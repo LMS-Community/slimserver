@@ -85,6 +85,12 @@ sub new {
 
 	$client->[0] = $id;
 	$client->[1] = $deviceid;
+	
+	# Ignore UUID if it contains a lot of 0's
+	if ( $uuid =~ /00000000/ ) {
+		$uuid = undef;
+	}
+	
 	$client->[2] = $uuid;
 
 #	$client->[3]

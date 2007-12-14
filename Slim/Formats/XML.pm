@@ -146,11 +146,17 @@ sub getFeedAsync {
 			my $user = $params->{client}->playerData->userid;
 			my $sid  = $user->sso . ':' . $user->password;
 			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-			$headers{'X-Player-MAC'} = $params->{'client'}->id;
+			$headers{'X-Player-MAC'} = $params->{'client'}->masterOrSelf->id;
+			if ( my $uuid = $params->{'client'}->masterOrSelf->uuid ) {
+				$headers{'X-Player-UUID'} = $uuid;
+			}
 		}
 		elsif ( my $sid = $prefs->get('sn_session') ) {
 			$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-			$headers{'X-Player-MAC'} = $params->{'client'}->id;
+			$headers{'X-Player-MAC'} = $params->{'client'}->masterOrSelf->id;
+			if ( my $uuid = $params->{'client'}->masterOrSelf->uuid ) {
+				$headers{'X-Player-UUID'} = $uuid;
+			}
 			
 			$log->info("Using existing SN session ID $sid");
 		}
@@ -163,7 +169,10 @@ sub getFeedAsync {
 				cb     => sub {
 					if ( my $sid = $prefs->get('sn_session') ) {
 						$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-						$headers{'X-Player-MAC'} = $params->{'client'}->id;
+						$headers{'X-Player-MAC'} = $params->{'client'}->masterOrSelf->id;
+						if ( my $uuid = $params->{'client'}->masterOrSelf->uuid ) {
+							$headers{'X-Player-UUID'} = $uuid;
+						}
 						
 						$log->info("Got SqueezeNetwork session ID: $sid");
 					}
