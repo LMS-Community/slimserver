@@ -127,7 +127,6 @@ sub alarmsQuery {
 	$request->setStatusDone();
 }
 
-
 sub albumsQuery {
 	my $request = shift;
 
@@ -229,6 +228,12 @@ sub albumsQuery {
 		}
 	}
 	
+	# Jive menu mode, needs contributor data and only a subset of columns
+	if ( $menuMode ) {
+		$attr->{'prefetch'} = 'contributor';
+		$attr->{'cols'}     = [ qw(id artwork title contributor.name) ];
+	}
+	
 	# use the browse standard additions, sort and filters, and complete with 
 	# our stuff
 	my $rs = Slim::Schema->rs('Album')->browse->search($where, $attr);
@@ -326,9 +331,8 @@ sub albumsQuery {
 			if ($menuMode) {
 				
 				# we want the text to be album\nartist
-				my @artists = $eachitem->artists();
-				my $artist = $artists[0] ? $artists[0]->name() : '';
-				my $text = $eachitem->title;
+				my $artist = $eachitem->contributor->name;
+				my $text   = $eachitem->title;
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
 				}
