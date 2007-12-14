@@ -4,7 +4,7 @@ var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&amp;c
 var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album.id=ALBUM&player=[% playerURI %]';
 var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]';
 var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]';
-var blankRequest = 'hierarchy=album,track&level=0&artwork=2&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
+var blankRequest = 'hierarchy=album,track&level=0&artwork=2&player=00%3A04%3A20%3A05%3A1b%3A82&start=[% start %]&ajaxRequest=1';
 
 var pAT = 'javascript:changeOSD("AlBuM [% "NOW_PLAYING" | string %]"); addItem("command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]")';
 var aAT = 'javascript:changeOSD("[% "ADDING_TO_PLAYLIST" | string %] AlBuM"); addItem("command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]")';
