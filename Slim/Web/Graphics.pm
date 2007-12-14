@@ -144,25 +144,25 @@ sub processCoverArtRequest {
 		
 		$log->info("  artwork cache key: $cacheKey");
 		
-		$cachedImage = $cache->get($cacheKey);
+		if ( $cachedImage = $cache->get($cacheKey) ) {
+			my $artworkFile = $cachedImage->{'orig'};
 		
-		my $artworkFile = $cachedImage->{'orig'};
-		
-		if ( $cachedImage && defined $artworkFile ) {
-			# Check mtime of original artwork has not changed
-			if ( $artworkFile && -r $artworkFile ) {
-				my $origMtime = (stat _)[9];
-				if ( $cachedImage->{'mtime'} != $origMtime ) {
-					$log->info( "  artwork mtime $origMtime differs from cached mtime " . $cachedImage->{'mtime'} );
-					$cachedImage = undef;
+			if ( defined $artworkFile ) {
+				# Check mtime of original artwork has not changed
+				if ( $artworkFile && -r $artworkFile ) {
+					my $origMtime = (stat _)[9];
+					if ( $cachedImage->{'mtime'} != $origMtime ) {
+						$log->info( "  artwork mtime $origMtime differs from cached mtime " . $cachedImage->{'mtime'} );
+						$cachedImage = undef;
+					}
 				}
-			}
 		
-			if ( $cachedImage ) {
+				if ( $cachedImage ) {
 
-				$log->info("  returning cached artwork image.");
+					$log->info("  returning cached artwork image.");
 
-				return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
+					return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
+				}
 			}
 		}
 	}
