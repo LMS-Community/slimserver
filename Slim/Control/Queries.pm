@@ -566,6 +566,7 @@ sub artistsQuery {
 
 		for my $obj (@data[$start..$end]) {
 
+			next if !$obj;
 			my $id = $obj->id();
 			$id += 0;
 
