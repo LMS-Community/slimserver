@@ -230,8 +230,8 @@ sub albumsQuery {
 	
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
-		$attr->{'prefetch'} = 'contributor';
-		$attr->{'cols'}     = [ qw(id artwork title contributor.name) ];
+		push @{ $attr->{'join'} }, 'contributor';
+		$attr->{'cols'} = [ qw(id artwork title contributor.name) ];
 	}
 	
 	# use the browse standard additions, sort and filters, and complete with 
