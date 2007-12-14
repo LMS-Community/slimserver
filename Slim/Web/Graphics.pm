@@ -153,7 +153,7 @@ sub processCoverArtRequest {
 			if ( $artworkFile && -r $artworkFile ) {
 				my $origMtime = (stat _)[9];
 				if ( $cachedImage->{'mtime'} != $origMtime ) {
-					$log->info( "  artwork mtime $origMtime differs from cached mtime $artworkFile" );
+					$log->info( "  artwork mtime $origMtime differs from cached mtime " . $cachedImage->{'mtime'} );
 					$cachedImage = undef;
 				}
 			}
