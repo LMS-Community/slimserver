@@ -35,6 +35,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 use Slim::Utils::OSDetect;
+use Slim::Web::Graphics;
 
 # Global caches:
 my $artworkDir = '';
@@ -48,6 +49,9 @@ tie my %lastFile, 'Tie::Cache::LRU', 32;
 sub findArtwork {
 	my $class = shift;
 	my $track = shift;
+	
+	# Initialize graphics resizing
+	Slim::Web::Graphics::init();
 
 	# Only look for track/album combos that don't already have artwork.
 	my $cond = {
@@ -97,6 +101,17 @@ sub findArtwork {
 
 			$album->artwork($track->id);
 			$album->update;
+			
+			# Pre-cache this artwork resized to our commonly-used sizes/formats
+			# 1. 100x100_p.png (large web artwork)
+			# 2. 50x50_p.png (small web artwork)
+			# 3. 56x56_p.png (Jive artwork)
+			
+			my @dims = qw(50 56 100);
+			for my $dim ( @dims ) {
+				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p.png" );
+				Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p.png" );
+			}
 		}
 
 		$progress->update($track->album->name);
