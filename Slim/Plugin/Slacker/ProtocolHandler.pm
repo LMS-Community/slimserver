@@ -249,10 +249,6 @@ sub onDecoderUnderrun {
 			$log->debug('Letting sync master fetch next Slacker track');
 			return;
 		}
-		else {
-			# XXX: Source does not call skipahead when synced for some reason
-			# Need to restart playback here?
-		}
 	}
 	
 	# Flag that we don't want any buffering messages while loading the next track,
@@ -282,6 +278,15 @@ sub onJump {
 	}
 	else {
 		$client->pluginData( showBuffering => 1 );
+	}
+	
+	# If synced and we already fetched a track in onDecoderUnderrun,
+	# just callback, don't fetch another track.  Checks prevTrack to
+	# make sure there is actually a track ready to be played.
+	if ( Slim::Player::Sync::isSynced($client) && $client->pluginData('prevTrack') ) {
+		$log->debug( 'onJump while synced, but already got the next track to play' );
+		$callback->();
+		return;
 	}
 	
 	# Get next track
