@@ -605,6 +605,13 @@ sub _stat_handler {
 	
 	my $now = Time::HiRes::time();
 	
+	# Bug 3881, 6350, ignore stat response if player is not in the heartbeat
+	# list, i.e. it is upgrading firmware
+	if ( !exists $heartbeat{ $client->id } ) {
+		$log->debug( 'Ignoring stat response, player ' . $client->id . ' is not in heartbeat list' );
+		return;
+	}
+	
 	# update the heartbeat value for this player
 	$heartbeat{ $client->id } = $now;
 
