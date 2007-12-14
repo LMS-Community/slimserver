@@ -854,8 +854,8 @@ sub _fixupAppenders {
 
 	if ($::LogTimestamp) {
 
-		$pattern    = '[%d{HH:mm:ss.SSSS}] %M (%L) %m%n';
-		$rawpattern = '[%d{HH:mm:ss.SSSS}] %m%n';
+		$pattern    = '[%d{yy-MM-dd HH:mm:ss.SSSS}] %M (%L) %m%n';
+		$rawpattern = '[%d{yy-MM-dd HH:mm:ss.SSSS}] %m%n';
 
 	} else {
 
