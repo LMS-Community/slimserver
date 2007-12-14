@@ -57,8 +57,18 @@ function setProgressBarWidth() {
 		clearIntervalCall();
 		doRefresh();
 	}
-	p = ( _progressBarWidth / _progressEnd) * _progressAt;
-	$("progressBar").width=p+" ";
+	
+	// For old IE versions
+	if (Prototype.Browser.IE) {
+		p = (document.body.clientWidth / _progressEnd) * _progressAt;
+		eval("document.progressBar.width=p");
+
+	// All others
+	} else {
+		p = ( _progressBarWidth / _progressEnd) * _progressAt;
+		$("progressBar").width=p+" ";
+	}
+	
 }
 
 function resetProgressBar() {
