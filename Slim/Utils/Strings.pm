@@ -267,14 +267,19 @@ sub parseStrings {
 
 	my $store = $args->{'storeString'} || \&storeString;
 
-	LINE: for my $line (split('\n', $$text)) {
+	# split on both \r and \n
+	# This caters for unix format (\n), DOS format (\r\n)
+	# and mac format (\r) files
+	# It also obviates the need to strip trailing \n or \r
+	# from the end of lines
+	LINE: for my $line (split('[\n\r]', $$text)) {
 
 		$ln++;
 
-		# remove any remaining CR or NL chars from end of line
-		$line =~ s/[\r\n]+$//g;
-
+		# skip lines starting with # (comments?)
 		next if $line =~ /^#/;
+		# skip lines containing nothing but whitespace
+		# (this includes empty lines)
 		next if $line !~ /\S/;
 
 		if ($line =~ /^(\S+)$/) {
