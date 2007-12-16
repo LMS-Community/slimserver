@@ -7,11 +7,13 @@ package Slim::Plugin::LMA::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use Slim::Networking::SqueezeNetwork;
+
 sub initPlugin {
 	my $class = shift;
 	
 	$class->SUPER::initPlugin(
-		feed      => 'http://content.us.squeezenetwork.com:8080/lma/artists.opml',
+		feed      => Slim::Networking::SqueezeNetwork->url( '/api/lma/v1/opml' ),
 		tag       => 'lma',
 		'icon-id' => 'html/images/ServiceProviders/lma.png',
 		menu      => 'music_services',
