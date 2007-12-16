@@ -1055,6 +1055,9 @@ sub _hello_handler {
 	$sock2client{$s} = $client;
 	
 	$latencyList{$client} = [];
+	
+	# add the player to the list of clients we're watching for signs of life
+	$heartbeat{ $client->id } = Time::HiRes::time();
 
 	if ($client->needsUpgrade()) {
 
@@ -1092,9 +1095,6 @@ sub _hello_handler {
 		# make sure volume is set, without changing temp setting
 		$client->audio_outputs_enable($client->power());
 		$client->volume($client->volume(), defined($client->tempVolume()));
-			
-		# add the player to the list of clients we're watching for signs of life
-		$heartbeat{ $client->id } = Time::HiRes::time();
 	}
 }
 
