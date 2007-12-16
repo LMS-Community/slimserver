@@ -750,14 +750,15 @@ sub setPlayerSetting {
 
 		my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
 		$client->sendFrame('setd', \$data);
-
+		
+		delete $client->pendingPrefChanges()->{$pref};
 	}
 	else {
 
 		# we can't update the pref's while playing, cache this change for later
 		logger('prefs')->info("Pending change for $pref");
 
-		$client->pendingPrefChanges()->{$pref}++;
+		$client->pendingPrefChanges()->{$pref} = 1;
 	}
 }
 
