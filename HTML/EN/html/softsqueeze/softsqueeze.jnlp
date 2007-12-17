@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="[% LOCALE %]"?>
 
-<!-- JNLP File for Softsqueeze -->
+<!-- JNLP File for SoftSqueeze -->
 
 <!--        ** This file is configured for the SqueezeCenter ** 			-->
 
@@ -14,11 +14,11 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 3.5</title>
+    <title>SoftSqueeze 3.5</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
-    <description>Softsqueeze Squeezebox Emulator</description>
-    <description kind="short">Softsqueeze Squeezebox Emulator</description>
+    <description>SoftSqueeze Squeezebox Emulator</description>
+    <description kind="short">SoftSqueeze Squeezebox Emulator</description>
     <icon width="400" height="200" kind="splash" href="icons/splash.gif" />
     <icon width="64" height="64" href="icons/icon64.gif" />
     <offline-allowed />
