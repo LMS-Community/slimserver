@@ -426,11 +426,12 @@ sub playerSettingsMenu {
 
 	my $client = shift;
 	my $batch = shift;
-	return unless $client;
+
+	my @menu = ();
+	return (\@menu, 0) unless $client;
  
 	$log->debug("Begin Function");
  
-	my @menu = ();
 
 	# always add repeat
 	my $repeat_setting = Slim::Player::Playlist::repeat($client);
