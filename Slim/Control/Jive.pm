@@ -428,7 +428,7 @@ sub playerSettingsMenu {
 	my $batch = shift;
 
 	my @menu = ();
-	return (\@menu, 0) unless $client;
+	return \@menu unless $client;
  
 	$log->debug("Begin Function");
  
