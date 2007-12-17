@@ -426,8 +426,7 @@ sub audioScrobblerSource {
 		return 'P';
 	}
 	 
-	# R (radio source) is not currently used as we don't
-	# support submitting radio tracks to Last.fm
+	# R (radio source)
 	return 'R';
 }
 
@@ -445,6 +444,21 @@ sub getMetadataFor {
 				cover    => $meta->{cover},
 				type     => 'MP3tunes',
 			};
+		}
+	}
+	else {
+		# Radio tracks, return artist and title if the metadata looks like Artist - Title
+		if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
+			my $dashCount = $currentTitle =~ m{ - };
+			if ( $dashCount == 1 ) {
+				my ($artist, $title) = split / - /, $currentTitle;
+			
+				return {
+					artist => $artist,
+					title  => $title,
+					type   => $client->string('RADIO'),
+				};
+			}
 		}
 	}
 	

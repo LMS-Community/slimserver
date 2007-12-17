@@ -318,6 +318,13 @@ sub newsongCallback {
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
 	
+	# If this is a radio track (no track length) and contains a playlist index value
+	# it is the newsong notification from the station title, which we want to ignore
+	if ( !$track->secs && defined $request->getParam('_p3') ) {
+		$log->debug( 'Ignoring radio station newsong notification' );
+		return;
+	}
+	
 	# report all new songs as now playing
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
@@ -345,10 +352,11 @@ sub newsongCallback {
 	}
 
 	# Determine when we need to check again
+	
 	# Track must be > 30 seconds
-	if ( !$track->secs || $track->secs < 30 ) {
+	if ( $track->secs && $track->secs < 30 ) {
 		if ( $log->is_debug ) {
-			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds or unknown length' );
+			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
 		}
 		
 		return;
@@ -379,7 +387,14 @@ sub newsongCallback {
 	}
 	
 	# We check again at half the song's length or 240 seconds, whichever comes first
-	my $checktime = $track->secs > 480 ? 240 : ( int( $track->secs / 2 ) );
+	my $checktime;
+	if ( $track->secs ) {
+		$checktime = $track->secs > 480 ? 240 : ( int( $track->secs / 2 ) );
+	}
+	else {
+		# For internet radio, check again in 30 seconds
+		$checktime = 30;
+	}
 	
 	if ( $log->is_debug ) {
 		$log->debug( "New track to scrobble: $title, will check in $checktime seconds" );
@@ -391,7 +406,7 @@ sub newsongCallback {
 		\&checkScrobble,
 		$track,
 		$checktime,
-	);		
+	);
 }
 
 sub submitNowPlaying {
