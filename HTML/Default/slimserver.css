@@ -473,8 +473,13 @@ div.pagetitleWithIcon {
 .browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
 	visibility: hidden;
 	position: absolute;
-	top: -2px;
+	top: -4px;
 	right: 6px;
+}
+
+.homeMenuSection .browsedbControls,
+#playList .playlistControls {
+	top: -2px;
 }
 
 .browsedbRightControls {
