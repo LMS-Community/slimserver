@@ -166,6 +166,12 @@ sub main {
 			logError("This is a fatal error. Exiting");
 			exit(-1);
 		}
+		
+		# Clear the artwork cache, since it will contain cached items with IDs
+		# that are no longer valid.  Just delete the directory because clearing the
+		# cache takes too long
+		my $artworkCacheDir = catdir( $prefs->get('cachedir'), 'Artwork' );
+		eval { rmtree( $artworkCacheDir, { verbose => 0 } ); };
 	}
 
 	# Don't wrap the below in a transaction - we want to have the server

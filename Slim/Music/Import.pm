@@ -42,8 +42,6 @@ use base qw(Class::Data::Inheritable);
 
 use Config;
 use FindBin qw($Bin);
-use File::Path qw(rmtree);
-use File::Spec::Functions qw(:ALL);
 use Proc::Background;
 use Scalar::Util qw(blessed);
 
@@ -354,12 +352,6 @@ sub runScanPostProcessing {
 	$log->info("Starting findArtwork().");
 
 	$importsRunning{'findArtwork'} = Time::HiRes::time();
-	
-	# Clear the artwork cache, since it will contain cached items with IDs
-	# that are no longer valid.  Just delete the directory because clearing the
-	# cache takes too long
-	my $artworkCacheDir = catdir( $prefs->get('cachedir'), 'Artwork' );
-	eval { rmtree( $artworkCacheDir, { verbose => 0 } ); };
 
 	Slim::Music::Artwork->findArtwork;
 
