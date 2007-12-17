@@ -449,8 +449,8 @@ sub getMetadataFor {
 	else {
 		# Radio tracks, return artist and title if the metadata looks like Artist - Title
 		if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
-			my $dashCount = $currentTitle =~ m{ - };
-			if ( $dashCount == 1 ) {
+			my @dashes = $currentTitle =~ /( - )/g;
+			if ( scalar @dashes == 1 ) {
 				my ($artist, $title) = split / - /, $currentTitle;
 			
 				return {
