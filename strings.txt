@@ -986,6 +986,18 @@ REPEAT_OFF
 	SV	Repetition avstängd
 	ZH_CN	关闭重复模式
 
+CHOICE_ONE
+	EN	song
+
+CHOICE_PLAYLIST
+	EN	playlist
+
+CHOICE_OFF
+	EN	off
+
+CHOICE_ALBUM
+	EN	album
+
 REPEAT_ONE
 	CS	Opakovat aktuální skladbu
 	DA	Gentag denne

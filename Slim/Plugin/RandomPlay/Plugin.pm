@@ -121,74 +121,93 @@ sub initPlugin {
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
 
-	my $menu = {
-		text   => Slim::Utils::Strings::string(getDisplayName()),
-		count  => 5,
-		offset => 0,
-		weight => 60,
-		window => { titleStyle => 'mymusic' },
-		item_loop => [
-			{
-				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
-				actions => {
-					do => {
-						player => 0,
-						cmd    => [ 'randomplay', 'tracks' ],
-						params => {
-							menu => 'nowhere',
-						},
-					}
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
-				actions => {
-					do => {
-						player => 0,
-						cmd    => [ 'randomplay', 'albums' ],
-						params => {
-							menu => 'nowhere',
-						},
-					}
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
-				actions => {
-					do => {
-						player => 0,
-						cmd    => [ 'randomplay', 'contributors' ],
-						params => {
-							menu => 'nowhere',
-						},
-					}
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
-				actions => {
-					do => {
-						player => 0,
-						cmd    => [ 'randomplay', 'year' ],
-						params => {
-							menu => 'nowhere',
-						},
-					}
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('PLUGIN_CHOOSE_GENRES'),
-				actions => {
-					go => {
-						player => 0,
-						cmd    => [ 'randomplaygenrelist' ],
-					},
-				},
-			},
-		],
-	};
+	my $node = {
+			text           => Slim::Utils::Strings::string(getDisplayName()),
+			weight         => 100,
+			id             => 'randomplay',
+			node           => 'myMusic',
+			displayWhenOff => 0,
+			window         => { titleStyle => 'mymusic' },
+		};
 
-	Slim::Control::Jive::registerPluginMenu($menu, 'mymusic');
+	Slim::Control::Jive::registerPluginNode($node);
+
+	my @menu = (
+		{
+			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
+			id      => 'randomtracks',
+			weight  => 10,
+			window  => { titleStyle => 'mymusic' },
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'randomplay', 'tracks' ],
+					params => {
+						menu => 'nowhere',
+					},
+				}
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
+			id      => 'randomalbums',
+			weight  => 20,
+			window  => { titleStyle => 'mymusic' },
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'randomplay', 'albums' ],
+					params => {
+						menu => 'nowhere',
+					},
+				}
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
+			id      => 'randomartists',
+			weight  => 30,
+			window  => { titleStyle => 'mymusic' },
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'randomplay', 'contributors' ],
+					params => {
+						menu => 'nowhere',
+					},
+				}
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
+			id      => 'randomyears',
+			weight  => 40,
+			window  => { titleStyle => 'mymusic' },
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'randomplay', 'year' ],
+					params => {
+						menu => 'nowhere',
+					},
+				}
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('PLUGIN_CHOOSE_GENRES'),
+			id      => 'randomchoosegenres',
+			weight  => 50,
+			window  => { titleStyle => 'mymusic' },
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ 'randomplaygenrelist' ],
+				},
+			},
+		},
+	);
+
+	Slim::Control::Jive::registerPluginMenu(\@menu, 'randomplay');
 }
 
 sub chooseGenre {

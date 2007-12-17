@@ -424,6 +424,10 @@ sub nameCommand {
 
 	$prefs->client($client)->set('playername', $newValue);
 	
+	# refresh Jive menu
+	Slim::Control::Jive::playerSettingsMenu($client);
+	Slim::Control::Jive::playerPower($client);
+
 	$request->setStatusDone();
 }
 
@@ -2013,6 +2017,9 @@ sub powerCommand {
 		$client->currentSleepTime(0);
 	}
 		
+	# send an update for Jive player power menu
+	Slim::Control::Jive::playerPower($client);
+
 	$request->setStatusDone();
 }
 

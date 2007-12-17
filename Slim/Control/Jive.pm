@@ -41,10 +41,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 # additional top level menus registered by plugins
 my %itemsToDelete      = ();
-my @extrasPluginMenu   = ();
-my @settingsPluginMenu = ();
-my @myMusicPluginMenu  = ();
-my @searchPluginMenu   = ();
+my @pluginMenus        = ();
 
 =head1 METHODS
 
@@ -67,12 +64,11 @@ sub init {
 
     Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], [1, 1, 1, \&alarmSettingsQuery]);
     Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'], [1, 1, 1, \&syncSettingsQuery]);
-    Slim::Control::Request::addDispatch(['repeatsettings', '_index', '_quantity'], [1, 1, 1, \&repeatSettingsQuery]);
-    Slim::Control::Request::addDispatch(['shufflesettings', '_index', '_quantity'], [1, 1, 1, \&shuffleSettingsQuery]);
     Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'], [1, 1, 1, \&sleepSettingsQuery]);
     Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
     Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
-    Slim::Control::Request::addDispatch(['jivefavorites', '_index', '_quantity'], [1, 1, 1, \&jiveFavoritesQuery]);
+    Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
+	Slim::Control::Request::addDispatch(['jivefavorites', '_index', '_quantity'], [1, 1, 1, \&jiveFavoritesQuery]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -82,8 +78,13 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveapplets'], [0, 1, 0, \&downloadQuery]);
 	Slim::Control::Request::addDispatch(['jivewallpapers'], [0, 1, 0, \&downloadQuery]);
 	Slim::Control::Request::addDispatch(['jivesounds'], [0, 1, 0, \&downloadQuery]);
-
+	
 	Slim::Web::HTTP::addRawDownload('^jive(applet|wallpaper|sound)/', \&downloadFile, 'binary');
+
+	# setup the menustatus dispatch and subscription
+	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'], [0, 0, 0, sub { warn "menustatus query\n" }]);
+	Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
+
 }
 
 =head2 getDisplayName()
@@ -115,32 +116,30 @@ sub menuQuery {
 	my $quantity      = $request->getParam('_quantity');
 
 	my $prefs         = preferences("server");
-	my $settingsMenu  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
-	my $myMusicMenu   = myMusicMenu();
-
-	# respin @settingsMenu and @myMusicPlugin menu with delete options
-	$settingsMenu  = _removeItemsForDeletion('settings', @$settingsMenu);
-	$myMusicMenu   = _removeItemsForDeletion('mymusic' , @$myMusicMenu);
-	
-	# cobble together default menus plus plugin menus
-	my @settingsMenu = ( @$settingsMenu, @settingsPluginMenu);
-	my @myMusicMenu  = ( @$myMusicMenu, @myMusicPluginMenu);
 	
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
+
+	# for the notification menus, we're going to send everything over "flat"
+	# as a result, no item_loops, all submenus (setting, myMusic) are just elements of the big array that get sent
+
 	my @menu = (
 		{
-			text      => Slim::Utils::Strings::string('MY_MUSIC'),
-			count     => scalar(@myMusicMenu),
-			offset    => 0,
-			weight    => 10,
-			window    => { titleStyle => 'mymusic', },
-			item_loop => \@myMusicMenu,
+			text           => Slim::Utils::Strings::string('MY_MUSIC'),
+			weight         => 11,
+			displayWhenOff => 0,
+			id             => 'myMusic',
+			isANode        => 1,
+			node           => 'home',
+			window         => { titleStyle => 'mymusic', },
 		},
 		{
-			text    => Slim::Utils::Strings::string('RADIO'),
-			weight  => 20,
-			actions => {
+			text           => Slim::Utils::Strings::string('RADIO'),
+			id             => 'radio',
+			node           => 'home',
+			displayWhenOff => 0,
+			weight         => 20,
+			actions        => {
 				go => {
 					cmd => ['radios'],
 					params => {
@@ -154,13 +153,16 @@ sub menuQuery {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('MUSIC_SERVICES'),
-			weight  => 30,
+			text           => Slim::Utils::Strings::string('MUSIC_SERVICES'),
+			id             => 'ondemand',
+			node           => 'home',
+			weight         => 30,
+			displayWhenOff => 0,
 			actions => {
 				go => {
-					cmd => ['music_services'],
+					cmd => ['music_on_demand'],
 					params => {
-						menu => 'music_services',
+						menu => 'music_on_demand',
 					},
 				},
 			},
@@ -170,14 +172,16 @@ sub menuQuery {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('FAVORITES'),
-			weight  => 40,
+			text           => Slim::Utils::Strings::string('FAVORITES'),
+			id             => 'favorites',
+			node           => 'home',
+			displayWhenOff => 0,
+			weight         => 40,
 			actions => {
 				go => {
 					cmd => ['favorites', 'items'],
 					params => {
 						menu     => 'favorites',
-						#menu_all => '1',
 					},
 				},
 			},
@@ -185,93 +189,98 @@ sub menuQuery {
 					titleStyle => 'favorites',
 			},
 		},
-		{
-			text    => Slim::Utils::Strings::string('PLAYER_PLUGINS'),
-			weight  => 45,
-			count     => scalar(@extrasPluginMenu),
-			offset    => 0,
-			item_loop => \@extrasPluginMenu,
-			window        => {
-			},
-		},
-		{
-			text    => Slim::Utils::Strings::string('SETTINGS'),
-			weight  => 50,
-			count     => scalar(@settingsMenu),
-			offset    => 0,
-			item_loop => \@settingsMenu, 
-			window        => {
-					titleStyle => 'settings',
-			},
-		},
 
+		# add the plugin menus
+		@pluginMenus,
 	);
 
 	if ( blessed($client) && $client->isPlayer() && $client->canPowerOff() ) {
-		push @menu, powerHash($client);
+		my $playerPower = playerPower($client, 1);
+		@menu = (@menu, @$playerPower);
 	}
 
-	# remove top level main menu items if specified by a plugin
-	my $menuForExport = _removeItemsForDeletion('main', @menu);
-	my $numitems = scalar(@$menuForExport);
-	$request->addResult("count", $numitems);
+	my $playerSettings = playerSettingsMenu($client, 1);
+	my $myMusic = myMusicMenu(1);
+	@menu = (@menu, @$playerSettings, @$myMusic);
 
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+	_notifyJive(\@menu);
 
-	if ($valid) {
-		
-		my $cnt = 0;
-		$request->addResult('offset', $start);
+	# a single dummy item to keep jive happy with _merge
+	my $upgradeText = 
+	"BETA TESTERS: Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and SqueezeCenter, and this requires a newer version of firmware.";
+        my $upgradeMessage = {
+		text      => 'READ ME',
+		weight    => 1,
+                offset    => 0,
+                count     => 1,
+                window    => { titleStyle => 'settings' },
+                textArea =>  $upgradeText,
+        };
 
-		for my $eachmenu (@$menuForExport[$start..$end]) {			
-			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-			$cnt++;
-		}
-	}
-
+        $request->addResult("count", 1);
+	$request->addResult("offset", 0);
+	$request->setResultLoopHash('item_loop', 0, $upgradeMessage);
 	$request->setStatusDone();
 }
 
-# allow a plugin to add a menu hash entry to appear at the top level of the player menu
-sub registerPluginMenu {
-	my $menuHash = shift;
-	my $whichMenu = shift || 'extras';
+# allow a plugin to add a node to the menu
+sub registerPluginNode {
+	my $nodeRef = shift;
 
-	if (ref $menuHash eq 'HASH' && exists $menuHash->{text}) {
-		$log->info("Registering menu $menuHash->{text} to $whichMenu");
-		if ($whichMenu eq 'extras') {
-			push @extrasPluginMenu, $menuHash;
-		} elsif ($whichMenu eq 'mymusic') {
-			push @myMusicPluginMenu, $menuHash;
-		} elsif ($whichMenu eq 'settings') {
-			push @settingsPluginMenu, $menuHash;
-		} elsif ($whichMenu eq 'search') {
-			push @searchPluginMenu, $menuHash;
+	$nodeRef->{'isANode'} = 1;
+	$log->info("Registering node menu item from plugin");
+
+	# notify this menu to be added
+	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $nodeRef, 'add' ] );
+
+	# but also remember this structure as part of the plugin menus
+	push @pluginMenus, $nodeRef;
+
+}
+
+#allow a plugin to add an array of menu entries
+sub registerPluginMenu {
+	my $menuArray = shift;
+	my $node = shift;
+	if ($node) {
+		my @menuArray = @$menuArray;
+		for my $i (0..$#menuArray) {
+			if (!$menuArray->[$i]{'node'}) {
+				$menuArray->[$i]{'node'} = $node;
+			}
 		}
 	}
+
+	$log->info("Registering menus from plugin");
+
+	# notify this menu to be added
+	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $menuArray, 'add' ] );
+
+	# but also remember this structure as part of the plugin menus
+	@pluginMenus = (@pluginMenus, @$menuArray);
 }
 
-# allow a plugin to delete a main menu from the Jive menu based on the text of the menu item
+# allow a plugin to delete an item from the Jive menu based on the id of the menu item
 sub deleteMenuItem {
-	my $menuText = shift;
-	my $whichMenu = shift || 'main';
-	return unless $menuText;
-	$log->warn($menuText . " in " . $whichMenu . " slated for deletion");
-	$itemsToDelete{$whichMenu}{$menuText}++;
+	my $menuId = shift;
+	return unless $menuId;
+	$log->warn($menuId . " menu id slated for deletion");
+	# send a notification to delete
+	my @menuDelete = ( { id => $menuId } );
+	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', \@menuDelete, 'remove' ] );
+	# but also remember that this id is not to be sent
+	$itemsToDelete{$menuId}++;
 }
 
-sub _removeItemsForDeletion {
-	my $whichMenu = shift;
-	my @menu = @_;
+sub _purgeMenu {
+	my $menu = shift;
+	my @menu = @$menu;
 	my @purgedMenu = ();
 	for my $i (0..$#menu) {
-		my $textString = defined($menu[$i]->{text}) ? $menu[$i]->{text} : 'skip';
+		my $menuId = defined($menu[$i]->{id}) ? $menu[$i]->{id} : $menu[$i]->{text};
 		last unless (defined($menu[$i]));
-		if ($itemsToDelete{$whichMenu}{$textString}) {
-			$log->warn("REMOVING " . $textString . " FROM " . $whichMenu);
-			# only delete it once, giving the opportunity for a
-			# custom menu with the same string key to be registered via a plugin
-			$itemsToDelete{$whichMenu}{$textString} = 0;
+		if ($itemsToDelete{$menuId}) {
+			$log->warn("REMOVING " . $menuId . " FROM Jive menu");
 		} else {
 			push @purgedMenu, $menu[$i];
 		}
@@ -299,7 +308,7 @@ sub alarmSettingsQuery {
 
 	my %weekDayAlarms = (
 		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
-		count     => 7,
+		count     => scalar(@weekDays),
 		offset    => 0,
 		item_loop => \@weekDays,
 		window    => { titleStyle => 'settings' },
@@ -312,6 +321,10 @@ sub alarmSettingsQuery {
 
 }
 
+sub playerInformationQuery {
+	return;
+}
+
 sub syncSettingsQuery {
 
 	my $request           = shift;
@@ -319,39 +332,6 @@ sub syncSettingsQuery {
 	my $playersToSyncWith = getPlayersToSyncWith($client);
 
 	my @menu = @$playersToSyncWith;
-
-	sliceAndShip($request, $client, \@menu);
-
-}
-
-sub repeatSettingsQuery {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $val     = Slim::Player::Playlist::repeat($client);
-	my @strings = ('REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL',);
-	my @menu;
-
-	push @menu, repeatHash($val, \@strings, 0);
-	push @menu, repeatHash($val, \@strings, 1);
-	push @menu, repeatHash($val, \@strings, 2);
-
-	sliceAndShip($request, $client, \@menu);
-}
-
-sub shuffleSettingsQuery {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $val     = Slim::Player::Playlist::shuffle($client);
-	my @strings = (
-		'SHUFFLE_OFF', 'SHUFFLE_ON_SONGS', 'SHUFFLE_ON_ALBUMS',
-	);
-	my @menu;
-
-	push @menu, shuffleHash($val, \@strings, 0);
-	push @menu, shuffleHash($val, \@strings, 1);
-	push @menu, shuffleHash($val, \@strings, 2);
 
 	sliceAndShip($request, $client, \@menu);
 
@@ -367,8 +347,8 @@ sub sleepSettingsQuery {
 	if ($val > 0) {
 		my $sleepString = sprintf(Slim::Utils::Strings::string('SLEEPING_IN_X_MINUTES'), $val);
 		push @menu, { text => $sleepString, style => 'itemNoAction' };
-		push @menu, sleepInXHash($val, 0);
 	}
+	push @menu, sleepInXHash($val, 0);
 	push @menu, sleepInXHash($val, 15);
 	push @menu, sleepInXHash($val, 30);
 	push @menu, sleepInXHash($val, 45);
@@ -443,139 +423,130 @@ sub sliceAndShip {
 }
 
 sub playerSettingsMenu {
-	my ($request, $client, $index, $quantity, $prefs) = @_;
+
+	my $client = shift;
+	my $batch = shift;
+	return unless $client;
  
 	$log->debug("Begin Function");
  
 	my @menu = ();
-	return \@menu unless $client;
 
 	# always add repeat
+	my $repeat_setting = Slim::Player::Playlist::repeat($client);
+	my @repeat_strings = ('CHOICE_OFF', 'CHOICE_ONE', 'CHOICE_PLAYLIST',);
+	my @translated_repeat_strings = map { Slim::Utils::Strings::string($_) } @repeat_strings;
+	my @repeatChoiceActions;
+	for my $i (0..$#repeat_strings) {
+		push @repeatChoiceActions, 
+		{
+			player => 0,
+			cmd    => ['playlist', 'repeat', "$i"],
+		};
+	}
 	push @menu, {
-		text      => Slim::Utils::Strings::string("REPEAT"),
-		actions => {
-			go => {
-				cmd    => ['repeatsettings'],
-				player => 0,
+		text           => Slim::Utils::Strings::string("REPEAT"),
+		id             => 'settingsRepeat',
+		node           => 'settings',
+		displayWhenOff => 0,
+		weight         => 20,
+		choiceStrings  => [ @translated_repeat_strings ],
+		selectedIndex  => $repeat_setting + 1, # 1 is added to make it count like Lua
+		actions        => {
+			do => { 
+				choices => [ 
+					@repeatChoiceActions 
+				], 
 			},
 		},
-		window    => { titleStyle => 'settings' },
 	};
 
 	# always add shuffle
+	my $shuffle_setting = Slim::Player::Playlist::shuffle($client);
+	my @shuffle_strings = ( 'CHOICE_OFF', 'CHOICE_ONE', 'CHOICE_ALBUM',);
+	my @translated_shuffle_strings = map { Slim::Utils::Strings::string($_) } @shuffle_strings;
+	my @shuffleChoiceActions;
+	for my $i (0..$#repeat_strings) {
+		push @shuffleChoiceActions, 
+		{
+			player => 0,
+			cmd => ['playlist', 'shuffle', "$i"],
+		};
+	}
 	push @menu, {
-		text      => Slim::Utils::Strings::string("SHUFFLE"),
-		actions => {
-			go => {
-				cmd    => ['shufflesettings'],
-				player => 0,
+		text           => Slim::Utils::Strings::string("SHUFFLE"),
+		id             => 'settingsShuffle',
+		node           => 'settings',
+		selectedIndex  => $shuffle_setting + 1,
+		displayWhenOff => 0,
+		weight         => 10,
+		choiceStrings  => [ @translated_shuffle_strings ],
+		actions        => {
+			do => {
+				choices => [
+					@shuffleChoiceActions
+				],
 			},
 		},
-		window    => { titleStyle => 'settings' },
+		window         => { titleStyle => 'settings' },
 	};
 
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
 		push @menu, {
-			text      => Slim::Utils::Strings::string("ALARM"),
-			actions => {
+			text           => Slim::Utils::Strings::string("ALARM"),
+			id             => 'settingsAlarm',
+			node           => 'settings',
+			displayWhenOff => 0,
+			weight         => 30,
+			actions        => {
 				go => {
 					cmd    => ['alarmsettings'],
 					player => 0,
 				},
 			},
-		window    => { titleStyle => 'settings' },
+			window         => { titleStyle => 'settings' },
 		};
 	}
 
 	# sleep setting (always)
 	push @menu, {
-		text      => Slim::Utils::Strings::string("SLEEP"),
-		actions => {
+		text           => Slim::Utils::Strings::string("SLEEP"),
+		id             => 'settingsSleep',
+		node           => 'settings',
+		displayWhenOff => 0,
+		weight         => 40,
+		actions        => {
 			go => {
 				cmd    => ['sleepsettings'],
 				player => 0,
 			},
 		},
-		window    => { titleStyle => 'settings' },
+		window         => { titleStyle => 'settings' },
 	};	
 
 	# synchronization. only if numberOfPlayers > 1
 	my $synchablePlayers = howManyPlayersToSyncWith($client);
 	if ($synchablePlayers > 0) {
 		push @menu, {
-			text      => Slim::Utils::Strings::string("SYNCHRONIZE"),
-			actions => {
+			text           => Slim::Utils::Strings::string("SYNCHRONIZE"),
+			id             => 'settingsSync',
+			node           => 'settings',
+			displayWhenOff => 0,
+			weight         => 50,
+			actions        => {
 				go => {
 					cmd    => ['syncsettings'],
 					player => 0,
 				},
 			},
-		window    => { titleStyle => 'settings' },
+			window         => { titleStyle => 'settings' },
 		};	
 	}
-
-	# transition only for Sb2 and beyond
-	if ($client->isa('Slim::Player::Squeezebox2')) {
-		push @menu, {
-			text      => Slim::Utils::Strings::string("SETUP_TRANSITIONTYPE"),
-			actions => {
-				go => {
-					cmd    => ['crossfadesettings'],
-					player => 0,
-				},
-			},
-		window    => { titleStyle => 'settings' },
-		};	
-	}
-
-	# replay gain (volume adjustment)
-	if ($client->canDoReplayGain(0)) {
-		push @menu, {
-			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
-			actions   => {
-				  go => {
-					cmd    => ['replaygainsettings'],
-					player => 0,
-				  },
-			},
-		window    => { titleStyle => 'settings' },
-		};	
-	}
-
-	# player name change, always display
-	push @menu, {
-		text      => Slim::Utils::Strings::string('INFORMATION_PLAYER_NAME'),
-		input => {
-			initialText  => $client->name(),
-			len          => 1, # For those that want to name their player "X"
-			allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
-			help         => {
-				           text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
-			},
-			softbutton1  => Slim::Utils::Strings::string('INSERT'),
-			softbutton2  => Slim::Utils::Strings::string('DELETE'),
-		},
-		actions => {
-			do => {
-				player => 0,
-				cmd    => ['name'],
-				params => {
-					playername => '__INPUT__',
-				},
-			},
-		},
-		window    => { titleStyle => 'settings' },
-	};
 
 	# information, always display
 	my $playerInfoText = sprintf(Slim::Utils::Strings::string('INFORMATION_SPECIFIC_PLAYER'), $client->name());
-	push @menu, {
-		text      => $playerInfoText,
-		offset    => 0,
-		count	  => 1,
-		window    => { titleStyle => 'settings' },
-		textArea => 
+	my $playerInfoTextArea = 
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
 			$client->name() . "\n\n" . 
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
@@ -587,11 +558,103 @@ sub playerSettingsMenu {
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT_ABBR") . ": " .
 			$client->port() . "\n\n" .
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
-			uc($client->macaddress())
-			,
+			uc($client->macaddress());
+	push @menu, {
+		text           => $playerInfoText,
+		id             => 'settingsPlayerInformation',
+		node           => 'settings',
+		displayWhenOff => 0,
+		textArea       => $playerInfoTextArea,
+		weight         => 75,
+		window         => { titleStyle => 'settings' },
+		actions        => {
+				go =>	{
+						# this is a dummy command...doesn't do anything but is required
+						cmd    => ['playerinformation'],
+						player => 0,
+					},
+				},
 	};
 
-	return \@menu;
+
+	# player name change, always display
+	push @menu, {
+		text           => Slim::Utils::Strings::string('INFORMATION_PLAYER_NAME'),
+		id             => 'settingsPlayerNameChange',
+		node           => 'settings',
+		displayWhenOff => 0,
+		weight         => 80,
+		input          => {	
+			initialText  => $client->name(),
+			len          => 1, # For those that want to name their player "X"
+			allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
+			help         => {
+				           text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
+			},
+			softbutton1  => Slim::Utils::Strings::string('INSERT'),
+			softbutton2  => Slim::Utils::Strings::string('DELETE'),
+		},
+                actions        => {
+                                do =>   {
+                                                cmd    => ['name'],
+                                                player => 0,
+						params => {
+							playername => '__INPUT__',
+						},
+                                        },
+                                  },
+		window         => { titleStyle => 'settings' },
+	};
+
+
+	# transition only for Sb2 and beyond (aka 'crossfade')
+	if ($client->isa('Slim::Player::Squeezebox2')) {
+		push @menu, {
+			text           => Slim::Utils::Strings::string("SETUP_TRANSITIONTYPE"),
+			id             => 'settingsXfade',
+			node           => 'settings',
+			displayWhenOff => 0,
+			weight         => 85,
+			actions        => {
+				go => {
+					cmd    => ['crossfadesettings'],
+					player => 0,
+				},
+			},
+			window         => { titleStyle => 'settings' },
+		};	
+	}
+
+	# replay gain (aka volume adjustment)
+	if ($client->canDoReplayGain(0)) {
+		push @menu, {
+			displayWhenOff => 0,
+			text           => Slim::Utils::Strings::string("REPLAYGAIN"),
+			id             => 'settingsReplayGain',
+			node           => 'settings',
+			weight         => 90,
+			actions        => {
+				  go => {
+					cmd    => ['replaygainsettings'],
+					player => 0,
+				  },
+			},
+			window         => { titleStyle => 'settings' },
+		};	
+	}
+
+
+	if ($batch) {
+		return \@menu;
+	} else {
+		_notifyJive(\@menu);
+	}
+}
+
+sub _notifyJive {
+	my $menu = shift;
+	my $menuForExport = _purgeMenu($menu);
+	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $menuForExport, 'add' ] );
 }
 
 sub howManyPlayersToSyncWith {
@@ -937,6 +1000,7 @@ sub populateAlarmElements {
 		$alarm_volume,
 	);
 	push @return, $alarm_fade if $day == 0;
+	#Data::Dump::dump(@return) if $day == 1;
 	return \@return;
 }
 
@@ -947,19 +1011,20 @@ sub populateAlarmHash {
 	my $string = 'ALARM_DAY' . $day;
 	my %return = (
 		text      => Slim::Utils::Strings::string($string),
-		count     => 4,
+		count     => scalar(@$elements),
 		offset    => 0,
 		item_loop => $elements,
 	);
-#	Data::Dump::dump(%return);
 	return \%return;
 }
 
-sub powerHash {
+sub playerPower {
+
 	my $client = shift;
+	my $batch = shift;
 	my $name  = $client->name();
 	my $power = $client->power();
-	my %return; 
+	my @return; 
 	my ($text, $action);
 
 	if ($power == 1) {
@@ -970,17 +1035,27 @@ sub powerHash {
 		$action = 1;
 	}
 
-	%return = ( 
-		text    => $text,
-		weight  => 95,
-		actions  => {
+	push @return, {
+		text           => $text,
+		id             => 'playerpower',
+		node           => 'home',
+		displayWhenOff => 1,
+		weight         => 100,
+		actions        => {
 			do  => {
 				player => 0,
 				cmd    => ['power', $action],
+				},
 			},
-		},
-	);
-	return \%return;
+	};
+
+	if ($batch) {
+		return \@return;
+	} else {
+		# send player power info by notification
+		_notifyJive(\@return);
+	}
+
 }
 
 sub sleepInXHash {
@@ -1017,21 +1092,6 @@ sub repeatHash {
 	return \%return;
 }
 
-sub shuffleHash {
-	my ($val, $strings, $thisValue) = @_;
-	my %return = (
-		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
-		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
-			actions => {
-				do => {
-					player => 0,
-					cmd => ['playlist', 'shuffle', "$thisValue"],
-				},
-			},
-	);
-	return \%return;
-};
-
 sub transitionHash {
 	
 	my ($val, $prefs, $strings, $thisValue) = @_;
@@ -1065,12 +1125,15 @@ sub replayGainHash {
 }
 
 sub myMusicMenu {
-	my $searchMenu = searchMenu();
-	my @return = (
+	my $batch = shift;
+	my @myMusicMenu = (
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
-				weight  => 10,
-				actions => {
+				text           => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				id             => 'myMusicArtists',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 10,
+				actions        => {
 					go => {
 						cmd    => ['artists'],
 						params => {
@@ -1078,14 +1141,17 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window        => {
 					titleStyle => 'mymusic',
 				},
-			},
+			},		
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
-				weight  => 20,
-				actions => {
+				text           => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				id             => 'myMusicAlbums',
+				node           => 'myMusic',
+				weight         => 20,
+				displayWhenOff => 0,
+				actions        => {
 					go => {
 						cmd    => ['albums'],
 						params => {
@@ -1093,15 +1159,19 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window         => {
+					menuStyle => 'album',
 					menuStyle => 'album',
 					titleStyle => 'mymusic',
 				},
 			},
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
-				weight  => 30,
-				actions => {
+				text           => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				id             => 'myMusicGenres',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 30,
+				actions        => {
 					go => {
 						cmd    => ['genres'],
 						params => {
@@ -1109,14 +1179,17 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window        => {
 					titleStyle => 'mymusic',
 				},
 			},
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
-				weight  => 40,
-				actions => {
+				text           => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				id             => 'myMusicYears',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 40,
+				actions        => {
 					go => {
 						cmd    => ['years'],
 						params => {
@@ -1124,14 +1197,17 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window        => {
 					titleStyle => 'mymusic',
 				},
 			},
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
-				weight  => 50,
-				actions => {
+				text           => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				id             => 'myMusicNewMusic',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 50,
+				actions        => {
 					go => {
 						cmd    => ['albums'],
 						params => {
@@ -1140,15 +1216,18 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window        => {
 					menuStyle => 'album',
 					titleStyle => 'mymusic',
 				},
 			},
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
-				weight  => 70,
-				actions => {
+				text           => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				id             => 'myMusicMusicFolder',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 70,
+				actions        => {
 					go => {
 						cmd    => ['musicfolder'],
 						params => {
@@ -1156,14 +1235,17 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window        => {
 					titleStyle => 'mymusic',
 				},
 			},
 			{
-				text    => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
-				weight  => 80,
-				actions => {
+				text           => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				id             => 'myMusicPlaylists',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 80,
+				actions        => {
 					go => {
 						cmd    => ['playlists'],
 						params => {
@@ -1171,26 +1253,41 @@ sub myMusicMenu {
 						},
 					},
 				},
-				window => {
+				window        => {
 					titleStyle => 'mymusic',
 				},
 			},
 			{
-				text      => Slim::Utils::Strings::string('SEARCH'),
-				count     => scalar(@$searchMenu),
-				offset    => 0,
-				weight    => 90,
-				window    => { titleStyle => 'search', },
-				item_loop => $searchMenu,
+				text           => Slim::Utils::Strings::string('SEARCH'),
+				id             => 'myMusicSearch',
+				node           => 'myMusic',
+				isANode        => 1,
+				displayWhenOff => 0,
+				weight         => 90,
+				window         => { titleStyle => 'search', },
 			},
 		);
-	return \@return;
+	# add the items for under mymusicSearch
+	my $searchMenu = searchMenu(1);
+	@myMusicMenu = (@myMusicMenu, @$searchMenu);
+
+	if ($batch) {
+		return \@myMusicMenu;
+	} else {
+		_notifyJive(\@myMusicMenu);
+	}
+
 }
 
 sub searchMenu {
+	my $batch = shift;
 	my @searchMenu = (
 	{
-		text  => Slim::Utils::Strings::string('ARTISTS'),
+		text           => Slim::Utils::Strings::string('ARTISTS'),
+		id             => 'myMusicSearchArtists',
+		node           => 'myMusicSearch',
+		displayWhenOff => 0,
+		weight         => 10,
 		input => {
 			len  => 1, #bug 5318
 			help => {
@@ -1206,17 +1303,21 @@ sub searchMenu {
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'artists',
 				},
-			},
+                        },
 		},
-		window => {
-			text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
-			titleStyle => 'search',
-		},
+                window => {
+                        text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+                        titleStyle => 'search',
+                },
 	},
 	{
-		text  => Slim::Utils::Strings::string('ALBUMS'),
+		text           => Slim::Utils::Strings::string('ALBUMS'),
+		id             => 'myMusicSearchAlbums',
+		node           => 'myMusicSearch',
+		displayWhenOff => 0,
+		weight         => 20,
 		input => {
-			len => 1, #bug 5318
+			len  => 1, #bug 5318
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
@@ -1233,14 +1334,17 @@ sub searchMenu {
 		},
 		window => {
 			text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
-			menuStyle => 'album',
 			titleStyle => 'search',
 		},
 	},
 	{
-		text  => Slim::Utils::Strings::string('SONGS'),
+		text           => Slim::Utils::Strings::string('SONGS'),
+		id             => 'myMusicSearchSongs',
+		node           => 'myMusicSearch',
+		displayWhenOff => 0,
+		weight         => 30,
 		input => {
-			len => 1, #bug 5318
+			len  => 1, #bug 5318
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
@@ -1254,17 +1358,21 @@ sub searchMenu {
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'tracks',
 				},
-			},
+                        },
 		},
 		window => {
-			'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
+			text => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
 			titleStyle => 'search',
 		},
 	},
 	{
-		text  => Slim::Utils::Strings::string('PLAYLISTS'),
+		text           => Slim::Utils::Strings::string('PLAYLISTS'),
+		id             => 'myMusicSearchPlaylists',
+		node           => 'myMusicSearch',
+		displayWhenOff => 0,
+		weight         => 40,
 		input => {
-			len => 1, #bug 5318
+			len  => 1, #bug 5318
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
@@ -1276,7 +1384,7 @@ sub searchMenu {
 					menu     => 'track',
 					search   => '__TAGGEDINPUT__',
 				},
-			},
+                        },
 		},
 		window => {
 			text => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
@@ -1285,15 +1393,13 @@ sub searchMenu {
 	},
 	);
 
-	# remove any items slated for deletion by a plugin
-	my $return  = _removeItemsForDeletion('search', @searchMenu);
-	# add any new items from plugins
-	@searchMenu = (@$return, @searchPluginMenu);
-
-	return \@searchMenu;
+	if ($batch) {
+		return \@searchMenu;
+	} else {
+		_notifyJive(\@searchMenu);
+	}
 
 }
-
 
 # The following allow download of applets, wallpaper and sounds from SC to jive
 # Files may be packaged in a plugin or can be added individually via the api below.
@@ -1524,7 +1630,6 @@ sub downloadQuery {
 		if ($type eq 'applet') {
 			$entry->{'version'} = $val->{'version'};
 		}
-
 		$request->setResultLoopHash('item_loop', $cnt++, $entry);
 	}	
 
@@ -1549,6 +1654,17 @@ sub downloadFile {
 
 		$log->warn("unable to find file: $file for type: $type");
 	}
+}
+
+# send a notification for menustatus
+sub menuNotification {
+	$log->warn("Menustatus notification sent.");
+	# the lines below are needed as menu notifications are done via notifyFromArray, but
+	# if you wanted to debug what's getting sent over the Comet interface, you could do it here
+	my $request  = shift;
+	my $dataRef          = $request->getParam('_data')   || return;
+	my $action   	     = $request->getParam('_action') || 'add';
+#	$log->warn(Data::Dump::dump($dataRef));
 }
 
 1;
