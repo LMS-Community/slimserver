@@ -131,7 +131,7 @@ sub descendAlbum {
 
 	} else {
 
-		$roles = Slim::Schema->artistOnlyRoles;
+		$roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
 	}
 
 	if ($roles) {
