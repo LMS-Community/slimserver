@@ -33,12 +33,27 @@ sub _updateMetaData {
 			$attributes = $metadata;
 		}
 	}
+	
+	# Bug 6294, only updateOrCreate the track if the track
+	# doesn't already exist in the database.  $attributes will be
+	# set if it's a remote playlist and we want to update the metadata
+	# even if the track already exists.
 
-	return Slim::Schema->rs('Track')->updateOrCreate({
-		'url'        => $entry,
-		'attributes' => $attributes,
-		'readTags'   => 1,
-	});
+	my $track;
+
+	if ( !scalar keys %{$attributes} ) {
+		$track = Slim::Schema->rs('Track')->objectForUrl($entry);
+	}
+	
+	if ( !defined $track ) {
+		$track = Slim::Schema->rs('Track')->updateOrCreate( {
+			'url'        => $entry,
+			'attributes' => $attributes,
+			'readTags'   => 1,
+		} );
+	}
+	
+	return $track;
 }
 
 sub _pathForItem {
