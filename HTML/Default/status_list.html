@@ -28,7 +28,7 @@
 		<div class="playlistControls">
 			<img onclick="Playlist.control('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
 			<img onclick="Playlist.control('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
-			[% IF item.currentsong %]<img src="[% webroot %]html/images/icon_now_playing_selected.gif" class="nowPlayingIcon"/>[% END %]
+			[% IF item.currentsong %]<img src="[% webroot %]html/images/spacer.gif" class="nowPlayingIcon"/>[% END %]
 		</div>
 	</div>
 </div></div></div></div></div>

@@ -58,8 +58,6 @@ img#background {
 }
 
 /* browsing & navigation */
-.selectedItem .selector_bottomRight,
-.selectedItem .selector_topLeft,
 .mouseOver .selector_bottomRight,
 .mouseOver .selector_topLeft {
 	height: 18px;
