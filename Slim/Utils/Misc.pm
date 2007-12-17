@@ -1002,6 +1002,8 @@ sub findAndScanDirectoryTree {
 	my $path    = $topLevelObj->path;
 	my $fsMTime = (stat($path))[9] || 0;
 	my $dbMTime = $topLevelObj->timestamp || 0;
+	
+	logger('scan.scanner')->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
 
 	if ($fsMTime != $dbMTime) {
 

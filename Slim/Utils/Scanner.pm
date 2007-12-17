@@ -113,6 +113,8 @@ sub findFilesMatching {
 	my $types  = Slim::Music::Info::validTypeExtensions($args->{'types'});
 
 	my $descend_filter = sub {
+		
+		return 0 if !$args->{'recursive'};
 
 		# Don't include old Shoutcast recently played items.
 		return 0 if /ShoutcastBrowser_Recently_Played/;
