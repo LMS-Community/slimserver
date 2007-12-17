@@ -335,7 +335,7 @@ sub gotPlaybackSession {
 
 	$log->debug("New playback session started");
 	
-	my ($trackId) = $url =~ /(Tra\.[^.]+)/;
+	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
 	
 	# Get metadata for normal tracks
 	# If synced, only master should do this
@@ -536,7 +536,7 @@ sub getNextTrackInfo {
 	}
 	
 	# Get track URL for the next track
-	my ($trackId) = $nextURL =~ /(Tra\.[^.]+)/;
+	my ($trackId) = $nextURL =~ m{rhapd://(.+)\.wma};
 	
 	# Get metadata for normal tracks
 	# If synced, only the master should do this
@@ -823,7 +823,7 @@ sub gotTrackInfo {
 	
 	(undef, $mediaUrl) = unpack 'cn/a*', $mediaUrl;
 	
-	my ($trackId) = $url =~ /(Tra\.[^.]+)/;
+	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
 	
 	# Save the media URL for use in strm
 	$client->pluginData( mediaUrl => $mediaUrl );
@@ -914,7 +914,7 @@ sub canDirectStream {
 	}
 	
 	# Return the RAD URL here
-	my ($trackId) = $url =~ /(Tra\.[^.]+)/;
+	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
 	
 	# Needed so stopCallback can have the URL after a 'playlist clear'
 	$client->pluginData( lastURL => $url );
@@ -1095,7 +1095,7 @@ sub getMetadataFor {
 	
 	# If metadata is not here, fetch it so the next poll will include the data
 	if ( !$meta->{$url} ) {
-		my ($trackId) = $url =~ /(Tra\.[^.]+)/;
+		my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
 
 		my $master = Slim::Player::Sync::masterOrSelf($client);
 
