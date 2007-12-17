@@ -584,6 +584,15 @@ sub _disco_handler {
 	$log->info("Squeezebox got disconnection on the data channel: $reasons{$reason}");
 
 	if ($reason) {
+		# Report failure via protocol handler if available
+		if ( my $url = $client->directURL ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+			if ( $handler && $handler->can("handleDirectError") ) {
+				$handler->handleDirectError( $client, $url, $reason, $reasons{$reason} );
+				return;
+			}
+		}
+		
 		$client->failedDirectStream( $reasons{$reason} );
 	}
 }
