@@ -279,7 +279,7 @@ sub browseTreeExitCallback {
 
 			$params->{'hierarchy'}    = 'playlist,playlistTrack';
 			$params->{'level'}        = 1;
-			$params->{'findCriteria'} = { 'playlist' => $currentItem->id };
+			$params->{'findCriteria'} = { 'playlist.id' => $currentItem->id };
 
 			Slim::Buttons::Common::pushModeLeft($client, 'browsedb', $params);
 
