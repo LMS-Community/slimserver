@@ -1,6 +1,114 @@
 // Extensions to ExtJS classes
 Slim = {};
 
+Slim.Sortable = function(config){
+	Ext.apply(this, config);
+
+	Ext.dd.ScrollManager.register(this.el);
+
+	this.init();
+};
+
+Slim.Sortable.prototype = {
+	init: function(){
+		var items = Ext.DomQuery.select(this.selector);
+
+		for(var i = 0; i < items.length; i++) {
+			var item = Ext.get(items[i]);
+	
+			item.dd = new Slim.DDProxy(items[i], this.el, {
+				position: i,
+				list: this
+			});
+		}
+	},
+
+	onDrop: function(source, target) {
+		if (target && source) {
+			var sourcePos = -1;
+			var targetPos = -1;
+
+			// get to know where we come from, where we've gone to
+			var items = Ext.query(this.selector);
+			for(var i = 0; i < items.length; i++) {
+				if (items[i].id == source.id)
+					sourcePos = i;
+				else if (items[i].id == target.id)
+					targetPos = i;
+			}
+
+			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
+
+				if (sourcePos > targetPos) {
+					source.insertBefore(target);
+				}
+				else  {
+					source.insertAfter(target);
+				}
+
+				this.onDropCmd(sourcePos, targetPos);
+				this.init();
+			}
+		}
+	},
+
+	onDropCmd: function() {}
+}
+
+
+Slim.DDProxy = function(id, sGroup, config){
+	Slim.DDProxy.superclass.constructor.call(this, id, sGroup, config);
+	this.setXConstraint(0, 0);
+	this.scrollContainer = true;
+};
+
+Ext.extend(Slim.DDProxy, Ext.dd.DDProxy, {
+	// highlight a copy of the dragged item to move with the mouse pointer
+	startDrag: function(x, y) {
+		var dragEl = Ext.get(this.getDragEl());
+		var el = Ext.get(this.getEl());
+		Utils.unHighlight();
+
+		dragEl.applyStyles({'z-index':2000});
+		dragEl.update(el.child('div').dom.innerHTML);
+		dragEl.addClass(el.dom.className + ' dd-proxy');
+	},
+
+	// disable the default behaviour which would place the dragged element
+	// we don't need to place it as it will be moved in onDragDrop
+	endDrag: function() {},
+
+	onDragEnter: function(ev, id) {
+		var source = Ext.get(this.getEl());
+		var target = Ext.get(id);
+
+		if (target && source)
+			this.addDropIndicator(target, source.dd.config.position, target.dd.config.position); 
+	},
+
+	onDragOut: function(e, id) {
+		this.removeDropIndicator(Ext.get(id));
+	},
+
+	onDragDrop: function(e, id) {
+		this.removeDropIndicator(Ext.get(id));
+		this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id));
+	},
+
+	addDropIndicator: function(el, sourcePos, targetPos) {
+		if (parseInt(targetPos) < parseInt(sourcePos))
+			el.addClass('dragUp');
+		else
+			el.addClass('dragDown');
+	},
+
+	removeDropIndicator: function(el) {
+		el.removeClass('dragUp');
+		el.removeClass('dragDown');
+	}
+});
+
+
 // our own cookie manager doesn't prepend 'ys-' to any cookie
 Slim.CookieManager = function(config){
 	Slim.CookieManager.superclass.constructor.call(this, config);
