@@ -1325,11 +1325,6 @@ sub shouldCacheURL {
 	my $host = URI->new($url)->host;
 	
 	return 0 if $host !~ /\./;
-
-	# Still cache SN when in production or development mode
-	if ( ( $ENV{SLIM_SERVICE} || $ENV{SN_DEV} ) && $host =~ /192.168.254|127.0.0.1/ ) {
-		return 1;
-	}
 	
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
