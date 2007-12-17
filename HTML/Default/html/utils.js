@@ -61,6 +61,7 @@ Slim.Sortable.prototype = {
 Slim.DDProxy = function(id, sGroup, config){
 	Slim.DDProxy.superclass.constructor.call(this, id, sGroup, config);
 	this.setXConstraint(0, 0);
+	this.scroll = false;
 	this.scrollContainer = true;
 };
 

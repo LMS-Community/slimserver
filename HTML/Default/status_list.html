@@ -1,4 +1,4 @@
-<div class="draggableSong [% IF item.currentsong %]selectedItem[% ELSE %]selectorMarker[% END %] [% IF noPlaylistCover %]itemWithoutCover[% END %]" id="playlistSong[% item.num %]" onmouseover="Playlist.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+<div class="draggableSong [% IF item.currentsong %]selectedItem[% ELSE %]selectorMarker[% END %] [% IF noPlaylistCover %]itemWithoutCover[% END %]" id="playlistSong[% item.num %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 	<div class="browsedbListItem [% IF !noPlaylistCover %]itemWithCover[% END %]">
 		[% IF noPlaylistCover %]
 			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>

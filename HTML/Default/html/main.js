@@ -453,100 +453,21 @@ PlayerChooser = function(){
 
 
 Playlist = function(){
-	var isDragging = false;
-
 	return {
-		init : function(){
-			// some initialization of the DD class used
-			Ext.dd.ScrollManager.register('playList');
-
-			Ext.override(Ext.dd.DDProxy, {
-
-				// highlight a copy of the dragged item to move with the mouse pointer
-				startDrag: function(x, y) {
-					var dragEl = Ext.get(this.getDragEl());
-					var el = Ext.get(this.getEl());
-					Utils.unHighlight();
-
-					dragEl.applyStyles({'z-index':2000});
-					dragEl.update(el.dom.innerHTML);
-					dragEl.addClass(el.dom.className + ' dd-proxy');
-
-					isDragging = true;
-				},
-
-				// disable the default behaviour which would place the dragged element
-				// we don't need to place it as it will be moved in onDragDrop
-				endDrag: function() {
-					isDragging = false;
-				},
-
-				onDragEnter: function(ev, id) {
-					var source = Ext.get(this.getEl());
-					var target = Ext.get(id);
-
-					if (target && source) {
-						if (target.dd.config.position < source.dd.config.position)
-							Ext.get(id).addClass('dragUp');
-						else
-							Ext.get(id).addClass('dragDown');
-					}
-				},
-
-				onDragOut: function(e, id) {
-					Ext.get(id).removeClass('dragUp');
-					Ext.get(id).removeClass('dragDown');
-					isDragging = false;
-				},
-
-				// move the item when dropped
-				onDragDrop: function(e, id) {
-					var source = Ext.get(this.getEl());
-					var target = Ext.get(id);
-
-					if (target && source) {
-						var sourcePos = -1;
-						var targetPos = -1;
-
-						target.removeClass('dragUp');
-						target.removeClass('dragDown');
-
-						// get to know where we come from, where we've gone to
-						var items = Ext.query('#playList div.draggableSong');
-						for(var i = 0; i < items.length; i++) {
-							if (items[i].id == this.id)
-								sourcePos = i;
-							else if (items[i].id == id)
-								targetPos = i;
-						}
-
-						if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
-							var plPosition, plStart, el;
-
-							if (sourcePos > targetPos) {
-								source.insertBefore(target);
-								plPosition = parseInt(target.dd.config.position) - targetPos;
-								plStart = targetPos;
-							}
-							else  {
-								source.insertAfter(target);
-								plPosition = parseInt(source.dd.config.position) - sourcePos;
-								plStart = sourcePos;
-							}
-							Player.playerControl(['playlist', 'move', source.dd.config.position, target.dd.config.position], true);
-
-							// recalculate the item's number within the playlist
-							items = Ext.query('#playList div.draggableSong');
-							for (var i = plStart; i < items.length; i++) {
-								if (el = Ext.get(items[i]))
-									el.dd.config.position = plPosition + i;
-							}
-						}
-					}
-
-					isDragging = false;
+		init: function(){
+			new Slim.Sortable({
+				el: 'playList',
+				selector: '#playList div.draggableSong',
+				onDropCmd: function(sourcePos, targetPos) {
+					Player.playerControl(
+						[
+							'playlist',
+							'move',
+							sourcePos, targetPos
+						],
+					true);
 				}
-			});
+			})
 		},
 
 		load : function(url, showIndicator){
@@ -601,20 +522,7 @@ Playlist = function(){
 				return;
 
 			// make playlist items draggable
-			Ext.dd.ScrollManager.register('playList');
-
-			var items = Ext.DomQuery.select('#playList div.draggableSong');
-			for(var i = 0; i < items.length; i++) {
-				var item = Ext.get(items[i]);
-
-				var itemNo = item.id.replace(/\D*/, '');
-
-				item.dd = new Ext.dd.DDProxy(items[i], 'playlist', {position: itemNo});
-				item.dd.setXConstraint(0, 0);
-				item.dd.scroll = false;
-				item.dd.scrollContainer = true;
-			}
-
+			Playlist.init();
 			Playlist.highlightCurrent();
 
 			// playlist name is too long to be displayed
@@ -623,6 +531,7 @@ Playlist = function(){
 			if (el = Ext.get('currentPlaylistName'))
 				tooltip = el.dom.innerHTML;
 
+			var items = Ext.DomQuery.select('#playList div.draggableSong');
 			if (items.length > 0) {
 				if (Ext.get('btnPlaylistToggleArtwork')) {
 					var noCover = Utils.getCookie('SqueezeCenter-noPlaylistCover') == '1';
@@ -675,15 +584,6 @@ Playlist = function(){
 					minWidth: 32,
 					handler: Playlist.save
 				});
-			}
-
-			// dragging doesn't survive a reload
-			isDragging = false;
-		},
-
-		highlight : function(target){
-			if (!isDragging) {
-				Utils.highlight(target);
 			}
 		},
 
