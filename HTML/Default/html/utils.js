@@ -21,6 +21,8 @@ Slim.Sortable.prototype = {
 				list: this
 			});
 		}
+
+		Utils.isDragging = false;
 	},
 
 	onDrop: function(source, target) {
@@ -68,6 +70,7 @@ Ext.extend(Slim.DDProxy, Ext.dd.DDProxy, {
 		var dragEl = Ext.get(this.getDragEl());
 		var el = Ext.get(this.getEl());
 		Utils.unHighlight();
+		Utils.isDragging = true;
 
 		dragEl.applyStyles({'z-index':2000});
 		dragEl.update(el.child('div').dom.innerHTML);
@@ -76,7 +79,9 @@ Ext.extend(Slim.DDProxy, Ext.dd.DDProxy, {
 
 	// disable the default behaviour which would place the dragged element
 	// we don't need to place it as it will be moved in onDragDrop
-	endDrag: function() {},
+	endDrag: function() {
+		Utils.isDragging = false;
+	},
 
 	onDragEnter: function(ev, id) {
 		var source = Ext.get(this.getEl());
@@ -91,6 +96,7 @@ Ext.extend(Slim.DDProxy, Ext.dd.DDProxy, {
 	},
 
 	onDragDrop: function(e, id) {
+		Utils.isDragging = false;
 		this.removeDropIndicator(Ext.get(id));
 		this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id));
 	},
@@ -243,6 +249,8 @@ var Utils = function(){
 	var unHighlightTimer;
 
 	return {
+		isDragging : false,
+
 		init : function(){
 			// make sure all selectable list items have a unique ID
 			var items = Ext.DomQuery.select('.selectorMarker');
@@ -264,6 +272,10 @@ var Utils = function(){
 		},
 
 		highlight : function(target, onClickCB){
+			// don't highlight while dragging elements around
+			if (this.isDragging)
+				return;
+
 			// return if the target is a child of the main selector
 			var el = Ext.get(target.id); 
 			if (el != null && el.hasClass('.mouseOver'))
