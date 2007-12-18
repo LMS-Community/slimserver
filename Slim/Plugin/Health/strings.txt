@@ -354,7 +354,7 @@ PLUGIN_HEALTH_BUFFER_LOW
 	EN	Low
 	ES	Bajo
 	FI	Matala
-	FR	Low
+	FR	Faible
 	HE	נמוך
 	IT	Bassa
 	NL	Laag

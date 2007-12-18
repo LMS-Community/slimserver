@@ -1,18 +1,18 @@
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
-	DE	Rhapsody Direct
+	DE	Rhapsody
 	EN	Rhapsody
-	ES	Rhapsody Direct
-	FR	Rhapsody Direct
-	IT	Rhapsody Direct
-	NL	Rhapsody Direct
+	ES	Rhapsody
+	FR	Rhapsody
+	IT	Rhapsody
+	NL	Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
-	DE	Rhapsody Direct
+	DE	Rhapsody
 	EN	Rhapsody
-	ES	Rhapsody Direct
-	FR	Rhapsody Direct
-	IT	Rhapsody Direct
-	NL	Rhapsody Direct
+	ES	Rhapsody
+	FR	Rhapsody
+	IT	Rhapsody
+	NL	Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
 	DE	Rhapsody-Fehler

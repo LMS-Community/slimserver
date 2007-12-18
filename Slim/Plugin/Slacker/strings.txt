@@ -1,17 +1,42 @@
 PLUGIN_SLACKER_MODULE_NAME
+	DE	Slacker
 	EN	Slacker
+	ES	Slacker
+	FR	Slacker
+	IT	Slacker
+	NL	Slacker
 
 PLUGIN_SLACKER_GETTING_TRACK_DETAILS
+	DE	Titelinfos werden geladen ...
 	EN	Fetching track details...
+	ES	Obteniendo detalles de pista...
+	FR	Récupération des détails du morceau...
+	IT	Recupero informazioni brano...
+	NL	Nummerdetails worden opgehaald...
 
 PLUGIN_SLACKER_ERROR
+	DE	Slacker-Fehler
 	EN	Slacker Error
+	ES	Error de Slacker
+	FR	Erreur Slacker
+	IT	Errore Slacker
+	NL	Slacker-fout
 
 PLUGIN_SLACKER_SESSION_BUMPED
+	DE	Sie haben sich an einem anderen Gerät angemeldet. Zum Neustart PLAY drücken.
 	EN	You have logged in on another device, press PLAY to restart.
+	ES	Ha iniciado sesión en otro dispositivo, pulse PLAY para reiniciar.
+	FR	Vous vous êtes connecté à un autre dispositif, appuyez sur PLAY pour redémarrer.
+	IT	Ci si è connessi a un altro dispositivo. Premere PLAY per ricominciare.
+	NL	Je hebt je bij een ander apparaat aangemeld, druk op PLAY om opnieuw te starten.
 
 PLUGIN_SLACKER_NO_TRACKS
+	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
+	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
+	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 
 PLUGIN_SLACKER_STREAM_FAILED
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
@@ -32,13 +57,34 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED
 	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
+	DE	Sender nicht verfügbar: Kein Überspringen mehr möglich. Sie auf anderen Sender aufrufen oder es später erneut versuchen.
 	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
+	ES	Emisora no disponible: se ha excedido el límite de omisiones por hora. Puede cambiar a otra emisora o volver a intentarlo más tarde.
+	FR	Station non disponible: nombre limite de sauts par heure dépassé. Vous pouvez basculer vers une autre station ou réessayer ultérieurement.
+	IT	Stazione non disponibile: limite orario superato. È possibile passare a un'altra stazione o riprovare più tardi.
+	NL	Station niet beschikbaar: uurlimiet voor springen overschreden. Je kunt naar een ander station overschakelen of het later opnieuw proberen.
 
 PLUGIN_SLACKER_FAVORITE_TRACK
+	DE	Als Slacker-Favorit kennzeichnen
 	EN	Mark as Slacker favorite
+	ES	Marcar como favorito de Slacker
+	FR	Marquer comme favori Slacker
+	IT	Contrassegna come preferito Slacker
+	NL	Als Slacker-favoriet markeren
 
 PLUGIN_SLACKER_UNMARK_FAVORITE
+	DE	Kennzeichnung als Slacker-Favorit aufheben
 	EN	Unmark as Slacker favorite
+	ES	Anular marca de favorito de Slacker
+	FR	Désélectionner comme favori Slacker
+	IT	Rimuovi come preferito Slacker
+	NL	Markering als Slacker-favoriet opheffen
 
 PLUGIN_SLACKER_BAN_TRACK
+	DE	Diesen Titel sperren
 	EN	Ban this track
+	ES	Prohibir esta pista
+	FR	Exclure ce morceau
+	IT	Bandisci questo brano
+	NL	Dit nummer verbieden
+

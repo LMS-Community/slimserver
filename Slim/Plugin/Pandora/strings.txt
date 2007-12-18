@@ -1,13 +1,18 @@
 PLUGIN_PANDORA_MODULE_NAME
+	DE	Pandora
 	EN	Pandora
+	ES	Pandora
+	FR	Pandora
+	IT	Pandora
+	NL	Pandora
 
 PLUGIN_PANDORA_MODULE_NAME_DESC
-	DE	Pandora Radio
+	DE	Pandora
 	EN	Pandora
-	ES	Radio Pandora
-	FR	Pandora Radio
-	IT	Radio Pandora
-	NL	Radio Pandora
+	ES	Pandora
+	FR	Pandora
+	IT	Pandora
+	NL	Pandora
 
 PLUGIN_PANDORA_PERSONALIZED_RADIO
 	DE	Benutzerdefiniertes Radio (Pandora)

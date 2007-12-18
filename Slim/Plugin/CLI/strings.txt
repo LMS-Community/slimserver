@@ -15,7 +15,7 @@ PLUGIN_CLI_DESC
 	DE	Mithilfe des Befehlszeilen-Plugin können SqueezeCenter und Squeezebox über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
 	EN	The Command Line Interface plugin allows SqueezeCenter and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
 	ES	El complemento de interfaz de línea de comandos permite el control remoto de SqueezeCenter y de Squeezeboxen a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.
-	FR	Le plugin d'interface de ligne de commande permet de contrôler le SqueezeCenter et les Squeezeboxen à distance par le biais d'une connexion TCP/IP, par un système d'automatisation tiers tel qu'AMX ou Crestron, par exemple.
+	FR	Le plugin d'interface de ligne de commande permet de contrôler le SqueezeCenter et les Squeezebox à distance par le biais d'une connexion TCP/IP, par un système d'automatisation tiers tel qu'AMX ou Crestron, par exemple.
 	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-SqueezeCenter וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
 	IT	Il plugin dell'interfaccia della riga di comando consente di controllare SqueezeCenter e Squeezeboxen in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
 	NL	De opdrachtregelinterface-plugin maakt het mogelijk om de SqueezeCenter en de Squeezeboxen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.

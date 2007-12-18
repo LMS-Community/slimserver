@@ -43,8 +43,8 @@ SETUP_GROUP_PLUGIN_RADIOTIME_DESC
 	ES	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para encontrar sus emisoras de radio favoritas de debate, deportes, religión y música tanto locales como internacionales. Y <b>gratis</b>.
 	FR	Parcourez <b>gratuitement</b> <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> pour trouver vos stations préférées: infos, sport, musique, etc.
 	HE	השתמש באתר <a href='http://www.radiotime.com'
-	IT	In <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> sono disponibili canali <b>gratuiti</b> di sport, religione, discussione e musica sia locali che internazionali.
-	NL	Gebruik <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je favoriete lokale en globale religieuze, praat-, sport- en muziekradio te vinden — allemaal<b>gratis</b>.
+	IT	Usare <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> per trovare canali <b>gratuiti</b> di sport, religione, discussione e musica sia locali che internazionali.
+	NL	Gebruik <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je favoriete religieuze, praat-, sport- en muziekprogramma's op de radio te vinden, plaatselijk en wereldwijd - allemaal <b>gratis</b>.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME
 	DE	Geben Sie Ihren RadioTime-Benutzernamen ein.

@@ -32,7 +32,7 @@ PODCAST_GROUP_DESC
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 	ES	El complemento Examinador de podcasts permite ver y escuchar podcasts.
-	FR	Le plugin Podcast vous permet d'afficher et d'écouter des podcasts.
+	FR	L'extra Podcast vous permet d'afficher et d'écouter des podcasts.
 	HE	יישום ה-Plugin 'דפדפן Podcast' מאפשר לך להציג ולהאזין לפריטי Podcast.
 	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
 	NL	Met de Podcast-browserplugin kun je podcasts bekijken en beluisteren.

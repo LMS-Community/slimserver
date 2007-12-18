@@ -459,12 +459,12 @@ MUSIC_SERVICES
 	NL	Muziekservices
 
 MY_MUSIC
-	DE	Eigene Musik
+	DE	Musikbibliothek
 	EN	Music Library
-	ES	Mi música
-	FR	Ma musique
-	IT	Musica
-	NL	Mijn muziek
+	ES	Biblioteca de música
+	FR	Collection musicale
+	IT	Libreria musicale
+	NL	Muziekcollectie
 	NO	Min musikk
 
 GAMES
@@ -2607,7 +2607,12 @@ SETUP_GROUP_PLUGINS
 	NL	Extra's
 
 SETUP_GROUP_PLUGINS_DESC
+	DE	SqueezeCenter enthält einige Extras, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Extras unten aktivieren bzw. deaktivieren.
 	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below. 
+	ES	SqueezeCenter incluye elementos extra que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos extra individuales utilizando los botones siguientes.
+	FR	Le SqueezeCenter inclut certains extras à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des extras à l'aide des boutons ci-dessous.
+	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando o nell'interfaccia Web. Nella directory Plugin è possibile scegliere di attivare o disattivare risorse aggiuntive utilizzando i pulsanti sottostanti.
+	NL	SqueezeCenter bevat een aantal extra's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke extra's in- of uitschakelen.
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
@@ -3840,8 +3845,8 @@ REPLAYGAIN_TRACK_GAIN
 	ES	Usar ganancia de pista (si está presente)
 	FR	Utiliser le gain morceau si présent
 	HE	שימוש בהגברת רצועות (אם האפשרות קיימת)
-	IT	Usa guadagno traccia (se presente)
-	NL	Volumeaanpassing nummers gebruiken (indien aanwezig)
+	IT	Guadagno traccia
+	NL	Volumeaanpassing nummers
 	NO	Bruk «Track gain» (om tilgjengelig)
 	SV	Använd spårets volymjustering (om tillgänglig)
 	ZH_CN	利用音轨增益（如有）
@@ -3852,8 +3857,8 @@ REPLAYGAIN_ALBUM_GAIN
 	ES	Usar ganancia de álbum (si está presente)
 	FR	Utiliser le gain album si présent
 	HE	שימוש בהגברת אלבום (אם האפשרות קיימת)
-	IT	Usa guadagno album (se presente)
-	NL	Volumeaanpassing album gebruiken (indien aanwezig)
+	IT	Guadagno album
+	NL	Volumeaanpassing albums
 	NO	Bruk «Album gain» (om tilgjengelig)
 	SV	Används albumets volymjustering (om tillgänglig)
 	ZH_CN	利用专辑增益（如有）
@@ -4344,8 +4349,12 @@ SETTINGS_CHANGED
 	NO	Følgende innstillinger ble endret:
 
 SETTINGS_CHANGED_CONFIRM
-	DE	Es wurden Einstellungen geändert. Wollen Sie diese speichern?
+	DE	Einige Einstellungen wurden geändert. Sollen sie gespeichert werden?
 	EN	Some settings were changed. Do you want to save them?
+	ES	Algunas opciones han cambiado. ¿Desea guardarlas?
+	FR	Certains paramètres ont été modifiés. Voulez-vous les enregistrer?
+	IT	Alcune impostazioni sono state modificate. Salvarle?
+	NL	Sommige instellingen zijn gewijzigd. Wil je ze opslaan?
 
 SETUP_NO_PREFS
 	DE	Es gibt für diesen Player auf dieser Seite keine Einstellungen
@@ -4469,7 +4478,7 @@ SETUP_PLAYLISTDIR
 	EN	Playlists Folder
 	ES	Carpeta de listas de reproducción
 	FI	Tallenettujen soittolistojen hakemisto
-	FR	Dossier Des listes de lecture
+	FR	Dossier des listes de lecture
 	HE	תיקיית רשימות השמעה
 	IT	Cartella degli elenchi di riproduzione
 	JA	現在のプレイリストフォルダー
@@ -4757,7 +4766,12 @@ SETUP_SKIN_DESC
 	ZH_CN	您可以从如下的选项选择一个外壳作为网界面。
 
 SETUP_SKIN_OK
+	DE	Schließen Sie SqueezeCenter und öffnen Sie es erneut, um die Änderungen anzuwenden.
 	EN	To apply your changes please close the SqueezeCenter window and reload it.
+	ES	Para aplicar los cambios, cierre la ventana de SqueezeCenter y vuelva a cargarlo.
+	FR	Pour appliquer les modifications, fermez la fenêtre du SqueezeCenter et démarrez à nouveau le serveur.
+	IT	Per applicare le modifiche, chiudere la finestra di SqueezeCenter e aprirla di nuovo.
+	NL	Als je je wijzigingen wilt toepassen, sluit je het SqueezeCenter-venster en laad je het opnieuw.
 
 SETUP_PLUGINS
 	DE	Extras
@@ -5229,7 +5243,7 @@ SETUP_SCREENSAVER_DESC
 	DE	Sie können einen Bildschirmschoner wählen, der nach einer gewissen Inaktivität der Fernbedienung aktiviert wird. Außerdem können Sie die Zeit wählen, nach der der Bildschirmschoner aktiviert wird. Je nachdem, ob der Player Audio wiedergibt, angehalten oder ausgeschaltet wurde, können Sie verschiedene Bildschirmschoner wählen.
 	EN	After a period of inactivity from the remote control, the player can display various information as "screensavers". You can choose different screensavers to show, depending on whether the player is playing or not, or if it is powered off. You can also choose the amount of time to wait before enabling these screensavers.
 	ES	Se pueden elegir protectores de pantalla que muestren información transcurrido un cierto periodo de inactividad desde el mando a distancia. Y puede elegir la duración de la espera antes de que se habilite el protector de pantalla. También puede elegir protectores de pantalla diferentes dependiendo de si el reproductor está reproduciendo audio, detenido o apagado.
-	FR	Vous pouvez sélectionner un écran de veille à afficher après un certain temps d'inactivité de la télécommande. Vous pouvez choisir la durée d'inactivité ainsi que le type d'écran de veille à afficher selon que la platine est en lecture, arrêtée ou éteinte.
+	FR	Vous pouvez sélectionner un écran de veille à afficher après un certain temps d'inactivité de la télécommande. Vous pouvez choisir la durée d'inactivité ainsi que le type d'écran de veille à afficher selon que la platine soit en lecture, arrêtée ou éteinte.
 	HE	באפשרותך לבחור שומרי מסך להצגת מידע לאחר פרק זמן מסוים של חוסר פעילות מהשלט-רחוק. באפשרותך לבחור את פרק הזמן להמתנה לפני הפעלת שומר המסך. באפשרותך גם לבחור שומרי מסך שונים בהתאם למצב הנגן - שמע מופעל, שמע מופסק או כבוי.
 	IT	È possibile scegliere uno screen saver che visualizza informazioni dopo un certo periodo di tempo di inattività del telecomando. È possibile scegliere l'attesa prima di attivare lo screen saver e scegliere screen saver differenti a seconda che il lettore stia riproducendo musica, sia stato interrotto oppure sia spento.
 	NL	Je kunt schermbeveiligers gebruiken om informatie weer te geven nadat de afstandsbediening enige tijd niet is gebruikt. Je kunt bepalen hoe lang er gewacht moet worden voordat de schermbeveiliger ingeschakeld wordt. Je kunt ook verschillende schermbeveiligers kiezen, afhankelijk van de status van de speler: actief, gestopt of uit.
@@ -5712,7 +5726,7 @@ SETUP_SPLITLIST
 	DE	Trennzeichen für mehrere Einträge in Tags
 	EN	Separator for Multiple Items in Tags
 	ES	Separador para elementos múltiples en etiquetas
-	FR	Séparateur pour les éléments dans les tags.
+	FR	Séparateur pour les éléments dans les tags
 	IT	Separatore di voci multiple nei tag
 	NL	Scheidingsteken voor meerdere items in tags
 
@@ -5898,7 +5912,7 @@ SETUP_SHORTDATEFORMAT
 	EN	Short Date Format
 	ES	Formato de fecha corto
 	FI	Päiväys, lyhyt
-	FR	Format court des dates
+	FR	Date au format court
 	HE	תבנית של תאריך קצר
 	IT	Formato data breve
 	JA	短い日付フォーマット
@@ -6917,7 +6931,7 @@ SETUP_GROUPDISCS_1
 SETUP_SN_EMAIL
 	DE	Mail-Adresse
 	EN	Email Address
-	ES	Correo electrónico
+	ES	Dirección de correo electrónico
 	FR	Adresse électronique
 	IT	Indirizzo di posta elettronica
 	NL	E-mailadres
@@ -6926,7 +6940,7 @@ SETUP_SN_EMAIL_DESC
 	DE	Geben Sie bitte die Mail-Adresse an, welche Sie zum Anmelden an SqueezeNetwork verwenden.
 	EN	Enter the email address used to login to your SqueezeNetwork account.
 	ES	Introduzca la dirección de correo electrónico utilizada para iniciar una sesión en su cuenta SqueezeNetwork.
-	FR	Spécifiez l'adresse électronique que vous utilisez pour vous connecter à compte SqueezeNetwork.
+	FR	Spécifiez l'adresse électronique que vous utilisez pour vous connecter au compte SqueezeNetwork.
 	IT	Immettere l'indirizzo di porta elettronica utilizzato per accedere all'account SqueezeNetwork.
 	NL	Voer het e-mailadres in dat je gebruikt om je bij je SqueezeNetwork-account aan te melden.
 
@@ -6949,7 +6963,7 @@ SETUP_SN_PASSWORD_DESC
 SETUP_SN_INVALID_LOGIN
 	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf “<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>”.
 	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://www.squeezenetwork.com" target="_blank">I need an account</a>” to continue.
-	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en “<a href="http://www.squeezenetwork.com" target="_blank">Necesito una cuenta</a>” para continuar.
+	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://www.squeezenetwork.com" target="_blank">Necesito una cuenta</a>" para continuar.
 	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://www.squeezenetwork.com" target="_blank">Je souhaite créer un compte</a> pour continuer.
 	IT	Impossibile recuperare le informazioni account. Immettere nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://www.squeezenetwork.com" target="_blank">Nuovo account</a> per continuare.
 	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Als je geen account hebt, klik dan op <a href="http://www.squeezenetwork.com" target="_blank">Ik heb een account nodig</a> om verder te gaan.
@@ -6963,10 +6977,20 @@ SETUP_SN_VALID_LOGIN
 	NL	Verbinding met SqueezeNetwork geslaagd.
 
 SETUP_SN_FORGOT_PASSWORD
+	DE	Ich habe mein Kennwort vergessen
 	EN	I forgot my password
+	ES	He olvidado mi contraseña
+	FR	J'ai oublié mon mot de passe
+	IT	Ho dimenticato la password
+	NL	Ik ben mijn wachtwoord vergeten
 
 SETUP_SN_NEED_ACCOUNT
+	DE	Ich brauche ein Konto
 	EN	I need an account
+	ES	Necesito una cuenta
+	FR	Je souhaite créer un compte
+	IT	Nuovo account
+	NL	Ik heb een account nodig
 
 SETUP_SN_SYNC
 	DE	SqueezeNetwork-Integration
@@ -7033,12 +7057,12 @@ SETUP_SN_REPORT_STATS_DISABLE
 	NL	Nee, statistieken niet rapporteren.
 
 SETUP_NO_JAVASCRIPT
-	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> oder <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (für kleine Bildschirme optimiert) wählen.
+	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> oder <a href="/Handheld/?skipWizard=1">Handheld</a> (für kleine Bildschirme optimiert) wählen.
 	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a> or <a href="/Handheld/?skipWizard=1">Handheld</a> (optimized for small screens).
-	ES	Para acceder a SqueezeCenter, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o posterior) con la opción JavaScript habilitada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> o <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (optimizada para pantallas pequeñas).
-	FR	Pour accéder au SqueezeCenter, utilisez un navigateur récent (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 ou version ultérieure) et activez le JavaScript pour ce navigateur. Vous pouvez également utiliser une apparence d'interface plus légère, telle que <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> ou <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (optimisée pour les écrans de petite taille).
-	IT	Per accedere a SqueezeCenter, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare un'interfaccia quale <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> o <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (ottimizzata per schermi piccoli).
-	NL	Je moet een recente browser gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 of later) en JavaScript in je browser inschakelen om SqueezeCenter te kunnen oproepen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> of <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (geoptimaliseerd voor kleine schermen).
+	ES	Para acceder a SqueezeCenter, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o posterior) con la opción JavaScript habilitada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (optimizada para pantallas pequeñas).
+	FR	Pour accéder au SqueezeCenter, utilisez un navigateur récent (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 ou version ultérieure) et activez le JavaScript pour ce navigateur. Vous pouvez également utiliser une apparence d'interface plus légère, telle que <a href="/Classic/?skipWizard=1">Classic</a> ou <a href="/Handheld/?skipWizard=1">Handheld</a> (optimisée pour les écrans de petite taille).
+	IT	Per accedere a SqueezeCenter, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare un'interfaccia quale <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (ottimizzata per schermi piccoli).
+	NL	Je moet een recente browser gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 of later) en JavaScript in je browser inschakelen om SqueezeCenter te kunnen oproepen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1">Classic</a> of <a href="/Handheld/?skipWizard=1">Handheld</a> (geoptimaliseerd voor kleine schermen).
 
 SETUP_WIZARD_LANG_DESC
 	DE	Hier können Sie eine andere Sprache wählen:
@@ -7089,12 +7113,12 @@ SETUP_WIZARD_SQN
 	NL	SqueezeNetwork-account
 
 SETUP_WIZARD_SQN_DESC
-	DE	Mit SqueezeNetwork können Sie Ihr neues kabelloses Musiksystem optimal nutzen und auf Musik-auf-Abruf-Dienste und Internetradiosender zugreifen.<br/><br/>Wenn Sie bereits ein SqueezeNetwork-Konto haben, geben Sie Ihre Daten unten ein und klicken Sie auf "Hinzufügen". Wenn Sie kein SqueezeNetwork-Konto haben, klicken Sie auf “<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>”.
+	DE	Mit SqueezeNetwork können Sie Ihr neues kabelloses Musiksystem optimal nutzen und auf Musikdienste und Internetradiosender zugreifen.<br/><br/>Wenn Sie bereits ein SqueezeNetwork-Konto haben, geben Sie Ihre Daten unten ein und klicken Sie auf "Weiter". Wenn Sie kein SqueezeNetwork-Konto haben, klicken Sie auf “Ich brauche ein Konto”.
 	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Next" button. If you don't have a SqueezeNetwork account, please click "I need an account".
-	ES	SqueezeNetwork le permite obtener el máximo de su nuevo sistema de música inalámbrico, mediante el acceso a servicios de música a petición y emisoras de radio por Internet.<br/><br/>Si ya tiene una cuenta SqueezeNetwork, introduzca la información pertinente a continuación y haga clic en el botón "Agregar". Si no tiene una cuenta SqueezeNetwork, haga clic en “Necesito una cuenta”.
-	FR	SqueezeNetwork vous permet de tirer parti de votre nouveau système musical sans fil en vous donnant accès à des services de musique à la demande et à des stations de radio Internet.<br/><br/>Si vous disposez déjà d'un compte SqueezeNetwork, spécifiez les informations requises ci-dessous et cliquez sur le bouton Ajouter. Sinon, cliquez sur Je souhaite créer un compte.
-	IT	SqueezeNetwork consente di sfruttare al massimo i nuovi sistemi musicali senza fili fornendo accesso a servizi musicali su richiesta e alle stazioni radio di Internet.<br/><br/>Se si dispone già di un account SqueezeNetwork, immettere i propri dati in basso e fare clic sul pulsante "Aggiungi". Se non si dispone di un account SqueezeNetwork, fare clic su Nuovo account.
-	NL	SqueezeNetwork geeft je toegang tot services voor muziek op aanvraag en internetradiostations, zodat je je nieuwe draadloze muzieksysteem optimaal kunt benutten.<br/><br/>Als je al een SqueezeNetwork-account hebt, voer je hieronder je gegevens in en klik je op de knop Toevoegen. Heb je nog geen SqueezeNetwork-account, dan klik je op Ik heb een account nodig.
+	ES	SqueezeNetwork le permite obtener el máximo de su nuevo sistema de música inalámbrico, mediante el acceso a servicios de música y emisoras de radio por Internet.<br/><br/>Si ya tiene una cuenta SqueezeNetwork, introduzca la información pertinente a continuación y haga clic en el botón "Siguiente". Si no tiene una cuenta SqueezeNetwork, haga clic en “Necesito una cuenta”.
+	FR	SqueezeNetwork vous permet de tirer pleinement parti de votre système musical sans fil en vous donnant accès à des services musicaux et des stations de radio sur Internet.<br/><br/>Si vous possédez déjà un compte SqueezeNetwork, spécifiez vos informations ci-dessous et cliquez sur le bouton Suivant. Sinon, cliquez sur Je souhaite créer un compte.
+	IT	SqueezeNetwork consente di sfruttare al massimo i nuovi sistemi musicali senza fili fornendo accesso a servizi musicali e alle stazioni radio di Internet.<br/><br/>Se si dispone già di un account SqueezeNetwork, immettere i propri dati in basso e fare clic sul pulsante "Avanti". Se non si dispone di un account SqueezeNetwork, fare clic su Nuovo account.
+	NL	SqueezeNetwork geeft je toegang tot muziekservices en internetradiostations, zodat je je nieuwe draadloze muzieksysteem optimaal kunt benutten.<br/><br/>Als je al een SqueezeNetwork-account hebt, voer je hieronder je gegevens in en klik je op de knop Volgende. Heb je nog geen SqueezeNetwork-account, dan klik je op 'Ik heb een account nodig'.
 
 SETUP_WIZARD_SQN_VERIFY
 	DE	Hinzufügen
@@ -7317,7 +7341,7 @@ SETUP_WIZARD_SKIP
 	EN	Skip
 	ES	Omitir
 	FR	Suivant
-	IT	Prossimo
+	IT	Prossimo brano
 	NL	Overslaan
 
 SETUP_WIZARD_FINISH
@@ -7374,9 +7398,12 @@ PLAYER
 	ZH_CN	播放机
 
 PLAYERS
-	DE	Player
+	DE	Players
 	EN	Players
+	ES	Reproductores
 	FR	Platines
+	IT	Lettori
+	NL	Spelers
 
 CURRENT_PLAYER
 	CS	Aktuální přehrávač:
@@ -9649,12 +9676,12 @@ BROWSE
 	ZH_CN	浏览
 
 BROWSE_MUSIC
-	DE	Eigene Musik
+	DE	Musikbibliothek
 	EN	Music Library
-	ES	Mi música
-	FR	Ma musique
-	IT	Musica
-	NL	Mijn muziek
+	ES	Biblioteca de música
+	FR	Collection musicale
+	IT	Libreria musicale
+	NL	Muziekcollectie
 	NO	Min musikk
 
 BROWSE_BY_GENRE
@@ -10514,7 +10541,7 @@ PLAYER_MAC_ADDRESS
 	FI	Soittimen MAC -osoite on
 	FR	L'adresse MAC de cette platine est
 	HE	כתובת ה-MAC של האתרנט של הנגן היא
-	IT	L'indirizzo MAC di rete di questo lettore e'
+	IT	L'indirizzo MAC di rete di questo lettore è
 	JA	このプレーヤーのMACアドレスは 
 	NL	Het ethernet-MAC-adres van deze speler is
 	NO	Spillerens MAC adresse er
@@ -11958,7 +11985,12 @@ GETTING_STARTED
 	ZH_CN	开始
 
 COMMUNITY_FORUM
+	DE	Community-Foren
 	EN	Community Forums
+	ES	Foros de comunidad
+	FR	Forums de la communauté
+	IT	Forum della community
+	NL	Communityforums
 
 FAQ
 	CS	Často kladené dotazy
@@ -12900,7 +12932,12 @@ FAVORITES_FAVORITE_NUM
 	ZH_CN	最喜爱#
 
 FAVORITES_FAVORITE
+	DE	Favorit
 	EN	Favorite
+	ES	Favorito
+	FR	Favori
+	IT	Preferito
+	NL	Favoriet
 
 FAVORITES_RIGHT_TO_DELETE
 	DE	(RECHTS drücken zum Löschen)
@@ -12993,10 +13030,10 @@ SQUEEZENETWORK_CONNECTING
 	ZH_CN	SqueezeNetwork连接中...
 
 SQUEEZENETWORK_SWITCH
-	DE	Zum SqueezeNetwork Beta umschalten
+	DE	Zu SqueezeNetwork Beta umschalten
 	EN	Switch to SqueezeNetwork Beta
-	ES	Cambiar a SqueezeNetwork Beta
-	FR	Se connecter à SqueezeNetwork Beta
+	ES	Cambiar a SqueezeNetwork beta
+	FR	Se connecter à SqueezeNetwork Bêta
 	HE	מעבר ל-SqueezeNetwork Beta
 	IT	Passa a SqueezeNetwork Beta
 	NL	Wisselen naar SqueezeNetwork Beta
@@ -14525,9 +14562,12 @@ SAVE_SETTINGS
 	SV	Spara inställningar
 
 APPLY
-	DE	Anwenden
+	DE	Übernehmen
 	EN	Apply
+	ES	Aplicar
 	FR	Appliquer
+	IT	Applica
+	NL	Toepassen
 
 SHRINK
 	DE	Kleiner
