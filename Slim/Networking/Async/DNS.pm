@@ -50,16 +50,17 @@ my $log = logger('network.asyncdns');
 sub init {
 	my $class = shift;
 
-	my $res = Net::DNS::Resolver->new;
-
-	$res->tcp_timeout( 5 );
-	$res->udp_timeout( 5 );
+	my $res = Net::DNS::Resolver->new(
+		debug       => $log->is_debug,
+		udp_timeout => 2,
+		tcp_timeout => 5,
+	);
 	
 	my @ns = $res->nameservers();
 	
 	my $valid_servers = [];
 	
-	for my $ns ( @ns ) {
+	while ( my $ns = shift @ns ) {
 		
 		# domain to check
 		my $domain = ('a'..'m')[ int(rand(13)) ] . '.root-servers.net';
@@ -79,7 +80,19 @@ sub init {
 
 				push @{$LocalDNS}, $ns;
 
-				next;
+				if ( @ns ) {
+					# After we get a good result from at least 1 DNS server, continue
+					# checking the rest in the background to avoid delaying startup time
+					Slim::Utils::Timers::setTimer(
+						undef,
+						time(),
+						sub {
+							$class->check_background( @ns );
+						},
+					);
+				}
+				
+				last;
 			}
 		}
 		
@@ -104,6 +117,31 @@ sub init {
 				}
 			}
 		}
+	}
+}
+
+sub check_background {
+	my ( $class, @list ) = @_;
+	
+	for my $ns ( @list  ) {
+		$log->debug( "Checking additional DNS server $ns in the background..." );
+		
+		my $domain = ('a'..'m')[ int(rand(13)) ] . '.root-servers.net';
+		
+		$class->resolve( {
+			servers => [ $ns ],
+			host    => $domain,
+			timeout => 5,
+			cb      => sub {
+				my $addr = shift;
+				
+				$log->debug( "Test lookup of $domain using $ns OK: adding server to list of valid nameservers" );
+				push @{$LocalDNS}, $ns;
+			},
+			ecb     => sub {
+				$log->debug( "Lookup of $domain using $ns failed" );
+			},
+		} );
 	}
 }
 
@@ -142,7 +180,7 @@ sub resolve {
 		$args->{opendns} = 1;
 	}
 	
-	my $servers = $args->{opendns} ? $OpenDNS : $LocalDNS;
+	my $servers = $args->{servers} || ( $args->{opendns} ? $OpenDNS : $LocalDNS );
 
 	if ( $log->is_debug ) {
 		$log->debug( 
