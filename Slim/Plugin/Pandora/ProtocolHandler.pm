@@ -137,6 +137,19 @@ sub getNextTrack {
 	
 	# If idle time has been exceeded, stop playback
 	my $lastIR = Slim::Hardware::IR::lastIRTime($client);
+	
+	# If synced, check slave players to see if they have newer irtime
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		# We should already be the master, but just in case...
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		for my $c ( $master, @{ $master->slaves } ) {
+			my $slaveIR = Slim::Hardware::IR::lastIRTime($c);
+			if ( $slaveIR > $lastIR ) {
+				$lastIR = $slaveIR;
+			}
+		}
+	}
+	
 	if ( time() - $lastIR >= $MAX_IDLE_TIME ) {
 		$log->debug('Idle time reached, stopping playback');
 		
