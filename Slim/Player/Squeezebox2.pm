@@ -786,10 +786,15 @@ sub playerSettingsFrame {
 			logger('prefs')->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
 		}
 
-		if (!defined $value) {
-			$client->setPlayerSetting($pref, $prefs->client($client)->get($pref));
-		} else {
-			$prefs->client($client)->set($pref, $value);
+		if ( !defined $value ) {
+			# Only send the value to the firmware if we actually have one
+			$value = $prefs->client($client)->get($pref);
+			if ( defined $value ) {
+				$client->setPlayerSetting( $pref, $value );
+			}
+		}
+		else {
+			$prefs->client($client)->set( $pref, $value );
 		}
 	}
 }
