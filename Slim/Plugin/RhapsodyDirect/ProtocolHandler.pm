@@ -748,6 +748,13 @@ sub gotNextRadioTrack {
 		return;
 	}
 	
+	# Save existing repeat setting
+	my $repeat = Slim::Player::Playlist::repeat($client);
+	if ( $repeat != 2 ) {
+		$log->debug( "Saving existing repeat value: $repeat" );
+		$client->pluginData( oldRepeat => $repeat );
+	}
+	
 	# Watch for playlist commands in radio mode
 	Slim::Control::Request::subscribe( 
 		\&playlistCallback, 
@@ -755,7 +762,7 @@ sub gotNextRadioTrack {
 	);
 	
 	# Force repeating for Rhapsody radio
-	Slim::Player::Playlist::repeat( $client, 2 );
+	$client->execute(["playlist", "repeat", 2]);
 	
 	# set metadata for track, will be set on playlist newsong callback
 	my $url   = 'rhapd://' . $track->{trackId} . '.wma';
@@ -790,21 +797,30 @@ sub playlistCallback {
 	my $url = Slim::Player::Playlist::url($client);
 	
 	if ( !$url || $url !~ /\.rdr$/ ) {
-		# stop listening for playback events
+		# User stopped playing Rhapsody Radio, reset old repeat setting if any
+		my $repeat = $client->pluginData('oldRepeat');
+		if ( defined $repeat ) {
+			$log->debug( "Stopped Rhapsody Radio, restoring old repeat setting: $repeat" );
+			$client->execute(["playlist", "repeat", $repeat]);
+		}
+
+		$log->debug( "Stopped Rhapsody Radio, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		
 		return;
 	}
 	
 	# The user has changed the repeat setting.  Radio requires a repeat
 	# setting of '2' (repeat all) to work properly
 	if ( $p1 eq 'repeat' ) {
-
-		$log->debug("Radio mode, user changed repeat setting, forcing back to 2");
+		if ( $request->getParam('_newvalue') != 2 ) {
+			$log->debug("Radio mode, user changed repeat setting, forcing back to 2");
 		
-		Slim::Player::Playlist::repeat( $client, 2 );
+			$client->execute(["playlist", "repeat", 2]);
 		
-		if ( $client->playmode =~ /playout/ ) {
-			$client->playmode( 'playout-play' );
+			if ( $client->playmode =~ /playout/ ) {
+				$client->playmode( 'playout-play' );
+			}
 		}
 	}
 	elsif ( $p1 eq 'newsong' ) {

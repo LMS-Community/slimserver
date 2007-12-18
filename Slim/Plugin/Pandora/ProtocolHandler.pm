@@ -207,8 +207,15 @@ sub gotNextTrack {
 		[['playlist'], ['repeat', 'newsong']],
 	);
 	
+	# Save existing repeat setting
+	my $repeat = Slim::Player::Playlist::repeat($client);
+	if ( $repeat != 2 ) {
+		$log->debug( "Saving existing repeat value: $repeat" );
+		$client->pluginData( oldRepeat => $repeat );
+	}
+	
 	# Force repeating
-	Slim::Player::Playlist::repeat( $client, 2 );
+	$client->execute(["playlist", "repeat", 2]);
 	
 	# Save the previous track's metadata, in case the user wants track info
 	# after the next track begins buffering
@@ -413,9 +420,21 @@ sub playlistCallback {
 	return unless defined $client;
 	
 	# ignore if user is not using Pandora
-	my $url = Slim::Player::Playlist::url($client) || return;
+	my $url = Slim::Player::Playlist::url($client);
 	
-	return if $url !~ /^pandora/;
+	if ( !$url || $url !~ /^pandora/ ) {
+		# User stopped playing Pandora, reset old repeat setting if any
+		my $repeat = $client->pluginData('oldRepeat');
+		if ( defined $repeat ) {
+			$log->debug( "Stopped Pandora, restoring old repeat setting: $repeat" );
+			$client->execute(["playlist", "repeat", $repeat]);
+		}
+		
+		$log->debug( "Stopped Pandora, unsubscribing from playlistCallback" );
+		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		
+		return;
+	}
 	
 	$log->debug("Got playlist event: $p1");
 	
@@ -423,12 +442,14 @@ sub playlistCallback {
 	# setting of '2' (repeat all) to work properly, or it will cause the
 	# "stops after every song" bug
 	if ( $p1 eq 'repeat' ) {
-		$log->debug("User changed repeat setting, forcing back to 2");
+		if ( $request->getParam('_newvalue') != 2 ) {
+			$log->debug("User changed repeat setting, forcing back to 2");
 		
-		Slim::Player::Playlist::repeat( $client, 2 );
+			$client->execute(["playlist", "repeat", 2]);
 		
-		if ( $client->playmode =~ /playout/ ) {
-			$client->playmode( 'playout-play' );
+			if ( $client->playmode =~ /playout/ ) {
+				$client->playmode( 'playout-play' );
+			}
 		}
 	}
 	elsif ( $p1 eq 'newsong' ) {
