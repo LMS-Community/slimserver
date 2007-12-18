@@ -435,8 +435,8 @@ sub playerSettingsMenu {
 
 	# always add repeat
 	my $repeat_setting = Slim::Player::Playlist::repeat($client);
-	my @repeat_strings = ('CHOICE_OFF', 'CHOICE_ONE', 'CHOICE_PLAYLIST',);
-	my @translated_repeat_strings = map { Slim::Utils::Strings::string($_) } @repeat_strings;
+	my @repeat_strings = ('OFF', 'SONG', 'PLAYLIST',);
+	my @translated_repeat_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @repeat_strings;
 	my @repeatChoiceActions;
 	for my $i (0..$#repeat_strings) {
 		push @repeatChoiceActions, 
@@ -464,8 +464,8 @@ sub playerSettingsMenu {
 
 	# always add shuffle
 	my $shuffle_setting = Slim::Player::Playlist::shuffle($client);
-	my @shuffle_strings = ( 'CHOICE_OFF', 'CHOICE_ONE', 'CHOICE_ALBUM',);
-	my @translated_shuffle_strings = map { Slim::Utils::Strings::string($_) } @shuffle_strings;
+	my @shuffle_strings = ( 'OFF', 'SONG', 'ALBUM',);
+	my @translated_shuffle_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @shuffle_strings;
 	my @shuffleChoiceActions;
 	for my $i (0..$#repeat_strings) {
 		push @shuffleChoiceActions, 

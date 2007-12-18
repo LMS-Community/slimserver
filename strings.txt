@@ -987,16 +987,16 @@ REPEAT_OFF
 	ZH_CN	关闭重复模式
 
 CHOICE_ONE
-	EN	song
+	EN	Song
 
 CHOICE_PLAYLIST
-	EN	playlist
+	EN	Playlist
 
 CHOICE_OFF
-	EN	off
+	EN	Off
 
 CHOICE_ALBUM
-	EN	album
+	EN	Album
 
 REPEAT_ONE
 	CS	Opakovat aktuální skladbu
