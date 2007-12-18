@@ -389,6 +389,16 @@ sub init {
 		my $client = $_[2] || return;
 		$client->display->renderCache()->{'defaultfont'} = undef;
 	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
+
+	# Clear SN cookies from the cookie jar if the session changes
+	if ( !$ENV{SLIM_SERVICE} ) {
+		$prefs->setChange( sub {
+			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
+			$cookieJar->clear( 'www.squeezenetwork.com' );
+			$cookieJar->save();
+			logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
+		}, 'sn_session' );
+	}
 }
 
 =head2 writeAll( )
