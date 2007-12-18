@@ -712,6 +712,7 @@ sub submitScrobble {
 		{
 			tmpQueue => \@tmpQueue,
 			params   => $params,
+			client   => $client,
 		},
 	);
 	
@@ -727,7 +728,7 @@ sub _submitScrobbleOK {
 	my $content  = $http->content;
 	my $tmpQueue = $http->params('tmpQueue') || [];
 	my $params   = $http->params('params');
-	my $client   = $params->{client};
+	my $client   = $http->params('client');
 	
 	if ( $content =~ /^OK/ ) {
 		$log->debug( 'Scrobble submit successful' );
@@ -766,7 +767,7 @@ sub _submitScrobbleError {
 	my $error    = $http->error;
 	my $tmpQueue = $http->params('tmpQueue') || [];
 	my $params   = $http->params('params');
-	my $client   = delete $params->{client};
+	my $client   = $http->params('client');
 	
 	# put the tmpQueue items back into the main queue
 	my $queue = $prefs->client($client)->get('queue') || [];
