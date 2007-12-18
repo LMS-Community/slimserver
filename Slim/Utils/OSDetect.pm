@@ -567,8 +567,11 @@ sub winWritablePath {
 		}
 	);
 
-	if (defined $swKey) {
+	if (defined $swKey && $swKey->{'Common AppData'}) {
 		$root = catdir($swKey->{'Common AppData'}, 'SqueezeCenter');
+	}
+	elsif ($ENV{'ProgramData'}) {
+		$root = catdir($ENV{'ProgramData'}, 'SqueezeCenter');
 	}
 	else {
 		$root = $Bin;
