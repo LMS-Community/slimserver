@@ -1082,6 +1082,16 @@ sub _hello_handler {
 		$client->modeParam('visu', [0]);
 		$client->modeParam('screen2active', undef);
 		
+		# Unsync players that need an update
+		if ( Slim::Player::Sync::isSynced($client) ) {
+
+			if ( logger('player.sync')->is_info ) {
+				logger('player.sync')->info("Player needs update, temporary unsync " . $client->id);
+			}
+
+			Slim::Player::Sync::unsync($client, 1);
+		}
+		
 		$client->block( {
 			'screen1' => {
 				'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2') ],
