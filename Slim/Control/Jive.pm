@@ -240,6 +240,10 @@ sub mainMenu {
 # allow a plugin to add a node to the menu
 sub registerPluginNode {
 	my $nodeRef = shift;
+	unless (ref($nodeRef) eq 'HASH') {
+		$log->error("Incorrect data type");
+		return;
+	}
 
 	$nodeRef->{'isANode'} = 1;
 	$log->info("Registering node menu item from plugin");
@@ -261,6 +265,12 @@ sub refreshPluginMenus {
 sub registerPluginMenu {
 	my $menuArray = shift;
 	my $node = shift;
+
+	unless (ref($menuArray) eq 'ARRAY') {
+		$log->error("Incorrect data type");
+		return;
+	}
+
 	if ($node) {
 		my @menuArray = @$menuArray;
 		for my $i (0..$#menuArray) {
