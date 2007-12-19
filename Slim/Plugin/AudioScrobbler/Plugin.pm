@@ -294,6 +294,7 @@ sub _handshakeError {
 	
 	$log->warn("Error handshaking with Last.fm: $error, retrying in $delay minute(s)");
 	
+	Slim::Utils::Timers::killTimers( $params, \&handshake );
 	Slim::Utils::Timers::setTimer(
 		$params,
 		time() + ( $delay * 60 ),
@@ -337,12 +338,12 @@ sub newsongCallback {
 			cb => sub {
 				# delay by 1 second so we don't hit the server too fast after
 				# the submit call
+				Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
 				Slim::Utils::Timers::setTimer(
-					undef,
+					$client,
 					time() + 1,
-					sub {
-						submitNowPlaying( $client, $track );
-					},
+					\&submitNowPlaying,
+					$track,
 				);
 			},
 		} );
@@ -400,6 +401,7 @@ sub newsongCallback {
 		$log->debug( "New track to scrobble: $title, will check in $checktime seconds" );
 	}
 	
+	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 	Slim::Utils::Timers::setTimer(
 		$client,
 		Time::HiRes::time() + $checktime,
@@ -467,9 +469,10 @@ sub submitNowPlaying {
 		\&_submitNowPlayingOK,
 		\&_submitNowPlayingError,
 		{
-			client => $client,
-			track  => $track,
-			retry  => $retry,
+			client  => $client,
+			track   => $track,
+			retry   => $retry,
+			timeout => 30,
 		}
 	);
 	
@@ -530,6 +533,7 @@ sub _submitNowPlayingError {
 	$log->debug("Now Playing track failed to submit: $error, retrying in 5 seconds");
 	
 	# Retry once after 5 seconds
+	Slim::Utils::Timers::killTimers( $client, \&submitNowPlaying );
 	Slim::Utils::Timers::setTimer(
 		$client,
 		Time::HiRes::time() + 5,
@@ -713,6 +717,7 @@ sub submitScrobble {
 			tmpQueue => \@tmpQueue,
 			params   => $params,
 			client   => $client,
+			timeout  => 30,
 		},
 	);
 	
