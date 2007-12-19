@@ -252,6 +252,11 @@ sub registerPluginNode {
 
 }
 
+# send plugin menus array as a notification to Jive
+sub refreshPluginMenus {
+	_notifyJive(\@pluginMenus);
+}
+
 #allow a plugin to add an array of menu entries
 sub registerPluginMenu {
 	my $menuArray = shift;
@@ -270,8 +275,30 @@ sub registerPluginMenu {
 	# notify this menu to be added
 	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $menuArray, 'add' ] );
 
-	# but also remember this structure as part of the plugin menus
-	@pluginMenus = (@pluginMenus, @$menuArray);
+	# now we want all of the items in $menuArray to go into @pluginMenus, but we also
+	# don't want duplicate items (specified by 'id'), 
+	# so we want the ids from $menuArray to stomp on ids from @pluginMenus, 
+	# thus getting the "newest" ids into the @pluginMenus array of items
+	# we also do not allow any hash without an id into the array, and will log an error if that happens
+
+	my %seen; my @new;
+	for my $href (@$menuArray, @pluginMenus) {
+		my $id = $href->{'id'};
+		if ($id) {
+			if (!$seen{$id}) {
+				push @new, $href;
+			}
+			$seen{$id}++;
+		} else {
+			$log->error("Menu items cannot be added without an id");
+		}
+	}
+
+	# @new is the new @pluginMenus
+	# we do this in reverse so we get previously initialized nodes first 
+	# you can't add an item to a node that doesn't exist :)
+	@pluginMenus = reverse @new;
+
 }
 
 # allow a plugin to delete an item from the Jive menu based on the id of the menu item
