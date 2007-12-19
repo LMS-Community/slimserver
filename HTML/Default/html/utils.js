@@ -319,10 +319,15 @@ var Utils = function(){
 		},
 
 		onSelectorClicked : function(ev, target){
-			var el = Ext.get(target).child('a.browseItemLink');
+			target = Ext.get(target);
+			if (target.hasClass('browseItemDetail') || target.hasClass('playlistSongDetail'))
+				target = Ext.get(target.findParentNode('div'));
+
+			var el = target.child('a.browseItemLink');
 			if (el && el.dom.href) {
 				if (el.dom.target) {
-					parent.frames[el.dom.target].location.href = el.dom.href;
+					try { parent.frames[el.dom.target].location.href = el.dom.href; }
+					catch(e) { location.href = el.dom.href; }
 				}
 				else {
 					location.href = el.dom.href;
