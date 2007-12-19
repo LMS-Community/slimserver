@@ -129,26 +129,7 @@ sub findFilesMatching {
 	};
 
 	my $file_filter = sub {
-
-		# validTypeExtensions returns a qr// regex.
-		return 0 if $_ !~ $types;
-
-		# Make sure we can read the file.
-		return 0 if !-r $File::Next::name;
-
-		# Don't include old style internal playlists.
-		return 0 if /^__\S+\.m3u$/o;
-
-		# OS X leaves around turd files - ignore them.
-		return 0 if /^\.Apple(?:Single|Double)$/io;
-
-		# iTunes 4.x makes binary metadata files with the format of: ._filename.ext
-		# In the same directory as the real audio files. Ignore those, so we
-		# don't create bogus tracks and try to guess names based off the file,
-		# thus duplicating tracks & albums, etc.
-		return 0 if /^\._/o;
-
-		return 1;
+		return Slim::Utils::Misc::fileFilter($File::Next::dir, $_, $types);
 	};
 
 	my $iter  = File::Next::files({

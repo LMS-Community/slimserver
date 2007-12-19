@@ -830,6 +830,68 @@ $_ignoredItems{'.'}	= 1;
 $_ignoredItems{'..'}	= 1;
 
 
+=head2 fileFilter( $dirname, $item )
+
+	Verify whether we want to include a file or folder in our search.
+	This helper function is used to guarantee identical filtering across 
+	different browse/scan procedures
+
+=cut
+
+sub fileFilter {
+	my $dirname = shift;
+	my $item    = shift;
+	my $validRE = shift || Slim::Music::Info::validTypeExtensions();
+
+	return 0 if exists $_ignoredItems{$item};
+
+	# Ignore special named files and directories
+	# __ is a match against our old __history and __mac playlists.
+	# ._Foo is a OS X meta file.
+	return 0 if $item =~ /^__\S+\.m3u$/o;
+	return 0 if $item =~ /^\./o;
+
+	if ((my $ignore = $prefs->get('ignoreDirRE') || '') ne '') {
+		return 0 if $item =~ /$ignore/;
+	}
+
+	my $fullpath = catdir($dirname, $item);
+
+	# Don't display hidden/system files on Windows
+	if (Slim::Utils::OSDetect::OS() eq "win") {
+		my $attributes;
+		Win32::File::GetAttributes($fullpath, $attributes);
+		return 0 if ($attributes & Win32::File::HIDDEN()) || ($attributes & Win32::File::SYSTEM());
+	}
+
+
+	# We only want files, directories and symlinks Bug #441
+	# Otherwise we'll try and read them, and bad things will happen.
+	# symlink must come first so an lstat() is done.
+	return 0 unless (-l $fullpath || -d _ || -f _);
+
+
+	# Make sure we can read the file.
+	return 0 if !-r _;
+
+
+	# Don't bother with file types we don't understand.
+	if ($validRE && -f _) {
+		return 0 if $item !~ $validRE;
+	}
+	elsif ($validRE && -l _ && defined(my $target = readlink($fullpath))) {
+		# fix relative/absolute path
+		$target = ($target =~ /^\// ? $target : catdir($dirname, $target));
+
+		if (-f $target) {
+			return 0 if $target !~ $validRE;
+		}
+	}
+	
+	return 1
+}
+
+
 =head2 readDirectory( $dirname, [ $validRE ])
 
 	Return the contents of a directory $dirname as an array.  Optionally return only 
@@ -842,8 +904,6 @@ sub readDirectory {
 	my $validRE  = shift || Slim::Music::Info::validTypeExtensions();
 	my @diritems = ();
 	my $log      = logger('os.files');
-
-	my $ignore = $prefs->get('ignoreDirRE') || '';
 
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		my ($volume) = splitpath($dirname);
@@ -867,53 +927,12 @@ sub readDirectory {
 
 	for my $item (readdir(DIR)) {
 
-		next if exists $_ignoredItems{$item};
-
-		# Ignore special named files and directories
-		# __ is a match against our old __history and __mac playlists.
-		# ._Foo is a OS X meta file.
-		next if $item =~ /^__\S+\.m3u$/;
-		next if $item =~ /^\./;
-
-		if ($ignore ne '') {
-			next if $item =~ /$ignore/;
-		}
-
-		my $fullpath = catdir($dirname, $item);
-
-		# Don't display hidden/system files on Windows
-		if (Slim::Utils::OSDetect::OS() eq "win") {
-			my $attributes;
-			Win32::File::GetAttributes($fullpath, $attributes);
-			next if ($attributes & Win32::File::HIDDEN()) || ($attributes & Win32::File::SYSTEM());
-		}
-
-
-		# We only want files, directories and symlinks Bug #441
-		# Otherwise we'll try and read them, and bad things will happen.
-		# symlink must come first so an lstat() is done.
-		unless (-l $fullpath || -d _ || -f _) {
-			next;
-		}
-
-
-		# Don't bother with file types we don't understand.
-		if ($validRE && -f _) {
-			next unless $item =~ $validRE;
-		}
-		elsif ($validRE && -l _ && defined(my $target = readlink($fullpath))) {
-			# fix relative/absolute path
-			$target = ($target =~ /^\// ? $target : catdir($dirname, $target));
-
-			if (-f $target) {
-				next unless $target =~ $validRE;
-			}
-		}
-
 		# call idle streams to service timers - used for blocking animation.
 		if (scalar @diritems % 3) {
 			main::idleStreams();
 		}
+
+		next unless fileFilter($dirname, $item, $validRE);
 
 		push @diritems, $item;
 	}
