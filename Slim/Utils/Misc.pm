@@ -704,24 +704,6 @@ sub fixPath {
 	# duplicate entries in the database.
 	if (!Slim::Music::Info::isFileURL($fixed)) {
 
-		# Don't map drive letters when running as a service.
-		if (Slim::Utils::OSDetect::OS() eq "win" && !$PerlSvc::VERSION) {
-
-			my ($volume, $dirs, $file) = splitpath($fixed);
-
-			# Look for UNC paths
-			if ($volume && $volume =~ m|^\\|) {
-
-				# And map them to drive letters.
-				$volume = Win32::FileOp::Mapped($volume);
-
-				if ($volume && $volume =~ /^[A-Z]:/) {
-
-					$fixed = catfile($volume, $dirs, $file);
-				}
-			}
-		}
-
 		$fixed = canonpath(fixPathCase($fixed));
 
 		# Fixes Bug: 2757, but breaks a lot more: 3681, 3682 & 3683
