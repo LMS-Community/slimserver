@@ -101,22 +101,51 @@ sub getDisplayName {
 
 # handles the "menu" query
 sub menuQuery {
+
 	my $request = shift;
- 
-	$log->debug("Begin Function");
- 
+
+	$log->debug("Begin menuQuery function");
+
 	if ($request->isNotQuery([['menu']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# get our parameters
 	my $client        = $request->client() || 0;
-	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');
 
-	my $prefs         = preferences("server");
-	
+	# send main menu notification
+	mainMenu($client);
+
+	# a single dummy item to keep jive happy with _merge
+	my $upgradeText = 
+	"BETA TESTERS: Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and SqueezeCenter, and this requires a newer version of firmware.";
+        my $upgradeMessage = {
+		text      => 'READ ME',
+		weight    => 1,
+                offset    => 0,
+                count     => 1,
+                window    => { titleStyle => 'settings' },
+                textArea =>  $upgradeText,
+        };
+
+        $request->addResult("count", 1);
+	$request->addResult("offset", 0);
+	$request->setResultLoopHash('item_loop', 0, $upgradeMessage);
+	$request->setStatusDone();
+
+}
+
+sub mainMenu {
+
+	my $client = shift;
+
+	unless ($client->isa('Slim::Player::Client')) {
+		# if this isn't a player, no menus should get sent
+		return;
+	}
+ 
+	$log->debug("Begin Function");
+ 
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
 
@@ -171,6 +200,7 @@ sub menuQuery {
 					titleStyle => 'internetradio',
 			},
 		},
+
 		{
 			text           => Slim::Utils::Strings::string('FAVORITES'),
 			id             => 'favorites',
@@ -205,22 +235,6 @@ sub menuQuery {
 
 	_notifyJive(\@menu);
 
-	# a single dummy item to keep jive happy with _merge
-	my $upgradeText = 
-	"BETA TESTERS: Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and SqueezeCenter, and this requires a newer version of firmware.";
-        my $upgradeMessage = {
-		text      => 'READ ME',
-		weight    => 1,
-                offset    => 0,
-                count     => 1,
-                window    => { titleStyle => 'settings' },
-                textArea =>  $upgradeText,
-        };
-
-        $request->addResult("count", 1);
-	$request->addResult("offset", 0);
-	$request->setResultLoopHash('item_loop', 0, $upgradeMessage);
-	$request->setStatusDone();
 }
 
 # allow a plugin to add a node to the menu
