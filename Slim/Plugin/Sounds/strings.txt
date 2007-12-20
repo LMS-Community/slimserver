@@ -1,0 +1,2 @@
+PLUGIN_SOUNDS_MODULE_NAME
+	EN	Sounds & Effects

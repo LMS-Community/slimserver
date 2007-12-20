@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension>
+	<id>0381A1D8-7CDF-4236-BA8B-E92553162EDE</id>
+	<name>PLUGIN_SOUNDS_MODULE_NAME</name>
+	<module>Slim::Plugin::Sounds::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_SOUNDS_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.0</minVersion>
+		<maxVersion>7.0+</maxVersion>
+	</targetApplication>
+</extension>
