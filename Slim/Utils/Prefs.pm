@@ -155,6 +155,11 @@ sub init {
 		'rank-PLUGIN_SLACKER_MODULE_NAME'         => 15,
 		'rank-PLUGIN_MP3TUNES_MODULE_NAME'        => 10,
 		'rank-PLUGIN_LMA_MODULE_NAME'             => 5,
+		# Extras menu ordering
+		'rank-PLUGIN_PODCAST'                     => 35,
+		'rank-PLUGIN_RSSNEWS'                     => 30,
+		'rank-PLUGIN_SOUNDS_MODULE_NAME'          => 25,
+		'rank-GAMES'                              => 20,
 		# Server Settings - Basic
 		'language'              => 'EN',
 		'audiodir'              => \&defaultAudioDir,

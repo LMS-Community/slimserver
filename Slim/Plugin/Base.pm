@@ -38,7 +38,14 @@ sub initPlugin {
 
 		Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
 
-		if ($menu ne PLUGINMENU) {
+		# Add new submenus to Extras but only if they aren't main top-level menus
+		my $topLevel = {
+			BROWSE_MUSIC   => 1,
+			RADIO          => 1,
+			MUSIC_SERVICES => 1,
+		};
+		
+		if ( $menu ne PLUGINMENU && !$topLevel->{$menu} ) {
 
 			Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
 		}
