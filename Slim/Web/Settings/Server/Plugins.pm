@@ -55,7 +55,9 @@ sub handler {
 		
 		#Slim::Utils::PluginManager->runPendingOperations;
 		Slim::Utils::PluginManager->writePluginCache;
-		$paramRef->{'warning'} .= Slim::Utils::Strings::string('PLUGINS_CHANGED').'<br>'.join('<br>',@changed);
+		$paramRef->{'warning'} .= '<span id="popupWarning">'
+			. Slim::Utils::Strings::string('PLUGINS_CHANGED').'<br>'.join('<br>',@changed)
+			. '</span>';
 	}
 
 	$paramRef->{plugins}     = $plugins;

@@ -2607,12 +2607,12 @@ SETUP_GROUP_PLUGINS
 	NL	Extra's
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält einige Extras, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Extras unten aktivieren bzw. deaktivieren.
-	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below. 
-	ES	SqueezeCenter incluye elementos extra que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos extra individuales utilizando los botones siguientes.
-	FR	Le SqueezeCenter inclut certains extras à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des extras à l'aide des boutons ci-dessous.
-	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando o nell'interfaccia Web. Nella directory Plugin è possibile scegliere di attivare o disattivare risorse aggiuntive utilizzando i pulsanti sottostanti.
-	NL	SqueezeCenter bevat een aantal extra's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke extra's in- of uitschakelen.
+	DE	SqueezeCenter enthält einige Extras, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Extras unten aktivieren bzw. deaktivieren.<br/>Hinweis: Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
+	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below.<br/>Note: You will need to restart the application to see the effect of these changes.
+	ES	SqueezeCenter incluye elementos extra que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos extra individuales utilizando los botones siguientes.<br/>Nota: Deberá reiniciar el servidor para que estos cambios entren en vigor.
+	FR	Le SqueezeCenter inclut certains extras à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des extras à l'aide des boutons ci-dessous.<br/>Remarque: Vous devez redémarrer le serveur pour que les modifications prennent effet.
+	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando o nell'interfaccia Web. Nella directory Plugin è possibile scegliere di attivare o disattivare risorse aggiuntive utilizzando i pulsanti sottostanti.<br/>Nota: Per rendere effettive le modifiche, è necessario riavviare il server.
+	NL	SqueezeCenter bevat een aantal extra's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke extra's in- of uitschakelen.<br/>N.B. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
@@ -6719,7 +6719,7 @@ SETUP_MDNSNAME_OK
 SETUP_MDNSNAME_DESC
 	DA	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SqueezeCenter skal genstartes før denne indstilling har effekt.
 	DE	Wählen Sie für den Einsatz auf Bonjour einen Namen für den Server. Lassen Sie das Feld leer, um Bonjour-Werbung auf SqueezeCenter zu deaktivieren. Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
-	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SqueezeCenter.  You will need to restart application to see the effect of these changes.
+	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SqueezeCenter.  You will need to restart the application to see the effect of these changes.
 	ES	Se puede elegir qué nombre usará este servidor con Bonjour. Deje el campo en blanco par deshabilitar anuncios de Bonjour en SqueezeCenter. Deberá reiniciar el servidor para que estos cambios entren en vigor.
 	FR	Vous pouvez choisir un nom de serveur reconnu par Bonjour. Ne renseignez pas ce champ pour désactiver la présentation Bonjour du SqueezeCenter. Vous devez redémarrer le serveur pour que les modifications prennent effet.
 	HE	באפשרותך לבחור שם עבור השרת שייעשה בו שימוש עם Bonjour. השאר שדה זה ריק כדי להשבית את הפרסום של Bonjour ב-SqueezeCenter. יהיה עליך להפעיל מחדש את השרת כדי לראות את השפעת השינויים.

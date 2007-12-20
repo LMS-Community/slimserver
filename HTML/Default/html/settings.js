@@ -48,7 +48,7 @@ Settings = function(){
 
 			tp.on('beforetabchange', function(tb, ev, tab){
 				var modified = false;
-	
+
 				try { modified = frames.settings.subSettings.SettingsPage.isModified(); }
 				catch(e){
 					try { modified = frames.settings.SettingsPage.isModified(); }
@@ -141,7 +141,7 @@ Settings = function(){
 		resetModified : function() {
 			try { frames.settings.subSettings.SettingsPage.resetModified(); }
 			catch(e){
-				try { modified = frames.settings.SettingsPage.resetModified(); }
+				try { frames.settings.SettingsPage.resetModified(); }
 				catch(e){}
 			}
 		},
@@ -222,10 +222,7 @@ var SettingsPage = function(){
 				modified = true;
 			});
 
-			var reload;
-			if (reload = Ext.get('skinWarning')) {
-				Ext.Msg.alert(strings['setup_skin'], reload.dom.innerHTML);
-			}
+			this.showWarning();
 		},
 
 		initDescPopup : function(){
@@ -370,6 +367,18 @@ var SettingsPage = function(){
 					el.replaceClass('invalid', 'valid');
 				else
 					el.replaceClass('valid', 'invalid');
+			}
+		},
+
+		showWarning : function(){
+			var reload;
+			if (reload = Ext.get('popupWarning')) {
+				Ext.Msg.alert(strings['settings'], 
+					Ext.util.Format.stripTags(
+						reload.dom.innerHTML.replace(/<br\/?>/ig, ' ')
+					)
+				);
+				reload.update('');
 			}
 		},
 

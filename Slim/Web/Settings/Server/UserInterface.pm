@@ -65,7 +65,7 @@ sub handler {
 	
 			}
 
-			$paramRef->{'warning'} .= '<span id="skinWarning">' . string("SETUP_SKIN_OK") . '</span>';
+			$paramRef->{'warning'} .= '<span id="popupWarning">' . string("SETUP_SKIN_OK") . '</span>';
 		}
 
 

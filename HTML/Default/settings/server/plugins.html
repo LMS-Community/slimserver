@@ -1,6 +1,8 @@
 [% extJsScripts = BLOCK %]
 <script type="text/javascript">
 	var Plugins = function(){
+		var warn = true;
+
 		return {
 			toggle: function(plugin) {
 				var enable = plugin.name.match(/\.enable/);
@@ -16,6 +18,12 @@
 						if (response.responseText) {
 							response = response.responseText.replace(/warning\|/, '');
 							Ext.get('statusarea').update(response);
+							
+							// show popup only once
+							if (warn) {
+								SettingsPage.showWarning();
+								warn = false;
+							}
 						}
 					}
 				});
