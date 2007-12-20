@@ -1005,7 +1005,7 @@ form#advSearchForm.resultsPage {
 }
 
 /* settings pages */
-body.settings, body.settingsMenu {
+body.settings {
 	position: relative;
 	overflow: auto;
 	background-color: white;
@@ -1013,6 +1013,8 @@ body.settings, body.settingsMenu {
 
 body.settingsMenu {
 	margin-left: 5px;
+	overflow: auto;
+	background-color: white;
 }
 
 .settingsFrame #inner_header {
