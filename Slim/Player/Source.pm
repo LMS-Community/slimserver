@@ -1859,7 +1859,10 @@ sub openSong {
 			$endian     = $track->endian() || '';
 			$drm        = $track->drm();
 
-			$log->info("duration: [$duration] size: [$size] endian [$endian] offset: [$offset] for $fullpath");
+
+			if ( $log->is_info ) {
+				$log->info("duration: [$duration] size: [$size] endian [$endian] offset: [$offset] for $fullpath");
+			}
 
 			if ($drm) {
 
