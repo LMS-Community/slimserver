@@ -240,23 +240,6 @@ sub pcm_sample_rates {
 	return defined $rate ? $rate : '3';
 }
 
-sub playPoint {
-	my $client = shift;
-
-	my ($jiffies, $elapsedMilliseconds) = Slim::Networking::Slimproto::getPlayPointData($client);
-
-	return unless $elapsedMilliseconds;
-
-	my $statusTime = $client->jiffiesToTimestamp($jiffies);
-	my $apparentStreamStartTime = $statusTime - ($elapsedMilliseconds / 1000);
-
-	0 && logger('player.sync')->debug($client->id() . " playPoint: jiffies=$jiffies, epoch="
-		. ($client->jiffiesEpoch) . ", statusTime=$statusTime, elapsedMilliseconds=$elapsedMilliseconds");
-
-	return [$statusTime, $apparentStreamStartTime];
-}
-
-
 sub packetLatency {
 	my $client = shift;
 	

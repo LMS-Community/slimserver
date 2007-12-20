@@ -781,12 +781,17 @@ sub _stat_handler {
 		}
 	}
 	
-	if (   $client->model() eq 'squeezebox'
-		&& Slim::Player::Sync::isSynced($client)
+	if (Slim::Player::Sync::isSynced($client)
 		&& Slim::Player::Source::playmode($client) eq 'play')
 	{
 		my $statusTime = $client->jiffiesToTimestamp( $status{$client}->{'jiffies'} );
-		if ( my $apparentStreamStartTime = $client->apparentStreamStartTime($statusTime) ) {
+		my $apparentStreamStartTime;
+		if ($client->model() eq 'squeezebox') {
+			$apparentStreamStartTime = $client->apparentStreamStartTime($statusTime);
+		} elsif ($client->model() eq 'squeezeslave' && $status{$client}->{'elapsed_milliseconds'}) {
+			$apparentStreamStartTime = $statusTime - ($status{$client}->{'elapsed_milliseconds'} / 1000);
+		}
+		if ($apparentStreamStartTime) {
 			$client->publishPlayPoint( $statusTime, $apparentStreamStartTime, undef );
 		}
 	}
