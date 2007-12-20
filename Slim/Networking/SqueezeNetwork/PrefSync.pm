@@ -150,8 +150,12 @@ sub syncDown {
 	);
 	
 	my $sync = {
-		client => $client->id,
-		since  => $prefs->client($client)->get('snLastSyncDown'),
+		client   => $client->id,
+		uuid     => $client->uuid,
+		deviceid => $client->deviceid,
+		rev      => $client->revision,
+		name     => $client->name,
+		since    => $prefs->client($client)->get('snLastSyncDown'),
 	};
 	
 	if ( $log->is_debug ) {
@@ -187,6 +191,12 @@ sub _syncDown_done {
 	$cprefs->set( snSyncInterval => $content->{next_sync} );
 	
 	$cprefs->remove('snSyncErrors');
+	
+	# Sync name if different
+	if ( $content->{name} && ( $content->{name} ne $client->name ) ) {
+		$client->name( $content->{name} );
+		$log->debug( 'Updated player name to ' . $content->{name} . ' from SN' );
+	}
 		
 	while ( my ($pref, $data) = each %{ $content->{prefs} } ) {
 			
@@ -299,8 +309,12 @@ sub syncUp {
 	my $cprefs = $prefs->client($client);
 	
 	my $sync = {
-		client => $client->id,
-		prefs  => {},
+		client   => $client->id,
+		uuid     => $client->uuid,
+		deviceid => $client->deviceid,
+		rev      => $client->revision,
+		name     => $client->name,
+		prefs    => {},
 	};
 	
 	my $sn_timediff = $prefs->get('sn_timediff');
