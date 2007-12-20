@@ -452,6 +452,14 @@ sub directHeaders {
 				$log->info("Beginning direct stream!");
 
 				my $loop = $client->shouldLoop($length);
+				
+				# Some looping sounds are too short and mess up the buffer secs
+				# This will let quickstart avoid buffering these tracks too long
+				if ( $loop ) {
+					Slim::Music::Info::setDuration( $url, 0 );
+					
+					$log->info('Using infinite loop mode');
+				}
 
 				$client->streamformat($contentType);
 				$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, $guids_length, @guids)));

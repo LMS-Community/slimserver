@@ -1103,6 +1103,11 @@ sub stream {
 		else {
 			$replayGain = $client->canDoReplayGain($params->{replay_gain});
 		}
+		
+		# If looping, reduce the threshold, some of our sounds are really short
+		if ( $params->{loop} ) {
+			$bufferThreshold = 10;
+		}
 
 		$log->info("flags: $flags");
 
