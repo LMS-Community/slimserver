@@ -585,7 +585,7 @@ sub playerSettingsMenu {
 			id             => 'settingsSync',
 			node           => 'settings',
 			displayWhenOff => 0,
-			weight         => 50,
+			weight         => 70,
 			actions        => {
 				go => {
 					cmd    => ['syncsettings'],
@@ -614,10 +614,10 @@ sub playerSettingsMenu {
 	push @menu, {
 		text           => $playerInfoText,
 		id             => 'settingsPlayerInformation',
-		node           => 'settings',
+		node           => 'advancedSettings',
 		displayWhenOff => 0,
 		textArea       => $playerInfoTextArea,
-		weight         => 75,
+		weight         => 4,
 		window         => { titleStyle => 'settings' },
 		actions        => {
 				go =>	{
@@ -633,9 +633,8 @@ sub playerSettingsMenu {
 	push @menu, {
 		text           => Slim::Utils::Strings::string('INFORMATION_PLAYER_NAME'),
 		id             => 'settingsPlayerNameChange',
-		node           => 'settings',
+		node           => 'advancedSettings',
 		displayWhenOff => 0,
-		weight         => 80,
 		input          => {	
 			initialText  => $client->name(),
 			len          => 1, # For those that want to name their player "X"
@@ -664,9 +663,8 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => Slim::Utils::Strings::string("SETUP_TRANSITIONTYPE"),
 			id             => 'settingsXfade',
-			node           => 'settings',
+			node           => 'advancedSettings',
 			displayWhenOff => 0,
-			weight         => 85,
 			actions        => {
 				go => {
 					cmd    => ['crossfadesettings'],
@@ -683,8 +681,7 @@ sub playerSettingsMenu {
 			displayWhenOff => 0,
 			text           => Slim::Utils::Strings::string("REPLAYGAIN"),
 			id             => 'settingsReplayGain',
-			node           => 'settings',
-			weight         => 90,
+			node           => 'advancedSettings',
 			actions        => {
 				  go => {
 					cmd    => ['replaygainsettings'],
