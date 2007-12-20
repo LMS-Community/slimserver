@@ -788,7 +788,8 @@ sub _stat_handler {
 		my $apparentStreamStartTime;
 		if ($client->model() eq 'squeezebox') {
 			$apparentStreamStartTime = $client->apparentStreamStartTime($statusTime);
-		} elsif ($client->model() eq 'squeezeslave' && $status{$client}->{'elapsed_milliseconds'}) {
+		} elsif (($client->model() eq 'squeezeslave' || $client->model() eq 'softsqueeze')
+				 && $status{$client}->{'elapsed_milliseconds'}) {
 			$apparentStreamStartTime = $statusTime - ($status{$client}->{'elapsed_milliseconds'} / 1000);
 		}
 		if ($apparentStreamStartTime) {

@@ -14,6 +14,7 @@ use strict;
 use base qw(Slim::Player::Transporter);
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::Client;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 
@@ -100,6 +101,10 @@ sub canDirectStream {
 	return undef;
 }
 
+# Need to use weighted play-point
+sub playPoint {
+	return Slim::Player::Client::playPoint(@_);
+}
 
 1;
 
