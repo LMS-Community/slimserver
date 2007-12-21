@@ -166,3 +166,8 @@ PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
 	IT	Invia ad account: %s
 	NL	Scrobbelen naar account: %s
 
+PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
+	EN	Last.fm: Love this track
+
+PLUGIN_AUDIOSCROBBLER_TRACK_LOVED
+	EN	This track has been loved.

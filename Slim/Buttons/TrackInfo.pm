@@ -220,6 +220,26 @@ sub loadDataForTrack {
 
 		return;
 	}
+	
+	# If Audioscrobbler is enabled and the current track can be scrobbled,
+	# add 'Last.fm: Love this track' as the first item
+	if ( Slim::Utils::PluginManager->isEnabled( 'Slim::Plugin::AudioScrobbler::Plugin' ) ) {
+		if ( Slim::Plugin::AudioScrobbler::Plugin->canScrobble( $client, $track ) ) {
+			push @{$client->trackInfoLines}, $client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK');
+			push @{$client->trackInfoContent}, sub {
+				my $client = shift;
+				
+				$client->execute( [ 'audioscrobbler', 'loveTrack', $track->url ] );
+				
+				$client->showBriefly( {
+					line => [ 
+						$client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK'), 
+						$client->string('PLUGIN_AUDIOSCROBBLER_TRACK_LOVED'),
+					],
+				} );
+			};
+		}
+	}
 
 	if (my $title = $track->title) {
 		push (@{$client->trackInfoLines}, $client->string('TITLE') . ": $title");
@@ -416,6 +436,9 @@ sub listExitHandler {
 		if (ref($curItem) eq 'HASH') {
 			$curType = $curItem->{'type'};
 			$curObj  = $curItem->{'obj'};
+		}
+		elsif ( ref $curItem eq 'CODE' ) {
+			return $curItem->( $client );
 		}
 
 		# Tracks can not have an artist at all, but have a different

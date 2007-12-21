@@ -25,9 +25,6 @@ package Slim::Plugin::AudioScrobbler::Plugin;
 # Thanks to the SlimScrobbler plugin for inspiration and feature ideas.
 # http://slimscrobbler.sourceforge.net/
 
-# TODO:
-# Allow Love ratings for any track
-
 use strict;
 use base qw(Slim::Plugin::Base);
 
@@ -550,42 +547,6 @@ sub _submitNowPlayingError {
 	);
 }
 
-sub loveTrack {
-	my $request = shift;
-	my $client  = $request->client || return;
-	my $url     = $request->getParam('_url');
-	
-	# Ignore if not Scrobbling
-	return if !$prefs->client($client)->get('account');
-	return unless $prefs->get('enable_scrobbling');
-	
-	$log->debug( "Loved: $url" );
-	
-	# Look through the queue and update the item we want to love
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	for my $item ( @{$queue} ) {
-		if ( $item->{_url} eq $url ) {
-			$item->{r} = 'L';
-			
-			$prefs->client($client)->set( queue => $queue );
-			
-			return 1;
-		}
-	}
-	
-	# The track wasn't already in the queue, they probably rated the track
-	# before getting halfway through.  Call checkScrobble with a checktime
-	# of 0 to force it to be added to the queue with the rating of L
-	my $track = Slim::Schema->objectForUrl( { url => $url } );
-	
-	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
-	
-	checkScrobble( $client, $track, 0, 'L' );
-	
-	return 1;
-}
-
 sub checkScrobble {
 	my ( $client, $track, $checktime, $rating ) = @_;
 	
@@ -906,6 +867,69 @@ sub _submitScrobbleError {
 		\&submitScrobble,
 		$params,
 	);
+}
+
+sub loveTrack {
+	my $request = shift;
+	my $client  = $request->client || return;
+	my $url     = $request->getParam('_url');
+	
+	# Ignore if not Scrobbling
+	return if !$prefs->client($client)->get('account');
+	return unless $prefs->get('enable_scrobbling');
+	
+	$log->debug( "Loved: $url" );
+	
+	# Look through the queue and update the item we want to love
+	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	for my $item ( @{$queue} ) {
+		if ( $item->{_url} eq $url ) {
+			$item->{r} = 'L';
+			
+			$prefs->client($client)->set( queue => $queue );
+			
+			return 1;
+		}
+	}
+	
+	# The track wasn't already in the queue, they probably rated the track
+	# before getting halfway through.  Call checkScrobble with a checktime
+	# of 0 to force it to be added to the queue with the rating of L
+	my $track = Slim::Schema->objectForUrl( { url => $url } );
+	
+	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
+	
+	checkScrobble( $client, $track, 0, 'L' );
+	
+	return 1;
+}
+
+# Return whether or not the given track will be scrobbled
+sub canScrobble {
+	my ( $class, $client, $track ) = @_;
+	
+	# Ignore if not Scrobbling
+	return if !$prefs->client($client)->get('account');
+	return unless $prefs->get('enable_scrobbling');
+	
+	# Must be over 30 seconds
+	return if $track->secs && $track->secs < 30;
+	
+	# Remote tracks must provide a source
+	if ( $track->remote ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+		if ( $handler && $handler->can('audioScrobblerSource') ) {
+			if ( my $source = $handler->audioScrobblerSource( $track->url ) ) {
+				return 1;
+			}
+		}
+	}
+	else {
+		return 1;
+	}
+
+	return;
 }
 
 1;
