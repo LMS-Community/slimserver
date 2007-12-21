@@ -144,15 +144,14 @@
 			[%- IF pageinfo.alphamap %]
 				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
 					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
-					[%- IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');">&nbsp;[% alphakey | html %]</span>
-					[%- ELSE %]<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %]#[% alphakey | uri %][% IF useJS %]')[% END %]">&nbsp;[% alphakey | html %]</a>
+					[%- IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');">&nbsp;[% alphakey | html %]</span><wbr/>
+					[%- ELSE %]<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %]#[% alphakey | uri %][% IF useJS %]')[% END %]">&nbsp;[% alphakey | html %]</a><wbr/>
 					[%- END %]
 				[%- END %]
 			[%- ELSE %]
 				[%- FOREACH ind=[pagebarstart..pagebarend] -%]
-					[%- IF ind == pageinfo.currentpage %]<span>&nbsp;[% ind + 1 %]</span>
-					[%- ELSE %]
-						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% IF useJS %]')[% END %]">&nbsp;[% ind + 1 %]</a>
+					[%- IF ind == pageinfo.currentpage %]<span>&nbsp;[% ind + 1 %]</span><wbr/>
+					[%- ELSE %]<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% IF useJS %]')[% END %]">&nbsp;[% ind + 1 %]</a><wbr/>
 					[%- END %]
 				[% END %]
 			[%- END %]
