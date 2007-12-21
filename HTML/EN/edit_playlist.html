@@ -1,7 +1,7 @@
 [%- pagetitle = "EDIT_PLAYLIST" | string -%] 
 [%- pageicon = 'EDIT_PLAYLIST' -%] 
 [%- pwd_list = BLOCK -%]
-	/ [% "EDIT_PLAYLIST" | string %] / <a [% browsePlaylistHRef %]>[% playlist.title %]</a>
+	[% "EDIT_PLAYLIST" | string %] [% crumbSeparator %] <a [% browsePlaylistHRef %]>[% playlist.title %]</a>
 [% END -%]
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript" src="[% webroot %]html/editplaylist.js?r=[% revision %]"></script>
