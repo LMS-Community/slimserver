@@ -22,7 +22,6 @@ sub initPlugin {
 		feed => Slim::Networking::SqueezeNetwork->url('/api/live365/v1/opml'),
 		tag  => 'live365',
 		menu => 'radio',
-		'icon-id' => 'html/images/ServiceProviders/live365.png',
 	);
 }
 

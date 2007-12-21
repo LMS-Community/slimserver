@@ -283,6 +283,13 @@ sub _parseInstallManifest {
 		return ($pluginName, $installManifest);
 	}
 
+
+	if ($installManifest->{'icon-id'}) {
+
+		Slim::Web::Pages->addPageLinks("icons", { $pluginName => $installManifest->{'icon-id'} });
+
+	}
+
 	$installManifest->{'error'}   = INSTALLERROR_SUCCESS;
 
 	if ($installManifest->{'defaultState'} && !defined $prefs->get($pluginName)) {

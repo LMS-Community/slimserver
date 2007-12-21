@@ -18,10 +18,9 @@ sub initPlugin {
 		*{$class.'::'.'tag'}  = sub { $args{tag} };
 		*{$class.'::'.'menu'} = sub { $args{menu} };
 	}
-	
-	if (exists $args{'icon-id'}) {
-		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => $args{'icon-id'} });
-	} else {
+
+	if (!$class->_pluginDataFor('icon')) {
+
 		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
 	}
 	
@@ -80,7 +79,9 @@ sub setMode {
 sub cliRadiosQuery {
 	my ( $class, $args, $cli_menu ) = @_;
 	my $tag  = $args->{tag};
-	my $icon = defined($args->{'icon-id'}) ? $args->{'icon-id'} : 'html/images/radio.png';
+
+	my $icon = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+
 	return sub {
 		my $request = shift;
 

@@ -56,6 +56,11 @@ sub initPlugin {
 		$class->webPages;
 	}
 
+	if ($class->_pluginDataFor('icon')) {
+
+		Slim::Web::Pages->addPageLinks("icons", { $name => $class->_pluginDataFor('icon') });
+	}
+
 	if ($class->can('defaultMap')) {
 
 		Slim::Hardware::IR::addModeDefaultMapping($mode, $class->defaultMap);

@@ -15,7 +15,6 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed      => Slim::Networking::SqueezeNetwork->url( '/api/lma/v1/opml' ),
 		tag       => 'lma',
-		'icon-id' => 'html/images/ServiceProviders/lma.png',
 		menu      => 'music_services',
 		style     => 'albumcurrent',
 	);

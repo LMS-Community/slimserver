@@ -132,7 +132,6 @@ sub webPages {
 	my $url   = 'plugins/Podcast/index.html';
 	
 	Slim::Web::Pages->addPageLinks('plugins', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/podcast.png' });
 	
 	Slim::Web::HTTP::protectURI($url);
 
@@ -171,7 +170,7 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text'    => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-			'icon-id' => 'html/images/ServiceProviders/podcast.png',
+			'icon-id' => Slim::Plugin::Podcast::Plugin->_pluginDataFor('icon'),
 			'actions' => {
 				'go' => {
 					'cmd' => ['podcast', 'items'],

@@ -116,7 +116,6 @@ sub webPages {
 	my $url   = 'plugins/RadioTime/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/radiotime.png' });
 	
 	Slim::Web::HTTP::protectURI($url);
 	
@@ -148,7 +147,7 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text'    => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-			'icon-id' => 'html/images/ServiceProviders/radiotime.png',
+			'icon-id' => Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon'),
 			'actions' => {
 				'go' => {
 					'cmd' => ['radiotime', 'items'],

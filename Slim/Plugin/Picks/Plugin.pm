@@ -14,7 +14,6 @@ sub initPlugin {
 		feed => 'http://www.slimdevices.com/picks/split/picks.opml',
 		tag  => 'picks',
 		menu => 'radio',
-		'icon-id' => 'html/images/ServiceProviders/picks.png',
 	);
 }
 
