@@ -86,8 +86,14 @@ sub new {
 	$client->[0] = $id;
 	$client->[1] = $deviceid;
 	
-	# Ignore UUID if it contains a lot of 0's
-	if ( $uuid =~ /00000000/ ) {
+	# Ignore UUID if it's from a firmware that sends bogus data or is all zeros
+	if (
+		$uuid && (
+			   ( $client->isa('Slim::Player::Transporter') && $rev < 35 )
+			|| ( $client->isa('Slim::Player::Squeezebox2') && $rev < 85 )
+			|| ( $uuid eq '0' x 32 )
+		)
+	) {
 		$uuid = undef;
 	}
 	
