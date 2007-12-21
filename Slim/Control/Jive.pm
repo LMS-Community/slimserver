@@ -189,9 +189,9 @@ sub mainMenu {
 			displayWhenOff => 0,
 			actions => {
 				go => {
-					cmd => ['music_on_demand'],
+					cmd => ['music_services'],
 					params => {
-						menu => 'music_on_demand',
+						menu => 'music_services',
 					},
 				},
 			},
