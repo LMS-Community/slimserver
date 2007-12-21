@@ -1846,6 +1846,18 @@ PROBLEM_OPENING_REMOTE_URL
 	SV	Fel: Kan inte öppna URL
 	ZH_CN	失误：无法连接网址
 
+PROBLEM_CONVERT_FILE
+	EN	Problem: Unable to play file type for:
+
+PROBLEM_CONVERT_STREAM
+	EN	Problem: Unable to convert stream:
+
+PROBLEM_CONVERTING_STREAM
+	EN	Error: DRM in file:
+
+PROBLEM_UNKNOWN_TYPE
+	EN	Error: Unrecognized file type for:
+
 PLAYLIST_NO_ITEMS_FOUND
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist

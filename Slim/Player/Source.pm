@@ -1729,7 +1729,7 @@ sub openSong {
 
 						logError("Couldn't create command line for $type playback for [$fullpath]");
 
-						errorOpening($client);
+						errorOpening($client,'PROBLEM_CONVERT_FILE');
 
 						return undef;
 					}
@@ -1758,7 +1758,7 @@ sub openSong {
 
 							logError("Couldn't create command line for $type playback for [$fullpath]");
 
-							errorOpening($client);
+							errorOpening($client,'PROBLEM_CONVERT_FILE');
 							
 							return undef;
 						}
@@ -1771,7 +1771,7 @@ sub openSong {
 
 							logError("While creating conversion pipeline for: [$fullpath]");
 
-							errorOpening($client);
+							errorOpening($client,,'PROBLEM_CONVERT_STREAM');
 
 							return undef;
 						}
@@ -1868,7 +1868,7 @@ sub openSong {
 
 				logWarning("[$fullpath] has DRM. Skipping.");
 
-				errorOpening($client);
+				errorOpening($client, 'PROBLEM_DRM');
 				return undef;
 			}
 
@@ -1897,7 +1897,7 @@ sub openSong {
 
 			logError("Couldn't create command line for $type playback for [$fullpath]");
 
-			errorOpening($client);
+			errorOpening($client,'PROBLEM_CONVERT_FILE');
 
 			return undef;
 		}
@@ -2069,7 +2069,7 @@ sub openSong {
 
 		logError("[$fullpath] Unrecognized type " . Slim::Music::Info::contentType($fullpath));
 
-		errorOpening($client);
+		errorOpening($client, 'PROBLEM_CONVERT_FILE');
 		return undef;
 	}
 
