@@ -30,6 +30,7 @@ sub read {
 	if ($content =~ /<ASX/i) {
 		
 		# Forget trying to parse this as XML, all we care about are REF and ENTRYREF elements
+		# XXX: We're ignorning <title> elements here (bug 4681)
 		$log->info("Parsing ASX 3.0: $file url: [$url]");
 
 		my @refs      = $content =~ m{<ref\s+href\s*=\s*"([^"]+)"}ig;
