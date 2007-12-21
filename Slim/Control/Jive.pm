@@ -230,16 +230,17 @@ sub mainMenu {
 	}
 
 	my $playerSettings = playerSettingsMenu($client, 1);
-	my $myMusic = myMusicMenu(1);
+	my $myMusic = myMusicMenu(1, $client);
 	@menu = (@menu, @$playerSettings, @$myMusic);
 
-	_notifyJive(\@menu);
+	_notifyJive(\@menu, $client);
 
 }
 
 # allow a plugin to add a node to the menu
 sub registerPluginNode {
 	my $nodeRef = shift;
+	my $client = shift || undef;
 	unless (ref($nodeRef) eq 'HASH') {
 		$log->error("Incorrect data type");
 		return;
@@ -249,7 +250,8 @@ sub registerPluginNode {
 	$log->info("Registering node menu item from plugin");
 
 	# notify this menu to be added
-	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $nodeRef, 'add' ] );
+	my $id = _clientId($client);
+	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $nodeRef, 'add', $id ] );
 
 	# but also remember this structure as part of the plugin menus
 	push @pluginMenus, $nodeRef;
@@ -258,13 +260,15 @@ sub registerPluginNode {
 
 # send plugin menus array as a notification to Jive
 sub refreshPluginMenus {
-	_notifyJive(\@pluginMenus);
+	my $client = shift || undef;
+	_notifyJive(\@pluginMenus, $client);
 }
 
 #allow a plugin to add an array of menu entries
 sub registerPluginMenu {
 	my $menuArray = shift;
 	my $node = shift;
+	my $client = shift || undef;
 
 	unless (ref($menuArray) eq 'ARRAY') {
 		$log->error("Incorrect data type");
@@ -283,7 +287,8 @@ sub registerPluginMenu {
 	$log->info("Registering menus from plugin");
 
 	# notify this menu to be added
-	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $menuArray, 'add' ] );
+	my $id = _clientId($client);
+	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuArray, 'add', $id ] );
 
 	# now we want all of the items in $menuArray to go into @pluginMenus, but we also
 	# don't want duplicate items (specified by 'id'), 
@@ -314,11 +319,13 @@ sub registerPluginMenu {
 # allow a plugin to delete an item from the Jive menu based on the id of the menu item
 sub deleteMenuItem {
 	my $menuId = shift;
+	my $client = shift || undef;
 	return unless $menuId;
 	$log->warn($menuId . " menu id slated for deletion");
 	# send a notification to delete
 	my @menuDelete = ( { id => $menuId } );
-	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', \@menuDelete, 'remove' ] );
+	my $id = _clientId($client);
+	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', \@menuDelete, 'remove', $id ] );
 	# but also remember that this id is not to be sent
 	$itemsToDelete{$menuId}++;
 }
@@ -696,14 +703,25 @@ sub playerSettingsMenu {
 	if ($batch) {
 		return \@menu;
 	} else {
-		_notifyJive(\@menu);
+		_notifyJive(\@menu, $client);
 	}
 }
 
+sub _clientId {
+	my $client = shift;
+	my $id = 'all';
+	if ( blessed($client) && $client->id() ) {
+		$id = $client->id();
+	}
+	return $id;
+}
+	
 sub _notifyJive {
 	my $menu = shift;
+	my $client = shift || undef;
+	my $id = _clientId($client);
 	my $menuForExport = _purgeMenu($menu);
-	Slim::Control::Request::notifyFromArray( undef, [ 'menustatus', $menuForExport, 'add' ] );
+	Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', $menuForExport, 'add', $id ] );
 }
 
 sub howManyPlayersToSyncWith {
@@ -1102,7 +1120,7 @@ sub playerPower {
 		return \@return;
 	} else {
 		# send player power info by notification
-		_notifyJive(\@return);
+		_notifyJive(\@return, $client);
 	}
 
 }
@@ -1175,6 +1193,7 @@ sub replayGainHash {
 
 sub myMusicMenu {
 	my $batch = shift;
+	my $client = shift || undef;
 	my @myMusicMenu = (
 			{
 				text           => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
@@ -1323,13 +1342,14 @@ sub myMusicMenu {
 	if ($batch) {
 		return \@myMusicMenu;
 	} else {
-		_notifyJive(\@myMusicMenu);
+		_notifyJive(\@myMusicMenu, $client);
 	}
 
 }
 
 sub searchMenu {
 	my $batch = shift;
+	my $client = shift || undef;
 	my @searchMenu = (
 	{
 		text           => Slim::Utils::Strings::string('ARTISTS'),
@@ -1445,7 +1465,7 @@ sub searchMenu {
 	if ($batch) {
 		return \@searchMenu;
 	} else {
-		_notifyJive(\@searchMenu);
+		_notifyJive(\@searchMenu, $client);
 	}
 
 }
