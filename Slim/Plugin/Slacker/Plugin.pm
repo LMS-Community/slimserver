@@ -132,6 +132,11 @@ sub _rateTrackOK {
 	elsif ( $rating eq 'B' ) {
 		$log->debug('Rating was negative but no more skips allowed');
 	}
+	elsif ( $rating eq 'F' ) {
+		# Notify AudioScrobbler of the rating
+		my $url = Slim::Player::Playlist::url($client);
+		$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
+	}
 	
 	# For a change in rating, adjust our cached track data
 	if ( $rating =~ /[FU]/ ) {

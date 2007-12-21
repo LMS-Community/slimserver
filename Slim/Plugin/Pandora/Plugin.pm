@@ -130,6 +130,11 @@ sub _rateTrackOK {
 	elsif ( !$rating ) {
 		$log->debug('Rating was negative but no more skips allowed');
 	}
+	elsif ( $rating ) {
+		# Notify AudioScrobbler of the rating
+		my $url = Slim::Player::Playlist::url($client);
+		$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
+	}
 	
 	# Parse the text out of the OPML
 	my ($text) = $http->content =~ m/text="([^"]+)/;	

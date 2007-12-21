@@ -25,6 +25,9 @@ package Slim::Plugin::AudioScrobbler::Plugin;
 # Thanks to the SlimScrobbler plugin for inspiration and feature ideas.
 # http://slimscrobbler.sourceforge.net/
 
+# TODO:
+# Allow Love ratings for any track
+
 use strict;
 use base qw(Slim::Plugin::Base);
 
@@ -39,7 +42,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 
 use Digest::MD5 qw(md5_hex);
-use URI::Escape qw(uri_escape_utf8);
+use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');
 
@@ -70,6 +73,10 @@ sub initPlugin {
 		\&newsongCallback, 
 		[['playlist'], ['newsong']],
 	);
+	
+	# A way for other things to notify us the user loves a track
+	Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
+		[0, 1, 1, \&loveTrack]);
 }
 
 sub shutdownPlugin {
@@ -543,8 +550,44 @@ sub _submitNowPlayingError {
 	);
 }
 
+sub loveTrack {
+	my $request = shift;
+	my $client  = $request->client || return;
+	my $url     = $request->getParam('_url');
+	
+	# Ignore if not Scrobbling
+	return if !$prefs->client($client)->get('account');
+	return unless $prefs->get('enable_scrobbling');
+	
+	$log->debug( "Loved: $url" );
+	
+	# Look through the queue and update the item we want to love
+	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	for my $item ( @{$queue} ) {
+		if ( $item->{_url} eq $url ) {
+			$item->{r} = 'L';
+			
+			$prefs->client($client)->set( queue => $queue );
+			
+			return 1;
+		}
+	}
+	
+	# The track wasn't already in the queue, they probably rated the track
+	# before getting halfway through.  Call checkScrobble with a checktime
+	# of 0 to force it to be added to the queue with the rating of L
+	my $track = Slim::Schema->objectForUrl( { url => $url } );
+	
+	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
+	
+	checkScrobble( $client, $track, 0, 'L' );
+	
+	return 1;
+}
+
 sub checkScrobble {
-	my ( $client, $track, $checktime ) = @_;
+	my ( $client, $track, $checktime, $rating ) = @_;
 	
 	return unless $client;
 	
@@ -627,15 +670,16 @@ sub checkScrobble {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	push @{$queue}, {
-		a => uri_escape_utf8( $artist ),
-		t => uri_escape_utf8( $title ),
-		i => int( $client->currentPlaylistChangeTime() ),
-		o => $source,
-		r => '', # XXX: use L for thumbs-up for Pandora/Lastfm, B for Lastfm ban, S for Lastfm skip
-		l => ( $track->secs ? int( $track->secs ) : '' ),
-		b => uri_escape_utf8( $album ),
-		n => $tracknum,
-		m => $track->musicbrainz_id,
+		_url => $cururl,
+		a    => uri_escape_utf8( $artist ),
+		t    => uri_escape_utf8( $title ),
+		i    => int( $client->currentPlaylistChangeTime() ),
+		o    => $source,
+		r    => $rating, # L for thumbs-up for Pandora/Lastfm, B for Lastfm ban, S for Lastfm skip
+		l    => ( $track->secs ? int( $track->secs ) : '' ),
+		b    => uri_escape_utf8( $album ),
+		n    => $tracknum,
+		m    => $track->musicbrainz_id,
 	};
 	
 	# save queue as a pref
@@ -690,15 +734,28 @@ sub submitScrobble {
 		#$log->debug( Data::Dump::dump($queue) );
 	}
 	
+	my $current;
 	my @tmpQueue;
 	
 	my $post = 's=' . $client->pluginData('session_id');
 	
 	my $index = 0;
 	while ( my $item = shift @{$queue} ) {
+		
+		# Don't submit tracks that are still playing, to allow user
+		# to rate the track
+		if ( stillPlaying( $client, $item ) ) {
+			$log->debug( "Track " . $item->{_url} . " is still playing, not submitting" );
+			$current = $item;
+			next;
+		}
+		
 		push @tmpQueue, $item;
 		
 		for my $p ( keys %{$item} ) {
+			# Skip internal items i.e. _url
+			next if $p =~ /^_/;
+			
 			# each value is already uri-escaped as needed
 			$post .= '&' . $p . '[' . $index . ']=' . $item->{ $p };
 		}
@@ -706,26 +763,77 @@ sub submitScrobble {
 		$index++;
 	}
 	
+	# Add the currently playing track back to the queue
+	if ( $current ) {
+		unshift @{$queue}, $current;
+		
+		# Try again in a minute
+		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + 60,
+			\&submitScrobble,
+		);
+	}
+	
 	$prefs->client($client)->set( queue => $queue );
 	
-	$log->debug( "Submitting: $post" );
+	if ( @tmpQueue ) {
+		$log->debug( "Submitting: $post" );
 	
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_submitScrobbleOK,
-		\&_submitScrobbleError,
-		{
-			tmpQueue => \@tmpQueue,
-			params   => $params,
-			client   => $client,
-			timeout  => 30,
-		},
-	);
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			\&_submitScrobbleOK,
+			\&_submitScrobbleError,
+			{
+				tmpQueue => \@tmpQueue,
+				params   => $params,
+				client   => $client,
+				timeout  => 30,
+			},
+		);
 	
-	$http->post(
-		$client->pluginData('submit_url'),
-		'Content-Type' => 'application/x-www-form-urlencoded',
-		$post,
-	);
+		$http->post(
+			$client->pluginData('submit_url'),
+			'Content-Type' => 'application/x-www-form-urlencoded',
+			$post,
+		);
+	}
+}
+
+# Check if a track is still playing
+sub stillPlaying {
+	my ( $client, $item ) = @_;
+	
+	# Get the currently playing track
+	my $url   = Slim::Player::Playlist::url($client);
+	my $track = Slim::Schema->objectForUrl( { url => $url } );
+	
+	my $artist   = $track->artist ? $track->artist->name : '';
+	my $album    = $track->album  ? $track->album->name  : '';
+	my $title    = $track->title;
+	
+	if ( $track->remote ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			# this plugin provides track metadata, i.e. Pandora, Rhapsody
+			my $meta  = $handler->getMetadataFor( $client, $url, 'forceCurrent' );			
+			$artist   = $meta->{artist};
+			$album    = $meta->{album};
+			$title    = $meta->{title};
+		}
+	}
+	
+	if ( $title ne uri_unescape( $item->{t} ) ) {
+		return 0;
+	}
+	elsif ( $album ne uri_unescape( $item->{b} ) ) {
+		return 0;
+	}
+	elsif ( $artist ne uri_unescape( $item->{a} ) ) {
+		return 0;
+	}
+	
+	return 1;
 }
 
 sub _submitScrobbleOK {
@@ -791,6 +899,7 @@ sub _submitScrobbleError {
 	
 	# Retry after a short delay
 	$params->{retry}++;
+	Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
 	Slim::Utils::Timers::setTimer(
 		$client,
 		Time::HiRes::time() + 5,
