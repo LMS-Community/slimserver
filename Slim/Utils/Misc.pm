@@ -829,6 +829,8 @@ else {
 $_ignoredItems{'.'}	= 1;
 $_ignoredItems{'..'}	= 1;
 
+# Don't include old Shoutcast recently played items.
+$_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
 
 =head2 fileFilter( $dirname, $item )
 
@@ -847,7 +849,6 @@ sub fileFilter {
 
 	# Ignore special named files and directories
 	# __ is a match against our old __history and __mac playlists.
-	# ._Foo is a OS X meta file.
 	return 0 if $item =~ /^__\S+\.m3u$/o;
 	return 0 if $item =~ /^\./o;
 
@@ -891,6 +892,18 @@ sub fileFilter {
 	return 1
 }
 
+=head2 folderFilter( $dirname )
+
+	Verify whether we want to include a folder in our search.
+
+=cut
+
+sub folderFilter {
+	my @path = splitdir(shift);
+	my $folder = pop @path; 
+
+	return fileFilter(catdir(@path), $folder);
+}
 
 =head2 readDirectory( $dirname, [ $validRE ])
 

@@ -116,16 +116,7 @@ sub findFilesMatching {
 		
 		return 0 if !$args->{'recursive'};
 
-		# Don't include old Shoutcast recently played items.
-		return 0 if /ShoutcastBrowser_Recently_Played/;
-
-		if ($os eq 'win') {
-			my $attribs;
-
-			return Win32::File::GetAttributes($File::Next::dir, $attribs) && !($attribs & Win32::File::HIDDEN());
-		}
-
-		return 1;
+		return Slim::Utils::Misc::folderFilter($File::Next::dir);
 	};
 
 	my $file_filter = sub {
