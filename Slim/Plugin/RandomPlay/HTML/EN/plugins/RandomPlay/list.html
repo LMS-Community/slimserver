@@ -100,6 +100,14 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 
 		<hr>
 
+		<p>
+			<input class="stdedit" type="checkbox" name="continuousMode" id="continuousMode" value="1"
+			[% IF pluginRandomContinuousMode %]checked[% END %]>
+			<label for="continuousMode">[% "PLUGIN_RANDOM_CONTINUOUS_MODE" | string %]</label>
+		</p>
+
+
+
 		<p>[% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %]</p>
 	
 		[% odd = 1 %]
@@ -173,12 +181,6 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 										 + '" id="selectAllButton" onclick="selectAll()">');
 		// -->
 		</script>
-
-		<p>
-			<input class="stdedit" type="checkbox" name="continuousMode" id="continuousMode" value="1"
-			[% IF pluginRandomContinuousMode %]checked[% END %]>
-			<label for="continuousMode">[% "PLUGIN_RANDOM_CONTINUOUS_MODE" | string %]</label>
-		</p>
 
 		<p>
 			[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
