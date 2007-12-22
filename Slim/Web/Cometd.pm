@@ -404,7 +404,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
-			# A request to execute & subscribe to some SlimServer event
+			# A request to execute & subscribe to some SqueezeCenter event
 			
 			# A valid /slim/subscribe message looks like this:
 			# {
@@ -465,7 +465,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
-			# A request to unsubscribe from a SlimServer event, this is not the same as /meta/unsubscribe
+			# A request to unsubscribe from a SqueezeCenter event, this is not the same as /meta/unsubscribe
 			
 			# A valid /slim/unsubscribe message looks like this:
 			# {
@@ -488,7 +488,7 @@ sub handler {
 			};
 		}
 		elsif ( $obj->{channel} eq '/slim/request' ) {
-			# A request to execute a one-time SlimServer event
+			# A request to execute a one-time SqueezeCenter event
 			
 			# A valid /slim/request message looks like this:
 			# {

@@ -2,7 +2,7 @@ package Slim::Utils::Validate;
 
 # $Id: Validate.pm 11972 2007-05-12 07:32:19Z kdf $
 
-# SlimServer Copyright 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -393,7 +393,7 @@ sub sigquit {
 	exit();
 }
 
-# Aliased to END in slimserver & scanner, as Log::Log4perl installs an END
+# Aliased to END in SqueezeCenter & scanner, as Log::Log4perl installs an END
 # handler, which needs to run last.
 sub theEND {
 

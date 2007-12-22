@@ -18,7 +18,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 } );
 
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
-# XXX: needs testing in SlimServer
+# XXX: needs testing in SqueezeCenter
 sub new {
 	my $class  = shift;
 	my $args   = shift;

@@ -55,12 +55,12 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 	NL	Nee, gespeelde nummers niet bij Last.fm melden.
 
 PLUGIN_AUDIOSCROBBLER_BANNED
-	DE	Last.fm scheint diese Version von SlimServer nicht zuzulassen. Aktualisieren Sie auf eine neuere Version.
-	EN	This version of SlimServer appears to have been banned by Last.fm, please upgrade to a newer version.
-	ES	Parece que Last.fm ha prohibido esta versión de SlimServer. Actualícela a una versión más reciente.
-	FR	Cette version du SlimServer semble avoir été bannie par Last.fm. Veuillez effectuer une mise à niveau vers une version plus récente.
-	IT	È possibile che questa versione di SlimServer non sia supportata in Last.fm. Eseguire l'aggiornamento a una versione successiva.
-	NL	Deze versie van SlimServer wordt blijkbaar niet meer door Last.fm ondersteund. Upgrade naar een nieuwere versie.
+	DE	Last.fm scheint diese Version von SqueezeCenter nicht zuzulassen. Aktualisieren Sie auf eine neuere Version.
+	EN	This version of SqueezeCenter appears to have been banned by Last.fm, please upgrade to a newer version.
+	ES	Parece que Last.fm ha prohibido esta versión de SqueezeCenter. Actualícela a una versión más reciente.
+	FR	Cette version du SqueezeCenter semble avoir été bannie par Last.fm. Veuillez effectuer une mise à niveau vers une version plus récente.
+	IT	È possibile che questa versione di SqueezeCenter non sia supportata in Last.fm. Eseguire l'aggiornamento a una versione successiva.
+	NL	Deze versie van SqueezeCenter wordt blijkbaar niet meer door Last.fm ondersteund. Upgrade naar een nieuwere versie.
 
 PLUGIN_AUDIOSCROBBLER_BADAUTH
 	DE	Last.fm-Benutzername oder -Kennwort ungültig.

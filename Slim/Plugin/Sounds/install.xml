@@ -11,7 +11,7 @@
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type>
 	<targetApplication>
-		<id>SlimServer</id>
+		<id>SqueezeCenter</id>
 		<minVersion>7.0</minVersion>
 		<maxVersion>7.0+</maxVersion>
 	</targetApplication>

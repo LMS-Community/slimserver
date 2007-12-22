@@ -676,7 +676,7 @@ sub audio_outputs_enable {
 }
 
 
-# The following settings are sync'd between the player firmware and slimserver
+# The following settings are sync'd between the player firmware and SqueezeCenter
 our $pref_settings = {
 	'playername' => {
 		firmwareid => 0,
@@ -743,7 +743,7 @@ sub setPlayerSetting {
 	}
 }
 
-# Allow the firmware to update a pref in slimserver
+# Allow the firmware to update a pref in SqueezeCenter
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;
