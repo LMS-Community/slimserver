@@ -897,16 +897,14 @@ sub stream {
 			$pcmchannels     = '?';
 			$outputThreshold = 0;
 
-			# Only on Squeezebox2/3, threshold the output buffer for
-			# downsampled 96kHz flac.
+			# Threshold the output buffer for high sample-rate flac.
 			if ($params->{url}) {
 
 				my $track = Slim::Schema->rs('Track')->objectForUrl({
 					'url' => $params->{url},
 				});
 
-				if ($client->model() eq 'squeezebox2' &&
-				    $track && $track->samplerate() && $track->samplerate() == 96000) {
+				if ($track && $track->samplerate() && $track->samplerate() >= 88200) {
 			    		$outputThreshold = 20;
 				}
 			}
