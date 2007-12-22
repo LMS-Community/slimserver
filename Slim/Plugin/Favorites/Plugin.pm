@@ -203,14 +203,21 @@ sub indexHandler {
 	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
 
 	if (!defined $level || $params->{'action'} =~ /^play|^add/) {
-		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
-		# also pass through play/add to reuse xmlbrowser handling of playall etc
-		$log->info("passing through to xmlbrowser");
 
-		return Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => $opml->xmlbrowser,
-			args   => [$client, $params, @_],
-		} );
+		if ($sessId == 1) {
+			# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
+			# also pass through play/add to reuse xmlbrowser handling of playall etc
+			$log->info("passing through to xmlbrowser");
+			
+			return Slim::Web::XMLBrowser->handleWebIndex( {
+				feed   => $opml->xmlbrowser,
+				args   => [$client, $params, @_],
+			} );
+
+		} else {
+			# this is not the favorites session - if we pass through to xmlbrowser we loose session state, so dissable for now
+			return;
+		}
 	}
 
 	# if not editting favorites create favs class so we can add or delete urls from favorites
@@ -521,7 +528,7 @@ sub indexHandler {
 	# add the top level title to pwd_list
 	push @{$params->{'pwd_list'}}, {
 		'title' => $opml && $opml->title || string('PLUGIN_FAVORITES_EDITOR'),
-		'href'  => 'href="index.html?index="',
+		'href'  => 'href="index.html?index=&sess=' . $sessId . '"',
 	};
 
 	# add remaining levels up to current level to pwd_list
@@ -530,7 +537,7 @@ sub indexHandler {
 		my @ind = @indexPrefix[0..$i];
 		push @{$params->{'pwd_list'}}, {
 			'title' => $opml->entry(\@ind)->{'text'},
-			'href'  => 'href="index.html?index=' . (join '.', @ind) . '"',
+			'href'  => 'href="index.html?index=' . (join '.', @ind) . '&sess=' . $sessId . '"',
 		};
 	}
 
