@@ -591,7 +591,7 @@ Playlist = function(){
 			if (el = Ext.get('playList')) {
 				var plPos = el.getScroll();
 				var plView = el.getViewSize();
-				var el = Ext.DomQuery.selectNode('div.selectedItem');
+				var el = Ext.DomQuery.selectNode('div.currentSong');
 
 				if (el) {
 					el = Ext.get(el);
