@@ -123,7 +123,7 @@ sub initPlugin {
 
 	my $node = {
 			text           => Slim::Utils::Strings::string(getDisplayName()),
-			weight         => 100,
+			weight         => 60,
 			id             => 'randomplay',
 			node           => 'myMusic',
 			displayWhenOff => 0,
