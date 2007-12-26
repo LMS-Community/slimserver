@@ -27,7 +27,7 @@ sub isAudioURL { 1 }
 
 # Source for AudioScrobbler
 sub audioScrobblerSource {
-	my $url = shift;
+	my ( $class, $client, $url ) = @_;
 
 	if ( $url =~ /\.rdr$/ ) {
 		# R = Non-personalised broadcast

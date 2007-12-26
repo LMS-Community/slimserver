@@ -591,7 +591,7 @@ sub checkScrobble {
 			
 			# Get the source type from the plugin
 			if ( $handler->can('audioScrobblerSource') ) {
-				$source = $handler->audioScrobblerSource( $cururl );
+				$source = $handler->audioScrobblerSource( $client, $cururl );
 			}
 		}
 		else {
@@ -920,7 +920,7 @@ sub canScrobble {
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
 		if ( $handler && $handler->can('audioScrobblerSource') ) {
-			if ( my $source = $handler->audioScrobblerSource( $track->url ) ) {
+			if ( my $source = $handler->audioScrobblerSource( $client, $track->url ) ) {
 				return 1;
 			}
 		}

@@ -419,7 +419,7 @@ sub onJump {
 
 # Allow mp3tunes tracks to be scrobbled
 sub audioScrobblerSource {
-	my ( $class, $url ) = @_;
+	my ( $class, $client, $url ) = @_;
 	
 	if ( $url =~ /mp3tunes\.com/ ) {
 		# Scrobble mp3tunes as 'chosen by user' content
