@@ -465,7 +465,7 @@ sub submitNowPlaying {
 		. '&b=' . uri_escape_utf8( $album )
 		. '&l=' . ( $track->secs ? int( $track->secs ) : '' )
 		. '&n=' . $tracknum
-		. '&m=' . $track->musicbrainz_id;
+		. '&m=' . ( $track->musicbrainz_id || '' );
 	
 	$log->debug("Submitting Now Playing track to Last.fm: $post");
 
@@ -640,7 +640,7 @@ sub checkScrobble {
 		l    => ( $track->secs ? int( $track->secs ) : '' ),
 		b    => uri_escape_utf8( $album ),
 		n    => $tracknum,
-		m    => $track->musicbrainz_id,
+		m    => ( $track->musicbrainz_id || '' ),
 	};
 	
 	# save queue as a pref
