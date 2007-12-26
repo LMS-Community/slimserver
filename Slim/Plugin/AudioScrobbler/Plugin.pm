@@ -435,7 +435,7 @@ sub submitNowPlaying {
 	my $artist   = $track->artist ? $track->artist->name : '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
-	my $tracknum = $track->tracknum;
+	my $tracknum = $track->tracknum || '';
 	
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
@@ -443,9 +443,9 @@ sub submitNowPlaying {
 			# this plugin provides track metadata, i.e. Pandora, Rhapsody
 			my $meta  = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );
 			$artist   = $meta->{artist};
-			$album    = $meta->{album};
+			$album    = $meta->{album} || '';
 			$title    = $meta->{title};
-			$tracknum = $meta->{tracknum};
+			$tracknum = $meta->{tracknum} || '';
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
@@ -564,7 +564,7 @@ sub checkScrobble {
 	my $artist   = $track->artist ? $track->artist->name : '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
-	my $tracknum = $track->tracknum;
+	my $tracknum = $track->tracknum || '';
 	my $source   = 'P';
 	
 	if ( $track->remote ) {
@@ -573,9 +573,9 @@ sub checkScrobble {
 			# this plugin provides track metadata, i.e. Pandora, Rhapsody
 			my $meta  = $handler->getMetadataFor( $client, $cururl, 'forceCurrent' );			
 			$artist   = $meta->{artist};
-			$album    = $meta->{album};
+			$album    = $meta->{album} || '';
 			$title    = $meta->{title};
-			$tracknum = $meta->{tracknum};
+			$tracknum = $meta->{tracknum} || '';
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
