@@ -114,7 +114,7 @@ sub findFilesMatching {
 
 	my $descend_filter = sub {
 		
-		return 0 if !$args->{'recursive'};
+		return 0 if defined $args->{'recursive'} && !$args->{'recursive'};
 
 		return Slim::Utils::Misc::folderFilter($File::Next::dir);
 	};
