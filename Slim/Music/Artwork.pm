@@ -250,7 +250,7 @@ sub _readCoverArtFiles {
 	my $track = shift;
 	my $path  = shift;
 
-	my @names      = qw(cover thumb album folder);
+	my @names      = qw(cover Cover thumb Thumb album Album folder Folder);
 	my @ext        = qw(png jpg jpeg gif);
 
 	my $file       = file($path);
