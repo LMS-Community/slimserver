@@ -112,7 +112,9 @@ sub findArtwork {
 			
 			for my $dim ( @dims ) {
 				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p.png" );
-				Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p.png" );
+				eval {
+					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p.png" );
+				};
 			}
 		}
 

@@ -419,7 +419,7 @@ sub processCoverArtRequest {
 
 	} else {
 
-		$log->warn("Can't use GD for $path");
+		$log->warn("Can't use GD for $actualContentType ($path)");
 		$body = \$imageData;
 	}
 
