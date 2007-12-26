@@ -50,7 +50,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 } );
 
 use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com/';
-use constant CLIENT_ID     => 'ss7';
+use constant CLIENT_ID     => $ENV{SLIM_SERVICE} ? 'snw' : 'ss7';
 use constant CLIENT_VER    => 'sc' . $::VERSION;
 
 sub getDisplayName {
@@ -62,8 +62,10 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	Slim::Plugin::AudioScrobbler::Settings->new;
-	Slim::Plugin::AudioScrobbler::PlayerSettings->new;
+	if ( !$ENV{SLIM_SERVICE} ) {
+		Slim::Plugin::AudioScrobbler::Settings->new;
+		Slim::Plugin::AudioScrobbler::PlayerSettings->new;
+	}
 	
 	# Subscribe to new song events
 	Slim::Control::Request::subscribe(
@@ -74,6 +76,9 @@ sub initPlugin {
 	# A way for other things to notify us the user loves a track
 	Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
 		[0, 1, 1, \&loveTrack]);
+	
+	Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url'],
+		[0, 1, 1, \&banTrack]);
 }
 
 sub shutdownPlugin {
@@ -177,6 +182,17 @@ sub handshake {
 			$params->{username} = $prefs->client($client)->get('account');
 			
 			my $accounts = $prefs->get('accounts') || [];
+			
+			if ( $ENV{SLIM_SERVICE} ) {
+				$accounts = $prefs->client($client)->get('accounts') || [];
+			
+				if ( !ref $accounts ) {
+					use JSON::XS qw(to_json from_json);
+					use MIME::Base64 qw(encode_base64 decode_base64);
+					$accounts = from_json( decode_base64( $accounts ) );
+				}
+			}
+			
 			for my $account ( @{$accounts} ) {
 				if ( $account->{username} eq $params->{username} ) {
 					$params->{password} = $account->{password};
@@ -231,6 +247,11 @@ sub _handshakeOK {
 		
 			# If there are any tracks pending in the queue, send them now
 			my $queue = $prefs->client($client)->get('queue') || [];
+			
+			if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+				$queue = from_json( decode_base64( $queue ) );
+			}
+			
 			if ( scalar @{$queue} ) {
 				submitScrobble( $client );
 			}
@@ -318,7 +339,16 @@ sub newsongCallback {
 	# Check if this player has an account selected
 	return if !$prefs->client($client)->get('account');
 	
-	return unless $prefs->get('enable_scrobbling');
+	my $enable_scrobbling;
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
+	}
+	else {
+		$enable_scrobbling  = $prefs->get('enable_scrobbling');
+	}
+	
+	return unless $enable_scrobbling;
 
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
@@ -332,6 +362,10 @@ sub newsongCallback {
 	
 	# report all new songs as now playing
 	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( decode_base64( $queue ) );
+	}
 	
 	if ( scalar @{$queue} ) {
 		# before we submit now playing, submit all queued tracks, so that
@@ -630,6 +664,10 @@ sub checkScrobble {
 	
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( decode_base64( $queue ) );
+	}
+	
 	push @{$queue}, {
 		_url => $cururl,
 		a    => uri_escape_utf8( $artist ),
@@ -642,6 +680,10 @@ sub checkScrobble {
 		n    => $tracknum,
 		m    => ( $track->musicbrainz_id || '' ),
 	};
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$queue = encode_base64( to_json( $queue ), '' );
+	}
 	
 	# save queue as a pref
 	$prefs->client($client)->set( queue => $queue );
@@ -684,6 +726,10 @@ sub submitScrobble {
 	}
 	
 	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( decode_base64( $queue ) );
+	}
 	
 	if ( !scalar @{$queue} ) {
 		# Queue was already submitted, probably by the Now Playing request
@@ -735,6 +781,10 @@ sub submitScrobble {
 			time() + 60,
 			\&submitScrobble,
 		);
+	}
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$queue = encode_base64( to_json( $queue ), '' );
 	}
 	
 	$prefs->client($client)->set( queue => $queue );
@@ -815,7 +865,17 @@ sub _submitScrobbleOK {
 	elsif ( $content =~ /^BADSESSION/ ) {
 		# put the tmpQueue items back into the main queue
 		my $queue = $prefs->client($client)->get('queue') || [];
+		
+		if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+			$queue = from_json( decode_base64( $queue ) );
+		}
+		
 		push @{$queue}, @{$tmpQueue};
+		
+		if ( $ENV{SLIM_SERVICE} ) {
+			$queue = encode_base64( to_json( $queue ), '' );
+		}
+		
 		$prefs->client($client)->set( queue => $queue );
 		
 		$log->debug( 'Scrobble submit failed: invalid session, re-handshaking' );
@@ -845,7 +905,17 @@ sub _submitScrobbleError {
 	
 	# put the tmpQueue items back into the main queue
 	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( decode_base64( $queue ) );
+	}
+	
 	push @{$queue}, @{$tmpQueue};
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$queue = encode_base64( to_json( $queue ), '' );
+	}
+	
 	$prefs->client($client)->set( queue => $queue );
 	
 	if ( $params->{retry} == 3 ) {
@@ -876,16 +946,33 @@ sub loveTrack {
 	
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
-	return unless $prefs->get('enable_scrobbling');
+	
+	my $enable_scrobbling;
+	if ( $ENV{SLIM_SERVICE} ) {
+		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
+	}
+	else {
+		$enable_scrobbling  = $prefs->get('enable_scrobbling');
+	}
+	
+	return unless $enable_scrobbling;
 	
 	$log->debug( "Loved: $url" );
 	
 	# Look through the queue and update the item we want to love
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( decode_base64( $queue ) );
+	}
+	
 	for my $item ( @{$queue} ) {
 		if ( $item->{_url} eq $url ) {
 			$item->{r} = 'L';
+			
+			if ( $ENV{SLIM_SERVICE} ) {
+				$queue = encode_base64( to_json( $queue ) );
+			}
 			
 			$prefs->client($client)->set( queue => $queue );
 			
@@ -905,13 +992,84 @@ sub loveTrack {
 	return 1;
 }
 
+sub banTrack {
+	my $request = shift;
+	my $client  = $request->client || return;
+	my $url     = $request->getParam('_url');
+	
+	# Ignore if not Scrobbling
+	return if !$prefs->client($client)->get('account');
+	
+	my $enable_scrobbling;
+	if ( $ENV{SLIM_SERVICE} ) {
+		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
+	}
+	else {
+		$enable_scrobbling  = $prefs->get('enable_scrobbling');
+	}
+	
+	return unless $enable_scrobbling;
+
+	# Ban is only supported for Last.fm URLs
+	return unless $url =~ /^lastfm/;
+	
+	$log->debug( "Banned: $url" );
+	
+	# Look through the queue and update the item we want to ban
+	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( decode_base64( $queue ) );
+	}
+	
+	for my $item ( @{$queue} ) {
+		if ( $item->{_url} eq $url ) {
+			$item->{r} = 'B';
+			
+			if ( $ENV{SLIM_SERVICE} ) {
+				$queue = encode_base64( to_json( $queue ) );
+			}
+			
+			$prefs->client($client)->set( queue => $queue );
+			
+			# Skip to the next track
+			$client->execute([ 'playlist', 'jump', '+1' ]);
+			
+			return 1;
+		}
+	}
+	
+	# The track wasn't already in the queue, they probably rated the track
+	# before getting halfway through.  Call checkScrobble with a checktime
+	# of 0 to force it to be added to the queue with the rating of B
+	my $track = Slim::Schema->objectForUrl( { url => $url } );
+	
+	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
+	
+	checkScrobble( $client, $track, 0, 'B' );
+	
+	# Skip to the next track
+	$client->execute([ 'playlist', 'jump', '+1' ]);
+	
+	return 1;
+}	
+
 # Return whether or not the given track will be scrobbled
 sub canScrobble {
 	my ( $class, $client, $track ) = @_;
 	
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
-	return unless $prefs->get('enable_scrobbling');
+
+	my $enable_scrobbling;
+	if ( $ENV{SLIM_SERVICE} ) {
+		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
+	}
+	else {
+		$enable_scrobbling  = $prefs->get('enable_scrobbling');
+	}
+	
+	return unless $enable_scrobbling;
 	
 	# Must be over 30 seconds
 	return if $track->secs && $track->secs < 30;
