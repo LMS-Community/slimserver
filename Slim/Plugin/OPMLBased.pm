@@ -14,7 +14,7 @@ sub initPlugin {
 	
 	{
 		no strict 'refs';
-		*{$class.'::'.'feed'} = sub { $args{feed} };
+		*{$class.'::'.'feed'} = sub { $args{feed} } if $args{feed};
 		*{$class.'::'.'tag'}  = sub { $args{tag} };
 		*{$class.'::'.'menu'} = sub { $args{menu} };
 	}
@@ -65,7 +65,7 @@ sub setMode {
 	my %params = (
 		header   => $name,
 		modeName => $name,
-		url      => $class->feed(),
+		url      => $class->feed( $client ),
 		title    => $client->string( $name ),
 		timeout  => 35,
 	);
