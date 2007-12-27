@@ -613,7 +613,7 @@ Playlist = function(){
 
 		control : function(cmd, el) {
 			el = Ext.get(el);
-			if (el.dd && el.dd.config && el.dd.config.position)
+			if (el.dd && el.dd.config && el.dd.config.position >= 0)
 				Player.playerControl(['playlist', cmd, el.dd.config.position])
 		},
 
