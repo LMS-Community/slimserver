@@ -298,6 +298,12 @@ img#background { position:absolute; }
 	padding-bottom: 3px;
 }
 
+#headerSearch {
+	position: absolute;
+	right: 10px;
+	top: 0px;
+}
+
 #titleRight {
 	position: absolute;
 	left: 10px;
@@ -641,6 +647,7 @@ div.thumbwrap {
 	padding-bottom: 4px;
 }
 
+#headerSearch .searchInput,
 .browsedbControls #tuneinurl, 
 .browsedbControls .searchInput {
 	height: 15px;

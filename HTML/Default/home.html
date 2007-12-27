@@ -45,7 +45,7 @@ ELSE %]
 				control = BLOCK %]
 					<form method="GET" action="[% webroot %]search.html">
 						<input type="hidden" name="manualSearch" value="1"/>
-						<input type="hidden" name="livesearch" value="1"/>
+						<input type="hidden" name="livesearch" value="0"/>
 						<input type="hidden" name="player" value="[% playerid %]">
 						<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
 						<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
@@ -199,7 +199,7 @@ ELSE %]
 	</div>
 	[% END %]
 
-	[% PROCESS pageheader.html noHomeLink=1 %]
+	[% PROCESS pageheader.html noHomeLink=1 showSearch=1 %]
 
 	[% menu %]
 

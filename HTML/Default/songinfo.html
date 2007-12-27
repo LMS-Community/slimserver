@@ -14,7 +14,7 @@ END %]
 	[% END %]
 	<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% pagetitle %]</a>
 [% END %]
-[% PROCESS pageheader.html %]
+[% PROCESS pageheader.html showSearch=1 %]
 
 [% songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks; END %]
 

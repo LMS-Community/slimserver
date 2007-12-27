@@ -268,6 +268,14 @@ var Utils = function(){
 				click: Utils.cancelUnHighlightTimer
 			});
 
+			// initialize search field displayed in some browse pages
+			var el = Ext.get('headerSearchInput');
+			if (el && (items = Ext.get('headerSearchBtn'))) {
+				items.on('mouseover', function(){
+					el.setDisplayed(true);
+				});
+			}
+
 			Ext.EventManager.onWindowResize(Utils.resizeContent);
 			Ext.EventManager.onDocumentReady(Utils.resizeContent);
 		},
