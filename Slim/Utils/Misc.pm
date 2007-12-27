@@ -157,7 +157,7 @@ sub findbin {
 
 	} else {
 
-		$log->warn("Didn't find binary for $executable");
+		$log->info("Didn't find binary for $executable");
 
 		return undef;
 	}
