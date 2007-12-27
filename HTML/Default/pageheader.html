@@ -56,17 +56,16 @@
 				<img src="[% webroot %][% pageicon.replace('.png', "_25x25_f.png") %]" class="pageicon" width="25" border="0" alt="[% pagetitle %]">
 				[%- END -%]
 				<span>[% pagetitle %]&nbsp;</span>
-				[% IF showSearch %]
-					<span id="headerSearch">
-						<form method="GET" action="[% webroot %]search.html">
-							<input type="hidden" name="manualSearch" value="1"/>
-							<input type="hidden" name="livesearch" value="0"/>
-							<input type="hidden" name="player" value="[% playerid %]">
-							<input type="text" id="headerSearchInput" name="query" id="search" class="x-form-focus searchInput" style="display:none" size="30">
-							<input type="image" id="headerSearchBtn" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
-						</form>
-					</span>
-				[% END %]
+				<span id="headerSearch">
+					<form method="GET" action="[% webroot %]search.html">
+						<input type="hidden" name="manualSearch" value="1"/>
+						<input type="hidden" name="livesearch" value="0"/>
+						<input type="hidden" name="player" value="[% playerid %]">
+						<input type="text" id="headerSearchInput" name="query" 
+						id="search" class="x-form-focus searchInput" style="display:none" size="30">&nbsp;<input type="image" 
+						id="headerSearchBtn" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
+					</form>
+				</span>
 			</div>
 		</div>
 
