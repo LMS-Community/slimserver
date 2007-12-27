@@ -121,7 +121,7 @@
 	[% END %]
 
 	[% IF itemobj.path %] 
-		[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>[% END %]
+		[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] [% IF NOT itemobj.isRemoteURL %](<a href="[% download %]">[% "DOWNLOAD" | string %]</a>)[% END %][% END %]
 		[% PROCESS songInfoItem title = "LOCATION" %]
 	[% END %]
 
