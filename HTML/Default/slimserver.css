@@ -960,7 +960,8 @@ form#advSearchForm.resultsPage {
 	position: absolute;
 	padding: 0;
 	margin: 0;
-	top: 0;
+	top: 10px;
+	left: 5px;
 	z-index: 99;
 }
 
@@ -970,14 +971,18 @@ form#advSearchForm.resultsPage {
 }
 
 #linkedSongInfoItems {
-	top: 0px;
+	top: 10px;
 	padding-left: 160px;
-	min-height: 155px;
+	min-height: 165px;
 	position: relative;
 }
 
 #linkedSongInfoItems a {
 	font-weight: bold;
+}
+
+#linkedSongInfoItems img {
+	vertical-align: middle;
 }
 
 #linkedSongInfoItems .songInfoTitle {
