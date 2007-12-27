@@ -172,6 +172,7 @@ PlayerChooser = function(){
 	var playerDiscoveryTimer;
 	var playerNeedsUpgrade;
 	var playerList = new Ext.util.MixedCollection();
+	var previousPlayer;  // player which was active before SC was restarted
 
 	return {
 		init : function(){
@@ -196,7 +197,7 @@ PlayerChooser = function(){
 			var el;
 
 			Utils.processCommand({
-				params: [ '', [ "serverstatus", 0, 99 ] ],
+				params: [ '', [ "serverstatus", 0, 999 ] ],
 				scope: this,
 
 				success: function(response){
@@ -214,17 +215,20 @@ PlayerChooser = function(){
 							(responseText.result['player count'] > 0 || responseText.result.sn_players_loop)) {
 							var playerInList = false;
 							var el;
+							var activePlayer = playerid || previousPlayer;
 
 							playerList = new Ext.util.MixedCollection();
 
 							for (x=0; x < responseText.result['player count']; x++) {
-								var currentPlayer = false;
 								var playerInfo = responseText.result.players_loop[x];
 
 								// mark the current player as selected
-								if (playerInfo.playerid == playerid) {
-									currentPlayer = true;
-									playerInList = true;
+								if (playerInfo.playerid == activePlayer) {
+									playerInList = {
+										text: playerInfo.name,
+										value: playerInfo.playerid,
+										canpoweroff: playerInfo.canpoweroff
+									};
 									playerMenu.setText(playerInfo.name);
 
 									if (el = Ext.get('ctrlPower'))
@@ -256,7 +260,7 @@ PlayerChooser = function(){
 								);
 							}
 
-							// add alist of player connected to SQN, if available
+							// add a list of players connected to SQN, if available
 							if (responseText.result.sn_players_loop) {
 								var first = true;
 								
@@ -303,9 +307,11 @@ PlayerChooser = function(){
 								})
 							);
 
-							if (!playerInList) {
+							if (!playerInList)
 								PlayerChooser.selectPlayer();
-							}
+
+							else if (playerInList && !playerid && previousPlayer)
+								PlayerChooser.selectPlayer(playerInList);
 						}
 
 						else {
@@ -351,10 +357,13 @@ PlayerChooser = function(){
 			if (!ev) {
 				ev = {
 					text: '',
-					value: playerid,
+					value: '',
 					canpoweroff: false
 				}
 			}
+
+			if (playerid)
+				previousPlayer = playerid;
 
 			playerMenu.setText(ev.text);
 			playerid = ev.value;
@@ -1062,6 +1071,10 @@ Player = function(){
 
 							// display scanning information
 							Main.checkScanStatus(responseText);
+						}
+
+						else {
+							PlayerChooser.update();
 						}
 					},
 
