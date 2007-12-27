@@ -36,6 +36,7 @@ sub init {
 	$class->addPageLinks("radio", { 'SQUEEZENETWORK_SWITCH' => "squeezenetwork.html"});
 	$class->addPageLinks('icons', { 'SQUEEZENETWORK_SWITCH' => 'html/images/ServiceProviders/squeezenetwork.png' });
 	$class->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
+	$class->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
 }
 
 sub home {
