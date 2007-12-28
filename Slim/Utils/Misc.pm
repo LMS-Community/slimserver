@@ -921,7 +921,7 @@ sub readDirectory {
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		my ($volume) = splitpath($dirname);
 
-		if ($volume && !Win32::DriveInfo::IsReady($volume)) {
+		if ($volume && isWinDrive($volume) && !Win32::DriveInfo::IsReady($volume)) {
 			
 			$log->debug("drive [$dirname] not ready");
 
