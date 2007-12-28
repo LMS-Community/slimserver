@@ -120,8 +120,8 @@
 		[% item = itemobj.tagversion | html; title = "TAGVERSION"; PROCESS songInfoItem %]
 	[% END %]
 
-	[% IF itemobj.path %] 
-		[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] [% IF NOT itemobj.isRemoteURL %](<a href="[% download %]">[% "DOWNLOAD" | string %]</a>)[% END %][% END %]
+	[% IF itemobj.path && NOT itemobj.isRemoteURL %]
+		[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] (<a href="[% download %]">[% "DOWNLOAD" | string %]</a>)[% END %]
 		[% PROCESS songInfoItem title = "LOCATION" %]
 	[% END %]
 
