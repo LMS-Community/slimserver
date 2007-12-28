@@ -19,11 +19,6 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Web::HTTP;
 
-# Subversion Change 134 says that I can blame Felix for adding this
-# "functionality" to SqueezeCenter :)
-#
-# http://svn.slimdevices.com/trunk/server/Slim/Web/EditPlaylist.pm?rev=134&view=rev
-
 sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^edit_playlist\.(?:htm|xml)/, \&editplaylist);
 }
@@ -31,11 +26,11 @@ sub init {
 sub editplaylist {
 	my ($client, $params) = @_;
 
-	# This is a dispatcher to parts of the playlist editing that at one
-	# time was contained in the mess of Slim::Web::Pages::browser()
-	#
-	# Now that playlists reside in the db - these functions are much
-	# smaller and easier to work with.
+	$params->{'hierarchy'} = 'playlist,playlistTrack';
+	$params->{'level'} = 1;
+
+
+	# This is a dispatcher to parts of the playlist editing
 	if ($params->{'saveCurrentPlaylist'}) {
 
 		return saveCurrentPlaylist($client, $params);
@@ -87,26 +82,7 @@ sub editplaylist {
 
 	}
 
-
-	my $playlist = Slim::Schema->find('Playlist', $playlist_id);
-
-	if (!blessed($playlist) || !$playlist->tracks) {
-
-		return [];
-	}
-
-	my @items   = $playlist->tracks;
-
-	$params->{'items'}        = \@items;
-	$params->{'playlist'}     = $playlist;
-
-	if ($items[$itemPos] && ref($items[$itemPos])) {
-
-		$params->{'form_title'} = $items[$itemPos]->title;
-		$params->{'form_url'}   = $items[$itemPos]->url;
-	}
-
-	return Slim::Web::HTTP::filltemplatefile("edit_playlist.html", $params);
+	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
 }
 
 sub saveCurrentPlaylist {
