@@ -125,12 +125,12 @@ sub renamePlaylist {
 	my ($client, $params) = @_;
 
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
-	$params->{'level'}     = 0;
+	$params->{'level'}     = 1;
 	
 	my $playlist_id = $params->{'playlist.id'};
 	my $newName     = $params->{'newname'};
-	my $dry_run     = $params->{'overwrite'};
-	
+	my $dry_run     = !$params->{'overwrite'};
+
 	my $request = Slim::Control::Request::executeRequest(undef, [
 					'playlists', 
 					'rename', 
@@ -138,23 +138,19 @@ sub renamePlaylist {
 					'newname:' . $newName,
 					'dry_run:' . $dry_run]);
 
-	if (blessed($request)) {
-	
-		if ($request->getResult('overwritten_playlist_id') && !$params->{'overwrite'}) {
+	if (blessed($request) && $request->getResult('overwritten_playlist_id') && !$params->{'overwrite'}) {
 
 			$params->{'RENAME_WARNING'} = 1;
 
-		} elsif (!$params->{'overwrite'}) {
+	}
+	
+	else {
 
-			my $request = Slim::Control::Request::executeRequest(undef, [
-							'playlists', 
-							'rename', 
-							'playlist_id:' . $playlist_id,
-							'newname:' . $newName]);
-		}
-		
-		$params->{'level'}       = 1;
-		$params->{'playlist.id'} = $playlist_id;
+		my $request = Slim::Control::Request::executeRequest(undef, [
+						'playlists', 
+						'rename', 
+						'playlist_id:' . $playlist_id,
+						'newname:' . $newName]);
 	}
 
 	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
