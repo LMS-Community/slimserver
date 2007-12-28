@@ -27,7 +27,7 @@ var Favorites = function(){
 							},
 							function(){
 								Utils.init();
-								Favorites.init();
+								Favorites.init(session);
 							}
 						);
 					}
