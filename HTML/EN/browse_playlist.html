@@ -58,11 +58,11 @@
 		[% rightcontrols = 'editcontrols'; leftcontrols = 'browsecontrols' %]
 
 		[% BLOCK editcmd %]
-				href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist.id=[% playlist.id %]&amp;item=[% loop.count - 1 %]"
+				href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist.id=[% playlist.id %]&amp;itempos=[% loop.count - 1 %]"
 		[% END %]
 		
 		[% BLOCK editcontrols %]
-			[% IF loop.count > 1 %]
+			[% IF loop.count > 1 || loop.last %]
 			[% UNLESS useExtJS %]
 				[%- WRAPPER moveuplink noTarget=1 %]
 					[%- PROCESS editcmd cmd='up' %]
@@ -73,9 +73,9 @@
 				[% END %]
 			[% END %]
 			
-			[%#- WRAPPER editlink noTarget=1 %]
-				[%#- PROCESS editcmd cmd='edit' %]
-			[%# END %]
+			[%- WRAPPER editlink noTarget=1 %]
+				[%- PROCESS editcmd cmd='edit' %]
+			[% END %]
 		
 			[%- WRAPPER removelink noTarget=1 %]
 				[%- PROCESS editcmd cmd='delete' %]
@@ -91,8 +91,20 @@
 
 [% WRAPPER contentcontainer %]
 	[% FOREACH item = browse_items %]
-		[% addClasses = loop.index ? 'draggableSong' : '' %]
-		[% PROCESS browsedbitems_list.html %]
+		[% addClasses = loop.index || loop.last ? 'draggableSong' : '' %]
+		[% IF edit && loop.index == itempos %]
+			<form name="edit" action="[% webroot %]edit_playlist.html" style="display: inline; width: 100%;">
+				<input type="hidden" name="player" value=[% playerURI %]>
+				<input type="hidden" name="itempos" value=[% loop.index %]>				
+				<input type="hidden" name="playlist.id" value=[% playlist.id %]>
+				[%- IF item.itemobj.isRemoteURL %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.itemobj.title %]">[% END %]
+				<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.itemobj.url %]">
+				<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
+				<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
+			</form>
+		[% ELSE %]
+			[% currItem; PROCESS browsedbitems_list.html %]
+		[% END %]
 	[% END %]
 [% END %]
 

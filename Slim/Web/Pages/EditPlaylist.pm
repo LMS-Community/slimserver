@@ -29,7 +29,6 @@ sub editplaylist {
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 	$params->{'level'} = 1;
 
-
 	# This is a dispatcher to parts of the playlist editing
 	if ($params->{'saveCurrentPlaylist'}) {
 
@@ -46,8 +45,7 @@ sub editplaylist {
 
 	my $playlist_id = $params->{'playlist.id'};
 	# 0 base
-	my $itemPos = ($params->{'item'} || 1) - 1;
-
+	my $itemPos = ($params->{'itempos'} || 1) - 1;
 
 	my $changed = 0;
 
