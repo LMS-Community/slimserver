@@ -339,6 +339,7 @@ sub browsedb {
 		$form{'attributes'}   = _attributesToKeyValuePair(\%attrs);
 		$form{'levelName'}    = $levelName;
 		$form{'size'}         = $prefs->get('thumbSize');
+		$form{'coverThumb'}   = 'all_items';
 
 		# For some queries - such as New Music - we want to
 		# get the list of tracks to play from the fieldInfo

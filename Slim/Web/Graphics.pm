@@ -171,6 +171,12 @@ sub processCoverArtRequest {
 
 		$obj = Slim::Player::Playlist::song($client);
 
+	} elsif ($trackid eq 'all_items') {
+
+		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent('html/images/all_items.png', $params);
+		$imageData = $$body;
+		
+
 	} elsif ($trackid eq 'notCoverArt') {
 
 		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($actualPathToImage, $params);
