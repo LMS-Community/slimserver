@@ -195,8 +195,6 @@ sub setMetadataTitle {
 
 	for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 		$everybuddy->update();
-		
-		$everybuddy->currentPlaylistChangeTime(Time::HiRes::time());
 	}
 	
 	# For some purposes, a change of title is a newsong...
