@@ -273,13 +273,14 @@ var Utils = function(){
 			var el = Ext.get('headerSearchInput');
 			if (el && (items = Ext.get('headerSearchBtn'))) {
 				items.on({
-					mouseover: function(){ el.setDisplayed(true); }
+					mouseover: function(){
+						el.setDisplayed(true);
+						hideSearchTimer.delay(2000);
+					}
 				});
 
 				if (!hideSearchTimer)
 					hideSearchTimer = new Ext.util.DelayedTask(function(){ el.setDisplayed(false); });
-
-				hideSearchTimer.delay(2000);
 
 				el.on({
 					click: hideSearchTimer.cancel,
