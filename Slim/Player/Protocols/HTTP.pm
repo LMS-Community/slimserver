@@ -195,6 +195,8 @@ sub setMetadataTitle {
 
 	for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 		$everybuddy->update();
+		
+		$everybuddy->currentPlaylistChangeTime(Time::HiRes::time());
 	}
 	
 	# For some purposes, a change of title is a newsong...
@@ -436,15 +438,40 @@ sub getMetadataFor {
 	if ( $url =~ /mp3tunes\.com/ ) {
 		my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
 		if ( $meta ) {
+			# Metadata for currently playing song
 			return {
 				artist   => $meta->{artist},
 				album    => $meta->{album},
 				tracknum => $meta->{tracknum},
 				title    => $meta->{title},
-				cover    => $meta->{cover},
+				cover    => $meta->{cover} || 'html/images/ServiceProviders/mp3tunes.png',
+				icon     => 'html/images/ServiceProviders/mp3tunes.png',
 				type     => 'MP3tunes',
 			};
 		}
+		else {
+			# Metadata for items in the playlist that have not yet been played
+			return {	
+				cover    => 'html/images/ServiceProviders/mp3tunes.png',
+				icon     => 'html/images/ServiceProviders/mp3tunes.png',
+				type     => 'MP3tunes',
+			};
+		}
+	}
+	elsif ( $url =~ /archive\.org/ ) {
+		return {	
+			cover    => 'html/images/ServiceProviders/lma.png',
+			icon     => 'html/images/ServiceProviders/lma.png',
+			type     => 'Live Music Archive',
+		};
+	}
+	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ) {
+		# RadioIO
+		return {	
+			cover    => 'html/images/ServiceProviders/radioio.png',
+			icon     => 'html/images/ServiceProviders/radioio.png',
+			type     => 'MP3 (RadioIO)',
+		};
 	}
 	else {
 		# Radio tracks, return artist and title if the metadata looks like Artist - Title

@@ -676,6 +676,7 @@ sub gotTrackMetadata {
 		bitrate   => '128k CBR',
 		type      => 'WMA (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
+		icon      => 'html/images/ServiceProviders/rhapsodydirect.png',
 	};
 	
 	$client->pluginData( metaCache => $meta );
@@ -1124,7 +1125,12 @@ sub getMetadataFor {
 		);
 	}
 	
-	return $meta->{$url} || {};
+	return $meta->{$url} || {
+		bitrate   => '128k CBR',
+		type      => 'WMA (Rhapsody)',
+		info_link => 'plugins/rhapsodydirect/trackinfo.html',
+		icon      => 'html/images/ServiceProviders/rhapsodydirect.png',
+	};
 }
 
 # SN only, re-init upon reconnection

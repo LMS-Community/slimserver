@@ -179,16 +179,32 @@ sub playlist {
 		if ($itemnum == $currsongind) {
 			$form{'currentsong'} = "current";
 
-			if (Slim::Music::Info::isRemoteURL($track)) {
-				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
-			} else {
+			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
 				$form{'title'} = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
+			} else {
+				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
 			}
 
 		} else {
 
 			$form{'currentsong'} = undef;
 			$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat);
+		}
+		
+		# See if a protocol handler can provide more metadata
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			$form{'plugin_meta'} = $handler->getMetadataFor( $client, $track->url );
+			
+			# Strip extension from icon path
+			if ( $form{'plugin_meta'}->{'icon'} ) {
+				$form{'plugin_meta'}->{'icon'} =~ s/\.png$//;
+			}
+			
+			# Only use cover if it's a full URL
+			if ( $form{'plugin_meta'}->{'cover'} && $form{'plugin_meta'}->{'cover'} !~ /^http/ ) {
+				delete $form{'plugin_meta'}->{'cover'};
+			}
 		}
 
 		$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);

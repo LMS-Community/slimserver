@@ -40,8 +40,19 @@ sub initPlugin {
 			'plugins/rhapsodydirect/trackinfo.html',
 			sub {
 				my $client = $_[0];
+				my $params = $_[1];
 				
-				my $url = Slim::Player::Playlist::url($client);
+				my $url;
+				
+				if ( $params->{item} ) {
+					# The user clicked on a different URL than is currently playing
+					if ( my $track = Slim::Schema->find( Track => $params->{item} ) ) {
+						$url = $track->url;
+					}
+				}
+				else {
+					$url = Slim::Player::Playlist::url($client);
+				}
 				
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					feed    => Slim::Plugin::RhapsodyDirect::ProtocolHandler->trackInfoURL( $client, $url ),

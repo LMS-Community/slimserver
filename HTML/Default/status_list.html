@@ -1,7 +1,9 @@
 <div class="draggableSong selectorMarker[% IF noPlaylistCover %]itemWithoutCover[% END %] [% IF item.currentsong %]currentSong[% END %]" id="playlistSong[% item.num %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 	<div class="browsedbListItem [% IF !noPlaylistCover %]itemWithCover[% END %]">
+		[%# Plugins can provide their own songinfo links %]
+		[% info_link = item.plugin_meta.info_link || 'songinfo.html' %]
 		[% IF noPlaylistCover %]
-			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
+			<a href="[% webroot _ info_link %]?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
 			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 				[% "FROM" | string %]
 				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
@@ -10,11 +12,20 @@
 		[% ELSE %]
 			<span class="playlistCover">
 				[% IF item.itemobj.album.id %]<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% END %]
+				[% IF item.plugin_meta.cover || item.plugin_meta.icon %]
+					[%# Display plugin cover or icon %]
+					[% IF item.plugin_meta.cover %]
+					<img src="[% item.plugin_meta.cover %]" width="50" height="50">
+					[% ELSIF item.plugin_meta.icon %]
+					<img src="[% item.plugin_meta.icon %]_50x50_[% resizeParam %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]">
+					[% END %]
+				[% ELSE %]
 					<img src="/music/[% item.itemobj.id %]/cover_50x50_[% resizeParam %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]">
+				[% END %]
 				[% IF item.itemobj.album.id %]</a>[% END %]
 			</span>
 			<div class="playlistSongDetail">
-				<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
+				<a href="[% webroot _ info_link %]?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
 			</div>
 			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 				<div class="playlistSongDetail">

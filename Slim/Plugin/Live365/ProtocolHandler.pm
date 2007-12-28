@@ -290,6 +290,7 @@ sub getMetadataFor {
 		album   => ( !ref $track->{album} ? $track->{album} : undef ),
 		title   => $track->{title} || $track->{desc},
 		cover   => 'html/images/ServiceProviders/live365.png',
+		icon    => 'html/images/ServiceProviders/live365.png',
 		type    => 'MP3 (Live365)',
 	};
 	

@@ -21,4 +21,14 @@ sub isAudioURL { 1 }
 
 sub shouldLoop { 1 }
 
+sub getMetadataFor {
+	return {
+		# XXX: Need an icon for sounds
+		#cover    => 'html/images/ServiceProviders/sounds.png',
+		#icon     => 'html/images/ServiceProviders/sounds.png',
+		bitrate  => '128k CBR',
+		type     => 'MP3 (Sounds & Effects)',
+	};
+}
+
 1;

@@ -712,6 +712,7 @@ sub getMetadataFor {
 		title       => $track->{title},
 		# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
 		cover       => 'http://images.slacker.com/covers/272/' . $track->{albumid},
+		icon        => 'html/images/ServiceProviders/slacker.png',
 		bitrate     => '128k CBR',
 		type        => 'MP3 (Slacker)',
 		info_link   => 'plugins/slacker/trackinfo.html',
