@@ -323,7 +323,7 @@ sub exitInput {
 sub lines {
 	my $client = shift;
 
-	my $arrayRef = $client->modeParam('arrayRef') || return;
+	my $arrayRef = $client->modeParam('arrayRef') || return {};
 	my $charsRef = $client->modeParam('charsRef');
 
 	my $line1    = $client->modeParam('header');
