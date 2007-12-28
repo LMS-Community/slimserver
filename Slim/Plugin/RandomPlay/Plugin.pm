@@ -56,9 +56,14 @@ $prefs->migrate( 1, sub {
 	if ( !defined $continuous ) {
 		$continuous = 1;
 	}
+
+	my $oldtracks = Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks');
+	if ( !defined $oldtracks ) {
+		$oldtracks = 10;
+	}
 	
 	$prefs->set( 'newtracks', $newtracks );
-	$prefs->set( 'oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') );
+	$prefs->set( 'oldtracks', $oldtracks);
 	$prefs->set( 'continuous', $continuous );
 	$prefs->set( 'exclude_genres', Slim::Utils::Prefs::OldPrefs->get('plugin_random_exclude_genres') || [] );
 	
