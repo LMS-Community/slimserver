@@ -26,10 +26,10 @@
 [% IF streaminfo %]
 		[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
 			[% item = BLOCK %]
-				[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "PLAY_THIS_SONG" | string %]
+				[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "PLAY" | string %]
 			[% END; title = ""; PROCESS songInfoItem %]
 			[% item = BLOCK %]
-				[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+				[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "ADD" | string %]
 			[% END; title = ""; PROCESS songInfoItem %]
 		[% END; END %]
 
