@@ -248,6 +248,7 @@ var Utils = function(){
 	});
 	var highlightedEl;
 	var unHighlightTimer;
+	var hideSearchTimer;
 
 	return {
 		isDragging : false,
@@ -264,15 +265,26 @@ var Utils = function(){
 
 			// don't remove the highlight automatically while we're editing a search term or similar
 			Ext.select('.browsedbControls input[type="text"]').on({
-				focus: Utils.cancelUnHighlightTimer,
-				click: Utils.cancelUnHighlightTimer
+				focus: unHighlightTimer.cancel,
+				click: unHighlightTimer.cancel
 			});
 
 			// initialize search field displayed in some browse pages
 			var el = Ext.get('headerSearchInput');
 			if (el && (items = Ext.get('headerSearchBtn'))) {
-				items.on('mouseover', function(){
-					el.setDisplayed(true);
+				items.on({
+					mouseover: function(){ el.setDisplayed(true); }
+				});
+
+				if (!hideSearchTimer)
+					hideSearchTimer = new Ext.util.DelayedTask(function(){ el.setDisplayed(false); });
+
+				hideSearchTimer.delay(2000);
+
+				el.on({
+					click: hideSearchTimer.cancel,
+					focus: hideSearchTimer.cancel,
+					blur: function(){ hideSearchTimer.delay(2000); }
 				});
 			}
 
@@ -320,10 +332,6 @@ var Utils = function(){
 				}
 				highlightedEl.un('click', highlightedEl.onClickCB);
 			}
-		},
-
-		cancelUnHighlightTimer : function() {
-			unHighlightTimer.cancel();
 		},
 
 		onSelectorClicked : function(ev, target){
