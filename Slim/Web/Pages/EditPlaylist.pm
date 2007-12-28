@@ -56,7 +56,7 @@ sub editplaylist {
 			'playlist_id:' . $playlist_id,
 			'index:' . $itemPos]);
 
-	} elsif (defined($params->{'form_title'})) {
+	} elsif (defined($params->{'form_url'})) {
 
 		Slim::Control::Request::executeRequest(undef, 
 			['playlists', 'edit', 'cmd:add', 

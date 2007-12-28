@@ -31,30 +31,37 @@
 	
 	[% UNLESS noEdit %]
 		<div class="playlistform">
-		<form method="get" action="edit_playlist.html"><table><tr>
-			<td>[% "NAME" | string %] <input class="stdedit" name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="[% maxInputSize ? maxInputSize : 40 %]"></td>
-			<td><input class="stdclick" name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
-			[% IF playlist.title %]
-				<td><input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'></td>
-			[% END %]
-			</tr><tr>
-			<td>
-				<input type="hidden" name="playlist.id" value="[% playlist.id %]">
-				<input type="hidden" name="renamePlaylist" value="0">
-				<input type="hidden" name="editPlaylist" value="0">
-				<input type="hidden" name="deletePlaylist" value="0">
-			</td>
-			
-			[% IF RENAME_WARNING %]<td colspan="2">
-				<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]</td>
-			[% END %]
-			[% IF DELETE_WARNING %]<td></td><td></td><td>
-				<input align="absmiddle" type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]</td>
-			[% END %]
-			</tr></table>
-			<input type="hidden" name="dir" value="[% dir %]">
-			<input type="hidden" value="[% player %]" name="player">
-		</form></div>
+			<form method="get" action="edit_playlist.html">
+				<table>
+					<tr>
+						<td>[% "NAME" | string %] <input class="stdedit" name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="[% maxInputSize ? maxInputSize : 40 %]"></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
+						<td><input class="stdclick" name="submit" type=submit value="[% "ADD" | string %]" onclick='this.form.addItem.value=1'></td>
+						<td>
+							[% IF playlist.title %]
+								<input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'>
+							[% END %]
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+							[%- IF RENAME_WARNING %]
+								<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]
+							[%- END %]
+							[%- IF DELETE_WARNING %]
+								<input align="absmiddle" type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]
+							[%- END %]
+							<input type="hidden" name="playlist.id" value="[% playlist.id %]">
+							<input type="hidden" name="renamePlaylist" value="0">
+							<input type="hidden" name="editPlaylist" value="0">
+							<input type="hidden" name="deletePlaylist" value="0">
+							<input type="hidden" name="addItem" value="0">
+							<input type="hidden" name="player" value="[% player %]">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
 		[% rightcontrols = 'editcontrols'; leftcontrols = 'browsecontrols' %]
 
 		[% BLOCK editcmd %]
@@ -87,21 +94,31 @@
 	<div id="browsedbHeader">
 		[% IF hasPagebar %][% PROCESS pagebar %][% END %]
 	</div>
-[% END %] 
+[% END %]
+
+
+[% BLOCK editform %]
+	<form name="edit" action="[% webroot %]edit_playlist.html" style="display: inline; width: 100%;">
+		<input type="hidden" name="player" value=[% playerURI %]>
+		<input type="hidden" name="itempos" value=[% loop.index %]>				
+		<input type="hidden" name="playlist.id" value=[% playlist.id %]>
+		[%- IF item.itemobj.isRemoteURL %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.itemobj.title %]">[% END %]
+		<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.itemobj.url %]">
+		<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
+		<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
+	</form>
+[% END %]
+
 
 [% WRAPPER contentcontainer %]
+	[% IF addItem %]
+		[% PROCESS editform %]
+	[% END %]
+
 	[% FOREACH item = browse_items %]
 		[% addClasses = loop.index || loop.last ? 'draggableSong' : '' %]
 		[% IF edit && loop.index == itempos %]
-			<form name="edit" action="[% webroot %]edit_playlist.html" style="display: inline; width: 100%;">
-				<input type="hidden" name="player" value=[% playerURI %]>
-				<input type="hidden" name="itempos" value=[% loop.index %]>				
-				<input type="hidden" name="playlist.id" value=[% playlist.id %]>
-				[%- IF item.itemobj.isRemoteURL %]<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_title" value="[% item.itemobj.title %]">[% END %]
-				<input style="display: inline; width: 35%;" type="text" class="stdedit" name="form_url" value="[% item.itemobj.url %]">
-				<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="save" value=[% "SAVE" | string %]>
-				<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "CANCEL" | string %]>
-			</form>
+			[% PROCESS editform %]
 		[% ELSE %]
 			[% currItem; PROCESS browsedbitems_list.html %]
 		[% END %]

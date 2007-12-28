@@ -1702,7 +1702,7 @@ sub playlistsEditCommand {
 		my $title = $request->getParam('title');
 		my $url   = $request->getParam('url');
 
-		if ($title && $url) {
+		if ($url) {
 
 			my $playlistTrack = Slim::Schema->rs('Track')->updateOrCreate({
 				'url'      => $url,
@@ -1724,9 +1724,12 @@ sub playlistsEditCommand {
 				push @items, $playlistTrack;
 			}
 
-			$playlistTrack->title($title);
-			$playlistTrack->titlesort(Slim::Utils::Text::ignoreCaseArticles($title));
-			$playlistTrack->titlesearch(Slim::Utils::Text::ignoreCaseArticles($title));
+			if ($title) {
+				$playlistTrack->title($title);
+				$playlistTrack->titlesort(Slim::Utils::Text::ignoreCaseArticles($title));
+				$playlistTrack->titlesearch(Slim::Utils::Text::ignoreCaseArticles($title));
+			}
+
 			$playlistTrack->update;
 
 			$changed = 1;
