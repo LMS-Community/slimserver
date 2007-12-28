@@ -322,7 +322,7 @@ sub albumsQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname, includeArt => 1);
 		}
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -565,7 +565,7 @@ sub artistsQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 
 		for my $obj (@data) {
@@ -1029,7 +1029,7 @@ sub genresQuery {
 		$request->addResult('offset', $start) if $menuMode;
 		
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 		for my $eachitem ($rs->slice($start, $end)) {
 			
@@ -1317,7 +1317,7 @@ sub musicfolderQuery {
 		$request->addResult('offset', $start) if $menuMode;
 		
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 		for my $eachitem (@data[$start..$end]) {
 			
@@ -1956,7 +1956,7 @@ sub playlistsQuery {
 			$request->addResult('offset', $start) if $menuMode;
 
 			if ($insertAll) {
-				($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+				($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 			}
 
 			for my $eachitem ($rs->slice($start, $end)) {
@@ -3635,7 +3635,7 @@ sub titlesQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 
 
@@ -3818,7 +3818,7 @@ sub yearsQuery {
 		$request->addResult('offset', $start) if $menuMode;
 
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 		for my $eachitem ($rs->slice($start, $end)) {
 
@@ -4140,7 +4140,6 @@ sub _addJiveSong {
 	$request->addResultLoop($loop, $count, 'params', $params);
 }
 
-
 sub _jiveAddToFavorites {
 	my ($cnt, $request, $loopname, $favorites) = @_;
 	$log->warn('MARK1' . $cnt);
@@ -4432,13 +4431,25 @@ sub _songData {
 }
 
 sub _playAll {
-	my ($start, $end, $cnt, $request, $loopname) = @_;
+
+	my %args       = @_;
+	my $start      = $args{'start'};
+	my $end        = $args{'end'};
+	my $cnt        = $args{'count'};
+	my $loopname   = $args{'loopname'};
+	my $request    = $args{'request'};
+	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
+
 	# insert first item if needed
 	if ($start == 0 && $end == 1) {
 		# one item list, so do not add a play all and just return
 		return($start, $end, $cnt);
 	} elsif ($start == 0) {
 			$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL'));
+
+		if ($includeArt) {
+			$request->addResultLoop($loopname, $cnt, 'icon-id', '/music/all_items/cover.png');
+		}
 
 		# get all our params
 		my $params = $request->getParamsCopy();
