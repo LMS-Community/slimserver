@@ -28,6 +28,9 @@
 		<div class="playlistControls">
 			<img onclick="Playlist.control('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
 			<img onclick="Playlist.control('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
+			[% FOREACH mixer = item.mixerlinks.values.sort %]
+				[% PROCESS $mixer %]
+			[% END %]
 			[% IF item.currentsong %]<img src="[% webroot %]html/images/spacer.gif" class="nowPlayingIcon"/>[% END %]
 		</div>
 	</div>
