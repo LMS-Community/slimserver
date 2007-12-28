@@ -443,31 +443,34 @@ sub getMetadataFor {
 				tracknum => $meta->{tracknum},
 				title    => $meta->{title},
 				cover    => $meta->{cover} || 'html/images/ServiceProviders/mp3tunes.png',
-				icon     => 'html/images/ServiceProviders/mp3tunes.png',
+				icon     => Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon'),
 				type     => 'MP3tunes',
 			};
 		}
 		else {
 			# Metadata for items in the playlist that have not yet been played
+			my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
 			return {	
-				cover    => 'html/images/ServiceProviders/mp3tunes.png',
-				icon     => 'html/images/ServiceProviders/mp3tunes.png',
+				cover    => $icon,
+				icon     => $icon,
 				type     => 'MP3tunes',
 			};
 		}
 	}
 	elsif ( $url =~ /archive\.org/ ) {
+		my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
 		return {	
-			cover    => 'html/images/ServiceProviders/lma.png',
-			icon     => 'html/images/ServiceProviders/lma.png',
+			cover    => $icon,
+			icon     => $icon,
 			type     => 'Live Music Archive',
 		};
 	}
 	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ) {
 		# RadioIO
+		my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
 		return {	
-			cover    => 'html/images/ServiceProviders/radioio.png',
-			icon     => 'html/images/ServiceProviders/radioio.png',
+			cover    => $icon,
+			icon     => $icon,
 			type     => 'MP3 (RadioIO)',
 		};
 	}

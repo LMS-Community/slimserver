@@ -22,10 +22,13 @@ sub isAudioURL { 1 }
 sub shouldLoop { 1 }
 
 sub getMetadataFor {
+	my $class = shift;
+	
+	my $icon = Slim::Plugin::Sounds::Plugin->_pluginDataFor('icon');
+	
 	return {
-		# XXX: Need an icon for sounds
-		#cover    => 'html/images/ServiceProviders/sounds.png',
-		#icon     => 'html/images/ServiceProviders/sounds.png',
+		cover    => $icon,
+		icon     => $icon,
 		bitrate  => '128k CBR',
 		type     => 'MP3 (Sounds & Effects)',
 	};

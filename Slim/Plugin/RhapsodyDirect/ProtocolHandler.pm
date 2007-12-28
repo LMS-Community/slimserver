@@ -676,7 +676,7 @@ sub gotTrackMetadata {
 		bitrate   => '128k CBR',
 		type      => 'WMA (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
-		icon      => 'html/images/ServiceProviders/rhapsodydirect.png',
+		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
 	};
 	
 	$client->pluginData( metaCache => $meta );
@@ -1129,7 +1129,7 @@ sub getMetadataFor {
 		bitrate   => '128k CBR',
 		type      => 'WMA (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
-		icon      => 'html/images/ServiceProviders/rhapsodydirect.png',
+		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
 	};
 }
 

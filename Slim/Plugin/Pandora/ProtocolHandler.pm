@@ -588,7 +588,7 @@ sub getMetadataFor {
 		album       => $track->{albumName},
 		title       => $track->{songName},
 		cover       => $track->{albumArtUrl} || $defaultArtURL,
-		icon        => 'html/images/ServiceProviders/pandora.png',
+		icon        => Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon'),
 		replay_gain => $track->{trackGain},
 		bitrate     => '128k CBR',
 		type        => 'MP3 (Pandora)',
