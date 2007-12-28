@@ -418,7 +418,7 @@ PlayerChooser = function(){
 					playerSelection += tpl.apply({
 						name: name,
 						id: id,
-						checked: syncedPlayers.indexOf(id) >= 0 ? 'checked' : ''
+						checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked' : ''
 					});
 			});
 			playerSelection += '</form>';
@@ -451,7 +451,7 @@ PlayerChooser = function(){
 					Utils.processCommand({ params: [ players[i].id, [ 'sync', playerid ] ] });
 
 				// unsync if no longer checked
-				else if (syncedPlayers.indexOf(players[i].id) >= 0 & !players[i].checked)
+				else if (syncedPlayers.indexOf(parseInt(players[i].id)) >= 0 & !players[i].checked)
 					Utils.processCommand({ params: [ players[i].id, [ 'sync', '-' ] ] });
 			}
 
@@ -613,7 +613,7 @@ Playlist = function(){
 
 		control : function(cmd, el) {
 			el = Ext.get(el);
-			if (el.dd && el.dd.config && el.dd.config.position >= 0)
+			if (el.dd && el.dd.config && parseInt(el.dd.config.position) >= 0)
 				Player.playerControl(['playlist', cmd, el.dd.config.position])
 		},
 
