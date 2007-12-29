@@ -2,7 +2,7 @@
 
 	[% IF streaminfo.item.image %]
 	<div id="COVERART">
-		<img src="[% streaminfo.item.image %]" />
+		<img src="[% streaminfo.item.image %]" onLoad="resize(this)"/>
 	</div>
 	[% END %]
 
