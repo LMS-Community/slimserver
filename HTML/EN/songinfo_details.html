@@ -2,9 +2,18 @@
 	[% IF artAtTop %]
 		<div id="COVERART">
 			<span class="songInfoText">
-				<a href="/music/[% itemobj.id %]/cover.jpg" target="cover">
-					<img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)">
-				</a>
+				[% IF plugin_meta.cover || plugin_meta.icon %]
+					[%# Display plugin cover or icon %]
+					[% IF plugin_meta.cover %]
+					<img src="[% plugin_meta.cover %]" alt="coverArt" onLoad="resize(this)">
+					[% ELSIF plugin_meta.icon %]
+					<img src="[% plugin_meta.icon %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="coverArt" onLoad="resize(this)">
+					[% END %]
+				[% ELSE %]
+					<a href="/music/[% itemobj.id %]/cover.jpg" target="cover">
+						<img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)">
+					</a>
+				[% END %]
 			</span>
 		</div>
 	[% END %]
@@ -71,7 +80,7 @@
 		[% item = itemobj.content_type | getstring | html; title = "TYPE"; PROCESS songInfoItem %]
 	[% END %]
 
-	[% IF itemobj.duration %] 
+	[% IF itemobj.duration && itemobj.duration > 0 %] 
 		[% item = itemobj.duration | html; title = "LENGTH"; PROCESS songInfoItem %]
 	[% END %]
 

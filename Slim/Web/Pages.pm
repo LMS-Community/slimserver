@@ -253,6 +253,24 @@ sub addSongInfo {
 	}
 
 	$url   = $track->url() if $track;
+	
+	# Add plugin metadata if available
+	if ( Slim::Music::Info::isRemoteURL($url) ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			$params->{'plugin_meta'} = $handler->getMetadataFor( $client, $url );
+			
+			# Strip extension from icon path
+			if ( $params->{'plugin_meta'}->{'icon'} ) {
+				$params->{'plugin_meta'}->{'icon'} =~ s/\.png$//;
+			}
+			
+			# Only use cover if it's a full URL
+			if ( $params->{'plugin_meta'}->{'cover'} && $params->{'plugin_meta'}->{'cover'} !~ /^http/ ) {
+				delete $params->{'plugin_meta'}->{'cover'};
+			}
+		}
+	}
 
 	if (blessed($track) && $track->can('filesize')) {
 
