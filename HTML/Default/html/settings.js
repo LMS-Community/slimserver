@@ -247,7 +247,7 @@ var SettingsPage = function(){
 					title = title.dom.innerHTML;
 
 				if (section && (desc = descEl.dom.innerHTML)) {
-					if (desc.length > 100) {
+//					if (desc.length > 100) {
 						helpEl = tpl.insertAfter(descEl);
 						Ext.QuickTips.register({
 							target: helpEl,
@@ -256,10 +256,10 @@ var SettingsPage = function(){
 							maxWidth: 600,
 							autoHide: false
 						});
-					}
-					else {
-						descEl.removeClass('hiddenDesc');
-					}
+//					}
+//					else {
+//						descEl.removeClass('hiddenDesc');
+//					}
 				}
 			}
 		},
