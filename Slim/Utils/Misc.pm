@@ -113,8 +113,8 @@ sub findbin {
 	}
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
-		push @paths, "/Library/SlimDevices/bin/";
+		push @paths, $ENV{'HOME'} . "/Library/Application Support/SqueezeCenter/bin/";
+		push @paths, "/Library/Application Support/SqueezeCenter/bin/";
 		push @paths, $ENV{'HOME'} . "/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
 	}
 

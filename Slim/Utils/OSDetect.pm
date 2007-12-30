@@ -142,8 +142,6 @@ sub dirsFor {
 
 			push @dirs, "$ENV{'HOME'}/Library/Application Support/SqueezeCenter/$dir";
 			push @dirs, "/Library/Application Support/SqueezeCenter/$dir";
-			push @dirs, "$ENV{'HOME'}/Library/SlimDevices/$dir";
-			push @dirs, "/Library/SlimDevices/$dir";
 			push @dirs, catdir($Bin, $dir);
 
 		} elsif ($dir eq 'log') {
@@ -498,15 +496,15 @@ sub initDetailsForOSX {
 		'Library/Application Support/SqueezeCenter/Graphics',
 		'Library/Application Support/SqueezeCenter/html',
 		'Library/Application Support/SqueezeCenter/IR',
-		'Library/SlimDevices/bin',
+		'Library/Application Support/SqueezeCenter/bin',
 		'Library/Logs/SqueezeCenter'
 	) {
 
 		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
 	}
 
-	unshift @INC, $ENV{'HOME'} . "/Library/SqueezeCenter";
-	unshift @INC, "/Library/SlimDevices/";
+	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/SqueezeCenter";
+	unshift @INC, "/Library/Application Support/SqueezeCenter";
 }
 
 sub initDetailsForLinux {
