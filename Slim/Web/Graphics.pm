@@ -72,7 +72,7 @@ sub processCoverArtRequest {
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
 			(?:_([sSfFpc]))?         # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
-			\.(jpg|png|gif)$         # file suffixes allowed are jpg png gif
+			\.(jpg|png|gif|gd)$      # file suffixes allowed are jpg png gif gd [libgd uncompressed]
 			/x;	
 
 	my $image               = $1;
@@ -83,7 +83,12 @@ sub processCoverArtRequest {
 
 	# if the image is a png and bgColor wasn't explicitly sent, image should be transparent
 	my $transparentRequest = 0;
-	if ($suffix =~ /png/) { 
+	if ($suffix =~ /gd/) { 
+		if ($bgColor eq '') {
+			$log->info('this is a transparent gd request');
+			$transparentRequest = 'gd';
+		}
+	} elsif ($suffix =~ /png/) { 
 		if ($bgColor eq '') {
 			$log->info('this is a transparent png request');
 			$transparentRequest = 'png';
@@ -232,7 +237,7 @@ sub processCoverArtRequest {
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
 		# can be passed straight through.
-		if ($image eq "thumb" || $requestedWidth || ($requestedContentType eq "image/png" && ($transparentRequest eq 'png' || ($requestedBackColour >> 24) != 0x7F))) {
+		if ($image eq "thumb" || $requestedWidth || ($requestedContentType =~ /image\/(png|gd)/ && ($transparentRequest eq 'png' || ($requestedBackColour >> 24) != 0x7F))) {
 
 			# Bug: 3850 - new() can't auto-identify the
 			# ContentType (for things like non-JFIF JPEGs) - but
@@ -314,7 +319,7 @@ sub processCoverArtRequest {
 				}
 
 				# the image needs to be processed if the sizes differ, or the image is a png
-				if ($requestedContentType eq "image/png" || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
+				if ($requestedContentType =~ /image\/(png|gd)/ || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
 
 					if ( $log->is_info ) {
 						$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
@@ -352,9 +357,9 @@ sub processCoverArtRequest {
 
 					my $newImage = GD::Image->new($returnedWidth, $returnedHeight);
 
-					# PNG with 7 bit transparency
-					if ($transparentRequest eq 'png') {
-						$log->info("SET ALPHA FOR TRANSPARENT PNGs");
+					# PNG/GD with 7 bit transparency
+					if ($transparentRequest =~ /png|gd/) {
+						$log->info("Set alpha for transparent $transparentRequest");
 						$newImage->saveAlpha(1);
 						$newImage->alphaBlending(0);
 						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0x7f000000);
@@ -383,7 +388,12 @@ sub processCoverArtRequest {
 
 					# if the source image was a png and GD can output png data
 					# then return a png, else return a jpg
-					if (($returnedType eq "png" || $transparentRequest eq 'png') && GD::Image->can('png') ) {
+					if ($transparentRequest eq 'gd') {
+
+						$newImageData = $newImage->gd;
+						$requestedContentType = 'image/gd';
+						
+					} elsif (($returnedType eq "png" || $transparentRequest eq 'png') && GD::Image->can('png') ) {
 
 						$newImageData = $newImage->png;
 						$requestedContentType = 'image/png';

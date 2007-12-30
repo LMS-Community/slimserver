@@ -106,6 +106,7 @@ sub findArtwork {
 			# 1. user's thumb size or 100x100_p.png (large web artwork)
 			# 2. 50x50_p.png (small web artwork)
 			# 3. 56x56_p.png (Jive artwork)
+			# 4. 56x56_p.gd  (Jive artwork - gd format)
 			
 			my @dims = qw(50 56);
 			push @dims, $prefs->get('thumbSize') || 100;
@@ -116,6 +117,10 @@ sub findArtwork {
 					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p.png" );
 				};
 			}
+			eval {
+				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_p.gd" );
+				Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_p.gd" );
+			};
 		}
 
 		$progress->update($track->album->name);
