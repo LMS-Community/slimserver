@@ -46,10 +46,6 @@ my $check_time;                 # time scheduled for next check_all_clients
 my $slimproto_socket;
 
 our %ipport;		     # ascii IP:PORT
-our %inputbuffer;  	     # inefficiently append data here until we have a full slimproto frame
-our %parser_state; 	     # 'LENGTH', 'OP', or 'DATA'
-our %parser_framelength; # total number of bytes for data frame
-our %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
 our %sock2client;	     # reference to client for each sonnected sock
 our %heartbeat;          # the last time we heard from a client
 our %status;
@@ -171,10 +167,7 @@ sub slimproto_accept {
 		return;
 	}
 
-	$ipport{$clientsock}             = join(':', $tmpaddr, $clientsock->peerport);
-	$parser_state{$clientsock}       = 'OP';
-	$parser_framelength{$clientsock} = 0;
-	$inputbuffer{$clientsock}        = '';
+	$ipport{$clientsock} = join(':', $tmpaddr, $clientsock->peerport);
 
 	Slim::Networking::Select::addRead($clientsock, \&client_readable, 1); # processed during idleStreams
 	Slim::Networking::Select::addError($clientsock, \&slimproto_close);
@@ -279,8 +272,6 @@ sub slimproto_close {
 
 	# forget state
 	delete($ipport{$clientsock});
-	delete($parser_state{$clientsock});
-	delete($parser_framelength{$clientsock});
 	delete($sock2client{$clientsock});
 }		
 
@@ -315,136 +306,66 @@ sub client_writeable {
 sub client_readable {
 	my $s = shift;
 
-	$log->debug("client readable: $ipport{$s}");
-
-	my $total_bytes_read = 0;
-
-GETMORE:
-	if (!($s->connected)) {
+	if ( !$s->connected ) {
 
 		$log->info("connection closed by peer in readable.");
 
 		slimproto_close($s);		
 		return;
-	}			
-
-	my $bytes_remaining;
-
-	if ( $log->is_debug ) {
-		$log->debug(join(', ', 
-			"state: " . $parser_state{$s},
-			"framelen: " . $parser_framelength{$s},
-			"inbuflen: " . length($inputbuffer{$s})
-		));
 	}
-
-	if ($parser_state{$s} eq 'OP') {
-		$bytes_remaining = 4 - length($inputbuffer{$s});
-        assert ($bytes_remaining <= 4);
-	} elsif ($parser_state{$s} eq 'LENGTH') {
-		$bytes_remaining = 4 - length($inputbuffer{$s});
-		assert ($bytes_remaining <= 4);
-	} else {
-		assert ($parser_state{$s} eq 'DATA');
-		$bytes_remaining = $parser_framelength{$s} - length($inputbuffer{$s});
-	}
-
-	my $bytes_read = 0;
-	my $indata = '';
-	if ($bytes_remaining) {
-
-		$log->debug("attempting to read $bytes_remaining bytes");
 	
-		$bytes_read = $s->sysread($indata, $bytes_remaining);
-	
-		if (!defined($bytes_read) || ($bytes_read == 0)) {
+	while (1) {
+		my $nb = sysread( $s, my $buf, 4096 );
+		
+		if ( defined $nb ) {
+			if ( $nb > 0 ) {
+				# Parse slimproto frame
+				my ($op, $data) = unpack 'a4N/a*', $buf;
+				
+				if ( $log->is_debug ) {
+					$log->debug( "Slimproto frame: $op, len: " . length($data) );
+				}
+				
+				my $handler_ref = $message_handlers{$op};
 
-			if ($total_bytes_read == 0) {
-
+				if ( $handler_ref && ref $handler_ref  eq 'CODE' ) {
+					my $client = $sock2client{$s};
+					
+					if ( $op eq 'HELO' ) {
+						$handler_ref->( $s, \$data );
+					}
+					else {
+						if ( $client ) {
+							$handler_ref->( $client, \$data );
+						}
+						else {
+							$log->error( "client_readable: Client not found for slimproto msg op: $op" );
+						}
+					}
+				}
+				else {
+					$log->warn("Unknown slimproto op: $op");
+				}
+				
+				return;				
+			}
+			else {
 				$log->info("half-close from client: $ipport{$s}");
 
 				slimproto_close($s);
 				return;
 			}
-	
-			$log->debug("no more to read.");
+		}
+		elsif ( $! == EWOULDBLOCK ) {
+			next;
+		}
+		else {
+			$log->debug( "Error reading from client: $!" );
+			
+			slimproto_close($s);
 			return;
 		}
 	}
-
-	$total_bytes_read += $bytes_read;
-
-	$inputbuffer{$s}.=$indata;
-	$bytes_remaining -= $bytes_read;
-
-	$log->debug("Got $bytes_read bytes from client, $bytes_remaining remaining");
-
-	assert ($bytes_remaining >= 0);
-
-	if ($bytes_remaining == 0) {
-
-		if ($parser_state{$s} eq 'OP') {
-
-			assert(length($inputbuffer{$s}) == 4);
-			$parser_frametype{$s} = $inputbuffer{$s};
-			$inputbuffer{$s} = '';
-			$parser_state{$s} = 'LENGTH';
-
-			$log->debug("got op: $parser_frametype{$s}");
-
-		} elsif ($parser_state{$s} eq 'LENGTH') {
-
-			assert(length($inputbuffer{$s}) == 4);
-
-			$parser_framelength{$s} = unpack('N', $inputbuffer{$s});
-
-			$parser_state{$s} = 'DATA';
-			$inputbuffer{$s} = '';
-
-			if ($parser_framelength{$s} > 10000) {
-
-				$log->info("Client gave us insane length $parser_framelength{$s} for slimproto frame. Disconnecting him.");
-				slimproto_close($s);
-				return;
-			}
-
-		} else {
-			assert($parser_state{$s} eq 'DATA');
-			assert(length($inputbuffer{$s}) == $parser_framelength{$s});
-			
-			my $op = $parser_frametype{$s};
-			
-			my $handler_ref = $message_handlers{$op};
-			
-			if ($handler_ref && ref($handler_ref) eq 'CODE') {
-				
-				my $client = $sock2client{$s};
-				
-				if ($op eq 'HELO') {
-					$handler_ref->($s, \$inputbuffer{$s});
-				}
-				else {
-					if (!defined($client)) {
-						msg("client_readable: Client not found for slimproto msg op: $op\n");
-					} else {
-						$handler_ref->($client, \$inputbuffer{$s});
-					}
-				}
-			} else {
-
-				$log->warn("Unknown slimproto op: $op");
-			}
-
-			$inputbuffer{$s} = '';
-			$parser_frametype{$s} = '';
-			$parser_framelength{$s} = 0;
-			$parser_state{$s} = 'OP';
-		}
-	}
-
-	$log->debug("new state: $parser_state{$s}");
-
-	goto GETMORE;
 }
 
 # returns the signal strength (0 to 100), outside that range, it's not a wireless connection, so return undef
