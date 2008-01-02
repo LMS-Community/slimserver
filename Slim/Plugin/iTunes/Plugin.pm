@@ -79,7 +79,7 @@ sub checker {
 	}
 
 	# make sure we aren't doing this more than once...
-	Slim::Utils::Timers::killTimers(0, \&checker);
+	Slim::Utils::Timers::killTimers(undef, \&checker);
 
 	my $interval = $prefs->get('scan_interval') || 3600;
 
@@ -90,7 +90,7 @@ sub checker {
 
 	$log->info("setting checker for $interval seconds from now.");
 
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&checker);
 }
 
 1;

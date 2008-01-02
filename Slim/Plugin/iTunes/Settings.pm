@@ -12,6 +12,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
+use Slim::Plugin::iTunes::Plugin;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.itunes',
@@ -44,6 +45,18 @@ $prefs->setChange(
 		}
 	},
 'itunes');
+
+$prefs->setChange(
+	sub {
+			Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::iTunes::Plugin::checker);
+		
+			my $interval = $prefs->get('scan_interval') || 3600;
+		
+			$log->info("re-setting checker for $interval seconds from now.");
+		
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::iTunes::Plugin::checker);
+	},
+'scan_interval');
 
 sub name {
 	return Slim::Web::HTTP::protectName('ITUNES');
