@@ -193,27 +193,27 @@ sub dirsFor {
 
 		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
-			push @dirs, "/usr/share/slimserver/$dir";
+			push @dirs, "/usr/share/squeezecenter/$dir";
 
 		} elsif ($dir eq 'Plugins') {
 			
-			push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/slimserver/Plugins";
+			push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezecenter/Plugins";
 		
 		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
-			push @dirs, "/usr/share/slimserver";
+			push @dirs, "/usr/share/squeezecenter";
 
 		} elsif ($dir =~ /^(?:types|convert|prefs)$/) {
 
-			push @dirs, "/etc/slimserver";
+			push @dirs, "/etc/squeezecenter";
 
 		} elsif ($dir eq 'log') {
 
-			push @dirs, "/var/log/slimserver";
+			push @dirs, "/var/log/squeezecenter";
 
 		} elsif ($dir eq 'cache') {
 
-			push @dirs, "/var/cache/slimserver";
+			push @dirs, "/var/cache/squeezecenter";
 
 		} elsif ($dir eq 'MySQL') {
 
@@ -404,7 +404,7 @@ sub isDebian {
 	my $OS      = OS();
 	my $details = details();
 
-	if ($details->{'osName'} eq 'Debian' && $0 =~ m{^/usr/sbin/slimserver} ) {
+	if ($details->{'osName'} eq 'Debian' && $0 =~ m{^/usr/sbin/squeezecenter} ) {
 		return 1;
 	}
 
@@ -534,7 +534,7 @@ sub initDetailsForLinux {
 	# package specific addition to @INC to cater for plugin locations
 	if (isDebian()) {
 
-		unshift @INC, '/usr/share/slimserver';
+		unshift @INC, '/usr/share/squeezecenter';
 	}
 }
 
