@@ -1150,7 +1150,64 @@ sub generateHTTPResponse {
 			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
 		}
 
-	# XXX: log.txt needs to be put back here
+	} elsif ($path =~ /(server|scanner|log)\.(?:log|txt)/) {
+		
+		require File::Tail;
+		
+		my $logfile = ( $1 eq 'scanner' ) ? 'scanner' : 'server';
+		$logfile .= 'LogFile';
+		
+		$response->remove_header('Content-Length');
+		$response->header( 'Content-Type' => 'text/plain; charset=utf-8' );
+		
+		my $count = $params->{lines} || 5;
+		
+		my $file = File::Tail->new( 
+			name   => Slim::Utils::Log->$logfile,
+			nowait => 1,
+			tail   => $count,
+		);
+		
+		while ( my $line = $file->read ) {
+			$$body .= $line;
+		}
+		
+		addHTTPResponse( $httpClient, $response, $body, 1, 1 );
+		
+		my $more;
+		$more = sub {
+			my $file = shift;
+			
+			return if !$httpClient->connected;
+			
+			my $out;
+			
+			while ( my $line = $file->read ) {
+				$out .= $line;
+			}
+			
+			if ( $out ) {
+				addHTTPResponse( $httpClient, $response, \$out, 0, 1 );
+			}
+			
+			my $next = $file->predict;
+			if ( $next < 1 ) {
+				$next = 1;
+			}
+			
+			Slim::Utils::Timers::setTimer(
+				$file,
+				time() + $next,
+				$more,
+			);
+		};
+		
+		Slim::Utils::Timers::setTimer(
+			$file,
+			time() + $file->predict,
+			$more,
+		);
+		
 	} elsif ($path =~ /(?:status|robots)\.txt/) {
 
 		# if the HTTP client has asked for a text file, then always return the text on the display
