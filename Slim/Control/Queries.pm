@@ -156,6 +156,7 @@ sub albumsQuery {
 	my $sort          = $request->getParam('sort');
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
+	my $to_cache      = $request->getParam('cache');
 	
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow'])) {
 		$request->setStatusBadParams();
@@ -399,7 +400,7 @@ sub albumsQuery {
 	
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
-	if ( $menuMode ) {
+	if ( $to_cache && $menuMode ) {
 		$cache->{albums}->{$cacheKey} = to_json( $request->getResults() );
 	}
 
