@@ -94,6 +94,7 @@
 	<div id="browsedbHeader">
 		[% IF hasPagebar %][% PROCESS pagebar %][% END %]
 	</div>
+	
 [% END %]
 
 
@@ -120,14 +121,16 @@
 		[% IF edit && loop.index == itempos %]
 			[% PROCESS editform %]
 		[% ELSE %]
-			[% currItem; PROCESS browsedbitems_list.html %]
+			[% PROCESS browsedbitems_list.html %]
 		[% END %]
 	[% END %]
 [% END %]
 
-[% IF NOT ajaxUpdate %]
+[% UNLESS ajaxUpdate %]
+	[% UNLESS useExtJS %]
 	<div id="browsedbHeader">
 		[% IF hasPagebar %][% PROCESS pagebar %][% END %]
 	</div>
-[% PROCESS pagefooter.html %]
+	[% END %]
+	[% PROCESS pagefooter.html %]
 [% END %]
