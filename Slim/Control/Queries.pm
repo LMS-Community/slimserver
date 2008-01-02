@@ -249,9 +249,8 @@ sub albumsQuery {
 			# Slice the full album result according to start and end
 			$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];
 		
-			# Change offset/count values
+			# Change offset value
 			$copy->{offset} = $index;
-			$copy->{count}  = scalar @{ $copy->{item_loop} };
 		
 			$request->setRawResults( $copy );
 			$request->setStatusDone();
