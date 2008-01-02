@@ -101,7 +101,7 @@ sub enabled {
 sub shutdownPlugin {
 
 	# turn off checker
-	Slim::Utils::Timers::killTimers(0, \&checker);
+	Slim::Utils::Timers::killTimers(undef, \&checker);
 
 	# disable protocol handler?
 	Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
@@ -319,10 +319,10 @@ sub checker {
 	}
 
 	# make sure we aren't doing this more than once...
-	Slim::Utils::Timers::killTimers(0, \&checker);
+	Slim::Utils::Timers::killTimers(undef, \&checker);
 
 	# Call ourselves again after 120 seconds
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 120), \&checker);
+	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 120), \&checker);
 }
 
 sub prefName {

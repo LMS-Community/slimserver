@@ -58,6 +58,18 @@ $prefs->setChange(
 	'musicmagic',
 );
 
+$prefs->setChange(
+	sub {
+			Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::MusicMagic::Plugin::checker);
+		
+			my $interval = $prefs->get('scan_interval') || 3600;
+		
+			$log->info("re-setting checker for $interval seconds from now.");
+		
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::MusicMagic::Plugin::checker);
+	},
+'scan_interval');
+
 sub name {
 	return Slim::Web::HTTP::protectName('MUSICMAGIC');
 }
