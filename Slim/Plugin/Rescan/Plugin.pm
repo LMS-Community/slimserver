@@ -424,14 +424,14 @@ sub getFunctions {
 
 sub setTimer {
 	# timer to check alarms on an interval
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checkScanTimer);
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&checkScanTimer);
 }
 
 sub checkScanTimer {
 
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 
-	Slim::Utils::Timers::killTimers(0, \&checkScanTimer);
+	Slim::Utils::Timers::killTimers(undef, \&checkScanTimer);
 
 	my $time = $hour * 60 * 60 + $min * 60;
 

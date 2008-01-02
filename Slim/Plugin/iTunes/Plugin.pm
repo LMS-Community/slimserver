@@ -53,7 +53,7 @@ sub shutdownPlugin {
 	my $class = shift;
 
 	# turn off checker
-	Slim::Utils::Timers::killTimers(0, \&checker);
+	Slim::Utils::Timers::killTimers(undef, \&checker);
 
 	# disable protocol handler
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);

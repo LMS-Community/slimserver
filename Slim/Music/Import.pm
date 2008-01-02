@@ -166,7 +166,7 @@ sub launchScan {
 	$class->setIsScanning(1);
 
 	# Set a timer to check on the scanning process.
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5), \&checkScanningStatus);
+	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
 
 	return 1;
 }
@@ -181,12 +181,12 @@ If we're still scanning, start a timer process to notify any subscribers of a
 sub checkScanningStatus {
 	my $class = shift || __PACKAGE__;
 
-	Slim::Utils::Timers::killTimers(0, \&checkScanningStatus);
+	Slim::Utils::Timers::killTimers(undef, \&checkScanningStatus);
 
 	# Run again if we're still scanning.
 	if ($class->stillScanning) {
 
-		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5), \&checkScanningStatus);
+		Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
 
 	} else {
 

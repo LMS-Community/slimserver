@@ -438,7 +438,7 @@ sub alarmExitHandler {
 
 sub setTimer {
 	# timer to check alarms on an interval
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checkAlarms);
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&checkAlarms);
 }
 
 =head2 checkAlarms ( )

@@ -82,7 +82,7 @@ sub startTimer {
 
 		$log->info("Starting timer.");
 
-		$timer = Slim::Utils::Timers::setTimer(0, time + $interval, \&checkClientActivity);
+		$timer = Slim::Utils::Timers::setTimer(undef, time + $interval, \&checkClientActivity);
 
 		if (!defined $timer) {
 			$log->error("Starting timer failed!");
