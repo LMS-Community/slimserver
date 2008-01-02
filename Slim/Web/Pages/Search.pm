@@ -391,6 +391,8 @@ sub fillInSearchResults {
 		}
 
 		push @{$params->{'browse_items'}}, \%form;
+		
+		main::idleStreams();
 	}
 }
 
