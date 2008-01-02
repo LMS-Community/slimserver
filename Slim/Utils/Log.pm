@@ -177,11 +177,6 @@ sub reInit {
 
 		Slim::Schema->updateDebug;
 	}
-
-	# enable http file download of logs
-	Slim::Web::HTTP::addRawDownload('^serverlog\.txt' , $class->serverLogFile,  'text');
-	Slim::Web::HTTP::addRawDownload('^scannerlog\.txt', $class->scannerLogFile, 'text');
-	Slim::Web::HTTP::addRawDownload('^perfmonlog\.txt', $class->perfmonLogFile, 'text');
 }
 
 =head2 needsReInit ( )

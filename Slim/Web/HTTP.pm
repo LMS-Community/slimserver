@@ -1150,11 +1150,12 @@ sub generateHTTPResponse {
 			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
 		}
 
-	} elsif ($path =~ /(server|scanner|log)\.(?:log|txt)/) {
+	} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
 		
 		require File::Tail;
 		
-		my $logfile = ( $1 eq 'scanner' ) ? 'scanner' : 'server';
+		my $logfile = $1;
+		$logfile =~ s/log/server/;
 		$logfile .= 'LogFile';
 		
 		$response->remove_header('Content-Length');
