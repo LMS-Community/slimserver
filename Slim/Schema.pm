@@ -2321,6 +2321,8 @@ sub _mergeAndCreateContributors {
 		if ($attributes->{'ARTIST'} && $attributes->{'ALBUMARTIST'}) {
 
 			$attributes->{'TRACKARTIST'} = delete $attributes->{'ARTIST'};
+			# Bug: 6507 - use any ARTISTSORT tag for this contributor
+			$attributes->{'TRACKARTISTSORT'} = delete $attributes->{'ARTISTSORT'};
 
 			$log->debug(sprintf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'",
 				$attributes->{'TRACKARTIST'},
