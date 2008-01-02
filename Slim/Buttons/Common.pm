@@ -671,18 +671,9 @@ our %functions = (
 
 			$log->info("Switching to playlist view.");
 
-			if (Slim::Player::Playlist::count($client) == 0) {
-
-				$client->showBriefly( {
-					'line' =>  [ $client->string('PLAYLIST_EMPTY'), "" ]
-				});
-
-			} else {
-
-				Slim::Buttons::Common::setMode($client, 'home');
-				Slim::Buttons::Home::jump($client, 'playlist');
-				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-			}
+			Slim::Buttons::Common::setMode($client, 'home');
+			Slim::Buttons::Home::jump($client, 'playlist');
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 
 		} elsif ($buttonarg =~ /^[0-5]$/) {
 
