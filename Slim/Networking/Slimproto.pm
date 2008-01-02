@@ -319,32 +319,43 @@ sub client_readable {
 		
 		if ( defined $nb ) {
 			if ( $nb > 0 ) {
-				# Parse slimproto frame
-				my ($op, $data) = unpack 'a4N/a*', $buf;
-				
-				if ( $log->is_debug ) {
-					$log->debug( "Slimproto frame: $op, len: " . length($data) );
-				}
-				
-				my $handler_ref = $message_handlers{$op};
-
-				if ( $handler_ref && ref $handler_ref  eq 'CODE' ) {
-					my $client = $sock2client{$s};
+				# Parse slimproto frame(s) in packet
+				while ( $buf ) {
+					my $op   = substr $buf, 0, 4, '';
+					my $len  = unpack 'N', substr( $buf, 0, 4, '' );
+					my $data = substr $buf, 0, $len, '';
 					
-					if ( $op eq 'HELO' ) {
-						$handler_ref->( $s, \$data );
+					# Sanity check for bad data
+					unless ( length($op) == 4 && $len && length($data) == $len ) {
+						$log->error( "client_readable: Client sent bad data: $op / $len / $data" );
+						slimproto_close($s);
+						return;
 					}
-					else {
-						if ( $client ) {
-							$handler_ref->( $client, \$data );
+				
+					if ( $log->is_debug ) {
+						$log->debug( "Slimproto frame: $op, len: $len" );
+					}
+				
+					my $handler_ref = $message_handlers{$op};
+
+					if ( $handler_ref && ref $handler_ref  eq 'CODE' ) {
+						my $client = $sock2client{$s};
+					
+						if ( $op eq 'HELO' ) {
+							$handler_ref->( $s, \$data );
 						}
 						else {
-							$log->error( "client_readable: Client not found for slimproto msg op: $op" );
+							if ( $client ) {
+								$handler_ref->( $client, \$data );
+							}
+							else {
+								$log->error( "client_readable: Client not found for slimproto msg op: $op" );
+							}
 						}
 					}
-				}
-				else {
-					$log->warn("Unknown slimproto op: $op");
+					else {
+						$log->warn("Unknown slimproto op: $op");
+					}
 				}
 				
 				return;				
