@@ -84,7 +84,10 @@ sub init {
 	# setup the menustatus dispatch and subscription
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'], [0, 0, 0, sub { warn "menustatus query\n" }]);
 	Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
-
+	
+	# Pre-cache albums query to improve Jive responsiveness
+	my $numAlbums = Slim::Schema->rs('Album')->count;
+	Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:menu' ] );
 }
 
 =head2 getDisplayName()

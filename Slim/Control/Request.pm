@@ -1499,6 +1499,12 @@ sub getResults {
 	return $self->{'_results'};
 }
 
+sub setRawResults {
+	my $self = shift;
+	
+	$self->{'_results'} = shift;
+}
+
 sub getResult {
 	my $self = shift;
 	my $key = shift || return;

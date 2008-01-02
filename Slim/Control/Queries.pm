@@ -31,6 +31,8 @@ L<Slim::Control::Queries> implements most SqueezeCenter queries and is designed 
 
 use strict;
 
+use Data::URIEncode qw(complex_to_query);
+use JSON::XS qw(from_json to_json);
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
@@ -49,6 +51,9 @@ use Slim::Utils::Prefs;
 my $log = logger('control.queries');
 
 my $prefs = preferences('server');
+
+# Frequently used data can be cached in memory, such as the list of albums for Jive
+my $cache = {};
 
 sub alarmsQuery {
 	my $request = shift;
@@ -234,6 +239,26 @@ sub albumsQuery {
 		$attr->{'cols'} = [ qw(id artwork title contributor.name) ];
 	}
 	
+	# Flatten request for lookup in cache, only for Jive menu queries
+	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $tags . $insert;
+	if ( $menuMode ) {
+		if ( my $cached = $cache->{albums}->{$cacheKey} ) {
+			my $copy = from_json( $cached );
+		
+			# Slice the full album result according to start and end
+			$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. $quantity - 1 ] ];
+		
+			# Change offset/count values
+			$copy->{offset} = $index;
+			$copy->{count}  = scalar @{ $copy->{item_loop} };
+		
+			$request->setRawResults( $copy );
+			$request->setStatusDone();
+		
+			return;
+		}
+	}
+	
 	# use the browse standard additions, sort and filters, and complete with 
 	# our stuff
 	my $rs = Slim::Schema->rs('Album')->browse->search($where, $attr);
@@ -370,6 +395,12 @@ sub albumsQuery {
 			
 			$cnt++;
 		}
+	}
+	
+	# Cache data as JSON to speed up the cloning of it later, this is faster
+	# than using Storable
+	if ( $menuMode ) {
+		$cache->{albums}->{$cacheKey} = to_json( $request->getResults() );
 	}
 
 	$request->setStatusDone();
@@ -4537,6 +4568,11 @@ sub showArtwork {
 	$request->addResult('offset', 0);
 	$request->setStatusDone();
 
+}
+
+# Wipe cached data, called after a rescan
+sub wipeCaches {
+	$cache = {};
 }
 
 =head1 SEE ALSO
