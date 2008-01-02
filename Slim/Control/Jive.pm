@@ -85,8 +85,17 @@ sub init {
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'], [0, 0, 0, sub { warn "menustatus query\n" }]);
 	Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
 	
-	# Pre-cache albums query to improve Jive responsiveness
+	# Load memory caches to help with menu performance
+	buildCaches();
+	
+	# Re-build the caches after a rescan
+	Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
+}
+
+sub buildCaches {
+	# Pre-cache albums query
 	my $numAlbums = Slim::Schema->rs('Album')->count;
+	$log->debug( "Pre-caching $numAlbums album items." );
 	Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:menu' ] );
 }
 
