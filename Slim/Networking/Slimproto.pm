@@ -326,7 +326,7 @@ sub client_readable {
 					my $data = substr $buf, 0, $len, '';
 					
 					# Sanity check for bad data
-					unless ( length($op) == 4 && $len && length($data) == $len ) {
+					unless ( length($op) == 4 && defined $len && length($data) == $len ) {
 						$log->error( "client_readable: Client sent bad data: $op / $len / $data" );
 						slimproto_close($s);
 						return;
