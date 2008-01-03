@@ -464,8 +464,13 @@ PlayerChooser = function(){
 Playlist = function(){
 	return {
 		init: function(){
+			var offset = 0;
+			if (offset = Ext.get('offset'))
+				offset = parseInt(offset.dom.innerHTML);
+
 			new Slim.Sortable({
 				el: 'playList',
+				offset: offset,
 				selector: '#playList div.draggableSong',
 				onDropCmd: function(sourcePos, targetPos) {
 					Player.playerControl(

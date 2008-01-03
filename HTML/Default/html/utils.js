@@ -12,12 +12,13 @@ Slim.Sortable = function(config){
 Slim.Sortable.prototype = {
 	init: function(){
 		var items = Ext.DomQuery.select(this.selector);
+		this.offset |= 0;
 
 		for(var i = 0; i < items.length; i++) {
 			var item = Ext.get(items[i]);
 	
 			item.dd = new Slim.DDProxy(items[i], this.el, {
-				position: i,
+				position: i + this.offset,
 				list: this
 			});
 		}
@@ -27,17 +28,8 @@ Slim.Sortable.prototype = {
 
 	onDrop: function(source, target) {
 		if (target && source) {
-			var sourcePos = -1;
-			var targetPos = -1;
-
-			// get to know where we come from, where we've gone to
-			var items = Ext.query(this.selector);
-			for(var i = 0; i < items.length; i++) {
-				if (items[i].id == source.id)
-					sourcePos = i;
-				else if (items[i].id == target.id)
-					targetPos = i;
-			}
+			var sourcePos = Ext.get(source.id).dd.config.position;
+			var targetPos = Ext.get(target.id).dd.config.position;
 
 			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
 

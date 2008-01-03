@@ -1,4 +1,5 @@
 <div>
+
 	[% noPlaylistCover = "SqueezeCenter-noPlaylistCover"; noPlaylistCover = cookies.$noPlaylistCover.value %]
 	[% IF hasPagebar %]
 		<div class="pagerbox">
@@ -16,7 +17,7 @@
 			[% IF playlist_items %]
 				[% FOREACH item = playlist_items %]
 					[% PROCESS status_list.html %]
-				[% END %]
+				[% END %]<div id="offset" style="display:none">[% start %]</div>
 			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
 		[% END %]
 	</div>
@@ -37,6 +38,5 @@
 		</div>
 	</div>
 	[% END %]
-
 
 </div>
