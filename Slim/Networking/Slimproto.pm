@@ -321,17 +321,45 @@ sub client_readable {
 			if ( $nb > 0 ) {
 				# Parse slimproto frame(s) in packet
 				while ( $buf ) {
-					my $op   = substr $buf, 0, 4, '';
-					my $len  = unpack 'N', substr( $buf, 0, 4, '' );
-					my $data = substr $buf, 0, $len, '';
+					my ($op, $len, $data);
+					
+					# Check for previous partial data
+					if ( my $partial = ${*$s}{_partial} ) {
+						$op   = $partial->[0];
+						$len  = $partial->[1];
+						$data = $partial->[2];
+						
+						my $remain = $len - length($data);
+						$data .= substr $buf, 0, $remain, '';
+						
+						if ( $log->is_debug ) {
+							$log->debug( "Client sent additional $remain partial data: $op / $len / " . Data::Dump::dump($data) );
+						}
+					}
+					else {
+						$op   = substr $buf, 0, 4, '';
+						$len  = unpack 'N', substr( $buf, 0, 4, '' );
+						$data = substr $buf, 0, $len, '';
+					}
+					
+					# Check for partial reads
+					if ( defined $len && length($data) < $len ) {
+						if ( $log->is_debug ) {
+							$log->debug( "Client sent partial data: $op / $len / " . length($data) . " data: " . Data::Dump::dump($data) );
+						}
+						${*$s}{_partial} = [ $op, $len, $data ];
+						return;
+					}
+
+					# Remove partial data if any
+					delete ${*$s}{_partial};
 					
 					# Sanity check for bad data
 					unless ( length($op) == 4 && defined $len && length($data) == $len ) {
-						$log->error( "client_readable: Client sent bad data: $op / $len / $data" );
-						slimproto_close($s);
+						$log->error( "Client sent bad data: $op / $len / " . length($data) . " data: " . Data::Dump::dump($data) );
 						return;
 					}
-				
+					
 					if ( $log->is_debug ) {
 						$log->debug( "Slimproto frame: $op, len: $len" );
 					}
