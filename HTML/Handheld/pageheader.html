@@ -11,6 +11,13 @@
 		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
 	[% END %]
+	<script TYPE="text/javascript">
+		function resizeBody() {
+			if (navigator.userAgent.search(/Opera 8/) != -1 
+				&& document.getElementsByTagName("body")[0].offsetWidth > window.outerWidth)
+				document.getElementsByTagName("body")[0].style.width = window.outerWidth;
+		}
+	</script>
 </head>
 
 [%- BLOCK submenu -%]
@@ -27,7 +34,7 @@
 	<table bgcolor="[% subtitleC %]" width=100%><tr><td><h4>[% title | string %]</h4></td></tr></table>
 [%- END -%]
 
-<body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="resizeBody();">
 	<table width="100%" bgcolor="#333333">
 		<tr>
 			<td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></td>
