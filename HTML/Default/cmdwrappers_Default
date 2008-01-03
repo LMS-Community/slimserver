@@ -34,21 +34,12 @@
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker [% addClasses %]" onmouseover="Utils.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (levelName == 'album' || levelName == 'age') && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
-			[%- IF leftcontrols -%]
-				<span class="browsedbLeftControls">
-				[%- PROCESS $leftcontrols -%]
-				</span>
-			[%- END %]
 			[%- content | indent(4) %]
-			[%- IF rightcontrols -%]
-				<span class="browsedbRightControls">
-				[%- PROCESS $rightcontrols -%]
-				</span>
-			[%- END; IF controls -%]
-				<span class="browsedbControls">
-				[%- PROCESS $controls -%]
-				</span>
-			[%- END %]
+			<span class="browsedbControls">
+				[%- IF leftcontrols && leftcontrols != controls; PROCESS $leftcontrols; END %]
+				[%- IF rightcontrols && rightcontrols != controls; PROCESS $rightcontrols; END %]
+				[%- IF controls; PROCESS $controls; END %]
+			</span>
 		</div></div></div></div></div>
 	</div>
 	[%- END %]
@@ -125,9 +116,9 @@
 			[%- END %]
 		[% ELSE %]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
-			[% IF allLinks && NOT rightcontrols; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
+			[% IF allLinks; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
-			[% IF allLinks && NOT rightcontrols; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
+			[% IF allLinks; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
 			[% FOREACH mixer = mixerlinks.values.sort -%]
 				[% PROCESS $mixer %]
 			[% END %]
