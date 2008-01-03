@@ -1,0 +1,13 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="SETUP_CHECKVERSION" desc="SETUP_CHECKVERSION_DESC"%]
+		<select class="stdedit" name="checkVersion" id="checkVersion">
+
+			<option [% IF NOT prefs.checkVersion %]selected [% END %]value="0">[% 'SETUP_CHECKVERSION_0' | string %]</option>
+			<option [% IF prefs.checkVersion %]selected [% END %]value="1">[% 'SETUP_CHECKVERSION_1' | string %]</option>
+		
+		</select>
+	[% END %]
+
+[% PROCESS settings/footer.html %]
+
