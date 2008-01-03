@@ -68,6 +68,14 @@ a:hover, .link:hover,
 	cursor: pointer;
 }
 
+.selectedItem a {
+	font-weight: bold;
+}
+
+.selectedItem a:before {
+	content: '> ';
+}
+
 .folderselector {
 	overflow: auto;
 	height: 300px;
@@ -591,9 +599,6 @@ div.thumbwrap {
 	padding-bottom: 0;
 }
 
-.selectedItem a,
-.selectedItem .browsedbListItem,
-.selectedItem .playlistSongDetail,
 .mouseOver .browseItemDetail,
 .mouseOver .browseItemLink,
 .mouseOver .browsedbListItem,
@@ -603,22 +608,18 @@ div.thumbwrap {
 	text-weight: bold;
 }
 
-.selectedItem .selector_topRight,
 .mouseOver .selector_topRight {
 	background: #999 url(html/images/selector_top_right.gif) no-repeat top right;
 }
 
-.selectedItem .selector_topLeft,
 .mouseOver .selector_topLeft {
 	background: transparent url(html/images/selector_top_left.gif) no-repeat top left;
 }
 
-.selectedItem .selector_bottomRight,
 .mouseOver .selector_bottomRight {
 	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right;
 }
 
-.selectedItem .selector_bottomLeft,
 .mouseOver .selector_bottomLeft {
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
