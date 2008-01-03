@@ -626,6 +626,7 @@ function resize(src, width) {
 		else if (document.getElementById) //else if NS6+
 			width = window.innerWidth*0.5;
 
+		width = Math.min(150, parseInt(width));
 	}
 
 	if (src.width > width || !src.width)
