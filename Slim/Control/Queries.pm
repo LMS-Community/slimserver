@@ -241,10 +241,15 @@ sub albumsQuery {
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
-	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $tags . $insert;
+	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . $tags . $insert;
 	if ( $menuMode ) {
 		if ( my $cached = $cache->{albums}->{$cacheKey} ) {
 			my $copy = from_json( $cached );
+			
+			# Don't slice past the end of the array
+			if ( $copy->{count} < $index + $quantity ) {
+				$quantity = $copy->{count} - $index;
+			}
 		
 			# Slice the full album result according to start and end
 			$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];

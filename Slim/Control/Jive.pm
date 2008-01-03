@@ -96,7 +96,7 @@ sub buildCaches {
 	# Pre-cache albums query
 	my $numAlbums = Slim::Schema->rs('Album')->count;
 	$log->debug( "Pre-caching $numAlbums album items." );
-	Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:menu', 'cache:1' ] );
+	Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:track', 'cache:1' ] );
 }
 
 =head2 getDisplayName()
