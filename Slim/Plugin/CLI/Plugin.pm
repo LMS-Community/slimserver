@@ -195,7 +195,7 @@ sub cli_socket_close {
 
 		$log->info("Closing socket $cli_socket_port");
 		
-		Slim::Networking::Select::addRead($cli_socket, undef);
+		Slim::Networking::Select::removeRead($cli_socket);
 		$cli_socket->close();
 		$cli_socket_port = 0;
 		Slim::Control::Request::unsubscribe(\&cli_request_notification);
@@ -261,9 +261,9 @@ sub client_socket_close {
 
 	my $client_id = $connections{$client_socket}{'id'};
 		
-	Slim::Networking::Select::addWrite($client_socket, undef);
-	Slim::Networking::Select::addRead($client_socket, undef);
-	Slim::Networking::Select::addError($client_socket, undef);
+	Slim::Networking::Select::removeWrite($client_socket);
+	Slim::Networking::Select::removeRead($client_socket);
+	Slim::Networking::Select::removeError($client_socket);
 	
 	close $client_socket;
 	delete($connections{$client_socket});
@@ -462,7 +462,7 @@ sub client_socket_write {
 			# no more messages to send
 			$log->info("Sent response to $connections{$client_socket}{'id'}");
 
-			Slim::Networking::Select::addWrite($client_socket, undef);
+			Slim::Networking::Select::removeWrite($client_socket);
 			
 		} else {
 

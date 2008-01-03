@@ -350,8 +350,8 @@ sub close {
 
 	if (defined($listenReader)) {
 
-		Slim::Networking::Select::addRead($listenReader, undef);
-		Slim::Networking::Select::addError($listenReader, undef);
+		Slim::Networking::Select::removeRead($listenReader);
+		Slim::Networking::Select::removeError($listenReader);
 
 		${*$listenReader}{'pipeline'} = undef;
 
@@ -362,8 +362,8 @@ sub close {
 
 	if (defined($listenWriter)) {
 
-		Slim::Networking::Select::addRead($listenWriter, undef);
-		Slim::Networking::Select::addError($listenWriter, undef);
+		Slim::Networking::Select::removeRead($listenWriter);
+		Slim::Networking::Select::removeError($listenWriter);
 
 		${*$listenWriter}{'pipeline'} = undef;
 

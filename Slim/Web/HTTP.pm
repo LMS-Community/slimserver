@@ -201,7 +201,7 @@ sub _adjustHTTPPortCallback {
 		
 		$log->info("Closing http server socket");
 
-		Slim::Networking::Select::addRead($http_server_socket, undef);
+		Slim::Networking::Select::removeRead($http_server_socket);
 
 		$http_server_socket->close();
 		undef($http_server_socket);
