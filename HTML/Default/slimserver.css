@@ -521,6 +521,10 @@ div.pagetitleWithIcon {
 	padding: 0 6px;
 }
 
+#browsedbList {
+	position: relative;
+}
+
 .thumbArtwork span.browsedbControls {
 	position: absolute;
 	top: auto;

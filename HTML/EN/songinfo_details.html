@@ -64,6 +64,8 @@
 
 	</div>
 
+	[% UNLESS headOnly %]
+
 	[% IF itemobj.disc %] 
 		[% item = itemobj.disc | html; title = "DISC"; PROCESS songInfoItem %]
 	[% END %]
@@ -145,5 +147,7 @@
 	[% IF itemobj.coverArt('cover', 1) AND !artAtTop %]
 		[% item = BLOCK %]<a href="/music/[% itemobj.id %]/cover.jpg" target="cover"><img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)"></a>[% END %]
 		[% PROCESS songInfoItem title = "COVERART" %]
+	[% END %]
+
 	[% END %]
 </div>

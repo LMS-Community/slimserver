@@ -50,9 +50,30 @@
 	[%- END; END -%]
 
 	[%- WRAPPER $container %]
-		[% IF coverArt AND tree != 1 -%]
+
+		[% IF levelName == 'track' && !browse_items.1.attributes.${'album.compilation'} && album.id %]
+			[% songInfoPlayLinks = BLOCK %]
+				<div id="songInfoPlayLinks">
+					<div>
+						[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %] [% "PLAY" | string %]
+					</div>
+					<div>
+						[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %] [% "ADD_TO_PLAYLIST" | string %]
+					</div>
+				</div>
+			[% END %]
+
+			[% 
+				itemobj = browse_items.1.itemobj;
+				PROCESS songinfo_details.html artAtTop = 1 headOnly = 1;
+				noByOrAlbum = 1;
+			%]
+
+		[% ELSIF coverArt AND tree != 1 -%]
+
 			<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 		[% END -%]
+
 		[% FOREACH item = browse_items -%]
 			[%- PROCESS browsedbitems_list.html -%]
 		[%- END %]
