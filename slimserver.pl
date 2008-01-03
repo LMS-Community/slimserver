@@ -329,6 +329,9 @@ sub init {
 		Slim::Utils::Misc::setPriority( $prefs->get('serverPriority') );
 	}
 
+	$log->info("SqueezeCenter binary search path init...");
+	Slim::Utils::OSDetect::initSearchPath();
+
 	$log->info("SqueezeCenter strings init...");
 	Slim::Utils::Strings::init();
 

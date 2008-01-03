@@ -439,6 +439,16 @@ sub enablePlugins {
 
 			Slim::Web::HTTP::addTemplateDirectory($htmlDir);
 		}
+
+		# Add any Bin dirs to findbin search path
+		my $binDir = catdir($baseDir, 'Bin');
+
+		if (-d $binDir) {
+
+			$log->debug("Adding Bin directory: [$binDir]");
+
+			Slim::Utils::Misc::addFindBinPaths( catdir($binDir, Slim::Utils::OSDetect::details()->{'binArch'}), $binDir );
+		}
 	}
 
 	# Call init functions for all loaded plugins - multiple passes allows plugins to offer services to each other

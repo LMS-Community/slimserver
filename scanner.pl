@@ -240,8 +240,7 @@ sub initializeFrameworks {
 	$log->info("SqueezeCenter OSDetect init...");
 
 	Slim::Utils::OSDetect::init();
-
-	$log->info("SqueezeCenter OS Specific init...");
+	Slim::Utils::OSDetect::initSearchPath();
 
 	# initialize SqueezeCenter subsystems
 	$log->info("SqueezeCenter settings init...");

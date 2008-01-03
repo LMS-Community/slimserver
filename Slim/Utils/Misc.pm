@@ -78,6 +78,7 @@ my $userAgentString;
 
 my %pathToFileCache = ();
 my %fileToPathCache = ();
+my @findBinPaths    = ();
 
 =head1 METHODS
 
@@ -94,48 +95,16 @@ sub findbin {
 
 	$log->debug("Looking for executable: [$executable]");
 
-	# Reduce all the x86 architectures down to i386, including x86_64,
-	# so we only need one directory per *nix OS. 
-	my $arch = $Config::Config{'archname'};
+	my $isWin = (Slim::Utils::OSDetect::OS() eq "win");
 
-	$arch =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
+	if ($isWin && $executable !~ /\.\w{3}$/) {
 
-	my @paths = (
-		catdir($Bin, 'Bin', $arch),
-		catdir($Bin, 'Bin', $^O),
-		Slim::Utils::OSDetect::dirsFor('Bin'),
-		# Not sure if the above is needed, but add this one instead of changing it
-		catdir(Slim::Utils::OSDetect::dirsFor('Bin'), $arch),
-	);
-
-	if (Slim::Utils::OSDetect::isRHorSUSE()) {
-		push @paths, "/var/lib/squeezecenter/Plugins/Bin";
+		$executable .= '.exe';
 	}
 
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @paths, $ENV{'HOME'} . "/Library/Application Support/SqueezeCenter/bin/";
-		push @paths, "/Library/Application Support/SqueezeCenter/bin/";
-		push @paths, $ENV{'HOME'} . "/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
-	}
+	for my $search (@findBinPaths) {
 
-	if (Slim::Utils::OSDetect::OS() ne "win") {
-
-		push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin));
-
-	} else {
-
-		push @paths, 'C:\Perl\bin';
-
-		# Don't add .exe on - we may be looking for a .bat file.
-		if ($executable !~ /\.\w{3}$/) {
-
-			$executable .= '.exe';
-		}
-	}
-
-	for my $path (@paths) {
-
-		$path = catdir($path, $executable);
+		my $path = catdir($search, $executable);
 
 		$log->debug("Checking for $executable in $path");
 
@@ -147,9 +116,8 @@ sub findbin {
 		}
 	}
 
-	# Couldn't find it in the environment? Look on disk..
-	# XXXX - why only windows? Security issue?
-	if (Slim::Utils::OSDetect::OS() eq "win" && (my $path = File::Which::which($executable))) {
+	# For Windows we don't include the path in @findBinPaths so now search this
+	if ($isWin && (my $path = File::Which::which($executable))) {
 
 		$log->info("Found binary $path for $executable");
 
@@ -162,6 +130,25 @@ sub findbin {
 		return undef;
 	}
 }
+
+=head2 addFindBinPaths( $path1, $path2, ... )
+
+Add $path1, $path2 etc to paths searched by findbin
+
+=cut
+sub addFindBinPaths {
+
+	while (my $path = shift) {
+
+		if (-d $path) {
+
+			logger('os.paths')->info("adding $path");
+
+			push @findBinPaths, $path;
+		}
+	}
+}
+
 
 =head2 setPriority( $priority )
 

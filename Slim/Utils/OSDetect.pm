@@ -103,6 +103,40 @@ sub init {
 	}
 }
 
+=head2 initSearchPath( )
+
+Initialises the binary seach path used by Slim::Utils::Misc::findbin to OS specific locations
+
+=cut
+
+sub initSearchPath {
+	# Initialise search path for findbin - called later in initialisation than init above
+
+	# Reduce all the x86 architectures down to i386, including x86_64, so we only need one directory per *nix OS. 
+	my $arch = $Config::Config{'archname'};
+	$arch =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
+
+	my @paths = ( catdir(dirsFor('Bin'), $arch), dirsFor('Bin') );
+
+	if ($detectedOS eq 'mac') {
+
+		push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
+	}
+
+	if ($detectedOS ne "win") {
+
+		push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin));
+
+	} else {
+
+		push @paths, 'C:\Perl\bin';
+	}
+
+	$osDetails{'binArch'} = $arch;
+	
+	Slim::Utils::Misc::addFindBinPaths(@paths);
+}
+
 =head2 dirsFor( $dir )
 
 Return OS Specific directories.
@@ -496,7 +530,6 @@ sub initDetailsForOSX {
 		'Library/Application Support/SqueezeCenter/Graphics',
 		'Library/Application Support/SqueezeCenter/html',
 		'Library/Application Support/SqueezeCenter/IR',
-		'Library/Application Support/SqueezeCenter/bin',
 		'Library/Logs/SqueezeCenter'
 	) {
 
