@@ -132,7 +132,7 @@ sub initPlugin {
 			id             => 'randomplay',
 			node           => 'myMusic',
 			displayWhenOff => 0,
-			window         => { titleStyle => 'mymusic' },
+			window         => { titleStyle => 'random' },
 		};
 
 	Slim::Control::Jive::registerPluginNode($node);
@@ -142,7 +142,6 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
 			id      => 'randomtracks',
 			weight  => 10,
-			window  => { titleStyle => 'mymusic' },
 			actions => {
 				do => {
 					player => 0,
@@ -157,7 +156,6 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
 			id      => 'randomalbums',
 			weight  => 20,
-			window  => { titleStyle => 'mymusic' },
 			actions => {
 				do => {
 					player => 0,
@@ -172,7 +170,6 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
 			id      => 'randomartists',
 			weight  => 30,
-			window  => { titleStyle => 'mymusic' },
 			actions => {
 				do => {
 					player => 0,
@@ -187,7 +184,6 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
 			id      => 'randomyears',
 			weight  => 40,
-			window  => { titleStyle => 'mymusic' },
 			actions => {
 				do => {
 					player => 0,
@@ -202,7 +198,7 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_CHOOSE_GENRES'),
 			id      => 'randomchoosegenres',
 			weight  => 50,
-			window  => { titleStyle => 'mymusic' },
+			window  => { titleStyle => 'random' },
 			actions => {
 				go => {
 					player => 0,

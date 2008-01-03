@@ -555,7 +555,7 @@ sub artistsQuery {
 			# style correctly the window that opens for the action element
 			'window' => {
 				'menuStyle'  => 'album',
-				'titleStyle' => 'mymusic',
+				'titleStyle' => 'artists',
 			}
 		};
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
@@ -1037,7 +1037,7 @@ sub genresQuery {
 					'itemsParams' => 'params',
 				},
 			},
-			window => { titleStyle => 'mymusic', },
+			window => { titleStyle => 'genres', },
 		};
 		$request->addResult('base', $base);
 		$count++ if $insertAll;
@@ -1322,7 +1322,7 @@ sub musicfolderQuery {
 				},
 			},
 			window => {
-				titleStyle => 'mymusic',
+				titleStyle => 'musicfolder',
 			},
 		};
 		$request->addResult('base', $base);
@@ -1959,7 +1959,7 @@ sub playlistsQuery {
 				},
 			},
 			window => {
-				titleStyle => 'mymusic',
+				titleStyle => 'playlist',
 			},
 		};
 		$request->addResult('base', $base);
@@ -3825,7 +3825,7 @@ sub yearsQuery {
 			},
 			'window' => {
 				menuStyle   => 'album',
-				titleStyle  => 'mymusic',
+				titleStyle  => 'years',
 			}
 		};
 		$request->addResult('base', $base);
@@ -4043,7 +4043,7 @@ sub _addJivePlaylistControls {
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
-	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'mymusic' } );
+	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
 
 	# save playlist
 	my $input = {
@@ -4069,7 +4069,7 @@ sub _addJivePlaylistControls {
 	$request->addResultLoop($loop, $count, 'text', $text);
 	$request->addResultLoop($loop, $count, 'input', $input);
 	$request->addResultLoop($loop, $count, 'actions', $actions);
-	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'mymusic' } );
+	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
 
 }
 

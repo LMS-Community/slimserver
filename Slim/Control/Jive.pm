@@ -1222,7 +1222,7 @@ sub myMusicMenu {
 					},
 				},
 				window        => {
-					titleStyle => 'mymusic',
+					titleStyle => 'artists',
 				},
 			},		
 			{
@@ -1242,7 +1242,7 @@ sub myMusicMenu {
 				window         => {
 					menuStyle => 'album',
 					menuStyle => 'album',
-					titleStyle => 'mymusic',
+					titleStyle => 'albumlist',
 				},
 			},
 			{
@@ -1260,7 +1260,7 @@ sub myMusicMenu {
 					},
 				},
 				window        => {
-					titleStyle => 'mymusic',
+					titleStyle => 'genres',
 				},
 			},
 			{
@@ -1278,7 +1278,7 @@ sub myMusicMenu {
 					},
 				},
 				window        => {
-					titleStyle => 'mymusic',
+					titleStyle => 'years',
 				},
 			},
 			{
@@ -1298,7 +1298,7 @@ sub myMusicMenu {
 				},
 				window        => {
 					menuStyle => 'album',
-					titleStyle => 'mymusic',
+					titleStyle => 'newmusic',
 				},
 			},
 			{
@@ -1316,7 +1316,7 @@ sub myMusicMenu {
 					},
 				},
 				window        => {
-					titleStyle => 'mymusic',
+					titleStyle => 'musicfolder',
 				},
 			},
 			{
@@ -1334,7 +1334,7 @@ sub myMusicMenu {
 					},
 				},
 				window        => {
-					titleStyle => 'mymusic',
+					titleStyle => 'playlist',
 				},
 			},
 			{
