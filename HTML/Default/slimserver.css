@@ -1025,6 +1025,7 @@ body.settings {
 }
 
 body.settingsMenu {
+	position: relative;
 	margin-left: 5px;
 	overflow: auto;
 	background-color: white;
