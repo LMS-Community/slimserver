@@ -141,7 +141,7 @@ sub launchScan {
 
 	} elsif (-x '/usr/sbin/squeezecenter-scanner') {
 
-		$command  = '/usr/libexec/squeezecenter-scanner';
+		$command  = '/usr/sbin/squeezecenter-scanner';
 
 	} elsif (-x '/usr/sbin/slimserver-scanner') {
 
