@@ -121,6 +121,8 @@ sub initSearchPath {
 	if ($detectedOS eq 'mac') {
 
 		push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
+		# hack fix to make OS X work until better fix
+		push @paths, 'Bin/darwin/';
 	}
 
 	if ($detectedOS ne "win") {
