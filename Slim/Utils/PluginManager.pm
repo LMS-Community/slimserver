@@ -106,16 +106,14 @@ sub init {
 		$class->readInstallManifests($manifestFiles);
 	}
 
-	if (scalar keys %$plugins != scalar @$manifestFiles) {
+	elsif (scalar keys %$plugins != scalar @$manifestFiles) {
 
 		$log->info("Reparsing plugin manifests - cache contains different number of plugins");
-
-		$plugins = {};
 
 		$class->readInstallManifests($manifestFiles);
 	}
 
-	if ( $rootDir ne $Bin ) {
+	elsif ( $rootDir ne $Bin ) {
 
 		$log->info("Reparsing plugin manifests - SC running from different folder than when cache was written");
 
@@ -203,6 +201,8 @@ sub findInstallManifests {
 sub readInstallManifests {
 	my $class = shift;
 	my $files = shift;
+
+	$plugins = {};
 
 	for my $file (@{$files}) {
 
