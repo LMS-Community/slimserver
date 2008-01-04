@@ -306,7 +306,13 @@ END %]
 	[% WRAPPER addlink %]href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]"[% END %]
 		[% FILTER nbsp %][% IF itemobj.isRemoteURL; "ADD_TO_PLAYLIST" | string; ELSE; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %][% END %]
 	</a>
+	[% FOREACH mixer = mixerlinks.keys.sort -%]
+		<br>
+		[% PROCESS $mixerlinks.$mixer %]
+		[% mixer | string %]
+	[% END %]
 [% END %]
+
 
 [% BLOCK songInfoItem %]
 	<div id="[% title %]">

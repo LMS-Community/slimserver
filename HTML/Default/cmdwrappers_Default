@@ -153,14 +153,7 @@
 
 	[% BLOCK songInfoPlayLinks %]
 		<div id="songInfoPlayLinks">
-			<div>
-				[% WRAPPER playlink %]onclick="Utils.processPlaylistURL('command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]', true);"[% END %]
-				[% IF itemobj.isRemoteURL; "PLAY" | string; ELSE; "PLAY_THIS_SONG" | string; END %]
-			</div>
-			<div>
-				[% WRAPPER addlink %]onclick="Utils.processPlaylistURL('command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]', true);"[% END %]
-				[% IF itemobj.isRemoteURL; "ADD_TO_PLAYLIST" | string; ELSE; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %]
-			</div>
+			[% PROCESS browsecontrols %]
 		</div>
 	[% END %]
 

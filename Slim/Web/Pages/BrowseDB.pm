@@ -461,6 +461,26 @@ sub browsedb {
 				}
 			}
 		}
+
+		# If we're at the track level, and it's at the bottom of a
+		# *,album,track hierarchy, make the album mixable
+		if ($level == $maxLevel && $levelName eq 'track' && defined $firstItem 
+			&& (defined $params->{'album.id'})
+		) {
+			my $Imports = Slim::Music::Import->importers;
+	
+			for my $mixer (keys %{$Imports}) {
+	
+				if (defined $Imports->{$mixer}->{'mixerlink'}) {
+	
+					$params->{mixeritems} = { album => $params->{'album.id'} };
+					&{$Imports->{$mixer}->{'mixerlink'}}($firstItem->album, $params->{mixeritems}, 1);
+	
+				}
+			}
+			$params->{mixerlinks} = $params->{mixeritems}->{mixerlinks};
+		}
+
 	}
 
 	# Give players a bit of time.

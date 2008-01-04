@@ -312,6 +312,20 @@ sub addSongInfo {
 		} else {
 
 			$params->{'download'} = sprintf('%smusic/%d/download', $params->{'webroot'}, $track->id);
+
+
+			my $Imports = Slim::Music::Import->importers;
+		
+			for my $mixer (keys %{$Imports}) {
+			
+				if (defined $Imports->{$mixer}->{'mixerlink'}) {
+					
+					$params->{mixeritems} = { item => $params->{item} };
+					&{$Imports->{$mixer}->{'mixerlink'}}($track, $params->{mixeritems});
+
+				}
+			}
+			$params->{mixerlinks} = $params->{mixeritems}->{mixerlinks};
 		}
 	}
 }
