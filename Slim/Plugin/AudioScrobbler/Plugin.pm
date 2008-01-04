@@ -741,7 +741,13 @@ sub submitScrobble {
 		#$log->debug( Data::Dump::dump($queue) );
 	}
 	
-	my $current;
+	# Get the currently playing track
+	my $current_track;
+	if ( my $url = Slim::Player::Playlist::url($client) ) {
+		$current_track = Slim::Schema->objectForUrl( { url => $url } );
+	}
+	
+	my $current_item;
 	my @tmpQueue;
 	
 	my $post = 's=' . $client->pluginData('session_id');
@@ -751,9 +757,9 @@ sub submitScrobble {
 		
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
-		if ( stillPlaying( $client, $item ) ) {
+		if ( stillPlaying( $client, $current_track, $item ) ) {
 			$log->debug( "Track " . $item->{_url} . " is still playing, not submitting" );
-			$current = $item;
+			$current_item = $item;
 			next;
 		}
 		
@@ -768,11 +774,14 @@ sub submitScrobble {
 		}
 		
 		$index++;
+		
+		# If we have a really large queue, don't let this loop block
+		main::idleStreams();
 	}
 	
 	# Add the currently playing track back to the queue
-	if ( $current ) {
-		unshift @{$queue}, $current;
+	if ( $current_item ) {
+		unshift @{$queue}, $current_item;
 		
 		# Try again in a minute
 		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
@@ -813,21 +822,17 @@ sub submitScrobble {
 
 # Check if a track is still playing
 sub stillPlaying {
-	my ( $client, $item ) = @_;
-	
-	# Get the currently playing track
-	my $url   = Slim::Player::Playlist::url($client);
-	my $track = Slim::Schema->objectForUrl( { url => $url } );
+	my ( $client, $track, $item ) = @_;
 	
 	my $artist   = $track->artist ? $track->artist->name : '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
 	
 	if ( $track->remote ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			# this plugin provides track metadata, i.e. Pandora, Rhapsody
-			my $meta  = $handler->getMetadataFor( $client, $url, 'forceCurrent' );			
+			my $meta  = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );			
 			$artist   = $meta->{artist};
 			$album    = $meta->{album};
 			$title    = $meta->{title};
