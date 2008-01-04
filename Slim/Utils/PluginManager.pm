@@ -64,6 +64,7 @@ use constant INSTALLERROR_NO_PLUGIN             => -7;
 my @pluginDirs     = Slim::Utils::OSDetect::dirsFor('Plugins');
 my @pluginRootDirs = ();
 my $plugins        = {};
+my $rootDir        = '';
 
 my $prefs = preferences('plugin.state');
 my $log   = logger('server.plugins');
@@ -114,6 +115,13 @@ sub init {
 		$class->readInstallManifests($manifestFiles);
 	}
 
+	if ( $rootDir ne $Bin ) {
+
+		$log->info("Reparsing plugin manifests - SC running from different folder than when cache was written");
+
+		$class->readInstallManifests($manifestFiles);
+	}
+
 	$class->enablePlugins;
 
 	$class->writePluginCache;
@@ -134,9 +142,14 @@ sub writePluginCache {
 	# can check for updates.
 	$plugins->{'__version'} = $::VERSION;
 
+	# Append the SC installation folder, so we
+	# can check for moved installations/differnent branch running
+	$plugins->{'__installationFolder'} = $Bin;
+
 	YAML::Syck::DumpFile($class->pluginCacheFile, $plugins);
 
 	delete $plugins->{'__version'};
+	$rootDir = delete $plugins->{'__installationFolder'};
 
 	return 1;
 }
@@ -147,6 +160,8 @@ sub loadPluginCache {
 	$log->info("Loading plugin data file.");
 
 	$plugins = YAML::Syck::LoadFile($class->pluginCacheFile);
+
+	$rootDir = delete $plugins->{'__installationFolder'};
 
 	my $checkVersion = delete $plugins->{'__version'};
 
