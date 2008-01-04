@@ -19,9 +19,10 @@
 			[% IF playlist_items %]
 				<ol id="playlist_draglist" style="counter-reset: item [% start %];">
 				[% FOREACH item = playlist_items %]
-					<li class="listing" id="draglist_[% loop.index %]" 
+					[% listClass = 'odd' %][% IF item.currentsong; listClass = 'current'; END %]
+					<li class="[% listClass %]" id="draglist_[% loop.index %]" 
 						onMouseOver="this.className='oddactive';showElements(['playlistControls[% item.num %]'], 'inline');" 
-						onMouseOut="this.className='odd';hideElements(['playlistControls[% item.num %]']);" 
+						onMouseOut="this.className='[% listClass %]';hideElements(['playlistControls[% item.num %]']);" 
 						onMouseDown="Event.observe('draglist_[% loop.index %]', 'click', function(event) { checkPlaylistSortable(event); });">[% PROCESS status_list.html %]</li>
 				[% END %]
 				</ol>

@@ -231,15 +231,25 @@ A.linkbtn:link {
 	background-color: #cc9966;
 }
 
-.listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A
+.listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A, .current A
 {
 	color : #663300 ! important;
 	font-family: Arial, Helvetica, sans-serif;
 }
+.current
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background: #ffe580;
+	color:#996600 ;
+	padding-left: 1px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	border-top:solid 2px #996633;
+	border-bottom:solid 2px #cc9966;
+}
 
 .currentListItem
 {
-	background:#ffe580;
 	border-top:solid 1px #EE3823;
 	border-bottom:solid 1px #EE3823;
 	position: relative;

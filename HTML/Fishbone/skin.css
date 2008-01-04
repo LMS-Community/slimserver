@@ -810,6 +810,16 @@ A.linkbtn:link {
 	line-height: 100%;
 }	
 
+.currentListItem
+{
+	border-top:solid 1px #EE3823;
+	border-bottom:solid 1px #EE3823;
+	position: relative;
+	padding: 0px;
+	padding-right: 50px;
+}
+
+
 .listing, .listing2, .even, .odd 
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -830,19 +840,19 @@ A.linkbtn:link {
 	border-top:solid 1px #333;
 }
 
-.listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A
+.listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A, .current A
 {
 	color : white ! important;
 }
 
-.currentListItem
+.current
 {
-	background-color:#333;
-	border-top:solid 1px #EE3823;
-	border-bottom:solid 1px #EE3823;
-	position: relative;
-	padding: 0px;
-	padding-right: 50px;
+	background-color: #333;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color:#999;
+	padding-left: 1px;
+	margin: 0px;
+	border-top:solid 1px #333;
 }
 
 .listinghead
