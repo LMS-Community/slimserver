@@ -11,7 +11,7 @@
 					[% END %]
 				[% ELSE %]
 					<a href="/music/[% itemobj.id %]/cover.jpg" target="cover">
-						<img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)">
+						<img src="/music/[% itemobj.id || 0 %]/cover.jpg" alt="coverArt" onLoad="resize(this)">
 					</a>
 				[% END %]
 			</span>
@@ -23,7 +23,7 @@
 
 		[% FOREACH role = itemobj.contributorRoles.sort %]
 	
-			[% contributors = itemobj.contributorsOfType(role) %]
+			[% contributors = itemobj.contributorsOfType(role) || itemobj.album.artistsForRoles(role) %]
 			
 			[% IF contributors %]
 				[% contributorsHTML = [] %]
@@ -62,6 +62,15 @@
 			[% PROCESS songInfoItem title = "YEAR" %]
 		[% END %]
 
+		[% IF headOnly %]
+			[% IF itemobj.album.compilation %] 
+				[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
+			[% END %]
+		
+			[% IF itemobj.album.replay_gain.defined %] 
+				[% item = itemobj.album.replay_gain | format('%2.2f') |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
+			[% END %]
+		[% END %]
 	</div>
 
 	[% UNLESS headOnly %]

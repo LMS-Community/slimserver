@@ -51,7 +51,7 @@
 
 	[%- WRAPPER $container %]
 
-		[% IF levelName == 'track' && !browse_items.1.attributes.${'album.compilation'} && album.id %]
+		[% IF levelName == 'track' && album.id %]
 			[% songInfoPlayLinks = BLOCK %]
 				<div id="songInfoPlayLinks">
 					<div>
@@ -64,9 +64,23 @@
 			[% END %]
 
 			[% 
-				itemobj = browse_items.1.itemobj;
-				PROCESS songinfo_details.html artAtTop = 1 headOnly = 1;
-				noByOrAlbum = 1;
+				contributorRoles = {};
+				
+				FOREACH contributor IN album.contributors;
+					FOREACH contributor IN contributor.contributorRoles;
+						contributorRoles.${contributor} = 1;
+					END;
+				END;
+
+				PROCESS songinfo_details.html artAtTop = 1 headOnly = 1 itemobj = {
+					id => coverArt,
+					album => album,
+					contributorRoles => contributorRoles.keys,
+					genres => album.genre,
+					year => album.year
+				};
+
+				noByOrAlbum = !album.compilation;
 			%]
 
 		[% ELSIF coverArt AND tree != 1 -%]
@@ -75,7 +89,7 @@
 		[% END -%]
 
 		[% FOREACH item = browse_items -%]
-			[%- PROCESS browsedbitems_list.html -%]
+			[%- PROCESS browsedbitems_list.html item.includeAlbum = 0 -%]
 		[%- END %]
 	[% END -%]
 
