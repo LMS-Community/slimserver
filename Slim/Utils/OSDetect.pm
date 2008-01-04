@@ -116,13 +116,11 @@ sub initSearchPath {
 	my $arch = $Config::Config{'archname'};
 	$arch =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
 
-	my @paths = ( catdir(dirsFor('Bin'), $arch), dirsFor('Bin') );
+	my @paths = ( catdir(dirsFor('Bin'), $arch), catdir(dirsFor('Bin'), $^O), dirsFor('Bin') );
 
 	if ($detectedOS eq 'mac') {
 
 		push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
-		# hack fix to make OS X work until better fix
-		push @paths, 'Bin/darwin/';
 	}
 
 	if ($detectedOS ne "win") {

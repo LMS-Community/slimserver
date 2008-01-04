@@ -138,13 +138,19 @@ Add $path1, $path2 etc to paths searched by findbin
 =cut
 sub addFindBinPaths {
 
+	my $log = logger('os.paths');
+
 	while (my $path = shift) {
 
 		if (-d $path) {
 
-			logger('os.paths')->info("adding $path");
+			$log->info("adding $path");
 
 			push @findBinPaths, $path;
+
+		} else {
+
+			$log->info("not adding $path - does not exist");
 		}
 	}
 }
