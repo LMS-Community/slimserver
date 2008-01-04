@@ -386,10 +386,11 @@ sub browsedb {
 
 	if ($count) {
 
-		my $lastAnchor = '';
+		my $lastAnchor    = '';
 		my $anchorText;
-		my $attrName   = lc($levelName);
-		my $firstItem  = undef;
+		my $attrName      = lc($levelName);
+		my $firstItem     = undef;
+		my $albumDuration = 0;
 
 		for my $item ($browseRS->slice($start, $end)) {
 
@@ -425,6 +426,11 @@ sub browsedb {
 				$form{'attributes'} = _attributesToKeyValuePair(\%attrs);
 			}
 
+			elsif (my $secs = $item->durationSeconds) {
+
+				$albumDuration += $secs;
+			}
+
 			$form{'attributes'} .= sprintf('&%s.id=%d', $attrName, $itemid);
 
 			$item->displayAsHTML(\%form, $descend, $orderBy, \$anchorText);
@@ -445,6 +451,8 @@ sub browsedb {
 
 			push @{$params->{'browse_items'}}, \%form;
 		}
+
+		$params->{albumDuration} = sprintf('%s:%02s', int($albumDuration / 60), $albumDuration % 60) if $albumDuration;
 
 		# If we're at the track level, and it's at the bottom of the
 		# hierarchy, display cover art if we have it.

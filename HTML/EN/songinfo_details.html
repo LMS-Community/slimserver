@@ -63,6 +63,10 @@
 		[% END %]
 
 		[% IF headOnly %]
+			[% IF albumDuration %] 
+				[% item = albumDuration; title = "LENGTH"; PROCESS songInfoItem %]
+			[% END %]
+		
 			[% IF itemobj.album.compilation %] 
 				[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
 			[% END %]
