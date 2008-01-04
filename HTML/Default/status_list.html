@@ -27,6 +27,12 @@
 			<div class="playlistSongDetail">
 				<a href="[% webroot _ info_link %]?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
 			</div>
+			[%# current_title is for radio streams %]
+			[% IF item.current_title %]
+			<div class="playlistSongDetail">
+				[% item.current_title | html %]
+			</div>
+			[% END %]
 			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 				<div class="playlistSongDetail">
 					<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a>

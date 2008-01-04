@@ -180,7 +180,9 @@ sub playlist {
 			$form{'currentsong'} = "current";
 
 			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
-				$form{'title'} = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
+				# For remote streams, add both the current title and the station title
+				$form{'title'}         = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
+				$form{'current_title'} = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
 			} else {
 				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
 			}
