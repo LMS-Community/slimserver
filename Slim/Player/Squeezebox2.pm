@@ -353,13 +353,11 @@ sub directHeaders {
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
 			
-			# Set a new title unless one is already set and it's not a URL
+			# Always prefer the title returned in the headers of a radio station
 			if ( $title ) {
-				my $curTitle = Slim::Music::Info::title($url);
-				if ( !$curTitle || $curTitle =~ /^(?:http|mms)/ ) {
-					$log->info( "Setting new title for $url, $title" );
-					Slim::Music::Info::setTitle( $url, $title );
-				}
+				$log->info( "Setting new title for $url, $title" );
+				Slim::Music::Info::setTitle( $url, $title );
+				Slim::Music::Info::setCurrentTitle( $url, $title );
 			}
 			
 			# Bitrate may have been set in Scanner by reading the mp3 stream
