@@ -13,6 +13,11 @@
 		[% END %]
 		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 		</span>
+		[%# current_title is for radio streams %]
+		[% IF item.current_title %]
+			<br />
+			[% item.current_title | html %]
+		[% END %]
 		<div class="playlistControls">
 			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "PLAY" | string %]</a>
 			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "DOWN" | string %]</a>

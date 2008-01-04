@@ -177,6 +177,12 @@
 	[% END %]
 
 	[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+	[%# current_title is for radio streams %]
+	[% IF item.current_title %]
+		<br />
+		[% item.current_title | html %]
+	[% END %]
+
 [% END %]
 
 [% BLOCK pagebar %]

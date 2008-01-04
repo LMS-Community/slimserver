@@ -1,13 +1,19 @@
 <div id="playlistitem[% item.num %]" [% IF item.currentsong %]class="currentListItem"[% ELSE %]class="playListItem"[% END %]>
 
 	<span class="itemnumber" id="itemnumber_[% item.num %]">&nbsp;[% item.num + 1 %].&nbsp;</span>
-	<b><a href="javascript:void(0)" onClick="handleClick(event.type, showSongInfo ,['[% webroot %]','[% item.itemobj.id %]'])" onDblClick="handleClick(event.type, processPlayControls,'p0=playlist&amp;p1=jump&amp;p2=[% item.num %]')">[% item.title | html %]</a></b>
+	<b><a href="javascript:void(0)" onClick="handleClick(event.type, showSongInfo ,['[% webroot %]','[% item.itemobj.id %]'])" onDblClick="handleClick(event.type, processPlayControls,'p0=playlist&amp;p1=jump&amp;p2=[% item.num %]')">
+		[% item.title | html %]
+	</a></b>
 	<span id="trackid_[% item.itemobj.id %]"></span>
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
 	[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %][% "FROM" | string %]
 	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
-
+	[%# current_title is for radio streams %]
+	[% IF item.current_title %]
+		<br />
+		<span style="padding-left: 20px;"></span>[% item.current_title | html %]
+	[% END %]
 	<div class="playlistControls" id="playlistControls[% item.num %]" style="display: none;">
 		[% PROCESS playlistcontrols
 		num = item.num
