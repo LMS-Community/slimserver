@@ -23,13 +23,12 @@ sub new {
 	my $url    = $args->{url};
 	my $client = $args->{client};
 	my $self   = $args->{self};
+	
+	my $realURL = $client->pluginData('audioURL');
 
-	if ( $url =~ m{^live365://} ) {
+	if ( $url =~ m{^live365://} && $realURL ) {
 
-		$log->info("Requested: $url");
-
-		my $realURL = $url;
-		$realURL =~ s/^live365/http/;
+		$log->info("Requested: $url, streaming real URL $realURL");
 
 		$self = $class->SUPER::new( { 
 			url     => $realURL, 
@@ -48,102 +47,132 @@ sub new {
 		);
 
 	}
-	else {
-		
-		$log->info("Not a Live365 station URL: $url");
+	else {		
+		handleError( $client->string('PLUGIN_LIVE365_NO_URL'), $client );
 	}
 
 	return $self;
 }
 
-# Perform processing before scan
-sub onScan {
-	my ( $class, $client, $url, $callback ) = @_;
-	
-	# Get the user's session ID from SN, this is so we
-	# don't have to worry about old session ID's in favorites
-	my $sessionURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/live365/v1/sessionid?url=' . uri_escape($url)
-	);
+sub getFormatForURL () { 'mp3' }
 
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotSession,
-		\&gotSessionError,
-		{
-			client   => $client,
-			url      => $url,
-			callback => $callback,
-		},
-	);
+sub isAudioURL () { 1 }
+
+# Source for AudioScrobbler (R = Radio)
+sub audioScrobblerSource () { 'R' }
+
+# Perform processing before scan
+sub onCommand {
+	my ( $class, $client, $cmd, $url, $callback ) = @_;
 	
-	$http->get( $sessionURL );
+	if ( $cmd eq 'play' ) {	
+		# Get the user's session ID from SN, this is so we
+		# don't have to worry about old session ID's in favorites
+		
+		# Remove any existing session id
+		$url =~ s/\?+//;
+		
+		my $getAudioURL = Slim::Networking::SqueezeNetwork->url(
+			'/api/live365/v1/playback/getAudioURL?url=' . uri_escape($url)
+		);
+
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&gotURL,
+			\&gotURLError,
+			{
+				client   => $client,
+				url      => $url,
+				callback => $callback,
+			},
+		);
+		
+		$log->debug( "Getting audio URL for $url from SN" );
+	
+		$http->get( $getAudioURL );
+	}
+	else {
+		return $callback->();
+	}
 }
 
-sub gotSession {
+sub gotURL {
 	my $http     = shift;
 	my $client   = $http->params->{client};
 	my $url      = $http->params->{url};
 	my $callback = $http->params->{callback};
 	
-	my $session = eval { from_json( $http->content ) };
-	if ( $@ ) {
-		$http->error( $@ );
-		return gotSessionError( $http, $@ );
+	my $info = eval { from_json( $http->content ) };
+	if ( $@ || $info->{error} ) {
+		$http->error( $@ || $info->{error} );
+		return gotURLError( $http );
 	}
 	
-	$log->debug( "Got Live365 sessionid from SN: " . $session->{session_id} );
+	$log->debug( "Got Live365 URL from SN: " . $info->{url} );
 	
-	# Remove any existing session id
-	$url =~ s/\?sessionid.+//;
+	$client->pluginData( audioURL => $info->{url} );
 	
-	# Transfer the title to the new URL
-	my $title = Slim::Music::Info::title( $url );
-	
-	# Add the current session id
-	$url .= '?sessionid=' . uri_escape( $session->{session_id} );
-
-	if ( !$title ) {
-		# No title, go get one from SN
-		getTitle( $client, $url );
-	}
-	else {
-		$log->debug( "Setting title for $url to $title" );
-		Slim::Music::Info::setTitle( $url, $title );
-	}
-	
-	$callback->( $url );
+	$callback->();
 }
 
-sub gotSessionError {
+sub gotURLError {
 	my $http     = shift;
+	my $client   = $http->params->{client};
 	my $url      = $http->params->{url};
 	my $callback = $http->params->{callback};
 	
 	if ( $log->is_error ) {
-		$log->error( "Error getting Live365 session ID: " . $http->error );
+		$log->error( "Error getting Live365 URL: " . $http->error );
 	}
 	
-	# Callback to scanner with unchanged URL
-	$callback->( $url );
+	handleError( $http->error, $client );
+	
+	# Make sure we re-enable readNextChunkOk
+	$client->readNextChunkOk(1);
 }
 
-sub getTitle {
-	
+sub handleError {
+    my ( $error, $client ) = @_;
+
+	if ( $client ) {
+		$client->unblock;
+		
+		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Choice', {
+			header  => '{PLUGIN_LIVE365_ERROR}',
+			listRef => [ $error ],
+		} );
+		
+		if ( $ENV{SLIM_SERVICE} ) {
+		    logError( $client, $error );
+		}
+		
+		# XXX: log to SC event log
+	}
 }
 
-sub notifyOnRedirect {
-	my ( $class, $client, $originalURL, $redirURL ) = @_;
+# On skip, get the audio URL before playback
+sub onJump {
+    my ( $class, $client, $nextURL, $callback ) = @_;
 	
-	# Live365 redirects like so:
-	# http://www.live365.com/play/rocklandusa?sessionid=foo:bar ->
-	# http://216.235.81.102:15072/play?membername=foo&session=...
+	# Remove any existing session id
+	$nextURL =~ s/\?+//;
 	
-	# Scanner calls this method with the new URL so we can cache it
-	# for use in canDirectStream
+	my $getAudioURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/live365/v1/playback/getAudioURL?url=' . uri_escape($nextURL)
+	);
+
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&gotURL,
+		\&gotURLError,
+		{
+			client   => $client,
+			url      => $nextURL,
+			callback => $callback,
+		},
+	);
 	
-	$log->debug("Caching redirect URL: $redirURL");
-	
-	$client->pluginData( redirURL => $redirURL );
+	$log->debug( "Getting audio URL for $nextURL from SN" );
+
+	$http->get( $getAudioURL );
 }
 
 sub canDirectStream {
@@ -157,6 +186,9 @@ sub canDirectStream {
 	}
 
 	Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
+	
+	my $audioURL = $client->pluginData('audioURL');
+	return 0 unless $audioURL;
 		
 	Slim::Utils::Timers::setTimer(
 		$client,
@@ -164,10 +196,8 @@ sub canDirectStream {
 		\&getPlaylist,
 		$url,
 	);
-	
-	my $redirURL = $client->pluginData('redirURL') || 0;
 
-	return $redirURL;
+	return $audioURL;
 }
 
 sub getPlaylist {
@@ -244,7 +274,8 @@ sub gotPlaylist {
 		$newTitle = $track->{desc};
 	}
 	
-	Slim::Music::Info::setCurrentTitle( $url, $newTitle);
+	# Delay the title set depending on buffered data
+	Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
 	
 	Slim::Utils::Timers::setTimer(
 		$client,
