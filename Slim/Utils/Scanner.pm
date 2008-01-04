@@ -535,7 +535,7 @@ redirects to an mms:// protocol URL we need to rewrite the link and set proper h
 =cut
 
 sub handleRedirect {
-	my $request = shift;
+	my ( $request, $args, $originalURL ) = @_;
 	
 	if ( $request->uri =~ /^mms/ ) {
 
@@ -544,6 +544,14 @@ sub handleRedirect {
 		}
 		
 		addWMAHeaders( $request );
+	}
+	
+	# Maintain title across redirects
+	my $title = Slim::Music::Info::title($originalURL);
+	Slim::Music::Info::setTitle( $request->uri->as_string, $title );
+
+	if ( $log->is_debug ) {
+		$log->debug( "Server redirected, copying title $title from $originalURL to " . $request->uri );
 	}
 	
 	return $request;
@@ -864,7 +872,15 @@ sub scanPlaylistFileHandle {
 
 	$playlist->content_type($ct);
 	$playlist->update;
-
+	
+	# Copy playlist title to all items if they are remote URLs
+	for my $track ( @playlistTracks ) {
+		if ( $track->remote ) {
+			$track->title( $playlist->title );
+			$track->update;
+		}
+	}
+	
 	if ($log->is_debug) {
 
 		$log->debug(sprintf("Found %d items in playlist: ", scalar @playlistTracks));

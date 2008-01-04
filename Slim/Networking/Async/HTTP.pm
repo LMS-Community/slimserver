@@ -346,7 +346,8 @@ sub _http_read {
 				
 				# Does the caller want to modify redirecting URLs?
 				if ( $args->{onRedirect} ) {
-					$args->{onRedirect}->( $self->request );
+					my $passthrough = $args->{passthrough} || [];
+					$args->{onRedirect}->( $self->request, @{$passthrough} );
 				}
 			
 				$self->send_request( {
