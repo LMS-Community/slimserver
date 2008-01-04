@@ -52,23 +52,19 @@
 	[%- WRAPPER $container %]
 
 		[% IF levelName == 'track' && album.id %]
-			[% songInfoPlayLinks = BLOCK %]
-				<div id="songInfoPlayLinks">
-					<div>
-						[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %] [% "PLAY" | string %]
-					</div>
-					<div>
-						[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %] [% "ADD_TO_PLAYLIST" | string %]
-					</div>
-				</div>
-			[% END %]
-
 			[% 
+				# remove "All Songs" item and display links at the top
+				songInfoPlayLinks = BLOCK;
+					PROCESS songInfoPlayLinks item = browse_items.shift();
+				END;
+
 				contributorRoles = {};
-				
-				FOREACH contributor IN album.contributors;
-					FOREACH contributor IN contributor.contributorRoles;
-						contributorRoles.${contributor} = 1;
+
+				IF !album.compilation;
+					FOREACH contributor IN album.contributors;
+						FOREACH contributor IN contributor.contributorRoles;
+							contributorRoles.${contributor} = 1;
+						END;
 					END;
 				END;
 
@@ -79,8 +75,6 @@
 					genres => album.genre,
 					year => album.year
 				};
-
-				noByOrAlbum = !album.compilation;
 			%]
 
 		[% ELSIF coverArt AND tree != 1 -%]
@@ -89,7 +83,7 @@
 		[% END -%]
 
 		[% FOREACH item = browse_items -%]
-			[%- PROCESS browsedbitems_list.html item.includeAlbum = 0 -%]
+			[%- PROCESS browsedbitems_list.html item.includeAlbum = 0 item.includeArtist = album.compilation -%]
 		[%- END %]
 	[% END -%]
 
