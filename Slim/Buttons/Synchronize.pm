@@ -140,9 +140,9 @@ sub syncExitHandler {
 		my @oldlines = $client->curLines();
 	
 		if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
-			Slim::Player::Sync::unsync($client);
+			$client->execute( [ 'sync', '-' ] );
 		} else {
-			Slim::Player::Sync::sync($client, $selectedClient);
+			$client->execute( [ 'sync', $selectedClient->id ] );
 		}
 
 		$client->pushLeft(\@oldlines, $client->curLines());
