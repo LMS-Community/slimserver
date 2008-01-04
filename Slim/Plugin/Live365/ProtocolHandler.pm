@@ -314,14 +314,12 @@ sub getMetadataFor {
 	
 	my $track = $client->pluginData('currentTrack');
 	
-	return unless $track;
-	
 	my $icon = Slim::Plugin::Live365::Plugin->_pluginDataFor('icon');
 	
  	return {
-		artist  => ( !ref $track->{artist} ? $track->{artist} : undef ),
-		album   => ( !ref $track->{album} ? $track->{album} : undef ),
-		title   => $track->{title} || $track->{desc},
+		artist  => ( $track && !ref $track->{artist} ? $track->{artist} : undef ),
+		album   => ( $track && !ref $track->{album} ? $track->{album} : undef ),
+		title   => ( $track ) ? ( $track->{title} || $track->{desc} ) : undef,
 		cover   => $icon,
 		icon    => $icon,
 		type    => 'MP3 (Live365)',
