@@ -9,6 +9,11 @@
 				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
 			[% END %]
 			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+			[%# current_title is for radio streams %]
+			[% IF item.current_title %]
+				<br />
+				[% item.current_title | html %]
+			[% END %]
 		[% ELSE %]
 			<span class="playlistCover">
 				[% IF item.itemobj.album.id %]<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% END %]
