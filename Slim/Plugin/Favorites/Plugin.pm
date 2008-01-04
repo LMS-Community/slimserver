@@ -359,7 +359,7 @@ sub indexHandler {
 				# editted item - modify including possibly changing type
 				my $entry = @$level[$indexLevel];
 
-				$entry->{'text'} = $params->{'entrytitle'};
+				$entry->{'text'} = Slim::Utils::Unicode::utf8decode($params->{'entrytitle'});
 
 				if (defined $params->{'entryurl'} && $params->{'entryurl'} ne $entry->{'URL'}) {
 
