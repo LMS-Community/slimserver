@@ -439,6 +439,67 @@ sub getCurrentTitle {
 	return standardTitle( $client, $url );
 }
 
+# Sets a new metadata title but delays the set
+# according to the amount of audio data in the
+# player's buffer.
+sub setDelayedTitle {
+	my ( $client, $url, $newTitle ) = @_;
+	
+	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
+	
+	my $metaTitle = $client->metaTitle || '';
+	
+	if ( $newTitle && ( $metaTitle ne $newTitle ) ) {
+		
+		# Some mp3 stations can have 10-15 seconds in the buffer.
+		# This will delay metadata updates according to how much is in
+		# the buffer, so title updates are more in sync with the music
+		my $bitrate = Slim::Music::Info::getBitrate($url) || 128000;
+		my $delay   = 0;
+		
+		if ( $bitrate > 0 ) {
+			my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
+			my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+		
+			$delay = $decodeBuffer + $outputBuffer;
+		}
+		
+		# No delay on the initial metadata
+		if ( !$metaTitle ) {
+			$delay = 0;
+		}
+		
+		$log->info("Delaying metadata title set by $delay secs");
+		
+		$client->metaTitle( $newTitle );
+		
+		Slim::Utils::Timers::setTimer(
+			$client,
+			Time::HiRes::time() + $delay,
+			sub {
+				my $client = shift || return;
+				
+				my $currentTitle = getCurrentTitle( $client, $url ) || '';
+				
+				return if $newTitle eq $currentTitle;
+
+				setCurrentTitle( $url, $newTitle );
+
+				for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+					$everybuddy->update();
+				}
+
+				# For some purposes, a change of title is a newsong...
+				Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'newsong', $newTitle ] );
+
+				$log->info("Setting title for $url to $newTitle");
+			},
+		);
+	}
+	
+	return $metaTitle;
+}
+
 # If no metadata is available,
 # use this to get a title, which is derived from the file path or URL.
 # Also used to get human readable titles for playlist files and directories.

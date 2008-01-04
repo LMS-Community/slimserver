@@ -131,8 +131,6 @@ sub parseMetadata {
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
-		my $metaTitle = $client->metaTitle || '';
-
 		# capitalize titles that are all lowercase
 		# XXX: Why do we do this?  Shouldn't we let metadata display as-is?
 		if (lc($newTitle) eq $newTitle) {
@@ -145,62 +143,12 @@ sub parseMetadata {
 					  )
 				/\U$1/xg;
 		}
-
-		if ($newTitle && ($metaTitle ne $newTitle)) {
-			
-			# Some mp3 stations can have 10-15 seconds in the buffer.
-			# This will delay metadata updates according to how much is in
-			# the buffer, so title updates are more in sync with the music
-			my $bitrate = Slim::Music::Info::getBitrate($url) || 128000;
-			my $delay   = 0;
-			
-			if ( $bitrate > 0 ) {
-				my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
-				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
-			
-				$delay = $decodeBuffer + $outputBuffer;
-			}
-			
-			# No delay on the initial metadata
-			if ( !$metaTitle ) {
-				$delay = 0;
-			}
-			
-			logger('player.streaming')->info("Delaying metadata title set by $delay secs");
-			
-			$client->metaTitle( $newTitle );
-			
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time() + $delay,
-				\&setMetadataTitle,
-				$url,
-				$newTitle,
-			);
-		}
-
-		return $metaTitle;
+		
+		# Delay the title set
+		return Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
 	}
 
 	return undef;
-}
-
-sub setMetadataTitle {
-	my ( $client, $url, $newTitle ) = @_;
-	
-	my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $url) || '';
-	return if $newTitle eq $currentTitle;
-	
-	Slim::Music::Info::setCurrentTitle($url, $newTitle);
-
-	for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
-		$everybuddy->update();
-	}
-	
-	# For some purposes, a change of title is a newsong...
-	Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', $newTitle]);
-	
-	logger('player.streaming')->info("Setting title for $url to $newTitle");
 }
 
 sub canDirectStream {
