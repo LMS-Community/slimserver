@@ -373,7 +373,7 @@ function refreshInfo(theData, force, curstyle) {
 				hideElements(['yearinfo']);
 			}
 		} else {
-			hideElements(['albuminfo', 'albumhref']);
+			hideElements(['albuminfo', 'albumhref','yearinfo']);
 		}
 		
 		if(parsedData['artist']) {
