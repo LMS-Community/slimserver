@@ -89,8 +89,8 @@ sub new {
 	# Ignore UUID if it's from a firmware that sends bogus data or is all zeros
 	if (
 		$uuid && (
-			   ( $client->isa('Slim::Player::Transporter') && $rev < 35 )
-			|| ( $client->isa('Slim::Player::Squeezebox2') && $rev < 85 )
+			   ( $deviceid == 5 && $rev < 35 )
+			|| ( $deviceid == 4 && $rev < 85 )
 			|| ( $uuid eq '0' x 32 )
 		)
 	) {
