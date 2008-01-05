@@ -1416,8 +1416,7 @@ sub _cliQuery_done {
 					$hash{'name'} = $subFeed->{'name'} if defined $subFeed->{'name'};
 					$hash{'title'} = $subFeed->{'title'} if defined $subFeed->{'title'};
 					my $hasAudio = defined(hasAudio($subFeed)) + 0;
-					$hash{'isaudio'} = $hasAudio;
-				
+					$hash{'isaudio'} = $hasAudio;				
 				
 					foreach my $data (keys %{$subFeed}) {
 						if (ref($subFeed->{$data}) eq 'ARRAY') {
@@ -1555,41 +1554,7 @@ sub _cliQuery_done {
 		
 		# now build the result
 	
-		if ($menuMode) {
-
-			# decide what is the next step down
-			# we go to xxx items from xx items :)
-
-			# build the base element
-			my $params = {
-				'menu' => $query,
-			};
-			
-			if ( $url ) {
-				$params->{'url'} = $url;
-			}
-			
-			my $base = {
-				'actions' => {
-					'go' => {
-						'cmd' => [ $query, 'items' ],
-						'params' => $params,
-						'itemsParams' => 'params',
-					},
-					'play' => {
-						'player' => 0,
-						'cmd' => [$query, 'playlist', 'play'],
-						'itemsParams' => 'params',
-					},
-					'add' => {
-						'player' => 0,
-						'cmd' => [$query, 'playlist', 'add'],
-						'itemsParams' => 'params',
-					},
-				},
-			};
-			$request->addResult('base', $base);
-		}
+		my $hasImage = 0;
 		
 		$request->addResult('count', $count);
 		
@@ -1616,6 +1581,7 @@ sub _cliQuery_done {
 					$hash{'name'} = $item->{'name'} if defined $item->{'name'};
 					$hash{'title'} = $item->{'title'} if defined $item->{'title'};
 					$hash{'url'} = $item->{'url'} if $want_url && defined $item->{'url'};
+					$hash{'image'} = $item->{'image'} if defined $item->{'image'};
 
 					my $hasAudio = defined(hasAudio($item)) + 0;
 					$hash{'isaudio'} = $hasAudio;
@@ -1640,6 +1606,11 @@ sub _cliQuery_done {
 							$params = {
 								item_id => "$id", #stringify, make sure it's a string
 							};
+						}
+						
+						if ( $item->{image} ) {
+							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
+							$hasImage = 1;
 						}
 						
 						if ( $item->{type} eq 'search' ) {
@@ -1679,6 +1650,52 @@ sub _cliQuery_done {
 				}
 			}
 
+		}
+		
+		if ($menuMode) {
+
+			# decide what is the next step down
+			# we go to xxx items from xx items :)
+
+			# build the base element
+			my $params = {
+				'menu' => $query,
+			};
+			
+			if ( $url ) {
+				$params->{'url'} = $url;
+			}
+			
+			my $base = {
+				'actions' => {
+					'go' => {
+						'cmd' => [ $query, 'items' ],
+						'params' => $params,
+						'itemsParams' => 'params',
+					},
+					'play' => {
+						'player' => 0,
+						'cmd' => [$query, 'playlist', 'play'],
+						'itemsParams' => 'params',
+					},
+					'add' => {
+						'player' => 0,
+						'cmd' => [$query, 'playlist', 'add'],
+						'itemsParams' => 'params',
+					},
+				},
+			};
+
+			# Change window menuStyle to album if any images are in the list
+			# XXX: this should only be done on hasImage but a bug in Jive
+			# means this only affects child menus, so must be set for all
+			#if ( $hasImage ) {
+				$base->{window} = {
+					menuStyle => 'album',
+				};
+			#}
+
+			$request->addResult('base', $base);
 		}
 	}
 	
