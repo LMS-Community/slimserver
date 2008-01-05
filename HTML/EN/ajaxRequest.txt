@@ -62,7 +62,7 @@ artist_[% myItem.num %]|[% PROCESS artistsAsHTML.html itemobj = myItem.itemobj %
 album_[% myItem.num %]|[% myItem.album.title %]
 artistid_[% myItem.num %]|[% myItem.itemobj.artist.id %]
 albumid_[% myItem.num %]|[% myItem.itemobj.album.id %]
-coverthumb_[% thisItem %]|[% myItem.coverThumb %]
+coverthumb_[% myItem.num %]|[% myItem.coverThumb %]
 includeAlbum_[% myItem.num %]|[% myItem.includeAlbum %]
 includeArtist_[% myItem.num %]|[% myItem.includeArtist %]
 nextsongind_[% myItem.num %]|[% myItem.nextsongind %]
