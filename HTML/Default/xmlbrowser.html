@@ -114,6 +114,14 @@ END %]
 				[% END %]
 			[% ELSE %]
 				[%- WRAPPER contentitem controls = 'gencontrol' %]
+					[% IF item.image %]
+					[%# XXX: I'm sure there is a better way to do this but I don't know how... %]
+					<div class="browsedbListItem itemWithCover">
+					<span class="browseCover">
+						<img src="[% item.image %]" width="50" height="50" />
+					</span>
+					<div class="browseItemDetail">
+					[% END %]
 					[% IF item.weblink %]
 					<a href="[% item.weblink %]" target="_blank">
 					[% ELSIF item.type != 'text' %]
@@ -122,6 +130,11 @@ END %]
 					[% item.name || item.title %]
 					[% IF item.weblink || item.type != 'text' %]
 					</a>
+					[% END %]
+					[% IF item.image %]
+					[%# XXX: better way to do this %]
+					</div>
+					</div>
 					[% END %]
 				[%- END %]
 			[%- END %]
