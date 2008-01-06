@@ -33,7 +33,7 @@
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker [% addClasses %]" onmouseover="Utils.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="[% lineclass || 'browsedbListItem' %][% IF (levelName == 'album' || levelName == 'age') && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
+		<div class="[% lineclass || 'browsedbListItem' %][% IF (item.image || (levelName == 'album' || levelName == 'age')) && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- content | indent(4) %]
 			<span class="browsedbControls">
 				[%- IF leftcontrols && leftcontrols != controls; PROCESS $leftcontrols; END %]
@@ -49,9 +49,20 @@
 	<li class="thumbwrap" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%] style="width:[% item.size + 20 %]px;">
 		<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
 
-			[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
 			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;position:relative;">
-				<a [% PROCESS browseDbItemHRef %]>[% PROCESS $itemImg height="$item.size" %]</a>
+				[% IF item.coverThumb %]
+					[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
+					<a [% PROCESS browseDbItemHRef %]>
+				[% ELSE %]
+					[%- itemImg = item.image ? "thumbnailItemImg" : "dummyItemImg" %]
+					[% IF item.weblink %]
+						<a href="[% item.weblink %]" target="_blank">
+					[% ELSIF item.type != 'text' %]
+						<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]" class="browseItemLink">
+					[% END %]
+				[% END %]
+				[% PROCESS $itemImg height="$item.size" %]</a>
+
 				<span class="browsedbControls">
 					[%- PROCESS $controls -%]
 				</span>

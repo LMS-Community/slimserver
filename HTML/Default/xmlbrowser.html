@@ -1,5 +1,38 @@
-[% extJsScripts = BLOCK %]
+[%- 
+hasArtwork = 0;
+contentwrapper = 'contentitem';
+container = 'contentcontainer';
+
+FOREACH item = items;
+	IF item.image;
+		hasArtwork = 1;
+		LAST;
+	END;	
+END;
+
+IF hasArtwork;
+	IF artwork == 1;
+		container = 'gallerycontainer';
+		contentwrapper = 'galleryitem';
+	END;
+	
+	titleRight = BLOCK %]
+		<div id="viewSelect"></div>
+	[% END; 
+END %]
+
+[%- extJsScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js?r=[% revision %]"></script>
+
+	[% IF hasArtwork %]
+	<script type="text/javascript">
+		[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+		[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+		[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
+		[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
+		var orderByList;
+	</script>
+	[% END %]
 [% END %]
 
 [% IF query %]
@@ -81,7 +114,7 @@ END %]
 		[% END %]
 	[%- END %]
 
-	[%- WRAPPER contentcontainer %]
+	[%- WRAPPER $container %]
 		[% IF image %]
 		<div>
 			<img src="[% image %]" />
@@ -113,28 +146,33 @@ END %]
 					</span>					
 				[% END %]
 			[% ELSE %]
-				[%- WRAPPER contentitem controls = 'gencontrol' %]
-					[% IF item.image %]
-					[%# XXX: I'm sure there is a better way to do this but I don't know how... %]
-					<div class="browsedbListItem itemWithCover">
-					<span class="browseCover">
-						<img src="[% item.image %]" width="50" height="50" />
-					</span>
-					<div class="browseItemDetail">
+				[%- WRAPPER $contentwrapper controls = 'gencontrol' %]
+					[% IF artwork == 1;
+						item.size = 100;
+						itemobj.id = loop.count;
+					END %]
+
+					[% IF item.image && !(artwork > 0) %]
+						<span class="browseCover">
+							<img src="[% item.image %]" width="50" height="50" />
+						</span>
+						<div class="browseItemDetail">
 					[% END %]
+
 					[% IF item.weblink %]
-					<a href="[% item.weblink %]" target="_blank">
+						<a href="[% item.weblink %]" target="_blank">
 					[% ELSIF item.type != 'text' %]
-					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]" class="browseItemLink">
+						<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]" class="browseItemLink">
 					[% END %]
+
 					[% item.name || item.title %]
+
 					[% IF item.weblink || item.type != 'text' %]
-					</a>
+						</a>
 					[% END %]
-					[% IF item.image %]
-					[%# XXX: better way to do this %]
-					</div>
-					</div>
+
+					[% IF item.image && !(artwork > 0) %]
+						</div>
 					[% END %]
 				[%- END %]
 			[%- END %]

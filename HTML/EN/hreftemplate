@@ -189,7 +189,11 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	[% FILTER collapse %][%# collapse all whitespace and newlines into single space %]
 	<img [% style %] 
 		src=
+		[% IF item.image %]
+		"[% item.image %]"
+		[% ELSE %]
 		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %].[% IF fileSuffix %][% fileSuffix %][% ELSIF browserType == 'IE' %]gif[% ELSE %]png[% END %]"
+		[% END %]
 	[%- IF NOT serverResizesArt %]
 		height="[% height %]" width="[% height %]"
 	[%- END %]
