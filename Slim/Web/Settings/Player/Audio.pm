@@ -90,7 +90,7 @@ sub handler {
 			if ($pref eq 'synchronize') {
 			
 				if (my $otherClient = Slim::Player::Client::getClient($paramRef->{$pref})) {
-					$client->execute( [ 'sync', $otherClient->id ] );
+					$otherClient->execute( [ 'sync', $client->id ] );
 				} else {
 					$client->execute( [ 'sync', '-' ] );
 				}
