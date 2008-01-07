@@ -521,7 +521,7 @@ div.pagetitleWithIcon {
 	padding: 0 6px;
 }
 
-#browsedbList {
+#browsedbList, #inlineList {
 	position: relative;
 }
 

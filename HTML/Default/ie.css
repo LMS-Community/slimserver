@@ -37,8 +37,15 @@ img#background {
 	bottom: 3px;
 }
 
+#inlineList div.mouseOver,
+#browsedbList div.mouseOver,
 .homeMenuSection div.my_music {
 	position: relative;
+}
+
+#inlineList div.mouseOver div,
+#browsedbList div.mouseOver div {
+	position: static;
 }
 
 #infoTab {
@@ -51,6 +58,11 @@ img#background {
 
 .browsedbControls input {
 	padding: 0;
+}
+
+.browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
+	top: 4px;
+	right: 10px;
 }
 
 #linkedSongInfoItems {
