@@ -35,8 +35,6 @@ sub model {
 	return 'receiver';
 }
 
-sub modelName { 'Receiver' }
-
 sub stop {
 	my $client = shift;
 
