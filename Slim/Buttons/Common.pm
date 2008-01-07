@@ -784,18 +784,6 @@ our %functions = (
 				if ($client->modeParam('track')) {
 
 					$obj = $client->modeParam('track');
-
-				# specific HACK for Live365
-				} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Slim::Plugin::Live365::Plugin::getLive365($client))) {
-
-					my $live365 = Slim::Plugin::Live365::Plugin::getLive365($client);
-					my $station = $live365->getCurrentStation();
-
-					$title = $station->{STATION_TITLE};
-					$url   = $station->{STATION_ADDRESS};
-
-					# fix url to activate protocol handler
-					$url =~ s/http\:/live365\:/;
 				}
 			}
 
