@@ -1724,7 +1724,7 @@ UPDATING_FIRMWARE_TRANSPORTER
 	ZH_CN	更新Transporter韧件
 
 UPDATING_FIRMWARE_RECEIVER
-	EN	Updating Ray Firmware.
+	EN	Updating Squeezebox Firmware.
 	DE	Squeezebox-Firmware wird aktualisiert...
 	NL	Squeezebox-firmware wordt bijgewerkt.
 	ES	Actualizando firmware de Squeezebox.
