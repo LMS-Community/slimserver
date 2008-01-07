@@ -2686,12 +2686,6 @@ sub statusQuery_filter {
 		return 1;
 	}
 
-	# don't delay for newsong
-	if ($request->isCommand([['playlist'], ['newsong']])) {
-
-		return 1;
-	}
-
 	# suppress frequent updates during volume changes
 	if ($request->isCommand([['mixer'], ['volume']])) {
 
