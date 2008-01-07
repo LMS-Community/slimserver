@@ -477,12 +477,12 @@ sub addLogAppender {
 
 	my $name     = $args->{'name'}     || 'server';
 	my $filemode = $args->{'filemode'} || 'append';
-	my $filename = $args->{'logfile'}  || $::logfile || _logFileFor($name);
+	my $filename = $args->{'logfile'};
 	my $appender = $args->{'appender'} || 'Log::Log4perl::Appender::File';
 
-	if ($filename =~ s/|//) {
-
-		$filemode = 'pipe';
+	unless ($filename) {
+		$filename = _logFileName($name);
+		$filemode = _logFileMode($name);
 	}
 
 	$appenders{$name} = {
@@ -537,14 +537,17 @@ Returns the location of the server's main log file.
 =cut
 
 sub serverLogFile {
-	my $class = shift;
+	return _logFileName('server');
+}
 
-	# If the user has requested an override.
-	if ($::logfile) {
-		return $::logfile;
-	}
+=head2 serverLogMode ( )
 
-	return _logFileFor('server');
+Returns the logging mode for the server's main log file.
+
+=cut
+
+sub serverLogMode {
+	return _logFileMode('server');
 }
 
 =head2 scannerLogFile ( )
@@ -554,14 +557,17 @@ Returns the location of SqueezeCenter's scanner log file.
 =cut
 
 sub scannerLogFile {
-	my $class = shift;
+	return _logFileName('scanner');
+}
 
-	# If the user has requested an override.
-	if ($::logfile) {
-		return $::logfile;
-	}
+=head2 scannerLogMode ( )
 
-	return _logFileFor('scanner');
+Returns the logging mode of SqueezeCenter's scanner log file.
+
+=cut
+
+sub scannerLogMode {
+	return _logFileMode('scanner');
 }
 
 =head2 perfmonLogFile ( )
@@ -571,14 +577,36 @@ Returns the location of SqueezeCenter's performance monitor log file.
 =cut
 
 sub perfmonLogFile {
-	my $class = shift;
+	return _logFileName('perfmon');
+}
 
-	# If the user has requested an override.
-	if ($::logfile) {
-		return $::logfile;
-	}
+=head2 perfmonLogMode ( )
 
-	return _logFileFor('perfmon');
+Returns the logging mode of SqueezeCenter's performance monitor log file.
+
+=cut
+
+sub perfmonLogMode {
+	return _logFileMode('perfmon');
+}
+
+sub _logFileMode {
+	my $name = shift;
+
+	my $filename = $::logfile || _logFileFor($name);
+
+	return $filename =~ /^\|/ ? 'pipe' : 'append';
+}
+
+sub _logFileName {
+	my $name = shift;
+
+	my $filename = $::logfile || _logFileFor($name);
+
+	$filename =~ s/^\|//;
+	$filename =~ s/%/$name/;
+
+	return $filename;
 }
 
 sub _logFileFor {
@@ -819,19 +847,19 @@ sub _defaultAppenders {
 
 		'server' => {
 			'appender' => 'Log::Log4perl::Appender::File',
-			'mode'     => 'append',
+			'mode'     => 'sub { Slim::Utils::Log::serverLogMode() }',
 			'filename' => 'sub { Slim::Utils::Log::serverLogFile() }',
 		},
 
 		'scanner' => {
 			'appender' => 'Log::Log4perl::Appender::File',
-			'mode'     => 'append',
+			'mode'     => 'sub { Slim::Utils::Log::scannerLogMode() }',
 			'filename' => 'sub { Slim::Utils::Log::scannerLogFile() }',
 		},
 
 		'perfmon' => {
 			'appender' => 'Log::Log4perl::Appender::File',
-			'mode'     => 'append',
+			'mode'     => 'sub { Slim::Utils::Log::perfmonLogMode() }',
 			'filename' => 'sub { Slim::Utils::Log::perfmonLogFile() }',
 			'layout'   => 'raw'
 		},
