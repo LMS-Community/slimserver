@@ -35,8 +35,13 @@ sub commentTagTodB {
 		my $comment = $tags->{'COMMENT'}->[$i];
 
 		if ($comment =~ /^iTunNORM/) {
-
-			$tags->{'REPLAYGAIN_TRACK_GAIN'} = normStringTodB($comment);
+			
+			if ( my $gain = normStringTodB($comment) ) {
+				# Bug 3207, if we already have a known gain value,
+				# combine it with the iTunNORM value	
+				$tags->{'REPLAYGAIN_TRACK_GAIN'} ||= 0;
+				$tags->{'REPLAYGAIN_TRACK_GAIN'} += $gain;
+			}
 
 			splice(@{$tags->{'COMMENT'}}, $i, 1);
 		}
@@ -61,7 +66,7 @@ sub normStringTodB {
 
 	my @values = map { oct(sprintf('0x%s', $_)) } split(/\s+/, $tag);
 
-	return sprintf('%.2f dB', normValueToDBChange(maxNormValue(@values), 1000));
+	return sprintf('%.2f', normValueToDBChange(maxNormValue(@values), 1000));
 }
 
 sub dBChangeToNormValue {
