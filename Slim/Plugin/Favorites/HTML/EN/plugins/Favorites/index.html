@@ -106,7 +106,7 @@
 
 [% BLOCK entryblock -%]
 	[%- WRAPPER contentitem leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' itemobj.id = entry.index %]
-		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]">
+		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
 		   <span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %]</span></a>
 	[% END -%]
 [% END %]
@@ -140,7 +140,7 @@
 	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
-		Ext.EventManager.onDocumentReady(function(){ Favorites.init([% sess %]); });
+		Ext.EventManager.onDocumentReady(function(){ Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %][% END %]); });
 	</script>
 [% END; END %]
 
@@ -193,7 +193,7 @@
 		[% PROCESS dummylink %]
 
 		<a [% IF useAJAX || useExtJS -%]
-		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'insert&amp;index=[% levelindex %]&amp;sess=[% sess %]');"
+		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'insert&amp;index=[% levelindex %]&amp;sess=[% sess %]');" class="browseItemLink"
 		   [%- ELSE %]
 		     href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]&amp;sess=[% sess %]"
 		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>

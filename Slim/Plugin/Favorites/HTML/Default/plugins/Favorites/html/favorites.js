@@ -1,6 +1,6 @@
 var Favorites = function(){
 	return {
-		init : function(session){
+		init : function(session, offset){
 			new Slim.Sortable({
 				el: 'draglist',
 				selector: 'ol#draglist li',
@@ -19,7 +19,7 @@ var Favorites = function(){
 							webroot + 'plugins/Favorites/index.html', 
 							{
 								action: 'move',
-								index: sourcePos,
+								index: (offset >= 0 ? offset + '.' : '') + sourcePos,
 								to: targetPos,
 								sess: session,
 								ajaxUpdate: 1,
@@ -27,7 +27,7 @@ var Favorites = function(){
 							},
 							function(){
 								Utils.init();
-								Favorites.init(session);
+								Favorites.init(session, offset);
 							}
 						);
 					}
