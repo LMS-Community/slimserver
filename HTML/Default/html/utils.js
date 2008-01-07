@@ -651,7 +651,7 @@ function ajaxRequest(myUrl, params, action) {
 
 // request and update with new list html, requires a 'mainbody' div defined in the document
 // templates should use the ajaxUpdate param to block headers and footers.
-function ajaxUpdate(url, params) {
+function ajaxUpdate(url, params, callback) {
 	var el = Ext.get('mainbody');
 
 	if (el) {
@@ -660,7 +660,7 @@ function ajaxUpdate(url, params) {
 		if (um)
 			um.loadScripts = true;
 
-		el.load(url, params + '&ajaxUpdate=1&player=' + player, Utils.init);
+		el.load(url, params + '&ajaxUpdate=1&player=' + player, callback || Utils.init);
 	}
 }
 
