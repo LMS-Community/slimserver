@@ -1,6 +1,7 @@
 var Favorites = function(){
 	return {
 		init : function(session, offset){
+			Utils.init();
 			new Slim.Sortable({
 				el: 'draglist',
 				selector: 'ol#draglist li',
@@ -26,7 +27,6 @@ var Favorites = function(){
 								player: player
 							},
 							function(){
-								Utils.init();
 								Favorites.init(session, offset);
 							}
 						);
