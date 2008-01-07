@@ -62,6 +62,9 @@ sub initPlugin {
 	
 	# register notifications
 	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
+	
+	# register new mode for deletion of favorites
+	Slim::Buttons::Common::addMode( 'favorites.delete', {}, \&deleteMode );
 }
 
 sub modeName { 'FAVORITES' };
@@ -88,6 +91,64 @@ sub setMode {
 
 	# we'll handle the push in a callback
 	$client->modeParam('handledTransition',1)
+}
+
+sub deleteMode {
+	my ( $client, $method ) = @_;
+	
+	if ( $method eq 'pop' ) {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
+	my $title = $client->modeParam('title'); # title to display
+	my $index = $client->modeParam('index'); # favorite index to delete
+	my $depth = $client->modeParam('depth'); # number of levels to pop out of when done
+	
+	# Bug 6177, Menu to confirm favorite removal
+	Slim::Buttons::Common::pushMode( $client, 'INPUT.Choice', {
+		header   => '{FAVORITES_FAVORITE} ' . ($index + 1),
+		title    => $title,
+		favorite => $index,
+		listRef  => [
+			{
+				name    => "{FAVORITES_CANCEL}",
+				onRight => sub {
+					Slim::Buttons::Common::popModeRight(shift);
+				},
+			},
+			{
+				name    => "{FAVORITES_DELETE}",
+				onRight => sub {
+					my $client = shift;
+					my $index  = $client->modeParam('favorite');
+					
+					my $favorites = Slim::Utils::Favorites->new($client);					
+					$favorites->deleteIndex($index);
+					
+					$client->modeParam( 'favorite', undef );
+					
+					$client->showBriefly( {
+						line => [ $client->string('FAVORITES_DELETING'), $title ],
+					},
+					{
+						callback     => sub {
+							my $client = shift || return;
+							
+							# Pop back until we're out of Favorites
+							for ( 1 .. $depth ) {
+								Slim::Buttons::Common::popModeRight($client);
+							}
+							
+							$client->update;
+						},
+						callbackargs => $client,
+					} );
+				},
+			},
+		],
+		overlayRef => [ undef, $client->symbols('rightarrow') ],
+	} );
 }
 
 sub playFavorite {

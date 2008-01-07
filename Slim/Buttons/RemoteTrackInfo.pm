@@ -64,7 +64,7 @@ sub setMode {
 
 	my $favIndex;
 
-	if (Slim::Utils::Favorites->enabled && (Slim::Music::Info::isSong($url) || Slim::Music::Info::isPlaylist($url)) ) {
+	if ( $url && Slim::Utils::Favorites->enabled ) {
 
 		unshift @list, {
 			value => $url,
@@ -75,10 +75,10 @@ sub setMode {
 				if (defined $index) {
 					if ($index =~ /^\d+$/) {
 						# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
-						return "{FAVORITES_FAVORITE_NUM}" . ($index + 1) . " {FAVORITES_RIGHT_TO_DELETE}";
+						return "{FAVORITES_FAVORITE}" . ' ' . ($index + 1);
 					} else {
 						# existing favorite not at top level - don't display number
-						return "{FAVORITES_FAVORITE} {FAVORITES_RIGHT_TO_DELETE}";
+						return "{FAVORITES_FAVORITE}";
 					}
 				} else {
 					return "{FAVORITES_RIGHT_TO_ADD}";
@@ -91,11 +91,14 @@ sub setMode {
 				my $index = $client->modeParam('favorite');
 
 				if (defined $index) {
-					$favorites->deleteIndex($index);
-					$client->modeParam('favorite', undef);
-					$client->showBriefly( {
-						'line' => [ $client->string('FAVORITES_DELETING'), $client->modeParam('title') ]
-					});
+					
+					# Bug 6177, Menu to confirm favorite removal
+					Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
+						title => $title,
+						index => $index,
+						depth => 3,
+					} );
+
 				} else {
 					$index = $favorites->add($url, $title);
 					$client->modeParam('favorite', $index);
@@ -103,7 +106,8 @@ sub setMode {
 						'line' => [ $client->string('FAVORITES_ADDING'), $client->modeParam('title') ]
 					});
 				}
-			}
+			},
+			overlayRef => [ undef, $client->symbols('rightarrow') ],
 		};
 
 		$favIndex = Slim::Utils::Favorites->new($client)->findUrl($url);

@@ -527,13 +527,13 @@ sub listExitHandler {
 
 			} else {
 
-				$favorites->deleteIndex($favIndex);
-
-				$client->showBriefly( {
-					'line' => [ $client->string('FAVORITES_DELETING'), $track->title || $track->url ]
-				   });
-
-				$client->modeParam('favorite', undef);
+				# Bug 6177, Menu to confirm favorite removal
+				Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
+					title => $track->title || $track->url,
+					index => $favIndex,
+					depth => 2,
+				} );
+				
 			}
 
 			$push = 0;
@@ -564,10 +564,10 @@ sub infoLine {
 		} else {
 			if ($favIndex =~ /^\d+$/) {
 				# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
-				$line2 = $client->string('FAVORITES_FAVORITE_NUM') . ($favIndex + 1) . " " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+				$line2 = $client->string('FAVORITES_FAVORITE') . ' ' . ($favIndex + 1);
 			} else {
 				# existing favorite not at top level - don't display number
-				$line2 = $client->string('FAVORITES_FAVORITE') . " " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+				$line2 = $client->string('FAVORITES_FAVORITE');
 			}
 		}
 	}

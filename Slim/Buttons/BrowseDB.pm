@@ -416,7 +416,7 @@ sub browsedbExitCallback {
 				return;
 			}
 
-			if (!$index) {
+			if ( !defined $index ) {
 
 				$index = $favorites->add($track, $track->title);
 
@@ -427,14 +427,14 @@ sub browsedbExitCallback {
 				$client->modeParam('favorite', $index);
 
 			} else {
-
-				$favorites->deleteIndex($index);
-
-				$client->showBriefly( {
-					'line' => [ $client->string('FAVORITES_DELETING'), $track->title ]
-				});
-
-				$client->modeParam('favorite', undef);
+				
+				# Bug 6177, Menu to confirm favorite removal
+				Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
+					title => $track->title,
+					index => $index,
+					depth => 2,
+				} );
+				
 			}
 
 		} elsif ($descend || $all) {
@@ -525,10 +525,10 @@ sub browsedbItemName {
 		if (defined $index) {
 			if ($index =~ /^\d+$/) {
 				# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
-				return $client->string('FAVORITES_FAVORITE_NUM') . ($index + 1) . " " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+				return $client->string('FAVORITES_FAVORITE') . ' ' . ($index + 1);
 			} else {
 				# existing favorite not at top level - don't display number
-				return $client->string('FAVORITES_FAVORITE') . " " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+				return $client->string('FAVORITES_FAVORITE');
 			}
 		} else {
 			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
