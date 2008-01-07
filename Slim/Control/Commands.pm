@@ -475,6 +475,9 @@ sub playcontrolCommand {
 		} else {
 			$wantmode = ($curmode eq 'pause') ? 'play' : 'pause';
 		}
+
+		# Start a player upon a pause command if player is currently in stop mode
+		$wantmode = 'play' if ($curmode eq 'stop');
 	}
 
 	# Adjust for resume: if we're paused and asked to play, we resume

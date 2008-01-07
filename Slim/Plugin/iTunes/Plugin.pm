@@ -30,6 +30,8 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
+	Slim::Plugin::iTunes::Settings->new;
+
 	return 1 if $class->initialized;
 
 	Slim::Plugin::iTunes::Settings->new;

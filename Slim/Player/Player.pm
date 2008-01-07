@@ -530,6 +530,8 @@ sub nowPlayingModeLines {
 
 	my $display = $client->display;
 
+	return if $display->isa('Slim::Display::NoDisplay');
+
 	my $overlay;
 	my $fractioncomplete = 0;
 	my $songtime = '';

@@ -1983,6 +1983,8 @@ sub startPeriodicUpdates {
 	# unset any previous timers
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
 
+	return if $client->display->isa('Slim::Display::NoDisplay');
+
 	my $interval  = $client->modeParam('modeUpdateInterval');
 	my $interval2 = undef;
 

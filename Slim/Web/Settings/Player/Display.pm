@@ -38,7 +38,6 @@ sub validFor {
 	return !$client->display->isa('Slim::Display::NoDisplay');
 }
 
-
 sub prefs {
 	my $class  = shift;
 	my $client = shift;

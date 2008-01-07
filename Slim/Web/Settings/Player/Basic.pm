@@ -55,11 +55,11 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	# array prefs handled by this handler not handler::SUPER
-	my @prefs = qw(titleFormat);
+	my @prefs = ();
 
-	if (defined $client && $client->isPlayer()) {
+	if (defined $client && $client->isPlayer() && !$client->display->isa('Slim::Display::NoDisplay')) {
 
-		push @prefs, qw(playingDisplayModes);
+		push @prefs, qw(titleFormat playingDisplayModes);
 
 		if ($client->display->isa('Slim::Display::Transporter')) {
 

@@ -39,7 +39,6 @@ sub handler {
 	if ($client->isPlayer()) {
 
 		my $prefs = preferences('server');
-
 		my @menu  = @{ $prefs->client($client)->get('menuItem') };
 
 		for (my $i = $#menu; $i >= 0; $i--) {
@@ -53,13 +52,11 @@ sub handler {
 				} elsif ($action eq 'Up' && $i > 0) {
 
 					my $temp = splice @menu, $i, 1;
-
 					splice @menu, $i - 1, 0, $temp;
 
 				} elsif ($action eq 'Down' && $i < $#menu) {
 
 					my $temp = splice @menu, $i, 1;
-
 					splice @menu, $i + 1, 0, $temp;
 				}
 			}

@@ -744,7 +744,7 @@ sub processFrontPanel {
 
 	} else {
 
-		my $timediff = $irTime - $client->lastirtime;
+		my $timediff = $client->irtimediff;
 
 		$log->info("IR: Front panel button release after $timediff: $code");
 		

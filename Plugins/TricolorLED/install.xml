@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>663969E4-9824-5555-AF9C-BB55797048D2</id>
+        <name>PLUGIN_TRICOLORLED_MODULE_NAME</name>
+        <module>Plugins::TricolorLED::Plugin</module>
+        <version>0.2</version>
+	<description>PLUGIN_TRICOLORLED_MODULE_NAME</description>
+        <creator>GWENDESIGN</creator>
+        <email>felix.mueller@gwendesign.com</email>
+
+	<defaultState>enabled</defaultState>
+
+        <homepageURL>http://www.gwendesign.com/</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+		<id>SqueezeCenter</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

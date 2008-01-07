@@ -1,0 +1,50 @@
+# Strings file to Tricolor LED
+
+PLUGIN_TRICOLORLED_MODULE_NAME
+	DE	Dreifarbige LED
+	EN	Tricolor LED
+	ES	Diodo tricolor
+	FR	Témoin de trois couleurs
+	IT	Led tricolore
+	NL	Driekleurige led
+
+PLUGIN_TRICOLORLED_COLOR_RED
+	DE	Rot
+	EN	Red
+	ES	Rojo
+	FR	Rouge
+	IT	Rosso
+	NL	Rood
+
+PLUGIN_TRICOLORLED_COLOR_GREEN
+	DE	Grün
+	EN	Green
+	ES	Verde
+	FR	Vert
+	IT	Verde
+	NL	Groen
+
+PLUGIN_TRICOLORLED_COLOR_BLUE
+	DE	Blau
+	EN	Blue
+	ES	Azul
+	FR	Bleu
+	IT	Blu
+	NL	Blauw
+
+PLUGIN_TRICOLORLED_PLAYER_NAME
+	DE	Player Name:
+	EN	Player name:
+	ES	Nombre de reproductor:
+	FR	Nom de la platine:
+	IT	Nome lettore:
+	NL	Naam speler:
+
+PLUGIN_TRICOLORLED_PLAYER_MAC
+	DE	Player-MAC:
+	EN	Player MAC:
+	ES	Reproductor MAC:
+	FR	Adresse MAC de la platine:
+	IT	Lettore MAC:
+	NL	Spelers-MAC:
+

@@ -311,7 +311,8 @@ var Utils = function(){
 				el.on('click', highlightedEl.onClickCB);
 			}
 
-			unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
+			if (unHighlightTimer)
+				unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
 		},
 
 		unHighlight : function(){

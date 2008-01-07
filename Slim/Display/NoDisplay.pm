@@ -14,7 +14,7 @@ Slim::Display::NoDisplay
 =head1 DESCRIPTION
 
 L<Slim::Display::NoDisplay>
- Display class for clients with no display, e.g. http streaming sessions
+ Display class for clients with no display
   - used to stub out common display methods in Display::Display
 
 =cut
@@ -24,8 +24,15 @@ use base qw(Slim::Display::Display);
 use strict;
 use Slim::Utils::Misc;
 
+sub showBriefly {
+	my $display = shift;
+
+	if ($display->notifyLevel) {
+		$display->notify('showbriefly', @_)
+	}
+}
+
 sub update {}
-sub showBriefly {}
 sub brightness {}
 sub prevline1 {}
 sub prevline2 {}
@@ -43,8 +50,10 @@ sub scrollUpdate {}
 sub killAnimation {}
 sub resetDisplay {}
 sub endAnimation {}
-sub vfdmodel { 'http' }
-sub linesPerScreen {}
+sub vfdmodel { 'none' }
+sub linesPerScreen { 0 }
+sub displayWidth { 0 }
+sub maxBrightness {}
 sub symbols {return $_[1];}
 
 =head1 SEE ALSO

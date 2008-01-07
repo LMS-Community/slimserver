@@ -1,0 +1,267 @@
+[% PROCESS settings/header.html %]
+
+		<!-- start plugins output -->
+
+<div class="settingSection">
+</div>
+
+	<input type="hidden" name="playername" value="[% playername %]">
+	<input type="hidden" name="mode" value="">
+	<table cellspacing="0" width="100%" border="0">
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		&nbsp;
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		<hr>
+	</td>
+	</tr>
+
+	<tr>
+	<td colspan="7">
+		<b>Base color values (use dropdown or keys to change)</b>
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		&nbsp;
+	</td>
+	</tr>
+
+	<tr>
+	<td colspan="7">
+		<!-- *** RED *** -->
+		<b>[% 'PLUGIN_TRICOLORLED_COLOR_RED' | string %]</b>
+		&nbsp;
+
+		<select name="selColorRed_0" onChange="settingsForm.mode.value='colorred_0';submit();">
+			<option value="0" [% IF selColorRed_0 == 0 %]selected[% END %]>off</option>
+			<option value="10" [% IF selColorRed_0 == 10 %]selected[% END %]>0x10</option>
+			<option value="20" [% IF selColorRed_0 == 20 %]selected[% END %]>0x20</option>
+			<option value="30" [% IF selColorRed_0 == 30 %]selected[% END %]>0x30</option>
+			<option value="40" [% IF selColorRed_0 == 40 %]selected[% END %]>0x40</option>
+			<option value="50" [% IF selColorRed_0 == 50 %]selected[% END %]>0x50</option>
+			<option value="60" [% IF selColorRed_0 == 60 %]selected[% END %]>0x60</option>
+			<option value="70" [% IF selColorRed_0 == 70 %]selected[% END %]>0x70</option>
+			<option value="80" [% IF selColorRed_0 == 80 %]selected[% END %]>0x80</option>
+			<option value="90" [% IF selColorRed_0 == 90 %]selected[% END %]>0x90</option>
+			<option value="A0" [% IF selColorRed_0 == 'A0' %]selected[% END %]>0xA0</option>
+			<option value="B0" [% IF selColorRed_0 == 'B0' %]selected[% END %]>0xB0</option>
+			<option value="C0" [% IF selColorRed_0 == 'C0' %]selected[% END %]>0xC0</option>
+			<option value="D0" [% IF selColorRed_0 == 'D0' %]selected[% END %]>0xD0</option>
+			<option value="E0" [% IF selColorRed_0 == 'E0' %]selected[% END %]>0xE0</option>
+			<option value="F0" [% IF selColorRed_0 == 'F0' %]selected[% END %]>0xF0</option>
+		</select>
+		&nbsp;U:up J:down&nbsp;&nbsp;
+
+		<!-- *** GREEN *** -->
+		<b>[% 'PLUGIN_TRICOLORLED_COLOR_GREEN' | string %]</b>
+		&nbsp;
+
+		<select name="selColorGreen_0" onChange="settingsForm.mode.value='colorgreen_0';submit();">
+			<option value="0" [% IF selColorGreen_0 == 0 %]selected[% END %]>off</option>
+			<option value="10" [% IF selColorGreen_0 == 10 %]selected[% END %]>0x10</option>
+			<option value="20" [% IF selColorGreen_0 == 20 %]selected[% END %]>0x20</option>
+			<option value="30" [% IF selColorGreen_0 == 30 %]selected[% END %]>0x30</option>
+			<option value="40" [% IF selColorGreen_0 == 40 %]selected[% END %]>0x40</option>
+			<option value="50" [% IF selColorGreen_0 == 50 %]selected[% END %]>0x50</option>
+			<option value="60" [% IF selColorGreen_0 == 60 %]selected[% END %]>0x60</option>
+			<option value="70" [% IF selColorGreen_0 == 70 %]selected[% END %]>0x70</option>
+			<option value="80" [% IF selColorGreen_0 == 80 %]selected[% END %]>0x80</option>
+			<option value="90" [% IF selColorGreen_0 == 90 %]selected[% END %]>0x90</option>
+			<option value="A0" [% IF selColorGreen_0 == 'A0' %]selected[% END %]>0xA0</option>
+			<option value="B0" [% IF selColorGreen_0 == 'B0' %]selected[% END %]>0xB0</option>
+			<option value="C0" [% IF selColorGreen_0 == 'C0' %]selected[% END %]>0xC0</option>
+			<option value="D0" [% IF selColorGreen_0 == 'D0' %]selected[% END %]>0xD0</option>
+			<option value="E0" [% IF selColorGreen_0 == 'E0' %]selected[% END %]>0xE0</option>
+			<option value="F0" [% IF selColorGreen_0 == 'F0' %]selected[% END %]>0xF0</option>
+		</select>
+		&nbsp;I:up K:down&nbsp;&nbsp;
+
+		<!-- *** BLUE *** -->
+		<b>[% 'PLUGIN_TRICOLORLED_COLOR_BLUE' | string %]</b>
+		&nbsp;&nbsp;
+
+		<select name="selColorBlue_0" onChange="settingsForm.mode.value='colorblue_0';submit();">
+			<option value="0" [% IF selColorBlue_0 == 0 %]selected[% END %]>off</option>
+			<option value="10" [% IF selColorBlue_0 == 10 %]selected[% END %]>0x10</option>
+			<option value="20" [% IF selColorBlue_0 == 20 %]selected[% END %]>0x20</option>
+			<option value="30" [% IF selColorBlue_0 == 30 %]selected[% END %]>0x30</option>
+			<option value="40" [% IF selColorBlue_0 == 40 %]selected[% END %]>0x40</option>
+			<option value="50" [% IF selColorBlue_0 == 50 %]selected[% END %]>0x50</option>
+			<option value="60" [% IF selColorBlue_0 == 60 %]selected[% END %]>0x60</option>
+			<option value="70" [% IF selColorBlue_0 == 70 %]selected[% END %]>0x70</option>
+			<option value="80" [% IF selColorBlue_0 == 80 %]selected[% END %]>0x80</option>
+			<option value="90" [% IF selColorBlue_0 == 90 %]selected[% END %]>0x90</option>
+			<option value="A0" [% IF selColorBlue_0 == 'A0' %]selected[% END %]>0xA0</option>
+			<option value="B0" [% IF selColorBlue_0 == 'B0' %]selected[% END %]>0xB0</option>
+			<option value="C0" [% IF selColorBlue_0 == 'C0' %]selected[% END %]>0xC0</option>
+			<option value="D0" [% IF selColorBlue_0 == 'D0' %]selected[% END %]>0xD0</option>
+			<option value="E0" [% IF selColorBlue_0 == 'E0' %]selected[% END %]>0xE0</option>
+			<option value="F0" [% IF selColorBlue_0 == 'F0' %]selected[% END %]>0xF0</option>
+		</select>
+		&nbsp;O:up L:down&nbsp;&nbsp;
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		&nbsp;
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		&nbsp;
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		<hr>
+	</td>
+	</tr>
+
+	<tr>
+	<td colspan="1">
+		<b>Color presets</b>
+	</td>
+	<td colspan="6">
+		S: Set immediately  T: Transition to new color
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		&nbsp;
+	</td>
+	</tr>
+
+	[% color_list %]
+
+	<!-- Back to default values -->
+	<tr>
+	<td colspan="7">
+		Set presets back to default values: <input type="button" onClick="setColorDefault();" value="Default">
+	</td>
+	</tr>
+
+	<!-- *** Spacer *** -->
+	<tr>
+	<td colspan="7">
+		<hr>
+	</td>
+	</tr>
+
+	<!-- *** Debug *** -->
+	<tr>
+	<td colspan="7">
+		[% 'PLUGIN_TRICOLORLED_PLAYER_NAME' | string %] [% playername %]
+		&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;
+		[% 'PLUGIN_TRICOLORLED_PLAYER_MAC' | string %] [% playerid %]
+	</td>
+	</tr>
+
+	</table>
+
+
+
+
+<script language="JavaScript">
+document.onkeyup = key_up_handler;
+
+function key_up_handler(e) {
+	if( !e) {
+		e = window.event;
+	}
+	if( e.which) {
+		Key = e.which;
+	} else {
+		Key = e.keyCode;
+	}
+
+	redIndex = document.settingsForm.selColorRed_0.selectedIndex;
+	greenIndex = document.settingsForm.selColorGreen_0.selectedIndex;
+	blueIndex = document.settingsForm.selColorBlue_0.selectedIndex;
+
+	if( Key == 85) { // 'U'
+		redIndex++;
+		document.settingsForm.selColorRed_0.selectedIndex = redIndex;
+		document.settingsForm.mode.value='colorred_0';
+		document.settingsForm.submit();
+	} else if( Key == 74) { // 'J'
+		redIndex--;
+		document.settingsForm.selColorRed_0.selectedIndex = redIndex;
+		document.settingsForm.mode.value='colorred_0';
+		document.settingsForm.submit();
+
+	} else if( Key == 73) { // 'I'
+		greenIndex++;
+		document.settingsForm.selColorGreen_0.selectedIndex = greenIndex;
+		document.settingsForm.mode.value='colorgreen_0';
+		document.settingsForm.submit();
+	} else if( Key == 75) { // 'K'
+		greenIndex--;
+		document.settingsForm.selColorGreen_0.selectedIndex = greenIndex;
+		document.settingsForm.mode.value='colorgreen_0';
+		document.settingsForm.submit();
+
+	} else if( Key == 79) { // 'O'
+		blueIndex++;
+		document.settingsForm.selColorBlue_0.selectedIndex = blueIndex;
+		document.settingsForm.mode.value='colorblue_0';
+		document.settingsForm.submit();
+	} else if( Key == 76) { // 'L'
+		blueIndex--;
+		document.settingsForm.selColorBlue_0.selectedIndex = blueIndex;
+		document.settingsForm.mode.value='colorblue_0';
+		document.settingsForm.submit();
+	}
+}
+
+
+
+function setColorByIndex( ind, mixed_color, red, green, blue) {
+	var con;
+	con = eval( 'document.settingsForm.selColorRed_' + ind);
+	con.value = red;
+	con = eval( 'document.settingsForm.selColorGreen_' + ind);
+	con.value = green;
+	con = eval( 'document.settingsForm.selColorBlue_' + ind);
+	con.value = blue;
+}
+
+function setColorDefault() {
+	setColorByIndex( 1, 'Off', '0', '0', '0');
+	setColorByIndex( 2, 'Red', 'F0', '0', '0');
+	setColorByIndex( 3, 'Green', '0', 'F0', '0');
+	setColorByIndex( 4, 'Blue', '0', '0', 'F0');
+	setColorByIndex( 5, 'Yellow', 'F0', '80', '0');
+	setColorByIndex( 6, 'Magenta', 'F0', '0', 'F0');
+	setColorByIndex( 7, 'Cyan', '0', 'F0', 'F0');
+	setColorByIndex( 8, 'Orange', 'F0', '20', '0');
+	setColorByIndex( 9, 'White', 'F0', 'F0', 'F0');
+	setColorByIndex( 10, 'Dark White', '40', '40', '40');
+}
+
+setColorDefault();
+
+</script>
+
+		<!-- end plugins output -->
+
+
+
+[% PROCESS settings/footer.html %]

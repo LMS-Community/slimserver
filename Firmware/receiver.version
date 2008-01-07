@@ -1,0 +1,10 @@
+# Receiver firmware 
+
+# from        to
+# from1..from2 to
+
+1..19 19
+
+# future versions may be downgraded to this one
+* 19
+

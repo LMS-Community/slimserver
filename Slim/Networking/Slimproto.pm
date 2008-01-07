@@ -24,6 +24,7 @@ use Slim::Player::Squeezebox;
 use Slim::Player::Squeezebox2;
 use Slim::Player::Transporter;
 use Slim::Player::SoftSqueeze;
+use Slim::Player::Receiver;
 use Slim::Player::SqueezeSlave;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -35,7 +36,7 @@ use constant SLIMPROTO_PORT   => 3483;
 use constant LATENCY_LIST_MAX => 10;
 use constant LATENCY_LIST_MIN => 6;
 
-my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', undef, 'squeezeslave', 'controller');
+my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller');
 my $log       = logger('network.protocol.slimproto');
 
 my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
@@ -835,7 +836,7 @@ sub _hello_handler {
 	$log->info("Killing bogus player timer."); 	 
  
 	Slim::Utils::Timers::killOneTimer($s, \&slimproto_close);
-	
+
 	my ($deviceid, $revision, @mac, $uuid, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
 
 	# Newer player fw reports a uuid. With uuid, length is 36; without uuid, length is 20
@@ -909,6 +910,11 @@ sub _hello_handler {
 
 		$client_class  = 'Slim::Player::Squeezebox2';
 		$display_class = 'Slim::Display::Squeezebox2';
+
+	} elsif ($deviceids[$deviceid] eq 'receiver') {
+
+		$client_class  = 'Slim::Player::Receiver';
+		$display_class = 'Slim::Display::NoDisplay';
 
 	} elsif ($deviceids[$deviceid] eq 'transporter') {
 

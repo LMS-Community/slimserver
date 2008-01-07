@@ -900,31 +900,67 @@ sub displaystatusQuery {
 		# new subscription request - add subscription, assume cli or jive format for the moment
 		$request->privateData({ 'format' => $request->source eq 'CLI' ? 'cli' : 'jive' }); 
 
+		my $client = $request->client;
+
 		if ($subs eq 'bits') {
 
-			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
-				$request->client->display->widthOverride(1, undef);
-				$request->client->display->notifyLevel(0);
-				$request->client->update;
-			});
-			$request->client->display->widthOverride(1, $request->getParam('width'));
+			if ($client->display->isa('Slim::Display::NoDisplay')) {
+				# there is currently no display class, we need an emulated display to generate bits
+				Slim::bootstrap::tryModuleLoad('Slim::Display::EmulatedSqueezebox2');
+				if ($@) {
+					$log->logBacktrace;
+					logError("Couldn't load Slim::Display::EmulatedSqueezebox2: [$@]");
+
+				} else {
+					# swap to emulated display
+					$client->display->forgetDisplay();
+					$client->display( Slim::Display::EmulatedSqueezebox2->new($client) );
+					$client->display->init;				
+					# register ourselves for execution and a cleanup function to swap the display class back
+					$request->registerAutoExecute(0, \&displaystatusQuery_filter, \&_displaystatusCleanupEmulated);
+				}
+
+			} elsif ($client->display->isa('Slim::Display::EmulatedSqueezebox2')) {
+				# register ourselves for execution and a cleanup function to swap the display class back
+				$request->registerAutoExecute(0, \&displaystatusQuery_filter, \&_displaystatusCleanupEmulated);
+
+			} else {
+				# register ourselves for execution and a cleanup function to clear width override when subscription ends
+				$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
+					$client->display->widthOverride(1, undef);
+					$client->display->notifyLevel(0);
+					$client->update;
+				});
+			}
+
+			# override width for new subscription
+			$client->display->widthOverride(1, $request->getParam('width'));
 
 		} else {
-
 			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
-				$request->client->display->notifyLevel(0);
+				$client->display->notifyLevel(0);
 			});
 		}
 
 		if ($subs eq 'showbriefly') {
-			$request->client->display->notifyLevel(1);
+			$client->display->notifyLevel(1);
 		} else {
-			$request->client->display->notifyLevel(2);
-			$request->client->update;
+			$client->display->notifyLevel(2);
+			$client->update;
 		}
 	}
 	
 	$request->setStatusDone();
+}
+
+# cleanup function to disable display emulation.  This is a named sub so that it can be suppressed when resubscribing.
+sub _displaystatusCleanupEmulated {
+	my $request = shift;
+	my $client  = $request->client;
+
+	$client->display->forgetDisplay();
+	$client->display( Slim::Display::NoDisplay->new($client) );
+	$client->display->init;
 }
 
 
