@@ -901,18 +901,24 @@ Player = function(){
 				Ext.get('ctrlPlayNum').update(parseInt(result.playlist_cur_index) + 1);
 
 				currentArtist = '';
+				var currentContributors = new Array();
 				for (var x = 0; x < contributorRoles.length; x++) {
 					if (result.playlist_loop[0][contributorRoles[x]]) {
 						var contributors = result.playlist_loop[0][contributorRoles[x]].split(',');
 						var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(',') : new Array();
 
 						for (var i = 0; i < contributors.length; i++) {
-							if (currentArtist)
-								currentArtist += ', ';
-	
-							currentArtist += ids[i]
-									? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + ids[i] + '&amp;level=1&amp;player=' + player + '" target="browser">' + contributors[i] + '</a>'
-									: contributors[i];
+							// only add to the list if it's not already in there
+							if (!currentContributors[contributors[i]]) {
+								currentContributors[contributors[i]] = 1;
+
+								if (currentArtist)
+									currentArtist += ', ';
+		
+								currentArtist += ids[i]
+										? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + ids[i] + '&amp;level=1&amp;player=' + player + '" target="browser">' + contributors[i] + '</a>'
+										: contributors[i];
+							}
 						}
 					}
 				}
