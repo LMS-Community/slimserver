@@ -253,14 +253,27 @@ sub mapfiles {
 sub addModeDefaultMapping {
 	my ($mode, $mapRef) = @_;
 
-	if (exists $irMap{$defaultMapFile}{$mode}) {
-
-		# don't overwrite existing mappings
+	if ( exists $irMap{$defaultMapFile}{$mode} ) {
+		while ( my ($key, $value) = each %{$mapRef} ) {
+			if ( exists $irMap{$defaultMapFile}{$mode}->{$key} ) {
+				# future enhancement - make a menu of options if a key action is duplicated
+				$log->warn("ignoring [$mode] $key => $value");
+			}
+			else {
+				$log->info("mapping [$mode] $key => $value");
+				$irMap{$defaultMapFile}{$mode}->{$key} = $value;
+			}
+		}
 		return;
 	}
 
-	if (ref($mapRef) eq 'HASH') {
-
+	if ( ref $mapRef eq 'HASH' ) {
+		if ( $log->is_info ) {
+			while ( my ($key, $value) = each %{$mapRef} ) {
+				$log->info("mapping [$mode] $key => $value");
+			}
+		}
+		
 		$irMap{$defaultMapFile}{$mode} = $mapRef;
 	}
 }
