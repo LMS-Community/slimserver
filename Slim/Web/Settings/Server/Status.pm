@@ -43,6 +43,10 @@ sub handler {
 	$paramRef->{library}{'INFORMATION_GENRES'}  = Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'));
 	$paramRef->{library}{'INFORMATION_TIME'}    = Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime);
 
+	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
+	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
+	$paramRef->{'debugPerfmonLog'} = Slim::Utils::Log->perfmonLogFile if $::perfmon;
+
 	for my $client (Slim::Player::Client::clients()) {
 		$paramRef->{clients}{$client->id} = [
 			{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },

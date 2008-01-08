@@ -98,4 +98,17 @@
 	[% END %]
 [% END %]
 
+
+[% WRAPPER setting title="SETUP_DEBUG_SERVER_LOG" desc="SETUP_DEBUG_SERVER_LOG_DESC" %]
+	<div class="prefDesc"><a href="/server.log" target="log">[% debugServerLog %]</a></div>
+[% END %]
+
+[% WRAPPER setting title="SETUP_DEBUG_SCANNER_LOG" desc="SETUP_DEBUG_SCANNER_LOG_DESC" %]
+	<div class="prefDesc"><a href="/scanner.log" target="log">[% debugScannerLog %]</a></div>
+[% END %]
+
+[% IF debugPerfmonLog; WRAPPER setting title="SETUP_DEBUG_PERFMON_LOG" desc="SETUP_DEBUG_PERFMON_LOG_DESC" %]
+	<div class="prefDesc"><a href="/perfmon.log" target="log">[% debugPerfmonLog %]</a></div>
+[% END; END %]
+
 [% PROCESS settings/footer.html %]
