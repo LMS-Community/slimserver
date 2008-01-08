@@ -398,8 +398,6 @@ sub playmode {
 			$log->info($everyclient->id, " New play mode: $newmode");
 		}
 
-		next if $prefs->client($everyclient)->get('silent');
-
 		# set up a callback to handle repeat changes during buffer drain
 		if ($newmode =~ /^playout/) {
 			Slim::Control::Request::subscribe(\&repeatCallback,[['playlist'],['repeat']]);
@@ -1070,10 +1068,6 @@ sub gototime {
 
 	for my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 
-		if ($prefs->client($everybuddy)->get('silent')) {
-			next;
-		}
-
 		if ( $log->is_info ) {
 			$log->info("Stopping playback for ", $everybuddy->id);
 		}
@@ -1095,10 +1089,6 @@ sub gototime {
 	$client->audioFilehandle()->sysseek($newoffset + $dataoffset, 0);
 
 	for my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
-
-		if ($prefs->client($everybuddy)->get('silent')) {
-			next;
-		}
 
 		if ( $log->is_info ) {
 			$log->info("Restarting playback for ", $everybuddy->id);
@@ -2444,11 +2434,7 @@ sub pauseSynced {
 	my $client = shift;
 
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-
-		next if ($prefs->client($everyclient)->get('silent'));
-
 		$everyclient->pause();
-
 	}
 }
 

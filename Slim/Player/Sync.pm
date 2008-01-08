@@ -256,16 +256,6 @@ sub sync {
 	
 	$buddy = masterOrSelf($buddy);
 
-	# if the buddy is silent, switch them, so we don't have any silent masters.
-	if ($prefs->client($buddy)->get('silent')) {
-		($client, $buddy) = ($buddy, $client);
-	}
-
-	if ( $log->is_warn && $prefs->client($buddy)->get('silent') ) {
-
-		$log->warn($buddy->id . " is silent and we're trying to make it a master!");
-	}
-	
 	$client->master($buddy);
 	
 	push (@{$client->master->slaves}, $client);
@@ -453,7 +443,7 @@ sub uniqueVirtualPlayers {
 sub checkSync {
 	my $client = shift;
 
-	if (!isSynced($client) || $prefs->client($client)->get('silent')) {
+	if (!isSynced($client)) {
 		return;
 	}
 

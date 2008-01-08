@@ -288,7 +288,7 @@ sub init {
 						 scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble scrollPixels scrollPixelsDouble
 						 activeFont idleFont activeFont_curr idleFont_curr doublesize offDisplaySize largeTextFont
 						 irmap disabledirsets
-						 power mute silent volume bass treble pitch repeat shuffle currentSong
+						 power mute volume bass treble pitch repeat shuffle currentSong
 						);
 
 		my $toMigrate;
@@ -569,10 +569,6 @@ sub maxRate {
 	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	
 	for my $everyclient (@playergroup) {
-
-		if ($prefs->client($client)->get('silent')) {
-			next;
-		}
 
 		my $otherRate = maxRate($everyclient, 1);
 		

@@ -188,8 +188,6 @@ sub getConvertCommand {
 
 	my @supportedformats = ();
 	my %formatcounter    = ();
-	my $audibleplayers   = 0;
-
 	my $underMax;
 
 	if (defined($client)) {
@@ -204,11 +202,7 @@ sub getConvertCommand {
 	
 		# make sure we only test formats that are supported.
 		foreach my $everyclient (@playergroup) {
-			
-			next if $prefs->client($everyclient)->get('silent');
-			
-			$audibleplayers++;
-			
+								
 			foreach my $supported ($everyclient->formats()) {
 				$formatcounter{$supported}++;
 			}
@@ -216,7 +210,7 @@ sub getConvertCommand {
 		
 		foreach my $testformat ($client->formats()) {
 			
-			if ($formatcounter{$testformat} == $audibleplayers) {
+			if ($formatcounter{$testformat} == @playergroup) {
 				push @supportedformats, $testformat;
 			}
 		}
