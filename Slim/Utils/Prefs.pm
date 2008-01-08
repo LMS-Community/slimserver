@@ -242,6 +242,8 @@ sub init {
 		'thumbSize'             => 100,
 		# Server Settings - SqueezeNetwork
 		'sn_sync'               => 1,
+		# Bug 5557, disable UPnP support by default
+		'noupnp'                => 1,
 	);
 
 	# add entry to dispatch table if it is loaded (it isn't in scanner.pl) as migration may call notify for this
