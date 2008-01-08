@@ -2630,9 +2630,9 @@ sub serverstatusQuery {
 					$request->addResultLoop(
 						'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
 					);
+					
+					$sn_cnt++;
 				}
-				
-				$sn_cnt++;
 			}
 		}
 	}
