@@ -15,6 +15,10 @@
 		<div class="prefDesc"><a href="/scanner.log" target="log">[% debugScannerLog %]</a></div>
 	[% END %]
 
+	[% IF debugPerfmonLog; WRAPPER setting title="SETUP_DEBUG_PERFMON_LOG" desc="SETUP_DEBUG_PERFMON_LOG_DESC" %]
+		<div class="prefDesc"><a href="/perfmon.log" target="log">[% debugPerfmonLog %]</a></div>
+	[% END; END %]
+
 	[% WRAPPER setting title="" desc="" %][% END %]
 
 	<div class = "prefs">

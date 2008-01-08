@@ -65,6 +65,7 @@ sub handler {
 
 	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
 	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
+	$paramRef->{'debugPerfmonLog'} = Slim::Utils::Log->perfmonLogFile if $::perfmon;
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

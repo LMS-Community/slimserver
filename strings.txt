@@ -14523,6 +14523,15 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	IT	SqueezeCenter mantiene un file di registro per tutte le attività relative all'analisi, inclusi iTunes e MusicIP, nel seguente percorso:
 	NL	SqueezeCenter bewaart hier een logboekbestand voor alle scanactiviteiten (zoals iTunes en MusicIP):
 
+SETUP_DEBUG_PERFMON_LOG
+	DE	Leistungs Logdatei
+	EN	Performance Log File
+	FR	Fichier journal de performance
+	NL	Prestaties-logboekbestand
+
+SETUP_DEBUG_PERFMON_LOG_DESC
+	EN	SqueezeCenter keeps a log file for performance monitoring here:
+
 SETUP_DEBUG_LEVEL_OFF
 	CS	Vypnuto
 	DA	Fra
