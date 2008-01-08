@@ -19,7 +19,7 @@
 [% pwd_list = BLOCK %]
 	<a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
 [% END %]
-[% PROCESS pageheader.html dontscroll=1 %]
+[% PROCESS pageheader.html dontscroll=browse_items.size %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<table><tr>
