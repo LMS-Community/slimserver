@@ -35,7 +35,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_RESCAN" desc="SETUP_RESCAN_DESC" %]
-		<select class="stdedit" name="rescantype" id="rescantype">
+		<select class="stdedit" name="rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
 
 		[% FOREACH option = {
 			'1rescan'   => 'SETUP_STANDARDRESCAN',
@@ -46,7 +46,7 @@
 		[%- END -%]
 		
 		</select>
-		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]"><br/><br/>
+		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 
