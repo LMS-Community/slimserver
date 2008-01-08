@@ -112,13 +112,13 @@ sub deleteMode {
 		favorite => $index,
 		listRef  => [
 			{
-				name    => "{FAVORITES_CANCEL}",
+				name    => "{PLUGIN_FAVORITES_CANCEL}",
 				onRight => sub {
 					Slim::Buttons::Common::popModeRight(shift);
 				},
 			},
 			{
-				name    => "{FAVORITES_DELETE}",
+				name    => "{FAVORITES_RIGHT_TO_DELETE}",
 				onRight => sub {
 					my $client = shift;
 					my $index  = $client->modeParam('favorite');
