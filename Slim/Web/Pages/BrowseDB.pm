@@ -392,6 +392,8 @@ sub browsedb {
 		my $firstItem     = undef;
 		my $albumDuration = 0;
 
+		$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
+
 		for my $item ($browseRS->slice($start, $end)) {
 
 			main::idleStreams();
@@ -417,6 +419,11 @@ sub browsedb {
 				'itemobj'      => $item,
 				$attrName      => $itemid,
 			);
+
+			if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($item->url)) {
+				$form{'isFavorite'} = Slim::Utils::Favorites->new($client)->findUrl($item->url);
+			}
+
 
 			# If we're at the track level - only append the track
 			# id for each item - it's a unique value and doesn't

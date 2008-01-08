@@ -115,6 +115,17 @@ function ajaxUpdate(url, params) {
 	} );
 }
 
+function toggleFavorite(el, url, title) {
+	new Ajax.Updater( { success: el }, 'plugins/Favorites/favcontrol.html', {
+		method: 'post',
+		postBody: 'url=' + url + '&title=' + title,
+		asynchronous: true,
+		onFailure: function(t) {
+			alert('Error -- ' + t.responseText);
+		}
+	} );
+}
+
 // Parse the raw data and return the requested hash.
 // if data is already parsed, just return unprocessed.
 function fillDataHash(theData) {

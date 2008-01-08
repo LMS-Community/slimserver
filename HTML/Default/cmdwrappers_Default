@@ -11,7 +11,7 @@
 	[% cmdLinkIconSize = 17 %]
 
 	[% BLOCK cmdlink -%]
-		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %]" class="cmdLinkIcon" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
+		[% IF content %]<a [% content %] >[% END %]<img src="[% webroot %]html/images/[% cmdimage %]" class="cmdLinkIcon" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/>[% IF content %]</a>[% END %]
 	[%- END %]
 
 
@@ -133,9 +133,9 @@
 			[% FOREACH mixer = mixerlinks.values.sort -%]
 				[% PROCESS $mixer %]
 			[% END %]
+			[% PROCESS favoritescontrol %]
 		[%- END %]
 	[%- END %]
-
 
 	[%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
 	[% BLOCK pagebar %]

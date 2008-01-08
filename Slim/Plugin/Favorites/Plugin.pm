@@ -185,6 +185,7 @@ sub playFavorite {
 sub webPages {
 	my $class = shift;
 
+	Slim::Web::HTTP::addPageFunction('plugins/Favorites/favcontrol.html', \&toggleButtonHandler);
 	Slim::Web::HTTP::addPageFunction('plugins/Favorites/index.html', \&indexHandler);
 
 	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html' });
@@ -201,6 +202,36 @@ sub addEditLink {
 # support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites editting]
 my $nextSession = 2; # session id 1 = favorites
 tie my %sessions, 'Tie::Cache::LRU', 4;
+
+sub toggleButtonHandler {
+	my $client = shift;
+	my $params = shift;
+
+	my $favs = Slim::Utils::Favorites->new($client);
+
+	$params->{favoritesEnabled} = 1;
+	$params->{itemobj} = {
+		url => $params->{url}, 
+		title => $params->{title},
+	};
+
+	if ($favs && $params->{url}) {
+
+		if ($favs->findUrl($params->{url})) {
+
+			$favs->deleteUrl( $params->{'url'} );
+		}
+
+		else {
+
+			$favs->add( $params->{url}, $params->{title} || $params->{url} );
+		}
+
+		$params->{item}->{isFavorite} = $favs->findUrl($params->{url});
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favcontrol.html', $params);
+}
 
 sub indexHandler {
 	my $client = shift;

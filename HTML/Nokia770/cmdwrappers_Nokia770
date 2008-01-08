@@ -138,6 +138,7 @@
 	[% FOREACH mixer = mixerlinks.values.sort %]
 		[% PROCESS $mixer %]
 	[% END %]
+	[% PROCESS favoritescontrol %]
 [% END %]
 
 [% BLOCK browsecontrols_small %]
@@ -149,6 +150,7 @@
 	[% FOREACH mixer = mixerlinks.values.sort %]
 		[% PROCESS $mixer %]
 	[% END %]
+	[% PROCESS favoritescontrol %]
 [% END %]
 
 [% BLOCK trackinfo %]

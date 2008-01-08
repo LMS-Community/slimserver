@@ -521,8 +521,18 @@ var Utils = function(){
 				url = url.replace(/player=/ig, '');
 
 			return (rExp.exec(url) ? url.replace(rExp, '=' + id) : url + '&player=' + id);
-		}
+		},
 
+		toggleFavorite : function(el, url, title) {
+			var el = Ext.get(el);
+			if (el) {
+				el.getUpdateManager().showLoadIndicator = false;
+				el.load({
+					url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&player=' + player,
+					method: 'GET'
+				});
+			}
+		}
 	};
 }();
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
