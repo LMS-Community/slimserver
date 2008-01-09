@@ -287,7 +287,10 @@ sub findAndAdd {
 		}
 
 		# Turn ids into tracks, note this will reorder ids so needs use of RAND() in SQL statement to maintain randomness
-		@results = Slim::Schema->rs($type)->search({ 'id' => { 'in' => \@randomIds } }, { 'order_by' => \'RAND()' })->all;
+		@results = Slim::Schema->rs($type)->search(
+			{ 'id' => { 'in' => \@randomIds } }, 
+			{ 'order_by' => \'RAND()' }
+		)->all;
 
 	} else {
 
@@ -328,6 +331,12 @@ sub findAndAdd {
 
 		my $rs = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
 
+		if (!$rs->count) {
+			# we've gone through all songs - start looping
+			delete $find->{lastPlayed}; 
+			$rs = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
+		}
+
 		if ($limit) {
 
 			# Get ids for all results from find and store in @$idList so they can be used in repeat calls
@@ -342,7 +351,10 @@ sub findAndAdd {
 			}
 
 			# Turn ids into tracks, note this will reorder ids so needs use of RAND() in SQL statement to maintain randomness
-			@results = Slim::Schema->rs($type)->search({ 'id' => { 'in' => \@randomIds } }, { 'order_by' => \'RAND()' })->all;
+			@results = Slim::Schema->rs($type)->search(
+				{ 'id' => { 'in' => \@randomIds } }, 
+				{ 'order_by' => \'RAND()' }
+			)->all;
 
 		} else {
 
