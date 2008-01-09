@@ -26,9 +26,16 @@ sub pageBarResults {
 	my $table = $self->{'attrs'}{'alias'};
 	my $name  = "$table.titlesort";
 
-	# pagebar based on contibutors if first sort field and results already sorted by this
-	if ($sort && $sort =~ /^contributor\.namesort/ && $self->{'attrs'}{'order_by'} =~ /contributor\.namesort/) {
-		$name  = "contributor.namesort";
+	# pagebar based on contributors if first sort field and results already sorted by this
+	if ($sort && $sort =~ /^contributor\.namesort/) {
+
+		if ($self->{'attrs'}{'order_by'} =~ /contributor\.namesort/) {
+			$name  = "contributor.namesort";
+		}
+
+		elsif ($self->{'attrs'}{'order_by'} =~ /me\.namesort/) {
+			$name  = "me.namesort";
+		}
 	}
 
 	$self->search(undef, {
