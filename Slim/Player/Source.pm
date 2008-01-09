@@ -600,6 +600,8 @@ sub decoderUnderrun {
 		# If the track that failed was the final one, stop, unless we're in repeat mode
 		if ( noMoreValidTracks($client) && !Slim::Player::Playlist::repeat($client) ) {
 			playmode( $client, 'stop' );
+		} else {
+			playmode( $client, 'playout-play' );
 		}
 	}
 	
