@@ -286,7 +286,7 @@ sub processSong {
 	# This breaks Linux however, so only do it on Windows & OS X
 	my @keys  = qw(album artist genre name);
 
-	if ($OS eq 'mac' || $OS eq 'win') {
+	if ($OS eq 'win') {
 
 		push @keys, 'file';
 	}
@@ -312,12 +312,10 @@ sub processSong {
 		$attributes{'MUSICMAGIC_MIXABLE'} = 1;
 	}
 
-	$log->debug("Exporting song: $songInfo{'file'}");
+	# need conversion to the current charset.
+	$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
 
-	# Both Linux & Windows need conversion to the current charset.
-	if ($OS ne 'mac') {
-		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
-	}
+	$log->debug("Exporting song: $songInfo{'file'}");
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
