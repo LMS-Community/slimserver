@@ -65,7 +65,13 @@ FAVORITES_FAVORITE
 	NL	Favoriet
 
 FAVORITES_RIGHT_TO_DELETE
+	DE	Favorit löschen
 	EN	Delete Favorite
+	ES	Eliminar
+	FR	Supprimer
+	HE	עבור ימינה למחיקה
+	IT	Eliminare
+	NL	Verwijderen
 
 FAVORITES_NOT_A_FAVORITE
 	DE	Kein Favorit
