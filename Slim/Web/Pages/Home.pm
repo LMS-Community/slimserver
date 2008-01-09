@@ -33,7 +33,7 @@ sub init {
 	$class->addPageLinks("help", { 'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	$class->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com"});
 	$class->addPageLinks("plugins", { 'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
-	$class->addPageLinks("radio", { 'SQUEEZENETWORK_SWITCH' => "squeezenetwork.html"});
+	$class->addPageLinks("plugins", { 'SQUEEZENETWORK_SWITCH' => "squeezenetwork.html"});
 	$class->addPageLinks('icons', { 'SQUEEZENETWORK_SWITCH' => 'html/images/ServiceProviders/squeezenetwork.png' });
 	$class->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
 	$class->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
