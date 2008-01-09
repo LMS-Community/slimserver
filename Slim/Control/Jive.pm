@@ -1416,6 +1416,7 @@ sub searchMenu {
 		window => {
 			text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
 			titleStyle => 'search',
+			menuStyle  => 'album',
 		},
 	},
 	{
