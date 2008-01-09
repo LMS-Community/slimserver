@@ -237,7 +237,7 @@ sub albumsQuery {
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
 		push @{ $attr->{'join'} }, 'contributor';
-		$attr->{'cols'} = [ qw(id artwork title contributor.name) ];
+		$attr->{'cols'} = [ qw(id artwork title contributor.name titlesort) ];
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
@@ -356,7 +356,7 @@ sub albumsQuery {
 		}
 
 		for my $eachitem ($rs->slice($start, $end)) {
-			
+
 			# Jive result formatting
 			if ($menuMode) {
 				
@@ -371,8 +371,10 @@ sub albumsQuery {
 				my $id = $eachitem->id();
 				$id += 0;
 				my $params = {
-					'album_id' =>  $id, 
+					'album_id' =>  $id,
+					'textkey' => substr($eachitem->titlesort, 0, 1),
 				};
+
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 
 				# artwork if we have it
@@ -614,7 +616,9 @@ sub artistsQuery {
 				$request->addResultLoop($loopname, $cnt, 'text', $obj->name);
 				my $params = {
 					'artist_id' => $id, 
+					'textkey' => substr($obj->namesort, 0, 1),
 				};
+
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
 			else {
@@ -1112,8 +1116,10 @@ sub genresQuery {
 				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
 				
 				my $params = {
-					'genre_id' =>  $id, 
+					'genre_id' => $id,
+					'textkey' => substr($eachitem->namesort, 0, 1),
 				};
+
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
 			else {
@@ -1392,13 +1398,19 @@ sub musicfolderQuery {
 			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 		for my $eachitem (@data[$start..$end]) {
-			
+
+			next if ($eachitem == undef);
+
 			my $filename = Slim::Music::Info::fileName($eachitem->url());
 			my $id = $eachitem->id();
 			$id += 0;
 			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $cnt, 'text', $filename);
+
+				my $params = {
+					'textkey' => uc(substr($filename, 0, 1)),
+				};
 				
 				# each item is different, but most items are folders
 				# the base assumes so above, we override it here
@@ -1407,10 +1419,7 @@ sub musicfolderQuery {
 				# assumed case, folder
 				if (Slim::Music::Info::isDir($eachitem)) {
 
-					my $params = {
-						'folder_id' => $id, 
-					};
-					$request->addResultLoop($loopname, $cnt, 'params', $params);
+					$params->{'folder_id'} = $id;
 
 				# playlist
 				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
@@ -1504,7 +1513,10 @@ sub musicfolderQuery {
 					};
 					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 				}
+
+				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
+
 			else {
 				$request->addResultLoop($loopname, $cnt, 'id', $id);
 				$request->addResultLoop($loopname, $cnt, 'filename', $filename);
@@ -2038,9 +2050,12 @@ sub playlistsQuery {
 
 				if ($menuMode) {
 					$request->addResultLoop($loopname, $cnt, 'text', $eachitem->title);
+
 					my $params = {
 						'playlist_id' =>  $id, 
+						'textkey' => substr($eachitem->namesort, 0, 1),
 					};
+
 					$request->addResultLoop($loopname, $cnt, 'params', $params);
 				}
 				else {
@@ -3893,9 +3908,12 @@ sub yearsQuery {
 
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
+
 				my $params = {
 					'year' =>  $id, 
+					'textkey' => substr($eachitem->name, 0, 1),
 				};
+
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
 			else {
