@@ -65,16 +65,7 @@ FAVORITES_FAVORITE
 	NL	Favoriet
 
 FAVORITES_RIGHT_TO_DELETE
-	DE	(RECHTS drücken zum Löschen)
-	EN	(Go right to delete)
-	ES	(Pulse DERECHA para eliminar)
-	FI	(OIKEALLE poistaaksesi)
-	FR	(DROITE pour supprimer)
-	HE	(עבור ימינה למחיקה)
-	IT	(Premere DESTRA per eliminare)
-	NL	(Rechts om te verwijderen)
-	SV	(Tryck HÖGER för att radera)
-	ZH_CN	 （删除按右方向键）
+	EN	Delete Favorite
 
 FAVORITES_NOT_A_FAVORITE
 	DE	Kein Favorit
