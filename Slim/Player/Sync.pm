@@ -333,7 +333,7 @@ sub restoreSync {
 			if ($othermasterID && ($othermasterID eq $masterID)) {
 				$client->syncgroupid($masterID);
 				$other->syncgroupid($masterID);
-				sync($client, $other);
+				$other->execute( [ 'sync', $client->id ] );
 				last;
 			}
 
