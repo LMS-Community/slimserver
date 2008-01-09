@@ -388,7 +388,7 @@ sub getFrame {
 
 	binmode $fh;
 	
-	my $offset = tell $fh;
+	my $offset = sysseek($fh, 0, 1);
 		
 	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
 	open(my $mpeg, '<&=', $fh) or do {
@@ -400,7 +400,7 @@ sub getFrame {
 	my $frame = MPEG::Audio::Frame->read($mpeg);
 	
 	# Seek back to where we started
-	seek $fh, $offset, 0;
+	sysseek ($fh, $offset, 0);
 	
 	close $mpeg;
 	
