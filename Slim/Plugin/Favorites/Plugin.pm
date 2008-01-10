@@ -230,8 +230,6 @@ sub toggleButtonHandler {
 		}
 	}
 
-use Data::Dumper;
-print Data::Dumper::Dumper($params->{item});
 	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favcontrol.html', $params);
 }
 
