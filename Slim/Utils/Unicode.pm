@@ -455,7 +455,7 @@ sub utf8decode_guess {
 	my @preferedEncodings = @_;
 
 	# Bail early if it's just ascii
-	if (looks_like_ascii($string) || Encode::is_utf8($string)) {
+	if (looks_like_ascii($string) || Encode::is_utf8($string) || !$string) {
 
 		return $string;
 	}
