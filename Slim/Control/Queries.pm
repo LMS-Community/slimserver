@@ -3997,7 +3997,10 @@ sub dynamicAutoQuery {
 
 		# add the data to the results
 		my $cnt = $request->getResultLoopCount($loop) || 0;
-		$request->setResultLoopHash($loop, $cnt, $data);
+		
+		if ( ref $data eq 'HASH' && scalar keys %{$data} ) {
+			$request->setResultLoopHash($loop, $cnt, $data);
+		}
 		
 		# more to jump to?
 		# note we carefully check $funcptr is not a lemon
