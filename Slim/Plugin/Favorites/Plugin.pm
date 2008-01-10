@@ -220,16 +220,18 @@ sub toggleButtonHandler {
 		if ($favs->findUrl($params->{url})) {
 
 			$favs->deleteUrl( $params->{'url'} );
+			$params->{item}->{isFavorite} = 0;
 		}
 
 		else {
 
 			$favs->add( $params->{url}, $params->{title} || $params->{url} );
+			$params->{item}->{isFavorite} = $favs->findUrl($params->{url});
 		}
-
-		$params->{item}->{isFavorite} = $favs->findUrl($params->{url});
 	}
-	
+
+use Data::Dumper;
+print Data::Dumper::Dumper($params->{item});
 	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favcontrol.html', $params);
 }
 
