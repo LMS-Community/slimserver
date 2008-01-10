@@ -279,7 +279,7 @@ sub albumsQuery {
 		# make $count = $quantity, which creates a new music menu that's only as big
 		# as the initial request (e.g., if command is `albums 0 100 sort:new menu:album` 
 		# then we return a count of 100 instead of the total count of all albums in SC
-		if ($sort eq 'new' && $count > $quantity) {
+		if (defined $sort && $sort eq 'new' && $count > $quantity) {
 			$count = $quantity;
 		}
 
