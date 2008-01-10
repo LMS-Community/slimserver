@@ -33,9 +33,10 @@ sub pageBarResults {
 			$name  = "contributor.namesort";
 		}
 
-		elsif ($self->{'attrs'}{'order_by'} =~ /me\.namesort/) {
-			$name  = "me.namesort";
-		}
+# bug 4633: sorting album views isn't fully supported yet
+#		elsif ($self->{'attrs'}{'order_by'} =~ /me\.namesort/) {
+#			$name  = "me.namesort";
+#		}
 	}
 
 	$self->search(undef, {
@@ -49,6 +50,11 @@ sub pageBarResults {
 sub alphaPageBar {
 	my $self = shift;
 	my $sort = shift;
+	my $hierarchy = shift;
+
+	# bug 4633: sorting album views isn't fully supported yet
+	# use simple numerical pagebar if we used a different hierarchy than album/*
+	return 0 unless ($hierarchy =~ /^album/);
 
 	return (!$sort || $sort =~ /^(?:contributor\.namesort|album\.titlesort)/) ? 1 : 0;
 }

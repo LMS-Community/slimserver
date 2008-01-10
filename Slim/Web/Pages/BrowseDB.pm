@@ -269,7 +269,7 @@ sub browsedb {
 	if ($count) {
 		my $alphaitems;
 
-		if (!defined $params->{'nopagebar'} && $rs->alphaPageBar($orderBy)) {
+		if (!defined $params->{'nopagebar'} && $rs->alphaPageBar($orderBy, $hierarchy)) {
 
 			$alphaitems = $browseRS->pageBarResults($orderBy);
 		}
