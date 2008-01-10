@@ -101,7 +101,7 @@ sub cliRadiosQuery {
 		# what we want the query to report about ourself
 		if (defined $menu) {
 			$data = {
-				text         => Slim::Utils::Strings::string( $class->getDisplayName() ),  # nice name
+				text         => Slim::Utils::Strings::string( $args->{display_name} || $class->getDisplayName() ),  # nice name
 				'icon-id'    => $icon,
 				actions      => {
 						go => {
@@ -112,7 +112,7 @@ sub cliRadiosQuery {
 						},
 				},
 				window        => {
-							titleStyle => 'album',
+					titleStyle => 'album',
 				},
 			};
 		}
