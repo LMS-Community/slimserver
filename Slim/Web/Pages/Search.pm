@@ -82,7 +82,7 @@ sub basicSearch {
 
 		for my $rs (@rsList) {
 
-			fillInSearchResults($params, $rs, [ 'manualSearch=1' ]);
+			fillInSearchResults($params, $rs, [ 'manualSearch=1' ], 0, $client);
 		}
 		
 		$params->{'query'} = Slim::Utils::Unicode::utf8decode($query);
@@ -270,13 +270,13 @@ sub advancedSearch {
 		$client->modeParam('searchTrackResults', { 'cond' => \%query, 'attr' => \%attrs });
 	}
 
-	fillInSearchResults($params, $rs, \@qstring, 1);
+	fillInSearchResults($params, $rs, \@qstring, 1, $client);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
 
 sub fillInSearchResults {
-	my ($params, $rs, $qstring, $advancedSearch) = @_;
+	my ($params, $rs, $qstring, $advancedSearch, $client) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = defined($params->{'query'}) ? $params->{'query'} : '';
@@ -350,6 +350,8 @@ sub fillInSearchResults {
 	my $lastAnchor = '';
 	my $descend    = $type eq 'track' ? 0 : 1;
 
+	$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
+
 	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
 	while (my $obj = $rs->next) {
 
@@ -378,6 +380,10 @@ sub fillInSearchResults {
 		} elsif ($type eq 'genre') {
 		
 			$form{'hierarchy'} = 'genre,contributor,album,track';
+		}
+
+		if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($obj->url)) {
+			$form{'isFavorite'} = Slim::Utils::Favorites->new($client)->findUrl($obj->url) || 0;
 		}
 
 		$obj->displayAsHTML(\%form, $descend);
