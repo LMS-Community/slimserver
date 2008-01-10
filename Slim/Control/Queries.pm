@@ -4164,7 +4164,7 @@ sub _addJiveSong {
 		$album = $remoteMeta->{album};
 	}
 	
-	$text .= "\n" . ( defined $album ? $album : '' );
+	$text .= ( defined $album ) ? "\n$album" : '';
 	
 	my $artist;
 	if ( defined( my $artistObj = $track->artist() ) ) {
@@ -4174,7 +4174,7 @@ sub _addJiveSong {
 		$artist = $remoteMeta->{artist};
 	}
 	
-	$text .= "\n" . ( defined $artist ? $artist : '' );
+	$text .= ( defined $artist ) ? "\n$artist" : '';
 	
 	if ( defined $iconId ) {
 		$iconId += 0;
@@ -4182,6 +4182,12 @@ sub _addJiveSong {
 	}
 	elsif ( $remoteMeta->{cover} ) {
 		$request->addResultLoop( $loop, $count, 'icon', $remoteMeta->{cover} );
+	}
+	
+	# Special case for Internet Radio streams, if the track is remote, has no duration,
+	# has title metadata, and has no album metadata, display the station title as line 1 of the text
+	if ( $track->remote && !$track->secs && $remoteMeta->{title} && !$album ) {
+		$text = $track->title . "\n" . $text;
 	}
 
 	$request->addResultLoop($loop, $count, 'text', $text);
