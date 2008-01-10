@@ -54,7 +54,7 @@ sub alphaPageBar {
 
 	# bug 4633: sorting album views isn't fully supported yet
 	# use simple numerical pagebar if we used a different hierarchy than album/*
-	return 0 unless ($hierarchy =~ /^album/);
+	return 0 unless ($hierarchy =~ /^album/ || !$sort || $sort =~ /^album\.titlesort/);
 
 	return (!$sort || $sort =~ /^(?:contributor\.namesort|album\.titlesort)/) ? 1 : 0;
 }
