@@ -451,7 +451,7 @@ Return the newly decoded string.
 =cut
 
 sub utf8decode_guess {
-	my $string = shift || return;
+	my $string = shift;
 	my @preferedEncodings = @_;
 
 	# Bail early if it's just ascii
