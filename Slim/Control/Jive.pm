@@ -309,10 +309,12 @@ sub registerPluginMenu {
 	# we also do not allow any hash without an id into the array, and will log an error if that happens
 
 	my %seen; my @new;
-	for my $href (@$menuArray, @pluginMenus) {
+	for my $href (@$menuArray, reverse @pluginMenus) {
 		my $id = $href->{'id'};
+		my $node = $href->{'node'};
 		if ($id) {
 			if (!$seen{$id}) {
+				$log->info("registering menuitem " . $id . " to " . $node );
 				push @new, $href;
 			}
 			$seen{$id}++;
