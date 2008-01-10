@@ -286,6 +286,11 @@ sub addSongInfo {
 			$params->{'songtitle'} = Slim::Music::Info::standardTitle(undef, $track);
 		}
 
+		$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
+		if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($url)) {
+			$params->{isFavorite} = Slim::Utils::Favorites->new($client)->findUrl($url) || 0;
+		}
+
 		# make urls in comments into links
 		for my $comment ($track->comment) {
 

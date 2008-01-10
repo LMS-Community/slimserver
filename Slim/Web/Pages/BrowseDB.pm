@@ -214,6 +214,8 @@ sub browsedb {
 		}
 	}
 
+	$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
+
 	# otherParams is used by the page bar generator.
 	my %otherParams = %attrs;
 
@@ -391,8 +393,6 @@ sub browsedb {
 		my $attrName      = lc($levelName);
 		my $firstItem     = undef;
 		my $albumDuration = 0;
-
-		$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
 
 		for my $item ($browseRS->slice($start, $end)) {
 
