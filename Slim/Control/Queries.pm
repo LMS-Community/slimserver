@@ -241,7 +241,7 @@ sub albumsQuery {
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
-	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . $tags . $insert;
+	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . $tags . (defined $insert ? $insert : '');
 	if ( $menuMode ) {
 		if ( my $cached = $cache->{albums}->{$cacheKey} ) {
 			my $copy = from_json( $cached );
