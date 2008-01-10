@@ -2253,8 +2253,8 @@ sub _generateContentFromFile {
 	if ($skin =~ /^(?:Default2)$/i) {
 		$skin = 'Default';
 	}
-	$params->{skin} = $skin;
-	$params->{systemLanguage} = $prefs->get('language');
+	$params->{'systemSkin'} = $skin;
+	$params->{'systemLanguage'} = $prefs->get('language');
 
 	$log->info("generating from $path with type: $type");
 	

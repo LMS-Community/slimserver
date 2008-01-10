@@ -2,9 +2,9 @@
 <link rel="shortcut icon" href="[% webroot %]favicon.ico" type="image/x-icon"/>
 <link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon"/>
 <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]"/>
-<link rel="stylesheet" type="text/css" href="/[% skin %]/slimserver.css"/>
-<link rel="stylesheet" type="text/css" href="/[% skin %]/skin.css"/>
-[% systemLanguage == 'HE' %]
+<link rel="stylesheet" type="text/css" href="/[% systemSkin %]/slimserver.css"/>
+<link rel="stylesheet" type="text/css" href="/[% systemSkin %]/skin.css"/>
+[% IF systemLanguage == 'HE' %]
 	<link rel="stylesheet" type="text/css" href="[% webroot %]rtl.css"/>
 	[% IF lefttoright %]<style>table, td, th, tr { text-align: left; }</style>[% END %]
 [% END %]
