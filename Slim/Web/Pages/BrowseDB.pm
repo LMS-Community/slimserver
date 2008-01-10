@@ -421,7 +421,7 @@ sub browsedb {
 			);
 
 			if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($item->url)) {
-				$form{'isFavorite'} = Slim::Utils::Favorites->new($client)->findUrl($item->url);
+				$form{'isFavorite'} = Slim::Utils::Favorites->new($client)->findUrl($item->url) || 0;
 			}
 
 

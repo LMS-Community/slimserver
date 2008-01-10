@@ -24,6 +24,7 @@ my %protocolHandlers = (
 	rtsp     => 1,
 	file     => 0,
 	playlist => 0,
+	db       => 1,
 );
 
 my %loadedHandlers = ();

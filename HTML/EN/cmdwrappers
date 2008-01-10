@@ -256,12 +256,17 @@ END %]
 [% END %]
 
 [% BLOCK favoritescontrol %]
-	[%- IF favoritesEnabled && (useAJAX || useExtJS) -%]
-		[%- IF item.isFavorite.defined; linktype = 'favdellink'; ELSE; linktype = 'favaddlink'; END -%]
-		[%- WRAPPER $linktype noTarget=1 -%]
-			[%- IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'Utils.'; END %]toggleFavorite(this, '[% itemobj.url | uri %]', '[% (item.text || itemobj.title) | uri %]')"[% END -%]
-		[%- END -%]
-	[%- END -%]
+	[%- IF favoritesEnabled && (useAJAX || useExtJS) && item.isFavorite.defined; 
+			IF item.isFavorite; 
+				linktype = 'favdellink'; 
+			ELSE; 
+				linktype = 'favaddlink'; 
+			END; 
+
+			WRAPPER $linktype noTarget=1;
+				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'Utils.'; END %]toggleFavorite(this, '[% itemobj.url | uri %]', '[% (item.text || itemobj.title) | uri %]')"[% END;
+			END;
+		END -%]
 [% END %]
 
 [%# this formats the track item %]
