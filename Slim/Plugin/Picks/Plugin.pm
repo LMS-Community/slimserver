@@ -13,7 +13,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed => 'http://www.slimdevices.com/picks/split/picks.opml',
 		tag  => 'picks',
-		menu => 'radio',
+		menu => 'radios',
 	);
 }
 

@@ -24,6 +24,14 @@ sub initPlugin {
 		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
 	}
 	
+	$class->initCLI( %args );
+	
+	$class->SUPER::initPlugin();
+}
+
+sub initCLI {
+	my ( $class, %args ) = @_;
+	
 	my $cliQuery = sub {
 	 	my $request = shift;
 		Slim::Buttons::XMLBrowser::cliQuery( $args{tag}, $args{feed}, $request );
@@ -40,14 +48,16 @@ sub initPlugin {
 		[ 1, 1, 1, $cliQuery ]
 	);
 	
-	my $cli_menu = $args{menu} eq 'music_services' ? 'music_services' : 'radios';	
-		
-	$cli_next{$class} = Slim::Control::Request::addDispatch(
-		[ $cli_menu, '_index', '_quantity' ],
-		[ 0, 1, 1, $class->cliRadiosQuery( \%args, $cli_menu ) ]
-	);
+	if ( $args{menu} eq 'plugins' ) {
+		$args{menu} = 'radios';
+	}
 	
-	$class->SUPER::initPlugin();
+	$cli_next{ $class } ||= {};
+		
+	$cli_next{ $class }->{ $args{menu} } = Slim::Control::Request::addDispatch(
+		[ $args{menu}, '_index', '_quantity' ],
+		[ 0, 1, 1, $class->cliRadiosQuery( \%args, $args{menu} ) ]
+	);
 }
 
 sub setMode {
@@ -113,9 +123,9 @@ sub cliRadiosQuery {
 				type => 'xmlbrowser',
 			};
 		}
-	
+		
 		# let our super duper function do all the hard work
-		Slim::Control::Queries::dynamicAutoQuery( $request, $cli_menu, $cli_next{$class}, $data );
+		Slim::Control::Queries::dynamicAutoQuery( $request, $cli_menu, $cli_next{ $class }->{ $cli_menu }, $data );
 	};
 }
 
