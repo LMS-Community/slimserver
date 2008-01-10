@@ -199,8 +199,11 @@ sub unsync {
 	foreach my $other (@players) {
 
 		next if ($other->power || $other eq $client );
-
-		push @inGroup, $other if ($prefs->client($other)->get('syncgroupid') == $syncgroupid);
+		
+		my $syncpref = $prefs->client($other)->get('syncgroupid');
+		next if !defined $syncpref;
+		
+		push @inGroup, $other if ($syncpref == $syncgroupid);
 	}
 
 	if (scalar @inGroup == 1) {
