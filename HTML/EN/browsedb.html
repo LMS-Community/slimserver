@@ -32,7 +32,35 @@
 %]
 
 [%- WRAPPER $container %]
-	[% IF coverArt AND tree != 1 -%]
+	[% IF levelName == 'track' && (album.id || age.id) %]
+		[% IF age.id; album = age; END %]
+		<div style="overflow: hidden;">
+		[% 
+			# remove "All Songs" item and display links at the top
+			songInfoPlayLinks = BLOCK;
+				PROCESS songInfoPlayLinks item = browse_items.shift();
+			END;
+
+			contributorRoles = {};
+
+			IF !album.compilation;
+				FOREACH contributor IN album.contributors;
+					FOREACH contributor IN contributor.contributorRoles;
+						contributorRoles.${contributor} = 1;
+					END;
+				END;
+			END;
+
+			PROCESS songinfo_details.html artAtTop = 1 headOnly = 1 itemobj = {
+				id => coverArt,
+				album => album,
+				contributorRoles => contributorRoles.keys,
+				genres => album.genre,
+				year => album.year
+			};
+		%]</div>
+
+	[% ELSIF coverArt AND tree != 1 -%]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 	[% END -%]
 	[% FOREACH item = browse_items -%]

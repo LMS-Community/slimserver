@@ -325,16 +325,30 @@ div#pagetitle {
 }
 
 #songInfo {
-	background: black;
-}
-
-#songInfo {
 	/* the list of song info items */
 	background-color: black;
+	clear: none;
+}
+
+#COVERART {
+	display: inline;
+	float: left;
+}
+
+.songInfoTitle {
+	width: auto;
+	padding-right: 5px;
 }
 
 .songInfoText {
-	width: 68%;
+	float: none;
+}
+
+#linkedSongInfoItems {
+	top:80px;
+	position: absolute;
+	padding-left: 52%;
+	width: auto;
 }
 
 .thumbnail {
