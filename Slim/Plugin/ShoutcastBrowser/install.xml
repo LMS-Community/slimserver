@@ -13,7 +13,7 @@
 	<defaultState>enabled</defaultState>
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
-	<icon>html/images/ServiceProviders/shoutcastbrowser.png</icon>
+	<icon>plugins/ShoutcastBrowser/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
 
         <targetApplication>

@@ -9,7 +9,7 @@
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
-	<icon>html/images/ServiceProviders/live365.png</icon>
+	<icon>plugins/Live365/html/images/icon.png</icon>
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>

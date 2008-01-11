@@ -12,7 +12,7 @@
 	<defaultState>enabled</defaultState>
         
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
-	<icon>html/images/ServiceProviders/radioio.png</icon>
+	<icon>plugins/RadioIO/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
 
 	<targetApplication>

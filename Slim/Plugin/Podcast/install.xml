@@ -13,7 +13,7 @@
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
 	<optionsURL>plugins/Podcast/settings/basic.html</optionsURL>
-	<icon>html/images/ServiceProviders/podcast.png</icon>
+	<icon>plugins/Podcast/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
 
         <targetApplication>

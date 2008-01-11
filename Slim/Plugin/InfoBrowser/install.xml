@@ -10,7 +10,7 @@
 	<email></email>
 	<defaultState>enabled</defaultState>
 	<optionsURL>plugins/InfoBrowser/settings/basic.html</optionsURL>
-	<icon>plugins/InfoBrowser/html/images/infobrowser.png</icon>
+	<icon>plugins/InfoBrowser/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
 		<id>SqueezeCenter</id>

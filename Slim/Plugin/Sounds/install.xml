@@ -9,7 +9,7 @@
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
-	<icon>plugins/Sounds/html/images/sounds.png</icon>
+	<icon>plugins/Sounds/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>
 		<id>SqueezeCenter</id>
