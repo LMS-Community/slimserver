@@ -585,8 +585,14 @@ sub enabledPlugins {
 
 		if (defined $prefs->get($plugin) && $prefs->get($plugin) == STATE_ENABLED) {
 
-			push @found, $plugin;
+			unless ($plugins->{$plugin}->{opType} eq OP_NEEDS_INSTALL
+				|| $plugins->{$plugin}->{opType} eq OP_NEEDS_ENABLE 
+				|| $plugins->{$plugin}->{opType} eq OP_NEEDS_UPGRADE) {
+					
+				push @found, $plugin;
+			}
 		}
+
 	}
 
 	return @found;
