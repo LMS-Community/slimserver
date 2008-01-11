@@ -4,7 +4,7 @@
 	<name>PLUGIN_AUDIOSCROBBLER_MODULE_NAME</name>
 	<module>Slim::Plugin::AudioScrobbler::Plugin</module>
 	<version>1.0</version>
-	<description>PLUGIN_AUDIOSCROBBLER_MODULE_NAME</description>
+	<description>SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW</description>
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>

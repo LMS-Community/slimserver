@@ -1,10 +1,5 @@
 [% PROCESS settings/header.html %]
 
-	<div>
-		<br />
-		[% "SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW" | string %]
-	</div>
-
 	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS" desc="SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC" %]
 		[% FOR account IN prefs.accounts %]
 			<input type="checkbox" name="delete" value="[% account.username %]" /> [% account.username %]<br /><br />
@@ -26,8 +21,8 @@
 		</select>
 	[% END %]
 	
-	<div>
+	[% WRAPPER setting title="" desc="" %]
 		[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE" | string %]
-	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
