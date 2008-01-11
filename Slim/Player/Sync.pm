@@ -229,15 +229,16 @@ sub unsync {
 	if ($temp) {
 
 		saveSyncPrefs($client);
-		$client->execute(["stop"]);
 
 	} else {
-
-		$client->execute(["stop"]);
-
 		# delete sync prefs for both this client and remaining client if it is last in group
 		deleteSyncPrefs($client) unless ($client == $lastInGroup);
 		deleteSyncPrefs($lastInGroup, 1) if $lastInGroup;
+	}
+
+	if (Slim::Player::Source::playmode($client) ne 'stop') {
+		Slim::Player::Source::playmode($client, 'stop');
+		Slim::Control::Request::notifyFromArray($client, ['stop']);
 	}
 }
 
@@ -257,15 +258,16 @@ sub sync {
 	
 	unsync($client);
 	
+	if (Slim::Player::Source::playmode($client) ne 'stop') {
+		Slim::Player::Source::playmode($client, 'stop');
+		Slim::Control::Request::notifyFromArray($client, ['stop']);
+	}
+		
 	$buddy = masterOrSelf($buddy);
 
 	$client->master($buddy);
 	
 	push (@{$client->master->slaves}, $client);
-	
-	if (Slim::Player::Source::playmode($client) eq "play") {
-		$client->execute(["stop"]);
-	}
 	
 	if (Slim::Player::Source::playmode($buddy) eq "play") {
 		$buddy->execute(["stop"]);
