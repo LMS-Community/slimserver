@@ -51,7 +51,8 @@
 
 	[%- WRAPPER $container %]
 
-		[% IF levelName == 'track' && album.id %]
+		[% IF levelName == 'track' && (album.id || age.id) %]
+			[% IF age.id; album = age; END %]
 			[% 
 				# remove "All Songs" item and display links at the top
 				songInfoPlayLinks = BLOCK;
