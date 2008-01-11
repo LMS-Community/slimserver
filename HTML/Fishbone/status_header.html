@@ -214,30 +214,23 @@
 			<div id="currentPlaylist">
 				[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
 				<span id="playlistName">[% IF current_playlist %][% current_playlist_name %][% END %]</span>
-				<span id="playlistSize">[% IF myClientState %]([% myClientState.playlist.size %] [% "SONGS" | string %])[% END %]</span><span id="playlistModified" style="display:none">([% "MODIFIED" | string %])</span>
+				<span id="playlistSize">[% IF myClientState %]([% myClientState.playlist.size %] [% "SONGS" | string %])[% END %]</span>
+				<span id="playlistModified" style="display:none">([% "MODIFIED" | string %])</span>
 			</div>
-			
-			<div id="deleteitem" style="display:none;" onMouseOut="$('deleteitem').style.backgroundColor = 'maroon';">Drag here to delete</div>
 			
 			<div id="playlistLinks">
 				[% img = '' %]<span id="saveplaylist" style="display:none;">[% PROCESS savePlaylistLink %] / </span>
 				<span id="playlistdownload" style="display:none;">[% PROCESS downloadPlaylistLink playlist_items = 1 %] /</span>
 				<span id="playlistclear" style="display:none;"><a href="javascript:processPlayControls('p0=playlist&amp;p1=clear');">[% "CLEAR" | string %]</a></span>
 			</div>
+
+			<div id="deleteitem" style="display:none;" onMouseOut="$('deleteitem').style.backgroundColor = 'maroon';">Drag here to delete</div>
 		</div>
 
 		<div id = "playlistframe">[% playlist %]</div>
 		<script type="text/javascript">
 			
 			resizePlaylist();
-			
-			//var playlist = document.getElementsByClassName('listing');
-			//for (var i = 0; i < playlist.length; i++) {
-			//	new Draggable(playlist[i].id, {
-			//		revert:true,
-			//		constraint: "vertical"
-			//	});
-			//};
 			
 			Droppables.add(
 				'playlistStatus', 

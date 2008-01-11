@@ -770,6 +770,7 @@ A.linkbtn:link {
 
 #currentPlaylist, #deleteitem, #playerlogo, #coverart, #browseForm, #SDlogo, #playerForm {
 	float: left;
+	z-index: 100;
 }
 
 #playlistLinks, #playerlinks, #serverlinks, #HeaderSearchForm {
@@ -889,18 +890,15 @@ DIV.playlistform
 	cursor: move;
 }
 
-#currentPlaylist {
-	width: 33%;
-}
-
 #deleteitem {
 	margin:0 auto;
 	padding: 0px;
 	color:white;
 	height: 18px;
-	width: 33%;
-	position: relative; 
+	width: 25%;
+	position: relative;
 	text-align: center;
+	float: right;
 }
 
 div#albumPopup {

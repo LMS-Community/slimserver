@@ -24,7 +24,7 @@ function doAjaxRefresh(light) {
 	
 	//bypass if there is a control command in progress
 	if (commandInProgress) {
-		showElements(['commandInProgress'],'inline');
+		$('commandInProgress').show();
 		return;
 	}
 	
@@ -172,14 +172,18 @@ function processPlayControls(param) {
 
 function processCommand(param, id) {
 	//ajaxRequest('status_header.html', param + "&ajaxRequest=1&s="+Math.random(), null);
-	ajaxRequest('status.html', param + "&ajaxRequest=1&force=1&s="+Math.random(), function(theData) {commandResponse(theData,1)});
+	ajaxRequest('status.html', param + "&ajaxRequest=1&force=1&s="+Math.random(), function(theData) {commandResponse(theData,1,id)});
 	commandInProgress = true;
+	console.log(id);
+	$('commandInProgress').show();
+	$('commandInProgress').style.backgroundColor = "00C000";
 }
 
-function commandResponse(thedata, force) {
+function commandResponse(thedata, force,id) {
 	commandInProgress = false;
 	refreshAll(thedata,force);
 	$('commandInProgress').hide();
+	$('commandInProgress').style.backgroundColor = "000000";
 }
 
 function refreshPlayControls(theData,force) {
