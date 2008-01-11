@@ -790,6 +790,10 @@ sub scanPlaylist {
 					$item->title( $title );
 				}
 				$item->update;
+				
+				if ( $log->is_debug ) {
+					$log->debug( 'Playlist item ' . $item->url . ' given title ' . $item->title );
+				}
 			}
 		}
 	}
@@ -873,11 +877,18 @@ sub scanPlaylistFileHandle {
 	$playlist->content_type($ct);
 	$playlist->update;
 	
-	# Copy playlist title to all items if they are remote URLs
+	# Copy playlist title to all items if they are remote URLs and do not already have a title
 	for my $track ( @playlistTracks ) {
 		if ( $track->remote ) {
-			$track->title( $playlist->title );
-			$track->update;
+			my $curTitle = $track->title;
+			if ( !$curTitle || Slim::Music::Info::isURL($curTitle) ) {
+				$track->title( $playlist->title );
+				$track->update;
+				
+				if ( $log->is_debug ) {
+					$log->debug( 'Playlist item ' . $track->url . ' given title ' . $track->title );
+				}
+			}
 		}
 	}
 	
