@@ -757,7 +757,7 @@ sub submitScrobble {
 		
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
-		if ( stillPlaying( $client, $current_track, $item ) ) {
+		if ( $current_track && stillPlaying( $client, $current_track, $item ) ) {
 			$log->debug( "Track " . $item->{_url} . " is still playing, not submitting" );
 			$current_item = $item;
 			next;
