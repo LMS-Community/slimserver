@@ -177,15 +177,8 @@ Settings = function(){
 			tp.activate(tab);
 		},
 
-		showPlayerSetting : function(tab, page) {
-			if (tabLinks[page])
-				tp.activate(page);
-			else {
-				var oldUrl = tabLinks[tab];
-				tabLinks[tab] = oldUrl + '&subPage=' + page;
-				tp.activate(tab);
-				tabLinks[tab] = oldUrl;
-			}			
+		hideTab : function(tab){
+			tp.active = '';
 		}
 	};
 }();
@@ -247,7 +240,6 @@ var SettingsPage = function(){
 					title = title.dom.innerHTML;
 
 				if (section && (desc = descEl.dom.innerHTML)) {
-//					if (desc.length > 100) {
 						helpEl = tpl.insertAfter(descEl);
 						Ext.QuickTips.register({
 							target: helpEl,
@@ -256,10 +248,6 @@ var SettingsPage = function(){
 							maxWidth: 600,
 							autoHide: false
 						});
-//					}
-//					else {
-//						descEl.removeClass('hiddenDesc');
-//					}
 				}
 			}
 		},

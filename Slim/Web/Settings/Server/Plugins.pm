@@ -28,6 +28,7 @@ sub handler {
 	my @changed = ();
 
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
+	my $pluginState = preferences('plugin.state')->all();
 
 	for my $plugin (keys %{$plugins}) {
 
@@ -35,18 +36,16 @@ sub handler {
 		my $module = $plugins->{$plugin}->{'module'};
 
 		# XXXX - handle install / uninstall / enable / disable
-		if ($paramRef->{$name.'.disable'}) {
-			push @changed, Slim::Utils::Strings::string($name);
-			Slim::Utils::PluginManager->disablePlugin($module);
-		}
-		
-		if ($paramRef->{$name.'.enable'}) {
-			push @changed, Slim::Utils::Strings::string($name);
-			Slim::Utils::PluginManager->enablePlugin($module);
-		}
-		
-		if ($paramRef->{$name.'.uninstall'}) {
-			push @changed, Slim::Utils::Strings::string($name);
+		if ( $paramRef->{'saveSettings'} ) {
+			if (!$paramRef->{$name} && $pluginState->{$plugin}) {
+				push @changed, Slim::Utils::Strings::string($name);
+				Slim::Utils::PluginManager->disablePlugin($module);
+			}
+	
+			if ($paramRef->{$name} && !$pluginState->{$plugin}) {
+				push @changed, Slim::Utils::Strings::string($name);
+				Slim::Utils::PluginManager->enablePlugin($module);
+			}
 		}
 
 	}
@@ -62,7 +61,6 @@ sub handler {
 
 	$paramRef->{plugins}     = $plugins;
 	$paramRef->{pluginState} = preferences('plugin.state')->all();
-	$paramRef->{nosubmit}    = 1;
 
 	# only show plugins with perl modules
 	my @keys = ();

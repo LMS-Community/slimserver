@@ -91,6 +91,7 @@ a.x-menu-item:hover {
 .x-tabs-strip .x-tabs-text,
 .x-tabs-strip .on .x-tabs-text {
 	color: #dedede;
+	cursor: pointer;
 }
 
 .x-tabs-strip .on .x-tabs-left {

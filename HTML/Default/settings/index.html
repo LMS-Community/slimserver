@@ -10,6 +10,31 @@
 		'BEHAVIOR_SETTINGS'
 	];
 
+USE Clients;
+players = Clients.get("id");
+
+BLOCK playerList %]
+	<p>&nbsp;</p>
+	<div id="playerSelector"></div>
+	<p>&nbsp;</p>
+	<script type="text/javascript">
+		playerList = new Array(
+			[% FOREACH playerobj IN players -%]
+				{ id: "[% playerobj.id %]", name: "[% playerobj.name %]" }[% IF !loop.last; ','; END %]
+			[% END %]
+		);
+
+		strings = new Array();
+		[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
+
+		if (Ext.isSafari)
+			SettingsPage.initPlayerList();
+		else
+			Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
+	</script>
+[% END;
+
+
 BLOCK settingsPage -%]
 	<div class="selectorMarker [% IF token == subPage %]selectedItem[% END %]" onclick="SettingsPage.onClicked(this);" onmouseover="SettingsPage.highlight(this);">
 		<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
@@ -44,30 +69,10 @@ BLOCK settingsPage -%]
 [%- ELSIF menu == 'player';
 	PROCESS settings/header.html bodyClass="settingsMenu";
 
+	PROCESS playerList;
+
 	links = playersetup;
-	USE Clients; players = Clients.get("id")
-	%]
-		<p>&nbsp;</p>
-		<div id="playerSelector"></div>
-		<p>&nbsp;</p>
-		<script type="text/javascript">
-			playerList = new Array(
-			[% FOREACH playerobj IN players -%]
-				{ id: "[% playerobj.id %]", name: "[% playerobj.name %]" }[% IF !loop.last; ','; END %]
-			[% END %]
-			);
-
-			strings = new Array();
-			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
-
-			if (Ext.isSafari)
-				SettingsPage.initPlayerList();
-			else
-				Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
-		</script>
-	[%
-
-	IF links;
+	IF links && !noSubs;
 		FOREACH link = links;
 			token = link.key;
 			title = link.key | string | html;
@@ -87,12 +92,12 @@ BLOCK settingsPage -%]
 
 [%- ELSIF sub -%]
 	<frameset cols="250,*">
-		[% IF !subPage && sub == 'player';
+		[% subPage; IF !subPage && sub == 'player';
 			subPage = "BASIC_PLAYER_SETTINGS";
 		ELSIF !subPage;
 			subPage = "FORMATTING_SETTINGS";
 		END %]
-		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&amp;menu=[% sub %]&amp;subPage=[% subPage %][% IF playerid %]&amp;playerid=[% playerURI; END %]" name="menu" frameborder="0">
+		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&amp;menu=[% sub %]&amp;subPage=[% subPage %][% IF playerid %]&amp;playerid=[% playerURI; END %][% IF noSubs %]&amp;noSubs=[% noSubs; END %]" name="menu" frameborder="0">
 
 		[% IF additionalLinks.setup.$subPage;
 			myPage = additionalLinks.setup.$subPage;

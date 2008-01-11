@@ -1,103 +1,33 @@
 [% PROCESS settings/header.html %]
 
 	<div class="settingSection">
-	
 		<div class="prefHead">[% "SETUP_GROUP_PLUGINS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_GROUP_PLUGINS_DESC" | string %]</div>
-
-		<p/>
-
-		[% FOREACH plugin = sortedPlugins %]
-
-			[% name     = plugins.$plugin.name %]
-			[% desc     = plugins.$plugin.description %]
-			[% version  = plugins.$plugin.version %]
-			[% settings = plugins.$plugin.optionsURL %]
-			[% enabled  = pluginState.$plugin %]
-
-			<table>
-			<tr>
-
-				<td>
-					<img src="[% webroot %]html/images/extensionItem.png">
-				</td>
-
-				<td>
-					&nbsp;&nbsp;<strong>[% name | string %]</strong>&nbsp;&nbsp;[% version %]<p/>
-					&nbsp;&nbsp;[% desc | string %]
-				</td>
-			</tr>
-
-			<tr id="[% name %]-div">
-
-				<td>&nbsp;</td>
-
-				<td>
-					<!-- XXXX - need to check for pending uninstall / install -->
-					[% IF enabled %]
-
-					<input type="submit" id="[% name %].toggle" name="[% name %].disable" value="[% 'DISABLE' | string %]">
-
-					[% ELSE %]
-
-					<input type="submit" id="[% name %].toggle" name="[% name %].enable" value="[% 'ENABLE' | string %]">
-
-					[% END %]
-
-					[% IF settings AND enabled %]
-
-					<input type="button" value="[% 'SETTINGS' | string %]" onClick="location.href='[% webroot %][% settings %][% IF player %]?player=[% playerURI %]&amp;playerid=[% playerURI %][% END %]'">
-
-					[% END %]
-
-<!-- 					<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]"> -->
-
-					[% IF NOT useTabList %]
-					<script type="text/javascript">
-						new Event.observe($('[% name %].toggle'), 'click', function(e) {
-							$('settingsForm').setStyle({cursor:'wait'});
-							Event.stop(e);
-							new Ajax.Request($('settingsForm').action, {
-								parameters: { useAJAX: 1, '[% name _ '.' _ (enabled ? 'disable' : 'enable') %]': 1, pageAntiCSRFToken: '[% pageAntiCSRFToken %]' },
-								onSuccess: function() {
-									if ($('[% name %].toggle').name == '[% name %].enable') {
-										$('[% name %].toggle').name = '[% name %].disable';
-										$('[% name %].toggle').value = '[% "DISABLE" | string %]';
-									}
-									else {
-										$('[% name %].toggle').name = '[% name %].enable';
-										$('[% name %].toggle').value = '[% "ENABLE" | string %]';
-									}
-									resizeSettingsSection();
-									$('settingsForm').setStyle({cursor:'auto'});
-								}
-							});
-						});
-
-/*						new Event.observe($('[% name %].uninstall'), 'click', function(e) {
-							$('settingsForm').setStyle({cursor:'wait'});
-							Event.stop(e);
-							new Ajax.Request($('settingsForm').action, {
-								parameters: { useAJAX: 1, '[% name %].uninstall': 1, pageAntiCSRFToken: '[% pageAntiCSRFToken %]' },
-								onSuccess: function(response) {
-									var results = parseData(response.responseText);
-									$('statusarea').update(results['warning']);
-									resizeSettingsSection();
-									$('settingsForm').setStyle({cursor:'auto'});
-								}
-							});
-						});
-*/
-					</script>
-					[% END %]
-				</td>
-			</tr>
-			</table>
-
-			<hr width="90%" /><p/>
-
-		[%- END -%]
-		
 	</div>
 
+	[% FOREACH plugin = sortedPlugins %]
+
+		[% name     = plugins.$plugin.name %]
+		[% version  = plugins.$plugin.version %]
+		[% settings = plugins.$plugin.optionsURL %]
+		[% enabled  = pluginState.$plugin %]
+
+		[% WRAPPER setting title = name%]
+			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %]>
+
+			[% IF plugins.$plugin.description %]
+				[% plugins.$plugin.description | string %]
+			[% END %]
+
+			[% IF enabled && settings %]
+				[% IF plugins.$plugin.description %]<br/>[% END %]
+				<a href="[% webroot %]settings/[% settings %]?player=[% playerURI; IF playerid %]&amp;playerid=[% playerURI; END %]">[% 'SETTINGS' | string %]</a>
+			[% END %]
+
+		[% END %]
+
+	[%- END -%]
+
+
 [% PROCESS settings/footer.html %]
+	

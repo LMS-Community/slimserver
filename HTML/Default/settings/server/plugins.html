@@ -1,90 +1,38 @@
-[% extJsScripts = BLOCK %]
-<script type="text/javascript">
-	var Plugins = function(){
-		var warn = true;
-
-		return {
-			toggle: function(plugin) {
-				var enable = plugin.name.match(/\.enable/);
-				Ext.get('settingsForm').setStyle({cursor: 'wait'});
-				Ext.Ajax.request({
-					url: Ext.get('settingsForm').dom.action,
-					params: 'useAJAX=1&' + plugin.name + '=1&pageAntiCSRFToken=[% pageAntiCSRFToken %]',
-					callback: function() { Ext.get('settingsForm').setStyle({cursor: 'auto'}); },
-					success: function(response) {
-						plugin.name = enable ? plugin.name.replace(/enable/, 'disable') : plugin.name.replace(/disable/, 'enable'); 
-						plugin.value = enable ? '[% "DISABLE" | string %]' : '[% "ENABLE" | string %]';
-
-						if (response.responseText) {
-							response = response.responseText.replace(/warning\|/, '');
-							Ext.get('statusarea').update(response);
-							
-							// show popup only once
-							if (warn) {
-								SettingsPage.showWarning();
-								warn = false;
-							}
-						}
-					}
-				});
-			}
-		};
-	}();
-
-</script>
-[% END %]
 [% PROCESS settings/header.html %]
 
 	<div class="settingSection">
-
-	<div class="prefHead">[% "SETUP_GROUP_PLUGINS" | string %]</div>
-	<div class="prefDesc">[% "SETUP_GROUP_PLUGINS_DESC" | string %]</div>
-
-	<p/>
+		<div class="prefHead">[% "SETUP_GROUP_PLUGINS" | string %]</div>
+		<div class="prefDesc">[% "SETUP_GROUP_PLUGINS_DESC" | string %]</div>
+	</div>
 
 	[% FOREACH plugin = sortedPlugins %]
 
 		[% name     = plugins.$plugin.name %]
-		[% desc     = plugins.$plugin.description %]
 		[% version  = plugins.$plugin.version %]
 		[% settings = plugins.$plugin.optionsURL %]
 		[% enabled  = pluginState.$plugin %]
 
-		[% WRAPPER setting title=name %]
-			<!-- XXXX - need to check for pending uninstall / install -->
-			[% IF enabled %]
+		[% WRAPPER setting title = name%]
+			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %] class="pluginEnablerCheckbox">
 
-			<input type="button" id="[% name %].toggle" name="[% name %].disable" value="[% 'DISABLE' | string %]" onClick="Plugins.toggle(this)">
-
-				[% IF settings %]
-
-					[% tab = '';
-					IF additionalLinks.setup.$name;
-						tab = 'advanced';
-					ELSIF playersetup.$name;
-						tab = 'players';
-					END %]
-
-					[% IF tab %]
-						<input type="button" value="[% 'SETTINGS' | string %]" onClick="top.Settings.showPlayerSetting('[% tab %]', '[% name %]')">
-					[% END %]
-
-				[% END %]
-
-			[% ELSE %]
-
-			<input type="button" id="[% name %].toggle" name="[% name %].enable" value="[% 'ENABLE' | string %]" onClick="Plugins.toggle(this)">
-
+			[% IF enabled && settings %]
+				<a href="[% webroot %]settings/[%-
+				IF playersetup.$name && !additionalLinks.setup.$name
+				-%]index.html?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;sub=player&amp;subPage=[% name %]&noSubs" [%- 
+				ELSE
+				-%][% settings %]?player=[% playerURI %]&amp;" [%-
+				END %]onclick="top.Settings.hideTab('SETUP_GROUP_PLUGINS');">[% 'SETTINGS' | string %]</a>
 			[% END %]
 
-<!-- uninstall isn't implemented in the page handler? -->
-<!-- 		<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]" onClick="Plugins.uninstall(this)">
- -->
+			[% IF plugins.$plugin.description %]
+				[% IF enabled && settings %]<br/>[% END %]
+				[% plugins.$plugin.description | string %]
+			[% END %]
+
 		[% END %]
 
 	[%- END -%]
 
-	</div>
 
 [% PROCESS settings/footer.html %]
 	

@@ -1076,6 +1076,14 @@ body.settingsMenu {
 	left: 0px;
 }
 
+.settingSection table {
+		margin: 0;
+}
+
+.settingSection td.firstColumn {
+	width: 245px;
+}
+
 .groupDesc, .prefDesc {
 	margin-bottom: 5px;
 }
@@ -1083,7 +1091,6 @@ body.settingsMenu {
 .hiddenDesc {
 	display: none;
 }
-
 
 /* Help screen */
 .helpPage, .helpPage .inner_content { background-color: white; }
