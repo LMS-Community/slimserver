@@ -142,8 +142,9 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
 			id      => 'randomtracks',
 			weight  => 10,
+			nextWindow => 'nowPlaying',
 			actions => {
-				do => {
+				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'tracks' ],
 					params => {
@@ -156,8 +157,9 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
 			id      => 'randomalbums',
 			weight  => 20,
+			nextWindow => 'nowPlaying',
 			actions => {
-				do => {
+				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'albums' ],
 					params => {
@@ -170,8 +172,9 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
 			id      => 'randomartists',
 			weight  => 30,
+			nextWindow => 'nowPlaying',
 			actions => {
-				do => {
+				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'contributors' ],
 					params => {
@@ -184,8 +187,9 @@ sub initPlugin {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
 			id      => 'randomyears',
 			weight  => 40,
+			nextWindow => 'nowPlaying',
 			actions => {
-				do => {
+				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'year' ],
 					params => {
