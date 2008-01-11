@@ -309,6 +309,7 @@ sub registerPluginMenu {
 	# we also do not allow any hash without an id into the array, and will log an error if that happens
 
 	my %seen; my @new;
+
 	for my $href (@$menuArray, reverse @pluginMenus) {
 		my $id = $href->{'id'};
 		my $node = $href->{'node'};
@@ -627,11 +628,13 @@ sub playerSettingsMenu {
 			Slim::Utils::Strings::string("INFORMATION_FIRMWARE_ABBR") . ": " . 
 			$client->revision() . "\n\n" .
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_IP_ABBR") . ": " .
-			$client->ip() . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT_ABBR") . ": " .
-			$client->port() . "\n\n" .
+			$client->ipport() . "\n\n" .
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
-			uc($client->macaddress());
+			uc($client->macaddress()) . "\n\n" .
+			($client->signalStrength ? Slim::Utils::Strings::string("INFORMATION_PLAYER_SIGNAL_STRENGTH") . ": " .
+			$client->signalStrength . "\n\n" : '') .
+			($client->voltage ? Slim::Utils::Strings::string("INFORMATION_PLAYER_VOLTAGE") . ": " .
+			$client->voltage . "\n\n" : '');
 	push @menu, {
 		text           => $playerInfoText,
 		id             => 'settingsPlayerInformation',
