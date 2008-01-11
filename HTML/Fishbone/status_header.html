@@ -213,8 +213,8 @@
 		<div id="playlistStatus">
 			<div id="currentPlaylist">
 				[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
-				[% IF current_playlist %][% current_playlist_name %]
-				([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+				<span id="playlistName">[% IF current_playlist %][% current_playlist_name %][% END %]</span>
+				<span id="playlistSize">[% IF myClientState %]([% myClientState.playlist.size %] [% "SONGS" | string %])[% END %]</span><span id="playlistModified" style="display:none">([% "MODIFIED" | string %])</span>
 			</div>
 			
 			<div id="deleteitem" style="display:none;" onMouseOut="$('deleteitem').style.backgroundColor = 'maroon';">Drag here to delete</div>

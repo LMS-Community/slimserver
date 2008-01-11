@@ -94,6 +94,26 @@ function refreshState(theData) {
 		hideElements(['saveplaylist']);
 	}
 	
+	if (parsedData['playlistName']) {
+		showElements(['playlistName'],'inline');
+		refreshElement('playlistName', parsedData['playlistName']);
+	} else {
+		hideElements(['playlistName']);
+	}
+	
+	if (parsedData['playlistModified']) {
+		showElements(['playlistModified'],'inline');
+	} else {
+		hideElements(['playlistModified']);
+	}
+	
+	if (parsedData['playlistSize'] && parsedData['playlistSize'] != 0) {
+		showElements(['playlistSize'],'inline');
+		refreshElement('playlistSize', "("+parsedData['playlistSize']+' [% "SONGS" | string %])');
+	} else {
+		hideElements(['playlistSize']);
+	}
+	
 	if (parseInt(parsedData['songcount']) > 0) {
 		showElements(['playlistdownload','playlistclear'],'inline');
 	} else {

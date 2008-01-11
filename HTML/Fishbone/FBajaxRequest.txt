@@ -18,4 +18,7 @@ coverartpath|
 [% END %]
 
 playlistTime|[% currentPlaylistChangeTime %]
+playlistName|[% current_playlist_name %]
+[% IF current_playlist_modified %]playlistModified|[% current_playlist_modified %][% END %]
+[% IF myClientState %]playlistSize|[% myClientState.playlist.size %][% END %]
 start|[% start %]
