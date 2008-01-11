@@ -61,6 +61,11 @@ END %]
 			[% item = BLOCK %]
 				[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %]
 				[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %]
+				[% IF streaminfo.item.favorites;
+					favoritesEnabled = 1;
+					isFavorite = streaminfo.item.favorites - 1;
+					PROCESS favoritescontrol;
+				   END %]
 			[% END; title = ""; PROCESS songInfoItem %]
 		[% END; END %]
 
@@ -81,6 +86,27 @@ END %]
 	[% END;
 END %]
 
+
+[%- BLOCK gencontrol -%]
+	[% item.favorites; IF item.favorites == 1 %]
+		[% WRAPPER favaddlink noTarget=1 %]
+			href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+		[% END %]
+	[% ELSIF item.favorites == 2 %]
+		[% WRAPPER favdellink noTarget=1 %]
+			href="[% path %]?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+		[% END %]
+	[% END %]
+
+	[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
+		[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
+		[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
+	[% ELSE %]
+		[% PROCESS dummylink %]
+		[% PROCESS dummylink %]
+	[% END %]
+[%- END %]
+
 [%- IF items.size -%]
 	<div id="browsedbHeader">
 		[% IF hasPagebar %]
@@ -93,26 +119,6 @@ END %]
 			</div>
 		[% END %]
 	</div>
-
-	[%- BLOCK gencontrol -%]
-		[% IF item.favorites == 1 %]
-			[% WRAPPER favaddlink noTarget=1 %]
-				href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
-			[% END %]
-		[% ELSIF item.favorites == 2 %]
-			[% WRAPPER favdellink noTarget=1 %]
-				href="[% path %]?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
-			[% END %]
-		[% END %]
-
-		[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-			[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
-			[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
-		[% ELSE %]
-			[% PROCESS dummylink %]
-			[% PROCESS dummylink %]
-		[% END %]
-	[%- END %]
 
 	[%- WRAPPER $container %]
 		[% IF image %]

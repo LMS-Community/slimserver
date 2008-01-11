@@ -1,3 +1,13 @@
+[%- BLOCK pluginLink -%]
+	[% IF enabled && settings %]
+		<a href="[% webroot %]settings/[%-
+		IF playersetup.$name && !additionalLinks.setup.$name
+		-%]index.html?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;sub=player&amp;subPage=[% name %]&noSubs" [%- 
+		ELSE
+		-%][% settings %]?player=[% playerURI %]&amp;" [%-
+		END %]>[% 'SETTINGS' | string %]</a>
+	[% END %]
+[%- END -%]
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>

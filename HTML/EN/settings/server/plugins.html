@@ -13,15 +13,13 @@
 		[% enabled  = pluginState.$plugin %]
 
 		[% WRAPPER setting title = name%]
-			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %]>
+			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %] class="pluginEnablerCheckbox">
+
+			[% PROCESS pluginLink %]
 
 			[% IF plugins.$plugin.description %]
+				[% IF enabled && settings %]<br/>[% END %]
 				[% plugins.$plugin.description | string %]
-			[% END %]
-
-			[% IF enabled && settings %]
-				[% IF plugins.$plugin.description %]<br/>[% END %]
-				<a href="[% webroot %]settings/[% settings %]?player=[% playerURI; IF playerid %]&amp;playerid=[% playerURI; END %]">[% 'SETTINGS' | string %]</a>
 			[% END %]
 
 		[% END %]

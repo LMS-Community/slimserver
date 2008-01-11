@@ -44,7 +44,27 @@ Settings = function(){
 
 			Ext.QuickTips.init();
 
-			tp = new Ext.TabPanel('settingsTabs');
+			tp = new Ext.TabPanel('settingsTabs', {
+				// overwriting default activate method:
+				// don't check whether the clicked tab is already active 
+				activate : function(id){
+					var tab = this.items[id];
+					if(!tab){
+						return null;
+					}
+					var e = {};
+					this.fireEvent("beforetabchange", this, e, tab);
+					if(e.cancel !== true && !tab.disabled){
+						if(this.active){
+							this.active.hide();
+						}
+						this.active = this.items[id];
+						this.active.show();
+						this.fireEvent("tabchange", this, this.active);
+					}
+					return tab;
+				}			
+			});
 
 			tp.on('beforetabchange', function(tb, ev, tab){
 				var modified = false;
@@ -175,10 +195,6 @@ Settings = function(){
 
 		activateTab : function(tab){
 			tp.activate(tab);
-		},
-
-		hideTab : function(tab){
-			tp.active = '';
 		}
 	};
 }();

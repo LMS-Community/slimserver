@@ -1,3 +1,6 @@
+[%- BLOCK pluginLink -%]
+	<a href="[% webroot %]settings/[% settings %]?player=[% playerURI; IF playerid %]&amp;playerid=[% playerURI; END %]">[% 'SETTINGS' | string %]</a>
+[%- END -%]
 [% IF NOT ajaxUpdate %]
 <!-- Begin settingsheader.html -->
 [% FILTER null %]

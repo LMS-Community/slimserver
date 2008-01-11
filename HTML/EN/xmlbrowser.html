@@ -32,6 +32,7 @@
 	<div id="songInfoHeader">
 		[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY" | string %]<br />
 		[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_TO_PLAYLIST" | string %]
+		[% PROCESS favoritescontrol item.favorites=streaminfo.item.favorites %]
 	</div>
 	[% END %]
 	
