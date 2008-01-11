@@ -247,7 +247,7 @@ sub sync {
 	my $buddy = shift;
 	
 	if ( $log->is_info ) {
-		$log->info($client->id .": syncing");
+		$log->info($client->id .": syncing to buddy-or-master: " . $buddy->id);
 	}
 
 	# we're already synced up!
@@ -262,6 +262,10 @@ sub sync {
 	$client->master($buddy);
 	
 	push (@{$client->master->slaves}, $client);
+	
+	if (Slim::Player::Source::playmode($client) eq "play") {
+		$client->execute(["stop"]);
+	}
 	
 	if (Slim::Player::Source::playmode($buddy) eq "play") {
 		$buddy->execute(["stop"]);
