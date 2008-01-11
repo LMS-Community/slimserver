@@ -27,25 +27,32 @@ sub handler {
 	my @versions = Slim::Utils::Misc::settingsDiagString();
 	my $osDetails = Slim::Utils::OSDetect::details();
 	
-	$paramRef->{server}{'versionInfo'}              = join( "<br />\n", @versions ) . "\n";
-	$paramRef->{server}{'INFORMATION_ARCHITECTURE'} = $osDetails->{'osArch'} || 'unknown';
-	$paramRef->{server}{'INFORMATION_HOSTNAME'}     = Slim::Utils::Network::hostName;
-	$paramRef->{server}{'INFORMATION_SERVER_PORT'}  = preferences('server')->get('httpport');
-	$paramRef->{server}{'networkProxy'}             = preferences('server')->get('networkproxy');
-	$paramRef->{server}{'INFORMATION_CLIENTS'}      = Slim::Player::Client::clientCount;
-	$paramRef->{server}{'INFORMATION_CACHEDIR'}     = preferences('server')->get('cachedir');
-	$paramRef->{server}{'INFORMATION_PREFSDIR'}     = preferences('server')->get('prefsdir');
-	$paramRef->{server}{'INFORMATION_PLUGINDIRS'}   = join(",",Slim::Utils::OSDetect::dirsFor('Plugins'));
+	$paramRef->{'versionInfoString'}    = join( "<br />\n", @versions ) . "\n";
+	
+	$paramRef->{server} = [
+		{INFORMATION_ARCHITECTURE => ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown')},
+		{INFORMATION_HOSTNAME     => Slim::Utils::Network::hostName},
+		{INFORMATION_SERVER_PORT  => preferences('server')->get('httpport')},
+		#{networkProxy             => preferences('server')->get('networkproxy');
+		{INFORMATION_CLIENTS      => Slim::Player::Client::clientCount},
+		{INFORMATION_CACHEDIR     => preferences('server')->get('cachedir')},
+		{INFORMATION_PREFSDIR     => preferences('server')->get('prefsdir')},
+		{INFORMATION_PLUGINDIRS   => join(",",Slim::Utils::OSDetect::dirsFor('Plugins'))},
+	];
 
-	$paramRef->{library}{'INFORMATION_TRACKS'}  = Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Track', { 'me.audio' => 1 }));
-	$paramRef->{library}{'INFORMATION_ALBUMS'}  = Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album'));
-	$paramRef->{library}{'INFORMATION_ARTISTS'} = Slim::Utils::Misc::delimitThousands(Slim::Schema->rs('Contributor')->browse->count);
-	$paramRef->{library}{'INFORMATION_GENRES'}  = Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'));
-	$paramRef->{library}{'INFORMATION_TIME'}    = Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime);
+	$paramRef->{library} =  [
+		{INFORMATION_TRACKS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Track', { 'me.audio' => 1 }))},
+		{INFORMATION_ALBUMS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album'))},
+		{INFORMATION_ARTISTS => Slim::Utils::Misc::delimitThousands(Slim::Schema->rs('Contributor')->browse->count)},
+		{INFORMATION_GENRES  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'))},
+		{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
+	];
 
-	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
-	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
-	$paramRef->{'debugPerfmonLog'} = Slim::Utils::Log->perfmonLogFile if $::perfmon;
+	$paramRef->{logs} = [
+		{SERVER  => Slim::Utils::Log->serverLogFile},
+		{SCANNER => Slim::Utils::Log->scannerLogFile},
+		{PERFMON => ($::perfmon ? Slim::Utils::Log->perfmonLogFile : undef )},
+	];
 
 	for my $client (Slim::Player::Client::clients()) {
 		$paramRef->{clients}{$client->id} = [

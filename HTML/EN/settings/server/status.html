@@ -30,10 +30,8 @@
 [% END %]
 		
 [% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
-	[% FOREACH item = library %]
-		[% IF item.value  %]
-		<p>[% item.key | string %][% "COLON" | string %] [% item.value %]</p>
-		[% END %]
+	[% FOREACH item IN library %]
+		<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
 	[% END %]
 [% END %]
 		
@@ -44,36 +42,14 @@
 [% END %]
 
 [% WRAPPER setting title="INFORMATION_MENU_SERVER" %]
-	[% IF server.versionInfo %]
-		<p>[% server.versionInfo %]</p>
+	[% IF versionInfoString %]
+		<p>[% versionInfoString %]</p>
 	[% END %]
 
-	[% IF server.INFORMATION_ARCHITECTURE %]
-		<p>[% "INFORMATION_ARCHITECTURE" | string %][% "COLON" | string %] [% server.INFORMATION_ARCHITECTURE %]</p>
-	[% END %]
-
-	[% IF server.INFORMATION_HOSTNAME %]
-		<p>[% "INFORMATION_HOSTNAME" | string %][% "COLON" | string %] [% server.INFORMATION_HOSTNAME %]</p>
-	[% END %]
-	
-	[% IF server.INFORMATION_SERVER_PORT %]
-		<p>[% "INFORMATION_SERVER_PORT" | string %][% "COLON" | string %] [% server.INFORMATION_SERVER_PORT %]</p>
-	[% END %]
-	
-	[% IF server.INFORMATION_CLIENTS %]
-		<p>[% "INFORMATION_CLIENTS" | string %][% "COLON" | string %] [% server.INFORMATION_CLIENTS %]</p>
-	[% END %]
-	
-	[% IF server.INFORMATION_CACHEDIR %]
-		<p>[% "INFORMATION_CACHEDIR" | string %][% "COLON" | string %] [% server.INFORMATION_CACHEDIR %]</p>
-	[% END %]
-	
-	[% IF server.INFORMATION_PREFSDIR %]
-		<p>[% "INFORMATION_PREFSDIR" | string %][% "COLON" | string %] [% server.INFORMATION_PREFSDIR %]</p>
-	[% END %]
-	
-	[% IF server.INFORMATION_PLUGINDIRS %]
-		<p>[% "INFORMATION_PLUGINDIRS" | string %][% "COLON" | string %] [% server.INFORMATION_PLUGINDIRS %]</p>
+	[% FOREACH item IN server %]
+		[% IF item.items.1 %]
+			<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
+		[% END %]
 	[% END %]
 [% END %]
 		
@@ -98,17 +74,12 @@
 	[% END %]
 [% END %]
 
-
-[% WRAPPER setting title="SETUP_DEBUG_SERVER_LOG" desc="SETUP_DEBUG_SERVER_LOG_DESC" %]
-	<div class="prefDesc"><a href="/server.log" target="log">[% debugServerLog %]</a></div>
+[% FOREACH item IN logs %]
+	[% IF item.items.1 %]
+		[% WRAPPER setting title="SETUP_DEBUG_${item.items.0}_LOG" desc="SETUP_DEBUG_${item.items.0}_LOG_DESC" %]
+			<div class="prefDesc"><a href="/[% item.items.0 | lower %].log" target="log">[% item.items.1 %]</a></div>
+		[% END %]
+	[% END %]
 [% END %]
-
-[% WRAPPER setting title="SETUP_DEBUG_SCANNER_LOG" desc="SETUP_DEBUG_SCANNER_LOG_DESC" %]
-	<div class="prefDesc"><a href="/scanner.log" target="log">[% debugScannerLog %]</a></div>
-[% END %]
-
-[% IF debugPerfmonLog; WRAPPER setting title="SETUP_DEBUG_PERFMON_LOG" desc="SETUP_DEBUG_PERFMON_LOG_DESC" %]
-	<div class="prefDesc"><a href="/perfmon.log" target="log">[% debugPerfmonLog %]</a></div>
-[% END; END %]
 
 [% PROCESS settings/footer.html %]
