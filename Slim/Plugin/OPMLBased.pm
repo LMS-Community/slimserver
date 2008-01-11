@@ -49,7 +49,7 @@ sub initCLI {
 	);
 	
 	if ( $args{menu} eq 'plugins' ) {
-		$args{menu} = 'radios';
+		$args{menu} = 'radio';
 	}
 	
 	$cli_next{ $class } ||= {};
