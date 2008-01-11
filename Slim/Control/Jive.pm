@@ -182,7 +182,7 @@ sub mainMenu {
 			weight         => 20,
 			actions        => {
 				go => {
-					cmd => ['radios'],
+					cmd => ['radio'],
 					params => {
 						menu => 'radio',
 					},
