@@ -906,6 +906,8 @@ sub displaystatusQuery {
 
 		my $client = $request->client;
 
+		$log->info("adding displaystatus subscription $subs");
+
 		if ($subs eq 'bits') {
 
 			if ($client->display->isa('Slim::Display::NoDisplay')) {
@@ -932,7 +934,10 @@ sub displaystatusQuery {
 				# register ourselves for execution and a cleanup function to clear width override when subscription ends
 				$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
 					$client->display->widthOverride(1, undef);
-					$client->display->notifyLevel(0);
+					if ( !Slim::Control::Request::hasSubscribers('displaystatus', $client->id) ) {
+						$log->info("last listener - suppressing display notify");
+						$client->display->notifyLevel(0);
+					}
 					$client->update;
 				});
 			}
@@ -942,7 +947,10 @@ sub displaystatusQuery {
 
 		} else {
 			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
-				$client->display->notifyLevel(0);
+				if ( !Slim::Control::Request::hasSubscribers('displaystatus', $client->id) ) {
+					$log->info("last listener - suppressing display notify");
+					$client->display->notifyLevel(0);
+				}
 			});
 		}
 
@@ -962,9 +970,12 @@ sub _displaystatusCleanupEmulated {
 	my $request = shift;
 	my $client  = $request->client;
 
-	$client->display->forgetDisplay();
-	$client->display( Slim::Display::NoDisplay->new($client) );
-	$client->display->init;
+	if ( !Slim::Control::Request::hasSubscribers('displaystatus', $client->id) ) {
+		$log->info("last listener - swapping back to NoDisplay class");
+		$client->display->forgetDisplay();
+		$client->display( Slim::Display::NoDisplay->new($client) );
+		$client->display->init;
+	}
 }
 
 

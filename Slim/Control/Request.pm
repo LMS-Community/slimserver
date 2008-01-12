@@ -827,7 +827,7 @@ sub unregisterAutoExecute{
 		for my $name (keys %{$subscribers{$connectionID}}) {
 			for my $clientid (keys %{$subscribers{$connectionID}{$name}}) {
 				
-				my $request = $subscribers{$connectionID}{$name}{$clientid};
+				my $request = delete $subscribers{$connectionID}{$name}{$clientid};
 				
 				if (my $cleanup = $request->autoExecuteCleanup()) {
 					eval { &{$cleanup}($request, $connectionID) };
@@ -845,6 +845,21 @@ sub unregisterAutoExecute{
 	return 0;
 }
 
+=head2 hasSubscribers ( $name, $clientid )
+
+Returns true if there are subscribers for $name/$clientid on any connection
+
+=cut
+sub hasSubscribers {
+	my $name     = shift;
+	my $clientid = shift;
+
+	for my $connectionID (keys %subscribers) {
+		return 1 if $subscribers{$connectionID}{$name} && $subscribers{$connectionID}{$name}{$clientid};
+	}
+
+	return 0;
+}
 
 ################################################################################
 # Constructors
@@ -1089,11 +1104,11 @@ sub removeAutoExecuteCallback {
 	
 	$log->debug("removeAutoExecuteCallback: deleting $cnxid - $name - $clientid");
 
+	delete $subscribers{$cnxid}{$name}{$clientid};
+	
 	if ($cleanup) {
 		eval { &{$cleanup}($self, $cnxid) };
 	}
-	
-	delete $subscribers{$cnxid}{$name}{$clientid};
 	
 	# there should not be any of those, but just to be sure
 	Slim::Utils::Timers::killTimers( $self, \&__autoexecute );
@@ -1992,6 +2007,8 @@ sub registerAutoExecute{
 
 		$log->info("Old friend: $cnxid - $name - $clientid");
 
+		delete $subscribers{$cnxid}{$name}{$clientid};
+
 		# call old cleanup if it exists and is different from the cleanup for new request
 		if (my $cleanup = $oldrequest->autoExecuteCleanup()) {
 			if (!$cleanupFunc || $cleanupFunc != $cleanup) {
@@ -1999,7 +2016,6 @@ sub registerAutoExecute{
 			}
 		}
 
-		delete $subscribers{$cnxid}{$name}{$clientid};
 		Slim::Utils::Timers::killTimers($oldrequest, \&__autoexecute);
 	}
 	else {
@@ -2491,12 +2507,11 @@ sub __autoexecute{
 	if ($deleteSub) {
 		my $name = $self->getRequestString();
 		my $clientid = $self->clientid() || 'global';
-		my $request2del = $subscribers{$cnxid}{$name}{$clientid};
+		my $request2del = delete $subscribers{$cnxid}{$name}{$clientid};
 		$log->debug("__autoexecute: deleting $cnxid - $name - $clientid");
 		if (my $cleanup = $self->autoExecuteCleanup()) {
 			eval { &{$cleanup}($self, $cnxid) };
 		}
-		delete $subscribers{$cnxid}{$name}{$clientid};
 		# there should not be any of those, but just to be sure
 		Slim::Utils::Timers::killTimers($self, \&__autoexecute);
 		Slim::Utils::Timers::killTimers($request2del, \&__autoexecute);
