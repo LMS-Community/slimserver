@@ -114,6 +114,8 @@ sub initPlugin {
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
 	[1, 0, 0, \&cliRequest]);
+	Slim::Control::Request::addDispatch(['randomplaymenu'],
+	[1, 1, 0, \&randomPlayMenu]);
 	Slim::Control::Request::addDispatch(['randomplaygenrelist'],
 	[1, 1, 0, \&chooseGenresMenu]);
 	Slim::Control::Request::addDispatch(['randomplaychoosegenre', '_genre', '_value'],
@@ -126,17 +128,28 @@ sub initPlugin {
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
 
-	my $node = {
+	my @item = ({
 			text           => Slim::Utils::Strings::string(getDisplayName()),
 			weight         => 60,
 			id             => 'randomplay',
 			node           => 'myMusic',
 			displayWhenOff => 0,
 			window         => { titleStyle => 'random' },
-		};
+			actions => {
+				go =>          {
+					player => 0,
+					cmd    => [ 'randomplaymenu' ],
+				},
+			},
+		});
 
-	Slim::Control::Jive::registerPluginNode($node);
+	Slim::Control::Jive::registerPluginMenu(\@item);
+}
 
+sub randomPlayMenu {
+
+	my $request = shift;
+	my $client = $request->client();
 	my @menu = (
 		{
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
@@ -144,13 +157,14 @@ sub initPlugin {
 			weight  => 10,
 			nextWindow => 'nowPlaying',
 			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'randomplay', 'tracks' ],
+				},
 				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'tracks' ],
-					params => {
-						menu => 'nowhere',
-					},
-				}
+				},
 			},
 		},
 		{
@@ -159,13 +173,14 @@ sub initPlugin {
 			weight  => 20,
 			nextWindow => 'nowPlaying',
 			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'randomplay', 'albums' ],
+				},
 				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'albums' ],
-					params => {
-						menu => 'nowhere',
-					},
-				}
+				},
 			},
 		},
 		{
@@ -174,13 +189,14 @@ sub initPlugin {
 			weight  => 30,
 			nextWindow => 'nowPlaying',
 			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'randomplay', 'contributors' ],
+				},
 				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'contributors' ],
-					params => {
-						menu => 'nowhere',
-					},
-				}
+				},
 			},
 		},
 		{
@@ -189,13 +205,14 @@ sub initPlugin {
 			weight  => 40,
 			nextWindow => 'nowPlaying',
 			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'randomplay', 'year' ],
+				},
 				go => {
 					player => 0,
 					cmd    => [ 'randomplay', 'year' ],
-					params => {
-						menu => 'nowhere',
-					},
-				}
+				},
 			},
 		},
 		{
@@ -211,8 +228,17 @@ sub initPlugin {
 			},
 		},
 	);
+	my $numitems = scalar(@menu);
+	$request->addResult("count", $numitems);
+	$request->addResult("offset", 0);
+	my $cnt = 0;
+	for my $eachItem (@menu[0..$#menu]) {
+		$request->setResultLoopHash('item_loop', $cnt, $eachItem);
+		$cnt++;
+	}
+	$request->setStatusDone();
 
-	Slim::Control::Jive::registerPluginMenu(\@menu, 'randomplay');
+
 }
 
 sub chooseGenre {
