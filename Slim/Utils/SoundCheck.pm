@@ -40,6 +40,7 @@ sub commentTagTodB {
 				# Bug 3207, if we already have a known gain value,
 				# combine it with the iTunNORM value	
 				$tags->{'REPLAYGAIN_TRACK_GAIN'} ||= 0;
+				$tags->{'REPLAYGAIN_TRACK_GAIN'} =~ s/[^-\d\.]//g;
 				$tags->{'REPLAYGAIN_TRACK_GAIN'} += $gain;
 			}
 
