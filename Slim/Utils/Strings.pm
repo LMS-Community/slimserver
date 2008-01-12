@@ -46,6 +46,7 @@ use Storable;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::PluginManager;
 
 our $strings = {};
 our $defaultStrings;

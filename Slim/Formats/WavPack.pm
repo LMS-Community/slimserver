@@ -303,14 +303,14 @@ sub _getAudioInfo {
 
 	my @sizechars = split '', $buffer;
 
-	$tmp = unpack "C", @sizechars[2];
+	$tmp = unpack "C", $sizechars[2];
 
 	if($tmp > 15)
 	{
 		return -1;
 	}
 
-	$tmp = unpack "C", @sizechars[3];
+	$tmp = unpack "C", $sizechars[3];
 
 	if($tmp != 0)
 	{
@@ -330,7 +330,7 @@ sub _getAudioInfo {
 
 	my @chars = split '', $buffer;
 
-	$tmp = unpack "C", @chars[1];
+	$tmp = unpack "C", $chars[1];
 
 	if($tmp != 4)
 	{
@@ -491,9 +491,9 @@ sub _read_sample_rate
 
 	my @chars = split '', $read_buffer;
 
-	$val0= unpack "C", @chars[0];
-	$val1= unpack "C", @chars[1];
-	$val2= unpack "C", @chars[2];
+	$val0= unpack "C", $chars[0];
+	$val1= unpack "C", $chars[1];
+	$val2= unpack "C", $chars[2];
 
 	$sample_rate = $val0;
 	$sample_rate |= (($val1 & 0xff) << 8);
@@ -511,7 +511,7 @@ sub _read_channel_info
 
 	my @chars = split '', $read_buffer;
 
-	$channel_info = unpack "C", @chars[0];
+	$channel_info = unpack "C", $chars[0];
 
 	return $channel_info;
 
@@ -625,27 +625,27 @@ sub _getAudioInfoUsingWvunpack {
 		$line=~s/ {2,}/ /g;
 
 		my @words = split(/ /, $line);
-		if ( @words[0] )
+		if ( $words[0] )
 		{
-			if(@words[0] eq $modalitiesString)
+			if($words[0] eq $modalitiesString)
 			{
-				if(@words[1] eq $hybridString)
+				if($words[1] eq $hybridString)
 				{
 					$self->{'encodingMode'} = 0;
 				}
 			}
 
-			if(@words[0] eq $avgBitrateString1 && @words[1] eq $avgBitrateString2 )
+			if($words[0] eq $avgBitrateString1 && $words[1] eq $avgBitrateString2 )
 			{
 				# wvunpack reports back in kbps format, we need it in bps format
 
-				$self->{'bitRate'} = @words[2] * 1000;
+				$self->{'bitRate'} = $words[2] * 1000;
 			}
 
-			if (@words[0] eq $sourceString)
+			if ($words[0] eq $sourceString)
 			{
-				$self->{'sampleFreq'} = @words[4];
-				my $tmpBps = @words[1];
+				$self->{'sampleFreq'} = $words[4];
+				my $tmpBps = $words[1];
 
 				my $bitString = "-bit";
 
@@ -661,19 +661,19 @@ sub _getAudioInfoUsingWvunpack {
 				$self->{'oldWavPack'} = 1;
 			}
 
-			if (@words[0] eq $channelString)
+			if ($words[0] eq $channelString)
 			{
-				$self->{'channels'} = @words[1];
+				$self->{'channels'} = $words[1];
 			}
 
-			if (@words[0] eq $durationString)
+			if ($words[0] eq $durationString)
 			{
-				my @numsections = split(/:/, @words[1]);
+				my @numsections = split(/:/, $words[1]);
 				my $durationCalc;
 
-				$durationCalc = @numsections[0] * 60 * 60;
-				$durationCalc = $durationCalc + (@numsections[1] * 60);
-				$durationCalc = $durationCalc + @numsections[2];
+				$durationCalc = $numsections[0] * 60 * 60;
+				$durationCalc = $durationCalc + ($numsections[1] * 60);
+				$durationCalc = $durationCalc + $numsections[2];
 				$self->{'trackTotalLengthSeconds'} = $durationCalc;
 			}
 
