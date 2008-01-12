@@ -127,6 +127,49 @@ my %font2uc = (
 	'standard.1' => 1,
 );
 
+# Our bitmap fonts are actually cp1252 (Windows-Latin1), NOT iso-8859-1.
+# The cp1252 encoding has 27 printable characters in the range [\x80-\x9F] .
+# In iso-8859-1, this range is occupied entirely by non-printing control codes.
+# The Unicode codepoints for the characters in this range are > 255, so instead
+# of displaying these characters with our bitmapped font, the code in this
+# sub will normally either replace them with characters from a TTF font
+# (if present) or transliterate them into the range [\x00-\x7F] .
+#
+# To prevent this (and allow our full bitmap font to be used whenever
+# possible), the following remaps the affected Unicode codepoints to their
+# locations in cp1252.
+my %cp1252mapping = (
+	"\x{0152}" => "\x8C",  # LATIN CAPITAL LIGATURE OE
+	"\x{0153}" => "\x9C",  # LATIN SMALL LIGATURE OE
+	"\x{0160}" => "\x8A",  # LATIN CAPITAL LETTER S WITH CARON
+	"\x{0161}" => "\x9A",  # LATIN SMALL LETTER S WITH CARON
+	"\x{0178}" => "\x9F",  # LATIN CAPITAL LETTER Y WITH DIAERESIS
+	"\x{017D}" => "\x8E",  # LATIN CAPITAL LETTER Z WITH CARON
+	"\x{017E}" => "\x9E",  # LATIN SMALL LETTER Z WITH CARON
+	"\x{0192}" => "\x83",  # LATIN SMALL LETTER F WITH HOOK
+	"\x{02C6}" => "\x88",  # MODIFIER LETTER CIRCUMFLEX ACCENT
+	"\x{02DC}" => "\x98",  # SMALL TILDE
+	"\x{2013}" => "\x96",  # EN DASH
+	"\x{2014}" => "\x97",  # EM DASH
+	"\x{2018}" => "\x91",  # LEFT SINGLE QUOTATION MARK
+	"\x{2019}" => "\x92",  # RIGHT SINGLE QUOTATION MARK
+	"\x{201A}" => "\x82",  # SINGLE LOW-9 QUOTATION MARK
+	"\x{201C}" => "\x93",  # LEFT DOUBLE QUOTATION MARK
+	"\x{201D}" => "\x94",  # RIGHT DOUBLE QUOTATION MARK
+	"\x{201E}" => "\x84",  # DOUBLE LOW-9 QUOTATION MARK
+	"\x{2020}" => "\x86",  # DAGGER
+	"\x{2021}" => "\x87",  # DOUBLE DAGGER
+	"\x{2022}" => "\x95",  # BULLET
+	"\x{2026}" => "\x85",  # HORIZONTAL ELLIPSIS
+	"\x{2030}" => "\x89",  # PER MILLE SIGN
+	"\x{2039}" => "\x8B",  # SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+	"\x{203A}" => "\x9B",  # SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+	"\x{20AC}" => "\x80",  # EURO SIGN
+	"\x{2122}" => "\x99"   # TRADE MARK SIGN
+);
+
+my $cp1252re = qr/(\x{0152}|\x{0153}|\x{0160}|\x{0161}|\x{0178}|\x{017D}|\x{017E}|\x{0192}|\x{02C6}|\x{02DC}|\x{2013}|\x{2014}|\x{2018}|\x{2019}|\x{201A}|\x{201C}|\x{201D}|\x{201E}|\x{2020}|\x{2021}|\x{2022}|\x{2026}|\x{2030}|\x{2039}|\x{203A}|\x{20AC}|\x{2122})/;
+
 my $log = logger('player.fonts');
 
 sub init {
@@ -271,6 +314,13 @@ sub string {
 		$useTTFNow  = 1;
 		$GDFontSize = $font2TTF{$defaultFontname}->{'GDFontSize'};
 		$GDBaseline = $font2TTF{$defaultFontname}->{'GDBaseline'};
+	}
+	
+	# If the string contains any Unicode characters which exist in our bitmap,
+	# use the bitmap version instead of the TTF version
+	# http://forums.slimdevices.com/showthread.php?t=42087
+	if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
+		$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
 	}
 
 	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
