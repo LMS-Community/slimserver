@@ -347,7 +347,7 @@ div#pagetitle {
 #linkedSongInfoItems {
 	top: 0px;
 	padding-left: 160px;
-	padding-top: 0px;
+	padding-top: 0px !important;
 	min-height: 165px;
 	position: relative;
 }
