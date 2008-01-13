@@ -1298,13 +1298,13 @@ Slim.RepeatButton = function(renderTo, config){
 			if (this.customHandler(result, 'repeat'))
 				this.state = -1;
 
-			else if (result['playlist repeat'] != null && this.state != result['playlist repeat'])
+			else if (this.state == -1 || (result['playlist repeat'] != null && this.state != result['playlist repeat']))
 				this.updateState(result['playlist repeat']);
 
 		},
 
 		updateState: function(newState){
-			this.state = newState;
+			this.state = newState || 0;
 			this.setIcon('');
 			this.setTooltip(strings['repeat'] + ' - ' + strings['repeat' + this.state]);
 			this.setClass('btn-repeat-' + this.state);
@@ -1337,13 +1337,14 @@ Slim.ShuffleButton = function(renderTo, config){
 
 			if (this.customHandler(result, 'shuffle'))
 				this.state = -1;
-			else if (result['playlist shuffle'] != null && this.state != result['playlist shuffle'])
+
+			else if (this.state == -1 || (result['playlist shuffle'] != null && this.state != result['playlist shuffle']))
 				this.updateState(result['playlist shuffle']);
 
 		},
 
 		updateState: function(newState){
-			this.state = newState;
+			this.state = newState || 0;
 			this.setIcon('');
 			this.setTooltip(strings['shuffle'] + ' - ' + strings['shuffle' + this.state]);
 			this.setClass('btn-shuffle-' + this.state);
