@@ -316,11 +316,11 @@ END %]
 
 [% BLOCK songInfoPlayLinks %]
 	[% WRAPPER playlink %]href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]"[% END %]
-		[% IF itemobj.isRemoteURL; "PLAY" | string; ELSE; "PLAY_THIS_SONG" | string; END %]
+		[% IF itemobj.isRemoteURL || browse_items; "PLAY" | string; ELSE; "PLAY_THIS_SONG" | string; END %]
 	</a>
 	<br>
 	[% WRAPPER addlink %]href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]"[% END %]
-		[% FILTER nbsp %][% IF itemobj.isRemoteURL; "ADD_TO_PLAYLIST" | string; ELSE; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %][% END %]
+		[% FILTER nbsp %][% IF itemobj.isRemoteURL || browse_items; "ADD_TO_PLAYLIST" | string; ELSE; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %][% END %]
 	</a>
 	[% FOREACH mixer = mixerlinks.keys.sort -%]
 		<br>
