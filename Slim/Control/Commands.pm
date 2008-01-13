@@ -573,16 +573,18 @@ sub playlistDeleteCommand {
 
 	my $song = Slim::Player::Playlist::song($client, $index);
 
-	# FIXME - make this conditional on client being jive?
-	$client->showBriefly({
-		'jive' => { 
-			'type'    => 'song',
-			'text'    => [ Slim::Utils::Strings::string('JIVE_POPUP_REMOVING'),
-						   $song->title,
-						   Slim::Utils::Strings::string('JIVE_POPUP_FROM_PLAYLIST') ],
-			'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
-		}
-	});
+	# show feedback if this action came from jive cometd session
+	if ($request->source && $request->source =~ /\/slim\/request/) {
+		$client->showBriefly({
+			'jive' => { 
+				'type'    => 'song',
+				'text'    => [ Slim::Utils::Strings::string('JIVE_POPUP_REMOVING'),
+							   $song->title,
+							   Slim::Utils::Strings::string('JIVE_POPUP_FROM_PLAYLIST') ],
+				'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
+			}
+		});
+	}
 
 	Slim::Player::Playlist::removeTrack($client, $index);
 
