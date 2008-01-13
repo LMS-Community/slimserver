@@ -330,25 +330,59 @@ div#pagetitle {
 	clear: none;
 }
 
-#COVERART {
-	display: inline;
-	float: left;
+#COVERART .songInfoText {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	top: 80px;
+	left: 10px;
+	z-index: 99;
 }
 
-.songInfoTitle {
+#COVERART .songInfoText img {
+	max-width: 150px;
+	max-height: 150px;
+}
+
+#linkedSongInfoItems {
+	top: 0px;
+	padding-left: 160px;
+	padding-top: 0px;
+	min-height: 165px;
+	position: relative;
+}
+
+#linkedSongInfoItems a {
+	font-weight: bold;
+}
+
+#linkedSongInfoItems img {
+	vertical-align: middle;
+}
+
+#linkedSongInfoItems .songInfoTitle {
+	text-align: left;
 	width: auto;
 	padding-right: 5px;
 }
 
-.songInfoText {
-	float: none;
+#songInfoItems {
+	display: table;
 }
 
-#linkedSongInfoItems {
-	top:80px;
-	position: absolute;
-	padding-left: 52%;
+#songInfoItems div {
+	display: table-row;
+}
+
+.songInfoTitle, .songInfoText {
+	display: table-cell;
 	width: auto;
+}
+
+.songInfoTitle {
+	width: 150px;
+	text-align: right;
+	padding-right: 12px;
 }
 
 .thumbnail {
