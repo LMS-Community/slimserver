@@ -73,10 +73,13 @@ BLOCK settingsPage -%]
 
 	links = playersetup;
 	IF links && !noSubs;
-		FOREACH link = links;
-			token = link.key;
-			title = link.key | string | html;
-			href = link.value _ "player=" _ playerURI;
+		FOREACH token = links.keys,;
+			sortedlinks.$token = token | string | html;
+		END;
+		FOREACH link = sortedlinks.sort;
+			token = link;
+			title = link | string | html;
+			href = links.$link _ "player=" _ playerURI;
 			href = href _ "&amp;playerid=" _ playerURI;
 
 			PROCESS settingsPage;
