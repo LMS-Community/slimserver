@@ -32,15 +32,16 @@
 %]
 
 [%- WRAPPER $container %]
-	[% IF levelName == 'track' && (album.id || age.id) %]
+	[% IF levelName == 'track' && (album.id || age.id) && NOT ajaxUpdate %]
 		[% IF age.id; album = age; END %]
 		<div style="overflow: hidden;">
 		[% 
 			# remove "All Songs" item and display links at the top
+			IF browse_items.size > 1;
 			songInfoPlayLinks = BLOCK;
 				PROCESS songInfoPlayLinks item = browse_items.shift();
-			END;
-
+			END;END;
+			
 			contributorRoles = {};
 
 			IF !album.compilation;

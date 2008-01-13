@@ -55,8 +55,10 @@
 			[% IF age.id; album = age; END %]
 			[% 
 				# remove "All Songs" item and display links at the top
+				IF browse_items.size > 1;
 				songInfoPlayLinks = BLOCK;
 					PROCESS songInfoPlayLinks item = browse_items.shift();
+				END;
 				END;
 
 				contributorRoles = {};
