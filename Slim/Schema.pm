@@ -1064,7 +1064,9 @@ sub cleanupStaleTrackEntries {
 
 	logger('scan.import')->info("Starting db garbage collection..");
 
-	my $iterator = $self->search('Track', { 'audio' => 1 });
+	# BUG 4355 only search for local audio files, as we cannot check
+	# validity of remote files
+	my $iterator = $self->search('Track', { 'audio' => 1, 'remote' => 0 });
 	my $count    = $iterator->count;
 
 	my $progress = Slim::Utils::Progress->new({
