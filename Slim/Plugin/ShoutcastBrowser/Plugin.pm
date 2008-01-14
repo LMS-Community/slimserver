@@ -30,7 +30,7 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['shoutcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
-	$cli_next = Slim::Control::Request::addDispatch(['radio', '_index', '_quantity' ],
+	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
 
 	$class->SUPER::initPlugin();
@@ -104,7 +104,7 @@ sub cliRadiosQuery {
 	}
 	
 	# let our super duper function do all the hard work
-	Slim::Control::Queries::dynamicAutoQuery($request, 'radio', $cli_next, $data);
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 sub webPages {

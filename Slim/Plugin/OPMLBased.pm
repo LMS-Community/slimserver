@@ -47,11 +47,11 @@ sub initCLI {
 		[ $args{tag}, 'playlist', '_method' ],
 		[ 1, 1, 1, $cliQuery ]
 	);
-	
-	if ( $args{menu} eq 'plugins' ) {
-		$args{menu} = 'radio';
+
+	if ( $args{menu} eq 'plugins' || $args{menu} eq 'radio' ) {
+		$args{menu} = 'radios';
 	}
-	
+
 	$cli_next{ $class } ||= {};
 		
 	$cli_next{ $class }->{ $args{menu} } = Slim::Control::Request::addDispatch(
