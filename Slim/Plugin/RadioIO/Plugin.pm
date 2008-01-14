@@ -23,7 +23,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed           => Slim::Networking::SqueezeNetwork->url('/api/radioio/v1/opml'),
 		tag            => 'radioio',
-		menu           => 'radio',
+		menu           => 'radios',
 	);
 }
 
