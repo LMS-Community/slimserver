@@ -17,7 +17,7 @@
 	[% END %]
 
 
-	[% WRAPPER setting title="SETUP_GROUP_NONMENUITEMS_INTRO" desc="&nbsp;" %][% END %]
+	[% WRAPPER setting title="SETUP_GROUP_NONMENUITEMS_INTRO" desc="&nbsp;" %]
 
 	<table width="100%">
 		[% FOREACH option = nonMenuItems.sort %]
@@ -32,10 +32,10 @@
 		<input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]">
 		<input type=hidden name="nonMenuItems" value="[% nonMenuItems.keys.max %]" />
 	</p>
-
+	[% END %]
 
 	[% IF pluginsItems %]
-		[% WRAPPER setting title="SETUP_GROUP_PLUGINITEMS_INTRO" desc="" %][% END %]
+		[% WRAPPER setting title="SETUP_GROUP_PLUGINITEMS_INTRO" desc="" %]
 
 		<table width="100%">
 			[% FOREACH option = pluginItems  %]
@@ -50,6 +50,7 @@
 			<input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]">
 			<input type=hidden name="pluginItems" value="[% pluginItems.keys.max %]" />
 		</p>
+		[% END %]
 	[% END %]
 
 [% PROCESS settings/footer.html %]
