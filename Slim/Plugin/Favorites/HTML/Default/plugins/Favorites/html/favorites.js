@@ -5,6 +5,7 @@ var Favorites = function(){
 			new Slim.Sortable({
 				el: 'draglist',
 				selector: 'ol#draglist li',
+
 				onDropCmd: function(sourcePos, targetPos) {
 					var el;
 

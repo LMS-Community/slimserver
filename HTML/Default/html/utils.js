@@ -16,11 +16,12 @@ Slim.Sortable.prototype = {
 
 		for(var i = 0; i < items.length; i++) {
 			var item = Ext.get(items[i]);
-	
-			item.dd = new Slim.DDProxy(items[i], this.el, {
-				position: i + this.offset,
-				list: this
-			});
+
+			if (!item.hasClass('dontdrag'))
+				item.dd = new Slim.DDProxy(items[i], this.el, {
+					position: i + this.offset,
+					list: this
+				});
 		}
 
 		Utils.isDragging = false;
