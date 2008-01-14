@@ -53,7 +53,7 @@ END %]
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]<div id="mainbody">[% END %]
 
 [% IF msg %][% WRAPPER contentcontainer %]
-	<b>[% msg %]</b>
+	<div class="message">[% msg %]</div>
 [% END %][% END %]
 
 [% IF streaminfo %]

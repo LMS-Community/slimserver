@@ -102,6 +102,10 @@ a:hover, .link:hover,
 	right: 15px;
 }
 
+.message {
+	font-weight: bold;
+	margin: 10px 10px;
+}
 
 
 /* Main screen (outer frame) */
