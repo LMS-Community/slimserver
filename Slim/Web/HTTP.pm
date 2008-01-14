@@ -66,7 +66,7 @@ use constant RETRY_TIME_FAST  => 0.02; # faster retry for streaming pcm on platf
 use constant PIPE_BUF_THRES   => 4096; # threshold for switching between retry times
 
 use constant MAXKEEPALIVES    => 30;
-use constant KEEPALIVETIMEOUT => 10;
+use constant KEEPALIVETIMEOUT => 75;
 
 # Package variables
 
@@ -244,10 +244,13 @@ sub acceptHTTP {
 		if (!($prefs->get('filterHosts')) ||
 		     (Slim::Utils::Network::isAllowedHost($peer))) {
 
-			# this is the timeout for the client connection.
-			$httpClient->timeout(KEEPALIVETIMEOUT);
-
 			$peeraddr{$httpClient} = $peer;
+
+			# XXX: HTTP::Daemon normally uses a timeout of 0.001 seconds in
+			# its internal select() call, this currently breaks some Jive POST requests
+			# that arrive too slowly and in multiple packets.
+			# Jive will be fixed soon to send requests in a single packet.
+			${*$httpClient}{io_socket_timeout} = 1;
 
 			Slim::Networking::Select::addRead($httpClient, \&processHTTP);
 			Slim::Networking::Select::addError($httpClient, \&closeStreamingSocket);
@@ -358,6 +361,8 @@ sub processHTTP {
 	# else
 	## Send bad request
 
+	# Remove keep-alive timeout
+	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
 	$log->info("Reading request...");
 
@@ -365,11 +370,13 @@ sub processHTTP {
 	# socket half-closed from client
 	if (!defined $request) {
 
+		my $reason = $httpClient->reason || 'unknown error reading request';
+		
 		if ( $log->is_info ) {
-			$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. (half-closed)");
+			$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. ($reason)");
 		}
 
-		closeHTTPSocket($httpClient);
+		closeHTTPSocket($httpClient, 0, $reason);
 		return;
 	}
 	
@@ -462,6 +469,17 @@ sub processHTTP {
 					$response->header('Connection' => 'close');
 
 				}
+			}
+			
+			if ( $keepAlives{$httpClient} ) {
+				# set the keep-alive timeout
+				Slim::Utils::Timers::setTimer(
+					$httpClient,
+					time() + KEEPALIVETIMEOUT,
+					\&closeHTTPSocket,
+					0,
+					'keep-alive timeout',
+				);
 			}
 		}
 
@@ -758,7 +776,7 @@ sub processHTTP {
 		$response->content("");
 		$log->debug("Response Headers: [\n" . $response->as_string . "]");
 	}
-
+	
 	if ( $log->is_info ) {
 		$log->info(
 			"End request: keepAlive: [" .
@@ -1703,7 +1721,7 @@ sub sendResponse {
 
 		$log->warn("Not connected with $peeraddr{$httpClient}:$port, closing socket");
 
-		closeHTTPSocket($httpClient);
+		closeHTTPSocket($httpClient, 0, 'not connected');
 		return;
 	}
 
@@ -1736,9 +1754,9 @@ sub sendResponse {
 	if (!defined($sentbytes)) {
 
 		# Treat $httpClient with suspicion
-		$log->info("Send to $peeraddr{$httpClient}:$port had error, closing and aborting.");
+		$log->info("Send to $peeraddr{$httpClient}:$port had error ($!), closing and aborting.");
 
-		closeHTTPSocket($httpClient);
+		closeHTTPSocket($httpClient, 0, "$!");
 
 		return;
 	}
@@ -1767,12 +1785,23 @@ sub sendResponse {
 				$log->info("End request, connection closing for: $peeraddr{$httpClient}:$port");
 
 				closeHTTPSocket($httpClient);
+				return;
 			}
 
 		} else {
 
 			$log->info("More segments to send to $peeraddr{$httpClient}:$port");
 		}
+		
+		# Reset keep-alive timer
+		Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+		Slim::Utils::Timers::setTimer(
+			$httpClient,
+			time() + KEEPALIVETIMEOUT,
+			\&closeHTTPSocket,
+			0,
+			'keep-alive timeout',
+		);
 	}
 }
 
@@ -2489,10 +2518,13 @@ sub forgetClient {
 }
 
 sub closeHTTPSocket {
-	my $httpClient = shift;
-	my $streaming = shift;
+	my ( $httpClient, $streaming, $reason ) = @_;
 	
-	$log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}");
+	$reason ||= 'closed normally';
+	
+	$log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}:" . $httpClient->peerport . " ($reason)");
+	
+	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
 	Slim::Networking::Select::removeRead($httpClient);
 	Slim::Networking::Select::removeWrite($httpClient);
