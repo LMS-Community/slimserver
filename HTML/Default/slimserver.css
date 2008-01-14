@@ -471,6 +471,16 @@ div.pagetitleWithIcon {
 	background-position: 0 -38px;
 }
 
+#settingsRegion .noPlayerPanel,
+#playList .noPlayerPanel ul,
+#playList .noPlayerPanel b,
+#playList .noPlayerPanel p {
+	margin: 10px 7px;
+}
+
+#playList .noPlayerPanel p b {
+	margin-left: 0px;
+}
 
 /* browse items */
 .itemWithCover { min-height: 48px; }
@@ -1070,14 +1080,15 @@ body.settingsMenu {
 	font-weight: bold;
 }
 
+
 .settingGroup .prefHead {
 	position: absolute;
 	width: 235px;
-	left: 0px;
+	left: 11px;
 }
 
 .settingSection table {
-		margin: 0;
+	margin: 0;
 }
 
 .settingSection td.firstColumn {
@@ -1091,6 +1102,12 @@ body.settingsMenu {
 .hiddenDesc {
 	display: none;
 }
+
+#settingsRegion .noPlayerPanel {
+	margin: 0 23px;
+}
+
+
 
 /* Help screen */
 .helpPage, .helpPage .inner_content { background-color: white; }

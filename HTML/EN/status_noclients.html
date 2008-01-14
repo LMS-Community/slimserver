@@ -1,3 +1,4 @@
+[% IF !ajaxUpdate %]
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -10,9 +11,13 @@
 <body bgcolor="#FFFFFF">
 <p><h3>[% playermodel _ "_MUSIC_PLAYER" | string %]</h3></p>
  <hr>
- <p>
+[% END %]
+
+<p>
 <b>[% "NO_PLAYER_FOUND" | string %]</b>
 <p>[% "NO_PLAYER_DETAILS" | string %]</p>
 
+[% IF !ajaxUpdate %]
 </body>
 </html>	
+[% END %]

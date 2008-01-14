@@ -12,7 +12,9 @@
 	[% END %]
 	<div id="playList">
 		[% IF playercount < 1 %]
-			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
+			<div class="noPlayerPanel">
+			[% PROCESS status_noclients.html ajaxUpdate=1 %]
+			</div>
 		[% ELSE %]
 			[% IF playlist_items %]
 				[% FOREACH item = playlist_items %]

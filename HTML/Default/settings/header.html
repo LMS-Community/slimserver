@@ -56,7 +56,10 @@
 		[% END %]
 
 		<style>
-			html { overflow: auto; }
+			html {
+				overflow: auto;
+				background-color: white;
+			}
 
 		[%- IF debug %]
 			.x-layout-panel-body { background: white; }
@@ -79,12 +82,12 @@
 	<body class="[% bodyClass || "settings" %]">
 
 		[% IF !noForm %]
-		<div id="statusarea" class="statusarea">
-			[% IF warning %]
+		[% IF warning %]
+			<div id="statusarea" class="statusarea">
 				[% warning %]
-			[% END %]
-			&nbsp;
-		</div>
+				&nbsp;
+			</div>
+		[% END %]
 
 		<form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
 

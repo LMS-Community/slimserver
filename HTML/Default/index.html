@@ -156,7 +156,11 @@
 									</div>
 	
 									<div id="playlistPanel">
-										<div id="playList"></div>
+										<div id="playList">
+											<div class="noPlayerPanel">
+											[% PROCESS status_noclients.html ajaxUpdate=1 %]
+											</div>
+										</div>
 									</div>
 								</div>
 

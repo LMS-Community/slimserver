@@ -90,7 +90,7 @@ BLOCK settingsPage -%]
 
 [%- ELSIF sub == 'player' && !playerid;
 	PROCESS settings/header.html %]
-	<p><br/>[% "NO_PLAYER_FOUND" | string %]</p>
+	<p class="noPlayerPanel"><br/>[% "NO_PLAYER_FOUND" | string %]</p>
 	[% PROCESS settings/footer.html %]
 
 [%- ELSIF sub -%]
