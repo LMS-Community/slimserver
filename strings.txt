@@ -2304,12 +2304,12 @@ SETUP_GROUP_MENUITEMS_DESC
 	ZH_CN	您可将播放机最高阶层的主页菜单加以用户化。单击以调整排序或除去该菜单项目。如要列入已被除去的菜单项目，请单击"Add"。
 
 SETUP_GROUP_PLUGINITEMS_INTRO
-	DE	Extras:
-	EN	Extras:
-	ES	Extras:
-	FR	Extras:
-	IT	Extra:
-	NL	Extra's:
+	DE	Plugins:
+	EN	Plugins:
+	ES	Plugins:
+	FR	Plugins:
+	IT	Plugin:
+	NL	Plugin's:
 
 SETUP_GROUP_NONMENUITEMS_INTRO
 	CS	Neaktivní položky menu:
@@ -2627,20 +2627,20 @@ SETUP_GROUP_IRSETS_DESC
 	ZH_CN	您可选择让这个播放机对某些红外线遥控信号有所反应。如要激活某个遥控代码组，请在如下的复选框内标记。如要撤销某个遥控代码组，请清除其复选框中的标记。
 
 SETUP_GROUP_PLUGINS
-	DE	Extras
-	EN	Extras
-	ES	Extras
-	FR	Extras
-	IT	Extra
-	NL	Extra's
+	DE	Plugins
+	EN	Plugins
+	ES	Plugins
+	FR	Plugins
+	IT	Plugin
+	NL	Plugin's
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält einige Extras, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Extras unten aktivieren bzw. deaktivieren.<br/>Hinweis: Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
-	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below.<br/>Note: You will need to restart the application to see the effect of these changes.
-	ES	SqueezeCenter incluye elementos extra que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos extra individuales utilizando los botones siguientes.<br/>Nota: Deberá reiniciar el servidor para que estos cambios entren en vigor.
-	FR	Le SqueezeCenter inclut certains extras à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des extras à l'aide des boutons ci-dessous.<br/>Remarque: Vous devez redémarrer le serveur pour que les modifications prennent effet.
+	DE	SqueezeCenter enthält einige Plugins, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Plugins unten aktivieren bzw. deaktivieren.<br/>Hinweis: Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
+	EN	SqueezeCenter includes some plugins that you can use with your remote or in the web interface. You can choose to enable or disable individual plugins using the buttons below.<br/>Note: You will need to restart the application to see the effect of these changes.
+	ES	SqueezeCenter incluye elementos plugin que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos plugin individuales utilizando los botones siguientes.<br/>Nota: Deberá reiniciar el servidor para que estos cambios entren en vigor.
+	FR	Le SqueezeCenter inclut certains plugins à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des plugins à l'aide des boutons ci-dessous.<br/>Remarque: Vous devez redémarrer le serveur pour que les modifications prennent effet.
 	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando o nell'interfaccia Web. Nella directory Plugin è possibile scegliere di attivare o disattivare risorse aggiuntive utilizzando i pulsanti sottostanti.<br/>Nota: Per rendere effettive le modifiche, è necessario riavviare il server.
-	NL	SqueezeCenter bevat een aantal extra's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke extra's in- of uitschakelen.<br/>N.B. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
+	NL	SqueezeCenter bevat een aantal plugin's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke plugin's in- of uitschakelen.<br/>N.B. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
@@ -4802,21 +4802,21 @@ SETUP_SKIN_OK
 	NL	Als je je wijzigingen wilt toepassen, sluit je het SqueezeCenter-venster en laad je het opnieuw.
 
 SETUP_PLUGINS
-	DE	Extras
-	EN	Extras
-	ES	Extras
-	FR	Extras
-	IT	Extra
-	NL	Extra's
+	DE	Plugins
+	EN	Plugins
+	ES	Plugins
+	FR	Plugins
+	IT	Plugin
+	NL	Plugin's
 
 SETUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält eine Reihe von Extras (u.a. Spiele), die Sie über die Fernbedienung steuern können. Unten können Sie das Extras-Menü in das Hauptmenü einfügen bzw. daraus entfernen.
-	EN	SqueezeCenter includes some extras, including some games, you can use with your remote. Use the menu below to add or remove the Extras menu from your Home.
-	ES	SqueezeCenter incluye elementos extra, incluidos algunos juegos, que se pueden usar con el mando a distancia. Use el menú siguiente para agregar o quitar el menú Extras de Inicio.
-	FR	Le SqueezeCenter inclut des extras, parmi lesquels des jeux, disponibles à partir de la télécommande. La barre de menu ci-dessous permet d'ajouter ou de supprimer le menu Extras du menu d'accueil.
+	DE	SqueezeCenter enthält eine Reihe von Plugins (u.a. Spiele), die Sie über die Fernbedienung steuern können. Unten können Sie das Extras-Menü in das Hauptmenü einfügen bzw. daraus entfernen.
+	EN	SqueezeCenter includes some plugins, including some games, you can use with your remote. Use the menu below to add or remove the Extras menu from your Home.
+	ES	SqueezeCenter incluye elementos plugin, incluidos algunos juegos, que se pueden usar con el mando a distancia. Use el menú siguiente para agregar o quitar el menú Extras de Inicio.
+	FR	Le SqueezeCenter inclut des plugins, parmi lesquels des jeux, disponibles à partir de la télécommande. La barre de menu ci-dessous permet d'ajouter ou de supprimer le menu Extras du menu d'accueil.
 	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, inclusi giochi, utilizzabili con il telecomando. Per aggiungere o rimuovere il menu Extra dalla home page, utilizzare il menu sottostante.
-	NL	SqueezeCenter bevat een aantal extra's, zoals games, die je met je afstandsbediening kunt gebruiken. Gebruik het onderstaande menu om het menu Extra's aan je hoofdmenu toe te voegen of ervan te verwijderen.
-	PT	O SqueezeCenter inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente.
+	NL	SqueezeCenter bevat een aantal plugin's, zoals games, die je met je afstandsbediening kunt gebruiken. Gebruik het onderstaande menu om het menu Extra's aan je hoofdmenu toe te voegen of ervan te verwijderen.
+	PT	O SqueezeCenter inclui algumas funcionalidades plugins, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus Plugins do cliente.
 
 SETUP_REFRESHRATE
 	CS	Interval mezi obnovením webového rozhraní
@@ -10947,22 +10947,22 @@ DISPLAY_PLUGINS
 	PT	Mostrar menu de Extras no cliente Slim
 
 SHOW_PLUGINS
-	DE	Extras anzeigen
-	EN	Show Extras
-	ES	Mostrar Extras
-	FR	Afficher les extras
-	IT	Mostra extra
-	NL	Extra's weergeven
-	PT	Mostrar Extras
+	DE	Plugins anzeigen
+	EN	Show Plugins
+	ES	Mostrar Plugins
+	FR	Afficher les plugins
+	IT	Mostra plugin
+	NL	Plugin's weergeven
+	PT	Mostrar Plugins
 
 NO_PLUGINS
-	DE	Keine Extras verfügbar.
-	EN	No Extras available.
-	ES	No hay Extras disponibles.
-	FR	Aucun extra disponible.
-	IT	Nessun extra disponibile
-	NL	Geen Extra's beschikbaar.
-	PT	Sem Extras
+	DE	Keine Plugins verfügbar.
+	EN	No Plugins available.
+	ES	No hay Plugins disponibles.
+	FR	Aucun plugin disponible.
+	IT	Nessun plugin disponibile
+	NL	Geen Plugin's beschikbaar.
+	PT	Sem Plugins
 
 MUSIC_PLAYER
 	DA	Afspiller
@@ -12274,12 +12274,12 @@ INFORMATION_MENU_LIBRARY
 	ZH_CN	音乐库统计
 
 INFORMATION_MENU_MODULE
-	DE	Extras-Module
-	EN	Extras Modules
-	ES	Módulos de Extras
-	FR	Modules Extras
-	IT	Moduli extra
-	NL	Modules van Extra's
+	DE	Plugin-Module
+	EN	Plugin Modules
+	ES	Módulos de Plugins
+	FR	Modules Plugins
+	IT	Moduli plugin
+	NL	Modules van Plugin's
 
 INFORMATION_PLAYER_NAME
 	CS	Název přehrávače
@@ -12464,9 +12464,9 @@ INFORMATION_PREFSDIR
 	NL	Voorkeurenmap
 
 INFORMATION_PLUGINDIRS
-	DE	Ordner für Extras
+	DE	Ordner für Plugins
 	EN	Plugin Folders
-	ES	Carpetas de extras
+	ES	Carpetas de plugins
 	FR	Dossiers Plugins
 	IT	Cartelle dei plugin
 	NL	Extramappen
@@ -14020,10 +14020,10 @@ DEBUG_FAVORITES
 DEBUG_SERVER_PLUGINS
 	DE	Plugin Informationen
 	EN	Plugin Module Loading
-	ES	Carga de módulo de extras
-	FR	Chargement du module d'extra
+	ES	Carga de módulo de plugins
+	FR	Chargement du module d'extension
 	IT	Caricamento dei moduli plugin
-	NL	Laden van extramodule
+	NL	Laden van pluginmodule
 
 DEBUG_PREFS
 	DE	Einstellungen
@@ -14649,10 +14649,10 @@ UNINSTALL
 PLUGINS_CHANGED
 	DE	Die folgenden Plugins werden beim nächsten Anwendungs-Neustart aktiviert bzw. deaktiviert:
 	EN	Changes will take place at the next application restart for the following plugins:
-	ES	Los cambios de estos extras entrarán en vigor la próxima vez que se inicie la aplicación:
-	FR	Les modifications pour les extras suivants seront appliquées au prochain démarrage de l'application.
+	ES	Los cambios de estos plugins entrarán en vigor la próxima vez que se inicie la aplicación:
+	FR	Les modifications pour les plugins suivants seront appliquées au prochain démarrage de l'application.
 	IT	Le modifiche diventeranno effettive al successivo avvio dell'applicazione nei seguenti plugin:
-	NL	Bij de volgende herstart van de toepassing worden wijzigingen voor deze extra's doorgevoerd:
+	NL	Bij de volgende herstart van de toepassing worden wijzigingen voor deze plugin's doorgevoerd:
 
 SETUP_VIEW_SCANNING
 	DE	Durchsuchen gestartet - Fortschritt anzeigen
