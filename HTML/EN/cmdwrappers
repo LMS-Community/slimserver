@@ -264,7 +264,7 @@ END %]
 			END; 
 
 			WRAPPER $linktype noTarget=1;
-				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'Utils.'; END %]toggleFavorite(this, '[% itemobj.url | uri %]', '[% (item.text || itemobj.title) | uri %]')"[% END;
+				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'Utils.'; END %]toggleFavorite(this, '[% itemobj.url | uri  | replace("'", "%27") %]', '[% (item.text || itemobj.title) | uri  | replace("'", "%27") %]')"[% END;
 			END;
 		END -%]
 [% END %]
