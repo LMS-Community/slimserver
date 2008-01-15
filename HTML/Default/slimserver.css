@@ -1054,10 +1054,6 @@ body.settingsMenu {
 	padding-bottom: 0;
 }
 
-#settingsForm {
-	padding-top: 20px;
-}
-
 .statusarea {
 	margin: 10px 20px;
 }
@@ -1132,6 +1128,10 @@ body.settingsMenu {
 	width: 100%;
 	background-color: #eee;
 	z-index: 999;
+}
+
+dif.buttonbarSpacer {
+	height: 20px;
 }
 
 .settings select.stdedit {

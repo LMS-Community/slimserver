@@ -109,7 +109,7 @@ Settings = function(){
 				tp.addTab('ITUNES', strings['itunes']).on('activate', Settings.showSettingsPage);
 
 			tp.addTab('INTERFACE_SETTINGS', strings['interface']).on('activate', Settings.showSettingsPage);
-			tp.addTab('SETUP_GROUP_PLUGINS', strings['plugins']).on('activate', Settings.showSettingsPage);
+			tp.addTab('SETUP_PLUGINS', strings['plugins']).on('activate', Settings.showSettingsPage);
 
 			if (podcastEnabled)
 				tp.addTab('PLUGIN_PODCAST', strings['podcasts']).on('activate', Settings.showSettingsPage);
