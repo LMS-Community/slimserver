@@ -1845,6 +1845,9 @@ sub addStreamingResponse {
 		$client->paddr($newpeeraddr) if $newpeeraddr;
 	}
 	
+	# Disable keep-alive timeout for streaming responses
+	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+	
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
