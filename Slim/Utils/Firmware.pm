@@ -201,9 +201,9 @@ sub init_jive_version_done {
 	# jive.version format:
 	# 1 r457
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
-	($JIVE_VER, $JIVE_REV) = $version =~ m/^(\d+)\s(r.*)/;
+	my ($ver, $rev) = $version =~ m/^(\d+)\s(r.*)/;
 
-	my $jive_file = catdir( $prefs->get('cachedir'), "jive_${JIVE_VER}_${JIVE_REV}.bin" );
+	my $jive_file = catdir( $prefs->get('cachedir'), "jive_${ver}_${rev}.bin" );
 
 	if ( !-e $jive_file ) {		
 		$log->info("Downloading Jive firmware to: $jive_file");
@@ -212,7 +212,9 @@ sub init_jive_version_done {
 	}
 	else {
 		$log->info("Jive firmware is up to date: $jive_file");
-		$JIVE_FW = $jive_file;
+		$JIVE_VER = $ver;
+		$JIVE_REV = $rev;
+		$JIVE_FW  = $jive_file;
 	}
 
 	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $jive_file, 'binary');
@@ -248,7 +250,11 @@ sub init_jive_done {
 		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
 	}
 	
-	$JIVE_FW = $jive_file;
+	my ($ver, $rev) = $jive_file =~ m/jive_([^_]+)_([^\.]+).bin/;
+	
+	$JIVE_VER = $ver;
+	$JIVE_REV = $rev;
+	$JIVE_FW  = $jive_file;
 }
 
 =head2 jive_url()
@@ -279,7 +285,7 @@ if there is no firmware downloaded.
 sub jive_needs_upgrade {
 	my ( $class, $current ) = @_;
 	
-	return unless $JIVE_FW;
+	return unless $JIVE_FW && $JIVE_VER;
 	
 	my ($cur_version, $cur_rev) = $current =~ m/^(\d+)\s(r.*)/;
 	
