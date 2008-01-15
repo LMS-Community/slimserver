@@ -861,8 +861,14 @@ sub firmwareUpgradeQuery {
 	else {
 		$request->addResult( firmwareUpgrade => 0 );
 	}
-	
+
+	# manage the subscription
+	if (defined(my $timeout = $request->getParam('subscribe'))) {
+		$request->registerAutoExecute($timeout, \&firmwareUpgradeQuery);
+	}
+
 	$request->setStatusDone();
+
 }
 
 sub alarmOnHash {
