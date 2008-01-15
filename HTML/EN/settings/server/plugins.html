@@ -2,9 +2,10 @@
 
 	<div class="settingSection">
 		<div class="prefHead">[% "SETUP_GROUP_PLUGINS" | string %]</div>
-		<div class="prefDesc">[% "SETUP_GROUP_PLUGINS_DESC" | string %]</div>
+		<div class="prefDesc"><br/>[% "SETUP_GROUP_PLUGINS_DESC" | string %]</div>
 	</div>
 
+	<div class="pluginSection">
 	[% FOREACH plugin = sortedPlugins %]
 
 		[% name     = plugins.$plugin.name %]
@@ -12,20 +13,16 @@
 		[% settings = plugins.$plugin.optionsURL %]
 		[% enabled  = pluginState.$plugin %]
 
-		[% WRAPPER setting title = name%]
-			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %] class="pluginEnablerCheckbox">
+		[% title = BLOCK %]
+			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %] class="pluginEnablerCheckbox"> [% name | getstring %]
+		[% END %]
 
-			[% PROCESS pluginLink %]
-
-			[% IF plugins.$plugin.description %]
-				[% IF enabled && settings %]<br/>[% END %]
-				[% plugins.$plugin.description | string %]
-			[% END %]
-
+		[% WRAPPER setting desc = plugins.$plugin.description %]
+			[% PROCESS pluginLink %]&nbsp;[% IF plugins.$plugin.opType %]<strong>([% "SETUP_GROUP_PLUGINS_NEEDS_RESTART" | string %])</strong>[% END %]
 		[% END %]
 
 	[%- END -%]
-
+	</div>
 
 [% PROCESS settings/footer.html %]
 	

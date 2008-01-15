@@ -2635,12 +2635,16 @@ SETUP_GROUP_PLUGINS
 	NL	Plugin's
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält einige Plugins, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Plugins unten aktivieren bzw. deaktivieren.<br/>Hinweis: Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
-	EN	SqueezeCenter includes some plugins that you can use with your remote or in the web interface. You can choose to enable or disable individual plugins using the buttons below.<br/>Note: You will need to restart the application to see the effect of these changes.
-	ES	SqueezeCenter incluye elementos plugin que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos plugin individuales utilizando los botones siguientes.<br/>Nota: Deberá reiniciar el servidor para que estos cambios entren en vigor.
-	FR	Le SqueezeCenter inclut certains plugins à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des plugins à l'aide des boutons ci-dessous.<br/>Remarque: Vous devez redémarrer le serveur pour que les modifications prennent effet.
-	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando o nell'interfaccia Web. Nella directory Plugin è possibile scegliere di attivare o disattivare risorse aggiuntive utilizzando i pulsanti sottostanti.<br/>Nota: Per rendere effettive le modifiche, è necessario riavviare il server.
-	NL	SqueezeCenter bevat een aantal plugin's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke plugin's in- of uitschakelen.<br/>N.B. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
+	DE	SqueezeCenter enthält einige Plugins, die Sie mit der Fernbedienung oder in der Web-Benutzeroberfläche nutzen können. Sie können diese Plugins unten aktivieren bzw. deaktivieren.<br/><br/>Hinweis: Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
+	EN	SqueezeCenter includes some plugins that you can use with your remote or in the web interface. You can choose to enable or disable individual plugins using the buttons below.<br/><br/>Note: You will need to restart the application to see the effect of these changes.
+	ES	SqueezeCenter incluye elementos plugin que se pueden usar con el mando a distancia o en la interfaz Web. Puede habilitar o deshabilitar elementos plugin individuales utilizando los botones siguientes.<br/><br/>Nota: Deberá reiniciar el servidor para que estos cambios entren en vigor.
+	FR	Le SqueezeCenter inclut certains plugins à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des plugins à l'aide des boutons ci-dessous.<br/><br/>Remarque: Vous devez redémarrer le serveur pour que les modifications prennent effet.
+	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando o nell'interfaccia Web. Nella directory Plugin è possibile scegliere di attivare o disattivare risorse aggiuntive utilizzando i pulsanti sottostanti.<br/><br/>Nota: Per rendere effettive le modifiche, è necessario riavviare il server.
+	NL	SqueezeCenter bevat een aantal plugin's die je met je afstandsbediening of in de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke plugin's in- of uitschakelen.<br/><br/>N.B. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
+
+SETUP_GROUP_PLUGINS_NEEDS_RESTART
+	DE	Änderung tritt nach Neustart in Kraft
+	EN	Change requires restart to take effect
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů

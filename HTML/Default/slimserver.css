@@ -1059,7 +1059,7 @@ body.settingsMenu {
 }
 
 .settingSection {
-	padding: 0 10px;
+	padding: 0 22px;
 	margin-bottom: 15px;
 	margin-top: 15px;
 }
@@ -1074,21 +1074,32 @@ body.settingsMenu {
 	margin-bottom: 15px;
 }
 
+.pluginSection .settingGroup {
+	padding-left: 400px;
+}
+
 .prefHelp {
 	position: absolute;
 	left: 230px;
 	top: 0px;
 }
 
+.pluginSection .prefHelp {
+	left: 380px;
+}
+
 .prefHead {
 	font-weight: bold;
 }
 
-
 .settingGroup .prefHead {
 	position: absolute;
 	width: 235px;
-	left: 11px;
+	left: 0;
+}
+
+.pluginSection .settingGroup .prefHead {
+	width: 385px;
 }
 
 .settingSection table {
