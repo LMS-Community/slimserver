@@ -9,11 +9,11 @@ File::Next - File-finding iterator
 
 =head1 VERSION
 
-Version 1.00
+Version 1.02
 
 =cut
 
-our $VERSION = '1.00';
+our $VERSION = '1.02';
 
 =head1 SYNOPSIS
 
@@ -224,7 +224,7 @@ sub files {
     return sub {
         while (@queue) {
             my ($dir,$file,$fullpath) = splice( @queue, 0, 3 );
-            if (-f $fullpath) {
+            if ( -f $fullpath ) {
                 if ( $filter ) {
                     local $_ = $file;
                     local $File::Next::dir = $dir;
@@ -233,7 +233,7 @@ sub files {
                 }
                 return wantarray ? ($dir,$file,$fullpath) : $fullpath;
             }
-            elsif (-d _) {
+            elsif ( -d _ ) {
                 unshift( @queue, _candidate_files( $parms, $fullpath ) );
             }
         } # while
@@ -249,7 +249,7 @@ sub dirs {
     return sub {
         while (@queue) {
             my (undef,undef,$fullpath) = splice( @queue, 0, 3 );
-            if (-d $fullpath) {
+            if ( -d $fullpath ) {
                 unshift( @queue, _candidate_files( $parms, $fullpath ) );
                 return $fullpath;
             }
@@ -267,7 +267,7 @@ sub everything {
     return sub {
         while (@queue) {
             my ($dir,$file,$fullpath) = splice( @queue, 0, 3 );
-            if (-d $fullpath) {
+            if ( -d $fullpath ) {
                 unshift( @queue, _candidate_files( $parms, $fullpath ) );
             }
             if ( $filter ) {
@@ -375,30 +375,39 @@ sub _candidate_files {
     }
 
     my @newfiles;
+    my $descend_filter = $parms->{descend_filter};
+    my $follow_symlinks = $parms->{follow_symlinks};
+    my $sort_sub = $parms->{sort_files};
+
     while ( defined ( my $file = readdir $dh ) ) {
         next if $skip_dirs{$file};
+        my $has_stat;
 
         # Only do directory checking if we have a descend_filter
         my $fullpath = File::Spec->catdir( $dir, $file );
-        if ( !$parms->{follow_symlinks} ) {
+        if ( !$follow_symlinks ) {
             next if -l $fullpath;
+            $has_stat = 1;
         }
 
-        if ( $parms->{descend_filter} && -d $fullpath ) {
-            local $File::Next::dir = $fullpath;
-            local $_ = $file;
-            next if not $parms->{descend_filter}->();
+        if ( $descend_filter ) {
+            if ( $has_stat ? (-d _) : (-d $fullpath) ) {
+                local $File::Next::dir = $fullpath;
+                local $_ = $file;
+                next if not $descend_filter->();
+            }
         }
-        push( @newfiles, $dir, $file, $fullpath );
+        if ( $sort_sub ) {
+            push( @newfiles, [ $dir, $file, $fullpath ] );
+        }
+        else {
+            push( @newfiles, $dir, $file, $fullpath );
+        }
     }
     closedir $dh;
 
-    if ( my $sub = $parms->{sort_files} ) {
-        my @triplets;
-        while ( @newfiles ) {
-            push @triplets, [splice( @newfiles, 0, 3 )];
-        }
-        @newfiles = map { @{$_} } sort $sub @triplets;
+    if ( $sort_sub ) {
+        return map { @{$_} } sort $sort_sub @newfiles;
     }
 
     return @newfiles;
@@ -411,10 +420,8 @@ Andy Lester, C<< <andy at petdance.com> >>
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-file-next at rt.cpan.org>, or through the web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=File-Next>.
-I will be notified, and then you'll automatically be notified of
-progress on your bug as I make changes.
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-Next>.  Note that
+File::Next does NOT use L<rt.cpan.org> for bug tracking.
 
 =head1 SUPPORT
 
@@ -426,6 +433,10 @@ You can also look for information at:
 
 =over 4
 
+=item * File::Next's bug queue
+
+L<http://code.google.com/p/file-next/issues/list>
+
 =item * AnnoCPAN: Annotated CPAN documentation
 
 L<http://annocpan.org/dist/File-Next>
@@ -433,10 +444,6 @@ L<http://annocpan.org/dist/File-Next>
 =item * CPAN Ratings
 
 L<http://cpanratings.perl.org/d/File-Next>
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-Next>
 
 =item * Search CPAN
 
@@ -455,7 +462,7 @@ marvelous I<Higher Order Perl>, page 126.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2006-2007 Andy Lester, all rights reserved.
+Copyright 2006-2008 Andy Lester, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
