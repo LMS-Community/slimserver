@@ -15,7 +15,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
 
 sub name {
-	return Slim::Web::HTTP::protectName('PLUGINS');
+	return Slim::Web::HTTP::protectName('SETUP_PLUGINS');
 }
 
 sub page {

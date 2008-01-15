@@ -33,6 +33,20 @@ use Scalar::Util qw(blessed);
 
 my @playerSettingsClasses;
 
+# the items we want to have in the top level of
+# new skin's settings window
+my @topLevelItems = (
+		'BASIC_SERVER_SETTINGS',
+		'ITUNES',
+		'PLUGIN_PODCAST',
+		'SQUEEZENETWORK_SETTINGS',
+		'INTERFACE_SETTINGS',
+		'SETUP_PLUGINS',
+		'SERVER_STATUS',
+		'BEHAVIOR_SETTINGS'
+	);
+
+
 =head1 METHODS
 
 =head2 new( )
@@ -163,8 +177,14 @@ sub handler {
 	# Common values
 	$paramRef->{'page'} = $class->name;
 	
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	map { $paramRef->{'topLevelItems'}->{$_} = $paramRef->{'additionalLinks'}->{'setup'}->{$_} } @topLevelItems; 
+	
 	# builds playersetup hash
 	if (defined $client) {
+
 		my %playerSetupLinks;
 		
 		for my $settingclass (@playerSettingsClasses) {
@@ -176,15 +196,33 @@ sub handler {
 		}
 
 		$paramRef->{'playersetup'} = \%playerSetupLinks;
-	}
-	
-	# Needed to generate the drop down settings chooser list.
-	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
-
-	if (defined $client) {
 		$paramRef->{'playername'}  = $client->name();
 		$paramRef->{'needsClient'} = $class->needsClient();
 		$paramRef->{'hasdisplay'}  = !$client->display->isa('Slim::Display::NoDisplay');
+	}
+
+	if ($class->needsClient()) {
+
+		my @orderedLinks = 
+			map { $_->[1] }
+			sort { $a->[0] cmp $b->[0] }
+			map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] } 
+			keys %{$paramRef->{'playersetup'}};
+	
+		$paramRef->{'orderedLinks'} = \@orderedLinks;
+	}
+
+	else {
+
+		# the new skins want to have a list of advanced settings
+		# which does not include the top-level items
+		my @orderedLinks = map { $_->[1] }
+			sort { $a->[0] cmp $b->[0] }
+			map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] }
+			grep { !$paramRef->{'topLevelItems'}->{$_} }
+			keys %{$paramRef->{'additionalLinks'}->{'setup'}};
+
+		$paramRef->{'orderedLinks'} = \@orderedLinks;
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);

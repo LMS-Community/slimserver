@@ -1,19 +1,6 @@
 Settings = function(){
 	var tp;
 
-	var tabLinks = {
-		BASIC_SERVER_SETTINGS: 'settings/server/basic.html',
-		BEHAVIOR_SETTINGS: 'settings/server/behavior.html',
-		ITUNES: 'plugins/iTunes/settings/itunes.html',
-		PLUGIN_PODCAST: 'plugins/Podcast/settings/basic.html',
-		SQUEEZENETWORK_SETTINGS: 'settings/server/squeezenetwork.html',
-		INTERFACE_SETTINGS: 'settings/server/interface.html',
-		SETUP_GROUP_PLUGINS: 'settings/server/plugins.html',
-		advanced: 'settings/index.html?sub=advanced',
-		players: 'settings/index.html?sub=player&playerid=' + player,
-		SERVER_STATUS: 'settings/server/status.html'
-	};
-
 	return {
 		init : function(){
 			var layout = new Ext.BorderLayout('mainbody', {
@@ -291,6 +278,9 @@ var SettingsPage = function(){
 		},
 
 		initPlayerList : function(){
+			if (!Ext.get('playerSelector'))
+				return;
+
 			var playerChooser = new Ext.SplitButton('playerSelector', {
 				handler: function(ev){
 					if(this.menu && !this.menu.isVisible()){
@@ -315,7 +305,42 @@ var SettingsPage = function(){
 						value: playerList[x].id,
 						cls: 'playerList',
 						handler: function(ev){
-							parent.location.href = Utils.replacePlayerIDinUrl(parent.location.href, ev.value);
+							location = Utils.replacePlayerIDinUrl(location, ev.value);
+						}
+					})
+				);
+			}
+		},
+
+		initSettingsList : function(){
+			if (!Ext.get('settingsSelector'))
+				return;
+
+			var settingsChooser = new Ext.SplitButton('settingsSelector', {
+				handler: function(ev){
+					if(this.menu && !this.menu.isVisible()){
+						this.menu.show(this.el, this.menuAlign);
+					}
+					this.fireEvent('arrowclick', this, ev);
+				},
+				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
+				tooltip: strings['settings'],
+				arrowTooltip: strings['settings'],
+				tooltipType: 'title'
+			});
+
+			for (x=0; x<settingsList.length; x++){
+				if (settingsList[x].id == page) {
+					settingsChooser.setText(settingsList[x].name);
+				}
+
+				settingsChooser.menu.add(
+					new Ext.menu.Item({
+						text: settingsList[x].name,
+						value: settingsList[x].url,
+						cls: 'settingsList',
+						handler: function(ev){
+							location.href = webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid;
 						}
 					})
 				);

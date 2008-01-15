@@ -1,121 +1,3 @@
-[%- 	firstLevelItems = [
-		'BASIC_SERVER_SETTINGS',
-		'ITUNES',
-		'PLUGIN_PODCAST',
-		'SQUEEZENETWORK_SETTINGS',
-		'INTERFACE_SETTINGS',
-		'SETUP_GROUP_PLUGINS',
-		'SERVER_STATUS',
-		'PLUGINS',
-		'BEHAVIOR_SETTINGS'
-	];
-
-USE Clients;
-players = Clients.get("id");
-
-BLOCK playerList %]
-	<p>&nbsp;</p>
-	<div id="playerSelector"></div>
-	<p>&nbsp;</p>
-	<script type="text/javascript">
-		playerList = new Array(
-			[% FOREACH playerobj IN players -%]
-				{ id: "[% playerobj.id %]", name: "[% playerobj.name %]" }[% IF !loop.last; ','; END %]
-			[% END %]
-		);
-
-		strings = new Array();
-		[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
-
-		if (Ext.isSafari)
-			SettingsPage.initPlayerList();
-		else
-			Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
-	</script>
-[% END;
-
-
-BLOCK settingsPage -%]
-	<div class="selectorMarker [% IF token == subPage %]selectedItem[% END %]" onclick="SettingsPage.onClicked(this);" onmouseover="SettingsPage.highlight(this);">
-		<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-			<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-				<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
-			</div>
-		</div></div></div></div>
-	</div>
-[%- END -%]
-
-[%- IF menu == 'advanced';
-	PROCESS settings/header.html bodyClass="settingsMenu";
-
-	links = additionalLinks.setup;
-
-	IF links;
-		FOREACH link = sortedLinks;
-			IF !firstLevelItems.grep("^$link$").size;
-				token = link;
-				title = link | string | html;
-				href = links.$link _ "player=" _ playerURI;
-				IF playerid;
-					href = href _ "&amp;playerid=" _ playerURI;
-				END;
-				PROCESS settingsPage;
-			END;
-		END;
-	END;
-
-	PROCESS settings/footer.html %]
-
-[%- ELSIF menu == 'player';
-	PROCESS settings/header.html bodyClass="settingsMenu";
-
-	PROCESS playerList;
-
-	links = playersetup;
-	IF links && !noSubs;
-		FOREACH token = links.keys,;
-			sortedlinks.$token = token | string | html;
-		END;
-		FOREACH link = sortedlinks.sort;
-			token = link;
-			title = link | string | html;
-			href = links.$link _ "player=" _ playerURI;
-			href = href _ "&amp;playerid=" _ playerURI;
-
-			PROCESS settingsPage;
-		END;
-	END;
-
-	PROCESS settings/footer.html %]
-
-[%- ELSIF sub == 'player' && !playerid;
-	PROCESS settings/header.html %]
-	<p class="noPlayerPanel"><br/>[% "NO_PLAYER_FOUND" | string %]</p>
-	[% PROCESS settings/footer.html %]
-
-[%- ELSIF sub -%]
-	<frameset cols="250,*">
-		[% subPage; IF !subPage && sub == 'player';
-			subPage = "BASIC_PLAYER_SETTINGS";
-		ELSIF !subPage;
-			subPage = "FORMATTING_SETTINGS";
-		END %]
-		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&amp;menu=[% sub %]&amp;subPage=[% subPage %][% IF playerid %]&amp;playerid=[% playerURI; END %][% IF noSubs %]&amp;noSubs=[% noSubs; END %]" name="menu" frameborder="0">
-
-		[% IF additionalLinks.setup.$subPage;
-			myPage = additionalLinks.setup.$subPage;
-		ELSIF playersetup.$subPage;
-			myPage = playersetup.$subPage _ playerURI _ "&amp;playerid=" _ playerURI;
-		ELSIF sub == 'player';
-			myPage = webroot _ "settings/player/basic.html?player=" _ playerURI _ "&amp;playerid=" _ playerURI;
-		ELSE;
-			myPage = webroot _ "settings/server/formatting.html?player=" _ playerURI;
-		END %]
-
-		<frame src="[% myPage %]" name="subSettings" frameborder="0" marginwidth="15">
-	</frameset>
-
-[%- ELSE -%]
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -164,6 +46,14 @@ BLOCK settingsPage -%]
 
 			var iTunesEnabled  = '[% iTunesEnabled %]';
 			var podcastEnabled = '[% podcastEnabled %]';
+
+			var tabLinks = {
+				[%- FOREACH tab = topLevelItems.keys %]
+					[% tab %]: '[% IF tab == "SETUP_GROUP_PLUGINS"; tab = "PLUGINS"; END; topLevelItems.$tab %]',
+				[% END -%]
+				players: '[% playersetup.BASIC_PLAYER_SETTINGS %]&playerid=' + player,
+				advanced: '[% additionalLinks.setup.FORMATTING_SETTINGS %]'
+			};
 
 			Ext.EventManager.onDocumentReady(Settings.init, Settings, true);
 		</script>
@@ -221,4 +111,3 @@ BLOCK settingsPage -%]
 		</div>
 	</body>
 </html>
-[% END %]

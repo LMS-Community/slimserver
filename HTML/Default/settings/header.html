@@ -32,8 +32,56 @@
 			[% PROCESS jsString id='SETTINGS' jsId='' %]
 			[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
 			[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
+			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
 
-			// pages using the filselector may set a filter (see iTunes)
+			// display player list if we're in the player settings
+			[%- pageId = '^' _ page _ '$'; pageLink = orderedLinks.grep(pageId);
+
+			IF needsClient; 
+			USE Clients;
+			players = Clients.get("id") %]
+
+			var page = '[% page %]';
+			var playerList = new Array(
+				[% FOREACH playerobj IN players -%]
+					{
+						id: "[% playerobj.id %]",
+						name: "[% playerobj.name %]"
+					}[% IF !loop.last; ','; END %]
+				[% END %]
+			);
+
+			var settingsList = new Array(
+				[% FOREACH link IN orderedLinks -%]
+					{
+						id: "[% link %]",
+						url: "[% playersetup.$link %]",
+						name: "[% link | string %]"
+					}[% IF !loop.last; ','; END %]
+				[% END %]
+			);
+
+			Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
+			Ext.EventManager.onDocumentReady(SettingsPage.initSettingsList);
+
+			[% ELSIF pageLink.size > 0 %]
+
+			var page = '[% page %]';
+			var settingsList = new Array(
+				[% FOREACH link IN orderedLinks -%]
+					{ 
+						id: "[% link %]",
+						url: "[% additionalLinks.setup.$link %]",
+						name: "[% link | string %]"
+					}[% IF !loop.last; ','; END %]
+				[% END %]
+			);
+
+			Ext.EventManager.onDocumentReady(SettingsPage.initSettingsList);
+
+			[% END %]
+
+			// pages using the fileselector may set a filter (see iTunes)
 			var fsFilter = new Array();
 
 			Ext.EventManager.onDocumentReady(SettingsPage.init, SettingsPage, true);
@@ -80,6 +128,17 @@
 	</head>
 
 	<body class="[% bodyClass || "settings" %]">
+
+		[% IF needsClient || pageLink.size > 0 %]
+		<table class="buttonbar">
+			<tr>
+				[%- IF needsClient %]
+					<td><span id="playerSelector"></span></td>
+				[% END %]
+				<td><span id="settingsSelector"></span></td>
+			<tr>
+		</table>
+		[% END -%]
 
 		[% IF !noForm %]
 		[% IF warning %]

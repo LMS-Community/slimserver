@@ -1122,6 +1122,9 @@ body.settingsMenu {
 	margin: 0 23px;
 }
 
+.buttonbar {
+	margin: 2px 13px;
+}
 
 
 /* Help screen */
