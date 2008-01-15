@@ -26,15 +26,15 @@
 	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
 
 	[% IF additionalLinks.music_services %]
-		[% IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
-				[% additionalmenu = {'PLUGIN_PANDORA_MODULE_NAME' => additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME } %]
+		[% IF additionalLinks.radios.exists('PLUGIN_PANDORA_MODULE_NAME') %]
+				[% additionalmenu = {'PLUGIN_PANDORA_MODULE_NAME' => additionalLinks.radios.PLUGIN_PANDORA_MODULE_NAME } %]
 		[% END %]
 		[% PROCESS menu menutitle='MUSIC_SERVICES' menulist=additionalLinks.music_services orderlist=additionalLinkOrder.music_services 
 		%]
 	[% END %]
 
 	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search orderlist={} additionalmenu={} %]
-	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radio orderlist=additionalLinkOrder.radio 
+	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radios orderlist=additionalLinkOrder.radios 
 		additionalmenu = {'RADIO_TUNEIN' => 'tunein.html'}
 	-%]
 	

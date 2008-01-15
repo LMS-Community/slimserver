@@ -62,10 +62,10 @@
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
-	[%- FOREACH item = additionalLinkOrder.radio %]
-		<li><a href="[% additionalLinks.radio.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.radios %]
+		<li><a href="[% additionalLinks.radios.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
-	[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %]
+	[%- FOREACH link = additionalLinks.radios; IF !additionalLinkOrder.radios.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END; END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string | html %]</a></li>
@@ -82,8 +82,8 @@
 	[%- FOREACH link = additionalLinks.music_services; IF !additionalLinkOrder.music_services.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END; END %]
-	[% IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
-		<li><a href="[% additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME | html %]player=[% playerURI %]">[% "PLUGIN_PANDORA_MODULE_NAME" | getstring | html %]</a></li>
+	[% IF additionalLinks.radios.exists('PLUGIN_PANDORA_MODULE_NAME') %]
+		<li><a href="[% additionalLinks.radios.PLUGIN_PANDORA_MODULE_NAME | html %]player=[% playerURI %]">[% "PLUGIN_PANDORA_MODULE_NAME" | getstring | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>

@@ -69,10 +69,10 @@
 	[% ELSE %]
 	
 		[% linkList = [] %]
-		[%- FOREACH item = additionalLinkOrder.radio %][% key = item %][% value = additionalLinks.radio.$item %]
+		[%- FOREACH item = additionalLinkOrder.radios %][% key = item %][% value = additionalLinks.radios.$item %]
 			[% linkList.push([key,value]) %]
 		[%- END %]
-		[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %][% value = link.value %][% key = link.key %]
+		[%- FOREACH link = additionalLinks.radios; IF !additionalLinkOrder.radios.grep(link.key).size %][% value = link.value %][% key = link.key %]
 			[% linkList.push([key,value]) %]
 		[%- END;END %]
 		[%- FOREACH item = additionalLinkOrder.music_services %][% key = item %][% value = additionalLinks.music_services.$item %]
@@ -138,10 +138,10 @@
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
-	[%- FOREACH item = additionalLinkOrder.radio %]
-		<li><a href="[% additionalLinks.radio.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.radios %]
+		<li><a href="[% additionalLinks.radios.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
-	[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %]
+	[%- FOREACH link = additionalLinks.radios; IF !additionalLinkOrder.radios.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
 	[%- END;END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a></li>

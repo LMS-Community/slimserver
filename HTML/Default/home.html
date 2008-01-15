@@ -57,15 +57,15 @@ ELSE %]
 	END;
 	
 	radioItems = BLOCK;
-		FOREACH item = additionalLinkOrder.radio;
-			IF additionalLinks.radio.exists(item);
-				link.value = additionalLinks.radio.$item;
+		FOREACH item = additionalLinkOrder.radios;
+			IF additionalLinks.radios.exists(item);
+				link.value = additionalLinks.radios.$item;
 				link.key = item;
 				PROCESS menuItem;
 			END;
 		END;
-		FOREACH link = additionalLinks.radio;
-			IF !additionalLinkOrder.radio.grep(link.key).size;
+		FOREACH link = additionalLinks.radios;
+			IF !additionalLinkOrder.radios.grep(link.key).size;
 				PROCESS menuItem;
 			END;
 		END;
@@ -91,8 +91,8 @@ ELSE %]
 				PROCESS menuItem;
 			END;
 		END;
-		IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME');
-			PROCESS menuItem link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME };
+		IF additionalLinks.radios.exists('PLUGIN_PANDORA_MODULE_NAME');
+			PROCESS menuItem link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radios.PLUGIN_PANDORA_MODULE_NAME };
 		END;
 	END;
 
@@ -141,7 +141,7 @@ ELSE %]
 		[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
 		<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 	
-		[% IF additionalLinks.radio %]
+		[% IF additionalLinks.radios %]
 			[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" %]
 			<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
 		[% END %]

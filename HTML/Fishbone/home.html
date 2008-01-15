@@ -7,14 +7,14 @@
 			[%- IF additionalLinks.music_services %]
 			<OPTION value="" label="">---[% "MUSIC_SERVICES" | string  %]---</option>
 			[%- PROCESS addBrowseLinks links=additionalLinks.music_services order=additionalLinkOrder.music_services %]
-			[%- IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
+			[%- IF additionalLinks.radios.exists('PLUGIN_PANDORA_MODULE_NAME') %]
 			<OPTION value="[% 'PLUGIN_PANDORA_MODULE_NAME' %]" label="[% 'PLUGIN_PANDORA_MODULE_NAME' | getstring | html %]">[% 'PLUGIN_PANDORA_MODULE_NAME' | getstring | html %]</OPTION>
 			[%- END -%]
 			[% END %]
 			<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
 			[%- PROCESS addBrowseLinks links=additionalLinks.search order={} %]
 			<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
-			[%- PROCESS addBrowseLinks links=additionalLinks.radio order=additionalLinkOrder.radio %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.radios order=additionalLinkOrder.radios %]
 			<OPTION value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
 			[%- IF additionalLinks.plugins %]
 			<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
@@ -89,7 +89,7 @@
 					{
 					[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.music_services cookie=1 %]
-					[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
+					[% PROCESS addCaseLinks links=additionalLinks.radios cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
 					[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]

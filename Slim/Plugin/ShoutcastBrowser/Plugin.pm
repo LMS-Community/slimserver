@@ -113,7 +113,7 @@ sub webPages {
 	my $title = getDisplayName();
 	my $url   = 'plugins/ShoutcastBrowser/index.html';
 
-	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+	Slim::Web::Pages->addPageLinks('radios', { $title => $url });
 	
 	Slim::Web::HTTP::protectURI($url);
 
