@@ -372,8 +372,11 @@ sub albumsQuery {
 				$id += 0;
 				my $params = {
 					'album_id' =>  $id,
-					'textkey' => substr($eachitem->titlesort, 0, 1),
 				};
+
+				if ($sort ne 'new') {
+					$params->{textkey} = substr($eachitem->titlesort, 0, 1),
+				}
 
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 
@@ -3921,8 +3924,7 @@ sub yearsQuery {
 				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
 
 				my $params = {
-					'year' =>  $id, 
-					'textkey' => substr($eachitem->name, 0, 1),
+					'year' =>  $id,
 				};
 
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
