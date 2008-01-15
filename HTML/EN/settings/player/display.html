@@ -47,39 +47,31 @@
 
 	[% IF prefs.exists('activeFont') %]
 		[% WRAPPER setting title="SETUP_ACTIVEFONT" desc="SETUP_ACTIVEFONT_DESC" %]
-			<table>
-				[% FOREACH format = prefs.activeFont %]
-					<tr>
-						<td><input type=radio [% IF prefs.activeFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="activeFont_curr"></td>
-						<td>
-							<select class="stdedit" name="activeFont[% loop.index %]" id="activeFont[% loop.index %]">
-								[% num = loop.index %][% last = loop.max %]
-								[% FOREACH option = fontOptions.keys %]
-									<option [% IF prefs.activeFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
-								[%- END -%]
-							</select>
-						</td>
-					</tr>
-				[% END %]
-			</table>	
+			[% FOREACH format = prefs.activeFont %]
+				<div>
+					<input type=radio [% IF prefs.activeFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="activeFont_curr">
+					<select class="stdedit" name="activeFont[% loop.index %]" id="activeFont[% loop.index %]">
+						[% num = loop.index %][% last = loop.max %]
+						[% FOREACH option = fontOptions.keys %]
+							<option [% IF prefs.activeFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
+						[%- END -%]
+					</select>
+				</div>
+			[% END %]
 		[% END %]
 
 		[% WRAPPER setting title="SETUP_IDLEFONT" desc="SETUP_IDLEFONT_DESC" %]
-			<table>
-				[% FOREACH format = prefs.idleFont %]
-					<tr>
-						<td><input type=radio [% IF prefs.idleFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="idleFont_curr"></td>
-						<td>
-							<select class="stdedit" name="idleFont[% loop.index %]" id="idleFont[% loop.index %]">
-								[% num = loop.index %][% last = loop.max %]
-								[% FOREACH option = fontOptions.keys %]
-									<option [% IF prefs.idleFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
-								[%- END -%]
-							</select>
-						</td>
-					</tr>
-				[% END %]
-			</table>	
+			[% FOREACH format = prefs.idleFont %]
+				<div>
+					<input type=radio [% IF prefs.idleFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="idleFont_curr">
+					<select class="stdedit" name="idleFont[% loop.index %]" id="idleFont[% loop.index %]">
+						[% num = loop.index %][% last = loop.max %]
+						[% FOREACH option = fontOptions.keys %]
+							<option [% IF prefs.idleFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
+						[%- END -%]
+					</select>
+				</div>
+			[% END %]
 		[% END %]
 	[% END %]
 	

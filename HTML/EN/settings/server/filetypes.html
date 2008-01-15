@@ -14,8 +14,9 @@
 		<br/>
 	[% END %]
 
-	<table border="0" cellspacing="0" width="100%">
-		<tr><th>[% 'FILE_FORMAT' | string %]</th><th>[% 'STREAM_FORMAT' | string %]</th><th>[% 'DECODER' | string %]</th></tr>
+	<div class="settingSection">
+	<table border="0" cellspacing="0">
+		<tr><th>[% 'FILE_FORMAT' | string %]</th><th>[% 'STREAM_FORMAT' | string %]&nbsp;&nbsp;</th><th>[% 'DECODER' | string %]</th></tr>
 
 		[% FOREACH format = formats %]
 			[% frame = format.input != loop.prev.input %]
@@ -24,7 +25,7 @@
 				[% odd = (not odd) %]<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
 			[% END %]
 			<tr>
-			<td class="[% odd ? "odd" : "even" %]">[% IF frame %][% format.input | string %][% END %]</td>
+			<td class="[% odd ? "odd" : "even" %] firstColumn">[% IF frame %][% format.input | string %][% END %]</td>
 			
 			<td class="[% odd ? "odd" : "even" %]"><label for="[% format.profile %]" class="stdlabel">[% format.output | string %]</label></td>
 			
@@ -41,5 +42,6 @@
 		[% END %]
 		<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
 	</table>
+	</div>
 
 [% PROCESS settings/footer.html %]

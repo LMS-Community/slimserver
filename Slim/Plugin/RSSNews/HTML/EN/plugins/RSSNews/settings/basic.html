@@ -8,10 +8,11 @@
 		<input type="text" class="stdedit" name="items_per_feed" value="[% prefs.items_per_feed %]" size="5" />
 	[% END %]
 
-	<table border="0" cellspacing="7" cellpadding="7">
+	<div class="settingSection">
+	<table>
 
 		<tr>
-		<td><label for="new_feed" class="stdlabel">[% "PLUGIN_RSSNEWS_ADD_NEW" | string %]</label></td>
+		<td class="firstColumn"><label for="new_feed" class="stdlabel">[% "PLUGIN_RSSNEWS_ADD_NEW" | string %]</label></td>
 
 		<td><input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" /></td>
 		</tr>
@@ -35,6 +36,6 @@
 
 	</table>
 
-
 	<input name="reset" type="submit" class="stdclick" value="[% "SETUP_PLUGIN_RSSNEWS_RESET" | string %]">
+	</div>
 [% PROCESS settings/footer.html %]

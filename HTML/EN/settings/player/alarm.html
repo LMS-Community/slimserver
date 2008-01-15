@@ -11,7 +11,7 @@
 		[% WRAPPER setting title="ALARM_DAY$day" desc="" %]
 			<table>
 				<tr>
-					<td><label for="alarm[% day %]" class="stdlabel">[% "SETUP_ALARM" | string %][% "COLON" | string %]</label></td>
+					<td><label for="alarm[% day %]" class="stdlabel">[% "SETUP_ALARM" | string %][% "COLON" | string %]</label>&nbsp;</td>
 					<td><select class="stdedit" name="alarm[% day %]" id="alarm[% day %]">
 			
 						[% FOREACH option = {
@@ -25,17 +25,17 @@
 				</tr>
 			
 				<tr>
-					<td><label for="alarmtime[% day %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label></td>
+					<td><label for="alarmtime[% day %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label>&nbsp;</td>
 					<td><input type="text" class="stdedit" name="alarmtime[% day %]" id="alarmtime[% day %]" value="[% prefs.alarmtime.$day %]" size="15"></td>
 				</tr>
 			
 				<tr>
-					<td><label for="alarmvolume[% day %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label></td>
+					<td><label for="alarmvolume[% day %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label>&nbsp;</td>
 					<td><input type="text" class="stdedit" name="alarmvolume[% day %]" id="alarmvolume[% day %]" value="[% prefs.alarmvolume.$day %]" size="15"></td>
 				</tr>
 					
 				<tr>
-					<td><label for="alarmplaylist[% day %]" class="stdlabel">[% "ALARM_SELECT_PLAYLIST" | string %][% "COLON" | string %]</label></td>
+					<td><label for="alarmplaylist[% day %]" class="stdlabel">[% "ALARM_SELECT_PLAYLIST" | string %][% "COLON" | string %]</label>&nbsp;</td>
 
 					<td><select class="stdedit" name="alarmplaylist[% day %]" id="alarmplaylist[% day %]">
 			

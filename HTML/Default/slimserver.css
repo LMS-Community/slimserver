@@ -1126,6 +1126,9 @@ body.settingsMenu {
 	margin: 2px 13px;
 }
 
+.settings select.stdedit {
+	vertical-align: top;
+}
 
 /* Help screen */
 .helpPage, .helpPage .inner_content { background-color: white; }

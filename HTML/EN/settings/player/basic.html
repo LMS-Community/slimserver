@@ -36,81 +36,48 @@
 
 
 	[% WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_GROUP_TITLEFORMATS_DESC" %]
-		<table width="100%">
-			<tr>
-				<th>[% 'SETUP_CURRENT' | string  %]</th>
-				<th>[% 'DISPLAY_SETTINGS' | string  %]</th>
-			</tr>
-			[% FOREACH format = prefs.titleFormat %]
-				<tr>
-					<td>
-						<input type=radio [% IF prefs.titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatCurr">
-					</td>
-				
-					<td>
-						<select class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]">
-						[% num = loop.index %][% last = loop.max %]
-						[% FOREACH option = titleFormatOptions.keys.sort %]
-							<option [% IF prefs.titleFormat.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% titleFormatOptions.$option %]</option>
-						[%- END -%]
-						</select>
-					</td>
-				</tr>
-			[% END %]
-		</table>
+		[% FOREACH format = prefs.titleFormat %]
+			<div>
+				<input type=radio [% IF prefs.titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatCurr" class="stdedit">
+				<select class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]">
+					[% num = loop.index %][% last = loop.max %]
+					[% FOREACH option = titleFormatOptions.keys.sort %]
+						<option [% IF prefs.titleFormat.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% titleFormatOptions.$option %]</option>
+					[%- END -%]
+				</select>
+			</div>
+		[% END %]
 	[% END %]
 	
 	[% IF prefs.exists('playingDisplayModes') %]
 		[% WRAPPER setting title="SETUP_PLAYINGDISPLAYMODE" desc="SETUP_PLAYINGDISPLAYMODE_DESC" %]
-			<table width="100%">
-				<tr>
-					<th>[% 'SETUP_CURRENT' | string  %]</th>
-					<th>[% 'SETUP_FORMATS' | string  %]</th>
-				</tr>
-				[% FOREACH format = prefs.playingDisplayModes %]
-					<tr>
-						<td>
-							<input type=radio [% IF prefs.playingDisplayMode == loop.index %]checked [% END %]value="[% loop.index %]" name="playingDisplayMode">
-						</td>
-
-						<td>
-							<select class="stdedit" name="playingDisplayModes[% loop.index %]" id="playingDisplayModes[% loop.index %]">
-							[% num = loop.index %][% last = loop.max %]
-							[% FOREACH option = playingDisplayOptions.keys.nsort %]
-								<option [% IF prefs.playingDisplayModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% playingDisplayOptions.$option %]</option>
-							[%- END -%]
-							</select>
-						</td>
-					</tr>
-				[% END %]
-			</table>
+			[% FOREACH format = prefs.playingDisplayModes %]
+				<div>
+					<input type=radio [% IF prefs.playingDisplayMode == loop.index %]checked [% END %]value="[% loop.index %]" name="playingDisplayMode" class="stdedit">
+					<select class="stdedit" name="playingDisplayModes[% loop.index %]" id="playingDisplayModes[% loop.index %]">
+						[% num = loop.index %][% last = loop.max %]
+						[% FOREACH option = playingDisplayOptions.keys.nsort %]
+							<option [% IF prefs.playingDisplayModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% playingDisplayOptions.$option %]</option>
+						[%- END -%]
+					</select>
+				</div>
+			[% END %]
 		[% END %]
 	[% END %]
 
 	[% IF prefs.exists('visualModes') %]
 		[% WRAPPER setting title="SETUP_VISUALIZERMODE" desc="SETUP_VISUALIZERMODE_DESC" %]
-		<table width="100%">
-			<tr>
-				<th>[% 'SETUP_CURRENT' | string  %]</th>
-				<th>[% 'DISPLAY_SETTINGS' | string  %]</th>
-			</tr>
 			[% FOREACH format = prefs.visualModes %]
-				<tr>
-					<td>
-						<input type=radio [% IF prefs.visualMode == loop.index %]checked [% END %]value="[% loop.index %]" name="visualMode">
-					</td>
-
-					<td>
-						<select class="stdedit" name="visualModes[% loop.index %]" id="visualModes[% loop.index %]">
+				<div>
+					<input type=radio [% IF prefs.visualMode == loop.index %]checked [% END %]value="[% loop.index %]" name="visualMode" class="stdedit">
+					<select class="stdedit" name="visualModes[% loop.index %]" id="visualModes[% loop.index %]">
 						[% num = loop.index %][% last = loop.max %]
 						[% FOREACH option = visualModeOptions.keys.nsort %]
 							<option [% IF prefs.visualModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% visualModeOptions.$option %]</option>
 						[%- END -%]
-						</select>
-					</td>
-				</tr>
+					</select>
+				</div>
 			[% END %]
-		</table>
 		[% END %]
 	[% END %]
 
