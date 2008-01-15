@@ -130,14 +130,16 @@
 	<body class="[% bodyClass || "settings" %]">
 
 		[% IF needsClient || pageLink.size > 0 %]
-		<table class="buttonbar">
-			<tr>
-				[%- IF needsClient %]
-					<td><span id="playerSelector"></span></td>
-				[% END %]
-				<td><span id="settingsSelector"></span></td>
-			<tr>
-		</table>
+		<div class="buttonbar">
+			<table>
+				<tr>
+					[%- IF needsClient %]
+						<td><span id="playerSelector"></span></td>
+					[% END %]
+					<td><span id="settingsSelector"></span></td>
+				<tr>
+			</table>
+		</div>
 		[% END -%]
 
 		[% IF !noForm %]
