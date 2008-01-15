@@ -379,6 +379,8 @@ sub enablePlugins {
 			next;
 		}
 
+		delete $manifest->{opType};
+
 		if (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED) {
 
 			$log->warn("Skipping plugin: $name - disabled");
