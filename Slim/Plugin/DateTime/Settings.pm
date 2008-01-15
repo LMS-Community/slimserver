@@ -13,8 +13,8 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('plugin.datetime');
 
 $prefs->migrate(1, sub {
-	$prefs->set('timeformat', Slim::Utils::Prefs::OldPrefs->get('screensaverTimeFormat') || '|%I:%M %p');
-	$prefs->set('dateformat', Slim::Utils::Prefs::OldPrefs->get('screensaverDateFormat') || '%A, %B |%d, %Y');
+	$prefs->set('timeformat', Slim::Utils::Prefs::OldPrefs->get('screensaverTimeFormat') || '');
+	$prefs->set('dateformat', Slim::Utils::Prefs::OldPrefs->get('screensaverDateFormat') || '');
 	1;
 });
 
