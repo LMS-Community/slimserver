@@ -156,8 +156,19 @@ Settings = function(){
 		showSettingsPage : function(page) {
 			if (page && tabLinks[page])
 				page = tabLinks[page];
-			else if (typeof page == 'object' && page.el != null)
-				page = tabLinks[this.id];
+
+			else if (typeof page == 'object' && page.el != null) {
+
+				page = '';
+				if (this.id == 'players')
+					page = Utils.getCookie('SqueezeCenter-playersettings');
+
+				else if (this.id == 'advanced')
+					page = Utils.getCookie('SqueezeCenter-advancedsettings');
+
+ 				if (!page)
+					page = tabLinks[this.id];
+			}
 
 			Ext.get('maincontent').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player;
 		},
