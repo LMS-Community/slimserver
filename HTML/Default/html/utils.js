@@ -364,7 +364,7 @@ var Utils = function(){
 				el.setHeight(maxHeight - el.getTop());
 			}
 
-			else if (el = Ext.get('songInfo')) {
+			else if ((el = Ext.get('songInfo')) && el.is('div.songInfo')) {
 				el.setHeight(maxHeight - el.getTop());
 			}
 
