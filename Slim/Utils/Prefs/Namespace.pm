@@ -29,6 +29,8 @@ use File::Slurp;
 use Slim::Utils::Prefs::Client;
 use Slim::Utils::Log;
 
+$YAML::Syck::ImplicitUnicode = 1;
+
 my $log = logger('prefs');
 
 # Simple validator functions which may be referenced by name in setValidate calls
