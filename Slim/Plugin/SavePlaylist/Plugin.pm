@@ -14,9 +14,12 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+use base qw(Slim::Plugin::Base);
+
 my $prefsServer = preferences('server');
 
 our %context = ();
+our %functions;
 
 our @LegalChars = (
 	undef, # placeholder for rightarrrow
@@ -48,6 +51,7 @@ sub getDisplayName {
 
 # the routines
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $push = shift;
 	
@@ -82,23 +86,6 @@ sub setMode {
 		});
 	}
 }
-
-our %functions = (
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
-		my $playlistfile = $context{$client};
-		Slim::Buttons::Common::setMode($client, 'playlist');
-		savePlaylist($client,$playlistfile);
-	},
-	'save' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.SavePlaylist');
-	},
-);
 
 sub lines {
 	my $client = shift;
@@ -187,6 +174,25 @@ sub defaultMap {
 }
 
 sub initPlugin {
+	my $class = shift;
+	
+	%functions = (
+		'left' => sub  {
+			my $client = shift;
+			Slim::Buttons::Common::popModeRight($client);
+		},
+		'right' => sub  {
+			my $client = shift;
+			my $playlistfile = $context{$client};
+			Slim::Buttons::Common::setMode($client, 'playlist');
+			savePlaylist($client,$playlistfile);
+		},
+		'save' => sub {
+			my $client = shift;
+			Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::SavePlaylist::Plugin');
+		},
+	);
+
 	
 	# programmatically add the playlist mode function for 'save' when play.hold button is detected
 	Slim::Hardware::IR::addModeDefaultMapping('playlist', \%mapping);
@@ -194,6 +200,8 @@ sub initPlugin {
 	our $functref = Slim::Buttons::Playlist::getFunctions();
 
 	$functref->{'save'} = $functions{'save'};
+	
+	$class->SUPER::initPlugin();
 }
 
 1;
