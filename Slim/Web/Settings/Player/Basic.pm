@@ -31,6 +31,8 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
+	return if (!defined $client);
+
 	my @prefs = qw(playername);
 
 	if ($client->isPlayer && !$client->display->isa('Slim::Display::NoDisplay')) {
@@ -53,6 +55,10 @@ sub prefs {
 
 sub handler {
 	my ($class, $client, $paramRef) = @_;
+
+	if (!defined $client) {
+		return $class->SUPER::handler($client, $paramRef);
+	}
 
 	# array prefs handled by this handler not handler::SUPER
 	my @prefs = ();

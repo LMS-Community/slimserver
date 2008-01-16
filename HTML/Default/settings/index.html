@@ -51,7 +51,7 @@
 				[%- FOREACH tab = topLevelItems.keys %]
 					[% tab %]: '[% IF tab == "SETUP_GROUP_PLUGINS"; tab = "PLUGINS"; END; topLevelItems.$tab %]',
 				[% END -%]
-				players: '[% playersetup.BASIC_PLAYER_SETTINGS %]&playerid=' + player,
+				players: '[% playersetup.BASIC_PLAYER_SETTINGS %]' || 'settings/player/basic.html?',
 				advanced: '[% additionalLinks.setup.FORMATTING_SETTINGS %]'
 			};
 

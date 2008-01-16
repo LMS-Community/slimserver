@@ -30,6 +30,7 @@
 [% END; END %]
 [% PROCESS settings/header.html %]
 
+[% IF version %]
 	[% WRAPPER setting title="SETUP_PLAYERNAME" desc="SETUP_PLAYERNAME_DESC" %]
 		<input type="text" class="stdedit" name="playername" id="playername" value="[% prefs.playername %]" size="20">
 	[% END %]
@@ -145,5 +146,11 @@
 			<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>
 		[% END %] 
 	[% END %]	
+
+[% ELSE %]
+	<div class="noPlayerPanel">
+		[% PROCESS status_noclients.html ajaxUpdate=1 %]
+	</div>
+[% END %]
 
 [% PROCESS settings/footer.html %]
