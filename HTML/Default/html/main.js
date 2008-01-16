@@ -244,7 +244,10 @@ PlayerChooser = function(){
 								// add the players to the list to be displayed in the synch dialog
 								playerList.add(
 									playerInfo.playerid,
-									playerInfo.name
+									{
+										name: playerInfo.name,
+										model: playerInfo.model
+									}
 								);
 
 								playerMenu.menu.add(
@@ -409,16 +412,17 @@ PlayerChooser = function(){
 			}
 
 			var playerSelection = '<p>' + strings['synchronize_desc'] + '</p><form name="syncgroup" id="syncgroup">';
-			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked}>&nbsp;{name}<br>');
+			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked} {disabled}>&nbsp;{name}<br>');
 			tpl.compile();
 
 			// create checkboxes for other players and preselect if synced
-			playerList.eachKey(function(id, name){
-				if (id && name && id != playerid)
+			playerList.eachKey(function(id, data){
+				if (id && data.name && id != playerid)
 					playerSelection += tpl.apply({
-						name: name,
+						name: data.name,
 						id: id,
-						checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked' : ''
+						checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked' : '',
+						disabled: data.model == 'http' ? 'disabled' : ''
 					});
 			});
 			playerSelection += '</form>';
