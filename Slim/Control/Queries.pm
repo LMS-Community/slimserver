@@ -3102,7 +3102,7 @@ sub songinfoQuery {
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
-	my $insertPlay = $menuMode && defined $insert;
+	my $insertPlay = $menuMode;
 
 	if (!defined $trackID && !defined $url) {
 		$request->setStatusBadParams();
@@ -3238,27 +3238,59 @@ sub songinfoQuery {
 			my $loopname = $menuMode?'item_loop':'songinfo_loop';
 			$request->addResult('offset', $start) if $menuMode;
 
-			# first PLAY item
+			# add Play this song and Add this song items
 			if ($insertPlay) {
 			
 				# insert first item if needed
 				if ($start == 0) {
-					$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG'));
-
-					# override the actions, babe!
-					my $actions = {
-						'do' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'load',
-								'track_id' => $trackId,
-							},
+					# setup hash for different items between play and add
+					my %items = ( 	
+						'play' => {
+							'string'  => Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG'),
+							'style'   => 'itemplay',
+							'cmd'     => 'load',
 						},
-						# play/add taken care of in base
-					};
-					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-					$cnt++;
+						'add' => {
+							'string'  => Slim::Utils::Strings::string('JIVE_ADD_THIS_SONG'),
+							'style'   => 'itemadd',
+							'cmd'     => 'add',
+						},
+					);
+
+					for my $mode ('play', 'add') {
+						# override the actions, babe!
+						my $actions = {
+							'do' => {
+								'player' => 0,
+								'cmd' => ['playlistcontrol'],
+								'params' => {
+									'cmd' => $items{$mode}{'cmd'},
+									'track_id' => $trackId,
+								},
+							},
+							'play' => {
+								'player' => 0,
+								'cmd' => ['playlistcontrol'],
+								'params' => {
+									'cmd' => $items{$mode}{'cmd'},
+									'track_id' => $trackId,
+								},
+							},
+							# add always adds
+							'add' => {
+								'player' => 0,
+								'cmd' => ['playlistcontrol'],
+								'params' => {
+									'cmd' => 'load',
+									'track_id' => $trackId,
+								},
+							},
+						};
+						$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
+						$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+						$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
+						$cnt++;
+					}
 				}
 
 				# correct db slice!
