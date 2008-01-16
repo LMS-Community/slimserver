@@ -475,13 +475,16 @@ div.pagetitleWithIcon {
 	background-position: 0 -38px;
 }
 
-#settingsRegion .noPlayerPanel,
+#settingsRegion .noPlayerPanel ul,
+#settingsRegion .noPlayerPanel b,
+#settingsRegion .noPlayerPanel p,
 #playList .noPlayerPanel ul,
 #playList .noPlayerPanel b,
 #playList .noPlayerPanel p {
 	margin: 10px 7px;
 }
 
+#settingsRegion .noPlayerPanel p b,
 #playList .noPlayerPanel p b {
 	margin-left: 0px;
 }
@@ -1119,7 +1122,7 @@ body.settingsMenu {
 }
 
 #settingsRegion .noPlayerPanel {
-	margin: 0 23px;
+	margin: 15px 16px;
 }
 
 .settings .buttonbar {

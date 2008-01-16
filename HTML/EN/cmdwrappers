@@ -389,7 +389,7 @@ END %]
 	<div class="settingGroup">
 		[% IF title %]<div class="prefHead">[% title | getstring %]</div>[% END %]
 		[% IF desc %]<div class="prefDesc hiddenDesc">[% desc | getstring %]</div>[% END %]
-		<div class="prefs">[% content %]</div>
+		<div class="prefs">[% content %]&nbsp;</div>
 	</div>
 [% END -%]
 
