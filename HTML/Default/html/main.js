@@ -340,6 +340,10 @@ PlayerChooser = function(){
 								})
 							);
 
+							var el = Ext.get('playList');
+							if (el && (el = el.child('div.noPlayerPanel')))
+								el.setDisplayed(true);
+
 							PlayerChooser.selectPlayer();
 						}
 
