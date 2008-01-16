@@ -243,6 +243,11 @@ sub acceptHTTP {
 		# Check if source address is valid
 		if (!($prefs->get('filterHosts')) ||
 		     (Slim::Utils::Network::isAllowedHost($peer))) {
+			
+			# Timeout for reads from the client.  HTTP::Daemon in get_request
+			# will call select(,,,10) but should not block long
+			# as we already know the socket is ready for reading
+			$httpClient->timeout(10);
 
 			$peeraddr{$httpClient} = $peer;
 
