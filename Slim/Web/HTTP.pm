@@ -246,12 +246,6 @@ sub acceptHTTP {
 
 			$peeraddr{$httpClient} = $peer;
 
-			# XXX: HTTP::Daemon normally uses a timeout of 0.001 seconds in
-			# its internal select() call, this currently breaks some Jive POST requests
-			# that arrive too slowly and in multiple packets.
-			# Jive will be fixed soon to send requests in a single packet.
-			${*$httpClient}{io_socket_timeout} = 1;
-
 			Slim::Networking::Select::addRead($httpClient, \&processHTTP);
 			Slim::Networking::Select::addError($httpClient, \&closeStreamingSocket);
 
