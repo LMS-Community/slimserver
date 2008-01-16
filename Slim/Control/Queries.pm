@@ -374,7 +374,7 @@ sub albumsQuery {
 					'album_id' =>  $id,
 				};
 
-				if ($sort && $sort ne 'new') {
+				unless ($sort && $sort eq 'new') {
 					$params->{textkey} = substr($eachitem->titlesort, 0, 1),
 				}
 
