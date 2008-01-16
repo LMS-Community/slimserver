@@ -3243,7 +3243,7 @@ sub songinfoQuery {
 			
 				# insert first item if needed
 				if ($start == 0) {
-					$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONGS'));
+					$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG'));
 
 					# override the actions, babe!
 					my $actions = {
@@ -4551,8 +4551,41 @@ sub _playAll {
 		# one item list, so do not add a play all and just return
 		return($start, $end, $cnt);
 	} elsif ($start == 0) {
-			$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL'));
-			$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+		# we're going to add a 'play all' and an 'add all'
+		# init some vars for each mode for use in the two item loop below
+		my %items = ( 	
+			'play' => {
+					'string'      => Slim::Utils::Strings::string('JIVE_PLAY_ALL'),
+					'style'       => 'itemplay',
+					'playAction'  => 'playtracks',
+					'addAction'   => 'addtracks',
+					'playCmd'     => [ 'playlistcontrol' ],
+					'addCmd'      => [ 'playlistcontrol' ],
+					'params'      => { 
+						'play' =>  { 'cmd' => 'load', },
+						'add'  =>  { 'cmd' => 'add',  },
+					},
+			},
+			'add' => { 
+					'string'     => Slim::Utils::Strings::string('JIVE_ADD_ALL'),
+					'style'      => 'itemadd',
+					'playAction' => 'addtracks',
+					'addAction'  => 'addtracks',
+					'playCmd'    => [ 'playlistcontrol' ],
+					'addCmd'     => [ 'playlistcontrol' ],
+					'params'     => { 
+						'play' =>  { 'cmd' => 'add', },
+						'add'  =>  { 'cmd' => 'add', },
+					},
+			},
+		);
+
+		# IF WE DECIDE TO ADD AN 'ADD ALL' item, THIS IS THE ONLY LINE THAT NEEDS CHANGING
+		#for my $mode ('play', 'add') {
+		for my $mode ('play') {
+
+		$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
+		$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
 
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $cnt, 'icon-id', '/music/all_items/cover.png');
@@ -4560,16 +4593,8 @@ sub _playAll {
 
 		# get all our params
 		my $params = $request->getParamsCopy();
-		my $paramsAdd = {};
-		my $paramsGoPlay = {};
-
 		my $searchType = $request->getParam('_searchType');
-		$paramsAdd->{'cmd'} = 'add';
-		$paramsGoPlay->{'cmd'} = 'load';
 	
-		my @playCmd = ('playlistcontrol');
-		my @addCmd = ('playlistcontrol');
-
 		# remove keys starting with _ (internal or positional) and make copies
 		while (my ($key, $val) = each %{$params}) {
 			if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
@@ -4577,24 +4602,25 @@ sub _playAll {
 			}
 			# search is a special case of _playAll, which needs to fire off a different cli command
 			if ($key eq 'search') {
-				@playCmd = ('playlist', 'loadtracks');
-				@addCmd  = ('playlist', 'addtracks');
+				$items{$mode}{'playCmd'} = ['playlist', 'loadtracks'];
+				$items{$mode}{'addCmd'}  = ['playlist', 'addtracks'];
+				$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
 				# we don't need a cmd: tagged param for these
-				delete($paramsAdd->{'cmd'});
-				delete($paramsGoPlay->{'cmd'});
+				delete($items{$mode}{'params'}{'play'}{'cmd'});
+				delete($items{$mode}{'params'}{'add'}{'cmd'});
 				if ($searchType eq 'artists') {
-					$paramsAdd->{'contributor.namesearch'}    = $val;
-					$paramsGoPlay->{'contributor.namesearch'} = $val;
+					$items{$mode}{'params'}{'add'}{'contributor.namesearch'}  = $val;
+					$items{$mode}{'params'}{'play'}{'contributor.namesearch'} = $val;
 				} elsif ($searchType eq 'albums') {
-					$paramsAdd->{'album.titlesearch'}    = $val;
-					$paramsGoPlay->{'album.titlesearch'} = $val;
+					$items{$mode}{'params'}{'add'}{'album.titlesearch'}  = $val;
+					$items{$mode}{'params'}{'play'}{'album.titlesearch'} = $val;
 				} else {
-					$paramsAdd->{'track.titlesearch'}    = $val;
-					$paramsGoPlay->{'track.titlesearch'} = $val;
+					$items{$mode}{'params'}{'add'}{'track.titlesearch'}  = $val;
+					$items{$mode}{'params'}{'play'}{'track.titlesearch'} = $val;
 				}
 			} else {
-				$paramsAdd->{$key} = $val;
-				$paramsGoPlay->{$key} = $val;
+				$items{$mode}{'params'}{'add'}{$key}  = $val;
+				$items{$mode}{'params'}{'play'}{$key} = $val;
 			}
 		}
 				
@@ -4602,22 +4628,24 @@ sub _playAll {
 		my $actions = {
 			'do' => {
 				'player' => 0,
-				'cmd' => [ @playCmd ],
-				'params' => $paramsGoPlay,
+				'cmd'    => $items{$mode}{'playCmd'},
+				'params' => $items{$mode}{'params'}{'play'},
 			},
 			'play' => {
 				'player' => 0,
-				'cmd' => [ @playCmd ],
-				'params' => $paramsGoPlay,
+				'cmd'    => $items{$mode}{'playCmd'},
+				'params' => $items{$mode}{'params'}{'play'},
 			},
 			'add' => {
 				'player' => 0,
-				'cmd' => [ @addCmd ],
-				'params' => $paramsAdd,
+				'cmd'    => $items{$mode}{'addCmd'},
+				'params' => $items{$mode}{'params'}{'add'},
 			},
 		};
 		$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 		$cnt++;
+
+		}
 
 	# correct db slice!
 	} else {

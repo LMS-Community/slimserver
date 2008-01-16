@@ -14706,7 +14706,19 @@ JIVE_PLAY_ALL
 	IT	Riproduci tutto
 	NL	Alles afspelen
 
-JIVE_PLAY_THIS_SONGS
+JIVE_ADD_ALL_SONGS
+	EN	Add all songs
+
+JIVE_ADD_ALL
+	EN	Add all
+
+JIVE_ADD_TO_FAVORITES
+	EN	Add to Favorites
+
+JIVE_ADD_THIS_SONG
+	EN	Add this song
+
+JIVE_PLAY_THIS_SONG
 	DE	Diesen Titel wiedergeben
 	EN	Play this song
 	ES	Reproducir esta canción
@@ -14865,4 +14877,5 @@ INSERT
 	FR	Insérer
 	IT	Inserisci
 	NL	Invoegen
+
 
