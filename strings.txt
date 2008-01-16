@@ -12754,7 +12754,7 @@ EQUALS
 	EN	equals
 	ES	igual a
 	FI	yhtäkuin
-	FR	égal à
+	FR	égal(e) à
 	HE	שווה ל-
 	IT	uguale a
 	JA	同輩
