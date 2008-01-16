@@ -1141,6 +1141,11 @@ div.buttonbarSpacer {
 	vertical-align: top;
 }
 
+/* don't show the checkbox in the tooltip */
+.x-tip-bd input.pluginEnablerCheckbox {
+	display: none;
+}
+
 /* Help screen */
 .helpPage, .helpPage .inner_content { background-color: white; }
 
