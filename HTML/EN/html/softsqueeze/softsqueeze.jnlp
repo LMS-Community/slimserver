@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="[% LOCALE %]"?>
 
-<!-- JNLP File for SoftSqueeze -->
+<!-- JNLP File for Softsqueeze -->
 
 <!--        ** This file is configured for the SqueezeCenter ** 			-->
 
@@ -14,10 +14,10 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>SoftSqueeze 3.5</title>
+    <title>SoftSqueeze 3.6</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
-    <description>SoftSqueeze Squeezebox Emulator</description>
+    <description>SoftsSqueeze Squeezebox Emulator</description>
     <description kind="short">SoftSqueeze Squeezebox Emulator</description>
     <icon width="400" height="200" kind="splash" href="icons/splash.gif" />
     <icon width="64" height="64" href="icons/icon64.gif" />
@@ -38,7 +38,7 @@
     <jar href="lib/tritonus_share.jar"/>
     <jar href="lib/mp3spi1.9.2.jar"/>
     <jar href="lib/jl1.0.jar"/>
-    <jar href="lib/jflac-1.0.jar"/>
+    <jar href="lib/jflac-1.2.jar"/>
     <jar href="lib/jsch-20040429.jar"/>
     <jar href="lib/jogg-0.0.7.jar"/>
     <jar href="lib/jorbis-0.0.15.jar"/>
