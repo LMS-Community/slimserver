@@ -155,6 +155,7 @@ sub randomPlayMenu {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
 			id      => 'randomtracks',
 			weight  => 10,
+			style   => 'itemplay',
 			nextWindow => 'nowPlaying',
 			actions => {
 				play => {
@@ -171,6 +172,7 @@ sub randomPlayMenu {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
 			id      => 'randomalbums',
 			weight  => 20,
+			style   => 'itemplay',
 			nextWindow => 'nowPlaying',
 			actions => {
 				play => {
@@ -187,6 +189,7 @@ sub randomPlayMenu {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
 			id      => 'randomartists',
 			weight  => 30,
+			style   => 'itemplay',
 			nextWindow => 'nowPlaying',
 			actions => {
 				play => {
@@ -203,6 +206,7 @@ sub randomPlayMenu {
 			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
 			id      => 'randomyears',
 			weight  => 40,
+			style   => 'itemplay',
 			nextWindow => 'nowPlaying',
 			actions => {
 				play => {

@@ -4552,6 +4552,7 @@ sub _playAll {
 		return($start, $end, $cnt);
 	} elsif ($start == 0) {
 			$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL'));
+			$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
 
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $cnt, 'icon-id', '/music/all_items/cover.png');
