@@ -219,11 +219,11 @@ sub init_jive_version_done {
 
 	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $jive_file, 'binary');
 	
-	# Check again for an updated jive.version in 24 hours
-	$log->debug('Scheduling next jive.version check in 24 hours');
+	# Check again for an updated jive.version in 12 hours
+	$log->debug('Scheduling next jive.version check in 12 hours');
 	Slim::Utils::Timers::setTimer(
 		undef,
-		time() + 86400,
+		time() + 43200,
 		\&init_jive,
 	);
 }
