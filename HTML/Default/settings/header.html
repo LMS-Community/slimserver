@@ -35,7 +35,9 @@
 			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
 
 			// display player list if we're in the player settings
-			[%- pageId = '^' _ page _ '$'; pageLink = orderedLinks.grep(pageId);
+			[%-
+			pageId = '^' _ page _ '$';
+			pageLink = orderedLinks.grep(pageId);
 
 			IF needsClient;
 				USE Clients;
@@ -51,31 +53,20 @@
 					[% END %]
 				);
 
-				var settingsList = new Array(
-					[% FOREACH link IN orderedLinks -%]
-						{
-							id: "[% link %]",
-							url: "[% playersetup.$link %]",
-							name: "[% link | string %]"
-						}[% IF !loop.last; ','; END %]
-					[% END %]
-				);
-
 				// remember the last loaded page - to be used when the player tab is selected next time
 				try { parent.Utils.setCookie('SqueezeCenter-playersettings', '[% playersetup.$page %]'); }
 				catch(e) {}
 
-				Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
-				Ext.EventManager.onDocumentReady(SettingsPage.initSettingsList);
+			[%- END;
 
-			[% ELSIF pageLink.size > 0 %]
+			IF pageLink.size > 0 %]
 
 				var page = '[% page %]';
 				var settingsList = new Array(
 					[% FOREACH link IN orderedLinks -%]
 						{ 
 							id: "[% link %]",
-							url: "[% additionalLinks.setup.$link %]",
+							url: "[% needsClient ? playersetup.$link : additionalLinks.setup.$link %]",
 							name: "[% link | string %]"
 						}[% IF !loop.last; ','; END %]
 					[% END %]
@@ -84,7 +75,6 @@
 				try { parent.Utils.setCookie('SqueezeCenter-advancedsettings', '[% additionalLinks.setup.$page %]'); }
 				catch(e) {}
 
-				Ext.EventManager.onDocumentReady(SettingsPage.initSettingsList);
 			[% END %]
 
 			// pages using the fileselector may set a filter (see iTunes)

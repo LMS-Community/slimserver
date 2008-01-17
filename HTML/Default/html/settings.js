@@ -205,6 +205,8 @@ var SettingsPage = function(){
 	return {
 		init : function(){
 			this.initDescPopup();
+			this.initPlayerList();
+			this.initSettingsList();
 			FilesystemBrowser.init();
 
 			var items = Ext.query('input');
