@@ -217,6 +217,9 @@ PlayerChooser = function(){
 							var el;
 							var activePlayer = playerid || previousPlayer;
 
+							if ((el = Ext.get('playList')) && (el = el.child('div.noPlayerPanel')))
+								el.setDisplayed(false);
+
 							playerList = new Ext.util.MixedCollection();
 
 							for (x=0; x < responseText.result['player count']; x++) {
