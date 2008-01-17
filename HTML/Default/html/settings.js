@@ -199,7 +199,6 @@ Settings = function(){
 
 
 var SettingsPage = function(){
-	var unHighlightTimer;
 	var invalidWarned = false;
 	var modified = false;
 
@@ -263,28 +262,6 @@ var SettingsPage = function(){
 							autoHide: false
 						});
 				}
-			}
-		},
-
-		// remove sticky highlight from previously selected item
-		onClicked : function(target){
-			var el = Ext.get(target);
-			if (el && el.hasClass('mouseOver')) {
-				if (el = Ext.get(Ext.DomQuery.selectNode('div.selectedItem')))
-					el.removeClass('selectedItem');
-	
-				if (el = Ext.get(target.id))
-					el.addClass('selectedItem');
-			}
-		},
-
-		highlight : function(target){
-			if (Utils) {
-				if (unHighlightTimer == null)
-					unHighlightTimer = new Ext.util.DelayedTask(Utils.unHighlight);
-					
-				Utils.highlight(target);
-				unHighlightTimer.delay(1000);	// remove highlighter after x seconds of inactivity
 			}
 		},
 
