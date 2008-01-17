@@ -1,11 +1,6 @@
 [%- BLOCK pluginLink -%]
 	[% IF enabled && settings %]
-		<a href="[% webroot %]settings/[%-
-		IF playersetup.$name && !additionalLinks.setup.$name
-		-%]index.html?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;sub=player&amp;subPage=[% name %]&noSubs" [%- 
-		ELSE
-		-%][% settings %]?player=[% playerURI %]&amp;" [%-
-		END %]>[% 'SETTINGS' | string %]</a>
+		<a href="[% webroot %]settings/[% settings %]?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;noSettingsList">[% 'SETTINGS' | string %]</a>
 	[% END %]
 [%- END -%]
 <?xml version="1.0" encoding="UTF-8"?>
@@ -125,14 +120,16 @@
 
 	<body class="[% bodyClass || "settings" %]">
 
-		[% IF needsClient || pageLink.size > 0 %]
+		[% IF needsClient || (pageLink.size > 0 && !noSettingsList) %]
 		<div class="buttonbar">
 			<table>
 				<tr>
 					[%- IF needsClient %]
 						<td><span id="playerSelector"></span></td>
 					[% END %]
-					<td><span id="settingsSelector"></span></td>
+					[%- IF !noSettingsList %]
+						<td><span id="settingsSelector"></span></td>
+					[% END %]
 				<tr>
 			</table>
 		</div>
