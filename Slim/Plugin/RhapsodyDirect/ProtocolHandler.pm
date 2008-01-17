@@ -344,7 +344,7 @@ sub gotPlaybackSession {
 		Slim::Utils::Timers::killTimers( $client, \&getTrackMetadata );
 		Slim::Utils::Timers::setTimer(
 			$client,
-			time() + 2,
+			time(),
 			\&getTrackMetadata,
 			{ trackId => $trackId },
 		);
@@ -544,7 +544,7 @@ sub getNextTrackInfo {
 		Slim::Utils::Timers::killTimers( $client, \&getTrackMetadata );
 		Slim::Utils::Timers::setTimer(
 			$client,
-			time() + 2,
+			time(),
 			\&getTrackMetadata,
 			{ trackId => $trackId },
 		);
@@ -678,6 +678,9 @@ sub gotTrackMetadata {
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
 	};
+	
+	# Update the playlist time so the web will refresh, etc
+	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
 	
 	$client->pluginData( metaCache => $meta );
 }
@@ -1119,7 +1122,7 @@ sub getMetadataFor {
 		Slim::Utils::Timers::killTimers( $master, \&getTrackMetadata );
 		Slim::Utils::Timers::setTimer(
 			$master,
-			time() + 2,
+			time(),
 			\&getTrackMetadata,
 			{ trackId => $trackId },
 		);
