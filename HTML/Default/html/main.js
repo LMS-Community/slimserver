@@ -445,8 +445,8 @@ PlayerChooser = function(){
 				resizeHandles: 'se'
 			});
 
-			dlg.addButton(strings['execute'], function(){ PlayerChooser.sync(syncedPlayers, dlg) }, dlg);
-			dlg.addButton(strings['close'], dlg.destroy, dlg);
+			dlg.addButton(strings['synchronize'], function(){ PlayerChooser.sync(syncedPlayers, dlg) }, dlg);
+			//dlg.addButton(strings['close'], dlg.destroy, dlg);
 			dlg.addKeyListener(27, dlg.destroy, dlg);
 
 			dlg.body.update(playerSelection);

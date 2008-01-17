@@ -1170,10 +1170,9 @@ div.buttonbarSpacer {
 	margin-bottom: 10px;
 }
 
-.x-dlg-bd b, .x-dlg-bd p, .x-dlg-bd ul,
+.x-dlg-bd b, .x-dlg-bd p, .x-dlg-bd ul, .x-dlg-bd form,
 .helpsection p, .helpsection dt {
-	margin-top: 10px;
-	margin-bottom: 5px;
+	margin: 5px 5px 10px;
 }
 
 ul.x-tree-node-ct {
