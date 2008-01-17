@@ -45,7 +45,7 @@ Settings = function(){
 					var e = {};
 					this.fireEvent("beforetabchange", this, e, tab);
 					if(e.cancel !== true && !tab.disabled){
-						if(this.active){
+						if(this.active && this.active != this.items[id]){
 							this.active.hide();
 						}
 						this.active = this.items[id];
