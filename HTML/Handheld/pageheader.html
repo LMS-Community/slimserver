@@ -13,9 +13,22 @@
 	[% END %]
 	<script TYPE="text/javascript">
 		function resizeBody() {
-			if (navigator.userAgent.search(/Opera 8/) != -1 
-				&& document.getElementsByTagName("body")[0].offsetWidth > window.outerWidth)
-				document.getElementsByTagName("body")[0].style.width = window.outerWidth;
+			if (navigator.userAgent.search(/Opera 8/) != -1) {
+				var width = 0;
+				// Opera Mobile on Symbian 
+				if (document.getElementsByTagName("body")[0].offsetWidth > window.outerWidth)
+					width = window.outerWidth;
+
+				// Opera Mobile on Windows Mobile 
+				else if (window.outerWidth > 1500) {
+					var regex = /(\d+)x(\d+)/;
+					if (regex.exec(navigator.userAgent) && RegExp.$1)
+						width = RegExp.$1;
+				}
+
+				if (width)
+					document.getElementsByTagName("body")[0].style.width = width;
+			}
 		}
 	</script>
 </head>
