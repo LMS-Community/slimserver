@@ -492,7 +492,7 @@ sub maxBrightness {
 sub scrollUpdateDisplay {
 	my $display = shift;
 	my $scroll = shift;
-	my $client = $display->client;
+	my $client = $display->client || return;
 	
 	# don't send update if the slimproto socket is congested
 	if ( Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) != 0 ) {
