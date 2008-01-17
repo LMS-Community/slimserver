@@ -396,6 +396,11 @@ sub hasDigitalOut {
 #
 sub needsUpgrade {
 	my $client = shift;
+	
+	# Avoid reading the file if we've already read it
+	if ( defined $client->[3] ) {
+		return $client->[3];
+	}
 
 	my $from  = $client->revision || return 0;
 	my $model = $client->model;
@@ -454,6 +459,7 @@ sub needsUpgrade {
 		} else {
 
 			$log->info("No upgrades found for $model v. $from");
+			$client->[3] = 0;
 			return 0;
 		}
 	}
@@ -461,6 +467,7 @@ sub needsUpgrade {
 	if ($to == $from) {
 
 		$log->info("$model firmware is up-to-date, v. $from");
+		$client->[3] = 0;
 		return 0;
 	}
 
@@ -489,7 +496,6 @@ sub needsUpgrade {
 	$log->info("$model v. $from requires upgrade to $to");
 
 	return $to;
-
 }
 
 =head2 checkFirmwareUpgrade($client)

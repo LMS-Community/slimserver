@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 3, 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
+	# 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -99,9 +99,8 @@ sub new {
 	
 	$client->[2] = $uuid;
 
-#	$client->[3]
-
 	# client variables id and version info
+	$client->[3] = undef; # needsUpgrade
 	$client->[4] = undef; # revision
 	$client->[5] = undef; # macaddress
 	$client->[6] = $paddr; # paddr
