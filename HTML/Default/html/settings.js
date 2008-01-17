@@ -25,6 +25,9 @@ Settings = function(){
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
+			Utils.clearCookie('SqueezeCenter-playersettings');
+			Utils.clearCookie('SqueezeCenter-advancedsettings');
+
 			// IE6 needs two tries...
 			if (Ext.isIE && !Ext.isIE7)
 				Ext.EventManager.onDocumentReady(this.onResize, layout, true);
