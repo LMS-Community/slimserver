@@ -138,7 +138,7 @@ player_name|[% player_name %]
 # path to cover art 
 coverartpath|
 [%- IF coverThumb -%][% coverThumb %]
-[%- ELSIF itemobj.isRemoteURL -%][% webroot %]html/images/radio.gif
+[%- ELSIF itemobj.isRemoteURL -%][% webroot %]html/images/radio.png
 [%- ELSE -%][% webroot %]html/images/cover.png
 [% END %]
 
