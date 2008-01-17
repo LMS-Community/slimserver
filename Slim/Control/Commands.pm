@@ -902,6 +902,14 @@ sub playlistSaveCommand {
 
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 
+	# FIXME, THIS_PLAYLIST_AS is not great as the string. EN string should be "Saved playlist as:"
+  	$client->showBriefly({
+		'jive' => {
+			'type'    => 'popupplay',
+			'text'    => [ Slim::Utils::Strings::string('THIS_PLAYLIST_AS') , " " , $title],
+                                }
+                        });
+
 	$request->addResult('__playlist_id', $playlistObj->id);
 	$request->addResult('__playlist_obj', $playlistObj);
 
