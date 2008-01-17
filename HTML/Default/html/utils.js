@@ -291,9 +291,13 @@ var Utils = function(){
 			if (this.isDragging)
 				return;
 
+			// remove highlighter after x seconds of inactivity
+			if (unHighlightTimer)
+				unHighlightTimer.delay(2000);
+
 			// return if the target is a child of the main selector
 			var el = Ext.get(target.id); 
-			if (el != null && el.hasClass('.mouseOver'))
+			if (el == highlightedEl)
 				return;
 
 			// always highlight the main selector, not its children
@@ -301,30 +305,17 @@ var Utils = function(){
 				Utils.unHighlight();
 				highlightedEl = el;
 
-				if (el.hasClass('selectedItem')) {
-					el.addClass('mouseOver');
-				}
-				else {
-					el.replaceClass('selectorMarker', 'mouseOver');
-				}
+				el.replaceClass('selectorMarker', 'mouseOver');
 
 				highlightedEl.onClickCB = onClickCB || Utils.onSelectorClicked;
 				el.on('click', highlightedEl.onClickCB);
 			}
-
-			if (unHighlightTimer)
-				unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
 		},
 
 		unHighlight : function(){
 			// remove highlighting from the other DIVs
 			if (highlightedEl) {
-				if (highlightedEl.hasClass('selectedItem')) {
-					highlightedEl.removeClass('mouseOver');
-				}
-				else {
-					highlightedEl.replaceClass('mouseOver', 'selectorMarker');
-				}
+				highlightedEl.replaceClass('mouseOver', 'selectorMarker');
 				highlightedEl.un('click', highlightedEl.onClickCB);
 			}
 		},
