@@ -2027,6 +2027,7 @@ sub playlistsQuery {
 			},
 			window => {
 				titleStyle => 'playlist',
+				menuStyle  => 'album',
 			},
 		};
 		$request->addResult('base', $base);
@@ -2930,8 +2931,7 @@ sub statusQuery {
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
-		# $songCount needs to change to $menuCount on the next line when the save/clear playlist items are ready
-		$request->addResult("count", $power?$songCount:0);
+		$request->addResult("count", $power?$menuCount:0);
 		
 		my $base = {
 			'actions' => {
@@ -3012,7 +3012,7 @@ sub statusQuery {
 						# add clear and save playlist items at the bottom
 						if ( ($idx+1)  == $songCount) {
 							# playlist management items not quite ready
-							#_addJivePlaylistControls($request, $loop, $count);
+							_addJivePlaylistControls($request, $loop, $count);
 						}
 					}
 					else {
@@ -4123,10 +4123,12 @@ sub _addJivePlaylistControls {
 		{
 			text    => Slim::Utils::Strings::string('CANCEL'),
 			actions => {
-				do => {
-					menu => 'nowhere',
+				go => {
+					player => 0,
+					cmd    => [ 'jiveblankcommand' ],
 				},
 			},
+			nextWindow => 'playlist',
 		},
 		{
 			text    => Slim::Utils::Strings::string('CLEAR_PLAYLIST'),
@@ -4134,13 +4136,14 @@ sub _addJivePlaylistControls {
 				do => {
 					player => 0,
 					cmd    => ['playlist', 'clear'],
-					menu   => 'nowhere',
 				},
 			},
+			nextWindow => 'home',
 		},
 	);
 
 	$request->addResultLoop($loop, $count, 'text', $text);
+	$request->addResultLoop($loop, $count, 'icon', '/html/images/playlist.png');
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
@@ -4168,6 +4171,7 @@ sub _addJivePlaylistControls {
 
 	$text = Slim::Utils::Strings::string('SAVE_PLAYLIST');
 	$request->addResultLoop($loop, $count, 'text', $text);
+	$request->addResultLoop($loop, $count, 'icon', '/html/images/playlist.png');
 	$request->addResultLoop($loop, $count, 'input', $input);
 	$request->addResultLoop($loop, $count, 'actions', $actions);
 	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );

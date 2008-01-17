@@ -85,6 +85,9 @@ sub init {
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'], [0, 0, 0, sub { warn "menustatus query\n" }]);
 	Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
 	
+	# setup a cli command for jive that returns nothing; can be useful in some situations
+	Slim::Control::Request::addDispatch( ['jiveblankcommand'], [0, 0, 0, sub { return 1; }]);
+
 	# Load memory caches to help with menu performance
 	buildCaches();
 	
