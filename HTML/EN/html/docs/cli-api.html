@@ -1057,6 +1057,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#irenable">irenable</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#connect">connect</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#client forget">client forget</a></code></strong>
 	</li>
 	<li>
@@ -2035,6 +2038,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;04:20:00:12:23:45 irenable ?&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 irenable 1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="connect">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			connect
+			&lt;ip|SN|SNbeta&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;connect&quot; command tells a Squeezebox 2 or newer player to
+	connect to a different server address or to SqueezeNetwork.
+	<br>
+	Supported values are:
+	<ul>
+		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
+		<li><strong>SN</strong> - Connect to SqueezeNetwork.</li>
+		<li><strong>SNbeta</strong> - Connect to SqueezeNetwork beta.</li>
+	</ul>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;bd:a5:a9:9b:9d:df connect 192.168.1.10&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

@@ -73,6 +73,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
  Y    alarm           <tagged parameters>
  Y    button          <buttoncode>
+ Y    connect         <ip|SN|SNbeta>
  Y    client          forget
  Y    display         <line1>                     <line2>                       <duration>
  Y    ir              <ircode>                    <time>
@@ -463,6 +464,7 @@ sub init {
 	addDispatch(['artists',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::artistsQuery]);
 	addDispatch(['button',         '_buttoncode',    '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
 	addDispatch(['client',         'forget'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
+	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
 	addDispatch(['connected',      '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
 	addDispatch(['current_title',  '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['debug',          '_debugflag',     '?'],                                             [0, 1, 0, \&Slim::Control::Queries::debugQuery]);

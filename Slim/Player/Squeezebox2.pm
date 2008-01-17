@@ -669,6 +669,10 @@ sub hasDisableDac() {
 	return 1;
 }
 
+sub hasServ {
+	return 1;
+}
+
 sub audio_outputs_enable { 
 	my $client = shift;
 	my $enabled = shift;

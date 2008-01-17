@@ -34,6 +34,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
+use Net::IP;
 
 use Slim::Utils::Alarms;
 use Slim::Utils::Log;
@@ -158,6 +159,41 @@ sub buttonCommand {
 	$request->setStatusDone();
 }
 
+sub clientConnectCommand {
+	my $request = shift;
+	my $client  = $request->client();
+
+	if ( $client->hasServ() ) {
+		my $host = $request->getParam('_where');
+		
+		if ( $host =~ /^SN$/i ) {
+			$host = 1;
+		}
+		elsif ( $host =~ /^SNbeta$/i ) {
+			# XXX: Change to '2' after new firmware includes this
+			# $host = 2;
+			
+			$host = Net::IP->new('207.7.156.11')->intip;
+		}
+		else {
+			my $ip = Net::IP->new($host);
+			if ( !defined $ip ) {
+				$request->setStatusBadParams();
+				return;
+			}
+			
+			$host = $ip->intip;
+		}
+		
+		my $packed = pack 'N', $host;
+		
+		$client->sendFrame( serv => \$packed );
+		
+		$client->execute([ 'client', 'forget' ]);
+	}
+	
+	$request->setStatusDone();
+}
 
 sub clientForgetCommand {
 	my $request = shift;
