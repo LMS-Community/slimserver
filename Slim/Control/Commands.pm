@@ -166,10 +166,10 @@ sub clientConnectCommand {
 	if ( $client->hasServ() ) {
 		my $host = $request->getParam('_where');
 		
-		if ( $host =~ /^SN$/i ) {
+		if ( $host =~ /^www.squeezenetwork.com$/i ) {
 			$host = 1;
 		}
-		elsif ( $host =~ /^SNbeta$/i ) {
+		elsif ( $host =~ /^www.beta.squeezenetwork.com$/i ) {
 			# XXX: Change to '2' after new firmware includes this
 			# $host = 2;
 			

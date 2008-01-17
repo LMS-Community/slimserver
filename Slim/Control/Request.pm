@@ -73,7 +73,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
  Y    alarm           <tagged parameters>
  Y    button          <buttoncode>
- Y    connect         <ip|SN|SNbeta>
+ Y    connect         <ip|www.squeezenetwork.com|www.beta.squeezenetwork.com>
  Y    client          forget
  Y    display         <line1>                     <line2>                       <duration>
  Y    ir              <ircode>                    <time>
