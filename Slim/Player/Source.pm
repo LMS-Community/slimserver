@@ -1471,7 +1471,12 @@ sub trackStartEvent {
 		$last_song->{'status'} = STATUS_PLAYING;
 	}
 
-	$master->currentPlaylistChangeTime(Time::HiRes::time());
+	# Update a few timestamps
+	# trackStartTime is used to signal the buffering status message to stop
+	# currentPlaylistChangeTime signals the web to refresh the playlist
+	my $time = Time::HiRes::time();
+	$master->trackStartTime( $time );
+	$master->currentPlaylistChangeTime( $time );
 
 	Slim::Player::Playlist::refreshPlaylist($master);
 	Slim::Control::Request::notifyFromArray($client,

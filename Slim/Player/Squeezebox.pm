@@ -286,7 +286,7 @@ sub buffering {
 	
 	# If the track has started, stop displaying buffering status
 	# currentPlaylistChangeTime is set to time() after a track start event
-	if ( $client->currentPlaylistChangeTime() > $client->bufferStarted() ) {
+	if ( $client->trackStartTime() > $client->bufferStarted() ) {
 		$client->update();
 		return;
 	}

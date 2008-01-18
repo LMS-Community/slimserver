@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
+	# 11, 12, 13, 16, 21, 24, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -128,8 +128,7 @@ sub new {
 	$client->[20] = []; # chunks
 #	$client->[21]
 	$client->[22] = 0; # remoteStreamStartTime
-
-#	$client->[23]
+	$client->[23] = 0; # trackStartTime
 #	$client->[24]
 #	$client->[25]
 #	$client->[26]
@@ -1188,6 +1187,10 @@ sub remoteStreamStartTime {
 	@_ ? ($r->[22] = shift) : $r->[22];
 }
 
+sub trackStartTime {
+	my $r = shift;
+	@_ ? ($r->[23] = shift) : $r->[23];
+}
 
 sub playlist {
 	my $r = shift;
