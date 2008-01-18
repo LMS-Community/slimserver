@@ -1229,6 +1229,7 @@ sub cliQuery {
 		\&_cliQuery_error,
 		{
 			'request'    => $request,
+			'client'     => $request->client,
 			'url'        => $feed,
 			'query'      => $query,
 			'expires'    => $expires,
@@ -1347,6 +1348,7 @@ sub _cliQuery_done {
 						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 						'currentIndex' => \@crumbIndex,
 						'request'      => $request,
+						'client'       => $request->client,
 						'query'        => $query,
 						'expires'      => $expires,
 						'timeout'      => $timeout,

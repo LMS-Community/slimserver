@@ -198,6 +198,7 @@ sub handleFeed {
 				
 				# Setup passthrough args
 				my $args = {
+					'client'       => $client,
 					'item'         => $subFeed,
 					'url'          => $subFeed->{'url'},
 					'path'         => $params->{'path'},
