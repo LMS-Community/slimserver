@@ -799,6 +799,9 @@ sub rebuffer {
 	# If the user changes something, stop rebuffering
 	return unless $client->playmode() eq 'pause';
 	
+	# Bug 6549, if the user powers off, stop rebuffering
+	return if !$client->power;
+	
 	$client->requestStatus();
 	
 	my $threshold = 80 * 1024; # 5 seconds of 128k
