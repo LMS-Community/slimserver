@@ -600,7 +600,7 @@ sub checkSync {
 		my $recentThreshold = $now - PLAYPOINT_RECENT_THRESHOLD;
 		my @playerPlayPoints;
 		foreach my $player (@group) {
-			next unless $prefs->client($player)->get('maintainSync');
+			next unless ($player->isPlayer() && $prefs->client($player)->get('maintainSync'));
 			my $playPoint = $player->playPoint();
 			if ( !defined $playPoint ) {
 				if ( $log->is_debug ) {
