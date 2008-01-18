@@ -139,7 +139,7 @@ sub getImageContentAndType {
 	# path into the current locale.
 	my $locale = Slim::Utils::Unicode::currentLocale();
 
-	if ($locale ne 'utf8') {
+	if ($locale ne 'utf8' && !-e $path) {
 		$path = Slim::Utils::Unicode::encode($locale, $path);
 	}
 
