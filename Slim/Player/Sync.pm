@@ -493,8 +493,8 @@ sub checkSync {
 			my $fullness = $client->bufferFullness();
 			my $usage = $client->usage();
 
-			if ( $log->is_info ) {
-				$log->info($client->id . " checking buffer fullness: $fullness (threshold: $threshold)");
+			if ( $log->is_debug ) {
+				$log->debug($client->id . " checking buffer fullness: $fullness (threshold: $threshold)");
 			}
 
 			if 	((defined($fullness) && $fullness > $threshold) ||
@@ -660,16 +660,16 @@ sub checkSync {
 				# || $delta < $referenceMinAdjust
 				);
 			if ($i < $reference) {
-				if ( $log->is_debug ) {
-					$log->debug( sprintf("%s resync: skipAhead %dms", $player->id(), $delta * 1000) );
+				if ( $log->is_info ) {
+					$log->info( sprintf("%s resync: skipAhead %dms", $player->id(), $delta * 1000) );
 				}
 				
 				$player->skipAhead($delta);
 				$nextCheckSyncTime{$client} += 1;
 			}
 			else {
-				if ( $log->is_debug ) {
-					$log->debug( sprintf("%s resync: pauseFor %dms", $player->id(), $delta * 1000) );
+				if ( $log->is_info ) {
+					$log->info( sprintf("%s resync: pauseFor %dms", $player->id(), $delta * 1000) );
 				}
 				
 				$player->pauseForInterval($delta);
