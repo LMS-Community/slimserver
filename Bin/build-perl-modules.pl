@@ -19,7 +19,9 @@ use File::Find;
 use File::Path;
 use File::Which;
 
-my $SOURCE = 'http://svn.slimdevices.com/vendor/src';
+# NOTE: If you change this in a future version of SC, create a new
+# versioned directory under vendor/src for all files for that version
+my $SOURCE = 'http://svn.slimdevices.com/repos/slim/vendor/src/7.0';
 my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
