@@ -269,7 +269,7 @@ sub render {
 					(!defined($sc->{line}[$l]) || ($screen->{line}[$l] ne $sc->{line}[$l]))) {
 					$sc->{line}[$l] = $screen->{line}[$l];
 					($sc->{linereverse}[$l], $sc->{linebits}[$l]) = 
-						Slim::Display::Lib::Fonts::string($sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{line}[$l]);
+						Slim::Display::Lib::Fonts::string($client, $sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{line}[$l]);
 					$sc->{linefinish}[$l] = length($sc->{linebits}[$l]);
 					if ($sc->{scroll} && ($sc->{scrollline} == $l)) {
 						$sc->{scroll} = 0; $sc->{scrollline} = undef;
@@ -293,7 +293,7 @@ sub render {
 					$sc->{overlay}[$l] = $screen->{overlay}[$l];
 					my $overlay;
 					{ no bytes; $overlay = "\x00" . $sc->{overlay}[$l]; }
-					$sc->{overlaybits}[$l] = Slim::Display::Lib::Fonts::string($sfonts->{overlay}[$l]||$dfonts->{overlay}[$l], $overlay);
+					$sc->{overlaybits}[$l] = Slim::Display::Lib::Fonts::string($client, $sfonts->{overlay}[$l]||$dfonts->{overlay}[$l], $overlay);
 					if (length($sc->{overlaybits}[$l]) > $screensize ) {
 						$sc->{overlaybits}[$l] = substr($sc->{overlaybits}[$l], 0, $screensize);
 					}
@@ -312,7 +312,7 @@ sub render {
 				if (defined($screen->{center}[$l]) &&
 					(!defined($sc->{center}[$l]) || ($screen->{center}[$l] ne $sc->{center}[$l]))) {
 					$sc->{center}[$l] = $screen->{center}[$l];
-					my $center = Slim::Display::Lib::Fonts::string($sfonts->{center}[$l]||$dfonts->{center}[$l], $screen->{center}[$l]);
+					my $center = Slim::Display::Lib::Fonts::string($client, $sfonts->{center}[$l]||$dfonts->{center}[$l], $screen->{center}[$l]);
 					$center = chr(0) x ( int( ($screensize-length($center)) / ($display->bytesPerColumn()*2) )
 										 * $display->bytesPerColumn() ) . $center;
 					$sc->{centerbits}[$l] = substr($center, 0, $screensize);
@@ -331,7 +331,7 @@ sub render {
 				$sc->{newscroll} = 1 if ($sc->{scroll} < 2); # switching scroll mode
 				foreach my $l (0..$maxLine) {
 					if (exists($screen->{ticker}[$l]) && defined($screen->{ticker}[$l])) {
-						$tickerbits |= Slim::Display::Lib::Fonts::string($sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{ticker}[$l]);
+						$tickerbits |= Slim::Display::Lib::Fonts::string($client, $sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{ticker}[$l]);
 						$sc->{scrollline} = $l; # overlays calculated from last scrolling ticker line
 					}
 				}
