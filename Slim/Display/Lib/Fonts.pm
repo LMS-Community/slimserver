@@ -293,7 +293,6 @@ sub loadExtent {
 }
 
 sub string {
-	my $client = shift;
 	my $defaultFontname = shift || return (0, '');
 	my $string = shift;
 	
@@ -317,10 +316,10 @@ sub string {
 		$GDBaseline = $font2TTF{$defaultFontname}->{'GDBaseline'};
 	}
 	
-	# For SB2 or newer, if the string contains any Unicode characters which exist in our bitmap,
+	# If the string contains any Unicode characters which exist in our bitmap,
 	# use the bitmap version instead of the TTF version
 	# http://forums.slimdevices.com/showthread.php?t=42087
-	if ( $string =~ /[\x{0152}-\x{2122}]/ && $client->isa('Slim::Player::Squeezebox2') ) {
+	if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
 		$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
 	}
 
