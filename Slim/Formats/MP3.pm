@@ -266,7 +266,18 @@ sub getTag {
 	
 	# We only want a 4-digit year
 	if ( defined $info->{'YEAR'} ) {
-		($info->{'YEAR'}) =~ s/.*(\d\d\d\d).*/$1/;
+		my $year = $info->{'YEAR'};
+
+		# In the case where multiple YEAR elements are 
+		# present (eg multi-value ID3v2.4) we only use
+		# the first.
+		$year = $year->[0] if ref $year eq 'ARRAY';
+		
+		if ( $year =~ /(\d\d\d\d)/ ) {
+			$year = $1;
+		}
+		
+		$info->{'YEAR'} = $year;
 	}
 
 	return $info;

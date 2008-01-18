@@ -999,6 +999,11 @@ sub _parse_v2tag {
 					#        raw_v2 = 1 => don't parse
 					#        raw_v2 = 2 => do split into arrayrefs
 					
+					# Strip off any trailing NULs, which would indicate an empty
+					# field and cause an array with no elements to be created.
+					$data =~ s/\x00+$//;
+
+					
 					if ($data =~ /\x00/ && ($raw_v2 == 2 || $raw_v2 == 0))
 					{
 						# There are embedded nuls in the string, which means an ID3v2.4
