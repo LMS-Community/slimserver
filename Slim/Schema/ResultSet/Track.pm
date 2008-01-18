@@ -65,8 +65,8 @@ sub browse {
 	my $self = shift;
 	my $find = shift;
 	my $cond = shift;
-	my $sort = shift || 'me.disc, me.tracknum, me.titlesort';
-
+	my $sort = shift || 'me.titlesort';
+	
 	my $join = '';
 
 	# Only search for audio
