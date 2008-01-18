@@ -99,10 +99,10 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	NL	Bestaande kanalen:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
-	DE	Ungültiger Feed - konnte nicht zu %s verbinden
-	EN	Invalid Feed - Can't connect to %s
-	ES	Fuente no válida - No se puede conectar a %s
-	FR	Flux incorrect. Connexion à %s impossible
-	IT	Feed non valido. Impossibile connettersi a %s
-	NL	Ongeldig kanaal - Kan geen verbinding maken met %s
+	DE	Ungültiger Feed - %s
+	EN	Invalid Feed - %s
+	ES	Fuente no válida - %s
+	FR	Flux incorrect. %s
+	IT	Feed non valido. %s
+	NL	Ongeldig kanaal - %s
 

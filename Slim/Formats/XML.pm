@@ -33,39 +33,6 @@ our $XML_CACHE_TIME = 300;
 my $log   = logger('formats.xml');
 my $prefs = preferences('server');
 
-# Get xml for a feed synchronously
-# Only used to support the web interface
-# when browsing, feeds are downloaded asynchronously, see Slim::Buttons::XMLBrowser
-sub getFeedSync {
-	my ($class, $url) = @_;
-
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => $url,
-		'create' => 0,
-	});
-
-	if (defined $http) {
-
-		my $content = $http->content;
-
-		$http->close;
-
-		return 0 unless defined $content;
-
-		my $xml = eval { xmlToHash(\$content) };
-
-		if ($@) {
-
-			logError("Failed to parse XML feed: $@");
-			return 0;
-		}
-
-		return $xml;
-	}
-
-	return 0;
-}
-
 sub getFeedAsync {
 	my $class = shift;
 	my ( $cb, $ecb, $params ) = @_;
@@ -634,7 +601,7 @@ sub xmlToHash {
 	if ($$content !~ /<\??(?:xml|rss)/) {
 
 		# Set $@, so the block below will catch it.
-		$@ = "Invalid XML feed - didn't find <xml>!\n";
+		$@ = "Invalid XML feed\n";
 
 	} else {
 		

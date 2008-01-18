@@ -83,89 +83,112 @@ sub prefs {
 }
 
 sub handler {
-	my ($class, $client, $params) = @_;
+	my ($class, $client, $params, $callback, @args) = @_;
 
-	if ($params->{'reset'}) {
+	if ( $params->{reset} ) {
 
-		$prefs->set('feeds', \@default_feeds);
-		$prefs->set('modified', 0);
+		$prefs->set( feeds => \@default_feeds );
+		$prefs->set( modified => 0 );
 
 		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(\@default_feeds);
 	}
+	
+	my @feeds = @{ $prefs->get('feeds') };
 
-	if ($params->{'saveSettings'}) {
+	if ( $params->{saveSettings} ) {
 
-		my @feeds       = @{ $prefs->get('feeds') };
-		my $newFeedUrl  = $params->{'newfeed'};
-		my $newFeedName = validateFeed($newFeedUrl);
-
-		if ($newFeedUrl && $newFeedName) {
-
-			push @feeds, {
-				'name'  => $newFeedName,
-				'value' => $newFeedUrl,
-			};
-
-		} elsif ($newFeedUrl) {
-
-			$params->{'warning'} .= sprintf Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_INVALID_FEED'), $newFeedUrl;
-			$params->{'newfeedval'} = $params->{'newfeed'};
+		if ( my $newFeedUrl  = $params->{newfeed} ) {
+			validateFeed( $newFeedUrl, {
+				cb  => sub {
+					my $newFeedName = shift;
+				
+					push @feeds, {
+						name  => $newFeedName,
+						value => $newFeedUrl,
+					};
+				
+					my $body = $class->saveSettings( $client, \@feeds, $params );
+					$callback->( $client, $params, $body, @args );
+				},
+				ecb => sub {
+					my $error = shift;
+				
+					$params->{warning}   .= Slim::Utils::Strings::string( 'SETUP_PLUGIN_RSSNEWS_INVALID_FEED', $error );
+					$params->{newfeedval} = $params->{newfeed};
+				
+					my $body = $class->saveSettings( $client, \@feeds, $params );
+					$callback->( $client, $params, $body, @args );
+				},
+			} );
+		
+			return;
 		}
+	}
 
-		my @delete = @{ ref $params->{'delete'} eq 'ARRAY' ? $params->{'delete'} : [ $params->{'delete'} ] };
+	return $class->saveSettings( $client, \@feeds, $params );
+}
 
-		for my $deleteItem (@delete) {
-			my $i = 0;
-			while ($i < scalar @feeds) {
-				if ($deleteItem eq $feeds[$i]->{'value'}) {
-					splice @feeds, $i, 1;
-					next;
-				}
-				$i++;
+sub saveSettings {
+	my ( $class, $client, $feeds, $params ) = @_;
+	
+	my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
+
+	for my $deleteItem  (@delete ) {
+		my $i = 0;
+		while ( $i < scalar @{$feeds} ) {
+			if ( $deleteItem eq $feeds->[$i]->{value} ) {
+				splice @{$feeds}, $i, 1;
+				next;
 			}
+			$i++;
 		}
-
-		$prefs->set('feeds', \@feeds);
-		$prefs->set('modified', 1);
-
-		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(\@feeds);
 	}
 
-	for my $feed (@{ $prefs->get('feeds') }) {
+	$prefs->set( feeds => $feeds );
+	$prefs->set( modified => 1 );
 
-		push @{$params->{'prefs'}->{'feeds'}}, [ $feed->{'value'}, $feed->{'name'} ];
+	Slim::Plugin::RSSNews::Plugin::updateOPMLCache($feeds);
+	
+	for my $feed ( @{$feeds} ) {
+		push @{ $params->{prefs}->{feeds} }, [ $feed->{value}, $feed->{name} ];
 	}
-
+	
 	return $class->SUPER::handler($client, $params);
 }
 
 sub validateFeed {
-	my $url = shift || return undef;
+	my ( $url, $args ) = @_;
 
-	$log->info("validating $url");
+	$log->info("validating $url...");
 
-	# this is synchronous at present
-	my $xml = Slim::Formats::XML->getFeedSync($url);
+	Slim::Formats::XML->getFeedAsync(
+		\&_validateDone,
+		\&_validateError,
+		{
+			url     => $url,
+			timeout => 10,
+			cb      => $args->{cb},
+			ecb     => $args->{ecb},
+		}
+	);
+}
 
-	if ($xml && exists $xml->{'channel'}->{'title'}) {
+sub _validateDone {
+	my ( $feed, $params ) = @_;
+	
+	my $title = $feed->{title} || $params->{url};
+	
+	$log->info( "Verified feed $params->{url}, title: $title" );
+		
+	$params->{cb}->( $title );
+}
 
-		# here for podcasts and RSS
-		return Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
-
-	} elsif ($xml && exists $xml->{'head'}->{'title'}) {
-
-		# here for OPML
-		return Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
-
-	} elsif ($xml) {
-
-		# got xml but can't find title - use url
-		return $url;
-	}
-
-	$log->warn("unable to connect to $url");
-
-	return undef;
+sub _validateError {
+	my ( $error, $params ) = @_;
+	
+	$log->error( "Error validating feed $params->{url}: $error" );
+	
+	$params->{ecb}->( $error );
 }
 
 1;
