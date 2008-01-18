@@ -102,6 +102,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    player          id|address                  <index or ID>               ?
  N    player          name                        <index or ID>               ?
  N    player          model                       <index or ID>               ?
+ N    player          isplayer                    <index or ID>               ?
  N    player          displaytype                 <index or ID>               ?
  N    players         <startindex>                <numitems>                  <tagged parameters>
 
@@ -508,6 +509,7 @@ sub init {
 	addDispatch(['player',         'id',             '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'ip',             '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'model',          '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
+	addDispatch(['player',         'isplayer',       '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'name',           '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'canpoweroff',    '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['playerpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);

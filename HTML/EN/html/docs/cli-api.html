@@ -127,6 +127,11 @@
 		to enable returning the given preference values along with each player.
 	</li>
 	<li>
+		Added the &quot;canpoweroff&quot; and &quot;isplayer&quot; tags to the &quot;<a href="#players">players</a>&quot;,
+		&quot;<a href="#players">player</a>&quot; and &quot;<a href="#serverstatus">serverstatus</a>&quot; queries. 
+		to enable returning the given preference values along with each player.
+	</li>
+	<li>
 		Added the &quot;<a href="#pref validate">pref validate</a>&quot; and
 		&quot;<a href="#playerpref validate">playerpref validate</a>&quot; queries to validate
 		preferences without setting them. 
@@ -988,6 +993,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#player model ?">player model ?</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#player isplayer ?">player isplayer ?</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#player displaytype ?">player displaytype ?</a></code></strong>
 	</li>
 	<li>
@@ -1203,6 +1211,35 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;player model 0 ?&lt;LF&gt;&quot; or "0 player model ?"
 		<br>
 		Response: &quot;player model squeezebox&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="player isplayer ?">
+	<strong>
+		<code>
+			player
+			isplayer
+			&lt;playerindex|playerid&gt;
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	Whether a player is a known player model. Currently know models are 
+	&quot;transporter&quot;, &quot;squeezebox2&quot;, 
+	&quot;squeezebox&quot;, &quot;slimp3&quot;, &quot;softsqueeze&quot;, 
+	or &quot;http&quot; (for remote streaming connections).
+	Will return 0 for streaming connections. 
+</p>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;player isplayer 0 ?&lt;LF&gt;&quot; or "0 player isplayer ?"
+		<br>
+		Response: &quot;player isplayer 1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
@@ -2221,6 +2258,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>
 			Player model. Equivalent to 
 			&quot;<a href="#player model ?">player model ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;isplayer
+		</td>
+		<td>
+			Whether a player is a known player model. Will return 0 for streaming connections. 
+			&quot;<a href="#player isplayer ?">player isplayer ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -6409,6 +6455,16 @@ in the saved playlists folder.</p>
 		<td>
 			Player model. Equivalent to 
 			&quot;<a href="#player model ?">player model ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;isplayer
+		</td>
+		<td>
+			Whether a player is a known player model. Will return 0 for streaming connections. 
+			Equivalent to 
+			&quot;<a href="#player isplayer ?">player isplayer ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>

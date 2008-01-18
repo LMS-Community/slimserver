@@ -1582,7 +1582,7 @@ sub playerXQuery {
 	$log->debug("Begin Function");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'canpoweroff']])) {
+	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'isplayer', 'canpoweroff']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1630,6 +1630,8 @@ sub playerXQuery {
 				$request->addResult("_$entity", $client->ipport());
 			} elsif ($entity eq "model") {
 				$request->addResult("_$entity", $client->model());
+			} elsif ($entity eq "isplayer") {
+				$request->addResult("_$entity", $client->isPlayer());
 			} elsif ($entity eq "displaytype") {
 				$request->addResult("_$entity", $client->vfdmodel());
 			} elsif ($entity eq "canpoweroff") {
@@ -1688,6 +1690,8 @@ sub playersQuery {
 					'name', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
 					'model', $eachclient->model());
+				$request->addResultLoop('players_loop', $cnt, 
+					'isplayer', $eachclient->isPlayer());
 				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
@@ -2629,6 +2633,8 @@ sub serverstatusQuery {
 					'canpoweroff', $eachclient->canPowerOff());
 				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
+				$request->addResultLoop('players_loop', $cnt, 
+					'isplayer', ($eachclient->isPlayer() || 0));
 				$request->addResultLoop('players_loop', $cnt, 
 					'player_needs_upgrade', "1")
 					if ($eachclient->needsUpgrade());
