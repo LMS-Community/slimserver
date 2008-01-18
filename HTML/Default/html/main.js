@@ -249,7 +249,7 @@ PlayerChooser = function(){
 									playerInfo.playerid,
 									{
 										name: playerInfo.name,
-										model: playerInfo.model
+										isplayer: playerInfo.isplayer
 									}
 								);
 
@@ -418,7 +418,7 @@ PlayerChooser = function(){
 				syncedPlayers = responseText.result._sync;
 			}
 
-			var playerSelection = '<p>' + strings['synchronize_desc'] + '</p><form name="syncgroup" id="syncgroup">';
+			var playerSelection = '<form name="syncgroup" id="syncgroup">';
 			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked} {disabled}>&nbsp;{name}<br>');
 			tpl.compile();
 
@@ -429,7 +429,7 @@ PlayerChooser = function(){
 						name: data.name,
 						id: id,
 						checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked' : '',
-						disabled: data.model == 'http' ? 'disabled' : ''
+						disabled: data.isplayer ? '' : 'disabled'
 					});
 			});
 			playerSelection += '</form>';
@@ -441,12 +441,12 @@ PlayerChooser = function(){
 				closable: false,
 				collapsible: false,
 				width: 500,
-				height: 200 + playerList.getCount() * 13,
+				height: 150 + playerList.getCount() * 13,
 				resizeHandles: 'se'
 			});
 
 			dlg.addButton(strings['synchronize'], function(){ PlayerChooser.sync(syncedPlayers, dlg) }, dlg);
-			//dlg.addButton(strings['close'], dlg.destroy, dlg);
+			dlg.addButton(strings['cancel'], dlg.destroy, dlg);
 			dlg.addKeyListener(27, dlg.destroy, dlg);
 
 			dlg.body.update(playerSelection);
@@ -459,7 +459,7 @@ PlayerChooser = function(){
 			for(var i = 0; i < players.length; i++) {
 				// sync if not synced yet
 				if (players[i].checked && syncedPlayers.indexOf(players[i].id) < 0)
-					Utils.processCommand({ params: [ players[i].id, [ 'sync', playerid ] ] });
+					Utils.processCommand({ params: [ playerid, [ 'sync', players[i].id ] ] });
 
 				// unsync if no longer checked
 				else if (syncedPlayers.indexOf(parseInt(players[i].id)) >= 0 & !players[i].checked)
