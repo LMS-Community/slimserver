@@ -41,6 +41,7 @@ sub basicSearch {
 	$params->{'browse_list'}  = " ";
 	$params->{'numresults'}   = -1;
 	$params->{'browse_items'} = [];
+	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
 
 	# short circuit
 	if (!defined($query) || ($params->{'manualSearch'} && $query eq '')) {
@@ -108,6 +109,7 @@ sub advancedSearch {
 	$params->{'browse_list'}  = " ";
 	$params->{'liveSearch'}   = 0;
 	$params->{'browse_items'} = [];
+	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
 
 	# Prep the date format
 	$params->{'dateFormat'} = Slim::Utils::DateTime::shortDateF();

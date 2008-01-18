@@ -504,7 +504,7 @@ sub browsedb {
 	$params->{'descend'}    = $descend;
 	$params->{'levelName'}  = lc($levelName);
 	$params->{'attributes'} = _attributesToKeyValuePair(\%attrs);
-	$params->{'pageicon'}   = $Slim::Web::Pages::additionalLinks{icons}{$title};
+	$params->{'icons'}      = $Slim::Web::Pages::additionalLinks{icons};
 	
 
 	# Don't show stats when only showing playlists - extra queries that aren't needed.

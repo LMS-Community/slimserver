@@ -53,7 +53,8 @@ sub browsetree {
 	}
 
 	# Page title
-	$params->{'browseby'} = 'MUSIC';
+	$params->{'browseby'} = 'BROWSE_MUSIC_FOLDER';
+	$params->{'icons'}    = $Slim::Web::Pages::additionalLinks{icons};
 
 	for (my $i = 0; $i < scalar @levels; $i++) {
 
