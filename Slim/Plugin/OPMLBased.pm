@@ -34,7 +34,7 @@ sub initCLI {
 	
 	my $cliQuery = sub {
 	 	my $request = shift;
-		Slim::Buttons::XMLBrowser::cliQuery( $args{tag}, $args{feed}, $request );
+		Slim::Buttons::XMLBrowser::cliQuery( $args{tag}, $class->feed( $request->client ), $request );
 	};
 	
 	# CLI support
