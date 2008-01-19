@@ -314,13 +314,13 @@ sub string {
 		$useTTFNow  = 1;
 		$GDFontSize = $font2TTF{$defaultFontname}->{'GDFontSize'};
 		$GDBaseline = $font2TTF{$defaultFontname}->{'GDBaseline'};
-	}
-	
-	# If the string contains any Unicode characters which exist in our bitmap,
-	# use the bitmap version instead of the TTF version
-	# http://forums.slimdevices.com/showthread.php?t=42087
-	if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
-		$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
+
+		# If the string contains any Unicode characters which exist in our bitmap,
+		# use the bitmap version instead of the TTF version
+		# http://forums.slimdevices.com/showthread.php?t=42087
+		if ( $string =~ /[\x{0152}-\x{2122}]/ ) {
+			$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
+		}
 	}
 
 	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
