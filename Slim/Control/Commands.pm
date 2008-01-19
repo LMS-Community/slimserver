@@ -461,11 +461,12 @@ sub nameCommand {
 		return;
 	}	
 
-	$prefs->client($client)->set('playername', $newValue);
-	
-	# refresh Jive menu
-	Slim::Control::Jive::playerSettingsMenu($client);
-	Slim::Control::Jive::playerPower($client);
+	if ($newValue != 0) {
+		$prefs->client($client)->set('playername', $newValue);
+		# refresh Jive menu
+		Slim::Control::Jive::playerSettingsMenu($client);
+		Slim::Control::Jive::playerPower($client);
+	}
 
 	$request->setStatusDone();
 }
