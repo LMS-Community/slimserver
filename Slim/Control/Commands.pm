@@ -456,12 +456,13 @@ sub nameCommand {
 	my $client = $request->client();
 	my $newValue = $request->getParam('_newvalue');
 
+	$log->warn("PLAYERNAMECHANGE: " . $newValue);
 	if (!defined $newValue || !defined $client) {
 		$request->setStatusBadParams();
 		return;
 	}	
 
-	if ($newValue != 0) {
+	if ($newValue ne "0") {
 		$prefs->client($client)->set('playername', $newValue);
 		# refresh Jive menu
 		Slim::Control::Jive::playerSettingsMenu($client);
