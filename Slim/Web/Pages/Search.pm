@@ -262,7 +262,7 @@ sub advancedSearch {
 	);
 
 	# Create a resultset - have fillInSearchResults do the actual search.
-	my $rs  = Slim::Schema->search('Track', \%query, \%attrs);
+	my $rs  = Slim::Schema->search('Track', \%query, \%attrs)->distinct;
 
 	if (defined $client && !$params->{'start'}) {
 
