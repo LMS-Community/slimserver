@@ -14759,12 +14759,12 @@ JIVE_SAVEPLAYLIST_HELP
 	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om de playlist op te slaan.
 
 JIVE_ALLOWEDCHARS_WITHCAPS
-	DE	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
-	EN	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
-	ES	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
-	FR	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
-	IT	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
-	NL	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	DE	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	EN	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
+	ES	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	FR	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	IT	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	NL	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
 
 JIVE_ALLOWEDCHARS_NOCAPS
 	DE	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
