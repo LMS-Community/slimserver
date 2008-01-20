@@ -4196,6 +4196,7 @@ sub _addJiveSong {
 	if ( $track->remote ) {
 		my $url     = $track->url;
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		$request->addResultLoop($loop, $count, 'trackType', 'radio');
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
 			
@@ -4204,6 +4205,8 @@ sub _addJiveSong {
 				$request->addResult( 'current_title' => undef );
 			}
 		}
+	} else {
+		$request->addResultLoop($loop, $count, 'trackType', 'local');
 	}
 	
 	my $text = $remoteMeta->{title} || $track->title;
@@ -4219,6 +4222,7 @@ sub _addJiveSong {
 		$album = $remoteMeta->{album};
 	}
 	
+
 	$text .= ( defined $album ) ? "\n$album" : '';
 	
 	my $artist;
