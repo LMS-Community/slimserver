@@ -288,7 +288,7 @@ sub fade_volume {
 
 	my $int = 0.05; # interval between volume updates
 
-	my $vol = abs($prefs->client($client->masterOrSelf)->get("volume"));
+	my $vol = abs($prefs->client($client)->get("volume"));
 	
 	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);
 
