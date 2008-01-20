@@ -1,7 +1,7 @@
 package Class::Accessor;
 require 5.00502;
 use strict;
-$Class::Accessor::VERSION = '0.22';
+$Class::Accessor::VERSION = '0.31';
 
 =head1 NAME
 
@@ -142,7 +142,7 @@ for details.
 sub mk_accessors {
     my($self, @fields) = @_;
 
-    $self->_mk_accessors('make_accessor', @fields);
+    $self->_mk_accessors('rw', @fields);
 }
 
 
@@ -150,23 +150,52 @@ sub mk_accessors {
     no strict 'refs';
 
     sub _mk_accessors {
-        my($self, $maker, @fields) = @_;
+        my($self, $access, @fields) = @_;
         my $class = ref $self || $self;
-
-        # So we don't have to do lots of lookups inside the loop.
-        $maker = $self->can($maker) unless ref $maker;
+        my $ra = $access eq 'rw' || $access eq 'ro';
+        my $wa = $access eq 'rw' || $access eq 'wo';
 
         foreach my $field (@fields) {
-            if( $field eq 'DESTROY' ) {
-                $self->carp("Having a data accessor named DESTROY  in '$class' is unwise.");
+            my $accessor_name = $self->accessor_name_for($field);
+            my $mutator_name = $self->mutator_name_for($field);
+            if( $accessor_name eq 'DESTROY' or $mutator_name eq 'DESTROY' ) {
+                $self->_carp("Having a data accessor named DESTROY  in '$class' is unwise.");
             }
-
-            my $accessor = $self->$maker($field);
-            my $alias = "_${field}_accessor";
-            *{"${class}::$field"}  = $accessor unless defined &{"${class}::$field"};
-            *{"${class}::$alias"}  = $accessor unless defined &{"${class}::$alias"};
+            if ($accessor_name eq $mutator_name) {
+                my $accessor;
+                if ($ra && $wa) {
+                    $accessor = $self->make_accessor($field);
+                } elsif ($ra) {
+                    $accessor = $self->make_ro_accessor($field);
+                } else {
+                    $accessor = $self->make_wo_accessor($field);
+                }
+                unless (defined &{"${class}::$accessor_name"}) {
+                    *{"${class}::$accessor_name"} = $accessor;
+                }
+                if ($accessor_name eq $field) {
+                    # the old behaviour
+                    my $alias = "_${field}_accessor";
+                    *{"${class}::$alias"} = $accessor unless defined &{"${class}::$alias"};
+                }
+            } else {
+                if ($ra and not defined &{"${class}::$accessor_name"}) {
+                    *{"${class}::$accessor_name"} = $self->make_ro_accessor($field);
+                }
+                if ($wa and not defined &{"${class}::$mutator_name"}) {
+                    *{"${class}::$mutator_name"} = $self->make_wo_accessor($field);
+                }
+            }
         }
     }
+
+    sub follow_best_practice {
+        my($self) = @_;
+        my $class = ref $self || $self;
+        *{"${class}::accessor_name_for"}  = \&best_practice_accessor_name_for;
+        *{"${class}::mutator_name_for"}  = \&best_practice_mutator_name_for;
+    }
+
 }
 
 =head2 mk_ro_accessors
@@ -192,7 +221,7 @@ set().
 sub mk_ro_accessors {
     my($self, @fields) = @_;
 
-    $self->_mk_accessors('make_ro_accessor', @fields);
+    $self->_mk_accessors('ro', @fields);
 }
 
 =head2 mk_wo_accessors
@@ -220,7 +249,7 @@ for orthoginality and because its easy to implement.
 sub mk_wo_accessors {
     my($self, @fields) = @_;
 
-    $self->_mk_accessors('make_wo_accessor', @fields);
+    $self->_mk_accessors('wo', @fields);
 }
 
 =head1 DETAILS
@@ -243,6 +272,42 @@ Very simple.  All it does is determine if you're wanting to set a
 value or get a value and calls the appropriate method.
 Class::Accessor provides default get() and set() methods which
 your class can override.  They're detailed later.
+
+=head2 follow_best_practice
+
+In Damian's Perl Best Practices book he recommends separate get and set methods
+with the prefix set_ and get_ to make it explicit what you intend to do.  If you
+want to create those accessor methods instead of the default ones, call:
+
+    __PACKAGE__->follow_best_practice
+
+=head2 accessor_name_for / mutator_name_for
+
+You may have your own crazy ideas for the names of the accessors, so you can
+make those happen by overriding C<accessor_name_for> and C<mutator_name_for> in
+your subclass.  (I copied that idea from Class::DBI.)
+
+=cut
+
+sub best_practice_accessor_name_for {
+    my ($class, $field) = @_;
+    return "get_$field";
+}
+
+sub best_practice_mutator_name_for {
+    my ($class, $field) = @_;
+    return "set_$field";
+}
+
+sub accessor_name_for {
+    my ($class, $field) = @_;
+    return $field;
+}
+
+sub mutator_name_for {
+    my ($class, $field) = @_;
+    return $field;
+}
 
 =head2 Modifying the behavior of the accessor
 
@@ -412,42 +477,40 @@ Class::Accessor does not employ an autoloader, thus it is much faster
 than you'd think.  Its generated methods incur no special penalty over
 ones you'd write yourself.
 
-Here are Schwern's results of benchmarking Class::Accessor,
-Class::Accessor::Fast, a hand-written accessor, and direct hash access.
+  accessors:
+               Rate   Basic Average    Fast  Faster  Direct
+  Basic    189150/s      --    -42%    -51%    -55%    -89%
+  Average  327679/s     73%      --    -16%    -22%    -82%
+  Fast     389212/s    106%     19%      --     -8%    -78%
+  Faster   421646/s    123%     29%      8%      --    -76%
+  Direct  1771243/s    836%    441%    355%    320%      --
 
-  Benchmark: timing 500000 iterations of By Hand - get, By Hand - set, 
-    C::A - get, C::A - set, C::A::Fast - get, C::A::Fast - set, 
-    Direct - get, Direct - set...
+  mutators:
+               Rate   Basic Average    Fast  Faster  Direct
+  Basic    173769/s      --    -34%    -53%    -59%    -90%
+  Average  263046/s     51%      --    -29%    -38%    -85%
+  Fast     371158/s    114%     41%      --    -13%    -78%
+  Faster   425821/s    145%     62%     15%      --    -75%
+  Direct  1699081/s    878%    546%    358%    299%      --
 
-  By Hand - get:  4 wallclock secs ( 5.09 usr +  0.00 sys =  5.09 CPU) 
-                  @ 98231.83/s (n=500000)
-  By Hand - set:  5 wallclock secs ( 6.06 usr +  0.00 sys =  6.06 CPU) 
-                  @ 82508.25/s (n=500000)
-  C::A - get:  9 wallclock secs ( 9.83 usr +  0.01 sys =  9.84 CPU) 
-               @ 50813.01/s (n=500000)
-  C::A - set: 11 wallclock secs ( 9.95 usr +  0.00 sys =  9.95 CPU) 
-               @ 50251.26/s (n=500000)
-  C::A::Fast - get:  6 wallclock secs ( 4.88 usr +  0.00 sys =  4.88 CPU) 
-                     @ 102459.02/s (n=500000)
-  C::A::Fast - set:  6 wallclock secs ( 5.83 usr +  0.00 sys =  5.83 CPU) 
-                     @ 85763.29/s (n=500000)
-  Direct - get:  0 wallclock secs ( 0.89 usr +  0.00 sys =  0.89 CPU) 
-                 @ 561797.75/s (n=500000)
-  Direct - set:  2 wallclock secs ( 0.87 usr +  0.00 sys =  0.87 CPU) 
-                 @ 574712.64/s (n=500000)
+Class::Accessor::Fast is faster than methods written by an average programmer
+(where "average" is based on Schwern's example code).
 
-So Class::Accessor::Fast is just as fast as one you'd write yourself
-while Class::Accessor is twice as slow, a price paid for flexibility.
-Direct hash access is about six times faster, but provides no
-encapsulation and no flexibility.
+Class::Accessor is slower than average, but more flexible.
 
-Of course, its not as simple as saying "Class::Accessor is twice as
-slow as one you write yourself".  These are benchmarks for the
-simplest possible accessor, if your accessors do any sort of
-complicated work (such as talking to a database or writing to a file)
-the time spent doing that work will quickly swamp the time spend just
-calling the accessor.  In that case, Class::Accessor and the ones you
-write will tend to be just as fast.
+Class::Accessor::Faster is even faster than Class::Accessor::Fast.  It uses an
+array internally, not a hash.  This could be a good or bad feature depending on
+your point of view.
+
+Direct hash access is, of course, much faster than all of these, but it
+provides no encapsulation.
+
+Of course, its not as simple as saying "Class::Accessor is slower than
+average".  These are benchmarks for a simple accessor.  If your accessors do
+any sort of complicated work (such as talking to a database or writing to a
+file) the time spent doing that work will quickly swamp the time spend just
+calling the accessor.  In that case, Class::Accessor and the ones you write
+will be roughly the same speed.
 
 
 =head1 EXAMPLES
@@ -580,7 +643,7 @@ instead of the expected SUPER::email().
 
 =head1 AUTHORS
 
-Copyright 2005 Marty Pauley <marty+perl@kasei.com>
+Copyright 2007 Marty Pauley <marty+perl@kasei.com>
 
 This program is free software; you can redistribute it and/or modify it under
 the same terms as Perl itself.  That means either (a) the GNU General Public
@@ -592,7 +655,7 @@ Michael G Schwern <schwern@pobox.com>
 
 =head2 THANKS
 
-Liz, for performance tweaks.
+Liz and RUZ for performance tweaks.
 
 Tels, for his big feature request/bug report.
 
