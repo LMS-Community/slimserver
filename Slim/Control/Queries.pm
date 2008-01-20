@@ -4149,7 +4149,7 @@ sub _addJivePlaylistControls {
 	);
 
 	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon', '/html/images/playlist.png');
+	$request->addResultLoop($loop, $count, 'icon', '/html/images/blank.png');
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
@@ -4177,7 +4177,7 @@ sub _addJivePlaylistControls {
 
 	$text = Slim::Utils::Strings::string('SAVE_PLAYLIST');
 	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon', '/html/images/playlist.png');
+	$request->addResultLoop($loop, $count, 'icon', '/html/images/blank.png');
 	$request->addResultLoop($loop, $count, 'input', $input);
 	$request->addResultLoop($loop, $count, 'actions', $actions);
 	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
