@@ -289,13 +289,15 @@ sub fade_volume {
 	my $int = 0.05; # interval between volume updates
 
 	my $vol = abs($prefs->client($client)->get("volume"));
+	my $now = Time::HiRes::time();
 	
 	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);
 
 	$client->_fadeVolumeUpdate( {
 		'startVol' => ($fade > 0) ? 0 : $vol,
 		'endVol'   => ($fade > 0) ? $vol : 0,
-		'startTime'=> Time::HiRes::time(),
+		'startTime'=> $now,
+		'endTime'  => Slim::Player::Sync::isSynced($client) ? $now + $fade : undef,
 		'int'      => $int,
 		'rate'     => ($vol && $fade) ? $vol / $fade : 0,
 		'cb'       => $callback,
@@ -325,11 +327,21 @@ sub _fadeVolumeUpdate {
 		|| ( $rate > 0 && $f->{'vol'} > $f->{'endVol'} )
 	) {
 
-		# reached end of fade
+		# reached end of fade - set final volume
 		$client->volume($f->{'endVol'}, 1);
 
 		if ($f->{'cb'}) {
-			&{$f->{'cb'}}(@{$f->{'cbargs'}});
+			
+			if ( $f->{'endTime'} && $f->{'endTime'} > $now ) {
+
+				# delay the callback until endTime so it occurs at approx same time as other synced players
+				my $endTime = delete $f->{'endTime'};
+				Slim::Utils::Timers::setHighTimer($client, $endTime, \&_fadeVolumeUpdate, $f);
+
+			} else {
+
+				&{$f->{'cb'}}(@{$f->{'cbargs'}});
+			}
 		}
 
 	} else {
