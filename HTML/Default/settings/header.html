@@ -71,8 +71,10 @@
 					[% END %]
 				);
 
-				try { parent.Utils.setCookie('SqueezeCenter-advancedsettings', '[% additionalLinks.setup.$page %]'); }
-				catch(e) {}
+				[% IF !needsClient %]
+					try { parent.Utils.setCookie('SqueezeCenter-advancedsettings', '[% additionalLinks.setup.$page %]'); }
+					catch(e) {}
+				[% END %]
 
 			[% END %]
 
