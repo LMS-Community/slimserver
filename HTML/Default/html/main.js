@@ -687,7 +687,7 @@ Player = function(){
 				scope: this,
 				handler: function(){
 					if (playerStatus.power)
-						this.playerControl(['playlist', 'index', '+1']);
+						this.playerControl(['button', 'jump_fwd']);
 				}
 			});
 
@@ -1223,7 +1223,7 @@ Slim.RewButton = function(renderTo, config){
 
 		handler: function(){
 			if (this.power)
-				Player.playerControl(['playlist', 'index', '-1']);
+				Player.playerControl(['button', 'jump_rew']);
 		},
 
 		updateHandler: function(result){
