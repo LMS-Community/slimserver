@@ -437,6 +437,7 @@ sub processCoverArtRequest {
 
 		$log->warn("Can't use GD for $actualContentType ($path)");
 		$body = \$imageData;
+		$requestedContentType = $actualContentType;
 	}
 
 	if ($cacheKey) {
