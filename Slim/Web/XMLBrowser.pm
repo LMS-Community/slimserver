@@ -345,14 +345,16 @@ sub handleFeed {
 	}
 	else {
 		
-		# Check if any of our items contain audio, so we can display an
-		# 'All Songs' link
+		# Check if any of our items contain audio as well as a duration value, so we can display an
+		# 'All Songs' link.  Lists with no duration values are lists of radio stations where it doesn't
+		# make sense to have an All Songs link. (bug 6531)
 		for my $item ( @{ $stash->{'items'} } ) {
-			if ( ( $item->{'type'} && $item->{'type'} eq 'audio' ) || $item->{'enclosure'} || $item->{'play'} ) {
-				$stash->{'itemsHaveAudio'} = 1;
-				$stash->{'currentIndex'}   = join '.', @index;
-				last;
-			}
+			next unless ( $item->{'type'} && $item->{'type'} eq 'audio' ) || $item->{'enclosure'} || $item->{'play'};
+			next unless defined $item->{'duration'};
+
+			$stash->{'itemsHaveAudio'} = 1;
+			$stash->{'currentIndex'}   = join '.', @index;
+			last;
 		}
 		
 		my $itemCount = scalar @{ $stash->{'items'} };
