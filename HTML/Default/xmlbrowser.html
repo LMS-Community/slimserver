@@ -50,7 +50,7 @@ END %]
 	[% END %]
 [% END # filter -%]
 
-[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]<div id="mainbody">[% END %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll = (streaminfo ? 0 : 1) %][% IF !streaminfo %]<div id="mainbody">[% END %][% END %]
 
 [% IF msg %][% WRAPPER contentcontainer %]
 	<div class="message">[% msg %]</div>
@@ -58,13 +58,13 @@ END %]
 
 [% IF streaminfo %]
 		[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
-			[% item = BLOCK %]
-				[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %]
-				[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %]
-			[% END; title = ""; PROCESS songInfoItem %]
+		<div id="songInfoPlayLinks">
+			[% WRAPPER playlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %]
+			[% WRAPPER addlink %]onclick="Utils.processCommandURL('[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %]
+		</div>
 		[% END; END %]
 
-		[% PROCESS xmlbrowser_details.html %]
+	[% PROCESS xmlbrowser_details.html %]
 [% END %]
 
 [% IF search;
@@ -185,5 +185,5 @@ END %]
 	<div>[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
 [%- END; END -%]
 
-[% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
+[% IF NOT ajaxUpdate %][% IF !streaminfo %]</div>[% END %][% PROCESS pagefooter.html %][% END %]
 
