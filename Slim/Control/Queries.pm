@@ -3257,7 +3257,7 @@ sub songinfoQuery {
 			if ($insertPlay) {
 			
 				# insert first item if needed
-				if ($start == 0) {
+				if ($start == 0 && !$track->remote ) {
 					# setup hash for different items between play and add
 					my %items = ( 	
 						'play' => {
