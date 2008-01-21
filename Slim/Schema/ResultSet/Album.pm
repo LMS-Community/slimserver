@@ -171,7 +171,8 @@ sub descendTrack {
 
 		if ($key =~ /^(year)\.\w+$/) {
 
-			$cond->{"me.$1"} = $value;
+			# we want to filter on the track level, not album level (bug 5748)
+			$cond->{"tracks.$1"} = $value;
 		}
 	}
 
