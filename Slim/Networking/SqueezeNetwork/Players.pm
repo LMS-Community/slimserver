@@ -46,8 +46,6 @@ sub init {
 	# wait a few seconds before updating to give the player time to connect to SQN
 	Slim::Control::Request::subscribe(
 		sub {
-			
-			Slim::Utils::Timers::killTimers( undef, \&fetch_players );
 			Slim::Utils::Timers::setTimer(
 				undef,
 				time() + 5,
@@ -183,9 +181,6 @@ sub _disconnect_player_done {
 	if ( $log->is_debug ) {
 		$log->debug( "Disconect SN player response: " . Data::Dump::dump( $res ) );
 	}
-	
-	# Refresh the list of players
-	fetch_players();
 	
 	$request->setStatusDone();
 }
