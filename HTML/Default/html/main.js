@@ -288,6 +288,7 @@ PlayerChooser = function(){
 											new Ext.menu.Item({
 												text: playerInfo.name,
 												value: playerInfo.id,
+												playerid: playerInfo.playerid,
 												cls: 'playerList',
 												handler: PlayerChooser.switchSQNPlayer
 											})
@@ -405,6 +406,15 @@ PlayerChooser = function(){
 				function(btn){
 					if (btn == 'yes') {
 						Utils.processCommand({ params: ['', ['squeezenetwork', 'disconnect', ev.value ]] });
+						var update = new Ext.util.DelayedTask(function(ev){
+							PlayerChooser.update();
+							PlayerChooser.selectPlayer({
+								text: ev.text,
+								value: ev.playerid,
+								canpoweroff: true
+							});
+						}, this, new Array(ev));
+						update.delay(3000); 
 					}
 				}
 			);

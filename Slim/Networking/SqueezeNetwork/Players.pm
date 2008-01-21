@@ -36,6 +36,26 @@ sub init {
 		['squeezenetwork', 'disconnect', '_id'],
 		[0, 1, 0, \&disconnect_player]
 	);
+
+	# Subscribe to player connect/disconnect messages
+	Slim::Control::Request::subscribe(
+		\&fetch_players,
+		[['client'],['new','reconnect']]
+	);
+
+	# wait a few seconds before updating to give the player time to connect to SQN
+	Slim::Control::Request::subscribe(
+		sub {
+			
+			Slim::Utils::Timers::killTimers( undef, \&fetch_players );
+			Slim::Utils::Timers::setTimer(
+				undef,
+				time() + 5,
+				\&fetch_players,
+			);			
+		},
+		[['client'],['disconnect','forget']]
+	);
 }
 
 sub shutdown {
