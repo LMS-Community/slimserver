@@ -210,6 +210,14 @@ sub loadDataForTrack {
 
 	@{$client->trackInfoLines}   = ();
 	@{$client->trackInfoContent} = ();
+	
+	# Bug 6704
+	# Always get the latest data out of the database instead of using cached
+	# playlist track object.  This allows a stream title to change dynamically
+	# for example
+	if ( blessed($url) ) {
+		$url = $url->url;
+	}
 
 	my $track = Slim::Schema->rs('Track')->objectForUrl($url);
 
