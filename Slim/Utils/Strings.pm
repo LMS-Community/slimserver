@@ -342,7 +342,8 @@ sub storeString {
 		$log->debug("Language $currentLang using $failsafeLang for $name in $file");
 	}
 
-	if ($args->{'storeFailsafe'}) {
+	if ($args->{'storeFailsafe'} && defined $curString->{$failsafeLang}) {
+
 		$strings->{$failsafeLang}->{$name} = $curString->{$failsafeLang};
 	}
 }
