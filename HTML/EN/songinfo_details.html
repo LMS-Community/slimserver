@@ -21,6 +21,15 @@
 	<div id="linkedSongInfoItems">
 		[% IF songInfoPlayLinks; songInfoPlayLinks; END %]
 
+		[%- albumInfo = BLOCK%]
+			[% IF itemobj.album %] 
+				[% item = BLOCK %]<a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a>[% END %]
+				[% PROCESS songInfoItem title = "ALBUM" %]
+			[% END %]
+		[% END %]
+
+		[% IF albumFirst; albumInfo; END %]
+
 		[% FOREACH role = itemobj.contributorRoles.sort %]
 	
 			[% contributors = itemobj.contributorsOfType(role) || itemobj.album.artistsForRoles(role) %]
@@ -42,11 +51,8 @@
 			[% END %]
 	
 		[% END %]
-	
-		[% IF itemobj.album %] 
-			[% item = BLOCK %]<a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a>[% END %]
-			[% PROCESS songInfoItem title = "ALBUM" %]
-		[% END %]
+
+		[% IF !albumFirst; albumInfo; END %]
 	
 		[% IF itemobj.genres %] [% genresHTML = [] %]
 			[% FOREACH genre = itemobj.genres %]
