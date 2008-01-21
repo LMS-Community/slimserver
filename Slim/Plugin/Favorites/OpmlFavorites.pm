@@ -160,17 +160,16 @@ sub add {
 	my $entry = {
 		'text' => $title,
 		'URL'  => $url,
+		'type' => $type || 'audio',
 	};
 
 	if ($parser) {
-
 		$entry->{'parser'} = $parser;
-		$entry->{'type'}   = $type if $type;
-
-	} elsif ($url !~ /\.opml$/) {
-
-		$entry->{'type'} = 'audio';
-	};
+	}
+	
+	if ( $url =~ /\.opml$/ ) {
+		delete $entry->{'type'};
+	}
 
 	# add it to end of top level
 	push @{$class->toplevel}, $entry;
