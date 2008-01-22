@@ -1195,10 +1195,6 @@ sub trackStartTime {
 sub lastActivityTime {
 	my $r = shift;
 	@_ ? ($r->[24] = shift) : $r->[24];
-	
-	warn "lastActivity: $r->[24]\n";
-	
-	return $r->[24];
 }
 
 sub playlist {
@@ -1329,7 +1325,6 @@ sub epochirtime {
 	if ( @_ ) {
 		# Also update lastActivityTime (24) on IR events
 		$r->[54] = $r->[24] = shift;
-		warn "last active: $r->[24]\n";
 	}
 	
 	return $r->[54];
