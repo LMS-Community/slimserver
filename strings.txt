@@ -7990,7 +7990,7 @@ CLEAR_PLAYLIST
 	CS	Vyčistit playlist
 	DA	Nulstil playlisten
 	DE	Wiedergabeliste leeren
-	EN	Clear playlist
+	EN	Clear Playlist
 	ES	Borrar lista de reproducción
 	FI	Tyhjennä soittolista
 	FR	Vider la liste de lecture
