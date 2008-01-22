@@ -595,6 +595,11 @@ sub gotOPML {
 					if ( $item->{'bitrate'} ) {
 						push @details, '{BITRATE}: ' . $item->{'bitrate'} . ' {KBPS}';
 					}
+					
+					if ( my $duration = $item->{'duration'} ) {
+						$duration = sprintf('%s:%02s', int($duration / 60), $duration % 60);
+						push @details, '{LENGTH}: ' . $duration;
+					}
 
 					if ( $item->{'listeners'} ) {
 						# Shoutcast
@@ -1450,11 +1455,125 @@ sub _cliQuery_done {
 					}
 										
 					if ($menuMode) {
-						while ( my ($key, $value) = each(%hash)) {
-							$request->addResultLoop($loopname, $cnt, 'text', $key . ":" . $value);
+						my ($play_string, $add_string);
+						if ( $hash{duration} ) {
+							# Items with a duration are songs
+							$play_string = $request->client->string('JIVE_PLAY_THIS_SONG');
+							$add_string  = $request->client->string('JIVE_ADD_THIS_SONG');
+						}
+						else {
+							# Items without duration are streams
+							$play_string = $request->client->string('PLAY');
+							$add_string  = $request->client->string('ADD');
+						}
+						
+						# setup hash for different items between play and add
+						my %items = (
+							'play' => {
+								'string'  => $play_string,
+								'style'   => 'itemplay',
+								'cmd'     => 'load',
+							},
+							'add' => {
+								'string'  => $add_string,
+								'style'   => 'itemadd',
+								'cmd'     => 'add',
+							},
+						);
+						
+						for my $mode ( 'play', 'add' ) {
+							my $actions = {
+								'do' => {
+									'player' => 0,
+									'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
+									'params' => {
+										'item_id' => $item_id,
+									},
+								},
+								'play' => {
+									'player' => 0,
+									'cmd'    => [$query, 'playlist', $items{$mode}->{'cmd'}],
+									'params' => {
+										'item_id' => $item_id,
+									},
+								},
+								# add always adds
+								'add' => {
+									'player' => 0,
+									'cmd'    => [$query, 'playlist', 'add'],
+									'params' => {
+										'item_id' => $item_id,
+									},
+								},
+							};
+							$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
+							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+							$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
 							$cnt++;
 						}
-						$request->addResult('count', $cnt)
+						
+						if ( my $title = $hash{name} ) {
+							my $text = $request->client->string('TITLE') . ": $title";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $url = $hash{url} ) {
+							my $text = $request->client->string('URL') . ": $url";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $bitrate = $hash{bitrate} ) {
+							my $text = $request->client->string('BITRATE') . ": $bitrate " . $request->client->string('KBPS');
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $duration = $hash{duration} ) {
+							$duration = sprintf('%s:%02s', int($duration / 60), $duration % 60);
+							my $text = $request->client->string('LENGTH') . ": $duration";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $listeners = $hash{listeners} ) {
+							# Shoutcast
+							my $text = $request->client->string('NUMBER_OF_LISTENERS') . ": $listeners";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $current_track = $hash{current_track} ) {
+							# Shoutcast
+							my $text = $request->client->string('NOW_PLAYING') . ": $current_track";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $genre = $hash{genre} ) {
+							# Shoutcast
+							my $text = $request->client->string('GENRE') . ": $genre";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+						
+						if ( my $source = $hash{source} ) {
+							# LMA
+							my $text = $request->client->string('SOURCE') . ": $source";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$cnt++;
+						}
+	
+						$request->addResult('count', $cnt);
 					}
 					
 					else {
