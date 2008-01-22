@@ -172,7 +172,6 @@ PlayerChooser = function(){
 	var playerDiscoveryTimer;
 	var playerNeedsUpgrade;
 	var playerList = new Ext.util.MixedCollection();
-	var previousPlayer;  // player which was active before SC was restarted
 
 	return {
 		init : function(){
@@ -215,7 +214,9 @@ PlayerChooser = function(){
 							(responseText.result['player count'] > 0 || responseText.result.sn_players_loop)) {
 							var playerInList = false;
 							var el;
-							var activePlayer = playerid || previousPlayer;
+
+							// if no player is given by the server, use the one which was last selected from the list
+							var activePlayer = decodeURIComponent(playerid || Utils.getCookie('SqueezeCenter-player'));
 
 							if ((el = Ext.get('playList')) && (el = el.child('div.noPlayerPanel')))
 								el.setDisplayed(false);
@@ -317,7 +318,7 @@ PlayerChooser = function(){
 							if (!playerInList)
 								PlayerChooser.selectPlayer();
 
-							else if (playerInList && !playerid && previousPlayer)
+							else if (playerInList && !playerid && Utils.getCookie('SqueezeCenter-player'))
 								PlayerChooser.selectPlayer(playerInList);
 						}
 
@@ -364,17 +365,19 @@ PlayerChooser = function(){
 		selectPlayer: function(ev){
 			var el;
 
+			// remember the selected player
+			if (ev) {
+				Utils.setCookie('SqueezeCenter-player', encodeURI(ev.value));
+			}
+
 			// currently selected player is not available. don't change anything but the button's label
-			if (!ev) {
+			else {
 				ev = {
 					text: '',
 					value: '',
 					canpoweroff: false
 				}
 			}
-
-			if (playerid)
-				previousPlayer = playerid;
 
 			playerMenu.setText(ev.text);
 			playerid = ev.value;
