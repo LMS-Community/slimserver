@@ -3505,11 +3505,7 @@ sub songinfoQuery {
 								# style correctly the title that opens for the action element
 								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
-							}
-						
-	
-							elsif ($key eq 'TYPE') {
-								$val = Slim::Utils::Strings::string($val);
+
 							}
 							elsif ($key eq 'LENGTH') {
 								$val = $track->duration();
