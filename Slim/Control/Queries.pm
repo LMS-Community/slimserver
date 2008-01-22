@@ -3304,7 +3304,7 @@ sub songinfoQuery {
 								'player' => 0,
 								'cmd' => ['playlistcontrol'],
 								'params' => {
-									'cmd' => 'load',
+									'cmd' => 'add',
 									'track_id' => $trackId,
 								},
 							},
