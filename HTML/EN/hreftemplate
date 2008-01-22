@@ -134,7 +134,7 @@ href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year
 
 [%# this is the href to the songinfo for item %]
 [% BLOCK songinfoItemHRef -%]
-href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]"
+href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]&amp;hierarchy=[% hierarchy %]&amp;level=[% level %]&amp;orderBy=[% orderBy %]&amp;album.id=[% item.itemobj.album.id %]&amp;year.id=[% item.year %][% IF artwork || artwork == 0 %]&amp;artwork=[% artwork %][% END %]&amp;genre.id=[% item.itemobj.genre.id %]&amp;contributor.id=[% item.itemobj.artist.id %]"
 [%- END %]
 
 [%# this is the href to the cover art for item %]

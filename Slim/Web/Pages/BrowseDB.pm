@@ -21,7 +21,7 @@ my $prefs = preferences('server');
 
 sub init {
 
-	Slim::Web::HTTP::addPageFunction( qr/^browsedb\.(?:htm|xml)/, \&browsedb );
+	Slim::Web::HTTP::addPageFunction( qr/^(?:songinfo|browsedb)\.(?:htm|xml)/, \&browsedb );
 	Slim::Web::HTTP::addPageFunction( qr/^browseid3\.(?:htm|xml)/, \&browseid3 );
 
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&level=0" });
@@ -213,6 +213,13 @@ sub browsedb {
 			$params->{'noEdit'} = 1;
 		}
 	}
+
+	# shortcut for songinfo page
+	if ($params->{path} eq 'songinfo.html') {
+
+		Slim::Web::Pages->addSongInfo($client, $params, 0);
+		return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
+	} 
 
 	$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
 

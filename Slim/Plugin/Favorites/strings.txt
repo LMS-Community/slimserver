@@ -16,7 +16,7 @@ FAVORITES
 FAVORITES_NOT_DEFINED
 	DE	Favorit Nr. %s existiert nicht
 	EN	Favorite #%s not defined.
-	ES	No se ha definido el favorito nº %s
+	ES	No se ha definido el favorito nº %s.
 	FR	Favori n°%s non défini
 	HE	פריט מועדף ‎#%s לא מוגדר.
 	IT	Preferito #%s non definito.
@@ -40,7 +40,7 @@ FAVORITES_PLAYING
 	ES	Reproduciendo favorito nº %s
 	FR	Lecture du favori n°%s
 	HE	השמעת פריט מועדף ‎#%s
-	IT	Riproduzione di _avour_te #%s
+	IT	Riproduzione del brano preferito #%s
 	NL	Favoriet #%s wordt afgespeeld
 	SV	Spelar favorit nr %s
 
@@ -51,8 +51,8 @@ FAVORITES_FAVORITE_NUM
 	FI	Suosikki nro
 	FR	Favori n°
 	HE	פריט מועדף #
-	IT	Preferiti #
-	NL	Favoriet nr.
+	IT	Preferito #
+	NL	Favorietnr.
 	SV	Favorit nr
 	ZH_CN	最喜爱#
 
@@ -67,16 +67,16 @@ FAVORITES_FAVORITE
 FAVORITES_RIGHT_TO_DELETE
 	DE	Favorit löschen
 	EN	Delete Favorite
-	ES	Eliminar
+	ES	Eliminar favorito
 	FR	Supprimer
 	HE	עבור ימינה למחיקה
-	IT	Eliminare
-	NL	Verwijderen
+	IT	Elimina preferito
+	NL	Favoriet verwijderen
 
 FAVORITES_NOT_A_FAVORITE
 	DE	Kein Favorit
 	EN	Not a favorite
-	ES	No es un favorito...
+	ES	No es un favorito
 	FI	Ei suosikki
 	FR	Pas un favori
 	HE	לא מוגדר כפריט מועדף
@@ -104,7 +104,7 @@ FAVORITES_ADDING
 	FI	Tallentaa suosikkeja...
 	FR	Enregistrement des favoris...
 	HE	שומר פריטים מועדפים...
-	IT	Salvataggio preferiti...
+	IT	Salvataggio preferiti in corso...
 	NL	Favorieten worden opgeslagen...
 	SV	Sparar favoriter...
 	ZH_CN	保存最喜爱的...
@@ -116,7 +116,7 @@ FAVORITES_DELETING
 	FI	Poistan suosikkia...
 	FR	Suppression du favori...
 	HE	מוחק פריטים מועדפים...
-	IT	Eliminazione di avour_te...
+	IT	Eliminazione preferito in corso...
 	NL	Favoriet wordt verwijderd...
 	SV	Raderar favoriter...
 	ZH_CN	删除最喜爱的...

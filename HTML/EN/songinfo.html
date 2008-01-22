@@ -3,18 +3,6 @@
 ELSE;
 	pagetitle = "SONG_INFO" | string;
 END %]
-[% pageicon = 'SongInfo' %]
-[% pwd_list = BLOCK %]
-	[% IF itemobj.artist.name %]
-		<a href="browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=[% itemobj.artist.id %]&amp;player=$playerURI" target="browser">[% itemobj.artist.name %]</a>
-		[% crumbSeparator %]
-	[% END %]
-	[% IF itemobj.album %]
-		<a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a>
-		[% crumbSeparator %]
-	[% END %]
-	<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% itemobj.title | html %]</a>
-[% END %]
 [% PROCESS pageheader.html %] 
 
 <div id="songInfoHeader">
