@@ -33,6 +33,13 @@ our $XML_CACHE_TIME = 300;
 my $log   = logger('formats.xml');
 my $prefs = preferences('server');
 
+sub getCachedFeed {
+	my ( $class, $url ) = @_;
+	
+	my $cache = Slim::Utils::Cache->new();
+	return $cache->get( $url . '_parsedXML' );
+}
+
 sub getFeedAsync {
 	my $class = shift;
 	my ( $cb, $ecb, $params ) = @_;
@@ -476,7 +483,7 @@ sub _parseOPMLOutline {
 		# Pull in all attributes we find
 		my %attrs;
 		for my $attr ( keys %{$itemXML} ) {
-		    next if $attr =~ /text|type|URL|xmlUrl/i;
+		    next if $attr =~ /text|type|URL|xmlUrl|outline/i;
 		    $attrs{$attr} = $itemXML->{$attr};
 	    }
 

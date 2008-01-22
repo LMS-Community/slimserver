@@ -1323,7 +1323,7 @@ sub _cliQuery_done {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
 				if ( $i =~ /\d+_(.+)/ ) {
 					$search = $1;
@@ -1334,26 +1334,37 @@ sub _cliQuery_done {
 					$subFeed->{url} =~ s/{QUERY}/$search/g;
 				}
 				
-				$log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
+				# Setup passthrough args
+				my $args = {
+					'item'         => $subFeed,
+					'url'          => $subFeed->{'url'},
+					'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
+					'parser'       => $subFeed->{'parser'},
+					'parent'       => $feed,
+					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
+					'currentIndex' => \@crumbIndex,
+					'request'      => $request,
+					'client'       => $request->client,
+					'query'        => $query,
+					'expires'      => $expires,
+					'timeout'      => $timeout,
+				};
+				
+				# Check for a cached version of this subfeed URL
+				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
+					$log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
+					_cliQuerySubFeed_done( $cached, $args );
+				}
+				else {				
+					$log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
 
-				Slim::Formats::XML->getFeedAsync(
-					\&_cliQuerySubFeed_done,
-					\&_cliQuery_error,
-					{
-						'item'         => $subFeed,
-						'url'          => $subFeed->{'url'},
-						'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
-						'parser'       => $subFeed->{'parser'},
-						'parent'       => $feed,
-						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
-						'currentIndex' => \@crumbIndex,
-						'request'      => $request,
-						'client'       => $request->client,
-						'query'        => $query,
-						'expires'      => $expires,
-						'timeout'      => $timeout,
-					},
-				);
+					Slim::Formats::XML->getFeedAsync(
+						\&_cliQuerySubFeed_done,
+						\&_cliQuery_error,
+						$args,
+					);
+				}
+				
 				return;
 			}
 
@@ -1746,22 +1757,6 @@ sub _cliQuerySubFeed_done {
 	}
 
 	$subFeed->{'fetched'} = 1;
-
-	if ($params->{'parentURL'} ne 'NONE') {
-		# parent url of 'NONE' should not be recached as we are being passed a preparsed hash
-		# re-cache the parsed XML to include the sub-feed
-		if ( Slim::Utils::Misc::shouldCacheURL( $params->{'parentURL'} ) ) {
-			my $cache   = Slim::Utils::Cache->new();
-			my $expires = defined( $feed->{'cachetime'} ) ? $feed->{'cachetime'} : $Slim::Formats::XML::XML_CACHE_TIME;
-
-			$log->info("Re-caching parsed XML for $expires seconds.");
-
-			$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
-		}
-		else {
-			$log->info( 'Not caching parsed XML for ' . $params->{'parentURL'} );
-		}
-	}
 	
 	_cliQuery_done( $parent, $params );
 }
