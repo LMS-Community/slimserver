@@ -13,6 +13,7 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
+use Slim::Networking::SqueezeNetwork;
 
 my $showProxy = 1;
 my $serverPrefs = preferences('server');
@@ -31,7 +32,7 @@ my %prefs = (
 sub new {
 	my $class = shift;
 
-	# try to connect to squeezenetwork.com to test for the need of proxy settings
+	# try to connect to SqueezeNetwork to test for the need of proxy settings
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			my $http = shift;
@@ -40,7 +41,7 @@ sub new {
 		},
 		sub {
 			my $http = shift;
-			$log->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
+			$log->error("Couldn't connect to SqueezeNetwork - do we need a proxy?\n" . $http->error);
 		},
 		{
 			timeout => 30
@@ -70,6 +71,9 @@ sub handler {
 	$paramRef->{rtl} = 1 if ($serverPrefs->get('language') eq 'HE');
 
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
+
+	# The hostname for SqueezeNetwork
+	$paramRef->{sn_server} = Slim::Networking::SqueezeNetwork->get_server("sn");
 
 	# make sure we only enforce the wizard at the very first startup
 	if ($paramRef->{saveSettings}) {

@@ -24,6 +24,37 @@ my $log   = logger('network.squeezenetwork');
 
 my $prefs = preferences('server');
 
+# This is a hashref of SqueezeNetwork server types
+#   and names.
+
+my $_Servers;
+
+sub get_server {
+	my ($class, $stype) = @_;
+
+	# One-shot initialization
+	if(!defined $_Servers) {
+		$_Servers = $prefs->get('sn_beta')
+		? {
+			sn => 'www.beta.squeezenetwork.com',
+			content => 'content.beta.squeezenetwork.com',
+			# XXX we haven't moved updates yet:
+			update => 'update.slimdevices.com',
+		}
+		: {
+			# These values are true for the moment, but should
+			#  change when the new prod racks roll out, and/or
+			#  when the sn_beta code goes prod on the existing racks
+			sn => 'www.squeezenetwork.com:3000',
+			content => 'content.us.squeezenetwork.com:8080',
+			update => 'update.slimdevices.com',
+		};
+	}
+
+	return $_Servers->{$stype}
+		|| die "No hostname known for server type '$stype'";
+}
+
 # Initialize by fetching the SN server time and storing our time difference
 sub init {
 	my $class = shift;
@@ -139,9 +170,7 @@ sub url {
 			: 'http://127.0.0.1:3000';  # Local dev
 	}
 	else {
-		# XXX: Port 3000 is the SN beta website, this will change back to 
-		# port 80 before release.
-		$base = 'http://www.squeezenetwork.com:3000';
+		$base = 'http://' . $class->get_server('sn');
 	}
 	
 	return $base . $path;

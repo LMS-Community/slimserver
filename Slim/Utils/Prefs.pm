@@ -242,6 +242,8 @@ sub init {
 		'thumbSize'             => 100,
 		# Server Settings - SqueezeNetwork
 		'sn_sync'               => 1,
+		# Use SN Beta servers
+		'sn_beta'               => 0,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
@@ -402,6 +404,7 @@ sub init {
 		$prefs->setChange( sub {
 			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
 			$cookieJar->clear( 'www.squeezenetwork.com' );
+			$cookieJar->clear( 'www.beta.squeezenetwork.com' );
 			$cookieJar->save();
 			logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );

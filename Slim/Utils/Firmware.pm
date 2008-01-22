@@ -35,6 +35,7 @@ use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
 use LWP::UserAgent;
 
+use Slim::Networking::SqueezeNetwork;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -50,7 +51,11 @@ my @models = qw( squeezebox squeezebox2 transporter );
 my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
 
 # Download location
-my $base = 'http://update.slimdevices.com/update/firmware';
+sub BASE {
+	'http://'
+	. Slim::Networking::SqueezeNetwork->get_server("update")
+	. '/update/firmware';
+}
 
 # Check interval when firmware can't be downloaded
 my $CHECK_TIME = 600;
@@ -118,7 +123,7 @@ sub init {
 	my $ok = 1;
 
 	for my $file ( keys %{$files} ) {
-		my $url = $base . '/' . $::VERSION . '/' . basename($file);
+		my $url = BASE() . '/' . $::VERSION . '/' . basename($file);
 		
 		$ok = download( $url, $file );
 		
@@ -148,7 +153,7 @@ and custom.jive.bin in the cachedir.  If these exist then these are used in pref
 
 sub init_jive {
 
-	my $url = $base . '/' . $::VERSION . '/jive.version';
+	my $url = BASE() . '/' . $::VERSION . '/jive.version';
 		
 	my $version_file   = catdir( $prefs->get('cachedir'), 'jive.version' );
 
@@ -386,7 +391,7 @@ sub downloadAsync {
 	my ( $cb, @pt ) = @_;
 	
 	# URL to download
-	my $url = $base . '/' . $::VERSION . '/' . basename($file);
+	my $url = BASE() . '/' . $::VERSION . '/' . basename($file);
 	
 	# Save to a tmp file so we can check SHA
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(

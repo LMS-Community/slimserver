@@ -7037,12 +7037,12 @@ SETUP_SN_PASSWORD_DESC
 	NL	Voer het wachtwoord voor je SqueezeNetwork-account in.
 
 SETUP_SN_INVALID_LOGIN
-	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf “<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>”.
-	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://www.squeezenetwork.com" target="_blank">I need an account</a>” to continue.
-	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://www.squeezenetwork.com" target="_blank">Necesito una cuenta</a>" para continuar.
-	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://www.squeezenetwork.com" target="_blank">Je souhaite créer un compte</a> pour continuer.
-	IT	Impossibile recuperare le informazioni account. Immettere nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://www.squeezenetwork.com" target="_blank">Nuovo account</a> per continuare.
-	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Heb je geen account, klik dan op <a href="http://www.squeezenetwork.com" target="_blank">Ik heb een account nodig</a> om verder te gaan.
+	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf “<a href="http://%s" target="_blank">Ich brauche ein Konto</a>”.
+	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://%s" target="_blank">I need an account</a>” to continue.
+	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://%s" target="_blank">Necesito una cuenta</a>" para continuar.
+	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://%s" target="_blank">Je souhaite créer un compte</a> pour continuer.
+	IT	Impossibile recuperare le informazioni account. Immettere nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://%s" target="_blank">Nuovo account</a> per continuare.
+	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Heb je geen account, klik dan op <a href="http://%s" target="_blank">Ik heb een account nodig</a> om verder te gaan.
 
 SETUP_SN_VALID_LOGIN
 	DE	Verbindung mit SqueezeNetwork wurde hergestellt.
@@ -7132,6 +7132,18 @@ SETUP_SN_REPORT_STATS_DISABLE
 	IT	No, non autorizzo la raccolta dei dati a fini statistici.
 	NL	Nee, statistieken niet rapporteren.
 
+SETUP_SN_BETA
+	EN	SqueezeNetwork Beta Testing
+
+SETUP_SN_BETA_DESC
+	EN	Switches SqueezeCenter between communicating with the Production and Beta SqueezeNetwork servers.  The two are completely separate, you may need to create an account in each one the first time you use it.  Switching to Beta here will also alter the menus on Squeezebox Classic and Transporter so that they use the Beta servers when you use "Connect to SqueezeNetwork Beta".  SqueezeCenter must be restarted for this option to take effect.
+
+SETUP_SN_BETA_ENABLE
+	EN	Use SN Beta (www.beta.squeezenetwork.com)
+
+SETUP_SN_BETA_DISABLE
+	EN	Use SN Prod (www.squeezenetwork.com)
+
 SETUP_NO_JAVASCRIPT
 	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> oder <a href="/Handheld/?skipWizard=1">Handheld</a> (für kleine Bildschirme optimiert) wählen.
 	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a> or <a href="/Handheld/?skipWizard=1">Handheld</a> (optimized for small screens).
@@ -7157,12 +7169,12 @@ SETUP_WIZARD_WELCOME
 	NL	Welkom bij de assistent voor SqueezeCenter&reg;-setup
 
 SETUP_WIZARD_WELCOME_DESC
-	DE	Vielen Dank, dass Sie sich für ein kabelloses Musiksystem von Logitech&reg; entschieden haben.<br><br>Der Assistent zum Einrichten von SqueezeCenter führt Sie durch die zum Einrichten des Players erforderlichen Schritte. Zuerst erstellen Sie eine Verbindung zu SqueezeNetwork&reg; und greifen dann auf Ihre lokale Musiksammlung zu.<br/><br/>Wenn Sie noch kein Konto für SqueezeNetwork haben, beenden Sie diesen Assistenten und richten Sie eines auf <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> ein.
-	EN	Thank you for purchasing a Logitech&reg; wireless music system.<br><br>This SqueezeCenter Setup Assistant will guide you through the steps of setting up your new player. We'll start by connecting you to SqueezeNetwork&reg;, then we'll help you find and access your local music.<br/><br/>If you haven't set up an account on SqueezeNetwork, please exit this Setup Assistant and go to <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> to create your account.
-	ES	Gracias por adquirir un sistema de música inalámbrico Logitech&reg;.<br><br>Este Asistente de configuración de SqueezeCenter le guiará en el proceso de configuración de su nuevo reproductor. Empezaremos por conectarle a SqueezeNetwork&reg; y, a continuación, le ayudaremos a encontrar y acceder a su música local.<br/><br/>Si no ha creado una cuenta en SqueezeNetwork, cierre este asistente y acceda a <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> para crear su cuenta.
-	FR	Vous venez d'acheter un système musical sans fil Logitech&reg; et nous vous en félicitons.<br><br>Cet assistant va vous guider dans la procédure de configuration de votre nouvelle platine. Vous allez d'abord pouvoir vous connecter à SqueezeNetwork&reg;, puis rechercher et accéder à votre musique locale.<br/><br/>Si vous n'avez pas configuré de compte SqueezeNetwork, quittez l'assistant et rendez-vous sur <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> pour créer un compte.
-	IT	Grazie per avere acquistato il sistema musicale senza fili Logitech&reg;.<br><br>L'Assistente configurazione SqueezeCenter assiste l'utente nella configurazione del nuovo lettore. Dopo avere descritto come connettersi a SqueezeNetwork&reg;, verrà illustrato come accedere alla raccolta musicale locale.<br/><br/>Se non è stato ancora configurato un account in SqueezeNetwork, uscire da questa procedura e visitare il sito Web <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> per creare un account personale.
-	NL	Hartelijk dank voor je aankoop van een draadloos Logitech&reg;-muzieksysteem.<br><br>Deze assistent voor SqueezeCenter-setup leidt je door de stappen om je nieuwe speler in te stellen. We verbinden je eerst met SqueezeNetwork&reg;, en helpen je dan je lokale muziek te vinden en op te roepen.<br/><br/>Als je nog geen account op SqueezeNetwork hebt, sluit je deze set-upassistent en ga je naar <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> om je account te maken.
+	DE	Vielen Dank, dass Sie sich für ein kabelloses Musiksystem von Logitech&reg; entschieden haben.<br><br>Der Assistent zum Einrichten von SqueezeCenter führt Sie durch die zum Einrichten des Players erforderlichen Schritte. Zuerst erstellen Sie eine Verbindung zu SqueezeNetwork&reg; und greifen dann auf Ihre lokale Musiksammlung zu.<br/><br/>Wenn Sie noch kein Konto für SqueezeNetwork haben, beenden Sie diesen Assistenten und richten Sie eines auf <a href="http://%s" target="_blank">%s</a> ein.
+	EN	Thank you for purchasing a Logitech&reg; wireless music system.<br><br>This SqueezeCenter Setup Assistant will guide you through the steps of setting up your new player. We'll start by connecting you to SqueezeNetwork&reg;, then we'll help you find and access your local music.<br/><br/>If you haven't set up an account on SqueezeNetwork, please exit this Setup Assistant and go to <a href="http://%s" target="_blank">%s</a> to create your account.
+	ES	Gracias por adquirir un sistema de música inalámbrico Logitech&reg;.<br><br>Este Asistente de configuración de SqueezeCenter le guiará en el proceso de configuración de su nuevo reproductor. Empezaremos por conectarle a SqueezeNetwork&reg; y, a continuación, le ayudaremos a encontrar y acceder a su música local.<br/><br/>Si no ha creado una cuenta en SqueezeNetwork, cierre este asistente y acceda a <a href="http://%s" target="_blank">%s</a> para crear su cuenta.
+	FR	Vous venez d'acheter un système musical sans fil Logitech&reg; et nous vous en félicitons.<br><br>Cet assistant va vous guider dans la procédure de configuration de votre nouvelle platine. Vous allez d'abord pouvoir vous connecter à SqueezeNetwork&reg;, puis rechercher et accéder à votre musique locale.<br/><br/>Si vous n'avez pas configuré de compte SqueezeNetwork, quittez l'assistant et rendez-vous sur <a href="http://%s" target="_blank">%s</a> pour créer un compte.
+	IT	Grazie per avere acquistato il sistema musicale senza fili Logitech&reg;.<br><br>L'Assistente configurazione SqueezeCenter assiste l'utente nella configurazione del nuovo lettore. Dopo avere descritto come connettersi a SqueezeNetwork&reg;, verrà illustrato come accedere alla raccolta musicale locale.<br/><br/>Se non è stato ancora configurato un account in SqueezeNetwork, uscire da questa procedura e visitare il sito Web <a href="http://%s" target="_blank">%s</a> per creare un account personale.
+	NL	Hartelijk dank voor je aankoop van een draadloos Logitech&reg;-muzieksysteem.<br><br>Deze assistent voor SqueezeCenter-setup leidt je door de stappen om je nieuwe speler in te stellen. We verbinden je eerst met SqueezeNetwork&reg;, en helpen je dan je lokale muziek te vinden en op te roepen.<br/><br/>Als je nog geen account op SqueezeNetwork hebt, sluit je deze set-upassistent en ga je naar <a href="http://%s" target="_blank">%s</a> om je account te maken.
 
 SETUP_WIZARD_PROXY
 	DE	Proxy-Einstellungen

@@ -10,16 +10,20 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Networking::SqueezeNetwork;
 
 my $log   = logger('plugin.podcast');
 my $prefs = preferences('plugin.podcast');
 
 use constant FEED_VERSION => 2; # bump this number when changing the defaults below
 
-our @default_feeds = (
+sub DEFAULT_FEEDS {
+	[
 	{
 		name  => 'Odeo',
-		value => 'http://content.us.squeezenetwork.com:8080/opml/odeo.opml',
+		value => 'http://'
+			. Slim::Networking::SqueezeNetwork->get_server("content")
+			. '/opml/odeo.opml',
 	},
 	{
 		name  => 'PodcastAlley Top 50',
@@ -29,7 +33,8 @@ our @default_feeds = (
 		name  => 'PodcastAlley 10 Newest',
 		value => 'http://podcastalley.com/PodcastAlley10Newest.opml'
 	},
-);
+	];
+}
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
@@ -51,7 +56,7 @@ $prefs->migrate(1, sub {
 
 # migrate to latest version of default feeds if they have not been modified
 $prefs->migrate(FEED_VERSION, sub {
-	$prefs->set('feeds', \@default_feeds) unless $prefs->get('modified');
+	$prefs->set('feeds', DEFAULT_FEEDS()) unless $prefs->get('modified');
 	1;
 });
 
@@ -68,10 +73,10 @@ sub handler {
 
 	if ( $params->{reset} ) {
 
-		$prefs->set( feeds => \@default_feeds );
+		$prefs->set( feeds => DEFAULT_FEEDS() );
 		$prefs->set( modified => 0 );
 
-		Slim::Plugin::Podcast::Plugin::updateOPMLCache(\@default_feeds);
+		Slim::Plugin::Podcast::Plugin::updateOPMLCache(DEFAULT_FEEDS());
 	}
 	
 	my @feeds = @{ $prefs->get('feeds') };

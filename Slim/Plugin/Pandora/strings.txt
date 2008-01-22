@@ -78,13 +78,13 @@ PLUGIN_PANDORA_DEFAULT_ERROR
 	NL	Er is een onverwachte fout opgetreden. Probeer het later opnieuw.
 
 PLUGIN_PANDORA_NO_ACCOUNT
-	DE	Pandora-Konto nicht eingerichtet. Registrieren Sie sich auf squeezenetwork.com.
-	EN	Pandora account not set, please visit squeezenetwork.com to register.
-	ES	No se ha configurado cuenta Pandora. Visite squeezenetwork.com para registrarse.
-	FR	Compte Pandora non défini, veuillez visiter squeezenetwork.com pour vous enregistrer.
-	HE	לא הוגדר חשבון Pandora, עבור אל squeezenetwork.com להרשמה.
-	IT	Account Pandora non impostato. Visitare squeezenetwork.com per registrarsi.
-	NL	Pandora-account niet ingesteld. Ga naar squeezenetwork.com voor registratie.
+	DE	Pandora-Konto nicht eingerichtet. Registrieren Sie sich auf %s.
+	EN	Pandora account not set, please visit %s to register.
+	ES	No se ha configurado cuenta Pandora. Visite %s para registrarse.
+	FR	Compte Pandora non défini, veuillez visiter %s pour vous enregistrer.
+	HE	לא הוגדר חשבון Pandora, עבור אל %s להרשמה.
+	IT	Account Pandora non impostato. Visitare %s per registrarsi.
+	NL	Pandora-account niet ingesteld. Ga naar %s voor registratie.
 
 PLUGIN_PANDORA_NO_ACCESS
 	DE	Sie sind zum Einsatz von Pandora nicht berechtigt.
@@ -537,13 +537,13 @@ PLUGIN_PANDORA_SKIPS_EXCEEDED
 	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
 
 PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
-	DE	Benutzername oder Kennwort ungültig. Aktualisieren Sie Ihre Kontoangaben auf squeezenetwork.com.
-	EN	Invalid username or password. Please visit squeezenetwork.com to update your account information.
-	ES	Nombre de usuario o contraseña no válida. Visite squeezenetwork.com para actualizar la información de cuenta.
-	FR	Nom d'utilisateur ou mot de passe non valide. Rendez-vous sur squeezenetwork.com pour mettre les informations de votre compte à jour.
-	HE	שם משתמש או סיסמה לא חוקיים. עבור אל squeezenetwork.com לעדכון פרטי החשבון.
-	IT	Nome utente o password non valido. Visitare squeezenetwork.com per aggiornare i dati dell'account.
-	NL	Ongeldige gebruikersnaam of ongeldig wachtwoord. Ga naar squeezenetwork.com om jouw accountgegevens te updaten.
+	DE	Benutzername oder Kennwort ungültig. Aktualisieren Sie Ihre Kontoangaben auf %s.
+	EN	Invalid username or password. Please visit %s to update your account information.
+	ES	Nombre de usuario o contraseña no válida. Visite %s para actualizar la información de cuenta.
+	FR	Nom d'utilisateur ou mot de passe non valide. Rendez-vous sur %s pour mettre les informations de votre compte à jour.
+	HE	שם משתמש או סיסמה לא חוקיים. עבור אל %s לעדכון פרטי החשבון.
+	IT	Nome utente o password non valido. Visitare %s per aggiornare i dati dell'account.
+	NL	Ongeldige gebruikersnaam of ongeldig wachtwoord. Ga naar %s om jouw accountgegevens te updaten.
 
 PLUGIN_PANDORA_AUTH_INVALID_TOKEN
 	DE	Auth-Token ungültig, versuchen Sie es noch einmal.

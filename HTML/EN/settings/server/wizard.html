@@ -177,7 +177,6 @@
 			[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
 			[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
 			[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
-			[% PROCESS jsString id='SETUP_SN_INVALID_LOGIN' jsId='sn_failure' %]
 
 			[% PROCESS jsString id='NONE' jsId='summary_none' %]
 			[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
@@ -233,7 +232,7 @@
 						<div id="wz_formpanel">
 							<div id="welcome_m" class="wz_page">
 								<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox.jpg"></div>
-								<div>[% "SETUP_WIZARD_WELCOME_DESC" | string %]</div>
+								<div>[% "SETUP_WIZARD_WELCOME_DESC" | string(sn_server, sn_server) %]</div>
 
 								<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
 									<select name="language" id="language">
@@ -276,8 +275,8 @@
 										</tr>
 										<tr>
 											<td colspan="2" align="right">
-												<div><a href="http://www.squeezenetwork.com/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
-												<div><a href="http://www.squeezenetwork.com/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
+												<div><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
+												<div><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
 											</td>
 										</tr>
 									</table></div>

@@ -12,9 +12,19 @@ use Slim::Utils::Strings qw( string );
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
+use Slim::Networking::SqueezeNetwork;
 
-my $FEED   = 'http://content.us.squeezenetwork.com:8080/shoutcast/index.opml';
-my $SEARCH = 'http://www.squeezenetwork.com/api/opensearch/shoutcast/opensearch.xml';
+sub FEED {
+	'http://'
+	. Slim::Networking::SqueezeNetwork->get_server("content")
+	. '/shoutcast/index.opml';
+}
+
+sub SEARCH {
+	'http://'
+	. Slim::Networking::SqueezeNetwork->get_server("sn")
+	. '/api/opensearch/shoutcast/opensearch.xml';
+}
 
 my $cli_next;
 
@@ -54,8 +64,8 @@ sub setMode {
 	my %params = (
 		header   => 'PLUGIN_SHOUTCASTBROWSER_CONNECTING',
 		modeName => 'ShoutcastBrowser Plugin',
-		url      => $FEED,
-		search   => $SEARCH,
+		url      => FEED(),
+		search   => SEARCH(),
 		title    => $client->string(getDisplayName()),
 	);
 
@@ -68,7 +78,7 @@ sub setMode {
 sub cliQuery {
 	my $request = shift;
 	
-	Slim::Buttons::XMLBrowser::cliQuery('shoutcast', $FEED, $request);
+	Slim::Buttons::XMLBrowser::cliQuery('shoutcast', FEED(), $request);
 }
 
 sub cliRadiosQuery {
@@ -120,9 +130,9 @@ sub webPages {
 	Slim::Web::HTTP::addPageFunction($url => sub {
 
 		Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => $FEED,
+			feed   => FEED(),
 			title  => $title,
-			search => $SEARCH, 
+			search => SEARCH(), 
 			args   => \@_
 		} );
 	});

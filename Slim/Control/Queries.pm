@@ -2934,6 +2934,7 @@ sub statusQuery {
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
+		$log->debug("statusQuery(): setup base for jive");
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
@@ -2961,6 +2962,7 @@ sub statusQuery {
 	
 	if ($songCount > 0 && $power) {
 	
+		$log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
 		my $tags     = $request->getParam('tags');
 		my $index    = $request->getParam('_index');
@@ -3071,6 +3073,7 @@ sub statusQuery {
 		}
 	# our playlist is empty, so send a single, unselectable 'Nothing' to jive
 	} else {
+		$log->debug("statusQuery(): empty menu");
 		if ($menuMode) {
 			$request->addResult("count", 1);
 		        $request->addResult("offset", 0);
@@ -3083,6 +3086,7 @@ sub statusQuery {
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
+		$log->debug("statusQuery(): setting up subscription");
 	
 		# register ourselves to be automatically re-executed on timeout or filter
 		$request->registerAutoExecute($timeout, \&statusQuery_filter);
@@ -3505,11 +3509,7 @@ sub songinfoQuery {
 								# style correctly the title that opens for the action element
 								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
-							}
-						
-	
-							elsif ($key eq 'TYPE') {
-								$val = Slim::Utils::Strings::string($val);
+
 							}
 							elsif ($key eq 'LENGTH') {
 								$val = $track->duration();
