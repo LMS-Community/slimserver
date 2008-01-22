@@ -42,7 +42,6 @@ our %hierarchy = (
 sub init {
 
 	Slim::Web::HTTP::addPageFunction(qr/^firmware\.(?:html|xml)/,\&firmware);
-	Slim::Web::HTTP::addPageFunction(qr/^songinfo\.(?:htm|xml)/,\&songInfo);
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
 
@@ -604,14 +603,6 @@ sub memory_usage {
 
 		return Slim::Utils::MemoryUsage->$command($item, $type);
 	}
-}
-
-sub songInfo {
-	my ($client, $params) = @_;
-
-	Slim::Web::Pages->addSongInfo($client, $params, 0);
-
-	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
 }
 
 sub firmware {
