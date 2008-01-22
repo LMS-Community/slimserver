@@ -9,7 +9,6 @@ use base qw(Slim::Player::Protocols::HTTP);
 
 use JSON::XS qw(from_json);
 
-use Slim::Hardware::IR;
 use Slim::Player::Playlist;
 use Slim::Utils::Misc;
 
@@ -136,21 +135,21 @@ sub getNextTrack {
 	my ( $client, $params ) = @_;
 	
 	# If idle time has been exceeded, stop playback
-	my $lastIR = Slim::Hardware::IR::lastIRTime($client);
+	my $lastActivity = $client->lastActivityTime();
 	
-	# If synced, check slave players to see if they have newer irtime
+	# If synced, check slave players to see if they have newer activity time
 	if ( Slim::Player::Sync::isSynced($client) ) {
 		# We should already be the master, but just in case...
 		my $master = Slim::Player::Sync::masterOrSelf($client);
 		for my $c ( $master, @{ $master->slaves } ) {
-			my $slaveIR = Slim::Hardware::IR::lastIRTime($c);
-			if ( $slaveIR > $lastIR ) {
-				$lastIR = $slaveIR;
+			my $slaveActivity = $c->lastActivityTime();
+			if ( $slaveActivity > $lastActivity ) {
+				$lastActivity = $slaveActivity;
 			}
 		}
 	}
 	
-	if ( time() - $lastIR >= $MAX_IDLE_TIME ) {
+	if ( time() - $lastActivity >= $MAX_IDLE_TIME ) {
 		$log->debug('Idle time reached, stopping playback');
 		
 		my $url = Slim::Player::Playlist::url($client);

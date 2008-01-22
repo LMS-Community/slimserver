@@ -825,6 +825,11 @@ sub processURL {
 	# explicitly specified player (for web browsers or squeezeboxen)
 	if (defined($params->{"player"})) {
 		$client = Slim::Player::Client::getClient($params->{"player"});
+		
+		if ( blessed($client) ) {
+			# Update the client's last activity time, since they did something through the web
+			$client->lastActivityTime( Time::HiRes::time() );
+		}
 	}
 
 	# is this an HTTP stream?

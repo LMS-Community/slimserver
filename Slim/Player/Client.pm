@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 11, 12, 13, 16, 21, 24, 25, 26, 27, 33, 34, 53
+	# 11, 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -129,7 +129,7 @@ sub new {
 #	$client->[21]
 	$client->[22] = 0; # remoteStreamStartTime
 	$client->[23] = 0; # trackStartTime
-#	$client->[24]
+	$client->[24] = 0; # lastActivityTime (last time this client performed some action (IR, CLI, web))
 #	$client->[25]
 #	$client->[26]
 #	$client->[27]
@@ -1192,6 +1192,15 @@ sub trackStartTime {
 	@_ ? ($r->[23] = shift) : $r->[23];
 }
 
+sub lastActivityTime {
+	my $r = shift;
+	@_ ? ($r->[24] = shift) : $r->[24];
+	
+	warn "lastActivity: $r->[24]\n";
+	
+	return $r->[24];
+}
+
 sub playlist {
 	my $r = shift;
 	my $i;
@@ -1317,7 +1326,13 @@ sub irenable {
 
 sub epochirtime {
 	my $r = shift;
-	@_ ? ($r->[54] = shift) : $r->[54];
+	if ( @_ ) {
+		# Also update lastActivityTime (24) on IR events
+		$r->[54] = $r->[24] = shift;
+		warn "last active: $r->[24]\n";
+	}
+	
+	return $r->[54];
 }
 
 sub modeStack {

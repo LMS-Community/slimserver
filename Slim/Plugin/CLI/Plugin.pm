@@ -516,6 +516,9 @@ sub cli_process {
 	if ($clientid) {
 
 		$log->info("Parsing command: Found client [$clientid]");
+		
+		# Update the client's last activity time, since they sent something through the CLI
+		$client->lastActivityTime( Time::HiRes::time() );
 	}
 
 	if (!defined $arrayRef) {
