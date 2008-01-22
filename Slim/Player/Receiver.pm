@@ -29,8 +29,6 @@ sub new {
 	return $client;
 }
 
-sub canPowerOff { return 0; }
-
 sub model {
 	return 'receiver';
 }

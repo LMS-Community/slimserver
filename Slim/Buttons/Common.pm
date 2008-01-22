@@ -254,18 +254,16 @@ our %functions = (
 			return;
 		}
 
-		my $noplay = Slim::Player::Source::playmode($client) eq 'pause';
-
 		# either starts the same song over, or the previous one, depending on whether we jumped back.
 		if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < 1.0) {
 
 			# less than second, jump back to the previous song
-			$client->execute(["playlist", "jump", "-1", $noplay]);
+			$client->execute(["playlist", "jump", "-1"]);
 
 		} else {
 
 			# otherwise, restart this song.
-			$client->execute(["playlist", "jump", "+0", $noplay]);
+			$client->execute(["playlist", "jump", "+0"]);
 		}
 
 		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
@@ -305,8 +303,6 @@ our %functions = (
 			return;	
 		}
 
-		my $noplay = Slim::Player::Source::playmode($client) eq 'pause';
-
 		# either starts the same song over, or the previous one, or
 		# the next one depending on whether/how we jumped
 		if ($functarg eq 'rew') { 
@@ -318,23 +314,23 @@ our %functions = (
 				# jump back a song if stopped, invalid
 				# songtime, or current song has been playing
 				# less than 5 seconds (use modetime instead of now when paused)
-				$client->execute(["playlist", "jump", "-1", $noplay]);
+				$client->execute(["playlist", "jump", "-1"]);
 
 			} else {
 
 				#restart current song
-				$client->execute(["playlist", "jump", "+0", $noplay]);
+				$client->execute(["playlist", "jump", "+0"]);
 			}
 
 		} elsif ($functarg eq 'fwd') {
 
 			# jump to next song
-			$client->execute(["playlist", "jump", "+1", $noplay]);
+			$client->execute(["playlist", "jump", "+1"]);
 
 		} else {
 
 			#restart current song
-			$client->execute(["playlist", "jump", "+0", $noplay]);
+			$client->execute(["playlist", "jump", "+0"]);
 		}
 
 		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
