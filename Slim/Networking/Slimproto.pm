@@ -260,6 +260,10 @@ sub slimproto_close {
 
 				Slim::Player::Sync::unsync($client, 1);
 			}
+			
+			# Bug 6714, delete the cached needsUpgrade value, as the player
+			# may change firmware versions before coming back
+			$client->[3] = undef;
 
 			# set timer to forget client
 			if ( $forget_disconnected_time ) {
