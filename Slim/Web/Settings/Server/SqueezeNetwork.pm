@@ -28,13 +28,15 @@ sub page {
 sub prefs {
 	# NOTE: if you add a pref here, check that the wizard also submits it
 	# in HTML/EN/html/wizard.js
-	my @prefs = qw(sn_email sn_password sn_sync sn_disable_stats);
+	my @prefs = qw(sn_email sn_password sn_sync sn_disable_stats sn_beta);
 
 	return ($prefs, @prefs);
 }
 
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
+
+	my $sn_server = Slim::Networking::SqueezeNetwork->get_server("sn");
 
 	if ( $params->{saveSettings} ) {
 		
@@ -64,11 +66,11 @@ sub handler {
 				},
 				ecb      => sub {
 					if ($params->{'AJAX'}) {
-						$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN'); 
+						$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server); 
 						$params->{'validated'}->{'valid'} = 0;
 					}
 					else {
-						$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN') . '<br/>';						
+						$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server) . '<br/>';						
 					}
 					
 					delete $params->{sn_email};
@@ -83,11 +85,11 @@ sub handler {
 		}
 		else {
 			if ($params->{'AJAX'}) {
-				$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN'); 
+				$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server); 
 				$params->{'validated'}->{'valid'} = 0;
 			}
 			else {
-				$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN') . '<br/>';						
+				$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server) . '<br/>';						
 			}
 			delete $params->{'saveSettings'};
 		}

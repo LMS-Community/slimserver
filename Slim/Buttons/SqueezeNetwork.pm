@@ -24,6 +24,7 @@ use strict;
 use Slim::Control::Request;
 use Slim::Utils::Timers;
 use Slim::Buttons::Common;
+use Slim::Networking::SqueezeNetwork;
 
 use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.1 $,10);
@@ -115,11 +116,18 @@ sub connectSqueezeNetwork {
 	return unless ($client->modeParam('squeezenetwork.connect'));
 
 	if (clientIsCapable($client)) {
-		my $host = pack('N',1);  # 1 is squeezenetwork
-		
-		# XXX: For now, connect people to the SN beta server
-		my $ip = Net::IP->new('207.7.156.11');
-		$host = pack 'N', $ip->intip;
+		# XXX after f/w change, pack either 1 or 2, depending on
+		# $prefs->get('sn_beta');
+		# my $host = pack('N',1);  # 1 is squeezenetwork
+		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
+
+		# XXX This is a complicated consequence of the existing beta env,
+		# will go away when that beta does...
+		if($host eq "www.squeezenetwork.com:3000") {
+			$host = '207.7.156.11';
+		}
+
+		$host = scalar gethostbyname($host);
 		
 		$client->sendFrame('serv', \$host);
 

@@ -15,6 +15,7 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 use base qw(Slim::Web::Pages);
 
 use Slim::Utils::Prefs;
+use Slim::Networking::SqueezeNetwork;
 
 my $prefs = preferences('server');
 
@@ -186,6 +187,8 @@ sub squeezeNetwork {
 			},
 		);
 	}
+
+	$params->{'sn_server'} = Slim::Networking::SqueezeNetwork->get_server("sn");
 	
 	return Slim::Web::HTTP::filltemplatefile('squeezenetwork.html', $params);
 }

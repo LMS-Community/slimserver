@@ -35,6 +35,17 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_SN_BETA" desc="SETUP_SN_BETA_DESC" %]
+		<select class="stdedit" name="sn_beta" id="sn_beta">
+			<option [% IF !prefs.sn_beta %]selected="selected" [% END %]value="0">
+				[% 'SETUP_SN_BETA_DISABLE' | string %]
+			</option>
+			<option [% IF prefs.sn_beta == 1 %]selected="selected" [% END %]value="1">
+				[% 'SETUP_SN_BETA_ENABLE' | string %]
+			</option>
+		</select>
+	[% END %]
+
 [% PROCESS settings/footer.html %]
 
 [% END %]

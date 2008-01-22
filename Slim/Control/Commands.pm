@@ -164,7 +164,8 @@ sub clientConnectCommand {
 	my $client  = $request->client();
 
 	if ( $client->hasServ() ) {
-		my $host = $request->getParam('_where');
+		my ($host, $packed);
+		$host = $request->getParam('_where');
 		
 		if ( $host =~ /^www.squeezenetwork.com$/i ) {
 			# XXX: Change to '1' in production
@@ -175,8 +176,7 @@ sub clientConnectCommand {
 		elsif ( $host =~ /^www.beta.squeezenetwork.com$/i ) {
 			# XXX: Change to '2' after new firmware includes this
 			# $host = 2;
-			
-			$host = Net::IP->new('207.7.156.11')->intip;
+			$packed = scalar gethostbyname('www.beta.squeezenetwork.com');
 		}
 		else {
 			my $ip = Net::IP->new($host);
@@ -188,7 +188,7 @@ sub clientConnectCommand {
 			$host = $ip->intip;
 		}
 		
-		my $packed = pack 'N', $host;
+		$packed ||= pack 'N', $host;
 		
 		$client->sendFrame( serv => \$packed );
 		

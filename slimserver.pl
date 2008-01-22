@@ -905,7 +905,9 @@ sub checkVersion {
 
 	$log->info("Checking version now.");
 
-	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
+	my $url  = "http://"
+		. Slim::Networking::SqueezeNetwork->get_server("update")
+		. "/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError);
 
 	# will call checkVersionCB when complete
