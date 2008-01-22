@@ -499,8 +499,6 @@ sub trackInfo {
 	my ( $class, $client, $track ) = @_;
 	
 	my $url = $track->url;
-	
-	my $secs = Slim::Music::Info::getDuration($url);
 
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
@@ -511,7 +509,6 @@ sub trackInfo {
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/v1/opml/trackinfo?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
-		. '&secs=' . $secs
 	);
 	
 	# let XMLBrowser handle all our display
@@ -532,8 +529,6 @@ sub trackInfo {
 # URL used for CLI trackinfo queries
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
-	
-	my $secs = Slim::Music::Info::getDuration($url);
 
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
@@ -544,7 +539,6 @@ sub trackInfoURL {
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/v1/opml/trackinfo?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
-		. '&secs=' . $secs
 	);
 	
 	return $trackInfoURL;
