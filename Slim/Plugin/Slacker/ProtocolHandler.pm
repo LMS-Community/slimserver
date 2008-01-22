@@ -173,6 +173,7 @@ sub gotNextTrack {
 			# Session bumped
 			$title = $client->string('PLUGIN_SLACKER_SESSION_BUMPED');
 			
+			$client->pluginData( prevTrack    => 0 );
 			$client->pluginData( currentTrack => 0 );
 		}
 		elsif ( $track->{error} =~ /Skip limits exceeded/ ) {
@@ -427,6 +428,7 @@ sub playlistCallback {
 	
 	if ( !$url || $url !~ /^slacker/ ) {
 		# No longer playing Slacker, clear plugin data
+		$client->pluginData( prevTrack    => 0 );
 		$client->pluginData( currentTrack => 0 );
 		
 		# User stopped playing Slacker, reset old repeat setting if any
@@ -545,6 +547,7 @@ sub stopCallback {
 		setCurrentTitle( $client, $url, $title );
 		
 		# Clear track data
+		$client->pluginData( prevTrack    => 0 );
 		$client->pluginData( currentTrack => 0 );
 	}
 }
