@@ -557,8 +557,6 @@ sub trackInfo {
 	my ( $class, $client, $track ) = @_;
 	
 	my $url = $track->url;
-	
-	my $secs = Slim::Music::Info::getDuration($url);
 
 	my ($stationId) = $url =~ m{^slacker://([^.]+)\.mp3};
 	
@@ -569,7 +567,6 @@ sub trackInfo {
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/slacker/v1/opml/trackinfo?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{tid}
-		. '&secs=' . $secs
 	);
 	
 	# let XMLBrowser handle all our display
@@ -590,8 +587,6 @@ sub trackInfo {
 # URL used for CLI trackinfo queries
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
-	
-	my $secs = Slim::Music::Info::getDuration($url);
 
 	my ($stationId) = $url =~ m{^slacker://([^.]+)\.mp3};
 	
@@ -602,7 +597,6 @@ sub trackInfoURL {
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/slacker/v1/opml/trackinfo?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{tid}
-		. '&secs=' . $secs
 	);
 	
 	return $trackInfoURL;
