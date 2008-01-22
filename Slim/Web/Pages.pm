@@ -161,9 +161,24 @@ sub addLibraryStats {
 	# The current level will always be a ->browse call, so just reuse the resultset.
 	if ($level eq 'album') {
 
-		$counts{'album'}       = $rs;
-		$counts{'contributor'} = $rs->search_related('contributorAlbums')->search_related('contributor');
-		$counts{'track'}       = $rs->search_related('tracks');
+		# Bug 3351
+		if ( $previousLevel eq 'contributor' ) {
+			# This avoids duplicate joins on contributorAlbums, the proper roles
+			# are already selected since the $rs is already joined with contributorAlbums
+			$counts{'contributor'} = $rs->search_related('contributor');
+		}
+		else {
+			# filter out non-artist roles for contributor count
+			my $cond  = {};
+			my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
+			if ( $roles ) {
+				$cond->{'contributorAlbums.role'} = { 'in' => $roles };
+			}
+			$counts{'contributor'} = $rs->search_related('contributorAlbums')->search_related( 'contributor', $cond );
+		}
+		
+		$counts{'album'} = $rs;
+		$counts{'track'} = $rs->search_related('tracks');
 
 	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {
 
@@ -172,9 +187,16 @@ sub addLibraryStats {
 		$counts{'track'}       = $rs->search_related('contributorTracks')->search_related('track');
 
 	} elsif ($level eq 'track') {
+		
+		# Bug 3351, filter out non-artist roles for contributor count
+		my $cond = {};
+		my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST');
+		if ( $roles ) {
+			$cond->{'contributorTracks.role'} = { 'in' => $roles };
+		}
 
 		$counts{'album'}       = $rs->search_related('album');
-		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related('contributor');
+		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
 		$counts{'track'}       = $rs;
 
 	} else {
@@ -189,7 +211,7 @@ sub addLibraryStats {
 	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 
 	if ( logger('database.sql')->is_info ) {
-		logger('database.sql')->info(sprintf("Found %s, %s & %s", 
+		logger('database.sql')->info(sprintf("(Level: $level, previousLevel: $previousLevel) Found %s, %s & %s", 
 			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 		));
 	}
