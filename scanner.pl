@@ -43,6 +43,7 @@ use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
@@ -259,6 +260,23 @@ sub initializeFrameworks {
 	$log->info("SqueezeCenter Info init...");
 
 	Slim::Music::Info::init();
+	
+	# Bug 6721
+	# The ProtocolHandlers class won't have all our handlers registered,
+	# and this can cause problems scanning playlists that contain URLs
+	# that use a protocol handler, i.e. rhapd://
+	my @handlers = qw(
+		live365
+		loop
+		pandora
+		rhapd
+		slacker
+		source
+	);
+	
+	for my $handler ( @handlers ) {
+		Slim::Player::ProtocolHandlers->registerHandler( $handler => 1 );
+	}
 }
 
 sub usage {
