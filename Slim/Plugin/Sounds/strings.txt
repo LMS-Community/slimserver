@@ -1,2 +1,8 @@
 PLUGIN_SOUNDS_MODULE_NAME
+	DE	Sounds & Effekte
 	EN	Sounds & Effects
+	ES	Sonidos y efectos
+	FR	Effets sonores
+	IT	Suoni ed effetti
+	NL	Geluiden en effecten
+

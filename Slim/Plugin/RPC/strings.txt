@@ -5,7 +5,7 @@
 PLUGIN_RPC
 	DE	XML-RPC/JSON-RPC-Schnittstelle
 	EN	XML-RPC/JSON-RPC Interface
-	ES	Interface XML-RPC/JSON-RPC
+	ES	Interfaz XML-RPC/JSON-RPC
 	FR	Interface XML-RPC/JSON-RPC
 	IT	Interfaccia XML-RPC/JSON-RPC
 	NL	XML-RPC/JSON-RPC interface

@@ -137,7 +137,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören. Last.fm stellt auf Ihren Geschmack zugeschnittene Radiosender, Musik- und Veranstaltungsempfehlungen, kostenlose Downloads usw. zur Verfügung. Melden Sie sich kostenlos an unter <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a>. Weitere Informationen finden Sie unter <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
 	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen	to.  Based on your taste, Last.fm provides customized radio stations,	music and event recommendations, free downloads and more.  Join for	free at <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la musica que escucha. Según sus gustos, Last.fm le proporciona recomendaciones personalizadas de emisoras de radio, música y sucesos, descargas gratuitas y mucho más. Inscríbase gratuitamente en <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o acceda a más información en <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
+	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha. Según sus gustos, Last.fm le proporciona recomendaciones personalizadas de emisoras de radio, música y sucesos, descargas gratuitas y mucho más. Inscríbase gratuitamente en <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o acceda a más información en <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
 	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez. En fonction de vos goûts musicaux, Last.fm fournit des stations de radio, des recommandations musicales et des téléchargements libres personnalisés, et bien plus encore. Rejoignez-nous sur <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> ou découvrez le service sur <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
 	IT	Last.fm è un servizio musicale che crea un profilo musicale personale tenendo traccia della musica che si ascolta. Last.fm si basa sui gusti personali e fornisce suggerimenti personalizzati su stazioni radio, musica ed eventi, download gratuiti e altro ancora. Iscriviti gratuitamente all'indirizzo <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o, per saperne di più, visita il sito Web <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
 	NL	Last.fm: een muziekservice die je persoonlijke muziekprofiel opbouwt door bij te houden naar welke muziek je luistert. Last.fm biedt gepersonaliseerde radiostations, muziek- en evenemententips, gratis downloads en nog meer op basis van je muzieksmaak. Meld je gratis aan op <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> of kom meer te weten op <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
@@ -167,7 +167,18 @@ PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
 	NL	Scrobbelen naar account: %s
 
 PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
+	DE	Last.fm: Diesen Titel lieben
 	EN	Last.fm: Love this track
+	ES	Last.fm: Esta pista es un favorito
+	FR	Last.fm: marquer ce morceau comme un coup de coeur
+	IT	Last.fm: brano preferito
+	NL	Last.fm: Love this track
 
 PLUGIN_AUDIOSCROBBLER_TRACK_LOVED
+	DE	Dieser Titel wurde geliebt.
 	EN	This track has been loved.
+	ES	Esta pista ha sido un favorito.
+	FR	Ce morceau a été marqué comme un coup de coeur.
+	IT	Il brano è stato aggiunto all'elenco dei preferiti.
+	NL	Dit is een geliefd nummer.
+
