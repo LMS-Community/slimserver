@@ -183,7 +183,7 @@ sub handleFeed {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			$subFeed->{'type'} ||= '';
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
 				my $searchQuery;
 				if ( $i =~ /\d+_(.+)/ ) {
@@ -219,12 +219,21 @@ sub handleFeed {
 					$subFeed->{'url'}->( undef, \&handleSubFeed, @{$pt} );
 					return;
 				}
-
-				Slim::Formats::XML->getFeedAsync(
-					\&handleSubFeed,
-					\&handleError,
-					$args,
-				);
+				
+				# Check for a cached version of this subfeed URL
+				if ( my $cached = Slim::Formats::XML->getCachedFeed( $subFeed->{'url'} ) ) {
+					$log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
+					handleSubFeed( $cached, $args );
+				}
+				else {
+					# We need to fetch the URL
+					Slim::Formats::XML->getFeedAsync(
+						\&handleSubFeed,
+						\&handleError,
+						$args,
+					);
+				}
+				
 				return;
 			}
 		}
@@ -482,21 +491,6 @@ sub handleSubFeed {
 		
 		# Clear passthrough data as it won't be needed again
 		delete $subFeed->{'passthrough'};
-	}
-	elsif ($params->{'parentURL'} ne 'NONE') {
-		# parentURL of 'NONE' indicates we were called with preparsed hash which should not be cached
-		# re-cache the parsed XML to include the sub-feed
-		if ( Slim::Utils::Misc::shouldCacheURL( $params->{'parentURL'} ) ) {
-			my $cache = Slim::Utils::Cache->new();
-			my $expires = defined( $feed->{'cachetime'} ) ? $feed->{'cachetime'} : $Slim::Formats::XML::XML_CACHE_TIME;
-
-			$log->info("Re-caching parsed XML for $expires seconds.");
-
-			$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
-		}
-		else {
-			$log->info( 'Not caching parsed XML for ' . $params->{'parentURL'} );
-		}
 	}
 	
 	handleFeed( $parent, $params );
