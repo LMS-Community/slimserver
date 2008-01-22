@@ -3257,16 +3257,24 @@ sub songinfoQuery {
 			if ($insertPlay) {
 			
 				# insert first item if needed
-				if ($start == 0 && !$track->remote ) {
+				if ($start == 0  ) {
+					my ($play_string, $add_string);
+					if ( $track->remote ) {
+						$play_string = Slim::Utils::Strings::string('PLAY');
+						$add_string = Slim::Utils::Strings::string('ADD');
+					} else {
+						$play_string = Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG');
+						$add_string = Slim::Utils::Strings::string('JIVE_ADD_THIS_SONG');
+					}	
 					# setup hash for different items between play and add
 					my %items = ( 	
 						'play' => {
-							'string'  => Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG'),
+							'string'  => $play_string,
 							'style'   => 'itemplay',
 							'cmd'     => 'load',
 						},
 						'add' => {
-							'string'  => Slim::Utils::Strings::string('JIVE_ADD_THIS_SONG'),
+							'string'  => $add_string,
 							'style'   => 'itemadd',
 							'cmd'     => 'add',
 						},
