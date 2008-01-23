@@ -4,7 +4,7 @@
 	</pre>
 [%- ELSE -%]
 
-	[% pagetitle = type _ "_PROGRESS" | string %]
+	[% pagetitle = (type || "SCANNER") _ "_PROGRESS" | string %]
 	
 	[% pageHeaderMenu = pagetitle %]
 	
@@ -35,7 +35,7 @@
 	
 	[% IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
-	[% IF desc %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
+	[% IF desc && type %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
 
 	[% odd = 1 %]
 	[% FOREACH num = [0..10] %]
