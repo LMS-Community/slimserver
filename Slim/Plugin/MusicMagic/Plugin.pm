@@ -126,6 +126,9 @@ sub initPlugin {
 
 	Slim::Plugin::MusicMagic::Settings->new;
 
+	# don't test the connection if MIP integration is disabled
+	return unless $prefs->get('musicmagic'); 
+
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
@@ -138,7 +141,7 @@ sub initPlugin {
 
 		$initialized = 0;
 
-		$log->warn("Can't connect to port $MMSport - MusicMagic disabled.");
+		$log->error("Can't connect to port $MMSport - MusicMagic disabled.");
 
 	} else {
 
