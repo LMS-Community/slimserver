@@ -1,6 +1,6 @@
 [%- BLOCK pluginLink -%]
-	[% IF enabled && settings %]
-		<a href="[% webroot %]settings/[% settings %]?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;noSettingsList">[% 'SETTINGS' | string %]</a>
+	[% IF enabled && settings.length > 0 %]
+		<a href="[% webroot %]settings/[% settings %]?player=[% playerURI %]&amp;playerid=[% playerURI %]&amp;noSettingsList=1">[% 'SETTINGS' | string %]</a>
 	[% END %]
 [%- END -%]
 <?xml version="1.0" encoding="UTF-8"?>
