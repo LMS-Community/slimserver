@@ -80,6 +80,10 @@ sub startScan {
 	}
 
 	$log->info("Starting playlist folder scan");
+	
+	# Bug 6710, clear all 'ssp' playlists before rescanning
+	$log->info("Clearing internal ssp playlists");
+	Slim::Schema->rs('Playlist')->clearInternalPlaylists();
 
 	Slim::Utils::Scanner->scanDirectory({
 		'url'       => $dir,
