@@ -591,6 +591,9 @@ sub checkSync {
 		my $now = Time::HiRes::time();
 
 		return if $now < $nextCheckSyncTime{$client};
+		
+		# bug 6666
+		return if Slim::Player::Source::playmode($client) ne 'play';
 
 		$nextCheckSyncTime{$client} = $now + CHECK_SYNC_INTERVAL;
 
