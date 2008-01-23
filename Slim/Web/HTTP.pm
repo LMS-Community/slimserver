@@ -2238,7 +2238,7 @@ sub newSkinTemplate {
 			}, 1 ],
 			'getstring'        => [ sub {
 				my ($context, @args) = @_;
-				sub { Slim::Utils::Strings::getstring(shift, @args) }	
+				sub { Slim::Utils::Strings::getString(shift, @args) }	
 			}, 1 ],
 			'nbsp'          => \&nonBreaking,
 			'uri'           => \&URI::Escape::uri_escape_utf8,
