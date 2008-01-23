@@ -793,6 +793,10 @@ sub gotNextRadioTrack {
 		type      => 'WMA (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
+		buttons   => {
+			# disable REW/Previous button in radio mode
+			rew => 0,
+		},
 	};
 	$client->pluginData( metaCache => $meta );
 	
