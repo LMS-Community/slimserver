@@ -2232,8 +2232,14 @@ sub newSkinTemplate {
 		PLUGIN_BASE => ['Slim::Plugin::TT',"HTML::$skin"],
 		PRE_PROCESS => \@preprocess,
 		FILTERS => {
-			'string'        => \&Slim::Utils::Strings::string,
-			'getstring'     => \&Slim::Utils::Strings::getString,
+			'string'        => [ sub {
+				my ($context, @args) = @_;
+				sub { Slim::Utils::Strings::string(shift, @args) }	
+			}, 1 ],
+			'getstring'        => [ sub {
+				my ($context, @args) = @_;
+				sub { Slim::Utils::Strings::getstring(shift, @args) }	
+			}, 1 ],
 			'nbsp'          => \&nonBreaking,
 			'uri'           => \&URI::Escape::uri_escape_utf8,
 			'unuri'         => \&URI::Escape::uri_unescape,
