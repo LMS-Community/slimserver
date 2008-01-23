@@ -724,6 +724,10 @@ sub gotNextRadioTrack {
 	
 	my $track = eval { from_json( $http->content ) };
 	
+	if ( $log->is_debug ) {
+		$log->debug( 'Got next radio track: ' . Data::Dump::dump($track) );
+	}
+	
 	if ( $track->{error} ) {
 		# We didn't get the next track to play
 		
@@ -764,10 +768,10 @@ sub gotNextRadioTrack {
 		\&playlistCallback, 
 		[['playlist'], ['repeat', 'newsong']],
 	);
-	
+
 	# Force repeating for Rhapsody radio
 	$client->execute(["playlist", "repeat", 2]);
-	
+
 	# set metadata for track, will be set on playlist newsong callback
 	my $url   = 'rhapd://' . $track->{trackId} . '.wma';
 	my $title = $track->{name} . ' ' . 
@@ -777,6 +781,20 @@ sub gotNextRadioTrack {
 	$client->pluginData( radioTrackURL => $url );
 	$client->pluginData( radioTitle    => $title );
 	$client->pluginData( radioTrack    => $track );
+	
+	# We already have the metadata for this track, so can save calling getTrack
+	my $meta = $client->pluginData('metaCache') || {};
+	$meta->{$url} = {
+		artist    => $track->{displayArtistName},
+		album     => $track->{displayAlbumName},
+		title     => $track->{name},
+		cover     => $track->{cover},
+		bitrate   => '128k CBR',
+		type      => 'WMA (Rhapsody)',
+		info_link => 'plugins/rhapsodydirect/trackinfo.html',
+		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
+	};
+	$client->pluginData( metaCache => $meta );
 	
 	my $cb = $params->{callback};
 	my $pt = $params->{passthrough} || [];
@@ -798,7 +816,7 @@ sub playlistCallback {
 	return unless defined $client;
 	
 	# check that user is still using Rhapsody Radio
-	my $url = Slim::Player::Playlist::url($client);
+	my $url = Slim::Player::Playlist::url($client) || return;
 	
 	if ( !$url || $url !~ /\.rdr$/ ) {
 		# User stopped playing Rhapsody Radio, reset old repeat setting if any
