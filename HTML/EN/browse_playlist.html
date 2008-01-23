@@ -65,7 +65,7 @@
 		[% rightcontrols = 'editcontrols'; leftcontrols = 'browsecontrols' %]
 
 		[% BLOCK editcmd %]
-				href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist.id=[% playlist.id %]&amp;itempos=[% loop.count - 1 %]"
+				href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist.id=[% playlist.id %]&amp;itempos=[% start + loop.count - 1 %]&amp;start=[% start %]"
 		[% END %]
 		
 		[% BLOCK editcontrols %]
