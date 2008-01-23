@@ -323,7 +323,7 @@ Wizard = function(){
 						sn_password: pw,
 						sn_disable_stats: disable_stats,
 						sn_sync: 1,
-						sn_beta: 1,
+						sn_beta: 0,
 						saveSettings: 1,
 						AJAX: 1
 					}),
