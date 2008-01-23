@@ -7,6 +7,7 @@ package Slim::Web::Settings::Server::Wizard;
 
 use strict;
 use base qw(Slim::Web::Settings);
+use Digest::SHA1 qw(sha1_base64);
 use I18N::LangTags qw(extract_language_tags);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
@@ -24,7 +25,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my %prefs = (
-	'server' => ['webproxy', 'sn_email', 'sn_password', 'audiodir', 'playlistdir'],
+	'server' => ['webproxy', 'sn_email', 'sn_password_sha', 'audiodir', 'playlistdir'],
 	'plugin.itunes' => ['itunes', 'xml_file'],
 	'plugin.musicmagic' => ['musicmagic', 'port']
 );
@@ -120,6 +121,9 @@ sub handler {
 		foreach my $pref (@{$prefs{$namespace}}) {
 			if ($paramRef->{saveSettings}) {
 				
+				# Skip SN prefs, they were set earlier
+				next if $pref =~ /^sn_/;
+				
 				# reset audiodir if it had been disabled
 				if ($pref eq 'audiodir' && !$paramRef->{useAudiodir})	{
 					$paramRef->{audiodir} = '';
@@ -177,9 +181,9 @@ sub handler {
 	if ( $paramRef->{saveSettings} ) {
 
 		if (   $paramRef->{sn_email}
-			&& $paramRef->{sn_password}
+			&& $paramRef->{sn_password_sha}
 			&& $serverPrefs->get('sn_sync')
-		) {
+		) {			
 			Slim::Networking::SqueezeNetwork->init();
 		}
 

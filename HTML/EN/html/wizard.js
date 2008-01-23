@@ -115,8 +115,8 @@ Wizard = function(){
 
 				Ext.get('sn_email').on('keyup', this.updateNextBtn, this);
 				Ext.get('sn_email').on('change', function(){ validators.sqn.valid = false; });
-				Ext.get('sn_password').on('keyup', this.updateNextBtn, this);
-				Ext.get('sn_password').on('change', function(){ validators.sqn.valid = false; });
+				Ext.get('sn_password_sha').on('keyup', this.updateNextBtn, this);
+				Ext.get('sn_password_sha').on('change', function(){ validators.sqn.valid = false; });
 				Ext.get('audiodir').on('change', function(){ validators.audiodir.valid = false; });
 				Ext.get('playlistdir').on('change', function(){ validators.playlistdir.valid = false; });
 				Ext.get('xml_file').on('change', function(){ validators.xml_file.valid = false; });
@@ -152,7 +152,7 @@ Wizard = function(){
 		},
 
 		updateNextBtn : function(){
-			if (Ext.get('sn_email').dom.value || Ext.get('sn_password').dom.value)
+			if (Ext.get('sn_email').dom.value || Ext.get('sn_password_sha').dom.value)
 				this.nextBtn.setText(strings['next']);
 			else
 				this.nextBtn.setText(strings['skip']);			
@@ -302,7 +302,7 @@ Wizard = function(){
 
 		verifySqnAccount : function(){
 			var email = Ext.get('sn_email').dom.value;
-			var pw = Ext.get('sn_password').dom.value;
+			var pw = Ext.get('sn_password_sha').dom.value;
 			var disable_stats = Ext.get('sn_disable_stats').dom.value;
 
 			var email_summary = Ext.get('sn_email_summary');
@@ -320,7 +320,7 @@ Wizard = function(){
 					url: '/settings/server/squeezenetwork.html',
 					params: Ext.urlEncode({
 						sn_email: email,
-						sn_password: pw,
+						sn_password_sha: pw,
 						sn_disable_stats: disable_stats,
 						sn_sync: 1,
 						sn_beta: 0,
@@ -337,7 +337,7 @@ Wizard = function(){
 							result_summary.update('(' + result[1] + ')');
 							validators.sqn.valid = false;
 							Ext.get('sn_email').highlight('ffcccc');
-							Ext.get('sn_password').highlight('ffcccc');
+							Ext.get('sn_password_sha').highlight('ffcccc');
 						}
 
 						else {
