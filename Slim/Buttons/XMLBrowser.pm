@@ -1819,13 +1819,11 @@ sub _cliQuery_done {
 			};
 
 			# Change window menuStyle to album if any images are in the list
-			# XXX: this should only be done on hasImage but a bug in Jive
-			# means this only affects child menus, so must be set for all
-			#if ( $hasImage ) {
-				$base->{window} = {
+			if ( $hasImage ) {
+				$request->addResult('window', {
 					menuStyle => 'album',
-				};
-			#}
+				});
+			}
 
 			$request->addResult('base', $base);
 		}
