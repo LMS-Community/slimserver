@@ -10,6 +10,8 @@ package Slim::Web::Settings::Server::SqueezeNetwork;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Digest::SHA1 qw(sha1_base64);
+
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Misc;
@@ -28,7 +30,7 @@ sub page {
 sub prefs {
 	# NOTE: if you add a pref here, check that the wizard also submits it
 	# in HTML/EN/html/wizard.js
-	my @prefs = qw(sn_email sn_password sn_sync sn_disable_stats sn_beta);
+	my @prefs = qw(sn_email sn_password_sha sn_sync sn_disable_stats sn_beta);
 
 	return ($prefs, @prefs);
 }
@@ -48,12 +50,16 @@ sub handler {
 			);
 		}
 
-		if ( $params->{sn_email} && $params->{sn_password} ) {
+		if ( $params->{sn_email} && $params->{sn_password_sha} ) {
+			
+			if ( length( $params->{sn_password_sha} ) != 27 ) {
+				$params->{sn_password_sha} = sha1_base64( $params->{sn_password_sha} );
+			}
 		
 			# Verify username/password
 			Slim::Networking::SqueezeNetwork->login(
 				username => $params->{sn_email},
-				password => $params->{sn_password},
+				password => $params->{sn_password_sha},
 				client   => $client,
 				cb       => sub {
 					my $body = $class->saveSettings( $client, $params );
@@ -74,7 +80,7 @@ sub handler {
 					}
 					
 					delete $params->{sn_email};
-					delete $params->{sn_password};
+					delete $params->{sn_password_sha};
 					
 					my $body = $class->saveSettings( $client, $params );
 					$callback->( $client, $params, $body, @args );
@@ -102,7 +108,7 @@ sub saveSettings {
 	my ( $class, $client, $params ) = @_;
 	
 	if (   $params->{sn_email}
-		&& $params->{sn_password}
+		&& $params->{sn_password_sha}
 		&& defined $params->{sn_sync} 
 		&& $params->{sn_sync} ne $prefs->get('sn_sync')
 	) {

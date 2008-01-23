@@ -61,6 +61,15 @@ sub init {
 	
 	$log->info('SqueezeNetwork Sync Init');
 	
+	# Convert old non-hashed password
+	if ( my $password = $prefs->get('sn_password') ) {
+		$password = sha1_base64( $password );
+		$prefs->set( sn_password_sha => $password );
+		$prefs->remove('sn_password');
+			
+		$log->debug('Converted SN password to hashed version');
+	}
+	
 	my $timeURL = $class->url( '/api/v1/time' );
 	
 	my $http = $class->new(
@@ -198,12 +207,15 @@ sub login {
 	
 	if ( !$username || !$password ) {
 		$username = $prefs->get('sn_email');
-		$password = $prefs->get('sn_password');
+		$password = $prefs->get('sn_password_sha');
 	}
 	
 	# Return if we don't have any SN login information
 	if ( !$username || !$password ) {
-		my $error = $client->string('SQUEEZENETWORK_NO_LOGIN');
+		my $error = $client 
+			? $client->string('SQUEEZENETWORK_NO_LOGIN')
+			: Slim::Utils::Strings::string('SQUEEZENETWORK_NO_LOGIN');
+			
 		$log->info( $error );
 		return $params{ecb}->( undef, $error );
 	}
@@ -227,7 +239,7 @@ sub login {
 			v => 'sc' . $::VERSION,
 			u => $username,
 			t => $time,
-			a => sha1_base64( sha1_base64($password) . $time ),
+			a => sha1_base64( $password . $time ),
 		},
 	);
 	
