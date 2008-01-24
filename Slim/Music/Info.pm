@@ -373,6 +373,78 @@ sub getDuration {
 	return ( blessed $track ) ? $track->secs : undef;
 }
 
+# Constant bitrates
+my %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
+
+sub setRemoteMetadata {
+	my ( $url, $meta ) = @_;
+	
+	my $attr = {};
+	
+	if ( $meta->{title} ) {
+		$attr->{TITLE} = $meta->{title};
+		
+		setCurrentTitle( $url, $meta->{title} );
+	}
+	
+	if ( my $type = $meta->{ct} ) {
+		if ( $type =~ /(.*);(.*)/ ) {
+			# content type has ";" followed by encoding
+			$log->info("Truncating content type. Was: $type, now: $1");
+			# TODO: remember encoding as it could be useful later
+			$type = $1; # truncate at ";"
+		}
+
+		$type = lc($type);
+
+		if ( $types{$type} ) {
+			# we got it
+		}
+		elsif ($mimeTypes{$type}) {
+			$type = $mimeTypes{$type};
+		}
+		else {
+			my $guessedtype = typeFromPath($url);
+
+			if ( $guessedtype ne 'unk' ) {
+				$type = $guessedtype;
+			}
+		}
+
+		# Update the cache set by typeFrompath as well.
+		$urlToTypeCache{$url} = $type;
+		
+		$attr->{CT} = $type;
+	}
+	
+	if ( $meta->{secs} ) {
+		$attr->{SECS} = $meta->{secs};
+	}
+	
+	if ( $meta->{bitrate} ) {
+		$attr->{BITRATE}   = $meta->{bitrate} * 1000;
+		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? 0 : 1;
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( "Updating metadata for $url: " . Data::Dump::dump($attr) );
+	}
+
+	my $track = Slim::Schema->rs('Track')->updateOrCreate( {
+		url        => $url,
+		attributes => $attr,
+		readTags   => 0,
+		commit     => 1,
+	} );
+	
+	if ( $meta->{bitrate} ) {
+		# Cache the bitrate string so it will appear in TrackInfo
+		$currentBitrates{$url} = $track->prettyBitRate;
+	}
+	
+	return $track;
+}
+
 sub setCurrentTitleChangeCallback {
 	my $callbackRef = shift || return;
 

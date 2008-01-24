@@ -298,8 +298,14 @@ sub handleFeed {
 		if ( $url ) {
 
 			$log->info("Playing/adding $url");
-		
-			Slim::Music::Info::setTitle( $url, $title );
+			
+			# Set metadata about this URL
+			Slim::Music::Info::setRemoteMetadata( $url, {
+				title   => $title,
+				ct      => $stash->{'streaminfo'}->{'item'}->{'mime'},
+				secs    => $stash->{'streaminfo'}->{'item'}->{'duration'},
+				bitrate => $stash->{'streaminfo'}->{'item'}->{'bitrate'},
+			} );
 		
 			if ( $play ) {
 				$client->execute([ 'playlist', 'clear' ]);
@@ -319,19 +325,32 @@ sub handleFeed {
 		my $play  = ($stash->{'action'} eq 'playall');
 		
 		my @urls;
+		# XXX: Why is $stash->{streaminfo}->{item} added on here, it seems to be undef?
 		for my $item ( @{ $stash->{'items'} }, $stash->{'streaminfo'}->{'item'} ) {
+			my $url;
 			if ( $item->{'type'} eq 'audio' && $item->{'url'} ) {
-				push @urls, $item->{'url'};
-				Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+				$url = $item->{'url'};
 			}
 			elsif ( $item->{'enclosure'} && $item->{'enclosure'}->{'url'} ) {
-				push @urls, $item->{'enclosure'}->{'url'};
-				Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+				$url = $item->{'enclosure'}->{'url'};
 			}
 			elsif ( $item->{'play'} ) {
-				push @urls, $item->{'play'};
-				Slim::Music::Info::setTitle( $item->{'play'}, $item->{'name'} || $item->{'title'} );
+				$url = $item->{'play'};
 			}
+			
+			next if !$url;
+			
+			# Set metadata about this URL
+			Slim::Music::Info::setRemoteMetadata( $url, {
+				title   => $item->{'name'} || $item->{'title'},
+				ct      => $item->{'mime'},
+				secs    => $item->{'duration'},
+				bitrate => $item->{'bitrate'},
+			} );
+			
+			main::idleStreams();
+			
+			push @urls, $url;
 		}
 		
 		if ( @urls ) {
