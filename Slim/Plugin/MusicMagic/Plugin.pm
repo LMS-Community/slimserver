@@ -32,7 +32,7 @@ my $MMSport;
 my $OS  = Slim::Utils::OSDetect::OS();
 
 my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.musicmagic',
+	'category'     => 'plugin.musicip',
 	'defaultLevel' => 'ERROR',
 });
 

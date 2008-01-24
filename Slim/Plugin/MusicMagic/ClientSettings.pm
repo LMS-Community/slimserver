@@ -14,11 +14,11 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.musicmagic',
+	'category'     => 'plugin.musicip',
 	'defaultLevel' => 'ERROR',
 });
 
-my $prefs = preferences('plugin.musicip');
+my $prefs = preferences('plugin.musicmagic');
 
 $prefs->migrateClient(1, sub {
 	my ($clientprefs, $client) = @_;

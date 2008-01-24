@@ -440,7 +440,7 @@ MUSICMAGIC_MOODS
 	NL	MugicMagic-stemmingsmix
 	ZH_CN	MusicIP气氛混音
 
-DEBUG_PLUGIN_MUSICMAGIC
+DEBUG_PLUGIN_MUSICIP
 	DE	MusicIP Mix & Export
 	EN	MusicIP Mix & Export Logging
 	ES	Registro de mezclas y exportación de MusicIP
