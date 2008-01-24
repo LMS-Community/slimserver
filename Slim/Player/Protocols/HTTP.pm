@@ -382,6 +382,7 @@ sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
 	if ( $url =~ /mp3tunes\.com/ ) {
+		my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
 		my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
 		if ( $meta ) {
 			# Metadata for currently playing song
@@ -390,14 +391,13 @@ sub getMetadataFor {
 				album    => $meta->{album},
 				tracknum => $meta->{tracknum},
 				title    => $meta->{title},
-				cover    => $meta->{cover} || 'html/images/ServiceProviders/mp3tunes.png',
-				icon     => Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon'),
+				cover    => $meta->{cover} || $icon,
+				icon     => $icon,
 				type     => 'MP3tunes',
 			};
 		}
 		else {
 			# Metadata for items in the playlist that have not yet been played
-			my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
 			return {	
 				cover    => $icon,
 				icon     => $icon,
