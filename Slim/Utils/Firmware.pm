@@ -167,7 +167,7 @@ sub init_jive {
 		$JIVE_FW = $custom_image;
 
 		my $version = read_file($version_file);
-		($JIVE_VER, $JIVE_REV) = $version =~ m/^(\d+)\s(r.*)/;
+		($JIVE_VER, $JIVE_REV) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
 		Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $custom_image, 'binary');
 		
@@ -204,11 +204,11 @@ sub init_jive_version_done {
 	my $version = read_file($version_file);
 	
 	# jive.version format:
-	# 1 r457
+	# 7.0 rNNNN
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
-	my ($ver, $rev) = $version =~ m/^(\d+)\s(r.*)/;
+	my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-	my $jive_file = catdir( $prefs->get('cachedir'), "jive_${ver}_${rev}.bin" );
+	my $jive_file = catdir( $prefs->get('cachedir'), "jive_${ver}_r${rev}.bin" );
 
 	if ( !-e $jive_file ) {		
 		$log->info("Downloading Jive firmware to: $jive_file");
@@ -255,7 +255,7 @@ sub init_jive_done {
 		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
 	}
 	
-	my ($ver, $rev) = $jive_file =~ m/jive_([^_]+)_([^\.]+).bin/;
+	my ($ver, $rev) = $jive_file =~ m/jive_([^_]+)_r([^\.]+).bin/;
 	
 	$JIVE_VER = $ver;
 	$JIVE_REV = $rev;
@@ -292,17 +292,19 @@ sub jive_needs_upgrade {
 	
 	return unless $JIVE_FW && $JIVE_VER;
 	
-	my ($cur_version, $cur_rev) = $current =~ m/^(\d+)\s(r.*)/;
+	my ($cur_version, $cur_rev) = $current =~ m/^([^ ]+)\sr(\d+)/;
 	
 	if ( !$cur_version || !$cur_rev ) {
 		logError("Jive sent invalid current version: $current");
 		return;
 	}
 	
+	# Force upgrade if the version doesn't match, or if the rev is older
+	# Allows newer firmware to work without forcing a downgrade
 	if ( 
-		( $JIVE_VER != $cur_version )
+		( $JIVE_VER ne $cur_version )
 		||
-		( $JIVE_REV ne $cur_rev )
+		( $JIVE_REV > $cur_rev )
 	) {
 		$log->debug("Jive needs upgrade! (has: $current, needs: $JIVE_VER $JIVE_REV)");
 		return 1;
