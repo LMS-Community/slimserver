@@ -537,6 +537,16 @@ Playlist = function(){
 			um.showLoadIndicator = false;
 		},
 
+		isUpdating : function(){
+			var el = Ext.get('playlistPanel');
+
+			// try to reload previous page if no URL is defined
+			if (el = el.getUpdateManager())
+				return el.isUpdating();
+
+			return false;
+		},
+
 		clear : function(){
 			Player.playerControl(['playlist', 'clear']);
 			Playlist.load();							// Bug 5709: force playlist to clear
@@ -641,6 +651,10 @@ Playlist = function(){
 		},
 
 		control : function(cmd, el) {
+			// don't accept new commands while the playlist is updating
+			if (this.isUpdating())
+				return;
+
 			el = Ext.get(el);
 			if (el.dd && el.dd.config && parseInt(el.dd.config.position) >= 0)
 				Player.playerControl(['playlist', cmd, el.dd.config.position])
