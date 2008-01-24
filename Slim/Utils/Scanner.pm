@@ -663,7 +663,7 @@ sub readRemoteHeaders {
 			}
 			else {
 
-				$log->debug("Scanning mp3 stream for bitrate");
+				$log->debug("Scanning mp3 stream for bitrate/ID3 tags");
 				
 				$http->read_body( {
 					'readLimit'   => 128 * 1024,
@@ -674,7 +674,7 @@ sub readRemoteHeaders {
 						
 						my ($bitrate, $vbr) = scanBitrate( $io, 'mp3', $url );
 						
-						if ( $bitrate > 0 ) {
+						if ( $bitrate > 0 && !$track->bitrate ) {
 							Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 						}
 					},

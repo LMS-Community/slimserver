@@ -208,25 +208,17 @@ sub gotPlaylist {
 		next unless $item->{'type'} eq 'audio';
 
 		push @urls, $item->{'url'};
-		Slim::Music::Info::setTitle( 
-			$item->{'url'}, 
-			$item->{'name'} || $item->{'title'} || $item->{'text'},
-		);
 		
-		# If there's a mime attribute, use it to set the content type properly
-		# This is needed to support MP3tunes, where a URL may be any number of formats
-		if ( my $mime = $item->{'mime'} ) {
-			$log->info( "Setting content-type to $mime for " . $item->{'url'} );
-
-			Slim::Music::Info::setContentType( $item->{'url'}, $mime );
-		}
+		# Set metadata about this URL
+		Slim::Music::Info::setRemoteMetadata( $item->{'url'}, {
+			title   => $item->{'name'} || $item->{'title'} || $item->{'text'},
+			ct      => $item->{'mime'},
+			secs    => $item->{'duration'},
+			bitrate => $item->{'bitrate'},
+		} );
 		
-		# If there's a duration attribute, use it to set the length
-		if ( my $secs = $item->{'duration'} ) {
-			$log->info( "Setting duration to $secs for " . $item->{'url'} );
-			
-			Slim::Music::Info::setDuration( $item->{'url'}, $secs );
-		}
+		# This loop may have a lot of items and a lot of database updates
+		main::idleStreams();
 	}
 
 	my $action = 'play';
@@ -1069,27 +1061,21 @@ sub playItem {
 				
 				push @urls, $otherURL;
 				
-				$log->info( "Setting title to $title for $otherURL" );
-				Slim::Music::Info::setTitle( $otherURL, $title );
-				
-				if ( my $mime = $other->{'mime'} ) {
-					$log->info( "Setting content-type to $mime for $otherURL" );
-
-					Slim::Music::Info::setContentType( $otherURL, $mime );
-				}
-
-				# If there's a duration attribute, use it to set the length
-				if ( my $secs = $other->{'duration'} ) {
-
-					$log->info( "Setting duration to $secs for $otherURL" );
-
-					Slim::Music::Info::setDuration( $otherURL, $secs );
-				}
-				
 				# Is this item the one to jump to?
 				if ( $url eq $otherURL ) {
 					$index = $count;
 				}
+
+				# Set metadata about this URL
+				Slim::Music::Info::setRemoteMetadata( $otherURL, {
+					title   => $title,
+					ct      => $other->{'mime'},
+					secs    => $other->{'duration'},
+					bitrate => $other->{'bitrate'},
+				} );
+
+				# This loop may have a lot of items and a lot of database updates
+				main::idleStreams();
 				
 				$count++;
 			}
@@ -1099,8 +1085,13 @@ sub playItem {
 			$client->execute([ 'playlist', 'jump', $index ]);
 		}
 		else {
-			$log->info( "Setting title to $title for $url" );
-			Slim::Music::Info::setTitle( $url, $title );
+			# Set metadata about this URL
+			Slim::Music::Info::setRemoteMetadata( $url, {
+				title   => $title,
+				ct      => $item->{'mime'},
+				secs    => $item->{'duration'},
+				bitrate => $item->{'bitrate'},
+			} );
 			
 			$client->execute([ 'playlist', $action, $url, $title ]);
 		}
@@ -1615,8 +1606,14 @@ sub _cliQuery_done {
 				if ( $url ) {
 
 					$log->info("$method $url");
-				
-					Slim::Music::Info::setTitle( $url, $title );
+					
+					# Set metadata about this URL
+					Slim::Music::Info::setRemoteMetadata( $url, {
+						title   => $title,
+						ct      => $subFeed->{'mime'},
+						secs    => $subFeed->{'duration'},
+						bitrate => $subFeed->{'bitrate'},
+					} );
 				
 					$client->execute([ 'playlist', 'clear' ]) if ($method =~ /play|load/i);
 					$client->execute([ 'playlist', $method, $url ]);
@@ -1627,18 +1624,29 @@ sub _cliQuery_done {
 			else {
 				my @urls;
 				for my $item ( @{ $subFeed->{'items'} } ) {
+					my $url;
+					
 					if ( $item->{'type'} eq 'audio' && $item->{'url'} ) {
-						push @urls, $item->{'url'};
-						Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+						$url = $item->{'url'};
 					}
 					elsif ( $item->{'enclosure'} && $item->{'enclosure'}->{'url'} ) {
-						push @urls, $item->{'enclosure'}->{'url'};
-						Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+						$url = $item->{'enclosure'}->{'url'};
 					}
 					elsif ( $item->{'play'} ) {
-						push @urls, $item->{'play'};
-						Slim::Music::Info::setTitle( $item->{'play'}, $item->{'name'} || $item->{'title'} );
+						$url = $item->{'play'};
 					}
+					
+					# Set metadata about this URL
+					Slim::Music::Info::setRemoteMetadata( $url, {
+						title   => $item->{'name'} || $item->{'title'},
+						ct      => $item->{'mime'},
+						secs    => $item->{'duration'},
+						bitrate => $item->{'bitrate'},
+					} );
+					
+					main::idleStreams();
+					
+					push @urls, $url;
 				}
 				
 				if ( @urls ) {
