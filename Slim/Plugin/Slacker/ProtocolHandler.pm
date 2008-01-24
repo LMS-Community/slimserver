@@ -694,44 +694,54 @@ sub getMetadataFor {
 	else {	
 		$track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 	}
-
-	return unless $track;
 	
-	# Fav icon changes if the user has already rated it up
-	# XXX: Need icons
-	my $fav_icon = $track->{trate} ? 'html/images/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav.gif';
-	my $fav_tip  = $track->{trate} ? 'PLUGIN_SLACKER_UNMARK_FAVORITE' : 'PLUGIN_SLACKER_FAVORITE_TRACK';
-	my $fav_cmd  = $track->{trate} ? 'U' : 'F';
+	my $icon = Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon');
+
+	if ( $track ) {
+		# Fav icon changes if the user has already rated it up
+		# XXX: Need icons
+		my $fav_icon = $track->{trate} ? 'html/images/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav.gif';
+		my $fav_tip  = $track->{trate} ? 'PLUGIN_SLACKER_UNMARK_FAVORITE' : 'PLUGIN_SLACKER_FAVORITE_TRACK';
+		my $fav_cmd  = $track->{trate} ? 'U' : 'F';
 	
-	return {
-		artist      => $track->{artist},
-		album       => $track->{album},
-		title       => $track->{title},
-		# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
-		cover       => 'http://images.slacker.com/covers/272/' . $track->{albumid},
-		icon        => Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon'),
-		bitrate     => '128k CBR',
-		type        => 'MP3 (Slacker)',
-		info_link   => 'plugins/slacker/trackinfo.html',
-		buttons     => {
-			# disable REW/Previous button
-			rew => 0,
+		return {
+			artist      => $track->{artist},
+			album       => $track->{album},
+			title       => $track->{title},
+			# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
+			cover       => 'http://images.slacker.com/covers/272/' . $track->{albumid},
+			icon        => $icon,
+			bitrate     => '128k CBR',
+			type        => 'MP3 (Slacker)',
+			info_link   => 'plugins/slacker/trackinfo.html',
+			buttons     => {
+				# disable REW/Previous button
+				rew => 0,
 
-			# replace repeat with Mark as Fav
-			repeat  => {
-				icon    => $fav_icon,
-				tooltip => Slim::Utils::Strings::string($fav_tip),
-				command => [ 'slacker', 'rate', $fav_cmd ],
-			},
+				# replace repeat with Mark as Fav
+				repeat  => {
+					icon    => $fav_icon,
+					tooltip => Slim::Utils::Strings::string($fav_tip),
+					command => [ 'slacker', 'rate', $fav_cmd ],
+				},
 
-			# replace shuffle with Ban Track
-			shuffle => {
-				icon    => 'html/images/btn_slacker_ban.gif',
-				tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
-				command => [ 'slacker', 'rate', 'B' ],
-			},
-		}
-	};
+				# replace shuffle with Ban Track
+				shuffle => {
+					icon    => 'html/images/btn_slacker_ban.gif',
+					tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
+					command => [ 'slacker', 'rate', 'B' ],
+				},
+			}
+		};
+	}
+	else {
+		return {
+			icon    => $icon,
+			cover   => $icon,
+			bitrate => '128k CBR',
+			type    => 'MP3 (Slacker)',
+		};
+	}
 }
 
 1;

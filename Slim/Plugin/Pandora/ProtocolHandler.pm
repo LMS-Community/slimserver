@@ -574,37 +574,47 @@ sub getMetadataFor {
 		$track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack')
 	}
 	
-	return unless $track;
+	my $icon = Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon');
 	
-	return {
-		artist      => $track->{artistName},
-		album       => $track->{albumName},
-		title       => $track->{songName},
-		cover       => $track->{albumArtUrl} || $defaultArtURL,
-		icon        => Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon'),
-		replay_gain => $track->{trackGain},
-		bitrate     => '128k CBR',
-		type        => 'MP3 (Pandora)',
-		info_link   => 'plugins/pandora/trackinfo.html',
-		buttons     => {
-			# disable REW/Previous button
-			rew => 0,
+	if ( $track ) {
+		return {
+			artist      => $track->{artistName},
+			album       => $track->{albumName},
+			title       => $track->{songName},
+			cover       => $track->{albumArtUrl} || $defaultArtURL,
+			icon        => $icon,
+			replay_gain => $track->{trackGain},
+			bitrate     => '128k CBR',
+			type        => 'MP3 (Pandora)',
+			info_link   => 'plugins/pandora/trackinfo.html',
+			buttons     => {
+				# disable REW/Previous button
+				rew => 0,
 
-			# replace repeat with Thumbs Up
-			repeat  => {
-				icon    => 'html/images/btn_thumbs_up.gif',
-				tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_LIKE'),
-				command => [ 'pandora', 'rate', 1 ],
-			},
+				# replace repeat with Thumbs Up
+				repeat  => {
+					icon    => 'html/images/btn_thumbs_up.gif',
+					tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_LIKE'),
+					command => [ 'pandora', 'rate', 1 ],
+				},
 
-			# replace shuffle with Thumbs Down
-			shuffle => {
-				icon    => 'html/images/btn_thumbs_down.gif',
-				tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_DONT_LIKE'),
-				command => [ 'pandora', 'rate', 0 ],
-			},
-		}
-	};
+				# replace shuffle with Thumbs Down
+				shuffle => {
+					icon    => 'html/images/btn_thumbs_down.gif',
+					tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_DONT_LIKE'),
+					command => [ 'pandora', 'rate', 0 ],
+				},
+			}
+		};
+	}
+	else {
+		return {
+			icon    => $icon,
+			cover   => $icon,
+			bitrate => '128k CBR',
+			type    => 'MP3 (Pandora)',
+		};
+	}
 }
 
 1;
