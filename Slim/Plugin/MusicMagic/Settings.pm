@@ -14,7 +14,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.musicmagic',
+	'category'     => 'plugin.musicip',
 	'defaultLevel' => 'ERROR',
 });
 
@@ -61,11 +61,11 @@ $prefs->setChange(
 $prefs->setChange(
 	sub {
 			Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::MusicMagic::Plugin::checker);
-		
+			
 			my $interval = $prefs->get('scan_interval') || 3600;
-		
+			
 			$log->info("re-setting checker for $interval seconds from now.");
-		
+			
 			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::MusicMagic::Plugin::checker);
 	},
 'scan_interval');

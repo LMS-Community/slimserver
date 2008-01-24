@@ -16,7 +16,7 @@ use Slim::Utils::Strings;
 use Slim::Utils::Prefs;
 
 my $os  = Slim::Utils::OSDetect::OS();
-my $log = logger('plugin.musicmagic');
+my $log = logger('plugin.musicip');
 
 my $prefs = preferences('plugin.musicmagic');
 
