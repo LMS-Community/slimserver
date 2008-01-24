@@ -18,6 +18,26 @@ sub initPlugin {
 		loop => 'Slim::Plugin::Sounds::ProtocolHandler'
 	);
 
+	my @item = ({
+			text           => Slim::Utils::Strings::string(getDisplayName()),
+			weight         => 30,
+			id             => 'sounds',
+			node           => 'extras',
+			'icon-id'      => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
+			displayWhenOff => 0,
+			window         => { titleStyle => 'album' },
+			actions => {
+				go =>          {
+							cmd => [ 'sounds', 'items' ],
+							params => {
+								menu => 'sounds',
+							},
+				},
+			},
+		});
+
+	Slim::Control::Jive::registerPluginMenu(\@item);
+
 	$class->SUPER::initPlugin(
 		feed => Slim::Networking::SqueezeNetwork->url( '/api/sounds/v1/opml' ),
 		tag  => 'sounds',

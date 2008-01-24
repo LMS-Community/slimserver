@@ -35,9 +35,10 @@ sub initPlugin {
 		[0, 1, 1, \&deleteStation]);
 	
 	$class->SUPER::initPlugin(
-		feed => Slim::Networking::SqueezeNetwork->url('/api/slacker/v1/opml'),
-		tag  => 'slacker',
-		menu => 'music_services',
+		feed   => Slim::Networking::SqueezeNetwork->url('/api/slacker/v1/opml'),
+		tag    => 'slacker',
+		menu   => 'music_services',
+		weight => 30,
 	);
 	
 	if ( !$ENV{SLIM_SERVICE} ) {

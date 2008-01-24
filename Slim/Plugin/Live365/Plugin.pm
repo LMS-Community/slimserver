@@ -19,9 +19,10 @@ sub initPlugin {
 	);
 
 	$class->SUPER::initPlugin(
-		feed => Slim::Networking::SqueezeNetwork->url('/api/live365/v1/opml'),
-		tag  => 'live365',
-		menu => 'radios',
+		feed   => Slim::Networking::SqueezeNetwork->url('/api/live365/v1/opml'),
+		tag    => 'live365',
+		menu   => 'radios',
+		weight => 40,
 	);
 }
 

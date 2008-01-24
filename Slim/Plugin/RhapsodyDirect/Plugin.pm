@@ -29,9 +29,10 @@ sub initPlugin {
 	);
 
 	$class->SUPER::initPlugin(
-		feed => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml'),
-		tag  => 'rhapsodydirect',
-		menu => 'music_services',
+		feed   => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml'),
+		tag    => 'rhapsodydirect',
+		menu   => 'music_services',
+		weight => 20,
 	);
 	
 	if ( !$ENV{SLIM_SERVICE} ) {

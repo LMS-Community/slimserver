@@ -92,6 +92,7 @@ sub cliRadiosQuery {
 		$data = {
 			'text' => string(getDisplayName()),  # nice name
 			'icon-id' => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
+			'weight'  => 50,
 			'actions' => {
 				'go' => {
 					'cmd' => ['shoutcast', 'items'],

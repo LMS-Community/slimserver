@@ -1506,8 +1506,13 @@ sub sortResultLoop {
 	}
 	
 	if (defined ${$self->{'_results'}}{$loop}) {
+		my @data;
 		
-		my @data = sort { $a->{$field} cmp $b->{$field} } @{${$self->{'_results'}}{$loop}};
+		if ($field == 'weight') {
+			@data = sort { $a->{$field} <=> $b->{$field} } @{${$self->{'_results'}}{$loop}};
+		} else {
+			@data = sort { $a->{$field} cmp $b->{$field} } @{${$self->{'_results'}}{$loop}};
+		}
 		${$self->{'_results'}}{$loop} = \@data;
 	}
 }
