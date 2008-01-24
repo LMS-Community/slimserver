@@ -1215,10 +1215,10 @@ sub replayGainHash {
 	my %return = (
 		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
-			actions => {
+		actions => {
 			do => {
 				player => 0,
-				cmd => ['replayGainMode', "$thisValue"],
+				cmd => ['playerpref', 'replayGainMode', "$thisValue"],
 			},
 		},
 	);
