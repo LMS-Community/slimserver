@@ -239,6 +239,14 @@ sub mainMenu {
 		@pluginMenus,
 	);
 
+	if( blessed($client)
+	 && $client->isPlayer()
+	 && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')
+	 && $client->hasDigitalIn() ) {
+		my $digitalInputItem = Slim::Plugin::DigitalInput::Plugin::digitalInputItem( $client);
+		@menu = ( @menu, @$digitalInputItem);
+	}
+
 	if ( blessed($client) && $client->isPlayer() && $client->canPowerOff() ) {
 		my $playerPower = playerPower($client, 1);
 		@menu = (@menu, @$playerPower);

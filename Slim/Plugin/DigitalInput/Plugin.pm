@@ -60,6 +60,137 @@ sub initPlugin {
 	);
 
 	Slim::Player::ProtocolHandlers->registerHandler('source', 'Slim::Plugin::DigitalInput::ProtocolHandler');
+
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+	Slim::Control::Request::addDispatch(['digitalinputmenu'],
+	[1, 1, 0, \&digitalInputMenu]);
+	Slim::Control::Request::addDispatch(['setdigitalinput', '_which'],
+	[1, 0, 0, \&setDigitalInput]);
+}
+
+# Called every time Jive main menu is updated after a player switch
+# Adds Digital Inputs menu item for TR
+sub digitalInputItem {
+	my $client = shift;
+	my @item = ({
+		text           => Slim::Utils::Strings::string(getDisplayName()),
+		weight         => 45,
+		id             => 'digitalinput',
+		node           => 'home',
+		displayWhenOff => 0,
+		window         => { titleStyle => 'settings' },
+		actions => {
+			go =>          {
+				player => 0,
+				cmd    => [ 'digitalinputmenu' ],
+			},
+		},
+	});
+	return \@item;
+}
+
+sub digitalInputMenu {
+	my $request = shift;
+	my $client = $request->client();
+	my @menu = (
+		{
+			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_BALANCED_AES'),
+			id  => 'aes-ebu',
+			weight  => 10,
+			style   => 'itemplay',
+			nextWindow => 'nowPlaying',
+			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'aes-ebu' ],
+				},
+				go => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'aes-ebu' ],
+				},
+			},
+		},
+		{
+			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_BNC_SPDIF'),
+			id  => 'bnc-spdif',
+			weight  => 20,
+			style   => 'itemplay',
+			nextWindow => 'nowPlaying',
+			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'bnc-spdif' ],
+				},
+				go => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'bnc-spdif' ],
+				},
+			},
+		},
+		{
+			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_RCA_SPDIF'),
+			id  => 'rca-spdif',
+			weight  => 30,
+			style   => 'itemplay',
+			nextWindow => 'nowPlaying',
+			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'rca-spdif' ],
+				},
+				go => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'rca-spdif' ],
+				},
+			},
+		},
+		{
+			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF'),
+			id  => 'toslink',
+			weight  => 40,
+			style   => 'itemplay',
+			nextWindow => 'nowPlaying',
+			actions => {
+				play => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'toslink' ],
+				},
+				go => {
+					player => 0,
+					cmd    => [ 'setdigitalinput' , 'toslink' ],
+				},
+			},
+		},
+	);
+
+	my $numitems = scalar(@menu);
+	$request->addResult("count", $numitems);
+	$request->addResult("offset", 0);
+	my $cnt = 0;
+	for my $eachItem (@menu[0..$#menu]) {
+		$request->setResultLoopHash('item_loop', $cnt, $eachItem);
+		$cnt++;
+	}
+	$request->setStatusDone();
+}
+
+sub setDigitalInput {
+	my $request = shift;
+	my $client  = $request->client();
+	my $which   = $request->getParam('_which');
+	my $functions = getFunctions();
+
+	if (!defined $which || !defined $$functions{$which} || !$client) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	&{$$functions{$which}}($client);
+
+	$request->setStatusDone()
 }
 
 sub enabled {
