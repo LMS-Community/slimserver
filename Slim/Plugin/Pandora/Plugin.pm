@@ -35,6 +35,7 @@ sub initPlugin {
 		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/v1/opml'),
 		tag       => 'pandora',
 		menu      => 'music_services',
+		weight    => 10,
 	);
 	
 	if ( !$ENV{SLIM_SERVICE} ) {

@@ -4067,6 +4067,7 @@ sub dynamicAutoQuery {
 		my $cnt = $request->getResultLoopCount($loop) || 0;
 		
 		if ( ref $data eq 'HASH' && scalar keys %{$data} ) {
+			$data->{weight} = $data->{weight} || 100;
 			$request->setResultLoopHash($loop, $cnt, $data);
 		}
 		

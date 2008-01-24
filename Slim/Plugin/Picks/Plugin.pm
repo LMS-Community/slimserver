@@ -11,9 +11,10 @@ sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin(
-		feed => 'http://www.slimdevices.com/picks/split/picks.opml',
-		tag  => 'picks',
-		menu => 'radios',
+		feed   => 'http://www.slimdevices.com/picks/split/picks.opml',
+		tag    => 'picks',
+		menu   => 'radios',
+		weight => 10,
 	);
 }
 

@@ -48,10 +48,6 @@ sub initCLI {
 		[ 1, 1, 1, $cliQuery ]
 	);
 
-	if ( $args{menu} eq 'plugins' || $args{menu} eq 'radio' ) {
-		$args{menu} = 'radios';
-	}
-
 	$cli_next{ $class } ||= {};
 		
 	$cli_next{ $class }->{ $args{menu} } = Slim::Control::Request::addDispatch(
@@ -90,18 +86,22 @@ sub cliRadiosQuery {
 	my ( $class, $args, $cli_menu ) = @_;
 	my $tag  = $args->{tag};
 
-	my $icon = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+	my $icon   = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+	my $weight = $args->{weight} || 100;
 
 	return sub {
 		my $request = shift;
 
 		my $menu = $request->getParam('menu');
 
+		$request->addParam('sort','weight');
+
 		my $data;
 		# what we want the query to report about ourself
 		if (defined $menu) {
 			$data = {
 				text         => Slim::Utils::Strings::string( $args->{display_name} || $class->getDisplayName() ),  # nice name
+				weight       => $weight,
 				'icon-id'    => $icon,
 				actions      => {
 						go => {

@@ -147,6 +147,7 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text'    => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			weight    => 30,
 			'icon-id' => Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon'),
 			'actions' => {
 				'go' => {

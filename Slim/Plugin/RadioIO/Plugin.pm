@@ -24,6 +24,7 @@ sub initPlugin {
 		feed           => Slim::Networking::SqueezeNetwork->url('/api/radioio/v1/opml'),
 		tag            => 'radioio',
 		menu           => 'radios',
+		weight         => 20,
 	);
 }
 

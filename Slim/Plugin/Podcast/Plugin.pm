@@ -53,8 +53,6 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['podcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
-	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
-		[0, 1, 1, \&cliRadiosQuery]);
 
 	if ($log->is_debug) {
 
@@ -67,6 +65,26 @@ sub initPlugin {
 
 		$log->debug('');
 	}
+
+	my @item = ({
+			text           => Slim::Utils::Strings::string(getDisplayName()),
+			weight         => 20,
+			id             => 'podcast',
+			node           => 'extras',
+			'icon-id'      => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
+			displayWhenOff => 0,
+			window         => { titleStyle => 'album' },
+			actions => {
+				go =>      {
+					'cmd' => ['podcast', 'items'],
+					'params' => {
+						'menu' => 'podcast',
+					},
+				},
+			},
+		});
+
+	Slim::Control::Jive::registerPluginMenu(\@item);
 
 	updateOPMLCache( $prefs->get('feeds') );
 }
@@ -158,42 +176,6 @@ sub cliQuery {
 	my $cache = Slim::Utils::Cache->new();
 	my $opml = $cache->get( 'podcasts_opml' );
 	Slim::Buttons::XMLBrowser::cliQuery('podcast', $opml, $request);
-}
-
-sub cliRadiosQuery {
-	my $request = shift;
-	
-	my $menu = $request->getParam('menu');
-
-	my $data;
-	# what we want the query to report about ourself
-	if (defined $menu) {
-		$data = {
-			'text'    => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-			'icon-id' => Slim::Plugin::Podcast::Plugin->_pluginDataFor('icon'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['podcast', 'items'],
-					'params' => {
-						'menu' => 'podcast',
-					},
-				},
-			},
-			window    => {
-				titleStyle => 'album',
-			},
-		};
-	}
-	else {
-		$data = {
-			'cmd' => 'podcast',                    # cmd label
-			'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-			'type' => 'xmlbrowser',              # type
-		};
-	}
-	
-	# let our super duper function do all the hard work
-	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 # Update the hashref of podcast feeds for use with the web UI
