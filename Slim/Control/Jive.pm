@@ -239,6 +239,14 @@ sub mainMenu {
 		@pluginMenus,
 	);
 
+	if( blessed($client)
+	 && $client->isPlayer()
+	 && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')
+	 && $client->hasDigitalIn() ) {
+		my $digitalInputItem = Slim::Plugin::DigitalInput::Plugin::digitalInputItem( $client);
+		@menu = ( @menu, @$digitalInputItem);
+	}
+
 	if ( blessed($client) && $client->isPlayer() && $client->canPowerOff() ) {
 		my $playerPower = playerPower($client, 1);
 		@menu = (@menu, @$playerPower);
@@ -1207,10 +1215,10 @@ sub replayGainHash {
 	my %return = (
 		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
-			actions => {
+		actions => {
 			do => {
 				player => 0,
-				cmd => ['replayGainMode', "$thisValue"],
+				cmd => ['playerpref', 'replayGainMode', "$thisValue"],
 			},
 		},
 	);
