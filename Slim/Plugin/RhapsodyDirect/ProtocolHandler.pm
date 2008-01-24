@@ -1150,11 +1150,13 @@ sub getMetadataFor {
 		);
 	}
 	
+	my $icon = Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
+	
 	return $meta->{$url} || {
 		bitrate   => '128k CBR',
 		type      => 'WMA (Rhapsody)',
-		info_link => 'plugins/rhapsodydirect/trackinfo.html',
-		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
+		icon      => $icon,
+		cover     => $icon,
 	};
 }
 
