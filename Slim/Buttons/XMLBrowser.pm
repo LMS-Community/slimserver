@@ -1563,7 +1563,25 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$cnt++;
 						}
-	
+						if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
+							my $actions = {
+								'go' => {
+									player => 0,
+									cmd    => [ 'jivefavorites', 'add' ],
+									params => {
+										title => $title,
+										url   => $url,
+									},
+								},
+					                };
+							my $string = $request->client->string('JIVE_ADD_TO_FAVORITES');
+							$request->addResultLoop($loopname, $cnt, 'text', $string);
+							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+							$request->addResultLoop($loopname, $cnt, 'style', 'item');
+							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'favorites' });
+							$cnt++;
+						}
+
 						$request->addResult('count', $cnt);
 					}
 					

@@ -144,6 +144,9 @@ sub albumsQuery {
 	}
 
 	# get our parameters
+	my %favorites;
+	$favorites{'url'}    = $request->getParam('favorites_url');
+	$favorites{'title'}  = $request->getParam('favorites_title');
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 	my $tags          = $request->getParam('tags');
@@ -329,8 +332,6 @@ sub albumsQuery {
 			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
 		}
 		$request->addResult('base', $base);
-		# add 1 to count if we are adding a 'Play All'
-		$count++ if $insertAll;
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -341,21 +342,15 @@ sub albumsQuery {
 	# now build the result
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	$count-- if $insertAll && $start == 0 && $end == 1;
-
-	$request->addResult('count', $count);
-
 	if ($valid) {
 
-
 		my $loopname = $menuMode?'item_loop':'albums_loop';
-		my $cnt = 0;
+		my $chunkCount = 0;
 		$request->addResult('offset', $start) if $menuMode;
-
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname, includeArt => 1);
+			($chunkCount, $count) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, includeArt => 1);
 		}
 
 
@@ -370,47 +365,63 @@ sub albumsQuery {
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
 				}
-				$request->addResultLoop($loopname, $cnt, 'text', $text);
+
+				my $favorites_title = $text;
+				$favorites_title =~ s/\n/ - /g;
+
+				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 				
 				my $id = $eachitem->id();
 				$id += 0;
+
+				# the favorites url to be sent to jive is the album title here
+				# album id would be (much) better, but that would screw up the favorite on a rescan
+				# title is a really stupid thing to use, since there's no assurance it's unique
+				my $url = 'db:album.titlesearch=' . $eachitem->title;
+
 				my $params = {
-					'album_id' =>  $id,
+					'album_id'        => $id,
+					'favorites_url'   => $url,
+					'favorites_title' => $favorites_title,
 				};
 
 				unless ($sort && $sort eq 'new') {
 					$params->{textkey} = substr($eachitem->titlesort, 0, 1),
 				}
 
-				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 
 				# artwork if we have it
 				if (defined(my $iconId = $eachitem->artwork())) {
 					$iconId += 0;
-					$request->addResultLoop($loopname, $cnt, 'icon-id', $iconId);
+					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 				}
 			}
 			
 			# "raw" result formatting (for CLI or JSON RPC)
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
-				$tags =~ /l/ && $request->addResultLoop($loopname, $cnt, 'album', $eachitem->title);
-				$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'year', $eachitem->year);
-				$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'artwork_track_id', $eachitem->artwork);
-				$tags =~ /t/ && $request->addResultLoop($loopname, $cnt, 'title', $eachitem->rawtitle);
-				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disc', $eachitem->disc);
-				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disccount', $eachitem->discc);
-				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'compilation', $eachitem->compilation);
+				$request->addResultLoop($loopname, $chunkCount, 'id', $eachitem->id);
+				$tags =~ /l/ && $request->addResultLoop($loopname, $chunkCount, 'album', $eachitem->title);
+				$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'year', $eachitem->year);
+				$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artwork_track_id', $eachitem->artwork);
+				$tags =~ /t/ && $request->addResultLoop($loopname, $chunkCount, 'title', $eachitem->rawtitle);
+				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disc', $eachitem->disc);
+				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'disccount', $eachitem->discc);
+				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $eachitem->compilation);
 				if ($tags =~ /a/) {
 					my @artists = $eachitem->artists();
-					$request->addResultLoopIfValueDefined($loopname, $cnt, 'artist', $artists[0]->name());
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $artists[0]->name());
 				}
 			}
 			
-			$cnt++;
+			$chunkCount++;
 		}
+
+		($chunkCount, $count) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
 	}
 	
+	$request->addResult('count', $count);
+
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
 	if ( $to_cache && $menuMode ) {
@@ -442,6 +453,10 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
+	my %favorites;
+	$favorites{'url'} = $request->getParam('favorites_url');
+	$favorites{'title'} = $request->getParam('favorites_title');
+
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -579,9 +594,6 @@ sub artistsQuery {
 		}
 		$request->addResult('base', $base);
 
-		# correct count if we insert "Play all"
-		$count++ if $insertAll;
-
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -591,13 +603,11 @@ sub artistsQuery {
 	$count += 0;
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	$count-- if $insertAll && $start == 0 && $end == 1;
-	$request->addResult('count', $count);
 
 	if ($valid) {
 
 		my $loopname = $menuMode?'item_loop':'artists_loop';
-		my $cnt = 0;
+		my $chunkCount = 0;
 		my @data = $rs->slice($start, $end);
 		
 		$request->addResult('offset', $start) if $menuMode;
@@ -610,8 +620,9 @@ sub artistsQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
+			($chunkCount, $count) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname);
 		}
+
 
 		for my $obj (@data) {
 
@@ -620,22 +631,31 @@ sub artistsQuery {
 			$id += 0;
 
 			if ($menuMode){
-				$request->addResultLoop($loopname, $cnt, 'text', $obj->name);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $obj->name);
+
+				# the favorites url to be sent to jive is the artist name here
+				my $url = 'db:contributor.namesearch=' . $obj->name;
+
 				my $params = {
+					'favorites_url'   => $url,
+					'favorites_title' => $obj->name,
 					'artist_id' => $id, 
 					'textkey' => substr($obj->namesort, 0, 1),
 				};
 
-				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $id);
-				$request->addResultLoop($loopname, $cnt, 'artist', $obj->name);
+				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+				$request->addResultLoop($loopname, $chunkCount, 'artist', $obj->name);
 			}
 
-			$cnt++;
+			$chunkCount++;
 		}
+		($chunkCount, $count) = _jiveAddToFavorites(start => $start, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
+
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
@@ -1103,7 +1123,6 @@ sub genresQuery {
 			window => { titleStyle => 'genres', },
 		};
 		$request->addResult('base', $base);
-		$count++ if $insertAll;
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -1112,18 +1131,15 @@ sub genresQuery {
 
 	$count += 0;
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	$count-- if $insertAll && $start == 0 && $end == 1;
-	
-	$request->addResult('count', $count);
 
 	if ($valid) {
 
 		my $loopname = $menuMode?'item_loop':'genres_loop';
-		my $cnt = 0;
+		my $chunkCount = 0;
 		$request->addResult('offset', $start) if $menuMode;
 		
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
+			($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 		for my $eachitem ($rs->slice($start, $end)) {
 			
@@ -1131,22 +1147,28 @@ sub genresQuery {
 			$id += 0;
 			
 			if ($menuMode) {
-				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
 				
+				# here the url is the genre name
+				my $url = 'db:genre.namesearch=' . $eachitem->name;
 				my $params = {
 					'genre_id' => $id,
 					'textkey' => substr($eachitem->namesort, 0, 1),
+					'favorites_url' => $url,
+					'favorites_title' => $eachitem->name,
 				};
 
-				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $id);
-				$request->addResultLoop($loopname, $cnt, 'genre', $eachitem->name);
+				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+				$request->addResultLoop($loopname, $chunkCount, 'genre', $eachitem->name);
 			}
-			$cnt++;
+			$chunkCount++;
 		}
 	}
+
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
@@ -1391,7 +1413,6 @@ sub musicfolderQuery {
 			},
 		};
 		$request->addResult('base', $base);
-		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1400,20 +1421,16 @@ sub musicfolderQuery {
 
 	$count += 0;
 
-	my ($valid, $start, $end) = $request->normalize(
-		scalar($index), scalar($quantity), $count
-	);
-	$count-- if $insertAll && $start == 0 && $end == 1;
-	$request->addResult('count', $count);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 		
 		my $loopname =  $menuMode?'item_loop':'folder_loop';
-		my $cnt = 0;
+		my $chunkCount = 0;
 		$request->addResult('offset', $start) if $menuMode;
 		
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
+			($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 		for my $eachitem (@data[$start..$end]) {
 
@@ -1424,7 +1441,7 @@ sub musicfolderQuery {
 			$id += 0;
 			
 			if ($menuMode) {
-				$request->addResultLoop($loopname, $cnt, 'text', $filename);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
 
 				my $params = {
 					'textkey' => uc(substr($filename, 0, 1)),
@@ -1468,7 +1485,7 @@ sub musicfolderQuery {
 							},
 						},
 					};
-					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 
 				# song
 				} elsif (Slim::Music::Info::isSong($eachitem)) {
@@ -1498,7 +1515,7 @@ sub musicfolderQuery {
 							},
 						},
 					};
-					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 
 				# not sure
 				} else {
@@ -1529,29 +1546,31 @@ sub musicfolderQuery {
 							'itemsParams' => 'params',
 						},
 					};
-					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 				}
 
-				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			}
 
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $id);
-				$request->addResultLoop($loopname, $cnt, 'filename', $filename);
+				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
+				$request->addResultLoop($loopname, $chunkCount, 'filename', $filename);
 			
 				if (Slim::Music::Info::isDir($eachitem)) {
-					$request->addResultLoop($loopname, $cnt, 'type', 'folder');
+					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
-					$request->addResultLoop($loopname, $cnt, 'type', 'playlist');
+					$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
 				} elsif (Slim::Music::Info::isSong($eachitem)) {
-					$request->addResultLoop($loopname, $cnt, 'type', 'track');
+					$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
 				} else {
-					$request->addResultLoop($loopname, $cnt, 'type', 'unknown');
+					$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 				}
 			}
-			$cnt++;
+			$chunkCount++;
 		}
 	}
+
+	$request->addResult('count', $count);
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
@@ -2039,7 +2058,6 @@ sub playlistsQuery {
 			},
 		};
 		$request->addResult('base', $base);
-		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -2053,17 +2071,15 @@ sub playlistsQuery {
 		
 		my ($valid, $start, $end) = $request->normalize(
 			scalar($index), scalar($quantity), $count);
-		$count-- if $insertAll && $start == 0 && $end == 1;
-		$request->addResult("count", $count);
 
 		if ($valid) {
 			
 			my $loopname = $menuMode?'item_loop':'playlists_loop';
-			my $cnt = 0;
+			my $chunkCount = 0;
 			$request->addResult('offset', $start) if $menuMode;
 
 			if ($insertAll) {
-				($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
+				($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 			}
 
 			for my $eachitem ($rs->slice($start, $end)) {
@@ -2072,23 +2088,24 @@ sub playlistsQuery {
 				$id += 0;
 
 				if ($menuMode) {
-					$request->addResultLoop($loopname, $cnt, 'text', $eachitem->title);
+					$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->title);
 
 					my $params = {
 						'playlist_id' =>  $id, 
 						'textkey' => substr($eachitem->namesort, 0, 1),
 					};
 
-					$request->addResultLoop($loopname, $cnt, 'params', $params);
+					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 				}
 				else {
-					$request->addResultLoop($loopname, $cnt, "id", $id);
-					$request->addResultLoop($loopname, $cnt, "playlist", $eachitem->title);
-					$request->addResultLoop($loopname, $cnt, "url", $eachitem->url) if ($tags =~ /u/);
+					$request->addResultLoop($loopname, $chunkCount, "id", $id);
+					$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
+					$request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url) if ($tags =~ /u/);
 				}
-				$cnt++;
+				$chunkCount++;
 			}
 		}
+		$request->addResult("count", $count);
 	}
 	else {
 		$request->addResult("count", 0);
@@ -3229,12 +3246,12 @@ sub songinfoQuery {
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 		if ($valid) {
+			my $chunkCount = 0;
 
 		# this is where we construct the nowplaying menu
 		if ($menu eq 'nowplaying' && $menuMode) {
 			$request->addResult("count", 1);
 			$request->addResult('offset', $start) if $menuMode;
-			my $cnt = 0;
 			my @vals;
 			my $loopname = 'item_loop';
 			while (my ($key, $val) = each %{$hashRef}) {
@@ -3247,14 +3264,12 @@ sub songinfoQuery {
 				push @vals, $val;
 			}
 			my $string = join ("\n", @vals);
-			$request->addResultLoop($loopname, $cnt, 'text', $string);
-			$request->addResultLoop($loopname, $cnt, 'icon-id', $trackId);
-			#$cnt++;
+			$request->addResultLoop($loopname, $chunkCount, 'text', $string);
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', $trackId);
 		} else {
 			
 
 			my $idx = 0;
-			my $cnt = 0;
 			my $loopname = $menuMode?'item_loop':'songinfo_loop';
 			$request->addResult('offset', $start) if $menuMode;
 
@@ -3317,10 +3332,10 @@ sub songinfoQuery {
 								},
 							},
 						};
-						$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
-						$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-						$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
-						$cnt++;
+						$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
+						$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+						$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
+						$chunkCount++;
 					}
 				}
 
@@ -3339,11 +3354,9 @@ sub songinfoQuery {
 
 			# add a favorites link below play/add links
 			#Add another to result count
-			$count++;
 			my %favorites;
 			$favorites{'title'} = $hashRef->{'TITLE'};
 			$favorites{'url'}   = $hashRef->{'LOCATION'};
-			$cnt = _jiveAddToFavorites($cnt, $request, $loopname, \%favorites);
 			
 			while (my ($key, $val) = each %{$hashRef}) {
 				if ( $key eq 'SHOW_ARTWORK' && $val > 0) {
@@ -3421,7 +3434,7 @@ sub songinfoQuery {
 									},
 								};
 								# style correctly the title that opens for the action element
-								$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId } );
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId } );
 							}
 							
 							#or one of the artist role -- we don't test explicitely !!!
@@ -3454,10 +3467,10 @@ sub songinfoQuery {
 								};
 								
 								# style correctly the window that opens for the action element
-								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' } );
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'menuStyle' => 'album' } );
 							}
 							
-							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+							$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 						}
 						# special case: artwork, only if it exists
 						elsif ($key eq 'COVERART' && $artworkExists) {
@@ -3467,15 +3480,15 @@ sub songinfoQuery {
 									},
 								};
 
-								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-								$request->addResultLoop($loopname, $cnt, 'showBigArtwork', 1);
+								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+								$request->addResultLoop($loopname, $chunkCount, 'showBigArtwork', 1);
 
 								my $text = Slim::Utils::Strings::string('SHOW_ARTWORK');
-								$request->addResultLoop($loopname, $cnt, 'text', $text);
+								$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 
-								# we're going to skip to the next loop (and increment $cnt)
+								# we're going to skip to the next loop (and increment $chunkCount)
 								#  so we don't get the 'key: value' style menu item
-								$cnt++; next; 
+								$chunkCount++; next; 
 								
 						}
 						else {
@@ -3516,8 +3529,8 @@ sub songinfoQuery {
 									},
 								};
 								# style correctly the title that opens for the action element
-								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
+								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
 
 							}
 							elsif ($key eq 'LENGTH') {
@@ -3552,17 +3565,18 @@ sub songinfoQuery {
 							} 
 							
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
-							$request->addResultLoop($loopname, $cnt, 'style', $style) unless $suppress;
+							$request->addResultLoop($loopname, $chunkCount, 'style', $style) unless $suppress;
 						}
-						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ": " . $val) unless $suppress;
+						$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($key) . ": " . $val) unless $suppress;
 					}
 					else {
-						$request->addResultLoop($loopname, $cnt, $key, $val);
+						$request->addResultLoop($loopname, $chunkCount, $key, $val);
 					}
-					$cnt++ unless $suppress;
+					$chunkCount++ unless $suppress;
 				}
 				$idx++;
  			}
+			($chunkCount, $count) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites);
 			
 			# because of suppression of some items, only now can we add the count
 			$request->addResult("count", $count);
@@ -3649,7 +3663,12 @@ sub titlesQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
+	my %favorites;
+	$favorites{'url'} = $request->getParam('favorites_url');
+	$favorites{'title'} = $request->getParam('favorites_title');
 	
+	Data::Dump::dump(%favorites);
+
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	
@@ -3767,8 +3786,6 @@ sub titlesQuery {
 		};
 		$request->addResult('base', $base);
 		
-		# correct count if we insert "Play all"
-		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning) {
@@ -3778,28 +3795,21 @@ sub titlesQuery {
 	$count += 0;
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	$count-- if $insertAll && $start == 0 && $end == 1;
-	$request->addResult("count", $count);
 
 	if ($valid) {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 		my $loopname = $menuMode?'item_loop':'titles_loop';
-		my $cnt = 0;
+		# this is the count of items in this part of the request (e.g., menu 100 200)
+		# not to be confused with $count, which is the count of the entire list
+		my $chunkCount = 0;
 		$request->addResult('offset', $start) if $menuMode;
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
+			($chunkCount, $count) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, listCount => $count);
 		}
 
-		# don't know how to format title and url params to favorites yet
-		#if ($menuMode) {
-			#my %favorites;
-			#$favorites{'title'} = ??
-			#$favorites{'url'} = ??
-			#$cnt = _jiveAddToFavorites($cnt, $request, $loopname, \%favorites);
-		#}
 
 		for my $item ($rs->slice($start, $end)) {
 			
@@ -3807,13 +3817,13 @@ sub titlesQuery {
 			if ($menuMode) {
 				
 				my $text = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
-				$request->addResultLoop($loopname, $cnt, 'text', $text);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 				my $id = $item->id();
 				$id += 0;
 				my $params = {
 					'track_id' =>  $id, 
 				};
-				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			
 			
 				# open a window with icon etc...
@@ -3843,22 +3853,24 @@ sub titlesQuery {
 					$window->{'icon-id'} = $iconId;
 				}
 
-				$request->addResultLoop($loopname, $cnt, 'window', $window);
+				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
 			}
 			
 			# regular formatting
 			else {
-				_addSong($request, $loopname, $cnt, $item, $tags);
+				_addSong($request, $loopname, $chunkCount, $item, $tags);
 			}
 			
-			$cnt++;
+			$chunkCount++;
 			
 			# give peace a chance...
-			if ($cnt % 5) {
+			if ($chunkCount % 5) {
 				::idleStreams();
 			}
 		}
+		($chunkCount, $count) = _jiveAddToFavorites(start => $start, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
+	$request->addResult("count", $count);
 
 	$request->setStatusDone();
 }
@@ -3960,7 +3972,6 @@ sub yearsQuery {
 			}
 		};
 		$request->addResult('base', $base);
-		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -3970,38 +3981,45 @@ sub yearsQuery {
 	$count += 0;
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	$count-- if $insertAll && $start == 0 && $end == 1;
-	$request->addResult('count', $count);
 
 	if ($valid) {
 
 		my $loopname = $menuMode?'item_loop':'years_loop';
-		my $cnt = 0;
+		my $chunkCount = 0;
 		$request->addResult('offset', $start) if $menuMode;
 
 		if ($insertAll) {
-			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
+			($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
+
 		for my $eachitem ($rs->slice($start, $end)) {
+
 
 			my $id = $eachitem->id();
 			$id += 0;
 
+			my $url = $eachitem->id() ? 'db:year.id=' . $eachitem->id() : 0;
+
 			if ($menuMode) {
-				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
+				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
 
 				my $params = {
-					'year' =>  $id,
+					'year'            => $id,
+					# bug 6781: can't add a year to favorites
+					'favorites_url'   => $url,
+					'favorites_title' => $id,
 				};
 
-				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'year', $id);
+				$request->addResultLoop($loopname, $chunkCount, 'year', $id);
 			}
-			$cnt++;
+			$chunkCount++;
 		}
 	}
+
+	$request->addResult('count', $count);
 
 	$request->setStatusDone();
 }
@@ -4323,26 +4341,51 @@ sub _addJiveSong {
 }
 
 sub _jiveAddToFavorites {
-	my ($cnt, $request, $loopname, $favorites) = @_;
-	$log->warn('MARK1' . $cnt);
-	$log->warn('MARK1' . $loopname);
-	$log->warn('MARK1' . Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
-	$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
-	my $actions = {
-		'go' => {
-			player => 0,
-			cmd    => [ 'jivefavorites', 'add' ],
-			params => {
-					title => $favorites->{'title'},
-					url   => $favorites->{'url'},
+
+	my %args       = @_;
+	my $chunkCount = $args{'chunkCount'};
+	my $listCount  = $args{'listCount'};
+	my $loopname   = $args{'loopname'};
+	my $request    = $args{'request'};
+	my $favorites  = $args{'favorites'};
+	my $start      = $args{'start'};
+	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
+
+	return ($chunkCount, $listCount) unless $loopname && $favorites;
+
+	if ($start == 0) {
+
+		# we need %favorites populated or else we don't want this item
+		if (!$favorites->{'title'} || !$favorites->{'url'}) {
+			return ($chunkCount, $listCount);
+		}
+
+
+		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
+		my $actions = {
+			'go' => {
+				player => 0,
+				cmd    => [ 'jivefavorites', 'add' ],
+				params => {
+						title => $favorites->{'title'},
+						url   => $favorites->{'url'},
+				},
 			},
-		},
-	};
-	$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-	$request->addResultLoop($loopname, $cnt, 'style', 'item');
-	$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'favorites' });
-	$cnt++;
-	return($cnt);
+		};
+		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+		$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
+			$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
+		if ($includeArt) {
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+			# FIXME, this needs to change to a favorites image after it is provided
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playlist.png');
+		}
+		$chunkCount++;
+		$listCount++;
+
+	}
+
+	return($chunkCount, $listCount);
 }
 
 sub _songData {
@@ -4618,7 +4661,8 @@ sub _playAll {
 	my %args       = @_;
 	my $start      = $args{'start'};
 	my $end        = $args{'end'};
-	my $cnt        = $args{'count'};
+	my $chunkCount = $args{'chunkCount'};
+	my $listCount  = $args{'listCount'};
 	my $loopname   = $args{'loopname'};
 	my $request    = $args{'request'};
 	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
@@ -4626,7 +4670,7 @@ sub _playAll {
 	# insert first item if needed
 	if ($start == 0 && $end == 1) {
 		# one item list, so do not add a play all and just return
-		return($start, $end, $cnt);
+		return($start, $end, $chunkCount, $listCount);
 	} elsif ($start == 0) {
 		# we're going to add a 'play all' and an 'add all'
 		# init some vars for each mode for use in the two item loop below
@@ -4661,11 +4705,12 @@ sub _playAll {
 		#for my $mode ('play', 'add') {
 		for my $mode ('play') {
 
-		$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
-		$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
+		$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
+		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $cnt, 'icon-id', '/music/all_items/cover.png');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/music/all_items/cover.png');
 		}
 
 		# get all our params
@@ -4719,21 +4764,16 @@ sub _playAll {
 				'params' => $items{$mode}{'params'}{'add'},
 			},
 		};
-		$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-		$cnt++;
+		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+		$chunkCount++;
+		$listCount++;
 
 		}
 
-	# correct db slice!
-	} else {
-		# we are not adding our item but it is counted in $start
-		# (a query for tracks 1 10 needs to start at db 0! -- and go to db 9 (instead of 10))
-		# (a query for tracks 0 10 ALSO needs to start at db 0! -- and go to db 8 (instead of 9))
-		$start--;
 	}
-	# always fix $end 
-	$end--;
-	return($start, $end, $cnt);
+
+	return($chunkCount, $listCount);
+
 }
 
 # this is a silly little sub that allows jive cover art to be rendered in a large window

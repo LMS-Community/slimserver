@@ -14793,6 +14793,9 @@ JIVE_ADD_TO_FAVORITES
 	IT	Aggiungi ai preferiti
 	NL	Toevoegen aan Favorieten
 
+JIVE_ADD_X_TO_FAVORITES
+	EN	Add %s to Favorites
+
 JIVE_ADD_THIS_SONG
 	DE	Dieses Lied hinzufügen
 	EN	Add this song
