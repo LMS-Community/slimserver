@@ -2831,6 +2831,8 @@ sub _playlistXtracksCommand_parseDbItem {
 	if (blessed($obj) && (
 		$class eq 'Album' || 
 		$class eq 'Contributor' || 
+		$class eq 'Genre' ||
+		$class eq 'Year' ||
 		($obj->can('content_type') && $obj->content_type ne 'dir'))) {
 
 		my $terms = sprintf('%s.id=%d', lc($class), $obj->id);
