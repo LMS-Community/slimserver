@@ -745,6 +745,19 @@ sub cliAdd {
 
 		$favs->save;
 
+		# show feedback if this action came from jive cometd session
+		if ($request->source && $request->source =~ /\/slim\/request/) {
+			$client->showBriefly({
+				'jive' => { 
+				'text'    => [ Slim::Utils::Strings::string('FAVORITES_ADDING'),
+						$title,
+					   ],
+				}
+			});
+
+		}
+
+
 		$request->setStatusDone();
 
 	} else {
@@ -774,6 +787,16 @@ sub cliDelete {
 	}
 
 	$favs->deleteIndex($index);
+
+	# show feedback if this action came from jive cometd session
+	if ($request->source && $request->source =~ /\/slim\/request/) {
+		$client->showBriefly({
+			'jive' => { 
+				'text'    => [ Slim::Utils::Strings::string('FAVORITES_RIGHT_TO_DELETE') ],
+			}
+		});
+	}
+
 
 	$request->setStatusDone();
 }

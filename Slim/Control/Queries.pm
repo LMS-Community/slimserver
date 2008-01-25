@@ -270,7 +270,6 @@ sub albumsQuery {
 
 	my $count = $rs->count;
 
-	# now build the result
 	
 	if ($menuMode) {
 
@@ -339,21 +338,26 @@ sub albumsQuery {
 	}
 
 	$count += 0;
-
+	# now build the result
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
 	$count-- if $insertAll && $start == 0 && $end == 1;
+
 	$request->addResult('count', $count);
 
 	if ($valid) {
+
 
 		my $loopname = $menuMode?'item_loop':'albums_loop';
 		my $cnt = 0;
 		$request->addResult('offset', $start) if $menuMode;
 
+
 		# first PLAY ALL item
 		if ($insertAll) {
 			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname, includeArt => 1);
 		}
+
 
 		for my $eachitem ($rs->slice($start, $end)) {
 
@@ -3332,11 +3336,14 @@ sub songinfoQuery {
 			}
 
 			my $artworkExists = 0; # artwork defaults to not being present
+
+			# add a favorites link below play/add links
 			my %favorites;
+			$favorites{'title'} = $hashRef->{'TITLE'};
+			$favorites{'url'}   = $hashRef->{'LOCATION'};
+			$cnt = _jiveAddToFavorites($cnt, $request, $loopname, \%favorites);
+
 			while (my ($key, $val) = each %{$hashRef}) {
-				if ($key eq 'TITLE') {
-					$favorites{'title'} = $val;
-				}
 				if ( $key eq 'SHOW_ARTWORK' && $val > 0) {
 					$artworkExists++; # flag that artwork exists
 				}
@@ -3531,7 +3538,6 @@ sub songinfoQuery {
 							}
 							elsif ($key eq 'LOCATION') {
 								$val = $track->path();
-								$favorites{'url'} = $val;
 							}
 							elsif ( $key eq 'YEAR' && $val == 0 ||
 								$key eq 'COMMENT' && $val == 0 ||
@@ -3555,9 +3561,6 @@ sub songinfoQuery {
 				}
 				$idx++;
  			}
-			# add an item for adding to favorites
-			# not done yet
-			#$count = _jiveAddToFavorites($count, $request, $loopname, \%favorites);
 			
 			# because of suppression of some items, only now can we add the count
 			$request->addResult("count", $count);
@@ -3788,6 +3791,13 @@ sub titlesQuery {
 			($start, $end, $cnt) = _playAll(start => $start, end => $end, count => $cnt, request => $request, loopname => $loopname);
 		}
 
+		# don't know how to format title and url params to favorites yet
+		#if ($menuMode) {
+			#my %favorites;
+			#$favorites{'title'} = ??
+			#$favorites{'url'} = ??
+			#$cnt = _jiveAddToFavorites($cnt, $request, $loopname, \%favorites);
+		#}
 
 		for my $item ($rs->slice($start, $end)) {
 			
@@ -4322,12 +4332,13 @@ sub _jiveAddToFavorites {
 			cmd    => [ 'jivefavorites', 'add' ],
 			params => {
 					title => $favorites->{'title'},
-					url   => 'file://' . $favorites->{'url'},
+					url   => $favorites->{'url'},
 			},
 		},
 	};
 	$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-#	$request->addResultLoop($loopname, $cnt, 'actions');
+	$request->addResultLoop($loopname, $cnt, 'style', 'item');
+	$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'favorites' });
 	$cnt++;
 	return($cnt);
 }

@@ -68,7 +68,7 @@ sub init {
     Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
     Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
     Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
-	Slim::Control::Request::addDispatch(['jivefavorites', '_index', '_quantity'], [1, 1, 1, \&jiveFavoritesQuery]);
+	Slim::Control::Request::addDispatch(['jivefavorites', '_index', '_quantity'], [1, 1, 1, \&jiveFavoritesCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -1673,29 +1673,46 @@ sub _downloadInfo {
 	return $ret;
 }
 
-sub jiveFavoritesQuery {
+sub jiveFavoritesCommand {
 
 	# work-in-progress; not called from anywhere yet
 	my $request = shift;
 	my $title   = $request->getParam('title');
 	my $url     = $request->getParam('url');
 	
-	$log->warn('BENDEBUG: ' . $title . "|" . $url);
-	my $actions = {
-		'go' => {
-			player => 0,
-			cmd    => [ 'favorites', 'add' ],
-			params => {
-					title => $title,
-					url   => 'file://' . $url
+	my @favorites_menu = (
+		{
+			text    => Slim::Utils::Strings::string('CANCEL'),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ 'jiveblankcommand' ],
+				},
 			},
+			nextWindow => 'parent',
 		},
-	};
-	$request->addResult('count', 2);
+		{
+			text    => Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'),
+			#text    => Slim::Utils::Strings::string('JIVE_ADD_X_TO_FAVORITES', $title),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => ['favorites', 'add' ],
+					params => {
+							title => $title,
+							url   => $url,
+					},
+				},
+			},
+			nextWindow => 'parent',
+		},
+	);
+
 	$request->addResult('offset', 0);
-	$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
-	$request->addResultLoop('item_loop', 0, 'actions', $actions);
-	$request->addResultLoop('item_loop', 1, 'text', Slim::Utils::Strings::string('CANCEL'));
+	$request->addResult('count', 2);
+	$request->addResult('item_loop', \@favorites_menu);
+	$request->addResult('window', { titleStyle => 'favorites' } );
+
 
 	$request->setStatusDone();
 
