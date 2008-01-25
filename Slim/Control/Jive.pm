@@ -1692,8 +1692,7 @@ sub jiveFavoritesCommand {
 			nextWindow => 'parent',
 		},
 		{
-			text    => Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'),
-			#text    => Slim::Utils::Strings::string('JIVE_ADD_X_TO_FAVORITES', $title),
+			text    => Slim::Utils::Strings::string('ADD') . ' ' . $title,
 			actions => {
 				go => {
 					player => 0,
