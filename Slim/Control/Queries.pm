@@ -3667,8 +3667,6 @@ sub titlesQuery {
 	$favorites{'url'} = $request->getParam('favorites_url');
 	$favorites{'title'} = $request->getParam('favorites_title');
 	
-	Data::Dump::dump(%favorites);
-
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	
