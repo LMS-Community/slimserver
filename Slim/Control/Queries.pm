@@ -3224,9 +3224,6 @@ sub songinfoQuery {
 		my $hashRef = _songData($request, $track, $tags, $menuMode);
 		my $count = scalar (keys %{$hashRef});
 
-		# correct count if we insert "Play all songs"
-		$count++ if $insertPlay;
-
 		$count += 0;
 
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -3289,6 +3286,9 @@ sub songinfoQuery {
 					);
 
 					for my $mode ('play', 'add') {
+						# add to result count
+						$count++;
+						
 						# override the actions, babe!
 						my $actions = {
 							'do' => {
@@ -3338,11 +3338,13 @@ sub songinfoQuery {
 			my $artworkExists = 0; # artwork defaults to not being present
 
 			# add a favorites link below play/add links
+			#Add another to result count
+			$count++;
 			my %favorites;
 			$favorites{'title'} = $hashRef->{'TITLE'};
 			$favorites{'url'}   = $hashRef->{'LOCATION'};
 			$cnt = _jiveAddToFavorites($cnt, $request, $loopname, \%favorites);
-
+			
 			while (my ($key, $val) = each %{$hashRef}) {
 				if ( $key eq 'SHOW_ARTWORK' && $val > 0) {
 					$artworkExists++; # flag that artwork exists
