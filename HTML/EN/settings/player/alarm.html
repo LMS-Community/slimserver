@@ -2,7 +2,7 @@
 
 	[% WRAPPER setting title="SETUP_GROUP_ALARM" desc="SETUP_GROUP_ALARM_DESC" %]
 		<input type=hidden name="alarmfadeseconds" value="0" />
-		<input type=checkbox [% IF alarmfadeseconds %]checked [% END %] class="stdedit" name="alarmfadeseconds" id="alarmfadeseconds" value="1" />
+		<input type=checkbox [% IF prefs.alarmfadeseconds %]checked [% END %] class="stdedit" name="alarmfadeseconds" id="alarmfadeseconds" value="1" />
 		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
 	[% END %]
 
