@@ -149,7 +149,7 @@ sub savePluginCallback {
 	if ($type eq 'nextChar') {
 
 		# re-enter plugin with the new playlist title to get the confirmation screen for saving the playlist.
-		Slim::Buttons::Common::pushModeLeft($client,'PLUGIN.SavePlaylist', {
+		Slim::Buttons::Common::pushModeLeft($client,'Slim::Plugin::SavePlaylist::Plugin', {
 			'playlist' => $context{$client},
 		});
 			
