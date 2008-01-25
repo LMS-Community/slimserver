@@ -60,7 +60,7 @@ __PACKAGE__->mk_classaccessors( qw(
 ) );
 
 # Body buffer size
-__PACKAGE__->mk_classaccessor( bufsize => 1024 );
+__PACKAGE__->mk_classaccessor( bufsize => 16 * 1024 );
 
 # Max redirects to follow
 __PACKAGE__->mk_classaccessor( maxRedirect => 7 );
