@@ -641,6 +641,8 @@ sub cli_request_write {
 	my $request = shift;
 	my $client_socket = shift;
 	
+	return unless defined $request;
+	
 	# Handle Comet JSON output data
 	if ( !ref $request && $request =~ /^\[/ ) {
 		client_socket_buffer(
