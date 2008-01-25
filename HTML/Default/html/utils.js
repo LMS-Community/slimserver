@@ -1,3 +1,6 @@
+// reference local blank image
+Ext.BLANK_IMAGE_URL = '/html/images/spacer.gif';
+
 // Extensions to ExtJS classes
 Slim = {};
 
