@@ -181,10 +181,14 @@ sub addLibraryStats {
 		$counts{'track'} = $rs->search_related('tracks');
 
 	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {
+		
+		# Bug 3351, we can't use the $rs here, because it's a contributor RS that is already
+		# joined to genres.  We can use the genre RS that is stored in params however.
+		my $genreTracks = $params->{'genre'}->search_related('genreTracks')->search_related('track');
 
-		$counts{'album'}       = $rs->search_related('contributorAlbums')->search_related('album');
+		$counts{'album'}       = $genreTracks->search_related('album');
 		$counts{'contributor'} = $rs;
-		$counts{'track'}       = $rs->search_related('contributorTracks')->search_related('track');
+		$counts{'track'}       = $genreTracks;
 
 	} elsif ($level eq 'track') {
 		
@@ -194,11 +198,18 @@ sub addLibraryStats {
 		if ( $roles ) {
 			$cond->{'contributorTracks.role'} = { 'in' => $roles };
 		}
+		
+		if ( $previousLevel eq 'album' && $params->{'hierarchy'} =~ /genre/ ) {
+			# Avoid duplicate join on contributorTracks when browsing by genre
+			$counts{'contributor'} = $rs->search_related('album')->search_related( 'contributor', $cond );
+		}
+		else {
+			$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
+		}
 
 		$counts{'album'}       = $rs->search_related('album');
-		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related( 'contributor', $cond );
 		$counts{'track'}       = $rs;
-
+		
 	} else {
 
 		$counts{'album'}       = Slim::Schema->resultset('Album')->browse;
