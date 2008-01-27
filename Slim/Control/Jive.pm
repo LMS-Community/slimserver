@@ -1393,6 +1393,9 @@ sub searchMenu {
 		weight         => 10,
 		input => {
 			len  => 1, #bug 5318
+			processingPopup => {
+				text => Slim::Utils::Strings::string('SEARCHING'),
+			},
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
@@ -1421,6 +1424,9 @@ sub searchMenu {
 		weight         => 20,
 		input => {
 			len  => 1, #bug 5318
+			processingPopup => {
+				text => Slim::Utils::Strings::string('SEARCHING'),
+			},
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
@@ -1449,6 +1455,9 @@ sub searchMenu {
 		weight         => 30,
 		input => {
 			len  => 1, #bug 5318
+			processingPopup => {
+				text => Slim::Utils::Strings::string('SEARCHING'),
+			},
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
@@ -1477,6 +1486,9 @@ sub searchMenu {
 		weight         => 40,
 		input => {
 			len  => 1, #bug 5318
+			processingPopup => {
+				text => Slim::Utils::Strings::string('SEARCHING'),
+			},
 			help => {
 				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 			},
