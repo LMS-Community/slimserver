@@ -151,7 +151,7 @@ sub browsetree {
 
 		push @{$params->{'browse_items'}}, \%form;
 
-		if (!$params->{'coverArt'} && $item->coverArt) {
+		if (!$params->{'coverArt'} && $item->coverArtExists) {
 			$params->{'coverArt'} = $item->id;
 		}
 	}

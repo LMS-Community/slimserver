@@ -168,6 +168,8 @@ sub processCoverArtRequest {
 
 					return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 				}
+			} else {
+				$log->info(" cached image not usable because 'orig' undef");
 			}
 		}
 	}
@@ -441,16 +443,19 @@ sub processCoverArtRequest {
 	}
 
 	if ($cacheKey) {
-	
+		
+		my $imageFilePath = blessed($obj) ? $obj->cover : 0;
+		$imageFilePath = $obj->path if $imageFilePath eq 1;
+		
 		my $cached = {
-			'orig'        => blessed($obj) ? $obj->cover : 0,
+			'orig'        => $imageFilePath, # '0' means no file to check mtime against
 			'mtime'       => $mtime,
 			'body'        => $body,
 			'contentType' => $requestedContentType,
 			'size'        => $size,
 		};
 
-		$log->info("  caching result key: $cacheKey");
+		$log->info("  caching result key: $cacheKey, orig=$imageFilePath");
 
 		$cache->set($cacheKey, $cached, "10days");
 	}

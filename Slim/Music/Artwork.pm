@@ -89,7 +89,7 @@ sub findArtwork {
 
 	while (my $track = $tracks->next) {
 
-		if ($track->coverArt) {
+		if ($track->coverArtExists) {
 
 			my $album = $track->album;
 

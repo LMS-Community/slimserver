@@ -474,7 +474,7 @@ sub browsedb {
 			&& (defined $params->{'album.id'} || defined $params->{'age.id'})
 		) {
 
-			if ($firstItem->can('coverArt') && $firstItem->coverArt) {
+			if ($firstItem->can('coverArtExists') && $firstItem->coverArtExists) {
 
 				$params->{'coverArt'} = $firstItem->id;
 				if (!$firstItem->album->artwork) {
