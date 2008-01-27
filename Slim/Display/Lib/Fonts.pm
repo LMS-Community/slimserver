@@ -111,8 +111,8 @@ my %font2TTF = (
 
 	# Huge - only one line.
 	'full.2' => {
-		'GDFontSize' => 26,
-		'GDBaseline' => 25,
+		'GDFontSize' => 24,
+		'GDBaseline' => 26,
 	},
 
 	# text for push on/off in fullscreen visu.
