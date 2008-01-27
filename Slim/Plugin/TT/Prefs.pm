@@ -8,10 +8,20 @@ package Slim::Plugin::TT::Prefs;
 
 # TT wrapper to access prefs, e.g of use:
 #
-# [% USE Prefs; FOREACH namespace = Prefs.namespaces %] <h3>[% namespace %]</h3>
-# [% prefs = Prefs.preferences(namespace) %]
-# [% FOREACH pref = prefs.all.keys %] [% pref %] = [% prefs.get(pref) %]<br>[% END %]
-# [% END %]
+#	[% USE Prefs; USE Clients %]
+#	<h1>Global Preferences</h1>
+#	[% FOREACH namespace = Prefs.namespaces %]<b>Namespace: [%	namespace %]</b><br />
+#	[% prefs = Prefs.preferences(namespace) %]
+#	[% FOREACH pref = prefs.all.keys %] [% pref %] = [%	prefs.get(pref) %]<br />[% END %]
+#	<br />
+#	[% END %]
+#	[% client = Clients.client(player) %]
+#	<h1>Client Preferences [% client.name %]</h1>
+#	[% FOREACH namespace = Prefs.namespaces %]<b>Namespace: [% namespace %]</b><br />
+#	[% clientprefs = Prefs.preferences(namespace).client(client) %]
+#	[% FOREACH clientpref = clientprefs.all.keys %] [% clientpref %] = [% clientprefs.get(clientpref) %]<br />[% END %]
+#	<br />
+#	[% END %]
 
 use strict;
 use base qw(Template::Plugin);

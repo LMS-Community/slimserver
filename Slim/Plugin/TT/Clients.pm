@@ -36,4 +36,10 @@ sub get {
 	return \@clients;	
 }
 
+sub client {
+	my $self = shift;
+	my $id = shift;
+	return Slim::Player::Client::getClient($id);
+}
+
 1;
