@@ -3339,17 +3339,6 @@ sub songinfoQuery {
 					}
 				}
 
-				# correct db slice!
-				else {
-					# we are not adding our item but it is counted in $start
-					# (a query for tracks 1 10 needs to start at db 0! -- and go to db 9 (instead of 10))
-					# (a query for tracks 0 10 ALSO needs to start at db 0! -- and go to db 8 (instead of 9))
-					$start--;
-				}
-				# always fix $end 
-				$end--;
-			}
-
 			my $artworkExists = 0; # artwork defaults to not being present
 
 			# add a favorites link below play/add links
