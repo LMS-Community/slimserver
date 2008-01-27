@@ -129,6 +129,8 @@ sub connectSqueezeNetwork {
 
 		$host = scalar gethostbyname($host);
 		
+		$client->execute([ 'stop' ]);
+		
 		$client->sendFrame('serv', \$host);
 
 		# TODO: ensure client actually received the message

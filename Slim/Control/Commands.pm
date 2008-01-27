@@ -170,8 +170,7 @@ sub clientConnectCommand {
 		if ( $host =~ /^www.squeezenetwork.com$/i ) {
 			# XXX: Change to '1' in production
 			#$host = 1;
-
-                        $host = Net::IP->new('207.7.156.11')->intip;
+			$host = Net::IP->new('207.7.156.11')->intip;
 		}
 		elsif ( $host =~ /^www.beta.squeezenetwork.com$/i ) {
 			# XXX: Change to '2' after new firmware includes this
@@ -189,6 +188,8 @@ sub clientConnectCommand {
 		}
 		
 		$packed ||= pack 'N', $host;
+		
+		$client->execute([ 'stop' ]);
 		
 		$client->sendFrame( serv => \$packed );
 		
