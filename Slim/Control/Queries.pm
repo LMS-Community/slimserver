@@ -3338,6 +3338,7 @@ sub songinfoQuery {
 						$chunkCount++;
 					}
 				}
+			}
 
 			my $artworkExists = 0; # artwork defaults to not being present
 
