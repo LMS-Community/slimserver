@@ -538,12 +538,20 @@ sub playcontrolCommand {
 	# do we need to do anything?
 	if ($curmode ne $wantmode) {
 		
-		# set new playmode
-		Slim::Player::Source::playmode($client, $wantmode);
-
-		# reset rate in all cases
-		Slim::Player::Source::rate($client, 1);
-		
+		if ( $wantmode eq 'play' ) {
+			# Bug 6813, 'play' from CLI needs to work the same as IR play button, by going
+			# through playlist jump
+			my $index = Slim::Player::Source::playingSongIndex($client);
+			$client->execute([ 'playlist', 'jump', $index ]);
+		}
+		else {
+			# set new playmode
+			Slim::Player::Source::playmode($client, $wantmode);
+			
+			# reset rate in all cases
+			Slim::Player::Source::rate($client, 1);
+		}
+					
 		# update the display unless suppressed
 		$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
 	}
