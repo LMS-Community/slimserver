@@ -71,7 +71,7 @@ sub initPlugin {
 			weight         => 20,
 			id             => 'podcast',
 			node           => 'extras',
-			'icon-id'      => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
+			'icon-id'      => $class->_pluginDataFor('icon'),
 			displayWhenOff => 0,
 			window         => { titleStyle => 'album' },
 			actions => {
