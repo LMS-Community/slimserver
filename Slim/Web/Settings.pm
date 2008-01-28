@@ -139,6 +139,12 @@ Complex handling and processing of specialised prefs should be done in the subcl
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
+	# don't display player preference pane if it doesn't exist for the player (eg. Display for an SBR)
+	# redirect to basic settings instead
+	if (defined $client && !$class->validFor($client)) {
+		return Slim::Web::Settings::Player::Basic->handler($client, $paramRef, $pageSetup);
+	}
+
 	# Handle the simple case where validation is done by prefs obj.
 	my ($prefsClass, @prefs) = $class->prefs($client);
 

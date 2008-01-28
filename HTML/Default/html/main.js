@@ -431,7 +431,12 @@ PlayerChooser = function(){
 				syncedPlayers = responseText.result._sync;
 			}
 
-			var playerSelection = '<form name="syncgroup" id="syncgroup">';
+			// make sure any previous syncgroup form is deleted; seems not to happen in on dlg.destroy() in some browsers
+			var playerSelection = Ext.get('syncgroup');
+			if (playerSelection)
+				playerSelection.remove();
+
+			playerSelection = '<form name="syncgroup" id="syncgroup">';
 			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked} {disabled}>&nbsp;{name}<br>');
 			tpl.compile();
 
@@ -471,7 +476,7 @@ PlayerChooser = function(){
 
 			for(var i = 0; i < players.length; i++) {
 				// sync if not synced yet
-				if (players[i].checked && syncedPlayers.indexOf(players[i].id) < 0)
+				if (players[i].checked && syncedPlayers.indexOf(parseInt(players[i].id)) < 0)
 					Utils.processCommand({ params: [ playerid, [ 'sync', players[i].id ] ] });
 
 				// unsync if no longer checked

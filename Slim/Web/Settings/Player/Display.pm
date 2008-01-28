@@ -108,7 +108,6 @@ sub handler {
 	# update the player display after changing any settings
 	if ($paramRef->{'saveSettings'}) {
 		$client->display->resetDisplay;
-		$client->display->brightness($paramRef->{'prefs'}->{ $client->power ? 'powerOnBrightness' : 'powerOffBrightness' });
 		$client->display->update;
 	}
 

@@ -49,8 +49,9 @@
 				);
 
 				// remember the last loaded page - to be used when the player tab is selected next time
+				var pageURL = '[% playersetup.$page || 'settings/player/basic.html?' %]';
 				try { 
-					parent.Utils.setCookie('SqueezeCenter-playersettings', '[% playersetup.$page %]');
+					parent.Utils.setCookie('SqueezeCenter-playersettings', pageURL);
 					parent.player = '[% playerURI %]';
 					parent.playerid = '[% playerURI %]';  
 				}

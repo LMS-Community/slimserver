@@ -293,12 +293,14 @@ var SettingsPage = function(){
 				}
 
 				playerChooser.menu.add(
-					new Ext.menu.Item({
+					new Ext.menu.CheckItem({
 						text: playerList[x].name,
 						value: playerList[x].id,
+						checked: playerList[x].id == playerid,
 						cls: 'playerList',
+						group: 'playerList',
 						handler: function(ev){
-							location = Utils.replacePlayerIDinUrl(location, ev.value);
+							location = pageURL + 'player=' + ev.value + '&amp;playerid=' + ev.value;
 						}
 					})
 				);
@@ -328,12 +330,14 @@ var SettingsPage = function(){
 				}
 
 				settingsChooser.menu.add(
-					new Ext.menu.Item({
+					new Ext.menu.CheckItem({
 						text: settingsList[x].name,
 						value: settingsList[x].url,
+						checked: page == settingsList[x].id,
 						cls: 'settingsList',
+						group: 'settingsList',
 						handler: function(ev){
-							location.href = webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid;
+							location.href = webroot + ev.value + 'player=' + playerid + '&amp;playerid=' + playerid;
 						}
 					})
 				);
