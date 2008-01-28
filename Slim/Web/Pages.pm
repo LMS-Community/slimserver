@@ -292,11 +292,6 @@ sub addSongInfo {
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$params->{'plugin_meta'} = $handler->getMetadataFor( $client, $url );
 
-			my $current_title = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
-			if ( $current_title && !$params->{'plugin_meta'}->{'title'} ) {
-				$params->{'plugin_meta'}->{'title'} = $current_title;
-			}
-
 			# Strip extension from icon path
 			if ( $params->{'plugin_meta'}->{'icon'} ) {
 				$params->{'plugin_meta'}->{'icon'} =~ s/\.png$//;
