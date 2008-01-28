@@ -298,7 +298,7 @@ var SettingsPage = function(){
 						value: playerList[x].id,
 						cls: 'playerList',
 						handler: function(ev){
-							location = Utils.replacePlayerIDinUrl(location, ev.value);
+							location = pageURL + 'player=' + ev.value + '&amp;playerid=' + ev.value;
 						}
 					})
 				);
@@ -333,7 +333,7 @@ var SettingsPage = function(){
 						value: settingsList[x].url,
 						cls: 'settingsList',
 						handler: function(ev){
-							location.href = webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid;
+							location.href = webroot + ev.value + 'player=' + playerid + '&amp;playerid=' + playerid;
 						}
 					})
 				);
