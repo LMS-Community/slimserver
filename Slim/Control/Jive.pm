@@ -11,6 +11,7 @@ use POSIX;
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
+use URI;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -862,7 +863,14 @@ sub firmwareUpgradeQuery {
 	
 	# always send the upgrade url this is also used if the user opts to upgrade
 	if ( my $url = Slim::Utils::Firmware->jive_url() ) {
-		$request->addResult( firmwareUrl => $url );
+		# Bug 6828, Send relative firmware URLs for Jive versions which support it
+		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
+		if ( $cur_rev >= 1659 ) {
+			$request->addResult( relativeFirmwareUrl => URI->new($url)->path );
+		}
+		else {
+			$request->addResult( firmwareUrl => $url );
+		}
 	}
 	
 	if ( Slim::Utils::Firmware->jive_needs_upgrade( $firmwareVersion ) ) {
