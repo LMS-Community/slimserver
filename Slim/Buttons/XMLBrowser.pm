@@ -1564,17 +1564,30 @@ sub _cliQuery_done {
 							$cnt++;
 						}
 						if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
+							# first see if $url is already a favorite
+							my $action = 'add';
+ 							my $favIndex = undef;
+							my $token = 'JIVE_ADD_TO_FAVORITES';
+							if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+								my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($request->client);
+								$favIndex = $favs->findUrl($url);
+								if (defined($favIndex)) {
+									$action = 'delete';
+									$token = 'JIVE_DELETE_FROM_FAVORITES';
+								}
+							}
 							my $actions = {
 								'go' => {
 									player => 0,
-									cmd    => [ 'jivefavorites', 'add' ],
+									cmd    => [ 'jivefavorites', $action ],
 									params => {
-										title => $title,
-										url   => $url,
+										title   => $title,
+										url     => $url,
 									},
 								},
 					                };
-							my $string = $request->client->string('JIVE_ADD_TO_FAVORITES');
+							$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
+							my $string = $request->client->string($token);
 							$request->addResultLoop($loopname, $cnt, 'text', $string);
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 							$request->addResultLoop($loopname, $cnt, 'style', 'item');

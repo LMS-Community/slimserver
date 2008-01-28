@@ -69,7 +69,7 @@ sub init {
     Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
     Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
     Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
-	Slim::Control::Request::addDispatch(['jivefavorites', '_index', '_quantity'], [1, 1, 1, \&jiveFavoritesCommand]);
+	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -1699,7 +1699,9 @@ sub jiveFavoritesCommand {
 	my $request = shift;
 	my $title   = $request->getParam('title');
 	my $url     = $request->getParam('url');
-	
+	my $command = $request->getParam('_cmd');
+	my $token   = uc($command); # either ADD or DELETE
+	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
 	my @favorites_menu = (
 		{
 			text    => Slim::Utils::Strings::string('CANCEL'),
@@ -1710,22 +1712,24 @@ sub jiveFavoritesCommand {
 				},
 			},
 			nextWindow => 'parent',
-		},
-		{
-			text    => Slim::Utils::Strings::string('ADD') . ' ' . $title,
-			actions => {
-				go => {
-					player => 0,
-					cmd    => ['favorites', 'add' ],
-					params => {
-							title => $title,
-							url   => $url,
-					},
+		}
+	);
+	my $actionItem = {
+		text    => Slim::Utils::Strings::string($token) . ' ' . $title,
+		actions => {
+			go => {
+				player => 0,
+				cmd    => ['favorites', $command ],
+				params => {
+						title => $title,
+						url   => $url,
 				},
 			},
-			nextWindow => 'parent',
 		},
-	);
+		nextWindow => 'parent',
+	};
+	$actionItem->{'actions'}{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
+	push @favorites_menu, $actionItem;
 
 	$request->addResult('offset', 0);
 	$request->addResult('count', 2);
