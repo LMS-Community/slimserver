@@ -308,6 +308,7 @@ sub webPages {
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DIGITAL_INPUT' => undef });
 	}
+	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 
 	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
 	Slim::Web::HTTP::addPageFunction("$urlBase/set.html", \&handleSetting);
