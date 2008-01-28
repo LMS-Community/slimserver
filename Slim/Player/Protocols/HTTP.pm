@@ -388,6 +388,10 @@ sub getMetadataFor {
 		if ( scalar @dashes == 1 ) {
 			($artist, $title) = split / - /, $currentTitle;
 		}
+
+		else {
+			$title = $currentTitle;
+		}
 	}
 	
 	if ( $url =~ /mp3tunes\.com/ ) {
@@ -416,8 +420,7 @@ sub getMetadataFor {
 	}
 	elsif ( $url =~ /archive\.org/ ) {
 		my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
-		return {	
-			artist   => $artist,
+		return {
 			title    => $title,
 			cover    => $icon,
 			icon     => $icon,
