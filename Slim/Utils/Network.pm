@@ -32,6 +32,7 @@ use Symbol qw(qualify_to_ref);
 use Time::HiRes;
 
 use Slim::Utils::Errno;
+use Slim::Utils::IPDetect;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
@@ -130,22 +131,7 @@ Returns the local host's IP address.
 =cut
 
 sub hostAddr {
-	my @hostAddr = ();
-
-	my @hostnames = ('localhost', hostname());
-	
-	foreach my $hostname (@hostnames) {
-
-		next if !$hostname;
-
-		if ($hostname =~ /^\d+(?:\.\d+(?:\.\d+(?:\.\d+)?)?)?$/) {
-			push @hostAddr, addrToHost($hostname);
-		} else {
-			push @hostAddr, hostToAddr($hostname);
-		}
-	}
-
-	return @hostAddr;
+	return Slim::Utils::IPDetect::IP();
 }
 
 =head2 hostName( )
@@ -165,20 +151,7 @@ Returns the IP that the server is bound to.
 =cut
 
 sub serverAddr {
-
-	if ($main::httpaddr) {
-		return $main::httpaddr;
-	}
-
-	my $ip = Slim::Utils::IPDetect::IP();
-
-	if ($ip) {
-		return $ip;
-	}
-
-	my @addrs = Slim::Utils::Network::hostAddr();
-
-	return $addrs[1] || $addrs[0] || '127.0.0.1';
+	return $main::httpaddr || hostAddr();
 }
 
 =head2 hostToAddr( $host )
