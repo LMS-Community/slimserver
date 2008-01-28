@@ -35,7 +35,8 @@
 		</select>
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_SN_BETA" desc="SETUP_SN_BETA_DESC" %]
+	[% WRAPPER setting title="SETUP_SN_BETA" %]
+		<div>[% "SETUP_SN_BETA_DESC" | string %]<br /><br /></div>
 		<select class="stdedit" name="sn_beta" id="sn_beta">
 			<option [% IF !prefs.sn_beta %]selected="selected" [% END %]value="0">
 				[% 'SETUP_SN_BETA_DISABLE' | string %]
