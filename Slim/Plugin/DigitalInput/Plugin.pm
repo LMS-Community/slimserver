@@ -80,6 +80,7 @@ sub digitalInputItem {
 		weight         => 45,
 		id             => 'digitalinput',
 		node           => 'home',
+		'icon-id'      => Slim::Plugin::DigitalInput::Plugin->_pluginDataFor('icon'),
 		displayWhenOff => 0,
 		window         => { titleStyle => 'settings' },
 		actions => {
