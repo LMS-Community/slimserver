@@ -3566,7 +3566,13 @@ sub songinfoQuery {
 				}
 				$idx++;
  			}
-			($chunkCount, $count) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites);
+
+			# in songinfo context, we only want an add-to-favorites link if it's a local track
+			# this is a workaround for the fact that a radio stream in the current playlist will
+			# often have a URL for a specific IP rather than a e.g DNS .m3u URL
+			if ($favorites{'url'} =~ /^file/) {
+				($chunkCount, $count) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites);
+			}
 			
 			# because of suppression of some items, only now can we add the count
 			$request->addResult("count", $count);
@@ -4348,18 +4354,33 @@ sub _jiveAddToFavorites {
 			return ($chunkCount, $listCount);
 		}
 
+		my $action = 'add';
+		my $token = 'JIVE_ADD_TO_FAVORITES';
+		# first we check to see if the URL exists in favorites already
+		my $client = $request->client();
+		my $favIndex = undef;
+		if ( blessed($client) && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+			my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+			$favIndex = $favs->findUrl($favorites->{'url'});
+			if (defined($favIndex)) {
+				$action = 'delete';
+				$token = 'JIVE_DELETE_FROM_FAVORITES';
+			}
+		}
 
-		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
+		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
 		my $actions = {
 			'go' => {
 				player => 0,
-				cmd    => [ 'jivefavorites', 'add' ],
+				cmd    => [ 'jivefavorites', $action ],
 				params => {
-						title => $favorites->{'title'},
-						url   => $favorites->{'url'},
+						title   => $favorites->{'title'},
+						url     => $favorites->{'url'},
 				},
 			},
 		};
+		$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
+
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 		$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 			$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });

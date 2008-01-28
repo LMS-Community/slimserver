@@ -69,7 +69,7 @@ sub init {
     Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
     Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
     Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
-	Slim::Control::Request::addDispatch(['jivefavorites', '_index', '_quantity'], [1, 1, 1, \&jiveFavoritesCommand]);
+	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -1525,6 +1525,66 @@ sub searchMenu {
 
 }
 
+# send a notification for menustatus
+sub menuNotification {
+	$log->warn("Menustatus notification sent.");
+	# the lines below are needed as menu notifications are done via notifyFromArray, but
+	# if you wanted to debug what's getting sent over the Comet interface, you could do it here
+	my $request  = shift;
+	my $dataRef          = $request->getParam('_data')   || return;
+	my $action   	     = $request->getParam('_action') || 'add';
+#	$log->warn(Data::Dump::dump($dataRef));
+}
+
+sub jiveFavoritesCommand {
+
+	# work-in-progress; not called from anywhere yet
+	my $request = shift;
+	my $title   = $request->getParam('title');
+	my $url     = $request->getParam('url');
+	my $command = $request->getParam('_cmd');
+	my $token   = uc($command); # either ADD or DELETE
+	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
+	my @favorites_menu = (
+		{
+			text    => Slim::Utils::Strings::string('CANCEL'),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ 'jiveblankcommand' ],
+				},
+			},
+			nextWindow => 'parent',
+		}
+	);
+	my $actionItem = {
+		text    => Slim::Utils::Strings::string($token) . ' ' . $title,
+		actions => {
+			go => {
+				player => 0,
+				cmd    => ['favorites', $command ],
+				params => {
+						title => $title,
+						url   => $url,
+				},
+			},
+		},
+		nextWindow => 'parent',
+	};
+	$actionItem->{'actions'}{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
+	push @favorites_menu, $actionItem;
+
+	$request->addResult('offset', 0);
+	$request->addResult('count', 2);
+	$request->addResult('item_loop', \@favorites_menu);
+	$request->addResult('window', { titleStyle => 'favorites' } );
+
+
+	$request->setStatusDone();
+
+}
+
+
 # The following allow download of applets, wallpaper and sounds from SC to jive
 # Files may be packaged in a plugin or can be added individually via the api below.
 #
@@ -1693,51 +1753,6 @@ sub _downloadInfo {
 	return $ret;
 }
 
-sub jiveFavoritesCommand {
-
-	# work-in-progress; not called from anywhere yet
-	my $request = shift;
-	my $title   = $request->getParam('title');
-	my $url     = $request->getParam('url');
-	
-	my @favorites_menu = (
-		{
-			text    => Slim::Utils::Strings::string('CANCEL'),
-			actions => {
-				go => {
-					player => 0,
-					cmd    => [ 'jiveblankcommand' ],
-				},
-			},
-			nextWindow => 'parent',
-		},
-		{
-			text    => Slim::Utils::Strings::string('ADD') . ' ' . $title,
-			actions => {
-				go => {
-					player => 0,
-					cmd    => ['favorites', 'add' ],
-					params => {
-							title => $title,
-							url   => $url,
-					},
-				},
-			},
-			nextWindow => 'parent',
-		},
-	);
-
-	$request->addResult('offset', 0);
-	$request->addResult('count', 2);
-	$request->addResult('item_loop', \@favorites_menu);
-	$request->addResult('window', { titleStyle => 'favorites' } );
-
-
-	$request->setStatusDone();
-
-}
-
-
 # return all files available for download based on query type
 sub downloadQuery {
 	my $request = shift;
@@ -1764,6 +1779,7 @@ sub downloadQuery {
 			$type     => $val->{'name'},
 			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
 			'url'     => $url,
+			'relurl'  => URI->new($url)->path,
 			'file'    => $val->{'file'},
 		};
 
@@ -1794,17 +1810,6 @@ sub downloadFile {
 
 		$log->warn("unable to find file: $file for type: $type");
 	}
-}
-
-# send a notification for menustatus
-sub menuNotification {
-	$log->warn("Menustatus notification sent.");
-	# the lines below are needed as menu notifications are done via notifyFromArray, but
-	# if you wanted to debug what's getting sent over the Comet interface, you could do it here
-	my $request  = shift;
-	my $dataRef          = $request->getParam('_data')   || return;
-	my $action   	     = $request->getParam('_action') || 'add';
-#	$log->warn(Data::Dump::dump($dataRef));
 }
 
 1;

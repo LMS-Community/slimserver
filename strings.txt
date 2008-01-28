@@ -14785,6 +14785,15 @@ JIVE_ADD_ALL
 	IT	Aggiungi tutto
 	NL	Alles toevoegen
 
+JIVE_DELETE_FROM_FAVORITES
+	DE	Favorit löschen
+	EN	Delete Favorite
+	ES	Eliminar favorito
+	FR	Supprimer
+	HE	עבור ימינה למחיקה
+	IT	Elimina preferito
+	NL	Favoriet verwijderen
+
 JIVE_ADD_TO_FAVORITES
 	DE	Zu Favoriten hinzufügen
 	EN	Add to Favorites

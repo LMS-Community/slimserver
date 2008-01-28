@@ -778,6 +778,8 @@ sub cliDelete {
 
 	my $client = $request->client();
 	my $index  = $request->getParam('item_id');
+	my $url    = $request->getParam('url');
+	my $title  = $request->getParam('title');
 
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
@@ -790,9 +792,11 @@ sub cliDelete {
 
 	# show feedback if this action came from jive cometd session
 	if ($request->source && $request->source =~ /\/slim\/request/) {
+		my $deleteMsg = $title?$title:$url;
 		$client->showBriefly({
 			'jive' => { 
-				'text'    => [ Slim::Utils::Strings::string('FAVORITES_RIGHT_TO_DELETE') ],
+				'text'    => [ Slim::Utils::Strings::string('FAVORITES_DELETING'),
+						$deleteMsg ],
 			}
 		});
 	}
