@@ -380,6 +380,15 @@ sub audioScrobblerSource {
 
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
+
+	my ($artist, $title);
+	# Radio tracks, return artist and title if the metadata looks like Artist - Title
+	if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
+		my @dashes = $currentTitle =~ /( - )/g;
+		if ( scalar @dashes == 1 ) {
+			($artist, $title) = split / - /, $currentTitle;
+		}
+	}
 	
 	if ( $url =~ /mp3tunes\.com/ ) {
 		my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
@@ -408,6 +417,8 @@ sub getMetadataFor {
 	elsif ( $url =~ /archive\.org/ ) {
 		my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
 		return {	
+			artist   => $artist,
+			title    => $title,
 			cover    => $icon,
 			icon     => $icon,
 			type     => 'Live Music Archive',
@@ -416,26 +427,20 @@ sub getMetadataFor {
 	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ) {
 		# RadioIO
 		my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
-		return {	
+		return {
+			artist   => $artist,
+			title    => $title,
 			cover    => $icon,
 			icon     => $icon,
 			type     => 'MP3 (RadioIO)',
 		};
 	}
 	else {
-		# Radio tracks, return artist and title if the metadata looks like Artist - Title
-		if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
-			my @dashes = $currentTitle =~ /( - )/g;
-			if ( scalar @dashes == 1 ) {
-				my ($artist, $title) = split / - /, $currentTitle;
-			
-				return {
-					artist => $artist,
-					title  => $title,
-					type   => $client->string('RADIO'),
-				};
-			}
-		}
+		return {
+			artist => $artist,
+			title  => $title,
+			type   => $client->string('RADIO'),
+		};
 	}
 	
 	return {};
