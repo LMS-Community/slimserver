@@ -291,7 +291,12 @@ sub addSongInfo {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$params->{'plugin_meta'} = $handler->getMetadataFor( $client, $url );
-			
+
+			my $current_title = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
+			if ( $current_title && !$params->{'plugin_meta'}->{'title'} ) {
+				$params->{'plugin_meta'}->{'title'} = $current_title;
+			}
+
 			# Strip extension from icon path
 			if ( $params->{'plugin_meta'}->{'icon'} ) {
 				$params->{'plugin_meta'}->{'icon'} =~ s/\.png$//;
@@ -301,6 +306,7 @@ sub addSongInfo {
 			if ( $params->{'plugin_meta'}->{'cover'} && $params->{'plugin_meta'}->{'cover'} !~ /^http/ ) {
 				delete $params->{'plugin_meta'}->{'cover'};
 			}
+
 		}
 	}
 

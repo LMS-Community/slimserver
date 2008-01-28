@@ -52,8 +52,18 @@
 	
 		[% END %]
 
-		[% IF !albumFirst; albumInfo; END %]
+		[% IF plugin_meta.title %] 
+			[% item = BLOCK %][% plugin_meta.title | html %][% END %]
+			[% PROCESS songInfoItem title = "TITLE" %]
+		[% END %]
 	
+		[% IF plugin_meta.artist %] 
+			[% item = BLOCK %][% plugin_meta.artist | html %][% END %]
+			[% PROCESS songInfoItem title = "ARTIST" %]
+		[% END %]
+
+		[% IF !albumFirst; albumInfo; END %]
+
 		[% IF itemobj.genres %] [% genresHTML = [] %]
 			[% FOREACH genre = itemobj.genres %]
 				[% genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" target=\"browser\">$genre.name</a>" %]
@@ -97,7 +107,9 @@
 		[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
 	[% END %]
 
-	[% IF itemobj.content_type %] 
+	[% IF plugin_meta.type %] 
+		[% item = plugin_meta.type | html; title = "TYPE"; PROCESS songInfoItem %]
+	[% ELSIF itemobj.content_type %] 
 		[% item = itemobj.content_type | getstring | html; title = "TYPE"; PROCESS songInfoItem %]
 	[% END %]
 

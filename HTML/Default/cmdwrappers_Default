@@ -126,6 +126,7 @@
 				[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 			[%- END %]
 		[% ELSE %]
+			[% PROCESS favoritescontrol %]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 			[% IF allLinks; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
@@ -133,7 +134,6 @@
 			[% FOREACH mixer = mixerlinks.values.sort -%]
 				[% PROCESS $mixer %]
 			[% END %]
-			[% PROCESS favoritescontrol %]
 		[%- END %]
 	[%- END %]
 
