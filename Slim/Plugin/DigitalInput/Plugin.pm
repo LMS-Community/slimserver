@@ -80,6 +80,7 @@ sub digitalInputItem {
 		weight         => 45,
 		id             => 'digitalinput',
 		node           => 'home',
+		'icon-id'      => Slim::Plugin::DigitalInput::Plugin->_pluginDataFor('icon'),
 		displayWhenOff => 0,
 		window         => { titleStyle => 'settings' },
 		actions => {
@@ -308,6 +309,7 @@ sub webPages {
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DIGITAL_INPUT' => undef });
 	}
+	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 
 	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
 	Slim::Web::HTTP::addPageFunction("$urlBase/set.html", \&handleSetting);

@@ -1,23 +1,23 @@
 <?xml version="1.0"?>
-
 <extension>
 	<id>BB7E7AAF-6587-4733-B12F-CB6EE6AA6715</id>
-        <name>PLUGIN_DIGITAL_INPUT</name>
-        <module>Slim::Plugin::DigitalInput::Plugin</module>
-        <version>1.0</version>
-        <description>PLUGIN_DIGITAL_INPUT_DESC</description>
-        <creator>Slim Devices/Logitech</creator>
-        <email>support@slimdevices.com</email>
+	<name>PLUGIN_DIGITAL_INPUT</name>
+	<module>Slim::Plugin::DigitalInput::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_DIGITAL_INPUT_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>
         
-        <homepageURL>http://www.slimdevices.com/</homepageURL>
-	<type>2</type><!-- type=extension -->
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/DigitalInput/html/images/icon.png</icon>
+	<type>2</type>
 
-        <targetApplication>
-  	        <id>SqueezeCenter</id>
-                <minVersion>7.0a</minVersion>
-                <maxVersion>7.0+</maxVersion>
-        </targetApplication>
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>7.0+</maxVersion>
+	</targetApplication>
 
 </extension>
