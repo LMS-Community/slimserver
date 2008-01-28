@@ -249,6 +249,24 @@ sub processCoverArtRequest {
 			GD::Image->trueColor(1);
 
 			my $constructor = $typeToMethod{$actualContentType};
+
+			# Bug 6458, filter JPEGs on win32 through Imager to handle any corrupt files
+			# XXX: Remove this when we get a newer build of GD
+			if ( $actualContentType eq 'image/jpeg' && Slim::Utils::OSDetect::OS() eq 'win' ) {
+				require Imager;
+				my $img = Imager->new;
+				eval {
+					$img->read( data => $imageData ) or die $img->errstr;
+					$img->write( data => \$imageData, type => 'jpeg', jpegquality => 100 ) or die $img->errstr;
+				};
+				if ( $@ ) {
+					$log->error( "Unable to process JPEG image using Imager: $@" );
+					$body = \$imageData;
+					$requestedContentType = $actualContentType;
+					return ($body, $mtime, $inode, $size, $requestedContentType);
+				}
+			}
+
 			my $origImage   = GD::Image->$constructor($imageData);
 
 			if ($origImage) {
