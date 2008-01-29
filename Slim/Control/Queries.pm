@@ -529,6 +529,9 @@ sub artistsQuery {
 		$rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
 	}
 	
+	my $count = $rs->count;
+	my $totalCount = $count;
+
 	# Various artist handling. Don't do if pref is off, or if we're
 	# searching, or if we have a track
 	my $count_va = 0;
@@ -538,10 +541,28 @@ sub artistsQuery {
 
 		# Only show VA item if there are any
 		$count_va =  Slim::Schema->rs('Album')->search($where_va, $attr_va)->count;
+
+		# fix the index and counts if we have to include VA
+		if ($count_va) {
+
+			$totalCount++;
+
+			# return one less result as we've added the VA item in the first chunk
+			if (!$index) {
+				$quantity--;
+			}
+
+			# decrease the index in subsequent queries
+			elsif ($index + $quantity >= $count) {
+				$index--;
+				$count_va = 0;
+			}
+
+			else {
+				$count_va = 0;
+			}
+		}
 	}
-
-	my $count = $rs->count + ($count_va?1:0);
-
 
 	# now build the result
 	
@@ -595,7 +616,7 @@ sub artistsQuery {
 		$request->addResult('base', $base);
 
 	}
-	
+
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
 	}
@@ -620,7 +641,7 @@ sub artistsQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($chunkCount, $count) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname);
+			($chunkCount, $totalCount) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname);
 		}
 
 
@@ -652,10 +673,10 @@ sub artistsQuery {
 
 			$chunkCount++;
 		}
-		($chunkCount, $count) = _jiveAddToFavorites(start => $start, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
 
-	$request->addResult('count', $count);
+	$request->addResult('count', $totalCount);
 
 	$request->setStatusDone();
 }
