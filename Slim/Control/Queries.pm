@@ -4409,7 +4409,7 @@ sub _jiveAddToFavorites {
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
 			# FIXME, this needs to change to a favorites image after it is provided
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playlist.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/favorites.png');
 		}
 		$chunkCount++;
 		$listCount++;

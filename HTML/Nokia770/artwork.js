@@ -36,7 +36,7 @@ function emptyFunction() {
 }
 
 function showArrows(firstOne, secondOne, lastOne) {
-	if (firstOne == '1') {
+	if (firstOne == '0') {
 		if ($('last_cover_click')) {
 			$('last_cover_click').onclick = emptyFunction;
 			$('last_cover_click').src = '[% webroot %]html/images/rew.gif';
@@ -70,8 +70,8 @@ function refreshThumbs(theData) {
 	parsedData = fillDataHash(theData);
 	showArrows(thisAlbum, thatAlbum, parsedData['last']);
 	hideAlbumInfo();
-	refreshThumb(parsedData, '1', thisAlbum);
-	refreshThumb(parsedData, '2', thatAlbum);
+	refreshThumb(parsedData, '0', thisAlbum);
+	refreshThumb(parsedData, '1', thatAlbum);
 }
 
 function refreshThumb(theData, whichOne, thatOne) {
@@ -120,7 +120,7 @@ function popUpAlbumInfo(thisOne, albumId) {
 	if (albumId) {
 		lookupId = thisOne;
 	} else {
-		if (thisOne == 1) {
+		if (thisOne == 0) {
 			clickedItem = thisAlbum;
 		} else {
 			clickedItem = thatAlbum;
@@ -210,7 +210,7 @@ function resizeThumbs() {
 }
 
 window.onload= function() {
-	artworkBrowse(blankRequest, 1, 2);
+	artworkBrowse(blankRequest, 0, 1);
 	globalOnload();
 }
 

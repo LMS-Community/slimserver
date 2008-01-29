@@ -74,10 +74,10 @@
 			<img src = '[% webroot %]html/images/rew_active.gif' id = 'last_cover_click' class = 'thinborder'>
 		</td>
 		<td>
-			<!--first cover here-->[% INCLUDE coverTable cover = 1 %]
+			<!--first cover here-->[% INCLUDE coverTable cover = 0 %]
 		</td>
 		<td>
-			<!--second cover here-->[% INCLUDE coverTable cover = 2 %]
+			<!--second cover here-->[% INCLUDE coverTable cover = 1 %]
 		</td>
 		<td>
 			<img src = '[% webroot %]html/images/ffw_active.gif' id = 'next_cover_click' class = 'thinborder'>
@@ -150,7 +150,7 @@
 [% END %]
 
 [% BLOCK coverTable %]
-[% IF cover == 1 %][% whichAlbum = 'thisAlbum' %][% ELSE %][% whichAlbum = 'thatAlbum' %][% END %]
+[% IF cover == 0 %][% whichAlbum = 'thisAlbum' %][% ELSE %][% whichAlbum = 'thatAlbum' %][% END %]
 <table id = 'cover_table_[% cover %]' align = 'center'>
 <tr>	
 	<td colspan = 2><table class = 'thinborder'><tr><td>
