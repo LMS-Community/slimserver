@@ -342,6 +342,9 @@ div#pagetitle {
 #COVERART .songInfoText img {
 	max-width: 150px;
 	max-height: 150px;
+	width: expression( "150px" ); /* dirty IE workaround */
+	height: expression( "150px" );
+	margin-top: expression( "15px" );
 }
 
 #linkedSongInfoItems {
@@ -349,6 +352,7 @@ div#pagetitle {
 	padding-left: 160px;
 	padding-top: 0px !important;
 	min-height: 165px;
+	height: expression( "165px" ); /* dirty IE method */	
 	position: relative;
 }
 
