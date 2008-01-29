@@ -217,9 +217,19 @@ sub addLibraryStats {
 		$counts{'contributor'} = Slim::Schema->resultset('Contributor')->browse;
 	}
 
-	$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
-	$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
-	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
+	# Don't let any database errors here stop the page from displaying
+	eval {
+		$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
+		$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
+		$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
+	};
+	if ( $@ ) {
+		logger('database.sql')->error("Error building library counts: $@");
+		
+		$params->{'song_count'}   = 0;
+		$params->{'album_count'}  = 0;
+		$params->{'artist_count'} = 0;
+	}
 
 	if ( logger('database.sql')->is_info ) {
 		logger('database.sql')->info(sprintf("(Level: $level, previousLevel: $previousLevel) Found %s, %s & %s", 
