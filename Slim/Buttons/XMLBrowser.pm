@@ -1768,6 +1768,11 @@ sub _cliQuery_done {
 
 					if ($menuMode) {
 						
+						# we need to check for an $item->{items}[0]{wrap} to see if 
+						# there is a single child item should be rendered as a textarea
+						if ( defined($item->{items}[0]{wrap}) && $item->{items}[0]{wrap} == 1 ) {
+							$request->addResultLoop( $loopname, $cnt, 'textArea', $item->{items}[0]{'name'} || $item->{items}[0]{'title'});
+						}
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
 						my $params = {};
@@ -1784,7 +1789,7 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 			
-						if ( $item->{type} eq 'text' && !$hasImage ) {
+						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
 						}
 						
@@ -1806,8 +1811,10 @@ sub _cliQuery_done {
 							my $input = {
 								len  => 3,
 								help => {
-									text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+									text => $request->client->string('JIVE_SEARCHFOR_HELP')
 								},
+								softbutton1 => $request->client->string('INSERT'),
+								softbutton2 => $request->client->string('DELETE'),
 							};
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
