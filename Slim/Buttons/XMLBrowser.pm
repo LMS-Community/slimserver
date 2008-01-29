@@ -1811,8 +1811,10 @@ sub _cliQuery_done {
 							my $input = {
 								len  => 3,
 								help => {
-									text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+									text => $request->client->string('JIVE_SEARCHFOR_HELP')
 								},
+								softbutton1 => $request->client->string('INSERT'),
+								softbutton2 => $request->client->string('DELETE'),
 							};
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
