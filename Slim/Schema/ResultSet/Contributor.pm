@@ -162,7 +162,7 @@ sub descendAlbum {
 
 	# Constrain on the genre if it exists
 	# but only do so if the noGenreFilter isn't set or the "All Songs" item is selected
-	if ((my $genre = $find->{'genre.id'}) && (!preferences('server')->get('noGenreFilter') || !$find->{'contributor.id'})) {
+	if ( (my $genre = $find->{'genre.id'}) && !preferences('server')->get('noGenreFilter') ) {
 		$albumCond->{'genreTracks.genre'} = $genre;
 		$attr->{'join'} = { 'tracks' => 'genreTracks' };
 	}
