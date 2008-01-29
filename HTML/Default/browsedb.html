@@ -87,7 +87,7 @@
 		[% END -%]
 
 		[% FOREACH item = browse_items -%]
-			[%- PROCESS browsedbitems_list.html item.includeAlbum = 0 item.includeArtist = album.compilation -%]
+			[%- PROCESS browsedbitems_list.html item.includeAlbum = !album.id.defined item.includeArtist = album.compilation -%]
 		[%- END %]
 	[% END -%]
 

@@ -320,6 +320,7 @@ var Utils = function(){
 			if (highlightedEl) {
 				highlightedEl.replaceClass('mouseOver', 'selectorMarker');
 				highlightedEl.un('click', highlightedEl.onClickCB);
+				highlightedEl = null;
 			}
 		},
 

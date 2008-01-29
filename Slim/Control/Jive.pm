@@ -238,7 +238,14 @@ sub mainMenu {
 
 		@pluginMenus,
 		@{playerPower($client, 1)},
-		@{Slim::Plugin::DigitalInput::Plugin::digitalInputItem($client)},
+		@{
+			# The Digital Input plugin could be disabled
+			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')) {
+				Slim::Plugin::DigitalInput::Plugin::digitalInputItem($client);
+			} else {
+				[];
+			}
+		},
 		@{playerSettingsMenu($client, 1)},
 		@{myMusicMenu(1, $client)},
 	);
