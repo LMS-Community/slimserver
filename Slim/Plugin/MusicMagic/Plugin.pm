@@ -183,6 +183,10 @@ sub initPlugin {
 			Slim::Web::Pages->addPageLinks("browse", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
 			});
+
+			Slim::Web::Pages->addPageLinks("icons", {
+				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
+			});
 		}
 	}
 
