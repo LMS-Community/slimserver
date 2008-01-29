@@ -1783,6 +1783,10 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
 							$hasImage = 1;
 						}
+			
+						if ( $item->{type} eq 'text' && !$hasImage ) {
+							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
+						}
 						
 						if ( $item->{type} eq 'search' ) {
 							#$params->{search} = '__INPUT__';
