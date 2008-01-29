@@ -75,7 +75,13 @@ sub initPlugin {
 # Adds Digital Inputs menu item for TR
 sub digitalInputItem {
 	my $client = shift;
-	my @item = ({
+
+	return [] unless blessed($client)
+		&& $client->isPlayer()
+		&& Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')
+		&& $client->hasDigitalIn();
+
+	return [{
 		text           => Slim::Utils::Strings::string(getDisplayName()),
 		weight         => 45,
 		id             => 'digitalinput',
@@ -89,8 +95,7 @@ sub digitalInputItem {
 				cmd    => [ 'digitalinputmenu' ],
 			},
 		},
-	});
-	return \@item;
+	}];
 }
 
 sub digitalInputMenu {

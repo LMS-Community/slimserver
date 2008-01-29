@@ -236,29 +236,14 @@ sub mainMenu {
 			},
 		},
 
-		# add the plugin menus
 		@pluginMenus,
+		@{playerPower($client, 1)},
+		@{Slim::Plugin::DigitalInput::Plugin::digitalInputItem($client)},
+		@{playerSettingsMenu($client, 1)},
+		@{myMusicMenu(1, $client)},
 	);
 
-	if( blessed($client)
-	 && $client->isPlayer()
-	 && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')
-	 && $client->hasDigitalIn() ) {
-		my $digitalInputItem = Slim::Plugin::DigitalInput::Plugin::digitalInputItem( $client);
-		@menu = ( @menu, @$digitalInputItem);
-	}
-
-	if ( blessed($client) && $client->isPlayer() && $client->canPowerOff() ) {
-		my $playerPower = playerPower($client, 1);
-		@menu = (@menu, @$playerPower);
-	}
-
-	my $playerSettings = playerSettingsMenu($client, 1);
-	my $myMusic = myMusicMenu(1, $client);
-	@menu = (@menu, @$playerSettings, @$myMusic);
-
 	_notifyJive(\@menu, $client);
-
 }
 
 # allow a plugin to add a node to the menu
@@ -1131,6 +1116,10 @@ sub playerPower {
 
 	my $client = shift;
 	my $batch = shift;
+
+	return [] unless blessed($client)
+		&& $client->isPlayer() && $client->canPowerOff();
+
 	my $name  = $client->name();
 	my $power = $client->power();
 	my @return; 
