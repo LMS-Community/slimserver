@@ -3255,7 +3255,7 @@ sub songinfoQuery {
 				# tags for songinfo page, ordered like SC7 Web UI
 				# j tag is '1' if artwork exists; it's put in front so it can act as a flag for "J"
 				# J tag gives icon-id for artwork
-				$tags = 'jAlGyJitodYfrTvun';
+				$tags = 'jAlGyJkitodYfrTvun';
 			}
 			$request->addResult('base', $base);
 		}
@@ -3566,8 +3566,8 @@ sub songinfoQuery {
 							elsif ($key eq 'LOCATION') {
 								$val = $track->path();
 							}
-							elsif ( $key eq 'YEAR' && $val == 0 ||
-								$key eq 'COMMENT' && $val == 0 ||
+							elsif ( $key eq 'YEAR' && $val eq '0' ||
+								$key eq 'COMMENT' && $val eq '0' ||
 								$key eq 'SHOW_ARTWORK' || # always suppress coverArtExists
 								$key eq 'COVERART' && !$artworkExists) {
 								# bug 5241, don't show YEAR or COMMENT if it's 0
@@ -3575,6 +3575,30 @@ sub songinfoQuery {
 								# now there's one less in the loop
 								$count--;
 							} 
+							# comments are often long, so we deliver them in a new window as a textarea
+							elsif ( $key eq 'COMMENT' && $val ne '0') {
+								$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($key));
+								$request->addResultLoop($loopname, $chunkCount, 'textArea', $val);
+
+								my $window = { 
+									text =>Slim::Utils::Strings::string($key) . ": " . $hashRef->{TITLE},  
+									titleStyle => 'mymusic' 
+								};
+                						$request->addResultLoop($loopname, $chunkCount, 'window', $window);
+
+								my $actions = {
+						                # this is a dummy command...doesn't do anything but is required
+									go =>   {
+                                               					 cmd    => ['playerinformation'],
+							                         player => 0,
+									},
+								};
+								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+								$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
+
+								# we want chunkCount to increment, but not to add the key:val text string below
+								$chunkCount++; $suppress = 1;
+							}
 							
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
 							$request->addResultLoop($loopname, $chunkCount, 'style', $style) unless $suppress;
