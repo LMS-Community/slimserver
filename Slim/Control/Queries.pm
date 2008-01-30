@@ -273,7 +273,6 @@ sub albumsQuery {
 
 	my $count = $rs->count;
 
-	
 	if ($menuMode) {
 
 		# Bug 5435
@@ -339,6 +338,9 @@ sub albumsQuery {
 	}
 
 	$count += 0;
+
+	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
+
 	# now build the result
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -350,7 +352,7 @@ sub albumsQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($chunkCount, $count) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, includeArt => 1);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1);
 		}
 
 
@@ -417,10 +419,10 @@ sub albumsQuery {
 			$chunkCount++;
 		}
 
-		($chunkCount, $count) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
+		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
 	}
 	
-	$request->addResult('count', $count);
+	$request->addResult('count', $totalCount);
 
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
@@ -530,7 +532,7 @@ sub artistsQuery {
 	}
 	
 	my $count = $rs->count;
-	my $totalCount = $count;
+	my $totalCount = $count || 0;
 
 	# Various artist handling. Don't do if pref is off, or if we're
 	# searching, or if we have a track
@@ -543,25 +545,10 @@ sub artistsQuery {
 		$count_va =  Slim::Schema->rs('Album')->search($where_va, $attr_va)->count;
 
 		# fix the index and counts if we have to include VA
-		if ($count_va) {
+		$totalCount = _fixCount($count_va, \$index, \$quantity, $count);
 
-			$totalCount++;
-
-			# return one less result as we've added the VA item in the first chunk
-			if (!$index) {
-				$quantity--;
-			}
-
-			# decrease the index in subsequent queries
-			elsif ($index + $quantity >= $count) {
-				$index--;
-				$count_va = 0;
-			}
-
-			else {
-				$count_va = 0;
-			}
-		}
+		# don't add the VA item on subsequent queries
+		$count_va = ($count_va && !$index);
 	}
 
 	# now build the result
@@ -614,8 +601,10 @@ sub artistsQuery {
 			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
 		}
 		$request->addResult('base', $base);
-
 	}
+
+
+	$totalCount = _fixCount($insertAll, \$index, \$quantity, $totalCount);
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
@@ -641,7 +630,7 @@ sub artistsQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($chunkCount, $totalCount) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 
 
@@ -1144,6 +1133,7 @@ sub genresQuery {
 			window => { titleStyle => 'genres', },
 		};
 		$request->addResult('base', $base);
+
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -1151,6 +1141,8 @@ sub genresQuery {
 	}
 
 	$count += 0;
+	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
+
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
@@ -1160,7 +1152,7 @@ sub genresQuery {
 		$request->addResult('offset', $start) if $menuMode;
 		
 		if ($insertAll) {
-			($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 		for my $eachitem ($rs->slice($start, $end)) {
 			
@@ -1189,7 +1181,7 @@ sub genresQuery {
 		}
 	}
 
-	$request->addResult('count', $count);
+	$request->addResult('count', $totalCount);
 
 	$request->setStatusDone();
 }
@@ -1440,7 +1432,7 @@ sub musicfolderQuery {
 		$request->addResult("rescan", 1);
 	}
 
-	$count += 0;
+	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -1451,8 +1443,9 @@ sub musicfolderQuery {
 		$request->addResult('offset', $start) if $menuMode;
 		
 		if ($insertAll) {
-			($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
+
 		for my $eachitem (@data[$start..$end]) {
 
 			next if ($eachitem == undef);
@@ -1591,7 +1584,7 @@ sub musicfolderQuery {
 		}
 	}
 
-	$request->addResult('count', $count);
+	$request->addResult('count', $totalCount);
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
@@ -2087,8 +2080,8 @@ sub playlistsQuery {
 
 	if (defined $rs) {
 
-	
 		$count += 0;
+		my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 		
 		my ($valid, $start, $end) = $request->normalize(
 			scalar($index), scalar($quantity), $count);
@@ -2100,7 +2093,7 @@ sub playlistsQuery {
 			$request->addResult('offset', $start) if $menuMode;
 
 			if ($insertAll) {
-				($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 			}
 
 			for my $eachitem ($rs->slice($start, $end)) {
@@ -2126,7 +2119,7 @@ sub playlistsQuery {
 				$chunkCount++;
 			}
 		}
-		$request->addResult("count", $count);
+		$request->addResult("count", $totalCount);
 	}
 	else {
 		$request->addResult("count", 0);
@@ -3833,6 +3826,7 @@ sub titlesQuery {
 	}
 
 	$count += 0;
+	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -3847,7 +3841,7 @@ sub titlesQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			($chunkCount, $count) = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, listCount => $count);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 
 
@@ -3908,9 +3902,9 @@ sub titlesQuery {
 				::idleStreams();
 			}
 		}
-		($chunkCount, $count) = _jiveAddToFavorites(start => $start, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
-	$request->addResult("count", $count);
+	$request->addResult("count", $totalCount);
 
 	$request->setStatusDone();
 }
@@ -4019,6 +4013,7 @@ sub yearsQuery {
 	}
 
 	$count += 0;
+	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -4029,7 +4024,7 @@ sub yearsQuery {
 		$request->addResult('offset', $start) if $menuMode;
 
 		if ($insertAll) {
-			($chunkCount, $count) = _playAll(start => $start, end => $end, listCount => $count, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -4059,7 +4054,7 @@ sub yearsQuery {
 		}
 	}
 
-	$request->addResult('count', $count);
+	$request->addResult('count', $totalCount);
 
 	$request->setStatusDone();
 }
@@ -4717,15 +4712,14 @@ sub _playAll {
 	my $start      = $args{'start'};
 	my $end        = $args{'end'};
 	my $chunkCount = $args{'chunkCount'};
-	my $listCount  = $args{'listCount'};
 	my $loopname   = $args{'loopname'};
 	my $request    = $args{'request'};
 	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
 
 	# insert first item if needed
-	if ($start == 0 && $end == 1) {
+	if ($start == 0 && $end == 0) {
 		# one item list, so do not add a play all and just return
-		return($start, $end, $chunkCount, $listCount);
+		return $chunkCount;
 	} elsif ($start == 0) {
 		# we're going to add a 'play all' and an 'add all'
 		# init some vars for each mode for use in the two item loop below
@@ -4821,13 +4815,12 @@ sub _playAll {
 		};
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 		$chunkCount++;
-		$listCount++;
 
 		}
 
 	}
 
-	return($chunkCount, $listCount);
+	return $chunkCount;
 
 }
 
@@ -4850,6 +4843,35 @@ sub showArtwork {
 sub wipeCaches {
 	$cache = {};
 }
+
+
+# fix the count in case we're adding additional items
+# (play all, VA etc.) to the resultset
+sub _fixCount {
+	my $insertItem = shift;
+	my $index      = shift;
+	my $quantity   = shift;
+	my $count      = shift;
+
+	my $totalCount = $count || 0;
+
+	if ($insertItem && $count > 1) {
+		$totalCount++;
+
+		# return one less result as we only add the additional item in the first chunk
+		if ( !$$index ) {
+			$$quantity--;
+		}
+
+		# decrease the index in subsequent queries
+		else {
+			$$index--;
+		}
+	}
+
+	return $totalCount;
+}
+
 
 =head1 SEE ALSO
 
