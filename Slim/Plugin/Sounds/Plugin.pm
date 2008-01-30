@@ -23,7 +23,7 @@ sub initPlugin {
 			weight         => 30,
 			id             => 'sounds',
 			node           => 'extras',
-			'icon-id'      => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
+			'icon-id'      => $class->_pluginDataFor('icon'),
 			displayWhenOff => 0,
 			window         => { titleStyle => 'album' },
 			actions => {
