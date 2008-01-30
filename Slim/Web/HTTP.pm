@@ -65,7 +65,7 @@ use constant RETRY_TIME       => 0.05; # normal retry time
 use constant RETRY_TIME_FAST  => 0.02; # faster retry for streaming pcm on platforms with small pipe buffer
 use constant PIPE_BUF_THRES   => 4096; # threshold for switching between retry times
 
-use constant MAXKEEPALIVES    => 30;
+use constant MAXKEEPALIVES    => -1;   # unlimited keepalive requests
 use constant KEEPALIVETIMEOUT => 75;
 
 # Package variables
@@ -432,7 +432,7 @@ sub processHTTP {
 		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
 		# XXX - MAXKEEPALIVES should be a preference
 		# This always add a Connection: close header if we want the connection to be closed.
-		if (defined $keepAlives{$httpClient} && $keepAlives{$httpClient} >= MAXKEEPALIVES) {
+		if (MAXKEEPALIVES > 0 && defined $keepAlives{$httpClient} && $keepAlives{$httpClient} >= MAXKEEPALIVES) {
 
 			# This will close the client socket & remove the
 			# counter in sendResponse()
