@@ -134,8 +134,9 @@ sub webPages {
 
 sub cliQuery {
 	my $request = shift;
+	my $client  = $request->client;
 	
-	Slim::Buttons::XMLBrowser::cliQuery('radiotime', radioTimeURL(), $request);
+	Slim::Buttons::XMLBrowser::cliQuery('radiotime', radioTimeURL($client), $request);
 }
 
 sub cliRadiosQuery {
