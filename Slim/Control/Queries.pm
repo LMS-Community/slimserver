@@ -3371,7 +3371,7 @@ sub songinfoQuery {
 			$favorites{'url'}   = $hashRef->{'LOCATION'};
 			
 			while (my ($key, $val) = each %{$hashRef}) {
-				if ( $key eq 'SHOW_ARTWORK' && $val > 0) {
+				if ( $key eq 'SHOW_ARTWORK' && $val ne '0' ) {
 					$artworkExists++; # flag that artwork exists
 				}
 
