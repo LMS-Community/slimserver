@@ -3106,17 +3106,6 @@ sub statusQuery {
 				}
 			}
 		}
-	# our playlist is empty or our player is off, so send a single, unselectable 'Nothing' or 'Off' to jive
-	} else {
-		my $token = 'NOTHING';
-		$token = 'MCOFF' if !$power;
-		if ($menuMode) {
-			$request->addResult("count", 1);
-		        $request->addResult("offset", 0);
-			$request->addResultLoop('item_loop', 0, 'style', 'albumitemNoAction');
-			$request->addResultLoop('item_loop', 0, 'icon', '/html/images/blank.png');
-			$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string($token));
-		}
 	}
 
 
