@@ -93,9 +93,9 @@ sub launchScan {
 
 	$args->{ "prefsdir=" . Slim::Utils::Prefs->dir } = 1;
 
-	if (Slim::Utils::Log->writeConfig) {
+	if ( my $logconfig = Slim::Utils::Log->defaultConfigFile ) {
 
-		$args->{sprintf("logconfig=%s", Slim::Utils::Log->defaultConfigFile)} = 1;
+		$args->{ "logconfig=$logconfig" } = 1;
 	}
 
 	if (defined $::logdir && -d $::logdir) {
@@ -154,7 +154,12 @@ sub launchScan {
 		unshift @scanArgs, $command;
 		$command  = $Config{'perlpath'};
 	}
-
+	
+	# Pass debug flags to scanner
+	if ( $main::debug ) {
+		push @scanArgs, '--debug', $main::debug;
+	}
+	
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
 	);
