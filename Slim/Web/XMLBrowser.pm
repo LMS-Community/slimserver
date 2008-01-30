@@ -11,6 +11,8 @@ package Slim::Web::XMLBrowser;
 
 use strict;
 
+use URI::Escape qw(uri_unescape);
+
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -471,7 +473,8 @@ sub handleSubFeed {
 	# places to trigger actions from an OPML result, such as to start playing
 	# a new Pandora radio station
 	if ( $feed->{'command'} && $client ) {
-		my @p = split / /, $feed->{'command'};
+		my @p = map { uri_unescape($_) } split / /, $feed->{command};
+		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
 	}
 	

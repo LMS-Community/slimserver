@@ -24,6 +24,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 use Tie::IxHash;
+use URI::Escape qw(uri_unescape);
 
 use Slim::Buttons::Common;
 use Slim::Control::Request;
@@ -353,7 +354,8 @@ sub gotOPML {
 	# places to trigger actions from an OPML result, such as to start playing
 	# a new Pandora radio station
 	if ( $opml->{'command'} ) {
-		my @p = split / /, $opml->{'command'};
+		my @p = map { uri_unescape($_) } split / /, $opml->{'command'};
+		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
 	}
 
@@ -1892,8 +1894,9 @@ sub _cliQuerySubFeed_done {
 	# places to trigger actions from an OPML result, such as to start playing
 	# a new Pandora radio station
 	if ( $feed->{command} ) {
-		my @p = split / /, $feed->{command};
+		my @p = map { uri_unescape($_) } split / /, $feed->{command};
 		my $client = $params->{request}->client();
+		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
 	}
 	
