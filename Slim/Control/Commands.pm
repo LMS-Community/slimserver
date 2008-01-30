@@ -553,7 +553,9 @@ sub playcontrolCommand {
 		}
 					
 		# update the display unless suppressed
-		$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+		if ($client->isPlayer()) {
+			$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+		}
 	}
 		
 	$request->setStatusDone();
