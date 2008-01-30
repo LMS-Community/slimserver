@@ -172,7 +172,7 @@ sub main {
 		# that are no longer valid.  Just delete the directory because clearing the
 		# cache takes too long
 		my $artworkCacheDir = catdir( $prefs->get('cachedir'), 'Artwork' );
-		eval { rmtree( $artworkCacheDir, { verbose => 0 } ); };
+		eval { rmtree( $artworkCacheDir ); };
 	}
 
 	# Don't wrap the below in a transaction - we want to have the server
