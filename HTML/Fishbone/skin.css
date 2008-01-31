@@ -335,9 +335,12 @@ div#pagetitle {
 	padding: 0;
 	margin: 0;
 	top: 80px;
-	top: expression( "10px" ); /* dirty IE method */
 	left: 10px;
 	z-index: 99;
+}
+
+#browsedbList #COVERART .songInfoText {
+	top: expression( "0px" ); /* dirty IE method */
 }
 
 #COVERART .songInfoText img {
