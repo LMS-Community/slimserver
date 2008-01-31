@@ -258,7 +258,7 @@ sub handleFeed {
 		}
 		$itemIndex .= '.';
 		
-		$stash->{'pagetitle'} = $subFeed->{'name'};
+		$stash->{'pagetitle'} = $subFeed->{'name'} || $subFeed->{'title'};
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = $itemIndex;
