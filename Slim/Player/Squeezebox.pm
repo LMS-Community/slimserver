@@ -163,6 +163,11 @@ sub play {
 			$params->{bufferThreshold} = 255 if $params->{bufferThreshold} > 255;
 		}
 		
+		# Reduce threshold if protocol handler wants to
+		if ( $handler && $handler->can('bufferThreshold') ) {
+			$params->{bufferThreshold} = $handler->bufferThreshold( $client, $params->{url} );
+		}
+		
 		# Check with the protocol handler on whether or not to show buffering messages
 		my $showBuffering = 1;
 		
