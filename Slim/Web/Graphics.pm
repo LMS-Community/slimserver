@@ -180,7 +180,7 @@ sub processCoverArtRequest {
 
 	} elsif ($trackid eq 'all_items') {
 
-		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent('html/images/all_items.png', $params);
+		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent('html/images/albums.png', $params);
 		$imageData = $$body if defined $body;
 		
 
