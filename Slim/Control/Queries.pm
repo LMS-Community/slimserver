@@ -1619,7 +1619,7 @@ sub playerXQuery {
 	$log->debug("Begin Function");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'isplayer', 'canpoweroff']])) {
+	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'isplayer', 'canpoweroff', 'uuid']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1673,7 +1673,9 @@ sub playerXQuery {
 				$request->addResult("_$entity", $client->vfdmodel());
 			} elsif ($entity eq "canpoweroff") {
 				$request->addResult("_$entity", $client->canPowerOff());
-			}
+			} elsif ($entity eq "uuid") {
+                                $request->addResult("_$entity", $client->uuid());
+                        }
 		}
 	}
 	
@@ -1721,6 +1723,8 @@ sub playersQuery {
 					'playerindex', $idx);
 				$request->addResultLoop('players_loop', $cnt, 
 					'playerid', $eachclient->id());
+                                $request->addResultLoop('players_loop', $cnt,
+                                        'uuid', $eachclient->uuid());
 				$request->addResultLoop('players_loop', $cnt, 
 					'ip', $eachclient->ipport());
 				$request->addResultLoop('players_loop', $cnt, 
@@ -2657,6 +2661,8 @@ sub serverstatusQuery {
 			for my $eachclient (@players[$start..$end]) {
 				$request->addResultLoop('players_loop', $cnt, 
 					'playerid', $eachclient->id());
+                                $request->addResultLoop('players_loop', $cnt,
+                                        'uuid', $eachclient->uuid());
 				$request->addResultLoop('players_loop', $cnt, 
 					'ip', $eachclient->ipport());
 				$request->addResultLoop('players_loop', $cnt, 

@@ -127,7 +127,7 @@
 		to enable returning the given preference values along with each player.
 	</li>
 	<li>
-		Added the &quot;canpoweroff&quot; and &quot;isplayer&quot; tags to the &quot;<a href="#players">players</a>&quot;,
+		Added the &quot;canpoweroff&quot;, &quot;isplayer&quot; and &quot;uuid&quot; tags to the &quot;<a href="#players">players</a>&quot;,
 		&quot;<a href="#players">player</a>&quot; and &quot;<a href="#serverstatus">serverstatus</a>&quot; queries. 
 		to enable returning the given preference values along with each player.
 	</li>
@@ -983,6 +983,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<li>
 		<strong><code><a href="#player id ?">player id ?</a></code></strong>
 	</li>
+        <li>
+                <strong><code><a href="#player uuid ?">player uuid ?</a></code></strong>
+        </li>
 	<li>
 		<strong><code><a href="#player name ?">player name ?</a></code></strong>
 	</li>
@@ -1133,6 +1136,32 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
   
+<br>
+<p id="player uuid ?">
+        <strong>
+                <code>
+                        player
+                        uuid
+                        &lt;playerindex&gt;
+                        ?
+                </code>
+        </strong>
+</p>
+<p>
+        The &quot;player uuid ?&quot; query returns the player uuid. The uuid is used by
+	SqueezeNetwork.
+</p>
+<p>
+        Example:
+</p>
+<blockquote>
+        <p>
+                Request: &quot;player uuid 0 ?&lt;LF&gt;&quot; (or)  "0 player uuid ?"
+                <br>
+                Response: &quot;player uuid 0 012345678901234567890123456789012&lt;LF&gt;&quot;
+        </p>
+</blockquote>
+
 <br>
 <p id="player name ?">
 	<strong>
@@ -6430,6 +6459,15 @@ in the saved playlists folder.</p>
 			&quot;<a href="#player id ?">player id ?</a>&quot;.
 		</td>
 	</tr>
+        <tr>
+                <td>
+                        &nbsp;&nbsp;<b>uuid</b>
+                </td>
+                <td>
+                        Player unique identifier. Equivalent to
+                        &quot;<a href="#player uuid ?">player uuid ?</a>&quot;.
+                </td>
+        </tr>
 	<tr>
 		<td>
 			&nbsp;&nbsp;ip
