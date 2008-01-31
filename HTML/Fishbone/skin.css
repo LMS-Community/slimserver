@@ -335,6 +335,7 @@ div#pagetitle {
 	padding: 0;
 	margin: 0;
 	top: 80px;
+	top: expression( "10px" ); /* dirty IE method */
 	left: 10px;
 	z-index: 99;
 }
@@ -344,7 +345,6 @@ div#pagetitle {
 	max-height: 150px;
 	width: expression( "150px" ); /* dirty IE workaround */
 	height: expression( "150px" );
-	margin-top: expression( "15px" );
 }
 
 #linkedSongInfoItems {
@@ -352,7 +352,7 @@ div#pagetitle {
 	padding-left: 160px;
 	padding-top: 0px !important;
 	min-height: 165px;
-	height: expression( "165px" ); /* dirty IE method */	
+	height: expression( "165px" ); /* dirty IE method */
 	position: relative;
 }
 
