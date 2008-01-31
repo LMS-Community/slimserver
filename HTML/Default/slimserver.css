@@ -341,6 +341,7 @@ img#background { position:absolute; }
 
 .pagetitle {
 	padding-left: 10px;
+	padding-right: 25px;
 	font-size: 14px;
 	font-weight: bold;
 }
