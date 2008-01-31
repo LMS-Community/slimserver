@@ -2337,10 +2337,6 @@ sub readDirectoryQuery {
 
 		my $filterRE = qr/./ unless ($filter eq 'musicfiles');
 
-		if ($filter =~ /^filetype:(.*)/) {
-			$filterRE = qr/\.$1$/;
-		}
-
 		# get file system items in $folder
 		@fsitems = Slim::Utils::Misc::readDirectory(catdir($folder), $filterRE);
 		map { 
@@ -2354,9 +2350,17 @@ sub readDirectoryQuery {
 	if ($filter eq 'foldersonly') {
 		@fsitems = grep { $fsitems{$_}->{d} } @fsitems;
 	}
-	elsif ($filter eq 'filesonly' || $filter =~ /^filetype:/) {
+
+	elsif ($filter eq 'filesonly') {
 		@fsitems = grep { $fsitems{$_}->{f} } @fsitems;
 	}
+
+	# return all folders plus files of type
+	elsif ($filter =~ /^filetype:(.*)/) {
+		my $filterRE = qr/\.$1$/;
+		@fsitems = grep { $fsitems{$_}->{d} || $_ =~ $filterRE } @fsitems;
+	}
+
 	# search anywhere within path/filename
 	elsif ($filter && $filter !~ /^(?:filename|filetype):/) {
 		@fsitems = grep { catdir($folder, $_) =~ /$filter/i } @fsitems;

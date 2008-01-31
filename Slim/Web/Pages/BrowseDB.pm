@@ -217,6 +217,17 @@ sub browsedb {
 	# shortcut for songinfo page
 	if ($params->{path} eq 'songinfo.html') {
 
+		# don't show single link to all songs
+		if (@{$params->{'pwd_list'}} == 1
+			&& $params->{'pwd_list'}->[0]->{'level'} == 0
+			&& $params->{'pwd_list'}->[0]->{'hierarchy'} eq 'track')
+		{
+
+			$params->{'pwd_list'}->[0] = {
+				 'title' => string('SONG_INFO')
+			}			
+		}
+
 		Slim::Web::Pages->addSongInfo($client, $params, 0);
 		return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
 	} 

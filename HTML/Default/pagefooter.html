@@ -1,10 +1,12 @@
 			</div>
 		</div>
 
+		[% UNLESS noInfoTab %]
 		<div id="infoTab" class="infoTab">
 			[% IF titleRight %]<span id="titleRight">[% titleRight %]</span>[% END %]
 			[% IF infoTab; infoTab; END %]&nbsp;
 		</div>
+		[% END %]
 
 	</body>
 </html>
