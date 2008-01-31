@@ -29,6 +29,7 @@
 			[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
 			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
 
+			[% playerid = playerid || player %]
 			// display player list if we're in the player settings
 			[%-
 			pageId = '^' _ page _ '$';

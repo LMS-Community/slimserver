@@ -173,7 +173,7 @@ Settings = function(){
 					page = tabLinks[this.id];
 			}
 
-			Ext.get('maincontent').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player;
+			Ext.get('maincontent').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player + '&playerid=' + playerid;
 		},
 
 		// resize panels, folder selectors etc.
@@ -300,7 +300,7 @@ var SettingsPage = function(){
 						cls: 'playerList',
 						group: 'playerList',
 						handler: function(ev){
-							location = pageURL + 'player=' + ev.value + '&amp;playerid=' + ev.value;
+							location = pageURL + 'player=' + ev.value + '&playerid=' + ev.value;
 						}
 					})
 				);
@@ -337,7 +337,7 @@ var SettingsPage = function(){
 						cls: 'settingsList',
 						group: 'settingsList',
 						handler: function(ev){
-							location.href = webroot + ev.value + 'player=' + playerid + '&amp;playerid=' + playerid;
+							location = webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid;
 						}
 					})
 				);
