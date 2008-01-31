@@ -381,7 +381,6 @@ div#homeMenu {
 
 #songInfo {
 	/* the list of song info items */
-	background-color: #ffffff;
 	padding: 0px;
 	list-style: none;
 	margin: 8px;
@@ -566,17 +565,6 @@ div#playList #browsedbHeader {
 
 #songInfoItems div {
 	display: table-row;
-}
-
-.songInfoTitle, .songInfoText {
-	display: table-cell;
-	width: auto;
-}
-
-.songInfoTitle {
-	width: 150px;
-	text-align: right;
-	padding-right: 12px;
 }
 
 .thumbnail {

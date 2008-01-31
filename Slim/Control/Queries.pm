@@ -4427,7 +4427,7 @@ sub _jiveAddToFavorites {
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
 			# FIXME, this needs to change to a favorites image after it is provided
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/favorites.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/favorites.png');
 		}
 		$chunkCount++;
 		$listCount++;
@@ -4758,7 +4758,7 @@ sub _playAll {
 
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
-			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/music/all_items/cover.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/playall.png');
 		}
 
 		# get all our params

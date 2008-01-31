@@ -34,7 +34,7 @@
 [%- WRAPPER $container %]
 	[% IF levelName == 'track' && (album.id || age.id) && NOT ajaxUpdate %]
 		[% IF age.id; album = age; END %]
-		<div style="overflow: hidden;">
+		<div style="overflow: hidden; width: 99%;">
 		[% 
 			# remove "All Songs" item and display links at the top
 			IF browse_items.size > 1;
@@ -60,6 +60,7 @@
 				year => album.year
 			};
 		%]</div>
+		
 
 	[% ELSIF coverArt AND tree != 1 -%]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
