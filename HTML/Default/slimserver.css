@@ -1172,8 +1172,10 @@ div.buttonbarSpacer {
 }
 
 .x-dlg-bd b, .x-dlg-bd p, .x-dlg-bd ul, .x-dlg-bd form,
-.helpsection p, .helpsection dt {
-	margin: 5px 5px 10px;
+.helpsection h1, .helpsection h2, .helpsection h3, .helpsection h4,
+.helpsection p, .helpsection dt, .helpsection ol, .helpsection pre,
+.helpsection table {
+		margin: 5px 5px 10px;
 }
 
 ul.x-tree-node-ct {
@@ -1184,8 +1186,9 @@ ul.x-tree-node-ct {
 	margin-left: 20px;
 }
 
-.helpsection ul, .helpsection ol {
+.helpsection li {
 	list-style-type: disc;
+	margin: 5px 25px;
 }
 
 .helpsection blockquote, .helpsection ul {
