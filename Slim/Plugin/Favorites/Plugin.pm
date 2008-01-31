@@ -196,7 +196,8 @@ sub webPages {
 sub addEditLink {
 	my $enabled = $prefs->get('opmleditor');
 
-	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
+	Slim::Web::Pages->addPageLinks('plugins', { 'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
+	Slim::Web::Pages->addPageLinks("icons", { 'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => 'html/images/plugin.png' });
 }
 
 # support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites editting]

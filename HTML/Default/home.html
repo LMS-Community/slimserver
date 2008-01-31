@@ -98,6 +98,8 @@ ELSE %]
 
 	pluginsItems = BLOCK;
 		FOREACH link = additionalLinks.plugins;
+			# we want an icon for every item in the Extras menu...
+			additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 			PROCESS menuItem;
 		END;
 	END %]
@@ -111,14 +113,14 @@ ELSE %]
 					[% ELSE %]
 						<a href="[% link.value %]player=[% player %]" class="browseItemLink">
 					[% END %]
-						[% IF additionalLinks.icons.${link.key} %]
+						[% IF additionalLinks.icons.${link.key} && !noIcon %]
 							<span class="browseCover">
 								<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
 							</span>
 							<div class="smallBrowseItemDetail">
 						[% END %]
 						[% link.key | getstring %]
-						[% IF additionalLinks.icons.${link.key} %]
+						[% IF additionalLinks.icons.${link.key} && !noIcon %]
 							</div>
 						[% END %]
 					[% IF !expandable %]
@@ -158,7 +160,7 @@ ELSE %]
 				END;
 			END;
 
-			PROCESS menuItem expandable=1 
+			PROCESS menuItem expandable=1 noIcon=1
 				link = { 
 					key = 'FAVORITES',
 					value = additionalLinks.browse.FAVORITES
