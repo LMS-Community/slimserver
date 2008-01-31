@@ -683,6 +683,11 @@ form#advSearchForm.resultsPage {
 	display: none;
 }
 
+.searchHeader {
+	margin: 15px 6px 5px;
+}
+
+
 #advSearchLink {
 	padding-left: 10px;
 	padding-top: 4px;

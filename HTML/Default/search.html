@@ -22,15 +22,17 @@
 [% END %]
 [% PROCESS pageheader.html dontscroll=browse_items.size %]
 
+	<div class="searchHeader">
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<table><tr>
-			<td><input type="text" id="livesearch" name="query" size="50" value="[% query %]" autocomplete="off"/></td>
+			<td><input type="text" id="livesearch" name="query" size="30" value="[% query %]" autocomplete="off"/></td>
 			<td><span id="searchButton"></span></td>
 			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
 		</tr></table>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form>
+	</div>
 
 	<div id="browsedbHeader">
 		[% IF searchError %]
@@ -57,7 +59,9 @@
 	
 			</div>
 		[% ELSIF manualSearch %]
-			[% "NO_SEARCH_RESULTS" | string %]
+			<div id="browsedbList">
+				[% "NO_SEARCH_RESULTS" | string %]
+			</div>
 		[% END %]
 	</div>
 
