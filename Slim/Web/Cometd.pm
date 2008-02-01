@@ -438,7 +438,11 @@ sub handler {
 				} );
 				
 				if ( $result->{error} ) {
-					push @errors, [ '/slim/subscribe', $result->{error} ];
+					push @errors, {
+						channel => '/slim/subscribe', 
+						error   => $result->{error},
+						id      => $id,
+					};
 				}
 				else {
 					push @{$events}, {
@@ -458,10 +462,18 @@ sub handler {
 				}
 			}
 			elsif ( !$request ) {
-				push @errors, [ '/slim/subscribe', 'request data key not found' ];
+				push @errors, {
+					channel => '/slim/subscribe',
+					error   => 'request data key not found',
+					id      => $id,
+				};
 			}
 			elsif ( !$response ) {
-				push @errors, [ '/slim/subscribe', 'response data key not found' ];
+				push @errors, {
+					channel => '/slim/subscribe',
+					error   => 'response data key not found',
+					id      => $id,
+				};
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
@@ -519,7 +531,11 @@ sub handler {
 				} );
 				
 				if ( $result->{error} ) {
-					push @errors, [ '/slim/request', $result->{error} ];
+					push @errors, {
+						channel => '/slim/request',
+						error   => $result->{error},
+						id      => $id,
+					};
 				}
 				else {
 					# If the caller does not want the response, id will be undef
@@ -544,10 +560,18 @@ sub handler {
 				}
 			}
 			elsif ( !$request ) {
-				push @errors, [ '/slim/request', 'request data key not found' ];
+				push @errors, {
+					channel => '/slim/request',
+					error   => 'request data key not found',
+					id      => $id,
+				};
 			}
 			elsif ( !$response ) {
-				push @errors, [ '/slim/request', 'response data key not found' ];
+				push @errors, {
+					channel => '/slim/request',
+					error   => 'response data key not found',
+					id      => $id,
+				};
 			}
 		}
 	}
@@ -556,11 +580,9 @@ sub handler {
 		my $out = [];
 		
 		for my $error ( @errors ) {
-			push @{$out}, {
-				channel    => $error->[0],
-				successful => JSON::XS::false,
-				error      => $error->[1],
-			};
+			$error->{successful} = JSON::XS::false;
+						
+			push @{$out}, $error;
 		}
 		
 		sendResponse( $conn, $out );
