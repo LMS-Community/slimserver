@@ -180,26 +180,7 @@ sub dirsFor {
 
 		} elsif ($dir eq 'log') {
 
-			# If SqueezeCenter is installed systemwide.
-			if (-d "/Library/Application Support/SqueezeCenter") {
-
-				mkpath("/Library/Logs/SqueezeCenter");
-
-			} else {
-
-				mkpath("$ENV{'HOME'}/Library/Logs/SqueezeCenter");
-				
-			}
-
-			if (-d "/Library/Application Support/SqueezeCenter") {
-
-				push @dirs, "/Library/Logs/SqueezeCenter";
-
-			} elsif (-d "$ENV{'HOME'}/Library/Logs/SqueezeCenter") {
-
-				push @dirs, "$ENV{'HOME'}/Library/Logs/SqueezeCenter";
-				
-			}
+			push @dirs, catdir($ENV{'HOME'}, '/Library/Logs/SqueezeCenter');
 
 		} elsif ($dir eq 'cache') {
 
