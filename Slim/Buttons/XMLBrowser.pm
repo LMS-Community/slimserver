@@ -1248,6 +1248,8 @@ sub _cliQuery_done {
 	my $expires    = $params->{'expires'};
 	my $timeout    = $params->{'timeout'};
 #	my $forceTitle = $params->{'forceTitle'};
+	my $window;
+	my $textArea;
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
 	if ($request->isQuery([[$query], ['playlist']])) {
@@ -1730,7 +1732,6 @@ sub _cliQuery_done {
 	
 		my $hasImage = 0;
 		
-		$request->addResult('count', $count);
 		
 		if ($count) {
 		
@@ -1746,6 +1747,7 @@ sub _cliQuery_done {
 				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 					
+					next if $textArea;
 					my $hasItems = 1;
 					
 					# create an ordered hash to store this stuff...
@@ -1771,11 +1773,13 @@ sub _cliQuery_done {
 
 					if ($menuMode) {
 						
-						# we need to check for an $item->{items}[0]{wrap} to see if 
-						# there is a single child item should be rendered as a textarea
-						if ( defined($item->{items}[0]{wrap}) && $item->{items}[0]{wrap} == 1 ) {
-							$request->addResultLoop( $loopname, $cnt, 'textArea', $item->{items}[0]{'name'} || $item->{items}[0]{'title'});
+						if ( $item->{wrap} && $item->{name}) {
+							$window->{'textArea'} = $item->{name};
+							# no menu when we're sending a textArea, but we need a count of 0 sent
+							$request->addResult('count', 0);
+							$textArea++;
 						}
+
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
 						my $params = {};
@@ -1836,6 +1840,8 @@ sub _cliQuery_done {
 			}
 
 		}
+
+		$request->addResult('count', $count) unless $window->{textArea};
 		
 		if ($menuMode) {
 
@@ -1873,11 +1879,13 @@ sub _cliQuery_done {
 
 			# Change window menuStyle to album if any images are in the list
 			if ( $hasImage ) {
-				$request->addResult('window', {
-					menuStyle => 'album',
-				});
+				$window->{'menuStyle'} = 'album';
 			}
 
+			# send any window parameters we've gathered, if we've gathered any
+			if ($window) {
+				$request->addResult('window', $window );
+			}
 			$request->addResult('base', $base);
 		}
 	}
