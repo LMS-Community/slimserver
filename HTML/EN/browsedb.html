@@ -63,7 +63,7 @@
 		
 
 	[% ELSIF coverArt AND tree != 1 -%]
-		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+		<p><a [% coverArtHRef %] [% unless notarget %]target="cover"[% END %]>[% PROCESS coverImg resize='1' %]</a></p>
 	[% END -%]
 	[% FOREACH item = browse_items -%]
 		[%- IF useAJAX %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% IF level %][% itemid = "$level"_"."_"$itemid" %][% END %][% END -%]
