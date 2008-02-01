@@ -2397,8 +2397,8 @@ sub readDirectoryQuery {
 			for my $item (@fsitems[$start..$end]) {
 				$path = ($folder ? catdir($folder, $item) : $item);
 
-				$request->addResultLoop('fsitems_loop', $cnt, 'path', $path);
-				$request->addResultLoop('fsitems_loop', $cnt, 'name', $item );
+				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode($path));
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode($item));
 				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', $fsitems{$item}->{d});
 
 				$idx++;
