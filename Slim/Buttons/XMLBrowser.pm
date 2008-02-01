@@ -1810,7 +1810,11 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
 							$hasImage = 1;
 						}
-			
+
+						if ( $item->{type} eq 'audio' && !$hasImage ) {
+							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay' );
+						}	
+
 						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
 						}
