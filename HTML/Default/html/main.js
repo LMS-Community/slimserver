@@ -211,7 +211,7 @@ PlayerChooser = function(){
 
 						// let's set the current player to the first player in the list
 						if (responseText.result && 
-							(responseText.result['player count'] > 0 || responseText.result.sn_players_loop)) {
+							(responseText.result['player count'] > 0 || responseText.result['sn player count'] > 0)) {
 							var playerInList = false;
 							var el;
 
@@ -223,48 +223,50 @@ PlayerChooser = function(){
 
 							playerList = new Ext.util.MixedCollection();
 
-							for (x=0; x < responseText.result['player count']; x++) {
-								var playerInfo = responseText.result.players_loop[x];
-
-								// mark the current player as selected
-								if (playerInfo.playerid == activePlayer) {
-									playerInList = {
-										text: playerInfo.name,
-										value: playerInfo.playerid,
-										canpoweroff: playerInfo.canpoweroff
-									};
-									playerMenu.setText(playerInfo.name);
-
-									if (el = Ext.get('ctrlPower'))
-										el.setVisible(playerInfo.canpoweroff);
-
-									// display information if the player needs a firmware upgrade
-									if (playerInfo.player_needs_upgrade || playerNeedsUpgrade) {
-										playerNeedsUpgrade = playerInfo.player_needs_upgrade; 
-										Playlist.load();
+							if (responseText.result.players_loop) {
+								for (x=0; x < responseText.result.players_loop.length; x++) {
+									var playerInfo = responseText.result.players_loop[x];
+	
+									// mark the current player as selected
+									if (playerInfo.playerid == activePlayer) {
+										playerInList = {
+											text: playerInfo.name,
+											value: playerInfo.playerid,
+											canpoweroff: playerInfo.canpoweroff
+										};
+										playerMenu.setText(playerInfo.name);
+	
+										if (el = Ext.get('ctrlPower'))
+											el.setVisible(playerInfo.canpoweroff);
+	
+										// display information if the player needs a firmware upgrade
+										if (playerInfo.player_needs_upgrade || playerNeedsUpgrade) {
+											playerNeedsUpgrade = playerInfo.player_needs_upgrade; 
+											Playlist.load();
+										}
 									}
+	
+									// add the players to the list to be displayed in the synch dialog
+									playerList.add(
+										playerInfo.playerid,
+										{
+											name: playerInfo.name,
+											isplayer: playerInfo.isplayer
+										}
+									);
+	
+									playerMenu.menu.add(
+										new Ext.menu.CheckItem({
+											text: playerInfo.name,
+											value: playerInfo.playerid,
+											canpoweroff: playerInfo.canpoweroff,
+											cls: 'playerList',
+											group: 'playerList',
+											checked: playerInfo.playerid == playerid,
+											handler: PlayerChooser.selectPlayer
+										})
+									);
 								}
-
-								// add the players to the list to be displayed in the synch dialog
-								playerList.add(
-									playerInfo.playerid,
-									{
-										name: playerInfo.name,
-										isplayer: playerInfo.isplayer
-									}
-								);
-
-								playerMenu.menu.add(
-									new Ext.menu.CheckItem({
-										text: playerInfo.name,
-										value: playerInfo.playerid,
-										canpoweroff: playerInfo.canpoweroff,
-										cls: 'playerList',
-										group: 'playerList',
-										checked: playerInfo.playerid == playerid,
-										handler: PlayerChooser.selectPlayer
-									})
-								);
 							}
 
 							// add a list of players connected to SQN, if available

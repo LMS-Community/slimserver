@@ -2645,14 +2645,16 @@ sub serverstatusQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	
+
 	my $count = Slim::Player::Client::clientCount();
 	$count += 0;
+
 	$request->addResult('player count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
+
 		my $cnt = 0;
 		my @players = Slim::Player::Client::clients();
 
@@ -2693,28 +2695,37 @@ sub serverstatusQuery {
 					
 				$cnt++;
 			}
+		}
+
+	}
+
+
+	my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
+
+	$count = scalar @sn_players || 0;
+
+	$request->addResult('sn player count', $count);
+
+	($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $sn_cnt = 0;
 			
-			my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
+		for my $player ( @sn_players ) {
+			$request->addResultLoop(
+				'sn_players_loop', $sn_cnt, 'id', $player->{id}
+			);
 			
-			if ( scalar @sn_players ) {
-				my $sn_cnt = 0;
+			$request->addResultLoop( 
+				'sn_players_loop', $sn_cnt, 'name', $player->{name}
+			);
+			
+			$request->addResultLoop(
+				'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
+			);
 				
-				for my $player ( @sn_players ) {
-					$request->addResultLoop(
-						'sn_players_loop', $sn_cnt, 'id', $player->{id}
-					);
-					
-					$request->addResultLoop( 
-						'sn_players_loop', $sn_cnt, 'name', $player->{name}
-					);
-					
-					$request->addResultLoop(
-						'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
-					);
-					
-					$sn_cnt++;
-				}
-			}
+			$sn_cnt++;
 		}
 	}
 	
