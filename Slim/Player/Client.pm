@@ -86,14 +86,9 @@ sub new {
 	$client->[0] = $id;
 	$client->[1] = $deviceid;
 	
-	# Ignore UUID if it's from a firmware that sends bogus data or is all zeros
-	if (
-		$uuid && (
-			   ( $deviceid == 5 && $rev < 35 )
-			|| ( $deviceid == 4 && $rev < 85 )
-			|| ( $uuid eq '0' x 32 )
-		)
-	) {
+	# XXX: Ignore UUID from non-Receivers, this will be fixed by bug 6899
+	# in a future version
+	if ( $uuid && $deviceid != 7 ) {
 		$uuid = undef;
 	}
 	
