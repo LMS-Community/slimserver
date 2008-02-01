@@ -511,10 +511,30 @@ sub currentSongLines {
 			};
 		}
 
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
+		my $imgKey;
+		my $artwork = 0;
+		if ($handler && $handler->can('getMetadataFor') ) {
+			my $meta = $handler->getMetadataFor( $client, $song->url );
+			if ($meta->{cover}) {
+				$imgKey = 'icon';
+				$artwork = $meta->{cover};
+			} elsif ($meta->{icon}) {
+				$imgKey = 'icon-id';
+				$artwork = $meta->{icon};
+			} else {
+				$imgKey = 'icon-id';
+				$artwork = '/html/images/radio.png';
+			}
+		} else {
+			$imgKey = 'icon-id';
+			$artwork = ($song->album->artwork || 0) + 0;
+		}
+
 		$jive = {
 			'type'    => 'song',
 			'text'    => [ $status, $song->title ],
-			'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
+			$imgKey   => $artwork,
 		};
 	}
 
