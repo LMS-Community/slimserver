@@ -449,6 +449,7 @@ sub playmode {
 			closeSong($everyclient);
 			resetSong($everyclient);
 			resetSongQueue($everyclient);
+			$everyclient->readNextChunkOk(1);
 
 		} elsif ($newmode eq "play") {
 						
@@ -2373,15 +2374,16 @@ bail:
 				my $nextURL = Slim::Player::Playlist::url( $client, $nextSong );
 				my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $nextURL );
 				if ( $handler && $handler->can('onDecoderUnderrun') ) {
+
+					# Flag that we don't want to try to read any more chunks
+					# until our callback is called.
+					$client->readNextChunkOk(0);
+					
 					$handler->onDecoderUnderrun(
 						$client,
 						$nextURL,
 						$callback,
 					);
-					
-					# Flag that we don't want to try to read any more chunks
-					# until our callback is called.
-					$client->readNextChunkOk(0);
 					
 					return;
 				}
