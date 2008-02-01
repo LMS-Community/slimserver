@@ -65,6 +65,14 @@ sub handler {
 		push @prefs,'clockSource';
 	}
 
+	if ($client->hasEffectsLoop()) {
+		push @prefs,'fxloopSource';
+	}
+
+	if ($client->hasEffectsLoop()) {
+		push @prefs,'fxloopClock';
+	}
+
 	if ($client->hasPolarityInversion()) {
 		push @prefs,'polarityInversion';
 	}

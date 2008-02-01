@@ -396,6 +396,21 @@ sub init {
 
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
+		Slim::Player::Transporter::updateClockSource($client);
+	}, 'clockSource');
+
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
+		Slim::Player::Transporter::updateEffectsLoop($client);
+	}, 'fxloopSource');
+
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
+		Slim::Player::Transporter::updateEffectsLoop($client);
+	}, 'fxloopClock');
+
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
 		$client->display->renderCache()->{'defaultfont'} = undef;
 	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
 

@@ -36,6 +36,8 @@ our $defaultPrefs = {
 	'wordClockOutput' => 0,
 	'powerOffDac' => 0,
 	'polarityInversion' => 0,
+	'fxloopSource' => 0,
+	'fxloopClock' => 0,
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -66,8 +68,11 @@ sub reconnect {
 	$client->getPlayerSetting('digitalOutputEncoding');
 	$client->getPlayerSetting('wordClockOutput');
 	$client->getPlayerSetting('powerOffDac');
+	$client->getPlayerSetting('fxloopSource');
+	$client->getPlayerSetting('fxloopClock');
 
 	$client->updateClockSource();
+	$client->updateEffectsLoop();
 
 	# Update the knob in reconnect - as that's the last function that is
 	# called when a new or pre-existing client connects to the server.
@@ -189,6 +194,17 @@ sub updateClockSource {
 	$client->sendFrame('audc', \$data);
 }
 
+sub updateEffectsLoop {
+	my $client = shift;
+
+	my $data = pack(
+		'CC', 
+		$prefs->client($client)->get('fxloopSource'),
+		$prefs->client($client)->get('fxloopClock'),
+		);
+	$client->sendFrame('audf', \$data);
+}
+
 sub updateKnob {
 	my $client  = shift;
 	my $newList = shift || 0;
@@ -304,6 +320,10 @@ sub hasDigitalIn {
 }
 
 sub hasExternalClock {
+	return 1;
+}
+
+sub hasEffectsLoop {
 	return 1;
 }
 

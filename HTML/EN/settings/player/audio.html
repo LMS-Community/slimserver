@@ -209,6 +209,43 @@
 				
 			[% END %]
 
+			[% IF prefs.exists('fxloopSource') %]
+	
+				[% WRAPPER settingGroup title="SETUP_FXLOOPSOURCE" desc="SETUP_FXLOOPSOURCE_DESC" %]
+					<select class="stdedit" name="fxloopSource" id="fxloopSource">
+			
+					[% FOREACH option = {
+						'0' => 'FXLOOPSOURCE_DISABLED',
+						'1' => 'AUDIO_SOURCE_BALANCED_AES',
+						'2' => 'AUDIO_SOURCE_BNC_SPDIF',
+						'3' => 'AUDIO_SOURCE_RCA_SPDIF',
+						'4' => 'AUDIO_SOURCE_OPTICAL_SPDIF',
+					} %]
+						<option [% IF prefs.fxloopSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+					
+					</select>
+				[% END %]
+				
+			[% END %]
+
+			[% IF prefs.exists('fxloopClock') %]
+	
+				[% WRAPPER settingGroup title="SETUP_FXLOOPCLOCK" desc="SETUP_FXLOOPCLOCK_DESC" %]
+					<select class="stdedit" name="fxloopClock" id="fxloopClock">
+			
+					[% FOREACH option = {
+						'0' => 'FXLOOPCLOCK_SYNCHRONOUS',
+						'1' => 'FXLOOPCLOCK_ASYNCHRONOUS',
+					} %]
+						<option [% IF prefs.fxloopClock == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+					
+					</select>
+				[% END %]
+				
+			[% END %]
+
 			[% IF prefs.exists('polarityInversion') %]
 	
 				[% WRAPPER settingGroup title="SETUP_POLARITYINVERSION" desc="SETUP_POLARITYINVERSION_DESC" %]
@@ -234,8 +271,8 @@
 			<select class="stdedit" name="wordClockOutput" id="wordClockOutput">
 	
 			[% FOREACH option = {
-				'1' => 'WORDCLOCKOUTPUT_GENERATECLOCK',
-				'0' => 'WORDCLOCKOUTPUT_PASSTHROUGH',
+				'0' => 'WORDCLOCKOUTPUT_DISABLED',
+				'1' => 'WORDCLOCKOUTPUT_ENABLED',
 			} %]
 				<option [% IF prefs.wordClockOutput == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 			[%- END -%]

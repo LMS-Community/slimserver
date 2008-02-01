@@ -13846,6 +13846,27 @@ CLOCKSOURCE_WORD_CLOCK
 	SV	Word Clock - ingång
 	ZH_CN	字形时钟输入
 
+SETUP_FXLOOPSOURCE
+	EN	Effects loop input
+
+SETUP_FXLOOPSOURCE_DESC
+	EN	An external digital processor, such as an EQ,  may be connected via s/pdif to process the signal before it reaches Trasporter's internal DAC. If this option is enabled, then the external processor must be connected and operating in order for Transporter's analog outputs to function.
+
+FXLOOPSOURCE_DISABLED
+	EN	Disabled
+
+SETUP_FXLOOPCLOCK
+	EN	Effects loop clock mode
+
+SETUP_FXLOOPCLOCK_DESC
+	EN	Preferably, the external processor's output will be synchronized to its input. Choose synchronous clock mode in this case, and the incoming signal will be reclocked by Transporter's internal oscillator for minimal jitter. In asynchronous mode, Transporter will recover the clock from the incoming signal, so it is not required to be synchronized.
+
+FXLOOPCLOCK_SYNCHRONOUS
+	EN	Synchronous: Transporter is master
+
+FXLOOPCLOCK_ASYNCHRONOUS
+	EN	Asynchronous: External processor is master
+
 VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
@@ -14127,34 +14148,13 @@ SETUP_WORDCLOCKOUTPUT
 	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
-	DE	Wenn die digitalen Eingänge verwendet werden, kann Transporter das Signal direkt durchschleifen oder an den S/PDIF-Ausgängen ein Word Clock-Signal erzeugen.
-	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
-	ES	Cuando se usan las entradas digitales, Transporter puede dejar pasar la señal a través o generar una señal de reloj de palabras en las salidas S/PDIF.
-	FR	Lorsqu'il utilise les entrées numériques, Transporter peut transférer le signal ou générer un signal word clock sur les sorties S/PDIF.
-	HE	בעת שימוש בקלט דיגיטלי, Transporter יכול להעביר את האות או להפיק אות של שעון טקסט ברכיבי הפלט מסוג S/PDIF.
-	IT	Quando si utilizzano gli ingressi digitali, Transporter può far passare il segnale o generare un segnale wordclock nelle uscite S/PDIF.
-	NL	Bij gebruik van de digitale ingangen kan de Transporter het signaal doorlaten of een Word-kloksignaal op de S/PDIF-uitgangen genereren.
-	ZH_CN	当使用数码输入时，Transporter可将信息进行直通或在S/PDIF输出产生字形时钟信息。
+	EN	When using the digital inputs, Transporter can be the clock master, and transmit a word clock signal on its S/PDIF outputs. This feature must only be enabled if the source device provideds a word clock input and the cable is connected.
 
-WORDCLOCKOUTPUT_GENERATECLOCK
-	DE	Word Clock erzeugen
-	EN	Generate word clock
-	ES	Generar reloj de palabras
-	FR	Générer word clock
-	HE	הפקת שעון טקסט
-	IT	Genera wordclock
-	NL	Word-klok genereren
-	ZH_CN	产生字形时钟
+WORDCLOCKOUTPUT_DISABLED
+	EN	Word clock output is disabled (Source is master)
 
-WORDCLOCKOUTPUT_PASSTHROUGH
-	DE	Digitales Durchschleifsignal
-	EN	Digital passthrough
-	ES	Paso a través digital
-	FR	Liaison numérique
-	HE	מעבר דיגיטלי
-	IT	Passthrough digitale
-	NL	Digitaal doorlaten
-	ZH_CN	数码直通
+WORDCLOCKOUTPUT_ENABLED
+	EN	Word clock output is enabled (Transporter is master)
 
 SETUP_POWEROFFDAC
 	DE	Audio aus
