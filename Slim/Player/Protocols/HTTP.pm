@@ -411,8 +411,16 @@ sub getMetadataFor {
 		}
 		else {
 			# Metadata for items in the playlist that have not yet been played
-			return {	
-				cover    => $icon,
+			
+			# We can still get cover art for items not yet played
+			my $cover;
+			if ( $url =~ /hasArt=1/ ) {
+				my ($id)  = $url =~ m/([0-9a-f]+\?sid=[0-9a-f]+)/;
+				$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
+			}
+			
+			return {
+				cover    => $cover || $icon,
 				icon     => $icon,
 				type     => 'MP3tunes',
 			};
