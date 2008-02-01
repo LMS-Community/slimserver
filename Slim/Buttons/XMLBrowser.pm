@@ -1772,7 +1772,22 @@ sub _cliQuery_done {
 					$hash{'hasitems'} = $hasItems;
 
 					if ($menuMode) {
-						
+						# if showBriefly is 1, send the name as a showBriefly
+						if ($item->{showBriefly} and ( $hash{name} || $hash{title} ) ) {
+							$request->client->showBriefly({ 
+										'jive' => {
+											'type'    => 'popupplay',
+											'text'    => [ $hash{name} || $hash{title} ],
+										},
+									});
+						}
+
+						# if nowPlaying is 1, tell Jive to go to nowPlaying
+						if ($item->{nowPlaying}) {
+							$request->addResult('goNow', 'nowPlaying');
+						}
+
+					
 						if ( $item->{wrap} && $item->{name}) {
 							$window->{'textArea'} = $item->{name};
 							# no menu when we're sending a textArea, but we need a count of 0 sent
