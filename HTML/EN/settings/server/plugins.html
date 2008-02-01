@@ -10,11 +10,12 @@
 
 		[% name     = plugins.$plugin.name %]
 		[% version  = plugins.$plugin.version %]
+		[% enforce  = plugins.$plugin.enforce %]
 		[% settings = plugins.$plugin.optionsURL %]
 		[% enabled  = pluginState.$plugin %]
 
 		[% title = BLOCK %]
-			<input name="[% name %]" type="checkbox" [% enabled ? "checked=\"checked\"" : "" %] class="pluginEnablerCheckbox"> [% name | getstring %]
+			<input name="[% name %]" type="checkbox" [% enforce ? "disabled" : "" %] [% enabled ? "checked=\"checked\"" : "" %] class="pluginEnablerCheckbox"> [% name | getstring %]
 		[% END %]
 
 		[% WRAPPER setting desc = plugins.$plugin.description %]

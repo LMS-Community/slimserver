@@ -14,6 +14,7 @@
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<optionsURL>plugins/Favorites/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
+	<enforce>1</enforce>
 
 	<targetApplication>
 		<id>SqueezeCenter</id>

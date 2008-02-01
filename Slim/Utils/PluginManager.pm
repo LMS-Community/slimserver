@@ -381,7 +381,14 @@ sub enablePlugins {
 
 		delete $manifest->{opType};
 
-		if (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED) {
+
+		if (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED && $manifest->{'enforce'}) {
+	
+			$log->debug("Enabling plugin: $name - must not be disabled");
+			$prefs->set($name, STATE_ENABLED);
+		}
+
+		elsif (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED) {
 
 			$log->warn("Skipping plugin: $name - disabled");
 
@@ -634,6 +641,11 @@ sub enablePlugin {
 sub disablePlugin {
 	my $class  = shift;
 	my $plugin = shift;
+
+	if ($plugins->{$plugin}->{enforce}) {
+		$log->debug("Can't disable plugin: $plugin - 'enforce' set in install.xml");
+		return;
+	}
 
 	my $opType = $plugins->{$plugin}->{'opType'};
 
