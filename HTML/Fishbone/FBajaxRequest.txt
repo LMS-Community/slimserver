@@ -11,8 +11,9 @@ sleepstring|[% "SLEEP" | string %]
 cansave|[% cansave %]
 
 # path to cover art 
-coverartpath|
-[%- IF coverThumb -%][% coverThumb %]
+coverartpath|[%- IF coverThumb -%][% coverThumb %]
+[%- ELSIF itemobj.isRemoteURL && plugin_meta.cover -%][% plugin_meta.cover %]
+[%- ELSIF itemobj.isRemoteURL && plugin_meta.icon -%][% plugin_meta.icon %].png
 [%- ELSIF itemobj.isRemoteURL -%][% webroot %]html/images/radio_100x100_p.gif
 [%- ELSE -%][% webroot %]html/images/cover_100x100_p.png
 [% END %]

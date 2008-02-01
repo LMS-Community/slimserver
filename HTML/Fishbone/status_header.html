@@ -133,6 +133,10 @@
 			<div id="coverart">
 				<span id='coverhref'><a id="coverarthref" [% albumHRef %] target="browser">[% IF coverThumb -%]
 					[%- PROCESS statusImg width="100" -%]
+				[%- ELSIF itemobj.isRemoteURL && plugin_meta.cover -%]
+					<img src="[% plugin_meta.cover %]" width="100" id="coverartpath">
+				[%- ELSIF itemobj.isRemoteURL && plugin_meta.icon -%]
+					<img src="[% plugin_meta.icon %].png" width="100" id="coverartpath">
 				[%- ELSE -%]
 					<img src="[% webroot %]html/images/cover_100x100_p.png" id="coverartpath" alt="" title="" width = '100' height="100">
 				[%- END %]</a></span>
