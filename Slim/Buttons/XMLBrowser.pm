@@ -1120,20 +1120,20 @@ sub playItem {
 		}
 		
 		# Playlist item may contain child items without a URL, i.e. Rhapsody's Tracks menu item
-	    elsif ( !$url && scalar @{ $item->{outline} || [] } ) {
-	        gotPlaylist( 
-	            { 
-	                items => $item->{outline},
-	            },
-	            {
-	                client => $client,
-	                action => $action,
-	                parser => $parser,
-	            },
-	        );
-	        
-	        return;
-	    }
+		elsif ( !$url && scalar @{ $item->{outline} || [] } ) {
+			gotPlaylist( 
+				{ 
+					items => $item->{outline},
+				},
+				{
+					client => $client,
+					action => $action,
+					parser => $parser,
+				},
+			);
+			
+			return;
+		}
 		
 		Slim::Formats::XML->getFeedAsync(
 			\&gotPlaylist,
@@ -1144,6 +1144,7 @@ sub playItem {
 				'url'     => $url,
 				'parser'  => $parser,
 				'item'    => $item,
+				'timeout' => $item->{'timeout'},
 			},
 		);
 
