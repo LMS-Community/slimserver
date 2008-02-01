@@ -319,29 +319,34 @@ function refreshInfo(theData, force, curstyle) {
 	}
 	
 	// refresh cover art
-	if ($('coverartpath') && newsong) {
+	if ($('coverartpath')) {
 		debug("update covers");
 		var coverPath = null;
-		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
+		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')
+			|| parsedData['coverartpath'].match('icon\.png') || parsedData['coverartpath'].match('^http:/')) {
 			coverPath = parsedData['coverartpath'];
 		} else {
 			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100_f_000000.jpg';
 		}
-		$('coverartpath').src   = coverPath;
 		
-		var tooltip = "";
-		if (parsedData['album']) {
-			tooltip = parsedData['album'];
-			if (parsedData['artist']) {
-				tooltip += " " + parsedData['by'] + " " + parsedData['artist'];
+		if (coverPath != $('coverartpath').src) {
+			debug("refresh cover art");
+			$('coverartpath').src   = coverPath;
+			
+			var tooltip = "";
+			if (parsedData['album']) {
+				tooltip = parsedData['album'];
+				if (parsedData['artist']) {
+					tooltip += " " + parsedData['by'] + " " + parsedData['artist'];
+				}
+				if (parsedData['year'] && parsedData['year'] != 0) {
+					tooltip += " (" + parsedData['year'] + ")";
+				}
 			}
-			if (parsedData['year'] && parsedData['year'] != 0) {
-				tooltip += " (" + parsedData['year'] + ")";
-			}
+			
+			$('coverartpath').title = tooltip;
+			$('coverartpath').alt   = tooltip;
 		}
-		
-		$('coverartpath').title = tooltip;
-		$('coverartpath').alt   = tooltip;
 	}
 	
 	// refresh href content

@@ -33,10 +33,11 @@
 		%]
 	[% END %]
 
-	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search orderlist={} additionalmenu={} %]
 	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radios orderlist=additionalLinkOrder.radios 
 		additionalmenu = {'RADIO_TUNEIN' => 'tunein.html'}
 	-%]
+
+	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search orderlist={} additionalmenu={} %]
 	
 	[% IF additionalLinks.plugins %]
 		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins additionalmenu={} orderlist={} %]

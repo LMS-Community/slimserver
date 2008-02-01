@@ -48,6 +48,16 @@
 				<td></td>
 				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]">[% PROCESS statusImg %]</a></td>
 			</tr>
+		[%- ELSIF itemobj.isRemoteURL && plugin_meta.cover -%]
+			<tr>
+				<td></td>
+				<td><img src="[% plugin_meta.cover %]" width="100"></td>
+			</tr>
+		[%- ELSIF itemobj.isRemoteURL && plugin_meta.icon -%]
+			<tr>
+				<td></td>
+				<td><img src="[% plugin_meta.icon %].png" width="100"></td>
+			</tr>
 		[% END %]
 	</table>
 	
