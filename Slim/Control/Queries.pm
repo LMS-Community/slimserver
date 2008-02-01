@@ -3682,7 +3682,8 @@ sub titlesQuery {
 		return;
 	}
 
-	my $where  = {};
+	# Bug 6889, exclude remote tracks from these queries
+	my $where  = { 'me.remote' => { '!=' => 1 } };
 	my $attr   = {};
 
 	my $tags   = 'gald';
