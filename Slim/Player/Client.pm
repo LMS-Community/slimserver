@@ -582,6 +582,7 @@ sub voltage {
 
 sub hasDigitalOut() { return 0; }
 sub hasVolumeControl() { return 0; }
+sub hasEffectsLoop() { return 0; }
 sub hasPreAmp() { return 0; }
 sub hasExternalClock() { return 0; }
 sub hasDigitalIn() { return 0; }
