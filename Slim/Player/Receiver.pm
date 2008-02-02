@@ -20,6 +20,7 @@ use Slim::Hardware::TriLED;
 
 my $WHITE_COLOR =      0x00f0f0f0;
 my $DARK_WHITE_COLOR = 0x00101010;
+my $OFF_COLOR = 0x00000000;
 
 sub new {
 	my $class = shift;
@@ -59,6 +60,30 @@ sub play {
 
 	Slim::Hardware::TriLED::setTriLED( $client, $WHITE_COLOR, 1);
 	return $client->SUPER::play(@_);
+}
+
+sub power {
+	my $client = shift;
+	my $on = $_[0];
+	my $prefs = preferences( 'server');
+	my $currOn = $prefs->client( $client)->get( 'power') || 0;
+
+	if( defined( $on) && (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on))) {
+		if( $on == 1) {
+			Slim::Hardware::TriLED::setTriLED( $client, $DARK_WHITE_COLOR, 1);
+		} else {
+			# Needed because sub stop or sub pause is called _after_ sub power
+			Slim::Utils::Timers::setTimer( $client,	Time::HiRes::time() + 0.75, \&powerTurnOffLED);
+		}
+	}
+	return $client->SUPER::power(@_);
+}
+
+sub powerTurnOffLED {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers( $client, \&powerTurnOffLED);
+	Slim::Hardware::TriLED::setTriLED( $client, $OFF_COLOR, 1);
 }
 
 1;
