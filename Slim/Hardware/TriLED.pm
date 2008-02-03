@@ -48,7 +48,7 @@ $times > 0 -> number of blinks
 sub setTriLED {
 
 	my $client = shift;
-	my $color = shift || 0x00f0f0f0;	# white
+	my $color = shift || 0x00000000;	# white
 	my $transition = shift || 0x00;		# no transition
 	my $on_time = shift || 0x00;		# no blinking
 	my $off_time = shift || 0x00;
