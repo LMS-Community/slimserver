@@ -1702,6 +1702,7 @@ sub _preCheckAttributes {
 
 			$attributes->{$shortTag} = delete $attributes->{$gainTag};
 			$attributes->{$shortTag} =~ s/\s*dB//gi;
+			$attributes->{$shortTag} =~ s/,/\./g; # bug 6900, change comma to period
 		}
 	}
 
@@ -2181,6 +2182,7 @@ sub _postCheckAttributes {
 			if ($attributes->{$gainTag}) {
 
 				$attributes->{$gainTag} =~ s/\s*dB//gi;
+				$attributes->{$gainTag} =~ s/,/\./g; # bug 6900, change comma to period
 
 				$set{$shortTag} = $attributes->{$gainTag};
 
