@@ -870,7 +870,7 @@ sub scanPlaylistFileHandle {
 	my $ct = Slim::Schema->contentType($playlist);
 
 	if (Slim::Music::Info::isFileURL($url) && Slim::Utils::Misc::inPlaylistFolder($url)) {
-
+		$log->debug( "Playlist item $url changed from $ct to ssp content-type" );
 		$ct = 'ssp';
 	}
 
