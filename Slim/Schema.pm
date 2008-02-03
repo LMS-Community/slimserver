@@ -1378,6 +1378,9 @@ sub forceCommit {
 			return;
 		}
 	}
+	else {
+		$log->debug("forceCommit ignored, database is in AutoCommit mode");
+	}
 }
 
 =head2 artistOnlyRoles( @add );
