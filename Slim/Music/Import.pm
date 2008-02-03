@@ -570,6 +570,8 @@ sub endImporter {
 		}
 
 		delete $importsRunning{$importer};
+		
+		Slim::Schema->forceCommit;
 
 		return 1;
 	}
