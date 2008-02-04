@@ -3,6 +3,7 @@
 # $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
 
 PLUGIN_SCREENSAVER_VISUALIZER
+	DA	Visualiseriongs Pauseskærm
 	DE	Visualisierungs-Bildschirmschoner
 	EN	Visualizer Screensaver
 	ES	Protector de pantalla de visualizador
@@ -13,6 +14,7 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	NL	Visualisatieschermbeveiliger
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
+	DA	Kræver Squeezebox2
 	DE	Squeezebox2 erforderlich
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
@@ -22,6 +24,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	NL	Vereist Squeezebox2
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
+	DA	Tryk HØJRE for at aktivere denne pauseskærm
 	DE	Drücken Sie RECHTS zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver
 	ES	Pulse -> para activar este protector de pantalla
@@ -32,6 +35,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	CS	Spořič je nastaven
+	DA	Denne pauseskærm er aktiveret
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este protector de pantalla está activo
@@ -43,6 +47,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CS	Výchozí spořič
+	DA	Standard pauseskærm
 	DE	Standard-Bildschirmschoner
 	EN	Default screenaver
 	ES	Protector de pantalla predeterminado

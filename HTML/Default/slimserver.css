@@ -1048,7 +1048,6 @@ form#advSearchForm.resultsPage {
 /* settings pages */
 body.settings {
 	position: relative;
-	overflow: auto;
 	background-color: white;
 }
 
@@ -1068,7 +1067,7 @@ body.settingsMenu {
 }
 
 .settingSection {
-	padding: 0 22px;
+	padding: 0 18px;
 	margin-bottom: 15px;
 	margin-top: 15px;
 }
@@ -1132,15 +1131,9 @@ body.settingsMenu {
 }
 
 .settings .buttonbar {
-	padding: 2px 13px;
-	position: fixed;
+	padding: 2px 11px;
 	width: 100%;
 	background-color: #eee;
-	z-index: 999;
-}
-
-div.buttonbarSpacer {
-	height: 20px;
 }
 
 .settings select.stdedit {

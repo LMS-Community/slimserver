@@ -212,6 +212,9 @@ var SettingsPage = function(){
 			this.initSettingsList();
 			FilesystemBrowser.init();
 
+			Ext.EventManager.onWindowResize(Utils.resizeContent);
+			Ext.EventManager.onDocumentReady(Utils.resizeContent);
+
 			var items = Ext.query('input');
 			for(var i = 0; i < items.length; i++) {
 

@@ -3,6 +3,7 @@
 # $Id: strings.txt 10924 2006-12-10 10:07:21Z mherger $
 
 PLUGIN_CLI
+	DA	Kommandolinje-grænseflade (CLI)
 	DE	Befehlszeilenschnittstelle (CLI)
 	EN	Command Line Interface (CLI)
 	ES	Interfaz de línea de comandos (CLI)
@@ -12,6 +13,7 @@ PLUGIN_CLI
 	NL	Opdrachtregelinterface
 
 PLUGIN_CLI_DESC
+	DA	Udvidelsesmodulet Kommandolinje-grænseflade giver muliged for at fjern-kontrollere SqueezeCenter og Squeezeboxen over en TCP/IP forbindelse, for eksempel med et tredjeparti automationssystem så som AMX eller Creston.
 	DE	Mithilfe des Befehlszeilen-Plugin können SqueezeCenter und Squeezebox über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
 	EN	The Command Line Interface plugin allows SqueezeCenter and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
 	ES	El complemento de interfaz de línea de comandos permite el control remoto de SqueezeCenter y de Squeezeboxen a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.

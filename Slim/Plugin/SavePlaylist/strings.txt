@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 SAVE_PLAYLIST_DESC
+	DA	Gem spillelister fra afspillerens grænseflade
 	DE	Wiedergabelisten über das Player-Interface abspeichern
 	EN	Save Playlists from the Player UI
 	ES	Guardar listas de reproducción desde la interfaz del reproductor
@@ -11,6 +12,7 @@ SAVE_PLAYLIST_DESC
 	NL	Playlists uit de speler-UI opslaan
 
 PLAYLIST_OVERWRITE
+	DA	Tryk HØJRE for at erstatte eksisterende spillelister:
 	DE	Drücken Sie RECHTS, um die vorhandene Wiedergabeliste zu überschreiben:
 	EN	Go right to replace existing playlist:
 	ES	Pulse DERECHA para reemplazar la lista de reproducción existente:
@@ -21,6 +23,7 @@ PLAYLIST_OVERWRITE
 
 PLAYLIST_SAVE
 	CS	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
+	DA	HØJRE igen for at gemme spilleliste som:
 	DE	Drücken Sie zum Speichern der Wiedergabeliste RECHTS:
 	EN	Right again to save playlist as:
 	ES	Pulse DERECHA de nuevo para guardar la lista de reproducción como:
@@ -36,6 +39,7 @@ PLAYLIST_SAVE
 
 PLAYLIST_AS
 	CS	Uložit aktuální playlist jako:
+	DA	Gem aktuel spilleliste som:
 	DE	Aktuelle Wiedergabeliste speichern unter:
 	EN	Save current playlist as:
 	ES	Guardar la lista de reproducción actual como:
@@ -51,6 +55,7 @@ PLAYLIST_AS
 
 PLAYLIST_SAVING
 	CS	Uložit aktuální playlist jako:
+	DA	Gem aktuel spilleliste som:
 	DE	Wiedergabeliste wird gespeichert unter:
 	EN	Saving current playlist as:
 	ES	Guardando la lista de reproducción actual como:
@@ -66,7 +71,7 @@ PLAYLIST_SAVING
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
-	DA	Problem: Der findes ingen folder med gemte playlister.
+	DA	Problem: Der findes ingen folder med gemte spillelister.
 	DE	Problem: kein Wiedergabelisten-Ordner
 	EN	Problem: No Saved Playlist folder.
 	ES	Problema: No existe una carpeta de listas de reproducción guardadas.

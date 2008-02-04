@@ -4,6 +4,7 @@
 
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	CS	Aktualizovat informace z hudebního archivu
+	DA	Genindlæser Musik Biblioteket
 	DE	Musiksammlung erneut durchsuchen
 	EN	Rescan Music Library
 	ES	Volver a examinar la biblioteca de música
@@ -14,6 +15,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	NL	Muziekcollectie opnieuw scannen
 
 PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
+	DA	Automatisk genindlæsning af musik biblioteket
 	DE	Automatisches Durchsuchen der Musiksammlung
 	EN	Automatic Library Scanning
 	ES	Examen automático de biblioteca
@@ -23,6 +25,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 
 PLUGIN_RESCAN_RESCANNING
 	CS	Server právě aktualizuje informace z hudebního archivu
+	DA	Server genindlæser...
 	DE	Server durchsucht Ordner ...
 	EN	Server now rescanning...
 	ES	El servidor está volviendo a examinar...
@@ -34,6 +37,7 @@ PLUGIN_RESCAN_RESCANNING
 
 PLUGIN_RESCAN_PRESS_PLAY
 	CS	Stiskněte PLAY a aktualizujte informace z  hudebního archivu.
+	DA	Tryk PLAY for at genindlæse nu.
 	DE	Drücken Sie PLAY, um das Einlesen zu starten
 	EN	Press PLAY to rescan now.
 	ES	Pulse PLAY para volver a examinar ahora.
@@ -45,6 +49,7 @@ PLUGIN_RESCAN_PRESS_PLAY
 
 PLUGIN_RESCAN_TIMER_NAME
 	CS	Časovač aktualizace
+	DA	Timer for genindlæsning
 	DE	Automatisches Durchsuchen
 	EN	Rescan Timer
 	ES	Temporizador para volver a examinar
@@ -55,6 +60,7 @@ PLUGIN_RESCAN_TIMER_NAME
 
 PLUGIN_RESCAN_TIMER_SET
 	CS	Nastavte čas pravidelné aktualizace
+	DA	Indstil tid for genindlæsning
 	DE	Startzeit für erneutes Durchsuchen festlegen
 	EN	Set Rescan Time
 	ES	Establecer hora para volver a examinar
@@ -65,6 +71,7 @@ PLUGIN_RESCAN_TIMER_SET
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
 	CS	Vypínám automatickou aktualizaci...
+	DA	Slår timer for genindlæsning fra...
 	DE	Automatisches Durchsuchen wird deaktiviert ...
 	EN	Turning rescan timer off...
 	ES	Desactivando el temporizador para volver a examinar...
@@ -75,6 +82,7 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
 	CS	Zapínám automatickou aktualizaci...
+	DA	Slår timer for genindlæsning til...
 	DE	Automatisches Durchsuchen wird aktiviert ...
 	EN	Turning rescan timer on...
 	ES	Activando el temporizador para volver a examinar...
@@ -85,6 +93,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 
 PLUGIN_RESCAN_TIMER_ON
 	CS	Časovač aktualizace zapnut
+	DA	Timer for genindlæsning TIL
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
 	ES	Temporizador para volver a examinar ACTIVADO
@@ -95,6 +104,7 @@ PLUGIN_RESCAN_TIMER_ON
 
 PLUGIN_RESCAN_TIMER_DESC
 	CS	Můžete zvolit automatickou denní aktualizaci informací z hudebního archivu. Nastavte čas, kdy se má aktualizace provést a volbou ON tuto funkci aktivujte.
+	DA	Du kan vælge at tillade planlagt genindlæsning af dit musik bibliotek hver 24. time. Indstil tiden og set timeren for genindlæsning på TIL for at anvende denne funktionalitet.
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie 'Automatisches Durchsuchen'.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede optar por permitir que se vuelva a examinar la biblioteca de música de forma programada cada 24 horas. Establezca la hora y el Temporizador para volver a examinar en ACTIVADO para utilizar esta característica.
@@ -105,6 +115,7 @@ PLUGIN_RESCAN_TIMER_DESC
 
 PLUGIN_RESCAN_TIMER_OFF
 	CS	Časovač aktualizace vypnut
+	DA	Timer for genindlæsning FRA
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
 	ES	Temporizador para volver a examinar DESACTIVADO
@@ -115,6 +126,7 @@ PLUGIN_RESCAN_TIMER_OFF
 
 PLUGIN_RESCAN_TIMER_TYPE
 	DE	Durchsuchmodus
+	DA	Genindlæsnings type
 	EN	Rescan Type
 	ES	Tipo de volver a examinar
 	FR	Type d'analyse
@@ -123,6 +135,7 @@ PLUGIN_RESCAN_TIMER_TYPE
 	NL	Type voor opnieuw scannen
 
 PLUGIN_RESCAN_PLEASE_WAIT
+	DA	Vent venligst
 	DE	Bitte warten
 	EN	Please Wait
 	ES	Espere un momento

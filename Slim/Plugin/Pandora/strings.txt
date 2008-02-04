@@ -1,4 +1,5 @@
 PLUGIN_PANDORA_MODULE_NAME
+	DA	Pandora
 	DE	Pandora
 	EN	Pandora
 	ES	Pandora
@@ -7,6 +8,7 @@ PLUGIN_PANDORA_MODULE_NAME
 	NL	Pandora
 
 PLUGIN_PANDORA_MODULE_NAME_DESC
+	DA	Pandora
 	DE	Pandora
 	EN	Pandora
 	ES	Pandora
@@ -15,6 +17,7 @@ PLUGIN_PANDORA_MODULE_NAME_DESC
 	NL	Pandora
 
 PLUGIN_PANDORA_PERSONALIZED_RADIO
+	DA	Personlig Radio (Pandora)
 	DE	Benutzerdefiniertes Radio (Pandora)
 	EN	Personalized Radio (Pandora)
 	ES	Radio personalizada (Pandora)
@@ -24,6 +27,7 @@ PLUGIN_PANDORA_PERSONALIZED_RADIO
 	NL	Gepersonaliseerde radio (Pandora)
 
 PLUGIN_PANDORA_FIRMWARE_UPGRADE_REQUIRED
+	DA	Software optatering er nødvendigt
 	DE	Software muss aktualisiert werden
 	EN	Software Update Required
 	ES	Se requiere actualización de software
@@ -33,6 +37,7 @@ PLUGIN_PANDORA_FIRMWARE_UPGRADE_REQUIRED
 	NL	Software-update vereist
 
 PLUGIN_PANDORA_FIRMWARE_UPGRADE
+	DA	For at anvende Pandora skal du trykke og holde BRIGHTNESS knappen for at opdatere.
 	DE	Halten Sie zum Verwenden von Pandora BRIGHTNESS gedrückt, um die Anzeige zu aktualisieren.
 	EN	To use Pandora, press and hold BRIGHTNESS to update.
 	ES	Para usar Pandora, mantenga presionado BRIGHTNESS para actualizar.
@@ -42,6 +47,7 @@ PLUGIN_PANDORA_FIRMWARE_UPGRADE
 	NL	Als je Pandora wilt gebruiken, houd je BRIGHTNESS ingedrukt om te updaten.
 
 PLUGIN_PANDORA_ERROR
+	DA	Pandora - fejl
 	DE	Pandora-Fehler
 	EN	Pandora Error
 	ES	Error de Pandora
@@ -51,6 +57,7 @@ PLUGIN_PANDORA_ERROR
 	NL	Pandora-fout
 
 PLUGIN_PANDORA_CONNECTION_REFUSED
+	DA	Kunne ikke tilslutte Pandora serveren. Forsøg venligst igen senere.
 	DE	Verbindung zu Pandora-Server nicht möglich. Versuchen Sie es später noch einmal.
 	EN	Unable to connect to Pandora server. Please try again later.
 	ES	Imposible conectar a servidor Pandora. Vuelva a intentarlo más tarde.
@@ -60,6 +67,7 @@ PLUGIN_PANDORA_CONNECTION_REFUSED
 	NL	Kan geen verbinding met Pandora-server maken. Probeer het later opnieuw.
 
 PLUGIN_PANDORA_STREAM_FAILED
+	DA	Lydstrøm afbrudt, springer til næste spor.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
@@ -69,6 +77,7 @@ PLUGIN_PANDORA_STREAM_FAILED
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 
 PLUGIN_PANDORA_DEFAULT_ERROR
+	DA	En uventet fejl opstod. Forsøg venligst igen senere.
 	DE	Unerwarteter Fehler. Versuchen Sie es später noch einmal.
 	EN	An unexpected error occurred. Please try again later.
 	ES	Se ha producido un error inesperado. Vuelva a intentarlo más tarde.
@@ -78,6 +87,7 @@ PLUGIN_PANDORA_DEFAULT_ERROR
 	NL	Er is een onverwachte fout opgetreden. Probeer het later opnieuw.
 
 PLUGIN_PANDORA_NO_ACCOUNT
+	DA	Pandora konto er ikke indstillet, registrer venligst på %s.
 	DE	Pandora-Konto nicht eingerichtet. Registrieren Sie sich auf %s.
 	EN	Pandora account not set, please visit %s to register.
 	ES	No se ha configurado cuenta Pandora. Visite %s para registrarse.
@@ -87,6 +97,7 @@ PLUGIN_PANDORA_NO_ACCOUNT
 	NL	Pandora-account niet ingesteld. Ga naar %s voor registratie.
 
 PLUGIN_PANDORA_NO_ACCESS
+	DA	Du har ikke rettigheder til at anvende Pandora.
 	DE	Sie sind zum Einsatz von Pandora nicht berechtigt.
 	EN	You are not authorized to use Pandora.
 	ES	No tiene autorización para usar Pandora.
@@ -96,6 +107,7 @@ PLUGIN_PANDORA_NO_ACCESS
 	NL	Je hebt geen rechten om Pandora te gebruiken.
 
 PLUGIN_PANDORA_LIST_STATIONS
+	DA	Dine Pandora Stationer
 	DE	Ihre Pandora-Sender
 	EN	Your Pandora Stations
 	ES	Emisoras Pandora
@@ -105,6 +117,7 @@ PLUGIN_PANDORA_LIST_STATIONS
 	NL	Jouw Pandora-stations
 
 PLUGIN_PANDORA_SEARCH_MUSIC
+	DA	Søg og opret en station
 	DE	Sender suchen und erstellen
 	EN	Search and create a station
 	ES	Buscar y crear una emisora
@@ -114,6 +127,7 @@ PLUGIN_PANDORA_SEARCH_MUSIC
 	NL	Een station zoeken en aanmaken
 
 PLUGIN_PANDORA_SEARCH_PROMPT
+	DA	Indtast et kunsternavn eller navn på nummer
 	DE	Interpret oder Titel eingeben
 	EN	Enter an artist or song title
 	ES	Introducir artista o título de canción
@@ -123,6 +137,7 @@ PLUGIN_PANDORA_SEARCH_PROMPT
 	NL	Een artiest of titel invoeren
 
 PLUGIN_PANDORA_LOADING_STATIONS
+	DA	Indlæser dine Pandora Stationer...
 	DE	Pandora-Sender werden geladen ...
 	EN	Loading Your Pandora Stations...
 	ES	Cargando emisoras Pandora...
@@ -132,6 +147,7 @@ PLUGIN_PANDORA_LOADING_STATIONS
 	NL	Jouw Pandora-stations worden geladen...
 
 PLUGIN_PANDORA_CREATE_STATION
+	DA	Tryk PLAY for at oprette en station.
 	DE	Drücken Sie PLAY, um einen Sender zu erstellen.
 	EN	Press PLAY to create a station from this
 	ES	Pulse PLAY para crear una emisora a partir de ésta
@@ -141,6 +157,7 @@ PLUGIN_PANDORA_CREATE_STATION
 	NL	Druk op PLAY om hier een nieuw station van te maken
 
 PLUGIN_PANDORA_PLAY_STATION
+	DA	Tryk PLAY for at lytte til denne station.
 	DE	Drücken Sie PLAY, um diesen Sender zu hören.
 	EN	Press PLAY to listen to this station
 	ES	Pulse PLAY para escuchar esta emisora
@@ -150,6 +167,7 @@ PLUGIN_PANDORA_PLAY_STATION
 	NL	Druk op PLAY om naar dit station te luisteren
 
 PLUGIN_PANDORA_ALREADY_PLAYING
+	DA	Denne station afspilles allerede.
 	DE	Dieser Sender wird bereits wiedergegeben.
 	EN	This station is already playing.
 	ES	Esta emisora ya se está reproduciendo.
@@ -159,6 +177,7 @@ PLUGIN_PANDORA_ALREADY_PLAYING
 	NL	Dit station speelt al.
 
 PLUGIN_PANDORA_ADD_FAVORITES
+	DA	Tilføj station til Favoritter
 	DE	Sender zu Favoriten hinzufügen
 	EN	Add station to favorites
 	ES	Agregar emisora a favoritos
@@ -168,6 +187,7 @@ PLUGIN_PANDORA_ADD_FAVORITES
 	NL	Station aan favorieten toevoegen
 
 PLUGIN_PANDORA_DEL_FAVORITES
+	DA	Fjern station fra Favoritter
 	DE	Sender aus Favoriten entfernen
 	EN	Remove station from favorites
 	ES	Quitar emisora de favoritos
@@ -177,6 +197,7 @@ PLUGIN_PANDORA_DEL_FAVORITES
 	NL	Station uit favorieten verwijderen
 
 PLUGIN_PANDORA_DELETE_STATION
+	DA	Slet denne station
 	DE	Diesen Sender löschen
 	EN	Delete this station
 	ES	Eliminar esta emisora
@@ -186,6 +207,7 @@ PLUGIN_PANDORA_DELETE_STATION
 	NL	Dit station verwijderen
 
 PLUGIN_PANDORA_RENAME_STATION
+	DA	Omdøb denne station
 	DE	Diesen Sender umbenennen
 	EN	Rename this station
 	ES	Cambiar nombre de esta emisora
@@ -195,6 +217,7 @@ PLUGIN_PANDORA_RENAME_STATION
 	NL	Naam van dit station wijzigen
 
 PLUGIN_PANDORA_RENAME_PROMPT
+	DA	Omdøb denne station til...
 	DE	Sender umbenennen in ...
 	EN	Rename station to...
 	ES	Cambiar nombre de emisora a...
@@ -204,6 +227,7 @@ PLUGIN_PANDORA_RENAME_PROMPT
 	NL	Naam van station wijzigen naar...
 
 PLUGIN_PANDORA_RENAMING_STATION
+	DA	Omdøber station...
 	DE	Sender wird umbenannt in ...
 	EN	Renaming station...
 	ES	Cambiando nombre de emisora...
@@ -213,6 +237,7 @@ PLUGIN_PANDORA_RENAMING_STATION
 	NL	Naam van station wordt gewijzigd...
 
 PLUGIN_PANDORA_CONFIRM_DELETE_STATION
+	DA	Tryk HØJRE for at slette
 	DE	Drücken Sie zum Löschen RECHTS
 	EN	Press RIGHT to delete
 	ES	Pulse DERECHA para eliminar
@@ -222,6 +247,7 @@ PLUGIN_PANDORA_CONFIRM_DELETE_STATION
 	NL	Druk RECHTS om te verwijderen
 
 PLUGIN_PANDORA_DELETING_STATION
+	DA	Sletter station...
 	DE	Sender wird gelöscht ...
 	EN	Deleting station...
 	ES	Eliminando emisora...
@@ -231,6 +257,7 @@ PLUGIN_PANDORA_DELETING_STATION
 	NL	Station wordt verwijderd...
 
 PLUGIN_PANDORA_LOADING_PLAYLIST
+	DA	Indlæser spillelsite for...
 	DE	Wiedergabeliste wird geladen für ...
 	EN	Loading playlist for...
 	ES	Cargando lista de reproducción para...
@@ -240,6 +267,7 @@ PLUGIN_PANDORA_LOADING_PLAYLIST
 	NL	Playlist wordt geladen voor...
 
 PLUGIN_PANDORA_SEARCHING
+	DA	Søger Pandora for musik...
 	DE	Pandora wird nach Musik durchsucht ...
 	EN	Searching Pandora for music...
 	ES	Buscando música en Pandora...
@@ -249,6 +277,7 @@ PLUGIN_PANDORA_SEARCHING
 	NL	Bezig met zoeken naar muziek bij Pandora...
 
 PLUGIN_PANDORA_SEARCH_ERROR
+	DA	Der opstod en fejl ved søgning i Pandora.
 	DE	Fehler beim Durchsuchen von Pandora.
 	EN	There was an error while searching Pandora.
 	ES	Se produjo en error al buscar en Pandora.
@@ -258,6 +287,7 @@ PLUGIN_PANDORA_SEARCH_ERROR
 	NL	Er is een fout opgetreden tijdens het zoeken bij Pandora.
 
 PLUGIN_PANDORA_ARTIST_OR_SONG
+	DA	Kunster eller Nummer?
 	DE	Interpret oder Titel?
 	EN	Artist or song?
 	ES	¿Artista o canción?
@@ -267,6 +297,7 @@ PLUGIN_PANDORA_ARTIST_OR_SONG
 	NL	Artiest of liedje?
 
 PLUGIN_PANDORA_ARTIST_SEARCH_RESULTS
+	DA	Søgeresultater for Kunstner
 	DE	Suchergebnisse nach Interpret
 	EN	Artist search results
 	ES	Resultados de búsqueda por artista
@@ -276,6 +307,7 @@ PLUGIN_PANDORA_ARTIST_SEARCH_RESULTS
 	NL	Zoekresultaten voor artiest
 
 PLUGIN_PANDORA_SONG_SEARCH_RESULTS
+	DA	Søgeresultater for Nummer
 	DE	Suchergebnisse nach Titel
 	EN	Song search results
 	ES	Resultados de búsqueda por canción
@@ -285,6 +317,7 @@ PLUGIN_PANDORA_SONG_SEARCH_RESULTS
 	NL	Zoekresultaten voor liedje
 
 PLUGIN_PANDORA_SEARCH_RESULTS
+	DA	Søgeresultater fra Pandora
 	DE	Pandora-Suchergebnisse
 	EN	Pandora Search Results
 	ES	Resultados de búsqueda en Pandora
@@ -294,6 +327,7 @@ PLUGIN_PANDORA_SEARCH_RESULTS
 	NL	Zoekresultaten bij Pandora
 
 PLUGIN_PANDORA_SEARCH_NO_RESULTS
+	DA	Søgningen på Pandora returnerede ingen resultater.
 	DE	Die Pandora-Suche erzielte keine Ergebnisse.
 	EN	There are no results for your Pandora search.
 	ES	No hay resultados para la búsqueda en Pandora.
@@ -303,6 +337,7 @@ PLUGIN_PANDORA_SEARCH_NO_RESULTS
 	NL	Er zijn geen resultaten voor jouw Pandora-zoekopdracht.
 
 PLUGIN_PANDORA_CREATING_STATION
+	DA	Opretter ny Pandora station...
 	DE	Pandora-Sender werden geladen ...
 	EN	Creating new Pandora station...
 	ES	Creando emisora Pandora...
@@ -312,6 +347,7 @@ PLUGIN_PANDORA_CREATING_STATION
 	NL	Nieuw Pandora-station wordt aangemaakt...
 
 PLUGIN_PANDORA_CREATING_STATION_EXACT_MATCH
+	DA	Opretter station baseret på
 	DE	Sender wird erstellt anhand von
 	EN	Creating station based on
 	ES	Creando emisora a partir de
@@ -321,6 +357,7 @@ PLUGIN_PANDORA_CREATING_STATION_EXACT_MATCH
 	NL	Station wordt aangemaakt op basis van
 
 PLUGIN_PANDORA_AUTH_LOGIN
+	DA	Logger ind på Pandora...
 	DE	Sie werden bei Pandora angemeldet ...
 	EN	Logging into Pandora...
 	ES	Iniciando sesión en Pandora...
@@ -330,6 +367,7 @@ PLUGIN_PANDORA_AUTH_LOGIN
 	NL	Bezig met aanmelden bij Pandora...
 
 PLUGIN_PANDORA_IS_AN
+	DA	er en
 	DE	ist ein
 	EN	is an
 	ES	es un/a
@@ -339,6 +377,7 @@ PLUGIN_PANDORA_IS_AN
 	NL	is een
 
 PLUGIN_PANDORA_IS_A
+	DA	er en
 	DE	ist ein
 	EN	is a
 	ES	es un/a
@@ -348,6 +387,7 @@ PLUGIN_PANDORA_IS_A
 	NL	is een
 
 PLUGIN_PANDORA_ARTIST
+	DA	kunstner
 	DE	Interpret
 	EN	artist
 	ES	artista
@@ -357,6 +397,7 @@ PLUGIN_PANDORA_ARTIST
 	NL	artiest
 
 PLUGIN_PANDORA_SONG
+	DA	nummer
 	DE	Titel
 	EN	song
 	ES	canción
@@ -366,6 +407,7 @@ PLUGIN_PANDORA_SONG
 	NL	liedje
 
 PLUGIN_PANDORA_BY
+	DA	af
 	DE	von
 	EN	by
 	ES	por
@@ -375,6 +417,7 @@ PLUGIN_PANDORA_BY
 	NL	van
 
 PLUGIN_PANDORA_FROM
+	DA	fra
 	DE	aus
 	EN	from
 	ES	de
@@ -384,6 +427,7 @@ PLUGIN_PANDORA_FROM
 	NL	van
 
 PLUGIN_PANDORA_STATION
+	DA	Station
 	DE	Sender
 	EN	Station
 	ES	Emisora
@@ -393,6 +437,7 @@ PLUGIN_PANDORA_STATION
 	NL	Station
 
 PLUGIN_PANDORA_I_LIKE
+	DA	Jeg kan lide dette nummer
 	DE	Dieser Titel gefällt mir
 	EN	I like this song
 	ES	Me gusta esta canción
@@ -402,6 +447,7 @@ PLUGIN_PANDORA_I_LIKE
 	NL	Ik vind dit een leuk liedje
 
 PLUGIN_PANDORA_I_DONT_LIKE
+	DA	Jeg kan ikke lide dette nummer
 	DE	Dieser Titel gefällt mir nicht
 	EN	I don't like this song
 	ES	No me gusta esta canción
@@ -411,6 +457,7 @@ PLUGIN_PANDORA_I_DONT_LIKE
 	NL	Ik vind dit geen leuk liedje
 
 PLUGIN_PANDORA_BOOKMARK_SONG
+	DA	Tilføj dette nummer til min personlige Pandora.com side
 	DE	Diesen Titel zu meiner Pandora-Seite hinzufügen
 	EN	Add this song to my Pandora.com personal page
 	ES	Agregar esta canción a mi página personal Pandora.com
@@ -420,6 +467,7 @@ PLUGIN_PANDORA_BOOKMARK_SONG
 	NL	Dit liedje aan mijn persoonlijke pagina op Pandora.com toevoegen
 
 PLUGIN_PANDORA_BOOKMARKING
+	DA	Tilføjer bogmærke for dette spor...
 	DE	Titel mit Lesezeichen versehen ...
 	EN	Bookmarking track...
 	ES	Marcando pista...
@@ -429,6 +477,7 @@ PLUGIN_PANDORA_BOOKMARKING
 	NL	Nummer wordt van bladwijzer voorzien...
 
 PLUGIN_PANDORA_BOOKMARKING_LINE2
+	DA	Besøg din personlige Pandora.com side for at se bogmærker.
 	DE	Lesezeichen auf meiner Pandora-Seite anzeigen
 	EN	Visit your Pandora.com personal page to view bookmarks.
 	ES	Visitar página personal Pandora.com para ver marcadores.
@@ -438,6 +487,7 @@ PLUGIN_PANDORA_BOOKMARKING_LINE2
 	NL	Ga naar jouw persoonlijke pagina op Pandora.com om bladwijzers te bekijken.
 
 PLUGIN_PANDORA_WHY_PLAYED
+	DA	Hvorfor spillede du dette nummer?
 	DE	Warum wurde dieser Titel gespielt?
 	EN	Why did you play this song?
 	ES	¿Por qué reprodujo esta canción?
@@ -447,6 +497,7 @@ PLUGIN_PANDORA_WHY_PLAYED
 	NL	Waarom heb je dit liedje afgespeeld?
 
 PLUGIN_PANDORA_FROM_STATION
+	DA	Fra station
 	DE	Aus Sender
 	EN	From station
 	ES	Desde emisora
@@ -456,6 +507,7 @@ PLUGIN_PANDORA_FROM_STATION
 	NL	Van station
 
 PLUGIN_PANDORA_PLEASE_WAIT
+	DA	Vent venligst...
 	DE	Bitte warten ...
 	EN	Please wait...
 	ES	Espere...
@@ -465,6 +517,7 @@ PLUGIN_PANDORA_PLEASE_WAIT
 	NL	Even wachten...
 
 PLUGIN_PANDORA_PLAYING_BECAUSE
+	DA	Vi spiller dette nummer fordi det indeholder
 	DE	Dieser Titel wurde gespielt, weil er Folgendes enthält
 	EN	We're playing this song because it features
 	ES	Reproducimos esta canción porque tiene
@@ -474,6 +527,7 @@ PLUGIN_PANDORA_PLAYING_BECAUSE
 	NL	We spelen dit liedje af vanwege
 
 PLUGIN_PANDORA_CREATE_FROM_SONG
+	DA	Lav en ny station fra dette nummer
 	DE	Einen neuen Sender aus diesem Titel erstellen
 	EN	Make a new station from this song
 	ES	Crear emisora a partir de esta canción
@@ -483,6 +537,7 @@ PLUGIN_PANDORA_CREATE_FROM_SONG
 	NL	Een nieuw station van dit liedje maken
 
 PLUGIN_PANDORA_RATING_POSITIVE
+	DA	Giver spor positiv karakter...
 	DE	Titel positiv bewerten ...
 	EN	Giving track a thumbs up...
 	ES	Aprobando pista...
@@ -492,6 +547,7 @@ PLUGIN_PANDORA_RATING_POSITIVE
 	NL	Een klik op de duim omhoog...
 
 PLUGIN_PANDORA_RATING_POSITIVE_LINE2
+	DA	Cool, vi forsøger at spille lignende nummer.
 	DE	Schön, wir versuchen, ähnliche Titel zu finden.
 	EN	Cool, we'll try to play similar songs.
 	ES	Bien. Intentaremos reproducir canciones similares.
@@ -501,6 +557,7 @@ PLUGIN_PANDORA_RATING_POSITIVE_LINE2
 	NL	Cool, we zullen proberen zulke liedjes te spelen.
 
 PLUGIN_PANDORA_RATING_NEGATIVE
+	DA	Giver spor negativ karakter...
 	DE	Titel negativ bewerten ...
 	EN	Giving track a thumbs down...
 	ES	Desaprobando pista...
@@ -510,6 +567,7 @@ PLUGIN_PANDORA_RATING_NEGATIVE
 	NL	Een klik op de duim omlaag...
 
 PLUGIN_PANDORA_RATING_NEGATIVE_LINE2
+	DA	Beklager, vi spiller ikke dette nummer igen.
 	DE	Wir spielen diesen Titel nicht noch einmal.
 	EN	Sorry, we won't play this song again.
 	ES	No volveremos a reproducir esta canción.
@@ -519,6 +577,7 @@ PLUGIN_PANDORA_RATING_NEGATIVE_LINE2
 	NL	Sorry, dit liedje gaan we niet meer spelen.
 
 PLUGIN_PANDORA_SEARCH_RHAPSODY
+	DA	Søg Rhapsody for %s
 	DE	Auf Rhapsody nach %s suchen
 	EN	Search for %s on Rhapsody
 	ES	Buscar %s en Rhapsody
@@ -528,6 +587,7 @@ PLUGIN_PANDORA_SEARCH_RHAPSODY
 	NL	Naar %s zoeken op Rhapsody
 
 PLUGIN_PANDORA_SKIPS_EXCEEDED
+	DA	Det er ikke muligt at springe flere over denne time, du kan springe over igen senere.
 	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
 	EN	Hourly skip limit exceeded, you may skip again later.
 	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
@@ -537,6 +597,7 @@ PLUGIN_PANDORA_SKIPS_EXCEEDED
 	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
 
 PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
+	DA	Ugyldigt brugernavn eller kodeord. Gå venligst til %s for at opdatere din konto-information.
 	DE	Benutzername oder Kennwort ungültig. Aktualisieren Sie Ihre Kontoangaben auf %s.
 	EN	Invalid username or password. Please visit %s to update your account information.
 	ES	Nombre de usuario o contraseña no válida. Visite %s para actualizar la información de cuenta.
@@ -546,6 +607,7 @@ PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
 	NL	Ongeldige gebruikersnaam of ongeldig wachtwoord. Ga naar %s om jouw accountgegevens te updaten.
 
 PLUGIN_PANDORA_AUTH_INVALID_TOKEN
+	DA	Ugyldigt auth-token, forsøg venglist igen senere.
 	DE	Auth-Token ungültig, versuchen Sie es noch einmal.
 	EN	Invalid auth token, please try again.
 	ES	Token de aut. no válido. Vuelva a intentarlo.
@@ -555,6 +617,7 @@ PLUGIN_PANDORA_AUTH_INVALID_TOKEN
 	NL	Ongeldig aut-token. Probeer het opnieuw.
 
 PLUGIN_PANDORA_LISTENER_ACCOUNT_IN_USE
+	DA	Pandora konto er allerede i brug.
 	DE	Pandora-Konto wird bereits genutzt.
 	EN	Pandora account already in use
 	ES	Cuenta Pandora en uso
@@ -564,6 +627,7 @@ PLUGIN_PANDORA_LISTENER_ACCOUNT_IN_USE
 	NL	Pandora-account wordt al gebruikt
 
 PLUGIN_PANDORA_LISTENER_NOT_AUTHORIZED
+	DA	Pandora konto er ikke autoriseret for denne station, forsøg venligst igen.
 	DE	Pandora-Konto ist für diesen Sender nicht autorisiert, versuchen Sie es noch einmal.
 	EN	Pandora account not authorized for this station, please try again.
 	ES	Cuenta Pandora no autorizada para esta emisora. Vuelva a intentarlo.
@@ -573,6 +637,7 @@ PLUGIN_PANDORA_LISTENER_NOT_AUTHORIZED
 	NL	Pandora-account heeft geen rechten voor dit station. Probeer het opnieuw.
 
 PLUGIN_PANDORA_STATION_NOT_FOUND
+	DA	Pandora station kunne ikke findes.
 	DE	Pandora-Sender nicht gefunden.
 	EN	Pandora station not found.
 	ES	No se ha encontrado emisora Pandora.
@@ -582,6 +647,7 @@ PLUGIN_PANDORA_STATION_NOT_FOUND
 	NL	Pandora-station niet gevonden.
 
 PLUGIN_PANDORA_NO_TRACKS
+	DA	Kunne ikke hente næste spor, tryk PLAY for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
@@ -591,6 +657,7 @@ PLUGIN_PANDORA_NO_TRACKS
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 
 PLUGIN_PANDORA_PLAYLIST_END
+	DA	Kunne ikke hente næste spor, tryk PLAY for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
@@ -600,6 +667,7 @@ PLUGIN_PANDORA_PLAYLIST_END
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 
 PLUGIN_PANDORA_IDLE_STOPPING
+	DA	Pandora tomgangstid overskredet, tryk PLAY for at fortsætte at lytte.
 	DE	Erlaubte Pandora-Pause überschritten, drücken Sie zum Weiterhören PLAY.
 	EN	Pandora idle time exceeded, press PLAY to continue listening.
 	ES	Se ha excedido el tiempo de inactividad en Pandora. Pulse PLAY para continuar escuchando.
@@ -609,6 +677,7 @@ PLUGIN_PANDORA_IDLE_STOPPING
 	NL	Niet-actieve tijd van Pandora overschreden. Druk op PLAY om door te gaan.
 
 PLUGIN_PANDORA_READONLY_MODE
+	DA	Pandora er i skrivebeskyttet tilstand, gentag vengligst din forespørgsel senere.
 	DE	Pandora befindet sich im schreibgeschützten Modus, versuchen Sie es später noch einmal.
 	EN	Pandora is in read-only mode, please try your request again later.
 	ES	Pandora está en modo de sólo lectura. Vuelva a realizar su solicitud más tarde.
@@ -618,6 +687,7 @@ PLUGIN_PANDORA_READONLY_MODE
 	NL	Pandora is in alleen-lezen modus. Probeer jouw verzoek later opnieuw.
 
 PLUGIN_PANDORA_MAINTENANCE_MODE
+	DA	Pandora er midlertidigt lukket for planlagte tjenesteforbedringer. Forsøg venligst igen snart, og nyd musikken!
 	DE	Pandora ist vorübergehend aufgrund geplanter Wartungsarbeiten nicht verfügbar. Versuchen Sie es später noch einmal und genießen Sie die Musik!
 	EN	Pandora is temporarily down for scheduled service improvements.  Please check back soon, and enjoy the music!
 	ES	Pandora está temporalmente fuera de servicio por mejoras de servicio planificadas. Vuelva a intentarlo pronto y disfrute de la música.
