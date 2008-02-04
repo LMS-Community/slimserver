@@ -35,7 +35,7 @@
 	
 	[% IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
-	[% IF desc && type %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
+	[% IF desc && type && !ajaxUpdate %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
 
 	[% odd = 1 %]
 	[% FOREACH num = [0..10] %]
