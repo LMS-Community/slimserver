@@ -1967,7 +1967,7 @@ sub _cliQuery_error {
 	
 	logError("While retrieving [$url]: [$err]");
 	
-	$request->addResult("networkerror", 1);
+	$request->addResult("networkerror", $err);
 	$request->addResult('count', 0);
 
 	$request->setStatusDone();	
