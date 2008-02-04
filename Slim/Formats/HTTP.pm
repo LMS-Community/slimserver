@@ -145,6 +145,8 @@ sub parseHeaders {
 	my @headers = @_;
 
 	my $log = logger('player.streaming.remote');
+	
+	my $url = $self->url;
 
 	for my $header (@headers) {
 
@@ -156,8 +158,10 @@ sub parseHeaders {
 
 			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
 
-				# Bug 4316: set title in DB if not already set
-				Slim::Music::Info::setTitle( $self->url, $self->title ) if !$self->title;
+				# Always prefer the title returned in the headers of a radio station
+				$log->info( "Setting new title for $url, " . ${*$self}{'title'} );
+				Slim::Music::Info::setTitle( $url, ${*$self}{'title'} );
+				Slim::Music::Info::setCurrentTitle( $url, ${*$self}{'title'} );
 			}
 		}
 
@@ -250,6 +254,10 @@ sub parseHeaders {
 			} );
 		}
 	}
+	
+	# Bug 6482, refresh the cached Track object in the client playlist from the database
+	# so it picks up any changed data such as title, bitrate, etc
+	Slim::Player::Playlist::refreshTrack( $self->client, $self->url );
 }
 
 =head1 SEE ALSO

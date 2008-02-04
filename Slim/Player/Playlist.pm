@@ -81,6 +81,25 @@ sub song {
 	return $objOrUrl;
 }
 
+# Refresh track(s) in a client playlist from the database
+sub refreshTrack {
+	my ( $client, $url ) = @_;
+	
+	my $track = Slim::Schema->rs('Track')->objectForUrl( {
+		url      => $url,
+		create   => 1,
+		readTags => 1,
+	} );
+	
+	my $i = 0;
+	for my $item ( @{ playList($client) } ) {
+		if ( $item->url eq $url ) {
+			playList($client)->[$i] = $track;
+		}
+		$i++;
+	}
+}
+
 sub url {
 	my $objOrUrl = song( @_ );
 
