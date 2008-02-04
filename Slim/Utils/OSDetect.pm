@@ -437,7 +437,7 @@ sub isRHorSUSE {
 	my $OS      = OS();
 	my $details = details();
 
-	if (($details->{'osName'} eq 'Red Hat' || $details->{'osName'} eq 'SUSE') && -d '/usr/share/squeezecenter/Firmware') {
+	if (($details->{'osName'} eq 'Red Hat' || $details->{'osName'} eq 'SUSE') && $0 =~ m{^/usr/libexec/squeezecenter} ) {
 		return 1;
 	}
 

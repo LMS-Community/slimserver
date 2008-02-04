@@ -135,17 +135,14 @@ sub launchScan {
 
 		$command  = "$Bin/scanner.exe";
 
-	} elsif (-x '/usr/libexec/squeezecenter-scanner') {
+	} elsif (Slim::Utils::OSDetect::isRHorSUSE()) {
 
 		$command  = '/usr/libexec/squeezecenter-scanner';
 
-	} elsif (-x '/usr/sbin/squeezecenter-scanner') {
+	} elsif (Slim::Utils::OSDetect::isDebian()) {
 
 		$command  = '/usr/sbin/squeezecenter-scanner';
 
-	} elsif (-x '/usr/sbin/slimserver-scanner') {
-
-		$command  = '/usr/sbin/slimserver-scanner';
 	}
 
 	# Bug: 3530 - use the same version of perl we were started with.
