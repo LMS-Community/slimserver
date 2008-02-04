@@ -293,7 +293,7 @@ PlayerChooser = function(){
 												value: playerInfo.id,
 												playerid: playerInfo.playerid,
 												cls: 'playerList',
-												handler: PlayerChooser.switchSQNPlayer
+												handler: PlayerChooser.confirmSwitchSQNPlayer
 											})
 										);
 									}
@@ -404,25 +404,36 @@ PlayerChooser = function(){
 			Player.getStatus();
 		},
 
-		switchSQNPlayer: function(ev){
-			Ext.MessageBox.confirm(
-				strings['squeezenetwork'],
-				strings['sqn_want_switch'],
-				function(btn){
-					if (btn == 'yes') {
-						Utils.processCommand({ params: ['', ['squeezenetwork', 'disconnect', ev.value ]] });
-						var update = new Ext.util.DelayedTask(function(ev){
-							PlayerChooser.update();
-							PlayerChooser.selectPlayer({
-								text: ev.text,
-								value: ev.playerid,
-								canpoweroff: true
-							});
-						}, this, new Array(ev));
-						update.delay(3000); 
+		confirmSwitchSQNPlayer: function(ev){
+			// don't display confirmation dialog in Opera,
+			// as it used to reload the full page without waiting for the answer
+			if (Ext.isOpera) {
+				PlayerChooser.switchSQNPlayer(ev);
+			}
+			else {
+				Ext.MessageBox.confirm(
+					strings['squeezenetwork'],
+					strings['sqn_want_switch'],
+					function(btn){
+						if (btn == 'yes') {
+							PlayerChooser.switchSQNPlayer(ev);
+						}
 					}
-				}
-			);
+				);
+			}
+		},
+
+		switchSQNPlayer: function(ev){
+			Utils.processCommand({ params: ['', ['squeezenetwork', 'disconnect', ev.value ]] });
+			var update = new Ext.util.DelayedTask(function(ev){
+				PlayerChooser.update();
+				PlayerChooser.selectPlayer({
+					text: ev.text,
+					value: ev.playerid,
+					canpoweroff: true
+				});
+			}, this, new Array(ev));
+			update.delay(3000); 
 		},
 
 		showSyncDialog: function(response){
