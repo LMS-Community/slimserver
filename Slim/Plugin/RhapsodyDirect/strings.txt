@@ -1,4 +1,5 @@
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
+	DA	Rhapsody
 	DE	Rhapsody
 	EN	Rhapsody
 	ES	Rhapsody
@@ -7,6 +8,7 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
 	NL	Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
+	DA	Rhapsody
 	DE	Rhapsody
 	EN	Rhapsody
 	ES	Rhapsody
@@ -15,6 +17,7 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
 	NL	Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
+	DA	Rhapsody Fejl
 	DE	Rhapsody-Fehler
 	EN	Rhapsody Error
 	ES	Error de Rhapsody
@@ -23,6 +26,7 @@ PLUGIN_RHAPSODY_DIRECT_ERROR
 	NL	Rhapsody-fout
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
+	DA	Intern Rhapsody Fejl: %s
 	DE	Interner Rhapsody-Fehler: %s
 	EN	Internal Rhapsody Error: %s
 	ES	Error interno de Rhapsody: %s
@@ -31,6 +35,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
 	NL	Interne Rhapsody-fout: %s
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
+	DA	Ugyldig Rhapsody svar fra Afspiller.
 	DE	Ungültige Rhapsody-Reaktion vom Player.
 	EN	Invalid Rhapsody response from player.
 	ES	Respuesta no válida de Rhapsody desde reproductor.
@@ -39,6 +44,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
 	NL	Ongeldige Rhapsody-respons van speler.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
+	DA	Kunne ikke kommunikere med Rhapsody.
 	DE	Verbindung mit Rhapsody nicht möglich.
 	EN	Unable to communicate with Rhapsody.
 	ES	Imposible comunicarse con Rhapsody.
@@ -47,6 +53,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
 	NL	Geen communicatie mogelijk met Rhapsody.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
+	DA	Afspilleren kunne ikke kommunikere med Rhapsody.
 	DE	Player konnnte keine Verbindung mit Rhapsody herstellen.
 	EN	Player was unable to communicate with Rhapsody.
 	ES	El reproductor no se pudo comunicar con Rhapsody.
@@ -55,6 +62,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
 	NL	Speler kan niet met Rhapsody communiceren.
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
+	DA	Vælg venligst Squeezebox 2, 3 eller Transporter for brug med Rhapsody.
 	DE	Für Rhapsody ist Squeezebox 2, 3 oder Transporter erforderlich.
 	EN	Please select a Squeezebox 2, 3, or Transporter to use Rhapsody.
 	ES	Seleccione Squeezebox 2, 3 o Transporter para usar Rhapsody.
@@ -63,6 +71,7 @@ PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	NL	Selecteer een Squeezebox 2, 3, of Transporter om Rhapsody te gebruiken.
 
 PLUGIN_RHAPSODY_DIRECT_US_ONLY
+	DA	Beklager, Rhapsody er kun tilgængeligt i USA.
 	DE	Rhapsody ist leider derzeit nur in den USA verfügbar.
 	EN	Sorry, Rhapsody is currently available in the U.S. only.
 	ES	Rhapsody sólo está disponible en EE UU.
@@ -71,6 +80,7 @@ PLUGIN_RHAPSODY_DIRECT_US_ONLY
 	NL	Sorry, Rhapsody is momenteel alleen beschikbaar in de VS.
 
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
+	DA	Lydstrøm fejlet, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
 	ES	Error de secuencia de audio; salto a pista siguiente.
@@ -79,6 +89,7 @@ PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 
 PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
+	DA	Logger ind på Rhapsody...
 	DE	Anmelden bei Rhapsody läuft ...
 	EN	Logging in to Rhapsody...
 	ES	Iniciando sesión en Rhapsody...
@@ -87,6 +98,7 @@ PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
 	NL	Bezig met aanmelden bij Rhapsody...
 
 PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
+	DA	Henter information om spor...
 	DE	Titelinfos werden geladen ...
 	EN	Getting track info...
 	ES	Obteniendo información de pista...
@@ -95,6 +107,7 @@ PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
 	NL	Nummerinfo wordt opgehaald...
 
 PLUGIN_RHAPSODY_DIRECT_NO_TRACK
+	DA	Kunne ikke hente spor fra kanal.
 	DE	Titel für Sender konnte nicht geladen werden.
 	EN	Unable to retrieve track for channel.
 	ES	Imposible obtener pista para canal.
@@ -103,6 +116,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_TRACK
 	NL	Kan nummer voor kanaal niet ophalen.
 
 PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
+	DA	Kunne ikke hente næste spor, tryk PLAY for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
@@ -111,6 +125,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
+	DA	Kunne ikke hente kontodetaljer fra SqueezeNetwork.
 	DE	Konnte über das SqueezeNetwork keine Account-Informationen finden.
 	EN	Unable to retrieve account details from SqueezeNetwork.
 	ES	Imposible obtener detalles de cuenta SqueezeNetwork.
@@ -119,6 +134,7 @@ PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
 	NL	Kan accountgegevens niet van SqueezeNetwork ophalen.
 
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
+	DA	Ugyldig afspillings-session.
 	DE	Ungültige Wiedergabesitzung.
 	EN	Invalid playback session.
 	ES	Sesión de reproducción no válida.
@@ -127,6 +143,7 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	NL	Ongeldige afspeelsessie.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
+	DA	Rhapsody kan ikke afspille mere end 3 synkroniserede afspillere. Slå venligst synkronisering fra på en eller flere afspillere.
 	DE	Rhapsody funktioniert nicht, wenn mehr als 3 Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
 	EN	Rhapsody cannot play with more than 3 players synced.  Please unsync one or more players.
 	ES	Rhapsody no puede reproducir con más de 3 reproductores sincronizados. Debe desincronizar al menos uno de ellos.

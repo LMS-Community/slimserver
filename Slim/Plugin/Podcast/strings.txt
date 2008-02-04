@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PODCAST
+	DA	Podcasts
 	DE	Podcasts
 	EN	Podcasts
 	ES	Podcasts
@@ -12,6 +13,7 @@ PLUGIN_PODCAST
 	NL	Podcasts
 
 PLUGIN_PODCAST_DESC
+	DA	Adgang til Podcasts
 	DE	Zugang zu Podcasts
 	EN	Access to Podcasts
 	ES	Acceso a Podcasts
@@ -20,6 +22,7 @@ PLUGIN_PODCAST_DESC
 	NL	Toegang tot Podcasts
 
 PODCAST_NOTHING_TO_PLAY
+	DA	Ikke noget at spille
 	DE	Kein Material vorhanden
 	EN	Nothing to play
 	ES	Nada para reproducir
@@ -29,6 +32,7 @@ PODCAST_NOTHING_TO_PLAY
 	NL	Niets om af te spelen
 
 PODCAST_GROUP_DESC
+	DA	Udvidelsesmodulet for Podcast Læsning giver mulighed for at se og høre podcasts.
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 	ES	El complemento Examinador de podcasts permite ver y escuchar podcasts.
@@ -38,6 +42,7 @@ PODCAST_GROUP_DESC
 	NL	Met de Podcast-browserplugin kun je podcasts bekijken en beluisteren.
 
 PODCAST_RESET_BUTTON
+	DA	Nulstil
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Restablecer
@@ -47,6 +52,7 @@ PODCAST_RESET_BUTTON
 	NL	Opnieuw instellen
 
 PODCAST_RESETTING
+	DA	Nulstiller til standard podcasts
 	DE	Standard-Podcasts werden wiederhergestellt
 	EN	Resetting to default podcasts
 	ES	Restableciendo podcasts predeterminados
@@ -56,6 +62,7 @@ PODCAST_RESETTING
 	NL	Standaard-podcasts worden opnieuw ingesteld
 
 PODCAST_FEEDS_CHANGE
+	DA	Podcast liste ændret.
 	DE	Die Podcast-Liste wurde geändert.
 	EN	Podcast list changed.
 	ES	La lista de podcasts ha cambiado.
@@ -65,6 +72,7 @@ PODCAST_FEEDS_CHANGE
 	NL	Podcast-lijst gewijzigd.
 
 SETUP_PLUGIN_PODCAST_FEEDS
+	DA	Podcasts
 	DE	Podcasts
 	EN	Podcasts
 	ES	Podcasts
@@ -74,6 +82,7 @@ SETUP_PLUGIN_PODCAST_FEEDS
 	NL	Podcasts
 
 SETUP_PLUGIN_PODCAST_RESET
+	DA	Nulstil standard podcasts
 	DE	Standard-Podcasts zurücksetzen
 	EN	Reset default Podcasts
 	ES	Restablecer podcasts predeterminados
@@ -83,6 +92,7 @@ SETUP_PLUGIN_PODCAST_RESET
 	NL	Standaard-podcasts opnieuw instellen
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
+	DA	Tilføj nyt feed:
 	DE	Neuen Feed hinzufügen:
 	EN	Add a new feed:
 	ES	Agregar fuente nueva:
@@ -91,6 +101,7 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 	NL	Nieuw kanaal toevoegen:
 
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
+	DA	Eksisterende feeds:
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
 	ES	Fuentes existentes:
@@ -99,6 +110,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	NL	Bestaande kanalen:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
+	DA	Ugyldigt Feed - %s
 	DE	Ungültiger Feed - konnte nicht zu %s verbinden
 	EN	Invalid Feed - %s
 	ES	Fuente no válida - No se puede conectar a %s

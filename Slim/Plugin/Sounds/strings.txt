@@ -1,4 +1,5 @@
 PLUGIN_SOUNDS_MODULE_NAME
+	DA	Lyde & Effekter
 	DE	Sounds & Effekte
 	EN	Sounds & Effects
 	ES	Sonidos y efectos

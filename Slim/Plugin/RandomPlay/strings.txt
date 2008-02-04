@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RANDOMPLAY
+	DA	Tilfældig Mix
 	DE	Zufallsmix
 	EN	Random Mix
 	ES	Mezcla aleatoria
@@ -13,6 +14,7 @@ PLUGIN_RANDOMPLAY
 	NL	Willekeurige mix
 
 PLUGIN_RANDOM_DESC
+	DA	Jukebox for din Musik
 	DE	Zufällige Wiedergabe ihrer Musiksammlung
 	EN	Jukebox For your Music
 	ES	Jukebox para su música
@@ -21,6 +23,7 @@ PLUGIN_RANDOM_DESC
 	NL	Jukebox voor je muziek
 
 PLUGIN_RANDOM_DISABLED
+	DA	Tilfældig Mix stoppet
 	DE	Zufallsmix angehalten
 	EN	Random Mix Stopped
 	ES	Mezcla aleatoria detenida
@@ -30,6 +33,7 @@ PLUGIN_RANDOM_DISABLED
 	NL	Willekeurige mix gestopt
 
 PLUGIN_RANDOM_TRACK
+	DA	Tilfældig Nummer Mix
 	DE	Zufälliger Titelmix
 	EN	Random Song Mix
 	ES	Mezcla de canciones aleatoria
@@ -39,6 +43,7 @@ PLUGIN_RANDOM_TRACK
 	NL	Willekeurige liedjesmix
 
 PLUGIN_RANDOM_TRACK_PLAYING
+	DA	Afspiller Tilfældige Nummer
 	DE	Zufällige Titel werden wiedergegeben
 	EN	Playing Random Songs
 	ES	Reproduciendo canciones aleatorias
@@ -48,6 +53,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	NL	Liedjes worden willekeurig afgespeeld
 
 PLUGIN_RANDOM_TRACK_DISABLE
+	DA	tilføj ikke flere nummer
 	DE	keine Titel mehr hinzuzufügen
 	EN	stop adding songs
 	ES	detener adición de canciones
@@ -57,6 +63,7 @@ PLUGIN_RANDOM_TRACK_DISABLE
 	NL	toevoegen van liedjes stoppen
 
 PLUGIN_RANDOM_ALBUM
+	DA	Tilfældig Album Mix
 	DE	Zufälliger Albummix
 	EN	Random Album Mix
 	ES	Mezcla aleatoria de álbum
@@ -66,6 +73,7 @@ PLUGIN_RANDOM_ALBUM
 	NL	Willekeurige albummix
 
 PLUGIN_RANDOM_ALBUM_ITEM
+	DA	Tilfældigt Album
 	DE	Zufälliges Album
 	EN	Random Album
 	ES	Álbum aleatorio
@@ -75,6 +83,7 @@ PLUGIN_RANDOM_ALBUM_ITEM
 	NL	Willekeurig album
 
 PLUGIN_RANDOM_ALBUM_PLAYING
+	DA	Afspiller Tilfældige Albums
 	DE	Zufällige Alben werden wiedergegeben
 	EN	Playing Random Albums
 	ES	Reproduciendo álbumes aleatorios
@@ -84,6 +93,7 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 	NL	Albums worden willekeurig afgespeeld
 
 PLUGIN_RANDOM_ALBUM_DISABLE
+	DA	tilføj ikke flere albums
 	DE	keine Alben mehr hinzuzufügen
 	EN	stop adding albums
 	ES	detener adición de álbumes
@@ -93,6 +103,7 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	NL	toevoegen van albums stoppen
 
 PLUGIN_RANDOM_CONTRIBUTOR
+	DA	Tilfældig Kunstner Mix
 	DE	Zufälliger Interpretenmix
 	EN	Random Artist Mix
 	ES	Mezcla de artista aleatoria
@@ -102,6 +113,7 @@ PLUGIN_RANDOM_CONTRIBUTOR
 	NL	Willekeurige artiestmix
 
 PLUGIN_RANDOM_CONTRIBUTOR_ITEM
+	DA	Tilfældig Kunstner
 	DE	Zufälliger Interpret
 	EN	Random Artist
 	ES	Artista aleatorio
@@ -111,6 +123,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	NL	Willekeurige artiest
 
 PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
+	DA	Afspiller Tilfældige Kunstnere...
 	DE	Zufällige Interpreten werden wiedergegeben ...
 	EN	Playing Random Artists
 	ES	Reproduciendo artistas aleatorios
@@ -120,6 +133,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
 	NL	Artiesten worden willekeurig afgespeeld
 
 PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
+	DA	tilføj ikke flere kunstnere
 	DE	keine Interpreten mehr hinzuzufügen
 	EN	stop adding artists
 	ES	detener adición de artistas
@@ -129,6 +143,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	NL	toevoegen van artiesten stoppen
 
 PLUGIN_RANDOM_YEAR
+	DA	Tilfældig År Mix
 	DE	Zufälliger Jahrgangsmix
 	EN	Random Year Mix
 	ES	Mezcla de años aleatorios
@@ -138,6 +153,7 @@ PLUGIN_RANDOM_YEAR
 	NL	Willekeurige jaarmix
 
 PLUGIN_RANDOM_YEAR_ITEM
+	DA	Tilfældig År
 	DE	Zufälliger Jahrgang
 	EN	Random Year
 	ES	Año aleatorio
@@ -147,6 +163,7 @@ PLUGIN_RANDOM_YEAR_ITEM
 	NL	Willekeurig jaar
 
 PLUGIN_RANDOM_YEAR_PLAYING
+	DA	Afspiller Tilfældige Ǻr
 	DE	Zufällige Jahrgänge werden wiedergegeben
 	EN	Playing Random Years
 	ES	Reproduciendo años aleatorios
@@ -156,6 +173,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	NL	Jaren worden willekeurig afgespeeld
 
 PLUGIN_RANDOM_YEAR_DISABLE
+	DA	tilføj ikke flere år
 	DE	keine Jahrgänge mehr hinzuzufügen
 	EN	stop adding years
 	ES	detener adición de años
@@ -165,6 +183,7 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	NL	toevoegen van jaren stoppen
 
 PLUGIN_RANDOM_GENRE_FILTER
+	DA	Vælg Genre som skal inkluderes
 	DE	Einzuschließende Stilrichtungen wählen
 	EN	Select Genres To Include
 	ES	Seleccionar géneros a incluir
@@ -175,6 +194,7 @@ PLUGIN_RANDOM_GENRE_FILTER
 	NL	Toe te voegen genres selecteren
 
 PLUGIN_RANDOM_SELECT_ALL
+	DA	Vælg alle
 	DE	Alle auswählen
 	EN	Select All
 	ES	Seleccionar todo
@@ -184,6 +204,7 @@ PLUGIN_RANDOM_SELECT_ALL
 	NL	Alles selecteren
 
 PLUGIN_RANDOM_SELECT_NONE
+	DA	Vælg ingen
 	DE	Keine auswählen
 	EN	Select None
 	ES	No seleccionar nada
@@ -193,6 +214,7 @@ PLUGIN_RANDOM_SELECT_NONE
 	NL	Niets selecteren
 
 PLUGIN_RANDOM_CHOOSE_BELOW
+	DA	Vælg et tilfældigt mix af musik fra dit bibliotek:
 	DE	Wählen Sie einen zufälligen Musikmix aus Ihrer Sammlung:
 	EN	Choose a random mix of music from your library:
 	ES	Elegir una mezcla aleatoria de música de la biblioteca:
@@ -202,6 +224,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	NL	Een willekeurige mix van muziek uit je collectie kiezen:
 
 PLUGIN_RANDOM_TRACK_WEB
+	DA	Tilfældige nummer
 	DE	Zufällige Titel
 	EN	Random songs
 	ES	Canciones aleatorias
@@ -211,6 +234,7 @@ PLUGIN_RANDOM_TRACK_WEB
 	NL	Willekeurige liedjes
 
 PLUGIN_RANDOM_CONTRIBUTOR_WEB
+	DA	Tilfældige kunstnere
 	DE	Zufällige Interpreten
 	EN	Random artists
 	ES	Artistas aleatorios
@@ -220,6 +244,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_WEB
 	NL	Willekeurige artiesten
 
 PLUGIN_RANDOM_ALBUM_WEB
+	DA	Tilfældige albums
 	DE	Zufällige Alben
 	EN	Random albums
 	ES	Álbumes aleatorios
@@ -229,6 +254,7 @@ PLUGIN_RANDOM_ALBUM_WEB
 	NL	Willekeurige albums
 
 PLUGIN_RANDOM_YEAR_WEB
+	DA	Tilfældige år
 	DE	Zufällige Jahrgänge
 	EN	Random years
 	ES	Años aleatorios
@@ -238,6 +264,7 @@ PLUGIN_RANDOM_YEAR_WEB
 	NL	Willekeurige jaren
 
 PLUGIN_RANDOM_GENRE_FILTER_WEB
+	DA	Genre som skal inkluderes i dit mix:
 	DE	Im Mix einzuschließende Stilrichtungen:
 	EN	Genres to include in your mix:
 	ES	Géneros a incluir en la mezcla:
@@ -248,6 +275,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	NL	Genres voor opname in je mix:
 
 PLUGIN_CHOOSE_GENRES
+	DA	Vælg Genre
 	DE	Stilrichtungen wählen
 	EN	Choose Genres
 	ES	Elegir géneros
@@ -256,6 +284,7 @@ PLUGIN_CHOOSE_GENRES
 	NL	Genres kiezen
 
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
+	DA	Aktiv Spilleliste vil vise
 	DE	Aktuelle Wiedergabe zeigt
 	EN	Now Playing will show
 	ES	Reproduciendo mostrará
@@ -266,6 +295,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	NL	'Speelt nu' toont:
 
 PLUGIN_RANDOM_AFTER_NUM_TRACKS
+	DA	næstkommende nummer og
 	DE	noch abzuspielende und
 	EN	upcoming songs and
 	ES	próximas canciones y
@@ -276,6 +306,7 @@ PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	NL	komende liedjes en
 
 PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
+	DA	nummer afspillet for nylig.
 	DE	wiedergegebene Titel.
 	EN	recently played songs.
 	ES	canciones reproducidas recientemente.
@@ -286,6 +317,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	NL	recent gespeelde liedjes.
 
 PLUGIN_RANDOM_CONTINUOUS_MODE
+	DA	Tilføj nye elementer til de gamel og afslut
 	DE	Neue Objekte hinzufügen, wenn alte wiedergegeben wurden
 	EN	Add new items when old ones finish
 	ES	Agregar elementos nuevos cuando acaben los antiguos
@@ -295,6 +327,7 @@ PLUGIN_RANDOM_CONTINUOUS_MODE
 	NL	Nieuwe items toevoegen zodra oude eindigen
 
 PLUGIN_RANDOM_GENERAL_HELP
+	DA	Du kan tilføje eller fjerne nummer fra dit mix når som helst. For at stoppe et tilfældigt mix, ryd spillelisten og klik for at
 	DE	Sie können jederzeit Titel aus dem Mix entfernen oder neue hinzufügen. Zum Anhalten des Zufallsmix leeren Sie die Wiedergabeliste oder klicken, um
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 	ES	Se pueden agregar o quitar canciones de la mezcla en cualquier momento. Para detener una mezcla aleatoria, borre la lista de reproducción o haga clic para
@@ -304,6 +337,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	NL	Je kunt op elk moment liedjes toevoegen aan of verwijderen uit je mix. Als je een willekeurige mix wilt stoppen, wis je de playlist of klik je op
 
 PLUGIN_RANDOM_PRESS_RIGHT
+	DA	Tryk HØJRE for at
 	DE	Drücken Sie RECHTS um
 	EN	Press RIGHT to
 	ES	Pulse DERECHA para

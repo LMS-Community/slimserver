@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_DIGITAL_INPUT
+	DA	Digitale indgange
 	DE	Digitale Eingänge
 	EN	Digital Inputs
 	ES	Entradas digitales
@@ -12,6 +13,7 @@ PLUGIN_DIGITAL_INPUT
 	NL	Digitale ingangen
 
 PLUGIN_DIGITAL_INPUT_DESC
+	DA	Digitale indgage for Transporter
 	DE	Digitale Eingänge für den Transporter
 	EN	Digital Input for Transporter
 	ES	Entrada digital para Transporter
@@ -20,6 +22,7 @@ PLUGIN_DIGITAL_INPUT_DESC
 	NL	Digitale ingang voor Transporter
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
+	DA	Balanceret AES/EBU
 	DE	Ausgeglichenes AES/EBU
 	EN	Balanced AES/EBU
 	ES	AES/EBU equilibrado
@@ -29,6 +32,7 @@ PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	NL	Gebalanceerde AES/EBU
 
 PLUGIN_DIGITAL_INPUT_BNC_SPDIF
+	DA	BNC Coax S/PDIF
 	DE	BNC Koax S/PDIF
 	EN	BNC Coax S/PDIF
 	ES	BNC Coax S/PDIF
@@ -38,6 +42,7 @@ PLUGIN_DIGITAL_INPUT_BNC_SPDIF
 	NL	BNC coaxiale S/PDIF
 
 PLUGIN_DIGITAL_INPUT_RCA_SPDIF
+	DA	RCA Coax S/PDIF
 	DE	Cinch Koax S/PDIF
 	EN	RCA Coax S/PDIF
 	ES	RCA Coax S/PDIF
@@ -47,6 +52,7 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	NL	RCA coaxiale S/PDIF
 
 PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
+	DA	Optisk S/PDIF (TOSLINK)
 	DE	Optisch S/PDIF (TOSLINK)
 	EN	Optical S/PDIF (TOSLINK)
 	ES	S/PDIF óptico (TOSLINK)
@@ -56,6 +62,7 @@ PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	NL	Optische S/PDIF (TOSLINK)
 
 PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
+	DA	Vælg digital input nedenunder:
 	DE	Wählen Sie einen digitalen Eingang:
 	EN	Choose a Digital Input option below:
 	ES	Elija una opción de entrada digital:

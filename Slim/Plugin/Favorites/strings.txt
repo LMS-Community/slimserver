@@ -3,6 +3,7 @@
 # $Id$
 
 FAVORITES
+	DA	Favoritter
 	DE	Favoriten
 	EN	Favorites
 	ES	Favoritos
@@ -14,6 +15,7 @@ FAVORITES
 	SV	Favoriter
 
 FAVORITES_NOT_DEFINED
+	DA	Favoritte nr. %s er ikke definieret.
 	DE	Favorit Nr. %s existiert nicht
 	EN	Favorite #%s not defined.
 	ES	No se ha definido el favorito nº %s.
@@ -24,6 +26,7 @@ FAVORITES_NOT_DEFINED
 	SV	Favorit nr %s finns inte.
 
 FAVORITES_NONE_DEFINED
+	DA	Der findes ingen Favoritter
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
 	ES	No existen favoritos
@@ -35,6 +38,7 @@ FAVORITES_NONE_DEFINED
 	SV	Det finns inga favoriter ännu
 
 FAVORITES_PLAYING
+	DA	Afspiller Favorit nr. %s
 	DE	Favorit Nr. %s läuft ...
 	EN	Playing favorite #%s
 	ES	Reproduciendo favorito nº %s
@@ -45,6 +49,7 @@ FAVORITES_PLAYING
 	SV	Spelar favorit nr %s
 
 FAVORITES_FAVORITE_NUM
+	DA	Favorit nr.
 	DE	Favorit Nr.
 	EN	Favorite #
 	ES	Nº de favorito
@@ -57,6 +62,7 @@ FAVORITES_FAVORITE_NUM
 	ZH_CN	最喜爱#
 
 FAVORITES_FAVORITE
+	DA	Favorit
 	DE	Favorit
 	EN	Favorite
 	ES	Favorito
@@ -65,6 +71,7 @@ FAVORITES_FAVORITE
 	NL	Favoriet
 
 FAVORITES_RIGHT_TO_DELETE
+	DA	Slet Favorit
 	DE	Favorit löschen
 	EN	Delete Favorite
 	ES	Eliminar favorito
@@ -74,6 +81,7 @@ FAVORITES_RIGHT_TO_DELETE
 	NL	Favoriet verwijderen
 
 FAVORITES_NOT_A_FAVORITE
+	DA	Ikke en Favorit
 	DE	Kein Favorit
 	EN	Not a favorite
 	ES	No es un favorito
@@ -86,6 +94,7 @@ FAVORITES_NOT_A_FAVORITE
 	ZH_CN	不是最喜爱的
 
 FAVORITES_RIGHT_TO_ADD
+	DA	Tryk Højre for at tilføje til Favoritter
 	DE	RECHTS drücken zum Hinzufügen des Favoriten
 	EN	Go right to add to favorites
 	ES	Pulse DERECHA para agregar a favoritos
@@ -98,6 +107,7 @@ FAVORITES_RIGHT_TO_ADD
 	ZH_CN	列入最喜爱的按右方向键
 
 FAVORITES_ADDING
+	DA	Gemmer Favoritter...
 	DE	Favoriten werden gespeichert ...
 	EN	Saving favorites...
 	ES	Guardando favoritos...
@@ -110,6 +120,7 @@ FAVORITES_ADDING
 	ZH_CN	保存最喜爱的...
 
 FAVORITES_DELETING
+	DA	Sletter Favorit...
 	DE	Favorit wird gelöscht ...
 	EN	Deleting favorite...
 	ES	Eliminando favorito...
@@ -122,6 +133,7 @@ FAVORITES_DELETING
 	ZH_CN	删除最喜爱的...
 
 PLUGIN_FAVORITES_DESC
+	DA	Gem og rediger dine Favoritter
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
 	ES	Guardar y editar favoritos
@@ -130,6 +142,7 @@ PLUGIN_FAVORITES_DESC
 	NL	Je Favorieten opslaan en bewerken
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
+	DA	OPML spilleliste viser & editor
 	DE	OPML Wiedergabelisten bearbeiten
 	EN	OPML Playlist Browser & Editor
 	ES	Navegador/Editor de listas de reproducción OPML
@@ -138,6 +151,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	NL	OPML Playlist Browser & Editor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
+	DA	Udvidelsesmodulet Favoritter lader dig også gennemse opml baserede spillelister og redigere opml spillelister som er gemt på din server. Vælg dette for at tilføje dette udvidelsesmodul under menuen 'Extras' på web-grænsefladen.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
 	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
@@ -146,6 +160,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	NL	Met behulp van de extra Favorieten kun je opml-playlists die op je server zijn opgeslagen, doorkijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het serverhoofdmenu.
 
 PLUGIN_FAVORITES_LOAD
+	DA	Indlæser
 	DE	Laden
 	EN	Load
 	ES	Cargar
@@ -154,6 +169,7 @@ PLUGIN_FAVORITES_LOAD
 	NL	Laden
 
 PLUGIN_FAVORITES_SAVE
+	DA	Gem
 	DE	Speichern
 	EN	Save
 	ES	Guardar
@@ -162,6 +178,7 @@ PLUGIN_FAVORITES_SAVE
 	NL	Opslaan
 
 PLUGIN_FAVORITES_IMPORT
+	DA	Importer
 	DE	Importieren
 	EN	Import
 	ES	Importar
@@ -170,6 +187,7 @@ PLUGIN_FAVORITES_IMPORT
 	NL	Importeren
 
 PLUGIN_FAVORITES_LOADFILE
+	DA	URL eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
@@ -178,6 +196,7 @@ PLUGIN_FAVORITES_LOADFILE
 	NL	URL of bestandsnaam
 
 PLUGIN_FAVORITES_SAVEFILE
+	DA	Filnavn
 	DE	Dateiname
 	EN	File Name
 	ES	Nombre de archivo
@@ -186,6 +205,7 @@ PLUGIN_FAVORITES_SAVEFILE
 	NL	Bestandsnaam
 
 PLUGIN_FAVORITES_IMPORTFILE
+	DA	URL eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
@@ -194,6 +214,7 @@ PLUGIN_FAVORITES_IMPORTFILE
 	NL	URL of bestandsnaam
 
 PLUGIN_FAVORITES_NOFILE
+	DA	Fil kan ikke findes
 	DE	Datei nicht gefunden
 	EN	File Not Found
 	ES	Archivo no encontrado
@@ -202,6 +223,7 @@ PLUGIN_FAVORITES_NOFILE
 	NL	Bestand niet gevonden
 
 PLUGIN_FAVORITES_CANCEL
+	DA	Afbryd
 	DE	Abbrechen
 	EN	Cancel
 	ES	Cancelar
@@ -210,6 +232,7 @@ PLUGIN_FAVORITES_CANCEL
 	NL	Annuleren
 
 PLUGIN_FAVORITES_INSERTDEL
+	DA	Indsæt slettet
 	DE	Gelöschten einfügen
 	EN	Insert Deleted
 	ES	Insertar eliminados
@@ -218,6 +241,7 @@ PLUGIN_FAVORITES_INSERTDEL
 	NL	Verwijderde terugzetten
 
 PLUGIN_FAVORITES_LOADING
+	DA	Indlæser Favoritter
 	DE	Lade Favoriten...
 	EN	Loading Favorites...
 	ES	Cargando favoritos...
@@ -226,6 +250,7 @@ PLUGIN_FAVORITES_LOADING
 	NL	Favorieten worden geladen...
 
 PLUGIN_FAVORITES_NEWFOLDER
+	DA	Ny mappe
 	DE	Neuer Ordner
 	EN	New Folder
 	ES	Carpeta nueva
@@ -234,6 +259,7 @@ PLUGIN_FAVORITES_NEWFOLDER
 	NL	Nieuwe map
 
 PLUGIN_FAVORITES_NEWENTRY
+	DA	Nyt element
 	DE	Neuer Eintrag
 	EN	New Entry
 	ES	Entrada nueva
@@ -242,6 +268,7 @@ PLUGIN_FAVORITES_NEWENTRY
 	NL	Nieuwe ingang
 
 PLUGIN_FAVORITES_NEWFAVORITE
+	DA	Ny Favorit
 	DE	Neuer Favorit
 	EN	New Favorite
 	ES	Favorito nuevo
@@ -250,6 +277,7 @@ PLUGIN_FAVORITES_NEWFAVORITE
 	NL	Nieuwe favoriet
 
 PLUGIN_FAVORITES_NEWURL
+	DA	Ny URL
 	DE	Neue URL
 	EN	New URL
 	ES	URL nueva
@@ -258,6 +286,7 @@ PLUGIN_FAVORITES_NEWURL
 	NL	Nieuwe URL
 
 PLUGIN_FAVORITES_LOADERROR
+	DA	Fejl ved indlæsning af fil
 	DE	Fehler beim Laden der Datei
 	EN	Error Loading File
 	ES	Error al cargar archivo
@@ -266,6 +295,7 @@ PLUGIN_FAVORITES_LOADERROR
 	NL	Fout tijdens laden bestand
 
 PLUGIN_FAVORITES_REMOTELOADERROR
+	DA	Fejl ved indlæsning af URL
 	DE	Fehler beim Lesen der URL
 	EN	Error Loading URL
 	ES	Error al cargar URL
@@ -274,6 +304,7 @@ PLUGIN_FAVORITES_REMOTELOADERROR
 	NL	Fout tijdens laden URL
 
 PLUGIN_FAVORITES_SAVEERROR
+	DA	Fejl ved gemning af fil
 	DE	Fehler beim Speichern der Datei
 	EN	Error Saving File
 	ES	Error al guardar archivo
@@ -282,6 +313,7 @@ PLUGIN_FAVORITES_SAVEERROR
 	NL	Fout tijdens opslaan bestand
 
 PLUGIN_FAVORITES_IMPORTERROR
+	DA	Fejl ved importering af spilleliste
 	DE	Fehler beim Import von Wiedergabelisten
 	EN	Error Importing Playlist	
 	ES	Error al importar lista de reproducción
@@ -290,6 +322,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 	NL	Fout tijdens importeren van playlist
 
 PLUGIN_FAVORITES_NOTITLE
+	DA	Igen titel
 	DE	Ohne Titel
 	EN	No Title
 	ES	Sin título
@@ -298,6 +331,7 @@ PLUGIN_FAVORITES_NOTITLE
 	NL	Geen titel
 
 PLUGIN_FAVORITES_NAME
+	DA	Navn
 	DE	Name
 	EN	Name
 	ES	Nombre
@@ -306,6 +340,7 @@ PLUGIN_FAVORITES_NAME
 	NL	Naam
 
 PLUGIN_FAVORITES_URL
+	DA	URL
 	DE	URL
 	EN	URL
 	ES	URL
@@ -314,6 +349,7 @@ PLUGIN_FAVORITES_URL
 	NL	URL
 
 PLUGIN_FAVORITES_ADD
+	DA	Tilføj til Favoritter
 	DE	Zu Favoriten hinzufügen
 	EN	Add to Favorites
 	ES	Agregar a favoritos
@@ -322,6 +358,7 @@ PLUGIN_FAVORITES_ADD
 	NL	Toevoegen aan Favorieten
 
 PLUGIN_FAVORITES_REMOVE
+	DA	Fjern fra Favoritter
 	DE	Aus Favoriten entfernen
 	EN	Remove from Favorites
 	ES	Quitar de Favoritos

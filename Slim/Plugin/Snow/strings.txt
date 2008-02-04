@@ -3,6 +3,7 @@
 # $Id: strings.txt 11049 2006-12-28 09:47:38Z mherger $
 
 PLUGIN_SCREENSAVER_SNOW
+	DA	Pauseskærm: Sne
 	DE	Bildschirmschoner: Schnee
 	EN	Snow Screensaver
 	ES	Protector de pantalla de nieve
@@ -13,6 +14,7 @@ PLUGIN_SCREENSAVER_SNOW
 	NL	Sneeuw-schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
+	DA	Vis indstillinger for pauseskærm
 	DE	Schnee-Einstellungen
 	EN	Snow Screensaver settings
 	ES	Configuración de protector de pantalla de nieve
@@ -22,6 +24,7 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	NL	Instellingen van sneeuw-schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
+	DA	Anvend standard pauseskærm (ikke Sne)
 	DE	Standard-Bildschirmschoner aktivieren (nicht Schnee)
 	EN	Use default screensaver (not Snow)
 	ES	Usar protector de pantalla predeterminado (no de nieve)
@@ -31,6 +34,7 @@ PLUGIN_SCREENSAVER_SNOW_DEFAULT
 	NL	Standaardschermbeveiliger gebruiken (geen sneeuw)
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
+	DA	Kvalitet
 	DE	Schneemenge
 	EN	Quantity of snow
 	ES	Cantidad de nieve
@@ -41,6 +45,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	NL	Hoeveelheid sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
+	DA	Pauseskærm: Sne, Kvalitet
 	DE	Bildschirmschoner 'Schnee': Schneemenge
 	EN	Snow Screensaver: Quantity of snow
 	ES	Protector de pantalla de nieve: Cantidad de nieve
@@ -50,6 +55,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	NL	Sneeuw-schermbeveiliger: hoeveelheid sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
+	DA	Let byge
 	DE	Ein paar Flocken
 	EN	Light flurries
 	ES	Ráfagas ligeras
@@ -60,6 +66,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	NL	Lichte sneeuwbui
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
+	DA	Juleagtigt
 	DE	Weiße Weihnachten
 	EN	Christmassy
 	ES	Estilo navidad
@@ -69,6 +76,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	NL	Kerstmisachtig
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
+	DA	Snestorm
 	DE	Schneesturm
 	EN	Blizzard
 	ES	Ventisca
@@ -78,6 +86,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	NL	Sneeuwstorm
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
+	DA	Hvidt
 	DE	Dichtes Schneetreiben
 	EN	Whiteout
 	ES	Tormenta de nieve
@@ -87,6 +96,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	NL	Zware sneeuwstorm
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
+	DA	Sne-udseende når tændt
 	DE	Schnee bei Aktivierung
 	EN	Style of snow when on
 	ES	Estilo de nieve cuando se activa
@@ -97,6 +107,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	NL	Sneeuwstijl wanneer aan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
+	DA	Sne-udseende når slukket
 	DE	Schnee bei Deaktivierung
 	EN	Style of snow when off
 	ES	Estilo de nieve cuando se desactiva
@@ -106,6 +117,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	NL	Sneeuwstijl wanneer uit
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
+	DA	Pauseskærm: Sne, Sne-udseende
 	DE	Bildschirmschoner 'Schnee': Schneeart
 	EN	Snow Screensaver: Style of snow
 	ES	Protector de pantalla de nieve: Estilo de nieve
@@ -115,6 +127,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	NL	Sneeuw-schermbeveiliger: sneeuwstijl
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
+	DA	Aktiv Spilleliste, sne falder bagved
 	DE	Aktuelle Wiedergabe mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
 	ES	Reproduciendo, la nieve cae detrás
@@ -124,6 +137,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	NL	Speelt nu, sneeuw valt achter
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
+	DA	Aktuel Spilleliste, sne falder foran
 	DE	Aktuelle Wiedergabe mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
 	ES	Reproduciendo, la nieve cae delante
@@ -133,6 +147,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	NL	Speelt nu, sneeuw valt voor
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
+	DA	Dato/Tid
 	DE	Datum/Zeit
 	EN	Date/Time
 	ES	Fecha/Hora
@@ -142,6 +157,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	NL	Datum/tijd
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
+	DA	Kun Sne
 	DE	Nur Schnee
 	EN	Just snow
 	ES	Sólo nieve
@@ -151,6 +167,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	NL	Alleen sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
+	DA	Automatisk
 	DE	Automatisch
 	EN	Automatic
 	ES	Automático
@@ -160,6 +177,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	NL	Automatisch
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
+	DA	Årstidens hilsen!
 	DE	Frohe Feiertage!
 	EN	Season's Greetings
 	ES	Felices fiestas
@@ -169,6 +187,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	NL	Prettige feestdagen
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
+	DA	5
 	DE	5
 	EN	5
 	ES	5
@@ -178,6 +197,7 @@ PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	NL	5
 
 PLUGIN_SCREENSAVER_SNOW_WORD_0
+	DA	GOD
 	DE	FROHE
 	EN	MERRY
 	ES	FELIZ
@@ -187,6 +207,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_0
 	NL	Vrolijk
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
+	DA	JUL
 	DE	WEIHNACHTEN
 	EN	CHRISTMAS
 	ES	NAVIDAD
@@ -196,6 +217,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_1
 	NL	Kerstmis
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
+	DA	OG ET GODT
 	DE	UND EIN GUTES
 	EN	AND A VERY
 	ES	Y UN MUY
@@ -205,6 +227,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	NL	en een heel
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
+	DA	LYKKELIG
 	DE	GLÜCKLICHES
 	EN	HAPPY
 	ES	PRÓSPERO
@@ -214,6 +237,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_3
 	NL	gelukkig
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
+	DA	NYT ÅR!
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
 	ES	AÑO NUEVO.
@@ -223,6 +247,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	NL	nieuwjaar!
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
+	DA	Beklager, Sne virker ikke på denne afspiller.
 	DE	Schnee kann auf diesem Player nicht angezeigt werden.
 	EN	Sorry, Snow doesn't work with this player.
 	ES	La nieve no funciona con este reproductor.

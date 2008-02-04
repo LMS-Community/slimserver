@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_LIVE365_MODULE_NAME
+	DA	Live365
 	DE	Live365
 	EN	Live365
 	ES	Live365
@@ -11,6 +12,7 @@ PLUGIN_LIVE365_MODULE_NAME
 	NL	Live365
 
 PLUGIN_LIVE365_MODULE_NAME_DESC
+	DA	Adgang til Live365 Internet Radio Stationer
 	DE	Zugriff auf Live365 Internet Radio
 	EN	Access to Live365 Internet Radio stations
 	ES	Acceso a emisoras de radio por Internet Live365
@@ -19,6 +21,7 @@ PLUGIN_LIVE365_MODULE_NAME_DESC
 	NL	Toegang tot Live365-internetradiostations
 
 PLUGIN_LIVE365_ERROR
+	DA	Live365 - Fejl
 	DE	Live365 - Fehler
 	EN	Live365 Error
 	ES	ERROR de Live365
@@ -27,6 +30,7 @@ PLUGIN_LIVE365_ERROR
 	NL	Live365-fout
 
 PLUGIN_LIVE365_NO_URL
+	DA	Kunne ikke hente URL for lyd. Tryk PLAY for at forsøge igen.
 	DE	Audio-URL konnte nicht geladen werden. Drücken Sie PLAY.
 	EN	Unable to retrieve audio URL.  Press PLAY to try again.
 	ES	Imposible obtener URL de audio. Pulse PLAY para volver a intentarlo.

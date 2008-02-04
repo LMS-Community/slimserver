@@ -4,6 +4,7 @@
 
 PLUGIN_SCREENSAVER_DATETIME
 	CS	Datumový spořič
+	DA	Pauseskærm dato og tid
 	DE	Bildschirmschoner: Datum/Zeit
 	EN	Date and Time Screensaver
 	ES	Protector de pantalla de fecha y hora
@@ -14,6 +15,7 @@ PLUGIN_SCREENSAVER_DATETIME
 
 PLUGIN_SCREENSAVER_DATETIME_DESC
 	CS	Datumový spořič
+	DA	Pauseskærm dato og tid
 	DE	Bildschirmschoner: Datum/Zeit
 	EN	Date and Time Screensaver
 	ES	Protector de pantalla de fecha y hora
@@ -24,6 +26,7 @@ PLUGIN_SCREENSAVER_DATETIME_DESC
 
 SETUP_GROUP_DATETIME
 	DE	Einstellungen für den Bildschirmschoner 'Datum/Zeit'
+	DA	Indstillinger for pauseskærmen dato og tid
 	EN	Date and Time Screensaver Settings
 	ES	Configuración de protector de pantalla de fecha y hora
 	FR	Paramètres Ecran de veille Date/Heure
@@ -32,6 +35,7 @@ SETUP_GROUP_DATETIME
 	NL	Instellingen datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME_DESC
+	DA	Disse indstillinger kontrollerer opførselen for pauseskærmen dato og tid.
 	DE	Hier können Sie das Format des Bildschirmschoners 'Datum/Zeit' festlegen.
 	EN	These settings control the behavior of the Date and Time Screensaver
 	ES	Estos parámetros controlan el comportamiento del protector de pantalla de fecha y hora
@@ -41,6 +45,7 @@ SETUP_GROUP_DATETIME_DESC
 	NL	Deze instellingen bepalen het gedrag van de datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
+	DA	SqueezeCenter standard
 	DE	SqueezeCenter-Standard
 	EN	SqueezeCenter Default
 	ES	Predeterminado de SqueezeCenter
@@ -50,6 +55,7 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	NL	SqueezeCenter-standaardinstellingen
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
+	DA	SqueezeCenter standard
 	DE	SqueezeCenter-Standard
 	EN	SqueezeCenter Default
 	ES	Predeterminado de SqueezeCenter

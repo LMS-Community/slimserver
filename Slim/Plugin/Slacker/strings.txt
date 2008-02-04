@@ -1,4 +1,5 @@
 PLUGIN_SLACKER_MODULE_NAME
+	DA	Slacker
 	DE	Slacker
 	EN	Slacker
 	ES	Slacker
@@ -7,6 +8,7 @@ PLUGIN_SLACKER_MODULE_NAME
 	NL	Slacker
 
 PLUGIN_SLACKER_GETTING_TRACK_DETAILS
+	DA	Henter detaljer om spor...
 	DE	Titelinfos werden geladen ...
 	EN	Fetching track details...
 	ES	Obteniendo detalles de pista...
@@ -15,6 +17,7 @@ PLUGIN_SLACKER_GETTING_TRACK_DETAILS
 	NL	Nummerdetails worden opgehaald...
 
 PLUGIN_SLACKER_ERROR
+	DA	Slacker Fejl
 	DE	Slacker-Fehler
 	EN	Slacker Error
 	ES	Error de Slacker
@@ -23,6 +26,7 @@ PLUGIN_SLACKER_ERROR
 	NL	Slacker-fout
 
 PLUGIN_SLACKER_SESSION_BUMPED
+	DA	Du er logget ind på en anden tjeneste, tryk PLAY for at genstarte.
 	DE	Sie haben sich an einem anderen Gerät angemeldet. Zum Neustart PLAY drücken.
 	EN	You have logged in on another device, press PLAY to restart.
 	ES	Ha iniciado sesión en otro dispositivo, pulse PLAY para reiniciar.
@@ -31,6 +35,7 @@ PLUGIN_SLACKER_SESSION_BUMPED
 	NL	Je hebt je bij een ander apparaat aangemeld, druk op PLAY om opnieuw te starten.
 
 PLUGIN_SLACKER_NO_TRACKS
+	DA	Kunne ikke hente spor, tryk PLAY for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
@@ -39,6 +44,7 @@ PLUGIN_SLACKER_NO_TRACKS
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 
 PLUGIN_SLACKER_STREAM_FAILED
+	DA	Forbindelse til Lydstrøm tabt, springer til næste spor.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
@@ -48,6 +54,7 @@ PLUGIN_SLACKER_STREAM_FAILED
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED
+	DA	Det er ikke muligt at springe over flere gange denne time, du kan springe over senere.
 	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
 	EN	Hourly skip limit exceeded, you may skip again later.
 	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
@@ -57,6 +64,7 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED
 	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
+	DA	Station ikke tilgængelig: du kan ikke springe over. Du kan skifte til en anden station og forsøge igen senere.
 	DE	Sender nicht verfügbar: Kein Überspringen mehr möglich. Sie auf anderen Sender aufrufen oder es später erneut versuchen.
 	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
 	ES	Emisora no disponible: se ha excedido el límite de omisiones por hora. Puede cambiar a otra emisora o volver a intentarlo más tarde.
@@ -65,6 +73,7 @@ PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
 	NL	Station niet beschikbaar: uurlimiet voor springen overschreden. Je kunt naar een ander station overschakelen of het later opnieuw proberen.
 
 PLUGIN_SLACKER_FAVORITE_TRACK
+	DA	Marker som Slacker Favorit
 	DE	Als Slacker-Favorit kennzeichnen
 	EN	Mark as Slacker favorite
 	ES	Marcar como favorito de Slacker
@@ -73,6 +82,7 @@ PLUGIN_SLACKER_FAVORITE_TRACK
 	NL	Als Slacker-favoriet markeren
 
 PLUGIN_SLACKER_UNMARK_FAVORITE
+	DA	Fjern markering som Slacker Favorit
 	DE	Kennzeichnung als Slacker-Favorit aufheben
 	EN	Unmark as Slacker favorite
 	ES	Anular marca de favorito de Slacker
@@ -81,6 +91,7 @@ PLUGIN_SLACKER_UNMARK_FAVORITE
 	NL	Markering als Slacker-favoriet opheffen
 
 PLUGIN_SLACKER_BAN_TRACK
+	DA	Forbyd dette nummer
 	DE	Diesen Titel sperren
 	EN	Ban this track
 	ES	Prohibir esta pista
