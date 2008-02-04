@@ -936,7 +936,8 @@ Player = function(){
 				var infoLink = result.playlist_loop[0].info_link || 'songinfo.html';
 
 				var currentArtist, currentAlbum;
-				var currentTitle = '<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+
+				Ext.get('ctrlCurrentTitle').update('<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
 					+
 					(result.current_title ? result.current_title : 
 						(result.playlist_loop[0].remote_title ? result.playlist_loop[0].remote_title : (
@@ -948,9 +949,21 @@ Player = function(){
 						)
 					))
 					+
+					'</a>');
+
+				// title for collapsed view - don't use remote station name
+				var currentTitle = '<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+					+
+					(result.current_title ? result.current_title : (
+						(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
+						+
+						(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
+						+
+						result.playlist_loop[0].title
+					))
+					+
 					'</a>';
 
-				Ext.get('ctrlCurrentTitle').update(currentTitle);
 
 				if (el = Ext.get('ctrlPlaytimeRight'))
 					el.show();
