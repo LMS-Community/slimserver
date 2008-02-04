@@ -218,9 +218,14 @@ sub dirsFor {
 
 			push @dirs, "/usr/share/squeezecenter";
 
-		} elsif ($dir =~ /^(?:types|convert|prefs)$/) {
+		} elsif ($dir =~ /^(?:types|convert)$/) {
 
 			push @dirs, "/etc/squeezecenter";
+
+		} elsif ($dir =~ /^(?:prefs)$/) {
+
+			push @dirs, "/var/lib/squeezecenter/prefs";
+
 
 		} elsif ($dir eq 'log') {
 
@@ -228,7 +233,7 @@ sub dirsFor {
 
 		} elsif ($dir eq 'cache') {
 
-			push @dirs, "/var/cache/squeezecenter";
+			push @dirs, "/var/lib/squeezecenter/cache";
 
 		} elsif ($dir eq 'MySQL') {
 
