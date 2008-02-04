@@ -1,33 +1,3 @@
-[% IF useExtJS; extJsScripts = BLOCK %]
-	<script TYPE="text/javascript">
-		function forgetPlayer(player) {
-			Utils.processPlayerCommand({
-				params: [
-					'client', 
-					'forget', 
-					player
-				]
-			});
-		}
-	</script>
-[% END; ELSE; pageHeaderScripts = BLOCK %]
-	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
-	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
-	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
-	<script TYPE="text/javascript" language="JavaScript">
-		function forgetPlayer(player) {
-		
-			// add a random number to the params as IE loves to cache the heck out of 
-			var args   = 'command=client&subcommand=forget&playerid='+ player +'&d=' + Math.random();
-			var url    = 'index.html';
-			var action = 'dummyCallback';
-			ajaxRequest(url, args, action);
-		}
-		
-		function dummyCallback() {
-		}
-	</script>
-[% END; END %]
 [% PROCESS settings/header.html %]
 
 [% IF prefs %]
@@ -111,18 +81,6 @@
 				<option [% IF prefs.playtrackalbum %]selected [% END %]value="1">[% 'SETUP_PLAYTRACKALBUM_1' | string %]</option>
 			</select>
 		[% END %]
-	[% END %]
-
-	[% WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]
-		<p>
-			[% IF useAJAX %]
-				<a href="[% webroot %]" onClick="forgetPlayer('[% player %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
-			[% ELSIF useExtJS %]
-				<a href="[% webroot %]settings/player/basic.html" onClick="forgetPlayer('[% player %]');" target="settings">[% "FORGET_PLAYER_LINK" | string %]</a>
-			[% ELSE %]
-				<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
-			[% END %]
-		</p>
 	[% END %]
 
 	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" desc="" %]
