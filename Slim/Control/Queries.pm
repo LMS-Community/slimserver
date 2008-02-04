@@ -4587,6 +4587,7 @@ sub _songData {
 		  'K' => [''],                                                                      # artwork URL, not in db
 		  'B' => [''],                                                                      # radio stream special buttons
 		  'L' => [''],                                                                      # special trackinfo link for i.e. Pandora
+		  'N' => [''],                                                                      # remote stream title
 
 	);
 	
@@ -4604,6 +4605,13 @@ sub _songData {
 		elsif ($tag eq 'B') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
 				$returnHash{buttons} = $meta;
+			}
+		}
+
+		# special case, remote stream name
+		elsif ($tag eq 'N' && $track->remote && !$track->secs && $remoteMeta->{title} && !$remoteMeta->{album} ) {
+			if ( my $meta = $track->title ) {
+				$returnHash{remote_title} = $meta;
 			}
 		}
 		

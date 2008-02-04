@@ -938,12 +938,14 @@ Player = function(){
 				var currentArtist, currentAlbum;
 				var currentTitle = '<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
 					+
-					(result.current_title ? result.current_title : (
-						(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
-						+
-						(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
-						+
-						result.playlist_loop[0].title
+					(result.current_title ? result.current_title : 
+						(result.playlist_loop[0].remote_title ? result.playlist_loop[0].remote_title : (
+							(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
+							+
+							(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
+							+
+							result.playlist_loop[0].title
+						)
 					))
 					+
 					'</a>';
@@ -999,6 +1001,9 @@ Player = function(){
 					Ext.get('ctrlCurrentAlbum').update(currentAlbum);
 
 					currentTitle += ' ' + strings['from'] + ' ' + currentAlbum;
+				}
+				else if (result.playlist_loop[0].remote_title && result.playlist_loop[0].title) {
+					Ext.get('ctrlCurrentAlbum').update(result.playlist_loop[0].title);
 				}
 				else {
 					Ext.get('ctrlCurrentAlbum').update('');
@@ -1091,7 +1096,7 @@ Player = function(){
 		getUpdate : function(){
 			if (player) {
 				Utils.processPlayerCommand({
-					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoKL" ],
+					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoKLN" ],
 					failure: this.updateStatus,
 					success: this.updateStatus,
 					scope: this
