@@ -741,7 +741,11 @@ sub cliAdd {
 			return;
 		}
 
-		splice @$level, $i, 0, $entry;
+		if (defined $i) {
+			splice @$level, $i, 0, $entry;
+		} else { # with no specific index, place automatically at the end
+			push @$level, $entry;
+		}
 
 		$favs->save;
 
