@@ -129,7 +129,7 @@
 	<body class="[% bodyClass || "settings" %]">
 
 		[% IF needsClient || (pageLink.size > 0 && !noSettingsList) %]
-		<div class="buttonbar">
+		<div class="buttonbar" id="toolbar">
 			<table>
 				<tr>
 					[%- IF needsClient %]
@@ -141,25 +141,23 @@
 				<tr>
 			</table>
 		</div>
-		<div class="buttonbarSpacer">&nbsp;</div>
 		[% END -%]
 
-		[% IF !noForm %]
-		[% IF warning %]
-			<div id="statusarea" class="statusarea">
-				[% warning %]
-				&nbsp;
-			</div>
-		[% END %]
+		<div id="content" class="scrollingPanel">
 
-		<form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
+			[% IF warning %]
+				<div id="statusarea" class="statusarea">
+					[% warning %]
+					&nbsp;
+				</div>
+			[% END %]
 
-		<div id="settingsRegion">
+			<form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
 
-			<input type=hidden value="1" name="saveSettings">
-			<input type=hidden value="0" name="useAJAX">
-			<input type=hidden value="[% page %]" name="page">
-			[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
-			[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
+			<div id="settingsRegion">
 
-		[% END %]
+				<input type=hidden value="1" name="saveSettings">
+				<input type=hidden value="0" name="useAJAX">
+				<input type=hidden value="[% page %]" name="page">
+				[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
+				[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]

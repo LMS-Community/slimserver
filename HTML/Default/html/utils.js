@@ -342,8 +342,9 @@ var Utils = function(){
 		},
 
 		resizeContent : function(){
-			var infoHeight = 0;
+			var infoHeight   = 0;
 			var footerHeight = 0;
+			var el;
 
 			if (el = Ext.get('infoTab'))
 				infoHeight = el.getHeight();
