@@ -240,7 +240,6 @@ our %functions = (
 		}
 
 		$client->execute(["playlist", "jump", "+1"]);
-		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'rew' => sub  {
@@ -265,8 +264,6 @@ our %functions = (
 			# otherwise, restart this song.
 			$client->execute(["playlist", "jump", "+0"]);
 		}
-
-		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'jump' => sub  {
@@ -332,8 +329,6 @@ our %functions = (
 			#restart current song
 			$client->execute(["playlist", "jump", "+0"]);
 		}
-
-		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'jumpinsong' => sub {
@@ -421,8 +416,6 @@ our %functions = (
 		my $wantmode = (Slim::Player::Source::playmode($client) eq 'pause') ? '0' : '1';
 
 		$client->execute(["pause", $wantmode]);
-
-		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'stop' => sub  {

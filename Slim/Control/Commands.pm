@@ -540,7 +540,7 @@ sub playcontrolCommand {
 		
 		if ( $wantmode eq 'play' ) {
 			# Bug 6813, 'play' from CLI needs to work the same as IR play button, by going
-			# through playlist jump
+			# through playlist jump - this will include a showBriefly to give feedback
 			my $index = Slim::Player::Source::playingSongIndex($client);
 			$client->execute([ 'playlist', 'jump', $index ]);
 		}
@@ -550,11 +550,11 @@ sub playcontrolCommand {
 			
 			# reset rate in all cases
 			Slim::Player::Source::rate($client, 1);
-		}
-					
-		# update the display unless suppressed
-		if ($client->isPlayer()) {
-			$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+
+			# give user feedback of new mode and current song
+			if ($client->isPlayer()) {
+				$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+			}
 		}
 	}
 		
@@ -752,7 +752,12 @@ sub playlistJumpCommand {
 
 		# Does the above change the playlist?
 		Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
-	
+
+		# update the display unless suppressed
+		if ($client->isPlayer()) {
+			$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+		}
+		
 		$request->setStatusDone();
 	};
 	
