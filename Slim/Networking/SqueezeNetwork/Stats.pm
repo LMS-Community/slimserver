@@ -33,10 +33,10 @@ sub init {
 		[['playlist'], ['newsong']],
 	);
 	
-	# Report stats once an hour
+	# Report stats now and then once an hour
 	Slim::Utils::Timers::setTimer(
 		undef,
-		time() + $REPORT_INTERVAL,
+		time(),
 		\&reportStats,
 	);
 }
