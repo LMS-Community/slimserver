@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RADIOTIME_MODULE_NAME
+	DA	RadioTime
 	DE	RadioTime
 	EN	RadioTime
 	ES	RadioTime
@@ -12,6 +13,7 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	NL	RadioTime
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
+	DA	RadioTime - Lokal Internet Radio
 	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
 	EN	RadioTime - Local Internet Radio
 	ES	RadioTime - Radio por Internet local
@@ -20,6 +22,7 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	NL	RadioTime - Lokale internetradio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
+	DA	radiotime
 	DE	radiotime
 	EN	radiotime
 	ES	radiotime
@@ -29,6 +32,7 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	NL	radiotime
 
 PLUGIN_RADIOTIME_LOADING
+	DA	Indlæser RadioTime...
 	DE	RadioTime wird geladen ...
 	EN	Loading RadioTime...
 	ES	Cargando RadioTime...
@@ -38,6 +42,7 @@ PLUGIN_RADIOTIME_LOADING
 	NL	RadioTime wordt geladen...
 
 SETUP_GROUP_PLUGIN_RADIOTIME_DESC
+	DA	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> for at finde din favorit lokale og globale debat, sports, religion, eller musik radio kanal - <b>gratis</b>.
 	DE	Auf <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> können Sie die interessantesten lokalen und globalen Radiosender suchen: Wort, Sport, Musik oder Religion - alles <b>gratis</b>.
 	EN	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 	ES	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para encontrar sus emisoras de radio favoritas de debate, deportes, religión y música tanto locales como internacionales. Y <b>gratis</b>.
@@ -47,6 +52,7 @@ SETUP_GROUP_PLUGIN_RADIOTIME_DESC
 	NL	Gebruik <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je favoriete religieuze, praat-, sport- en muziekprogramma's op de radio te vinden, plaatselijk en wereldwijd - allemaal <b>gratis</b>.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME
+	DA	Indtast dit RadioTime brugernavn.
 	DE	Geben Sie Ihren RadioTime-Benutzernamen ein.
 	EN	Enter your RadioTime username.
 	ES	Introduzca el nombre de usuario de RadioTime.
@@ -56,6 +62,7 @@ SETUP_PLUGIN_RADIOTIME_USERNAME
 	NL	Voer je RadioTime-gebruikersnaam in.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
+	DA	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> for at registrere <b>gratis</b>. Tilføj stationer og udsendelser til My Radio og lyt tid dem på din Squeezebox eller Transporter.
 	DE	Melden Sie sich bei <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> <b>kostenlos</b> an. Fügen Sie Sender oder Sendungen zu ihrer 'My Radio'-Liste hinzu und geben Sie sie auf Squeezebox oder Transporter wieder.
 	EN	Visit <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to sign up for <b>free</b>.  Add stations and shows to My Radio then listen on your Squeezebox or Transporter.
 	ES	Visite <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para registrarse <b>gratis</b>. Agregue emisoras y programas a Mi radio y escuche en Squeezebox o Transporter.
