@@ -473,6 +473,10 @@ sub directHeaders {
 
 				$client->failedDirectStream();
 			}
+			
+			# Bug 6482, refresh the cached Track object in the client playlist from the database
+			# so it picks up any changed data such as title, bitrate, etc
+			Slim::Player::Playlist::refreshTrack( $client, $url );
 		}
 	}
 }
