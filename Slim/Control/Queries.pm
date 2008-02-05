@@ -4298,6 +4298,13 @@ sub _addJiveSong {
 			if ( $remoteMeta->{title} ) {
 				$request->addResult( 'current_title' => undef );
 			}
+			
+			# Bug 6943, let plugins override the duration value, radio-type plugins
+			# like Pandora need this because they change the duration when the next
+			# track begins streaming
+			if ( $remoteMeta->{duration} ) {
+				$request->addResult( duration => $remoteMeta->{duration} );
+			}
 		}
 	} else {
 		$request->addResultLoop($loop, $count, 'trackType', 'local');
@@ -4496,6 +4503,13 @@ sub _songData {
 			# if we have a plugin-defined title, remove the current_title value
 			if ( $remoteMeta->{title} ) {
 				$request->addResult( 'current_title' => undef );
+			}
+			
+			# Bug 6943, let plugins override the duration value, radio-type plugins
+			# like Pandora need this because they change the duration when the next
+			# track begins streaming
+			if ( $remoteMeta->{duration} ) {
+				$request->addResult( duration => $remoteMeta->{duration} );
 			}
 		}
 	}
