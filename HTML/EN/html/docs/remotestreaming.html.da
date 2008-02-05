@@ -1,0 +1,30 @@
+﻿[% pageicon = 'help' %]
+[% pagetitle = 'REMOTE_STREAMING' | string %]
+[% PROCESS helpheader.html %]
+<p>SqueezeCenter er designet til at strømme dine mp3-filer via netværket til en musik-afpiller fra Slim Devices/Logitech. Men den kan også anvendes til at strømme de samme filer over Internettet til enhver programvare-baseret afspiller som understøtter mp3. For eksempel Winamp eller iTunes.
+
+<p>I det følgende kaldes computeren som kører SqueezeCenter for fjernmaskinen.
+
+<p>Start med at installere SqueezeCenter på denne maskine. Sikre dig at denne maskine kan tilgås fra Internettet. Hvis ikke skal du åbne for port 9000 på din ruter.
+
+<p>Gør nu som følger:
+<ol>
+<li>Åbn strømmen på adressen http://localhost:9000/stream.mp3 i din programvare-baserede afspiller. (Erstat "localhost" med IP adressen for fjernmaskinen.) SqueezeCenter vil nu registrere at en programvare-baseret afspiller er klar til at strømme.
+
+<li>Gå til SqueezeCenters web-grænseflade på fjernmaskinen ved at åbne http://localhost:9000 (Erstat "localhost" med fjernmaskinens IP adresse.) Du vil i web-grænsefladen nu kunne se at der er en ny afspiller svarende til IP adressen for den computer som kører den programvare-baserede afspiller.
+
+<li>Anvend venstre side i SqueezeCenter's web-grænseflade til at gennemse og vælge filer og spillelister. Når du har valgt musik vil det vises i højre side af web-grænsefladen.
+
+<li>Klik "Afspil" i højre side af SqueezeCenter's web-grænseflade for at starte afspilning.
+
+<li>Etter nogle sekunder vil du kunne høre musik fra din programvare-baserede mp3 afspiller (Forsinkelsen opstår på grund af mellemlagring i mp3-afspilleren.)
+
+<li>For at skifte nummer anvendes SqueezeCenter på fjernmaskinen.
+
+<li>Hvis du anvender kodeord på SqueezeCenter skal du anvende en lidt anden URL, http://username:password@localhost:9000/stream.mp3.
+</ol>
+<p>Du kan også strømme over netværket til en Squeezebox eller Transporter for at lytte til din musik på et stereoanlæg. Læs mere om dette produkt og se vores FAQ på siden <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
+
+<p>Har du spørgsmål eller problemer, kontakt support@slimdevices.com, eller besøg vores brugerforum på adressen <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>.
+
+[% PROCESS helpfooter.html %]

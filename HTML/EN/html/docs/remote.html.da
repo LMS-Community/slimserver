@@ -1,0 +1,89 @@
+﻿[% pageicon = 'help' %]
+[% pagetitle = "HELP_REMOTE" | string %]
+[% PROCESS helpheader.html %]
+
+		<table>
+			<tr>
+				<td valign=top width=180><img src="[% webroot %]html/images/remote.gif" alt="" width="167" height="700" border="0"></td>
+				<td>
+					<h4>Opsætning af fjernbetjeningen</h4>
+					<p>Fjernbetjeningen anvender to stk. AA batterier&#151;alkaliske batterier anbefales. Sikre dig at batterierne er friske. Dårlige batterier kan medføre at fjernbetjeningen virker dårligt.</p>
+					<h4>Knapper</h4>
+
+					<p>Tryk <b>POWER</b> for at skifte til dvaletilstand. Derved vil skærmen dæmpes, musikken stoppe og et ur vises. Tryk <b>POWER</b> igen for at vende tilbage til normal operationstilstand.
+					
+					<p>Anvend knapperne for <b>VOLUMEN</b> for at justere lydstyrken på Squeezeboxen.
+					
+					<p>Tryk <b>REW</b> for at umiddelbart starte det aktive nummer. Tryk <b>REW</b> to gange for at springe til foregående nummer. Tryk og hold <b>REW</b> for at skanne baglæns gennem det aktive nummer. 
+					
+					<p>Tryk <b>PAUSE</b> for at pause det aktive nummer. Tryk <b>PAUSE</b> igen for at fortsætte. Tryk og hold <b>PAUSE</b> for at stoppe afspilning.
+					
+					<p>Tryk <b>FWD</b> for at skifte til næste nummer. Tryk og hold <b>FWD</b> for at skanne gennem det aktive nummer.
+					
+					<p>Brug <b>OP</b>, <b>NED</b>, <b>HØJRE</b> og <b>VENSTRE</b> for at navigere i dit musik bibliotek. <b>OP</b> viser det foregående element i lister, <b>NED</b> det næste element. Tryk <b>VENSTRE</b> for at gå ud af den aktive liste. Tryk <b>HØJRE</b> for at gå ind i elementer eller vise yderligere information om et nummer.
+					
+					<p>Tryk <b>PLAY</b> for at spille numrene indenfor det aktive valg. Hvis du trykker <b>PLAY</b> under følgende visninger sker følgende:
+					
+					<ul>
+						<li>Genre, kunstner eller album &mdash;Squeezeboxen afspiller alle nummer fra den viste genre, kunstner eller album.
+						<li>Nummer&mdash;Squeezeboxen afspiller det nummer. Hvis det viste nummer er indeholdt i et album, afspilles den resterende del af albummet startende med det viste nummer.
+						<li>Spilleliste&mdash;Squeezeboxen afspiller alle nummer på spillelisten.
+						<li>Mappe&mdash;Squeezeboxen afspiller alle nummer i den pågældende mappe og undermapper.
+					</ul>
+
+					<p><i>Tip:</i>For at gemme en spilleliste kan du trykke <b>NOW PLAYING</b> efterfulgt af tryk og hold inde <b>PLAY</b>. Du vil blive spurgt om du ønsker at gemme den aktive spilleliste til senere brug.
+
+					<p>Tryk <b>ADD</b> for at tilføje det viste element til slutningen af den aktive spilleliste. Hvis du trykker <b>ADD</b> mens der vises:
+					<ul>
+						<li>Genre, kunstner eller album&mdash;Squeezebox tilføjer alle nummer for den viste genre, kunstner eller album til slutningen af den Aktive Spilleliste.
+						<li>Nummer&mdash;Squeezeboxen tilføjer nummer til slutningen af spillelisten.
+						<li>Spilleliste&mdash;Squeezeboxen tilføjer alle nummerer på spillelisten.
+						<li>Mappe&mdash;Squeezeboxen tilføjer alle nummer i mappen og undermapper.
+					</ul>
+					
+					<p><i>Tip:</i> Du kan trykke og holde <b>ADD</b> inde for at tilføje elementet på skærmen på den aktive spilleliste direkte efter det aktive nummer.
+
+					<p><i>Tip:</i>Når du står i de Aktive Spilleliste kan du trykke <b>ADD</b> for at fjerne det vist nummer fra spillelisten. Tryk og hold <b>ADD</b> inde for at flytte nummer fra den aktive spilleliste til slutningen af spillelisten for Zappede Nummer.
+					
+					<p><i>Tip:</i>Når du står i menuen Hjem, kan du rulle til Aktiv Spilleliste og trykke <b>ADD</b> for at rydde spillelisten.
+					
+					<p>Tryk <b>FAVORITES</b> for at springe til dine gemte favoritter. Tryk og hold <b>FAVORITES</b> under visning af nummer, radio station eller spilleliste for at tilføje den til listen af favoritter.
+					
+					<p>Tryk <b>BROWSE</b> for at gennemse dit musik bibliotek efter Genre, Kunstner eller Album med mere.
+					
+					<p>Tryk <b>SEARCH</b> for at søge efter Albums, Kunstnere eller Spor. Når skærmen viser Søg Musik skal du trykke <b>HØJRE</b> for at indtaste teksten du ønsker at søge efter. Anvend de numeriske knapper for at indtaste bokstaver (på samme måde som på en mobiltelefon). For eksempel giver et tryk på knappen 2 bokstavet "A", to tryk "B", tre tryk "C" og fire tryk "2". Brug 0 for at lave mellemrum. Tryk 1 for at genneløbe tegnsætnings-symboler. Tryk <b>HØJRE</b> for at vise resultatet af din søgning.
+					
+					<p><i>Tip:</i>I ordnede lister af kunstnere, albums eller genre kan du trykke på nummerknappene for at springe til det første element som starter med det tilsvarende bokstav.
+					
+					<p><i>Tip:</i>I uordnede lister så som spillelister kan du trykke på nummerknappene for at springe proportionalt gennem listen.
+					
+					<p>Tryk <b>SHUFFLE</b> for at gennemløbe følgende indstillinger:
+					<ul>
+						<li> Bland alle nummer
+						<li> Bland efter album
+						<li> Ingen blanding
+					</ul>
+					
+					<p>Tryk <b>REPEAT</b> for at genneløbe følgende indstillinger:
+					<ul>
+						<li> Ingen gentagelse (stop afspilningen ved slutningen af spillelisten) 
+						<li> Gentag aktivt nummer
+						<li> Gentag alle nummer
+					</ul>
+					
+					<p>Tryk<b>SLEEP</b> for at bede Squeezeboxen om at gå i dvaletilstand om 15 minutter. Ved at gentagne gange trykke <b>SLEEP</b> øges denne tid, i intervaller af 15 minutter, op til totalt 90 minutter. Hvis du ønsker at afbrudte automatisk dvaletilstand skal du trykke <b>SLEEP</b> indtil afspillerens skærm viser Dvaletilstand Afbrudt.
+					
+					<p>Tryk <b>NOW PLAYING</b> for at vise det nummer du lytter til. Tryk <b>NOW PLAYING</b> igen for at gennemløbe andre visningsformater for det aktive nummer. Nogle af visningsformaterne består af grafisk visualisering og fremgangsmålere.
+					
+					<p>Tryk <b>SIZE</b> for at genneløbe forskellige skriftstørrelser. Squeezeboxen behøver ikke være tændt for at gøre dette.
+					
+					<p>Tryk <b>BRIGHTNESS</b> for at genneløbe Squeezeboxen lysstyrke nivauer. Dette kan gøres mens Squeezeboxen er enten tændt eller slukket. Hvis du kan ved at trykke <b>BRIGHTNESS</b> flere gange helt dæmpe skærmens lysstyrke. Hvis Squeezeboxen er slukket vil skærmen forblive dæmpet indtil du tænder igen, eller trykker <b>BRIGHTNESS</b> igen. Hvis Squeezeboxen er tændt, tryk en vilkårlig knap for at tænde for displayet.				
+				</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+[% PROCESS helpfooter.html %]
+
+

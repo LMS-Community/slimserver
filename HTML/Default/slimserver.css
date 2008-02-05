@@ -1196,3 +1196,9 @@ ul.x-tree-node-ct {
 .helpsection li {
 	margin-bottom: 5px;
 }
+
+
+/* favorite plugin */
+#titleheader {
+	margin: 5px 10px;
+}
