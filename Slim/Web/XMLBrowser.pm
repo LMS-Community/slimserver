@@ -168,7 +168,12 @@ sub handleFeed {
 			};
 
 			# Change type to audio if it's an action request and we have a play attribute
-			if ( $subFeed->{'play'} && $stash->{'action'} =~ /^(?:play|add)$/ ) {
+			# and it's the last item
+			if ( 
+				   $subFeed->{'play'} 
+				&& $depth == $levels
+				&& $stash->{'action'} =~ /^(?:play|add)$/
+			) {
 				$subFeed->{'type'} = 'audio';
 			}
 			
