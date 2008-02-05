@@ -296,7 +296,11 @@ function refreshInfo(theData, force, curstyle) {
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
 		showElements(['nowplaying']);
-		$('coverarthref').href = convert(parsedData['albumhref']);
+		if($('coverarthref').href.match('browsedb')) {
+			$('coverarthref').href = convert(parsedData['albumhref']);
+		} else {
+			refreshHrefElement('coverarthref', parsedData['songtitleid'],"item=");
+		}
 	} else {
 		hideElements(['nowplaying']);
 		showElements(['notplaying']);
