@@ -12479,7 +12479,7 @@ TECHNICAL_INFORMATION
 
 GETTING_STARTED
 	CS	Začínáme
-	DA	Kom i gang (Engelsk)
+	DA	Kom i gang
 	DE	Erste Schritte
 	EN	Getting Started
 	ES	Introducción

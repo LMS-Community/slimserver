@@ -1,0 +1,56 @@
+﻿[% pageicon = 'help' %]
+[% pagetitle = "GETTING_STARTED" | string %]
+[% PROCESS helpheader.html %]
+
+<br><h4>Introduktion</h4>
+<p>Tak for at du har valgt at anskaffe dig en
+netværks-musikafspiller fra Slim Devices/Logitech.</p>
+<p>Denne opsætningsvejledning hjælper dig at indstille og komme i gang med at bruge din nye afspiller.</p>
+<p>Du kan læse mere om de nyeste funktioner på vores hjemmeside, <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>. Hvis du er udvikler kan du finde detaljerede informationer om SqueezeCenter
+på <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
+<p>SqueezeCenter-programmelet er udviklet gennem et åbent samarbejde mellem programudviklere fra hele verden. Vi takker oprigtigt bruger- og udviklerfælleskabet hvis bidrag er med til at gøre dette fantastiske produkt endnu bedre.</p>
+<p>Hvis du har brug for hjælp til at installere din afspiller kan du gå ind på vores hjemmeside eller kontakte os på <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
+<p>Vi håber du bliver tilfreds med produktet, og at du vil fortælle dine venner om Squeezeboxen og Transporteren.</p>
+
+<h4>Tilslutning af din afspiller</h4>
+
+<ol>
+<li>Din afspiller tilsluttes din stereo-forstærker, eller receiver, ved brug af et RCA kabel med røde og hvide stik. Du kan også tilslutte din afspiller til din forstærker ved at bruge et digitalt optisk kabel med firkantede forbindelser, eller et digitalt koaksial-kabel med orange forbindelse. Hvis du anvender headset eller højtalere med indebygget forstærker kan du forbinde dem til din Squeezebox via 1/8" jackstiket.
+<li>Hvis du anvender et kabel skal du tilslutte din hub, eller switch, til din afspiller med et ethernet kabel.
+<li>Indsæt to stk. AAA batterier i fjernbetjeningen.
+<li>Tilslut strømforsyningen. Du kan lade din afspiller være tændt til enhver tid. Når afspilleren ikke anvendes vil den gå i dvaletilstand og slukke for skærmen.
+</ol>
+
+<p>Bemærk: Squeezeboxen anvender en reguleret strømforsyning Anvend ALDRIG en anden strømforsyning da dette kan skade afspilleren.
+
+<h4>Konfiguration af afspilleren</h4>
+
+<p>Når du tilslutter afspilleren vil Logitech's logo vises et kort øjeblik, efterfulgt af en velkomst besked.
+
+Opsætning af netværk
+<ol>
+<li>Tryk HØJRE på fjernbetjeningen. Opsætningsmenuen for netværk vises nu.
+<li>Tryk HØJRE for at begynde opsætning af netværk.
+<li>Hvis din Squeezebox kun er udstyret med kablet forbindelse kan du springe til punkt 8. Ellers skal du vælge om du vil tilslutte din afspiller via det kablede eller det trådløse netværk. Tryk OP eller NED for at vælge. Når du har valg den ønskede forbindelsestype, tryk HØJRE.
+<li>Du bliver nu tilbudt at vælge hvilket region eller land du befinder dig i. Rul ved at trykke NED indtil du finder den ønskede region eller land. Tryk HØJRE for at vælge. Bemærk: Bevist valg af forkert region kan være i strid med lokal lovgivning.
+<li>Din afspiller vil lede efter dit trådløse netværk. Vælg dit netværksnavn (SSID) og tryk HØJRE. Hvis flere netværk bliver fundet kan du rulle ned, med fjernbetjeningen, indtil du finder det ønskede netværk. Hvis din ruter ikke rundsender (broadcast) netværksnavnet er det nødvendigt at vælge "Indtast netværksnavn".
+<p>Tip: Anvend de numeriske taster på din fjernbetjening til at indtaste tekst på samme måde som på en mobiltelefon. Brug ADD (TILFØJ) tasten på fjernbetjeningen til at gå tilbage og AFSPIL tasten til at indsætte et tegn.
+<li>Valg hvilken slags kryptering dit trådløse netværk anvender. Hvis du er i tvivl, konsulter brugsanvisningen til din trådløse ruter. Du kan vælge mellem Ingen kodeord/ingen kryptering, 64-bit WEP, WEP, 128-bit WEP, Personlig WPA eller WPA2 (AES). Rul til dit ønskede valg og tryk HØJRE.
+<li>Hvis dit netværk anvender WEP eller WPA kryptering skal du indtaste kodeord eller nøgle for netværket. Indtast kodeord eller nøgle med de numeriske taster på fjernbetjeningen og afslut med at trykke HØJRE.
+<p>Tip: WEP nøgler består af 10 eller 26 tal eller bokstaverne A til F. WPA kodeord er ord bestående af bokstaver, tal, og tegnsætnings-symboler. Din afspiller forbinder til det trådløse netværk. Hvis der opstår problemer gå til <a href="http://faq.slimdevices.com">FAQ</a> for at læse mere om problemløsning.
+<li>Vælg om din afspiller automatisk skal hente en IP adresse ved brug af DHCP, eller du selv ønsker at indtaste en statisk IP adresse. De fleste netværk giver mulighed for at automatisk tildele IP adresser. Hvis du vælger at selv indtaste en statisk IP adresse til afspilleren indtastes denne med de numeriske taster på fjernbetjeningen. Tryk HØJRE for at gemme IP adressen.
+<p>Tip: Anvend 0 forrest til at angive nummer med færre end 3 tal. For eksempel skal du indtaste 010.001.004.231 for 10.1.4.231. Indtast subnet masken, standard IP adresse for adgangpunkt, adressen til din DNS server ved at tryk HØJRE for at gå fra den ene til den anden.
+</ol>
+
+<h4>Tilslutning til SqueezeCenter</h4>
+<ol>
+<li>Hvis SqueezeCenter ikke allerede kører skal du starte det nu. Din afpiller vil automatisk lede efter computeren som kører SqueezeCenter. Hvis du startede på opsætningen inden du startede SqueezeCenter kan det være nødvendigt at rulle for at finde den.
+<li>Vælg computeren du ønsker at anvende Hvis SqueezeCenter kører på flere computere på dit lokale netværk kan du trykke NED for at rulle til den du ønsker at anvende.
+<li>Tryk HØJRE på fjernbetjeningen for at tilslutte.
+</ol>
+
+<p>Opsætningen er fuldført.
+
+<p>Tip: ønsker du på et senere tidspunkt at vende tilbage til opsætningen kan du trykke og holde VENSTRE nede 5 sekunder. Skærmen vil da vende tilbage til Opsætningsmenuen for Netværk.
+  
+[% PROCESS helpfooter.html %]
