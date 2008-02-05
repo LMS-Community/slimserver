@@ -4303,7 +4303,7 @@ sub _addJiveSong {
 			# like Pandora need this because they change the duration when the next
 			# track begins streaming
 			if ( $remoteMeta->{duration} ) {
-				$request->addResult( duration => $remoteMeta->{duration} );
+				$request->addResult( duration => $remoteMeta->{duration} + 0 );
 			}
 		}
 	} else {
@@ -4509,7 +4509,7 @@ sub _songData {
 			# like Pandora need this because they change the duration when the next
 			# track begins streaming
 			if ( $remoteMeta->{duration} ) {
-				$request->addResult( duration => $remoteMeta->{duration} );
+				$request->addResult( duration => $remoteMeta->{duration} + 0 );
 			}
 		}
 	}
