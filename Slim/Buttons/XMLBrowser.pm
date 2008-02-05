@@ -1744,6 +1744,40 @@ sub _cliQuery_done {
 			if ($valid) {
 				
 				$request->addResult( 'title', $subFeed->{'name'} || $subFeed->{'title'} );
+				# decide what is the next step down
+				# we go to xxx items from xx items :)
+				my $base; my $params = {};
+				if ($menuMode) {
+					# build the base element
+					$params = {
+						'menu' => $query,
+					};
+				
+					if ( $url ) {
+						$params->{'url'} = $url;
+					}
+				
+					$base = {
+						'actions' => {
+							'go' => {
+								'cmd' => [ $query, 'items' ],
+								'params' => $params,
+								'itemsParams' => 'params',
+							},
+							'play' => {
+								'player' => 0,
+								'cmd' => [$query, 'playlist', 'play'],
+								'itemsParams' => 'params',
+							},
+							'add' => {
+								'player' => 0,
+								'cmd' => [$query, 'playlist', 'add'],
+								'itemsParams' => 'params',
+							},
+						},
+					};
+					$request->addResult('base', $base);
+				}
 				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 					
@@ -1797,11 +1831,11 @@ sub _cliQuery_done {
 
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
-						my $params = {};
+						my $itemParams = {};
 						my $id = $hash{id};
 						
 						if ( $item->{type} ne 'text' ) {							
-							$params = {
+							$itemParams = {
 								item_id => "$id", #stringify, make sure it's a string
 							};
 						}
@@ -1820,7 +1854,7 @@ sub _cliQuery_done {
 						}
 						
 						if ( $item->{type} eq 'search' ) {
-							#$params->{search} = '__INPUT__';
+							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action
 							my $actions = {
@@ -1845,10 +1879,33 @@ sub _cliQuery_done {
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'input', $input );
+						} elsif ( $item->{type} eq 'text' || $item->{type} eq 'link' ) {
+							my %merged = %$params;
+							if ( scalar keys %{$itemParams} ) {
+								%merged = (%{$params}, %{$itemParams});
+							}
+							my $actions = {
+								'go' => {
+									'cmd' => [ $query, 'items' ],
+									'params' => \%merged,
+								},
+								'play' => {
+									'cmd' => [ $query, 'items' ],
+									'params' => \%merged,
+								},
+								'add' => {
+									'cmd' => [ $query, 'items' ],
+									'params' => \%merged,
+								},
+							};
+							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
+							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 						}
 						
-						if ( scalar keys %{$params} ) {
-							$request->addResultLoop( $loopname, $cnt, 'params', $params );
+						if ( scalar keys %{$itemParams} 
+							&&  $item->{type} ne 'text' && $item->{type} ne 'link' ) {
+							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
 						}
 					}
 					else {
@@ -1864,37 +1921,6 @@ sub _cliQuery_done {
 		
 		if ($menuMode) {
 
-			# decide what is the next step down
-			# we go to xxx items from xx items :)
-
-			# build the base element
-			my $params = {
-				'menu' => $query,
-			};
-			
-			if ( $url ) {
-				$params->{'url'} = $url;
-			}
-			
-			my $base = {
-				'actions' => {
-					'go' => {
-						'cmd' => [ $query, 'items' ],
-						'params' => $params,
-						'itemsParams' => 'params',
-					},
-					'play' => {
-						'player' => 0,
-						'cmd' => [$query, 'playlist', 'play'],
-						'itemsParams' => 'params',
-					},
-					'add' => {
-						'player' => 0,
-						'cmd' => [$query, 'playlist', 'add'],
-						'itemsParams' => 'params',
-					},
-				},
-			};
 
 			# Change window menuStyle to album if any images are in the list
 			if ( $hasImage ) {
@@ -1905,7 +1931,6 @@ sub _cliQuery_done {
 			if ($window) {
 				$request->addResult('window', $window );
 			}
-			$request->addResult('base', $base);
 		}
 	}
 	
