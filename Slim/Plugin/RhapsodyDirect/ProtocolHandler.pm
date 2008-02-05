@@ -673,6 +673,7 @@ sub gotTrackMetadata {
 		album     => $track->{displayAlbumName},
 		title     => $track->{name},
 		cover     => $track->{albumMetadata}->{albumArt162x162Url},
+		duration  => $track->{playbackSeconds},
 		bitrate   => '128k CBR',
 		type      => 'WMA (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',

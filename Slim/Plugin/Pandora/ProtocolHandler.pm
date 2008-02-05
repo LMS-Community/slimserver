@@ -332,6 +332,11 @@ sub parseDirectHeaders {
 		}
 	}
 	
+	# Bug 6943, Add duration to currentTrack
+	my $track = $client->pluginData('currentTrack');
+	$track->{duration} = int( ( $length * 8 ) / $bitrate );
+	$client->pluginData( currentTrack => $track );
+	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, $length, undef);
 }
@@ -584,6 +589,7 @@ sub getMetadataFor {
 			cover       => $track->{albumArtUrl} || $defaultArtURL,
 			icon        => $icon,
 			replay_gain => $track->{trackGain},
+			duration    => $track->{duration},
 			bitrate     => '128k CBR',
 			type        => 'MP3 (Pandora)',
 			info_link   => 'plugins/pandora/trackinfo.html',

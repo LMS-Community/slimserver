@@ -708,6 +708,7 @@ sub getMetadataFor {
 			artist      => $track->{artist},
 			album       => $track->{album},
 			title       => $track->{title},
+			duration    => $track->{tlen},
 			# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
 			cover       => 'http://images.slacker.com/covers/272/' . $track->{albumid},
 			icon        => $icon,
