@@ -395,56 +395,62 @@ sub getMetadataFor {
 	}
 	
 	if ( $url =~ /mp3tunes\.com/ ) {
-		my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
-		my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
-		if ( $meta ) {
-			# Metadata for currently playing song
-			return {
-				artist   => $meta->{artist},
-				album    => $meta->{album},
-				tracknum => $meta->{tracknum},
-				title    => $meta->{title},
-				cover    => $meta->{cover} || $icon,
-				icon     => $icon,
-				type     => 'MP3tunes',
-			};
-		}
-		else {
-			# Metadata for items in the playlist that have not yet been played
-			
-			# We can still get cover art for items not yet played
-			my $cover;
-			if ( $url =~ /hasArt=1/ ) {
-				my ($id)  = $url =~ m/([0-9a-f]+\?sid=[0-9a-f]+)/;
-				$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MP3tunes::Plugin') ) {
+			my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
+			my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
+			if ( $meta ) {
+				# Metadata for currently playing song
+				return {
+					artist   => $meta->{artist},
+					album    => $meta->{album},
+					tracknum => $meta->{tracknum},
+					title    => $meta->{title},
+					cover    => $meta->{cover} || $icon,
+					icon     => $icon,
+					type     => 'MP3tunes',
+				};
 			}
+			else {
+				# Metadata for items in the playlist that have not yet been played
 			
-			return {
-				cover    => $cover || $icon,
-				icon     => $icon,
-				type     => 'MP3tunes',
-			};
+				# We can still get cover art for items not yet played
+				my $cover;
+				if ( $url =~ /hasArt=1/ ) {
+					my ($id)  = $url =~ m/([0-9a-f]+\?sid=[0-9a-f]+)/;
+					$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
+				}
+			
+				return {
+					cover    => $cover || $icon,
+					icon     => $icon,
+					type     => 'MP3tunes',
+				};
+			}
 		}
 	}
 	elsif ( $url =~ /archive\.org/ ) {
-		my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
-		return {
-			title    => $title,
-			cover    => $icon,
-			icon     => $icon,
-			type     => 'Live Music Archive',
-		};
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
+			my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
+			return {
+				title    => $title,
+				cover    => $icon,
+				icon     => $icon,
+				type     => 'Live Music Archive',
+			};
+		}
 	}
 	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ) {
-		# RadioIO
-		my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
-		return {
-			artist   => $artist,
-			title    => $title,
-			cover    => $icon,
-			icon     => $icon,
-			type     => 'MP3 (RadioIO)',
-		};
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RadioIO::Plugin') ) {
+			# RadioIO
+			my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
+			return {
+				artist   => $artist,
+				title    => $title,
+				cover    => $icon,
+				icon     => $icon,
+				type     => 'MP3 (RadioIO)',
+			};
+		}
 	}
 	else {
 		return {
