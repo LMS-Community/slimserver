@@ -1306,8 +1306,12 @@ sub _cliQuery_done {
 				push @crumbIndex, $i;
 			}
 			
-			# Change URL if there is a play attribute
-			if ( $isPlaylistCmd && $subFeed->{play} ) {
+			# Change URL if there is a play attribute and it's the last item
+			if ( 
+			       $subFeed->{play}
+				&& $depth == $levels 
+				&& $isPlaylistCmd
+			) {
 				$subFeed->{url}  = $subFeed->{play};
 				$subFeed->{type} = 'audio';
 			}
@@ -1831,6 +1835,13 @@ sub _cliQuery_done {
 
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
+						my $isPlayable = (
+							   $item->{play} 
+							|| $item->{playlist} 
+							|| $item->{type} eq 'audio'
+							|| $item->{type} eq 'playlist'
+						);
+						
 						my $itemParams = {};
 						my $id = $hash{id};
 						
@@ -1879,7 +1890,8 @@ sub _cliQuery_done {
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'input', $input );
-						} elsif ( $item->{type} eq 'text' || $item->{type} eq 'link' ) {
+						}
+						elsif ( !$isPlayable ) {
 							my %merged = %$params;
 							if ( scalar keys %{$itemParams} ) {
 								%merged = (%{$params}, %{$itemParams});
@@ -1903,8 +1915,7 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
 						}
 						
-						if ( scalar keys %{$itemParams} 
-							&&  $item->{type} ne 'text' && $item->{type} ne 'link' ) {
+						if ( scalar keys %{$itemParams} && $isPlayable ) {
 							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
 						}
 					}
