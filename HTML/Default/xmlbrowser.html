@@ -134,6 +134,7 @@ END %]
 		[%- FOREACH item = items %]
 			[% IF item.type == 'search';
 				WRAPPER contentitem controls = xmlSearchControls;
+					itemobj.id = loop.count;
 					item.name || item.title %]
 					<span class="browsedbControls">
 						<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
