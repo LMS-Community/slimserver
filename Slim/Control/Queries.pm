@@ -2899,7 +2899,6 @@ sub statusQuery {
 	
 	my $playlist_cur_index;
 	# this will be true for http class players
-	if ($power) {
 	
 		$request->addResult('mode', Slim::Player::Source::playmode($client));
 
@@ -2986,7 +2985,6 @@ sub statusQuery {
 		}
 
 		$request->addResult("playlist_tracks", $songCount);
-	}
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
@@ -2994,7 +2992,7 @@ sub statusQuery {
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
-		$request->addResult("count", $power?$menuCount:0);
+		$request->addResult("count", $menuCount);
 		
 		my $base = {
 			'actions' => {
@@ -3016,7 +3014,7 @@ sub statusQuery {
 		$request->addResult('base', $base);
 	}
 	
-	if ($songCount > 0 && $power) {
+	if ($songCount > 0) {
 	
 		$log->debug("statusQuery(): setup non-zero player response");
 		# get the other parameters
