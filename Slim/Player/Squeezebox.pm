@@ -223,6 +223,13 @@ sub startAt {
 	return 1;
 }
 
+sub _unpauseAfterInterval {
+	my $client = shift;
+	$client->stream('u');
+	$client->playPoint(undef);
+	return 1;
+}
+
 #
 # pause
 #
@@ -234,30 +241,6 @@ sub pause {
 	$client->stream('p');
 	$client->playPoint(undef);
 	$client->SUPER::pause();
-	return 1;
-}
-
-sub pauseForInterval {
-	my $client   = shift;
-	my $interval = shift;
-
-	# TODO - show resyncing message briefly
-	# TODO - adjust interval for SB1 internal decode buffer
-	
-	$client->playPoint(undef);
-	$client->stream('p');
-	Slim::Utils::Timers::setHighTimer(
-				$client,
-				Time::HiRes::time() + $interval - 0.005,
-				\&_unpauseAfterInterval
-			);
-	return 1;
-}
-
-sub _unpauseAfterInterval {
-	my $client = shift;
-	$client->stream('u');
-	$client->playPoint(undef);
 	return 1;
 }
 
