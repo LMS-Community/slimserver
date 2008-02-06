@@ -391,6 +391,10 @@ sub playmode {
 		$client->bytesReceivedOffset(0);
 	}
 	
+	# bug 6971
+	# set the player power item on Jive to whatever our power setting now is
+	Slim::Control::Jive::playerPower($client);
+
 	# when we change modes, make sure we do it to all the synced clients.
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 
