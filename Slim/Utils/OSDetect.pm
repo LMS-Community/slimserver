@@ -554,6 +554,7 @@ sub initDetailsForLinux {
 	if (isDebian()) {
 
 		unshift @INC, '/usr/share/squeezecenter';
+		unshift @INC, '/usr/share/squeezecenter/CPAN';
 	}
 }
 
