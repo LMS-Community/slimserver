@@ -576,18 +576,12 @@ sub handler {
 		}
 	}
 	
-	if ( @errors ) {
-		my $out = [];
-		
+	if ( @errors ) {		
 		for my $error ( @errors ) {
 			$error->{successful} = JSON::XS::false;
 						
-			push @{$out}, $error;
+			push @{$events}, $error;
 		}
-		
-		sendResponse( $conn, $out );
-		
-		return;
 	}
 	
 	sendResponse( $conn, $events );
@@ -682,6 +676,7 @@ sub handleRequest {
 	
 	my $type     = $params->{type};
 	
+	my $mac  = $cmd->[0];
 	my $args = $cmd->[1];
 
 	if ( $type eq 'subscribe' ) {
@@ -700,6 +695,12 @@ sub handleRequest {
 		
 			my $callback = sub {
 				my $request = shift;
+				
+				if ( $mac && $request->client ) {
+					# Make sure this notification is for the right client
+					
+					return unless $mac eq $request->client->id;
+				}
 			
 				$request->source( "$response|$id|$priority" );
 			
