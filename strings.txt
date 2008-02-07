@@ -7387,19 +7387,6 @@ SETUP_SN_REPORT_STATS_DISABLE
 	IT	No, non autorizzo la raccolta dei dati a fini statistici.
 	NL	Nee, statistieken niet rapporteren.
 
-SETUP_SN_BETA
-	DA	SqueezeNetwork Beta testing
-	EN	SqueezeNetwork Beta Testing
-
-SETUP_SN_BETA_DESC
-	EN	Switches SqueezeCenter between communicating with the Production and Beta SqueezeNetwork servers.  The two are completely separate, you may need to create an account in each one the first time you use it.  Switching to Beta here will also alter the menus on Squeezebox Classic and Transporter so that they use the Beta servers when you use "Connect to SqueezeNetwork Beta".  SqueezeCenter must be restarted for this option to take effect.
-
-SETUP_SN_BETA_ENABLE
-	EN	Use SN Beta (www.beta.squeezenetwork.com)
-
-SETUP_SN_BETA_DISABLE
-	EN	Use SN Prod (www.squeezenetwork.com)
-
 SETUP_NO_JAVASCRIPT
 	DA	For at få adgang til SqueezeCenter skal du anvende en nyere browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere), og have JavaScript aktiveret i din browser. Du kan alternativt anvende et simplere tema så som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimeret for små skærme)
 	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> oder <a href="/Handheld/?skipWizard=1">Handheld</a> (für kleine Bildschirme optimiert) wählen.

@@ -27,29 +27,21 @@ my $prefs = preferences('server');
 # This is a hashref of SqueezeNetwork server types
 #   and names.
 
-my $_Servers;
+my $_Servers = {
+	sn => 'www.beta.squeezenetwork.com',
+	content => 'content.beta.squeezenetwork.com',
+	# XXX we haven't moved updates yet:
+	update => 'update.slimdevices.com',
+};
+# XXX above are beta names, when we go to production
+#  they should be: 
+#  sn => 'www.squeezenetwork.com',
+#  content => 'content.squeezenetwork.com',
+#  update => 'update.squeezenetwork.com',
+# (if update didn't actually move to SN (likely), CNAME it to update.slimdevices.com)
 
 sub get_server {
 	my ($class, $stype) = @_;
-
-	# One-shot initialization
-	if(!defined $_Servers) {
-		$_Servers = $prefs->get('sn_beta')
-		? {
-			sn => 'www.beta.squeezenetwork.com',
-			content => 'content.beta.squeezenetwork.com',
-			# XXX we haven't moved updates yet:
-			update => 'update.slimdevices.com',
-		}
-		: {
-			# These values are true for the moment, but should
-			#  change when the new prod racks roll out, and/or
-			#  when the sn_beta code goes prod on the existing racks
-			sn => 'www.squeezenetwork.com:3000',
-			content => 'content.us.squeezenetwork.com:8080',
-			update => 'update.slimdevices.com',
-		};
-	}
 
 	return $_Servers->{$stype}
 		|| die "No hostname known for server type '$stype'";
