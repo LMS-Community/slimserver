@@ -116,17 +116,20 @@ sub connectSqueezeNetwork {
 	return unless ($client->modeParam('squeezenetwork.connect'));
 
 	if (clientIsCapable($client)) {
-		# XXX after f/w change, pack either 1 or 2, depending on
-		# $prefs->get('sn_beta');
-		# my $host = pack('N',1);  # 1 is squeezenetwork
 		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
 
-		# XXX This is a complicated consequence of the existing beta env,
-		# will go away when that beta does...
-		if($host eq "www.squeezenetwork.com:3000") {
-			$host = '207.7.156.11';
-		}
-
+                # XXX When we go to production or when "serv 2" is in
+		# all the firmwares, this should be:
+		# 	if($host eq "www.squeezenetwork.com") {
+		# 		my $host = pack('N',1);  # 1 is squeezenetwork
+                # 	}
+                # 	elsif($host eq "www.beta.squeezenetwork.com") {
+		# 		my $host = pack('N',2);  # 2 is squeezenetwork beta
+                # 	}
+                # 	else {
+		# 		$host = scalar gethostbyname($host);
+                # 	}
+                # instead of this one line here:
 		$host = scalar gethostbyname($host);
 		
 		$client->execute([ 'stop' ]);

@@ -30,7 +30,7 @@ sub page {
 sub prefs {
 	# NOTE: if you add a pref here, check that the wizard also submits it
 	# in HTML/EN/html/wizard.js
-	my @prefs = qw(sn_email sn_password_sha sn_sync sn_disable_stats sn_beta);
+	my @prefs = qw(sn_email sn_password_sha sn_sync sn_disable_stats);
 
 	return ($prefs, @prefs);
 }

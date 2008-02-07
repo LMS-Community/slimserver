@@ -242,8 +242,6 @@ sub init {
 		'thumbSize'             => 100,
 		# Server Settings - SqueezeNetwork
 		'sn_sync'               => 1,
-		# Use SN Beta servers
-		'sn_beta'               => 0,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
