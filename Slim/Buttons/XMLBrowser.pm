@@ -1374,13 +1374,9 @@ sub _cliQuery_done {
 			}
 
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
-			# This is a leaf item, so show as much info as we have and go packing after that.
-			
-			
+			# This is a leaf item, so show as much info as we have and go packing after that.		
 			if (	$isItemQuery &&
 					(
-						!defined($subFeed->{'items'}) ||
-						scalar(@{$subFeed->{'items'}}) == 0 ||
 						$subFeed->{'type'} eq 'audio' || 
 						$subFeed->{'enclosure'} 
 					)
@@ -1401,7 +1397,7 @@ sub _cliQuery_done {
 							# we play/add the current track id
 							'play' => {
 								'player' => 0,
-								'cmd' => [$query, 'playlist', 'load'],
+								'cmd' => [$query, 'playlist', 'play'],
 								'params' => {
 									'item_id' => $item_id,
 								},
@@ -1472,7 +1468,7 @@ sub _cliQuery_done {
 							'play' => {
 								'string'  => $play_string,
 								'style'   => 'itemplay',
-								'cmd'     => 'load',
+								'cmd'     => 'play',
 							},
 							'add' => {
 								'string'  => $add_string,
@@ -1516,6 +1512,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('TITLE') . ": $title";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1523,6 +1520,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('URL') . ": $url";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1530,6 +1528,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('BITRATE') . ": $bitrate " . $request->client->string('KBPS');
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1538,6 +1537,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('LENGTH') . ": $duration";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1546,6 +1546,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('NUMBER_OF_LISTENERS') . ": $listeners";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1554,6 +1555,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('NOW_PLAYING') . ": $current_track";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1562,6 +1564,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('GENRE') . ": $genre";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1570,6 +1573,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('SOURCE') . ": $source";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
@@ -1713,6 +1717,15 @@ sub _cliQuery_done {
 	elsif ($isItemQuery) {
 
 		$log->info("Get items.");
+		
+		# Bug 7024, display an "Empty" item instead of returning an empty list
+		if ( !defined( $subFeed->{items} ) || !scalar @{ $subFeed->{items} } ) {
+			$subFeed->{items} ||= [];
+			push @{ $subFeed->{items} }, {
+				type => 'text',
+				name => $request->client ? $request->client->string('EMPTY') : Slim::Utils::Strings::string('EMPTY'),
+			};
+		}
 	
 		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
 		
@@ -1837,6 +1850,7 @@ sub _cliQuery_done {
 						
 						if ( $item->{image} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
+							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}
 
@@ -1846,6 +1860,7 @@ sub _cliQuery_done {
 
 						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 						}
 						
 						if ( $item->{type} eq 'search' ) {
