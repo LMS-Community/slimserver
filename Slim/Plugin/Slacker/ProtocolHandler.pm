@@ -699,7 +699,6 @@ sub getMetadataFor {
 
 	if ( $track ) {
 		# Fav icon changes if the user has already rated it up
-		# XXX: Need icons
 		my $fav_icon = $track->{trate} ? 'html/images/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav.gif';
 		my $fav_tip  = $track->{trate} ? 'PLUGIN_SLACKER_UNMARK_FAVORITE' : 'PLUGIN_SLACKER_FAVORITE_TRACK';
 		my $fav_cmd  = $track->{trate} ? 'U' : 'F';
