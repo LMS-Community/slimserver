@@ -93,7 +93,8 @@ sub refreshTrack {
 	
 	my $i = 0;
 	for my $item ( @{ playList($client) } ) {
-		if ( $item->url eq $url ) {
+		my $itemUrl = blessed($item) ? $item->url : $item;
+		if ( $itemUrl eq $url ) {
 			playList($client)->[$i] = $track;
 		}
 		$i++;
