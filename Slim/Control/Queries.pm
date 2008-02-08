@@ -4301,7 +4301,6 @@ sub _addJiveSong {
 			# like Pandora need this because they change the duration when the next
 			# track begins streaming
 			if ( $current && $remoteMeta->{duration} ) {
-				warn "Adding duration for $url - " . $remoteMeta->{duration} . "\n";
 				$request->addResult( duration => $remoteMeta->{duration} + 0 );
 			}
 		}
