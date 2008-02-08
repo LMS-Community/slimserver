@@ -1850,6 +1850,7 @@ sub _cliQuery_done {
 						
 						if ( $item->{image} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
+							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}
 
