@@ -1374,13 +1374,9 @@ sub _cliQuery_done {
 			}
 
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
-			# This is a leaf item, so show as much info as we have and go packing after that.
-			
-			
+			# This is a leaf item, so show as much info as we have and go packing after that.		
 			if (	$isItemQuery &&
 					(
-						!defined($subFeed->{'items'}) ||
-						scalar(@{$subFeed->{'items'}}) == 0 ||
 						$subFeed->{'type'} eq 'audio' || 
 						$subFeed->{'enclosure'} 
 					)
@@ -1721,6 +1717,15 @@ sub _cliQuery_done {
 	elsif ($isItemQuery) {
 
 		$log->info("Get items.");
+		
+		# Bug 7024, display an "Empty" item instead of returning an empty list
+		if ( !defined( $subFeed->{items} ) || !scalar @{ $subFeed->{items} } ) {
+			$subFeed->{items} ||= [];
+			push @{ $subFeed->{items} }, {
+				type => 'text',
+				name => $request->client ? $request->client->string('EMPTY') : Slim::Utils::Strings::string('EMPTY'),
+			};
+		}
 	
 		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
 		
