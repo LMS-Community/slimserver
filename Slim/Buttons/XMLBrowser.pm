@@ -1719,7 +1719,7 @@ sub _cliQuery_done {
 		$log->info("Get items.");
 		
 		# Bug 7024, display an "Empty" item instead of returning an empty list
-		if ( !defined( $subFeed->{items} ) || !scalar @{ $subFeed->{items} } ) {
+		if ( $menuMode && ( !defined( $subFeed->{items} ) || !scalar @{ $subFeed->{items} } ) ) {
 			$subFeed->{items} ||= [];
 			push @{ $subFeed->{items} }, {
 				type => 'text',
