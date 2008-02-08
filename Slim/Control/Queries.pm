@@ -4293,14 +4293,15 @@ sub _addJiveSong {
 			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
 			
 			# if we have a plugin-defined title, remove the current_title value
-			if ( $remoteMeta->{title} ) {
+			if ( $current && $remoteMeta->{title} ) {
 				$request->addResult( 'current_title' => undef );
 			}
 			
 			# Bug 6943, let plugins override the duration value, radio-type plugins
 			# like Pandora need this because they change the duration when the next
 			# track begins streaming
-			if ( $remoteMeta->{duration} ) {
+			if ( $current && $remoteMeta->{duration} ) {
+				warn "Adding duration for $url - " . $remoteMeta->{duration} . "\n";
 				$request->addResult( duration => $remoteMeta->{duration} + 0 );
 			}
 		}
