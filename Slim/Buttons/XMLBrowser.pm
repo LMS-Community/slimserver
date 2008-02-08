@@ -1397,7 +1397,7 @@ sub _cliQuery_done {
 							# we play/add the current track id
 							'play' => {
 								'player' => 0,
-								'cmd' => [$query, 'playlist', 'load'],
+								'cmd' => [$query, 'playlist', 'play'],
 								'params' => {
 									'item_id' => $item_id,
 								},
@@ -1468,7 +1468,7 @@ sub _cliQuery_done {
 							'play' => {
 								'string'  => $play_string,
 								'style'   => 'itemplay',
-								'cmd'     => 'load',
+								'cmd'     => 'play',
 							},
 							'add' => {
 								'string'  => $add_string,
