@@ -1516,6 +1516,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('TITLE') . ": $title";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1523,6 +1524,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('URL') . ": $url";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1530,6 +1532,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('BITRATE') . ": $bitrate " . $request->client->string('KBPS');
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1538,6 +1541,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('LENGTH') . ": $duration";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1546,6 +1550,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('NUMBER_OF_LISTENERS') . ": $listeners";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1554,6 +1559,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('NOW_PLAYING') . ": $current_track";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1562,6 +1568,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('GENRE') . ": $genre";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						
@@ -1570,6 +1577,7 @@ sub _cliQuery_done {
 							my $text = $request->client->string('SOURCE') . ": $source";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 							$cnt++;
 						}
 						if ( my ($url, $title) = ($hash{url}, $hash{name}) ) {
@@ -1846,6 +1854,7 @@ sub _cliQuery_done {
 
 						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 						}
 						
 						if ( $item->{type} eq 'search' ) {
