@@ -1713,22 +1713,6 @@ sub _cliQuery_done {
 	elsif ($isItemQuery) {
 
 		$log->info("Get items.");
-
-	
-		# allow searching in the name field
-		if ($search && @{$subFeed->{'items'}}) {
-			my @found = ();
-			my $i = 0;
-			for my $item ( @{$subFeed->{'items'}} ) {
-				if ($item->{'name'} =~ /$search/i || $item->{'title'} =~ /$search/i) {
-					$item->{'_slim_id'} = $i;
-					push @found, $item;
-				}
-				$i++;
-			}
-			
-			$subFeed->{'items'} = \@found;
-		}
 	
 		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
 		
