@@ -421,8 +421,14 @@ sub albumsQuery {
 
 		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
 	}
-	
-	$request->addResult('count', $totalCount);
+
+	if ($totalCount == 0 && $menuMode) {
+		# this is an empty resultset
+		_jiveNoResults($request);
+	} else {
+		$request->addResult('count', $totalCount);
+	}
+
 
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
@@ -665,7 +671,12 @@ sub artistsQuery {
 		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
 
-	$request->addResult('count', $totalCount);
+	if ($totalCount == 0 && $menuMode) {
+		# this is an empty resultset
+		_jiveNoResults($request);
+	} else {
+		$request->addResult('count', $totalCount);
+	}
 
 	$request->setStatusDone();
 }
@@ -1181,7 +1192,11 @@ sub genresQuery {
 		}
 	}
 
-	$request->addResult('count', $totalCount);
+	if ($totalCount == 0 && $menuMode) {
+		_jiveNoResults($request);
+	} else {
+		$request->addResult('count', $totalCount);
+	}
 
 	$request->setStatusDone();
 }
@@ -1584,7 +1599,11 @@ sub musicfolderQuery {
 		}
 	}
 
-	$request->addResult('count', $totalCount);
+	if ($totalCount == 0 && $menuMode) {
+		_jiveNoResults($request);
+	} else {
+		$request->addResult('count', $totalCount);
+	}
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
@@ -2017,7 +2036,7 @@ sub playlistsQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $search	 = $request->getParam('search');
+	my $search   = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
@@ -2114,8 +2133,7 @@ sub playlistsQuery {
 					};
 
 					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				}
-				else {
+				} else {
 					$request->addResultLoop($loopname, $chunkCount, "id", $id);
 					$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
 					$request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url) if ($tags =~ /u/);
@@ -2123,12 +2141,15 @@ sub playlistsQuery {
 				$chunkCount++;
 			}
 		}
-		$request->addResult("count", $totalCount);
-	}
-	else {
+		if ($totalCount == 0 && $menuMode) {
+			_jiveNoResults($request);
+		} else {
+			$request->addResult("count", $totalCount);
+		}
+	} else {
 		$request->addResult("count", 0);
-	} 
-	
+	}
+
 	$request->setStatusDone();
 }
 
@@ -3913,7 +3934,14 @@ sub titlesQuery {
 		}
 		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
-	$request->addResult("count", $totalCount);
+
+	if ($totalCount == 0 && $menuMode) {
+		# this is an empty resultset
+		_jiveNoResults($request);
+	} else {
+		$request->addResult('count', $totalCount);
+	}
+
 
 	$request->setStatusDone();
 }
@@ -4063,7 +4091,11 @@ sub yearsQuery {
 		}
 	}
 
-	$request->addResult('count', $totalCount);
+	if ($totalCount == 0 && $menuMode) {
+		_jiveNoResults($request);
+	} else {
+		$request->addResult('count', $totalCount);
+	}
 
 	$request->setStatusDone();
 }
@@ -4389,6 +4421,23 @@ sub _addJiveSong {
 		'track_id' => $id, 
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
+}
+
+
+sub _jiveNoResults {
+	my $request = shift;
+	my $search = $request->getParam('search');
+	$request->addResult('count', '1');
+	$request->addResult('offset', 0);
+
+	if (defined($search)) {
+		$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('NO_SEARCH_RESULTS'));
+	} else {
+		$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('EMPTY'));
+	}
+
+	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
+	$request->addResultLoop('item_loop', 0, 'action', 'none');
 }
 
 sub _jiveAddToFavorites {
