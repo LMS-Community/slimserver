@@ -39,6 +39,11 @@ sub init {
 		[ 'trackinfo', 'items', '_index', '_quantity' ],
 		[ 1, 1, 1, \&cliQuery ]
 	);
+	
+	Slim::Control::Request::addDispatch(
+		[ 'trackinfo', 'playlist', '_method' ],
+		[ 1, 1, 1, \&cliQuery ]
+	);
 
 	%functions = (
 

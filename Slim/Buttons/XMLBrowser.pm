@@ -1769,11 +1769,13 @@ sub _cliQuery_done {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'play'],
 								'itemsParams' => 'params',
+								'params' => $params,
 							},
 							'add' => {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'add'],
 								'itemsParams' => 'params',
+								'params' => $params,
 							},
 						},
 					};
