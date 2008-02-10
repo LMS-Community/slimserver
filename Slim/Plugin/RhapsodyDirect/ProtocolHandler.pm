@@ -282,7 +282,7 @@ sub gotAccount {
 		$client->pluginData( account => $account );
 		
 		if ( $log->is_debug ) {
-			$log->debug("Got Rhapsody account info from SN: " . Data::Dump::dump($account) );
+			$log->debug("Got Rhapsody account info from SN");
 		}
 		
 		$params->{cb}->();
