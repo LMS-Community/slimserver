@@ -155,7 +155,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
 	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
-	FR	L'extra des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous Extras sur la page d'accueil du serveur.
+	FR	Le plugin des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous Extras sur la page d'accueil du serveur.
 	IT	Il plugin dei preferiti consente anche di sfogliare gli elenchi di riproduzione in formato OPML e di modificare gli elenchi di riproduzione OPML memorizzati nel server. Selezionare l'opzione sottostante per aggiungere questa modalità negli Extra nella home page del server.
 	NL	Met behulp van de extra Favorieten kun je opml-playlists die op je server zijn opgeslagen, doorkijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het serverhoofdmenu.
 
