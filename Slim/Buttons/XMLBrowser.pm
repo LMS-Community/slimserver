@@ -360,7 +360,7 @@ sub gotOPML {
 	}
 
 	# Push staight into remotetrackinfo if asked to replace item or a playlist of one was returned
-	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} =~ /^(replace|playlist)$/ && scalar @{ $opml->{'items'} || [] } == 1) {
+	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} eq 'replace' && scalar @{ $opml->{'items'} || [] } == 1) {
 		my $item  = $opml->{'items'}[0];
 		my $title = $item->{'name'} || $item->{'title'};
 		my $url   = $item->{'url'};
@@ -1856,10 +1856,6 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 
-						if ( $item->{type} eq 'audio' && !$hasImage ) {
-							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay' );
-						}	
-
 						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1972,7 +1968,7 @@ sub _cliQuerySubFeed_done {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
-	if ($subFeed->{'type'} && $subFeed->{'type'} =~ /^(replace|playlist)$/ && scalar @{ $feed->{'items'} } == 1) {
+	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'replace' && scalar @{ $feed->{'items'} } == 1) {
 		# in the case of a replacable menu or playlist of one update previous entry to avoid new menu level
 		my $item = $feed->{'items'}[0];
 		if ($subFeed->{'type'} eq 'replace') {
