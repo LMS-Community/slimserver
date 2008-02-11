@@ -1831,6 +1831,11 @@ sub _cliQuery_done {
 							$request->addResult('count', 0);
 							$textArea++;
 						}
+						
+						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
+						if ( $item->{autoplays} ) {
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+						}
 
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
