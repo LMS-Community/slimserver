@@ -490,7 +490,7 @@ sub handleSubFeed {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
-	if ($subFeed->{'type'} && $subFeed->{'type'} =~ /^(replace|playlist)$/ && scalar @{ $feed->{'items'} } == 1) {
+	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'replace' && scalar @{ $feed->{'items'} } == 1) {
 		# in the case of a replace entry or playlist of one update previous entry to avoid adding a new menu level
 		my $item = $feed->{'items'}[0];
 		if ($subFeed->{'type'} eq 'replace') {
