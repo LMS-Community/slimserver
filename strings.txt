@@ -14436,37 +14436,13 @@ SETUP_WORDCLOCKOUTPUT
 	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
-	DA	Ved anvendelse af de digitale udgange kan Transporteren videregive signalet eller generere et ord klokke signal på S/PDIF udgangene.
-	DE	Wenn die digitalen Eingänge verwendet werden, kann Transporter das Signal direkt durchschleifen oder an den S/PDIF-Ausgängen ein Word Clock-Signal erzeugen.
-	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
-	ES	Cuando se usan las entradas digitales, Transporter puede dejar pasar la señal a través o generar una señal de reloj de palabras en las salidas S/PDIF.
-	FR	Lorsqu'il utilise les entrées numériques, Transporter peut transférer le signal ou générer un signal word clock sur les sorties S/PDIF.
-	HE	בעת שימוש בקלט דיגיטלי, Transporter יכול להעביר את האות או להפיק אות של שעון טקסט ברכיבי הפלט מסוג S/PDIF.
-	IT	Quando si utilizzano gli ingressi digitali, Transporter può far passare il segnale o generare un segnale wordclock nelle uscite S/PDIF.
-	NL	Bij gebruik van de digitale ingangen kan de Transporter het signaal doorlaten of een Word-kloksignaal op de S/PDIF-uitgangen genereren.
-	ZH_CN	当使用数码输入时，Transporter可将信息进行直通或在S/PDIF输出产生字形时钟信息。
+	EN	When using the digital inputs, Transporter can be the clock master, and transmit a word clock signal on its S/PDIF outputs. This feature must only be enabled if the source device provideds a word clock input and the cable is connected.
 
-WORDCLOCKOUTPUT_GENERATECLOCK
-	DA	Generer ord klokke
-	DE	Word Clock erzeugen
-	EN	Generate word clock
-	ES	Generar reloj de palabras
-	FR	Générer word clock
-	HE	הפקת שעון טקסט
-	IT	Genera wordclock
-	NL	Word-klok genereren
-	ZH_CN	产生字形时钟
+WORDCLOCKOUTPUT_DISABLED
+	EN	Word clock output is disabled (Source is master)
 
-WORDCLOCKOUTPUT_PASSTHROUGH
-	DA	Digital gennemgang
-	DE	Digitales Durchschleifsignal
-	EN	Digital passthrough
-	ES	Paso a través digital
-	FR	Liaison numérique
-	HE	מעבר דיגיטלי
-	IT	Passthrough digitale
-	NL	Digitaal doorlaten
-	ZH_CN	数码直通
+WORDCLOCKOUTPUT_ENABLED
+	EN	Word clock output is enabled (Transporter is master)
 
 SETUP_POWEROFFDAC
 	DA	Sluk lyd
