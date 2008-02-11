@@ -197,6 +197,7 @@ sub mainMenu {
 					titleStyle => 'internetradio',
 			},
 		},
+
 		{
 			text           => Slim::Utils::Strings::string('MUSIC_SERVICES'),
 			id             => 'ondemand',
@@ -893,7 +894,7 @@ sub alarmOnHash {
 				player => 0,
 				cmd    => ['alarm'],
 				params => { 
-					cmd     => 'set',
+					cmd     => 'update',
 					dow     => $day,
 					enabled => 1,
 				},
@@ -902,7 +903,7 @@ sub alarmOnHash {
 				player => 0,
 				cmd    => ['alarm'],
 				params => { 
-					cmd     => 'set',
+					cmd     => 'update',
 					dow     => $day,
 					enabled => 0,
 				},
@@ -931,7 +932,7 @@ sub alarmSetHash {
 				player => 0,
 				cmd    => ['alarm'],
 				params => {
-					cmd => 'set',
+					cmd => 'update',
 					dow =>	$day,
 					time => '__TAGGEDINPUT__',	
 				},
@@ -947,12 +948,15 @@ sub alarmPlaylistHash {
 	my @allPlaylists = (
 		{
 			text    => Slim::Utils::Strings::string("CURRENT_PLAYLIST"),
-			radio	=> ($alarm_playlist == -1) + 0, # 0 is added to force the data type to number
+			radio	=> ($alarm_playlist ne '' && 
+				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -1) + 0, # 0 is added to force the data type to number
+			
 			actions => {
 				do => {
 					player => 0,
-					cmd    => ['alarms'],
+					cmd    => ['alarm'],
 					params => {
+						cmd         => 'update',
 						playlist_id => '-1',
 						dow         => $day,
 					},
@@ -961,12 +965,15 @@ sub alarmPlaylistHash {
 		},
 		{
 			text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_TRACK"),
-			radio	=> ($alarm_playlist == -2) + 0, # 0 is added to force the data type to number
+			radio	=> ($alarm_playlist ne '' && 
+				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -2) + 0, # 0 is added to force the data type to number
+			
 			actions => {
 				do => {
 					player => 0,
-					cmd    => ['alarms'],
+					cmd    => ['alarm'],
 					params => {
+						cmd         => 'update',
 						playlist_id => '-2',
 						dow         => $day,
 					},
@@ -975,12 +982,15 @@ sub alarmPlaylistHash {
 		},
 		{
 			text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_ALBUM"),
-			radio	=> ($alarm_playlist == -3) + 0, # 0 is added to force the data type to number
+			radio	=> ($alarm_playlist ne '' && 
+				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -3) + 0, # 0 is added to force the data type to number
+			
 			actions => {
 				do => {
 					player => 0,
-					cmd    => ['alarms'],
+					cmd    => ['alarm'],
 					params => {
+						cmd         => 'update',
 						playlist_id => '-3',
 						dow         => $day,
 					},
@@ -989,12 +999,15 @@ sub alarmPlaylistHash {
 		},
 		{
 			text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_CONTRIBUTOR"),
-			radio	=> ($alarm_playlist == -4) + 0, # 0 is added to force the data type to number
+			radio	=> ($alarm_playlist ne '' && 
+				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -4) + 0, # 0 is added to force the data type to number
+			
 			actions => {
 				do => {
 					player => 0,
-					cmd    => ['alarms'],
+					cmd    => ['alarm'],
 					params => {
+						cmd         => 'update',
 						playlist_id => '-4',
 						dow         => $day,
 					},
@@ -1003,12 +1016,12 @@ sub alarmPlaylistHash {
 		},
 	);
 	## here we need to figure out how to populate the remaining playlist items from saved playlists
-	push @allPlaylists, getCustomPlaylists($client);
+	push @allPlaylists, getCustomPlaylists($client,$alarm_playlist,$day);
 
 	my %return = 
 	( 
 		text => Slim::Utils::Strings::string("ALARM_SELECT_PLAYLIST"),
-		count     => 4,
+		count     => scalar @allPlaylists,
 		offset    => 0,
 		item_loop => \@allPlaylists,
 	);
@@ -1016,8 +1029,30 @@ sub alarmPlaylistHash {
 }
 
 sub getCustomPlaylists {
+	my ($client, $alarm_playlist, $day) = @_;
+	
 	my @return = ();
-	return \@return;
+	
+	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
+		push @return,{
+			text    => Slim::Music::Info::standardTitle($client,$playlist->url),
+			radio	=> ($alarm_playlist ne '' && $alarm_playlist eq $playlist->url) + 0, # 0 is added to force the data type to number
+			
+			actions => {
+				do => {
+					player => 0,
+					cmd    => ['alarm'],
+					params => {
+						cmd         => 'update',
+						playlist_id => $playlist->id,
+						dow         => $day,
+					},
+				},
+			},
+		};
+	}
+	
+	return @return;
 }
 
 sub alarmVolumeHash {
@@ -1033,7 +1068,7 @@ sub alarmVolumeHash {
 					player => 0,
 					cmd    => ['alarm'],
 					params => {
-						cmd => 'set',
+						cmd => 'update',
 						volume => $i,
 						dow => $day,
 					},
@@ -1064,7 +1099,7 @@ sub alarmFadeHash {
 				player => 0,
 				cmd    => ['alarm'],
 				params => { 
-					cmd     => 'set',
+					cmd     => 'update',
 					dow     => 0,
 					fade    => 1,
 				},
@@ -1073,7 +1108,7 @@ sub alarmFadeHash {
 				player => 0,
 				cmd    => ['alarm'],
 				params => { 
-					cmd     => 'set',
+					cmd     => 'update',
 					dow     => 0,
 					fade    => 0,
 				},

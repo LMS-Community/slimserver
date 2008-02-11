@@ -16,7 +16,7 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
-my %possibleSpecialPlaylistsIDs = (
+our %possibleSpecialPlaylistsIDs = (
 	'CURRENT_PLAYLIST'          => -1,
 	'PLUGIN_RANDOM_TRACK'	    => -2,
 	'PLUGIN_RANDOM_ALBUM'	    => -3,
@@ -161,6 +161,17 @@ sub playlistid {
 			$self->playlist($playlistObj->url);
 
 			return $newvalue;
+		} else {
+		
+			for my $playlist (keys %possibleSpecialPlaylistsIDs) {
+		
+				if ($possibleSpecialPlaylistsIDs{$playlist} == $newvalue) {
+			
+					$self->playlist($playlist);
+					return $newvalue;
+				}
+		
+			}
 		}
 
 	} else {
