@@ -1629,10 +1629,11 @@ sub _cliQuery_done {
 		my $client = $request->client();
 		my $method = $request->getParam('_method');
 
-		if ($client && $method =~ /^(add|play|insert|load)$/i) {
+		if ($client && $method =~ /^(add|addall|play|playall|insert|load)$/i) {
 			# single item
 			if ((defined $subFeed->{'url'} && $subFeed->{'type'} eq 'audio' || defined $subFeed->{'enclosure'})
-				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})) {
+				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})
+				&& ($method !~ /all/)) {
 	
 				my $title = $subFeed->{'name'} || $subFeed->{'title'};
 				my $url   = $subFeed->{'url'};
@@ -1733,7 +1734,6 @@ sub _cliQuery_done {
 	
 		my $hasImage = 0;
 		
-		
 		if ($count) {
 		
 			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -1780,6 +1780,42 @@ sub _cliQuery_done {
 						},
 					};
 					$request->addResult('base', $base);
+				}
+
+				# Bug 6874, add a "Play All" item if list contains more than 1 playable item with duration
+				if ( $menuMode ) {
+					for my $item ( @{$subFeed->{items}}[$start..$end] ) {
+						if ( $item->{duration} && hasAudio($item) ) {
+							my $actions = {
+								do => {
+									player => 0,
+									cmd    => [ $query, 'playlist', 'playall' ],
+									params => $params,
+								},
+								add => {
+									player => 0,
+									cmd    => [ $query, 'playlist', 'addall' ],
+									params => $params,
+								},
+							};
+							
+							$actions->{do}->{params}->{item_id}  = $item_id;
+							$actions->{add}->{params}->{item_id} = $item_id;
+							
+							$actions->{play} = $actions->{do};
+							
+							my $text = $request->client
+								? $request->client->string('JIVE_PLAY_ALL')
+								: Slim::Utils::Strings::string('JIVE_PLAY_ALL');
+							
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+							
+							$cnt++;
+							last;
+						}
+					}
 				}
 				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
