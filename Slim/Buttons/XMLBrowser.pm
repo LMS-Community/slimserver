@@ -1373,12 +1373,13 @@ sub _cliQuery_done {
 				return;
 			}
 
-			# If the feed is an audio feed or Podcast enclosure, display the audio info
+			# If the feed is an audio feed, Podcast enclosure or informatio item, display the info
 			# This is a leaf item, so show as much info as we have and go packing after that.		
 			if (	$isItemQuery &&
 					(
 						$subFeed->{'type'} eq 'audio' || 
-						$subFeed->{'enclosure'} 
+						$subFeed->{'enclosure'} ||
+						$subFeed->{'description'}	
 					)
 				) {
 				
