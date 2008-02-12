@@ -847,7 +847,7 @@ sub fileFilter {
 	# Ignore special named files and directories
 	# __ is a match against our old __history and __mac playlists.
 	return 0 if $item =~ /^__\S+\.m3u$/o;
-	return 0 if ($item =~ /^\./o && !Slim::Utils::OSDetect::OS() eq 'win');
+	return 0 if ($item =~ /^\./o && Slim::Utils::OSDetect::OS() ne 'win');
 
 	if ((my $ignore = $prefs->get('ignoreDirRE') || '') ne '') {
 		return 0 if $item =~ /$ignore/;
