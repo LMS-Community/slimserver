@@ -359,8 +359,10 @@ sub gotOPML {
 		$client->execute( \@p );
 	}
 
-	# Push staight into remotetrackinfo if asked to replace item or a playlist of one was returned
-	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} eq 'replace' && scalar @{ $opml->{'items'} || [] } == 1) {
+	# Push staight into remotetrackinfo if asked to replace item or a playlist of one was returned with a parser
+	if ($params->{'item'}->{'type'} &&
+		($params->{'item'}->{'type'} eq 'replace' || 
+		 ($params->{'item'}->{'type'} eq 'playlist' && $params->{'item'}->{'parser'} && scalar @{ $opml->{'items'} || [] } == 1) ) ) {
 		my $item  = $opml->{'items'}[0];
 		my $title = $item->{'name'} || $item->{'title'};
 		my $url   = $item->{'url'};
@@ -2010,8 +2012,10 @@ sub _cliQuerySubFeed_done {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
-	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'replace' && scalar @{ $feed->{'items'} } == 1) {
-		# in the case of a replacable menu or playlist of one update previous entry to avoid new menu level
+	if ($subFeed->{'type'} &&
+		($subFeed->{'type'} eq 'replace' || 
+		 ($subFeed->{'type'} eq 'playlist' && $subFeed->{'parser'} && scalar @{ $feed->{'items'} } == 1) ) ) {
+		# in the case of a replacable menu or playlist of one with parser update previous entry to avoid new menu level
 		my $item = $feed->{'items'}[0];
 		if ($subFeed->{'type'} eq 'replace') {
 			delete $subFeed->{'url'};
