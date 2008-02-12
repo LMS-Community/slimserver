@@ -1217,6 +1217,15 @@ sub playlistXitemCommand {
 					'jive' => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
 				}, { 'duration' => $timeout + 5 });
 			}
+		} elsif ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
+
+			my $line1 = $client->string('JIVE_POPUP_ADDING');
+			my $line2 = Slim::Music::Info::title($path) || $path;
+			my $line3 = $client->string('JIVE_POPUP_TO_PLAYLIST');
+			$client->showBriefly({
+					'line' => [$line1, $line2, $line3],
+					'jive' => { 'type' => 'popupplay', text => [ $line1, $line2, $line3 ] },
+				});
 		}
 
 		Slim::Utils::Scanner->scanPathOrURL({
