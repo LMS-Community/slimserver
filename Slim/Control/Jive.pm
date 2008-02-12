@@ -1617,6 +1617,7 @@ sub jiveFavoritesCommand {
 	my $url     = $request->getParam('url');
 	my $command = $request->getParam('_cmd');
 	my $token   = uc($command); # either ADD or DELETE
+	my $action = $command eq 'add' ? 'parent' : 'grandparent';
 	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
 	my @favorites_menu = (
 		{
@@ -1642,7 +1643,7 @@ sub jiveFavoritesCommand {
 				},
 			},
 		},
-		nextWindow => 'parent',
+		nextWindow => $action,
 	};
 	$actionItem->{'actions'}{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
 	push @favorites_menu, $actionItem;
