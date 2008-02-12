@@ -13284,7 +13284,7 @@ LESSTHAN
 	EN	less than
 	ES	menos que
 	FI	Vähemmän kuin
-	FR	inférieur à
+	FR	inférieur(e) à
 	HE	פחות מ-
 	IT	minore di
 	JA	より少しより
@@ -13298,7 +13298,7 @@ GREATERTHAN
 	EN	greater than
 	ES	mayor que
 	FI	suurempi kuin
-	FR	supérieur à
+	FR	supérieur(e) à
 	HE	יותר מ-
 	IT	maggiore di
 	JA	大きいより
@@ -13312,7 +13312,7 @@ NOT
 	EN	not
 	ES	no
 	FI	ei
-	FR	différent de
+	FR	différent(e) de
 	HE	לא
 	IT	non
 	JA	ない
