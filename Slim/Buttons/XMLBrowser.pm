@@ -1373,7 +1373,7 @@ sub _cliQuery_done {
 				return;
 			}
 
-			# If the feed is an audio feed, Podcast enclosure or informatio item, display the info
+			# If the feed is an audio feed, Podcast enclosure or information item, display the info
 			# This is a leaf item, so show as much info as we have and go packing after that.		
 			if (	$isItemQuery &&
 					(
