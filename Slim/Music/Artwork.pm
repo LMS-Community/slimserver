@@ -105,10 +105,9 @@ sub findArtwork {
 			# Pre-cache this artwork resized to our commonly-used sizes/formats
 			# 1. user's thumb size or 100x100_p.png (large web artwork)
 			# 2. 50x50_p.png (small web artwork)
-			# 3. 56x56_p.png (Jive artwork)
-			# 4. 56x56_p.gd  (Jive artwork - gd format)
+			# 3. 56x56_p.gd  (Jive artwork - gd format (loads faster than png on Jive))
 			
-			my @dims = qw(50 56);
+			my @dims = (50);
 			push @dims, $prefs->get('thumbSize') || 100;
 			
 			for my $dim ( @dims ) {
