@@ -201,6 +201,7 @@ sub init {
 		'disableStatistics'     => 0,
 		'serverPriority'        => '',
 		'scannerPriority'       => 0,
+		'resampleArtwork'       => sub { !Slim::Utils::OSDetect::isReadyNAS() },
 		# Server Settings - Security
 		'filterHosts'           => 0,
 		'allowedHosts'          => sub { join(',', Slim::Utils::Network::hostAddr()) },

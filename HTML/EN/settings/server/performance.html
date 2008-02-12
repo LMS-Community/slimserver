@@ -9,6 +9,15 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_RESAMPLEARTWORK" desc="SETUP_RESAMPLEARTWORK_DESC" %]
+		<select class="stdedit" name="resampleArtwork" id="resampleArtwork">
+
+			<option [% IF NOT prefs.resampleArtwork %]selected [% END %]value="0">[% 'SETUP_USE_RESIZE' | getstring %]</option>
+			<option [% IF prefs.resampleArtwork %]selected [% END %]value="1">[% 'SETUP_USE_RESAMPLE' | getstring %]</option>
+		
+		</select>
+	[% END %]
+
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
 			<select class="stdedit" name="serverPriority" id="serverPriority">

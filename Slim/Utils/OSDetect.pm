@@ -444,6 +444,12 @@ sub isRHorSUSE {
 	return 0;
 }
 
+sub isReadyNAS {
+
+	return (isDebian() && -f '/etc/raidiator_version');
+	
+}
+
 sub isVista {
 
 	# Initialize
@@ -551,7 +557,7 @@ sub initDetailsForLinux {
 	$osDetails{'osArch'} = $Config{'myarchname'};
 
 	# package specific addition to @INC to cater for plugin locations
-	if (isDebian()) {
+	if (isDebian() || isReadyNAS()) {
 
 		unshift @INC, '/usr/share/squeezecenter';
 		unshift @INC, '/usr/share/squeezecenter/CPAN';

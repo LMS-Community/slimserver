@@ -396,13 +396,29 @@ sub processCoverArtRequest {
 						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
 					}
 
-					$newImage->copyResampled(
-						$origImage,
-						$destX, $destY,
-						$sourceX, $sourceY,
-						$destWidth, $destHeight,
-						$sourceWidth, $sourceHeight
-					);
+					# use faster Resize algorithm on slower machines
+					if (preferences('server')->get('resampleArtwork')) {
+
+						$log->info("Resampling file for better quality");
+						$newImage->copyResampled(
+							$origImage,
+							$destX, $destY,
+							$sourceX, $sourceY,
+							$destWidth, $destHeight,
+							$sourceWidth, $sourceHeight
+						);
+
+					} else {
+
+						$log->info("Resizing file for faster processing");
+						$newImage->copyResized(
+							$origImage,
+							$destX, $destY,
+							$sourceX, $sourceY,
+							$destWidth, $destHeight,
+							$sourceWidth, $sourceHeight
+						);
+					}
 
 					my $newImageData;
 
