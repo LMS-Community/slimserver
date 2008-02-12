@@ -64,6 +64,8 @@ sub init {
         [0, 1, 1, \&menuQuery]);
 
     Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], [1, 1, 1, \&alarmSettingsQuery]);
+    Slim::Control::Request::addDispatch(['alarmweekdays', '_index', '_quantity'], [1, 1, 1, \&alarmWeekdayMenu]);
+    Slim::Control::Request::addDispatch(['alarmweekdaysettings', '_day'], [1, 1, 1, \&alarmWeekdaySettingsQuery]);
     Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'], [1, 1, 1, \&syncSettingsQuery]);
     Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'], [1, 1, 1, \&sleepSettingsQuery]);
     Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
@@ -379,24 +381,63 @@ sub alarmSettingsQuery {
 	my $day0 = populateAlarmElements($client, 0);
 
 	my @weekDays;
-	for my $day (1..7) {
-		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
-		push @weekDays, populateAlarmHash($client, $day);
-	}
 
-	my %weekDayAlarms = (
+	my $weekDayAlarms = {
 		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
-		count     => scalar(@weekDays),
-		offset    => 0,
-		item_loop => \@weekDays,
 		window    => { titleStyle => 'settings' },
-	);
+		actions => {
+			go => {
+				player => 0,
+				cmd    => [ 'alarmweekdays' ],
+			},
+		},
+	};
 
 	# one item_loop to rule them all
-	my @menu = ( @$day0, \%weekDayAlarms );
+	my @menu = ( @$day0, $weekDayAlarms );
 
 	sliceAndShip($request, $client, \@menu);
 
+}
+
+sub alarmWeekdayMenu {
+	my $request = shift;
+	my $client = $request->client();
+
+	# setup the individual calls to weekday alarms
+	my @menu;
+	for my $weekday (1..7) {
+		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
+		my $string = "ALARM_DAY$weekday";
+		my $day = {
+			text      => Slim::Utils::Strings::string($string),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ 'alarmweekdaysettings', $weekday ],
+				},
+			},
+		};
+		push @menu, $day;
+	}
+	sliceAndShip($request, $client, \@menu);
+	$request->setStatusDone();
+
+}
+
+sub alarmWeekdaySettingsQuery {
+	my $request = shift;
+	my $client = $request->client();
+	my $day = $request->getParam('_day');
+	my $dayMenu = populateAlarmElements($client, $day);
+	$request->addResult('count', scalar(@$dayMenu));
+	$request->addResult('offset', 0);
+	my $cnt = 0;
+	for my $menu (@$dayMenu) {
+		$request->setResultLoopHash('item_loop', $cnt, $menu);
+		$cnt++;
+	}
+	
 }
 
 sub playerInformationQuery {
@@ -938,6 +979,7 @@ sub alarmSetHash {
 				},
 			},
 		},
+		nextWindow => 'refresh',
 	);
 	return \%return;
 }
