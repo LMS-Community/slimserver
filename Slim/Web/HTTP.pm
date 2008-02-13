@@ -300,9 +300,6 @@ sub skins {
 			next if $UI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 
-			# BUG 4171: Disable dead Default2 skin, in case it was left lying around
-			next if $dir =~ /^(?:ExBrowse3|Default2)$/i;
-
 			$log->info("skin entry: $dir");
 
 			if ($dir eq defaultSkin()) {
@@ -313,12 +310,6 @@ sub skins {
 				$skinlist{ $UI ? $dir : uc $dir } = Slim::Utils::Misc::unescape($dir);
 			}
 		}
-	}
-
-	# These skins are depreciated - map to Default in skin hash, don't show on settings page
-	if (!$UI) {
-		$skinlist{'DEFAULT2'}  = defaultSkin();
-		$skinlist{'EXBROWSE3'} = defaultSkin();
 	}
 
 	return %skinlist;
@@ -2294,10 +2285,6 @@ sub _generateContentFromFile {
 
 	my $skin = $params->{'skinOverride'} || $prefs->get('skin');
 
-	# Default2 is gone, so redirect to Default.
-	if ($skin =~ /^(?:Default2)$/i) {
-		$skin = 'Default';
-	}
 	$params->{'systemSkin'} = $skin;
 	$params->{'systemLanguage'} = $prefs->get('language');
 
