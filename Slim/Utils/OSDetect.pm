@@ -428,7 +428,8 @@ sub isDebian {
 		return 1;
 	}
 
-	return 0;
+	# ReadyNAS is running a customized Debian
+	return isReadyNAS();
 }
 
 sub isRHorSUSE {
@@ -442,6 +443,20 @@ sub isRHorSUSE {
 	}
 
 	return 0;
+}
+
+sub isReadyNAS {
+
+	# Initialize
+	my $OS      = OS();
+	my $details = details();
+
+	if ($details->{'osName'} eq 'Netgear RAIDiator') {
+		return 1;
+	}
+
+	return 0;
+	
 }
 
 sub isVista {
@@ -530,7 +545,11 @@ sub initDetailsForLinux {
 
 	$osDetails{'os'} = 'Linux';
 
-	if (-f '/etc/debian_version') {
+	if (-f '/etc/raidiator_version') {
+
+		$osDetails{'osName'} = 'Netgear RAIDiator';
+
+	} elsif (-f '/etc/debian_version') {
 
 		$osDetails{'osName'} = 'Debian';
 

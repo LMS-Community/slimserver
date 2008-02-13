@@ -14183,6 +14183,18 @@ SETUP_VISUALIZERMODE_DESC
 	NL	De speler kan visualisaties of extra informatie op het rechterscherm weergeven. Kies wat er weergegeven moet worden. Met de Visual-knop op de speler kun je de hieronder geselecteerde opties doorlopen.
 	SV	Spelaren kan visa visualiserare eller utökad textinformation till höger på skärmen. Välj vad du vill skall visas. "Visual" - knappen på spelaren stegar igenom de olika alternativen nedan.
 
+SETUP_RESAMPLEARTWORK
+	EN	Artwork resampling
+
+SETUP_RESAMPLEARTWORK_DESC
+	EN	On low-end machines like eg. some popular NAS devices, resampling artwork can be slow. By using a simpler method the time needed for the artwork processing can be improved at the cost of image quality. Select "Resizing" instead of "Resampling" if you want to speed up artwork handling. 
+
+SETUP_USE_RESAMPLE
+	EN	Resample Artwork (slower, better quality)
+
+SETUP_USE_RESIZE
+	EN	Resize Artwork (faster, lower quality)
+
 SETUP_SERVERPRIORITY
 	DA	Prioritet for server
 	DE	Serverpriorität
