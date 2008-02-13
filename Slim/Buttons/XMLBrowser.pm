@@ -1815,7 +1815,16 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 							
+							$count++;
 							$cnt++;
+							
+							# Bug 7109, we don't want later items to have the wrong index so we need to
+							# add _slim_id keys to them.
+							my $cnt2 = 0;
+							for my $subitem ( @{$subFeed->{items}}[$start..$end] ) {
+								$subitem->{_slim_id} = $cnt2++;
+							}
+							
 							last;
 						}
 					}
