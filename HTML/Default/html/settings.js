@@ -212,8 +212,8 @@ var SettingsPage = function(){
 			this.initSettingsList();
 			FilesystemBrowser.init();
 
-			Ext.EventManager.onWindowResize(Utils.resizeContent);
-			Ext.EventManager.onDocumentReady(Utils.resizeContent);
+			Ext.EventManager.onWindowResize(this.onResize);
+			Ext.EventManager.onDocumentReady(this.onResize);
 
 			var items = Ext.query('input');
 			for(var i = 0; i < items.length; i++) {
@@ -422,6 +422,12 @@ var SettingsPage = function(){
 
 		resetModified : function(){
 			modified = false;
+		},
+
+		onResize : function(){
+			var max = Utils.resizeContent();
+
+			Ext.util.CSS.updateRule('.x-menu-list', 'max-height', (max - 25) + 'px');
 		}
 	};
 }();

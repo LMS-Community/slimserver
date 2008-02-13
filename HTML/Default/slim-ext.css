@@ -37,6 +37,7 @@
 
 .x-menu-list {
 	border: none;
+	overflow: auto;
 }
 
 .x-menu-item {

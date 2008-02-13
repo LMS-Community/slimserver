@@ -363,6 +363,8 @@ var Utils = function(){
 			else if ((el = Ext.get('content')) && el.hasClass('scrollingPanel')) {
 				el.setHeight(maxHeight - el.getTop());
 			}
+
+			return maxHeight;
 		},
 
 		processPlaylistURL : function(param, reload) {
