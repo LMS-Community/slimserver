@@ -1778,11 +1778,15 @@ sub sendResponse {
 			}
 			else {
 				# Check for additional pipelined GET or HEAD requests we need to process
+				# We also support pipelined cometd requets, even though this is against the HTTP RFC
 				if ( ${*$httpClient}{httpd_rbuf} ) {
-					if ( ${*$httpClient}{httpd_rbuf} =~ /^(?:GET|HEAD)/ ) {
+					if ( ${*$httpClient}{httpd_rbuf} =~ m{^(?:GET|HEAD|POST /cometd)} ) {
 						$log->info("Pipelined request found, processing");
 						processHTTP($httpClient);
 						return;
+					}
+					elsif ( $log->is_info ) {
+						$log->info( "Not handling pipelined request:\n" . ${*$httpClient}{httpd_rbuf} );
 					}
 				}
 			}
