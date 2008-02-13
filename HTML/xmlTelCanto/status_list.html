@@ -1,7 +1,0 @@
-<status_entry>
-	<offset>[% item.num | html %]</offset>
-	[% IF item.currentsong %]<playing_now/>[% END %]
-	<song>
-	[% PROCESS _xml_song.html itemobj = item.itemobj %]
-	</song>
-</status_entry>

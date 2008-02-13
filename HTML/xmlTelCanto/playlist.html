@@ -1,8 +1,0 @@
-[%- IF pageinfo.totalpages > 1 %]
-	<offsets>
-		<from>[% pageinfo.startitem %]</from>
-		<to>[% pageinfo.enditem %]</to>
-		<last>[% pageinfo.totalitems - 1 %]</last>
-	</offsets>
-[%- END %]
-[% FOREACH item = playlist_items; PROCESS status_list.html; END; %]

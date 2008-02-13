@@ -35,7 +35,3 @@ Touch:
 xml:
 	Owner: SlimDevices
 	Description: Really needs to be updated.. or depricated in place of the CLI or XML/JSON/RPC.
-
-xmlTelCanto:
-	Owner: SlimDevices (Should be Malcom Beattie)
-	Description: Really needs to be updated.. or depricated in place of the CLI or XML/JSON/RPC.
