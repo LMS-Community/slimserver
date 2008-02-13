@@ -428,7 +428,8 @@ sub isDebian {
 		return 1;
 	}
 
-	return 0;
+	# ReadyNAS is running a customized Debian
+	return isReadyNAS();
 }
 
 sub isRHorSUSE {
@@ -446,7 +447,15 @@ sub isRHorSUSE {
 
 sub isReadyNAS {
 
-	return (isDebian() && -f '/etc/raidiator_version');
+	# Initialize
+	my $OS      = OS();
+	my $details = details();
+
+	if ($details->{'osName'} eq 'Netgear RAIDiator') {
+		return 1;
+	}
+
+	return 0;
 	
 }
 
@@ -536,7 +545,11 @@ sub initDetailsForLinux {
 
 	$osDetails{'os'} = 'Linux';
 
-	if (-f '/etc/debian_version') {
+	if (-f '/etc/raidiator_version') {
+
+		$osDetails{'osName'} = 'Netgear RAIDiator';
+
+	} elsif (-f '/etc/debian_version') {
 
 		$osDetails{'osName'} = 'Debian';
 
@@ -557,7 +570,7 @@ sub initDetailsForLinux {
 	$osDetails{'osArch'} = $Config{'myarchname'};
 
 	# package specific addition to @INC to cater for plugin locations
-	if (isDebian() || isReadyNAS()) {
+	if (isDebian()) {
 
 		unshift @INC, '/usr/share/squeezecenter';
 		unshift @INC, '/usr/share/squeezecenter/CPAN';
