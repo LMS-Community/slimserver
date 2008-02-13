@@ -965,12 +965,6 @@ sub generateHTTPResponse {
 	# default to 200
 	$response->code(RC_OK);
 
-	# We don't support pipelining, so respond as HTTP 1.0 for now.
-	if ($response->protocol =~ /1\.1/) {
-
-		$response->protocol('HTTP/1.0');
-	}
-
 	$params->{'player'}   = '';
 	$params->{'revision'} = $::REVISION if $::REVISION;
 	$params->{'nosetup'}  = 1   if $::nosetup;
@@ -1790,6 +1784,16 @@ sub sendResponse {
 
 				closeHTTPSocket($httpClient);
 				return;
+			}
+			else {
+				# Check for additional pipelined GET or HEAD requests we need to process
+				if ( ${*$httpClient}{httpd_rbuf} ) {
+					if ( ${*$httpClient}{httpd_rbuf} =~ /^(?:GET|HEAD)/ ) {
+						$log->info("Pipelined request found, processing");
+						processHTTP($httpClient);
+						return;
+					}
+				}
 			}
 
 		} else {
