@@ -386,6 +386,10 @@ sub albumsQuery {
 					'favorites_url'   => $url,
 					'favorites_title' => $favorites_title,
 				};
+				
+				if ($contributorID) {
+					$params->{artist_id} = $contributorID;
+				}
 
 				unless ($sort && $sort eq 'new') {
 					$params->{textkey} = substr($eachitem->titlesort, 0, 1),
