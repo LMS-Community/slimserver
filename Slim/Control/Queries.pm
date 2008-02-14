@@ -387,7 +387,7 @@ sub albumsQuery {
 					'favorites_title' => $favorites_title,
 				};
 				
-				if ($contributorID) {
+				if (defined $contributorID) {
 					$params->{artist_id} = $contributorID;
 				}
 
