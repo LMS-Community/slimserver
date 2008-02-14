@@ -373,6 +373,8 @@ sub init {
 
 	$prefs->setChange( sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) }, qw(splitList groupdiscs) );
 
+	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
+
 	$prefs->setChange( sub {
 		Slim::Utils::Text::clearCaseArticleCache();
 		Slim::Control::Request::executeRequest(undef, ['wipecache'])

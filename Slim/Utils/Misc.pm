@@ -163,7 +163,8 @@ Set the priority for the server. $priority should be -20 to 20
 =cut
 
 sub setPriority {
-	my $priority = shift || return;
+	my $priority = shift;
+	return unless (defined $priority);
 
 	# For *nix, including OSX, set whatever priority the user gives us.
 	# For win32, translate the priority to a priority class and use that
