@@ -237,6 +237,7 @@ sub gotPlaylist {
 	}
 	else {
 		$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+		_addingToPlaylist($client);
 	}
 }
 
@@ -1708,6 +1709,7 @@ sub _cliQuery_done {
 					}
 					else {
 						$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+						_addingToPlaylist($client);
 					}
 				}
 			}
@@ -2045,6 +2047,21 @@ sub _cliQuerySubFeed_done {
 	$subFeed->{'fetched'} = 1;
 	
 	_cliQuery_done( $parent, $params );
+}
+
+sub _addingToPlaylist {
+	my $client = shift;
+	my $string = Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " .  
+			Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST');
+	$client->showBriefly(
+			{ line => [ $string ], },
+			{ 
+				jive => {
+					'type'    => 'popupplay',
+					'text'    => [ $string ],
+				},
+			},
+                );
 }
 
 sub _cliQuery_error {
