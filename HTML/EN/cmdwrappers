@@ -198,12 +198,12 @@ END %]
 [%- END -%]
 	<div class="artworkImage" style="width: [% item.size %];">
 
-		[%- IF item.coverThumb %]
+		[%- IF item.coverThumb%]
 			<div style="width:[% item.size %]px;height:[% item.size %]px;overflow:hidden;">
-			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
+			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
 			</div>
 		[% ELSE %]
-			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
+			<a [% IF useAJAX && item.attributes.match('album.id') %]onClick = 'popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
 		[% END -%]
 	</div>
 

@@ -147,6 +147,10 @@ div#browsedbHeader {
 	text-align: center;
 }
 
+.artworkImage {
+	cursor: pointer;
+}
+
 .thumbwrap {
 	display: inline-block;
 	margin: 0px;
