@@ -164,7 +164,7 @@ Set the priority for the server. $priority should be -20 to 20
 
 sub setPriority {
 	my $priority = shift;
-	return unless (defined $priority);
+	return unless defined $priority && $priority =~ /^-?\d+$/;
 
 	# For *nix, including OSX, set whatever priority the user gives us.
 	# For win32, translate the priority to a priority class and use that
