@@ -465,10 +465,10 @@ sub artistsQuery {
 	my $albumID  = $request->getParam('album_id');
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
+	my $to_cache = $request->getParam('cache');
 	my %favorites;
 	$favorites{'url'} = $request->getParam('favorites_url');
 	$favorites{'title'} = $request->getParam('favorites_title');
-
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -494,6 +494,7 @@ sub artistsQuery {
  	}
 
 	my $rs;
+	my $cacheKey;
 
 	# Manage joins 
 	if (defined $trackID) {
@@ -534,6 +535,30 @@ sub artistsQuery {
 				if (defined $year) {
 					push @{$attr->{'join'}}, 'track';
 				}
+			}
+		}
+		
+		# Flatten request for lookup in cache, only for Jive menu queries
+		$cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
+		if ( $menuMode ) {
+			if ( my $cached = $cache->{artists}->{$cacheKey} ) {
+				my $copy = from_json( $cached );
+
+				# Don't slice past the end of the array
+				if ( $copy->{count} < $index + $quantity ) {
+					$quantity = $copy->{count} - $index;
+				}
+
+				# Slice the full album result according to start and end
+				$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];
+
+				# Change offset value
+				$copy->{offset} = $index;
+
+				$request->setRawResults( $copy );
+				$request->setStatusDone();
+
+				return;
 			}
 		}
 		
@@ -680,6 +705,12 @@ sub artistsQuery {
 		_jiveNoResults($request);
 	} else {
 		$request->addResult('count', $totalCount);
+	}
+	
+	# Cache data as JSON to speed up the cloning of it later, this is faster
+	# than using Storable
+	if ( $to_cache && $menuMode ) {
+		$cache->{artists}->{$cacheKey} = to_json( $request->getResults() );
 	}
 
 	$request->setStatusDone();
@@ -1052,6 +1083,7 @@ sub genresQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
+	my $to_cache      = $request->getParam('cache');
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
@@ -1100,6 +1132,30 @@ sub genresQuery {
 				$where->{'track.year'} = $year;
 			}
 			push @{$attr->{'join'}}, {'genreTracks' => 'track'};
+		}
+	}
+	
+	# Flatten request for lookup in cache, only for Jive menu queries
+	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
+	if ( $menuMode ) {
+		if ( my $cached = $cache->{genres}->{$cacheKey} ) {
+			my $copy = from_json( $cached );
+
+			# Don't slice past the end of the array
+			if ( $copy->{count} < $index + $quantity ) {
+				$quantity = $copy->{count} - $index;
+			}
+
+			# Slice the full album result according to start and end
+			$copy->{item_loop} = [ @{ $copy->{item_loop} }[ $index .. ( $index + $quantity ) - 1 ] ];
+
+			# Change offset value
+			$copy->{offset} = $index;
+
+			$request->setRawResults( $copy );
+			$request->setStatusDone();
+
+			return;
 		}
 	}
 
@@ -1200,6 +1256,12 @@ sub genresQuery {
 		_jiveNoResults($request);
 	} else {
 		$request->addResult('count', $totalCount);
+	}
+	
+	# Cache data as JSON to speed up the cloning of it later, this is faster
+	# than using Storable
+	if ( $to_cache && $menuMode ) {
+		$cache->{genres}->{$cacheKey} = to_json( $request->getResults() );
 	}
 
 	$request->setStatusDone();
