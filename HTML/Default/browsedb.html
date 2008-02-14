@@ -64,12 +64,19 @@
 
 				contributorRoles = {};
 
-				IF !album.compilation;
+				IF album.compilation;
+
+					USE Prefs;
+					includeArtist = !Prefs.preferences('server').get('titleFormat').${Prefs.preferences('server').get('titleFormatWeb')}.search('ARTIST');
+
+				ELSE;
+
 					FOREACH contributor IN album.contributors;
 						FOREACH contributor IN contributor.contributorRoles;
 							contributorRoles.${contributor} = 1;
 						END;
 					END;
+
 				END;
 
 				PROCESS songinfo_details.html artAtTop = 1 headOnly = 1 albumFirst = 1 itemobj = {
@@ -87,7 +94,7 @@
 		[% END -%]
 
 		[% FOREACH item = browse_items -%]
-			[%- PROCESS browsedbitems_list.html item.includeAlbum = !album.id.defined item.includeArtist = album.compilation -%]
+			[%- PROCESS browsedbitems_list.html item.includeAlbum = !album.id.defined item.includeArtist = includeArtist -%]
 		[%- END %]
 	[% END -%]
 
