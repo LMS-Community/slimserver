@@ -1408,18 +1408,6 @@ sub playlistXtracksCommand {
 		$client->currentPlaylistUpdateTime(Time::HiRes::time());
 	}
 
-	if ( $add ) {
-
-		$client->showBriefly({ 
-			'jive' => { 
-				'type'    => 'popupplay',
-				'text'    => [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " . 
-							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-					
-				}
-		});
-	}
-
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 	$request->setStatusDone();
