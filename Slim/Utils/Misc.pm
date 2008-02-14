@@ -853,7 +853,8 @@ sub fileFilter {
 		return 0 if $item =~ /$ignore/;
 	}
 
-	my $fullpath = catdir($dirname, $item);
+	# BUG 7111: don't catdir if the $item is already a full path.
+	my $fullpath = $dirname ? catdir($dirname, $item) : $item;
 
 	# Don't display hidden/system files on Windows
 	if (Slim::Utils::OSDetect::OS() eq "win") {
