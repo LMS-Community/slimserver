@@ -110,7 +110,7 @@ function(){ Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %]
 [% BLOCK entryblock -%]
 	[%- WRAPPER contentitem leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' itemobj.id = entry.index %]
 		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
-		   <span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %]</span></a>
+		   <span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.index + 1 %]: [% entry.title %]</span></a>
 	[% END -%]
 [% END %]
 	
