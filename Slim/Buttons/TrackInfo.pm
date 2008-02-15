@@ -469,7 +469,10 @@ sub listExitHandler {
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
 				'hierarchy'         => 'album,track',
 				'level'             => 1,
-				'findCriteria'      => { 'album.id' => $curObj->id },
+				'findCriteria'      => { 
+					'album.id' => $curObj->id,
+					'contributor.id' => ( blessed $contributor ) ? $contributor->id : undef,
+				},
 				'selectionCriteria' => $selectionCriteria,
 			});
 
