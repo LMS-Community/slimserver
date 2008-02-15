@@ -99,6 +99,15 @@ sub setMode {
 	my $listRef = [ 0 ];
 	
 	my $accounts = $prefs->get('accounts') || [];
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$accounts = $prefs->client($client)->get('accounts') || [];
+	
+		if ( !ref $accounts ) {
+			$accounts = from_json( decode_base64( $accounts ) );
+		}
+	}
+	
 	for my $account ( @{$accounts} ) {
 		push @{$listRef}, $account->{username};
 	}
@@ -115,8 +124,7 @@ sub setMode {
 				return $client->string('PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED');
 			}
 			
-			my $accounts = $prefs->get('accounts') || [];
-			return $client->string( 'PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT', $accounts->[$account]->{username} );
+			return $client->string( 'PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT', $account );
 		},
 		initialValue   => sub { $prefs->client(shift)->get('account'); },
 		overlayRef     => sub {
