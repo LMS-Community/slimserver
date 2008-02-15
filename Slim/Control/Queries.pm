@@ -4532,7 +4532,7 @@ sub _jiveAddToFavorites {
 		my $client = $request->client();
 		my $favIndex = undef;
 		if ( blessed($client) && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-			my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+			my $favs = Slim::Utils::Favorites->new($client);
 			$favIndex = $favs->findUrl($favorites->{'url'});
 			if (defined($favIndex)) {
 				$action = 'delete';

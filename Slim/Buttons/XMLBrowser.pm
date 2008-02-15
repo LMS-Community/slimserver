@@ -1586,7 +1586,7 @@ sub _cliQuery_done {
  							my $favIndex = undef;
 							my $token = 'JIVE_ADD_TO_FAVORITES';
 							if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
-								my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($request->client);
+								my $favs = Slim::Utils::Favorites->new($request->client);
 								$favIndex = $favs->findUrl($url);
 								if (defined($favIndex)) {
 									$action = 'delete';
