@@ -710,7 +710,7 @@ Player = function(){
 		player: null
 	};
 
-	var coverFileSuffix = Ext.isIE && !Ext.isIE7 ? 'gif' : 'png';
+	var coverFileSuffix = Ext.isIE && !Ext.isIE7 ? '_404040.gif' : '.png';
 	var contributorRoles = new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist');
 
 	return {
@@ -1039,7 +1039,7 @@ Player = function(){
 
 				if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
 
-					var coverart = '<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_p.' + coverFileSuffix + '"></a>';
+					var coverart = '<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_p' + coverFileSuffix + '"></a>';
 					// the bg color must match the qtip's background color, as otherwise the image shows white on white
 					var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX_f_e0e8f3.jpg" width="250">';
 
@@ -1078,7 +1078,7 @@ Player = function(){
 				Ext.get('ctrlBitrate').update('');
 				Ext.get('ctrlCurrentArtist').update('');
 				Ext.get('ctrlCurrentAlbum').update('');
-				Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_p.' + coverFileSuffix + '">');
+				Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_p' + coverFileSuffix + '">');
 				Ext.get('ctrlCurrentSongInfoCollapsed').update('');
 			}
 
