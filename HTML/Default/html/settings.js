@@ -29,8 +29,11 @@ Settings = function(){
 			Utils.clearCookie('SqueezeCenter-advancedsettings');
 
 			// IE6 needs two tries...
-			if (Ext.isIE && !Ext.isIE7)
-				Ext.EventManager.onDocumentReady(this.onResize, layout, true);
+			if (Ext.isIE && !Ext.isIE7) {
+				Ext.EventManager.onDocumentReady(function(){
+					Ext.get('footer_content').setHeight(16);
+				}, layout, true);
+			}
 
 			Ext.QuickTips.init();
 
