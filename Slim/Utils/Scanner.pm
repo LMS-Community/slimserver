@@ -1140,10 +1140,8 @@ sub scanWMAStreamDone {
 			return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE', $args );
 		}
 	
-		my $chunkLength = unpack 'v', substr($header, 2, 2);
-	
 		# skip to the body data
-		my $body = substr($header, 12, $chunkLength);
+		my $body = substr $header, 12;
 		$io->open(\$body);
 		$wma = Audio::WMA->new( $io, length($body) );
 	
