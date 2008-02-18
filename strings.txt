@@ -205,7 +205,7 @@ MYSQL_VERSION
 
 PLAYER_VERSION
 	CS	Verze firmwaru přehrávače
-	DA	Afspiller version
+	DA	Programmel version for afspiller
 	DE	Version der Player-Firmware
 	EN	Player Firmware Version
 	ES	Versión de firmware de reproductor
@@ -1724,7 +1724,7 @@ FREE_YOUR_MUSIC
 
 UPDATING_FIRMWARE_SQUEEZEBOX
 	CS	Aktualizuji Squeezebox firmware.
-	DA	Opdaterer Squeezebox firmware.
+	DA	Opdaterer Squeezebox programmel.
 	DE	Squeezebox-Firmware wird aktualisiert ...
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox.
@@ -1741,7 +1741,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX
 
 UPDATING_FIRMWARE_SQUEEZEBOX2
 	CS	Aktualizuji Squeezebox firmware.
-	DA	Opdaterer Squeezebox firmware.
+	DA	Opdaterer Squeezebox programmel.
 	DE	Squeezebox-Firmware wird aktualisiert ...
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox.
@@ -1757,7 +1757,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	ZH_CN	更新Squeezebox韧件
 
 UPDATING_FIRMWARE_TRANSPORTER
-	DA	Opdaterer Transporter firmware.
+	DA	Opdaterer Transporter programmel.
 	DE	Transporter-Firmware wird aktualisiert ...
 	EN	Updating Transporter firmware.
 	ES	Actualizando firmware de Transporter
@@ -1772,7 +1772,7 @@ UPDATING_FIRMWARE_TRANSPORTER
 	ZH_CN	更新Transporter韧件
 
 UPDATING_FIRMWARE_RECEIVER
-	DA	Opdaterer Squeezebox firmware.
+	DA	Opdaterer Squeezebox programmel.
 	DE	Squeezebox-Firmware wird aktualisiert...
 	EN	Updating Squeezebox Firmware.
 	ES	Actualizando firmware de Squeezebox.
@@ -1781,7 +1781,7 @@ UPDATING_FIRMWARE_RECEIVER
 	NL	Squeezebox-firmware wordt bijgewerkt.
 
 FIRMWARE_MISSING
-	DA	Fejl: Firmware mangler
+	DA	Fejl: Programmel mangler
 	DE	Fehler: Firmware fehlt
 	EN	Error: Missing Firmware
 	ES	Error: Falta firmware
@@ -1794,7 +1794,7 @@ FIRMWARE_MISSING
 	ZH_CN	失误：韧件丢失
 
 FIRMWARE_MISSING_DESC
-	DA	Serveren kan ikke koble til Internettet for at hente firmware opdatering.
+	DA	Serveren kan ikke koble til Internettet for at hente opdatering for programmel.
 	DE	SqueezeCenter kann zum Laden eines Firmware-Update keine Internetverbindung herstellen.
 	EN	Server can't connect to Internet to obtain firmware update.
 	ES	El servidor no se puede conectar a Internet para obtener la actualización de firmware.
@@ -4641,7 +4641,7 @@ SETUP_LANGUAGE
 	ZH_CN	语言
 
 SETUP_LANGUAGE_DESC
-	DA	Vælg sprog som anvendes i SqueezeCenter. De som er markeret med * er oversat af SqueezeCenter kunde fælleskabet. Finder du fejl og ønsker at bidrage, e-post <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	DA	Vælg hvilket sprog du ønsker SqueezeCenter skal anvende. Sprog markeret med * er oversat af SqueezeCenter's kunde fælleskab. Finder du fejl og ønsker at bidrage, e-post <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 	DE	Wählen Sie die Sprache für SqueezeCenter. Diejenigen, welche mit * markiert sind, werden durch die SqueezeCenter Community bereit gestellt werden. Falls damit Probleme auftreten oder Sie Verbesserungsvorschläge haben, so schreiben Sie an <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 	EN	Choose the language that you'd like to use with SqueezeCenter.  Those marked with * were translated by the SqueezeCenter customer community.  If you find problems or would like to contribute, email <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 	ES	Elija el idioma que desea utilizar con SqueezeCenter. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de SqueezeCenter. Si tiene alguna consulta que realizar o desea aportar su contribución, envíe un mensaje a <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
@@ -4894,7 +4894,7 @@ SETUP_RESCAN_DESC
 	ZH_CN	点击《重新扫描》将使SqueezeCenter扫瞄音乐库，把新增或已更新的音乐记录在音乐库内。在点击《重新扫描》前点击复选框将使SqueezeCenter把现有的音乐库删除然后重头扫描重建。
 
 SETUP_WIPEDB
-	DA	Ryd musik bibliotek og genindløs om igen
+	DA	Ryd musik bibliotek og indlæs igen
 	DE	Datenbank löschen und alles neu durchsuchen
 	EN	Clear library and rescan everything
 	ES	Borrar la biblioteca y volver a examinar todo
@@ -9550,7 +9550,7 @@ BYTES
 	ZH_CN	字节
 
 SAMPLESIZE
-	DA	Sample størrelse
+	DA	Sample-størrelse
 	DE	Samplegröße
 	EN	Sample Size
 	ES	Tamaño de muestra
@@ -10242,7 +10242,7 @@ BROWSE_BY_SONG_DBL
 
 BROWSE_BY_YEAR
 	CS	Procházet podle roku vydání
-	DA	År
+	DA	Gennemse år
 	DE	Jahrgang
 	EN	Years
 	ES	Años
@@ -10599,7 +10599,7 @@ PLAYER_SETTINGS
 	ZH_CN	播放机设置
 
 BASIC_PLAYER_SETTINGS
-	DA	Grundlæggende indstillinger
+	DA	Grundindstillinger
 	DE	Grundeinstellungen
 	EN	Basic Settings
 	ES	Configuración básica
@@ -10717,7 +10717,7 @@ SERVER_STATUS_DESC
 	NL	Informatie over alle geïdentificeerde apparaten die met SqueezeCenter verbonden zijn
 
 BASIC_SERVER_SETTINGS
-	DA	Grundlæggende indstillinger
+	DA	Grundindstillinger
 	DE	Grundeinstellungen
 	EN	Basic Settings
 	ES	Configuración básica
@@ -11684,7 +11684,7 @@ UPGRADE_COMPLETE_DETAILS
 
 UPGRADE_COMPLETE
 	CS	Update firmwaru
-	DA	Firmware opgradering
+	DA	Opdatering af programmel
 	DE	Firmware aktualisieren:
 	EN	Firmware Update
 	ES	Actualización de firmware
@@ -12815,7 +12815,7 @@ INFORMATION_PLAYER_MODEL_ABBR
 
 INFORMATION_FIRMWARE
 	CS	Verze firmvaru přehrávače
-	DA	Afspiller firmware version
+	DA	Programmel version for afspiller
 	DE	Version der Player-Firmware
 	EN	Player Firmware Version
 	ES	Versión de firmware de reproductor
@@ -12830,7 +12830,7 @@ INFORMATION_FIRMWARE
 	ZH_CN	播放机韧件版本
 
 INFORMATION_FIRMWARE_ABBR
-	DA	Firmware
+	DA	Programmel
 	DE	Firmware
 	EN	Firmware
 	ES	Firmware
@@ -14205,15 +14205,19 @@ SETUP_VISUALIZERMODE_DESC
 	SV	Spelaren kan visa visualiserare eller utökad textinformation till höger på skärmen. Välj vad du vill skall visas. "Visual" - knappen på spelaren stegar igenom de olika alternativen nedan.
 
 SETUP_RESAMPLEARTWORK
+	DA	Resampling af albumomslag
 	EN	Artwork resampling
 
 SETUP_RESAMPLEARTWORK_DESC
+	DA	Resampling af albumomslag kan være langsomt på maskiner med lave specifikationer, for eksempel på endel populære NAS enheder. Ved at anvende en simplere metode kan tiden det tager at håndtere albumomslag reduceres på bekosting af billedkvaliteten. Vælg "Resizing" i stedet for "Resampling" hvis du ønsker at anvende den simplere metode.   
 	EN	On low-end machines like eg. some popular NAS devices, resampling artwork can be slow. By using a simpler method the time needed for the artwork processing can be improved at the cost of image quality. Select "Resizing" instead of "Resampling" if you want to speed up artwork handling. 
 
 SETUP_USE_RESAMPLE
+	DA	Resample albumomslag (langsomt, bedst kvalitet)
 	EN	Resample Artwork (slower, better quality)
 
 SETUP_USE_RESIZE
+	DA	Resize albumomslag (hurtigere, lav kvalitet)
 	EN	Resize Artwork (faster, lower quality)
 
 SETUP_SERVERPRIORITY
@@ -14437,7 +14441,7 @@ AUDIO_SOURCE_OPTICAL_SPDIF
 	ZH_CN	S/PDIF(TOSLINK)光接口
 
 SETUP_WORDCLOCKOUTPUT
-	DA	Ord klokke på S/PDIF udgangen
+	DA	Ord-klokke på S/PDIF udgangen
 	DE	Word Clock an S/PDIF-Ausgängen
 	EN	Word Clock On S/PDIF Outputs
 	ES	Reloj de palabras en salidas S/PDIF
@@ -14448,12 +14452,15 @@ SETUP_WORDCLOCKOUTPUT
 	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
+	DA	Ved brug af de digitale indgange kan Transporteren virke som klokke-master og sende et ord-klokke signal via SPDIF-udgangene. Denne funktionalitet må kun aktiveres hvis kilde-enheden har en ord-klokke indgang og kablet er forbundet. 
 	EN	When using the digital inputs, Transporter can be the clock master, and transmit a word clock signal on its S/PDIF outputs. This feature must only be enabled if the source device provideds a word clock input and the cable is connected.
 
 WORDCLOCKOUTPUT_DISABLED
+	DA	Ord-klokke udgang er deaktiveret (Kilde er master)
 	EN	Word clock output is disabled (Source is master)
 
 WORDCLOCKOUTPUT_ENABLED
+	DA	Ord-klokke udgang er aktiveret (Transporter er master)
 	EN	Word clock output is enabled (Transporter is master)
 
 SETUP_POWEROFFDAC
@@ -14951,6 +14958,7 @@ DEBUG_PLAYER_FONTS
 	NL	Spelerdisplay (Lettertype- en bitmapinformatie)
 
 DEBUG_PLAYER_TEXT
+	DA	Afspiller skærm (Information om visning af tegn og symboler)
 	DE	Player Anzeige (Zeichendarstellung)
 	EN	Player Display (Character Display Information)
 	ES	Pantalla de reproductor (información de visualización de caracteres)
@@ -14959,6 +14967,7 @@ DEBUG_PLAYER_TEXT
 	NL	Spelerdisplay (Grafisch-displayinformatie)
 
 DEBUG_PLAYER_PLAYLIST
+	DA	Højnivau information om afspiller spilleliste kontrol
 	DE	Player Wiedergabelisten Informationen
 	EN	High Level Player Playlist Control Information
 	ES	Información de control de lista de reproducción de reproductor de nivel superior
@@ -14967,6 +14976,7 @@ DEBUG_PLAYER_PLAYLIST
 	NL	Bedieningsinformatie van spelerplaylists op hoofdniveau
 
 DEBUG_PLAYER_STREAMING
+	DA	Logning af strømning for alle afspillere
 	DE	Streaming aller Geräte
 	EN	All Player Streaming Logging
 	ES	Registro de envío de secuencias de todos los reproductores
@@ -14975,6 +14985,7 @@ DEBUG_PLAYER_STREAMING
 	NL	Registratie van streaming voor alle spelers
 
 DEBUG_PLAYER_STREAMING_DIRECT
+	DA	Afspiller: Direkte strømning
 	DE	Player: Direct Streaming
 	EN	Player Direct Streaming Logging
 	ES	Registro de envío de secuencias directo de reproductor
@@ -14983,6 +14994,7 @@ DEBUG_PLAYER_STREAMING_DIRECT
 	NL	Registratie van directe streaming voor speler
 
 DEBUG_PLAYER_STREAMING_REMOTE
+	DA	Afspiller: Fjern strømning
 	DE	Player: Remote Streaming
 	EN	Player Remote Streaming Logging
 	ES	Registro de envío de secuencias de mando a distancia de reproductor
@@ -14991,6 +15003,7 @@ DEBUG_PLAYER_STREAMING_REMOTE
 	NL	Registratie van streaming op afstand voor speler
 
 DEBUG_PLAYER_FIRMWARE
+	DA	Logning af opdatering af afspiller programmel
 	DE	Player-Firmware Aktualisierung
 	EN	Player Firmware Upgrade Logging
 	ES	Registro de actualización de firmware de reproductor
@@ -14999,6 +15012,7 @@ DEBUG_PLAYER_FIRMWARE
 	NL	Registratie van spelerfirmware-upgrade
 
 DEBUG_PLAYER_SOURCE
+	DA	Afspiller: Logning af lydkilde og konvertering
 	DE	Player: Audioquelle & Konvertierung
 	EN	Player Source Audio & Conversion Logging
 	ES	Registro de conversión y origen de audio de reproductor
@@ -15007,6 +15021,7 @@ DEBUG_PLAYER_SOURCE
 	NL	Registratie van bronaudio en -conversie van speler
 
 DEBUG_PLAYER_SYNC
+	DA	Logning af synkronisering af flere afspillere
 	DE	Synchronisation mehrerer Geräte
 	EN	Multi-Player Synchronization Logging
 	ES	Registro de sincronización de varios reproductores
@@ -15015,6 +15030,7 @@ DEBUG_PLAYER_SYNC
 	NL	Synchronisatieregistratie van meerdere spelers
 
 DEBUG_SCAN
+	DA	Logning af skanner information
 	DE	Alle Scanner-Informationen
 	EN	All Scan Logging
 	ES	Registro de todos los exámenes
@@ -15023,6 +15039,7 @@ DEBUG_SCAN
 	NL	Registratie van alle scanactiviteiten
 
 DEBUG_SCAN_SCANNER
+	DA	Musik & spilleliste skanning
 	DE	Musik & Wiedergabelisten Scanner
 	EN	Music & Playlist Folder Scanning
 	ES	Examen de carpetas de listas de reproducción y música
@@ -15031,6 +15048,7 @@ DEBUG_SCAN_SCANNER
 	NL	Scannen van muziek- en playlistmappen
 
 DEBUG_SCAN_IMPORT
+	DA	Logning af metadata import fra fil & spillelister
 	DE	Datei & Wiedergabelisten Metadaten-Import
 	EN	File & Playlist Metadata Import Logging
 	ES	Registro de importación de metadatos de lista de reproducción y archivos
@@ -15039,6 +15057,7 @@ DEBUG_SCAN_IMPORT
 	NL	Importregistratie van metagegevens van bestand en playlist
 
 DEBUG_WIZARD
+	DA	Loging af opsætningsvejledningsaktivitet
 	DE	Aktivitäten des Assistenten zum Einrichten
 	EN	Setup Wizard activity logging
 	ES	Registro de actividades de asistente para instalación
@@ -15047,6 +15066,7 @@ DEBUG_WIZARD
 	NL	Registratie van installatiewizardactiviteit
 
 SETUP_DEBUG_SERVER_LOG
+	DA	Log fil for SqueezeCenter
 	DE	SqueezeCenter Logdatei
 	EN	SqueezeCenter Log File
 	ES	Archivo de registro de SqueezeCenter
@@ -15055,6 +15075,7 @@ SETUP_DEBUG_SERVER_LOG
 	NL	SqueezeCenter-logboekbestand
 
 SETUP_DEBUG_SERVER_LOG_DESC
+	DA	SqueezeCenter logger all aktivitet (Lydstrømning, Infrarød, etc.) i følgende fil:
 	DE	SqueezeCenter schreibt Logs aller relevanten Aktivitäten (Audio Streaming, Infrarot etc.) in folgende Datei:
 	EN	SqueezeCenter keeps a log file for all application related activities (Audio Streaming, Infrared, etc) here:
 	ES	SqueezeCenter mantiene un archivo de registro para todas las actividades relacionadas con la aplicación (secuencias de audio, infrarrojos, etc.) aquí:
@@ -15063,6 +15084,7 @@ SETUP_DEBUG_SERVER_LOG_DESC
 	NL	SqueezeCenter bewaart hier een logboekbestand voor alle toepassingsactiviteiten (audio-streaming, infrarood, enz.):
 
 SETUP_DEBUG_SCANNER_LOG
+	DA	Log fil for skanner
 	DE	Scanner Logdatei
 	EN	Scanner Log File
 	ES	Archivo de registro de examen
@@ -15071,6 +15093,7 @@ SETUP_DEBUG_SCANNER_LOG
 	NL	Logboekbestand van scanner
 
 SETUP_DEBUG_SCANNER_LOG_DESC
+	DA	SqueezeCenter logger all skanner relateret aktivitet, inklusive iTunes & MusicIP i følgende fil:
 	DE	SqueezeCenter schreibt Logs der Aktivitäten im Zusammenhang mit dem Scanner (Musikdateien, iTunes, MusicIP) in folgende Datei:
 	EN	SqueezeCenter keeps a log file for all scanning related activities, including iTunes & MusicIP here:
 	ES	SqueezeCenter mantiene un archivo de registro para todas las actividades de examen, incluidas las de iTunes y MusicIP aquí:
@@ -15079,6 +15102,7 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	NL	SqueezeCenter bewaart hier een logboekbestand voor alle scanactiviteiten (zoals iTunes en MusicIP):
 
 SETUP_DEBUG_PERFMON_LOG
+	DA	Log fil for ydelse
 	DE	Leistungs-Logdatei
 	EN	Performance Log File
 	ES	Archivo de registro de rendimiento
@@ -15087,6 +15111,7 @@ SETUP_DEBUG_PERFMON_LOG
 	NL	Prestatielogboek
 
 SETUP_DEBUG_PERFMON_LOG_DESC
+	DA	SqueezeCenter logger overvågning af ydelse her:
 	DE	SqueezeCenter speichert eine Logdatei zur Leistungsüberwachung:
 	EN	SqueezeCenter keeps a log file for performance monitoring here:
 	ES	SqueezeCenter mantiene un archivo de registro para supervisión de rendimiento aquí:
@@ -15112,6 +15137,7 @@ SETUP_DEBUG_LEVEL_OFF
 	ZH_CN	熄机
 
 SETUP_DEBUG_LEVEL_FATAL
+	DA	Kritisk
 	DE	Fatale Fehler
 	EN	Fatal
 	ES	Grave
@@ -15120,6 +15146,7 @@ SETUP_DEBUG_LEVEL_FATAL
 	NL	Fataal
 
 SETUP_DEBUG_LEVEL_ERROR
+	DA	Fejl
 	DE	Fehler
 	EN	Error
 	ES	Error
@@ -15128,6 +15155,7 @@ SETUP_DEBUG_LEVEL_ERROR
 	NL	Fout
 
 SETUP_DEBUG_LEVEL_WARN
+	DA	Advarsel
 	DE	Warnungen
 	EN	Warn
 	ES	Advertencia
@@ -15136,6 +15164,7 @@ SETUP_DEBUG_LEVEL_WARN
 	NL	Waarschuwing
 
 SETUP_DEBUG_LEVEL_INFO
+	DA	Information
 	DE	Information
 	EN	Info
 	ES	Información
@@ -15144,6 +15173,7 @@ SETUP_DEBUG_LEVEL_INFO
 	NL	Info
 
 SETUP_DEBUG_LEVEL_DEBUG
+	DA	Fejlsøge
 	DE	Debuggen
 	EN	Debug
 	ES	Depuración
@@ -15619,7 +15649,7 @@ JIVE_PLAYER_MODEL
 	NL	Model
 
 JIVE_PLAYER_FIRMWARE_VERSION
-	DA	Firmware version
+	DA	Programmel version
 	DE	Firmware-Version
 	EN	FW Version
 	ES	Versión de FW
