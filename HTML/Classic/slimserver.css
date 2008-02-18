@@ -397,10 +397,48 @@ div#homeMenu {
 	width: 25%;
 }
 
-.songInfoText {
-	float: left;
-	padding: 0px;
-	width: 72%;
+#COVERART .songInfoText {
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	top: 80px;
+	left: 10px;
+	z-index: 99;
+}
+
+#browsedbList #COVERART .songInfoText {
+	top: expression( "0px" ); /* dirty IE method */
+}
+
+#COVERART .songInfoText img {
+	max-width: 150px;
+	max-height: 150px;
+	width: expression( "150px" ); /* dirty IE workaround */
+	height: expression( "150px" );
+}
+
+#linkedSongInfoItems {
+	top: 0px;
+	padding-left: 160px;
+	padding-top: 0px !important;
+	min-height: 165px;
+	height: expression( "165px" ); /* dirty IE method */
+	position: relative;
+	z-index: 999;
+}
+
+#linkedSongInfoItems a {
+	font-weight: bold;
+}
+
+#linkedSongInfoItems img {
+	vertical-align: middle;
+}
+
+#linkedSongInfoItems .songInfoTitle {
+	text-align: left;
+	width: auto;
+	padding-right: 5px;
 }
 
 .browsedbListItem, .progressItem {

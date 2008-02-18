@@ -357,6 +357,7 @@ div#pagetitle {
 	min-height: 165px;
 	height: expression( "165px" ); /* dirty IE method */
 	position: relative;
+	z-index: 999;
 }
 
 #linkedSongInfoItems a {
