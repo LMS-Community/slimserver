@@ -224,7 +224,9 @@ sub browsedb {
 		{
 
 			$params->{'pwd_list'}->[0] = {
-				 'title' => string('SONG_INFO')
+				title    => string('SONG_INFO'),
+				hreftype => 'songinfo',
+				itemobj  => { id => $params->{'item'}},
 			}			
 		}
 
