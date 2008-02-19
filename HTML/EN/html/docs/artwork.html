@@ -12,14 +12,14 @@ Artwork is displayed in several places within the SqueezeCenter Web interface.
 The details of the display vary depending on the skin currently being
 used. The "Default", "Fishbone," and "Moser" skins have browse by cover art 
 functions, clicking on a picture of the CD/album will select the album for
-playing or processing. The "Fishbone" skin also displays the cover art
+playing or processing. The "Default" and "Fishbone" skins also display the cover art
 in the status display as the songs are played.
 </P>
 
 <h4>What is Artwork, how does the SqueezeCenter use it?</h4>
 <p>
 Artwork is cover art from CD albums. It is displayed both to beautify 
-the SqueezeCenter interface, and in the "Browse by artwork" section to
+the SqueezeCenter interface, and in the "Browse by album" section to
 specify which albums are selected for playing or processing.
 </p>
 
@@ -37,9 +37,9 @@ of your MP3, Ogg, Flac, or other files. See
 for more information.
 </p>
 <h4>Graphic file requirements</h4>
-The SqueezeCenter will display any graphic file that your browser can support. 
+<p>The SqueezeCenter will display any graphic file that your browser can support. 
 Nearly all browsers support .GIF and .JPG files, so most SlimDevices
-customers use one of these file formats.
+customers use one of these file formats.</p>
 <h4>Image sizes</h4>
 <p>
 The image files should be modest in size, as they are sized to fit
@@ -47,35 +47,21 @@ on the HTML browser window. There is no reason to have images
 larger than 300x300 pixels, they won't be displayed with that size,
 and it simply takes up space and bandwidth.
 </P>
-<p>
-There are two file sizes in use in the current skins.
-One image is used when you select tracks from an  album, the image
-size should be about 300x300 pixels. A second image is 
-used as a "thumbnail" in the browse-by-coverart, and is displayed
-in the status pane of the Fishbone skin. This image should be
-no larger than 100x100.
 
 <h4>Technical details</h4>
-For each place in the skin that references a large cover art image,
-the SqueezeCenter software performs the following search:
+<p>For each place in the skin that references a large cover art image,
+the SqueezeCenter software performs the following search:</p>
 <ul>
 <li>Search in the current music directory for (in order): <br>
 <ol><li>cover.jpg, cover.gif, <li>folder.jpg, folder.gif, <li>album.jpg, album.gif, <li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif</ul>
 </ol>
 <p>
-The SqueezeCenter will use the first image file located in this search.
-For the smaller, thumbnail image, a similar search is performed, except that
-the list is reversed, searching for thumb first. 
-Specifically:
-<ul>
-<li>Search in the current music directory for (in order):<br>
-<ol><li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif, <li>cover.jpg, cover.gif, <li>album.jpg, album.gif, <li>folder.jpg, folder.gif</ol>
-</ul>
+The SqueezeCenter will use the first image file located in this search.</p>
 
 <p>
 SqueezeCenter looks in the same path as the song, thus you would be looking for the
 same artfile in this case.  However there is an option in Server Settings,
-Additional, Interface for setting filenames for Artwork, Artwork Thumbnail, and
+Advanced, Formatting for setting filenames for Artwork, Artwork Thumbnail, and
 for setting a central location for artwork files. You can enter a specific filename 
 if you use something not found in the list (eg, artwork.jpg).  You may also create 
 filenames based on song variables.  If your first character is %, the server then parses
@@ -84,16 +70,15 @@ filenames based on song variables.  If your first character is %, the server the
 
 <p>
 As an example, you could create a single directory of songs and name all your
-artwork as artist-album.jpg.  For this, enter a setting of 
-<pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre> for
-Artwork or Artwork Thumbnail in the server settings section.  The extension can be specified for any SqueezeCenter supported format, .jpg is
+artwork as artist-album.jpg.  For this, enter a setting of</p> 
+<pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre> 
+<p>for Artwork or Artwork Thumbnail in the server settings section.  The extension can be specified for any SqueezeCenter supported format, .jpg is
 assumed if no extension is given.
-
 </P>
 
 
 <p>
-Available data elements are: 
+Available data elements are:</p> 
 <table>
 <tr><td>&nbsp;&nbsp;</td><td>
 <dl>
@@ -110,7 +95,7 @@ Available data elements are:
 <dt>ARTIST
 <dd>Artist for pop music, sometimes conductor for classical works.
 <dt>ALBUM
-<dd>Alumn name.
+<dd>Album name.
 <dt> COMMENT
 <dd>Often the encoder used to create the   MP3/FLAC/AAC/... file.
 <dt> YEAR 
@@ -140,7 +125,7 @@ CURRTIME
 <dd>current time.
 </dl>
 </td></tr></table>
-Elements can be separated by anything (or nothing). The separators are only used
+<p>Elements can be separated by anything (or nothing). The separators are only used
 if the data elements are present.
 </p>
 
@@ -153,41 +138,13 @@ ability is in the SqueezeCenter.
 <p>
 Artwork internal to the  ID3 tags within a song takes precedence, followed by any specified filename in the server
 settings.  If an Artwork Folder setting is used (in Server Settings, Additional, Interface) then that folder is searched first
-for any file matching those given for Artwork and Artwork Thumbnail.
-
-In the Thumbnail selection, the Server reverses the search list so that thumb is found before cover. This
-way, you can have a set of large images and a set of small ones.  
+for any file matching those given for Artwork.
+</p>
 
 <p>
 Browse by artwork and status BOTH scale the same image
 file found for Thumb.  By default, the browse by artwork contrains to 100x100,
-while the status contrains to 100 leaving aspect ratio intact. 
-</p>
-
-<h4>Memory usage for Artwork</h4>
-<p>
-Artwork for large song libraries places a significant
-memory load on the SqueezeCenter. There are references to
-the cover art kept in memory of the SqueezeCenter for each song.
-This can add up fairly quickly. 
-</p>
-
-<p>
-The SqueezeCenter stores, in memory, the path where the artwork can be found for each
-song. Long path names and many songs can cause the SqueezeCenter
-to use more memory than is phycially installed on the server. This can
-have any of a number of impacts, from slow performance to complete
-failure of the SqueezeCenter to run.
- The raw
-artwork file is read on demand, so
-artwork file size has no impact on the SqueezeCenter itself.
-</p>
-
-<p>
-You can
-turn off the artwork scan completely to save memory usage.  Its in Server
-Settings, additional, performance. 
-
+while the status constrains to 100 leaving aspect ratio intact. 
 </p>
 
 [% PROCESS helpfooter.html %]
