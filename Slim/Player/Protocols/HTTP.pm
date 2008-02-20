@@ -262,6 +262,9 @@ sub parseDirectHeaders {
 	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 	
+	# Default contentType to audio/mpeg as some servers don't send the type
+	$contentType = 'audio/mpeg';
+	
 	foreach my $header (@headers) {
 	
 		logger('player.streaming.direct')->debug("header-ds: $header");
