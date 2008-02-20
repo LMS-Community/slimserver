@@ -48,6 +48,7 @@ sub initPlugin {
 				my $url = Slim::Player::Playlist::url($client);
 				
 				Slim::Web::XMLBrowser->handleWebIndex( {
+					client  => $client,
 					feed    => Slim::Plugin::Pandora::ProtocolHandler->trackInfoURL( $client, $url ),
 					path    => 'trackinfo.html',
 					title   => 'Pandora Track Info',

@@ -51,6 +51,7 @@ sub initPlugin {
 				my $url = Slim::Player::Playlist::url($client);
 				
 				Slim::Web::XMLBrowser->handleWebIndex( {
+					client  => $client,
 					feed    => Slim::Plugin::Slacker::ProtocolHandler->trackInfoURL( $client, $url ),
 					path    => 'trackinfo.html',
 					title   => 'Slacker Track Info',

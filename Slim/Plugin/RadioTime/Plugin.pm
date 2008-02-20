@@ -125,6 +125,7 @@ sub webPages {
 		my $url = radioTimeURL($client);
 
 		Slim::Web::XMLBrowser->handleWebIndex( {
+			client => $client,
 			feed   => $url,
 			title  => $title,
 			args   => \@_

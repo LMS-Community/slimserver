@@ -107,8 +107,10 @@ sub webPages {
 	Slim::Web::Pages->addPageLinks('plugins', { $title => $url });
 
 	Slim::Web::HTTP::addPageFunction($url, sub {
-
+		my $client = $_[0];
+		
 		Slim::Web::XMLBrowser->handleWebIndex( {
+			client => $client,
 			feed   => $menuUrl,
 			title  => $title,
 			args   => \@_

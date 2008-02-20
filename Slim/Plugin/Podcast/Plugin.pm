@@ -155,10 +155,13 @@ sub webPages {
 
 	Slim::Web::HTTP::addPageFunction(
 		$url => sub {
+			my $client = $_[0];
+			
 			# Get OPML list of feeds from cache
 			my $cache = Slim::Utils::Cache->new();
 			my $opml = $cache->get( 'podcasts_opml' );
 			Slim::Web::XMLBrowser->handleWebIndex( {
+				client => $client,
 				feed   => $opml,
 				title  => $title,
 				args   => \@_

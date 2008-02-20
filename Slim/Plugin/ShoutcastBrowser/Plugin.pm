@@ -129,8 +129,10 @@ sub webPages {
 	Slim::Web::HTTP::protectURI($url);
 
 	Slim::Web::HTTP::addPageFunction($url => sub {
-
+		my $client = $_[0];
+		
 		Slim::Web::XMLBrowser->handleWebIndex( {
+			client => $client,
 			feed   => FEED(),
 			title  => $title,
 			search => SEARCH(), 
