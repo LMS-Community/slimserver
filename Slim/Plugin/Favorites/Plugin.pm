@@ -302,6 +302,7 @@ sub indexHandler {
 			$log->info("passing through to xmlbrowser");
 			
 			return Slim::Web::XMLBrowser->handleWebIndex( {
+				client => $client,
 				feed   => $opml->xmlbrowser,
 				args   => [$client, $params, @_],
 			} );
