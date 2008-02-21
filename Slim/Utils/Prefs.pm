@@ -260,6 +260,10 @@ sub init {
 
 		for my $pref (keys %defaults) {
 			my $old = Slim::Utils::Prefs::OldPrefs->get($pref);
+
+			# bug 7237: don't migrate dbsource if we're upgrading from SS6.3
+			next if $pref eq 'dbsource' && $old =~ /SQLite/i;
+
 			$prefs->set($pref, $old) if !$prefs->exists($pref) && defined $old;
 		}
 
