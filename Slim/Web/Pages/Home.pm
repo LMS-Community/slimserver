@@ -178,14 +178,17 @@ sub squeezeNetwork {
 	if ($client) {
 		$params->{'playername'} = $client->name;
 		
-		Slim::Utils::Timers::setTimer(
-			$client,
-			time() + 1,
-			sub {
-				my $client = shift;
-				Slim::Buttons::Common::pushModeLeft( $client, 'squeezenetwork.connect' );
-			},
-		);
+		# Bug 7254, don't tell Ray to reconnect to SN
+		if ( $client->deviceid != 7 ) {
+			Slim::Utils::Timers::setTimer(
+				$client,
+				time() + 1,
+				sub {
+					my $client = shift;
+					Slim::Buttons::Common::pushModeLeft( $client, 'squeezenetwork.connect' );
+				},
+			);
+		}
 	}
 
 	$params->{'sn_server'} = Slim::Networking::SqueezeNetwork->get_server("sn");

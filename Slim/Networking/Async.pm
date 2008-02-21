@@ -118,6 +118,12 @@ sub connect {
 
 	my $socket = $self->new_socket( %{$args} );
 	
+	# Bug 5673, avoid a crash if socket is undef
+	if ( !defined $socket ) {
+		_connect_error( $socket, $self, $args );
+		return;
+	}
+	
 	$socket->set( passthrough => [ $self, $args ] );
 	
 	Slim::Networking::Select::addError( $socket, \&_connect_error );
@@ -151,8 +157,10 @@ sub _connect_error {
 	$log->error("Failed to connect: $!");
 
 	# close the socket
-	$socket->close;
-	undef $socket;
+	if ( defined $socket ) {
+		$socket->close;
+		undef $socket;
+	}
 	
 	my $ecb = $args->{onError};
 	if ( $ecb ) {
