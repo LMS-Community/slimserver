@@ -432,7 +432,14 @@ sub handleFeed {
 		if (defined $favsItem && $items[$favsItem - $start]) {
 			my $item = $items[$favsItem - $start];
 			if ($stash->{'action'} eq 'favadd') {
-				$favs->add( $item->{'play'} || $item->{'url'}, $item->{'name'}, $item->{'type'} || 'link', $item->{'parser'} );
+
+				my $type = $item->{'type'} || 'link';
+				
+				if ( $item->{'play'} ) {
+					$type = 'audio';
+				}
+				
+				$favs->add( $item->{'play'} || $item->{'url'}, $item->{'name'}, $type, $item->{'parser'} );
 			} elsif ($stash->{'action'} eq 'favdel') {
 				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );
 			}
