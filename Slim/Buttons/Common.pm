@@ -755,6 +755,8 @@ our %functions = (
 			my $obj;
 			my $title;
 			my $url;
+			my $type;
+			my $parser;
 
 			# If there is a list, try grabbing the current index.
 			if ($list) {
@@ -767,8 +769,22 @@ our %functions = (
 				$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
 			}
 
+			# xmlbrowser mode - save type and parser params to favorites too
+			if ($client->modeParam('modeName') && $client->modeParam('modeName') =~ /XMLBrowser/) {
+
+				$url   = $obj->{'play'} || $obj->{'url'};
+				$type  = $obj->{'type'} || 'link';
+				$title = $obj->{'name'};
+				
+				if ( $obj->{'play'} ) {
+					$type = 'audio';
+				}
+				
+				$parser = $obj->{'parser'};
+			}
+
 			# if that doesn't work, perhaps we have a track param from something like trackinfo
-			if (!blessed($obj)) {
+			if (!blessed($obj) && !$url) {
 
 				if ($client->modeParam('track')) {
 
@@ -776,24 +792,17 @@ our %functions = (
 				}
 			}
 
-			# start with the object if we have one
+			# convert object to url and title
 			if ($obj && !$url) {
 
 				if (blessed($obj) && $obj->can('url')) {
+
 					$url = $obj->url;
-
-					# xml browser uses hash lists with url and name values.
-				} elsif (ref($obj) eq 'HASH') {
-
-					$url = $obj->{'url'};
 				}
 
 				if (blessed($obj) && $obj->can('name')) {
 
 					$title = $obj->name;
-				} elsif (ref($obj) eq 'HASH') {
-
-					$title = $obj->{'name'} || $obj->{'title'};
 				}
 
 				if (!$title) {
@@ -811,7 +820,7 @@ our %functions = (
 			}
 
 			if ($url && $title) {
-				Slim::Utils::Favorites->new($client)->add($url, $title);
+				Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser);
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
 				} );
