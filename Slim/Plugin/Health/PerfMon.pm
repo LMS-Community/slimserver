@@ -46,7 +46,7 @@ sub initPlugin {
 		parseCmdLine($::perfwarn);
 	}
 
-	$class->SUPER::initPlugin();
+	$class->next::method(@_);
 }
 
 sub webPages {
@@ -254,40 +254,24 @@ sub handleIndex {
 		$params->{'playername'} = $client->name();
 		$params->{'nettest_options'} = \@Slim::Plugin::Health::NetTest::testRates;
 
-		if (!$client->display->isa("Slim::Display::Graphics")) {
+		if (!$client->isa("Slim::Player::Squeezebox")) {
 			$params->{'nettest_notsupported'} = 1;
 			
-		} elsif (Slim::Buttons::Common::mode($client) eq 'Slim::Plugin::Health::Plugin') {
-			# network test currently running on this player
-			my $modeParam = $client->modeParam('Health.NetTest');
+		} else {
 			if ($stoptest) {
-				# stop tests
-				Slim::Buttons::Common::popMode($client);
-				$client->update();
-				$refresh = 2;
-			} elsif (defined($newtest)) {
-				# change test rate
-				Slim::Plugin::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
-				$refresh = 2;
-			} 
-			if (!$stoptest && defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{'log'}) { 
-				# display current results & refresh in a minute
-				$params->{'nettest_rate'} = $modeParam->{'rate'};
-				$params->{'nettest_graph'} = $modeParam->{'log'}->sprint();
-				$refresh = 60;
+				$client->execute(['nettest', 'stop']);
+			}
+			if (defined($newtest)) {
+				$client->execute(['nettest', 'start', $newtest]);
 			}
 
-		} elsif (defined($newtest)) {
-			# start tests - power on if necessary
-			$client->power(1) if !$client->power();
-			Slim::Buttons::Common::pushMode($client, 'Slim::Plugin::Health::Plugin');
-			my $modeParam = $client->modeParam('Health.NetTest');
-			Slim::Plugin::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
-			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{'log'}) { 
-				$params->{'nettest_rate'} = $modeParam->{'rate'};
-				$params->{'nettest_graph'} = $modeParam->{'log'}->sprint();
+			my $test = $client->execute(['nettest', 'log']);
+
+			if ($test->getResult('state') eq 'running') {
+				$refresh = 10;
+				$params->{'nettest_rate'} = $test->getResult('rate');
+				$params->{'nettest_graph'} = $test->getResult('log')->sprint;
 			}
-			$refresh = 2;
 		}
 	}
 

@@ -217,6 +217,38 @@ sub count {
 	return $count;
 }
 
+sub sum {
+	return shift->{sum};
+}
+
+sub min {
+	return shift->{min};
+}
+
+sub max {
+	return shift->{max};
+}
+
+sub avg {
+	my $ref = shift;
+
+	my $count = $ref->count();
+
+	return $count ? $ref->{sum} / $count : 0;
+}
+
+sub distrib {
+	my $ref = shift;
+	my @distrib;
+
+	for my $entry (0..$ref->{buckets}) {
+		push @distrib, { $ref->{thres}[$entry] => $entry ? $ref->{val}[$entry] : $ref->{valL} };
+	}
+	push @distrib, { over => $ref->{over} };
+
+	return \@distrib;
+}
+
 sub above {
 	my $ref = shift;
 	my $val = shift;
