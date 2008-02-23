@@ -68,9 +68,6 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup, $httpClient, $response) = @_;
 
-	# set right-to-left orientation for Hebrew users
-	$paramRef->{rtl} = 1 if ($serverPrefs->get('language') eq 'HE');
-
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
 	# The hostname for SqueezeNetwork
@@ -112,10 +109,14 @@ sub handler {
 	
 	# handle language separately, as it is in its own form
 	if ($paramRef->{saveLanguage}) {
+		$log->debug( 'setting language to ' . $paramRef->{language} );
 		$serverPrefs->set('language', $paramRef->{language});		
 	}
 
 	$paramRef->{prefs}->{language} = Slim::Utils::Strings::getLanguage();
+	
+	# set right-to-left orientation for Hebrew users
+	$paramRef->{rtl} = 1 if ($paramRef->{prefs}->{language} eq 'HE');
 
 	foreach my $namespace (keys %prefs) {
 		foreach my $pref (@{$prefs{$namespace}}) {
