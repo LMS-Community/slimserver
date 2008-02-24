@@ -94,7 +94,12 @@ sub handleDirectError {
 	my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED');
 	
 	$client->showBriefly( {
-		line => [ $line1, $line2 ]
+		line1 => $line1,
+		line2 => $line2,
+		jive  => {
+			type => 'popupplay',
+			text => [ $line1, $line2 ],
+		},
 	},
 	{
 		block  => 1,
@@ -140,9 +145,14 @@ sub tooManySynced {
 		my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED');
 		
 		# Show message on all players
-		for my $client ( @clients ) {
+		for my $client ( @clients ) {			
 			$client->showBriefly( {
-				line => [ $line1, $line2 ]
+				line1 => $line1,
+				line2 => $line2,
+				jive  => {
+					type => 'popupplay',
+					text => [ $line1, $line2 ],
+				},
 			},
 			{
 				block  => 1,
@@ -743,11 +753,16 @@ sub gotNextRadioTrack {
 		}
 		else {
 			# User was just starting a radio station
+			my $line1 = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR');
+			my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_NO_TRACK');
+			
 			$client->showBriefly( {
-				line => [ 
-					$client->string('PLUGIN_RHAPSODY_DIRECT_ERROR'), 
-					$client->string('PLUGIN_RHAPSODY_DIRECT_NO_TRACK'),
-				],
+				line1 => $line1,
+				line2 => $line2,
+				jive  => {
+					type => 'popupplay',
+					text => [ $line1, $line2 ],
+				},
 			},
 			{
 				scroll => 1,

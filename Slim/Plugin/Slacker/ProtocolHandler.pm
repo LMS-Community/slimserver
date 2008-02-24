@@ -191,9 +191,16 @@ sub gotNextTrack {
 			Slim::Player::Source::playmode( $client, 'stop' );
 		}
 		else {
+			my $line1 = $client->string('PLUGIN_SLACKER_ERROR');
+			my $line2 = $title;
+			
 			$client->showBriefly( {
-				line1 => $client->string('PLUGIN_SLACKER_ERROR'),
-				line2 => $title,
+				line1 => $line1,
+				line2 => $line2,
+				jive  => {
+					type => 'popupplay',
+					text => [ $line1, $line2 ],
+				},
 			},
 			{
 				scroll => 1,
@@ -349,9 +356,16 @@ sub handleDirectError {
 	
 	$log->info("Direct stream failed: [$response] $status_line");
 	
+	my $line1 = $client->string('PLUGIN_SLACKER_ERROR');
+	my $line2 = $client->string('PLUGIN_SLACKER_STREAM_FAILED');
+	
 	$client->showBriefly( {
-		line1 => $client->string('PLUGIN_SLACKER_ERROR'),
-		line2 => $client->string('PLUGIN_SLACKER_STREAM_FAILED'),
+		line1 => $line1,
+		line2 => $line2,
+		jive  => {
+			type => 'popupplay',
+			text => [ $line1, $line2 ],
+		},
 	},
 	{
 		block  => 1,
@@ -381,10 +395,17 @@ sub canDoAction {
 	if ( $action eq 'stop' && !canSkip($client) ) {
 		# Is skip allowed?
 		$log->debug("Slacker: Skip limit exceeded, disallowing skip");
+		
+		my $line1 = $client->string('PLUGIN_SLACKER_ERROR');
+		my $line2 = $client->string('PLUGIN_SLACKER_SKIPS_EXCEEDED');
 
 		$client->showBriefly( {
-			line1 => $client->string('PLUGIN_SLACKER_MODULE_NAME'),
-			line2 => $client->string('PLUGIN_SLACKER_SKIPS_EXCEEDED'),
+			line1 => $line1,
+			line2 => $line2,
+			jive  => {
+				type => 'popupplay',
+				text => [ $line1, $line2 ],
+			},
 		},
 		{
 			block  => 1,
