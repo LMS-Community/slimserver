@@ -347,8 +347,16 @@ sub handleDirectError {
 	
 	$log->info("Direct stream failed: [$response] $status_line");
 	
+	my $line1 = $client->string('PLUGIN_PANDORA_ERROR');
+	my $line2 = $client->string('PLUGIN_PANDORA_STREAM_FAILED');
+	
 	$client->showBriefly( {
-		line => [ $client->string('PLUGIN_PANDORA_ERROR'), $client->string('PLUGIN_PANDORA_STREAM_FAILED') ]
+		line1 => $line1,
+		line2 => $line2,
+		jive  => {
+			type => 'popupplay',
+			text => [ $line1, $line2 ],
+		},
 	},
 	{
 		block  => 1,
@@ -398,13 +406,21 @@ sub canDoAction {
 	if ( $action eq 'stop' && !canSkip($client) ) {
 		# Is skip allowed?
 		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
-
+		
+		my $line1 = $client->string('PLUGIN_PANDORA_ERROR');
+		my $line2 = $client->string('PLUGIN_PANDORA_SKIPS_EXCEEDED');
+		
 		$client->showBriefly( {
-			line => [ $client->string('PLUGIN_PANDORA_MODULE_NAME'), $client->string('PLUGIN_PANDORA_SKIPS_EXCEEDED') ]
+			line1 => $line1,
+			line2 => $line2,
+			jive  => {
+				type => 'popupplay',
+				text => [ $line1, $line2 ],
+			},
 		},
 		{
-			scroll => 1,
 			block  => 1,
+			scroll => 1,
 		} );
 				
 		return 0;
