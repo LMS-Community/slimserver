@@ -142,7 +142,7 @@ sub webPages {
 		
 		Slim::Web::XMLBrowser->handleWebIndex( {
 			client  => $client,
-			feed    => $class->feed(),
+			feed    => $class->feed( $client ),
 			title   => $title,
 			timeout => 35,
 			args    => \@_
