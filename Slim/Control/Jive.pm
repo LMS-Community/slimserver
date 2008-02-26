@@ -108,7 +108,6 @@ sub buildCaches {
 	my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count;
 	# Add one since we may have a VA item
 	$numArtists++;
-	$numArtists = 100000;
 	$log->debug( "Pre-caching $numArtists artist items." );
 	Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, 'menu:album', 'cache:1' ] );
 	
