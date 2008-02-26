@@ -426,6 +426,11 @@ sub init {
 			logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );
 	}
+	
+	# Rebuild Jive cache if VA setting is changed
+	$prefs->setChange( sub {
+		Slim::Control::Jive::buildCaches();
+	}, 'variousArtistAutoIdentification' );
 }
 
 =head2 writeAll( )
