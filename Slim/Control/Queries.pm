@@ -348,7 +348,7 @@ sub albumsQuery {
 
 		my $loopname = $menuMode?'item_loop':'albums_loop';
 		my $chunkCount = 0;
-		$request->addResult('offset', $start) if $menuMode;
+		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 		# first PLAY ALL item
 		if ($insertAll) {
@@ -423,7 +423,14 @@ sub albumsQuery {
 			$chunkCount++;
 		}
 
-		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
+		if ($menuMode) {
+			# Add Favorites as the last item, if applicable
+			my $lastChunk;
+			if ( $end == $count - 1 ) {
+				$lastChunk = 1;
+			}
+			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
+		}
 	}
 
 	if ($totalCount == 0 && $menuMode) {
@@ -655,7 +662,7 @@ sub artistsQuery {
 		my $chunkCount = 0;
 		my @data = $rs->slice($start, $end);
 		
-		$request->addResult('offset', $start) if $menuMode;
+		$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 	
 		# Various artist handling. Don't do if pref is off, or if we're
 		# searching, or if we have a track
@@ -697,7 +704,16 @@ sub artistsQuery {
 
 			$chunkCount++;
 		}
-		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+		
+		if ($menuMode) {
+			# Add Favorites as the last item, if applicable
+			my $lastChunk;
+			if ( $end == $count - 1 ) {
+				$lastChunk = 1;
+			}
+			
+			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+		}
 	}
 
 	if ($totalCount == 0 && $menuMode) {
@@ -1220,7 +1236,7 @@ sub genresQuery {
 
 		my $loopname = $menuMode?'item_loop':'genres_loop';
 		my $chunkCount = 0;
-		$request->addResult('offset', $start) if $menuMode;
+		$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 		
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
@@ -1521,7 +1537,7 @@ sub musicfolderQuery {
 		
 		my $loopname =  $menuMode?'item_loop':'folder_loop';
 		my $chunkCount = 0;
-		$request->addResult('offset', $start) if $menuMode;
+		$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 		
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
@@ -2053,7 +2069,7 @@ sub playlistsTracksQuery {
 			my $cur = $start;
 			my $loopname = $menuMode?'item_loop':'playlisttracks_loop';
 			my $cnt = 0;
-			$request->addResult('offset', $start) if $menuMode;
+			$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 			
 			for my $eachitem ($iterator->slice($start, $end)) {
 
@@ -2179,7 +2195,7 @@ sub playlistsQuery {
 			
 			my $loopname = $menuMode?'item_loop':'playlists_loop';
 			my $chunkCount = 0;
-			$request->addResult('offset', $start) if $menuMode;
+			$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 
 			if ($insertAll) {
 				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
@@ -3149,7 +3165,7 @@ sub statusQuery {
 			if ($valid) {
 				my $count = 0;
 				$start += 0;
-				$request->addResult('offset', $start) if $menuMode;
+				$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 				
 				for ($idx = $start; $idx <= $end; $idx++) {
 					
@@ -3361,7 +3377,7 @@ sub songinfoQuery {
 		# this is where we construct the nowplaying menu
 		if ($menu eq 'nowplaying' && $menuMode) {
 			$request->addResult("count", 1);
-			$request->addResult('offset', $start) if $menuMode;
+			$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 			my @vals;
 			my $loopname = 'item_loop';
 			while (my ($key, $val) = each %{$hashRef}) {
@@ -3381,7 +3397,7 @@ sub songinfoQuery {
 
 			my $idx = 0;
 			my $loopname = $menuMode?'item_loop':'songinfo_loop';
-			$request->addResult('offset', $start) if $menuMode;
+			$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 			# add Play this song and Add this song items
 			if ($insertPlay) {
@@ -3704,8 +3720,13 @@ sub songinfoQuery {
 			# in songinfo context, we only want an add-to-favorites link if it's a local track
 			# this is a workaround for the fact that a radio stream in the current playlist will
 			# often have a URL for a specific IP rather than a e.g DNS .m3u URL
-			if ($favorites{'url'} =~ /^file/) {
-				($chunkCount, $count) = _jiveAddToFavorites(start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites);
+			if ($favorites{'url'} =~ /^file/ && $menuMode) {
+				# Add Favorites as the last item, if applicable
+				my $lastChunk;
+				if ( $end == $count - 1 ) {
+					$lastChunk = 1;
+				}
+				($chunkCount, $count) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites);
 			}
 			
 			# because of suppression of some items, only now can we add the count
@@ -3933,7 +3954,7 @@ sub titlesQuery {
 		# this is the count of items in this part of the request (e.g., menu 100 200)
 		# not to be confused with $count, which is the count of the entire list
 		my $chunkCount = 0;
-		$request->addResult('offset', $start) if $menuMode;
+		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 		# first PLAY ALL item
 		if ($insertAll) {
@@ -3998,7 +4019,15 @@ sub titlesQuery {
 				::idleStreams();
 			}
 		}
-		($chunkCount, $totalCount) = _jiveAddToFavorites(start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+
+		if ($menuMode) {
+			# Add Favorites as the last item, if applicable
+			my $lastChunk;
+			if ( $end == $count - 1 ) {
+				$lastChunk = 1;
+			}
+			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+		}
 	}
 
 	if ($totalCount == 0 && $menuMode) {
@@ -4124,7 +4153,7 @@ sub yearsQuery {
 
 		my $loopname = $menuMode?'item_loop':'years_loop';
 		my $chunkCount = 0;
-		$request->addResult('offset', $start) if $menuMode;
+		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
@@ -4269,7 +4298,7 @@ sub dynamicAutoQuery {
 			# slice as needed
 			my $count = $request->getResultLoopCount($loop);
 			$request->sliceResultLoop($loop, $index, $quantity);
-			$request->addResult('offset', $index) if $menuMode;
+			$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 			$count += 0;
 			$request->setResultFirst('count', $count);
 			
@@ -4515,23 +4544,34 @@ sub _jiveAddToFavorites {
 	my $request    = $args{'request'};
 	my $favorites  = $args{'favorites'};
 	my $start      = $args{'start'};
+	my $lastChunk  = $args{'lastChunk'};
 	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
 
 	return ($chunkCount, $listCount) unless $loopname && $favorites;
+	
+	# Do nothing unless Favorites are enabled
+	if ( !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+		return ($chunkCount, $listCount);
+	}
 
-	if ($start == 0) {
+	# we need %favorites populated or else we don't want this item
+	if (!$favorites->{'title'} || !$favorites->{'url'}) {
+		return ($chunkCount, $listCount);
+	}
+	
+	# We'll add a Favorites item to this request.
+	# We always bump listCount to indicate this request list will contain one more item at the end
+	$listCount++;
 
-		# we need %favorites populated or else we don't want this item
-		if (!$favorites->{'title'} || !$favorites->{'url'}) {
-			return ($chunkCount, $listCount);
-		}
-
+	# Add the actual favorites item if we're in the last chunk
+	# or if a start value was passed and it's 0
+	if ( $lastChunk || $start == 0 ) {
 		my $action = 'add';
 		my $token = 'JIVE_ADD_TO_FAVORITES';
 		# first we check to see if the URL exists in favorites already
 		my $client = $request->client();
 		my $favIndex = undef;
-		if ( blessed($client) && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
+		if ( blessed($client) ) {
 			my $favs = Slim::Utils::Favorites->new($client);
 			$favIndex = $favs->findUrl($favorites->{'url'});
 			if (defined($favIndex)) {
@@ -4561,12 +4601,11 @@ sub _jiveAddToFavorites {
 			# FIXME, this needs to change to a favorites image after it is provided
 			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/favorites.png');
 		}
+	
 		$chunkCount++;
-		$listCount++;
-
 	}
 
-	return($chunkCount, $listCount);
+	return ($chunkCount, $listCount);
 }
 
 sub _songData {
