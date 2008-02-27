@@ -344,11 +344,12 @@ sub albumsQuery {
 	# now build the result
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
+	my $loopname = $menuMode?'item_loop':'albums_loop';
+	my $chunkCount = 0;
+	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
+
 	if ($valid) {
 
-		my $loopname = $menuMode?'item_loop':'albums_loop';
-		my $chunkCount = 0;
-		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 		# first PLAY ALL item
 		if ($insertAll) {
@@ -426,11 +427,14 @@ sub albumsQuery {
 		if ($menuMode) {
 			# Add Favorites as the last item, if applicable
 			my $lastChunk;
-			if ( $end == $count - 1 ) {
+			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 				$lastChunk = 1;
 			}
 			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
 		}
+	}
+	elsif ($totalCount > 1 && $menuMode) {
+		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);	
 	}
 
 	if ($totalCount == 0 && $menuMode) {
@@ -656,14 +660,14 @@ sub artistsQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
+	my $loopname = $menuMode?'item_loop':'artists_loop';
+	my $chunkCount = 0;
+	$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
+
 	if ($valid) {
 
-		my $loopname = $menuMode?'item_loop':'artists_loop';
-		my $chunkCount = 0;
 		my @data = $rs->slice($start, $end);
-		
-		$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
-	
+			
 		# Various artist handling. Don't do if pref is off, or if we're
 		# searching, or if we have a track
 		if ($count_va) {
@@ -708,12 +712,15 @@ sub artistsQuery {
 		if ($menuMode) {
 			# Add Favorites as the last item, if applicable
 			my $lastChunk;
-			if ( $end == $count - 1 ) {
+			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 				$lastChunk = 1;
 			}
 			
 			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 		}
+	}
+	elsif ($totalCount > 1 && $menuMode) {
+		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
 
 	if ($totalCount == 0 && $menuMode) {
@@ -3369,10 +3376,17 @@ sub songinfoQuery {
 
 		$count += 0;
 
+		# insertPlay will add Play & Add items - have to fix by two elements
+		my $totalCount = _fixCount($insertPlay, \$index, \$quantity, $count);
+		$totalCount = _fixCount($insertPlay, \$index, \$quantity, $totalCount);
+
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
+		my $loopname = $menuMode?'item_loop':'songinfo_loop';
+		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
+		my $chunkCount = 0;
+
 		if ($valid) {
-			my $chunkCount = 0;
 
 		# this is where we construct the nowplaying menu
 		if ($menu eq 'nowplaying' && $menuMode) {
@@ -3396,8 +3410,6 @@ sub songinfoQuery {
 			
 
 			my $idx = 0;
-			my $loopname = $menuMode?'item_loop':'songinfo_loop';
-			$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 			# add Play this song and Add this song items
 			if ($insertPlay) {
@@ -3427,9 +3439,6 @@ sub songinfoQuery {
 					);
 
 					for my $mode ('play', 'add') {
-						# add to result count
-						$count++;
-						
 						# override the actions, babe!
 						my $actions = {
 							'do' => {
@@ -3676,8 +3685,6 @@ sub songinfoQuery {
 								$key eq 'COVERART' && !$artworkExists) {
 								# bug 5241, don't show YEAR or COMMENT if it's 0
 								$suppress = 1; 
-								# now there's one less in the loop
-								$count--;
 							} 
 							# comments are often long, so we deliver them in a new window as a textarea
 							elsif ( $key eq 'COMMENT' && $val ne '0') {
@@ -3701,7 +3708,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 
 								# we want chunkCount to increment, but not to add the key:val text string below
-								$chunkCount++; $suppress = 1;
+								$chunkCount++; next;
 							}
 							
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
@@ -3712,7 +3719,15 @@ sub songinfoQuery {
 					else {
 						$request->addResultLoop($loopname, $chunkCount, $key, $val);
 					}
-					$chunkCount++ unless $suppress;
+					if ($suppress) {
+						# now there's one less in the loop
+						$count--;
+						$totalCount--;
+						$idx--;
+					}
+					else {
+						$chunkCount++;					
+					}
 				}
 				$idx++;
  			}
@@ -3723,14 +3738,14 @@ sub songinfoQuery {
 			if ($favorites{'url'} =~ /^file/ && $menuMode) {
 				# Add Favorites as the last item, if applicable
 				my $lastChunk;
-				if ( $end == $count - 1 ) {
+				if ( $idx == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 					$lastChunk = 1;
 				}
-				($chunkCount, $count) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $count, request => $request, loopname => $loopname, favorites => \%favorites);
+				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $chunkCount, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 			}
 			
 			# because of suppression of some items, only now can we add the count
-			$request->addResult("count", $count);
+			$request->addResult("count", $totalCount);
 
 		}
 		}
@@ -3947,14 +3962,15 @@ sub titlesQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
+	my $loopname = $menuMode?'item_loop':'titles_loop';
+	# this is the count of items in this part of the request (e.g., menu 100 200)
+	# not to be confused with $count, which is the count of the entire list
+	my $chunkCount = 0;
+	$request->addResult('offset', $request->getParam('_index')) if $menuMode;
+
 	if ($valid) {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-		my $loopname = $menuMode?'item_loop':'titles_loop';
-		# this is the count of items in this part of the request (e.g., menu 100 200)
-		# not to be confused with $count, which is the count of the entire list
-		my $chunkCount = 0;
-		$request->addResult('offset', $request->getParam('_index')) if $menuMode;
 
 		# first PLAY ALL item
 		if ($insertAll) {
@@ -4023,11 +4039,14 @@ sub titlesQuery {
 		if ($menuMode) {
 			# Add Favorites as the last item, if applicable
 			my $lastChunk;
-			if ( $end == $count - 1 ) {
+			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 				$lastChunk = 1;
 			}
 			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 		}
+	}
+	elsif ($totalCount > 1 && $menuMode) {
+		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
 
 	if ($totalCount == 0 && $menuMode) {
@@ -4564,8 +4583,7 @@ sub _jiveAddToFavorites {
 	$listCount++;
 
 	# Add the actual favorites item if we're in the last chunk
-	# or if a start value was passed and it's 0
-	if ( $lastChunk || $start == 0 ) {
+	if ( $lastChunk ) {
 		my $action = 'add';
 		my $token = 'JIVE_ADD_TO_FAVORITES';
 		# first we check to see if the URL exists in favorites already
