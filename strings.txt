@@ -1705,6 +1705,15 @@ WELCOME_TO_RECEIVER
 	IT	Squeezebox
 	NL	Welkom bij Squeezebox
 
+WELCOME_TO_SQUEEZESLAVE
+	DA	Velkommetn til SqueezeSlave
+	DE	Willkommen!
+	EN	Welcome to SqueezeSlave
+	ES	Bienvenido a SqueezeSlave
+	FR	Bienvenue dans la SqueezeSlave
+	IT	SqueezeSlave
+	NL	Welkom bij SqueezeSlave
+
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
 	DA	Lyt til din musik!
