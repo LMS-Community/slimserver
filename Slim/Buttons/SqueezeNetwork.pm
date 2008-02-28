@@ -118,20 +118,23 @@ sub connectSqueezeNetwork {
 	if (clientIsCapable($client)) {
 		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
 
-                # XXX When we go to production or when "serv 2" is in
-		# all the firmwares, this should be:
-		# 	if($host eq "www.squeezenetwork.com") {
-		# 		my $host = pack('N',1);  # 1 is squeezenetwork
-                # 	}
-                # 	elsif($host eq "www.beta.squeezenetwork.com") {
-		# 		my $host = pack('N',2);  # 2 is squeezenetwork beta
-                # 	}
-                # 	else {
-		# 		$host = scalar gethostbyname($host);
-                # 	}
-                # instead of this one line here:
-		$host = scalar gethostbyname($host);
-		
+		if($host eq "www.squeezenetwork.com") {
+			my $host = pack('N',1);  # 1 is squeezenetwork
+		}
+		elsif($host eq "www.beta.squeezenetwork.com") {
+			# XXX this should be:
+			# my $host = pack('N',2);  # 2 is squeezenetwork beta
+			# XXX but for right now it isn't because the beta/prod
+			#  hostnames are both pointing to the new prod, and
+			#  "serv 2" firmware isn't out for all players anyways
+			my $host = pack('N',1);  # 1 is squeezenetwork
+		}
+		else {
+			# anything else is probably a custom value by a developer
+			# testing against a local SqueezeNetwork instance
+			$host = scalar gethostbyname($host);
+		}
+
 		$client->execute([ 'stop' ]);
 		
 		$client->sendFrame('serv', \$host);

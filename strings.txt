@@ -13448,13 +13448,13 @@ SQUEEZENETWORK
 	ZH_CN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECT
-	DA	SqueezeNetwork Beta
-	DE	SqueezeNetwork Beta
-	EN	SqueezeNetwork Beta
-	ES	SqueezeNetwork Beta
-	FR	SqueezeNetwork Beta
-	IT	SqueezeNetwork Beta
-	NL	SqueezeNetwork Beta
+	DA	SqueezeNetwork
+	DE	SqueezeNetwork
+	EN	SqueezeNetwork
+	ES	SqueezeNetwork
+	FR	SqueezeNetwork
+	IT	SqueezeNetwork
+	NL	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECTING
 	DA	Tilslutter til SqueezeNetwork...
@@ -13470,16 +13470,16 @@ SQUEEZENETWORK_CONNECTING
 	ZH_CN	SqueezeNetwork连接中...
 
 SQUEEZENETWORK_SWITCH
-	DA	Skift til SqueezeNetwork Beta
-	DE	Zu SqueezeNetwork Beta umschalten
-	EN	Switch to SqueezeNetwork Beta
-	ES	Cambiar a SqueezeNetwork beta
-	FR	Se connecter à SqueezeNetwork Bêta
-	HE	מעבר ל-SqueezeNetwork Beta
-	IT	Passa a SqueezeNetwork Beta
-	NL	Wisselen naar SqueezeNetwork Beta
-	SV	Växla till SqueezeNetwork Beta
-	ZH_CN	切换到SqueezeNetwork Beta
+	DA	Skift til SqueezeNetwork
+	DE	Zu SqueezeNetwork umschalten
+	EN	Switch to SqueezeNetwork
+	ES	Cambiar a SqueezeNetwork
+	FR	Se connecter à SqueezeNetwork
+	HE	מעבר ל-SqueezeNetwork
+	IT	Passa a SqueezeNetwork
+	NL	Wisselen naar SqueezeNetwork
+	SV	Växla till SqueezeNetwork
+	ZH_CN	切换到SqueezeNetwork
 
 SQUEEZENETWORK_SWITCHING
 	DA	Skifter til SqueezeNetwork, venligst vent...
