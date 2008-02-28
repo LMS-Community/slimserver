@@ -168,14 +168,13 @@ sub clientConnectCommand {
 		$host = $request->getParam('_where');
 		
 		if ( $host =~ /^www.squeezenetwork.com$/i ) {
-			# XXX: Change to '1' in production
-			# $host = 1;
-			$packed = scalar gethostbyname('www.beta.squeezenetwork.com');
+			$host = 1;
 		}
 		elsif ( $host =~ /^www.beta.squeezenetwork.com$/i ) {
 			# XXX: Change to '2' after new firmware includes this
-			# $host = 2;
-			$packed = scalar gethostbyname('www.beta.squeezenetwork.com');
+			#  and the "beta" hostnames actually go somewhere other
+			#  than production anyways
+			$host = 1;
 		}
 		else {
 			my $ip = Net::IP->new($host);
@@ -187,7 +186,7 @@ sub clientConnectCommand {
 			$host = $ip->intip;
 		}
 		
-		$packed ||= pack 'N', $host;
+		$packed = pack 'N', $host;
 		
 		$client->execute([ 'stop' ]);
 		

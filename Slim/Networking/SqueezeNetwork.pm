@@ -28,17 +28,10 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-	sn => 'www.beta.squeezenetwork.com',
-	content => 'content.beta.squeezenetwork.com',
-	# XXX we haven't moved updates yet:
-	update => 'update.slimdevices.com',
+	sn => 'www.squeezenetwork.com',
+	content => 'content.squeezenetwork.com',
+	update => 'update.squeezenetwork.com',
 };
-# XXX above are beta names, when we go to production
-#  they should be: 
-#  sn => 'www.squeezenetwork.com',
-#  content => 'content.squeezenetwork.com',
-#  update => 'update.squeezenetwork.com',
-# (if update didn't actually move to SN (likely), CNAME it to update.slimdevices.com)
 
 sub get_server {
 	my ($class, $stype) = @_;
