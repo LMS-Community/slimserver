@@ -4540,6 +4540,8 @@ sub _addJiveSong {
 					params => {
 						menu => 'menu',
 						url  => $track->url,
+						context => 'playlist',
+						playlist_index => $count,
 					},
 				},
 			};
