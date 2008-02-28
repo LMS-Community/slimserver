@@ -198,7 +198,7 @@ sub init {
 		'udpChunkSize'          => 1400,           # only used for Slimp3
 		'mDNSname'              => 'SqueezeCenter',
 		# Server Settings - Performance
-		'disableStatistics'     => 0,
+		'disableStatistics'     => sub { Slim::Utils::OSDetect::isReadyNAS() },
 		'serverPriority'        => '',
 		'scannerPriority'       => 0,
 		'resampleArtwork'       => sub { !Slim::Utils::OSDetect::isReadyNAS() },
