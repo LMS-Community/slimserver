@@ -3109,15 +3109,13 @@ sub statusQuery {
 				'go' => {
 					'cmd' => ['songinfo'],
 					'params' => {
-						#'menu' => 'nowplaying', # first enter the nowplaying window
-						'menu' => 'nowhere', # leave this as nowhere until things work
+						'menu' => 'nowhere', 
+						'context' => 'playlist',
 					},
 					'itemsParams' => 'params',
 				},
 			},
 			'window' => {
-				#'menuStyle'  => 'nowplaying', # this is only for use if nowplaying style menu is used in params above
-				#'titleStyle' => 'nowplaying',
 				'titleStyle' => 'album',
 			}
 		};
@@ -3183,7 +3181,6 @@ sub statusQuery {
 						_addJiveSong($request, $loop, $count, $current, $track);
 						# add clear and save playlist items at the bottom
 						if ( ($idx+1)  == $songCount) {
-							# playlist management items not quite ready
 							_addJivePlaylistControls($request, $loop, $count);
 						}
 					}
@@ -3271,6 +3268,8 @@ sub songinfoQuery {
 	my $tagsprm  = $request->getParam('tags');
 	
 	my $menu     = $request->getParam('menu');
+	my $context  = $request->getParam('context');
+	my $playlist_index = $request->getParam('playlist_index');
 	my $insert   = $request->getParam('menu_play');
 
 	# menu/jive mgmt
@@ -3416,57 +3415,76 @@ sub songinfoQuery {
 			
 				# insert first item if needed
 				if ($start == 0  ) {
-					my ($play_string, $add_string);
+					my ($play_string, $add_string, $delete_string);
 					if ( $track->remote ) {
 						$play_string = Slim::Utils::Strings::string('PLAY');
 						$add_string = Slim::Utils::Strings::string('ADD');
+						$delete_string = Slim::Utils::Strings::string('REMOVE_FROM_PLAYLIST');
 					} else {
 						$play_string = Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG');
 						$add_string = Slim::Utils::Strings::string('JIVE_ADD_THIS_SONG');
+						$delete_string = Slim::Utils::Strings::string('REMOVE_FROM_PLAYLIST');
 					}	
 					# setup hash for different items between play and add
 					my %items = ( 	
 						'play' => {
 							'string'  => $play_string,
 							'style'   => 'itemplay',
+							'command' => [ 'playlistcontrol' ],
 							'cmd'     => 'load',
 						},
 						'add' => {
 							'string'  => $add_string,
 							'style'   => 'itemadd',
+							'command' => [ 'playlistcontrol' ],
 							'cmd'     => 'add',
 						},
+						'delete' => {
+							'string'  => $delete_string,
+							'style'   => 'item',
+							'command' => [ 'playlist', 'delete', $playlist_index ],
+							'cmd'     => 'delete',
+						},
 					);
-
-					for my $mode ('play', 'add') {
+					my $addOrDelete = 'add';
+					if ( $context eq 'playlist' ) {
+						$addOrDelete = 'delete';
+					}
+					for my $mode ('play', $addOrDelete) {
 						# override the actions, babe!
 						my $actions = {
 							'do' => {
 								'player' => 0,
-								'cmd' => ['playlistcontrol'],
-								'params' => {
-									'cmd' => $items{$mode}{'cmd'},
-									'track_id' => $trackId,
-								},
+								'cmd' => $items{$mode}{'command'},
 							},
 							'play' => {
 								'player' => 0,
-								'cmd' => ['playlistcontrol'],
-								'params' => {
-									'cmd' => $items{$mode}{'cmd'},
-									'track_id' => $trackId,
-								},
+								'cmd' => $items{$mode}{'command'},
 							},
-							# add always adds
 							'add' => {
 								'player' => 0,
-								'cmd' => ['playlistcontrol'],
-								'params' => {
-									'cmd' => 'add',
-									'track_id' => $trackId,
-								},
+								'cmd' => $items{$mode}{'command'},
 							},
 						};
+						# tagged params are sent for play and add
+						if ($mode ne 'delete') {
+							$actions->{'do'}{'params'} = {
+									'cmd' => $items{$mode}{'cmd'},
+									'track_id' => $trackId,
+							};
+							$actions->{'play'}{'params'} = {
+									'cmd' => $items{$mode}{'cmd'},
+									'track_id' => $trackId,
+							};
+							# add always adds, except for delete
+							$actions->{'play'}{'params'} = {
+									'cmd' => 'add',
+									'track_id' => $trackId,
+							};
+						
+						} else {
+							$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'playlist');
+						}
 						$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
 						$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 						$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
@@ -4533,6 +4551,7 @@ sub _addJiveSong {
 	$id += 0;
 	my $params = {
 		'track_id' => $id, 
+		'playlist_index' => $count,
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
 }
