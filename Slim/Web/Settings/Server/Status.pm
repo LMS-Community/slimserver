@@ -36,7 +36,7 @@ sub handler {
 		#{networkProxy             => preferences('server')->get('networkproxy');
 		{INFORMATION_CLIENTS      => Slim::Player::Client::clientCount},
 		{INFORMATION_CACHEDIR     => preferences('server')->get('cachedir')},
-		{INFORMATION_PREFSDIR     => preferences('server')->get('prefsdir')},
+		{INFORMATION_PREFSDIR     => Slim::Utils::Prefs::dir()},
 		{INFORMATION_PLUGINDIRS   => join(", ",Slim::Utils::OSDetect::dirsFor('Plugins'))},
 	];
 
