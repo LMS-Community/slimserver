@@ -491,7 +491,7 @@ sub processCoverArtRequest {
 
 		$log->info("  caching result key: $cacheKey, orig=$imageFilePath");
 
-		$cache->set($cacheKey, $cached, "10days");
+		$cache->set( $cacheKey, $cached, $Cache::Cache::EXPIRES_NEVER );
 	}
 
 	return ($body, $mtime, $inode, $size, $requestedContentType);

@@ -141,7 +141,13 @@ sub new {
 
 	# store cache object and add namespace to purge lists
 	$caches{$namespace} = $self;
-	push @thisCycle, $namespace;
+	
+	# Bug 7340, don't purge the Artwork cache
+	# XXX: FileCache sucks, find a better solution for the Artwork cache
+	if ( $namespace ne 'Artwork' ) {
+		push @thisCycle, $namespace;
+	}
+	
 	push @eachCycle, $namespace unless $noPeriodicPurge;
 
 	return $self;
