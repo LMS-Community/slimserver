@@ -267,16 +267,12 @@ sub processSong {
 		}
 	}
 
-	$attributes{'TRACKNUM'} = $songInfo{'track'};
-
-	if ($songInfo{'bitrate'}) {
-		$attributes{'BITRATE'} = $songInfo{'bitrate'} * 1000;
-	}
-
-	$attributes{'YEAR'}  = $songInfo{'year'};
-	$attributes{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
-	$attributes{'AUDIO'} = 1;
-	$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
+	$attributes{'TRACKNUM'} = $songInfo{'track'}          if $songInfo{'track'};
+	$attributes{'BITRATE'}  = $songInfo{'bitrate'} * 1000 if $songInfo{'bitrate'};
+	$attributes{'YEAR'}     = $songInfo{'year'}           if $songInfo{'year'};
+	$attributes{'CT'}       = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
+	$attributes{'AUDIO'}    = 1;
+	$attributes{'SECS'}     = $songInfo{'seconds'}        if $songInfo{'seconds'};
 
 	# Bug 3318
 	# MiP 1.6+ encode filenames as UTF-8, even on Windows.
@@ -303,14 +299,11 @@ sub processSong {
 	}
 
 	# Assign these after they may have been verified as UTF-8
-	$attributes{'ALBUM'}  = $songInfo{'album'};
-	$attributes{'TITLE'}  = $songInfo{'name'};
-	$attributes{'ARTIST'} = $songInfo{'artist'};
-	$attributes{'GENRE'}  = $songInfo{'genre'};
-
-	if ($songInfo{'active'} eq 'yes') {
-		$attributes{'MUSICMAGIC_MIXABLE'} = 1;
-	}
+	$attributes{'ALBUM'}  = $songInfo{'album'}  if $songInfo{'album'};
+	$attributes{'TITLE'}  = $songInfo{'name'}   if $songInfo{'name'};
+	$attributes{'ARTIST'} = $songInfo{'artist'} if $songInfo{'artist'};
+	$attributes{'GENRE'}  = $songInfo{'genre'}  if $songInfo{'genre'};
+	$attributes{'MUSICMAGIC_MIXABLE'} = 1       if $songInfo{'active'} eq 'yes';
 
 	# need conversion to the current charset.
 	$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
