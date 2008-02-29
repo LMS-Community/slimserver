@@ -138,6 +138,7 @@ sub screensaverDateTimelines {
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 
 	# the alarm's days are sunday=7 based - 0 is daily
+	$wday = 7 if !$wday;
 
 	my $alarm = preferences('server')->client($client)->get('alarm');
 
