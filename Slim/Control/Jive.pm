@@ -991,7 +991,7 @@ sub alarmSetHash {
 				},
 			},
 		},
-		nextWindow => 'refresh',
+		nextWindow => 'refreshOrigin',
 	);
 	return \%return;
 }

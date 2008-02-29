@@ -120,6 +120,8 @@ sub initPlugin {
 	[1, 1, 0, \&chooseGenresMenu]);
 	Slim::Control::Request::addDispatch(['randomplaychoosegenre', '_genre', '_value'],
 	[1, 0, 0, \&chooseGenre]);
+	Slim::Control::Request::addDispatch(['randomplaygenreselectall', '_value'],
+	[1, 0, 0, \&genreSelectAllOrNone]);
 	
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
@@ -220,7 +222,7 @@ sub randomPlayMenu {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('PLUGIN_CHOOSE_GENRES'),
+			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CHOOSE_GENRES'),
 			id      => 'randomchoosegenres',
 			weight  => 50,
 			window  => { titleStyle => 'random' },
@@ -243,6 +245,27 @@ sub randomPlayMenu {
 	$request->setStatusDone();
 
 
+}
+
+sub genreSelectAllOrNone {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $enable  = $request->getParam('');
+	my $value     = $request->getParam('_value');
+	my $genres    = getGenres($client);
+
+	my @excluded = ();
+	for my $genre (keys %$genres) {
+		$genres->{$genre}->{'enabled'} = $value;
+		if ($value == 0) {
+			push @excluded, $genre;
+		}
+	}
+	# set the exclude_genres pref to either all genres or none
+	$prefs->set('exclude_genres', [@excluded]);
+
+	$request->setStatusDone();
 }
 
 sub chooseGenre {
@@ -271,9 +294,34 @@ sub chooseGenresMenu {
 	my $client = $request->client();
 	my $genres = getGenres($client);	
 	my $filteredGenres = getFilteredGenres($client);
+
 	my @menu = ();
+	# first a "choose all" item
+	push @menu, {
+		text => $client->string('PLUGIN_RANDOM_SELECT_ALL'),
+		nextWindow => 'refresh',
+		actions => {
+			go => {
+				player => 0,
+				cmd    => [ 'randomplaygenreselectall', 1 ],
+			},
+		},
+	};
+	# then a "choose none" item
+	push @menu, {
+		text => $client->string('PLUGIN_RANDOM_SELECT_NONE'),
+		nextWindow => 'refresh',
+		actions => {
+			go => {
+				player => 0,
+				cmd    => [ 'randomplaygenreselectall', 0 ],
+			},
+		},
+	};
+	
 	for my $genre (sort keys %$genres) {
 		my $val = $genres->{$genre}->{'enabled'};
+$log->error($genre . ":" . $val);
 		push @menu, {
 			text => $genre,
 			checkbox => ($val == 1) + 0,
