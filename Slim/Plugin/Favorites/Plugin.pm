@@ -157,7 +157,7 @@ sub playFavorite {
 	my $digit  = shift;
 
 	# we need to deal with $digit being 1-9 or 0 meaning 10 and convert to zero based index
-	my $entry = Slim::Plugin::Favorites::OpmlFavorites->new($client)->entry($digit != 0 ? $digit - 1 : 9);
+	my $entry = Slim::Utils::Favorites->new($client)->entry($digit != 0 ? $digit - 1 : 9);
 
 	if (defined $entry && $entry->{'type'} && $entry->{'type'} eq 'audio') {
 
