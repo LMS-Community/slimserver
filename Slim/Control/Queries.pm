@@ -3848,6 +3848,8 @@ sub titlesQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
+	my $menuStyle     = $request->getParam('menuStyle') || 'item';
+
 	my %favorites;
 	$favorites{'url'} = $request->getParam('favorites_url');
 	$favorites{'title'} = $request->getParam('favorites_title');
@@ -3992,7 +3994,7 @@ sub titlesQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => ( $menuStyle eq 'album' ) );
 		}
 
 
@@ -4001,8 +4003,6 @@ sub titlesQuery {
 			# jive formatting
 			if ($menuMode) {
 				
-				my $text = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
-				$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 				my $id = $item->id();
 				$id += 0;
 				my $params = {
@@ -4013,29 +4013,41 @@ sub titlesQuery {
 			
 				# open a window with icon etc...
 			
-				my $text2 = $item->title;
+
+				my $text = $item->title;
 				my $album;
 				my $albumObj = $item->album();
-				my $iconId;
+				my $iconId = 0;
 				if(defined($albumObj)) {
 					$album = $albumObj->title();
 					$iconId = $albumObj->artwork();
 				}
-				$text2 = $text2 . "\n" . (defined($album)?$album:"");
+				$text = $text . "\n" . (defined($album)?$album:"");
 			
 				my $artist;
 				if(defined(my $artistObj = $item->artist())) {
 					$artist = $artistObj->name();
 				}
-				$text2 = $text2 . "\n" . (defined($artist)?$artist:"");
+				$text = $text . "\n" . (defined($artist)?$artist:"");
 			
 				my $window = {
-					'text' => $text2,
+					'text' => $text,
 				};
+
+				if ($menuStyle eq 'album') {
+					$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
+				} else {
+					my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
+					$request->addResultLoop($loopname, $chunkCount, 'text', $oneLineTrackTitle);
+				}
 			
 				if (defined($iconId)) {
 					$iconId += 0;
 					$window->{'icon-id'} = $iconId;
+					if ($menuStyle eq 'album') {
+						$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
+					}
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
@@ -4585,7 +4597,7 @@ sub _jiveAddToFavorites {
 	my $favorites  = $args{'favorites'};
 	my $start      = $args{'start'};
 	my $lastChunk  = $args{'lastChunk'};
-	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
+	my $includeArt = $args{'includeArt'};
 
 	return ($chunkCount, $listCount) unless $loopname && $favorites;
 	
@@ -4938,7 +4950,7 @@ sub _playAll {
 	my $chunkCount = $args{'chunkCount'};
 	my $loopname   = $args{'loopname'};
 	my $request    = $args{'request'};
-	my $includeArt = defined($args{'includeArt'}) ? 1 : 0;
+	my $includeArt = $args{'includeArt'};
 
 	# insert first item if needed
 	if ($start == 0 && $end == 0) {

@@ -1560,6 +1560,7 @@ sub searchMenu {
 				cmd => ['tracks'],
 				params => {
 					menu     => 'track',
+					menuStyle => 'album',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'tracks',
@@ -1569,6 +1570,7 @@ sub searchMenu {
 		window => {
 			text => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
 			titleStyle => 'search',
+			menuStyle => 'album',
 		},
 	},
 	{
