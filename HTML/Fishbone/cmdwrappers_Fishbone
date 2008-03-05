@@ -149,13 +149,13 @@ href="[% webroot %][% statusroot %]?[% END %][%
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
- <a href="[% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
+ <a href="[% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %]#[% alphakey | uri %]">[% IF curpage %]<span class="curpagebar">[% END %][% alphakey | html %][% IF curpage %]</span>[% END %]</a> 
 [%- END %]
 [%- ELSE %]
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]
- [%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
- [%- ELSE %] <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% ind * pageinfo.itemsperpage %]);[% ELSE %][% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% END %]">[% ind + 1 %]</a> 
- [%- END %]
+ <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% ind * pageinfo.itemsperpage %]);[% ELSE %][% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% END %]">
+ [%- IF ind == pageinfo.currentpage %]<span class="curpagebar">[% END %][% ind + 1 %]
+ [%- IF ind == pageinfo.currentpage %]</span>[% END %]</a>
 [% END %]
 [%- END %]
 [% IF pagenext %] <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% pagenext %]);[% ELSE %][% pageinfo.path %]?start=[% pagenext %][% pageinfo.otherparams | html %][% END %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]

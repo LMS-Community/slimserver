@@ -261,3 +261,10 @@ DIV.playlistform,#TopMenu2
 	background:#999;
 	color:white;
 }
+
+.curpagebar {
+	font-size: 13px;
+	font-weight: bold;
+}
+
+

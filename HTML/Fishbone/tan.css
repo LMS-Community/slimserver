@@ -307,3 +307,9 @@ div#albumPopup {
 .descendinfo {
 	background-color: #D1B586;
 }
+
+.curpagebar {
+	font-size: 14px;
+	font-weight: bold;
+}
+
