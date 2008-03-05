@@ -262,9 +262,6 @@ sub parseDirectHeaders {
 	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 	
-	# Default contentType to audio/mpeg as some servers don't send the type
-	$contentType = 'audio/mpeg';
-	
 	foreach my $header (@headers) {
 	
 		logger('player.streaming.direct')->debug("header-ds: $header");
@@ -302,6 +299,13 @@ sub parseDirectHeaders {
 	}
 
 	$contentType = Slim::Music::Info::mimeToType($contentType);
+	
+	if ( !$contentType ) {
+		# Bugs 7225, 7423
+		# Default contentType to mp3 as some servers don't send the type
+		# or send an invalid type we don't include in types.conf
+		$contentType = 'mp3';
+	}
 	
 	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 }
