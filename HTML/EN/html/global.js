@@ -26,7 +26,7 @@ var myGlobalHandlers = {
 					request.transport.abort();
 					
 					if (request.options['onFailure']) {
-						request.option['onFailure'](request.transport, request.json);
+						request.options['onFailure'](request.transport, request.json);
 					}
 				}
 			}, 30*1000
