@@ -362,7 +362,7 @@ sub _finalBar {
 	# passing in $num_done is optional, and will most likely rarely be used,
 	# we should generally favor the data that has been passed in to update()
 	if (!defined $num_done) {
-		$num_done = $self->{'num_done'};
+		$num_done = $self->{'num_done'} || 0;
 	}
 
 	my $fh = $self->{'fh'};
