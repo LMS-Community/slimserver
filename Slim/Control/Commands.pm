@@ -1249,8 +1249,7 @@ sub playlistXitemCommand {
 				_playlistXitem_load_done(
 					$client,
 					$jumpToIndex,
-					$request->callbackFunction,
-					$request->callbackArguments,
+					$request,
 					scalar @{Slim::Player::Playlist::playList($client)},
 					$path,
 					$error,
@@ -2471,7 +2470,7 @@ sub _mixer_mute {
 }
 
 sub _playlistXitem_load_done {
-	my ($client, $index, $callbackf, $callbackargs, $count, $url, $error, $noShuffle) = @_;
+	my ($client, $index, $request, $count, $url, $error, $noShuffle) = @_;
 
 	$log->debug("Begin Function");
 	
@@ -2509,7 +2508,16 @@ sub _playlistXitem_load_done {
 		}, { 'scroll' => 1, 'firstline' => 1 });
 	}
 
-	$callbackf && (&$callbackf(@$callbackargs));
+	# XXX: this should not be calling a request callback directly!
+	# It should be handled by $request->setStatusDone
+	if ( my $callbackf = $request->callbackFunction ) {
+		if ( my $callbackargs = $request->callbackArguments ) {
+			$callbackf->( @{$callbackargs} );
+		}
+		else {
+			$callbackf->( $request );
+		}
+	}
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
 }
