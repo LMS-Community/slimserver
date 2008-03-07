@@ -3617,9 +3617,12 @@ sub songinfoQuery {
 						}
 						# special case: artwork, only if it exists
 						elsif ($key eq 'COVERART' && $artworkExists) {
+								# Bug 7443, check for a track cover before using the album cover
+								my $coverId = $track->coverArtExists ? $track->id : $val;
+							
 								$actions = {
 									'do' => {
-										'cmd' => ['artwork', $val],
+										'cmd' => ['artwork', $coverId],
 									},
 								};
 
@@ -4017,10 +4020,13 @@ sub titlesQuery {
 				my $text = $item->title;
 				my $album;
 				my $albumObj = $item->album();
-				my $iconId = 0;
+				
+				# Bug 7443, check for a track cover before using the album cover
+				my $iconId = $item->coverArtExists ? $id : 0;
+				
 				if(defined($albumObj)) {
 					$album = $albumObj->title();
-					$iconId = $albumObj->artwork();
+					$iconId ||= $albumObj->artwork();
 				}
 				$text = $text . "\n" . (defined($album)?$album:"");
 			
@@ -4489,9 +4495,14 @@ sub _addJiveSong {
 	my $albumObj = $track->album();
 	my $iconId;
 	
+	# Bug 7443, check for a track cover before using the album cover
+	if ( $track->coverArtExists() ) {
+		$iconId = $track->id;
+	}
+	
 	if ( defined $albumObj ) {
 		$album = $albumObj->title();
-		$iconId = $albumObj->artwork();
+		$iconId ||= $albumObj->artwork();
 	}
 	elsif ( $remoteMeta->{album} ) {
 		$album = $remoteMeta->{album};
