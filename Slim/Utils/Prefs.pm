@@ -411,6 +411,13 @@ sub init {
 		}
 	}, 'persistPlaylists');
 
+
+	$prefs->setChange( sub {
+		return if $_[1];
+		my $client = $_[2] || return;
+		$prefs->client($client)->set('playername', $client->name);
+	}, 'playername');
+
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
 		Slim::Player::Transporter::updateClockSource($client);
