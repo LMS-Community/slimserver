@@ -71,6 +71,12 @@ my $prefs = preferences('server');
 		require Win32::Service;
 		require Win32::Shortcut;
 	}
+	
+	elsif ($^O =~/darwin/i) {
+		require Mac::Errors;
+		require Mac::Files;
+		require Mac::Resources;
+	}
 }
 
 # Cache our user agent string.
@@ -359,6 +365,29 @@ sub fileURLFromWinShortcut {
 	my $shortcut = shift;
 
 	return fixPath(pathFromWinShortcut($shortcut));
+}
+
+=head2 pathFromMacAlias( $path )
+
+Return the filepath for a given Mac Alias
+
+=cut
+
+sub pathFromMacAlias {
+	my $fullpath = shift;
+	my $path = '';
+
+	if (Slim::Utils::OSDetect::OS() ne "mac") {
+
+		return $path;
+	}
+
+	if (Mac::Resources::FSpOpenResFile($fullpath, 0) && (my $alis = Mac::Resources::GetIndResource('alis', 1))) {
+		
+		$path = Mac::Files::ResolveAlias($alis);
+	}
+
+	return $path;
 }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
@@ -874,12 +903,19 @@ sub fileFilter {
 	# Make sure we can read the file.
 	return 0 if !-r _;
 
-
+	my $target;
+ 
+	# a file can be an Alias on Mac
+	if (Slim::Utils::OSDetect::OS() eq "mac" && -f _ && $validRE && ($target = pathFromMacAlias($fullpath))) {
+		unless (-d $target) {
+			return 0;
+		}
+	}
 	# Don't bother with file types we don't understand.
-	if ($validRE && -f _) {
+	elsif ($validRE && -f _) {
 		return 0 if $item !~ $validRE;
 	}
-	elsif ($validRE && -l _ && defined(my $target = readlink($fullpath))) {
+	elsif ($validRE && -l _ && defined ($target = readlink($fullpath))) {
 		# fix relative/absolute path
 		$target = ($target =~ /^\// ? $target : catdir($dirname, $target));
 

@@ -173,6 +173,28 @@ sub findFilesMatching {
 			}
 		}
 
+		elsif (my $file = Slim::Utils::Misc::pathFromMacAlias($file)) {
+			if (dir($file)->subsumes($topDir)) {
+
+				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
+				next;
+			}
+			
+			# Recurse into additional shortcuts and directories.
+			if (-d $file) {
+
+				$log->info("Following Mac Alias to: $file");
+
+				$class->findFilesMatching($file, {
+					'foundItems' => $found,
+					'recursive'  => $args->{'recursive'},
+					'types'      => $args->{'types'},
+				});
+
+				next;
+			}
+		}
+
 		# Fix slashes
 		push @{$found}, File::Spec->canonpath($file);
 	}
