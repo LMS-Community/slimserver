@@ -331,6 +331,7 @@ sub cliStopTest {
 
 	if (Slim::Buttons::Common::mode($client) eq 'Slim::Plugin::Health::Plugin') {
 		Slim::Buttons::Common::popMode($client);
+		$client->update;
 	}
 
 	$request->setStatusDone();
