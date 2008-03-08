@@ -36,12 +36,15 @@ use File::BOM;
 use POSIX qw(LC_CTYPE LC_TIME);
 use Text::Unidecode;
 
+# This works better than Encode::Guess
+use Encode::Detect::Detector;
+
 use Slim::Utils::Log;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
 	$sysLang, $locale, $lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET,
-	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE, $encodeDetect
+	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE
 );
 
 {
@@ -148,14 +151,6 @@ our (
 		$lc_ctype =~ s/euckr/euc-kr/i;
 		$lc_ctype =~ s/big5/big5-eten/i;
 		$lc_ctype =~ s/gb2312/euc-cn/i;
-	}
-
-	# This works better than Encode::Guess, but it may not be everywhere.
-	eval "use Encode::Detect::Detector";
-
-	if (!$@) {
-
-		$encodeDetect = 1;
 	}
 
 	# Setup Encode::Guess
@@ -780,14 +775,11 @@ sub encodingFromString {
 
 	# Check Encode::Detect::Detector before ISO-8859-1, as it can find
 	# overlapping charsets.
-	if ($encodeDetect) {
+	my $charset = Encode::Detect::Detector::detect($_[0]);
 
-		my $charset = Encode::Detect::Detector::detect($_[0]);
+	if ($charset) {
 
-		if ($charset) {
-
-			return lc($charset);
-		}
+		return lc($charset);
 	}
 
 	if (looks_like_latin1($_[0])) {
