@@ -296,13 +296,13 @@ sub handleGraphs {
 		if (defined $params->{'monitor'} && ($params->{'monitor'} eq $mon->{'name'} || $params->{'monitor'} eq 'all') ) {
 			if (exists($params->{'setwarn'})) {
 				if (defined $monitor->warnHigh() || $params->{'warnhi'} ne '') {
-					$monitor->setWarnHigh($params->{'warnhi'});
+					$monitor->setWarnHigh($params->{'warnhi'} ne '' ? $params->{'warnhi'} : undef);
 				}
 				if (defined $monitor->warnLow() || $params->{'warnlo'} ne '') {
-					$monitor->setWarnLow($params->{'warnlo'});
+					$monitor->setWarnLow($params->{'warnlo'} ne '' ? $params->{'warnlo'} : undef);
 				}
 				if (defined $monitor->warnBt() || $params->{'warnbt'} ne '') {
-					$monitor->setWarnBt($params->{'warnbt'});
+					$monitor->setWarnBt($params->{'warnbt'} || undef);
 				}
 			}
 			if (exists($params->{'clear'})) {
