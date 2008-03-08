@@ -49,33 +49,11 @@ Linux Notes (Debian/Ubuntu Install):
 
 Linux Notes (RPM Install):
 
-	The Linux RPMs install the software under /usr/local/slimserver
-	There is one critical config file, /etc/slimserver.config
-	There is also a /etc/sysconfig/slimserver that handles
-	startup from /etc/rc/d/init.d
+	Please see the Wiki:
 
-	The standard installation creates a non-priviledged user names "slimserver"
-	that is used to own files and directories, and is used as the
-	login account for the SqueezeCenter daemon.
+	http://wiki.slimdevices.com/index.cgi?SqueezeCenterRPM
 
-	The standard RPM puts the appropriate entries in /etc/rc.d/init.d
-	so that automated startup works as you expect.
-
-	In the 6.* releases, there is a log file written to /tmp/slimserver.log
-	This can be changed by editing the /etc/sysconfig/slimserver
-
-	If you've installed the RPM on a RedHat or Mandrake Linux system, you can start 
-	the server with this command:
-
-		/etc/rc.d/init.d/slimserver start
-
-	and stop it with this:
-
-		/etc/rc.d/init.d/slimserver stop
-
-	and check that the daemon is running with
-
-		/etc/rc.d/init.d/slimserver status
+	for the latest install instructions.
 		
 --------------------------------------------------------------------------------
 
