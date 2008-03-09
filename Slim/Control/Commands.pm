@@ -2503,8 +2503,7 @@ sub _playlistXitem_load_done {
 		
 		# Show an error message
 		$client->showBriefly({
-			'line1'    => $line1,
-			'line2'    => $url,
+			line => [$line1, $url],
 		}, { 'scroll' => 1, 'firstline' => 1 });
 	}
 
