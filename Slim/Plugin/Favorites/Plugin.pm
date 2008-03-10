@@ -458,53 +458,50 @@ sub indexHandler {
 
 					my $url = $params->{'entryurl'};
 
-					if ($entry->{'type'} eq 'check') {
+					if ($url !~ /^http:/) {
 
-						if ($url !~ /^http:/) {
-
-							if ($url !~ /\.(xml|opml|rss)$/) {
-
-								$entry->{'type'} = 'audio';
-
-							} else {
-
-								delete $entry->{'type'};
-							}
-
-						} elsif (!$params->{'fetched'}) {
-
-							$log->info("checking content type for $url");
-
-							Slim::Networking::Async::HTTP->new()->send_request( {
-								'request'     => HTTP::Request->new( GET => $url ),
-								'onHeaders'   => \&asyncCBContentType,
-								'onError'     => \&asyncCBContentTypeError,
-								'passthrough' => [ $client, $params, @_ ],
-							} );
-
-							return;
-
-						} elsif (my $type = $params->{'fetchedtype'}) {
-
-							if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
-
-								$log->info("  got content type $type - treating as audio");
-																
-								$entry->{'type'} = 'audio';
-
-							} else {
-
-								$log->info("  got content type $type - treating as non audio");
-															
-								delete $entry->{'type'};
-							}
-								
+						if ($url !~ /\.(xml|opml|rss)$/) {
+							
+							$entry->{'type'} = 'audio';
+							
 						} else {
-
-							$log->info("  error fetching content type - treating as non audio");
-													
+							
 							delete $entry->{'type'};
 						}
+						
+					} elsif (!$params->{'fetched'}) {
+						
+						$log->info("checking content type for $url");
+						
+						Slim::Networking::Async::HTTP->new()->send_request( {
+							'request'     => HTTP::Request->new( GET => $url ),
+							'onHeaders'   => \&asyncCBContentType,
+							'onError'     => \&asyncCBContentTypeError,
+							'passthrough' => [ $client, $params, @_ ],
+						} );
+						
+						return;
+						
+					} elsif (my $type = $params->{'fetchedtype'}) {
+						
+						if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
+							
+							$log->info("  got content type $type - treating as audio");
+							
+							$entry->{'type'} = 'audio';
+							
+						} else {
+							
+							$log->info("  got content type $type - treating as non audio");
+							
+							delete $entry->{'type'};
+						}
+						
+					} else {
+						
+						$log->info("  error fetching content type - treating as non audio");
+						
+						delete $entry->{'type'};
 					}
 
 					$entry->{'URL'} = $url;
@@ -547,7 +544,6 @@ sub indexHandler {
 		push @$level,{
 			'text' => string('PLUGIN_FAVORITES_NAME'),
 			'URL'  => string('PLUGIN_FAVORITES_URL'),
-			'type' => 'check',
 		};
 
 		$edit = scalar @$level - 1;
