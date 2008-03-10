@@ -695,6 +695,7 @@ Player = function(){
 	var playTimeTimer;
 	var playTime = 0;
 	var displayElements = new Ext.util.MixedCollection();
+	var showBriefly;
 
 	var playerStatus = {
 		power: null,
@@ -1154,14 +1155,8 @@ Player = function(){
 								});
 							}
 
-							if (responseText.result && responseText.result.showBriefly) {
-								var msg = '<img src="' + webroot + 'html/images/btn_info.gif">&nbsp;' + responseText.result.showBriefly.join(' ');
-								var info = Ext.get('footerInfoText');
-								if (info && info.dom.innerHTML != msg && !info.hasActiveFx()) {
-									info.update(msg);
-									info.fadeIn().pause(7).fadeOut();
-								}
-							}
+							if (responseText.result && responseText.result.showBriefly)
+								Utils.msg(responseText.result.showBriefly.join(' '));
 
 							// display scanning information
 							Main.checkScanStatus(responseText);

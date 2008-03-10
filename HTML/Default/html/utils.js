@@ -245,6 +245,7 @@ var Utils = function(){
 	var highlightedEl;
 	var unHighlightTimer;
 	var hideSearchTimer;
+	var showBriefly;
 
 	return {
 		isDragging : false,
@@ -493,9 +494,14 @@ var Utils = function(){
 
 		msg : function(text){
 			var info = Ext.get('footerInfoText');
-			if (info) {
+			if (info && text && this.showBriefly != text && !info.hasActiveFx()) {
+				this.showBriefly = text;
 				info.update('<img src="' + webroot + 'html/images/btn_info.gif"/>&nbsp;' + text);
-				info.fadeIn().pause(2).fadeOut();
+				info.fadeIn().pause(4).fadeOut();
+			}
+			else if (info && !text) {
+				this.showBriefly = null;
+				info.update('');
 			}
 		},
 
