@@ -1154,6 +1154,15 @@ Player = function(){
 								});
 							}
 
+							if (responseText.result && responseText.result.showBriefly) {
+								var msg = '<img src="' + webroot + 'html/images/btn_info.gif">&nbsp;' + responseText.result.showBriefly.join(' ');
+								var info = Ext.get('footerInfoText');
+								if (info && info.dom.innerHTML != msg && !info.hasActiveFx()) {
+									info.update(msg);
+									info.fadeIn().pause(7).fadeOut();
+								}
+							}
+
 							// display scanning information
 							Main.checkScanStatus(responseText);
 						}
