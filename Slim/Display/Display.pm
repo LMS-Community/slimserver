@@ -305,7 +305,7 @@ sub showBriefly {
 
 	# cache info for async showBriefly (web UI)
 	$display->renderCache->{showBriefly} = {
-		ttl  => time() + 30,
+		ttl  => time() + 15,
 		line => $parts->{line}
 	};
 
