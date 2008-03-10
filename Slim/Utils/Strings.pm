@@ -93,12 +93,13 @@ optional $argshash allows default behavious to be overridden, keys that can be s
 sub loadStrings {
 	my $args = shift;
 
-	my ($newest, $files) = stringsFiles();
+	my ($newest, $sum, $files) = stringsFiles();
 
 	my $stringCache = catdir( $prefs->get('cachedir'),
 		Slim::Utils::OSDetect::OS() eq 'unix' ? 'stringcache' : 'strings.bin');
 
-	my $stringCacheVersion = 1; # Version number for cache file
+	my $stringCacheVersion = 2; # Version number for cache file
+	# version 2 - include the sum of string file mtimes as an additional validation check
 
 	# use stored stringCache if newer than all string files and correct version
 	if (!$args->{'ignoreCache'} && -r $stringCache && ($newest < (stat($stringCache))[9])) {
@@ -124,6 +125,11 @@ sub loadStrings {
 			$cacheOK = 0;
 		}
 
+		# check sum of mtimes matches that stored in stringcache
+		if ($strings->{'mtimesum'} && $strings->{'mtimesum'} != $sum) {
+			$cacheOK = 0;
+		}
+
 		# check for same list of strings files as that stored in stringcache
 		if (scalar @{$strings->{'files'}} == scalar @$files) {
 			for my $i (0 .. scalar @$files - 1) {
@@ -144,6 +150,7 @@ sub loadStrings {
 	unless ($args->{'dontClear'}) {
 		$strings = {
 			'version' => $stringCacheVersion,
+			'mtimesum'=> $sum,
 			'lang'    => $currentLang,
 			'files'   => $files,
 		};
@@ -172,7 +179,8 @@ sub loadStrings {
 
 sub stringsFiles {
 	my @files;
-	my $newest = 0;
+	my $newest = 0; # mtime of newest file
+	my $sum = 0;    # sum of all mtimes
 
 	# server string file
 	my $serverPath = Slim::Utils::OSDetect::dirsFor('strings');
@@ -196,6 +204,7 @@ sub stringsFiles {
 	while (my $file = $files[$i]) {
 		if (-r $file) {
 			my $moddate = (stat($file))[9];
+			$sum += $moddate;
 			if ($moddate > $newest) {
 				$newest = $moddate;
 			}
@@ -205,7 +214,7 @@ sub stringsFiles {
 		}
 	}
 
-	return $newest, \@files;
+	return $newest, $sum, \@files;
 }
 
 sub loadFile {
