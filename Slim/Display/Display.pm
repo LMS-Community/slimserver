@@ -303,6 +303,12 @@ sub showBriefly {
 		$name         = shift;
 	}
 
+	# cache info for async showBriefly (web UI)
+	$display->renderCache->{showBriefly} = {
+		ttl  => time() + 30,
+		line => $parts->{line}
+	};
+
 	# notify cli/jive of the show briefly message
 	if ($display->notifyLevel >= 1) {
 		$display->notify('showbriefly', $parts);

@@ -2997,7 +2997,14 @@ sub statusQuery {
 	# add player info...
 	$request->addResult("player_name", $client->name());
 	$request->addResult("player_connected", $connected);
-	
+
+	# add showBriefly info
+	if ($client->display->renderCache->{showBriefly}
+		&& $client->display->renderCache->{showBriefly}->{line}
+		&& $client->display->renderCache->{showBriefly}->{ttl} > time()) {
+		$request->addResult('showBriefly', $client->display->renderCache->{showBriefly}->{line});
+	}
+
 	if (!$RSC) {
 		$power += 0;
 		$request->addResult("power", $power);
