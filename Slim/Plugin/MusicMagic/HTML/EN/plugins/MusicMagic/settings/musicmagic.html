@@ -82,8 +82,8 @@
 			[% END %]
 		[% END %]
 
-		[% WRAPPER settingGroup title="SETUP_MMSPORT" desc="SETUP_MMSPORT_DESC" %]
-			[% IF prefs.exists('port') %]
+		[% IF prefs.exists('port') %]
+			[% WRAPPER settingGroup title="SETUP_MMSPORT" desc="SETUP_MMSPORT_DESC" %]
 				<input type="text" class="stdedit" name="port" id="port" value="[% prefs.port %]" size="5">
 			[% END %]
 		[% END %]
