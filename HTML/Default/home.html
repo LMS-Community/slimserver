@@ -189,7 +189,7 @@ ELSE %]
 
 					PROCESS menuItem 
 						link = {
-							key = ( loop.index + 1 ) _ ": " _ entry.text,
+							key = entry.text,
 							value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ loop.index _ "&amp;player=" _ playerURI
 						};
 				END
