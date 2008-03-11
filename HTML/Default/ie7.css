@@ -38,3 +38,13 @@
 .x-tabs-item-body {
 	height: 0;
 }
+
+.x-menu-list {
+	overflow: hidden;
+	min-width: 160px;
+}
+
+.settings .x-menu-list {
+	overflow: auto;
+}
+
