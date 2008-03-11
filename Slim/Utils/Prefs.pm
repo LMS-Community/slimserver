@@ -76,6 +76,7 @@ use Exporter::Lite;
 use File::Path qw(mkpath);
 use Getopt::Long qw(:config pass_through);
 use Storable;
+use Net::IP qw(ip_is_ipv4);
 
 use Slim::Utils::Prefs::Namespace;
 use Slim::Utils::Prefs::OldPrefs;
@@ -369,6 +370,32 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0, 'high' =>  1000 }, 'packetLatency');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   10, 'high' =>  1000 }, 'minSyncAdjust');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>   255 }, 'syncBufferThreshold');
+
+	$prefs->setValidate({
+		validator => sub {
+							foreach (split (/,/, $_[1])) {
+								s/^\s*//g; 
+								s/\s*$//g;
+	 
+								next if Net::IP::ip_is_ipv4($_);
+								
+								# 192.168.0.*
+								if (/(.*\.)\*$/) {
+									next if Net::IP::ip_is_ipv4($1 . '0');
+								}
+								
+								# allow ranges à la "192.168.0.1-50"
+								if (/(.+)-(\d+)$/) {
+									next if Net::IP::ip_is_ipv4($1);
+								}
+							
+								return 0;
+							}
+
+							return 1;
+					}
+		}, 'allowedHosts',
+	);
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort,                              'httpport'    );
