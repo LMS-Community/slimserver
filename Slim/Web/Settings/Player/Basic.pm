@@ -33,7 +33,7 @@ sub prefs {
 
 	return if (!defined $client);
 
-	my @prefs = ();
+	my @prefs = qw(playername);
 
 	if ($client->isPlayer && !$client->display->isa('Slim::Display::NoDisplay')) {
 
@@ -61,7 +61,7 @@ sub handler {
 	}
 
 	# array prefs handled by this handler not handler::SUPER
-	my @prefs = qw(playername);
+	my @prefs = ();
 
 	if (defined $client && $client->isPlayer() && !$client->display->isa('Slim::Display::NoDisplay')) {
 
@@ -76,10 +76,6 @@ sub handler {
 	if ($paramRef->{'saveSettings'}) {
 
 		for my $pref (@prefs) {
-			if ($pref eq 'playername') {
-				$prefs->client($client)->set($pref, $paramRef->{$pref} || $client->name);
-				next;
-			}
 
 			my $i = 0;
 			my @array;
@@ -97,9 +93,7 @@ sub handler {
 	$paramRef->{'prefs'}->{'playername'} |= $client->name;
 
 	for my $pref (@prefs) {
-		unless (defined $paramRef->{'prefs'}->{$pref}) {		
-			$paramRef->{'prefs'}->{$pref} = [ @{ $prefs->client($client)->get($pref) }, "-1" ];
-		}
+		$paramRef->{'prefs'}->{$pref} = [ @{ $prefs->client($client)->get($pref) }, "-1" ];
 	}
 
 	$paramRef->{'titleFormatOptions'}  = hashOfPrefs('titleFormat');

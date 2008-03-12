@@ -371,31 +371,31 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   10, 'high' =>  1000 }, 'minSyncAdjust');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>   255 }, 'syncBufferThreshold');
 
+	$prefs->setValidate({ 'validator' => sub { $_[1] ne '' } }, 'playername');
+
 	$prefs->setValidate({
 		validator => sub {
-							foreach (split (/,/, $_[1])) {
-								s/^\s*//g; 
-								s/\s*$//g;
+			foreach (split (/,/, $_[1])) {
+				s/\s*//g; 
 	 
-								next if Net::IP::ip_is_ipv4($_);
+				next if Net::IP::ip_is_ipv4($_);
 								
-								# 192.168.0.*
-								if (/(.*\.)\*$/) {
-									next if Net::IP::ip_is_ipv4($1 . '0');
-								}
+				# 192.168.0.*
+				if (/(.*\.)\*$/) {
+					next if Net::IP::ip_is_ipv4($1 . '0');
+				}
 								
-								# allow ranges à la "192.168.0.1-50"
-								if (/(.+)-(\d+)$/) {
-									next if Net::IP::ip_is_ipv4($1);
-								}
+				# allow ranges à la "192.168.0.1-50"
+				if (/(.+)-(\d+)$/) {
+					next if Net::IP::ip_is_ipv4($1);
+				}
 							
-								return 0;
-							}
+				return 0;
+			}
 
-							return 1;
-					}
-		}, 'allowedHosts',
-	);
+			return 1;
+		}
+	}, 'allowedHosts');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort,                              'httpport'    );
@@ -437,13 +437,6 @@ sub init {
 			Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
 		}
 	}, 'persistPlaylists');
-
-
-	$prefs->setChange( sub {
-		return if $_[1];
-		my $client = $_[2] || return;
-		$prefs->client($client)->set('playername', $client->name);
-	}, 'playername');
 
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
