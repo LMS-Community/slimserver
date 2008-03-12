@@ -238,7 +238,19 @@ sub savenow {
 
 	$log->info("saving prefs for $class->{'namespace'} to $class->{'file'}");
 
-	eval { File::Slurp::write_file($class->{'file'}, { 'atomic' => 1 }, Dump($class->{'prefs'}) ) };
+	eval {
+		my $path = $class->{'file'} . '.tmp';
+
+		open(OUT,'>:utf8', $path) or die "$!";
+		print OUT Dump($class->{'prefs'});
+		close OUT;
+
+		if (-w $path) {
+			rename($path, $class->{'file'});
+		} else {
+			unlink($path);
+		}
+	};
 
 	if ($@) {
 		logError("can't save $class->{'file'}: $@");
