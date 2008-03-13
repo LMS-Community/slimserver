@@ -269,7 +269,7 @@ sub startServer {
 
 		if (scalar keys %status == 0 || ($status{'CurrentState'} != 0x02 && $status{'CurrentState'} != 0x04)) {
 
-			logError("Couldn't install MySQL as a service! Will run as a process!");
+			logInfo("Couldn't install MySQL as a service! Will run as a process!");
 			$service = 0;
 		}
 	}
