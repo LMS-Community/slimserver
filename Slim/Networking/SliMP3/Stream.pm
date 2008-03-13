@@ -620,17 +620,8 @@ sub sendNextChunk {
 
 		0 && $log->warn("Stream not readable");
 
-		if ($streamState eq 'eof') {
-
-			$log->debug("Sending empty chunk...");
-
-			# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
-			Slim::Utils::Timers::setTimer($client, make_timeout($client, $BUFFER_FULL_DELAY), \&sendEmptyChunk);
-
-		} else {
-
-			Slim::Utils::Timers::setTimer($client, make_timeout($client, $TIMEOUT), \&sendNextChunk);
-		}
+		# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
+		Slim::Utils::Timers::setTimer($client, make_timeout($client, $BUFFER_FULL_DELAY), \&sendEmptyChunk);
 
 		return 0;
 	}
