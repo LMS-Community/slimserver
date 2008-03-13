@@ -807,6 +807,36 @@ sub rebuffer {
 	# Bug 6549, if the user powers off, stop rebuffering
 	return if !$client->power;
 	
+	# Bug 6712, give up after 30s
+	if (time() > $client->bufferStarted() + 30) {
+		# Only show rebuffering failed status if no user activity on player or we're on the Now Playing screen
+		my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
+		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+
+		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
+			my ( $line1, $line2 );
+		
+			my $failedString = $client->string('REBUFFERING_FAILED');
+			$line1 = $client->string('NOW_PLAYING') . ': ' . $failedString; 	 
+			if ( $client->linesPerScreen() == 1 ) { 	 
+				$line2 = $failedString; 	 
+			} 	 
+			else { 	 
+				my $url = Slim::Player::Playlist::url($client); 	 
+				$line2  = Slim::Music::Info::title($url);
+			}
+
+			$client->showBriefly( {
+				line => [ $line1, $line2 ],
+				jive => undef,
+				cli  => undef,
+			}, 2 ) unless $client->display->sbName();
+		}
+		playmode( $client, 'stop' );
+		playmode( $client, 'play' );
+		return;
+	}
+	
 	$client->requestStatus();
 	
 	my $threshold = 80 * 1024; # 5 seconds of 128k
