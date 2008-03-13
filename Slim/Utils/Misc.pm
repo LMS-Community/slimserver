@@ -59,6 +59,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
+my $canFollowAlias = 0;
 
 {
 	if ($^O =~ /Win32/) {
@@ -73,9 +74,8 @@ my $prefs = preferences('server');
 	}
 	
 	elsif ($^O =~/darwin/i) {
-		require Mac::Errors;
-		require Mac::Files;
-		require Mac::Resources;
+		# OSX 10.3 doesn't have the modules needed to follow aliases
+		$canFollowAlias = !Slim::bootstrap::tryModuleLoad('Mac::Errors', 'Mac::Files', 'Mac::Resources', 'nowarn');
 	}
 }
 
@@ -377,10 +377,7 @@ sub pathFromMacAlias {
 	my $fullpath = shift;
 	my $path = '';
 
-	if (Slim::Utils::OSDetect::OS() ne "mac") {
-
-		return $path;
-	}
+	return $path unless $canFollowAlias;
 
 	if (Mac::Resources::FSpOpenResFile($fullpath, 0) && (my $alis = Mac::Resources::GetIndResource('alis', 1))) {
 		
