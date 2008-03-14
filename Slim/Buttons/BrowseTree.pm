@@ -262,7 +262,7 @@ sub browseTreeExitCallback {
 
 	my $currentItem = ${$client->modeParam('valueRef')};
 
-	my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
+	my $descend     = Slim::Music::Info::isList($currentItem) || -d Slim::Utils::Misc::pathFromMacAlias($currentItem->url);
 
 	my @levels      = split(/\//, $client->modeParam('hierarchy'));
 

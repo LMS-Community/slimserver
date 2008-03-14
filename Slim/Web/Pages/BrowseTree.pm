@@ -98,7 +98,6 @@ sub browsetree {
 		push @{$params->{'browse_items'}}, \%form;
 	}
 
-	#
 	my $topPath = $topLevelObj->path;
 	my $osName  = Slim::Utils::OSDetect::OS();
 
@@ -127,12 +126,16 @@ sub browsetree {
 		# Bug: 1360 - Don't show files referenced in a cuesheet
 		next if ($item->content_type eq 'cur');
 
+		# allow descending if current item is a Mac alias pointing to a folder
+		my $descend = Slim::Music::Info::isList($item) 
+						|| ($item->content_type eq 'unk' && -d Slim::Utils::Misc::pathFromMacAlias($url));
+
 		# Turn the utf8 flag on for proper display - since this is
 		# coming directly from the filesystem.
 		my %form = (
 			'text'      => Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item->url) ),
 			'hierarchy' => join('/', @levels, $item->id),
-			'descend'   => Slim::Music::Info::isList($item) ? 1 : 0,
+			'descend'   => $descend,
 			'odd'       => ($itemnumber + 1) % 2,
 			'itemobj'   => $item,
 			'hreftype'  => 'browseTree',

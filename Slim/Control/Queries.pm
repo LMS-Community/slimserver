@@ -1570,7 +1570,7 @@ sub musicfolderQuery {
 				
 
 				# assumed case, folder
-				if (Slim::Music::Info::isDir($eachitem)) {
+				if (Slim::Music::Info::isDir($eachitem) || -d Slim::Utils::Misc::pathFromMacAlias($eachitem->url)) {
 
 					$params->{'folder_id'} = $id;
 
@@ -1680,6 +1680,8 @@ sub musicfolderQuery {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
 				} elsif (Slim::Music::Info::isSong($eachitem)) {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
+				} elsif (-d Slim::Utils::Misc::pathFromMacAlias($eachitem->url)) {
+					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 				} else {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 				}

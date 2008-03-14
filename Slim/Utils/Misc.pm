@@ -377,14 +377,35 @@ sub pathFromMacAlias {
 	my $fullpath = shift;
 	my $path = '';
 
-	return $path unless $canFollowAlias;
+	return $path unless $fullpath && $canFollowAlias;
 
-	if (Mac::Resources::FSpOpenResFile($fullpath, 0) && (my $alis = Mac::Resources::GetIndResource('alis', 1))) {
-		
+	if (my $alis = isMacAlias($fullpath)) {
+
+		$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;	
 		$path = Mac::Files::ResolveAlias($alis);
 	}
 
 	return $path;
+}
+
+=head2 isMacAlias( $path )
+
+Return the filepath for a given Mac Alias
+
+=cut
+
+sub isMacAlias {
+	my $fullpath = shift;
+
+	return unless $fullpath && $canFollowAlias;
+
+	$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
+	if (Mac::Resources::FSpOpenResFile($fullpath, 0) && (my $alis = Mac::Resources::GetIndResource('alis', 1))) {
+		
+		return $alis;
+	}
+
+	return;
 }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
@@ -1034,6 +1055,21 @@ sub findAndScanDirectoryTree {
 			'readTags' => 1,
 			'commit'   => 1,
 		});
+	}
+
+	if (Slim::Utils::OSDetect::OS() eq 'mac' && blessed($topLevelObj) && $topLevelObj->can('path')) {
+		my $topPath = $topLevelObj->path;
+
+		if (Slim::Utils::Misc::isMacAlias($topPath)) {
+	
+			$topLevelObj = Slim::Schema->rs('Track')->objectForUrl({
+				'url'      => Slim::Utils::Misc::pathFromMacAlias($topPath),
+				'create'   => 1,
+				'readTags' => 1,
+				'commit'   => 1,
+			});
+
+		}
 	}
 
 	if (!blessed($topLevelObj) || !$topLevelObj->can('path') || !$topLevelObj->can('id')) {
