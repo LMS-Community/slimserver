@@ -225,12 +225,12 @@ sub unsync {
 		$lastInGroup = undef;
 	}
 
-	# when we unsync, we stop, but save settings first if we're doing at temporary unsync.
-	if ($temp) {
-
-		saveSyncPrefs($client);
-
-	} else {
+	# Bug #7121
+	# The code used to do a saveSyncPrefs() here, iff temp
+	# but this is unnecessary as that function was called when
+	# the sync-group was first established.
+	
+	if (!$temp) {
 		# delete sync prefs for both this client and remaining client if it is last in group
 		deleteSyncPrefs($client) unless ($client == $lastInGroup);
 		deleteSyncPrefs($lastInGroup, 1) if $lastInGroup;
@@ -264,6 +264,14 @@ sub sync {
 	}
 		
 	$buddy = masterOrSelf($buddy);
+	
+	# Save Status to Prefs file
+	saveSyncPrefs($client, $buddy);
+
+	# Bug #7121
+	if (!$client->power()) {
+		return;
+	}
 
 	$client->master($buddy);
 	
@@ -274,33 +282,34 @@ sub sync {
 		$client->execute(["playlist", "jump", "+0"]);
 	}
 	
-	# Save Status to Prefs file
-	saveSyncPrefs($client);
-	
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'sync']);
 }
 
 sub saveSyncPrefs {
 	my $client = shift;
-
-	if (isSynced($client)) {
+	my $master = shift;
 	
-		if (!defined($client->master->syncgroupid)) {
-			$client->master->syncgroupid(int(rand 999999999));
-		}
-
-		my $masterID = $client->master->syncgroupid;
-		my $clientID = $client->id;
-
-		$client->syncgroupid($masterID);
-
-		# Save Status to Prefs file
-		$log->info("Saving $clientID as a slave to $masterID");
-
-		$prefs->client($client)->set('syncgroupid', $masterID);
-		$prefs->client($client->master)->set('syncgroupid', $masterID);
-		
+	# Bug 7172
+	# This functionality used to be conditional on $client.isSynced == true 
+	# but this bug-fix wants to set up and save the syncgroupid of a 
+	# powered-off player without bringing it into a live synced state.
+	# Therefore, we assert that this function is only called to establish
+	# and save the syncgroupid between a (potentially new) master and its slave (client).
+	
+	if (!defined($master->syncgroupid)) {
+		$master->syncgroupid(int(rand 999999999));
 	}
+
+	my $masterID = $master->syncgroupid;
+	my $clientID = $client->id;
+
+	$client->syncgroupid($masterID);
+
+	# Save Status to Prefs file
+	$log->info("Saving $clientID as a slave to $masterID");
+
+	$prefs->client($client)->set('syncgroupid', $masterID);
+	$prefs->client($master)->set('syncgroupid', $masterID);
 }
 
 sub deleteSyncPrefs {
