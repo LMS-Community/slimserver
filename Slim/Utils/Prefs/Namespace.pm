@@ -28,6 +28,7 @@ use File::Slurp;
 
 use Slim::Utils::Prefs::Client;
 use Slim::Utils::Log;
+use Slim::Utils::Unicode;
 
 $YAML::Syck::ImplicitUnicode = 1;
 
@@ -190,6 +191,11 @@ sub _load {
 
 		if ($@) {
 			$log->info("can't read $class->{'file'} : $@");
+		}
+
+		# bug 7507: turn utf flag off on folder variables
+		foreach (qw(audiodir playlistdir)) {
+			$prefs->{$_} = Slim::Utils::Unicode::utf8off($prefs->{$_}) if $prefs->{$_};
 		}
 	}
 
