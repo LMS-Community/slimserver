@@ -160,7 +160,7 @@ function switchPlayer(player_List) {
 		if (rExp.exec(myString)) {
 			this.location = myString.replace(rExp, newPlayer);
 		} else {
-			this.location = this.location.href + "?player=" + escape(player);
+			this.location = this.location.href + "?player" + newPlayer;
 		}
 	}
 }
