@@ -24,7 +24,6 @@ use base qw(Slim::Utils::Prefs::Base);
 
 use File::Spec::Functions qw(:ALL);
 use YAML::Syck;
-use File::Slurp;
 
 use Slim::Utils::Prefs::Client;
 use Slim::Utils::Log;
