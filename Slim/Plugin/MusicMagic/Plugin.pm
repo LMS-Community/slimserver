@@ -49,7 +49,7 @@ our %validMixTypes = (
 	'track'    => 'song',
 	'album'    => 'album',
 	'artist'   => 'artist',
-	'genre'    => 'genre',
+	'genre'    => 'filter',
 	'mood'     => 'mood',
 	'playlist' => 'playlist',
 	'year'     => 'filter=?year',
