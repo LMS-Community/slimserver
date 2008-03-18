@@ -463,7 +463,7 @@ sub getMetadataFor {
 		return {
 			artist => $artist,
 			title  => $title,
-			type   => $client->string('RADIO'),
+			type   => defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO'),
 		};
 	}
 	
