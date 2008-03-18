@@ -2431,7 +2431,7 @@ sub readDirectoryQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $folder   = $request->getParam('folder');
+	my $folder   = Slim::Utils::Unicode::utf8off($request->getParam('folder'));
 	my $filter   = $request->getParam('filter');
 
 	use File::Spec::Functions qw(catdir);

@@ -42,8 +42,8 @@ my $simpleValidators = {
 	'hash'     => sub { ref $_[1] eq 'HASH' },
 	'defined'  => sub { defined $_[1] },
 	'false'    => sub { 0 },
-	'file'     => sub { !$_[1] || -e $_[1] },
-	'dir'      => sub { !$_[1] || -d $_[1] },
+	'file'     => sub { !$_[1] || -e $_[1] || -d Slim::Utils::Unicode::utf8encode_locale($_[1]) },
+	'dir'      => sub {	!$_[1] || -d $_[1] || -d $_[1] || -d Slim::Utils::Unicode::utf8encode_locale($_[1]) },
 	'intlimit' => sub { $_[1] =~ /^-?\d+$/ &&
 						(!defined $_[2]->{'low'}  || $_[1] >= $_[2]->{'low'} ) &&
 						(!defined $_[2]->{'high'} || $_[1] <= $_[2]->{'high'}) },

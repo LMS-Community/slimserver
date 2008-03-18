@@ -886,7 +886,7 @@ $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
 =cut
 
 sub fileFilter {
-	my $dirname = shift;
+	my $dirname = Slim::Utils::Unicode::utf8off(shift);
 	my $item    = shift;
 	my $validRE = shift || Slim::Music::Info::validTypeExtensions();
 
@@ -902,7 +902,7 @@ sub fileFilter {
 	}
 
 	# BUG 7111: don't catdir if the $item is already a full path.
-	my $fullpath = $dirname ? catdir($dirname, $item) : $item;
+	my $fullpath = $dirname ? catdir(Slim::Utils::Unicode::utf8off($dirname), $item) : $item;
 
 	# Don't display hidden/system files on Windows
 	if (Slim::Utils::OSDetect::OS() eq "win") {
