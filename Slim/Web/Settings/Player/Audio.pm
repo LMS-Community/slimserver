@@ -153,11 +153,6 @@ sub handler {
 		} elsif ($pref eq 'maxBitrate') {
 			
 			$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::maxRate($client, 1);
-			
-		} elsif ($pref eq 'powerOnResume') {
-			
-			$paramRef->{'prefs'}->{$pref} = Slim::Player::Sync::syncGroupPref($client,'powerOnResume') || 
-								$prefs->client($client)->get('powerOnResume');
 
 		} else {
 
