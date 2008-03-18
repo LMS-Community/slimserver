@@ -160,6 +160,10 @@ sub setMode {
 					Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 					Slim::Utils::Timers::killTimers( $client, \&submitScrobble ); 
 				}
+				
+				if ( $log->is_debug ) {
+					$log->debug( "Setting account for player " . $client->id . " to " . $$value );
+				}
 
 				$client->update();
 			}
