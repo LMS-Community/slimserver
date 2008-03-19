@@ -1293,7 +1293,7 @@ sub gotoNext {
 			(
 				   ( $oldstreamformat ne $newstreamformat )
 				|| Slim::Player::Sync::isSynced($client) 
-			 	|| $client->isa("Slim::Player::Squeezebox2")
+			 	|| $client->reportsTrackStart()
 				|| ( $client->rate() != 1 )
 			)
 		) {
