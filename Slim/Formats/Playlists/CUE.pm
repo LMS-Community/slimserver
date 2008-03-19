@@ -49,7 +49,7 @@ sub parse {
 		my $enc = Slim::Utils::Unicode::encodingFromString($line);
 
 		# Prefer UTF8 for CUE sheets.
-		$line = Slim::Utils::Unicode::utf8decode_guess($line, 'utf8', $enc);
+		$line = Slim::Utils::Unicode::utf8decode_guess($line, 'utf8', $enc) unless $line =~ /^FILE\s+/i;
 
 		# strip whitespace from end
 		$line =~ s/\s*$//;
