@@ -28,6 +28,7 @@ use Slim::Plugin::MusicMagic::PlayerSettings;
 my $initialized = 0;
 my $MMSHost;
 my $MMSport;
+my $canPowerSearch;
 
 my $OS  = Slim::Utils::OSDetect::OS();
 
@@ -152,6 +153,21 @@ sub initPlugin {
 		}
 
 		$http->close;
+
+		# this query should return an API error if Power Search is not available
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/mix?filter=?length>120&length=1",
+			'create' => 0,
+			'timeout' => 5,
+		}) || return 0;
+
+		if ($http && $http->content !~ /MusicIP API error/i) {
+			$canPowerSearch = 1;
+
+			$log->info('Power Search enabled');
+		}
+	
+		$http->close;		
 
 		Slim::Plugin::MusicMagic::PlayerSettings::init();
 
@@ -552,7 +568,7 @@ sub mixerlink {
 		
 		# flag if mixable
 		if (($item->can('musicmagic_mixable') && $item->musicmagic_mixable) ||
-			(defined $form->{'levelName'} && $form->{'levelName'} eq 'year')) {
+			($canPowerSearch && defined $form->{'levelName'} && $form->{'levelName'} eq 'year')) {
 
 			$form->{'musicmagic_mixable'} = 1;
 		}
