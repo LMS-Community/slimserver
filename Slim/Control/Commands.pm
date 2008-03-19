@@ -891,7 +891,7 @@ sub playlistSaveCommand {
 	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
-			catfile( $prefs->get('playlistdir'), $title . '.m3u')
+			catfile( $prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($title) . '.m3u')
 		),
 
 		'attributes' => {
