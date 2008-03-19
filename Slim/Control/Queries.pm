@@ -3535,6 +3535,7 @@ sub songinfoQuery {
 										'cmd' => ['artists'],
 										'params' => {
 											'menu' => 'album',
+											'menu_all' => 1,
 											'genre_id' => $id,
 										},
 									},
@@ -3555,6 +3556,7 @@ sub songinfoQuery {
 										},
 									},
 								};
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => $val } );
 							}
 						
 							# album -- not multi, but _songData simulates it in menuMode so we can add our action here
@@ -3564,6 +3566,7 @@ sub songinfoQuery {
 										'cmd' => ['tracks'],
 										'params' => {
 											'menu' => 'songinfo',
+											'menu_all' => 1,
 											'album_id' => $id,
 											'sort' => 'tracknum',
 										},
@@ -3586,7 +3589,7 @@ sub songinfoQuery {
 									},
 								};
 								# style correctly the title that opens for the action element
-								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId } );
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId, text => $val } );
 							}
 							
 							#or one of the artist role -- we don't test explicitely !!!
@@ -3597,6 +3600,7 @@ sub songinfoQuery {
 										'cmd' => ['albums'],
 										'params' => {
 											'menu' => 'track',
+											'menu_all' => 1,
 											'artist_id' => $id,
 										},
 									},
@@ -3619,7 +3623,7 @@ sub songinfoQuery {
 								};
 								
 								# style correctly the window that opens for the action element
-								$request->addResultLoop($loopname, $chunkCount, 'window', { 'menuStyle' => 'album' } );
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'artists', 'menuStyle' => 'album', text => $val } );
 							}
 							
 							$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
