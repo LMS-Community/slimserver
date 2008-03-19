@@ -643,7 +643,7 @@ sub playerSettingsMenu {
 
 	# sleep setting (always)
 	push @menu, {
-		text           => Slim::Utils::Strings::string("SLEEP"),
+		text           => Slim::Utils::Strings::string("PLAYER_SLEEP"),
 		id             => 'settingsSleep',
 		node           => 'settings',
 		displayWhenOff => 0,

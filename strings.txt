@@ -1142,6 +1142,9 @@ SLEEP
 	NO	Sovemodus
 	ZH_CN	睡眠状态
 
+PLAYER_SLEEP
+	EN	Player Sleep
+
 SLEEPING_AT
 	DA	Hviler om
 	DE	Schlafmodus um
