@@ -259,9 +259,8 @@ sub power {
 				$client->execute(["playlist","jump", 0, 1]);
 			}
 
-			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client) &&
-				!Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
-				# play if current playlist item is not a remote url
+			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client)) {
+				# play even if current playlist item is a remote url (bug 7426)
 				$client->execute(["play"]);
 			}
 		}		
