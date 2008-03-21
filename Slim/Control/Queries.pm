@@ -472,6 +472,7 @@ sub artistsQuery {
 	my $search   = $request->getParam('search');
 	my $year     = $request->getParam('year');
 	my $genreID  = $request->getParam('genre_id');
+	my $genreString  = $request->getParam('genre_string');
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
 	my $menu     = $request->getParam('menu');
@@ -484,6 +485,7 @@ sub artistsQuery {
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
 	my $insertAll = $menuMode && defined $insert;
+	my $allAlbums = defined $genreID;
 	
 	# get them all by default
 	my $where = {};
@@ -711,12 +713,16 @@ sub artistsQuery {
 		
 		if ($menuMode) {
 			# Add Favorites as the last item, if applicable
-			my $lastChunk;
+			my $lastChunk = 0;
 			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 				$lastChunk = 1;
 			}
-			
-			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+
+			if ($allAlbums) {
+				($chunkCount, $totalCount) = _jiveGenreAllAlbums(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, genreID => $genreID, genreString => $genreString );
+			}
+
+			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => ($lastChunk == 1), listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 		}
 	}
 	elsif ($totalCount > 1 && $menuMode) {
@@ -1259,9 +1265,10 @@ sub genresQuery {
 				# here the url is the genre name
 				my $url = 'db:genre.namesearch=' . $eachitem->name;
 				my $params = {
-					'genre_id' => $id,
-					'textkey' => substr($eachitem->namesort, 0, 1),
-					'favorites_url' => $url,
+					'genre_id'        => $id,
+					'genre_string'    => $eachitem->name,
+					'textkey'         => substr($eachitem->namesort, 0, 1),
+					'favorites_url'   => $url,
 					'favorites_title' => $eachitem->name,
 				};
 
@@ -4623,6 +4630,7 @@ sub _jiveAddToFavorites {
 	my $lastChunk  = $args{'lastChunk'};
 	my $includeArt = $args{'includeArt'};
 
+
 	return ($chunkCount, $listCount) unless $loopname && $favorites;
 	
 	# Do nothing unless Favorites are enabled
@@ -4669,12 +4677,66 @@ sub _jiveAddToFavorites {
 		$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
 
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-		$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
-			$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
+		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
+
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
-			# FIXME, this needs to change to a favorites image after it is provided
 			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/favorites.png');
+		} else {
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
+		}
+	
+		$chunkCount++;
+	}
+
+	return ($chunkCount, $listCount);
+}
+
+sub _jiveGenreAllAlbums {
+
+	my %args       = @_;
+	my $chunkCount = $args{'chunkCount'};
+	my $listCount  = $args{'listCount'};
+	my $loopname   = $args{'loopname'};
+	my $request    = $args{'request'};
+	my $start      = $args{'start'};
+	my $end        = $args{'end'};
+	my $lastChunk  = $args{'lastChunk'};
+	my $genreID    = $args{'genreID'};
+	my $genreString    = $args{'genreString'};
+	my $includeArt = $args{'includeArt'};
+
+	return ($chunkCount, $listCount) unless $loopname && $genreID;
+	return ($chunkCount, $listCount) if $start == 0 && $end == 0;
+	
+	# We always bump listCount to indicate this request list will contain one more item at the end
+	$listCount++;
+
+	# Add the actual favorites item if we're in the last chunk
+	if ( $lastChunk ) {
+		my $action = 'add';
+		my $token = 'ALL_ALBUMS';
+		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
+		my $actions = {
+			'go' => {
+				player => 0,
+				cmd    => [ 'albums' ],
+				params => {
+						genre_id	=> $genreID,
+						menu		=> 'track',
+						menu_all	=> 1,
+				},
+			},
+		};
+
+		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => "$genreString" });
+
+		if ($includeArt) {
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/playall.png');
+		} else {
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 		}
 	
 		$chunkCount++;
