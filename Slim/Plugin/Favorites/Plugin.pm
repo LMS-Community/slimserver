@@ -482,26 +482,34 @@ sub indexHandler {
 						
 						return;
 						
-					} elsif (my $type = $params->{'fetchedtype'}) {
-						
+					} else {
+
+						my $mime = $params->{'fetchedtype'} || 'error';
+						my $type = Slim::Music::Info::mimeToType($mime);
+
+						if ($type) {
+
+							$log->info("got mime type $mime");
+
+						} else {
+
+							$log->info("unknown mime type $mime, inferring from url");
+
+							$type = Slim::Music::Info::typeFromPath($url);
+						}
+
 						if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
 							
-							$log->info("  got content type $type - treating as audio");
+							$log->info("content type $type - treating as audio");
 							
 							$entry->{'type'} = 'audio';
 							
 						} else {
 							
-							$log->info("  got content type $type - treating as non audio");
-							
+							$log->info("content type $type - treating as non audio");
+
 							delete $entry->{'type'};
 						}
-						
-					} else {
-						
-						$log->info("  error fetching content type - treating as non audio");
-						
-						delete $entry->{'type'};
 					}
 
 					$entry->{'URL'} = $url;
@@ -655,7 +663,7 @@ sub asyncCBContentType {
 	my ($http, $client, $params, $callback, $httpClient, $response) = @_;
 
 	$params->{'fetched'} = 1;
-	$params->{'fetchedtype'} = Slim::Music::Info::mimeToType( $http->response->content_type ) || $http->response->content_type;
+	$params->{'fetchedtype'} = $http->response->content_type;
 
 	$http->disconnect;
 
