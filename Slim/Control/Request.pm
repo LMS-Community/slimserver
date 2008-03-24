@@ -1518,6 +1518,11 @@ sub sortResultLoop {
 	}
 }
 
+sub isValidQuery {
+	my $self = shift;
+	return $self->{'_isQuery'};
+}
+
 sub getResults {
 	my $self = shift;
 	

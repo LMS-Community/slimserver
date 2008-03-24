@@ -99,6 +99,7 @@ sub init {
 }
 
 sub buildCaches {
+	$log->info("Begin function");
 	# Pre-cache albums query
 	my $numAlbums = Slim::Schema->rs('Album')->count;
 	$log->debug( "Pre-caching $numAlbums album items." );
@@ -134,7 +135,7 @@ sub menuQuery {
 
 	my $request = shift;
 
-	$log->debug("Begin menuQuery function");
+	$log->info("Begin menuQuery function");
 
 	if ($request->isNotQuery([['menu']])) {
 		$request->setStatusBadDispatch();
@@ -167,6 +168,7 @@ sub menuQuery {
 
 sub mainMenu {
 
+	$log->info("Begin function");
 	my $client = shift;
 
 	unless ($client->isa('Slim::Player::Client')) {
@@ -174,7 +176,7 @@ sub mainMenu {
 		return;
 	}
  
-	$log->debug("Begin Function");
+	$log->info("Begin Function");
  
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
@@ -192,46 +194,6 @@ sub mainMenu {
 			node           => 'home',
 			window         => { titleStyle => 'mymusic', },
 		},
-		{
-			text           => Slim::Utils::Strings::string('RADIO'),
-			id             => 'radio',
-			node           => 'home',
-			displayWhenOff => 0,
-			weight         => 20,
-			actions        => {
-				go => {
-					cmd => ['radios'],
-					params => {
-						menu => 'radio',
-					},
-				},
-			},
-			window        => {
-					menuStyle => 'album',
-					titleStyle => 'internetradio',
-			},
-		},
-
-		{
-			text           => Slim::Utils::Strings::string('MUSIC_SERVICES'),
-			id             => 'ondemand',
-			node           => 'home',
-			weight         => 30,
-			displayWhenOff => 0,
-			actions => {
-				go => {
-					cmd => ['music_services'],
-					params => {
-						menu => 'music_services',
-					},
-				},
-			},
-			window        => {
-					menuStyle => 'album',
-					titleStyle => 'internetradio',
-			},
-		},
-
 		{
 			text           => Slim::Utils::Strings::string('FAVORITES'),
 			id             => 'favorites',
@@ -261,6 +223,8 @@ sub mainMenu {
 				[];
 			}
 		},
+		@{internetRadioMenu($client)},
+		@{musicServicesMenu($client)},
 		@{playerSettingsMenu($client, 1)},
 		@{myMusicMenu(1, $client)},
 	);
@@ -270,6 +234,7 @@ sub mainMenu {
 
 # allow a plugin to add a node to the menu
 sub registerPluginNode {
+	$log->info("Begin function");
 	my $nodeRef = shift;
 	my $client = shift || undef;
 	unless (ref($nodeRef) eq 'HASH') {
@@ -291,6 +256,7 @@ sub registerPluginNode {
 
 # send plugin menus array as a notification to Jive
 sub refreshPluginMenus {
+	$log->info("Begin function");
 	my $client = shift || undef;
 	_notifyJive(\@pluginMenus, $client);
 }
@@ -382,6 +348,7 @@ sub _purgeMenu {
 
 sub alarmSettingsQuery {
 
+	$log->info("Begin function");
 	my $request = shift;
 	my $client = $request->client();
 
@@ -413,6 +380,7 @@ sub alarmSettingsQuery {
 }
 
 sub alarmWeekdayMenu {
+	$log->info("Begin function");
 	my $request = shift;
 	my $client = $request->client();
 
@@ -438,6 +406,7 @@ sub alarmWeekdayMenu {
 }
 
 sub alarmWeekdaySettingsQuery {
+	$log->info("Begin function");
 	my $request = shift;
 	my $client = $request->client();
 	my $day = $request->getParam('_day');
@@ -458,6 +427,7 @@ sub playerInformationQuery {
 
 sub syncSettingsQuery {
 
+	$log->info("Begin function");
 	my $request           = shift;
 	my $client            = $request->client();
 	my $playersToSyncWith = getPlayersToSyncWith($client);
@@ -470,6 +440,7 @@ sub syncSettingsQuery {
 
 sub sleepSettingsQuery {
 
+	$log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 	my $val     = $client->currentSleepTime();
@@ -491,6 +462,7 @@ sub sleepSettingsQuery {
 
 sub crossfadeSettingsQuery {
 
+	$log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 	my $prefs   = preferences("server");
@@ -513,6 +485,8 @@ sub crossfadeSettingsQuery {
 }
 
 sub replaygainSettingsQuery {
+
+	$log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
 	my $prefs   = preferences("server");
@@ -553,15 +527,92 @@ sub sliceAndShip {
 	$request->setStatusDone()
 }
 
+# returns a single item for the homeMenu if radios is a valid command
+sub internetRadioMenu {
+	$log->info("Begin function");
+	my $client = shift;
+	my @command = ('radios', 0, 200, 'menu:radio');
+
+	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
+	my $validQuery = $test_request->isValidQuery();
+
+	my @menu = ();
+	
+	if ($validQuery) {
+		push @menu,
+		{
+			text           => Slim::Utils::Strings::string('RADIO'),
+			id             => 'radio',
+			node           => 'home',
+			displayWhenOff => 0,
+			weight         => 20,
+			actions        => {
+				go => {
+					cmd => ['radios'],
+					params => {
+						menu => 'radio',
+					},
+				},
+			},
+			window        => {
+					menuStyle => 'album',
+					titleStyle => 'internetradio',
+			},
+		};
+	}
+
+	return \@menu;
+
+}
+
+# returns a single item for the homeMenu if music_services is a valid command
+sub musicServicesMenu {
+	$log->info("Begin function");
+	my $client = shift;
+	my @command = ('music_services', 0, 200, 'menu:music_services');
+
+	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
+	my $validQuery = $test_request->isValidQuery();
+
+	my @menu = ();
+	
+	if ($validQuery) {
+		push @menu, 
+		{
+			text           => Slim::Utils::Strings::string('MUSIC_SERVICES'),
+			id             => 'ondemand',
+			node           => 'home',
+			weight         => 30,
+			displayWhenOff => 0,
+			actions => {
+				go => {
+					cmd => ['music_services'],
+					params => {
+						menu => 'music_services',
+					},
+				},
+			},
+			window        => {
+					menuStyle => 'album',
+					titleStyle => 'internetradio',
+			},
+		};
+	}
+
+	return \@menu;
+
+}
+
 sub playerSettingsMenu {
 
+	$log->info("Begin function");
 	my $client = shift;
 	my $batch = shift;
 
 	my @menu = ();
 	return \@menu unless $client;
  
-	$log->debug("Begin Function");
+	$log->info("Begin Function");
  
 
 	# always add repeat
@@ -1253,6 +1304,7 @@ sub playerPower {
 }
 
 sub sleepInXHash {
+	$log->info("Begin function");
 	my ($val, $sleepTime) = @_;
 	my $minutes = Slim::Utils::Strings::string('MINUTES');
 	my $text = $sleepTime == 0 ? 
@@ -1319,6 +1371,7 @@ sub replayGainHash {
 }
 
 sub myMusicMenu {
+	$log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
 	my @myMusicMenu = (
@@ -1475,6 +1528,7 @@ sub myMusicMenu {
 }
 
 sub searchMenu {
+	$log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
 	my @searchMenu = (
@@ -1625,6 +1679,7 @@ sub menuNotification {
 
 sub jiveFavoritesCommand {
 
+	$log->info("Begin function");
 	# work-in-progress; not called from anywhere yet
 	my $request = shift;
 	my $title   = $request->getParam('title');
@@ -1726,6 +1781,7 @@ $path : fullpath for file on server or http:// url
 =cut
 
 sub registerDownload {
+	$log->info("Begin function");
 	my $type = shift;
 	my $name = shift;
 	my $path = shift;
@@ -1756,6 +1812,7 @@ $path : fullpath for file on server or http:// url
 =cut
 
 sub deleteDownload {
+	$log->info("Begin function");
 	my $type = shift;
 	my $path = shift;
 
@@ -1845,7 +1902,7 @@ sub _downloadInfo {
 sub downloadQuery {
 	my $request = shift;
  
-	$log->debug("Begin Function");
+	$log->info("Begin Function");
  
 	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
 
@@ -1884,6 +1941,7 @@ sub downloadQuery {
 
 # convert path to location for download
 sub downloadFile {
+	$log->info("Begin function");
 	my $path = shift;
 
 	my ($type, $file) = $path =~ /^jive(applet|wallpaper|sound)\/(.*)/;
