@@ -681,7 +681,7 @@ sub checkSync {
 			}
 			else {
 				# bug 6864: SB1s cannot reliably pause without skipping frames, so we don't try
-				if (player->can('pauseForInterval')) {
+				if ($player->can('pauseForInterval')) {
 					if ( $log->is_info ) {
 						$log->info( sprintf("%s resync: pauseFor %dms", $player->id(), $delta * 1000) );
 					}
