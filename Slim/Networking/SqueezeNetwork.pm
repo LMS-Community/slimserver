@@ -40,11 +40,11 @@ sub get_server {
 		|| die "No hostname known for server type '$stype'";
 }
 
-# Initialize by fetching the SN server time and storing our time difference
+# Initialize by logging into SN server time and storing our time difference
 sub init {
 	my $class = shift;
 	
-	$log->info('SqueezeNetwork Sync Init');
+	$log->info('SqueezeNetwork Init');
 	
 	# Convert old non-hashed password
 	if ( my $password = $prefs->get('sn_password') ) {
@@ -55,30 +55,25 @@ sub init {
 		$log->debug('Converted SN password to hashed version');
 	}
 	
-	my $timeURL = $class->url( '/api/v1/time' );
-	
-	my $http = $class->new(
-		\&_init_done,
-		\&_init_error,
-		{
-			Timeout => 30,
-		},
-	);
-	
-	# Any async HTTP in init must be done on a timer
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time(),
 		sub {
-			$http->get( $timeURL );
+			if ( $prefs->get('sn_email') && $prefs->get('sn_password_sha') ) {
+				# Login to SN
+				$class->login(
+					cb  => \&_init_done,
+					ecb => \&_init_error,
+				);
+			}
 		},
 	);
 }
 
 sub _init_done {
-	my $http = shift;
+	my ( $http, $json ) = @_;
 	
-	my $snTime = $http->content;
+	my $snTime = $json->{time};
 	
 	if ( $snTime !~ /^\d+$/ ) {
 		$http->error( "Invalid SqueezeNetwork server timestamp" );
@@ -89,10 +84,29 @@ sub _init_done {
 	
 	$log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
 	
-	$prefs->set( 'sn_timediff' => $diff );
+	$prefs->set( sn_timediff => $diff );
 	
 	# Clear error counter
 	$prefs->remove( 'snInitErrors' );
+	
+	# Store disabled plugins, if any
+	if ( $json->{disabled_plugins} ) {
+		if ( ref $json->{disabled_plugins} eq 'ARRAY' ) {
+			$prefs->set( sn_disabled_plugins => $json->{disabled_plugins} );
+			
+			# Remove disabled plugins from player UI and web UI
+			for my $plugin ( @{ $json->{disabled_plugins} } ) {
+				my $pclass = "Slim::Plugin::${plugin}::Plugin";
+				if ( $pclass->can('setMode') ) {
+					Slim::Buttons::Home::delSubMenu( $pclass->playerMenu, $pclass->displayName );
+				}
+				
+				if ( $pclass->can('webPages') ) {
+					Slim::Web::Pages->delPageLinks( $pclass->menu, $pclass->displayName );
+				}
+			}
+		}
+	}
 	
 	# Init pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->init();
@@ -108,7 +122,7 @@ sub _init_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
-	$log->error( "Unable to get SqueezeNetwork server time, sync is disabled: $error" );
+	$log->error( "Unable to login to SqueezeNetwork, sync is disabled: $error" );
 	
 	$prefs->remove('sn_timediff');
 	
@@ -309,7 +323,7 @@ sub _login_done {
 	
 	$log->debug("Logged into SN OK");
 	
-	$params->{cb}->();
+	$params->{cb}->( $self, $json );
 }
 
 sub _error {

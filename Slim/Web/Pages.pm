@@ -116,6 +116,12 @@ sub addPageLinks {
 	}
 }
 
+sub delPageLinks {
+	my ( $class, $category, $title ) = @_;
+	
+	delete $additionalLinks{$category}->{$title};
+}
+
 sub addLibraryStats {
 	my ($class, $params, $rs, $previousLevel) = @_;
 

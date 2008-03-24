@@ -7,6 +7,10 @@ package Slim::Plugin::OPMLBased;
 use strict;
 use base 'Slim::Plugin::Base';
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 my %cli_next = ();
 
 sub initPlugin {
@@ -122,6 +126,16 @@ sub cliRadiosQuery {
 				name => Slim::Utils::Strings::string( $class->getDisplayName() ),
 				type => 'xmlbrowser',
 			};
+		}
+		
+		# Exclude disabled plugins
+		if ( my $disabled = $prefs->get('sn_disabled_plugins') ) {
+			for my $plugin ( @{$disabled} ) {
+				if ( $class =~ /^Slim::Plugin::${plugin}::/ ) {
+					$data = {};
+					last;
+				}
+			}
 		}
 		
 		# let our super duper function do all the hard work
