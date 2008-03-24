@@ -39,7 +39,7 @@ use constant LATENCY_LIST_MIN => 6;
 my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller');
 my $log       = logger('network.protocol.slimproto');
 
-my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
+my $forget_disconnected_time = 60; # disconnected clients will be forgotten unless they reconnect before this
 
 my $check_all_clients_time = 5; # how often to look for disconnected clients
 my $check_time;                 # time scheduled for next check_all_clients
