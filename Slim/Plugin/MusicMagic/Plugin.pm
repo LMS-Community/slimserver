@@ -159,15 +159,15 @@ sub initPlugin {
 			'url'    => "http://$MMSHost:$MMSport/api/mix?filter=?length>120&length=1",
 			'create' => 0,
 			'timeout' => 5,
-		}) || return 0;
+		});
 
 		if ($http && $http->content !~ /MusicIP API error/i) {
 			$canPowerSearch = 1;
 
 			$log->info('Power Search enabled');
+
+			$http->close;		
 		}
-	
-		$http->close;		
 
 		Slim::Plugin::MusicMagic::PlayerSettings::init();
 
