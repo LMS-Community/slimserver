@@ -464,6 +464,9 @@ sub init {
 			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
 			$cookieJar->clear( 'www.squeezenetwork.com' );
 			$cookieJar->clear( 'www.beta.squeezenetwork.com' );
+			if ( $ENV{SN_DEV} ) {
+				$cookieJar->clear( '127.0.0.1' );
+			}
 			$cookieJar->save();
 			logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );
