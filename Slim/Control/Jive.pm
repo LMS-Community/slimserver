@@ -616,63 +616,10 @@ sub playerSettingsMenu {
  
 
 	# always add repeat
-	my $repeat_setting = Slim::Player::Playlist::repeat($client);
-	my @repeat_strings = ('OFF', 'SONG', 'PLAYLIST',);
-	my @translated_repeat_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @repeat_strings;
-	my @repeatChoiceActions;
-	for my $i (0..$#repeat_strings) {
-		push @repeatChoiceActions, 
-		{
-			player => 0,
-			cmd    => ['playlist', 'repeat', "$i"],
-		};
-	}
-	push @menu, {
-		text           => Slim::Utils::Strings::string("REPEAT"),
-		id             => 'settingsRepeat',
-		node           => 'settings',
-		displayWhenOff => 0,
-		weight         => 20,
-		choiceStrings  => [ @translated_repeat_strings ],
-		selectedIndex  => $repeat_setting + 1, # 1 is added to make it count like Lua
-		actions        => {
-			do => { 
-				choices => [ 
-					@repeatChoiceActions 
-				], 
-			},
-		},
-	};
+	push @menu, repeatSettings($client, 1);
 
 	# always add shuffle
-	my $shuffle_setting = Slim::Player::Playlist::shuffle($client);
-	my @shuffle_strings = ( 'OFF', 'SONG', 'ALBUM',);
-	my @translated_shuffle_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @shuffle_strings;
-	my @shuffleChoiceActions;
-	for my $i (0..$#repeat_strings) {
-		push @shuffleChoiceActions, 
-		{
-			player => 0,
-			cmd => ['playlist', 'shuffle', "$i"],
-		};
-	}
-	push @menu, {
-		text           => Slim::Utils::Strings::string("SHUFFLE"),
-		id             => 'settingsShuffle',
-		node           => 'settings',
-		selectedIndex  => $shuffle_setting + 1,
-		displayWhenOff => 0,
-		weight         => 10,
-		choiceStrings  => [ @translated_shuffle_strings ],
-		actions        => {
-			do => {
-				choices => [
-					@shuffleChoiceActions
-				],
-			},
-		},
-		window         => { titleStyle => 'settings' },
-	};
+	push @menu, shuffleSettings($client, 1);
 
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
@@ -830,6 +777,84 @@ sub playerSettingsMenu {
 		return \@menu;
 	} else {
 		_notifyJive(\@menu, $client);
+	}
+}
+
+sub repeatSettings {
+	my $client = shift;
+	my $batch = shift;
+
+	my $repeat_setting = Slim::Player::Playlist::repeat($client);
+	my @repeat_strings = ('OFF', 'SONG', 'PLAYLIST',);
+	my @translated_repeat_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @repeat_strings;
+	my @repeatChoiceActions;
+	for my $i (0..$#repeat_strings) {
+		push @repeatChoiceActions, 
+		{
+			player => 0,
+			cmd    => ['playlist', 'repeat', "$i"],
+		};
+	}
+	my $return = {
+		text           => Slim::Utils::Strings::string("REPEAT"),
+		id             => 'settingsRepeat',
+		node           => 'settings',
+		displayWhenOff => 0,
+		weight         => 20,
+		choiceStrings  => [ @translated_repeat_strings ],
+		selectedIndex  => $repeat_setting + 1, # 1 is added to make it count like Lua
+		actions        => {
+			do => { 
+				choices => [ 
+					@repeatChoiceActions 
+				], 
+			},
+		},
+	};
+	if ($batch) {
+		return $return;
+	} else {
+		_notifyJive( [ $return ], $client);
+	}
+}
+
+sub shuffleSettings {
+	my $client = shift;
+	my $batch = shift;
+
+	my $shuffle_setting = Slim::Player::Playlist::shuffle($client);
+	my @shuffle_strings = ( 'OFF', 'SONG', 'ALBUM',);
+	my @translated_shuffle_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @shuffle_strings;
+	my @shuffleChoiceActions;
+	for my $i (0..$#shuffle_strings) {
+		push @shuffleChoiceActions, 
+		{
+			player => 0,
+			cmd => ['playlist', 'shuffle', "$i"],
+		};
+	}
+	my $return = {
+		text           => Slim::Utils::Strings::string("SHUFFLE"),
+		id             => 'settingsShuffle',
+		node           => 'settings',
+		selectedIndex  => $shuffle_setting + 1,
+		displayWhenOff => 0,
+		weight         => 10,
+		choiceStrings  => [ @translated_shuffle_strings ],
+		actions        => {
+			do => {
+				choices => [
+					@shuffleChoiceActions
+				],
+			},
+		},
+		window         => { titleStyle => 'settings' },
+	};
+
+	if ($batch) {
+		return $return;
+	} else {
+		_notifyJive( [ $return ], $client);
 	}
 }
 

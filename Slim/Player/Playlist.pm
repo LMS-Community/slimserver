@@ -16,6 +16,7 @@ use Slim::Player::Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Control::Jive;
 
 my $prefs = preferences('server');
 
@@ -131,6 +132,8 @@ sub shuffle {
 
 	if (defined($shuffle)) {
 		$prefs->client($client)->set('shuffle', $shuffle);
+		# tell jive we've changed that setting
+		Slim::Control::Jive::shuffleSettings($client);
 	}
 	
 	return $prefs->client($client)->get('shuffle');
@@ -144,6 +147,8 @@ sub repeat {
 
 	if (defined($repeat)) {
 		$prefs->client($client)->set('repeat', $repeat);
+		# tell jive we've changed that setting
+		Slim::Control::Jive::repeatSettings($client);
 	}
 	
 	return $prefs->client($client)->get('repeat');
