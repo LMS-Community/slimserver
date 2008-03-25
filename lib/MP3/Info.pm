@@ -868,29 +868,27 @@ sub _parse_v2tag {
 						# Only guess if it's not ascii.
 						if ($data && $data !~ /^[\x00-\x7F]+$/) {
 
-# Bug 5686: let's not try to be smart about the encoding, just follow the specs
-							$data = Encode::decode('iso-8859-1', $data);
-#							if ($unicode_detect_module) {
-#
-#								my $charset = Encode::Detect::Detector::detect($data) || 'iso-8859-1';
-#								my $enc     = Encode::find_encoding($charset);
-#
-#								if ($enc) {
-#									$data = $enc->decode($data, 0);
-#								}
-#
-#							} else {
-#
-#								# Try and guess the encoding, otherwise just use latin1
-#								my $dec = Encode::Guess->guess($data);
-#
-#								if (ref $dec) {
-#									$data = $dec->decode($data);
-#								} else {
-#									# Best try
-#									$data = Encode::decode('iso-8859-1', $data);
-#								}
-#							}
+							if ($unicode_detect_module) {
+
+								my $charset = Encode::Detect::Detector::detect($data) || 'iso-8859-1';
+								my $enc     = Encode::find_encoding($charset);
+
+								if ($enc) {
+									$data = $enc->decode($data, 0);
+								}
+
+							} else {
+
+								# Try and guess the encoding, otherwise just use latin1
+								my $dec = Encode::Guess->guess($data);
+
+								if (ref $dec) {
+									$data = $dec->decode($data);
+								} else {
+									# Best try
+									$data = Encode::decode('iso-8859-1', $data);
+								}
+							}
 						}
 					}
 
