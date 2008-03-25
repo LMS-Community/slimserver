@@ -77,6 +77,7 @@ sub new {
 		'validparam'=> {},
 		'onchange'  => {},
 		'migratecb' => {},
+		'utf8off'   => {},
 	}, $ref;
 
 	$class->{'prefs'} = $class->_load || {
@@ -164,6 +165,39 @@ sub setChange {
 	}
 }
 
+
+=head2 setUtf8off( list )
+
+Turns off the utf8 flag for the preferences listed.  This is normally used for folder prefernces
+which may otherwise have the utf8 flag set when read in from YAML.
+
+This should be called as soon as a namespace is created before preferences are used to make sure
+utf8 is turned off after reading in the namespace preference file.
+
+Only supports global (non client) prefs.
+
+See bug: 7507
+
+=cut
+
+sub setUtf8Off {
+	my $class = shift;
+
+	while (my $pref = shift) {
+
+		if ( $log->isInitialized && $log->is_debug ) {
+			$log->debug("setting utf8off for $class->{'namespace'}:$pref");
+		}
+
+		if ( $class->{'prefs'}->{ $pref } ) {
+			$class->{'prefs'}->{ $pref } = Slim::Utils::Unicode::utf8off($class->{'prefs'}->{ $pref });
+		}
+
+		$class->{'utf8off'}->{ $pref } = 1;
+	}
+}
+
+
 =head2 client( $client )
 
 Returns a preference client object for client $client.  This is used to access client preferences for a namespace:
@@ -192,9 +226,8 @@ sub _load {
 			$log->info("can't read $class->{'file'} : $@");
 		}
 
-		# bug 7507: turn utf flag off on folder variables
-		foreach (qw(audiodir playlistdir)) {
-			$prefs->{$_} = Slim::Utils::Unicode::utf8off($prefs->{$_}) if $prefs->{$_};
+		foreach ( keys %{$class->{'utf8off'}} ) {
+			$prefs->{$_} = Slim::Utils::Unicode::utf8off($prefs->{$_});
 		}
 	}
 
