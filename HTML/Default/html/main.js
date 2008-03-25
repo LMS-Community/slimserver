@@ -711,7 +711,7 @@ Player = function(){
 		player: null
 	};
 
-	var coverFileSuffix = Ext.isIE && !Ext.isIE7 ? '_404040.gif' : '.png';
+	var coverFileSuffix = Ext.isIE && !Ext.isIE7 ? '_404040.gif' : '';
 	var contributorRoles = new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist');
 
 	return {

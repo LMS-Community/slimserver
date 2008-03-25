@@ -44,7 +44,7 @@ sub serverResizesArt {
 sub processCoverArtRequest {
 	my ($client, $path, $params) = @_;
 
-	my ($body, $mtime, $inode, $size, $actualContentType); 
+	my ($body, $mtime, $inode, $size, $actualContentType, $autoType); 
 
 	# Allow the client to specify dimensions, etc.
 	$path =~ /music\/(\w+)\//;
@@ -52,6 +52,14 @@ sub processCoverArtRequest {
 
 	my $imgName = File::Basename::basename($path);
 	my ($imgBasename, $dirPath, $suffix)  = File::Basename::fileparse($path, '\..*');
+	
+	if ( !$suffix ) {
+		$autoType = 1;
+		
+		# Assume PNG until later
+		$suffix = 'png';
+	}
+	
 	my $actualPathToImage;
 	my $requestedContentType = "image/" . $suffix;
 	$requestedContentType =~ s/\.//;
@@ -72,7 +80,7 @@ sub processCoverArtRequest {
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
 			(?:_([sSfFpc]))?         # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
-			\.(jpg|png|gif|gd)$      # file suffixes allowed are jpg png gif gd [libgd uncompressed]
+			(?:\.(jpg|png|gif|gd))?$ # optional file suffixes allowed are jpg png gif gd [libgd uncompressed]
 			/x;	
 
 	my $image               = $1;
@@ -164,7 +172,11 @@ sub processCoverArtRequest {
 		
 				if ( $cachedImage ) {
 
-					$log->info("  returning cached artwork image.");
+					if ( $log->is_info ) {
+						my $type = $cachedImage->{contentType};
+						my $size = length( ${$cachedImage->{body}} );
+						$log->info( "  returning cached artwork image, $type ($size bytes)" );
+					}
 
 					return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 				}
@@ -220,7 +232,7 @@ sub processCoverArtRequest {
 		
 		if ( $cachedImage ) {
 
-			$log->info("  returning cached artwork image.");
+			$log->info( "  returning cached artwork image, " . $cachedImage->{'contentType'} );
 
 			return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 		}
@@ -270,6 +282,15 @@ sub processCoverArtRequest {
 			my $origImage   = GD::Image->$constructor($imageData);
 
 			if ($origImage) {
+				
+				
+				# If no extension was given or request was from Jive,
+				# optimize for the common case: square JPEG cover art
+				if ( ( $autoType || $suffix eq '.gd' ) && $actualContentType eq 'image/jpeg' && $origImage->width == $origImage->height ) {
+					$log->info( "  No file type requested, returning jpeg for square image" );
+					$requestedContentType = 'image/jpeg';
+					$transparentRequest   = 0;
+				}
 
 				# deterime the size and of type image to be returned
 				my $returnedWidth;

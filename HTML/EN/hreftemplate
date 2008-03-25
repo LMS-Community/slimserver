@@ -192,7 +192,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		[% IF item.image %]
 		"[% item.image %]"
 		[% ELSE %]
-		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %].[% IF fileSuffix %][% fileSuffix %][% ELSIF browserType == 'IE' %]gif[% ELSE %]png[% END %]"
+		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% ELSIF browserType == 'IE' %].gif[% END %]"
 		[% END %]
 	[%- IF NOT serverResizesArt %]
 		height="[% height %]" width="[% height %]"
@@ -220,7 +220,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		[% itemobj=item.itemobj %]
 		[% artistlist = PROCESS artistsAsText.html %]
 	[% END %]
-	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p.[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" 
+	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p[% IF browserType == 'IE' %].gif[% END %]" 
 		height="
 		[% IF height %]
 			[% height %]

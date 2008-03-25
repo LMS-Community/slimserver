@@ -103,17 +103,17 @@ sub findArtwork {
 			$album->update;
 			
 			# Pre-cache this artwork resized to our commonly-used sizes/formats
-			# 1. user's thumb size or 100x100_p.png (large web artwork)
-			# 2. 50x50_p.png (small web artwork)
+			# 1. user's thumb size or 100x100_p (large web artwork)
+			# 2. 50x50_p (small web artwork)
 			# 3. 56x56_p.gd  (Jive artwork - gd format (loads faster than png on Jive))
 			
 			my @dims = (50);
 			push @dims, $prefs->get('thumbSize') || 100;
 			
 			for my $dim ( @dims ) {
-				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p.png" );
+				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p" );
 				eval {
-					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p.png" );
+					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p" );
 				};
 			}
 			eval {
