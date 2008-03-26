@@ -1717,6 +1717,15 @@ WELCOME_TO_SQUEEZESLAVE
 	IT	SqueezeSlave
 	NL	Welkom bij SqueezeSlave
 
+WELCOME_TO_BOOM
+	DA	Velkommetn til Squeezebox
+	DE	Willkommen!
+	EN	Welcome to Squeezebox
+	ES	Bienvenido a Squeezebox
+	FR	Bienvenue dans la Squeezebox
+	IT	Squeezebox
+	NL	Welkom bij Squeezebox
+
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
 	DA	Lyt til din musik!

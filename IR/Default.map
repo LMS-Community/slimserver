@@ -71,6 +71,7 @@ trebleup				= treble_up
 trebleup.repeat			= treble_up
 volume					= volume
 volumemode				= volumemode
+home					= home
 
 # playing display modes
 now_playing				= playdisp_toggle
@@ -196,6 +197,7 @@ trebledown.*			= dead
 trebleup.*				= dead
 volumemode.*			= dead
 visual.*				= dead
+home.*					= dead
 
 [block]
 # When the player is blocked during a long operations, most buttons are dead
@@ -230,6 +232,7 @@ shuffle_off				= dead
 shuffle_on				= dead
 sleep					= dead
 stop					= dead
+home.*					= dead
 
 [browsedb]
 play					= dead

@@ -1157,6 +1157,25 @@ our %functions = (
 			'line' => [ $client->string('SETUP_IRMAP') . ':', $functarg ]
 		});
 	},
+
+	'home' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		# TODO: There must be a better way to find out if
+		# we are in the top level menu than compairing strings
+		my $myline1 = substr( $client->prevline1(), 0, 10);
+		my $myhead = substr( Slim::Buttons::Home::homeheader( $client), 0, 10);
+
+		Slim::Buttons::Home::jump( $client, "NOW_PLAYING");
+		# Top menu - go to now playing list
+		if( $myline1 eq $myhead) {
+			pushModeLeft( $client, "playlist");
+		# Somewhere - go to top menu
+		} else {
+			setMode( $client, 'home');
+		}
+		$client->update();
+	},
 );
 
 sub getFunction {
