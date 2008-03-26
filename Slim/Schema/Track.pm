@@ -18,6 +18,7 @@ my $prefs = preferences('server');
 
 our @allColumns = (qw(
 	id url content_type title titlesort titlesearch album tracknum
+	primary_contributor num_contributors
 	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
@@ -35,6 +36,8 @@ our @allColumns = (qw(
 
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::Schema::Album');
+	
+	$class->belongs_to('primary_contributor' => 'Slim::Schema::Contributor');
 
 	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
 	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
@@ -94,6 +97,8 @@ sub albumid {
 
 sub artist {
 	my $self = shift;
+	
+	return $self->primary_contributor;
 
 	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
 	return $self->contributorsOfType('ARTIST')->single ||
@@ -382,22 +387,34 @@ sub displayAsHTML {
 
 	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
 	if ($format !~ /ARTIST/) {
-
-		if (my $contributors = $self->contributorsOfType(qw(ARTIST TRACKARTIST))) {
-
-			my $artist = $contributors->first;
-
+		
+		# Optimized for the common case of a track with a single artist,
+		# to avoid the extra contributors database query for each track.
+		
+		if ( my $artist = $self->primary_contributor ) {
+			my @info;
+			
 			$form->{'includeArtist'} = 1;
 			$form->{'artist'} = $artist;
-
-			my @info;
-
-			for my $contributor ($contributors->all) {
+			
+			if ( $self->num_contributors == 1 ) {
 				push @info, {
-					'artist'     => $contributor,
-					'name'       => $contributor->name,
-					'attributes' => 'contributor.id=' . $contributor->id,
+					'artist'     => $artist,
+					'name'       => $artist->name,
+					'attributes' => 'contributor.id=' . $artist->id,
 				};
+			}
+			elsif ( $self->num_contributors > 1 ) {
+				if (my $contributors = $self->contributorsOfType(qw(ARTIST TRACKARTIST))) {
+
+					for my $contributor ($contributors->all) {
+						push @info, {
+							'artist'     => $contributor,
+							'name'       => $contributor->name,
+							'attributes' => 'contributor.id=' . $contributor->id,
+						};
+					}
+				}
 			}
 
 			$form->{'artistsWithAttributes'} = \@info;

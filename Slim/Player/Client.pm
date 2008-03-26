@@ -481,7 +481,15 @@ sub startup {
 
 		if (blessed($playlist)) {
 
-			my $tracks = [ $playlist->tracks ];
+			my $tracks = [ 
+				$playlist->tracks( 
+					{}, 
+					{ 
+						join     => 'primary_contributor',
+						prefetch => 'primary_contributor',
+					},
+				)
+			];
 
 			# Only add on to the playlist if there are tracks.
 			if (scalar @$tracks && defined $tracks->[0] && blessed($tracks->[0]) && $tracks->[0]->id) {

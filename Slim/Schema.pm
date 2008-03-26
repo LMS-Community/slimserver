@@ -1457,7 +1457,13 @@ sub _retrieveTrack {
 
 	} else {
 
-		$track = $self->resultset($source)->single({ 'url' => $url });
+		$track = $self->resultset($source)->single(
+			{ 'url'  => $url },
+			{ 
+				'join'     => 'primary_contributor',
+				'prefetch' => 'primary_contributor',
+			},
+		);
 	}
 
 	# XXX - exception should go here. Comming soon.
@@ -1905,7 +1911,7 @@ sub _postCheckAttributes {
 	# Walk through the valid contributor roles, adding them to the database for each track.
 	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes, $isCompilation, $isLocal);
 	my $foundContributor = scalar keys %{$contributors};
-
+	
 	$log->debug("-- Track has $foundContributor contributor(s)");
 
 	# Create a singleton for "No Artist"
@@ -1929,12 +1935,29 @@ sub _postCheckAttributes {
 		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
+		
+		$foundContributor = 1;
 
 		$log->debug("-- Track has no artist");
 	}
 
 	# The "primary" contributor
 	my $contributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
+	
+	$track->primary_contributor( $contributor );
+	
+	# Number of contributors value only stores the number of *unique* contribs
+	if ( $foundContributor > 1 ) {
+		my $unique = {};
+		for my $type ( keys %{$contributors} ) {
+			for my $contrib ( @{ $contributors->{$type} } ) {
+				$unique->{ $contrib->id } = 1;
+			}
+		}
+		$foundContributor = scalar keys %{$unique};
+	}
+	
+	$track->num_contributors( $foundContributor );
 
 	if ($log->is_debug && blessed($contributor)) {
 
