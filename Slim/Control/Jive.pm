@@ -612,9 +612,6 @@ sub playerSettingsMenu {
 	my @menu = ();
 	return \@menu unless $client;
  
-	$log->info("Begin Function");
- 
-
 	# always add repeat
 	push @menu, repeatSettings($client, 1);
 
@@ -777,6 +774,49 @@ sub playerSettingsMenu {
 		return \@menu;
 	} else {
 		_notifyJive(\@menu, $client);
+	}
+}
+
+sub browseMusicFolder {
+	$log->info("Begin function");
+	my $client = shift;
+	my $batch = shift;
+
+	# first we decide if $audiodir has been configured. If not, don't show this
+	my $prefs    = preferences("server");
+	my $audiodir = $prefs->get('audiodir');
+
+	my $return = 0;
+	if (defined($audiodir) && -d $audiodir) {
+		$log->info("Adding Browse Music Folder");
+		$return = {
+				text           => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				id             => 'myMusicMusicFolder',
+				node           => 'myMusic',
+				displayWhenOff => 0,
+				weight         => 70,
+				actions        => {
+					go => {
+						cmd    => ['musicfolder'],
+						params => {
+							menu => 'musicfolder',
+						},
+					},
+				},
+				window        => {
+					titleStyle => 'musicfolder',
+				},
+			};
+	} else {
+		# if it disappeared, send a notification to get rid of it if it exists
+		$log->info("Removing Browse Music Folder from Jive menu via notification");
+		deleteMenuItem('myMusicMusicFolder', $client);
+	}
+
+	if ($batch) {
+		return $return;
+	} else {
+		_notifyJive( [ $return ], $client);
 	}
 }
 
@@ -1495,24 +1535,6 @@ sub myMusicMenu {
 				},
 			},
 			{
-				text           => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
-				id             => 'myMusicMusicFolder',
-				node           => 'myMusic',
-				displayWhenOff => 0,
-				weight         => 70,
-				actions        => {
-					go => {
-						cmd    => ['musicfolder'],
-						params => {
-							menu => 'musicfolder',
-						},
-					},
-				},
-				window        => {
-					titleStyle => 'musicfolder',
-				},
-			},
-			{
 				text           => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
 				id             => 'myMusicPlaylists',
 				node           => 'myMusic',
@@ -1543,6 +1565,10 @@ sub myMusicMenu {
 	# add the items for under mymusicSearch
 	my $searchMenu = searchMenu(1);
 	@myMusicMenu = (@myMusicMenu, @$searchMenu);
+
+	if (my $browseMusicFolder = browseMusicFolder($client, 1)) {
+		push @myMusicMenu, $browseMusicFolder;
+	}
 
 	if ($batch) {
 		return \@myMusicMenu;
