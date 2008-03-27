@@ -350,6 +350,9 @@ sub processHTTP {
 	## Log processed headers
 	# else
 	## Send bad request
+	
+	# Store the time we started processing this request
+	$httpClient->start_time( Time::HiRes::time() );
 
 	# Remove keep-alive timeout
 	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
@@ -1637,6 +1640,9 @@ sub addHTTPResponse {
 
 	# First add the headers, if requested
 	if (!defined($sendheaders) || $sendheaders == 1) {
+		
+		# Add a header displaying the time it took us to serve this request
+		$response->header( 'X-Time-To-Serve' => ( Time::HiRes::time() - $httpClient->start_time ) );
 
 		$outbuf .= _stringifyHeaders($response) . $CRLF;
 	}

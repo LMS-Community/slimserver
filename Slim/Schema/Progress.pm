@@ -12,6 +12,10 @@ use base 'Slim::Schema::DBI';
 
 	$class->add_columns(qw/id type name active total done start finish info/);
 	$class->set_primary_key('id');
+
+	if ($] > 5.007) {
+		$class->utf8_columns(qw/info/);
+	}
 }
 
 1;
