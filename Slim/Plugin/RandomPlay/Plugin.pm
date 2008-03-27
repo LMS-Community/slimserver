@@ -947,8 +947,8 @@ sub setMode {
 		name       => \&getDisplayText,
 		overlayRef => \&getOverlay,
 		modeName   => 'RandomPlay',
-		onPlay     => sub { handlePlayOrAdd(@_, 0) },
-		onAdd      => sub { handlePlayOrAdd(@_, 1) },
+		onPlay     => sub { handlePlayOrAdd(@_[0,1], 0) },
+		onAdd      => sub {	handlePlayOrAdd(@_[0,1], 1) },
 		onRight    => sub {
 			my ($client, $item) = @_;
 
