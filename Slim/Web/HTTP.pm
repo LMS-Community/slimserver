@@ -1158,63 +1158,35 @@ sub generateHTTPResponse {
 
 	} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
 		
-		require File::Tail;
+		require File::ReadBackwards;
+
+		# if the HTTP client has asked for a text file, then always return the text on the display
+		$contentType = "text/plain";
+
+		$response->header("Refresh" => "10; url=$path" . ($params->{lines} ? '?lines=' . $params->{lines} : ''));
+		$response->header("Content-Type" => "text/plain; charset=utf-8");
 		
 		my $logfile = $1;
 		$logfile =~ s/log/server/;
 		$logfile .= 'LogFile';
 		
-		$response->remove_header('Content-Length');
-		$response->header( 'Content-Type' => 'text/plain; charset=utf-8' );
+		my $count = $params->{lines} || 50;
+
+		$$body ||= '';
+
+		my $file = File::ReadBackwards->new(Slim::Utils::Log->$logfile);
 		
-		my $count = $params->{lines} || 5;
-		
-		my $file = File::Tail->new( 
-			name   => Slim::Utils::Log->$logfile,
-			nowait => 1,
-			tail   => $count,
-		);
-		
-		while ( my $line = $file->read ) {
-			$$body .= $line;
-		}
-		
-		addHTTPResponse( $httpClient, $response, $body, 1, 1 );
-		
-		my $more;
-		$more = sub {
-			my $file = shift;
-			
-			return if !$httpClient->connected;
-			
-			my $out;
-			
-			while ( my $line = $file->read ) {
-				$out .= $line;
+		if ($file){
+
+			my @lines;
+			while ( --$count && (my $line = $file->readline()) ) {
+				unshift (@lines, $line);
 			}
-			
-			if ( $out ) {
-				addHTTPResponse( $httpClient, $response, \$out, 0, 1 );
-			}
-			
-			my $next = $file->predict;
-			if ( $next < 1 ) {
-				$next = 1;
-			}
-			
-			Slim::Utils::Timers::setTimer(
-				$file,
-				time() + $next,
-				$more,
-			);
-		};
-		
-		Slim::Utils::Timers::setTimer(
-			$file,
-			time() + $file->predict,
-			$more,
-		);
-		
+			$$body .= join('', @lines);
+
+			$file->close();			
+		};		
+
 	} elsif ($path =~ /(?:status|robots)\.txt/) {
 
 		# if the HTTP client has asked for a text file, then always return the text on the display
