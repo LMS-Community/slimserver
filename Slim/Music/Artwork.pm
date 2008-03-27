@@ -105,7 +105,7 @@ sub findArtwork {
 			# Pre-cache this artwork resized to our commonly-used sizes/formats
 			# 1. user's thumb size or 100x100_p (large web artwork)
 			# 2. 50x50_p (small web artwork)
-			# 3. 56x56_p.gd  (Jive artwork - gd format (loads faster than png on Jive))
+			# 3. 56x56_o.jpg (Jive artwork - OAR JPG)
 			
 			my @dims = (50);
 			push @dims, $prefs->get('thumbSize') || 100;
@@ -117,8 +117,8 @@ sub findArtwork {
 				};
 			}
 			eval {
-				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_p.gd" );
-				Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_p.gd" );
+				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_o.jpg" );
+				Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_o.jpg" );
 			};
 		}
 
