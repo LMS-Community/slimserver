@@ -104,12 +104,12 @@ sub launchScan {
 
 	# Add in the various importer flags
 	# TODO: rework to only access prefs IF Importer is active
-	for my $importer (qw(itunes musicmagic)) {
-		my $prefs = preferences("plugin.$importer");
-		
-		if ($prefs->get($importer)) {
+	for my $importer (qw(iTunes MusicMagic)) {
+		my $prefs = preferences("plugin.".lc($importer));
 
-			$args->{$importer} = 1;
+		if (Slim::Utils::PluginManager->isEnabled("Slim::Plugin::".$importer."::Plugin") && $prefs->get(lc($importer))) {
+
+			$args->{lc($importer)} = 1;
 		}
 	}
 
