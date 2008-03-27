@@ -94,7 +94,7 @@ my %font2TTF = (
 	},
 
 	'standard.2' => {
-		'GDFontSize' => 17,
+		'GDFontSize' => 14,
 		'GDBaseline' => 28,
 	},
 

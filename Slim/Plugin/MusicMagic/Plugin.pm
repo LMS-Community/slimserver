@@ -517,7 +517,13 @@ sub mixerFunction {
 		$mixSeed = $currentItem->name;
 	}
 
-	if ($currentItem && ($paramref->{'mood'} || $currentItem->musicmagic_mixable)) {
+	# Bug: 7478: special handling for playlist tracks.
+	if ($levels[$level] eq 'playlistTrack') {
+
+		$mixSeed = $currentItem->path;
+		$mix = getMix($client, $mixSeed, 'track');
+
+	} elsif ($currentItem && ($paramref->{'mood'} || $currentItem->musicmagic_mixable)) {
 
 		# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 		$mix = getMix($client, $mixSeed, $levels[$level]);
