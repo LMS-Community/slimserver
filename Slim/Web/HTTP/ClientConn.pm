@@ -37,6 +37,17 @@ sub transport {
 	}
 
 	return ${*$self}{_transport};
-}	
+}
+
+# Request start time
+sub start_time {
+	my ( $self, $value ) = @_;
+	
+	if ( defined $value ) {
+		${*$self}{_start} = $value;
+	}
+	
+	return ${*$self}{_start};
+}
 
 1;
