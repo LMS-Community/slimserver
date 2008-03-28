@@ -105,7 +105,9 @@ sub _players_done {
 	$PLAYERS = $res->{players};
 	
 	# Clear error count if any
-	$prefs->remove('snPlayersErrors');
+	if ( $prefs->get('snPlayersErrors') ) {
+		$prefs->remove('snPlayersErrors');
+	}
 	
 	Slim::Utils::Timers::setTimer(
 		undef,

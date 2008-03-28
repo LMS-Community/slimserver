@@ -393,9 +393,9 @@ sub handleFeed {
 		}
 		
 		my $itemCount = scalar @{ $stash->{'items'} };
-			
+		
 		my $clientId = ( $client ) ? $client->id : undef;
-		my $otherParams = '&index=' . join('.', @index) . '&player=' . $clientId;
+		my $otherParams = '&index=' . $crumb[-1]->{index} . '&player=' . $clientId;
 		if ( $stash->{'query'} ) {
 			$otherParams = '&query=' . $stash->{'query'} . $otherParams;
 		}

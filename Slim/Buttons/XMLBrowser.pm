@@ -236,8 +236,9 @@ sub gotPlaylist {
 		$client->execute([ 'playlist', 'play', \@urls ]);
 	}
 	else {
-		$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
-		_addingToPlaylist($client);
+		my $cmd = $action eq 'insert' ? 'inserttracks' : 'addtracks';
+		$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
+		_addingToPlaylist($client, $action);
 	}
 }
 
@@ -1413,6 +1414,13 @@ sub _cliQuery_done {
 									'item_id' => $item_id,
 								},
 							},
+							'add-hold' => {
+								'player' => 0,
+								'cmd' => [$query, 'playlist', 'insert'],
+								'params' => {
+									'item_id' => $item_id,
+								},
+							},
 						},
 					};
 					$request->addResult('base', $base);
@@ -1505,7 +1513,13 @@ sub _cliQuery_done {
 										'item_id' => $item_id,
 									},
 								},
-							};
+								'add-hold' => {
+									'player' => 0,
+									'cmd'    => [$query, 'playlist', 'insert'],
+									'params' => {
+										'item_id' => $item_id,
+									},
+								},						};
 							$request->addResultLoop($loopname, $cnt, 'text', $items{$mode}{'string'});
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 							$request->addResultLoop($loopname, $cnt, 'style', $items{$mode}{'style'});
@@ -1708,8 +1722,9 @@ sub _cliQuery_done {
 						$client->execute([ 'playlist', 'play', \@urls ]);
 					}
 					else {
-						$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
-						_addingToPlaylist($client);
+						my $cmd = $method eq 'insert' ? 'inserttracks' : 'addtracks';
+						$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
+						_addingToPlaylist($client, $method);
 					}
 				}
 			}
@@ -1779,6 +1794,12 @@ sub _cliQuery_done {
 							'add' => {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'add'],
+								'itemsParams' => 'params',
+								'params' => $params,
+							},
+							'add-hold' => {
+								'player' => 0,
+								'cmd' => [$query, 'playlist', 'insert'],
 								'itemsParams' => 'params',
 								'params' => $params,
 							},
@@ -2051,8 +2072,14 @@ sub _cliQuerySubFeed_done {
 
 sub _addingToPlaylist {
 	my $client = shift;
-	my $string = Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " .  
-			Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST');
+	my $action = shift || 'add';
+	my $string = $action eq 'add' ?
+			Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " .  
+			Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST')
+			: 
+			Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " .  
+			Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT');
+
 	$client->showBriefly(
 			{ line => [ $string ], },
 			{ 

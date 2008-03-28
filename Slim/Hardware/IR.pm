@@ -251,11 +251,11 @@ sub mapfiles {
 }
 
 sub addModeDefaultMapping {
-	my ($mode, $mapRef) = @_;
+	my ($mode, $mapRef, $force) = @_;
 
 	if ( exists $irMap{$defaultMapFile}{$mode} ) {
 		while ( my ($key, $value) = each %{$mapRef} ) {
-			if ( exists $irMap{$defaultMapFile}{$mode}->{$key} ) {
+			if ( !$force && exists $irMap{$defaultMapFile}{$mode}->{$key} ) {
 				# future enhancement - make a menu of options if a key action is duplicated
 				$log->warn("ignoring [$mode] $key => $value");
 			}

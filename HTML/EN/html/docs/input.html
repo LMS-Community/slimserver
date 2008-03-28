@@ -911,6 +911,13 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         take the client object as the first parameter and the exit event type
         as the second.
       </dd>
+      <dt>handleLeaveMode</dt>
+      <dd>Default: undef</dd>
+      <dd>
+      	If set and true then the exit callback handler function will be invoked
+      	whenever the mode is left. This is most useful if the mode wants to exit
+      	if another mode is pushed. 
+      </dd>
       <dt>valueRef</dt>
       <dd>
         Default: reference to copy of item in <var>listIndex</var> position in list
@@ -920,6 +927,12 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
         Typically this will be a reference to a variable local to the calling
         mode, so that the final value will not need to be explicitly assigned
         to some local variable.
+      </dd>
+      <dt>trackValueChanges</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        Allow the value referenced by valueRef to be modified externally and to
+        track such changes before applying up/down changes.
       </dd>
       <dt>min</dt>
       <dd>Default: 0</dd>
@@ -938,6 +951,11 @@ Slim::Buttons::Common::pushMode($client,'INPUT.Text',
       <dd>
         Sets the midpoint reference for bi-directional sliders.  Accellerated scrolling 
         will pause at this point, and the bar will display mirrored output centred on this point.
+      </dd>
+      <dt>cursor</dt>
+      <dd>Default: undef</dd>
+      <dd>
+        Places a visible cursor at the specified position.
       </dd>
       <dt>increment</dt>
       <dd>Default: 2.5</dd>
