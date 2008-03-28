@@ -1,0 +1,27 @@
+# String file for Scanner plugin
+
+# $Id: strings.txt,v 1.1 2007-11-07 07:38:15 fishbone Exp $
+
+PLUGIN_SCANNER
+	EN	Song Scanner
+
+PLUGIN_SCANNER_DESC
+	EN	Player interface for jumping to arbitrary positions within the currently playing song
+
+PLUGIN_SCANNER_SET
+	EN	Position:
+
+PLUGIN_SCANNER_HELP
+	EN	Use UP/DOWN or <</>>
+
+PLUGIN_SCANNER_ERR_REMOTE
+	EN	Cannot scan through remote tracks
+
+PLUGIN_SCANNER_ERR_UNKNOWNSIZE
+	EN	Cannot scan through track because duration unknown
+
+PLUGIN_SCANNER_ERR_TRANSCODED
+	EN	Cannot scan through transcoded track
+
+PLUGIN_SCANNER_ERR_NOTRACK
+	EN	No track

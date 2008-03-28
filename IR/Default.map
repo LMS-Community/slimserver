@@ -380,3 +380,5 @@ add.*						= passback
 search.*					= passback
 stop.*						= passback
 pause.*						= passback
+fwd.*						= passback
+rew.*						= passback
