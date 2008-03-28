@@ -399,7 +399,7 @@ sub theEND {
 
 	Slim::Utils::Log::logger('server')->info('Got to the END');
 
-	if (!$sigINTcalled && !$main::daemon) {
+	if ( !$sigINTcalled && !$main::daemon && !$main::stop ) {
 		sigint();
 	}
 }

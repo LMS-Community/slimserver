@@ -130,7 +130,7 @@ sub array_to_string {
 	unshift @elements, $clientid if defined $clientid;
 	
 	# escape all the terms
-	map { $_ = URI::Escape::uri_escape($_) } @elements;
+	map { $_ = URI::Escape::uri_escape_utf8($_) } @elements;
 	
 	# join by space and return!
 	return join " ",  @elements;
