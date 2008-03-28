@@ -2011,9 +2011,11 @@ sub playlistsTracksQuery {
 		return;
 	}
 	my $menu          = $request->getParam('menu');
+	my $insert        = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 		
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
@@ -2072,44 +2074,64 @@ sub playlistsTracksQuery {
 
 	if (defined $iterator) {
 
-		my $count = $iterator->count();
-
-		$count += 0;
+		my $totalCount = $iterator->count();
+		$totalCount += 0;
 		
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-		$request->addResult("count", $count);
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $totalCount);
 
 		if ($valid) {
+
 
 			my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 			my $cur = $start;
 			my $loopname = $menuMode?'item_loop':'playlisttracks_loop';
-			my $cnt = 0;
+			my $chunkCount = 0;
 			$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
 			
+			if ($insertAll) {
+				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
+			}
+
 			for my $eachitem ($iterator->slice($start, $end)) {
 
 				if ($menuMode) {
 					
 					my $text = Slim::Music::TitleFormatter::infoFormat($eachitem, $format, 'TITLE');
-					$request->addResultLoop($loopname, $cnt, 'text', $text);
+					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 					my $id = $eachitem->id();
 					$id += 0;
 					my $params = {
 						'track_id' =>  $id, 
 					};
-					$request->addResultLoop($loopname, $cnt, 'params', $params);
+					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 
 				}
 				else {
-					_addSong($request, $loopname, $cnt, $eachitem, $tags, 
+					_addSong($request, $loopname, $chunkCount, $eachitem, $tags, 
 							"playlist index", $cur);
 				}
 				
 				$cur++;
-				$cnt++;
+				$chunkCount++;
 			}
+
+
+			my $lastChunk;
+			if ( $end == $totalCount - 1 && $chunkCount < $request->getParam('_quantity') ) {
+				$lastChunk = 1;
+			}
+
+                        # add a favorites link below play/add links
+                        #Add another to result count
+                        my %favorites;
+                        $favorites{'title'} = $playlistObj->name;
+                        $favorites{'url'} = $playlistObj->url;
+
+			($chunkCount, $totalCount) = _jiveDeletePlaylist(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, playlistURL => $playlistObj->url, playlistID => $playlistID, playlistTitle => $playlistObj->name );
+			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
+
 		}
+		$request->addResult("count", $totalCount);
 
 	} else {
 
@@ -2189,7 +2211,6 @@ sub playlistsQuery {
 			},
 			window => {
 				titleStyle => 'playlist',
-				menuStyle  => 'album',
 			},
 		};
 		$request->addResult('base', $base);
@@ -3782,7 +3803,7 @@ sub songinfoQuery {
 				if ( $idx == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 					$lastChunk = 1;
 				}
-				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $chunkCount, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
+				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 			}
 			
 			# because of suppression of some items, only now can we add the count
@@ -4692,6 +4713,53 @@ sub _jiveAddToFavorites {
 	return ($chunkCount, $listCount);
 }
 
+sub _jiveDeletePlaylist {
+
+	my %args          = @_;
+	my $chunkCount    = $args{'chunkCount'};
+	my $listCount     = $args{'listCount'};
+	my $loopname      = $args{'loopname'};
+	my $request       = $args{'request'};
+	my $start         = $args{'start'};
+	my $end           = $args{'end'};
+	my $lastChunk     = $args{'lastChunk'};
+	my $playlistURL   = $args{'playlistURL'};
+	my $playlistTitle = $args{'playlistTitle'};
+	my $playlistID    = $args{'playlistID'};
+
+	return ($chunkCount, $listCount) unless $loopname && $playlistURL;
+	return ($chunkCount, $listCount) if $start == 0 && $end == 0;
+	
+	# We always bump listCount to indicate this request list will contain one more item at the end
+	$listCount++;
+
+	# Add the actual favorites item if we're in the last chunk
+	if ( $lastChunk ) {
+		my $token = 'JIVE_DELETE_PLAYLIST';
+		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
+		my $actions = {
+			'go' => {
+				player => 0,
+				cmd    => [ 'jiveplaylists', 'delete' ],
+				params => {
+						url	        => $playlistURL,
+						playlist_id     => $playlistID,
+						title           => $playlistTitle,
+						menu		=> 'track',
+						menu_all	=> 1,
+				},
+			},
+		};
+
+		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'playlist' });
+		$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
+		$chunkCount++;
+	}
+
+	return ($chunkCount, $listCount);
+}
+
 sub _jiveGenreAllAlbums {
 
 	my %args       = @_;
@@ -4714,7 +4782,6 @@ sub _jiveGenreAllAlbums {
 
 	# Add the actual favorites item if we're in the last chunk
 	if ( $lastChunk ) {
-		my $action = 'add';
 		my $token = 'ALL_ALBUMS';
 		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
 		my $actions = {
