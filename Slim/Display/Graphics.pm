@@ -589,6 +589,7 @@ sub sliderBar {
 	my $midpoint = shift;
 	my $fullstep = shift; # unused - only for text sliderBar
 	my $reverse = shift;
+	my $cursor = shift;
 
 	$midpoint = 0 unless defined $midpoint;
 
@@ -598,7 +599,10 @@ sub sliderBar {
 
 	my $spaces = int($width) - 4;
 	my $dots   = int($value/100 * $spaces);
-	my $divider= ($midpoint/100) * ($spaces);	
+	my $divider= ($midpoint/100) * ($spaces);
+	if ($cursor) {
+		$cursor = int($cursor/100 * $spaces);
+	}	
 
 	if ($dots < 0) { $dots = 0 };
 		
@@ -609,6 +613,7 @@ sub sliderBar {
 	my $prog2e = $display->symbols('progress2e');
 	my $prog3e = $display->symbols('progress2e');
 	my $progEnd = $display->symbols('progressEnd');
+	my $cursorSymbol = $display->symbols('cursor');
 
 	my $chart = $display->symbols('tight') . $progEnd;
 	
@@ -648,7 +653,10 @@ sub sliderBar {
 			}
 		} else {
 			my $pos = $reverse ? ($i <= $dots) : ($i > $dots);
-			if ($i == $divider +1 || $i == $spaces - 1) {
+			if ($i == $cursor) {
+				$chart .= $cursorSymbol;
+				$chart .= $pos ? $prog3 : $prog3e;
+			} elsif ($i == $divider +1 || $i == $spaces - 1) {
 				$chart .= $pos ? $prog1e : $prog1;
 			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
 				$chart .= $pos ? $prog2e : $prog2;

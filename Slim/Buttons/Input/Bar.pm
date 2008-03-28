@@ -37,7 +37,9 @@ Avilable Parameters and their defaults:
  'headerValueArgs' = CV    # accepts C, and V
  'headerValueUnit' = ''    # Set to a units symbol to be displayed before the closing paren
  'valueRef'        =       # reference to value to be selected
+ 'trackValueChanges'= undef# allow the value referenced by valueRef to be updated externally
  'callback'        = undef # function to call to exit mode
+ 'handleLeaveMode' = undef # call the exit callback function whenever leaving this mode
  'overlayRef'      = undef # reference to subroutine to set any overlay display conditions.
  'overlayRefArgs'  = CV    # accepts C, and V
  'onChange'        = undef # code reference to execute when the valueRef is changed
@@ -46,6 +48,7 @@ Avilable Parameters and their defaults:
  'max'             = 100   # maximum value for slider scale
  'mid'             = 0     # midpoint value for marking the division point for a balance bar.
  'midIsZero'       = 1     # set to 0 if you don't want the mid value to be interpreted as zero
+ 'cursor'	       = undef # plave a visible cursor at the specified position.
  'increment'       = 2.5   # step value for each bar character or button press.
  'barOnDouble'     = 0     # set to 1 if the bar is preferred when using large text.
  'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to 
@@ -63,7 +66,7 @@ my %functions = ();
 
 # XXXX - This should this be in init() - but we don't init Input methods
 # before trying to use them.
-Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode);
+Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode, \&_leaveModeHandler);
 
 sub init {
 	my $client = shift;
@@ -284,6 +287,18 @@ sub changePos {
 
 	my $listRef   = $client->modeParam('listRef');
 	my $listIndex = $client->modeParam('listIndex');
+	my $valueRef  = $client->modeParam('valueRef');
+	
+	# Track intermediate change to value
+	if ($client->modeParam('trackValueChanges') && $$valueRef != $listRef->[$listIndex]) {
+		my $newIndex;
+		for ($newIndex = 0; $newIndex < scalar(@$listRef); $newIndex++) {
+			 if ($$valueRef <= $listRef->[$newIndex]) {
+			 	$listIndex = $newIndex;
+			 	last;
+			 }
+		}
+	}
 
 	if (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0)) {
 
@@ -329,7 +344,6 @@ sub changePos {
 	$newposition = scalar(@$listRef) -1 if $newposition > scalar(@$listRef) -1;
 	$newposition = 0 if $newposition < 0;
 
-	my $valueRef = $client->modeParam('valueRef');
 	$$valueRef   = $listRef->[$newposition];
 
 	$client->modeParam('listIndex', int($newposition));
@@ -397,11 +411,16 @@ sub lines {
 	$min = $client->modeParam('min') || 0 unless defined $min;
 	$mid = $client->modeParam('mid') || 0 unless defined $mid;
 	$max = $client->modeParam('max') || 100 unless defined $max;
+	
+	my $cursor = $client->modeParam('cursor');
+	if (defined($cursor)) {
+		$cursor = $max == $min ? 0 : int(($cursor - $min)*100/($max-$min));
+	}
 
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
 	my $fullstep = 1 unless $client->modeParam('smoothing');
 
-	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep);
+	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep,0,$cursor);
 
 	if ($client->linesPerScreen() == 1) {
 
@@ -444,6 +463,18 @@ sub setMode {
 	#}
 
 	$client->lines( $client->modeParam('lines') || \&lines );
+}
+
+sub _leaveModeHandler {
+	my ($client, $exittype) = @_;
+	
+	if ($exittype eq 'pop') {
+		return;	# to avoid recursion
+	}
+	
+	if (defined $client->modeParam('handleLeaveMode')) {
+		exitInput($client, $exittype);
+	}
 }
 
 sub exitInput {
