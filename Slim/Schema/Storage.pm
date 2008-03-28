@@ -24,7 +24,10 @@ use Slim::Utils::Prefs;
 sub dbh {
 	my $self = shift;
 
-	eval { $self->ensure_connected };
+	# Make sure we're connected unless we are already shutting down
+	unless ( $main::stop ) {
+		eval { $self->ensure_connected };
+	}
 
 	# Try and bring up the database if we can't connect.
 	if ($@ && $@ =~ /Connection failed/) {

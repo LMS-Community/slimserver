@@ -593,7 +593,7 @@ sub cli_process {
 		elsif ($cmd eq 'shutdown') {
 			# delay execution so we have time to reply...
 			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2,
-				\&main::forceStopServer);
+				\&main::stopServer);
 			$exit = 1;
 		} 
 
