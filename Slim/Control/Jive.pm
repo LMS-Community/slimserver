@@ -72,6 +72,7 @@ sub init {
     Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
     Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
+	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -1728,10 +1729,56 @@ sub menuNotification {
 #	$log->warn(Data::Dump::dump($dataRef));
 }
 
+sub jivePlaylistsCommand {
+
+	$log->info("Begin function");
+	my $request    = shift;
+	my $title      = $request->getParam('title');
+	my $url        = $request->getParam('url');
+	my $command    = $request->getParam('_cmd');
+	my $playlistID = $request->getParam('playlist_id');
+	my $token      = uc($command); 
+	my @delete_menu= (
+		{
+			text    => Slim::Utils::Strings::string('CANCEL'),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => [ 'jiveblankcommand' ],
+				},
+			},
+			nextWindow => 'parent',
+		}
+	);
+	my $actionItem = {
+		text    => Slim::Utils::Strings::string($token) . ' ' . $title,
+		actions => {
+			go => {
+				player => 0,
+				cmd    => ['playlists', 'delete'],
+				params => {
+					playlist_id    => $playlistID,
+					title          => $title,
+					url            => $url,
+				},
+			},
+		},
+		nextWindow => 'grandparent',
+	};
+	push @delete_menu, $actionItem;
+
+	$request->addResult('offset', 0);
+	$request->addResult('count', 2);
+	$request->addResult('item_loop', \@delete_menu);
+	$request->addResult('window', { titleStyle => 'playlist' } );
+
+	$request->setStatusDone();
+
+}
+
 sub jiveFavoritesCommand {
 
 	$log->info("Begin function");
-	# work-in-progress; not called from anywhere yet
 	my $request = shift;
 	my $title   = $request->getParam('title');
 	my $url     = $request->getParam('url');
