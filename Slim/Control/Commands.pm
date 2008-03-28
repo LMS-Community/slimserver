@@ -1185,7 +1185,16 @@ sub playlistXitemCommand {
 				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
+		if ( $cmd eq 'insert' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
 
+			my $line1 = $client->string('JIVE_POPUP_ADDING');
+			my $line2 = Slim::Music::Info::title($path) || $path;
+			my $line3 = $client->string('JIVE_POPUP_TO_PLAY_NEXT');
+			$client->showBriefly({
+					'line' => [$line1, $line2, $line3],
+					'jive' => { 'type' => 'popupplay', text => [ $line1, $line2, $line3 ] },
+				});
+		}
 	} else {
 		
 		# Display some feedback for the player on remote URLs
@@ -1464,7 +1473,7 @@ sub playlistZapCommand {
 sub playlistcontrolCommand {
 	my $request = shift;
 	
-	$log->debug("Begin Function");
+	$log->error("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlistcontrol']])) {
@@ -1508,17 +1517,19 @@ sub playlistcontrolCommand {
 			return;
 		}
 
-		if ($add || $load) {
+		if ( $add || $load || $insert ) {
 			$client->showBriefly({ 
 				'jive' => { 
 					'type'    => 'popupplay',
-					'text'    => $add
+					'text'    => $add || $insert ? $add 
 						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $folder->title,
 							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
+						: [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $folder->title,
+							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT') ]
 						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $folder->title ]
 				}
 			});
-		}
+		} 
 
 		Slim::Control::Request::executeRequest(
 			$client, ['playlist', $cmd, $folder->url()]
@@ -1566,13 +1577,15 @@ sub playlistcontrolCommand {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			if ($add || $load) {
+			if ( $add || $load || $insert ) {
 				$client->showBriefly({ 
 					'jive' => { 
 						'type'    => 'popupplay',
-						'text'    => $add
+						'text'    => $add || $insert ? $add
 							? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $playlist->title,
 								Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
+							: [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $playlist->title,
+								Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT') ]
 								: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ]
 					}
 				 });
@@ -1650,16 +1663,18 @@ sub playlistcontrolCommand {
 	# don't call Xtracks if we got no songs
 	if (@tracks) {
 
-		if ($load || $add) {
+		if ($load || $add || $insert) {
 
 			$info[0] ||= $tracks[0]->title;
 
 			$client->showBriefly({ 
 				'jive' => { 
 					'type'    => defined $artwork ? 'song' : 'popupplay',
-					'text'    => $add
+					'text'    => $add || $insert ? $add
 						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info[0],
 							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
+						: [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info[0],
+							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT') ]
 						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), @info ],
 					'icon-id' => $artwork,
 				}
