@@ -3414,7 +3414,6 @@ sub songinfoQuery {
 
 		# insertPlay will add Play & Add items - have to fix by two elements
 		my $totalCount = _fixCount($insertPlay, \$index, \$quantity, $count);
-		$totalCount = _fixCount($insertPlay, \$index, \$quantity, $totalCount);
 
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -4464,7 +4463,7 @@ sub _addJivePlaylistControls {
 	);
 
 	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon', '/html/images/blank.png');
+	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/blank.png');
 	$request->addResultLoop($loop, $count, 'offset', 0);
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
@@ -4492,7 +4491,7 @@ sub _addJivePlaylistControls {
 
 	$text = Slim::Utils::Strings::string('SAVE_PLAYLIST');
 	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon', '/html/images/blank.png');
+	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/blank.png');
 	$request->addResultLoop($loop, $count, 'input', $input);
 	$request->addResultLoop($loop, $count, 'actions', $actions);
 	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
@@ -4702,7 +4701,7 @@ sub _jiveAddToFavorites {
 
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
-			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/favorites.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/favorites.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 		}
@@ -4801,7 +4800,7 @@ sub _jiveGenreAllAlbums {
 
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
-			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/playall.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 		}
@@ -5148,7 +5147,7 @@ sub _playAll {
 
 		if ($includeArt) {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
-			$request->addResultLoop($loopname, $chunkCount, 'icon', '/html/images/playall.png');
+			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		}
 
 		# get all our params
