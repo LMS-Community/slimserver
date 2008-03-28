@@ -950,6 +950,9 @@ sub forceStopServer {
 sub stopServer {
 
 	logger('')->info("SqueezeCenter shutting down.");
+	
+	$::stop = 1;
+	
 	cleanup();
 	exit();
 }
@@ -957,6 +960,8 @@ sub stopServer {
 sub cleanup {
 
 	logger('')->info("SqueezeCenter cleaning up.");
+	
+	$::stop = 1;
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
