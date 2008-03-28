@@ -15487,6 +15487,9 @@ JIVE_ADD_ALL
 	IT	Aggiungi tutto
 	NL	Alles toevoegen
 
+JIVE_DELETE_PLAYLIST
+	EN	Delete Playlist
+
 JIVE_DELETE_FROM_FAVORITES
 	DA	Slet Favorit
 	DE	Favorit löschen

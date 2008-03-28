@@ -509,8 +509,7 @@ sub handleCharElement {
 	# Playlists have their own array structure.
 	if ($nextIsPlaylistName && $inValue) {
 
-		$item{'TITLE'} = $value;
-		$nextIsPlaylistName = 0;
+		$item{'TITLE'} .= $value;
 
 		return;
 	}
@@ -591,6 +590,7 @@ sub handleEndElement {
 
 		if ($inPlaylists && $currentKey eq 'Name') {
 			$nextIsPlaylistName = 1;
+			%item = ();
 		}
 
 		return;
@@ -598,6 +598,8 @@ sub handleEndElement {
 
 	if ($element eq 'string' || $element eq 'integer' || $element eq 'date') {
 		$inValue = 0;
+
+		$nextIsPlaylistName = 0;
 	}
 
 	# Done reading this entry - add it to the database.

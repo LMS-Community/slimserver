@@ -869,7 +869,7 @@ sub musicmagic_mix {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
 		$client->modeParam('musicmagic_mix',$mix);
-	} else {
+	} elsif (!defined $mix || ref $mix ne "ARRAY") {
 		$mix = [];
 	}
 
