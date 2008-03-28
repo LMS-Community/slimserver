@@ -26,6 +26,7 @@ Read tags & metadata embedded in Ogg Vorbis files.
 use strict;
 use base qw(Slim::Formats);
 
+use Fcntl qw(:seek);
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
@@ -200,6 +201,145 @@ sub scanBitrate {
 	logWarning("Unable to read bitrate from stream!");
 
 	return (-1, undef);
+}
+
+sub getInitialAudioBlock {
+	my ($class, $fh) = @_;
+	
+	open(my $localFh, '<&=', $fh);
+	
+	seek($localFh, 0, 0);
+	my $ogg = Ogg::Vorbis::Header::PurePerl->new($localFh);
+	
+	seek($localFh, 0, 0);
+	logger('player.source')->debug('Reading initial audio blcok: length ' . ($ogg->info('headers_length')));
+	read ($localFh, my $buffer, $ogg->info('headers_length'));
+	
+	close($localFh);
+	
+	return $buffer;
+}
+
+=head2 findFrameBoundaries( $fh, $offset, $seek )
+
+Starts seeking from $offset (bytes relative to beginning of file) until it
+finds the next valid frame header. Returns the offset of the first and last
+bytes of the frame if any is found, otherwise (0, 0).
+
+If the caller does not request an array context, only the first (start) position is returned.
+
+The only caller is L<Slim::Player::Source> at this time.
+
+=cut
+
+sub findFrameBoundaries {
+	my ($class, $fh, $offset, $seek) = @_;
+
+	if (!defined $fh || !defined $offset) {
+		logError("Invalid arguments!");
+		return wantarray ? (0, 0) : 0;
+	}
+
+	my $start = $class->_seekNextFrame($fh, $offset, 1);
+	my $end   = 0;
+
+	if (defined $seek) {
+		$end = $class->_seekNextFrame($fh, $offset + $seek, 1);
+		return ($start, $end);
+	}
+
+	return wantarray ? ($start, $end) : $start;
+}
+
+my $HEADERLEN   = 28; # minumum
+my $MAXDISTANCE = 255 * 255 + 26 + 256;
+
+# seekNextFrame:
+#
+# when scanning forward ($direction=1), simply detects the next frame header.
+#
+# when scanning backwards ($direction=-1), returns the next frame header whose
+# frame length is within the distance scanned (so that when scanning backwards 
+# from EOF, it skips any truncated frame at the end of block.
+
+sub _seekNextFrame {
+	my ($class, $fh, $startoffset, $direction) = @_;
+
+	use bytes;
+
+	if (!defined $fh || !defined $startoffset || !defined $direction) {
+		logError("Invalid arguments!");
+		return 0;
+	}
+
+	my $filelen = -s $fh;
+	if ($startoffset > $filelen) {
+		$startoffset = $filelen;
+	}
+
+	# TODO: MAXDISTANCE is far too far to seek backwards in most cases, so we don't
+	# use negative direction for the moment.
+	my $seekto = ($direction == 1) ? $startoffset : $startoffset - $MAXDISTANCE;
+	my $log    = logger('player.source');
+
+	$log->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
+
+	sysseek($fh, $seekto, SEEK_SET);
+	sysread($fh, my $buf, $MAXDISTANCE, 0);
+
+	my $len = length($buf);
+
+	if ($len < $HEADERLEN) {
+		$log->warn("Got less than $HEADERLEN bytes");
+		return 0;
+	}
+
+	my ($start, $end) = (0, 0);
+
+	if ($direction == 1) {
+		$start = 0;
+		$end   = $len - $HEADERLEN;
+	} else {
+		$start = $len - $HEADERLEN;
+		$end   = 0;
+	}
+
+	$log->debug("Scanning: len = $len, start = $start, end = $end");
+
+	for (my $pos = $start; $pos != $end; $pos += $direction) {
+
+		my $head = substr($buf, $pos, $HEADERLEN);
+
+		if (!_isOggPageHeader($head)) {
+			next;
+		}
+
+		my $found_at_offset = $seekto + $pos;
+
+		$log->debug("Found frame header at $found_at_offset");
+
+		return $found_at_offset;
+	}
+
+	$log->warn("Couldn't find any frame header");
+
+	return 0;
+}
+
+# This is a pretty minimal test, liable to false positives
+# but it does not really matter as the player decoder will
+# resync properly if need be (as it has to anyway because 
+# of the non-coincidence or page and packet boundaries).
+sub _isOggPageHeader {
+	my $buffer = shift;
+	
+	if (substr($buffer, 0, 4) ne 'OggS') {return 0;}
+	
+	if (ord(substr($buffer, 4, 1)) != 0) {return 0;}
+	
+	if (ord(substr($buffer, 5, 1)) & ~5) {return 0;}
+	
+	return 1;
 }
 
 1;

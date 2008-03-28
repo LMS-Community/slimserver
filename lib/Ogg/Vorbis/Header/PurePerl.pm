@@ -14,20 +14,35 @@ sub new {
 	my $class = shift;
 	my $file = shift;
 
-	# open up the file
-	open FILE, $file or do {
-		warn "$class: File $file does not exist or cannot be read: $!";
-		return undef;
-	};
-
-	# make sure dos-type systems can handle it...
-	binmode FILE;
-
-	my %data = (
-		'filename'   => $file,
-		'filesize'   => -s $file,
-		'fileHandle' => \*FILE,
-	);
+	my %data;
+	
+	if (ref $file) {
+		binmode $file;
+		
+		%data = (
+			'filesize'   => -s $file,
+			'fileHandle' => $file,
+		);
+		
+	}
+	
+	else {
+		
+		# open up the file
+		open FILE, $file or do {
+			warn "$class: File $file does not exist or cannot be read: $!";
+			return undef;
+		};
+	
+		# make sure dos-type systems can handle it...
+		binmode FILE;
+	
+		%data = (
+			'filename'   => $file,
+			'filesize'   => -s $file,
+			'fileHandle' => \*FILE,
+		);
+	}
 
 	_init(\%data);
 	_loadInfo(\%data);
@@ -263,8 +278,18 @@ sub _loadComments {
 	$byteCount += 5;
 
 	# then skip on past it
-	substr($buffer, 0, $page_segments, '');
+	my $segmentSizes = substr($buffer, 0, $page_segments, '');
 	$byteCount += $page_segments;
+	
+	my $contentSize = 0;
+	for (my $i = 0; $i < $page_segments; $i++) {
+		my $segmentSize = ord(substr($segmentSizes, $i, 1));
+		$contentSize += $segmentSize;
+	}
+	
+	# This assumes the normal case that the three mandatory Vorbis header packets are 
+	# completely contained in the first 2 Ogg pages.
+	$data->{'INFO'}{'headers_length'} = $contentSize + $byteCount;
 
 	# check the header type (should be 0x03)
 	if (ord(substr($buffer, 0, 1, '')) != 0x03) {
