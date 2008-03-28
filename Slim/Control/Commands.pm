@@ -1865,7 +1865,19 @@ sub playlistsDeleteCommand {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
+	# show feedback if this action came from jive cometd session
+	if ($request->source && $request->source =~ /\/slim\/request/) {
+		$request->client->showBriefly({
+			'jive' => {
+				'text'    => [	
+					Slim::Utils::Strings::string('JIVE_DELETE_PLAYLIST'),
+					$playlistObj->name,
+				],
+			},
+		});
+	}
+
 	Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
 	
 	# Do a fast delete, and then commit it.
@@ -1875,6 +1887,8 @@ sub playlistsDeleteCommand {
 	$playlistObj = undef;
 
 	Slim::Schema->forceCommit;
+
+
 
 	$request->setStatusDone();
 }
