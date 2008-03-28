@@ -78,7 +78,7 @@ sub processCoverArtRequest {
 	# delimiter on "fields" is an underscore '_'
 	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)  # image name is first string before resizing parameters
 			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
-			(?:_([sSfFpc]))?         # resizeMode, given by a single character
+			(?:_([sSfFpco]))?        # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
 			(?:\.(jpg|png|gif|gd))?$ # optional file suffixes allowed are jpg png gif gd [libgd uncompressed]
 			/x;	
@@ -143,6 +143,8 @@ sub processCoverArtRequest {
 		$resizeMode = "crop";
 	} elsif ($resizeMode eq "S") {
 		$resizeMode = "squash";
+	} elsif ($resizeMode eq "o") {
+		$resizeMode = "original";
 	} elsif ($resizeMode eq "s" || $requestedWidth) {
 		$resizeMode = "stretch";
 	} else {
@@ -284,9 +286,8 @@ sub processCoverArtRequest {
 			if ($origImage) {
 				
 				
-				# If no extension was given or request was from Jive,
-				# optimize for the common case: square JPEG cover art
-				if ( ( $autoType || $suffix eq '.gd' ) && $actualContentType eq 'image/jpeg' && $origImage->width == $origImage->height ) {
+				# If no extension was given optimize for the common case: square JPEG cover art
+				if ( $autoType && $actualContentType eq 'image/jpeg' && $origImage->width == $origImage->height ) {
 					$log->info( "  No file type requested, returning jpeg for square image" );
 					$requestedContentType = 'image/jpeg';
 					$transparentRequest   = 0;
@@ -379,7 +380,7 @@ sub processCoverArtRequest {
 						$destX = 0; $destY = 0;
 						$destWidth = $returnedWidth; $destHeight = $returnedHeight;
 
-					}elsif ($resizeMode eq "pad") {
+					} elsif ($resizeMode eq "pad") {
 
 						$sourceX = 0; $sourceY = 0;
 						$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
@@ -387,16 +388,44 @@ sub processCoverArtRequest {
 						($destX, $destY, $destWidth, $destHeight) = 
 							getResizeCoords($origImage->width, $origImage->height, $returnedWidth, $returnedHeight);
 
-					}elsif ($resizeMode eq "crop") {
+					} elsif ($resizeMode eq "crop") {
 
 						$destX = 0; $destY = 0;
 						$destWidth = $returnedWidth; $destHeight = $returnedHeight;
 
 						($sourceX, $sourceY, $sourceWidth, $sourceHeight) = 
 							getResizeCoords($returnedWidth, $returnedHeight, $origImage->width, $origImage->height);
-					}
+					} elsif ($resizeMode eq "original") {
+						$destX = $sourceX = 0;
+						$destY = $sourceY = 0;
+						
+						$sourceWidth  = $origImage->width;
+						$sourceHeight = $origImage->height;
+	
+						# For resize mode 'o', maintain the original aspect ratio.
+						# The requested height value is not used in this case
 
-					my $newImage = GD::Image->new($returnedWidth, $returnedHeight);
+						if ( $sourceWidth > $sourceHeight ) {
+							$destWidth  = $requestedWidth;
+							$destHeight = $sourceHeight / ( $sourceWidth / $requestedWidth );
+						}
+						elsif ( $sourceHeight > $sourceWidth ) {
+							$destWidth  = $sourceWidth / ( $sourceHeight / $requestedWidth );
+							$destHeight = $requestedWidth;
+						}
+						else {
+							$destWidth = $destHeight = $requestedWidth;
+						}
+					}
+					
+					my $newImage;
+					
+					if ( $resizeMode eq 'original' ) {
+						$newImage = GD::Image->new($destWidth, $destHeight);
+					}
+					else {
+						$newImage = GD::Image->new($returnedWidth, $returnedHeight);
+					}
 
 					# PNG/GD with 7 bit transparency
 					if ($transparentRequest =~ /png|gd/) {
@@ -414,7 +443,9 @@ sub processCoverArtRequest {
 
 					# not transparent
 					} else {
-						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
+						if ( $resizeMode ne 'original' ) {
+							$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
+						}
 					}
 
 					# use faster Resize algorithm on slower machines
