@@ -901,7 +901,7 @@ sub scanPlaylistFileHandle {
 	
 	# Copy playlist title to all items if they are remote URLs and do not already have a title
 	for my $track ( @playlistTracks ) {
-		if ( $track->remote ) {
+		if ( blessed($track) && $track->remote ) {
 			my $curTitle = $track->title;
 			if ( !$curTitle || Slim::Music::Info::isURL($curTitle) ) {
 				$track->title( $playlist->title );

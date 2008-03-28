@@ -115,7 +115,7 @@ my @modes = (
 	# mode 12	  
 	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 	  bar => 1, secs => 0,  width => 320, fullness => 1,
-	  params => [$VISUALIZER_NONE], },
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } ,
 );
 
 my $nmodes = $#modes;

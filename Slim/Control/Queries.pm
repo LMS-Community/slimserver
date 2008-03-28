@@ -318,6 +318,14 @@ sub albumsQuery {
 					},
 					'itemsParams' => 'params',
 				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
+					},
+					'itemsParams' => 'params',
+				}		
 			},
 			'window' => {
 				'titleStyle' => "album",
@@ -633,6 +641,14 @@ sub artistsQuery {
 					'cmd' => ['playlistcontrol'],
 					'params' => {
 						'cmd' => 'add',
+					},
+					'itemsParams' => 'params'
+				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
 					},
 					'itemsParams' => 'params'
 				},
@@ -1229,6 +1245,14 @@ sub genresQuery {
 					},
 					'itemsParams' => 'params',
 				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
+					},
+					'itemsParams' => 'params',
+				},
 			},
 			window => { titleStyle => 'genres', },
 		};
@@ -1531,6 +1555,14 @@ sub musicfolderQuery {
 					},
 					'itemsParams' => 'params',
 				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
+					},
+					'itemsParams' => 'params',
+				},
 			},
 			window => {
 				titleStyle => 'musicfolder',
@@ -1609,6 +1641,14 @@ sub musicfolderQuery {
 								'playlist_id' => $id,
 							},
 						},
+						'add-hold' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'insert',
+								'playlist_id' => $id,
+							},
+						},
 					};
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 
@@ -1636,6 +1676,14 @@ sub musicfolderQuery {
 							'cmd' => ['playlistcontrol'],
 							'params' => {
 								'cmd' => 'add',
+								'track_id' => $id,
+							},
+						},
+						'add-hold' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'insert',
 								'track_id' => $id,
 							},
 						},
@@ -1667,6 +1715,14 @@ sub musicfolderQuery {
 							'cmd' => ['playlistcontrol'],
 							'params' => {
 								'cmd' => 'add',
+							},
+							'itemsParams' => 'params',
+						},
+						'add-hold' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'insert',
 							},
 							'itemsParams' => 'params',
 						},
@@ -2063,6 +2119,14 @@ sub playlistsTracksQuery {
 					},
 					'itemsParams' => 'params',
 				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
+					},
+					'itemsParams' => 'params',
+				},
 			},
 		};
 		$request->addResult('base', $base);
@@ -2205,6 +2269,14 @@ sub playlistsQuery {
 					'cmd' => ['playlistcontrol'],
 					'params' => {
 						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
 					},
 					'itemsParams' => 'params',
 				},
@@ -3386,6 +3458,14 @@ sub songinfoQuery {
 							track_id => $trackId,
 						},
 					},
+					'add-hold' => {
+						player => 0,
+						cmd => ['playlistcontrol'],
+						params => {
+							cmd => 'insert',
+							track_id => $trackId,
+						},
+					},
 				},
 				window => {
 				},
@@ -3475,6 +3555,12 @@ sub songinfoQuery {
 							'command' => [ 'playlistcontrol' ],
 							'cmd'     => 'add',
 						},
+						'add-hold' => {
+							'string'  => $add_string,
+							'style'   => 'itemadd',
+							'command' => [ 'playlistcontrol' ],
+							'cmd'     => 'insert',
+						},
 						'delete' => {
 							'string'  => $delete_string,
 							'style'   => 'item',
@@ -3499,22 +3585,29 @@ sub songinfoQuery {
 							},
 							'add' => {
 								'player' => 0,
-								'cmd' => $items{$mode}{'command'},
+								'cmd'    => $items{'add'}{'command'},
 							},
 						};
 						# tagged params are sent for play and add
 						if ($mode ne 'delete') {
+							$actions->{'add-hold'} = {
+								'player' => 0,
+								'cmd' => $items{'add-hold'}{'command'},
+							};
+							$actions->{'add'}{'params'} = {
+									'cmd' => $items{'add'}{'cmd'},
+									'track_id' => $trackId,
+							};
+							$actions->{'add-hold'}{'params'} = {
+									'cmd' => $items{'add-hold'}{'cmd'},
+									'track_id' => $trackId,
+							};
 							$actions->{'do'}{'params'} = {
 									'cmd' => $items{$mode}{'cmd'},
 									'track_id' => $trackId,
 							};
 							$actions->{'play'}{'params'} = {
 									'cmd' => $items{$mode}{'cmd'},
-									'track_id' => $trackId,
-							};
-							# add always adds, except for delete
-							$actions->{'play'}{'params'} = {
-									'cmd' => 'add',
 									'track_id' => $trackId,
 							};
 						
@@ -3614,6 +3707,14 @@ sub songinfoQuery {
 											'album_id' => $id,
 										},
 									},
+									'add-hold' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'insert',
+											'album_id' => $id,
+										},
+									},
 								};
 								# style correctly the title that opens for the action element
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId, text => $val } );
@@ -3644,6 +3745,14 @@ sub songinfoQuery {
 										'cmd' => ['playlistcontrol'],
 										'params' => {
 											'cmd' => 'add',
+											'artist_id' => $id,
+										},
+									},
+									'add-hold' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'insert',
 											'artist_id' => $id,
 										},
 									},
@@ -3711,6 +3820,15 @@ sub songinfoQuery {
 										params => {
 											year => $val,
 											cmd => 'add',
+										},
+									},
+									'add-hold' => {
+										player => 0,
+										itemsParams => 'params',
+										cmd => ['playlistcontrol'],
+										params => {
+											year => $val,
+											cmd => 'insert',
 										},
 									},
 								};
@@ -4007,6 +4125,14 @@ sub titlesQuery {
 					},
 					'itemsParams' => 'params',
 				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
+					},
+					'itemsParams' => 'params',
+				},
 			},
 			'window' => {
 				'titleStyle' => 'album',
@@ -4223,6 +4349,14 @@ sub yearsQuery {
 					'cmd' => ['playlistcontrol'],
 					'params' => {
 						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+				'add-hold' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'params' => {
+						'cmd' => 'insert',
 					},
 					'itemsParams' => 'params',
 				},
@@ -5119,9 +5253,11 @@ sub _playAll {
 					'addAction'   => 'addtracks',
 					'playCmd'     => [ 'playlistcontrol' ],
 					'addCmd'      => [ 'playlistcontrol' ],
+					'addHoldCmd'      => [ 'playlistcontrol' ],
 					'params'      => { 
 						'play' =>  { 'cmd' => 'load', },
 						'add'  =>  { 'cmd' => 'add',  },
+						'add-hold'  =>  { 'cmd' => 'insert',  },
 					},
 			},
 			'add' => { 
@@ -5131,12 +5267,14 @@ sub _playAll {
 					'addAction'  => 'addtracks',
 					'playCmd'    => [ 'playlistcontrol' ],
 					'addCmd'     => [ 'playlistcontrol' ],
+					'addHoldCmd'     => [ 'playlistcontrol' ],
 					'params'     => { 
 						'play' =>  { 'cmd' => 'add', },
 						'add'  =>  { 'cmd' => 'add', },
+						'add-hold'  =>  { 'cmd' => 'insert',  },
 					},
 			},
-		);
+	);
 
 		# IF WE DECIDE TO ADD AN 'ADD ALL' item, THIS IS THE ONLY LINE THAT NEEDS CHANGING
 		#for my $mode ('play', 'add') {
@@ -5163,22 +5301,24 @@ sub _playAll {
 			if ($key eq 'search') {
 				$items{$mode}{'playCmd'} = ['playlist', 'loadtracks'];
 				$items{$mode}{'addCmd'}  = ['playlist', 'addtracks'];
+				$items{$mode}{'addHoldCmd'}  = ['playlist', 'inserttracks'];
 				$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
 				# we don't need a cmd: tagged param for these
 				delete($items{$mode}{'params'}{'play'}{'cmd'});
 				delete($items{$mode}{'params'}{'add'}{'cmd'});
-				if ($searchType eq 'artists') {
-					$items{$mode}{'params'}{'add'}{'contributor.namesearch'}  = $val;
-					$items{$mode}{'params'}{'play'}{'contributor.namesearch'} = $val;
-				} elsif ($searchType eq 'albums') {
-					$items{$mode}{'params'}{'add'}{'album.titlesearch'}  = $val;
-					$items{$mode}{'params'}{'play'}{'album.titlesearch'} = $val;
-				} else {
-					$items{$mode}{'params'}{'add'}{'track.titlesearch'}  = $val;
-					$items{$mode}{'params'}{'play'}{'track.titlesearch'} = $val;
+				delete($items{$mode}{'params'}{'add-hold'}{'cmd'});
+				for my $button ('add', 'add-hold', 'play') {
+					if ($searchType eq 'artists') {
+						$items{$mode}{'params'}{$button}{'contributor.namesearch'}  = $val;
+					} elsif ($searchType eq 'albums') {
+						$items{$mode}{'params'}{$button}{'album.titlesearch'}  = $val;
+					} else {
+						$items{$mode}{'params'}{$button}{'track.titlesearch'}  = $val;
+					}
 				}
 			} else {
 				$items{$mode}{'params'}{'add'}{$key}  = $val;
+				$items{$mode}{'params'}{'add-hold'}{$key}  = $val;
 				$items{$mode}{'params'}{'play'}{$key} = $val;
 			}
 		}
@@ -5199,6 +5339,11 @@ sub _playAll {
 				'player' => 0,
 				'cmd'    => $items{$mode}{'addCmd'},
 				'params' => $items{$mode}{'params'}{'add'},
+			},
+			'add-hold' => {
+				'player' => 0,
+				'cmd'    => $items{$mode}{'addCmd'},
+				'params' => $items{$mode}{'params'}{'add-hold'},
 			},
 		};
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
