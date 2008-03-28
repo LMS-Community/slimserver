@@ -235,6 +235,8 @@ sub new {
 	$client->[125] = undef; # jiffiesEpoch
 	$client->[126] = [];	# jiffiesOffsetList; array tracking the relative deviations relative to our clock
 	$client->[127] = undef; # frameData; array of (stream-byte-offset, stream-time-offset) tuples
+	
+	$client->[128] = 0; 	# initialAudioBlockRemaining
 
 	$clientHash{$id} = $client;
 
@@ -1718,6 +1720,11 @@ sub jiffiesOffsetList {
 sub frameData {
 	my $r = shift;
 	@_ ? ($r->[127] = shift) : $r->[127];
+}
+
+sub initialAudioBlockRemaining {
+	my $r = shift;
+	@_ ? ($r->[128] = shift) : $r->[128];
 }
 
 1;
