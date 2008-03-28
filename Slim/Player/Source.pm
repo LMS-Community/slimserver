@@ -95,7 +95,7 @@ sub rate {
 	}
 }
 
-sub time2offset {
+sub _time2offset {
 	my $client   = shift;
 	my $time     = shift;
 	
@@ -114,14 +114,25 @@ sub time2offset {
 	my $byterate = $duration ? ($size / $duration) : 0;
 	my $offset   = int($byterate * $time);
 
-	if (my $streamClass = streamClassForFormat($client)) {
+	my $streamClass = _streamClassForFormat($client);
 
+	if (!defined($song->{'initialAudioBlock'}) && 
+		$streamClass && $streamClass->can('getInitialAudioBlock'))
+	{
+		$song->{'initialAudioBlock'} = $streamClass->getInitialAudioBlock($client->audioFilehandle);
+		my $length = length($song->{'initialAudioBlock'});
+		$log->debug("Got initial audio block of size $length");
+		if ($offset < $length) {
+			$offset = $length;
+		}
+	}
+
+	if ($streamClass && $streamClass->can('findFrameBoundaries')) {
 		$offset  = $streamClass->findFrameBoundaries($client->audioFilehandle, $offset);
-
 	} else {
-
 		$offset -= $offset % $align;
 	}
+	
 
 	$log->info("$time to $offset (align: $align size: $size duration: $duration)");
 
@@ -1042,7 +1053,7 @@ sub gototime {
 		$newtime += $oldtime;
 	}
 
-	my $newoffset = time2offset($client, $newtime);
+	my $newoffset = _time2offset($client, $newtime);
 
 	if ($rangecheck) {
 
@@ -1125,6 +1136,8 @@ sub gototime {
 	$client->bytesReceivedOffset(0);
 	$client->trickSegmentRemaining(0);
 	resetFrameData($client);
+	$client->initialAudioBlockRemaining(defined($song->{'initialAudioBlock'}) ?
+		length($song->{'initialAudioBlock'}) : 0);
 
 	$client->audioFilehandle()->sysseek($newoffset + $dataoffset, 0);
 
@@ -1628,6 +1641,7 @@ sub resetSong {
 	$client->songBytes(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
+	$client->initialAudioBlockRemaining(0);
 	resetFrameData($client);
 }
 
@@ -1965,65 +1979,6 @@ sub openSong {
 					$offset -= $seekoffset;
 				}
 				
-				if ( $format eq 'mp3' ) {
-
-					# report whether the track should play back gapless or not
-					my $streamClass = streamClassForFormat($client, 'mp3');
-					my $frame       = $streamClass->getFrame( $client->audioFilehandle );
-					
-					# Look for the LAME header and delay data in the frame
-					if ( $frame ) {
-						my $io = IO::String->new( \$frame->asbin );
-					
-						if ( my $info = MP3::Info::get_mp3info($io) ) {
-							
-							if ( $log->is_debug ) {
-								if ( $info->{LAME} ) {
-
-									$log->info("MP3 file was encoded with $info->{'LAME'}->{'encoder_version'}");
-							
-									if ( $info->{LAME}->{start_delay} ) {
-
-										$log->info(sprintf("MP3 contains encoder delay information (%d/%d), will be played gapless",
-											$info->{LAME}->{start_delay},
-											$info->{LAME}->{end_padding},
-										));
-									}
-									else {
-										$log->info("MP3 doesn't contain encoder delay information, won't play back gapless");
-									}
-								}
-								else {
-									$log->info("MP3 wasn't encoded with LAME, won't play back gapless");
-								}
-							}
-							
-							if ( $info->{BITRATE} ) {
-								if ($log->is_debug && $bitrate && $info->{BITRATE}*1000 != $bitrate) {
-									$log->debug(
-										"Track bitrate $bitrate differs from MP3::Info rate ".
-										($info->{BITRATE}*1000)
-									);
-							    }
-								$bitrate ||= $info->{BITRATE}*1000;
-							}
-							
-							if ( $info->{FREQUENCY} ) {
-								my $frequency = int($info->{FREQUENCY} * 1000);
-								if ($log->is_debug && $samplerate && $frequency != $samplerate) {
-									$log->debug("Track samplerate $samplerate differs from MP3::Info rate $frequency");
-								}
-								$samplerate ||= $frequency;
-							}
-							
-							$channels ||= $info->{STEREO} ? 2 : 1;
-						}
-					}
-					else {
-						$log->warn('Unable to find MP3 frame in file!');
-					}
-				}
-
 				# pipe is a socket
 				if (-p $filepath) {
 					$client->audioFilehandleIsSocket(1);
@@ -2097,6 +2052,17 @@ sub openSong {
 			# Clear out the song queue to just include this song
 			streamingSongIndex($client, streamingSongIndex($client), 1, $song);
 			gototime($client, $duration, 1);
+			return 1;
+		}
+		
+		# Deal with the case where we are fast-forwarding and get to
+		# this song. In this case, we should jump to the start of
+		# the newly opened song using gototime so that we fully
+		# include any initial header.
+		elsif (rate($client) > 1 && !$client->audioFilehandleIsSocket()) {
+			# Clear out the song queue to just include this song
+			streamingSongIndex($client, streamingSongIndex($client), 1, $song);
+			gototime($client, 0, 1);
 			return 1;
 		}
 
@@ -2207,6 +2173,28 @@ sub readNextChunk {
 
 	my $song = streamingSong($client);
 
+	if (my $length = $client->initialAudioBlockRemaining()) {
+		
+		my $chunkLength = $length;
+		my $chunkref;
+		
+		$log->debug("getting initial audio block of size $length");
+		
+		if ($length > $givenChunkSize) {
+			$chunkLength = $givenChunkSize;
+			$chunk = substr($song->{'initialAudioBlock'}, -$length, $chunkLength);
+			$client->initialAudioBlockRemaining($length - $chunkLength);
+			$chunkref = \$chunk;
+		} else {
+			$client->initialAudioBlockRemaining(0);
+			$chunkref = \$song->{'initialAudioBlock'};
+		}
+	
+		$client->streamBytes($client->streamBytes() + $chunkLength);
+
+		return $chunkref;
+	}
+	
 	if ($client->audioFilehandle()) {
 
 		if (!$client->audioFilehandleIsSocket) {
@@ -2262,7 +2250,9 @@ sub readNextChunk {
 					$tricksegmentbytes -= $tricksegmentbytes % $song->{blockalign};
 
 					# Find the frame boundaries for the streaming format, and seek to them.
-					if (my $streamClass = streamClassForFormat($client)) {
+					my $streamClass;
+					if (($streamClass = _streamClassForFormat($client)) && 
+						$streamClass->can('findFrameBoundaries')) {
 
 						my ($start, $end) = $streamClass->findFrameBoundaries(
 							$client->audioFilehandle, $seekpos, $tricksegmentbytes
@@ -2460,19 +2450,13 @@ bail:
 	return \$chunk;
 }
 
-sub streamClassForFormat {
+sub _streamClassForFormat {
 	my ( $client, $streamFormat ) = @_;
 
 	$streamFormat ||= $client->streamformat;
 
 	if (Slim::Formats->loadTagFormatForType($streamFormat)) {
-
-		my $streamClass = Slim::Formats->classForFormat($streamFormat);
-
-		if ($streamClass && $streamClass->can('findFrameBoundaries')) {
-
-			return $streamClass;
-		}
+		return Slim::Formats->classForFormat($streamFormat);
 	}
 }
 
