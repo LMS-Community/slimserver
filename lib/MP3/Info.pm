@@ -801,8 +801,8 @@ sub _parse_v2tag {
 
 					$pic_len += 1 + length($description) + 1;
 
-					# skip extra terminating null if unicode
-					if ($encoding) { $pic_len++; }
+					# skip extra terminating null if UTF-16 (encoding 1 or 2)
+					if ( $encoding == 1 || $encoding == 2 ) { $pic_len++; }
 
 					$valid_pic  = 1;
 					$pic_format = $format;
