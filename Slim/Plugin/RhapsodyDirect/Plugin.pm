@@ -35,6 +35,34 @@ sub initPlugin {
 		weight => 20,
 	);
 	
+	if ( $ENV{SLIM_SERVICE} ) {
+		# Also add to the My Music menu
+		my $my_menu = {
+			useMode => sub { $class->myLibraryMode(@_) },
+			header  => 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
+		};
+		
+		Slim::Buttons::Home::addSubMenu( 
+			'MY_MUSIC',
+			'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
+			$my_menu,
+		);
+		
+		# Add as top-level item choice
+		Slim::Buttons::Home::addMenuOption(
+			'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
+			$my_menu,
+		);
+		
+		# Setup additional CLI methods for this menu
+		$class->initCLI(
+			feed         => Slim::Networking::SqueezeNetwork->url('/api/mp3tunes/v1/opml/library/getLastDateLibraryUpdated'),
+			tag          => 'rhapsody_library',
+			menu         => 'my_music',
+			display_name => 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
+		);
+	}
+	
 	if ( !$ENV{SLIM_SERVICE} ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::HTTP::addPageFunction( 
@@ -76,6 +104,34 @@ sub getDisplayName () {
 	return 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME';
 }
 
+# SLIM_SERVICE
+sub myLibraryMode {
+	my ( $class, $client, $method ) = @_;
+
+	if ($method eq 'pop') {
+
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	# use INPUT.Choice to display the list of feeds
+	my $name = 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY';
+	
+	my %params = (
+		header   => $name,
+		modeName => $name,
+		url      => $class->feed() . '/library/getLastDateLibraryUpdated',
+		title    => $client->string( $name ),
+		timeout  => 35,
+	);
+
+	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+
+	# we'll handle the push in a callback
+	$client->modeParam( handledTransition => 1 );
+}
+# /SLIM_SERVICE
+
 sub handleError {
 	my ( $error, $client ) = @_;
 	
@@ -101,6 +157,14 @@ sub handleError {
 		    logError( $client, $error );
 		}
 	}
+}
+
+sub logError {
+	my ( $client, $error ) = @_;
+	
+	SDI::Service::EventLog::logEvent( 
+		$client->id, 'rhapsody_error', $error,
+	);
 }
 
 1;
