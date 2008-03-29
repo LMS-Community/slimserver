@@ -14,12 +14,15 @@ use MIME::Base64 qw(decode_base64);
 use Slim::Plugin::RhapsodyDirect::RPDS;
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
 	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
 	'description'  => 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
 });
+
+my $prefs = preferences('server');
 
 sub getFormatForURL { 'wma' }
 
@@ -166,6 +169,35 @@ sub tooManySynced {
 	return;
 }
 
+sub getAccount {
+	my ( $class, $client ) = @_;
+	
+	my $account = $client->pluginData('account');
+	
+	# Bug 7540, some Rhapsody prefs got messed up by broken code
+	if ( $ENV{SLIM_SERVICE} && $account ) {
+		if ( ref $account->{username}->[0] eq 'ARRAY' ) {
+			$account = undef;
+		}
+	}
+	
+	if ( $ENV{SLIM_SERVICE} && !$account ) {
+		my @username = $prefs->client($client)->get('plugin_rhapsody_direct_username');
+		my @password = $prefs->client($client)->get('plugin_rhapsody_direct_password');
+		
+		$account = {
+			username   => \@username,
+			password   => \@password,
+			cobrandId  => 40134,
+			clientType => 'slimdevices',
+		};
+		
+		$client->pluginData( account => $account );
+	}
+	
+	return $account;
+}
+
 # Perform processing during play/add, before actual playback begins
 sub onCommand {
 	my ( $class, $client, $cmd, $url, $callback ) = @_;
@@ -183,7 +215,7 @@ sub onCommand {
 	# no logging is performed
 	
 	# Get login info from SN if we don't already have it
-	my $account = $client->pluginData('account');
+	my $account = $class->getAccount($client);
 	
 	if ( !$account ) {
 		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
@@ -459,6 +491,35 @@ sub onJump {
 		);
 	}
 	
+	# Get login info from SN if we don't already have it
+	my $account = $class->getAccount($client);
+	
+	if ( !$account ) {
+		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
+		
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&gotAccount,
+			\&gotAccountError,
+			{
+				client => $client,
+				cb     => sub {
+					$class->onJump( $client, $nextURL, $callback );
+				},
+				ecb    => sub {
+					my $error = shift;
+					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
+					handleError( $error, $client );
+				},
+			},
+		);
+		
+		$log->debug("Getting Rhapsody account from SqueezeNetwork");
+		
+		$http->get( $accountURL );
+		
+		return;
+	}
+	
 	# Clear any previous outstanding rpds queries
 	cancel_rpds($client);
 
@@ -666,7 +727,7 @@ sub gotTrackMetadata {
 	
 	my $track = eval { from_json( $http->content ) };
 	if ( $@ ) {
-		$log->warn("Error getting track metadata from SN: $@");
+		$log->warn( "Error getting track metadata from SN: $@ - " . $http->content );
 		return;
 	}
 	
