@@ -11,7 +11,6 @@ use HTML::Entities qw(encode_entities);
 use MIME::Base64 qw(decode_base64);
 use Scalar::Util qw(blessed);
 
-use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
@@ -28,6 +27,14 @@ my $rpds_args = {};
 
 sub handleError {
     return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
+}
+
+sub logError {
+	my ( $client, $error ) = @_;
+	
+	SDI::Service::EventLog::logEvent( 
+		$client->id, 'rhapsody_error', $error,
+	);
 }
 
 # Send an rpds command
