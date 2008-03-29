@@ -653,7 +653,7 @@ sub sliderBar {
 			}
 		} else {
 			my $pos = $reverse ? ($i <= $dots) : ($i > $dots);
-			if ($i == $cursor) {
+			if (defined $cursor && $i == $cursor) {
 				$chart .= $cursorSymbol;
 				$chart .= $pos ? $prog3 : $prog3e;
 			} elsif ($i == $divider +1 || $i == $spaces - 1) {
