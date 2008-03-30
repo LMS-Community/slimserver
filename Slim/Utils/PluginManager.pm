@@ -371,10 +371,7 @@ sub enablePlugins {
 
 		# Skip plugins that can't be loaded.
 		if ($manifest->{'error'} != INSTALLERROR_SUCCESS) {
-
-			if ( $log->is_warn ) {
-				$log->warn(sprintf("Couldn't load $name. Error: [%s]\n", $manifest->{'error'}));
-			}
+			$log->error(sprintf("Couldn't load $name. Error: [%s]\n", $manifest->{'error'}));
 
 			next;
 		}
@@ -444,7 +441,7 @@ sub enablePlugins {
 
 			if (Slim::bootstrap::tryModuleLoad($module)) {
 
-				logWarning("Couldn't load $module");
+				logError("Couldn't load $module");
 
 			} else {
 
