@@ -1859,7 +1859,7 @@ sub jiveFavoritesCommand {
 # file types allowed for downloading to jive
 my %filetypes = (
 	applet    => qr/\.zip$/,
-	wallpaper => qr/\.(bmp|jpeg|png)$/,
+	wallpaper => qr/\.(bmp|jpg|jpeg|png)$/,
 	sound     => qr/\.wav$/,
 );
 
@@ -1867,28 +1867,32 @@ my %filetypes = (
 my %extras = (
 	wallpaper => {},
 	sound     => {},
+	applet    => {},
 );
 
 =head2 registerDownload()
 
-Register a local file or url for downloading to jive as a wallpaper or sound file.
-$type : either 'wallpaper' or 'sound'
+Register a local file or url for downloading to jive as a wallpaper, sound file or applet
+$type : either 'wallpaper', 'sound' or 'applet'
 $name : description to show on jive
 $path : fullpath for file on server or http:// url
+$key  : (optional) unique key for this type to avoid using file's basename
+$vers : version (applets only)
 
 =cut
 
 sub registerDownload {
-	$log->info("Begin function");
 	my $type = shift;
 	my $name = shift;
 	my $path = shift;
+	my $key  = shift;
+	my $vers = shift;
 
-	my $file = basename($path);
+	my $file = $key || basename($path);
 
-	if ($type =~ /wallpaper|sound/ && $file =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
+	if ($type =~ /wallpaper|sound|applet/ && $file =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
 
-		$log->info("registering download for $type $file $path");
+		$log->info("registering download for $type $name $file $path");
 
 		$extras{$type}->{$file} = {
 			'name'    => $name,
@@ -1896,27 +1900,32 @@ sub registerDownload {
 			'file'    => $file,
 		};
 
+		if ($type eq 'applet') {
+			$extras{$type}->{$file}->{'version'} = $vers;
+		}
+
 	} else {
-		$log->warn("unable to register download for $type $file");
+		$log->warn("unable to register download for $name $type $file");
 	}
 }
 
 =head2 deleteDownload()
 
 Remove previously registered download entry.
-$type : either 'wallpaper' or 'sound'
+$type : either 'wallpaper', 'sound' or 'applet'
 $path : fullpath for file on server or http:// url
+$key  : (optional) unique key for this type to avoid using file's basename
 
 =cut
 
 sub deleteDownload {
-	$log->info("Begin function");
 	my $type = shift;
 	my $path = shift;
+	my $key  = shift;
 
-	my $file = basename($path);
+	my $file = $key || basename($path);
 
-	if ($type =~ /wallpaper|sound/ && $extras{$type}->{$file}) {
+	if ($type =~ /wallpaper|sound|applet/ && $extras{$type}->{$file}) {
 
 		$log->info("removing download for $type $file");
 		delete $extras{$type}->{$file};
@@ -2000,8 +2009,6 @@ sub _downloadInfo {
 sub downloadQuery {
 	my $request = shift;
  
-	$log->info("Begin Function");
- 
 	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
 
 	if (!defined $type) {
@@ -2022,13 +2029,17 @@ sub downloadQuery {
 			$type     => $val->{'name'},
 			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
 			'url'     => $url,
-			'relurl'  => URI->new($url)->path,
 			'file'    => $val->{'file'},
 		};
+
+		if ($val->{'path'} !~ /^http:\/\//) {
+			$entry->{'relurl'} = URI->new($url)->path;
+		}
 
 		if ($type eq 'applet') {
 			$entry->{'version'} = $val->{'version'};
 		}
+
 		$request->setResultLoopHash('item_loop', $cnt++, $entry);
 	}	
 
@@ -2039,7 +2050,6 @@ sub downloadQuery {
 
 # convert path to location for download
 sub downloadFile {
-	$log->info("Begin function");
 	my $path = shift;
 
 	my ($type, $file) = $path =~ /^jive(applet|wallpaper|sound)\/(.*)/;
