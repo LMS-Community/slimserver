@@ -102,7 +102,7 @@ sub _timerHandler {
 		return;
 	}
 	
-	if ($playingSong != Slim::Player::Source::playingSong($client)) {
+	if ($playingSong ne Slim::Player::Playlist::url($client)) {
 		Slim::Buttons::Common::popModeRight($client);
 		return;
 	}
@@ -275,8 +275,8 @@ sub setMode {
 	my $errorStringName;
 	my $duration;
 	
-	if (my $song = Slim::Player::Playlist::url($client)) {
-		if (Slim::Music::Info::isRemoteURL($song)) {
+	if ($playingSong = Slim::Player::Playlist::url($client)) {
+		if (Slim::Music::Info::isRemoteURL($playingSong)) {
 			$errorStringName = 'PLUGIN_SCANNER_ERR_REMOTE';
 		} elsif (!($duration = Slim::Player::Source::playingSongDuration($client))) {
 			$errorStringName = 'PLUGIN_SCANNER_ERR_UNKNOWNSIZE';
@@ -307,7 +307,6 @@ sub setMode {
 	$params{'increment'} = $increment;
 
 	$offset = Slim::Player::Source::songTime($client);
-	$playingSong = Slim::Player::Source::playingSong($client);	
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.Bar',\%params);
 	$lastUpdateTime = 0;
