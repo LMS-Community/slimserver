@@ -418,7 +418,17 @@ sub setRemoteMetadata {
 	}
 	
 	if ( $meta->{secs} ) {
-		$attr->{SECS} = $meta->{secs};
+		my $secs = $meta->{secs};
+		
+		# Bug 7470: duration may be in hh:mm:ss format
+		if ($secs =~ /\d+:\d+/) {
+			
+			my @F = split(':', $secs);
+			$secs = $F[-1] + $F[-2] * 60;
+			if (@F > 2) {$secs += $F[-3] * 3600;}
+		}
+		
+		$attr->{SECS} = $secs;
 	}
 	
 	if ( $meta->{bitrate} ) {
