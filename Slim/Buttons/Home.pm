@@ -527,9 +527,7 @@ sub createList {
 
 	my @list = ();
 
-	for my $sub (sort {(($prefs->get("rank-$b") || 0) <=> 
-		($prefs->get("rank-$a") || 0)) || 
-		(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
+	for my $sub (sort {(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
 		keys %{$params->{'submenus'}}) {
 
 		# Leakage of the DigitalInput plugin..
