@@ -856,7 +856,9 @@ Player = function(){
 			if (!isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
 
-				if (totalTime > 0 && playTime >= totalTime-1) {
+				// update player status if we're past the current track's duration
+				// but don't try longer than for a few seconds in case a duration is set wrong (see bug 7470)
+				if (totalTime > 0 && playTime >= totalTime-1 && playTime <= totalTime+2) {
 					this.getStatus();
 					return;
 				}
