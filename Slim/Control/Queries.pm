@@ -3531,15 +3531,17 @@ sub songinfoQuery {
 			
 				# insert first item if needed
 				if ($start == 0  ) {
-					my ($play_string, $add_string, $delete_string);
+					my ($play_string, $add_string, $delete_string, $jump_string);
 					if ( $track->remote ) {
 						$play_string = Slim::Utils::Strings::string('PLAY');
 						$add_string = Slim::Utils::Strings::string('ADD');
 						$delete_string = Slim::Utils::Strings::string('REMOVE_FROM_PLAYLIST');
+						$jump_string = Slim::Utils::Strings::string('PLAY');
 					} else {
 						$play_string = Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG');
 						$add_string = Slim::Utils::Strings::string('JIVE_ADD_THIS_SONG');
 						$delete_string = Slim::Utils::Strings::string('REMOVE_FROM_PLAYLIST');
+						$jump_string = Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG');
 					}	
 					# setup hash for different items between play and add
 					my %items = ( 	
@@ -3565,14 +3567,21 @@ sub songinfoQuery {
 							'string'  => $delete_string,
 							'style'   => 'item',
 							'command' => [ 'playlist', 'delete', $playlist_index ],
-							'cmd'     => 'delete',
 						},
+						'jump' => {
+							'string'  => $jump_string,
+							'style'   => 'itemplay',
+							'command' => [ 'playlist', 'jump', $playlist_index ],
+						},
+
 					);
 					my $addOrDelete = 'add';
+					my $jumpOrPlay = 'play';
 					if ( $context eq 'playlist' ) {
 						$addOrDelete = 'delete';
+						$jumpOrPlay = 'jump';
 					}
-					for my $mode ('play', $addOrDelete) {
+					for my $mode ($jumpOrPlay, $addOrDelete) {
 						# override the actions, babe!
 						my $actions = {
 							'do' => {
@@ -3588,8 +3597,8 @@ sub songinfoQuery {
 								'cmd'    => $items{'add'}{'command'},
 							},
 						};
-						# tagged params are sent for play and add
-						if ($mode ne 'delete') {
+						# tagged params are sent for play and add, not delete/jump
+						if ($mode ne 'delete' && $mode ne 'jump') {
 							$actions->{'add-hold'} = {
 								'player' => 0,
 								'cmd' => $items{'add-hold'}{'command'},
