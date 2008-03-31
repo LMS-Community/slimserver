@@ -1,6 +1,6 @@
 [%- pageicon = 'MusicMagic' -%]
 [%- pagetitle = "MUSICMAGIC_MIX" | string -%]
-[%- PROCESS pageheader.html %] 
+[%- IF !ajaxUpdate; PROCESS pageheader.html; END %] 
 
 [% IF warn %]<p>[% warn %]</p>[% END %]
 [% IF browselist_header %][% browselist_header %][% END %]
@@ -20,4 +20,4 @@
 	</script>
 [% END %]
 
-[%- PROCESS pagefooter.html %]
+[%- IF !ajaxUpdate; PROCESS pagefooter.html; END %]
