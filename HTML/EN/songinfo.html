@@ -1,12 +1,18 @@
-[% IF itemobj.title;
-	pagetitle = itemobj.title | html;
-ELSE;
-	pagetitle = "SONG_INFO" | string;
-END %]
-[% PROCESS pageheader.html %]
+[% 
+IF !ajaxUpdate;
+
+	IF itemobj.title;
+		pagetitle = itemobj.title | html;
+	ELSE;
+		pagetitle = "SONG_INFO" | string;
+	END;
+	
+	PROCESS pageheader.html;
+END
+%]
 
 [% songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks; END %]
 
 [% PROCESS songinfo_details.html artAtTop=1 %]
 
-[% PROCESS pagefooter.html %]
+[% IF !ajaxUpdate; PROCESS pagefooter.html; END %]

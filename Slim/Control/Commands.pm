@@ -1073,7 +1073,9 @@ sub playlistXitemCommand {
 
 	# check whether url is potentially for a local file or db entry, if so pass to playlistXtracksCommand
 	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
-	if ($path =~ /^file:\/\/|^db:/) {
+	
+	# XXX: hardcoding these protocols isn't the best way to do this. We should have a flag in ProtocolHandler to get this list
+	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicmagicplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 

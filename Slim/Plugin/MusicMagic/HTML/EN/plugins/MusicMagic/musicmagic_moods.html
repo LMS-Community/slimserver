@@ -5,7 +5,7 @@
 		[% "MUSICMAGIC_MOODS" | string %]
 	</a>
 [% END -%]
-[%- PROCESS pageheader.html %]
+[%- IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
 [% IF browselist_header %][% browselist_header %][% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
@@ -27,4 +27,4 @@
 	[% END %]
 [% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-[% PROCESS pagefooter.html %]
+[% IF !ajaxUpdate; PROCESS pagefooter.html; END %]
