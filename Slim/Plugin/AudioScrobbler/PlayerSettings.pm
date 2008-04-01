@@ -36,12 +36,9 @@ sub handler {
 		$params->{prefs}->{account}            = $prefs->client($client)->get('account');
 		
 		if ( $params->{saveSettings} ) {
-			if ( $log->is_debug ) {
-				$log->debug( "Setting account for player " . $client->id . " to " . $params->{account} );
-			}
-			
-			$prefs->client($client)->set( account => $params->{account} );
 			$params->{prefs}->{account} = $params->{account};
+			
+			Slim::Plugin::AudioScrobbler::Plugin::changeAccount( $client, $params->{account} );
 		}
 	}
 	
