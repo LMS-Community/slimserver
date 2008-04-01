@@ -17,7 +17,7 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
 	EN	RadioTime - Local Internet Radio
 	ES	RadioTime - Radio por Internet local
-	FR	RadioTime – Radio Internet locale
+	FR	RadioTime - Radio Internet locale
 	IT	RadioTime: radio Internet locale
 	NL	RadioTime - Lokale internetradio
 
