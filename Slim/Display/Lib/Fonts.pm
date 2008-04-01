@@ -295,7 +295,6 @@ sub loadExtent {
 sub string {
 	my $defaultFontname = shift || return (0, '');
 	my $string = shift;
-	my $interspace = shift;
 
 	if (!defined $string) {
 		return (0, '');
@@ -360,14 +359,9 @@ sub string {
 	my $tight = 0;
 	my $newFontname = '';
 	my $font = $defaultFont;
-#	my $interspace = $defaultFont->[0];
+	my $interspace = $defaultFont->[0];
 	my $cursorpos = undef;
 	my $cursorend = 0;
-
-	# $interspace is only defined here for Boom
-	if( !defined( $interspace)) {
-		$interspace = $defaultFont->[0];
-	}
 
 	# special characters:
 	# \x1d [29] = 'tight'  - suppress inter character space
