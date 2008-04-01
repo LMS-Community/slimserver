@@ -19,6 +19,7 @@ use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
 use POSIX ":sys_wait_h";
 use Symbol;
+use version ();
 
 use Slim::Utils::OSDetect;
 

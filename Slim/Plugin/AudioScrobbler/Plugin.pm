@@ -39,6 +39,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 
 use Digest::MD5 qw(md5_hex);
+use JSON::XS qw(to_json from_json);
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');
@@ -104,7 +105,7 @@ sub setMode {
 		$accounts = $prefs->client($client)->get('accounts') || [];
 	
 		if ( !ref $accounts ) {
-			$accounts = from_json( decode_base64( $accounts ) );
+			$accounts = from_json( $accounts );
 		}
 	}
 	
@@ -153,19 +154,13 @@ sub setMode {
 			elsif ( $exittype eq 'RIGHT' ) {
 				my $value = $client->modeParam('valueRef');
 				
-				$prefs->client($client)->set( account => $$value );
+				my $curAccount = $prefs->client($client)->get('account') || 0;
 				
-				if ( $$value eq '0' ) {
-					# Kill any timers so the current track is not scrobbled
-					Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
-					Slim::Utils::Timers::killTimers( $client, \&submitScrobble ); 
-				}
-				
-				if ( $log->is_debug ) {
-					$log->debug( "Setting account for player " . $client->id . " to " . $$value );
-				}
+				if ( $curAccount ne $$value ) {
+					changeAccount( $client, $$value );
 
-				$client->update();
+					$client->update();
+				}
 			}
 			else {
 				$client->bumpRight;
@@ -174,7 +169,47 @@ sub setMode {
 	} );
 }
 
-sub clear_session {
+sub changeAccount {
+	my ( $client, $account ) = @_;
+	
+	$prefs->client($client)->set( account => $account );
+
+	if ( $account eq '0' ) {
+		# Kill any timers so the current track is not scrobbled
+		Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
+		Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
+		
+		# Dump queue
+		setQueue( $client, [] );
+	}
+	else {	
+		# If you change accounts and have more than 1 track queued for scrobbling,
+		# dump all but the most recent queued track
+		my $queue = getQueue($client);
+	
+		my $count = scalar @{$queue};
+		if ( $count > 1 ) {
+			$log->warn( "Changed scrobble accounts with $count queued items, removing items:" );
+		
+			my $newQueue = [ pop @{$queue} ];
+		
+			for my $item ( @{$queue} ) {
+				$log->warn( '  ' . uri_unescape( $item->{t} ) );
+			}
+		
+			setQueue( $client, $newQueue );
+		}
+	}
+
+	# Clear session
+	clearSession($client);
+
+	if ( $log->is_debug ) {
+		$log->debug( "Changing account for player " . $client->id . " to $account" );
+	}
+}
+
+sub clearSession {
 	my $client = shift;
 	
 	# Reset our state
@@ -187,7 +222,7 @@ sub handshake {
 	my $params = shift || {};
 	
 	if ( my $client = $params->{client} ) {
-		clear_session( $client );
+		clearSession( $client );
 		
 		# Get client's account information
 		if ( !$params->{username} ) {
@@ -199,9 +234,7 @@ sub handshake {
 				$accounts = $prefs->client($client)->get('accounts') || [];
 			
 				if ( !ref $accounts ) {
-					use JSON::XS qw(to_json from_json);
-					use MIME::Base64 qw(encode_base64 decode_base64);
-					$accounts = from_json( decode_base64( $accounts ) );
+					$accounts = from_json( $accounts );
 				}
 			}
 			
@@ -258,11 +291,7 @@ sub _handshakeOK {
 			$client->pluginData( handshake_delay => 0 );
 		
 			# If there are any tracks pending in the queue, send them now
-			my $queue = $prefs->client($client)->get('queue') || [];
-			
-			if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-				$queue = from_json( decode_base64( $queue ) );
-			}
+			my $queue = getQueue($client);
 			
 			if ( scalar @{$queue} ) {
 				submitScrobble( $client );
@@ -373,11 +402,7 @@ sub newsongCallback {
 	}
 	
 	# report all new songs as now playing
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
-	}
+	my $queue = getQueue($client);
 	
 	if ( scalar @{$queue} ) {
 		# before we submit now playing, submit all queued tracks, so that
@@ -674,11 +699,7 @@ sub checkScrobble {
 	
 	$log->debug( "$title - Queueing track for scrobbling in $checktime seconds" );
 	
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
-	}
+	my $queue = getQueue($client);
 	
 	push @{$queue}, {
 		_url => $cururl,
@@ -693,12 +714,7 @@ sub checkScrobble {
 		m    => ( $track->musicbrainz_id || '' ),
 	};
 	
-	if ( $ENV{SLIM_SERVICE} ) {
-		$queue = encode_base64( to_json( $queue ), '' );
-	}
-	
-	# save queue as a pref
-	$prefs->client($client)->set( queue => $queue );
+	setQueue( $client, $queue );
 	
 	#warn "Queue is now: " . Data::Dump::dump($queue) . "\n";
 	
@@ -717,15 +733,30 @@ sub submitScrobble {
 	my ( $client, $params ) = @_;
 	
 	$params ||= {};
+	$params->{retry} ||= 0;
+	
+	my $cb = $params->{cb} || sub {};
 	
 	# Remove any other pending submit timers
 	Slim::Utils::Timers::killTimers( $client, \&submitScrobble );
+
+	my $queue = getQueue($client);
+	
+	if ( !scalar @{$queue} ) {
+		# Queue was already submitted, probably by the Now Playing request
+		return $cb->();
+	}
 	
 	# Abort if the user disabled scrobbling for this player
-	return if !$prefs->client($client)->get('account');
-	
-	$params->{retry} ||= 0;
-	
+	my $account = $prefs->client($client)->get('account');
+	if ( !$account ) {
+		$log->debug( 'User disabled scrobbling for this player, wiping queue and not submitting' );
+		
+		setQueue( $client, [] );
+		
+		return $cb->();
+	}
+
 	if ( !$client->pluginData('submit_url') ) {
 		# Get a new session
 		handshake( {
@@ -736,18 +767,7 @@ sub submitScrobble {
 		} );
 		return;
 	}
-	
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
-	}
-	
-	if ( !scalar @{$queue} ) {
-		# Queue was already submitted, probably by the Now Playing request
-		return;
-	}
-	
+
 	if ( $log->is_debug ) {
 		$log->debug( 'Scrobbling ' . scalar( @{$queue} ) . ' queued item(s)' );
 		#$log->debug( Data::Dump::dump($queue) );
@@ -801,14 +821,11 @@ sub submitScrobble {
 			$client,
 			time() + 60,
 			\&submitScrobble,
+			$params,
 		);
 	}
 	
-	if ( $ENV{SLIM_SERVICE} ) {
-		$queue = encode_base64( to_json( $queue ), '' );
-	}
-	
-	$prefs->client($client)->set( queue => $queue );
+	setQueue( $client, $queue );
 	
 	if ( @tmpQueue ) {
 		$log->debug( "Submitting: $post" );
@@ -881,19 +898,11 @@ sub _submitScrobbleOK {
 	}
 	elsif ( $content =~ /^BADSESSION/ ) {
 		# put the tmpQueue items back into the main queue
-		my $queue = $prefs->client($client)->get('queue') || [];
-		
-		if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-			$queue = from_json( decode_base64( $queue ) );
-		}
+		my $queue = getQueue($client);
 		
 		push @{$queue}, @{$tmpQueue};
 		
-		if ( $ENV{SLIM_SERVICE} ) {
-			$queue = encode_base64( to_json( $queue ), '' );
-		}
-		
-		$prefs->client($client)->set( queue => $queue );
+		setQueue( $client, $queue );
 		
 		$log->debug( 'Scrobble submit failed: invalid session, re-handshaking' );
 		
@@ -921,19 +930,11 @@ sub _submitScrobbleError {
 	my $client   = $http->params('client');
 	
 	# put the tmpQueue items back into the main queue
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
-	}
+	my $queue = getQueue($client);
 	
 	push @{$queue}, @{$tmpQueue};
 	
-	if ( $ENV{SLIM_SERVICE} ) {
-		$queue = encode_base64( to_json( $queue ), '' );
-	}
-	
-	$prefs->client($client)->set( queue => $queue );
+	setQueue( $client, $queue );
 	
 	if ( $params->{retry} == 3 ) {
 		# after 3 failures, give up and handshake
@@ -977,21 +978,13 @@ sub loveTrack {
 	$log->debug( "Loved: $url" );
 	
 	# Look through the queue and update the item we want to love
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
-	}
+	my $queue = getQueue($client);
 	
 	for my $item ( @{$queue} ) {
 		if ( $item->{_url} eq $url ) {
 			$item->{r} = 'L';
 			
-			if ( $ENV{SLIM_SERVICE} ) {
-				$queue = encode_base64( to_json( $queue ) );
-			}
-			
-			$prefs->client($client)->set( queue => $queue );
+			setQueue( $client, $queue );
 			
 			return 1;
 		}
@@ -1033,21 +1026,13 @@ sub banTrack {
 	$log->debug( "Banned: $url" );
 	
 	# Look through the queue and update the item we want to ban
-	my $queue = $prefs->client($client)->get('queue') || [];
-	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
-	}
+	my $queue = getQueue($client);
 	
 	for my $item ( @{$queue} ) {
 		if ( $item->{_url} eq $url ) {
 			$item->{r} = 'B';
 			
-			if ( $ENV{SLIM_SERVICE} ) {
-				$queue = encode_base64( to_json( $queue ) );
-			}
-			
-			$prefs->client($client)->set( queue => $queue );
+			setQueue( $client, $queue );
 			
 			# Skip to the next track
 			$client->execute([ 'playlist', 'jump', '+1' ]);
@@ -1105,6 +1090,28 @@ sub canScrobble {
 	}
 
 	return;
+}
+
+sub getQueue {
+	my $client = shift;
+	
+	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+		$queue = from_json( $queue );
+	}
+	
+	return $queue;
+}
+
+sub setQueue {
+	my ( $client, $queue ) = @_;
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$queue = to_json( $queue );
+	}
+	
+	$prefs->client($client)->set( queue => $queue );
 }
 
 1;
