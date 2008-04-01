@@ -344,5 +344,5 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	FR	Appuyez sur DROITE pour
 	HE	לחץ על הלחצן ימינה כדי
 	IT	Premere il pulsante DESTRA per
-	NL	RECHTS is
+	NL	Met pijltje-RECHTS kun je
 

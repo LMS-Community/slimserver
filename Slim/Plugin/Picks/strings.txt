@@ -7,7 +7,7 @@ PLUGIN_PICKS_MODULE_NAME
 	DE	Unsere Empfehlungen
 	EN	Staff Picks
 	ES	Nuestras selecciones
-	FR	Staff Picks
+	FR	Notre séléction
 	IT	Scelti dallo staff
 	NL	Aanraders
 
@@ -16,7 +16,7 @@ PLUGIN_PICKS_MODULE_NAME_DESC
 	DE	Unsere Empfehlungen - die besten Internetradiosender
 	EN	Staff Picks - Best of Internet Radio
 	ES	Nuestras selecciones - Lo mejor en radio por Internet
-	FR	Staff Picks – Le meilleur des radios Internet
+	FR	Notre séléction - Le meilleur des radios Internet
 	IT	Scelti dallo staff: il meglio della radio su Internet
-	NL	Aanraders – de beste internetradio
+	NL	Aanraders - de beste internetradio
 
