@@ -104,7 +104,7 @@ sub setMode {
 		$accounts = $prefs->client($client)->get('accounts') || [];
 	
 		if ( !ref $accounts ) {
-			$accounts = from_json( decode_base64( $accounts ) );
+			$accounts = from_json( $accounts );
 		}
 	}
 	
@@ -200,8 +200,7 @@ sub handshake {
 			
 				if ( !ref $accounts ) {
 					use JSON::XS qw(to_json from_json);
-					use MIME::Base64 qw(encode_base64 decode_base64);
-					$accounts = from_json( decode_base64( $accounts ) );
+					$accounts = from_json( $accounts );
 				}
 			}
 			
@@ -261,7 +260,7 @@ sub _handshakeOK {
 			my $queue = $prefs->client($client)->get('queue') || [];
 			
 			if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-				$queue = from_json( decode_base64( $queue ) );
+				$queue = from_json( $queue );
 			}
 			
 			if ( scalar @{$queue} ) {
@@ -376,7 +375,7 @@ sub newsongCallback {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
+		$queue = from_json( $queue );
 	}
 	
 	if ( scalar @{$queue} ) {
@@ -677,7 +676,7 @@ sub checkScrobble {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
+		$queue = from_json( $queue );
 	}
 	
 	push @{$queue}, {
@@ -694,7 +693,7 @@ sub checkScrobble {
 	};
 	
 	if ( $ENV{SLIM_SERVICE} ) {
-		$queue = encode_base64( to_json( $queue ), '' );
+		$queue = to_json( $queue );
 	}
 	
 	# save queue as a pref
@@ -740,7 +739,7 @@ sub submitScrobble {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
+		$queue = from_json( $queue );
 	}
 	
 	if ( !scalar @{$queue} ) {
@@ -805,7 +804,7 @@ sub submitScrobble {
 	}
 	
 	if ( $ENV{SLIM_SERVICE} ) {
-		$queue = encode_base64( to_json( $queue ), '' );
+		$queue = to_json( $queue );
 	}
 	
 	$prefs->client($client)->set( queue => $queue );
@@ -884,13 +883,13 @@ sub _submitScrobbleOK {
 		my $queue = $prefs->client($client)->get('queue') || [];
 		
 		if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-			$queue = from_json( decode_base64( $queue ) );
+			$queue = from_json( $queue );
 		}
 		
 		push @{$queue}, @{$tmpQueue};
 		
 		if ( $ENV{SLIM_SERVICE} ) {
-			$queue = encode_base64( to_json( $queue ), '' );
+			$queue = to_json( $queue );
 		}
 		
 		$prefs->client($client)->set( queue => $queue );
@@ -924,13 +923,13 @@ sub _submitScrobbleError {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
+		$queue = from_json( $queue );
 	}
 	
 	push @{$queue}, @{$tmpQueue};
 	
 	if ( $ENV{SLIM_SERVICE} ) {
-		$queue = encode_base64( to_json( $queue ), '' );
+		$queue = to_json( $queue );
 	}
 	
 	$prefs->client($client)->set( queue => $queue );
@@ -980,7 +979,7 @@ sub loveTrack {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
+		$queue = from_json( $queue );
 	}
 	
 	for my $item ( @{$queue} ) {
@@ -988,7 +987,7 @@ sub loveTrack {
 			$item->{r} = 'L';
 			
 			if ( $ENV{SLIM_SERVICE} ) {
-				$queue = encode_base64( to_json( $queue ) );
+				$queue = to_json( $queue );
 			}
 			
 			$prefs->client($client)->set( queue => $queue );
@@ -1036,7 +1035,7 @@ sub banTrack {
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
 	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
-		$queue = from_json( decode_base64( $queue ) );
+		$queue = from_json( $queue );
 	}
 	
 	for my $item ( @{$queue} ) {
@@ -1044,7 +1043,7 @@ sub banTrack {
 			$item->{r} = 'B';
 			
 			if ( $ENV{SLIM_SERVICE} ) {
-				$queue = encode_base64( to_json( $queue ) );
+				$queue = to_json( $queue );
 			}
 			
 			$prefs->client($client)->set( queue => $queue );
