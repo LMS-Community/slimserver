@@ -502,7 +502,7 @@ PLUGIN_HEALTH_RESPONSE_POOR_DESC
 	NL	De serverreactietijd is regelmatig lager dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-spelers). Controleer de prestaties van je server. Zijn deze goed, controleer dan of SqueezeCenter misschien intensieve taken uitvoert (zoals het scannen van de muziekcollectie). Controleer ook of alle plug-ins naar behoren functioneren.
 
 PLUGIN_HEALTH_NORMAL
-	dA	Denne afspiller har normal ydelse.
+	DA	Denne afspiller har normal ydelse.
 	DE	Dieser Player funktioniert normal.
 	EN	This player is performing normally.
 	ES	Este reproductor funciona normalmente.
