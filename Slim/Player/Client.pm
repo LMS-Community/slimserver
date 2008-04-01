@@ -86,9 +86,8 @@ sub new {
 	$client->[0] = $id;
 	$client->[1] = $deviceid;
 	
-	# XXX: Ignore UUID from non-Receivers, this will be fixed by bug 6899
-	# in a future version
-	if ( $uuid && $deviceid != 7 ) {
+	# Ignore UUID if all zeros (bug 6899)
+	if ( $uuid eq '0' x 32 ) {
 		$uuid = undef;
 	}
 	
