@@ -102,21 +102,24 @@ sub init {
 sub buildCaches {
 	$log->info("Begin function");
 	# Pre-cache albums query
-	my $numAlbums = Slim::Schema->rs('Album')->count;
-	$log->debug( "Pre-caching $numAlbums album items." );
-	Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:track', 'cache:1' ] );
+	if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
+		$log->debug( "Pre-caching $numAlbums album items." );
+		Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:track', 'cache:1' ] );
+	}
 	
 	# Artists
-	my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count;
-	# Add one since we may have a VA item
-	$numArtists++;
-	$log->debug( "Pre-caching $numArtists artist items." );
-	Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, 'menu:album', 'cache:1' ] );
+	if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
+		# Add one since we may have a VA item
+		$numArtists++;
+		$log->debug( "Pre-caching $numArtists artist items." );
+		Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, 'menu:album', 'cache:1' ] );
+	}
 	
 	# Genres
-	my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count;
-	$log->debug( "Pre-caching $numGenres genre items." );
-	Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, 'menu:artist', 'cache:1' ] );
+	if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
+		$log->debug( "Pre-caching $numGenres genre items." );
+		Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, 'menu:artist', 'cache:1' ] );
+	}
 }
 
 =head2 getDisplayName()

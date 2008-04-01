@@ -616,7 +616,7 @@ sub _parseWavFormat {
 	my %wav  = (
 		'codec'           => _RIFFwFormatTagLookup($wFormatTag),
 		'channels'        => unpack('v', substr($data,  2, $WORD)),
-		'sample_rate'     => unpack('v', substr($data,  4, $DWORD)),
+		'sample_rate'     => unpack('V', substr($data,  4, $DWORD)),
 		# See bitrate in _parseASFFilePropertiesObject() for the correct calculation.
 		#'bitrate'         => unpack('v', substr($data,  8, $DWORD)) * 8,
 		'bits_per_sample' => unpack('v', substr($data, 14, $WORD)),

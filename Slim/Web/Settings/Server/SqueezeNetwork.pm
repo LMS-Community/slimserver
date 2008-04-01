@@ -89,6 +89,10 @@ sub handler {
 		
 			return;
 		}
+		elsif ( !$params->{sn_email} && !$params->{sn_password_sha} ) {
+			# Shut down SN if username/password were removed
+			Slim::Networking::SqueezeNetwork->shutdown();
+		}
 		else {
 			if ($params->{'AJAX'}) {
 				$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server); 

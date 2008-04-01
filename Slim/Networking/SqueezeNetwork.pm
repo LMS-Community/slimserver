@@ -149,6 +149,9 @@ sub shutdown {
 	
 	$prefs->remove('sn_timediff');
 	
+	# Remove SN session
+	$prefs->remove('sn_session');
+	
 	# Shutdown pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
 	
