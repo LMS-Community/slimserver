@@ -97,8 +97,8 @@ CHOOSE_A_LANGUAGE
 	ZH_CN	请选择语言
 
 LOADING_SQUEEZECENTER
-	DE	SqueezeCenter wird geladen...
 	DA	Indlæser SqueezeCenter...
+	DE	SqueezeCenter wird geladen...
 	EN	Loading SqueezeCenter...
 	ES	Cargando SqueezeCenter...
 	FR	Chargement du SqueezeCenter...
@@ -157,8 +157,8 @@ DEFAULT_MAP
 
 SERVER_VERSION
 	CS	Verze SqueezeCenteru
-	DE	SqueezeCenter-Version
 	DA	SqueezeCenter version
+	DE	SqueezeCenter-Version
 	EN	SqueezeCenter Version
 	ES	Versión de SqueezeCenter
 	FR	Version du SqueezeCenter
@@ -173,8 +173,8 @@ SERVER_VERSION
 
 PERL_VERSION
 	CS	Verze Perl
-	DE	Perl-Version
 	DA	Perl version
+	DE	Perl-Version
 	EN	Perl Version
 	ES	Versión de Perl
 	FI	Perl versio
@@ -189,8 +189,8 @@ PERL_VERSION
 
 MYSQL_VERSION
 	CS	Verze MySQL
-	DE	MySQL-Version
 	DA	MySQL version
+	DE	MySQL-Version
 	EN	MySQL Version
 	ES	Versión de MySQL
 	FI	MySQL versio
@@ -223,9 +223,9 @@ PLAYER_VERSION
 ABOUT_SLIMDEVICES
 	CS	O Slim Devices/Logitech
 	DA	Om Slim Devices/Logitech
-	DE	Info zu Slim Devices
+	DE	Info zu Slim Devices/Logitech
 	EN	About Slim Devices/Logitech
-	ES	Acerca de Slim Devices
+	ES	Acerca de Slim Devices/Logitech
 	FI	Yleistä Slimdevicesista
 	FR	A propos de Slim Devices
 	HE	אודות Slim Devices/Logitech
@@ -822,7 +822,7 @@ INSERT_TO_PLAYLIST
 
 INSERT_TO_PLAYLIST_DBL
 	DA	Tilføjer
-	DE	Einfügen läuft ...
+	DE	Einfügen von ...
 	EN	Adding
 	ES	Agregando
 	FI	Lisätään
@@ -3151,7 +3151,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	EN	Brightness when off:
 	ES	Brillo cuando está apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité en veille:
+	FR	Luminosité lorsque éteint:
 	HE	בהירות במצב כבוי:
 	IT	Luminosità quando spento:
 	JA	パワーオフ時の明るさ:
@@ -5141,7 +5141,7 @@ SETUP_COVERART_DESC
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
 	ES	Cuando están disponibles, las imágenes de material gráfico de álbum se muestran al ver la información de un álbum o de una canción. Las imágenes de material gráfico se encuentran en las etiquetas ID3 para canciones individuales o pueden residir en la misma carpeta que los archivos de canciones. De forma predeterminada, se usan las imágenes llamadas "cover.jpg", "folder.jpg", "album.jpg" o "thumb.jpg". Se puede especificar un nombre de archivo adicional para usarlo para imágenes de material gráfico de álbum. Se pueden especificar nombres de archivo diferentes para las imágenes en miniatura o a tamaño completo. Coloque el prefijo % a la opción y podrá seguirlo de cualquier cadena con los mismos elementos disponibles para formatos de título (por ejemplo, %ARTISTA - ÁLBUM, buscará Artista - Álbum.jpg que coincida con la información de artista y álbum encontrada.
 	FI	Kansikuvat näytetään (jos niitä on) kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3 otsikoista, tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii kuvia  "cover.jpg", "folder.jpg", "album.jpg" tai "thumb.jpg" nimillä. Voit myö määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muotoa Artist - album.jpg
-	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un repère ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants: "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg. Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTISTE – ALBUM permet par exemple de rechercher une image Artiste – Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
+	FR	Si elle existe, l'image de la pochette du disque est affichée en regard des informations d'un album ou d'un morceau. Les images se trouvent dans un repère ID3 pour les morceaux individuels ou dans le même dossier que les fichiers. Le serveur recherche par défaut les noms de fichiers suivants: "cover.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg. Vous pouvez spécifier des noms de fichiers supplémentaires pour les images de pochettes et spécifier différents noms de fichiers pour les vignettes ou les images. Si vous ajoutez % en préfixe, vous pouvez faire suivre ce signe d'une chaîne créée à partir des mêmes éléments disponibles pour les formats des titres. La chaîne %ARTIST - ALBUM permet par exemple de rechercher une image Artiste - Album.jpg pour correspondre aux informations d'artiste et d'album trouvées.
 	HE	תמונות של עטיפות אלבומים, כאשר זמינות, מופיעות בעת הצגה של פרטי אלבום או שיר. תמונות של עטיפות נמצאות בתגים מסוג ID3 עבור שירים נפרדים, או מאוחסנות באותה תיקייה עם קובצי השירים. כברירת מחדל, נעשה שימוש בקבצים בשם "cover.jpg"‏, "albumartsmall.jpg"‏, "folder.jpg"‏, "album.jpg" או "thumb.jpg". באפשרותך לציין שם קובץ נוסף שישמש עבור תמונות של עטיפות אלבומים. באפשרותך לציין שמות קובץ שונים עבור תמונות ממוזערות או תמונות בגודל מלא. הוסף את הקידומת % לאפשרות וציין לאחר מכן כל מחרוזת המורכבת מאותם רכיבים הזמינים עבור תבניות שם (לדוגמה, ‎%ARTIST - ALBUM יחפש את Artist - Album.jpg בהתאם למידע המבצע והאלבום שנמצא.)
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate insieme all'album o alle informazioni sul brano. Le copertine possono essere inserite nei tag ID3 di ogni singolo brano o risiedere nella stessa cartella dei file dei brani. Per impostazione predefinita vengono utilizzate immagini denominate cover.jpg, albumartsmall.jpg, folder.jpg, album.jpg o thumb.jpg. È possibile specificare un nome di file aggiuntivo da utilizzare per le copertine e nomi diversi per le miniature e le immagini intere. Anteporre all'opzione il carattere %, a cui può far seguito qualsiasi stringa composta dagli stessi elementi disponibili per il formato titolo. Ad esempio, con %ARTISTA - ALBUM viene cercato il file Artista - Album.jpg che corrisponde alle informazioni sull'artista e l'album trovati.
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
@@ -7305,7 +7305,7 @@ SETUP_SN_PASSWORD_DESC
 
 SETUP_SN_INVALID_LOGIN
 	DA	Vi kunne ikke find konto-information, indtast venligst dine informationer igen. Hvis du ikke har en bruger konto klik venligst “<a href="http://%s" target="_blank">Jeg har brug for en konto</a> for at fortsætte.
-	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf “<a href="http://%s" target="_blank">Ich brauche ein Konto</a>”.
+	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf "<a href="http://%s" target="_blank">Ich brauche ein Konto</a>".
 	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://%s" target="_blank">I need an account</a>” to continue.
 	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://%s" target="_blank">Necesito una cuenta</a>" para continuar.
 	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://%s" target="_blank">Je souhaite créer un compte</a> pour continuer.
@@ -7476,9 +7476,9 @@ SETUP_WIZARD_SQN
 
 SETUP_WIZARD_SQN_DESC
 	DA	SqueezeNetwork gør at du får mere ud af dit nye trådløse musik system ved at give adgang til musiktjenester og internet radio stationer.<br/><br/>Hvis du allerede har en SqueezeNetwork konto, indtast venligst dine informationer nedenunder og klik "Næste". Hvis du ikke har en SqueezeNetwork konto klik venligst "Jeg har brug for en konto".
-	DE	Mit SqueezeNetwork können Sie Ihr neues kabelloses Musiksystem optimal nutzen und auf Musikdienste und Internetradiosender zugreifen.<br/><br/>Wenn Sie bereits ein SqueezeNetwork-Konto haben, geben Sie Ihre Daten unten ein und klicken Sie auf "Weiter". Wenn Sie kein SqueezeNetwork-Konto haben, klicken Sie auf “Ich brauche ein Konto”.
+	DE	Mit SqueezeNetwork können Sie Ihr neues kabelloses Musiksystem optimal nutzen und auf Musikdienste und Internetradiosender zugreifen.<br/><br/>Wenn Sie bereits ein SqueezeNetwork-Konto haben, geben Sie Ihre Daten unten ein und klicken Sie auf "Weiter". Wenn Sie kein SqueezeNetwork-Konto haben, klicken Sie auf "Ich brauche ein Konto".
 	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Next" button. If you don't have a SqueezeNetwork account, please click "I need an account".
-	ES	SqueezeNetwork le permite obtener el máximo de su nuevo sistema de música inalámbrico, mediante el acceso a servicios de música y emisoras de radio por Internet.<br/><br/>Si ya tiene una cuenta SqueezeNetwork, introduzca la información pertinente a continuación y haga clic en el botón "Siguiente". Si no tiene una cuenta SqueezeNetwork, haga clic en “Necesito una cuenta”.
+	ES	SqueezeNetwork le permite obtener el máximo de su nuevo sistema de música inalámbrico, mediante el acceso a servicios de música y emisoras de radio por Internet.<br/><br/>Si ya tiene una cuenta SqueezeNetwork, introduzca la información pertinente a continuación y haga clic en el botón "Siguiente". Si no tiene una cuenta SqueezeNetwork, haga clic en "Necesito una cuenta".
 	FR	SqueezeNetwork vous permet de tirer pleinement parti de votre système musical sans fil en vous donnant accès à des services musicaux et des stations de radio sur Internet.<br/><br/>Si vous possédez déjà un compte SqueezeNetwork, spécifiez vos informations ci-dessous et cliquez sur le bouton Suivant. Sinon, cliquez sur Je souhaite créer un compte.
 	IT	SqueezeNetwork consente di sfruttare al massimo i nuovi sistemi musicali senza fili fornendo accesso a servizi musicali e alle stazioni radio di Internet.<br/><br/>Se si dispone già di un account SqueezeNetwork, immettere i propri dati in basso e fare clic sul pulsante "Avanti". Se non si dispone di un account SqueezeNetwork, fare clic su Nuovo account.
 	NL	SqueezeNetwork geeft je toegang tot muziekservices en internetradiostations, zodat je je nieuwe draadloze muzieksysteem optimaal kunt benutten.<br/><br/>Als je al een SqueezeNetwork-account hebt, voer je hieronder je gegevens in en klik je op de knop Volgende. Heb je nog geen SqueezeNetwork-account, dan klik je op 'Ik heb een account nodig'.
@@ -9558,8 +9558,8 @@ THOUSANDS_SEP
 	ZH_CN	,
 
 BYTES
-	DE	Byte
 	DA	Byte
+	DE	Byte
 	EN	Bytes
 	ES	Bytes
 	FI	Tavua
@@ -9742,7 +9742,7 @@ TAGVERSION
 LOCATION
 	CS	Umístění
 	DA	Sti
-	DE	Standort
+	DE	Speicherort
 	EN	Location
 	ES	Ubicación
 	FI	Sijanti
@@ -14477,7 +14477,11 @@ SETUP_WORDCLOCKOUTPUT
 
 SETUP_WORDCLOCKOUTPUT_DESC
 	DA	Ved brug af de digitale indgange kan Transporteren virke som klokke-master og sende et ord-klokke signal via SPDIF-udgangene. Denne funktionalitet må kun aktiveres hvis kilde-enheden har en ord-klokke indgang og kablet er forbundet. 
+	DE	Wenn die digitalen Eingänge verwendet werden, kann Transporter das Signal direkt durchschleifen oder an den S/PDIF-Ausgängen ein Word Clock-Signal erzeugen.
 	EN	When using the digital inputs, Transporter can be the clock master, and transmit a word clock signal on its S/PDIF outputs. This feature must only be enabled if the source device provideds a word clock input and the cable is connected.
+	ES	Cuando se usan las entradas digitales, Transporter puede dejar pasar la señal a través o generar una señal de reloj de palabras en las salidas S/PDIF.
+	FR	Lorsqu'il utilise les entrées numériques, Transporter peut transférer le signal ou générer un signal word clock sur les sorties S/PDIF.
+	NL	Bij gebruik van de digitale ingangen kan de Transporter het signaal doorlaten of een Word-kloksignaal op de S/PDIF-uitgangen genereren.
 
 WORDCLOCKOUTPUT_DISABLED
 	DA	Ord-klokke udgang er deaktiveret (Kilde er master)
@@ -15420,7 +15424,7 @@ SETUP_VIEW_SCANNING
 	DE	Durchsuchen gestartet - Fortschritt anzeigen
 	EN	Scanning - View Progress
 	ES	Examen - Ver progreso
-	FR	Analyse – Affichage de la progression
+	FR	Analyse - Affichage de la progression
 	IT	Analisi - Visualizza avanzamento
 	NL	Bezig met scannen - Voortgang bekijken
 
@@ -15596,7 +15600,7 @@ JIVE_ALARMSET_HELP
 
 JIVE_POPUP_ADDING
 	DA	Tilføjer...
-	DE	Einfügen läuft ...
+	DE	Einfügen von ...
 	EN	Adding
 	ES	Agregando
 	FR	Ajout
@@ -15605,7 +15609,7 @@ JIVE_POPUP_ADDING
 
 JIVE_POPUP_REMOVING
 	DA	Fjerner
-	DE	Entfernen läuft
+	DE	Entfernen von
 	EN	Removing
 	ES	Quitando
 	FR	Suppression
@@ -15617,7 +15621,7 @@ JIVE_POPUP_TO_PLAY_NEXT
 
 JIVE_POPUP_TO_PLAYLIST
 	DA	til spilleliste...
-	DE	an Wiedergabeliste...
+	DE	in Wiedergabeliste...
 	EN	to Playlist...
 	ES	a lista de reproducción...
 	FR	vers la liste de lecture...
