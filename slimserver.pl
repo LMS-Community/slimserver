@@ -216,6 +216,7 @@ my $prefs        = preferences('server');
 
 our $VERSION     = '7.0.1';
 our $REVISION    = undef;
+our $BUILDDATE   = undef;
 our $audiodir    = undef;
 our $playlistdir = undef;
 our $httpport    = undef;
@@ -263,9 +264,15 @@ sub init {
 	srand();
 
 	# The revision file may not exist for svn copies.
-	$REVISION = eval { File::Slurp::read_file(
+	my $tempBuildInfo = eval { File::Slurp::read_file(
 		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
-	) } || 'TRUNK';
+	) } || 'TRUNK\nUNKNOWN';
+
+	# Once we've read the file, split it up so we have the Revision and Build Date
+	my @tempBuildArray = split (/\n/, $tempBuildInfo);
+	$REVISION = $tempBuildArray[0];
+	$BUILDDATE = $tempBuildArray[1];
+
 
 	if ($diag) { 
 		eval "use diagnostics";
