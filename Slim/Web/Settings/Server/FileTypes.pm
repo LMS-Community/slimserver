@@ -81,15 +81,23 @@ sub handler {
 		$cmdline =~ 
 			s{^\[(.*?)\](.*?\|?\[(.*?)\].*?)?}
 			{
-				$binstring = $1;
-				$binstring .= "/".$3 if defined $3;
+				$binstring = $1 if $1 eq '-' || Slim::Utils::Misc::findbin($1);
+
+				if ($binstring && defined $3) {
+					if ($3 eq '-' || Slim::Utils::Misc::findbin($3)) {
+						$binstring .= "/" . $3;
+					}
+					else {
+						$binstring = undef;
+					}
+				}
 			}iegsx;
 
 		if (defined $binstring && $binstring ne '-') {
 
 			push @binaries, $binstring;
 
-		} else {
+		} elsif ($cmdline eq '-' || $binstring eq '-') {
 
 			push @binaries, 'NATIVE';
 		}

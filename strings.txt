@@ -3920,18 +3920,18 @@ CONVERTED_TO
 	ZH_CN	已转换成
 
 SETUP_LAME_NOT_FOUND
-	DA	(<b>Bemærk</b>: Det ser ikke ud til at du har LAME installeret. SqueezeCenter anvender LAME's MP3 koder til at konvertere til MP3. Du kan finde mere information om LAME <a href="http://lame.sourceforge.net/">her</a>.)
-	DE	<b>Hinweis</b>: LAME scheint nicht installiert zu sein. SqueezeCenter benötigt den MP3-Kodierer LAME zum Durchführen der MP3-Konvertierung. Weitere Informationen über LAME finden Sie <a href="http://lame.sourceforge.net/">hier</a>.
-	EN	(<b>Note</b>: You do not appear to have LAME installed. SqueezeCenter will need the LAME MP3 encoder installed on your system to do conversion to MP3.  You can find out more about LAME <a href="http://lame.sourceforge.net/">here</a>.)
-	ES	<b>Nota</b>: Parece que LAME no está instalado. SqueezeCenter necesita que el codificador MP3 LAME esté instalado en el sistema para la conversión a MP3. Encontrará más información sobre LAME <a href="http://lame.sourceforge.net/">aquí</a>.
-	FR	<b>Remarque</b>: LAME ne semble pas être installé. Le SqueezeCenter nécessite l'installation de LAME pour effectuer la conversion au format MP3. Cliquez ici <a href="http://lame.sourceforge.net/">pour en savoir plus sur LAME</a>.
-	HE	(<b>שים לב</b>: נראה שאין ברשותך LAME מותקן. לביצוע המרות ל-MP3,‏ SqueezeCenter זקוק למקודד LAME MP3 מותקן. באפשרותך למצוא מידע נוסף אודות LAME <a href="http://lame.sourceforge.net/">כאן</a>.)
-	IT	<b>Nota</b>: LAME potrebbe non essere installato. Per eseguire la conversione al formato MP3 in SqueezeCenter, è necessario che il codificatore LAME MP3 sia installato. Ulteriori informazioni su LAME sono disponibili <a href="http://lame.sourceforge.net/">qui</a>.
-	JA	(<b>注意</b>: LAMEがインストールされていないようです。MP3に変換するためにはSqueezeCenterはLAMEをインストールする必要があります。LAMEについては<href="http://lame.sourceforge.net/">ここ</a>をクリックして下さい。)
-	NL	(Let op: Het lijkt erop dat LAME niet geïnstalleerd is. SqueezeCenter heeft het MP3-codeerprogramma LAME nodig voor conversie naar MP3. Je kunt hier <a href="http://lame.sourceforge.net/">meer informatie over LAME vinden</a>.)
-	NO	(<strong>OBS</strong>: LAME ser ikke ut til å være installert på ditt system. SqueezeCenter trenger MP3-koderen LAME for å kode til MP3. Du kan <a href="http://lame.sourceforge.net/">lese mer om LAME</a>.)
-	SV	(<b>Notera</b>: LAME verkar inte vara installerat i ditt system. SqueezeCenter behöver använda LAME MP3-kodaren för att konvertera till MP3.  Läs mer om LAME <a href="http://lame.sourceforge.net/">här</a>.)
-	ZH_CN	(<b>注意</b>: 您似乎没有在此计算机内安装LAME。SqueezeCenter需要用到您计算机的LAME MP3编码器进行MP3格式转换。您能从<a href="http://lame.sourceforge.net/">这里</a>查阅更多有关LAME的资料。)
+	DA	(<b>Bemærk</b>: Det ser ikke ud til at du har LAME installeret. SqueezeCenter anvender LAME's MP3 koder til at konvertere til MP3. Du kan finde mere information om LAME <a href="http://lame.sourceforge.net/" target="_blank">her</a>.)
+	DE	(<b>Hinweis</b>: LAME scheint nicht installiert zu sein. SqueezeCenter benötigt den MP3-Kodierer LAME zum Durchführen der MP3-Konvertierung. Weitere Informationen über LAME finden Sie <a href="http://lame.sourceforge.net/" target="_blank">hier</a>.)
+	EN	(<b>Note</b>: You do not appear to have LAME installed. SqueezeCenter will need the LAME MP3 encoder installed on your system to do conversion to MP3.  You can find out more about LAME <a href="http://lame.sourceforge.net/" target="_blank">here</a>.)
+	ES	(<b>Nota</b>: Parece que LAME no está instalado. SqueezeCenter necesita que el codificador MP3 LAME esté instalado en el sistema para la conversión a MP3. Encontrará más información sobre LAME <a href="http://lame.sourceforge.net/" target="_blank">aquí</a>.)
+	FR	(<b>Remarque</b>: LAME ne semble pas être installé. Le SqueezeCenter nécessite l'installation de LAME pour effectuer la conversion au format MP3. Cliquez ici <a href="http://lame.sourceforge.net/" target="_blank">pour en savoir plus sur LAME</a>.)
+	HE	(<b>שים לב</b>: נראה שאין ברשותך LAME מותקן. לביצוע המרות ל-MP3,‏ SqueezeCenter זקוק למקודד LAME MP3 מותקן. באפשרותך למצוא מידע נוסף אודות LAME <a href="http://lame.sourceforge.net/" target="_blank">כאן</a>.)
+	IT	(<b>Nota</b>: LAME potrebbe non essere installato. Per eseguire la conversione al formato MP3 in SqueezeCenter, è necessario che il codificatore LAME MP3 sia installato. Ulteriori informazioni su LAME sono disponibili <a href="http://lame.sourceforge.net/" target="_blank">qui</a>.)
+	JA	(<b>注意</b>: LAMEがインストールされていないようです。MP3に変換するためにはSqueezeCenterはLAMEをインストールする必要があります。LAMEについては<href="http://lame.sourceforge.net/" target="_blank">ここ</a>をクリックして下さい。)
+	NL	(Let op: Het lijkt erop dat LAME niet geïnstalleerd is. SqueezeCenter heeft het MP3-codeerprogramma LAME nodig voor conversie naar MP3. Je kunt hier <a href="http://lame.sourceforge.net/" target="_blank">meer informatie over LAME vinden</a>.)
+	NO	(<strong>OBS</strong>: LAME ser ikke ut til å være installert på ditt system. SqueezeCenter trenger MP3-koderen LAME for å kode til MP3. Du kan <a href="http://lame.sourceforge.net/" target="_blank">lese mer om LAME</a>.)
+	SV	(<b>Notera</b>: LAME verkar inte vara installerat i ditt system. SqueezeCenter behöver använda LAME MP3-kodaren för att konvertera till MP3.  Läs mer om LAME <a href="http://lame.sourceforge.net/" target="_blank">här</a>.)
+	ZH_CN	(<b>注意</b>: 您似乎没有在此计算机内安装LAME。SqueezeCenter需要用到您计算机的LAME MP3编码器进行MP3格式转换。您能从<a href="http://lame.sourceforge.net/" target="_blank">这里</a>查阅更多有关LAME的资料。)
 
 SETUP_LAME_FOUND
 	CS	Vypadá to, že LAME encoder je korektně nainstalován.
@@ -15128,6 +15128,11 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	FR	Le SqueezeCenter conserve un fichier journal de toutes les activités d'analyse, y compris pour iTunes et MusicIP, à l'emplacement suivant:
 	IT	SqueezeCenter mantiene un file di registro per tutte le attività relative all'analisi, inclusi iTunes e MusicIP, nel seguente percorso:
 	NL	SqueezeCenter bewaart hier een logboekbestand voor alle scanactiviteiten (zoals iTunes en MusicIP):
+
+LINES
+	DE	Zeilen
+	EN	lines
+	FR	lignes
 
 SETUP_DEBUG_PERFMON_LOG
 	DA	Log fil for ydelse
