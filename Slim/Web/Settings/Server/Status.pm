@@ -48,11 +48,7 @@ sub handler {
 		{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
 	];
 
-	$paramRef->{logs} = [
-		{SERVER  => Slim::Utils::Log->serverLogFile},
-		{SCANNER => Slim::Utils::Log->scannerLogFile},
-		{PERFMON => ($::perfmon ? Slim::Utils::Log->perfmonLogFile : undef )},
-	];
+	$paramRef->{logs} = Slim::Web::Settings::Server::Debugging::getLogs();
 
 	for my $client (Slim::Player::Client::clients()) {
 		$paramRef->{clients}{$client->id} = [
