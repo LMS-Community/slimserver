@@ -19,7 +19,6 @@ use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
 use POSIX ":sys_wait_h";
 use Symbol;
-use version ();
 
 use Slim::Utils::OSDetect;
 
@@ -54,7 +53,7 @@ use Slim::Utils::OSDetect;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @default_required_modules = qw(Time::HiRes DBD::mysql DBI XML::Parser::Expat HTML::Parser JSON::XS Compress::Zlib Digest::SHA1 YAML::Syck GD);
+my @default_required_modules = qw(version Time::HiRes DBD::mysql DBI XML::Parser::Expat HTML::Parser JSON::XS Compress::Zlib Digest::SHA1 YAML::Syck GD);
 my @default_optional_modules = qw(Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;

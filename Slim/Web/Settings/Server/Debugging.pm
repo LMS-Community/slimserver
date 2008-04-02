@@ -63,11 +63,17 @@ sub handler {
 	$paramRef->{'logLevels'}  = \@validLogLevels;
 	$paramRef->{'persist'}    = Slim::Utils::Log->persist;
 
-	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
-	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
-	$paramRef->{'debugPerfmonLog'} = Slim::Utils::Log->perfmonLogFile if $::perfmon;
+	$paramRef->{'logs'} = getLogs();
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
+}
+
+sub getLogs {
+	return [
+		{SERVER  => Slim::Utils::Log->serverLogFile},
+		{SCANNER => Slim::Utils::Log->scannerLogFile},
+		{PERFMON => ($::perfmon ? Slim::Utils::Log->perfmonLogFile : undef )},
+	]
 }
 
 1;
