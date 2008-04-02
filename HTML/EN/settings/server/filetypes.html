@@ -30,7 +30,7 @@
 			<td class="[% odd ? "odd" : "even" %]"><label for="[% format.profile %]" class="stdlabel">[% format.output | string %]</label></td>
 			
 			<td class="[% odd ? "odd" : "even" %]">
-				<select class="stdedit" name="[% format.profile %]" id="[% format.profile %]">
+				<select class="stdedit" name="[% format.profile %]" id="[% format.profile %]" [% format.binaries.size() <= 1 && "disabled" %]>
 	
 				[%- FOREACH value = format.binaries -%]
 					<option [% IF loop.index == format.enabled %]selected [% END %]value="[% value %]">[% value | getstring %]</option>
