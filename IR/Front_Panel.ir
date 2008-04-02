@@ -34,6 +34,16 @@ size.down				= 0001001b
 visual.down				= 0001001c
 volumemode.down			= 0001001d
 
+preset_1.down			= 00010020	# Boom: Preset 1
+preset_2.down			= 00010021	# Boom: Preset 2
+preset_3.down			= 00010022	# Boom: Preset 3
+preset_4.down			= 00010023	# Boom: Preset 4
+preset_5.down			= 00010024	# Boom: Preset 5
+preset_6.down			= 00010025	# Boom: Preset 6
+arrow_up.down			= 0001005a	# Boom: Knob up
+arrow_down.down			= 0001005b	# Boom: Knob down
+
+
 0.up					= 00020000
 1.up					= 00020001
 2.up					= 00020002
@@ -64,3 +74,12 @@ voldown.up				= 0002001a
 size.up					= 0002001b
 visual.up				= 0002001c
 volumemode.up			= 0002001d
+
+preset_1.up			= 00020020	# Boom: Preset 1
+preset_2.up			= 00020021	# Boom: Preset 2
+preset_3.up			= 00020022	# Boom: Preset 3
+preset_4.up			= 00020023	# Boom: Preset 4
+preset_5.up			= 00020024	# Boom: Preset 5
+preset_6.up			= 00020025	# Boom: Preset 6
+arrow_up.up			= 0002005a	# Boom: Knob up
+arrow_down.up			= 0002005b	# Boom: Knob down
