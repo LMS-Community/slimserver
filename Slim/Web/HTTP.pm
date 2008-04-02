@@ -2541,7 +2541,7 @@ sub closeHTTPSocket {
 	# little more assertive about closing the socket. Windows-only
 	# for now, but could be considered for other platforms and
 	# non-streaming connections.
-	if ($streaming && Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		$httpClient->shutdown(2);
 	}
 
