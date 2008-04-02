@@ -20,7 +20,7 @@ function loadBrowser(force) {
 
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
-	//setCookie('SqueezeCenter-player', player);
+	setCookie('SqueezeCenter-player', player);
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
