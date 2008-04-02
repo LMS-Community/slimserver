@@ -1179,12 +1179,13 @@ sub settingsDiagString {
 	my @diagString;
 
 	# We masquerade as iTunes for radio stations that really want it.
-	push @diagString, sprintf("%s%s %s - %s - %s - %s - %s",
+	push @diagString, sprintf("%s%s %s - %s @ %s - %s - %s - %s",
 
 		Slim::Utils::Strings::string('SERVER_VERSION'),
 		Slim::Utils::Strings::string('COLON'),
 		$::VERSION,
 		$::REVISION,
+		$::BUILDDATE,
 		$osDetails->{'osName'},
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
