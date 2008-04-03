@@ -540,7 +540,8 @@ function currentSong(theData) {
 function refreshAll(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
-	if (parsedData['player_id']) {
+	//debug("escape(parsedData['player_id']),player);
+	if (parsedData['player_id'] && escape(parsedData['player_id']) == player) {
 		if ($('waiting').style.display == 'inline') {
 			hideElements(['waiting']);
 			force = 1;
