@@ -1856,28 +1856,33 @@ sub _cliQuery_done {
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 					
 					next if $textArea;
-					my $hasItems = 1;
 					
 					# create an ordered hash to store this stuff...
-					tie (my %hash, "Tie::IxHash");
+					tie my %hash, "Tie::IxHash";
 					
-					$hash{'id'} = join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt);
-					$hash{'name'} = $item->{'name'} if defined $item->{'name'};
-					$hash{'title'} = $item->{'title'} if defined $item->{'title'};
-					$hash{'url'} = $item->{'url'} if $want_url && defined $item->{'url'};
-					$hash{'image'} = $item->{'image'} if defined $item->{'image'};
+					$hash{id}    = join('.', @crumbIndex, defined $item->{_slim_id} ? $item->{_slim_id} : $start + $cnt);
+					$hash{name}  = $item->{name}  if defined $item->{name};
+					$hash{type}  = $item->{type}  if defined $item->{type};
+					$hash{title} = $item->{title} if defined $item->{title};
+					$hash{url}   = $item->{url}   if $want_url && defined $item->{url};
+					$hash{image} = $item->{image} if defined $item->{image};
 
 					my $hasAudio = defined(hasAudio($item)) + 0;
-					$hash{'isaudio'} = $hasAudio;
-
-					foreach my $data (keys %{$item}) {
-						if (ref($item->{$data}) eq 'ARRAY') {
-							if (scalar @{$item->{$data}}) {
-								$hasItems = scalar @{$item->{$data}};
-							}
-						}
-					}		
-					$hash{'hasitems'} = $hasItems;
+					$hash{isaudio} = $hasAudio;
+					
+					# Bug 7684, set hasitems to 1 if any of the following are true:
+					# type is not text or audio
+					# items array contains items
+					my $hasItems = 0;
+					
+					if ( $item->{type} && $item->{type} !~ /^(?:text|audio)$/i ) {
+						$hasItems = 1;
+					}
+					elsif ( ref $item->{items} eq 'ARRAY' ) {
+						$hasItems = scalar @{ $item->{items} };
+					}
+					
+					$hash{hasitems} = $hasItems;
 
 					if ($menuMode) {
 						# if showBriefly is 1, send the name as a showBriefly
