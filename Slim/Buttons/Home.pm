@@ -440,13 +440,15 @@ sub homeExitHandler {
 
 			my %params = %defaultParams;
 			
-			$params{'header'} = $client->string($client->curSelection($client->curDepth()));
+			my $containerLevel = $client->curSelection($client->curDepth());
+			$params{'header'}  = $client->string($containerLevel);
 
 			# move reference to new depth
 			$client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
 			
 			# check for disalbed plugins in item list.
-			$params{'listRef'} = createList($client, $nextParams);
+			# Bug: 7089 - sort by ranking unless it's the plugins menu
+			$params{'listRef'} = createList($client, $nextParams, $containerLevel ne 'PLUGINS' ? 1 : 0);
 			$params{'overlayRef'} = undef if scalar @{$params{'listRef'}} == 0;
 			$params{'curMenu'} = $client->curDepth();
 			
@@ -522,12 +524,13 @@ sub cmpString {
 
 # load the submenu hash keys into an array of valid entries.
 sub createList {
-	my $client = shift;
-	my $params = shift;
+	my $client   = shift;
+	my $params   = shift;
+	my $weighted = shift;
 
 	my @list = ();
 
-	for my $sub (sort {(($prefs->get("rank-$b") || 0) <=> 
+	for my $sub (sort {($weighted && ($prefs->get("rank-$b") || 0) <=> 
 		($prefs->get("rank-$a") || 0)) || 
 		(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
 		keys %{$params->{'submenus'}}) {
