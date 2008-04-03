@@ -5019,6 +5019,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	a search string.
 </p>
 <p>
+	Please note that &quot;start&quot; and &quot;itemsPerResponse&quot; are calculated per category.
+	If you eg. have genres and tracks with the search term in them, you'll get &quot;itemsPerResponse&quot;
+	number of each of them.
+	The total number of items returned therefore can be a multiple of &quot;itemsPerResponse&quot;. 
+</p>
+<p>
 	Accepted tagged parameters:
 </p>
 <table border="0" spacing="50">
@@ -5106,6 +5112,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			genres_count
+		</td>
+		<td>
+			Total number of genres found.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			tracks_count
 		</td>
 		<td>
@@ -5172,6 +5186,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Album title.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>
+				For each genre:
+			</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				genre_id
+			</em>
+		</td>
+		<td>
+			Genre ID.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				genre
+			</em>
+		</td>
+		<td>
+			Genre title.
 		</td>
 	</tr>
 	<tr>
