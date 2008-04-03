@@ -5313,23 +5313,24 @@ sub _playAll {
 			}
 			# search is a special case of _playAll, which needs to fire off a different cli command
 			if ($key eq 'search') {
-				$items{$mode}{'playCmd'} = ['playlist', 'loadtracks'];
-				$items{$mode}{'addCmd'}  = ['playlist', 'addtracks'];
-				$items{$mode}{'addHoldCmd'}  = ['playlist', 'inserttracks'];
-				$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
 				# we don't need a cmd: tagged param for these
 				delete($items{$mode}{'params'}{'play'}{'cmd'});
 				delete($items{$mode}{'params'}{'add'}{'cmd'});
 				delete($items{$mode}{'params'}{'add-hold'}{'cmd'});
+				my $searchParam;
 				for my $button ('add', 'add-hold', 'play') {
 					if ($searchType eq 'artists') {
-						$items{$mode}{'params'}{$button}{'contributor.namesearch'}  = $val;
+						$searchParam = 'contributor.namesearch=' . $val;
 					} elsif ($searchType eq 'albums') {
-						$items{$mode}{'params'}{$button}{'album.titlesearch'}  = $val;
+						$searchParam = 'album.titlesearch=' . $val;
 					} else {
-						$items{$mode}{'params'}{$button}{'track.titlesearch'}  = $val;
+						$searchParam = 'track.titlesearch=' . $val;
 					}
 				}
+				$items{$mode}{'playCmd'} = ['playlist', 'loadtracks', $searchParam ];
+				$items{$mode}{'addCmd'}  = ['playlist', 'addtracks', $searchParam ];
+				$items{$mode}{'addHoldCmd'}  = ['playlist', 'inserttracks', $searchParam ];
+				$items{$mode}{'playCmd'} = $items{$mode}{'addCmd'} if $mode eq 'add';
 			} else {
 				$items{$mode}{'params'}{'add'}{$key}  = $val;
 				$items{$mode}{'params'}{'add-hold'}{$key}  = $val;
