@@ -2743,18 +2743,23 @@ sub searchQuery {
 		my $count = $results{$type}->{'count'};
 
 		$count += 0;
-		$request->addResult("${type}s_count", $count);
 
-		my $loopName  = "${type}s_loop";
-		my $loopCount = 0;
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-		for my $result ($results{$type}->{'rs'}->slice(0, $quantity)) {
-
-			# add result to loop
-			$request->addResultLoop($loopName, $loopCount, "${type}_id", $result->id);
-			$request->addResultLoop($loopName, $loopCount, $type, $result->name);
-
-			$loopCount++;
+		if ($valid) {
+			$request->addResult("${type}s_count", $count);
+	
+			my $loopName  = "${type}s_loop";
+			my $loopCount = 0;
+	
+			for my $result ($results{$type}->{'rs'}->slice($start, $end)) {
+	
+				# add result to loop
+				$request->addResultLoop($loopName, $loopCount, "${type}_id", $result->id);
+				$request->addResultLoop($loopName, $loopCount, $type, $result->name);
+	
+				$loopCount++;
+			}
 		}
 	}
 	

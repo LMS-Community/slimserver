@@ -125,13 +125,13 @@ sub getTag {
 
 	if (!$file) {
 
-		logWarning("No file was passed!");
+		$log->error("No file was passed!");
 		return {};
 	}
 
 	open(my $fh, $file) or do {
 
-		logWarning("Couldn't open file: [$file] $!");
+		$log->error("Couldn't open file: [$file] $!");
 		return {};
 	};
 
