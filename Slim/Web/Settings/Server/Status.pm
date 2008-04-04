@@ -35,9 +35,6 @@ sub handler {
 		{INFORMATION_SERVER_PORT  => preferences('server')->get('httpport')},
 		#{networkProxy             => preferences('server')->get('networkproxy');
 		{INFORMATION_CLIENTS      => Slim::Player::Client::clientCount},
-		{INFORMATION_CACHEDIR     => preferences('server')->get('cachedir')},
-		{INFORMATION_PREFSDIR     => Slim::Utils::Prefs::dir()},
-		{INFORMATION_PLUGINDIRS   => join(", ",Slim::Utils::OSDetect::dirsFor('Plugins'))},
 	];
 
 	$paramRef->{library} =  [
@@ -46,6 +43,12 @@ sub handler {
 		{INFORMATION_ARTISTS => Slim::Utils::Misc::delimitThousands(Slim::Schema->rs('Contributor')->browse->count)},
 		{INFORMATION_GENRES  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'))},
 		{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
+	];
+
+	$paramRef->{folders} = [
+		{INFORMATION_CACHEDIR     => preferences('server')->get('cachedir')},
+		{INFORMATION_PREFSDIR     => Slim::Utils::Prefs::dir()},
+		{INFORMATION_PLUGINDIRS   => join(", ",Slim::Utils::OSDetect::dirsFor('Plugins'))},
 	];
 
 	$paramRef->{logs} = Slim::Web::Settings::Server::Debugging::getLogs();
