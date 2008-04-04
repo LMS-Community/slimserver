@@ -440,11 +440,17 @@ sub playmode {
 		} elsif ($newmode =~ /^playout/) {
 
 			closeSong($everyclient);
-			# Resume to make sure that we actually start playing
-			# what we just finished streaming (it may be too short
-			# to have triggered an autostart).
-			$everyclient->resume();
-			$everyclient->playmode($newmode);
+			
+			# Bug 7497, don't actually change mode while paused
+			if ($prevmode eq 'pause') {
+				$everyclient->resumePlaymode($newmode);
+			} else {
+				# Resume to make sure that we actually start playing
+				# what we just finished streaming (it may be too short
+				# to have triggered an autostart).
+				$everyclient->resume();
+				$everyclient->playmode($newmode);
+			}
 
 		} else {
 			$everyclient->playmode($newmode);
@@ -1117,6 +1123,9 @@ sub gototime {
 		return;
 	}
 
+	# Bug 7497 - stay paused if currently paused
+	my $wasPaused = (playmode($client) eq 'pause');
+	
 	for my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 
 		if ( $log->is_info ) {
@@ -1149,7 +1158,7 @@ sub gototime {
 
 		$everybuddy->readytosync(0);
 		
-		my $paused = ( Slim::Player::Sync::isSynced($client) ) ? 1 : 0;
+		my $paused = ($wasPaused || Slim::Player::Sync::isSynced($client) ) ? 1 : 0;
 
 		$everybuddy->play({ 
 			'paused'      => $paused, 
@@ -1158,7 +1167,7 @@ sub gototime {
 			'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($client)
 		});
 
-		$everybuddy->playmode("play");
+		$everybuddy->playmode($wasPaused ? 'pause' : 'play');
 	}
 }
 

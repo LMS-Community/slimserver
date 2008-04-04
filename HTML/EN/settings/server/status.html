@@ -74,6 +74,17 @@
 	[% END %]
 [% END %]
 
+[% FOREACH item IN folders %]
+	[% IF item.items.1 %]
+		[% WRAPPER settingSection %]
+			<div class="settingGroup">
+				<div class="prefHead">[% item.items.0 | string %]</div>
+				<div class="prefs">[% item.items.1 %]</div>
+			</div>
+		[% END %]
+	[% END %]
+[% END %]
+
 [% FOREACH item IN logs %]
 	[% IF item.items.1 %]
 		[% WRAPPER setting title="SETUP_DEBUG_${item.items.0}_LOG" desc="SETUP_DEBUG_${item.items.0}_LOG_DESC" %]
