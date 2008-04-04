@@ -369,7 +369,11 @@ sub string {
 	# \x1b [27] = font change - new fontname enclosed in \x1b chars, null name = back to default font
 	# \x0a [10] = 'cursorpos' - set cursor for next character
 
+	my $remaining = scalar @ords;
+
 	for my $ord (@ords) {
+
+		$remaining--;
 
 		if ($fontChange) {
 
@@ -467,7 +471,12 @@ sub string {
 					$cursorend = length($font->[$ord]) / length($font->[$ord0a]); 
 				}
 
-				$bits .= $font->[$ord] . $interspace;
+				$bits .= $font->[$ord];
+
+				# add inter charater space except at end of string
+				if ($remaining) {
+					$bits .= $interspace;
+				}
 			}
 		}
 	}
