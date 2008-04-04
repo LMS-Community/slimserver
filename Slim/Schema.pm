@@ -2097,7 +2097,12 @@ sub _postCheckAttributes {
 				# Bug 4361, also match on contributor, so we don't group
 				# different multi-disc albums together just because they
 				# have the same title
-				$search->{'me.contributor'} = $contributor->id;
+				my $contributor = $contributor->id;
+				if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
+				    $contributor = $self->variousArtistsObject->id;
+			    }
+			    
+				$search->{'me.contributor'} = $contributor;
 
 			} elsif (defined $disc && !defined $discc) {
 
@@ -2109,7 +2114,12 @@ sub _postCheckAttributes {
 				# Bug 4361, also match on contributor, so we don't group
 				# different multi-disc albums together just because they
 				# have the same title
-				$search->{'me.contributor'} = $contributor->id;
+				my $contributor = $contributor->id;
+				if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
+				    $contributor = $self->variousArtistsObject->id;
+			    }
+			    
+				$search->{'me.contributor'} = $contributor;
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
