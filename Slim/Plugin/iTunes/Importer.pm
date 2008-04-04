@@ -245,13 +245,20 @@ sub handleTrack {
 			}
 		}
 
+		# Bug 5339
+		# iTunes uses decomposed utf-8 (on a MAC), which corresponds to the decomposed UTF-8 file path on an HFS+ volume.
+		# if the file is moved to a different path on an NFS or SMB file system, the path is automagically
+		# converted into composed utf-8.
+		if (!-e $file && -e Slim::Utils::Unicode::recomposeUnicode( $file )) {
+			$file = Slim::Utils::Unicode::recomposeUnicode( $file );
+		}
+
 		# Bug 3402 
 		# If the file can't be found using itunes_library_music_path,
 		# we want to fall back to the real file path from the XML file
 		#
 		# Bug 3717 - check this after we've checked the locale above.
-		if (!-e $file && $prefs->get('music_path')) {
-
+		elsif (!-e $file && $prefs->get('music_path')) {
 			$url  = $class->normalize_location($location, 'fallback');
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 		}

@@ -1968,6 +1968,13 @@ sub _postCheckAttributes {
 	my $album    = $attributes->{'ALBUM'};
 	my $disc     = $attributes->{'DISC'};
 	my $discc    = $attributes->{'DISCC'};
+	
+	# Bug 4361, Some programs (iTunes) tag things as Disc 1/1, but
+	# we want to ignore that or the group discs logic below gets confused
+	if ( $discc && $discc == 1 ) {
+		$log->debug( '-- Ignoring useless DISCC tag value of 1' );
+		$disc = $discc = undef;
+	}
 
 	# we may have an album object already..
 	# But mark it undef first - bug 3685
@@ -2031,7 +2038,7 @@ sub _postCheckAttributes {
 			$checkDisc = 1;
 		}
 
-		$log->debug(sprintf("-- %shecking for discs", $checkDisc ? 'NOT C' : 'C'));
+		$log->debug(sprintf("-- %shecking for discs", $checkDisc ? 'C' : 'NOT C'));
 
 		# Go through some contortions to see if the album we're in
 		# already exists. Because we keep contributors now, but an

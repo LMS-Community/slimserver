@@ -534,7 +534,8 @@ sub checkSync {
 					}
 				}
 			
-				if ($allReady) {
+				# Bug 7497 - only start up if not paused
+				if ($allReady && Slim::Player::Source::playmode($client) eq 'play') {
 
 					$log->info("all clients ready to sync now. unpausing them.");
 					
