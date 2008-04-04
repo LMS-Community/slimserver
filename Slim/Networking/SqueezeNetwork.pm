@@ -28,13 +28,19 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-	sn => 'www.squeezenetwork.com',
+	sn      => 'www.squeezenetwork.com',
 	content => 'content.squeezenetwork.com',
-	update => 'update.squeezenetwork.com',
+	update  => 'update.squeezenetwork.com',
+	test    => 'www.test.squeezenetwork.com',
 };
 
 sub get_server {
 	my ($class, $stype) = @_;
+	
+	# Use SN test server if hidden test pref is set
+	if ( $stype eq 'sn' && $prefs->get('use_sn_test') ) {
+		$stype = 'test';
+	}
 
 	return $_Servers->{$stype}
 		|| die "No hostname known for server type '$stype'";

@@ -119,16 +119,11 @@ sub connectSqueezeNetwork {
 		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
 		my $packed;
 
-		if($host eq "www.squeezenetwork.com") {
-		        $packed = pack('N', 1);
+		if ( $host eq "www.squeezenetwork.com" ) {
+			$packed = pack 'N', 1;
 		}
-		elsif($host eq "www.beta.squeezenetwork.com") {
-			# XXX this should be:
-			# $packed = pack('N', 2);  # 2 is squeezenetwork beta
-			# XXX but for right now it isn't because the beta/prod
-			#  hostnames are both pointing to the new prod, and
-			#  "serv 2" firmware isn't out for all players anyways
-		        $packed = pack('N', 1);
+		elsif ( $host eq "www.test.squeezenetwork.com" ) {
+			$packed = pack 'N', 2;
 		}
 		else {
 			# anything else is probably a custom value by a developer
