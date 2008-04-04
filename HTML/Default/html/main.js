@@ -450,7 +450,7 @@ PlayerChooser = function(){
 				playerSelection.remove();
 
 			playerSelection = '<form name="syncgroup" id="syncgroup">';
-			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked} {disabled}>&nbsp;{name}<br>');
+			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked} {disabled}>&nbsp;<label for="{id}">{name}</label><br>');
 			tpl.compile();
 
 			// create checkboxes for other players and preselect if synced
