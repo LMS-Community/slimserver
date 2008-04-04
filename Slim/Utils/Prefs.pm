@@ -466,7 +466,7 @@ sub init {
 		$prefs->setChange( sub {
 			my $cookieJar = Slim::Networking::Async::HTTP::cookie_jar();
 			$cookieJar->clear( 'www.squeezenetwork.com' );
-			$cookieJar->clear( 'www.beta.squeezenetwork.com' );
+			$cookieJar->clear( 'www.test.squeezenetwork.com' );
 			if ( $ENV{SN_DEV} ) {
 				$cookieJar->clear( '127.0.0.1' );
 			}
