@@ -1642,12 +1642,15 @@ sub _preCheckAttributes {
 		}
 	}
 
-	# Don't insert non-numeric YEAR fields into the database. Bug: 2610
+	# Don't insert non-numeric or '0' YEAR fields into the database. Bug: 2610
 	# Same for DISC - Bug 2821
 	for my $tag (qw(YEAR DISC DISCC BPM)) {
 
-		if (defined $attributes->{$tag} && $attributes->{$tag} !~ /^\d+$/) {
-
+		if ( 
+		    defined $attributes->{$tag} 
+		    &&
+		    ( $attributes->{$tag} !~ /^\d+$/ || $attributes->{$tag} == 0 ) 
+		) {
 			delete $attributes->{$tag};
 		}
 	}
@@ -2067,6 +2070,11 @@ sub _postCheckAttributes {
 				# in the case where there are multiple albums
 				# of the same name by the same artist. bug3254
 				$search->{'me.discc'} = $discc;
+				
+				# Bug 4361, also match on contributor, so we don't group
+				# different multi-disc albums together just because they
+				# have the same title
+				$search->{'me.contributor'} = $contributor->id;
 
 			} elsif (defined $disc && !defined $discc) {
 
@@ -2074,6 +2082,11 @@ sub _postCheckAttributes {
 				# albums of the same name, but one is
 				# multidisc _without_ having a discc set.
 				$search->{'me.disc'} = { '!=' => undef };
+				
+				# Bug 4361, also match on contributor, so we don't group
+				# different multi-disc albums together just because they
+				# have the same title
+				$search->{'me.contributor'} = $contributor->id;
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
