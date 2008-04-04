@@ -28,11 +28,90 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
-# FIXME: Use correct display modes
+# Mode definitions - including visualizer
+
+# Parameters for the vumeter:
+#   0 - Channels: stereo == 0, mono == 1
+#   1 - Style: digital == 0, analog == 1
+# Left channel parameters:
+#   2 - Position in pixels
+#   3 - Width in pixels
+# Right channel parameters (not required for mono):
+#   4-5 - same as left channel parameters
+
+# Parameters for the spectrum analyzer:
+#   0 - Channels: stereo == 0, mono == 1
+#   1 - Bandwidth: 0..22050Hz == 0, 0..11025Hz == 1
+#   2 - Preemphasis in dB per KHz
+# Left channel parameters:
+#   3 - Position in pixels
+#   4 - Width in pixels
+#   5 - orientation: left to right == 0, right to left == 1
+#   6 - Bar width in pixels
+#   7 - Bar spacing in pixels
+#   8 - Clipping: show all subbands == 0, clip higher subbands == 1
+#   9 - Bar intensity (greyscale): 1-3
+#   10 - Bar cap intensity (greyscale): 1-3
+# Right channel parameters (not required for mono):
+#   11-18 - same as left channel parameters
+
+my $VISUALIZER_NONE = 0;
+my $VISUALIZER_VUMETER = 1;
+my $VISUALIZER_SPECTRUM_ANALYZER = 2;
+my $VISUALIZER_WAVEFORM = 3;
+
+my @modes = (
+	# mode 0
+	{ desc => ['BLANK'],
+	  bar => 0, secs => 0,  width => 160, 
+	  params => [$VISUALIZER_NONE] },
+	# mode 1
+	{ desc => ['PROGRESS_BAR'],
+	  bar => 1, secs => 0,  width => 160,
+	  params => [$VISUALIZER_NONE] },
+	# mode 2
+	{ desc => ['ELAPSED'],
+	  bar => 0, secs => 1,  width => 160,
+	  params => [$VISUALIZER_NONE] },
+	# mode 3
+	{ desc => ['REMAINING'],
+	  bar => 0, secs => -1, width => 160,
+	  params => [$VISUALIZER_NONE] },
+	# mode 4
+	{ desc => ['VISUALIZER_VUMETER_SMALL'],
+	  bar => 0, secs => 0,  width => 145,
+	  params => [$VISUALIZER_VUMETER, 0, 0, 146, 6, 154, 6] },
+	# mode 5
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL'],
+	  bar => 0, secs => 0,  width => 145,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 146, 16, 0, 2, 0, 0, 1, 3] },
+	# mode 6
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER'],
+	  bar => 0, secs => 0,  width => 160,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] },
+	# mode 7
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'PROGRESS_BAR'],
+	  bar => 1, secs => 0,  width => 160,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] },
+	# mode 8
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'ELAPSED'],
+	  bar => 0, secs => 1,  width => 160,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] },
+	# mode 9
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'REMAINING'],
+	  bar => 0, secs => -1, width => 160,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] }, 
+	# mode 10	  
+	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
+	  bar => 0, secs => 0,  width => 160, fullness => 1,
+	  params => [$VISUALIZER_NONE],
+	},
+);
+
 our $defaultPrefs = {
 	'idleBrightness'      => 2,
-	'playingDisplayMode'  => 5,
-	'playingDisplayModes' => [0..11]
+	'playingDisplayMode'  => 1,
+	'playingDisplayModes' => [0..10]
 };
 
 our $defaultFontPrefs = {
@@ -59,8 +138,12 @@ sub init {
 	$display->validateFonts($defaultFontPrefs);
 }
 
-sub displayWidth {
-	return shift->widthOverride(@_) || 160;
+sub modes {
+	return \@modes;
+}
+
+sub nmodes {
+	return $#modes;
 }
 
 sub vfdmodel {
