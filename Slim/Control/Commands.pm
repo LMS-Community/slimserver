@@ -170,11 +170,8 @@ sub clientConnectCommand {
 		if ( $host =~ /^www.squeezenetwork.com$/i ) {
 			$host = 1;
 		}
-		elsif ( $host =~ /^www.beta.squeezenetwork.com$/i ) {
-			# XXX: Change to '2' after new firmware includes this
-			#  and the "beta" hostnames actually go somewhere other
-			#  than production anyways
-			$host = 1;
+		elsif ( $host =~ /^www.test.squeezenetwork.com$/i ) {
+			$host = 2;
 		}
 		else {
 			my $ip = Net::IP->new($host);
