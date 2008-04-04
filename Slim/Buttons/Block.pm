@@ -171,7 +171,7 @@ sub lines {
 			# For graphics players animation cycles through characters in one of the following fonts:
 			# SB2 - blockanimateSB2.1, SBG - blockanimateSBG.1
 			my $vfd   = $client->display->vfdmodel(); 
-			my $model = $vfd eq 'graphic-320x32' ? 'SB2' : 'SBG';
+			my $model = $vfd =~ /graphic-\d+x32/ ? 'SB2' : 'SBG';
 			my $font  = "blockanimate$model.1";
 			my $chars = Slim::Display::Lib::Fonts::fontchars($font);
 
