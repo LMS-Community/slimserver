@@ -113,7 +113,7 @@ sub handler {
 	my $page = $class->SUPER::handler($client, $paramRef);
 
 	if ($client && $client->display->isa('Slim::Display::Transporter')) {
-		Slim::Buttons::Common::updateScreen2Mode();
+		Slim::Buttons::Common::updateScreen2Mode($client);
 	}
 
 	return $page;

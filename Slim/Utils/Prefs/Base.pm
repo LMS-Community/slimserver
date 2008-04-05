@@ -177,7 +177,7 @@ sub init {
 
 			if (ref $hash->{ $pref } eq 'CODE') {
 
-				$value = $hash->{ $pref }->();
+				$value = $hash->{ $pref }->( $class->_obj );
 
 			} elsif (ref $hash->{ $pref }) {
 

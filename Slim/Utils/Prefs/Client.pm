@@ -22,17 +22,21 @@ use strict;
 
 use base qw(Slim::Utils::Prefs::Base);
 
+use Scalar::Util qw(blessed);
+
 use Slim::Utils::Log;
 
 my $log = logger('prefs');
-my $clientPreferenceTag = '_client';
+
+our $clientPreferenceTag = '_client';
 
 sub new {
 	my $ref    = shift;
 	my $parent = shift;
 	my $client = shift;
+	my $nomigrate = shift;
 
-	my $clientid = $client->id;
+	my $clientid = blessed($client) ? $client->id : $client;
 
 	my $class = bless {
 		'clientid'  => $clientid,
@@ -43,22 +47,25 @@ sub new {
 		'_version' => 0,
 	};
 
-	for my $version (sort keys %{$parent->{'migratecb'}}) {
+	if (!$nomigrate) {
 
-		if ($class->{'prefs'}->{'_version'} < $version) {
-
-			if ($parent->{'migratecb'}->{ $version }->($class, $client)) {
-
-				$log->info("migrating client prefs $parent->{'namespace'}:$class->{'clientid'} to version $version");
-
-				$class->{'prefs'}->{'_version'} = $version;
-
-			} else {
-
-				$log->warn("failed to migrate client prefs for $parent->{'namespace'}:$class->{'clientid'} to version $version");
+		for my $version (sort keys %{$parent->{'migratecb'}}) {
+			
+			if ($class->{'prefs'}->{'_version'} < $version) {
+				
+				if ($parent->{'migratecb'}->{ $version }->($class, $client)) {
+					
+					$log->info("migrating client prefs $parent->{'namespace'}:$class->{'clientid'} to version $version");
+					
+					$class->{'prefs'}->{'_version'} = $version;
+					
+				} else {
+					
+					$log->warn("failed to migrate client prefs for $parent->{'namespace'}:$class->{'clientid'} to version $version");
+				}
 			}
 		}
-	}
+	}		
 
 	return $class;
 }
@@ -66,24 +73,6 @@ sub new {
 sub _root { shift->{'parent'} }
 
 sub _obj { Slim::Player::Client::getClient(shift->{'clientid'}) }
-
-# Returns a ref to a hash of all client 'playerName' attributes indexed by client-id
-
-sub allKnownClients {
-	my $class = shift;
-	
-	my %clients;
-	
-	foreach ((keys %{$class->{'prefs'}})) {
-		if (/^$clientPreferenceTag:/) {
-			my $id = $';
-			my $name = $class->{'prefs'}->{$_}->{'playername'};
-			$clients{$id} = $name;
-		}
-	}
-	
-	return \%clients;
-}
 
 =head2 SEE ALSO
 
