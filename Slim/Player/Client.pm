@@ -37,7 +37,7 @@ our $defaultPrefs = {
 	'alarmtime'        => [0,0,0,0,0,0,0,0],
 	'alarmplaylist'	   => ['','','','','','','',''],
 	'lameQuality'      => 9,
-	'playername'       => undef,
+	'playername'       => \&_makeDefaultName,
 	'repeat'           => 2,
 	'shuffle'          => 0,
 	'titleFormat'      => [5, 1, 3, 6],
@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 11, 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
+	# 8, 11, 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -102,7 +102,7 @@ sub new {
 	
 	$client->[7] = undef; # startupPlaylistLoading
 
-	$client->[8] = _makeDefaultName($client); # name
+#	$client->[8]
 
 	# client hardware information
 	$client->[9] = undef; # udpsock
@@ -351,12 +351,12 @@ sub name {
 	my $name   = shift;
 
 	if (defined $name) {
-		$client->[8] = $name;
+
 		$prefs->client($client)->set('playername', $name);
 
 	} else {
 
-		$name = $client->[8];
+		$name = $prefs->client($client)->get('playername');
 	}
 
 	return $name;
@@ -368,32 +368,22 @@ sub name {
 # all the players ever known to this SC in finding an unused name.
 sub _makeDefaultName {
 	my $client = shift;
+
 	my $modelName = $client->modelName() || $client->ip;
-	
-	my $name = $prefs->client($client)->get('playername');
-	return $name if ($name);
-	
-	my $maxIndex = 0;
-	NEWNAME: while (1) {
-		$name = $modelName . ($maxIndex++ ? " $maxIndex" : '');
-		my $clientsRef = $prefs->allKnownClients();
-		while (my($id, $existingName) = each %{$clientsRef}) { 
-			next if ($id eq $client->id);
-			next NEWNAME if ($existingName eq $name);
-		}
-		last;
+
+	my $name;
+	my %existingName;
+
+	foreach my $clientPref ( $prefs->allClients ) {
+		$existingName{ $clientPref->get('playername') } = 1;
 	}
 	
-	# Set the name asynchronously so that the object hierarchy can finish initializing;
-	# otherwise the preference onChange callback can be called too early.
-	Slim::Utils::Timers::setTimer(
-				$client,
-				time() + 2,
-				sub {my($client, $name) = @_; $prefs->client($client)->set('playername', $name);},
-				$name
-			);
+	my $maxIndex = 0;
 
-	logger('network.protocol')->info("New client: name=$name");
+	do {
+		$name = $modelName . ($maxIndex++ ? " $maxIndex" : '');
+	} while ($existingName{$name});
+
 	return $name;
 }
 
