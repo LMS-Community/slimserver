@@ -215,13 +215,27 @@ sub client {
 
 =head2 allClients()
 
-Returns a ref to a hash of all client 'playerName' attributes indexed by client-id
+Returns a list of client preference objects for all clients stored in the namespace preference file.
+This includes clients which are not attached and so allows reading of their preferences.
+
+It does not migrate the preferences for these objects to the latest version and so should only be used
+for read only access to stored preference values.
 
 =cut
 
-sub allKnownClients {
-	
-	return Slim::Utils::Prefs::Client::allKnownClients(shift);
+sub allClients {
+	my $class = shift;
+
+	my @clientPrefs = ();
+
+	foreach my $key (keys %{$class->{'prefs'}}) {
+
+		if ($key =~ /^$Slim::Utils::Prefs::Client::clientPreferenceTag:(.*)/) {
+			push @clientPrefs, Slim::Utils::Prefs::Client->new($class, $1, 'nomigrate');
+		}
+	}
+
+	return @clientPrefs;
 }
 
 sub _load {
