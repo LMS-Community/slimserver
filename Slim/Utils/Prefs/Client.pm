@@ -25,6 +25,7 @@ use base qw(Slim::Utils::Prefs::Base);
 use Slim::Utils::Log;
 
 my $log = logger('prefs');
+my $clientPreferenceTag = '_client';
 
 sub new {
 	my $ref    = shift;
@@ -38,7 +39,7 @@ sub new {
 		'parent'    => $parent,
 	}, $ref;
 
-	$class->{'prefs'} = $parent->{'prefs'}->{"_client:$clientid"} ||= {
+	$class->{'prefs'} = $parent->{'prefs'}->{"$clientPreferenceTag:$clientid"} ||= {
 		'_version' => 0,
 	};
 
@@ -65,6 +66,24 @@ sub new {
 sub _root { shift->{'parent'} }
 
 sub _obj { Slim::Player::Client::getClient(shift->{'clientid'}) }
+
+# Returns a ref to a hash of all client 'playerName' attributes indexed by client-id
+
+sub allKnownClients {
+	my $class = shift;
+	
+	my %clients;
+	
+	foreach ((keys %{$class->{'prefs'}})) {
+		if (/^$clientPreferenceTag:/) {
+			my $id = $';
+			my $name = $class->{'prefs'}->{$_}->{'playername'};
+			$clients{$id} = $name;
+		}
+	}
+	
+	return \%clients;
+}
 
 =head2 SEE ALSO
 
