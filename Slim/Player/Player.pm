@@ -746,7 +746,7 @@ sub mixerDisplay {
 
 	my $featureHeader = join('', $client->string(uc($feature)), $headerValue);
 
-	if (blessed($client->display) eq 'Slim::Display::Squeezebox2') {
+	if (blessed($client->display) =~ /Squeezebox2|Boom/) {
 		# XXXX hack attack: turn off visualizer when showing volume, etc.		
 		$oldvisu = $client->modeParam('visu');
 		$savedvisu = 1;
