@@ -367,6 +367,39 @@ sub init {
 					},
 				},
 
+				'SETUP_PLAYINGDISPLAYMODE'      => {
+					'useMode'      => 'INPUT.Choice',
+					'header'       => '{SETUP_PLAYINGDISPLAYMODE}{count}',
+					'onPlay'       => \&setPref,
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
+					'pref'         => 'playingDisplayMode',
+					'initialValue' => sub { $prefs->client(shift)->get('playingDisplayMode') },
+					'condition'    => sub { return $_[0]->display->isa('Slim::Display::Boom') },
+					'init'         => sub {
+						my $client = shift;
+
+						my $modes = $client->display->modes;
+						my @opts  = ();
+
+						for my $mode (@{ $prefs->client($client)->get('playingDisplayModes') }) {
+
+							my @desc;
+
+							for my $tok (@{ $modes->[$mode]{'desc'} }) {
+								push @desc, Slim::Utils::Strings::string($tok);
+							}
+
+							push @opts, {
+								'name'  => join(' ', @desc),
+								'value' => $mode,
+							};
+						}
+
+						$client->modeParam('listRef', \@opts);
+					}
+				},
+
 				'SETUP_VISUALIZERMODE'         => {
 					'useMode'      => 'INPUT.Choice',
 					'onPlay'       => \&updateVisualMode,
