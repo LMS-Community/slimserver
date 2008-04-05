@@ -855,11 +855,7 @@ sub processURL {
 						$agent = 'Winamp';
 					}
 					
-					$client->defaultName( $agent . ' ' . string('FROM') . ' ' . $address );
-				}
-				else {
-					# Just show the IP address if there's no user-agent
-					$client->defaultName( $address );
+					$client->name( $agent . ' ' . string('FROM') . ' ' . $address );
 				}
 				
 				# Bug 4795

@@ -211,6 +211,8 @@ sub screensaverLines {
 			]
 		};
 	}
+
+	return { 'screen1' => {} };
 }
 
 sub leaveVisualizerMode {
