@@ -102,7 +102,7 @@ sub init {
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 }
 
-# usage	- float	buffer fullness as a percentage
+# usage	- float	buffer fullness as a fraction
 sub usage {
 	my $client = shift;
 	return $client->bufferSize() ? $client->bufferFullness() / $client->bufferSize() : 0;
@@ -175,6 +175,9 @@ sub power {
 	my ($resumeOff, $resumeOn) = ($1,$2);
 
 	if (!$on) {
+		
+		my $playing = (Slim::Player::Source::playmode($client) eq 'play');
+		$prefs->client($client)->set('playingAtPowerOff', $playing);
 
 		# turning player off - unsync/pause/stop player and move to off mode
 		my $sync = $prefs->client($client)->get('syncPower');
@@ -188,7 +191,7 @@ sub power {
 			Slim::Player::Sync::unsync($client, 1);
   		}
   
-		if (Slim::Player::Source::playmode($client) eq 'play') {
+		if ($playing) {
 
 			if (Slim::Player::Playlist::song($client) && 
 				Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
@@ -259,9 +262,11 @@ sub power {
 				# reset playlist to start
 				$client->execute(["playlist","jump", 0, 1]);
 			}
-
-			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client)) {
+			
+			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client)
+				&& $prefs->client($client)->get('playingAtPowerOff')) {
 				# play even if current playlist item is a remote url (bug 7426)
+				# but only if we were playing at power-off (bug 7061)
 				$client->execute(["play"]);
 			}
 		}		
