@@ -118,8 +118,6 @@ my @modes = (
 	  params => [$VISUALIZER_NONE], },
 );
 
-my $nmodes = $#modes;
-
 our $defaultPrefs = {
 	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 5,
@@ -279,10 +277,10 @@ sub visualizerParams {
 		$visu = 0; 
 	}
 	
-	if ($visu > $nmodes) {
-		$visu = $nmodes;
+	if ($visu > $display->nmodes) {
+		$visu = $display->nmodes;
 	}
-	
+
 	return $display->modes()->[$visu]{params};
 }
 
@@ -291,7 +289,7 @@ sub modes {
 }
 
 sub nmodes {
-	return $nmodes;
+	return $#modes;
 }
 
 # update visualizer and init scrolling
