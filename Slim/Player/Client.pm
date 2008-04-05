@@ -102,7 +102,7 @@ sub new {
 	
 	$client->[7] = undef; # startupPlaylistLoading
 
-	$client->[8] = _makeDefaultName($client); # defaultName
+	$client->[8] = _makeDefaultName($client); # name
 
 	# client hardware information
 	$client->[9] = undef; # udpsock
@@ -349,61 +349,50 @@ sub name {
 	my $name   = shift;
 
 	if (defined $name) {
-
+		$client->[8] = $name;
 		$prefs->client($client)->set('playername', $name);
 
 	} else {
 
-		$name = $prefs->client($client)->get('playername');
+		$name = $client->[8];
 	}
 
-	if (!defined $name || $name eq '') {
-		$name = defaultName($client);
-	}
-	
 	return $name;
 }
 
-=head2 defaultName( $client )
-
-Sets or returns the default name for the client (IP address as last resort)
-
-=cut
-
-sub defaultName {
-	my $r = shift;
-	@_ ? ($r->[8] = shift) : ($r->[8] || $r->ip);
-}
-
+# If this player does not have a name set, then find the first 
+# unused name from the sequence ("Name", "Name 2", "Name 3", ...),
+# where Name, is the result of the modelName() method. Consider
+# all the players ever known to this SC in finding an unused name.
 sub _makeDefaultName {
 	my $client = shift;
 	my $modelName = $client->modelName() || $client->ip;
-
-	# Do we already have one of these?
-	# We cannot just assume that this is the Nth player of this type
-	# because a user may have 'forgotten' a player, creating a discrepency between
-	# the number of players known about and default names that they have.
-	#
-	# We could try to be clever and fill in the gaps but let's just settle for 
-	# making sure that the number of this new player is bigger than any we already know about.
-	# We should also ensure that it does not clash with any user-chosen name.
+	
+	my $name = $prefs->client($client)->get('playername');
+	return $name if ($name);
+	
 	my $maxIndex = 0;
-	my $player;
-	foreach $player (clients()) {
-		if ($player->defaultName =~ /^$modelName( (\d+))?/) {
-			my $index = $2 || 1;
-			$maxIndex = $index if ($index > $maxIndex);
+	NEWNAME: while (1) {
+		$name = $modelName . ($maxIndex++ ? " $maxIndex" : '');
+		my $clientsRef = $prefs->allKnownClients();
+		while (my($id, $existingName) = each %{$clientsRef}) { 
+			next if ($id eq $client->id);
+			next NEWNAME if ($existingName eq $name);
 		}
+		last;
 	}
 	
-	NEWNAME: while (1) {
-		my $name = $modelName . ($maxIndex++ ? " $maxIndex" : '');
-		foreach $player (clients()) {
-			next NEWNAME if ($prefs->client($client)->get('playername') eq $name);
-		}
-		logger('network.protocol')->info("New client: defaultName=$name");
-		return $name;
-	}
+	# Set the name asynchronously so that the object hierarchy can finish initializing;
+	# otherwise the preference onChange callback can be called too early.
+	Slim::Utils::Timers::setTimer(
+				$client,
+				time() + 2,
+				sub {my($client, $name) = @_; $prefs->client($client)->set('playername', $name);},
+				$name
+			);
+
+	logger('network.protocol')->info("New client: name=$name");
+	return $name;
 }
 
 =head2 debug( $client, @msg )

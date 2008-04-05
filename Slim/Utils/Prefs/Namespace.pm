@@ -209,8 +209,19 @@ $prefs->client($client)->get('pref1');
 sub client {
 	my $class  = shift;
 	my $client = shift;
-
+	
 	return $class->{'clients'}->{ $client->id } ||= Slim::Utils::Prefs::Client->new($class, $client);
+}
+
+=head2 allClients()
+
+Returns a ref to a hash of all client 'playerName' attributes indexed by client-id
+
+=cut
+
+sub allKnownClients {
+	
+	return Slim::Utils::Prefs::Client::allKnownClients(shift);
 }
 
 sub _load {
