@@ -2267,6 +2267,7 @@ sub showCommand {
 	if ($font eq 'huge') {
 		$hash->{'fonts'} = {
 			'graphic-320x32' => 'full',
+			'graphic-160x32' => 'full_n',
 			'graphic-280x16' => 'huge',
 			'text'           => 1,
 		};		
@@ -2274,6 +2275,7 @@ sub showCommand {
 	else {
 		$hash->{'fonts'} = {
 			'graphic-320x32' => 'standard',
+			'graphic-160x32' => 'standard_n',
 			'graphic-280x16' => 'medium',
 			'text'           => 2,
 		};

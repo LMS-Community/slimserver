@@ -130,6 +130,7 @@ sub setScreensaverDateTimeMode() {
 my $fontDef = {
 	'graphic-280x16'  => { 'overlay' => [ 'small.1'    ] },
 	'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
+	'graphic-160x32'  => { 'overlay' => [ 'standard.1' ] },
 	'text'            => { 'displayoverlays' => 1        },
 };
 

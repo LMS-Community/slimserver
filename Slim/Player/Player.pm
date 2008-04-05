@@ -242,6 +242,7 @@ sub power {
 			'center' => [ $client->string('WELCOME_TO_' . $client->model), $client->string('FREE_YOUR_MUSIC') ],
 			'fonts' => { 
 					'graphic-320x32' => 'standard',
+					'graphic-160x32' => 'standard_n',
 					'graphic-280x16' => 'medium',
 					'text'           => 2,
 				},

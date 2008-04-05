@@ -519,6 +519,7 @@ sub checkFirmwareUpgrade {
 				'line' => [ $client->string('PLAYER_NEEDS_UPGRADE_1'), $client->string('PLAYER_NEEDS_UPGRADE_2') ],
 				'fonts' => { 
 					'graphic-320x32' => 'light',
+					'graphic-160x32' => 'light_n',
 					'graphic-280x16' => 'small',
 					'text'           => 2,
 				},
@@ -561,6 +562,7 @@ sub upgradeFirmware_SDK5 {
 		'line'  => [ $client->string('UPDATING_FIRMWARE_' . uc($client->model())) ],
 		'fonts' => { 
 			'graphic-320x32' => 'light',
+			'graphic-160x32' => 'light_n',
 			'graphic-280x16' => 'small',
 			'text'           => 2,
 		},
@@ -593,6 +595,7 @@ sub upgradeFirmware_SDK5 {
 
 				'fonts' => { 
 					'graphic-320x32' => 'light',
+					'graphic-160x32' => 'light_n',
 					'graphic-280x16' => 'small',
 					'text'           => 2,
 				},

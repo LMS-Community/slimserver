@@ -1079,6 +1079,7 @@ sub _hello_handler {
 				'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2') ],
 				'fonts' => { 
 					'graphic-320x32' => 'light',
+					'graphic-160x32' => 'light_n',
 					'graphic-280x16' => 'small',
 					'text'           => 2,
 				}
