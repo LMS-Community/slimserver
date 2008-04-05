@@ -65,9 +65,7 @@ sub status {
 
 		$songcount = Slim::Player::Playlist::count($client);
 		
-		if ($client->defaultName() ne $client->name()) {
-			$params->{'player_name'} = $client->name();
-		}
+		$params->{'player_name'} = $client->name();
 
 		$params->{'shuffle'} = Slim::Player::Playlist::shuffle($client);
 	

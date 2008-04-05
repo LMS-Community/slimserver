@@ -1976,12 +1976,31 @@ sub openSong {
 
 			if ($client->audioFilehandle->open($filepath)) {
 
-				$log->info("Seeking in $offset into $filepath");
-
+				# Bug 6836 - support CUE files for Ogg
 				if ($offset) {
 
-					if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
+					my $streamClass = _streamClassForFormat($client);
 
+					if (!defined($song->{'initialAudioBlock'}) && 
+						$streamClass && $streamClass->can('getInitialAudioBlock'))
+					{
+						$song->{'initialAudioBlock'} = $streamClass->getInitialAudioBlock($client->audioFilehandle);
+						my $length = length($song->{'initialAudioBlock'});
+						$log->debug("Got initial audio block of size $length");
+						if ($offset <= $length) {
+							# Might as well just play from the start normally
+							$offset = $seekoffset = 0;
+						} else {
+							$client->initialAudioBlockRemaining($length);
+						}
+					}
+				}
+					
+				if ($offset) {
+
+					$log->info("Seeking in $offset into $filepath");
+
+					if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
 						logError("couldn't seek to $offset for $filepath");
 					};
 
