@@ -403,6 +403,7 @@ sub browsedbExitCallback {
 
 			my $favorites = Slim::Utils::Favorites->new($client);
 			my $index = $client->modeParam('favorite');
+			my $hotkey = $client->modeParam('hotkey');
 			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist.id'});
 
 			if (!blessed($track) || !$track->can('title')) {
@@ -418,13 +419,14 @@ sub browsedbExitCallback {
 
 			if ( !defined $index ) {
 
-				$index = $favorites->add($track, $track->title);
+				($index, $hotkey) = $favorites->add($track, $track->title, undef, undef, 'hotkey');
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title ]
 				});
 
 				$client->modeParam('favorite', $index);
+				$client->modeParam('hotkey', $hotkey);
 
 			} else {
 				
@@ -432,6 +434,7 @@ sub browsedbExitCallback {
 				Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
 					title => $track->title,
 					index => $index,
+					hotkey=> $hotkey,
 					depth => 2,
 				} );
 				
@@ -521,15 +524,10 @@ sub browsedbItemName {
 	if (!$blessed && $item eq 'FAVORITE') {
 
 		my $index = $client->modeParam('favorite');
+		my $hotkey = $client->modeParam('hotkey');
 
 		if (defined $index) {
-			if ($index =~ /^\d+$/) {
-				# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
-				return $client->string('FAVORITES_FAVORITE') . ' ' . ($index + 1);
-			} else {
-				# existing favorite not at top level - don't display number
-				return $client->string('FAVORITES_FAVORITE');
-			}
+			return $client->string('FAVORITES_FAVORITE') . (defined $hotkey ? " [ $hotkey ]" : '');
 		} else {
 			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
 		}
@@ -813,7 +811,10 @@ sub setMode {
 
 		if (blessed($track) && $track->can('id')) {
 
-			$client->modeParam('favorite', Slim::Utils::Favorites->new($client)->findUrl($track->url) );
+			my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($track->url);
+
+			$client->modeParam('favorite', $index);
+			$client->modeParam('hotkey', $hotkey);
 
 			push @items, 'FAVORITE';
 		}
@@ -877,6 +878,7 @@ sub setMode {
 		findCriteria      => $filters,
 		selectionCriteria => $selectionCriteria,
 		favorite          => $client->modeParam('favorite'),
+		hotkey            => $client->modeParam('hotkey'),
 	);
 
 	# If this is a list of containers (e.g. albums, artists, genres)

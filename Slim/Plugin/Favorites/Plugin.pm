@@ -38,6 +38,10 @@ my $log = logger('favorites');
 
 my $prefs = preferences('plugin.favorites');
 
+# support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites editting]
+my $nextSession = 2; # session id 1 = favorites
+tie my %sessions, 'Tie::Cache::LRU', 4;
+
 sub initPlugin {
 	my $class = shift;
 
@@ -62,10 +66,11 @@ sub initPlugin {
 	
 	# register notifications
 	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
-	
-	# register new mode for deletion of favorites
+
+	# register new mode for deletion of favorites	
 	Slim::Buttons::Common::addMode( 'favorites.delete', {}, \&deleteMode );
 }
+
 
 sub modeName { 'FAVORITES' };
 
@@ -103,11 +108,12 @@ sub deleteMode {
 	
 	my $title = $client->modeParam('title'); # title to display
 	my $index = $client->modeParam('index'); # favorite index to delete
+	my $hotkey= $client->modeParam('hotkey');# favorite hotkey
 	my $depth = $client->modeParam('depth'); # number of levels to pop out of when done
 	
 	# Bug 6177, Menu to confirm favorite removal
 	Slim::Buttons::Common::pushMode( $client, 'INPUT.Choice', {
-		header   => '{FAVORITES_FAVORITE} ' . ($index + 1),
+		header   => '{FAVORITES_FAVORITE} ' . (defined $hotkey ? $hotkey : ''),
 		title    => $title,
 		favorite => $index,
 		listRef  => [
@@ -156,8 +162,9 @@ sub playFavorite {
 	my $button = shift;
 	my $digit  = shift;
 
-	# we need to deal with $digit being 1-9 or 0 meaning 10 and convert to zero based index
-	my $entry = Slim::Utils::Favorites->new($client)->entry($digit != 0 ? $digit - 1 : 9);
+	my $favs  = Slim::Utils::Favorites->new($client);
+	my $index = $favs->hasHotkey($digit);
+	my $entry = defined $index ? $favs->entry($index) : undef;
 
 	if (defined $entry && $entry->{'type'} && $entry->{'type'} eq 'audio') {
 
@@ -177,7 +184,7 @@ sub playFavorite {
 		$log->info("Can't play favorite number $digit - not an audio entry");
 
 		$client->showBriefly({
-			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit != 0 ? $digit : 10) ],
+			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
 		});
 	}
 }
@@ -198,10 +205,6 @@ sub addEditLink {
 
 	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
 }
-
-# support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites editting]
-my $nextSession = 2; # session id 1 = favorites
-tie my %sessions, 'Tie::Cache::LRU', 4;
 
 sub toggleButtonHandler {
 	my $client = shift;
@@ -532,6 +535,11 @@ sub indexHandler {
 
 			$favs->deleteUrl( $entry->{'URL'} );
 		}
+
+		if ($action eq 'hotkey' && defined $params->{'index'} && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
+
+			$opml->setHotkey( $params->{'index'}, $params->{'hotkey'} ne '' ? $params->{'hotkey'} : undef );
+		}
 	}
 
 	if ($params->{'forgetdelete'}) {
@@ -615,12 +623,21 @@ sub indexHandler {
 			$entry->{'favorites'} = $favs->hasUrl($entry->{'url'}) ? 2 : 1;
 		}
 
+		if (!$favs && defined $opmlEntry->{'hotkey'}) {
+			$entry->{'hotkey'} = $opmlEntry->{'hotkey'};
+		}
+
 		push @entries, $entry;
 	}
 
 	$params->{'entries'}       = \@entries;
 	$params->{'levelindex'}    = join '.', @indexPrefix;
 	$params->{'indexOnLevel'}  = $indexLevel;
+
+	# for favorites add the currently used hotkeys
+	if (!$favs) {
+		$params->{'hotkeys'}   = $opml->hotkeys;
+	}
 
 	# add the top level title to pwd_list
 	push @{$params->{'pwd_list'}}, {
@@ -747,8 +764,11 @@ sub cliAdd {
 		}
 
 		if (defined $i) {
+
 			splice @$level, $i, 0, $entry;
+
 		} else { # with no specific index, place automatically at the end
+
 			push @$level, $entry;
 		}
 
@@ -758,14 +778,12 @@ sub cliAdd {
 		if ($request->source && $request->source =~ /\/slim\/request/) {
 			$client->showBriefly({
 				'jive' => { 
-				'text'    => [ Slim::Utils::Strings::string('FAVORITES_ADDING'),
-						$title,
-					   ],
+					'text' => [ Slim::Utils::Strings::string('FAVORITES_ADDING'),
+								$title,
+							   ],
 				}
 			});
-
 		}
-
 
 		$request->setStatusDone();
 
@@ -809,7 +827,6 @@ sub cliDelete {
 			}
 		});
 	}
-
 
 	$request->setStatusDone();
 }
