@@ -1165,20 +1165,20 @@ our %functions = (
 	'home' => sub {
 		my ($client, $funct, $functarg) = @_;
 
-		# TODO: There must be a better way to find out if
-		# we are in the top level menu than compairing strings
-		my $myline1 = substr( $client->prevline1(), 0, 10);
-		my $myhead = substr( Slim::Buttons::Home::homeheader( $client), 0, 10);
+		if ($client->modeParam('HOME-MENU')) {
 
-		Slim::Buttons::Home::jump( $client, "NOW_PLAYING");
-		# Top menu - go to now playing list
-		if( $myline1 eq $myhead) {
-			pushModeLeft( $client, "playlist");
-		# Somewhere - go to top menu
+			$log->info("Switching to playlist view.");
+			Slim::Buttons::Common::setMode($client, 'home');
+			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+
 		} else {
-			setMode( $client, 'home');
+
+			$log->info("Switching to home menu.");
+			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
+			Slim::Buttons::Common::setMode($client, 'home');
+			$client->pushRight();
 		}
-		$client->update();
 	},
 );
 
