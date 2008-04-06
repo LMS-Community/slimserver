@@ -196,6 +196,7 @@ sub setMode {
 		'track'          => $client->modeParam('track'),
 		'current'        => $client->modeParam('current'),
 		'favorite'       => $client->modeParam('favorite'),
+		'hotkey'         => $client->modeParam('hotkey'),
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
@@ -384,7 +385,10 @@ sub loadDataForTrack {
 
 	if (Slim::Music::Info::isURL($track->url) && Slim::Utils::Favorites->enabled) {
 
-		$client->modeParam( 'favorite', Slim::Utils::Favorites->new($client)->findUrl($track->url) );
+		my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($track->url);
+
+		$client->modeParam('favorite', $index);
+		$client->modeParam('hotkey', $hotkey);
 
 		push (@{$client->trackInfoLines}, 'FAVORITE'); # replaced in lines()
 		push (@{$client->trackInfoContent}, {
@@ -510,16 +514,18 @@ sub listExitHandler {
 
 			my $favorites = Slim::Utils::Favorites->new($client);
 			my $favIndex = $client->modeParam('favorite');
+			my $hotKey = $client->modeParam('hotkey');
 
 			if (!defined $favIndex) {
 
-				$favIndex = $favorites->add(track($client), $track->title || $track->url);
+				($favIndex, $hotKey) = $favorites->add(track($client), $track->title || $track->url, undef, undef, 'hotkey');
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title || $track->url ]
 				   });
 
 				$client->modeParam('favorite', $favIndex);
+				$client->modeParam('hotkey', $hotKey);
 
 			} else {
 
@@ -527,6 +533,7 @@ sub listExitHandler {
 				Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
 					title => $track->title || $track->url,
 					index => $favIndex,
+					hotkey=> $hotKey,
 					depth => 2,
 				} );
 				
@@ -555,16 +562,11 @@ sub infoLine {
 	# special case favorites line, which must be determined dynamically
 	if ($line2 eq 'FAVORITE') {
 		my $favIndex = $client->modeParam('favorite');
+		my $hotkey = $client->modeParam('hotkey');
 		if (!defined $favIndex) {
 			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
-			if ($favIndex =~ /^\d+$/) {
-				# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
-				$line2 = $client->string('FAVORITES_FAVORITE') . ' ' . ($favIndex + 1);
-			} else {
-				# existing favorite not at top level - don't display number
-				$line2 = $client->string('FAVORITES_FAVORITE');
-			}
+			$line2 = $client->string('FAVORITES_FAVORITE') . (defined $hotkey ? " [ $hotkey ]" : '');
 		}
 	}
 

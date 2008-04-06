@@ -820,7 +820,7 @@ our %functions = (
 			}
 
 			if ($url && $title) {
-				Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser);
+				my (undef, $hotkey) = Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser, 'hotkey');
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
 				} );

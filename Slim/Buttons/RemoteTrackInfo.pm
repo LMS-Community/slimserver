@@ -62,7 +62,7 @@ sub setMode {
 	# 
 	# Only allow adding to favorites if the URL is something we can play.
 
-	my $favIndex;
+	my ($favIndex, $favHotkey);
 
 	if ( $url && Slim::Utils::Favorites->enabled ) {
 
@@ -72,14 +72,9 @@ sub setMode {
 				my $client = shift;
 
 				my $index = $client->modeParam('favorite');
+				my $hotkey= $client->modeParam('hotkey');
 				if (defined $index) {
-					if ($index =~ /^\d+$/) {
-						# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
-						return "{FAVORITES_FAVORITE}" . ' ' . ($index + 1);
-					} else {
-						# existing favorite not at top level - don't display number
-						return "{FAVORITES_FAVORITE}";
-					}
+					return "{FAVORITES_FAVORITE} " . (defined $hotkey ? "[$hotkey]" : '');
 				} else {
 					return "{FAVORITES_RIGHT_TO_ADD}";
 				}
@@ -89,6 +84,7 @@ sub setMode {
 				my $client = shift;
 				my $favorites = Slim::Utils::Favorites->new($client) || return;
 				my $index = $client->modeParam('favorite');
+				my $hotkey= $client->modeParam('hotkey');
 
 				if (defined $index) {
 					
@@ -96,12 +92,14 @@ sub setMode {
 					Slim::Buttons::Common::pushModeLeft( $client, 'favorites.delete', {
 						title => $title,
 						index => $index,
-						depth => 3,
+						hotkey=> $hotkey,
+						depth => 2,
 					} );
 
 				} else {
-					$index = $favorites->add($url, $title);
+					($index, $hotkey) = $favorites->add($url, $title, undef, undef, 'hotkey');
 					$client->modeParam('favorite', $index);
+					$client->modeParam('hotkey', $hotkey);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_ADDING'), $client->modeParam('title') ]
 					});
@@ -110,7 +108,7 @@ sub setMode {
 			overlayRef => [ undef, $client->symbols('rightarrow') ],
 		};
 
-		$favIndex = Slim::Utils::Favorites->new($client)->findUrl($url);
+		($favIndex, $favHotkey) = Slim::Utils::Favorites->new($client)->findUrl($url);
 	}
 
 	# now use another mode for the heavy lifting
@@ -120,6 +118,7 @@ sub setMode {
 		'url'      => $url,
 		'title'    => $title,
 		'favorite' => $favIndex,
+		'hotkey'   => $favHotkey,
 
 		# play music when play is pressed
 		'onPlay'   => sub {
