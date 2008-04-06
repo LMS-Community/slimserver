@@ -27,10 +27,14 @@
 9.hold					= playFavorite_9
 arrow_down				= down
 arrow_down.repeat		= down_repeat
+knob_right              = down
+knob_right.repeat       = down_repeat
 arrow_left				= left
 arrow_right				= right
 arrow_up				= up
 arrow_up.repeat			= up_repeat
+knob_left				= up
+knob_left.repeat		= up_repeat
 rew.single				= jump_rew
 rew.hold				= scan_rew
 brightness_down			= brightness_down
@@ -72,6 +76,18 @@ trebleup.repeat			= treble_up
 volume					= volume
 volumemode				= volumemode
 home					= home
+preset_1.single			= playFavorite_1
+preset_2.single			= playFavorite_2
+preset_3.single			= playFavorite_3
+preset_4.single			= playFavorite_4
+preset_5.single			= playFavorite_5
+preset_6.single			= playFavorite_6
+preset_1.hold			= storeFavorite_1
+preset_2.hold			= storeFavorite_2
+preset_3.hold			= storeFavorite_3
+preset_4.hold			= storeFavorite_4
+preset_5.hold			= storeFavorite_5
+preset_6.hold			= storeFavorite_6
 
 # playing display modes
 now_playing				= playdisp_toggle
@@ -135,6 +151,8 @@ arrow_right.*			= dead
 arrow_left.*			= dead
 arrow_down.*			= dead
 arrow_up.*				= dead
+knob_left.*				= dead
+knob_right.*			= dead
 format					= dead
 fwd.*					= dead
 menu_browse_album		= dead
@@ -207,6 +225,8 @@ arrow_down.*			= dead
 arrow_left				= dead
 arrow_right				= dead
 arrow_up.*				= dead
+knob_left.*				= dead
+knob_right.*			= dead
 format					= dead
 fwd.*					= dead
 menu_browse_album		= dead
@@ -274,12 +294,6 @@ add						= right
 play					= right
 add						= right
 
-[volume]
-arrow_up				= volume_up
-arrow_down				= volume_down
-arrow_up.repeat			= volume_up
-arrow_down.repeat		= volume_down
-
 [screensaver]
 0						= done
 1						= done
@@ -295,6 +309,8 @@ arrow_down				= done
 arrow_left				= done
 arrow_right				= done
 arrow_up				= done
+knob_left				= done
+knob_right				= done					
 fwd						= done_passback
 rew						= done_passback
 pause.*					= done_passback
@@ -321,7 +337,6 @@ play.*						= dead
 play						= exit_play
 add.*						= dead
 add						= exit_add
-
 
 [INPUT.Text]
 0						= numberLetter_0
@@ -382,3 +397,17 @@ stop.*						= passback
 pause.*						= passback
 fwd.*						= passback
 rew.*						= passback
+
+[INPUT.Volume]
+knob_left					= down
+knob_left.repeat			= down
+knob_right					= up
+knob_right.repeat			= up
+arrow_up					= up
+arrow_down					= down
+arrow_up.repeat				= up
+arrow_down.repeat			= down
+volup						= up
+volup.repeat				= up
+voldown						= down
+voldown.repeat				= down

@@ -67,6 +67,7 @@ my %functions = ();
 # XXXX - This should this be in init() - but we don't init Input methods
 # before trying to use them.
 Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode, \&_leaveModeHandler);
+Slim::Buttons::Common::addMode('INPUT.Volume', getFunctions(), \&setMode, \&_leaveModeHandler);
 
 sub init {
 	my $client = shift;

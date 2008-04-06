@@ -883,9 +883,10 @@ our %functions = (
 		}
 	},
 
-	# XXXX This mode is used by the Transporter knob - _NOT_ by the remote
-	# volume buttons, which are defined below. They should be combined.
-	# See Slim::Buttons::Volume
+	# Volume always pushes into Slim::Buttons::Volume to allow Transporter and Boom knobs to be used
+	# - from the volumemode front panel button use a push transition
+	# - for a volume up/down button just push the mode and set a shorter timeout
+
 	'volumemode' => sub {
 		my $client = shift;
 		my $button = shift;
@@ -907,7 +908,10 @@ our %functions = (
 
 		return if (!$client->hasVolumeControl());
 
-		mixer($client, 'volume', $buttonarg);
+		if (!$client->modeParam('parentMode') || $client->modeParam('parentMode') ne 'volume') {
+			pushMode($client, 'volume', {'timeout' => 1, 'transition' => 0, 'passthrough' => 1});
+			$client->update;
+		}
 	},
 
 	'pitch' => sub {

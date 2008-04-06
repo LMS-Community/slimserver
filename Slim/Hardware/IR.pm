@@ -460,7 +460,7 @@ sub lookup {
 }
 
 sub lookupFunction {
-	my ($client, $code, $mode) = @_;
+	my ($client, $code, $mode, $haveFunction) = @_;
 
 	if (!defined $mode) {
 		$mode = Slim::Buttons::Common::mode($client);
@@ -513,7 +513,7 @@ sub lookupFunction {
 		$log->info("Found function: $function for button $code in mode common from map $defaultMapFile");
 	}
 
-	if (!$function) {
+	if (!$function && !$haveFunction) {
 		$log->info("irCode not defined: [$code] for map: [$map] and mode: [$mode]");
 	}
 
@@ -673,6 +673,27 @@ sub processIR {
 		$client->irrepeattime(0);
 
 		processFrontPanel($client, $1, $2, $irTime);
+
+	} elsif ($code =~ /^knob/) {
+
+		$log->info("Knob code detected, processing $code");
+
+		if ($irCodeBytes eq $client->lastircodebytes) {
+
+			$code .= ".repeat";
+
+		} else {
+
+			$client->lastircodebytes($irCodeBytes);
+			$client->irrepeattime(0);
+		}
+
+		# The S:B:C:scroll code rate limits scrolling unless this is reset for every update
+		$client->startirhold($irTime);
+
+		my $irCode = lookupFunction($client, $code);
+
+		processCode($client, $irCode, $irTime);
 
 	} elsif (($irCodeBytes eq $client->lastircodebytes) # same button press as last one
 		&& ( ($client->irtimediff < $IRMINTIME) # within the minimum time to be considered a repeat
@@ -959,7 +980,7 @@ sub executeButton {
 	my $mode       = shift;
 	my $orFunction = shift; # allow function names as $button
 
-	my $irCode = lookupFunction($client, $button, $mode);
+	my $irCode = lookupFunction($client, $button, $mode, $orFunction);
 
 	if ($orFunction && !$irCode) {
 

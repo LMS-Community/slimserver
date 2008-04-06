@@ -50,6 +50,7 @@ sub initPlugin {
 
 	# register handler for playing favorites by remote hot button
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
+	Slim::Buttons::Common::setFunction('storeFavorite',\&storeFavorite);
 
 	# register cli handlers
 	Slim::Control::Request::addDispatch(['favorites', 'items', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
@@ -180,6 +181,14 @@ sub playFavorite {
 			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit != 0 ? $digit : 10) ],
 		});
 	}
+}
+
+sub storeFavorite {
+	my $client = shift;
+
+	$client->showBriefly({
+		'line' => [ "STORE FAVORITES", "Coming Soon" ],
+	});
 }
 
 sub webPages {
