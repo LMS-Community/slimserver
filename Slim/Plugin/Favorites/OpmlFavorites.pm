@@ -76,7 +76,9 @@ sub _urlindex {
 	my $index = shift || '';
 
 	unless (defined $level) {
-		$class->{'urlindex'} = {};
+		$class->{'url-index'} = {};
+		$class->{'hotkey-index'} = {};
+		$class->{'url-hotkey'} = {};
 		$level = $class->toplevel;
 	}
 
@@ -85,7 +87,12 @@ sub _urlindex {
 	for my $entry (@{$level}) {
 
 		if ($entry->{'URL'} || $entry->{'url'}) {
-			$class->{'urlindex'}->{ $entry->{'URL'} || $entry->{'url'} } = $index . $i;
+			$class->{'url-index'}->{ $entry->{'URL'} || $entry->{'url'} } = $index . $i;
+		}
+
+		if (defined $entry->{'hotkey'}) {
+			$class->{'hotkey-index'}->{ $entry->{'hotkey'} } = $index . $i;
+			$class->{'url-hotkey'}->{ $entry->{'URL'} || $entry->{'url'} } = $entry->{'hotkey'};
 		}
 
 		if ($entry->{'outline'}) {
@@ -105,14 +112,21 @@ sub _loadOldFavorites {
 
 	my @urls   = @{Slim::Utils::Prefs::OldPrefs->get('favorite_urls')   || []};
 	my @titles = @{Slim::Utils::Prefs::OldPrefs->get('favorite_titles') || []} ;
+	my @hotkeys= (1..9, 0);
 
 	while (@urls) {
 
-		push @$toplevel, {
-			'text' => shift @titles,
-			'URL'  => shift @urls,
-			'type' => 'audio',
+		my $entry = {
+			'text'   => shift @titles,
+			'URL'    => shift @urls,
+			'type'   => 'audio',
 		};
+
+		if (@hotkeys) {
+			$entry->{'hotkey'} = shift @hotkeys;
+		}
+
+		push @$toplevel, $entry;
 	}
 
 	$class->title(string('FAVORITES'));
@@ -136,6 +150,7 @@ sub add {
 	my $title  = shift;
 	my $type   = shift;
 	my $parser = shift;
+	my $hotkey = shift; # pick next available hotkey for this url
 
 	if (!$url) {
 		logWarning("No url passed! Skipping.");
@@ -149,7 +164,7 @@ sub add {
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
 	if ( $log->is_info ) {
-		$log->info(sprintf("url: %s title: %s type: %s parser: %s", $url, $title, $type, $parser));
+		$log->info(sprintf("url: %s title: %s type: %s parser: %s hotkey: %s", $url, $title, $type, $parser, $hotkey));
 	}
 
 	# if its already a favorite, don't add it again
@@ -171,19 +186,28 @@ sub add {
 		delete $entry->{'type'};
 	}
 
+	if ($hotkey) {
+		for my $i (1..9, 0) {
+			if (!defined $class->{'hotkey-index'}->{ $i }) {
+				$entry->{'hotkey'} = $i;
+				last;
+			}
+		}
+	}
+
 	# add it to end of top level
 	push @{$class->toplevel}, $entry;
 
 	$class->save;
 
-	return scalar @{$class->toplevel} - 1;
+	return wantarray ? (scalar @{$class->toplevel} - 1, $entry->{'hotkey'}) : scalar @{$class->toplevel} - 1;
 }
 
 sub hasUrl {
 	my $class = shift;
 	my $url   = shift;
 
-	return (defined $class->{'urlindex'}->{ $url });
+	return (defined $class->{'url-index'}->{ $url });
 }
 
 sub findUrl {
@@ -192,13 +216,14 @@ sub findUrl {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	my $index = $class->{'urlindex'}->{ $url };
+	my $index = $class->{'url-index'}->{ $url };
+	my $hotkey = $class->{'url-hotkey'}->{ $url };
 
 	if (defined $index) {
 
 		$log->info("Match $url at index $index");
 
-		return $index;
+		return wantarray ? ($index, $hotkey) : $index;
 	}
 
 	$log->info("No match for $url");
@@ -216,9 +241,9 @@ sub deleteUrl {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	if (exists $class->{'urlindex'}->{ $url }) {
+	if (exists $class->{'url-index'}->{ $url }) {
 
-		$class->deleteIndex($class->{'urlindex'}->{ $url });
+		$class->deleteIndex($class->{'url-index'}->{ $url });
 
 	} else {
 
@@ -242,5 +267,49 @@ sub deleteIndex {
 	}
 }
 
+sub hotkeys {
+	my $class = shift;
+
+	return keys %{$class->{'hotkey-index'}};
+}
+
+sub hasHotkey {
+	my $class = shift;
+	my $key   = shift;
+
+	return $class->{'hotkey-index'}->{ $key };
+}
+
+sub setHotkey {
+	my $class = shift;
+	my $index = shift;
+	my $key   = shift;
+
+	if (defined $key && $class->{'hotkey-index'}->{ $key }) {
+
+		$log->warn("Hotkey $key already used - not setting");
+		return;
+	}
+
+	my ($pos, $i) = $class->level($index, 'contains');
+
+	if (ref @{$pos}[ $i ] eq 'HASH') {
+
+		if (defined $key) {
+			
+			@{$pos}[ $i ]->{'hotkey'} = $key;
+
+			$log->info("Setting hotkey $key for index $index");
+
+		} else {
+
+			delete @{$pos}[ $i ]->{'hotkey'};
+
+			$log->info("Deleting hotkey for index $index");
+		}
+
+		$class->save;
+	}
+}
 
 1;
