@@ -82,12 +82,12 @@ preset_3.single			= playFavorite_3
 preset_4.single			= playFavorite_4
 preset_5.single			= playFavorite_5
 preset_6.single			= playFavorite_6
-preset_1.hold			= storeFavorite_1
-preset_2.hold			= storeFavorite_2
-preset_3.hold			= storeFavorite_3
-preset_4.hold			= storeFavorite_4
-preset_5.hold			= storeFavorite_5
-preset_6.hold			= storeFavorite_6
+preset_1.hold			= favorites_add1
+preset_2.hold			= favorites_add2
+preset_3.hold			= favorites_add3
+preset_4.hold			= favorites_add4
+preset_5.hold			= favorites_add5
+preset_6.hold			= favorites_add6
 
 # playing display modes
 now_playing				= playdisp_toggle

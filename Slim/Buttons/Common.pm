@@ -748,7 +748,9 @@ our %functions = (
 		my $buttonarg = shift;
 		my $playdisp  = undef;
 
-		if (defined $buttonarg && $buttonarg eq "add") {
+		if (defined $buttonarg && $buttonarg =~ /^add$|^add(\d+)/) {
+
+			my $hotkey = $1;
 
 			# First lets try for a listRef from INPUT.*
 			my $list = $client->modeParam('listRef');
@@ -819,8 +821,25 @@ our %functions = (
 				$title = $client->modeParam('title');
 			}
 
-			if ($url && $title) {
-				my (undef, $hotkey) = Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser, 'hotkey');
+			my $favs = Slim::Utils::Favorites->new($client);
+
+			if ($url && $title && $favs) {
+
+				if (defined $hotkey) {
+					
+					my $oldindex = $favs->hasHotkey($hotkey);
+
+					$favs->deleteIndex($oldindex) if defined $oldindex;
+
+					my $newindex = $favs->add($url, $title, $type || 'audio', $parser);
+
+					$favs->setHotkey($newindex, $hotkey);
+
+				} else {
+
+					my (undef, $hotkey) = $favs->add($url, $title, $type || 'audio', $parser, 'hotkey');
+				}
+
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
 				} );
