@@ -50,9 +50,7 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
-
-our $modules = ();
-our %enabled = ();
+use Slim::Utils::Strings qw(string);
 
 # since we just jump into INPUT.List, we don't need any functions of our own
 our %functions = ();
@@ -179,7 +177,7 @@ sub init {
 			'header' => 'INFORMATION_MENU_MODULE',
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
-			'listRef' => undef, # filled in setMode
+			'listRef' => \&moduleList,
 			'externRef' => \&moduleDisplay,
 			'externRefArgs' => 'CV',
 			'menuName' => 'module',
@@ -197,11 +195,6 @@ sub forgetClient {
 	my $client = shift;
 	
 	delete $current{ $client };
-}
-
-sub module_list {
-	return undef unless $modules;
-	return [sort { $modules->{$a} cmp $modules->{$b} } keys %$modules];
 }
 
 sub timeFormat {
@@ -233,29 +226,43 @@ sub infoDisplay {
 	}
 }
 
+# function defining the list of plugins to display
+sub moduleList {
+	my $plugins = Slim::Utils::PluginManager->allPlugins;
+
+	my @modules;
+
+	for my $key (keys %{$plugins}) {
+		push @modules, $key if $plugins->{$key}->{'module'};
+	}
+
+	@modules = sort { string($plugins->{$a}->{'name'}) cmp string($plugins->{$b}->{'name'}) } @modules;
+
+	return \@modules;
+}
+
 # function providing the second line of the display for the module menu
 sub moduleDisplay {
 	my $client = shift;
-	my $item = shift;
+	my $key    = shift;
 
-	my @info = $client->string($modules->{$item});
+	my $plugin = Slim::Utils::PluginManager->dataForPlugin($key);
 
-	my $version = eval {
-		no strict 'refs';
-		${"${item}::VERSION"};
-	};
+	my @info = $client->string($plugin->{'name'});
 
-	if ($@ || !$version) {
+	my $version = $plugin->{'version'};
+
+	if (!$version) {
 		push @info, $client->string('INFORMATION_NO_VERSION');
-	} else {
 
+	} else {
 		$version =~ s/^\s+//;
 		$version =~ s/\s+$//;
 
-		push @info, $client->string('INFORMATION_VERSION') . ": $version";
+		push @info, $version;
 	}
 
-	if ($enabled{$item}) {
+	if (Slim::Utils::PluginManager->isEnabled($key)) {
 		push(@info, $client->string('ENABLED'));
 	} else {
 		push(@info, $client->string('INFORMATION_DISABLED'));
@@ -285,7 +292,10 @@ sub mainExitHandler {
 		}
 
 		my %nextParams = %{$menuParams{$nextmenu}};
-		$current{$client}{$nextmenu} = $menuParams{$nextmenu}{'listRef'}[0] unless exists($current{$client}{$nextmenu});
+		if (ref $nextParams{'listRef'} eq 'CODE') {
+			$nextParams{'listRef'} = $nextParams{'listRef'}->();
+		}
+		$current{$client}{$nextmenu} = $nextParams{'listRef'}[0] unless exists($current{$client}{$nextmenu}); 
 		$nextParams{'valueRef'} = \$current{$client}{$nextmenu};
 
 		if ($nextmenu eq catdir('main','player')) {
@@ -322,13 +332,6 @@ sub setMode {
 		Slim::Utils::Timers::killTimers($client, \&updateClientStatus);
 		Slim::Buttons::Common::popMode($client);
 		return;
-	}
-
-	unless (ref($modules)) {
-		my $plugins = Slim::Utils::PluginManager->allPlugins;
-		$modules->{$_} = $plugins->{$_}->{'name'}for Slim::Utils::PluginManager->installedPlugins();
-		$enabled{$_} = 1 for (Slim::Utils::PluginManager->enabledPlugins($client));
-		$menuParams{catdir('main','module')}{'listRef'} = module_list();
 	}
 
 	$current{$client}{main} = 'library' unless exists($current{$client}{main});
