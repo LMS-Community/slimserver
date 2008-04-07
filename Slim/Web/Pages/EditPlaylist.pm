@@ -92,14 +92,22 @@ sub saveCurrentPlaylist {
 				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
 					$client->string('UNTITLED');
 
-		# Changed by Fred to fix the issue of getting the playlist object
-		# by setting $p1 to it, which was messing up callback and the CLI.
+		if ($title ne Slim::Utils::Misc::cleanupFilename($title)) {
 
-		my $request = Slim::Control::Request::executeRequest($client, ['playlist', 'save', $title]);
+			$params->{'warning'} = 'FILENAME_WARNING';
 
-		if (defined $request) {
-		
-			$params->{'playlist.id'} = $request->getResult('__playlist_id');
+		} else {
+			
+			# Changed by Fred to fix the issue of getting the playlist object
+			# by setting $p1 to it, which was messing up callback and the CLI.
+	
+			my $request = Slim::Control::Request::executeRequest($client, ['playlist', 'save', $title]);
+	
+			if (defined $request) {
+			
+				$params->{'playlist.id'} = $request->getResult('__playlist_id');
+			}
+	
 		}
 
 		# setup browsedb params to view the current playlist
@@ -125,30 +133,37 @@ sub renamePlaylist {
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 	$params->{'level'}     = 1;
 	
-	my $playlist_id = $params->{'playlist.id'};
-	my $newName     = $params->{'newname'};
-	my $dry_run     = !$params->{'overwrite'};
+	my $newName = $params->{'newname'};
+	if ($newName ne Slim::Utils::Misc::cleanupFilename($newName)) {
+			
+		$params->{'warning'} = 'FILENAME_WARNING';
 
-	my $request = Slim::Control::Request::executeRequest(undef, [
-					'playlists', 
-					'rename', 
-					'playlist_id:' . $playlist_id,
-					'newname:' . $newName,
-					'dry_run:' . $dry_run]);
-
-	if (blessed($request) && $request->getResult('overwritten_playlist_id') && !$params->{'overwrite'}) {
-
-			$params->{'RENAME_WARNING'} = 1;
-
-	}
+	} else {
+			
+		my $playlist_id = $params->{'playlist.id'};
+		my $dry_run     = !$params->{'overwrite'};
 	
-	else {
-
 		my $request = Slim::Control::Request::executeRequest(undef, [
 						'playlists', 
 						'rename', 
 						'playlist_id:' . $playlist_id,
-						'newname:' . $newName]);
+						'newname:' . $newName,
+						'dry_run:' . $dry_run]);
+	
+		if (blessed($request) && $request->getResult('overwritten_playlist_id') && !$params->{'overwrite'}) {
+	
+			$params->{'warning'} = 'RENAME_WARNING';
+	
+		}
+		
+		else {
+	
+			my $request = Slim::Control::Request::executeRequest(undef, [
+							'playlists', 
+							'rename', 
+							'playlist_id:' . $playlist_id,
+							'newname:' . $newName]);
+		}
 	}
 
 	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
@@ -165,9 +180,9 @@ sub deletePlaylist {
 	# Warn the user if the playlist already exists.
 	if (blessed($playlistObj) && !$params->{'confirm'}) {
 
-		$params->{'DELETE_WARNING'} = 1;
-		$params->{'level'}          = 1;
-		$params->{'playlist.id'}    = $playlist_id;
+		$params->{'warning'}     = 'DELETE_WARNING';
+		$params->{'level'}       = 1;
+		$params->{'playlist.id'} = $playlist_id;
 
 	} elsif (blessed($playlistObj)) {
 	

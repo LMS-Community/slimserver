@@ -10516,6 +10516,10 @@ NOTE
 	SV	Observera:
 	ZH_CN	备注：
 
+FILENAME_WARNING
+	DE	Dateiname enthält illegale Zeichen.
+	EN	Illegal filename. Please check for illegal characters.
+
 RENAME_WARNING
 	CS	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
 	DA	Det valgte navn er optaget. Vælg venligst et andet navn til din spilleliste.

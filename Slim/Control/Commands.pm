@@ -882,8 +882,7 @@ sub playlistSaveCommand {
 	my $title  = $request->getParam('_title');
 	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
 
-	# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
-	$title     =~ tr|.:\x00-\x1f\/\\| |s;
+	$title = Slim::Utils::Misc::cleanupFilename($title);
 
 	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
@@ -1927,9 +1926,8 @@ sub playlistsNewCommand {
 
 	# get the parameters
 	my $title  = $request->getParam('name');
+	$title = Slim::Utils::Misc::cleanupFilename($title);
 
-	# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
-	$title     =~ tr|.:\x00-\x1f\/\\| |s;
 	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
 
 	# create the playlist URL
@@ -2000,11 +1998,10 @@ sub playlistsRenameCommand {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
+	$newName = Slim::Utils::Misc::cleanupFilename($newName);
+
 	# now perform the operation
-		
-	# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
-	$newName     =~ tr|.:\x00-\x1f\/\\| |s;
 	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
 		catfile($prefs->get('playlistdir'), $newName . '.m3u')

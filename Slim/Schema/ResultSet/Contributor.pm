@@ -149,7 +149,7 @@ sub descendAlbum {
 
 	if (defined $find->{'album.compilation'}) {
 
-		if ($cond->{'me.id'} && $cond->{'me.id'} == Slim::Schema->variousArtistsObject->id) {
+		if ($cond->{'me.id'} && $cond->{'me.id'} == Slim::Schema->variousArtistsObject->id && $find->{'contributor.role'} ne 'ALL') {
 
 			delete $cond->{'me.id'};
 		}
