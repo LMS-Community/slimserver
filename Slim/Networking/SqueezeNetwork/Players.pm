@@ -6,7 +6,7 @@ package Slim::Networking::SqueezeNetwork::Players;
 
 use strict;
 
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Control::Request;
 use Slim::Networking::SqueezeNetwork;
