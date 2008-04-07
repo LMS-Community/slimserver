@@ -359,17 +359,54 @@ sub onDecoderUnderrun {
 	# Flag that we don't want any buffering messages while loading the next track,
 	$client->showBuffering( 0 );
 	
-	return $callback->();
+	$log->debug( 'Scanning next HTTP track before playback' );
+	
+	$class->scanHTTPTrack( $client, $nextURL, $callback );
 }
 
 # On skip, load the next track before playback
 sub onJump {
-    my ( $class, $client, $nextURL, $callback ) = @_;
+	my ( $class, $client, $nextURL, $callback ) = @_;
 
 	# Display buffering info on loading the next track
 	$client->showBuffering( 1 );
+	
+	$log->debug( 'Scanning next HTTP track before playback' );
+	
+	$class->scanHTTPTrack( $client, $nextURL, $callback );
+}
 
-	return $callback->();
+sub scanHTTPTrack {
+	my ( $class, $client, $nextURL, $callback ) = @_;
+	
+	# Bug 7739, Scan the next track before we play it
+	Slim::Utils::Scanner->scanPathOrURL( {
+		url      => $nextURL,
+		client   => $client,
+		callback => sub {
+			my ( $foundItems, $error ) = @_;
+			
+			if ( scalar @{$foundItems} ) {
+				# If the item expanded into a playlist or is different from the original,
+				# splice it into the playlist
+				if ( scalar @{$foundItems} > 1 || $foundItems->[0] ne $nextURL ) {
+					# Find the location of nextURL in the playlist
+					my $i = 0;
+				
+					for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
+						if ( $item->url eq $nextURL ) {
+							$log->debug( 'Splicing ' . scalar( @{$foundItems} ) . " scanned tracks into playlist at index $i" );
+							splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, @{$foundItems};
+							last;
+						}
+						$i++;
+					}
+				}
+			}
+			
+			$callback->();
+		},
+	} );
 }
 
 # Allow mp3tunes tracks to be scrobbled
