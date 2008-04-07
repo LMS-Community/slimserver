@@ -489,7 +489,7 @@ sub gotOPML {
 		'header'     => fitTitle( $client, $title, scalar @{ $opml->{'items'} } ),
 		'listRef'    => $opml->{'items'},
 
-		'isSorted'   => 1,
+		'isSorted'   => $opml->{sorted} || 0,
 		'lookupRef'  => sub {
 			my $index = shift;
 
