@@ -8,7 +8,7 @@ use strict;
 
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
-use JSON::XS qw(to_json from_json);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Control::Request;
 use Slim::Hardware::IR;

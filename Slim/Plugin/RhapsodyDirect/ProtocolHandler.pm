@@ -8,7 +8,7 @@ use strict;
 use warnings;
 
 use HTML::Entities qw(encode_entities);
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(decode_base64);
 
 use Slim::Plugin::RhapsodyDirect::RPDS;

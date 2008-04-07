@@ -37,7 +37,7 @@ use POSIX qw(LC_CTYPE LC_TIME);
 use Text::Unidecode;
 
 # This works better than Encode::Guess
-use Encode::Detect::Detector;
+#use Encode::Detect::Detector;
 
 use Slim::Utils::Log;
 
