@@ -456,6 +456,11 @@ sub parseOPML {
 	if ( $xml->{'command'} ) {
 		$opml->{'command'} = $xml->{'command'};
 	}
+	
+	# Optional item to indicate if the list is sorted
+	if ( $xml->{sorted} ) {
+		$opml->{sorted} = $xml->{sorted};
+	}
 
 	$xml = undef;
 
