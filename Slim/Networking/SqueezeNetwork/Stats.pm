@@ -6,7 +6,7 @@ package Slim::Networking::SqueezeNetwork::Stats;
 
 use strict;
 
-use JSON::XS qw(to_json from_json);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Control::Request;
 use Slim::Networking::SqueezeNetwork;

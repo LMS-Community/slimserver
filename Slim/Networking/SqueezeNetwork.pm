@@ -8,7 +8,7 @@ use strict;
 use base qw(Slim::Networking::SimpleAsyncHTTP);
 
 use Digest::SHA1 qw(sha1_base64);
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape);
 
 use Slim::Networking::SqueezeNetwork::Players;

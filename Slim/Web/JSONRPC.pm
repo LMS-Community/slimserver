@@ -13,7 +13,7 @@ package Slim::Web::JSONRPC;
 use strict;
 
 use HTTP::Status;
-use JSON::XS qw(to_json from_json);
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 
 use Slim::Web::HTTP;

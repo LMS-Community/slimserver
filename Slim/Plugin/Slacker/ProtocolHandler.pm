@@ -9,7 +9,7 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.slacker',

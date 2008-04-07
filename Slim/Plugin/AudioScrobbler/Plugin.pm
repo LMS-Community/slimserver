@@ -39,7 +39,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 
 use Digest::MD5 qw(md5_hex);
-use JSON::XS qw(to_json from_json);
+use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8 uri_unescape);
 
 my $prefs = preferences('plugin.audioscrobbler');

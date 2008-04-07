@@ -21,7 +21,7 @@ use strict;
 use bytes;
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Date;
-use JSON::XS qw(to_json from_json);
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_unescape);
 
