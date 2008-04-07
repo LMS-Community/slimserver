@@ -958,6 +958,24 @@ sub folderFilter {
 	return fileFilter(catdir(@path), $folder);
 }
 
+
+=head2 cleanupFilename( $filename )
+
+	Do some basic, simple sanity checks.
+	Don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
+
+=cut
+
+sub cleanupFilename {
+	my $filename = shift; 
+
+	$filename =~ tr|:\x00-\x1f\/\\| |s;
+	$filename =~ s/^\.//;
+
+	return $filename;
+}
+
+
 =head2 readDirectory( $dirname, [ $validRE ])
 
 	Return the contents of a directory $dirname as an array.  Optionally return only 
