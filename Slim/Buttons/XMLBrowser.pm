@@ -479,6 +479,15 @@ sub gotOPML {
 		
 		return;
 	}
+	
+	if ( $log->is_debug ) {
+		if ( $opml->{sorted} ) {
+			$log->debug( 'Treating list as sorted' );
+		}
+		else {
+			$log->debug( 'Treating list as unsorted' );
+		}
+	}
 
 	my %params = (
 		'url'        => $url,
@@ -1809,7 +1818,7 @@ sub _cliQuery_done {
 				}
 
 				# Bug 6874, add a "Play All" item if list contains more than 1 playable item with duration
-				if ( $menuMode ) {
+				if ( $menuMode ) {					
 					for my $item ( @{$subFeed->{items}}[$start..$end] ) {
 						if ( $item->{duration} && hasAudio($item) ) {
 							my $actions = {
@@ -1824,30 +1833,34 @@ sub _cliQuery_done {
 									params => $params,
 								},
 							};
-							
+						
 							$actions->{do}->{params}->{item_id}  = $item_id;
 							$actions->{add}->{params}->{item_id} = $item_id;
-							
+						
 							$actions->{play} = $actions->{do};
-							
+						
 							my $text = $request->client
 								? $request->client->string('JIVE_PLAY_ALL')
 								: Slim::Utils::Strings::string('JIVE_PLAY_ALL');
-							
-							$request->addResultLoop($loopname, $cnt, 'text', $text);
-							$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
-							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+								
+							# Bug 7517, only add Play All at the top, not in the middle if we're
+							# dealing with a chunked list starting at 200, etc
+							if ( $start == 0 ) {
+								$request->addResultLoop($loopname, $cnt, 'text', $text);
+								$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+								$cnt++;
+							}
 							
 							$count++;
-							$cnt++;
-							
+						
 							# Bug 7109, we don't want later items to have the wrong index so we need to
 							# add _slim_id keys to them.
 							my $cnt2 = 0;
 							for my $subitem ( @{$subFeed->{items}}[$start..$end] ) {
 								$subitem->{_slim_id} = $cnt2++;
 							}
-							
+						
 							last;
 						}
 					}
