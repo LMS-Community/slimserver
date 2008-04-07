@@ -7,7 +7,7 @@ package Slim::Plugin::Pandora::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Player::Playlist;
 use Slim::Utils::Misc;

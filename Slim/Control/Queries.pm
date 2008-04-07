@@ -32,7 +32,7 @@ L<Slim::Control::Queries> implements most SqueezeCenter queries and is designed 
 use strict;
 
 use Data::URIEncode qw(complex_to_query);
-use JSON::XS qw(from_json to_json);
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
