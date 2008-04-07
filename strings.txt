@@ -321,6 +321,22 @@ SOFTSQUEEZE_HOME
 	SV	SoftSqueeze huvudmeny
 	ZH_CN	SoftSqueeze主页
 
+HOMEMENU
+	DA	Hovedmenu
+	DE	Hauptmenü
+	EN	Home
+	ES	Inicio
+	FI	Valikko
+	FR	Menu
+	HE	ראשי
+	IT	Pagina iniziale
+	JA	ホーム
+	NL	Hoofdmenu
+	NO	Hovedmeny
+	PT	Início
+	SV	Huvudmeny
+	ZH_CN	主页
+
 LIBRARY_CONTAINS
 	CS	Hudební archiv obsahuje
 	DA	Dit Musiksbibliotek indeholder

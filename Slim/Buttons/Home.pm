@@ -633,6 +633,10 @@ sub homeheader {
 
 		return $client->string('TRANSPORTER_HOME');
 
+	} elsif ($client->isa("Slim::Player::Boom")) {
+
+		return $client->string('HOMEMENU');
+
 	} else {
 
 		return $client->string('SQUEEZEBOX_HOME');
