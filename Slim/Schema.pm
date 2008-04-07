@@ -843,7 +843,12 @@ sub newTrack {
 		$key = lc($key);
 
 		if (defined $val && exists $trackAttrs->{$key}) {
-
+			
+			# Bug 7731, filter out duplicate keys that end up as array refs
+			if ( ref $val eq 'ARRAY' ) {
+				$val = $val->[0];
+			}
+			
 			$log->debug("  $key : $val");
 
 			$columnValueHash->{$key} = $val;
@@ -2253,6 +2258,13 @@ sub _postCheckAttributes {
 			$set{'year'} = $track->year;
 		} else {
 			$set{'year'} = undef;
+		}
+		
+		# Bug 7731, filter out duplicate keys that end up as array refs
+		while ( my ($tag, $value) = each %set ) {
+			if ( ref $value eq 'ARRAY' ) {
+				$set{$tag} = $value->[0];
+			}
 		}
 
 		$albumObj->set_columns(\%set);
