@@ -163,8 +163,10 @@ sub playFavorite {
 	my $digit  = shift;
 
 	my $favs  = Slim::Utils::Favorites->new($client);
+
+	# play the favorite with the hotkey of $digit, or if not set the favorite with index $digit
 	my $index = $favs->hasHotkey($digit);
-	my $entry = defined $index ? $favs->entry($index) : undef;
+	my $entry = defined $index ? $favs->entry($index) : $favs->entry($digit ? $digit-1 : 9);
 
 	if (defined $entry && $entry->{'type'} && $entry->{'type'} eq 'audio') {
 
