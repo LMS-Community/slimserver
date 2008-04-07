@@ -5,7 +5,7 @@ package Slim::Plugin::Live365::ProtocolHandler;
 use strict;
 use base qw( Slim::Player::Protocols::HTTP );
 
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape);
 
 use Slim::Player::Playlist;
