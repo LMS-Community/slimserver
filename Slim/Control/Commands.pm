@@ -1354,20 +1354,6 @@ sub playlistXtracksCommand {
 	my $size  = scalar(@tracks);
 	my $playListSize = Slim::Player::Playlist::count($client);
 
-	# Bug 4092, if we have a single remote URL in a playlist, send it to the non-tracks command for scanning
-	# XXX: Playlists with multiple remote URLs are a trickier problem to solve, people should really not do this!
-	#
-	# Don't do this check for the digital input source though.
-	# It masquerades as a direct streaming protocol handler.
-	if ( $size == 1 && !$delete && $tracks[0]->content_type ne 'src' &&
-		Slim::Music::Info::isRemoteURL( $tracks[0]->url ) ) {
-
-		$cmd =~ s/tracks//;
-		$client->execute([ 'playlist', $cmd, $tracks[0] ]);
-		$request->setStatusDone(); # XXX: Is this needed?
-		return;
-	}
-
 	# add or remove the found songs
 	if ($load || $add || $insert) {
 		push(@{Slim::Player::Playlist::playList($client)}, @tracks);
@@ -1400,8 +1386,9 @@ sub playlistXtracksCommand {
 			# update CURTRACK when the song changes.
 			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
 		}
-
-		Slim::Player::Source::jumpto($client, $jumpToIndex);
+		
+		$client->execute( [ 'playlist', 'jump', $jumpToIndex ] );
+		
 		$client->currentPlaylistModified(0);
 	}
 
@@ -1412,8 +1399,6 @@ sub playlistXtracksCommand {
 	if ($load || $add || $insert || $delete) {
 		$client->currentPlaylistUpdateTime(Time::HiRes::time());
 	}
-
-	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 	$request->setStatusDone();
 }

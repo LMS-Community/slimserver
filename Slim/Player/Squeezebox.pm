@@ -945,6 +945,8 @@ sub stream {
 
 				$pcmsamplesize = 0;
 			}
+			
+			logger('player.streaming.direct')->debug( "WMA PCM sample size set to $pcmsamplesize" );
 
 			$pcmsamplerate   = chr(1);
 			$pcmendian       = '?';
