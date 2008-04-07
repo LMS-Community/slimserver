@@ -24,6 +24,8 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log = logger('player.streaming.direct');
+
 use constant DEFAULT_TYPE => 'wma';
 
 # Use the same random GUID for all connections
@@ -225,8 +227,6 @@ sub parseMetadata {
 
 sub setMetadata {
 	my ( $client, $url, $wma, $streamNumber ) = @_;
-
-	my $log = logger('player.streaming.direct');
 	
 	# Bitrate method 1: from parseDirectBody, we have the whole WMA object
 	if ( $streamNumber && ref $wma->stream ) {
@@ -304,6 +304,30 @@ sub setMetadata {
 			$log->info("Setting title to '$title' from WMA metadata");
 		}
 	}
+}
+
+# Handle normal advances to the next track
+sub onDecoderUnderrun {
+	my ( $class, $client, $nextURL, $callback ) = @_;
+	
+	# Flag that we don't want any buffering messages while loading the next track,
+	$client->showBuffering( 0 );
+	
+	$log->debug( 'Scanning next HTTP track before playback' );
+	
+	Slim::Player::Protocols::HTTP->scanHTTPTrack( $client, $nextURL, $callback );
+}
+
+# On skip, load the next track before playback
+sub onJump {
+	my ( $class, $client, $nextURL, $callback ) = @_;
+
+	# Display buffering info on loading the next track
+	$client->showBuffering( 1 );
+	
+	$log->debug( 'Scanning next HTTP track before playback' );
+	
+	Slim::Player::Protocols::HTTP->scanHTTPTrack( $client, $nextURL, $callback );
 }
 
 1;
