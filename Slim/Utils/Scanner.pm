@@ -1218,9 +1218,14 @@ sub scanWMAStreamDone {
 	$mmsURL =~ s/^http/mms/;
 	
 	# Cache this metadata for the MMS protocol handler to use
+	my $meta = {
+		meta    => $wma,
+		headers => $http->response->headers,
+	};
+	
 	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wma_streamNum_' . $mmsURL, $streamNum,      '1 day' );	
-	$cache->set( 'wma_metadata_'  . $mmsURL, $wma,            '1 day' );
+	$cache->set( 'wma_metadata_'  . $mmsURL, $meta,           '1 day' );
 	
 	# Always return WMA URLs using MMS prefix so correct direct stream headers are used
 	$args->{'foundItems'}->[0]->url( $mmsURL );
