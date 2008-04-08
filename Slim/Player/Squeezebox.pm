@@ -57,6 +57,8 @@ sub reconnect {
 	my $tcpsock = shift;
 	my $reconnect = shift;
 	my $bytes_received = shift;
+	
+	my $log = logger('player.source');
 
 	$client->tcpsock($tcpsock);
 	$client->paddr($paddr);
@@ -81,28 +83,37 @@ sub reconnect {
 
 	if (!$reconnect) {
 
-		if ($client->playmode() eq 'play') {
-
-			# If bytes_received was sent and we're dealing 
-			# with a seekable source, just resume streaming
-			# else stop and restart.    
-
-			if (!$bytes_received || $client->audioFilehandleIsSocket()) {
-
+		if (!Slim::Player::Sync::isSynced($client)) {
+			
+			# Only do this if not synced as restoreSync will have done any restart in that case
+			
+			if ($client->playmode() eq 'play') {
+	
+				# If bytes_received was sent and we're dealing 
+				# with a seekable source, just resume streaming
+				# else stop and restart.    
+	
+				if (!$bytes_received || $client->audioFilehandleIsSocket()) {
+	
+					Slim::Player::Source::playmode($client, "stop");
+					$bytes_received = 0;
+				}
+				
+				$log->info($client->id . " restaring play on pseudo-reconnect at $bytes_received bytes");
+				Slim::Player::Source::playmode($client, "play", $bytes_received);
+	
+			} elsif ($client->playmode() eq 'pause') {
+	
 				Slim::Player::Source::playmode($client, "stop");
-				$bytes_received = 0;
 			}
 
-			Slim::Player::Source::playmode($client, "play", $bytes_received);
-
-		} elsif ($client->playmode() eq 'pause') {
-
-			Slim::Player::Source::playmode($client, "stop");
-
-		} elsif ($client->playmode() eq 'stop') {
+		} 
+		
+		if ($client->playmode() eq 'stop') {
 
 			# Ensure that a new client is stopped, but only on sb2s
 			if ( $client->isa('Slim::Player::Squeezebox2') ) {
+				$log->info($client->id . " forcing stop on pseudo-reconnect");
 				$client->stop();
 			}
 		}
@@ -788,7 +799,7 @@ sub stream {
 
 	if ($client->opened()) {
 
-		if ( $log->is_info ) {
+		if ( $log->is_info && $command eq 's' || $log->is_debug) {
 			$log->info(sprintf("stream called: $command paused: %s format: %s url: %s",
 				($params->{'paused'} || 'undef'), ($format || 'undef'), ($params->{'url'} || 'undef')
 			));
@@ -1073,7 +1084,7 @@ sub stream {
 			return;
 		}
 
-		if ( $log->is_info ) {
+		if ( $log->is_info && $command eq 's' ) {
 			$log->info(sprintf(
 				"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
 				$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
@@ -1106,7 +1117,7 @@ sub stream {
 			$bufferThreshold = 10;
 		}
 
-		$log->info("flags: $flags");
+		$log->debug("flags: $flags");
 
 		my $frame = pack 'aaaaaaaCCCaCCCNnN', (
 			$command,	# command
@@ -1132,7 +1143,7 @@ sub stream {
 	
 		$frame .= $request_string;
 
-		if ( $log->is_info ) {
+		if ( $log->is_debug ) {
 			$log->info("sending strm frame of length: " . length($frame) . " request string: [$request_string]");
 		}
 
