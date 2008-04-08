@@ -625,3 +625,11 @@ div.fileselectorautocomplete ul li {
 .favoritesText {
 	font-size: 160%;
 }
+
+/* XMLBrowser details */
+.songInfoText img {
+	width: 200px;
+	left: -220px;
+	top: -20px;
+	position: absolute;
+}

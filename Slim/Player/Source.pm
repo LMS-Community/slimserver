@@ -600,6 +600,12 @@ sub decoderUnderrun {
 		$log->info($client->id, ": Decoder underrun while this mode: ", $client->playmode);
 	}
 	
+	# Bug 6508
+	if (playmode($client) eq 'stop') {
+		$log->warn( $client->id . ": discarding bogus decoderUnderrun while stopped" );
+		return;
+	}
+	
 	# in the case that we're starting up a digital input, 
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));

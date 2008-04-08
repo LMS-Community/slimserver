@@ -268,8 +268,9 @@ sub sync {
 	# Save Status to Prefs file
 	saveSyncPrefs($client, $buddy);
 
-	# Bug #7121
-	if (!$client->power()) {
+	# Bugs #7121, #6508
+	if (!$client->power() || !$buddy->connected()) {
+		$log->info($client->id .": syncing not live");
 		return;
 	}
 
@@ -468,8 +469,8 @@ sub checkSync {
 	return if $client->playmode eq 'stop';
 
 	if ( 0 && $log->is_debug && isSynced($client) ) {
-		$log->debug(sprintf("Player %s has %d chunks and %d%% full buffer, readyToSync=%s", 
-			$client->id, scalar(@{$client->chunks}), $client->usage, $client->readytosync()
+		$log->debug(sprintf("Player %s (%s) has %d chunks and %d%% full buffer, readyToSync=%s", 
+			$client->id, $client->playmode(), scalar(@{$client->chunks}), $client->usage*100, $client->readytosync()
 		));
 	}
 
@@ -613,6 +614,7 @@ sub checkSync {
 		my $recentThreshold = $now - PLAYPOINT_RECENT_THRESHOLD;
 		my @playerPlayPoints;
 		foreach my $player (@group) {
+			return unless $player->readytosync;
 			next unless ($player->isPlayer() && $prefs->client($player)->get('maintainSync'));
 			my $playPoint = $player->playPoint();
 			if ( !defined $playPoint ) {
