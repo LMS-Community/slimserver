@@ -209,6 +209,13 @@ sub clientForgetCommand {
 	# get the parameters
 	my $client = $request->client();
 	
+	# Bug 6508
+	# Can have a timing race with client reconnecting before this command get executed
+	if ($client->connected()) {
+		$log->info($client->id . ': not forgetting as connected again');
+		return;
+	}
+	
 	# Bug 3115, temporarily unsync player when disconnecting
 	if ( Slim::Player::Sync::isSynced($client) ) {
 		Slim::Player::Sync::unsync( $client, 'temp' );
