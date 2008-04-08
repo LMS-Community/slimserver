@@ -936,22 +936,24 @@ sub stream {
 				}
 				else {
 					$pcmsamplesize = 1;
-				}
-				
-				# Bug 5631
-				# Check WMA metadata to see if this remote stream is a live stream
-				# or a normal file.  Normal file requires pcmsamplesize = 0 whereas
-				# live streams require pcmsamplesize = 1
-				my $mmsURL = $server_url;
-				$mmsURL    =~ s/^http/mms/;
-				my $cache = Slim::Utils::Cache->new;
-				my $wma   = $cache->get( 'wma_metadata_'  . $mmsURL );
-				
-				if ( $wma ) {
-					my $flags = $wma->info('flags');
-					if ( $flags->{broadcast} == 0 ) {
-						# A normal file
-						$pcmsamplesize = 0;
+					
+					# Bugs 5631, 7762
+					# Check WMA metadata to see if this remote stream is being served from a
+					# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
+					# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
+					my $mmsURL = $server_url;
+					$mmsURL    =~ s/^http/mms/;
+					my $cache = Slim::Utils::Cache->new;
+					my $wma   = $cache->get( 'wma_metadata_'  . $mmsURL ) || {};
+
+					if ( $wma->{meta} ) {
+						if ( $wma->{meta}->info('flags')->{broadcast} == 0 ) {
+							if ( $wma->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
+								# The server didn't return the expected ASF header content-type,
+								# so we assume it's not a Windows Media server
+								$pcmsamplesize = 0;
+							}
+						}
 					}
 				}
 
