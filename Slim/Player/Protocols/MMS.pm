@@ -148,14 +148,14 @@ sub requestString {
 	
 	my $cache     = Slim::Utils::Cache->new;
 	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
-	my $wma       = $cache->get( 'wma_metadata_'  . $mmsURL );
+	my $wma       = $cache->get( 'wma_metadata_'  . $mmsURL ) || {};
 	
 	# Just in case, use stream #1
 	$streamNum ||= 1;
 	
 	# Handle our metadata
-	if ( $wma ) {
-		setMetadata( $client, $url, $wma, $streamNum );
+	if ( $wma->{meta} ) {
+		setMetadata( $client, $url, $wma->{meta}, $streamNum );
 	}
 
 	push @headers, (
