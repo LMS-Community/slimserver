@@ -80,6 +80,13 @@ sub initPlugin {
 	
 	Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url'],
 		[0, 1, 1, \&banTrack]);
+	
+	# Pref change hooks
+	$prefs->setChange( sub {
+		my $value  = $_[1];
+		my $client = $_[2] || return;
+		changeAccount( $client, $value );
+	}, 'account' );
 }
 
 sub shutdownPlugin {
