@@ -266,7 +266,7 @@ sub init {
 	# The revision file may not exist for svn copies.
 	my $tempBuildInfo = eval { File::Slurp::read_file(
 		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
-	) } || 'TRUNK\nUNKNOWN';
+	) } || "TRUNK\nUNKNOWN";
 
 	# Once we've read the file, split it up so we have the Revision and Build Date
 	my @tempBuildArray = split (/\n/, $tempBuildInfo);
