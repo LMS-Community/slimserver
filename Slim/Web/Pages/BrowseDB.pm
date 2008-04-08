@@ -200,7 +200,7 @@ sub browsedb {
 		if ($params->{'contributor.id'} == Slim::Schema->variousArtistsObject->id) {
 
 			# bug 6643: don't remove the contributor id when referred to by the search result page
-			delete $params->{'contributor.id'}; # unless $params->{'contributor.role'};
+			delete $params->{'contributor.id'} unless $params->{'contributor.role'};
 
 			$params->{'album.compilation'} = 1;
 		}

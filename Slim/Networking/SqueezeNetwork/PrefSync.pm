@@ -62,10 +62,17 @@ sub _init_done {
 		
 		Slim::Utils::Timers::setTimer(
 			$client,
-			time() + 10,
+			time() + int( rand(10) ),
 			\&syncDown,
 		);
 	}
+	
+	# Sync global prefs
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + int( rand(10) ),
+		\&syncDownGlobal,
+	);
 	
 	# Subscribe to pref changes
 	Slim::Control::Request::subscribe( 
@@ -135,6 +142,9 @@ sub shutdown {
 		Slim::Utils::Timers::killTimers( $client, \&syncDown );
 	}
 	
+	Slim::Utils::Timers::killTimers( undef, \&syncUpGlobal );
+	Slim::Utils::Timers::killTimers( undef, \&syncDownGlobal );
+	
 	$log->info( "SqueezeNetwork pref sync shutdown" );
 }
 
@@ -159,7 +169,30 @@ sub syncDown {
 	};
 	
 	if ( $log->is_debug ) {
-		$log->debug( "Syncing down from SN: " . Data::Dump::dump($sync) );
+		$log->debug( "Requesting sync down from SN: " . Data::Dump::dump($sync) );
+	}
+	
+	my $json = eval { to_json($sync) };
+	if ( $@ ) {
+		$http->error( $@ );
+		return _syncDown_error( $http );
+	}
+	
+	$http->post( $http->url( '/api/v1/prefs/sync_down' ), $json );
+}
+
+sub syncDownGlobal {
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_syncDown_done,
+		\&_syncDown_error,
+	);
+	
+	my $sync = {
+		since => $prefs->get('snLastSyncDown'),
+	};
+	
+	if ( $log->is_debug ) {
+		$log->debug( "Requesting global sync down from SN: " . Data::Dump::dump($sync) );
 	}
 	
 	my $json = eval { to_json($sync) };
@@ -181,65 +214,125 @@ sub _syncDown_done {
 		return _syncDown_error( $http );
 	}
 	
-	my $cprefs = $prefs->client($client);
-	
 	if ( $log->is_debug ) {
 		$log->debug( 'Sync down data from SN: ' . Data::Dump::dump($content) );
 	}
+
+	# Client prefs
+	if ( $client ) {
+		my $cprefs = $prefs->client($client);
 	
-	$cprefs->set( snLastSyncDown => $content->{timestamp} );
-	$cprefs->set( snSyncInterval => $content->{next_sync} );
+		$cprefs->set( snLastSyncDown => $content->{timestamp} );
+		$cprefs->set( snSyncInterval => $content->{next_sync} );
 	
-	$cprefs->remove('snSyncErrors');
-	
-	# Sync name if different
-	if ( $content->{name} && ( $content->{name} ne $client->name ) ) {
-		$client->name( $content->{name} );
-		$log->debug( 'Updated player name to ' . $content->{name} . ' from SN' );
-	}
+		$cprefs->remove('snSyncErrors');
 		
-	while ( my ($pref, $data) = each %{ $content->{prefs} } ) {
+		# Sync name if different
+		if ( $content->{name} && ( $content->{name} ne $client->name ) ) {
+			$client->name( $content->{name} );
+			$log->debug( 'Updated player name to ' . $content->{name} . ' from SN' );
+		}
+		
+		while ( my ($pref, $data) = each %{ $content->{prefs} } ) {
 			
-		# compare timestamps
-		if ( $data->{ts} > $cprefs->timestamp($pref) ) {		
+			if ( $pref =~ /\./ ) {
+				# It's a plugin pref
+				my ($ns, $prefname) = $pref =~ /(\w+\.\w+)\.(\w+)/;
+
+				my $rprefs = preferences($ns);
+				
+				# compare timestamps
+				if ( $data->{ts} > $rprefs->client($client)->timestamp($prefname) ) {
+					if ( $log->is_debug ) {
+						$log->debug("Synced " . $client->id . " ${ns}.${prefname} to: " . Data::Dump::dump( $data->{value} ) );
+					}
+
+					$rprefs->client($client)->set( $prefname => $data->{value} );
+
+					# Wipe timestamp values so the pref is
+					# not immediately synced back up to SN
+					$rprefs->client($client)->timestamp( $prefname, 'wipe' );
+				}
+			}
+			else {
+				# compare timestamps
+				if ( $data->{ts} > $cprefs->timestamp($pref) ) {
+
+					# special handling needed to rewrite disabledirsets with full pathname
+					if ( $pref eq 'disabledirsets' ) {
+						# Force array pref
+						if ( !ref $data->{value} ) {
+							$data->{value} = [ $data->{value} ];
+						}
+
+						# XXX: This may break if users have custom IR files in a different directory
+						my $irfiles = Slim::Hardware::IR::irfiles();
+						my $dir     = dirname( (keys %{$irfiles})[0] );
+						$data->{value} = [ map { catfile( $dir, $_ ) } @{ $data->{value} } ];
+					}			
+
+					if ( $log->is_debug ) {
+						$log->debug("Synced " . $client->id . " $pref to: " . Data::Dump::dump( $data->{value} ) );
+					}
+
+					$cprefs->set( $pref => $data->{value} );
+
+					# Wipe timestamp values so the pref is
+					# not immediately synced back up to SN
+					$cprefs->timestamp( $pref, 'wipe' );
+				}
+			}
+		}
+
+		$client->update;
+
+		if ( $log->is_debug ) {
+			$log->debug( 'Synced prefs from SN for player ' . $client->id );
+		}
+
+		# Schedule next sync
+		Slim::Utils::Timers::setTimer( 
+			$client, 
+			time() + $content->{next_sync},
+			\&syncDown,
+		);
+	}
+	
+	# Global prefs
+	else {
+		$prefs->set( snLastSyncDown => $content->{timestamp} );
+	
+		$prefs->remove('snSyncErrors');
+		
+		while ( my ($pref, $data) = each %{ $content->{prefs} } ) {
+			my ($ns, $prefname) = $pref =~ /(\w+\.\w+)\.(\w+)/;
 			
-			# special handling needed to rewrite disabledirsets with full pathname
-			if ( $pref eq 'disabledirsets' ) {
-				# Force array pref
-				if ( !ref $data->{value} ) {
-					$data->{value} = [ $data->{value} ];
+			my $rprefs = preferences($ns);		
+
+			# compare timestamps
+			if ( $data->{ts} > $rprefs->timestamp($prefname) ) {
+				
+				# If pref value looks like JSON, try to decode it
+				# (used for AudioScrobbler accounts)
+				if ( $data->{value} =~ /^(?:\[|{)/ ) {
+					my $decoded = eval { from_json( $data->{value} ) };
+					if ( !$@ ) {
+						$data->{value} = $decoded;
+					}
 				}
 				
-				# XXX: This may break if users have custom IR files in a different directory
-				my $irfiles = Slim::Hardware::IR::irfiles();
-				my $dir     = dirname( (keys %{$irfiles})[0] );
-				$data->{value} = [ map { catfile( $dir, $_ ) } @{ $data->{value} } ];
-			}			
-		
-			if ( $log->is_debug ) {
-				$log->debug("Synced $pref to: " . Data::Dump::dump( $data->{value} ) );
+				if ( $log->is_debug ) {
+					$log->debug("Synced ${ns}.${prefname} to: " . Data::Dump::dump( $data->{value} ) );
+				}
+
+				$rprefs->set( $prefname => $data->{value} );
+
+				# Wipe timestamp values so the pref is
+				# not immediately synced back up to SN
+				$rprefs->timestamp( $prefname, 'wipe' );
 			}
-		
-			$cprefs->set( $pref => $data->{value} );
-		
-			# Wipe timestamp values so the pref is
-			# not immediately synced back up to SN
-			$cprefs->timestamp( $pref, 'wipe' );
 		}
 	}
-	
-	$client->update;
-	
-	if ( $log->is_debug ) {
-		$log->debug( 'Synced prefs from SN for player ' . $client->id );
-	}
-	
-	# Schedule next sync
-	Slim::Utils::Timers::setTimer( 
-		$client, 
-		time() + $content->{next_sync},
-		\&syncDown
-	);
 }
 
 sub _syncDown_error {
@@ -248,31 +341,33 @@ sub _syncDown_error {
 	
 	my $client = $http->params('client');
 	
-	$prefs->remove('sn_session');
+	if ( $client ) {
+		# back off if we keep getting errors
+		my $cprefs = $prefs->client($client);
+		my $count  = $cprefs->get('snSyncErrors') || 0;
+		$cprefs->set( snSyncErrors => $count + 1 );
 	
-	# back off if we keep getting errors
-	my $cprefs = $prefs->client($client);
-	my $count = $cprefs->get('snSyncErrors') || 0;
-	$cprefs->set( snSyncErrors => $count + 1 );
+		my $retry = $cprefs->get('snSyncInterval') * ( $count + 1 );
 	
-	my $retry = $cprefs->get('snSyncInterval') * ( $count + 1 );
+		$log->error( "Sync Down failed: $error, will retry in $retry" );
 	
-	$log->error( "Sync Down failed: $error, will retry in $retry" );
-	
-	Slim::Utils::Timers::setTimer(
-		$client,
-		time() + $retry,
-		\&syncDown,
-	);
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + $retry,
+			\&syncDown,
+		);
+	}
+	else {
+		$log->error( "Global Sync Down failed: $error" );
+	}
 }
 
 # Callback whenever a pref is changed
-# XXX: Support changes to global prefs
 sub prefEvent {
 	my $request = shift;
-	my $client  = $request->client || return;
+	my $client  = $request->client;
 	
-	if ( !$client->isa('Slim::Player::Squeezebox2') ) {
+	if ( $client && !$client->isa('Slim::Player::Squeezebox2') ) {
 		return;
 	}
 	
@@ -280,27 +375,57 @@ sub prefEvent {
 	my $pref  = $request->getParam('_prefname');
 	my $value = $request->getParam('_newvalue');
 	
-	# Is the pref one we care about?
-	if ( !exists $can_sync->{$pref} ) {
-		return;
+	# Client prefs
+	if ( $client ) {
+		# Is the pref one we care about?
+		if ( !exists $can_sync->{$pref} ) {
+			return;
+		}
+		
+		# Was this pref just synced to us from SN?  If so, ignore it
+		if ( $prefs->client($client)->timestamp($pref) == -1 ) {
+			return;
+		}
+	
+		if ( $log->is_debug ) {
+			$log->debug( "Client prefEvent to sync: " . $client->id . " / $ns / $pref / " . Data::Dump::dump($value) );
+		}
+	
+		# Kill existing sync timer, if any
+		# This way, if someone is changing a lot of prefs, we don't sync until things
+		# have settled down for a while
+		Slim::Utils::Timers::killTimers( $client, \&syncUp );
+	
+		# Set a timer to sync the changes
+		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 30, \&syncUp );
 	}
 	
-	# Was this pref just synced to us from SN?  If so, ignore it
-	if ( $prefs->client($client)->timestamp($pref) == -1 ) {
-		return;
+	# Global prefs
+	else {
+		# Is the pref one we care about?
+		if ( !exists $can_sync->{ "${ns}.${pref}" } ) {
+			return;
+		}
+		
+		my $rprefs = preferences($ns);
+		
+		# Was this pref just synced to us from SN?  If so, ignore it
+		if ( $rprefs->timestamp($pref) == -1 ) {
+			return;
+		}
+		
+		if ( $log->is_debug ) {
+			$log->debug( "Global prefEvent to sync: $ns / $pref / " . Data::Dump::dump($value) );
+		}
+		
+		# Kill existing sync timer, if any
+		# This way, if someone is changing a lot of prefs, we don't sync until things
+		# have settled down for a while
+		Slim::Utils::Timers::killTimers( undef, \&syncUpGlobal );
+	
+		# Set a timer to sync the changes
+		Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + 30, \&syncUpGlobal );
 	}
-	
-	if ( $log->is_debug ) {
-		$log->debug( "prefEvent to sync: " . $client->id . " / $ns / $pref / " . Data::Dump::dump($value) );
-	}
-	
-	# Kill existing sync timer, if any
-	# This way, if someone is changing a lot of prefs, we don't sync until things
-	# have settled down for a while
-	Slim::Utils::Timers::killTimers( $client, \&syncUp );
-	
-	# Set a timer to sync the changes
-	Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 30, \&syncUp );
 }
 
 sub syncUp {
@@ -343,7 +468,7 @@ sub syncUp {
 	}
 	
 	if ( $log->is_debug ) {
-		$log->debug( 'Syncing up to SN: ' . Data::Dump::dump($sync) );
+		$log->debug( 'Syncing client prefs up to SN: ' . Data::Dump::dump($sync) );
 	}
 	
 	my $json = eval { to_json($sync) };
@@ -360,6 +485,55 @@ sub syncUp {
 		{
 			client => $client,
 		},
+	);
+	
+	$http->post( $http->url( '/api/v1/prefs/sync_up' ), $json );
+}
+
+sub syncUpGlobal {	
+	my $sync = {
+		prefs => {},
+	};
+	
+	my $sn_timediff = $prefs->get('sn_timediff');
+	
+	# Send prefs that have been changed since the last sync
+	my $lastSync = $prefs->get('snLastSyncUp');
+	
+	for my $pref ( keys %{$can_sync} ) {
+		next unless $pref =~ /\./;
+		
+		my ($ns, $prefname) = $pref =~ /(\w+\.\w+)\.(\w+)/;
+		
+		my $rprefs = preferences($ns);
+		
+		my $ts = $rprefs->timestamp($prefname);
+		
+		if ( $ts >= $lastSync ) {
+			my $value = $rprefs->get($prefname);
+			
+			$sync->{prefs}->{$pref} = {
+				value => $value,
+				ts    => $ts + $sn_timediff,
+			};
+		}
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( 'Syncing global prefs up to SN: ' . Data::Dump::dump($sync) );
+	}
+	
+	my $json = eval { to_json($sync) };
+	if ( $@ ) {
+		$log->error( "Unable to sync up: $@" );
+		return;
+	}
+	
+	$prefs->set( snLastSyncUp => time() );
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_syncUp_done,
+		\&_syncUp_error,
 	);
 	
 	$http->post( $http->url( '/api/v1/prefs/sync_up' ), $json );
@@ -383,9 +557,12 @@ sub _syncUp_error {
 	my $error  = $http->error;
 	my $client = $http->params('client');
 	
-	$prefs->client($client)->set( snLastSyncUp => -1 );
-	
-	$prefs->remove('sn_session');
+	if ( $client ) {
+		$prefs->client($client)->set( snLastSyncUp => -1 );
+	}
+	else {
+		$prefs->set( snLastSyncUp => -1 );
+	}
 	
 	$log->error( "Sync Up failed: $error" );
 }
