@@ -77,6 +77,9 @@ sub rpds {
 	}
 	
 	if ( $log->is_warn ) {
+		if ( $sent != 2 ) {
+			$sent = Data::Dump::dump($data);
+		}
 		$log->warn( $client->id . " RPDS packet sent: $sent" );
 	}
 
@@ -126,7 +129,7 @@ sub cancel_rpds {
 	
 	delete $rpds_args->{$client};
 }
-	
+
 sub rpds_handler {
 	my ( $client, $data_ref ) = @_;
 	
