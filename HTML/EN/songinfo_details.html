@@ -115,7 +115,7 @@
 		[% item = itemobj.content_type | getstring | html; title = "TYPE"; PROCESS songInfoItem %]
 	[% END %]
 
-	[% IF itemobj.duration && itemobj.duration > 0 %] 
+	[% IF itemobj.duration %] 
 		[% item = itemobj.duration | html; title = "LENGTH"; PROCESS songInfoItem %]
 	[% END %]
 
