@@ -676,6 +676,10 @@ sub onUnderrun {
 		
 		my $nextsong = Slim::Player::Source::nextsong($client);
 		if ( $client->playmode !~ /stop/ && defined $nextsong ) {
+			
+			# Force playmode to playout-stop so Source doesn't try to skipahead
+			$client->playmode( 'playout-stop' );
+			
 			# This is on a timer so the underrun callback will stop the player first
 			Slim::Utils::Timers::setTimer(
 				$client,
