@@ -858,26 +858,16 @@ sub checkDataSource {
 
 	my $audiodir = $prefs->get('audiodir');
 
-	if (!(defined $audiodir && -d $audiodir) && !$quiet && !Slim::Music::Import->countImporters()) {
+	if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
+		$audiodir =~ s|[/\\]$||;
+		$prefs->set('audiodir',$audiodir);
+	}
 
-		msg("\n", 0, 1);
-		msg(string('SETUP_DATASOURCE_1') . "\n", 0, 1);
-		msg(string('SETUP_DATASOURCE_2') . "\n\n", 0, 1);
-		msg(string('SETUP_URL_WILL_BE') . "\n\n\t" . Slim::Utils::Prefs::homeURL() . "\n\n", 0, 1);
+	if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
-	} else {
+		logWarning("Schema updated or tracks in the database, initiating scan.");
 
-		if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
-			$audiodir =~ s|[/\\]$||;
-			$prefs->set('audiodir',$audiodir);
-		}
-
-		if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
-
-			logWarning("Schema updated or tracks in the database, initiating scan.");
-
-			Slim::Control::Request::executeRequest(undef, ['wipecache']);
-		}
+		Slim::Control::Request::executeRequest(undef, ['wipecache']);
 	}
 }
 
