@@ -1942,6 +1942,9 @@ PROBLEM_CONVERT_FILE
 	IT	Problema. Impossibile riprodurre tipo di file per:
 	NL	Probleem: Kan bestandstype niet afspelen voor:
 
+PROBLEM_CONVERT_FILE_WMA_LOSSLESS
+	EN	Problem: WMA Lossless requires Windows
+
 PROBLEM_CONVERT_STREAM
 	DA	Problem: Kan ikke konvertere strøm:
 	DE	Fehler beim Konvertieren des Stream:
