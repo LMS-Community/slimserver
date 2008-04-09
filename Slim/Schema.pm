@@ -2076,15 +2076,17 @@ sub _postCheckAttributes {
 				# of the same name by the same artist. bug3254
 				$search->{'me.discc'} = $discc;
 				
-				# Bug 4361, also match on contributor, so we don't group
-				# different multi-disc albums together just because they
-				# have the same title
-				my $contributor = $contributor->id;
-				if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
-				    $contributor = $self->variousArtistsObject->id;
-			    }
+				if ( blessed($contributor) ) {
+					# Bug 4361, also match on contributor, so we don't group
+					# different multi-disc albums together just because they
+					# have the same title
+					my $contributor = $contributor->id;
+					if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
+					    $contributor = $self->variousArtistsObject->id;
+				    }
 			    
-				$search->{'me.contributor'} = $contributor;
+					$search->{'me.contributor'} = $contributor;
+				}
 
 			} elsif (defined $disc && !defined $discc) {
 
@@ -2093,15 +2095,17 @@ sub _postCheckAttributes {
 				# multidisc _without_ having a discc set.
 				$search->{'me.disc'} = { '!=' => undef };
 				
-				# Bug 4361, also match on contributor, so we don't group
-				# different multi-disc albums together just because they
-				# have the same title
-				my $contributor = $contributor->id;
-				if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
-				    $contributor = $self->variousArtistsObject->id;
-			    }
+				if ( blessed($contributor) ) {
+					# Bug 4361, also match on contributor, so we don't group
+					# different multi-disc albums together just because they
+					# have the same title
+					my $contributor = $contributor->id;
+					if ( $isCompilation && !scalar @{ $contributors->{ALBUMARTIST} } ) {
+					    $contributor = $self->variousArtistsObject->id;
+				    }
 			    
-				$search->{'me.contributor'} = $contributor;
+					$search->{'me.contributor'} = $contributor;
+				}
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
