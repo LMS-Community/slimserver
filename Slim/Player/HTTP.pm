@@ -48,6 +48,11 @@ sub connected {
 	return ($client->streamingsocket() && $client->streamingsocket->connected()) ? 1 : 0;
 }
 
+sub string {
+	my $client = shift;
+	Slim::Utils::Strings::string(@_)
+};
+
 # dummy methods
 sub update		{ }
 sub isPlayer		{ 0 }
