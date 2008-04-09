@@ -1686,9 +1686,14 @@ sub errorOpening {
 	}
 	
 	# Show an error message
-	$client->showBriefly({
-		'line' => [ $line1, $line2 ]
-	}, { 'scroll' => 1, 'firstline' => 1 });
+	$client->showBriefly( {
+		line => [ $line1, $line2 ],
+	}, {
+		scroll    => 1,
+		firstline => 1,
+		block     => 1,
+		duration  => 5,
+	} );
 }
 
 sub explodeSong {
@@ -1960,8 +1965,14 @@ sub openSong {
 		if (!defined($command)) {
 
 			logError("Couldn't create command line for $type playback for [$fullpath]");
-
-			errorOpening($client,'PROBLEM_CONVERT_FILE');
+			
+			# Bug 7771, Display a better error message for lossless WMA on non-Windows platforms
+			if ( $type eq 'wma' && $track->lossless && Slim::Utils::OSDetect::OS() ne 'win' ) {
+				errorOpening($client, 'PROBLEM_CONVERT_FILE_WMA_LOSSLESS');
+			}
+			else {
+				errorOpening($client,'PROBLEM_CONVERT_FILE');
+			}
 
 			return undef;
 		}

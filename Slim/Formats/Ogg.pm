@@ -30,6 +30,7 @@ use Fcntl qw(:seek);
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
+use MIME::Base64 qw(decode_base64);
 use Ogg::Vorbis::Header::PurePerl;
 
 my %tagMapping = (
@@ -146,6 +147,11 @@ sub getTag {
 	}
 
 	$tags->{'OFFSET'}   =  0; # the header is an important part of the file. don't skip it
+	
+	# Read cover art if available
+	if ( $tags->{'COVERART'} ) {
+		$tags->{'ARTWORK'} = decode_base64( delete $tags->{'COVERART'} );
+	}
 
 	return $tags;
 }
