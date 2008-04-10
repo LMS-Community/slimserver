@@ -57,6 +57,23 @@ sub displayAsHTML {
 	}
 }
 
+# Cleanup years that are no longer used by albums or tracks
+sub cleanupStaleYears {
+	my $class = shift;
+	
+	Slim::Schema->storage->dbh->do( qq{
+		DELETE years y
+		FROM   years y
+		LEFT JOIN (
+			SELECT DISTINCT year FROM albums a
+			UNION
+			SELECT DISTINCT year FROM tracks t
+		) z 
+		ON     y.id = z.year
+		WHERE  z.year is NULL
+	} );
+}
+
 1;
 
 __END__
