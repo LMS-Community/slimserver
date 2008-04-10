@@ -92,14 +92,26 @@ sub lines {
 
 	my ($line1, $line2, $arrow);
 	
+	my $playlistfile = $context{$client};
+	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile($prefsServer->get('playlistdir'), $context{$client} . '.m3u')
+		catfile($prefsServer->get('playlistdir'), $playlistfile . '.m3u')
 	);
 
 	if (!$prefsServer->get('playlistdir')) {
 
 		$line1 = $client->string('NO_PLAYLIST_DIR');
 		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');
+
+	} elsif ($playlistfile ne Slim::Utils::Misc::cleanupFilename($playlistfile)) {
+		# Special text for overwriting an existing playlist
+		# if large text, make sure we show the message instead of the playlist name
+		if ($client->linesPerScreen == 1) {
+			$line2 = $client->doubleString('PLAYLIST_FILENAME_WARNING');
+		} else {
+			$line1 = $client->string('PLAYLIST_FILENAME_WARNING');
+			$line2 = $context{$client};
+		}
 
 	} elsif (Slim::Schema->rs('Track')->objectForUrl($newUrl)) {
 		
@@ -184,8 +196,13 @@ sub initPlugin {
 		'right' => sub  {
 			my $client = shift;
 			my $playlistfile = $context{$client};
-			Slim::Buttons::Common::setMode($client, 'playlist');
-			savePlaylist($client,$playlistfile);
+			
+			if ($playlistfile ne Slim::Utils::Misc::cleanupFilename($playlistfile)) {
+				$client->bumpRight();
+			} else {
+				Slim::Buttons::Common::setMode($client, 'playlist');
+				savePlaylist($client,$playlistfile);
+			}
 		},
 		'save' => sub {
 			my $client = shift;
