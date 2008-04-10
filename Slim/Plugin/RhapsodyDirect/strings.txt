@@ -143,11 +143,5 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	NL	Ongeldige afspeelsessie.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
-	DA	Rhapsody kan ikke afspille mere end 3 synkroniserede afspillere. Slå venligst synkronisering fra på en eller flere afspillere.
-	DE	Rhapsody funktioniert nicht, wenn mehr als 3 Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
-	EN	Rhapsody cannot play with more than 3 players synced.  Please unsync one or more players.
-	ES	Rhapsody no puede reproducir con más de 3 reproductores sincronizados. Debe desincronizar al menos uno de ellos.
-	FR	Rhapsody ne peut fonctionner avec plus de trois platines synchronisées. Veuillez désynchroniser au moins une platine.
-	IT	Impossibile utilizzare Rhapsody con più di tre lettori sincronizzati. Annullare la sincronizzazione di almeno un lettore.
-	NL	Rhapsody kan niet spelen wanneer er meer dan 3 spelers gesynchroniseerd zijn. Hef de synchronisatie van een of meer spelers op.
+	EN	Rhapsody cannot play with this many players synced.  Please unsync one or more players.
 
