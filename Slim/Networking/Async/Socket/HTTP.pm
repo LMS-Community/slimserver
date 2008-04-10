@@ -26,7 +26,7 @@ sub connect {
 	my $sock = shift;
 
 	# set to non-blocking
-	$sock->blocking(0);
+	Slim::Utils::Network::blocking( $sock, 0 );
 
 	# pack the host address
 	my $addr = @_ == 1 ? shift : pack_sockaddr_in(@_);
