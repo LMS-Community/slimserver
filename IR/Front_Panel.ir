@@ -41,8 +41,8 @@ preset_4.down			= 00010023	# Boom: Preset 4
 preset_5.down			= 00010024	# Boom: Preset 5
 preset_6.down			= 00010025	# Boom: Preset 6
 sleep.down			= 00010026	# Boom: Sleep
-arrow_up.down			= 0001005a	# Boom: Knob up
-arrow_down.down			= 0001005b	# Boom: Knob down
+knob_left			= 0001005a	# Boom: Knob left
+knob_right			= 0001005b	# Boom: Knob right
 
 
 0.up					= 00020000
@@ -83,5 +83,3 @@ preset_4.up			= 00020023	# Boom: Preset 4
 preset_5.up			= 00020024	# Boom: Preset 5
 preset_6.up			= 00020025	# Boom: Preset 6
 sleep.up			= 00020026	# Boom: Sleep
-arrow_up.up			= 0002005a	# Boom: Knob up
-arrow_down.up			= 0002005b	# Boom: Knob down
