@@ -371,12 +371,32 @@ sub retry_new_session {
 	if ( $log->is_debug ) {
 		$log->debug( $client->id, ' Getting a new session and then retrying ' . Data::Dump::dump( $rpds->{data} ) );
 	}
+	
+	# Choose the correct account to use for this player's session
+	my $username = $account->{username}->[0];
+	my $password = $account->{password}->[0];
+	
+	if ( $account->{defaults} ) {
+		if ( my $default = $account->{defaults}->{ $client->id } ) {
+			$log->debug( $client->id, " Using default account $default" );
+			
+			my $i = 0;
+			for my $user ( @{ $account->{username} } ) {
+				if ( $default eq $user ) {
+					$username = $account->{username}->[ $i ];
+					$password = $account->{password}->[ $i ];
+					last;
+				}
+				$i++;
+			}
+		}
+	}
 
 	my $packet = pack 'cC/a*C/a*C/a*C/a*', 
 		2,
-		encode_entities( $account->{username}->[0] ),
+		encode_entities( $username ),
 		$account->{cobrandId}, 
-		encode_entities( decode_base64( $account->{password}->[0] ) ), 
+		encode_entities( decode_base64( $password ) ), 
 		$account->{clientType};
 	
 	rpds( $client, {

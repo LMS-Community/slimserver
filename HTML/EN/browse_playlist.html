@@ -45,10 +45,10 @@
 					<tr>
 						<td colspan="4">
 							[%- IF RENAME_WARNING %]
-								<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]
+								<input type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]
 							[%- END %]
 							[%- IF DELETE_WARNING %]
-								<input align="absmiddle" type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]
+								<input type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]
 							[%- END %]
 							<input type="hidden" name="playlist.id" value="[% playlist.id %]">
 							<input type="hidden" name="renamePlaylist" value="0">
