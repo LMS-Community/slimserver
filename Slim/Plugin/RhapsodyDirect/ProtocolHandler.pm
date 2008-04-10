@@ -141,7 +141,32 @@ sub tooManySynced {
 	my $master = Slim::Player::Sync::masterOrSelf($client);
 	push @clients, $master, @{ $master->slaves };
 	
-	if ( scalar @clients > 3 ) {
+	my $tooMany  = 0;
+	my %accounts = ();
+
+	for my $client ( @clients ) {
+		if ( my $account = $client->pluginData('account') ) {
+			if ( $account->{defaults} ) {
+				if ( my $default = $account->{defaults}->{ $client->id } ) {
+					$accounts{ $default } ||= 0;
+					$accounts{ $default }++;
+				}
+				else {
+					$accounts{ $account->{username}->[0] } ||= 0;
+					$accounts{ $account->{username}->[0] }++;
+				}
+			}
+			else {
+				$accounts{ $account->{username}->[0] } ||= 0;
+				$accounts{ $account->{username}->[0] }++;
+			}
+		}
+	}
+	
+	# If any one account has more than 3 players on it, sync will fail
+	$tooMany = grep { $_ > 3 } values %accounts;
+	
+	if ( $tooMany ) {
 		$log->debug('Too many players synced, not playing');
 		
 		my $line1 = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR');
@@ -181,20 +206,6 @@ sub getAccount {
 		}
 	}
 	
-	if ( $ENV{SLIM_SERVICE} && !$account ) {
-		my @username = $prefs->client($client)->get('plugin_rhapsody_direct_username');
-		my @password = $prefs->client($client)->get('plugin_rhapsody_direct_password');
-		
-		$account = {
-			username   => \@username,
-			password   => \@password,
-			cobrandId  => 40134,
-			clientType => 'slimdevices',
-		};
-		
-		$client->pluginData( account => $account );
-	}
-	
 	return $account;
 }
 
@@ -208,8 +219,6 @@ sub onCommand {
 	if ( $cmd ne 'play' ) {
 		return $callback->();
 	}
-	
-	return if tooManySynced($client);
 	
 	# XXX: When hitting play while currently listening to another Rhapsody track,
 	# no logging is performed
@@ -242,6 +251,8 @@ sub onCommand {
 		
 		return;
 	}
+	
+	return if tooManySynced($client);
 	
 	$log->debug("Ending any previous playback session");
 	
@@ -296,11 +307,31 @@ sub getPlaybackSession {
 	# Get login info
 	my $account = $client->pluginData('account');
 	
+	# Choose the correct account to use for this player's session
+	my $username = $account->{username}->[0];
+	my $password = $account->{password}->[0];
+	
+	if ( $account->{defaults} ) {
+		if ( my $default = $account->{defaults}->{ $client->id } ) {
+			$log->debug( $client->id, " Using default account $default" );
+			
+			my $i = 0;
+			for my $user ( @{ $account->{username} } ) {
+				if ( $default eq $user ) {
+					$username = $account->{username}->[ $i ];
+					$password = $account->{password}->[ $i ];
+					last;
+				}
+				$i++;
+			}
+		}
+	}
+	
 	my $packet = pack 'cC/a*C/a*C/a*C/a*', 
 		2,
-		encode_entities( $account->{username}->[0] ),
+		encode_entities( $username ),
 		$account->{cobrandId}, 
-		encode_entities( decode_base64( $account->{password}->[0] ) ), 
+		encode_entities( decode_base64( $password ) ), 
 		$account->{clientType};
 	
 	# When synced, all players will make this request to get a new playback session
@@ -324,7 +355,7 @@ sub gotAccount {
 		$client->pluginData( account => $account );
 		
 		if ( $log->is_debug ) {
-			$log->debug("Got Rhapsody account info from SN");
+			$log->debug( "Got Rhapsody account info from SN" );
 		}
 		
 		$params->{cb}->();
@@ -479,8 +510,6 @@ sub onDecoderUnderrun {
 sub onJump {
 	my ( $class, $client, $nextURL, $callback ) = @_;
 	
-	return if tooManySynced($client);
-
 	if ( $log->is_debug ) {
 		$log->debug( 'Handling command "jump", playmode: ' . $client->playmode );
 	}
@@ -519,6 +548,8 @@ sub onJump {
 		
 		return;
 	}
+	
+	return if tooManySynced($client);
 	
 	# Clear any previous outstanding rpds queries
 	cancel_rpds($client);
