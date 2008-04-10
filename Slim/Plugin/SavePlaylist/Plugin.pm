@@ -107,9 +107,9 @@ sub lines {
 		# Special text for overwriting an existing playlist
 		# if large text, make sure we show the message instead of the playlist name
 		if ($client->linesPerScreen == 1) {
-			$line2 = $client->doubleString('PLAYLIST_FILENAME_WARNING');
+			$line2 = $client->doubleString('FILENAME_WARNING');
 		} else {
-			$line1 = $client->string('PLAYLIST_FILENAME_WARNING');
+			$line1 = $client->string('FILENAME_WARNING');
 			$line2 = $context{$client};
 		}
 

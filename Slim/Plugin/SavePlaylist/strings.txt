@@ -69,9 +69,6 @@ PLAYLIST_SAVING
 	SV	Lagrar aktuell låtlista som:
 	ZH_CN	正在保存当前的播放表：
 
-PLAYLIST_FILENAME_WARNING
-	EN	Illegal characters in name, Please edit.
-
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
 	DA	Problem: Der findes ingen folder med gemte spillelister.
