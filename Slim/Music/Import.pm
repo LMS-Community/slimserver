@@ -371,6 +371,9 @@ sub runScanPostProcessing {
 
 		Slim::Schema->cleanupStaleTrackEntries;
 	}
+	
+	# Cleanup stale year entries
+	Slim::Schema::Year->cleanupStaleYears;
 
 	# Reset
 	$class->useFolderImporter(0);
