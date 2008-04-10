@@ -232,13 +232,17 @@ sub gotViaHTTP {
 
 		if ( !$feed->{'nocache'} ) {
 
-			$log->info("Caching parsed XML for $expires seconds");
+			if ( $log->is_info ) {
+				$log->info("Caching parsed XML for " . $http->url . " for $expires seconds");
+			}
 
 			$cache->set( $http->url() . '_parsedXML', $feed, $expires );
 
 		} elsif ( !$cache->get( $http->url() ) ) {
 
-			$log->info("Caching raw response for $expires seconds - not previously cached");
+			if ( $log->is_info ) {
+				$log->info("Caching raw response for " . $http->url . " for $expires seconds - not previously cached");
+			}
 
 			# Responses not previously cached by SimpleAsyncHTTP as web page did not request caching
 			# cache it now for a short time to speed up reparsing of this page
