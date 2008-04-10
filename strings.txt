@@ -10521,7 +10521,7 @@ NOTE
 
 FILENAME_WARNING
 	DE	Dateiname enthält illegale Zeichen.
-	EN	Illegal filename. Please check for illegal characters.
+	EN	Illegal characters in name, Please edit.
 
 RENAME_WARNING
 	CS	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
