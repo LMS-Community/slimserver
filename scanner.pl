@@ -56,7 +56,7 @@ use Slim::Control::Request;
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup, $prefsFile, $progress, $priority);
-	our ($quiet, $logfile, $logdir, $logconf, $debug);
+	our ($quiet, $logfile, $logdir, $logconf, $debug, $help);
 
 	our $LogTimestamp = 1;
 
@@ -82,12 +82,8 @@ sub main {
 		'debug=s'      => \$debug,
 		'quiet'        => \$quiet,
 		'LogTimestamp!'=> \$LogTimestamp,
+		'help'         => \$help,
 	);
-
-	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$itunes && !scalar @ARGV) {
-		usage();
-		exit;
-	}
 
 	Slim::Utils::Log->init({
 		'logconf' => $logconf,
@@ -96,6 +92,11 @@ sub main {
 		'logtype' => 'scanner',
 		'debug'   => $debug,
 	});
+
+	if ($help || (!$rescan && !$wipe && !$playlists && !$musicmagic && !$itunes && !scalar @ARGV)) {
+		usage();
+		exit;
+	}
 
 	# Redirect STDERR to the log file.
 	if (!$progress) {
@@ -326,8 +327,7 @@ sub initClass {
 sub cleanup {
 
 	# Make sure to flush anything in the database to disk.
-	if ($INC{'Slim/Schema.pm'}) {
-
+	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
 		Slim::Music::Import->setIsScanning(0);
 
 		Slim::Schema->forceCommit;
@@ -335,9 +335,9 @@ sub cleanup {
 	}
 }
 
-sub END { 
+sub END {
 
-        Slim::bootstrap::theEND();
+	Slim::bootstrap::theEND();
 }
 
 sub idleStreams {}
