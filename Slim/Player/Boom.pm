@@ -31,6 +31,10 @@ sub model {
 	return 'boom';
 }
 
+sub hasFrontPanel {
+	return 1;
+}
+
 sub reconnect {
 	my $client = shift;
 

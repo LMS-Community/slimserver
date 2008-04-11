@@ -178,8 +178,8 @@ sub irfiles {
 			}
 			
 			# NOTE: client isn't required here, but if it's been sent from setup
-			# Don't show front panel ir set for non-transporter clients
-			if (defined ($client) && !$client->isa('Slim::Player::Transporter') && ($1 eq 'Front_Panel')) {
+			# Don't show front panel ir set for clients without a front panel
+			if (defined ($client) && !$client->hasFrontPanel() && ($1 eq 'Front_Panel')) {
 				next;
 			}
 
