@@ -207,18 +207,20 @@ sub cli_socket_close {
 sub cli_socket_accept {
 
 	$log->debug("Begin Function");
-
-	# Check max connections
-	if (scalar keys %connections > $prefsServer->get('tcpConnectMaximum')) {
-
-		$log->warn("Warning: Did not accept connection: too many connections open!");
-
-		return;
-	}
-
+	
 	my $client_socket = $cli_socket->accept();
-
+	
 	if ($client_socket && $client_socket->connected && $client_socket->peeraddr) {
+
+		# Check max connections
+		if (scalar keys %connections >= $prefsServer->get('tcpConnectMaximum')) {
+
+			$log->error("Warning: Closing connection: too many connections open! (" . scalar( keys %connections ) . ")" );
+		
+			$client_socket->close();
+
+			return;
+		}
 
 		my $tmpaddr = inet_ntoa($client_socket->peeraddr);
 
@@ -248,7 +250,7 @@ sub cli_socket_accept {
 
 	} else {
 
-		$log->warn("Warning: Could not accept connection");
+		$log->error("Warning: Could not accept connection: $!");
 	}
 }
 
