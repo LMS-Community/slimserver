@@ -151,6 +151,8 @@ sub shutdown {
 sub syncDown {
 	my $client = shift || return;
 	
+	Slim::Utils::Timers::killTimers( $client, \&syncDown );
+	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_syncDown_done,
 		\&_syncDown_error,
@@ -430,6 +432,8 @@ sub prefEvent {
 
 sub syncUp {
 	my $client = shift || return;
+	
+	Slim::Utils::Timers::killTimers( $client, \&syncUp );
 	
 	my $cprefs = $prefs->client($client);
 	
