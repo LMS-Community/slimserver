@@ -280,15 +280,6 @@ sub init {
 
 	Slim::Utils::OSDetect::init();
 
-	# open the log files
-	Slim::Utils::Log->init({
-		'logconf' => $logconf,
-		'logdir'  => $logdir,
-		'logfile' => $logfile,
-		'logtype' => 'server',
-		'debug'   => $debug,
-	});
-
 	# initialize SqueezeCenter subsystems
 	initSettings();
 
@@ -603,7 +594,7 @@ sub initOptions {
 
 	$LogTimestamp = 1;
 
-	if (!GetOptions(
+	my $gotOptions = !GetOptions(
 		'user=s'        => \$user,
 		'group=s'       => \$group,
 		'cliaddr=s'     => \$cliaddr,
@@ -637,15 +628,21 @@ sub initOptions {
 		'perfwarn=s'    => \$perfwarn,  # content parsed by Health plugin if loaded
 		'checkstrings'  => \$checkstrings,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
-	)) {
-		showUsage();
-		exit(1);
-	}
+	);
+
+	# open the log files
+	Slim::Utils::Log->init({
+		'logconf' => $logconf,
+		'logdir'  => $logdir,
+		'logfile' => $logfile,
+		'logtype' => 'server',
+		'debug'   => $debug,
+	});
 
 	# make --logging and --debug synonyms, but prefer --logging
 	$debug = $logging if ($logging);
 
-	if ($help) {
+	if ($help || !$gotOptions) {
 		showUsage();
 		exit(1);
 	}
@@ -961,7 +958,7 @@ sub cleanup {
 	$::stop = 1;
 
 	# Make sure to flush anything in the database to disk.
-	if ($INC{'Slim/Schema.pm'}) {
+	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
 		Slim::Schema->forceCommit;
 		Slim::Schema->disconnect;
 	}
