@@ -57,6 +57,8 @@ sub Install {
 		'password=s' => \$Password,
 	);
 
+	main::initLogging();
+
 	if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
 		my @infos;
 		my ($host, $user);
@@ -88,12 +90,12 @@ sub Interactive {
 
 sub Remove {
 	# add your additional remove messages or functions here
+	main::initLogging();
 }
 
 sub Help {	
 	main::showUsage();
-	# add your additional help messages or functions here
-	$Config{DisplayName};
+	main::initLogging();
 }
 
 package main;
@@ -547,7 +549,8 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --audiodir       => The path to a directory of your MP3 files.
     --playlistdir    => The path to a directory of your playlist files.
     --cachedir       => Directory for SqueezeCenter to save cached music and web data
-    --diag           => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
+    --diag           => Use diagnostics, shows more verbose errors.
+                        Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --noLogTimestamp => Don't add timestamp to log output
     --daemon         => Run the server in the background.
@@ -577,7 +580,8 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
-    --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
+    --noserver       => Disable web access server settings, but leave player settings accessible.
+                        Settings changes are not preserved.
     --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
@@ -594,7 +598,7 @@ sub initOptions {
 
 	$LogTimestamp = 1;
 
-	my $gotOptions = !GetOptions(
+	my $gotOptions = GetOptions(
 		'user=s'        => \$user,
 		'group=s'       => \$group,
 		'cliaddr=s'     => \$cliaddr,
@@ -630,14 +634,7 @@ sub initOptions {
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	);
 
-	# open the log files
-	Slim::Utils::Log->init({
-		'logconf' => $logconf,
-		'logdir'  => $logdir,
-		'logfile' => $logfile,
-		'logtype' => 'server',
-		'debug'   => $debug,
-	});
+	initLogging();
 
 	# make --logging and --debug synonyms, but prefer --logging
 	$debug = $logging if ($logging);
@@ -646,6 +643,17 @@ sub initOptions {
 		showUsage();
 		exit(1);
 	}
+}
+
+sub initLogging {
+	# open the log files
+	Slim::Utils::Log->init({
+		'logconf' => $logconf,
+		'logdir'  => $logdir,
+		'logfile' => $logfile,
+		'logtype' => 'server',
+		'debug'   => $debug,
+	});
 }
 
 sub initSettings {
