@@ -829,7 +829,7 @@ our %functions = (
 					
 					my $oldindex = $favs->hasHotkey($hotkey);
 
-					$favs->deleteIndex($oldindex) if defined $oldindex;
+					$favs->setHotkey($oldindex, undef) if defined $oldindex;
 
 					my $newindex = $favs->add($url, $title, $type || 'audio', $parser);
 
