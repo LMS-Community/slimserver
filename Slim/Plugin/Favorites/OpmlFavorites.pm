@@ -167,9 +167,15 @@ sub add {
 		$log->info(sprintf("url: %s title: %s type: %s parser: %s hotkey: %s", $url, $title, $type, $parser, $hotkey));
 	}
 
-	# if its already a favorite, don't add it again
+	# if it is already a favorite, don't add it again return the existing entry
 	if ($class->hasUrl($url)) {
-		return undef;
+
+		my $index = $class->{'url-index'}->{ $url };
+		my $entry = $class->entry($index);
+
+		$log->info("Url already exists in favorites as index $index");
+
+		return wantarray ? ($index, $entry->{'hotkey'}) : $index;
 	}
 
 	my $entry = {
