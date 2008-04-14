@@ -484,6 +484,9 @@ sub checkAlarms {
 			}
 
 			if ($time == $alarmtime) {
+				
+				# Bug 7818, count this as user interaction, even though it isn't really
+				$client->lastActivityTime( Time::HiRes::time() );
 
 				$client->execute(['stop']);
 
