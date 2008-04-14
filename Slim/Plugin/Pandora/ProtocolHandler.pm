@@ -59,6 +59,8 @@ sub isAudioURL () { 1 }
 # Don't allow looping if the tracks are short
 sub shouldLoop () { 0 }
 
+sub canSeek { 0 }
+
 # Source for AudioScrobbler (E = Personalised recommendation except Last.fm)
 sub audioScrobblerSource () { 'E' }
 
