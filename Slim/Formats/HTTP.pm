@@ -107,6 +107,18 @@ sub requestString {
 	if (defined($user) && defined($password)) {
 		$request .= "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'') . $CRLF;
 	}
+	
+	# If seeking, add Range header
+	if ( my $seekdata = $client->scanData->{seekdata} ) {
+		$request .= 'Range: bytes=' . int( $seekdata->{newoffset} ) . '-';
+		
+		# Fix progress bar
+		$client->masterOrSelf->currentsongqueue()->[-1]->{startOffset} = $seekdata->{newtime};
+		$client->masterOrSelf->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{newtime} );
+
+		# Remove seek data
+		delete $client->scanData->{seekdata};
+	}
 
 	# Send additional information if we're POSTing
 	if ($post) {
@@ -146,7 +158,8 @@ sub parseHeaders {
 
 	my $log = logger('player.streaming.remote');
 	
-	my $url = $self->url;
+	my $client = $self->client;
+	my $url    = $self->url;
 
 	for my $header (@headers) {
 
@@ -165,7 +178,7 @@ sub parseHeaders {
 			}
 		}
 
-		if ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)$CRLF$/i) {
+		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)$CRLF$/i) {
 
 			${*$self}{'bitrate'} = $1 * 1000;
 
@@ -182,18 +195,18 @@ sub parseHeaders {
 			}
 		}
 		
-		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
+		elsif ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
 
 			${*$self}{'metaInterval'} = $1;
 			${*$self}{'metaPointer'}  = 0;
 		}
 		
-		if ($header =~ /^Location:\s*(.*)$CRLF$/i) {
+		elsif ($header =~ /^Location:\s*(.*)$CRLF$/i) {
 
 			${*$self}{'redirect'} = $1;
 		}
 
-		if ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
+		elsif ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
 
 			my $contentType = $1;
 
@@ -212,15 +225,21 @@ sub parseHeaders {
 			}
 		}
 		
-		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
+		elsif ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
 
 			${*$self}{'contentLength'} = $1;
 		}
 
-		if ($header eq $CRLF) { 
+		elsif ($header eq $CRLF) { 
 
 			$log->info("Recieved final blank line...");
 			last; 
+		}
+		
+		# mp3tunes metadata, this is a bit of hack but creating
+		# an mp3tunes protocol handler is overkill
+		elsif ( $client && $url =~ /mp3tunes\.com/ && $header =~ /^X-Locker-Info:\s*(.+)/i ) {
+			Slim::Plugin::MP3tunes::Plugin->setLockerInfo( $client, $url, $1 );
 		}
 	}
 	
@@ -229,13 +248,13 @@ sub parseHeaders {
 		${*$self}{'bitrate'} = Slim::Music::Info::getCurrentBitrate( $self->url );
 	}
 	
-	return unless $self->client;
+	return unless $client;
 	
 	# See if we have an existing track object with duration info for this stream.
 	if ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
 		
 		# Display progress bar
-		$self->client->streamingProgressBar( {
+		$client->streamingProgressBar( {
 			'url'      => $self->url,
 			'duration' => $secs,
 		} );
@@ -247,7 +266,7 @@ sub parseHeaders {
 			if ( $self->bitrate < 1000 ) {
 				${*$self}{'bitrate'} *= 1000;
 			}
-			$self->client->streamingProgressBar( {
+			$client->streamingProgressBar( {
 				'url'     => $self->url,
 				'bitrate' => $self->bitrate,
 				'length'  => $self->contentLength,
@@ -255,9 +274,18 @@ sub parseHeaders {
 		}
 	}
 	
+	if ( $self->contentLength && Slim::Music::Info::mimeToType( $self->contentType ) eq 'mp3' ) {
+		$log->debug("Stream supports seeking");
+		$client->scanData->{mp3_can_seek} = 1;
+	}
+	else {
+		$log->debug("Stream does not support seeking");
+		delete $client->scanData->{mp3_can_seek};
+	}
+	
 	# Bug 6482, refresh the cached Track object in the client playlist from the database
 	# so it picks up any changed data such as title, bitrate, etc
-	Slim::Player::Playlist::refreshTrack( $self->client, $self->url );
+	Slim::Player::Playlist::refreshTrack( $client, $self->url );
 }
 
 =head1 SEE ALSO

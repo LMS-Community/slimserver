@@ -155,23 +155,39 @@ sub _scan {
 	my ($client, $direction) = @_;
 
 	my $playmode = Slim::Player::Source::playmode($client);
-	my $rate = Slim::Player::Source::rate($client);
+	my $url      = Slim::Player::Playlist::url($client);
+	my $rate     = Slim::Player::Source::rate($client);
 
 	if ($direction > 0) {
 		if ($rate < 0) {
 			$rate = 1;
 		}
+		
 		if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
 			return;
 		}
+		
+		# Do not allow rate change on remote streams
+		if ( Slim::Music::Info::isRemoteURL($url) ) {
+			return;
+		}
+		
 		Slim::Player::Source::rate($client, $rate * $SCAN_RATE_MULTIPLIER);
-	} else {
+	}
+	else {
 		if ($rate > 0) {
 			$rate = 1;
 		}
+		
 		if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
 			return;
 		}
+		
+		# Do not allow rate change on remote streams
+		if ( Slim::Music::Info::isRemoteURL($url) ) {
+			return;
+		}
+		
 		Slim::Player::Source::rate($client, -abs($rate * $SCAN_RATE_MULTIPLIER));
 	}
 	
@@ -284,27 +300,51 @@ sub setMode {
 		return;
 	}
 	
-	my $errorStringName;
+	my @errorString;
 	my $duration;
 
 	_initClientState($client);
 	
 	if ($clientState{$client->id}->{'playingSong'} = Slim::Player::Playlist::url($client)) {
-		if (Slim::Music::Info::isRemoteURL($clientState{$client->id}->{'playingSong'})) {
-			$errorStringName = 'PLUGIN_SCANNER_ERR_REMOTE';
-		} elsif (!($duration = Slim::Player::Source::playingSongDuration($client))) {
-			$errorStringName = 'PLUGIN_SCANNER_ERR_UNKNOWNSIZE';
-		} elsif ($client->masterOrSelf()->audioFilehandleIsSocket()) {
-			$errorStringName = 'PLUGIN_SCANNER_ERR_TRANSCODED';
+		$duration = Slim::Player::Source::playingSongDuration($client);
+		
+		if ( !$duration ) {
+			# Try to get duration from the track object
+			$duration = Slim::Music::Info::getDuration( $clientState{$client->id}->{'playingSong'} );
+		}
+		
+		if ( !$duration ) {
+			@errorString = ('PLUGIN_SCANNER_ERR_UNKNOWNSIZE');
+		}
+		elsif ( Slim::Music::Info::isRemoteURL( $clientState{$client->id}->{'playingSong'} ) ) {
+			# Check with protocol handler to determine if the remote stream is seekable
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $clientState{$client->id}->{'playingSong'} );
+			if ( $handler && $handler->can('canSeek') ) {
+				$log->debug( "Checking with protocol handler $handler for canSeek" );
+				if ( !$handler->canSeek( $client, $clientState{$client->id}->{'playingSong'} ) ) {
+					@errorString = $handler->can('canSeekError') 
+						? $handler->canSeekError( $client, $clientState{$client->id}->{'playingSong'} )
+						: ('PLUGIN_SCANNER_ERR_REMOTE');
+				}
+			}
+			else {
+				@errorString = ('PLUGIN_SCANNER_ERR_REMOTE');
+			}
+		}
+		# XXX: need a better way to determine if a stream is transcoded
+		# because we want to prevent seek with real transcoding but not
+		# proxied streaming
+		elsif ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
+			@errorString = ('PLUGIN_SCANNER_ERR_TRANSCODED');
 		}
 	} else {
-		$errorStringName = 'PLUGIN_SCANNER_ERR_NOTRACK';
+		@errorString = ('PLUGIN_SCANNER_ERR_NOTRACK');
 	}
 	
-	if (defined $errorStringName) {
+	if ( @errorString ) {
 		$client->modeParam('handledTransition',1);
 		$client->showBriefly(
-			{line => [ $client->string($errorStringName), ''], 'jive' => undef},
+			{line => [ $client->string(@errorString), ''], 'jive' => undef},
 			{duration => 1.5, scroll => 1,
 				callback => sub {Slim::Buttons::Common::popMode($client);}
 			}
