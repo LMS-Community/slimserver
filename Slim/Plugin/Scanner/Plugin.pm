@@ -49,12 +49,19 @@ my $log          = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-# TOTO should be client-specific
-my $offset=0;
-my $jumptomode;
-my $playingSong;
-my $lastUpdateTime = 0;
-my $activeFfwRew = 0;
+# Keep track of the state of each client to prevent simultaneous scans clashing with each other
+my %clientState = {};
+
+sub _initClientState {
+	my $client = shift;
+	$clientState{$client->id} = {
+		'offset' => 0,
+		'jumpToMode' => undef,
+		'playingSong' => undef,
+		'lastUpdateTime' => 0,
+		'activeFfwRew' => 0,
+	};
+}
 
 my %modeParams = (
 	'header' => 'PLUGIN_SCANNER_SET'
@@ -62,8 +69,8 @@ my %modeParams = (
 	,'headerValue' => sub {
 			my $client = shift;
 			my $val = shift;
-			if (!$lastUpdateTime) {
-				$val = $offset = Slim::Player::Source::songTime($client);
+			if (!$clientState{$client->id}->{'lastUpdateTime'}) {
+				$val = $clientState{$client->id}->{'offset'} = Slim::Player::Source::songTime($client);
 				$client->modeParam('cursor', undef);
 			} else {
 				$client->modeParam('cursor', Slim::Player::Source::songTime($client));
@@ -84,12 +91,14 @@ my %modeParams = (
 	,'headerArgs' => 'CV'
 	,'max' => undef
 	,'increment' => undef
-	,'onChange' => sub { $offset = $_[1];
-					$lastUpdateTime = time();
-				}
+	,'onChange' => sub { 
+			my $client = shift;
+			my $val = shift;
+			$clientState{$client->id}->{'offset'} = $val;
+			$clientState{$client->id}->{'lastUpdateTime'} = time();
+		}
 	,'onChangeArgs' => 'CV'
 	,'callback' => \&_scannerExitHandler
-	,'valueRef' => \$offset
 	,'handleLeaveMode' => 1
 	,'trackValueChanges' => 1
 	,'knobFlags' => Slim::Player::Client::KNOB_NOWRAP()
@@ -102,21 +111,22 @@ sub _timerHandler {
 		return;
 	}
 	
-	if ($playingSong ne Slim::Player::Playlist::url($client)) {
+	if ($clientState{$client->id}->{'playingSong'} ne Slim::Player::Playlist::url($client)) {
 		Slim::Buttons::Common::popModeRight($client);
 		return;
 	}
 
-	if ($lastUpdateTime && time() - $lastUpdateTime >= 2 &&
-		 !(Slim::Player::Source::playmode($client) =~ /pause/))
+	if ($clientState{$client->id}->{'lastUpdateTime'}
+		&& time() - $clientState{$client->id}->{'lastUpdateTime'} >= 2
+		&& !(Slim::Player::Source::playmode($client) =~ /pause/))
 	{
-		Slim::Player::Source::gototime($client, $offset, 1);
-		$lastUpdateTime = 0;
+		Slim::Player::Source::gototime($client, $clientState{$client->id}->{'offset'}, 1);
+		$clientState{$client->id}->{'lastUpdateTime'} = 0;
 	}
 
 	$client->update;
 	
-	$activeFfwRew++;
+	$clientState{$client->id}->{'activeFfwRew'}++;
 	
 	Slim::Utils::Timers::setTimer($client, time()+1, \&_timerHandler);
 }
@@ -127,10 +137,10 @@ sub _scannerExitHandler {
 	
 	if ($exittype eq 'RIGHT') {
 		$client->bumpRight();
-	} elsif (($exittype ne 'POP' && $jumptomode) || $exittype eq 'PUSH') {
+	} elsif (($exittype ne 'POP' && $clientState{$client->id}->{'jumpToMode'}) || $exittype eq 'PUSH') {
 		Slim::Utils::Timers::killOneTimer($client, \&_timerHandler);
 		Slim::Buttons::Common::popMode($client);
-		$jumptomode = 0;
+		$clientState{$client->id}->{'jumpToMode'} = 0;
 	} elsif ($exittype eq 'LEFT') {
 		Slim::Utils::Timers::killOneTimer($client, \&_timerHandler);
 		Slim::Buttons::Common::popModeRight($client);
@@ -145,23 +155,39 @@ sub _scan {
 	my ($client, $direction) = @_;
 
 	my $playmode = Slim::Player::Source::playmode($client);
-	my $rate = Slim::Player::Source::rate($client);
+	my $url      = Slim::Player::Playlist::url($client);
+	my $rate     = Slim::Player::Source::rate($client);
 
 	if ($direction > 0) {
 		if ($rate < 0) {
 			$rate = 1;
 		}
+		
 		if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
 			return;
 		}
+		
+		# Do not allow rate change on remote streams
+		if ( Slim::Music::Info::isRemoteURL($url) ) {
+			return;
+		}
+		
 		Slim::Player::Source::rate($client, $rate * $SCAN_RATE_MULTIPLIER);
-	} else {
+	}
+	else {
 		if ($rate > 0) {
 			$rate = 1;
 		}
+		
 		if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
 			return;
 		}
+		
+		# Do not allow rate change on remote streams
+		if ( Slim::Music::Info::isRemoteURL($url) ) {
+			return;
+		}
+		
 		Slim::Player::Source::rate($client, -abs($rate * $SCAN_RATE_MULTIPLIER));
 	}
 	
@@ -171,7 +197,7 @@ sub _scan {
 	}
 	
 	$client->update();
-	$lastUpdateTime = 0;
+	$clientState{$client->id}->{'lastUpdateTime'} = 0;
 }
 
 my %functions = (
@@ -187,8 +213,8 @@ my %functions = (
 		my $client = shift;
 		my $playmode = Slim::Player::Source::playmode($client);
 		Slim::Player::Source::rate($client, 1);
-		if ($lastUpdateTime) {
-			Slim::Player::Source::gototime($client, $offset, 1);
+		if ($clientState{$client->id}->{'lastUpdateTime'}) {
+			Slim::Player::Source::gototime($client, $clientState{$client->id}->{'offset'}, 1);
 			if ($playmode =~ /pause/) {
 				# To get the volume to fade in
 				Slim::Player::Source::playmode($client, 'resume');
@@ -199,20 +225,20 @@ my %functions = (
 		} elsif ($playmode =~ /pause/) {
 			Slim::Player::Source::playmode($client, 'play');
 		}
-		if ($jumptomode) {
+		if ($clientState{$client->id}->{'jumpToMode'}) {
 			Slim::Buttons::Common::popMode($client);
-			$jumptomode = 0;
+			$clientState{$client->id}->{'jumpToMode'} = 0;
 		}
-		$lastUpdateTime = 0;
+		$clientState{$client->id}->{'lastUpdateTime'} = 0;
 		$client->update;
 	},
 	'pause' => sub {
 		my $client = shift;
 		my $playmode = Slim::Player::Source::playmode($client);
 		my $rate = Slim::Player::Source::rate($client);
-		if ($lastUpdateTime) {
+		if ($clientState{$client->id}->{'lastUpdateTime'}) {
 			Slim::Player::Source::rate($client, 1);
-			Slim::Player::Source::gototime($client, $offset, 1);
+			Slim::Player::Source::gototime($client, $clientState{$client->id}->{'offset'}, 1);
 			if ($playmode =~ /pause/) {
 				# To get the volume to fade in
 				Slim::Player::Source::playmode($client, 'resume');
@@ -224,7 +250,7 @@ my %functions = (
 		} else {
 			Slim::Player::Source::playmode($client, 'pause');
 		}
-		$lastUpdateTime = 0;
+		$clientState{$client->id}->{'lastUpdateTime'} = 0;
 		$client->update;
 	},
 	'jump_fwd' => sub {
@@ -236,10 +262,12 @@ my %functions = (
 		_scan($client, -1);
 	},
 	'scanner_fwd' => sub {
-		Slim::Buttons::Input::Bar::changePos(shift, 1, 'up') if $activeFfwRew > 1;
+		my $client = shift;
+		Slim::Buttons::Input::Bar::changePos(shift, 1, 'up') if $clientState{$client->id}->{'activeFfwRew'} > 1;
 	},
 	'scanner_rew' => sub {
-		Slim::Buttons::Input::Bar::changePos(shift, -1, 'down') if $activeFfwRew > 1;
+		my $client = shift;
+		Slim::Buttons::Input::Bar::changePos(shift, -1, 'down') if $clientState{$client->id}->{'activeFfwRew'} > 1;
 	},
 	#'scanner' => \&_jumptoscanner,
 );
@@ -247,8 +275,8 @@ my %functions = (
 sub _jumptoscanner {
 	my $client = shift;
 	Slim::Buttons::Common::pushModeLeft($client, $modeName);
-	$jumptomode = 1;
-	$lastUpdateTime = 0;
+	$clientState{$client->id}->{'jumpToMode'} = 1;
+	$clientState{$client->id}->{'lastUpdateTime'} = 0;
 }
 
 sub getFunctions {
@@ -272,25 +300,51 @@ sub setMode {
 		return;
 	}
 	
-	my $errorStringName;
+	my @errorString;
 	my $duration;
+
+	_initClientState($client);
 	
-	if ($playingSong = Slim::Player::Playlist::url($client)) {
-		if (Slim::Music::Info::isRemoteURL($playingSong)) {
-			$errorStringName = 'PLUGIN_SCANNER_ERR_REMOTE';
-		} elsif (!($duration = Slim::Player::Source::playingSongDuration($client))) {
-			$errorStringName = 'PLUGIN_SCANNER_ERR_UNKNOWNSIZE';
-		} elsif ($client->masterOrSelf()->audioFilehandleIsSocket()) {
-			$errorStringName = 'PLUGIN_SCANNER_ERR_TRANSCODED';
+	if ($clientState{$client->id}->{'playingSong'} = Slim::Player::Playlist::url($client)) {
+		$duration = Slim::Player::Source::playingSongDuration($client);
+		
+		if ( !$duration ) {
+			# Try to get duration from the track object
+			$duration = Slim::Music::Info::getDuration( $clientState{$client->id}->{'playingSong'} );
+		}
+		
+		if ( !$duration ) {
+			@errorString = ('PLUGIN_SCANNER_ERR_UNKNOWNSIZE');
+		}
+		elsif ( Slim::Music::Info::isRemoteURL( $clientState{$client->id}->{'playingSong'} ) ) {
+			# Check with protocol handler to determine if the remote stream is seekable
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $clientState{$client->id}->{'playingSong'} );
+			if ( $handler && $handler->can('canSeek') ) {
+				$log->debug( "Checking with protocol handler $handler for canSeek" );
+				if ( !$handler->canSeek( $client, $clientState{$client->id}->{'playingSong'} ) ) {
+					@errorString = $handler->can('canSeekError') 
+						? $handler->canSeekError( $client, $clientState{$client->id}->{'playingSong'} )
+						: ('PLUGIN_SCANNER_ERR_REMOTE');
+				}
+			}
+			else {
+				@errorString = ('PLUGIN_SCANNER_ERR_REMOTE');
+			}
+		}
+		# XXX: need a better way to determine if a stream is transcoded
+		# because we want to prevent seek with real transcoding but not
+		# proxied streaming
+		elsif ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
+			@errorString = ('PLUGIN_SCANNER_ERR_TRANSCODED');
 		}
 	} else {
-		$errorStringName = 'PLUGIN_SCANNER_ERR_NOTRACK';
+		@errorString = ('PLUGIN_SCANNER_ERR_NOTRACK');
 	}
 	
-	if (defined $errorStringName) {
+	if ( @errorString ) {
 		$client->modeParam('handledTransition',1);
 		$client->showBriefly(
-			{line => [ $client->string($errorStringName), ''], 'jive' => undef},
+			{line => [ $client->string(@errorString), ''], 'jive' => undef},
 			{duration => 1.5, scroll => 1,
 				callback => sub {Slim::Buttons::Common::popMode($client);}
 			}
@@ -300,17 +354,19 @@ sub setMode {
 	$client->update;
 	my %params = %modeParams;
 
+	$params{'valueRef'} = \$clientState{$client->id}->{'offset'};
+
 	$params{'max'} = $duration;
 	
 	my $increment = $duration / 100;
 	if ($increment < 1) {$increment = 1;} elsif ($increment > 5) {$increment = 5;}
 	$params{'increment'} = $increment;
 
-	$offset = Slim::Player::Source::songTime($client);
+	$clientState{$client->id}->{'offset'} = Slim::Player::Source::songTime($client);
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.Bar',\%params);
-	$lastUpdateTime = 0;
-	$activeFfwRew = 0;
+	$clientState{$client->id}->{'lastUpdateTime'} = 0;
+	$clientState{$client->id}->{'activeFfwRew'} = 0;
 	
 	$client->update();
 	

@@ -14,5 +14,6 @@
     <minVersion>7.0a</minVersion>
   </targetApplication>
   <type>2</type>
+  <enforce>1</enforce>
   <version>2.0</version>
 </extension>
