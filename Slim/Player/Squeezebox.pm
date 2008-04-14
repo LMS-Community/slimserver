@@ -352,7 +352,7 @@ sub buffering {
 			line => [ $line1, $line2 ], 
 			jive => undef, 
 			cli  => undef
-		}, 0.5 );
+		}, 10 );
 		
 		# Call again unless we've reached the threshold
 		if ( $stillBuffering ) {
@@ -941,14 +941,9 @@ sub stream {
 					# Check WMA metadata to see if this remote stream is being served from a
 					# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
 					# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
-					my $mmsURL = $server_url;
-					$mmsURL    =~ s/^http/mms/;
-					my $cache = Slim::Utils::Cache->new;
-					my $wma   = $cache->get( 'wma_metadata_'  . $mmsURL ) || {};
-
-					if ( $wma->{meta} ) {
-						if ( $wma->{meta}->info('flags')->{broadcast} == 0 ) {
-							if ( $wma->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
+					if ( my $meta = $client->scanData->{metadata} ) {
+						if ( $meta->info('flags')->{broadcast} == 0 ) {
+							if ( $client->scanData->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
 								# The server didn't return the expected ASF header content-type,
 								# so we assume it's not a Windows Media server
 								$pcmsamplesize = 0;

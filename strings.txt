@@ -15740,3 +15740,20 @@ INSERT
 	IT	Inserisci
 	NL	Invoegen
 
+SEEK_ERROR_MMS
+	EN	Cannot seek in this WMA stream
+
+SEEK_ERROR_LIVE
+	EN	Cannot seek in live stream
+
+SEEK_ERROR_MP3
+	EN	Cannot seek in this MP3 stream
+
+SEEK_ERROR_MP3_UNKNOWN_BITRATE
+	EN	Cannot seek with unknown bitrate
+
+SEEK_ERROR_MP3_UNKNOWN_DURATION
+	EN	Cannot seek with unknown duration
+
+SEEK_ERROR_TYPE_NOT_SUPPORTED
+	EN	Cannot seek in streams of type %s
