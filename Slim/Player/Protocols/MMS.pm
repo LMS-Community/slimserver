@@ -81,6 +81,13 @@ sub contentType {
 	return ${*$self}{'contentType'};
 }
 
+# Whether or not to display buffering info while a track is loading
+sub showBuffering {
+	my ( $class, $client, $url ) = @_;
+	
+	return $client->showBuffering;
+}
+
 sub randomGUID {
 
 	return $guid if $guid;
@@ -141,29 +148,38 @@ sub requestString {
 		"Host: $host",
 		"Pragma: xClientGUID={" . randomGUID() . "}",
 	);
-
-	# Cache always uses mms URLs
-	my $mmsURL = $url;
-	$mmsURL    =~ s/^http/mms/;
 	
-	my $cache     = Slim::Utils::Cache->new;
-	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
-	my $wma       = $cache->get( 'wma_metadata_'  . $mmsURL ) || {};
-	
-	# Just in case, use stream #1
-	$streamNum ||= 1;
+	my $streamNum = $client->scanData->{streamNum} || 1;
+	my $metadata  = $client->scanData->{metadata};
+	my $seekdata  = $client->scanData->{seekdata}  || {};
 	
 	# Handle our metadata
-	if ( $wma->{meta} ) {
-		setMetadata( $client, $url, $wma->{meta}, $streamNum );
+	if ( $metadata ) {
+		setMetadata( $client, $url, $metadata, $streamNum );
 	}
+	
+	my $newtime = $seekdata->{newtime};
+	
+	my $context    = $newtime ? 4 : 2;
+	my $streamtime = $newtime ? $newtime * 1000 : 0;
 
 	push @headers, (
-		"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
+		"Pragma: no-cache,rate=1.0000000,stream-offset=0:0,max-duration=0",
+		"Pragma: stream-time=$streamtime",
+		"Pragma: request-context=$context",
 		"Pragma: xPlayStrm=1",
 		"Pragma: stream-switch-count=1",
 		"Pragma: stream-switch-entry=ffff:" . $streamNum . ":0 ",
 	);
+	
+	# Fix progress bar if seeking
+	if ( $newtime ) {
+		$client->masterOrSelf->currentsongqueue()->[-1]->{startOffset} = $newtime;
+		$client->masterOrSelf->remoteStreamStartTime( Time::HiRes::time() - $newtime );
+		
+		# Remove seek data
+		delete $client->scanData->{seekdata};
+	}
 
 	# make the request
 	return join($CRLF, @headers, $CRLF);
@@ -211,16 +227,10 @@ sub parseDirectHeaders {
 sub parseMetadata {
 	my ( $client, $url, $metadata ) = @_;
 	
-	my $wma = Audio::WMA->parseObject( $metadata );
-	
-	# Cache always uses mms URLs
-	my $mmsURL = $url;
-	$mmsURL    =~ s/^http/mms/;
-	
-	my $cache     = Slim::Utils::Cache->new;
-	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
+	my $wma       = Audio::WMA->parseObject( $metadata );
+	my $streamNum = $client->scanData->{streamNum} || 1;
 
-	setMetadata( $client, $url, $wma, $streamNum || 1 );
+	setMetadata( $client, $url, $wma, $streamNum );
 	
 	return;
 }
@@ -321,6 +331,15 @@ sub onDecoderUnderrun {
 # On skip, load the next track before playback
 sub onJump {
 	my ( $class, $client, $nextURL, $callback ) = @_;
+	
+	# If seeking, we can avoid scanning	
+	if ( $client->scanData->{seekdata} ) {
+		# XXX: we could set showBuffering to 0 but on slow
+		# streams there would be no feedback
+		
+		$callback->();
+		return;
+	}
 
 	# Display buffering info on loading the next track
 	$client->showBuffering( 1 );
@@ -328,6 +347,84 @@ sub onJump {
 	$log->debug( 'Scanning next HTTP track before playback' );
 	
 	Slim::Player::Protocols::HTTP->scanHTTPTrack( $client, $nextURL, $callback );
+}
+
+sub canSeek {
+	my ( $class, $client, $url ) = @_;
+	
+	$client = $client->masterOrSelf;
+	
+	# Remote stream must be seekable
+	if ( my $headers = $client->scanData->{headers} ) {
+		if ( $headers->content_type eq 'application/vnd.ms.wms-hdr.asfv1' ) {
+			# Stream is from a Windows Media server and we can seek if seekable flag is true
+			if ( $client->scanData->{metadata}->info('flags')->{seekable} ) {
+				return 1;
+			}
+		}
+	}
+	
+	return 0;
+}
+
+sub canSeekError {
+	my ( $class, $client, $url ) = @_;
+	
+	$client = $client->masterOrSelf;
+	
+	if ( my $metadata = $client->scanData->{metadata} ) {
+		if ( $metadata->info('flags')->{broadcast} ) {
+			return 'SEEK_ERROR_LIVE';
+		}
+	}
+	
+	return 'SEEK_ERROR_MMS';
+}
+
+sub getSeekData {
+	my ( $class, $client, $url, $newtime ) = @_;
+	
+	$client = $client->masterOrSelf;
+	
+	# Determine byte offset and song length in bytes
+	my $data = {};
+	
+	if ( my $metadata = $client->scanData->{metadata} ) {
+		my $bitrate = Slim::Music::Info::getBitrate( $url ) || return;
+		my $seconds = $metadata->info('playtime_seconds')   || return;
+		
+		$bitrate /= 1000;
+		
+		$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream of $seconds length" );
+		
+		$data->{newoffset}         = ( ( $bitrate * 1024 ) / 8 ) * $newtime;
+		$data->{songLengthInBytes} = ( ( $bitrate * 1024 ) / 8 ) * $seconds;
+	}
+	
+	return $data;
+}
+
+sub setSeekData {
+	my ( $class, $client, $url, $newtime, $newoffset ) = @_;
+	
+	my @clients;
+	
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		# if synced, save seek data for all players
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		push @clients, $master, @{ $master->slaves };
+	}
+	else {
+		push @clients, $client;
+	}
+	
+	for my $client ( @clients ) {
+		# Save the new seek point
+		$client->scanData->{seekdata} = {
+			newtime   => $newtime,
+			newoffset => $newoffset,
+		};
+	}
 }
 
 1;

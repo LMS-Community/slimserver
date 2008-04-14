@@ -307,6 +307,15 @@ sub parseDirectHeaders {
 		$contentType = 'mp3';
 	}
 	
+	if ( $length && $contentType eq 'mp3' ) {
+		logger('player.streaming.direct')->debug("Stream supports seeking");
+		$client->scanData->{mp3_can_seek} = 1;
+	}
+	else {
+		logger('player.streaming.direct')->debug("Stream does not support seeking");
+		delete $client->scanData->{mp3_can_seek};
+	}
+	
 	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 }
 
@@ -367,6 +376,15 @@ sub onDecoderUnderrun {
 # On skip, load the next track before playback
 sub onJump {
 	my ( $class, $client, $nextURL, $callback ) = @_;
+	
+	# If seeking, we can avoid scanning
+	if ( $client->scanData->{seekdata} ) {
+		# XXX: we could set showBuffering to 0 but on slow
+		# streams there would be no feedback
+		
+		$callback->();
+		return;
+	}
 
 	# Display buffering info on loading the next track
 	$client->showBuffering( 1 );
@@ -505,6 +523,93 @@ sub getMetadataFor {
 	}
 	
 	return {};
+}
+
+sub canSeek {
+	my ( $class, $client, $url ) = @_;
+	
+	$client = $client->masterOrSelf;
+	
+	# Can only seek if bitrate and duration are known
+	my $bitrate = Slim::Music::Info::getBitrate( $url );
+	my $seconds = Slim::Music::Info::getDuration( $url );
+	
+	if ( !$bitrate || !$seconds ) {
+		$log->debug( "bitrate: $bitrate, duration: $seconds" );
+		$log->debug( "Unknown bitrate or duration, seek disabled" );
+		return 0;
+	}
+	
+	if ( $client->scanData->{mp3_can_seek} ) {
+		return 1;
+	}
+	
+	$log->debug( "Seek not possible, content-length missing or wrong content-type" );
+	
+	return 0;
+}
+
+sub canSeekError {
+	my ( $class, $client, $url ) = @_;
+	
+	my $ct = Slim::Music::Info::contentType($url);
+	
+	if ( $ct ne 'mp3' ) {
+		return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', $ct );
+	} 
+	
+	if ( !Slim::Music::Info::getBitrate( $url ) ) {
+		return 'SEEK_ERROR_MP3_UNKNOWN_BITRATE';
+	}
+	elsif ( !Slim::Music::Info::getDuration( $url ) ) {
+		return 'SEEK_ERROR_MP3_UNKNOWN_DURATION';
+	}
+	
+	return 'SEEK_ERROR_MP3';
+}
+
+sub getSeekData {
+	my ( $class, $client, $url, $newtime ) = @_;
+	
+	# Determine byte offset and song length in bytes
+	my $bitrate = Slim::Music::Info::getBitrate( $url ) || return;
+	my $seconds = Slim::Music::Info::getDuration( $url ) || return;
+		
+	$bitrate /= 1000;
+		
+	$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream of $seconds length" );
+	
+	my $data = {
+		newoffset         => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
+		songLengthInBytes => ( ( $bitrate * 1024 ) / 8 ) * $seconds,
+	};
+	
+	return $data;
+}
+
+sub setSeekData {
+	my ( $class, $client, $url, $newtime, $newoffset ) = @_;
+	
+	my @clients;
+	
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		# if synced, save seek data for all players
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		push @clients, $master, @{ $master->slaves };
+	}
+	else {
+		push @clients, $client;
+	}
+	
+	for my $client ( @clients ) {
+		# Save the new seek point
+		$client->scanData( {
+			seekdata => {
+				newtime   => $newtime,
+				newoffset => $newoffset,
+			},
+		} );
+	}
 }
 
 1;

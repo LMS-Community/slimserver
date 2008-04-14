@@ -1045,16 +1045,20 @@ sub gototime {
 	my $rangecheck = shift;
 	
 	return unless Slim::Player::Playlist::song($client);
+	
+	$log->debug( "trying to gototime $newtime (rangecheck: $rangecheck)" );
+	
+	my $url = Slim::Player::Playlist::url($client);
 
-	if (!defined $client->audioFilehandle()) {
-		return unless openSong($client);
+	if ( !Slim::Music::Info::isRemoteURL($url) ) {
+		if (!defined $client->audioFilehandle()) {
+			return unless openSong($client);
+		}
 	}
-
-	my $song = playingSong($client);
-	my $songLengthInBytes = $song->{totalbytes};
-	my $duration	      = $song->{duration};
-
-	return if (!$songLengthInBytes || !$duration);
+	else {
+		# Force rangecheck for remote files
+		$rangecheck = 1;
+	}
 
 	if ($newtime =~ /^[\+\-]/) {
 
@@ -1064,8 +1068,37 @@ sub gototime {
 
 		$newtime += $oldtime;
 	}
+	
+	my $song = playingSong($client);
+	my $songLengthInBytes = $song->{totalbytes};
+	my $duration	      = $song->{duration};
+	
+	my $newoffset;
+	
+	# Let Protocol Handler give us the offset for remote URLs
+	if ( Slim::Music::Info::isRemoteURL($url) ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('getSeekData') ) {
+			my $data = $handler->getSeekData( $client, $url, $newtime );
+			
+			return unless $data;
+			
+			$newoffset         = $data->{newoffset};
+			$songLengthInBytes = $data->{songLengthInBytes};
+			
+			$log->debug( "Protocol handler gave us newoffset $newoffset, songLengthInBytes $songLengthInBytes" );
+		}
+		else {
+			return;
+		}
+	}
+	
+	return if (!$songLengthInBytes || !$duration);
 
-	my $newoffset = _time2offset($client, $newtime);
+	if ( !defined $newoffset ) {
+		# Get offset for local tracks
+		$newoffset = _time2offset($client, $newtime);
+	}
 
 	if ($rangecheck) {
 
@@ -1077,7 +1110,7 @@ sub gototime {
 		}
 	}
 
-	$log->info("Going to time $newtime");
+	$log->info("Going to time $newtime, offset $newoffset");
 
 	# skip to the previous or next track as necessary
 	if ($newoffset > $songLengthInBytes) {
@@ -1141,6 +1174,21 @@ sub gototime {
 		$everybuddy->stop();
 
 		@{$everybuddy->chunks} = ();
+	}
+	
+	if ( Slim::Music::Info::isRemoteURL($url) ) {
+		$log->debug("skipping ($newoffset) : $url");
+		
+		# Tell the protocol handler where to seek the next time this URL is played
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('setSeekData') ) {
+			$handler->setSeekData( $client, $url, $newtime, $newoffset );
+		}
+		
+		# Restart playback
+		$client->execute([ 'playlist', 'jump', playingSongIndex($client) ]);
+		
+		return;
 	}
 
 	my $dataoffset = $song->{offset};

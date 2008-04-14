@@ -24,6 +24,8 @@ sub shouldLoop { 1 }
 # Some sounds are small, use a small buffer threshold
 sub bufferThreshold { 10 }
 
+sub canSeek { 0 }
+
 sub getMetadataFor {
 	my $class = shift;
 	
