@@ -364,6 +364,12 @@ sub albumsQuery {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1);
 		}
 
+		# We need to know the 'No album' name so that those items
+		# which have been grouped together under it do not get the
+		# album art of the first album.
+		# It looks silly to go to Madonna->No album and see the
+		# picture of '2 Unlimited'.
+		my $noAlbumName = Slim::Utils::Strings::string('NO_ALBUM');
 
 		for my $eachitem ($rs->slice($start, $end)) {
 
@@ -407,7 +413,8 @@ sub albumsQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 
 				# artwork if we have it
-				if (defined(my $iconId = $eachitem->artwork())) {
+				if ($eachitem->title ne $noAlbumName &&
+				    defined(my $iconId = $eachitem->artwork())) {
 					$iconId += 0;
 					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 				}
