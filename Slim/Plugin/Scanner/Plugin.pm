@@ -49,18 +49,13 @@ my $log          = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-# Keep track of the state of each client to prevent simultaneous scans clashing with each other
-my %clientState = {};
-
 sub _initClientState {
 	my $client = shift;
-	$clientState{$client->id} = {
-		'offset' => 0,
-		'jumpToMode' => undef,
-		'playingSong' => undef,
-		'lastUpdateTime' => 0,
-		'activeFfwRew' => 0,
-	};
+	$client->pluginData(offset => 0);
+	$client->pluginData(lastUpdateTime => 0);
+	$client->pluginData(activeFfwRew => 0);
+	# The following keys are also used but start as undef:
+	# jumpToMode, playingSong
 }
 
 my %modeParams = (
@@ -69,8 +64,9 @@ my %modeParams = (
 	,'headerValue' => sub {
 			my $client = shift;
 			my $val = shift;
-			if (!$clientState{$client->id}->{'lastUpdateTime'}) {
-				$val = $clientState{$client->id}->{'offset'} = Slim::Player::Source::songTime($client);
+			if (! $client->pluginData('lastUpdateTime')) {
+				$val = Slim::Player::Source::songTime($client);
+				$client->pluginData(offset => $val);
 				$client->modeParam('cursor', undef);
 			} else {
 				$client->modeParam('cursor', Slim::Player::Source::songTime($client));
@@ -94,8 +90,8 @@ my %modeParams = (
 	,'onChange' => sub { 
 			my $client = shift;
 			my $val = shift;
-			$clientState{$client->id}->{'offset'} = $val;
-			$clientState{$client->id}->{'lastUpdateTime'} = time();
+			$client->pluginData(offset => $val);
+			$client->pluginData(lastUpdateTime => time());
 		}
 	,'onChangeArgs' => 'CV'
 	,'callback' => \&_scannerExitHandler
@@ -111,22 +107,23 @@ sub _timerHandler {
 		return;
 	}
 	
-	if ($clientState{$client->id}->{'playingSong'} ne Slim::Player::Playlist::url($client)) {
+	if ($client->pluginData('playingSong') ne Slim::Player::Playlist::url($client)) {
 		Slim::Buttons::Common::popModeRight($client);
 		return;
 	}
 
-	if ($clientState{$client->id}->{'lastUpdateTime'}
-		&& time() - $clientState{$client->id}->{'lastUpdateTime'} >= 2
+	my $lastUpdateTime = $client->pluginData('lastUpdateTime'); 
+	if ($lastUpdateTime
+		&& time() - $lastUpdateTime >= 2
 		&& !(Slim::Player::Source::playmode($client) =~ /pause/))
 	{
-		Slim::Player::Source::gototime($client, $clientState{$client->id}->{'offset'}, 1);
-		$clientState{$client->id}->{'lastUpdateTime'} = 0;
+		Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
+		$client->pluginData(lastUpdateTime => 0);
 	}
 
 	$client->update;
 	
-	$clientState{$client->id}->{'activeFfwRew'}++;
+	$client->pluginData->{'activeFfwRew'}++;
 	
 	Slim::Utils::Timers::setTimer($client, time()+1, \&_timerHandler);
 }
@@ -137,10 +134,10 @@ sub _scannerExitHandler {
 	
 	if ($exittype eq 'RIGHT') {
 		$client->bumpRight();
-	} elsif (($exittype ne 'POP' && $clientState{$client->id}->{'jumpToMode'}) || $exittype eq 'PUSH') {
+	} elsif (($exittype ne 'POP' && $client->pluginData('jumpToMode')) || $exittype eq 'PUSH') {
 		Slim::Utils::Timers::killOneTimer($client, \&_timerHandler);
 		Slim::Buttons::Common::popMode($client);
-		$clientState{$client->id}->{'jumpToMode'} = 0;
+		$client->pluginData(jumpToMode => 0);
 	} elsif ($exittype eq 'LEFT') {
 		Slim::Utils::Timers::killOneTimer($client, \&_timerHandler);
 		Slim::Buttons::Common::popModeRight($client);
@@ -197,7 +194,7 @@ sub _scan {
 	}
 	
 	$client->update();
-	$clientState{$client->id}->{'lastUpdateTime'} = 0;
+	$client->pluginData(lastUpdateTime => 0);
 }
 
 my %functions = (
@@ -213,8 +210,8 @@ my %functions = (
 		my $client = shift;
 		my $playmode = Slim::Player::Source::playmode($client);
 		Slim::Player::Source::rate($client, 1);
-		if ($clientState{$client->id}->{'lastUpdateTime'}) {
-			Slim::Player::Source::gototime($client, $clientState{$client->id}->{'offset'}, 1);
+		if ($client->pluginData('lastUpdateTime')) {
+			Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
 			if ($playmode =~ /pause/) {
 				# To get the volume to fade in
 				Slim::Player::Source::playmode($client, 'resume');
@@ -225,20 +222,20 @@ my %functions = (
 		} elsif ($playmode =~ /pause/) {
 			Slim::Player::Source::playmode($client, 'play');
 		}
-		if ($clientState{$client->id}->{'jumpToMode'}) {
+		if ($client->pluginData('jumpToMode')) {
 			Slim::Buttons::Common::popMode($client);
-			$clientState{$client->id}->{'jumpToMode'} = 0;
+			$client->pluginData(jumpToMode => 0);
 		}
-		$clientState{$client->id}->{'lastUpdateTime'} = 0;
+		$client->pluginData(lastUpdateTime => 0);
 		$client->update;
 	},
 	'pause' => sub {
 		my $client = shift;
 		my $playmode = Slim::Player::Source::playmode($client);
 		my $rate = Slim::Player::Source::rate($client);
-		if ($clientState{$client->id}->{'lastUpdateTime'}) {
+		if ($client->pluginData('lastUpdateTime')) {
 			Slim::Player::Source::rate($client, 1);
-			Slim::Player::Source::gototime($client, $clientState{$client->id}->{'offset'}, 1);
+			Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
 			if ($playmode =~ /pause/) {
 				# To get the volume to fade in
 				Slim::Player::Source::playmode($client, 'resume');
@@ -250,7 +247,7 @@ my %functions = (
 		} else {
 			Slim::Player::Source::playmode($client, 'pause');
 		}
-		$clientState{$client->id}->{'lastUpdateTime'} = 0;
+		$client->pluginData(lastUpdateTime => 0);
 		$client->update;
 	},
 	'jump_fwd' => sub {
@@ -263,11 +260,11 @@ my %functions = (
 	},
 	'scanner_fwd' => sub {
 		my $client = shift;
-		Slim::Buttons::Input::Bar::changePos(shift, 1, 'up') if $clientState{$client->id}->{'activeFfwRew'} > 1;
+		Slim::Buttons::Input::Bar::changePos(shift, 1, 'up') if $client->pluginData('activeFfwRew') > 1;
 	},
 	'scanner_rew' => sub {
 		my $client = shift;
-		Slim::Buttons::Input::Bar::changePos(shift, -1, 'down') if $clientState{$client->id}->{'activeFfwRew'} > 1;
+		Slim::Buttons::Input::Bar::changePos(shift, -1, 'down') if $client->pluginData('activeFfwRew') > 1;
 	},
 	#'scanner' => \&_jumptoscanner,
 );
@@ -275,8 +272,8 @@ my %functions = (
 sub _jumptoscanner {
 	my $client = shift;
 	Slim::Buttons::Common::pushModeLeft($client, $modeName);
-	$clientState{$client->id}->{'jumpToMode'} = 1;
-	$clientState{$client->id}->{'lastUpdateTime'} = 0;
+	$client->pluginData(jumpToMode => 1);
+	$client->pluginData(lastUpdateTime => 0);
 }
 
 sub getFunctions {
@@ -305,25 +302,27 @@ sub setMode {
 
 	_initClientState($client);
 	
-	if ($clientState{$client->id}->{'playingSong'} = Slim::Player::Playlist::url($client)) {
+	my $playingSong = Slim::Player::Playlist::url($client);
+	$client->pluginData(playingSong => $playingSong);
+	if ( $playingSong ) {
 		$duration = Slim::Player::Source::playingSongDuration($client);
 		
 		if ( !$duration ) {
 			# Try to get duration from the track object
-			$duration = Slim::Music::Info::getDuration( $clientState{$client->id}->{'playingSong'} );
+			$duration = Slim::Music::Info::getDuration($playingSong);
 		}
 		
 		if ( !$duration ) {
 			@errorString = ('PLUGIN_SCANNER_ERR_UNKNOWNSIZE');
 		}
-		elsif ( Slim::Music::Info::isRemoteURL( $clientState{$client->id}->{'playingSong'} ) ) {
+		elsif ( Slim::Music::Info::isRemoteURL($playingSong) ) {
 			# Check with protocol handler to determine if the remote stream is seekable
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $clientState{$client->id}->{'playingSong'} );
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingSong);
 			if ( $handler && $handler->can('canSeek') ) {
 				$log->debug( "Checking with protocol handler $handler for canSeek" );
-				if ( !$handler->canSeek( $client, $clientState{$client->id}->{'playingSong'} ) ) {
+				if ( !$handler->canSeek( $client, $playingSong ) ) {
 					@errorString = $handler->can('canSeekError') 
-						? $handler->canSeekError( $client, $clientState{$client->id}->{'playingSong'} )
+						? $handler->canSeekError( $client, $playingSong )
 						: ('PLUGIN_SCANNER_ERR_REMOTE');
 				}
 			}
@@ -354,7 +353,7 @@ sub setMode {
 	$client->update;
 	my %params = %modeParams;
 
-	$params{'valueRef'} = \$clientState{$client->id}->{'offset'};
+	$params{'valueRef'} = \$client->pluginData('offset');
 
 	$params{'max'} = $duration;
 	
@@ -362,11 +361,11 @@ sub setMode {
 	if ($increment < 1) {$increment = 1;} elsif ($increment > 5) {$increment = 5;}
 	$params{'increment'} = $increment;
 
-	$clientState{$client->id}->{'offset'} = Slim::Player::Source::songTime($client);
+	$client->pluginData(offset => Slim::Player::Source::songTime($client));
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.Bar',\%params);
-	$clientState{$client->id}->{'lastUpdateTime'} = 0;
-	$clientState{$client->id}->{'activeFfwRew'} = 0;
+	$client->pluginData(lastUpdateTime => 0);
+	$client->pluginData(activeFfwRew => 0);
 	
 	$client->update();
 	
