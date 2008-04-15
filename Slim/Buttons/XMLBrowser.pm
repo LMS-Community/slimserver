@@ -1765,6 +1765,28 @@ sub _cliQuery_done {
 		
 		if ($count) {
 		
+			# first, determine whether there should be a "Play All" item in this list
+			# this determination is made by checking if there are 2 or more playable items in the list
+			my $insertAll = 0;
+			if ( $menuMode ) {
+				my $mark = 0;
+				my ($v, $s, $e) = $request->normalize(scalar($index), scalar($quantity), $count);
+				last unless $v;
+				for my $item ( @{$subFeed->{items}}[0..$e] ) {
+					if ( $item->{duration} && hasAudio($item) ) {
+						$mark++;
+						if ($mark > 1) {
+							$insertAll = 1;
+							last;
+						}
+					}
+				}
+			}
+			# second, fix the count, index, and quantity variables if we are adding Play All
+			if ( $menuMode && $insertAll ) {
+				$count = _fixCount($insertAll, \$index, \$quantity, $count);
+			}
+			# finally we can determine $start and $end of the chunk based on the tweaked metrics
 			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 		
 			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
@@ -1818,51 +1840,43 @@ sub _cliQuery_done {
 				}
 
 				# Bug 6874, add a "Play All" item if list contains more than 1 playable item with duration
-				if ( $menuMode ) {					
-					for my $item ( @{$subFeed->{items}}[$start..$end] ) {
-						if ( $item->{duration} && hasAudio($item) ) {
-							my $actions = {
-								do => {
-									player => 0,
-									cmd    => [ $query, 'playlist', 'playall' ],
-									params => $params,
-								},
-								add => {
-									player => 0,
-									cmd    => [ $query, 'playlist', 'addall' ],
-									params => $params,
-								},
-							};
+				if ( $menuMode && $insertAll ) {
+					my $actions = {
+						do => {
+							player => 0,
+							cmd    => [ $query, 'playlist', 'playall' ],
+							params => $params,
+						},
+						add => {
+							player => 0,
+							cmd    => [ $query, 'playlist', 'addall' ],
+							params => $params,
+							},
+						};
 						
-							$actions->{do}->{params}->{item_id}  = $item_id;
-							$actions->{add}->{params}->{item_id} = $item_id;
+					$actions->{do}->{params}->{item_id}  = $item_id;
+					$actions->{add}->{params}->{item_id} = $item_id;
+					
+					$actions->{play} = $actions->{do};
 						
-							$actions->{play} = $actions->{do};
-						
-							my $text = $request->client
-								? $request->client->string('JIVE_PLAY_ALL')
-								: Slim::Utils::Strings::string('JIVE_PLAY_ALL');
+					my $text = $request->client
+						? $request->client->string('JIVE_PLAY_ALL')
+						: Slim::Utils::Strings::string('JIVE_PLAY_ALL');
 								
-							# Bug 7517, only add Play All at the top, not in the middle if we're
-							# dealing with a chunked list starting at 200, etc
-							if ( $start == 0 ) {
-								$request->addResultLoop($loopname, $cnt, 'text', $text);
-								$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
-								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-								$cnt++;
-							}
+					# Bug 7517, only add Play All at the top, not in the middle if we're
+					# dealing with a chunked list starting at 200, etc
+					if ( $start == 0 ) {
+						$request->addResultLoop($loopname, $cnt, 'text', $text);
+						$request->addResultLoop($loopname, $cnt, 'style', 'itemplay');
+						$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+						$cnt++;
+					}
 							
-							$count++;
-						
-							# Bug 7109, we don't want later items to have the wrong index so we need to
-							# add _slim_id keys to them.
-							my $cnt2 = 0;
-							for my $subitem ( @{$subFeed->{items}}[$start..$end] ) {
-								$subitem->{_slim_id} = $cnt2++;
-							}
-						
-							last;
-						}
+					# Bug 7109, we don't want later items to have the wrong index so we need to
+					# add _slim_id keys to them.
+					my $cnt2 = 0;
+					for my $subitem ( @{$subFeed->{items}}[$start..$end] ) {
+						$subitem->{_slim_id} = $cnt2++;
 					}
 				}
 				
@@ -2121,6 +2135,32 @@ sub _cliQuery_error {
 	$request->addResult('count', 0);
 
 	$request->setStatusDone();	
+}
+
+# fix the count in case we're adding additional items
+# (play all) to the resultset
+sub _fixCount {
+	my $insertItem = shift;
+	my $index      = shift;
+	my $quantity   = shift;
+	my $count      = shift;
+
+	my $totalCount = $count || 0;
+
+	if ($insertItem && $count > 1) {
+		$totalCount++;
+		if (!$$index && $count == $$quantity) {
+			# count and qty are the same, don't do anything to index or quantity
+		# return one less result as we only add the additional item in the first chunk
+		} elsif ( !$$index ) {
+			$$quantity--;
+		# decrease the index in subsequent queries
+		} else {
+                        $$index--;
+		}
+	}
+
+	return $totalCount;
 }
 
 =head1 SEE ALSO
