@@ -1770,9 +1770,7 @@ sub _cliQuery_done {
 			my $insertAll = 0;
 			if ( $menuMode ) {
 				my $mark = 0;
-				my ($v, $s, $e) = $request->normalize(scalar($index), scalar($quantity), $count);
-				last unless $v;
-				for my $item ( @{$subFeed->{items}}[0..$e] ) {
+				for my $item ( @{$subFeed->{items}}[0..$count] ) {
 					if ( $item->{duration} && hasAudio($item) ) {
 						$mark++;
 						if ($mark > 1) {
