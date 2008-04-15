@@ -363,6 +363,10 @@ sub buffering {
 				$threshold,
 			);
 		}
+		else {
+			# All done buffering, refresh the screen
+			$client->update;
+		}
 	}
 }
 
