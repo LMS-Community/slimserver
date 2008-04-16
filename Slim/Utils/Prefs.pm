@@ -100,7 +100,7 @@ $path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 my $prefs = preferences('server');
 
 # make sure these server prefs has the utf8flag turned off before they get used
-$prefs->setUtf8Off(qw(audiodir playlistdir cachedir));
+$prefs->setUtf8Off(qw(audiodir playlistdir cachedir coverArt));
 
 
 =head2 preferences( $namespace )
