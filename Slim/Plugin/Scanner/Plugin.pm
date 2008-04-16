@@ -1,8 +1,16 @@
-#line 2 "Plugin/Scanner/Plugin.pm"
 package Slim::Plugin::Scanner::Plugin;
+use strict;
+use base qw(Slim::Plugin::Base);
 
-# $Id: Plugin.pm,v 1.2 2007-11-10 04:36:58 fishbone Exp $
-# by Kevin Deane-Freeman August 2004
+# Originally written by Kevin Deane-Freeman August 2004
+
+# Provide a new mode allowing the user to jump to an arbitrary point in the
+# currently playing song.  Replaces the default fast-forward/rewind behaviour,
+# but also allows fast-forwards/rewinds once the mode has been entered. 
+# This plugin uses Input.Bar to provide a "scanner bar".  The user moves
+# the bar left and right to select a new song position.  The new song position
+# is then applied when the user presses Play or after a period of inactivity
+# occurs.
 
 # This code is derived from code with the following copyright message:
 #
@@ -11,22 +19,11 @@ package Slim::Plugin::Scanner::Plugin;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# To use this as a single-button access, add the following to a custom.map file:
-# fwd.hold =  menu_Plugins::Scanner::Plugin
-#
-use strict;
-
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 use Slim::Hardware::IR;
 use Slim::Player::Client;
-use base qw(Slim::Plugin::Base);
-
-###########################################
-### Section 1. Change these as required ###
-###########################################
-
 use Slim::Utils::Strings qw (string);
 use File::Spec::Functions qw(:ALL);
 
@@ -35,13 +32,7 @@ $VERSION = substr(q$Revision: 1.2 $,10);
 
 my $modeName = 'Slim::Plugin::Scanner::Plugin';
 
-
-
 sub getDisplayName {return 'PLUGIN_SCANNER'}
-
-##################################################
-### Section 2. Your variables and code go here ###
-##################################################
 
 my $log          = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.songscanner',
@@ -51,8 +42,11 @@ my $log          = Slim::Utils::Log->addLogCategory({
 
 sub _initClientState {
 	my $client = shift;
+	# The currently selected position in the scanner bar
 	$client->pluginData(offset => 0);
+	# The time (seconds since epoch) at which the user last moved the scanner bar
 	$client->pluginData(lastUpdateTime => 0);
+	# The number of seconds since the scanner mode was entered 
 	$client->pluginData(activeFfwRew => 0);
 	# The following keys are also used but start as undef:
 	# jumpToMode, playingSong
@@ -65,16 +59,22 @@ my %modeParams = (
 			my $client = shift;
 			my $val = shift;
 			if (! $client->pluginData('lastUpdateTime')) {
+				# No new position has been selected, set offset to track the current song position and clear the cursor
 				$val = Slim::Player::Source::songTime($client);
 				$client->pluginData(offset => $val);
 				$client->modeParam('cursor', undef);
 			} else {
+				# A selection is being made - set the cursor to the current song pos
 				$client->modeParam('cursor', Slim::Player::Source::songTime($client));
 			}
+
+			# Work out song position state e.g. 01:30/3:32
 			my $pos = int($val);
 			my $dur = int(Slim::Player::Source::playingSongDuration($client));
 			my $txtPos = sprintf("%02d:%02d", $pos / 60, $pos % 60);
 			my $txtDur = sprintf("%02d:%02d", $dur / 60, $dur % 60);
+
+			# Work out ffwd/rew state e.g. >> 2X 
 			my $rate = Slim::Player::Source::rate($client);
 			my $rateText = '';
 			if ($rate < 0 || $rate > 1) {
@@ -90,6 +90,7 @@ my %modeParams = (
 	,'onChange' => sub { 
 			my $client = shift;
 			my $val = shift;
+			# Won't Input.Bar have already done this via valueRef?? [Max]
 			$client->pluginData(offset => $val);
 			$client->pluginData(lastUpdateTime => time());
 		}
@@ -97,6 +98,7 @@ my %modeParams = (
 	,'callback' => \&_scannerExitHandler
 	,'handleLeaveMode' => 1
 	,'trackValueChanges' => 1
+	# Override defaults to allow acceleration
 	,'knobFlags' => Slim::Player::Client::KNOB_NOWRAP()
 );
 
@@ -353,7 +355,7 @@ sub setMode {
 	$client->update;
 	my %params = %modeParams;
 
-	$params{'valueRef'} = \$client->pluginData('offset');
+	$params{'valueRef'} = \$client->pluginData->{'offset'};
 
 	$params{'max'} = $duration;
 	
