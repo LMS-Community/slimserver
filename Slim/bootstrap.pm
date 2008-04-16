@@ -246,6 +246,8 @@ sub tryModuleLoad {
 
 	for my $module (@modules) {
 
+		next unless ($module);
+
 		%oldINC = %INC;
 
 		# Don't spit out any redefined warnings
