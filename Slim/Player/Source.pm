@@ -2548,7 +2548,7 @@ sub _streamClassForFormat {
 
 	$streamFormat ||= $client->streamformat;
 
-	if (Slim::Formats->loadTagFormatForType($streamFormat)) {
+	if ($streamFormat && Slim::Formats->loadTagFormatForType($streamFormat)) {
 		return Slim::Formats->classForFormat($streamFormat);
 	}
 }
