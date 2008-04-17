@@ -1862,7 +1862,7 @@ sub jiveFavoritesCommand {
 # file types allowed for downloading to jive
 my %filetypes = (
 	applet    => qr/\.zip$/,
-	wallpaper => qr/\.(bmp|jpg|jpeg|png)$/,
+	wallpaper => qr/\.(bmp|jpg|jpeg|png)$|^http:\/\//,
 	sound     => qr/\.wav$/,
 );
 
@@ -1893,7 +1893,7 @@ sub registerDownload {
 
 	my $file = $key || basename($path);
 
-	if ($type =~ /wallpaper|sound|applet/ && $file =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
+	if ($type =~ /wallpaper|sound|applet/ && $path =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
 
 		$log->info("registering download for $type $name $file $path");
 
