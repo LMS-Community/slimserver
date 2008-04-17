@@ -488,9 +488,18 @@ sub handler {
 			
 			my $unsub = $obj->{data}->{unsubscribe};
 			
-			# Add it to our list of pending unsubscribe events
-			# It will be removed the next time we get a requestCallback for it
-			$toUnsubscribe{$unsub} = 1;
+			# If this subscription was a normal subscribe, we can unsubscribe now
+			if ( my $callback = delete $subCallbacks{$unsub} ) {
+				# this was a normal subscribe, so we have to call unsubscribe()
+				$log->debug( "Request::unsubscribe( $callback )" );
+
+				Slim::Control::Request::unsubscribe( $callback );
+			}
+			else {
+				# Add it to our list of pending unsubscribe events
+				# It will be removed the next time we get a requestCallback for it
+				$toUnsubscribe{$unsub} = 1;
+			}
 			
 			push @{$events}, {
 				channel      => '/slim/unsubscribe',
@@ -800,20 +809,10 @@ sub requestCallback {
 	$log->debug( "requestCallback got results for $channel / $id" );
 	
 	# Do we need to unsubscribe from this request?
-	if ( exists $toUnsubscribe{ $channel } ) {
+	if ( delete $toUnsubscribe{ $channel } ) {
 		$log->debug( "requestCallback: unsubscribing from $channel" );
 		
-		if ( my $callback = delete $subCallbacks{ $channel } ) {
-			# this was a normal subscribe, so we have to call unsubscribe()
-			$log->debug( "Request::unsubscribe( $callback )" );
-			
-			Slim::Control::Request::unsubscribe( $callback );
-		}
-		else {
-			$request->removeAutoExecuteCallback();
-		}
-		
-		delete $toUnsubscribe{ $channel };
+		$request->removeAutoExecuteCallback();
 		
 		return;
 	}
