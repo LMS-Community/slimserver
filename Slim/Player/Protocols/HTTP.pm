@@ -12,6 +12,7 @@ use base qw(Slim::Formats::HTTP);
 
 use File::Spec::Functions qw(:ALL);
 use IO::String;
+use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Player::TranscodingHelper;
@@ -407,12 +408,15 @@ sub scanHTTPTrack {
 			if ( scalar @{$foundItems} ) {
 				# If the item expanded into a playlist or is different from the original,
 				# splice it into the playlist
-				if ( scalar @{$foundItems} > 1 || $foundItems->[0] ne $nextURL ) {
+				my $foundURL = blessed( $foundItems->[0] ) ? $foundItems->[0]->url : $foundItems->[0];
+				
+				if ( scalar @{$foundItems} > 1 || $foundURL ne $nextURL ) {
 					# Find the location of nextURL in the playlist
 					my $i = 0;
 				
 					for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
-						if ( $item->url eq $nextURL ) {
+						my $itemURL = blessed($item) ? $item->url : $item;
+						if ( $itemURL eq $nextURL ) {
 							$log->debug( 'Splicing ' . scalar( @{$foundItems} ) . " scanned tracks into playlist at index $i" );
 							splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, @{$foundItems};
 							last;
