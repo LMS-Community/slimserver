@@ -8,7 +8,6 @@ use base qw(Slim::Plugin::Base);
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
-use Slim::Utils::Strings qw( string );
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
@@ -37,11 +36,11 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
     Slim::Control::Request::addDispatch(['shoutcast', 'items', '_index', '_quantity'],
-        [0, 1, 1, \&cliQuery]);
+        [1, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['shoutcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
-		[0, 1, 1, \&cliRadiosQuery]);
+		[1, 1, 1, \&cliRadiosQuery]);
 
 	$class->SUPER::initPlugin();
 }
@@ -66,7 +65,7 @@ sub setMode {
 		modeName => 'ShoutcastBrowser Plugin',
 		url      => FEED(),
 		search   => SEARCH(),
-		title    => $client->string(getDisplayName()),
+		title    => $client->string( getDisplayName() ),
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
@@ -83,6 +82,7 @@ sub cliQuery {
 
 sub cliRadiosQuery {
 	my $request = shift;
+	my $client  = $request->client;
 	
 	my $menu = $request->getParam('menu');
 
@@ -90,7 +90,7 @@ sub cliRadiosQuery {
 	# what we want the query to report about ourself
 	if (defined $menu) {
 		$data = {
-			'text' => string(getDisplayName()),  # nice name
+			'text' => $client->string( getDisplayName() ),  # nice name
 			'icon-id' => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
 			'weight'  => 50,
 			'actions' => {
@@ -109,7 +109,7 @@ sub cliRadiosQuery {
 	else {
 		$data = {
 			'cmd' => 'shoutcast',                    # cmd label
-			'name' => string(getDisplayName()),  # nice name
+			'name' => $client->string( getDisplayName() ),  # nice name
 			'type' => 'xmlbrowser',              # type
 		};
 	}

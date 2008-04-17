@@ -4590,13 +4590,16 @@ sub _addSong {
 sub _addJivePlaylistControls {
 
 	my ($request, $loop, $count) = @_;
+	
+	my $client = $request->client;
+	
 	# clear playlist
-	my $text = Slim::Utils::Strings::string('CLEAR_PLAYLIST');
+	my $text = $client->string('CLEAR_PLAYLIST');
 	# add clear playlist and save playlist menu items
 	$count++;
 	my @clear_playlist = (
 		{
-			text    => Slim::Utils::Strings::string('CANCEL'),
+			text    => $client->string('CANCEL'),
 			actions => {
 				go => {
 					player => 0,
@@ -4606,7 +4609,7 @@ sub _addJivePlaylistControls {
 			nextWindow => 'playlist',
 		},
 		{
-			text    => Slim::Utils::Strings::string('CLEAR_PLAYLIST'),
+			text    => $client->string('CLEAR_PLAYLIST'),
 			actions => {
 				do => {
 					player => 0,
@@ -4627,9 +4630,9 @@ sub _addJivePlaylistControls {
 	# save playlist
 	my $input = {
 		len          => 1,
-		allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
+		allowedChars => $client->string('JIVE_ALLOWEDCHARS_WITHCAPS'),
 		help         => {
-			text => Slim::Utils::Strings::string('JIVE_SAVEPLAYLIST_HELP'),
+			text => $client->string('JIVE_SAVEPLAYLIST_HELP'),
 		},
 	};
 	my $actions = {
@@ -4644,7 +4647,7 @@ sub _addJivePlaylistControls {
 	};
 	$count++;
 
-	$text = Slim::Utils::Strings::string('SAVE_PLAYLIST');
+	$text = $client->string('SAVE_PLAYLIST');
 	$request->addResultLoop($loop, $count, 'text', $text);
 	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/blank.png');
 	$request->addResultLoop($loop, $count, 'input', $input);
