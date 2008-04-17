@@ -17,10 +17,11 @@
 
 ELSE %]
 	[% extJsScripts = BLOCK %]
-		<script type="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
-	
+		<script type="text/javascript" src="[% webroot %]html/Home.js?r=[% revision %]"></script>
 		<script type="text/javascript">
-			Ext.EventManager.onDocumentReady(MainMenu.init, MainMenu, true);
+			Ext.onReady(function(){
+				Home.init();
+			});
 		</script>
 	[% END %]
 
@@ -74,8 +75,8 @@ ELSE %]
 		additionalLinks.icons.RADIO_TUNEIN = 'html/images/ServiceProviders/tuneinurl.png';
 		control = BLOCK %]
 			<input type="text" id="tuneinurl" class="x-form-focus" size="30" value="http://" onfocus="this.select();">
-			[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
-			[% WRAPPER addlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
+			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.playerRequest({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
+			[% WRAPPER addlink %]onclick="SqueezeJS.Controller.playerRequest({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
 		[% END;
 		PROCESS menuItem link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
@@ -108,7 +109,7 @@ ELSE %]
 	END %]
 
 	[% BLOCK menuItem %]
-		<div class="selectorMarker [% expandable %]" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
+		<div class="selectorMarker [% expandable %]" onmouseover="Highlighter.highlight(this [% IF expandable %], Home.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 				<div class="homeMenuItem" id="[% link.key %]">
 					[% IF expandable %]
@@ -176,10 +177,10 @@ ELSE %]
 					control = BLOCK;
 						IF entry.type == "audio";
 							 WRAPPER playlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
+								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true);"
 							[%- END;
 							WRAPPER addlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
+								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true);"
 							[%- END;
 						ELSE;
 							PROCESS dummylink;

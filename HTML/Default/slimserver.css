@@ -5,13 +5,11 @@ html, body {
 	margin: 0;
 	border: 0 none;
 	overflow: hidden;
-	height: 100%;
 	background-color: #eee;
 }
 
 body.singlePanel,
 body.main {
-	margin: 5px;
 	background: #666;
 }
 
@@ -88,6 +86,11 @@ a:hover, .link:hover,
 	background-color: white;
 }
 
+#filesystembrowser .x-panel-body-noheader,
+#filesystembrowser .x-panel-mc .x-panel-body {
+	border: none;
+}
+
 .filesystemBrowseBtn {
 	vertical-align: bottom;
 	padding: 0 2px;
@@ -116,17 +119,18 @@ a:hover, .link:hover,
 	background-image: url(html/images/background.png);
 }
 
-img#background { position:absolute; }
-
-#mainbody {
-	position: relative;
-	width: 100%;
+img#background {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	z-index: -1;
 }
 
 #header_content {
 	height: 12px;
 	padding-top: 11px;
 	background: url(html/images/header_right.gif) no-repeat top right;
+	margin-right: 0;
 }
 
 #header_left {
@@ -140,7 +144,7 @@ img#background { position:absolute; }
 #squeezeCenterLogo {
 	position: absolute;
 	top: 15px;
-	left: 15px;
+	left: 20px;
 	height: 40px;
 	width: 144px;
 	background: url(html/images/squeezecenter.gif) no-repeat;
@@ -149,7 +153,7 @@ img#background { position:absolute; }
 #logitechLogo {
 	position: absolute;
 	top: 0px;
-	right: 15px;
+	right: 20px;
 	height: 40px;
 	width: 42px;
 	background: url(html/images/logitech.gif) no-repeat;
@@ -160,15 +164,8 @@ img#background { position:absolute; }
 	right: 100px;
 }
 
-#main {
-	overflow: hidden;
-	background: transparent;
-	padding: 0 10px;
-}
-
 .inner {
 	position: relative;
-	width: 100%;
 }
 
 .inner p {
@@ -219,35 +216,41 @@ img#background { position:absolute; }
 	bottom: 0;
 }
 
-#leftpanel, #rightpanel {
-	vertical-align: top;
-}
-
 .inner_top_left, .inner_top_right,
 .inner_bottom_left, .inner_bottom_right {
 	background-image: url(html/images/inner_edges.gif);
 }
 
-.inner_top_left { background-position: 0 0; }
-.inner_top_right { background-position: 0 -12px; }
+#leftcontent {
+	width: 100%;
+	height: 100%;
+}
 
-#leftpanel .inner_bottom_left,
-#mainpanel .inner_bottom_left {
+#inner_footer .inner_bottom_left,
+#leftfooter .inner_bottom_left {
 	background-position: 0 -24px;
 }
 
-#leftpanel .inner_bottom_right { background-position: 0 -36px; }
+#leftfooter .inner_bottom_right {
+	background-position: 0 -36px;
+}
 
-#rightpanel .inner_bottom_left { background-position: 0 -48px; }
+#rightfooter .inner_bottom_left {
+	background-position: 0 -48px;
+}
 
-#rightpanel .inner_bottom_right,
-#mainpanel .inner_bottom_right {
+#inner_footer .inner_bottom_right,
+#rightfooter .inner_bottom_right {
 	background-position: 0 -60px;
 }
+
+.inner_top_left { background-position: 0 0; }
+.inner_top_right { background-position: 0 -12px; }
 
 #footer_content {
 	height: 16px;
 	padding-top: 24px;
+	margin-right: 0;
 	background: url(html/images/footer_right.gif) no-repeat bottom right;
 }
 
@@ -266,6 +269,11 @@ img#background { position:absolute; }
 .singlePanel #footer_content { padding-top: 0; }
 .singlePanel #footer_left { margin-top: 0; }
 
+.singlePanel .inner_top_left,
+.singlePanel .inner_top_right {
+	background-color: black;
+}
+
 #helpLink img, #settingsLink img, #footerInfo img {
 	vertical-align: middle;
 }
@@ -282,8 +290,8 @@ img#background { position:absolute; }
 
 #helpInfoSection {
 	display: inline;
-	position: absolute;
 	top: 7px;
+	position: absolute;
 	left: 25px;
 }
 
@@ -295,19 +303,19 @@ img#background { position:absolute; }
 #settingsLink {
 	position: absolute;
 	top: 7px;
-	right: 25px;
+	right: 35px;
 	text-align: right;
 }
 
 
 /* inner pages (left frame) */
-#inner_header, #infoTab, #playlistTab {
+.wz_page .pagetitle, #inner_header, #infoTab, #playlistTab {
 	background-color: #404040;
 	color: #dddddd;
 }
 
-#inner_header {
-	min-height: 22px;
+.wz_page .pagetitle, #inner_header {
+	min-height: 20px;
 	padding-bottom: 3px;
 }
 
@@ -341,7 +349,6 @@ img#background { position:absolute; }
 
 .pagetitle {
 	padding-left: 10px;
-	padding-right: 25px;
 	font-size: 14px;
 	font-weight: bold;
 }
@@ -450,11 +457,20 @@ div.pagetitleWithIcon {
 #btnPlaylistToggleArtwork {
 	position: absolute;
 	left: 12px;
-	bottom: 12px;
+	bottom: 0px;
 }
 
-.btn-playlist-save, .btn-playlist-save button,
-.btn-playlist-clear, .btn-playlist-clear button {
+#btnPlaylistSave, #btnPlaylistClear {
+	position: absolute;
+	bottom: 0px;
+	right: 10px;
+}
+
+#btnPlaylistSave {
+	right: 45px;
+}
+
+.btn-playlist-save button, .btn-playlist-clear button {
 	height: 19px;
 }
 
@@ -550,6 +566,10 @@ div.pagetitleWithIcon {
 	bottom: 5px;
 	right: 5px;
 	padding: 2px;
+	background-color: #c4c4c4;
+}
+
+#playerControlPanel {
 	background-color: #c4c4c4;
 }
 
@@ -1046,6 +1066,11 @@ form#advSearchForm.resultsPage {
 }
 
 /* settings pages */
+#settingsTabs {
+	height: 20px;
+	margin: 0 8px;
+}
+
 body.settings {
 	position: relative;
 	background-color: white;
@@ -1067,7 +1092,7 @@ body.settingsMenu {
 }
 
 .settingSection {
-	padding: 0 18px;
+	padding: 0 22px;
 	margin-bottom: 15px;
 	margin-top: 15px;
 }
@@ -1131,9 +1156,14 @@ body.settingsMenu {
 }
 
 .settings .buttonbar {
-	padding: 2px 11px;
+	padding: 2px 13px;
 	width: 100%;
 	background-color: #eee;
+	z-index: 999;
+}
+
+div.buttonbarSpacer {
+	height: 20px;
 }
 
 .settings select.stdedit {
@@ -1169,24 +1199,25 @@ body.settingsMenu {
 	margin-bottom: 10px;
 }
 
-.x-dlg-bd b, .x-dlg-bd p, .x-dlg-bd ul, .x-dlg-bd form,
-.helpsection h1, .helpsection h2, .helpsection h3, .helpsection h4,
-.helpsection p, .helpsection dt, .helpsection ol, .helpsection pre,
-.helpsection table {
-		margin: 5px 5px 10px;
+.x-window .x-window-body b, .x-window .x-window-body p, .x-window .x-window-body ul, .x-window .x-window-body form,
+.helpsection p, .helpsection dt {
+	margin: 5px 5px 10px;
 }
 
+ul.x-tree-root-ct,
+.x-window .x-window-body ul.x-tree-node-ct,
 ul.x-tree-node-ct {
 	margin: 0;
 }
+
+
 
 .helpsection dd {
 	margin-left: 20px;
 }
 
-.helpsection li {
+.helpsection ul, .helpsection ol {
 	list-style-type: disc;
-	margin: 5px 25px;
 }
 
 .helpsection blockquote, .helpsection ul {

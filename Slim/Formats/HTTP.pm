@@ -109,7 +109,7 @@ sub requestString {
 	}
 	
 	# If seeking, add Range header
-	if ( my $seekdata = $client->scanData->{seekdata} ) {
+	if ($client && (my $seekdata = $client->scanData->{seekdata} )) {
 		$request .= 'Range: bytes=' . int( $seekdata->{newoffset} ) . '-';
 		
 		# Fix progress bar

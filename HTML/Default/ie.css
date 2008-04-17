@@ -4,36 +4,11 @@
 	overflow-x: hidden;
 }
 
-img#background {
-	margin-top: 5px;
-}
-
-.singlePanel img#background {
-	margin-top: 0;
+.inner_top_left {
+	left: -12px;
 }
 
 #footer_content { height: 40px; }
-
-.inner_top, .inner_bottom {
-	font-size: 0;
-	padding: 0;
-}
-
-#inner_header {
-	height: 25px;
-}
-
-#mainpanel .inner_bottom_right,
-#mainpanel .inner_bottom_left,
-#leftpanel .inner_bottom_right,
-#leftpanel .inner_bottom_left {
-	bottom: -2px;
-}
-
-#rightpanel .inner_bottom_right,
-#rightpanel .inner_bottom_left {
-	bottom: 3px;
-}
 
 .helpsection,
 #inlineList div.mouseOver,
@@ -49,10 +24,6 @@ img#background {
 
 #infoTab {
 	height: 25px;
-}
-
-#btnPlaylistToggleArtwork {
-	bottom: 18px;
 }
 
 .browsedbControls input {

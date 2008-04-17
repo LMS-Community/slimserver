@@ -1,7 +1,15 @@
 /* this stylesheet overwrites the default extjs stylesheet */
+.x-panel-body {
+	background: none;
+}
+
 
 .x-tree-node-leaf .x-tree-node-alwayscollapsed {
 	background-image:url(/html/ext/resources/images/default/tree/folder.gif);
+}
+
+.x-tree-node .x-tree-selected {
+	background-color: #eeeeee;
 }
 
 .x-layout-container {
@@ -51,10 +59,15 @@ a.x-menu-item:hover {
 .x-menu-item-active {
 	border-color: #bfbfbf;
 	background-color: #dedede;
+	background-image: url();
+}
+
+.x-menu-item-active a.x-menu-item {
+	color: #494949;
 }
 
 .x-menu-sep {
-	background-color: #494949;
+	border-bottom-color: #494949;
 }
 
 .x-menu-item-checked .x-menu-group-item .x-menu-item-icon {
@@ -62,45 +75,39 @@ a.x-menu-item:hover {
 }
 
 /* tabs and tab panel (settings) */
-.x-tabs-body, .x-tabs-wrap {
-	border-color: #404040;
+.x-border-layout-ct .x-tab-panel,
+ul.x-tab-strip-top {
+	background: none;
 }
 
-.x-tabs-strip .on .x-tabs-inner {
-	padding-bottom: 6px;
-}
-.x-tabs-strip .x-tabs-inner {
-	padding-bottom: 5px;
-}
-
-.x-layout-panel .x-tabs-wrap {
-	background-image: none;
-}
-
-.x-tabs-strip .x-tabs-left,
-.x-tabs-strip .x-tabs-right,
-.x-tabs-strip .on .x-tabs-left,
-.x-tabs-strip .on .x-tabs-right {
+.x-tab-strip-top .x-tab-right,
+.x-tab-strip-top .x-tab-left,
+.x-tab-strip-top .x-tab-strip-inner {
 	background-image: url(html/images/slim-ext/tab-sprite.gif);
 }
 
-.x-tabs-strip .x-tabs-text {
+.x-tab-strip span.x-tab-strip-text,
+.x-tab-strip-active span.x-tab-strip-text,
+.x-tab-strip-over span.x-tab-strip-text {
+	color: #dedede;
 	font-family: sans-serif;
 	font-weight: normal;
 }
 
-.x-tabs-strip .x-tabs-text,
-.x-tabs-strip .on .x-tabs-text {
-	color: #dedede;
-	cursor: pointer;
+ul.x-tab-strip-top {
+	border-bottom-color: black;
 }
 
-.x-tabs-strip .on .x-tabs-left {
-	background-position: 0 -150px;
+.x-tab-strip span.x-tab-strip-text {
+	padding: 4px 0 6px;
 }
 
-.x-tabs-strip .x-tabs-left {
-	background-position: 0 -100px;
+.x-tab-scroller-right {
+	background-image: url(html/images/slim-ext/tab-scroll-right.gif);
+}
+
+.x-tab-scroller-left {
+	background-image: url(html/images/slim-ext/tab-scroll-left.gif);
 }
 
 /* buttons */
@@ -121,18 +128,21 @@ a.x-menu-item:hover {
 	font-weight: bold;
 }
 
+.x-panel-btns-ct .x-btn-focus .x-btn-left,
 .x-btn-left {
 	width: 5px;
 	height: 19px;
 	background: url(html/images/slim-ext/btn-generic.png) no-repeat 0 0;
 }
 
+.x-panel-btns-ct .x-btn-focus .x-btn-right,
 .x-btn-right {
 	width: 5px;
 	height: 19px;
 	background: url(html/images/slim-ext/btn-generic.png) no-repeat 0 -19px;
 }
 
+.x-panel-btns-ct .x-btn-focus .x-btn-center,
 .x-btn-center {
 	background: url(html/images/slim-ext/btn-generic.png) repeat-x 0 -38px;
 	vertical-align: middle;
@@ -146,82 +156,99 @@ a.x-menu-item:hover {
     width: 5px;
 }
 
-.x-dlg .x-dlg-ft .x-dlg-btns .x-btn-focus .x-btn-left,
+.x-window .x-btn-over .x-btn-left,
 .x-btn-over .x-btn-left,
 .x-btn-menu-active .x-btn-left {
 	background-position: 0 -57px;
 }
 
-.x-dlg .x-dlg-ft .x-dlg-btns .x-btn-focus .x-btn-right,
+.x-window .x-btn-over .x-btn-right,
 .x-btn-over .x-btn-right, 
 .x-btn-menu-active .x-btn-right {
 	background-position: 0 -76px;
 }
 
-.x-dlg .x-dlg-ft .x-dlg-btns .x-btn-focus .x-btn-center,
+.x-window .x-btn-over .x-btn-center,
 .x-btn-over .x-btn-center,
 .x-btn-menu-active .x-btn-center {
 	background-position: 0 -95px;
 }
 
-.x-dlg .x-dlg-ft .x-dlg-btns .x-btn-click .x-btn-left,
+.x-window .x-btn-click .x-btn-left,
 .x-btn-click .x-btn-left,
 .x-btn-pressed .x-btn-left {
 	background-position: 0 -114px;
 }
 
-.x-dlg .x-dlg-ft .x-dlg-btns .x-btn-click .x-btn-right,
+.x-window .x-btn-click .x-btn-right,
 .x-btn-click .x-btn-right,
 .x-btn-pressed .x-btn-right {
 	background-position: 0 -133px;
 }
 
-.x-dlg .x-dlg-ft .x-dlg-btns .x-btn-click .x-btn-center,
+.x-window .x-btn-click .x-btn-center,
 .x-btn-click .x-btn-center,
 .x-btn-pressed .x-btn-center {
 	background-position: 0 -152px;
 }
 
 /* dialog */
-.x-dlg .x-dlg-hd-left {
+.x-window .x-window-tl, .x-panel-ghost .x-window-tl {
 	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat 0 0;
 	padding-left: 14px;
-	height: 41px;
 }
 
-.x-dlg .x-dlg-hd-right {
+.x-window .x-window-tr, .x-panel-ghost .x-window-tr {
 	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat right -41px;
 	padding-right: 14px;
 }
 
-.x-dlg .x-dlg-hd {
+.x-window .x-window-header, .x-panel-ghost .x-window-header {
 	background: url(html/images/slim-ext/hd-sprite.gif) repeat-x right -82px;
 	padding-top: 16px;
 	padding-bottom: 9px;
-	font-size: 110%;
 }
 
-.x-dlg .x-dlg-dlg-body {
+.x-window-header-text {
+	font-size: 110%;
+	color: white;
+	cursor: default;
+}
+
+.x-panel-ghost ul,
+.x-window-bwrap {
 	background-image: url(html/images/slim-ext/dlg-bg.gif);
 	border: none;
 	padding: 0 8px 8px 8px;
 }
 
-.x-dlg .x-dlg-bd, .x-dlg .x-dlg-ft {
-	padding: 5px;
+body.x-body-masked .x-window-plain .x-window-mc,
+.x-window-plain .x-window-body,
+.x-window-mc, .x-window-bc,
+.x-window-ml, .x-window-bl,
+.x-window-mr, .x-window-br {
 	background-color: white;
+	background-image: none;
+	border: none;
 }
 
-.x-dlg .x-dlg-close {
+.x-panel-ghost .x-tool-close,
+.x-window .ext-mb-icon,
+.x-window .x-tool-close {
 	background-image: none;
 }
 
-.x-dlg div.x-resizable-handle-southeast {
-	bottom: 8px;
-	right: 8px;
-	background-image: url(html/images/slim-ext/se-handle.gif);
-	height: 7px;
-	width: 7px;
+.x-window .ext-mb-icon {
+	height: 0;
+	width: 0;
+}
+
+.x-window-dlg .ext-mb-text {
+	font-size: 100%;
+}
+
+.x-window-dlg .x-window-body {
+	padding: 5px 15px 5px 0;
 }
 
 
