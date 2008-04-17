@@ -39,6 +39,7 @@ my $interval    = 1;  # check every x seconds
 my $FADESECONDS = 20; # fade-in of 20 seconds
 
 my %menuSelection;
+my %snooze = ();
 our %specialPlaylists;
 our %menuParams = ();
 our %functions = ();
@@ -489,7 +490,7 @@ sub checkAlarms {
 				$client->lastActivityTime( Time::HiRes::time() );
 
 				$client->execute(['stop']);
-
+				
 				my $volume = $prefs->client($client)->get('alarmvolume')->[ $day ];
 
 				if (defined ($volume)) {
@@ -557,6 +558,48 @@ sub playDone {
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
 }
 
+sub snooze {
+	my $client = shift;
+	
+	# don't snooze again if we're already snoozing.
+	if (!$snooze{$client}) {
+		$client->execute(['stop']);
+
+		# set up 9m snooze
+		$snooze{$client} = Time::HiRes::time() + (9 * 60);
+
+		Slim::Utils::Timers::setTimer($client, $snooze{$client}, \&snoozeEnd, $client);
+
+		$client->showBriefly({
+			'line'     => [$client->string('ALARM_NOW_PLAYING'),$client->string('ALARM_SNOOZE')],
+			'duration' => 3,
+			'block'    => 1,
+		});
+	}
+	
+	
+}
+
+sub snoozeEnd {
+	my $client = shift;
+	
+	$snooze{$client} = 0;
+	
+	if ($client->power) {
+		$client->execute(["playlist", "jump", "+1"]);
+	
+		Slim::Player::Playlist::refreshPlaylist($client);
+
+		$client->showBriefly({
+			'line'     => [$client->string('ALARM_NOW_PLAYING'),$client->string('ALARM_WAKEUP')],
+			'duration' => 2,
+			'block'    => 1,
+		});
+		
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
+	}
+}
+
 # temporary lines shown after alarm triggers, just to let the user know why the music started.
 sub alarmLines {
 	my $client = shift;
@@ -586,6 +629,7 @@ sub visibleAlarm {
 
 	# show visible alert for 30s
 	$client->showBriefly(alarmLines($client), 30);
+	$client->modeParam('alarmactive',1);
 }
 
 sub overlayFunc {

@@ -966,8 +966,24 @@ our %functions = (
 		$client->execute(["mixer", "muting", $mute]);
 	},
 
+	'snooze' => sub  {
+		my $client = shift;
+
+		if ($client->modeParam('alarmactive')) {
+			Slim::Buttons::AlarmClock::snooze($client);
+		}
+	},
+	
 	'sleep' => sub  {
 		my $client = shift;
+		
+		# sleep function is overridden when alarm activates
+		if ($client->modeParam('alarmactive')) {
+			
+			$log->info("Alarm Active: sleep function override for snooze");
+			Slim::Buttons::AlarmClock::snooze($client);
+			return;
+		}
 		
 		# Bug: 2151 some extra stuff to add the option to sleep after the current song.
 		# first make sure we're playing, and its a valid song.
