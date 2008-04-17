@@ -1392,22 +1392,6 @@ sub sleepInXHash {
 	return \%return;
 }
 
-# XXX: no longer used?
-sub repeatHash {
-	my ($val, $strings, $thisValue) = @_;
-	my %return = (
-		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
-		radio	=> ($val == $thisValue) + 0, # 0 is added to force data type to number
-		actions => {
-			do => {
-				player => 0,
-				cmd => ['playlist', 'repeat', "$thisValue" ],
-			},
-		},
-	);
-	return \%return;
-}
-
 sub transitionHash {
 	
 	my ($client, $val, $prefs, $strings, $thisValue) = @_;
