@@ -11,9 +11,16 @@
 		<style type="text/css">
 		<!--
 			html { background: #666666; }
-			#maincontent { background: white; }
+
+			.maincontent {
+				background: white;
+			}
 
 			form div { cursor: default; }
+
+			.wz_desc {
+				padding: 10px;
+			}
 
 			.wz_path {
 				width: 50%;
@@ -25,20 +32,14 @@
 				position: relative;
 			}
 
-			.wz_page {
-				position: absolute;
-				width: 95%;
-			}
-
 			.wz_logo {
 				float: right;
-				margin-top: 60px;
-				margin-left: 30px;
+				margin: 60px 50px 0 30px;
 			}
 
 			.wz_desc_right {
 				position: absolute;
-				left: 55%;
+				left: 52%;
 				float: right;
 				width: 45%;
 			}
@@ -55,8 +56,8 @@
 
 			#language {
 				position: absolute;
-				top: 0px;
-				right: 0px;
+				top: 30px;
+				right: 50px;
 			}
 
 			#loading-mask {
@@ -78,8 +79,11 @@
 				display: none;
 			}
 
-			#loading .loading-indicator,
+			.x-tree .x-panel-body {
+				border: none;
+			}
 
+			#loading .loading-indicator,
 			a { color: green; }
 
 			#noJS { color: white; }
@@ -158,36 +162,31 @@
 			document.getElementById('loading').style.display = 'block';
 		</script>
 
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/fileselector.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/wizard.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/SqueezeJS/Base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/SqueezeJS/UI.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/Default/html/wizard.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
-			var showproxy = [% showProxy ? "true" : "false" %];
-			var showitunes = [% showiTunes ? "true" : "false" %];
-			var showmusicip = [% showMusicIP ? "true" : "false" %];
-			var firsttimerun = [% firstTimeRun ? "true" : "false" %];
-			var wizarddone = [% wizardDone ? "true" : "false" %];
+			Ext.onReady(function(){
+				[% PROCESS jsString id='SETUP_WIZARD_PREVIOUS' jsId='previous' %]
+				[% PROCESS jsString id='SETUP_WIZARD_NEXT' jsId='next' %]
+				[% PROCESS jsString id='SETUP_WIZARD_SKIP' jsId='skip' %]
+				[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
+				[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
+				[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
+	
+				[% PROCESS jsString id='NONE' jsId='summary_none' %]
+				[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
+				SqueezeJS.Strings['summary_audiodir'] += '[% "COLON" | string %]';
+				[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
+				SqueezeJS.Strings['summary_playlistdir'] += '[% "COLON" | string %]';
+				[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
+				[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicmagic' %]
 
-			var strings = new Array();
-			[% PROCESS jsString id='SETUP_WIZARD_PREVIOUS' jsId='previous' %]
-			[% PROCESS jsString id='SETUP_WIZARD_NEXT' jsId='next' %]
-			[% PROCESS jsString id='SETUP_WIZARD_SKIP' jsId='skip' %]
-			[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
-			[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
-			[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
-
-			[% PROCESS jsString id='NONE' jsId='summary_none' %]
-			[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
-			strings['summary_audiodir'] += '[% "COLON" | string %]';
-			[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
-			strings['summary_playlistdir'] += '[% "COLON" | string %]';
-			[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
-			[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicmagic' %]
-
-			Ext.EventManager.onDocumentReady(function(){
-				try { Wizard.init(); }
+				try { Wizard.init([% wizardDone ? "true" : "false" %]); }
 				catch(e) {
 					document.getElementById('loading').style.display = 'none';
 					document.getElementById('noJS').style.display = 'block';
@@ -196,226 +195,250 @@
 			});
 		</script>
 
-		<div id="mainbody">
-
-			<div id="header">
-				<div id="header_left"></div>
-				<div id="header_content">
-					<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></span>
-					<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
-				</div>
+		<div id="header">
+			<div id="header_left"></div>
+			<div id="header_content">
+				<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></span>
+				<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
 			</div>
-
-			<div id="main">
-				<div class="inner" id="mainpanel">
-					<div class="inner_top"></div>
-					<div class="inner_top_left">&nbsp;</div>
-					<div class="inner_top_right">&nbsp;</div>
-
-					<div id="inner_header">
-						<div class="pagetitle">
-							<div id="welcome_h" class="wz_page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
-							<div id="proxy_h" class="wz_page">[% "SETUP_WIZARD_PROXY" | string %]</div>
-							<div id="sqn_h" class="wz_page">[% "SETUP_WIZARD_SQN" | string %]</div>
-							<div id="source_h" class="wz_page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
-							<div id="audiodir_h" class="wz_page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
-							<div id="playlistdir_h" class="wz_page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
-							<div id="itunes_h" class="wz_page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
-							<div id="musicip_h" class="wz_page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
-							<div id="summary_h" class="wz_page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
-							<div id="done_h" class="wz_page">[% "SETUP_WIZARD_DONE" | string %]</div>
-						</div>
-					</div>
-
-					<div id="maincontent">
-
-						<div id="wz_formpanel">
-							<div id="welcome_m" class="wz_page">
-								<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox.jpg"></div>
-								<div>[% "SETUP_WIZARD_WELCOME_DESC" | string(sn_server, sn_server) %]</div>
-
-								<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
-									<select name="language" id="language">
-
-										[% FOREACH option = languageoptions %]
-											[% IF !option.value.search('\*') %]
-												<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
-											[% END %]
-										[%- END -%]
-
-										[% IF !preferredLanguage %]
-											<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
-										[% END %]
-
-									</select>
-									<input name="saveLanguage" type="hidden" value="1">
-								</form>
-
-							</div>
-
-							<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
-								<div id="proxy_m" class="wz_page">
-									<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
-									<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %] <input type="text" name="webproxy" value="[% prefs.webproxy %]"></div>
-								</div>
-
-								<div id="sqn_m" class="wz_page">
-									<div class="wz_logo"></div>
-
-									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]<br>&nbsp;</div>
-
-									<div><table>
-										<tr>
-											<td>[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]</td>
-											<td><input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40"></td>
-										</tr>
-										<tr>
-											<td>[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
-											<td><input type="password" name="sn_password_sha" id="sn_password_sha" value="[% prefs.sn_password_sha %]" size="40"></td>
-										</tr>
-										<tr>
-											<td colspan="2" align="right">
-												<div><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
-												<div><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
-											</td>
-										</tr>
-									</table></div>
-									
-									<hr />
-									<div>
-										[% "SETUP_SN_REPORT_STATS_DESC" | string %]<br />
-										<br />
-										<select class="stdedit" name="sn_disable_stats" id="sn_disable_stats">
-											<option [% IF !prefs.sn_disable_stats %]selected="selected" [% END %]value="0">
-												[% 'SETUP_SN_REPORT_STATS_ENABLE' | string %]
-											</option>
-											<option [% IF prefs.sn_disable_stats == 1 %]selected="selected" [% END %]value="1">
-												[% 'SETUP_SN_REPORT_STATS_DISABLE' | string %]
-											</option>
-										</select>
-										<br />
-										<br />
-									</div>
-									
-									<div id="sn_result"></div>
-								</div>
-
-								<div id="source_m" class="wz_page">
-									<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
-									<div><table id="wz_musicsource">
-										<tr>
-											<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF useAudiodir %]checked="checked" [% END %]>&nbsp;</td>
-											<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
-										</tr>
-										<tr>
-											<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="checked" [% END %] value="1"></td>
-											<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
-										</tr>
-										<tr>
-											<td><input type="checkbox" name="musicmagic" id="musicmagic" [% IF prefs.musicmagic %]checked="checked" [% END %] value="1"></td>
-											<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
-										</tr>
-									</table></div>
-								</div>
-
-								<div id="audiodir_m" class="wz_page">
-									<div class="wz_desc_right">
-										[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]
-										[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
-									</div>
-									<div id="audiodirselector"></div>
-									<div>
-										<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="wz_path">
-										<!-- <span id="gotoAudiodir"></span>  -->
-									</div>
-								</div>
-
-								<div id="playlistdir_m" class="wz_page">
-									<div class="wz_desc_right">
-										[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]
-										[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
-									</div>
-									<div id="playlistdirselector"></div>
-									<div>
-										<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="wz_path">
-										<!-- <span id="gotoPlaylistdir"></span> -->
-									</div>
-								</div>
-
-								<div id="itunes_m" class="wz_page">
-									<div class="wz_desc_right">
-										[% "SETUP_WIZARD_ITUNES_DESC" | string %]
-										[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
-									</div>
-									<div id="itunespathselector"></div>
-									<div>
-										<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" class="wz_path">
-										<!-- <span id="gotoiTunesDir"></span> -->
-									</div>
-								</div>
-
-								<div id="musicip_m" class="wz_page">
-									<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
-									<br/>
-									<div><input type="text" name="port" id="port" value="[% prefs.port %]" size="20"></div>
-									<br/>
-									<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
-									<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
-								</div>
-
-								<div id="summary_m" class="wz_page">
-									<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
-									<br/>
-
-									<div>[% "SETUP_WIZARD_SUMMARY_SQN" | string %]</div>
-									<ul class="wz_summary_list">
-										<li><span id="sn_email_summary"></span> <span id="sn_result_summary"></span></li>
-									</ul>
-									<br/>
-
-									<div>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% "COLON" | string %]</div>
-									<ul class="wz_summary_list" id="summary"></ul>
-									<br/>
-
-									<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
-								</div>
-
-								[% IF firstTimeRun %]
-								<input name="firstTimeRunCompleted" type="hidden" value="1">
-								[% END %]
-								<input name="saveSettings" type="hidden" value="1">
-							</form>
-
-							<div id="done_m" class="wz_page">
-								<div>[% "SETUP_WIZARD_DONE_DESC" | string %]</div>
-							</div>
-
-						</div>
-					</div>
-
-					<div id="infoTab" class="buttonbar">
-						<table id="buttonbar">
-							<tr>
-								<td><span id="previous"></span></td>
-								<td><span id="next"></span></td>
-							<tr>
-						</table>
-					</div>
-
-					<div class="inner_bottom"></div>
-					<div class="inner_bottom_left">&nbsp;</div>
-					<div class="inner_bottom_right">&nbsp;</div>
-
-				</div>
-
-			</div>
-
-			<div id="footer">
-				<div id="footer_left"></div>
-				<div id="footer_content">
-				</div>
-			</div>
-
 		</div>
+
+		<div id="inner_header">
+			<div class="inner">
+				<div class="inner_top"></div>
+				<div class="inner_top_left">&nbsp;</div>
+				<div class="inner_top_right"></div>
+			</div>
+		</div>
+
+
+		<div id="inner_footer">
+			<div id="infoTab" class="buttonbar">
+				<table id="buttonbar">
+					<tr>
+						<td><span id="skip"></span></td>
+						<td><span id="back"></span></td>
+						<td><span id="next"></span></td>
+					<tr>
+				</table>
+			</div>				
+
+			<div class="inner">
+				<div class="inner_bottom"></div>
+				<div class="inner_bottom_left">&nbsp;</div>
+				<div class="inner_bottom_right">&nbsp;</div>
+			</div>
+		</div>
+
+		<div id="footer">
+			<div id="footer_left"></div>
+			<div id="footer_content">
+			</div>
+		</div>
+
+		<!-- the wizard's tabs: make them all use the same class, which is iterated by the JS -->
+		[% UNLESS wizardDone %]
+
+		<div id="welcome" class="wz_page">
+			<div id="welcome_h" class="pagetitle">[% "SETUP_WIZARD_WELCOME" | string %]</div>
+
+			<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox.jpg"></div>
+			<div class="wz_desc">
+				<div>[% "SETUP_WIZARD_WELCOME_DESC" | string(sn_server, sn_server) %]</div>
+	
+				<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
+					<select name="language" id="language">
+	
+						[% FOREACH option = languageoptions %]
+							[% IF !option.value.search('\*') %]
+								<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
+							[% END %]
+						[%- END -%]
+	
+						[% IF !preferredLanguage %]
+							<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+						[% END %]
+	
+					</select>
+					<input name="saveLanguage" type="hidden" value="1">
+				</form>
+			</div>
+		</div>
+
+		<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
+			[% IF showProxy %]
+				<div id="proxy_p" class="wz_page">
+					<div id="proxy_h" class="pagetitle">[% "SETUP_WIZARD_PROXY" | string %]</div>
+					<div class="wz_desc">
+						<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
+						<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %]
+							<input type="text" name="webproxy" value="[% prefs.webproxy %]">
+						</div>
+					</div>
+				</div>
+			[% END %]
+
+			<div id="sqn_p" class="wz_page wz_canskip">
+				<div id="sqn_p" class="pagetitle">[% "SETUP_WIZARD_SQN" | string %]</div>
+
+				<div class="wz_desc">
+					<div>[% "SETUP_WIZARD_SQN_DESC" | string %]<br>&nbsp;</div>
+
+					<div><table>
+						<tr>
+							<td>[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]</td>
+							<td><input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40"></td>
+						</tr>
+						<tr>
+							<td>[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
+							<td><input type="password" name="sn_password_sha" id="sn_password_sha" value="[% prefs.sn_password_sha %]" size="40"></td>
+						</tr>
+						<tr>
+							<td colspan="2" align="right">
+								<div><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
+								<div><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
+							</td>
+						</tr>
+					</table></div>
+
+					<hr />
+					<div>
+						[% "SETUP_SN_REPORT_STATS_DESC" | string %]<br />
+						<br />
+						<select class="stdedit" name="sn_disable_stats" id="sn_disable_stats">
+							<option [% IF !prefs.sn_disable_stats %]selected="selected" [% END %]value="0">
+								[% 'SETUP_SN_REPORT_STATS_ENABLE' | string %]
+							</option>
+							<option [% IF prefs.sn_disable_stats == 1 %]selected="selected" [% END %]value="1">
+								[% 'SETUP_SN_REPORT_STATS_DISABLE' | string %]
+							</option>
+						</select>
+						<br />
+						<br />
+					</div>
+					
+					<div id="sn_result"></div>
+				</div>
+			</div>
+
+			<div id="source_p" class="wz_page">
+				<div id="source_h" class="pagetitle">[% "SETUP_WIZARD_SOURCE" | string %]</div>
+
+				<div class="wz_desc">
+					<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
+					<div><table id="wz_musicsource">
+						<tr>
+							<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF useAudiodir %]checked="checked" [% END %]>&nbsp;</td>
+							<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="checked" [% END %] value="1"></td>
+							<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" name="musicmagic" id="musicmagic" [% IF prefs.musicmagic %]checked="checked" [% END %] value="1"></td>
+							<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
+						</tr>
+					</table></div>
+				</div>
+			</div>
+
+			<div id="audiodir_p" class="wz_page">
+				<div id="audiodir_h" class="pagetitle">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
+
+				<div class="wz_desc">
+					<div class="wz_desc_right">
+						[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]
+						[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+					</div>
+					<div id="audiodirselector" class="folderselector"></div>
+					<div>
+						<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="wz_path">
+					</div>
+				</div>
+			</div>
+
+			<div id="playlistdir_p" class="wz_page">
+				<div id="playlistdir_h" class="pagetitle">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
+
+				<div class="wz_desc">
+					<div class="wz_desc_right">
+						[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]
+						[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+					</div>
+					<div id="playlistdirselector" class="folderselector"></div>
+					<div>
+						<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="wz_path">
+					</div>
+				</div>
+			</div>
+
+			[% IF showiTunes %]
+				<div id="itunes_p" class="wz_page">
+					<div id="itunes_h" class="pagetitle">[% "SETUP_WIZARD_ITUNES" | string %]</div>
+
+					<div class="wz_desc">
+						<div class="wz_desc_right">
+							[% "SETUP_WIZARD_ITUNES_DESC" | string %]
+							[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+						</div>
+						<div id="itunespathselector" class="folderselector"></div>
+						<div>
+							<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" class="wz_path">
+						</div>
+					</div>
+				</div>
+			[% END %]
+
+			[% IF showMusicIP %]
+				<div id="musicip_p" class="wz_page">
+					<div id="musicip_h" class="pagetitle">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
+
+					<div class="wz_desc">
+						<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
+						<br/>
+						<div><input type="text" name="port" id="port" value="[% prefs.port %]" size="20"></div>
+						<br/>
+						<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
+						<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
+					</div>
+				</div>
+			[% END %]
+
+			<div id="summary_p" class="wz_page wz_finish">
+				<div id="summary_h" class="pagetitle">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
+
+				<div class="wz_desc">
+					<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
+					<br/>
+	
+					<div>[% "SETUP_WIZARD_SUMMARY_SQN" | string %]</div>
+					<ul class="wz_summary_list">
+						<li><span id="sn_email_summary"></span> <span id="sn_result_summary"></span></li>
+					</ul>
+					<br/>
+	
+					<div>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% "COLON" | string %]</div>
+					<ul class="wz_summary_list" id="summary"></ul>
+					<br/>
+	
+					<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
+				</div>
+			</div>
+
+			[% IF firstTimeRun %]
+			<input name="firstTimeRunCompleted" type="hidden" value="1">
+			[% END %]
+			<input name="saveSettings" type="hidden" value="1">
+		</form>
+
+		[% ELSE %]
+
+		<div id="done_p" class="wz_page wz_finish">
+			<div id="done_h" class="pagetitle">[% "SETUP_WIZARD_DONE" | string %]</div>
+			<div class="wz_desc">[% "SETUP_WIZARD_DONE_DESC" | string %]</div>
+		</div>
+
+		[% END %]
 	</body>
 </html>

@@ -24,39 +24,14 @@ my $log = logger('os.files');
 
 my $pages = {
 	'autocomplete' => 'settings/server/fileselector_autocomplete.html',
-	'fileselector' => 'settings/server/fileselector.html'
 };
 
-sub new {
-	my $class = shift;
-
-	Slim::Web::HTTP::addPageFunction($pages->{'autocomplete'}, \&autoCompleteHandler);
-
-	$class->SUPER::new($class);
-}
-
 sub page {
-	return $pages->{'fileselector'};
+	return $pages->{'autocomplete'};
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
-
-	$paramRef->{'audiodir'} = '';
-
-	my $prev = '';
-	foreach (split /\//, preferences('server')->get('audiodir')) {
-		if ($_) {
-			$prev .= "/$_";
-			$paramRef->{'audiodir'} .= '|' . $prev;
-		}
-	}
-
-	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
-}
-
-sub autoCompleteHandler {
-	my ($client, $paramRef) = @_;
 
 	my @subdirs;
 	my $currDir = $paramRef->{'currDir'};
@@ -108,7 +83,7 @@ sub autoCompleteHandler {
 
 	$paramRef->{'folders'} = \@subdirs;
 
-	return Slim::Web::HTTP::filltemplatefile($pages->{'autocomplete'}, $paramRef);	
+	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);	
 }
 
 sub _getDriveList {

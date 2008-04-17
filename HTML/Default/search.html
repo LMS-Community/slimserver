@@ -2,10 +2,51 @@
 [%- pageicon = icons.SEARCHMUSIC %]
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript">
-		Ext.EventManager.onDocumentReady(function(){
-			Utils.initSearch([% IF manualSearch; 'true'; END %]);
+		Ext.onReady(function(){
+			new Ext.form.TextField({
+				applyTo: 'livesearch',
+				validationDelay: 100,
+				validateOnBlur: false,
+				selectOnFocus: true,
 
-			new Ext.Button('searchButton', {
+				validator: [% IF manualSearch; 'null'; ELSE %]function(value){
+					var el;
+
+					if (value.length > 2) {
+						if (el = Ext.get('browsedbHeader'))
+							el.remove();
+
+						if (el = Ext.get('browsedbList'))
+							el.remove();
+
+						el = Ext.get('search-results')
+
+						// don't wait for an earlier update to finish
+						if (el.getUpdateManager().isUpdating())
+							el.getUpdateManager().abort();
+
+						el.load('search.xml',
+							{
+								query: value,
+								player: player
+							},
+							function(){
+								Highlighter.init();
+								SqueezeJS.UI.ScrollPanel.init();
+							}
+						);
+					}
+					else if (el = Ext.get('search-results')) {
+						el.update('');
+					}
+
+					return true;
+				}
+				[% END %]
+			});
+
+			new Ext.Button({
+				renderTo: 'searchButton',
 				text: '[% "SEARCH" | string %]',
 				//icon: webroot + 'html/images/b_search.gif',
 				//cls: 'x-btn-text-icon',

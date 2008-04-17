@@ -1,13 +1,13 @@
 [% IF browse_items.size %]
 	[% extJsScripts = BLOCK %]
 	<script TYPE="text/javascript">
-		Ext.EventManager.onDocumentReady(function(){
+		Ext.onReady(function(){
 			var el = Ext.get('advLink');
 			if (el) {
 				el.dom.href='javascript:void(0);';
 				el.on('click', function(){ 
 					Ext.get('advSearchForm').show();
-					Utils.resizeContent(); 
+					SqueezeJS.UI.ScrollPanel.init(); 
 				})
 			}
 		});

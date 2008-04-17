@@ -1,4 +1,4 @@
-<div class="draggableSong selectorMarker[% IF noPlaylistCover %]itemWithoutCover[% END %] [% IF item.currentsong %]currentSong[% END %]" id="playlistSong[% item.num %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+<div class="draggableSong selectorMarker[% IF noPlaylistCover %]itemWithoutCover[% END %] [% IF item.currentsong %]currentSong[% END %]" id="playlistSong[% item.num %]" onmouseover="Main.playlist.Highlighter.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 	<div class="browsedbListItem [% IF !noPlaylistCover %]itemWithCover[% END %]">
 		[%# Plugins can provide their own songinfo links %]
 		[% info_link = item.plugin_meta.info_link || 'songinfo.html' %]
@@ -48,8 +48,8 @@
 			</div>
 		[% END %]
 		<div class="playlistControls">
-			<img onclick="Playlist.control('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
-			<img onclick="Playlist.control('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
+			<img onclick="Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
+			<img onclick="Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
 			[% FOREACH mixer = item.mixerlinks.values.sort %]
 				[% PROCESS $mixer %]
 			[% END %]

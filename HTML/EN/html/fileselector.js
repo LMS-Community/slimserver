@@ -219,8 +219,8 @@ var FilesystemBrowser = function(){
 			var inputEl, btnEl, filter, classes, start;
 
 			var tpl;
-			if (strings && strings['browse'])
-				tpl = new Ext.Template('&nbsp;<input type="button" value="' + strings['browse'] + '" onclick="FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
+			if (SqueezeJS && SqueezeJS.strings && SqueezeJS.strings('browse'))
+				tpl = new Ext.Template('&nbsp;<input type="button" value="' + SqueezeJS.strings('browse') + '" onclick="FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
 			else
 				tpl = new Ext.Template('<img src="/html/images/spacer.gif" class="filesystemBrowseBtn" onclick="FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
 
@@ -271,7 +271,7 @@ var FilesystemBrowser = function(){
 					resizeHandles: 'se'
 				});
 
-				filesystemDlg.addButton(strings['close'], filesystemDlg.hide, filesystemDlg);
+				filesystemDlg.addButton(SqueezeJS.strings('close'), filesystemDlg.hide, filesystemDlg);
 				filesystemDlg.addKeyListener(27, filesystemDlg.hide, filesystemDlg);
 				filesystemDlg.body.setStyle('background', 'white');
 			}
@@ -283,7 +283,7 @@ var FilesystemBrowser = function(){
 				filter: filter
 			});
 
-			filesystemDlg.setTitle(strings[filter == 'foldersonly' ? 'choose_folder' : 'choose_file']);
+			filesystemDlg.setTitle(SqueezeJS.strings(filter == 'foldersonly' ? 'choose_folder' : 'choose_file'));
 			filesystemDlg.show();
 		}
 	}

@@ -15,7 +15,7 @@
 	[%- END %]
 
 
-	[% BLOCK cmdHRef -%]onclick="Utils.processPlaylistURL('[%
+	[% BLOCK cmdHRef -%]onclick="SqueezeJS.Controller.playlistRequest('[%
 		# single quotes aren't url encoded, but can con fuse JS
 		IF itemobj.url;
 			itemobj.url = itemobj.url | replace("'", "%27");
@@ -32,7 +32,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker [% addClasses %]" onmouseover="Utils.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (item.image || (levelName == 'album' || levelName == 'age')) && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content | indent(4) %]</div>
 			<span class="browsedbControls">
@@ -47,7 +47,7 @@
 
 	[% BLOCK galleryitem -%]
 	<li class="thumbwrap" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%] style="width:[% item.size + 20 %]px;">
-		<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
+		<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
 
 			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;position:relative;">
 				[% IF template.name.search('browsedb.html') %]
@@ -168,4 +168,7 @@
 		</div>
 	[% END %]
 
+	[% BLOCK jsString %]
+		SqueezeJS.Strings['[% IF jsId; jsId; ELSE; id | lower; END %]'] = "[% id | string | replace('"', '\"') %]";
+	[% END %]
 [% END -%]
