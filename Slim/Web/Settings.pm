@@ -31,21 +31,7 @@ use Slim::Web::Pages;
 
 use Scalar::Util qw(blessed);
 
-my @playerSettingsClasses;
-
-# the items we want to have in the top level of
-# new skin's settings window
-my @topLevelItems = (
-		'BASIC_SERVER_SETTINGS',
-		'ITUNES',
-		'PLUGIN_PODCAST',
-		'SQUEEZENETWORK_SETTINGS',
-		'INTERFACE_SETTINGS',
-		'SETUP_PLUGINS',
-		'SERVER_STATUS',
-		'BEHAVIOR_SETTINGS'
-	);
-
+my (@playerSettingsClasses, @topLevelItems, %topLevelItems);
 
 =head1 METHODS
 
@@ -186,8 +172,28 @@ sub handler {
 	# Needed to generate the drop down settings chooser list.
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
-	map { $paramRef->{'topLevelItems'}->{$_} = $paramRef->{'additionalLinks'}->{'setup'}->{$_} } @topLevelItems; 
-	
+	# the items we want to have in the top level of
+	# new skin's settings window
+	if (! scalar(@topLevelItems)) {
+		@topLevelItems = map {
+			$topLevelItems{$_} = 1;
+			[ $_, $paramRef->{'additionalLinks'}->{'setup'}->{$_} ];
+		}(
+			'BASIC_SERVER_SETTINGS',
+			'BASIC_PLAYER_SETTINGS',
+			'BEHAVIOR_SETTINGS',
+			'SQUEEZENETWORK_SETTINGS',
+			'ITUNES',
+			'INTERFACE_SETTINGS',
+			'SETUP_PLUGINS',
+			'PLUGIN_PODCAST',
+			'ADVANCED_SETTINGS',
+			'SERVER_STATUS'
+		);
+	}
+
+	$paramRef->{'topLevelItems'} = \@topLevelItems;
+
 	# builds playersetup hash
 	if (defined $client) {
 
@@ -225,7 +231,7 @@ sub handler {
 		my @orderedLinks = map { $_->[1] }
 			sort { $a->[0] cmp $b->[0] }
 			map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] }
-			grep { !$paramRef->{'topLevelItems'}->{$_} }
+			grep { !$topLevelItems{$_} }
 			keys %{$paramRef->{'additionalLinks'}->{'setup'}};
 
 		$paramRef->{'orderedLinks'} = \@orderedLinks;

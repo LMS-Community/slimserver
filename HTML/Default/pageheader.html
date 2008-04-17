@@ -13,19 +13,45 @@
 			<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 			<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
-			<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
+			<script type="text/javascript" src="/html/SqueezeJS/Base.js?r=[% revision %]"></script>
+			<script type="text/javascript" src="/html/SqueezeJS/UI.js?r=[% revision %]"></script>
 
-			[% IF extJsScripts %]
-				<script type="text/javascript">
-					var strings = new Array();
-					[% PROCESS jsString id='LOADING' jsId='loading' %]
-					[% PROCESS jsString id='CLOSE' jsId='close' %]
-					[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
-					[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
-				</script>
+			<script type="text/javascript">
+				[% PROCESS jsString id='LOADING' jsId='loading' %]
+				[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
+				[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
+				var hideSearchTimer;
+				var Highlighter;
 
-				[% extJsScripts %]
-			[% END %]
+				Ext.onReady(function(){
+					if (SqueezeJS.UI) {
+						Highlighter = new SqueezeJS.UI.Highlight();		
+						SqueezeJS.UI.ScrollPanel.init();
+					}
+
+					var input = Ext.get('headerSearchInput');
+					var button = Ext.get('headerSearchBtn');
+					if (input && button) {
+						if (!hideSearchTimer)
+							hideSearchTimer = new Ext.util.DelayedTask(function(){ input.setDisplayed(false); });
+
+						button.on({
+							mouseover: function(){
+								input.setDisplayed(true);
+								hideSearchTimer.delay(2000);
+							}
+						});
+
+						input.on({
+							click: hideSearchTimer.cancel,
+							focus: hideSearchTimer.cancel,
+							blur: function(){ hideSearchTimer.delay(2000); }
+						});
+					}
+				});
+			</script>
+
+			[% extJsScripts %]
 		[% END %]
 
 		[% IF debug %]
