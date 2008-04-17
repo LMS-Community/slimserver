@@ -190,7 +190,7 @@ sub mainMenu {
 
 	my @menu = (
 		{
-			text           => Slim::Utils::Strings::string('MY_MUSIC'),
+			text           => $client->string('MY_MUSIC'),
 			weight         => 11,
 			displayWhenOff => 0,
 			id             => 'myMusic',
@@ -199,7 +199,7 @@ sub mainMenu {
 			window         => { titleStyle => 'mymusic', },
 		},
 		{
-			text           => Slim::Utils::Strings::string('FAVORITES'),
+			text           => $client->string('FAVORITES'),
 			id             => 'favorites',
 			node           => 'home',
 			displayWhenOff => 0,
@@ -366,7 +366,7 @@ sub alarmSettingsQuery {
 	my @weekDays;
 
 	my $weekDayAlarms = {
-		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
+		text      => $client->string("ALARM_WEEKDAYS"),
 		window    => { titleStyle => 'settings' },
 		actions => {
 			go => {
@@ -394,7 +394,7 @@ sub alarmWeekdayMenu {
 		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
 		my $string = "ALARM_DAY$weekday";
 		my $day = {
-			text      => Slim::Utils::Strings::string($string),
+			text      => $client->string($string),
 			actions => {
 				go => {
 					player => 0,
@@ -451,15 +451,15 @@ sub sleepSettingsQuery {
 	my @menu;
 
 	if ($val > 0) {
-		my $sleepString = sprintf(Slim::Utils::Strings::string('SLEEPING_IN_X_MINUTES'), $val);
+		my $sleepString = $client->string( 'SLEEPING_IN_X_MINUTES', $val );
 		push @menu, { text => $sleepString, style => 'itemNoAction' };
 	}
-	push @menu, sleepInXHash($val, 0);
-	push @menu, sleepInXHash($val, 15);
-	push @menu, sleepInXHash($val, 30);
-	push @menu, sleepInXHash($val, 45);
-	push @menu, sleepInXHash($val, 60);
-	push @menu, sleepInXHash($val, 90);
+	push @menu, sleepInXHash($client, $val, 0);
+	push @menu, sleepInXHash($client, $val, 15);
+	push @menu, sleepInXHash($client, $val, 30);
+	push @menu, sleepInXHash($client, $val, 45);
+	push @menu, sleepInXHash($client, $val, 60);
+	push @menu, sleepInXHash($client, $val, 90);
 
 	sliceAndShip($request, $client, \@menu);
 }
@@ -478,11 +478,11 @@ sub crossfadeSettingsQuery {
 	);
 	my @menu;
 
-	push @menu, transitionHash($val, $prefs, \@strings, 0);
-	push @menu, transitionHash($val, $prefs, \@strings, 1);
-	push @menu, transitionHash($val, $prefs, \@strings, 2);
-	push @menu, transitionHash($val, $prefs, \@strings, 3);
-	push @menu, transitionHash($val, $prefs, \@strings, 4);
+	push @menu, transitionHash($client, $val, $prefs, \@strings, 0);
+	push @menu, transitionHash($client, $val, $prefs, \@strings, 1);
+	push @menu, transitionHash($client, $val, $prefs, \@strings, 2);
+	push @menu, transitionHash($client, $val, $prefs, \@strings, 3);
+	push @menu, transitionHash($client, $val, $prefs, \@strings, 4);
 
 	sliceAndShip($request, $client, \@menu);
 
@@ -501,10 +501,10 @@ sub replaygainSettingsQuery {
 	);
 	my @menu;
 
-	push @menu, replayGainHash($val, $prefs, \@strings, 0);
-	push @menu, replayGainHash($val, $prefs, \@strings, 1);
-	push @menu, replayGainHash($val, $prefs, \@strings, 2);
-	push @menu, replayGainHash($val, $prefs, \@strings, 3);
+	push @menu, replayGainHash($client, $val, $prefs, \@strings, 0);
+	push @menu, replayGainHash($client, $val, $prefs, \@strings, 1);
+	push @menu, replayGainHash($client, $val, $prefs, \@strings, 2);
+	push @menu, replayGainHash($client, $val, $prefs, \@strings, 3);
 
 	sliceAndShip($request, $client, \@menu);
 }
@@ -545,7 +545,7 @@ sub internetRadioMenu {
 	if ($validQuery) {
 		push @menu,
 		{
-			text           => Slim::Utils::Strings::string('RADIO'),
+			text           => $client->string('RADIO'),
 			id             => 'radio',
 			node           => 'home',
 			displayWhenOff => 0,
@@ -583,7 +583,7 @@ sub musicServicesMenu {
 	if ($validQuery) {
 		push @menu, 
 		{
-			text           => Slim::Utils::Strings::string('MUSIC_SERVICES'),
+			text           => $client->string('MUSIC_SERVICES'),
 			id             => 'ondemand',
 			node           => 'home',
 			weight         => 30,
@@ -625,7 +625,7 @@ sub playerSettingsMenu {
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
 		push @menu, {
-			text           => Slim::Utils::Strings::string("ALARM"),
+			text           => $client->string("ALARM"),
 			id             => 'settingsAlarm',
 			node           => 'settings',
 			displayWhenOff => 0,
@@ -642,7 +642,7 @@ sub playerSettingsMenu {
 
 	# sleep setting (always)
 	push @menu, {
-		text           => Slim::Utils::Strings::string("PLAYER_SLEEP"),
+		text           => $client->string("PLAYER_SLEEP"),
 		id             => 'settingsSleep',
 		node           => 'settings',
 		displayWhenOff => 0,
@@ -660,7 +660,7 @@ sub playerSettingsMenu {
 	my $synchablePlayers = howManyPlayersToSyncWith($client);
 	if ($synchablePlayers > 0) {
 		push @menu, {
-			text           => Slim::Utils::Strings::string("SYNCHRONIZE"),
+			text           => $client->string("SYNCHRONIZE"),
 			id             => 'settingsSync',
 			node           => 'settings',
 			displayWhenOff => 0,
@@ -676,21 +676,21 @@ sub playerSettingsMenu {
 	}
 
 	# information, always display
-	my $playerInfoText = sprintf(Slim::Utils::Strings::string('INFORMATION_SPECIFIC_PLAYER'), $client->name());
+	my $playerInfoText = $client->string( 'INFORMATION_SPECIFIC_PLAYER', $client->name() );
 	my $playerInfoTextArea = 
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
+			$client->string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
 			$client->name() . "\n\n" . 
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
+			$client->string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
 			Slim::Buttons::Information::playerModel($client) . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_FIRMWARE_ABBR") . ": " . 
+			$client->string("INFORMATION_FIRMWARE_ABBR") . ": " . 
 			$client->revision() . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_IP_ABBR") . ": " .
+			$client->string("INFORMATION_PLAYER_IP_ABBR") . ": " .
 			$client->ipport() . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
+			$client->string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
 			uc($client->macaddress()) . "\n\n" .
-			($client->signalStrength ? Slim::Utils::Strings::string("INFORMATION_PLAYER_SIGNAL_STRENGTH") . ": " .
+			($client->signalStrength ? $client->string("INFORMATION_PLAYER_SIGNAL_STRENGTH") . ": " .
 			$client->signalStrength . "\n\n" : '') .
-			($client->voltage ? Slim::Utils::Strings::string("INFORMATION_PLAYER_VOLTAGE") . ": " .
+			($client->voltage ? $client->string("INFORMATION_PLAYER_VOLTAGE") . ": " .
 			$client->voltage . "\n\n" : '');
 	push @menu, {
 		text           => $playerInfoText,
@@ -712,19 +712,19 @@ sub playerSettingsMenu {
 
 	# player name change, always display
 	push @menu, {
-		text           => Slim::Utils::Strings::string('INFORMATION_PLAYER_NAME'),
+		text           => $client->string('INFORMATION_PLAYER_NAME'),
 		id             => 'settingsPlayerNameChange',
 		node           => 'advancedSettings',
 		displayWhenOff => 0,
 		input          => {	
 			initialText  => $client->name(),
 			len          => 1, # For those that want to name their player "X"
-			allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
+			allowedChars => $client->string('JIVE_ALLOWEDCHARS_WITHCAPS'),
 			help         => {
-				           text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
+				           text => $client->string('JIVE_CHANGEPLAYERNAME_HELP')
 			},
-			softbutton1  => Slim::Utils::Strings::string('INSERT'),
-			softbutton2  => Slim::Utils::Strings::string('DELETE'),
+			softbutton1  => $client->string('INSERT'),
+			softbutton2  => $client->string('DELETE'),
 		},
                 actions        => {
                                 do =>   {
@@ -742,7 +742,7 @@ sub playerSettingsMenu {
 	# transition only for Sb2 and beyond (aka 'crossfade')
 	if ($client->isa('Slim::Player::Squeezebox2')) {
 		push @menu, {
-			text           => Slim::Utils::Strings::string("SETUP_TRANSITIONTYPE"),
+			text           => $client->string("SETUP_TRANSITIONTYPE"),
 			id             => 'settingsXfade',
 			node           => 'advancedSettings',
 			displayWhenOff => 0,
@@ -760,7 +760,7 @@ sub playerSettingsMenu {
 	if ($client->canDoReplayGain(0)) {
 		push @menu, {
 			displayWhenOff => 0,
-			text           => Slim::Utils::Strings::string("REPLAYGAIN"),
+			text           => $client->string("REPLAYGAIN"),
 			id             => 'settingsReplayGain',
 			node           => 'advancedSettings',
 			actions        => {
@@ -794,7 +794,7 @@ sub browseMusicFolder {
 	if (defined($audiodir) && -d $audiodir) {
 		$log->info("Adding Browse Music Folder");
 		$return = {
-				text           => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				text           => $client->string('BROWSE_MUSIC_FOLDER'),
 				id             => 'myMusicMusicFolder',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -830,7 +830,7 @@ sub repeatSettings {
 
 	my $repeat_setting = Slim::Player::Playlist::repeat($client);
 	my @repeat_strings = ('OFF', 'SONG', 'PLAYLIST',);
-	my @translated_repeat_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @repeat_strings;
+	my @translated_repeat_strings = map { ucfirst($client->string($_)) } @repeat_strings;
 	my @repeatChoiceActions;
 	for my $i (0..$#repeat_strings) {
 		push @repeatChoiceActions, 
@@ -840,7 +840,7 @@ sub repeatSettings {
 		};
 	}
 	my $return = {
-		text           => Slim::Utils::Strings::string("REPEAT"),
+		text           => $client->string("REPEAT"),
 		id             => 'settingsRepeat',
 		node           => 'settings',
 		displayWhenOff => 0,
@@ -868,7 +868,7 @@ sub shuffleSettings {
 
 	my $shuffle_setting = Slim::Player::Playlist::shuffle($client);
 	my @shuffle_strings = ( 'OFF', 'SONG', 'ALBUM',);
-	my @translated_shuffle_strings = map { ucfirst(Slim::Utils::Strings::string($_)) } @shuffle_strings;
+	my @translated_shuffle_strings = map { ucfirst($client->string($_)) } @shuffle_strings;
 	my @shuffleChoiceActions;
 	for my $i (0..$#shuffle_strings) {
 		push @shuffleChoiceActions, 
@@ -878,7 +878,7 @@ sub shuffleSettings {
 		};
 	}
 	my $return = {
-		text           => Slim::Utils::Strings::string("SHUFFLE"),
+		text           => $client->string("SHUFFLE"),
 		id             => 'settingsShuffle',
 		node           => 'settings',
 		selectedIndex  => $shuffle_setting + 1,
@@ -1060,7 +1060,7 @@ sub alarmOnHash {
 	my ($client, $prefs, $day) = @_;
 	my $val = $prefs->client($client)->get('alarm')->[ $day ];
 	my %return = (
-		text     => Slim::Utils::Strings::string("ENABLED"),
+		text     => $client->string("ENABLED"),
 		checkbox => ($val == 1) + 0,
 		actions  => {
 			on  => {
@@ -1091,13 +1091,13 @@ sub alarmSetHash {
 	my $current_setting = $prefs->client($client)->get('alarmtime')->[ $day ];
 	my %return = 
 	( 
-		text    => Slim::Utils::Strings::string("ALARM_SET"),
+		text    => $client->string("ALARM_SET"),
 		input   => {
 			initialText  => $current_setting, # this will need to be formatted correctly
 			_inputStyle  => 'time',
 			len          => 1,
 			help         => {
-				text => Slim::Utils::Strings::string('JIVE_ALARMSET_HELP')
+				text => $client->string('JIVE_ALARMSET_HELP')
 			},
 		},
 		actions => {
@@ -1121,7 +1121,7 @@ sub alarmPlaylistHash {
 	my $alarm_playlist = $prefs->client($client)->get('alarmplaylist')->[ $day ];
 	my @allPlaylists = (
 		{
-			text    => Slim::Utils::Strings::string("CURRENT_PLAYLIST"),
+			text    => $client->string("CURRENT_PLAYLIST"),
 			radio	=> ($alarm_playlist ne '' && 
 				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -1) + 0, # 0 is added to force the data type to number
 			
@@ -1138,7 +1138,7 @@ sub alarmPlaylistHash {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_TRACK"),
+			text    => $client->string("PLUGIN_RANDOM_TRACK"),
 			radio	=> ($alarm_playlist ne '' && 
 				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -2) + 0, # 0 is added to force the data type to number
 			
@@ -1155,7 +1155,7 @@ sub alarmPlaylistHash {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_ALBUM"),
+			text    => $client->string("PLUGIN_RANDOM_ALBUM"),
 			radio	=> ($alarm_playlist ne '' && 
 				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -3) + 0, # 0 is added to force the data type to number
 			
@@ -1172,7 +1172,7 @@ sub alarmPlaylistHash {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_CONTRIBUTOR"),
+			text    => $client->string("PLUGIN_RANDOM_CONTRIBUTOR"),
 			radio	=> ($alarm_playlist ne '' && 
 				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -4) + 0, # 0 is added to force the data type to number
 			
@@ -1194,7 +1194,7 @@ sub alarmPlaylistHash {
 
 	my %return = 
 	( 
-		text => Slim::Utils::Strings::string("ALARM_SELECT_PLAYLIST"),
+		text => $client->string("ALARM_SELECT_PLAYLIST"),
 		count     => scalar @allPlaylists,
 		offset    => 0,
 		item_loop => \@allPlaylists,
@@ -1253,7 +1253,7 @@ sub alarmVolumeHash {
 	}
 	my %return = 
 	( 
-		text      => Slim::Utils::Strings::string("ALARM_SET_VOLUME"),
+		text      => $client->string("ALARM_SET_VOLUME"),
 		count     => 10,
 		offset    => 0,
 		item_loop => \@vol_settings,
@@ -1266,7 +1266,7 @@ sub alarmFadeHash {
 	my $current_setting = $prefs->client($client)->get('alarmfadeseconds');
 	my %return = 
 	( 
-		text     => Slim::Utils::Strings::string("ALARM_FADE"),
+		text     => $client->string("ALARM_FADE"),
 		checkbox => ($current_setting > 0) + 0,
 		actions  => {
 			on  => {
@@ -1320,7 +1320,7 @@ sub populateAlarmHash {
 	my $elements = populateAlarmElements($client, $day);
 	my $string = 'ALARM_DAY' . $day;
 	my %return = (
-		text      => Slim::Utils::Strings::string($string),
+		text      => $client->string($string),
 		count     => scalar(@$elements),
 		offset    => 0,
 		item_loop => $elements,
@@ -1342,10 +1342,10 @@ sub playerPower {
 	my ($text, $action);
 
 	if ($power == 1) {
-		$text = sprintf(Slim::Utils::Strings::string('JIVE_TURN_PLAYER_OFF'), $name);
+		$text = sprintf($client->string('JIVE_TURN_PLAYER_OFF'), $name);
 		$action = 0;
 	} else {
-		$text = sprintf(Slim::Utils::Strings::string('JIVE_TURN_PLAYER_ON'), $name);
+		$text = sprintf($client->string('JIVE_TURN_PLAYER_ON'), $name);
 		$action = 1;
 	}
 
@@ -1374,10 +1374,10 @@ sub playerPower {
 
 sub sleepInXHash {
 	$log->info("Begin function");
-	my ($val, $sleepTime) = @_;
-	my $minutes = Slim::Utils::Strings::string('MINUTES');
+	my ($client, $val, $sleepTime) = @_;
+	my $minutes = $client->string('MINUTES');
 	my $text = $sleepTime == 0 ? 
-		Slim::Utils::Strings::string("SLEEP_CANCEL") :
+		$client->string("SLEEP_CANCEL") :
 		$sleepTime . " " . $minutes;
 	my %return = ( 
 		text    => $text,
@@ -1392,6 +1392,7 @@ sub sleepInXHash {
 	return \%return;
 }
 
+# XXX: no longer used?
 sub repeatHash {
 	my ($val, $strings, $thisValue) = @_;
 	my %return = (
@@ -1409,9 +1410,9 @@ sub repeatHash {
 
 sub transitionHash {
 	
-	my ($val, $prefs, $strings, $thisValue) = @_;
+	my ($client, $val, $prefs, $strings, $thisValue) = @_;
 	my %return = (
-		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
+		text    => $client->string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
 		actions => {
 			do => {
@@ -1425,9 +1426,9 @@ sub transitionHash {
 
 sub replayGainHash {
 	
-	my ($val, $prefs, $strings, $thisValue) = @_;
+	my ($client, $val, $prefs, $strings, $thisValue) = @_;
 	my %return = (
-		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
+		text    => $client->string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
 		actions => {
 			do => {
@@ -1445,7 +1446,7 @@ sub myMusicMenu {
 	my $client = shift || undef;
 	my @myMusicMenu = (
 			{
-				text           => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				text           => $client->string('BROWSE_BY_ARTIST'),
 				id             => 'myMusicArtists',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1463,7 +1464,7 @@ sub myMusicMenu {
 				},
 			},		
 			{
-				text           => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				text           => $client->string('BROWSE_BY_ALBUM'),
 				id             => 'myMusicAlbums',
 				node           => 'myMusic',
 				weight         => 20,
@@ -1483,7 +1484,7 @@ sub myMusicMenu {
 				},
 			},
 			{
-				text           => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				text           => $client->string('BROWSE_BY_GENRE'),
 				id             => 'myMusicGenres',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1501,7 +1502,7 @@ sub myMusicMenu {
 				},
 			},
 			{
-				text           => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				text           => $client->string('BROWSE_BY_YEAR'),
 				id             => 'myMusicYears',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1519,7 +1520,7 @@ sub myMusicMenu {
 				},
 			},
 			{
-				text           => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				text           => $client->string('BROWSE_NEW_MUSIC'),
 				id             => 'myMusicNewMusic',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1539,7 +1540,7 @@ sub myMusicMenu {
 				},
 			},
 			{
-				text           => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				text           => $client->string('SAVED_PLAYLISTS'),
 				id             => 'myMusicPlaylists',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1557,7 +1558,7 @@ sub myMusicMenu {
 				},
 			},
 			{
-				text           => Slim::Utils::Strings::string('SEARCH'),
+				text           => $client->string('SEARCH'),
 				id             => 'myMusicSearch',
 				node           => 'myMusic',
 				isANode        => 1,
@@ -1567,7 +1568,7 @@ sub myMusicMenu {
 			},
 		);
 	# add the items for under mymusicSearch
-	my $searchMenu = searchMenu(1);
+	my $searchMenu = searchMenu(1, $client);
 	@myMusicMenu = (@myMusicMenu, @$searchMenu);
 
 	if (my $browseMusicFolder = browseMusicFolder($client, 1)) {
@@ -1588,7 +1589,7 @@ sub searchMenu {
 	my $client = shift || undef;
 	my @searchMenu = (
 	{
-		text           => Slim::Utils::Strings::string('ARTISTS'),
+		text           => $client->string('ARTISTS'),
 		id             => 'myMusicSearchArtists',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1596,10 +1597,10 @@ sub searchMenu {
 		input => {
 			len  => 1, #bug 5318
 			processingPopup => {
-				text => Slim::Utils::Strings::string('SEARCHING'),
+				text => $client->string('SEARCHING'),
 			},
 			help => {
-				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+				text => $client->string('JIVE_SEARCHFOR_HELP')
 			},
 		},
 		actions => {
@@ -1614,12 +1615,12 @@ sub searchMenu {
                         },
 		},
                 window => {
-                        text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+                        text => $client->string('SEARCHFOR_ARTISTS'),
                         titleStyle => 'search',
                 },
 	},
 	{
-		text           => Slim::Utils::Strings::string('ALBUMS'),
+		text           => $client->string('ALBUMS'),
 		id             => 'myMusicSearchAlbums',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1627,10 +1628,10 @@ sub searchMenu {
 		input => {
 			len  => 1, #bug 5318
 			processingPopup => {
-				text => Slim::Utils::Strings::string('SEARCHING'),
+				text => $client->string('SEARCHING'),
 			},
 			help => {
-				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+				text => $client->string('JIVE_SEARCHFOR_HELP')
 			},
 		},
 		actions => {
@@ -1644,13 +1645,13 @@ sub searchMenu {
 			},
 		},
 		window => {
-			text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
+			text => $client->string('SEARCHFOR_ALBUMS'),
 			titleStyle => 'search',
 			menuStyle  => 'album',
 		},
 	},
 	{
-		text           => Slim::Utils::Strings::string('SONGS'),
+		text           => $client->string('SONGS'),
 		id             => 'myMusicSearchSongs',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1658,10 +1659,10 @@ sub searchMenu {
 		input => {
 			len  => 1, #bug 5318
 			processingPopup => {
-				text => Slim::Utils::Strings::string('SEARCHING'),
+				text => $client->string('SEARCHING'),
 			},
 			help => {
-				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+				text => $client->string('JIVE_SEARCHFOR_HELP')
 			},
 		},
 		actions => {
@@ -1677,13 +1678,13 @@ sub searchMenu {
                         },
 		},
 		window => {
-			text => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
+			text => $client->string('SEARCHFOR_SONGS'),
 			titleStyle => 'search',
 			menuStyle => 'album',
 		},
 	},
 	{
-		text           => Slim::Utils::Strings::string('PLAYLISTS'),
+		text           => $client->string('PLAYLISTS'),
 		id             => 'myMusicSearchPlaylists',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1691,10 +1692,10 @@ sub searchMenu {
 		input => {
 			len  => 1, #bug 5318
 			processingPopup => {
-				text => Slim::Utils::Strings::string('SEARCHING'),
+				text => $client->string('SEARCHING'),
 			},
 			help => {
-				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+				text => $client->string('JIVE_SEARCHFOR_HELP')
 			},
 		},
 		actions => {
@@ -1707,7 +1708,7 @@ sub searchMenu {
                         },
 		},
 		window => {
-			text => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
+			text => $client->string('SEARCHFOR_PLAYLISTS'),
 			titleStyle => 'search',
 		},
 	},
@@ -1736,6 +1737,7 @@ sub jivePlaylistsCommand {
 
 	$log->info("Begin function");
 	my $request    = shift;
+	my $client     = $request->client || return;
 	my $title      = $request->getParam('title');
 	my $url        = $request->getParam('url');
 	my $command    = $request->getParam('_cmd');
@@ -1743,7 +1745,7 @@ sub jivePlaylistsCommand {
 	my $token      = uc($command); 
 	my @delete_menu= (
 		{
-			text    => Slim::Utils::Strings::string('CANCEL'),
+			text    => $client->string('CANCEL'),
 			actions => {
 				go => {
 					player => 0,
@@ -1754,7 +1756,7 @@ sub jivePlaylistsCommand {
 		}
 	);
 	my $actionItem = {
-		text    => Slim::Utils::Strings::string($token) . ' ' . $title,
+		text    => $client->string($token) . ' ' . $title,
 		actions => {
 			go => {
 				player => 0,
@@ -1783,6 +1785,7 @@ sub jiveFavoritesCommand {
 
 	$log->info("Begin function");
 	my $request = shift;
+	my $client  = $request->client || shift;
 	my $title   = $request->getParam('title');
 	my $url     = $request->getParam('url');
 	my $command = $request->getParam('_cmd');
@@ -1791,7 +1794,7 @@ sub jiveFavoritesCommand {
 	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
 	my @favorites_menu = (
 		{
-			text    => Slim::Utils::Strings::string('CANCEL'),
+			text    => $client->string('CANCEL'),
 			actions => {
 				go => {
 					player => 0,
@@ -1802,7 +1805,7 @@ sub jiveFavoritesCommand {
 		}
 	);
 	my $actionItem = {
-		text    => Slim::Utils::Strings::string($token) . ' ' . $title,
+		text    => $client->string($token) . ' ' . $title,
 		actions => {
 			go => {
 				player => 0,

@@ -1242,6 +1242,7 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 			this.title = '&nbsp;';
  
 		SqueezeJS.UI.CoverartPopup.superclass.initComponent.call(this);
+		this.maxWidth = 1600;
 
 		SqueezeJS.Controller.on({
 			playerstatechange: {
