@@ -16,80 +16,77 @@
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
-		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="[% webroot %]html/settings.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="[% webroot %]html/fileselector.js?r=[% revision %]"></script>
+ 		<script type="text/javascript" src="/html/SqueezeJS/Base.js?r=[% revision %]"></script>
+		<script type="text/javascript">[% PROCESS html/SqueezeJS/Strings.js %]</script>
+		<script type="text/javascript" src="/html/SqueezeJS/UI.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="[% webroot %]html/Settings.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
-			var strings = new Array();
-			[% PROCESS jsString id='CLOSE' jsId='' %]
 			[% PROCESS jsString id='BROWSE' jsId='' %]
 			[% PROCESS jsString id='SETTINGS' jsId='' %]
+			[% PROCESS jsString id='ADVANCED_SETTINGS' jsId='' %]
 			[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
 			[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
-			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
 
 			[% playerid = playerid || player %]
 			// display player list if we're in the player settings
 			[%-
 			pageId = '^' _ page _ '$';
 			pageLink = orderedLinks.grep(pageId);
-
-			IF needsClient;
-				USE Clients;
-				players = Clients.get("id") %]
-	
-				var page = '[% page %]';
-				var playerList = new Array(
-					[% FOREACH playerobj IN players -%]
-						{
-							id: "[% playerobj.id %]",
-							name: "[% playerobj.name %]"
-						}[% IF !loop.last; ','; END %]
-					[% END %]
-				);
-
-				// remember the last loaded page - to be used when the player tab is selected next time
-				var pageURL = '[% playersetup.$page || 'settings/player/basic.html?' %]';
-				try { 
-					parent.Utils.setCookie('SqueezeCenter-playersettings', pageURL);
-					parent.player = '[% playerURI %]';
-					parent.playerid = '[% playerURI %]';  
-				}
-				catch(e) {}
-
-			[%- END;
-
-			IF pageLink.size > 0 %]
-
-				var page = '[% page %]';
-				var settingsList = new Array(
-					[% FOREACH link IN orderedLinks -%]
-						{ 
-							id: "[% link %]",
-							url: "[% needsClient ? playersetup.$link : additionalLinks.setup.$link %]",
-							name: "[% link | string %]"
-						}[% IF !loop.last; ','; END %]
-					[% END %]
-				);
-
-				[% IF !needsClient %]
-					try { parent.Utils.setCookie('SqueezeCenter-advancedsettings', '[% additionalLinks.setup.$page %]'); }
-					catch(e) {}
-				[% END %]
-
-			[% END %]
+			-%]
 
 			// pages using the fileselector may set a filter (see iTunes)
 			var fsFilter = new Array();
 
-			Ext.EventManager.onDocumentReady(SettingsPage.init, SettingsPage, true);
+			Ext.onReady(function(){
+				[% IF needsClient;
+					USE Clients;
+					players = Clients.get("id") %]
 
-			Ext.EventManager.onDocumentReady(function(){
+					Settings.Page.initPlayerList([
+						[% FOREACH playerobj IN players -%]
+							{
+								id: "[% playerobj.id %]",
+								name: "[% playerobj.name %]",
+								current: "[% playerobj.id %]" == playerid || "[% playerobj.id %]" == player
+							}[% loop.last ? '' : ',' %]
+						[% END %]
+					]);
+	
+					// remember the last loaded page - to be used when the player tab is selected next time
+					try {
+						parent.SqueezeJS.setCookie('SqueezeCenter-playersettings', '[% playersetup.$page || 'settings/player/basic.html?' %]');
+						parent.player = '[% playerURI %]';
+						parent.playerid = '[% playerURI %]';  
+					}
+					catch(e) {}
+	
+				[% END %]
+
+				[% IF pageLink.size > 0 -%]
+					Settings.Page.initSettingsList([
+						[%- FOREACH link IN orderedLinks %]
+							{ 
+								id: "[% link %]",
+								current: [% page == link ? 'true' : 'false' %],
+								url: "[% needsClient ? playersetup.$link : additionalLinks.setup.$link %]",
+								name: "[% link | string %]"
+							}[% loop.last ? '' : ',' %]
+						[% END %]
+					]);
+
+					[% IF !needsClient %]
+						try { parent.SqueezeJS.setCookie('SqueezeCenter-advancedsettings', '[% additionalLinks.setup.$page %]'); }
+						catch(e) {}
+					[% END %]
+				[%- END -%]
+
+				Settings.Page.init();
+
 				var el;
 				[%- FOREACH pref = validate; IF pref.value %]
 					if (el = Ext.get('[% pref.key %]')) {
-						el.on('blur', function(){ SettingsPage.validatePref('[% pref.key %]', '[% namespace %]'); } );
+						el.on('blur', function(){ Settings.Page.validatePref('[% pref.key %]', '[% namespace %]'); } );
 						el.addClass('canValidate');
 					}
 				[%- END; END %]

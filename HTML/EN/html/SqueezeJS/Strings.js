@@ -1,0 +1,41 @@
+/* 
+ * Globally used SqueezeCenter strings.
+ * This file should be PROCESSed if SqueezeJS.UI is used.
+ */
+[% PROCESS jsString id='POWER' jsId='' %]
+[% PROCESS jsString id='PLAY' jsId='' %]
+[% PROCESS jsString id='PAUSE' jsId='' %]
+[% PROCESS jsString id='NEXT' jsId='' %]
+[% PROCESS jsString id='PREVIOUS' jsId='' %]
+
+[% PROCESS jsString id='SHUFFLE' jsId='' %]
+[% PROCESS jsString id='SHUFFLE_OFF' jsId='shuffle0' %]
+[% PROCESS jsString id='SHUFFLE_ON_SONGS' jsId='shuffle1' %]	 
+[% PROCESS jsString id='SHUFFLE_ON_ALBUMS' jsId='shuffle2' %]
+
+[% PROCESS jsString id='REPEAT' jsId='' %]
+[% PROCESS jsString id='REPEAT_OFF' jsId='repeat0' %]
+[% PROCESS jsString id='REPEAT_ONE' jsId='repeat1' %]	 
+[% PROCESS jsString id='REPEAT_ALL' jsId='repeat2' %]
+
+[% PROCESS jsString id='VOLUME' jsId='volume' %]
+SqueezeJS.Strings['volume'] += '[% "COLON" | string %]';
+[% PROCESS jsString id='VOLUME_LOUDER' jsId='volumeup' %]
+[% PROCESS jsString id='VOLUME_SOFTER' jsId='volumedown' %]
+
+[% PROCESS jsString id='BY' jsId='' %]
+[% PROCESS jsString id='FROM' jsId='' %]
+[% PROCESS jsString id='COLON' jsId='colon' %] 	
+[% PROCESS jsString id='ON' jsId='on' %]
+[% PROCESS jsString id='OFF' jsId='off' %]
+[% PROCESS jsString id='YES' jsId='' %]
+[% PROCESS jsString id='NO' jsId='' %]
+
+[% PROCESS jsString id='CLOSE' jsId='' %]
+[% PROCESS jsString id='CANCEL' jsId='' %]
+[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
+[% PROCESS jsString id='SYNCHRONIZE' jsId='' %]
+[% PROCESS jsString id='NO_PLAYER_FOUND' jsId='no_player' %]
+[% PROCESS jsString id='NO_PLAYER_DETAILS' jsId='' %]
+[% PROCESS jsString id='SQUEEZENETWORK' %]
+[% PROCESS jsString id='SQUEEZENETWORK_WANT_SWITCH' jsId='sqn_want_switch' %]

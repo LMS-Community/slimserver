@@ -2,12 +2,12 @@
 [% pageicon = 'SAVED_PLAYLISTS' %]
 [% UNLESS noEdit; extJsScripts = BLOCK %]
 	<script type="text/javascript">
-		Ext.EventManager.onDocumentReady(function(){
-			new Slim.Sortable({
+		Ext.onReady(function(){
+			new SqueezeJS.UI.Sortable({
 				el: 'browsedbList',
 				selector: '#browsedbList div.draggableSong',
 				onDropCmd: function(sourcePos, targetPos) {
-					Utils.processCommand({
+					SqueezeJS.Controller.request({
 						params: [ '', [
 							'playlists',
 							'edit',
