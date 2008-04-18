@@ -11,7 +11,7 @@
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script src="[% webroot %]html/prototype.js?r=[% revision %]" type = 'text/javascript'></script>
 		<script src="[% webroot %]html/global.js?r=[% revision %]" type = 'text/javascript'></script>
-		<script>
+		<script type = 'text/javascript'>
 		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSIF thispage == 'search' %][% PROCESS search.js %][% ELSIF thispage == 'playlist' %][% PROCESS playlist.js %][% ELSIF thispage == 'artwork' || ( artwork == 1 && (levelName == 'album' || levelName == 'age')) %][% PROCESS artwork.js %][% ELSE %][% PROCESS browse.js %][% END %]
 		</script>
 	[% END %]
@@ -27,9 +27,9 @@
 [%# END %]
 
 <div id = 'miniControls'>
-	<img src = '[% webroot %]html/images/smaller/play_transparent.gif' onClick='miniControls("play");'>
+	<img src = '[% webroot %]html/images/smaller/play_transparent.gif' onClick='miniControls("play");' alt = 'play'>
 &nbsp;
-	<img src = '[% webroot %]html/images/smaller/pause_transparent.gif' onClick='miniControls("pause");'>
+	<img src = '[% webroot %]html/images/smaller/pause_transparent.gif' onClick='miniControls("pause");' alt = 'pause'>
 </div>
 
 <div id = 'topbar'>
