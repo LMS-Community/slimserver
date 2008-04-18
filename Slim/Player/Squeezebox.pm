@@ -711,6 +711,8 @@ sub upgradeFirmware {
 
 		return 0;
 	}
+	
+	$client->isUpgrading(1);
 
 	my $err;
 
