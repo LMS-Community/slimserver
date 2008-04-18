@@ -210,6 +210,8 @@ sub upgradeFirmware {
 	$client->stop();
 
 	$log->info("Using new update mechanism: $file");
+	
+	$client->isUpgrading(1);
 
 	my $err = $client->upgradeFirmware_SDK5($file);
 
