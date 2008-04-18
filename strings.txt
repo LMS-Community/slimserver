@@ -1977,7 +1977,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron elementos en la lista de reproducción
-	FR	Erreur: la liste de lecture ne contient aucun élément
+	FR	Erreur: rien dans la liste de lecture
 	HE	שגיאה: לא נמצאו פריטים ברשימת ההשמעה
 	IT	Errore: nessun elemento trovato nell'elenco di riproduzione
 	NL	Fout: Geen items in playlist gevonden
@@ -3094,7 +3094,7 @@ SETUP_POWERONBRIGHTNESS
 	EN	Brightness when on
 	ES	Brillo cuando está encendido
 	FI	Näytön kirkkaus soittimen ollessa päällä
-	FR	Luminosité lorsque allumé
+	FR	Luminosité (allumé)
 	HE	בהירות במצב מופעל
 	IT	Luminosità quando acceso
 	JA	パワーオン時の明るさ
@@ -3111,7 +3111,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	EN	Brightness when on:
 	ES	Brillo cuando está encendido:
 	FI	Näytön kirkkaus soittimen ollessa päällä:
-	FR	Luminosité lorsque allumé:
+	FR	Luminosité (allumé):
 	HE	בהירות במצב מופעל:
 	IT	Luminosità quando acceso:
 	JA	パワーオン時の明るさ:
@@ -3128,7 +3128,7 @@ SETUP_POWEROFFBRIGHTNESS
 	EN	Brightness when off
 	ES	Brillo cuando está apagado
 	FI	Näytön kirkkaus soittimen ollessa pois päältä
-	FR	Luminosité en veille
+	FR	Luminosité (éteint)
 	HE	בהירות במצב כבוי
 	IT	Luminosità quando spento
 	JA	パワーオフ時の明るさ
@@ -3145,7 +3145,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	EN	Brightness when off:
 	ES	Brillo cuando está apagado:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité lorsque éteint:
+	FR	Luminosité (éteint):
 	HE	בהירות במצב כבוי:
 	IT	Luminosità quando spento:
 	JA	パワーオフ時の明るさ:
@@ -3160,7 +3160,7 @@ SETUP_IDLEBRIGHTNESS
 	DE	Helligkeit im Standbymodus
 	EN	Brightness when idle
 	ES	Brillo en inactividad
-	FR	Luminosité en veille
+	FR	Luminosité (inactif)
 	HE	בהירות במצב מוכן
 	IT	Luminosità quando inattivo
 	JA	アイドル時の明るさ
@@ -3174,7 +3174,7 @@ SETUP_IDLEBRIGHTNESS_CHOOSE
 	DE	Helligkeit im Standbymodus:
 	EN	Brightness when idle:
 	ES	Brillo en inactividad::
-	FR	Luminosité en veille:
+	FR	Luminosité (inactif):
 	HE	בהירות במצב מוכן:
 	IT	Luminosità quando inattivo:
 	JA	アイドル時の明るさ:
@@ -8928,7 +8928,7 @@ ADD_TO_PLAYLIST
 	EN	Add to playlist
 	ES	Agregar a la lista de reproducción
 	FI	Lisää soittolistaan
-	FR	Ajouter
+	FR	Ajouter à la liste de lecture
 	HE	הוספה לרשימת השמעה
 	IT	Aggiungi a elenco di riproduzione
 	JA	プレイリストに加える
@@ -11076,7 +11076,7 @@ BRIGHTNESS_ON
 	EN	Brightness when on:
 	ES	Brillo cuando está encendido:
 	FI	Näytön kirkkaus soittimen ollessa päällä:
-	FR	Luminosité lorsque allumé:
+	FR	Luminosité (allumé):
 	HE	בהירות במצב מופעל:
 	IT	Luminosità quando acceso:
 	JA	パワーオン時の明るさ :
@@ -11093,7 +11093,7 @@ BRIGHTNESS_OFF
 	EN	Brightness in standby:
 	ES	Brillo en modo de espera:
 	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité en veille:
+	FR	Luminosité (veille):
 	HE	בהירות במצב המתנה:
 	IT	Luminosità in standby:
 	JA	スタンバイ時の明るさ :
