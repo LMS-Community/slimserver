@@ -17,9 +17,6 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	$paramRef->{iTunesEnabled}  = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin');
-	$paramRef->{podcastEnabled} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin');
-
 	return $class->SUPER::handler($client, $paramRef);
 }
 
