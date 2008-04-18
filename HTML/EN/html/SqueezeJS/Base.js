@@ -61,7 +61,7 @@ function _init() {
 				name : 'playerstatus',
 				fn : function(self){
 	
-					if (this.player) {
+					if (this.player && this.player != -1) {
 	
 						this.playerRequest({
 							params: [ "status", "-", 1, "tags:uB" ],
@@ -411,6 +411,8 @@ function _init() {
 				this._initPlayerStatus();
 				this.fireEvent('playerselected', playerobj);
 			}
+			else
+				this.player = null;
 		},
 
 		_parseCurrentPlayerInfo : function(response, activeplayer) {
