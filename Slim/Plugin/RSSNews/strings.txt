@@ -7,7 +7,7 @@ PLUGIN_RSSNEWS
 	DE	RSS-Nachrichtenticker
 	EN	RSS News Ticker
 	ES	Teletipo de noticias RSS
-	FR	Aggrégateur RSS
+	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
 	IT	RSS News Ticker
 	NL	RSS-nieuwsberichten
@@ -77,7 +77,7 @@ PLUGIN_RSSNEWS_SCREENSAVER
 	DE	RSS-Nachrichtenticker
 	EN	RSS News Ticker
 	ES	Teletipo de noticias RSS
-	FR	Aggrégateur RSS
+	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
 	IT	RSS News Ticker
 	NL	RSS-nieuwsberichten
@@ -87,7 +87,7 @@ PLUGIN_RSSNEWS_NAME
 	DE	RSS-Nachrichtenticker
 	EN	RSS News Ticker
 	ES	Teletipo de noticias RSS
-	FR	Aggrégateur RSS
+	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
 	IT	RSS News Ticker
 	NL	RSS-nieuwsberichten
