@@ -64,14 +64,15 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin;
 
+	Slim::Plugin::InfoBrowser::Settings->new($class);
+
 	$menuUrl    = $class->_menuUrl;
 	@searchDirs = $class->_searchDirs;
 
-	Slim::Plugin::InfoBrowser::Settings->new($class);
 	Slim::Plugin::InfoBrowser::Settings->importNewMenuFiles;
 
-    Slim::Control::Request::addDispatch(['infobrowser', 'items', '_index', '_quantity'],
-        [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['infobrowser', 'items', '_index', '_quantity'],
+		[0, 1, 1, \&cliQuery]);
 }
 
 sub getDisplayName { 'PLUGIN_INFOBROWSER' };

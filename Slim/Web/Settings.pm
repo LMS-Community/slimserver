@@ -178,7 +178,13 @@ sub handler {
 		@topLevelItems = map {
 			$topLevelItems{$_} = 1;
 			[ $_, $paramRef->{'additionalLinks'}->{'setup'}->{$_} ];
-		}(
+		}
+		grep { 
+			if (/ITUNES/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') }
+			elsif (/PLUGIN_PODCAST/) { Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin') }
+			else { 1 }
+		}
+		(
 			'BASIC_SERVER_SETTINGS',
 			'BASIC_PLAYER_SETTINGS',
 			'BEHAVIOR_SETTINGS',
