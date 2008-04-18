@@ -1029,6 +1029,9 @@ sub _hello_handler {
 		}
 
 		Slim::Utils::Timers::killTimers($client, \&forget_disconnected_client);
+		
+		# Reset isUpgrading flag now that the player has come back
+		$client->isUpgrading(0);
 
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
 

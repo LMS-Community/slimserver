@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 8, 11, 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
+	# 11, 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -102,7 +102,7 @@ sub new {
 	
 	$client->[7] = undef; # startupPlaylistLoading
 
-#	$client->[8]
+	$client->[8] = 0; # isUpgrading
 
 	# client hardware information
 	$client->[9] = undef; # udpsock
@@ -1113,6 +1113,11 @@ sub paddr {
 sub startupPlaylistLoading {
 	my $r = shift;
 	@_ ? ($r->[7] = shift) : $r->[7];
+}
+
+sub isUpgrading {
+	my $r = shift;
+	@_ ? ($r->[8] = shift) : $r->[8];
 }
 
 sub udpsock {

@@ -2909,6 +2909,9 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'player_needs_upgrade', "1")
 					if ($eachclient->needsUpgrade());
+				$request->addResultLoop('players_loop', $cnt,
+					'player_is_upgrading', "1")
+					if ($eachclient->isUpgrading());
 
 				for my $pref (@{$savePrefs{'player'}}) {
 					if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
@@ -3106,6 +3109,10 @@ sub statusQuery {
 
 	if ($client->needsUpgrade()) {
 		$request->addResult('player_needs_upgrade', "1");
+	}
+	
+	if ($client->isUpgrading()) {
+		$request->addResult('player_is_upgrading', "1");
 	}
 	
 	# add player info...
