@@ -1,0 +1,23 @@
+PLUGIN_JIVEEXTRAS
+	EN	Customize Controller
+
+PLUGIN_JIVEEXTRAS_DESC
+	EN	You may customize your Squeezebox Controller by selecting additional wallpaper images and sound effects which will become available on the settings menus for your Controller.
+
+PLUGIN_JIVEEXTRAS_WALLPAPERS
+	EN	Wallpapers
+
+PLUGIN_JIVEEXTRAS_WALLPAPERS_DESC
+	EN	Select local or remote image files for using as the wallpaper on your controller.  These images will be available as options for the wallpaper from the Settings->Screen->Wallpaper menu from your controller.  Wallpaper files should be 240x320 pixel .jpeg, .jpg, .png or .bmp files.
+
+PLUGIN_JIVEEXTRAS_SOUNDS
+	EN	Sounds
+
+PLUGIN_JIVEEXTRAS_SOUNDS_DESC
+	EN	Select local or remote sound files to use as optional sounds effects for actions such as menu selections on your Squeezebox controller.  These optional sounds will be available from the Settings->Advanced->Sound Effects menu from your controller.  Sound effect files should be .wav files containing 1 channel (mono) 16 bit 44.1KHz data.
+ 
+PLUGIN_JIVEEXTRAS_CUSTOM
+	EN	Custom #
+
+PLUGIN_JIVEEXTRAS_FILEORURL
+	EN	Enter File or URL
