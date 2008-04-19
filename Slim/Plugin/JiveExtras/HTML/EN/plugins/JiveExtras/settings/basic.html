@@ -1,0 +1,54 @@
+[%- IF useExtJS -%]
+	<script type="text/javascript" src="[% webroot %]html/fileselector.js?r=[% revision %]"></script>
+	<script type="text/javascript">
+		var strings = new Array();
+		[% PROCESS jsString id='CLOSE' jsId='' %]
+		[% PROCESS jsString id='BROWSE' jsId='' %]
+		[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
+		[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
+	</script>
+[%- END -%]
+
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_JIVEEXTRAS" desc="" %]
+		[% "PLUGIN_JIVEEXTRAS_DESC" | string %]
+	[% END %]
+
+	[% WRAPPER setting title="PLUGIN_JIVEEXTRAS_WALLPAPERS" desc="" %]
+		[% "PLUGIN_JIVEEXTRAS_WALLPAPERS_DESC" | string %]
+	[% END %]
+
+	<div class="settingSection">
+		<table>
+		[% FOREACH entry IN wallpaper; idx = loop.index %]
+			<tr>
+				<td class="firstColumn">[% IF wallpaper_served.$idx %]<img src=[% wallpaper_served.$idx %] alt="" width="120px" height="160px"></div>[% END %]&nbsp;</td>
+				<td>
+					<input id=[% "wallpaper_name" _ idx %] type="text" class="stdedit" name=[% "wallpaper_name" _ idx %] value="[% entry.name %]">
+					<input id=[% "wallpaper" _ idx %] type="text" class="stdedit selectFile" name=[% "wallpaper" _ idx %] value="[% entry.url %]">
+				</td>
+			</tr>
+		[% END %]
+		</table>
+	</div>
+
+	[% WRAPPER setting title="PLUGIN_JIVEEXTRAS_SOUNDS" desc="" %]
+		[% "PLUGIN_JIVEEXTRAS_SOUNDS_DESC" | string %]
+	[% END %]
+
+	<div class="settingSection">
+		<table>
+		[% FOREACH entry IN sound; idx = loop.index %] 
+			<tr>
+				<td class="firstColumn">[% IF sound_served.$idx %]<object data="[% sound_served.$idx %]" autoplay="false" width="120px" height="20px" />[% END %]&nbsp;</td>
+				<td>
+					<input id=[% "sound_name" _ idx %] type="text" class="stdedit" name=[% "sound_name" _ idx %] value="[% entry.name %]">
+					<input id=[% "sound" _ idx %] type="text" class="stdedit selectFile" name=[% "sound" _ idx %] value="[% entry.url %]">
+				</td>
+			</tr>
+		[% END %]
+		</table>
+	</div>
+
+[% PROCESS settings/footer.html %]
