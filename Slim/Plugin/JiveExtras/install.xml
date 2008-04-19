@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<extension>
+	<name>PLUGIN_JIVEEXTRAS</name>
+	<module>Slim::Plugin::JiveExtras::Plugin</module>
+	<version>0.1</version>
+	<description>PLUGIN_JIVEEXTRAS_DESC</description>
+	<defaultState>enabled</defaultState>
+	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
+	<type>2</type><!-- type=extension -->
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.0a</minVersion>
+        <maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

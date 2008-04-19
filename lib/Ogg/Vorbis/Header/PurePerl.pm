@@ -334,28 +334,45 @@ sub _loadComments {
 	$data->{'INFO'}{offset} = tell $fh;
 }
 
-	# get the number of entries in the segment_table...
-	substr($buffer, 0, 4, '');
-	$page_segments = _decodeInt(substr($buffer, 0, 1, ''));
-	$byteCount += 5;
-
-	# then skip on past it
-	my $segmentSizes = substr($buffer, 0, $page_segments, '');
-	$byteCount += $page_segments;
+sub _processComments {
+	my ( $data, $dataPt ) = @_;
 	
-	my $contentSize = 0;
-	for (my $i = 0; $i < $page_segments; $i++) {
-		my $segmentSize = ord(substr($segmentSizes, $i, 1));
-		$contentSize += $segmentSize;
-	}
+	my $pos = 7;
+	my $end = length $$dataPt;
 	
-	# This assumes the normal case that the three mandatory Vorbis header packets are 
-	# completely contained in the first 2 Ogg pages.
-	$data->{'INFO'}{'headers_length'} = $contentSize + $byteCount;
-
-	# check the header type (should be 0x03)
-	if (ord(substr($buffer, 0, 1, '')) != 0x03) {
-		warn "Wrong header type: " . ord($buffer);
+	my $num;
+	my %comments;
+	
+	while (1) {
+		last if $pos + 4 > $end;
+		my $len = Get32u($dataPt, $pos);
+		last if $pos + 4 + $len > $end;
+		my $start = $pos + 4;
+		my $buff = substr($$dataPt, $start, $len);
+		$pos = $start + $len;
+		my ($tag, $val);
+		if (defined $num) {
+			$buff =~ /(.*?)=(.*)/s or last;
+			($tag, $val) = ($1, $2);
+		} else {
+			$tag = 'vendor';
+			$val = $buff;
+			$num = ($pos + 4 < $end) ? Get32u($dataPt, $pos) : 0;
+			$pos += 4;
+		}
+		
+		my $lctag = lc $tag;
+		
+		push @{$comments{$lctag}}, $val;
+		push @{$data->{COMMENT_KEYS}}, $lctag;
+		
+		$num--;
+		
+		# all done if this was our last tag
+		if ( !$num ) {
+			$data->{COMMENTS} = \%comments;
+			return 1;
+		}
 	}
 	
 	warn "format error in Vorbis comments\n";

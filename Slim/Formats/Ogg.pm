@@ -252,8 +252,8 @@ sub getInitialAudioBlock {
 	my $ogg = Ogg::Vorbis::Header::PurePerl->new($localFh);
 	
 	seek($localFh, 0, 0);
-	logger('player.source')->debug('Reading initial audio blcok: length ' . ($ogg->info('headers_length')));
-	read ($localFh, my $buffer, $ogg->info('headers_length'));
+	logger('player.source')->debug('Reading initial audio block: length ' . ($ogg->info('offset')));
+	read ($localFh, my $buffer, $ogg->info('offset'));
 	
 	close($localFh);
 	
