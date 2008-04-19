@@ -155,6 +155,40 @@ sub getTag {
 	return $tags;
 }
 
+=head2 getCoverArt( $filename )
+
+Extract and return cover image from the file.
+
+=cut
+
+sub getCoverArt {
+	my $class = shift;
+	my $file  = shift || return undef;
+	
+	my $ogg;
+
+	# some ogg files can blow up - especially if they are invalid.
+	eval {
+		local $^W = 0;
+		$ogg = Ogg::Vorbis::Header::PurePerl->new( $file );
+	};
+
+	if ( !$ogg || $@ ) {
+		logWarning("Unable to parse Ogg stream");
+		return;
+	}
+	
+	my ($coverart) = $ogg->comment('coverart');
+
+	if ( $coverart ) {
+		$coverart = eval { decode_base64( $coverart ) };
+		return if $@;
+		return $coverart;
+	}
+
+	return;
+}
+
 =head2 scanBitrate( $fh )
 
 Scans a file and returns just the bitrate and VBR setting.  This is used
