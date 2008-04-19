@@ -239,38 +239,100 @@ sub _loadInfo {
 }
 
 sub _loadComments {
-
 	my $data = shift;
-	my $fh = $data->{'fileHandle'};
+	
+	my $fh    = $data->{'fileHandle'};
 	my $start = $data->{'startCommentHeader'};
-	my $page_segments;
-	my $vendor_length;
-	my $user_comment_count;
-	my $byteCount = $start;
-	my %comments;
+	
+	$data->{COMMENT_KEYS} = [];
+	
+	# Comment parsing code based on Image::ExifTool::Vorbis
 
-	seek($fh, $start, 0);
-	read($fh, my $buffer, 8192);
+	my $MAX_PACKETS = 2;
+	my $done;
+	my ($page, $packets, $streams) = (0,0,0,0);
+	my ($buff, $flag, $stream, %val);			
 
-	# check that the first four bytes are 'OggS'
-	if (substr($buffer, 0, 4, '') ne OGGHEADERFLAG) {
-		warn "No comment header?";
-		return undef;
+	seek $fh, 0, 0;
+	
+	while (1) {	
+		if ( !$done && read( $fh, $buff, 28 ) == 28 ) {
+			# validate magic number
+			unless ( $buff =~ /^OggS/ ) {
+				warn "No comment header?";
+				last;
+			}
+
+			$flag   = Get8u(\$buff, 5);		# page flag
+			$stream = Get32u(\$buff, 14);	# stream serial number
+			++$streams if $flag & 0x02;		# count start-of-stream pages
+			++$packets unless $flag & 0x01; # keep track of packet count
+		}
+		else {
+			# all done unless we have to process our last packet
+			last unless %val;
+			($stream) = sort keys %val;     # take a stream
+			$flag = 0;                      # no continuation
+			$done = 1;                      # flag for done reading
+		}
+		
+		# can finally process previous packet from this stream
+		# unless this is a continuation page
+		if (defined $val{$stream} and not $flag & 0x01) {
+			_processComments( $data, \$val{$stream} );
+			delete $val{$stream};
+			# only read the first $MAX_PACKETS packets from each stream
+			if ($packets > $MAX_PACKETS * $streams) {
+				last unless %val;	# all done (success!)
+				next;				# process remaining stream(s)
+			}
+		}
+		# stop processing Ogg Vorbis if we have scanned enough packets
+		last if $packets > $MAX_PACKETS * $streams and not %val;
+		
+		# continue processing the current page
+		my $pageNum = Get32u(\$buff, 18);   # page sequence number
+		my $nseg    = Get8u(\$buff, 26);    # number of segments
+		# calculate total data length
+		my $dataLen = Get8u(\$buff, 27);
+		
+		if ($nseg) {
+			read( $fh, $buff, $nseg-1 ) == $nseg-1 or last;
+			my @segs = unpack('C*', $buff);
+			# could check that all these (but the last) are 255...
+			foreach (@segs) { $dataLen += $_ }
+		}
+
+		if (defined $page) {
+			if ($page == $pageNum) {
+				++$page;
+			} else {
+				warn "Missing page(s) in Ogg file\n";
+				undef $page;
+			}
+		}
+		
+		# read page data
+        read( $fh, $buff, $dataLen ) == $dataLen or last;
+
+		if (defined $val{$stream}) {
+			$val{$stream} .= $buff;		# add this continuation page
+		} elsif (not $flag & 0x01) {	# ignore remaining pages of a continued packet
+			# ignore the first page of any packet we aren't parsing
+			if ($buff =~ /^(.)vorbis/s and ord($1) == 3) {
+				$val{$stream} = $buff;  # save this page, it has comments
+			}
+		}
+		
+		if (defined $val{$stream} and $flag & 0x04) {
+			# process Ogg Vorbis packet now if end-of-stream bit is set
+			_processComments( $data, \$val{$stream} );
+			delete $val{$stream};
+		}
 	}
-
-	$byteCount += 4;
-
-	# read the stream serial number
-	substr($buffer, 0, 10, '');
-	push @{$data->{'commentSerialNumber'}}, _decodeInt(substr($buffer, 0, 4, ''));
-	$byteCount += 14;
-
-	# read the page sequence number (should be 0x01)
-	if (_decodeInt(substr($buffer, 0, 4, '')) != 0x01) {
-		warn "Comment header page sequence number is not 0x01: " + _decodeInt($buffer);
-		warn "Going to keep going anyway.";
-	}
-	$byteCount += 4;
+	
+	$data->{'INFO'}{offset} = tell $fh;
+}
 
 	# get the number of entries in the segment_table...
 	substr($buffer, 0, 4, '');
@@ -295,53 +357,18 @@ sub _loadComments {
 	if (ord(substr($buffer, 0, 1, '')) != 0x03) {
 		warn "Wrong header type: " . ord($buffer);
 	}
-	$byteCount += 1;
+	
+	warn "format error in Vorbis comments\n";
+	
+	return 0;
+}
 
-	# now we should see 'vorbis'
-	if (substr($buffer, 0, 6, '') ne 'vorbis') {
-		warn "Missing comment header. Should have found 'vorbis', found $buffer\n";
-	}
-	$byteCount += 6;
+sub Get8u {
+	return unpack( "x$_[1] C", ${$_[0]} );
+}
 
-	# get the vendor length
-	$vendor_length = _decodeInt(substr($buffer, 0, 4, ''));
-	$byteCount += 4;
-
-	# read in the vendor
-	$comments{'vendor'} = substr($buffer, 0, $vendor_length, '');
-	$byteCount += $vendor_length;
-
-	# read in the number of user comments
-	$user_comment_count = _decodeInt(substr($buffer, 0, 4, ''));
-	$byteCount += 4;
-
-	# finally, read the comments
-	$data->{'COMMENT_KEYS'} = [];
-
-	for (my $i = 0; $i < $user_comment_count; $i++) {
-
-	# first read the length
-	my $comment_length = _decodeInt(substr($buffer, 0, 4, ''));
-		$byteCount += 4;
-
-		# then the comment itself
-		$byteCount += $comment_length;
-
-		my ($key, $value) = split(/=/, substr($buffer, 0, $comment_length, ''), 2);
-
-		my $lcKey = lc($key);
-
-		push @{$comments{$lcKey}}, $value;
-		push @{$data->{'COMMENT_KEYS'}}, $lcKey;
-	}
-
-	# read past the framing_bit
-	$byteCount += 1;
-	seek($fh, $byteCount, 1);
-
-	$data->{'INFO'}{'offset'} = $byteCount;
-
-	$data->{'COMMENTS'} = \%comments;
+sub Get32u {
+	return unpack( "x$_[1] V", ${$_[0]} );
 }
 
 sub _calculateTrackLength {
