@@ -25,3 +25,9 @@ PLUGIN_SCANNER_ERR_TRANSCODED
 
 PLUGIN_SCANNER_ERR_NOTRACK
 	EN	No track
+
+PLUGIN_SCANNER_MAX_RATE_FWD
+	EN	Maximum fast-forward rate reached
+
+PLUGIN_SCANNER_MAX_RATE_REW
+	EN	Maximum rewind rate reached
