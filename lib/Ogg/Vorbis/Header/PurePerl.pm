@@ -351,10 +351,8 @@ sub _processComments {
 		push @{$comments{$lctag}}, $val;
 		push @{$data->{COMMENT_KEYS}}, $lctag;
 		
-		$num--;
-		
 		# all done if this was our last tag
-		if ( !$num ) {
+		if ( !$num-- ) {
 			$data->{COMMENTS} = \%comments;
 			return 1;
 		}
