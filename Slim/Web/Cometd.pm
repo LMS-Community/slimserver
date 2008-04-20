@@ -504,6 +504,7 @@ sub handler {
 			push @{$events}, {
 				channel      => '/slim/unsubscribe',
 				clientId     => $clid,
+				id           => $obj->{id},
 				successful   => JSON::XS::true,
 				data         => $obj->{data},
 			};
