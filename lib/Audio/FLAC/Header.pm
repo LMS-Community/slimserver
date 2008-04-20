@@ -165,9 +165,17 @@ sub application {
 sub picture {
 	my $self = shift;
 	my $type = shift || 3; # front cover
+	
+	# Bug 7907, also look for other types of images
+	# http://flac.sourceforge.net/format.html#metadata_block_picture
+	my @types = ( $type, 4, 0, 5..20 );
 
 	# if the picture block exists, return it's content
-	return $self->{'picture'}->{$type} if exists($self->{'picture'}->{$type});
+	for ( @types ) {
+		if ( exists $self->{'picture'}->{$_} ) {
+			return $self->{'picture'}->{$_};
+		}
+	}
 
 	# otherwise, return nothing
 	return undef;
