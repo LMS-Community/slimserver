@@ -971,6 +971,8 @@ our %functions = (
 
 		if ($client->modeParam('alarmactive')) {
 			Slim::Buttons::AlarmClock::snooze($client);
+		} else {
+			pushButton('datetime', $client);
 		}
 	},
 	
@@ -1113,6 +1115,7 @@ our %functions = (
 
  		# briefly display the time/date
  		$client->showBriefly(dateTime(), {
+			'brightness' => 'powerOn',
 			'duration' => 3
 		});
  	},
