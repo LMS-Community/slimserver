@@ -404,12 +404,13 @@ function _init() {
 		},
 
 		_firePlayerSelected : function(playerobj){
-			if ((playerobj && playerobj.playerid 
-				&& playerobj.playerid != this.player
-				&& encodeURIComponent(playerobj.playerid) != this.player) || this.player == -1) {
+			if (playerobj && playerobj.playerid) {
+				if ((playerobj.playerid != this.player && encodeURIComponent(playerobj.playerid) != this.player) 
+					|| this.player == -1) {
 					
-				this._initPlayerStatus();
-				this.fireEvent('playerselected', playerobj);
+					this._initPlayerStatus();
+					this.fireEvent('playerselected', playerobj);
+				}
 			}
 			else
 				this.player = null;
