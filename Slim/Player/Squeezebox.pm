@@ -709,6 +709,9 @@ sub upgradeFirmware {
 	}
 	
 	$client->isUpgrading(1);
+	
+	# Notify about firmware upgrade starting
+	Slim::Control::Request::notifyFromArray( $client, [ 'firmware_upgrade' ] );
 
 	my $err;
 
