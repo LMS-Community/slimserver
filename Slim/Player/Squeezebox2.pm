@@ -212,6 +212,9 @@ sub upgradeFirmware {
 	$log->info("Using new update mechanism: $file");
 	
 	$client->isUpgrading(1);
+	
+	# Notify about firmware upgrade starting
+	Slim::Control::Request::notifyFromArray( $client, [ 'firmware_upgrade' ] );
 
 	my $err = $client->upgradeFirmware_SDK5($file);
 
