@@ -371,10 +371,15 @@ function _init() {
 
 		_checkShowBriefly : function(result){
 			if (result && result.showBriefly) {
-				result = result.showBriefly.join(' ').replace(/[^\w\s\.;,:()\[\]%]/g, '');
-				if (result && this.showBriefly != result) {
-					this.showBriefly = result;
-					this.fireEvent('showbriefly', result);
+				var text = '';
+				for (var x = 0; x < result.showBriefly.length; x++) {
+					if (result.showBriefly[x].match(/^[\w\s\.;,:()\[\]%]/))
+						text += result.showBriefly[x] + ' ';
+				}
+
+				if (text && this.showBriefly != text) {
+					this.showBriefly = text;
+					this.fireEvent('showbriefly', text);
 				}
 			}
 		},
@@ -404,12 +409,13 @@ function _init() {
 		},
 
 		_firePlayerSelected : function(playerobj){
-			if ((playerobj && playerobj.playerid 
-				&& playerobj.playerid != this.player
-				&& encodeURIComponent(playerobj.playerid) != this.player) || this.player == -1) {
+			if (playerobj && playerobj.playerid) {
+				if ((playerobj.playerid != this.player && encodeURIComponent(playerobj.playerid) != this.player) 
+					|| this.player == -1) {
 					
-				this._initPlayerStatus();
-				this.fireEvent('playerselected', playerobj);
+					this._initPlayerStatus();
+					this.fireEvent('playerselected', playerobj);
+				}
 			}
 			else
 				this.player = null;

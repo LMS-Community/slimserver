@@ -482,7 +482,8 @@ SqueezeJS.UI.Sortable.prototype = {
 				});
 		}
 
-		SqueezeJS.UI.Highlight.isDragging = false;
+		if (this.highlighter)
+			this.highlighter.isDragging = false;
 	},
 
 	onDrop: function(source, target) {
@@ -520,8 +521,10 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	startDrag: function(x, y) {
 		var dragEl = Ext.get(this.getDragEl());
 		var el = Ext.get(this.getEl());
-		SqueezeJS.UI.Highlight.unHighlight();
-		SqueezeJS.UI.Highlight.isDragging = true;
+		if (this.config.list.highlighter) {
+			this.config.list.highlighter.unHighlight();
+			this.config.list.highlighter.isDragging = true;
+		}
 
 		dragEl.applyStyles({'z-index':2000});
 		dragEl.update(el.child('div').dom.innerHTML);
@@ -531,7 +534,8 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	// disable the default behaviour which would place the dragged element
 	// we don't need to place it as it will be moved in onDragDrop
 	endDrag: function() {
-		SqueezeJS.UI.Highlight.isDragging = false;
+		if (this.config.list.highlighter)
+			this.config.list.highlighter.isDragging = false;
 	},
 
 	onDragEnter: function(ev, id) {
@@ -1242,7 +1246,8 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 			this.title = '&nbsp;';
  
 		SqueezeJS.UI.CoverartPopup.superclass.initComponent.call(this);
-		this.maxWidth = 1600;
+		// let's try to size the width at a maximum of 80% of the current screen size
+		this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
 
 		SqueezeJS.Controller.on({
 			playerstatechange: {
@@ -1250,6 +1255,22 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 				scope: this
 			}
 		});
+
+		this.on({
+			show: {
+				fn: function(el){
+					if (el && el.body 
+						&& (el = el.body.child('img:first', true)) 
+						&& (el = Ext.get(el))
+						&& (el.getWidth() > this.maxWidth))
+							el.setSize(this.maxWidth - 10, this.maxWidth - 10);
+				}
+			}
+		});
+
+		Ext.EventManager.onWindowResize(function(){
+			this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
+		}, this);
 	},
 
 	onPlayerStateChange : function(result){
@@ -1347,6 +1368,7 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 			el: this.playlistEl,
 			offset: offset,
 			selector: '#' + this.playlistEl + ' div.draggableSong',
+			highlighter: this.Highlighter,
 			onDropCmd: function(sourcePos, targetPos) {
 				SqueezeJS.Controller.playerControl(
 					[
