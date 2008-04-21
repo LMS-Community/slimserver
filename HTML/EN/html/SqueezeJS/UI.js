@@ -37,15 +37,16 @@ SqueezeJS.UI = {
 	
 		initComponent : function(){
 			this.tooltipType = this.initialConfig.tooltipType || 'title';
-	
-			this.template = new Ext.Template(
-				'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
-				'<td></td><td><button type="{1}" style="padding:0" class="x-btn-text">{0}</button></td><td></td>',
-				'</tr></tbody></table>');
 
-			if (this.textOnly)
-				this.text = this.tooltip;
-	
+			if (SqueezeJS.UI.btnTemplate)
+				this.template = SqueezeJS.UI.btnTemplate;
+
+			// if we want a pure graphical button, overwrite text and setText method
+			if (this.noText) {
+				this.text = '';
+				this.setText = function(){};
+			}
+
 			SqueezeJS.UI.Button.superclass.initComponent.call(this);
 
 			// work around an IE7 workaround...
@@ -578,6 +579,7 @@ SqueezeJS.UI.Buttons.Play = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-play'; 
 		this.tooltip = this.tooltip || SqueezeJS.string('play');
+		this.text = this.text || SqueezeJS.string('play');
 		SqueezeJS.UI.Buttons.Play.superclass.initComponent.call(this);
 	},
 
@@ -607,6 +609,7 @@ SqueezeJS.UI.Buttons.Play = Ext.extend(SqueezeJS.UI.Button, {
 		playEl.addClass(isPlaying ? 'btn-pause' : 'btn-play');
 
 		this.setTooltip(isPlaying ? SqueezeJS.string('pause') : SqueezeJS.string('play'));
+		this.setText(isPlaying ? SqueezeJS.string('pause') : SqueezeJS.string('play'));
 		this.isPlaying = isPlaying;
 	}
 });
@@ -615,6 +618,7 @@ SqueezeJS.UI.Buttons.Rew = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-previous'; 
 		this.tooltip = this.tooltip || SqueezeJS.string('previous');
+		this.text = this.text || SqueezeJS.string('previous');
 		SqueezeJS.UI.Buttons.Rew.superclass.initComponent.call(this);
 	},
 
@@ -637,6 +641,7 @@ SqueezeJS.UI.Buttons.Fwd = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-next';
 		this.tooltip = this.tooltip || SqueezeJS.string('next');
+		this.text = this.text || SqueezeJS.string('next');
 		SqueezeJS.UI.Buttons.Fwd.superclass.initComponent.call(this);
 	},
 
@@ -652,7 +657,6 @@ SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
 
 	initComponent : function(){
 		this.cls = this.cls || 'btn-repeat-0';
-		this.tooltip = this.tooltip || SqueezeJS.string('repeat');
 		SqueezeJS.UI.Buttons.Repeat.superclass.initComponent.call(this);
 	},
 
@@ -676,6 +680,7 @@ SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
 		this.state = newState || 0;
 		this.setIcon('');
 		this.setTooltip(SqueezeJS.string('repeat') + ' - ' + SqueezeJS.string('repeat' + this.state));
+		this.setText(SqueezeJS.string('repeat') + ' - ' + SqueezeJS.string('repeat' + this.state));
 		this.setClass('btn-repeat-' + this.state);
 	}
 });
@@ -687,6 +692,7 @@ SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-shuffle-0';
 		this.tooltip = this.tooltip || SqueezeJS.string('shuffle');
+		this.text = this.text || SqueezeJS.string('shuffle');
 		SqueezeJS.UI.Buttons.Shuffle.superclass.initComponent.call(this);
 	},
 
@@ -710,6 +716,7 @@ SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
 		this.state = newState || 0;
 		this.setIcon('');
 		this.setTooltip(SqueezeJS.string('shuffle' + ' - ' + SqueezeJS.string('shuffle' + this.state)));
+		this.setText(SqueezeJS.string('shuffle' + ' - ' + SqueezeJS.string('shuffle' + this.state)));
 		this.setClass('btn-shuffle-' + this.state);
 	}
 });
@@ -718,6 +725,7 @@ SqueezeJS.UI.Buttons.Power = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-power';
 		this.tooltip = this.tooltip || SqueezeJS.string('power');
+		this.text = this.text || SqueezeJS.string('power') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off');
 		SqueezeJS.UI.Buttons.Power.superclass.initComponent.call(this);
 
 		SqueezeJS.Controller.on({
@@ -739,6 +747,7 @@ SqueezeJS.UI.Buttons.Power = Ext.extend(SqueezeJS.UI.Button, {
 
 	onPlayerStateChange: function(result){
 		this.setTooltip(SqueezeJS.string('power') + SqueezeJS.string('colon') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off'));
+		this.setText(SqueezeJS.string('power') + SqueezeJS.string('colon') + ' ' + SqueezeJS.string(this.power ? 'on' : 'off'));
 
 		if (this.power)
 			this.el.removeClass('btn-power-off');
@@ -1005,6 +1014,7 @@ SqueezeJS.UI.Buttons.VolumeDown = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-volume-decrease';
 		this.tooltip = this.tooltip || SqueezeJS.string('volumedown');
+		this.text = this.text || SqueezeJS.string('volumedown');
 		SqueezeJS.UI.Buttons.VolumeUp.superclass.initComponent.call(this);
 	},
 
@@ -1018,6 +1028,7 @@ SqueezeJS.UI.Buttons.VolumeUp = Ext.extend(SqueezeJS.UI.Button, {
 	initComponent : function(){
 		this.cls = this.cls || 'btn-volume-increase';
 		this.tooltip = this.tooltip || SqueezeJS.string('volumeup');
+		this.text = this.text || SqueezeJS.string('volumeup');
 		SqueezeJS.UI.Buttons.VolumeUp.superclass.initComponent.call(this);
 	},
 
