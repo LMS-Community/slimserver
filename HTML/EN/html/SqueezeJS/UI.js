@@ -1255,14 +1255,11 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 		this.on({
 			show: {
 				fn: function(el){
-					var width;
-					if (el && el.body && (el = el.body.child('img:first', true)) && (el = Ext.get(el))) {
-						width = el.getWidth();
-						if (width > this.maxWidth) {
+					if (el && el.body 
+						&& (el = el.body.child('img:first', true)) 
+						&& (el = Ext.get(el))
+						&& (el.getWidth() > this.maxWidth))
 							el.setSize(this.maxWidth - 10, this.maxWidth - 10);
-							console.debug('resized');
-						}
-					}
 				}
 			}
 		});
