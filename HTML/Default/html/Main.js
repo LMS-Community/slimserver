@@ -4,7 +4,12 @@ Main = {
 	layout : null,
 
 	init : function(){
+		// overwrite some default Ext values
 		Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">' + SqueezeJS.string('loading') + '</div>';
+		Ext.Button.buttonTemplate = new Ext.Template(
+				'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
+				'<td></td><td><button type="{1}" style="padding:0" class="x-btn-text">{0}</button></td><td></td>',
+				'</tr></tbody></table>');
 
 		var leftpanel = {
 			region: 'center',
@@ -184,36 +189,43 @@ Main = {
 	initPlayerControl : function(){
 		new SqueezeJS.UI.Buttons.Rew({
 			renderTo: 'ctrlPrevious',
+			noText:   true,
 			minWidth: 31
 		});
 
 		new SqueezeJS.UI.Buttons.Play({
 			renderTo: 'ctrlTogglePlay',
+			noText:   true,
 			minWidth: 31
 		});
 
 		new SqueezeJS.UI.Buttons.Fwd({
 			renderTo: 'ctrlNext',
+			noText:   true,
 			minWidth: 31
 		});
 
 		new SqueezeJS.UI.Buttons.Repeat({
 			renderTo: 'ctrlRepeat',
+			noText:   true,
 			minWidth: 31
 		});
 
 		new SqueezeJS.UI.Buttons.Shuffle({
 			renderTo: 'ctrlShuffle',
+			noText:   true,
 			minWidth: 31
 		});
 
 		new SqueezeJS.UI.Buttons.VolumeDown({
 			renderTo: 'ctrlVolumeDown',
+			noText:   true,
 			minWidth: 27
 		});
 
 		new SqueezeJS.UI.Buttons.VolumeUp({
 			renderTo: 'ctrlVolumeUp',
+			noText:   true,
 			minWidth: 27
 		});
 
@@ -223,6 +235,7 @@ Main = {
 
 		new SqueezeJS.UI.Buttons.Power({
 			renderTo: 'ctrlPower',
+			noText:   true,
 			minWidth: 24
 		});
 
@@ -254,21 +267,23 @@ Main = {
 
 		new SqueezeJS.UI.Button({
 			renderTo: 'ctrlCollapse',
-			cls: 'btn-collapse-player',
-			tooltip: SqueezeJS.string('collapse'),
+			cls:      'btn-collapse-player',
+			tooltip:  SqueezeJS.string('collapse'),
 			minWidth: 18,
-			scope: this,
-			handler: this.collapseExpand
+			noText:   true,
+			scope:    this,
+			handler:  this.collapseExpand
 		});
 
 		if (Ext.get('ctrlUndock')) {
 			new SqueezeJS.UI.Button({
 				renderTo: 'ctrlUndock',
-				cls: 'btn-undock',
-				tooltip: SqueezeJS.string('undock'),
+				cls:      'btn-undock',
+				tooltip:  SqueezeJS.string('undock'),
 				minWidth: 16,
-				scope: this,
-				handler: function(){
+				noText:   true,
+				scope:    this,
+				handler:  function(){
 					window.open(webroot + 'status_header.html?player=' + SqueezeJS.Controller.getPlayer(), 'playerControl', 'width=500,height=100,status=no,menubar=no,location=no,resizable=yes');
 				}
 			});
@@ -297,11 +312,12 @@ Main = {
 
 		new SqueezeJS.UI.Button({
 			renderTo: 'ctrlExpand',
-			cls: 'btn-expand-player',
-			tooltip: SqueezeJS.string('expand'),
+			cls:      'btn-expand-player',
+			tooltip:  SqueezeJS.string('expand'),
 			minWidth: 18,
-			scope: this,
-			handler: this.collapseExpand
+			noText:   true,
+			scope:    this,
+			handler:  this.collapseExpand
 		});
 
 	},
@@ -364,10 +380,11 @@ Main = {
 	
 				new SqueezeJS.UI.Button({
 					renderTo: 'btnPlaylistClear',
-					cls: 'btn-playlist-clear',
-					tooltip: SqueezeJS.Strings['clear_playlist'],
+					cls:      'btn-playlist-clear',
+					tooltip:  SqueezeJS.Strings['clear_playlist'],
 					minWidth: 32,
-					handler: function(){
+					noText:   true,
+					handler:  function(){
 						SqueezeJS.Controller.playerControl(['playlist', 'clear']);
 						this.load();							// Bug 5709: force playlist to clear
 					}.createDelegate(this)
@@ -375,10 +392,11 @@ Main = {
 
 				new SqueezeJS.UI.Button({
 					renderTo: 'btnPlaylistSave',
-					cls: 'btn-playlist-save',
-					tooltip: SqueezeJS.Strings['save'],
+					cls:      'btn-playlist-save',
+					tooltip:  SqueezeJS.Strings['save'],
 					minWidth: 32,
-					handler: function(){
+					noText:   true,
+					handler:  function(){
 						frames.browser.location = webroot + 'edit_playlist.html?player=' + SqueezeJS.Controller.getPlayer() + '&saveCurrentPlaylist=1';
 					}
 				});
