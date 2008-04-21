@@ -1157,8 +1157,14 @@ Player = function(){
 								});
 							}
 
-							if (responseText.result && responseText.result.showBriefly)
-								Utils.msg(responseText.result.showBriefly.join(' '));
+							if (responseText.result && responseText.result.showBriefly) {
+								var text = '';
+								for (var x = 0; x < responseText.result.showBriefly.length; x++) {
+									if (responseText.result.showBriefly[x].match(/^[\w\s\.;,:()\[\]%]/))
+										text += responseText.result.showBriefly[x] + ' ';
+								}
+								Utils.msg(text);
+							}
 
 							// display scanning information
 							Main.checkScanStatus(responseText);
