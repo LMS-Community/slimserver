@@ -106,7 +106,7 @@ sub loadHandler {
 
 	my $handlerClass = $protocolHandlers{lc $protocol};
 
-	if ($handlerClass && $handlerClass != 1 && !$loadedHandlers{$handlerClass}) {
+	if ($handlerClass && $handlerClass ne '1' && !$loadedHandlers{$handlerClass}) {
 
 		Slim::bootstrap::tryModuleLoad($handlerClass);
 
