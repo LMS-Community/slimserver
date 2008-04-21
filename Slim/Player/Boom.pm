@@ -35,6 +35,14 @@ sub hasFrontPanel {
 	return 1;
 }
 
+sub hasDigitalOut {
+	return 0;
+}
+
+sub hasPowerControl {
+	return 0;
+}
+
 sub reconnect {
 	my $client = shift;
 
