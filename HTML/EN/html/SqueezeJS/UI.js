@@ -1242,7 +1242,8 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 			this.title = '&nbsp;';
  
 		SqueezeJS.UI.CoverartPopup.superclass.initComponent.call(this);
-		this.maxWidth = 1600;
+		// let's try to size the width at a maximum of 80% of the current screen size
+		this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
 
 		SqueezeJS.Controller.on({
 			playerstatechange: {
@@ -1250,6 +1251,25 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 				scope: this
 			}
 		});
+
+		this.on({
+			show: {
+				fn: function(el){
+					var width;
+					if (el && el.body && (el = el.body.child('img:first', true)) && (el = Ext.get(el))) {
+						width = el.getWidth();
+						if (width > this.maxWidth) {
+							el.setSize(this.maxWidth - 10, this.maxWidth - 10);
+							console.debug('resized');
+						}
+					}
+				}
+			}
+		});
+
+		Ext.EventManager.onWindowResize(function(){
+			this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;
+		}, this);
 	},
 
 	onPlayerStateChange : function(result){
