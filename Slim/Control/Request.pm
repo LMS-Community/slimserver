@@ -180,6 +180,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    client          disconnect
  Y    client          new
  Y    client          reconnect
+ Y    client          upgrade_firmware
  Y    playlist        load_done
  Y    playlist        newsong                     <current_title>
  Y    playlist        open                        <url>
@@ -605,6 +606,7 @@ sub init {
 	addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);
 	addDispatch(['client',         'new'],                                                             [1, 0, 0, undef]);
 	addDispatch(['client',         'reconnect'],                                                       [1, 0, 0, undef]);
+	addDispatch(['client',         'upgrade_firmware'],                                                [1, 0, 0, undef]);
 	addDispatch(['playlist',       'load_done'],                                                       [1, 0, 0, undef]);
 	addDispatch(['playlist',       'newsong'],                                                         [1, 0, 0, undef]);
 	addDispatch(['playlist',       'open',           '_path'],                                         [1, 0, 0, undef]);
