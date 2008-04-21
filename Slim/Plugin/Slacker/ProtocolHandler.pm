@@ -56,6 +56,9 @@ sub shouldLoop () { 0 }
 # Source for AudioScrobbler ( E = Personalised recommendation except Last.fm)
 sub audioScrobblerSource () { 'E' }
 
+# Some ad content is small, use a small buffer threshold
+sub bufferThreshold { 20 }
+
 sub handleError {
     my ( $error, $client ) = @_;
 
