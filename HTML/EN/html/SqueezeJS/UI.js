@@ -482,7 +482,8 @@ SqueezeJS.UI.Sortable.prototype = {
 				});
 		}
 
-		SqueezeJS.UI.Highlight.isDragging = false;
+		if (this.highlighter)
+			this.highlighter.isDragging = false;
 	},
 
 	onDrop: function(source, target) {
@@ -520,8 +521,10 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	startDrag: function(x, y) {
 		var dragEl = Ext.get(this.getDragEl());
 		var el = Ext.get(this.getEl());
-		SqueezeJS.UI.Highlight.unHighlight();
-		SqueezeJS.UI.Highlight.isDragging = true;
+		if (this.config.list.highlighter) {
+			this.config.list.highlighter.unHighlight();
+			this.config.list.highlighter.isDragging = true;
+		}
 
 		dragEl.applyStyles({'z-index':2000});
 		dragEl.update(el.child('div').dom.innerHTML);
@@ -531,7 +534,8 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	// disable the default behaviour which would place the dragged element
 	// we don't need to place it as it will be moved in onDragDrop
 	endDrag: function() {
-		SqueezeJS.UI.Highlight.isDragging = false;
+		if (this.config.list.highlighter)
+			this.config.list.highlighter.isDragging = false;
 	},
 
 	onDragEnter: function(ev, id) {
@@ -1364,6 +1368,7 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 			el: this.playlistEl,
 			offset: offset,
 			selector: '#' + this.playlistEl + ' div.draggableSong',
+			highlighter: this.Highlighter,
 			onDropCmd: function(sourcePos, targetPos) {
 				SqueezeJS.Controller.playerControl(
 					[

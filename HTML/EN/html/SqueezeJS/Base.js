@@ -372,9 +372,9 @@ function _init() {
 		_checkShowBriefly : function(result){
 			if (result && result.showBriefly) {
 				var text = '';
-				for (var x = 0; x < responseText.result.showBriefly.length; x++) {
-					if (responseText.result.showBriefly[x].match(/^[\w\s\.;,:()\[\]%]/))
-						text += responseText.result.showBriefly[x] + ' ';
+				for (var x = 0; x < result.showBriefly.length; x++) {
+					if (result.showBriefly[x].match(/^[\w\s\.;,:()\[\]%]/))
+						text += result.showBriefly[x] + ' ';
 				}
 
 				if (text && this.showBriefly != text) {
