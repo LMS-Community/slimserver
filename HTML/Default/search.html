@@ -1,6 +1,6 @@
 [%- pagetitle = 'SEARCHMUSIC' | string %]
 [%- pageicon = icons.SEARCHMUSIC %]
-[% extJsScripts = BLOCK %]
+[% debug=1; extJsScripts = BLOCK %]
 	<script type="text/javascript">
 		Ext.onReady(function(){
 			new Ext.form.TextField({
@@ -41,7 +41,14 @@
 					}
 
 					return true;
-				}
+				},
+
+				// overwrite default filter to ignore key modifiers
+			    filterValidation : function(e){
+			        if(!e.isNavKeyPress() && !e.isSpecialKey()){
+			            this.validationTask.delay(this.validationDelay);
+			        }
+			    }
 				[% END %]
 			});
 
