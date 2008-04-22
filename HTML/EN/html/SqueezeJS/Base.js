@@ -710,9 +710,9 @@ SqueezeJS.clearCookie = function(name, failover) {
 
 // update the status if the Player is available
 function refreshStatus() {
-	try { SqueezeJS.Controller.getUpdate(); }
+	try { SqueezeJS.Controller.getStatus();	}
 	catch(e) {
-		try { parent.SqueezeJS.Controller.getUpdate(); }
+		try { parent.SqueezeJS.Controller.getStatus(); }
 		catch(e) {}
 	}
 }
