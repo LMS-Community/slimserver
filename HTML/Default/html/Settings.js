@@ -203,6 +203,9 @@ Settings.Page = function(){
 				}
 			}
 
+			this.onResize(0, Ext.lib.Dom.getViewHeight());
+			Ext.EventManager.onWindowResize(this.onResize);
+
 			Ext.select('input, textarea, select').on('change', function(ev){
 				modified = true;
 			});
@@ -471,6 +474,10 @@ Settings.Page = function(){
 
 		resetModified : function(){
 			modified = false;
+		},
+
+		onResize : function(width, height){
+			Ext.util.CSS.updateRule('.x-menu-list', 'max-height', (height - 50) + 'px');
 		}
 	};
 }();
