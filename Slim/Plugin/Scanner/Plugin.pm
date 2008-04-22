@@ -47,7 +47,7 @@ my %modeParams = (
 	,'headerValue' => sub {
 			my $client = shift;
 			my $val = shift;
-
+			
 			if (! $client->pluginData('lastUpdateTime')) {
 				# No new position has been selected, set offset to track the current song position and clear the cursor
 				$val = Slim::Player::Source::songTime($client);
@@ -58,12 +58,6 @@ my %modeParams = (
 				$client->modeParam('cursor', Slim::Player::Source::songTime($client));
 			}
 
-			# Work out song position state e.g. 01:30/3:32
-			my $pos = int($val);
-			my $dur = int(Slim::Player::Source::playingSongDuration($client));
-			my $txtPos = sprintf("%02d:%02d", $pos / 60, $pos % 60);
-			my $txtDur = sprintf("%02d:%02d", $dur / 60, $dur % 60);
-
 			# Work out ffwd/rew state e.g. >> 2X 
 			my $rate = Slim::Player::Source::rate($client);
 			my $rateText = '';
@@ -72,9 +66,22 @@ my %modeParams = (
 			} elsif (Slim::Player::Source::playmode($client) =~ /pause/) {
 				$rateText = ' ' . $client->string('PAUSED') . ':';
 			}
-			return " ($txtPos/$txtDur)$rateText " . $client->string('PLUGIN_SCANNER_HELP');
+			return " $rateText ";
 		}
 	,'headerArgs' => 'CV'
+	,'overlayRef' => sub {
+			my $client = shift;
+			my $val = shift;
+			# For some reason we get passed a reference to val rather than val itself, unlike with headerValue 
+			if (ref($val)) {
+			  $val = $$val;
+			}
+
+			# Display song position e.g. 1:32
+			my $pos = int($val);
+		        return sprintf("%01d:%02d", $pos / 60, $pos % 60);
+		}
+	,'overlayRefArgs' => 'CV'
 	,'max' => undef
 	,'increment' => undef
 	,'onChange' => sub { 
