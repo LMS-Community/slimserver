@@ -349,10 +349,10 @@ Settings.Page = function(){
 						for (var x=0; x<classes.length; x++) {
 
 							if (classes[x].search(/selectFile_/) > -1) {
-								filter = "filetype:" + classes[x].replace(/selectFile_/, '');
-								break;
+								filter += (filter ? '|' : '') + classes[x].replace(/selectFile_/, '');
 							}
 						}
+						filter = "filetype:" + filter;
 					}
 
 					btnEl = tpl.insertAfter(inputEl, {

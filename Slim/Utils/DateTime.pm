@@ -322,6 +322,10 @@ sub shortDateFormats {
 		q(%d.%m.%Y) => q{DD.MM.YYYY},
 		q(%d.%m.%y) => q{DD.MM.YY},
 		q(%Y-%m-%d) => q{YYYY-MM-DD (ISO)},
+		# request 6884
+		q(%a %-m/%d)=> q{WWW M/DD},
+		q(%a %d/%-m)=> q{WWW DD/M},
+		q(%a %d.%-m)=> q{WWW DD.M},
 		# Japanese style
 		q(%Y/%m/%d) => q{YYYY/MM/DD},
 	};
