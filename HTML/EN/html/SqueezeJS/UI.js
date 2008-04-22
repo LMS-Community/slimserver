@@ -38,8 +38,10 @@ SqueezeJS.UI = {
 		initComponent : function(){
 			this.tooltipType = this.initialConfig.tooltipType || 'title';
 
-			if (SqueezeJS.UI.btnTemplate)
-				this.template = SqueezeJS.UI.btnTemplate;
+			if (this.initialConfig.template)
+				this.template = this.initialConfig.template;
+			else if (SqueezeJS.UI.buttonTemplate)
+				this.template = SqueezeJS.UI.buttonTemplate;
 
 			// if we want a pure graphical button, overwrite text and setText method
 			if (this.noText) {
@@ -1044,7 +1046,10 @@ SqueezeJS.UI.VolumeBar = Ext.extend(SqueezeJS.UI.Component, {
 
 	initComponent : function(){
 		SqueezeJS.UI.VolumeBar.superclass.initComponent.call(this);
-	
+
+		this.marginLeft = this.initialConfig.marginLeft || 0;
+		this.marginLeft = this.initialConfig.marginRight || 0;
+
 		if (this.el && (this.el = Ext.get(this.el))) {
 			var el;
 			if (el = this.el.child('img:first'))
@@ -1058,19 +1063,27 @@ SqueezeJS.UI.VolumeBar = Ext.extend(SqueezeJS.UI.Component, {
 
 		var el = Ext.get(target);
 		if (el) {
-			var margin = 9;
+			var minX = el.getX() + this.marginLeft + 1;
+			var maxX = el.getX() + el.getWidth() - this.marginRight + 1;
 
-			var maxWidth = el.getWidth() - 2*margin;
-			var myStep = maxWidth/11;
+			// clicking outside the valid range
+			if (ev.xy[0] <= minX || ev.xy[0] >= maxX)
+				return;
 
-			var myX = ev.xy[0] - el.getX() - margin - (Ext.isGecko * 5) - (Ext.isSafari * 5);
+			if (!this.maxWidth)
+				this.maxWidth = maxX - minX;
+
+			if (!this.myStep)
+				this.myStep = this.maxWidth/11;
+
+			var myX = ev.xy[0] - minX;
+
 			myX = Math.max(myX, 1);
-			myX = Math.min(myX, maxWidth);
+			myX = Math.min(myX, this.maxWidth);
 
-			var volVal = Math.ceil(myX / myStep) - 1;
-
-			this.updateState(volVal*10);
-			SqueezeJS.Controller.setVolume(volVal);
+			myX = Math.ceil(myX / this.myStep) - 1;
+			this.updateState(myX*10);
+			SqueezeJS.Controller.setVolume(myX);
 		}
 	},
 
@@ -1335,13 +1348,10 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 			this.container.getUpdateManager().showLoadIndicator = true;
 
 		this.container.load(
-			{
-				url: url || webroot + 'playlist.html?ajaxRequest=1&player=' + SqueezeJS.getPlayer(),
-				method: 'GET',
-				disableCaching: true
-			},
+			{ url: url || webroot + 'playlist.html?ajaxRequest=1&player=' + SqueezeJS.getPlayer() + (Ext.isIE6 ? '&uid=' + Date.parse(Date()) : '')},
 			{},
-			this._onUpdated.createDelegate(this)
+			this._onUpdated.createDelegate(this),
+			true
 		);
 
 		um.showLoadIndicator = false;

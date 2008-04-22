@@ -20,6 +20,7 @@ ELSE %]
 		<script type="text/javascript" src="[% webroot %]html/Home.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			Ext.onReady(function(){
+				[% PROCESS jsString id='CONNECTING_FOR' jsId='' %]
 				Home.init();
 			});
 		</script>
@@ -75,8 +76,8 @@ ELSE %]
 		additionalLinks.icons.RADIO_TUNEIN = 'html/images/ServiceProviders/tuneinurl.png';
 		control = BLOCK %]
 			<input type="text" id="tuneinurl" class="x-form-focus" size="30" value="http://" onfocus="this.select();">
-			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.playerRequest({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
-			[% WRAPPER addlink %]onclick="SqueezeJS.Controller.playerRequest({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
+			[% WRAPPER playlink %]onclick="Home.tuneInUrl('play');"[% END %]
+			[% WRAPPER addlink %]onclick="Home.tuneInUrl('add');"[% END %]
 		[% END;
 		PROCESS menuItem link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
