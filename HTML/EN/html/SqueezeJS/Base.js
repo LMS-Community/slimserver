@@ -149,7 +149,9 @@ function _init() {
 			this.addObserver({
 				name : 'playtimeticker',
 				fn : function(self){
-					if (this.playerStatus.duration > 0 && this.playerStatus.playtime >= this.playerStatus.duration-1)
+					if (this.playerStatus.duration > 0 
+						&& this.playerStatus.playtime >= this.playerStatus.duration-1
+						&& this.playerStatus.playtime <= this.playerStatus.duration + 2)
 						this.getStatus();
 
 					this.fireEvent('playtimeupdate', {
@@ -708,9 +710,9 @@ SqueezeJS.clearCookie = function(name, failover) {
 
 // update the status if the Player is available
 function refreshStatus() {
-	try { SqueezeJS.Controller.getUpdate(); }
+	try { SqueezeJS.Controller.getStatus();	}
 	catch(e) {
-		try { parent.SqueezeJS.Controller.getUpdate(); }
+		try { parent.SqueezeJS.Controller.getStatus(); }
 		catch(e) {}
 	}
 }

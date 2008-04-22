@@ -856,6 +856,7 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 
 	_addPlayerlistMenu : function(response){
 		if (response.players_loop) {
+			response.players_loop = response.players_loop.sort(this._sortPlayer);
 			for (var x=0; x < response.players_loop.length; x++) {
 				var playerInfo = response.players_loop[x];
 
@@ -889,6 +890,7 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		// add a list of players connected to SQN, if available
 		if (response.sn_players_loop) {
 			var first = true;
+			response.sn_players_loop = response.sn_players_loop.sort(this._sortPlayer);
 							
 			for (var x=0; x < response.sn_players_loop.length; x++) {
 				var playerInfo = response.sn_players_loop[x];
@@ -917,6 +919,12 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 				}
 			}
 		}
+	},
+
+	_sortPlayer : function(a, b){
+		a = a.name.toLowerCase();
+		b = b.name.toLowerCase();
+		return a > b ? 1 : (a < b ? -1 : 0);
 	},
 
 	_selectPlayer: function(ev){
