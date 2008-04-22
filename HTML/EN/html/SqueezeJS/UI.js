@@ -38,8 +38,10 @@ SqueezeJS.UI = {
 		initComponent : function(){
 			this.tooltipType = this.initialConfig.tooltipType || 'title';
 
-			if (SqueezeJS.UI.btnTemplate)
-				this.template = SqueezeJS.UI.btnTemplate;
+			if (this.initialConfig.template)
+				this.template = this.initialConfig.template;
+			else if (SqueezeJS.UI.buttonTemplate)
+				this.template = SqueezeJS.UI.buttonTemplate;
 
 			// if we want a pure graphical button, overwrite text and setText method
 			if (this.noText) {

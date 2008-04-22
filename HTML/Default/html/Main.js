@@ -6,7 +6,7 @@ Main = {
 	init : function(){
 		// overwrite some default Ext values
 		Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">' + SqueezeJS.string('loading') + '</div>';
-		Ext.Button.buttonTemplate = new Ext.Template(
+		SqueezeJS.UI.buttonTemplate = new Ext.Template(
 				'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
 				'<td></td><td><button type="{1}" style="padding:0" class="x-btn-text">{0}</button></td><td></td>',
 				'</tr></tbody></table>');
