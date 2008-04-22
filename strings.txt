@@ -2773,6 +2773,15 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	IT	Per applicare la modifica è necessario riavviare
 	NL	Je moet opnieuw opstarten om de wijziging te implementeren
 
+SETUP_GROUP_PLUGINS_NEEDS_UPDATE
+	EN	Plugin is incompatible with this version of SqueezeCenter. Please update.
+
+SETUP_GROUP_PLUGINS_WRONG_PLATFORM
+	EN	Plugin is incompatible with your platform.
+
+SETUP_GROUP_PLUGINS_FAILURE
+	EN	Plugin failed to load.
+
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
 	DA	Indstillinger for konvertering mellem filformater
