@@ -9,10 +9,7 @@ PLUGIN_SCANNER_DESC
 	EN	Player interface for jumping to arbitrary positions within the currently playing song
 
 PLUGIN_SCANNER_SET
-	EN	Position:
-
-PLUGIN_SCANNER_HELP
-	EN	Use UP/DOWN or <</>>
+	EN	Time:
 
 PLUGIN_SCANNER_ERR_REMOTE
 	EN	Cannot scan through remote tracks
