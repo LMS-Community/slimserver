@@ -230,7 +230,9 @@ Main = {
 		});
 
 		new SqueezeJS.UI.VolumeBar({
-			el: 'ctrlVolume'
+			el: 'ctrlVolume',
+			marginLeft: 7,
+			marginRight: 6
 		});
 
 		new SqueezeJS.UI.Buttons.Power({
