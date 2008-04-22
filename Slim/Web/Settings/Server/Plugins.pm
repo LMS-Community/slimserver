@@ -32,11 +32,14 @@ sub handler {
 
 	for my $plugin (keys %{$plugins}) {
 
-		my $name   = $plugins->{$plugin}->{'name'};
-		my $module = $plugins->{$plugin}->{'module'};
+		my $name     = $plugins->{$plugin}->{'name'};
+		my $module   = $plugins->{$plugin}->{'module'};
 
 		# XXXX - handle install / uninstall / enable / disable
 		if ( $paramRef->{'saveSettings'} ) {
+			# don't handle enforced plugins
+			next if $plugins->{$plugin}->{'enforce'};
+
 			if (!$paramRef->{$name} && $pluginState->{$plugin}) {
 				push @changed, Slim::Utils::Strings::string($name);
 				Slim::Utils::PluginManager->disablePlugin($module);
