@@ -19,7 +19,21 @@
 		progressbarlen = '40';
 		progresstype   = 'importer';
 
-		Ext.EventManager.onDocumentReady(ScannerProgress.init, ScannerProgress, true);
+		Ext.onReady(function(){
+			SqueezeJS.UI.ScannerInfoExtended.init({
+				onUpdate: function(result){
+					if (result) {
+						if (result.scans && !(result.message || result.total_time)) {
+							var el = Ext.get('library');
+							if (el && el.isVisible()) {
+								el.setDisplayed('none');
+							}
+						}
+					}
+					console.debug(result);
+				}
+			});
+		}, SqueezeJS.UI.ScannerInfoExtended, true);
 	</script>
 [% END %]
 
@@ -28,12 +42,14 @@
 [% WRAPPER setting title="SERVER_STATUS" %]
 	<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
 [% END %]
-		
+
+<div id="library">
 [% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
 	[% FOREACH item IN library %]
 		<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
 	[% END %]
 [% END %]
+</div>
 		
 [% IF progress %]
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]

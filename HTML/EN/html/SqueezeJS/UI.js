@@ -1554,7 +1554,9 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 	var progressTimer;
 
 	return {
-		init: function(){
+		init: function(config){
+			this.onUpdate = config.onUpdate || function(){};
+
 			progressTimer = new Ext.util.DelayedTask(this.refresh, this);
 			this.refresh();
 		},
@@ -1571,16 +1573,20 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 				},
 				timeout: 3000,
 				disableCaching: true,
-				success: this.updatePage
+				success: this._updatePage,
+				scope: this
 			});
 			
 		},
 
-		updatePage: function(result){
+		_updatePage: function(result){
 			// clean up response to have a correct JSON object
 			result = result.responseText;
 			result = result.replace(/<[\/]?pre>|\n/g, '');
 			result = Ext.decode(result);
+
+			// dummy function which can be overwritten by the calling page
+			this.onUpdate(result);
 
 			if (result['scans']) {
 				var elems = ['Name', 'Done', 'Total', 'Active', 'Time', 'Bar', 'Info'];
