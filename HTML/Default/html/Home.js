@@ -91,6 +91,15 @@ var Home = {
 		this.onResize();
 	},
 
+	tuneInUrl : function(mode) {
+		var url = Ext.get('tuneinurl').dom.value;
+		SqueezeJS.Controller.checkShowbriefly({ result: [ SqueezeJS.string('connecting_for'), url ] });
+
+		SqueezeJS.Controller.playerRequest({
+			params: ['playlist', mode, url]
+		});
+	},
+
 	onResize : function(){
 		var size = Ext.get('content').getViewSize();
 		Ext.select('div.homeMenuSection').setWidth(size[0]);

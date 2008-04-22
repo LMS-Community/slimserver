@@ -3164,7 +3164,11 @@ sub statusQuery {
 					$request->addResult('duration', $dur);
 				}
 			}
-
+			
+			my $canSeek = Slim::Music::Info::canSeek($client, $song);
+			if ($canSeek) {
+				$request->addResult('can_seek', 1);
+			}
 		}
 		
 		if ($client->currentSleepTime()) {

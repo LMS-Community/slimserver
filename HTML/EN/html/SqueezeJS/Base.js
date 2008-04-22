@@ -95,7 +95,7 @@ function _init() {
 										}
 									}
 
-									this._checkShowBriefly(response.result);
+									this.checkShowBriefly(response.result);
 
 									if (this.playerStatus.rescan != response.result.rescan) {
 										this.playerStatus.rescan = response.result.rescan;
@@ -274,7 +274,7 @@ function _init() {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 						if (response && response.result && response.result.text) {
-							this._checkShowBriefly({ result: [ response.result.text ] });
+							this.checkShowBriefly({ result: [ response.result.text ] });
 						}
 					}
 				},
@@ -369,7 +369,7 @@ function _init() {
 			return needUpdate;
 		},
 
-		_checkShowBriefly : function(result){
+		checkShowBriefly : function(result){
 			if (result && result.showBriefly) {
 				var text = '';
 				for (var x = 0; x < result.showBriefly.length; x++) {
@@ -383,7 +383,7 @@ function _init() {
 				}
 			}
 		},
-	
+
 		setVolume : function(amount, d){
 			amount *= 10;
 			if (d)
