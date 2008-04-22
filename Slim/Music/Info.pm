@@ -1020,6 +1020,44 @@ sub isRemoteURL {
 	return 0;
 }
 
+# Only valid for the current playing song
+sub canSeek {
+	my ($client, $playingSong) = @_;
+	my @errorString;
+	my $canSeek = 0;
+	
+	if ( Slim::Music::Info::isRemoteURL($playingSong) ) {
+		# Check with protocol handler to determine if the remote stream is seekable
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingSong);
+		if ( $handler && $handler->can('canSeek') ) {
+			$log->debug( "Checking with protocol handler $handler for canSeek" );
+			if ( !$handler->canSeek( $client, $playingSong ) ) {
+				if (wantarray) {
+					@errorString = $handler->can('canSeekError') 
+						? $handler->canSeekError( $client, $playingSong )
+						: ('PLUGIN_SCANNER_ERR_REMOTE');
+				}
+			} else {
+				$canSeek = 1;
+			}
+		}
+		else {
+			@errorString = ('PLUGIN_SCANNER_ERR_REMOTE');
+		}
+	} 		
+	# XXX: need a better way to determine if a stream is transcoded
+	# because we want to prevent seek with real transcoding but not
+	# proxied streaming
+	else {
+		if ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
+			@errorString = ('PLUGIN_SCANNER_ERR_TRANSCODED');
+		} else {
+			$canSeek = 1;
+		}	
+	}
+	return (wantarray ? ($canSeek, @errorString) : $canSeek);
+}
+
 sub isPlaylistURL {
 	my $url = shift || return 0;
 	

@@ -326,26 +326,8 @@ sub setMode {
 		if ( !$duration ) {
 			@errorString = ('PLUGIN_SCANNER_ERR_UNKNOWNSIZE');
 		}
-		elsif ( Slim::Music::Info::isRemoteURL($playingSong) ) {
-			# Check with protocol handler to determine if the remote stream is seekable
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingSong);
-			if ( $handler && $handler->can('canSeek') ) {
-				$log->debug( "Checking with protocol handler $handler for canSeek" );
-				if ( !$handler->canSeek( $client, $playingSong ) ) {
-					@errorString = $handler->can('canSeekError') 
-						? $handler->canSeekError( $client, $playingSong )
-						: ('PLUGIN_SCANNER_ERR_REMOTE');
-				}
-			}
-			else {
-				@errorString = ('PLUGIN_SCANNER_ERR_REMOTE');
-			}
-		}
-		# XXX: need a better way to determine if a stream is transcoded
-		# because we want to prevent seek with real transcoding but not
-		# proxied streaming
-		elsif ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
-			@errorString = ('PLUGIN_SCANNER_ERR_TRANSCODED');
+		else {
+			(undef, @errorString) = Slim::Music::Info::canSeek($client, $playingSong);
 		}
 	} else {
 		@errorString = ('PLUGIN_SCANNER_ERR_NOTRACK');
