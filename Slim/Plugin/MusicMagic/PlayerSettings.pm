@@ -17,7 +17,7 @@ our %current = ();
 our %menuParams = ();
 our %functions = ();
 
-my $prefs = preferences('plugin.musicmagic');
+my $prefs = preferences('plugin.musicip');
 
 sub init {
 	Slim::Buttons::Common::addMode('MMMsettings',getFunctions(),\&setMode);

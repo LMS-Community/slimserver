@@ -18,7 +18,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 });
 
-my $prefs = preferences('plugin.musicmagic');
+my $prefs = preferences('plugin.musicip');
 
 $prefs->migrateClient(1, sub {
 	my ($clientprefs, $client) = @_;
@@ -31,6 +31,21 @@ $prefs->migrateClient(1, sub {
 	$clientprefs->set('mix_style',   Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMStyle')      );
 	$clientprefs->set('mix_type',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMMixType')    );
 	$clientprefs->set('mix_size',    Slim::Utils::Prefs::OldPrefs->clientGet($client, 'MMMSize')       );
+	1;
+});
+
+$prefs->migrateClient(2, sub {
+	my ($clientprefs, $client) = @_;
+	
+	my $oldPrefs = preferences('plugin.musicmagic');
+	$clientprefs->set('mix_filter',  $oldPrefs->client($client)->get($client, 'mix_filter')  );
+	$clientprefs->set('reject_size', $oldPrefs->client($client)->get($client, 'reject_size') );
+	$clientprefs->set('reject_type', $oldPrefs->client($client)->get($client, 'reject_type') );
+	$clientprefs->set('mix_genre',   $oldPrefs->client($client)->get($client, 'mix_genre')   );
+	$clientprefs->set('mix_variety', $oldPrefs->client($client)->get($client, 'mix_variety') );
+	$clientprefs->set('mix_style',   $oldPrefs->client($client)->get($client, 'mix_style')   );
+	$clientprefs->set('mix_type',    $oldPrefs->client($client)->get($client, 'mix_type')    );
+	$clientprefs->set('mix_size',    $oldPrefs->client($client)->get($client, 'mix_size')    );
 	1;
 });
 

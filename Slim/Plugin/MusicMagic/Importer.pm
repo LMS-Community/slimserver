@@ -37,7 +37,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 });
 
-my $prefs = preferences('plugin.musicmagic');
+my $prefs = preferences('plugin.musicip');
 
 sub useMusicMagic {
 	my $class    = shift;
@@ -48,24 +48,24 @@ sub useMusicMagic {
 	if (defined($newValue)) {
 
 		if (!$can) {
-			$prefs->set('musicmagic', 0);
+			$prefs->set('musicip', 0);
 		} else {
-			$prefs->set('musicmagic', $newValue);
+			$prefs->set('musicip', $newValue);
 		}
 	}
 
-	my $use = $prefs->get('musicmagic');
+	my $use = $prefs->get('musicip');
 
 	if (!defined($use) && $can) { 
 
-		$prefs->set('musicmagic', 1);
+		$prefs->set('musicip', 1);
 
 	} elsif (!defined($use) && !$can) {
 
-		$prefs->set('musicmagic', 0);
+		$prefs->set('musicip', 0);
 	}
 
-	$use = $prefs->get('musicmagic') && $can;
+	$use = $prefs->get('musicip') && $can;
 
 	Slim::Music::Import->useImporter($class, $use);
 
@@ -106,7 +106,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'reset'        => \&resetState,
 			'playlistOnly' => 1,
-			'use'          => $prefs->get('musicmagic'),
+			'use'          => $prefs->get('musicip'),
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
@@ -195,7 +195,7 @@ sub exportSongs {
 
 	my $progress = Slim::Utils::Progress->new({ 
 		'type'  => 'importer', 
-		'name'  => 'musicmagic', 
+		'name'  => 'musicip', 
 		'total' => $count, 
 		'bar'   => 1
 	});

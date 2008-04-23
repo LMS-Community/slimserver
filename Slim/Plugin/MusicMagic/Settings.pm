@@ -18,7 +18,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 });
 
-my $prefs = preferences('plugin.musicmagic');
+my $prefs = preferences('plugin.musicip');
 
 $prefs->migrate(1, sub {
 	$prefs->set('musicmagic',      Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
@@ -45,6 +45,28 @@ $prefs->migrate(1, sub {
 	1;
 });
 
+$prefs->migrate(2, sub {
+	my $oldPrefs = preferences('plugin.musicmagic'); 
+
+	$prefs->set('musicip',         $oldPrefs->get('musicmagic'));
+	$prefs->set('scan_interval',   $oldPrefs->get('scan_interval') || 3600          );
+	$prefs->set('player_settings', $oldPrefs->get('player_settings') || 0           );
+	$prefs->set('port',            $oldPrefs->get('port') || 10002                  );
+	$prefs->set('mix_filter',      $oldPrefs->get('mix_filter')                     );
+	$prefs->set('reject_size',     $oldPrefs->get('reject_size') || 0               );
+	$prefs->set('reject_type',     $oldPrefs->get('reject_type')                    );
+	$prefs->set('mix_genre',       $oldPrefs->get('mix_genre')                      );
+	$prefs->set('mix_variety',     $oldPrefs->get('mix_variety') || 0               );
+	$prefs->set('mix_style',       $oldPrefs->get('mix_style') || 0                 );
+	$prefs->set('mix_type',        $oldPrefs->get('mix_type')                       );
+	$prefs->set('mix_size',        $oldPrefs->get('mix_size') || 12                 );
+	$prefs->set('playlist_prefix', $oldPrefs->get('playlist_prefix') || 'MusicIP: ' );
+	$prefs->set('playlist_suffix', $oldPrefs->get('playlist_suffix') || ''          );
+
+	$prefs->remove('musicmagic');
+	1;
+});
+
 $prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_size));
 
 $prefs->setChange(
@@ -55,7 +77,7 @@ $prefs->setChange(
 			Slim::Buttons::Home::updateMenu($c);
 		}
 	},
-	'musicmagic',
+	'musicip',
 );
 
 $prefs->setChange(
@@ -79,7 +101,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(musicmagic scan_interval player_settings port mix_filter reject_size reject_type 
+	return ($prefs, qw(musicip scan_interval player_settings port mix_filter reject_size reject_type 
 			   mix_genre mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
 }
 
@@ -87,7 +109,7 @@ sub handler {
 	my ($class, $client, $params) = @_;
 
 	# Cleanup the checkbox
-	$params->{'musicmagic'} = defined $params->{'musicmagic'} ? 1 : 0;
+	$params->{'musicip'} = defined $params->{'musicip'} ? 1 : 0;
 
 	$params->{'filters'}  = grabFilters();
 

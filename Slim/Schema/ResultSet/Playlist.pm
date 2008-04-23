@@ -91,7 +91,7 @@ sub getPlaylists {
 	# Don't search for playlists if the plugin isn't enabled.
 	if ($type eq 'all' || $type eq 'external') {
 
-		for my $importer (qw(itunes musicmagic)) {
+		for my $importer (qw(itunes musicip)) {
 	
 			my $prefs = preferences("plugin.$importer");
 	
