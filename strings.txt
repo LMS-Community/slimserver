@@ -15454,7 +15454,7 @@ SETUP_VIEW_SCANNING
 
 SETUP_VIEW_NOT_SCANNING
 	DA	Vis detaljer for sidste skanning
-	DE	Zeige Details zur vorherige Suche
+	DE	Zeige Details zur vorherigen Suche
 	EN	View Previous Scan Details
 	ES	Ver detalles de examen previos
 	FR	Afficher les détails de l'analyse précédente
