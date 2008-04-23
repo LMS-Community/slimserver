@@ -14,12 +14,11 @@
 			<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 			<script type="text/javascript" src="/html/SqueezeJS/Base.js?r=[% revision %]"></script>
+			<script type="text/javascript">[% PROCESS html/SqueezeJS/Strings.js %]</script>
 			<script type="text/javascript" src="/html/SqueezeJS/UI.js?r=[% revision %]"></script>
 
 			<script type="text/javascript">
 				[% PROCESS jsString id='LOADING' jsId='loading' %]
-				[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
-				[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
 				var hideSearchTimer;
 				var Highlighter;
 

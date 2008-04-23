@@ -1,5 +1,7 @@
 [%- IF useExtJS; initCall = BLOCK -%]
-function(){ Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %][% END %]); }
+function(){
+	Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %][% END %]);
+}
 [%- END; END -%]
 [% BLOCK editentry %]
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
@@ -140,20 +142,14 @@ function(){ Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %]
 [% END %][% END %]
 
 [% extJsScripts = BLOCK %]
-	<script type="text/javascript" src="[% webroot %]html/fileselector.js?r=[% revision %]"></script>
 	<script type="text/javascript">
-		var strings = new Array();
-		[% PROCESS jsString id='CLOSE' jsId='' %]
-		[% PROCESS jsString id='BROWSE' jsId='' %]
-		[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
-		[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
 	</script>
 [% END %]
 [% IF action != 'edit'; extJsScripts = BLOCK; extJsScripts %]
-	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
+	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/Favorites.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
-		Ext.EventManager.onDocumentReady([% initCall %]);
+		Ext.onReady([% initCall %]);
 	</script>
 [% END; END %]
 
@@ -254,14 +250,16 @@ function(){ Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %]
 
 [% ELSIF import %]<div id='importfile'>
 	<script type="text/javascript">
-		Ext.onReady(FilesystemBrowser.init);
+		Ext.onReady(function(){
+			SqueezeJS.UI.FilesystemBrowser.init();
+		});
 	</script>
 
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="sess" value="[% sess %]">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input id="importfilename" type="text" class="stdedit selectFile" name="filename" style="width: 66%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
+		<input id="importfilename" type="text" class="stdedit selectFile selectFile_opml" name="filename" style="width: 66%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
 		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="ajaxUpdate('index.html', 'importfile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('importfilename').dom[% ELSE %]$('importfilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('importfile'); showElements(['defaultform']);" />

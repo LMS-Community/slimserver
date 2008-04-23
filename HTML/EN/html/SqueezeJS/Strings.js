@@ -39,3 +39,6 @@ SqueezeJS.Strings['volume'] += '[% "COLON" | string %]';
 [% PROCESS jsString id='NO_PLAYER_DETAILS' jsId='' %]
 [% PROCESS jsString id='SQUEEZENETWORK' %]
 [% PROCESS jsString id='SQUEEZENETWORK_WANT_SWITCH' jsId='sqn_want_switch' %]
+[% PROCESS jsString id='BROWSE' jsId='' %]
+[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
+[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
