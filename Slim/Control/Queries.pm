@@ -5014,6 +5014,7 @@ sub _songData {
 			$remoteMeta->{A} = $remoteMeta->{artist};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{K} = $remoteMeta->{cover};
+			$remoteMeta->{d} = $remoteMeta->{duration};
 			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
 			$remoteMeta->{o} = $remoteMeta->{type};
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
@@ -5029,7 +5030,10 @@ sub _songData {
 			# like Pandora need this because they change the duration when the next
 			# track begins streaming
 			if ( $remoteMeta->{duration} ) {
-				$request->addResult( duration => $remoteMeta->{duration} + 0 );
+				# Bug 7643, only do this if there is only one track on the playlist
+				if ( Slim::Player::Playlist::count( $request->client ) == 1 ) {
+					$request->addResult( duration => $remoteMeta->{duration} + 0 );
+				}
 			}
 		}
 	}
