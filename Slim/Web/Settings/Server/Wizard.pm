@@ -87,7 +87,7 @@ sub handler {
 
 		# try to guess the local language setting
 		# only on non-Windows systems, as the Windows installer is setting the langugae
-		if (Slim::Utils::OSDetect::OS() ne 'win'  && !$paramRef->{saveLanguage}
+		if (Slim::Utils::OSDetect::OS() ne 'win' && !$paramRef->{saveLanguage}
 			&& defined $response->{_request}->{_headers}->{'accept-language'}) {
 
 			$log->debug("Accepted-Languages: " . $response->{_request}->{_headers}->{'accept-language'});
@@ -105,12 +105,15 @@ sub handler {
 			}
 
 		}
+
+		Slim::Utils::DateTime::setDefaultFormats();
 	}
 	
 	# handle language separately, as it is in its own form
 	if ($paramRef->{saveLanguage}) {
 		$log->debug( 'setting language to ' . $paramRef->{language} );
-		$serverPrefs->set('language', $paramRef->{language});		
+		$serverPrefs->set('language', $paramRef->{language});
+		Slim::Utils::DateTime::setDefaultFormats();
 	}
 
 	$paramRef->{prefs}->{language} = Slim::Utils::Strings::getLanguage();
