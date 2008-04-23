@@ -55,12 +55,13 @@ use Slim::Control::Request;
 
 sub main {
 
-	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup, $prefsFile, $progress, $priority);
+	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $progress, $priority);
 	our ($quiet, $logfile, $logdir, $logconf, $debug, $help);
 
 	our $LogTimestamp = 1;
 
 	my $prefs = preferences('server');
+	my $musicmagic;
 
 	$prefs->readonly;
 
@@ -71,6 +72,7 @@ sub main {
 		'wipe'         => \$wipe,
 		'playlists'    => \$playlists,
 		'itunes'       => \$itunes,
+		'musicip'      => \$musicip,
 		'musicmagic'   => \$musicmagic,
 		'prefsfile=s'  => \$prefsFile,
 		# prefsdir parsed by Slim::Utils::Prefs
@@ -85,6 +87,10 @@ sub main {
 		'help'         => \$help,
 	);
 
+	if (defined $musicmagic && !defined $musicip) {
+		$musicip = $musicmagic;
+	}
+
 	Slim::Utils::Log->init({
 		'logconf' => $logconf,
 		'logdir'  => $logdir,
@@ -93,7 +99,7 @@ sub main {
 		'debug'   => $debug,
 	});
 
-	if ($help || (!$rescan && !$wipe && !$playlists && !$musicmagic && !$itunes && !scalar @ARGV)) {
+	if ($help || (!$rescan && !$wipe && !$playlists && !$musicip && !$itunes && !scalar @ARGV)) {
 		usage();
 		exit;
 	}
@@ -141,7 +147,7 @@ sub main {
 		initClass('Slim::Plugin::iTunes::Importer');
 	}
 
-	if ($musicmagic) {
+	if ($musicip) {
 		initClass('Slim::Plugin::MusicMagic::Importer');
 	}
 
@@ -282,7 +288,7 @@ sub initializeFrameworks {
 
 sub usage {
 	print <<EOF;
-Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
+Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicip] <path or URL>
 
 Command line options:
 
@@ -292,7 +298,7 @@ Command line options:
 	--wipe         Wipe the DB and start from scratch
 	--playlists    Only scan files in your playlistdir.
 	--itunes       Run the iTunes Importer.
-	--musicmagic   Run the MusicMagic/MusicIP Importer.
+	--musicip      Run the MusicIP Importer.
 	--progress     Show a progress bar of the scan.
 	--prefsdir     Specify alternative preferences directory.
 	--priority     set process priority from -20 (high) to 20 (low)

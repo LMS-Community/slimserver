@@ -37,7 +37,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 });
 
-my $prefs = preferences('plugin.musicmagic');
+my $prefs = preferences('plugin.musicip');
 
 our %mixMap  = (
 	'add.single' => 'play_1',
@@ -66,21 +66,21 @@ sub useMusicMagic {
 	
 	if (defined($newValue)) {
 		if (!$can) {
-			$prefs->set('musicmagic', 0);
+			$prefs->set('musicip', 0);
 		} else {
-			$prefs->set('musicmagic', $newValue);
+			$prefs->set('musicip', $newValue);
 		}
 	}
 	
-	my $use = $prefs->get('musicmagic');
+	my $use = $prefs->get('musicip');
 	
 	if (!defined($use) && $can) { 
-		$prefs->set('musicmagic', 1);
+		$prefs->set('musicip', 1);
 	} elsif (!defined($use) && !$can) {
-		$prefs->set('musicmagic', 0);
+		$prefs->set('musicip', 0);
 	}
 	
-	$use = $prefs->get('musicmagic') && $can;
+	$use = $prefs->get('musicip') && $can;
 
 	$log->info("Using musicip: $use");
 
@@ -128,7 +128,7 @@ sub initPlugin {
 	Slim::Plugin::MusicMagic::Settings->new;
 
 	# don't test the connection if MIP integration is disabled
-	return unless $prefs->get('musicmagic'); 
+	return unless $prefs->get('musicip'); 
 
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
@@ -332,7 +332,7 @@ sub isMusicLibraryFileChanged {
 sub checker {
 	my $firstTime = shift || 0;
 	
-	if (!$prefs->get('musicmagic')) {
+	if (!$prefs->get('musicip')) {
 		return;
 	}
 
@@ -567,9 +567,9 @@ sub mixerlink {
 
 	Slim::Web::HTTP::protectURI('plugins/MusicMagic/.*\.html');
 	# only add link if enabled and usable
-	if (canUseMusicMagic() && $prefs->get('musicmagic')) {
+	if (canUseMusicMagic() && $prefs->get('musicip')) {
 
-		# set up a musicmagic link
+		# set up a musicip link
 		$form->{'mixerlinks'}{Slim::Plugin::MusicMagic::Plugin->title()} = "plugins/MusicMagic/mixerlink.html";
 		
 		# flag if mixable
