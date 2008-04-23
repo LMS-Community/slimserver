@@ -1,11 +1,10 @@
 [% extJsScripts = BLOCK %]
 	<script TYPE="text/javascript">
-		Ext.EventManager.onDocumentReady(function(){
+		Ext.onReady(function(){
 			var el = Ext.get('progressLink');
 			if (el) {
 				el.on('click', function(){
-					try { parent.Settings.activateTab('SERVER_STATUS'); }
-					catch(e) {}
+					Settings.activate('SERVER_STATUS');
 				})
 			}
 		});
