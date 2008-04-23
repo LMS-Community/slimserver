@@ -737,3 +737,19 @@ function resize(src, width) {
 		src.width = width;
 
 }
+
+// request and update with new list html, requires a 'mainbody' div defined in the document
+// templates should use the ajaxUpdate param to block headers and footers.
+function ajaxUpdate(url, params, callback) {
+	var el = Ext.get('mainbody');
+
+	if (el) {
+		var um = el.getUpdateManager();
+
+		if (um)
+			um.loadScripts = true;
+
+		el.load(url, params + '&ajaxUpdate=1&player=' + player, callback);
+	}
+}
+

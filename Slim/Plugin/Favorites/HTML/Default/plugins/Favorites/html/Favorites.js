@@ -1,11 +1,11 @@
 var Favorites = function(){
 	return {
 		init : function(session, offset){
-			Utils.init();
-			new Slim.Sortable({
+			new SqueezeJS.UI.Sortable({
 				el: 'draglist',
 				selector: 'ol#draglist li',
 
+				highlighter: Highlighter,
 				onDropCmd: function(sourcePos, targetPos) {
 					var el;
 
@@ -15,7 +15,6 @@ var Favorites = function(){
 						Ext.dd.ScrollManager.unregister(el);
 
 					if (el = Ext.get('mainbody')) {
-						Utils.unHighlight();
 						var um = el.getUpdateManager();						
 						el.load(
 							webroot + 'plugins/Favorites/index.html', 
@@ -33,7 +32,7 @@ var Favorites = function(){
 						);
 					}
 				}
-			})
+			});
 		}
 	}
 }();
