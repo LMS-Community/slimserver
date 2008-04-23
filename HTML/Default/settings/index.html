@@ -46,7 +46,8 @@
 
 					{
 						title: '[% tab.0 | string %]',
-						url: '[%- tab.1 -%]'
+						url: '[%- tab.1 -%]',
+						id: '[% tab.0 %]'
 					}[% loop.last ? '' : ',' %]
 				[% END -%]
 				]);

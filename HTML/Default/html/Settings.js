@@ -155,6 +155,15 @@ Settings = {
 		Ext.get('maincontent').dom.src = webroot + page + 'player=' + player + '&playerid=' + playerid;
 	},
 
+	activate : function(tab) {
+		if (!this.tp)
+			parent.Settings.activate(tab);
+
+		else {
+			this.tp.activate(tab);
+		}
+	},
+
 	submitSettings : function() {
 		try { frames.settings.Settings.Page.submit() }
 		catch(e){ return false; }

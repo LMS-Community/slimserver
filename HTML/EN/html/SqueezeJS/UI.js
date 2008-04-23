@@ -1555,7 +1555,7 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 
 	return {
 		init: function(config){
-			this.onUpdate = config.onUpdate || function(){};
+			Ext.apply(this, config);
 
 			progressTimer = new Ext.util.DelayedTask(this.refresh, this);
 			this.refresh();
@@ -1578,6 +1578,8 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 			});
 			
 		},
+
+		onUpdate : function(){},
 
 		_updatePage: function(result){
 			// clean up response to have a correct JSON object

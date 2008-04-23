@@ -331,6 +331,19 @@ sub shortDateFormats {
 	};
 }
 
+=head2 setDefaultFormats()
+
+Set default date/time formats for the selected language.
+Formats are to be defined in strings.txt file.
+
+=cut
+
+sub setDefaultFormats {
+	$prefs->set('longdateFormat',  Slim::Utils::Strings::string('SETUP_LONGDATEFORMAT_DEFAULT'));
+	$prefs->set('shortdateFormat', Slim::Utils::Strings::string('SETUP_SHORTDATEFORMAT_DEFAULT'));
+	$prefs->set('timeFormat',      Slim::Utils::Strings::string('SETUP_TIMEFORMAT_DEFAULT'));
+}
+
 =head1 SEE ALSO
 
 L<POSIX::strftime>
