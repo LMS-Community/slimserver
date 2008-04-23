@@ -1555,7 +1555,8 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 
 	return {
 		init: function(config){
-			this.onUpdate = config.onUpdate || function(){};
+			if (config)
+				this.onUpdate = config.onUpdate || function(){};
 
 			progressTimer = new Ext.util.DelayedTask(this.refresh, this);
 			this.refresh();
