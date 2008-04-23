@@ -27,7 +27,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my %prefs = (
 	'server' => ['webproxy', 'sn_email', 'sn_password_sha', 'audiodir', 'playlistdir'],
 	'plugin.itunes' => ['itunes', 'xml_file'],
-	'plugin.musicmagic' => ['musicmagic', 'port']
+	'plugin.musicip' => ['musicip', 'port']
 );
 
 sub new {
@@ -137,8 +137,8 @@ sub handler {
 					$paramRef->{itunes} = '0';
 				}
 
-				if ($pref eq 'musicmagic' && !$paramRef->{musicmagic})	{
-					$paramRef->{musicmagic} = '0';
+				if ($pref eq 'musicip' && !$paramRef->{musicip})	{
+					$paramRef->{musicip} = '0';
 				}
 
 				preferences($namespace)->set($pref, $paramRef->{$pref});
@@ -150,7 +150,7 @@ sub handler {
 			$paramRef->{prefs}->{$pref} = preferences($namespace)->get($pref);
 
 			# Cleanup the checkbox
-			if ($pref =~ /itunes|musicmagic/) {
+			if ($pref =~ /itunes|musicip/) {
 				$paramRef->{prefs}->{$pref} = defined $paramRef->{prefs}->{$pref} ? $paramRef->{prefs}->{$pref} : 0;
 			}
 		}

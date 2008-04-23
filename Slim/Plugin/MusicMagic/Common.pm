@@ -18,7 +18,7 @@ use Slim::Utils::Prefs;
 my $os  = Slim::Utils::OSDetect::OS();
 my $log = logger('plugin.musicip');
 
-my $prefs = preferences('plugin.musicmagic');
+my $prefs = preferences('plugin.musicip');
 
 sub convertPath {
 	my $mmsPath = shift;
@@ -37,7 +37,7 @@ sub convertPath {
 		# we are unix
 		if ($winPath) {
 
-			# we are running musicmagic on windows but
+			# we are running musicip on windows but
 			# slim server is running on unix
 
 			# convert any windozes paths to unix style
@@ -78,8 +78,8 @@ sub convertPath {
 
 sub checkDefaults {
 
-	if (!defined $prefs->get('musicmagic')) {
-		$prefs->set('musicmagic',0)
+	if (!defined $prefs->get('musicip')) {
+		$prefs->set('musicip',0)
 	}
 
 	if (!defined $prefs->get('mix_type')) {
@@ -99,7 +99,7 @@ sub checkDefaults {
 	}
 
 	if (!defined $prefs->get('playlist_prefix')) {
-		$prefs->set('playlist_prefix','MusicMagic: ');
+		$prefs->set('playlist_prefix','MusicIP: ');
 	}
 
 	if (!defined $prefs->get('playlist_suffix')) {
