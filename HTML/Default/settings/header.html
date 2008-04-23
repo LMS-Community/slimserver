@@ -22,11 +22,8 @@
 		<script type="text/javascript" src="[% webroot %]html/Settings.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
-			[% PROCESS jsString id='BROWSE' jsId='' %]
 			[% PROCESS jsString id='SETTINGS' jsId='' %]
 			[% PROCESS jsString id='ADVANCED_SETTINGS' jsId='' %]
-			[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
-			[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
 
 			[% playerid = playerid || player %]
 			// display player list if we're in the player settings

@@ -190,8 +190,7 @@ Settings.Page = function(){
 	return {
 		init : function(){
 			this.initDescPopup();
-			this.initFilesystemBrowser();
-
+			SqueezeJS.UI.FilesystemBrowser.init();
 			SqueezeJS.UI.ScrollPanel.init();
 
 			var items = Ext.query('input');
@@ -331,79 +330,6 @@ Settings.Page = function(){
 					})
 				);
 			}
-		},
-
-		initFilesystemBrowser: function(){
-			var inputEl, btnEl, filter, classes, start;
-
-			var tpl = new Ext.Template('&nbsp;<input type="button" value="' + SqueezeJS.string('browse') + '" onclick="Settings.Page.showFilesystemBrowser(\'{inputField}\', \'{filter}\')">');
-			tpl.compile();
-
-			// try to get the filter expression from the input fields CSS class
-			// selectFolder - only display folders
-			// selectFile   - display any filetype
-			// selectFile_X - only show files of the type X (eg. selectFile_xml -> .xml only)
-			var items = Ext.query('input.selectFolder, input[class*=selectFile]');
-			for(var i = 0; i < items.length; i++) {
-
-				if (inputEl = Ext.get(items[i])) {
-					filter = '';
-
-					if (inputEl.hasClass('selectFolder'))
-						filter = 'foldersonly'
-
-					else {
-						classes = items[i].className.split(' ');
-
-						for (var x=0; x<classes.length; x++) {
-
-							if (classes[x].search(/selectFile_/) > -1) {
-								filter += (filter ? '|' : '') + classes[x].replace(/selectFile_/, '');
-							}
-						}
-						filter = "filetype:" + filter;
-					}
-
-					btnEl = tpl.insertAfter(inputEl, {
-						inputField: inputEl.id,
-						filter: filter
-					});
-				}
-			}
-		},
-
-		showFilesystemBrowser: function(inputField, filter){
-			var filesystemDlg = new Ext.Window({
-				modal: true,
-				closable: false,
-				collapsible: false,
-				width: 350,
-				height: 400,
-				resizeHandles: 'se',
-				html: '<div id="filesystembrowser"></div>',
-				buttons: [{
-					text: SqueezeJS.string('close'),
-					handler: function(){
-						filesystemDlg.hide()
-					},
-					scope: filesystemDlg
-				}]
-			});
-
-			filesystemDlg.setTitle(SqueezeJS.string(filter == 'foldersonly' ? 'choose_folder' : 'choose_file'));
-			filesystemDlg.show();
-
-			var el = Ext.get('filesystembrowser');
-			if (el && (el = el.parent())) {
-				el.setWidth(el.getWidth()-12);
-				el.setStyle({ overflow: 'auto' })
-			}
-
-			new SqueezeJS.UI.FileSelector({
-				renderTo: 'filesystembrowser',
-				input: inputField,
-				filter: filter
-			});
 		},
 
 		validatePref : function(myPref, namespace) {
