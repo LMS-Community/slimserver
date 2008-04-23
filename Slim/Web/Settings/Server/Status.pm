@@ -37,13 +37,15 @@ sub handler {
 		{INFORMATION_CLIENTS      => Slim::Player::Client::clientCount},
 	];
 
-	$paramRef->{library} =  [
-		{INFORMATION_TRACKS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Track', { 'me.audio' => 1 }))},
-		{INFORMATION_ALBUMS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album'))},
-		{INFORMATION_ARTISTS => Slim::Utils::Misc::delimitThousands(Slim::Schema->rs('Contributor')->browse->count)},
-		{INFORMATION_GENRES  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'))},
-		{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
-	];
+	unless (Slim::Music::Import->stillScanning) {
+		$paramRef->{library} =  [
+			{INFORMATION_TRACKS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Track', { 'me.audio' => 1 }))},
+			{INFORMATION_ALBUMS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album'))},
+			{INFORMATION_ARTISTS => Slim::Utils::Misc::delimitThousands(Slim::Schema->rs('Contributor')->browse->count)},
+			{INFORMATION_GENRES  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'))},
+			{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
+		];
+	}
 
 	$paramRef->{folders} = [
 		{INFORMATION_CACHEDIR     => preferences('server')->get('cachedir')},
