@@ -6265,6 +6265,10 @@ SETUP_LONGDATEFORMAT_DESC
 	SV	Detta val avgör hur långt datumformat presenteras (som bland annat visas när spelaren är avstängd). Följande konventioner används för valen nedan:<br>WWWW är veckodag (lördag, söndag, osv)<br>WWW är veckodag förkortad (lör, sön, osv)<br>DD är dag i månaden (inledande nolla borttagen)<br>MM är månaden<BR>YY är tvåsiffrigt årtal<BR>YYYY är fyrsiffrigt årtal
 	ZH_CN	这个选项决定了显示完整日期所使用的格式（譬如在播放机关机状态时）。以下是各个选择所使用的惯例：<br>WWWW=星期（星期六、星期天、等）<br>WWW=简化的星期（六、日、等）<br>DD=日（主导零被去除）<br>MM=简化的月份<br>YY=两位数的年份<br>YYYY=四位数的年份
 
+SETUP_LONGDATEFORMAT_DEFAULT
+	DE	%A, |%d. %B %Y
+	EN	%A, %B |%d, %Y
+
 SETUP_SHORTDATEFORMAT
 	CS	Formát datumu krátký
 	DA	Kort dato-format
@@ -6299,6 +6303,10 @@ SETUP_SHORTDATEFORMAT_DESC
 	SV	Detta val hur kort datumformat presenteras. Följande konventioner används för valen nedan:<br>YYYY är fyrsiffrigt årtal<br>YY är tvåsiffrigt årtal<br>MM är månadsnummret<br>DD är dagen i månaden<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
 	ZH_CN	这个选项决定了显示简化日期所使用的格式。以下是各个选择所使用的惯例：<br>YYYY=四位数的年份<br>YY=两位数的年份<br>MM=月份<br>DD=日<br>在末端括弧内的任何信息为备注而将不显示。
 
+SETUP_SHORTDATEFORMAT_DEFAULT
+	DE	%m.%d.%y
+	EN	%m/%d/%Y
+
 SETUP_TIMEFORMAT
 	CS	Formát času
 	DA	Tidsformat
@@ -6331,6 +6339,10 @@ SETUP_TIMEFORMAT_DESC
 	PT	Esta opção determina o formato a usar para horas. São usadas as seguintes convenções para as opções abaixo
 	SV	Detta val avgör formatet för tidvisning. Följande konventioner används i valen nedan:<br>hh är timmen<br>h är timmen med inledande nolla borttagen<br>mm är minuten<br>ss är sekunden<br>pm är antingen AM eller PM<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
 	ZH_CN	这个选项决定了显示时间所使用的格式。以下是各个选择所使用的惯例：<br>hh=时<br>h=时（主导零被去除）<br>mm=分<br>ss=秒<br>pm=AM或PM<BR>在末端括弧内的任何信息为备注而将不显示。
+
+SETUP_TIMEFORMAT_DEFAULT
+	DE	%H:%M
+	EN	|%I:%M %p
 
 SETUP_ITEMSPERPAGE
 	CS	Položek na stránku
@@ -15480,7 +15492,7 @@ SETUP_VIEW_SCANNING
 
 SETUP_VIEW_NOT_SCANNING
 	DA	Vis detaljer for sidste skanning
-	DE	Zeige Details zur vorherige Suche
+	DE	Zeige Details zur vorherigen Suche
 	EN	View Previous Scan Details
 	ES	Ver detalles de examen previos
 	FR	Afficher les détails de l'analyse précédente
