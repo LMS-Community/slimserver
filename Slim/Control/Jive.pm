@@ -1878,7 +1878,7 @@ sub registerDownload {
 	my $key  = shift;
 	my $vers = shift;
 
-	my $file = $key || basename($path);
+	my $file = $key || ($path ? basename($path) : '');
 
 	if ($type =~ /wallpaper|sound|applet/ && $path =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
 

@@ -1,8 +1,8 @@
 [% PROCESS settings/header.html %]
 
-	[% IF prefs.exists('musicmagic') %]
+	[% IF prefs.exists('musicip') %]
 		[% WRAPPER setting title="MUSICMAGIC" desc="SETUP_MUSICMAGIC_DESC" %]
-			<input type="checkbox" [% IF prefs.musicmagic %]checked [% END %] class="stdedit" name="musicmagic" id="musicmagic" />	
+			<input type="checkbox" [% IF prefs.musicip %]checked [% END %] class="stdedit" name="musicip" id="musicmagic" />	
 			<label for="musicmagic" class="stdlabel">[% "USE_MUSICMAGIC" | string %]</label>
 		[% END %]
 	[% END %]
