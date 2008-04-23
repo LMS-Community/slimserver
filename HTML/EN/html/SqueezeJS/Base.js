@@ -276,7 +276,7 @@ function _init() {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 						if (response && response.result && response.result.text) {
-							this.checkShowBriefly({ result: [ response.result.text ] });
+							this.checkShowBriefly({ showBriefly: [ response.result.text ] });
 						}
 					}
 				},
@@ -375,7 +375,7 @@ function _init() {
 			if (result && result.showBriefly) {
 				var text = '';
 				for (var x = 0; x < result.showBriefly.length; x++) {
-					if (result.showBriefly[x].match(/^[\w\s\.;,:()\[\]%]/))
+					if (result.showBriefly[x] && result.showBriefly[x].match(/^[\w\s\.;,:()\[\]%]/))
 						text += result.showBriefly[x] + ' ';
 				}
 
@@ -453,14 +453,14 @@ SqueezeJS.SonginfoParser = {
 			album : new Ext.Template('{album}'),
 			contributor : new Ext.Template('{contributor}'),
 			year : new Ext.Template('{year}'),
-			coverart : new Ext.Template('<img src="{src}" max-width="{width}" max-height="{width}">')
+			coverart : new Ext.Template('<img src="{src}" width="{width}" height="{width}">')
 		},
 		linked : {
 			title : new Ext.Template('<a href="' + webroot +'{link}?player={player}&amp;item={id}" target="browser">{title}</a>'),
 			album : new Ext.Template('<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id={id}&amp;player={player}" target="browser">{album}</a>'),
 			contributor : new Ext.Template('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id={id}&amp;level=1&amp;player={player}" target="browser">{contributor}</a>'),
 			year : new Ext.Template('<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id={year}&amp;player={player}" target="browser">{year}</a>'),
-			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" max-width="{width}" max-height="{width}"></a>')
+			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" width="{width}" height="{width}"></a>')
 		}
 	},
 
