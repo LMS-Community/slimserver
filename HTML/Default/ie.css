@@ -8,6 +8,15 @@
 	left: -12px;
 }
 
+.inner_bottom_right, .inner_bottom_left {
+	font-size: 11px;
+	height: 12px;
+	top: 0;
+}
+
+.inner_bottom_left { left: -12px; }
+
+
 #footer_content { height: 40px; }
 
 .helpsection,
