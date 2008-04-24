@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 11, 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
+	# 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -108,7 +108,7 @@ sub new {
 	$client->[9] = undef; # udpsock
 	$client->[10] = undef; # tcpsock
 
-#	$client->[11]
+	$client->[11] = undef; # languageOverride
 #	$client->[12]
 #	$client->[13]
 
@@ -1128,6 +1128,11 @@ sub udpsock {
 sub tcpsock {
 	my $r = shift;
 	@_ ? ($r->[10] = shift) : $r->[10];
+}
+
+sub languageOverride {
+	my $r = shift;
+	@_ ? ($r->[11] = shift) : $r->[11];
 }
 
 sub readytosync {
