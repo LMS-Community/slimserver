@@ -798,8 +798,17 @@ sub forgetDisplay {
 }
 
 sub string {
-	my $strings = shift->displayStrings;
+	my $display = shift;
+	
+	my $strings = $display->displayStrings;
 	my $name = uc(shift);
+	
+	# Check language override
+	if ( $display->client ) {
+		if ( my $lang = $display->client->languageOverride ) {
+			$strings = Slim::Utils::Strings::loadAdditional( $lang );
+		}
+	}		
 	
 	if ( @_ ) {
 		return sprintf( $strings->{$name} || ( logBacktrace("missing string $name") && $name ), @_ );
