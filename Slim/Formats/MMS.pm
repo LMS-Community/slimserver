@@ -19,6 +19,8 @@ Extract metadata from MMS/WMA streams.
 
 =cut
 
+# XXX: Is any of this code still used?
+
 use strict;
 use base qw(Slim::Formats::RemoteStream);
 
@@ -133,7 +135,7 @@ sub requestString {
 	my @headers = (
 		"GET $path HTTP/1.0",
 		"Accept: */*",
-		"User-Agent: NSPlayer/4.1.0.3856",
+		"User-Agent: NSPlayer/8.0.0.3802",
 		"Host: $host",
 		"Pragma: xClientGUID={" . $self->randomGUID() . "}",
 	);
@@ -146,6 +148,8 @@ sub requestString {
 
 		push @headers, (
 			"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
+			"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=18000",
+			"Pragma: Speed=5.000",
 			"Pragma: xPlayStrm=1",
 			"Pragma: stream-switch-count=1",
 			"Pragma: stream-switch-entry=ffff:" .  ${*$self}{'stream_num'} . ":0",
