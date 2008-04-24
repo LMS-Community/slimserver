@@ -97,7 +97,7 @@ Main = {
 					height: 40
 				}
 			]
-		}
+		};
 
 		this.layout = new Ext.Viewport(mainpanel);
 
