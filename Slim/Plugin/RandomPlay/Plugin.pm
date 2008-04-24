@@ -131,7 +131,7 @@ sub initPlugin {
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
 
 	my @item = ({
-			text           => Slim::Utils::Strings::string(getDisplayName()),
+			stringToken    => getDisplayName(),
 			weight         => 60,
 			id             => 'randomplay',
 			node           => 'myMusic',
@@ -154,7 +154,7 @@ sub randomPlayMenu {
 	my $client = $request->client();
 	my @menu = (
 		{
-			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
+			text    => $client->string('PLUGIN_RANDOM_TRACK'),
 			id      => 'randomtracks',
 			weight  => 10,
 			style   => 'itemplay',
@@ -171,7 +171,7 @@ sub randomPlayMenu {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
+			text    => $client->string('PLUGIN_RANDOM_ALBUM'),
 			id      => 'randomalbums',
 			weight  => 20,
 			style   => 'itemplay',
@@ -188,7 +188,7 @@ sub randomPlayMenu {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
+			text    => $client->string('PLUGIN_RANDOM_CONTRIBUTOR'),
 			id      => 'randomartists',
 			weight  => 30,
 			style   => 'itemplay',
@@ -205,7 +205,7 @@ sub randomPlayMenu {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
+			text    => $client->string('PLUGIN_RANDOM_YEAR'),
 			id      => 'randomyears',
 			weight  => 40,
 			style   => 'itemplay',
@@ -222,7 +222,7 @@ sub randomPlayMenu {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CHOOSE_GENRES'),
+			text    => $client->string('PLUGIN_RANDOM_CHOOSE_GENRES'),
 			id      => 'randomchoosegenres',
 			weight  => 50,
 			window  => { titleStyle => 'random' },
@@ -321,7 +321,7 @@ sub chooseGenresMenu {
 	
 	for my $genre (sort keys %$genres) {
 		my $val = $genres->{$genre}->{'enabled'};
-$log->error($genre . ":" . $val);
+
 		push @menu, {
 			text => $genre,
 			checkbox => ($val == 1) + 0,
