@@ -1830,7 +1830,7 @@ sub _get_vbr {
 		# start with quality factor at position 8
 		_vbr_seek($fh, \$off, \$bytes, 4);
 		_vbr_seek($fh, \$off, \$bytes, 2);
-		$vbr{scale} = _unpack_head($bytes);
+		$vbr{scale} = unpack('l', pack('L', unpack('n', $bytes)));
 
 		# Then Bytes, as position 10
 		_vbr_seek($fh, \$off, \$bytes);
