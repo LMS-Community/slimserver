@@ -1793,36 +1793,58 @@ sub _get_vbr {
 	}
 
 	_vbr_seek($fh, \$off, \$bytes);
-	return unless $bytes =~ /(?:Xing|Info)/;
 
-	_vbr_seek($fh, \$off, \$bytes);
-	$vbr{flags} = _unpack_head($bytes);
+	if ($bytes =~ /(?:Xing|Info)/) {
 
-	if ($vbr{flags} & 1) {
 		_vbr_seek($fh, \$off, \$bytes);
-		$vbr{frames} = _unpack_head($bytes);
-	}
+		$vbr{flags} = _unpack_head($bytes);
+	
+		if ($vbr{flags} & 1) {
+			_vbr_seek($fh, \$off, \$bytes);
+			$vbr{frames} = _unpack_head($bytes);
+		}
+	
+		if ($vbr{flags} & 2) {
+			_vbr_seek($fh, \$off, \$bytes);
+			$vbr{bytes} = _unpack_head($bytes);
+		}
+	
+		if ($vbr{flags} & 4) {
+			_vbr_seek($fh, \$off, \$bytes, 100);
+	# Not used right now ...
+	#		$vbr{toc} = _unpack_head($bytes);
+		}
+	
+		if ($vbr{flags} & 8) { # (quality ind., 0=best 100=worst)
+			_vbr_seek($fh, \$off, \$bytes);
+			$vbr{scale} = _unpack_head($bytes);
+		} else {
+			$vbr{scale} = -1;
+		}
 
-	if ($vbr{flags} & 2) {
+		$$roff = $off;
+		return \%vbr;
+	} elsif ($bytes =~ /(?:VBRI)/) {
+		
+		# Fraunhofer encoder uses VBRI format
+		# start with quality factor at position 8
+		_vbr_seek($fh, \$off, \$bytes, 4);
+		_vbr_seek($fh, \$off, \$bytes, 2);
+		$vbr{scale} = _unpack_head($bytes);
+
+		# Then Bytes, as position 10
 		_vbr_seek($fh, \$off, \$bytes);
 		$vbr{bytes} = _unpack_head($bytes);
-	}
 
-	if ($vbr{flags} & 4) {
-		_vbr_seek($fh, \$off, \$bytes, 100);
-# Not used right now ...
-#		$vbr{toc} = _unpack_head($bytes);
-	}
-
-	if ($vbr{flags} & 8) { # (quality ind., 0=best 100=worst)
+		# Finally Frames at position 14
 		_vbr_seek($fh, \$off, \$bytes);
-		$vbr{scale} = _unpack_head($bytes);
-	} else {
-		$vbr{scale} = -1;
-	}
+		$vbr{frames} = _unpack_head($bytes);
 
-	$$roff = $off;
-	return \%vbr;
+		$$roff = $off;
+		return \%vbr;
+	} else {
+		return;
+	}
 }
 
 # Read LAME info tag
