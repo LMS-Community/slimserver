@@ -51,7 +51,7 @@ use Slim::Utils::PluginManager;
 our $strings = {};
 our $defaultStrings;
 
-my $currentLang;
+our $currentLang;
 my $failsafeLang  = 'EN';
 
 my $log = logger('server');
@@ -175,6 +175,31 @@ sub loadStrings {
 
 	$defaultStrings = $strings->{$currentLang};
 
+}
+
+sub loadAdditional {
+	my $lang = shift;
+	
+	if ( exists $strings->{$lang} ) {
+		return $strings->{$lang};
+	}
+	
+	for my $file ( @{ $strings->{files} } ) {
+		$log->info("Loading string file for additional language $lang: $file");
+		
+		my $args = {
+			storeString => sub {
+				local $currentLang = $lang;
+				storeString( @_ );
+			},
+		};
+
+		loadFile( $file, $args );
+		
+		main::idleStreams();
+	}
+	
+	return $strings->{$lang};
 }
 
 sub stringsFiles {

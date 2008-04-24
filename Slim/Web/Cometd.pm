@@ -182,6 +182,14 @@ sub handler {
 		
 		last if @errors;
 		
+		# Detect the language Jive wants content returned in
+		my $lang;
+		if ( ref $conn ) {
+			if ( my $al = $conn->[HTTP_RESPONSE]->request->header('Accept-Language') ) {
+				$lang = uc $al;
+			}
+		}
+		
 		if ( $obj->{channel} eq '/meta/handshake' ) {
 
 			push @{$events}, {
@@ -434,7 +442,8 @@ sub handler {
 					response => $response,
 					priority => $priority,
 					clid     => $responseClid,
-					type     => 'subscribe'
+					type     => 'subscribe',
+					lang     => $lang,
 				} );
 				
 				if ( $result->{error} ) {
@@ -538,6 +547,7 @@ sub handler {
 					priority => $priority,
 					clid     => $responseClid,
 					type     => 'request',
+					lang     => $lang,
 				} );
 				
 				if ( $result->{error} ) {
@@ -685,6 +695,7 @@ sub handleRequest {
 	my $clid     = $params->{clid};
 	
 	my $type     = $params->{type};
+	my $lang     = $params->{lang};
 	
 	my $mac  = $cmd->[0];
 	my $args = $cmd->[1];
@@ -732,10 +743,11 @@ sub handleRequest {
 		return { error => 'invalid request arguments, array expected' };
 	}
 	
+	my $client;
 	my $clientid;
 	
 	if ( my $mac = $cmd->[0] ) {
-		my $client   = Slim::Player::Client::getClient($mac);
+		$client   = Slim::Player::Client::getClient($mac);
 		$clientid = blessed($client) ? $client->id : undef;
 		
 		if ( $clientid ) {
@@ -762,6 +774,11 @@ sub handleRequest {
 			$request->autoExecuteCallback( \&requestCallback );
 		}
 		
+		# Set language override for this request
+		if ( $lang && $client ) {
+			$client->languageOverride( $lang );
+		}
+		
 		$request->execute();
 		
 		if ( $request->isStatusError ) {
@@ -783,6 +800,11 @@ sub handleRequest {
 			$log->debug( "Request for $response / $id is async, will callback" );
 			
 			return { ok => 1 };
+		}
+		
+		# Remove language override, request is done
+		if ( $client ) {
+			$client->languageOverride( undef );
 		}
 		
 		# the request was successful and is not async
@@ -808,6 +830,12 @@ sub requestCallback {
 	my ($channel, $id, $priority) = split /\|/, $request->source, 3;
 	
 	$log->debug( "requestCallback got results for $channel / $id" );
+	
+	# Remove language override, request done
+	# XXX: what about subscriptions?
+	if ( $request->client ) {
+		$request->client->languageOverride( undef );
+	}
 	
 	# Do we need to unsubscribe from this request?
 	if ( delete $toUnsubscribe{ $channel } ) {
