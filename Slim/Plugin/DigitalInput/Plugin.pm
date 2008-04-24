@@ -82,7 +82,7 @@ sub digitalInputItem {
 		&& $client->hasDigitalIn();
 
 	return [{
-		text           => Slim::Utils::Strings::string(getDisplayName()),
+		stringToken    => getDisplayName(),
 		weight         => 45,
 		id             => 'digitalinput',
 		node           => 'home',
@@ -103,7 +103,7 @@ sub digitalInputMenu {
 	my $client = $request->client();
 	my @menu = (
 		{
-			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_BALANCED_AES'),
+			text  => $client->string('PLUGIN_DIGITAL_INPUT_BALANCED_AES'),
 			id  => 'aes-ebu',
 			weight  => 10,
 			style   => 'itemplay',
@@ -120,7 +120,7 @@ sub digitalInputMenu {
 			},
 		},
 		{
-			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_BNC_SPDIF'),
+			text  => $client->string('PLUGIN_DIGITAL_INPUT_BNC_SPDIF'),
 			id  => 'bnc-spdif',
 			weight  => 20,
 			style   => 'itemplay',
@@ -137,7 +137,7 @@ sub digitalInputMenu {
 			},
 		},
 		{
-			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_RCA_SPDIF'),
+			text  => $client->string('PLUGIN_DIGITAL_INPUT_RCA_SPDIF'),
 			id  => 'rca-spdif',
 			weight  => 30,
 			style   => 'itemplay',
@@ -154,7 +154,7 @@ sub digitalInputMenu {
 			},
 		},
 		{
-			text  => Slim::Utils::Strings::string('PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF'),
+			text  => $client->string('PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF'),
 			id  => 'toslink',
 			weight  => 40,
 			style   => 'itemplay',
