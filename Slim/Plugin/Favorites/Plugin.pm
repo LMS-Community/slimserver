@@ -780,9 +780,9 @@ sub cliAdd {
 		if ($request->source && $request->source =~ /\/slim\/request/) {
 			$client->showBriefly({
 				'jive' => { 
-					'text' => [ Slim::Utils::Strings::string('FAVORITES_ADDING'),
-								$title,
-							   ],
+				'text' => [ $client->string('FAVORITES_ADDING'),
+						$title,
+					   ],
 				}
 			});
 		}
@@ -824,7 +824,7 @@ sub cliDelete {
 		my $deleteMsg = $title?$title:$url;
 		$client->showBriefly({
 			'jive' => { 
-				'text'    => [ Slim::Utils::Strings::string('FAVORITES_DELETING'),
+			'text' => [ $client->string('FAVORITES_DELETING'),
 						$deleteMsg ],
 			}
 		});

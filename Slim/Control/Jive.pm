@@ -63,14 +63,14 @@ sub init {
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
         [0, 1, 1, \&menuQuery]);
 
-    Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], [1, 1, 1, \&alarmSettingsQuery]);
-    Slim::Control::Request::addDispatch(['alarmweekdays', '_index', '_quantity'], [1, 1, 1, \&alarmWeekdayMenu]);
-    Slim::Control::Request::addDispatch(['alarmweekdaysettings', '_day'], [1, 1, 1, \&alarmWeekdaySettingsQuery]);
-    Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'], [1, 1, 1, \&syncSettingsQuery]);
-    Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'], [1, 1, 1, \&sleepSettingsQuery]);
-    Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
-    Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
-    Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
+	Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], [1, 1, 1, \&alarmSettingsQuery]);
+	Slim::Control::Request::addDispatch(['alarmweekdays', '_index', '_quantity'], [1, 1, 1, \&alarmWeekdayMenu]);
+	Slim::Control::Request::addDispatch(['alarmweekdaysettings', '_day'], [1, 1, 1, \&alarmWeekdaySettingsQuery]);
+	Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'], [1, 1, 1, \&syncSettingsQuery]);
+	Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'], [1, 1, 1, \&sleepSettingsQuery]);
+	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
+	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
+	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
 	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
 
@@ -188,9 +188,12 @@ sub mainMenu {
 	# for the notification menus, we're going to send everything over "flat"
 	# as a result, no item_loops, all submenus (setting, myMusic) are just elements of the big array that get sent
 
-	my @menu = (
+	my @menu = map {
+		$_->{text} = $client->string($_->{stringToken}) if ($_->{stringToken});
+		$_;
+	}(
 		{
-			text           => $client->string('MY_MUSIC'),
+			stringToken    => 'MY_MUSIC',
 			weight         => 11,
 			displayWhenOff => 0,
 			id             => 'myMusic',
@@ -199,7 +202,7 @@ sub mainMenu {
 			window         => { titleStyle => 'mymusic', },
 		},
 		{
-			text           => $client->string('FAVORITES'),
+			stringToken    => 'FAVORITES',
 			id             => 'favorites',
 			node           => 'home',
 			displayWhenOff => 0,
@@ -339,7 +342,7 @@ sub _purgeMenu {
 	my @menu = @$menu;
 	my @purgedMenu = ();
 	for my $i (0..$#menu) {
-		my $menuId = defined($menu[$i]->{id}) ? $menu[$i]->{id} : $menu[$i]->{text};
+		my $menuId = defined($menu[$i]->{id}) ? $menu[$i]->{id} : ($menu[$i]->{stringToken} ? $menu[$i]->{stringToken} : $menu[$i]->{text});
 		last unless (defined($menu[$i]));
 		if ($itemsToDelete{$menuId}) {
 			$log->warn("REMOVING " . $menuId . " FROM Jive menu");
@@ -1999,6 +2002,7 @@ sub _downloadInfo {
 sub downloadQuery {
 	my $request = shift;
  
+	my $client = $request->client;
 	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
 
 	if (!defined $type) {
@@ -2017,7 +2021,7 @@ sub downloadQuery {
 
 		my $entry = {
 			$type     => $val->{'name'},
-			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
+			'name'    => $client->getString($val->{'name'}),
 			'url'     => $url,
 			'file'    => $val->{'file'},
 		};

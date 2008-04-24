@@ -67,7 +67,7 @@ sub initPlugin {
 	}
 
 	my @item = ({
-			text           => Slim::Utils::Strings::string(getDisplayName()),
+			stringToken    => getDisplayName(),
 			weight         => 20,
 			id             => 'podcast',
 			node           => 'extras',
