@@ -27,11 +27,16 @@ use Slim::Hardware::IR;
 use Slim::Player::Client;
 use Slim::Utils::Strings qw (string);
 use File::Spec::Functions qw(:ALL);
+use Time::HiRes;
 
 use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.2 $,10);
 
 my $modeName = 'Slim::Plugin::Scanner::Plugin';
+
+my $JUMP_INTERVAL            = 10;    # seconds
+my $LOCAL_UPDATE_INTERVAL    = 0.400; # seconds
+my $REMOTE_UPDATE_INTERVAL   = 2.000; # seconds
 
 sub getDisplayName {return 'PLUGIN_SCANNER'}
 
@@ -47,7 +52,7 @@ my %modeParams = (
 	,'headerValue' => sub {
 			my $client = shift;
 			my $val = shift;
-			
+
 			if (! $client->pluginData('lastUpdateTime')) {
 				# No new position has been selected, set offset to track the current song position and clear the cursor
 				$val = Slim::Player::Source::songTime($client);
@@ -79,14 +84,15 @@ my %modeParams = (
 
 			# Display song position e.g. 1:32
 			my $pos = int($val);
-		        return sprintf("%01d:%02d", $pos / 60, $pos % 60);
+			my $dur = int(Slim::Player::Source::playingSongDuration($client));
+		    return sprintf("%01d:%02d / %01d:%02d", $pos / 60, $pos % 60, $dur / 60, $dur % 60);
 		}
 	,'overlayRefArgs' => 'CV'
 	,'max' => undef
 	,'increment' => undef
 	,'onChange' => sub { 
 			my $client = shift;
-			$client->pluginData(lastUpdateTime => time());
+			$client->pluginData(lastUpdateTime => Time::HiRes::time());
 		}
 	,'onChangeArgs' => 'C'
 	,'callback' => \&_scannerExitHandler
@@ -111,10 +117,12 @@ sub _timerHandler {
 		return;
 	}
 
-	# If there's a change to be applied and 2 secs has elapsed since the last change in the scanner position, apply it 
+	# If there's a change to be applied and sufficient time has elapsed since the last change in the scanner position, apply it 
 	my $lastUpdateTime = $client->pluginData('lastUpdateTime'); 
-	if ($lastUpdateTime && time() - $lastUpdateTime >= 2) {
+	if ($lastUpdateTime && Time::HiRes::time() - $lastUpdateTime >= $client->pluginData('updateInterval')) {
+		$client->suppressStatus('all');
 		Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
+		$client->suppressStatus(undef);
 		$client->pluginData(lastUpdateTime => 0);
 	}
 
@@ -122,7 +130,7 @@ sub _timerHandler {
 	
 	$client->pluginData->{'activeFfwRew'}++;
 	
-	Slim::Utils::Timers::setTimer($client, time()+1, \&_timerHandler);
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+0.1, \&_timerHandler);
 }
 
 sub _scannerExitHandler {
@@ -196,6 +204,23 @@ sub _scan {
 	$client->update();
 }
 
+sub _jump {
+	my $client = shift;
+	my $interval = shift;
+	
+	my $offset = $client->pluginData('offset');
+	
+	if ($interval > 0 && $offset + (2 * $interval) < $client->modeParam('max')) {
+		$client->pluginData(offset => $offset + $interval);
+	} elsif ($interval < 0) {
+		$client->pluginData(offset => $offset > -$interval ? $offset + $interval : 0);
+	} else {
+		return;
+	}
+	$client->pluginData(lastUpdateTime => Time::HiRes::time());
+	$client->update;
+}
+
 my %functions = (
 	'right' => sub  {
 		my ($client,$funct,$functarg) = @_;
@@ -262,11 +287,13 @@ my %functions = (
 	},
 	'jump_fwd' => sub {
 		my $client = shift;
-		_scan($client, 1);
+		_jump($client, $JUMP_INTERVAL);
+#		_scan($client, 1);
 	},
 	'jump_rew' => sub {
 		my $client = shift;
-		_scan($client, -1);
+		_jump($client, -$JUMP_INTERVAL);
+#		_scan($client, -1);
 	},
 	'scanner_fwd' => sub {
 		my $client = shift;
@@ -321,6 +348,9 @@ sub setMode {
 	$client->pluginData(jumpToMode => 0);
 	# URL of the playing song when the scanner was started
 	$client->pluginData(playingSong => $playingSong);
+	# How quickly to apply updates
+	$client->pluginData(updateInterval => 
+		Slim::Music::Info::isRemoteURL($playingSong) ? $REMOTE_UPDATE_INTERVAL : $LOCAL_UPDATE_INTERVAL);
 
 	if ( $playingSong ) {
 		$duration = Slim::Player::Source::playingSongDuration($client);
@@ -369,7 +399,7 @@ sub setMode {
 	
 	$client->update();
 	
-	Slim::Utils::Timers::setTimer($client, time()+1, \&_timerHandler);
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+1, \&_timerHandler);
 }
 
 # Set up scanner to be called by default on fwd.hold and rew.hold from all modes
