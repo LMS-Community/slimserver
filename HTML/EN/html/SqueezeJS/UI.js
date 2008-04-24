@@ -1131,7 +1131,7 @@ SqueezeJS.UI.VolumeBar = Ext.extend(SqueezeJS.UI.Component, {
 	initComponent : function(){
 		SqueezeJS.UI.VolumeBar.superclass.initComponent.call(this);
 
-		this.marginLeft = this.initialConfig.marginLeft || 0;
+		this.marginLeft = this.initialConfig.marginLeft || 0;
 		this.marginLeft = this.initialConfig.marginRight || 0;
 
 		if (this.el && (this.el = Ext.get(this.el))) {
