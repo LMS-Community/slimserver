@@ -144,7 +144,7 @@ sub requestString {
 	my @headers = (
 		"GET $path HTTP/1.0",
 		"Accept: */*",
-		"User-Agent: NSPlayer/4.1.0.3856",
+		"User-Agent: NSPlayer/8.0.0.3802",
 		"Host: $host",
 		"Pragma: xClientGUID={" . randomGUID() . "}",
 	);
@@ -167,6 +167,8 @@ sub requestString {
 		"Pragma: no-cache,rate=1.0000000,stream-offset=0:0,max-duration=0",
 		"Pragma: stream-time=$streamtime",
 		"Pragma: request-context=$context",
+		"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=18000",
+		"Pragma: Speed=5.000",
 		"Pragma: xPlayStrm=1",
 		"Pragma: stream-switch-count=1",
 		"Pragma: stream-switch-entry=ffff:" . $streamNum . ":0 ",
