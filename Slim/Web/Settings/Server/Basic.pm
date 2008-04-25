@@ -39,28 +39,28 @@ sub handler {
 
 	# prefs setting handled by SUPER::handler
 
-	if ($paramRef->{'rescan'}) {
+	if ($paramRef->{'pref_rescan'}) {
 
 		my $rescanType = ['rescan'];
 
-		if ($paramRef->{'rescantype'} eq '2wipedb') {
+		if ($paramRef->{'pref_rescantype'} eq '2wipedb') {
 
 			$rescanType = ['wipecache'];
 
-		} elsif ($paramRef->{'rescantype'} eq '3playlist') {
+		} elsif ($paramRef->{'pref_rescantype'} eq '3playlist') {
 
 			$rescanType = [qw(rescan playlists)];
 		}
 
 		for my $pref (qw(audiodir playlistdir)) {
 	
-			my (undef, $ok) = preferences('server')->set($pref, $paramRef->{$pref});
+			my (undef, $ok) = preferences('server')->set($pref, $paramRef->{"pref_$pref"});
 
 			if ($ok) {
 				$paramRef->{'validated'}->{$pref} = 1; 
 			}
 			else { 
-				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref) . '<br/>';
+				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{"pref_$pref"}, $pref) . '<br/>';
 				$paramRef->{'validated'}->{$pref} = 0;
 			}
 		}

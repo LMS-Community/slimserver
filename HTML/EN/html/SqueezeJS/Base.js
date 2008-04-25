@@ -34,7 +34,7 @@ function _init() {
 	SqueezeJS.Controller = new Ext.util.Observable();
 	Ext.apply(SqueezeJS.Controller, {
 		observers : null,
-		showBriefly : '',
+		showBrieflyCache : '',
 	
 		init : function(o){
 			Ext.apply(this, o);
@@ -95,7 +95,7 @@ function _init() {
 										}
 									}
 
-									this.checkShowBriefly(response.result);
+									this.showBriefly(response.result);
 
 									if (this.playerStatus.rescan != response.result.rescan) {
 										this.playerStatus.rescan = response.result.rescan;
@@ -276,7 +276,7 @@ function _init() {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
 						if (response && response.result && response.result.text) {
-							this.checkShowBriefly({ showBriefly: [ response.result.text ] });
+							this.showBriefly(response.result.text);
 						}
 					}
 				},
@@ -371,7 +371,12 @@ function _init() {
 			return needUpdate;
 		},
 
-		checkShowBriefly : function(result){
+		showBriefly : function(result){
+			if (typeof result == 'string')
+				result = { showBriefly: [ result ] };
+			else if (typeof result == 'array')
+				result = { showBriefly: result };
+
 			if (result && result.showBriefly) {
 				var text = '';
 				for (var x = 0; x < result.showBriefly.length; x++) {
@@ -379,8 +384,8 @@ function _init() {
 						text += result.showBriefly[x] + ' ';
 				}
 
-				if (text && this.showBriefly != text) {
-					this.showBriefly = text;
+				if (text && this.showBrieflyCache != text) {
+					this.showBrieflyCache = text;
 					this.fireEvent('showbriefly', text);
 				}
 			}
