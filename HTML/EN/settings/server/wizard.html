@@ -328,15 +328,15 @@
 					<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
 					<div><table id="wz_musicsource">
 						<tr>
-							<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF useAudiodir %]checked="checked" [% END %]>&nbsp;</td>
+							<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF useAudiodir %]checked="1" [% END %]>&nbsp;</td>
 							<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
 						</tr>
 						<tr>
-							<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="checked" [% END %] value="1"></td>
+							<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="1" [% END %] value="1"></td>
 							<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
 						</tr>
 						<tr>
-							<td><input type="checkbox" name="musicip" id="musicmagic" [% IF prefs.musicip %]checked="checked" [% END %] value="1"></td>
+							<td><input type="checkbox" name="musicip" id="musicmagic" [% IF prefs.musicip %]checked="1" [% END %] value="1"></td>
 							<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
 						</tr>
 					</table></div>

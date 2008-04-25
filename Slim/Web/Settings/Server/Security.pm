@@ -30,9 +30,9 @@ sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
 	# pre-process password to avoid saving clear text
-	if ($paramRef->{'saveSettings'} && $paramRef->{'password'}) {
+	if ($paramRef->{'saveSettings'} && $paramRef->{'pref_password'}) {
 
-		my $val = $paramRef->{'password'};
+		my $val = $paramRef->{'pref_password'};
 	
 		my $currentPassword = preferences('server')->get('password');
 		my $salt = substr($currentPassword, 0, 2);

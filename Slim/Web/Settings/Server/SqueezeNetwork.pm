@@ -42,24 +42,24 @@ sub handler {
 
 	if ( $params->{saveSettings} ) {
 		
-		if ( defined $params->{sn_disable_stats} ) {
+		if ( defined $params->{pref_sn_disable_stats} ) {
 			Slim::Utils::Timers::setTimer(
-				$params->{sn_disable_stats},
+				$params->{pref_sn_disable_stats},
 				time() + 30,
 				\&reportStatsDisabled,
 			);
 		}
 
-		if ( $params->{sn_email} && $params->{sn_password_sha} ) {
+		if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
 			
-			if ( length( $params->{sn_password_sha} ) != 27 ) {
-				$params->{sn_password_sha} = sha1_base64( $params->{sn_password_sha} );
+			if ( length( $params->{pref_sn_password_sha} ) != 27 ) {
+				$params->{pref_sn_password_sha} = sha1_base64( $params->{pref_sn_password_sha} );
 			}
 		
 			# Verify username/password
 			Slim::Networking::SqueezeNetwork->login(
-				username => $params->{sn_email},
-				password => $params->{sn_password_sha},
+				username => $params->{pref_sn_email},
+				password => $params->{pref_sn_password_sha},
 				client   => $client,
 				cb       => sub {
 					my $body = $class->saveSettings( $client, $params );
@@ -79,8 +79,8 @@ sub handler {
 						$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server) . '<br/>';						
 					}
 					
-					delete $params->{sn_email};
-					delete $params->{sn_password_sha};
+					delete $params->{pref_sn_email};
+					delete $params->{pref_sn_password_sha};
 					
 					my $body = $class->saveSettings( $client, $params );
 					$callback->( $client, $params, $body, @args );
@@ -89,7 +89,7 @@ sub handler {
 		
 			return;
 		}
-		elsif ( !$params->{sn_email} && !$params->{sn_password_sha} ) {
+		elsif ( !$params->{pref_sn_email} && !$params->{pref_sn_password_sha} ) {
 			# Shut down SN if username/password were removed
 			Slim::Networking::SqueezeNetwork->shutdown();
 		}
@@ -111,16 +111,16 @@ sub handler {
 sub saveSettings {
 	my ( $class, $client, $params ) = @_;
 	
-	if (   $params->{sn_email}
-		&& $params->{sn_password_sha}
-		&& defined $params->{sn_sync} 
-		&& $params->{sn_sync} ne $prefs->get('sn_sync')
+	if (   $params->{pref_sn_email}
+		&& $params->{pref_sn_password_sha}
+		&& defined $params->{pref_sn_sync} 
+		&& $params->{pref_sn_sync} ne $prefs->get('sn_sync')
 	) {
 		# Shut down all SN activity
 		Slim::Networking::SqueezeNetwork->shutdown();
 		
 		# Start it up again if the user enabled it
-		if ( $params->{sn_sync} ) {
+		if ( $params->{pref_sn_sync} ) {
 			Slim::Networking::SqueezeNetwork->init();
 		}
 	}

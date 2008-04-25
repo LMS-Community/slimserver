@@ -13,10 +13,10 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_LANGUAGE" desc="SETUP_LANGUAGE_DESC" %]
-		<select class="stdedit" name="language" id="language">
+		<select class="stdedit" name="pref_language" id="language">
 
 		[% FOREACH option = languageoptions %]
-			<option [% IF prefs.language == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+			<option [% IF prefs.pref_language == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
 		[%- END -%]
 		
 		</select>
@@ -24,16 +24,16 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_AUDIODIR" desc="SETUP_AUDIODIR_DESC" %]
-			<input type="text" class="stdedit selectFolder" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" size="40">
+			<input type="text" class="stdedit selectFolder" name="pref_audiodir" id="audiodir" value="[% prefs.pref_audiodir %]" size="40">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_PLAYLISTDIR" desc="SETUP_PLAYLISTDIR_DESC" %]
-			<input type="text" class="stdedit selectFolder" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" size="40">
+			<input type="text" class="stdedit selectFolder" name="pref_playlistdir" id="playlistdir" value="[% prefs.pref_playlistdir %]" size="40">
 		[% END %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_RESCAN" desc="SETUP_RESCAN_DESC" %]
-		<select class="stdedit" name="rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
+		<select class="stdedit" name="pref_rescantype" id="rescantype" [% IF scanning %]disabled[% END %]>
 
 		[% FOREACH option = {
 			'1rescan'   => 'SETUP_STANDARDRESCAN',
@@ -44,7 +44,7 @@
 		[%- END -%]
 		
 		</select>
-		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
+		<input name="pref_rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]" [% IF scanning %]disabled[% END %]><br/><br/>
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 
