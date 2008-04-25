@@ -2024,6 +2024,10 @@ sub openSong {
 
 			return undef;
 		}
+		
+		$client->streamformat($format);
+
+		$log->info("Streaming with format: $format");
 
 		# this case is when we play the file through as-is
 		if ($command eq '-') {
@@ -2133,10 +2137,6 @@ sub openSong {
 		$song->{'duration'}   = $duration;
 		$song->{'offset'}     = $offset;
 		$song->{'blockalign'} = $blockalign;
-
-		$client->streamformat($format);
-
-		$log->info("Streaming with format: $format");
 
 		# Deal with the case where we are rewinding and get to
 		# this song. In this case, we should jump to the end of
