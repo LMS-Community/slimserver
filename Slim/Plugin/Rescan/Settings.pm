@@ -35,11 +35,11 @@ sub prefs {
 sub handler {
 	my ($class, $client, $params) = @_;
 
-	if ($params->{'saveSettings'} && $params->{'time'}) {
-		$prefs->set('time', Slim::Utils::DateTime::prettyTimeToSecs($params->{'time'}));
+	if ($params->{'saveSettings'} && $params->{'pref_time'}) {
+		$prefs->set('time', Slim::Utils::DateTime::prettyTimeToSecs($params->{'pref_time'}));
 	}
 
-	$params->{'prefs'}->{'time'} = Slim::Utils::DateTime::secsToPrettyTime($prefs->get('time'));
+	$params->{'prefs'}->{'pref_time'} = Slim::Utils::DateTime::secsToPrettyTime($prefs->get('time'));
 
 	return $class->SUPER::handler($client, $params);
 }

@@ -30,15 +30,15 @@ sub handler {
 	my ($class, $client, $params) = @_;
 	
 	if ( $client ) {
-		$params->{prefs}->{accounts}           = $prefs->get('accounts') || [];
-		$params->{prefs}->{enable_scrobbling}  = $prefs->get('enable_scrobbling');
+		$params->{prefs}->{pref_accounts}           = $prefs->get('accounts') || [];
+		$params->{prefs}->{pref_enable_scrobbling}  = $prefs->get('enable_scrobbling');
 		
-		$params->{prefs}->{account}            = $prefs->client($client)->get('account');
+		$params->{prefs}->{pref_account}            = $prefs->client($client)->get('account');
 		
 		if ( $params->{saveSettings} ) {
-			$params->{prefs}->{account} = $params->{account};
+			$params->{prefs}->{pref_account} = $params->{pref_account};
 			
-			Slim::Plugin::AudioScrobbler::Plugin::changeAccount( $client, $params->{account} );
+			Slim::Plugin::AudioScrobbler::Plugin::changeAccount( $client, $params->{pref_account} );
 		}
 	}
 	
