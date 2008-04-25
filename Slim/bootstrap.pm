@@ -109,13 +109,16 @@ sub loadModules {
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
 
+	my $perlmajorversion = $Config{'version'};
+	   $perlmajorversion =~ s/\.\d+$//;
+
 	@SlimINC = (
-		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
-		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
-		catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-		catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch, 'auto'),
+		catdir($libPath,'CPAN','arch',$Config{'version'}, $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$Config{'version'}, $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
 		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
 		catdir($libPath,'lib'), 
 		catdir($libPath,'CPAN'), 
