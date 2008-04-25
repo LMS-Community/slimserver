@@ -76,7 +76,7 @@ sub handler {
 
 	if ( $paramRef->{'saveSettings'} ) {
 		my $curLang = preferences('server')->get('language');
-		my $lang    = $paramRef->{'language'};
+		my $lang    = $paramRef->{'pref_language'};
 
 		# Bug 5443, Change the MySQL collation if switching to a language that doesn't work right with UTF8 collation
 		if ( $lang && $lang ne $curLang ) {

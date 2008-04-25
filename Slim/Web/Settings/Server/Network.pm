@@ -48,9 +48,9 @@ sub prefs {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
-	if ($paramRef->{'saveSettings'} && $paramRef->{'httpport'} ne $prefs->get('httpport')) {
+	if ($paramRef->{'saveSettings'} && $paramRef->{'pref_httpport'} ne $prefs->get('httpport')) {
 
-		my (undef, $ok) = $prefs->set('httpport', $paramRef->{'httpport'});
+		my (undef, $ok) = $prefs->set('httpport', $paramRef->{'pref_httpport'});
 
 		if ($ok) {
 			my $homeURL = Slim::Utils::Prefs::homeURL();
@@ -67,12 +67,12 @@ sub handler {
 		# warning for invalid value created by base class
 	}
 	
-	if ( defined $paramRef->{'noupnp'} && $paramRef->{'noupnp'} ne $prefs->get('noupnp') ) {
+	if ( defined $paramRef->{'pref_noupnp'} && $paramRef->{'pref_noupnp'} ne $prefs->get('noupnp') ) {
 		# Shut down all UPnP activity
 		Slim::Utils::UPnPMediaServer::shutdown();
 		
 		# Start it up again if the user enabled it
-		if ( !$paramRef->{'noupnp'} ) {
+		if ( !$paramRef->{'pref_noupnp'} ) {
 			Slim::Utils::UPnPMediaServer::init();
 		}
 	}
