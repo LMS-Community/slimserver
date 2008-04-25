@@ -31,6 +31,8 @@ use Slim::Web::Pages;
 
 use Scalar::Util qw(blessed);
 
+my $log = logger('prefs');
+
 my (@playerSettingsClasses, @topLevelItems, %topLevelItems);
 
 =head1 METHODS
@@ -139,22 +141,30 @@ sub handler {
 	for my $pref (@prefs) {
 
 		if ($paramRef->{'saveSettings'}) {
+			if (!defined $paramRef->{'pref_' . $pref} && defined $paramRef->{$pref}) {
+				$log->error('Preference names must be prefixed by "pref_" in the page template: ' . $pref . ' (' . $class->name . ')');
+				$paramRef->{'pref_' . $pref} = $paramRef->{$pref};
+			}
 
-			my (undef, $ok) = $prefsClass->set($pref, $paramRef->{$pref});
+			my (undef, $ok) = $prefsClass->set($pref, $paramRef->{'pref_' . $pref});
 
 			if ($ok) {
 				$paramRef->{'validated'}->{$pref} = 1; 
 			}
-			else { 
-				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref) . '<br/>';
+			else {
+				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{'pref_' . $pref}, $pref) . '<br/>';
 				$paramRef->{'validated'}->{$pref} = 0;
 			}
 		}
 
 		$paramRef->{'validate'}->{$pref} = $prefsClass->hasValidator($pref);
+		$paramRef->{'prefs'}->{'pref_' . $pref} = $prefsClass->get($pref);
+	
+		# XXX store prefs in legacy style, too - to be removed once we can give up on 7.0 backwards compatibility for plugins
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
+
 		if (defined $client && $pref eq 'playername') {
-			$client->execute(['name', $paramRef->{'prefs'}->{$pref}]);
+			$client->execute(['name', $paramRef->{'prefs'}->{'pref_' . $pref}]);
 		}
 	}
 

@@ -80,9 +80,9 @@ sub handler {
 			my $i = 0;
 			my @array;
 
-			while (defined $paramRef->{$pref.$i}) {
+			while (defined $paramRef->{'pref_'.$pref.$i}) {
 
-				if ($paramRef->{$pref.$i} ne "-1") {push @array, $paramRef->{$pref.$i};}
+				if ($paramRef->{'pref_'.$pref.$i} ne "-1") {push @array, $paramRef->{'pref_'.$pref.$i};}
 				$i++;
 			}
 
@@ -90,10 +90,10 @@ sub handler {
 		}
 	}
 
-	$paramRef->{'prefs'}->{'playername'} |= $client->name;
+	$paramRef->{'prefs'}->{'pref_playername'} |= $client->name;
 
 	for my $pref (@prefs) {
-		$paramRef->{'prefs'}->{$pref} = [ @{ $prefs->client($client)->get($pref) }, "-1" ];
+		$paramRef->{'prefs'}->{'pref_'.$pref} = [ @{ $prefs->client($client)->get($pref) }, "-1" ];
 	}
 
 	$paramRef->{'titleFormatOptions'}  = hashOfPrefs('titleFormat');

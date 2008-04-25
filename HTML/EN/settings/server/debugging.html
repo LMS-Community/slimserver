@@ -2,7 +2,7 @@
 
 	[% WRAPPER setting title="DEBUGGING_SETTINGS" desc="SETUP_GROUP_DEBUG_DESC" %]
 		<div>
-			<input name="persist" id="persist" type="checkbox" [% IF persist %] checked [% END %]>
+			<input name="persist" id="persist" type="checkbox" [% IF persist %] checked="1" [% END %]>
 			[% "PERSIST_DEBUG_SETTINGS" | string %]
 		</div>
 	[% END %]

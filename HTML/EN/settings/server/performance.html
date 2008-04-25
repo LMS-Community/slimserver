@@ -1,43 +1,43 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_DISABLESTATISTICS" desc="SETUP_DISABLESTATISTICS_DESC" %]
-		<select class="stdedit" name="disableStatistics" id="disableStatistics">
+		<select class="stdedit" name="pref_disableStatistics" id="disableStatistics">
 
-			<option [% IF NOT prefs.disableStatistics %]selected [% END %]value="0">[% 'SETUP_ENABLE_STATISTICS' | getstring %]</option>
-			<option [% IF prefs.disableStatistics %]selected [% END %]value="1">[% 'SETUP_DISABLE_STATISTICS' | getstring %]</option>
+			<option [% IF NOT prefs.pref_disableStatistics %]selected [% END %]value="0">[% 'SETUP_ENABLE_STATISTICS' | getstring %]</option>
+			<option [% IF prefs.pref_disableStatistics %]selected [% END %]value="1">[% 'SETUP_DISABLE_STATISTICS' | getstring %]</option>
 		
 		</select>
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_RESAMPLEARTWORK" desc="SETUP_RESAMPLEARTWORK_DESC" %]
-		<select class="stdedit" name="resampleArtwork" id="resampleArtwork">
+		<select class="stdedit" name="pref_resampleArtwork" id="resampleArtwork">
 
-			<option [% IF NOT prefs.resampleArtwork %]selected [% END %]value="0">[% 'SETUP_USE_RESIZE' | getstring %]</option>
-			<option [% IF prefs.resampleArtwork %]selected [% END %]value="1">[% 'SETUP_USE_RESAMPLE' | getstring %]</option>
+			<option [% IF NOT prefs.pref_resampleArtwork %]selected [% END %]value="0">[% 'SETUP_USE_RESIZE' | getstring %]</option>
+			<option [% IF prefs.pref_resampleArtwork %]selected [% END %]value="1">[% 'SETUP_USE_RESAMPLE' | getstring %]</option>
 		
 		</select>
 	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
-			<select class="stdedit" name="serverPriority" id="serverPriority">
+			<select class="stdedit" name="pref_serverPriority" id="serverPriority">
 	
 			[% option = "" %]
-			<option [% IF prefs.serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+			<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
-				<option [% IF prefs.serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+				<option [% IF prefs.pref_serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[%- END -%]
 	
 			</select>
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_SCANNERPRIORITY" desc="SETUP_SCANNERPRIORITY_DESC" %]
-			<select class="stdedit" name="scannerPriority" id="scannerPriority">
+			<select class="stdedit" name="pref_scannerPriority" id="scannerPriority">
 	
 			[% option = "" %]
-			<option [% IF prefs.scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+			<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[% FOREACH option = [-20..20] %]
-				<option [% IF prefs.scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+				<option [% IF prefs.pref_scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 			[%- END -%]
 	
 			</select>

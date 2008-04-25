@@ -60,9 +60,9 @@ sub handler {
 				
 				# The HTML form contains 2 irsetlistN items, so if the user
 				# unchecks the box to disable a set, we won't get an arrayref
-				if ( !ref $paramRef->{'irsetlist'.$i} ) {
+				if ( !ref $paramRef->{'pref_irsetlist'.$i} ) {
 
-					push @disabled, $paramRef->{'irsetlist'.$i};
+					push @disabled, $paramRef->{'pref_irsetlist'.$i};
 				}
 
 				Slim::Hardware::IR::loadIRFile($irsets[$i]);
@@ -71,7 +71,7 @@ sub handler {
 			$prefs->client($client)->set('disabledirsets', \@disabled);
 		}
 
-		$paramRef->{'prefs'}->{'disabledirsets'} = { map {$_ => 1} @{ $prefs->client($client)->get('disabledirsets') } };
+		$paramRef->{'prefs'}->{'pref_disabledirsets'} = { map {$_ => 1} @{ $prefs->client($client)->get('disabledirsets') } };
 
 		$paramRef->{'irmapOptions'}   = { %{Slim::Hardware::IR::mapfiles()}};
 		$paramRef->{'irsetlist'}      = { map {$_ => Slim::Hardware::IR::irfileName($_)} sort(keys %{Slim::Hardware::IR::irfiles($client)})};

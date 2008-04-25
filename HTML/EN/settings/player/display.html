@@ -1,6 +1,6 @@
 [% PROCESS settings/header.html %]
 [% IF prefs %]
-	[% IF prefs.exists('powerOnBrightness') %]
+	[% IF prefs.exists('pref_powerOnBrightness') %]
 		[% BLOCK brightnessoptions %]
 			[% FOREACH option = [ 0 .. maxBrightness ] %]
 				<option [% IF current == option %]selected [% END %]value="[%option %]">
@@ -14,30 +14,30 @@
 			[% desc="SETUP_GROUP_BRIGHTNESS_DESC" %]
 			
 			[% WRAPPER settingGroup title="SETUP_POWERONBRIGHTNESS_CHOOSE" %]
-				<select class="stdedit" name="powerOnBrightness" id="powerOnBrightness">
-					[% PROCESS brightnessoptions current = prefs.powerOnBrightness %]
+				<select class="stdedit" name="pref_powerOnBrightness" id="powerOnBrightness">
+					[% PROCESS brightnessoptions current = prefs.pref_powerOnBrightness %]
 				</select>
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_POWEROFFBRIGHTNESS_CHOOSE" desc="" %]
-				<select class="stdedit" name="powerOffBrightness" id="powerOffBrightness">
-					[% PROCESS brightnessoptions current = prefs.powerOffBrightness %]
+				<select class="stdedit" name="pref_powerOffBrightness" id="powerOffBrightness">
+					[% PROCESS brightnessoptions current = prefs.pref_powerOffBrightness %]
 				</select>	
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_IDLEBRIGHTNESS_CHOOSE" desc="" %]
-				<select class="stdedit" name="idleBrightness" id="idleBrightness">
-					[% PROCESS brightnessoptions current = prefs.idleBrightness %]
+				<select class="stdedit" name="pref_idleBrightness" id="idleBrightness">
+					[% PROCESS brightnessoptions current = prefs.pref_idleBrightness %]
 				</select>	
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_AUTOBRIGHTNESS_CHOOSE" desc="" %]
-				<select class="stdedit" name="autobrightness" id="autobrightness">
+				<select class="stdedit" name="pref_autobrightness" id="autobrightness">
 					[% FOREACH option = {
 						'1'   => 'SETUP_AUTOBRIGHTNESS_ON',
 						'0'   => 'SETUP_AUTOBRIGHTNESS_OFF',
 					} %]
-						<option [% IF prefs.autobrightness == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_autobrightness == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 				</select>
 			[% END %]
@@ -45,15 +45,15 @@
 		[% END %]
 	[% END %]
 
-	[% IF prefs.exists('activeFont') %]
+	[% IF prefs.exists('pref_activeFont') %]
 		[% WRAPPER setting title="SETUP_ACTIVEFONT" desc="SETUP_ACTIVEFONT_DESC" %]
-			[% FOREACH format = prefs.activeFont %]
+			[% FOREACH format = prefs.pref_activeFont %]
 				<div>
-					<input type=radio [% IF prefs.activeFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="activeFont_curr">
-					<select class="stdedit" name="activeFont[% loop.index %]" id="activeFont[% loop.index %]">
+					<input type=radio [% IF prefs.pref_activeFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="pref_activeFont_curr">
+					<select class="stdedit" name="pref_activeFont[% loop.index %]" id="activeFont[% loop.index %]">
 						[% num = loop.index %][% last = loop.max %]
 						[% FOREACH option = fontOptions.keys %]
-							<option [% IF prefs.activeFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
+							<option [% IF prefs.pref_activeFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
 						[%- END -%]
 					</select>
 				</div>
@@ -61,13 +61,13 @@
 		[% END %]
 
 		[% WRAPPER setting title="SETUP_IDLEFONT" desc="SETUP_IDLEFONT_DESC" %]
-			[% FOREACH format = prefs.idleFont %]
+			[% FOREACH format = prefs.pref_idleFont %]
 				<div>
-					<input type=radio [% IF prefs.idleFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="idleFont_curr">
-					<select class="stdedit" name="idleFont[% loop.index %]" id="idleFont[% loop.index %]">
+					<input type=radio [% IF prefs.pref_idleFont_curr == loop.index %]checked [% END %]value="[% loop.index %]" name="pref_idleFont_curr">
+					<select class="stdedit" name="pref_idleFont[% loop.index %]" id="idleFont[% loop.index %]">
 						[% num = loop.index %][% last = loop.max %]
 						[% FOREACH option = fontOptions.keys %]
-							<option [% IF prefs.idleFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
+							<option [% IF prefs.pref_idleFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
 						[%- END -%]
 					</select>
 				</div>
@@ -75,18 +75,18 @@
 		[% END %]
 	[% END %]
 	
-	[% IF prefs.exists('doublesize') %]
+	[% IF prefs.exists('pref_doublesize') %]
 		[% WRAPPER setting title="SETUP_DOUBLESIZE" desc="SETUP_DOUBLESIZE_DESC" %]
 			<table>
 				<tr>
 					<td><label for="doublesize" class="stdlabel">[% "SETUP_DOUBLESIZE" | string %][% "COLON" | string %]</label></td>
 					<td>
-						<select class="stdedit" name="doublesize" id="doublesize">
+						<select class="stdedit" name="pref_doublesize" id="doublesize">
 							[% FOREACH option = {
 								'1'   => 'LARGE',
 								'0'   => 'SMALL',
 							} %]
-								<option [% IF prefs.doublesize == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+								<option [% IF prefs.pref_doublesize == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 							[%- END -%]
 						</select>
 					</td>
@@ -95,12 +95,12 @@
 				<tr>
 					<td><label for="offDisplaySize" class="stdlabel">[% "SETUP_OFFDISPLAYSIZE" | string %][% "COLON" | string %]</label></td>
 					<td>
-						<select class="stdedit" name="offDisplaySize" id="offDisplaySize">
+						<select class="stdedit" name="pref_offDisplaySize" id="offDisplaySize">
 							[% FOREACH option = {
 								'1'   => 'LARGE',
 								'0'   => 'SMALL',
 							} %]
-								<option [% IF prefs.offDisplaySize == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+								<option [% IF prefs.pref_offDisplaySize == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 							[%- END -%]
 						</select>
 					</td>
@@ -109,27 +109,27 @@
 		[% END %]
 
 		[% WRAPPER setting title="SETUP_LARGETEXTFONT" desc="SETUP_LARGETEXTFONT_DESC" %]
-			<select class="stdedit" name="largeTextFont" id="largeTextFont">
+			<select class="stdedit" name="pref_largeTextFont" id="largeTextFont">
 				[% FOREACH option = {
 					'1'   => 'SETUP_LARGETEXTFONT_1',
 					'0'   => 'SETUP_LARGETEXTFONT_0',
 				} %]
-					<option [% IF prefs.largeTextFont == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_largeTextFont == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 				[%- END -%]
 			</select>	
 		[% END %]
 	[% END %]
 
-	[% IF prefs.exists('scrollMode') %]
+	[% IF prefs.exists('pref_scrollMode') %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="SETUP_SCROLLMODE" desc="SETUP_SCROLLMODE_DESC" %]
-				<select class="stdedit" name="scrollMode" id="scrollMode">
+				<select class="stdedit" name="pref_scrollMode" id="scrollMode">
 					[% FOREACH option = {
 						'0' => 'SETUP_SCROLLMODE_DEFAULT',
 						'1' => 'SETUP_SCROLLMODE_SCROLLONCE',
 						'2' => 'SETUP_SCROLLMODE_NOSCROLL'
 					} %]
-						<option [% IF prefs.scrollMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_scrollMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 				</select>
 			[% END %]
@@ -138,12 +138,12 @@
 				<table>
 					<tr>
 						<td><label for="scrollRate" class="stdlabel">[% "SINGLE-LINE" | string %] [% "SETUP_SCROLLRATE" | string %][% "COLON" | string %]</label></td>
-						<td><input type="text" class="stdedit" name="scrollRate" id="scrollRate" value="[% prefs.scrollRate %]" size="15"></td>
+						<td><input type="text" class="stdedit" name="pref_scrollRate" id="scrollRate" value="[% prefs.pref_scrollRate %]" size="15"></td>
 					</tr>
 			
 					<tr>
 						<td><label for="scrollRateDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLRATE" | string %][% "COLON" | string %]</label></td>
-						<td><input type="text" class="stdedit" name="scrollRateDouble" id="scrollRateDouble" value="[% prefs.scrollRateDouble %]" size="15"></td>
+						<td><input type="text" class="stdedit" name="pref_scrollRateDouble" id="scrollRateDouble" value="[% prefs.pref_scrollRateDouble %]" size="15"></td>
 					</tr>
 				</table>	
 			[% END %]
@@ -152,27 +152,27 @@
 				<table>
 					<tr>
 						<td><label for="scrollPause" class="stdlabel">[% "SINGLE-LINE" | string %] [% "SETUP_SCROLLPAUSE" | string %][% "COLON" | string %]</label></td>
-						<td><input type="text" class="stdedit" name="scrollPause" id="scrollPause" value="[% prefs.scrollPause %]" size="15"></td>
+						<td><input type="text" class="stdedit" name="pref_scrollPause" id="scrollPause" value="[% prefs.pref_scrollPause %]" size="15"></td>
 					</tr>
 	
 					<tr>
 						<td><label for="scrollPauseDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLPAUSE" | string %][% "COLON" | string %]</label></td>
-						<td><input type="text" class="stdedit" name="scrollPauseDouble" id="scrollPauseDouble" value="[% prefs.scrollPauseDouble %]" size="15"></td>
+						<td><input type="text" class="stdedit" name="pref_scrollPauseDouble" id="scrollPauseDouble" value="[% prefs.pref_scrollPauseDouble %]" size="15"></td>
 					</tr>
 				</table>	
 			[% END %]
 
-			[% IF prefs.exists('scrollPixels') %]
+			[% IF prefs.exists('pref_scrollPixels') %]
 				[% WRAPPER settingGroup title="SETUP_SCROLLPIXELS" desc="SETUP_SCROLLPIXELS_DESC" %]
 					<table>
 						<tr>
 							<td><label for="scrollPixels" class="stdlabel">[% "SINGLE-LINE" | string %] [% "SETUP_SCROLLPIXELS" | string %][% "COLON" | string %]</label></td>
-							<td><input type="text" class="stdedit" name="scrollPixels" id="scrollPixels" value="[% prefs.scrollPixels %]" size="15"></td>
+							<td><input type="text" class="stdedit" name="pref_scrollPixels" id="scrollPixels" value="[% prefs.pref_scrollPixels %]" size="15"></td>
 						</tr>
 		
 						<tr>
 							<td><label for="scrollPixelsDouble" class="stdlabel">[% "DOUBLE-LINE" | string %] [% "SETUP_SCROLLPIXELS" | string %][% "COLON" | string %]</label></td>
-							<td><input type="text" class="stdedit" name="scrollPixelsDouble" id="scrollPixelsDouble" value="[% prefs.scrollPixelsDouble %]" size="15"></td>
+							<td><input type="text" class="stdedit" name="pref_scrollPixelsDouble" id="scrollPixelsDouble" value="[% prefs.pref_scrollPixelsDouble %]" size="15"></td>
 						</tr>
 					</table>
 				[% END %]

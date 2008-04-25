@@ -38,7 +38,7 @@ sub handler {
 		# XXXX - handle install / uninstall / enable / disable
 		if ( $paramRef->{'saveSettings'} ) {
 			# don't handle enforced plugins
-			next if $plugins->{$plugin}->{'enforce'};
+			next if $plugins->{$plugin}->{'enforce'} || $plugins->{$plugin}->{error} < 0;
 
 			if (!$paramRef->{$name} && $pluginState->{$plugin}) {
 				push @changed, Slim::Utils::Strings::string($name);
