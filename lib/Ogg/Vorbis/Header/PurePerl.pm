@@ -29,10 +29,11 @@ sub new {
 		'fileHandle' => \*FILE,
 	);
 
-	_init(\%data);
-	_loadInfo(\%data);
-	_loadComments(\%data);
-	_calculateTrackLength(\%data);
+	if ( _init(\%data) ) {
+		_loadInfo(\%data);
+		_loadComments(\%data);
+		_calculateTrackLength(\%data);
+	}
 
 	undef $data{'fileHandle'};
 	close FILE;
@@ -82,23 +83,36 @@ sub _init {
 
 	# check the header to make sure this is actually an Ogg-Vorbis file
 	$data->{'startInfoHeader'} = _checkHeader($data) || return undef;
+	
+	return 1;
 }
 
 sub _skipID3Header {
 	my $fh = shift;
 
-	my $byteCount = 0;
+	read $fh, my $buffer, 3;
+	
+	my $byteCount = 3;
+	
+	if ( $buffer eq 'ID3' ) {
 
-	while (read($fh, my $buffer, 4)) {
+		while ( read $fh, $buffer, 4096 ) {
 
-		if ($buffer eq OGGHEADERFLAG) {
+			my $found;
+			if ( ( $found = index( $buffer, OGGHEADERFLAG ) ) >= 0 ) {
+				$byteCount += $found;
 
-			seek($fh, $byteCount, 0);
-			last;
+				seek $fh, $byteCount, 0;
+				
+				last;
+			}
+			else {
+				$byteCount += 4096;
+			}
 		}
-
-		$byteCount++;
-		seek($fh, $byteCount, 0);
+	}
+	else {
+		seek $fh, 0, 0;
 	}
 
 	return tell($fh);
@@ -115,6 +129,9 @@ sub _checkHeader {
 	# skip right past all of the header stuff
 
 	my $byteCount = _skipID3Header($fh);
+	
+	# Remember the start of the Ogg data
+	$data->{startHeader} = $byteCount;
 
 	# check that the first four bytes are 'OggS'
 	read($fh, $buffer, 27);
@@ -227,7 +244,7 @@ sub _loadComments {
 	my $data = shift;
 	
 	my $fh    = $data->{'fileHandle'};
-	my $start = $data->{'startCommentHeader'};
+	my $start = $data->{'startHeader'};
 	
 	$data->{COMMENT_KEYS} = [];
 	
@@ -236,9 +253,9 @@ sub _loadComments {
 	my $MAX_PACKETS = 2;
 	my $done;
 	my ($page, $packets, $streams) = (0,0,0,0);
-	my ($buff, $flag, $stream, %val);			
+	my ($buff, $flag, $stream, %val);
 
-	seek $fh, 0, 0;
+	seek $fh, $start, 0;
 	
 	while (1) {	
 		if ( !$done && read( $fh, $buff, 28 ) == 28 ) {
