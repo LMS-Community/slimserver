@@ -93,7 +93,7 @@ var Home = {
 
 	tuneInUrl : function(mode) {
 		var url = Ext.get('tuneinurl').dom.value;
-		SqueezeJS.Controller.checkShowBriefly({ showBriefly: [ SqueezeJS.string('connecting_for'), url ] });
+		SqueezeJS.Controller.showBriefly(SqueezeJS.string('connecting_for') + ' ' + url);
 
 		SqueezeJS.Controller.playerRequest({
 			params: ['playlist', mode, url]
