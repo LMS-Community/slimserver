@@ -40,15 +40,15 @@ sub handler {
 
 			my @array;
 
-			for (my $i = 0; defined $paramRef->{$pref.$i}; $i++) {
+			for (my $i = 0; defined $paramRef->{'pref_'.$pref.$i}; $i++) {
 
-				push @array, $paramRef->{$pref.$i} if $paramRef->{$pref.$i};
+				push @array, $paramRef->{'pref_'.$pref.$i} if $paramRef->{'pref_'.$pref.$i};
 			}
 
 			$prefs->set($pref, \@array);
 		}
 
-		if ($paramRef->{'titleFormatWeb'} ne $prefs->get('titleFormatWeb')) {
+		if ($paramRef->{'pref_titleFormatWeb'} ne $prefs->get('titleFormatWeb')) {
 
 			for my $client (Slim::Player::Client::clients()) {
 
@@ -57,11 +57,11 @@ sub handler {
 		}
 
 
-		if ($paramRef->{'skin'} ne $prefs->get('skin')) {
+		if ($paramRef->{'pref_skin'} ne $prefs->get('skin')) {
 			# use Classic instead of Default skin if the server's language is set to Hebrew
-			if ($prefs->get('language') eq 'HE' && $paramRef->{'skin'} eq 'Default') {
+			if ($prefs->get('language') eq 'HE' && $paramRef->{'pref_skin'} eq 'Default') {
 	
-				$paramRef->{'skin'} = 'Classic';
+				$paramRef->{'pref_skin'} = 'Classic';
 	
 			}
 
@@ -76,7 +76,7 @@ sub handler {
 	}
 
 	for my $pref (@prefs) {
-		$paramRef->{'prefs'}->{ $pref } = [ @{ $prefs->get($pref) || [] }, '' ];
+		$paramRef->{'prefs'}->{ 'pref_'.$pref } = [ @{ $prefs->get($pref) || [] }, '' ];
 	}
 
 	$paramRef->{'longdateoptions'}  = Slim::Utils::DateTime::longDateFormats();

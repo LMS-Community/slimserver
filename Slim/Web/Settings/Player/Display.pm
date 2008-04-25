@@ -77,9 +77,9 @@ sub handler {
 					my @array;
 					my $i = 0;
 
-					while (defined $paramRef->{$pref.$i}) {
+					while (defined $paramRef->{'pref_'.$pref.$i}) {
 
-						if ($paramRef->{$pref.$i} ne "-1") {push @array, $paramRef->{$pref.$i};}
+						if ($paramRef->{'pref_'.$pref.$i} ne "-1") {push @array, $paramRef->{'pref_'.$pref.$i};}
 
 						$i++;
 					}
@@ -88,8 +88,8 @@ sub handler {
 				}
 			}
 
-			$paramRef->{'prefs'}->{'activeFont'} = [ @{ $prefs->client($client)->get('activeFont') }, "-1" ];
-			$paramRef->{'prefs'}->{'idleFont'}   = [ @{ $prefs->client($client)->get('idleFont') }, "-1" ];
+			$paramRef->{'prefs'}->{'pref_activeFont'} = [ @{ $prefs->client($client)->get('activeFont') }, "-1" ];
+			$paramRef->{'prefs'}->{'pref_idleFont'}   = [ @{ $prefs->client($client)->get('idleFont') }, "-1" ];
 		}
 
 		# Load any option lists for dynamic options.

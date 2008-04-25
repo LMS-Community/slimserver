@@ -52,9 +52,9 @@ sub handler {
 
 			my @array;
 
-			for (my $i = 0; defined $paramRef->{$pref.$i}; $i++) {
+			for (my $i = 0; defined $paramRef->{'pref_'.$pref.$i}; $i++) {
 
-				push @array, $paramRef->{$pref.$i} if $paramRef->{$pref.$i};
+				push @array, $paramRef->{'pref_'.$pref.$i} if $paramRef->{'pref_'.$pref.$i};
 			}
 
 			$prefs->set($pref, \@array);
@@ -63,7 +63,7 @@ sub handler {
 	}
 
 	for my $pref (@prefs) {
-		$paramRef->{'prefs'}->{ $pref } = [ @{ $prefs->get($pref) || [] }, '' ];
+		$paramRef->{'prefs'}->{ 'pref_'.$pref } = [ @{ $prefs->get($pref) || [] }, '' ];
 	}
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
