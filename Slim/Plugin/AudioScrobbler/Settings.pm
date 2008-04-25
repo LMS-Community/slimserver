@@ -34,7 +34,7 @@ sub handler {
 	if ( $params->{saveSettings} ) {
 		
 		# Save existing accounts
-		$params->{accounts} = $prefs->get('accounts') || [];
+		$params->{pref_accounts} = $prefs->get('accounts') || [];
 		
 		# delete accounts
 		if ( my $delete = $params->{delete} ) {
@@ -44,7 +44,7 @@ sub handler {
 			
 			my $newlist = [];
 			ACCOUNT:
-			for my $account ( @{ $params->{accounts} } ) {
+			for my $account ( @{ $params->{pref_accounts} } ) {
 				for my $todelete ( @{$delete} ) {
 					if ( $todelete eq $account->{username} ) {
 						$log->debug( "Deleting account $todelete" );
@@ -55,29 +55,29 @@ sub handler {
 				push @{$newlist}, $account;
 			}
 			
-			$params->{accounts} = $newlist;
+			$params->{pref_accounts} = $newlist;
 		}
 		
 		# Save new account
-		if ( $params->{password} ) {
-			$params->{password} = md5_hex( $params->{password} );
+		if ( $params->{pref_password} ) {
+			$params->{pref_password} = md5_hex( $params->{pref_password} );
 		}
 		
 		# If the user added a username/password, we need to verify their info
-		if ( $params->{username} && $params->{password} ) {
+		if ( $params->{pref_username} && $params->{pref_password} ) {
 			Slim::Plugin::AudioScrobbler::Plugin::handshake( {
-				username => $params->{username},
-				password => $params->{password},
+				username => $params->{pref_username},
+				password => $params->{pref_password},
 				cb       => sub {
 					# Callback for OK handshake response
 					
-					push @{ $params->{accounts} }, {
-						username => $params->{username},
-						password => $params->{password},
+					push @{ $params->{pref_accounts} }, {
+						username => $params->{pref_username},
+						password => $params->{pref_password},
 					};
 					
 					if ( $log->is_debug ) {
-						$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{accounts} ) );
+						$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
 					}
 
 					my $body = $class->SUPER::handler( $client, $params );
@@ -102,8 +102,8 @@ sub handler {
 						$params->{warning} .= $error . '<br/>';						
 					}
 
-					delete $params->{username};
-					delete $params->{password};
+					delete $params->{pref_username};
+					delete $params->{pref_password};
 
 					my $body = $class->SUPER::handler( $client, $params );
 					$callback->( $client, $params, $body, @args );

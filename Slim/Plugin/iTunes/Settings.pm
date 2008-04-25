@@ -74,7 +74,7 @@ sub handler {
 	my ($class, $client, $params) = @_;
 
 	# Cleanup the checkbox
-	$params->{'itunes'} = defined $params->{'itunes'} ? 1 : 0;
+	$params->{'pref_itunes'} = defined $params->{'pref_itunes'} ? 1 : 0;
 
 	return $class->SUPER::handler($client, $params);
 }
