@@ -109,7 +109,7 @@ sub handler {
 	my ($class, $client, $params) = @_;
 
 	# Cleanup the checkbox
-	$params->{'musicip'} = defined $params->{'musicip'} ? 1 : 0;
+	$params->{'pref_musicip'} = defined $params->{'pref_musicip'} ? 1 : 0;
 
 	$params->{'filters'}  = grabFilters();
 

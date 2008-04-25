@@ -7,7 +7,7 @@
 	[% WRAPPER setting title="SETUP_CLI_OVER_RS232" desc="" %]
 		<div class="prefDesc">[% "SETUP_CLI_OVER_RS232_ENABLE" | string %]</div>
 
-		<input type="checkbox" class="stdedit" name="clioverrs232enable" id="clioverrs232enable" value="1" [% IF prefs.clioverrs232enable == 1 %] checked [% END %] >
+		<input type="checkbox" class="stdedit" name="pref_clioverrs232enable" id="clioverrs232enable" value="1" [% IF prefs.pref_clioverrs232enable == 1 %] checked [% END %] >
 	[% END %]
 
 [% PROCESS settings/footer.html %]

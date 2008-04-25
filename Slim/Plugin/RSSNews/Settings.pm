@@ -97,7 +97,7 @@ sub handler {
 
 	if ( $params->{saveSettings} ) {
 
-		if ( my $newFeedUrl  = $params->{newfeed} ) {
+		if ( my $newFeedUrl  = $params->{pref_newfeed} ) {
 			validateFeed( $newFeedUrl, {
 				cb  => sub {
 					my $newFeedName = shift;
@@ -114,7 +114,7 @@ sub handler {
 					my $error = shift;
 				
 					$params->{warning}   .= Slim::Utils::Strings::string( 'SETUP_PLUGIN_RSSNEWS_INVALID_FEED', $error );
-					$params->{newfeedval} = $params->{newfeed};
+					$params->{newfeedval} = $params->{pref_newfeed};
 				
 					my $body = $class->saveSettings( $client, \@feeds, $params );
 					$callback->( $client, $params, $body, @args );

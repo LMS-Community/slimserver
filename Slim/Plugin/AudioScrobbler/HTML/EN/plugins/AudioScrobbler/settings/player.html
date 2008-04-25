@@ -1,14 +1,14 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER" desc="SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC" %]
-		<select name="account">
+		<select name="pref_account">
 			<option value="0">[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED" | string %]</option>
-		[% FOR global_account IN prefs.accounts %]
-			<option value="[% global_account.username %]" [% IF global_account.username == prefs.account %]selected="selected"[% END %] />[% global_account.username %]</option>
+		[% FOR global_account IN prefs.pref_accounts %]
+			<option value="[% global_account.username %]" [% IF global_account.username == prefs.pref_account %]selected="selected"[% END %] />[% global_account.username %]</option>
 		[% END %]
 		</select>
 		
-		[% IF !prefs.enable_scrobbling %]
+		[% IF !prefs.pref_enable_scrobbling %]
 			<br /><br />
 			[% "SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED" | string %]
 		[% END %]
