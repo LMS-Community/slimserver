@@ -2021,7 +2021,7 @@ sub downloadQuery {
 
 		my $entry = {
 			$type     => $val->{'name'},
-			'name'    => $client->getString($val->{'name'}),
+			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
 			'url'     => $url,
 			'file'    => $val->{'file'},
 		};
