@@ -61,10 +61,12 @@ use constant INSTALLERROR_INCOMPATIBLE_PLATFORM => -5;
 use constant INSTALLERROR_BLOCKLISTED           => -6;
 use constant INSTALLERROR_NO_PLUGIN             => -7;
 
+use constant CACHE_VERSION => 1;
+
 my @pluginDirs     = Slim::Utils::OSDetect::dirsFor('Plugins');
 my @pluginRootDirs = ();
 my $plugins        = {};
-my $rootDir        = '';
+my $cacheInfo      = {};
 
 my $prefs = preferences('plugin.state');
 my $log   = logger('server.plugins');
@@ -77,50 +79,61 @@ sub init {
 	require PAR;
 	PAR->import;
 
-	my ($manifestFiles, $newest) = $class->findInstallManifests;
+	my ($manifestFiles, $sum) = $class->findInstallManifests;
+
+	my $cacheInvalid;
 
 	if (!scalar keys %{$prefs->all}) {
 
-		$log->info("Reparsing plugin manifests - plugin states are not defined.");
+		$cacheInvalid = 'plugins states are not defined';
 
-		$class->readInstallManifests($manifestFiles);
+	} elsif ( -r $class->pluginCacheFile ) {
 		
-	}
+		$class->loadPluginCache;
 
-	# Load the plugin cache file
-	if ( -r $class->pluginCacheFile ) {
-		if (!$class->loadPluginCache) {
+		if ($cacheInfo->{'version'} != CACHE_VERSION) {
 
-			$class->checkPluginVersions;
+			$cacheInvalid = 'cache version does not match';
+
+		} elsif ($cacheInfo->{'bin'} ne $Bin) {
+
+			$cacheInvalid = 'binary location does not match';
+
+		} elsif ($cacheInfo->{'count'} != scalar @{$manifestFiles}) {
+
+			$cacheInvalid = 'different number of plugins in cache';
+
+		} elsif ($cacheInfo->{'mtimesum'} != $sum) {
+
+			$cacheInvalid = 'manefest checksum differs';
 		}
 
-		# process any pending operations
+	} else {
+
+		$cacheInvalid = 'no plugin cache';
+	}
+
+	if ($cacheInvalid) {
+
+		$log->warn("Reparsing plugin manifests - $cacheInvalid");
+
+		$class->readInstallManifests($manifestFiles);
+
+	} else {
+
+		$class->checkPluginVersions;
+
 		$class->runPendingOperations;
 	}
 
-	# parse the manifests if cache file is older than newest install.xml file
-	if ( (stat($class->pluginCacheFile))[9] < $newest ) {
-
-		$log->info("Reparsing plugin manifests - new manifest found.");
-
-		$class->readInstallManifests($manifestFiles);
-	}
-
-	elsif (scalar keys %$plugins != scalar @$manifestFiles) {
-
-		$log->info("Reparsing plugin manifests - cache contains different number of plugins");
-
-		$class->readInstallManifests($manifestFiles);
-	}
-
-	elsif ( $rootDir ne $Bin ) {
-
-		$log->info("Reparsing plugin manifests - SC running from different folder than when cache was written");
-
-		$class->readInstallManifests($manifestFiles);
-	}
-
 	$class->enablePlugins;
+
+	$cacheInfo = {
+		'version' => CACHE_VERSION,
+		'bin'     => $Bin,
+		'count'   => scalar @{$manifestFiles},
+		'mtimesum'=> $sum,
+	};
 
 	$class->writePluginCache;
 }
@@ -136,20 +149,12 @@ sub writePluginCache {
 
 	$log->info("Writing out plugin data file.");
 
-	# Append the version number of the currently running server, so we
-	# can check for updates.
-	$plugins->{'__version'} = $::VERSION;
-
-	# Append the SC installation folder, so we
-	# can check for moved installations/differnent branch running
-	$plugins->{'__installationFolder'} = $Bin;
+	# add the cacheinfo data
+	$plugins->{'__cacheinfo'} = $cacheInfo;
 
 	YAML::Syck::DumpFile($class->pluginCacheFile, $plugins);
 
-	delete $plugins->{'__version'};
-	$rootDir = delete $plugins->{'__installationFolder'};
-
-	return 1;
+	delete $plugins->{'__cacheinfo'};
 }
 
 sub loadPluginCache {
@@ -159,22 +164,26 @@ sub loadPluginCache {
 
 	$plugins = YAML::Syck::LoadFile($class->pluginCacheFile);
 
-	$rootDir = delete $plugins->{'__installationFolder'};
+	$cacheInfo = delete $plugins->{'__cacheinfo'} || { 
+		'version' => -1,
+	};
 
-	my $checkVersion = delete $plugins->{'__version'};
+	if ($log->is_debug) {
+		$log->debug("Cache Version: " . $cacheInfo->{'version'} . 
+			" Bin: ", $cacheInfo->{'bin'} . 
+			" Plugins: " . $cacheInfo->{'count'} . 
+			" MTimeSum: " . $cacheInfo->{'mtimesum'} );
 
-	if (!$checkVersion || $checkVersion ne $::VERSION) {
-
-		return 0;
+		for my $plugin (sort keys %{$plugins}){
+			$log->debug("  $plugin");
+		}
 	}
-
-	return 1;
 }
 
 sub findInstallManifests {
 	my $class = shift;
 
-	my $newest = 0;
+	my $mtimesum = 0;
 	my @files;
 
 	# Only find plugins that have been installed.
@@ -189,13 +198,11 @@ sub findInstallManifests {
 
 	while ( my $file = $iter->() ) {
 
-		my $mtime = (stat($file))[9];
-		$newest = $mtime if $mtime > $newest;
-
+		$mtimesum += (stat($file))[9];
 		push @files, $file;
 	}
 
-	return (\@files, $newest);
+	return (\@files, $mtimesum);
 }
 
 sub readInstallManifests {
