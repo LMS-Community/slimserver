@@ -38,6 +38,15 @@ sub new {
 		$favs->_loadOldFavorites;
 	}
 
+	Slim::Control::Request::subscribe(sub {
+		my $request = shift;
+
+		if ($request->getRequestString() eq 'rescan done'){
+			$favs->_urlindex;
+		}
+		
+	}, [['rescan', 'done']]);
+
 	return $favs;
 }
 
@@ -102,8 +111,9 @@ sub _urlindex {
 			$class->{'url-hotkey'}->{ $entry->{'URL'} || $entry->{'url'} } = $entry->{'hotkey'};
 		}
 
-		if (!$entry->{'icon'}) {
-			$entry->{'icon'} = $class->icon($entry->{'URL'});
+		# look up icon if not defined or an album or track (can change during rescan)
+		if (!$entry->{'icon'} || $entry->{'URL'} =~ /^db:album/ || $entry->{'URL'} =~ /^file:/) {
+			$log->error($entry->{'URL'}, ', ', $entry->{'icon'});
 		}
 
 		if ($entry->{'outline'}) {
