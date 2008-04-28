@@ -331,7 +331,7 @@ sub exitSetHandler {
 
 	$exittype = uc($exittype);
 
-	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
+	if ($exittype eq 'LEFT' || $exittype eq 'RIGHT' ||  $exittype eq 'PLAY') {
 
 		my $times = $prefs->client($client)->get('alarmtime');
 		$times->[ weekDay($client) ] = ${$client->modeParam('valueRef')};
@@ -339,9 +339,6 @@ sub exitSetHandler {
 
 		Slim::Buttons::Common::popModeRight($client);
 
-	} elsif ($exittype eq 'RIGHT') {
-
-		$client->bumpRight();
 	}
 }
 
