@@ -3516,7 +3516,10 @@ sub songinfoQuery {
 		$count += 0;
 
 		# insertPlay will add Play & Add items - have to fix by two elements
+		# first for Play
 		my $totalCount = _fixCount($insertPlay, \$index, \$quantity, $count);
+		# then for Add (note we are now sending the amended $totalCount to _fixCount()
+		$totalCount = _fixCount($insertPlay, \$index, \$quantity, $totalCount);
 
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -3954,7 +3957,7 @@ sub songinfoQuery {
 				}
 				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 			}
-			
+
 			# because of suppression of some items, only now can we add the count
 			$request->addResult("count", $totalCount);
 
