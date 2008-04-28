@@ -13,6 +13,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Music::Info;
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
@@ -98,6 +99,59 @@ sub handlerForURL {
 	
 	# Handler should be a class, not '1' for rtsp
 	return $handler =~ /::/ ? $handler : undef;
+}
+
+sub iconForURL {
+	my ($class, $url, $client) = @_;
+
+	if (my $handler = $class->handlerForURL($url)) {
+		if ($client) {
+			return $handler->getMetadataFor($client, $url);
+		}
+		else {
+			return $handler->getIcon($url);
+		}
+	}
+
+	elsif ( ($url =~ /^file:/ && Slim::Music::Info::isPlaylist($url)) || $url =~ /^[a-z0-9\-]*playlist:/) {
+		return 'html/images/playlists.png';
+	}
+
+	elsif ( ($url =~ /^file:/ && Slim::Music::Info::isSong($url))) {
+		my $track = Slim::Schema->rs('Track')->objectForUrl({
+			'url' => $url,
+		});
+
+		if ($track && $track->coverArt) {
+			return 'music/' . $track->id . '/cover.png';
+		}
+
+		return 'html/images/cover.png';
+	}
+
+	elsif ($url =~ /^db:album\.(\w+)=(.+)/) {
+		my $album = Slim::Schema->single('Album', { $1 => Slim::Utils::Misc::unescape($2) });
+
+		if ($album && $album->artwork) {
+			return 'music/' . $album->artwork . '/cover.png';
+		}
+
+		return 'html/images/albums.png'
+	}
+
+	elsif ($url =~ /^db:contributor/) {
+		return 'html/images/artists.png'
+	}
+
+	elsif ($url =~ /^db:year/) {
+		return 'html/images/years.png'
+	}
+
+	elsif ($url =~ /^db:genre/) {
+		return 'html/images/genres.png'
+	}
+
+	return;
 }
 
 # Dynamically load in the protocol handler classes to save memory.
