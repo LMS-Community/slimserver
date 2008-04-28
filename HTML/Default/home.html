@@ -118,14 +118,15 @@ ELSE %]
 					[% ELSE %]
 						<a href="[% link.value %]player=[% player %]" class="browseItemLink">
 					[% END %]
-						[% IF additionalLinks.icons.${link.key} && !noIcon %]
+						[% IF (additionalLinks.icons.${link.key} || link.icon) && !noIcon %]
+							[% link.icon = additionalLinks.icons.${link.key} || link.icon %]
 							<span class="browseCover">
-								<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
+								<img src="[% webroot %][% link.icon.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | getstring %]">
 							</span>
 							<div class="smallBrowseItemDetail">
 						[% END %]
 						[% link.key | getstring %]
-						[% IF additionalLinks.icons.${link.key} && !noIcon %]
+						[% IF link.icon && !noIcon %]
 							</div>
 						[% END %]
 					[% IF !expandable %]
@@ -145,16 +146,16 @@ ELSE %]
 	[% pagetitle = "HOME" | string %]
 	[% menu = BLOCK %]
 	<div class="homeMenuSection" id="homeMenu">
-		[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
+		[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" noIcon=1 %]
 		<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 	
 		[% IF additionalLinks.radios %]
-			[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" %]
+			[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" noIcon=1 %]
 			<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
 		[% END %]
 	
 		[% IF additionalLinks.music_services %]
-			[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" %]
+			[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" noIcon=1 %]
 			<div id="MUSIC_SERVICES_expanded" class="expandableHomeMenuItem">[%- music_servicesItems -%]</div>
 		[% END %]
 
@@ -177,7 +178,7 @@ ELSE %]
 				FOREACH entry = favorites;
 					control = BLOCK;
 						IF entry.type == "audio";
-							 WRAPPER playlink noTarget=1 -%]
+							WRAPPER playlink noTarget=1 -%]
 								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true);"
 							[%- END;
 							WRAPPER addlink noTarget=1 -%]
@@ -189,12 +190,14 @@ ELSE %]
 						END;
 					END;
 
-					PROCESS menuItem 
+					PROCESS menuItem noIcon=!entry.icon
 						link = {
+							icon = entry.icon,
 							key = entry.text,
 							value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ loop.index _ "&amp;player=" _ playerURI
 						};
-				END
+				END;
+				noIcon=1
 			%]
 			</div>
 		[% END %]

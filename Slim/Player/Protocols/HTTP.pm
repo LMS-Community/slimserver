@@ -460,7 +460,7 @@ sub getMetadataFor {
 		}
 	}
 	
-	if ( $url =~ /mp3tunes\.com/ ) {
+	if ( $url =~ /mp3tunes\.com/ || $url =~ m|squeezenetwork\.com.+/mp3tunes| ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MP3tunes::Plugin') ) {
 			my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
 			my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
@@ -494,7 +494,7 @@ sub getMetadataFor {
 			}
 		}
 	}
-	elsif ( $url =~ /archive\.org/ ) {
+	elsif ( $url =~ /archive\.org/ || $url =~ m|squeezenetwork\.com.+/lma/| ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
 			my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
 			return {
@@ -505,7 +505,7 @@ sub getMetadataFor {
 			};
 		}
 	}
-	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ) {
+	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ||  $url =~ /\.radioio\.com/ ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RadioIO::Plugin') ) {
 			# RadioIO
 			my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
@@ -527,6 +527,33 @@ sub getMetadataFor {
 	}
 	
 	return {};
+}
+
+sub getIcon {
+	my ( $class, $url ) = @_;
+
+	if ( $url =~ /mp3tunes\.com/ || $url =~ m|squeezenetwork\.com.*/mp3tunes| ) {
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MP3tunes::Plugin') ) {
+			return Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
+		}
+	}
+	elsif ( $url =~ /archive\.org/ || $url =~ m|squeezenetwork\.com.*/lma/| ) {
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
+			return Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
+		}
+	}
+	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ||  $url =~ /\.radioio\.com/ ) {
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RadioIO::Plugin') ) {
+			return Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
+		}
+	}
+	elsif ( $url =~ /\.shoutcast\.com/ || $url =~ m|squeezenetwork\.com.*/shoutcast/| ) {
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::ShoutcastBrowser::Plugin') ) {
+			return Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon');
+		}
+	}
+
+	return 'html/images/ServiceProviders/tuneinurl.png';
 }
 
 sub canSeek {
