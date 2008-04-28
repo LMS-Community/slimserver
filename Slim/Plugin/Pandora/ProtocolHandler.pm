@@ -597,7 +597,7 @@ sub getMetadataFor {
 		$track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack')
 	}
 	
-	my $icon = Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon');
+	my $icon = $class->getIcon();
 	
 	if ( $track ) {
 		return {
@@ -639,6 +639,12 @@ sub getMetadataFor {
 			type    => 'MP3 (Pandora)',
 		};
 	}
+}
+
+sub getIcon {
+	my ( $class, $url ) = @_;
+
+	return Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon');
 }
 
 1;

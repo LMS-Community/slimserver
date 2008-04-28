@@ -721,7 +721,7 @@ sub getMetadataFor {
 		$track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 	}
 	
-	my $icon = Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon');
+	my $icon = $class->getIcon();
 
 	if ( $track ) {
 		# Fav icon changes if the user has already rated it up
@@ -768,6 +768,12 @@ sub getMetadataFor {
 			type    => 'MP3 (Slacker)',
 		};
 	}
+}
+
+sub getIcon {
+	my ( $class, $url ) = @_;
+
+	return Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon');
 }
 
 1;

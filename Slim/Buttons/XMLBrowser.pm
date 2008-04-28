@@ -1955,9 +1955,15 @@ sub _cliQuery_done {
 								item_id => "$id", #stringify, make sure it's a string
 							};
 						}
-						
+
 						if ( $item->{image} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
+							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
+							$hasImage = 1;
+						}
+
+						if ( $item->{icon} ) {
+							$request->addResultLoop( $loopname, $cnt, 'icon-id', $item->{icon} );
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}
