@@ -38,6 +38,15 @@ sub new {
 		$favs->_loadOldFavorites;
 	}
 
+	Slim::Control::Request::subscribe(sub {
+		my $request = shift;
+
+		if ($request->getRequestString() eq 'rescan done'){
+			$favs->_urlindex;
+		}
+		
+	}, [['rescan', 'done']]);
+
 	return $favs;
 }
 
@@ -52,6 +61,13 @@ sub filename {
 	}
 
 	return catdir($dir, "favorites.opml");
+}
+
+sub icon {
+	my $class = shift;
+	my $url = shift;
+
+	return Slim::Player::ProtocolHandlers->iconForURL($url) || 'html/images/favorites.png';
 }
 
 sub load {
@@ -95,6 +111,11 @@ sub _urlindex {
 			$class->{'url-hotkey'}->{ $entry->{'URL'} || $entry->{'url'} } = $entry->{'hotkey'};
 		}
 
+		# look up icon if not defined or an album or track (can change during rescan)
+		if (!$entry->{'icon'} || $entry->{'URL'} =~ /^db:album/ || $entry->{'URL'} =~ /^file:/) {
+			$entry->{'icon'} = $class->icon($entry->{'URL'});
+		}
+
 		if ($entry->{'outline'}) {
 			$class->_urlindex($entry->{'outline'}, $index."$i.");
 		}
@@ -126,6 +147,8 @@ sub _loadOldFavorites {
 			$entry->{'hotkey'} = shift @hotkeys;
 		}
 
+		$entry->{'icon'} = $class->icon($entry->{'url'});
+
 		push @$toplevel, $entry;
 	}
 
@@ -151,6 +174,7 @@ sub add {
 	my $type   = shift;
 	my $parser = shift;
 	my $hotkey = shift; # pick next available hotkey for this url
+	my $icon   = shift;
 
 	if (!$url) {
 		logWarning("No url passed! Skipping.");
@@ -164,7 +188,7 @@ sub add {
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
 	if ( $log->is_info ) {
-		$log->info(sprintf("url: %s title: %s type: %s parser: %s hotkey: %s", $url, $title, $type, $parser, $hotkey));
+		$log->info(sprintf("url: %s title: %s type: %s parser: %s hotkey: %s icon: %s", $url, $title, $type, $parser, $hotkey, $icon));
 	}
 
 	# if it is already a favorite, don't add it again return the existing entry
@@ -200,6 +224,8 @@ sub add {
 			}
 		}
 	}
+
+	$entry->{'icon'} = $icon || $class->icon($entry->{'url'});
 
 	# add it to end of top level
 	push @{$class->toplevel}, $entry;

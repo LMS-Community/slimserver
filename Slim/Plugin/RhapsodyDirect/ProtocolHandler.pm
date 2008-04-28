@@ -1262,7 +1262,7 @@ sub getMetadataFor {
 		);
 	}
 	
-	my $icon = Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
+	my $icon = $class->getIcon();
 	
 	return $meta->{$url} || {
 		bitrate   => '128k CBR',
@@ -1270,6 +1270,12 @@ sub getMetadataFor {
 		icon      => $icon,
 		cover     => $icon,
 	};
+}
+
+sub getIcon {
+	my ( $class, $url ) = @_;
+
+	return Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
 }
 
 # SN only, re-init upon reconnection

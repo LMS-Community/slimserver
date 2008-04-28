@@ -659,6 +659,17 @@ SqueezeJS.Utils = {
 		formattedTime += (minutes ? (minutes < 10 && hours ? '0' : '') + minutes : '0') + ':';
 		formattedTime += (seconds ? (seconds < 10 ? '0' : '') + seconds : '00');
 		return (remaining ? '-' : '') + formattedTime;
+	},
+
+	toggleFavorite : function(el, url, title) {
+		var el = Ext.get(el);
+		if (el) {
+			el.getUpdateManager().showLoadIndicator = false;
+			el.load({
+				url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&player=' + player,
+				method: 'GET'
+			});
+		}
 	}
 };
 
@@ -723,7 +734,7 @@ function refreshStatus() {
 }
 
 function setCookie(name, value) {
-	Utils.setCookie(name, value);
+	SqueezeJS.setCookie(name, value);
 }
 
 function resize(src, width) {
