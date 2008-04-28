@@ -67,7 +67,7 @@ sub icon {
 	my $class = shift;
 	my $url = shift;
 
-	return Slim::Player::ProtocolHandlers->iconForURL($url) || 'html/images/b_favorite.gif';
+	return Slim::Player::ProtocolHandlers->iconForURL($url) || 'html/images/favorites.png';
 }
 
 sub load {
@@ -113,7 +113,7 @@ sub _urlindex {
 
 		# look up icon if not defined or an album or track (can change during rescan)
 		if (!$entry->{'icon'} || $entry->{'URL'} =~ /^db:album/ || $entry->{'URL'} =~ /^file:/) {
-			$log->error($entry->{'URL'}, ', ', $entry->{'icon'});
+			$entry->{'icon'} = $class->icon($entry->{'URL'});
 		}
 
 		if ($entry->{'outline'}) {

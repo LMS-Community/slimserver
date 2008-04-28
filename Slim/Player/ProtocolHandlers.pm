@@ -117,20 +117,25 @@ sub iconForURL {
 		return 'html/images/playlists.png';
 	}
 
-	# TODO: track/album should return current artwork
 	elsif ( ($url =~ /^file:/ && Slim::Music::Info::isSong($url))) {
 		my $track = Slim::Schema->rs('Track')->objectForUrl({
 			'url' => $url,
 		});
 
-		if ($track->coverArt) {
+		if ($track && $track->coverArt) {
 			return 'music/' . $track->id . '/cover.png';
 		}
 
 		return 'html/images/cover.png';
 	}
 
-	elsif ($url =~ /^db:album\.titlesearch=(.*)/) {
+	elsif ($url =~ /^db:album\.(\w+)=(.+)/) {
+		my $album = Slim::Schema->single('Album', { $1 => Slim::Utils::Misc::unescape($2) });
+
+		if ($album && $album->artwork) {
+			return 'music/' . $album->artwork . '/cover.png';
+		}
+
 		return 'html/images/albums.png'
 	}
 
