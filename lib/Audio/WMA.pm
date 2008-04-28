@@ -429,7 +429,7 @@ sub _parseASFExtendedContentDescriptionObject {
 		my $data_length  = unpack('v', $self->_readAndIncrementOffset($WORD));
 		my $value        = $self->_bytesToValue($data_type, $self->_readAndIncrementOffset($data_length));
 
-		if ($DEBUG && $name ne 'WM/Picture') {
+		if ( $DEBUG && uc($name) ne 'WM/PICTURE' ) {
 			print "Ext Cont Desc: $id";
 			print "\tname   = $name\n";
 			print "\tvalue  = $value\n";
@@ -448,7 +448,7 @@ sub _parseASFExtendedContentDescriptionObject {
 		#  BYTE*  pbData;
 		# };
 
-		if ($name eq 'WM/Picture') {
+		if ( uc($name) eq 'WM/PICTURE' ) {
 
 			my $image_type_id = unpack('v', substr($value, 0, 1));
 			my $image_size    = unpack('v', substr($value, 1, $DWORD));
