@@ -537,6 +537,8 @@ sub artistsQuery {
 			$where->{'genreTracks.genre'} = $genreID;
 			push @{$attr->{'join'}}, {'contributorTracks' => {'track' => 'genreTracks'}};
 			
+			$where->{'contributorTracks.role'} = { 'in' => Slim::Schema->artistOnlyRoles };
+			
 			$where_va->{'genreTracks.genre'} = $genreID;
 			push @{$attr_va->{'join'}}, {'tracks' => 'genreTracks'};
 		}
@@ -591,7 +593,7 @@ sub artistsQuery {
 		}
 		
 		# use browse here
-		$rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
+		$rs = Slim::Schema->rs('Contributor')->browse( undef, $where )->search( {}, $attr );
 	}
 	
 	my $count = $rs->count;

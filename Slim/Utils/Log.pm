@@ -808,7 +808,7 @@ sub _defaultCategories {
 		'scan.scanner'               => 'ERROR',
 		'scan.import'                => 'ERROR',
 
-		'perfmon'                    => 'ERROR, screen-raw, perfmon',
+		'perfmon'                    => 'WARN, screen-raw, perfmon', # perfmon assumes this is set to WARN
 	);
 
 	# Map our shortened names to the ones l4p wants.
