@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<extension>
+	<id>FDED34DE-2691-4096-8E25-752E2BFEA8DC</id>
+	<name>PLUGIN_SIRIUS_MODULE_NAME</name>
+	<module>Slim::Plugin::Sirius::Plugin</module>
+	<playerMenu>RADIO</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_SIRIUS_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Sirius/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

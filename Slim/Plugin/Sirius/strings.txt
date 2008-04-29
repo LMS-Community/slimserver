@@ -1,0 +1,47 @@
+PLUGIN_SIRIUS_MODULE_NAME
+	DE	Internetradio SIRIUS
+	EN	SIRIUS Internet Radio
+	ES	SIRIUS Internet Radio
+	FR	Radio Internet SIRIUS
+	HE	רדיו אינטרנט ‏SIRIUS
+	IT	Radio Internet SIRIUS
+	NL	SIRIUS Internet Radio
+
+PLUGIN_SIRIUS_ERROR
+	DE	SIRIUS-Fehler
+	EN	SIRIUS Error
+	ES	Error de SIRIUS
+	FR	Erreur SIRIUS
+	HE	שגיאה ב-SIRIUS
+	IT	Errore SIRIUS
+	NL	SIRIUS-fout
+
+PLUGIN_SIRIUS_NO_INFO
+	EN	Unable to retrieve channel info.
+
+PLUGIN_SIRIUS_GETTING_STREAM_INFO
+	DE	Streaminfos werden geladen ...
+	EN	Getting stream info...
+	ES	Obteniendo información de secuencia...
+	FR	Obtention des informations sur le flux...
+	HE	מקבל פרטי זרימה...
+	IT	Recupero info su flusso...
+	NL	Stroominfo wordt opgehaald...
+
+PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED
+	DE	Stream angehalten, Berechtigung zum Hören erloschen.
+	EN	Stream stopped, you are no longer authorized to listen.
+	ES	Se ha detenido la secuencia. No tiene autorización para escuchar.
+	FR	Flux arrêté, vous n'êtes plus autorisé à l'écouter.
+	HE	הזרימה הופסקה, אינך מורשה עוד להאזין.
+	IT	Flusso interrotto. Non si è più autorizzati all'ascolto.
+	NL	Stroom gestopt; je hebt geen rechten meer om te luisteren.
+
+PLUGIN_SIRIUS_STOPPING_INACTIVE
+	DE	Erlaubte SIRIUS-Pause überschritten, drücken Sie zum Weiterhören PLAY.
+	EN	SIRIUS idle time exceeded, press PLAY to continue listening.
+	ES	Se ha excedido el tiempo de inactividad en SIRIUS. Pulse PLAY para continuar escuchando.
+	FR	Temps d'inactivité SIRIUS dépassé, appuyez sur PLAY pour continuer l'écoute.
+	HE	חריגה מפרק הזמן שהוקצב לחוסר פעילות של SIRIUS, לחץ על PLAY (הפעלה) כדי להמשיך בהאזנה.
+	IT	Tempo di inattività di SIRIUS superato. Premere PLAY per proseguire l'ascolto.
+	NL	Niet-actieve tijd van SIRIUS overschreden. Druk op PLAY om door te gaan.
