@@ -69,7 +69,7 @@ sub searchNames {
 sub browse {
 	my $self = shift;
 	my $find = shift;
-	my $cond = shift;
+	my $cond = shift || {};
 	my $sort = shift;
 
 	my @joins = ();
@@ -77,8 +77,10 @@ sub browse {
 
 	# The user may not want to include all the composers / conductors
 	if ($roles) {
-
-		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
+		# Bug 7992, Don't join on contributorAlbums if this is for a genre query
+		if ( !exists $cond->{'genreTracks.genre'} ) {
+			$cond->{'contributorAlbums.role'} = { 'in' => $roles };
+		}
 	}
 
 	if (preferences('server')->get('variousArtistAutoIdentification')) {
@@ -89,7 +91,9 @@ sub browse {
 
 	} elsif ($roles) {
 
-		push @joins, 'contributorAlbums';
+		if ( !exists $cond->{'genreTracks.genre'} ) {
+			push @joins, 'contributorAlbums';
+		}
 	}
 
 	return $self->search($cond, {
