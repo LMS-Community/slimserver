@@ -1432,7 +1432,7 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 			this.container.getUpdateManager().showLoadIndicator = true;
 
 		this.container.load(
-			{ url: url || webroot + 'playlist.html?ajaxRequest=1&player=' + SqueezeJS.getPlayer() + (Ext.isIE6 ? '&uid=' + Date.parse(Date()) : '')},
+			{ url: (url || webroot + 'playlist.html?ajaxRequest=1&player=' + SqueezeJS.getPlayer()) + '&uid=' + Date.parse(Date()) },
 			{},
 			this._onUpdated.createDelegate(this),
 			true
