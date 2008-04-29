@@ -19,6 +19,13 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
+use Slim::Utils::Unicode;
+
+{
+	if ($^O =~ /Win32/) {
+		require Win32;
+	}
+}
 
 our %commandTable = ();
 our %binaries = ();
@@ -342,7 +349,14 @@ sub tokenizeConvertCommand {
 	if ( $command =~ /mov123/ && $fullpath =~ /^http/ ) {
 		$filepath = $fullpath;
 	}
-	
+
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		$filepath = Win32::GetShortPathName($filepath);
+	}
+	else {
+		$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
+	}
+
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
 	$command =~ s/\$RATE\$/$sampleRate/g;
