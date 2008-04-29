@@ -340,6 +340,10 @@ play.*						= dead
 play						= exit_play
 add.*						= dead
 add						= exit_add
+knob_left					= down
+knob_left.repeat			= down
+knob_right					= up
+knob_right.repeat			= up
 
 [INPUT.Text]
 0						= numberLetter_0
@@ -391,6 +395,10 @@ stop.*						= passback
 pause.*						= passback
 
 [INPUT.Bar]
+knob_left					= down
+knob_left.repeat			= down
+knob_right					= up
+knob_right.repeat			= up
 arrow_left					= exit_left
 arrow_right					= exit_right
 play.*						= passback
@@ -414,3 +422,12 @@ volup						= up
 volup.repeat				= up
 voldown						= down
 voldown.repeat				= down
+arrow_left					= exit_left
+arrow_right					= exit_right
+play.*						= passback
+add.*						= passback
+search.*					= passback
+stop.*						= passback
+pause.*						= passback
+fwd.*						= passback
+rew.*						= passback
