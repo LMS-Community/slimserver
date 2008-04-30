@@ -496,13 +496,21 @@ sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
 	my $bitrate = $client->pluginData('bitrate') / 1000;
-	my $logo    = $client->pluginData('logo');
+	my $logo    = $class->getIcon($url, $client);
 	
 	return {
 		cover       => $logo,
 		bitrate     => $bitrate . 'k CBR',
 		type        => 'WMA (Sirius)',
 	};
+}
+
+sub getIcon {
+	my ( $class, $url, $client ) = @_;
+
+	return $client->pluginData('logo') if ($client && $client->pluginData('logo'));
+
+	return Slim::Plugin::Sirius::Plugin->_pluginDataFor('icon');
 }
 
 # SN only

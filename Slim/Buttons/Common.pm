@@ -757,6 +757,7 @@ our %functions = (
 			my $url;
 			my $type;
 			my $parser;
+			my $icon;
 
 			# If there is a list, try grabbing the current index.
 			if ($list) {
@@ -771,10 +772,10 @@ our %functions = (
 
 			# xmlbrowser mode - save type and parser params to favorites too
 			if ($client->modeParam('modeName') && $client->modeParam('modeName') =~ /XMLBrowser/) {
-
 				$url   = $obj->{'play'} || $obj->{'url'};
 				$type  = $obj->{'type'} || 'link';
 				$title = $obj->{'name'};
+				$icon  = $obj->{'image'};
 				
 				if ( $obj->{'play'} ) {
 					$type = 'audio';
@@ -820,7 +821,7 @@ our %functions = (
 			}
 
 			if ($url && $title) {
-				my (undef, $hotkey) = Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser, 'hotkey');
+				my (undef, $hotkey) = Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser, 'hotkey', $icon);
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
 				} );
