@@ -1,4 +1,3 @@
-[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>Le SqueezeCenter a &eacute;t&eacute; con&ccedil;u pour diffuser des fichiers MP3 vers une platine Slim Devices/Logitech sur un r&eacute;seau.  Il peut &eacute;galement diffuser ces fichiers sur Internet vers un lecteur MP3 tel que Winamp ou iTunes.
 

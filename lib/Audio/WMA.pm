@@ -215,6 +215,9 @@ sub _parseWMAHeader {
 
 	# some sanity checks
 	return -1 if ($self->{'size'} && $objectSize > $self->{'size'});
+	
+	# Must begin with ASF_Header_Object GUID
+	return -1 unless _byteStringToGUID($objectId) eq $guidMapping{ASF_Header_Object};
 
 	read($fh, $self->{'headerData'}, ($objectSize - 30));
 
@@ -234,9 +237,10 @@ sub _parseWMAHeader {
 			print "nextObjectGUID: [" . $nextObjectGUIDText . "]\n";
 			print "nextObjectName: [" . (defined($nextObjectGUIDName) ? $nextObjectGUIDName : "<unknown>") . "]\n";
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
+			print "nextObjectOffset: [" . $nextObjectOffset . "]\n";
 			print "\n";
 		}
-
+		
 		# FIX: don't error out on unknown objects (they are properly
 		# skipped below), report a debug message if we get an
 		# inconsistent object size. some sanity checks
@@ -276,7 +280,7 @@ sub _parseWMAHeader {
 			}
 
 			if ($nextObjectGUIDName eq 'ASF_Stream_Properties_Object') {
-
+				
 				$self->_parseASFStreamPropertiesObject(0);
 				next;
 			}
@@ -540,15 +544,18 @@ sub _parseASFStreamPropertiesObject {
 	$stream{'error_correct_guid'} = _byteStringToGUID($stream{'error_correct_type'});
 
 	$stream{'time_offset'}        = unpack('v', $self->$method($QWORD));
-	$stream{'type_data_length'}   = unpack('v', $self->$method($DWORD));
-	$stream{'error_data_length'}  = unpack('v', $self->$method($DWORD));
+	$stream{'type_data_length'}   = unpack('V', $self->$method($DWORD));
+	$stream{'error_data_length'}  = unpack('V', $self->$method($DWORD));
 	$stream{'flags_raw'}          = unpack('v', $self->$method($WORD));
 	$stream{'streamNumber'}       = $stream{'flags_raw'} & 0x007F;
 	$stream{'flags'}{'encrypted'} = ($stream{'flags_raw'} & 0x8000);
 
-	# Skip the DWORD
+	# Skip the reserved DWORD
 	$self->$method($DWORD);
 
+	# XXX: If a file has bogus data for either of these length values
+	# it will screw up parsing the rest of the header
+	# i.e. mms://c9l.earthcache.net/wlc-01.media.globix.net/COMP005996BCT1_wqxr_live_hi.wmv
 	$stream{'type_specific_data'} = $self->$method($stream{'type_data_length'});
 	$stream{'error_correct_data'} = $self->$method($stream{'error_data_length'});
 
@@ -1136,35 +1143,9 @@ sub _guidToByteString {
 }
 
 sub _byteStringToGUID {
-	my @byteString	= split //, shift;
-
-	my $guidString;
-	
-	return unless @byteString;
-
-	# this reverses _guidToByteString.
-	$guidString  = sprintf("%02X", ord($byteString[3]));
-	$guidString .= sprintf("%02X", ord($byteString[2]));
-	$guidString .= sprintf("%02X", ord($byteString[1]));
-	$guidString .= sprintf("%02X", ord($byteString[0]));
-	$guidString .= '-';
-	$guidString .= sprintf("%02X", ord($byteString[5]));
-	$guidString .= sprintf("%02X", ord($byteString[4]));
-	$guidString .= '-';
-	$guidString .= sprintf("%02X", ord($byteString[7]));
-	$guidString .= sprintf("%02X", ord($byteString[6]));
-	$guidString .= '-';
-	$guidString .= sprintf("%02X", ord($byteString[8]));
-	$guidString .= sprintf("%02X", ord($byteString[9]));
-	$guidString .= '-';
-	$guidString .= sprintf("%02X", ord($byteString[10]));
-	$guidString .= sprintf("%02X", ord($byteString[11]));
-	$guidString .= sprintf("%02X", ord($byteString[12]));
-	$guidString .= sprintf("%02X", ord($byteString[13]));
-	$guidString .= sprintf("%02X", ord($byteString[14]));
-	$guidString .= sprintf("%02X", ord($byteString[15]));
-
-	return uc($guidString);
+	my $buff = unpack('H*',pack('NnnNN',unpack('VvvNN',$_[0])));
+	$buff =~ s/(.{8})(.{4})(.{4})(.{4})/$1-$2-$3-$4-/;
+	return uc($buff);
 }
 
 sub _fileTimeToUnixTime {
