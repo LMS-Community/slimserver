@@ -1,4 +1,3 @@
-[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>SqueezeCenter &egrave; stato progettato per effettuare lo streaming di file mp3 a un lettore musicale di rete Slim Device/Logitech.  Tuttavia &egrave; anche possibile effettuare lo streaming degli stessi file tramite Internet a un lettore software mp3 quale Winamp e iTunes.
 

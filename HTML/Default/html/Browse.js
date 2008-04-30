@@ -13,31 +13,37 @@ Browse = {
 								&& SqueezeJS.getCookie('SqueezeCenter-albumView').match(/[012]/) 
 								? SqueezeJS.getCookie('SqueezeCenter-albumView') : '0');
 
+			// we don't have gallery view in playlist mode
+			if (!SqueezeJS.string('switch_to_gallery'))
+				viewMode = (viewMode == 1 ? 0 : viewMode);
+
 			var menu = new Ext.menu.Menu({
 				items: [
 					new Ext.menu.CheckItem({
-						text: SqueezeJS.Strings['switch_to_list'],
+						text: SqueezeJS.string('switch_to_list'),
 						cls: 'albumList',
 						handler: function(){ Browse.toggleGalleryView(2) },
 						group: 'viewMode',
 						checked: viewMode == 2
 					}),
 					new Ext.menu.CheckItem({
-						text: SqueezeJS.Strings['switch_to_extended_list'],
+						text: SqueezeJS.string('switch_to_extended_list'),
 						cls: 'albumXList',
 						handler: function(){ Browse.toggleGalleryView(0) },
 						group: 'viewMode',
 						checked: viewMode == 0
-					}),
-					new Ext.menu.CheckItem({
+					})
+				]
+			});
+
+			if (SqueezeJS.string('switch_to_gallery'))
+				menu.items.push(new Ext.menu.CheckItem({
 						text: SqueezeJS.Strings['switch_to_gallery'],
 						cls: 'albumListGallery',
 						handler: function(){ Browse.toggleGalleryView(1) },
 						group: 'viewMode',
 						checked: viewMode == 1
-					})
-				]
-			});
+					}));
 
 			if (orderByList) {
 				menu.add(

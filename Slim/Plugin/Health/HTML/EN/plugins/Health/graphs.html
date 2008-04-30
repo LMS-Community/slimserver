@@ -1,4 +1,4 @@
-[% pagetitle = "PLUGIN_HEALTH_" _ type | string; pageicon = 'HELP' %]
+[% pagetitle = "PLUGIN_HEALTH_" _ type | string %]
 [% IF type == "player" %][% pagetitle = pagetitle _ " : " _ playername %][% END %]
 [% pwd_list = [] %]
 [% pwd_list.0 = BLOCK %]<a href="index.html?player=[% playerURI %]">[% "PLUGIN_HEALTH" | string %]</a>[% END %]

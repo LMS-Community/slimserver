@@ -1,4 +1,3 @@
-[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>SqueezeCenter se ha dise&ntilde;ado para transmitir por secuencias archivos mp3 a un reproductor de m&uacute;sica en red Slim Devices/Logitech. Sin embargo, tambi&eacute;n puede transmitir por secuencias los mismos archivos, por Internet, a un software reproductor de MP3 como Winamp o iTunes.
 
