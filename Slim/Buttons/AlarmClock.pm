@@ -101,6 +101,11 @@ sub init {
 		'condition' => sub { 1 },
 	});
 	
+	Slim::Buttons::Home::addMenuOption('ALARM', {
+		'useMode'   => 'alarm',
+		'condition' => sub { 1 },
+	});
+
 	setTimer();
 
 	# add option for the current playlist
