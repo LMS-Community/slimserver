@@ -1,4 +1,3 @@
-﻿[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %]
 [% PROCESS helpheader.html %]
 <p>SqueezeCenter er designet til at strømme dine mp3-filer via netværket til en musik-afpiller fra Slim Devices/Logitech. Men den kan også anvendes til at strømme de samme filer over Internettet til enhver programvare-baseret afspiller som understøtter mp3. For eksempel Winamp eller iTunes.

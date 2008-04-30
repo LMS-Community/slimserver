@@ -1,4 +1,3 @@
-﻿[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>SqueezeCenter תוכנן להזרים קובצי mp3 לנגני מוסיקה מבית Slim Devices/Logitech הפועלים ברשת.  עם זאת, באפשרותו להזרים את אותם קבצים באינטרנט גם לנגן תוכנות MP3 כגון Winamp או iTunes.
 

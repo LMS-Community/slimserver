@@ -31,7 +31,7 @@
 [% END %]
 
 [% IF playerid && needsClient; pagetitle='PLAYER_SETTINGS' | string; ELSE; pagetitle = 'SERVER_SETTINGS' | string; END %]
-[% pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %]
+[% noSpacer = 1; PROCESS pageheader.html %]
 
 <div id="statusarea" class="statusarea">
 	[%- IF warning %]

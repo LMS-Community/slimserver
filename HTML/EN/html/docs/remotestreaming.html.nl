@@ -1,4 +1,3 @@
-[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>De SqueezeCenter is ontworpen om mp3-bestanden naar een Slim Devices/Logitech-netwerkmuziekspeler te stromen. Dezelfde bestanden kunnen echter ook via het internet naar een MP3-softwarespeler zoals Winamp en iTunes gestroomd worden.
 
