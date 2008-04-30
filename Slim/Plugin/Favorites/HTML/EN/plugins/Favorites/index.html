@@ -130,7 +130,7 @@ function(){
 	[% PROCESS titleedit %]
 [% ELSE %]
 	
-[% pagetitle = title | getstring; pageicon = 'PLUGINS' %]
+[% pagetitle = title | getstring %]
 	
 [% IF useAJAX %][% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>

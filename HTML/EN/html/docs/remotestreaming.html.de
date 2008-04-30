@@ -1,4 +1,3 @@
-[% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>SqueezeCenter wurde zum Streaming von MP3-Dateien auf einen Netzwerk-Musikplayer von Slim Devices/Logitech entwickelt.  Es k&ouml;nnen jedoch auch dieselben Dateien &uuml;ber das Internet an einen MP3-Software-Player wie Winamp und iTunes &uuml;bertragen werden.
 

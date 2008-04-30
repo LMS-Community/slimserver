@@ -1,6 +1,18 @@
 [% pagetitle = "SAVED_PLAYLISTS" | string %]
-[% pageicon = 'SAVED_PLAYLISTS' %]
-[% UNLESS noEdit; extJsScripts = BLOCK %]
+[% pageicon = icons.SAVED_PLAYLISTS %]
+[% IF levelName == 'album' || levelName == 'age' || levelName == 'playlisttrack'; titleRight = BLOCK %]
+	<div id="viewSelect"></div>
+[% END; END %]
+[%- extJsScripts = BLOCK -%]
+	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
+
+	<script type="text/javascript">
+		[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+		[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+
+		var orderByList;
+	</script>
+[% UNLESS noEdit %]
 	<script type="text/javascript">
 		Ext.onReady(function(){
 			new SqueezeJS.UI.Sortable({

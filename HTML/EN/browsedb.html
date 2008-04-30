@@ -3,7 +3,7 @@
 	[% IF albumDuration %]([% "LENGTH" | string %][% "COLON" | string %] [% albumDuration %])[% END %]
 [% END; END %]  
 
-[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %]
+[% pagetitle = browseby | string; noSpacer = 1 %]
 
 [% IF useAJAX %][% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
