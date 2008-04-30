@@ -336,13 +336,14 @@ sub exitSetHandler {
 
 	$exittype = uc($exittype);
 
-	if ($exittype eq 'LEFT' || $exittype eq 'RIGHT' ||  $exittype eq 'PLAY') {
+	if ($exittype eq 'LEFT' || $exittype eq 'RIGHT') {
 
 		my $times = $prefs->client($client)->get('alarmtime');
 		$times->[ weekDay($client) ] = ${$client->modeParam('valueRef')};
 		$prefs->client($client)->set('alarmtime', $times);
+		$client->showBriefly({line=>[$client->string('ALARM_SAVING')]});
 
-		Slim::Buttons::Common::popModeRight($client);
+		Slim::Buttons::Common::popMode($client);
 
 	}
 }
