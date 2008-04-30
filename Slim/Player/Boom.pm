@@ -19,6 +19,21 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+our $defaultPrefs = {
+	'menuItem'             => [qw(
+		NOW_PLAYING
+		BROWSE_MUSIC
+		RADIO
+		MUSIC_SERVICES
+		FAVORITES
+		PLUGINS
+		SETTINGS
+		ALARM
+		SQUEEZENETWORK_CONNECT
+	)],
+};
+
+
 sub new {
 	my $class = shift;
 
@@ -26,6 +41,16 @@ sub new {
 
 	return $client;
 }
+
+sub init {
+	my $client = shift;
+
+	# make sure any preferences unique to this client may not have set are set to the default
+	$prefs->client($client)->init($defaultPrefs);
+
+	$client->SUPER::init();
+}
+
 
 sub model {
 	return 'boom';
