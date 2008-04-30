@@ -724,6 +724,7 @@ sub cliAdd {
 	my $command= $request->getRequest(1);
 	my $url    = $request->getParam('url');
 	my $title  = $request->getParam('title');
+	my $icon   = $request->getParam('icon');
 	my $index  = $request->getParam('item_id');
 
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
@@ -742,6 +743,7 @@ sub cliAdd {
 				'text' => $title,
 				'URL'  => $url,
 				'type' => 'audio',
+				'icon' => $icon || $favs->icon($url),
 			};
 			
 			$request->addResult('count', 1);

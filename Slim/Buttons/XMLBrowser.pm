@@ -1623,9 +1623,10 @@ sub _cliQuery_done {
 									params => {
 										title   => $title,
 										url     => $url,
+										icon    => $hash{image},
 									},
 								},
-					                };
+							};
 							$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
 							my $string = $request->client->string($token);
 							$request->addResultLoop($loopname, $cnt, 'text', $string);
@@ -1963,7 +1964,7 @@ sub _cliQuery_done {
 						}
 
 						if ( $item->{icon} ) {
-							$request->addResultLoop( $loopname, $cnt, 'icon-id', $item->{icon} );
+							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}

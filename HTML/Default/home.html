@@ -118,10 +118,16 @@ ELSE %]
 					[% ELSE %]
 						<a href="[% link.value %]player=[% player %]" class="browseItemLink">
 					[% END %]
-						[% IF (additionalLinks.icons.${link.key} || link.icon) && !noIcon %]
-							[% link.icon = additionalLinks.icons.${link.key} || link.icon %]
+						[% IF (additionalLinks.icons.${link.key} || link.icon) && !noIcon;
+							link.icon = additionalLinks.icons.${link.key} || link.icon;
+
+							# have local artwork resized
+							UNLESS link.icon.match('^http:');
+								link.icon = webroot _ link.icon.replace('.png', "_25x25_f.png");
+							END
+						%]
 							<span class="browseCover">
-								<img src="[% webroot %][% link.icon.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | getstring %]">
+								<img src="[% link.icon %]" width="25" border="0" alt="[% link.key | getstring %]">
 							</span>
 							<div class="smallBrowseItemDetail">
 						[% END %]

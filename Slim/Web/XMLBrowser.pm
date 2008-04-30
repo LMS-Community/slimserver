@@ -14,6 +14,7 @@ use strict;
 use URI::Escape qw(uri_unescape);
 
 use Slim::Formats::XML;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -438,8 +439,17 @@ sub handleFeed {
 				if ( $item->{'play'} ) {
 					$type = 'audio';
 				}
-				
-				$favs->add( $item->{'play'} || $item->{'url'}, $item->{'name'}, $type, $item->{'parser'} );
+
+				$favs->add(
+					$item->{'play'} || $item->{'url'},
+					$item->{'name'}, 
+					$type, 
+					$item->{'parser'}, 
+					undef, 
+					$item->{'image'} 
+						|| Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}, $client) 
+						|| Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
+				);
 			} elsif ($stash->{'action'} eq 'favdel') {
 				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );
 			}

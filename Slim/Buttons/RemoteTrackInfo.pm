@@ -85,6 +85,7 @@ sub setMode {
 				my $favorites = Slim::Utils::Favorites->new($client) || return;
 				my $index = $client->modeParam('favorite');
 				my $hotkey= $client->modeParam('hotkey');
+				my $icon  = $client->modeParam('icon');
 
 				if (defined $index) {
 					
@@ -97,7 +98,7 @@ sub setMode {
 					} );
 
 				} else {
-					($index, $hotkey) = $favorites->add($url, $title, undef, undef, 'hotkey');
+					($index, $hotkey) = $favorites->add($url, $title, undef, undef, 'hotkey', $icon);
 					$client->modeParam('favorite', $index);
 					$client->modeParam('hotkey', $hotkey);
 					$client->showBriefly( {
@@ -119,6 +120,7 @@ sub setMode {
 		'title'    => $title,
 		'favorite' => $favIndex,
 		'hotkey'   => $favHotkey,
+		'icon'     => $client->modeParam('item')->{'image'},
 
 		# play music when play is pressed
 		'onPlay'   => sub {

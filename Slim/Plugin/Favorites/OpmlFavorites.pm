@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::Favorites::Opml);
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
@@ -225,7 +226,7 @@ sub add {
 		}
 	}
 
-	$entry->{'icon'} = $icon || $class->icon($entry->{'url'});
+	$entry->{'icon'} = $icon || $class->icon($url);
 
 	# add it to end of top level
 	push @{$class->toplevel}, $entry;
