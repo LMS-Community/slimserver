@@ -439,16 +439,16 @@ sub handleFeed {
 				if ( $item->{'play'} ) {
 					$type = 'audio';
 				}
-				
+
 				$favs->add(
 					$item->{'play'} || $item->{'url'},
 					$item->{'name'}, 
 					$type, 
 					$item->{'parser'}, 
 					undef, 
-					$stash->{'icon'} 
-						|| Slim::Player::ProtocolHandlers->iconForUrl($item->{'play'} || $item->{'url'}, $client) 
-						|| Slim::Player::ProtocolHandlers->iconForUrl($item->{'play'} || $item->{'url'}) 
+					$item->{'image'} 
+						|| Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}, $client) 
+						|| Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
 				);
 			} elsif ($stash->{'action'} eq 'favdel') {
 				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );

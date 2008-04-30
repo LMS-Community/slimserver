@@ -101,7 +101,7 @@ sub handlerForURL {
 	return $handler =~ /::/ ? $handler : undef;
 }
 
-sub iconForUrl {
+sub iconForURL {
 	my ($class, $url, $client) = @_;
 
 	if (my $handler = $class->handlerForURL($url)) {

@@ -1775,6 +1775,7 @@ sub jiveFavoritesCommand {
 	my $client  = $request->client || shift;
 	my $title   = $request->getParam('title');
 	my $url     = $request->getParam('url');
+	my $icon    = $request->getParam('icon');
 	my $command = $request->getParam('_cmd');
 	my $token   = uc($command); # either ADD or DELETE
 	my $action = $command eq 'add' ? 'parent' : 'grandparent';
@@ -1800,6 +1801,7 @@ sub jiveFavoritesCommand {
 				params => {
 						title => $title,
 						url   => $url,
+						icon  => $icon,
 				},
 			},
 		},

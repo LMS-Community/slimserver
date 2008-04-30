@@ -68,7 +68,7 @@ sub icon {
 	my $class = shift;
 	my $url = shift;
 
-	return Slim::Player::ProtocolHandlers->iconForUrl($url) || 'html/images/favorites.png';
+	return Slim::Player::ProtocolHandlers->iconForURL($url) || 'html/images/favorites.png';
 }
 
 sub load {
@@ -226,7 +226,7 @@ sub add {
 		}
 	}
 
-	$entry->{'icon'} = $icon || $class->icon($entry->{'url'});
+	$entry->{'icon'} = $icon || $class->icon($url);
 
 	# add it to end of top level
 	push @{$class->toplevel}, $entry;
