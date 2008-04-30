@@ -105,10 +105,10 @@ sub iconForURL {
 	my ($class, $url, $client) = @_;
 
 	if (my $handler = $class->handlerForURL($url)) {
-		if ($client) {
+		if ($client && $handler->can('getMetadataFor')) {
 			return $handler->getMetadataFor($client, $url);
 		}
-		else {
+		elsif ($handler->can('getIcon')) {
 			return $handler->getIcon($url);
 		}
 	}
