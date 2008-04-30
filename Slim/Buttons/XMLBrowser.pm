@@ -303,7 +303,9 @@ sub gotRSS {
 		'url'      => $url,
 		'feed'     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		'modeName' => ( $params->{'remember'} ) ? "XMLBrowser:$url" : undef,
+		'modeName' => 
+			( defined $params->{remember} && $params->{remember} == 0 ) 
+			? undef : "XMLBrowser:$url",
 		'header'   => fitTitle( $client, $feed->{'title'} ),
 
 		# TODO: we show only items here, we skip the description of the entire channel
@@ -494,7 +496,9 @@ sub gotOPML {
 		'timeout'    => $timeout,
 		'item'       => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		'modeName'   => ( $params->{'remember'} ) ? "XMLBrowser:$url:$title" : undef,
+		'modeName' => 
+			( defined $params->{remember} && $params->{remember} == 0 ) 
+			? undef : "XMLBrowser:$url:$title",
 		'header'     => fitTitle( $client, $title, scalar @{ $opml->{'items'} } ),
 		'listRef'    => $opml->{'items'},
 
@@ -650,7 +654,8 @@ sub gotOPML {
 					$client->modeParam('url'),
 					$item,
 					{
-						timeout => $timeout,
+						timeout  => $timeout,
+						remember => $params->{remember},
 					},
 				);
 
