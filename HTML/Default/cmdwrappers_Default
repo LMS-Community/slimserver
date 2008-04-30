@@ -33,7 +33,7 @@
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="[% lineclass || 'browsedbListItem' %][% IF (item.image || (levelName == 'album' || levelName == 'age')) && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
+		<div class="[% lineclass || 'browsedbListItem' %][% IF ((item.image || (levelName == 'album' || levelName == 'age')) && !(artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content | indent(4) %]</div>
 			<span class="browsedbControls">
 				[%- IF leftcontrols && leftcontrols != controls; PROCESS $leftcontrols; END %]
@@ -79,9 +79,10 @@
 
 	[% BLOCK iteminfo -%]
 
-		[%- IF item.descend %]
+		[%- IF item.descend || (levelName == 'playlisttrack') %]
 
-			[% IF (levelName == 'album' || levelName == 'age') && !(artwork > 0) %]
+			[% IF ((levelName == 'album' || levelName == 'age') && !(artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %]
+				[% IF levelName == 'playlisttrack'; item.coverThumb = item.item; END %]
 				<span class="browseCover">
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50" noby=0 %][% IF item.hierarchy %]</a>[% END -%]
 				</span>
