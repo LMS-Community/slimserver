@@ -543,7 +543,7 @@ sub currentSongLines {
 				$artwork = '/html/images/radio.png';
 			}
 
-		} else {
+		} elsif ( $song->album ) {
 
 			$imgKey = 'icon-id';
 			$artwork = ($song->album->artwork || 0) + 0;
