@@ -11,7 +11,7 @@
 						params: [ '', [
 							'playlists',
 							'edit',
-							'playlist_id:' + [% playlist.id %],
+							'playlist_id:' + [% playlist.id || 0 %],
 							'cmd:move',
 							'index:' + sourcePos,
 							'toindex:' + targetPos
