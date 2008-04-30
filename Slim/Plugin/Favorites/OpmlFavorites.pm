@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::Favorites::Opml);
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
@@ -67,7 +68,7 @@ sub icon {
 	my $class = shift;
 	my $url = shift;
 
-	return Slim::Player::ProtocolHandlers->iconForURL($url) || 'html/images/favorites.png';
+	return Slim::Player::ProtocolHandlers->iconForUrl($url) || 'html/images/favorites.png';
 }
 
 sub load {

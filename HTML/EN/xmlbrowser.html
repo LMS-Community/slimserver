@@ -56,8 +56,8 @@
 	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('[% path %]', 'action=favadd&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
-				[%- ELSE       -%]href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('[% path %]', 'action=favadd&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]&icon=[% item.image | uri%]')"
+				[%- ELSE       -%]href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&icon=[% item.image | uri%]"
 				[%- END -%]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]

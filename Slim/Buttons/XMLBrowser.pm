@@ -1963,7 +1963,7 @@ sub _cliQuery_done {
 						}
 
 						if ( $item->{icon} ) {
-							$request->addResultLoop( $loopname, $cnt, 'icon-id', $item->{icon} );
+							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
 						}

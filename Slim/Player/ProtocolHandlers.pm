@@ -101,12 +101,13 @@ sub handlerForURL {
 	return $handler =~ /::/ ? $handler : undef;
 }
 
-sub iconForURL {
+sub iconForUrl {
 	my ($class, $url, $client) = @_;
 
 	if (my $handler = $class->handlerForURL($url)) {
+
 		if ($client && $handler->can('getMetadataFor')) {
-			return $handler->getMetadataFor($client, $url);
+			return $handler->getMetadataFor($client, $url)->{cover};
 		}
 		elsif ($handler->can('getIcon')) {
 			return $handler->getIcon($url);
