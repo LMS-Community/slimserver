@@ -112,6 +112,10 @@ our $defaultPrefs = {
 	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 1,
 	'playingDisplayModes' => [0..10]
+	'scrollPause'          => 1.5,
+	'scrollPauseDouble'    => 1.5,
+	'scrollRate'           => 0.1,
+	'scrollRateDouble'     => 0.1,
 };
 
 our $defaultFontPrefs = {
