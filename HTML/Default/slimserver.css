@@ -691,6 +691,11 @@ div.thumbwrap {
 	padding-bottom: 4px;
 }
 
+.dragOver .selector_topLeft {
+	background-color: #aaa;
+	font-color: white;
+}
+
 #headerSearch .searchInput,
 .browsedbControls #tuneinurl, 
 .browsedbControls .searchInput {

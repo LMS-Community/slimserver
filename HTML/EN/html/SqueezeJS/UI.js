@@ -555,7 +555,7 @@ SqueezeJS.UI.Sortable.prototype = {
 			var item = Ext.get(items[i]);
 
 			if (!item.hasClass('dontdrag'))
-				item.dd = new SqueezeJS.DDProxy(items[i], this.el, {
+				item.dd = this.addDDProxy(items[i], this.el, {
 					position: i + this.offset,
 					list: this
 				});
@@ -565,13 +565,22 @@ SqueezeJS.UI.Sortable.prototype = {
 			this.highlighter.isDragging = false;
 	},
 
-	onDrop: function(source, target) {
+	addDDProxy: function(item, el, config){
+		return new SqueezeJS.DDProxy(item, el, config);
+	},
+
+	onDrop: function(source, target, offset) {
 		if (target && source) {
 			var sourcePos = Ext.get(source.id).dd.config.position;
 			var targetPos = Ext.get(target.id).dd.config.position;
 
-			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
+			if (sourcePos >= 0 && targetPos >= 0) {
+				if ((sourcePos > targetPos && offset > 0) || (sourcePos < targetPos && offset < 0)) {
+					targetPos += offset;
+				}
+			}
 
+			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
 				if (sourcePos > targetPos) {
 					source.insertBefore(target);
 				}
@@ -593,6 +602,7 @@ SqueezeJS.DDProxy = function(id, sGroup, config){
 	this.setXConstraint(0, 0);
 	this.scroll = false;
 	this.scrollContainer = true;
+	this.position = 0;
 };
 
 Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
@@ -617,12 +627,16 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 			this.config.list.highlighter.isDragging = false;
 	},
 
-	onDragEnter: function(ev, id) {
-		var source = Ext.get(this.getEl());
-		var target = Ext.get(id);
+	onDragOver: function(ev, id){
+		var el = Ext.get(id);
+		var oldPosition = this.position;
 
-		if (target && source)
-			this.addDropIndicator(target, source.dd.config.position, target.dd.config.position); 
+		this.calculatePosition(el.getHeight(), ev.getPageY() - el.getY());
+
+		if (oldPosition != this.position) {
+			this.removeDropIndicator(el);
+			this.addDropIndicator(el)
+		}
 	},
 
 	onDragOut: function(e, id) {
@@ -632,11 +646,18 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	onDragDrop: function(e, id) {
 		SqueezeJS.UI.Highlight.isDragging = false;
 		this.removeDropIndicator(Ext.get(id));
-		this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id));
+		this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id), this.position);
 	},
 
-	addDropIndicator: function(el, sourcePos, targetPos) {
-		if (parseInt(targetPos) < parseInt(sourcePos))
+	calculatePosition: function(height, top){
+		if (top <= 0.5*height)
+			this.position = -1;
+		else
+			this.position = 1;		
+	},
+
+	addDropIndicator: function(el) {
+		if (this.position < 0)
 			el.addClass('dragUp');
 		else
 			el.addClass('dragDown');
