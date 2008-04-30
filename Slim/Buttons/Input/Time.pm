@@ -71,30 +71,23 @@ our %functions = (
 
 			my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
 
-			scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
+			# Don't scroll if on right arrow
+			defined $timedigits[$client->modeParam('cursorPos')]
+			  && scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
 		}
 
 	#moving one position to the left, exiting on leftmost position
 	,'left' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			my $cursorPos = $client->modeParam('cursorPos');
-			$cursorPos--;
-
-			if ($cursorPos < 0) {
-				exitInput($client,'left');
-				return;
-			}
-
-			$client->modeParam('cursorPos',$cursorPos);
-			$client->update();
+			moveCursor($client,-1);
 		}
 
 	#advance to next character, exiting if last char is right arrow
 	,'right' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			moveCursor($client,1,1);
+			moveCursor($client,1);
 		}
 	#move cursor left/right, exiting at edges
 	,'cursor' => sub {
@@ -107,7 +100,7 @@ our %functions = (
 				$increment = -$increment;
 			}
 
-			moveCursor($client,$increment,0);
+			moveCursor($client,$increment);
 		}
 
 	#use numbers to enter ... er... numbers ;-)
@@ -466,7 +459,7 @@ sub scroll {
 	$client->update();
 }
 
-=head2 prepKnob( $client, $client, $digits )
+=head2 prepKnob( $client, $digits )
 
 This function is required for updating the Transporter knob.  The knob extents are based on the listLen param, 
 which changes in this mode depending on which column of the time display is being adjusted.
@@ -493,11 +486,15 @@ sub prepKnob {
 	} elsif ($c == 3) { 
 		$client->modeParam('listLen', 10);
 
-	} elsif ($c == 4) { 
+	} elsif ($c == 4 && $ampm) { 
 		$client->modeParam('listLen', 2);
+	} else {
+		# Right arrow
+		$client->modeParam('listLen', 1);
 	}
 
-	$client->modeParam('listIndex', $digits->[$c]);
+	# $digits->[$c] will be undefined if on right arrow
+	$client->modeParam('listIndex', defined $digits->[$c] ? $digits->[$c] : 1);
 
 	$client->updateKnob(1);
 }
