@@ -61,6 +61,9 @@ FAVORITES_FAVORITE_NUM
 	SV	Favorit nr
 	ZH_CN	最喜爱#
 
+FAVORITES_HOTKEYS
+	EN	Hotkeys
+
 FAVORITES_FAVORITE
 	DA	Favorit
 	DE	Favorit
