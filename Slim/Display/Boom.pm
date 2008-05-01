@@ -154,6 +154,10 @@ sub vfdmodel {
 	return 'graphic-160x32';
 }
 
+sub brightnessMap {
+	return (0, 1, 2, 3, 4, 5, 0x0201);	# Formula: brightness = lightsensor value / upper byte + lower byte
+}
+
 =head1 SEE ALSO
 
 L<Slim::Display::Graphics>

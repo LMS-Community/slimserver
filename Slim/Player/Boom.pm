@@ -112,6 +112,13 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 }
 
+# TO DO: Needs to be a setting in the webinterface
+sub setAnalogOutMode {
+	my $client = shift;
+	my $data = pack('C', 0);	# 0 = headphone (i.e. internal speakers off), 1 = sub out
+	$client->sendFrame('audo', \$data);
+}
+
 1;
 
 __END__
