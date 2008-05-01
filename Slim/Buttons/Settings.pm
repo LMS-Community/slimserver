@@ -286,6 +286,30 @@ sub init {
 				#	'useMode' => 'INPUT.Text'
 					#add more params here after the rest is working
 				#}
+
+				'SETUP_ANALOGOUTMODE'       => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{ANALOGOUTMODE_HEADPHONE}',
+							value  => 0,
+						},
+						{
+							name   => '{ANALOGOUTMODE_SUBOUT}',
+							value  => 1,
+						},
+					],
+					'onPlay'       => \&setPref,
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
+					'header'       => '{SETUP_ANALOGOUTMODE}{count}',
+					'pref'            => "analogOutMode",
+					'initialValue'    => sub { $prefs->client(shift)->get('analogOutMode') },
+					'condition'   => sub {
+						my $client = shift;
+						return $client->isa('Slim::Player::Boom');
+					},
+				},
 		
 				'SETUP_TRANSITIONTYPE' => {
 					'useMode'      => 'INPUT.Choice',
