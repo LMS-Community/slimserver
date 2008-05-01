@@ -334,6 +334,10 @@ sub init {
 			$defaults = $Slim::Player::Transporter::defaultPrefs;
 		}
 		
+		if ( $client->isa('Slim::Player::Boom') ) {
+			$defaults = $Slim::Player::Boom::defaultPrefs;
+		}
+		
 		$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) ); # clone for each client
 		1;
 	} );
