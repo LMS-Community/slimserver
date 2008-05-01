@@ -48,7 +48,7 @@ Browse = {
 			if (orderByList) {
 				menu.add(
 						'-',
-						'<span class="menu-title">' + SqueezeJS.Strings['sort_by'] + '...</span>'
+						'<span class="menu-title">' + SqueezeJS.String('sort_by') + '...</span>'
 				);
 
 				var sortOrder = SqueezeJS.getCookie('SqueezeCenter-orderBy');
@@ -76,8 +76,8 @@ Browse = {
 					}
 					this.fireEvent('arrowclick', this, ev);
 				},
-				tooltip: SqueezeJS.Strings['display_options'],
-				arrowTooltip: SqueezeJS.Strings['display_options'],
+				tooltip: SqueezeJS.string('display_options'),
+				arrowTooltip: SqueezeJS.string('display_options'),
 				tooltipType: 'title'
 			});
 		}

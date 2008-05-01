@@ -341,7 +341,7 @@ Main = {
 					var menu = new Ext.menu.Menu({
 						items: [
 							new Ext.menu.CheckItem({
-								text: SqueezeJS.Strings['hide_artwork'],
+								text: SqueezeJS.string('hide_artwork'),
 								cls: 'albumList',
 								handler: function(){
 									SqueezeJS.setCookie('SqueezeCenter-noPlaylistCover', 1);
@@ -351,7 +351,7 @@ Main = {
 								checked: noCover
 							}),
 							new Ext.menu.CheckItem({
-								text: SqueezeJS.Strings['show_artwork'],
+								text: SqueezeJS.string('show_artwork'),
 								cls: 'albumXList',
 								handler: function(){
 									SqueezeJS.setCookie('SqueezeCenter-noPlaylistCover', 0);
@@ -374,8 +374,8 @@ Main = {
 							}
 							this.fireEvent('arrowclick', this, ev);
 						},
-						tooltip: SqueezeJS.Strings['coverart'],
-						arrowTooltip: SqueezeJS.Strings['coverart'],
+						tooltip: SqueezeJS.string('coverart'),
+						arrowTooltip: SqueezeJS.string('coverart'),
 						tooltipType: 'title'
 					});
 				}
@@ -383,7 +383,7 @@ Main = {
 				new SqueezeJS.UI.Button({
 					renderTo: 'btnPlaylistClear',
 					cls:      'btn-playlist-clear',
-					tooltip:  SqueezeJS.Strings['clear_playlist'],
+					tooltip:  SqueezeJS.string('clear_playlist'),
 					minWidth: 32,
 					noText:   true,
 					handler:  function(){
@@ -395,7 +395,7 @@ Main = {
 				new SqueezeJS.UI.Button({
 					renderTo: 'btnPlaylistSave',
 					cls:      'btn-playlist-save',
-					tooltip:  SqueezeJS.Strings['save'],
+					tooltip:  SqueezeJS.string('save'),
 					minWidth: 32,
 					noText:   true,
 					handler:  function(){
