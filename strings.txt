@@ -14639,6 +14639,18 @@ DISABLEDAC_WHENOFF
 	NL	Uitgangen uitschakelen wanneer uit
 	ZH_CN	关机后撤销输出
 
+SETUP_ANALOGOUTMODE
+	EN	Analog Out Mode
+
+SETUP_ANALOGOUTMODE_DESC
+	EN	Choose the function of Boom analog line out port.  Headphone option will shut off internal speakers.
+
+ANALOGOUTMODE_SUBOUT
+	EN	Subwoofer output, Speakers Enabled
+
+ANALOGOUTMODE_HEADPHONE
+	EN	Headphone Output, Speakers Disabled
+
 SETUP_POLARITYINVERSION
 	DA	Inverter polaritet
 	DE	Polarität umkehren

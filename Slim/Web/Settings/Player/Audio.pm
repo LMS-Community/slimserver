@@ -85,6 +85,10 @@ sub handler {
 	if ($client->canDoReplayGain(0)) {
 		push @prefs,'replayGainMode';
 	}
+
+	if ($client->isa('Slim::Player::Boom')) {
+		push @prefs,'analogOutMode';
+	}
 	
 	if ( $client->isa('Slim::Player::Squeezebox2') ) {
 		push @prefs, 'mp3StreamingMethod';

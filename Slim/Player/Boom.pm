@@ -20,6 +20,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 our $defaultPrefs = {
+	'analogOutMode'        => 1,      # default sub-out
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -112,10 +113,10 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 }
 
-# TO DO: Needs to be a setting in the webinterface
 sub setAnalogOutMode {
 	my $client = shift;
-	my $data = pack('C', 0);	# 0 = headphone (i.e. internal speakers off), 1 = sub out
+	
+	my $data = pack('C', $prefs->client($client)->get('analogOutMode'));	# 0 = headphone (i.e. internal speakers off), 1 = sub out
 	$client->sendFrame('audo', \$data);
 }
 

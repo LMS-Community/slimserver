@@ -83,6 +83,23 @@
 		</select>
 	[% END %]
 
+	[% IF prefs.exists('analogOutMode') %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_ANALOGOUTMODE" desc="SETUP_ANALOGOUTMODE_DESC" %]
+				<select class="stdedit" name="analogOutMode" id="analogOutMode">
+		
+				[% FOREACH option = {
+					'1' => 'ANALOGOUTMODE_SUBOUT',
+					'0' => 'ANALOGOUTMODE_HEADPHONE'
+				} %]
+					<option [% IF prefs.analogOutMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+				
+				</select>
+			[% END %]
+		[% END %]
+	[% END %]
+
 	[% IF prefs.exists('powerOffDac') || prefs.exists('disableDac') %]
 		[% WRAPPER settingSection %]
 			[% IF prefs.exists('powerOffDac') %]

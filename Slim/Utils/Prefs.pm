@@ -461,6 +461,11 @@ sub init {
 		$client->display->renderCache()->{'defaultfont'} = undef;
 	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
 
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
+		Slim::Player::Boom::setAnalogOutMode($client);
+	}, 'analogOutMode');
+
 	# Clear SN cookies from the cookie jar if the session changes
 	if ( !$ENV{SLIM_SERVICE} ) {
 		$prefs->setChange( sub {
