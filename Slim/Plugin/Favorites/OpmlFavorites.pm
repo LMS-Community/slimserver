@@ -95,6 +95,7 @@ sub _urlindex {
 	unless (defined $level) {
 		$class->{'url-index'} = {};
 		$class->{'hotkey-index'} = {};
+		$class->{'hotkey-title'} = {};
 		$class->{'url-hotkey'} = {};
 		$level = $class->toplevel;
 	}
@@ -109,6 +110,7 @@ sub _urlindex {
 
 		if (defined $entry->{'hotkey'}) {
 			$class->{'hotkey-index'}->{ $entry->{'hotkey'} } = $index . $i;
+			$class->{'hotkey-title'}->{ $entry->{'hotkey'} } = $entry->{'text'};
 			$class->{'url-hotkey'}->{ $entry->{'URL'} || $entry->{'url'} } = $entry->{'hotkey'};
 		}
 
@@ -303,7 +305,17 @@ sub deleteIndex {
 sub hotkeys {
 	my $class = shift;
 
-	return keys %{$class->{'hotkey-index'}};
+	my @keys;
+
+	for my $key (1..9,0) {
+		push @keys, {
+			'key'   => $key,
+			'used'  => $class->{'hotkey-index'}->{ $key } ? 1 : 0,
+			'title' => $class->{'hotkey-title'}->{ $key },
+		};
+	}
+
+	return \@keys;
 }
 
 sub hasHotkey {
