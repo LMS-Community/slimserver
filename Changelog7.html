@@ -2,6 +2,20 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
+		<li>Boom - Version 6</li>
+		<ul>
+			<li>Bug 7867: Add new audio command 'audo' to allow setting of analog output mode (0 = headphone, 1 = sub out)</li>
+			<li>Bug 8015: Made push animation a tad faster again</li>	
+			<li>Bugs 7788, 7743, 7717:
+			<ul>
+				<li>Tweak brightness and greyscale levels</li>
+				<li>Added option to allow setting brightness to auto, which then uses the light sensor value</li>
+				<li>If a brightness like 0, 1, 2, 3, 4 is set, it's used as before as a fixed brightness</li>
+				<li>If a brightness like 0x0201 is set, the higher byte is used as divider and the lower byte as offset (brightness = light sensor value / divider + offset)</li>
+				<li>As long as auto brightness is set the brightness is recalculated and applied every second</li>
+			</ul>
+			</li>
+		</ul>
 		<li>Boom - Version 5</li>
 		<ul>
 			<li>Caleb's DAC changes</li>
