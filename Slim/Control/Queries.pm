@@ -3816,7 +3816,7 @@ sub songinfoQuery {
 
 								# we're going to skip to the next loop (and increment $chunkCount)
 								#  so we don't get the 'key: value' style menu item
-								$chunkCount++; next; 
+								$chunkCount++; $idx++; next; 
 								
 						}
 						else {
