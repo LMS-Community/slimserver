@@ -37,18 +37,18 @@ Browse = {
 			});
 
 			if (SqueezeJS.string('switch_to_gallery'))
-				menu.items.push(new Ext.menu.CheckItem({
-						text: SqueezeJS.Strings['switch_to_gallery'],
-						cls: 'albumListGallery',
-						handler: function(){ Browse.toggleGalleryView(1) },
-						group: 'viewMode',
-						checked: viewMode == 1
-					}));
+				menu.add(new Ext.menu.CheckItem({
+					text: SqueezeJS.string('switch_to_gallery'),
+					cls: 'albumListGallery',
+					handler: function(){ Browse.toggleGalleryView(1) },
+					group: 'viewMode',
+					checked: viewMode == 1
+				}));
 
 			if (orderByList) {
 				menu.add(
 						'-',
-						'<span class="menu-title">' + SqueezeJS.Strings['sort_by'] + '...</span>'
+						'<span class="menu-title">' + SqueezeJS.String('sort_by') + '...</span>'
 				);
 
 				var sortOrder = SqueezeJS.getCookie('SqueezeCenter-orderBy');
@@ -76,8 +76,8 @@ Browse = {
 					}
 					this.fireEvent('arrowclick', this, ev);
 				},
-				tooltip: SqueezeJS.Strings['display_options'],
-				arrowTooltip: SqueezeJS.Strings['display_options'],
+				tooltip: SqueezeJS.string('display_options'),
+				arrowTooltip: SqueezeJS.string('display_options'),
 				tooltipType: 'title'
 			});
 		}

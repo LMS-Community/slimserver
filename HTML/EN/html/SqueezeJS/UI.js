@@ -557,7 +557,8 @@ SqueezeJS.UI.Sortable.prototype = {
 			if (!item.hasClass('dontdrag'))
 				item.dd = this.addDDProxy(items[i], this.el, {
 					position: i + this.offset,
-					list: this
+					list: this,
+					droptarget: item.hasClass('droptarget')
 				});
 		}
 
@@ -581,14 +582,17 @@ SqueezeJS.UI.Sortable.prototype = {
 			}
 
 			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
-				if (sourcePos > targetPos) {
-					source.insertBefore(target);
-				}
-				else  {
-					source.insertAfter(target);
-				}
+				if (offset == 0)
+					source.remove();
 
-				this.onDropCmd(sourcePos, targetPos);
+				else if (sourcePos > targetPos)
+					source.insertBefore(target);
+
+				else
+					source.insertAfter(target);
+
+
+				this.onDropCmd(sourcePos, targetPos, offset);
 				this.init();
 			}
 		}
@@ -631,7 +635,7 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 		var el = Ext.get(id);
 		var oldPosition = this.position;
 
-		this.calculatePosition(el.getHeight(), ev.getPageY() - el.getY());
+		this.calculatePosition(el.getHeight(), ev.getPageY() - el.getY(), el.dd.config.droptarget);
 
 		if (oldPosition != this.position) {
 			this.removeDropIndicator(el);
@@ -649,23 +653,37 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 		this.config.list.onDrop(Ext.get(this.getEl()), Ext.get(id), this.position);
 	},
 
-	calculatePosition: function(height, top){
-		if (top <= 0.5*height)
-			this.position = -1;
+	calculatePosition: function(height, top, droptarget){
+		// target can be dropped on - make it selectable
+		if (droptarget)
+			if (top <= 0.33*height)
+				this.position = -1;
+			else if (top >= 0.6*height)
+				this.position = 1;
+			else
+				this.position = 0;		
+
+		// target can't be dropped on - only drop below/beneath
 		else
-			this.position = 1;		
+			if (top <= 0.5*height)
+				this.position = -1;
+			else
+				this.position = 1;		
 	},
 
 	addDropIndicator: function(el) {
 		if (this.position < 0)
 			el.addClass('dragUp');
-		else
+		else if (this.position > 0)
 			el.addClass('dragDown');
+		else
+			el.addClass('dragOver');
 	},
 
 	removeDropIndicator: function(el) {
 		el.removeClass('dragUp');
 		el.removeClass('dragDown');
+		el.removeClass('dragOver');
 	}
 });
 
