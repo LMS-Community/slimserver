@@ -37,13 +37,13 @@ Browse = {
 			});
 
 			if (SqueezeJS.string('switch_to_gallery'))
-				menu.items.push(new Ext.menu.CheckItem({
-						text: SqueezeJS.Strings['switch_to_gallery'],
-						cls: 'albumListGallery',
-						handler: function(){ Browse.toggleGalleryView(1) },
-						group: 'viewMode',
-						checked: viewMode == 1
-					}));
+				menu.add(new Ext.menu.CheckItem({
+					text: SqueezeJS.string('switch_to_gallery'),
+					cls: 'albumListGallery',
+					handler: function(){ Browse.toggleGalleryView(1) },
+					group: 'viewMode',
+					checked: viewMode == 1
+				}));
 
 			if (orderByList) {
 				menu.add(
