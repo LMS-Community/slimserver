@@ -22,19 +22,53 @@ function(){
 			</form>
 		[% ELSE %]
 			<form name="edittitleurl" method="" style="display: inline; width: 100%;">
-				<input type="hidden" name="index" value="[% entry.index %]">
-				<input type="hidden" name="sess" value="[% sess %]">
-				<input type="hidden" name="action" value="editset">
-				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-				<input id="edit_title_[% entry.index %]" style="display: inline; width: 35%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
-				<input id="edit_url_[% entry.index %]" style="display: inline; width: 35%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
-				[% IF useAJAX %]
-					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
-					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
-				[% ELSE %]
-					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
-				[% END %]
+			<table width="100%">
+				<tr>
+					<td width="35%">
+						<input type="hidden" name="index" value="[% entry.index %]">
+						<input type="hidden" name="sess" value="[% sess %]">
+						<input type="hidden" name="action" value="editset">
+						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
+						<input id="edit_title_[% entry.index %]" style="display: inline; width: 98%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+					</td>
+					<td width="35%">
+						<input id="edit_url_[% entry.index %]" style="display: inline; width: 98%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+					</td>
+					<td>
+					[% IF favorites AND entry.audio %]
+						[% IF useExtJS %]
+							<input type="hidden" name="entryhotkey" id="entryhotkey" value="[% entry.hotkey %]">
+							<span id="hotkey"></span>
+							<script type="text/javascript">
+								Ext.onReady(function(){
+									Favorites.initHotkeyList(new Array(
+									[% FOREACH k IN hotkeys %]
+										'[% k.key _ (k.title ? '&nbsp;-&nbsp;' _ k.title : '') %]'[% UNLESS loop.last; ','; END %]
+									[% END %]
+									), '[% entry.hotkey %]', 'hotkey', 'entryhotkey')
+								}, Favorites);
+							</script>
+						[% ELSE %]
+							<select size="1" name="entryhotkey">
+							<option value=""></option>
+								[% FOREACH k IN hotkeys %]
+									<option [% IF k.key == entry.hotkey %]selected[% END %] value="[% k.key %]">[% k.key %][% IF k.used %] [% k.title %][% END %]</option>
+								[% END %]
+							</select>
+						[% END %]
+					[% END %]
+					</td>
+					<td>
+					[% IF useAJAX %]
+						<input type="button" class="stdclick" style="display: inline; width: 45%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
+						<input type="button" class="stdclick" style="display: inline; width: 45%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+					[% ELSE %]
+						<input type="submit" style="display: inline; width: 45%" class="stdclick" name="editset" value=[% "SAVE" | string %]>
+						<input type="submit" style="display: inline; width: 45%" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+					[% END %]
+					</td>
+				</tr>
+			</table>
 			</form>
 		[% END %]
 	[% END %]
@@ -141,14 +175,11 @@ function(){
 	<script TYPE="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 [% END %][% END %]
 
-[% extJsScripts = BLOCK %]
-	<script type="text/javascript">
-	</script>
-[% END %]
-[% IF action != 'edit'; extJsScripts = BLOCK; extJsScripts %]
+[% IF useExtJS; extJsScripts = BLOCK %]
 	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/Favorites.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
+		[% PROCESS jsString id='FAVORITES_HOTKEYS' jsId='' %]
 		Ext.onReady([% initCall %]);
 	</script>
 [% END; END %]
@@ -173,7 +204,7 @@ function(){
 [% WRAPPER contentcontainer %]
 	<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
 	[% FOREACH entry = entries %]
-		<li id="dragitem_[% entry.index %]" [% IF entry.edit -%]class="dontdrag"[% END %]
+		<li id="dragitem_[% entry.index %]" class="[% IF entry.edit -%]dontdrag [% END %][% IF !(entry.url || entry.audio) -%]droptarget [% END %]"
 			[% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"
 			onMouseOver="showElements(['editcontrols[% entry.index %]'], 'inline');"
 			onMouseOut="hideElements(['editcontrols[% entry.index %]'])"[% END %]>

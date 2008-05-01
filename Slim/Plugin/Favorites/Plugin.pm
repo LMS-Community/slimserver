@@ -519,6 +519,31 @@ sub indexHandler {
 
 					$entry->{'URL'} = $url;
 				}
+
+				if (!$favs) {
+
+					my $hotkey = $params->{'entryhotkey'};
+
+					if (!defined $hotkey || $hotkey eq '') {
+
+						$log->info("removing hotkey from entry");
+
+						delete $entry->{'hotkey'};
+
+					} else {
+
+						my $oldindex = $opml->hasHotkey($hotkey);
+
+						if (defined $oldindex) {
+
+							$opml->setHotkey($oldindex, undef);
+						}
+
+						$log->info("setting hotkey for entry to $hotkey");
+
+						$entry->{'hotkey'} = $hotkey;
+					}
+				}
 			}
 
 			$changed = 1;

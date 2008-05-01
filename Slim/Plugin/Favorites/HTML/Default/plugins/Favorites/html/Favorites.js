@@ -8,7 +8,8 @@ var Favorites = function(){
 				selector: 'ol#draglist li',
 
 				highlighter: Highlighter,
-				onDropCmd: function(sourcePos, targetPos) {
+
+				onDropCmd: function(sourcePos, targetPos, offset) {
 					var el;
 
 					// send the result to the page handler
@@ -34,6 +35,64 @@ var Favorites = function(){
 						);
 					}
 				}
+			});
+		},
+
+		initHotkeyList : function(hotkeys, current, el, input){
+			var menu = new Ext.menu.Menu({
+				items: [
+					new Ext.menu.CheckItem({
+						text: '',
+						handler: this.selectHotkey,
+						group: 'hotkeys',
+						checked: current == ''
+					})
+				]
+			});
+
+			var title = '';
+			for (var i = 1; i <= hotkeys.length; i++){
+				var hotkey = new String(i % 10);
+				menu.add(new Ext.menu.CheckItem({
+					text: hotkeys[i-1],
+					group: 'hotkeys',
+					checked: current == hotkey
+				}));
+
+				if (current == hotkey)
+					title = i;
+			}
+
+			new Ext.SplitButton({
+				renderTo: el,
+				text: title,
+				menu: menu,
+				handler: function(ev){
+					if(this.menu && !this.menu.isVisible()){
+						this.menu.show(this.el, this.menuAlign);
+					}
+					this.fireEvent('arrowclick', this, ev);
+				},
+				listeners: {
+					menuhide: function(btn, menu){
+						menu.items.each(function(item, i){
+							if (item.checked){
+								var el = Ext.get(input)
+
+								if (i == 0)
+									el.dom.value = ''; 
+
+								else
+									el.dom.value = i % 10;
+
+								this.setText(el.dom.value)
+							}
+						}, btn);
+					}
+				},
+				tooltip: SqueezeJS.string('favorites_hotkeys'),
+				arrowTooltip: SqueezeJS.string('favorites_hotkeys'),
+				tooltipType: 'title'
 			});
 		}
 	}
