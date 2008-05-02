@@ -190,6 +190,9 @@ sub initPlugin {
 		Slim::Control::Request::addDispatch(['musicip', 'mix'],
 			[1, 1, 1, \&cliMix]);
 
+		Slim::Control::Request::addDispatch(['musicip', 'moods'],
+			[1, 1, 0, \&cliMoods]);
+
 		Slim::Control::Request::addDispatch(['musicip', 'play'],
 			[1, 0, 0, \&cliPlayMix]);
 
