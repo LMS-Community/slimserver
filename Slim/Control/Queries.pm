@@ -3920,7 +3920,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 
 								# we want chunkCount to increment, but not to add the key:val text string below
-								$chunkCount++; next;
+								$chunkCount++; $idx++; next;
 							}
 							
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
@@ -3948,12 +3948,8 @@ sub songinfoQuery {
 			# this is a workaround for the fact that a radio stream in the current playlist will
 			# often have a URL for a specific IP rather than a e.g DNS .m3u URL
 			if ($favorites{'url'} =~ /^file/ && $menuMode) {
-				# Add Favorites as the last item, if applicable
-				my $lastChunk;
-				if ( $idx == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
-					$lastChunk = 1;
-				}
-				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
+				# Add Favorites as the last item to all chunks (the assumption is that there will be 1 chunk in this response 100% of the time)
+				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 			}
 
 			# because of suppression of some items, only now can we add the count
