@@ -13011,6 +13011,9 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	SV	Trådlös signalstyrka
 	ZH_CN	无线讯号强度
 
+INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
+	EN	Wireless Signal
+
 INFORMATION_CLIENTS
 	CS	Celkem přehrávačů rozpoznáno
 	DA	Samlet antal kendte afspillere
@@ -14696,6 +14699,18 @@ POLARITYINVERSION_INVERTED
 	ZH_CN	电极倒转
 
 INFORMATION_PLAYER_VOLTAGE
+	DA	Spænding
+	DE	Spannung
+	EN	Voltage
+	ES	Voltaje
+	FR	Tension
+	HE	מתח
+	IT	Voltaggio
+	NL	Voltage
+	SV	Spänning
+	ZH_CN	伏特
+
+INFORMATION_PLAYER_VOLTAGE_ABBR
 	DA	Spænding
 	DE	Spannung
 	EN	Voltage
