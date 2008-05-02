@@ -1143,7 +1143,12 @@ SLEEP
 	ZH_CN	睡眠状态
 
 PLAYER_SLEEP
+	DE	Player Schlafmodus
 	EN	Player Sleep
+	ES	Suspender del reproductor
+	FR	Veille de la platine
+	IT	Sospendi Lettore
+	NL	Sluimermodus spesler
 
 SLEEPING_AT
 	DA	Hviler om
@@ -1873,7 +1878,12 @@ REBUFFERING
 	NO	Fyller bufferet på nytt...
 
 REBUFFERING_FAILED
+	DE	Puffer konnte nicht aktualisiert werden
 	EN	Rebuffering failed
+	ES	Error d'almacenar en búfer
+	FR	Echec de remise en tampon
+	IT	Reinizializzazione buffer non riuscita
+	NL	Kan niet vul de buffer
 
 WAITING_TO_SYNC
 	DA	Venter på synkronisering...
@@ -1943,7 +1953,12 @@ PROBLEM_CONVERT_FILE
 	NL	Probleem: Kan bestandstype niet afspelen voor:
 
 PROBLEM_CONVERT_FILE_WMA_LOSSLESS
+	DE	Problem: WMA Lossless benötigt Windows
 	EN	Problem: WMA Lossless requires Windows
+	ES	Problema: WMA Lossless requiere Windows
+	FR	Problème: WMA Lossless nécessite Windows
+	IT	Problema: WMA Lossless richiede Windows
+	NL	Probleem: WMA Lossless vereist Windows
 
 PROBLEM_CONVERT_STREAM
 	DA	Problem: Kan ikke konvertere strøm:
@@ -10515,6 +10530,10 @@ NOTE
 FILENAME_WARNING
 	DE	Dateiname enthält illegale Zeichen.
 	EN	Illegal characters in name, Please edit.
+	ES	Caracteres ilegales en nombre, corrigen por favor.
+	FR	Caractères illégaux dans le nom.
+	IT	Caratteri illegali nel nome.
+	NL	De onwettige karakters in naam.
 
 RENAME_WARNING
 	CS	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
@@ -15151,7 +15170,10 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 LINES
 	DE	Zeilen
 	EN	lines
+	ES	líneas
 	FR	lignes
+	IT	linee
+	NL	lijnen
 
 SETUP_DEBUG_PERFMON_LOG
 	DA	Log fil for ydelse
@@ -15516,7 +15538,12 @@ JIVE_ADD_ALL
 	NL	Alles toevoegen
 
 JIVE_DELETE_PLAYLIST
+	DE	Wiedergabeliste löschen
 	EN	Delete Playlist
+	ES	Eliminar lista de reproducción
+	FR	Supprimer la liste de lecture
+	IT	Elimina elenco di riproduzione
+	NL	Playlist verwijderen
 
 JIVE_DELETE_FROM_FAVORITES
 	DA	Slet Favorit
@@ -15641,7 +15668,12 @@ JIVE_POPUP_REMOVING
 	NL	Bezig met verwijderen
 
 JIVE_POPUP_TO_PLAY_NEXT
+	DE	um als nächstes zu spielen
 	EN	to play next...
+	ES	para reproducir a continuación
+	FR	après le morceau en cours
+	IT	successivo...
+	NL	om als volgende af te spelen
 
 JIVE_POPUP_TO_PLAYLIST
 	DA	til spilleliste...
