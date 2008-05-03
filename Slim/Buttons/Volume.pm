@@ -44,7 +44,7 @@ sub volumeExitHandler {
 		$exittype = uc($exittype);
 	}
 
-	if (!$exittype || $exittype eq 'LEFT') {
+	if (!$exittype || $exittype eq 'LEFT' || $exittype eq 'PASSBACK') {
 
 		Slim::Utils::Timers::killTimers($client, \&_volumeIdleChecker);
 

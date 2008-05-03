@@ -493,6 +493,11 @@ sub exitInput {
 
 			Slim::Buttons::Common::popModeRight($client);
 
+		} elsif ($exitType eq 'passback') {
+
+			Slim::Buttons::Common::popMode($client);
+			Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime, Slim::Buttons::Common::mode($client));
+
 		} else {
 
 			Slim::Buttons::Common::popMode($client);
@@ -502,6 +507,10 @@ sub exitInput {
 	}
 
 	$callbackFunct->(@_);
+
+	if ($exitType eq 'passback') {
+		Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime, Slim::Buttons::Common::mode($client));
+	}
 }
 
 =head1 SEE ALSO
