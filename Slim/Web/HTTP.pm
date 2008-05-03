@@ -2504,7 +2504,7 @@ sub closeHTTPSocket {
 	
 	$reason ||= 'closed normally';
 	
-	$log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}:" . $httpClient->peerport . " ($reason)");
+	$log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}:" . ($httpClient->peerport || 0). " ($reason)");
 	
 	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
