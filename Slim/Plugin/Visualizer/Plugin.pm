@@ -60,6 +60,7 @@ my %screensaver_info = (
 				'squeezebox2' => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
 			},
 		showtext => 1,
+		hidevisu => 0,
 	},
 
 # Parameters for the vumeter:
@@ -78,6 +79,7 @@ my %screensaver_info = (
 				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
 			},
 		showtext => 0,
+		hidevisu => 1,
 	},
 	'SCREENSAVER.visualizer_digital_vumeter' => {
 		name => 'VISUALIZER_DIGITAL_VUMETER',
@@ -86,6 +88,7 @@ my %screensaver_info = (
 				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
 			},
 		showtext => 1,
+		hidevisu => 1,
 	},
 	'screensaver' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT',
@@ -253,6 +256,7 @@ sub setVisualizerMode {
 	}
 	
 	$client->modeParam('visu', $paramsRef);
+	$client->modeParam('hidevisu', $screensaver_info{$mode}->{hidevisu});
 
 	# visualiser uses screen 2 - blank it and turn off other screen two displays
 	$client->update( { 'screen2' => {} } );

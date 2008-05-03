@@ -422,6 +422,8 @@ sub lines {
 
 	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep,0,$cursor);
 
+	my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef') unless $noOverlay;
+
 	if ($client->linesPerScreen() == 1) {
 
 		if ($client->modeParam('barOnDouble')) {
@@ -432,10 +434,9 @@ sub lines {
 		} else {
 
 			$line2 = $line1;
+			$overlay2 = $overlay1;
 		}
 	}
-
-	my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef') unless $noOverlay;
 
 	my $parts = {
 		'line'    => [ $line1, $line2 ],

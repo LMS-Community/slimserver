@@ -1,30 +1,30 @@
-# String file for Scanner plugin
+# String file for SongScanner plugin
 
 # $Id: strings.txt,v 1.1 2007-11-07 07:38:15 fishbone Exp $
 
-PLUGIN_SCANNER
+PLUGIN_SONGSCANNER
 	EN	Song Scanner
 
-PLUGIN_SCANNER_DESC
+PLUGIN_SONGSCANNER_DESC
 	EN	Player interface for jumping to arbitrary positions within the currently playing song
 
-PLUGIN_SCANNER_SET
+PLUGIN_SONGSCANNER_SET
 	EN	Time:
 
-PLUGIN_SCANNER_ERR_REMOTE
+PLUGIN_SONGSCANNER_ERR_REMOTE
 	EN	Cannot scan through remote tracks
 
-PLUGIN_SCANNER_ERR_UNKNOWNSIZE
+PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	EN	Cannot scan through track because duration unknown
 
-PLUGIN_SCANNER_ERR_TRANSCODED
+PLUGIN_SONGSCANNER_ERR_TRANSCODED
 	EN	Cannot scan through transcoded track
 
-PLUGIN_SCANNER_ERR_NOTRACK
+PLUGIN_SONGSCANNER_ERR_NOTRACK
 	EN	No track
 
-PLUGIN_SCANNER_MAX_RATE_FWD
+PLUGIN_SONGSCANNER_MAX_RATE_FWD
 	EN	Maximum fast-forward rate reached
 
-PLUGIN_SCANNER_MAX_RATE_REW
+PLUGIN_SONGSCANNER_MAX_RATE_REW
 	EN	Maximum rewind rate reached
