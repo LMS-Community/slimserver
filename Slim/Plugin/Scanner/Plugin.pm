@@ -69,7 +69,7 @@ my %modeParams = (
 			if ($rate < 0 || $rate > 1) {
 				$rateText = ($rate < 0 ? ' <<' : ' >>') . abs($rate) . 'X:';
 			} elsif (Slim::Player::Source::playmode($client) =~ /pause/) {
-				$rateText = ' ' . $client->string('PAUSED') . ':';
+				$rateText = ' (' . $client->string('PAUSED') . ')';
 			}
 			return " $rateText ";
 		}
@@ -140,15 +140,39 @@ sub _scannerExitHandler {
 	# Input.BAR should never pass POP to a callback function
 	return if $exittype eq 'POP';
 
-	if ($exittype eq 'RIGHT') {
-		$client->bumpRight();
-	} elsif ($exittype eq 'LEFT' || $exittype eq 'PUSH') {
-		$log->debug('Exiting');
-		Slim::Utils::Timers::killOneTimer($client, \&_timerHandler);
-		Slim::Buttons::Common::popModeRight($client);
-		if ($client->pluginData('jumpToMode')) {
+	if ($exittype eq 'PLAY' || $exittype eq 'RIGHT' || $exittype eq 'LEFT' || $exittype eq 'PUSH') {
+		my $playmode = Slim::Player::Source::playmode($client);
+		
+		$log->debug('Exiting...');
+
+		# Cancel any fast-forward or rewind
+		my $originalRate = Slim::Player::Source::rate($client);
+		if ($originalRate != 1 && $originalRate != 0) {
+			$log->debug("Changing rate from $originalRate to 1");
+			Slim::Player::Source::rate($client, 1);
+		}
+
+		# Apply any pending change in song position
+		if ($client->pluginData('lastUpdateTime')) {
+			$log->debug('Applying pending update');
+			Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
+
+			#my $lines = $client->currentSongLines();
+			#$lines->{'jive'} = undef;
+			#$client->showBriefly($lines, {block => 1});
+		}
+		if ($playmode =~ /pause/) {
+			$log->debug('Resuming playback');
+			Slim::Player::Source::playmode($client, 'resume');
+		}
+		# Don't exit if play was used to cancel a fast-forward/rewind 
+		if ($client->pluginData('jumpToMode')
+			&& ($originalRate == 1 || $client->pluginData('lastUpdateTime'))) {
+			Slim::Buttons::Common::popMode($client);
 			$client->pluginData(jumpToMode => 0);
 		}
+		$client->pluginData(lastUpdateTime => 0);
+		$client->update;
 	}
 }
 
@@ -223,7 +247,7 @@ sub _jump {
 
 my %functions = (
 	'right' => sub  {
-		my ($client,$funct,$functarg) = @_;
+		my $client = shift;
 		_scannerExitHandler($client,'RIGHT');
 	},
 	'left' => sub {
@@ -232,38 +256,7 @@ my %functions = (
 	},
 	'play' => sub {
 		my $client = shift;
-		my $playmode = Slim::Player::Source::playmode($client);
-		
-		$log->debug('Play pressed.');
-
-		# Cancel any fast-forward or rewind
-		my $originalRate = Slim::Player::Source::rate($client);
-		if ($originalRate != 1 && $originalRate != 0) {
-			$log->debug("Changing rate from $originalRate to 1");
-			Slim::Player::Source::rate($client, 1);
-		}
-
-		# Apply any pending change in song position
-		if ($client->pluginData('lastUpdateTime')) {
-			$log->debug('Applying pending update');
-			Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
-
-			#my $lines = $client->currentSongLines();
-			#$lines->{'jive'} = undef;
-			#$client->showBriefly($lines, {block => 1});
-		}
-		if ($playmode =~ /pause/) {
-			$log->debug('Resuming playback');
-			Slim::Player::Source::playmode($client, 'resume');
-		}
-		# Don't exit if play was used to cancel a fast-forward/rewind 
-		if ($client->pluginData('jumpToMode')
-			&& ($originalRate == 1 || $client->pluginData('lastUpdateTime'))) {
-			Slim::Buttons::Common::popMode($client);
-			$client->pluginData(jumpToMode => 0);
-		}
-		$client->pluginData(lastUpdateTime => 0);
-		$client->update;
+		_scannerExitHandler($client,'PLAY');
 	},
 	'pause' => sub {
 		my $client = shift;
