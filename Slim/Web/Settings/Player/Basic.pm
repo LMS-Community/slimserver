@@ -90,7 +90,7 @@ sub handler {
 		}
 	}
 
-	$paramRef->{'prefs'}->{'pref_playername'} |= $client->name;
+	$paramRef->{'prefs'}->{'pref_playername'} ||= $client->name;
 
 	for my $pref (@prefs) {
 		$paramRef->{'prefs'}->{'pref_'.$pref} = [ @{ $prefs->client($client)->get($pref) }, "-1" ];

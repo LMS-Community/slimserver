@@ -669,9 +669,7 @@ sub shutdownPlugins {
 
 	$log->info("Shutting down plugins...");
 
-	my %enabledPlugins = $class->enabledPlugins;
-
-	for my $plugin (sort keys %enabledPlugins) {
+	for my $plugin (sort $class->enabledPlugins) {
 
 		$class->shutdownPlugin($plugin);
 	}

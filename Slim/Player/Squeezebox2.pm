@@ -727,7 +727,7 @@ sub getPlayerSetting {
 
 	my $currpref = $pref_settings->{$pref};
 
-	my $data = pack('C', $currpref->{firmwareid});
+	my $data = pack('C', $currpref->{firmwareid} || 0);
 	$client->sendFrame('setd', \$data);
 }
 
