@@ -48,7 +48,7 @@ Browse = {
 			if (orderByList) {
 				menu.add(
 						'-',
-						'<span class="menu-title">' + SqueezeJS.String('sort_by') + '...</span>'
+						'<span class="menu-title">' + SqueezeJS.string('sort_by') + '...</span>'
 				);
 
 				var sortOrder = SqueezeJS.getCookie('SqueezeCenter-orderBy');

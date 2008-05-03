@@ -187,6 +187,18 @@ sub initPlugin {
 
 		Slim::Plugin::MusicMagic::ClientSettings->new;
 
+		Slim::Control::Request::addDispatch(['musicip', 'mix'],
+			[1, 1, 1, \&cliMix]);
+
+		Slim::Control::Request::addDispatch(['musicip', 'moods'],
+			[1, 1, 0, \&cliMoods]);
+
+		Slim::Control::Request::addDispatch(['musicip', 'play'],
+			[1, 0, 0, \&cliPlayMix]);
+
+		Slim::Control::Request::addDispatch(['musicip', 'add'],
+			[1, 0, 0, \&cliPlayMix]);
+
 		if (scalar @{grabMoods()}) {
 
 			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
@@ -758,21 +770,181 @@ sub musicmagic_mix {
 	my ($client, $params) = @_;
 
 	my $output = "";
-	my $mix;
+	my $mix = _prepare_mix($client, $params);
 
+	my $p0       = $params->{'p0'};
+
+	my $itemnumber = 0;
+	$params->{'browse_items'} = [];
+	$params->{'levelName'} = "track";
+
+	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_pwdlist.html", $params)};
+
+	if (scalar @$mix) {
+
+		push @{$params->{'browse_items'}}, {
+
+			'text'         => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
+			'attributes'   => "&listRef=musicmagic_mix",
+			'odd'          => ($itemnumber + 1) % 2,
+			'webroot'      => $params->{'webroot'},
+			'skinOverride' => $params->{'skinOverride'},
+			'player'       => $params->{'player'},
+		};
+
+		$itemnumber++;
+
+	} else {
+		
+		# no mixed items, report empty.
+		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
+	}
+
+	for my $item (@$mix) {
+
+		my %form = %$params;
+
+		# If we can't get an object for this url, skip it, as the
+		# user's database is likely out of date. Bug 863
+		my $trackObj = Slim::Schema->rs('Track')->objectForUrl($item);
+
+		if (!blessed($trackObj) || !$trackObj->can('id')) {
+
+			next;
+		}
+		
+		$trackObj->displayAsHTML(\%form, 0);
+
+		$form{'attributes'} = join('=', '&track.id', $trackObj->id);
+		$form{'odd'}        = ($itemnumber + 1) % 2;
+
+		$itemnumber++;
+
+		push @{$params->{'browse_items'}}, \%form;
+	}
+
+	if (defined $p0 && defined $client) {
+		$client->execute(["playlist", $p0 eq "append" ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
+	}
+
+	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);
+}
+
+sub cliMoods {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['musicip', 'moods']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client = $request->client();	
+
+	my $moods = grabMoods();
+
+	# menu/jive mgmt
+	my $menu     = $request->getParam('menu');
+	my $menuMode = defined $menu;
+
+	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
+	my $chunkCount = 0;
+
+	for my $item (@$moods) {
+		if ($menuMode) {}
+		else {
+			$request->addResultLoop($loopname, $chunkCount, 'name', $item);
+		}
+		$chunkCount++;
+	}
+
+	$request->addResult('count', $chunkCount);
+}
+
+
+sub cliMix {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['musicip', 'mix']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client = $request->client();
+	my $tags   = $request->getParam('tags') || 'al';
+
+	my $params = {
+		song        => $request->getParam('song_id'), 
+		track       => $request->getParam('track_id'),
+		artist      => $request->getParam('artist_id'),
+		contributor => $request->getParam('contributor_id'),
+		album       => $request->getParam('album_id'),
+		genre       => $request->getParam('genre_id'),
+		year        => $request->getParam('year'),
+		mood        => $request->getParam('mood'),
+		playlist    => $request->getParam('playlist'),
+	};
+
+	my $mix = _prepare_mix($client, $params);
+
+	# menu/jive mgmt
+	my $menu     = $request->getParam('menu');
+	my $menuMode = defined $menu;
+
+	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
+	my $chunkCount = 0;
+
+	for my $item (@$mix) {
+
+		# If we can't get an object for this url, skip it, as the
+		# user's database is likely out of date. Bug 863
+		my $trackObj = Slim::Schema->rs('Track')->objectForUrl($item);
+
+		if (!blessed($trackObj) || !$trackObj->can('id')) {
+
+			next;
+		}
+
+		if ($menuMode) {}
+		else {
+			Slim::Control::Queries::_addSong($request, $loopname, $chunkCount, $trackObj, $tags);
+		}
+		$chunkCount++;
+	}
+
+	$request->addResult('count', $chunkCount);
+}
+
+sub cliPlayMix {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotCommand([['musicip'], ['play', 'add']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client = $request->client();
+	my $add    = !$request->isNotCommand([['musicip'], ['add']]);
+
+	$client->execute(["playlist", $add ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
+}
+
+sub _prepare_mix {
+	my ($client, $params) = @_;
+
+	my $mix;
 	my $song     = $params->{'song'} || $params->{'track'};
 	my $artist   = $params->{'artist'} || $params->{'contributor'};
 	my $album    = $params->{'album'};
 	my $genre    = $params->{'genre'};
 	my $year     = $params->{'year'};
 	my $mood     = $params->{'mood'};
-	my $player   = $params->{'player'};
 	my $playlist = $params->{'playlist'};
-	my $p0       = $params->{'p0'};
-
-	my $itemnumber = 0;
-	$params->{'browse_items'} = [];
-	$params->{'levelName'} = "track";
 
 	if ($mood) {
 		$mix = getMix($client, $mood, 'mood');
@@ -868,63 +1040,13 @@ sub musicmagic_mix {
 	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
-		$client->modeParam('musicmagic_mix',$mix);
+		$client->modeParam('musicmagic_mix', $mix);
 	} elsif (!defined $mix || ref $mix ne "ARRAY") {
 		$mix = [];
 	}
-
-	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_pwdlist.html", $params)};
-
-	if (scalar @$mix) {
-
-		push @{$params->{'browse_items'}}, {
-
-			'text'         => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
-			'attributes'   => "&listRef=musicmagic_mix",
-			'odd'          => ($itemnumber + 1) % 2,
-			'webroot'      => $params->{'webroot'},
-			'skinOverride' => $params->{'skinOverride'},
-			'player'       => $params->{'player'},
-		};
-
-		$itemnumber++;
-
-	} else {
-		
-		# no mixed items, report empty.
-		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
-	}
-
-	for my $item (@$mix) {
-
-		my %form = %$params;
-
-		# If we can't get an object for this url, skip it, as the
-		# user's database is likely out of date. Bug 863
-		my $trackObj = Slim::Schema->rs('Track')->objectForUrl($item);
-
-		if (!blessed($trackObj) || !$trackObj->can('id')) {
-
-			next;
-		}
-		
-		$trackObj->displayAsHTML(\%form, 0);
-
-		$form{'attributes'} = join('=', '&track.id', $trackObj->id);
-		$form{'odd'}        = ($itemnumber + 1) % 2;
-
-		$itemnumber++;
-
-		push @{$params->{'browse_items'}}, \%form;
-	}
-
-	if (defined $p0 && defined $client) {
-		$client->execute(["playlist", $p0 eq "append" ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
-	}
-
-	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);
+	
+	return $mix;
 }
-
 1;
 
 __END__
