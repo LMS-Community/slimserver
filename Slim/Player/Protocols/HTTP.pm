@@ -369,6 +369,19 @@ sub onDecoderUnderrun {
 	# Flag that we don't want any buffering messages while loading the next track,
 	$client->showBuffering( 0 );
 	
+	# Special handling needed when synced since onDecoderUnderrun is
+	# called for all players
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		if ( !Slim::Player::Sync::isMaster($client) ) {
+			# Only the master needs to scan the track
+			$log->debug('Letting sync master scan next track');
+			
+			$callback->();
+			
+			return;
+		}
+	}
+	
 	$log->debug( 'Scanning next HTTP track before playback' );
 	
 	$class->scanHTTPTrack( $client, $nextURL, $callback );
