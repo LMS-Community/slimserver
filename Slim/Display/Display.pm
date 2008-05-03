@@ -92,6 +92,7 @@ sub new {
 	$display->[12]= {};       # displayStrings - strings for this display
 	$display->[13]= [];       # widthOverride - element 1 = screen1 (undef if default for display)
 	$display->[14]= 0;        # notifyLevel [0 = notify off, 1 = showbriefly only, 2 = all]
+	$display->[15]= 0;        # hideVisu [0 = don't hide, 1 = hide if mode requests, 2 = hide all]
 
 	$display->resetDisplay(); # init render cache
 	
@@ -171,6 +172,10 @@ sub widthOverride {
 sub notifyLevel {
 	my $r = shift;
 	@_ ? ($r->[14] = shift) : $r->[14];
+}
+sub hideVisu {
+	my $r = shift;
+	@_ ? ($r->[15] = shift) : $r->[15];
 }
 
 ################################################################################################
@@ -272,7 +277,7 @@ sub showBriefly {
 	# return if update blocked
 	return if ($display->updateMode() == 2);
 
-	my ($duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs, $name);
+	my ($duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs, $name, $hideVisu);
 
 	if (ref($parts) ne 'HASH') {
 		logBacktrace("showBriefly should be passed a display hash");
@@ -292,6 +297,7 @@ sub showBriefly {
 		$callback     = $args->{'callback'};     # callback when showBriefly completes
 		$callbackargs = $args->{'callbackargs'}; # callback arguments
 		$name         = $args->{'name'};         # name - so caller can name who owns current showBriefly
+		$hideVisu     = $args->{'hidevisu'} ? 2 : 1 # caller requests all visualisers to be hidden
 	} else {
 		$duration = $args || 1;
 		$firstLine   = shift;
@@ -301,6 +307,7 @@ sub showBriefly {
 		$callback     = shift;
 		$callbackargs = shift;
 		$name         = shift;
+		$hideVisu     = @_ ? 2 : 1;
 	}
 
 	# cache info for async showBriefly (web UI)
@@ -320,9 +327,11 @@ sub showBriefly {
 
 	my $oldDisplay = $display->sbOldDisplay() || $display->curDisplay();
 	$display->sbOldDisplay(undef);
+	$display->hideVisu($hideVisu);
 
 	$display->update($parts, $scrollToEnd ? 3 : undef);
 	
+	$display->hideVisu(0);
 	$display->screen2updateOK( ($oldDisplay->{'screen2'} && !$parts->{'screen2'} && !$display->updateMode) ? 1 : 0 );
 	$display->updateMode( $blockUpdate ? 2 : 1 );
 	$display->animateState(5);
