@@ -1,9 +1,9 @@
-package Slim::Plugin::Scanner::Plugin;
+package Slim::Plugin::SongScanner::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 
 # Originally written by Kevin Deane-Freeman August 2004
-# Revised by Max Spicer, April 2008   
+# Revamped and revised by Alan Young & Max Spicer, April 2008   
 
 # Provide a new mode allowing the user to jump to an arbitrary point in the
 # currently playing song.  Replaces the default fast-forward/rewind behaviour,
@@ -32,13 +32,13 @@ use Time::HiRes;
 use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.2 $,10);
 
-my $modeName = 'Slim::Plugin::Scanner::Plugin';
+my $modeName = 'Slim::Plugin::SongScanner::Plugin';
 
 my $JUMP_INTERVAL            = 10;    # seconds
 my $LOCAL_UPDATE_INTERVAL    = 0.400; # seconds
 my $REMOTE_UPDATE_INTERVAL   = 2.000; # seconds
 
-sub getDisplayName {return 'PLUGIN_SCANNER'}
+sub getDisplayName {return 'PLUGIN_SONGSCANNER'}
 
 my $log          = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.songscanner',
@@ -47,7 +47,7 @@ my $log          = Slim::Utils::Log->addLogCategory({
 });
 
 my %modeParams = (
-	'header' => 'PLUGIN_SCANNER_SET'
+	'header' => 'PLUGIN_SONGSCANNER_SET'
 	,'stringHeader' => 1
 	,'headerValue' => sub {
 			my $client = shift;
@@ -161,16 +161,18 @@ sub _scannerExitHandler {
 			#$lines->{'jive'} = undef;
 			#$client->showBriefly($lines, {block => 1});
 		}
-		if ($playmode =~ /pause/) {
-			$log->debug('Resuming playback');
-			Slim::Player::Source::playmode($client, 'resume');
+		if ($exittype eq 'PLAY' && $playmode =~ /pause/) {
+				$log->debug('Resuming playback');
+				Slim::Player::Source::playmode($client, 'resume');
 		}
+
 		# Don't exit if play was used to cancel a fast-forward/rewind 
 		if ($client->pluginData('jumpToMode')
 			&& ($originalRate == 1 || $client->pluginData('lastUpdateTime'))) {
 			Slim::Buttons::Common::popMode($client);
 			$client->pluginData(jumpToMode => 0);
 		}
+
 		$client->pluginData(lastUpdateTime => 0);
 		$client->update;
 	}
@@ -208,7 +210,7 @@ sub _scan {
 	if (abs($rate) > $SCAN_RATE_MAX_MULTIPLIER) {
 		$log->debug('Max scan rate reached');
 		$client->showBriefly(
-			{line => [ $client->string($direction > 0 ? 'PLUGIN_SCANNER_MAX_RATE_FWD' : 'PLUGIN_SCANNER_MAX_RATE_REW'), '' ],
+			{line => [ $client->string($direction > 0 ? 'PLUGIN_SONGSCANNER_MAX_RATE_FWD' : 'PLUGIN_SONGSCANNER_MAX_RATE_REW'), '' ],
 				'jive' => undef},
 			{duration => 1.5, scroll => 1}
 		);
@@ -288,15 +290,14 @@ my %functions = (
 		_jump($client, -$JUMP_INTERVAL);
 #		_scan($client, -1);
 	},
-	'scanner_fwd' => sub {
+	'song_scanner_fwd' => sub {
 		my $client = shift;
 		Slim::Buttons::Input::Bar::changePos($client, 1, 'up') if $client->pluginData('activeFfwRew') > 1;
 	},
-	'scanner_rew' => sub {
+	'song_scanner_rew' => sub {
 		my $client = shift;
 		Slim::Buttons::Input::Bar::changePos($client, -1, 'down') if $client->pluginData('activeFfwRew') > 1; 
 	},
-	#'scanner' => \&_jumptoscanner,
 );
 
 sub _jumptoscanner {
@@ -310,7 +311,7 @@ sub getFunctions {
 }
 
 sub lines {
-	my $line1 = string('PLUGIN_SCANNER');
+	my $line1 = string('PLUGIN_SONGSCANNER');
 	my $line2 = '';
 	
 	return {'line'    => [$line1, $line2],}
@@ -354,13 +355,13 @@ sub setMode {
 		}
 		
 		if ( !$duration ) {
-			@errorString = ('PLUGIN_SCANNER_ERR_UNKNOWNSIZE');
+			@errorString = ('PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE');
 		}
 		else {
 			(undef, @errorString) = Slim::Music::Info::canSeek($client, $playingSong);
 		}
 	} else {
-		@errorString = ('PLUGIN_SCANNER_ERR_NOTRACK');
+		@errorString = ('PLUGIN_SONGSCANNER_ERR_NOTRACK');
 	}
 	
 	if ( @errorString ) {
@@ -399,12 +400,12 @@ sub setMode {
 sub initPlugin {
 	my $class = shift;
 	# Single press of fwd/rew triggers ffwd/rewind
-	Slim::Hardware::IR::addModeDefaultMapping('common', {'fwd.hold' => 'scanner', 'rew.hold' => 'scanner'}, 1);
+	Slim::Hardware::IR::addModeDefaultMapping('common', {'fwd.hold' => 'song_scanner', 'rew.hold' => 'song_scanner'}, 1);
 	# Holding fwd and rew moves the scanner bar left/right
 	Slim::Hardware::IR::addModeDefaultMapping($modeName,
-		{'fwd.repeat' => 'scanner_fwd', 'rew.repeat' => 'scanner_rew',
+		{'fwd.repeat' => 'song_scanner_fwd', 'rew.repeat' => 'song_scanner_rew',
 		'fwd.hold' => 'dead', 'rew.hold' => 'dead'}, 1);
 
-	Slim::Buttons::Common::setFunction('scanner', \&_jumptoscanner);
+	Slim::Buttons::Common::setFunction('song_scanner', \&_jumptoscanner);
 	$class->SUPER::initPlugin();
 }
