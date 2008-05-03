@@ -244,6 +244,10 @@ sub visualizer {
 
 	my $paramsref = $client->modeParam('visu');
 
+	if ($display->hideVisu && ( ($display->hideVisu == 1 && $client->modeParam('hidevisu')) || $display->hideVisu == 2) ) {
+		$paramsref = [0]; # hide all visualisers
+	}
+
 	if (!$paramsref) {
 		$paramsref = $display->visualizerParams()
 	}
