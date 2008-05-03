@@ -297,13 +297,6 @@ sub visualizerParams {
 	return $visualizers[$visu]{params};
 }
 
-sub visualizer {
-	my $display = shift;
-	my $forceSend = shift;
-
-	$display->SUPER::visualizer($forceSend);	
-}
-
 sub showVisualizer {
 	my $display = shift;
 
