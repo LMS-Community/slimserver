@@ -1837,13 +1837,13 @@ sub _postCheckAttributes {
 	if (defined $attributes->{'COMPILATION'}) {
 
 		# Use eq instead of == here, otherwise perl will warn.
-		if ($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} eq 1) {
+		if ($attributes->{'COMPILATION'} =~ /^(?:yes|true)$/i || $attributes->{'COMPILATION'} eq 1) {
 
 			$isCompilation = 1;
 
 			$log->debug("-- Track is a compilation");
 
-		} elsif ($attributes->{'COMPILATION'} =~ /^no$/i || $attributes->{'COMPILATION'} eq 0) {
+		} elsif ($attributes->{'COMPILATION'} =~ /^(?:no|false)$/i || $attributes->{'COMPILATION'} eq 0) {
 
 			$isCompilation = 0;
 
