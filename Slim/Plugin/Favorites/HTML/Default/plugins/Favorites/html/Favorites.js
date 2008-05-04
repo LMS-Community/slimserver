@@ -1,41 +1,83 @@
 var Favorites = function(){
 	return {
-		init : function(session, offset){
+		init : function(session, index){
 			SqueezeJS.UI.ScrollPanel.init();
 
-			new SqueezeJS.UI.Sortable({
+			var favlist = new SqueezeJS.UI.Sortable({
 				el: 'draglist',
 				selector: 'ol#draglist li',
 
 				highlighter: Highlighter,
 
-				onDropCmd: function(sourcePos, targetPos, offset) {
-					var el;
+				onDrop: function(source, target, position) {
+					if (target && source) {
+						var sourcePos = Ext.get(source.id).dd.config.position;
+						var targetPos = Ext.get(target.id).dd.config.position;
+			
+						if (sourcePos >= 0 && targetPos >= 0 && targetPos < 10000) {
+							if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
+								targetPos += position;
+							}
+						}
 
-					// send the result to the page handler
-					if (el = Ext.get(this.el))
-						// unregister event handlers
-						Ext.dd.ScrollManager.unregister(el);
-
-					if (el = Ext.get('mainbody')) {
-						var um = el.getUpdateManager();						
-						el.load(
-							webroot + 'plugins/Favorites/index.html', 
-							{
+						if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {	
+							var el;
+		
+							// send the result to the page handler
+							if (el = Ext.get(this.el))
+								// unregister event handlers
+								Ext.dd.ScrollManager.unregister(el);
+		
+							var params = {
 								action: 'move',
-								index: (offset >= 0 ? offset + '.' : '') + sourcePos,
-								to: targetPos,
+								index: (index >= 0 ? index+ '.' : '') + sourcePos,
 								sess: session,
 								ajaxUpdate: 1,
 								player: player
-							},
-							function(){
-								Favorites.init(session, offset);
+							};
+		
+							// drop into parent level
+							if (targetPos > 10000) {
+								targetPos = (targetPos % 10000) - 1;
+								params.tolevel = targetPos ? targetPos : '';
 							}
-						);
+		
+							// drop to sub-folder
+							else if (position == 0)
+								params.into = targetPos;
+		
+							// move within current level
+							else
+								params.to = targetPos;
+		
+							if (el = Ext.get('mainbody')) {
+								var um = el.getUpdateManager();						
+								el.load(
+									webroot + 'plugins/Favorites/index.html', 
+									params,
+									function(){
+										Favorites.init(session, index);
+									}
+								);
+							}
+
+							this.init();
+						}
 					}
 				}
 			});
+
+			// add upper levels in crumb list as drop targets
+			// but don't add first (home) and last (current) level
+			var items = Ext.DomQuery.select('div#crumblist a');
+			for(var i = 1; i < items.length-1; i++) {
+				var item = Ext.get(items[i]);
+
+				Ext.id(item);
+				item.dd = new Ext.dd.DDProxy(items[i], 'draglist', {
+					position: i + 10000
+				});
+			}
 		},
 
 		initHotkeyList : function(hotkeys, current, el, input){

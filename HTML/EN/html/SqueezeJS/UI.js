@@ -570,19 +570,19 @@ SqueezeJS.UI.Sortable.prototype = {
 		return new SqueezeJS.DDProxy(item, el, config);
 	},
 
-	onDrop: function(source, target, offset) {
+	onDrop: function(source, target, position) {
 		if (target && source) {
 			var sourcePos = Ext.get(source.id).dd.config.position;
 			var targetPos = Ext.get(target.id).dd.config.position;
 
 			if (sourcePos >= 0 && targetPos >= 0) {
-				if ((sourcePos > targetPos && offset > 0) || (sourcePos < targetPos && offset < 0)) {
-					targetPos += offset;
+				if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
+					targetPos += position;
 				}
 			}
 
 			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
-				if (offset == 0)
+				if (position == 0)
 					source.remove();
 
 				else if (sourcePos > targetPos)
@@ -592,7 +592,7 @@ SqueezeJS.UI.Sortable.prototype = {
 					source.insertAfter(target);
 
 
-				this.onDropCmd(sourcePos, targetPos, offset);
+				this.onDropCmd(sourcePos, targetPos, position);
 				this.init();
 			}
 		}
@@ -681,6 +681,9 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	},
 
 	removeDropIndicator: function(el) {
+		if (!el)
+			return;
+
 		el.removeClass('dragUp');
 		el.removeClass('dragDown');
 		el.removeClass('dragOver');

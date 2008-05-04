@@ -696,6 +696,14 @@ div.thumbwrap {
 	font-color: white;
 }
 
+#crumblist a.dragOver, 
+#crumblist a.dragUp, 
+#crumblist a.dragDown {
+	background-color: #dddddd;
+	color: #404040;
+} 
+
+
 #headerSearch .searchInput,
 .browsedbControls #tuneinurl, 
 .browsedbControls .searchInput {
