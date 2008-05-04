@@ -285,7 +285,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 
 	onClick: function(node, e){
 		var input = Ext.get(this.input);
-		if (input != null && input.dom.value != null) {
+		if (input != null && input.getValue() != null) {
 			input.dom.value = node.id;
 		}
 	},
@@ -307,10 +307,10 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 		// select the current setting, if available
 		var input = Ext.get(this.input);
 
-		if (input == null || input.dom.value == null || input.dom.value == '')
+		if (input == null || input.getValue() == null || input.getValue() == '')
 			return;
 
-		var path = input.dom.value;
+		var path = input.getValue();
 		var separator = '/';
 		var result;
 
@@ -337,7 +337,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 		this.selectPath(target, null, function(success, selNode){
 			if (!success) {
 				// if that path is a Windows share, try adding it to the tree
-				var result = input.dom.value.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
+				var result = input.getValue().match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
 				if (result) {
 					var root = this.getRootNode();
 					root.appendChild(new Ext.tree.AsyncTreeNode({
@@ -354,7 +354,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 	// select path (if available) or try to add it to the tree if it's a network share
 	showPath: function(){
 		var input = Ext.get(this.input);
-		if (input == null || input.dom.value == null)
+		if (input == null || input.getValue() == null)
 			return;
 
 		SqueezeJS.Controller.request({
@@ -363,7 +363,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 					'pref',
 					'validate',
 					'audiodir',
-					input.dom.value
+					input.getValue()
 				]
 			],
 
