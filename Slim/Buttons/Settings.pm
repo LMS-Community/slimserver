@@ -29,7 +29,7 @@ use Slim::Buttons::Information;
 my $prefs = preferences('server');
 
 # button functions for browse directory
-our @defaultSettingsChoices = qw(VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE SCREENSAVERS);
+our @defaultSettingsChoices = qw(VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE SETUP_GROUP_BRIGHTNESS SCREENSAVERS);
 
 our @settingsChoices = ();
 our %menuParams = ();
@@ -344,6 +344,74 @@ sub init {
 					'condition'    => sub { return $_[0]->isa('Slim::Player::Squeezebox2') },
 				},
 
+				# Brightness submenus
+				'SETUP_GROUP_BRIGHTNESS'        => {
+					'useMode'         => 'INPUT.List',
+					'listRef'         => ['SETUP_POWERONBRIGHTNESS', 'SETUP_POWEROFFBRIGHTNESS', 'SETUP_IDLEBRIGHTNESS', 'SETUP_AUTOBRIGHTNESS'],
+					'stringExternRef' => 1,
+					'header'          => 'BRIGHTNESS',
+					'stringHeader'    => 1,
+					'headerAddCount'  => 1,
+					'overlayRef'      => sub { 
+						
+						if ($_[1] eq 'SETUP_AUTOBRIGHTNESS') {
+							
+							return (
+								undef,
+								Slim::Buttons::Common::checkBoxOverlay($_[0],
+									$prefs->client($_[0])->get('autobrightness')
+								),
+							);
+						}
+						
+						return (undef, shift->symbols('rightarrow')); 
+					},
+					'overlayRefArgs'  => 'CV',
+					'submenus'        => {
+	
+						'SETUP_POWERONBRIGHTNESS' => {
+							'useMode'       => 'INPUT.Choice',
+							'onPlay'        => \&setPref,
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
+							'pref'          => "powerOnBrightness",
+							'header'        => '{SETUP_POWERONBRIGHTNESS}{count}',
+							'initialValue'  => sub { $prefs->client(shift)->get('powerOnBrightness') },
+							'init'          => \&brightnessInit,
+						},
+						
+						'SETUP_POWEROFFBRIGHTNESS' => {
+							'useMode'       => 'INPUT.Choice',
+							'onPlay'        => \&setPref,
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
+							'pref'          => "powerOffBrightness",
+							'header'        => '{SETUP_POWEROFFBRIGHTNESS}{count}',
+							'initialValue'  => sub { $prefs->client(shift)->get('powerOffBrightness') },
+							'init'          => \&brightnessInit,
+						},
+				
+						'SETUP_IDLEBRIGHTNESS' => {
+							'useMode'       => 'INPUT.Choice',
+							'onPlay'        => \&setPref,
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
+							'pref'          => "idlebrightness",
+							'header'        => '{SETUP_IDLEBRIGHTNESS}{count}',
+							'initialValue'  => sub { $prefs->client(shift)->get('idlebrightness') },
+							'init'          => \&brightnessInit,
+						},
+						
+						'SETUP_AUTOBRIGHTNESS' => {
+							'useMode'      => sub {
+									$prefs->client($_[0])->set('autobrightness') = !$prefs->client($_[0])->get('autobrightness')
+							},
+							'pref'         => 'autobrightness',
+							'initialValue' => sub { $prefs->client($_[0])->get('autobrightness') },
+						},
+					},
+				},
+
 				# Screensavers submenus
 				'SCREENSAVERS'        => {
 					'useMode'         => 'INPUT.List',
@@ -491,6 +559,25 @@ sub screensaverInit {
 	
 	$client->modeParam('listRef', \@savers);
 }
+
+sub brightnessInit {
+	my $client = shift;
+	
+	my $hash  = Slim::Web::Settings::Player::Display::getBrightnessOptions($client);
+	my @options;
+	
+	for (sort keys %$hash) {
+	
+		unshift @options, {
+			'name'  => $hash->{$_},
+			'value' => $_,
+		};
+
+	}
+	
+	$client->modeParam('listRef', \@options);
+}
+
 
 sub settingsMenu {
 	my $client = shift;

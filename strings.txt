@@ -11048,39 +11048,11 @@ CHOOSE_A_NAME
 	SV	Namn:
 	ZH_CN	播放机名字：
 
-BRIGHTNESS_ON
-	CS	Jas pro 'zapnuto':
-	DA	Lysstyrke når tændt:
-	DE	Helligkeit im eingeschalteten Zustand:
-	EN	Brightness when on:
-	ES	Brillo cuando está encendido:
-	FI	Näytön kirkkaus soittimen ollessa päällä:
-	FR	Luminosité (allumé):
-	HE	בהירות במצב מופעל:
-	IT	Luminosità quando acceso:
-	JA	パワーオン時の明るさ :
-	NL	Helderheid wanneer aan:
-	NO	Lysstyrke når på:
-	PT	O brilho quando está ligado
-	SV	Ljusstyrka i påslaget läge:
-	ZH_CN	开机状态时的亮度：
+BRIGHTNESS_DIMMEST
+	EN	Dimmest
 
-BRIGHTNESS_OFF
-	CS	Jas pro 'standby':
-	DA	Lysstyrke når slukket:
-	DE	Helligkeit im ausgeschalteten Zustand:
-	EN	Brightness in standby:
-	ES	Brillo en modo de espera:
-	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité (veille):
-	HE	בהירות במצב המתנה:
-	IT	Luminosità in standby:
-	JA	スタンバイ時の明るさ :
-	NL	Helderheid in stand-by:
-	NO	Lysstyrke når av:
-	PT	O brilho quando está desligado
-	SV	Ljusstyrka i avslaget läge:
-	ZH_CN	备用状态时的亮度：
+BRIGHTNESS_AMBIENT
+	EN	Use Ambient Sensor
 
 BRIGHTNESS_DARK
 	CS	Tmavý

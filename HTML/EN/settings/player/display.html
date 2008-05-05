@@ -2,10 +2,9 @@
 [% IF prefs %]
 	[% IF prefs.exists('pref_powerOnBrightness') %]
 		[% BLOCK brightnessoptions %]
-			[% FOREACH option = [ 0 .. maxBrightness ] %]
-				<option [% IF current == option %]selected [% END %]value="[%option %]">
-					[% option %] [% IF loop.first %] ([% "BRIGHTNESS_DARK" | string %])
-					[% ELSIF loop.last %] ([% "BRIGHTNESS_BRIGHTEST" | string %])[% END %]
+			[% FOREACH option = brightnessOptions %]
+				<option [% IF current == option.key %]selected [% END %]value="[% option.key %]">
+					[% option.value %]
 				</option>
 			[%- END -%]
 		[% END %]
