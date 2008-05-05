@@ -1,6 +1,6 @@
 [%- IF useExtJS; initCall = BLOCK -%]
 function(){
-	Favorites.init([% sess %][% IF levelindex != '' %], [% levelindex %][% END %]);
+	Favorites.init([% sess %][% IF levelindex != '' %], '[% levelindex %]'[% END %]);
 }
 [%- END; END -%]
 [% BLOCK editentry %]
