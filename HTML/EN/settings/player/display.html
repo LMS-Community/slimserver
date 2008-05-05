@@ -13,25 +13,25 @@
 		[% WRAPPER settingSection %]
 			[% desc="SETUP_GROUP_BRIGHTNESS_DESC" %]
 			
-			[% WRAPPER settingGroup title="SETUP_POWERONBRIGHTNESS_CHOOSE" %]
+			[% WRAPPER settingGroup title="SETUP_POWERONBRIGHTNESS" %]
 				<select class="stdedit" name="pref_powerOnBrightness" id="powerOnBrightness">
 					[% PROCESS brightnessoptions current = prefs.pref_powerOnBrightness %]
 				</select>
 			[% END %]
 
-			[% WRAPPER settingGroup title="SETUP_POWEROFFBRIGHTNESS_CHOOSE" desc="" %]
+			[% WRAPPER settingGroup title="SETUP_POWEROFFBRIGHTNESS" desc="" %]
 				<select class="stdedit" name="pref_powerOffBrightness" id="powerOffBrightness">
 					[% PROCESS brightnessoptions current = prefs.pref_powerOffBrightness %]
 				</select>	
 			[% END %]
 
-			[% WRAPPER settingGroup title="SETUP_IDLEBRIGHTNESS_CHOOSE" desc="" %]
+			[% WRAPPER settingGroup title="SETUP_IDLEBRIGHTNESS" desc="" %]
 				<select class="stdedit" name="pref_idleBrightness" id="idleBrightness">
 					[% PROCESS brightnessoptions current = prefs.pref_idleBrightness %]
 				</select>	
 			[% END %]
 
-			[% WRAPPER settingGroup title="SETUP_AUTOBRIGHTNESS_CHOOSE" desc="" %]
+			[% WRAPPER settingGroup title="SETUP_AUTOBRIGHTNESS" desc="" %]
 				<select class="stdedit" name="pref_autobrightness" id="autobrightness">
 					[% FOREACH option = {
 						'1'   => 'SETUP_AUTOBRIGHTNESS_ON',

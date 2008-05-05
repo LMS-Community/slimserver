@@ -34,6 +34,7 @@ SqueezeJS.UI = {
 		cmd : null,
 		cmd_id : null,
 		cls : '',
+		config: {},
 	
 		initComponent : function(){
 			this.tooltipType = this.initialConfig.tooltipType || 'title';
@@ -88,10 +89,17 @@ SqueezeJS.UI = {
 
 							if (this.textOnly && btn.tooltip)
 								this.setText(btn.tooltip);
-							
-				
+
 							if (btn.command)
 								this.cmd = btn.command;
+						}
+
+						else if (this.cmd_id) {
+							this.setClass(this.config.cls);
+							this.setIcon('');
+							this.setTooltip(this.config.tooltip);
+							this.setText(this.config.text);
+							this.cmd = '';
 						}
 	
 						this.onPlayerStateChange(result);
@@ -116,6 +124,9 @@ SqueezeJS.UI = {
 		onPlayerStateChange : function(result){},
 	
 		setTooltip: function(tooltip){
+			if (this.config.tooltip == null)
+				this.config.tooltip = this.tooltip;
+
 			if (this.tooltip == tooltip)
 				return;
 	
@@ -137,6 +148,9 @@ SqueezeJS.UI = {
 		},
 
 		setText : function(text){
+			if (this.config.text == null)
+				this.config.text = this.text;
+
 			this.text = text;
 
 			if (this.el)
@@ -146,12 +160,14 @@ SqueezeJS.UI = {
 		},
 
 		setClass: function(newClass) {
+			if (this.config.cls == null)
+				this.config.cls = this.cls;
+
 			this.el.removeClass(this.cls);
 			this.cls = newClass
 			this.el.addClass(this.cls);
 		},
-	
-	
+
 		setIcon: function(newIcon) {
 			var btnEl = this.el.child("button:first");
 			if (btnEl)
