@@ -350,11 +350,13 @@ sub tokenizeConvertCommand {
 		$filepath = $fullpath;
 	}
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-		$filepath = Win32::GetShortPathName($filepath);
-	}
-	else {
-		$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
+	if (Slim::Music::Info::isFile($filepath)) {
+		if (Slim::Utils::OSDetect::OS() eq 'win') {
+			$filepath = Win32::GetShortPathName($filepath);
+		}
+		else {
+			$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
+		}
 	}
 
 	$command =~ s/\$FILE\$/"$filepath"/g;
