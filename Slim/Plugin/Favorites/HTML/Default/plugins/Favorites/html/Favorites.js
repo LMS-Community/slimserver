@@ -6,13 +6,15 @@ var Favorites = function(){
 			var favlist = new SqueezeJS.UI.Sortable({
 				el: 'draglist',
 				selector: 'ol#draglist li',
+				index: index,
 
 				highlighter: Highlighter,
 
 				onDrop: function(source, target, position) {
 					if (target && source) {
 						var sourcePos = Ext.get(source.id).dd.config.position;
-						var targetPos = Ext.get(target.id).dd.config.position;
+						target = Ext.get(target.id);
+						var targetPos = target.dd.config.position;
 			
 						if (sourcePos >= 0 && targetPos >= 0 && targetPos < 10000) {
 							if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
@@ -30,7 +32,7 @@ var Favorites = function(){
 		
 							var params = {
 								action: 'move',
-								index: (index >= 0 ? index+ '.' : '') + sourcePos,
+								index: (this.index != null ? this.index+ '.' : '') + sourcePos,
 								sess: session,
 								ajaxUpdate: 1,
 								player: player
@@ -39,7 +41,7 @@ var Favorites = function(){
 							// drop into parent level
 							if (targetPos > 10000) {
 								targetPos = (targetPos % 10000) - 1;
-								params.tolevel = targetPos ? targetPos : '';
+								params.tolevel = target.dd.config.index != null ? target.dd.config.index : '';
 							}
 		
 							// drop to sub-folder
@@ -56,12 +58,12 @@ var Favorites = function(){
 									webroot + 'plugins/Favorites/index.html', 
 									params,
 									function(){
-										Favorites.init(session, index);
-									}
+										Favorites.init(session, new String(this.index));
+									}.createDelegate(this)
 								);
 							}
 
-							this.init();
+							this.init(session, new String(this.index));
 						}
 					}
 				}
@@ -72,10 +74,12 @@ var Favorites = function(){
 			var items = Ext.DomQuery.select('div#crumblist a');
 			for(var i = 1; i < items.length-1; i++) {
 				var item = Ext.get(items[i]);
+				var index = item.dom.href.match(/index=([\d\.,]+)/i);
 
 				Ext.id(item);
 				item.dd = new Ext.dd.DDTarget(items[i], 'draglist', {
-					position: i + 10000
+					position: i + 10000,
+					index: index && index.length > 1 ? index[1] : ''
 				});
 			}
 		},
