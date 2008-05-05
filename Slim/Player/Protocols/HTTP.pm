@@ -566,7 +566,7 @@ sub getIcon {
 		}
 	}
 
-	return 'html/images/ServiceProviders/tuneinurl.png';
+	return 'html/images/radio.png';
 }
 
 sub canSeek {

@@ -83,21 +83,6 @@ SETUP_XPLINTERVAL
 	SV	Hjärtrytm, intervall
 	ZH_CN	心跳间隔时间
 
-SETUP_XPLINTERVAL_CHOOSE
-	CS	Interval kontrolního taktu:
-	DA	Heartbeat interval:
-	DE	Heartbeat -Intervall:
-	EN	Heartbeat Interval:
-	ES	Intervalo de latidos:
-	FR	Intervalle:
-	HE	מרווח זמן של פעימה:
-	IT	Intervallo di heartbeat:
-	JA	インターバル:
-	NL	Heartbeat-interval:
-	NO	Intervall:
-	SV	Hjärtrytm, intervall:
-	ZH_CN	心跳间隔时间：
-
 SETUP_XPLIR
 	DA	Infrarød håndtering
 	DE	Infrarot-Verarbeitung
@@ -111,20 +96,6 @@ SETUP_XPLIR
 	NO	Infrarød håndtering
 	SV	Infraröd, hantering
 	ZH_CN	红外线处理
-
-SETUP_XPLIR_CHOOSE
-	DA	Infrarød håndtering:
-	DE	Infrarot-Verarbeitung:
-	EN	Infra-red Processing:
-	ES	Procesamiento de infrarrojos
-	FR	Traitement infrarouge:
-	HE	עיבוד אינפרה-אדום:
-	IT	Elaborazione segnale a infrarossi:
-	JA	赤外線プロセシング:
-	NL	Infraroodverwerking:
-	NO	Infrarød håndtering:
-	SV	Infraröd, hantering:
-	ZH_CN	红外线处理：
 
 SETUP_XPLIR_NONE
 	CS	Není

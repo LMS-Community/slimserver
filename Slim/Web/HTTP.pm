@@ -1117,7 +1117,14 @@ sub generateHTTPResponse {
 			/x   # extend this to also include any image that gives resizing parameters
 		) {
 
-		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest($client, $path, $params);
+		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest(
+			$client, 
+			$path, 
+			$params,
+			\&prepareResponseForSending,
+			$httpClient,
+			$response,
+		);
 
 	} elsif ($path =~ /music\/(\d+)\/download/) {
 
