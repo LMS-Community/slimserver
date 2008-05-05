@@ -445,13 +445,6 @@ sub indexHandler {
 				push @$dest, splice @$level, $indexLevel, 1;
 			}
 				
-			if ($params->{'into'} eq 'prev') {
-
-				my ($prevlevel, undef, undef) = $opml->level(join('.', @indexPrefix), 'contains');
-
-				push @$prevlevel, splice @$level, $indexLevel, 1;
-			}
-
 			$changed = 1;
 		}
 
