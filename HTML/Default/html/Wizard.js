@@ -99,9 +99,9 @@ Wizard = {
 			pageconfig: {
 				sqn_p: {
 					validator: function(){
-						var email = Ext.get('sn_email').dom.value;
-						var pw = Ext.get('sn_password_sha').dom.value;
-						var disable_stats = Ext.get('sn_disable_stats').dom.value;
+						var email = Ext.get('sn_email').getValue();
+						var pw = Ext.get('sn_password_sha').getValue();
+						var disable_stats = Ext.get('sn_disable_stats').getValue();
 	
 						var email_summary = Ext.get('sn_email_summary');
 						var result_summary = Ext.get('sn_result_summary');

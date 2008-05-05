@@ -285,7 +285,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 
 	onClick: function(node, e){
 		var input = Ext.get(this.input);
-		if (input != null && input.dom.value != null) {
+		if (input != null && input.getValue() != null) {
 			input.dom.value = node.id;
 		}
 	},
@@ -307,10 +307,10 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 		// select the current setting, if available
 		var input = Ext.get(this.input);
 
-		if (input == null || input.dom.value == null || input.dom.value == '')
+		if (input == null || input.getValue() == null || input.getValue() == '')
 			return;
 
-		var path = input.dom.value;
+		var path = input.getValue();
 		var separator = '/';
 		var result;
 
@@ -337,7 +337,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 		this.selectPath(target, null, function(success, selNode){
 			if (!success) {
 				// if that path is a Windows share, try adding it to the tree
-				var result = input.dom.value.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
+				var result = input.getValue().match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
 				if (result) {
 					var root = this.getRootNode();
 					root.appendChild(new Ext.tree.AsyncTreeNode({
@@ -354,7 +354,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 	// select path (if available) or try to add it to the tree if it's a network share
 	showPath: function(){
 		var input = Ext.get(this.input);
-		if (input == null || input.dom.value == null)
+		if (input == null || input.getValue() == null)
 			return;
 
 		SqueezeJS.Controller.request({
@@ -363,7 +363,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 					'pref',
 					'validate',
 					'audiodir',
-					input.dom.value
+					input.getValue()
 				]
 			],
 
@@ -570,19 +570,19 @@ SqueezeJS.UI.Sortable.prototype = {
 		return new SqueezeJS.DDProxy(item, el, config);
 	},
 
-	onDrop: function(source, target, offset) {
+	onDrop: function(source, target, position) {
 		if (target && source) {
 			var sourcePos = Ext.get(source.id).dd.config.position;
 			var targetPos = Ext.get(target.id).dd.config.position;
 
 			if (sourcePos >= 0 && targetPos >= 0) {
-				if ((sourcePos > targetPos && offset > 0) || (sourcePos < targetPos && offset < 0)) {
-					targetPos += offset;
+				if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
+					targetPos += position;
 				}
 			}
 
 			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
-				if (offset == 0)
+				if (position == 0)
 					source.remove();
 
 				else if (sourcePos > targetPos)
@@ -592,7 +592,7 @@ SqueezeJS.UI.Sortable.prototype = {
 					source.insertAfter(target);
 
 
-				this.onDropCmd(sourcePos, targetPos, offset);
+				this.onDropCmd(sourcePos, targetPos, position);
 				this.init();
 			}
 		}
@@ -681,6 +681,9 @@ Ext.extend(SqueezeJS.DDProxy, Ext.dd.DDProxy, {
 	},
 
 	removeDropIndicator: function(el) {
+		if (!el)
+			return;
+
 		el.removeClass('dragUp');
 		el.removeClass('dragDown');
 		el.removeClass('dragOver');

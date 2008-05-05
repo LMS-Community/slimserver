@@ -5,13 +5,20 @@
 			[%-
 				IF streaminfo.item.image;
 					artwork = streaminfo.item.image;
+				ELSIF streaminfo.item.icon;
+					artwork = streaminfo.item.icon;
 				ELSE;
 					IF streaminfo.item.url.search('^(http|mms):');
 						artwork = webroot _ "html/images/radio." _ (browserType == 'IE' ? "gif" : "png");
 					ELSE;
 						artwork = "/music/0/cover.jpg";
 					END;
-				END
+				END;
+
+				# prepend webroot unless we have an absolute url
+				UNLESS artwork.match("^(\/|http)");
+					artwork = webroot _ artwork;
+				END;
 			-%]
 			<img src="[% artwork %]" onLoad="resize(this)"/>
 		</span>
