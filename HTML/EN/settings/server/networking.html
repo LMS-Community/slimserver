@@ -56,19 +56,19 @@
 			[% WRAPPER settingGroup title="SETUP_GROUP_TCP_PARAMS" desc="SETUP_GROUP_TCP_PARAMS_DESC" %][% END %]	
 
 			[% IF prefs.exists('pref_tcpReadMaximum') %]
-				[% WRAPPER settingGroup title="SETUP_TCPREADMAXIMUM_CHOOSE" desc="" %]
+				[% WRAPPER settingGroup title="SETUP_TCPREADMAXIMUM" desc="" %]
 					<input type="text" class="stdedit" name="pref_tcpReadMaximum" id="tcpReadMaximum" value="[% prefs.pref_tcpReadMaximum %]" size="15">		
 				[% END %]
 			[% END %]
 
 			[% IF prefs.exists('pref_tcpWriteMaximum') %]
-				[% WRAPPER settingGroup title="SETUP_TCPWRITEMAXIMUM_CHOOSE" desc="" %]
+				[% WRAPPER settingGroup title="SETUP_TCPWRITEMAXIMUM" desc="" %]
 					<input type="text" class="stdedit" name="pref_tcpWriteMaximum" id="tcpWriteMaximum" value="[% prefs.pref_tcpWriteMaximum %]" size="15">		
 				[% END %]
 			[% END %]
 
 			[% IF prefs.exists('pref_udpChunkSize') %]
-				[% WRAPPER settingGroup title="SETUP_UDPCHUNKSIZE_CHOOSE" desc="" %]
+				[% WRAPPER settingGroup title="SETUP_UDPCHUNKSIZE" desc="SETUP_UDPCHUNKSIZE_DESC" %]
 					<input type="text" class="stdedit" name="pref_udpChunkSize" id="udpChunkSize" value="[% prefs.pref_udpChunkSize %]" size="15">
 				[% END %]
 			[% END %]

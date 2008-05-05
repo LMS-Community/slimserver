@@ -3128,23 +3128,6 @@ SETUP_POWERONBRIGHTNESS
 	SV	Ljusstyrka i påslaget läge
 	ZH_CN	开机时的光亮度
 
-SETUP_POWERONBRIGHTNESS_CHOOSE
-	CS	Jas pro 'zapnuto':
-	DA	Lysstyrke når tændt:
-	DE	Helligkeit im eingeschalteten Zustand:
-	EN	Brightness when on:
-	ES	Brillo cuando está encendido:
-	FI	Näytön kirkkaus soittimen ollessa päällä:
-	FR	Luminosité (allumé):
-	HE	בהירות במצב מופעל:
-	IT	Luminosità quando acceso:
-	JA	パワーオン時の明るさ:
-	NL	Helderheid wanneer aan:
-	NO	Lysstyrke når på:
-	PT	Brilho quando Ligado
-	SV	Ljusstyrka i påslaget läge:
-	ZH_CN	开机时的光亮度：
-
 SETUP_POWEROFFBRIGHTNESS
 	CS	Jas pro 'vypnuto'
 	DA	Lysstyrke når slukket
@@ -3162,23 +3145,6 @@ SETUP_POWEROFFBRIGHTNESS
 	SV	Ljusstyrka i avslaget läge
 	ZH_CN	关机时的光亮度
 
-SETUP_POWEROFFBRIGHTNESS_CHOOSE
-	CS	Jas pro 'vypnuto':
-	DA	Lysstyrke når slukket:
-	DE	Helligkeit im ausgeschalteten Zustand:
-	EN	Brightness when off:
-	ES	Brillo cuando está apagado:
-	FI	Näytön kirkkaus soittimen ollessa pois päältä:
-	FR	Luminosité (éteint):
-	HE	בהירות במצב כבוי:
-	IT	Luminosità quando spento:
-	JA	パワーオフ時の明るさ:
-	NL	Helderheid wanneer uit:
-	NO	Lysstyrke når av:
-	PT	Brilho quando Desligado
-	SV	Ljusstyrka i avslaget läge:
-	ZH_CN	关机时的光亮度：
-
 SETUP_IDLEBRIGHTNESS
 	CS	Jas pro stav 'nečinný'
 	DE	Helligkeit im Standbymodus
@@ -3193,21 +3159,7 @@ SETUP_IDLEBRIGHTNESS
 	SV	Ljusstyrka i viloläge
 	ZH_CN	空闲时的光亮度
 
-SETUP_IDLEBRIGHTNESS_CHOOSE
-	CS	Jas pro stav 'nečinný':
-	DE	Helligkeit im Standbymodus:
-	EN	Brightness when idle:
-	ES	Brillo en inactividad::
-	FR	Luminosité (inactif):
-	HE	בהירות במצב מוכן:
-	IT	Luminosità quando inattivo:
-	JA	アイドル時の明るさ:
-	NL	Helderheid in ruststand:
-	NO	Lysstyrke i hvilemodus:
-	SV	Ljusstyrka i viloläge:
-	ZH_CN	空闲时的光亮度：
-
-SETUP_AUTOBRIGHTNESS_CHOOSE
+SETUP_AUTOBRIGHTNESS
 	CS	Automaticjý jas displeje:
 	DA	Automatisk lysstyrkeindstilling:
 	DE	Automatische Helligkeit:
@@ -3692,13 +3644,13 @@ SETUP_SYNCSTARTDELAY_CHOOSE
 	NL	Vertraging bij gesynchroniseerd opstarten (milliseconden):
 
 SETUP_STARTDELAY
-	DA	Forsinkelse for start af afspiller
-	DE	Startverzögerung des Players
-	EN	Player Start Delay
-	ES	Retraso de inicio de reproductor
-	FR	Délai de démarrage de la platine
-	IT	Ritardo avvio lettore
-	NL	Vertraging bij opstarten speler
+	DA	Startforsinkelse for afspiller (millisekunder)
+	DE	Startverzögerung des Players (Millisekunden)
+	EN	Player start delay (milliseconds)
+	ES	Retraso de inicio de reproductor (milisegundos)
+	FR	Délai audio de la platine (millisecondes)
+	IT	Ritardo avvio lettore (millisecondi)
+	NL	Vertraging bij opstarten speler (milliseconden)
 
 SETUP_STARTDELAY_DESC
 	DA	Det kan tage mærkbart lang tid før afspilning starter (inden du hører lyd) efter den har behandlet start kommandoen fra SqueezeCenter. Dette kan forekomme ved anvendelse af de digitale udgange (afhængig af det tilsluttede udstyr) eller med software afspiller på nogle platforme. Ved sådanne tilfælde kan en forsinkelse indstilles her således at SqueezeCenter ved hvor lang tid i forvejen afspilleren skal startes for at lyden fra de synkroniserede afspillere starter på det samme tidspunkt. Bemærk: dette er i tillæg til eventuel "Lydforsinkelse for afspiller" (nedenunder)
@@ -3708,15 +3660,6 @@ SETUP_STARTDELAY_DESC
 	FR	Il est possible qu'une platine mette un certain temps à démarrer (avant d'entendre le morceau lu) après avoir reçu la commande de démarrage du serveur. Tel peut être le cas avec des sorties numériques (en fonction de l'équipement connecté) ou avec des lecteurs logiciels sur certaines plates-formes. Dans de tels cas, il est possible de régler le délai pour que le SqueezeCenter connaisse le délai en fonction duquel il doit démarrer cette platine en avance afin que l'audio de toutes les platines synchronisées démarre en même temps. Remarque: cette valeur est ajoutée à celle définie pour Délai audio de la platine (ci-dessous).
 	IT	L'avvio della riproduzione di un lettore può richiedere un intervallo considerevole (prima che venga emesso l'audio) dopo l'elaborazione del comando di avvio in SqueezeCenter. Un caso del genere può verificarsi quando si utilizzano ingressi digitali (a seconda dell'apparecchiatura collegata) o con lettori software di alcune piattaforme. In questi casi il ritardo qui impostato consente di definire con quanto anticipo SqueezeCenter deve avviare il lettore per consentire l'inizio simultaneo della riproduzione in tutti i lettori sincronizzati. Nota: questo ritardo si aggiunge a quello impostato in "Ritardo audio lettore" (sotto).
 	NL	Nadat een speler de startopdracht van SqueezeCenter heeft verwerkt, kan het een tijdje duren voordat de speler begint met afspelen (voordat je de audio hoort). Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwarespelers op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat SqueezeCenter weet hoever van tevoren deze speler moet worden gestart om de audio uit alle gesynchroniseerde spelers tegelijk te laten beginnen. N.B. Deze optie kan ook ingesteld worden terwijl Vertraging speleraudio (hieronder) actief is.
-
-SETUP_STARTDELAY_CHOOSE
-	DA	Startforsinkelse for afspiller (millisekunder):
-	DE	Startverzögerung des Players (Millisekunden):
-	EN	Player start delay (milliseconds):
-	ES	Retraso de inicio de reproductor (milisegundos):
-	FR	Délai audio de la platine (millisecondes):
-	IT	Ritardo avvio lettore (millisecondi):
-	NL	Vertraging bij opstarten speler (milliseconden):
 
 SETUP_MAINTAINSYNC
 	DA	Vedligehold synkronisering
@@ -4423,7 +4366,7 @@ NO
 	SV	Nej
 	ZH_CN	否
 
-SETUP_PLAYLISTPREFIX_CHOOSE
+SETUP_PLAYLISTPREFIX
 	DA	Præfiks:
 	DE	Prefix:
 	EN	Prefix:
@@ -4436,7 +4379,7 @@ SETUP_PLAYLISTPREFIX_CHOOSE
 	SV	Prefix:
 	ZH_CN	前缀：
 
-SETUP_PLAYLISTSUFFIX_CHOOSE
+SETUP_PLAYLISTSUFFIX
 	DA	Suffiks:
 	DE	Suffix:
 	EN	Suffix:
@@ -5567,35 +5510,22 @@ SETUP_SCREENSAVER_DESC
 	SV	Efter en tids inaktivitet från fjärrkontrollern kan spelaren visa olika sorters information som "skärmsläckare". Du kan välja olika skärmsläckare som visas beroende på om spelaren spelar eller inte, eller om den är av. Du kan också välja vilken inaktivitet som krävs innan skärmsläckaren aktiveras.
 	ZH_CN	您可以通过遥控器选择在播放机非活动状态时以屏幕保护程序来显示信息。您可以设定屏幕保护程序介入前的等候时间。并且设定播放机在不同状态下如播放时、停止播放时、或关机时应用不同屏幕保护程序。
 
-SETUP_SCREENSAVERTIMEOUT_CHOOSE
-	CS	Prodlení spořiče v sekundách:
-	DA	Ventetid for pauseskærm i sekunder:
-	DE	Bildschirmschoner-Verzögerung in Sekunden:
-	EN	Screensaver delay time in seconds:
-	ES	Tiempo de retraso de protector de pantalla en segundos:
-	FI	Näytönsäästäjän viive sekunteina:
-	FR	Délai de l'écran de veille en secondes:
-	HE	משך העיכוב של שומר המסך, בשניות:
-	IT	Ritardo screen saver in secondi:
-	JA	スクリーンセーバー開示時間（秒）:
-	NL	Tijd in seconden waarna schermbeveiliger actief wordt:
-	NO	Ventetid før skjermspareren aktiveres, i sekunder:
-	PT	Tempo de espera da proteção de ecrã, em segundos
-	SV	Fördröjning innan skärmsläckare aktiveras, i sekunder:
-	ZH_CN	屏幕保护程序介入前的等候时间（秒）：
-
 SETUP_SCREENSAVERTIMEOUT
-	CS	Prodleva pro zapnutí spořiče:
-	DA	Tidsgrænse for pauseskærm:
-	DE	Bildschirmschoner-Verzögerung:
-	EN	Screensaver Timeout:
-	ES	Tiempo de espera para protector de pantalla:
-	FR	Délai de l'écran de veille:
-	HE	פסק זמן לשומר מסך:
-	IT	Timeout screen saver:
-	NL	Time-out van schermbeveiliger:
-	NO	Tidsavbrudd for skjermsparer:
-	ZH_CN	屏幕保护程序暂停：
+	CS	Prodlení spořiče v sekundách
+	DA	Ventetid for pauseskærm i sekunder
+	DE	Bildschirmschoner-Verzögerung in Sekunden
+	EN	Screensaver delay time in seconds
+	ES	Tiempo de retraso de protector de pantalla en segundos
+	FI	Näytönsäästäjän viive sekunteina
+	FR	Délai de l'écran de veille en secondes
+	HE	משך העיכוב של שומר המסך, בשניות
+	IT	Ritardo screen saver in secondi
+	JA	スクリーンセーバー開示時間（秒）
+	NL	Tijd in seconden waarna schermbeveiliger actief wordt
+	NO	Ventetid før skjermspareren aktiveres, i sekunder
+	PT	Tempo de espera da proteção de ecrã, em segundos
+	SV	Fördröjning innan skärmsläckare aktiveras, i sekunder
+	ZH_CN	屏幕保护程序介入前的等候时间（秒）
 
 SCREENSAVER_JUMP_BACK_NAME
 	CS	Nyní hraje (Skočí zpátky při probuzení.)
@@ -6405,22 +6335,6 @@ SETUP_TCPREADMAXIMUM
 	SV	Maximalt antal lästa "TCP-sockets" per pass
 	ZH_CN	每次通行时读取TCP插口的最大数量
 
-SETUP_TCPREADMAXIMUM_CHOOSE
-	DA	Maksimum antal læste TCP socket pr. pass:
-	DE	Maximale Anzahl der zu lesenden TCP-Sockets pro Durchlauf:
-	EN	Maximum number of TCP sockets to read per pass:
-	ES	Número máximo de sockets TCP para leer por pase:
-	FI	TCP -yhteyksien enimmäismäärä (luku)
-	FR	Nombre maximal de prises TCP à lire à chaque passe:
-	HE	מספר מרבי של שקעי TCP לקריאה במעבר:
-	IT	Numero massimo di socket TCP da leggere per passaggio:
-	JA	パス毎に読むTCPソケットの最大数:
-	NL	Maximumaantal te lezen TCP-sockets per pass:
-	NO	Maksimalt antall leste TCP-sockets per passering:
-	PT	Número máximo de sockets TCP a ler por passagem
-	SV	Maximalt antal lästa "TCP-sockets" per pass
-	ZH_CN	每次通行时读取TCP插口的最大数量：
-
 SETUP_TCPWRITEMAXIMUM
 	DA	Maksimum antal skrevne TCP sockets pr. pass
 	DE	Maximale Anzahl der zu schreibenden TCP-Sockets pro Durchlauf
@@ -6436,22 +6350,6 @@ SETUP_TCPWRITEMAXIMUM
 	PT	Número máximo de sockets TCP a escrever por passagem
 	SV	Maximalt antal skrivna "TCP-sockets" per pass
 	ZH_CN	每次通行时写出TCP插口的最大数量
-
-SETUP_TCPWRITEMAXIMUM_CHOOSE
-	DA	Maksimum antal skrevne TCP sockets pr. pass:
-	DE	Maximale Anzahl der zu schreibenden TCP-Sockets pro Durchlauf:
-	EN	Maximum number of TCP sockets to write per pass:
-	ES	Número máximo de sockets TCP para escribir por pase:
-	FI	TCP -yhteyksien enimmäismäärä (kirjoitus)
-	FR	Nombre maximal de prises TCP à écrire à chaque passe:
-	HE	מספר מרבי של שקעי TCP לכתיבה במעבר:
-	IT	Numero massimo di socket TCP da scrivere per passaggio:
-	JA	パス毎に書き込むTCPソケットの最大数:
-	NL	Maximumaantal te schrijven TCP-sockets per pass:
-	NO	Maksimalt antall skrevne TCP-sockets per passering:
-	PT	Número máximo de sockets TCP a escrever por passagem
-	SV	Maximalt antal skrivna "TCP-sockets" per pass
-	ZH_CN	每次通行时写出TCP插口的最大数量：
 
 SETUP_UDPCHUNKSIZE
 	DA	Maksimum UDP-datastørrelse
@@ -6469,20 +6367,20 @@ SETUP_UDPCHUNKSIZE
 	SV	Maximal storlek på UDP-data
 	ZH_CN	最大UDP数据大小
 
-SETUP_UDPCHUNKSIZE_CHOOSE
-	DA	Maksimum antal bytes audiodata der sendes til afspilleren i en UDP-pakke (SLIMP3):
-	DE	Maximale Anzahl Byte an Audiodaten, die in UDP-Paketen zum Player geschickt werden (nur SLIMP3):
-	EN	Maximum number of bytes of audio data to send to player in a UDP packet (SLIMP3 only):
-	ES	EL número máximo de bytes de datos de audio que se enviarán al reproductor en un paquete UDP (solo SLIMP3):
-	FR	Nombre maximal d'octets de données audio à envoyer à la platine par paquet UDP (SLIMP3 uniquement):
-	HE	מספר הבתים המרבי של נתוני שמע שניתן לשלוח לנגן במנת UDP‏ (SLIMP3 בלבד):
-	IT	Numero massimo di byte di dati audio da inviare in pacchetti UDP (solo per SLIMP3):
-	JA	UDPパケットでプレーヤーに送信するオーディオデータの最大バイト数（SLIMP3のみ）:
-	NL	Maximumaantal bytes aan audiodata dat in een UDP-pakket naar de speler moet worden gestuurd (alleen SLIMP3):
-	NO	Maksimalt antall bytes med lyd data å sende til spilleren i en UDP pakke (SLIMP3):
-	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP (SLIMP):
-	SV	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3):
-	ZH_CN	发送到播放机的最大音像数据UDP字节（只适用于SLIMP3）：
+SETUP_UDPCHUNKSIZE_DESC
+	DA	Maksimum antal bytes audiodata der sendes til afspilleren i en UDP-pakke (SLIMP3)
+	DE	Maximale Anzahl Byte an Audiodaten, die in UDP-Paketen zum Player geschickt werden (nur SLIMP3)
+	EN	Maximum number of bytes of audio data to send to player in a UDP packet (SLIMP3 only)
+	ES	EL número máximo de bytes de datos de audio que se enviarán al reproductor en un paquete UDP (solo SLIMP3)
+	FR	Nombre maximal d'octets de données audio à envoyer à la platine par paquet UDP (SLIMP3 uniquement)
+	HE	מספר הבתים המרבי של נתוני שמע שניתן לשלוח לנגן במנת UDP‏ (SLIMP3 בלבד)
+	IT	Numero massimo di byte di dati audio da inviare in pacchetti UDP (solo per SLIMP3)
+	JA	UDPパケットでプレーヤーに送信するオーディオデータの最大バイト数（SLIMP3のみ）
+	NL	Maximumaantal bytes aan audiodata dat in een UDP-pakket naar de speler moet worden gestuurd (alleen SLIMP3)
+	NO	Maksimalt antall bytes med lyd data å sende til spilleren i en UDP pakke (SLIMP3)
+	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP (SLIMP3)
+	SV	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3)
+	ZH_CN	发送到播放机的最大音像数据UDP字节（只适用于SLIMP3）
 
 SETUP_WEBPROXY
 	CS	Nastavení Proxy

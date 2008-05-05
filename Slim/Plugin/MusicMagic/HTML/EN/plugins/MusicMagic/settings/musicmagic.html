@@ -91,9 +91,9 @@
 
 		[% IF prefs.exists('pref_playlist_prefix') %]
 			[% WRAPPER settingGroup title="SETUP_MUSICMAGICPLAYLISTFORMAT" desc="SETUP_MUSICMAGICPLAYLISTFORMAT_DESC" %]
-				[% "SETUP_PLAYLISTPREFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="pref_playlist_prefix" id="playlist_prefix" value="[% prefs.pref_playlist_prefix %]" size="40">
+				[% "SETUP_PLAYLISTPREFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_prefix" id="playlist_prefix" value="[% prefs.pref_playlist_prefix %]" size="40">
 				<br>
-				[% "SETUP_PLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="pref_playlist_suffix" id="playlist_suffix" value="[% prefs.pref_playlist_suffix %]" size="40">
+				[% "SETUP_PLAYLISTSUFFIX" | string %] <input type="text" class="stdedit" name="pref_playlist_suffix" id="playlist_suffix" value="[% prefs.pref_playlist_suffix %]" size="40">
 			[% END %]
 		[% END %]
 	[% END %]
