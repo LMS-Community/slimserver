@@ -74,7 +74,7 @@ var Favorites = function(){
 				var item = Ext.get(items[i]);
 
 				Ext.id(item);
-				item.dd = new Ext.dd.DDProxy(items[i], 'draglist', {
+				item.dd = new Ext.dd.DDTarget(items[i], 'draglist', {
 					position: i + 10000
 				});
 			}
