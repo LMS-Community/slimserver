@@ -4,6 +4,8 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Music::Artwork;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
@@ -42,7 +44,7 @@ sub serverResizesArt {
 }
 
 sub processCoverArtRequest {
-	my ($client, $path, $params) = @_;
+	my ($client, $path, $params, $callback, @args) = @_;
 
 	my ($body, $mtime, $inode, $size, $actualContentType, $autoType); 
 
@@ -219,6 +221,64 @@ sub processCoverArtRequest {
 			$actualContentType = $requestedContentType;
 		}
 		$log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);
+	}
+
+	# if $obj->coverArt didn't send back data, then fill with the station icon
+	if ( !$imageData && $trackid eq 'current' && blessed($obj) && $obj->url
+		&& (my $image = Slim::Player::ProtocolHandlers->iconForURL($obj->url, $client))) {
+
+		$log->info("  looking up artwork $image.");
+
+		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
+
+		$cachedImage = $cache->get($cacheKey);
+		
+		if ( $cachedImage ) {
+
+			$log->info( "  returning cached artwork image, " . $cachedImage->{'contentType'} );
+
+			return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
+		}
+
+		# resized version wasn't in cache - is there a local copy of the raw file?
+		$cachedImage = $cache->get($image);
+
+		if (Slim::Music::Info::isRemoteURL($image) && defined $cachedImage) {
+
+			$imageData = ${$cachedImage->{body}};
+
+			$log->info( "  found cached remote artwork image" );
+
+		}
+
+		# need to fetch remote artwork
+		elsif (Slim::Music::Info::isRemoteURL($image)) {
+
+			$log->info( "  catching remote artwork image" );
+			my $http = Slim::Networking::SimpleAsyncHTTP->new(
+				\&_gotRemoteArtwork,
+				\&_errorGettingRemoteArtwork, 
+				{
+					client   => $client,
+					params   => $params,
+					callback => $callback,
+					args     => \@args,
+					path     => $path,
+					timeout  => 15,
+				}
+			);
+
+			$http->get($image);
+			return undef;
+		}
+
+		else {
+			
+			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("$image", $params);		
+			$imageData = $$body;
+		}
+
+		$actualContentType = Slim::Music::Artwork->_imageContentType(\$imageData);
 	}
 
 	# if $obj->coverArt didn't send back data, then fill with a placeholder
@@ -547,6 +607,46 @@ sub processCoverArtRequest {
 	}
 
 	return ($body, $mtime, $inode, $size, $requestedContentType);
+}
+
+sub _gotRemoteArtwork {
+	my $http = shift;
+
+	my $imageData = $http->content();
+	my $url       = $http->url();
+
+	$log->info( "got remote artwork from $url, size " . length($imageData) );
+
+	my $cached = {
+		'body'        => \$imageData,
+		'size'        => length($imageData),
+	};
+
+	$cache->set( $url, $cached, $Cache::Cache::EXPIRES_NEVER );
+
+	my $client   = $http->params('client');
+	my $params   = $http->params('params');
+	my @args     = @{$http->params('args')};
+	my $callback = $http->params('callback');
+
+	my ($body, @more) = processCoverArtRequest($client, $http->params('path'), $params, $callback, @args);
+
+	$callback->( $client, $params, $body, @args );
+}
+
+sub _errorGettingRemoteArtwork {
+	my $http = shift;
+
+	$log->info("  failure looking up remote artwork - using placeholder.");
+
+	my ($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/radio.png", $http->params('params'));
+
+	$http->params('callback')->( 
+		$http->params('client'),
+		$http->params('params'),
+		$body,
+		@{$http->params('args')},
+	);
 }
 
 sub getResizeCoords {
