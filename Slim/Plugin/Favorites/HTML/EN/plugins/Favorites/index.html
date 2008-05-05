@@ -118,7 +118,7 @@ function(){
 		[% WRAPPER movedownlink noTarget=1 -%]
 			href="[% webroot %]plugins/Favorites/index.html?action=movedown&amp;index=[% entry.index %]&amp;sess=[% sess %]"
 	[%- END %][% END %]
-	[% WRAPPER removelink noTarget=1 -%]
+	[% WRAPPER cmdlink cmdtitle = "PLUGIN_FAVORITES_CUT" cmdimage = "b_delete.gif" noTarget=1 -%]
 		[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=delete&amp;index=[% entry.index %]&amp;sess=[% sess %]'[% IF initCall; ', ' _ initCall; END %]);"
 		[%- ELSE                   -%]href="[% webroot %]plugins/Favorites/index.html?action=delete&amp;index=[% entry.index %]&amp;sess=[% sess %]"
 		[%- END -%]
@@ -238,7 +238,7 @@ function(){
 		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'insert&amp;index=[% levelindex %]&amp;sess=[% sess %]'[% IF initCall; ', ' _ initCall; END %]);" class="browseItemLink"
 		   [%- ELSE %]
 		     href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]&amp;sess=[% sess %]"
-		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>
+		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_PASTE" | string %]</b> [ [% deleted %] ]</I></a>
 		
 	[% END %]
 	[% IF useAJAX %]</span>[% END %]
