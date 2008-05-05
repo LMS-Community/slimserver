@@ -1,6 +1,6 @@
 <?xml version='1.0' standalone='yes'?>
 <extension>
-  <name>PLUGIN_SCANNER</name>
+  <name>PLUGIN_SONGSCANNER</name>
   <creator>Kevin Deane-Freeman</creator>
   <defaultState>enabled</defaultState>
   <description>PLUGIN_SONGSCANNER_DESC</description>

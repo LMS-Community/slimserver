@@ -338,7 +338,7 @@ Settings.Page = function(){
 							'pref', 
 							'validate', 
 							namespace + ':' + myPref, 
-							Ext.get(myPref).dom.value
+							Ext.get(myPref).getValue()
 						]],
 				success: function(response) {
 					if (response && response.responseText) {

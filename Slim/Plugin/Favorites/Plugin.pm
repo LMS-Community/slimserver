@@ -427,6 +427,17 @@ sub indexHandler {
 			$changed = 1;
 		}
 
+		if ($action eq 'move' && defined $params->{'tolevel'}) {
+
+			my ($dest, undef, undef) = $opml->level($params->{'tolevel'});
+
+			if ($dest) {
+				push @$dest, splice @$level, $indexLevel, 1;
+			}
+
+			$changed = 1;
+		}
+
 		if ($action eq 'move' && defined $params->{'into'}) {
 
 			if (my $dest = @$level[$params->{'into'}]->{'outline'}) {
@@ -434,13 +445,6 @@ sub indexHandler {
 				push @$dest, splice @$level, $indexLevel, 1;
 			}
 				
-			if ($params->{'into'} eq 'prev') {
-
-				my ($prevlevel, undef, undef) = $opml->level(join('.', @indexPrefix), 'contains');
-
-				push @$prevlevel, splice @$level, $indexLevel, 1;
-			}
-
 			$changed = 1;
 		}
 
