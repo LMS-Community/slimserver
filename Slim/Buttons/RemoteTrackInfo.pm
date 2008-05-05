@@ -120,7 +120,7 @@ sub setMode {
 		'title'    => $title,
 		'favorite' => $favIndex,
 		'hotkey'   => $favHotkey,
-		'icon'     => $client->modeParam('item')->{'image'},
+		'icon'     => $client->modeParam('item') ? $client->modeParam('item')->{'image'} : undef,
 
 		# play music when play is pressed
 		'onPlay'   => sub {
