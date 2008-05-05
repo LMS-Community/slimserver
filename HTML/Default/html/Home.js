@@ -92,7 +92,7 @@ var Home = {
 	},
 
 	tuneInUrl : function(mode) {
-		var url = Ext.get('tuneinurl').dom.value;
+		var url = Ext.get('tuneinurl').getValue();
 		SqueezeJS.Controller.showBriefly(SqueezeJS.string('connecting_for') + ' ' + url);
 
 		SqueezeJS.Controller.playerRequest({
