@@ -1295,7 +1295,7 @@ SqueezeJS.UI.Contributors = Ext.extend(SqueezeJS.UI.Component, {
 
 SqueezeJS.UI.CurrentIndex = Ext.extend(SqueezeJS.UI.Component, {
 	onPlayerStateChange : function(result){
-		this.el.update((parseInt(result.playlist_cur_index) || -1) + 1);
+		this.el.update(result.playlist_cur_index == null ? 0 : (parseInt(result.playlist_cur_index) + 1));
 	}
 });
 
