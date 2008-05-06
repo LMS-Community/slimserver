@@ -432,7 +432,9 @@ sub albumsQuery {
 				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'compilation', $eachitem->compilation);
 				if ($tags =~ /a/) {
 					my @artists = $eachitem->artists();
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $artists[0]->name());
+					if ( blessed( $artists[0] ) ) {
+						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $artists[0]->name());
+					}
 				}
 			}
 			
