@@ -30,7 +30,40 @@ sub initPlugin {
 	
 	$class->initCLI( %args );
 	
+	$class->initJive( %args );
+
 	$class->SUPER::initPlugin();
+}
+
+# add "hidden" items to Jive home menu for individual OPMLbased items
+# this allows individual items to be optionally added to the 
+# top-level menu through the CustomizeHomeMenu applet
+sub initJive {
+	my ( $class, %args ) = @_;
+
+	my $icon   = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+	my $name = $class->getDisplayName();
+        my @jiveMenu = ({
+		stringToken    => $name,
+		id             => 'opml' . $args{tag},
+		node           => 'hidden',
+		displayWhenOff => 0,
+		window         => { 
+				'icon-id' => $icon,
+				titleStyle => 'album',
+		},
+		actions => {
+			go =>          {
+				player => 0,
+				cmd    => [ $args{tag}, 'items' ],
+				params => {
+					menu => $args{tag},
+				},
+			},
+		},
+	});
+
+	Slim::Control::Jive::registerPluginMenu(\@jiveMenu);
 }
 
 sub initCLI {

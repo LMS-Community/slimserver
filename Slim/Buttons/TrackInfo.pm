@@ -287,8 +287,21 @@ sub loadDataForTrack {
 	}
 
 	if (my $ct = Slim::Schema->contentType($track)) {
-		push (@{$client->trackInfoLines}, $client->string('TYPE') . ": " . $client->string(uc($ct)));
-		push (@{$client->trackInfoContent}, undef);
+		# Display the real content type for remote playlist items
+		if ( $track->remote && Slim::Music::Info::isPlaylist( $track, $ct ) )  {
+			my $realtype = $ct;
+			
+			if ( my $entry = $client->masterOrSelf->remotePlaylistCurrentEntry ) {
+				$realtype = $entry->content_type;
+			}
+			
+			push (@{$client->trackInfoLines}, $client->string('TYPE') . ": " . $client->string(uc($realtype)));
+			push (@{$client->trackInfoContent}, undef);
+		}
+		else {
+			push (@{$client->trackInfoLines}, $client->string('TYPE') . ": " . $client->string(uc($ct)));
+			push (@{$client->trackInfoContent}, undef);
+		}
 	}
 
 	if (my $comment = $track->comment) {

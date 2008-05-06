@@ -17,7 +17,6 @@ sub initPlugin {
 	my $name  = $class->displayName;
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
-	my $cond  = $class->condition;
 
 	# This is a bit of a hack, but since Slim::Buttons::Common is such a
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
@@ -32,7 +31,7 @@ sub initPlugin {
 		my %params = (
 			'useMode'   => $mode,
 			'header'    => $name,
-			'condition' => $cond,
+			'condition' => sub { $class->condition(shift); },
 		);
 
 		# Add toplevel info for the option of having a plugin at the top level.

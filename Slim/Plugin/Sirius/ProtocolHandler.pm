@@ -30,37 +30,6 @@ my $log = Slim::Utils::Log->addLogCategory( {
 
 sub getFormatForURL { 'wma' }
 
-sub isAudioURL { 1 }
-
-# Perform processing during play/add, before actual playback begins
-sub onCommand {
-	my ( $class, $client, $cmd, $url, $callback ) = @_;
-	
-	# Only handle 'play'
-	if ( $cmd eq 'play' ) {
-		
-		my ($channelId) = $url =~ m{^sirius://(.+)};
-		
-		getChannelInfo( $client, {
-			channelId => $channelId,
-			callback  => $callback,
-		} );
-		
-		# Update the 'Connecting...' text
-		Slim::Utils::Timers::setTimer(
-			undef,
-			time(),
-			sub {
-				displayStatus( $client, $url, 'PLUGIN_SIRIUS_GETTING_STREAM_INFO', 60 );
-			},
-		);
-		
-		return;
-	}
-	
-	return $callback->();
-}
-
 sub onJump {
 	my ( $class, $client, $nextURL, $callback ) = @_;
 	

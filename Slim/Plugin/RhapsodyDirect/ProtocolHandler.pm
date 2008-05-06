@@ -26,8 +26,6 @@ my $prefs = preferences('server');
 
 sub getFormatForURL { 'wma' }
 
-sub isAudioURL { 1 }
-
 # Source for AudioScrobbler
 sub audioScrobblerSource {
 	my ( $class, $client, $url ) = @_;
@@ -207,83 +205,6 @@ sub getAccount {
 	}
 	
 	return $account;
-}
-
-# Perform processing during play/add, before actual playback begins
-sub onCommand {
-	my ( $class, $client, $cmd, $url, $callback ) = @_;
-	
-	$log->debug("RhapsodyDirect: Handling command '$cmd'");
-	
-	# Only handle 'play'
-	if ( $cmd ne 'play' ) {
-		return $callback->();
-	}
-	
-	# XXX: When hitting play while currently listening to another Rhapsody track,
-	# no logging is performed
-	
-	# Get login info from SN if we don't already have it
-	my $account = $class->getAccount($client);
-	
-	if ( !$account ) {
-		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
-		
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&gotAccount,
-			\&gotAccountError,
-			{
-				client => $client,
-				cb     => sub {
-					$class->onCommand( $client, $cmd, $url, $callback );
-				},
-				ecb    => sub {
-					my $error = shift;
-					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
-					handleError( $error, $client );
-				},
-			},
-		);
-		
-		$log->debug("Getting Rhapsody account from SqueezeNetwork");
-		
-		$http->get( $accountURL );
-		
-		return;
-	}
-	
-	return if tooManySynced($client);
-	
-	$log->debug("Ending any previous playback session");
-	
-	my @clients;
-	
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# if synced, send this packet to all slave players
-		my $master = Slim::Player::Sync::masterOrSelf($client);
-		push @clients, $master, @{ $master->slaves };
-	}
-	else {
-		push @clients, $client;
-	}
-	
-	for my $client ( @clients ) {
-		# Clear any previous outstanding rpds queries
-		cancel_rpds($client);
-		
-		# Sometimes while changing tracks we get a 'playlist clear' after
-		# this runs, so set a flag to ignore this
-		$client->pluginData( trackStarting => 1 );
-		
-		rpds( $client, {
-			data        => pack( 'c', 6 ),
-			callback    => \&getPlaybackSession,
-			onError     => sub {
-				getPlaybackSession( $client, undef, $url, $callback );
-			},
-			passthrough => [ $url, $callback ],
-		} );
-	}
 }
 
 sub getPlaybackSession {
@@ -564,6 +485,46 @@ sub onJump {
 	# Display buffering info on loading the next track
 	$client->pluginData( showBuffering => 1 );
 	
+	my $url = Slim::Player::Playlist::url($client);
+	
+	# If user was not previously playing Rhapsody, get a new playback session first
+	# XXX: it's not possible to get the previously playing track here, the playlist
+	# is updated before we're called
+	if ( $url !~ /^rhapd/ || $client->playmode !~ /play/ ) {
+		$log->debug("Ending any previous playback session");
+
+		my @clients;
+
+		if ( Slim::Player::Sync::isSynced($client) ) {
+			# if synced, send this packet to all slave players
+			my $master = Slim::Player::Sync::masterOrSelf($client);
+			push @clients, $master, @{ $master->slaves };
+		}
+		else {
+			push @clients, $client;
+		}
+
+		for my $client ( @clients ) {
+			# Clear any previous outstanding rpds queries
+			cancel_rpds($client);
+
+			# Sometimes while changing tracks we get a 'playlist clear' after
+			# this runs, so set a flag to ignore this
+			$client->pluginData( trackStarting => 1 );
+
+			rpds( $client, {
+				data        => pack( 'c', 6 ),
+				callback    => \&getPlaybackSession,
+				onError     => sub {
+					getPlaybackSession( $client, undef, $nextURL, $callback );
+				},
+				passthrough => [ $nextURL, $callback ],
+			} );
+		}
+		
+		return;
+	}
+	
 	# For a skip use only the amount of time we've played the song
 	my $songtime = Slim::Player::Source::songTime($client);
 
@@ -575,8 +536,7 @@ sub onJump {
 		
 		# There are different log methods for normal vs. radio play
 		my $data;
-
-		my $url = Slim::Player::Playlist::url($client);
+		
 		if ( my ($stationId) = $url =~ m{rhapd://(.+)\.rdr} ) {
 			# logMeteringInfoForStationTrackPlay
 			$data = pack( 'cC/a*C/a*', 5, $songtime, $stationId );

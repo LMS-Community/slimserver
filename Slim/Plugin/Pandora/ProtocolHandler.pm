@@ -54,8 +54,6 @@ sub new {
 
 sub getFormatForURL () { 'mp3' }
 
-sub isAudioURL () { 1 }
-
 # Don't allow looping if the tracks are short
 sub shouldLoop () { 0 }
 
@@ -88,49 +86,6 @@ sub showBuffering {
 	my $showBuffering = $client->pluginData('showBuffering');
 	
 	return ( defined $showBuffering ) ? $showBuffering : 1;
-}
-
-# Perform processing during play/add, before actual playback begins
-sub onCommand {
-	my ( $class, $client, $cmd, $url, $callback ) = @_;
-	
-	# Only handle 'play'
-	if ( $cmd eq 'play' ) {
-		# Display buffering info on loading the next track
-		$client->pluginData( showBuffering => 1 );
-		
-		my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
-		
-		# If the user was playing a different Pandora station, report a stationChange event
-		my $prevTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
-		if ( $prevTrack && $prevTrack->{stationToken} ne $stationId ) {
-			my $snURL = Slim::Networking::SqueezeNetwork->url(
-				  '/api/pandora/v1/playback/stationChange?stationId=' . $prevTrack->{stationToken} 
-				. '&trackId=' . $prevTrack->{trackToken}
-			);
-
-			my $http = Slim::Networking::SqueezeNetwork->new(
-				sub {},
-				sub {},
-				{
-					client  => $client,
-					timeout => 35,
-				},
-			);
-
-			$log->debug('Reporting station change to SqueezeNetwork');
-			$http->get( $snURL );
-		}
-		
-		getNextTrack( $client, {
-			stationId => $stationId,
-			callback  => $callback,
-		} );
-		
-		return;
-	}
-	
-	return $callback->();
 }
 
 sub getNextTrack {
@@ -304,6 +259,27 @@ sub onJump {
 	
 	# Get next track
 	my ($stationId) = $nextURL =~ m{^pandora://([^.]+)\.mp3};
+	
+	# If the user was playing a different Pandora station, report a stationChange event
+	my $prevTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	if ( $prevTrack && $prevTrack->{stationToken} ne $stationId ) {
+		my $snURL = Slim::Networking::SqueezeNetwork->url(
+			  '/api/pandora/v1/playback/stationChange?stationId=' . $prevTrack->{stationToken} 
+			. '&trackId=' . $prevTrack->{trackToken}
+		);
+
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			sub {},
+			sub {},
+			{
+				client  => $client,
+				timeout => 35,
+			},
+		);
+
+		$log->debug('Reporting station change to SqueezeNetwork');
+		$http->get( $snURL );
+	}
 	
 	getNextTrack( $client, {
 		stationId => $stationId,

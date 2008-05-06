@@ -265,16 +265,16 @@ sub setContentType {
 
 	# Update the cache set by typeFrompath as well.
 	$urlToTypeCache{$url} = $type;
+	
+	$log->info("Content-Type for $url is cached as $type");
 
 	# Commit, since we might use it again right away.
-	Slim::Schema->rs('Track')->updateOrCreate({
+	return Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'CT' => $type },
 		'commit'     => 1,
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
 	});
-
-	$log->info("Content-Type for $url is cached as $type");
 }
 
 sub title {
@@ -300,7 +300,7 @@ sub setTitle {
 
 	# Only readTags if we're not a remote URL. Otherwise, we'll
 	# overwrite the title with the URL.
-	Slim::Schema->rs('Track')->updateOrCreate({
+	return Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'TITLE' => $title },
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
@@ -346,7 +346,7 @@ sub setBitrate {
 	# Cache the bitrate string so it will appear in TrackInfo
 	$currentBitrates{$url} = $track->prettyBitRate;
 
-	return 1;
+	return $track;
 }
 
 sub setDuration {
@@ -433,7 +433,7 @@ sub setRemoteMetadata {
 	
 	if ( $meta->{bitrate} ) {
 		$attr->{BITRATE}   = $meta->{bitrate} * 1000;
-		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? 0 : 1;
+		$attr->{VBR_SCALE} = ( exists $cbr{ $meta->{bitrate} } ) ? undef : 1;
 	}
 	
 	if ( $log->is_debug ) {
@@ -1072,29 +1072,6 @@ sub isPlaylistURL {
 	}
 
 	return 0;
-}
-
-sub isAudioURL {
-	# return true if url scheme (http: etc) defined as audio in types
-	my $url = shift;
-	
-	if (isDigitalInput($url)) {
-		return 1;
-	}
-	
-	# Let the protocol handler determine audio status
-	if ( $url !~ /^(?:http|mms)/ ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
-		if ( $handler && $handler->can('isAudioURL') ) {
-			return $handler->isAudioURL( $url );
-		}
-	}
-
-	# alternatively check for the uri scheme being defined as type 'audio' in the suffixes hash
-	# this occurs if scheme: is defined in the suffix field of types.conf or a custom-types.conf, e.g.:
-	#  id scheme: ? audio
-	# it is used by plugins which know specific uri schemes to be audio, but protocol handler method is preferred
-	return ($url =~ /^([a-z0-9]+:)/ && defined($suffixes{$1}) && $slimTypes{$suffixes{$1}} eq 'audio');
 }
 
 sub isURL {
