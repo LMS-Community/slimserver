@@ -49,6 +49,11 @@ sub prefs {
 			push @prefs, qw(visualMode);
 		}
 	}
+	
+	# Bug 8069, show title format pref for HTTP clients
+	if ( $client->isa('Slim::Player::HTTP') ) {
+		push @prefs, 'titleFormatCurr';
+	}
 
 	return ($prefs->client($client), @prefs);
 }
@@ -71,6 +76,11 @@ sub handler {
 
 			push @prefs, qw(visualModes);
 		}
+	}
+	
+	# Bug 8069, show title format pref for HTTP clients
+	if ( $client->isa('Slim::Player::HTTP') ) {
+		push @prefs, 'titleFormat';
 	}
 
 	if ($paramRef->{'saveSettings'}) {
