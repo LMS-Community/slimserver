@@ -313,11 +313,11 @@ END %]
 	[%- END %]
 [%- END %]
 
-	[% BLOCK songInfoPlayLinks %]
-		<div id="songInfoPlayLinks">
-			[% PROCESS browsecontrols %]
-		</div>
-	[% END %]
+[% BLOCK songInfoPlayLinks %]
+	<div id="songInfoPlayLinks">
+		[% PROCESS browsecontrols %]
+	</div>
+[% END %]
 
 [% BLOCK songInfoItem %]
 	<div id="[% title %]">
