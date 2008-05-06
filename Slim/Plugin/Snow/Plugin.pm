@@ -37,8 +37,6 @@ sub initPlugin {
 		\&leaveScreensaverSnowMode,
 		getDisplayName(),
 	);
-
-	Slim::Buttons::Home::addSubMenu("SCREENSAVERS", getDisplayName());
 }
 
 ##################################################
@@ -51,22 +49,8 @@ our %flakes;
 # flag to avoid loading custom fonts multiple times
 my $loadedTextCustomChars = 0; 
 
-# for the player settings menu
-#sub setupGroup{
-#	my %setupGroup = {
-#		PrefOrder => ['plugin_snow_quantity','plugin_snow_style','plugin_snow_style_off'],
-#		GroupHed => string(''),
-#		GroupDesc => string(''),
-#		GroupLine => 1,
-#		GroupSub => 1,
-#		Suppress_PrefSub => 1,
-#		Suppress_PrefLine => 1
-#	};
-#	
-#}
-
 # button functions for browse directory
-my @snowSettingsChoices = ('SETUP_SCREENSAVER_USE','PLUGIN_SCREENSAVER_SNOW_QUANTITY', 'PLUGIN_SCREENSAVER_SNOW_STYLE','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF');
+my @snowSettingsChoices = ('PLUGIN_SCREENSAVER_SNOW_QUANTITY', 'PLUGIN_SCREENSAVER_SNOW_STYLE','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF');
 
 our %menuParams = (
 	'snow' => {
@@ -78,9 +62,6 @@ our %menuParams = (
 		'callback'        => \&snowExitHandler,
 		'overlayRef'      => \&overlayFunc,
 		'overlayRefArgs'  => 'C',
-	},
-	catdir('snow','SETUP_SCREENSAVER_USE') => {
-		'useMode'         => 'boolean',
 	},
 	catdir('snow','PLUGIN_SCREENSAVER_SNOW_QUANTITY') => {
 		'useMode'         => 'INPUT.List',
@@ -124,16 +105,6 @@ sub overlayFunc {
 	
 	my $nextmenu = 'snow/' . $client->modeParam('listRef')->[$client->modeParam('listIndex')];
 	if (exists($menuParams{$nextmenu})) {
-		my %nextParams = %{$menuParams{$nextmenu}};
-		
-		if ($nextParams{'useMode'} eq 'boolean') {
-			return (
-				undef,
-				Slim::Buttons::Common::checkBoxOverlay($client,
-					$prefs->client($client)->get($saver) eq 'SCREENSAVER.snow'
-				),
-			);
-		}
 	} else {
 		return (undef,$client->symbols('rightarrow'));
 	}
@@ -149,19 +120,6 @@ sub snowExitHandler {
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
 			
-			if ($nextParams{'useMode'} eq 'boolean') {
-				
-				my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-				
-				if ($prefs->client($client)->get($saver) eq 'SCREENSAVER.snow') {
-					$prefs->client($client)->set($saver,$Slim::Player::Player::defaultPrefs->{$saver});
-				} else {
-					$prefs->client($client)->set($saver, 'SCREENSAVER.snow');
-				}
-				
-				$client->update();
-				return;
-			}	
 			if ($nextParams{'useMode'} eq 'INPUT.List' && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;

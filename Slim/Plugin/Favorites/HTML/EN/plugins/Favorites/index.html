@@ -21,7 +21,7 @@ function(){
 				[% END %]
 			</form>
 		[% ELSE %]
-			<form name="edittitleurl" method="" style="display: inline; width: 100%;">
+			<form name="edittitleurl" method="">
 			<table width="100%">
 				<tr>
 					<td width="35%">
@@ -29,10 +29,10 @@ function(){
 						<input type="hidden" name="sess" value="[% sess %]">
 						<input type="hidden" name="action" value="editset">
 						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-						<input id="edit_title_[% entry.index %]" style="display: inline; width: 98%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+						<input id="edit_title_[% entry.index %]" size="25" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 					</td>
 					<td width="35%">
-						<input id="edit_url_[% entry.index %]" style="display: inline; width: 98%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+						<input id="edit_url_[% entry.index %]" size="25" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 					</td>
 					<td>
 					[% IF favorites AND entry.audio %]
@@ -50,7 +50,7 @@ function(){
 							</script>
 						[% ELSE %]
 							<select size="1" name="entryhotkey">
-							<option value=""></option>
+								<option value=""></option>
 								[% FOREACH k IN hotkeys %]
 									<option [% IF k.key == entry.hotkey %]selected[% END %] value="[% k.key %]">[% k.key %][% IF k.used %] [% k.title %][% END %]</option>
 								[% END %]
@@ -60,8 +60,8 @@ function(){
 					</td>
 					<td>
 					[% IF useAJAX %]
-						<input type="button" class="stdclick" style="display: inline; width: 45%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
-						<input type="button" class="stdclick" style="display: inline; width: 45%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+						<input type="button" class="stdclick" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]', '[% sess %]'); return false;" />
+						<input type="button" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]', '[% sess %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
 					[% ELSE %]
 						<input type="submit" style="display: inline; width: 45%" class="stdclick" name="editset" value=[% "SAVE" | string %]>
 						<input type="submit" style="display: inline; width: 45%" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
