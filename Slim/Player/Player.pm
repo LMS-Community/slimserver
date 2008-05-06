@@ -176,9 +176,6 @@ sub power {
 
 	if (!$on) {
 		
-		my $playing = (Slim::Player::Source::playmode($client) eq 'play');
-		$prefs->client($client)->set('playingAtPowerOff', $playing);
-
 		# turning player off - unsync/pause/stop player and move to off mode
 		my $sync = $prefs->client($client)->get('syncPower');
 
@@ -190,7 +187,12 @@ sub power {
 
 			Slim::Player::Sync::unsync($client, 1);
   		}
-  
+  		
+  		# Bug 7996: Since unsync can change the playing state we need to wait until now to
+  		# find out if we are playing. If unsync() stopped us then that is fine. 
+		my $playing = (Slim::Player::Source::playmode($client) eq 'play');
+		$prefs->client($client)->set('playingAtPowerOff', $playing);
+
 		if ($playing) {
 
 			if (Slim::Player::Playlist::song($client) && 
