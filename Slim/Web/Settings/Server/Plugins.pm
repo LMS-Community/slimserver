@@ -35,6 +35,8 @@ sub handler {
 		my $name     = $plugins->{$plugin}->{'name'};
 		my $module   = $plugins->{$plugin}->{'module'};
 
+		$plugins->{$plugin}->{errorDesc} = Slim::Utils::PluginManager->getErrorString($plugin);
+
 		# XXXX - handle install / uninstall / enable / disable
 		if ( $paramRef->{'saveSettings'} ) {
 			# don't handle enforced plugins
