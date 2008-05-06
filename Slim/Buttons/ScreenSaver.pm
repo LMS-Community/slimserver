@@ -86,17 +86,23 @@ sub screenSaver {
 		$saver = 'playlist'; 
 	}
 	
-	# dim the screen if we're not playing...  will restore brightness on next IR input.
-	# only ned to do this once, but its hard to ensure all cases, so it might be repeated.
-	if ( $timeout && $display->brightness() && 
-			$display->brightness() != $dim &&
-			$prefs->client($client)->get('autobrightness') &&
-			$irtime &&
-			$irtime < $now - $timeout && 
-			$mode ne 'block' &&
-			$client->power()) {
-
-		$display->brightness($dim);
+	# automatically control brightness if set to do so.
+	if ($prefs->client($client)->get('autobrightness') && defined $display->brightness()) {
+		
+		# dim the screen if we're not playing...  will restore brightness on next IR input.
+		# only need to do this once, but its hard to ensure all cases, so it might be repeated.
+		if ( $timeout && 
+				$irtime && $irtime < $now - $timeout && 
+				$mode ne 'block' && $client->power()) {
+	
+			$display->brightness($dim) if $display->brightness() != $dim;
+		
+		} elsif ($client->power && $display->brightness() != $prefs->client($client)->get('powerOnBrightness')) {
+			$display->brightness($prefs->client($client)->get('powerOnBrightness'));
+		
+		} elsif (!$client->power && $display->brightness() != $prefs->client($client)->get('powerOffBrightness')) {
+			$display->brightness($prefs->client($client)->get('powerOffBrightness'));
+		}
 	}
 
 	if ($display->updateMode() == 2 || $display->animateState() ) {

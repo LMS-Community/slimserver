@@ -20,7 +20,6 @@ ELSE %]
 		<script type="text/javascript" src="[% webroot %]html/Home.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			Ext.onReady(function(){
-				[% PROCESS jsString id='CONNECTING_FOR' jsId='' %]
 				Home.init();
 			});
 		</script>
@@ -185,10 +184,10 @@ ELSE %]
 					control = BLOCK;
 						IF entry.type == "audio";
 							WRAPPER playlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true);"
+								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
 							WRAPPER addlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true);"
+								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
 						ELSE;
 							PROCESS dummylink;
