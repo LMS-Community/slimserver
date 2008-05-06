@@ -3434,7 +3434,7 @@ sub songinfoQuery {
 
 	} else {
 
-		if (defined $url && Slim::Music::Info::isSong($url)){
+		if ( defined $url )){
 
 			$track = Slim::Schema->rs('Track')->objectForUrl($url);
 		}
