@@ -457,7 +457,7 @@ sub scanBitrate {
 		
 		# XXX: Schema ignores ARTIST, ALBUM, YEAR, and GENRE for remote URLs
 		# so we have to format our title info manually.
-		Slim::Schema->rs('Track')->updateOrCreate({
+		my $track = Slim::Schema->rs('Track')->updateOrCreate({
 			url        => $url,
 			attributes => {
 				TITLE   => $tags{TITLE},
@@ -478,6 +478,22 @@ sub scanBitrate {
 		$title .= ' ' . string('FROM') . ' ' . $tags{ALBUM}  if $tags{ALBUM};
 		
 		Slim::Music::Info::setCurrentTitle( $url, $title );
+		
+		# Save artwork if found
+		if ( defined $tags{PIC} && defined $tags{PIC}->{DATA}) {
+			$track->cover(1);
+			$track->update;
+			
+			my $data = {
+				image => $tags{PIC}->{DATA},
+				type  => $tags{PIC}->{FORMAT} || 'image/jpeg',
+			};
+			
+			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+			$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
+			
+			$log->debug( 'Found embedded cover art, saving for ' . $track->url );
+		}
 	}
 
 	# Check if first frame has a Xing VBR header

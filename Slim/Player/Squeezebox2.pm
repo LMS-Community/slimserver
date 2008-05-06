@@ -437,13 +437,6 @@ sub directHeaders {
 
 				# we've got a playlist in all likelyhood, have the player send it to us
 				$client->sendFrame('body', \(pack('N', $length)));
-				
-			} elsif ( $contentType =~ /^(?:mp3|ogg|flc)$/ && !defined $bitrate ) {
-				
-				# if we're streaming mp3, ogg or flac audio and don't know the bitrate, request some body data
-				$log->info("MP3/Ogg/FLAC stream with unknown bitrate, requesting body from player to parse");
-				
-				$client->sendFrame( 'body', \(pack( 'N', 16 * 1024 )) );
 
 			} elsif ($client->contentTypeSupported($contentType)) {
 				

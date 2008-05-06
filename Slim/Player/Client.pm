@@ -236,6 +236,7 @@ sub new {
 	$client->[127] = undef; # frameData; array of (stream-byte-offset, stream-time-offset) tuples
 	$client->[128] = 0; 	# initialAudioBlockRemaining
 	$client->[129] = {};    # scanData (used to store info obtained from scan that is needed later)
+	$client->[130] = undef; # remotePlaylistCurrentEntry
 
 	$clientHash{$id} = $client;
 
@@ -1711,6 +1712,11 @@ sub initialAudioBlockRemaining {
 sub scanData {
 	my $r = shift;
 	@_ ? ($r->[129] = shift) : $r->[129];
+}
+
+sub remotePlaylistCurrentEntry {
+	my $r = shift;
+	@_ ? ($r->[130] = shift) : $r->[130];
 }
 
 1;

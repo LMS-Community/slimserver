@@ -164,9 +164,12 @@
 		[% item = itemobj.tagversion | html; title = "TAGVERSION"; PROCESS songInfoItem %]
 	[% END %]
 
-	[% IF itemobj.path && NOT itemobj.isRemoteURL %]
-		[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] (<a href="[% download %]">[% "DOWNLOAD" | string %]</a>)[% END %]
-		[% PROCESS songInfoItem title = "LOCATION" %]
+	[%# Display path for local files and http/mms streams %]
+	[% IF itemobj.path %]
+		[% IF !itemobj.isRemoteURL || itemobj.path.match('^(http|mms)') %]
+			[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] [% IF !itemobj.isRemoteURL %](<a href="[% download %]">[% "DOWNLOAD" | string %]</a>)[% END %][% END %]
+			[% PROCESS songInfoItem title = "LOCATION" %]
+		[% END %]
 	[% END %]
 
 	[% IF itemobj.modificationTime %] 

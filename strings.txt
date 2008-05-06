@@ -15719,4 +15719,4 @@ SEEK_ERROR_MP3_UNKNOWN_DURATION
 	EN	Cannot seek with unknown duration
 
 SEEK_ERROR_TYPE_NOT_SUPPORTED
-	EN	Cannot seek in streams of type %s
+	EN	Unable to scan: Playlist nested too deep

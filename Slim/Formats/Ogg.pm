@@ -28,6 +28,7 @@ use base qw(Slim::Formats);
 
 use Fcntl qw(:seek);
 use Slim::Utils::Log;
+use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
 use MIME::Base64 qw(decode_base64);
@@ -202,6 +203,7 @@ bitrate.
 sub scanBitrate {
 	my $class = shift;
 	my $fh    = shift;
+	my $url   = shift;
 	
 	my $ogg;
 	my $log   = logger('scan.scanner');
@@ -209,14 +211,63 @@ sub scanBitrate {
 	# some ogg files can blow up - especially if they are invalid.
 	eval {
 		local $^W = 0;
-		$ogg = Ogg::Vorbis::Header::PurePerl->new( $fh->filename );
+		$ogg = Ogg::Vorbis::Header::PurePerl->new( $fh );
 	};
 
 	if ( !$ogg || $@ ) {
 
-		logWarning("Unable to parse Ogg stream");
+		logWarning("Unable to parse Ogg stream $@");
 
 		return (-1, undef);
+	}
+	
+	# Save tag data if available
+	if ( my $title = $ogg->comment('title') ) {
+		my $artist = $ogg->comment('artist');
+		my $album  = $ogg->comment('album');
+		my $date   = $ogg->comment('date');
+		my $genre  = $ogg->comment('genre');
+		
+		# XXX: Schema ignores ARTIST, ALBUM, YEAR, and GENRE for remote URLs
+		# so we have to format our title info manually.
+		my $track = Slim::Schema->rs('Track')->updateOrCreate({
+			url        => $url,
+			attributes => {
+				TITLE   => $title,
+				ARTIST  => $artist,
+				ALBUM   => $album,
+				YEAR    => $date,
+				GENRE   => $genre,
+			},
+		});
+
+		if ( $log->is_debug ) {
+			$log->debug("Read Ogg tags from stream: " . Data::Dump::dump( $ogg->{COMMENTS} ));
+		}
+		
+		$title .= ' ' . string('BY') . ' ' . $artist if $artist;
+		$title .= ' ' . string('FROM') . ' ' . $album if $album;
+
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+
+		# Save artwork if found
+		# Read cover art if available
+		if ( my $coverart = $ogg->comment('coverart') ) {
+			$coverart = decode_base64($coverart);
+
+			$track->cover(1);
+			$track->update;
+
+			my $data = {
+				image => $coverart,
+				type  => $ogg->comment('coverartmime') || 'image/jpeg',
+			};
+
+			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+			$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
+
+			$log->debug( 'Found embedded cover art, saving for ' . $track->url );
+		}
 	}
 	
 	my $vbr = 0;

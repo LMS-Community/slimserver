@@ -7,6 +7,9 @@ package Slim::Formats::Playlists::ASX;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+# ASX 3.0 official documentation can be found here:
+# http://msdn.microsoft.com/en-us/library/bb249663%28VS.85%29.aspx
+
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
@@ -29,34 +32,110 @@ sub read {
 	# First try for version 3.0 ASX
 	if ($content =~ /<ASX/i) {
 		
-		# Forget trying to parse this as XML, all we care about are REF and ENTRYREF elements
-		# XXX: We're ignorning <title> elements here (bug 4681)
 		$log->info("Parsing ASX 3.0: $file url: [$url]");
-
-		my @refs      = $content =~ m{<ref\s+href\s*=\s*"([^"]+)"}ig;
-		my @entryrefs = $content =~ m{<entryref\s+href\s*=\s*"([^"]+)"}ig;
-
-		for my $href ( @refs, @entryrefs ) {
+		
+		# Deal with the common parsing problem of unescaped ampersands 	 
+		# found in many ASX files on the web. 	 
+		$content =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
+		
+		# Remove HTML comments
+		$content =~ s{<!.*?(--.*?--\s*)+.*?>}{}sgx;
+		
+		# Convert all tags to upper case as ASX allows mixed case tags, XML does not!
+		$content =~ s{(<[^\s>]+)}{\U$1\E}mg;
+		$content =~ s/href\s*=/HREF=/ig;
+		
+		# Change ENTRYREF tags to ENTRY so they stay in the proper order
+		$content =~ s/ENTRYREF/ENTRY/g;
+		
+		my $parsed = eval {
+			XMLin(
+				\$content,
+				ForceArray => [
+					'ENTRY',
+					'REF',
+				],
+				SuppressEmpty => undef,
+			);
+		};
+		
+		if ( $@ ) {
+			$log->error( "Unable to parse ASX playlist:\n$@\n$content" );
+			$parsed = {};
+		}
+		
+		my @entries = ();
+		
+		# Move entry items inside repeat tags
+		if ( my $repeat = $parsed->{REPEAT} ) {
+			$parsed->{ENTRY} ||= [];
+			push @{ $parsed->{ENTRY} }, @{ $repeat->{ENTRY} };
+		}
+		
+		for my $entry ( @{ $parsed->{ENTRY} || [] } ) {
+			if ( my $href = $entry->{HREF} ) {
+				# It was an entryref tag
+				push @entries, {
+					href => $href,
+				}
+			}
+			else {
+				# It's a normal entry tag
+				my $title = $entry->{TITLE};
+				my $refs  = $entry->{REF} || [];
+			
+				for my $ref ( @{$refs} ) {
+					if ( my $href = $ref->{HREF} ) {
+						push @entries, {
+							title => $title,
+							href  => $href,
+						};
+					}
+				}
+			}
+		}
+		
+		for my $entry ( @entries ) {
+		
+			my $title = $entry->{title};
+			my $href  = $entry->{href};
+			
+			if ( ref $title ) {
+				$title = undef;
+			}
+			
+			# Ignore .nsc files (multicast streams)
+			# and non-HTTP/MMS protocols such as RTSP
+			next if $href =~ /\.nsc$/i;
+			next if $href !~ /^(http|mms)/i;
 			
 			# Bug 3160 (partial)
 			# 'ref' tags should refer to audio content, so we need to force
 			# the use of the MMS protocol handler by making sure the URI starts with mms
 			$href =~ s/^http/mms/;
-			
-			$log->info("Found an entry: $href");
-			
+
+			$log->info("Found an entry: $href, title $title");
+
 			# We've found URLs in ASX files that should be
 			# escaped to be legal - specifically, they contain
 			# spaces. For now, deal with this specific case.
 			# If this seems to happen in other ways, maybe we
 			# should URL escape before continuing.
 			$href =~ s/ /%20/;
-			
+
 			$href = Slim::Utils::Misc::fixPath($href, $baseDir);
 
 			if ($class->playlistEntryIsValid($href, $url)) {
 
-				push @items, $class->_updateMetaData($href);
+				push @items, $class->_updateMetaData( $href, {
+					TITLE => $title,
+				} );
+			}
+		}
+		
+		if ( $log->is_info ) {
+			if ( scalar @items == 0 ) {
+				$log->info( "Input ASX we didn't parse:\n$content\n" . Data::Dump::dump($parsed) );
 			}
 		}
 	}
@@ -102,7 +181,7 @@ sub read {
 
 	if ( $log->is_info ) {
 		$log->info("parsed " . scalar(@items) . " items out of ASX");
-	}
+	}		
 
 	return @items;
 }
