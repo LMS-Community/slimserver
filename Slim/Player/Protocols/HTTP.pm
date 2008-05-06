@@ -20,6 +20,7 @@ use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Scanner::Remote;
 use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
@@ -75,9 +76,9 @@ sub readMetaData {
 	
 	$metadataSize = ord($metadataSize) * 16;
 	
-	$log->debug("Metadata size: $metadataSize");
-
 	if ($metadataSize > 0) {
+		$log->debug("Metadata size: $metadataSize");
+		
 		my $metadata;
 		my $metadatapart;
 		
@@ -349,19 +350,6 @@ sub showBuffering {
 	return $client->showBuffering;
 }
 
-# Perform processing during play/add, before actual playback begins
-sub onCommand {
-	my ( $class, $client, $cmd, $url, $callback ) = @_;
-	
-	# Only handle 'play'
-	if ( $cmd eq 'play' ) {
-		# Display buffering info on loading the next track
-		$client->showBuffering( 1 );
-	}
-	
-	return $callback->();
-}
-
 # Handle normal advances to the next track
 sub onDecoderUnderrun {
 	my ( $class, $client, $nextURL, $callback ) = @_;
@@ -382,9 +370,65 @@ sub onDecoderUnderrun {
 		}
 	}
 	
+	# If user was listening to a playlist, it may contain non-infinite tracks
+	# so this lets us advance to the next entry in the playlist.  We just
+	# want to skip scanHTTPTrack in this case, and the onUnderrun callback
+	# will handle playing the next entry
+	if ( $client->remotePlaylistCurrentEntry ) {
+		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( { 	 
+			url => Slim::Player::Playlist::url($client), 	 
+		} );
+		
+		if ( my $nextEntry = $playlist->getNextEntry( { after => $client->remotePlaylistCurrentEntry } ) ) {
+			$log->debug( 'Playlist contains more tracks, not scanning next track' );
+			return;
+		}
+	}
+	
 	$log->debug( 'Scanning next HTTP track before playback' );
 	
 	$class->scanHTTPTrack( $client, $nextURL, $callback );
+}
+
+sub onUnderrun {
+	my ( $class, $client, $url, $callback ) = @_;
+	
+	# Special handling needed when synced since onUnderrun is
+	# called for all players
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		if ( !Slim::Player::Sync::isMaster($client) ) {
+			# Only the master needs to scan the track
+			$log->debug('Letting sync master handle onUnderrun');
+			
+			$callback->();
+			
+			return;
+		}
+	}
+	
+	# If user was listening to a playlist, it may contain non-infinite tracks
+	# so this lets us advance to the next entry in the playlist
+	if ( $client->remotePlaylistCurrentEntry ) {
+		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( { 	 
+			url => Slim::Player::Playlist::url($client), 	 
+		} );
+		
+		if ( my $nextEntry = $playlist->getNextEntry( { after => $client->remotePlaylistCurrentEntry } ) ) {
+			# Jump to the same track where we'll play the next item in the playlist
+			
+			$client->remotePlaylistCurrentEntry( $nextEntry );
+			
+			$log->debug( "Jumping to same track to play the next entry in the playlist" );
+
+			Slim::Music::Info::setCurrentTitle( $playlist->url, $nextEntry->title );
+
+			Slim::Player::Source::jumpto( $client, '+0' );
+			
+			return;
+		}
+	}
+	
+	$callback->();
 }
 
 # On skip, load the next track before playback
@@ -402,44 +446,74 @@ sub onJump {
 
 	# Display buffering info on loading the next track
 	$client->showBuffering( 1 );
-	
+
 	$log->debug( 'Scanning next HTTP track before playback' );
-	
+		
 	$class->scanHTTPTrack( $client, $nextURL, $callback );
 }
 
 sub scanHTTPTrack {
 	my ( $class, $client, $nextURL, $callback ) = @_;
 	
-	# Bug 7739, Scan the next track before we play it
-	Slim::Utils::Scanner->scanPathOrURL( {
-		url      => $nextURL,
-		client   => $client,
-		callback => sub {
-			my ( $foundItems, $error ) = @_;
+	$client = $client->masterOrSelf;
+	
+	# Clear previous playlist entry if any
+	$client->remotePlaylistCurrentEntry( undef );
+	
+	# Bug 7739, Scan the next track/playlist before we play it
+	Slim::Utils::Scanner::Remote->scanURL( $nextURL, {
+		client => $client,
+		cb     => sub {
+			my ( $track, $error ) = @_;
 			
-			if ( scalar @{$foundItems} ) {
-				# If the item expanded into a playlist or is different from the original,
-				# splice it into the playlist
-				my $foundURL = blessed( $foundItems->[0] ) ? $foundItems->[0]->url : $foundItems->[0];
-				
-				if ( scalar @{$foundItems} > 1 || $foundURL ne $nextURL ) {
-					# Find the location of nextURL in the playlist
+			if ( $track ) {
+				# An HTTP URL may really be an MMS URL,
+				# check now and if so, change the URL before playback
+				if ( $track->content_type eq 'wma' ) {
+					$log->debug( "Changing URL to MMS protocol: $nextURL" );
+					my $mmsURL = $nextURL;
+					$mmsURL =~ s/^http/mms/i;
+					$track->url( $mmsURL );
+					$track->update;
+					
+					# Replace the item on the playlist so it has the new URL
 					my $i = 0;
-				
 					for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
 						my $itemURL = blessed($item) ? $item->url : $item;
 						if ( $itemURL eq $nextURL ) {
-							$log->debug( 'Splicing ' . scalar( @{$foundItems} ) . " scanned tracks into playlist at index $i" );
-							splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, @{$foundItems};
+							splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, $track;
 							last;
 						}
 						$i++;
 					}
 				}
+				
+				$callback->();
 			}
-			
-			$callback->();
+			else {
+				my $line1;
+				$error ||= 'PROBLEM_OPENING_REMOTE_URL';
+
+				# If the playlist was unable to load a remote URL, notify
+				# This is used for logging broken stream links
+				Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'cant_open', $nextURL, $error ] );
+
+				if ( uc($error) eq $error ) {
+					$line1 = $client->string($error);
+				}
+				else {
+					$line1 = $error;
+				}
+
+				# Show an error message
+				$client->showBriefly( {
+					line => [ $line1, $nextURL ],
+				}, {
+					scroll    => 1,
+					firstline => 1,
+					duration  => 5,
+				} );
+			}
 		},
 	} );
 }
@@ -473,6 +547,26 @@ sub getMetadataFor {
 		}
 	}
 	
+	# Item may be a playlist, so get the real URL playing
+	if ( Slim::Music::Info::isPlaylist($url) ) {
+		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
+			$url = $entry->url;
+		}
+	}
+	
+	# Remote streams may include ID3 tags with embedded artwork
+	# Example: http://downloads.bbc.co.uk/podcasts/radio4/excessbag/excessbag_20080426-1217.mp3		
+	my $cover;
+	my $track = Slim::Schema->rs('Track')->objectForUrl( {
+		url => $url,
+	} );
+	
+	return {} unless $track;
+	
+	if ( $track->cover ) {
+		$cover = '/music/' . $track->id . '/cover.jpg';
+	}
+	
 	if ( $url =~ /mp3tunes\.com/ || $url =~ m|squeezenetwork\.com.+/mp3tunes| ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MP3tunes::Plugin') ) {
 			my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
@@ -484,7 +578,7 @@ sub getMetadataFor {
 					album    => $meta->{album},
 					tracknum => $meta->{tracknum},
 					title    => $meta->{title},
-					cover    => $meta->{cover} || $icon,
+					cover    => $cover || $meta->{cover} || $icon,
 					icon     => $icon,
 					type     => 'MP3tunes',
 				};
@@ -493,8 +587,7 @@ sub getMetadataFor {
 				# Metadata for items in the playlist that have not yet been played
 			
 				# We can still get cover art for items not yet played
-				my $cover;
-				if ( $url =~ /hasArt=1/ ) {
+				if ( !$cover && $url =~ /hasArt=1/ ) {
 					my ($id)  = $url =~ m/([0-9a-f]+\?sid=[0-9a-f]+)/;
 					$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
 				}
@@ -512,7 +605,7 @@ sub getMetadataFor {
 			my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
 			return {
 				title    => $title,
-				cover    => $icon,
+				cover    => $cover || $icon,
 				icon     => $icon,
 				type     => 'Live Music Archive',
 			};
@@ -531,11 +624,17 @@ sub getMetadataFor {
 			};
 		}
 	}
-	else {
+	else {		
+		my $type = uc( $track->content_type ) . ' '
+			. ( defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO') );
+		
 		return {
-			artist => $artist,
-			title  => $title,
-			type   => defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO'),
+			artist   => $artist,
+			title    => $title,
+			type     => $type,
+			bitrate  => $track->prettyBitRate,
+			duration => $track->secs,
+			cover    => $cover,
 		};
 	}
 	
@@ -574,13 +673,19 @@ sub canSeek {
 	
 	$client = $client->masterOrSelf;
 	
+	if ( Slim::Music::Info::isPlaylist($url) ) {
+		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
+			$url = $entry->url;
+		}
+	}
+	
 	# Can only seek if bitrate and duration are known
 	my $bitrate = Slim::Music::Info::getBitrate( $url );
 	my $seconds = Slim::Music::Info::getDuration( $url );
 	
 	if ( !$bitrate || !$seconds ) {
-		$log->debug( "bitrate: $bitrate, duration: $seconds" );
-		$log->debug( "Unknown bitrate or duration, seek disabled" );
+		#$log->debug( "bitrate: $bitrate, duration: $seconds" );
+		#$log->debug( "Unknown bitrate or duration, seek disabled" );
 		return 0;
 	}
 	
@@ -588,13 +693,19 @@ sub canSeek {
 		return 1;
 	}
 	
-	$log->debug( "Seek not possible, content-length missing or wrong content-type" );
+	#$log->debug( "Seek not possible, content-length missing or wrong content-type" );
 	
 	return 0;
 }
 
 sub canSeekError {
 	my ( $class, $client, $url ) = @_;
+	
+	if ( Slim::Music::Info::isPlaylist($url) ) {
+		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
+			$url = $entry->url;
+		}
+	}
 	
 	my $ct = Slim::Music::Info::contentType($url);
 	
@@ -614,6 +725,12 @@ sub canSeekError {
 
 sub getSeekData {
 	my ( $class, $client, $url, $newtime ) = @_;
+	
+	if ( Slim::Music::Info::isPlaylist($url) ) {
+		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
+			$url = $entry->url;
+		}
+	}
 	
 	# Determine byte offset and song length in bytes
 	my $bitrate = Slim::Music::Info::getBitrate( $url ) || return;
@@ -654,6 +771,34 @@ sub setSeekData {
 			},
 		} );
 	}
+}
+
+sub onOpen {
+	my ( $class, $client, $track ) = @_;
+	
+	$client = $client->masterOrSelf;
+	
+	if ( Slim::Music::Info::isPlaylist( $track, $track->content_type ) ) {
+		if ( my $next = $client->remotePlaylistCurrentEntry ) {
+			return $next;
+		}
+		
+		# Return the first good audio track
+		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( {
+			url => $track->url,
+		} );
+		
+		$log->debug( "Getting next audio URL from playlist" );
+		
+		my $next = $playlist->getNextEntry;
+		
+		# Save the current playlist entry being used
+		$client->remotePlaylistCurrentEntry( $next );
+		
+		return $next;
+	}
+	
+	return $track;
 }
 
 1;

@@ -3955,13 +3955,8 @@ sub songinfoQuery {
 				$idx++;
  			}
 
-			# in songinfo context, we only want an add-to-favorites link if it's a local track
-			# this is a workaround for the fact that a radio stream in the current playlist will
-			# often have a URL for a specific IP rather than a e.g DNS .m3u URL
-			if ($favorites{'url'} =~ /^file/ && $menuMode) {
-				# Add Favorites as the last item to all chunks (the assumption is that there will be 1 chunk in this response 100% of the time)
-				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
-			}
+			# Add Favorites as the last item to all chunks (the assumption is that there will be 1 chunk in this response 100% of the time)
+			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
 
 			# because of suppression of some items, only now can we add the count
 			$request->addResult("count", $totalCount);

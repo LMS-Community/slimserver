@@ -52,7 +52,7 @@ sub init {
 
 	if (!-d $cacheDir) {
 
-		$log->error("Error: cachedir [$cacheDir] isn't set or writeable");
+		$log->error("cachedir [$cacheDir] isn't set or writeable");
 		return 0;
 	}
 
@@ -107,7 +107,7 @@ sub startAdvertising {
 
 	my $mDNSBin = Slim::Utils::Misc::findbin('mDNSResponderPosix') || do {
 
-		$log->error("Error: Couldn't find mDNSResponderPosix binary! Aborting!");
+		$log->warn("Couldn't find mDNSResponderPosix binary");
 		return;
 	};
 
@@ -121,7 +121,7 @@ sub startAdvertising {
 	open(CONF, '>', $class->confFile) or do {
 
 		if ( $log->is_error ) {
-			$log->error(sprintf("Error: Couldn't open %s for appending!: $!", $class->confFile));
+			$log->error(sprintf("Couldn't open %s for appending: $!", $class->confFile));
 		}
 		return;
 	};

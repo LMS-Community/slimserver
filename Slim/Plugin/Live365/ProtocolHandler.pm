@@ -56,44 +56,8 @@ sub new {
 
 sub getFormatForURL () { 'mp3' }
 
-sub isAudioURL () { 1 }
-
 # Source for AudioScrobbler (R = Radio)
 sub audioScrobblerSource () { 'R' }
-
-# Perform processing before scan
-sub onCommand {
-	my ( $class, $client, $cmd, $url, $callback ) = @_;
-	
-	if ( $cmd eq 'play' ) {	
-		# Get the user's session ID from SN, this is so we
-		# don't have to worry about old session ID's in favorites
-		
-		# Remove any existing session id
-		$url =~ s/\?+//;
-		
-		my $getAudioURL = Slim::Networking::SqueezeNetwork->url(
-			'/api/live365/v1/playback/getAudioURL?url=' . uri_escape($url)
-		);
-
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&gotURL,
-			\&gotURLError,
-			{
-				client   => $client,
-				url      => $url,
-				callback => $callback,
-			},
-		);
-		
-		$log->debug( "Getting audio URL for $url from SN" );
-	
-		$http->get( $getAudioURL );
-	}
-	else {
-		return $callback->();
-	}
-}
 
 sub gotURL {
 	my $http     = shift;

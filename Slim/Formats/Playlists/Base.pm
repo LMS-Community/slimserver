@@ -103,8 +103,6 @@ sub _filehandleFromNameOrString {
 sub playlistEntryIsValid {
 	my ($class, $entry, $url) = @_;
 
-	my $caller = (caller(1))[3];
-
 	if (Slim::Music::Info::isRemoteURL($entry) || Slim::Music::Info::isRemoteURL($url)) {
 
 		return 1;

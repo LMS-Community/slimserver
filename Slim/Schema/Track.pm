@@ -256,6 +256,26 @@ sub isContainer {
 sub coverArt {
 	my $self    = shift;
 	my $list    = shift || 0;
+	
+	my ($body, $contentType, $mtime, $path);
+	
+	# Remote files may have embedded cover art
+	if ( $self->remote && $self->cover ) {
+		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+		my $image = $cache->get( 'cover_' . $self->url );
+		if ( $image ) {
+			$body        = $image->{image};
+			$contentType = $image->{type};
+			$mtime       = time();
+		}
+		
+		if ( !$list && wantarray ) {
+			return ( $body, $contentType, time() );
+		}
+		else {
+			return $body;
+		}
+	}
 
 	# return with nothing if this isn't a file. 
 	# We don't need to search on streams, for example.
@@ -269,8 +289,6 @@ sub coverArt {
 	my $log = logger('artwork');
 
 	$log->info("Retrieving artwork for: $url");
-
-	my ($body, $contentType, $mtime, $path);
 
 	# A value of 1 indicate the cover art is embedded in the file's
 	# metdata tags.
