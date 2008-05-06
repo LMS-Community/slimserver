@@ -835,6 +835,13 @@ sub stream {
 		my $pcmendian;
 		my $pcmchannels;
 		my $outputThreshold;
+		
+		my $track;
+		if ( $params->{url} ) {
+			$track = Slim::Schema->rs('Track')->objectForUrl( {
+				url => $params->{url},
+			} );
+		}
 
 		my $handler;
 		my $server_url = $client->canDirectStream($params->{'url'});
@@ -867,15 +874,10 @@ sub stream {
 			$pcmchannels     = 2;
 			$outputThreshold = 0;
 
-			if ($params->{url}) {
-
-				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $params->{'url'},
-		       		});
-
+			if ( $track ) {
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
 				$pcmsamplerate = $client->pcm_sample_rates($track);
-				$pcmchannels = $track->channels() || '2';
+				$pcmchannels   = $track->channels() || '2';
 			}
 
 		} elsif ($format eq 'aif') {
@@ -891,15 +893,10 @@ sub stream {
 			$pcmchannels     = 2;
 			$outputThreshold = 0;
 
-			if ($params->{url}) {
-
-				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $params->{url},
-		       		});
-
+			if ( $track ) {
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
 				$pcmsamplerate = $client->pcm_sample_rates($track);
-				$pcmchannels = $track->channels() || '2';
+				$pcmchannels   = $track->channels() || '2';
 			 }
 
 		} elsif ($format eq 'flc') {
@@ -912,14 +909,9 @@ sub stream {
 			$outputThreshold = 0;
 
 			# Threshold the output buffer for high sample-rate flac.
-			if ($params->{url}) {
-
-				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $params->{url},
-				});
-
-				if ($track && $track->samplerate() && $track->samplerate() >= 88200) {
-			    		$outputThreshold = 20;
+			if ( $track ) {
+				if ( $track->samplerate() && $track->samplerate() >= 88200 ) {
+			    	$outputThreshold = 20;
 				}
 			}
 
@@ -1113,6 +1105,12 @@ sub stream {
 		}
 		else {
 			$replayGain = $client->canDoReplayGain($params->{replay_gain});
+		}
+		
+		# Reduce buffer threshold if a remote file is really small
+		if ( $track && $track->remote && $track->filesize && $track->filesize < ( $bufferThreshold * 1024 ) ) {
+			$bufferThreshold = int( $track->filesize / 1024 ) - 1;
+			$log->info( "Reducing buffer threshold to $bufferThreshold" );
 		}
 		
 		# If looping, reduce the threshold, some of our sounds are really short

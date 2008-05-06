@@ -489,23 +489,31 @@ sub playmode {
 			
 			my $currentSong = Slim::Player::Playlist::song($client, streamingSongIndex($client));
 			
-			if ( ref $currentSong ) {
-
-				if ( $currentSong->can('url') ) {
-					$currentSong = $currentSong->url;
+			my $url = $currentSong;
+			if ( blessed($currentSong) && $currentSong->can('url') ) {
+				$url = $currentSong->url;
+			}
+			
+			# Let Protocol Handlers change the track to stream, for use if we are
+			# trying to play a remote playlist
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+			if ( $handler && $handler->can('onOpen') ) {
+				my $altTrack = $handler->onOpen( $everyclient, $currentSong );
+				if ( $altTrack ) {
+					$url = $altTrack->url;
 				}
 			}
 			
 			my $paused = ( Slim::Player::Sync::isSynced($everyclient) ) ? 1 : 0;
 			
-			$everyclient->play({ 
+			$everyclient->play( { 
 				'paused'      => $paused, 
 				'format'      => $master->streamformat(), 
-				'url'         => $currentSong, 
+				'url'         => $url, 
 				'reconnect'   => (defined($seekoffset) && $seekoffset > 0), 
 				'loop'        => $master->shouldLoop, 
 				'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($master)
-			});
+			} );
 
 		} elsif ($newmode eq "pause") {
 
@@ -1771,11 +1779,11 @@ sub openSong {
 	$song->{startOffset} = 0; # (logically) used to be in resetSong
 	
 	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
-
+	
 	# Bug: 3390 - reload the track if it's changed.
 	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;
-
-	my $track    = Slim::Schema->rs('Track')->objectForUrl({
+	
+ 	my $track    = Slim::Schema->rs('Track')->objectForUrl({
 		'url'      => $url,
 		'readTags' => 1
 	});
@@ -1796,7 +1804,7 @@ sub openSong {
 			return undef;
 		}
 	}
-
+	
 	my $fullpath = $track->url;
 
 	$log->info("Trying to open: $fullpath");
@@ -1804,11 +1812,34 @@ sub openSong {
 	####################
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
+		
+		# Allow protocol handler to change the actual item we'll be streaming,
+		# if for example we are trying to play a remote playlist item
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $fullpath );
+		if ( $handler && $handler->can('onOpen') ) {
+			$track = $handler->onOpen( $client, $track );
+			
+			if ( !$track ) {
+				# Error
+				$log->error( "No audio URL returned for $fullpath" );
+				errorOpening( $client, 'PLAYLIST_NO_ITEMS_FOUND' );
+				return;
+			}
+			
+			if ( $fullpath ne $track->url ) {
+				$fullpath = $track->url;
+			
+				$log->debug( "Handler returned alternate track $fullpath" );
+			}
+		}
 
 		if ($client->canDirectStream($fullpath)) {
+			
+			$log->debug( "URL supports direct streaming [$fullpath]" );
 
 			$directStream = 1;
-			$client->streamformat(Slim::Music::Info::contentType($track));
+			
+			$client->streamformat( Slim::Music::Info::contentType($track) );
 		}
 
 		if (!$directStream) {
@@ -2003,7 +2034,7 @@ sub openSong {
 
 		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
 		my $maxRate = Slim::Utils::Prefs::maxRate($client);
-
+		
 		my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $track);
 
 		$log->info("This is an $type file: $fullpath");

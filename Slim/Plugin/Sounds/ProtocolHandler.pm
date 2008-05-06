@@ -17,8 +17,6 @@ sub canDirectStream {
 	return $url;
 }
 
-sub isAudioURL { 1 }
-
 sub shouldLoop { 1 }
 
 # Some sounds are small, use a small buffer threshold

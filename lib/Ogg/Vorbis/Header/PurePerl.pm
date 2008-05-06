@@ -82,7 +82,9 @@ sub comment {
 	# if the user supplied key does not exist, return undef
 	return undef unless($self->{'COMMENTS'}{lc $key});
 
-	return @{$self->{'COMMENTS'}{lc $key}};
+	return wantarray 
+		? @{$self->{'COMMENTS'}{lc $key}}
+		: $self->{'COMMENTS'}{lc $key}->[0];
 }
 
 sub path {

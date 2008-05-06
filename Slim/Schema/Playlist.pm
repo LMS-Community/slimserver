@@ -119,6 +119,67 @@ sub _addTracksToPlaylist {
 	}
 }
 
+# Return the next audio URL from a remote playlist
+sub getNextEntry {
+	my ( $self, $args ) = @_;
+	
+	my $log = logger('player.source');
+	
+	my $playlist = $args->{playlist} || $self;
+	
+	for my $track ( $playlist->tracks ) {
+		my $type = $track->content_type;
+		
+		if ( Slim::Music::Info::isSong( $track, $type ) ) {
+			# An audio URL
+			if ( $args->{after} ) {
+				if ( $args->{after}->url eq $track->url ) {
+					# We are looking for the track after this one
+					$log->debug( "Skipping " . $track->url . " we want the one after" );
+					delete $args->{after};
+				}
+				else {
+					$log->debug( "Skipping" . $track->url . ", haven't seen " . $args->{after}->url . " yet" );
+				}
+			}
+			else {
+				$log->debug( "Next playlist entry is " . $track->url );
+				return $track;
+			}
+		}
+		elsif ( Slim::Music::Info::isPlaylist( $track, $type ) ) {
+			# A nested playlist, recurse into it
+			$log->debug( 'Looking in nested playlist ' . $track->url );
+			
+			$track = Slim::Schema->rs('Playlist')->objectForUrl( {
+				url => $track->url,
+			} );
+			
+			if ( my $result = $self->getNextEntry( { %{$args}, playlist => $track } ) ) {
+				$log->debug( 'Found audio URL in nested playlist: ' . $result->url );
+				
+				if ( $args->{after} ) {
+					if ( $args->{after}->url eq $result->url ) {
+						# We are looking for the track after this one
+						$log->debug( "Skipping " . $result->url . " we want the one after" );
+						delete $args->{after};
+					}
+					else {
+						$log->debug( "Skipping" . $result->url . ", haven't seen " . $args->{after}->url . " yet" );
+					}
+				}
+				else {
+					$log->debug( "Next playlist entry is " . $result->url );
+					return $result;
+				}
+			}
+		}
+	}
+	
+	# No audio URLs found
+	return;
+}
+
 1;
 
 __END__

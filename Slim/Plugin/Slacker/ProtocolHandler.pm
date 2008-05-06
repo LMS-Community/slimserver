@@ -48,8 +48,6 @@ sub new {
 
 sub getFormatForURL () { 'mp3' }
 
-sub isAudioURL () { 1 }
-
 # Don't allow looping if the tracks are short
 sub shouldLoop () { 0 }
 
@@ -85,28 +83,6 @@ sub showBuffering {
 	my $showBuffering = $client->pluginData('showBuffering');
 	
 	return ( defined $showBuffering ) ? $showBuffering : 1;
-}
-
-# Perform processing during play/add, before actual playback begins
-sub onCommand {
-	my ( $class, $client, $cmd, $url, $callback ) = @_;
-	
-	# Only handle 'play'
-	if ( $cmd eq 'play' ) {
-		# Display buffering info on loading the next track
-		$client->pluginData( showBuffering => 1 );
-		
-		my ($stationId) = $url =~ m{^slacker://([^.]+)\.mp3};
-		
-		getNextTrack( $client, {
-			stationId => $stationId,
-			callback  => $callback,
-		} );
-		
-		return;
-	}
-	
-	return $callback->();
 }
 
 sub getNextTrack {
