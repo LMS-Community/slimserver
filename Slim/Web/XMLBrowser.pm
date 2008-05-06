@@ -251,6 +251,8 @@ sub handleFeed {
 			 ||
 			 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} } ) 
 		) {
+			$subFeed->{'image'} = $subFeed->{'image'} || Slim::Player::ProtocolHandlers->iconForURL($subFeed->{'play'} || $subFeed->{'url'});
+
 			$stash->{'streaminfo'} = {
 				'item'  => $subFeed,
 				'index' => join '.', @index,
@@ -446,9 +448,7 @@ sub handleFeed {
 					$type, 
 					$item->{'parser'}, 
 					undef, 
-					$item->{'image'} 
-						|| Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}, $client) 
-						|| Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
+					$item->{'image'} || Slim::Player::ProtocolHandlers->iconForURL($item->{'play'} || $item->{'url'}) 
 				);
 			} elsif ($stash->{'action'} eq 'favdel') {
 				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );

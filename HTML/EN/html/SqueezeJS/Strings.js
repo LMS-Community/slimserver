@@ -7,6 +7,7 @@
 [% PROCESS jsString id='PAUSE' jsId='' %]
 [% PROCESS jsString id='NEXT' jsId='' %]
 [% PROCESS jsString id='PREVIOUS' jsId='' %]
+[% PROCESS jsString id='CONNECTING_FOR' jsId='' %]
 
 [% PROCESS jsString id='SHUFFLE' jsId='' %]
 [% PROCESS jsString id='SHUFFLE_OFF' jsId='shuffle0' %]
