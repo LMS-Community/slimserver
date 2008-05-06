@@ -29,12 +29,6 @@ my $initialtextofftime = 5;
 
 my %client_context = ();
 
-my @visualizer_screensavers = (
-	'SCREENSAVER.visualizer_spectrum', 
-	'SCREENSAVER.visualizer_digital_vumeter', 
-	'SCREENSAVER.visualizer_analog_vumeter'
-);
-
 my %screensaver_info = ( 
 
 # Parameters for the spectrum analyzer:
@@ -142,60 +136,6 @@ sub initPlugin {
 		\&leaveVisualizerMode,
 		'VISUALIZER_DIGITAL_VUMETER',
 	);
-}
-
-##################################################
-### Screensaver configuration mode
-##################################################
-our %functions = ();
-
-sub getFunctions {
-	return \%functions;
-}
-
-sub setMode {
-	my $class  = shift;
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-	
-	my %params = (
-		'header'       => '{PLUGIN_SCREENSAVER_VISUALIZER}{count}',
-		'onPlay'         => \&setVis,
-		'onAdd'          => \&setVis,
-		'onRight'        => \&setVis,
-		'pref'           => $saver,
-		'initialValue'   => sub { preferences('server')->client($_[0])->get($saver) },
-	);
-		
-	my @externTF = ();
-	
-	for my $format (@visualizer_screensavers) {
-
-		push @externTF, {
-			'name'  => '{'.$screensaver_info{$format}->{name}.'}',
-			'value' => $format,
-		};
-	}
-
-	$params{'listRef'} = \@externTF;
-	
-	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
-}
-
-sub setVis {
-	my $client = shift;
-	my $value  = shift;
-
-	my $pref = $client->modeParam('pref');
-	
-	preferences('server')->client($client)->set($pref, $value->{'value'});
 }
 
 ##################################################

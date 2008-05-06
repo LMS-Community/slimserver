@@ -18,16 +18,6 @@ sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_DATETIME';
 }
 
-sub setMode {
-	my $class  = shift;
-	my $client = shift;
-
-	$client->lines(\&lines);
-
-	# setting this param will call client->update() frequently
-	$client->modeParam('modeUpdateInterval', 1); # seconds
-}
-
 sub initPlugin {
 	my $class = shift;
 
@@ -43,61 +33,6 @@ sub initPlugin {
 		getDisplayName(),
 	);
 }
-
-our %functions = (
-	'up' => sub  {
-		my $client = shift;
-		my $button = shift;
-		$client->bumpUp() if ($button !~ /repeat/);
-	},
-	'down' => sub  {
-	    my $client = shift;
-		my $button = shift;
-		$client->bumpDown() if ($button !~ /repeat/);;
-	},
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
-		
-		my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-		
-		if ($prefs->client($client)->get($saver) ne 'SCREENSAVER.datetime') {
-			$prefs->client($client)->set($saver,'SCREENSAVER.datetime');
-		} else {
-			$prefs->client($client)->set($saver, $Slim::Player::Player::defaultPrefs->{$saver});
-		}
-	},
-	'stop' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::pushMode($client, 'SCREENSAVER.datetime');
-	}
-);
-
-sub lines {
-	my $client = shift;
-	
-	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-	my $line2 = $client->string('SETUP_SCREENSAVER_USE');
-	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $prefs->client($client)->get($saver) eq 'SCREENSAVER.datetime');
-	
-	return {
-		'line'    => [ $client->string('PLUGIN_SCREENSAVER_DATETIME'), $line2 ],
-		'overlay' => [ undef, $overlay2 ]
-	};
-}
-
-sub getFunctions {
-	my $class = shift;
-
-	return \%functions;
-}
-
-###################################################################
-### Section 3. Your variables for your screensaver mode go here ###
-###################################################################
 
 our %screensaverDateTimeFunctions = (
 	'done' => sub  {

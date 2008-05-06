@@ -17,6 +17,7 @@ sub initPlugin {
 	my $name  = $class->displayName;
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
+	my $cond  = $class->condition;
 
 	# This is a bit of a hack, but since Slim::Buttons::Common is such a
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
@@ -29,8 +30,9 @@ sub initPlugin {
 		Slim::Buttons::Common::addMode($mode, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
 
 		my %params = (
-			'useMode' => $mode,
-			'header'  => $name,
+			'useMode'   => $mode,
+			'header'    => $name,
+			'condition' => $cond,
 		);
 
 		# Add toplevel info for the option of having a plugin at the top level.
@@ -43,6 +45,7 @@ sub initPlugin {
 			BROWSE_MUSIC   => 1,
 			RADIO          => 1,
 			MUSIC_SERVICES => 1,
+			SETTINGS       => 1,
 		};
 		
 		if ( $menu ne PLUGINMENU && !$topLevel->{$menu} ) {
@@ -82,6 +85,10 @@ sub modeName {
 	my $class = shift;
 
 	return $class;
+}
+
+sub condition {
+	return 1;
 }
 
 sub _pluginDataFor {
