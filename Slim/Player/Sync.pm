@@ -268,8 +268,8 @@ sub sync {
 	# Save Status to Prefs file
 	saveSyncPrefs($client, $buddy);
 
-	# Bugs #7121, #6508
-	if (!$client->power() || !$buddy->connected()) {
+	# Bug #6508
+	if (!$buddy->connected()) {
 		$log->info($client->id .": syncing not live");
 		return;
 	}
