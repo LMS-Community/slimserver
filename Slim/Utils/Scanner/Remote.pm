@@ -90,6 +90,19 @@ sub scanURL {
 		$track = Slim::Music::Info::setTitle( $url, $url );
 	}
 	
+	# In some cases, a remote protocol may always be audio and not need scanning
+	# This is not used by any core code, but plugins such as AlienBBC need it for
+	# handling rtsp:// URLs in playlists
+	if ( Slim::Music::Info::isAudioURL($url) ) { 	 
+		$log->debug( "Remote stream $url known to be audio" ); 	 
+
+		# Set this track's content type from protocol handler getFormatForURL method 	 
+		$track->content_type( Slim::Music::Info::typeFromPath($url) ); 	 
+
+		# Success, done scanning 	 
+		return $cb->( $track, undef, @{$pt} );
+	}
+	
 	# Bug 4522, if user has disabled native WMA decoding to get MMS support, don't scan MMS URLs
 	if ( $url =~ /^mms/i ) {
 		
