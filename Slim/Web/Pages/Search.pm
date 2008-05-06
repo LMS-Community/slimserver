@@ -111,9 +111,6 @@ sub advancedSearch {
 	$params->{'browse_items'} = [];
 	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
 
-	# Prep the date format
-	$params->{'dateFormat'} = Slim::Utils::DateTime::shortDateF();
-
 	# Check for valid search terms
 	for my $key (sort keys %$params) {
 		

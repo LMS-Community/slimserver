@@ -10,7 +10,7 @@
 
 		[% name     = plugins.$plugin.name %]
 		[% version  = plugins.$plugin.version %]
-		[% enforce  = plugins.$plugin.enforce || plugins.$plugin.error < 0 %]
+		[% enforce  = plugins.$plugin.enforce || plugins.$plugin.errorDesc %]
 		[% settings = plugins.$plugin.optionsURL %]
 		[% enabled  = pluginState.$plugin %]
 
@@ -19,9 +19,7 @@
 		[% END %]
 
 		[% WRAPPER setting desc = plugins.$plugin.description %]
-			[% IF plugins.$plugin.error == -1 %]<strong>[% "SETUP_GROUP_PLUGINS_NEEDS_UPDATE" | string %]</strong>
-			[% ELSIF plugins.$plugin.error == -5 %]<strong>[% "SETUP_GROUP_PLUGINS_WRONG_PLATFORM" | string %]</strong>
-			[% ELSIF plugins.$plugin.error < 0 %]<strong>[% "SETUP_GROUP_PLUGINS_FAILURE" | string %] ([% plugins.$plugin.error %])</strong>
+			[% IF plugins.$plugin.errorDesc %]<strong>[% plugins.$plugin.errorDesc %]</strong>
 			[% ELSE %]
 				[% PROCESS pluginLink %]&nbsp;
 				[% IF plugins.$plugin.opType %]<strong>([% "SETUP_GROUP_PLUGINS_NEEDS_RESTART" | string %])</strong>[% END %]
