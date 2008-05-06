@@ -275,13 +275,20 @@ sub albumsQuery {
 
 	if ($menuMode) {
 
-		# Bug 5435
-		# special hook for 'nowplaying'
-		# make $count = $quantity, which creates a new music menu that's only as big
-		# as the initial request (e.g., if command is `albums 0 100 sort:new menu:album` 
-		# then we return a count of 100 instead of the total count of all albums in SC
-		if (defined $sort && $sort eq 'new' && $count > $quantity) {
-			$count = $quantity;
+		# Bug 5435, 8020
+		# on "new music" queries, return the count as being 
+		# the user setting for new music limit if available
+		# then fall back to the block size if the pref doesn't exist
+		if (defined $sort && $sort eq 'new') {
+			if (!$prefs->get('browseagelimit')) {
+				if ($count > $quantity) {
+					$count = $quantity;
+				}
+			} else {
+				if ($count > $prefs->get('browseagelimit')) {
+					$count = $prefs->get('browseagelimit');
+				}
+			}
 		}
 
 		# decide what is the next step down
