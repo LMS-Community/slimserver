@@ -39,6 +39,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings;
 use Slim::Utils::Versions;
 
 # XXXX - These constants will probably change. This is just a rough start.
@@ -52,16 +53,7 @@ use constant OP_NEEDS_UNINSTALL => "needs-uninstall";
 use constant OP_NEEDS_ENABLE    => "needs-enable";
 use constant OP_NEEDS_DISABLE   => "needs-disable";
 
-use constant INSTALLERROR_SUCCESS               =>  0;
-use constant INSTALLERROR_INVALID_VERSION       => -1;
-use constant INSTALLERROR_INVALID_GUID          => -2;
-use constant INSTALLERROR_INCOMPATIBLE_VERSION  => -3;
-use constant INSTALLERROR_PHONED_HOME           => -4;
-use constant INSTALLERROR_INCOMPATIBLE_PLATFORM => -5;
-use constant INSTALLERROR_BLOCKLISTED           => -6;
-use constant INSTALLERROR_NO_PLUGIN             => -7;
-
-use constant CACHE_VERSION => 1;
+use constant CACHE_VERSION => 2;
 
 my @pluginDirs     = Slim::Utils::OSDetect::dirsFor('Plugins');
 my @pluginRootDirs = ();
@@ -220,7 +212,7 @@ sub readInstallManifests {
 			next;
 		}
 
-		if ($installManifest->{'error'} == INSTALLERROR_SUCCESS) {
+		if ($installManifest->{'error'} eq 'INSTALLERROR_SUCCESS') {
 
 		}
 
@@ -247,14 +239,14 @@ sub _parseInstallManifest {
 
 	if (!defined $pluginName && $installManifest->{'jive'}) {
 		
-		$installManifest->{'error'} = INSTALLERROR_NO_PLUGIN;
+		$installManifest->{'error'} = 'INSTALLERROR_NO_PLUGIN';
 
 		return ($file, $installManifest);
 	}
 
 	if (!$class->checkPluginVersion($installManifest)) {
 
-		$installManifest->{'error'} = INSTALLERROR_INVALID_VERSION;
+		$installManifest->{'error'} = 'INSTALLERROR_INVALID_VERSION';
 
 		return ($pluginName, $installManifest);
 	}
@@ -300,7 +292,7 @@ sub _parseInstallManifest {
 
 	if ($requireOS && (!$matchingOS || ($requireArch && !$matchingArch))) {
 
-		$installManifest->{'error'} = INSTALLERROR_INCOMPATIBLE_PLATFORM;
+		$installManifest->{'error'} = 'INSTALLERROR_INCOMPATIBLE_PLATFORM';
 
 		return ($pluginName, $installManifest);
 	}
@@ -312,7 +304,7 @@ sub _parseInstallManifest {
 
 	}
 
-	$installManifest->{'error'}   = INSTALLERROR_SUCCESS;
+	$installManifest->{'error'} = 'INSTALLERROR_SUCCESS';
 
 	if ($installManifest->{'defaultState'} && !defined $prefs->get($pluginName)) {
 
@@ -338,7 +330,7 @@ sub checkPluginVersions {
 
 		if (!$class->checkPluginVersion($manifest)) {
 
-			$plugins->{$name}->{'error'} = INSTALLERROR_INVALID_VERSION;
+			$plugins->{$name}->{'error'} = 'INSTALLERROR_INVALID_VERSION';
 		}
 	}
 }
@@ -377,8 +369,8 @@ sub enablePlugins {
 		next unless $manifest->{'module'};
 
 		# Skip plugins that can't be loaded.
-		if ($manifest->{'error'} != INSTALLERROR_SUCCESS) {
-			$log->error(sprintf("Couldn't load $name. Error: [%s]\n", $manifest->{'error'}));
+		if ($manifest->{'error'} ne 'INSTALLERROR_SUCCESS') {
+			$log->error(sprintf("Couldn't load $name. Error: %s\n", $class->getErrorString($name)));
 
 			next;
 		}
@@ -521,7 +513,7 @@ sub allPlugins {
 sub installedPlugins {
 	my $class = shift;
 
-	return $class->_filterPlugins('error', INSTALLERROR_SUCCESS);
+	return $class->_filterPlugins('error', 'INSTALLERROR_SUCCESS');
 }
 
 sub _filterPlugins {
@@ -587,6 +579,17 @@ sub getPendingOperations {
 	my ($class, $opType) = @_;
 
 	return $class->_filterPlugins('opType', $opType);
+}
+
+sub getErrorString {
+	my ($class, $plugin) = @_;
+
+	unless ($plugins->{$plugin}->{error} eq 'INSTALLERROR_SUCCESS') {
+
+		return Slim::Utils::Strings::getString($plugins->{$plugin}->{error});
+	}
+
+	return '';
 }
 
 sub enabledPlugins {
