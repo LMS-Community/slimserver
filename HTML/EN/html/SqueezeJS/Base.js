@@ -240,6 +240,9 @@ function _init() {
 					url: config,
 					method: 'GET'
 				};
+
+			if (config.showBriefly)
+				this.showBriefly(config.showBriefly);
 	
 			Ext.Ajax.request({
 				url: config.url || '/jsonrpc.js',
@@ -284,7 +287,7 @@ function _init() {
 			});
 		},
 	
-		urlRequest : function(myUrl, updateStatus) {
+		urlRequest : function(myUrl, updateStatus, showBriefly) {
 			this.request({
 				url: myUrl,
 				method: 'GET',
@@ -292,7 +295,8 @@ function _init() {
 					// try updating the player control in this or the parent document
 					if (updateStatus)
 						this.getStatus();
-				}
+				},
+				showBriefly: showBriefly
 			});
 		},
 		
