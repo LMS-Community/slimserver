@@ -1801,12 +1801,12 @@ sub jiveFavoritesCommand {
 				params => {
 						title => $title,
 						url   => $url,
-						icon  => $icon,
 				},
 			},
 		},
 		nextWindow => $action,
 	};
+	$actionItem->{'actions'}{'go'}{'params'}{'icon'} = $icon if $icon;
 	$actionItem->{'actions'}{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
 	push @favorites_menu, $actionItem;
 
