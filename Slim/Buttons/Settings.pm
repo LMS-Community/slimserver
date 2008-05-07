@@ -505,11 +505,9 @@ sub updateVisualMode {
 
 sub serverListInit {
 	my $client = shift;
-	my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
 
-	if (Slim::Buttons::SqueezeNetwork::clientIsCapable($client)) {
-		unshift @servers, 'SQUEEZENETWORK';
-	}
+	my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
+	unshift @servers, 'SQUEEZENETWORK';
 
 	$client->modeParam('listRef', \@servers);
 }
