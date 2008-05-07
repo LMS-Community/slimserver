@@ -158,10 +158,6 @@ sub brightnessMap {
 	return (0, 1, 2, 3, 4, 5, 0x0201);	# Formula: brightness = lightsensor value / upper byte + lower byte
 }
 
-sub maxBrightness {
-	return 5
-}
-
 =head1 SEE ALSO
 
 L<Slim::Display::Graphics>

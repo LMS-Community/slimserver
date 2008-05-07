@@ -156,18 +156,23 @@ sub getBrightnessOptions {
 	}
 
 	if (defined $client->maxBrightness) {
+	
+		my $maxBrightness = $client->maxBrightness;
 
 		$brightnesses{4} = 4;
 
-		$brightnesses{$client->maxBrightness} = sprintf('%s (%s)',
-			$client->maxBrightness, string('BRIGHTNESS_BRIGHTEST')
-		);
-		
 		my @brightnessMap = $client->display->brightnessMap();
 		
-		if ($client->maxBrightness < $#brightnessMap) {
-			$brightnesses{$brightnessMap[-1]} = string('BRIGHTNESS_AMBIENT');
+		if ($brightnessMap[$maxBrightness] > 255 ) {
+
+			$brightnesses{$client->maxBrightness} = string('BRIGHTNESS_AMBIENT');
+			$maxBrightness--;
 		}
+			
+		$brightnesses{$maxBrightness} = sprintf('%s (%s)',
+			$maxBrightness, string('BRIGHTNESS_BRIGHTEST')
+		);
+
 	}
 
 	return \%brightnesses;
