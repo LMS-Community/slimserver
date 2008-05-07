@@ -1143,12 +1143,12 @@ SLEEP
 	ZH_CN	睡眠状态
 
 PLAYER_SLEEP
-	DE	Player Schlafmodus
+	DE	Player-Schlafmodus
 	EN	Player Sleep
-	ES	Suspender del reproductor
-	FR	Veille de la platine
+	ES	Suspensión de reproductor
+	FR	Mise en veille de la platine
 	IT	Sospendi Lettore
-	NL	Sluimermodus spesler
+	NL	Speler in slaapstand
 
 SLEEPING_AT
 	DA	Hviler om
@@ -1878,12 +1878,12 @@ REBUFFERING
 	NO	Fyller bufferet på nytt...
 
 REBUFFERING_FAILED
-	DE	Puffer konnte nicht aktualisiert werden
+	DE	Puffer-Aktualisierungsfehler
 	EN	Rebuffering failed
-	ES	Error d'almacenar en búfer
-	FR	Echec de remise en tampon
-	IT	Reinizializzazione buffer non riuscita
-	NL	Kan niet vul de buffer
+	ES	Fallo al volver a almacenar en búfer
+	FR	Echec de la remise en tampon
+	IT	Rebuffering non riuscito
+	NL	Opnieuw bufferen mislukt
 
 WAITING_TO_SYNC
 	DA	Venter på synkronisering...
@@ -1953,10 +1953,10 @@ PROBLEM_CONVERT_FILE
 	NL	Probleem: Kan bestandstype niet afspelen voor:
 
 PROBLEM_CONVERT_FILE_WMA_LOSSLESS
-	DE	Problem: WMA Lossless benötigt Windows
+	DE	Problem: Windows erforderlich für WMA Lossless
 	EN	Problem: WMA Lossless requires Windows
 	ES	Problema: WMA Lossless requiere Windows
-	FR	Problème: WMA Lossless nécessite Windows
+	FR	Problème : le format WMA Lossless nécessite Windows
 	IT	Problema: WMA Lossless richiede Windows
 	NL	Probleem: WMA Lossless vereist Windows
 
@@ -7339,15 +7339,6 @@ SETUP_SN_REPORT_STATS_DISABLE
 	IT	No, non autorizzo la raccolta dei dati a fini statistici.
 	NL	Nee, statistieken niet rapporteren.
 
-SETUP_MUSICSOURCE
-	DA	Musik kilde
-	DE	Musikquelle
-	EN	Music Source
-	ES	Origen de música
-	FR	Source musicale
-	IT	Sorgente musicale
-	NL	Muziekbron
-
 SETUP_NO_JAVASCRIPT
 	DA	For at få adgang til SqueezeCenter skal du anvende en nyere browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere), og have JavaScript aktiveret i din browser. Du kan alternativt anvende et simplere tema så som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimeret for små skærme)
 	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> oder <a href="/Handheld/?skipWizard=1">Handheld</a> (für kleine Bildschirme optimiert) wählen.
@@ -10435,12 +10426,12 @@ NOTE
 	ZH_CN	备注：
 
 FILENAME_WARNING
-	DE	Dateiname enthält illegale Zeichen.
+	DE	Name enthält ungültige Zeichen, bitte bearbeiten.
 	EN	Illegal characters in name, Please edit.
-	ES	Caracteres ilegales en nombre, corrigen por favor.
-	FR	Caractères illégaux dans le nom.
-	IT	Caratteri illegali nel nome.
-	NL	De onwettige karakters in naam.
+	ES	Caracteres no válidos en nombre, edite.
+	FR	Caractères non autorisés dans le nom. Veuillez le modifier.
+	IT	Caratteri non validi nel nome. Correggere.
+	NL	Ongeldige tekens in naam. Verander deze.
 
 RENAME_WARNING
 	CS	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
@@ -12342,7 +12333,7 @@ RADIO_TUNEIN_NOW
 RADIO_TUNEIN_DESC
 	DA	Hvis du kender URL til stationen du ønsker at lytte til, indtast den her og klik på "Indstil nu" knappen. Du kan enten indtaste radiostrømmens URL direkte (eks. http://62.49.59.50:8000) eller en spilleliste som henviser til strømmen (eks. http://www.hitzradio.com/hitzradio.pl).
 	DE	Falls Sie die URL eines Internet-Radiosenders bereits kennen, können Sie diese hier eingeben und auf 'Sender wählen' klicken. Sie können entweder die URL des Datenstroms (z.B. http://62) oder die Wiedergabeliste, die auf den Datenstrom zeigt (z.B. http://www.hitzradio.com/hitzradio.pls) eingeben.
-	EN	If you already know the URL of the station you would like to listen to, enter it here and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
+	EN	If you already know the URL of the station you would like to listen to, enter it here and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).
 	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala a continuación y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls).
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ci-dessous et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
 	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls). 
@@ -12749,7 +12740,7 @@ INFORMATION_PLAYER_NAME
 	ZH_CN	播放机名字
 
 INFORMATION_PLAYER_NAME_ABBR
-	DA	Navn	
+	DA	Navn
 	DE	Name
 	EN	Name
 	ES	Nombre
@@ -13500,6 +13491,18 @@ SQUEEZENETWORK_NO_LOGIN
 	FR	Un compte SqueezeNetwork est requis pour ce service. Dans votre navigateur, rendez-vous dans Réglages du SqueezeCenter -> SqueezeNetwork pour effectuer la configuration.
 	IT	Per questo servizio è richiesto un account SqueezeNetwork. Accedere a Impostazioni SqueezeCenter -> SqueezeNetwork tramite un browser Web per la configurazione.
 	NL	Voor deze service is een SqueezeNetwork-account vereist. Ga via een webbrowser naar SqueezeCenter-instellingen -> SqueezeNetwork om te configureren.
+
+MUSICSOURCE
+	DA	Musik kilde
+	DE	Musikquelle
+	EN	Music Source
+	ES	Origen de música
+	FR	Source musicale
+	IT	Sorgente musicale
+	NL	Muziekbron
+
+MUSICSOURCE_SWITCH
+	EN	Please select the music source you'd like to connect your player to.
 
 SQUEEZECENTER_CONNECTING
 	DA	Tilslutter til %s...
@@ -15092,8 +15095,8 @@ LINES
 	EN	lines
 	ES	líneas
 	FR	lignes
-	IT	linee
-	NL	lijnen
+	IT	righe
+	NL	regels
 
 SETUP_DEBUG_PERFMON_LOG
 	DA	Log fil for ydelse
@@ -15588,12 +15591,12 @@ JIVE_POPUP_REMOVING
 	NL	Bezig met verwijderen
 
 JIVE_POPUP_TO_PLAY_NEXT
-	DE	um als nächstes zu spielen
+	DE	und als nächstes spielen
 	EN	to play next...
-	ES	para reproducir a continuación
-	FR	après le morceau en cours
-	IT	successivo...
-	NL	om als volgende af te spelen
+	ES	para reproducir a continuación...
+	FR	à lire à la suite...
+	IT	come brano successivo...
+	NL	om als volgende af te spelen...
 
 JIVE_POPUP_TO_PLAYLIST
 	DA	til spilleliste...

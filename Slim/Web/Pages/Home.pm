@@ -15,6 +15,8 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 use base qw(Slim::Web::Pages);
 
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings;
+use Slim::Networking::Discovery::Server;
 use Slim::Networking::SqueezeNetwork;
 
 my $prefs = preferences('server');
@@ -25,7 +27,7 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^$/, sub {$class->home(@_)});
 	Slim::Web::HTTP::addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
 	Slim::Web::HTTP::addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
-	Slim::Web::HTTP::addPageFunction(qr/^squeezenetwork\.(?:htm|xml)/, sub {$class->squeezeNetwork(@_)});
+	Slim::Web::HTTP::addPageFunction(qr/^switchserver\.(?:htm|xml)/, sub {$class->switchServer(@_)});
 
 	$class->addPageLinks("help", { 'HELP_REMOTE' => "html/docs/remote.html"});
 	$class->addPageLinks("help", { 'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
@@ -34,9 +36,9 @@ sub init {
 	$class->addPageLinks("help", { 'COMMUNITY_FORUM' =>	"http://forums.slimdevices.com"});
 
 	$class->addPageLinks("plugins", { 'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
-	$class->addPageLinks("plugins", { 'SQUEEZENETWORK_SWITCH' => "squeezenetwork.html"});
+	$class->addPageLinks("plugins", { 'MUSICSOURCE' => "switchserver.html"});
 
-	$class->addPageLinks('icons', { 'SQUEEZENETWORK_SWITCH' => 'html/images/ServiceProviders/squeezenetwork.png' });
+	$class->addPageLinks('icons', { 'MUSICSOURCE' => 'html/images/ServiceProviders/squeezenetwork.png' });
 	$class->addPageLinks('icons', { 'RADIO_TUNEIN' => 'html/images/ServiceProviders/tuneinurl.png' });
 	$class->addPageLinks('icons', { 'SOFTSQUEEZE' => 'html/images/softsqueeze.png' });
 	$class->addPageLinks('icons', { 'BROWSE_BY_ARTIST' => 'html/images/artists.png'} );
@@ -170,12 +172,11 @@ sub home {
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
 }
 
-sub squeezeNetwork {
+sub switchServer {
 	my ($class, $client, $params) = @_;
-	
-	if ($client) {
-		$params->{'playername'} = $client->name;
-		
+
+	if ($params->{'switchto'} =~ /^www\.(.*)squeezenetwork\.com$/) {
+
 		# Bug 7254, don't tell Ray to reconnect to SN
 		if ( $client->deviceid != 7 ) {
 			Slim::Utils::Timers::setTimer(
@@ -187,11 +188,36 @@ sub squeezeNetwork {
 				},
 			);
 		}
+
+	} elsif ($params->{'switchto'}) {
+
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
+			sub {
+
+				my ($client, $server) = @_;
+				$client->execute(['connect', Slim::Networking::Discovery::Server::getServerAddress($server)]);
+
+			}, $params->{'switchto'});
 	}
 
-	$params->{'sn_server'} = Slim::Networking::SqueezeNetwork->get_server("sn");
+
+
+	if ($params->{'switchto'}) {
+		$params->{'switchto'} = Slim::Networking::Discovery::Server::getServerAddress($params->{'switchto'})
+			. (Slim::Networking::Discovery::Server::getServerPort($params->{'switchto'}) ? ':' . Slim::Networking::Discovery::Server::getServerPort($params->{'switchto'}) : '');
+	}
+	else {
+		$params->{servers} = Slim::Networking::Discovery::Server::getServerList();
+		$params->{servers}->{'SQUEEZENETWORK'} = {
+			IP   => Slim::Networking::SqueezeNetwork->get_server("sn"),
+			NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')	
+		}; 
 	
-	return Slim::Web::HTTP::filltemplatefile('squeezenetwork.html', $params);
+		my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
+		$params->{serverlist} = \@servers;
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('switchserver.html', $params);
 }
 
 1;

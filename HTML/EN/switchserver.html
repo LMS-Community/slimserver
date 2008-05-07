@@ -1,0 +1,42 @@
+[% pagetitle = 'MUSICSOURCE' | string %]
+[% pwd_list = BLOCK %]
+	[% "MUSICSOURCE" | string %]
+[% END %]
+[%- extJsScripts = BLOCK -%]
+	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
+[%- END -%]
+[% BLOCK helpTopic %]
+	<div class="selectorMarker" onmouseover="Highlighter.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+			<a href="[% href %][% IF NOT url.match('^http') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^http:') %]target="_new" [% END %] class="browseItemLink">[% title %]</a>
+		</div>
+	</div></div></div></div></div>
+[% END -%]
+[% PROCESS pageheader.html dontscroll=1 %]
+
+[% IF serverlist %]
+	<div id="browsedbHeader"><br/>[% "MUSICSOURCE_SWITCH" | string %]<br/>&nbsp;</div>
+	
+	[% WRAPPER contentcontainer;
+		odd = 1; %]
+		[% FOREACH server = serverlist %]
+			[% WRAPPER contentitem %]
+				
+				<a class="browseItemLink" href="[% path %]?player=[% player | uri %]&amp;switchto=[% servers.$server.NAME | uri %]">[% servers.$server.NAME %]</a>
+			[% END;
+			odd = odd ? 0 : 1 -%]
+		[%- END %]
+	[% END %]
+[% ELSIF switchto %]
+	<p>[% "SQUEEZECENTER_CONNECTING" | string, switchto %]</p>
+
+	<script language="JavaScript">
+		setTimeout( "loadWebsite()", 2000 );
+		
+		function loadWebsite() {
+			parent.location = 'http://[% switchto %]';
+		}
+	</script>
+[% END %]
+
+[% PROCESS pagefooter.html %]

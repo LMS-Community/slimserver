@@ -381,10 +381,10 @@ sub init {
 					'init'         => \&visualInit,
 				},
 
-				'SETUP_MUSICSOURCE' => {
+				'MUSICSOURCE' => {
 					'useMode'        => 'INPUT.List',
 					'callback'       => \&switchServer,
-					'header'         => 'SETUP_MUSICSOURCE',
+					'header'         => 'MUSICSOURCE',
 					'stringHeader'   => 1,
 					'headerAddCount' => 1,
 					'externRef'      => sub { $_[1] eq 'SQUEEZENETWORK' ? $_[0]->string($_[1]) : $_[1] },
@@ -395,8 +395,9 @@ sub init {
 			},
 		},
 	);
-	
+
 	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
+	Slim::Buttons::Home::addMenuOption('MUSICSOURCE', $menuParams{'SETTINGS'}->{'submenus'}->{'MUSICSOURCE'});
 }
 
 sub setPref {
@@ -533,7 +534,7 @@ sub switchServer {
 
 			$client->showBriefly({
 				'line' => [
-					$client->string('SETUP_MUSICSOURCE'),
+					$client->string('MUSICSOURCE'),
 					$client->string('SQUEEZECENTER_CONNECTING', $server) 
 				]
 			});
@@ -548,7 +549,6 @@ sub switchServer {
 					return unless ($client->modeParam('server.switch'));
 
 					my $addr = Slim::Networking::Discovery::Server::getServerAddress($server);
-					Slim::Utils::Log->logger('')->error($server, $addr);
 					$client->execute(['connect', $addr]);
 				}, $server);
 		
