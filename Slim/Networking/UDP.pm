@@ -13,6 +13,7 @@ use strict;
 use IO::Socket;
 
 use Slim::Networking::Discovery;
+use Slim::Networking::Discovery::Server;
 use Slim::Networking::Select;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -46,6 +47,8 @@ sub init {
 	};
 
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
+
+	Slim::Networking::Discovery::Server::init();
 
 	# say hello to the old slimp3 clients that we might remember...
 	for my $clientID (@{ preferences('server')->get('slimp3clients') || [] }) {
@@ -103,6 +106,10 @@ sub readUDP {
 
 				Slim::Networking::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, join(':', @mac));
 
+			} elsif ($msg =~ /^E(.*)/) {
+
+				Slim::Networking::Discovery::Server::gotTLVResponse($sock, $clientpaddr, $msg);
+
 			} elsif ($msg =~/^e/) {
 
 				# New extensible discovery format - pass to handler for processing
@@ -120,6 +127,10 @@ sub readUDP {
 		}
 
 	} while $clientpaddr;
+}
+
+sub socket {
+	return $udpsock;
 }
 
 1;

@@ -664,6 +664,11 @@ sub getIcon {
 			return Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon');
 		}
 	}
+	elsif ( $url =~ m|squeezenetwork\.com.*/api/slacker/| ) {
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Slacker::Plugin') ) {
+			return Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon');
+		}
+	}
 
 	return 'html/images/radio.png';
 }

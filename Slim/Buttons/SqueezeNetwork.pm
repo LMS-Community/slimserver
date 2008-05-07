@@ -27,14 +27,12 @@ use Slim::Buttons::Common;
 use Slim::Networking::SqueezeNetwork;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 sub init {
 	Slim::Buttons::Common::addMode('squeezenetwork.connect',
 				       getFunctions(),
 				       \&setMode);
-	Slim::Buttons::Home::addMenuOption('SQUEEZENETWORK_CONNECT',
-				{useMode => 'squeezenetwork.connect'});
 }
 
 sub setMode {
@@ -87,7 +85,7 @@ sub lines {
 
 	$line1 = $client->string('SQUEEZENETWORK');
 
-	if (clientIsCapable($client)) {
+	if ($client->hasServ) {
 		$line2 = $client->string('SQUEEZENETWORK_CONNECTING');
 	} else {
 		$line2 = $client->string('SQUEEZENETWORK_SB2_REQUIRED');
@@ -102,20 +100,13 @@ sub getFunctions() {
 	return \%functions;
 }
 
-# can the client handle the 'serv' message?
-sub clientIsCapable {
-	my $client = shift;
-	# for now, only SB2s can do it
-	return $client->isa('Slim::Player::Squeezebox2');
-}
-
 sub connectSqueezeNetwork {
 	my $client = shift;
 
 	# don't disconnect unless we're still in this mode.
 	return unless ($client->modeParam('squeezenetwork.connect'));
 
-	if (clientIsCapable($client)) {
+	if ($client->hasServ) {
 		my $host = Slim::Networking::SqueezeNetwork->get_server("sn");
 		my $packed;
 

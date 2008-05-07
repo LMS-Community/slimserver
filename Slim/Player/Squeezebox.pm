@@ -1163,7 +1163,7 @@ sub pcm_sample_sizes {
 	my %pcm_sample_sizes = ( 8 => '0',
 				 16 => '1',
 				 24 => '2',
-				 32 => '4',
+				 32 => '3',
 				 );
 
 	my $size = $pcm_sample_sizes{$track->samplesize()};
@@ -1175,8 +1175,8 @@ sub pcm_sample_rates {
 	my $client = shift;
 	my $track = shift;
 
-    	my %pcm_sample_rates = ( 11000 => '0',				 
-				 22000 => '1',				 
+    	my %pcm_sample_rates = ( 11025 => '0',				 
+				 22050 => '1',				 
 				 32000 => '2',
 				 44100 => '3',
 				 48000 => '4',
