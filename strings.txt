@@ -12414,7 +12414,7 @@ RADIO_TUNEIN_NOW
 RADIO_TUNEIN_DESC
 	DA	Hvis du kender URL til stationen du ønsker at lytte til, indtast den her og klik på "Indstil nu" knappen. Du kan enten indtaste radiostrømmens URL direkte (eks. http://62.49.59.50:8000) eller en spilleliste som henviser til strømmen (eks. http://www.hitzradio.com/hitzradio.pl).
 	DE	Falls Sie die URL eines Internet-Radiosenders bereits kennen, können Sie diese hier eingeben und auf 'Sender wählen' klicken. Sie können entweder die URL des Datenstroms (z.B. http://62) oder die Wiedergabeliste, die auf den Datenstrom zeigt (z.B. http://www.hitzradio.com/hitzradio.pls) eingeben.
-	EN	If you already know the URL of the station you would like to listen to, enter it here and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
+	EN	If you already know the URL of the station you would like to listen to, enter it here and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).
 	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala a continuación y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls).
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ci-dessous et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
 	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls). 
@@ -12821,7 +12821,7 @@ INFORMATION_PLAYER_NAME
 	ZH_CN	播放机名字
 
 INFORMATION_PLAYER_NAME_ABBR
-	DA	Navn	
+	DA	Navn
 	DE	Name
 	EN	Name
 	ES	Nombre
