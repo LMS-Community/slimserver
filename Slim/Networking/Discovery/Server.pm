@@ -151,6 +151,11 @@ sub gotTLVResponse {
 		
 		my ($portno, $ipaddr) = sockaddr_in($clientpaddr);
 		$server->{IP} = inet_ntoa($ipaddr);
+
+		# should we remove ourselves from the list?
+#		if ($server->{IP} eq Slim::Utils::Network::hostAddr()) {
+#			$server = undef;
+#		}
 	}
 
 	if ($log->is_debug) {	
