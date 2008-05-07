@@ -7339,15 +7339,6 @@ SETUP_SN_REPORT_STATS_DISABLE
 	IT	No, non autorizzo la raccolta dei dati a fini statistici.
 	NL	Nee, statistieken niet rapporteren.
 
-SETUP_MUSICSOURCE
-	DA	Musik kilde
-	DE	Musikquelle
-	EN	Music Source
-	ES	Origen de música
-	FR	Source musicale
-	IT	Sorgente musicale
-	NL	Muziekbron
-
 SETUP_NO_JAVASCRIPT
 	DA	For at få adgang til SqueezeCenter skal du anvende en nyere browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere), og have JavaScript aktiveret i din browser. Du kan alternativt anvende et simplere tema så som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimeret for små skærme)
 	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1">Classic</a> oder <a href="/Handheld/?skipWizard=1">Handheld</a> (für kleine Bildschirme optimiert) wählen.
@@ -13500,6 +13491,18 @@ SQUEEZENETWORK_NO_LOGIN
 	FR	Un compte SqueezeNetwork est requis pour ce service. Dans votre navigateur, rendez-vous dans Réglages du SqueezeCenter -> SqueezeNetwork pour effectuer la configuration.
 	IT	Per questo servizio è richiesto un account SqueezeNetwork. Accedere a Impostazioni SqueezeCenter -> SqueezeNetwork tramite un browser Web per la configurazione.
 	NL	Voor deze service is een SqueezeNetwork-account vereist. Ga via een webbrowser naar SqueezeCenter-instellingen -> SqueezeNetwork om te configureren.
+
+MUSICSOURCE
+	DA	Musik kilde
+	DE	Musikquelle
+	EN	Music Source
+	ES	Origen de música
+	FR	Source musicale
+	IT	Sorgente musicale
+	NL	Muziekbron
+
+MUSICSOURCE_SWITCH
+	EN	Please select the music source you'd like to connect your player to.
 
 SQUEEZECENTER_CONNECTING
 	DA	Tilslutter til %s...
