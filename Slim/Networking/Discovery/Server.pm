@@ -11,6 +11,7 @@ use strict;
 use IO::Socket;
 
 use Slim::Networking::UDP;
+use Slim::Networking::Discovery::Players;
 use Slim::Utils::Log;
 use Slim::Utils::Network;
 use Slim::Utils::Timers;
@@ -58,7 +59,7 @@ Poll the SqueezeCenter/SlimServers in our network
 sub fetch_servers {
 	my $udpsock = Slim::Networking::UDP::socket();
 
-	Slim::Utils::Timers::killTimers($udpsock, \&fetch_servers);
+	Slim::Utils::Timers::killTimers(undef, \&fetch_servers);
 
 	_purge_server_list();
 
@@ -125,6 +126,17 @@ sub getServerPort {
 	return $server_list->{shift}->{JSON} || 9000;
 }
 
+=head2 getWebHostAddress()
+
+Return a server's full address to access its web page
+
+=cut
+
+sub getWebHostAddress {
+	my $server = shift;
+	return 'http://' . getServerAddress($server) . ':' . getServerPort($server) . '/';
+}
+
 =head2 gotTLVResponse( $udpsock, $clientpaddr, $msg )
 
 Process TLV based discovery response.
@@ -171,7 +183,7 @@ sub gotTLVResponse {
 		$server->{IP} = inet_ntoa($ipaddr);
 
 		# should we remove ourselves from the list?
-#		if ($server->{IP} eq Slim::Utils::Network::serverAddr()) {
+#		if (is_self($server->{IP})) {
 #			$server = undef;
 #		}
 	}
@@ -184,9 +196,23 @@ sub gotTLVResponse {
 		
 		$server_list->{$server->{NAME}}              = $server;
 		$server_list->{$server->{NAME}}->{timestamp} = time();
+
+		unless (is_self($server->{IP})) {
+
+			Slim::Utils::Timers::killTimers($server->{NAME}, \&fetch_servers);
+
+			Slim::Utils::Timers::setTimer(
+				$server->{NAME},
+				time() + 2,
+				\&Slim::Networking::Discovery::Players::fetch_players,
+			);
+		}
 	}
 }
 
+sub is_self {
+	return (shift eq Slim::Utils::Network::serverAddr())
+}
 
 =head1 SEE ALSO
 

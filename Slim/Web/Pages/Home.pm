@@ -203,8 +203,7 @@ sub switchServer {
 
 
 	if ($params->{'switchto'}) {
-		$params->{'switchto'} = Slim::Networking::Discovery::Server::getServerAddress($params->{'switchto'})
-			. (Slim::Networking::Discovery::Server::getServerPort($params->{'switchto'}) ? ':' . Slim::Networking::Discovery::Server::getServerPort($params->{'switchto'}) : '');
+		$params->{'switchto'} = Slim::Networking::Discovery::Server::getWebHostAddress($params->{'switchto'});
 	}
 	else {
 		$params->{servers} = Slim::Networking::Discovery::Server::getServerList();

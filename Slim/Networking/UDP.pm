@@ -14,6 +14,7 @@ use IO::Socket;
 
 use Slim::Networking::Discovery;
 use Slim::Networking::Discovery::Server;
+use Slim::Networking::Discovery::Players;
 use Slim::Networking::Select;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -49,6 +50,7 @@ sub init {
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 
 	Slim::Networking::Discovery::Server::init();
+	Slim::Networking::Discovery::Players::init();
 
 	# say hello to the old slimp3 clients that we might remember...
 	for my $clientID (@{ preferences('server')->get('slimp3clients') || [] }) {
