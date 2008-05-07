@@ -23,7 +23,7 @@ my $discovery_packet = pack 'a5xa4xa4', 'eIPAD', 'NAME', 'JSON';
 my $server_list = {};
 
 # Default polling time
-use constant POLL_INTERVAL => 15;
+use constant POLL_INTERVAL => 60;
 
 =head1 NAME
 
@@ -60,6 +60,8 @@ sub fetch_servers {
 
 	Slim::Utils::Timers::killTimers($udpsock, \&fetch_servers);
 
+	_purge_server_list();
+
 	# broadcast command to discover SlimServers
 	my $opt = $udpsock->sockopt(SO_BROADCAST);
 	$udpsock->sockopt(SO_BROADCAST, 1);
@@ -74,6 +76,22 @@ sub fetch_servers {
 		time() + POLL_INTERVAL,
 		\&fetch_servers,
 	);
+}
+
+=head2 _purge_server_list()
+
+purge servers from the list when they haven't been discovered in two poll cycles
+
+=cut
+
+sub _purge_server_list {
+	foreach my $server (keys %{$server_list}) {
+		
+		if ($server_list->{$server}->{timestamp} < time() + (2 x POLL_INTERVAL)) {
+			
+			delete $server_list->{$server};
+		}
+	}
 }
 
 =head2 getServerList()
@@ -151,6 +169,11 @@ sub gotTLVResponse {
 		
 		my ($portno, $ipaddr) = sockaddr_in($clientpaddr);
 		$server->{IP} = inet_ntoa($ipaddr);
+
+		# should we remove ourselves from the list?
+#		if ($server->{IP} eq Slim::Utils::Network::serverAddr()) {
+#			$server = undef;
+#		}
 	}
 
 	if ($log->is_debug) {	
