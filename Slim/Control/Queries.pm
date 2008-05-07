@@ -2937,7 +2937,7 @@ sub serverstatusQuery {
 
 	}
 
-
+	# return list of players connected to SN
 	my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
 
 	$count = scalar @sn_players || 0;
@@ -2964,6 +2964,39 @@ sub serverstatusQuery {
 			);
 				
 			$sn_cnt++;
+		}
+	}
+
+	# return list of players connected to other servers
+	my $other_players = Slim::Networking::Discovery::Players::getPlayerList();
+
+	$count = scalar keys %{$other_players} || 0;
+
+	$request->addResult('other player count', $count);
+
+	($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $other_cnt = 0;
+			
+		for my $player ( keys %{$other_players} ) {
+			$request->addResultLoop(
+				'other_players_loop', $other_cnt, 'playerid', $player
+			);
+
+			$request->addResultLoop( 
+				'other_players_loop', $other_cnt, 'name', $other_players->{$player}->{name}
+			);
+
+			$request->addResultLoop(
+				'other_players_loop', $other_cnt, 'model', $other_players->{$player}->{model}
+			);
+				
+			$request->addResultLoop(
+				'other_players_loop', $other_cnt, 'server', $other_players->{$player}->{server}
+			);
+			$other_cnt++;
 		}
 	}
 	
