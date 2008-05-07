@@ -1143,12 +1143,12 @@ SLEEP
 	ZH_CN	睡眠状态
 
 PLAYER_SLEEP
-	DE	Player Schlafmodus
+	DE	Player-Schlafmodus
 	EN	Player Sleep
-	ES	Suspender del reproductor
-	FR	Veille de la platine
+	ES	Suspensión de reproductor
+	FR	Mise en veille de la platine
 	IT	Sospendi Lettore
-	NL	Sluimermodus spesler
+	NL	Speler in slaapstand
 
 SLEEPING_AT
 	DA	Hviler om
@@ -1878,12 +1878,12 @@ REBUFFERING
 	NO	Fyller bufferet på nytt...
 
 REBUFFERING_FAILED
-	DE	Puffer konnte nicht aktualisiert werden
+	DE	Puffer-Aktualisierungsfehler
 	EN	Rebuffering failed
-	ES	Error d'almacenar en búfer
-	FR	Echec de remise en tampon
-	IT	Reinizializzazione buffer non riuscita
-	NL	Kan niet vul de buffer
+	ES	Fallo al volver a almacenar en búfer
+	FR	Echec de la remise en tampon
+	IT	Rebuffering non riuscito
+	NL	Opnieuw bufferen mislukt
 
 WAITING_TO_SYNC
 	DA	Venter på synkronisering...
@@ -1953,10 +1953,10 @@ PROBLEM_CONVERT_FILE
 	NL	Probleem: Kan bestandstype niet afspelen voor:
 
 PROBLEM_CONVERT_FILE_WMA_LOSSLESS
-	DE	Problem: WMA Lossless benötigt Windows
+	DE	Problem: Windows erforderlich für WMA Lossless
 	EN	Problem: WMA Lossless requires Windows
 	ES	Problema: WMA Lossless requiere Windows
-	FR	Problème: WMA Lossless nécessite Windows
+	FR	Problème : le format WMA Lossless nécessite Windows
 	IT	Problema: WMA Lossless richiede Windows
 	NL	Probleem: WMA Lossless vereist Windows
 
@@ -10507,12 +10507,12 @@ NOTE
 	ZH_CN	备注：
 
 FILENAME_WARNING
-	DE	Dateiname enthält illegale Zeichen.
+	DE	Name enthält ungültige Zeichen, bitte bearbeiten.
 	EN	Illegal characters in name, Please edit.
-	ES	Caracteres ilegales en nombre, corrigen por favor.
-	FR	Caractères illégaux dans le nom.
-	IT	Caratteri illegali nel nome.
-	NL	De onwettige karakters in naam.
+	ES	Caracteres no válidos en nombre, edite.
+	FR	Caractères non autorisés dans le nom. Veuillez le modifier.
+	IT	Caratteri non validi nel nome. Correggere.
+	NL	Ongeldige tekens in naam. Verander deze.
 
 RENAME_WARNING
 	CS	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
@@ -15151,8 +15151,8 @@ LINES
 	EN	lines
 	ES	líneas
 	FR	lignes
-	IT	linee
-	NL	lijnen
+	IT	righe
+	NL	regels
 
 SETUP_DEBUG_PERFMON_LOG
 	DA	Log fil for ydelse
@@ -15647,12 +15647,12 @@ JIVE_POPUP_REMOVING
 	NL	Bezig met verwijderen
 
 JIVE_POPUP_TO_PLAY_NEXT
-	DE	um als nächstes zu spielen
+	DE	und als nächstes spielen
 	EN	to play next...
-	ES	para reproducir a continuación
-	FR	après le morceau en cours
-	IT	successivo...
-	NL	om als volgende af te spelen
+	ES	para reproducir a continuación...
+	FR	à lire à la suite...
+	IT	come brano successivo...
+	NL	om als volgende af te spelen...
 
 JIVE_POPUP_TO_PLAYLIST
 	DA	til spilleliste...
