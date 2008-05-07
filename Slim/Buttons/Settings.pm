@@ -395,8 +395,9 @@ sub init {
 			},
 		},
 	);
-	
+
 	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
+	Slim::Buttons::Home::addMenuOption('MUSICSOURCE', $menuParams{'SETTINGS'}->{'submenus'}->{'MUSICSOURCE'});
 }
 
 sub setPref {
