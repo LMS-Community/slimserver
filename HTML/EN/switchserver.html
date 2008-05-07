@@ -34,7 +34,7 @@
 		setTimeout( "loadWebsite()", 2000 );
 		
 		function loadWebsite() {
-			parent.location = 'http://[% switchto %]';
+			parent.location = 'http://[% switchto %]/?player=[% player | uri %]';
 		}
 	</script>
 [% END %]
