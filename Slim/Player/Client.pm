@@ -567,6 +567,7 @@ sub hasPowerControl() { return 0; }
 sub hasDisableDac() { return 0; }
 sub hasPolarityInversion() { return 0; }
 sub hasFrontPanel() { return 0; }
+sub hasServ { return 0; }
 
 sub maxBrightness() { return undef; }
 

@@ -25,6 +25,8 @@ use Slim::Buttons::AlarmClock;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
+use Slim::Networking::Discovery::Server;
+use Slim::Buttons::SqueezeNetwork;
 
 my $prefs = preferences('server');
 
@@ -251,7 +253,7 @@ sub init {
 					},
 					'onRight'      => sub { 
 						$_[0]->textSize($_[1]->{'value'})
-					},,
+					},
 					'pref'         => 'activeFont_curr',
 					'initialValue' => sub { $prefs->client(shift)->get('activeFont_curr') },
 					'init'         => sub {
@@ -501,7 +503,19 @@ sub init {
 					'pref'         => 'visualMode',
 					'initialValue' => sub { $prefs->client(shift)->get('visualMode') },
 					'condition'    => sub { return $_[0]->display->isa('Slim::Display::Transporter') },
-					'init'          => \&visualInit,
+					'init'         => \&visualInit,
+				},
+
+				'SETUP_MUSICSOURCE' => {
+					'useMode'        => 'INPUT.List',
+					'callback'       => \&switchServer,
+					'header'         => 'SETUP_MUSICSOURCE',
+					'stringHeader'   => 1,
+					'headerAddCount' => 1,
+					'externRef'      => sub { $_[1] eq 'SQUEEZENETWORK' ? $_[0]->string($_[1]) : $_[1] },
+					'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
+					'init'           => \&serverListInit,
+					'condition'      => sub { shift->hasServ(); },
 				},
 			},
 		},
@@ -632,6 +646,64 @@ sub updateVisualMode {
 	$prefs->client($client)->set('visualMode', $value->{'value'});
 	Slim::Buttons::Common::updateScreen2Mode($client);
 };
+
+sub serverListInit {
+	my $client = shift;
+
+	my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
+	unshift @servers, 'SQUEEZENETWORK';
+
+	$client->modeParam('listRef', \@servers);
+}
+
+sub switchServer {
+	my ($client, $exittype) = @_;
+
+	$exittype = uc($exittype);
+					
+	if ($exittype eq 'LEFT') {
+					
+		Slim::Buttons::Common::popModeRight($client);
+					
+	} elsif ($exittype eq 'RIGHT') {
+
+		my $server = ${$client->modeParam('valueRef')}; 
+
+		if ($server eq 'SQUEEZENETWORK') {
+
+			Slim::Buttons::Common::pushModeLeft($client, 'squeezenetwork.connect');
+
+		} elsif ($server) {
+
+			$client->showBriefly({
+				'line' => [
+					$client->string('SETUP_MUSICSOURCE'),
+					$client->string('SQUEEZECENTER_CONNECTING', $server) 
+				]
+			});
+
+			# we want to disconnect, but not immediately, because that
+			# makes the UI jerky.  Postpone disconnect for a short while
+			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
+				sub {
+					my ($client, $server) = @_;
+					
+					# don't disconnect unless we're still in this mode.
+					return unless ($client->modeParam('server.switch'));
+
+					my $addr = Slim::Networking::Discovery::Server::getServerAddress($server);
+					Slim::Utils::Log->logger('')->error($server, $addr);
+					$client->execute(['connect', $addr]);
+				}, $server);
+		
+			# this flag prevents disconnect if user has popped out of this mode
+			$client->modeParam('server.switch', 1);
+		} else {
+
+			$client->bumpRight();
+		}
+	}
+}
 
 =head1 SEE ALSO
 
