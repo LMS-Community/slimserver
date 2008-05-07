@@ -33,6 +33,9 @@ sub init {
 	Slim::Buttons::Common::addMode('squeezenetwork.connect',
 				       getFunctions(),
 				       \&setMode);
+
+	Slim::Buttons::Home::addMenuOption('SQUEEZENETWORK_CONNECT',
+				{useMode => 'squeezenetwork.connect'});
 }
 
 sub setMode {

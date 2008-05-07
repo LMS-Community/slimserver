@@ -46,7 +46,6 @@ our $defaultPrefs = {
 		FAVORITES
 		PLUGINS
 		SETTINGS
-		SQUEEZENETWORK_CONNECT
 	)],
 	'mp3SilencePrelude'    => 0,
 	'pitch'                => 100,

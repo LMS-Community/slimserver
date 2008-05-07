@@ -97,6 +97,15 @@ sub getServerAddress {
 	return $server_list->{$server}->{IP} || $server;
 }
 
+=head2 getServerPort()
+
+Return a server's port if available
+
+=cut
+
+sub getServerPort {
+	return $server_list->{shift}->{JSON} || 9000;
+}
 
 =head2 gotTLVResponse( $udpsock, $clientpaddr, $msg )
 
