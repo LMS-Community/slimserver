@@ -27,14 +27,12 @@ use Slim::Buttons::Common;
 use Slim::Networking::SqueezeNetwork;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+$VERSION = substr(q$Revision: 1.2 $,10);
 
 sub init {
 	Slim::Buttons::Common::addMode('squeezenetwork.connect',
 				       getFunctions(),
 				       \&setMode);
-	Slim::Buttons::Home::addMenuOption('SQUEEZENETWORK_CONNECT',
-				{useMode => 'squeezenetwork.connect'});
 }
 
 sub setMode {
