@@ -38,7 +38,7 @@ $prefs->setValidate('dir', 'music_path');
 
 $prefs->setChange(
 	sub {
-		Slim::Music::Import->useImporter('Plugin::iTunes::Plugin', $_[1]);
+		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Plugin', $_[1]);
 
 		for my $c (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($c);
