@@ -180,7 +180,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'mixer'     => \&mixerFunction,
 			'mixerlink' => \&mixerlink,
-			'use'       => $prefs->get($class->prefName),
+			'use'       => $prefs->get('musicip'),
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
