@@ -142,7 +142,7 @@ sub initPlugin {
 
 		$initialized = 0;
 
-		$log->error("Can't connect to port $MMSport - MusicMagic disabled.");
+		$log->error("Can't connect to port $MMSport - MusicIP disabled.");
 
 	} else {
 
