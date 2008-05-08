@@ -9,6 +9,7 @@ package Slim::Networking::Discovery::Server;
 
 use strict;
 use IO::Socket;
+use Net::IP;
 
 use Slim::Networking::UDP;
 use Slim::Networking::Discovery::Players;
@@ -113,7 +114,10 @@ Return a server's IP address if available
 
 sub getServerAddress {
 	my $server = shift;
-	return $server_list->{$server}->{IP} || $server;
+	my $ip = Net::IP->new($server);
+	$ip = $ip->ip if $ip;
+	
+	return $server_list->{$server}->{IP} || $ip || $server;
 }
 
 =head2 getServerPort()

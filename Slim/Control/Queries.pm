@@ -2992,10 +2992,16 @@ sub serverstatusQuery {
 			$request->addResultLoop(
 				'other_players_loop', $other_cnt, 'model', $other_players->{$player}->{model}
 			);
-				
+
 			$request->addResultLoop(
 				'other_players_loop', $other_cnt, 'server', $other_players->{$player}->{server}
 			);
+
+			$request->addResultLoop(
+				'other_players_loop', $other_cnt, 'serverurl', 
+					Slim::Networking::Discovery::Server::getWebHostAddress($other_players->{$player}->{server})
+			);
+
 			$other_cnt++;
 		}
 	}

@@ -35,6 +35,7 @@ use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 use Net::IP;
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Alarms;
 use Slim::Utils::Log;
@@ -262,6 +263,71 @@ sub debugCommand {
 		Slim::Utils::Log->reInit;
 	}
 
+	$request->setStatusDone();
+}
+
+# disconnect a player from a remote server and connect to us
+# this is done by doing a "connect" call to the remote server
+sub disconnectCommand {
+	my $request = shift;
+
+	$log->debug("Begin Function");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['disconnect']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $remoteClient = $request->getParam('_playerid');
+	my $server       = $request->getParam('_from');
+
+	if (! ($remoteClient && $server)) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# leave the SN case to its own command
+	if ( $server =~ /^www.squeezenetwork.com$/i || $server =~ /^www.test.squeezenetwork.com$/i ) {
+
+		# we have to find the player id used on SN
+		my @players = Slim::Networking::SqueezeNetwork::Players->get_players();
+
+		foreach my $player (@players) {
+
+			if ($player->{mac} eq $remoteClient) {
+
+				$log->debug("Sending disconnect request for $remoteClient to $server");
+				Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $player->{id} ]);
+
+				last;
+			}
+		}
+
+	}
+
+	else {
+
+		$server = Slim::Networking::Discovery::Server::getWebHostAddress($server);
+
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			sub {},
+			sub { $log->error("Problem disconnecting client $remoteClient from $server: " . shift->error); },
+			{ timeout => 10 }
+		);
+
+		my $postdata = to_json({
+			id     => 1,
+			method => 'slim.request',
+			params => [ $remoteClient, ['connect', Slim::Utils::Network::hostAddr()] ]
+		});
+
+		$log->debug("Sending connect request to $server: $postdata");
+
+		$http->get( $server . 'jsonrpc.js', $postdata);
+
+	}
+	
 	$request->setStatusDone();
 }
 
