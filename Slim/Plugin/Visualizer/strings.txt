@@ -49,7 +49,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CS	Výchozí spořič
 	DA	Standard pauseskærm
 	DE	Standard-Bildschirmschoner
-	EN	Default screenaver
+	EN	Default screensaver
 	ES	Protector de pantalla predeterminado
 	FR	Ecran de veille par défaut
 	HE	ברירת מחדל
