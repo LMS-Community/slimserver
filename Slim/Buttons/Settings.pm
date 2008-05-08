@@ -398,9 +398,9 @@ sub init {
 							'onPlay'        => \&setPref,
 							'onAdd'         => \&setPref,
 							'onRight'       => \&setPref,
-							'pref'          => "idlebrightness",
+							'pref'          => "idleBrightness",
 							'header'        => '{SETUP_IDLEBRIGHTNESS}{count}',
-							'initialValue'  => sub { $prefs->client(shift)->get('idlebrightness') },
+							'initialValue'  => sub { $prefs->client(shift)->get('idleBrightness') },
 							'init'          => \&brightnessInit,
 						},
 						
