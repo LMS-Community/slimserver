@@ -38,6 +38,8 @@ my $prefs = preferences('plugin.radiotime');
 sub initPlugin {
 	my $class = shift;
 
+	$class->initJive();
+
 	$class->SUPER::initPlugin();
 
 	Slim::Plugin::RadioTime::Settings->new;
@@ -54,6 +56,37 @@ sub initPlugin {
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[1, 1, 1, \&cliRadiosQuery]);
 	Slim::Web::HTTP::protectCommand([qw|radiotime radios|]);
+}
+
+# add "hidden" item to Jive home menu 
+# this allows RadioTime to be optionally added to the 
+# top-level menu through the CustomizeHomeMenu applet
+sub initJive {
+	my ( $class ) = @_;
+
+	my $icon     =  Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon'),
+	my $name     = $class->getDisplayName();
+        my @jiveMenu = ({
+		stringToken    => $name,
+		id             => 'pluginRadiotime',
+		node           => 'hidden',
+		displayWhenOff => 0,
+		window         => { 
+				'icon-id' => $icon,
+				titleStyle => 'album',
+		},
+		actions => {
+			go =>          {
+				player => 0,
+				cmd    => [ 'radiotime', 'items' ],
+				params => {
+					menu => 'radiotime',
+				},
+			},
+		},
+	});
+
+	Slim::Control::Jive::registerPluginMenu(\@jiveMenu);
 }
 
 sub getDisplayName {
