@@ -376,7 +376,7 @@ sub mixable {
 	my $class = shift;
 	my $item  = shift;
 	
-	if (blessed($item) && $item->can('musicmagic_mixable')) {
+	if ($prefs->get('musicip') && blessed($item) && $item->can('musicmagic_mixable')) {
 
 		return $item->musicmagic_mixable;
 	}
