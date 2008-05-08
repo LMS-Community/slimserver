@@ -180,7 +180,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'mixer'     => \&mixerFunction,
 			'mixerlink' => \&mixerlink,
-			'use'       => $prefs->get($class->prefName),
+			'use'       => $prefs->get('musicip'),
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
@@ -376,7 +376,7 @@ sub mixable {
 	my $class = shift;
 	my $item  = shift;
 	
-	if (blessed($item) && $item->can('musicmagic_mixable')) {
+	if ($prefs->get('musicip') && blessed($item) && $item->can('musicmagic_mixable')) {
 
 		return $item->musicmagic_mixable;
 	}
