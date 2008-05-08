@@ -432,7 +432,7 @@ sub connectMetadataStream {
 		onError     => sub {
 			my ( $http, $error ) = @_;
 
-			logError("Error on metadata stream: $error.");
+			$log->error("Error on metadata stream: $error.");
 		},
 		passthrough => [ $client, $url ],
 	} );
