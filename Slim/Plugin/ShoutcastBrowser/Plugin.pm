@@ -42,7 +42,40 @@ sub initPlugin {
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[1, 1, 1, \&cliRadiosQuery]);
 
+	$class->initJive();
+
 	$class->SUPER::initPlugin();
+}
+
+# add "hidden" item to Jive home menu 
+# this allows ShoutCast to be optionally added to the 
+# top-level menu through the CustomizeHomeMenu applet
+sub initJive {
+	my ( $class ) = @_;
+
+	my $icon   = Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
+	my $name = $class->getDisplayName();
+        my @jiveMenu = ({
+		stringToken    => $name,
+		id             => 'pluginShoutcast',
+		node           => 'hidden',
+		displayWhenOff => 0,
+		window         => { 
+				'icon-id' => $icon,
+				titleStyle => 'album',
+		},
+		actions => {
+			go =>          {
+				player => 0,
+				cmd    => [ 'shoutcast', 'items' ],
+				params => {
+					menu => 'shoutcast',
+				},
+			},
+		},
+	});
+
+	Slim::Control::Jive::registerPluginMenu(\@jiveMenu);
 }
 
 sub getDisplayName {

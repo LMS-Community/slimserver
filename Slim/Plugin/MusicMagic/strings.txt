@@ -165,7 +165,7 @@ SETUP_REJECT_SIZE
 	FR	Taille de rejet MusicIP
 	HE	גודל הפסילות ב-MusicIP.
 	IT	N. elementi da scartare in MusicIP.
-	NL	MusicMagix-afkeurgrootte.
+	NL	MusicIP-afkeurgrootte.
 	ZH_CN	MusicIP拒绝量
 
 SETUP_REJECT_SIZE_DESC
@@ -259,11 +259,11 @@ MUSICMAGIC_MIXING
 SETUP_MMMPLAYERSETTINGS
 	DA	MusipIP afspiller indstillinger for hver Mix
 	DE	MusicIP-Mix - Player-Einstellungen
-	EN	Musicmagic Player Settings for Each Mix
+	EN	MusicIP Player Settings for Each Mix
 	ES	Configuración de reproductor MusicIP para cada mezcla
 	FR	Réglages de la platine MusicIP pour chaque mix
-	HE	הגדרות נגן Musicmagic עבור כל מיקס
-	IT	Impostazioni del lettore Musicmagic per ciascuna raccolta
+	HE	הגדרות נגן MusicIP עבור כל מיקס
+	IT	Impostazioni del lettore MusicIP per ciascuna raccolta
 	NL	MusicIP-spelerinstellingen voor elke mix
 	ZH_CN	MusicIP播放机上各个混音的设置
 
