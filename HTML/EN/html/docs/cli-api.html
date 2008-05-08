@@ -1073,6 +1073,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#client forget">client forget</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#disconnect">disconnect</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#players">players</a></code></strong>
 	</li>
 	<li>
@@ -2112,7 +2115,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			connect
-			&lt;ip|www.squeezenetwork.com|www.beta.squeezenetwork.com&gt;
+			&lt;ip|www.squeezenetwork.com|www.test.squeezenetwork.com&gt;
 		</code>
 	</strong>
 </p>
@@ -2124,7 +2127,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<ul>
 		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
 		<li><strong>www.squeezenetwork.com</strong> - Connect to SqueezeNetwork.</li>
-		<li><strong>www.beta.squeezenetwork.com</strong> - Connect to SqueezeNetwork beta.</li>
+		<li><strong>www.beta.squeezenetwork.com</strong> - Connect to SqueezeNetwork test.</li>
 	</ul>
 <p>
 	Example:
@@ -2158,6 +2161,39 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="disconnect">
+	<strong>
+		<code>
+			disconnect
+			&lt;playerid&gt;
+			&lt;ip|www.squeezenetwork.com|www.test.squeezenetwork.com&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;disconnect&quot; command tells a Squeezebox 2 or newer player
+	on another SqueezeCenter instance to disconnect from its server and 
+	connect to us. This is the opposite of &quot;<a href="#connect">connect</a>&quot;, where we
+	tell a player connected to us to connect to a different server.
+	<br>
+	Supported values are:
+	<ul>
+		<li><strong>ip</strong> - A dotted IP address to connect to.</li>
+		<li><strong>www.squeezenetwork.com</strong> - Connect to SqueezeNetwork.</li>
+		<li><strong>www.test.squeezenetwork.com</strong> - Connect to SqueezeNetwork test.</li>
+	</ul>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;disconnect bd:a5:a9:9b:9d:df 192.168.1.10&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
