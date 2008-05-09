@@ -744,8 +744,8 @@ sub updateMenu {
 
 		if (defined $plugin) {
 
-                        $menuItem = $plugin->{'name'};
-                }
+			$menuItem = $plugin->{'name'};
+		}
 
 		push @home, $menuItem;
 	}
@@ -757,6 +757,13 @@ sub updateMenu {
 
 	$homeChoices{$client} = \@home;
 
+	# this is only for top level, so shortcut out if player is not at top level
+	if ($client->curDepth()) {
+	
+		$client->update();
+		return;
+	}
+	
 	$client->modeParam('listRef', \@home);
 }
  
