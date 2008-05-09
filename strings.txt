@@ -13453,15 +13453,6 @@ SQUEEZENETWORK_SWITCHING
 	SV	Växlar till SqueezeNetwork, vänta...
 	ZH_CN	正在切换到SqueezeNetwork，请稍等。
 
-SQUEEZENETWORK_WANT_SWITCH
-	DA	Denne afspiller er tilsluttet til SqueezeNetwork. Ønsker du at skifte til SqueezeCenter?
-	DE	Dieser Player ist derzeit mit dem SqueezeNetwork verbunden. Wollen Sie ihn zurück zum SqueezeCenter verbinden?
-	EN	This player is currently connected to SqueezeNetwork. Do you want it to switch back to SqueezeCenter?
-	ES	Este reproductor se encuentra conectado a SqueezeNetwork. ¿Desea regresar a SqueezeCenter?
-	FR	Cette platine est actuellement connectée à SqueezeNetwork. Voulez-vous revenir au SqueezeCenter?
-	IT	Il lettore è attualmente connesso a SqueezeNetwork. Ripristinare la connessione a SqueezeCenter?
-	NL	Deze speler is momenteel met SqueezeNetwork verbonden. Wil je de speler terugschakelen naar SqueezeCenter?
-
 SQUEEZENETWORK_SB2_REQUIRED
 	DA	Beklager, denne funktion kræver en nyere Squeezebox.
 	DE	Diese Funktion benötigt eine neuere Squeezebox.
@@ -13503,6 +13494,15 @@ MUSICSOURCE
 
 MUSICSOURCE_SWITCH
 	EN	Please select the music source you'd like to connect your player to.
+
+SQUEEZECENTER_WANT_SWITCH
+	DA	Denne afspiller er tilsluttet til %s. Ønsker du at skifte til SqueezeCenter?
+	DE	Dieser Player ist derzeit mit %s verbunden. Wollen Sie ihn zu diesem SqueezeCenter verbinden?
+	EN	This player is currently connected to %s. Do you want it to switch to this SqueezeCenter?
+	ES	Este reproductor se encuentra conectado a %s. ¿Desea regresar a SqueezeCenter?
+	FR	Cette platine est actuellement connectée à %s. Voulez-vous revenir au SqueezeCenter?
+	IT	Il lettore è attualmente connesso a %s. Ripristinare la connessione a SqueezeCenter?
+	NL	Deze speler is momenteel met %s verbonden. Wil je de speler terugschakelen naar SqueezeCenter?
 
 SQUEEZECENTER_CONNECTING
 	DA	Tilslutter til %s...

@@ -934,13 +934,14 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		);
 
 		// let's set the current player to the first player in the list
-		if (response['player count'] > 0 || response['sn player count'] > 0) {
+		if (response['player count'] > 0 || response['sn player count'] > 0 || response['other player count'] > 0) {
 			var el;
 
 			this.playerList = new Ext.util.MixedCollection();
 
 			this._addPlayerlistMenu(response);
 			this._addSNPlayerlistMenu(response);
+			this._addOtherPlayerlistMenu(response);
 
 			// add the sync option menu item
 			this.menu.add(
@@ -1035,7 +1036,14 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 					if (first) {
 						this.menu.add(
 							'-',
-							'<span class="menu-title">' + SqueezeJS.string('squeezenetwork') + '</span>'
+							new Ext.menu.Item({
+								text: SqueezeJS.string('squeezenetwork'),
+								cls: 'menu-title',
+								scope: this,
+								handler: function(ev){
+									location = 'http://www.squeezenetwork.com/';
+								}
+							})
 						);
 						first = false;
 					}
@@ -1043,11 +1051,13 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 					this.menu.add(
 						new Ext.menu.Item({
 							text: playerInfo.name,
-							value: playerInfo.id,
 							playerid: playerInfo.playerid,
+							server: 'www.squeezenetwork.com',
 							cls: 'playerList',
 							scope: this,
-							handler: this._confirmSwitchSQNPlayer
+							dlgTitle: SqueezeJS.string('squeezenetwork'),
+							dlgServer: SqueezeJS.string('squeezenetwork'),
+							handler: this._confirmSwitchPlayer
 						})
 					);
 				}
@@ -1055,10 +1065,92 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		}
 	},
 
+	_addOtherPlayerlistMenu : function(response){
+		// add a list of players connected to other servers, if available
+		if (response.other_players_loop) {
+			var first = true;
+
+			var playersByServer = this._groupPlayersByServer(response.other_players_loop);
+
+			playersByServer._servers.each(function(item){
+				var players = playersByServer[item].players.sort(this._sortPlayer);
+
+				for (var x = 0; x < players.length; x++) {
+					var playerInfo = players[x];
+					
+					// don't display players which are already connected to SC
+					// this is to prevent double entries right after a player has switched
+					if (playerInfo && !this.playerList.get(playerInfo.playerid)) {
+						if (first) {
+							this.menu.add(
+								'-',
+								new Ext.menu.Item({
+									text: item,
+									url: playerInfo.serverurl,
+									cls: 'menu-title',
+									scope: this,
+									handler: function(ev){
+										location = ev.url;
+									}
+								})
+							);
+							first = false;
+						}
+	
+						this.menu.add(
+							new Ext.menu.Item({
+								text: playerInfo.name,
+								playerid: playerInfo.playerid,
+								server: playerInfo.server,
+								cls: 'playerList',
+								scope: this,
+								dlgTitle: SqueezeJS.string('squeezecenter'),
+								dlgServer: playerInfo.server,
+								handler: this._confirmSwitchPlayer
+							})
+						);
+					}
+				}
+				
+				return 1;
+			}, this);
+
+		}
+	},
+
 	_sortPlayer : function(a, b){
 		a = a.name.toLowerCase();
 		b = b.name.toLowerCase();
 		return a > b ? 1 : (a < b ? -1 : 0);
+	},
+
+	_groupPlayersByServer : function(players) {
+		var playersByServer = {};
+		playersByServer._servers = new Ext.util.MixedCollection();
+
+		// group players by server
+		for (var x=0; x < players.length; x++) {
+			// some players can't be switched, as they don't know the SERV command
+			if (players[x].model.match(/http|slimp3|softsqueeze|squeezeslave|squeezebox$/i))
+				continue;
+			
+			var server = players[x].server;
+
+			if (playersByServer[server] == null) {
+				playersByServer[server] = {
+					players: new Array(),
+					url: players[x].serverurl
+				}
+
+				playersByServer._servers.add(server, server);
+			}
+
+			playersByServer[server].players.push(players[x]);
+		}
+
+		playersByServer._servers.sort('ASC');
+
+		return playersByServer;
 	},
 
 	_selectPlayer: function(ev){
@@ -1069,22 +1161,25 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		}
 	},
 
-	_confirmSwitchSQNPlayer: function(ev){
+	_confirmSwitchPlayer: function(ev){
+		var msg = SqueezeJS.string('sc_want_switch');
+		msg.replace(/%s/, ev.dlgServer);
+
 		Ext.MessageBox.confirm(
-			SqueezeJS.string('squeezenetwork'),
-			SqueezeJS.string('sqn_want_switch'),
+			ev.dlgTitle,
+			SqueezeJS.string('sc_want_switch').replace(/%s/, ev.dlgServer),
 			function(btn){
 				if (btn == 'yes') {
-					this._switchSQNPlayer(ev);
+					this._switchPlayer(ev);
 				}
 			},
 			this
 		);
 	},
 
-	_switchSQNPlayer: function(ev){
-		SqueezeJS.Controller.request({ params: ['', ['squeezenetwork', 'disconnect', ev.value ]] });
-
+	_switchPlayer: function(ev){
+		SqueezeJS.Controller.request({ params: ['', ['disconnect', ev.playerid, ev.server ]] });
+			
 		// switch player in a few seconds, to give the player time to connect
 		var update = new Ext.util.DelayedTask(function(ev){
 			SqueezeJS.Controller.updateAll();
