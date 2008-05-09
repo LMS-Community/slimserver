@@ -23,7 +23,7 @@
 	</tr>
 [% END %]
 
-[% pagetitle = "HOME" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
+[% pagetitle = "HOME" | string %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
 
 [%- IF browse_radio -%]
 	[%- thispage = 'radio' -%]
@@ -197,7 +197,7 @@
         <input type="hidden" name="player" value="[% player %]">
         <br>[% 'RADIO_TUNEIN_RADIOURL' | string %]
         <input type="text" class="stdedit" name="p2" size="40">
-        <input type="submit" class="stdclick" value="[% "RADIO_TUNEIN_CHOOSE" | string %]">
+        <input type="button" class="stdclick" value="[% "RADIO_TUNEIN_CHOOSE" | string %]" onclick = "document.tune.submit();">
 	</form>
 [% END %]
 
