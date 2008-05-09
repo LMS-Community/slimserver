@@ -161,24 +161,21 @@ sub prettyTimeToSecs {
 	return ($hh*3600) + ($mm*60);
 }
 
-=head2 timeDigits( $time )
+=head2 splitTime ($time )
 
-This function converts a unix time value to the individual values for hours, minutes and am/pm
+This function converts a unix time value to hours and minutes and am/pm.
 
-Takes as arguments, the $client object/structure and a reference to the scalar time value.
+Takes as arguments, a scalar time value or a reference to one.
 
 =cut
 
-sub timeDigits {
-	my $timeRef = shift;
-	my $time;
+sub splitTime {
+	my $time = shift;
 
-	if (ref($timeRef))  {
-		$time = $$timeRef || 0;
-
-	} else {
-		$time = $timeRef || 0;
+	if (ref($time))  {
+		$time = $$time;
 	}
+	$time = $time || 0;
 
 	my $h = int($time / (60*60));
 	my $m = int(($time - $h * 60 * 60) / 60);
@@ -190,7 +187,38 @@ sub timeDigits {
 		if ($h > 11) { $h -= 12; $p = 'PM'; }
 
 		if ($h == 0) { $h = 12; }
-	} #else { $p = " "; };
+	}
+
+	return ($h, $m, $p);
+}
+
+=head2 hourMinToTime ( $h, $m, $p)
+
+This function converts discrete time values into a scalar time value.  It is the reverse of splitTime().
+
+Takes as arguments, the hour ($h), minute ($m) and whether time is am or pm if applicable ($p).
+
+=cut
+
+sub hourMinToTime {
+	my ($h, $m, $p) = @_;
+
+	$p ||= 0;
+	return (((($p * 12) + $h) * 60) + $m) * 60;
+}
+
+=head2 timeDigits( $time )
+
+This function converts a unix time value to the individual digits for hours, minutes and am/pm.
+
+Takes as arguments, a scalar time value or a reference to one.
+
+=cut
+
+sub timeDigits {
+	my $time = shift;
+	
+	my ($h, $m, $p) = splitTime($time);
 
 	if ($h < 10) { $h = '0' . $h; }
 
@@ -205,10 +233,11 @@ sub timeDigits {
 }
 
 =head2 timeDigitsToTime( $h0, $h1, $m0, $m1, $p)
+timeDigitsToTime( $h, $m, $p)
 
-This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits()
+This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits().
 
-Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
+Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p).
 
 =cut
 
@@ -218,8 +247,8 @@ sub timeDigitsToTime {
 	$p ||= 0;
 	
 	my $time = (((($p * 12)            # pm adds 12 hours
-	         + ($h0 * 10) + $h1) * 60) # convert hours to minutes
-	         + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
+		 + ($h0 * 10) + $h1) * 60) # convert hours to minutes
+		 + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
 
 	return $time;
 }

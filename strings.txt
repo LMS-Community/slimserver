@@ -1255,21 +1255,7 @@ ALARM
 	ZH_CN	闹钟
 
 ALARM_SET
-	CS	Nastav čas buzení
-	DA	Indstil alarmtid
-	DE	Weckzeit einstellen
-	EN	Set Alarm Time
-	ES	Establecer hora de alarma
-	FI	Aseta herätyksen aika
-	FR	Définir l'heure de réveil
-	HE	קביעת שעה להתראה
-	IT	Imposta orario sveglia
-	JA	アラーム セット
-	NL	Wektijd instellen
-	NO	Still inn alarmtid
-	PT	Acertar Alarme
-	SV	Ställ väckningstid
-	ZH_CN	配置闹钟
+	EN	Alarm Time
 
 ALARM_ON
 	CS	Budík zapnut

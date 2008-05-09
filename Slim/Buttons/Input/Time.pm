@@ -49,9 +49,6 @@ my $prefs = preferences('server');
 
 Slim::Buttons::Common::addMode('INPUT.Time',getFunctions(),\&setMode);
 
-###########################
-#Button mode specific junk#
-###########################
 our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
@@ -364,17 +361,27 @@ sub timeString {
 	$c = $c || $client->modeParam('cursorPos') || 0;
 
 	my $timestring =
-		# Display a leading zero in 12hr clock mode with the cursor displayed as otherwise it is confusing
-		# to have the leading digit suddenly vanish when changing from 1 to 0 and it's not obvious that you
-		# can move the cursor to the start of a time like 9:23 in order to add a leading 1
-		($c == 0 ? $cs : '') . ($h0 == 0 && defined($p) && $c == -1 ? '' : $h0) .
-		($c == 1 ? $cs : '') . $h1 . ':' .
-		($c == 2 ? $cs : '') . $m0 .
-		($c == 3 ? $cs : '') . $m1 .
-		# AM/PM if applicable
-		($c == 4 ? $cs : '') . (defined($p) ? $p : '') .
-		# Add right arrow if cursor is in last position
-		(($c ==4 && ! defined($p)) || $c == 5 ? $client->symbols('rightarrow') : '');
+		($h0 == 0 && defined($p) ? '' : $h0) .
+		($c == 0 ? $cs : '') .  $h1 .  ':' .
+		$m0 .
+		($c == 1 ? $cs : '') . $m1;
+
+	# Add am/pm
+	if (defined($p)) {
+		if ($c == 2) {
+			# Put the cursor before 2nd char of $p
+			my @ampm = split(//, $p);
+			$timestring .= ' ' . shift(@ampm) . $cs . shift(@ampm);
+			
+		} else {
+			$timestring .= ' ' . $p;
+		}
+	}
+		
+	# Add right arrow if cursor is in last position
+	if ($c == 2 && ! defined($p) || $c == 3) {
+		$timestring .= $client->symbols('rightarrow');
+	}
 
 	return ($timestring);
 }
@@ -420,7 +427,7 @@ sub moveCursor {
 
 	my $charIndex;
 
-	if ($cursorPos > (($prefs->get('timeFormat') =~ /%p/) ? 5 : 4)) {
+	if ($cursorPos > (($prefs->get('timeFormat') =~ /%p/) ? 3 : 2)) {
 		exitInput($client,'right');
 		return;
 	}
@@ -451,7 +458,7 @@ sub scroll {
 		$onChange->(@args);
 	}
 
-	my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
+	my @timedigits = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'));
 
 	$client->modeParam('listIndex', $timedigits[$client->modeParam('cursorPos')]);
 	$client->updateKnob();
@@ -508,7 +515,7 @@ Takes the $client object as the first argument.
 
 $dir specifies the direction to scroll. 
 $valueRef is a reference to the scalar time value.
-$c specifies the current cursor position where the digit is intended to scrol.
+$c specifies the current cursor position where the digit is intended to scroll.
 
 =cut
 
@@ -529,61 +536,42 @@ sub scrollTime {
 		$valueRef = $client->modeParam('valueRef');
 	}
 	
-	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
+	my ($h, $m, $p) = Slim::Utils::DateTime::splitTime($valueRef);
 
 	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
 	
 	$p = ($p && $p eq 'PM') ? 1 : 0;
 
 	if ($c == 0) {
-		$h0 = Slim::Buttons::Common::scroll($client, $dir, $ampm ? 2 : 3, $h0);
-		
+		# Scroll list is zero-based if 24hr, otherwise starts at 1.  Scrolling in 12hr mode goes through am/pm so still has 24 entries
+		# Convert $h to 24h for the scroll list
 		if ($ampm) {
-			if ($h0 == 0 && $h1 == 0) {
-				$h1 = 1;
-			}	
-			
-			if ($h0 && $h1 > 2) {
-				$h1 = 0;
-			}
-		} else {
-
-			if ($h0 == 2 && $h1 > 3) {
-				$h1 = 0;
+			if ($p) {
+				if ($h < 12) {
+					$h += 12;
+				}
+			} elsif ($h == 12) {
+				$h = 0;
 			}
 		}
-	} elsif ($c == 1) {
-		my $max = $ampm ? ($h0 ? 3 : 10) : ($h0 == 2 ? 4 : 10);
-
-		$h1 = Slim::Buttons::Common::scroll($client, $dir, $max, $h1);
-
-		if ($ampm && $h1 == 0 && $h0 == 0) {
-			$h1 = $dir > 0 ? 1 : ($max - 1);
+		$h = Slim::Buttons::Common::scroll($client, $dir, 24, $h);
+		if ($ampm) {
+			# Toggle am/pm if necessary
+			if ($h > 11) {
+				$h -= 12;
+				$p = 1;
+			} else {
+				$p = 0;
+			}
 		}
-
-	} elsif ($c == 2) { 
-		$m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0);
-
-	} elsif ($c == 3) { 
-		$m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1);
-
-	# 4 is the right arrow unless we're using 12 hour clock
-	} elsif ($ampm && $c == 4) { 
-		$p = Slim::Buttons::Common::scroll($client, +1, 2, $p);
+	} elsif ($c == 1) { 
+		$m = Slim::Buttons::Common::scroll($client, $dir, 60, $m);
+	# 2 is the right arrow unless we're using 12 hour clock
+	} elsif ($ampm && $c == 2) { 
+		$p = Slim::Buttons::Common::scroll($client, $dir, 2, $p);
 	}
 
-	if ($ampm && $h0 && $h1 == 2) {
-
-		if ($p) {
-			$p = 0;
-
-		} else {
-			$h0 = 0; 
-			$h1 = 0;
-		}
-	}
-	
-	$$valueRef = Slim::Utils::DateTime::timeDigitsToTime($h0, $h1, $m0, $m1, $p);
+	$$valueRef = Slim::Utils::DateTime::hourMinToTime($h, $m, $p);
 	
 	return $$valueRef;
 }
