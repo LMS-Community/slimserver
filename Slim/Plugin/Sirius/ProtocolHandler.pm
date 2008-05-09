@@ -28,6 +28,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	description  => 'PLUGIN_SIRIUS_MODULE_NAME',
 } );
 
+sub audioScrobblerSource { 'R' }
+
 sub getFormatForURL { 'wma' }
 
 sub isAudioURL { 1 }
@@ -495,13 +497,28 @@ sub handleMetadataStream {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 
+	my ($artist, $title);
+	# Return artist and title if the metadata looks like Artist - Title
+	if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
+		my @dashes = $currentTitle =~ /( - )/g;
+		if ( scalar @dashes == 1 ) {
+			($artist, $title) = split / - /, $currentTitle;
+		}
+
+		else {
+			$title = $currentTitle;
+		}
+	}
+	
 	my $bitrate = $client->pluginData('bitrate') / 1000;
 	my $logo    = $client->pluginData('logo');
 	
 	return {
-		cover       => $logo,
-		bitrate     => $bitrate . 'k CBR',
-		type        => 'WMA (Sirius)',
+		artist  => $artist,
+		title   => $title,
+		cover   => $logo,
+		bitrate => $bitrate . 'k CBR',
+		type    => 'WMA (Sirius)',
 	};
 }
 
