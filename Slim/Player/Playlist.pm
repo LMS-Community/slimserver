@@ -136,6 +136,13 @@ sub shuffle {
 		Slim::Control::Jive::shuffleSettings($client);
 	}
 	
+	# If Random Play mode is active, return 0
+	if (   exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'} 
+		&& Slim::Plugin::RandomPlay::Plugin::active($client)
+	) {
+		return 0;
+	}
+	
 	return $prefs->client($client)->get('shuffle');
 }
 
