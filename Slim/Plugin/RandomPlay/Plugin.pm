@@ -470,10 +470,6 @@ sub findAndAdd {
 		));
 	}
 
-	# temporarily turn off shuffle while we add new stuff
-	my $oldshuffle = Slim::Player::Playlist::shuffle($client);
-	Slim::Player::Playlist::shuffle($client, 0);
-
 	# Replace the current playlist with the first item / track or add it to end
 	my $request = $client->execute([
 		'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $obj->id)
@@ -497,7 +493,6 @@ sub findAndAdd {
 		}
 	}
 
-	Slim::Player::Playlist::shuffle($client, $oldshuffle);
 	return $obj->name;
 }
 
@@ -1023,7 +1018,7 @@ sub commandCallback {
 		playRandom($client, $mixInfo{$client->masterOrSelf->id}->{'type'});
 
 		return;
-	}		
+	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 

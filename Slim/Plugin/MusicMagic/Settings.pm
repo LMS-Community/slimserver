@@ -71,7 +71,13 @@ $prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_si
 
 $prefs->setChange(
 	sub {
-		Slim::Music::Import->useImporter('Plugin::MusicMagic::Plugin', $_[1]);
+		my $newval = $_[1];
+		
+		if ($newval) {
+			Slim::Plugin::MusicMagic::Plugin->initPlugin();
+		}
+		
+		Slim::Music::Import->useImporter('Slim::Plugin::MusicMagic::Plugin', $_[1]);
 
 		for my $c (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($c);
