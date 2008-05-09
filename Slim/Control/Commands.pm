@@ -813,7 +813,7 @@ sub playlistJumpCommand {
 
 		# update the display unless suppressed
 		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client));
+			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
 			$client->showBriefly($parts) if $parts;
 		}
 		
