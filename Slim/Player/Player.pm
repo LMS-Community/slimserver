@@ -398,6 +398,7 @@ sub currentSongLines {
 	my $client = shift;
 	my $suppressScreen2 = shift; # suppress the screen2 display
 	my $suppressDisplay = shift; # suppress both displays [leaving just jive hash]
+	my $retrieveMetadata = shift || 0;
 
 	my $parts;
 	my $status;
@@ -519,9 +520,8 @@ sub currentSongLines {
 		my $imgKey;
 		my $artwork;
 
-		if ($song->isRemoteURL) {
-			# XXX: this should only be run if it's a Jive request, otherwise
-			# it is run once a second while player is on Now Playing screen
+		#if ( $song->isRemoteURL ) {
+		if ( $retrieveMetadata && $song->isRemoteURL ) {
 
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
 
@@ -550,6 +550,7 @@ sub currentSongLines {
 
 			$imgKey = 'icon-id';
 			$artwork = ($song->album->artwork || 0) + 0;
+
 		}
 
 		$jive = {

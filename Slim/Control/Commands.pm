@@ -290,20 +290,8 @@ sub disconnectCommand {
 	# leave the SN case to its own command
 	if ( $server =~ /^www.squeezenetwork.com$/i || $server =~ /^www.test.squeezenetwork.com$/i ) {
 
-		# we have to find the player id used on SN
-		my @players = Slim::Networking::SqueezeNetwork::Players->get_players();
-
-		foreach my $player (@players) {
-
-			if ($player->{mac} eq $remoteClient) {
-
-				$log->debug("Sending disconnect request for $remoteClient to $server");
-				Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $player->{id} ]);
-
-				last;
-			}
-		}
-
+		$log->debug("Sending disconnect request for $remoteClient to $server");
+		Slim::Control::Request::executeRequest(undef, [ 'squeezenetwork', 'disconnect', $remoteClient ]);
 	}
 
 	else {
@@ -825,7 +813,7 @@ sub playlistJumpCommand {
 
 		# update the display unless suppressed
 		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client));
+			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
 			$client->showBriefly($parts) if $parts;
 		}
 		
