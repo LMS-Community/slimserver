@@ -81,12 +81,24 @@ sub setRTCTime {
 	my $client = shift;
 	my $data;
 
-	# Set 12h / 24h display mode according to SC setting
-	# Internal IC format must always be set to 24h mode (bit 1)
+	# According to Michael there is a player specific date format, but I was not able
+	#  to test this as I don't know where to set it via web interface
+	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeformat');
+	if( $dateTimeFormat eq "") {
+		# Try the date time screensaver date format, if set differently from system wide setting
+		$dateTimeFormat = preferences('plugin.datetime')->get('timeformat');
+	}
+	if( $dateTimeFormat eq "") {
+		# If all else fails, use system wide date format setting
+		$dateTimeFormat = $prefs->get('timeFormat');
+	}
+
+	# Set 12h / 24h display mode accordingly
+	# Internal RTC format must always be set to 24h mode (bit 1)
 	# Display format is stored in SC0 (bit 2) (meaning: 0 = 12h mode, 1 = 24h mode)
 	$data = pack( 'C', 0x00); 	# Status register 1
 	# 12h mode
-	if( $prefs->get('timeFormat') =~ /%p/) {
+	if( $dateTimeFormat =~ /%p/) {
 		$data .= pack( 'C', 0b00000010);	# Reset SC0 (=display format 12h), keep internal format at 24h mode
 	# 24h mode
 	} else {
@@ -102,15 +114,39 @@ sub setRTCTime {
 	my $m_1 = $min % 10;
 	my $s_10 = int( $sec / 10);
 	my $s_1 = $sec % 10;
-	my $hhh = $h_10 * 16 + $h_1;
-	my $mmm = $m_10 * 16 + $m_1;
-	my $sss = $s_10 * 16 + $s_1;
+	my $hhhBCD = $h_10 * 16 + $h_1;
+	my $mmmBCD = $m_10 * 16 + $m_1;
+	my $sssBCD = $s_10 * 16 + $s_1;
 
-	$data = pack( 'C', 0x03);	# Time register 2
-	$data .= pack( 'C', $hhh);
-	$data .= pack( 'C', $mmm);
-	$data .= pack( 'C', $sss);
+	$data = pack( 'C', 0x03);	# Set time (hours, minutes and seconds)
+	$data .= pack( 'C', $hhhBCD);
+	$data .= pack( 'C', $mmmBCD);
+	$data .= pack( 'C', $sssBCD);
 	$client->sendFrame( 'rtcs', \$data);
+}
+
+# TODO: Sync alarm time whenever needed (i.e. when user changes alarm in SC, ...)
+sub setRTCAlarm {
+	my $client = shift;
+
+#	Sample how to set alarm
+#	- Alarm time needs to be set always in 24h mode
+#	- Hours and minutes are in BCD format (see setRTCTime)
+#	- Setting the MSB (0x80) makes the hour, minute or both active
+
+#	$data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
+#	$data .= pack( 'C', $alarmHourBCD | 0x80);
+#	$data .= pack( 'C', $alarmMinuteBCD | 0x80);
+#	$client->sendFrame( 'rtcs', \$data);
+
+
+#	Sample how to clear alarm
+
+#	$data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
+#	$data .= pack( 'C', 0x00);
+#	$data .= pack( 'C', 0x00);
+#	$client->sendFrame( 'rtcs', \$data);
+
 }
 
 sub setAnalogOutMode {
