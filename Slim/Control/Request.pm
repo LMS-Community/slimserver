@@ -1494,6 +1494,16 @@ sub sliceResultLoop {
 	}
 }
 
+sub string {
+	my $self   = shift;
+	my $string = shift;
+
+	my $client = $self->client();
+
+	return $client ? $client->string($string) : Slim::Utils::Strings::string($string);
+}
+
+
 # sortResultLoop
 # sort the result loop $loop using field $field.
 sub sortResultLoop {
