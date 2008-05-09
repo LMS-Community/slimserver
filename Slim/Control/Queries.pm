@@ -376,7 +376,7 @@ sub albumsQuery {
 		# album art of the first album.
 		# It looks silly to go to Madonna->No album and see the
 		# picture of '2 Unlimited'.
-		my $noAlbumName = Slim::Utils::Strings::string('NO_ALBUM');
+		my $noAlbumName = $request->string('NO_ALBUM');
 
 		for my $eachitem ($rs->slice($start, $end)) {
 
@@ -2840,7 +2840,7 @@ sub serverstatusQuery {
 		$request->addResult('rescan', "1");
 		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
 
-			$request->addResult('progressname', Slim::Utils::Strings::string($p->name."_PROGRESS"));
+			$request->addResult('progressname', $request->string($p->name."_PROGRESS"));
 			$request->addResult('progressdone', $p->done);
 			$request->addResult('progresstotal', $p->total);
 		}
@@ -3609,15 +3609,15 @@ sub songinfoQuery {
 				if ($start == 0  ) {
 					my ($play_string, $add_string, $delete_string, $jump_string);
 					if ( $track->remote ) {
-						$play_string = Slim::Utils::Strings::string('PLAY');
-						$add_string = Slim::Utils::Strings::string('ADD');
-						$delete_string = Slim::Utils::Strings::string('REMOVE_FROM_PLAYLIST');
-						$jump_string = Slim::Utils::Strings::string('PLAY');
+						$play_string = $request->string('PLAY');
+						$add_string = $request->string('ADD');
+						$delete_string = $request->string('REMOVE_FROM_PLAYLIST');
+						$jump_string = $request->string('PLAY');
 					} else {
-						$play_string = Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG');
-						$add_string = Slim::Utils::Strings::string('JIVE_ADD_THIS_SONG');
-						$delete_string = Slim::Utils::Strings::string('REMOVE_FROM_PLAYLIST');
-						$jump_string = Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONG');
+						$play_string = $request->string('JIVE_PLAY_THIS_SONG');
+						$add_string = $request->string('JIVE_ADD_THIS_SONG');
+						$delete_string = $request->string('REMOVE_FROM_PLAYLIST');
+						$jump_string = $request->string('JIVE_PLAY_THIS_SONG');
 					}	
 					# setup hash for different items between play and add
 					my %items = ( 	
@@ -3863,7 +3863,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 								$request->addResultLoop($loopname, $chunkCount, 'showBigArtwork', 1);
 
-								my $text = Slim::Utils::Strings::string('SHOW_ARTWORK');
+								my $text = $request->string('SHOW_ARTWORK');
 								$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 
 								# we're going to skip to the next loop (and increment $chunkCount)
@@ -3879,7 +3879,7 @@ sub songinfoQuery {
 							## the rest is using pretty printing methods of track
 						
 							if ($key eq 'COMPILATION') {
-								$val = Slim::Utils::Strings::string('YES');
+								$val = $request->string('YES');
 							}
 
 							elsif ( $key eq 'YEAR' && $val != 0 ) {
@@ -3932,13 +3932,13 @@ sub songinfoQuery {
 								$val = $val / 100;
 							}
 							elsif ($key eq 'FILELENGTH') {
-								$val = Slim::Utils::Misc::delimitThousands($val) . " " . Slim::Utils::Strings::string('BYTES');
+								$val = Slim::Utils::Misc::delimitThousands($val) . " " . $request->string('BYTES');
 							}
 							elsif ($key eq 'SAMPLERATE') {
 								$val = $track->prettySampleRate();
 							}
 							elsif ($key eq 'SAMPLESIZE') {
-								$val = $val . " " . Slim::Utils::Strings::string('BITS');
+								$val = $val . " " . $request->string('BITS');
 							}
 							elsif ($key eq 'LOCATION') {
 								$val = $track->path();
@@ -3952,11 +3952,11 @@ sub songinfoQuery {
 							} 
 							# comments are often long, so we deliver them in a new window as a textarea
 							elsif ( $key eq 'COMMENT' && $val ne '0') {
-								$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($key));
+								$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($key));
 								$request->addResultLoop($loopname, $chunkCount, 'textArea', $val);
 
 								my $window = { 
-									text =>Slim::Utils::Strings::string($key) . ": " . $hashRef->{TITLE},  
+									text =>$request->string($key) . ": " . $hashRef->{TITLE},  
 									titleStyle => 'mymusic' 
 								};
                 						$request->addResultLoop($loopname, $chunkCount, 'window', $window);
@@ -3978,7 +3978,7 @@ sub songinfoQuery {
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
 							$request->addResultLoop($loopname, $chunkCount, 'style', $style) unless $suppress;
 						}
-						$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($key) . ": " . $val) unless $suppress;
+						$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($key) . ": " . $val) unless $suppress;
 					}
 					else {
 						$request->addResultLoop($loopname, $chunkCount, $key, $val);
@@ -4842,9 +4842,9 @@ sub _jiveNoResults {
 	$request->addResult('offset', 0);
 
 	if (defined($search)) {
-		$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('NO_SEARCH_RESULTS'));
+		$request->addResultLoop('item_loop', 0, 'text', $request->string('NO_SEARCH_RESULTS'));
 	} else {
-		$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('EMPTY'));
+		$request->addResultLoop('item_loop', 0, 'text', $request->string('EMPTY'));
 	}
 
 	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
@@ -4896,7 +4896,7 @@ sub _jiveAddToFavorites {
 			}
 		}
 
-		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
+		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($token));
 		my $actions = {
 			'go' => {
 				player => 0,
@@ -4948,7 +4948,7 @@ sub _jiveDeletePlaylist {
 	# Add the actual favorites item if we're in the last chunk
 	if ( $lastChunk ) {
 		my $token = 'JIVE_DELETE_PLAYLIST';
-		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
+		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($token));
 		my $actions = {
 			'go' => {
 				player => 0,
@@ -4995,7 +4995,7 @@ sub _jiveGenreAllAlbums {
 	# Add the actual favorites item if we're in the last chunk
 	if ( $lastChunk ) {
 		my $token = 'ALL_ALBUMS';
-		$request->addResultLoop($loopname, $chunkCount, 'text', Slim::Utils::Strings::string($token));
+		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($token));
 		my $actions = {
 			'go' => {
 				player => 0,
@@ -5330,7 +5330,7 @@ sub _playAll {
 		# init some vars for each mode for use in the two item loop below
 		my %items = ( 	
 			'play' => {
-					'string'      => Slim::Utils::Strings::string('JIVE_PLAY_ALL'),
+					'string'      => $request->string('JIVE_PLAY_ALL'),
 					'style'       => 'itemplay',
 					'playAction'  => 'playtracks',
 					'addAction'   => 'addtracks',
@@ -5344,7 +5344,7 @@ sub _playAll {
 					},
 			},
 			'add' => { 
-					'string'     => Slim::Utils::Strings::string('JIVE_ADD_ALL'),
+					'string'     => $request->string('JIVE_ADD_ALL'),
 					'style'      => 'itemadd',
 					'playAction' => 'addtracks',
 					'addAction'  => 'addtracks',

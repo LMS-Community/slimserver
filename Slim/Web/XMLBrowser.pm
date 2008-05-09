@@ -391,7 +391,7 @@ sub handleFeed {
 			next unless defined $item->{'duration'};
 
 			$stash->{'itemsHaveAudio'} = 1;
-			$stash->{'currentIndex'}   = join '.', @index;
+			$stash->{'currentIndex'}   = $crumb[-1]->{index};
 			last;
 		}
 		
