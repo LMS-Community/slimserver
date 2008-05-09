@@ -28,6 +28,7 @@
 arrow_down				= down
 arrow_down.repeat		= down_repeat
 arrow_left				= left
+arrow_left.hold			= home
 arrow_right				= right
 arrow_up				= up
 arrow_up.repeat			= up_repeat
