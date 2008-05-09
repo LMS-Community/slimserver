@@ -24,6 +24,8 @@ sub bufferThreshold { 10 }
 
 sub canSeek { 0 }
 
+sub isAudioURL { 1 }
+
 sub getMetadataFor {
 	my $class = shift;
 	
