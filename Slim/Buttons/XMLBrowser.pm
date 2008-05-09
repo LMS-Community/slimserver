@@ -1759,7 +1759,7 @@ sub _cliQuery_done {
 			$subFeed->{items} ||= [];
 			push @{ $subFeed->{items} }, {
 				type => 'text',
-				name => $request->client ? $request->client->string('EMPTY') : Slim::Utils::Strings::string('EMPTY'),
+				name => $request->string('EMPTY'),
 			};
 		}
 	
@@ -1863,9 +1863,7 @@ sub _cliQuery_done {
 					
 					$actions->{play} = $actions->{do};
 						
-					my $text = $request->client
-						? $request->client->string('JIVE_PLAY_ALL')
-						: Slim::Utils::Strings::string('JIVE_PLAY_ALL');
+					my $text = $request->string('JIVE_PLAY_ALL');
 								
 					# Bug 7517, only add Play All at the top, not in the middle if we're
 					# dealing with a chunked list starting at 200, etc
@@ -2116,11 +2114,11 @@ sub _addingToPlaylist {
 	my $client = shift;
 	my $action = shift || 'add';
 	my $string = $action eq 'add' ?
-			Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " .  
-			Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST')
+			$client->string('JIVE_POPUP_ADDING') . " " .  
+			$client->string('JIVE_POPUP_TO_PLAYLIST')
 			: 
-			Slim::Utils::Strings::string('JIVE_POPUP_ADDING') . " " .  
-			Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT');
+			$client->string('JIVE_POPUP_ADDING') . " " .  
+			$client->string('JIVE_POPUP_TO_PLAY_NEXT');
 
 	$client->showBriefly(
 			{ line => [ $string ], },

@@ -700,9 +700,9 @@ sub playlistDeleteCommand {
 		$client->showBriefly({
 			'jive' => { 
 				'type'    => 'song',
-				'text'    => [ Slim::Utils::Strings::string('JIVE_POPUP_REMOVING'),
+				'text'    => [ $request->string('JIVE_POPUP_REMOVING'),
 							   $song->title,
-							   Slim::Utils::Strings::string('JIVE_POPUP_FROM_PLAYLIST') ],
+							   $request->string('JIVE_POPUP_FROM_PLAYLIST') ],
 				'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
 			}
 		});
@@ -997,7 +997,7 @@ sub playlistSaveCommand {
   	$client->showBriefly({
 		'jive' => {
 			'type'    => 'popupplay',
-			'text'    => [ Slim::Utils::Strings::string('THIS_PLAYLIST_AS') , " " , $title],
+			'text'    => [ $request->string('THIS_PLAYLIST_AS') , " " , $title],
                                 }
                         });
 
@@ -1493,7 +1493,7 @@ sub playlistZapCommand {
 	my $client   = $request->client();
 	my $index    = $request->getParam('_index');;
 	
-	my $zapped   = Slim::Utils::Strings::string('ZAPPED_SONGS');
+	my $zapped   = $request->string('ZAPPED_SONGS');
 	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
 	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
 
@@ -1580,11 +1580,11 @@ sub playlistcontrolCommand {
 				'jive' => { 
 					'type'    => 'popupplay',
 					'text'    => $add || $insert ? $add 
-						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $folder->title,
-							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-						: [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $folder->title,
-							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT') ]
-						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $folder->title ]
+						? [ $request->string('JIVE_POPUP_ADDING'), $folder->title,
+							$request->string('JIVE_POPUP_TO_PLAYLIST') ]
+						: [ $request->string('JIVE_POPUP_ADDING'), $folder->title,
+							$request->string('JIVE_POPUP_TO_PLAY_NEXT') ]
+						: [ $request->string('JIVE_POPUP_NOW_PLAYING'), $folder->title ]
 				}
 			});
 		} 
@@ -1640,11 +1640,11 @@ sub playlistcontrolCommand {
 					'jive' => { 
 						'type'    => 'popupplay',
 						'text'    => $add || $insert ? $add
-							? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $playlist->title,
-								Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-							: [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $playlist->title,
-								Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT') ]
-								: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ]
+							? [ $request->string('JIVE_POPUP_ADDING'), $playlist->title,
+								$request->string('JIVE_POPUP_TO_PLAYLIST') ]
+							: [ $request->string('JIVE_POPUP_ADDING'), $playlist->title,
+								$request->string('JIVE_POPUP_TO_PLAY_NEXT') ]
+								: [ $request->string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ]
 					}
 				 });
 			}
@@ -1729,11 +1729,11 @@ sub playlistcontrolCommand {
 				'jive' => { 
 					'type'    => defined $artwork ? 'song' : 'popupplay',
 					'text'    => $add || $insert ? $add
-						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info[0],
-							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-						: [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info[0],
-							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAY_NEXT') ]
-						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), @info ],
+						? [ $request->string('JIVE_POPUP_ADDING'), $info[0],
+							$request->string('JIVE_POPUP_TO_PLAYLIST') ]
+						: [ $request->string('JIVE_POPUP_ADDING'), $info[0],
+							$request->string('JIVE_POPUP_TO_PLAY_NEXT') ]
+						: [ $request->string('JIVE_POPUP_NOW_PLAYING'), @info ],
 					'icon-id' => $artwork,
 				}
 			});
@@ -1944,7 +1944,7 @@ sub playlistsDeleteCommand {
 		$request->client->showBriefly({
 			'jive' => {
 				'text'    => [	
-					Slim::Utils::Strings::string('JIVE_DELETE_PLAYLIST'),
+					$request->string('JIVE_DELETE_PLAYLIST'),
 					$playlistObj->name,
 				],
 			},
