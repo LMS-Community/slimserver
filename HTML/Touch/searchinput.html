@@ -17,8 +17,8 @@
 
 <tr><td colspan="8" align="center">
 <br>
-	     <input type=submit value="[% "SEARCH" | string %]" name="Go" class = 'searchButton'>
-	     <input type=reset value="[% "CLEAR" | string %]" name="Reset" class = 'searchButton'>
+	     <input type=submit value="[% "SEARCH" | string %]" name="Go" class = 'searchButton' onClick = "$('FormSong').submit();">
+	     <input type=button value="[% "CLEAR" | string %]" name="Reset" class = 'searchButton' onClick = "$('query').value = '';">
              <input type=hidden value="[% player %]" name="player">
              <input type=hidden value="1" name="manualSearch">
              [% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
