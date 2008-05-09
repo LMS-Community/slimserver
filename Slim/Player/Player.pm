@@ -523,9 +523,6 @@ sub currentSongLines {
 		#if ( $song->isRemoteURL ) {
 		if ( $retrieveMetadata && $song->isRemoteURL ) {
 
-			# XXX: this should only be run if it's a Jive request, otherwise
-			# it is run once a second while player is on Now Playing screen
-
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
 
 			if ( $handler && $handler->can('getMetadataFor') ) {
