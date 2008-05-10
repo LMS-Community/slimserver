@@ -41,7 +41,7 @@
 [% IF search %]
 	<form id="searchForm" name="searchForm" method="GET">
 		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
-		<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
+		<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]" onClick = "document.searchForm.submit();"><p>
 		<input type="hidden" value="[% player %]" name="player">
 	</form>
 [% END %]
@@ -99,10 +99,10 @@
 			[%- END %]
 			
 			[% IF item.type == 'search' %]
-				<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
+				<form name="searchForm[% index _ (start + loop.index) %]" id="searchForm[% index _ (start + loop.index) %]" method="GET">
 					[% item.name || item.title %]
 					<input type="text" name="q" value=""/>
-					<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
+					<input name="formsubmit" type="submit" class="stdclick" value="[% "SEARCH" | string %]" onClick = "document.getElementById('searchForm[% index _ (start + loop.index) %]').submit();"><p>
 					<input type="hidden" value="[% player %]" name="player" />
 					<input type="hidden" value="[% index _ (start + loop.index) %]" name="index" />
 				</form>
