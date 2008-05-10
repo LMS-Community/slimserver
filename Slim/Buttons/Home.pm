@@ -63,6 +63,8 @@ sub init {
 
 	# More documentation needed for all this magic.
 	%defaultParams = (
+		'HOME-MENU' => 1,
+
 		'listRef' => undef,
 
 		'externRef' => sub {
