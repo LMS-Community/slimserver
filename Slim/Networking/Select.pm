@@ -276,16 +276,19 @@ sub writeNoBlock {
 	my $chunkRef = shift;
 
 	return unless ($socket && $socket->opened());
-	
-	if (defined $chunkRef) {	
 
-		push @{$writeQueue{$socket}}, {
-			'data'   => $chunkRef,
-			'offset' => 0,
-			'length' => length($$chunkRef)
-		};
-	}
-	
+	push @{$writeQueue{$socket}}, {
+		'data'   => $chunkRef,
+		'offset' => 0,
+		'length' => length($$chunkRef)
+	   };
+
+	_writeNoBlock($socket);
+}
+
+sub _writeNoBlock {
+	my $socket = shift;
+
 	my $segment = shift(@{$writeQueue{$socket}});
 	
 	if (!defined $segment) {
@@ -331,7 +334,7 @@ sub writeNoBlock {
 
 		unshift @{$writeQueue{$socket}}, $segment;
 
-		addWrite($socket, \&writeNoBlock, 1);
+		addWrite($socket, \&_writeNoBlock, 1);
 	} 
 }
 
