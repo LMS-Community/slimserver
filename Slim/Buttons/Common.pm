@@ -1158,6 +1158,25 @@ our %functions = (
 			'line' => [ $client->string('SETUP_IRMAP') . ':', $functarg ]
 		});
 	},
+
+	'home' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		if ($client->modeParam('HOME-MENU')) {
+
+			$log->info("Switching to playlist view.");
+			Slim::Buttons::Common::setMode($client, 'home');
+			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+
+		} else {
+
+			$log->info("Switching to home menu.");
+			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
+			Slim::Buttons::Common::setMode($client, 'home');
+			$client->pushRight();
+		}
+	},
 );
 
 sub getFunction {
