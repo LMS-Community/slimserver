@@ -30,9 +30,7 @@ arrow_down.repeat		= down_repeat
 knob_right              = down
 knob_right.repeat       = down_repeat
 arrow_left				= left
-# XXX: this breaks navigation from Song Info back to Now Playing
-#arrow_left.single		= left
-#arrow_left.hold			= home
+arrow_left.hold			= home
 arrow_right				= right
 arrow_up				= up
 arrow_up.repeat			= up_repeat
