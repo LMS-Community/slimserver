@@ -281,7 +281,7 @@ sub writeNoBlock {
 		'data'   => $chunkRef,
 		'offset' => 0,
 		'length' => length($$chunkRef)
-	   };
+	};
 
 	_writeNoBlock($socket);
 }
