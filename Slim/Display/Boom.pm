@@ -122,7 +122,7 @@ our $defaultFontPrefs = {
 	'activeFont'          => [qw(light_n standard_n full_n)],
 	'activeFont_curr'     => 1,
 	'idleFont'            => [qw(light_n standard_n full_n)],
-	'idleFont_curr'       => 1,
+	'idleFont_curr'       => 2,
 };
 
 sub init {
