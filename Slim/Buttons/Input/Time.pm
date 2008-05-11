@@ -66,11 +66,11 @@ our %functions = (
 	,'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
+			my @timedigits = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0);
+			# Manually set the am/pm bit
+			$timedigits[2] = $timedigits[0] > 11 ? 1 : 0;
 
-			# Don't scroll if on right arrow
-			defined $timedigits[$client->modeParam('cursorPos')]
-			  && scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
+			scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
 		}
 
 	#moving one position to the left, exiting on leftmost position
@@ -280,11 +280,7 @@ sub setMode {
 
 	$client->lines(\&lines);
 
-	# The knob on Transporter needs to be prepopulated with list lengths
-	# for proper scrolling.
-	my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
-
-	prepKnob($client, \@timedigits);
+	prepKnob($client, 1);
 }
 
 =head1 METHODS
@@ -435,12 +431,17 @@ sub moveCursor {
 	$client->modeParam('cursorPos',$cursorPos);
 	$client->update();
 	
-	prepKnob($client, [ Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef')) ]);
+	prepKnob($client, 1);
 }
 
 sub scroll {
-	my ($client,$dir) = @_;
+	my ($client, $dir) = @_;
 	
+	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
+	my $c = $client->modeParam('cursorPos');
+	# Don't scroll on the right arrow
+	return if ($ampm && $c == 3 || ! $ampm && $c == 2);
+
 	my $valueRef = $client->modeParam('valueRef');
 	my $oldTime = $$valueRef;
 	my $time = scrollTime($client,$dir);
@@ -458,10 +459,7 @@ sub scroll {
 		$onChange->(@args);
 	}
 
-	my @timedigits = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'));
-
-	$client->modeParam('listIndex', $timedigits[$client->modeParam('cursorPos')]);
-	$client->updateKnob();
+	prepKnob($client, 0);
 
 	$client->update();
 }
@@ -471,39 +469,38 @@ sub scroll {
 This function is required for updating the Transporter knob.  The knob extents are based on the listLen param, 
 which changes in this mode depending on which column of the time display is being adjusted.
 
-Takes as arguments, the $client structure and a reference to the array of discret digits returned by timeDigits.
+Takes as arguments, the $client structure and whether the knob is now scrolling through a diferent list. 
 
 =cut
 
 sub prepKnob {
-	my ($client, $digits) = @_;
+	my ($client, $newList) = @_;
+
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0);
 	
+	my $c = $client->modeParam('cursorPos');
+
 	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
-	my $c    = $client->modeParam('cursorPos');
 	
 	if ($c == 0) {
-		$client->modeParam('listLen', $ampm ? 2 : 3);
+		$client->modeParam('listLen', 24);
+		$client->modeParam('listIndex', $h);
 
 	} elsif ($c == 1) {
-		$client->modeParam('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
+		$client->modeParam('listLen', 60);
+		$client->modeParam('listIndex', $m);
 
-	} elsif ($c == 2) { 
-		$client->modeParam('listLen', 6);
-
-	} elsif ($c == 3) { 
-		$client->modeParam('listLen', 10);
-
-	} elsif ($c == 4 && $ampm) { 
+	} elsif ($c == 2 && $ampm) { 
+		my $p = $h > 11 ? 1 : 0;
 		$client->modeParam('listLen', 2);
+		$client->modeParam('listIndex', $p);
 	} else {
 		# Right arrow
 		$client->modeParam('listLen', 1);
+		$client->modeParam('listIndex', 1);
 	}
 
-	# $digits->[$c] will be undefined if on right arrow
-	$client->modeParam('listIndex', defined $digits->[$c] ? $digits->[$c] : 1);
-
-	$client->updateKnob(1);
+	$client->updateKnob($newList);
 }
 
 =head2 scrollTime( $client,$dir,$valueRef,$c)
@@ -515,7 +512,7 @@ Takes the $client object as the first argument.
 
 $dir specifies the direction to scroll. 
 $valueRef is a reference to the scalar time value.
-$c specifies the current cursor position where the digit is intended to scroll.
+$c specifies the current cursor position at which the digit should be scrolled.
 
 =cut
 
@@ -536,42 +533,24 @@ sub scrollTime {
 		$valueRef = $client->modeParam('valueRef');
 	}
 	
-	my ($h, $m, $p) = Slim::Utils::DateTime::splitTime($valueRef);
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($valueRef, 0);
 
 	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
-	
-	$p = ($p && $p eq 'PM') ? 1 : 0;
 
 	if ($c == 0) {
-		# Scroll list is zero-based if 24hr, otherwise starts at 1.  Scrolling in 12hr mode goes through am/pm so still has 24 entries
-		# Convert $h to 24h for the scroll list
-		if ($ampm) {
-			if ($p) {
-				if ($h < 12) {
-					$h += 12;
-				}
-			} elsif ($h == 12) {
-				$h = 0;
-			}
-		}
+		# Scrolling is done in 24h mode regardless of 12h preference as in 12h mode it goes from 12am through to 11pm
 		$h = Slim::Buttons::Common::scroll($client, $dir, 24, $h);
-		if ($ampm) {
-			# Toggle am/pm if necessary
-			if ($h > 11) {
-				$h -= 12;
-				$p = 1;
-			} else {
-				$p = 0;
-			}
-		}
 	} elsif ($c == 1) { 
 		$m = Slim::Buttons::Common::scroll($client, $dir, 60, $m);
 	# 2 is the right arrow unless we're using 12 hour clock
 	} elsif ($ampm && $c == 2) { 
+		# Scrolling on am/pm simply alters the hour value by +-12
+		my $p = $h > 11 ? 1 : 0;
 		$p = Slim::Buttons::Common::scroll($client, $dir, 2, $p);
+		$h = ($h + ($p ? 12 : -12)) % 24; 
 	}
 
-	$$valueRef = Slim::Utils::DateTime::hourMinToTime($h, $m, $p);
+	$$valueRef = Slim::Utils::DateTime::hourMinToTime($h, $m);
 	
 	return $$valueRef;
 }

@@ -161,16 +161,21 @@ sub prettyTimeToSecs {
 	return ($hh*3600) + ($mm*60);
 }
 
-=head2 splitTime ($time )
+=head2 splitTime ($time, $24h )
 
-This function converts a unix time value to hours and minutes and am/pm.
+This function converts a unix time value to hours, minutes and am/pm if applicable.  am/pm is given as undef or 0/1.
 
-Takes as arguments, a scalar time value or a reference to one.
+Takes as arguments, a scalar time value or a reference to one and optionally whether the time should be returned in 12h (true) or 24h (false) format.  The default format returned is based on the current timeFormat pref.
 
 =cut
 
 sub splitTime {
 	my $time = shift;
+	my $twelveHour = shift;
+
+	if (! defined $twelveHour) {
+		$twelveHour = $prefs->get('timeFormat') =~ /%p/;
+	}
 
 	if (ref($time))  {
 		$time = $$time;
@@ -181,10 +186,10 @@ sub splitTime {
 	my $m = int(($time - $h * 60 * 60) / 60);
 	my $p = undef;
 
-	if ($prefs->get('timeFormat') =~ /%p/) {
-		$p = 'AM';
+	if ($twelveHour) {
+		$p = 0;
 
-		if ($h > 11) { $h -= 12; $p = 'PM'; }
+		if ($h > 11) { $h -= 12; $p = 1; }
 
 		if ($h == 0) { $h = 12; }
 	}
@@ -209,7 +214,7 @@ sub hourMinToTime {
 
 =head2 timeDigits( $time )
 
-This function converts a unix time value to the individual digits for hours, minutes and am/pm.
+This function converts a unix time value to the individual digits for hours, minutes and am/pm.  am/pm is returned as 'AM' or 'PM'.
 
 Takes as arguments, a scalar time value or a reference to one.
 
@@ -228,6 +233,10 @@ sub timeDigits {
 	my $h1 = substr($h, 1, 1);
 	my $m0 = substr($m, 0, 1);
 	my $m1 = substr($m, 1, 1);
+
+	if (defined $p) {
+		$p = $p ? 'PM' : 'AM';
+	}
 
 	return ($h0, $h1, $m0, $m1, $p);
 }
