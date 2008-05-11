@@ -46,9 +46,9 @@ sub prefs {
 		return ();
 	}
 
-	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness autobrightness
-				   scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble
-				  );
+	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness 
+				scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble
+				);
 
 	if ($client->display->isa("Slim::Display::Graphics")) {
 

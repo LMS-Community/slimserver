@@ -2365,20 +2365,7 @@ SETUP_GROUP_BRIGHTNESS
 	ZH_CN	光亮度
 
 SETUP_GROUP_BRIGHTNESS_DESC
-	CS	Jas displeje přehrávače může být nastaven pro  různé stavy přehrávače: zapnut, vypnut, nehraje. Může být také nastaven automaticky když zmáčknete tlačítko, začnete přehrávat skladbu, nebo necháte přehrávač chvíli bez ovládání. Je možno také vypnout toto automatické chování.
-	DA	Lysstyrken på afspillerens display kan indstilles til når den er tændt, slukket eller ledig (pauseskærm). Den kan også justeres automatisk når du trykker på en knap, starter afspilning af en sang, eller efter en tids inaktivitet. Du kan vælge at slå denne automatik fra.
-	DE	Sie können die Helligkeit des Display für die drei Zustände 'ein', 'aus' und 'Bildschirmschoner' festlegen. Außerdem können Sie bestimen, dass sie automatisch angepasst wird, wenn eine Taste gedrückt bzw. ein Titel wiedergegeben wird oder eine Weile lang nichts geschieht. Sie können diese automatische Funktion auch deaktivieren.
-	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
-	ES	Se puede establecer el brillo de la pantalla del reproductor cuando está encendido, apagado o inactivo (protector de pantalla). También se puede ajustar automáticamente cuando se pulsa un botón, se inicia la reproducción de una canción o se deja inactivo un tiempo. Se puede optar por deshabilitar este comportamiento automático.
-	FI	Soittimen näytön kirkkaus voidaan säätää erikseen soittimen ollessa päällä, pois päältä tai toimettomana (ruudunsäästäjä). Sitä voidaan säätää myös automaattisesti kun painat nappulaa, aloitat toiston tai jätät soittimen hetkeksi rauhaan. Tämän automaattisen toiminnon voi kytkeä pois päältä.
-	FR	Vous pouvez modifier la luminosité de l'afficheur de la platine lorsque celle-ci est allumée, éteinte ou en veille (avec écran de veille). Elle peut également être réglée automatiquement lorsque vous appuyez sur un bouton de la télécommande, lorsque vous commencez à lire un morceau ou lorsque la platine n'est pas utilisée. Ce réglage automatique peut être désactivé.
-	HE	ניתן להגדיר את הבהירות של תצוגת הנגן כאשר הנגן מופעל, כבוי או במצב מוכן (שומר מסך). באפשרותך גם לכוונן את הבהירות באופן אוטומטי כאשר אתה לוחץ על אחד הלחצנים, כאשר מתחיל להשמיע שיר, או כאשר לא מתבצעת כל פעולה שהיא בנגן. באפשרותך לבחור להשבית התנהגות אוטומטית זו.
-	IT	È possibile impostare una diversa luminosità del display del lettore a seconda che sia acceso, spento o inattivo (screen saver). La luminosità può essere inoltre regolata automaticamente quando si preme un pulsante, si avvia la riproduzione di un brano o se il lettore è inattivo. Questa funzione automatica può essere disattivata.
-	JA	パワーオン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
-	NL	De helderheid van het spelerdisplay kan afgestemd worden op de status van speler: aan, uit, of in ruststand (schermbeveiliger) De helderheid kan ook automatisch aangepast worden wanneer je op een knop drukt, het afspelen van een liedje start of een tijdje niets doet. Je kunt dit automatische gedrag desgewenst uitschakelen.
-	NO	Displayets lysstyrke kan stilles inn for når den er på, av og ventende (skjermsparer). Den kan også justeres automatisk når du trykker på en knapp, ved starten eller slutten av sanger, eller etter forhåndsinnstilt tid med inaktivitet. Du kan også velge å skru av denne funksjonen.
-	SV	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av inaktivitet. Du kan också välja att stänga av denna automatik.
-	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的光亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏光亮度。用户可选择是否采用此项自动光亮度调节功能。
+	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). 
 
 SETUP_GROUP_TCP_PARAMS
 	CS	Nastavení TCP/IP
@@ -3146,56 +3133,6 @@ SETUP_POWEROFFBRIGHTNESS
 
 SETUP_IDLEBRIGHTNESS
 	EN	Idle Brightness
-
-SETUP_AUTOBRIGHTNESS
-	CS	Automaticjý jas displeje:
-	DA	Automatisk lysstyrkeindstilling:
-	DE	Automatische Helligkeit:
-	EN	Automatic Display Brightness:
-	ES	Brillo automático de pantalla:
-	FR	Réglage automatique de la luminosité de l'affichage:
-	HE	בהירות תצוגה אוטומטית:
-	IT	Luminosità automatica del display:
-	JA	ディスプレイ明るさ自動調節
-	NL	Helderheid van display automatisch aanpassen:
-	NO	Vis lysstyrke automatisk:
-	PT	Brilho Automático:
-	SV	Automatisk ljusstyrka:
-	ZH_CN	自动调节显示屏光亮度：
-
-SETUP_AUTOBRIGHTNESS_OFF
-	CS	Nastavit jas ručně
-	DA	Indstil lysstyrke manuelt
-	DE	Helligkeit manuell anpassen
-	EN	Adjust Brightness Manually
-	ES	Ajustar brillo manualmente
-	FI	Säädä kirkkaus käsin
-	FR	Régler la luminosité manuellement
-	HE	כוונון הבהירות באופן ידני
-	IT	Regola luminosità manualmente
-	JA	明るさを手動調節にする
-	NL	Helderheid handmatig aanpassen
-	NO	Juster lysstyrke manuelt
-	PT	Ajustar o Brilho Manualmente
-	SV	Ändra ljusstyrka manuellt
-	ZH_CN	手工调节显示屏光亮度
-
-SETUP_AUTOBRIGHTNESS_ON
-	CS	Nastavit jas automaticky
-	DA	Indstil lysstyrke automatisk
-	DE	Helligkeit automatisch anpassen
-	EN	Adjust Brightness Automatically
-	ES	Ajustar brillo automáticamente
-	FI	Säädä kirkkaus automaattisesti
-	FR	Régler la luminosité automatiquement
-	HE	כוונון הבהירות באופן אוטומטי
-	IT	Regola luminosità automaticamente
-	JA	明るさを自動調節にする
-	NL	Helderheid automatisch aanpassen
-	NO	Juster lysstyrke automatisk
-	PT	Ajustar o Brilho Automaticamente
-	SV	Ändra ljusstyrka automatiskt
-	ZH_CN	自动调节显示屏光亮度
 
 SETUP_ALARM
 	CS	Budík

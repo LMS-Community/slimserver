@@ -59,7 +59,6 @@ my $prefs = preferences('server');
 my $log = logger('player.display');
 
 our $defaultPrefs = {
-	'autobrightness'       => 1,
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
 	'scrollPause'          => 3.6,

@@ -87,7 +87,7 @@ sub screenSaver {
 	}
 	
 	# automatically control brightness if set to do so.
-	if ($prefs->client($client)->get('autobrightness') && defined $display->brightness()) {
+	if (defined $display->brightness()) {
 		
 		# dim the screen if we're not playing...  will restore brightness on next IR input.
 		# only need to do this once, but its hard to ensure all cases, so it might be repeated.
@@ -206,8 +206,6 @@ sub wakeup {
 	
 	Slim::Hardware::IR::setLastIRTime($client, Time::HiRes::time());
 
-	if (!$prefs->client($client)->get('autobrightness')) { return; };
-	
 	my $curBrightnessPref;
 	
 	if (Slim::Buttons::Common::mode($client) eq 'off' || !$client->power()) {

@@ -349,23 +349,12 @@ sub init {
 				# Brightness submenus
 				'SETUP_GROUP_BRIGHTNESS'        => {
 					'useMode'         => 'INPUT.List',
-					'listRef'         => ['SETUP_POWERONBRIGHTNESS', 'SETUP_POWEROFFBRIGHTNESS', 'SETUP_IDLEBRIGHTNESS', 'SETUP_AUTOBRIGHTNESS'],
+					'listRef'         => ['SETUP_POWERONBRIGHTNESS', 'SETUP_POWEROFFBRIGHTNESS', 'SETUP_IDLEBRIGHTNESS'],
 					'stringExternRef' => 1,
 					'header'          => 'BRIGHTNESS',
 					'stringHeader'    => 1,
 					'headerAddCount'  => 1,
 					'overlayRef'      => sub { 
-						
-						if ($_[1] eq 'SETUP_AUTOBRIGHTNESS') {
-							
-							return (
-								undef,
-								Slim::Buttons::Common::checkBoxOverlay($_[0],
-									$prefs->client($_[0])->get('autobrightness')
-								),
-							);
-						}
-						
 						return (undef, shift->symbols('rightarrow')); 
 					},
 					'overlayRefArgs'  => 'CV',
@@ -402,14 +391,6 @@ sub init {
 							'header'        => '{SETUP_IDLEBRIGHTNESS}{count}',
 							'initialValue'  => sub { $prefs->client(shift)->get('idleBrightness') },
 							'init'          => \&brightnessInit,
-						},
-						
-						'SETUP_AUTOBRIGHTNESS' => {
-							'useMode'      => sub {
-									$prefs->client($_[0])->set('autobrightness') = !$prefs->client($_[0])->get('autobrightness')
-							},
-							'pref'         => 'autobrightness',
-							'initialValue' => sub { $prefs->client($_[0])->get('autobrightness') },
 						},
 					},
 				},
@@ -592,7 +573,6 @@ sub brightnessInit {
 	
 	$client->modeParam('listRef', \@options);
 }
-
 
 sub settingsMenu {
 	my $client = shift;

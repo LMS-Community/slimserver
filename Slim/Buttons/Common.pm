@@ -595,7 +595,7 @@ our %functions = (
 				$saver = 1;
 			}
 
-			if (($saver || $prefs->client($client)->get('autobrightness')) && ($lastIR && $lastIR < $timeout)) {
+			if (($saver) && ($lastIR && $lastIR < $timeout)) {
 
 				$brightmode = 'idleBrightness';
 			}

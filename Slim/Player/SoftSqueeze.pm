@@ -22,8 +22,6 @@ sub init {
 	my $client = shift;
 
 	$client->SUPER::init(@_);
-
-	preferences('server')->client($client)->set('autobrightness', 0);
 }
 
 sub reconnect {
