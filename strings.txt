@@ -14510,10 +14510,10 @@ SETUP_ANALOGOUTMODE_DESC
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers.
 
 ANALOGOUTMODE_SUBOUT
-	EN	Subwoofer Output, Speakers Enabled
+	EN	Subwoofer
 
 ANALOGOUTMODE_HEADPHONE
-	EN	Headphone Output, Speakers Disabled
+	EN	Headphones
 
 SETUP_POLARITYINVERSION
 	DA	Inverter polaritet
