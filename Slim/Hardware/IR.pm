@@ -773,7 +773,8 @@ sub processFrontPanel {
 			Time::HiRes::time() + $IRHOLDTIME,
 			\&fireHold,
 			"$code.hold",
-			$client->lastirtime
+			$client->lastirtime,
+			$client->lastircodebytes
 		);
 
 	} else {
@@ -813,16 +814,15 @@ sub fireHold {
 	my $client = shift;
 	my $irCode = shift;
 	my $irTime = shift;
+	my $startIRCodeBytes = shift;
 
-	my $last = lookupCodeBytes($client, $client->lastircodebytes);
-
-	# block the .hold event if we know that the button has been released already.
-	if ($last =~ /\.up$/) {
+	# block the .hold event if the last ir code was not the one which started the timer
+	if ($startIRCodeBytes ne $client->lastircodebytes) {
 		return;
 	}
 
 	if ( $log->is_info ) {
-		$log->info("Hold Time Expired - irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [$last]");
+		$log->info("Hold Time Expired - irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "]");
 	}
 
 	# must set lastirbutton so that button functions like 'passback' will work.
