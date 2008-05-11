@@ -3139,52 +3139,13 @@ SETUP_PLAYERNAME_CHOOSE
 	ZH_CN	播放机名字：
 
 SETUP_POWERONBRIGHTNESS
-	CS	Jas pro 'zapnuto'
-	DA	Lysstyrke når tændt
-	DE	Helligkeit im eingeschalteten Zustand
-	EN	Brightness when on
-	ES	Brillo cuando está encendido
-	FI	Näytön kirkkaus soittimen ollessa päällä
-	FR	Luminosité (allumé)
-	HE	בהירות במצב מופעל
-	IT	Luminosità quando acceso
-	JA	パワーオン時の明るさ
-	NL	Helderheid wanneer aan
-	NO	Lysstyrke når på
-	PT	Brilho quando Ligado
-	SV	Ljusstyrka i påslaget läge
-	ZH_CN	开机时的光亮度
+	EN	Power On Brightness
 
 SETUP_POWEROFFBRIGHTNESS
-	CS	Jas pro 'vypnuto'
-	DA	Lysstyrke når slukket
-	DE	Helligkeit im ausgeschalteten Zustand
-	EN	Brightness when off
-	ES	Brillo cuando está apagado
-	FI	Näytön kirkkaus soittimen ollessa pois päältä
-	FR	Luminosité (éteint)
-	HE	בהירות במצב כבוי
-	IT	Luminosità quando spento
-	JA	パワーオフ時の明るさ
-	NL	Helderheid wanneer uit
-	NO	Lysstyrke når av
-	PT	Brilho quando Desligado
-	SV	Ljusstyrka i avslaget läge
-	ZH_CN	关机时的光亮度
+	EN	Power Off Brightness
 
 SETUP_IDLEBRIGHTNESS
-	CS	Jas pro stav 'nečinný'
-	DE	Helligkeit im Standbymodus
-	EN	Brightness when idle
-	ES	Brillo en inactividad
-	FR	Luminosité (inactif)
-	HE	בהירות במצב מוכן
-	IT	Luminosità quando inattivo
-	JA	アイドル時の明るさ
-	NL	Helderheid in ruststand
-	NO	Lysstyrke i hvilemodus
-	SV	Ljusstyrka i viloläge
-	ZH_CN	空闲时的光亮度
+	EN	Idle Brightness
 
 SETUP_AUTOBRIGHTNESS
 	CS	Automaticjý jas displeje:
@@ -14543,10 +14504,10 @@ DISABLEDAC_WHENOFF
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
-	EN	Analog Out Mode
+	EN	Headphone/Sub Out
 
 SETUP_ANALOGOUTMODE_DESC
-	EN	Choose the function of Boom analog line out port.  Headphone option will shut off internal speakers.
+	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers.
 
 ANALOGOUTMODE_SUBOUT
 	EN	Subwoofer Output, Speakers Enabled
