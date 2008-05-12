@@ -89,7 +89,7 @@ sub initCLI {
 		
 	$cli_next{ $class }->{ $args{menu} } = Slim::Control::Request::addDispatch(
 		[ $args{menu}, '_index', '_quantity' ],
-		[ 1, 1, 1, $class->cliRadiosQuery( \%args, $args{menu} ) ]
+		[ 0, 1, 1, $class->cliRadiosQuery( \%args, $args{menu} ) ]
 	);
 }
 
@@ -128,7 +128,6 @@ sub cliRadiosQuery {
 
 	return sub {
 		my $request = shift;
-		my $client  = $request->client;
 
 		my $menu = $request->getParam('menu');
 
@@ -138,7 +137,7 @@ sub cliRadiosQuery {
 		# what we want the query to report about ourself
 		if (defined $menu) {
 			$data = {
-				text         => $client->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
+				text         => $request->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
 				weight       => $weight,
 				'icon-id'    => $icon,
 				actions      => {
@@ -157,7 +156,7 @@ sub cliRadiosQuery {
 		else {
 			$data = {
 				cmd  => $tag,
-				name => $client->string( $class->getDisplayName() ),
+				name => $request->string( $class->getDisplayName() ),
 				type => 'xmlbrowser',
 			};
 		}
