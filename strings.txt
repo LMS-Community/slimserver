@@ -9674,6 +9674,18 @@ ARTISTS
 	SV	Artister
 	ZH_CN	艺人名
 
+ARTIST_SEARCH
+	EN	Artist Search
+
+ALBUM_SEARCH
+	EN	Album Search
+
+TRACK_SEARCH
+	EN	Track Search
+
+PLAYLIST_SEARCH
+	EN	Playlist Search
+
 LCARTISTS
 	CS	interpretů
 	DA	kunstnere
@@ -15628,4 +15640,3 @@ SEEK_ERROR_MP3_UNKNOWN_DURATION
 	EN	Cannot seek with unknown duration
 
 SEEK_ERROR_TYPE_NOT_SUPPORTED
-	EN	Unable to scan: Playlist nested too deep
