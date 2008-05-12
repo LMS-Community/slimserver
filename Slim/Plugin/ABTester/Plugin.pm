@@ -311,14 +311,14 @@ sub loadDefaultDACImage {
 }
 
 sub setMode {
-        my $class  = shift;
-        my $client = shift;
-        my $method = shift;
-        
-        if ($method eq 'pop') {
-                Slim::Buttons::Common::popMode($client);
-                return;
-        }
+	my $class  = shift;
+	my $client = shift;
+	my $method = shift;
+	
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
 
 	# Read the configuration files
 	_extractConfigurationFiles();
@@ -333,21 +333,21 @@ sub setMode {
 		push @listRef,'PLUGIN_ABTESTER_DEFAULT_IMAGES';
 	}
 
-        # use INPUT.Choice to display the list of feeds
-        my %params = (
-                header     => '{PLUGIN_ABTESTER} {count}',
-                listRef    => \@listRef,
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
+		header     => '{PLUGIN_ABTESTER} {count}',
+		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
 		},
-                name       => \&getDisplayText,
-                modeName   => 'ABTester',
+		name       => \&getDisplayText,
+		modeName   => 'ABTester',
 		onPlay     => sub {
 			my ($client, $item) = @_;
 			$client->execute(["pause","0"]);
 		},
 		onRight    => sub {
-                        my ($client, $item) = @_;
+			my ($client, $item) = @_;
 
 			if($item eq 'PLUGIN_ABTESTER_DEFAULT_IMAGES') {
 				setModeDefaultImages($client);
@@ -366,8 +366,8 @@ sub setMode {
 				}
 				disableScreenSaver($client);
 			}
-                },
-        );
+		},
+	);
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
@@ -407,24 +407,24 @@ sub setModeDefaultImages {
 		}
 	}
 	
-        # use INPUT.Choice to display the list of feeds
-        my %params = (
-                header     => '{PLUGIN_ABTESTER} {count}',
-                listRef    => \@listRef,
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
+		header     => '{PLUGIN_ABTESTER} {count}',
+		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
 		},
-                name       => sub {
+		name       => sub {
 			my ($client, $item) = @_;
 			return  $item->{'name'};
 		},
-                modeName   => 'ABTester.StandardImages',
+		modeName   => 'ABTester.StandardImages',
 		onPlay     => sub {
 			my ($client, $item) = @_;
 			$client->execute(["pause","0"]);
 		},
 		onRight    => sub {
-                        my ($client, $item) = @_;
+			my ($client, $item) = @_;
 
 			loadImage($client,$item->{'value'});
 			if(!defined($item->{'value'})) {
@@ -433,8 +433,8 @@ sub setModeDefaultImages {
 					'overlay' => [ undef, undef ],
 				});
 			}
-                },
-        );
+		},
+	);
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
@@ -529,8 +529,8 @@ sub setModeABXTest {
 	push @listRef,\%dataCheck;
 
 	my %currentData = ();
-        # use INPUT.Choice to display the list of feeds
-        my %params = (
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
 		header     => 
 			sub {
 				my $client = shift;
@@ -540,7 +540,7 @@ sub setModeABXTest {
 		testcase   => $testcase,
 		currentData => \%currentData,
 		initialValue => $initialValue,
-                listRef    => \@listRef,
+		listRef    => \@listRef,
 		overlayRef => sub {
 			my ($client, $item) = @_;
 			if($item->{'value'} eq 'instruction') {
@@ -549,13 +549,13 @@ sub setModeABXTest {
 				return [undef, $client->symbols('rightarrow')];
 			}
 		},
-                modeName   => 'ABTester.ABX',
+		modeName   => 'ABTester.ABX',
 		onPlay     => sub {
 			my ($client, $item) = @_;
 			$client->execute(["pause","0"]);
 		},
 		onRight    => sub {
-                        my ($client, $item) = @_;
+			my ($client, $item) = @_;
 
 			if($item->{'value'} =~ /^publish(.*)$/) {
 				my $selected = $1;
@@ -618,8 +618,8 @@ sub setModeABXTest {
 					});
 				}
 			}
-                },
-        );
+		},
+	);
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
@@ -707,15 +707,15 @@ sub setModeABCDTest {
 	my %currentData = (
 		'result' => \%empty,
 	);
-        # use INPUT.Choice to display the list of feeds
-        my %params = (
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
 		header     => 
 			sub {
 				my $client = shift;
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
-                listRef    => \@listRef,
+		listRef    => \@listRef,
 		overlayRef => sub {
 			my ($client, $item) = @_;
 			if($item->{'value'} eq 'instruction') {
@@ -724,7 +724,7 @@ sub setModeABCDTest {
 				return [undef, $client->symbols('rightarrow')];
 			}
 		},
-                modeName   => 'ABTester.ABCD',
+		modeName   => 'ABTester.ABCD',
 		testcase   => $testcase,
 		currentData => \%currentData,
 		initialValue => $initialValue,
@@ -733,7 +733,7 @@ sub setModeABCDTest {
 			$client->execute(["pause","0"]);
 		},
 		onRight    => sub {
-                        my ($client, $item) = @_;
+			my ($client, $item) = @_;
 
 			if($item->{'value'} =~ /^publish$/) {
 				my $result = $client->modeParam('currentData')->{'result'};
@@ -807,8 +807,8 @@ sub setModeABCDTest {
 					});
 				}
 			}
-                },
-        );
+		},
+	);
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
@@ -829,19 +829,19 @@ sub setModeQuestions {
 		push @listRef,\%dataQuestion;
 	}
 
-        # use INPUT.Choice to display the list of feeds
-        my %params = (
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
 		header     => 
 			sub {
 				my $client = shift;
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
-                listRef    => \@listRef,
+		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
 		},
-                modeName   => 'ABTester.Questions.ABCD',
+		modeName   => 'ABTester.Questions.ABCD',
 		testcase   => $testcase,
 		currentData => $currentData,
 		initialValue => $initialValue,
@@ -850,11 +850,11 @@ sub setModeQuestions {
 			$client->execute(["pause","0"]);
 		},
 		onRight    => sub {
-                        my ($client, $item) = @_;
+			my ($client, $item) = @_;
 
 			setModeRequestQuestionAnswer($client,$testcase,$item->{'value'},$client->modeParam('currentData'));
-                },
-        );
+		},
+	);
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
@@ -877,20 +877,20 @@ sub setModeRequestQuestionAnswer {
 		push @listRef,\%ratingItem;
 	}
 
-        # use INPUT.Choice to display the list of feeds
-        my %params = (
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
 		header     => 
 			sub {
 				my $client = shift;
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
-                listRef    => \@listRef,
+		listRef    => \@listRef,
 		initialValue => $currentRating,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
 		},
-                modeName   => 'ABTester.QuestionAnswer.ABCD',
+		modeName   => 'ABTester.QuestionAnswer.ABCD',
 		testcase   => $testcase,
 		currentData => $currentData,
 		question => $question,
@@ -899,7 +899,7 @@ sub setModeRequestQuestionAnswer {
 			$client->execute(["pause","0"]);
 		},
 		onRight    => sub {
-                        my ($client, $item) = @_;
+			my ($client, $item) = @_;
 
 			my $currentData = $client->modeParam('currentData');
 			$currentData->{'result'}->{$currentData->{'image'}}->{$question} = $item->{'value'};
@@ -911,8 +911,8 @@ sub setModeRequestQuestionAnswer {
 				}
 			}
 			$client->update();
-                },
-        );
+		},
+	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
@@ -1038,10 +1038,10 @@ sub loadImage {
 	
 	if(defined($image)) {
 		$log->warn("Loading ".$image);
-		return upgradeDAC($client,$image);
+		return $client->upgradeDAC($client,$image);
 	}else {
 		$log->warn("Loading default image");
-		sendBDACFrame($client,"DACDEFAULT");
+		$client->sendBDACFrame($client,"DACDEFAULT");
 		return 1;
 	}
 }
@@ -1126,130 +1126,6 @@ sub disableScreenSaver {
 	}
 }
 
-# *** START: THIS PART SHOULD BE MOVED TO Slim::Player::Boom or something similar ***
-
-sub sendBDACFrame {
-	my ($client, $type, $data) = @_;
-	use bytes;
-
-	if($type eq 'DACRESET') {
-		$logFirmware->info("Sending BDAC DAC RESET");
-		my $buf = pack('C',0);
-	        $client->sendFrame('bdac', \$buf);
-	}elsif($type eq 'DACI2CDATA') {
-		my $length = length($data)/9;
-		$logFirmware->debug("Sending BDAC DAC I2C DATA $length chunks");
-		#$log->debug("Sending $length chunks of 9 bytes");
-		my $buf = pack('C',1).pack('C',$length).$data;
-		$client->sendFrame('bdac', \$buf);
-	}elsif($type eq 'DACI2CDATAEND') {
-		$logFirmware->info("Sending BDAC DAC I2C DATA COMPLETE");
-		my $buf = pack('C',2);
-        	$client->sendFrame('bdac', \$buf);
-	}elsif($type eq 'DACDEFAULT') {
-		$logFirmware->info("Sending BDAC DAC DEFAULT");
-		my $buf = pack('C',3);
-	        $client->sendFrame('bdac', \$buf);
-	}
-}
-
-sub upgradeDAC {
-        my ($client, $filename) = @_;
-
-        use bytes;
-
-        $log->info("Updating DAC with file: $filename");
-
-        my $frame;
-
-        # disable visualizer is this mode
-        $client->modeParam('visu', [0]);
-
-        # force brightness to dim if off
-        if ($client->display->currBrightness() == 0) { $client->display->brightness(1); }
-
-        open FS, $filename || return("Open failed for: $filename\n");
-
-        binmode FS;
-        
-        my $size = -s $filename;
-        
-        # place in block mode so that brightness key is now ignored
-        $client->block( {
-                'line'  => [ $client->string('PLUGIN_ABTESTER_UPDATING_DAC') ],
-                'fonts' => { 
-                        'graphic-320x32' => 'light',
-                        'graphic-160x32' => 'light_n',
-                        'graphic-280x16' => 'small',
-                        'text'           => 2,
-                },
-        }, 'upgrade', 1 );
-        
-        my $bytesread      = 0;
-        my $totalbytesread = 0;
-        my $lastFraction   = -1;
-        my $byteswritten;
-        my $bytesleft;
-
-	sendBDACFrame($client,'DACRESET');
-
-        $logFirmware->info("Updating DAC: Sending $size bytes");
-
-	eval {
-	        while ($bytesread = read(FS, my $buf, 36)) {
-
-	                assert(length($buf) == $bytesread);
-
-			sendBDACFrame($client,'DACI2CDATA',$buf);
-
-	                $totalbytesread += $bytesread;
-
-	                $logFirmware->debug("Updating DAC: $totalbytesread / $size bytes");
-	
-	                my $fraction = $totalbytesread / $size;
-
-	                if (($fraction - $lastFraction) > (1/40)) {
-	
-	                        $client->showBriefly( {
-	
-	                                'line'  => [ $client->string('PLUGIN_ABTESTER_UPDATING_DAC'),
-	                                         $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
-	
-	                                'fonts' => { 
-	                                        'graphic-320x32' => 'light',
-	                                        'graphic-160x32' => 'light_n',
-	                                        'graphic-280x16' => 'small',
-	                                        'text'           => 2,
-	                                },
-	                                'jive'  => undef,
-	                                'cli'   => undef,
-	                        } );
-	
-	                        $lastFraction = $fraction;
-	                }
-	        }
-	};
-	if ($@) {
-		$logFirmware->error("Updating DAC: Failure: $@");
-		sendBDACFrame($client,'DACDEFAULT');
-	        $client->unblock();
-		$logFirmware->info("Updating DAC: Restore default image");
-		$client->showBriefly({
-			'line'    => [ undef, $client->string("PLUGIN_ABTESTER_UPDATE_FAILURE_RESTORE")],
-			'overlay' => [ undef, undef ],
-		});
-		return 0;
-	}else {
-		sendBDACFrame($client,'DACI2CDATAEND');
-	        $client->unblock();
-
-	        $logFirmware->info("Updating DAC: successfully completed");
-		return 1;
-	}
-}
-
-# *** END: THIS PART SHOULD BE MOVED TO Slim::Player::Boom or something similar ***
-
 sub publishResult {
 	my ($client, $testcase, $result) = @_;
 
@@ -1293,8 +1169,8 @@ sub _extractConfigurationFiles {
 			if(-d $extractDir) {
 				$log->debug("Deleting dir: ".$extractDir."\n");
 				rmtree($extractDir) or do {
-	                                $log->error("Unable to delete directory: $extractDir");
-	                        };
+					$log->error("Unable to delete directory: $extractDir");
+				};
 			}
 			mkdir($extractDir);
 			$log->debug("Extracting $item to $extractDir");
@@ -1349,7 +1225,7 @@ sub _readTestFiles {
 	}
 	my $content = eval { read_file($specFile) };
 	if ( $content ) {
-               	$log->debug("Parsing file: $specFile\n");
+	       	$log->debug("Parsing file: $specFile\n");
 		my $xml = eval { XMLin($content,forcearray => ["question","image","script","init"]) };
 		if ($@) {
 			$log->error("Failed to parse configuration ($imageDir) because:\n$@\n");
@@ -1423,39 +1299,39 @@ sub _readTestFiles {
 }
 
 sub _isPluginsInstalled {
-        my $client = shift;
-        my $pluginList = shift;
-        my $enabledPlugin = 1;
-        foreach my $plugin (split /,/, $pluginList) {
-                if($enabledPlugin) {
-                        $enabledPlugin = grep(/$plugin/, Slim::Utils::PluginManager->enabledPlugins($client));
-                }
-        }
-        return $enabledPlugin;
+	my $client = shift;
+	my $pluginList = shift;
+	my $enabledPlugin = 1;
+	foreach my $plugin (split /,/, $pluginList) {
+		if($enabledPlugin) {
+			$enabledPlugin = grep(/$plugin/, Slim::Utils::PluginManager->enabledPlugins($client));
+		}
+	}
+	return $enabledPlugin;
 }
 
 sub _isOperatingSystem {
-        my $client = shift;
-        my $osList = shift;
-        foreach my $os (split /,/, $osList) {
+	my $client = shift;
+	my $osList = shift;
+	foreach my $os (split /,/, $osList) {
 		if($os eq Slim::Utils::OSDetect::OS()) {
 			return 1;
-                }
-        }
+		}
+	}
 	$log->debug("Not allowed, os is: ".Slim::Utils::OSDetect::OS());
-        return 0;
+	return 0;
 }
 
 sub _isPlayerModels {
-        my $client = shift;
-        my $modelList = shift;
-        foreach my $model (split /,/, $modelList) {
+	my $client = shift;
+	my $modelList = shift;
+	foreach my $model (split /,/, $modelList) {
 		if($model eq $client->model) {
 			return 1;
-                }
-        }
+		}
+	}
 	$log->debug("Not allowed, model is: ".$client->model);
-        return 0;
+	return 0;
 }
 
 1;
