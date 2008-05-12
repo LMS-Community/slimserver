@@ -1,0 +1,18 @@
+<test type="abcd">
+	<requiredplugins>BoomDac</requiredplugins>
+	<requiredmodels>boom</requiredmodels>
+	<minfirmware>7</minfirmware>
+	<requiredos>unix,mac</requiredos>
+
+	<init id="1" type="cli">mixer volume 5</init>
+	
+	<script id="A">cd $TESTDIR;perl set_woofer_bq.pl $PLAYERNAME 0</script>
+	<script id="B">cd $TESTDIR;perl set_woofer_bq.pl $PLAYERNAME 20</script>
+	<script id="C">cd $TESTDIR;perl set_woofer_bq.pl $PLAYERNAME 50</script>
+	<script id="D">cd $TESTDIR;perl set_woofer_bq.pl $PLAYERNAME 200</script>
+	
+	<instructions>Listen to the bass (Keep the volume low when changing test data)</instructions>
+
+	<question id="1">Overall sound quality ?</question>
+</test>
+

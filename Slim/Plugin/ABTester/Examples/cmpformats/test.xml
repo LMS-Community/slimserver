@@ -1,0 +1,7 @@
+<test type="abx">
+	<audio id="A">trackA.mp3</audio>
+	<audio id="B">trackB.mp3</audio>
+	
+	<instructions>Compares audio files</instructions>
+</test>
+

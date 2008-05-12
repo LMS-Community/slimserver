@@ -1,0 +1,1 @@
+Example test where the set_stereoxl scripts are exectued as system commands instead of per modules. Due to command separator ; and the requirement to be able to run per, this example is limited to Linux and Mac users.
