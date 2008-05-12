@@ -9749,6 +9749,18 @@ ARTISTS
 	SV	Artister
 	ZH_CN	艺人名
 
+ARTIST_SEARCH
+	EN	Artist Search
+
+ALBUM_SEARCH
+	EN	Album Search
+
+TRACK_SEARCH
+	EN	Track Search
+
+PLAYLIST_SEARCH
+	EN	Playlist Search
+
 LCARTISTS
 	CS	interpretů
 	DA	kunstnere

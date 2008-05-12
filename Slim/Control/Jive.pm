@@ -1577,6 +1577,7 @@ sub searchMenu {
 	my @searchMenu = (
 	{
 		text           => $client->string('ARTISTS'),
+		homeMenuText   => $client->string('ARTIST_SEARCH'),
 		id             => 'myMusicSearchArtists',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1608,6 +1609,7 @@ sub searchMenu {
 	},
 	{
 		text           => $client->string('ALBUMS'),
+		homeMenuText   => $client->string('ALBUM_SEARCH'),
 		id             => 'myMusicSearchAlbums',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1639,6 +1641,7 @@ sub searchMenu {
 	},
 	{
 		text           => $client->string('SONGS'),
+		homeMenuText   => $client->string('TRACK_SEARCH'),
 		id             => 'myMusicSearchSongs',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
@@ -1672,6 +1675,7 @@ sub searchMenu {
 	},
 	{
 		text           => $client->string('PLAYLISTS'),
+		homeMenuText   => $client->string('PLAYLIST_SEARCH'),
 		id             => 'myMusicSearchPlaylists',
 		node           => 'myMusicSearch',
 		displayWhenOff => 0,
