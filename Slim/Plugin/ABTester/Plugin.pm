@@ -1041,7 +1041,7 @@ sub loadImage {
 		return upgradeDAC($client,$image);
 	}else {
 		$log->warn("Loading default image");
-		$sendBDACFrame($client,"DACDEFAULT");
+		sendBDACFrame($client,"DACDEFAULT");
 		return 1;
 	}
 }
