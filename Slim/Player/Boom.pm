@@ -16,6 +16,7 @@ use base qw(Slim::Player::Squeezebox2);
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
+use Slim::Utils::Log;
 
 my $prefs = preferences('server');
 
@@ -155,6 +156,148 @@ sub setAnalogOutMode {
 	my $data = pack('C', $prefs->client($client)->get('analogOutMode'));	# 0 = headphone (i.e. internal speakers off), 1 = sub out
 	$client->sendFrame('audo', \$data);
 }
+
+sub sendBDACFrame {
+	my ($client, $type, $data) = @_;
+
+	use bytes;
+
+	my $log = logger('player.firmware');
+
+	if($type eq 'DACRESET') {
+
+		$log->info("Sending BDAC DAC RESET");
+
+		my $buf = pack('C',0);
+
+		$client->sendFrame('bdac', \$buf);
+
+	}elsif($type eq 'DACI2CDATA') {
+		my $length = length($data)/9;
+
+		$log->debug("Sending BDAC DAC I2C DATA $length chunks");
+		#$log->debug("Sending $length chunks of 9 bytes");
+
+		my $buf = pack('C',1).pack('C',$length).$data;
+		$client->sendFrame('bdac', \$buf);
+
+	}elsif($type eq 'DACI2CDATAEND') {
+
+		$log->info("Sending BDAC DAC I2C DATA COMPLETE");
+
+		my $buf = pack('C',2);
+
+		$client->sendFrame('bdac', \$buf);
+
+	}elsif($type eq 'DACDEFAULT') {
+
+		$log->info("Sending BDAC DAC DEFAULT");
+
+		my $buf = pack('C',3);
+
+		$client->sendFrame('bdac', \$buf);
+	}
+}
+
+sub upgradeDAC {
+	my ($client, $filename) = @_;
+
+	use bytes;
+
+	my $log = logger('player.firmware');
+
+	my $frame;
+
+	# disable visualizer is this mode
+	$client->modeParam('visu', [0]);
+
+	# force brightness to dim if off
+	if ($client->display->currBrightness() == 0) { $client->display->brightness(1); }
+
+	open FS, $filename || return("Open failed for: $filename\n");
+
+	binmode FS;
+	
+	my $size = -s $filename;
+	
+	# place in block mode so that brightness key is now ignored
+	$client->block( {
+		'line'  => [ $client->string('PLUGIN_ABTESTER_UPDATING_DAC') ],
+		'fonts' => { 
+			'graphic-320x32' => 'light',
+			'graphic-160x32' => 'light_n',
+			'graphic-280x16' => 'small',
+			'text'           => 2,
+		},
+	}, 'upgrade', 1 );
+	
+	my $bytesread      = 0;
+	my $totalbytesread = 0;
+	my $lastFraction   = -1;
+	my $byteswritten;
+	my $bytesleft;
+
+	sendBDACFrame($client,'DACRESET');
+
+	$log->info("Updating DAC: Sending $size bytes");
+
+	eval {
+		while ($bytesread = read(FS, my $buf, 36)) {
+
+			assert(length($buf) == $bytesread);
+
+			sendBDACFrame($client,'DACI2CDATA',$buf);
+
+			$totalbytesread += $bytesread;
+
+			$log->debug("Updating DAC: $totalbytesread / $size bytes");
+	
+			my $fraction = $totalbytesread / $size;
+
+			if (($fraction - $lastFraction) > (1/40)) {
+	
+				$client->showBriefly( {
+	
+					'line'  => [ $client->string('PLUGIN_ABTESTER_UPDATING_DAC'),
+					         $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
+	
+					'fonts' => { 
+						'graphic-320x32' => 'light',
+						'graphic-160x32' => 'light_n',
+						'graphic-280x16' => 'small',
+						'text'           => 2,
+					},
+					'jive'  => undef,
+					'cli'   => undef,
+				} );
+	
+				$lastFraction = $fraction;
+			}
+		}
+	};
+	if ($@) {
+		$log->error("Updating DAC: Failure: $@");
+		sendBDACFrame($client,'DACDEFAULT');
+		$client->unblock();
+
+		$log->info("Updating DAC: Restore default image");
+
+		$client->showBriefly({
+			'line'    => [ undef, $client->string("PLUGIN_ABTESTER_UPDATE_FAILURE_RESTORE")],
+			'overlay' => [ undef, undef ],
+		});
+
+		return 0;
+	}else {
+
+		sendBDACFrame($client,'DACI2CDATAEND');
+		$client->unblock();
+
+		$log->info("Updating DAC: successfully completed");
+		return 1;
+	}
+}
+
 
 1;
 
