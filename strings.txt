@@ -15640,3 +15640,13 @@ SEEK_ERROR_MP3_UNKNOWN_DURATION
 	EN	Cannot seek with unknown duration
 
 SEEK_ERROR_TYPE_NOT_SUPPORTED
+	EN	Cannot seek in streams of type %s
+
+SCANNER_REMOTE_NO_URL_PROVIDED
+	EN	Unable to scan: No URL found
+
+SCANNER_REMOTE_INVALID_URL
+	EN	Unable to scan: Invalid URL
+
+SCANNER_REMOTE_NESTED_TOO_DEEP
+	EN	Unable to scan: Playlist nested too deep
