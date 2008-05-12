@@ -40,7 +40,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['shoutcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
-		[1, 1, 1, \&cliRadiosQuery]);
+		[0, 1, 1, \&cliRadiosQuery]);
 
 	$class->SUPER::initPlugin();
 }
@@ -82,7 +82,6 @@ sub cliQuery {
 
 sub cliRadiosQuery {
 	my $request = shift;
-	my $client  = $request->client;
 	
 	my $menu = $request->getParam('menu');
 
@@ -90,7 +89,7 @@ sub cliRadiosQuery {
 	# what we want the query to report about ourself
 	if (defined $menu) {
 		$data = {
-			'text' => $client->string( getDisplayName() ),  # nice name
+			'text' => $request->string( getDisplayName() ),  # nice name
 			'icon-id' => Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon'),
 			'weight'  => 50,
 			'actions' => {
@@ -109,7 +108,7 @@ sub cliRadiosQuery {
 	else {
 		$data = {
 			'cmd' => 'shoutcast',                    # cmd label
-			'name' => $client->string( getDisplayName() ),  # nice name
+			'name' => $request->string( getDisplayName() ),  # nice name
 			'type' => 'xmlbrowser',              # type
 		};
 	}

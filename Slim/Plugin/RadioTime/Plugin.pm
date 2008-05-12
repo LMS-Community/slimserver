@@ -52,7 +52,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['radiotime', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
-		[1, 1, 1, \&cliRadiosQuery]);
+		[0, 1, 1, \&cliRadiosQuery]);
 	Slim::Web::HTTP::protectCommand([qw|radiotime radios|]);
 }
 
@@ -141,7 +141,6 @@ sub cliQuery {
 
 sub cliRadiosQuery {
 	my $request = shift;
-	my $client  = $request->client;
 	
 	my $menu = $request->getParam('menu');
 
@@ -149,7 +148,7 @@ sub cliRadiosQuery {
 	# what we want the query to report about ourself
 	if (defined $menu) {
 		$data = {
-			'text'    => $client->string( getDisplayName() ),  # nice name
+			'text'    => $request->string( getDisplayName() ),  # nice name
 			weight    => 30,
 			'icon-id' => Slim::Plugin::RadioTime::Plugin->_pluginDataFor('icon'),
 			'actions' => {
@@ -168,7 +167,7 @@ sub cliRadiosQuery {
 	else {
 		$data = {
 			'cmd'  => 'radiotime',
-			'name' => $client->string( getDisplayName() ),
+			'name' => $request->string( getDisplayName() ),
 			'type' => 'xmlbrowser',
 		};
 	}
