@@ -216,12 +216,12 @@ sub infoDisplay {
 	my $listIndex     = $client->modeParam('listIndex');
 	my $formatRef     = $client->modeParam('formatRef');
 	my $valueFunctRef = $client->modeParam('valueFunctRef');
-
+	
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
-		return $client->string('INFORMATION_' . uc($value) . ($client->model() eq 'boom' ? '_ABBR' : '')) . $client->string('COLON')
+		return $client->string('INFORMATION_' . uc($value)) . $client->string('COLON')
 		. ' ' . $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client));
 	} else {
-		return $client->string('INFORMATION_' . uc($value) . ($client->model() eq 'boom' ? '_ABBR' : '')) . $client->string('COLON')
+		return $client->string('INFORMATION_' . uc($value)) . $client->string('COLON')
 		. ' ' . $valueFunctRef->[$listIndex]->($client);
 	}
 }

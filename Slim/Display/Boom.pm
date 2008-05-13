@@ -154,6 +154,18 @@ sub vfdmodel {
 	return 'graphic-160x32';
 }
 
+sub string {
+	my $display = shift;
+	
+	my $name = uc(shift);
+	
+	if (Slim::Utils::Strings::stringExists($name."_ABBR")) {
+		return $display->SUPER::string($name."_ABBR");
+	} else {
+		return $display->SUPER::string($name);
+	}
+}
+
 sub brightnessMap {
 	return (0, 1, 2, 3, 4, 5, 0x0201);	# Formula: brightness = lightsensor value / upper byte + lower byte
 }
