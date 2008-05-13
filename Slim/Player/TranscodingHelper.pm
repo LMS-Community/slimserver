@@ -355,7 +355,10 @@ sub tokenizeConvertCommand {
 			$filepath = Win32::GetShortPathName($filepath);
 		}
 		else {
-			$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
+			# Bug 8118, only decode if filename can't be found
+			if ( !-e $filepath ) {
+				$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
+			}
 		}
 	}
 
