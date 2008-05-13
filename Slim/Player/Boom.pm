@@ -16,6 +16,7 @@ use base qw(Slim::Player::Squeezebox2);
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
+use Slim::Utils::Misc;
 use Slim::Utils::Log;
 
 my $prefs = preferences('server');
@@ -237,7 +238,7 @@ sub upgradeDAC {
 	my $byteswritten;
 	my $bytesleft;
 
-	sendBDACFrame($client,'DACRESET');
+	$client->sendBDACFrame('DACRESET');
 
 	$log->info("Updating DAC: Sending $size bytes");
 
@@ -246,7 +247,7 @@ sub upgradeDAC {
 
 			assert(length($buf) == $bytesread);
 
-			sendBDACFrame($client,'DACI2CDATA',$buf);
+			$client->sendBDACFrame('DACI2CDATA',$buf);
 
 			$totalbytesread += $bytesread;
 
@@ -277,7 +278,7 @@ sub upgradeDAC {
 	};
 	if ($@) {
 		$log->error("Updating DAC: Failure: $@");
-		sendBDACFrame($client,'DACDEFAULT');
+		$client->sendBDACFrame('DACDEFAULT');
 		$client->unblock();
 
 		$log->info("Updating DAC: Restore default image");
@@ -290,7 +291,7 @@ sub upgradeDAC {
 		return 0;
 	}else {
 
-		sendBDACFrame($client,'DACI2CDATAEND');
+		$client->sendBDACFrame('DACI2CDATAEND');
 		$client->unblock();
 
 		$log->info("Updating DAC: successfully completed");
