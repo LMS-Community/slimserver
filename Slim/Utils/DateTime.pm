@@ -253,10 +253,23 @@ Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is a
 sub timeDigitsToTime {
 	my ($h0, $h1, $m0, $m1, $p) = @_;
 
-	$p ||= 0;
-	
+	my $h = $h0 * 10 + $h1;
+	if (defined $p) {
+		# 12h - treat 12am as midnight and 12pm as noon
+		if ($h == 12) {
+			if ($p) {
+				$h = 12;
+				$p = 0;
+			} else {
+				$h = 0;
+			}
+		}
+	} else {
+		$p = 0;
+	}
+
 	my $time = (((($p * 12)            # pm adds 12 hours
-		 + ($h0 * 10) + $h1) * 60) # convert hours to minutes
+		 + $h) * 60)               # convert hours to minutes
 		 + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
 
 	return $time;
