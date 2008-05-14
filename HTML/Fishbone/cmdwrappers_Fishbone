@@ -78,30 +78,37 @@
 
 [%# taken from EN/cmdwrappers as an override %]
 [% BLOCK contentitem -%]
-<div class="[% odd ? "odd" : "even" %]" onmouseover="this.className='[% odd ? "odd" : "even" %]active';" onmouseout="this.className='[% odd ? "odd" : "even" %]';">
+<div class="[% odd ? "odd" : "even" %]" 
+	onmouseover="this.className='[% odd ? "odd" : "even" %]active';showElements(['browsedbControls[% itemid %]'], 'inline');" 
+	onmouseout="this.className='[% odd ? "odd" : "even" %]';hideElements(['browsedbControls[% itemid %]']);">
 	[%- IF anchor %]
 		<a name="[% anchor | uri %]"></a>
 	[%- END -%]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
 		[%- IF leftcontrols -%]
-			<span class="browsedbLeftControls">
+			<span class="browsedbLeftControls" id="browsedbLeftControls[% itemid %]">
 			[%- PROCESS $leftcontrols -%]
 			</span>
 		[%- END %]
 		[%- content | indent(4) %]
 		[%- IF rightcontrols -%]
-			<span class="browsedbRightControls">
+			<span class="browsedbRightControls" id="browsedbRightControls[% itemid %]">
 			[%- PROCESS $rightcontrols -%]
 			</span>
 		[%- ELSIF controls -%]
-			<span class="browsedbControls">
+			<span class="browsedbControls" id="browsedbControls[% itemid %]" style="display:none;">
 			[%- PROCESS $controls -%]
 			</span>
 		[%- END %]
 	</div>
 </div>
 [%- END %]
+
+[% BLOCK cmdRemoteURLQueryJS -%]
+p0=playlist&p1=[% urlcmdFor.$cmdType %]&p2=[% itemobj.url | uri | uri %][% IF p3 %]&p3=[% p3 %][% END %]
+[%- END %]
+
 
 [%# taken from EN/cmdwrappers as an override %]
 [%# use this to add/play/insert/remove tracks and remote URLs %]
@@ -110,7 +117,9 @@ href="[% webroot %][% statusroot %]?[% END %][%
 	IF numcmdFor.$cmdType; # better way to determine this?
 		PROCESS cmdNumericQuery;
 	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
-		PROCESS cmdRemoteURLQuery;
+		IF useJSControls;
+		PROCESS cmdRemoteURLQueryJS;
+		ELSE; PROCESS cmdRemoteURLQuery; END;
 	ELSE;
 		PROCESS cmdLocalQuery;
 	END; %]&amp;player=[% playerURI %][% IF useJSControls %]',this.name)[% END %]"
