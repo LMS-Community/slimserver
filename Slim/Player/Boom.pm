@@ -51,6 +51,8 @@ sub init {
 	# make sure any preferences unique to this client may not have set are set to the default
 	$prefs->client($client)->init($defaultPrefs);
 
+	Slim::Control::Request::addDispatch(['boomdac', '_command'], [1, 0, 0, \&Slim::Player::Boom::boomI2C]);
+
 	$client->SUPER::init();
 }
 
@@ -299,6 +301,49 @@ sub upgradeDAC {
 	}
 }
 
+# CLI I2C Example:  Set volume
+# main volume control is at i2c address 47 (2f)
+# Set volume to -20 dB.  0dB == 0x080000
+# -20 dB == 0.1 linear.  
+# 0x00800000 * 0.1 = 0x000CCCCC
+#
+# To send this volume command to a player called 'boom' do the following from the CLI:
+#     boom boomdac %2f%00%0c%cc%cc    <- -20 dB
+#     boom boomdac %2f%00%0c%cc%cc    <- back to 0 dB
+sub boomI2C {
+	my $request = shift;
+	
+	my $log = logger('player.firmware');
+	
+	# get the parameters
+	my $client     = $request->client();
+	my $i2cbytes   = $request->getParam('_command');
+	warn 'i2c';
+	if (!defined $i2cbytes ) {
+		$request->setStatusBadParams();
+		return;
+	}
+	warn 'i2c2';
+	my $data  = pack('C', 0x04);
+	
+	$data .= pack('C', length($i2cbytes));
+	$data .= $i2cbytes;
+	
+	my @d = unpack("C*", $data);
+	my $msg = "Sending data to i2c bus :[";
+	
+	foreach my $d (@d) {
+		$msg .= sprintf("0x%02x ", $d);
+	}
+	
+	$msg .= "]";
+	
+	$log->debug($msg);
+	
+	$client->sendFrame('bdac', \$data);
+	
+	$request->setStatusDone();
+}
 
 1;
 
