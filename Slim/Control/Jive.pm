@@ -549,7 +549,7 @@ sub internetRadioMenu {
 		push @menu,
 		{
 			text           => $client->string('RADIO'),
-			id             => 'radio',
+			id             => 'radios',
 			node           => 'home',
 			displayWhenOff => 0,
 			weight         => 20,
@@ -587,7 +587,7 @@ sub musicServicesMenu {
 		push @menu, 
 		{
 			text           => $client->string('MUSIC_SERVICES'),
-			id             => 'ondemand',
+			id             => 'music_services',
 			node           => 'home',
 			weight         => 30,
 			displayWhenOff => 0,
@@ -1434,6 +1434,7 @@ sub myMusicMenu {
 	my @myMusicMenu = (
 			{
 				text           => $client->string('BROWSE_BY_ARTIST'),
+				homeMenuText   => $cleint->string('BROWSE_ARTISTS'),
 				id             => 'myMusicArtists',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1452,6 +1453,7 @@ sub myMusicMenu {
 			},		
 			{
 				text           => $client->string('BROWSE_BY_ALBUM'),
+				homeMenuText   => $cleint->string('BROWSE_ALBUMS'),
 				id             => 'myMusicAlbums',
 				node           => 'myMusic',
 				weight         => 20,
@@ -1472,6 +1474,7 @@ sub myMusicMenu {
 			},
 			{
 				text           => $client->string('BROWSE_BY_GENRE'),
+				homeMenuText   => $cleint->string('BROWSE_GENRES'),
 				id             => 'myMusicGenres',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1490,6 +1493,7 @@ sub myMusicMenu {
 			},
 			{
 				text           => $client->string('BROWSE_BY_YEAR'),
+				homeMenuText   => $cleint->string('BROWSE_YEARS'),
 				id             => 'myMusicYears',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1575,7 +1579,7 @@ sub searchMenu {
 	my $batch = shift;
 	my $client = shift || undef;
 	my @searchMenu = (
-	{
+		{
 		text           => $client->string('ARTISTS'),
 		homeMenuText   => $client->string('ARTIST_SEARCH'),
 		id             => 'myMusicSearchArtists',
