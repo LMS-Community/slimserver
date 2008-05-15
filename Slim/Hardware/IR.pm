@@ -760,6 +760,9 @@ sub processFrontPanel {
 	if ($dir eq 'down') {
 
 		$log->info("IR: Front panel button press: $code");
+		
+		# kill any previous hold timers
+		Slim::Utils::Timers::killTimers($client, \&fireHold);
 
 		my $irCode  = lookupFunction($client,$code);
 
@@ -782,6 +785,9 @@ sub processFrontPanel {
 		my $timediff = $client->irtimediff;
 
 		$log->info("IR: Front panel button release after $timediff: $code");
+
+		# kill any previous hold timers
+		Slim::Utils::Timers::killTimers($client, \&fireHold);
 		
 		my $irCode;
 
