@@ -318,14 +318,15 @@ sub boomI2C {
 	# get the parameters
 	my $client     = $request->client();
 	my $i2cbytes   = $request->getParam('_command');
-	warn 'i2c';
+
 	if (!defined $i2cbytes ) {
+
 		$request->setStatusBadParams();
 		return;
 	}
-	warn 'i2c2';
+
 	my $data  = pack('C', 0x04);
-	
+
 	$data .= pack('C', length($i2cbytes));
 	$data .= $i2cbytes;
 	
