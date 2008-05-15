@@ -10047,6 +10047,15 @@ BROWSE_BY_ARTIST
 	SV	Bläddra artister
 	ZH_CN	浏览艺人
 
+BROWSE_ARTISTS
+	EN	Browse Artists
+BROWSE_ALBUMS
+	EN	Browse Albums
+BROWSE_GENRES
+	EN	Browse Genres
+BROWSE_YEARS
+	EN	Browse Years
+
 BROWSE_BY_ARTIST_DBL
 	DA	Gennemse kunstnere
 	ES	Examinar por Artista
