@@ -58,7 +58,7 @@ sub initJive {
         my @jiveMenu = ({
 		stringToken    => $name,
 		id             => 'pluginShoutcast',
-		node           => 'hidden',
+		node           => 'radios',
 		displayWhenOff => 0,
 		window         => { 
 				'icon-id' => $icon,

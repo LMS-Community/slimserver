@@ -46,7 +46,7 @@ sub initJive {
         my @jiveMenu = ({
 		stringToken    => $name,
 		id             => 'opml' . $args{tag},
-		node           => 'hidden',
+		node           => $args{menu},
 		displayWhenOff => 0,
 		window         => { 
 				'icon-id' => $icon,
