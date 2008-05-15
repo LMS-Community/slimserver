@@ -346,7 +346,7 @@ sub handleDirectError {
 	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
-		  '/api/pandora/v1/opml/playback?audioError?stationId=' . $stationId 
+		  '/api/pandora/v1/opml/playback/audioError?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
 	);
 	
@@ -360,6 +360,10 @@ sub handleDirectError {
 	);
 	
 	$http->get( $snURL );
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		logError( $client, "[$response] $status_line" );
+	}
 	
 	# XXX: Stop after a certain number of errors in a row
 	
