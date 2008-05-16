@@ -1434,7 +1434,7 @@ sub myMusicMenu {
 	my @myMusicMenu = (
 			{
 				text           => $client->string('BROWSE_BY_ARTIST'),
-				homeMenuText   => $cleint->string('BROWSE_ARTISTS'),
+				homeMenuText   => $client->string('BROWSE_ARTISTS'),
 				id             => 'myMusicArtists',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1453,7 +1453,7 @@ sub myMusicMenu {
 			},		
 			{
 				text           => $client->string('BROWSE_BY_ALBUM'),
-				homeMenuText   => $cleint->string('BROWSE_ALBUMS'),
+				homeMenuText   => $client->string('BROWSE_ALBUMS'),
 				id             => 'myMusicAlbums',
 				node           => 'myMusic',
 				weight         => 20,
@@ -1474,7 +1474,7 @@ sub myMusicMenu {
 			},
 			{
 				text           => $client->string('BROWSE_BY_GENRE'),
-				homeMenuText   => $cleint->string('BROWSE_GENRES'),
+				homeMenuText   => $client->string('BROWSE_GENRES'),
 				id             => 'myMusicGenres',
 				node           => 'myMusic',
 				displayWhenOff => 0,
@@ -1493,7 +1493,7 @@ sub myMusicMenu {
 			},
 			{
 				text           => $client->string('BROWSE_BY_YEAR'),
-				homeMenuText   => $cleint->string('BROWSE_YEARS'),
+				homeMenuText   => $client->string('BROWSE_YEARS'),
 				id             => 'myMusicYears',
 				node           => 'myMusic',
 				displayWhenOff => 0,
