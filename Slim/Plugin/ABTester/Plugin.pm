@@ -35,6 +35,7 @@ use Data::Dumper;
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use POSIX qw(floor);
 use Slim::Utils::Log;
+use Slim::Plugin::ABTester::Settings;
 
 our $PLUGINVERSION =  undef;
 
@@ -45,10 +46,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'WARN',
 	'description'  => 'PLUGIN_ABTESTER',
 });
-my $logFirmware = logger('player.firmware');
+my %testcases;
 
-my %images;
-
+# This mapping must be a copy of the INPUT.Choice mapping with the addition of the association of the selectImage function
 my %choiceMapping = (
 	'1' => 'selectImage_1',
 	'2' => 'selectImage_2',
@@ -74,7 +74,6 @@ sub getDisplayName {
 }
 
 sub getFunctions {
-	# Functions to allow mapping of mixes to keypresses
 	return {
 		'loadStandardImage' => sub  {
 			my $client = shift;
@@ -94,105 +93,121 @@ sub getFunctions {
 	}
 }
 
+# Mode function to handle the shortcut buttons when the users uses number buttons during the execution of a test case
 sub selectImage {
 	my $client = shift;
 	my $button = shift;
 	my $number = shift;
 			
 	$log->debug("Handling button: $number");
+
+	# Check if a test case is active and in that case execute the "Load data" menu associated with the button
 	my $testcase = $client->modeParam('testcase');
 	if($client->modeParam('modeName') =~ /.*ABX$/) {
 		if($number le '3') {
 			$log->debug("Executing button: $number");
-			my $testcaseImages;
-			if(exists $images{$client->id}->{$testcase}->{'image'}) {
-				$testcaseImages = $images{$client->id}->{$testcase}->{'image'};
-			}elsif(exists $images{$client->id}->{$testcase}->{'audio'}) {
-				$testcaseImages = $images{$client->id}->{$testcase}->{'audio'};
-			}elsif(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-				$testcaseImages = $images{$client->id}->{$testcase}->{'perlfunction'};
+
+			# Find all available test case data entries
+			my $testData;
+			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+				$testData = $testcases{$client->id}->{$testcase}->{'image'};
+			}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+				$testData = $testcases{$client->id}->{$testcase}->{'audio'};
+			}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+				$testData = $testcases{$client->id}->{$testcase}->{'perlfunction'};
 			}else {
-				$testcaseImages = $images{$client->id}->{$testcase}->{'script'};
+				$testData = $testcases{$client->id}->{$testcase}->{'script'};
 			}
-			my @testcaseImageKeys = sort keys %$testcaseImages;
+			my @testcaseDataKeys = sort keys %$testData;
 	
-			my $imageKey = 'X';
-	
+			# Find the test case data entry associated with the button
+			my $testdataKey = 'X';
 			if($number le '2') {
-				$imageKey = @testcaseImageKeys->[$number-1];
+				$testdataKey = @testcaseDataKeys->[$number-1];
 			}
 	
-			my $visibleImageKey = $imageKey;
-			if($imageKey eq 'X') {
+			# Find the test case data text that should be shown to the user
+			# We don't want to show the real value behind X if the 3 button is used
+			my $visibleTestdataKey = $testdataKey;
+			if($testdataKey eq 'X') {
 				my $listRef = $client->modeParam('listRef');
 				if($listRef->[0]->{'value'} eq 'instruction') {
-					$imageKey=$listRef->[3]->{'realId'};
+					$testdataKey=$listRef->[3]->{'realId'};
 				}else {
-					$imageKey=$listRef->[2]->{'realId'};
+					$testdataKey=$listRef->[2]->{'realId'};
 				}
 			}
+
+			# Load the image if there is a image associated with the selected test data entry
 			my $currentData = $client->modeParam('currentData');
-			if(exists $images{$client->id}->{$testcase}->{'image'}) {
-				if(loadImage($client,catfile(_getImageDir($testcase),$images{$client->id}->{$testcase}->{'image'}->{$imageKey}->{'content'}))) {
-					$currentData->{'image'} = $visibleImageKey;
+			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+				if(loadImage($client,catfile(_getImageDir($testcase),$testcases{$client->id}->{$testcase}->{'image'}->{$testdataKey}->{'content'}))) {
+					$currentData->{'image'} = $visibleTestdataKey;
 				}else {
 					delete $currentData->{'image'};
 				}
 			}else {
-				$currentData->{'image'} = $visibleImageKey;
+				$currentData->{'image'} = $visibleTestdataKey;
 			}
+			
+			# Execute additional actions associated with the selected test data entry
 			my $showChangedData = 0;
-			if(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-				_executeFunction($client,$testcase,$images{$client->id}->{$testcase}->{'perlfunction'}->{$imageKey}->{'content'});
+			if(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+				_executeFunction($client,$testcase,$testcases{$client->id}->{$testcase}->{'perlfunction'}->{$testdataKey}->{'content'});
 				$showChangedData = 1;
 			}
-			if(exists $images{$client->id}->{$testcase}->{'script'}) {
-				_executeScript($client,$testcase,$images{$client->id}->{$testcase}->{'script'}->{$imageKey}->{'content'});
+			if(exists $testcases{$client->id}->{$testcase}->{'script'}) {
+				_executeScript($client,$testcase,$testcases{$client->id}->{$testcase}->{'script'}->{$testdataKey}->{'content'});
 				$showChangedData = 1;
 			}
-			if(exists $images{$client->id}->{$testcase}->{'audio'}) {
+			if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 				my $url;
-				if(Slim::Music::Info::isURL($images{$client->id}->{$testcase}->{'audio'}->{$imageKey}->{'content'})) {
-					$url = $images{$client->id}->{$testcase}->{'audio'}->{$imageKey}->{'content'};
+				if(Slim::Music::Info::isURL($testcases{$client->id}->{$testcase}->{'audio'}->{$testdataKey}->{'content'})) {
+					$url = $testcases{$client->id}->{$testcase}->{'audio'}->{$testdataKey}->{'content'};
 				}else {
-					$url = Slim::Utils::Misc::fileURLFromPath(catfile(_getImageDir($testcase),$images{$client->id}->{$testcase}->{'audio'}->{$imageKey}->{'content'}));
+					$url = Slim::Utils::Misc::fileURLFromPath(catfile(_getImageDir($testcase),$testcases{$client->id}->{$testcase}->{'audio'}->{$testdataKey}->{'content'}));
 				}
-				_playAudio($client,$url,$images{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.$visibleImageKey);
+				_playAudio($client,$url,$testcases{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.$visibleTestdataKey);
 				$showChangedData = 1;
 			}
 			if($showChangedData) {
 				$client->showBriefly({
-					'line'    => [ undef, $client->string("PLUGIN_ABTESTER_LOADING_DATA")." ".$visibleImageKey],
+					'line'    => [ undef, $client->string("PLUGIN_ABTESTER_LOADING_DATA")." ".$visibleTestdataKey],
 					'overlay' => [ undef, undef ],
 				});
 			}
 		}
 	}elsif($client->modeParam('modeName') =~ /.*ABCD$/) { 
-		my $testcaseImages;
-		if(exists $images{$client->id}->{$testcase}->{'image'}) {
-			$testcaseImages = $images{$client->id}->{$testcase}->{'image'};
-		}elsif(exists $images{$client->id}->{$testcase}->{'audio'}) {
-			$testcaseImages = $images{$client->id}->{$testcase}->{'audio'};
-		}elsif(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-			$testcaseImages = $images{$client->id}->{$testcase}->{'perlfunction'};
-		}else {
-			$testcaseImages = $images{$client->id}->{$testcase}->{'script'};
-		}
-		my @testcaseImageKeys = sort keys %$testcaseImages;
 
-		if($number le scalar(@testcaseImageKeys)) {
+		# Find all available test case data entries
+		my $testData;
+		if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+			$testData = $testcases{$client->id}->{$testcase}->{'image'};
+		}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+			$testData = $testcases{$client->id}->{$testcase}->{'audio'};
+		}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+			$testData = $testcases{$client->id}->{$testcase}->{'perlfunction'};
+		}else {
+			$testData = $testcases{$client->id}->{$testcase}->{'script'};
+		}
+		my @testcaseDataKeys = sort keys %$testData;
+
+		# Ignore buttons above the number of available test case data entries
+		if($number le scalar(@testcaseDataKeys)) {
 			$log->debug("Executing button: $number");
+			# Load the image if there is a image associated with the selected test data entry
 			my $currentData = $client->modeParam('currentData');
-			if(exists $images{$client->id}->{$testcase}->{'image'}) {
-				if(loadImage($client,catfile(_getImageDir($testcase),$images{$client->id}->{$testcase}->{'image'}->{@testcaseImageKeys->[$number-1]}->{'content'}))) {
-					$currentData->{'image'} = @testcaseImageKeys->[$number-1];
+			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+				if(loadImage($client,catfile(_getImageDir($testcase),$testcases{$client->id}->{$testcase}->{'image'}->{@testcaseDataKeys->[$number-1]}->{'content'}))) {
+					$currentData->{'image'} = @testcaseDataKeys->[$number-1];
 				}else {
 					delete $currentData->{'image'};
 				}
 			}else {
-				$currentData->{'image'} = @testcaseImageKeys->[$number-1];
+				$currentData->{'image'} = @testcaseDataKeys->[$number-1];
 			}
 
+			# If the user stands in one of the "Test result" menus, change the * marking to the rating previously selected for the specified question
 			if($client->modeParam('modeName') eq 'ABTester.QuestionAnswer.ABCD') {
 				my $question = $client->modeParam('question');
 				my $currentRating = undef;
@@ -210,29 +225,31 @@ sub selectImage {
 					}
 				}
 			}
+
+			# Execute additional actions associated with the selected test data entry
 			my $showChangedData = 0;
-			if(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-				_executeFunction($client,$testcase,$images{$client->id}->{$testcase}->{'perlfunction'}->{@testcaseImageKeys->[$number-1]}->{'content'});
+			if(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+				_executeFunction($client,$testcase,$testcases{$client->id}->{$testcase}->{'perlfunction'}->{@testcaseDataKeys->[$number-1]}->{'content'});
 				$showChangedData = 1;
 			}
-			if(exists $images{$client->id}->{$testcase}->{'script'}) {
-				_executeScript($client,$testcase,$images{$client->id}->{$testcase}->{'script'}->{@testcaseImageKeys->[$number-1]}->{'content'});
+			if(exists $testcases{$client->id}->{$testcase}->{'script'}) {
+				_executeScript($client,$testcase,$testcases{$client->id}->{$testcase}->{'script'}->{@testcaseDataKeys->[$number-1]}->{'content'});
 				$showChangedData = 1;
 			}
 
-			if(exists $images{$client->id}->{$testcase}->{'audio'}) {
+			if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 				my $url;
-				if(Slim::Music::Info::isURL($images{$client->id}->{$testcase}->{'audio'}->{@testcaseImageKeys->[$number-1]}->{'content'})) {
-					$url = $images{$client->id}->{$testcase}->{'audio'}->{@testcaseImageKeys->[$number-1]}->{'content'};
+				if(Slim::Music::Info::isURL($testcases{$client->id}->{$testcase}->{'audio'}->{@testcaseDataKeys->[$number-1]}->{'content'})) {
+					$url = $testcases{$client->id}->{$testcase}->{'audio'}->{@testcaseDataKeys->[$number-1]}->{'content'};
 				}else {
-					$url = Slim::Utils::Misc::fileURLFromPath(catfile(_getImageDir($testcase),$images{$client->id}->{$testcase}->{'audio'}->{@testcaseImageKeys->[$number-1]}->{'content'}));
+					$url = Slim::Utils::Misc::fileURLFromPath(catfile(_getImageDir($testcase),$testcases{$client->id}->{$testcase}->{'audio'}->{@testcaseDataKeys->[$number-1]}->{'content'}));
 				}
-				_playAudio($client,$url,$images{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.@testcaseImageKeys->[$number-1]);
+				_playAudio($client,$url,$testcases{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.@testcaseDataKeys->[$number-1]);
 				$showChangedData = 1;
 			}
 			if($showChangedData) {
 				$client->showBriefly({
-					'line'    => [ undef, $client->string("PLUGIN_ABTESTER_LOADING_DATA")." ".@testcaseImageKeys->[$number-1]],
+					'line'    => [ undef, $client->string("PLUGIN_ABTESTER_LOADING_DATA")." ".@testcaseDataKeys->[$number-1]],
 					'overlay' => [ undef, undef ],
 				});
 			}
@@ -244,7 +261,9 @@ sub initPlugin {
 	my $class = shift;
 	$class->SUPER::initPlugin(@_);
 	$PLUGINVERSION = Slim::Utils::PluginManager->dataForPlugin($class)->{'version'};
+	Slim::Plugin::ABTester::Settings->new($class);
 
+	# Set default values of plugin settings
 	if(!defined($prefs->get("restrictedtohardware"))) {
 		$prefs->set("restrictedtohardware",1)
 	}
@@ -252,6 +271,8 @@ sub initPlugin {
 		$prefs->set("autoupdate",1)
 	}
 
+	# Register a custom mode which is based on the INPUT.Choice mode but adds a selectImage function
+	# This is required to make it possible to use the number buttons as shortcuts to load different data in the test cases
 	my %choiceFunctions = %{Slim::Buttons::Input::Choice::getFunctions()};
 	$choiceFunctions{'selectImage'} = \&selectImage;
 	Slim::Buttons::Common::addMode('Slim::Plugin::ABTester::Plugin.selectImage',\%choiceFunctions,\&Slim::Buttons::Input::Choice::setMode);
@@ -263,44 +284,57 @@ sub initPlugin {
 		$choiceMapping{'pause.' . $buttonPressMode} = 'passback';
 	}
 	Slim::Hardware::IR::addModeDefaultMapping('Slim::Plugin::ABTester::Plugin.selectImage',\%choiceMapping);
-	Slim::Control::Request::subscribe(\&loadDefaultDACImage,[['client','reconnect']]);
+
+	# Subscribe to event to automatically load DSP images when player reconnects
+	Slim::Control::Request::subscribe(\&loadDefaultDSPImage,[['client','reconnect']]);
 }
 
 sub exitPlugin {
-	Slim::Control::Request::unsubscribe(\&loadDefaultDACImage);
+	Slim::Control::Request::unsubscribe(\&loadDefaultDSPImage);
 }
 
 sub getDisplayText {
 	my ($client,$item) = @_;
 
-	if(exists $images{$client->id}->{$item}) {
-		return $images{$client->id}->{$item}->{'id'};
+	if(exists $testcases{$client->id}->{$item}) {
+		return $testcases{$client->id}->{$item}->{'id'};
 	}else {
 		return string($item);
 	}
 }
 
-sub loadDefaultDACImage {
-	# These are the two passed parameters
+# Function to automatically load DSP image at player reconnect
+sub loadDefaultDSPImage {
 	my $request=shift;
 	my $client = $request->client();
 
+	# Exit if automatic update of DSP image has been disabled
 	if(!$prefs->get("autoupdate")) {
 		return;
 	}
+
+	# Verify that this is a Boom player that is reconnecting and find and load the bundled default image
 	if ( defined($client) && $request->isCommand([['client','reconnect']]) ) {
 		if($client->model eq 'boom' || !$prefs->get("restrictedtohardware")) {
+
+			# Search for default DSP image bundled with plugin
 			my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 			for my $plugindir (@pluginDirs) {
 				my $dir = catdir($plugindir,"ABTester","StandardImages");
+				
+				# Use default.i2c unless the user has specified another default image file
 				if(!$prefs->get("defaultimage")) {
 					if(-e catfile($dir,'default.i2c')) {
 						loadImage($client,catfile($dir,'default.i2c'));
 						last;
 					}
+
+				# A default image file has been specified with full path
 				}elsif(-e $prefs->get("defaultimage")) {
 					loadImage($client,$prefs->get("defaultimage"));
 					last;
+
+				# A default image file has been specified without path, load it from the StandardImages directory
 				}elsif(-e catfile($dir,$prefs->get("defaultimage"))) {
 					loadImage($client,catfile($dir,$prefs->get("defaultimage")));
 					last;
@@ -310,6 +344,15 @@ sub loadDefaultDACImage {
 	}
 }
 
+# Function to re-read the testcases after a new test case has been extracted, 
+# this is for example used when a test case has been downloaded from internet
+# or when the user enters the ABTester plugin menu
+sub refreshTestdata {
+	my $client = shift;
+	$testcases{$client->id} = _readTestcases($client);
+}
+
+# Mode to represent the main ABTester plugin menu
 sub setMode {
 	my $class  = shift;
 	my $client = shift;
@@ -321,19 +364,20 @@ sub setMode {
 	}
 
 	# Read the configuration files
-	_extractConfigurationFiles();
-	$images{$client->id} = _readTestImages($client);
-
+	_extractTestcaseAndImageFiles();
+	refreshTestdata($client);
+	
 	my @listRef = ();
-	my $currentImages = $images{$client->id};
-	push @listRef, keys %$currentImages;
 
-	push @listRef,'PLUGIN_ABTESTER_DELETE_AUDIO';
+	# Prepare top level menu entries under the plugin menu
 	if($client->model eq 'boom' || !$prefs->get("restrictedtohardware")) {
-		push @listRef,'PLUGIN_ABTESTER_DEFAULT_IMAGES';
+		push @listRef,'PLUGIN_ABTESTER_IMAGES';
 	}
+	push @listRef,'PLUGIN_ABTESTER_TESTCASES';
+	push @listRef,'PLUGIN_ABTESTER_FROM_INTERNET';
+	push @listRef,'PLUGIN_ABTESTER_DELETE_TEST_FILES';
 
-	# use INPUT.Choice to display the list of feeds
+	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => '{PLUGIN_ABTESTER} {count}',
 		listRef    => \@listRef,
@@ -349,65 +393,145 @@ sub setMode {
 		onRight    => sub {
 			my ($client, $item) = @_;
 
-			if($item eq 'PLUGIN_ABTESTER_DEFAULT_IMAGES') {
+			if($item eq 'PLUGIN_ABTESTER_IMAGES') {
+				# Show "Images" menu
 				setModeDefaultImages($client);
-			}elsif($item eq 'PLUGIN_ABTESTER_DELETE_AUDIO') {
+			}elsif($item eq 'PLUGIN_ABTESTER_DELETE_TEST_FILES') {
+				# Clean up after test cases
 				$client->showBriefly({
-					'line'    => [ undef, $client->string("PLUGIN_ABTESTER_DELETE_AUDIO_FILES") ],
+					'line'    => [ undef, $client->string("PLUGIN_ABTESTER_DELETING_TEST_FILES") ],
 					'overlay' => [ undef, undef ],
 				});
 				_deleteFiles($client);
-			}else {
-				my $testcase = $item;
-				if($images{$client->id}->{$testcase}->{'type'} eq 'abx') {
-					setModeABXTest($client,$testcase);
-				}else {
-					setModeABCDTest($client,$testcase);
-				}
-				disableScreenSaver($client);
+			}elsif($item eq 'PLUGIN_ABTESTER_FROM_INTERNET') {
+				# Show "From Internet" menu
+				setModeFromInternet($client);
+			}elsif($item eq 'PLUGIN_ABTESTER_TESTCASES') {
+				# Create a sub menu for each test case in the "Test cases" menu and let the user select one to run
+				my @testCases = ();
+				my $currentTestcases = $testcases{$client->id};
+				push @testCases, sort keys %$currentTestcases;
+				my %params = (
+					header     => '{PLUGIN_ABTESTER} {count}',
+					listRef    => \@testCases,
+					overlayRef => sub {
+						return [undef, $client->symbols('rightarrow')];
+					},
+					modeName   => 'ABTester.Testcases',
+					onPlay     => sub {
+						my ($client, $item) = @_;
+						$client->execute(["pause","0"]);
+					},
+					onRight    => sub {
+						my ($client, $item) = @_;
+						runTestcase($client,$item);
+					},
+				);
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 			}
 		},
 	);
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
+# Function that executes a testcase
+sub runTestcase {
+	my $client = shift;
+	my $testcase = shift;
+
+	if($testcases{$client->id}->{$testcase}->{'type'} eq 'abx') {
+		setModeABXTest($client,$testcase);
+	}else {
+		setModeABCDTest($client,$testcase);
+	}
+	# Disable screen saver during the time the test case is run
+	disableScreenSaver($client);
+}
+
+# Mode that represents the "ABTester/From Internet" menu
+sub setModeFromInternet {
+	my ($client) = @_;
+
+	# Add sub menus under "From Internet" menu
+	my @listRef = ();
+	push @listRef,'PLUGIN_ABTESTER_TESTCASES';
+	if($client->model eq 'boom' || !$prefs->get("restrictedtohardware")) {
+		push @listRef,'PLUGIN_ABTESTER_IMAGES';
+	}
+
+	# Prepare mode parameters and move player into the new mode
+	my %params = (
+		header     => '{PLUGIN_ABTESTER} {count}',
+		listRef    => \@listRef,
+		overlayRef => sub {
+			return [undef, $client->symbols('rightarrow')];
+		},
+		name       => \&getDisplayText,
+		modeName   => 'ABTester',
+		onPlay     => sub {
+			my ($client, $item) = @_;
+			$client->execute(["pause","0"]);
+		},
+		onRight    => sub {
+			my ($client, $item) = @_;
+			if($item eq 'PLUGIN_ABTESTER_TESTCASES') {
+				# Use Slim::Buttons::XMLBrowser based mode for the "From Internet/Test cases" menu
+				# TODO: Verify the url below when Logitech has put up the opml files
+				my %params = (
+					url => 'http://www.slimdevices.com/abtester/testcases.opml',
+					title => $client->string($item),
+					parser => "Slim::Plugin::ABTester::TestcaseZipParser",
+				);
+				Slim::Buttons::Common::pushMode($client,'xmlbrowser',\%params);
+			}elsif($item eq 'PLUGIN_ABTESTER_IMAGES') {
+				# Use Slim::Buttons::XMLBrowser based mode for the "From Internet/Images" menu
+				# TODO: Verify the url below when Logitech has put up the opml files
+				my %params = (
+					url => 'http://www.slimdevices.com/abtester/images.opml',
+					title => $client->string($item),
+					parser => "Slim::Plugin::ABTester::ImageZipParser",
+				);
+				Slim::Buttons::Common::pushMode($client,'xmlbrowser',\%params);
+			}
+		},
+	);
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+
+}
+
+# Mode that represents the "ABTester/Images" menu
 sub setModeDefaultImages {
 	my ($client) = @_;
 	
 	my @listRef = ();
 
+	# Add the "From Firmware" entry to the "Images" menu
 	my %default = (
 		'name' => $client->string('PLUGIN_ABTESTER_RESTORE_DEFAULT_IMAGE'),
-		'value' => undef,
+		'value' => 0,
 	);
 	push @listRef, \%default;
 
+	# Add all images bundled with the plugin as directories to the "Images" menu
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $plugindir (@pluginDirs) {
 		my $dir = catdir($plugindir,"ABTester","StandardImages");
 		$log->debug("Checking for directory: $dir");
 		next unless -d $dir;
 		
-		my @dircontents = Slim::Utils::Misc::readDirectory($dir,"i2c");
-		my $extensionRegexp = "\\.i2c\$";
+		_readImageDir($dir,\@listRef);
+	}
 
-		# Iterate through all files in the specified directory
-		for my $item (@dircontents) {
-			next unless $item =~ /$extensionRegexp/;
-			next if -d catdir($dir, $item);
-
-			my $name = $item;
-			$name =~ s/$extensionRegexp//;
-			
-			my %item = (
-				'name' => $name,
-				'value' => catfile($dir,$item),
-			);
-			push @listRef, \%item;
-		}
+	# Add all images extracted to the "Images" menu 
+	# (this can be both extracted .zip files bundled with plugin and downloaded from internet)
+	my $cacheDir = $serverPrefs->get('cachedir');
+	$cacheDir = catdir($cacheDir,'ABTester','Images');
+	return unless -d $cacheDir;
+	if(-d $cacheDir) {
+		_readImageDir($cacheDir,\@listRef);
 	}
 	
-	# use INPUT.Choice to display the list of feeds
+	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => '{PLUGIN_ABTESTER} {count}',
 		listRef    => \@listRef,
@@ -438,61 +562,113 @@ sub setModeDefaultImages {
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
+sub _readImageDir {
+	my $dir = shift;
+	my $result = shift;
+
+	opendir(DIR, $dir) || do {
+                $log->error("opendir on [$dir] failed: $!");
+		return;
+        };
+
+	my $extensionRegexp = "\\.i2c\$";
+
+	# Find all *.i2c files in the specified directory and the sub directories one level down
+	for my $item (readdir(DIR)) {
+
+		# Enter sub directories that doesn't start with a .
+		if(-d catdir($dir, $item) && $item !~ /^\./) {
+			my @subdircontents = Slim::Utils::Misc::readDirectory(catdir($dir,$item),"i2c");
+
+			# Find all .i2c files in the sub directory and add them to the result
+			for my $subitem (@subdircontents) {
+				next unless $subitem =~ /$extensionRegexp/;
+				next if -d catdir($dir, $item, $subitem);
+				my %item = (
+					'name' => $item,
+					'value' => catfile($dir,$item,$subitem),
+				);
+				push @$result, \%item;
+			}
+
+		# If this is a .i2c file, add it to the result
+		}else {
+			next unless $item =~ /$extensionRegexp/;
+			next if -d catdir($dir, $item);
+			my $name = $item;
+			$name =~ s/$extensionRegexp//;
+			my %item = (
+				'name' => $name,
+				'value' => catfile($dir,$item),
+			);
+			push @$result, \%item;
+		}
+	}
+	closedir(DIR);
+}
+
+# Mode that represents the menu shown when a ABX test case is selected
 sub setModeABXTest {
 	my ($client, $testcase) = @_;
 
+	# Execute the init elements in the test case to prepare the player for the test case
 	_executeInitCommands($client,$testcase);
 
 	my $initialValue = 'A';
 	my $startIndex = 0;
 
+	# Add optional "instructions" element to the test case menu
 	my @listRef = ();
-	if(exists $images{$client->id}->{$testcase}->{'instructions'}) {
+	if(exists $testcases{$client->id}->{$testcase}->{'instructions'}) {
 		my %instruction = (
 			'value' => 'instruction',
-			'name' => ($images{$client->id}->{$testcase}->{'instructions'} || ''),
+			'name' => ($testcases{$client->id}->{$testcase}->{'instructions'} || ''),
 		);
 		push @listRef,\%instruction;
 		$initialValue = $instruction{'value'};
 		$startIndex = 1;
 	}
 
-	my $testImages;
-	if(exists $images{$client->id}->{$testcase}->{'image'}) {
-		$testImages = $images{$client->id}->{$testcase}->{'image'};
-	}elsif(exists $images{$client->id}->{$testcase}->{'audio'}) {
-		$testImages = $images{$client->id}->{$testcase}->{'audio'};
-	}elsif(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-		$testImages = $images{$client->id}->{$testcase}->{'perlfunction'};
+	# Create a test data structure that contains the available data entries which the user should be able to select to load
+	my $testData;
+	if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'image'};
+	}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'audio'};
+	}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'perlfunction'};
 	}else {
-		$testImages = $images{$client->id}->{$testcase}->{'script'};
+		$testData = $testcases{$client->id}->{$testcase}->{'script'};
 	}
 
-	foreach my $img (qw(A B)) {
-		if(exists($testImages->{$img})) {
+	# Add the "Load data A/B" menus to the test case menu
+	foreach my $data (qw(A B)) {
+		if(exists($testData->{$data})) {
 			my %data = (
-				'value' => $img,
-				'name' => $client->string("PLUGIN_ABTESTER_LOAD_DATA").' '.$img,
+				'value' => $data,
+				'name' => $client->string("PLUGIN_ABTESTER_LOAD_DATA").' '.$data,
 			);
-			if(exists $images{$client->id}->{$testcase}->{'image'}) {
-				$data{'image'} = $images{$client->id}->{$testcase}->{'image'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+				$data{'image'} = $testcases{$client->id}->{$testcase}->{'image'}->{$data}->{'content'};
 			}
-			if(exists $images{$client->id}->{$testcase}->{'audio'}) {
-				$data{'audio'} = $images{$client->id}->{$testcase}->{'audio'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+				$data{'audio'} = $testcases{$client->id}->{$testcase}->{'audio'}->{$data}->{'content'};
 			}
-			if(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-				$data{'perlfunction'} = $images{$client->id}->{$testcase}->{'perlfunction'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+				$data{'perlfunction'} = $testcases{$client->id}->{$testcase}->{'perlfunction'}->{$data}->{'content'};
 			}
-			if(exists $images{$client->id}->{$testcase}->{'script'}) {
-				$data{'script'} = $images{$client->id}->{$testcase}->{'script'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'script'}) {
+				$data{'script'} = $testcases{$client->id}->{$testcase}->{'script'}->{$data}->{'content'};
 			}
 			push @listRef,\%data;
 		}else {
-			$log->error("Can't find '.$img.' image for ABX test of $testcase");
+			$log->error("Can't find '.$data.' image for ABX test of $testcase");
 			$client->bumpRight();
 			return;
 		}
 	}
+
+	# Add the "Load data X" menu to the test case menu
 	my $imageXPos = floor(rand(2))+$startIndex;
 	my %dataX = (
 		'value' => 'X',
@@ -513,14 +689,17 @@ sub setModeABXTest {
 	}
 	push @listRef,\%dataX;
 
-	foreach my $img (qw(A B)) {
+	# Add the "Publish ..." menus to the test case menu
+	foreach my $data (qw(A B)) {
 		my %dataPublish = (
-			'value' => 'publish'.$img,
+			'value' => 'publish'.$data,
 			'realId' => @listRef->[$imageXPos]->{'value'},
-			'name' => 'Publish X='.$img,
+			'name' => 'Publish X='.$data,
 		);
 		push @listRef,\%dataPublish;
 	}
+	
+	# Add a "Check Answer" menu to the test case menu
 	my %dataCheck = (
 		'value' => 'checkanswer',
 		'realId' => @listRef->[$imageXPos]->{'value'},
@@ -528,8 +707,10 @@ sub setModeABXTest {
 	);
 	push @listRef,\%dataCheck;
 
+	# The test result will be stored in this hash when the user navigates around between the menus inside the test case
 	my %currentData = ();
-	# use INPUT.Choice to display the list of feeds
+
+	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => 
 			sub {
@@ -608,7 +789,7 @@ sub setModeABXTest {
 					}else {
 						$url = Slim::Utils::Misc::fileURLFromPath(catfile(_getImageDir($testcase),$item->{'audio'}));
 					}
-					_playAudio($client,$url,$images{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.$item->{'value'});
+					_playAudio($client,$url,$testcases{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.$item->{'value'});
 					$showChangedData = 1;
 				}
 				if($showChangedData) {
@@ -623,78 +804,76 @@ sub setModeABXTest {
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
+# Mode that represents the menu shown when a ABCD test case is selected
 sub setModeABCDTest {
 	my ($client, $testcase) = @_;
 
+	# Execute the init elements in the test case to prepare the player for the test case
 	_executeInitCommands($client,$testcase);
 
 	my @listRef = ();
+
+	# Add optional "instructions" element to the test case menu
 	my $initialValue = undef;
-	if(exists $images{$client->id}->{$testcase}->{'instructions'}) {
+	if(exists $testcases{$client->id}->{$testcase}->{'instructions'}) {
 		my %instruction = (
 			'value' => 'instruction',
-			'name' => ($images{$client->id}->{$testcase}->{'instructions'} || ''),
+			'name' => ($testcases{$client->id}->{$testcase}->{'instructions'} || ''),
 		);
 		push @listRef,\%instruction;
 		$initialValue = $instruction{'value'};
 	}
 
-	my $testImages;
-	if(exists $images{$client->id}->{$testcase}->{'image'}) {
-		$testImages = $images{$client->id}->{$testcase}->{'image'};
-	}elsif(exists $images{$client->id}->{$testcase}->{'audio'}) {
-		$testImages = $images{$client->id}->{$testcase}->{'audio'};
-	}elsif(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-		$testImages = $images{$client->id}->{$testcase}->{'perlfunction'};
+	# Create a test data structure that contains the available data entries which the user should be able to select to load
+	my $testData;
+	if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'image'};
+	}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'audio'};
+	}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'perlfunction'};
 	}else {
-		$testImages = $images{$client->id}->{$testcase}->{'script'};
+		$testData = $testcases{$client->id}->{$testcase}->{'script'};
 	}
 
-	foreach my $img (sort keys %$testImages) {
+	# Add all the Load menus that should be available in the test case menu
+	foreach my $data (sort keys %$testData) {
 		if(!defined($initialValue)) {
-			$initialValue = $img;
+			$initialValue = $data;
 		}
-		if(exists($testImages->{$img})) {
+		if(exists($testData->{$data})) {
 			my %data = (
-				'value' => $img,
-				'name' => $client->string('PLUGIN_ABTESTER_LOAD_DATA').' '.$img,
+				'value' => $data,
+				'name' => $client->string('PLUGIN_ABTESTER_LOAD_DATA').' '.$data,
 			);
-			if(exists $images{$client->id}->{$testcase}->{'image'}) {
-				$data{'image'} = $images{$client->id}->{$testcase}->{'image'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
+				$data{'image'} = $testcases{$client->id}->{$testcase}->{'image'}->{$data}->{'content'};
 			}
-			if(exists $images{$client->id}->{$testcase}->{'audio'}) {
-				$data{'audio'} = $images{$client->id}->{$testcase}->{'audio'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+				$data{'audio'} = $testcases{$client->id}->{$testcase}->{'audio'}->{$data}->{'content'};
 			}
-			if(exists $images{$client->id}->{$testcase}->{'perlfunction'}) {
-				$data{'perlfunction'} = $images{$client->id}->{$testcase}->{'perlfunction'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
+				$data{'perlfunction'} = $testcases{$client->id}->{$testcase}->{'perlfunction'}->{$data}->{'content'};
 			}
-			if(exists $images{$client->id}->{$testcase}->{'script'}) {
-				$data{'script'} = $images{$client->id}->{$testcase}->{'script'}->{$img}->{'content'};
+			if(exists $testcases{$client->id}->{$testcase}->{'script'}) {
+				$data{'script'} = $testcases{$client->id}->{$testcase}->{'script'}->{$data}->{'content'};
 			}
 			push @listRef,\%data;
 		}else {
-			$log->error("Can't find '.$img.' image for ABCD test of $testcase");
+			$log->error("Can't find '.$data.' image for ABCD test of $testcase");
 			$client->bumpRight();
 			return;
 		}
 	}
 
-	my @questions = ();
-	my $testQuestions = $images{$client->id}->{$testcase}->{'question'};
-	foreach my $question (keys %$testQuestions) {
-		my %dataQuestion = (
-			'value' => 'question'.$question,
-			'name' => $testQuestions->{$question}->{'content'},
-		);
-		push @questions,\%dataQuestion;
-	}
-
+	# Add the "Test result" menu to the test case menu
 	my %dataResult = (
 		'value' => 'question',
 		'name' => $client->string("PLUGIN_ABTESTER_TEST_RESULT"),
 	);
 	push @listRef,\%dataResult;
 
+	# Add the "Publish" menu to the test case menu
 	my %dataPublish = (
 		'value' => 'publish',
 		'name' => $client->string("PLUGIN_ABTESTER_PUBLISH"),
@@ -703,11 +882,13 @@ sub setModeABCDTest {
 
 	my %result = ();
 
+	# The test result will be stored in this hash when the user navigates around between the menus inside the test case
 	my %empty = ();
 	my %currentData = (
 		'result' => \%empty,
 	);
-	# use INPUT.Choice to display the list of feeds
+
+	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => 
 			sub {
@@ -738,10 +919,10 @@ sub setModeABCDTest {
 			if($item->{'value'} =~ /^publish$/) {
 				my $result = $client->modeParam('currentData')->{'result'};
 				my $completeResult = 1;
-				foreach my $img (sort keys %$testImages) {
-					my $testQuestions = $images{$client->id}->{$testcase}->{'question'};
+				foreach my $data (sort keys %$testData) {
+					my $testQuestions = $testcases{$client->id}->{$testcase}->{'question'};
 					foreach my $question (keys %$testQuestions) {
-						if(!defined($result->{$img}->{$question})) {
+						if(!defined($result->{$data}->{$question})) {
 							$completeResult = 0;
 						}
 					}
@@ -797,7 +978,7 @@ sub setModeABCDTest {
 					}else {
 						$url = Slim::Utils::Misc::fileURLFromPath(catfile(_getImageDir($testcase),$item->{'audio'}));
 					}
-					_playAudio($client,$url,$images{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.$item->{'value'});
+					_playAudio($client,$url,$testcases{$client->id}->{$testcase}->{'id'}.' '.$client->string('TRACK').' '.$item->{'value'});
 					$showChangedData = 1;
 				}
 				if($showChangedData) {
@@ -812,11 +993,14 @@ sub setModeABCDTest {
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
+# Mode that represents the menu shown when the "Test result" menu is selected within a ABCD test case
 sub setModeQuestions {
 	my ($client, $testcase, $currentData) = @_;
 
 	my @listRef = ();
-	my $testQuestions = $images{$client->id}->{$testcase}->{'question'};
+
+	# Prepare the questions for a ABCD test case, all question elements in the test case should be shown
+	my $testQuestions = $testcases{$client->id}->{$testcase}->{'question'};
 	my $initialValue = undef;
 	foreach my $question (sort keys %$testQuestions) {
 		if(!defined($initialValue)) {
@@ -829,7 +1013,7 @@ sub setModeQuestions {
 		push @listRef,\%dataQuestion;
 	}
 
-	# use INPUT.Choice to display the list of feeds
+	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => 
 			sub {
@@ -858,17 +1042,21 @@ sub setModeQuestions {
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
+# Mode that represents the menu shown when a specific question is selected within the "Test result" menu in a ABCD test case
 sub setModeRequestQuestionAnswer {
 	my ($client, $testcase, $question, $currentData) = @_;
 
 	my $listIndex = 0;
 	my $currentRating = undef;
 	my @listRef = ();
+
+	# Prepare question answers, it should be possible to select a rating number
 	foreach my $rating (qw(5 4 3 2 1)) {
 		my %ratingItem = (
 			'value' => $rating,
 			'name' => $rating,
 		);
+		# Mark the currently selected rating if the user has answered the question already
 		if(exists($currentData->{'result'}->{$currentData->{'image'}}->{$question}) && $currentData->{'result'}->{$currentData->{'image'}}->{$question} eq $rating) {
 			$ratingItem{'name'} .= ' *';
 			$currentRating = $ratingItem{'value'};
@@ -877,7 +1065,7 @@ sub setModeRequestQuestionAnswer {
 		push @listRef,\%ratingItem;
 	}
 
-	# use INPUT.Choice to display the list of feeds
+	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => 
 			sub {
@@ -913,7 +1101,6 @@ sub setModeRequestQuestionAnswer {
 			$client->update();
 		},
 	);
-
 	Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.selectImage', \%params);
 }
 
@@ -923,9 +1110,9 @@ sub getHeaderText {
 
 	my $currentData = $client->modeParam('currentData');
 	if(defined($currentData->{'image'})) {
-		return uc($images{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_DATA} '.$currentData->{'image'}.' {count}';
+		return uc($testcases{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_DATA} '.$currentData->{'image'}.' {count}';
 	}else {
-		return uc($images{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_NONE} {count}';
+		return uc($testcases{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_NONE} {count}';
 	}
 }
 
@@ -933,14 +1120,18 @@ sub _executeInitCommands {
 	my $client = shift;
 	my $testcase = shift;
 
-	if(exists $images{$client->id}->{$testcase}->{'init'}) {
-		my $initCommands = $images{$client->id}->{$testcase}->{'init'};
+	# Iterate through all specified init element in the test case
+	if(exists $testcases{$client->id}->{$testcase}->{'init'}) {
+		my $initCommands = $testcases{$client->id}->{$testcase}->{'init'};
 		foreach my $key (sort keys %$initCommands) {
 			my $cmd = $initCommands->{$key};
 			if($cmd->{'type'} eq 'cli') {
 				my $execString = $cmd->{'content'};
-				my $playername = $client->name;
-				$execString =~ s/\$PLAYERNAME/$playername/;
+
+				# Replace special keywords in the CLI command
+				$execString = _replaceKeywords($execString,$client,$testcase);
+
+				# Call the CLI Command
 				my @cmdParts = split(/ /,$execString);
 				if(scalar(@cmdParts)>0) {
 					$log->debug("Executing CLI: $execString");
@@ -957,10 +1148,11 @@ sub _executeInitCommands {
 sub _deleteFiles {
 	my $client = shift;
 
-	my $currentImages = $images{$client->id};
-	foreach my $testcase (keys %$currentImages) {
-		if(exists $images{$client->id}->{$testcase}->{'audio'}) {
-			my $audioHash = $images{$client->id}->{$testcase}->{'audio'};
+	# Remove any test audio files from the SqueezeCenter database
+	my $currentTestcases = $testcases{$client->id};
+	foreach my $testcase (keys %$currentTestcases) {
+		if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
+			my $audioHash = $testcases{$client->id}->{$testcase}->{'audio'};
 			foreach my $key (keys %$audioHash) {
 				my $url;
 				if(Slim::Music::Info::isURL($audioHash->{$key}->{'content'})) {
@@ -977,12 +1169,25 @@ sub _deleteFiles {
 			}
 		}
 	}
+
+	# Remove any downloaded test cases
+	my $downloadDir = $serverPrefs->get('cachedir');
+	$downloadDir = catdir($downloadDir,'ABTester','Downloaded');
+	if(-d $downloadDir) {
+		$log->debug("Deleting directory $downloadDir");
+		rmtree($downloadDir) or do {
+			$log->error("Unable to delete directory: $downloadDir");
+		};
+	}
+
 }
 sub _playAudio {
 	my $client = shift;
 	my $url = shift;
 	my $fileId = shift;
 	my %attributeHash = %{Slim::Formats->readTags($url)};
+
+	# Remove scanned tags which we don't want to show to the user
 	my @removeAttributes =('ALBUMSORT',
 				'ARTISTSORT',
 				'TITLESORT',
@@ -1006,12 +1211,16 @@ sub _playAudio {
 	}
 	$attributeHash{'TITLE'} = $fileId;
 	$attributeHash{'TRACKNUM'} = 1;
+
+	# Add the track to the SqueezeCenter database
 	my $track = Slim::Schema->updateOrCreate({
 		'url' => $url,
 		'readTags' => 0,
 		'checkMTime' => 0,
 		'attributes' => \%attributeHash,
 	});
+
+	# Start to play the track
 	my @tracks = ();
 	push @tracks,$track;
 	$client->execute(['playlist','loadtracks','listRef',\@tracks]);
@@ -1020,34 +1229,47 @@ sub _playAudio {
 sub _getImageDir {
 	my $testcase = shift;
 
-	# Iterate through all files in plugin image directories
+	# Return test case from the Images directory under the plugin, if it exist
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $plugindir (@pluginDirs) {
-		my $dir = catdir($plugindir,"ABTester","Images",$testcase);
+		my $dir = catdir($plugindir,"ABTester","Testcases",$testcase);
+		return $dir if -d $dir;
+		$dir = catdir($plugindir,"ABTester","Images",$testcase);
 		return $dir if -d $dir;
 	}
 	
+	# Return test case from the extracted zip files
 	my $imageDir = $serverPrefs->get('cachedir');
-	$imageDir = catdir($imageDir,'ABTesterImages');
-	$imageDir = catdir($imageDir,$testcase);
+	$imageDir = catdir($imageDir,'ABTester','Testcases',$testcase);
 	return $imageDir;
 }
 
 sub loadImage {
 	my ($client, $image) = @_;
 	
-	if(defined($image)) {
-		$log->warn("Loading ".$image);
-		return $client->upgradeDAC($image);
+	if($client->model eq 'boom') {
+		if($image) {
+			$log->info("Loading ".$image);
+			return $client->upgradeDAC($image);
+		}else {
+			$log->info("Loading default image");
+			$client->sendBDACFrame("DACDEFAULT");
+			return 1;
+		}
+
+	# If we aren't using a Boom, we just need to log what a Boom would be doing to simplify testing
+	}elsif($image) {
+		$log->info("Simulate loading of $image");
 	}else {
-		$log->warn("Loading default image");
-		$client->sendBDACFrame("DACDEFAULT");
-		return 1;
+		$log->info("Simulate loading of default image");
 	}
+	return 1;
 }
 
-sub _executeScript {
-	my ($client, $testcase, $script) = @_;
+sub _replaceKeywords {
+	my $script = shift;
+	my $client = shift;
+	my $testcase = shift;
 
 	my $playername = $client->name;
 	$script =~ s/\$PLAYERNAME/$playername/;
@@ -1055,6 +1277,16 @@ sub _executeScript {
 	my $testdir = _getImageDir($testcase);
 	$script =~ s/\$TESTDIR/$testdir/;
 
+	return $script;
+}
+
+sub _executeScript {
+	my ($client, $testcase, $script) = @_;
+
+	# Replace special keywords in the script script command
+	$script = _replaceKeywords($script,$client,$testcase);
+
+	# Execute the script as a system call
 	$log->debug("Executing: $script");
 	my $result = system($script);
 	if($result) {
@@ -1067,14 +1299,13 @@ sub _executeScript {
 sub _executeFunction {
 	my ($client, $testcase, $script) = @_;
 
-	my $playername = $client->name;
-	$script =~ s/\$PLAYERNAME/$playername/;
-	
-	my $testdir = _getImageDir($testcase);
-	$script =~ s/\$TESTDIR/$testdir/;
+	# Replace special keywords in the script function parameters
+	$script = _replaceKeywords($script,$client,$testcase);
 
 	my @args = split(/ /,$script);
 	
+	# Add the test case directory temporarily to @INC so the perl modules can be found
+	my $testdir = _getImageDir($testcase);
 	my $found = 0;
 	foreach my $dir (@INC) {
 		if($dir eq $testdir) {
@@ -1086,8 +1317,8 @@ sub _executeFunction {
 		push @INC,$testdir;
 	}
 
+	# Load the module, make the function call and unload the module
 	my $function = shift @args;
-
 	my $package = $function;
 	if($package =~ /^(.*)::([^:]+)$/) {
 		no strict 'refs';
@@ -1107,6 +1338,8 @@ sub _executeFunction {
 		eval "no $package";
 		use strict 'refs';
 	}
+
+	# Remove the test case directory from @INC to avoid side effects later on
 	my $i = 0;
 	foreach my $dir (@INC) {
 		if($dir eq $testdir) {
@@ -1118,8 +1351,11 @@ sub _executeFunction {
 	return 0;
 }
 
+# Disable the screen saver as long as the player is in a ABTester mode
 sub disableScreenSaver {
 	my $client = shift;
+
+	# Disable screen saver by changing the last IR time every 4'th second to the current time
 	Slim::Hardware::IR::setLastIRTime($client, Time::HiRes::time());
 	if($client->modeParam('modeName') =~ /ABTester.*/) {
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 4,\&disableScreenSaver);
@@ -1129,94 +1365,147 @@ sub disableScreenSaver {
 sub publishResult {
 	my ($client, $testcase, $result) = @_;
 
-	$log->warn("Publish result for testcase ".$images{$client->id}->{$testcase}->{'id'}.": ".Dumper($result));
+	# TODO: Write publishing code to publish the test result to Logitech provided php scripts when they are available
+	$log->warn("Publish result for testcase ".$testcases{$client->id}->{$testcase}->{'id'}.": ".Dumper($result));
 }
 
-sub _extractConfigurationFiles {
+sub _extractTestcaseAndImageFiles {
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	my $cacheDir = $serverPrefs->get('cachedir');
-	$cacheDir = catdir($cacheDir,'ABTesterImages');
-	if(-d $cacheDir) {
-		$log->debug("Deleting dir: ".$cacheDir."\n");
-		rmtree($cacheDir) or do {
-			$log->error("Unable to delete directory: $cacheDir");
+	$cacheDir = catdir($cacheDir,'ABTester');
+	mkdir(catdir($cacheDir));
+
+	# Remove previously extracted test cases
+	if(-d catdir($cacheDir,'Testcases')) {
+		$log->debug("Deleting dir: ".catdir($cacheDir,'Testcases')."\n");
+		rmtree(catdir($cacheDir,'Testcases')) or do {
+			$log->error("Unable to delete directory: ".catdir($cacheDir,'Testcases'));
 		};
 	}
-	mkdir($cacheDir);
+	mkdir(catdir($cacheDir,'Testcases'));
 
+	# Remove previously extracted images
+	if(-d catdir($cacheDir,'Images')) {
+		$log->debug("Deleting dir: ".catdir($cacheDir,'Images')."\n");
+		rmtree(catdir($cacheDir,'Images')) or do {
+			$log->error("Unable to delete directory: ".catdir($cacheDir,'Images'));
+		};
+	}
+	mkdir(catdir($cacheDir,'Images'));
+
+	# Extract test cases bundled with the plugin
 	for my $plugindir (@pluginDirs) {
-		my $dir = catdir($plugindir,"ABTester","Images");
+		my $dir = catdir($plugindir,"ABTester","Testcases");
 		$log->debug("Checking for directory: $dir");
-		next unless -d $dir;
-		
-		my @dircontents = Slim::Utils::Misc::readDirectory($dir,"zip");
-		my $extensionRegexp = "\\.zip\$";
-
-		# Iterate through all files in the specified directory
-		for my $item (@dircontents) {
-			next unless $item =~ /$extensionRegexp/;
-			next if -d catdir($dir, $item);
-
-			my $file = catfile($dir, $item);
-			my $zip = Archive::Zip->new();
-			unless ( $zip->read( $file ) == AZ_OK ) {
-				$log->error("Unable to read zip file: $item");
-				next;
-			}
-			my $itemDir = $item;
-			$itemDir =~ s/$extensionRegexp//;
-			my $extractDir = catdir($cacheDir,$itemDir);
-			if(-d $extractDir) {
-				$log->debug("Deleting dir: ".$extractDir."\n");
-				rmtree($extractDir) or do {
-					$log->error("Unable to delete directory: $extractDir");
-				};
-			}
-			mkdir($extractDir);
-			$log->debug("Extracting $item to $extractDir");
-			$zip->extractTree(undef,$extractDir."/");
+		if(! -d $dir) {
+			$dir = catdir($plugindir,"ABTester","Images");
+			$log->debug("Checking for directory: $dir");
+			next unless -d $dir;
 		}
+		
+		_extractZipFiles($dir,catdir($cacheDir,'Testcases'));
+	}
+
+	my $downloadDir = catdir($cacheDir,'Downloaded');
+	return unless -d $downloadDir;
+
+	# Extract test cases downloaded from internet
+	my $dir = catdir($downloadDir,'Testcases');
+	if(-d $dir) {
+		_extractZipFiles($dir,catdir($cacheDir,'Testcases'));
+	}
+
+	# Extract images downloaded from internet
+	my $dir = catdir($downloadDir,'Images');
+	if(-d $dir) {
+		_extractZipFiles($dir,catdir($cacheDir,'Images'));
 	}
 }
 
-sub _readTestImages {
-	my $client = shift;
-	my %images = ();
+sub _extractZipFiles {
+	my $dir = shift;
+	my $cacheDir = shift;
 
-	# Iterate through all files in plugin image directories
+	my @dircontents = Slim::Utils::Misc::readDirectory($dir,"zip");
+
+	# Extract all zip files in the specified directory
+	for my $item (@dircontents) {
+		next unless $item =~ /\.zip$/;
+		next if -d catdir($dir, $item);
+
+		extractZipFile($dir,$item,$cacheDir);
+	}
+
+}
+sub extractZipFile {
+	my $dir = shift;
+	my $file = shift;
+	my $cacheDir = shift;
+
+	my $extensionRegexp = "\\.zip\$";
+
+	my $filepath = catfile($dir,$file);
+
+	my $zip = Archive::Zip->new();
+	unless ( $zip->read( $filepath ) == AZ_OK ) {
+		$log->error("Unable to read zip file: $filepath");
+		return;
+	}
+	my $itemDir = $file;
+	$itemDir =~ s/$extensionRegexp//;
+	my $extractDir = catdir($cacheDir,$itemDir);
+	if(-d $extractDir) {
+		$log->debug("Deleting dir: ".$extractDir."\n");
+		rmtree($extractDir) or do {
+			$log->error("Unable to delete directory: $extractDir");
+		};
+	}
+	mkdir($extractDir);
+	$log->debug("Extracting $file to $extractDir");
+	$zip->extractTree(undef,$extractDir."/");
+}
+
+sub _readTestcases {
+	my $client = shift;
+	my %localTestcases = ();
+
+	# Find test cases bundled with plugin
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $plugindir (@pluginDirs) {
-		my $dir = catdir($plugindir,"ABTester","Images");
-		next unless -d $dir;
+		my $dir = catdir($plugindir,"ABTester","Testcases");
+		if(! -d $dir) {
+			$dir = catdir($plugindir,"ABTester","Images");
+			next unless -d $dir;
+		}
 
 		my @imageDirs = Slim::Utils::Misc::readDirectory($dir);
 		for my $imageDir (@imageDirs) {
 			next unless -d catdir($dir, $imageDir);
 
-			_readTestFiles($client,$dir,$imageDir,\%images);
+			_readTestcase($client,$dir,$imageDir,\%localTestcases);
 		}
 	}
 	
+	# Find test cases extracted from zip files
 	my $cacheDir = $serverPrefs->get('cachedir');
-	my $cacheDir = catdir($cacheDir,'ABTesterImages');
+	$cacheDir = catdir($cacheDir,'ABTester','Testcases');
 
-	return \%images unless -d $cacheDir;
+	return \%localTestcases unless -d $cacheDir;
 
 	my @imageDirs = Slim::Utils::Misc::readDirectory($cacheDir);
-	# Iterate through all files in the specified directory
 	for my $imageDir (@imageDirs) {
 		next unless -d catdir($cacheDir, $imageDir);
-		next if exists $images{$imageDir};
-		_readTestFiles($client,$cacheDir,$imageDir,\%images);
+		next if exists $localTestcases{$imageDir};
+		_readTestcase($client,$cacheDir,$imageDir,\%localTestcases);
 	}
-	return \%images;
+	return \%localTestcases;
 }
 
-sub _readTestFiles {
+sub _readTestcase {
 	my $client = shift;
 	my $cacheDir = shift;
 	my $imageDir = shift;
-	my $images = shift;
+	my $localTestcases = shift;
 
 	my $specFile = catfile(catdir($cacheDir,$imageDir),"test.xml");
 	if(! -f $specFile) {
@@ -1294,7 +1583,7 @@ sub _readTestFiles {
 			$log->info("Testcase \"".$xml->{'id'}."\" not available, needs operating system: ".$xml->{'requiredos'});
 			return;
 		}
-		$images->{$imageDir} = $xml;
+		$localTestcases->{$imageDir} = $xml;
 	}
 }
 

@@ -1,0 +1,22 @@
+[% PROCESS settings/header.html %]
+
+[% WRAPPER setting title="SETUP_PLUGIN_ABTESTER_RESTRICTEDTOHARDWARE" desc="SETUP_PLUGIN_ABTESTER_RESTRICTEDTOHARDWARE_DESC" %]
+	<select name="pref_restrictedtohardware">
+		<option value="1" [% IF prefs.restrictedtohardware %]selected[% END %]>[% "YES" | string %]</option>
+		<option value="0" [% IF NOT prefs.restrictedtohardware %]selected[% END %]>[% "NO" | string %]</option>
+	</select>
+[% END %]
+
+[% WRAPPER setting title="SETUP_PLUGIN_ABTESTER_AUTOUPDATE" desc="SETUP_PLUGIN_ABTESTER_AUTOUPDATE_DESC" %]
+	<select name="pref_autoupdate">
+		<option value="1" [% IF prefs.autoupdate %]selected[% END %]>[% "YES" | string %]</option>
+		<option value="0" [% IF NOT prefs.autoupdate %]selected[% END %]>[% "NO" | string %]</option>
+	</select>
+[% END %]
+
+[% WRAPPER setting title="SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE" desc="SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE_DESC" %]
+	<input type="text" class="stdedit" name="pref_defaultimage" id="defaultimage" value="[% prefs.defaultimage %]" size="20">
+[% END %]
+
+[% PROCESS settings/footer.html %]
+

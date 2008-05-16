@@ -1,0 +1,16 @@
+<test type="abcd">
+	<requiredmodels>boom</requiredmodels>
+	<minfirmware>7</minfirmware>
+	
+	<perlfunction id="A">set_stereoxl::main $PLAYERNAME off</perlfunction>
+
+	<perlfunction id="B">set_stereoxl::main $PLAYERNAME -6</perlfunction>
+
+	<perlfunction id="C">set stereoxl::main $PLAYERNAME -12</perlfunction>
+	
+	<instructions>Verify the different cases with FLAC and MP3 format</instructions>
+	<question id="1">Audio quality with FLAC</question>
+
+	<question id="2">Audio quality with MP3</question>
+</test>
+

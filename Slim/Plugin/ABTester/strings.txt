@@ -43,14 +43,39 @@ PLUGIN_ABTESTER_UPDATE_FAILURE_RESTORE
 PLUGIN_ABTESTER_RESTORE_DEFAULT_IMAGE
 	EN	From firmware
 
-PLUGIN_ABTESTER_DEFAULT_IMAGES
-	EN	Standard images
-
-PLUGIN_ABTESTER_DELETE_AUDIO
+PLUGIN_ABTESTER_DELETE_TEST_FILES
 	EN	Remove test files
 
-PLUGIN_ABTESTER_DELETE_AUDIO_FILES
+PLUGIN_ABTESTER_DELETING_TEST_FILES
 	EN	Removing test files
 
 PLUGIN_ABTESTER_CHECK_ANSWER
 	EN	Check X
+
+PLUGIN_ABTESTER_FROM_INTERNET
+	EN	From Internet
+
+PLUGIN_ABTESTER_TESTCASES
+	EN	Test cases
+
+PLUGIN_ABTESTER_IMAGES
+	EN	Images
+
+SETUP_PLUGIN_ABTESTER_AUTOUPDATE
+	EN	Automatically update DSP image
+
+SETUP_PLUGIN_ABTESTER_AUTOUPDATE_DESC
+	EN	Automatically update to the default DSP image when reconnecting a player
+
+SETUP_PLUGIN_ABTESTER_RESTRICTEDTOHARDWARE
+	EN	Limit to supported hardware
+
+SETUP_PLUGIN_ABTESTER_RESTRICTEDTOHARDWARE_DESC
+	EN	Limit the plugin functionality to the features that are supported in the current hardware player, turn this off to be able to test the plugin with a software player such as SoftSqueeze
+
+SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE
+	EN	Default DSP image in automatic update
+
+SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE_DESC
+	EN	Default DSP image to use in in automatic update (empty means that the default.i2c image in the StandardImages directory will be used)
+

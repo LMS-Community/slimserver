@@ -8,11 +8,12 @@
   <homepageURL>http://erland.homeip.net</homepageURL>
   <id>75001CE2-205A-11DD-AC87-D6BF6574B279</id>
   <module>Slim::Plugin::ABTester::Plugin</module>
+  <optionsURL>plugins/ABTester/settings/basic.html</optionsURL>
   <targetApplication>
     <id>SqueezeCenter</id>
     <maxVersion>7+</maxVersion>
     <minVersion>7.0a</minVersion>
   </targetApplication>
   <type>2</type>
-  <version>0.41</version>
+  <version>0.5</version>
 </extension>
