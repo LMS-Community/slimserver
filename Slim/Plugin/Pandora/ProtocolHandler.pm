@@ -170,10 +170,11 @@ sub gotNextTrack {
 		$log->debug( 'Got Pandora track: ' . Data::Dump::dump($track) );
 	}
 	
-	# Watch for playlist commands
+	# Watch for playlist commands for this client only
 	Slim::Control::Request::subscribe( 
 		\&playlistCallback, 
 		[['playlist'], ['repeat', 'newsong']],
+		$client,
 	);
 	
 	# Save existing repeat setting
@@ -446,7 +447,7 @@ sub playlistCallback {
 		}
 		
 		$log->debug( "Stopped Pandora, unsubscribing from playlistCallback" );
-		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
 		
 		return;
 	}

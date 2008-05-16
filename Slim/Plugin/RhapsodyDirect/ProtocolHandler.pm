@@ -839,6 +839,7 @@ sub gotNextRadioTrack {
 	Slim::Control::Request::subscribe( 
 		\&playlistCallback, 
 		[['playlist'], ['repeat', 'newsong']],
+		$client,
 	);
 
 	# Force repeating for Rhapsody radio
@@ -903,7 +904,7 @@ sub playlistCallback {
 		}
 
 		$log->debug( "Stopped Rhapsody Radio, unsubscribing from playlistCallback" );
-		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
 		
 		return;
 	}
@@ -969,6 +970,7 @@ sub gotTrackInfo {
 	Slim::Control::Request::subscribe( 
 		\&stopCallback, 
 		[['stop', 'playlist']],
+		$client,
 	);
 	
 	# Clear the trackStarting flag
@@ -1055,7 +1057,7 @@ sub stopCallback {
 		if ( !$url || $url !~ /^rhapd/ ) {
 			# stop listening for stop events
 			$log->debug("No longer playing Rhapsody, ignoring (URL: $url)");
-			Slim::Control::Request::unsubscribe( \&stopCallback );
+			Slim::Control::Request::unsubscribe( \&stopCallback, $client );
 			return;
 		}
 		
@@ -1262,6 +1264,7 @@ sub reinit {
 	Slim::Control::Request::subscribe( 
 		\&stopCallback, 
 		[['stop', 'playlist']],
+		$client,
 	);
 	
 	# Reset song duration/progress bar
