@@ -742,8 +742,14 @@ sub addDispatch {
 sub subscribe {
 	my $subscriberFuncRef = shift || return;
 	my $requestsRef = shift;
+	my $client = shift;
 	
-	$listeners{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
+	if ( $client ) {
+		$listeners{ $client->id . $subscriberFuncRef } = [ $subscriberFuncRef, $requestsRef, $client->id ];
+	}
+	else {
+		$listeners{$subscriberFuncRef} = [ $subscriberFuncRef, $requestsRef ];
+	}
 	
 	if ( $log->is_info ) {
 		$log->info(sprintf(
@@ -757,8 +763,14 @@ sub subscribe {
 # remove a subscriber
 sub unsubscribe {
 	my $subscriberFuncRef = shift;
+	my $client = shift;
 	
-	delete $listeners{$subscriberFuncRef};
+	if ( $client ) {
+		delete $listeners{ $client->id . $subscriberFuncRef };
+	}
+	else {
+		delete $listeners{$subscriberFuncRef};
+	}
 
 	if ( $log->is_info ) {
 		$log->info(sprintf(
@@ -1909,6 +1921,15 @@ sub notify {
 			# undef means no filter
 			my $notifyFuncRef = $listeners{$listener}->[0];
 			my $requestsRef   = $listeners{$listener}->[1];
+			my $clientid      = $listeners{$listener}->[2];
+			
+			# If this listener is client-specific, ignore unless we have that client
+			if ( $clientid ) {
+				unless ( blessed( $self->client ) && $self->client->id eq $clientid ) {
+					$log->debug( "Skipping notification, only wanted for $clientid" );
+					next;
+				}
+			}
 
 			my $funcName = $listener;
 
