@@ -224,12 +224,14 @@ sub gotNextTrack {
 	Slim::Control::Request::subscribe( 
 		\&playlistCallback, 
 		[['playlist'], ['repeat', 'newsong']],
+		$client,
 	);
 	
 	# Watch for stop commands
 	Slim::Control::Request::subscribe( 
 		\&stopCallback, 
 		[['stop', 'playlist']],
+		$client,
 	);
 	
 	# Force repeating
@@ -463,7 +465,7 @@ sub playlistCallback {
 		}
 		
 		$log->debug( "Stopped Slacker, unsubscribing from playlistCallback" );
-		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
 		
 		return;
 	}
@@ -540,7 +542,7 @@ sub stopCallback {
 
 		if ( !$url || $url !~ /^slacker/ ) {
 			# stop listening for stop events
-			Slim::Control::Request::unsubscribe( \&stopCallback );
+			Slim::Control::Request::unsubscribe( \&stopCallback, $client );
 			return;
 		}
 		
