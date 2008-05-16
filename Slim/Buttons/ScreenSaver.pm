@@ -75,7 +75,7 @@ sub screenSaver {
 		$log->info("screenSaver idle display [$diff] (mode: [$mode])");
 	}
 
-	# some variables, so save us calling the same functions multiple times.
+	# some variables, to save us calling the same functions multiple times.
 	my $saver   = $prefs->client($client)->get(Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver');
 	my $dim     = $prefs->client($client)->get('idleBrightness');
 	my $timeout = $prefs->client($client)->get('screensavertimeout');
@@ -116,6 +116,10 @@ sub screenSaver {
 	} elsif ($saver eq 'nosaver' && $client->power()) {
 
 		# don't change modes when none (just dim) is the screensaver.
+	
+	} elsif ($client->alarmActive && $mode eq 'SCREENSAVER.datetime') {
+
+		# don't change modes if the alarmclock has activated the datetime screensaver
 
 	} elsif ($timeout && 
 			

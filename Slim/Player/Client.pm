@@ -44,7 +44,7 @@ our $defaultPrefs = {
 	'titleFormatCurr'  => 1,
 };
 
-# depricated, use $client->maxVolume
+# deprecated, use $client->maxVolume
 our $maxVolume = 100;
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
@@ -237,6 +237,8 @@ sub new {
 	$client->[128] = 0; 	# initialAudioBlockRemaining
 	$client->[129] = {};    # scanData (used to store info obtained from scan that is needed later)
 	$client->[130] = undef; # remotePlaylistCurrentEntry
+	$client->[131] = undef; # alarmActive (if an alarm is currently active, stores the time when it began)
+	$client->[132] = undef; # snoozeActive (if a snooze is currently active, stores the time when it began)
 
 	$clientHash{$id} = $client;
 
@@ -1718,6 +1720,16 @@ sub scanData {
 sub remotePlaylistCurrentEntry {
 	my $r = shift;
 	@_ ? ($r->[130] = shift) : $r->[130];
+}
+
+sub alarmActive {
+	my $r = shift;
+	@_ ? ($r->[131] = shift) : $r->[131];
+}
+
+sub snoozeActive {
+	my $r = shift;
+	@_ ? ($r->[132] = shift) : $r->[132];
 }
 
 1;

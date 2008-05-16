@@ -29,6 +29,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Log;
 
 use Scalar::Util qw(blessed);
 use Time::HiRes;
@@ -488,11 +489,19 @@ sub checkAlarms {
 			}
 
 			if ($time == $alarmtime) {
+				# Sound the alarm!
+				logger('player.ui')->debug('Alarm clock starting');
 				
+				my $now = Time::HiRes::time(); 
 				# Bug 7818, count this as user interaction, even though it isn't really
-				$client->lastActivityTime( Time::HiRes::time() );
+				$client->lastActivityTime($now);
 
+				$client->alarmActive($now);
+
+				# Turn on and show the datetime screensaver if possible
 				$client->execute(['stop']);
+				$client->execute(["power", 1]);
+				pushDateTime($client);
 				
 				my $volume = $prefs->client($client)->get('alarmvolume')->[ $day ];
 
@@ -508,14 +517,15 @@ sub checkAlarms {
 				my $playlist = $prefs->client($client)->get('alarmplaylist')->[ $day ];
 				
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
+				# TODO: This doesn't seem to check!
 				if ($specialPlaylists{$playlist}) {
 					
+					# Random mix will turn player on
 					Slim::Plugin::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
 					
 				# handle a chosen playlist that is not the current playlist.
+				# TODO: How do we get here?
 				} elsif (defined $playlist && $playlist ne 'CURRENT_PLAYLIST') {
-
-					$client->execute(["power", 1]);
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
 					
@@ -544,6 +554,8 @@ sub checkAlarms {
 				
 				# slight delay for things to load up before showing the temporary alarm lines.
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
+				# Subscribe to ir commands in order to end the alarm
+				Slim::Control::Request::subscribe(\&alarmEnd, [['ir']]);
 			}
 		}
 	}
@@ -559,6 +571,17 @@ sub playDone {
 
 	# show the alarm screen after a couple of seconds when the song has started playing and the display is updated
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
+}
+
+# Called when the alarm is no longer active.  An alarm ceases to be active when user activity occurs after the alarm
+# begins.  When an alarm is active, the screensaver and active outputs can change.  This resets such changes.
+sub alarmEnd {
+	my $request = shift;
+
+	my $client = $request->client;
+	logger('player.ui')->debug('Alarm no longer active');
+
+	$client->alarmActive(undef);
 }
 
 sub snooze {
@@ -578,6 +601,7 @@ sub snooze {
 			'duration' => 3,
 			'block'    => 1,
 		});
+		pushDateTime($client);
 	}
 	
 	
@@ -630,9 +654,24 @@ sub alarmLines {
 sub visibleAlarm {
 	my $client = shift;
 
-	# show visible alert for 30s
-	$client->showBriefly(alarmLines($client), 30);
-	$client->modeParam('alarmactive',1);
+	my $showBrieflyDur = 30;
+	# Datetime screensaver already provides alarm info so don't need a long showBriefly
+	if (Slim::Buttons::Common::mode($client) eq 'SCREENSAVER.datetime') {
+		$showBrieflyDur = 3;
+	}
+	$client->showBriefly(alarmLines($client), $showBrieflyDur);
+}
+
+# Push into the datetime screensaver if it's available
+sub pushDateTime {
+	my $client = shift;
+
+	if (Slim::Buttons::Common::validMode('SCREENSAVER.datetime')) {
+		Slim::Buttons::Common::pushMode($client, 'SCREENSAVER.datetime');
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 sub overlayFunc {

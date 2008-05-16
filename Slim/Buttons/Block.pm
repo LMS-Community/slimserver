@@ -18,8 +18,8 @@ Slim::Buttons::Block::unblock($client);
 =head1 DESCRIPTION
 
 L<Slim::Buttons::Block> is a mode for locking out further remote control interaction 
-until a longer process has compeleted.  It is also used to provide feedback to the user
-in the form of an apropriate message and animated display during the wait for a long operation to
+until a longer process has completed.  It is also used to provide feedback to the user
+in the form of an appropriate message and animated display during the wait for a long operation to
 complete.
 
 =cut

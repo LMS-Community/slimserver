@@ -970,7 +970,7 @@ our %functions = (
 	'snooze' => sub  {
 		my $client = shift;
 
-		if ($client->modeParam('alarmactive')) {
+		if ($client->alarmActive) {
 			Slim::Buttons::AlarmClock::snooze($client);
 		} else {
 			pushButton('datetime', $client);
