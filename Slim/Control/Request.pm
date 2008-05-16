@@ -743,7 +743,7 @@ sub subscribe {
 	my $requestsRef = shift;
 	my $client = shift;
 	
-	if ( $client ) {
+	if ( blessed($client) ) {
 		$listeners{ $client->id . $subscriberFuncRef } = [ $subscriberFuncRef, $requestsRef, $client->id ];
 	}
 	else {
@@ -764,7 +764,7 @@ sub unsubscribe {
 	my $subscriberFuncRef = shift;
 	my $client = shift;
 	
-	if ( $client ) {
+	if ( blessed($client) ) {
 		delete $listeners{ $client->id . $subscriberFuncRef };
 	}
 	else {
