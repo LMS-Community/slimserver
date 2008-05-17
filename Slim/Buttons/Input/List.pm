@@ -267,6 +267,10 @@ sub lines {
 		'overlay' => [ $overlay1, $overlay2 ]
 	};
 
+	if ($client->modeParam('fonts')) {
+		$parts->{'fonts'} = $client->modeParam('fonts');
+	}
+
 	return $parts;
 }
 

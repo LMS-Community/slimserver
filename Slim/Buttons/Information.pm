@@ -99,6 +99,7 @@ sub init {
 			'listRef' => ['library','player','server','module'],
 			'overlayRef' => sub { return (undef,shift->symbols('rightarrow')) },
 			'overlayRefArgs' => 'C',
+			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'callback' => \&mainExitHandler,
 		},
 
@@ -110,6 +111,8 @@ sub init {
 			'listRef' => ['TIME','ALBUMS','TRACKS','ARTISTS','GENRES'],
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
+			'overlayRef' => \&infoDisplayOverlay,
+			'overlayRefArgs' => 'CV',
 			'formatRef' => [
 				\&timeFormat,
 				\&Slim::Utils::Misc::delimitThousands,
@@ -117,6 +120,7 @@ sub init {
 				\&Slim::Utils::Misc::delimitThousands,
 				\&Slim::Utils::Misc::delimitThousands,
 			],
+			'fonts' => { 'graphic-160x32' => 'light_n' },
 
 			'valueFunctRef' => [
 				sub { return Slim::Schema->totalTime },
@@ -137,6 +141,9 @@ sub init {
 			'listRef' => [],       # this is replaced in mainExitHandler
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
+			'overlayRef' => \&infoDisplayOverlay,
+			'overlayRefArgs' => 'CV',
+			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'valueFunctRef' => [], # this is replaced in mainExitHandler
 			'menuName' => 'player'
 		},
@@ -146,27 +153,30 @@ sub init {
 			'header' => 'INFORMATION_MENU_SERVER',
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
-			'listRef' => [qw(VERSION DIAGSTRING SERVER_PORT SERVER_HTTP HOSTNAME HOSTIP CLIENTS)],
+			'listRef' => [qw(VERSION SERVER_PORT SERVER_HTTP HOSTNAME HOSTIP CLIENTS DIAGSTRING)],
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
+			'overlayRef' => \&infoDisplayOverlay,
+			'overlayRefArgs' => 'CV',
+			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'formatRef' => [
 				undef,
 				undef,
 				undef,
 				undef,
 				undef,
-				undef,
 				\&Slim::Utils::Misc::delimitThousands,
+				'left',
 			],
 
 			'valueFunctRef' => [
 				sub { $::VERSION },
-				\&Slim::Utils::Misc::settingsDiagString,
 				sub { 3483 },
 				sub { preferences('server')->get('httpport') },
 				\&Slim::Utils::Network::hostName,
 				\&Slim::Utils::Network::serverAddr,
 				\&Slim::Player::Client::clientCount,
+				\&Slim::Utils::Misc::settingsDiagString,
 			],
 
 			'menuName' => 'server'
@@ -180,6 +190,7 @@ sub init {
 			'listRef' => \&moduleList,
 			'externRef' => \&moduleDisplay,
 			'externRefArgs' => 'CV',
+			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'menuName' => 'module',
 		}
 	);
@@ -217,12 +228,30 @@ sub infoDisplay {
 	my $formatRef     = $client->modeParam('formatRef');
 	my $valueFunctRef = $client->modeParam('valueFunctRef');
 	
+	if (defined($formatRef) && defined($formatRef->[$listIndex]) && $formatRef->[$listIndex] eq 'left') {
+		return $valueFunctRef->[$listIndex]->($client);
+	}
+
+	return $client->string('INFORMATION_' . uc($value));
+}
+
+# function providing the overlay portion of the display for the
+# library, server, and player menus
+sub infoDisplayOverlay {
+	my ($client,$value) = @_;
+
+	my $listIndex     = $client->modeParam('listIndex');
+	my $formatRef     = $client->modeParam('formatRef');
+	my $valueFunctRef = $client->modeParam('valueFunctRef');
+	
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
-		return $client->string('INFORMATION_' . uc($value)) . $client->string('COLON')
-		. ' ' . $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client));
+		if ($formatRef->[$listIndex] eq 'left') {
+			return ( undef, undef );
+		} else {
+			return ( undef, $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client)) );
+		}
 	} else {
-		return $client->string('INFORMATION_' . uc($value)) . $client->string('COLON')
-		. ' ' . $valueFunctRef->[$listIndex]->($client);
+		return ( undef, $valueFunctRef->[$listIndex]->($client) );
 	}
 }
 
