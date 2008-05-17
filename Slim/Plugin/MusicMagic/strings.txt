@@ -498,3 +498,5 @@ MUSICIP_PROGRESS
 	IT	Importazione da MusicIP
 	NL	MusicIP importeren
 
+MUSICIP_PLAYTHISMIX
+	EN	Play this mix
