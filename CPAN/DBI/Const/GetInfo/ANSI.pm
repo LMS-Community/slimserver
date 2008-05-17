@@ -1,4 +1,4 @@
-# $Id: ANSI.pm,v 1.3 2003/02/26 17:56:01 timbo Exp $
+# $Id: ANSI.pm 8696 2007-01-24 23:12:38Z timbo $
 #
 # Copyright (c) 2002  Tim Bunce  Ireland
 #
@@ -38,7 +38,8 @@ The API for this module is private and subject to change.
 =cut
 
 my
-$VERSION = sprintf "%d.%02d", '$Revision: 1.3 $ ' =~ /(\d+)\.(\d+)/;
+$VERSION = sprintf("2.%06d", q$Revision: 8696 $ =~ /(\d+)/o);
+
 
 %InfoTypes =
 (
