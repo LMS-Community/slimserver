@@ -1,6 +1,6 @@
 package DBI::DBD::Metadata;
 
-# $Id: Metadata.pm,v 1.5 2004/02/01 11:16:16 timbo Exp $
+# $Id: Metadata.pm 8696 2007-01-24 23:12:38Z timbo $
 #
 # Copyright (c) 1997-2003 Jonathan Leffler, Jochen Wiedmann,
 # Steffen Goeldner and Tim Bunce
@@ -18,7 +18,8 @@ use DBI::Const::GetInfoType qw(%GetInfoType);
 @ISA = qw(Exporter);
 @EXPORT = qw(write_getinfo_pm write_typeinfo_pm);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("2.%06d", q$Revision: 8696 $ =~ /(\d+)/o);
+
 
 use strict;
 
