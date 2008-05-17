@@ -897,6 +897,50 @@ sub cliMix {
 	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
 	my $chunkCount = 0;
 
+	if ($menuMode) {
+		my $base = {
+			'actions' => {
+				'go' => {
+					'cmd' => ['songinfo'],
+					'params' => {
+						'menu' => 'nowhere',
+						'context' => 'playlist',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+                $request->addResult('base', $base);
+		$request->addResult('offset', 0);
+		#$request->addResult('text', $request->string('MUSICMAGIX_MIX'));
+		my $thisWindow = {
+				'titleStyle' => 'playlist',
+				'menuStyle'  => 'album',
+				'text'       => $request->string('MUSICMAGIC_MIX'),
+		};
+		$request->addResult('window', $thisWindow);
+
+		# add an item for "play this mix"
+		$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'playlist');
+		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string('MUSICIP_PLAYTHISMIX'));
+		$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
+		my $actions = {
+			'go' => {
+				'cmd' => ['musicip', 'play'],
+			},
+			'play' => {
+				'cmd' => ['musicip', 'play'],
+			},
+			'add' => {
+				'cmd' => ['musicip', 'add'],
+			},
+		};
+		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+		$chunkCount++;
+		
+	}
+	
+	
 	for my $item (@$mix) {
 
 		# If we can't get an object for this url, skip it, as the
@@ -908,14 +952,16 @@ sub cliMix {
 			next;
 		}
 
-		if ($menuMode) {}
-		else {
+		if ($menuMode) {
+			Slim::Control::Queries::_addJiveSong($request, $loopname, $chunkCount, 0, $trackObj);
+		} else {
 			Slim::Control::Queries::_addSong($request, $loopname, $chunkCount, $trackObj, $tags);
 		}
 		$chunkCount++;
 	}
 
 	$request->addResult('count', $chunkCount);
+	$request->setStatusDone();
 }
 
 sub cliPlayMix {
