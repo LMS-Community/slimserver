@@ -981,7 +981,7 @@ our %functions = (
 		my $client = shift;
 		
 		# sleep function is overridden when alarm activates
-		if ($client->modeParam('alarmactive')) {
+		if ($client->alarmActive) {
 			
 			$log->info("Alarm Active: sleep function override for snooze");
 			Slim::Buttons::AlarmClock::snooze($client);

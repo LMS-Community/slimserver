@@ -40,7 +40,6 @@ my $interval    = 1;  # check every x seconds
 my $FADESECONDS = 20; # fade-in of 20 seconds
 
 my %menuSelection;
-my %snooze = ();
 our %specialPlaylists;
 our %menuParams = ();
 our %functions = ();
@@ -555,7 +554,7 @@ sub checkAlarms {
 				# slight delay for things to load up before showing the temporary alarm lines.
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
 				# Subscribe to ir commands in order to end the alarm
-				Slim::Control::Request::subscribe(\&alarmEnd, [['ir']], $client);
+				Slim::Control::Request::subscribe(\&alarmEnd, [['button']], $client);
 			}
 		}
 	}
@@ -577,11 +576,19 @@ sub playDone {
 # begins.  When an alarm is active, the screensaver and active outputs can change.  This resets such changes.
 sub alarmEnd {
 	my $request = shift;
-
+	
 	my $client = $request->client;
+	my $button = $request->getParam('_buttoncode');
+
+	return if $button eq 'sleep' || $button eq 'snooze';
+
 	logger('player.ui')->debug('Alarm no longer active');
 
 	$client->alarmActive(undef);
+	if ($client->snoozeActive) {
+		$client->snoozeActive(undef);
+		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE_OFF')]});
+	}
 	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
 }
 
@@ -589,19 +596,16 @@ sub snooze {
 	my $client = shift;
 	
 	# don't snooze again if we're already snoozing.
-	if (!$snooze{$client}) {
+	if (! $client->snoozeActive) {
 		$client->execute(['stop']);
 
+		my $time = Time::HiRes::time();
+		$client->snoozeActive($time);
+
 		# set up 9m snooze
-		$snooze{$client} = Time::HiRes::time() + (9 * 60);
+		Slim::Utils::Timers::setTimer($client, $time + (9 * 60), \&snoozeEnd, $client);
 
-		Slim::Utils::Timers::setTimer($client, $snooze{$client}, \&snoozeEnd, $client);
-
-		$client->showBriefly({
-			'line'     => [$client->string('ALARM_NOW_PLAYING'),$client->string('ALARM_SNOOZE')],
-			'duration' => 3,
-			'block'    => 1,
-		});
+		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE')]});
 		pushDateTime($client);
 	}
 	
@@ -611,16 +615,17 @@ sub snooze {
 sub snoozeEnd {
 	my $client = shift;
 	
-	$snooze{$client} = 0;
+	$client->snoozeActive = undef;
 	
 	if ($client->power) {
+		# Jump to next track.  Should we do this?
 		$client->execute(["playlist", "jump", "+1"]);
 	
 		Slim::Player::Playlist::refreshPlaylist($client);
 
 		$client->showBriefly({
 			'line'     => [$client->string('ALARM_NOW_PLAYING'),$client->string('ALARM_WAKEUP')],
-			'duration' => 2,
+			'duration' => 3,
 			'block'    => 1,
 		});
 		
@@ -666,8 +671,10 @@ sub visibleAlarm {
 # Push into the datetime screensaver if it's available
 sub pushDateTime {
 	my $client = shift;
+	my $mode = 'SCREENSAVER.datetime';
 
-	if (Slim::Buttons::Common::validMode('SCREENSAVER.datetime')) {
+	if (Slim::Buttons::Common::validMode($mode)
+	    && Slim::Buttons::Common::mode($client) ne $mode) {
 		Slim::Buttons::Common::pushMode($client, 'SCREENSAVER.datetime');
 		return 1;
 	} else {

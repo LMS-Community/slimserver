@@ -69,11 +69,11 @@ my $fontDef = {
 sub screensaverDateTimelines {
 	my $client = shift;
 
-	my $alarmOn = 0; # Whether to display the alarm symbol
+	my $alarmOn = 0; # Whether to display the alarm/snooze symbol
 	my $nextUpdate = $client->periodicUpdateTime();
 	my $updateInterval = $client->modeParam('modeUpdateInterval');
 
-	if ($client->alarmActive) {
+	if ($client->alarmActive || $client->snoozeActive) {
 		# An alarm is currently active - flash the symbol
 		my $time = Time::HiRes::time;
 		$alarmOn = ($time - int($time)) < 0.5;
@@ -109,10 +109,19 @@ sub screensaverDateTimelines {
 		}
 	}
 
+	my $overlay = undef;
+	if ($alarmOn) {
+		if ($client->snoozeActive) {
+			# TODO: Need proper snooze indicator!
+			$overlay = 'ZZ';
+		} else {
+			$overlay = $client->symbols('bell');
+		}
+	}
 	my $display = {
 		'center' => [ Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat')),
 					  Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')) ],
-		'overlay'=> [ ($alarmOn ? $client->symbols('bell') : undef) ],
+		'overlay'=> [ $overlay ],
 		'fonts'  => $fontDef,
 	};
 
