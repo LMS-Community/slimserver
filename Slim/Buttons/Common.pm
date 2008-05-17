@@ -2027,6 +2027,8 @@ sub dateTime {
 
 sub startPeriodicUpdates {
 	my $client = shift;
+	# Optional time for first update
+	my $startTime = shift;
 
 	# unset any previous timers
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
@@ -2043,14 +2045,14 @@ sub startPeriodicUpdates {
 
 	return unless ($interval || $interval2);
 
-	my $time = Time::HiRes::time() + ($interval || 0.05);
+	my $time = $startTime || (Time::HiRes::time() + ($interval || 0.05));
 
 	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
 
 	$client->periodicUpdateTime($time);
 }
 
-# resych periodic updates to $time - to synchonise updates with time/elaspsed time
+# resync periodic updates to $time - to synchronise updates with time/elapsed time
 sub syncPeriodicUpdates {
 	my $client = shift;
 	my $time = shift || Time::HiRes::time();
