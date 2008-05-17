@@ -90,6 +90,7 @@ sub init {
 
 	$client->SUPER::init();
 
+	Slim::Hardware::IR::initClient($client);
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
