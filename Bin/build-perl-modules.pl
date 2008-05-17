@@ -21,13 +21,13 @@ use File::Which;
 
 # NOTE: If you change this in a future version of SC, create a new
 # versioned directory under vendor/src for all files for that version
-my $SOURCE = 'http://svn.slimdevices.com/repos/slim/vendor/src/7.0';
+my $SOURCE = 'http://svn.slimdevices.com/repos/slim/vendor/src/7.1';
 my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
 my %packages = (
 	'Compress::Zlib'     => 'Compress-Zlib-1.41.tar.gz',
-	'DBI'                => 'DBI-1.50.tar.gz',
+	'DBI'                => 'DBI-1.604.tar.gz',
 	'DBD::mysql'         => 'DBD-mysql-3.0002.tar.gz',
 	'Digest::SHA1'       => 'Digest-SHA1-2.11.tar.gz',
 	'Encode::Detect'     => 'Encode-Detect-1.00.tar.gz',
