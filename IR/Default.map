@@ -126,6 +126,7 @@ menu_synchronize		= menu_synchronize
 
 [home]
 add.*					= add
+arrow_left.hold			= dead
 
 [off]
 # When the player is powered off, most buttons are dead
