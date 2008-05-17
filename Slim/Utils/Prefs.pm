@@ -488,6 +488,12 @@ sub init {
 	$prefs->setChange( sub {
 		Slim::Control::Jive::buildCaches();
 	}, 'variousArtistAutoIdentification' );
+
+	# Reset IR state if preference change
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
+		Slim::Hardware::IR::initClient($client);
+	}, qw(disabledirsets irmap) );
 }
 
 =head2 writeAll( )

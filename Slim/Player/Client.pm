@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 12, 13, 16, 21, 25, 26, 27, 33, 34, 53
+	# 16, 21, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
@@ -108,8 +108,8 @@ sub new {
 	$client->[10] = undef; # tcpsock
 
 	$client->[11] = undef; # languageOverride
-#	$client->[12]
-#	$client->[13]
+	$client->[12] = undef; # ircodes
+	$client->[13] = undef; # irmaps
 
 	$client->[14] = 0; # readytosync
 	$client->[15] = undef; # streamformat
@@ -1139,6 +1139,16 @@ sub tcpsock {
 sub languageOverride {
 	my $r = shift;
 	@_ ? ($r->[11] = shift) : $r->[11];
+}
+
+sub ircodes {
+	my $r = shift;
+	@_ ? ($r->[12] = shift) : $r->[12];
+}
+
+sub irmaps {
+	my $r = shift;
+	@_ ? ($r->[13] = shift) : $r->[13];
 }
 
 sub readytosync {

@@ -76,10 +76,6 @@ sub enqueue {
 	my $irTime = $clientTime / $client->ticspersec;
 	my $now = Time::HiRes::time();
 
-	assert($client);
-	assert($irCodeBytes);
-	assert($irTime);
-
 	# estimate time of actual key press as $irTime + $ref, $ref = min($now - $irTime) over set of key presses
 	# allows estimation of delay for IR key presses queued in slimproto tcp session while server busy/network congested
 	# assumes most IR interaction lasts < 60s, reset estimate after this to ensure recovery from clock adjustments
@@ -387,6 +383,42 @@ sub loadIRFile {
 	}
 }	
 
+# init lookup state for new client so this is not done per ir lookup
+sub initClient {
+	my $client = shift;
+
+	my @codes;
+	my %disabled = map { $_ => 1 } @{ $prefs->client($client)->get('disabledirsets') };
+
+	for my $code (keys %irCodes) {
+		if (!$disabled{$code}) {
+			$log->info("Client: " . $client->id . " IR code set: $code");
+			push @codes, \%{ $irCodes{$code} };
+		}
+	}
+
+	$client->ircodes(\@codes);
+
+	my $map = $prefs->client($client)->get('irmap');
+
+	if (!-e $map) {
+		# older prefs didn't track pathname
+		# resave the pref with path also stripping to basename as a way to try to fix an invalid path
+		my @dirs = IRFileDirs();
+		$map = file($dirs[0], basename($map))->stringify;
+		$prefs->client($client)->set('irmap', $map);
+	}
+
+	my @maps = ( \%{ $irMap{$defaultMapFile} } );
+
+	if ($map ne $defaultMapFile) {
+		$log->info("Client: " . $client->id . " Using mapfile: $map");
+		unshift @maps, \%{ $irMap{$map} };
+	}
+
+	$client->irmaps(\@maps);
+}
+
 # returns the code for a CodeByte
 # for now copycat of lookup for detecting unknown codes
 # result of this investigation should be reused, but too delicate operation now
@@ -396,16 +428,9 @@ sub lookupCodeBytes {
 		
 	if (defined $irCodeBytes) {
 	
-		my %enabled = %irCodes;
+		for my $irset (@{$client->ircodes}) {
 
-		if ($client) {
-
-			map { delete $enabled{$_} } @{ $prefs->client($client)->get('disabledirsets') };
-		}
-
-		for my $irset (keys %enabled) {
-
-			if (defined (my $code = $irCodes{$irset}{$irCodeBytes})) {
+			if (defined (my $code = $irset->{$irCodeBytes})) {
 
 				$log->info("$irCodeBytes -> code: $code");
 
@@ -432,19 +457,13 @@ sub lookup {
 		return '';
 	}
 	
-	my %enabled = %irCodes;
+	for my $irset (@{$client->ircodes}) {
 
-	for (@{ $prefs->client($client)->get('disabledirsets')}) {
-		delete $enabled{$_};
-	}
+		if (defined (my $found = $irset->{$code})) {
 
-	for my $irset (keys %enabled) {
+			$log->info("Found button $found for $code");
 
-		if (defined $irCodes{$irset}{$code}) {
-
-			$log->info("Found button $irCodes{$irset}{$code} for $code");
-
-			$code = $irCodes{$irset}{$code};
+			$code = $found;
 
 			last;
 		}
@@ -463,61 +482,34 @@ sub lookupFunction {
 	my ($client, $code, $mode, $haveFunction) = @_;
 
 	if (!defined $mode) {
-		$mode = Slim::Buttons::Common::mode($client);
+		# find the current mode
+		$mode = $client->modeStack(-1);
 	}
 
-	my $map = $prefs->client($client)->get('irmap');
-	
-	if (!-e $map) {
-	
-		# older prefs didn't track pathname
-		# resave the pref with path also stripping to basename as a way to try to fix an invalid path
-		my @dirs = IRFileDirs();
-		$map = file($dirs[0], basename($map))->stringify;
-		$prefs->client($client)->set('irmap', $map);
-	}
-	
-	my $function = '';
+	my @maps  = @{$client->irmaps};
+	my @order = ( $mode, 'common' );
 
-	assert($client);
-	assert($map);
-	assert($mode);
-#	assert($code); # FIXME: somhow we keep getting here with no $code.
-
-	if ($function = $irMap{$map}{$mode}{$code}) {
-
-		$log->info("Found function: $function for button $code in mode $mode from map $map");
-
-	} elsif ($function = $irMap{$defaultMapFile}{$mode}{$code}) {
-
-		$log->info("Found function: $function for button $code in mode $mode from map $defaultMapFile");
-	
-	} elsif ($mode =~ /^(.+)\..+/ && $irMap{$map}{lc($1)}{$code}) {
-
-		$function = $irMap{$map}{lc($1)}{$code};
-
-		$log->info("Found function: $function for button $code in mode class \L$1 from map $map");
-
-	} elsif ($mode =~ /^(.+)\..+/ && $irMap{$defaultMapFile}{lc($1)}{$code}) {
-
-		$function = $irMap{$defaultMapFile}{lc($1)}{$code};
-
-		$log->info("Found function: $function for button $code in mode class \L$1 from map $defaultMapFile");
-
-	} elsif ($function = $irMap{$map}{'common'}{$code}) {
-
-		$log->info("Found function: $function for button $code in mode common from map $map");
-	
-	} elsif ($function = $irMap{$defaultMapFile}{'common'}{$code}) {
-
-		$log->info("Found function: $function for button $code in mode common from map $defaultMapFile");
+	if ($mode =~ /^INPUT\..+/) {
+		# add the previous mode so we can provide specific mappings for callers of INPUT.*
+		splice @order, 1, 0, $client->modeStack(-2);
 	}
 
-	if (!$function && !$haveFunction) {
-		$log->info("irCode not defined: [$code] for map: [$map] and mode: [$mode]");
+	for my $search (@order) {
+
+		for my $map (@maps) {
+
+			if (my $function = $map->{$search}{$code}) {
+
+				$log->info("Found function: $function for button $code in mode $search");
+
+				return $function;
+			}
+		}
 	}
 
-	return $function;
+	$log->info("irCode not defined: [$code] for mode: [$mode]");
+
+	return '';
 }
 
 # Checks to see if a button has been released, this sub is executed through timers
