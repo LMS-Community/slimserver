@@ -555,7 +555,7 @@ sub checkAlarms {
 				# slight delay for things to load up before showing the temporary alarm lines.
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
 				# Subscribe to ir commands in order to end the alarm
-				Slim::Control::Request::subscribe(\&alarmEnd, [['ir']]);
+				Slim::Control::Request::subscribe(\&alarmEnd, [['ir']], $client);
 			}
 		}
 	}
@@ -582,6 +582,7 @@ sub alarmEnd {
 	logger('player.ui')->debug('Alarm no longer active');
 
 	$client->alarmActive(undef);
+	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
 }
 
 sub snooze {
