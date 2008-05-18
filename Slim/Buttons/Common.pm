@@ -586,16 +586,10 @@ our %functions = (
 			$brightmode = 'powerOnBrightness';
 
 			my $lastIR  = Slim::Hardware::IR::lastIRTime($client);
-			my $saver   = 0;
 			my $timeout = Time::HiRes::time() - $prefs->client($client)->get('screensavertimeout');
+			my $mode    = Slim::Buttons::Common::mode($client);
 
-			if ($mode eq $prefs->client($client)->get('screensaver') ||
-			    $mode eq $prefs->client($client)->get('idlesaver')) {
-
-				$saver = 1;
-			}
-
-			if (($saver) && ($lastIR && $lastIR < $timeout)) {
+			if (($mode ne 'block') && ($lastIR && $lastIR < $timeout)) {
 
 				$brightmode = 'idleBrightness';
 			}
