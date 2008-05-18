@@ -69,6 +69,9 @@ PLUGIN_RESCAN_TIMER_SET
 	IT	Imposta ora analisi
 	NL	Tijd voor opnieuw scannen instellen
 
+
+PLUGIN_RESCAN_TIMER_SAVED
+	EN	Saving Time...
 PLUGIN_RESCAN_TIMER_TURNING_OFF
 	CS	Vypínám automatickou aktualizaci...
 	DA	Slår timer for genindlæsning fra...
