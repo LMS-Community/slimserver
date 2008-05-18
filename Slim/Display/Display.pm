@@ -20,7 +20,7 @@ L<Slim::Display::Display>
 
 use strict;
 
-use Scalar::Util qw(weaken);
+use base qw(Slim::Utils::Accessor);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -67,37 +67,41 @@ our $defaultPrefs = {
 	'scrollRateDouble'     => 0.1,
 };
 
+{
+	__PACKAGE__->mk_accessor('weak',   qw(client));
+	__PACKAGE__->mk_accessor('scalar', qw(updateMode animateState renderCache currBrightness lastVisMode sbCallbackData sbOldDisplay
+										  sbName screen2updateOK displayStrings notifyLevel hideVisu));
+	__PACKAGE__->mk_accessor('arraydefault', 1, qw(scrollState scrollData widthOverride));
+}
 
 # create base class - always called via a class which inherits from this one
 sub new {
 	my $class = shift;
 	my $client = shift;
-	
-	my $display =[];	
-	bless $display, $class;
 
-	$display->[0] = $client; # ref to client
-	$display->[1] = 0;        # updateMode [0 = normal, 1 = periodic update blocked, 2 = all updates blocked]
-	$display->[2] = 0;        # animateState
-	$display->[3] = [0, 0, 0];# scrollState - element 1 = screen1
-	$display->[4] = {};       # renderCache
-	$display->[5] = [];       # scrollData - element 1 = screen1
-	$display->[6] = 1;        # currBrightness
-	$display->[7] = undef;    # lastVisMode
-	$display->[8] = undef;    # sbCallbackData
-	$display->[9] = undef;    # sbOldDisplay
-	$display->[10]= undef;    # sbName
-	$display->[11]= 0;        # screen2updateOK
-	$display->[12]= {};       # displayStrings - strings for this display
-	$display->[13]= [];       # widthOverride - element 1 = screen1 (undef if default for display)
-	$display->[14]= 0;        # notifyLevel [0 = notify off, 1 = showbriefly only, 2 = all]
-	$display->[15]= 0;        # hideVisu [0 = don't hide, 1 = hide if mode requests, 2 = hide all]
+	my $display = $class->SUPER::new;
+
+	# set default state via accessors
+	$display->client($client);
+	$display->updateMode(0);     # 0 = normal, 1 = periodic update blocked, 2 = all updates blocked
+	$display->animateState(0);
+	$display->scrollState(1, 0); # screen1
+	$display->scrollState(2, 0); # screen2
+	$display->renderCache({});
+	$display->currBrightness(1);
+	$display->lastVisMode(undef);
+	$display->sbCallbackData(undef);
+	$display->sbOldDisplay(undef);
+	$display->sbName(undef);
+	$display->screen2updateOK(undef);
+	$display->displayStrings({});
+	$display->widthOverride(1, undef); #screen1
+	$display->widthOverride(2, undef); #screen2
+	$display->notifyLevel(0);    # 0 = notify off, 1 = showbriefly only, 2 = all
+	$display->hideVisu(0);       # 0 = don't hide, 1 = hide if mode requests, 2 = hide all
 
 	$display->resetDisplay(); # init render cache
 	
-	# Circular refs are bad
-	weaken( $display->[0] );
-
 	return $display;
 }
 
@@ -109,73 +113,6 @@ sub init {
 	$display->displayStrings(Slim::Utils::Strings::clientStrings($display->client));
 }
 
-# Methods to access display state
-sub client {
-	return shift->[0];
-}
-sub updateMode {
-	my $r = shift;
-	@_ ? ($r->[1] = shift) : $r->[1];
-}
-sub animateState {
-	my $r = shift;
-	@_ ? ($r->[2] = shift) : $r->[2];
-}    
-sub scrollState {
-	my $r = shift;
-	my $s = shift || 1;
-	@_ ? ($r->[3][$s] = shift) : $r->[3][$s];
-}    
-sub renderCache {
-	my $r = shift;
-	@_ ? ($r->[4] = shift) : $r->[4];
-}    
-sub scrollData {
-	my $r = shift;
-	my $s = shift || 1;
-	@_ ? ($r->[5][$s] = shift) : $r->[5][$s];
-}    
-sub currBrightness {
-	my $r = shift;
-	@_ ? ($r->[6] = shift) : $r->[6];
-}    
-sub lastVisMode {
-	my $r = shift;
-	@_ ? ($r->[7] = shift) : $r->[7];
-}    
-sub sbCallbackData {
-	my $r = shift;
-	@_ ? ($r->[8] = shift) : $r->[8];
-}
-sub sbOldDisplay {
-	my $r = shift;
-	@_ ? ($r->[9] = shift) : $r->[9];
-}
-sub sbName {
-	my $r = shift;
-	@_ ? ($r->[10] = shift) : $r->[10];
-}
-sub screen2updateOK {
-	my $r = shift;
-	@_ ? ($r->[11] = shift) : $r->[11];
-}
-sub displayStrings {
-	my $r = shift;
-	@_ ? ($r->[12] = shift) : $r->[12];
-}
-sub widthOverride {
-	my $r = shift;
-	my $s = shift || 1;
-	@_ ? ($r->[13][$s] = shift) : $r->[13][$s];
-}
-sub notifyLevel {
-	my $r = shift;
-	@_ ? ($r->[14] = shift) : $r->[14];
-}
-sub hideVisu {
-	my $r = shift;
-	@_ ? ($r->[15] = shift) : $r->[15];
-}
 
 ################################################################################################
 
