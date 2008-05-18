@@ -495,7 +495,7 @@ sub lookupFunction {
 			splice @order, 1, 0, $client->modeStack(-2);
 		} else {
 			# add the class name so modes of the form class.name can share maps entries
-			splice @order, 1, 0, $1;
+			splice @order, 1, 0, lc($1);
 		}
 	}
 
