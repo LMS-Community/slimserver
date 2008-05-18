@@ -168,18 +168,34 @@ sub playFavorite {
 	my $index = $favs->hasHotkey($digit);
 	my $entry = defined $index ? $favs->entry($index) : $favs->entry($digit ? $digit-1 : 9);
 
-	if (defined $entry && $entry->{'type'} && $entry->{'type'} eq 'audio') {
+	if (defined $entry && $entry->{'type'} && $entry->{'type'} =~ /audio|playlist/) {
 
 		my $url   = $entry->{'URL'} || $entry->{'url'};
 		my $title = $entry->{'title'};
 
-		$log->info("Playing favorite number $digit $title $url");
+		if ($entry->{'parser'} || $entry->{'type'} eq 'playlist') {
 
-		Slim::Music::Info::setTitle($url, $title);
+			$log->info("Playing favorite number $digit $title $url via xmlbrowser");
 
-		$client->execute(['playlist', 'play', $url]);
+			my $item = {
+				'url'   => $url,
+				'title' => $title,
+				'type'  => $entry->{'type'},
+				'parser'=> $entry->{'parser'},
+			};
 
-		$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+			Slim::Buttons::XMLBrowser::playItem($client, $item);
+
+		} else {
+
+			$log->info("Playing favorite number $digit $title $url");
+
+			Slim::Music::Info::setTitle($url, $title);
+			
+			$client->execute(['playlist', 'play', $url]);
+			
+			$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+		}
 
 	} else {
 
@@ -661,9 +677,9 @@ sub indexHandler {
 		my $entry = {
 			'title'   => $opmlEntry->{'text'} || '',
 			'url'     => $opmlEntry->{'URL'} || $opmlEntry->{'url'} || '',
-			'audio'   => (defined $opmlEntry->{'type'} && $opmlEntry->{'type'} eq 'audio'),
+			'audio'   => (defined $opmlEntry->{'type'} && $opmlEntry->{'type'} =~ /audio|playlist/) ? 1 : 0,
 			'outline' => $opmlEntry->{'outline'},
-			'edit'    => (defined $edit && $edit == $i),
+			'edit'    => (defined $edit && $edit == $i) ? 1 : 0,
 			'index'   => join '.', (@indexPrefix, $i++),
 		};
 
