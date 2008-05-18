@@ -112,8 +112,7 @@ sub screensaverDateTimelines {
 	my $overlay = undef;
 	if ($alarmOn) {
 		if ($client->snoozeActive) {
-			# TODO: Need proper snooze indicator!
-			$overlay = 'ZZ';
+			$overlay = $client->symbols('sleep');
 		} else {
 			$overlay = $client->symbols('bell');
 		}

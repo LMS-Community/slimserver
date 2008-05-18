@@ -721,6 +721,7 @@ my %fontSymbols = (
 	'square'      => "\x0e",
 	'filledsquare'=> "\x0f",
 	'bell'	      => "\x10",
+	'sleep'       => "\x11",
 	'hardspace'   => "\x20",
 
 	# following are commands rather than symbols
