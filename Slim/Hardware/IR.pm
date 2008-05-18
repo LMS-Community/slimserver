@@ -489,9 +489,14 @@ sub lookupFunction {
 	my @maps  = @{$client->irmaps};
 	my @order = ( $mode, 'common' );
 
-	if ($mode =~ /^INPUT\..+/) {
-		# add the previous mode so we can provide specific mappings for callers of INPUT.*
-		splice @order, 1, 0, $client->modeStack(-2);
+	if ($mode =~ /^(.+)\..+/) {
+		if ($1 eq 'INPUT') {
+			# add the previous mode so we can provide specific mappings for callers of INPUT.*
+			splice @order, 1, 0, $client->modeStack(-2);
+		} else {
+			# add the class name so modes of the form class.name can share maps entries
+			splice @order, 1, 0, lc($1);
+		}
 	}
 
 	for my $search (@order) {
