@@ -509,7 +509,7 @@ sub lookupFunction {
 
 	$log->info("irCode not defined: [$code] for mode: [$mode]");
 
-	return '';
+	return undef;
 }
 
 # Checks to see if a button has been released, this sub is executed through timers
