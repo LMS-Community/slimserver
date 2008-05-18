@@ -18,8 +18,12 @@ use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;
+use Slim::Hardware::BacklightLED;
 
 my $prefs = preferences('server');
+
+my $LED_ALL = 0xFFFF;
+my $LED_POWER = 0x0200;
 
 our $defaultPrefs = {
 	'analogOutMode'        => 1,      # default sub-out
@@ -78,7 +82,29 @@ sub reconnect {
 
 	$client->SUPER::reconnect(@_);
 
+	my $on = $prefs->client( $client)->get( 'power') || 0;
+	if( $on == 1) {
+		Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_ALL);
+	} else {
+		Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_POWER);
+	}
+
 	setRTCTime( $client);
+}
+
+sub power {
+	my $client = shift;
+	my $on = $_[0];
+	my $currOn = $prefs->client( $client)->get( 'power') || 0;
+
+	if( defined( $on) && (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on))) {
+		if( $on == 1) {
+			Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_ALL);
+		} else {
+			Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_POWER);
+		}
+	}
+	return $client->SUPER::power(@_);
 }
 
 sub setRTCTime {
