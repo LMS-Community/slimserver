@@ -1862,7 +1862,7 @@ sub jiveFavoritesCommand {
 # file types allowed for downloading to jive
 my %filetypes = (
 	applet    => qr/\.zip$/,
-	wallpaper => qr/\.(bmp|jpg|jpeg|png)$|^http:\/\//,
+	wallpaper => qr/\.(bmp|jpg|jpeg|png|BMP|JPG|JPEG|PNG)$|^http:\/\//,
 	sound     => qr/\.wav$/,
 );
 
