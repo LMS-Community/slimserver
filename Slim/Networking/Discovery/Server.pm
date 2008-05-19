@@ -19,7 +19,7 @@ use Slim::Utils::Timers;
 
 my $log = logger('network.protocol');
 
-my $discovery_packet = pack 'a5xa4xa4', 'eIPAD', 'NAME', 'JSON';
+my $discovery_packet = pack 'a5xa4xa4x', 'eIPAD', 'NAME', 'JSON';
 
 # List of server we see
 my $server_list = {};
