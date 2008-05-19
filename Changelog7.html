@@ -2,6 +2,26 @@
 <ul>
 	<li>Firmware updates:</li>
 	<ul>
+		<li>Boom - Version 8</li>
+		<ul>
+			<li>Bug 8152: Sanity check for RTC to prevent alarm on PQP1 and older units, where RTC I2C communication has issues when hot</li>
+			<li>Reset alarm when unit is factory reset</li>
+			<li>Fix home button on remote while in setup mode</li>
+			<li>Bug 8040:
+			<ul>
+				<li>Only light up Power button LED when off</li>
+				<li>Allow SC to control background LEDs</li>
+			</ul>
+			<li>Bug 8145: Move Text Viewer, button and snooze button test into new Factory Test menu in Current Settings.</li>
+			<li>Bug 7891: Debounce code for buttons (including knob push button)</li>
+			<li>Bug 7623: Fix chopped off logo</li>
+			<li>Bug 8050:
+			<ul>
+				<li>Prevent second line scrolling while entering WEP or WPA key</li>
+				<li>Make sure cursor stays on screen while entering WEP key</li>
+			</ul>
+			<li>Make Text Viewer a per player define</li>
+		</ul>
 		<li>Boom - Version 7</li>
 		<ul>
 			<li>Additional knob debouncing (needed for PQP2 Booms)</li>
