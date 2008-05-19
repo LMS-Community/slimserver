@@ -17,7 +17,7 @@ $prefs->init({
 });
 
 my %filetypes = (
-	wallpaper => qr/\.(bmp|jpg|jpeg|png)$|^http:\/\//,
+	wallpaper => qr/\.(bmp|jpg|jpeg|png|BMP|JPG|JPEG|PNG)$|^http:\/\//,
 	sound     => qr/\.(wav)$/,
 );
 
@@ -69,7 +69,7 @@ sub handler {
 
 					my $opt = {
 						'name' => $params->{"${optname}_name$i"},
-						'url'  => $params->{"$optname$i"},
+						'url'  => Slim::Utils::Unicode::utf8off($params->{"$optname$i"}), # Bug: 8184 turn utf8off
 						'key'  => "JiveExtras_$j.$ext",
 						'vers' => undef,
 					};
