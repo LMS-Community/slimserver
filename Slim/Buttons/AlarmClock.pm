@@ -34,7 +34,10 @@ use Slim::Utils::Log;
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
+use Data::Dumper; # TODO: Don't go live with this in!
+
 my $prefs = preferences('server');
+my $log = logger('player.alarmclock');
 
 my $interval    = 1;  # check every x seconds
 my $FADESECONDS = 20; # fade-in of 20 seconds
@@ -489,7 +492,7 @@ sub checkAlarms {
 
 			if ($time == $alarmtime) {
 				# Sound the alarm!
-				logger('player.ui')->debug('Alarm clock starting');
+				$log->debug('Alarm starting');
 				
 				my $now = Time::HiRes::time(); 
 				# Bug 7818, count this as user interaction, even though it isn't really
@@ -497,19 +500,24 @@ sub checkAlarms {
 
 				$client->alarmActive($now);
 
-				# Turn on and show the datetime screensaver if possible
-				$client->execute(['stop']);
-				$client->execute(["power", 1]);
+				my $request = $client->execute(['stop']);
+				$request->source('ALARM');
+				$request = $client->execute(["power", 1]);
+				$request->source('ALARM');
+
 				pushDateTime($client);
 				
 				my $volume = $prefs->client($client)->get('alarmvolume')->[ $day ];
 
 				if (defined ($volume)) {
-					$client->execute(["mixer", "volume", $volume]);
+					$log->debug('Changing volume');
+					$request = $client->execute(["mixer", "volume", $volume]);
+					$request->source('ALARM');
 				}
 
 				# fade volume over 20s if enabled.
 				if ( $prefs->client($client)->get('alarmfadeseconds') ) {
+					$log->debug('Fading volume');
 					$client->fade_volume( $FADESECONDS );
 				}
 
@@ -518,6 +526,7 @@ sub checkAlarms {
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
 				# TODO: This doesn't seem to check!
 				if ($specialPlaylists{$playlist}) {
+					$log->debug('Playing random mix');
 					
 					# Random mix will turn player on
 					Slim::Plugin::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
@@ -525,6 +534,7 @@ sub checkAlarms {
 				# handle a chosen playlist that is not the current playlist.
 				# TODO: How do we get here?
 				} elsif (defined $playlist && $playlist ne 'CURRENT_PLAYLIST') {
+					$log->debug('Playing playlist');
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
 					
@@ -534,27 +544,33 @@ sub checkAlarms {
 
 					if (blessed($playlistObj) && $playlistObj->can('id')) {
 
-						$client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id], \&playDone, [$client]);
+						$request = $client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id], \&playDone, [$client]);
+						$request->source('ALARM');
 						setTimer();
 						return;
 					
 					#if all else fails, just try to play the current playlist.
 					} else {
+						$log->debug('Can\'t use playlist obj.  Falling back to current playlist');
 						# no object, so try to play the current playlist
-						$client->execute(['play'], \&playDone, [$client]);
+						$request = $client->execute(['play'], \&playDone, [$client]);
+						$request->source('ALARM');
 					}
 
 				#fallback to current playlist if all else fails.
 				} else {
+					$log->debug('Using current playlist');
 
-					$client->execute(['play']);
+					$request = $client->execute(['play']);
+					$request->source('ALARM');
 
 				}
 				
 				# slight delay for things to load up before showing the temporary alarm lines.
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
-				# Subscribe to ir commands in order to end the alarm
-				Slim::Control::Request::subscribe(\&alarmEnd, [['button']], $client);
+				# Subscribe to pause and stop commands in order to end the alarm
+				$log->debug('Adding subscription');
+				Slim::Control::Request::subscribe(\&alarmEnd, [['power', 'pause', 'stop']], $client);
 			}
 		}
 	}
@@ -576,18 +592,26 @@ sub playDone {
 # begins.  When an alarm is active, the screensaver and active outputs can change.  This resets such changes.
 sub alarmEnd {
 	my $request = shift;
-	
+
 	my $client = $request->client;
-	my $button = $request->getParam('_buttoncode');
 
-	return if $button eq 'sleep' || $button eq 'snooze';
+	$log->debug(sub {'alarmEnd called with request: ' . $request->getRequestString});
+	$log->debug(Dumper($request));
 
-	logger('player.ui')->debug('Alarm no longer active');
+	# Don't respond to requests that we created ourselves
+	my $source = $request->source;
+	if ($source && ($source eq 'ALARM' || $source eq 'PLUGIN_RANDOMPLAY')) {
+		$log->debug('Ignoring self-created request');
+		return;
+	}
 
+	$log->debug('Stopping alarm');
 	$client->alarmActive(undef);
 	if ($client->snoozeActive) {
+		$log->debug('Stopping snooze');
 		$client->snoozeActive(undef);
-		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE_OFF')]});
+		Slim::Utils::Timers::killTimers($client, \&snoozeEnd);
+		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE_CANCEL')]});
 	}
 	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
 }
@@ -597,19 +621,21 @@ sub snooze {
 	
 	# don't snooze again if we're already snoozing.
 	if (! $client->snoozeActive) {
-		$client->execute(['stop']);
+		my $request = $client->execute(['stop']);
+		$request->source('ALARM');
 
 		my $time = Time::HiRes::time();
 		$client->snoozeActive($time);
 
 		# set up 9m snooze
-		Slim::Utils::Timers::setTimer($client, $time + (9 * 60), \&snoozeEnd, $client);
+		Slim::Utils::Timers::setTimer($client, $time + (9 * 60), \&snoozeEnd);
 
 		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE')]});
+	}
+
+	if ($client->alarmActive) {
 		pushDateTime($client);
 	}
-	
-	
 }
 
 sub snoozeEnd {
@@ -619,7 +645,8 @@ sub snoozeEnd {
 	
 	if ($client->power) {
 		# Jump to next track.  Should we do this?
-		$client->execute(["playlist", "jump", "+1"]);
+		my $request = $client->execute(["playlist", "jump", "+1"]);
+		$request->source('ALARM');
 	
 		Slim::Player::Playlist::refreshPlaylist($client);
 
@@ -671,11 +698,16 @@ sub visibleAlarm {
 # Push into the datetime screensaver if it's available
 sub pushDateTime {
 	my $client = shift;
-	my $mode = 'SCREENSAVER.datetime';
 
-	if (Slim::Buttons::Common::validMode($mode)
-	    && Slim::Buttons::Common::mode($client) ne $mode) {
+	my $mode = 'SCREENSAVER.datetime';
+	my $currentMode = Slim::Buttons::Common::mode($client);
+
+	$log->debug("Attempting to push datetime screensaver.  Current mode: $currentMode");
+	if (Slim::Buttons::Common::validMode($mode) && $currentMode ne $mode) {
+		$log->debug('Pushing screensaver');
 		Slim::Buttons::Common::pushMode($client, 'SCREENSAVER.datetime');
+		$client->update();
+
 		return 1;
 	} else {
 		return 0;

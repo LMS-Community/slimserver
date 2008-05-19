@@ -790,6 +790,7 @@ sub _defaultCategories {
 		'control.queries'            => 'ERROR',
 		'control.stdio'              => 'ERROR',
 
+		'player.alarmclock'          => 'ERROR',
 		'player.display'             => 'ERROR',
 		'player.fonts'               => 'ERROR',
 		'player.firmware'            => 'ERROR',

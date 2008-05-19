@@ -617,9 +617,11 @@ sub playRandom {
 
 	if ($numItems) {
 
-		if (!$addOnly) {
-			$client->execute(['stop']);
-			$client->execute(['power', '1']);
+		if (0 && !$addOnly) {
+			my $request = $client->execute(['stop']);
+			$request->source('PLUGIN_RANDOMPLAY');
+			$request = $client->execute(['power', '1']);
+			$request->source('PLUGIN_RANDOMPLAY');
 		}
 
 		my $find = {};

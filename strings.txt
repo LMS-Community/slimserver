@@ -1431,7 +1431,7 @@ ALARM_SNOOZE
 	EN	Snoozing...
 	FR	Sommeiller...
 
-ALARM_SNOOZE_OFF
+ALARM_SNOOZE_CANCEL
 	EN	Cancelling Snooze...
 
 ALARM_WAKEUP
@@ -14848,6 +14848,9 @@ DEBUG_CONTROL_COMMAND
 	FR	Journalisation d'exécution de commandes internes (avancé)
 	IT	Registrazione esecuzione comandi interni (per utenti esperti)
 	NL	Registratie van interne opdrachtuitvoering (Geavanceerd)
+
+DEBUG_PLAYER_ALARMCLOCK
+	EN	Player Alarm Clock Logging
 
 DEBUG_PLAYER_IR
 	DA	Infrarød aktivitet & parsning
