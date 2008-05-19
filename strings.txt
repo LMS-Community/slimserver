@@ -1431,8 +1431,11 @@ ALARM_SNOOZE
 	EN	Snoozing...
 	FR	Sommeiller...
 
-ALARM_SNOOZE_CANCEL
-	EN	Cancelling Snooze...
+ALARM_STOPPED
+	EN	Alarm Stopped
+
+ALARM_SNOOZE_STOPPED
+	EN	Snooze Stopped
 
 ALARM_WAKEUP
 	DE	Zeit, aufzustehen...

@@ -34,7 +34,7 @@ use Slim::Utils::Log;
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
-use Data::Dumper; # TODO: Don't go live with this in!
+#use Data::Dumper; # TODO: Don't go live with this in!
 
 my $prefs = preferences('server');
 my $log = logger('player.alarmclock');
@@ -491,7 +491,7 @@ sub checkAlarms {
 			}
 
 			if ($time == $alarmtime) {
-				# Sound the alarm!
+				# Sound an Alarm (HWV 63)
 				$log->debug('Alarm starting');
 				
 				my $now = Time::HiRes::time(); 
@@ -502,7 +502,7 @@ sub checkAlarms {
 
 				my $request = $client->execute(['stop']);
 				$request->source('ALARM');
-				$request = $client->execute(["power", 1]);
+				$request = $client->execute(['power', 1]);
 				$request->source('ALARM');
 
 				pushDateTime($client);
@@ -511,7 +511,8 @@ sub checkAlarms {
 
 				if (defined ($volume)) {
 					$log->debug('Changing volume');
-					$request = $client->execute(["mixer", "volume", $volume]);
+					# TODO: Need to store the previous level so it can be restored
+					$request = $client->execute(['mixer', 'volume', $volume]);
 					$request->source('ALARM');
 				}
 
@@ -544,7 +545,7 @@ sub checkAlarms {
 
 					if (blessed($playlistObj) && $playlistObj->can('id')) {
 
-						$request = $client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id], \&playDone, [$client]);
+						$request = $client->execute(['playlist', 'playtracks', 'playlist=' . $playlistObj->id], \&playDone, [$client]);
 						$request->source('ALARM');
 						setTimer();
 						return;
@@ -568,9 +569,7 @@ sub checkAlarms {
 				
 				# slight delay for things to load up before showing the temporary alarm lines.
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
-				# Subscribe to pause and stop commands in order to end the alarm
-				$log->debug('Adding subscription');
-				Slim::Control::Request::subscribe(\&alarmEnd, [['power', 'pause', 'stop']], $client);
+				setAlarmSubscription($client);
 			}
 		}
 	}
@@ -596,12 +595,18 @@ sub alarmEnd {
 	my $client = $request->client;
 
 	$log->debug(sub {'alarmEnd called with request: ' . $request->getRequestString});
-	$log->debug(Dumper($request));
+	#$log->debug(Dumper($request));
 
 	# Don't respond to requests that we created ourselves
 	my $source = $request->source;
 	if ($source && ($source eq 'ALARM' || $source eq 'PLUGIN_RANDOMPLAY')) {
 		$log->debug('Ignoring self-created request');
+		return;
+	}
+
+	# When snoozing we should end on 'playlist jump' but can only filter on playlist
+	if ($request->getRequest(0) eq 'playlist' && $request->getRequest(1) ne 'jump') {
+		$log->debug('Ignoring playlist command that isn\'t jump');
 		return;
 	}
 
@@ -611,17 +616,22 @@ sub alarmEnd {
 		$log->debug('Stopping snooze');
 		$client->snoozeActive(undef);
 		Slim::Utils::Timers::killTimers($client, \&snoozeEnd);
-		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE_CANCEL')]});
+		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE_STOPPED')]});
+	} else {
+		$client->showBriefly({line=>[$client->string('ALARM_STOPPED')]});
 	}
 	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
 }
 
 sub snooze {
 	my $client = shift;
-	
+
+	$log->debug('Snooze called');
 	# don't snooze again if we're already snoozing.
-	if (! $client->snoozeActive) {
-		my $request = $client->execute(['stop']);
+	if ($client->snoozeActive) {
+		$log->debug('Already snoozing');
+	} else {
+		my $request = $client->execute(['pause', 1]);
 		$request->source('ALARM');
 
 		my $time = Time::HiRes::time();
@@ -629,6 +639,8 @@ sub snooze {
 
 		# set up 9m snooze
 		Slim::Utils::Timers::setTimer($client, $time + (9 * 60), \&snoozeEnd);
+
+		setSnoozeSubscription($client);
 
 		$client->showBriefly({line=>[$client->string('ALARM_SNOOZE')]});
 	}
@@ -641,23 +653,23 @@ sub snooze {
 sub snoozeEnd {
 	my $client = shift;
 	
-	$client->snoozeActive = undef;
-	
-	if ($client->power) {
-		# Jump to next track.  Should we do this?
-		my $request = $client->execute(["playlist", "jump", "+1"]);
-		$request->source('ALARM');
-	
-		Slim::Player::Playlist::refreshPlaylist($client);
+	$log->debug('Snooze ending');
 
-		$client->showBriefly({
-			'line'     => [$client->string('ALARM_NOW_PLAYING'),$client->string('ALARM_WAKEUP')],
-			'duration' => 3,
-			'block'    => 1,
-		});
-		
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
-	}
+	$client->snoozeActive(undef);
+	
+	my $request = $client->execute(['pause', 0]);
+	$request->source('ALARM');
+
+	# TODO: Bring in line with other notifications
+	$client->showBriefly({
+		'line'     => [$client->string('ALARM_NOW_PLAYING'),$client->string('ALARM_WAKEUP')],
+		'duration' => 3,
+		'block'    => 1,
+	});
+	
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
+
+	setAlarmSubscription($client);
 }
 
 # temporary lines shown after alarm triggers, just to let the user know why the music started.
@@ -752,6 +764,36 @@ sub alarmHeader {
 	}
 	
 	return $line1;
+}
+
+# Subscribe to commands that should stop the alarm
+sub setAlarmSubscription {
+	my $client = shift;
+
+	if ($client->snoozeActive) {
+		$log->debug('Removing snooze subscription');
+		Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
+	}
+
+	$log->debug('Adding alarm subscription');
+	# The alarm should be cancelled on anything the user does that would stop the music:
+	# pause and stop both result in power
+	Slim::Control::Request::subscribe(\&alarmEnd, [['pause', 'stop']], $client);
+}
+
+# Subscribe to commands that should cancel the snooze
+sub setSnoozeSubscription {
+	my $client = shift;
+
+	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
+
+	$log->debug('Adding snooze subscription');
+	# The snooze should be cancelled on anything the user does that results in music playing and also on any
+	# "off" action:
+	# power needs to be caught on its own as the music is paused
+	# pause/play when paused results in pause
+	# fwd/rew and (hopefully) commands that load a new playlist result in 'playlist jump'
+	Slim::Control::Request::subscribe(\&alarmEnd, [['power', 'pause', 'stop', 'playlist']], $client);
 }
 
 =head1 SEE ALSO
