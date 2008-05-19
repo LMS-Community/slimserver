@@ -154,7 +154,9 @@ sub gotTLVRequest {
 		$l = unpack("xxxxC", $msg);
 		$v = $l ? substr($msg, 5, $l) : undef;
 
-		$log->debug(" TLV: $t len: $l");
+		if ( $log->is_debug ) {
+			$log->debug(" TLV: $t len: $l");
+		}
 
 		if ($TLVhandlers{$t}) {
 			if (my $r = $TLVhandlers{$t}->($v)) {
