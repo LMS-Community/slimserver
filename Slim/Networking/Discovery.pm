@@ -139,7 +139,9 @@ sub gotTLVRequest {
 		return;
 	}
 
-	$log->info("discovery packet:");
+	if ($log->is_debug) {
+		$log->debug("discovery packet:" . Data::Dump::dump($msg));
+	}
 
 	# chop of leading character
 	$msg = substr($msg, 1);
@@ -149,14 +151,12 @@ sub gotTLVRequest {
 	my $response = 'E';
 
 	# parse TLVs
-	while ($len > 0) {
+	while ($len >= 5) {
 		$t = substr($msg, 0, 4);
 		$l = unpack("xxxxC", $msg);
 		$v = $l ? substr($msg, 5, $l) : undef;
 
-		if ( $log->is_debug ) {
-			$log->debug(" TLV: $t len: $l");
-		}
+		$log->debug(" TLV: $t len: $l");
 
 		if ($TLVhandlers{$t}) {
 			if (my $r = $TLVhandlers{$t}->($v)) {
