@@ -249,6 +249,7 @@ sub render {
 				}
 
 				$sc->{fonts} = $sfonts;
+				$sc->{extent} = Slim::Display::Lib::Fonts::extent(($sfonts ? $sfonts : $dfonts)->{line}[1]);
 			}
 
 			if (!$scroll || $changed) { 
