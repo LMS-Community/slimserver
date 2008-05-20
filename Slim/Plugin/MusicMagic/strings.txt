@@ -500,3 +500,9 @@ MUSICIP_PROGRESS
 
 MUSICIP_PLAYTHISMIX
 	EN	Play this mix
+
+MUSICIP_UNMIXABLE
+	EN	This item is not available for mixing
+
+MUSICIP_CREATEMIX
+	EN	Create MusicIP Mix
