@@ -32,6 +32,7 @@ L<Slim::Control::Queries> implements most SqueezeCenter queries and is designed 
 use strict;
 
 use Data::URIEncode qw(complex_to_query);
+use Data::Dump;
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use URI::Escape;
@@ -240,7 +241,7 @@ sub albumsQuery {
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
 		push @{ $attr->{'join'} }, 'contributor';
-		$attr->{'cols'} = [ qw(id artwork title contributor.name titlesort) ];
+		$attr->{'cols'} = [ qw(id artwork title contributor.name titlesort musicmagic_mixable ) ];
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
@@ -339,6 +340,8 @@ sub albumsQuery {
 			}
 		};
 		
+		$base->{'actions'}{'play-hold'} = _musicIPBase();
+
 		# adapt actions to SS preference
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
@@ -425,6 +428,8 @@ sub albumsQuery {
 					$iconId += 0;
 					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 				}
+
+				_musicIPItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			
 			# "raw" result formatting (for CLI or JSON RPC)
@@ -581,6 +586,7 @@ sub artistsQuery {
 		$cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
 		if ( $menuMode ) {
 			if ( my $cached = $cache->{artists}->{$cacheKey} ) {
+
 				my $copy = from_json( $cached );
 
 				# Don't slice past the end of the array
@@ -675,8 +681,10 @@ sub artistsQuery {
 			'window' => {
 				'menuStyle'  => 'album',
 				'titleStyle' => 'artists',
-			}
+			},
 		};
+		$base->{'actions'}{'play-hold'} = _musicIPBase();
+
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
@@ -734,7 +742,7 @@ sub artistsQuery {
 					'artist_id' => $id, 
 					'textkey' => substr($obj->namesort, 0, 1),
 				};
-
+				_musicIPItemParams(request => $request, obj => $obj, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			}
 			else {
@@ -1274,6 +1282,7 @@ sub genresQuery {
 			},
 			window => { titleStyle => 'genres', },
 		};
+		$base->{'actions'}{'play-hold'} = _musicIPBase();
 		$request->addResult('base', $base);
 
 	}
@@ -1315,6 +1324,7 @@ sub genresQuery {
 				};
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				_musicIPItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
@@ -3762,6 +3772,10 @@ sub songinfoQuery {
 									},
 								};
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => $val } );
+								# add MusicIP handler for play-hold when available
+								my $genreObj = Slim::Schema->find("Genre", $id);
+								$actions->{'play-hold'} = _musicIPItemHandler(obj => $genreObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'genre_id', loopname => $loopname );
+
 							}
 						
 							# album -- not multi, but _songData simulates it in menuMode so we can add our action here
@@ -3803,6 +3817,9 @@ sub songinfoQuery {
 								};
 								# style correctly the title that opens for the action element
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId, text => $val } );
+								# add MusicIP handler for play-hold when available
+								my $albumObj = Slim::Schema->find("Album", $id);
+								$actions->{'play-hold'} = _musicIPItemHandler(obj => $albumObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'album_id', loopname => $loopname );
 							}
 							
 							#or one of the artist role -- we don't test explicitely !!!
@@ -3845,6 +3862,9 @@ sub songinfoQuery {
 								
 								# style correctly the window that opens for the action element
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'artists', 'menuStyle' => 'album', text => $val } );
+								# add MusicIP handler for play-hold when available
+								my $artistObj = Slim::Schema->find("Contributor", $id);
+								$actions->{'play-hold'} = _musicIPItemHandler(obj => $artistObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'artist_id', loopname => $loopname );
 							}
 							
 							$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
@@ -3921,6 +3941,13 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
 
+							} elsif ($key eq 'TITLE') {
+								# add MusicIP handler for play-hold when available
+								my $trackObj = Slim::Schema->find("Track", $trackID);
+								my $actions = { 
+									'play-hold' => _musicIPItemHandler(obj => $trackObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'track_id', loopname => $loopname ), 
+								};
+								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 							}
 							elsif ($key eq 'LENGTH') {
 								$val = $track->duration();
@@ -3995,6 +4022,29 @@ sub songinfoQuery {
 				}
 				$idx++;
  			}
+
+			# Add "Create MusicIP Mix" item when MusicIP enabled, running, and track is mixable
+			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') &&
+				Slim::Plugin::MusicMagic::Plugin->isRunning ) {
+				my $trackObj = Slim::Schema->find("Track", $trackID);
+				# object must be blessed and mixable
+				if (blessed($trackObj) && $trackObj->musicmagic_mixable) {
+					my $actions = {
+						go	=> {
+							player => 0,
+							cmd    => ['musicip', 'mix'],
+							'params'	=> {
+								'menu'		=> '1',
+								'track_id'	=> $trackID,
+							},
+						},
+					};
+					$request->addResultLoop($loopname, $chunkCount, 'text', $request->string('MUSICIP_CREATEMIX'));
+					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+					$chunkCount++;
+					$totalCount++;
+				}
+			}
 
 			# Add Favorites as the last item to all chunks (the assumption is that there will be 1 chunk in this response 100% of the time)
 			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites);
@@ -4214,6 +4264,7 @@ sub titlesQuery {
 				'titleStyle' => 'album',
 			}
 		};
+		$base->{'actions'}{'play-hold'} = _musicIPBase();
 		$request->addResult('base', $base);
 		
 	}
@@ -4299,6 +4350,7 @@ sub titlesQuery {
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
+				 _musicIPItemParams(request => $request, obj => $item, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			
 			# regular formatting
@@ -5489,7 +5541,81 @@ sub _fixCount {
 	return $totalCount;
 }
 
+sub _musicIPItemParams {
 
+	if ( !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin')  ||
+		!Slim::Plugin::MusicMagic::Plugin->isRunning  ) {
+		return;	
+	}
+	my %args       = @_;
+	my $chunkCount = $args{'chunkCount'};
+	my $loopname   = $args{'loopname'};
+	my $params     = $args{'params'};
+	my $request    = $args{'request'};
+	my $obj        = $args{'obj'};
+
+	if ($obj->musicmagic_mixable) {
+		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
+	} else {
+		my $playHoldAction = {
+			player => 0,
+			cmd    => ['musicip', 'unmixable'],
+				params => $params,
+			};
+		$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction });
+	}
+
+}
+	
+sub _musicIPBase {
+	if ( !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin')  ||
+		!Slim::Plugin::MusicMagic::Plugin->isRunning  ) {
+		return undef;	
+	} else {
+		return {
+			player => 0,
+			cmd    => ['musicip', 'mix'],
+			params => {
+				menu => '1',
+			},
+			itemsParams => 'params',
+		};
+	}
+}
+
+sub _musicIPItemHandler {
+	my %args       = @_;
+	my $chunkCount = $args{'chunkCount'};
+	my $loopname   = $args{'loopname'};
+	my $obj        = $args{'obj'};
+	my $obj_param  = $args{'obj_param'};
+	my $request    = $args{'request'};
+
+	# MusicMagic needs to be enabled and running, and object must be blessed
+	if (	Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') &&
+		Slim::Plugin::MusicMagic::Plugin->isRunning &&
+		blessed($obj)  ) {
+		if ($obj->musicmagic_mixable) {
+			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
+			return {
+				player => 0,
+				cmd    => ['musicip', 'mix'],
+				'params'	=> {
+					'menu'		=> '1',
+					$obj_param	=> $obj->id,
+				},
+			};
+		} else {
+			return {
+				player => 0,
+				cmd    => ['musicip', 'unmixable'],
+			};
+		}
+	} else {
+		return undef;
+	}
+}
+	
 =head1 SEE ALSO
 
 L<Slim::Control::Request.pm>

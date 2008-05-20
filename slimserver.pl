@@ -398,11 +398,12 @@ sub init {
 		Slim::Web::Setup::initSetup();
 	}
 
-	$log->info("SqueezeCenter Jive init...");
-	Slim::Control::Jive->init();
-
+	# load plugins before Jive init so MusicMagic hooks to cached artist/genre queries from Jive->init() will take root
 	$log->info("SqueezeCenter Plugins init...");
 	Slim::Utils::PluginManager->init();
+
+	$log->info("SqueezeCenter Jive init...");
+	Slim::Control::Jive->init();
 
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
