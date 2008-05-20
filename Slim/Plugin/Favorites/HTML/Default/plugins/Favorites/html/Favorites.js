@@ -161,6 +161,17 @@ function ajaxUpdate(url, params, callback) {
 	}
 }
 
+function ajaxRequest(url, params, callback) {
+	Ext.Ajax.request({
+		method: 'GET',
+		url: url,
+		params: params,
+		timeout: 5000,
+		disableCaching: true,
+		callback: callback || function(){}
+	});
+}
+
 // some prototype JS compatibility classes
 var Element = function(){
 	return {
