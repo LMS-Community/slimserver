@@ -1028,7 +1028,7 @@ sub banTrack {
 	return unless $enable_scrobbling;
 
 	# Ban is only supported for Last.fm URLs
-	return unless $url =~ /^lastfm/;
+	return unless $url =~ /^lfm/;
 	
 	$log->debug( "Banned: $url" );
 	
