@@ -451,11 +451,11 @@ sub init {
 	Slim::bootstrap::tryModuleLoad('Slim::Utils::PerlRunTime');
 
 ######################################################################################################################################################################
-#                                                                                                       |requires Client
-#                                                                                                       |  |is a Query
-#                                                                                                       |  |  |has Tags
-#                                                                                                       |  |  |  |Function to call
-#                 P0               P1                P2            P3             P4         P5         C  Q  T  F
+#                                                                                                           |requires Client
+#                                                                                                           |  |is a Query
+#                                                                                                           |  |  |has Tags
+#                                                                                                           |  |  |  |Function to call
+#                     P0               P1                P2            P3             P4         P5         C  Q  T  F
 ######################################################################################################################################################################
 
 	addDispatch(['alarm'],                                                                             [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
@@ -577,6 +577,7 @@ sub init {
 	addDispatch(['rate',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::rateQuery]);
 	addDispatch(['rate',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::rateCommand]);
 	addDispatch(['remote',         '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+	addDispatch(['recentsearches'],                                                                    [0, 1, 0, \&Slim::Control::Queries::recentSearchQuery]);
 	addDispatch(['rescan',         '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
 	addDispatch(['rescan',         '_playlists'],                                                      [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
 	addDispatch(['rescanprogress'],                                                                    [0, 1, 1, \&Slim::Control::Queries::rescanprogressQuery]);
