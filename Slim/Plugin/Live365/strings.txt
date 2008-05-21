@@ -26,8 +26,8 @@ PLUGIN_LIVE365_ERROR
 	EN	Live365 Error
 	ES	ERROR de Live365
 	FR	Erreur Live365
-	IT	Errore Live365
-	NL	Live365-fout
+	IT	Errore di Live365
+	NL	Live365-foutmelding
 
 PLUGIN_LIVE365_NO_URL
 	DA	Kunne ikke hente URL for lyd. Tryk PLAY for at forsøge igen.
