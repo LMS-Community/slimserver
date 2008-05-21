@@ -25,8 +25,8 @@ PLUGIN_SCREENSAVER_DATETIME_DESC
 	NL	Datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME
-	DE	Einstellungen für den Bildschirmschoner 'Datum/Zeit'
 	DA	Indstillinger for pauseskærmen dato og tid
+	DE	Einstellungen für den Bildschirmschoner 'Datum/Zeit'
 	EN	Date and Time Screensaver Settings
 	ES	Configuración de protector de pantalla de fecha y hora
 	FR	Paramètres Ecran de veille Date/Heure

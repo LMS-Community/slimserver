@@ -165,7 +165,7 @@ SETUP_REJECT_SIZE
 	FR	Taille de rejet MusicIP
 	HE	גודל הפסילות ב-MusicIP.
 	IT	N. elementi da scartare in MusicIP.
-	NL	MusicIP-afkeurgrootte.
+	NL	MusicMagix-afkeurgrootte.
 	ZH_CN	MusicIP拒绝量
 
 SETUP_REJECT_SIZE_DESC
@@ -264,7 +264,7 @@ SETUP_MMMPLAYERSETTINGS
 	FR	Réglages de la platine MusicIP pour chaque mix
 	HE	הגדרות נגן MusicIP עבור כל מיקס
 	IT	Impostazioni del lettore MusicIP per ciascuna raccolta
-	NL	MusicIP-spelerinstellingen voor elke mix
+	NL	Instellingen van MusicIP-muzieksysteem voor elke mix
 	ZH_CN	MusicIP播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
@@ -274,8 +274,8 @@ SETUP_MMMPLAYERSETTINGS_DESC
 	ES	Se puede optar por conceder a cada reproductor acceso a la configuración de mezcla de MusicIP antes de que se genere una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración del servidor y se conservará hasta que se cambie desde el reproductor. Si desea pasar directamente a la creación de una mezcla, usando sólo la configuración de reproductor/servidor existente, elija No.
 	FR	Vous pouvez choisir de donner à chaque platine accès aux réglages du mix MusicIP avant de générer un mix. Tous les réglages définis à partir de la platine remplacent les réglages du serveur, jusqu'à ce qu'ils soient à nouveau modifiés à partir de la platine. Si vous souhaitez passer cette étape et créer directement un mix à l'aide des paramètres du serveur ou de la platine existants, sélectionnez non.
 	HE	באפשרותך לבחור להעניק לכל נגן גישה להגדרות המיקס של MusicIP לפני הפקת מיקס. הגדרות שנבחרו בנגן יעקפו הגדרות שנבחרו בשרת ויישארו בתוקף עד שישונו שוב בנגן. אם ברצונך לדלג ישירות לשלב של יצירת מיקס, באמצעות ההגדרות הנוכחיות של הנגן/השרת בלבד, בחר 'לא'.
-	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni della raccolta MusicIP prima di creare una raccolta. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di una raccolta, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
-	NL	Je kunt ervoor kiezen elke speler toegang te geven tot de MusicIP-mixinstellingen voordat er een mix gegenereerd wordt. Spelerinstellingen vervangen de serverinstellingen en blijven van kracht tot ze via de speler veranderd worden. Kies 'Nee' als je direct een mix wilt maken met de huidige speler-/serverinstellingen.
+	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni del mix MusicIP prima di creare il mix. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di un mix, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
+	NL	Je kunt ervoor kiezen elk muzieksysteem toegang te geven tot de MusicIP-mixinstellingen voordat er een mix gegenereerd wordt. Muzieksysteeminstellingen vervangen de serverinstellingen en blijven van kracht tot ze via het systeem veranderd worden. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
 	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicIP混音设置的特权。任何播放机上的特定设置将藐视服务器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
 
 SETUP_MMMSETTINGS
@@ -454,7 +454,7 @@ SETUP_MMSPORT_DESC
 	ES	La API de servicios de MusicIP permite seleccionar un puerto HTTP para usarlo para consultas a la API de MusicIP. Introduzca aquí el número de puerto para que coincida con el elegido en la configuración del mezclador de MusicIP.
 	FR	L'API du service MusicIP permet de sélectionner un port HTTP à utiliser pour les requêtes. Saisissez ici le numéro de port spécifié dans les réglages MusicIP Mixer.
 	HE	ממשק תוכנת היישום (API) של שירות MusicIP מאפשרת לבחור יציאת http לשימוש עבור שאילתות ל-API של MusicIP. הזן בשדה זה את מספר היציאה בהתאם להגדרה שבחרת בהגדרות יוצר המיקסים של MusicIP.
-	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Immettere qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
+	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
 	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
 	ZH_CN	您可以通过MusicIP的服务应用程序接口来选择用来询问MusicIP应用程序接口的http端口。请在此输入匹配您在MusicIP里已设置好的端口号。
 
@@ -482,7 +482,7 @@ MUSICMAGIC_MOODS
 
 DEBUG_PLUGIN_MUSICIP
 	DA	MusicIP Mix & Eksporter
-	DE	MusicIP Mix & Export
+	DE	MusicIP-Mix & Export
 	EN	MusicIP Mix & Export Logging
 	ES	Registro de mezclas y exportación de MusicIP
 	FR	Journalisation des mix et exportations MusicIP
