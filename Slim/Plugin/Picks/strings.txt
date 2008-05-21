@@ -9,14 +9,14 @@ PLUGIN_PICKS_MODULE_NAME
 	ES	Nuestras selecciones
 	FR	Notre séléction
 	IT	Scelti dallo staff
-	NL	Aanraders
+	NL	Aanraders van personeel
 
 PLUGIN_PICKS_MODULE_NAME_DESC
 	DA	Vore Udvalgte - Det beste af Internet Radio
 	DE	Unsere Empfehlungen - die besten Internetradiosender
 	EN	Staff Picks - Best of Internet Radio
 	ES	Nuestras selecciones - Lo mejor en radio por Internet
-	FR	Notre séléction - Le meilleur des radios Internet
+	FR	Notre séléction – Le meilleur des radios Internet
 	IT	Scelti dallo staff: il meglio della radio su Internet
-	NL	Aanraders - de beste internetradio
+	NL	Aanraders van personeel – de beste internetradio
 

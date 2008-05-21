@@ -22,8 +22,8 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	EN	Enter your Last.fm username and password.  Multiple accounts may be entered if you wish to submit tracks from different players to different accounts.  To delete an existing account, check the box next to it.
 	ES	Se han verificado correctamente el nombre de usuario y la contraseña para Last.fm. Puede introducir varias cuentas si desea enviar pistas de reproductores diversos a distintas cuentas. Para eliminar una cuenta existente, seleccione la casilla correspondiente.
 	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm. Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents. Pour supprimer un compte existant, cochez la case appropriée.
-	IT	Immettere il nome utente e la password Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account. Per eliminare un account esistente, selezionare la casella corrispondente.
-	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende spelers bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren. Je verwijdert een bestaande account door het bijbehorende vakje te selecteren.
+	IT	Inserire il nome utente e la password Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account. Per eliminare un account esistente, selezionare la casella corrispondente.
+	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende muzieksystemen bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren. Je verwijdert een bestaande account door het bijbehorende vakje te selecteren.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	DA	Indsend (scrobble) alle afspillede nummer til Last.fm
@@ -104,7 +104,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
 	ES	Configuración de reproductor Audioscrobbler Last.fm
 	FR	Paramètres de Last.fm Audioscrobbler.
 	IT	Impostazioni del lettore Audioscrobbler Last.fm
-	NL	Spelerinstellingen voor Last.fm Audioscrobbler
+	NL	Muzieksysteeminstellingen voor Last.fm Audioscrobbler
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
 	DA	For at aktivere Audioscrobbler for denne afspiller skal du vælge en konto.
@@ -113,7 +113,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
 	ES	Para habilitar Audioscrobbler para este reproductor, seleccione la cuenta que usar.
 	FR	Pour activer Audioscrobbler pour cette platine, sélectionnez un compte à utiliser.
 	IT	Per abilitare Audioscrobbler per questo lettore, selezionare l'account da utilizzare.
-	NL	Selecteer een te gebruiken account om Audioscrobbler voor deze speler in te schakelen.
+	NL	Selecteer een te gebruiken account om Audioscrobbler voor dit muzieksysteem in te schakelen.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	DA	Deaktiveret, indsend ikke nummer afspillet på denne afspiller.
@@ -122,7 +122,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	ES	Deshabilitado, no enviar pistas reproducidas a Last.fm.
 	FR	Désactivé, ne pas envoyer les morceaux lus sur cette platine.
 	IT	Disattiva. Non inviare i brani riprodotti con questo lettore.
-	NL	Uitgeschakeld; nummers gespeeld op deze speler niet indienen.
+	NL	Uitgeschakeld; nummers gespeeld op dit muzieksysteem niet indienen.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	DA	Advarsel: Indsendelse af nummer er deaktiveret globalt. For at indsende nummer fra denne afspiller skal du aktivere Indsend alle nummer i Avanceret -> Last.fm Audioscrobbler.
@@ -131,7 +131,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	ES	Advertencia: Enviar todas las pistas se ha deshabilitado globalmente. Para enviar información de pistas para este reproductor, habilite la opción Enviar todas las pistas, en Avanzada -> Audioscrobbler de Last.fm.
 	FR	Avertissement: l'envoi de tous les morceaux est désactivé de manière globale. Pour envoyer les informations des morceaux pour cette platine, activez l'option pour envoyer tous les morceaux dans Avancé -> Last.fm Audioscrobbler.
 	IT	Avviso: l'invio di tutti i brani è stato disattivato a livello globale. Per inviare i dati relativi ai brani del lettore corrente, attivare l'impostazione Invia tutti i brani, accessibile dalla scheda Avanzate -> Audioscrobbler Last.fm.
-	NL	Waarschuwing: Alle nummers indienen is globaal uitgeschakeld. Als je nummergegevens voor deze speler wilt indienen, schakel je Alle nummers indienen in via Geavanceerd -> Last.fm Audioscrobbler.
+	NL	Waarschuwing: Alle nummers indienen is globaal uitgeschakeld. Als je nummergegevens voor dit muzieksysteem wilt indienen, schakel je Alle nummers indienen in via Geavanceerd -> Last.fm Audioscrobbler.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	DA	Bemærk: Du skal aktivere Audioscrobbler for for hver afspiller. Klik på fanebladet Afspiller og vælg Last.fm Audioscrobbler for hver afspiller som du ønsker at indsende informationer fra.
@@ -140,7 +140,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	ES	Nota: además debe habilitar Audioscrobbler para cada reproductor. Haga clic en la ficha Reproductor y seleccione el elemento Audioscrobbler de Last.fm para cada reproductor en el que desee esta función.
 	FR	Remarque: vous devez également activer Audioscrobbler pour chaque platine. Cliquez sur l'onglet Platine et sélectionner Last.fm Audioscrobbler pour chaque platine.
 	IT	Nota: è inoltre necessario attivare Audioscrobbler per ogni lettore. Fare clic sulla scheda Lettore e selezionare la voce Audioscrobbler Last.fm per ogni lettore che si desidera monitorare.
-	NL	Opmerking: Je moet ook Autoscrobbler voor elke speler activeren. Klik op de tab Speler en selecteer het item Last.fm Audioscrobbler voor elke speler die je wilt scrobbelen.
+	NL	Opmerking: Je moet ook Autoscrobbler voor elk muzieksysteem inschakelen. Klik op de tab Muzieksysteem en selecteer het item Last.fm Audioscrobbler voor elk systeem dat je wilt scrobbelen.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	DA	Der opstod en fejl under kontrol af din konto på Last.fm. Forsøg venligst igen senere. (%s)
@@ -153,12 +153,12 @@ SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 
 SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 	DA	Musiktjenesten Last.fm kan registrere din personlige musik profil ved at registrere musik du lytter til. På grundlag af din musiksmag  tilbyder Last.fm tilpassede radiostationer, anbefalinger om musik og begivenheder, samt gratis downloads med mere. Registrer dig gratis på <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> eller læs mere om Last.fm på <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören. Last.fm stellt auf Ihren Geschmack zugeschnittene Radiosender, Musik- und Veranstaltungsempfehlungen, kostenlose Downloads usw. zur Verfügung. Melden Sie sich kostenlos an unter <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a>. Weitere Informationen finden Sie unter <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
+	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören.	to.  Based on your taste, Last.fm provides customized radio stations,
 	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen	to.  Based on your taste, Last.fm provides customized radio stations,	music and event recommendations, free downloads and more.  Join for	free at <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha. Según sus gustos, Last.fm le proporciona recomendaciones personalizadas de emisoras de radio, música y sucesos, descargas gratuitas y mucho más. Inscríbase gratuitamente en <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o acceda a más información en <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez. En fonction de vos goûts musicaux, Last.fm fournit des stations de radio, des recommandations musicales et des téléchargements libres personnalisés, et bien plus encore. Rejoignez-nous sur <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> ou découvrez le service sur <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	IT	Last.fm è un servizio musicale che crea un profilo musicale personale tenendo traccia della musica che si ascolta. Last.fm si basa sui gusti personali e fornisce suggerimenti personalizzati su stazioni radio, musica ed eventi, download gratuiti e altro ancora. Iscriviti gratuitamente all'indirizzo <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> o, per saperne di più, visita il sito Web <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
-	NL	Last.fm: een muziekservice die je persoonlijke muziekprofiel opbouwt door bij te houden naar welke muziek je luistert. Last.fm biedt gepersonaliseerde radiostations, muziek- en evenemententips, gratis downloads en nog meer op basis van je muzieksmaak. Meld je gratis aan op <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> of kom meer te weten op <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
+	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha.	to.  Based on your taste, Last.fm provides customized radio stations,
+	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez.	to.  Based on your taste, Last.fm provides customized radio stations,
+	IT	Last.fm è un servizio di musica che crea un profilo musicale personale tenendo traccia della musica che si ascolta.	to.  Based on your taste, Last.fm provides customized radio stations,
+	NL	Last.fm: een muziekservice die je persoonlijke muziekprofiel opbouwt door bij te houden naar welke muziek je luistert.	to.  Based on your taste, Last.fm provides customized radio stations,
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	DA	Bemærk: For at konfigurere din Last.fm konto, klik fanabladet Avanceret og vælg Last.fm Audioscrobbler.
@@ -176,7 +176,7 @@ PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
 	ES	No hacer scrobble en este reproductor
 	FR	Ne pas envoyer les informations de cette platine
 	IT	Non monitorare questo lettore
-	NL	Deze speler niet scrobbelen
+	NL	Dit muzieksysteem niet scrobbelen
 
 PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
 	DA	Indsend til konto: %s

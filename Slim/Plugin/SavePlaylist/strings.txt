@@ -9,7 +9,7 @@ SAVE_PLAYLIST_DESC
 	ES	Guardar listas de reproducción desde la interfaz del reproductor
 	FR	Enregistrer des listes de lecture à partir de l'interface de la platine
 	IT	Salva elenchi di riproduzione dall'interfaccia del lettore
-	NL	Playlists uit de speler-UI opslaan
+	NL	Playlists uit de muzieksysteem-UI opslaan
 
 PLAYLIST_OVERWRITE
 	DA	Tryk HØJRE for at erstatte eksisterende spillelister:

@@ -17,7 +17,7 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
 	EN	RadioTime - Local Internet Radio
 	ES	RadioTime - Radio por Internet local
-	FR	RadioTime - Radio Internet locale
+	FR	RadioTime – Radio Internet locale
 	IT	RadioTime: radio Internet locale
 	NL	RadioTime - Lokale internetradio
 
@@ -58,7 +58,7 @@ SETUP_PLUGIN_RADIOTIME_USERNAME
 	ES	Introduzca el nombre de usuario de RadioTime.
 	FR	Spécifiez votre nom d'utilisateur RadioTime
 	HE	הזן את שם המשתמש שלך עבור RadioTime.
-	IT	Immettere il nome utente RadioTime.
+	IT	Inserire il nome utente RadioTime.
 	NL	Voer je RadioTime-gebruikersnaam in.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
