@@ -241,7 +241,7 @@ sub albumsQuery {
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
 		push @{ $attr->{'join'} }, 'contributor';
-		$attr->{'cols'} = [ qw(id artwork title contributor.name titlesort musicmagic_mixable ) ];
+		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable ) ];
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
@@ -416,8 +416,10 @@ sub albumsQuery {
 					$params->{artist_id} = $contributorID;
 				}
 
-				unless ($sort && $sort eq 'new') {
-					$params->{textkey} = substr($eachitem->titlesort, 0, 1),
+				if ($sort && $sort eq 'artflow') {
+					$params->{textkey} = substr($eachitem->contributor->namesort, 0, 1);
+				} elsif ($sort && $sort ne 'new') {
+					$params->{textkey} = substr($eachitem->titlesort, 0, 1);
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
@@ -4494,6 +4496,10 @@ sub yearsQuery {
 				titleStyle  => 'years',
 			}
 		};
+		# sort by artist, year, album when sending the albums query
+		if ($actioncmd eq 'albums') {
+			$base->{'actions'}{'go'}{'params'}{'sort'} = 'artflow';
+		}
 		$request->addResult('base', $base);
 	}
 

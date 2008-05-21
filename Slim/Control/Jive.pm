@@ -104,7 +104,7 @@ sub buildCaches {
 	# Pre-cache albums query
 	if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
 		$log->debug( "Pre-caching $numAlbums album items." );
-		Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'menu:track', 'cache:1' ] );
+		Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'sort:artflow', 'menu:track', 'cache:1' ] );
 	}
 	
 	# Artists
@@ -1463,6 +1463,7 @@ sub myMusicMenu {
 						cmd    => ['albums'],
 						params => {
 							menu     => 'track',
+							sort     => 'artflow',
 						},
 					},
 				},
