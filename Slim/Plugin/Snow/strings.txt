@@ -254,5 +254,5 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 	FR	Désolé, Neige ne fonctionne pas sur cette platine.
 	HE	מצטערים, אין אפשרות להציג שלג בנגן זה.
 	IT	L'effetto neve non funziona con questo lettore.
-	NL	Sorry, sneeuw werkt niet met deze speler.
+	NL	Sorry, sneeuw werkt niet met dit muzieksysteem.
 

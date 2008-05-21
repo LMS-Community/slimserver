@@ -279,7 +279,7 @@ PLUGIN_RANDOM_CHOOSE_GENRES
 	DE	Stilrichtungen wählen
 	EN	Choose Genres
 	ES	Elegir géneros
-	FR	Choisir des genres
+	FR	Choisir les genres
 	IT	Scegli generi
 	NL	Genres kiezen
 
