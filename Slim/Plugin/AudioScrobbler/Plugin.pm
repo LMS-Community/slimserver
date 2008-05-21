@@ -78,7 +78,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
 		[0, 1, 1, \&loveTrack]);
 	
-	Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url'],
+	Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url', '_skip'],
 		[0, 1, 1, \&banTrack]);
 	
 	# Pref change hooks
@@ -1013,6 +1013,7 @@ sub banTrack {
 	my $request = shift;
 	my $client  = $request->client || return;
 	my $url     = $request->getParam('_url');
+	my $skip    = $request->getParam('_skip') || 0;
 	
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
@@ -1042,7 +1043,9 @@ sub banTrack {
 			setQueue( $client, $queue );
 			
 			# Skip to the next track
-			$client->execute([ 'playlist', 'jump', '+1' ]);
+			if ( $skip ) {
+				$client->execute([ 'playlist', 'jump', '+1' ]);
+			}
 			
 			return 1;
 		}
