@@ -4830,7 +4830,7 @@ sub _addJiveSong {
 		$iconId += 0;
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 	}
-	elsif ( $remoteMeta->{cover} ) {
+	elsif ( defined($remoteMeta->{cover}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', $remoteMeta->{cover} );
 	}
 	
