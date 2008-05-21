@@ -22,8 +22,8 @@ PLUGIN_RHAPSODY_DIRECT_ERROR
 	EN	Rhapsody Error
 	ES	Error de Rhapsody
 	FR	Erreur Rhapsody
-	IT	Errore Rhapsody
-	NL	Rhapsody-fout
+	IT	Errore di Rhapsody
+	NL	Rhapsody-foutmelding
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
 	DA	Intern Rhapsody Fejl: %s
@@ -31,8 +31,8 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
 	EN	Internal Rhapsody Error: %s
 	ES	Error interno de Rhapsody: %s
 	FR	Erreur interne Rhapsody: %s
-	IT	Errore interno Rhapsody: %s
-	NL	Interne Rhapsody-fout: %s
+	IT	Errore interno di Rhapsody: %s
+	NL	Interne Rhapsody-foutmelding: %s
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
 	DA	Ugyldig Rhapsody svar fra Afspiller.
@@ -41,7 +41,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
 	ES	Respuesta no válida de Rhapsody desde reproductor.
 	FR	Réponse Rhapsody non valide de la part de la platine.
 	IT	Risposta Rhapsody non valida dal lettore.
-	NL	Ongeldige Rhapsody-respons van speler.
+	NL	Ongeldige Rhapsody-respons van muzieksysteem.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
 	DA	Kunne ikke kommunikere med Rhapsody.
@@ -59,7 +59,7 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
 	ES	El reproductor no se pudo comunicar con Rhapsody.
 	FR	La platine n'a pas pu communiquer avec Rhapsody.
 	IT	Il lettore non è stato in grado di comunicare con Rhapsody.
-	NL	Speler kan niet met Rhapsody communiceren.
+	NL	Muzieksysteem kan niet met Rhapsody communiceren.
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	DA	Vælg venligst Squeezebox 2, 3 eller Transporter for brug med Rhapsody.
@@ -85,7 +85,7 @@ PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
 	EN	Audio stream failed, skipping to next track.
 	ES	Error de secuencia de audio; salto a pista siguiente.
 	FR	Echec du flux audio, lecture du morceau suivant.
-	IT	Errore di flusso audio. Passaggio al brano seguente.
+	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 
 PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
@@ -143,5 +143,10 @@ PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	NL	Ongeldige afspeelsessie.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
+	DE	Rhapsody funktioniert nicht, wenn so viele Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
 	EN	Rhapsody cannot play with this many players synced.  Please unsync one or more players.
+	ES	Rhapsody no puede reproducir con tantos reproductores sincronizados. Debe desincronizar al menos uno de ellos.
+	FR	Rhapsody ne peut fonctionner avec autant de platines synchronisées. Veuillez désynchroniser au moins une platine.
+	IT	Impossibile utilizzare Rhapsody con un numero così elevato di lettori sincronizzati. Annullare la sincronizzazione di uno o più lettori.
+	NL	Rhapsody kan niet spelen wanneer er zoveel muzieksystemen gesynchroniseerd zijn. Hef de synchronisatie van een of meer systemen op.
 

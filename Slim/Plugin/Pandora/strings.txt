@@ -31,7 +31,7 @@ PLUGIN_PANDORA_FIRMWARE_UPGRADE_REQUIRED
 	DE	Software muss aktualisiert werden
 	EN	Software Update Required
 	ES	Se requiere actualización de software
-	FR	Mise à jour du logiciel Squeezebox nécessaire
+	FR	Mise à jour du logiciel nécessaire
 	HE	יש לבצע עדכון תוכנה
 	IT	È necessario aggiornare il software
 	NL	Software-update vereist
@@ -53,8 +53,8 @@ PLUGIN_PANDORA_ERROR
 	ES	Error de Pandora
 	FR	Erreur Pandora
 	HE	שגיאה ב-Pandora
-	IT	Errore Pandora
-	NL	Pandora-fout
+	IT	Errore di Pandora
+	NL	Pandora-foutmelding
 
 PLUGIN_PANDORA_CONNECTION_REFUSED
 	DA	Kunne ikke tilslutte Pandora serveren. Forsøg venligst igen senere.
@@ -73,7 +73,7 @@ PLUGIN_PANDORA_STREAM_FAILED
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
-	IT	Flusso audio disconnesso. Passaggio al brano seguente.
+	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 
 PLUGIN_PANDORA_DEFAULT_ERROR
@@ -83,7 +83,7 @@ PLUGIN_PANDORA_DEFAULT_ERROR
 	ES	Se ha producido un error inesperado. Vuelva a intentarlo más tarde.
 	FR	Une erreur inattendue est survenue. Veuillez réessayer ultérieurement.
 	HE	אירעה שגיאה לא צפויה. נסה שוב מאוחר יותר.
-	IT	Errore non previsto. Riprovare più tardi.
+	IT	Si è verificato un errore inatteso. Riprovare più tardi.
 	NL	Er is een onverwachte fout opgetreden. Probeer het later opnieuw.
 
 PLUGIN_PANDORA_NO_ACCOUNT
@@ -133,7 +133,7 @@ PLUGIN_PANDORA_SEARCH_PROMPT
 	ES	Introducir artista o título de canción
 	FR	Spécifier un artiste ou un titre de morceau
 	HE	הזן שם מבצע או שיר
-	IT	Immettere un artista o il titolo di un brano
+	IT	Inserire un artista o il titolo di un brano
 	NL	Een artiest of titel invoeren
 
 PLUGIN_PANDORA_LOADING_STATIONS
@@ -604,7 +604,7 @@ PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
 	FR	Nom d'utilisateur ou mot de passe non valide. Rendez-vous sur %s pour mettre les informations de votre compte à jour.
 	HE	שם משתמש או סיסמה לא חוקיים. עבור אל %s לעדכון פרטי החשבון.
 	IT	Nome utente o password non valido. Visitare %s per aggiornare i dati dell'account.
-	NL	Ongeldige gebruikersnaam of ongeldig wachtwoord. Ga naar %s om jouw accountgegevens te updaten.
+	NL	Gebruikersnaam of wachtwoord ongeldig. Ga naar %s om je accountgegevens te updaten.
 
 PLUGIN_PANDORA_AUTH_INVALID_TOKEN
 	DA	Ugyldigt auth-token, forsøg venglist igen senere.

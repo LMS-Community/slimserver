@@ -182,7 +182,7 @@ SETUP_ITUNES_DESC
 	HE	SqueezeCenter יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
 	IT	In SqueezeCenter è possibile utilizzare la libreria musicale e gli elenchi di riproduzione di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
 	JA	SqueezeCenterはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
-	NL	SqueezeCenter kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je speler doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
+	NL	SqueezeCenter kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je muzieksysteem  doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
 	SV	SqueezeCenter kan använda ditt iTunes-bibliotek och låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
 	ZH_CN	SqueezeCenter可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 

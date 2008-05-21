@@ -22,8 +22,8 @@ PLUGIN_SLACKER_ERROR
 	EN	Slacker Error
 	ES	Error de Slacker
 	FR	Erreur Slacker
-	IT	Errore Slacker
-	NL	Slacker-fout
+	IT	Errore di Slacker
+	NL	Slacker-foutmelding
 
 PLUGIN_SLACKER_SESSION_BUMPED
 	DA	Du er logget ind på en anden tjeneste, tryk PLAY for at genstarte.
@@ -50,7 +50,7 @@ PLUGIN_SLACKER_STREAM_FAILED
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
-	IT	Flusso audio disconnesso. Passaggio al brano seguente.
+	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED

@@ -125,8 +125,8 @@ PLUGIN_RESCAN_TIMER_OFF
 	NL	Timer voor opnieuw scannen UIT
 
 PLUGIN_RESCAN_TIMER_TYPE
-	DE	Durchsuchmodus
 	DA	Genindlæsnings type
+	DE	Durchsuchmodus
 	EN	Rescan Type
 	ES	Tipo de volver a examinar
 	FR	Type d'analyse
