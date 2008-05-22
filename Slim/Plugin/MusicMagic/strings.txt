@@ -165,7 +165,7 @@ SETUP_REJECT_SIZE
 	FR	Taille de rejet MusicIP
 	HE	גודל הפסילות ב-MusicIP.
 	IT	N. elementi da scartare in MusicIP.
-	NL	MusicMagix-afkeurgrootte.
+	NL	MusicIP-afkeurgrootte.
 	ZH_CN	MusicIP拒绝量
 
 SETUP_REJECT_SIZE_DESC
@@ -477,7 +477,7 @@ MUSICMAGIC_MOODS
 	FR	Mix d'ambiances MusicIP
 	HE	מיקס מצב רוח של MusicIP
 	IT	Raccolta MusicIP per stati d'animo
-	NL	MugicMagic-stemmingsmix
+	NL	MusicIP-stemmingsmix
 	ZH_CN	MusicIP气氛混音
 
 DEBUG_PLUGIN_MUSICIP
