@@ -236,6 +236,7 @@ sub mainMenu {
 		@{musicServicesMenu($client)},
 		@{playerSettingsMenu($client, 1)},
 		@{myMusicMenu(1, $client)},
+		@{recentSearchMenu($client, 1)},
 	);
 
 	_notifyJive(\@menu, $client);
@@ -1712,23 +1713,7 @@ sub searchMenu {
 			titleStyle => 'search',
 		},
 	},
-	{
-		text           => $client->string('RECENT_SEARCHES'),
-		id             => 'myMusicSearchRecent',
-		node           => 'myMusicSearch',
-		displayWhenOff => 0,
-		weight         => 50,
-		actions => {
-			go => {
-				#player => 0,
-				cmd => ['jiverecentsearches'],
-                        },
-		},
-		window => {
-			text => $client->string('RECENT_SEARCHES'),
-			titleStyle => 'search',
-		},
-	},
+
 	);
 
 	if ($batch) {
@@ -1738,7 +1723,6 @@ sub searchMenu {
 	}
 
 }
-
 # send a notification for menustatus
 sub menuNotification {
 	$log->warn("Menustatus notification sent.");
@@ -1860,10 +1844,64 @@ sub _jiveNoResults {
 }
 
 sub cacheSearch {
-	my $search = shift;
+	my $request = shift;
+	my $search  = shift;
+
 	if (defined($search) && $search->{text} && $search->{actions}{go}{cmd}) {
 		unshift (@recentSearches, $search);
 	}
+	recentSearchMenu($request->client, 0);
+}
+
+sub recentSearchMenu {
+	my $client  = shift;
+	my $batch   = shift;
+
+	my @recentSearchMenu = ();
+	return \@recentSearchMenu unless $client;
+
+	if (scalar(@recentSearches) == 1) {
+		push @recentSearchMenu,
+		{
+			text           => $client->string('RECENT_SEARCHES'),
+			id             => 'homeSearchRecent',
+			node           => 'home',
+			displayWhenOff => 0,
+			weight         => 80,
+			actions => {
+				go => {
+					cmd => ['jiverecentsearches'],
+       	                 },
+			},
+			window => {
+				text => $client->string('RECENT_SEARCHES'),
+				titleStyle => 'search',
+			},
+		};
+		push @recentSearchMenu,
+		{
+			text           => $client->string('RECENT_SEARCHES'),
+			id             => 'myMusicSearchRecent',
+			node           => 'myMusicSearch',
+			noCustom       => 1,
+			displayWhenOff => 0,
+			weight         => 50,
+			actions => {
+				go => {
+					cmd => ['jiverecentsearches'],
+       	                 	},
+			},
+			window => {
+				text => $client->string('RECENT_SEARCHES'),
+				titleStyle => 'search',
+			},
+		};	
+		if (!$batch) {
+			_notifyJive(\@recentSearchMenu, $client);
+		}
+	}
+	return \@recentSearchMenu;
+
 }
 
 sub jiveRecentSearchQuery {
