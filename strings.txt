@@ -15822,3 +15822,6 @@ SCANNER_REMOTE_INVALID_URL
 
 SCANNER_REMOTE_NESTED_TOO_DEEP
 	EN	Unable to scan: Playlist nested too deep
+
+RECENT_SEARCHES
+	EN	Recent Searches
