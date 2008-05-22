@@ -496,7 +496,7 @@ sub albumsQuery {
 			},
 			window      => { menuStyle => 'album' },
 		};
-		Slim::Control::Jive::cacheSearch($jiveSearchCache);
+		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
 	}
 	
 	$request->setStatusDone();
@@ -815,10 +815,9 @@ sub artistsQuery {
 						},
 					},
 			},
-			window      => { menuStyle => 'album' },
 		};
-		Slim::Control::Jive::cacheSearch($jiveSearchCache);
-}
+		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
+	}
 	$request->setStatusDone();
 }
 
@@ -2417,7 +2416,7 @@ sub playlistsQuery {
 						},
 				},
 			};
-			Slim::Control::Jive::cacheSearch($jiveSearchCache);
+			Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
 		}
 	
 	} else {
@@ -4457,7 +4456,7 @@ sub titlesQuery {
 			},
 			window       => { menuStyle => 'album' },
 		};
-		Slim::Control::Jive::cacheSearch($jiveSearchCache);
+		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
 	}
 	
 	$request->setStatusDone();

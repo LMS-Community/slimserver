@@ -1226,6 +1226,39 @@ sub cliQuery {
 
 	$request->setStatusProcessing();
 	
+	# cache SBC queries for "Recent Search" menu
+	if ( $request->isQuery([[$query], ['items']]) && defined($request->getParam('menu')) && defined($request->getParam('search')) ) {
+		# make a best effort to make a labeled title for the search
+		my $queryTypes = {
+			rhapsodydirect	=>	'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
+			mp3tunes	=>	'PLUGIN_MP3TUNES_MODULE_NAME',
+			radiotime	=>	'PLUGIN_RADIOTIME_MODULE_NAME',
+			slacker		=>	'PLUGIN_SLACKER_MODULE_NAME',
+			live365		=>	'PLUGIN_LIVE365_MODULE_NAME',
+			lma		=>	'PLUGIN_LMA_MODULE_NAME',
+		};
+		my $title = $request->getParam('search');
+		if ($queryTypes->{$query}) {
+			$title = $request->string($queryTypes->{$query}) . ": " . $title;
+		}
+
+		my $jiveSearchCache = {
+			text     => $title,
+			actions  => {
+				go => {
+					player => 0,
+					cmd => [ $query, 'items' ],
+					params => {
+						'item_id' => $request->getParam('item_id'),
+						menu      => $query,
+						search    => $request->getParam('search'),
+					},
+				},
+			},
+		};
+		Slim::Control::Jive::cacheSearch($request, $jiveSearchCache);
+	}
+
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		
@@ -1254,6 +1287,7 @@ sub cliQuery {
 #			'forceTitle' => $forceTitle,
 		}
 	);
+
 }
 
 sub _cliQuery_done {
