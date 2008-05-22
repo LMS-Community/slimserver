@@ -517,6 +517,11 @@ sub currentSongLines {
 				'line' => [ $s2line1, $s2line2 ],
 			};
 		}
+		
+		$jive = {
+			'type' => 'song',
+			'text' => [ $status, $song->title ],
+		};
 
 		my $imgKey;
 		my $artwork;
@@ -553,12 +558,10 @@ sub currentSongLines {
 			$artwork = ($song->album->artwork || 0) + 0;
 
 		}
-
-		$jive = {
-			'type'    => 'song',
-			'text'    => [ $status, $song->title ],
-			$imgKey   => $artwork,
-		};
+		
+		if ( $imgKey ) {
+			$jive->{$imgKey} = $artwork;
+		}
 	}
 
 	if (!$suppressDisplay) {
