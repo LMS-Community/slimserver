@@ -480,16 +480,23 @@ sub albumsQuery {
 	if ( $to_cache && $menuMode ) {
 		$cache->{albums}->{$cacheKey} = to_json( $request->getResults() );
 	} elsif ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-		my $searchParams = {
-			title => $request->string('ALBUMS') . ": " . $search,
-			cmd =>  [ 'albums' ], 
-			search      => $request->getParam('search'),
-			menu        => $request->getParam('menu'),
-			menu_all    => $request->getParam('menu_all'),
-			menuStyle   => 'album',
-			_searchType => $request->getParam('_searchType'),
+		my $jiveSearchCache = {
+			text        => $request->string('ALBUMS') . ": " . $search,
+			actions     => {
+					go => {
+						cmd => [ 'albums' ],
+						params => {
+							search => $request->getParam('search'),
+							menu_all => 1,
+							cached_search => 1,
+							menu   => $request->getParam('menu'),
+							_searchType => $request->getParam('_searchType'),
+						},
+					},
+			},
+			window      => { menuStyle => 'album' },
 		};
-		Slim::Control::Jive::cacheSearch($searchParams);
+		Slim::Control::Jive::cacheSearch($jiveSearchCache);
 	}
 	
 	$request->setStatusDone();
@@ -794,16 +801,24 @@ sub artistsQuery {
 	if ( $to_cache && $menuMode ) {
 		$cache->{artists}->{$cacheKey} = to_json( $request->getResults() );
 	} elsif ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-		my $searchParams = {
-			title => $request->string('ARTISTS') . ": " . $search,
-			cmd =>  [ 'artists' ], 
-			search      => $request->getParam('search'),
-			menu        => $request->getParam('menu'),
-			menu_all    => $request->getParam('menu_all'),
-			_searchType => $request->getParam('_searchType'),
+		my $jiveSearchCache = {
+			text        => $request->string('ARTISTS') . ": " . $search,
+			actions     => {
+					go => {
+						cmd => [ 'artists' ],
+						params => {
+							search => $request->getParam('search'),
+							menu   => $request->getParam('menu'),
+							menu_all => 1,
+							cached_search => 1,
+							_searchType => $request->getParam('_searchType'),
+						},
+					},
+			},
+			window      => { menuStyle => 'album' },
 		};
-		Slim::Control::Jive::cacheSearch($searchParams);
-	}
+		Slim::Control::Jive::cacheSearch($jiveSearchCache);
+}
 	$request->setStatusDone();
 }
 
@@ -2387,15 +2402,22 @@ sub playlistsQuery {
 		}
 
 		if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-			my $searchParams = {
-				title => $request->string('PLAYLISTS') . ": " . $request->getParam('search'),
-				cmd =>  [ 'playlists' ], 
-				search      => $request->getParam('search'),
-				menu        => $request->getParam('menu'),
-				menu_all    => $request->getParam('menu_all'),
-				_searchType => $request->getParam('_searchType'),
+			my $jiveSearchCache = {
+				text        => $request->string('PLAYLISTS') . ": " . $search,
+				actions     => {
+						go => {
+							cmd => [ 'playlists' ],
+							params => {
+								search => $request->getParam('search'),
+								menu   => $request->getParam('menu'),
+								menu_all => 1,
+								cached_search => 1,
+								_searchType => $request->getParam('_searchType'),
+							},
+						},
+				},
 			};
-			Slim::Control::Jive::cacheSearch($searchParams);
+			Slim::Control::Jive::cacheSearch($jiveSearchCache);
 		}
 	
 	} else {
@@ -4419,16 +4441,23 @@ sub titlesQuery {
 	}
 
 	if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
-		my $searchParams = {
-			title => $request->string('SONGS') . ": " . $search,
-			cmd =>  [ 'tracks' ], 
-			search      => $request->getParam('search'),
-			menu        => $request->getParam('menu'),
-			menu_all    => $request->getParam('menu_all'),
-			menuStyle   => 'album',
-			_searchType => $request->getParam('_searchType'),
+		my $jiveSearchCache = {
+			text        => $request->string('SONGS') . ": " . $search,
+			actions     => {
+					go => {
+						cmd => [ 'tracks' ],
+						params => {
+							search => $request->getParam('search'),
+							menu   => $request->getParam('menu'),
+							menu_all => 1,
+							cached_search => 1,
+							_searchType => $request->getParam('_searchType'),
+						},
+					},
+			},
+			window       => { menuStyle => 'album' },
 		};
-		Slim::Control::Jive::cacheSearch($searchParams);
+		Slim::Control::Jive::cacheSearch($jiveSearchCache);
 	}
 	
 	$request->setStatusDone();
