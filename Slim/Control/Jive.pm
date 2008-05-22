@@ -1635,6 +1635,7 @@ sub searchMenu {
 				cmd => ['albums'],
 				params => {
 					menu     => 'track',
+					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'albums',
 				},
@@ -1701,6 +1702,7 @@ sub searchMenu {
 				cmd => ['playlists'],
 				params => {
 					menu     => 'track',
+					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
 				},
                         },
@@ -1859,7 +1861,7 @@ sub _jiveNoResults {
 
 sub cacheSearch {
 	my $search = shift;
-	if ($search->{cmd}) {
+	if (defined($search) && $search->{text} && $search->{actions}{go}{cmd}) {
 		unshift (@recentSearches, $search);
 	}
 }
@@ -1886,25 +1888,10 @@ sub jiveRecentSearchQuery {
 		$request->addResult('offset', 0);
 		for my $i (0..$totalCount) {
 			last unless $recentSearches[$i];
-			$request->addResultLoop('item_loop', $i, 'text', $recentSearches[$i]->{title});
-			my $actions = {
-				go => {
-					cmd => $recentSearches[$i]->{cmd},
-					params => {
-						search => $recentSearches[$i]->{search},
-					},
-				},
-			};
-			$actions->{go}{params}{cached_search} = 1;
-			for my $param ('menu', '_searchType', 'menu_all', 'menuStyle') {
-				if ($recentSearches[$i]->{$param}) {
-					$actions->{'go'}{'params'}{$param} = $recentSearches[$i]->{$param};
-				}
+			my $href = $recentSearches[$i];
+			for my $key (keys %$href) {
+				$request->addResultLoop('item_loop', $i, $key, $href->{$key});
 			}
-			if ($recentSearches[$i]->{menuStyle}) {
-				$request->addResultLoop('item_loop', $i, 'window', { titleStyle => 'search', menuStyle => $recentSearches[$i]->{menuStyle} });
-			}
-			$request->addResultLoop('item_loop', $i, 'actions', $actions);
 		}
 	}
 	$request->setStatusDone();
