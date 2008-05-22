@@ -55,7 +55,6 @@ my $prefs = preferences('server');
 
 # Frequently used data can be cached in memory, such as the list of albums for Jive
 my $cache = {};
-my @recentSearches = ();
 
 sub alarmsQuery {
 	my $request = shift;
@@ -490,54 +489,9 @@ sub albumsQuery {
 			menuStyle   => 'album',
 			_searchType => $request->getParam('_searchType'),
 		};
-		unshift (@recentSearches, $searchParams);
+		Slim::Control::Jive::cacheSearch($searchParams);
 	}
 	
-	$request->setStatusDone();
-}
-
-sub recentSearchQuery {
-	my $request = shift;
-	$log->info("Begin Function");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['recentsearches']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $totalCount = scalar(@recentSearches);
-	if ($totalCount == 0) {
-		# this is an empty resultset
-		_jiveNoResults($request);
-	} else {
-		my $maxCount = 200;
-		$totalCount = $totalCount > $maxCount ? ($maxCount - 1) : $totalCount;
-		$request->addResult('count', $totalCount);
-		$request->addResult('offset', 0);
-		for my $i (0..$totalCount) {
-			last unless $recentSearches[$i];
-			$request->addResultLoop('item_loop', $i, 'text', $recentSearches[$i]->{title});
-			my $actions = {
-				go => {
-					cmd => $recentSearches[$i]->{cmd},
-					params => {
-						search => $recentSearches[$i]->{search},
-					},
-				},
-			};
-			$actions->{go}{params}{cached_search} = 1;
-			for my $param ('menu', '_searchType', 'menu_all', 'menuStyle') {
-				if ($recentSearches[$i]->{$param}) {
-					$actions->{'go'}{'params'}{$param} = $recentSearches[$i]->{$param};
-				}
-			}
-			if ($recentSearches[$i]->{menuStyle}) {
-				$request->addResultLoop('item_loop', $i, 'window', { menuStyle => $recentSearches[$i]->{menuStyle} });
-			}
-			$request->addResultLoop('item_loop', $i, 'actions', $actions);
-		}
-	}
 	$request->setStatusDone();
 }
 
@@ -848,7 +802,7 @@ sub artistsQuery {
 			menu_all    => $request->getParam('menu_all'),
 			_searchType => $request->getParam('_searchType'),
 		};
-		unshift (@recentSearches, $searchParams);
+		Slim::Control::Jive::cacheSearch($searchParams);
 	}
 	$request->setStatusDone();
 }
@@ -2441,7 +2395,7 @@ sub playlistsQuery {
 				menu_all    => $request->getParam('menu_all'),
 				_searchType => $request->getParam('_searchType'),
 			};
-			unshift (@recentSearches, $searchParams);
+			Slim::Control::Jive::cacheSearch($searchParams);
 		}
 	
 	} else {
@@ -4474,7 +4428,7 @@ sub titlesQuery {
 			menuStyle   => 'album',
 			_searchType => $request->getParam('_searchType'),
 		};
-		unshift (@recentSearches, $searchParams);
+		Slim::Control::Jive::cacheSearch($searchParams);
 	}
 	
 	$request->setStatusDone();

@@ -43,6 +43,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 # additional top level menus registered by plugins
 my %itemsToDelete      = ();
 my @pluginMenus        = ();
+my @recentSearches     = ();
 
 =head1 METHODS
 
@@ -73,6 +74,7 @@ sub init {
 	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
 	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
+	Slim::Control::Request::addDispatch(['jiverecentsearches'], [0, 1, 0, \&jiveRecentSearchQuery]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -1717,7 +1719,7 @@ sub searchMenu {
 		actions => {
 			go => {
 				#player => 0,
-				cmd => ['recentsearches'],
+				cmd => ['jiverecentsearches'],
                         },
 		},
 		window => {
@@ -1846,6 +1848,67 @@ sub jiveFavoritesCommand {
 
 }
 
+sub _jiveNoResults {
+	my $request = shift;
+	$request->addResult('count', '1');
+	$request->addResult('offset', 0);
+	$request->addResultLoop('item_loop', 0, 'text', $request->string('EMPTY'));
+	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
+	$request->addResultLoop('item_loop', 0, 'action', 'none');
+}
+
+sub cacheSearch {
+	my $search = shift;
+	if ($search->{cmd}) {
+		unshift (@recentSearches, $search);
+	}
+}
+
+sub jiveRecentSearchQuery {
+
+	my $request = shift;
+	$log->info("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['jiverecentsearches']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $totalCount = scalar(@recentSearches);
+	if ($totalCount == 0) {
+		# this is an empty resultset
+		_jiveNoResults($request);
+	} else {
+		my $maxCount = 200;
+		$totalCount = $totalCount > $maxCount ? ($maxCount - 1) : $totalCount;
+		$request->addResult('count', $totalCount);
+		$request->addResult('offset', 0);
+		for my $i (0..$totalCount) {
+			last unless $recentSearches[$i];
+			$request->addResultLoop('item_loop', $i, 'text', $recentSearches[$i]->{title});
+			my $actions = {
+				go => {
+					cmd => $recentSearches[$i]->{cmd},
+					params => {
+						search => $recentSearches[$i]->{search},
+					},
+				},
+			};
+			$actions->{go}{params}{cached_search} = 1;
+			for my $param ('menu', '_searchType', 'menu_all', 'menuStyle') {
+				if ($recentSearches[$i]->{$param}) {
+					$actions->{'go'}{'params'}{$param} = $recentSearches[$i]->{$param};
+				}
+			}
+			if ($recentSearches[$i]->{menuStyle}) {
+				$request->addResultLoop('item_loop', $i, 'window', { titleStyle => 'search', menuStyle => $recentSearches[$i]->{menuStyle} });
+			}
+			$request->addResultLoop('item_loop', $i, 'actions', $actions);
+		}
+	}
+	$request->setStatusDone();
+}
 
 # The following allow download of applets, wallpaper and sounds from SC to jive
 # Files may be packaged in a plugin or can be added individually via the api below.
