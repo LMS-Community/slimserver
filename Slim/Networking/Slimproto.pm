@@ -37,7 +37,7 @@ use constant SLIMPROTO_PORT   => 3483;
 use constant LATENCY_LIST_MAX => 10;
 use constant LATENCY_LIST_MIN => 6;
 
-my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom');
+my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom');
 my $log       = logger('network.protocol.slimproto');
 
 my $forget_disconnected_time = 60; # disconnected clients will be forgotten unless they reconnect before this
@@ -953,6 +953,11 @@ sub _hello_handler {
 
 		$client_class = 'Slim::Player::SoftSqueeze';
 		$display_class = 'Slim::Display::Transporter';
+
+	} elsif ($deviceids[$deviceid] eq 'softboom') {
+
+		$client_class = 'Slim::Player::SoftSqueeze';
+		$display_class = 'Slim::Display::Boom';
 
 	} elsif ($deviceids[$deviceid] eq 'squeezeslave') {
 
