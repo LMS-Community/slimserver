@@ -114,7 +114,7 @@ sub init {
 			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 
 				$client->showBriefly( {
-					'line' => [ $client->string('CLEARING_PLAYLIST'), "" ]
+					'line' => [ "", $client->string('CLEARING_PLAYLIST') ]
 				});
 				$client->execute(['playlist', 'clear']);
 

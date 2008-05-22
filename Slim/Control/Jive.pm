@@ -1708,6 +1708,23 @@ sub searchMenu {
 			titleStyle => 'search',
 		},
 	},
+	{
+		text           => $client->string('RECENT_SEARCHES'),
+		id             => 'myMusicSearchRecent',
+		node           => 'myMusicSearch',
+		displayWhenOff => 0,
+		weight         => 50,
+		actions => {
+			go => {
+				#player => 0,
+				cmd => ['recentsearches'],
+                        },
+		},
+		window => {
+			text => $client->string('RECENT_SEARCHES'),
+			titleStyle => 'search',
+		},
+	},
 	);
 
 	if ($batch) {

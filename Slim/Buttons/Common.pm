@@ -424,7 +424,7 @@ our %functions = (
 		if (Slim::Player::Playlist::count($client) == 0) {
 
 			$client->showBriefly( {
-				'line' => [ $client->string('PLAYLIST_EMPTY'), "" ]
+				'line' => [ "", $client->string('PLAYLIST_EMPTY') ]
 			});
 
 		} else {
@@ -434,7 +434,7 @@ our %functions = (
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 
 			$client->showBriefly( {
-				'line' => [ $client->string('STOPPING'), "" ],
+				'line' => [ "", $client->string('STOPPING') ],
 				'jive' => undef,	
 			}) unless suppressStatus($client);
 		}
@@ -880,19 +880,19 @@ our %functions = (
 		if (Slim::Player::Playlist::repeat($client) == 0) {
 
 			$client->showBriefly( {
-				'line' => [ $client->string('REPEAT_OFF'), "" ]
+				'line' => [ "", $client->string('REPEAT_OFF') ]
 			});
 
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
 
 			$client->showBriefly( {
-				'line' =>  [ $client->string('REPEAT_ONE'), "" ]
+				'line' =>  [ "", $client->string('REPEAT_ONE') ]
 			});
 
 		} elsif (Slim::Player::Playlist::repeat($client) == 2) {
 
 			$client->showBriefly( {
-				'line' => [ $client->string('REPEAT_ALL'), "" ]
+				'line' => [ "", $client->string('REPEAT_ALL') ]
 			});
 		}
 	},
@@ -1034,11 +1034,11 @@ our %functions = (
 
 		if ($sleepTime == 0) {
 			$client->showBriefly( {
-				'line' => [ $client->string('CANCEL_SLEEP'), "" ]
+				'line' => [ "", $client->string('CANCEL_SLEEP') ]
 			});
 		} else {
 			$client->showBriefly( {
-				'line' => [ $client->prettySleepTime, "" ]
+				'line' => [ "", $client->prettySleepTime ]
 			});
 		}
 	},
@@ -1076,19 +1076,19 @@ our %functions = (
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
 
 			$client->showBriefly( {
-				'line' => [ $client->string('SHUFFLE_ON_ALBUMS'), "" ]
+				'line' => [ "", $client->string('SHUFFLE_ON_ALBUMS') ]
 			});
 
 		} elsif (Slim::Player::Playlist::shuffle($client) == 1) {
 
 			$client->showBriefly( {
-				'line' => [ $client->string('SHUFFLE_ON_SONGS'), "" ]
+				'line' => [ "", $client->string('SHUFFLE_ON_SONGS') ]
 			});
 
 		} else {
 
 			$client->showBriefly( {
-				'line' => [ $client->string('SHUFFLE_OFF'), "" ]
+				'line' => [ "", $client->string('SHUFFLE_OFF') ]
 			});
 		}
 	},
@@ -1150,7 +1150,7 @@ our %functions = (
 		my $client = shift;
 
 		$client->showBriefly( {
-			'line' => [ $client->string('CLEARING_PLAYLIST'), "" ]
+			'line' => [ "", $client->string('CLEARING_PLAYLIST') ]
 		});
 
 		$client->execute(['playlist', 'clear']);
