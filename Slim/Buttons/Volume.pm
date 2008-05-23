@@ -94,6 +94,7 @@ sub setMode {
 		'increment'    => 1,
 		'lines'        => $client->customVolumeLines(),
 		'screen2'      => 'inherit',
+		'visu'         => [0],
 	});
 
 	if ($passthrough) {
