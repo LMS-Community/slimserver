@@ -119,16 +119,46 @@ sub mk_accessor {
 sub _slot {
 	my $class = shift;
 	my $field = shift;
+	
+	my $baseclass = $class->_baseClass;
 
-    my $n = $slot{$class}->{$field};
+	my $n = $slot{$baseclass}->{$field};
 
-    return $n if defined $n;
+	return $n if defined $n;
 
-    $n = keys %{$slot{$class}};
+	$n = keys %{$slot{$baseclass}};
 
-    $slot{$class}->{$field} = $n;
+	$slot{$baseclass}->{$field} = $n;
 
-    return $n;
+	return $n;
+}
+
+# Find the base class excluding this package
+# Used so we can allocate slots which don't clash for all classes that inherit from it
+# Based on Class::ISA
+sub _baseClass {
+	my $class = shift;
+
+	my @in  = ($class);
+	my @out = ();
+	my $current;
+
+	while (@in) {
+		next unless defined($current = shift @in) && length($current);
+		push @out, $current;
+		no strict 'refs';
+		unshift @in, @{"$current\::ISA"};
+	}
+
+	if ($out[-1] eq __PACKAGE__) {
+		return $out[-2];
+	}
+	
+	# more complex inheritance - admit defeat!
+	# if we get here you would be better using Class::Accessor::Fast
+	warn("Potential clash in accessor allocation in Slim::Utils::Accessor for $class");
+
+	return $class;
 }
 
 =head1 SEE ALSO
