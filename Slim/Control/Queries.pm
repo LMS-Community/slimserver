@@ -3621,6 +3621,7 @@ sub songinfoQuery {
 				$tags = 'jAlGyJkitodYfrTvun';
 			}
 			$request->addResult('base', $base);
+			$request->addResult('window', { titleStyle => 'album', 'icon-id' => $trackId });
 		}
 
 		my $hashRef = _songData($request, $track, $tags, $menuMode);
@@ -3992,7 +3993,7 @@ sub songinfoQuery {
 								};
 								# style correctly the title that opens for the action element
 								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-								$request->addResultLoop($loopname, $chunkCount, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
+								$request->addResultLoop($loopname, $chunkCount, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'years' } );
 
 							} elsif ($key eq 'TITLE') {
 								# add MusicIP handler for play-hold when available
