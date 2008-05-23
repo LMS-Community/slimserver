@@ -19,13 +19,31 @@ my $log   = logger('network.squeezenetwork');
 my $prefs = preferences('server');
 
 # Regex for which URLs we want to report stats for
-my $REPORT_RE = qr{^(?:http|mms)://};
+my $REPORT_RE = qr{^(?:http|mms|sirius|live365)://};
 
-# Report stats at this interval
-my $REPORT_INTERVAL = 3600;
+# Report stats to SN at this interval
+my $REPORT_INTERVAL = 1200;
+
+# Granularity for radio logging
+my $REPORT_GRANULARITY = 300;
 
 sub init {
+	my ( $class, $json ) = @_;
+	
 	$log->info( "SqueezeNetwork stats init" );
+	
+	# Override defaults if SN has provided them
+	if ( $json->{stats_interval} ) {
+		$REPORT_INTERVAL = $json->{stats_interval};
+	}
+	
+	if ( my $regex = $json->{stats_regex} ) {
+		$REPORT_RE = qr{^(?:$regex)://};
+	}
+	
+	if ( $json->{stats_granularity} ) {
+		$REPORT_GRANULARITY = $json->{stats_granularity};
+	}
 	
 	# Subscribe to new song events
 	Slim::Control::Request::subscribe(
@@ -36,7 +54,7 @@ sub init {
 	# Report stats now and then once an hour
 	Slim::Utils::Timers::setTimer(
 		undef,
-		time(),
+		time() + 15,
 		\&reportStats,
 	);
 }
@@ -51,10 +69,6 @@ sub shutdown {
 sub newsongCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
-	my $idx     = $request->getParam('_p3');
-	
-	# mp3 streams report newsong on every metadata change, so we want to ignore that
-	return if !defined $idx;
 	
 	# Check if stats are disabled
 	return if $prefs->get('sn_disable_stats');
@@ -64,25 +78,78 @@ sub newsongCallback {
 		return unless Slim::Player::Sync::isMaster($client);
 	}
 	
-	my $url = Slim::Player::Playlist::url( $client, $idx );
+	my $url = Slim::Player::Playlist::url($client);
 	
 	# Make sure the URL matches what we want to report
 	return unless $url =~ $REPORT_RE;
 	
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
 	
-	$log->debug( "Reporting play of radio URL to SN: $url" );
+	my $secs = $track->secs || 0;
+	
+	# If this is a radio track (no track length) and doesn't contain a playlist index value
+	# it is the newsong notification from a metadata change, which we want to ignore
+	if ( !$secs && !defined $request->getParam('_p3') ) {
+		$log->debug( 'Ignoring radio station newsong metadata notification' );
+		return;
+	}
+		
+	if ( $secs > 0 ) {
+		# A track with known duration, log one event for it
+		my $queue = $prefs->get('sn_stats_queue') || [];
+	
+		push @{$queue}, {
+			player  => $client->id,
+			ts      => time() + $prefs->get('sn_timediff'),
+			url     => $url,
+			secs    => $secs,
+		};
+	
+		$prefs->set( sn_stats_queue => $queue );
+		
+		$log->debug( "Reporting play of remote URL to SN: $url, duration: $secs" );
+	}
+	else {
+		# A radio track, log events at 5-minute intervals
+		logRadio( $client, $url );
+	}
+}
+
+sub logRadio {
+	my ( $client, $url ) = @_;
+	
+	# If player is stopped, stop logging
+	if ( !$client || $client->playmode !~ /play|pause/ ) {
+		$log->debug( "Player no longer playing, finished logging for $url" );
+		return;
+	}
+	
+	my $cururl = Slim::Player::Playlist::url($client);
+	
+	if ( $cururl ne $url ) {
+		$log->debug( "Currently playing radio URL has changed, finished logging for $url" );
+		return;
+	}
 	
 	my $queue = $prefs->get('sn_stats_queue') || [];
-	
+
 	push @{$queue}, {
 		player  => $client->id,
 		ts      => time() + $prefs->get('sn_timediff'),
 		url     => $url,
-		secs    => $track->secs,
+		secs    => $REPORT_GRANULARITY,
 	};
-	
+
 	$prefs->set( sn_stats_queue => $queue );
+	
+	$log->debug( "Reporting play of radio URL to SN: $url, duration: $REPORT_GRANULARITY" );
+	
+	Slim::Utils::Timers::setTimer(
+		$client,
+		time() + $REPORT_GRANULARITY,
+		\&logRadio,
+		$url,
+	);
 }
 
 sub reportStats {
