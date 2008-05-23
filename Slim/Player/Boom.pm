@@ -217,7 +217,7 @@ sub treble {
 	my $treble = $client->SUPER::treble($newtreble);
 	if (defined($newtreble)) {
 		#do treble bdac code here, then you can remove the warning
-		warn "treble adjusted to $newbass";
+		warn "treble adjusted to $newtreble";
 	}
 	return $treble;
 }
