@@ -121,7 +121,7 @@ sub _init_done {
 	Slim::Networking::SqueezeNetwork::Players->init();
 	
 	# Init stats
-	Slim::Networking::SqueezeNetwork::Stats->init();
+	Slim::Networking::SqueezeNetwork::Stats->init( $json );
 }
 
 sub _init_error {
