@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+
 use strict;
 use IO::Socket;
 use FileHandle;
@@ -18,10 +20,11 @@ sub read_config_file
 {
     my ($filename) = @_;
     my $f = new FileHandle($filename);
+    die "Couldn't open $f for reading." unless $f;
     my $result = [];
     while (my $line = <$f>) {
 	chomp($line);
-	if ($line =~ m/(^[0-9.]+) : ([0-9A-Fa-f ]+)$/) {
+	if ($line =~ m/(^[0-9.]+) : ([0-9A-Fa-f ]+)\s*$/) {
 	    my $frequency = $1;
 	    my $commands = $2;
 	    my @commands = split(/ /, $commands);

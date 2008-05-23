@@ -33,7 +33,7 @@ use Scalar::Util qw(blessed);
 use XML::Simple;
 use Data::Dumper;
 use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
-use POSIX qw(floor);
+use POSIX qw(floor strftime);
 use Slim::Utils::Log;
 use Slim::Plugin::ABTester::Settings;
 
@@ -47,6 +47,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_ABTESTER',
 });
 my %testcases;
+my %recordedData;
 
 # This mapping must be a copy of the INPUT.Choice mapping with the addition of the association of the selectImage function
 my %choiceMapping = (
@@ -111,6 +112,8 @@ sub selectImage {
 			my $testData;
 			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
 				$testData = $testcases{$client->id}->{$testcase}->{'image'};
+			}elsif(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+				$testData = $testcases{$client->id}->{$testcase}->{'commands'};
 			}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 				$testData = $testcases{$client->id}->{$testcase}->{'audio'};
 			}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
@@ -152,6 +155,10 @@ sub selectImage {
 			
 			# Execute additional actions associated with the selected test data entry
 			my $showChangedData = 0;
+			if(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+				_executeCommands($client,$testcase,$testcases{$client->id}->{$testcase}->{'commands'}->{$testdataKey}->{'command'});
+				$showChangedData = 1;
+			}
 			if(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
 				_executeFunction($client,$testcase,$testcases{$client->id}->{$testcase}->{'perlfunction'}->{$testdataKey}->{'content'});
 				$showChangedData = 1;
@@ -183,6 +190,8 @@ sub selectImage {
 		my $testData;
 		if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
 			$testData = $testcases{$client->id}->{$testcase}->{'image'};
+		}elsif(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+			$testData = $testcases{$client->id}->{$testcase}->{'commands'};
 		}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 			$testData = $testcases{$client->id}->{$testcase}->{'audio'};
 		}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
@@ -228,6 +237,10 @@ sub selectImage {
 
 			# Execute additional actions associated with the selected test data entry
 			my $showChangedData = 0;
+			if(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+				_executeCommands($client,$testcase,$testcases{$client->id}->{$testcase}->{'commands'}->{@testcaseDataKeys->[$number-1]}->{'command'});
+				$showChangedData = 1;
+			}
 			if(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
 				_executeFunction($client,$testcase,$testcases{$client->id}->{$testcase}->{'perlfunction'}->{@testcaseDataKeys->[$number-1]}->{'content'});
 				$showChangedData = 1;
@@ -275,6 +288,7 @@ sub initPlugin {
 	# This is required to make it possible to use the number buttons as shortcuts to load different data in the test cases
 	my %choiceFunctions = %{Slim::Buttons::Input::Choice::getFunctions()};
 	$choiceFunctions{'selectImage'} = \&selectImage;
+	Slim::Buttons::Common::addMode('Slim::Plugin::ABTester::Plugin.recordTestcase',$class->getFunctions(),\&setModeRecordTestcase);
 	Slim::Buttons::Common::addMode('Slim::Plugin::ABTester::Plugin.selectImage',\%choiceFunctions,\&Slim::Buttons::Input::Choice::setMode);
 	for my $buttonPressMode (qw{repeat hold hold_release single double}) {
 		$choiceMapping{'play.' . $buttonPressMode} = 'dead';
@@ -287,10 +301,31 @@ sub initPlugin {
 
 	# Subscribe to event to automatically load DSP images when player reconnects
 	Slim::Control::Request::subscribe(\&loadDefaultDSPImage,[['client','reconnect']]);
+	Slim::Control::Request::subscribe(\&recordBoomDacCommands,[['boomdac']]);
+}
+
+sub recordBoomDacCommands {
+	my $request = shift;
+	my $client = $request->client();
+
+	my $mode = $client->modeParam('modeName');
+
+	if ($request->isCommand([['boomdac']]) && $mode =~ /^ABTester\.Recording\.(.*)$/) {
+		my $recordingKey = $1;
+
+		my $data = $request->getParam('_command');
+		$log->debug("Recording $recordingKey: boomdac ".URI::Escape::uri_escape($data,'\x00-\xff'));
+		
+		my @empty = ();
+		my $current = $recordedData{$client->id}->{$recordingKey} || \@empty;
+		push @$current,"boomdac ".URI::Escape::uri_escape($data,'\x00-\xff');
+	}
+	return;
 }
 
 sub exitPlugin {
 	Slim::Control::Request::unsubscribe(\&loadDefaultDSPImage);
+	Slim::Control::Request::unsubscribe(\&recordBoomDacCommands);
 }
 
 sub getDisplayText {
@@ -352,6 +387,140 @@ sub refreshTestdata {
 	$testcases{$client->id} = _readTestcases($client);
 }
 
+# Mode to record boomdac commands
+sub setModeRecordTestcase {
+	my $client = shift;
+	my $method = shift;
+
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	$recordedData{$client->id} = ();
+
+	my $dirname = "rec_".strftime("%Y%m%d_%H%M%S", localtime(time()));
+
+	my @listRef = ();
+	foreach my $dataKey (qw(A B)) {
+		my %dataEntry = (
+			'value' => $dataKey,
+			'name' => $client->string('PLUGIN_ABTESTER_RECORD_DATA')." ".$dataKey,
+		);
+		push @listRef,\%dataEntry;
+	}
+	my %saveEntry = (
+		'value' => 'save',
+		'name' => $client->string('PLUGIN_ABTESTER_RECORD_SAVE'),
+	);
+	push @listRef,\%saveEntry;
+	
+	my %params = (
+		header     => '{PLUGIN_ABTESTER} {count}',
+		listRef    => \@listRef,
+		name       => sub {
+			my ($client, $item) = @_;
+			return  $item->{'name'};
+		},
+		overlayRef => sub {
+			return [undef, $client->symbols('rightarrow')];
+		},
+		modeName   => 'ABTester.RecordTestcase',
+		onPlay     => sub {
+			my ($client, $item) = @_;
+			$client->execute(["pause","0"]);
+		},
+		onRight    => sub {
+			my ($client, $item) = @_;
+			
+			if($item->{'value'} eq 'save') {
+				# Saving recorded data
+				my $datas = $recordedData{$client->id};
+
+				# We need both A and B data to make a working test case
+				if(scalar(keys %$datas)<2) {
+					$client->showBriefly({
+						'line'    => [ undef, $client->string("PLUGIN_ABTESTER_RECORD_SAVING_NOT_ENOUGH_DATA") ],
+						'overlay' => [ undef, undef ],
+					});
+					return;
+				}
+
+				# Create test case directory
+				my $cacheDir = $serverPrefs->get('cachedir');
+				$cacheDir = catdir($cacheDir,'ABTester','Recorded');
+				mkdir($cacheDir) unless -d catdir($cacheDir);
+				$cacheDir = catdir($cacheDir,$dirname);				
+				mkdir($cacheDir);
+
+				# Generate test case text and save the test case
+				$log->debug("Saving: ".Dumper($recordedData{$client->id}));
+				my $file = catfile($cacheDir,"test.xml");
+				my $fh;
+				open($fh,"> $file") or do {
+					$log->error("Unable to save to: ".$file);
+					$client->showBriefly({
+						'line'    => [ undef, $client->string("PLUGIN_ABTESTER_RECORD_SAVING_FAILED") ],
+						'overlay' => [ undef, undef ],
+					});
+					return;
+				};
+				print $fh "<test type=\"abx\">\n";
+				print $fh "\t<requiredmodels>boom</requiredmodels>\n";
+				print $fh "\t<minfirmware>7</minfirmware>\n";
+				foreach my $key (keys %$datas) {
+					my $commands = $datas->{$key};
+					if(defined($commands) && scalar(@$commands)>0) {
+						print $fh "\t<commands id=\"$key\">\n";
+						my $i=1;
+						foreach my $command (@$commands) {
+							print $fh "\t\t<command id=\"$i\" type=\"cli\">$command</command>\n";
+							$i++;
+						}
+						print $fh "\t</commands>\n";
+					}else {
+						$client->showBriefly({
+							'line'    => [ undef, $client->string("PLUGIN_ABTESTER_RECORD_SAVING_NOT_ENOUGH_DATA") ],
+							'overlay' => [ undef, undef ],
+						});
+						return;
+					}
+				}
+				print $fh "</test>";
+				close $fh;
+				$log->warn("Saved recorded testcase as: ".catfile($cacheDir,"test.xml"));
+				refreshTestdata($client);
+
+				$client->showBriefly({
+					'line'    => [ $client->string("PLUGIN_ABTESTER_RECORD_SAVING"), $dirname ],
+					'overlay' => [ undef, undef ],
+				},
+				{
+					'duration' => 3,
+				});
+			}else {
+				# Initiate recording mode
+				my @recording = ($client->string('PLUGIN_ABTESTER_RECORDING')." ".$item->{'value'}."...");
+				my @empty = ();
+				$recordedData{$client->id}->{$item->{'value'}} = \@empty;
+				my %params = (
+					header     => '{PLUGIN_ABTESTER} {count}',
+					listRef    => \@recording,
+					modeName   => 'ABTester.Recording.'.$item->{'value'},
+					onPlay     => sub {
+						my ($client, $item) = @_;
+						$client->execute(["pause","0"]);
+					},
+				);
+				Slim::Buttons::Common::pushModeLeft($client,'INPUT.Choice',\%params);
+			}
+		}
+	);
+
+	Slim::Buttons::Common::pushModeLeft($client,'INPUT.Choice',\%params);
+	disableScreenSaver($client);
+}
+
 # Mode to represent the main ABTester plugin menu
 sub setMode {
 	my $class  = shift;
@@ -376,6 +545,9 @@ sub setMode {
 	push @listRef,'PLUGIN_ABTESTER_TESTCASES';
 	push @listRef,'PLUGIN_ABTESTER_FROM_INTERNET';
 	push @listRef,'PLUGIN_ABTESTER_DELETE_TEST_FILES';
+	if($client->model eq 'boom' || !$prefs->get("restrictedtohardware")) {
+		push @listRef,'PLUGIN_ABTESTER_RECORD';
+	}
 
 	# Prepare mode parameters and move player into the new mode
 	my %params = (
@@ -403,6 +575,8 @@ sub setMode {
 					'overlay' => [ undef, undef ],
 				});
 				_deleteFiles($client);
+			}elsif($item eq 'PLUGIN_ABTESTER_RECORD') {
+				Slim::Buttons::Common::pushModeLeft($client, 'Slim::Plugin::ABTester::Plugin.recordTestcase');
 			}elsif($item eq 'PLUGIN_ABTESTER_FROM_INTERNET') {
 				# Show "From Internet" menu
 				setModeFromInternet($client);
@@ -633,6 +807,8 @@ sub setModeABXTest {
 	my $testData;
 	if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
 		$testData = $testcases{$client->id}->{$testcase}->{'image'};
+	}elsif(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'commands'};
 	}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 		$testData = $testcases{$client->id}->{$testcase}->{'audio'};
 	}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
@@ -650,6 +826,9 @@ sub setModeABXTest {
 			);
 			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
 				$data{'image'} = $testcases{$client->id}->{$testcase}->{'image'}->{$data}->{'content'};
+			}
+			if(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+				$data{'commands'} = $testcases{$client->id}->{$testcase}->{'commands'}->{$data}->{'command'};
 			}
 			if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 				$data{'audio'} = $testcases{$client->id}->{$testcase}->{'audio'}->{$data}->{'content'};
@@ -677,6 +856,9 @@ sub setModeABXTest {
 	);
 	if(exists(@listRef->[$imageXPos]->{'image'})) {
 		$dataX{'image'} = @listRef->[$imageXPos]->{'image'};
+	}
+	if(exists(@listRef->[$imageXPos]->{'commands'})) {
+		$dataX{'commands'} = @listRef->[$imageXPos]->{'commands'};
 	}
 	if(exists(@listRef->[$imageXPos]->{'audio'})) {
 		$dataX{'audio'} = @listRef->[$imageXPos]->{'audio'};
@@ -774,6 +956,10 @@ sub setModeABXTest {
 					$currentData->{'image'} = $item->{'value'};
 				}
 				my $showChangedData = 0;
+				if(exists $item->{'commands'}) {
+					_executeCommands($client,$testcase,$item->{'commands'});
+					$showChangedData = 1;
+				}
 				if(exists $item->{'perlfunction'}) {
 					_executeFunction($client,$testcase,$item->{'perlfunction'});
 					$showChangedData = 1;
@@ -828,6 +1014,8 @@ sub setModeABCDTest {
 	my $testData;
 	if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
 		$testData = $testcases{$client->id}->{$testcase}->{'image'};
+	}elsif(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+		$testData = $testcases{$client->id}->{$testcase}->{'commands'};
 	}elsif(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 		$testData = $testcases{$client->id}->{$testcase}->{'audio'};
 	}elsif(exists $testcases{$client->id}->{$testcase}->{'perlfunction'}) {
@@ -848,6 +1036,9 @@ sub setModeABCDTest {
 			);
 			if(exists $testcases{$client->id}->{$testcase}->{'image'}) {
 				$data{'image'} = $testcases{$client->id}->{$testcase}->{'image'}->{$data}->{'content'};
+			}
+			if(exists $testcases{$client->id}->{$testcase}->{'commands'}) {
+				$data{'commands'} = $testcases{$client->id}->{$testcase}->{'commands'}->{$data}->{'command'};
 			}
 			if(exists $testcases{$client->id}->{$testcase}->{'audio'}) {
 				$data{'audio'} = $testcases{$client->id}->{$testcase}->{'audio'}->{$data}->{'content'};
@@ -963,6 +1154,10 @@ sub setModeABCDTest {
 					$currentData->{'image'} = $item->{'value'};
 				}
 				my $showChangedData = 0;
+				if(exists $item->{'commands'}) {
+					_executeCommands($client,$testcase,$item->{'commands'});
+					$showChangedData = 1;
+				}
 				if(exists $item->{'perlfunction'}) {
 					_executeFunction($client,$testcase,$item->{'perlfunction'});
 					$showChangedData = 1;
@@ -1125,26 +1320,37 @@ sub _executeInitCommands {
 		my $initCommands = $testcases{$client->id}->{$testcase}->{'init'};
 		foreach my $key (sort keys %$initCommands) {
 			my $cmd = $initCommands->{$key};
-			if($cmd->{'type'} eq 'cli') {
-				my $execString = $cmd->{'content'};
-
-				# Replace special keywords in the CLI command
-				$execString = _replaceKeywords($execString,$client,$testcase);
-
-				# Call the CLI Command
-				my @cmdParts = split(/ /,$execString);
-				if(scalar(@cmdParts)>0) {
-					$log->debug("Executing CLI: $execString");
-					$client->execute(\@cmdParts);
-				}else {
-					$log->error("Empty CLI command found, not executing");
-				}
-			}else {
-				$log->error("Unknown command type found, not executing");
-			}
+			_executeCommand($client,$testcase,$cmd);
 		}
 	}
 }
+
+sub _executeCommand {
+	my ($client, $testcase, $cmd) = @_;
+
+	if($cmd->{'type'} eq 'cli') {
+		my $execString = $cmd->{'content'};
+
+		# Replace special keywords in the CLI command
+		$execString = _replaceKeywords($execString,$client,$testcase);
+
+		# Call the CLI Command
+		my @cmdParts = split(/ /,$execString);
+		if(scalar(@cmdParts)>0) {
+			my @executeCmds = ();
+			foreach my $part (@cmdParts) {
+				push @executeCmds,URI::Escape::uri_unescape($part);
+			}
+			$log->debug("Executing CLI: $execString");
+			$client->execute(\@executeCmds);
+		}else {
+			$log->error("Empty CLI command found, not executing");
+		}
+	}else {
+		$log->error("Unknown command type found, not executing");
+	}
+}
+
 sub _deleteFiles {
 	my $client = shift;
 
@@ -1180,6 +1386,16 @@ sub _deleteFiles {
 		};
 	}
 
+	# Remove any recorded test cases
+	my $downloadDir = $serverPrefs->get('cachedir');
+	$downloadDir = catdir($downloadDir,'ABTester','Recorded');
+	if(-d $downloadDir) {
+		$log->debug("Deleting directory $downloadDir");
+		rmtree($downloadDir) or do {
+			$log->error("Unable to delete directory: $downloadDir");
+		};
+	}
+	refreshTestdata($client);
 }
 sub _playAudio {
 	my $client = shift;
@@ -1296,6 +1512,15 @@ sub _executeScript {
 	return $result;
 }
 
+sub _executeCommands {
+	my ($client, $testcase, $commands) = @_;
+
+	foreach my $key (sort keys %$commands) {
+		my $cmd = $commands->{$key};
+		_executeCommand($client,$testcase,$cmd);
+	}
+}
+
 sub _executeFunction {
 	my ($client, $testcase, $script) = @_;
 
@@ -1373,7 +1598,7 @@ sub _extractTestcaseAndImageFiles {
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	my $cacheDir = $serverPrefs->get('cachedir');
 	$cacheDir = catdir($cacheDir,'ABTester');
-	mkdir(catdir($cacheDir));
+	mkdir($cacheDir);
 
 	# Remove previously extracted test cases
 	if(-d catdir($cacheDir,'Testcases')) {
@@ -1490,14 +1715,29 @@ sub _readTestcases {
 	my $cacheDir = $serverPrefs->get('cachedir');
 	$cacheDir = catdir($cacheDir,'ABTester','Testcases');
 
-	return \%localTestcases unless -d $cacheDir;
+	if(-d $cacheDir) {
 
-	my @imageDirs = Slim::Utils::Misc::readDirectory($cacheDir);
-	for my $imageDir (@imageDirs) {
-		next unless -d catdir($cacheDir, $imageDir);
-		next if exists $localTestcases{$imageDir};
-		_readTestcase($client,$cacheDir,$imageDir,\%localTestcases);
+		my @imageDirs = Slim::Utils::Misc::readDirectory($cacheDir);
+		for my $imageDir (@imageDirs) {
+			next unless -d catdir($cacheDir, $imageDir);
+			next if exists $localTestcases{$imageDir};
+			_readTestcase($client,$cacheDir,$imageDir,\%localTestcases);
+		}
 	}
+
+	# Find recorded test cases
+	$cacheDir = $serverPrefs->get('cachedir');
+	$cacheDir = catdir($cacheDir,'ABTester','Recorded');
+
+	if(-d $cacheDir) {
+		my @imageDirs = Slim::Utils::Misc::readDirectory($cacheDir);
+		for my $imageDir (@imageDirs) {
+			next unless -d catdir($cacheDir, $imageDir);
+			next if exists $localTestcases{$imageDir};
+			_readTestcase($client,$cacheDir,$imageDir,\%localTestcases);
+		}
+	}
+
 	return \%localTestcases;
 }
 
@@ -1527,14 +1767,20 @@ sub _readTestcase {
 			$log->error("Failed to parse configuration ($imageDir) because: 'type' not defined");
 			return;
 		}
-		if(!exists($xml->{'image'}) && !exists($xml->{'audio'}) && !exists($xml->{'script'}) && !exists($xml->{'perlfunction'})) {
-			$log->error("Failed to parse configuration ($imageDir) because: No 'image' or 'audio' or 'script' or 'perlfunction' elements defined");
+		if(!exists($xml->{'image'}) && !exists($xml->{'audio'}) && !exists($xml->{'script'}) && !exists($xml->{'perlfunction'}) && !exists($xml->{'commands'})) {
+			$log->error("Failed to parse configuration ($imageDir) because: No 'image' or 'audio' or 'script' or 'perlfunction' or 'commands' elements defined");
 			return;
 		}
 		if(exists($xml->{'image'}))  {
 			my $imageElements = $xml->{'image'};
 			if(scalar(keys %$imageElements) lt 2) {
 				$log->error("Failed to parse configuration ($imageDir) because: At least two 'image' elements is required");
+				return;
+			}
+		}elsif(exists($xml->{'commands'})) {
+			my $commandsElements = $xml->{'commands'};
+			if(scalar(keys %$commandsElements) lt 2) {
+				$log->error("Failed to parse configuration ($imageDir) because: At least two 'commands' elements is required");
 				return;
 			}
 		}elsif(exists($xml->{'audio'})) {

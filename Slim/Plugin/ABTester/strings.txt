@@ -79,3 +79,23 @@ SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE
 SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE_DESC
 	EN	Default DSP image to use in in automatic update (empty means that the default.i2c image in the StandardImages directory will be used)
 
+PLUGIN_ABTESTER_RECORD
+	EN	Record test case
+
+PLUGIN_ABTESTER_RECORDING
+	EN	Recording
+
+PLUGIN_ABTESTER_RECORD_SAVE
+	EN	Save
+
+PLUGIN_ABTESTER_RECORD_SAVING
+	EN	Saving in
+
+PLUGIN_ABTESTER_RECORD_DATA
+	EN	Record Data 
+
+PLUGIN_ABTESTER_RECORD_SAVING_NOT_ENOUGH_DATA
+	EN	Not enough data recorded
+
+PLUGIN_ABTESTER_RECORD_SAVING_FAILED
+	EN	Failed!

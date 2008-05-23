@@ -72,6 +72,8 @@ Each testcase has a test.xml file which describes the files and commands that ar
 You can see a number of test.xml file sample in the bundled plugin in the sub directories below Plugins/ABTester/Images and also
 in the directory Plugins/ABTester/Examples.
 
+See also next section regarding recording of test cases.
+
 The test.xml file can contain the following different elements:
 
 - To specify that the image file image1.i2c should be loaded when the user select "Load data A":
@@ -115,4 +117,19 @@ Besides the above mentioned elements, there is also a number of optional element
 
 Finally, you may enter a "instruction" for the test case that describes the test case and what you like the user to look for:
   <instructions>Listen to the bass (Keep the volume low when changing test data)</instructions>
+
+6. RECORDING OF TEST CASES
+==========================
+There is a "Record test case" menu under "Extras/ABTester" in the player menu, by entering this menu you will be able to record a ABX test case based on
+a number of boomdac commands issued from an external application or script. To record a test case do as follows:
+
+1. Enter the "Record Data A" menu
+2. Issue the boomdac CLI commands needed for test data A from an external application/script
+3. Exit the "Record Data A" menu and enter the "Record Data B" menu
+4. Issue the boomdac CLI commands needed for test data B from an external application/script
+5. Exit the "Record Data B" menu and enter the "Save" menu
+
+The test case will be generated and stored in the the SqueezeCenter cache directory under the "Recorded" sub directory. It will also be available
+directly in the menu so you can verify that it works as you like.
+
 

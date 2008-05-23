@@ -1,3 +1,5 @@
+#!/usr/bin/perl -w
+
 use strict;
 use IO::Socket;
 use FileHandle;
@@ -33,16 +35,19 @@ sub asc2i2c
 }
 
 # Convert depth in db to linear
-if ($depth_db > 10) {
+if ($depth_db ne 'off' && $depth_db > 10) {
     print "You really, really don't want stereoxl depth to be this big.  Try something like 0 or -6";
     exit(0);
 }
-my $depth = 10.0**($depth_db/20.0);
+
+my $depth;
 if ($depth_db eq 'off') {
-    $depth = 0;
+	$depth = 0;
+} else {
+	$depth = 10.0**($depth_db/20.0);
 }
-my $depth_int  = int(($depth * 0x01000000)+0.5)  ;
-my $depth_int_ = -int(($depth * 0x01000000)+0.5) ;
+my $depth_int  = (int(($depth  * 0x00800000)+0.5)) & 0xFFFFFFFF ;
+my $depth_int_ = (-int(($depth * 0x00800000)+0.5)) & 0xFFFFFFFF ;
 
 my $stereoxl_i2c_address = 41;
 my $command = sprintf("%02x%08x%08x%08x%08x", $stereoxl_i2c_address, 

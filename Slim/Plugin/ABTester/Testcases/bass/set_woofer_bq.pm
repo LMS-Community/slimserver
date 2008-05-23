@@ -11,10 +11,11 @@ sub read_config_file
 {
     my ($filename) = @_;
     my $f = new FileHandle($filename);
+    return undef unless $f;
     my $result = [];
     while (my $line = <$f>) {
 	chomp($line);
-	if ($line =~ m/(^[0-9.]+) : ([0-9A-Fa-f ]+)$/) {
+	if ($line =~ m/(^[0-9.]+) : ([0-9A-Fa-f ]+)\s*$/) {
 	    my $frequency = $1;
 	    my $commands = $2;
 	    my @commands = split(/ /, $commands);
@@ -62,6 +63,10 @@ sub main {
         $configFile = catfile($directory,$configFile);
     }
     my $cfg = read_config_file($configFile);
+    unless ($cfg) {
+        print "Couldn't open $configFile for reading.";
+        return -1;
+    }
 
     # Find the closest frequency in $cfg
     my $i2c_data = get_i2c_data($cfg, $frequency);
