@@ -27,6 +27,9 @@ my $LED_POWER = 0x0200;
 
 our $defaultPrefs = {
 	'analogOutMode'        => 1,      # default sub-out
+	'bass'                 => 0,
+	'treble'               => 0,
+	'stereoxl'             => 0,
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -39,7 +42,6 @@ our $defaultPrefs = {
 		SQUEEZENETWORK_CONNECT
 	)],
 };
-
 
 sub new {
 	my $class = shift;
@@ -76,6 +78,15 @@ sub hasDigitalOut {
 sub hasPowerControl {
 	return 0;
 }
+
+sub maxTreble {	return 100; }
+sub minTreble {	return -100; }
+
+sub maxBass {	return 100; }
+sub minBass {	return -100; }
+
+sub maxXL {	return 10; }
+sub minXL {	return -100; }
 
 sub reconnect {
 	my $client = shift;
@@ -184,6 +195,31 @@ sub setAnalogOutMode {
 	
 	my $data = pack('C', $prefs->client($client)->get('analogOutMode'));	# 0 = headphone (i.e. internal speakers off), 1 = sub out
 	$client->sendFrame('audo', \$data);
+}
+
+sub bass {
+	my $client = shift;
+	my $newbass = shift;
+
+	my $bass = $client->SUPER::bass($newbass);
+	if (defined($newbass)) {
+		#do bass bdac code here, then you can remove the warning
+		warn "bass adjusted to $newbass";
+	}
+
+	return $bass;
+}
+
+sub treble {
+	my $client = shift;
+	my $newtreble = shift;
+
+	my $treble = $client->SUPER::treble($newtreble);
+	if (defined($newtreble)) {
+		#do treble bdac code here, then you can remove the warning
+		warn "treble adjusted to $newbass";
+	}
+	return $treble;
 }
 
 sub sendBDACFrame {

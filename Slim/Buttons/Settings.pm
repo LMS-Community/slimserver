@@ -84,7 +84,13 @@ sub init {
 					'header'       => 'BASS',
 					'stringHeader' => 1,
 					'headerValue'  => 'scaled',
-					'mid'          => 50,
+					'min'          => sub { shift->minBass(); },
+					'max'          => sub { shift->maxBass(); },
+					'mid'          => sub {
+						my $client = shift;
+						($client->maxBass() + $client->minBass()) / 2;
+					},
+					'increment'    => 1,
 					'onChange'     => \&executeCommand,
 					'command'      => 'mixer',
 					'subcommand'   => 'bass',
@@ -120,8 +126,14 @@ sub init {
 					'useMode'      => 'INPUT.Bar',
 					'header'       => 'TREBLE',
 					'stringHeader' => 1,
-					'headerValue'  => 'scaled',
-					'mid'          => 50,
+					'headerValue'  => 'unscaled',
+					'min'          => sub { shift->minTreble(); },
+					'max'          => sub { shift->maxTreble(); },
+					'mid'          => sub {
+						my $client = shift;
+						($client->maxTreble() + $client->minTreble()) / 2;
+					},
+					'increment'    => 1,
 					'onChange'     =>  \&executeCommand,
 					'command'      => 'mixer',
 					'subcommand'   => 'treble',
@@ -131,6 +143,24 @@ sub init {
 						return $client->maxTreble() - $client->minTreble();
 					},
 				},
+		
+# 				'STEREOXL'           => {
+# 					'useMode'      => 'INPUT.Bar',
+# 					'header'       => 'STEREOXL',
+# 					'stringHeader' => 1,
+# 					'headerValue'  => 'scaled',
+# 					'min'          => sub { shift->minXL(); },
+# 					'max'          => sub { shift->maxXL(); },
+# 					'mid'          => 0,
+# 					'onChange'     =>  \&executeCommand,
+# 					'command'      => 'mixer',
+# 					'subcommand'   => 'stereoxl',
+# 					'initialValue' => sub { return $_[0]->stereoXL() },
+# 					'condition'   => sub {
+# 						my $client = shift;
+# 						return $client->maxXL() - $client->minXL();
+# 					},
+# 				},
 		
 				'REPLAYGAIN'       => {
 					'useMode'      => 'INPUT.Choice',

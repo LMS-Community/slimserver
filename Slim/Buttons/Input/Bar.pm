@@ -113,11 +113,12 @@ sub init {
 		}
 	}
 	
-	my $min  = $client->modeParam('min');
-	my $mid  = $client->modeParam('mid');
-	my $max  = $client->modeParam('max');
+	my $min  = getExtVal($client, 'min');
+	my $mid  = getExtVal($client, 'mid');
+	my $max  = getExtVal($client, 'max');
+	
 	my $step = $client->modeParam('increment');
-
+	
 	my $listRef = [];
 	my $j = 0;
 
@@ -247,13 +248,17 @@ sub scaledValue {
 	my $value  = shift;
 
 	if ($client->modeParam('midIsZero')) {
-		$value -= $client->modeParam('mid');
+		$value -= getExtVal($client, 'mid');
 	}
 
 	my $increment = $client->modeParam('increment');
 
 	$value /= $increment if $increment;
-	$value = int($value + 0.5);
+	if ($value > 0) {
+		$value = int($value + 0.5);
+	} else {
+		$value = int($value);
+	}
 
 	my $unit = $client->modeParam('headerValueUnit');
 
@@ -269,10 +274,14 @@ sub unscaledValue {
 	my $value  = shift;
 
 	if ($client->modeParam('midIsZero')) {
-		$value -= $client->modeParam('mid');
+		$value -= getExtVal($client, 'mid');
 	}
 
-	$value = int($value + 0.5);
+	if ($value > 0) {
+		$value = int($value + 0.5);
+	} else {
+		$value = int($value);
+	}
 
 	my $unit = $client->modeParam('headerValueUnit');
 
@@ -309,9 +318,9 @@ sub changePos {
 	
 	my $accel = 8; # Hz/sec
 	my $rate  = 50; # Hz
-	my $mid   = $client->modeParam('mid')||0;
-	my $min   = $client->modeParam('min')||0;
-	my $max   = $client->modeParam('max')||100;
+	my $mid   = getExtVal($client, 'mid') || 0;
+	my $min   = getExtVal($client, 'min') || 0;
+	my $max   = getExtVal($client, 'max') || 100;
 
 	my $midpoint = ($mid-$min)/($max-$min)*(scalar(@$listRef) - 1);
 
@@ -346,6 +355,13 @@ sub changePos {
 	$newposition = 0 if $newposition < 0;
 
 	$$valueRef   = $listRef->[$newposition];
+	
+	my $val;
+	if ($dir > 0) {
+		$val = '+'.abs($listRef->[$newposition] - $listRef->[$listIndex]);
+	} else {
+		$val = '-'.abs($listRef->[$newposition] - $listRef->[$listIndex]);
+	}
 
 	$client->modeParam('listIndex', int($newposition));
 
@@ -359,7 +375,7 @@ sub changePos {
 		my @args = ();
 
 		push @args, $client if $onChangeArgs =~ /c/i;
-		push @args, $$valueRef if $onChangeArgs =~ /v/i;
+		push @args, $val if $onChangeArgs =~ /v/i;
 
 		$onChange->(@args);
 	}
@@ -409,9 +425,9 @@ sub lines {
 		}
 	}
 	
-	$min = $client->modeParam('min') || 0 unless defined $min;
-	$mid = $client->modeParam('mid') || 0 unless defined $mid;
-	$max = $client->modeParam('max') || 100 unless defined $max;
+	$min = getExtVal($client, 'min') || 0 unless defined $min;
+	$mid = getExtVal($client, 'mid') || 0 unless defined $mid;
+	$max = getExtVal($client, 'max') || 100 unless defined $max;
 	
 	my $cursor = $client->modeParam('cursor');
 	if (defined($cursor)) {
@@ -511,6 +527,28 @@ sub exitInput {
 
 	if ($exitType eq 'passback') {
 		Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime, Slim::Buttons::Common::mode($client));
+	}
+}
+
+sub getExtVal {
+	my $client = shift;
+	my $value  = shift;
+
+	if (ref $client->modeParam($value) eq 'CODE') {
+
+		my $ret = eval { $client->modeParam($value)->($client) };
+
+		if ($@) {
+
+			logError("Couldn't run coderef. [$@]");
+			return '';
+		}
+
+		return $ret;
+
+	} else {
+
+		return $client->modeParam($value);
 	}
 }
 
