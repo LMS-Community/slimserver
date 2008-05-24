@@ -975,6 +975,25 @@ sub gotTrackInfo {
 	
 	# Clear the trackStarting flag
 	$client->pluginData( trackStarting => 0 );
+	
+	# Ping SN
+	if ( !$client->pluginData('radioTrackURL') ) {
+		if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
+			my $pingURL = Slim::Networking::SqueezeNetwork->url(
+				"/api/rhapsody/v1/playback/gotTrack?trackId=$trackId"
+			);
+			
+			my $http = Slim::Networking::SqueezeNetwork->new(
+				sub {},
+				sub {},
+				{
+					client => $client,
+				},
+			);
+			
+			$http->get( $pingURL );
+		}
+	}
 }
 
 sub gotTrackError {
