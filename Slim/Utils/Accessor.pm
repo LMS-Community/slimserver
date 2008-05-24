@@ -22,7 +22,7 @@ L<Slim::Utils::Accessor>
 
 use strict;
 
-use Scalar::Util qw(weaken);
+use Scalar::Util qw(blessed weaken);
 
 my %slot;
 
@@ -36,13 +36,14 @@ sub new {
 
  Creates accessor method for each element of @accessors based on the type defined in $type:
 
- 'scalar' - accessors store / retrieve a simple scalar
+ 'rw'     - accessors store / retrieve a simple scalar
+ 'ro'     - retrieve a simple scalar
  'weak'   - accessors store a weak reference to a scalar
  'array'  - accessors store / retrieve an array or element from an array
  'arraydefault' - accessors store / retrieve elements from an array (index defaults to $default)
  'hash'   - accessors store / retrieve elements of a hash
 
- Accessors for 'scalar' and 'weak' are of the format:
+ Accessors for 'rw', 'ro' and 'weak' are of the format:
 
  $class->accessor( [ $value ] ) - returns stored value or sets to $value if $value present
 
@@ -68,11 +69,17 @@ sub mk_accessor {
 
 		my $n = $class->_slot($field);
 
-		if ($type eq 'scalar') {
+		if ($type eq 'rw') {
 
 			$accessor = sub {
 				return $_[0]->[$n]                    if @_ == 1;
 				return $_[0]->[$n] = $_[1]            if @_ == 2;
+			};
+
+		} elsif ($type eq 'ro') {
+
+			$accessor = sub {
+				return $_[0]->[$n];
 			};
 
 		} elsif ($type eq 'weak') {
@@ -116,6 +123,25 @@ sub mk_accessor {
 	}
 }
 
+=head2 init_accessor( $field1, $value1, $field2, $value2, ... )
+
+ Initialise the accessor for each key, value pair.  Used to set ro accessor content and init array/hashes.
+
+=cut
+
+sub init_accessor {
+	my $class = shift;
+
+	my $baseclass = $class->_baseClass($class);
+
+	while (my $key = shift) {
+		my $val = shift;
+		if (my $n = $slot{$baseclass}->{$key}) {
+			$class->[$n] = $val;
+		}
+	}
+}
+
 sub _slot {
 	my $class = shift;
 	my $field = shift;
@@ -138,6 +164,8 @@ sub _slot {
 # Based on Class::ISA
 sub _baseClass {
 	my $class = shift;
+
+	$class = blessed($class) || $class;
 
 	my @in  = ($class);
 	my @out = ();

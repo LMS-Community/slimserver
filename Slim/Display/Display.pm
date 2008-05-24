@@ -69,9 +69,9 @@ our $defaultPrefs = {
 };
 
 {
-	__PACKAGE__->mk_accessor('weak',   qw(client));
-	__PACKAGE__->mk_accessor('scalar', qw(updateMode animateState renderCache currBrightness lastVisMode sbCallbackData sbOldDisplay
-										  sbName screen2updateOK displayStrings notifyLevel hideVisu));
+	__PACKAGE__->mk_accessor('weak', qw(client));
+	__PACKAGE__->mk_accessor('rw',   qw(updateMode screen2updateOK animateState renderCache currBrightness
+										lastVisMode sbCallbackData sbOldDisplay sbName displayStrings notifyLevel hideVisu));
 	__PACKAGE__->mk_accessor('arraydefault', 1, qw(scrollState scrollData widthOverride));
 }
 
@@ -82,26 +82,28 @@ sub new {
 
 	my $display = $class->SUPER::new;
 
-	# set default state via accessors
-	$display->client($client);
-	$display->updateMode(0);     # 0 = normal, 1 = periodic update blocked, 2 = all updates blocked
-	$display->animateState(0);
-	$display->scrollState(1, 0); # screen1
-	$display->scrollState(2, 0); # screen2
-	$display->renderCache({});
-	$display->currBrightness(1);
-	$display->lastVisMode(undef);
-	$display->sbCallbackData(undef);
-	$display->sbOldDisplay(undef);
-	$display->sbName(undef);
-	$display->screen2updateOK(undef);
-	$display->displayStrings({});
-	$display->widthOverride(1, undef); #screen1
-	$display->widthOverride(2, undef); #screen2
-	$display->notifyLevel(0);    # 0 = notify off, 1 = showbriefly only, 2 = all
-	$display->hideVisu(0);       # 0 = don't hide, 1 = hide if mode requests, 2 = hide all
+	# set default state
+	$display->client($client);    # set via accessor so reference is weakened
 
-	$display->resetDisplay(); # init render cache
+	$display->init_accessor(
+		updateMode     => 0,      # 0 = normal, 1 = periodic update blocked, 2 = all updates blocked
+		screen2updateOK=> undef,
+		animateState   => 0,
+		renderCache    => {},
+		currBrightness => 1,
+		lastVisMode    => undef,
+		sbCallbackData => undef,
+		sbOldDisplay   => undef,
+		sbName         => undef,
+		displayStrings => {},
+		notifyLevel    => 0,      # 0 = notify off, 1 = showbriefly only, 2 = all
+		hideVisu       => 0,      # 0 = don't hide, 1 = hide if mode requests, 2 = hide all
+		scrollState    => [0,0,0],
+		scrollData     => [],
+		widthOverride  => [],
+	);
+
+	$display->resetDisplay();     # init render cache
 	
 	return $display;
 }
