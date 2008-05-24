@@ -13,6 +13,9 @@ package Slim::Player::Client;
 # GNU General Public License for more details.
 
 use strict;
+
+use base qw(Slim::Utils::Accessor);
+
 use Scalar::Util qw(blessed);
 use Storable qw(nfreeze);
 
@@ -54,6 +57,42 @@ our %clientHash = ();
 use constant KNOB_NOWRAP => 0x01;
 use constant KNOB_NOACCELERATION => 0x02;
 
+{
+	__PACKAGE__->mk_accessor('ro', qw(
+								id deviceid uuid
+							));
+	__PACKAGE__->mk_accessor('rw', qw(
+								revision _needsUpgrade isUpgrading
+								macaddress paddr udpsock tcpsock
+								irRefTime irRefTimeStored ircodes irmaps lastirtime lastircode lastircodebytes lastirbutton
+								startirhold irtimediff irrepeattime irenable _epochirtime lastActivityTime
+								knobPos knobTime knobSync
+								streamformat streamingsocket audioFilehandle audioFilehandleIsSocket remoteStreamStartTime
+								trackStartTime playmode rate outputBufferFullness bytesReceived songBytes pauseTime
+								bytesReceivedOffset streamBytes songElapsedSeconds bufferSize trickSegmentRemaining bufferStarted
+								resumePlaymode streamAtTrackStart readNextChunkOk lastSong _currentplayingsong
+								directURL directBody
+								startupPlaylistLoading remotePlaylistCurrentEntry currentPlaylistModified currentPlaylistRender
+								_currentPlaylist _currentPlaylistUpdateTime _currentPlaylistChangeTime
+								display lines customVolumeLines customPlaylistLines lines2periodic periodicUpdateTime
+								blocklines suppressStatus showBuffering
+								curDepth lastLetterIndex lastLetterDigit lastLetterTime lastDigitIndex lastDigitTime searchFor
+								readytosync master syncgroupid syncSelection initialStreamBuffer _playPoint playPoints
+								jiffiesEpoch jiffiesOffsetList frameData initialAudioBlockRemaining
+								_tempVolume musicInfoTextCache metaTitle languageOverride password scanData currentSleepTime
+								sleepTime pendingPrefChanges _pluginData
+								signalStrengthLog bufferFullnessLog slimprotoQLenLog
+							));
+
+	__PACKAGE__->mk_accessor('array', qw(
+								modeStack modeParameterStack searchTerm trackInfoLines trackInfoContent slaves syncSelections
+								currentsongqueue chunks playlist shufflelist
+							));
+	__PACKAGE__->mk_accessor('hash', qw(
+								curSelection lastID3Selection
+							));
+}
+
 =head1 NAME
 
 Slim::Player::Client
@@ -66,178 +105,159 @@ The following object contains all the state that we keep about each player.
 
 =cut
 
-# XXX - this is gross. Move to Class::Accessor or Object::InsideOut
 sub new {
 	my ($class, $id, $paddr, $rev, $s, $deviceid, $uuid) = @_;
-	
-	# If we haven't seen this client, initialialize a new one
-	my $client = [];
-	my $clientAlreadyKnown = 0;
-	bless $client, $class;
+
+	my $client = $class->SUPER::new;
 
 	logger('network.protocol')->info("New client connected: $id");
 
 	assert(!defined(getClient($id)));
 
-	# The following indexes are unused:
-	# 16, 21, 25, 26, 27, 33, 34, 53
-	# 64, 65, 66, 67, 68, 72, 111, 118
-
-	$client->[0] = $id;
-	$client->[1] = $deviceid;
-	
 	# XXX: Ignore UUID from non-Receivers, this will be fixed by bug 6899
 	# in a future version
 	if ( $uuid && $deviceid != 7 ) {
 		$uuid = undef;
 	}
+
+	$client->init_accessor(
+
+		# device identify
+		id                      => $id,
+		deviceid                => $deviceid,
+		uuid                    => $uuid,
+
+		# upgrade management
+		revision                => undef,
+		_needsUpgrade           => undef,
+		isUpgrading             => 0,
+
+		# network state
+		macaddress              => undef,
+		paddr                   => $paddr,
+		udpsock                 => undef,
+		tcpsock                 => undef,
+
+		# ir / knob state
+		ircodes                 => undef,
+		irmaps                  => undef,
+		irRefTime               => undef,
+		irRefTimeStored         => undef,
+		lastirtime              => 0,
+		lastircode              => 0,
+		lastircodebytes         => 0,
+		lastirbutton            => undef,
+		startirhold             => 0,
+		irtimediff              => 0,
+		irrepeattime            => 0,
+		irenable                => 1,
+		_epochirtime            => Time::HiRes::time(),
+		lastActivityTime        => 0,                   #  last time this client performed some action (IR, CLI, web)
+		knobPos                 => undef,
+		knobTime                => undef,
+		knobSync                => 0,
+
+		# streaming state
+		streamformat            => undef,
+		streamingsocket         => undef,
+		audioFilehandle         => undef,
+		audioFilehandleIsSocket => 0,
+		remoteStreamStartTime   => 0,
+		trackStartTime          => 0,
+		playmode                => 'stop',
+		rate                    => 1,
+		outputBufferFullness    => undef,
+		bytesReceived           => 0,
+		songBytes               => 0,
+		pauseTime               => 0,
+		bytesReceivedOffset     => 0,
+		streamBytes             => 0,
+		songElapsedSeconds      => undef,
+		bufferSize              => 0,
+		trickSegmentRemaining   => undef,
+		directURL               => undef,
+		directBody              => undef,
+		currentsongqueue        => [],
+		chunks                  => [],
+		bufferStarted           => 0,
+		resumePlaymode          => undef,
+		streamAtTrackStart      => 0,
+		readNextChunkOk         => 1,                  # flag used when we are waiting for an async response in readNextChunk
+
+		lastSong                => undef,              # FIXME - is this used ???? - Last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
+		_currentplayingsong     => '',                 # FIXME - is this used ????
+
+		# playlist state
+		playlist                => [],
+		shufflelist             => [],
+		startupPlaylistLoading  => undef,
+		remotePlaylistCurrentEntry => undef,
+		_currentPlaylist        => undef,
+		currentPlaylistModified => undef,
+		currentPlaylistRender   => undef,
+		_currentPlaylistUpdateTime => Time::HiRes::time(), # only changes to the playlist
+		_currentPlaylistChangeTime => undef,               # updated on song changes
+		
+		# display state
+		display                 => undef,
+		lines                   => undef,
+		customVolumeLines       => undef,
+	    customPlaylistLines     => undef,
+		lines2periodic          => undef,
+		periodicUpdateTime      => 0,
+		blocklines              => undef,
+		suppressStatus          => undef,
+		showBuffering           => 1,
+
+		# button mode state
+		modeStack               => [],
+		modeParameterStack      => [],
+		curDepth                => undef,
+		curSelection            => {},
+		lastLetterIndex         => 0,
+		lastLetterDigit         => '',
+		lastLetterTime          => 0,
+		lastDigitIndex          => 0,
+		lastDigitTime           => 0,
+		searchFor               => undef,
+		searchTerm              => [],
+		trackInfoLines          => [],
+		trackInfoContent        => [],
+		lastID3Selection        => {},
+
+		# sync state
+		readytosync             => 0,
+		master                  => undef,
+		slaves                  => [],
+		syncgroupid             => undef,
+		syncSelection           => undef,
+		syncSelections          => [],
+		initialStreamBuffer     => undef,              # cache of initially-streamed data to calculate rate
+		_playPoint              => undef,              # (timeStamp, apparentStartTime) tuple
+		playPoints              => undef,              # set of (timeStamp, apparentStartTime) tuples to determine consistency
+		jiffiesEpoch            => undef,
+		jiffiesOffsetList       => [],                 # array tracking the relative deviations relative to our clock
+		frameData               => undef,              # array of (stream-byte-offset, stream-time-offset) tuples
+		initialAudioBlockRemaining => 0,
+
+		# perfmon logs
+		signalStrengthLog       => Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]),
+		bufferFullnessLog       => Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]),
+		slimprotoQLenLog        => Slim::Utils::PerfMon->new("Slimproto QLen ($id)",  [1, 2, 5, 10, 20]),
+
+		# other
+		_tempVolume             => undef,
+		musicInfoTextCache      => undef,
+		metaTitle               => undef,
+		languageOverride        => undef,
+		password                => undef,
+		scanData                => {},                 # used to store info obtained from scan that is needed later
+		currentSleepTime        => 0,
+		sleepTime               => 0,
+		pendingPrefChanges      => {},
+		_pluginData             => {},
 	
-	$client->[2] = $uuid;
-
-	# client variables id and version info
-	$client->[3] = undef; # needsUpgrade
-	$client->[4] = undef; # revision
-	$client->[5] = undef; # macaddress
-	$client->[6] = $paddr; # paddr
-	
-	$client->[7] = undef; # startupPlaylistLoading
-
-	$client->[8] = 0; # isUpgrading
-
-	# client hardware information
-	$client->[9] = undef; # udpsock
-	$client->[10] = undef; # tcpsock
-
-	$client->[11] = undef; # languageOverride
-	$client->[12] = undef; # ircodes
-	$client->[13] = undef; # irmaps
-
-	$client->[14] = 0; # readytosync
-	$client->[15] = undef; # streamformat
-
-#	$client->[16]
-
-	$client->[17] = undef; # streamingsocket
-	$client->[18] = undef; # audioFilehandle
-	$client->[19] = 0; # audioFilehandleIsSocket
-	$client->[20] = []; # chunks
-#	$client->[21]
-	$client->[22] = 0; # remoteStreamStartTime
-	$client->[23] = 0; # trackStartTime
-	$client->[24] = 0; # lastActivityTime (last time this client performed some action (IR, CLI, web))
-#	$client->[25]
-#	$client->[26]
-#	$client->[27]
-
-	$client->[28] = []; # playlist
-	$client->[29] = []; # shufflelist
-	$client->[30] = []; # currentsongqueue
-	$client->[31] = 'stop'; # playmode
-	$client->[32] = 1; # rate
-
-#	$client->[33]
-#	$client->[34]
-
-	$client->[35] = undef; # outputBufferFullness
-	$client->[36] = undef; # irRefTime
-	$client->[37] = 0; # bytesReceived
-	$client->[38] = ''; # currentplayingsong
-	$client->[39] = 0; # currentSleepTime
-	$client->[40] = 0; # sleepTime
-	$client->[41] = undef; # master
-	$client->[42] = []; # slaves
-	$client->[43] = undef; # syncgroupid
-	$client->[44] = undef; # password
-	$client->[45] = undef; # lastirbutton
-	$client->[46] = 0; # lastirtime
-	$client->[47] = 0; # lastircode
-	$client->[48] = 0; # lastircodebytes
-	$client->[50] = 0; # startirhold
-	$client->[51] = 0; # irtimediff
-	$client->[52] = 0; # irrepeattime
-	$client->[53] = 1; # irenable
-
-	$client->[54] = Time::HiRes::time(); # epochirtime
-	$client->[55] = []; # modeStack
-	$client->[56] = []; # modeParameterStack
-	$client->[57] = undef; # lines
-	$client->[58] = []; # trackInfoLines
-	$client->[59] = []; # trackInfoContent
-	$client->[60] = {}; # lastID3Selection
-	$client->[61] = undef; # blocklines
-	$client->[62] = {}; # curSelection
-	$client->[63] = undef; # pluginsSelection
-
-#	$client->[64]
-#	$client->[65]
-#	$client->[66]
-#	$client->[67]
-#	$client->[68]
-
-	$client->[69] = undef; # curDepth
-	$client->[70] = undef; # searchFor
-	$client->[71] = []; # searchTerm
-
-#	$client->[72]
-
-	$client->[73] = 0;  # lastLetterIndex
-	$client->[74] = ''; # lastLetterDigit
-	$client->[75] = 0;  # lastLetterTime
-	$client->[76] = Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]);
-	$client->[77] = Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]);
-	$client->[78] = Slim::Utils::PerfMon->new("Slimproto QLen ($id)", [1, 2, 5, 10, 20]);
-	$client->[79] = undef; # irRefTimeStored
-	$client->[80] = undef; # syncSelection
-	$client->[81] = []; # syncSelections
-	$client->[82] = Time::HiRes::time(); #currentPlaylistUpdateTime (only changes to the playlist (see 96))
-	$client->[83] = undef; # suppressStatus
-	$client->[84] = 0; # songBytes
-	$client->[85] = 0; # pauseTime
-	$client->[87] = 0; # bytesReceivedOffset
-	$client->[88] = 0; # buffersize
-	$client->[89] = 0; # streamBytes
-	$client->[90] = undef; # trickSegmentRemaining
-	$client->[91] = undef; # currentPlaylist
-	$client->[92] = undef; # currentPlaylistModified 
-	$client->[93] = undef; # songElapsedSeconds
-	$client->[94] = undef; # customPlaylistLines
-	# 95 is currentPlaylistRender
-	# 96 is currentPlaylistChangeTime (updated on song changes (see 82))
-	$client->[97] = undef; # tempVolume temporary volume setting
-	$client->[98] = undef; # directurl
-	$client->[99] = undef; # directbody
-	$client->[100] = undef; # display object
-	$client->[101] = undef; # lines2periodic
-	$client->[102] = 0; # periodicUpdateTime
-	$client->[103] = undef; # musicInfoTextCache
-	$client->[104] = undef; # customVolumeLines
-	# 105 is scroll state
-	$client->[106] = undef; # knobPos
-	$client->[107] = undef; # knobTime
-	$client->[108] = 0; # lastDigitIndex
-	$client->[109] = 0; # lastDigitTime
-	$client->[110] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
-	$client->[112] = 0; # knobSync
-	$client->[113] = {}; # pendingPrefChanges
-	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
-	$client->[115] = undef; # resumePlaymode, previous play mode when paused
-	$client->[116] = 0; # streamAtTrackStart, Source.pm flag indicating we should start streaming the next track on a track start event
-	$client->[117] = undef; # metaTitle, current remote stream metadata title
-	$client->[119] = 1; # showBuffering
-	$client->[120] = {}; # pluginData, plugin-specific state data
-	$client->[121] = 1; # readNextChunkOk (flag used when we are waiting for an async response in readNextChunk)
-
-	# Sync data
-	$client->[122] = undef; # initialStreamBuffer, cache of initially-streamed data to calculate rate
-	$client->[123] = undef; # playPoint, (timeStamp, apparentStartTime) tuple;
-	$client->[124] = undef; # playPoints, set of (timeStamp, apparentStartTime) tuples to determine consistency;
-
-	$client->[125] = undef; # jiffiesEpoch
-	$client->[126] = [];	# jiffiesOffsetList; array tracking the relative deviations relative to our clock
-	$client->[127] = undef; # frameData; array of (stream-byte-offset, stream-time-offset) tuples
-	$client->[128] = 0; 	# initialAudioBlockRemaining
-	$client->[129] = {};    # scanData (used to store info obtained from scan that is needed later)
-	$client->[130] = undef; # remotePlaylistCurrentEntry
+	);
 
 	$clientHash{$id} = $client;
 
@@ -723,7 +743,7 @@ sub volume {
 
 		if ($temp) {
 
-			$client->[97] = $volume;
+			$client->_tempVolume($volume);
 
 		} else {
 
@@ -731,7 +751,7 @@ sub volume {
 			$prefs->client($client)->set('volume', $volume);
 
 			# forget any previous temporary volume
-			$client->[97] = undef;
+			$client->_tempVolume(undef);
 		}
 	}
 
@@ -749,8 +769,8 @@ sub volume {
 # getter only.
 # use volume() to set, passing in temp flag
 sub tempVolume {
-	my $r = shift;
-	return $r->[97];
+	my $client = shift;
+	return $client->_tempVolume;
 }
 
 sub treble {
@@ -1055,460 +1075,50 @@ sub streamingProgressBar {
 	}
 }
 
-=head2 id()
+sub epochirtime {
+	my $client = shift;
 
-Returns the client ID - in the form of a MAC Address.
+	if ( @_ ) {
+		# Also update lastActivityTime on IR events
+		my $val = shift;
 
-=cut
-
-sub id {
-	my $r = shift;
-	@_ ? ($r->[0] = shift) : $r->[0];
-}
-
-=head2 revision()
-
-Returns the firmware revision of the client.
-
-=over 4
-
-=item * 0
-
-Unknown
-
-item * 1.2
-
-Old (1.0, 1.1, 1.2),
-
-item * 1.3
-
-New streaming protocol (Squeezebox v1?)
-
-=item * 2.0
-
-Client sends MAC address, NEC IR codes supported
-
-=back
-
-=cut
-
-sub deviceid {
-	shift->[1];
-}
-
-sub uuid {
-	shift->[2];
-}
-
-sub revision {
-	my $r = shift;
-	@_ ? ($r->[4] = shift) : $r->[4];
-}
-
-sub macaddress {
-	my $r = shift;
-	@_ ? ($r->[5] = shift) : $r->[5];
-}
-sub paddr {
-	my $r = shift;
-	@_ ? ($r->[6] = shift) : $r->[6];
-}
-
-sub startupPlaylistLoading {
-	my $r = shift;
-	@_ ? ($r->[7] = shift) : $r->[7];
-}
-
-sub isUpgrading {
-	my $r = shift;
-	@_ ? ($r->[8] = shift) : $r->[8];
-}
-
-sub udpsock {
-	my $r = shift;
-	@_ ? ($r->[9] = shift) : $r->[9];
-}
-
-sub tcpsock {
-	my $r = shift;
-	@_ ? ($r->[10] = shift) : $r->[10];
-}
-
-sub languageOverride {
-	my $r = shift;
-	@_ ? ($r->[11] = shift) : $r->[11];
-}
-
-sub ircodes {
-	my $r = shift;
-	@_ ? ($r->[12] = shift) : $r->[12];
-}
-
-sub irmaps {
-	my $r = shift;
-	@_ ? ($r->[13] = shift) : $r->[13];
-}
-
-sub readytosync {
-	my $r = shift;
-	@_ ? ($r->[14] = shift) : $r->[14];
-}
-
-sub streamformat {
-	my $r = shift;
-	@_ ? ($r->[15] = shift) : $r->[15];
-}
-
-sub streamingsocket {
-	my $r = shift;
-	@_ ? ($r->[17] = shift) : $r->[17];
-}
-
-sub audioFilehandle {
-	my $r = shift;
-	@_ ? ($r->[18] = shift) : $r->[18];
-}
-
-sub audioFilehandleIsSocket {
-	my $r = shift;
-	@_ ? ($r->[19] = shift) : $r->[19];
-}
-
-sub chunks {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[20];
-	@_ ? ($r->[20]->[$i] = shift) : $r->[20]->[$i];
-}
-
-sub remoteStreamStartTime {
-	my $r = shift;
-	@_ ? ($r->[22] = shift) : $r->[22];
-}
-
-sub trackStartTime {
-	my $r = shift;
-	@_ ? ($r->[23] = shift) : $r->[23];
-}
-
-sub lastActivityTime {
-	my $r = shift;
-	@_ ? ($r->[24] = shift) : $r->[24];
-}
-
-sub playlist {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[28];
-	@_ ? ($r->[28]->[$i] = shift) : $r->[28]->[$i];
-}
-
-sub shufflelist {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[29];
-	@_ ? ($r->[29]->[$i] = shift) : $r->[29]->[$i];
-}
-
-sub currentsongqueue {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[30];
-	@_ ? ($r->[30]->[$i] = shift) : $r->[30]->[$i];
-}
-
-sub playmode {
-	my $r = shift;
-	@_ ? ($r->[31] = shift) : $r->[31];
-}
-
-sub rate {
-	my $r = shift;
-	@_ ? ($r->[32] = shift) : $r->[32];
-}
-
-sub outputBufferFullness {
-	my $r = shift;
-	@_ ? ($r->[35] = shift) : $r->[35];
-}
-
-sub irRefTime {
-	my $r = shift;
-	@_ ? ($r->[36] = shift) : $r->[36];
-}
-
-sub bytesReceived {
-	my $r = shift;
-	@_ ? ($r->[37] = shift) : $r->[37];
+		$client->lastActivityTime($val);
+		$client->_epochirtime($val);
+	}
+	
+	return $client->_epochirtime;
 }
 
 sub currentplayingsong {
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
-	@_ ? ($r->[38] = shift) : $r->[38];
-}
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
 
-sub currentSleepTime {
-	my $r = shift;
-	@_ ? ($r->[39] = shift) : $r->[39];
-}
-
-sub sleepTime {
-	my $r = shift;
-	@_ ? ($r->[40] = shift) : $r->[40];
-}
-
-sub master {
-	my $r = shift;
-	@_ ? ($r->[41] = shift) : $r->[41];
-}
-
-sub slaves {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[42];
-	@_ ? ($r->[42]->[$i] = shift) : $r->[42]->[$i];
-}
-
-sub syncgroupid {
-	my $r = shift;
-	@_ ? ($r->[43] = shift) : $r->[43];
-}
-
-sub password {
-	my $r = shift;
-	@_ ? ($r->[44] = shift) : $r->[44];
-}
-
-sub lastirbutton {
-	my $r = shift;
-	@_ ? ($r->[45] = shift) : $r->[45];
-}
-
-sub lastirtime {
-	my $r = shift;
-	@_ ? ($r->[46] = shift) : $r->[46];
-}
-
-sub lastircode {
-	my $r = shift;
-	@_ ? ($r->[47] = shift) : $r->[47];
-}
-
-sub lastircodebytes {
-	my $r = shift;
-	@_ ? ($r->[48] = shift) : $r->[48];
-}
-
-sub startirhold {
-	my $r = shift;
-	@_ ? ($r->[50] = shift) : $r->[50];
-}
-
-sub irtimediff {
-	my $r = shift;
-	@_ ? ($r->[51] = shift) : $r->[51];
-}
-
-sub irrepeattime {
-	my $r = shift;
-	@_ ? ($r->[52] = shift) : $r->[52];
-}
-
-sub irenable {
-	my $r = shift;
-	@_ ? ($r->[53] = shift) : $r->[53];
-}
-
-sub epochirtime {
-	my $r = shift;
-	if ( @_ ) {
-		# Also update lastActivityTime (24) on IR events
-		$r->[54] = $r->[24] = shift;
-	}
-	
-	return $r->[54];
-}
-
-sub modeStack {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[55];
-	@_ ? ($r->[55]->[$i] = shift) : $r->[55]->[$i];
-}
-
-sub modeParameterStack {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[56];
-	@_ ? ($r->[56]->[$i] = shift) : $r->[56]->[$i];
-}
-
-sub lines {
-	my $r = shift;
-	@_ ? ($r->[57] = shift) : $r->[57];
-}
-
-sub trackInfoLines {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[58];
-	@_ ? ($r->[58]->[$i] = shift) : $r->[58]->[$i];
-}
-
-sub trackInfoContent {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[59];
-	@_ ? ($r->[59]->[$i] = shift) : $r->[59]->[$i];
-}
-
-sub lastID3Selection {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[60];
-	@_ ? ($r->[60]->{$i} = shift) : $r->[60]->{$i};
-}
-
-sub blocklines {
-	my $r = shift;
-	@_ ? ($r->[61] = shift) : $r->[61];
-}
-
-sub curSelection {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[62];
-	@_ ? ($r->[62]->{$i} = shift) : $r->[62]->{$i};
-}
-
-sub pluginsSelection {
-	my $r = shift;
-	@_ ? ($r->[63] = shift) : $r->[63];
-}
-
-sub curDepth {
-	my $r = shift;
-	@_ ? ($r->[69] = shift) : $r->[69];
-}
-
-sub searchFor {
-	my $r = shift;
-	@_ ? ($r->[70] = shift) : $r->[70];
-}
-
-sub searchTerm {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[71];
-	@_ ? ($r->[71]->[$i] = shift) : $r->[71]->[$i];
-}
-
-sub lastLetterIndex {
-	my $r = shift;
-	@_ ? ($r->[73] = shift) : $r->[73];
-}
-
-sub lastLetterDigit {
-	my $r = shift;
-	@_ ? ($r->[74] = shift) : $r->[74];
-}
-
-sub lastLetterTime {
-	my $r = shift;
-	@_ ? ($r->[75] = shift) : $r->[75];
-}
-
-sub signalStrengthLog {
-	my $r = shift;
-	@_ ? ($r->[76]->log(shift)) : $r->[76];
-}
-
-sub bufferFullnessLog {
-	my $r = shift;
-	@_ ? ($r->[77]->log(shift)) : $r->[77];
-}
-
-sub slimprotoQLenLog {
-	my $r = shift;
-	@_ ? ($r->[78]->log(shift)) : $r->[78];
-}
-
-sub irRefTimeStored {
-	my $r = shift;
-	@_ ? ($r->[79] = shift) : $r->[79];
-}
-
-sub syncSelection {
-	my $r = shift;
-	@_ ? ($r->[80] = shift) : $r->[80];
-}
-
-sub syncSelections {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[81];
-	@_ ? ($r->[81]->[$i] = shift) : $r->[81]->[$i];
+	return $client->_currentplayingsong(@_);
 }
 
 sub currentPlaylistUpdateTime {
 	# This needs to be the same for all synced clients
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
 
 	if (@_) {
 		my $time = shift;
-		$r->[82] = $time;
+		$client->_currentPlaylistUpdateTime($time);
 		# update playlistChangeTime
-		$r->currentPlaylistChangeTime($time);
+		$client->currentPlaylistChangeTime($time);
 		return;
 	}
 
-	return $r->[82];
-}
-
-sub suppressStatus {
-	my $r = shift;
-	@_ ? ($r->[83] = shift) : $r->[83];
-}
-
-sub songBytes {
-	my $r = shift;
-	@_ ? ($r->[84] = shift) : $r->[84];
-}
-
-sub pauseTime {
-	my $r = shift;
-	@_ ? ($r->[85] = shift) : $r->[85];
-}
-
-sub bytesReceivedOffset {
-	my $r = shift;
-	@_ ? ($r->[87] = shift) : $r->[87];
-}
-
-sub bufferSize {
-	my $r = shift;
-	@_ ? ($r->[88] = shift) : $r->[88];
-}
-
-sub streamBytes {
-	my $r = shift;
-	@_ ? ($r->[89] = shift) : $r->[89];
-}
-
-sub trickSegmentRemaining {
-	my $r = shift;
-	@_ ? ($r->[90] = shift) : $r->[90];
+	return $client->_currentPlaylistUpdateTime;
 }
 
 sub currentPlaylist {
-	my $r    = Slim::Player::Sync::masterOrSelf(shift);
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
 
 	if (@_) {
-		$r->[91] = shift;
+		$client->_currentPlaylist(shift);
 		return;
 	}
 
-	my $playlist = $r->[91];
+	my $playlist = $client->_currentPlaylist;
 
 	# Force the caller to do the right thing.
 	if (ref($playlist)) {
@@ -1518,125 +1128,11 @@ sub currentPlaylist {
 	return;
 }
 
-sub currentPlaylistModified {
-	my $r = shift;
-	@_ ? ($r->[92] = shift) : $r->[92];
-}
-
-sub songElapsedSeconds {
-	my $r = shift;
-	@_ ? ($r->[93] = shift) : $r->[93];
-}
-
-sub customPlaylistLines {
-	my $r = shift;
-	@_ ? ($r->[94] = shift) : $r->[94];
-}
-
-sub currentPlaylistRender {
-	my $r = shift;
-	@_ ? ($r->[95] = shift) : $r->[95];
-}
-
 sub currentPlaylistChangeTime {
 	# This needs to be the same for all synced clients
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
-	@_ ? ($r->[96] = shift) : $r->[96];
-}
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
 
-sub directURL {
-	my $r = shift;
-	@_ ? ($r->[98] = shift) : $r->[98];
-}
-
-sub directBody {
-	my $r = shift;
-	@_ ? ($r->[99] = shift) : $r->[99];
-}
-
-sub display {
-	my $r = shift;
-	@_ ? ($r->[100] = shift) : $r->[100];
-}
-
-sub lines2periodic {
-	my $r = shift;
-	@_ ? ($r->[101] = shift) : $r->[101];
-}
-
-sub periodicUpdateTime {
-	my $r = shift;
-	@_ ? ($r->[102] = shift) : $r->[102];
-}
-
-sub musicInfoTextCache {
-	my $r = shift;
-	@_ ? ($r->[103] = shift) : $r->[103];
-}
-
-sub customVolumeLines {
-	my $r = shift;
-	@_ ? ($r->[104] = shift) : $r->[104];
-}
-
-sub knobPos {
-	my $r = shift;
-	@_ ? ($r->[106] = shift) : $r->[106];
-}
-
-sub knobTime {
-	my $r = shift;
-	@_ ? ($r->[107] = shift) : $r->[107];
-}
-
-sub lastDigitIndex {
-	my $r = shift;
-	@_ ? ($r->[108] = shift) : $r->[108];
-}
-
-sub lastDigitTime {
-	my $r = shift;
-	@_ ? ($r->[109] = shift) : $r->[109];
-}
-
-sub lastSong {
-	my $r = shift;
-	@_ ? ($r->[110] = shift) : $r->[110];
-}
-
-sub knobSync {
-	my $r = shift;
-	@_ ? ($r->[112] = shift) : $r->[112];
-}
-
-sub pendingPrefChanges {
-	my $r = shift;
-	@_ ? ($r->[113] = shift) : $r->[113];
-}
-
-sub bufferStarted {
-	my $r = shift;
-	@_ ? ($r->[114] = shift) : $r->[114];
-}
-
-sub resumePlaymode {
-	my $r = shift;
-	@_ ? ($r->[115] = shift) : $r->[115];
-}
-
-sub streamAtTrackStart {
-	my $r = shift;
-	@_ ? ($r->[116] = shift) : $r->[116];
-}
-
-sub metaTitle {
-	my $r = shift;
-	@_ ? ($r->[117] = shift) : $r->[117];
-}
-
-sub showBuffering {
-	my $r = shift;
-	@_ ? ($r->[119] = shift) : $r->[119];
+	$client->_currentPlaylistChangeTime(@_);
 }
 
 sub pluginData {
@@ -1653,81 +1149,37 @@ sub pluginData {
 	}
 	
 	if ( $namespace && !defined $key ) {
-		return $client->[120]->{$namespace};
+		return $client->_pluginData->{$namespace};
 	}
 	
 	if ( defined $value ) {
 		if ( $namespace ) {
-			$client->[120]->{$namespace}->{$key} = $value;
+			$client->_pluginData->{$namespace}->{$key} = $value;
 		}
 		else {
-			$client->[120]->{$key} = $value;
+			$client->_pluginData->{$key} = $value;
 		}
 	}
 	
 	if ( $namespace ) {
-		my $val = $client->[120]->{$namespace}->{$key};
+		my $val = $client->_pluginData->{$namespace}->{$key};
 		return ( defined $val ) ? $val : undef;
 	}
 	else {
-		return $client->[120];
+		return $client->_pluginData;
 	}
-}
-
-sub readNextChunkOk {
-	my $r = shift;
-	@_ ? ($r->[121] = shift) : $r->[121];
-}
-
-sub initialStreamBuffer {
-	my $r = shift;
-	@_ ? ($r->[122] = shift) : $r->[122];
 }
 
 sub playPoint {
-	my $r = shift;
+	my $client = shift;
 	if (@_) {
-		$r->[123] = my $new = shift;
-		playPoints($r, undef) if (!defined($new));
+		my $new = $client->_playPoint(shift);
+		$client->playPoints(undef) if (!defined($new));
 		return $new;
 	} else {
-		return $r->[123];
+		return $client->_playPoint;
 	}
 }
 
-sub playPoints {
-	my $r = shift;
-	@_ ? ($r->[124] = shift) : $r->[124];
-}
-
-sub jiffiesEpoch {
-	my $r = shift;
-	@_ ? ($r->[125] = shift) : $r->[125];
-}
-
-sub jiffiesOffsetList {
-	my $r = shift;
-	@_ ? ($r->[126] = shift) : $r->[126];
-}
-
-sub frameData {
-	my $r = shift;
-	@_ ? ($r->[127] = shift) : $r->[127];
-}
-
-sub initialAudioBlockRemaining {
-	my $r = shift;
-	@_ ? ($r->[128] = shift) : $r->[128];
-}
-
-sub scanData {
-	my $r = shift;
-	@_ ? ($r->[129] = shift) : $r->[129];
-}
-
-sub remotePlaylistCurrentEntry {
-	my $r = shift;
-	@_ ? ($r->[130] = shift) : $r->[130];
-}
 
 1;
