@@ -245,6 +245,8 @@ sub init {
 		'coverArt'              => '',
 		'artfolder'             => '',
 		'thumbSize'             => 100,
+		# Server Settings - jive UI
+		'jivealbumsort'		=> 'artistalbum',
 		# Server Settings - SqueezeNetwork
 		'sn_sync'               => 1,
 		# Bug 5557, disable UPnP support by default

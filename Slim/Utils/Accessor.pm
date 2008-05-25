@@ -24,6 +24,10 @@ use strict;
 
 use Scalar::Util qw(blessed weaken);
 
+use Slim::Utils::Log;
+
+my $log = logger('server');
+
 my %slot;
 
 sub new {
@@ -53,7 +57,8 @@ sub new {
 
  Accessors for 'arraydefault' are of the format:
 
- $class->accessor( [ $index ], [ $value ] ) - returns value stored at index $index or $default if $index is not present, sets it if $value present
+ $class->accessor( [ $index ], [ $value ] ) - returns value stored at index $index or $default if $index is not present,
+ sets it if $value present
 
 =cut
 
@@ -79,6 +84,8 @@ sub mk_accessor {
 		} elsif ($type eq 'ro') {
 
 			$accessor = sub {
+				return $_[0]->[$n]                    if @_ == 1;
+				$log->error("Attempt to set ro accessor $field");
 				return $_[0]->[$n];
 			};
 
@@ -136,8 +143,10 @@ sub init_accessor {
 
 	while (my $key = shift) {
 		my $val = shift;
-		if (my $n = $slot{$baseclass}->{$key}) {
+		if (defined (my $n = $slot{$baseclass}->{$key})) {
 			$class->[$n] = $val;
+		} else {
+			$log->error("accessor not created " . blessed($class) . "->$key");
 		}
 	}
 }

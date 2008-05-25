@@ -401,8 +401,8 @@ sub needsUpgrade {
 	my $client = shift;
 	
 	# Avoid reading the file if we've already read it
-	if ( defined $client->[3] ) {
-		return $client->[3];
+	if ( defined $client->_needsUpgrade ) {
+		return $client->_needsUpgrade;
 	}
 
 	my $from  = $client->revision || return 0;
@@ -462,7 +462,7 @@ sub needsUpgrade {
 		} else {
 
 			$log->info("No upgrades found for $model v. $from");
-			$client->[3] = 0;
+			$client->_needsUpgrade(0);
 			return 0;
 		}
 	}
@@ -470,7 +470,7 @@ sub needsUpgrade {
 	if ($to == $from) {
 
 		$log->info("$model firmware is up-to-date, v. $from");
-		$client->[3] = 0;
+		$client->_needsUpgrade(0);
 		return 0;
 	}
 

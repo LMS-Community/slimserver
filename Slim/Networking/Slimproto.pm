@@ -264,7 +264,7 @@ sub slimproto_close {
 			
 			# Bug 6714, delete the cached needsUpgrade value, as the player
 			# may change firmware versions before coming back
-			$client->[3] = undef;
+			$client->_needsUpgrade(undef);
 
 			# set timer to forget client
 			if ( $forget_disconnected_time ) {
