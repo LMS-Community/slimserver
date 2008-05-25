@@ -73,6 +73,8 @@ sub init {
 	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
 	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
+	Slim::Control::Request::addDispatch(['jivealbumsortsettings'], [1, 0, 1, \&albumSortSettingsMenu]);
+	Slim::Control::Request::addDispatch(['jivesetalbumsort'], [1, 0, 1, \&jiveSetAlbumSort]);
 	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
 	Slim::Control::Request::addDispatch(['jiverecentsearches'], [0, 1, 0, \&jiveRecentSearchQuery]);
 
@@ -103,10 +105,12 @@ sub init {
 
 sub buildCaches {
 	$log->info("Begin function");
+	my $prefs   = preferences("server");
+	my $sort    = $prefs->get('jivealbumsort') || 'artistalbum';
 	# Pre-cache albums query
 	if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
 		$log->debug( "Pre-caching $numAlbums album items." );
-		Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, 'sort:artflow', 'menu:track', 'cache:1' ] );
+		Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "sort:$sort", 'menu:track', 'cache:1' ] );
 	}
 	
 	# Artists
@@ -235,11 +239,90 @@ sub mainMenu {
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
 		@{playerSettingsMenu($client, 1)},
+		@{albumSortSettingsItem($client, 1)},
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},
 	);
 
 	_notifyJive(\@menu, $client);
+}
+
+sub jiveSetAlbumSort {
+	my $request = shift;
+	my $client  = $request->client;
+	my $sort = $request->getParam('sortMe');
+	my $prefs = preferences("server");
+	$prefs->set('jivealbumsort', $sort);
+	# resend the myMusic menus with the new sort pref set
+	myMusicMenu(0, $client);
+	$request->setStatusDone();
+}
+
+sub albumSortSettingsMenu {
+	$log->info("Begin function");
+	my $request = shift;
+	my $client = $request->client;
+	my $prefs   = preferences("server");
+	my $sort    = $prefs->get('jivealbumsort');
+	my %sortMethods = (
+		artistalbum =>	'SORT_ARTISTALBUM',
+		artflow =>	'SORT_ARTISTYEARALBUM',
+		album =>	'ALBUM',
+	);
+	$request->addResult('count', scalar(keys %sortMethods));
+	$request->addResult('offset', 0);
+	my $i = 0;
+	for my $key (sort keys %sortMethods) {
+		$request->addResultLoop('item_loop', $i, 'text', $client->string($sortMethods{$key}));
+		my $selected = ($sort eq $key) + 0;
+		$request->addResultLoop('item_loop', $i, 'radio', $selected);
+		my $actions = {
+			do => {
+				player => 0,
+				cmd    => ['jivesetalbumsort'],
+				params => {
+					'sortMe' => $key,
+				},
+			},
+		};
+		$request->addResultLoop('item_loop', $i, 'actions', $actions);
+		$i++;
+	}
+	
+}
+
+sub albumSortSettingsItem {
+	$log->info("Begin function");
+	my $client = shift;
+	my $batch = shift;
+
+	my @menu = ();
+	push @menu,
+	{
+		text           => $client->string('ALBUMS_SORT_METHOD'),
+		id             => 'settingsAlbumSettings',
+		node           => 'myMusic',
+		displayWhenOff => 0,
+		weight         => 900,
+			actions        => {
+			go => {
+				cmd => ['jivealbumsortsettings'],
+				params => {
+					menu => 'radio',
+				},
+			},
+		},
+		window        => {
+				titleStyle => 'settings',
+		},
+	};
+
+	if ($batch) {
+		return \@menu;
+	} else {
+		_notifyJive(\@menu, $client);
+	}
+
 }
 
 # allow a plugin to add a node to the menu
@@ -1434,6 +1517,8 @@ sub myMusicMenu {
 	$log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
+	my $prefs  = preferences("server");
+	my $sort   = $prefs->get('jivealbumsort') || 'artistalbum';
 	my @myMusicMenu = (
 			{
 				text           => $client->string('BROWSE_BY_ARTIST'),
@@ -1466,7 +1551,7 @@ sub myMusicMenu {
 						cmd    => ['albums'],
 						params => {
 							menu     => 'track',
-							sort     => 'artflow',
+							sort     => $sort,
 						},
 					},
 				},

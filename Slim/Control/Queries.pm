@@ -162,7 +162,7 @@ sub albumsQuery {
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
 	
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow'])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -192,12 +192,26 @@ sub albumsQuery {
 
 			$attr->{'order_by'} = 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort';
 			push @{$attr->{'join'}}, 'tracks';
-		}
-		
-		if ($sort && $sort eq 'artflow') {
+
+		} elsif ($sort && $sort eq 'artflow') {
 
 			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('contributor.namesort,album.year,album.titlesort');
 			push @{$attr->{'join'}}, 'contributor';
+
+		} elsif ($sort && $sort eq 'artistalbum') {
+
+			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('contributor.namesort,album.titlesort');
+			push @{$attr->{'join'}}, 'contributor';
+
+		} elsif ($sort && $sort eq 'yearartistalbum') {
+
+			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('album.year,contributor.namesort,album.titlesort');
+			push @{$attr->{'join'}}, 'contributor';
+
+		} elsif ($sort && $sort eq 'yearalbum') {
+
+			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('album.year,album.titlesort');
+
 		}
 
 		if (specified($search)) {
@@ -416,7 +430,8 @@ sub albumsQuery {
 					$params->{artist_id} = $contributorID;
 				}
 
-				if ($sort && $sort eq 'artflow') {
+				#FIXME: see if multiple char textkey is doable for year/genre sort
+				if ($sort && ($sort eq 'artflow' || $sort eq 'artistalbum') ) {
 					$params->{textkey} = substr($eachitem->contributor->namesort, 0, 1);
 				} elsif ($sort && $sort ne 'new') {
 					$params->{textkey} = substr($eachitem->titlesort, 0, 1);
@@ -4569,7 +4584,7 @@ sub yearsQuery {
 		};
 		# sort by artist, year, album when sending the albums query
 		if ($actioncmd eq 'albums') {
-			$base->{'actions'}{'go'}{'params'}{'sort'} = 'artflow';
+			$base->{'actions'}{'go'}{'params'}{'sort'} = 'artistalbum';
 		}
 		$request->addResult('base', $base);
 	}
