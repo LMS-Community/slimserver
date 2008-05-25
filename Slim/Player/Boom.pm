@@ -190,10 +190,19 @@ sub setRTCAlarm {
 
 }
 
+# Change the analog output mode between headphone and sub-woofer
+# If no mode is specified, the value of the client's analogOutMode preference is used.
+# Otherwise the mode is temporarily changed to the given value without altering the preference.
 sub setAnalogOutMode {
 	my $client = shift;
+	# 0 = headphone (i.e. internal speakers off), 1 = sub 
+	my $mode = shift;
+
+	if ($mode == undef) {
+		$mode = $prefs->client($client)->get('analogOutMode');
+	}
 	
-	my $data = pack('C', $prefs->client($client)->get('analogOutMode'));	# 0 = headphone (i.e. internal speakers off), 1 = sub out
+	my $data = pack('C', $mode);
 	$client->sendFrame('audo', \$data);
 }
 

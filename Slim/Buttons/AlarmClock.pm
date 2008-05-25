@@ -507,6 +507,9 @@ sub checkAlarms {
 				$request->source('ALARM');
 
 				pushDateTime($client);
+
+				# Set analogOutMode to subwoofer to force output through main speakers even if headphones are plugged in
+				$client->can('setAnalogOutMode') && $client->setAnalogOutMode(1);
 				
 				my $volume = $prefs->client($client)->get('alarmvolume')->[ $day ];
 				my $currentVolume = $client->volume;
@@ -615,6 +618,9 @@ sub alarmEnd {
 	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
 
 	popDateTime($client);
+
+	# Restore analogOutMode to previous setting
+	$client->can('setAnalogOutMode') && $client->setAnalogOutMode();
 
 	$client->alarmActive(undef);
 	if ($client->snoozeActive) {
