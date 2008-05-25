@@ -89,10 +89,21 @@ sub scanURL {
 	if ( !$track->title ) {
 		$track = Slim::Music::Info::setTitle( $url, $url );
 	}
+
+	# Check if the protocol handler has a custom scanning method
+	# This is used to allow plugins to add scanning routines for exteral stream types
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	if ( $handler && $handler->can('scanStream') ) {
+		$log->debug( "Scanning remote stream $url using protocol hander $handler" );
+		
+		# Allow protocol hander to scan the stream and then call the callback
+		$handler->scanStream($url, $track, $args);
+
+		return;
+	}
 	
 	# In some cases, a remote protocol may always be audio and not need scanning
-	# This is not used by any core code, but plugins such as AlienBBC need it for
-	# handling rtsp:// URLs in playlists
+	# This is not used by any core code, but some plugins require it
 	if ( Slim::Music::Info::isAudioURL($url) ) { 	 
 		$log->debug( "Remote stream $url known to be audio" ); 	 
 
@@ -593,4 +604,4 @@ sub parsePlaylist {
 }
 
 1;
-	
+
