@@ -94,7 +94,7 @@ sub scanURL {
 	# This is used to allow plugins to add scanning routines for exteral stream types
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	if ( $handler && $handler->can('scanStream') ) {
-		$log->error( "Scanning remote stream $url using protocol hander $handler" );
+		$log->debug( "Scanning remote stream $url using protocol hander $handler" );
 		
 		# Allow protocol hander to scan the stream and then call the callback
 		$handler->scanStream($url, $track, $args);
