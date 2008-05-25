@@ -41,6 +41,7 @@ my $log = logger('player.alarmclock');
 
 my $interval    = 1;  # check every x seconds
 my $FADESECONDS = 20; # fade-in of 20 seconds
+my $alarmScreensaver = 'SCREENSAVER.datetime';
 
 my %menuSelection;
 our %specialPlaylists;
@@ -177,7 +178,7 @@ sub init {
 			'onChange'     => sub { 
 				my ($client, $val) = @_;
 				my $volumes = $prefs->client($client)->get('alarmvolume');
-				$volumes->[ weekDay($client) ] = $val;
+				$volumes->[ weekDay($client) ] = $volumes->[ weekDay($client) ] + $val;
 				$prefs->client($client)->set('alarmvolume', $volumes);
 			},
 			'initialValue' => sub { $prefs->client($_[0])->get('alarmvolume')->[ weekDay($_[0]) ] },
@@ -508,12 +509,12 @@ sub checkAlarms {
 				pushDateTime($client);
 				
 				my $volume = $prefs->client($client)->get('alarmvolume')->[ $day ];
+				my $currentVolume = $client->volume;
+				$log->debug("Current vol: $currentVolume Alarm vol: $volume");
 
-				if (defined ($volume)) {
-					$log->debug('Changing volume');
-					# TODO: Need to store the previous level so it can be restored
-					$request = $client->execute(['mixer', 'volume', $volume]);
-					$request->source('ALARM');
+				if (defined ($volume) && $currentVolume != $volume) {
+					$log->debug("Changing volume from $currentVolume to $volume");
+					$client->volume($volume);
 				}
 
 				# fade volume over 20s if enabled.
@@ -595,7 +596,6 @@ sub alarmEnd {
 	my $client = $request->client;
 
 	$log->debug(sub {'alarmEnd called with request: ' . $request->getRequestString});
-	#$log->debug(Dumper($request));
 
 	# Don't respond to requests that we created ourselves
 	my $source = $request->source;
@@ -611,6 +611,11 @@ sub alarmEnd {
 	}
 
 	$log->debug('Stopping alarm');
+
+	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
+
+	popDateTime($client);
+
 	$client->alarmActive(undef);
 	if ($client->snoozeActive) {
 		$log->debug('Stopping snooze');
@@ -620,7 +625,6 @@ sub alarmEnd {
 	} else {
 		$client->showBriefly({line=>[$client->string('ALARM_STOPPED')]});
 	}
-	Slim::Control::Request::unsubscribe(\&alarmEnd, $client);
 }
 
 sub snooze {
@@ -701,7 +705,7 @@ sub visibleAlarm {
 
 	my $showBrieflyDur = 30;
 	# Datetime screensaver already provides alarm info so don't need a long showBriefly
-	if (Slim::Buttons::Common::mode($client) eq 'SCREENSAVER.datetime') {
+	if (Slim::Buttons::Common::mode($client) eq $alarmScreensaver) {
 		$showBrieflyDur = 3;
 	}
 	$client->showBriefly(alarmLines($client), $showBrieflyDur);
@@ -711,18 +715,25 @@ sub visibleAlarm {
 sub pushDateTime {
 	my $client = shift;
 
-	my $mode = 'SCREENSAVER.datetime';
 	my $currentMode = Slim::Buttons::Common::mode($client);
 
-	$log->debug("Attempting to push datetime screensaver.  Current mode: $currentMode");
-	if (Slim::Buttons::Common::validMode($mode) && $currentMode ne $mode) {
-		$log->debug('Pushing screensaver');
-		Slim::Buttons::Common::pushMode($client, 'SCREENSAVER.datetime');
+	$log->debug("Attempting to push alarm screensaver.  Current mode: $currentMode");
+	if (Slim::Buttons::Common::validMode($alarmScreensaver) && $currentMode ne $alarmScreensaver) {
+		$log->debug('Pushing alarm screensaver');
+		Slim::Buttons::Common::pushMode($client, $alarmScreensaver);
 		$client->update();
+	}
+}
 
-		return 1;
-	} else {
-		return 0;
+# Pop out of datetime screensaver if it's being displayed
+sub popDateTime {
+	my $client = shift;
+
+	my $currentMode = Slim::Buttons::Common::mode($client);
+	$log->debug("Attempting to pop alarm screensaver.  Current mode: $currentMode");
+	if ($currentMode eq $alarmScreensaver) {
+		$log->debug('Popping alarm screensaver');
+		Slim::Buttons::Common::popMode($client);
 	}
 }
 
