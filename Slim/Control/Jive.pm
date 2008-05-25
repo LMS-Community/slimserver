@@ -301,9 +301,9 @@ sub albumSortSettingsItem {
 	{
 		text           => $client->string('ALBUMS_SORT_METHOD'),
 		id             => 'settingsAlbumSettings',
-		node           => 'myMusic',
+		node           => 'advancedSettings',
 		displayWhenOff => 0,
-		weight         => 900,
+		weight         => 100,
 			actions        => {
 			go => {
 				cmd => ['jivealbumsortsettings'],
