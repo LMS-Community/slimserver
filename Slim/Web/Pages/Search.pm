@@ -111,9 +111,6 @@ sub advancedSearch {
 	$params->{'browse_items'} = [];
 	$params->{'icons'}        = $Slim::Web::Pages::additionalLinks{icons};
 
-	# Prep the date format
-	$params->{'dateFormat'} = Slim::Utils::DateTime::shortDateF();
-
 	# Check for valid search terms
 	for my $key (sort keys %$params) {
 		
@@ -121,6 +118,11 @@ sub advancedSearch {
 		next unless $params->{$key};
 
 		my $newKey = $1;
+
+		if ($params->{'resetAdvSearch'}) {
+			delete $params->{$key};
+			next;
+		}
 
 		# Stuff the requested item back into the params hash, under
 		# the special "search" hash. Because Template Toolkit uses '.'
