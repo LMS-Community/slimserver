@@ -952,9 +952,7 @@ sub gotTrackInfo {
 	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
 	# When done, callback to Scanner, which will continue on to playback
 	# This is a callback to Source::decoderUnderrun if we are loading the next track
-
-	# If synced, only the master calls back
-	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
+	my $done = sub {
 		my $dns = Slim::Networking::Async->new;
 		$dns->open( {
 			Host        => URI->new($mediaUrl)->host,
@@ -964,6 +962,25 @@ sub gotTrackInfo {
 			onError     => $callback, # even if it errors, keep going
 			passthrough => [],
 		} );
+	};
+	
+	if ( !Slim::Player::Sync::isSynced($client) ) {
+		$done->();
+	}
+	else {
+		# Bug 8122, wait until all synced players have a response to rpds 3 before continuing
+		my $ready     = $client->pluginData('syncReady') || 1;
+		my $syncCount = scalar @{ $client->masterOrSelf->slaves } + 1;
+		
+		if ( $ready == $syncCount ) {
+			$log->debug( 'All synced players have track info, beginning playback' );
+			$client->pluginData( syncReady => 0 );
+			$done->();
+		}
+		else {
+			$log->debug( 'Waiting for ' . ( $syncCount - $ready ) . ' more player(s) to get track info' );
+			$client->pluginData( syncReady => $ready + 1 );
+		}
 	}
 	
 	# Watch for stop commands for logging purposes
