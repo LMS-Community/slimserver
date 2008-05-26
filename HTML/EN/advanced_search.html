@@ -4,10 +4,17 @@
 		Ext.onReady(function(){
 			var el = Ext.get('advLink');
 			if (el) {
+				var link = el.dom.href;
 				el.dom.href='javascript:void(0);';
 				el.on('click', function(){ 
-					Ext.get('advSearchForm').show();
-					SqueezeJS.UI.ScrollPanel.init(); 
+					var f = Ext.get('advSearchForm');
+					
+					if (f.isVisible())
+						location = link;
+					else {
+						f.show();
+						SqueezeJS.UI.ScrollPanel.init();
+					} 
 				})
 			}
 		});
@@ -101,7 +108,7 @@
 	[% timeSelectionBlock(name='search.timestamp.op') %]
 
 	<input name="search.timestamp" value="[% search.timestamp.value %]" size="10" maxlength="10" type="text">
-	&nbsp; [% "EXAMPLE_SHORT" | string %] [% dateFormat %]
+	&nbsp; [% "EXAMPLE_SHORT" | string %] mm/dd/yyyy
 [% END %]
 
 [% WRAPPER field title='BITRATE' %]
@@ -170,8 +177,8 @@
 		<td>&nbsp;</td>
 		<td class="content" valign="middle">
 			<br>
-			<input value="[% "SEARCH" | string %]" id="submitAdvSearch" type="submit">
-			<input value="[% "CLEAR"  | string %]" type="reset">
+			<input value="[% "SEARCH" | string %]" name="submitAdvSearch" id="submitAdvSearch" type="submit">
+			<input value="[% "CLEAR"  | string %]" name="resetAdvSearch" type="submit">
 		</td>
 	</tr>
 	

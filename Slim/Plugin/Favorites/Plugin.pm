@@ -317,21 +317,15 @@ sub indexHandler {
 
 	if (!defined $level || $params->{'action'} =~ /^play|^add/) {
 
-		if ($sessId == 1) {
-			# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
-			# also pass through play/add to reuse xmlbrowser handling of playall etc
-			$log->info("passing through to xmlbrowser");
+		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
+		# also pass through play/add to reuse xmlbrowser handling of playall etc
+		$log->info("passing through to xmlbrowser");
 			
-			return Slim::Web::XMLBrowser->handleWebIndex( {
-				client => $client,
-				feed   => $opml->xmlbrowser,
-				args   => [$client, $params, @_],
-			} );
-
-		} else {
-			# this is not the favorites session - if we pass through to xmlbrowser we loose session state, so dissable for now
-			return;
-		}
+		return Slim::Web::XMLBrowser->handleWebIndex( {
+			client => $client,
+			feed   => $opml->xmlbrowser,
+			args   => [$client, $params, @_],
+		} );
 	}
 
 	# if not editting favorites create favs class so we can add or delete urls from favorites
