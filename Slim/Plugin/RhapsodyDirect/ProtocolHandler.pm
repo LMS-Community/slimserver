@@ -13,6 +13,7 @@ use MIME::Base64 qw(decode_base64);
 
 use Slim::Plugin::RhapsodyDirect::RPDS;
 use Slim::Networking::SqueezeNetwork;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
@@ -680,9 +681,9 @@ sub getTrackMetadata {
 	my $trackId = $params->{trackId};
 	
 	# Don't request if we already have it
-	my $meta = $client->pluginData('metaCache') || {};
-	my $url  = 'rhapd://' . $params->{trackId} . '.wma';
-	return if $meta->{$url};
+	my $cache = Slim::Utils::Cache->new;
+	my $meta  = $cache->get( 'rhapsody_meta_' . $params->{trackId} );
+	return if $meta;
 	
 	my $trackURL = Slim::Networking::SqueezeNetwork->url(
 		"/api/rhapsody/v1/opml/metadata/getTrack?trackId=$trackId&json=1"
@@ -718,10 +719,7 @@ sub gotTrackMetadata {
 	}
 	
 	# cache the metadata we need for display
-	my $meta = $client->pluginData('metaCache') || {};
-	my $url  = 'rhapd://' . $params->{trackId} . '.wma';
-	
-	$meta->{$url} = {
+	my $meta = {
 		artist    => $track->{displayArtistName},
 		album     => $track->{displayAlbumName},
 		title     => $track->{name},
@@ -733,10 +731,11 @@ sub gotTrackMetadata {
 		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
 	};
 	
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'rhapsody_meta_' . $params->{trackId}, $meta, 86400 );
+	
 	# Update the playlist time so the web will refresh, etc
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
-	
-	$client->pluginData( metaCache => $meta );
 }
 
 sub gotTrackMetadataError {
@@ -843,8 +842,7 @@ sub gotNextRadioTrack {
 	$client->pluginData( radioTrack    => $track );
 	
 	# We already have the metadata for this track, so can save calling getTrack
-	my $meta = $client->pluginData('metaCache') || {};
-	$meta->{$url} = {
+	my $meta = {
 		artist    => $track->{displayArtistName},
 		album     => $track->{displayAlbumName},
 		title     => $track->{name},
@@ -858,7 +856,9 @@ sub gotNextRadioTrack {
 			rew => 0,
 		},
 	};
-	$client->pluginData( metaCache => $meta );
+	
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'rhapsody_meta_' . $track->{trackId}, $meta, 86400 );
 	
 	my $cb = $params->{callback};
 	my $pt = $params->{passthrough} || [];
@@ -1155,9 +1155,6 @@ sub endPlaybackSession {
 		onError     => sub {},
 		passthrough => [],
 	} );
-	
-	# Clear out the metadata cache for this client
-	$client->pluginData( metaCache => {} );
 }
 
 sub displayStatus {
@@ -1227,18 +1224,19 @@ sub trackInfo {
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 	
-	my $meta = $client->pluginData('metaCache') || {};
-	
 	if ( $url =~ /\.rdr$/ ) {
 		$url = $client->pluginData('radioTrackURL');
 	}
 	
 	return {} unless $url;
 	
+	my $cache = Slim::Utils::Cache->new;
+	
 	# If metadata is not here, fetch it so the next poll will include the data
-	if ( !$meta->{$url} ) {
-		my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
-
+	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
+	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
+	
+	if ( !$meta ) {
 		my $master = Slim::Player::Sync::masterOrSelf($client);
 
 		Slim::Utils::Timers::killTimers( $master, \&getTrackMetadata );
@@ -1252,7 +1250,7 @@ sub getMetadataFor {
 	
 	my $icon = Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
 	
-	return $meta->{$url} || {
+	return $meta || {
 		bitrate   => '128k CBR',
 		type      => 'WMA (Rhapsody)',
 		icon      => $icon,
