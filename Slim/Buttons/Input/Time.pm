@@ -279,6 +279,7 @@ sub exitInput {
 	
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		Slim::Buttons::Common::popMode($client);
+		$client->update();
 		return;
 	}
 

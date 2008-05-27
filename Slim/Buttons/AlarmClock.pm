@@ -122,8 +122,8 @@ sub init {
 			'externRef'      => sub {
 				my ($client, $value) = @_;
 				
-				# show alarm state when the right menu item is selected.  otherwise, 
-				# just show the string for the other menu items as selected.
+				# If the current menu item is alarm on/off, show the current on/off state otherwise just
+				# return the appropriate string for that menu item
 				if ($prefs->client($client)->get('alarm')->[ weekDay($client) ] && $value eq 'ALARM_OFF') {
 					return $client->string('ALARM_ON');
 				

@@ -337,7 +337,7 @@ sub setMode {
 # listRef = none # reference to list of internal values, exit mode if not supplied
 # header = 'Select item:' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs
-# headerArgs = CV # accepts C and V
+# headerArgs = CV # accepts C, V and I (I is the 1-based index)
 # stringHeader = undef # if true, put the value of header through the string function
 	# before displaying it.
 # headerAddCount = undef # if true add (I of T) to end of header
