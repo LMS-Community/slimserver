@@ -145,8 +145,8 @@ sub tooManySynced {
 	my $tooMany  = 0;
 	my %accounts = ();
 
-	for my $client ( @clients ) {
-		if ( my $account = $client->pluginData('account') ) {
+	if ( my $account = __PACKAGE__->getAccount($client) ) {
+		for my $client ( @clients ) {
 			if ( $account->{defaults} ) {
 				if ( my $default = $account->{defaults}->{ $client->id } ) {
 					$accounts{ $default } ||= 0;
@@ -199,13 +199,6 @@ sub getAccount {
 	my ( $class, $client ) = @_;
 	
 	my $account = $client->pluginData('account');
-	
-	# Bug 7540, some Rhapsody prefs got messed up by broken code
-	if ( $ENV{SLIM_SERVICE} && $account ) {
-		if ( ref $account->{username}->[0] eq 'ARRAY' ) {
-			$account = undef;
-		}
-	}
 	
 	return $account;
 }
@@ -306,7 +299,7 @@ sub getPlaybackSession {
 	$client->pluginData( showBuffering => 1 );
 	
 	# Get login info
-	my $account = $client->pluginData('account');
+	my $account = __PACKAGE__->getAccount($client);
 	
 	# Choose the correct account to use for this player's session
 	my $username = $account->{username}->[0];
