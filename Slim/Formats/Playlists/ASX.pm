@@ -48,6 +48,14 @@ sub read {
 		# Change ENTRYREF tags to ENTRY so they stay in the proper order
 		$content =~ s/ENTRYREF/ENTRY/g;
 		
+		# Make sure playlist is UTF-8
+		my $encoding = Slim::Utils::Unicode::encodingFromString( $content );
+		$log->debug( "Encoding of ASX playlist: $encoding" );
+		
+		if ( $encoding ne 'utf8' ) {		
+			$content = Slim::Utils::Unicode::utf8decode_guess( $content );
+		}
+		
 		my $parsed = eval {
 			XMLin(
 				\$content,
