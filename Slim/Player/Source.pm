@@ -602,6 +602,9 @@ sub decoderUnderrun {
 		
 		markStreamingTrackAsPlayed($client);
 		
+		# This player is ready to sync again
+		$client->readytosync(-1);
+		
 		# If we now have 2 tracks in the queue, pop the failed one off,
 		# so we are able to continue with the next track
 		if ( scalar @{$queue} > 1 ) {
