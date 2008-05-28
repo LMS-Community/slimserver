@@ -1345,17 +1345,6 @@ sub generateHTTPResponse {
 		$response->etag(join('-', @etag));
 	}
 
-	# If we're perl 5.8 or above, always send back utf-8
-	# Otherwise, send back the charset from the current locale
-	if ($contentType =~ m!^text/(?:html|xml)!) {
-
-		if ($] > 5.007) {
-			$contentType .= '; charset=utf-8';
-		} else {
-			$contentType .= sprintf("; charset=%s", Slim::Utils::Unicode::currentLocale());
-		}
-	}
-
 	$response->content_type($contentType);
 
 	#if (defined $params->{'refresh'}) {
@@ -1530,7 +1519,23 @@ sub prepareResponseForSending {
 
 	# Set the Content-Length - valid for either HEAD or GET
 	$response->content_length(length($$body));
-	
+
+	# bug 7498: add charset to content type if needed
+	# If we're perl 5.8 or above, always send back utf-8
+	# Otherwise, send back the charset from the current locale
+	my $contentType = $response->content_type; 
+
+	if ($contentType =~ m!^text/(?:html|xml)!) {
+
+		if ($] > 5.007) {
+			$contentType .= '; charset=utf-8';
+		} else {
+			$contentType .= sprintf("; charset=%s", Slim::Utils::Unicode::currentLocale());
+		}
+	}
+
+	$response->content_type($contentType);
+
 	$response->header( Date => time2str(time) );
 
 	# If we're already a 304 - that means we've already checked before the static content fetch.

@@ -382,18 +382,17 @@ sub init {
 		validator => sub {
 			foreach (split (/,/, $_[1])) {
 				s/\s*//g; 
-	 
+
 				next if Net::IP::ip_is_ipv4($_);
-								
-				# 192.168.0.*
-				if (/(.*\.)\*$/) {
-					next if Net::IP::ip_is_ipv4($1 . '0');
-				}
-								
+
 				# allow ranges à la "192.168.0.1-50"
 				if (/(.+)-(\d+)$/) {
 					next if Net::IP::ip_is_ipv4($1);
 				}
+
+				# 192.168.0.*
+				s/\*/0/g;
+				next if Net::IP::ip_is_ipv4($_);
 							
 				return 0;
 			}
