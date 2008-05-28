@@ -82,7 +82,7 @@ sub parseList {
 		# Try to guess what kind of playlist it is		
 		$log->warn("Unknown content type $type, trying to guess");
 
-		my $content = read_file($fh);
+		my $content = eval { read_file($fh) };
 
 		# look for known strings that would indicate a certain content-type
 		if ( $content =~ /\[playlist\]/i ) {
@@ -108,7 +108,6 @@ sub parseList {
 			my ( $uri, $orig_uri ) = @_;
 			push @results, $orig_uri;
 		} );
-
 		$finder->find(\$content);
 	}
 
