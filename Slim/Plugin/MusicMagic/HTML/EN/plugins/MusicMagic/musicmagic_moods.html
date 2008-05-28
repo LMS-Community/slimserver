@@ -11,8 +11,15 @@
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 [% WRAPPER contentcontainer %]
 [% odd = 1 %]
-	[% FOREACH mood = mood_list %]
+	[% FOREACH mood = mood_list.keys %]
 		[% BLOCK controls %]
+			[%
+				itemobj = {
+					url   = "mood://${mood}"
+					title = mood
+				};
+				PROCESS favoritescontrol isFavorite = mood_list.${mood}.isFavorite
+			%]
 			[% WRAPPER playlink %][% IF browserTarget %][% target =  browserTarget %][% END %]
 				href="musicmagic_mix.html?player=[% player | uri %]&amp;mood=[% mood %]&amp;p0=play"
 			[% END %]
@@ -20,7 +27,7 @@
 				href="musicmagic_mix.html?player=[% player | uri %]&amp;mood=[% mood %]&amp;p0=append"
 			[% END %]
 		[% END %]
-		[% WRAPPER contentitem controls='controls'%]
+		[% WRAPPER contentitem controls='controls' %]
 			<a href="musicmagic_mix.html?player=[% player | uri %]&amp;mood=[% mood %]">[% mood %]</a>
 		[% END %]
 		[% odd = (not odd) %]

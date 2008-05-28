@@ -25,6 +25,8 @@ use Slim::Plugin::MusicMagic::ClientSettings;
 use Slim::Plugin::MusicMagic::Common;
 use Slim::Plugin::MusicMagic::PlayerSettings;
 
+use Slim::Utils::Favorites;
+
 my $initialized = 0;
 my $MMSHost;
 my $MMSport;
@@ -232,7 +234,11 @@ sub initPlugin {
 
 	Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
 	Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
-	
+
+	Slim::Player::ProtocolHandlers->registerHandler(
+		mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
+	);
+
 	return $initialized;
 }
 
@@ -781,7 +787,10 @@ sub getMix {
 sub musicmagic_moods {
 	my ($client, $params) = @_;
 
-	$params->{'mood_list'} = grabMoods();
+	my $mood_list;
+	map { $mood_list->{$_}->{isFavorite} = Slim::Utils::Favorites->new($client)->findUrl("mood://$_") || 0 } @{ grabMoods() };
+
+	$params->{'mood_list'} = $mood_list;
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_moods.html", $params);
 }

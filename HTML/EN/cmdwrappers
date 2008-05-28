@@ -256,7 +256,7 @@ END %]
 [% END %]
 
 [% BLOCK favoritescontrol %]
-	[%- IF favoritesEnabled && (useAJAX || useExtJS) && (item.isFavorite.defined || isFavorite.defined); 
+	[%- IF (useAJAX || useExtJS) && (item.isFavorite.defined || isFavorite.defined); 
 			IF item.isFavorite || isFavorite; 
 				linktype = 'favdellink'; 
 			ELSE; 
