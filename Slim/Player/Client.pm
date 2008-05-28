@@ -82,6 +82,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								_tempVolume musicInfoTextCache metaTitle languageOverride password scanData currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								signalStrengthLog bufferFullnessLog slimprotoQLenLog
+								alarmActive snoozeActive
 							));
 
 	__PACKAGE__->mk_accessor('array', qw(
@@ -243,6 +244,10 @@ sub new {
 		signalStrengthLog       => Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]),
 		bufferFullnessLog       => Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]),
 		slimprotoQLenLog        => Slim::Utils::PerfMon->new("Slimproto QLen ($id)",  [1, 2, 5, 10, 20]),
+
+		# alarm state
+		alarmActive		=> undef,		# boolean.  Time when current alarm began.
+		snoozeActive		=> undef,		# boolean.  Time when current snooze began.
 
 		# other
 		_tempVolume             => undef,
@@ -1179,17 +1184,6 @@ sub playPoint {
 	} else {
 		return $client->_playPoint;
 	}
-}
-
-
-sub alarmActive {
-	my $r = shift;
-	@_ ? ($r->[131] = shift) : $r->[131];
-}
-
-sub snoozeActive {
-	my $r = shift;
-	@_ ? ($r->[132] = shift) : $r->[132];
 }
 
 1;
