@@ -6,7 +6,7 @@
 	[% useAJAX = 0 %]
 	[% useExtJS = 1 %]
 	[% crumbSeparator = "&gt;" %]
-	[% resizeParam = "p" %]
+	[% resizeParam = "o" %]
 	[% bgcolor = "" %]
 	[% cmdLinkIconSize = 17 %]
 
