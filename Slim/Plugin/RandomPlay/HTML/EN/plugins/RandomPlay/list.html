@@ -84,16 +84,15 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 
 		[% odd = 1 %]
 		[%- WRAPPER contentcontainer listid = "inlineList" %]
-		[% FOREACH type IN ['track','contributor','album','year'] %]
-			[% title = 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]
+		[% FOREACH type IN mixTypes %]
+			[% mixTypeMap.type; title = 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]
 			[% BLOCK controls %]
 				[%
-					favType = type _ (type == 'year' ? '' : 's');
 					itemobj = {
-						url   = "randomplay://${favType}" 
+						url   = "randomplay://${type}" 
 						title = title
 					};
-					PROCESS favoritescontrol isFavorite = favorites.${favType}
+					PROCESS favoritescontrol isFavorite = favorites.${type}
 				%]
 				[% PROCESS randomLink type="$type" addOnly="0" %]
 				[% PROCESS randomLink type="$type" addOnly="1" %]
