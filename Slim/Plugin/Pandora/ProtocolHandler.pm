@@ -134,33 +134,35 @@ sub onCommand {
 sub getNextTrack {
 	my ( $client, $params ) = @_;
 	
-	# If idle time has been exceeded, stop playback
-	my $lastActivity = $client->lastActivityTime();
+	# If playing and idle time has been exceeded, stop playback
+	if ( $client->playmode =~ /play/ ) {
+		my $lastActivity = $client->lastActivityTime();
 	
-	# If synced, check slave players to see if they have newer activity time
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# We should already be the master, but just in case...
-		my $master = Slim::Player::Sync::masterOrSelf($client);
-		for my $c ( $master, @{ $master->slaves } ) {
-			my $slaveActivity = $c->lastActivityTime();
-			if ( $slaveActivity > $lastActivity ) {
-				$lastActivity = $slaveActivity;
+		# If synced, check slave players to see if they have newer activity time
+		if ( Slim::Player::Sync::isSynced($client) ) {
+			# We should already be the master, but just in case...
+			my $master = Slim::Player::Sync::masterOrSelf($client);
+			for my $c ( $master, @{ $master->slaves } ) {
+				my $slaveActivity = $c->lastActivityTime();
+				if ( $slaveActivity > $lastActivity ) {
+					$lastActivity = $slaveActivity;
+				}
 			}
 		}
-	}
 	
-	if ( time() - $lastActivity >= $MAX_IDLE_TIME ) {
-		$log->debug('Idle time reached, stopping playback');
+		if ( time() - $lastActivity >= $MAX_IDLE_TIME ) {
+			$log->debug('Idle time reached, stopping playback');
 		
-		my $url = Slim::Player::Playlist::url($client);
+			my $url = Slim::Player::Playlist::url($client);
 
-		setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_IDLE_STOPPING') );
+			setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_IDLE_STOPPING') );
 		
-		$client->update();
+			$client->update();
 
-		Slim::Player::Source::playmode( $client, 'stop' );
+			Slim::Player::Source::playmode( $client, 'stop' );
 		
-		return;
+			return;
+		}
 	}
 	
 	my $stationId = $params->{stationId};
