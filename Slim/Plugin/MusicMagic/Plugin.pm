@@ -212,10 +212,12 @@ sub initPlugin {
 
 			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
 
-			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', {
+			my $params = {
 				'useMode'  => 'musicmagic_moods',
 				'mood'     => 'none',
-			});
+			}; 
+			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
+			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
 
 			Slim::Web::Pages->addPageLinks("browse", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
