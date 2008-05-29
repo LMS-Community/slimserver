@@ -18,6 +18,7 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Slim::Buttons::Home;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -124,6 +125,10 @@ sub initPlugin {
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','contributor');
+
+	Slim::Player::ProtocolHandlers->registerHandler(
+		randomplay => 'Slim::Plugin::RandomPlay::ProtocolHandler'
+	);
 
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
@@ -1143,6 +1148,10 @@ sub handleWebList {
 		$params->{'pluginRandomNumOldTracks'}  = $prefs->get('oldtracks');
 		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');
 		$params->{'pluginRandomNowPlaying'}    = $mixInfo{$client->masterOrSelf->id}->{'type'};
+
+		map { 
+			$params->{favorites}->{$_} = Slim::Utils::Favorites->new($client)->findUrl("randomplay://$_") || 0 
+		} qw( tracks contributors albums year );
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
