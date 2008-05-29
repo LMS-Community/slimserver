@@ -33,6 +33,10 @@ my %mixInfo      = ();
 # Display text for each mix type
 my %displayText  = ();
 
+# map CLI command args to internal mix types
+my %mixTypeMap   = ();
+my @mixTypes;
+
 # Genres for each client (don't access this directly - use getGenres())
 my %genres       = ();
 my %genreNameMap = ();
@@ -98,6 +102,25 @@ sub initPlugin {
 		'loadalbum'  => 1, # old style multi-item load
 		'playalbum'  => 1, # old style multi-item play
 	);
+
+	%displayText = (
+		'track'       => 'PLUGIN_RANDOM_TRACK',
+		'album'       => 'PLUGIN_RANDOM_ALBUM',
+		'contributor' => 'PLUGIN_RANDOM_CONTRIBUTOR',
+		'year'        => 'PLUGIN_RANDOM_YEAR',
+		'genreFilter' => 'PLUGIN_RANDOM_GENRE_FILTER'
+	);
+
+	%mixTypeMap = (
+		'tracks'       => 'track',
+		'contributors' => 'contributor',
+		'albums'       => 'album',
+		'year'         => 'year',
+		'artists'      => 'contributor',		
+	);
+
+	my %seen;
+	@mixTypes = map { $mixTypeMap{$_} }	grep (!$seen{$mixTypeMap{$_}}++, keys %mixTypeMap);
 
 	generateGenreNameMap();
 
@@ -777,17 +800,6 @@ sub playRandom {
 sub getDisplayText {
 	my ($client, $item) = @_;
 
-	if (!scalar keys %displayText) {
-
-		%displayText = (
-			'track'       => 'PLUGIN_RANDOM_TRACK',
-			'album'       => 'PLUGIN_RANDOM_ALBUM',
-			'contributor' => 'PLUGIN_RANDOM_CONTRIBUTOR',
-			'year'        => 'PLUGIN_RANDOM_YEAR',
-			'genreFilter' => 'PLUGIN_RANDOM_GENRE_FILTER'
-		)
-	}
-
 	# if showing the current mode, show altered string
 	if (defined $mixInfo{$client->masterOrSelf->id}->{'type'} && $item eq $mixInfo{$client->masterOrSelf->id}->{'type'}) {
 
@@ -1080,15 +1092,18 @@ sub cliRequest {
  
 	# get our parameters
 	my $mode   = $request->getParam('_mode');
-	my $client = $request->client();
-	my $functions = getFunctions();
 
-	if (!defined $mode || !defined $$functions{$mode} || !$client) {
+	# try mapping CLI plural values on singular values used internally (eg. albums -> album)
+	$mode      = $mixTypeMap{$mode} || $mode;
+
+	my $client = $request->client();
+
+	if (!defined $mode || !(scalar grep /$mode/, @mixTypes) || !$client) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	&{$$functions{$mode}}($client);
+	playRandom($client, $mode);
 	
 	$request->setStatusDone();
 }
@@ -1098,17 +1113,6 @@ sub shutdownPlugin {
 
 	# unsubscribe
 	Slim::Control::Request::unsubscribe(\&commandCallback);
-}
-
-sub getFunctions {
-
-	# Functions to allow mapping of mixes to keypresses
-	return {
-		'tracks'       => sub { playRandom(shift, 'track') },
-		'albums'       => sub { playRandom(shift, 'album') },
-		'contributors' => sub { playRandom(shift, 'contributor') },
-		'year'         => sub { playRandom(shift, 'year') },
-	}
 }
 
 sub buttonStart {
@@ -1149,9 +1153,15 @@ sub handleWebList {
 		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');
 		$params->{'pluginRandomNowPlaying'}    = $mixInfo{$client->masterOrSelf->id}->{'type'};
 
+		$params->{'mixTypes'}                  = \@mixTypes;
+		$params->{'favorites'}                 = {};
+
 		map { 
-			$params->{favorites}->{$_} = Slim::Utils::Favorites->new($client)->findUrl("randomplay://$_") || 0 
-		} qw( tracks contributors albums year );
+			$params->{'favorites'}->{$_} = 
+				Slim::Utils::Favorites->new($client)->findUrl("randomplay://$_")
+				|| Slim::Utils::Favorites->new($client)->findUrl("randomplay://$mixTypeMap{$_}")
+				|| 0;
+		} keys %mixTypeMap, @mixTypes;
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
