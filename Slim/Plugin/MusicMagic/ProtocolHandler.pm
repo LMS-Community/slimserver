@@ -26,7 +26,7 @@ sub new {
 		return undef;
 	}
 
-	my $mix = $client->execute(["musicip", "mix", "mood:$1"]);
+	$client->execute(["musicip", "mix", "mood:$1"]);
 	$client->execute(["musicip", "play"]);
 
 	return $class;
