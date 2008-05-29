@@ -208,14 +208,21 @@ sub initPlugin {
 		Slim::Control::Request::addDispatch(['musicip', 'add'],
 			[1, 0, 0, \&cliPlayMix]);
 
+
+		Slim::Player::ProtocolHandlers->registerHandler(
+			mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
+		);
+
 		if (scalar @{grabMoods()}) {
 
 			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
 
-			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', {
+			my $params = {
 				'useMode'  => 'musicmagic_moods',
 				'mood'     => 'none',
-			});
+			}; 
+			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
+			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
 
 			Slim::Web::Pages->addPageLinks("browse", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
@@ -234,10 +241,6 @@ sub initPlugin {
 
 	Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
 	Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
-
-	Slim::Player::ProtocolHandlers->registerHandler(
-		mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
-	);
 
 	return $initialized;
 }
