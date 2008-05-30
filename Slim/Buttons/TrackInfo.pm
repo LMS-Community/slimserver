@@ -173,7 +173,7 @@ sub setMode {
 	
 	# Protocol Handlers can setup their own track info
 	my $track   = track($client);
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( blessed($track) ? $track->url : $track );
 	if ( $handler && $handler->can('trackInfo') ) {
 		# trackInfo method is responsible for pushing its own mode
 		$handler->trackInfo( $client, $track );
@@ -183,7 +183,7 @@ sub setMode {
 	loadDataForTrack( $client, $track );
 
 	my %params = (
-		'header'         => sub { return Slim::Music::Info::getCurrentTitle( $client, $track->url )},
+		'header'         => sub { return Slim::Music::Info::getCurrentTitle( $client, blessed($track) ? $track->url : $track )},
 		'headerArgs'     => 'CVI',
 		'listRef'        => $client->trackInfoLines,
 		'externRef'      => \&infoLine,
