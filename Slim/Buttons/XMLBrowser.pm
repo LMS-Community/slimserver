@@ -2150,7 +2150,7 @@ sub _addingToPlaylist {
 
 	my $string = $action eq 'add' 
 			?  $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', ' ') 
-			:  $client->string('JIVE_POPUP_ADDING_TO_PLAYNEXT', ' ') ;
+			:  $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', ' ') ;
 
 	$client->showBriefly(
 			{ line => [ $string ], },
