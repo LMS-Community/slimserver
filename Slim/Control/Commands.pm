@@ -688,9 +688,7 @@ sub playlistDeleteCommand {
 		$client->showBriefly({
 			'jive' => { 
 				'type'    => 'song',
-				'text'    => [ $request->string('JIVE_POPUP_REMOVING'),
-							   $song->title,
-							   $request->string('JIVE_POPUP_FROM_PLAYLIST') ],
+				'text'    => [ $client->string('JIVE_POPUP_REMOVING_FROM_PLAYLIST', $song->title) ],
 				'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
 			}
 		});
@@ -981,11 +979,10 @@ sub playlistSaveCommand {
 
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 
-	# FIXME, THIS_PLAYLIST_AS is not great as the string. EN string should be "Saved playlist as:"
   	$client->showBriefly({
 		'jive' => {
 			'type'    => 'popupplay',
-			'text'    => [ $request->string('THIS_PLAYLIST_AS') , " " , $title],
+			'text'    => [ $client->string('SAVED_THIS_PLAYLIST_AS', $title) ],
                                 }
                         });
 
@@ -1248,12 +1245,12 @@ sub playlistXitemCommand {
 		});
 		if ( $cmd eq 'insert' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
 
-			my $line1 = $client->string('JIVE_POPUP_ADDING');
-			my $line2 = Slim::Music::Info::title($path) || $path;
-			my $line3 = $client->string('JIVE_POPUP_TO_PLAY_NEXT');
+			my $insert = Slim::Music::Info::title($path) || $path;
+			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', $insert);
+			my @line = split("\n", $msg);
 			$client->showBriefly({
-					'line' => [$line1, $line2, $line3],
-					'jive' => { 'type' => 'popupplay', text => [ $line1, $line2, $line3 ] },
+					'line' => [ @line ],
+					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
 				});
 		}
 	} else {
@@ -1288,12 +1285,12 @@ sub playlistXitemCommand {
 			}
 		} elsif ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
 
-			my $line1 = $client->string('JIVE_POPUP_ADDING');
-			my $line2 = Slim::Music::Info::title($path) || $path;
-			my $line3 = $client->string('JIVE_POPUP_TO_PLAYLIST');
+			my $insert = Slim::Music::Info::title($path) || $path;
+			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', $insert);
+			my @line = split("\n", $msg);
 			$client->showBriefly({
-					'line' => [$line1, $line2, $line3],
-					'jive' => { 'type' => 'popupplay', text => [ $line1, $line2, $line3 ] },
+					'line' => [ @line ],
+					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
 				});
 		}
 
@@ -1481,7 +1478,7 @@ sub playlistZapCommand {
 	my $client   = $request->client();
 	my $index    = $request->getParam('_index');;
 	
-	my $zapped   = $request->string('ZAPPED_SONGS');
+	my $zapped   = $client->string('ZAPPED_SONGS');
 	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
 	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
 
@@ -1564,15 +1561,19 @@ sub playlistcontrolCommand {
 		}
 
 		if ( $add || $load || $insert ) {
+			my $token;
+			if ($add) {
+				$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
+			} elsif ($insert) {
+				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
+			} else {
+				$token = 'JIVE_POPUP_NOW_PLAYING';
+			}
+			my $string = $client->string($token, $folder->title);
 			$client->showBriefly({ 
 				'jive' => { 
 					'type'    => 'popupplay',
-					'text'    => $add || $insert ? $add 
-						? [ $request->string('JIVE_POPUP_ADDING'), $folder->title,
-							$request->string('JIVE_POPUP_TO_PLAYLIST') ]
-						: [ $request->string('JIVE_POPUP_ADDING'), $folder->title,
-							$request->string('JIVE_POPUP_TO_PLAY_NEXT') ]
-						: [ $request->string('JIVE_POPUP_NOW_PLAYING'), $folder->title ]
+					'text'    => [ $string ],
 				}
 			});
 		} 
@@ -1624,17 +1625,21 @@ sub playlistcontrolCommand {
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
 			if ( $add || $load || $insert ) {
+				my $token;
+				if ($add) {
+					$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
+				} elsif ($insert) {
+					$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
+				} else {
+					$token = 'JIVE_POPUP_NOW_PLAYING';
+				}
+				my $string = $client->string($token, $playlist->title);
 				$client->showBriefly({ 
 					'jive' => { 
 						'type'    => 'popupplay',
-						'text'    => $add || $insert ? $add
-							? [ $request->string('JIVE_POPUP_ADDING'), $playlist->title,
-								$request->string('JIVE_POPUP_TO_PLAYLIST') ]
-							: [ $request->string('JIVE_POPUP_ADDING'), $playlist->title,
-								$request->string('JIVE_POPUP_TO_PLAY_NEXT') ]
-								: [ $request->string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ]
+						'text'    => [ $string ],
 					}
-				 });
+				});			
 			}
 
 			$cmd .= "tracks";
@@ -1712,19 +1717,23 @@ sub playlistcontrolCommand {
 		if ($load || $add || $insert) {
 
 			$info[0] ||= $tracks[0]->title;
-
+			my $token;
+			if ($add) {
+				$token = 'JIVE_POPUP_ADDING_TO_PLAYLIST';
+			} elsif ($insert) {
+				$token = 'JIVE_POPUP_ADDING_TO_PLAY_NEXT';
+			} else {
+				$token = 'JIVE_POPUP_NOW_PLAYING';
+			}
+			my $string = $client->string($token, $info[0]);
 			$client->showBriefly({ 
 				'jive' => { 
 					'type'    => defined $artwork ? 'song' : 'popupplay',
-					'text'    => $add || $insert ? $add
-						? [ $request->string('JIVE_POPUP_ADDING'), $info[0],
-							$request->string('JIVE_POPUP_TO_PLAYLIST') ]
-						: [ $request->string('JIVE_POPUP_ADDING'), $info[0],
-							$request->string('JIVE_POPUP_TO_PLAY_NEXT') ]
-						: [ $request->string('JIVE_POPUP_NOW_PLAYING'), @info ],
+					'text'    => [ $string ],
 					'icon-id' => $artwork,
 				}
 			});
+
 		}
 
 		$cmd .= "tracks";
@@ -1932,8 +1941,7 @@ sub playlistsDeleteCommand {
 		$request->client->showBriefly({
 			'jive' => {
 				'text'    => [	
-					$request->string('JIVE_DELETE_PLAYLIST'),
-					$playlistObj->name,
+					$request->client->string('JIVE_DELETE_PLAYLIST', $playlistObj->name)
 				],
 			},
 		});

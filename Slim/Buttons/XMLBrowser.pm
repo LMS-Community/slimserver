@@ -2147,12 +2147,10 @@ sub _cliQuerySubFeed_done {
 sub _addingToPlaylist {
 	my $client = shift;
 	my $action = shift || 'add';
-	my $string = $action eq 'add' ?
-			$client->string('JIVE_POPUP_ADDING') . " " .  
-			$client->string('JIVE_POPUP_TO_PLAYLIST')
-			: 
-			$client->string('JIVE_POPUP_ADDING') . " " .  
-			$client->string('JIVE_POPUP_TO_PLAY_NEXT');
+
+	my $string = $action eq 'add' 
+			?  $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', ' ') 
+			:  $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', ' ') ;
 
 	$client->showBriefly(
 			{ line => [ $string ], },

@@ -8797,6 +8797,9 @@ THIS_PLAYLIST_AS
 	SV	denna låtlista som:
 	ZH_CN	此播放表为：
 
+SAVED_THIS_PLAYLIST_AS
+	EN	Saved this playlist as:\n\n%s
+
 SAVE_THIS_PLAYLIST_AS
 	CS	Uložit playlist jako:
 	DA	Gem denne spilleliste som:
@@ -15567,7 +15570,7 @@ JIVE_ADD_ALL
 
 JIVE_DELETE_PLAYLIST
 	DE	Wiedergabeliste löschen
-	EN	Delete Playlist
+	EN	Delete Playlist\n%s
 	ES	Eliminar lista de reproducción
 	FR	Supprimer la liste de lecture
 	IT	Elimina elenco di riproduzione
@@ -15680,6 +15683,12 @@ JIVE_ALARMSET_HELP
 	IT	Utilizzare la rotellina per cambiare le cifre dell'orario, quindi premere il pulsante centrale per selezionarle. Per impostare la sveglia, premere il pulsante centrale dopo avere inserito l'ora.
 	NL	Gebruik het scrollwiel om klokcijfers te wijzigen. Druk dan op de middelste knop om dat cijfer te selecteren. Nadat de tijd is ingevoerd, druk je op de middelste knop om de alarmtijd in te stellen.
 
+JIVE_POPUP_ADDING_TO_PLAYLIST
+	EN	Adding\n%s\nto Playlist...
+
+JIVE_POPUP_ADDING_TO_PLAY_NEXT
+	EN	Adding\n%s\nto play next...
+
 JIVE_POPUP_ADDING
 	DA	Tilføjer...
 	DE	Einfügen von ...
@@ -15697,6 +15706,9 @@ JIVE_POPUP_REMOVING
 	FR	Suppression
 	IT	Rimozione
 	NL	Bezig met verwijderen
+
+JIVE_POPUP_REMOVING_FROM_PLAYLIST
+	EN	Removing\n%s\nfrom Playlist...
 
 JIVE_POPUP_TO_PLAY_NEXT
 	DE	und als nächstes spielen...
@@ -15727,7 +15739,7 @@ JIVE_POPUP_FROM_PLAYLIST
 JIVE_POPUP_NOW_PLAYING
 	DA	Nuværende titel
 	DE	Aktueller Titel
-	EN	Now Playing
+	EN	Now Playing\n%s
 	ES	Reproducción en curso
 	FR	Lecture
 	IT	Riproduzione in corso
