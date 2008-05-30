@@ -167,7 +167,7 @@ sub string {
 }
 
 sub brightnessMap {
-	return (0, 1, 2, 3, 4, 5, 0x0201);	# Formula: brightness = lightsensor value / upper byte + lower byte
+	return (0, 1, 2, 3, 4, 5, 0x0A01);	# Formula: vfd brightness = lightsensor value / upper byte + lower byte
 }
 
 =head1 SEE ALSO
