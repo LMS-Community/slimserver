@@ -34,6 +34,22 @@ sub getFormatForURL { 'wma' }
 
 sub isAudioURL { 1 }
 
+# Support transcoding
+sub new {
+	my $class = shift;
+	my $args  = shift;
+
+	my $client = $args->{client};
+	my $url    = $client->pluginData('url');
+	
+	return unless $url;
+
+	return $class->SUPER::new( {
+		client => $client,
+		url    => $url,
+	} );
+}
+
 # Perform processing during play/add, before actual playback begins
 sub onCommand {
 	my ( $class, $client, $cmd, $url, $callback ) = @_;
