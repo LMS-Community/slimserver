@@ -774,7 +774,7 @@ sub overlaySymbol {
 	if ( $item->{type} eq 'radio' ) {
 		# Display check box overlay for type=radio
 		my $default = $item->{default};
-		$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, $default eq $item->{name} );
+		$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, $default eq $item->{name} );
 	}
 	elsif ( $item->{type} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
 

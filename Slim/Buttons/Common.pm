@@ -1676,25 +1676,53 @@ sub validMode {
 
 =head2 checkBoxOverlay ( $client, $value)
 
-Update audio mixer settings
+This is a standard UI widget for showing a multi-selected item in a list, or a true/false state of a setting
 
-This is a standard UI widget for showing a single selected item in a list, or a true/false state of a setting
-
-If the $client argument is a valid client object, graphics capable players will show a 'radio button'-style ui.
+If the $client argument is a valid client object, graphics capable players will show a 'check box'-style ui.
 Otherwise, an text-based check box will be marked wtih an X for true and empty for false.
 
 The $value argument is a boolean result provided by the caller to determine if the box is checked or not.
 
 =cut
 
-# standard UI feature enable/disable a setting
+# standard UI feature multi-select list
 sub checkBoxOverlay {
 	my $client = shift;
 	my $value = shift;
 
 	unless (blessed($client) && $client->isa('Slim::Player::Client')) {
 
-		logBacktrace("Plugins must now provide client when calling checkBoxOverlay!");
+		logBacktrace("Plugins must provide client when calling checkBoxOverlay!");
+
+		$value = $client;
+
+	} elsif ($client->display->isa('Slim::Display::Graphics')) {
+
+		return $client->symbols( $value ? 'filledsquare' : 'square' );
+	}
+
+	return $value ? "[X]" : "[ ]";
+}
+
+=head2 radioButtonOverlay ( $client, $value)
+
+This is a standard UI widget for showing a single-selected item in a list
+
+If the $client argument is a valid client object, graphics capable players will show a 'radio button'-style ui.
+Otherwise, an text-based radio button will be marked wtih an O for true and empty for false.
+
+The $value argument is a boolean result provided by the caller to determine if the box is checked or not.
+
+=cut
+
+# standard UI feature enable/disable a setting
+sub radioButtonOverlay {
+	my $client = shift;
+	my $value = shift;
+
+	unless (blessed($client) && $client->isa('Slim::Player::Client')) {
+
+		logBacktrace("Plugins must now provide client when calling radioButtonOverlay!");
 
 		$value = $client;
 
@@ -1703,8 +1731,10 @@ sub checkBoxOverlay {
 		return $client->symbols( $value ? 'filledcircle' : 'circle' );
 	}
 
-	return $value ? "[X]" : "[ ]";
+	return $value ? "(O)" : "( )";
 }
+
+
 
 sub param {
 	my $client = shift;

@@ -98,7 +98,23 @@ Generally only called from L<Slim::Buttons::Common>
 # some initialization code, adding modes for this module
 sub init {
 
-	Slim::Buttons::Common::addMode('alarm', {}, \&setMode);
+	%functions = (
+		'play' => sub  {
+			my ($client,$funct,$functarg) = @_;
+			
+			# nothing to be done, so play is same as right
+			alarmExitHandler($client,'RIGHT');
+		},
+
+		'add'  => sub  {
+			my ($client,$funct,$functarg) = @_;
+			
+			# nothing to be done, so add is same as right
+			alarmExitHandler($client,'RIGHT');
+		},
+	);
+
+	Slim::Buttons::Common::addMode('alarm', \%functions, \&setMode);
 	
 	Slim::Buttons::Home::addSubMenu('SETTINGS', 'ALARM', {
 		'useMode'   => 'alarm',
@@ -199,6 +215,24 @@ sub init {
 
 				$client->update();
 			},
+			'onPlay'        => sub { 
+				my ( $client, $item ) = @_;
+
+				my $playlist = $prefs->client($client)->get('alarmplaylist');
+				$playlist->[ weekDay($client) ] = exists $specialPlaylists{$item} ? $item : $item->url;
+				$prefs->client($client)->set('alarmplaylist', $playlist);
+
+				$client->update();
+			},
+			'onAdd'        => sub { 
+				my ( $client, $item ) = @_;
+
+				my $playlist = $prefs->client($client)->get('alarmplaylist');
+				$playlist->[ weekDay($client) ] = exists $specialPlaylists{$item} ? $item : $item->url;
+				$prefs->client($client)->set('alarmplaylist', $playlist);
+
+				$client->update();
+			},
 			'initialValue'   => sub { $prefs->client($_[0])->get('alarmplaylist')->[ weekDay($_[0]) ]; },
 			'overlayRef'     => sub {
 				my ( $client, $item ) = @_;
@@ -207,9 +241,9 @@ sub init {
 				$item = ( ref $item ) ? $item->url : $item;
 
 				if ( $item eq $prefs->client($client)->get('alarmplaylist')->[ weekDay($_[0]) ] ) {
-					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
+					$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, 1 );
 				} else {
-					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
+					$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, 0 );
 				}
 				
 				return [undef, $overlay];
@@ -252,6 +286,7 @@ sub init {
 			'overlayRefArgs'   => 'CI',
 		},
 	);
+	
 }
 
 sub addSpecialPlaylist {
