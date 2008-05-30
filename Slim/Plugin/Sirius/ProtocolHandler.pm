@@ -32,6 +32,24 @@ sub audioScrobblerSource { 'R' }
 
 sub getFormatForURL { 'wma' }
 
+sub isAudioURL { 1 }
+
+# Support transcoding
+sub new {
+	my $class = shift;
+	my $args  = shift;
+
+	my $client = $args->{client};
+	my $url    = $client->pluginData('url');
+	
+	return unless $url;
+
+	return $class->SUPER::new( {
+		client => $client,
+		url    => $url,
+	} );
+}
+
 sub onJump {
 	my ( $class, $client, $nextURL, $callback ) = @_;
 	
