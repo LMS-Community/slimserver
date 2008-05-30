@@ -109,7 +109,9 @@ my @modes = (
 );
 
 our $defaultPrefs = {
-	'idleBrightness'      => 2,
+	'idleBrightness'      => 0x0A01,
+	'powerOnBrightness'   => 0x0A01,
+	'powerOffBrightness'  => 0x0A01,
 	'playingDisplayMode'  => 1,
 	'playingDisplayModes' => [0..10],
 	'scrollPause'          => 1.5,
