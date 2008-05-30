@@ -49,6 +49,7 @@ our %mixFunctions = ();
 our %validMixTypes = (
 	'track'    => 'song',
 	'album'    => 'album',
+	'age'      => 'album',
 	'artist'   => 'artist',
 	'genre'    => 'filter',
 	'mood'     => 'mood',
@@ -502,7 +503,7 @@ sub mixerFunction {
 
 		$mixSeed = $currentItem->path;
 
-	} elsif ($levels[$level] eq 'album') {
+	} elsif ($levels[$level] eq 'album' || $levels[$level] eq 'age') {
 
 		$mixSeed = $currentItem->tracks->next->path;
 
