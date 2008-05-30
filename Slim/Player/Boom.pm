@@ -30,6 +30,9 @@ our $defaultPrefs = {
 	'bass'                 => 0,
 	'treble'               => 0,
 	'stereoxl'             => 0,
+	'idleBrightness'       => 0x0A01,
+	'powerOnBrightness'    => 0x0A01,
+	'powerOffBrightness'   => 0x0A01,
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
