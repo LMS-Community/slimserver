@@ -33,14 +33,7 @@ PLUGIN_RANDOM_DISABLED
 	NL	Willekeurige mix gestopt
 
 PLUGIN_RANDOM_TRACK
-	DA	Tilfældig Nummer Mix
-	DE	Zufälliger Titelmix
-	EN	Random Song Mix
-	ES	Mezcla de canciones aleatoria
-	FR	Morceaux aléatoires
-	HE	מיקס שירים אקראיים
-	IT	Raccolta casuale di brani
-	NL	Willekeurige liedjesmix
+	EN	Song Mix
 
 PLUGIN_RANDOM_TRACK_PLAYING
 	DA	Afspiller Tilfældige Nummer
@@ -63,14 +56,7 @@ PLUGIN_RANDOM_TRACK_DISABLE
 	NL	toevoegen van liedjes stoppen
 
 PLUGIN_RANDOM_ALBUM
-	DA	Tilfældig Album Mix
-	DE	Zufälliger Albummix
-	EN	Random Album Mix
-	ES	Mezcla aleatoria de álbum
-	FR	Albums aléatoires
-	HE	מיקס אלבומים אקראי
-	IT	Raccolta casuale di album
-	NL	Willekeurige albummix
+	EN	Album Mix
 
 PLUGIN_RANDOM_ALBUM_ITEM
 	DA	Tilfældigt Album
@@ -103,14 +89,7 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	NL	toevoegen van albums stoppen
 
 PLUGIN_RANDOM_CONTRIBUTOR
-	DA	Tilfældig Kunstner Mix
-	DE	Zufälliger Interpretenmix
-	EN	Random Artist Mix
-	ES	Mezcla de artista aleatoria
-	FR	Artistes aléatoires
-	HE	מיקס מבצעים אקראי
-	IT	Raccolta casuale di artisti
-	NL	Willekeurige artiestmix
+	EN	Artist Mix
 
 PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	DA	Tilfældig Kunstner
@@ -143,14 +122,7 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	NL	toevoegen van artiesten stoppen
 
 PLUGIN_RANDOM_YEAR
-	DA	Tilfældig År Mix
-	DE	Zufälliger Jahrgangsmix
-	EN	Random Year Mix
-	ES	Mezcla de años aleatorios
-	FR	Années aléatoires
-	HE	מיקס של שנים בסדר אקראי
-	IT	Raccolta casuale di anni
-	NL	Willekeurige jaarmix
+	EN	Year Mix
 
 PLUGIN_RANDOM_YEAR_ITEM
 	DA	Tilfældig År
@@ -183,15 +155,7 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	NL	toevoegen van jaren stoppen
 
 PLUGIN_RANDOM_GENRE_FILTER
-	DA	Vælg Genre som skal inkluderes
-	DE	Einzuschließende Stilrichtungen wählen
-	EN	Select Genres To Include
-	ES	Seleccionar géneros a incluir
-	FI	Valitse sisällytettävät tyylilajit
-	FR	Sélectionnez les genres à inclure
-	HE	בחירת סגנונות שיש לכלול
-	IT	Selezionare i generi musicali da includere
-	NL	Toe te voegen genres selecteren
+	EN	Include Genres
 
 PLUGIN_RANDOM_SELECT_ALL
 	DA	Vælg alle
