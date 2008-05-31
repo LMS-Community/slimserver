@@ -1064,6 +1064,9 @@ REPEAT_ONE
 	SV	Repetera låt
 	ZH_CN	重复一曲模式
 
+REPEAT_ONE_ABBR
+	EN	Repeat Song
+
 REPEAT_ALL
 	CS	Opakovat playlist
 	DA	Gentag spilleliste
@@ -3153,6 +3156,15 @@ SETUP_POWEROFFBRIGHTNESS
 SETUP_IDLEBRIGHTNESS
 	EN	Idle Brightness
 
+SETUP_POWERONBRIGHTNESS_ABBR
+	EN	While On
+
+SETUP_POWEROFFBRIGHTNESS_ABBR
+	EN	While Off
+
+SETUP_IDLEBRIGHTNESS_ABBR
+	EN	Idle Brightness
+
 SETUP_ALARM
 	CS	Budík
 	DA	Alarm
@@ -3218,6 +3230,9 @@ SETUP_PLAYINGDISPLAYMODE
 	NO	Informasjon under avspilling
 	SV	Information i läge "Nu spelas"
 	ZH_CN	播放中信息
+
+SETUP_PLAYINGDISPLAYMODE_ABBR
+	EN	Now Playing Info
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DA	Afspilleren vil nu vise status for afspilningen således:
@@ -3983,6 +3998,9 @@ REPLAYGAIN_DISABLED
 	SV	Avaktivera volymjustering
 	ZH_CN	关闭音量调整
 
+REPLAYGAIN_DISABLED_ABBR
+	EN	None
+
 REPLAYGAIN_TRACK_GAIN
 	DA	Anvend Track Gain (hvis tilgængeligt)
 	DE	Titel-Normalisierung verwenden (falls möglich)
@@ -4012,7 +4030,7 @@ REPLAYGAIN_ALBUM_GAIN
 REPLAYGAIN_SMART_GAIN
 	DA	Anvend "Smart" Gain
 	DE	'Intelligente' Normalisierung
-	EN	"Smart" Gain 
+	EN	Smart Gain 
 	ES	Selección de ganancia "inteligente"
 	FR	Utiliser le gain intelligent
 	HE	בחירת הגברה חכמה
@@ -5366,6 +5384,9 @@ SETUP_SCREENSAVER
 	SV	Skärmsläckare
 	ZH_CN	屏幕保护程序（播放时）
 
+SETUP_SCREENSAVER_ABBR
+	EN	When Playing
+
 SETUP_OFFSAVER
 	CS	Spořič (vypnut)
 	DA	Pauseskærm i slukket tilstand
@@ -5380,6 +5401,9 @@ SETUP_OFFSAVER
 	SV	Skärmsläckare i avslaget läge
 	ZH_CN	屏幕保护程序（关机时）
 
+SETUP_OFFSAVER
+	EN	When Off
+
 SETUP_IDLESAVER
 	CS	Spořič (zastaven)
 	DA	Pauseskærm i stoppet tilstand
@@ -5393,6 +5417,9 @@ SETUP_IDLESAVER
 	NO	Skjermsparer når stoppet
 	SV	Skärmsläckare i stoppat läge
 	ZH_CN	屏幕保护程序（停止播放时）
+
+SETUP_IDLESAVER_ABBR
+	EN	When Stopped
 
 SETUP_SCREENSAVER_USE
 	DA	Anvend som aktiv pauseskærm
@@ -10988,7 +11015,16 @@ BRIGHTNESS_DIMMEST
 	EN	Dimmest
 
 BRIGHTNESS_AMBIENT
-	EN	Use Ambient Sensor
+	EN	Automatic
+
+LIGHT_N
+	EN	Light Narrow
+
+STANDARD_N
+	EN	Standard Narrow
+
+FULL_N
+	EN	Full Narrow
 
 BRIGHTNESS_DARK
 	CS	Tmavý
@@ -14568,7 +14604,7 @@ DISABLEDAC_WHENOFF
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
-	EN	Headphone/Sub Out
+	EN	Line Out
 
 SETUP_ANALOGOUTMODE_DESC
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers.
