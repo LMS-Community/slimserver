@@ -1262,37 +1262,37 @@ ALARM_SET
 
 ALARM_ON
 	CS	Budík zapnut
-	DA	Til (Tryk HØJRE for at slå fra)
-	DE	Ein (Drücken Sie RECHTS, um auszuschalten)
-	EN	On (Go right to turn off)
-	ES	Activada (pulse DERECHA para desactivar)
-	FI	Päälle (paina OIKEALLE sammuttaaksesi)
-	FR	Activé (Appuyez sur DROITE pour désactiver)
+	DA	Til
+	DE	Ein
+	EN	On
+	ES	Activada
+	FI	Päälle
+	FR	Activé
 	HE	מופעל (עבור ימינה לכיבוי)
-	IT	Acceso (Premi DESTRA per disattivare)
-	JA	アラーム オン（オフにするにはRIGHTを押してください）
-	NL	Aan (Rechts is uitzetten)
-	NO	På (Trykk HØYRE for å slå av)
-	PT	Ligado (Prima DIREITA para desligar)
-	SV	På (Tryck HÖGER för att avaktivera)
-	ZH_CN	启用（撤销请按右方向键）
+	IT	Acceso
+	JA	アラーム オン
+	NL	Aan
+	NO	På
+	PT	Ligad
+	SV	På
+	ZH_CN	启用
 
 ALARM_OFF
-	CS	Budík vypnut (Stiskni PRAVÉ tlačítko pro zapnutí)
-	DA	Fra (Tryk HØJRE for at slå til)
-	DE	Aus (Drücken Sie RECHTS, um einzuschalten)
-	EN	Off (Go right to turn on)
-	ES	Desactivada (pulse DERECHA para activar)
-	FI	Pois päältä (paina OIKEALLE laittaaksesi päälle)
-	FR	Désactivé (Appuyez sur DROITE pour activer)
+	CS	Budík vypnut
+	DA	Fra
+	DE	Aus
+	EN	Off
+	ES	Desactivada
+	FI	Pois päältä
+	FR	Désactivé
 	HE	כבוי (עבור ימינה להפעלה)
-	IT	Spento (Premi Destra per attivare)
-	JA	アラーム オフ（オンにするにはRIGHTを押してください）
-	NL	Uit (Rechts is aanzetten)
-	NO	Av (Trykk HØYRE for å slå på)
-	PT	Desligado (Prima DIREITA para ligar)
-	SV	Av (Tryck HÖGER för att aktivera)
-	ZH_CN	撤销（激活请按右方向键）
+	IT	Spento
+	JA	アラーム オフ）
+	NL	Uit
+	NO	Av
+	PT	Desligado
+	SV	Av
+	ZH_CN	撤销
 
 ALARM_SELECT_PLAYLIST
 	CS	Vyber playlist pro budík
@@ -12251,7 +12251,7 @@ SYNC_WITH
 	CS	Zmáčkněte tlačítko DOPRAVA pro synchornizaci s:
 	DA	Tryk HØJRE for at synkronisere med:
 	DE	Zum Synchronisieren RECHTS drücken:
-	EN	Go right to sync with:
+	EN	Sync with:
 	ES	Pulse DERECHA para sincronizar con:
 	FI	Paina RIGHT uudelleen saattaaksesi ajan tasalle:
 	FR	Appuyez sur DROITE pour se synchroniser à:
@@ -12268,7 +12268,7 @@ UNSYNC_WITH
 	CS	Stiskněte 'DOPRAVA' pro zrušení synchronizace
 	DA	Tryk HØJRE igen for at afslutte synkronisering med:
 	DE	Zum Aufheben der Synchronisierung RECHTS drücken:
-	EN	Go right to unsync with:
+	EN	Unsync with:
 	ES	Pulse DERECHA para desincronizar con:
 	FI	Paina RIGHT uudelleen poistaaksesi tasaustiedon:
 	FR	Appuyez sur Droite pour annuler la synchronisation avec:

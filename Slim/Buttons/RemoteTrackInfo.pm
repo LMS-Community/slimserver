@@ -76,7 +76,7 @@ sub setMode {
 				if (defined $index) {
 					return "{FAVORITES_FAVORITE} " . (defined $hotkey ? "[$hotkey]" : '');
 				} else {
-					return "{FAVORITES_RIGHT_TO_ADD}";
+					return "{PLUGIN_FAVORITES_ADD}";
 				}
 			},
 

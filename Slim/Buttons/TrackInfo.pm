@@ -577,7 +577,7 @@ sub infoLine {
 		my $favIndex = $client->modeParam('favorite');
 		my $hotkey = $client->modeParam('hotkey');
 		if (!defined $favIndex) {
-			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
+			$line2 = $client->string('PLUGIN_FAVORITES_ADD');
 		} else {
 			$line2 = $client->string('FAVORITES_FAVORITE') . (defined $hotkey ? " [ $hotkey ]" : '');
 		}
