@@ -37,8 +37,9 @@ my $scroll_pad_ticker = 60; # lines of padding in ticker mode
 our $defaultPrefs = {
 	'scrollPixels'		   => 7,
 	'scrollPixelsDouble'   => 7,
-	'powerOnBrightness'    => 1,
-	'powerOffBrightness'   => 4,
+	'idleBrightness'       => 2,
+	'powerOffBrightness'   => 1,
+	'powerOnBrightness'    => 4,
 };
 
 sub init {

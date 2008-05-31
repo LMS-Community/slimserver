@@ -119,7 +119,6 @@ my @modes = (
 );
 
 our $defaultPrefs = {
-	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 5,
 	'playingDisplayModes' => [0..11]
 };
