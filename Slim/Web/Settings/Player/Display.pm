@@ -163,12 +163,19 @@ sub getBrightnessOptions {
 
 		my @brightnessMap = $client->display->brightnessMap();
 		
+		# for large values at the end of the brightnessMap, we assume these are ambient index values
 		if ($brightnessMap[$maxBrightness] > 255 ) {
 
-			$brightnesses{$client->maxBrightness} = string('BRIGHTNESS_AMBIENT');
-			$maxBrightness--;
+			for my $brightness (4 .. $maxBrightness) {
+				if ($brightnessMap[$brightness] > 255 ) {
+		
+					$brightnesses{$brightness} = string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
+					$maxBrightness--;
+				}
+			}
 		}
-			
+		
+		
 		$brightnesses{$maxBrightness} = sprintf('%s (%s)',
 			$maxBrightness, string('BRIGHTNESS_BRIGHTEST')
 		);
