@@ -127,7 +127,8 @@ Return a server's port if available
 =cut
 
 sub getServerPort {
-	return $server_list->{shift}->{JSON} || 9000;
+	my $server = shift;
+	return $server_list->{$server}->{JSON} || 9000;
 }
 
 =head2 getWebHostAddress()
