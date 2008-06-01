@@ -79,14 +79,14 @@ sub hasPowerControl {
 	return 0;
 }
 
-sub maxTreble {	return 100; }
-sub minTreble {	return -100; }
-
-sub maxBass {	return 100; }
-sub minBass {	return -100; }
-
-sub maxXL {	return 10; }
-sub minXL {	return -100; }
+# sub maxTreble {	return 100; }
+# sub minTreble {	return -100; }
+# 
+# sub maxBass {	return 100; }
+# sub minBass {	return -100; }
+# 
+# sub maxXL {	return 10; }
+# sub minXL {	return -100; }
 
 sub reconnect {
 	my $client = shift;
