@@ -72,6 +72,7 @@ function _init() {
 							},
 				
 							success: function(response){
+								this._updateStatus(response);
 								if (response && response.responseText) {
 									response = Ext.util.JSON.decode(response.responseText);
 		
@@ -316,17 +317,17 @@ function _init() {
 				});
 			}
 		},
-	
+
 		_updateStatus : function(response) {
 			if (!(response && response.responseText))
 				return;
-	
+
 			response = Ext.util.JSON.decode(response.responseText);
-	
+
 			// only continue if we got a result and player
 			if (!(response.result && response.result.player_connected))
 				return;
-	
+
 			response = response.result;
 	
 			this.fireEvent('playerstatechange', response);
