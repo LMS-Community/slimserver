@@ -10,6 +10,8 @@
 
 	[% WRAPPER setting title="SETUP_SN_PASSWORD" desc="SETUP_SN_PASSWORD_DESC" %]
 		<input type="password" class="stdedit" name="pref_sn_password_sha" id="sn_password_sha" value="[% prefs.pref_sn_password_sha %]" size="40">
+		<div><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
+		<div><a href="http://[% sn_server %]/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
 	[% END %]
 	
 	[% WRAPPER setting title="SETUP_SN_SYNC" desc="SETUP_SN_SYNC_DESC" %]

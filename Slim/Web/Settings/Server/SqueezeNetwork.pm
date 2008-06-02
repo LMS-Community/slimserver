@@ -38,7 +38,9 @@ sub prefs {
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
+	# The hostname for SqueezeNetwork
 	my $sn_server = Slim::Networking::SqueezeNetwork->get_server("sn");
+	$params->{sn_server} = $sn_server;
 
 	if ( $params->{saveSettings} ) {
 		
