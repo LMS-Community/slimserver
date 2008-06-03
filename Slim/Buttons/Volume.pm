@@ -80,6 +80,7 @@ sub setMode {
 
 	my $timeout = $client->modeParam('timeout') || $AUTO_EXIT_TIME;
 	my $passthrough = $client->modeParam('passthrough');
+	my $transition = $client->modeParam('transition');
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Volume', {
 		'header'       => 'VOLUME',
@@ -95,6 +96,7 @@ sub setMode {
 		'lines'        => $client->customVolumeLines(),
 		'screen2'      => 'inherit',
 		'visu'         => [0],
+		'transition'   => $transition,
 	});
 
 	if ($passthrough) {

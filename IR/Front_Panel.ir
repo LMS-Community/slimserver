@@ -28,8 +28,8 @@ now_playing.down		= 00010015
 
 pause.down				= 00010017
 browse.down				= 00010018
-volup.down				= 00010019
-voldown.down			= 0001001a
+volup_front.down		= 00010019
+voldown_front.down		= 0001001a
 size.down				= 0001001b
 visual.down				= 0001001c
 volumemode.down			= 0001001d
@@ -70,8 +70,8 @@ now_playing.up			= 00020015
 
 pause.up				= 00020017
 browse.up				= 00020018
-volup.up				= 00020019
-voldown.up				= 0002001a
+volup_front.up			= 00020019
+voldown_font.up			= 0002001a
 size.up					= 0002001b
 visual.up				= 0002001c
 volumemode.up			= 0002001d

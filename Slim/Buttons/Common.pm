@@ -898,8 +898,9 @@ our %functions = (
 	},
 
 	# Volume always pushes into Slim::Buttons::Volume to allow Transporter and Boom knobs to be used
-	# - from the volumemode front panel button use a push transition
-	# - for a volume up/down button just push the mode and set a shorter timeout
+	# - from the volumemode front panel button use a push transition with 3 sec timeout
+	# - for a remote volume up/down button just push the mode with 1 sec timeout
+	# - for the front panel volume up/down push the mode with 3 sec timeout
 
 	'volumemode' => sub {
 		my $client = shift;
@@ -911,7 +912,7 @@ our %functions = (
 		if ($client->modeParam('parentMode') && $client->modeParam('parentMode') eq 'volume') {
 			popModeRight($client);
 		} else {
-			pushModeLeft($client, 'volume');
+			pushModeLeft($client, 'volume', { 'timeout' => 3, 'transition' => 1, 'passthrough' => 0 });
 		}
 	},
 
@@ -922,8 +923,10 @@ our %functions = (
 
 		return if (!$client->hasVolumeControl());
 
+		my $timeout = $buttonarg && $buttonarg eq 'front' ? 3 : 1;
+
 		if (!$client->modeParam('parentMode') || $client->modeParam('parentMode') ne 'volume') {
-			pushMode($client, 'volume', {'timeout' => 1, 'transition' => 0, 'passthrough' => 1});
+			pushMode($client, 'volume', {'timeout' => $timeout, 'transition' => 0, 'passthrough' => 1});
 			$client->update;
 		}
 	},
