@@ -1459,6 +1459,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	given playerid. The command accepts only one playerindex or playerid. 
 	To unsync the player, use the &quot;-&quot; parameter.
 	<br>
+	Note that in both cases the first <code>&lt;playerid&gt</code> is the player which
+	is already a member of a sync group. When adding a player to a sync group,
+	the second specified player will be added to the group which includes the first player,
+	if necessary first removing the second player from its existing sync-group.
+	<br>
 	You may query which players are already synced with this player by passing 
 	in a &quot;?&quot; parameter.  Multiple playerids are separated by a comma. 
 	If the player is not synced, &quot;-&quot; is returned.
