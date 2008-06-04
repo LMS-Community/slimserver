@@ -296,7 +296,7 @@ sub upgradeDAC {
 	
 	# place in block mode so that brightness key is now ignored
 	$client->block( {
-		'line'  => [ $client->string('PLUGIN_ABTESTER_UPDATING_DAC') ],
+		'line'  => [ $client->string('UPDATING_DSP') ],
 		'fonts' => { 
 			'graphic-320x32' => 'light',
 			'graphic-160x32' => 'light_n',
@@ -332,7 +332,7 @@ sub upgradeDAC {
 	
 				$client->showBriefly( {
 	
-					'line'  => [ $client->string('PLUGIN_ABTESTER_UPDATING_DAC'),
+					'line'  => [ $client->string('UPDATING_DSP'),
 					         $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
 	
 					'fonts' => { 
@@ -357,7 +357,7 @@ sub upgradeDAC {
 		$log->info("Updating DAC: Restore default image");
 
 		$client->showBriefly({
-			'line'    => [ undef, $client->string("PLUGIN_ABTESTER_UPDATE_FAILURE_RESTORE")],
+			'line'    => [ undef, $client->string("UPDATE_DSP_FAILURE_RESTORE")],
 			'overlay' => [ undef, undef ],
 		});
 

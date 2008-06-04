@@ -15810,3 +15810,9 @@ RECENT_SEARCHES
 
 ALBUMS_SORT_METHOD
 	EN	Albums Sort Method
+
+UPDATING_DSP
+	EN	Updating DSP...
+
+UPDATE_DSP_FAILURE_RESTORE
+	EN	Update failed!, restoring default
