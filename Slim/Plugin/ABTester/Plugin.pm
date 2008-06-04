@@ -302,6 +302,10 @@ sub initPlugin {
 	# Subscribe to event to automatically load DSP images when player reconnects
 	Slim::Control::Request::subscribe(\&loadDefaultDSPImage,[['client','reconnect']]);
 	Slim::Control::Request::subscribe(\&recordBoomDacCommands,[['boomdac']]);
+
+	# Add CLI commands
+	Slim::Control::Request::addDispatch(['abtester','images'], [0, 1, 0, \&cliListImages]);
+	Slim::Control::Request::addDispatch(['abtester','image','_image'], [1, 0, 0, \&cliLoadImage]);
 }
 
 sub recordBoomDacCommands {
@@ -362,6 +366,9 @@ sub loadDefaultDSPImage {
 					if(-e catfile($dir,'default.i2c')) {
 						loadImage($client,catfile($dir,'default.i2c'));
 						last;
+					}else {
+						loadImage($client);
+						last;
 					}
 
 				# A default image file has been specified with full path
@@ -372,6 +379,9 @@ sub loadDefaultDSPImage {
 				# A default image file has been specified without path, load it from the StandardImages directory
 				}elsif(-e catfile($dir,$prefs->get("defaultimage"))) {
 					loadImage($client,catfile($dir,$prefs->get("defaultimage")));
+					last;
+				}else {
+					loadImage($client);
 					last;
 				}
 			}
@@ -673,6 +683,31 @@ sub setModeFromInternet {
 
 }
 
+# Retreive available images as array
+sub _getAvailableImages {
+	my @availableImages = ();
+
+	# Add all images bundled with the plugin as directories to the "Images" menu
+	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
+	for my $plugindir (@pluginDirs) {
+		my $dir = catdir($plugindir,"ABTester","StandardImages");
+		$log->debug("Checking for directory: $dir");
+		next unless -d $dir;
+		
+		_readImageDir($dir,\@availableImages);
+	}
+
+	# Add all images extracted to the "Images" menu 
+	# (this can be both extracted .zip files bundled with plugin and downloaded from internet)
+	my $cacheDir = $serverPrefs->get('cachedir');
+	$cacheDir = catdir($cacheDir,'ABTester','Images');
+	return unless -d $cacheDir;
+	if(-d $cacheDir) {
+		_readImageDir($cacheDir,\@availableImages);
+	}
+	return \@availableImages;
+}
+
 # Mode that represents the "ABTester/Images" menu
 sub setModeDefaultImages {
 	my ($client) = @_;
@@ -685,26 +720,12 @@ sub setModeDefaultImages {
 		'value' => 0,
 	);
 	push @listRef, \%default;
-
-	# Add all images bundled with the plugin as directories to the "Images" menu
-	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
-	for my $plugindir (@pluginDirs) {
-		my $dir = catdir($plugindir,"ABTester","StandardImages");
-		$log->debug("Checking for directory: $dir");
-		next unless -d $dir;
-		
-		_readImageDir($dir,\@listRef);
-	}
-
-	# Add all images extracted to the "Images" menu 
-	# (this can be both extracted .zip files bundled with plugin and downloaded from internet)
-	my $cacheDir = $serverPrefs->get('cachedir');
-	$cacheDir = catdir($cacheDir,'ABTester','Images');
-	return unless -d $cacheDir;
-	if(-d $cacheDir) {
-		_readImageDir($cacheDir,\@listRef);
-	}
 	
+	my $availableImages = _getAvailableImages();
+	if(scalar(@$availableImages)>0) {
+		push @listRef, @$availableImages;
+	}
+
 	# Prepare mode parameters and move player into the new mode
 	my %params = (
 		header     => '{PLUGIN_ABTESTER} {count}',
@@ -1867,6 +1888,80 @@ sub _isPlayerModels {
 	}
 	$log->debug("Not allowed, model is: ".$client->model);
 	return 0;
+}
+
+# Implementation of CLI command "abtester images"
+sub cliListImages {
+	my $request = shift;
+	
+	my @images = ();
+
+	# Add the "From Firmware" entry
+	my %default = (
+		'name' => string('PLUGIN_ABTESTER_RESTORE_DEFAULT_IMAGE'),
+		'value' => 'fromfirmware',
+	);
+	push @images, \%default;
+	
+	my $availableImages = _getAvailableImages();
+	if(scalar(@$availableImages)>0) {
+		push @images, @$availableImages;
+	}
+
+  	$request->addResult('count',scalar(@images));
+
+	my $imageno = 0;
+	for my $image (@images) {
+	  	$request->addResultLoop('@images',$imageno,'path',$image->{'value'});
+	  	$request->addResultLoop('@images',$imageno,'name',$image->{'name'});
+		$imageno++;
+	}
+	
+	$request->setStatusDone();
+}
+
+# Implementation of CLI command "abtester image _image"
+sub cliLoadImage {
+	my $request = shift;
+	my $client = $request->client();
+
+	if(!defined $client) {
+		$log->warn("Client required\n");
+		$request->setStatusNeedsClient();
+		return;
+	}
+	
+  	my $image = $request->getParam('_image');
+	if($client->model ne 'boom' && $prefs->get("restrictedtohardware")) {
+		$log->warn("Can't load DSP images on this player type");
+		$request->setStatusBadConfig();
+		return;
+	}
+
+	if($image ne 'fromfirmware' && ! -e $image) {
+		# Search for default DSP image bundled with plugin (in case full path hasn't been specified)
+		my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
+		for my $plugindir (@pluginDirs) {
+			my $dir = catdir($plugindir,"ABTester","StandardImages");
+			if(-e catfile($dir,$image)) {
+				$image = catfile($dir,$image);
+				last;
+			}
+		}
+
+		if(!-e $image) {
+			$log->warn("Image files doesn't exist: $image");
+			$request->setStatusBadParams();
+			return;
+		}
+	}
+
+	if($image ne 'fromfirmware') {
+		loadImage($client,$image);
+	}else {
+		loadImage($client);
+	}
+	$request->setStatusDone();
 }
 
 1;
