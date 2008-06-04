@@ -72,7 +72,6 @@ function _init() {
 							},
 				
 							success: function(response){
-								this._updateStatus(response);
 								if (response && response.responseText) {
 									response = Ext.util.JSON.decode(response.responseText);
 		
@@ -211,6 +210,7 @@ function _init() {
 				timestamp: null,
 				dontUpdate: false,
 				player: null,
+				volume: 0,
 				rescan: 0
 			}
 		},
@@ -346,7 +346,8 @@ function _init() {
 				index:     response.playlist_cur_index,
 				duration:  parseInt(response.duration) || 0,
 				playtime:  parseInt(response.time),
-				timestamp: response.playlist_timestamp
+				timestamp: response.playlist_timestamp,
+				volume:    response['mixer volume']
 			};
 	
 			if ((response.power != null) && !response.power) {
@@ -363,6 +364,7 @@ function _init() {
 			}
 	
 			var needUpdate = (result.power != null && (result.power != this.playerStatus.power));
+			needUpdate |= (result['mixer volume'] != null && result['mixer volume'] != this.playerStatus.volume );                                         // track in playlist changed
 			needUpdate |= (result.mode != null && result.mode != this.playerStatus.mode);                                   // play/paus mode
 			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > this.playerStatus.timestamp);   // playlist: time of last change
 			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != this.playerStatus.index);      // the currently playing song's position in the playlist 
