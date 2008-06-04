@@ -1085,12 +1085,20 @@ sub gototime {
 	my $duration	      = $song->{duration};
 	
 	my $newoffset;
-	
+	my $playingurl;
 	# Let Protocol Handler give us the offset for remote URLs
 	if ( Slim::Music::Info::isRemoteURL($url) ) {
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if (Slim::Music::Info::isPlaylist($url)) {
+			my $entry = $client->remotePlaylistCurrentEntry;
+			$playingurl = $entry->url;
+		} else {
+			$playingurl = $url;
+		} ;
+
+
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingurl);
 		if ( $handler && $handler->can('getSeekData') ) {
-			my $data = $handler->getSeekData( $client, $url, $newtime );
+			my $data = $handler->getSeekData( $client, $playingurl, $newtime );
 			
 			return unless $data;
 			
@@ -1188,12 +1196,12 @@ sub gototime {
 	}
 	
 	if ( Slim::Music::Info::isRemoteURL($url) ) {
-		$log->debug("skipping ($newoffset) : $url");
+		$log->debug("skipping ($newoffset) : $playingurl");
 		
 		# Tell the protocol handler where to seek the next time this URL is played
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingurl);
 		if ( $handler && $handler->can('setSeekData') ) {
-			$handler->setSeekData( $client, $url, $newtime, $newoffset );
+			$handler->setSeekData( $client, $playingurl, $newtime, $newoffset );
 		}
 		
 		# Restart playback
