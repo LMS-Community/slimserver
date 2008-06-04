@@ -120,7 +120,7 @@ sub _players_done {
 
 	foreach my $player (@{$res->{result}->{players_loop}}) {
 		$players->{$player->{playerid}} = {
-			name   => $player->{name},
+			name   => $player->{name} || $player->{model} . ' ' . substr($player->{playerid}, 9),
 			server => $server,
 			model  => $player->{model},
 		}
