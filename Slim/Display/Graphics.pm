@@ -609,8 +609,8 @@ sub sliderBar {
 
 	my $spaces = int($width) - 4;
 	my $dots   = int($value/100 * $spaces);
-	my $divider= ($midpoint/100) * ($spaces);
-	if ($cursor) {
+	my $divider= int($midpoint/100 * $spaces);
+	if (defined $cursor) {
 		$cursor = int($cursor/100 * $spaces);
 	}	
 
@@ -626,37 +626,46 @@ sub sliderBar {
 	my $cursorSymbol = $display->symbols('cursor');
 
 	my $chart = $display->symbols('tight') . $progEnd;
-	
+
 	if ($midpoint) {
 		#left half
 		for (my $i = 0; $i < $divider; $i++) {
 			if ($value >= $midpoint) {
-				if ($i == 0 || $i == $spaces/2 - 1) {
+				if ((($i == $divider - 1) && !(defined $cursor && $cursor == $divider)) || $i == 0) {
 					$chart .= $prog1e;
-				} elsif ($i == 1 || $i == $spaces/2 - 2) {
+				} elsif ((($i == $divider - 2) && !(defined $cursor && $cursor == $divider)) || $i == 1) {
 					$chart .= $prog2e;
 				} else {
 					$chart .= $prog3e;
 				}
 			} else {
-				if ($i == 0 || $i == $divider - 1) {
+				if ((($i == $divider - 1) && !(defined $cursor && $midpoint && $cursor == $divider)) || $i == 0) {
 					$chart .= ($i < $dots) ? $prog1e : $prog1;
-				} elsif ($i == 1 || $i == $divider - 2) {
+				} elsif ((($i == $divider - 2) && !(defined $cursor && $midpoint && $cursor == $divider)) || $i == 1) {
 					$chart .= ($i < $dots) ? $prog2e : $prog2;
 				} else {
 					$chart .= ($i < $dots) ? $prog3e : $prog3;
 				}
 			}
 		}
-		$chart .= $progEnd;
+		
+		if (defined $cursor && $cursor == $divider) {
+			$chart .= $cursorSymbol;
+			$chart .= $prog3;
+		} else {
+			$chart .= $progEnd;
+		}
 	}
 	
 	# right half
 	for (my $i = $divider + 1; $i < $spaces; $i++) {
 		if ($value <= $midpoint) {
-			if ($i == $divider +1 || $i == $spaces - 1) {
+
+			# create end lobes
+			# check for midpoint and cursor position to skip the lobe when a left half exists.
+			if ((($i == $divider +1) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 1) {
 				$chart .= $reverse ? $prog1 : $prog1e;
-			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
+			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 2) {
 				$chart .= $reverse ? $prog2 : $prog2e;
 			} else {
 				$chart .= $reverse ? $prog3 : $prog3e;
@@ -666,9 +675,9 @@ sub sliderBar {
 			if (defined $cursor && $i == $cursor) {
 				$chart .= $cursorSymbol;
 				$chart .= $pos ? $prog3 : $prog3e;
-			} elsif ($i == $divider +1 || $i == $spaces - 1) {
+			} elsif ((($i == $divider +1) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 1) {
 				$chart .= $pos ? $prog1e : $prog1;
-			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
+			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 2) {
 				$chart .= $pos ? $prog2e : $prog2;
 			} else {
 				$chart .= $pos ? $prog3e : $prog3;
