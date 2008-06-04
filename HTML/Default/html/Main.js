@@ -161,6 +161,7 @@ Main = {
 	},
 
 	onResize : function(width, height) {
+		Ext.util.CSS.updateRule('.x-menu-list', 'max-height', (height - 50) + 'px');
 		this.background.setHeight(height - this.offsets[0]);
 		this.background.setWidth(width - this.offsets[1]);
 	},
