@@ -1027,14 +1027,28 @@ sub canSeek {
 	my $canSeek = 0;
 	
 	if ( Slim::Music::Info::isRemoteURL($playingSong) ) {
+
+		my $playingUrl;
+		if (Slim::Music::Info::isPlaylist($playingSong)) {
+			$log->info("Playing list $playingSong");
+			my $entry = $client->remotePlaylistCurrentEntry;
+			if (defined ($entry)) {
+				$playingUrl = $entry->url;
+			} else {
+				$log->info("No current entry in remoteplaylist $playingSong ");
+			}
+		} else {
+			$playingUrl = $playingSong;
+		} ;
+
 		# Check with protocol handler to determine if the remote stream is seekable
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingSong);
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingUrl);
 		if ( $handler && $handler->can('canSeek') ) {
 			$log->debug( "Checking with protocol handler $handler for canSeek" );
-			if ( !$handler->canSeek( $client, $playingSong ) ) {
+			if ( !$handler->canSeek( $client, $playingUrl ) ) {
 				if (wantarray) {
 					@errorString = $handler->can('canSeekError') 
-						? $handler->canSeekError( $client, $playingSong )
+						? $handler->canSeekError( $client, $playingUrl )
 						: ('PLUGIN_SONGSCANNER_ERR_REMOTE');
 				}
 			} else {
