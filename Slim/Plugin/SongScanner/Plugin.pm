@@ -352,6 +352,11 @@ sub setMode {
 		if ( !$duration ) {
 			# Try to get duration from the track object
 			$duration = Slim::Music::Info::getDuration($playingSong);
+			if ( !$duration && Slim::Music::Info::isPlaylist($playingSong) ) {
+				if ( my $entry = $client->remotePlaylistCurrentEntry ) {
+					$duration = Slim::Music::Info::getDuration($entry->url);
+				}
+			}	
 		}
 		
 		if ( !$duration ) {
