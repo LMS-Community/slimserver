@@ -162,9 +162,9 @@ sub string {
 	my $name = uc(shift);
 	
 	if (Slim::Utils::Strings::stringExists($name."_ABBR")) {
-		return $display->SUPER::string($name."_ABBR");
+		return $display->SUPER::string($name."_ABBR",@_);
 	} else {
-		return $display->SUPER::string($name);
+		return $display->SUPER::string($name,@_);
 	}
 }
 
