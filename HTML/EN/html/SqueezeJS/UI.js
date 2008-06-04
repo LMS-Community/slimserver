@@ -992,6 +992,7 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 	_addPlayerlistMenu : function(response){
 		if (response.players_loop) {
 			response.players_loop = response.players_loop.sort(this._sortPlayer);
+
 			for (var x=0; x < response.players_loop.length; x++) {
 				var playerInfo = response.players_loop[x];
 
@@ -1068,11 +1069,10 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 	_addOtherPlayerlistMenu : function(response){
 		// add a list of players connected to other servers, if available
 		if (response.other_players_loop) {
-			var first = true;
-
 			var playersByServer = this._groupPlayersByServer(response.other_players_loop);
 
 			playersByServer._servers.each(function(item){
+				var first = true;
 				var players = playersByServer[item].players.sort(this._sortPlayer);
 
 				for (var x = 0; x < players.length; x++) {
