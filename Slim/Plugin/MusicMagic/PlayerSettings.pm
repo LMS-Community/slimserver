@@ -36,7 +36,7 @@ sub init {
 		},
 		'play' => sub {
 			my $client = shift;
-			my @oldlines = Slim::Display::Display::curLines($client);
+			my @oldlines = $client->curLines();
 			
 			Slim::Buttons::Common::popMode($client);
 			Slim::Plugin::MusicMagic::Plugin::mixerFunction($client,1);
