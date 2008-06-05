@@ -15538,6 +15538,9 @@ JIVE_PLAY_ALL
 	IT	Riproduci tutto
 	NL	Alles afspelen
 
+JIVE_ALL_SONGS
+	EN	All songs
+
 JIVE_ADD_ALL_SONGS
 	DA	Tilføj alle nummer
 	DE	Alle Lieder hinzufügen
