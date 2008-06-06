@@ -70,43 +70,15 @@ SqueezeJS.UI = {
 
 			SqueezeJS.Controller.on({
 				'playerstatechange': {
-					fn: function(result){
-						this.power = (result.power == null) || result.power; 
-	
-						// update custom handler for stations overwriting default behavior
-						if (this.cmd_id && result.playlist_loop && result.playlist_loop[0] 
-							&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
-				
-							var btn = result.playlist_loop[0].buttons[this.cmd_id];
-				
-							if (btn.cls)
-								this.setClass(btn.cls);
-							else if (btn.icon)
-								this.setIcon(btn.icon);
-				
-							if (btn.tooltip)
-								this.setTooltip(btn.tooltip);
-
-							if (this.textOnly && btn.tooltip)
-								this.setText(btn.tooltip);
-
-							if (btn.command)
-								this.cmd = btn.command;
-						}
-
-						else if (this.cmd_id) {
-							this.setClass(this.config.cls);
-							this.setIcon('');
-							this.setTooltip(this.config.tooltip);
-							this.setText(this.config.text);
-							this.cmd = '';
-						}
-	
-						this.onPlayerStateChange(result);
-					},
+					fn: this._beforePlayerStateChange,
+					scope: this
+				},
+				'buttonupdate': {
+					fn: this._beforePlayerStateChange,
 					scope: this
 				}
 			});
+
 
 			this.on({
 				'render': {
@@ -120,13 +92,37 @@ SqueezeJS.UI = {
 				}
 			});
 		},
+
+		_beforePlayerStateChange : function(result){
+			this.power = (result.power == null) || result.power; 
+
+			// update custom handler for stations overwriting default behavior
+			if (this.cmd_id && result.playlist_loop && result.playlist_loop[0] 
+				&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
 	
+				var btn = result.playlist_loop[0].buttons[this.cmd_id];
+	
+				if (btn.cls)
+					this.setClass(btn.cls);
+				else if (btn.icon)
+					this.setIcon(btn.icon);
+	
+				if (btn.tooltip)
+					this.setTooltip(btn.tooltip);
+
+				if (this.textOnly && btn.tooltip)
+					this.setText(btn.tooltip);
+
+				if (btn.command)
+					this.cmd = btn.command;
+			}
+
+			this.onPlayerStateChange(result);
+		},
+
 		onPlayerStateChange : function(result){},
 	
 		setTooltip: function(tooltip){
-			if (this.config.tooltip == null)
-				this.config.tooltip = this.tooltip;
-
 			if (this.tooltip == tooltip)
 				return;
 	
@@ -148,9 +144,6 @@ SqueezeJS.UI = {
 		},
 
 		setText : function(text){
-			if (this.config.text == null)
-				this.config.text = this.text;
-
 			this.text = text;
 
 			if (this.el)
@@ -160,9 +153,6 @@ SqueezeJS.UI = {
 		},
 
 		setClass: function(newClass) {
-			if (this.config.cls == null)
-				this.config.cls = this.cls;
-
 			this.el.removeClass(this.cls);
 			this.cls = newClass
 			this.el.addClass(this.cls);
@@ -789,10 +779,10 @@ SqueezeJS.UI.Buttons.Fwd = Ext.extend(SqueezeJS.UI.Button, {
 
 SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
 	cmd_id: 'repeat',
-	state: 0,
+	state: -1,
 
 	initComponent : function(){
-		this.cls = this.cls || 'btn-repeat-0';
+		this.cls = this.initialConfig.cls || 'btn-repeat-0';
 		SqueezeJS.UI.Buttons.Repeat.superclass.initComponent.call(this);
 	},
 
@@ -823,10 +813,10 @@ SqueezeJS.UI.Buttons.Repeat = Ext.extend(SqueezeJS.UI.Button, {
 
 SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
 	cmd_id: 'shuffle',
-	state: 0,
+	state: -1,
 
 	initComponent : function(){
-		this.cls = this.cls || 'btn-shuffle-0';
+		this.cls = this.initialConfig.cls || 'btn-shuffle-0';
 		this.tooltip = this.tooltip || SqueezeJS.string('shuffle');
 		this.text = this.text || SqueezeJS.string('shuffle');
 		SqueezeJS.UI.Buttons.Shuffle.superclass.initComponent.call(this);
@@ -1283,6 +1273,13 @@ SqueezeJS.UI.VolumeBar = Ext.extend(SqueezeJS.UI.Component, {
 
 	initComponent : function(){
 		SqueezeJS.UI.VolumeBar.superclass.initComponent.call(this);
+
+		SqueezeJS.Controller.on({
+			'buttonupdate': {
+				fn: this.onPlayerStateChange,
+				scope: this
+			}
+		});
 
 		this.marginLeft = this.initialConfig.marginLeft || 0;
 		this.marginLeft = this.initialConfig.marginRight || 0;

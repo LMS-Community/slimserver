@@ -41,7 +41,7 @@ sub init {
 sub setMode {
 	my $client = shift;
 	my $method = shift;
-	
+
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -129,13 +129,24 @@ sub connectSqueezeNetwork {
 		
 		$client->sendFrame('serv', \$packed);
 
-		# TODO: ensure client actually received the message
-
-		# if message recieved, client has disconnected
-		Slim::Control::Request::executeRequest(
-			$client,
-			['client', 'forget']);
+		# ensure client has disconnected before forgetting him
+		Slim::Control::Request::subscribe(
+			\&_forgetPlayer, 
+			[['client'],['disconnect']], 
+			$client
+		);
 	}
+}
+
+sub _forgetPlayer {
+	my $request = shift;
+	my $client  = $request->client;
+	
+	Slim::Control::Request::unsubscribe(\&_forgetPlayer, $client);
+
+	Slim::Control::Request::executeRequest(
+		$client,
+		['client', 'forget']);	
 }
 
 =head1 SEE ALSO
