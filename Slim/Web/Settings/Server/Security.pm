@@ -29,11 +29,14 @@ sub prefs {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
+	# disable authorization if no username is set
+	$paramRef->{'authorize'} = 0 unless $paramRef->{'username'};
+
 	# pre-process password to avoid saving clear text
 	if ($paramRef->{'saveSettings'} && $paramRef->{'password'}) {
 
 		my $val = $paramRef->{'password'};
-	
+
 		my $currentPassword = preferences('server')->get('password');
 		my $salt = substr($currentPassword, 0, 2);
 	
