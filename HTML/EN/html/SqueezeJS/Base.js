@@ -47,6 +47,7 @@ function _init() {
 				'playerselected'   : true,
 				'playerlistupdate' : true,
 				'playlistchange'   : true,
+				'buttonupdate'     : true,
 				'playerstatechange': true,
 				'playtimeupdate'   : true,
 				'showbriefly'      : true,
@@ -77,6 +78,8 @@ function _init() {
 		
 									// only continue if we got a result and player
 									if (response.result && response.result.player_connected) {
+										this.fireEvent('buttonupdate', response.result);
+
 										if (response.result.time)
 											this.playerStatus.playtime = parseInt(response.result.time);
 		
@@ -210,7 +213,6 @@ function _init() {
 				timestamp: null,
 				dontUpdate: false,
 				player: null,
-				volume: 0,
 				rescan: 0
 			}
 		},
@@ -329,7 +331,7 @@ function _init() {
 				return;
 
 			response = response.result;
-	
+
 			this.fireEvent('playerstatechange', response);
 	
 			if (this._needUpdate(response) && Ext.get('playList'))
@@ -346,8 +348,7 @@ function _init() {
 				index:     response.playlist_cur_index,
 				duration:  parseInt(response.duration) || 0,
 				playtime:  parseInt(response.time),
-				timestamp: response.playlist_timestamp,
-				volume:    response['mixer volume']
+				timestamp: response.playlist_timestamp
 			};
 	
 			if ((response.power != null) && !response.power) {
@@ -364,7 +365,6 @@ function _init() {
 			}
 	
 			var needUpdate = (result.power != null && (result.power != this.playerStatus.power));
-			needUpdate |= (result['mixer volume'] != null && result['mixer volume'] != this.playerStatus.volume );                                         // track in playlist changed
 			needUpdate |= (result.mode != null && result.mode != this.playerStatus.mode);                                   // play/paus mode
 			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > this.playerStatus.timestamp);   // playlist: time of last change
 			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != this.playerStatus.index);      // the currently playing song's position in the playlist 
