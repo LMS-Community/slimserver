@@ -395,13 +395,14 @@ sub albumsQuery {
 		# picture of '2 Unlimited'.
 		my $noAlbumName = $request->string('NO_ALBUM');
 
+		my $artist;
 		for my $eachitem ($rs->slice($start, $end)) {
 
 			# Jive result formatting
 			if ($menuMode) {
 				
 				# we want the text to be album\nartist
-				my $artist = $eachitem->contributor->name;
+				$artist = $eachitem->contributor->name;
 				my $text   = $eachitem->title;
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
@@ -475,6 +476,12 @@ sub albumsQuery {
 			my $lastChunk;
 			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
 				$lastChunk = 1;
+			}
+			# add an "all songs" at the bottom (artist album lists only)
+			if ($insertAll && $lastChunk && defined($contributorID)) {
+				my $beforeCount = $chunkCount;
+				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1, allSongs => 1, artist => $artist );
+				$totalCount++ if $beforeCount != $chunkCount;
 			}
 			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
 		}
@@ -4405,6 +4412,8 @@ sub titlesQuery {
 				if ($menuStyle eq 'album') {
 					$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
 					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
+				} elsif ($menuStyle eq 'allSongs') {
+					$request->addResultLoop($loopname, $chunkCount, 'text', $item->title);
 				} else {
 					my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
 					$request->addResultLoop($loopname, $chunkCount, 'text', $oneLineTrackTitle);
@@ -5467,6 +5476,7 @@ sub _songData {
 
 sub _playAll {
 
+	$log->info('Begin function');
 	my %args       = @_;
 	my $start      = $args{'start'};
 	my $end        = $args{'end'};
@@ -5474,6 +5484,10 @@ sub _playAll {
 	my $loopname   = $args{'loopname'};
 	my $request    = $args{'request'};
 	my $includeArt = $args{'includeArt'};
+	my $allSongs   = $args{'allSongs'} || 0;
+	my $artist     = $args{'artist'} || '';
+	# this isn't in use, but if an addAll flag is sent this will add an item for "Add All"
+	my $addAll     = $args{'addAll'} || 0;
 
 	# insert first item if needed
 	if ($start == 0 && $end == 0) {
@@ -5511,11 +5525,33 @@ sub _playAll {
 						'add-hold'  =>  { 'cmd' => 'insert',  },
 					},
 			},
-	);
+			allSongs => { 
+					string     => $request->string('JIVE_ALL_SONGS') . "\n" . $artist,
+					style      => 'item',
+					playAction => 'playtracks',
+					addAction  => 'addtracks',
+					playCmd    => [ 'playlistcontrol' ],
+					addCmd     => [ 'playlistcontrol' ],
+					goCmd      => [ 'tracks' ],
+					addHoldCmd     => [ 'playlistcontrol' ],
+					params     => { 
+						go          =>  { menu => 1, menu_all => 1, sort => 'title', menuStyle => 'allSongs', },
+						play        =>  { cmd => 'load', },
+						add         =>  { cmd => 'add', },
+						'add-hold'  =>  { cmd => 'insert',  },
+					},
+			},
+		);
 
-		# IF WE DECIDE TO ADD AN 'ADD ALL' item, THIS IS THE ONLY LINE THAT NEEDS CHANGING
-		#for my $mode ('play', 'add') {
-		for my $mode ('play') {
+		my @items = qw/ play /;
+		# addAll currently dormant
+		push @items, 'add' if $addAll;
+
+		if ($allSongs) {
+			@items = ( 'allSongs' );
+		}
+
+		for my $mode (@items) {
 
 		$request->addResultLoop($loopname, $chunkCount, 'text', $items{$mode}{'string'});
 		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
@@ -5558,16 +5594,12 @@ sub _playAll {
 				$items{$mode}{'params'}{'add'}{$key}  = $val;
 				$items{$mode}{'params'}{'add-hold'}{$key}  = $val;
 				$items{$mode}{'params'}{'play'}{$key} = $val;
+				$items{$mode}{'params'}{'go'}{$key} = $val;
 			}
 		}
 				
 		# override the actions, babe!
 		my $actions = {
-			'do' => {
-				'player' => 0,
-				'cmd'    => $items{$mode}{'playCmd'},
-				'params' => $items{$mode}{'params'}{'play'},
-			},
 			'play' => {
 				'player' => 0,
 				'cmd'    => $items{$mode}{'playCmd'},
@@ -5584,6 +5616,19 @@ sub _playAll {
 				'params' => $items{$mode}{'params'}{'add-hold'},
 			},
 		};
+		if ($items{$mode}{'goCmd'}) {
+			$actions->{'go'} = {
+					'player' => 0,
+					'cmd'    => $items{$mode}{'goCmd'},
+					'params' => $items{$mode}{'params'}{'go'},
+			};
+		} else {
+			$actions->{'do'} = {
+				'player' => 0,
+				'cmd'    => $items{$mode}{'playCmd'},
+				'params' => $items{$mode}{'params'}{'play'},
+			};
+		}
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 		$chunkCount++;
 
