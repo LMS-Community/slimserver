@@ -38,7 +38,9 @@ sub new {
 
 		for my $opt (@{$prefs->get($optname)}) {
 
-			Slim::Control::Jive::registerDownload($optname, $opt->{'name'}, $opt->{'url'}, $opt->{'key'}, $opt->{'vers'});
+			my $path = Slim::Utils::Unicode::utf8off($opt->{'url'});
+
+			Slim::Control::Jive::registerDownload($optname, $opt->{'name'}, $path, $opt->{'key'}, $opt->{'vers'});
 		}
 	}
 }
@@ -69,12 +71,14 @@ sub handler {
 
 					my $opt = {
 						'name' => $params->{"${optname}_name$i"},
-						'url'  => Slim::Utils::Unicode::utf8off($params->{"$optname$i"}), # Bug: 8184 turn utf8off
+						'url'  => $params->{"$optname$i"},
 						'key'  => "JiveExtras_$j.$ext",
 						'vers' => undef,
 					};
 
-					Slim::Control::Jive::registerDownload($optname, $opt->{'name'}, $opt->{'url'}, $opt->{'key'}, $opt->{'vers'});
+					my $path = Slim::Utils::Unicode::utf8off($opt->{'url'});
+
+					Slim::Control::Jive::registerDownload($optname, $opt->{'name'}, $path, $opt->{'key'}, $opt->{'vers'});
 
 					push @opts, $opt;
 
