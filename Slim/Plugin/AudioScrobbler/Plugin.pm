@@ -1014,6 +1014,14 @@ sub banTrack {
 	my $client  = $request->client || return;
 	my $url     = $request->getParam('_url');
 	my $skip    = $request->getParam('_skip') || 0;
+
+	# Ban is only supported for Last.fm URLs
+	return unless $url =~ /^lfm/;
+	
+	# Skip to the next track
+	if ( $skip ) {
+		$client->execute([ 'playlist', 'jump', '+1' ]);
+	}
 	
 	# Ignore if not Scrobbling
 	return if !$prefs->client($client)->get('account');
@@ -1028,9 +1036,6 @@ sub banTrack {
 	
 	return unless $enable_scrobbling;
 
-	# Ban is only supported for Last.fm URLs
-	return unless $url =~ /^lfm/;
-	
 	$log->debug( "Banned: $url" );
 	
 	# Look through the queue and update the item we want to ban
@@ -1041,12 +1046,7 @@ sub banTrack {
 			$item->{r} = 'B';
 			
 			setQueue( $client, $queue );
-			
-			# Skip to the next track
-			if ( $skip ) {
-				$client->execute([ 'playlist', 'jump', '+1' ]);
-			}
-			
+				
 			return 1;
 		}
 	}
@@ -1059,9 +1059,6 @@ sub banTrack {
 	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 	
 	checkScrobble( $client, $track, 0, 'B' );
-	
-	# Skip to the next track
-	$client->execute([ 'playlist', 'jump', '+1' ]);
 	
 	return 1;
 }	
