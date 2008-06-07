@@ -617,7 +617,7 @@ sub decoderUnderrun {
 	# Bug 7916
 	if ($client->playmode() !~ /playout/) {
 		gotoNext($client, 0);
-		$log->warn( $client->id . ": forcing playout mode on unexpected decoder underrun: new mode " 
+		$log->warn( $client->id . ": forcing playout mode on unexpected decoder underrun: new mode " .
 			$client->playmode);
 	}
 	
