@@ -614,6 +614,13 @@ sub decoderUnderrun {
 		return;
 	}
 	
+	# Bug 7916
+	if ($client->playmode() !~ /playout/) {
+		gotoNext($client, 0);
+		$log->warn( $client->id . ": forcing playout mode on unexpected decoder underrun: new mode " 
+			$client->playmode);
+	}
+	
 	# in the case that we're starting up a digital input, 
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
