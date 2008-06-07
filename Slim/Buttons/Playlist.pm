@@ -144,6 +144,11 @@ sub init {
 
 			if ($songcount < 2) {
 
+				if ($client->isa('Slim::Player::Boom')) {
+					Slim::Buttons::Common::pushMode($client, 'volume', { 'timeout' => 3, 'transition' => 0, 'passthrough' => 1 });
+					return;
+				}
+
 				$client->bumpUp() if ($button !~ /repeat/);
 
 			} else {
@@ -171,6 +176,11 @@ sub init {
 			my ($songcount) = Slim::Player::Playlist::count($client);
 
 			if ($songcount < 2) {
+
+				if ($client->isa('Slim::Player::Boom')) {
+					Slim::Buttons::Common::pushMode($client, 'volume', { 'timeout' => 3, 'transition' => 0, 'passthrough' => 1 });
+					return;
+				}
 
 				$client->bumpDown() if ($button !~ /repeat/);
 
