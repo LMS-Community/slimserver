@@ -2670,19 +2670,8 @@ SETUP_SCROLLRATE_DESC
 	SV	Tid mellan rullande bilder. 0.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska rull-tempot
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
-SINGLE-LINE
-	CS	Jediný řádek
-	DE	Einzelne Zeile
-	EN	Single Line
-	ES	Una sola línea
-	FI	Yhden rivin
-	FR	Une seule ligne
-	HE	שורה יחידה
-	IT	Riga singola
-	NL	Enkele regel
-	NO	Enkeltlinje
-	SV	Enkel höjd
-	ZH_CN	单行
+DOUBLE-LINE
+	EN	Large Text
 
 SETUP_GROUP_ALARM
 	CS	Budík
