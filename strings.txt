@@ -2694,7 +2694,7 @@ SETUP_SCROLLRATEDOUBLE
 
 SETUP_SCROLLRATE_DESC
 	DE	Sie können festlegen, wie schnell sich die Laufschrift bewegt. Die Laufschriftgeschwindigkeit bestimmt die Zeit, die zwischen Aktualisierungen des Display vergeht. Bei Playern mit grafischem Display können Sie diese Einstellung zusammen mit 'Laufschrift: Pixel' anpassen, um das optimale Ergebnis zu erzielen. Der Text bewegt sich um den Wert in Pixeln pro als Geschwindigkeit angegebenem Intervall. Auf Playern mit Zeichendisplay wird die Länge der Zeit bis zum nächsten Zeichen festgelegt. Geben Sie den gewünschten Wert in Sekunden ein. Ein niedrigerer Wert hat eine höhere Geschwindigkeit zur Folge. Der Standardwert für eine Zeile ist 0,15 für zwei Zeilen 0,1 Sekunden.
-	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.15 seconds is the default for single-line, 0.1 seconds for multi-line.
+	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.15 seconds is the default for single-line, 0.1 seconds for large text.
 	ES	Se puede ajustar la velocidad a la que el texto se desplaza por la pantalla. La velocidad de desplazamiento define el tiempo que se tarda entre actualizaciones de pantalla. En un reproductor con una pantalla gráfica, se puede ajustar junto con Píxeles de desplazamiento para establecer la velocidad y la calidad de desplazamiento (el texto se moverá según el valor de Píxeles de desplazamiento en cada valor en segundos de Velocidad de desplazamiento). En un reproductor con una pantalla de caracteres, esto define la duración antes del desplazamiento al próximo carácter. Introduzca un valor, en segundos, para el tiempo de espera entre actualizaciones. Los número bajos hacen que el desplazamiento sea más rápido. 0,15 segundos es el valor predeterminado para una sola línea; 0,1 segundos para dos líneas.
 	FI	Voi säätää millä nopeudella teksti vierii ruudulla. Vieritysnopeus määrittelee ruudunpäivitysten välisen ajan. Graafisen näytön omaavissa soittimissa, tätä voidaan säätää vierityspikselien kanssa vierityksen laadun määrittämiseksi. Merkkipohjaisissa näytöissä, tämä määrittelee kuinka kauan odotetaan, ennenkuin vieritetään seuraavaan merkkiin. Syötä arvo sekunneissa. Pienemmät arvot nopeuttavat vieritystä. 0.15 on yksirivisen näytön oletusarvo ja 0.1 kaksirivisen.
 	FR	Vous pouvez ajuster la vitesse de défilement du texte à l'écran. La vitesse de défilement permet de définir l'intervalle de temps entre les rafraîchissements de l'écran. Pour une platine dotée d'un affichage graphique, vous pouvez ajuster cette valeur en combinaison avec la valeur de Pixels de défilement pour définir la vitesse et la qualité du défilement. Le texte se déplace d'un certain nombre de pixels après le nombre de secondes défini. Pour une platine dotée d'un affichage par caractères, cette valeur définir l'intervalle de temps avant le défilement vers le caractère suivant. Spécifiez une valeur en secondes pour cet intervalle. Plus la valeur est faible, plus le défilement est rapide. La valeur par défaut 0,15 s pour l'affichage sur une seule ligne et 0,1 s pour l'affichage sur deux lignes.
@@ -2707,21 +2707,7 @@ SETUP_SCROLLRATE_DESC
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE-LINE
-	EN	Multi-Line
-
-SINGLE-LINE
-	CS	Jediný řádek
-	DE	Einzelne Zeile
-	EN	Single Line
-	ES	Una sola línea
-	FI	Yhden rivin
-	FR	Une seule ligne
-	HE	שורה יחידה
-	IT	Riga singola
-	NL	Enkele regel
-	NO	Enkeltlinje
-	SV	Enkel höjd
-	ZH_CN	单行
+	EN	Large Text
 
 SETUP_GROUP_ALARM
 	CS	Budík
