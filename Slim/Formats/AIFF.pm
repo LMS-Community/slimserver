@@ -113,6 +113,9 @@ sub getTag {
 	if ( $prefs->get('useTPE2AsAlbumArtist') ) {
 		$MP3::Info::v2_to_v1_names{'TPE2'} = 'ALBUMARTIST';
 	}
+	else {
+		$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';
+	}
 
 	$log->info("Reading information for $file");
 
