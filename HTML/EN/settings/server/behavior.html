@@ -24,6 +24,11 @@
 			<input type="radio" name="pref_useBandAsAlbumArtist" value="0" [% IF NOT prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_0' | getstring %]<br/>
 			<input type="radio" name="pref_useBandAsAlbumArtist" value="1" [% IF prefs.pref_useBandAsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]<br/>
 		[% END %]
+		
+		[% WRAPPER settingGroup title="" desc="SETUP_USETPE2ASALBUMARTIST_DESC"%]
+			<input type="radio" name="pref_useTPE2AsAlbumArtist" value="0" [% IF NOT prefs.pref_useTPE2AsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USETPE2ASALBUMARTIST_0' | getstring %]<br/>
+			<input type="radio" name="pref_useTPE2AsAlbumArtist" value="1" [% IF prefs.pref_useTPE2AsAlbumArtist %]checked="checked"[% END %]>[% 'SETUP_USETPE2ASALBUMARTIST_1' | getstring %]<br/>
+		[% END %]
 
 		[% WRAPPER settingGroup title="" desc=""%]
 			<div class="prefDesc">[% "SETUP_VARIOUSARTISTSSTRING_DESC" | string %]</div>

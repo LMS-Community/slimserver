@@ -13,6 +13,7 @@ use base qw(Slim::Formats);
 use MP3::Info;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::SoundCheck;
 
 =head1 NAME
@@ -40,6 +41,8 @@ L<Slim::Formats>, L<Slim::Utils::SoundCheck>, L<MP3::Info>
 =cut
 
 my $log = logger('formats.audio');
+
+my $prefs = preferences('server');
 
 # Additional tag mapping taken from Slim::Formats::MP3
 {
@@ -105,6 +108,11 @@ sub getTag {
 
 	# Make sure the file exists.
 	return undef unless $filesize && -r $file;
+	
+	# Bug 8001, remap TPE2 if user wants it to mean Album Artist
+	if ( $prefs->get('useTPE2AsAlbumArtist') ) {
+		$MP3::Info::v2_to_v1_names{'TPE2'} = 'ALBUMARTIST';
+	}
 
 	$log->info("Reading information for $file");
 
