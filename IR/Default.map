@@ -325,6 +325,8 @@ play					= done
 add						= done
 stop					= done_passback
 knob					= done
+knob_left				= volume
+knob_right				= volume
 
 [INPUT.Time]
 0						= numberLetter_0
