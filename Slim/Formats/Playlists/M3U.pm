@@ -70,12 +70,18 @@ sub read {
 
 			$log->debug("  found secs: $secs, title: $title, artist: $artist, album: $album");
 
-		} elsif ($entry =~ /^#EXTINF:(.*?),(.*)$/) {
+		}
+		elsif ($entry =~ /^#EXTINF:(.*?),(.*)$/) {
 
 			$secs  = $1;
 			$title = $2;	
 
 			$log->debug("  found secs: $secs, title: $title");
+		}
+		elsif ( $entry =~ /^#EXTINF:(.*?)$/ ) {
+			$title = $1;
+			
+			$log->debug("  found title: $title");
 		}
 
 		next if $entry =~ /^#/;
