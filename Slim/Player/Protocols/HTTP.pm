@@ -547,6 +547,10 @@ sub getMetadataFor {
 		}
 	}
 	
+	# Check for radio URLs with cached covers (RadioTime)
+	my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+	my $cover = $cache->get( "remote_image_$url" );
+	
 	# Item may be a playlist, so get the real URL playing
 	if ( Slim::Music::Info::isPlaylist($url) ) {
 		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
@@ -555,8 +559,7 @@ sub getMetadataFor {
 	}
 	
 	# Remote streams may include ID3 tags with embedded artwork
-	# Example: http://downloads.bbc.co.uk/podcasts/radio4/excessbag/excessbag_20080426-1217.mp3		
-	my $cover;
+	# Example: http://downloads.bbc.co.uk/podcasts/radio4/excessbag/excessbag_20080426-1217.mp3
 	my $track = Slim::Schema->rs('Track')->objectForUrl( {
 		url => $url,
 	} );
