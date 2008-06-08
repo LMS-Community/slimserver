@@ -62,7 +62,6 @@ sub init {
 	$client->SUPER::init();
 }
 
-
 sub model {
 	return 'boom';
 }
@@ -79,14 +78,18 @@ sub hasPowerControl {
 	return 0;
 }
 
-# sub maxTreble {	return 100; }
-# sub minTreble {	return -100; }
-# 
-# sub maxBass {	return 100; }
-# sub minBass {	return -100; }
-# 
-# sub maxXL {	return 10; }
-# sub minXL {	return -100; }
+sub maxTreble {	return 100; }
+sub minTreble {	return -100; }
+
+sub maxBass {	return 100; }
+sub minBass {	return -100; }
+
+sub maxXL {	return 10; }
+sub minXL {	return -90; }
+
+sub stereoXL {
+	return 0;
+}
 
 sub reconnect {
 	my $client = shift;
@@ -238,37 +241,42 @@ sub sendBDACFrame {
 
 	my $log = logger('player.firmware');
 
-	if($type eq 'DACRESET') {
+	my $buf = undef; 
+
+	if ($type eq 'DACRESET') {
 
 		$log->info("Sending BDAC DAC RESET");
 
-		my $buf = pack('C',0);
+		$buf = pack('C',0);
 
-		$client->sendFrame('bdac', \$buf);
-
-	}elsif($type eq 'DACI2CDATA') {
+	} elsif($type eq 'DACI2CDATA') {
 		my $length = length($data)/9;
 
 		$log->debug("Sending BDAC DAC I2C DATA $length chunks");
-		#$log->debug("Sending $length chunks of 9 bytes");
 
-		my $buf = pack('C',1).pack('C',$length).$data;
-		$client->sendFrame('bdac', \$buf);
+		$buf = pack('C',1).pack('C',$length).$data;
 
-	}elsif($type eq 'DACI2CDATAEND') {
+	} elsif($type eq 'DACI2CDATAEND') {
 
 		$log->info("Sending BDAC DAC I2C DATA COMPLETE");
 
-		my $buf = pack('C',2);
+		$buf = pack('C',2);
 
-		$client->sendFrame('bdac', \$buf);
-
-	}elsif($type eq 'DACDEFAULT') {
+	} elsif($type eq 'DACDEFAULT') {
 
 		$log->info("Sending BDAC DAC DEFAULT");
 
-		my $buf = pack('C',3);
+		$buf = pack('C',3);
 
+	} elsif($type eq 'DACI2CGEN') {
+		my $length = length($data)/8;
+
+		$log->info("Sending BDAC I2C GENERAL DATA $length chunks");
+
+		$buf = pack('C',4).pack('C',$length).$data;
+	}
+	
+	if (defined $buf) {
 		$client->sendFrame('bdac', \$buf);
 	}
 }
