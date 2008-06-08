@@ -13794,6 +13794,15 @@ SETUP_USEBANDASALBUMARTIST_0
 	NL	Albums bij alle artiesten voor dat album weergeven
 	ZH_CN	专辑按艺人列出
 
+SETUP_USETPE2ASALBUMARTIST_DESC
+	EN	Some MP3 tagging tools use the TPE2 field to mean Album Artist while others use it to mean Band.  Select the meaning you would like to use.
+
+SETUP_USETPE2ASALBUMARTIST_1
+	EN	TPE2 is Album Artist
+
+SETUP_USETPE2ASALBUMARTIST_0
+	EN	TPE2 is Band
+
 LYRICS
 	DA	Tekster
 	DE	Texte

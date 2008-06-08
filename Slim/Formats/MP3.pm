@@ -33,8 +33,11 @@ use MPEG::Audio::Frame;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Utils::SoundCheck;
 use Slim::Utils::Strings qw(string);
+
+my $prefs = preferences('server');
 
 my %tagMapping = (
 	'Unique file identifier'            => 'MUSICBRAINZ_ID',
@@ -134,6 +137,11 @@ sub getTag {
 		$log->error("Couldn't open file: [$file] $!");
 		return {};
 	};
+	
+	# Bug 8001, remap TPE2 if user wants it to mean Album Artist
+	if ( $prefs->get('useTPE2AsAlbumArtist') ) {
+		$MP3::Info::v2_to_v1_names{'TPE2'} = 'ALBUMARTIST';
+	}
 
 	# Bug: 4071 - Windows is lame.
 	binmode($fh);
