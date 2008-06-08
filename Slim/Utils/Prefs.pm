@@ -187,6 +187,7 @@ sub init {
 		'bandInArtists'         => 0,
 		'variousArtistAutoIdentification' => 0,
 		'useBandAsAlbumArtist'  => 0,
+		'useTPE2AsAlbumArtist'  => 0,
 		'variousArtistsString'  => undef,
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
