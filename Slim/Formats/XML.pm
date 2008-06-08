@@ -506,6 +506,12 @@ sub _parseOPMLOutline {
 			'items' => _parseOPMLOutline($itemXML->{'outline'}),
 			%attrs,
 		};
+		
+		# Cache images for remote URLs to support RadioTime logos
+		if ( $attrs{image} ) {
+			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+			$cache->set( "remote_image_$url", $attrs{image}, 86400 * 7 );
+		}
 	}
 
 	return \@items;
