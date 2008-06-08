@@ -7,13 +7,6 @@ DELETE FROM contributor_album;
 
 INSERT INTO contributor_album (role,contributor,album) SELECT DISTINCT role,contributor,album FROM contributor_track,tracks where tracks.id=contributor_track.track;
 
-
---
--- Remove all remote tracks
---
-
-DELETE FROM tracks WHERE remote = 1;
-
 --
 -- Optimise the schema
 --
