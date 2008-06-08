@@ -5206,15 +5206,7 @@ sub _songData {
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
 	if ( $track->remote ) {
-		my $url;
-		if (Slim::Music::Info::isPlaylist($track->url)) {
-			if (defined($request->client->remotePlaylistCurrentEntry)) {
-				$url = $request->client->remotePlaylistCurrentEntry->url;
-			}
-			
-		} else {
-			$url = $track->url;
-		}
+		my $url = $track->url;
 
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		
