@@ -57,10 +57,10 @@
 		
 [% IF clients %]
 	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" %]
-		[% FOREACH client = clients %]
+		[% FOREACH client = sorted %]
 		<div style="padding-bottom: 10px;">
-			[% FOREACH item IN client.value %]
-				[% IF item.items.1  %]
+			[% FOREACH item IN clients.$client %]
+				[% IF item.items.1 %]
 				<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
 				[% END %]
 			[% END %]

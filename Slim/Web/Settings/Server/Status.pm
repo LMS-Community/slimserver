@@ -67,6 +67,13 @@ sub handler {
 		];
 	}
 
+	$paramRef->{sorted} = [
+		sort {
+			uc(Slim::Player::Client::getClient($a)->name) cmp uc(Slim::Player::Client::getClient($b)->name);
+		} 
+		keys %{ $paramRef->{clients} }
+	];
+
 	# TODO Get something useful from any Jive devices on the network.
 	#$paramRef->{controllers} = undef;
 
