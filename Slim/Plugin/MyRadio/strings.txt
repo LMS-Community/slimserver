@@ -1,0 +1,5 @@
+PLUGIN_MYRADIO
+	EN	My Radio Stations
+
+PLUGIN_MYRADIO_DESC
+	EN	Plugin to store your favorite radio stations under the Radio menu.  This plugin may be enabled to allow you to store your radio stations separately from your Favorites.
