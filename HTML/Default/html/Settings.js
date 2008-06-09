@@ -274,6 +274,13 @@ Settings.Page = function(){
 				tooltipType: 'title'
 			});
 
+
+			playerList = playerList.sort(function(a, b){
+				a = a.name.toLowerCase();
+				b = b.name.toLowerCase();
+				return a > b ? 1 : (a < b ? -1 : 0);
+			});
+
 			for (var x=0; x<playerList.length; x++){
 				if (playerList[x].current) {
 					playerChooser.setText(playerList[x].name);
