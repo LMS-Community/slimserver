@@ -527,7 +527,7 @@ sub browsedbItemName {
 		my $hotkey = $client->modeParam('hotkey');
 
 		if (defined $index) {
-			return $client->string('FAVORITES_FAVORITE') . (defined $hotkey ? " [ $hotkey ]" : '');
+			return $client->string('PLUGIN_FAVORITES_REMOVE') . (defined $hotkey ? " [ $hotkey ]" : '');
 		} else {
 			$item = $client->string('PLUGIN_FAVORITES_ADD');
 		}
