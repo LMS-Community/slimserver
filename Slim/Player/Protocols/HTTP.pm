@@ -547,6 +547,9 @@ sub getMetadataFor {
 		}
 	}
 	
+	# Remember playlist URL
+	my $playlistURL = $url;
+	
 	# Check for radio URLs with cached covers (RadioTime)
 	my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
 	my $cover = $cache->get( "remote_image_$url" );
@@ -614,7 +617,7 @@ sub getMetadataFor {
 			};
 		}
 	}
-	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ||  $url =~ /\.radioio\.com/ ) {
+	elsif ( $playlistURL =~ /radioio/i ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RadioIO::Plugin') ) {
 			# RadioIO
 			my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
