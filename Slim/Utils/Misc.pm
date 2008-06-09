@@ -379,10 +379,22 @@ sub pathFromMacAlias {
 
 	return $path unless $fullpath && $canFollowAlias;
 
-	if (my $alis = isMacAlias($fullpath)) {
+	if (isMacAlias($fullpath)) {
 
-		$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;	
+		$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
+
+		my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0);
+
+		return '' unless $rsc;
+
+		my $alis = Mac::Resources::GetIndResource('alis', 1);
+
+		return '' unless $alis;
+
 		$path = Mac::Files::ResolveAlias($alis);
+
+		Mac::Resources::ReleaseResource($alis);
+		Mac::Resources::CloseResFile($rsc);
 	}
 
 	return $path;
@@ -400,12 +412,19 @@ sub isMacAlias {
 	return unless $fullpath && $canFollowAlias;
 
 	$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
-	if (Mac::Resources::FSpOpenResFile($fullpath, 0) && (my $alis = Mac::Resources::GetIndResource('alis', 1))) {
-		
-		return $alis;
-	}
 
-	return;
+	my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0);
+
+	return unless $rsc;
+
+	my $alis = Mac::Resources::GetIndResource('alis', 1);
+
+	return unless $alis;
+
+	Mac::Resources::ReleaseResource($alis);
+	Mac::Resources::CloseResFile($rsc);
+
+	return 1;
 }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
