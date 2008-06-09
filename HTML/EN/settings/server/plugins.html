@@ -16,6 +16,7 @@
 
 		[% title = BLOCK %]
 			<input name="[% name %]" type="checkbox" [% enforce ? "disabled" : "" %] [% enabled ? "checked=\"1\"" : "" %] class="pluginEnablerCheckbox"> [% name | getstring %]
+			[% IF version %](v[% version %])[% END %]
 		[% END %]
 
 		[% WRAPPER setting desc = plugins.$plugin.description %]
