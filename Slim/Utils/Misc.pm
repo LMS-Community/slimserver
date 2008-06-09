@@ -383,18 +383,17 @@ sub pathFromMacAlias {
 
 		$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
 
-		my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0);
+		if (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0)) {
+			
+			if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
+				
+				$path = Mac::Files::ResolveAlias($alis);
 
-		return '' unless $rsc;
+				Mac::Resources::ReleaseResource($alis);
+			}
 
-		my $alis = Mac::Resources::GetIndResource('alis', 1);
-
-		return '' unless $alis;
-
-		$path = Mac::Files::ResolveAlias($alis);
-
-		Mac::Resources::ReleaseResource($alis);
-		Mac::Resources::CloseResFile($rsc);
+			Mac::Resources::CloseResFile($rsc);
+		}
 	}
 
 	return $path;
@@ -408,28 +407,30 @@ Return the filepath for a given Mac Alias
 
 sub isMacAlias {
 	my $fullpath = shift;
+	my $isAlias  = 0;
 
 	return unless $fullpath && $canFollowAlias;
 
 	$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
 
-	my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0);
+	if (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0)) {
 
-	return unless $rsc;
+		if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
 
-	my $alis = Mac::Resources::GetIndResource('alis', 1);
+			$isAlias = 1;
 
-	return unless $alis;
+			Mac::Resources::ReleaseResource($alis);
+		}
 
-	Mac::Resources::ReleaseResource($alis);
-	Mac::Resources::CloseResFile($rsc);
+		Mac::Resources::CloseResFile($rsc);
+	}
 
-	return 1;
+	return $isAlias;
 }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
 
-	Given a file::// style url, return the filepath to the caller
+	Given a file:// style url, return the filepath to the caller
 
 	If the option $noCache argument is set, the result is  not cached
 
