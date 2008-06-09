@@ -113,7 +113,7 @@ sub deleteMode {
 	
 	# Bug 6177, Menu to confirm favorite removal
 	Slim::Buttons::Common::pushMode( $client, 'INPUT.Choice', {
-		header   => '{FAVORITES_FAVORITE} ' . (defined $hotkey ? $hotkey : ''),
+		header   => '{PLUGIN_FAVORITES_REMOVE} ' . (defined $hotkey ? $hotkey : ''),
 		title    => $title,
 		favorite => $index,
 		listRef  => [
