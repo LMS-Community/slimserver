@@ -187,7 +187,9 @@ sub setPref {
 	
 	my $pref = $client->modeParam('pref');
 	
-	$prefs->client($client)->set($pref, $value);
+	my $newvalue = $prefs->client($client)->get($pref) + $value;
+	
+	$prefs->client($client)->set($pref, $newvalue);
 }
 
 sub executeCommand {
