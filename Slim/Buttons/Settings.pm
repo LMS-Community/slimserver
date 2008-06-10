@@ -548,8 +548,17 @@ sub switchServer {
 					# don't disconnect unless we're still in this mode.
 					return unless ($client->modeParam('server.switch'));
 
-					my $addr = Slim::Networking::Discovery::Server::getServerAddress($server);
-					$client->execute(['connect', $addr]);
+					$client->execute([ 'stop' ]);
+
+					# ensure client has disconnected before forgetting him
+					Slim::Control::Request::subscribe(
+						\&_forgetPlayer, 
+						[['client'],['disconnect']], 
+						$client
+					);
+
+					$client->execute( [ 'connect', Slim::Networking::Discovery::Server::getServerAddress($server) ] );
+
 				}, $server);
 		
 			# this flag prevents disconnect if user has popped out of this mode
@@ -560,6 +569,18 @@ sub switchServer {
 		}
 	}
 }
+
+sub _forgetPlayer {
+	my $request = shift;
+	my $client  = $request->client;
+	
+	Slim::Control::Request::unsubscribe(\&_forgetPlayer, $client);
+
+	Slim::Control::Request::executeRequest(
+		$client,
+		['client', 'forget']);	
+}
+
 
 =head1 SEE ALSO
 
