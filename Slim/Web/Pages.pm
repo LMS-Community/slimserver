@@ -265,7 +265,7 @@ sub addPlayerList {
 			}	
 		}
 
-		$params->{'player_chooser_list'} = $class->options($client->id(), \%clientlist, $params->{'skinOverride'});
+		$params->{'player_chooser_list'} = $class->options($client->id(), \%clientlist, $params->{'skinOverride'}, 50);
 	}
 }
 
@@ -396,7 +396,7 @@ sub anchor {
 }
 
 sub options {
-	my ($class, $selected, $option, $skinOverride) = @_;
+	my ($class, $selected, $option, $skinOverride, $truncate) = @_;
 
 	# pass in the selected value and a hash of value => text pairs to get the option list filled
 	# with the correct option selected.
@@ -410,6 +410,7 @@ sub options {
 			'key'          => $curroption,
 			'value'        => $option->{$curroption},
 			'skinOverride' => $skinOverride,
+			'maxLength'    => $truncate,
 		})};
 	}
 
