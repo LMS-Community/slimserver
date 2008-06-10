@@ -33,6 +33,7 @@ use strict;
 
 use Data::URIEncode qw(complex_to_query);
 use Data::Dump;
+use Storable;
 use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use URI::Escape;
@@ -354,7 +355,7 @@ sub albumsQuery {
 			}
 		};
 		
-		$base->{'actions'}{'play-hold'} = _musicIPBase();
+		$base->{'actions'}{'play-hold'} = _mixerBase();
 
 		# adapt actions to SS preference
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
@@ -447,7 +448,7 @@ sub albumsQuery {
 					$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 				}
 
-				_musicIPItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			
 			# "raw" result formatting (for CLI or JSON RPC)
@@ -723,7 +724,7 @@ sub artistsQuery {
 				'titleStyle' => 'artists',
 			},
 		};
-		$base->{'actions'}{'play-hold'} = _musicIPBase();
+		$base->{'actions'}{'play-hold'} = _mixerBase();
 
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
@@ -782,7 +783,7 @@ sub artistsQuery {
 					'artist_id' => $id, 
 					'textkey' => substr($obj->namesort, 0, 1),
 				};
-				_musicIPItemParams(request => $request, obj => $obj, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				_mixerItemParams(request => $request, obj => $obj, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			}
 			else {
@@ -1338,7 +1339,7 @@ sub genresQuery {
 			},
 			window => { titleStyle => 'genres', },
 		};
-		$base->{'actions'}{'play-hold'} = _musicIPBase();
+		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$request->addResult('base', $base);
 
 	}
@@ -1380,7 +1381,7 @@ sub genresQuery {
 				};
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
-				_musicIPItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
@@ -3230,6 +3231,7 @@ sub statusQuery {
 	
 	my $connected = $client->connected() || 0;
 	my $power     = $client->power();
+	my $ip        = $client->ipport();
 	my $repeat    = Slim::Player::Playlist::repeat($client);
 	my $shuffle   = Slim::Player::Playlist::shuffle($client);
 	my $songCount = Slim::Player::Playlist::count($client);
@@ -3253,6 +3255,7 @@ sub statusQuery {
 	# add player info...
 	$request->addResult("player_name", $client->name());
 	$request->addResult("player_connected", $connected);
+	$request->addResult("player_ip", $ip);
 
 	# add showBriefly info
 	if ($client->display->renderCache->{showBriefly}
@@ -3850,7 +3853,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => $val } );
 								# add MusicIP handler for play-hold when available
 								my $genreObj = Slim::Schema->find("Genre", $id);
-								$actions->{'play-hold'} = _musicIPItemHandler(obj => $genreObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'genre_id', loopname => $loopname );
+								$actions->{'play-hold'} = _mixerItemHandler(obj => $genreObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'genre_id', loopname => $loopname );
 
 							}
 						
@@ -3895,7 +3898,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId, text => $val } );
 								# add MusicIP handler for play-hold when available
 								my $albumObj = Slim::Schema->find("Album", $id);
-								$actions->{'play-hold'} = _musicIPItemHandler(obj => $albumObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'album_id', loopname => $loopname );
+								$actions->{'play-hold'} = _mixerItemHandler(obj => $albumObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'album_id', loopname => $loopname );
 							}
 							
 							#or one of the artist role -- we don't test explicitely !!!
@@ -3940,7 +3943,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'artists', 'menuStyle' => 'album', text => $val } );
 								# add MusicIP handler for play-hold when available
 								my $artistObj = Slim::Schema->find("Contributor", $id);
-								$actions->{'play-hold'} = _musicIPItemHandler(obj => $artistObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'artist_id', loopname => $loopname );
+								 $actions->{'play-hold'} = _mixerItemHandler(obj => $artistObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'artist_id', loopname => $loopname );
 							}
 							
 							$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
@@ -4020,9 +4023,8 @@ sub songinfoQuery {
 							} elsif ($key eq 'TITLE') {
 								# add MusicIP handler for play-hold when available
 								my $trackObj = Slim::Schema->find("Track", $trackID);
-								my $actions = { 
-									'play-hold' => _musicIPItemHandler(obj => $trackObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'track_id', loopname => $loopname ), 
-								};
+								my $actions;
+								$actions->{'play-hold'} = _mixerItemHandler(obj => $trackObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'track_id', loopname => $loopname );
 								$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 							}
 							elsif ($key eq 'LENGTH') {
@@ -4099,23 +4101,29 @@ sub songinfoQuery {
 				$idx++;
  			}
 
+			my $Imports = Slim::Music::Import->importers;
+			my @mixers = ();
+			for my $import (keys %{$Imports}) {
+				next if !$Imports->{$import}->{'mixer'};
+				next if !$Imports->{$import}->{'use'};
+				next if !$Imports->{$import}->{'cliBase'};
+				push @mixers, $import;
+			}
+	
 			# Add "Create MusicIP Mix" item when MusicIP enabled, running, and track is mixable
-			if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') &&
-				Slim::Plugin::MusicMagic::Plugin->isRunning ) {
+			#if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') &&
+			#	Slim::Plugin::MusicMagic::Plugin->isRunning ) {
+
+			# one enabled mixer available
+			if ( scalar(@mixers) ) {
 				my $trackObj = Slim::Schema->find("Track", $trackID);
-				# object must be blessed and mixable
-				if (blessed($trackObj) && $trackObj->musicmagic_mixable) {
-					my $actions = {
-						go	=> {
-							player => 0,
-							cmd    => ['musicip', 'mix'],
-							'params'	=> {
-								'menu'		=> '1',
-								'track_id'	=> $trackID,
-							},
-						},
-					};
-					$request->addResultLoop($loopname, $chunkCount, 'text', $request->string('MUSICIP_CREATEMIX'));
+
+				# object must be blessed and mixable by one of the mixers
+				my $mixable = grep { $_->mixable($trackObj) } @mixers;
+				if ( blessed($trackObj) && $mixable ) {
+					my $actions;
+					$actions->{'go'} = _mixerItemHandler(obj => $trackObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'track_id', loopname => $loopname );
+					$request->addResultLoop($loopname, $chunkCount, 'text', $request->string('CREATE_MIX'));
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 					$chunkCount++;
 					$totalCount++;
@@ -4340,7 +4348,7 @@ sub titlesQuery {
 				'titleStyle' => 'album',
 			}
 		};
-		$base->{'actions'}{'play-hold'} = _musicIPBase();
+		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$request->addResult('base', $base);
 		
 	}
@@ -4428,7 +4436,7 @@ sub titlesQuery {
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
-				 _musicIPItemParams(request => $request, obj => $item, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				 _mixerItemParams(request => $request, obj => $item, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 			}
 			
 			# regular formatting
@@ -5680,12 +5688,7 @@ sub _fixCount {
 	return $totalCount;
 }
 
-sub _musicIPItemParams {
-
-	if ( !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin')  ||
-		!Slim::Plugin::MusicMagic::Plugin->isRunning  ) {
-		return;	
-	}
+sub _mixerItemParams {
 	my %args       = @_;
 	my $chunkCount = $args{'chunkCount'};
 	my $loopname   = $args{'loopname'};
@@ -5693,36 +5696,69 @@ sub _musicIPItemParams {
 	my $request    = $args{'request'};
 	my $obj        = $args{'obj'};
 
-	if ($obj->musicmagic_mixable) {
-		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
-	} else {
-		my $playHoldAction = {
-			player => 0,
-			cmd    => ['musicip', 'unmixable'],
+	my $Imports = Slim::Music::Import->importers;
+	my @mixers = ();
+	for my $import (keys %{$Imports}) {
+		next if !$Imports->{$import}->{'mixer'};
+		next if !$Imports->{$import}->{'use'};
+		next if !$Imports->{$import}->{'cliBase'};
+		push @mixers, $import;
+	}
+	
+	# one enabled mixer available
+	if ( scalar(@mixers) == 1 ) {
+		if ($mixers[0]->mixable($obj)) {
+			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
+		} else {
+			my $playHoldAction = {
+				player => 0,
+				cmd    => ['musicip', 'unmixable'],
 				params => $params,
 			};
-		$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction });
-	}
+			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction } );
+		}
+	# FIXME: > 1 enabled mixer available; for now, punt
+	} elsif ( scalar(@mixers) ) {
 
-}
-	
-sub _musicIPBase {
-	if ( !Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin')  ||
-		!Slim::Plugin::MusicMagic::Plugin->isRunning  ) {
-		return undef;	
+		if ($mixers[0]->mixable($obj)) {
+			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
+		} else {
+			my $playHoldAction = {
+				player => 0,
+				cmd    => ['musicip', 'unmixable'],
+				params => $params,
+			};
+			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction });
+		}
+
 	} else {
-		return {
-			player => 0,
-			cmd    => ['musicip', 'mix'],
-			params => {
-				menu => '1',
-			},
-			itemsParams => 'params',
-		};
+		return;
 	}
 }
 
-sub _musicIPItemHandler {
+sub _mixerBase {
+
+	my $Imports = Slim::Music::Import->importers;
+	my @mixers = ();
+	for my $import (keys %{$Imports}) {
+		next if !$Imports->{$import}->{'mixer'};
+		next if !$Imports->{$import}->{'use'};
+		next if !$Imports->{$import}->{'cliBase'};
+		push @mixers, $import;
+	}
+	
+	# one enabled mixer available
+	if ( scalar(@mixers) == 1 ) {
+		return $Imports->{$mixers[0]}->{'cliBase'};
+	# FIXME: > 1 enabled mixer available; for now, punt
+	} elsif (@mixers) {
+		return $Imports->{$mixers[0]}->{'cliBase'};
+	} else {
+		return undef;	
+	}
+}
+
+sub _mixerItemHandler {
 	my %args       = @_;
 	my $chunkCount = $args{'chunkCount'};
 	my $loopname   = $args{'loopname'};
@@ -5730,31 +5766,36 @@ sub _musicIPItemHandler {
 	my $obj_param  = $args{'obj_param'};
 	my $request    = $args{'request'};
 
-	# MusicMagic needs to be enabled and running, and object must be blessed
-	if (	Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') &&
-		Slim::Plugin::MusicMagic::Plugin->isRunning &&
-		blessed($obj)  ) {
-		if ($obj->musicmagic_mixable) {
+	my $Imports = Slim::Music::Import->importers;
+	my @mixers = ();
+	for my $import (keys %{$Imports}) {
+		next if !$Imports->{$import}->{'mixer'};
+		next if !$Imports->{$import}->{'use'};
+		push @mixers, $import;
+	}
+	
+	# FIXME: multiple mixers not covered yet; for now, punt
+	if (scalar(@mixers) && blessed($obj)) {
+		my $mixer = $mixers[0];
+		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
 			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
-			return {
-				player => 0,
-				cmd    => ['musicip', 'mix'],
-				'params'	=> {
-					'menu'		=> '1',
-					$obj_param	=> $obj->id,
-				},
-			};
+			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
+			my $command = Storable::dclone( $Imports->{$mixers[0]}->{cliBase} );
+			$command->{'params'}{'menu'} = 1;
+			$command->{'params'}{$obj_param} = $obj->id;
+			return $command;
 		} else {
-			return {
+			return ({
 				player => 0,
 				cmd    => ['musicip', 'unmixable'],
-			};
+			}, undef);
+			
 		}
 	} else {
 		return undef;
 	}
 }
-	
+
 =head1 SEE ALSO
 
 L<Slim::Control::Request.pm>
