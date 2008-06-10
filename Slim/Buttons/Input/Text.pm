@@ -341,6 +341,11 @@ sub lines {
 
 	$line2 .= defined $last && defined $charsRef->[$last] ? $charsRef->[$last] : $client->symbols('rightarrow');
 
+	# trim left of string if too long for display
+	while ($client->measureText($line2, 2) > $client->displayWidth) {
+		$line2 = substr($line2, 1);
+	}
+
 	return { 'line' => [ $line1, $line2 ] };
 }
 
