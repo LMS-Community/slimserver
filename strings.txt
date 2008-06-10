@@ -13781,13 +13781,13 @@ SETUP_USEBANDASALBUMARTIST_0
 	ZH_CN	专辑按艺人列出
 
 SETUP_USETPE2ASALBUMARTIST_DESC
-	EN	Some MP3 tagging tools use the TPE2 field to mean Album Artist while others use it to mean Band.  Select the meaning you would like to use.
+	EN	The MP3 tag format does not provide a standard way of defining an Album Artist.  Some MP3 tagging tools use the TPE2 field for Album Artist (iTunes, Winamp, Windows Media Player) while others may use it for the intended meaning of "Band/orchestra".  Select the meaning you would like SqueezeCenter to use.  Changing this setting will start a rescan of your music library.
 
 SETUP_USETPE2ASALBUMARTIST_1
-	EN	TPE2 is Album Artist
+	EN	Treat TPE2 MP3 tag as Album Artist
 
 SETUP_USETPE2ASALBUMARTIST_0
-	EN	TPE2 is Band
+	EN	Treat TPE2 MP3 tag as Band
 
 LYRICS
 	DA	Tekster
