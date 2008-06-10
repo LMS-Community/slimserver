@@ -12,7 +12,6 @@ our $VERSION = substr(q$Revision: 1.7 $,10);
 
 # constants
 my $height = 4;
-my $width = 39;
 my $customchar = 1;
 
 # flag to avoid loading custom chars multiple times
@@ -57,7 +56,7 @@ sub defaultHandler {
 		my $client = shift;
 		if ($gamemode eq 'attract') {
 			$gamemode = 'play';
-			resetGame();
+			resetGame($client);
 			$client->pushLeft();
 			return 1;
 		} elsif ($gamemode eq 'gameover') {
@@ -87,7 +86,7 @@ our %functions = (
 		my ($client,$funct,$functarg) = @_;
 		if (defaultHandler($client)) {return};
 		if ((!Slim::Hardware::IR::holdTime($client) || Slim::Hardware::IR::repeatCount($client,2,0)) && $functarg =~ /-?1/) {
-			rotate($functarg);
+			rotate($client, $functarg);
 			$client->update();
 		}
 	},
@@ -97,9 +96,9 @@ our %functions = (
 			if (defaultHandler($client)) {return};
 			my $knobPos   = $client->knobPos();
 			if ($knobPos > $client->modeParam('listIndex')) {
-				rotate(1);
+				rotate($client, 1);
 			} elsif ($knobPos < $client->modeParam('listIndex')) {
-				rotate(-1);
+				rotate($client, -1);
 			}
 			$client->update();
 			$client->modeParam('listIndex', $knobPos);			
@@ -113,7 +112,7 @@ our %functions = (
 	'right' => sub  {
 		my $client = shift;
 		if (defaultHandler($client)) {return};
-		while (move(1,0)) {
+		while (move($client, 1,0)) {
 			$client->update();
 		}
 		$client->update();
@@ -122,7 +121,7 @@ our %functions = (
 		my $client = shift;
 		if (defaultHandler($client)) {return};
 		if (!Slim::Hardware::IR::holdTime($client) || Slim::Hardware::IR::repeatCount($client,2,0)) {
-			move(0,-1);
+			move($client, 0,-1);
 			$client->update();
 		}
 	},
@@ -130,7 +129,7 @@ our %functions = (
 		my $client = shift;
 		if (defaultHandler($client)) {return};
 		if (!Slim::Hardware::IR::holdTime($client) || Slim::Hardware::IR::repeatCount($client,2,0)) {
-			move(0,1);
+			move($client, 0,1);
 			$client->update();
 		}
 	},
@@ -139,7 +138,7 @@ our %functions = (
 # start a random new block at the top
 #
 sub dropNewBlock {
-
+	my $client = shift;
 	$xpos = 3;
 	$ypos = 2;
 	$currblock = int(rand() * ($#blocks+1));
@@ -147,7 +146,7 @@ sub dropNewBlock {
 	if ($currblock == 1) {
 		checkBorderConflict();
 	}
-	if (!move(0,0)) {
+	if (!move($client, 0,0)) {
 		gameOver();
 	}
 }
@@ -156,6 +155,7 @@ sub dropNewBlock {
 # rotates a block if it can
 #
 sub rotate {
+	my $client = shift;
 	my $direction = shift;
 
 	my $block = $blockspix[$currblock];
@@ -166,7 +166,7 @@ sub rotate {
 		@$pixel[1] = $temppix * $direction;
 	}
 	# check the position we rotated into and rotate back if it's bad
-	if (!move(0,0)) {
+	if (!move($client, 0,0)) {
 		rotate(-1 * $direction);
 	}
 }
@@ -177,6 +177,7 @@ sub rotate {
 # returns false if the move was blocked and doesn't move it
 #
 sub move {
+	my $client = shift;
 	my $xdelta = shift;
 	my $ydelta = shift;
 
@@ -195,8 +196,8 @@ sub move {
 				my $y = @$pixel[1] + $ypos;
 				$grid[$x][$y] = 1;
 			}
-			cleanupGrid();
-			dropNewBlock();
+			cleanupGrid($client);
+			dropNewBlock($client);
 		}
 		return (0);
 	}
@@ -208,8 +209,11 @@ sub move {
 # NOTE: stolen from Sean's perltris cause I suck
 #
 sub cleanupGrid {
-
+	my $client = shift;
 	my $scoremult = 0;
+
+	my $width = $client->displayWidth() / 8 - 1;
+	
 
 COL:	for (my $x = $width; $x >= 1; $x--)
 	{
@@ -310,7 +314,8 @@ sub loadBlocks {
 # initalize a grid with walls around the playing area
 #
 sub initGrid {
-
+	my $client = shift;
+	my $width = $client->displayWidth() / 8 - 1;
 	for (my $x = 0; $x < $width+2; $x++) {
 		for (my $y = 0; $y < $height+2; $y++) {
 	
@@ -324,10 +329,10 @@ sub initGrid {
 }
 
 sub resetGame {
-
+	my $client = shift;
 	loadBlocks();
-	initGrid();
-	dropNewBlock();
+	initGrid($client);
+	dropNewBlock($client);
 	$gamemode = 'play';
 	$score = 0;
 }
@@ -382,6 +387,8 @@ sub lines {
 
 	my $parts;
 
+	my $width = $client->displayWidth() / 8 - 1;
+	
 	if ($gamemode eq 'attract') {
 		$parts = {
 		    'center1' => "- S - L - I - M - T - R - I - S -",
@@ -398,8 +405,8 @@ sub lines {
 
 	if (Time::HiRes::time() - $lastdrop > .5)
 	{
-		move(1,0);
-		cleanupGrid();
+		move($client, 1,0);
+		cleanupGrid($client);
 		$lastdrop = Time::HiRes::time();
 	}
 
