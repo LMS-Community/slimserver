@@ -188,6 +188,14 @@ sub initPlugin {
 			'mixer'     => \&mixerFunction,
 			'mixerlink' => \&mixerlink,
 			'use'       => $prefs->get('musicip'),
+			'cliBase'   => {
+					player => 0,
+					cmd    => ['musicip', 'mix'],
+					params => {
+						menu => '1',
+					},
+					itemsParams => 'params',
+			},
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
