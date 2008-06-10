@@ -67,7 +67,7 @@ sub audioScrobblerSource {
 	my $track = $client->pluginData('currentTrack');
 	
 	if ( $track ) {
-		return 'L' . $track->{meta}->{trackauth};
+		return 'L' . $track->{extension}->{trackauth};
 	}
 	
 	return;
