@@ -2,9 +2,9 @@
 [% PROCESS pageheader.html %] 
 
 <div id="songInfoHeader">
-<a href="status_header.html?p0=playlist&p1=play&p2=[% itemobj.url | uri %]&player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+<a href="status_header.html?p0=playlist&p1=play&p2=[% itemobj.url | uri | replace("'", "%27") %]&player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
 <br>
-<a href="status_header.html?p0=playlist&p1=add&p2=[% itemobj.url | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %]</a>
+<a href="status_header.html?p0=playlist&p1=add&p2=[% itemobj.url | uri | replace("'", "%27") %]&player=[% player | uri %]" target="status">[% FILTER nbsp; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %]</a>
 </div>
 <div id="songInfo">
 	<ul>
