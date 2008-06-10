@@ -1,1 +1,2 @@
+[% IF maxLength; value = value | truncate(maxLength); END %]
 <option [% IF selected %]selected[% END %] value="[% key | utf8decode | html %]">[% value | html %]</option>
