@@ -88,7 +88,17 @@ sub maxXL {	return 10; }
 sub minXL {	return -90; }
 
 sub stereoXL {
-	return 0;
+	my $client = shift;
+	my $newvalue = shift;
+
+	my $bass = $client->_mixerPrefs('stereoxl', 'maxXL', 'minXL', $newvalue);
+
+	if (defined($newvalue)) {
+		#do bass bdac code here, then you can remove the warning
+		warn "stereoxl adjusted to $newvalue";
+	}
+
+	return $bass;
 }
 
 sub reconnect {

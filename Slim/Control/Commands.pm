@@ -412,7 +412,7 @@ sub mixerCommand {
 	$log->debug("Begin Function");
 
 	# check this is the correct command.
-	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
+	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch', 'stereoxl']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}

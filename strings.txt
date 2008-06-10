@@ -8355,6 +8355,9 @@ BASS
 	SV	Bas
 	ZH_CN	低音
 
+STEREOXL
+	EN	stereoXL
+
 PITCH
 	CS	Odstup
 	DA	Tonehøjde
