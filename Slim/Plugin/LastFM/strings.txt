@@ -1,0 +1,49 @@
+PLUGIN_LFM_MODULE_NAME
+	EN	Last.fm Radio
+
+PLUGIN_LFM_MODULE_NAME_DESC
+	EN	Listen to customized Last.fm Radio stations based on your listening history.
+
+PLUGIN_LFM_ERROR
+	EN	Last.fm Error
+
+PLUGIN_LFM_NO_TRACKS
+	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
+	EN	Unable to retrieve next track, press PLAY to try again.
+	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
+	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
+	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+
+PLUGIN_LFM_STREAM_FAILED
+	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
+	EN	Audio stream disconnected, skipping to next track.
+	ES	Secuencia de audio desconectada; salto a pista siguiente.
+	FR	Flux audio déconnecté, lecture du morceau suivant.
+	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
+	IT	Flusso audio disconnesso. Passaggio al brano seguente.
+	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+
+PLUGIN_LFM_SKIPS_EXCEEDED
+	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
+	EN	Hourly skip limit exceeded, you may skip again later.
+	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
+	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
+	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
+	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
+	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
+
+PLUGIN_LFM_LOVE
+	EN	Love this track
+
+PLUGIN_LFM_BAN
+	EN	Ban this track
+
+PLUGIN_LFM_ON_LASTFM
+	DE	Auf Last.fm Radio
+	EN	On Last.fm Radio
+	ES	En Last.fm Radio
+	FR	Sur Last.fm Radio
+	IT	Su Last.fm Radio
+	NL	Op Last.fm Radio
