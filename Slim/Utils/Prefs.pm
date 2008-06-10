@@ -411,7 +411,10 @@ sub init {
 	$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) },               'language'    );
 	$prefs->setChange( \&main::checkVersion,                                           'checkVersion');
 
-	$prefs->setChange( sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) }, qw(splitList groupdiscs) );
+	$prefs->setChange( 
+		sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },
+		qw(splitList groupdiscs useTPE2AsAlbumArtist)
+	);
 
 	$prefs->setChange( sub { Slim::Utils::Misc::setPriority($_[1]) }, 'serverPriority');
 
