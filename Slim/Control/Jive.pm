@@ -73,6 +73,7 @@ sub init {
 	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
 	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
+	Slim::Control::Request::addDispatch(['jiveunmixable'], [1, 1, 1, \&jiveUnmixableMessage]);
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'], [1, 0, 1, \&albumSortSettingsMenu]);
 	Slim::Control::Request::addDispatch(['jivesetalbumsort'], [1, 0, 1, \&jiveSetAlbumSort]);
 	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
@@ -1865,6 +1866,21 @@ sub jivePlaylistsCommand {
 
 	$request->setStatusDone();
 
+}
+
+sub jiveUnmixableMessage {
+	my $request = shift;
+	my $service = $request->getParam('contextToken');
+	my $serviceString = $request->client->string($service);
+	$request->client->showBriefly(
+		{ 'jive' =>
+			{
+				'type'    => 'popupplay',
+				'text'    => [ $request->client->string('UNMIXABLE', $serviceString) ],
+			},
+		}
+	);
+        $request->setStatusDone();
 }
 
 sub jiveFavoritesCommand {
