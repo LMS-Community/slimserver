@@ -41,6 +41,7 @@ my @mixTypes;
 my %genres       = ();
 my %genreNameMap = ();
 
+my %functions;
 my $htmlTemplate = 'plugins/RandomPlay/list.html';
 
 my $log          = Slim::Utils::Log->addLogCategory({
@@ -90,8 +91,6 @@ sub getDisplayName {
 sub initPlugin {
 	my $class = shift;
 
-	$class->SUPER::initPlugin();
-
 	# playlist commands that will stop random play
 	%stopcommands = (
 		'clear'	     => 1,
@@ -122,7 +121,15 @@ sub initPlugin {
 	my %seen;
 	@mixTypes = map { $mixTypeMap{$_} }	grep (!$seen{$mixTypeMap{$_}}++, keys %mixTypeMap);
 
+	# create function map
+	foreach (keys %mixTypeMap) {
+		my $type = $mixTypeMap{$_};
+		$functions{$_} = sub { playRandom(shift, $type); }
+	}		
+
 	generateGenreNameMap();
+
+	$class->SUPER::initPlugin();
 
 	# set up our subscription
 	Slim::Control::Request::subscribe(\&commandCallback, 
@@ -1113,6 +1120,12 @@ sub shutdownPlugin {
 
 	# unsubscribe
 	Slim::Control::Request::unsubscribe(\&commandCallback);
+}
+
+# legacy method to allow mapping to remote buttons
+sub getFunctions {
+
+	return \%functions;
 }
 
 sub buttonStart {
