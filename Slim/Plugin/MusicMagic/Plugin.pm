@@ -196,6 +196,7 @@ sub initPlugin {
 					},
 					itemsParams => 'params',
 			},
+			'contextToken' => 'MUSICMAGIC_MIX',
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
@@ -204,9 +205,6 @@ sub initPlugin {
 
 		Slim::Control::Request::addDispatch(['musicip', 'mix'],
 			[1, 1, 1, \&cliMix]);
-
-		Slim::Control::Request::addDispatch(['musicip', 'unmixable'],
-			[1, 1, 1, \&cliUnmixable]);
 
 		Slim::Control::Request::addDispatch(['musicip', 'moods'],
 			[1, 1, 0, \&cliMoods]);
@@ -258,19 +256,6 @@ sub defaultMap {
 	#Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
 
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix', \%mixMap);
-}
-
-sub cliUnmixable {
-	my $request = shift;
-	$request->client->showBriefly(
-		{ 'jive' => 
-			{
-				'type'    => 'popupplay',
-				'text'    => [ $request->client->string('MUSICIP_UNMIXABLE') ],
-			},
-		}
-	);
-	$request->setStatusDone();
 }
 
 sub playMix {
