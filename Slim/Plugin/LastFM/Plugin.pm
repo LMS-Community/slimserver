@@ -90,10 +90,12 @@ sub feed {
 	
 	# Add account to URL, if account is not configured SN will provide an error message
 	# instructing user to select an account for this player
-	my $account = $prefs->client($client)->get('account');
-	
-	if ( $account ) {
-		$url .= '?account=' . uri_escape_utf8($account);
+	if ( $client ) {
+		my $account = $prefs->client($client)->get('account');
+		
+		if ( $account ) {
+			$url .= '?account=' . uri_escape_utf8($account);
+		}		
 	}
 	
 	return $url;
