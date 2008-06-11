@@ -4101,25 +4101,14 @@ sub songinfoQuery {
 				$idx++;
  			}
 
-			my $Imports = Slim::Music::Import->importers;
-			my @mixers = ();
-			for my $import (keys %{$Imports}) {
-				next if !$Imports->{$import}->{'mixer'};
-				next if !$Imports->{$import}->{'use'};
-				next if !$Imports->{$import}->{'cliBase'};
-				push @mixers, $import;
-			}
-	
-			# Add "Create MusicIP Mix" item when MusicIP enabled, running, and track is mixable
-			#if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') &&
-			#	Slim::Plugin::MusicMagic::Plugin->isRunning ) {
+			my ($Imports, $mixers) = _mixers();
 
 			# one enabled mixer available
-			if ( scalar(@mixers) ) {
+			if ( scalar(@$mixers) ) {
 				my $trackObj = Slim::Schema->find("Track", $trackID);
 
 				# object must be blessed and mixable by one of the mixers
-				my $mixable = grep { $_->mixable($trackObj) } @mixers;
+				my $mixable = grep { $_->mixable($trackObj) } @$mixers;
 				if ( blessed($trackObj) && $mixable ) {
 					my $actions;
 					$actions->{'go'} = _mixerItemHandler(obj => $trackObj, request => $request, chunkCount => $chunkCount, 'obj_param' => 'track_id', loopname => $loopname );
@@ -5696,63 +5685,137 @@ sub _mixerItemParams {
 	my $request    = $args{'request'};
 	my $obj        = $args{'obj'};
 
-	my $Imports = Slim::Music::Import->importers;
-	my @mixers = ();
-	for my $import (keys %{$Imports}) {
-		next if !$Imports->{$import}->{'mixer'};
-		next if !$Imports->{$import}->{'use'};
-		next if !$Imports->{$import}->{'cliBase'};
-		push @mixers, $import;
-	}
-	
+	my ($Imports, $mixers) = _mixers();
+
 	# one enabled mixer available
-	if ( scalar(@mixers) == 1 ) {
-		if ($mixers[0]->mixable($obj)) {
+	if ( scalar(@$mixers) == 1 ) {
+		my $mixer = $mixers->[0];
+		if ($mixer->mixable($obj)) {
 			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 		} else {
 			my $playHoldAction = {
 				player => 0,
-				cmd    => ['musicip', 'unmixable'],
-				params => $params,
+				cmd    => ['jiveunmixable'],
+				params => {
+					contextToken => $Imports->{$mixer}->{contextToken},
+				},
 			};
 			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction } );
 		}
-	# FIXME: > 1 enabled mixer available; for now, punt
-	} elsif ( scalar(@mixers) ) {
-
-		if ($mixers[0]->mixable($obj)) {
-			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
-		} else {
-			my $playHoldAction = {
-				player => 0,
-				cmd    => ['musicip', 'unmixable'],
-				params => $params,
-			};
-			$request->addResultLoop($loopname, $chunkCount, 'actions', { 'play-hold' => $playHoldAction });
-		}
-
+	} elsif ( scalar(@$mixers) ) {
+		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 	} else {
 		return;
 	}
 }
 
-sub _mixerBase {
+sub contextMenuQuery {
 
+	$log->error('Begin Function');
+	my $request = shift;
+
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+
+	my $trackID       = $request->getParam('track_id');
+	my $genreID       = $request->getParam('genre_id');
+	my $artistID      = $request->getParam('artist_id');
+	my $albumID       = $request->getParam('album_id');
+				
+	my $obj_param     = $request->getParam('obj_param') ? $request->getParam('obj_param') :
+				$trackID  ? 'track_id'  :
+				$artistID ? 'artist_id' :
+				$albumID  ? 'album_id'  :
+				$genreID  ? 'genre_id'  :
+				undef;
+
+	if ( !defined($obj_param) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $obj_id = $request->getParam('obj_param') ? 
+			$request->getParam('obj_param') :
+			$request->getParam($obj_param);
+
+
+	my ($Imports, $mixers) = _mixers();
+	
+	$request->addResult('count', scalar(@$mixers) );
+	$request->addResult('offset', 0 );
+	$request->addResult('window', { menuStyle => '' } );
+	my $chunkCount = 0;
+
+	# fetch the object
+	my $obj;
+	if ($obj_param eq 'track_id') {
+		$obj = Slim::Schema->find('Track', $obj_id);
+	} elsif ($obj_param eq 'artist_id') {
+		$obj = Slim::Schema->find('Contributor', $obj_id);
+	} elsif ($obj_param eq 'album_id') {
+		$obj = Slim::Schema->find('Album', $obj_id);
+	} elsif ($obj_param eq 'genre_id') {
+		$obj = Slim::Schema->find('Genre', $obj_id);
+	}
+
+	for my $mixer (@$mixers) {
+		my $token = $Imports->{$mixer}->{'contextToken'};
+		my $string = $request->string($token);
+		$request->addResultLoop('item_loop', $chunkCount, 'text', $string);
+		my $actions;
+
+		if ( blessed($obj) && $mixer->mixable($obj) ) {
+			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
+			$command->{'params'}{'menu'} = 1;
+			$command->{'params'}{$obj_param} = $obj->id;
+			$actions->{go} = $command;
+		} else {
+			$actions = {
+				do => {
+					player => 0,
+					cmd    => ['jiveunmixable'],
+					params => {
+						contextToken => $Imports->{$mixer}->{contextToken},
+					},
+				}
+			};
+		}
+		$request->addResultLoop('item_loop', $chunkCount, 'actions', $actions);
+		$chunkCount++;
+	}
+	$request->setStatusDone();
+
+}
+
+sub _mixers {
 	my $Imports = Slim::Music::Import->importers;
 	my @mixers = ();
 	for my $import (keys %{$Imports}) {
 		next if !$Imports->{$import}->{'mixer'};
 		next if !$Imports->{$import}->{'use'};
 		next if !$Imports->{$import}->{'cliBase'};
+		next if !$Imports->{$import}->{'contextToken'};
 		push @mixers, $import;
 	}
+	return ($Imports, \@mixers);
+}
+
+sub _mixerBase {
+
+	my ($Imports, $mixers) = _mixers();
 	
 	# one enabled mixer available
-	if ( scalar(@mixers) == 1 ) {
-		return $Imports->{$mixers[0]}->{'cliBase'};
-	# FIXME: > 1 enabled mixer available; for now, punt
-	} elsif (@mixers) {
-		return $Imports->{$mixers[0]}->{'cliBase'};
+	if ( scalar(@$mixers) == 1 ) {
+		return $Imports->{$mixers->[0]}->{'cliBase'};
+	} elsif (@$mixers) {
+		return {
+			player => 0,
+			cmd    => ['contextmenu'],
+			params => {
+				menu => '1',
+			},
+			itemsParams => 'params',
+		};
 	} else {
 		return undef;	
 	}
@@ -5766,31 +5829,38 @@ sub _mixerItemHandler {
 	my $obj_param  = $args{'obj_param'};
 	my $request    = $args{'request'};
 
-	my $Imports = Slim::Music::Import->importers;
-	my @mixers = ();
-	for my $import (keys %{$Imports}) {
-		next if !$Imports->{$import}->{'mixer'};
-		next if !$Imports->{$import}->{'use'};
-		push @mixers, $import;
-	}
+	my ($Imports, $mixers) = _mixers();
 	
-	# FIXME: multiple mixers not covered yet; for now, punt
-	if (scalar(@mixers) && blessed($obj)) {
-		my $mixer = $mixers[0];
+	if (scalar(@$mixers) == 1 && blessed($obj)) {
+		my $mixer = $mixers->[0];
 		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
 			$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
-			my $command = Storable::dclone( $Imports->{$mixers[0]}->{cliBase} );
+			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
 			$command->{'params'}{'menu'} = 1;
 			$command->{'params'}{$obj_param} = $obj->id;
 			return $command;
 		} else {
-			return ({
-				player => 0,
-				cmd    => ['musicip', 'unmixable'],
-			}, undef);
+			return (
+				{
+					player => 0,
+					cmd    => ['jiveunmixable'],
+					params => {
+						contextToken => $Imports->{$mixer}->{contextToken},
+					},
+				}
+			);
 			
 		}
+	} elsif ( scalar(@$mixers) && blessed($obj) ) {
+		return {
+			player => 0,
+			cmd    => ['contextmenu'],
+			params => {
+				menu => '1',
+				$obj_param => $obj->id,
+			},
+		};
 	} else {
 		return undef;
 	}
