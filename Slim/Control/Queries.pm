@@ -4973,6 +4973,11 @@ sub _addJiveSong {
 			};
 		}
 		$request->addResultLoop( $loop, $count, 'actions', $actions );
+	} else {
+		my $actions;
+		$actions->{'play-hold'} = _mixerItemHandler(obj => $track, request => $request, chunkCount => $count, 'obj_param' => 'track_id', loopname => $loop );
+		$request->addResultLoop( $loop, $count, 'actions', $actions );
+		$request->addResultLoop( $loop, $count, 'playHoldAction', 'go' );
 	}
 
 	my $id = $track->id();

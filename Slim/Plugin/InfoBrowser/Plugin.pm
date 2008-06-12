@@ -62,9 +62,9 @@ my @searchDirs; # search directories for menu opml files
 sub initPlugin {
 	my $class = shift;
 
-	$class->SUPER::initPlugin;
-
 	Slim::Plugin::InfoBrowser::Settings->new($class);
+
+	$class->SUPER::initPlugin;
 
 	$menuUrl    = $class->_menuUrl;
 	@searchDirs = $class->_searchDirs;
@@ -103,20 +103,9 @@ sub webPages {
 	my $class = shift;
 
 	my $title = getDisplayName();
-	my $url   = 'plugins/InfoBrowser/index.html';
+	my $url   = 'plugins/Favorites/index.html?new=' . $class->_menuUrl() . '&autosave';
 
 	Slim::Web::Pages->addPageLinks('plugins', { $title => $url });
-
-	Slim::Web::HTTP::addPageFunction($url, sub {
-		my $client = $_[0];
-		
-		Slim::Web::XMLBrowser->handleWebIndex( {
-			client => $client,
-			feed   => $menuUrl,
-			title  => $title,
-			args   => \@_
-		} );
-	});
 }
 
 sub cliQuery {

@@ -638,7 +638,7 @@ sub screensaverInit {
 	my %hash  = %{&Slim::Buttons::Common::hash_of_savers};
 	my @savers;
 	
-	for (sort keys %hash) {
+	for (sort {$client->string($hash{$a}) cmp $client->string($hash{$b})} keys %hash) {
 	
 		push @savers, {
 			'name'  => "{".$hash{$_}."}",
