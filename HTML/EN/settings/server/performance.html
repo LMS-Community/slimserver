@@ -17,6 +17,15 @@
 		
 		</select>
 	[% END %]
+	
+	[% WRAPPER setting title="SETUP_PRECACHEARTWORK" desc="SETUP_PRECACHEARTWORK_DESC" %]
+		<select class="stdedit" name="pref_precacheArtwork" id="precacheArtwork">
+
+			<option [% IF prefs.pref_precacheArtwork %]selected [% END %]value="1">[% 'SETUP_PRECACHEARTWORK_ENABLED' | getstring %]</option>
+			<option [% IF NOT prefs.pref_precacheArtwork %]selected [% END %]value="0">[% 'SETUP_PRECACHEARTWORK_DISABLED' | getstring %]</option>
+		
+		</select>
+	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_SERVERPRIORITY" desc="SETUP_SERVERPRIORITY_DESC" %]
