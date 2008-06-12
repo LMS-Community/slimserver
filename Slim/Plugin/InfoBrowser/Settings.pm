@@ -59,7 +59,13 @@ sub importNewMenuFiles {
 	$log->info($clear ? "clearing old menu" : "searching for new menu files to import");
 
 	my @files = ();
-	my $iter  = File::Next::files({ 'file_filter' => sub { /\.opml$/ }, 'descend_filter' => sub { $_ ne 'HTML' } }, $plugin->searchDirs );
+	my $iter  = File::Next::files(
+		{ 
+			'file_filter' => sub { /\.opml$/ }, 
+			'descend_filter' => sub { $_ ne 'HTML' } 
+		}, 
+		$plugin->searchDirs
+	);
 
 	while (my $file = $iter->()) {
 		if ( !$imported->{ $file } ) {
