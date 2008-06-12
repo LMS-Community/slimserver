@@ -4206,6 +4206,18 @@ TRANSITION_FADE_IN_OUT
 	SV	Tona in och ut
 	ZH_CN	音频同时淡出淡入
 
+SETUP_TRANSITIONSMART
+	EN	Smart Crossfade
+
+SETUP_TRANSITIONSMART_DESC
+	EN	If Smart Crossfade is enabled, successive tracks played from the same album will not use the Crossfade setting.
+
+SETUP_TRANSITIONSMART_ON
+	EN	Enable Smart Crossfade
+
+SETUP_TRANSITIONSMART_OFF
+	EN	Disable Smart Crossfade
+
 SETUP_TITLEFORMATCURR
 	CS	Aktuální formát názvu skladby
 	DA	Valgt sangtitelformat

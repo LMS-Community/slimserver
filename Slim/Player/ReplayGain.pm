@@ -92,6 +92,9 @@ sub trackAlbumMatch {
 
 	my $count         = Slim::Player::Playlist::count($client);
 	my $repeat        = Slim::Player::Playlist::repeat($client);
+	
+	# if no songs in the playlist, abort
+	return unless $count;
 
 	# only one song in the playlist, so we match
 	if ($count == 1 || $repeat == 1) {
