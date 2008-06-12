@@ -96,9 +96,9 @@ sub trackAlbumMatch {
 	# if no songs in the playlist, abort
 	return unless $count;
 
-	# only one song in the playlist, so we match
-	if ($count == 1 || $repeat == 1) {
-		return 1;
+	# only one song in the playlist, abort
+	if ( $count == 1 || $repeat == 1 ) {
+		return;
 	}
 
 	# Check the case where the track to compare against is
@@ -135,6 +135,40 @@ sub trackAlbumMatch {
 		logError("Couldn't a find valid object for track: [$current_track] or [$compare_track] !");
 
 		return 0;
+	}
+	
+	# For remote tracks, get metadata from the protocol handler
+	# This allows Rhapsody to support smart crossfade
+	if ( $current_track->remote ) {
+		if ( !$compare_track->remote ) {
+			# Other track is not remote, fail
+			return;
+		}
+		
+		my $current_meta = {};
+		my $compare_meta = {};
+		
+		my $current_handler = Slim::Player::ProtocolHandlers->handlerForURL( $current_track->url );
+		my $compare_handler = Slim::Player::ProtocolHandlers->handlerForURL( $compare_track->url );
+		
+		if ( $current_handler && $current_handler->can('getMetadataFor') ) {
+			$current_meta = $current_handler->getMetadataFor( $client, $current_track->url );
+		}
+		
+		if ( $compare_handler && $compare_handler->can('getMetadataFor') ) {
+			$compare_meta = $compare_handler->getMetadataFor( $client, $compare_track->url );
+		}
+		
+		if (   $current_meta->{album}
+			&& $compare_meta->{album} 
+			&& $current_meta->{album} eq $compare_meta->{album}
+		) {
+			# Album metadata matches
+			return 1;
+		}
+		else {
+			return;
+		}
 	}
 	
 	# Check for album and tracknum matches as expected
