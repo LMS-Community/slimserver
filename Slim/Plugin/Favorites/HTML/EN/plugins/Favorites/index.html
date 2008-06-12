@@ -145,8 +145,9 @@ function(){
 
 [% BLOCK entryblock -%]
 	[%- WRAPPER contentitem leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' itemobj.id = entry.index %]
-		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
-		   <span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %][% IF entry.hotkey.defined %] [ [% entry.hotkey %] ] [% END %]</span></a>
+		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?index=[% entry.index %]&amp;player=[% playerURI %]&amp;sess=[% sess %]" class="browseItemLink">
+			<span id="dragitemtitle_[% entry.index %]" class = "favoritesText">[% entry.title %][% IF entry.hotkey.defined %] [ [% entry.hotkey %] ] [% END %]</span>
+		</a>
 	[% END -%]
 [% END %]
 	
