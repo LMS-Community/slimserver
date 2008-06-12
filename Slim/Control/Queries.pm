@@ -4977,7 +4977,6 @@ sub _addJiveSong {
 		my $actions;
 		$actions->{'play-hold'} = _mixerItemHandler(obj => $track, request => $request, chunkCount => $count, 'obj_param' => 'track_id', loopname => $loop );
 		$request->addResultLoop( $loop, $count, 'actions', $actions );
-		$request->addResultLoop( $loop, $count, 'playHoldAction', 'go' );
 	}
 
 	my $id = $track->id();
@@ -5858,6 +5857,7 @@ sub _mixerItemHandler {
 			
 		}
 	} elsif ( scalar(@$mixers) && blessed($obj) ) {
+		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 		return {
 			player => 0,
 			cmd    => ['contextmenu'],
