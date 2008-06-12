@@ -1120,6 +1120,23 @@ sub stream {
 
 		$log->debug("flags: $flags");
 
+		my $transitionType = $prefs->client($client)->get('transitionType') || 0;
+		
+		if ( $command eq 's' ) {
+			# If we need to determine dynamically
+			if (
+				$prefs->client($client)->get('transitionSmart') 
+				&&
+				( Slim::Player::ReplayGain->trackAlbumMatch( $client, -1 ) 
+				  ||
+				  Slim::Player::ReplayGain->trackAlbumMatch( $client, 1 )
+				)
+			) {
+				$log->info('Using smart transition mode');
+				$transitionType = 0;
+			}
+		}
+
 		my $frame = pack 'aaaaaaaCCCaCCCNnN', (
 			$command,	# command
 			$autostart,
@@ -1131,7 +1148,7 @@ sub stream {
 			$bufferThreshold,
 			0,		# s/pdif auto
 			$prefs->client($client)->get('transitionDuration') || 0,
-			$prefs->client($client)->get('transitionType') || 0,
+			$transitionType,
 			$flags,		# flags	     
 			$outputThreshold,
 			0,		# reserved

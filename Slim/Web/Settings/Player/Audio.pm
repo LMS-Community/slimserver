@@ -46,7 +46,7 @@ sub handler {
 	}
 
 	if ($client->maxTransitionDuration()) {
-		push @prefs,qw(transitionType transitionDuration);
+		push @prefs,qw(transitionType transitionDuration transitionSmart);
 	}
 	
 	if ($client->hasDigitalOut()) {
