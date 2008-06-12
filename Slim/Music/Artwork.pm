@@ -102,24 +102,26 @@ sub findArtwork {
 			$album->artwork($track->id);
 			$album->update;
 			
-			# Pre-cache this artwork resized to our commonly-used sizes/formats
-			# 1. user's thumb size or 100x100_p (large web artwork)
-			# 2. 50x50_p (small web artwork)
-			# 3. 56x56_o.jpg (Jive artwork - OAR JPG)
+			if ( $prefs->get('precacheArtwork') ) {
+				# Pre-cache this artwork resized to our commonly-used sizes/formats
+				# 1. user's thumb size or 100x100_p (large web artwork)
+				# 2. 50x50_p (small web artwork)
+				# 3. 56x56_o.jpg (Jive artwork - OAR JPG)
 			
-			my @dims = (50);
-			push @dims, $prefs->get('thumbSize') || 100;
+				my @dims = (50);
+				push @dims, $prefs->get('thumbSize') || 100;
 			
-			for my $dim ( @dims ) {
-				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p" );
+				for my $dim ( @dims ) {
+					logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p" );
+					eval {
+						Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p" );
+					};
+				}
 				eval {
-					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p" );
+					logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_o.jpg" );
+					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_o.jpg" );
 				};
 			}
-			eval {
-				logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_o.jpg" );
-				Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_o.jpg" );
-			};
 		}
 
 		$progress->update($track->album->name);
