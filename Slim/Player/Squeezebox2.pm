@@ -36,7 +36,7 @@ my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'transitionType'     => 0,
-	'transitionDuration' => 0,
+	'transitionDuration' => 10,
 	'replayGainMode'     => 0,
 	'disableDac'         => 0,
 	'minSyncAdjust'      => 10,	# ms
