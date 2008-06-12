@@ -543,15 +543,6 @@ sub getNextTrackInfo {
 	# Get track URL for the next track
 	my ($trackId) = $nextURL =~ m{rhapd://(.+)\.wma};
 	
-	# Get metadata for normal tracks
-	Slim::Utils::Timers::killTimers( $client, \&getTrackMetadata );
-	Slim::Utils::Timers::setTimer(
-		$client,
-		time(),
-		\&getTrackMetadata,
-		{ trackId => $trackId },
-	);
-	
 	my @clients;
 	
 	if ( Slim::Player::Sync::isSynced($client) ) {
@@ -628,70 +619,49 @@ sub onUnderrun {
 	$callback->();
 }
 
-sub getTrackMetadata {
-	my ( $client, $params ) = @_;
-	
-	my $trackId = $params->{trackId};
-	
-	# Don't request if we already have it
-	my $cache = Slim::Utils::Cache->new;
-	my $meta  = $cache->get( 'rhapsody_meta_' . $params->{trackId} );
-	return if $meta;
-	
-	my $trackURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/v1/opml/metadata/getTrack?trackId=$trackId&json=1"
-	);
-	
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotTrackMetadata,
-		\&gotTrackMetadataError,
-		{
-			client => $client,
-			params => $params,
-		},
-	);
-	
-	$log->debug("Getting track metadata for $trackId from SqueezeNetwork");
-	
-	$http->get( $trackURL );
-}
-
-sub gotTrackMetadata {
+sub gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
-	my $params = $http->params->{params};
 	
-	my $track = eval { from_json( $http->content ) };
-	if ( $@ ) {
-		$log->warn( "Error getting track metadata from SN: $@ - " . $http->content );
+	#$client->pluginData( fetchingMeta => 0 );
+	
+	my $info = eval { from_json( $http->content ) };
+	
+	if ( $@ || ref $info ne 'ARRAY' ) {
+		$log->error( "Error fetching track metadata: " . ( $@ || 'Invalid JSON response' ) );
 		return;
 	}
 	
 	if ( $log->is_debug ) {
-		$log->debug( 'Got track metadata: ' . Data::Dump::dump($track) );
+		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
 	}
 	
-	# cache the metadata we need for display
-	my $meta = {
-		artist    => $track->{displayArtistName},
-		album     => $track->{displayAlbumName},
-		title     => $track->{name},
-		cover     => $track->{albumMetadata}->{albumArt162x162Url},
-		duration  => $track->{playbackSeconds},
-		bitrate   => '128k CBR',
-		type      => 'WMA (Rhapsody)',
-		info_link => 'plugins/rhapsodydirect/trackinfo.html',
-		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
-	};
-	
+	# Cache metadata
 	my $cache = Slim::Utils::Cache->new;
-	$cache->set( 'rhapsody_meta_' . $params->{trackId}, $meta, 86400 );
+	my $icon  = Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
+
+	for my $track ( @{$info} ) {
+		next unless ref $track eq 'HASH';
+		
+		# cache the metadata we need for display
+		my $trackId = delete $track->{trackId};
+		
+		my $meta = {
+			%{$track},
+			bitrate   => '128k CBR',
+			type      => 'WMA (Rhapsody)',
+			info_link => 'plugins/rhapsodydirect/trackinfo.html',
+			icon      => $icon,
+		};
+	
+		$cache->set( 'rhapsody_meta_' . $trackId, $meta, 86400 );
+	}
 	
 	# Update the playlist time so the web will refresh, etc
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
 }
 
-sub gotTrackMetadataError {
+sub gotBulkMetadataError {
 	my $http   = shift;
 	my $client = $http->params('client');
 	my $error  = $http->error;
@@ -1189,15 +1159,42 @@ sub getMetadataFor {
 	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
 	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
 	
-	if ( !$meta ) {
-		my $master = Slim::Player::Sync::masterOrSelf($client);
+	if ( !$meta && !$client->pluginData('fetchingMeta') ) {
+		# Go fetch metadata for all tracks on the playlist without metadata
+		my @need;
+		
+		for my $track ( @{ $client->playlist } ) {
+			if ( $track->url =~ m{rhapd://(.+)\.wma} ) {
+				my $id = $1;
+				if ( !$cache->get("rhapsody_meta_$id") ) {
+					push @need, $id;
+				}
+			}
+		}
+		
+		if ( $log->is_debug ) {
+			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
+		}
+		
+		$client->pluginData( fetchingMeta => 1 );
+		
+		my $url = Slim::Networking::SqueezeNetwork->url(
+			"/api/rhapsody/v1/playback/getBulkMetadata"
+		);
+		
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&gotBulkMetadata,
+			\&gotBulkMetadataError,
+			{
+				client  => $client,
+				timeout => 60,
+			},
+		);
 
-		Slim::Utils::Timers::killTimers( $master, \&getTrackMetadata );
-		Slim::Utils::Timers::setTimer(
-			$master,
-			time(),
-			\&getTrackMetadata,
-			{ trackId => $trackId },
+		$http->post(
+			$url,
+			'Content-Type' => 'application/x-www-form-urlencoded',
+			'trackIds=' . join( ',', @need ),
 		);
 	}
 	
