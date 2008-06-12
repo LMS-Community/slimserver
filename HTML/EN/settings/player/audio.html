@@ -131,6 +131,19 @@
 				
 				</select>
 			[% END %]
+			
+			[% WRAPPER settingGroup title="SETUP_TRANSITIONSMART" desc="SETUP_TRANSITIONSMART_DESC" %]
+				<select class="stdedit" name="transitionSmart" id="transitionSmart">
+					
+				[% FOREACH option = {
+					'0' => 'SETUP_TRANSITIONSMART_OFF',
+					'1' => 'SETUP_TRANSITIONSMART_ON',
+				} %]
+					<option [% IF prefs.transitionSmart == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+				
+				</select>
+			[% END %]
 	
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
 				<input type="text" class="stdedit" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="15">
