@@ -14255,6 +14255,18 @@ SETUP_USE_RESIZE
 	IT	Ridimensiona immagine (velocità superiore, qualità inferiore)
 	NL	Formaat van hoesafbeeldingen wijzigen (sneller, lagere kwaliteit)
 
+SETUP_PRECACHEARTWORK
+	EN	Artwork Pre-caching
+
+SETUP_PRECACHEARTWORK_DESC
+	EN	By default, all cover art found during the scanning phase is automatically resized and cached to improve performance when using Squeezebox Controller or the web interface.  This does slow down the scan process, so it can be disabled here.
+
+SETUP_PRECACHEARTWORK_ENABLED
+	EN	Pre-cache artwork
+
+SETUP_PRECACHEARTWORK_DISABLED
+	EN	Do not pre-cache artwork
+
 SETUP_SERVERPRIORITY
 	DA	Prioritet for server
 	DE	Serverpriorität
