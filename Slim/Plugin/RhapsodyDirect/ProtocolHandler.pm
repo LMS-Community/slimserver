@@ -623,7 +623,7 @@ sub gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	
-	#$client->pluginData( fetchingMeta => 0 );
+	$client->pluginData( fetchingMeta => 0 );
 	
 	my $info = eval { from_json( $http->content ) };
 	
