@@ -137,6 +137,13 @@ sub dBToFixed {
 		return int(($floatmult * (1 << 16)) + 0.5);
 	}
 }
+sub getVolumeDivisor
+{
+	# Use 0.5 dB steps for Squeezebox2.
+	my $client = shift;
+	my $model = $client->model();
+	return 2;
+}
 
 sub volume {
 	my $client = shift;
@@ -154,9 +161,7 @@ sub volume {
 			$newGain = 0;
 		}
 		else {
-			# With new style volume, let's try -49.5dB as the lowest
-			# value.
-			my $db = ($volume - 100)/2;	
+			my $db = ($volume - 100)/$client->getVolumeDivisor();	
 			$newGain = dBToFixed($db);
 		}
 
