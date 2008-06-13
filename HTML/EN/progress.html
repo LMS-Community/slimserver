@@ -3,12 +3,13 @@
 	[% PROCESS ajaxProgress.txt %]
 	</pre>
 [%- ELSE -%]
-
 	[% pagetitle = (type || "SCANNER") _ "_PROGRESS" | string %]
 	
 	[% pageHeaderMenu = pagetitle %]
 	
-	[% pageHeaderScripts = BLOCK %]
+	[%- IF !cancelScan -%]
+
+		[% pageHeaderScripts = BLOCK %]
 		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script TYPE="text/javascript">
 			timestring     = "[% 'TOTAL_TIME' | string %]";
@@ -19,9 +20,9 @@
 		<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
 		<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
-	[% END %]
+		[% END %]
 
-	[% extJsScripts = BLOCK %]
+		[% extJsScripts = BLOCK %]
 		<script TYPE="text/javascript">
 			timestring     = "[% 'TOTAL_TIME' | string %]";
 			progressbarlen = "[% barlen %]";
@@ -29,13 +30,19 @@
 
 			Ext.onReady(SqueezeJS.UI.ScannerInfoExtended.init, SqueezeJS.UI.ScannerInfoExtended, true);
 		</script>
-	[% END %]
+		[% END %]
 
-	[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
+		[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
+
+	[% END %]
 	
 	[% IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
-	[% IF desc && type && !ajaxUpdate %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
+	[%- IF cancelScan -%]
+		<div>[% "SCAN_CANCELED" | string %]</div>
+	[% END %]
+
+	[% IF desc && type && !ajaxUpdate %]<div>[% type _ "_PROGRESS_DESC" | string %]<br/>&nbsp;</div>[% END %]
 
 	[% odd = 1 %]
 	[% FOREACH num = [0..10] %]
@@ -65,6 +72,7 @@
 		[% odd = (not odd) %]
 	[% END %]
 
+	[% IF scanning && !ajaxUpdate %]<div><br/><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;cancelScan=1">[% "CANCEL_SCAN" | string %]</a></div>[% END %]
 	<div id="message">[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
 
 	[% IF !ajaxUpdate; PROCESS pagefooter.html; END %]
