@@ -24,6 +24,10 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
+	if ($paramRef->{'cancelScan'}) {
+		Slim::Music::Import->cancelScan();
+	}
+
 	my @versions = Slim::Utils::Misc::settingsDiagString();
 	my $osDetails = Slim::Utils::OSDetect::details();
 	
@@ -46,6 +50,7 @@ sub handler {
 			{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
 		];
 	}
+	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();
 
 	$paramRef->{folders} = [
 		{INFORMATION_CACHEDIR     => preferences('server')->get('cachedir')},

@@ -11,6 +11,10 @@ sub init {
 sub progress {
 	my ($client, $params) = @_;
 
+	if ($params->{'cancelScan'}) {
+		Slim::Music::Import->cancelScan();
+	}
+
 	my $total_time = 0;
 	my $barLen = $params->{'barlen'} || 40;
 
@@ -70,6 +74,8 @@ sub progress {
 			$params->{'desc'} = 0;
 		}
 	}
+
+	$params->{'scanning'} = Slim::Music::Import->stillScanning();
 
 	return Slim::Web::HTTP::filltemplatefile("progress.html", $params);
 }

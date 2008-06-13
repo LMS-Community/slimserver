@@ -4946,6 +4946,12 @@ RESCANNING_SHORT
 	SV	Söker igenom musikbibliotek...
 	ZH_CN	重新扫描音乐库中...
 
+CANCEL_SCAN
+	EN	Cancel scan
+
+SCAN_CANCELED
+	EN	The scan has been canceled. Please note that you'll have to re-run a scan to get full access to your music library.
+
 # advanced server settings
 
 SETUP_MENUITEM
