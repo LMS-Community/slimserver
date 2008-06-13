@@ -171,7 +171,7 @@ sub playFavorite {
 	if (defined $entry && $entry->{'type'} && $entry->{'type'} =~ /audio|playlist/) {
 
 		my $url   = $entry->{'URL'} || $entry->{'url'};
-		my $title = $entry->{'title'};
+		my $title = $entry->{'text'};
 
 		if ($entry->{'parser'} || $entry->{'type'} eq 'playlist') {
 
