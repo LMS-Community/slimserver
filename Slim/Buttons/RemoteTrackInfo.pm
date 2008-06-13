@@ -74,7 +74,7 @@ sub setMode {
 				my $index = $client->modeParam('favorite');
 				my $hotkey= $client->modeParam('hotkey');
 				if (defined $index) {
-					return "{PLUGIN_FAVORITES_REMOVE} " . (defined $hotkey ? "[$hotkey]" : '');
+					return "{PLUGIN_FAVORITES_REMOVE}";
 				} else {
 					return "{FAVORITES_RIGHT_TO_ADD}";
 				}

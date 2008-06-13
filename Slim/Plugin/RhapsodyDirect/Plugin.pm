@@ -11,6 +11,8 @@ use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::RhapsodyDirect::ProtocolHandler;
 use Slim::Plugin::RhapsodyDirect::RPDS ();
 
+use URI::Escape qw(uri_escape_utf8);
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
 	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
@@ -94,6 +96,12 @@ sub initPlugin {
 			},
 		);
 	}
+	
+	# CLI-only command to create a Rhapsody playlist given a set of trackIds
+	Slim::Control::Request::addDispatch(
+		[ 'rhapsodydirect', 'createplaylist', '_name', '_trackIds' ],
+		[ 1, 1, 0, \&createPlaylist ]
+	);
 }
 
 sub playerMenu () {
@@ -165,6 +173,64 @@ sub logError {
 	SDI::Service::EventLog::logEvent( 
 		$client->id, 'rhapsody_error', $error,
 	);
+}
+
+sub createPlaylist {
+	my $request = shift;
+	my $client  = $request->client || return;
+	
+	my $name     = $request->getParam('_name');
+	my @trackIds = split /,/, $request->getParam('_trackIds');
+	
+	if ( !$name || !scalar @trackIds ) {
+		$log->debug( 'createplaylist requires name and trackIds params' );
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	my $url = Slim::Networking::SqueezeNetwork->url(
+		"/api/rhapsody/v1/opml/library/createMemberPlaylistFromTracks"
+	);
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&gotCreatePlaylist,
+		\&gotCreatePlaylistError,
+		{
+			request => $request,
+			timeout => 60,
+		},
+	);
+	
+	my $post 
+		= 'name=' . uri_escape_utf8($name)
+		. '&trackIds=' . join( ',', @trackIds );
+
+	$http->post(
+		$url,
+		'Content-Type' => 'application/x-www-form-urlencoded',
+		$post,
+	);
+	
+	$request->setStatusProcessing();
+}
+
+sub gotCreatePlaylist {
+	my $http    = shift;
+	my $request = $http->params->{request};
+	
+	$log->debug('Playlist created OK');
+	
+	$request->setStatusDone();
+}
+
+sub gotCreatePlaylistError {
+	my $http    = shift;
+	my $request = $http->params->{request};
+	my $error   = $http->error;
+	
+	$log->debug( "Playlist creation failed: $error" );
+	
+	$request->setStatusBadParams();
 }
 
 1;
