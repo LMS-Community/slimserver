@@ -174,6 +174,21 @@ sub launchScan {
 	return 1;
 }
 
+=head2 cancelScan()
+
+Stop the external (forked) scanning process.
+
+=cut
+
+sub cancelScan {
+	my $class = shift || __PACKAGE__;
+
+	if ($class->stillScanning) {
+
+		$class->scanningProcess->die();
+	}
+}
+
 =head2 checkScanningStatus( )
 
 If we're still scanning, start a timer process to notify any subscribers of a

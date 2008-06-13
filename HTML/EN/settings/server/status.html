@@ -40,8 +40,14 @@
 [% IF progress %]
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]
 		[% progress %]
+		[% IF scanning %]
+			<div><br/>
+				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;cancelScan=1">[% "CANCEL_SCAN" | string %]</a>
+			</div>
+		[% END %]
 	[% END %]
 [% END %]
+
 
 [% WRAPPER setting title="INFORMATION_MENU_SERVER" %]
 	[% IF versionInfoString %]
