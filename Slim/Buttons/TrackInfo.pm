@@ -579,7 +579,7 @@ sub infoLine {
 		if (!defined $favIndex) {
 			$line2 = $client->string('PLUGIN_FAVORITES_ADD');
 		} else {
-			$line2 = $client->string('PLUGIN_FAVORITES_REMOVE') . (defined $hotkey ? " [ $hotkey ]" : '');
+			$line2 = $client->string('PLUGIN_FAVORITES_REMOVE');
 		}
 	}
 
