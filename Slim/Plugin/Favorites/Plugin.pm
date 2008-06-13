@@ -171,7 +171,7 @@ sub playFavorite {
 	if (defined $entry && $entry->{'type'} && $entry->{'type'} =~ /audio|playlist/) {
 
 		my $url   = $entry->{'URL'} || $entry->{'url'};
-		my $title = $entry->{'title'};
+		my $title = $entry->{'text'};
 
 		if ($entry->{'parser'} || $entry->{'type'} eq 'playlist') {
 
@@ -192,9 +192,9 @@ sub playFavorite {
 
 			Slim::Music::Info::setTitle($url, $title);
 			
-			$client->execute(['playlist', 'play', $url]);
-			
 			$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+			
+			$client->execute(['playlist', 'play', $url]);
 		}
 
 	} else {

@@ -1257,6 +1257,12 @@ sub playlistXitemCommand {
 		
 		# Display some feedback for the player on remote URLs
 		if ( $cmd eq 'play' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
+			
+			# Bug 8112, if playing a track that needs to be scanned first,
+			# we want to turn on the power
+			if ( !$client->power ) {
+				$client->power(1);
+			}
 		
 			my $showBuffering = 1;
 			
@@ -1275,13 +1281,11 @@ sub playlistXitemCommand {
 			
 					$line2 = $client->string('CHECKING_STREAM');
 				}
-			
-				my $timeout = $prefs->get('remotestreamtimeout') || 10;
 
 				$client->showBriefly({
 					'line' => [$line1, $line2],
 					'jive' => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
-				}, { 'duration' => $timeout + 5 });
+				}, { 'duration' => 30 });
 			}
 		} elsif ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
 
