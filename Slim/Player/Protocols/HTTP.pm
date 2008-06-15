@@ -630,7 +630,14 @@ sub getMetadataFor {
 			};
 		}
 	}
-	else {		
+	else {	
+
+		if ( (my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url)) ne $class )  {
+			if ( $handler && $handler->can('getMetadataFor') ) {
+				return $handler->getMetadataFor( $client, $url );
+			}
+		}	
+
 		my $type = uc( $track->content_type ) . ' '
 			. ( defined $client ? $client->string('RADIO') : Slim::Utils::Strings::string('RADIO') );
 		
