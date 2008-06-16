@@ -41,6 +41,7 @@ our $defaultPrefs = {
 		SETTINGS
 		SQUEEZENETWORK_CONNECT
 	)],
+	'titleFormatCurr'      => 4,
 };
 
 sub new {

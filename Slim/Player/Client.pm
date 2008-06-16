@@ -43,7 +43,7 @@ our $defaultPrefs = {
 	'playername'       => \&_makeDefaultName,
 	'repeat'           => 2,
 	'shuffle'          => 0,
-	'titleFormat'      => [5, 1, 3, 6],
+	'titleFormat'      => [5, 1, 3, 6, 0],
 	'titleFormatCurr'  => 1,
 };
 
