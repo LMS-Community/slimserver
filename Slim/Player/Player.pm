@@ -240,18 +240,8 @@ sub power {
 		$client->brightness($powerOnBrightness);
 
 		my $oneline = ($client->linesPerScreen() == 1);
-		
-		$client->showBriefly( {
-			'center' => [ $client->string('WELCOME_TO_' . $client->model), $client->string('FREE_YOUR_MUSIC') ],
-			'fonts' => { 
-					'graphic-320x32' => 'standard',
-					'graphic-160x32' => 'standard_n',
-					'graphic-280x16' => 'medium',
-					'text'           => 2,
-				},
-			'screen2' => {},
-			'jive' => undef,
-		}, undef, undef, 1);
+
+		$client->welcomeScreen();		
 
 		# check if there is a sync group to restore
 		Slim::Player::Sync::restoreSync($client);
@@ -271,6 +261,25 @@ sub power {
 			}
 		}		
 	}
+}
+
+sub welcomeScreen {
+	my $client = shift;
+
+	$client->showBriefly( {
+		'center' => [ 
+				$client->string('WELCOME_TO_' . $client->model), 
+				$client->string('FREE_YOUR_MUSIC')
+			],
+		'fonts' => { 
+				'graphic-320x32' => 'standard',
+				'graphic-160x32' => 'standard_n',
+				'graphic-280x16' => 'medium',
+				'text'           => 2,
+			},
+		'screen2' => {},
+		'jive' => undef,
+	}, undef, undef, 1);
 }
 
 sub audio_outputs_enable { }

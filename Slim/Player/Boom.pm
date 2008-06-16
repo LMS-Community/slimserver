@@ -52,6 +52,18 @@ sub new {
 	return $client;
 }
 
+
+sub welcomeScreen {
+	my $client = shift;
+
+	$client->showBriefly( {
+		'line' => [ '', '0' ],
+		'fonts' => {
+				'graphic-160x32' => { 'line' => [ 'standard_n.1', 'logoSB2.2' ] },
+			},
+	}, undef, undef, 1);
+}
+
 sub getVolumeDivisor
 {
 	# Use 0.62 dB steps for Boom.  This allows boom to get very quiet for the bedroom.
