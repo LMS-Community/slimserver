@@ -1207,9 +1207,11 @@ div.buttonbarSpacer {
 .helpsection h1 { font-size: 125%; }
 .helpsection h2 { font-size: 110%; }
 
-.helpsection h1, .helpsection h2, .helpsection h3, .helpsection h4 {
+.helpsection h1, .helpsection h2, .helpsection h3, .helpsection h4,
+.helpsection h5, .helpsection pre {
 	margin-top: 10px;
 	margin-bottom: 10px;
+	margin-left: 5px;
 }
 
 .x-window .x-window-body b, .x-window .x-window-body p, .x-window .x-window-body ul, .x-window .x-window-body form,

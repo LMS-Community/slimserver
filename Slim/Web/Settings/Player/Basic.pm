@@ -65,6 +65,11 @@ sub handler {
 		return $class->SUPER::handler($client, $paramRef);
 	}
 
+	# reset all client preferences to factory defaults
+	if ($paramRef->{resetprefs}) {
+		$client->resetPrefs();
+	}
+
 	# array prefs handled by this handler not handler::SUPER
 	my @prefs = ();
 

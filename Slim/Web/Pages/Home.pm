@@ -175,7 +175,8 @@ sub home {
 sub switchServer {
 	my ($class, $client, $params) = @_;
 
-	if ($params->{'switchto'} =~ /^www\.(.*)squeezenetwork\.com$/) {
+	if (lc($params->{'switchto'}) eq 'squeezenetwork' 
+		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK')) {
 
 		# Bug 7254, don't tell Ray to reconnect to SN
 		if ( $client->deviceid != 7 ) {
@@ -187,9 +188,13 @@ sub switchServer {
 					Slim::Buttons::Common::pushModeLeft( $client, 'squeezenetwork.connect' );
 				},
 			);
+
+			$params->{'switchto'} = 'http://' . Slim::Networking::SqueezeNetwork->get_server("sn");
 		}
 
-	} elsif ($params->{'switchto'}) {
+	}
+
+	elsif ($params->{'switchto'}) {
 
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
 			sub {
@@ -198,19 +203,19 @@ sub switchServer {
 				$client->execute(['connect', Slim::Networking::Discovery::Server::getServerAddress($server)]);
 
 			}, $params->{'switchto'});
-	}
 
-
-
-	if ($params->{'switchto'}) {
 		$params->{'switchto'} = Slim::Networking::Discovery::Server::getWebHostAddress($params->{'switchto'});
 	}
+
 	else {
 		$params->{servers} = Slim::Networking::Discovery::Server::getServerList();
-		$params->{servers}->{'SQUEEZENETWORK'} = {
-			IP   => Slim::Networking::SqueezeNetwork->get_server("sn"),
-			NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')	
-		}; 
+
+		# Bug 7254, don't tell Ray to reconnect to SN
+		if ( $client->deviceid != 7 ) {
+			$params->{servers}->{'SQUEEZENETWORK'} = {
+				NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')	
+			}; 
+		}
 	
 		my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
 		$params->{serverlist} = \@servers;

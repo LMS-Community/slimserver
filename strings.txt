@@ -3121,6 +3121,12 @@ SETUP_PLAYERNAME_CHOOSE
 	SV	Spelarens namn:
 	ZH_CN	播放机名字：
 
+SETUP_RESET_PLAYER
+	EN	Reset player preferences
+
+SETUP_RESET_PLAYER_DESC
+	EN	You can reset a player's settings like player name, title format, menus etc. to factory defaults. Please note that this will not reset the player's hardware settings like eg. networking parameters.
+
 SETUP_POWERONBRIGHTNESS
 	EN	Power On Brightness
 
