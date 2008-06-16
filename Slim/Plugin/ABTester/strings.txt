@@ -1,77 +1,202 @@
 PLUGIN_ABTESTER
+	DE	ABTester
 	EN	ABTester
+	ES	ABTester
+	FR	ABTester
+	IT	ABTester
+	NL	ABTester
 
 PLUGIN_ABTESTER_DESC
+	DE	ABTester ist ein Plugin, dass das Ausführen eines ABX- oder ABCD-Tests von DSP-Abbildern und Audiodateien ermöglicht
 	EN	ABTester is a plugin that makes it possible to perform a ABX or ABCD test of DSP images and audio files
+	ES	ABTester es un complemento que permite realizar pruebas ABX o ABCD de imágenes DSP y archivos de audio
+	FR	ABTester est un plugin permettant de procéder à un test ABX ou ABCD des images DSP et des fichiers audio.
+	IT	ABTester è un plugin che consente di eseguire una verifica ABX o ABCD di immagini DSP e file audio
+	NL	ABTester is een plug-in waarmee een ABX- of ABCD-test van DSP-afbeeldingen en audiobestanden kan worden uitgevoerd
 
 PLUGIN_ABTESTER_NONE
+	DE	Keine
 	EN	None
+	ES	Ninguno
+	FR	Aucun
+	IT	Nessuno
+	NL	Geen
 
 PLUGIN_ABTESTER_DATA
+	DE	Daten
 	EN	Data
+	ES	Datos
+	FR	Données
+	IT	Dati
+	NL	Gegevens
 
 PLUGIN_ABTESTER_LOAD_DATA
+	DE	Daten laden
 	EN	Load data
+	ES	Cargar datos
+	FR	Charger les données
+	IT	Carica dati
+	NL	Gegevens laden
 
 PLUGIN_ABTESTER_LOADING_DATA
+	DE	Daten werden geladen
 	EN	Loading data
+	ES	Cargando datos
+	FR	Chargement des données
+	IT	Caricamento dati
+	NL	Gegevens worden geladen
 
 PLUGIN_ABTESTER_LOADING_DEFAULT_IMAGE
+	DE	Standardabbild wird geladen
 	EN	Loading default image
+	ES	Cargando imagen predeterminada
+	FR	Chargement de l'image par défaut
+	IT	Caricamento dell'immagine predefinita in corso
+	NL	Standaardafbeelding wordt geladen
 
 PLUGIN_ABTESTER_PUBLISH_RESULT
+	DE	Ergebnis wird veröffentlicht...
 	EN	Publishing result...
+	ES	Publicando resultado...
+	FR	Publication du résultat...
+	IT	Pubblicazione risultati...
+	NL	Resultaat wordt gepubliceerd...
 
 PLUGIN_ABTESTER_PUBLISH
+	DE	Veröffentlichen
 	EN	Publish
+	ES	Publicar
+	FR	Publier
+	IT	Pubblica
+	NL	Publiceren
 
 PLUGIN_ABTESTER_SELECT_DATA_FIRST
+	DE	Wählen Sie zuerst Daten aus!
 	EN	Select data first!
+	ES	Seleccione datos primero
+	FR	Sélectionnez d'abord des données.
+	IT	Selezionare prima i dati
+	NL	Selecteer eerst gegevens!
 
 PLUGIN_ABTESTER_TEST_RESULT
+	DE	Testergebnis
 	EN	Test result
+	ES	Resultado de la prueba
+	FR	Résultat du test
+	IT	Risultato verifica
+	NL	Testresultaat
 
 PLUGIN_ABTESTER_TEST_RESULT_MISSING
+	DE	Testergebnis fehlt!
 	EN	Test result missing!
+	ES	Faltan resultados de la prueba
+	FR	Le résultat du test est manquant.
+	IT	Risultato verifica mancante.
+	NL	Testresultaat ontbreekt!
 
 PLUGIN_ABTESTER_RESTORE_DEFAULT_IMAGE
+	DE	Aus Firmware
 	EN	From firmware
+	ES	Desde firmware
+	FR	A partir du micrologiciel
+	IT	Da firmware
+	NL	Van firmware
 
 PLUGIN_ABTESTER_DELETE_TEST_FILES
+	DE	Testdateien entfernen
 	EN	Remove test files
+	ES	Eliminar archivos de prueba
+	FR	Supprimer les fichiers de test
+	IT	Rimuovi file della verifica
+	NL	Testbestanden verwijderen
 
 PLUGIN_ABTESTER_DELETING_TEST_FILES
+	DE	Testdateien werden entfernt
 	EN	Removing test files
+	ES	Eliminando archivos de prueba
+	FR	Suppression des fichiers de test
+	IT	Rimozione file della verifica in corso
+	NL	Testbestanden worden verwijderd
 
 PLUGIN_ABTESTER_CHECK_ANSWER
+	DE	X prüfen
 	EN	Check X
+	ES	Comprobar X
+	FR	Vérifier X
+	IT	Controlla X
+	NL	X controleren
 
 PLUGIN_ABTESTER_FROM_INTERNET
+	DE	Aus dem Internet
 	EN	From Internet
+	ES	Desde Internet
+	FR	A partir d'Internet
+	IT	Da Internet
+	NL	Vanaf internet
 
 PLUGIN_ABTESTER_TESTCASES
+	DE	Testfälle
 	EN	Test cases
+	ES	Casos de prueba
+	FR	Test des cas
+	IT	Tipi di verifiche
+	NL	Testcases
 
 PLUGIN_ABTESTER_IMAGES
+	DE	Abbilder
 	EN	Images
+	ES	Imágenes
+	FR	Images
+	IT	Immagini
+	NL	Afbeeldingen
 
 SETUP_PLUGIN_ABTESTER_AUTOUPDATE
+	DE	DSP-Abbild automatisch aktualisieren
 	EN	Automatically update DSP image
+	ES	Actualizar imagen DSP automáticamente
+	FR	Mettre automatiquement à jour l'image DSP
+	IT	Aggiorna l'immagine DSP automaticamente
+	NL	DSP-afbeelding automatisch bijwerken
 
 SETUP_PLUGIN_ABTESTER_AUTOUPDATE_DESC
+	DE	Standard-DSP-Abbild beim Anschließen eines Player automatisch aktualisieren
 	EN	Automatically update to the default DSP image when reconnecting a player
+	ES	Actualizar a la imagen DSP predeterminada automáticamente al volver a conectar el reproductor
+	FR	Mettre automatiquement à jour à l'image DSP par défaut au moment de la reconnexion à la platine
+	IT	Aggiorna automaticamente l'immagine DSP predefinita alla successiva connessione del lettore
+	NL	Automatisch bijwerken naar de standaard DSP-afbeelding wanneer muzieksysteem opnieuw wordt verbonden
 
 SETUP_PLUGIN_ABTESTER_RESTRICTEDTOHARDWARE
+	DE	Auf unterstützte Hardware begrenzen
 	EN	Limit to supported hardware
+	ES	Limitar al hardware admitido
+	FR	Limité au matériel pris en charge
+	IT	Limita ad hardware supportato
+	NL	Beperken tot ondersteunde hardware
 
 SETUP_PLUGIN_ABTESTER_RESTRICTEDTOHARDWARE_DESC
+	DE	Plugin-Funktionsumfang auf die vom aktuellen Hardware-Player unterstützten Funktionen beschränken. Deaktivieren Sie dies, um das Plugin mit einem Software-Player (z.B. SoftSqueeze) testen zu können.
 	EN	Limit the plugin functionality to the features that are supported in the current hardware player, turn this off to be able to test the plugin with a software player such as SoftSqueeze
+	ES	Limita las funciones del complemento a aquellas compatibles con el hardware del reproductor actual. Desactive esta función para probar el complemento con un software reproductor como SoftSqueeze.
+	FR	Limite la fonctionnalité du plugin aux fonctions prises en charge par le lecteur matériel actuel. Désactivez cette option pour pouvoir tester le plugin avec un lecteur logiciel tel que SoftSqueeze.
+	IT	Limita la funzionalità del plugin alle funzioni supportate dal lettore hardware corrente. Disattivare questa impostazione per eseguire la verifica del plugin con un lettore software come SoftSqueeze.
+	NL	Beperk de plug-infunctionaliteit tot de functies die in het huidige hardwaremuzieksysteem worden ondersteund, en schakel deze uit om de plug-in te testen met een softwaremuzieksysteem zoals SoftSqueeze
 
 SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE
+	DE	Standard-DSP-Abbild in automatischer Aktualisierung
 	EN	Default DSP image in automatic update
+	ES	Imagen DSP predeterminada en actualización automática
+	FR	Image DSP par défaut pour la mise à jour automatique
+	IT	Aggiornamento automatico dell'immagine DSP predefinita in corso
+	NL	Standaard DSP-afbeelding in automatische update
 
 SETUP_PLUGIN_ABTESTER_DEFAULTIMAGE_DESC
+	DE	Bei automatischer Aktualisierung zu verwendendes Standard-DSP-Abbild (keine Angabe bedeutet, dass das Abbild 'default.i2c' im Ordner 'StandardImages' verwendet wird)
 	EN	Default DSP image to use in in automatic update (empty means that the default.i2c image in the StandardImages directory will be used)
+	ES	Imagen DSP predeterminada que se utilizará en la actualización automática (si está vacío se utilizará la imagen default.i2c del directorio StandardImages)
+	FR	Image DSP par défaut à utiliser pour la mise à jour automatique (en l'absence d'indication, l'image utilisée sera default.i2c située dans le répertoire StandardImages)
+	IT	Immagine DSP predefinita da utilizzare per l'aggiornamento automatico (se non viene specificata alcuna immagine, verra utilizzata l'immagine default.i2c nella directory StandardImages)
+	NL	Standaard DSP-afbeelding die in automatische update moet worden gebruikt (leeg betekent dat de afbeelding default.i2c in de map StandardImages wordt gebruikt)
 
 PLUGIN_ABTESTER_RECORD
 	EN	Record test case

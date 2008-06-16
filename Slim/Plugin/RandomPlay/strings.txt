@@ -33,7 +33,12 @@ PLUGIN_RANDOM_DISABLED
 	NL	Willekeurige mix gestopt
 
 PLUGIN_RANDOM_TRACK
+	DE	Zufälliger Titelmix
 	EN	Song Mix
+	ES	Mezcla de canciones aleatoria
+	FR	Morceaux aléatoires
+	IT	Raccolta casuale di brani
+	NL	Willekeurige liedjesmix
 
 PLUGIN_RANDOM_TRACK_PLAYING
 	DA	Afspiller Tilfældige Nummer
@@ -56,7 +61,12 @@ PLUGIN_RANDOM_TRACK_DISABLE
 	NL	toevoegen van liedjes stoppen
 
 PLUGIN_RANDOM_ALBUM
+	DE	Zufälliger Albummix
 	EN	Album Mix
+	ES	Mezcla aleatoria de álbum
+	FR	Albums aléatoires
+	IT	Raccolta casuale di album
+	NL	Willekeurige albummix
 
 PLUGIN_RANDOM_ALBUM_ITEM
 	DA	Tilfældigt Album
@@ -89,7 +99,12 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	NL	toevoegen van albums stoppen
 
 PLUGIN_RANDOM_CONTRIBUTOR
+	DE	Zufälliger Interpretenmix
 	EN	Artist Mix
+	ES	Mezcla de artista aleatoria
+	FR	Artistes aléatoires
+	IT	Raccolta casuale di artisti
+	NL	Willekeurige artiestmix
 
 PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	DA	Tilfældig Kunstner
@@ -122,7 +137,12 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	NL	toevoegen van artiesten stoppen
 
 PLUGIN_RANDOM_YEAR
+	DE	Zufälliger Jahrgangsmix
 	EN	Year Mix
+	ES	Mezcla de años aleatorios
+	FR	Années aléatoires
+	IT	Raccolta casuale di anni
+	NL	Willekeurige jaarmix
 
 PLUGIN_RANDOM_YEAR_ITEM
 	DA	Tilfældig År
@@ -155,7 +175,12 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	NL	toevoegen van jaren stoppen
 
 PLUGIN_RANDOM_GENRE_FILTER
+	DE	Einzuschließende Stilrichtungen wählen
 	EN	Include Genres
+	ES	Seleccionar géneros a incluir
+	FR	Sélectionnez les genres à inclure
+	IT	Selezionare i generi musicali da includere
+	NL	Toe te voegen genres selecteren
 
 PLUGIN_RANDOM_SELECT_ALL
 	DA	Vælg alle

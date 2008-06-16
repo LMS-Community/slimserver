@@ -323,15 +323,15 @@ SOFTSQUEEZE_HOME
 
 HOMEMENU
 	DA	Hovedmenu
-	DE	Hauptmenü
+	DE	Start
 	EN	Home
 	ES	Inicio
 	FI	Valikko
-	FR	Menu
+	FR	Menu d'accueil
 	HE	ראשי
 	IT	Pagina iniziale
 	JA	ホーム
-	NL	Hoofdmenu
+	NL	Startpagina
 	NO	Hovedmeny
 	PT	Início
 	SV	Huvudmeny
@@ -1258,7 +1258,12 @@ ALARM
 	ZH_CN	闹钟
 
 ALARM_SET
+	DE	Weckzeit einstellen
 	EN	Alarm Time
+	ES	Establecer hora de alarma
+	FR	Définir l'heure de réveil
+	IT	Imposta orario sveglia
+	NL	Wektijd instellen
 
 ALARM_ON
 	CS	Budík zapnut
@@ -1376,7 +1381,12 @@ ALARM_SET_ENTRY
 	ZH_CN	闹钟时间配置
 
 ALARM_SAVING
+	DE	Wecker wird gespeichert...
 	EN	Saving Alarm...
+	ES	Guardando alarma...
+	FR	Enregistrement du réveil...
+	IT	Salvataggio sveglia...
+	NL	Wekker wordt opgeslagen...
 
 ALARM_TURNING_ON
 	CS	Zapnout buzení...
@@ -1430,20 +1440,36 @@ ALARM_NOW_PLAYING
 	ZH_CN	闹钟播放中
 
 ALARM_SNOOZE
-	DE	Schlummern...
+	DE	Weckwiederholung aktiv...
 	EN	Snoozing...
-	FR	Sommeiller...
+	ES	Repitiendo...
+	FR	Répétition...
+	IT	Snooze in corso...
+	NL	Bezig met snoozen...
 
 ALARM_STOPPED
+	DE	Wecker angehalten
 	EN	Alarm Stopped
+	ES	Alarma detenida
+	FR	Réveil arrêté
+	IT	Sveglia interrotta
+	NL	Wekker gestopt
 
 ALARM_SNOOZE_STOPPED
+	DE	Weckwiederholung angehalten
 	EN	Snooze Stopped
+	ES	Repetición detenida
+	FR	Répétition arrêtée
+	IT	Snooze interrotto
+	NL	Snooze gestopt
 
 ALARM_WAKEUP
-	DE	Zeit, aufzustehen...
+	DE	Es ist Zeit, aufzuwachen...
 	EN	Time to wake up...
-	FR	C'est le temps de se lever...
+	ES	Hora de levantarse...
+	FR	Heure de réveil...
+	IT	È ora di svegliarsi...
+	NL	Tijd om wakker te worden...
 
 ALARM_WEEKDAYS
 	DA	Alarm hverdage
@@ -1748,11 +1774,11 @@ WELCOME_TO_SQUEEZESLAVE
 
 WELCOME_TO_BOOM
 	DA	Velkommetn til Squeezebox
-	DE	Willkommen!
+	DE	Willkommen bei Squeezebox
 	EN	Welcome to Squeezebox
 	ES	Bienvenido a Squeezebox
 	FR	Bienvenue dans la Squeezebox
-	IT	Squeezebox
+	IT	Benvenuti in Squeezebox
 	NL	Welkom bij Squeezebox
 
 FREE_YOUR_MUSIC
@@ -1831,7 +1857,12 @@ UPDATING_FIRMWARE_RECEIVER
 	NL	Squeezebox-firmware wordt bijgewerkt.
 
 UPDATING_FIRMWARE_BOOM
+	DE	Firmware wird aktualisiert.
 	EN	Updating Firmware.
+	ES	Actualizando firmware.
+	FR	Mise à jour du micrologiciel.
+	IT	Aggiornamento firmware in corso.
+	NL	Firmware wordt bijgewerkt.
 
 FIRMWARE_MISSING
 	DA	Fejl: Programmel mangler
@@ -3148,13 +3179,28 @@ SETUP_RESET_PLAYER_DESC
 	EN	You can reset a player's settings like player name, title format, menus etc. to factory defaults. Please note that this will not reset the player's hardware settings like eg. networking parameters.
 
 SETUP_POWERONBRIGHTNESS
+	DE	Helligkeit im eingeschalteten Zustand
 	EN	Power On Brightness
+	ES	Brillo cuando está encendido
+	FR	Luminosité (allumé)
+	IT	Luminosità quando acceso
+	NL	Helderheid wanneer aan
 
 SETUP_POWEROFFBRIGHTNESS
+	DE	Helligkeit im ausgeschalteten Zustand
 	EN	Power Off Brightness
+	ES	Brillo cuando está apagado
+	FR	Luminosité (éteint)
+	IT	Luminosità quando spento
+	NL	Helderheid wanneer uit
 
 SETUP_IDLEBRIGHTNESS
+	DE	Helligkeit im Standbymodus
 	EN	Idle Brightness
+	ES	Brillo en inactividad
+	FR	Luminosité (inactif)
+	IT	Luminosità quando inattivo
+	NL	Helderheid in ruststand
 
 SETUP_POWERONBRIGHTNESS_ABBR
 	EN	While On
@@ -10169,10 +10215,10 @@ BROWSE_ARTISTS
 BROWSE_ALBUMS
 	DE	Alben durchsuchen
 	EN	Browse Albums
-	NL	Albums bekijken
 	ES	Examinar álbumes
 	FR	Parcourir les albums
 	IT	Sfoglia album
+	NL	Albums bekijken
 
 BROWSE_ALBUMS
 	DE	Stilrichtungen durchsuchen
@@ -10185,10 +10231,10 @@ BROWSE_ALBUMS
 BROWSE_YEARS
 	DE	Jahre durchsuchen
 	EN	Browse Years
-	NL	Jaren bekijken
 	ES	Examinar años
 	FR	Parcourir les années
 	IT	Sfoglia anni
+	NL	Jaren bekijken
 
 BROWSE_BY_ARTIST_DBL
 	DA	Gennemse kunstnere
@@ -11088,10 +11134,20 @@ CHOOSE_A_NAME
 	ZH_CN	播放机名字：
 
 BRIGHTNESS_DIMMEST
+	DE	Am dunkelsten
 	EN	Dimmest
+	ES	Atenuación máxima
+	FR	Réduction maximale de l'éclairage
+	IT	Meno luminoso
+	NL	Meest gedimd
 
 BRIGHTNESS_AMBIENT
+	DE	Umgebungssensor verwenden
 	EN	Automatic
+	ES	Utilizar sensor ambiental
+	FR	Utiliser le capteur ambiant
+	IT	Utilizzare sensore ambiente
+	NL	Omgevingssensor gebruiken
 
 LIGHT_N
 	EN	Light Narrow
@@ -12949,7 +13005,12 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	ZH_CN	无线讯号强度
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH_ABBR
+	DE	Kabellos-Signal
 	EN	Wireless Signal
+	ES	Señal inalámbrica
+	FR	Signal sans fil
+	IT	Segnale senza fili
+	NL	Draadloos signaal
 
 INFORMATION_CLIENTS
 	CS	Celkem přehrávačů rozpoznáno
@@ -14706,16 +14767,36 @@ DISABLEDAC_WHENOFF
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
+	DE	Kopfhörer/Sub Out
 	EN	Line Out
+	ES	Salida de auriculares/subwoofer
+	FR	Sortie casque/sub
+	IT	Uscita cuffia/subwoofer
+	NL	Koptelefoon-/subwooferuitgang
 
 SETUP_ANALOGOUTMODE_DESC
+	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher.
 	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers.
+	ES	Elija la función del puerto de salida de auriculares o subwoofer de Boom. La opción de auriculares desactivará los altavoces internos.
+	FR	Sélectionnez la fonction du port de sortie du casque/sub Boom. L'option casque va désactiver les haut-parleurs internes.
+	IT	Scegliere la funzione della porta di uscita per cuffia/subwoofer di Boom. L'opzione Cuffia disattiva gli altoparlanti interni.
+	NL	Kies de functie van de koptelefoon-/subwooferuitgang voor de Boom. Met de koptelefoonoptie worden de interne speakers uitgeschakeld.
 
 ANALOGOUTMODE_SUBOUT
+	DE	Subwoofer
 	EN	Subwoofer
+	ES	Subwoofer
+	FR	Subwoofer
+	IT	Subwoofer
+	NL	Subwoofer
 
 ANALOGOUTMODE_HEADPHONE
+	DE	Kopfhörer
 	EN	Headphones
+	ES	Auriculares
+	FR	Casques
+	IT	Cuffie
+	NL	Koptelefoon
 
 SETUP_POLARITYINVERSION
 	DA	Inverter polaritet
@@ -15091,7 +15172,12 @@ DEBUG_CONTROL_COMMAND
 	NL	Registratie van interne opdrachtuitvoering (Geavanceerd)
 
 DEBUG_PLAYER_ALARMCLOCK
+	DE	Player-Weckerprotokoll
 	EN	Player Alarm Clock Logging
+	ES	Registro de reloj despertador del reproductor
+	FR	Journalisation du réveil de la platine
+	IT	Registrazione sveglia lettore
+	NL	Wekkerregistratie muzieksysteem
 
 DEBUG_PLAYER_IR
 	DA	Infrarød aktivitet & parsning
