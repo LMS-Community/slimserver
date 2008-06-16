@@ -283,6 +283,8 @@ sub init {
 Accessors for the list of known clients. These are functions, and do not need
 clients passed. They should be moved to be class methods.
 
+=cut
+
 =head2 clients()
 
 Returns an array of all client objects.
@@ -291,6 +293,22 @@ Returns an array of all client objects.
 
 sub clients {
 	return values %clientHash;
+}
+
+=head2 resetPrefs()
+
+Resets a client's preference object.
+
+=cut
+
+sub resetPrefs {
+	my $client = shift;
+
+	my $clientPrefs = $prefs->client($client);
+
+	$clientPrefs->remove( keys %{$clientPrefs->all} );
+
+	$client->init();
 }
 
 =head2 clientCount()

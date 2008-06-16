@@ -791,6 +791,19 @@ sub playerSettingsFrame {
 	}
 }
 
+sub resetPrefs {
+	my $client = shift;
+
+	# clear reset client prefs to default
+	$client->SUPER::resetPrefs;
+
+	# reset prefs stored on player to new values
+	for my $pref (keys %$pref_settings) {
+		my $value = $prefs->client($client)->get($pref);
+		$client->setPlayerSetting($pref, $value);
+	}
+}
+
 sub pcm_sample_rates {
 	my $client = shift;
 	my $track = shift;
