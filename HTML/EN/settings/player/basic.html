@@ -108,6 +108,10 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 		[% END %]
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_RESET_PLAYER" desc="SETUP_RESET_PLAYER_DESC" %]
+		<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1">[% "SETUP_RESET_PLAYER" | string %]</a>
+	[% END %]
+
 	[% IF !macaddress; WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]   
 		<p>   
 		[% IF useAJAX %]   
