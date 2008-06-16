@@ -1,23 +1,64 @@
 PLUGIN_JIVEEXTRAS
+	DE	Controller anpassen
 	EN	Customize Controller
+	ES	Personalizar controlador
+	FR	Personnaliser le contrôleur
+	IT	Personalizza Controller
+	NL	Controller aanpassen
 
 PLUGIN_JIVEEXTRAS_DESC
+	DE	Sie können den Squeezebox Controller anpassen, indem Sie zusätzliche Hintergrundbilder und Soundeffekte, die in den Einstellungsmenüs des Controllers verfügbar werden, auswählen.
 	EN	You may customize your Squeezebox Controller by selecting additional wallpaper images and sound effects which will become available on the settings menus for your Controller.
+	ES	Puede personalizar Squeezebox Controller seleccionando imágenes de papel tapiz y efectos de sonido adicionales que encontrará en los menús de configuración del controlador.
+	FR	Vous pouvez personnaliser le contrôleur Squeezebox Controller en sélectionnant d'autres images d'arrière-plan et d'autres effets sonores auxquels vous pourrez accéder par le biais des menus de réglage de votre contrôleur.
+	IT	Per personalizzare Squeezebox Controller, selezionare immagini di sfondo ed effetti sonori aggiuntivi che saranno disponibili nei menu delle impostazioni del dispositivo di controllo.
+	NL	Je kunt je Squeezebox Controller aanpassen door extra achtergrondafbeeldingen en geluidseffecten te selecteren, die beschikbaar worden gesteld in de instellingenmenu's voor je controller.
 
 PLUGIN_JIVEEXTRAS_WALLPAPERS
+	DE	Hintergrundbilder
 	EN	Wallpapers
+	ES	Papeles tapiz
+	FR	Arrière-plans
+	IT	Sfondi
+	NL	Achtergronden
 
 PLUGIN_JIVEEXTRAS_WALLPAPERS_DESC
+	DE	Wählen Sie lokale oder Remote-Bilddateien als Hintergrundbilder für den Controller. Diese Bilder sind dann als Optionen im Controller-Menü Einstellungen->Bildschirm->Hintergrundbild verfügbar. Hintergrundbilder sollten 240x320 Pixel groß sein und im Format JPEG, JPG, PNG oder BMP vorliegen.
 	EN	Select local or remote image files for using as the wallpaper on your controller.  These images will be available as options for the wallpaper from the Settings->Screen->Wallpaper menu from your controller.  Wallpaper files should be 240x320 pixel .jpeg, .jpg, .png or .bmp files.
+	ES	Seleccione archivos de imagen locales o remotos para utilizar como papel tapiz del controlador. Podrá acceder a estas imágenes como opciones para papel tapiz desde el menú Configuración->Pantalla->Papel tapiz del controlador. Los archivos de papel tapiz deben tener un tamaño de 240 x 320 píxeles y ser archivos .jpeg, .jpg, .png o .bmp.
+	FR	Sélectionnez des fichiers image locaux ou distants comme arrière-plans de votre contrôleur. Ces images seront disponibles dans les options des arrière-plans dans le menu Réglages > Ecran > Arrière-plan de votre contrôleur. Les fichiers d'arrière-plan doivent être aux formats .jpeg, .jpg, .png ou .bmp à 240x320 pixels.
+	IT	Selezionare i file di immagini salvati nel computer locale o in computer remoti da utilizzare come sfondi nel dispositivo di controllo. Queste immagini saranno disponibili nel menu Impostazioni->Schermo->Sfondo del dispositivo di controllo. I file degli sfondi devono essere file .jpeg, .jpg, .png o .bmp da 240x320 pixel.
+	NL	Selecteer lokale of externe beeldbestanden om als achtergrond op je controller te gebruiken. Deze afbeeldingen zijn beschikbaar als opties voor de achtergrond via het menu Instellingen->Scherm->Achtergrond op je controller. Achtergrondbestanden moeten .jpeg-, .jpg-, .png- of .bmp-bestanden met 240 x 320 pixels zijn.
 
 PLUGIN_JIVEEXTRAS_SOUNDS
+	DE	Sounds
 	EN	Sounds
+	ES	Sonidos
+	FR	Sons
+	IT	Suoni
+	NL	Geluiden
 
 PLUGIN_JIVEEXTRAS_SOUNDS_DESC
+	DE	Wählen Sie lokale oder Remote-Sounddateien als optionale Soundeffekte für Vorgänge (z.B. Menüauswahl auf dem Squeezebox Controller). Diese optionalen Sounds sind im Controller-Menü Einstellungen->Erweitert->Soundeffekte verfügbar. Soundeffektdateien sollten im Format WAV mit 1 Kanal (mono), 16 Bit und 44,1 kHz vorliegen.
 	EN	Select local or remote sound files to use as optional sounds effects for actions such as menu selections on your Squeezebox controller.  These optional sounds will be available from the Settings->Advanced->Sound Effects menu from your controller.  Sound effect files should be .wav files containing 1 channel (mono) 16 bit 44.1KHz data.
- 
+	ES	Seleccione archivos de sonido locales o remotos para utilizarlos como efectos de sonido opcionales para acciones como las selecciones en el menú del controlador Squeezebox. Podrá acceder a estos sonidos opcionales desde el menú Configuración->Avanzada->Efectos de sonido del controlador. Los archivos de efectos de sonido deben ser archivos .wav con datos de 1 canal (mono) a 16 bits y 44,1 KHz.
+	FR	Sélectionnez des fichiers son locaux ou distants comme effets sonores optionnels pour des actions telles que le choix de menus dans votre contrôleur. Ces sons seront disponibles dans le menu Réglages > Avancé > Effets sonores de votre Squeezebox Controller. Les effets sonores doivent se trouver dans des fichiers .wav contenant des données 16 bits 44,1 KHz à 1 canal (mono).
+	IT	Selezionare i file audio salvati nel computer locale o in computer remoti da associare come effetti sonori facoltativi ad azioni quali la selezione di voci di menu di Squeezebox Controller. Questi effetti sonori saranno disponibili nel menu Impostazioni->Avanzate->Effetti sonori del dispositivo di controllo. I file degli effetti sonori devono avere l'estensione .wav e contenere dati a 1 canale (mono) da 16 bit e 44,1KHz.
+	NL	Selecteer lokale of externe geluidsbestanden om als optionele geluidseffecten te gebruiken voor acties zoals menuselecties op je Squeezebox Controller. Deze optionele geluiden zijn beschikbaar in het menu Instellingen->Geavanceerd->Geluidseffecten op je controller. Geluidseffectbestanden moeten .wav-bestanden met 1-kanaals (mono) 16-bits 44.1KHz-gegevens zijn.
+
 PLUGIN_JIVEEXTRAS_CUSTOM
+	DE	Benutzerdefiniert #
 	EN	Custom #
+	ES	Elemento personalizado #
+	FR	# personnalisé
+	IT	Voce pers. #
+	NL	Aangepast #
 
 PLUGIN_JIVEEXTRAS_FILEORURL
+	DE	Datei oder URL eingeben
 	EN	Enter File or URL
+	ES	Introduzca archivo o URL
+	FR	Saisir le fichier ou l'URL
+	IT	Immettere file o URL
+	NL	Bestand of URL invoeren
+
