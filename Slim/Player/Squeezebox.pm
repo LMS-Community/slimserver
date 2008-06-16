@@ -531,7 +531,10 @@ sub checkFirmwareUpgrade {
 		
 		$client->block( {
 			'screen1' => {
-				'line' => [ $client->string('PLAYER_NEEDS_UPGRADE_1'), $client->string('PLAYER_NEEDS_UPGRADE_2') ],
+				'line' => [
+					$client->string('PLAYER_NEEDS_UPGRADE_1'),
+					$client->isa('Slim::Player::Boom') ? '' : $client->string('PLAYER_NEEDS_UPGRADE_2')
+				],
 				'fonts' => { 
 					'graphic-320x32' => 'light',
 					'graphic-160x32' => 'light_n',
