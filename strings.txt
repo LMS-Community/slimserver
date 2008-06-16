@@ -10200,7 +10200,7 @@ BROWSE_ALBUMS
 	FR	Parcourir les albums
 	IT	Sfoglia album
 
-BROWSE_ALBUMS
+BROWSE_GENRES
 	DE	Stilrichtungen durchsuchen
 	EN	Browse Genres
 	NL	Genres bekijken
