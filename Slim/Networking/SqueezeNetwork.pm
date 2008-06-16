@@ -105,10 +105,12 @@ sub _init_done {
 				my $pclass = "Slim::Plugin::${plugin}::Plugin";
 				if ( $pclass->can('setMode') ) {
 					Slim::Buttons::Home::delSubMenu( $pclass->playerMenu, $pclass->displayName );
+					$log->debug( "Removing $plugin from player UI, service not allowed in country" );
 				}
 				
 				if ( $pclass->can('webPages') ) {
 					Slim::Web::Pages->delPageLinks( $pclass->menu, $pclass->displayName );
+					$log->debug( "Removing $plugin from web UI, service not allowed in country" );
 				}
 			}
 		}
