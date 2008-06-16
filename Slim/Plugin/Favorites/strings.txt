@@ -62,7 +62,12 @@ FAVORITES_FAVORITE_NUM
 	ZH_CN	最喜爱#
 
 FAVORITES_HOTKEYS
+	DE	Abkürzungstasten
 	EN	Hotkeys
+	ES	Teclas de acceso rápido
+	FR	Raccourcis
+	IT	Tasti di scelta rapida
+	NL	Sneltoetsen
 
 FAVORITES_FAVORITE
 	DA	Favorit
@@ -74,7 +79,12 @@ FAVORITES_FAVORITE
 	NL	Favoriet
 
 FAVORITES_RIGHT_TO_DELETE
+	DE	Favorit löschen
 	EN	Remove Favorite
+	ES	Eliminar favorito
+	FR	Supprimer
+	IT	Elimina preferito
+	NL	Favoriet verwijderen
 
 FAVORITES_NOT_A_FAVORITE
 	DA	Ikke en Favorit
@@ -103,7 +113,12 @@ FAVORITES_ADDING
 	ZH_CN	保存最喜爱的...
 
 FAVORITES_DELETING
+	DE	Favorit wird gelöscht ...
 	EN	Removing favorite...
+	ES	Eliminando favorito...
+	FR	Suppression du favori...
+	IT	Eliminazione preferito in corso...
+	NL	Favoriet wordt verwijderd...
 
 PLUGIN_FAVORITES_DESC
 	DA	Gem og rediger dine Favoritter
@@ -205,10 +220,20 @@ PLUGIN_FAVORITES_CANCEL
 	NL	Annuleren
 
 PLUGIN_FAVORITES_CUT
+	DE	Ausschneiden
 	EN	Cut
+	ES	Cortar
+	FR	Couper
+	IT	Taglia
+	NL	Knippen
 
 PLUGIN_FAVORITES_PASTE
+	DE	Einfügen
 	EN	Paste
+	ES	Pegar
+	FR	Coller
+	IT	Incolla
+	NL	Plakken
 
 PLUGIN_FAVORITES_LOADING
 	DA	Indlæser Favoritter
