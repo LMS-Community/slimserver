@@ -10220,7 +10220,7 @@ BROWSE_ALBUMS
 	IT	Sfoglia album
 	NL	Albums bekijken
 
-BROWSE_ALBUMS
+BROWSE_GENRES
 	DE	Stilrichtungen durchsuchen
 	EN	Browse Genres
 	NL	Genres bekijken
