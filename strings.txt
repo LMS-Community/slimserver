@@ -2671,7 +2671,12 @@ SETUP_SCROLLRATE_DESC
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE-LINE
+	DE	Doppelte Größe
 	EN	Large Text
+	ES	Tamaño doble
+	FR	Taille double
+	IT	Raddoppia
+	NL	Dubbele hoogte
 
 SETUP_GROUP_ALARM
 	CS	Budík
@@ -2763,13 +2768,28 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	NL	Je moet opnieuw opstarten om de wijziging te implementeren
 
 INSTALLERROR_INVALID_VERSION
+	DE	Plugin ist nicht kompatibel mit dieser Version von SqueezeCenter. Aktuailsieren Sie die Anwendung.
 	EN	Plugin is incompatible with this version of SqueezeCenter. Please update.
+	ES	El complemento no es compatible con esta versión de SqueezeCenter. Realice una actualización.
+	FR	Le plugin n'est pas compatible avec cette version de SqueezeCenter. Veuillez mettre à jour.
+	IT	Plugin incompatibile con questa versione di SqueezeCenter. Aggiornarlo.
+	NL	Plug-in is incompatibel met deze versie van SqueezeCenter. Werk de plug-in bij.
 
 INSTALLERROR_INCOMPATIBLE_PLATFORM
+	DE	Plugin ist mit Ihrer Plattform nicht kompatibel.
 	EN	Plugin is incompatible with your platform.
+	ES	El complemento no es compatible con su plataforma.
+	FR	Le plugin n'est pas compatible avec votre plate-forme.
+	IT	Plugin incompatibile con la piattaforma.
+	NL	Plug-in is incompatibel met je platform.
 
 SETUP_GROUP_PLUGINS_FAILURE
+	DE	Plugin konnte nicht geladen werden.
 	EN	Plugin failed to load.
+	ES	No se ha podido cargar el complemento.
+	FR	Echec de chargement du plugin.
+	IT	Caricamento plugin non riuscito.
+	NL	Plug-in kan niet worden geladen.
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
@@ -4026,7 +4046,7 @@ REPLAYGAIN_TRACK_GAIN
 	ES	Usar ganancia de pista (si está presente)
 	FR	Utiliser le gain morceau si présent
 	HE	שימוש בהגברת רצועות (אם האפשרות קיימת)
-	IT	Guadagno traccia
+	IT	Guadagno brano
 	NL	Volumeaanpassing nummers
 	NO	Bruk «Track gain» (om tilgjengelig)
 	SV	Använd spårets volymjustering (om tillgänglig)
@@ -4369,10 +4389,10 @@ NO
 
 SETUP_PLAYLISTPREFIX
 	DA	Præfiks:
-	DE	Prefix:
+	DE	Präfix:
 	EN	Prefix:
 	ES	Prefijo:
-	FR	Préfixe :
+	FR	Préfixe:
 	IT	Prefisso:
 	JA	プレフィックス:
 	NL	Voorvoegsel:
@@ -4385,7 +4405,7 @@ SETUP_PLAYLISTSUFFIX
 	DE	Suffix:
 	EN	Suffix:
 	ES	Sufijo:
-	FR	Suffixe :
+	FR	Suffixe:
 	IT	Suffisso:
 	JA	サフィックス:
 	NL	Achtervoegsel:
@@ -5520,15 +5540,15 @@ SETUP_SCREENSAVER_DESC
 SETUP_SCREENSAVERTIMEOUT
 	CS	Prodlení spořiče v sekundách
 	DA	Ventetid for pauseskærm i sekunder
-	DE	Bildschirmschoner-Verzögerung in Sekunden
+	DE	Bildschirmschoner-Verzögerung:
 	EN	Screensaver delay time in seconds
-	ES	Tiempo de retraso de protector de pantalla en segundos
+	ES	Tiempo de espera para protector de pantalla:
 	FI	Näytönsäästäjän viive sekunteina
-	FR	Délai de l'écran de veille en secondes
+	FR	Délai de l'écran de veille:
 	HE	משך העיכוב של שומר המסך, בשניות
-	IT	Ritardo screen saver in secondi
+	IT	Timeout screen saver:
 	JA	スクリーンセーバー開示時間（秒）
-	NL	Tijd in seconden waarna schermbeveiliger actief wordt
+	NL	Time-out van schermbeveiliger:
 	NO	Ventetid før skjermspareren aktiveres, i sekunder
 	PT	Tempo de espera da proteção de ecrã, em segundos
 	SV	Fördröjning innan skärmsläckare aktiveras, i sekunder
@@ -6060,7 +6080,7 @@ SETUP_BROWSEAGELIMIT_DESC
 	ES	Elija el número de pistas que se deben mostrar al buscar música nueva. El valor predeterminado es 100
 	FR	Spécifiez le nombre d'éléments à afficher dans la rubrique Nouveautés. Le nombre par défaut est 100.
 	HE	בחר את מספר הרצועות להצגה בעת עיון לאיתור מוסיקה חדשה. ברירת המחדל היא 100
-	IT	Scegliere il numero di tracce da visualizzare quando si cerca musica nuova. L'impostazione predefinita è 100.
+	IT	Scegliere il numero di brani da visualizzare quando si cerca musica nuova. L'impostazione predefinita è 100.
 	NL	Kies het aantal tracks dat weergegeven moet worden wanneer je naar nieuwe muziek zoekt. De standaardwaarde is 100.
 	NO	Velg antall album som nylig er lagt til når du søker etter ny musikk. Standardverdien er 100 album.
 
@@ -6182,6 +6202,10 @@ SETUP_LONGDATEFORMAT_DESC
 SETUP_LONGDATEFORMAT_DEFAULT
 	DE	%A, |%d. %B %Y
 	EN	%A, %B |%d, %Y
+	ES	%A, %B |%d, %Y
+	FR	%A, %B |%d, %Y
+	IT	%A, %B |%d, %Y
+	NL	%A, %B |%d, %Y
 
 SETUP_SHORTDATEFORMAT
 	CS	Formát datumu krátký
@@ -6220,6 +6244,10 @@ SETUP_SHORTDATEFORMAT_DESC
 SETUP_SHORTDATEFORMAT_DEFAULT
 	DE	%m.%d.%y
 	EN	%m/%d/%Y
+	ES	%m/%d/%Y
+	FR	%m/%d/%Y
+	IT	%m/%d/%Y
+	NL	%m/%d/%Y
 
 SETUP_TIMEFORMAT
 	CS	Formát času
@@ -6257,6 +6285,10 @@ SETUP_TIMEFORMAT_DESC
 SETUP_TIMEFORMAT_DEFAULT
 	DE	%H:%M
 	EN	|%I:%M %p
+	ES	|%I:%M %p
+	FR	|%I:%M %p
+	IT	|%I:%M %p
+	NL	|%I:%M %p
 
 SETUP_ITEMSPERPAGE
 	CS	Položek na stránku
@@ -8921,7 +8953,7 @@ TRACK
 	FI	Kappale
 	FR	Piste
 	HE	רצועה
-	IT	Traccia
+	IT	Brano
 	JA	トラック
 	NL	Track
 	NO	Spor
@@ -9760,16 +9792,36 @@ ARTISTS
 	ZH_CN	艺人名
 
 ARTIST_SEARCH
+	DE	Interpretensuche
 	EN	Artist Search
+	ES	Búsqueda de artista
+	FR	Recherche d'artiste
+	IT	Ricerca artista
+	NL	Artiesten zoeken
 
 ALBUM_SEARCH
+	DE	Album suchen
 	EN	Album Search
+	ES	Búsqueda de álbumes
+	FR	Recherche d'album
+	IT	Ricerca album
+	NL	Albums zoeken
 
 TRACK_SEARCH
+	DE	Titelsuche
 	EN	Track Search
+	ES	Búsqueda de pistas
+	FR	Recherche de piste
+	IT	Ricerca brano
+	NL	Nummers zoeken
 
 PLAYLIST_SEARCH
+	DE	Wiedergabeliste suchen
 	EN	Playlist Search
+	ES	Búsqueda de listas de reproducción
+	FR	Recherche de la liste de lecture
+	IT	Ricerca elenco di riproduzione
+	NL	Playlists zoeken
 
 LCARTISTS
 	CS	interpretů
@@ -10133,13 +10185,36 @@ BROWSE_BY_ARTIST
 	ZH_CN	浏览艺人
 
 BROWSE_ARTISTS
+	DE	Interpreten durchsuchen
 	EN	Browse Artists
+	ES	Examinar artistas
+	FR	Parcourir les artistes
+	IT	Sfoglia artisti
+	NL	Artiesten bekijken
+
 BROWSE_ALBUMS
+	DE	Alben durchsuchen
 	EN	Browse Albums
-BROWSE_GENRES
+	NL	Albums bekijken
+	ES	Examinar álbumes
+	FR	Parcourir les albums
+	IT	Sfoglia album
+
+BROWSE_ALBUMS
+	DE	Stilrichtungen durchsuchen
 	EN	Browse Genres
+	NL	Genres bekijken
+	ES	Examinar géneros
+	FR	Parcourir les genres
+	IT	Sfoglia generi
+
 BROWSE_YEARS
+	DE	Jahre durchsuchen
 	EN	Browse Years
+	NL	Jaren bekijken
+	ES	Examinar años
+	FR	Parcourir les années
+	IT	Sfoglia anni
 
 BROWSE_BY_ARTIST_DBL
 	DA	Gennemse kunstnere
@@ -13533,27 +13608,32 @@ MUSICSOURCE
 	NL	Muziekbron
 
 MUSICSOURCE_SWITCH
+	DE	Wählen Sie die Musikquelle, mit der der Player verbunden werden soll.
 	EN	Please select the music source you'd like to connect your player to.
+	ES	Seleccione el origen de música al que desea conectar el reproductor.
+	FR	Veuillez sélectionner la source musicale à laquelle vous souhaitez connecter la platine.
+	IT	Selezionare la sorgente musicale da connettere al lettore.
+	NL	Selecteer de muziekbron waarmee u uw muzieksysteem wilt verbinden.
 
 SQUEEZECENTER_WANT_SWITCH
 	DA	Denne afspiller er tilsluttet til %s. Ønsker du at skifte til SqueezeCenter?
-	DE	Dieser Player ist derzeit mit %s verbunden. Wollen Sie ihn zu diesem SqueezeCenter verbinden?
+	DE	Dieser Player ist derzeit verbunden mit %s. Möchten Sie auf diese Version von SqueezeCenter umschalten?
 	EN	This player is currently connected to %s. Do you want it to switch to this SqueezeCenter?
-	ES	Este reproductor se encuentra conectado a %s. ¿Desea regresar a SqueezeCenter?
-	FR	Cette platine est actuellement connectée à %s. Voulez-vous revenir au SqueezeCenter?
-	IT	Il lettore è attualmente connesso a %s. Ripristinare la connessione a SqueezeCenter?
-	NL	Deze speler is momenteel met %s verbonden. Wil je de speler terugschakelen naar SqueezeCenter?
+	ES	Este reproductor se encuentra conectado a %s. ¿Desea conectarlo a este SqueezeCenter?
+	FR	Cette platine est actuellement connectée à %s. Voulez-vous la connecter à ce SqueezeCenter?
+	IT	Questo lettore è correntemente connesso a %s. Passare a questo SqueezeCenter?
+	NL	Dit muzieksysteem is momenteel verbonden met %s. Wilt u het overschakelen naar dit SqueezeCenter?
 
 SQUEEZECENTER_CONNECTING
 	DA	Tilslutter til %s...
-	DE	Verbindung zu %s wird hergestellt ...
+	DE	Verbindung zu %s...
 	EN	Connecting to %s...
 	ES	Conectando a %s...
 	FI	Yhdistetään %s...
 	FR	Connexion à %s...
 	HE	מתחבר ל-%s...
-	IT	Connessione a %s in corso...
-	NL	Verbinding met %s wordt gemaakt...
+	IT	Connessione a %s...
+	NL	Bezig verbinding te maken met %s...
 	SV	Ansluter till %s...
 	ZH_CN	%s连接中...
 
@@ -14773,7 +14853,7 @@ DEBUG_FACTORYTEST
 	EN	Information used during factory testing
 	ES	Información utilizada durante pruebas de fábrica
 	FR	Informations utilisées pour les tests usine
-	IT	Informazioni utilizzate durante il test in fabbrica
+	IT	Informazioni utilizzate durante la verifica in fabbrica
 	NL	Informatie gebruikt tijdens fabriekstesten
 
 DEBUG_FAVORITES
@@ -15831,34 +15911,84 @@ INSERT
 	NL	Invoegen
 
 SEEK_ERROR_MMS
+	DE	Suchlauf in diesem WMA-Stream nicht möglich
 	EN	Cannot seek in this WMA stream
+	ES	Imposible desplazarse en esta secuencia WMA
+	FR	Impossible de rechercher dans ce flux WMA
+	IT	Impossibile eseguire ricerca in questo stream WMA
+	NL	Kan niet zoeken in deze WMA-stream
 
 SEEK_ERROR_LIVE
+	DE	Suchlauf in Live-Stream nicht möglich
 	EN	Cannot seek in live stream
+	ES	Imposible desplazarse en secuencia en directo
+	FR	Impossible de rechercher dans un flux en direct
+	IT	Impossibile eseguire ricerca negli stream in diretta
+	NL	Kan niet zoeken in live-stream
 
 SEEK_ERROR_MP3
+	DE	Suchlauf in diesem MP3-Stream nicht möglich
 	EN	Cannot seek in this MP3 stream
+	ES	No puede desplazarse por esta secuencia MP3
+	FR	Impossible de rechercher dans ce flux MP3
+	IT	Impossibile eseguire ricerche in questo stream MP3
+	NL	Kan niet zoeken in deze MP3-stream
 
 SEEK_ERROR_MP3_UNKNOWN_BITRATE
+	DE	Suchlauf mit unbekannter Bitrate nicht möglich
 	EN	Cannot seek with unknown bitrate
+	ES	Imposible desplazarse con velocidad de bits desconocida
+	FR	Impossible de rechercher avec un débit binaire inconnu
+	IT	Impossibile eseguire ricerca con velocità in bit sconosciuta
+	NL	Kan niet zoeken met onbekende bitsnelheid
 
 SEEK_ERROR_MP3_UNKNOWN_DURATION
+	DE	Suchlauf mit unbekannter Dauer nicht möglich
 	EN	Cannot seek with unknown duration
+	ES	Imposible desplazarse con duración desconocida
+	FR	Impossible de rechercher avec une durée inconnue
+	IT	Impossibile eseguire ricerca con durata sconosciuta
+	NL	Kan niet zoeken met onbekende duur
 
 SEEK_ERROR_TYPE_NOT_SUPPORTED
+	DE	Suchlauf in Streams des Typs %s nicht möglich
 	EN	Cannot seek in streams of type %s
+	ES	Imposible desplazarse en secuencias del tipo %s
+	FR	Impossible de rechercher dans les flux de type %s
+	IT	Impossibile eseguire ricerca negli stream del tipo %s
+	NL	Kan niet zoeken in streams van type %s
 
 SCANNER_REMOTE_NO_URL_PROVIDED
+	DE	Scannen nicht möglich: Keine URL gefunden
 	EN	Unable to scan: No URL found
+	ES	No se puede realizar el examen: no se ha encontrado la URL
+	FR	Impossible d'analyser: l'URL est introuvable
+	IT	Impossibile eseguire analisi: URL non trovato
+	NL	Kan niet scannen: geen URL gevonden
 
 SCANNER_REMOTE_INVALID_URL
+	DE	Scannen nicht möglich: Ungültige URL
 	EN	Unable to scan: Invalid URL
+	ES	No se puede realizar el examen: URL no váida
+	FR	Impossible d'analyser: l'URL n'est pas valide
+	IT	Impossibile eseguire analisi: URL non valido
+	NL	Kan niet scannen: ongeldige URL
 
 SCANNER_REMOTE_NESTED_TOO_DEEP
+	DE	Scannen nicht möglich: Wiedergabeliste zu tief verschachtelt
 	EN	Unable to scan: Playlist nested too deep
+	ES	No puede realizar el examen: la anidación de la lista de reproducción es demasiado profunda
+	FR	Impossible d'analyser: la liste de lecture est emboîtée trop profondément
+	IT	Impossibile eseguire l'analisi: l'elenco di riproduzione contiene troppe nidificazioni
+	NL	Kan niet scannen: playlist te diep genest
 
 RECENT_SEARCHES
+	DE	Letzte Suchvorgänge
 	EN	Recent Searches
+	ES	Búsquedas recientes
+	FR	Recherches récentes
+	IT	Ricerche recenti
+	NL	Recente zoekopdrachten
 
 ALBUMS_SORT_METHOD
 	EN	Albums Sort Method

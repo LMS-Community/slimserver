@@ -491,15 +491,26 @@ DEBUG_PLUGIN_MUSICIP
 
 MUSICIP_PROGRESS
 	DA	MusicIP import
-	DE	MusicIP Import
+	DE	MusicIP-Import
 	EN	MusicIP Import
 	ES	Importación de MusicIP
 	FR	Importation MusicIP
-	IT	Importazione da MusicIP
-	NL	MusicIP importeren
+	IT	Importa MusicIP
+	NL	MusicIP-import
 
 MUSICIP_PLAYTHISMIX
+	DE	Diesen Mix wiedergeben
 	EN	Play this mix
+	ES	Reproducir esta mezcla
+	FR	Lire ce mix
+	IT	Riproduci raccolta
+	NL	Deze mix afspelen
 
 MUSICIP_CREATEMIX
+	DE	MusicIP-Mix erstellen
 	EN	Create MusicIP Mix
+	ES	Crear mezcla de MusicIP
+	FR	Créer un mix MusicIP
+	IT	Crea raccolta MusicIP
+	NL	MusicIP-mix maken
+
