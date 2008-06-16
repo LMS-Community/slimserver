@@ -96,6 +96,7 @@ sub init {
 			'headerValue'    => 'unscaled',
 			'min'            => 0,
 			'max'            => 200,
+			'increment'      => 1,
 			'onChange'       => \&setPref,
 			'pref'           => "mix_style",
 			'initialValue'   => "mix_style",
