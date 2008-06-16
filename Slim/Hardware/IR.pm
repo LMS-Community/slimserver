@@ -675,7 +675,7 @@ sub processIR {
 
 		$log->info("Knob code detected, processing $code");
 
-		if ($irCodeBytes eq $client->lastircodebytes) {
+		if ($irCodeBytes eq $client->lastircodebytes && $timediff < 0.5) {
 
 			$code .= ".repeat";
 
