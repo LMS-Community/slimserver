@@ -15995,3 +15995,9 @@ ALBUMS_SORT_METHOD
 
 UNMIXABLE
 	EN	%s not available for this item
+
+PLAYER_BRIGHTNESS
+	EN	Player Brightness
+
+SETTING_PLAYER_BRIGHTNESS_TO
+	EN	Setting %s brightness to %s
