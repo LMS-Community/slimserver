@@ -215,6 +215,8 @@ sub initPlugin {
 		Slim::Control::Request::addDispatch(['musicip', 'add'],
 			[1, 0, 0, \&cliPlayMix]);
 
+		Slim::Control::Request::addDispatch(['musicip', 'insert'],
+			[1, 0, 0, \&cliPlayMix]);
 
 		Slim::Player::ProtocolHandlers->registerHandler(
 			mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
@@ -960,6 +962,9 @@ sub cliMix {
 			'add' => {
 				'cmd' => ['musicip', 'add'],
 			},
+			'add-hold' => {
+				'cmd' => ['musicip', 'insert'],
+			},
 		};
 		$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 		$chunkCount++;
@@ -994,7 +999,7 @@ sub cliPlayMix {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotCommand([['musicip'], ['play', 'add']])) {
+	if ($request->isNotCommand([['musicip'], ['play', 'add', 'insert']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1002,8 +1007,12 @@ sub cliPlayMix {
 	# get our parameters
 	my $client = $request->client();
 	my $add    = !$request->isNotCommand([['musicip'], ['add']]);
+	my $insert = !$request->isNotCommand([['musicip'], ['insert']]);
 
-	$client->execute(["playlist", $add ? "addtracks" : "playtracks", "listref=musicmagic_mix"]);
+	$client->execute(["playlist",	$add ? "addtracks" 
+					: $insert ? "inserttracks"
+					: "playtracks", 
+			"listref=musicmagic_mix"]);
 }
 
 sub _prepare_mix {
