@@ -865,7 +865,7 @@ sub playerSettingsMenu {
 	}
 
 	# brightness settings for players with displays 
-	if ( $client->display() && !$client->isa('Slim::Player::Receiver') ) {
+	if ( $client->isPlayer() && !$client->display->isa('Slim::Display::NoDisplay') ) {
 		push @menu, {
 			text           => $client->string("PLAYER_BRIGHTNESS"),
 			id             => 'settingsPlayerBrightness',
