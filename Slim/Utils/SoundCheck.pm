@@ -45,6 +45,9 @@ sub commentTagTodB {
 			}
 
 			splice(@{$tags->{'COMMENT'}}, $i, 1);
+			
+			# In case there are multiple iTunNORM tags for some reason, skip the rest
+			last;
 		}
 	}
 
