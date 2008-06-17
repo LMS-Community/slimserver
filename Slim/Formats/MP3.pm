@@ -244,7 +244,7 @@ sub getTag {
 
 		for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
 
-			$info->{$type} = $info->{'RVAD'}->{'RIGHT'}->{$type};
+			$info->{"RVA_$type"} = $info->{'RVAD'}->{'RIGHT'}->{$type};
 		}
 
 		delete $info->{'RVAD'};
@@ -255,14 +255,14 @@ sub getTag {
 
 			while (my ($type, $gain) = each %{$info->{'RVA2'}->{'MASTER'}}) {
 
-				$info->{$type} = $gain;
+				$info->{"RVA_$type"} = $gain;
 			}
 
 		} elsif ($info->{'RVA2'}->{'FRONT_RIGHT'} && $info->{'RVA2'}->{'FRONT_LEFT'}) {
 
 			while (my ($type, $gain) = each %{$info->{'RVA2'}->{'FRONT_RIGHT'}}) {
 
-				$info->{$type} = $gain;
+				$info->{"RVA_$type"} = $gain;
 			}		
 		}
 
@@ -270,9 +270,51 @@ sub getTag {
 	}
 
 	# Look for iTunes SoundCheck data
-	if ($info->{'COMMENT'}) {
-
+	
+	# Logic used here is:
+	# If there is an iTunNORM tag and an RVA tag:
+	#   Gain values are added together
+	# If there is an iTunNORM tag and a TXXX track gain tag
+	#   Only the iTunNORM value is used
+	# If there is no iTunNORM tag, the value used is RVA if available, or TXXX
+	# See bug 6890 for more info
+	
+	# Sometimes iTunNORM is not in the comment tag?
+	if ( $info->{'ITUNNORM'} ) {
+		$info->{'COMMENT'} ||= [];
+		push @{ $info->{'COMMENT'} }, 'iTunNORM  ' . delete $info->{'ITUNNORM'};
+	}
+	
+	if ( $info->{'COMMENT'} ) {
+		my $rva_gain  = delete $info->{'RVA_REPLAYGAIN_TRACK_GAIN'} || 0;
+		my $txxx_gain = delete $info->{'REPLAYGAIN_TRACK_GAIN'};
+		
+		# use RVA track gain for combining with iTunNORM
+		$info->{'REPLAYGAIN_TRACK_GAIN'} = $rva_gain;
+		
 		Slim::Utils::SoundCheck::commentTagTodB($info);
+		
+		if ( $info->{'REPLAYGAIN_TRACK_GAIN'} == $rva_gain ) {
+			# SoundCheck did not find a gain value, restore previous value
+			$info->{'REPLAYGAIN_TRACK_GAIN'} = $rva_gain || $txxx_gain;
+			
+			$log->is_debug && $log->debug( 
+				'No iTunNORM SoundCheck data found, track gain set to '
+				. $info->{'REPLAYGAIN_TRACK_GAIN'}
+				. ' from '
+				. ( $rva_gain ? 'RVA tag' : 'TXXX tag' )
+			);
+		}
+		else {
+			$log->debug( 'iTunNORM SoundCheck data found, track gain set to ' . $info->{'REPLAYGAIN_TRACK_GAIN'} );
+		}
+	}
+	
+	# Move RVA_ tags back to their proper name
+	for my $tag ( keys %{$info} ) {
+		if ( $tag =~ /^RVA_(.+)/ ) {
+			$info->{$1} = delete $info->{$tag};
+		}
 	}
 	
 	# We only want a 4-digit year
