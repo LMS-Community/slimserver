@@ -329,35 +329,44 @@ sub client_readable {
 					my ($op, $len, $data);
 					
 					# Check for previous partial data
-					if ( my $partial = ${*$s}{_partial} ) {
-						$op   = $partial->[0];
-						$len  = $partial->[1];
-						$data = $partial->[2];
-						
-						my $remain = $len - length($data);
-						$data .= substr $buf, 0, $remain, '';
-						
+					if ( my $partial = delete ${*$s}{_partial} ) {
+						$buf = $partial . $buf;
+
 						if ( $log->is_debug ) {
-							$log->debug( "Client sent additional $remain partial data: $op / $len / " . Data::Dump::dump($data) );
+							$log->debug( "Client sent additional header / data: " . Data::Dump::dump($buf) );
 						}
-					}
-					else {
-						$op   = substr $buf, 0, 4, '';
-						$len  = unpack 'N', substr( $buf, 0, 4, '' );
-						$data = substr $buf, 0, $len, '';
 					}
 					
-					# Check for partial reads
-					if ( defined $len && length($data) < $len ) {
+					# Make sure we have at op and len
+					if ( length($buf) < 8 ) {
 						if ( $log->is_debug ) {
-							$log->debug( "Client sent partial data: $op / $len / " . length($data) . " data: " . Data::Dump::dump($data) );
+							$log->debug( "Client sent partial header: " . Data::Dump::dump($buf) );
 						}
-						${*$s}{_partial} = [ $op, $len, $data ];
+
+						${*$s}{_partial} = $buf;
+
 						return;
 					}
 
-					# Remove partial data if any
-					delete ${*$s}{_partial};
+					$op  = substr $buf, 0, 4;
+					$len = unpack 'N', substr( $buf, 4, 4 );
+
+					# Now having read len, make sure that all the data is available
+					if ( length($buf) < $len + 8 ) {
+
+						if ( $log->is_debug ) {
+							$log->debug( "Client sent partial data: $op / $len / " . Data::Dump::dump(substr($buf,8)) );
+						}
+
+						${*$s}{_partial} = $buf;
+
+						return;
+
+					}
+
+					# Consume op / len from start of buf and read data
+					substr $buf, 0, 8, '';
+					$data = substr $buf, 0, $len, '';
 					
 					# Sanity check for bad data
 					unless ( length($op) == 4 && defined $len && length($data) == $len ) {
