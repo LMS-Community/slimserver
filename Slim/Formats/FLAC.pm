@@ -996,6 +996,11 @@ sub _isFLACHeader {
 		     $sample_size == 0x7 ||
 		     $padding);
 	
+	my $log = logger('player.source');
+	if ( $log->is_debug ) {
+		$log->debug( "Found FLAC header: block_size: $block_size, sample_rate: $sample_rate, channel: $channel, sample_size: $sample_size, padding: $padding" );
+	}
+	
 	my $len = 4;
 	if (!($bytes[4] & 0x80)) {
 		$len += 1;
@@ -1019,6 +1024,7 @@ sub _isFLACHeader {
 		$len += 7;
 	}
 
+	# Block size can be stored at the end of the header
 	if ($block_size == 0x6) {
 		$len += 1;
 	}
@@ -1026,10 +1032,15 @@ sub _isFLACHeader {
 		$len += 2;
 	}
 
-	if ($sample_rate == 0xc) {
+	# Sample rate can be stored at the end of the header
+	if ($sample_rate == 0xC) {
 		$len += 1;
 	}
-	elsif ($block_size == 0xd || $block_size == 0xe) {
+	elsif ($sample_rate == 0xD || $sample_rate == 0xE) {
+		$len += 2;
+	}
+	# XXX: I'm not sure why this is part of the sample_rate if block, bug?
+	elsif ($block_size == 0xD || $block_size == 0xE) {
 		$len += 2;
 	}
 	
