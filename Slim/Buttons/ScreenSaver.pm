@@ -50,6 +50,12 @@ sub init {
 			if (defined $functarg && $functarg eq 'passback') {
 				Slim::Hardware::IR::resendButton($client);
 			}
+
+			# passback only if exposed mode is playlist
+			if (defined $functarg && $functarg eq 'passbackplaylist' && Slim::Buttons::Common::mode($client) eq 'playlist') {
+				Slim::Hardware::IR::resendButton($client);
+			}
+
 		}
 	);
 }
