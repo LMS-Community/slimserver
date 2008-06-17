@@ -16072,3 +16072,9 @@ UPDATE_DSP_FAILURE_RESTORE
 
 UNMIXABLE
 	EN	%s not available for this item
+
+PLAYER_BRIGHTNESS
+	EN	Player Brightness
+
+SETTING_PLAYER_BRIGHTNESS_TO
+	EN	Setting %s brightness to %s

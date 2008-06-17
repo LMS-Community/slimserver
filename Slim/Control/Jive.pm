@@ -73,6 +73,7 @@ sub init {
 	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
 	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
+	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings'], [1, 0, 0, \&playerBrightnessMenu]);
 	Slim::Control::Request::addDispatch(['jiveunmixable'], [1, 1, 1, \&jiveUnmixableMessage]);
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'], [1, 0, 1, \&albumSortSettingsMenu]);
 	Slim::Control::Request::addDispatch(['jivesetalbumsort'], [1, 0, 1, \&jiveSetAlbumSort]);
@@ -863,12 +864,47 @@ sub playerSettingsMenu {
 		};	
 	}
 
+	# brightness settings for players with displays 
+	if ( $client->isPlayer() && !$client->display->isa('Slim::Display::NoDisplay') ) {
+		push @menu, {
+			text           => $client->string("PLAYER_BRIGHTNESS"),
+			id             => 'settingsPlayerBrightness',
+			node           => 'advancedSettings',
+			actions        => {
+				  do => {
+					cmd    => ['jiveplayerbrightnesssettings'],
+					player => 0,
+				  },
+			},
+			window         => { titleStyle => 'settings' },
+		};	
+	}
+
 
 	if ($batch) {
 		return \@menu;
 	} else {
 		_notifyJive(\@menu, $client);
 	}
+}
+
+sub playerBrightnessMenu {
+
+	my $request    = shift;
+	my $client     = $request->client();
+
+	Slim::Hardware::IR::executeButton($client, 'brightness_toggle', undef, undef, 1);
+
+	my $newBrightness = $client->brightness();
+	$client->showBriefly({
+		'jive' => {
+			'type'    => 'popupplay',
+			'text'    => [ $client->string('SETTING_PLAYER_BRIGHTNESS_TO', $client->name(), $newBrightness) ],
+                       }
+                });
+
+	$request->setStatusDone();
+
 }
 
 sub browseMusicFolder {
