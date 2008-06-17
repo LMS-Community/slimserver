@@ -885,8 +885,9 @@ elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 
 else {
 	%_ignoredItems = (
-		# Items we should ignore on a linux vlume
+		# Items we should ignore on a linux volume
 		'lost+found' => 1,
+		'@eaDir'     => 1,
 	)	
 }
 
