@@ -6244,10 +6244,10 @@ SETUP_SHORTDATEFORMAT_DESC
 SETUP_SHORTDATEFORMAT_DEFAULT
 	DE	%m.%d.%y
 	EN	%m/%d/%Y
-	ES	%m/%d/%Y
-	FR	%m/%d/%Y
-	IT	%m/%d/%Y
-	NL	%m/%d/%Y
+	ES	%d/%m/%Y
+	FR	%d/%m/%Y
+	IT	%d/%m/%Y
+	NL	%d-%m-%Y
 
 SETUP_TIMEFORMAT
 	CS	Formát času
@@ -10195,26 +10195,26 @@ BROWSE_ARTISTS
 BROWSE_ALBUMS
 	DE	Alben durchsuchen
 	EN	Browse Albums
-	NL	Albums bekijken
 	ES	Examinar álbumes
 	FR	Parcourir les albums
 	IT	Sfoglia album
+	NL	Albums bekijken
 
 BROWSE_GENRES
 	DE	Stilrichtungen durchsuchen
 	EN	Browse Genres
-	NL	Genres bekijken
 	ES	Examinar géneros
 	FR	Parcourir les genres
 	IT	Sfoglia generi
+	NL	Genres bekijken
 
 BROWSE_YEARS
 	DE	Jahre durchsuchen
 	EN	Browse Years
-	NL	Jaren bekijken
 	ES	Examinar años
 	FR	Parcourir les années
 	IT	Sfoglia anni
+	NL	Jaren bekijken
 
 BROWSE_BY_ARTIST_DBL
 	DA	Gennemse kunstnere
