@@ -927,14 +927,37 @@ sub cliMix {
 
 	if ($menuMode) {
 		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => ['songinfo'],
-					'params' => {
-						'menu' => 'nowhere',
-						'context' => 'playlist',
+			actions => {
+				go => {
+					cmd => ['songinfo'],
+					params => {
+						menu => 'nowhere',
 					},
-					'itemsParams' => 'params',
+					itemsParams => 'params',
+				},
+				play => {
+					cmd => ['playlistcontrol'],
+					params => {
+						cmd  => 'load',
+						menu => 'nowhere',
+					},
+					itemsParams => 'params',
+				},
+				add =>  {
+					cmd => ['playlistcontrol'],
+					params => {
+						cmd  => 'add',
+						menu => 'nowhere',
+					},
+					itemsParams => 'params',
+				},
+				'add-hold' =>  {
+					cmd => ['playlistcontrol'],
+					params => {
+						cmd  => 'insert',
+						menu => 'nowhere',
+					},
+					itemsParams => 'params',
 				},
 			},
 		};
