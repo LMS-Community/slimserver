@@ -542,10 +542,13 @@ sub sleepSettingsQuery {
 	my @menu;
 
 	if ($val > 0) {
-		my $sleepString = $client->string( 'SLEEPING_IN_X_MINUTES', $val );
+		my $now = Time::HiRes::time();
+		my $then = $client->sleepTime();
+		my $sleepyTime = int( ($then - $now) / 60 ) + 1;
+		my $sleepString = $client->string( 'SLEEPING_IN_X_MINUTES', $sleepyTime );
 		push @menu, { text => $sleepString, style => 'itemNoAction' };
+		push @menu, sleepInXHash($client, $val, 0);
 	}
-	push @menu, sleepInXHash($client, $val, 0);
 	push @menu, sleepInXHash($client, $val, 15);
 	push @menu, sleepInXHash($client, $val, 30);
 	push @menu, sleepInXHash($client, $val, 45);
@@ -1501,19 +1504,18 @@ sub playerPower {
 sub sleepInXHash {
 	$log->info("Begin function");
 	my ($client, $val, $sleepTime) = @_;
-	my $minutes = $client->string('MINUTES');
 	my $text = $sleepTime == 0 ? 
 		$client->string("SLEEP_CANCEL") :
-		$sleepTime . " " . $minutes;
+		$client->string('X_MINUTES', $sleepTime);
 	my %return = ( 
 		text    => $text,
-		radio	=> ($val == ($sleepTime*60)) + 0, # 0 is added to force the data type to number
 		actions => {
-			do => {
+			go => {
 				player => 0,
 				cmd => ['sleep', $sleepTime*60 ],
 			},
 		},
+		nextWindow => 'refresh',
 	);
 	return \%return;
 }
