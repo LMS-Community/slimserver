@@ -25,7 +25,8 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(skin itemsPerPage refreshRate thumbSize longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb));
+	return ($prefs, qw(displaytexttimeout skin itemsPerPage refreshRate thumbSize
+					   longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb));
 }
 
 sub handler {
