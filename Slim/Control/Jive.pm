@@ -782,8 +782,6 @@ sub playerSettingsMenu {
 			$client->ipport() . "\n\n" .
 			$client->string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
 			uc($client->macaddress()) . "\n\n" .
-			($client->signalStrength ? $client->string("INFORMATION_PLAYER_SIGNAL_STRENGTH") . ": " .
-			$client->signalStrength . "\n\n" : '') .
 			($client->voltage ? $client->string("INFORMATION_PLAYER_VOLTAGE") . ": " .
 			$client->voltage . "\n\n" : '');
 	push @menu, {
