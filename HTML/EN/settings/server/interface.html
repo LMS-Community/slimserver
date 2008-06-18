@@ -89,5 +89,9 @@
 		[% END %]
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_DISPLAYTEXTTIMEOUT" desc="SETUP_DISPLAYTEXTTIMEOUT_DESC"%]
+		<input type=text class="stdedit" name="pref_displaytexttimeout" id="displaytexttimeout" value="[% prefs.pref_displaytexttimeout || 0 %]" size="15">
+	[% END %]
+
 [% PROCESS settings/footer.html %]
 
