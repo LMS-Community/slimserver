@@ -1119,6 +1119,9 @@ SLEEPING_IN_X_MINUTES
 	IT	Sospendi fra %s minuti
 	NL	Sluimermodus over %s minuten
 
+X_MINUTES
+	EN	%s minutes
+
 SLEEPING_IN
 	CS	Sleep za
 	DA	Slumrefunktion om

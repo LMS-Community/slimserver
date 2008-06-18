@@ -2408,14 +2408,31 @@ sub sleepCommand {
 		$client->sleepTime($offTime);
 		# for some reason this is minutes...
 		$client->currentSleepTime($will_sleep_in / 60); 
+
+		my $will_sleep_in_minutes = int( $will_sleep_in / 60 );
+		$client->showBriefly({
+			'jive' => { 
+				'type'    => 'popupplay',
+				'text'    => [ $client->string('SLEEPING_IN_X_MINUTES', $will_sleep_in_minutes ) ],
+			}
+		});
 		
 	} else {
 
 		# finish canceling any sleep in progress
 		$client->sleepTime(0);
 		$client->currentSleepTime(0);
-	}
+
+		$client->showBriefly({
+			'jive' => { 
+				'type'    => 'popupplay',
+				'text'    => [ $client->string('CANCEL_SLEEP' ) ],
+			}
+		});
 	
+	}
+
+
 	$request->setStatusDone();
 }
 
