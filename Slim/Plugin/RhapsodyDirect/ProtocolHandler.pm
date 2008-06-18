@@ -10,6 +10,7 @@ use warnings;
 use HTML::Entities qw(encode_entities);
 use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(decode_base64);
+use Scalar::Util qw(blessed);
 
 use Slim::Plugin::RhapsodyDirect::RPDS;
 use Slim::Networking::SqueezeNetwork;
@@ -1164,7 +1165,8 @@ sub getMetadataFor {
 		my @need;
 		
 		for my $track ( @{ $client->playlist } ) {
-			if ( $track->url =~ m{rhapd://(.+)\.wma} ) {
+			my $url = blessed($track) ? $track->url : $track;
+			if ( $url =~ m{rhapd://(.+)\.wma} ) {
 				my $id = $1;
 				if ( !$cache->get("rhapsody_meta_$id") ) {
 					push @need, $id;
