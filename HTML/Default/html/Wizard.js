@@ -41,7 +41,25 @@ Wizard = {
 
 			next: function(){
 				if (this.items.items[this.activeItemPos].finish && !this.wizardDone) {
-					document.getElementById("wizardForm").submit();
+
+					// we have to copy our form values over to the form again,
+					// as the Ext.Panel moved them out of the form
+					var formValues = Ext.query('input, textarea, select');
+					var wzForm = Ext.get('wizardForm');
+					for (var x = 0; x < formValues.length; x++) {
+						if (!document.forms.wizardForm.elements[formValues[x].name]) {
+							Ext.DomHelper.insertFirst(wzForm, {
+								tag: 'input',
+								name: formValues[x].name,
+								value: formValues[x].value,
+								style: {
+									display: "none"
+								}
+							})
+						}
+					}
+					
+					document.forms.wizardForm.submit();
 
 					if (this.windowSize[0] && this.windowSize[1]);
 						window.resizeTo(this.windowSize[0], this.windowSize[1]);
@@ -116,10 +134,10 @@ Wizard = {
 							Ext.Ajax.request({
 								url: '/settings/server/squeezenetwork.html',
 								params: {
-									sn_email: email,
-									sn_password_sha: pw,
-									sn_disable_stats: disable_stats,
-									sn_sync: 1,
+									pref_sn_email: email,
+									pref_sn_password_sha: pw,
+									pref_sn_disable_stats: disable_stats,
+									pref_sn_sync: 1,
 									saveSettings: 1,
 									AJAX: 1
 								},
