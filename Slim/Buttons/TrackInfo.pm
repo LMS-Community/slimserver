@@ -227,9 +227,9 @@ sub loadDataForTrack {
 
 	my $track = Slim::Schema->rs('Track')->objectForUrl($url);
 
-	# Couldn't get a track or URL? How do people get in this state?
+	# Couldn't get a track or URL? File may have been moved or deleted
 	if (!$url || !blessed($track) || !$track->can('title')) {
-		push (@{$client->trackInfoLines}, "Error! url: [$url] is empty or a track could not be retrieved.\n");
+		push (@{$client->trackInfoLines}, "Error! [$url] is empty or a track could not be retrieved.\n");
 		push (@{$client->trackInfoContent}, undef);
 
 		return;

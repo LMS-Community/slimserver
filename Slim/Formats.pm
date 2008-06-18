@@ -154,6 +154,12 @@ sub readTags {
 
 	# Only read local audio.
 	if (Slim::Music::Info::isSong($file, $type) && !$remote) {
+		
+		# Bug 4402, ignore if the file has gone away
+		if ( !-e $filepath ) {
+			$log->error("File missing: $filepath");
+			return {};
+		}
 
 		# Extract tag and audio info per format
 		if (my $tagReaderClass = $class->classForFormat($type)) {
