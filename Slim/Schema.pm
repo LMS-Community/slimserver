@@ -32,6 +32,7 @@ use DBIx::Migration;
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
 use List::Util qw(max);
+use Path::Class;
 use Scalar::Util qw(blessed);
 use Storable;
 use Tie::Cache::LRU::Expires;
@@ -811,6 +812,11 @@ sub newTrack {
 		$log->info("readTags is ". $args->{'readTags'});
 
 		$attributeHash = { %{Slim::Formats->readTags($url)}, %$attributeHash  };
+		
+		# Abort early if readTags returned nothing, meaning the file is probably bad/missing
+		if ( !scalar keys %{$attributeHash} ) {
+			return;
+		}
 	}
 
 	# Abort early and don't add the track if it's DRM'd
@@ -1511,6 +1517,9 @@ sub _checkValidity {
 		});
 		
 	}
+	
+	# Track may have been deleted by _hasChanged
+	return undef unless $track->in_storage;
 
 	return undef unless blessed($track);
 	return undef unless $track->can('url');
@@ -1539,7 +1548,7 @@ sub _hasChanged {
 	# See if the file exists
 	#
 	# Reuse _, as we only need to stat() once.
-	if (-e $filepath) {
+	if (-e _) {
 
 		my $filesize  = $track->get('filesize');
 		my $timestamp = $track->get('timestamp');
@@ -1567,6 +1576,37 @@ sub _hasChanged {
 		return 1;
 
 	} else {
+		
+		# Bug 4402, if the entire volume/drive this file is on is unavailable,
+		# it's likely removable storage and shouldn't be deleted
+		my $offline;
+			
+		if ( Slim::Utils::OSDetect::OS() eq 'win' ) {
+			# win32, check the drive letter
+			my $parent = Path::Class::File->new($filepath)->dir;
+			if ( my $vol = $parent->volume ) {
+				if ( !-d $vol ) {
+					$offline = 1;
+				}
+			}
+		}
+		elsif ( Slim::Utils::OSDetect::OS() eq 'mac' ) {
+			# Mac, check if path is in /Volumes
+			if ( $filepath =~ m{^/Volumes/([^/]+)} ) {
+				if ( !-d "/Volumes/$1" ) {
+					$offline = 1;
+				}
+			}
+		}
+		else {
+			# XXX: Linux/Unix, not sure how to tell if a given path
+			# is from an unmounted filesystem
+		}
+		
+		if ( $offline ) {
+			$log->debug( "Drive/Volume containing [$filepath] seems to be offline, skipping" );
+			return 0;
+		}
 
 		$log->debug("Removing [$filepath] from the db as it no longer exists.");
 
