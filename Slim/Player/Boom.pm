@@ -232,7 +232,7 @@ sub setAnalogOutMode {
 	# 0 = headphone (i.e. internal speakers off), 1 = sub 
 	my $mode = shift;
 
-	if ($mode == undef) {
+	if (! defined $mode) {
 		$mode = $prefs->client($client)->get('analogOutMode');
 	}
 	
