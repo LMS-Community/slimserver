@@ -130,7 +130,7 @@ ELSE %]
 							</span>
 							<div class="smallBrowseItemDetail">
 						[% END %]
-						[% link.key | getstring %]
+						[% IF dontGetString; link.key; ELSE; link.key | getstring; END %]
 						[% IF link.icon && !noIcon %]
 							</div>
 						[% END %]
@@ -180,6 +180,7 @@ ELSE %]
 			<div id="FAVORITES_expanded" class="expandableHomeMenuItem">
 			[% 
 				expandable = 0;
+				dontGetString = 1;
 				FOREACH entry = favorites;
 					control = BLOCK;
 						IF entry.type == "audio";
@@ -203,6 +204,7 @@ ELSE %]
 						};
 				END;
 				noIcon=1
+				dontGetString = 0;
 			%]
 			</div>
 		[% END %]
