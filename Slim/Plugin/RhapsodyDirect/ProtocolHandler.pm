@@ -1165,8 +1165,8 @@ sub getMetadataFor {
 		my @need;
 		
 		for my $track ( @{ $client->playlist } ) {
-			my $url = blessed($track) ? $track->url : $track;
-			if ( $url =~ m{rhapd://(.+)\.wma} ) {
+			my $trackURL = blessed($track) ? $track->url : $track;
+			if ( $trackURL =~ m{rhapd://(.+)\.wma} ) {
 				my $id = $1;
 				if ( !$cache->get("rhapsody_meta_$id") ) {
 					push @need, $id;
