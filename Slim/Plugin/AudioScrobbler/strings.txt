@@ -17,13 +17,31 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	NL	Last.fm-account(s)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
-	DA	Indtast dit brugernavn og kodeord på Last.fm. Du kan specificere flere konti hvis du ønsker at indsende nummer fra forskellige afspillere til forskellige konti. Marker en konto for at slette den.
-	DE	Geben Sie Benutzername und Kennwort für Last.fm ein. Sie können mehrere Konten eingeben, um Titel aus verschiedenen Playern an verschiedene Konten zu senden. Zum Löschen eines vorhandenen Kontos aktivieren Sie das entsprechende Kontrollkästchen.
-	EN	Enter your Last.fm username and password.  Multiple accounts may be entered if you wish to submit tracks from different players to different accounts.  To delete an existing account, check the box next to it.
-	ES	Se han verificado correctamente el nombre de usuario y la contraseña para Last.fm. Puede introducir varias cuentas si desea enviar pistas de reproductores diversos a distintas cuentas. Para eliminar una cuenta existente, seleccione la casilla correspondiente.
-	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm. Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents. Pour supprimer un compte existant, cochez la case appropriée.
-	IT	Inserire il nome utente e la password Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account. Per eliminare un account esistente, selezionare la casella corrispondente.
-	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende muzieksystemen bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren. Je verwijdert een bestaande account door het bijbehorende vakje te selecteren.
+	DA	Indtast dit brugernavn og kodeord på Last.fm. Du kan specificere flere konti hvis du ønsker at indsende nummer fra forskellige afspillere til forskellige konti.
+	DE	Geben Sie Benutzername und Kennwort für Last.fm ein. Sie können mehrere Konten eingeben, um Titel aus verschiedenen Playern an verschiedene Konten zu senden.
+	EN	Enter your Last.fm username and password.  Multiple accounts may be entered if you wish to submit tracks from different players to different accounts.
+	ES	Se han verificado correctamente el nombre de usuario y la contraseña para Last.fm. Puede introducir varias cuentas si desea enviar pistas de reproductores diversos a distintas cuentas.
+	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm. Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents.
+	IT	Inserire il nome utente e la password Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account.
+	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende muzieksystemen bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
+	DA	Marker en konto for at slette den.
+	DE	Zum Löschen eines vorhandenen Kontos aktivieren Sie das entsprechende Kontrollkästchen.
+	EN	To delete an existing account, check the box next to it.
+	ES	Para eliminar una cuenta existente, seleccione la casilla correspondiente.
+	FR	Pour supprimer un compte existant, cochez la case appropriée.
+	IT	Per eliminare un account esistente, selezionare la casella corrispondente.
+	NL	Je verwijdert een bestaande account door het bijbehorende vakje te selecteren.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD
+	DA	Indtast dit brugernavn og kodeord på Last.fm.
+	DE	Geben Sie Benutzername und Kennwort für Last.fm ein.
+	EN	Enter your Last.fm username and password.
+	ES	Se han verificado correctamente el nombre de usuario y la contraseña para Last.fm.
+	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm.
+	IT	Inserire il nome utente e la password Last.fm.
+	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	DA	Indsend (scrobble) alle afspillede nummer til Last.fm
