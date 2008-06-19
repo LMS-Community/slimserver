@@ -363,7 +363,7 @@ sub init {
 								for my $font (@{ $prefs->client($client)->get('activeFont') }) {
 		
 									push @fonts, {
-										'name'  => $font,
+										'name'  => Slim::Utils::Strings::getString($font),
 										'value' => $i++
 									};
 								}
