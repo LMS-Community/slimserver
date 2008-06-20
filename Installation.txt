@@ -43,7 +43,7 @@ Linux Notes (Debian/Ubuntu Install):
 
 	Please see the Wiki:
 
-	http://wiki.slimdevices.com/index.cgi?DebianPackage
+	http://wiki.slimdevices.com/index.php/DebianPackage
 
 	for the latest install instructions.
 
@@ -51,7 +51,7 @@ Linux Notes (RPM Install):
 
 	Please see the Wiki:
 
-	http://wiki.slimdevices.com/index.cgi?SqueezeCenterRPM
+	http://wiki.slimdevices.com/index.php/SqueezeCenterRPM
 
 	for the latest install instructions.
 		
