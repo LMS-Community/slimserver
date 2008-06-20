@@ -42,7 +42,7 @@
 		[% progress %]
 		[% IF scanning %]
 			<div><br/>
-				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;cancelScan=1">[% "CANCEL_SCAN" | string %]</a>
+				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a>
 			</div>
 		[% END %]
 	[% END %]

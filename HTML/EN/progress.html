@@ -7,7 +7,7 @@
 	
 	[% pageHeaderMenu = pagetitle %]
 	
-	[%- IF !cancelScan -%]
+	[%- IF !abortScan -%]
 
 		[% pageHeaderScripts = BLOCK %]
 		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
@@ -38,8 +38,8 @@
 	
 	[% IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
-	[%- IF cancelScan -%]
-		<div>[% "SCAN_CANCELED" | string %]</div>
+	[%- IF abortScan -%]
+		<div>[% "SCAN_ABORTED" | string %]</div>
 	[% END %]
 
 	[% IF desc && type && !ajaxUpdate %]<div>[% type _ "_PROGRESS_DESC" | string %]<br/>&nbsp;</div>[% END %]
@@ -72,7 +72,7 @@
 		[% odd = (not odd) %]
 	[% END %]
 
-	[% IF scanning && !ajaxUpdate %]<div><br/><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;cancelScan=1">[% "CANCEL_SCAN" | string %]</a></div>[% END %]
+	[% IF scanning && !ajaxUpdate %]<div><br/><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a></div>[% END %]
 	<div id="message">[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
 
 	[% IF !ajaxUpdate; PROCESS pagefooter.html; END %]

@@ -11,8 +11,8 @@ sub init {
 sub progress {
 	my ($client, $params) = @_;
 
-	if ($params->{'cancelScan'}) {
-		Slim::Music::Import->cancelScan();
+	if ($params->{'abortScan'}) {
+		Slim::Music::Import->abortScan();
 	}
 
 	my $total_time = 0;
