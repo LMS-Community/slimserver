@@ -213,11 +213,19 @@ Wizard = {
 					skip: function(){
 						// just update the summary, ...
 						Ext.get('summary').update(
-							(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicmagic').dom.checked) ? '<li>' + SqueezeJS.string('summary_none') + '</li>' : '') +
-							(Ext.get('useAudiodir').dom.checked ? '<li>' + SqueezeJS.string('summary_audiodir') + ' ' + Ext.get('audiodir').dom.value + '</li>' : '') +
-							('<li>' + SqueezeJS.string('summary_playlistdir') + ' ' + Ext.get('playlistdir').dom.value + '</li>') +
-							(Ext.get('itunes').dom.checked ? '<li>' + SqueezeJS.string('summary_itunes') + '</li>' : '') +
-							(Ext.get('musicmagic').dom.checked ? '<li>' + SqueezeJS.string('summary_musicmagic') + '</li>' : '')
+							(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicmagic').dom.checked) 
+								? '<li>' + SqueezeJS.string('summary_none') + '</li>' 
+								: '') 
+							+ (Ext.get('useAudiodir').dom.checked 
+								? '<li>' + SqueezeJS.string('summary_audiodir') + ' ' + Ext.get('audiodir').dom.value + '</li>'
+								         + ('<li>' + SqueezeJS.string('summary_playlistdir') + ' ' + Ext.get('playlistdir').dom.value + '</li>')
+								: '')  +
+							(Ext.get('itunes').dom.checked 
+								? '<li>' + SqueezeJS.string('summary_itunes') + '</li>' 
+								: '') +
+							(Ext.get('musicmagic').dom.checked 
+								? '<li>' + SqueezeJS.string('summary_musicmagic') + '</li>' 
+								: '')
 						);
 						// ...but never skip
 						return false;

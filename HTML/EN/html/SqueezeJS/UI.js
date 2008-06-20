@@ -96,25 +96,33 @@ SqueezeJS.UI = {
 		_beforePlayerStateChange : function(result){
 			this.power = (result.power == null) || result.power; 
 
-			// update custom handler for stations overwriting default behavior
-			if (this.cmd_id && result.playlist_loop && result.playlist_loop[0] 
-				&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
-	
-				var btn = result.playlist_loop[0].buttons[this.cmd_id];
-	
-				if (btn.cls)
-					this.setClass(btn.cls);
-				else if (btn.icon)
-					this.setIcon(btn.icon);
-	
-				if (btn.tooltip)
-					this.setTooltip(btn.tooltip);
+			if (this.cmd_id) {
 
-				if (this.textOnly && btn.tooltip)
-					this.setText(btn.tooltip);
-
-				if (btn.command)
-					this.cmd = btn.command;
+				// update custom handler for stations overwriting default behavior
+				if (result.playlist_loop && result.playlist_loop[0] 
+					&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[this.cmd_id]) {
+		
+					var btn = result.playlist_loop[0].buttons[this.cmd_id];
+		
+					if (btn.cls)
+						this.setClass(btn.cls);
+					else if (btn.icon)
+						this.setIcon(btn.icon);
+		
+					if (btn.tooltip)
+						this.setTooltip(btn.tooltip);
+	
+					if (this.textOnly && btn.tooltip)
+						this.setText(btn.tooltip);
+	
+					if (btn.command)
+						this.cmd = btn.command;
+				}
+				else {
+					// reset button
+					this.cmd   = '';
+					this.state = -1;
+				}
 			}
 
 			this.onPlayerStateChange(result);
