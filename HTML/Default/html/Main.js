@@ -404,7 +404,9 @@ Main = {
 					}
 				});
 
-				this.Highlighter.init();
+				this.Highlighter.init({
+					unHighlight : 'playList'
+				});
 			}
 		};
 		

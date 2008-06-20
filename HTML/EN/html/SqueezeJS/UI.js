@@ -476,7 +476,7 @@ SqueezeJS.UI.FilesystemBrowser = {
 
 // menu highlighter helper classes 
 SqueezeJS.UI.Highlight = function(config){
-	this.init();
+	this.init(config);
 };
 
 SqueezeJS.UI.Highlight.prototype = {
@@ -484,7 +484,7 @@ SqueezeJS.UI.Highlight.prototype = {
 	unHighlightTimer : null,
 	isDragging : false,
 
-	init : function() {
+	init : function(config) {
 		// make sure all selectable list items have a unique ID
 		var items = Ext.DomQuery.select('.selectorMarker');
 		for(var i = 0; i < items.length; i++) {
@@ -494,11 +494,23 @@ SqueezeJS.UI.Highlight.prototype = {
 		if (!this.unHighlightTimer)
 			this.unHighlightTimer = new Ext.util.DelayedTask(this.unHighlight, this);
 
-		// don't remove the highlight automatically while we're editing a search term or similar
-		Ext.select('.browsedbControls input[type="text"]').on({
-			focus: this.unHighlightTimer.cancel,
-			click: this.unHighlightTimer.cancel
-		});
+		var el;
+		if (config && config.unHighlight && (el = Ext.get(config.unHighlight))) {
+			el.on({
+				mouseout: {
+					fn: function(){
+						this.unHighlightTimer.delay(2000);
+					},
+					scope: this
+				},
+				mouseover: {
+					fn: function(){
+						this.unHighlightTimer.cancel();
+					},
+					scope: this
+				}
+			});			
+		}
 	},
 
 	highlight : function(target, onClickCB){
@@ -515,7 +527,6 @@ SqueezeJS.UI.Highlight.prototype = {
 		if (el != null) {
 			this.unHighlight();
 			this.highlightedEl = el;
-			this.unHighlightTimer.delay(2000);
 
 			el.replaceClass('selectorMarker', 'mouseOver');
 
