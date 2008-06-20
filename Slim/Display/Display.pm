@@ -370,6 +370,52 @@ sub brightness {
 	return $brightness;
 }
 
+sub getBrightnessOptions {
+	my $display = shift;
+
+	my %brightnesses = (
+		0 => '0 ('.$display->client->string('BRIGHTNESS_DARK').')',
+		1 => '1 ('.$display->client->string('BRIGHTNESS_DIMMEST').')',
+		2 => '2',
+		3 => '3',
+		4 => '4 ('.$display->client->string('BRIGHTNESS_BRIGHTEST').')',
+	);
+
+	if (!defined $display) {
+
+		return \%brightnesses;
+	}
+
+	if (defined $display->maxBrightness) {
+	
+		my $maxBrightness = $display->maxBrightness;
+
+		$brightnesses{4} = 4;
+
+		my @brightnessMap = $display->brightnessMap();
+		
+		# for large values at the end of the brightnessMap, we assume these are ambient index values
+		if ($brightnessMap[$maxBrightness] > 255 ) {
+
+			for my $brightness (4 .. $maxBrightness) {
+				if ($brightnessMap[$brightness] > 255 ) {
+		
+					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
+					$maxBrightness--;
+				}
+			}
+		}
+		
+		
+		$brightnesses{$maxBrightness} = sprintf('%s (%s)',
+			$maxBrightness, $display->client->string('BRIGHTNESS_BRIGHTEST')
+		);
+
+	}
+
+	return \%brightnesses;
+}
+
 sub prevline1 {
 	my $display = shift;
 	my $cache = $display->renderCache() || return;

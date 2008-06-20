@@ -653,7 +653,7 @@ sub screensaverInit {
 sub brightnessInit {
 	my $client = shift;
 	
-	my $hash  = Slim::Web::Settings::Player::Display::getBrightnessOptions($client);
+	my $hash  = $client->display->getBrightnessOptions();
 	my @options;
 	
 	for (sort keys %$hash) {

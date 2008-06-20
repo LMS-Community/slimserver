@@ -93,7 +93,7 @@ sub handler {
 		}
 
 		# Load any option lists for dynamic options.
-		$paramRef->{'brightnessOptions' } = getBrightnessOptions($client);
+		$paramRef->{'brightnessOptions' } = $client->display->getBrightnessOptions();
 		$paramRef->{'maxBrightness' }     = $client->maxBrightness;
 		$paramRef->{'fontOptions'}        = getFontOptions($client);
 
@@ -137,52 +137,6 @@ sub getFontOptions {
 	}
 
 	return $fonts;
-}
-
-sub getBrightnessOptions {
-	my $client = shift;
-
-	my %brightnesses = (
-		0 => '0 ('.string('BRIGHTNESS_DARK').')',
-		1 => '1 ('.string('BRIGHTNESS_DIMMEST').')',
-		2 => '2',
-		3 => '3',
-		4 => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
-	);
-
-	if (!defined $client) {
-
-		return \%brightnesses;
-	}
-
-	if (defined $client->maxBrightness) {
-	
-		my $maxBrightness = $client->maxBrightness;
-
-		$brightnesses{4} = 4;
-
-		my @brightnessMap = $client->display->brightnessMap();
-		
-		# for large values at the end of the brightnessMap, we assume these are ambient index values
-		if ($brightnessMap[$maxBrightness] > 255 ) {
-
-			for my $brightness (4 .. $maxBrightness) {
-				if ($brightnessMap[$brightness] > 255 ) {
-		
-					$brightnesses{$brightness} = string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
-					$maxBrightness--;
-				}
-			}
-		}
-		
-		
-		$brightnesses{$maxBrightness} = sprintf('%s (%s)',
-			$maxBrightness, string('BRIGHTNESS_BRIGHTEST')
-		);
-
-	}
-
-	return \%brightnesses;
 }
 
 1;
