@@ -47,6 +47,16 @@ my $log = logger('control.command');
 
 my $prefs = preferences('server');
 
+
+sub abortScanCommand {
+	my $request = shift;
+
+	Slim::Music::Import->abortScan();
+	
+	$request->setStatusDone();
+}
+
+
 sub alarmCommand {
 	# functions designed to execute requests have a single parameter, the
 	# Request object
@@ -159,6 +169,7 @@ sub buttonCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub clientConnectCommand {
 	my $request = shift;

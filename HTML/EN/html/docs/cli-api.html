@@ -114,6 +114,9 @@
 		scanning progress.
 	</li>
 	<li>
+		Added the &quot;<a href="#abortscan">abortscan</a>&quot; command, to stop a running scan.
+	</li>
+	<li>
 		Added the &quot;<a href="#serverstatus">serverstatus</a>&quot; query, to return
 		compound server status in a single query.
 	</li>
@@ -2606,6 +2609,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#rescanprogress">rescanprogress</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#abortscan">abortscan</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#wipecache">wipecache</a></code></strong>
 	</li>
 	<li>
@@ -2796,6 +2802,30 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
 
+
+<br>
+<p id="abortscan">
+	<strong>
+		<code>
+			abortscan
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;abortscan&quot; command causes SqueezeCenter to cancel a running scan.
+	Please note that after stopping a scan this way you'll have to fully rescan
+	your music collection to get consistent data.
+</p>
+<p>
+	Examples:
+</p> 
+<blockquote> 
+	<p>
+		Request:  &quot;abortscan&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;abortscan&lt;LF&gt;&quot;
+	</p>
+</blockquote>
 
 <br>
 <p id="wipecache">
