@@ -688,6 +688,8 @@ sub processIR {
 		# The S:B:C:scroll code rate limits scrolling unless this is reset for every update
 		$client->startirhold($irTime);
 
+		$client->lastirbutton($code);
+
 		my $irCode = lookupFunction($client, $code);
 
 		processCode($client, $irCode, $irTime);

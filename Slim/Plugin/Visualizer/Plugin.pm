@@ -172,13 +172,6 @@ sub setVisualizerMode {
 	my $client = shift;
 	my $method = shift;
 
-	# If we're popping back into this mode, it's because another screensaver
-	# got stacked above us...so we really shouldn't be here.
-	if (defined($method) && $method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
 	my $mode = Slim::Buttons::Common::mode($client);
 	my $paramsRef;
 
