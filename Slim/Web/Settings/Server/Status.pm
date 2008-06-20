@@ -24,8 +24,8 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	if ($paramRef->{'cancelScan'}) {
-		Slim::Music::Import->cancelScan();
+	if ($paramRef->{'abortScan'}) {
+		Slim::Music::Import->abortScan();
 	}
 
 	my @versions = Slim::Utils::Misc::settingsDiagString();

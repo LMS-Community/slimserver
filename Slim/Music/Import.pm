@@ -174,13 +174,13 @@ sub launchScan {
 	return 1;
 }
 
-=head2 cancelScan()
+=head2 abortScan()
 
 Stop the external (forked) scanning process.
 
 =cut
 
-sub cancelScan {
+sub abortScan {
 	my $class = shift || __PACKAGE__;
 
 	if ($class->stillScanning) {
