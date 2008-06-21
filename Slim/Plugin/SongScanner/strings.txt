@@ -26,14 +26,6 @@ PLUGIN_SONGSCANNER_SET
 	IT	Ora:
 	NL	Tijd:
 
-PLUGIN_SONGSCANNER_ERR_REMOTE
-	DE	Scannen von Remote-Titeln nicht möglich
-	EN	Cannot scan through remote tracks
-	ES	No se pueden examinar las pistas remotas
-	FR	Impossible d'analyser des pistes distantes
-	IT	Impossibile analizzare brani remoti
-	NL	Kan niet door externe nummers scannen
-
 PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	DE	Scannen im Titel nicht möglich, da Dauer unbekannt
 	EN	Cannot scan through track because duration unknown
@@ -41,14 +33,6 @@ PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
 	FR	Impossible d'analyser la piste car la durée est inconnue
 	IT	Impossibile analizzare il brano poiché non se ne conosce la durata
 	NL	Kan niet door nummer scannen omdat duur onbekend is
-
-PLUGIN_SONGSCANNER_ERR_TRANSCODED
-	DE	Scannen von transkodierten Titeln nicht möglich
-	EN	Cannot scan through transcoded track
-	ES	No se puede examinar la pista transcodificada
-	FR	Impossible d'analyser une piste transcodée
-	IT	Impossibile analizzare brani transcodificati
-	NL	Kan niet door getranscodeerd nummer scannen
 
 PLUGIN_SONGSCANNER_ERR_NOTRACK
 	DE	Kein Titel
