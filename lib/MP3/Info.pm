@@ -2088,7 +2088,7 @@ sub _get_v2foot {
 
 sub _find_id3_chunk {
 	my($fh, $filetype) = @_;
-	my($bytes, $size, $tag, $pat, $mat);
+	my($bytes, $size, $tag, $pat, @mat);
 
 	# CHANGE 10616 introduced a read optimization in _get_v2head:
 	#  10 bytes are read, not 3, so reading one here hoping to get the last letter of the
@@ -2098,17 +2098,19 @@ sub _find_id3_chunk {
 	if ($filetype eq 'RIF') {  # WAV
 #		return 0 if $bytes ne 'F';
 		$pat = 'a4V';
-		$mat = 'id3 ';
+		@mat = ('id3 ', 'ID32');
 	} elsif ($filetype eq 'FOR') { # AIFF
 #		return 0 if $bytes ne 'M';
 		$pat = 'a4N';
-		$mat = 'ID3 ';
+		@mat = ('ID3 ', 'ID32');
 	}
 	seek $fh, 12, SEEK_SET;  # skip to the first chunk
 
 	while ((read $fh, $bytes, 8) == 8) {
 		($tag, $size)  = unpack $pat, $bytes;
-		return 1 if $tag eq $mat;
+		for my $mat ( @mat ) {
+			return 1 if $tag eq $mat;
+		}
 		seek $fh, $size, SEEK_CUR;
 	}
 
