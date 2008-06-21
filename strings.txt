@@ -16032,6 +16032,22 @@ SEEK_ERROR_TYPE_NOT_SUPPORTED
 	IT	Impossibile eseguire ricerca negli stream del tipo %s
 	NL	Kan niet zoeken in streams van type %s
 
+SEEK_ERROR_REMOTE
+	DE	Scannen von Remote-Titeln nicht möglich
+	EN	Cannot scan through remote tracks
+	ES	No se pueden examinar las pistas remotas
+	FR	Impossible d'analyser des pistes distantes
+	IT	Impossibile analizzare brani remoti
+	NL	Kan niet door externe nummers scannen
+
+SEEK_ERROR_TRANSCODED
+	DE	Scannen von transkodierten Titeln nicht möglich
+	EN	Cannot scan through transcoded track
+	ES	No se puede examinar la pista transcodificada
+	FR	Impossible d'analyser une piste transcodée
+	IT	Impossibile analizzare brani transcodificati
+	NL	Kan niet door getranscodeerd nummer scannen
+
 SCANNER_REMOTE_NO_URL_PROVIDED
 	DE	Scannen nicht möglich: Keine URL gefunden
 	EN	Unable to scan: No URL found

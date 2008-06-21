@@ -1049,14 +1049,14 @@ sub canSeek {
 				if (wantarray) {
 					@errorString = $handler->can('canSeekError') 
 						? $handler->canSeekError( $client, $playingUrl )
-						: ('PLUGIN_SONGSCANNER_ERR_REMOTE');
+						: ('SEEK_ERROR_REMOTE');
 				}
 			} else {
 				$canSeek = 1;
 			}
 		}
 		else {
-			@errorString = ('PLUGIN_SONGSCANNER_ERR_REMOTE');
+			@errorString = ('SEEK_ERROR_REMOTE');
 		}
 	} 		
 	# XXX: need a better way to determine if a stream is transcoded
@@ -1064,7 +1064,7 @@ sub canSeek {
 	# proxied streaming
 	else {
 		if ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
-			@errorString = ('PLUGIN_SONGSCANNER_ERR_TRANSCODED');
+			@errorString = ('SEEK_ERROR_TRANSCODED');
 		} else {
 			$canSeek = 1;
 		}	
