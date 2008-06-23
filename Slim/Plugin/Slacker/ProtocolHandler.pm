@@ -556,6 +556,19 @@ sub stopCallback {
 	}
 }
 
+# Override replaygain to always use the supplied gain value
+sub trackGain {
+	my ( $class, $client, $url ) = @_;
+	
+	my $currentTrack = $client->pluginData('currentTrack');
+	
+	my $gain = $currentTrack->{audiogain} || 0;
+	
+	$log->info("Using replaygain value of $gain for Slacker track");
+	
+	return $gain;
+}
+
 # Track Info menu
 sub trackInfo {
 	my ( $class, $client, $track ) = @_;
@@ -712,6 +725,7 @@ sub getMetadataFor {
 			album       => $track->{album},
 			title       => $track->{title},
 			duration    => $track->{tlen},
+			replay_gain => $track->{audiogain},
 			# Note Slacker offers 5 image sizes: 75, 272, 383, 700, 1400
 			cover       => 'http://images.slacker.com/covers/272/' . $track->{albumid},
 			icon        => $icon,
