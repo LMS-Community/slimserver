@@ -344,6 +344,8 @@ sub _handshakeError {
 	my $error  = $http->error;
 	my $params = $http->params('params');
 	my $client = $params->{client};
+
+	$log->error("Error handshaking with Last.fm: $error");
 	
 	if ( $params->{ecb} ) {
 		$params->{ecb}->($error);
@@ -365,7 +367,7 @@ sub _handshakeError {
 	
 	$client->pluginData( handshake_delay => $delay );
 	
-	$log->warn("Error handshaking with Last.fm: $error, retrying in $delay minute(s)");
+	$log->warn("  retrying in $delay minute(s)");
 	
 	Slim::Utils::Timers::killTimers( $params, \&handshake );
 	Slim::Utils::Timers::setTimer(
