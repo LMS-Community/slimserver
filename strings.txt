@@ -7275,12 +7275,12 @@ SETUP_SN_PASSWORD_DESC
 
 SETUP_SN_INVALID_LOGIN
 	DA	Vi kunne ikke find konto-information, indtast venligst dine informationer igen. Hvis du ikke har en bruger konto klik venligst “<a href="http://%s" target="_blank">Jeg har brug for en konto</a> for at fortsætte.
-	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf "<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>".
+	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf "<a href="http://%s" target="_blank">Ich brauche ein Konto</a>".
 	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://%s" target="_blank">I need an account</a>” to continue.
-	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://www.squeezenetwork.com" target="_blank">Necesito una cuenta</a>" para continuar.
-	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://www.squeezenetwork.com" target="_blank">Je souhaite créer un compte</a> pour continuer.
-	IT	Impossibile recuperare le informazioni account. Inserire nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://www.squeezenetwork.com" target="_blank">Nuovo account</a> per continuare.
-	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Heb je geen account, klik dan op <a href="http://www.squeezenetwork.com" target="_blank">Ik heb een account nodig</a> om verder te gaan.
+	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://%s" target="_blank">Necesito una cuenta</a>" para continuar.
+	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://%s" target="_blank">Je souhaite créer un compte</a> pour continuer.
+	IT	Impossibile recuperare le informazioni account. Inserire nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://%s" target="_blank">Nuovo account</a> per continuare.
+	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Heb je geen account, klik dan op <a href="http://%s" target="_blank">Ik heb een account nodig</a> om verder te gaan.
 
 SETUP_SN_VALID_LOGIN
 	DA	Tilsluttet SqueezeNetwork.
