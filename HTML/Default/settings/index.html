@@ -34,6 +34,7 @@
 
 			Ext.onReady(function(){
 				Settings.init([
+				[%- activeTab = 0 -%]
 				[%- FOREACH tab = topLevelItems -%]
 					[%- IF tab.0 == 'BASIC_PLAYER_SETTINGS';
 						tab.0 = 'PLAYER';
@@ -44,13 +45,15 @@
 					[%- ELSIF tab.0 == 'SERVER_STATUS'; tab.0 = 'STATUS' -%]
 					[%- END -%]
 
+					[% IF tab.0 == activePage; activeTab = loop.index; END %]
+
 					{
 						title: '[% tab.0 | string %]',
 						url: '[%- tab.1 -%]',
 						id: '[% tab.0 %]'
 					}[% loop.last ? '' : ',' %]
 				[% END -%]
-				]);
+				], [% activeTab %]);
 			}, Settings, true);
 		</script>
 	</head>

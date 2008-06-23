@@ -4,7 +4,7 @@ Settings = {
 	layout : null,
 	tp: null,
 
-	init : function(settingsTabs){
+	init : function(settingsTabs, activeTab){
 		var mainpanel = {
 			layout: 'border',
 			border: false,
@@ -82,7 +82,7 @@ Settings = {
 					activate: this.showSettingsPage
 				}
 			},
-			activeTab: 0,
+			activeTab: activeTab,
 			items: settingsTabs
 		});
 

@@ -68,6 +68,8 @@ sub handler {
 			Slim::Plugin::AudioScrobbler::Plugin::handshake( {
 				username => $params->{pref_username},
 				password => $params->{pref_password},
+				pref_accounts => $params->{pref_accounts},
+
 				cb       => sub {
 					# Callback for OK handshake response
 					
@@ -75,22 +77,31 @@ sub handler {
 						username => $params->{pref_username},
 						password => $params->{pref_password},
 					};
-					
+
 					if ( $log->is_debug ) {
 						$log->debug( "Saving Audioscrobbler accounts: " . Data::Dump::dump( $params->{pref_accounts} ) );
 					}
 
+					my $msg  = Slim::Utils::Strings::string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN');
 					my $body = $class->SUPER::handler( $client, $params );
 
 					if ( $params->{AJAX} ) {
-						$params->{warning} = Slim::Utils::Strings::string('PLUGIN_AUDIOSCROBBLER_VALID_LOGIN');
+						$params->{warning} = $msg;
 						$params->{validated}->{valid} = 1;
 					}
+					else {
+						$params->{warning} .= $msg . '<br/>';												
+					}
+
 					$callback->( $client, $params, $body, @args );
 				},
 				ecb      => sub {
 					# Callback for any errors
 					my $error = shift;
+
+					if ( $log->is_debug ) {
+						$log->debug( "Error saving Audioscrobbler account: " . Data::Dump::dump( $error ) );
+					}
 					
 					$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
 
