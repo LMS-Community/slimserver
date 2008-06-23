@@ -2094,17 +2094,17 @@ ABOUT_SHORT
 	ZH_CN	关于
 
 WEB_XML_ERROR
-	DA	Der opstod en fejl ved overførsel af fjernstrøm for %s: (%s)
-	DE	Beim Laden des Remote-Feed von %s ist ein Fehler aufgetreten: (%s)
-	EN	There was an error loading the remote feed for %s: (%s)
-	ES	Error al cargar la secuencia remota de %s: (%s)
-	FR	Une erreur s'est produite lors du chargement du flux de la télécommande pour %s: (%s).
-	HE	אירעה שגיאה במהלך טעינת ההזנה מרחוק עבור %s: ‏(%s)
-	IT	Errore durante il tentativo di caricamento del feed remoto per %s: (%s)
-	NL	Fout tijdens laden van externe feed voor %s: (%s)
-	NO	Det skjedde en feil under lasting av ekstern strøm for %s: (%s)
-	SV	Ett fel uppstod vid laddning av feed för %s: (%s)
-	ZH_CN	载入远方信息时发生失误%s: (%s)
+	DA	Der opstod en fejl ved overførsel af fjernstrøm for %s: <br/><br/>%s
+	DE	Beim Laden des Remote-Feed von %s ist ein Fehler aufgetreten: <br/><br/>%s
+	EN	There was an error loading the remote feed for %s: <br/><br/>%s
+	ES	Error al cargar la secuencia remota de %s: <br/><br/>%s
+	FR	Une erreur s'est produite lors du chargement du flux de la télécommande pour %s: <br/><br/>%s.
+	HE	אירעה שגיאה במהלך טעינת ההזנה מרחוק עבור %s: ‏<br/><br/>%s
+	IT	Errore durante il tentativo di caricamento del feed remoto per %s: <br/><br/>%s
+	NL	Fout tijdens laden van externe feed voor %s: <br/><br/>%s
+	NO	Det skjedde en feil under lasting av ekstern strøm for %s: <br/><br/>%s
+	SV	Ett fel uppstod vid laddning av feed för %s: <br/><br/>%s
+	ZH_CN	载入远方信息时发生失误%s: <br/><br/>%s
 
 XML_ERROR
 	DA	Fejl
@@ -13593,13 +13593,13 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	NL	Zonder een verbonden muzieksysteem kunnen SqueezeNetwork-services niet worden opgeroepen.
 
 SQUEEZENETWORK_NO_LOGIN
-	DA	En SqueezeNetwork konto er påkrævet for denne tjeneste. Venligst åbn SqueezeCenter indsilinger -> SqueezeNetwork i en browser for at konfigurere.
-	DE	Für diesen Dienst ist ein SqueezeNetwork-Konto erforderlich. Sie können das Konto in einem Web-Browser in den SqueezeCenter-Einstellungen unter 'SqueezeNetwork' konfigurieren.
-	EN	A SqueezeNetwork account is required for this service. Please access SqueezeCenter Settings -> SqueezeNetwork with a web browser to configure.
-	ES	Este servicio requiere una cuenta SqueezeNetwork. Acceda a Configuración de SqueezeCenter -> SqueezeNetwork a través de un navegador Web.
-	FR	Un compte SqueezeNetwork est requis pour ce service. Dans votre navigateur, rendez-vous dans Réglages du SqueezeCenter -> SqueezeNetwork pour effectuer la configuration.
-	IT	Per questo servizio è richiesto un account SqueezeNetwork. Accedere a Impostazioni SqueezeCenter -> SqueezeNetwork tramite un browser Web per la configurazione.
-	NL	Voor deze service is een SqueezeNetwork-account vereist. Ga via een webbrowser naar SqueezeCenter-instellingen -> SqueezeNetwork om te configureren.
+	DA	En SqueezeNetwork konto er påkrævet for denne tjeneste. Venligst åbn <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">SqueezeCenter indsilinger -> SqueezeNetwork</a> i en browser for at konfigurere.
+	DE	Für diesen Dienst ist ein SqueezeNetwork-Konto erforderlich. Sie können das Konto in einem Web-Browser in den <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">SqueezeCenter-Einstellungen unter 'SqueezeNetwork'</a> konfigurieren.
+	EN	A SqueezeNetwork account is required for this service. Please access <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">SqueezeCenter Settings -> SqueezeNetwork</a> with a web browser to configure.
+	ES	Este servicio requiere una cuenta SqueezeNetwork. Acceda a <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">Configuración de SqueezeCenter -> SqueezeNetwork</a> a través de un navegador Web.
+	FR	Un compte SqueezeNetwork est requis pour ce service. Dans votre navigateur, rendez-vous dans <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">Réglages du SqueezeCenter -> SqueezeNetwork</a> pour effectuer la configuration.
+	IT	Per questo servizio è richiesto un account SqueezeNetwork. Accedere a <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">Impostazioni SqueezeCenter -> SqueezeNetwork</a> tramite un browser Web per la configurazione.
+	NL	Voor deze service is een SqueezeNetwork-account vereist. Ga via een webbrowser naar <a href="/settings/index.html?activePage=SQUEEZENETWORK_SETTINGS" target="sc_settings">SqueezeCenter-instellingen -> SqueezeNetwork</a> om te configureren.
 
 MUSICSOURCE
 	DA	Musik kilde
