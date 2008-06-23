@@ -27,7 +27,7 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 
 [% IF prefs %]
 	[% WRAPPER setting title="SETUP_PLAYERNAME" desc="SETUP_PLAYERNAME_DESC" %]
-		<input type="text" class="stdedit" name="pref_playername" id="playername" value="[% prefs.pref_playername %]" size="20">
+		<input type="text" class="stdedit" name="pref_playername" id="playername" value="[% prefs.pref_playername %]" size="20" maxlength="32">
 	[% END %]
 
 
