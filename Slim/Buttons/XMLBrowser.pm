@@ -2110,16 +2110,22 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 
-						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} ) {
+						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} && !$item->{jive} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 						}
 						
 						# Support type='db' for Track Info
-						if ( $item->{type} eq 'db' && $item->{jive} ) {
+						if ( $item->{jive} ) {
 							$request->addResultLoop( $loopname, $cnt, 'actions', $item->{jive}->{actions} );
 							if ( $item->{jive}->{window} ) {
 								$request->addResultLoop( $loopname, $cnt, 'window', $item->{jive}->{window} );
+							}
+							if ( $item->{jive}->{style} ) {
+								$request->addResultLoop( $loopname, $cnt, 'style', $item->{jive}->{style} );
+							}
+							if ( $item->{jive}->{nextWindow} ) {
+								$request->addResultLoop( $loopname, $cnt, 'style', $item->{jive}->{nextWindow} );
 							}
 						}
 						
