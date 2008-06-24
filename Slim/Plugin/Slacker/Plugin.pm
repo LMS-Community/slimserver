@@ -5,6 +5,8 @@ package Slim::Plugin::Slacker::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use URI::Escape qw(uri_escape_utf8);
+
 use Slim::Plugin::Slacker::ProtocolHandler;
 use Slim::Networking::SqueezeNetwork;
 
@@ -20,6 +22,12 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		slacker => 'Slim::Plugin::Slacker::ProtocolHandler'
 	);
+	
+	# Track Info item
+	Slim::Menu::TrackInfo->registerInfoProvider( slacker => (
+		after => 'middle',
+		func  => \&trackInfoMenu,
+	) );
 	
 	# Commands init
 	Slim::Control::Request::addDispatch(['slacker', 'rate', '_rating'],
@@ -213,6 +221,28 @@ sub deleteStation {
 	if ( $url =~ /$sid/ ) {
 		$log->debug( 'Station was deleted, stopping' );
 		$client->execute( [ 'playlist', 'clear' ] );
+	}
+}
+
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'slacker' ) ) {
+		return;
+	}
+	
+	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
+	
+	my $snURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/slacker/v1/opml/search?q=' . uri_escape_utf8($artist)
+	);
+	
+	if ( $artist ) {
+		return {
+			type => 'link',
+			name => $client->string('PLUGIN_SLACKER_ON_SLACKER'),
+			url  => $snURL,
+		};
 	}
 }
 

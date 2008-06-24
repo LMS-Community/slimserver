@@ -7,6 +7,8 @@ package Slim::Plugin::Pandora::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use URI::Escape qw(uri_escape_utf8);
+
 use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::Pandora::ProtocolHandler;
 use Slim::Utils::Unicode;
@@ -23,6 +25,12 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		pandora => 'Slim::Plugin::Pandora::ProtocolHandler'
 	);
+	
+	# Track Info item
+	Slim::Menu::TrackInfo->registerInfoProvider( pandora => (
+		after => 'middle',
+		func  => \&trackInfoMenu,
+	) );
 	
 	# Commands init
 	Slim::Control::Request::addDispatch(['pandora', 'rate', '_rating'],
@@ -169,6 +177,32 @@ sub skipTrack {
 	$client->pluginData( banMode => 1 );
 	
 	$client->execute( [ "playlist", "jump", "+1" ] );
+}
+
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' ) ) {
+		return;
+	}
+	
+	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
+	my $title  = $remoteMeta->{title}  || $track->title;
+	
+	my $snURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/pandora/v1/opml/context?artist='
+			. uri_escape_utf8($artist)
+			. '&track='
+			. uri_escape_utf8($title)
+	);
+	
+	if ( $artist || $title ) {
+		return {
+			type => 'link',
+			name => $client->string('PLUGIN_PANDORA_ON_PANDORA'),
+			url  => $snURL,
+		};
+	}
 }
 
 1;

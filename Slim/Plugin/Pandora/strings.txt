@@ -696,3 +696,10 @@ PLUGIN_PANDORA_MAINTENANCE_MODE
 	IT	Pandora non è temporaneamente disponibile in seguito ad attività di manutenzione periodica. Torna presto e goditi la musica!
 	NL	Pandora is tijdelijk niet beschikbaar voor geplande serviceverbeteringen. Probeer het straks weer, om van de muziek te genieten!
 
+PLUGIN_PANDORA_ON_PANDORA
+	DE	Auf Pandora
+	EN	On Pandora
+	ES	En Pandora
+	FR	Sur Pandora
+	IT	Su Pandora
+	NL	Op Pandora

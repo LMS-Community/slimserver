@@ -529,7 +529,7 @@ sub browsedbItemName {
 		if (defined $index) {
 			return $client->string('PLUGIN_FAVORITES_REMOVE');
 		} else {
-			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
+			$item = $client->string('PLUGIN_FAVORITES_ADD');
 		}
 
 		return $item

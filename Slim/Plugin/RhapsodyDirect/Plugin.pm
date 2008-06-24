@@ -29,6 +29,12 @@ sub initPlugin {
 	Slim::Networking::Slimproto::addHandler( 
 		RPDS => \&Slim::Plugin::RhapsodyDirect::RPDS::rpds_handler
 	);
+	
+	# Track Info item
+	Slim::Menu::TrackInfo->registerInfoProvider( rhapsody => (
+		after => 'middle',
+		func  => \&trackInfoMenu,
+	) );
 
 	$class->SUPER::initPlugin(
 		feed   => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml'),
@@ -231,6 +237,35 @@ sub gotCreatePlaylistError {
 	$log->debug( "Playlist creation failed: $error" );
 	
 	$request->setStatusBadParams();
+}
+
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'rhapsody' ) ) {
+		return;
+	}
+	
+	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
+	my $album  = $remoteMeta->{album}  || ( $track->album ? $track->album->name : undef );
+	my $title  = $remoteMeta->{title}  || $track->title;
+	
+	my $snURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/rhapsody/v1/opml/context?artist='
+			. uri_escape_utf8($artist)
+			. '&album='
+			. uri_escape_utf8($album)
+			. '&track='
+			. uri_escape_utf8($title)
+	);
+	
+	if ( $artist || $album || $title ) {
+		return {
+			type => 'link',
+			name => $client->string('PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY'),
+			url  => $snURL,
+		};
+	}
 }
 
 1;
