@@ -54,7 +54,17 @@ sub registerDefaultInfoProviders {
     $class->registerInfoProvider( middle => ( isa => '' ) );
     $class->registerInfoProvider( bottom => ( isa => '' ) );
 
-	# XXX: Play/Add this song (Jive only)
+	$class->registerInfoProvider( playtrack => (
+		menuMode  => 1,
+		before    => 'addtrack',
+		func      => \&playTrack,
+	) );
+
+	$class->registerInfoProvider( addtrack => (
+		menuMode  => 1,
+		before    => 'contributors',
+		func      => \&addTrack,
+	) );
 
 	$class->registerInfoProvider( contributors => (
 		after => 'top',
@@ -234,8 +244,9 @@ sub deregisterInfoProvider {
 }
 
 sub menu {
-	my ( $class, $client, $url, $track ) = @_;
-	
+	my ( $class, $client, $url, $track, $tags ) = @_;
+	$tags ||= {};
+
 	# If we don't have an ordering, generate one.
 	# This will be triggered every time a change is made to the
 	# registered information providers, but only then. After
@@ -275,13 +286,15 @@ sub menu {
 		
 		if ( defined $ref->{func} ) {
 			
-			my $item = eval { $ref->{func}->( $client, $url, $track, $remoteMeta ) };
+			my $item = eval { $ref->{func}->( $client, $url, $track, $remoteMeta, $tags ) };
 			if ( $@ ) {
 				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
 				next;
 			}
 			
 			next unless defined $item;
+			# skip jive-only items for non-jive UIs
+			next if $ref->{menuMode} && !$tags->{menuMode};
 			
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
@@ -289,6 +302,7 @@ sub menu {
 				}
 			}
 			elsif ( ref $item eq 'HASH' ) {
+				next if $ref->{menuMode} && !$tags->{menuMode};
 				if ( scalar keys %{$item} ) {
 					push @{$items}, $item;
 				}
@@ -479,6 +493,126 @@ sub infoContributors {
 			}
 		}
 	}
+	
+	return $items;
+}
+
+sub playTrack {
+	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+	playAddTrack( $client, $url, $track, $remoteMeta, $tags, 'play');
+}
+	
+sub addTrack {
+	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+	playAddTrack( $client, $url, $track, $remoteMeta, $tags, 'add');
+}
+
+sub playAddTrack {
+	my ( $client, $url, $track, $remoteMeta, $tags, $action ) = @_;
+	my $items = [];
+	my $jive;
+	
+	my ($play_string, $add_string, $delete_string, $jump_string);
+	if ( $track->remote ) {
+		$play_string   = $client->string('PLAY');
+		$add_string    = $client->string('ADD');
+		$delete_string = $client->string('REMOVE_FROM_PLAYLIST');
+		$jump_string   = $client->string('PLAY');
+	} else {
+		$play_string   = $client->string('JIVE_PLAY_THIS_SONG');
+		$add_string    = $client->string('JIVE_ADD_THIS_SONG');
+		$delete_string = $client->string('REMOVE_FROM_PLAYLIST');
+		$jump_string   = $client->string('JIVE_PLAY_THIS_SONG');
+	}	
+
+	# setup hash for different items between play and add
+	my $menuItems = {
+		play => {
+			string  => $play_string,
+			style   => 'itemplay',
+			command => [ 'playlistcontrol' ],
+			cmd     => 'load',
+		},
+		add => {
+			string  => $add_string,
+			style   => 'itemadd',
+			command => [ 'playlistcontrol' ],
+			cmd     => 'add',
+		},
+		'add-hold' => {
+			string  => $add_string,
+			style   => 'itemadd',
+			command => [ 'playlistcontrol' ],
+			cmd     => 'insert',
+		},
+		delete => {
+			string  => $delete_string,
+			style   => 'item',
+			command => [ 'playlist', 'delete', $tags->{playlistIndex} ],
+		},
+		jump => {
+			string  => $jump_string,
+			style   => 'itemplay',
+			command => [ 'playlist', 'jump', $tags->{playlistIndex} ],
+		},
+	};
+
+	if ( $tags->{menuContext} eq 'playlist' ) {
+		if ( $action eq 'play' ) {
+			$action = 'jump';
+		} elsif ( $action eq 'add' ) {
+			$action = 'delete';
+		}
+	}
+
+	my $actions = {
+		do => {
+			player => 0,
+			cmd => $menuItems->{$action}{command},
+		},
+		play => {
+			player => 0,
+			cmd => $menuItems->{$action}{command},
+		},
+		add => {
+			player => 0,
+			cmd    => $menuItems->{add}{command},
+		},
+	};
+	# tagged params are sent for play and add, not delete/jump
+	if ($action ne 'delete' && $action ne 'jump') {
+		$actions->{'add-hold'} = {
+			player => 0,
+			cmd => $menuItems->{'add-hold'}{command},
+		};
+		$actions->{'add'}{'params'} = {
+			cmd => $menuItems->{add}{cmd},
+			track_id => $track->id,
+		};
+		$actions->{'add-hold'}{'params'} = {
+			cmd => $menuItems->{'add-hold'}{cmd},
+			track_id => $track->id,
+		};
+		$actions->{'do'}{'params'} = {
+			cmd => $menuItems->{$action}{cmd},
+			track_id => $track->id,
+		};
+		$actions->{'play'}{'params'} = {
+			cmd => $menuItems->{$action}{cmd},
+			track_id => $track->id,
+		};
+	
+	} else {
+		$jive->{nextWindow} = 'playlist';
+	}
+	$jive->{actions} = $actions;
+	$jive->{style} = $menuItems->{$action}{style};
+
+	push @{$items}, {
+		type => 'text',
+		name => $menuItems->{$action}{string},
+		jive => $jive, 
+	};
 	
 	return $items;
 }
