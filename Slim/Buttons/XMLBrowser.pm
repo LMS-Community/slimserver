@@ -2118,14 +2118,10 @@ sub _cliQuery_done {
 						# Support type='db' for Track Info
 						if ( $item->{jive} ) {
 							$request->addResultLoop( $loopname, $cnt, 'actions', $item->{jive}->{actions} );
-							if ( $item->{jive}->{window} ) {
-								$request->addResultLoop( $loopname, $cnt, 'window', $item->{jive}->{window} );
-							}
-							if ( $item->{jive}->{style} ) {
-								$request->addResultLoop( $loopname, $cnt, 'style', $item->{jive}->{style} );
-							}
-							if ( $item->{jive}->{nextWindow} ) {
-								$request->addResultLoop( $loopname, $cnt, 'style', $item->{jive}->{nextWindow} );
+							for my $key ('window', 'showBigArtwork', 'style', 'nextWindow') {
+								if ( $item->{jive}->{$key} ) {
+									$request->addResultLoop( $loopname, $cnt, $key, $item->{jive}->{$key} );
+								}
 							}
 						}
 						
