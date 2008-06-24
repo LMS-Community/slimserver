@@ -66,6 +66,12 @@ sub registerDefaultInfoProviders {
 		func      => \&addTrack,
 	) );
 
+	$class->registerInfoProvider( artwork => (
+		menuMode  => 1,
+		after     => 'year',
+		func      => \&showArtwork,
+	) );
+
 	$class->registerInfoProvider( contributors => (
 		after => 'top',
 		func  => \&infoContributors,
@@ -295,6 +301,8 @@ sub menu {
 			next unless defined $item;
 			# skip jive-only items for non-jive UIs
 			next if $ref->{menuMode} && !$tags->{menuMode};
+			# show artwork item to jive only if artwork exists
+			next if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
 			
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
@@ -493,6 +501,27 @@ sub infoContributors {
 			}
 		}
 	}
+	
+	return $items;
+}
+
+sub showArtwork {
+	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+	my $items = [];
+	my $jive;
+	my $actions = {
+		do => {
+			cmd => [ 'artwork', $track->id ],
+		},
+	};
+	$jive->{actions} = $actions;
+	$jive->{showBigArtwork} = 1;
+
+	push @{$items}, {
+		type => 'text',
+		name => $client->string('SHOW_ARTWORK'),
+		jive => $jive, 
+	};
 	
 	return $items;
 }
