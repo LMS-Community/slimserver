@@ -116,6 +116,11 @@ sub _init_done {
 		}
 	}
 	
+	# XXX: probably should poll for this, or include with players response
+	if ( $json->{active_services} ) {
+		$prefs->set( sn_active_services => $json->{active_services} );
+	}
+	
 	# Init pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->init();
 	
@@ -364,6 +369,26 @@ sub _construct_url {
 	}
 	
 	return $url;
+}
+
+sub hasAccount {
+	my ( $class, $client, $type ) = @_;
+		
+	if ( $ENV{SLIM_SERVICE} ) {
+		my $type_pref = {
+			pandora  => 'pandora_username',
+			rhapsody => 'plugin_rhapsody_direct_username',
+			lastfm   => 'plugin_audioscrobbler_accounts',
+			slacker  => 'plugin_slacker_username',
+		};
+		
+		return $prefs->client($client)->get( $type_pref->{$type} );
+	}
+	else {
+		my $services = $prefs->get('sn_active_services') || {};
+		
+		return $services->{$type};
+	}
 }
 
 1;

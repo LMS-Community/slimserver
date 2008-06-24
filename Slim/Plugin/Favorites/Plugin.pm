@@ -69,6 +69,12 @@ sub initPlugin {
 
 	# register new mode for deletion of favorites	
 	Slim::Buttons::Common::addMode( 'favorites.delete', {}, \&deleteMode );
+	
+	# Track Info handler
+	Slim::Menu::TrackInfo->registerInfoProvider( favorites => (
+		after => 'bottom',
+		func  => \&trackInfoHandler,
+	) );
 }
 
 
@@ -949,5 +955,101 @@ sub cliMove {
 	$request->setStatusDone();
 }
 
+sub trackInfoHandler {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($url);
+	
+	if ( !defined $index ) {
+		$log->debug( "Item is not a favorite [$url]" );
+		
+		return {
+			type        => 'link',
+			name        => $client->string('PLUGIN_FAVORITES_ADD'),
+			url         => \&trackInfoAddFavorite,
+			passthrough => [ $track ],
+		};
+	}
+	else {
+		$log->debug( "Item is a favorite [$url]" );
+		
+		return {
+			type        => 'link',
+			name        => $client->string('PLUGIN_FAVORITES_REMOVE'),
+			url         => \&trackInfoRemoveFavorite,
+			passthrough => [ $track ],
+		};
+	}
+	
+	return;
+}
+
+sub trackInfoAddFavorite {
+	my ( $client, $callback, $track ) = @_;
+	
+	my $favorites = Slim::Utils::Favorites->new($client);
+	
+	my ($favIndex, $hotKey) = $favorites->add(
+		$track,
+		$track->title || $track->url,
+		undef,
+		undef,
+		'hotkey',
+	);
+	
+	my $menu = {
+		type        => 'text',
+		name        => $client->string('FAVORITES_ADDING'),
+		showBriefly => 1,
+		refresh     => 1,
+	};
+	
+	$callback->( $menu );
+}
+
+sub trackInfoRemoveFavorite {
+	my ( $client, $callback, $track ) = @_;
+	
+	my $menu = [
+		{
+			type => 'link',
+			name => $client->string('PLUGIN_FAVORITES_CANCEL'),
+			url  => sub {
+				my $callback = $_[1];
+				
+				$callback->( {
+					type        => 'text',
+					name        => $client->string('PLUGIN_FAVORITES_CANCELLING'),
+					showBriefly => 1,
+					popback     => 2,
+				} );
+			},
+		},
+		{
+			type => 'link',
+			name => $client->string('FAVORITES_RIGHT_TO_DELETE'),
+			url  => sub {
+				my $callback = $_[1];
+				
+				my $favorites = Slim::Utils::Favorites->new($client);
+				my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl( $track->url );
+				
+				$favorites->deleteIndex($index);
+				
+				my $menu2 = {
+					type        => 'text',
+					name        => $client->string('FAVORITES_DELETING'),
+					showBriefly => 1,
+					popback     => 2,
+					refresh     => 1,
+				};
+				
+				$callback->( $menu2 );
+			},
+		},
+	];
+	
+	$callback->( $menu );
+}
 
 1;

@@ -309,9 +309,9 @@ sub albumsQuery {
 
 		# decide what is the next step down
 		# generally, we go to tracks after albums, so we get menu:track
-		# from the tracks we'll go to songinfo
+		# from the tracks we'll go to trackinfo
 		my $actioncmd = $menu . 's';
-		my $nextMenu = 'songinfo';
+		my $nextMenu = 'trackinfo';
 		
 		# build the base element
 		my $base = {
@@ -1705,7 +1705,7 @@ sub musicfolderQuery {
 						'go' => {
 							'cmd' => ['playlists', 'tracks'],
 							'params' => {
-								menu        => 'songinfo',
+								menu        => 'trackinfo',
 								menu_all    => '1',
 								playlist_id => $id,
 							},
@@ -1742,7 +1742,7 @@ sub musicfolderQuery {
 					
 					my $actions = {
 						'go' => {
-							'cmd' => ['songinfo'],
+							'cmd' => ['trackinfo', 'items'],
 							'params' => {
 								'menu' => 'nowhere',
 								'track_id' => $id,
@@ -2175,14 +2175,14 @@ sub playlistsTracksQuery {
 	if ($menuMode) {
 
 		# decide what is the next step down
-		# generally, we go to songingo after playlists tracks, so we get menu:songinfo
+		# generally, we go to songingo after playlists tracks, so we get menu:trackinfo
 		# from the artists we'll go to albums
 
 		# build the base element
 		my $base = {
 			'actions' => {
 				'go' => {
-					'cmd' => ['songinfo'],
+					'cmd' => ['trackinfo', 'items'],
 					'params' => {
 						'menu' => 'nowhere',
 					},
@@ -2328,7 +2328,7 @@ sub playlistsQuery {
 
 		# decide what is the next step down
 		# generally, we go to playlists tracks after playlists, so we get menu:track
-		# from the tracks we'll go to songinfo
+		# from the tracks we'll go to trackinfo
 		
 		# build the base element
 		my $base = {
@@ -2336,7 +2336,7 @@ sub playlistsQuery {
 				'go' => {
 					'cmd' => ['playlists', 'tracks'],
 					'params' => {
-						menu     => 'songinfo',
+						menu     => 'trackinfo',
 						menu_all => '1',
 					},
 					'itemsParams' => 'params',
@@ -3377,7 +3377,7 @@ sub statusQuery {
 		my $base = {
 			'actions' => {
 				'go' => {
-					'cmd' => ['songinfo'],
+					'cmd' => ['trackinfo', 'items'],
 					'params' => {
 						'menu' => 'nowhere', 
 						'context' => 'playlist',
@@ -3516,6 +3516,7 @@ sub statusQuery {
 	$request->setStatusDone();
 }
 
+# XXX: deprecated
 sub songinfoQuery {
 	my $request = shift;
 
@@ -4294,14 +4295,13 @@ sub titlesQuery {
 		# decide what is the next step down
 		# generally, we go to songinfo after albums, so we get menu:track
 		# from songinfo we go nowhere...
-		my $actioncmd = 'songinfo';
 		my $nextMenu = 'nowhere';
 		
 		# build the base element
 		my $base = {
 			'actions' => {
 				'go' => {
-					'cmd' => [$actioncmd],
+					'cmd' => [ 'trackinfo', 'items', ],
 					'params' => {
 						'menu' => $nextMenu,
 #						'menu_play' => '1',

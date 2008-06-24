@@ -21,8 +21,9 @@ my $prefs = preferences('server');
 
 sub init {
 
-	Slim::Web::HTTP::addPageFunction( qr/^(?:songinfo|browsedb)\.(?:htm|xml)/, \&browsedb );
+	Slim::Web::HTTP::addPageFunction( qr/^browsedb\.(?:htm|xml)/, \&browsedb );
 	Slim::Web::HTTP::addPageFunction( qr/^browseid3\.(?:htm|xml)/, \&browseid3 );
+	Slim::Web::HTTP::addPageFunction( qr/^(?:songinfo|trackinfo)\.(?:htm|xml)/, \&trackinfo);
 
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&level=0" });
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&level=0" });
@@ -214,26 +215,6 @@ sub browsedb {
 			$params->{'noEdit'} = 1;
 		}
 	}
-
-	# shortcut for songinfo page
-	if ($params->{path} eq 'songinfo.html') {
-
-		# don't show single link to all songs
-		if (@{$params->{'pwd_list'}} == 1
-			&& $params->{'pwd_list'}->[0]->{'level'} == 0
-			&& $params->{'pwd_list'}->[0]->{'hierarchy'} eq 'track')
-		{
-
-			$params->{'pwd_list'}->[0] = {
-				title    => string('SONG_INFO'),
-				hreftype => 'songinfo',
-				itemobj  => { id => $params->{'item'}},
-			}			
-		}
-
-		Slim::Web::Pages->addSongInfo($client, $params, 0);
-		return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
-	} 
 
 	$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
 
@@ -599,6 +580,30 @@ sub browseid3 {
 	$params->{'hierarchy'} = join(',', @hierarchy);
 
 	return browsedb($client, $params);
+}
+
+sub trackinfo {
+	my $client = shift;
+	my $params = shift;
+	
+	my $id    = $params->{sess} || $params->{item};
+	my $track = Slim::Schema->find( Track => $id );
+	
+	my $menu = Slim::Menu::TrackInfo->menu( $client, $track->url, $track );
+	
+	# Pass-through track ID as sess param
+	$params->{sess} = $id;
+	
+	# Include track cover image
+	$params->{image} = $menu->{cover};
+	
+	Slim::Web::XMLBrowser->handleWebIndex( {
+		client => $client,
+		path   => 'trackinfo.html',
+		title  => 'SONG_INFO',
+		feed   => $menu,
+		args   => [ $client, $params, @_ ],
+	} );
 }
 
 # Turn an array of attributes into a URI string

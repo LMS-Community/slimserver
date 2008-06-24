@@ -29,8 +29,11 @@ sub initPlugin {
 		lfm => 'Slim::Plugin::LastFM::ProtocolHandler'
 	);
 	
-	# TODO
-	# Slim::Utils::PluginManager->registerTrackInfoHandler( \&trackInfoHandler );
+	# Track Info item
+	Slim::Menu::TrackInfo->registerInfoProvider( lfm => (
+		after => 'middle',
+		func  => \&trackInfoMenu,
+	) );
 	
 	# Commands init
 	Slim::Control::Request::addDispatch(['lfm', 'rate', '_rating'],
@@ -213,29 +216,24 @@ sub skipTrack {
 	$client->execute( [ "playlist", "jump", "+1" ] );
 }
 
-sub trackInfoHandler {
-	my ( $client, $track, $metadata ) = @_;
+sub trackInfoMenu {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
-	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'lastfm' ) ) {
+	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'lfm' ) ) {
 		return;
 	}
 	
-	my $artist = $metadata->{artist} || ( $track->artist ? $track->artist->name : undef );
+	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
+	
+	my $snURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/lastfm/v1/opml/search_artist?q=' . uri_escape_utf8($artist)
+	);
 	
 	if ( $artist ) {
 		return {
-			string   => 'PLUGIN_LFM_ON_LASTFM',
-			callback => sub {
-				my $url = '/api/lastfm/v1/opml/context?artist='
-					. uri_escape_utf8($artist);
-	
-				__PACKAGE__->opmlMenu(
-					client => $client,
-					name   => 'On Last.fm Radio',
-					url    => Slim::Networking::SqueezeNetwork->url( $url ),
-					title  => $client->string('PLUGIN_LFM_ON_LASTFM'),
-				);
-			},
+			type => 'link',
+			name => $client->string('PLUGIN_LFM_ON_LASTFM'),
+			url  => $snURL,
 		};
 	}
 	

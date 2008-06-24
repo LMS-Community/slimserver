@@ -162,6 +162,7 @@ use Slim::Control::Request;
 use Slim::Display::Lib::Fonts;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
+use Slim::Menu::TrackInfo;
 use Slim::Music::Info;
 use Slim::Music::Import;
 use Slim::Music::MusicFolderScan;
@@ -401,6 +402,9 @@ sub init {
 		$log->info("SqueezeCenter Web Settings init...");
 		Slim::Web::Setup::initSetup();
 	}
+	
+	$log->info('Menu init...');
+	Slim::Menu::TrackInfo->init();
 
 	# load plugins before Jive init so MusicMagic hooks to cached artist/genre queries from Jive->init() will take root
 	$log->info("SqueezeCenter Plugins init...");
