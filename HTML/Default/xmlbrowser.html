@@ -118,7 +118,9 @@ END %]
 	[%- WRAPPER $container %]
 		[% IF image %]
 		<div>
-			<img src="[% image %]" />
+			<a href="[% image %]" target="cover">
+				<img src="[% image %]" alt="coverArt" onLoad="resize(this)">
+			</a>
 		</div>
 		[% END %]
 
@@ -166,6 +168,14 @@ END %]
 
 					[% IF item.weblink %]
 						<a href="[% item.weblink %]" target="_blank">
+					[% ELSIF item.type == 'db' %]
+						[%
+							findCriteria = '';
+							FOREACH pair IN item.db.findCriteria.pairs;
+								findCriteria = findCriteria _ '&amp;' _ pair.key _ '=' _ pair.value;
+							END;
+						%]
+						<a href="browsedb.html?hierarchy=[% item.db.hierarchy %]&amp;level=[% item.db.level %][% findCriteria %]&amp;player=[% player | uri %]" class="browseItemLink">
 					[% ELSIF item.type != 'text' %]
 						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% index _ (start + loop.index) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 					[% END %]

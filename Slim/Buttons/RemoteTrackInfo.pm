@@ -76,7 +76,7 @@ sub setMode {
 				if (defined $index) {
 					return "{PLUGIN_FAVORITES_REMOVE}";
 				} else {
-					return "{FAVORITES_RIGHT_TO_ADD}";
+					return "{PLUGIN_FAVORITES_ADD}";
 				}
 			},
 

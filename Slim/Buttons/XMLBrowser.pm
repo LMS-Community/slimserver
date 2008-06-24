@@ -57,6 +57,13 @@ sub setMode {
 	my $url    = $client->modeParam('url');
 	my $search = $client->modeParam('search');
 	my $parser = $client->modeParam('parser');
+	my $opml   = $client->modeParam('opml');
+	
+	# Pre-filled menu of OPML items
+	if ( $opml ) {
+		gotOPML( $client, $url, $opml, {} );
+		return;
+	}
 
 	# if no url, error
 	if (!$url) {
@@ -98,30 +105,54 @@ sub setMode {
 		# give user feedback while loading
 		$client->block();
 		
+		my $params = {
+			'client'    => $client,
+			'url'       => $url,
+			'search'    => $search,
+			'expires'   => $expires,
+			'onSuccess' => $onSuccess,
+			'onFailure' => $onFailure,
+			'feedTitle' => $title,
+			'parser'    => $parser,
+			'item'      => $item,
+			'timeout'   => $timeout,
+			'remember'  => $remember,
+		};
+		
 		# Some plugins may give us a callback we should use to get OPML data
 		# instead of fetching it ourselves.
 		if ( ref $url eq 'CODE' ) {
+			my $callback = sub {
+				my $menu = shift;
+				
+				if ( ref $menu ne 'ARRAY' ) {
+					$menu = [ $menu ];
+				}
+				
+				my $opml = {
+					type  => 'opml',
+					title => $title,
+					items => $menu,
+				};
+				
+				gotFeed( $opml, $params );
+			};
+			
 			# get passthrough params if supplied
 			my $pt = $item->{'passthrough'} || [];
-			return $url->( $client, \&gotFeed, @{$pt} );
+			
+			if ( $log->is_debug ) {
+				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
+				$log->debug( "Fetching OPML from coderef $cbname" );
+			}
+			
+			return $url->( $client, $callback, @{$pt} );
 		}
 		
 		Slim::Formats::XML->getFeedAsync( 
 			\&gotFeed,
 			\&gotError,
-			{
-				'client'    => $client,
-				'url'       => $url,
-				'search'    => $search,
-				'expires'   => $expires,
-				'onSuccess' => $onSuccess,
-				'onFailure' => $onFailure,
-				'feedTitle' => $title,
-				'parser'    => $parser,
-				'item'      => $item,
-				'timeout'   => $timeout,
-				'remember'  => $remember,
-			},
+			$params,
 		);
 
 		# we're done.  gotFeed callback will finish setting up mode.
@@ -222,16 +253,8 @@ sub gotPlaylist {
 		main::idleStreams();
 	}
 
-	my $action = 'play';
-	
-	if ( !$params->{'action'} ) {
-		# check cached action
-		$action = Slim::Utils::Cache->new->get( $client->id . '_playlist_action' ) || 'play';
-	}
-	else {
-		$action = $params->{'action'};
-	}
-	
+	my $action = $params->{'action'} || 'play';
+		
 	if ( $action eq 'play' ) {
 		$client->execute([ 'playlist', 'play', \@urls ]);
 	}
@@ -466,7 +489,35 @@ sub gotOPML {
 		else {
 			$callback = sub {
 				if ( blessed($client) ) {
-					Slim::Buttons::Common::popMode($client);
+					my $popback = $item->{popback} || 1;
+					
+					while ( $popback-- ) {
+						Slim::Buttons::Common::popMode($client);
+					}
+					
+					# Refresh the menu if requested
+					if ( $item->{refresh} ) {
+						if ( my $refresh = $client->modeParameterStack->[-2]->{onRefresh} ) {
+							# Get the new menu, pass a callback to support async refreshing
+							$refresh->( $client, sub {
+								my $refreshed = shift;
+								
+								# Get the INPUT.Choice mode and replace a few things
+								my $choice = $client->modeParameterStack->[-1];
+								$choice->{item}     = $refreshed;
+								$choice->{listRef}  = $refreshed->{items};
+							
+								# valueRef caches the menu item for some reason, so we need to replace it
+								my $listIndex = $choice->{listIndex};
+								my $valueRef  = $choice->{listRef}->[ $listIndex ];
+								$choice->{valueRef} = \$valueRef;
+							
+								$log->debug('Refreshed menu');
+							
+								$client->update;
+							} );
+						}
+					}
 				}
 			};
 		}
@@ -490,7 +541,7 @@ sub gotOPML {
 			$log->debug( 'Treating list as unsorted' );
 		}
 	}
-
+	
 	my %params = (
 		'url'        => $url,
 		'timeout'    => $timeout,
@@ -522,6 +573,13 @@ sub gotOPML {
 			# Set itemURL to value, but only if value was not created from the name above
 			if (!defined $itemURL && $item->{'value'} && $item->{'value'} ne $item->{'name'}) {
 				$itemURL = $item->{'value'};
+			}
+			
+			# Type = 'db', hack to allow XMLBrowser items to push into
+			# browsedb mode, used by TrackInfo menu
+			if ( $item->{type} && $item->{type} eq 'db' ) {
+				Slim::Buttons::Common::pushModeLeft( $client, 'browsedb', $item->{db} );
+				return;
 			}
 			
 			# For type=radio items, don't push right, but submit the URL in the background.
@@ -1122,19 +1180,42 @@ sub playItem {
 		# give user feedback while loading
 		$client->block();
 		
+		my $params = {
+			'client'  => $client,
+			'action'  => $action,
+			'url'     => $url,
+			'parser'  => $parser,
+			'item'    => $item,
+			'timeout' => $item->{'timeout'},
+		};
+		
 		# we may have a callback as URL
 		if ( ref $url eq 'CODE' ) {
+			my $callback = sub {
+				my $menu = shift;
+				
+				if ( ref $menu ne 'ARRAY' ) {
+					$menu = [ $menu ];
+				}
+				
+				my $opml = {
+					type  => 'opml',
+					title => $title,
+					items => $menu,
+				};
+				
+				gotPlaylist( $opml, $params );
+			};
+			
 			# get passthrough params if supplied
 			my $pt = $item->{'passthrough'} || [];
 			
-			# This is not flexible enough to support passthrough items for
-			# gotPlaylist(), so we need to cache the action the user wants,
-			# or else an add will work like play
-			if ( $action ne 'play' ) {
-				Slim::Utils::Cache->new->set( $client->id . '_playlist_action', $action, 60 );
+			if ( $log->is_debug ) {
+				my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($url);
+				$log->debug( "Fetching OPML playlist from coderef $cbname" );
 			}
 			
-			return $url->( $client, \&gotPlaylist, @{$pt} );
+			return $url->( $client, $callback, @{$pt} );
 		}
 		
 		# Playlist item may contain child items without a URL, i.e. Rhapsody's Tracks menu item
@@ -1143,11 +1224,7 @@ sub playItem {
 				{ 
 					items => $item->{outline},
 				},
-				{
-					client => $client,
-					action => $action,
-					parser => $parser,
-				},
+				$params,
 			);
 			
 			return;
@@ -1156,14 +1233,7 @@ sub playItem {
 		Slim::Formats::XML->getFeedAsync(
 			\&gotPlaylist,
 			\&gotError,
-			{
-				'client'  => $client,
-				'action'  => $action,
-				'url'     => $url,
-				'parser'  => $parser,
-				'item'    => $item,
-				'timeout' => $item->{'timeout'},
-			},
+			$params,
 		);
 
 	}
@@ -1319,6 +1389,7 @@ sub _cliQuery_done {
 	my $item_id    = $request->getParam('item_id');
 	my $menu       = $request->getParam('menu');
 	my $url        = $request->getParam('url');
+	my $trackId    = $request->getParam('track_id');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -1412,7 +1483,36 @@ sub _cliQuery_done {
 					$log->debug( "Using previously cached subfeed data for $subFeed->{url}" );
 					_cliQuerySubFeed_done( $cached, $args );
 				}
-				else {				
+				else {
+					# Some plugins may give us a callback we should use to get OPML data
+					# instead of fetching it ourselves.
+					if ( ref $subFeed->{url} eq 'CODE' ) {
+						my $callback = sub {
+							my $menu = shift;
+
+							if ( ref $menu ne 'ARRAY' ) {
+								$menu = [ $menu ];
+							}
+
+							my $opml = {
+								type  => 'opml',
+								title => $args->{feedTitle},
+								items => $menu,
+							};
+
+							_cliQuerySubFeed_done( $opml, $args );
+						};
+						
+						my $pt = $subFeed->{passthrough} || [];
+
+						if ( $log->is_debug ) {
+							my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
+							$log->debug( "Fetching OPML from coderef $cbname" );
+						}
+
+						return $subFeed->{url}->( $request->client, $callback, @{$pt} );
+					}
+								
 					$log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
 
 					Slim::Formats::XML->getFeedAsync(
@@ -1846,6 +1946,10 @@ sub _cliQuery_done {
 					if ( $url ) {
 						$params->{'url'} = $url;
 					}
+					
+					if ( $trackId ) {
+						$params->{'track_id'} = $trackId;
+					}
 				
 					$base = {
 						'actions' => {
@@ -2011,7 +2115,15 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 						}
 						
-						if ( $item->{type} eq 'search' ) {
+						# Support type='db' for Track Info
+						if ( $item->{type} eq 'db' && $item->{jive} ) {
+							$request->addResultLoop( $loopname, $cnt, 'actions', $item->{jive}->{actions} );
+							if ( $item->{jive}->{window} ) {
+								$request->addResultLoop( $loopname, $cnt, 'window', $item->{jive}->{window} );
+							}
+						}
+						
+						elsif ( $item->{type} eq 'search' ) {
 							#$itemParams->{search} = '__INPUT__';
 							
 							# XXX: bug in Jive, this should really be handled by the base go action

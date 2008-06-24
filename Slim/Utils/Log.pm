@@ -789,6 +789,8 @@ sub _defaultCategories {
 		'control.command'            => 'ERROR',
 		'control.queries'            => 'ERROR',
 		'control.stdio'              => 'ERROR',
+		
+		'menu.trackinfo'             => 'ERROR',
 
 		'player.display'             => 'ERROR',
 		'player.fonts'               => 'ERROR',

@@ -99,3 +99,10 @@ PLUGIN_SLACKER_BAN_TRACK
 	IT	Bandisci questo brano
 	NL	Dit nummer verbieden
 
+PLUGIN_SLACKER_ON_SLACKER
+	DE	Auf Slacker
+	EN	On Slacker
+	ES	En Slacker
+	FR	Sur Slacker
+	IT	Su Slacker
+	NL	Op Slacker
