@@ -203,6 +203,7 @@ sub createPlaylist {
 		\&gotCreatePlaylistError,
 		{
 			request => $request,
+			client  => $client,
 			timeout => 60,
 		},
 	);
