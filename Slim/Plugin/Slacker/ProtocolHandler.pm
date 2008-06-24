@@ -94,7 +94,7 @@ sub getNextTrack {
 	my $track = $client->pluginData('currentTrack');
 	
 	my $last    = '';
-	my $len     = $track ? $track->{len} : '';
+	my $len     = $track ? $track->{tlen} : '';
 	my $end     = $mode || '';
 	my $elapsed = $track ? $track->{elapsed} : '';
 	
@@ -322,13 +322,6 @@ sub parseDirectHeaders {
 		}
 	}
 	
-	# Remember the length of this track
-	$client->pluginData( length => $length );
-	
-	if ( my $track = $client->pluginData('currentTrack') ) {
-		$track->{len} = int( ( $length * 8 ) / $bitrate );
-	}
-	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, $length, undef);
 }
@@ -528,7 +521,7 @@ sub stopCallback {
 		
 		if ( my $track = $client->pluginData('currentTrack') ) {
 			my ($sid)   = $url =~ m{^slacker://([^.]+)\.mp3};
-			my $len     = $track->{len};
+			my $len     = $track->{tlen};
 			my $elapsed = $track->{elapsed};
 		
 			my $stopURL = Slim::Networking::SqueezeNetwork->url(
@@ -652,7 +645,7 @@ sub reinit {
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );
 		
 		# Reset song duration/progress bar
-		if ( my $length = $client->pluginData('length') ) {			
+		if ( $track->{tlen} ) {			
 			# On a timer because $client->currentsongqueue does not exist yet
 			Slim::Utils::Timers::setTimer(
 				$client,
@@ -661,9 +654,8 @@ sub reinit {
 					my $client = shift;
 					
 					$client->streamingProgressBar( {
-						url     => $url,
-						length  => $length,
-						bitrate => 128000,
+						url      => $url,
+						duration => $track->{tlen},
 					} );
 				},
 			);
