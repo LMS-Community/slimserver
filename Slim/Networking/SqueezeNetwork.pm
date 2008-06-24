@@ -28,7 +28,7 @@ my $prefs = preferences('server');
 #   and names.
 
 my $_Servers = {
-	sn      => 'boom.squeezenetwork.com',
+	sn      => 'www.squeezenetwork.com',
 	content => 'content.squeezenetwork.com',
 	update  => 'update.slimdevices.com',
 	test    => 'www.test.squeezenetwork.com',
