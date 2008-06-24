@@ -99,19 +99,6 @@ FAVORITES_NOT_A_FAVORITE
 	SV	Ingen favorit
 	ZH_CN	不是最喜爱的
 
-FAVORITES_RIGHT_TO_ADD
-	DA	Tryk Højre for at tilføje til Favoritter
-	DE	RECHTS drücken zum Hinzufügen des Favoriten
-	EN	Go right to add to favorites
-	ES	Pulse DERECHA para agregar a favoritos
-	FI	Paina oikealle lisätäksesi suosikkeihin
-	FR	Appuyez sur DROITE pour ajouter aux favoris
-	HE	עבור ימינה להוספת פריטים
-	IT	Premere DESTRA per aggiungere ai preferiti
-	NL	Rechts om favorieten toe te voegen
-	SV	Tryck HÖGER för att göra till favorit
-	ZH_CN	列入最喜爱的按右方向键
-
 FAVORITES_ADDING
 	DA	Gemmer Favoritter...
 	DE	Favoriten werden gespeichert ...
@@ -231,6 +218,9 @@ PLUGIN_FAVORITES_CANCEL
 	FR	Annuler
 	IT	Annulla
 	NL	Annuleren
+
+PLUGIN_FAVORITES_CANCELLING
+	EN	Cancelling...
 
 PLUGIN_FAVORITES_CUT
 	DE	Ausschneiden

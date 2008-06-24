@@ -55,17 +55,45 @@ sub handleWebIndex {
 		return;
 	}
 	
+	my $params = {
+		'client'  => $client,
+		'url'     => $feed,
+		'path'    => $path,
+		'title'   => $title,
+		'search'  => $search,
+		'expires' => $expires,
+		'timeout' => $timeout,
+		'args'    => $asyncArgs,
+		'pageicon'=> $pageicon,
+	};
+	
 	# Handle plugins that want to use callbacks to fetch their own URLs
 	if ( ref $feed eq 'CODE' ) {
+		my $callback = sub {
+			my $menu = shift;
+			
+			if ( ref $menu ne 'ARRAY' ) {
+				$menu = [ $menu ];
+			}
+			
+			my $opml = {
+				type  => 'opml',
+				title => $title,
+				items => $menu,
+			};
+			
+			handleFeed( $opml, $params );
+		};
+		
 		# get passthrough params if supplied
 		my $pt = $item->{'passthrough'} || [];
 		
-		# Passthrough all our web params
-		push @{$pt}, $asyncArgs;
+		if ( $log->is_debug ) {
+			my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef($feed);
+			$log->debug( "Fetching OPML from coderef $cbname" );
+		}
 		
-		# first param is a $client object, but undef from webpages
-		$feed->( undef, \&handleFeed, @{$pt} );
-		return;
+		return $feed->( $client, $callback, @{$pt} );
 	}
 
 	# Handle search queries
@@ -81,7 +109,7 @@ sub handleWebIndex {
 				'query'  => $query,
 				'title'  => $title,
 				'args'   => $asyncArgs,
-				'pageicon'=> $pageicon
+				'pageicon' => $pageicon
 			},
 		);
 
@@ -92,17 +120,7 @@ sub handleWebIndex {
 	Slim::Formats::XML->getFeedAsync(
 		\&handleFeed,
 		\&handleError,
-		{
-			'client'  => $client,
-			'url'     => $feed,
-			'path'    => $path,
-			'title'   => $title,
-			'search'  => $search,
-			'expires' => $expires,
-			'timeout' => $timeout,
-			'args'    => $asyncArgs,
-			'pageicon'=> $pageicon
-		},
+		$params,
 	);
 
 	return;
@@ -222,10 +240,32 @@ sub handleFeed {
 				};
 				
 				if ( ref $subFeed->{'url'} eq 'CODE' ) {
+					my $callback = sub {
+						my $menu = shift;
+
+						if ( ref $menu ne 'ARRAY' ) {
+							$menu = [ $menu ];
+						}
+
+						my $opml = {
+							type  => 'opml',
+							title => $args->{feedTitle},
+							items => $menu,
+						};
+
+						handleSubFeed( $opml, $args );
+					};
+
+					# get passthrough params if supplied
 					my $pt = $subFeed->{'passthrough'} || [];
-					push @{$pt}, $args;
-					$subFeed->{'url'}->( undef, \&handleSubFeed, @{$pt} );
-					return;
+
+					if ( $log->is_debug ) {
+						my $cbname = Slim::Utils::PerlRunTime::realNameForCodeRef( $subFeed->{url} );
+						$log->debug( "Fetching OPML from coderef $cbname" );
+					}
+
+					# first param is a $client object, but undef from webpages
+					return $subFeed->{url}->( $client, $callback, @{$pt} );
 				}
 				
 				# Check for a cached version of this subfeed URL

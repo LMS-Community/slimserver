@@ -150,3 +150,10 @@ PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
 	IT	Impossibile utilizzare Rhapsody con un numero così elevato di lettori sincronizzati. Annullare la sincronizzazione di uno o più lettori.
 	NL	Rhapsody kan niet spelen wanneer er zoveel muzieksystemen gesynchroniseerd zijn. Hef de synchronisatie van een of meer systemen op.
 
+PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
+	DE	Auf Rhapsody
+	EN	On Rhapsody
+	ES	En Rhapsody
+	FR	Sur Rhapsody
+	IT	Su Rhapsody
+	NL	Op Rhapsody
