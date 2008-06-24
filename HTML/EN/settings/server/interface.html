@@ -43,6 +43,12 @@
 		<input type="text" class="stdedit" name="pref_itemsPerPage" id="itemsPerPage" value="[% prefs.pref_itemsPerPage %]" size="15">
 	[% END %]
 
+	[% IF useExtJS %]   
+		[% WRAPPER setting title="SETUP_ADDITIONAL_PLAYLIST_BUTTONS" desc="SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC"%]
+		<input type=checkbox [% IF cookies.${'SqueezeCenter-allLinks'}.value %]checked [% END %] class="stdedit" id="additionalPlaylistButtons" value="1" onChange="SqueezeJS.setCookie( 'SqueezeCenter-allLinks', this.checked ? '1' : '')" />
+		[% END %]
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_REFRESHRATE" desc="SETUP_REFRESHRATE_DESC" %]
 		<input type="text" class="stdedit" name="pref_refreshRate" id="refreshRate" value="[% prefs.pref_refreshRate %]" size="15">
 	[% END %]

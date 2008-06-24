@@ -256,6 +256,7 @@ our (
 	$perfmon,
 	$perfwarn,
 	$checkstrings,
+	$charset,
 	$d_startup, # Needed for Slim::bootstrap
 );
 
@@ -279,6 +280,9 @@ sub init {
 	if ($diag) { 
 		eval "use diagnostics";
 	}
+
+	# force a charset from the command line
+	$Slim::Utils::Unicode::lc_ctype = $charset if $charset;
 
 	Slim::Utils::OSDetect::init();
 
@@ -544,7 +548,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--priority <priority>]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
-          [--checkstrings] [--logging]
+          [--checkstrings] [--charset <charset>] [--logging]
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
@@ -587,6 +591,8 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
     --checkstrings   => Enable reloading of changed string files for plugin development
+    --charset        => Force a character set to be used, eg. utf8 on Linux devices
+                        which don't have full utf8 locale installed
     --logging        => Enable logging for the specified comma separated categories
 
 Commands may be sent to the server through standard in and will be echoed via
@@ -632,6 +638,7 @@ sub initOptions {
 		'perfmon'       => \$perfmon,
 		'perfwarn=s'    => \$perfwarn,  # content parsed by Health plugin if loaded
 		'checkstrings'  => \$checkstrings,
+		'charset=s'     => \$charset,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	);
 

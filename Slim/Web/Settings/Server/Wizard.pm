@@ -129,16 +129,12 @@ sub handler {
 				next if $pref =~ /^sn_/;
 				
 				# reset audiodir if it had been disabled
-				if ($pref eq 'audiodir' && !$paramRef->{useAudiodir})	{
-					$paramRef->{audiodir} = '';
+				if ($pref =~ /^(?:audiodir|playlistdir)$/ && !$paramRef->{useAudiodir}) {
+					$paramRef->{$pref} = '';
 				}
 
-				if ($pref eq 'itunes' && !$paramRef->{itunes})	{
-					$paramRef->{itunes} = '0';
-				}
-
-				if ($pref eq 'musicip' && !$paramRef->{musicip})	{
-					$paramRef->{musicip} = '0';
+				if ($pref =~ /^(?:itunes|musicip)/ && !$paramRef->{$pref}) {
+					$paramRef->{$pref} = '0';
 				}
 
 				preferences($namespace)->set($pref, $paramRef->{$pref});

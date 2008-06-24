@@ -5637,6 +5637,12 @@ SETUP_DISPLAYTEXTTIMEOUT_DESC
 	SV	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa teckenposition efter en liten fördröjning.<br>Här kan du ställa in tiden för denna fördröjning.
 	ZH_CN	当您通过播放机输入文字进行搜查行动时，播放机会在您输入的每一个字符后等待片刻才向下一个字符移动。您可以在这里调整该等待时间。
 
+SETUP_ADDITIONAL_PLAYLIST_BUTTONS
+	EN	Additional Playlist Buttons
+
+SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
+	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".<br/><br/>Please note: this preference is stored in your browser only - you'll have to set it on all browsers you want to use it.
+
 SETUP_THROTTLESCAN
 	DA	Hastighed for gennemlæsning af musik
 	DE	Musik-Durchsuchgeschwindigkeit
