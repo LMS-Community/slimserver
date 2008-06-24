@@ -61,10 +61,20 @@ sub init {
 sub cliQuery {
 	my $request = shift;
 	
-	my $client  = $request->client;
-	my $url     = $request->getParam('url');
-	my $trackId = $request->getParam('track_id');
+	my $client         = $request->client;
+	my $url            = $request->getParam('url');
+	my $trackId        = $request->getParam('track_id');
+	my $menuMode       = $request->getParam('menu') || 0;
+	my $menuContext    = $request->getParam('context') || 'normal';
+	my $playlist_index = $request->getParam('playlist_index') || undef;
 	
+
+	my $tags = {
+		menuMode      => $menuMode,
+		menuContext   => $menuContext,
+		playlistIndex => $playlist_index,
+	};
+
 	unless ( $url || $trackId ) {
 		$request->setStatusBadParams();
 		return;
@@ -83,11 +93,11 @@ sub cliQuery {
 	if ( !$feed ) {
 		# Default menu
 		if ( $url ) {
-			$feed = Slim::Menu::TrackInfo->menu( $client, $url );
+			$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
 		}
 		else {
 			my $track = Slim::Schema->find( Track => $trackId );
-			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track );
+			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags );
 		}
 	}
 	

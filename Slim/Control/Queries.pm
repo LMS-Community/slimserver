@@ -3589,7 +3589,7 @@ sub songinfoQuery {
 			if ($menu eq 'nowplaying') {
 				$go_action = 
 					{ 
-						cmd  => ['songinfo'],
+						cmd  => ['trackinfo'],
 						params => {
 							menu => 'nowhere',
 							itemsParams => 'params', 
@@ -4962,7 +4962,7 @@ sub _addJiveSong {
 	        } else {
         		$actions = {
 				go => {
-					cmd    => [ 'songinfo' ],
+					cmd    => [ 'trackinfo' ],
 					params => {
 						menu => 'menu',
 						url  => $track->url,
