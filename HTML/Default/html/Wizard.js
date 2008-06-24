@@ -46,12 +46,14 @@ Wizard = {
 					// as the Ext.Panel moved them out of the form
 					var formValues = Ext.query('input, textarea, select');
 					var wzForm = Ext.get('wizardForm');
+
 					for (var x = 0; x < formValues.length; x++) {
+
 						if (!document.forms.wizardForm.elements[formValues[x].name]) {
 							Ext.DomHelper.insertFirst(wzForm, {
 								tag: 'input',
 								name: formValues[x].name,
-								value: formValues[x].value,
+								value: formValues[x].type == 'checkbox' ? (formValues[x].checked ? 1 : 0) : formValues[x].value,
 								style: {
 									display: "none"
 								}
