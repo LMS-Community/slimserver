@@ -84,10 +84,6 @@ sub new {
 sub init {
 	my $client = shift;
 
-	# make sure any preferences this client may not have set are set to the default
-	# This should be a method on client!
-	$prefs->client($client)->init($defaultPrefs);
-
 	$client->SUPER::init();
 
 	Slim::Hardware::IR::initClient($client);
@@ -100,6 +96,16 @@ sub init {
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+}
+
+sub initPrefs {
+	my $client = shift;
+
+	# make sure any preferences this client may not have set are set to the default
+	# This should be a method on client!
+	$prefs->client($client)->init($defaultPrefs);
+
+	$client->SUPER::initPrefs();
 }
 
 # usage	- float	buffer fullness as a fraction

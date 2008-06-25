@@ -63,11 +63,17 @@ sub new {
 sub init {
 	my $client = shift;
 
-	$prefs->client($client)->init($defaultPrefs);
-
 	$client->SUPER::init();
 
 	$client->periodicScreenRefresh(); 
+}
+
+sub initPrefs {
+	my $client = shift;
+
+	$prefs->client($client)->init($defaultPrefs);
+
+	$client->SUPER::initPrefs();
 }
 
 # periodic screen refresh

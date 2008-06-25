@@ -18,10 +18,10 @@ use Slim::Player::Client;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 
-sub init {
+sub initPrefs {
 	my $client = shift;
 
-	$client->SUPER::init(@_);
+	$client->SUPER::initPrefs(@_);
 
 	preferences('server')->client($client)->set('autobrightness', 0);
 }
