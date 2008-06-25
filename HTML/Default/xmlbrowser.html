@@ -135,7 +135,6 @@ END %]
 		[% END %]
 
 		[%- FOREACH item = items %]
-[% IF item.passthrough; "<pre>"; USE Dumper; Dumper.dump(item.passthrough);"</pre>"; END %] 
 			[% IF item.type == 'search';
 				WRAPPER contentitem controls = xmlSearchControls;
 					IF artwork == 1;
