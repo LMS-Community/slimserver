@@ -8990,6 +8990,9 @@ TRACK
 	SV	Spår
 	ZH_CN	音轨
 
+TRACK_NUMBER
+	EN	Track Number
+
 SONGTITLE
 	CS	Název skladby
 	DA	Sangtitel
@@ -13421,7 +13424,7 @@ COLON
 	DE	:
 	EN	: 
 	ES	:
-	FR	:
+	FR	 :
 	HE	: 
 	IT	:
 	JA	:

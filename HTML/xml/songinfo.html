@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="[% LOCALE %]" standalone="no"?>
-
-<!DOCTYPE songinfo SYSTEM "html/slimserver_xml.dtd">
-
-<songinfo xmlns="http://www.slimdevices.com/slimserver/xml">
-	[% PROCESS _xml_song.html %]
-	<replace_url><![CDATA[[% webroot %]status.xml?command=playlist&subcommand=loadtracks&track.id=[% track.id %]]]></replace_url>
- 	<append_url><![CDATA[[% webroot %]status.xml??command=playlist&subcommand=addtracks&track.id=[% track.id %]]]></append_url>
-</songinfo>
