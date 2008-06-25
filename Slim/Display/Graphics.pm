@@ -39,12 +39,12 @@ our $defaultPrefs = {
 	'scrollPixelsDouble'   => 7,
 };
 
-sub init {
+sub initPrefs {
 	my $display = shift;
 
 	$prefs->client($display->client)->init($defaultPrefs);
 
-	$display->SUPER::init();
+	$display->SUPER::initPrefs();
 }
 
 sub validateFonts {

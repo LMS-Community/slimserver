@@ -57,12 +57,12 @@ END %]
 [% END %][% END %]
 
 [% IF streaminfo %]
-		[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
-		<div id="songInfoPlayLinks">
-			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
-			[% WRAPPER addlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
-		</div>
-		[% END; END %]
+	[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
+	<div id="songInfoPlayLinks">
+		[% WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
+		[% WRAPPER addlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
+	</div>
+	[% END; END %]
 
 	[% PROCESS xmlbrowser_details.html %]
 [% END %]

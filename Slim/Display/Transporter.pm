@@ -151,12 +151,18 @@ sub init {
 	my $display = shift;
 	my $client = $display->client;
 
-	$prefs->client($client)->init($defaultPrefs);
-
 	$display->SUPER::init();
 
 	# register default handler for periodic screen2 updates on visual screen
 	$client->lines2periodic(\&Slim::Player::Player::currentSongLines);
+}
+
+sub initPrefs {
+	my $display = shift;
+
+	$prefs->client($display->client)->init($defaultPrefs);
+
+	$display->SUPER::initPrefs();
 }
 
 sub resetDisplay {

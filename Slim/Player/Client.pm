@@ -269,14 +269,21 @@ sub new {
 sub init {
 	my $client = shift;
 
-	# make sure any preferences unique to this client may not have set are set to the default
-	$prefs->client($client)->init($defaultPrefs);
+	$client->initPrefs();
 
 	# init display including setting any display specific preferences to default
 	if ($client->display) {
 		$client->display->init();
 	}
 }
+
+sub initPrefs {
+	my $client = shift;
+
+	# make sure any preferences unique to this client may not have set are set to the default
+	$prefs->client($client)->init($defaultPrefs);
+}
+
 
 =head1 FUNCTIONS
 
@@ -308,7 +315,7 @@ sub resetPrefs {
 
 	$clientPrefs->remove( keys %{$clientPrefs->all} );
 
-	$client->init();
+	$client->initPrefs();
 }
 
 =head2 clientCount()
