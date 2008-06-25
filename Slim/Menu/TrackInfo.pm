@@ -456,6 +456,13 @@ sub infoContributors {
 							'contributor.id' => $id,
 						},
 					},
+
+					web  => {
+						type  => 'contributor',
+						group => uc($role),
+						value => $contributor->name,
+					},
+
 					jive => {
 						actions => {
 							go => {
@@ -676,6 +683,12 @@ sub infoAlbum {
 					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
 				},
 			},
+
+			web  => {
+				group => 'album',
+				value => $album->name,
+			},
+
 			jive => {
 				actions => {
 					go => {
@@ -747,6 +760,12 @@ sub infoGenres {
 					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
 				},
 			},
+
+			web  => {
+				group => 'genre',
+				value => $genre->name,
+			},
+
 			jive => {
 				actions => {
 					go => {
@@ -793,7 +812,7 @@ sub infoYear {
 	if ( my $year = $track->year ) {
 		$item = {
 			type => 'db',
-			name => $client->string('YEAR') . ": $year",
+			name => $client->string('YEAR') . $client->string('COLON') . " $year",
 			db   => {
 				hierarchy         => 'year,album,track',
 				level             => 1,
@@ -806,6 +825,12 @@ sub infoYear {
 					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
 				},
 			},
+
+			web  => {
+				group => 'year',
+				value => $year,
+			},
+
 			jive => {
 				actions => {
 					go => {
@@ -882,6 +907,11 @@ sub infoMoreInfo {
 	
 	return {
 		name => $client->string('MOREINFO'),
+
+		web  => {
+			group => 'moreinfo',
+		},
+
 	};
 }
 
@@ -893,13 +923,13 @@ sub infoTrackNum {
 	if ( my $tracknum = $track->tracknum ) {
 		$item = {
 			type => 'text',
-			name => $client->string('TRACK') . ": $tracknum",
+			name => $client->string('TRACK_NUMBER') . $client->string('COLON') . " $tracknum",
 		};
 	}
 	
 	return $item;
 }
-			
+
 sub infoContentType {
 	my ( $client, $url, $track ) = @_;
 	
@@ -929,7 +959,7 @@ sub infoDuration {
 	if ( my $duration = $track->duration ) {
 		$item = {
 			type => 'text',
-			name => $client->string('LENGTH') . ": $duration",
+			name => $client->string('LENGTH') . $client->string('COLON') . " $duration",
 		};
 	}
 	
@@ -1037,7 +1067,7 @@ sub infoSampleSize {
 	if ( my $samplesize = $track->samplesize ) {
 		$item = {
 			type => 'text',
-			name => $client->string('SAMPLESIZE') . ": $samplesize " . $client->string('BITS'),
+			name => $client->string('SAMPLESIZE') . $client->string('COLON') . " $samplesize " . $client->string('BITS'),
 		};
 	}
 	
@@ -1083,7 +1113,7 @@ sub infoFileModTime {
 		if ( my $age = $track->modificationTime ) {
 			$item = {
 				type => 'text',
-				name => $client->string('MODTIME') . ": $age",
+				name => $client->string('MODTIME') . $client->string('COLON') . " $age",
 			};
 		}
 	}
@@ -1099,7 +1129,7 @@ sub infoTagVersion {
 	if ( my $ver = $track->tagversion ) {
 		$item = {
 			type => 'text',
-			name => $client->string('TAGVERSION') . ": $ver",
+			name => $client->string('TAGVERSION') . $client->string('COLON') . " $ver",
 		};
 	}
 	
