@@ -115,6 +115,56 @@ END %]
 		[% END %]
 	[%- END %]
 
+
+	[%- # treat track information specially
+	IF path == 'trackinfo.html';
+		details = {};
+
+		FOREACH item = items;
+			IF item.web;
+
+				IF item.web.type == 'contributor';
+
+					UNLESS details.contributors.${item.web.group}; details.contributors.${item.web.group} = []; END;
+
+					details.contributors.${item.web.group}.push({
+						name = item.web.value
+						id   = item.db.findCriteria.${'contributor.id'}
+					});
+
+				ELSIF item.web.group == 'moreinfo';
+					CALL items.splice(loop.index, 1, item.items);
+
+				ELSIF item.web.group;
+
+					UNLESS details.${item.web.group}; details.${item.web.group} = []; END;
+
+					id = item.web.group _ '.id';
+					details.${item.web.group}.push({
+						name = item.web.value
+						id   = item.db.findCriteria.${id}
+					});
+
+				END;
+
+			END;
+		END;
+
+		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess; END;
+
+		PROCESS songinfo_details.html albumFirst = 1 itemobj = {
+			id => sess,
+			album => details.album.0,
+			contributorRoles => details.contributors.keys,
+			contributors => details.contributors,
+			genres => details.genre,
+			year => details.year.0.id
+		};
+
+		image = undef;
+	END %]
+
+
 	[%- WRAPPER $container %]
 		[% IF image %]
 		<div>
@@ -135,6 +185,9 @@ END %]
 		[% END %]
 
 		[%- FOREACH item = items %]
+
+			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
+
 			[% IF item.type == 'search';
 				WRAPPER contentitem controls = xmlSearchControls;
 					IF artwork == 1;
