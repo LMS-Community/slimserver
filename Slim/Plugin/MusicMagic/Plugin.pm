@@ -222,6 +222,13 @@ sub initPlugin {
 			mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
 		);
 
+		# Track Info handler
+		Slim::Menu::TrackInfo->registerInfoProvider( musicmagic => (
+			menuMode => 1,
+			above    => 'favorites',
+			func     => \&trackInfoHandler,
+		) );
+
 		if (scalar @{grabMoods()}) {
 
 			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
@@ -503,8 +510,19 @@ sub specialPushLeft {
 	}
 }
 
+sub trackInfoCreateMix {
+	my ( $client, $callback, $track ) = @_;
+	if ( $prefs->get('player_settings') ) {
+		mixerFunction($client, 1, $track);
+	} else {
+		mixerFunction($client, 0, $track);
+	}
+}
+
 sub mixerFunction {
-	my ($client, $noSettings) = @_;
+	my ($client, $noSettings, $track) = @_;
+
+	my $trackinfo = ( defined($track) && blessed($track) && $track->path ) ? 1 : 0;
 
 	# look for parentParams (needed when multiple mixers have been used)
 	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
@@ -529,8 +547,12 @@ sub mixerFunction {
 
 	my $currentItem = $items->[$listIndex];
 
-	# start by checking for moods
-	if ($paramref->{'mood'}) {
+	# start by checking for a passed track (trackinfo)
+	if ( $trackinfo ) {
+		$currentItem = $track;
+		$levels[$level] = 'track';
+	# then moods
+	} elsif ($paramref->{'mood'}) {
 		$mixSeed = $currentItem;
 		$levels[$level] = 'mood';
 	
@@ -555,7 +577,7 @@ sub mixerFunction {
 	}
 
 	# Bug: 7478: special handling for playlist tracks.
-	if ($levels[$level] eq 'playlistTrack') {
+	if ($levels[$level] eq 'playlistTrack' || $trackinfo ) {
 
 		$mixSeed = $currentItem->path;
 		$mix = getMix($client, $mixSeed, 'track');
@@ -567,7 +589,6 @@ sub mixerFunction {
 	}
 
 	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
-
 		my %params = (
 			'listRef'        => $mix,
 			'externRef'      => \&Slim::Music::Info::standardTitle,
@@ -1151,6 +1172,61 @@ sub _prepare_mix {
 	
 	return $mix;
 }
+
+sub trackInfoHandler {
+	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+	$tags ||= {};
+	
+	my $mixable = $track->musicmagic_mixable;
+
+	if ( $tags->{menuMode} ) {
+		my ($jive, $actions);
+		if ( $mixable ) {
+			$actions = {
+				go => {
+					player => 0,
+					cmd    => [ 'musicip', 'mix' ],
+					params => {
+						menu     => 1,
+						track_id => $track->id,
+					},
+				},
+			};
+		} else {
+			$actions = {
+				do => {
+					player => 0,
+					cmd    => [ 'jiveunmixable' ],
+					params => {
+						contextToken => 'MUSICMAGIC_MIX',
+					},
+				},
+			};
+
+		}
+
+		$jive->{actions} = $actions;
+		return {
+			type        => 'text',
+			name        => $client->string('MUSICIP_CREATEMIX'),
+			jive        => $jive,
+		};
+	} else {
+		if ( $mixable ) {
+			return {
+				type        => 'link',
+				name        => $client->string('MUSICIP_CREATEMIX'),
+				url         => \&trackInfoCreateMix,
+				passthrough => [ $track ],
+			};
+		}
+	
+	}
+
+	return;
+
+}
+
 1;
 
 __END__
