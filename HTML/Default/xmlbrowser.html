@@ -83,6 +83,12 @@ END %]
 END %]
 
 [%- IF items.size -%]
+	[%- # Maintain correct index values
+		FOREACH item = items;
+			item.index = index _ (start + loop.index);
+		END;
+	%]
+
 	<div id="browsedbHeader">
 		[% IF hasPagebar %]
 			<div class="pagerbox">
@@ -98,27 +104,27 @@ END %]
 	[%- BLOCK gencontrol -%]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				href="[% path %]?action=favadd&index=[% index _ (start + loop.index) | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
+				href="[% path %]?action=favadd&index=[% item.index | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				href="[% path %]?action=favdel&index=[% index _ (start + loop.index) | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
+				href="[% path %]?action=favdel&index=[% item.index | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
 			[% END %]
 		[% END %]
 
 		[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
-			[% WRAPPER addlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
+			[% WRAPPER playlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
+			[% WRAPPER addlink %]onclick="SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
 		[% ELSE %]
 			[% PROCESS dummylink %]
 			[% PROCESS dummylink %]
 		[% END %]
 	[%- END %]
 
-
 	[%- # treat track information specially
 	IF path == 'trackinfo.html';
 		details = {};
+		moreinfo_index = 0;
 
 		FOREACH item = items;
 			IF item.web;
@@ -133,6 +139,12 @@ END %]
 					});
 
 				ELSIF item.web.group == 'moreinfo';
+					# Change the index value for the moreinfo items
+					FOREACH moreitem = item.items;
+						moreitem.index = item.index _ '.' _ moreinfo_index;
+						moreinfo_index = moreinfo_index + 1;
+					END;
+				
 					CALL items.splice(loop.index, 1, item.items);
 
 				ELSIF item.web.group;
@@ -195,10 +207,10 @@ END %]
 					END;
 					item.name || item.title %]
 					<span class="browsedbControls">
-						<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
+						<form id="searchForm[% item.index %]" method="GET">
 							<input type="hidden" value="[% player %]" name="player" />
 							<input type="hidden" value="[% sess %]" name="sess" />
-							<input type="hidden" value="[% index _ (start + loop.index) %]" name="index" />
+							<input type="hidden" value="[% item.index %]" name="index" />
 		 					<input type="hidden" name="submit" class="stdclick" value="[% "SEARCH" | string %]"/>
 							<input type="text" class="x-form-focus searchInput" name="q" value=""/>
 							<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
@@ -230,7 +242,7 @@ END %]
 						%]
 						<a href="browsedb.html?hierarchy=[% item.db.hierarchy %]&amp;level=[% item.db.level %][% findCriteria %]&amp;player=[% player | uri %]" class="browseItemLink">
 					[% ELSIF item.type != 'text' %]
-						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% index _ (start + loop.index) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
+						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 					[% END %]
 
 					[% item.name || item.title %]
