@@ -68,7 +68,7 @@ my @modes = (
 
 my $nmodes = $#modes;
 
-sub init {
+sub initPrefs {
 	my $display = shift;
 
 	if (!$prefs->get('loadFontsText')) {
@@ -77,7 +77,7 @@ sub init {
 
 	$prefs->client($display->client)->init($defaultPrefs);
 
-	$display->SUPER::init();
+	$display->SUPER::initPrefs();
 }
 
 sub resetDisplay {

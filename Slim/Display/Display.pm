@@ -111,9 +111,15 @@ sub new {
 sub init {
 	my $display = shift;
 
-	$prefs->client($display->client)->init($defaultPrefs);
+	$display->initPrefs();
 
 	$display->displayStrings(Slim::Utils::Strings::clientStrings($display->client));
+}
+
+sub initPrefs {
+	my $display = shift;
+
+	$prefs->client($display->client)->init($defaultPrefs);
 }
 
 
