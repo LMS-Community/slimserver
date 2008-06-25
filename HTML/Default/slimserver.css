@@ -66,6 +66,10 @@ a:hover, .link:hover,
 	cursor: pointer;
 }
 
+.defaultCursor {
+	cursor: default;
+}
+
 .selectedItem a {
 	font-weight: bold;
 }

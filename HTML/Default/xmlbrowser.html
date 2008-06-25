@@ -206,7 +206,7 @@ END %]
 					</span>					
 				[% END %]
 			[% ELSE %]
-				[%- WRAPPER $contentwrapper controls = 'gencontrol' %]
+				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = item.type=='text' ? 'defaultCursor' : '' %]
 					[% IF artwork == 1;
 						item.size = 100;
 						itemobj.id = loop.count;
