@@ -4,7 +4,9 @@
 			[% IF image || plugin_meta.cover || plugin_meta.icon %]
 				[%# Display plugin cover or icon %]
 				[% IF image || plugin_meta.cover %]
-				<img src="[% image || plugin_meta.cover %]" alt="coverArt" onLoad="resize(this)">
+				<a href="[% image || plugin_meta.cover %]" target="cover">
+					<img src="[% image || plugin_meta.cover %]" alt="coverArt" onLoad="resize(this)">
+				</a>
 				[% ELSIF plugin_meta.icon %]
 				<img src="[% plugin_meta.icon %].[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="coverArt" onLoad="resize(this)">
 				[% END %]
