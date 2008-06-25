@@ -956,29 +956,73 @@ sub cliMove {
 }
 
 sub trackInfoHandler {
-	my ( $client, $url, $track, $remoteMeta ) = @_;
+	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+	$tags ||= {};
 	
 	my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($url);
 	
+	my $jive;
 	if ( !defined $index ) {
+
 		$log->debug( "Item is not a favorite [$url]" );
-		
-		return {
-			type        => 'link',
-			name        => $client->string('PLUGIN_FAVORITES_ADD'),
-			url         => \&trackInfoAddFavorite,
-			passthrough => [ $track ],
-		};
+
+		if ( $tags->{menuMode} ) {
+			my $actions = {
+				go => {
+					player => 0,
+					cmd    => [ 'jivefavorites', 'add' ],
+					params => {
+						title   => $track->title,
+                                                url     => $track->url,
+					},
+				},
+			};
+			$jive->{actions} = $actions;
+			return {
+				type        => 'text',
+				name        => $client->string('JIVE_ADD_TO_FAVORITES'),
+				jive        => $jive,
+			};
+		} else {
+			return {
+				type        => 'link',
+				name        => $client->string('PLUGIN_FAVORITES_ADD'),
+				url         => \&trackInfoAddFavorite,
+				passthrough => [ $track ],
+			};
+		}
 	}
 	else {
+
 		$log->debug( "Item is a favorite [$url]" );
-		
-		return {
-			type        => 'link',
-			name        => $client->string('PLUGIN_FAVORITES_REMOVE'),
-			url         => \&trackInfoRemoveFavorite,
-			passthrough => [ $track ],
-		};
+
+		if ( $tags->{menuMode} ) {
+			my $actions = {
+				go => {
+					player => 0,
+					cmd    => [ 'jivefavorites', 'delete' ],
+					params => {
+						title   => $track->title,
+                                                url     => $track->url,
+						item_id => $index,
+					},
+				},
+			};
+			$jive->{actions} = $actions;
+			return {
+				type        => 'text',
+				name        => $client->string('JIVE_DELETE_FROM_FAVORITES'),
+				jive        => $jive,
+			};
+	
+		} else {
+			return {
+				type        => 'link',
+				name        => $client->string('PLUGIN_FAVORITES_REMOVE'),
+				url         => \&trackInfoRemoveFavorite,
+				passthrough => [ $track ],
+			};
+		}
 	}
 	
 	return;
