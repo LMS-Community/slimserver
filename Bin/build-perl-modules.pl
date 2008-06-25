@@ -21,7 +21,7 @@ use File::Which;
 
 # NOTE: If you change this in a future version of SC, create a new
 # versioned directory under vendor/src for all files for that version
-my $SOURCE = 'http://svn.slimdevices.com/repos/slim/vendor/src/7.1';
+my $SOURCE = 'http://svn.slimdevices.com/repos/slim/vendor/src/7.2';
 my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
