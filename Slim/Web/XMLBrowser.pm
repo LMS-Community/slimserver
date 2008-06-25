@@ -313,10 +313,10 @@ sub handleFeed {
 		$stash->{'image'}     = $subFeed->{'image'};
 	}
 	else {
-		$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
+		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || string($params->{'title'});
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
-		
+
 		# insert a search box on the top-level page if we support searching
 		# for this feed
 		if ( $params->{'search'} ) {
