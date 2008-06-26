@@ -828,7 +828,7 @@ sub submitScrobble {
 		# Don't submit tracks that are still playing, to allow user
 		# to rate the track
 		if ( $current_track && stillPlaying( $client, $current_track, $item ) ) {
-			$log->debug( "Track " . $item->{_url} . " is still playing, not submitting" );
+			$log->debug( "Track " . $item->{t} . " is still playing, not submitting" );
 			$current_item = $item;
 			next;
 		}
@@ -1165,7 +1165,7 @@ sub canScrobble {
 			if ( $handler->can('getMetadataFor') ) {
 				my $meta = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );
 				my $duration = $meta->{duration} || $track->secs;
-				if ( !$duration || $duration < 30 ) {
+				if ( $duration && $duration < 30 ) {
 					return;
 				}
 			}
@@ -1180,7 +1180,7 @@ sub canScrobble {
 	}
 	else {
 		# Must be over 30 seconds
-		return if !$track->secs || $track->secs < 30;
+		return if $track->secs && $track->secs < 30;
 		
 		return 1;
 	}
