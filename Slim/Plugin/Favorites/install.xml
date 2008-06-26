@@ -10,7 +10,8 @@
 	<email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>
-        
+
+	<playerMenu>HOME</playerMenu>        
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<optionsURL>plugins/Favorites/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
