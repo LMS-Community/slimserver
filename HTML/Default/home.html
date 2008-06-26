@@ -185,10 +185,10 @@ ELSE %]
 					control = BLOCK;
 						IF entry.type == "audio";
 							WRAPPER playlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
+								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor(Ext.get(this).child('img'));SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
 							WRAPPER addlink noTarget=1 -%]
-								href="javascript:void(0);" onClick="SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
+								href="javascript:void(0);" onClick="SqueezeJS.UI.setProgressCursor(Ext.get(this).child('img'));SqueezeJS.Controller.urlRequest('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]', true, SqueezeJS.string('connecting_for'));"
 							[%- END;
 						ELSE;
 							PROCESS dummylink;
