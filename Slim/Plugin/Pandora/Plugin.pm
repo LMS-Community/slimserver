@@ -186,8 +186,8 @@ sub trackInfoMenu {
 		return;
 	}
 	
-	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
-	my $title  = $remoteMeta->{title}  || $track->title;
+	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/pandora/v1/opml/context?artist='

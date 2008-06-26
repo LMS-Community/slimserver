@@ -247,9 +247,9 @@ sub trackInfoMenu {
 		return;
 	}
 	
-	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
-	my $album  = $remoteMeta->{album}  || ( $track->album ? $track->album->name : undef );
-	my $title  = $remoteMeta->{title}  || $track->title;
+	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
+	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
+	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/rhapsody/v1/opml/context?artist='
