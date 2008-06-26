@@ -124,6 +124,8 @@ END %]
 	[%- # treat track information specially
 	IF path == 'trackinfo.html';
 		details = {};
+		mixerlinks = {};
+		moreinfo_start = 0;
 		moreinfo_index = 0;
 
 		FOREACH item = items;
@@ -140,12 +142,27 @@ END %]
 
 				ELSIF item.web.group == 'moreinfo';
 					# Change the index value for the moreinfo items
-					FOREACH moreitem = item.items;
+					moreinfo = item.items;
+					moreinfo_start = loop.index;
+					FOREACH moreitem = moreinfo;
 						moreitem.index = item.index _ '.' _ moreinfo_index;
 						moreinfo_index = moreinfo_index + 1;
 					END;
-				
-					CALL items.splice(loop.index, 1, item.items);
+
+				ELSIF item.web.group == 'mixers';
+
+					UNLESS details.${item.web.group}; details.${item.web.group} = []; END;
+
+					details.${item.web.group}.push({
+						item = sess
+					});
+
+					mixerkey = item.web.item.mixerlinks.keys.0;
+					mixerlinks.${mixerkey} = item.web.item.mixerlinks.${mixerkey};
+
+					FOREACH param IN item.web.item.pairs;
+						details.mixers.0.${param.key} = param.value;
+					END;
 
 				ELSIF item.web.group;
 
@@ -162,7 +179,11 @@ END %]
 			END;
 		END;
 
-		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess; END;
+		IF moreinfo;
+			CALL items.splice(moreinfo_start, 1, moreinfo);
+		END;
+
+		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
 
 		PROCESS songinfo_details.html albumFirst = 1 itemobj = {
 			id => sess,
