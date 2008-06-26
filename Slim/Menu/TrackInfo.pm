@@ -462,7 +462,7 @@ sub infoContributors {
 
 					player => {
 						mode  => 'browsedb',
-						modeParams => [ $db ],
+						modeParams => $db,
 					},
 
 					web  => {
@@ -698,7 +698,7 @@ sub infoAlbum {
 
 			player => {
 				mode  => 'browsedb',
-				modeParams => [ $db ],
+				modeParams => $db,
 			},
 
 			web  => {
@@ -784,7 +784,7 @@ sub infoGenres {
 
 			player => {
 				mode  => 'browsedb',
-				modeParams => [ $db ],
+				modeParams => $db,
 			},
 
 			web  => {
@@ -858,7 +858,7 @@ sub infoYear {
 
 			player => {
 				mode  => 'browsedb',
-				modeParams => [ $db ],
+				modeParams => $db,
 			},
 
 			web  => {
