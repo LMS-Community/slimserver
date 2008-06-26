@@ -438,26 +438,35 @@ sub infoContributors {
 			for my $contributor ( $track->contributorsOfType($role) ) {
 				my $id = $contributor->id;
 				
+				my $db = {   
+					hierarchy         => 'contributor,album,track',
+					level             => 1,
+					findCriteria      => {
+						'contributor.id'   => $id,
+						'contributor.role' => $role,
+					},
+					selectionCriteria => {
+						'track.id'       => $track->id,
+						'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
+						'contributor.id' => $id,
+					},
+				};
+
 				# XXX: Ideally this would point to another OPML provider like
 				# Slim::Menu::Library::Contributor
 				push @{$items}, {
-					type => 'db',
+					type => 'redirect',
 					name => $client->string( uc $role ) . ': ' . $contributor->name,
-					db   => {
-						hierarchy         => 'contributor,album,track',
-						level             => 1,
-						findCriteria      => {
-							'contributor.id'   => $id,
-							'contributor.role' => $role,
-						},
-						selectionCriteria => {
-							'track.id'       => $track->id,
-							'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
-							'contributor.id' => $id,
-						},
+
+					db   => $db,
+
+					player => {
+						mode  => 'browsedb',
+						modeParams => [ $db ],
 					},
 
 					web  => {
+						url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
 						type  => 'contributor',
 						group => uc($role),
 						value => $contributor->name,
@@ -666,25 +675,34 @@ sub infoAlbum {
 	}
 	elsif ( my $album = $track->album ) {
 		my $id = $album->id;
+
+		my $db = {
+			hierarchy         => 'album,track',
+			level             => 1,
+			findCriteria      => { 
+				'album.id'       => $id,
+				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+			},
+			selectionCriteria => {
+				'track.id'       => $track->id,
+				'album.id'       => $id,
+				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+			},
+		};
 		
 		$item = {
-			type => 'db',
+			type => 'redirect',
 			name => $client->string('ALBUM') . ': ' . $album->name,
-			db   => {
-				hierarchy         => 'album,track',
-				level             => 1,
-				findCriteria      => { 
-					'album.id'       => $id,
-					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
-				},
-				selectionCriteria => {
-					'track.id'       => $track->id,
-					'album.id'       => $id,
-					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
-				},
+
+			db   => $db,
+
+			player => {
+				mode  => 'browsedb',
+				modeParams => [ $db ],
 			},
 
 			web  => {
+				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
 				group => 'album',
 				value => $album->name,
 			},
@@ -745,23 +763,32 @@ sub infoGenres {
 	for my $genre ( $track->genres ) {
 		my $id = $genre->id;
 		
+		my $db = {
+			hierarchy         => 'genre,contributor,album,track',
+			level             => 1,
+			findCriteria      => {
+				'genre.id' => $id,
+			},
+			selectionCriteria => {
+				'track.id'       => $track->id,
+				'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
+				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+			},
+		};
+		
 		push @{$items}, {
-			type => 'db',
+			type => 'redirect',
 			name => $client->string('GENRE') . ': ' . $genre->name,
-			db   => {
-				hierarchy         => 'genre,contributor,album,track',
-				level             => 1,
-				findCriteria      => {
-					'genre.id' => $id,
-				},
-				selectionCriteria => {
-					'track.id'       => $track->id,
-					'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
-					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
-				},
+
+			db   => $db,
+
+			player => {
+				mode  => 'browsedb',
+				modeParams => [ $db ],
 			},
 
 			web  => {
+				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
 				group => 'genre',
 				value => $genre->name,
 			},
@@ -810,23 +837,32 @@ sub infoYear {
 	my $item;
 	
 	if ( my $year = $track->year ) {
+		my $db = {
+			hierarchy         => 'year,album,track',
+			level             => 1,
+			findCriteria      => {
+				'year.id' => $year,
+			},
+			selectionCriteria => {
+				'track.id'       => $track->id,
+				'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
+				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+			},
+		};
+
 		$item = {
-			type => 'db',
+			type => 'redirect',
 			name => $client->string('YEAR') . $client->string('COLON') . " $year",
-			db   => {
-				hierarchy         => 'year,album,track',
-				level             => 1,
-				findCriteria      => {
-					'year.id' => $year,
-				},
-				selectionCriteria => {
-					'track.id'       => $track->id,
-					'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
-					'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
-				},
+
+			db   => $db,
+
+			player => {
+				mode  => 'browsedb',
+				modeParams => [ $db ],
 			},
 
 			web  => {
+				url   => "browsedb.html?hierarchy=$db->{hierarchy}&amp;level=$db->{level}" . _findDBCriteria($db),
 				group => 'year',
 				value => $year,
 			},
@@ -1135,6 +1171,19 @@ sub infoTagVersion {
 	
 	return $item;
 }
+
+
+sub _findDBCriteria {
+	my $db = shift;
+	
+	my $findCriteria = '';
+	foreach (keys %{$db->{findCriteria}}) {
+		$findCriteria .= "&amp;$_=" . $db->{findCriteria}->{$_};
+	}
+	
+	return $findCriteria;
+}
+
 
 =head1 CREATING MENUS
 

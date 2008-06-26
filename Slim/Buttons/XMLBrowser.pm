@@ -575,10 +575,16 @@ sub gotOPML {
 				$itemURL = $item->{'value'};
 			}
 			
-			# Type = 'db', hack to allow XMLBrowser items to push into
-			# browsedb mode, used by TrackInfo menu
-			if ( $item->{type} && $item->{type} eq 'db' ) {
-				Slim::Buttons::Common::pushModeLeft( $client, 'browsedb', $item->{db} );
+			# Type = 'redirect', hack to allow XMLBrowser items to push into
+			# other modes, used by TrackInfo menu
+			if ( $item->{type} && $item->{type} eq 'redirect' 
+				&& $item->{player} && $item->{player}->{mode} && $item->{player}->{modeParams} ) {
+
+				Slim::Buttons::Common::pushModeLeft( 
+					$client, 
+					$item->{player}->{mode}, 
+					@{ $item->{player}->{modeParams} } 
+				);
 				return;
 			}
 			
