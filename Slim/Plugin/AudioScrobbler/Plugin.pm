@@ -74,6 +74,12 @@ sub initPlugin {
 		[['playlist'], ['newsong']],
 	);
 	
+	# Track Info item for loving tracks
+	Slim::Menu::TrackInfo->registerInfoProvider( lfm_love => (
+		before => 'top',
+		func   => \&infoLoveTrack,
+	) );
+	
 	# A way for other things to notify us the user loves a track
 	Slim::Control::Request::addDispatch(['audioscrobbler', 'loveTrack', '_url'],
 		[0, 1, 1, \&loveTrack]);
@@ -403,9 +409,22 @@ sub newsongCallback {
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
 	
+	my $duration = $track->secs;
+	
+	if ( $track->remote ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			# this plugin provides track metadata, i.e. Pandora, Rhapsody
+			my $meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
+			if ( $meta && $meta->{duration} ) {
+				$duration = $meta->{duration};
+			}
+		}
+	}
+	
 	# If this is a radio track (no track length) and contains a playlist index value
 	# it is the newsong notification from the station title, which we want to ignore
-	if ( !$track->secs && defined $request->getParam('_p3') ) {
+	if ( !$duration && defined $request->getParam('_p3') ) {
 		$log->debug( 'Ignoring radio station newsong notification' );
 		return;
 	}
@@ -439,7 +458,7 @@ sub newsongCallback {
 	# Determine when we need to check again
 	
 	# Track must be > 30 seconds
-	if ( $track->secs && $track->secs < 30 ) {
+	if ( $duration && $duration < 30 ) {
 		if ( $log->is_debug ) {
 			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds' );
 		}
@@ -473,8 +492,8 @@ sub newsongCallback {
 	
 	# We check again at half the song's length or 240 seconds, whichever comes first
 	my $checktime;
-	if ( $track->secs ) {
-		$checktime = $track->secs > 480 ? 240 : ( int( $track->secs / 2 ) );
+	if ( $duration ) {
+		$checktime = $duration > 480 ? 240 : ( int( $duration / 2 ) );
 	}
 	else {
 		# For internet radio, check again in 30 seconds
@@ -516,6 +535,7 @@ sub submitNowPlaying {
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
 	my $tracknum = $track->tracknum || '';
+	my $duration = $track->secs;
 	
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
@@ -526,6 +546,7 @@ sub submitNowPlaying {
 			$album    = $meta->{album} || '';
 			$title    = $meta->{title};
 			$tracknum = $meta->{tracknum} || '';
+			$duration = $meta->{duration} || $track->secs;
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
@@ -543,7 +564,7 @@ sub submitNowPlaying {
 		. '&a=' . uri_escape_utf8( $artist )
 		. '&t=' . uri_escape_utf8( $title )
 		. '&b=' . uri_escape_utf8( $album )
-		. '&l=' . ( $track->secs ? int( $track->secs ) : '' )
+		. '&l=' . ( $duration ? int( $duration ) : '' )
 		. '&n=' . $tracknum
 		. '&m=' . ( $track->musicbrainz_id || '' );
 	
@@ -645,6 +666,7 @@ sub checkScrobble {
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
 	my $tracknum = $track->tracknum || '';
+	my $duration = $track->secs;
 	my $source   = 'P';
 	
 	if ( $track->remote ) {
@@ -656,6 +678,7 @@ sub checkScrobble {
 			$album    = $meta->{album} || '';
 			$title    = $meta->{title};
 			$tracknum = $meta->{tracknum} || '';
+			$duration = $meta->{duration} || $track->secs;
 			
 			# Handler must return at least artist and title
 			unless ( $meta->{artist} && $meta->{title} ) {
@@ -701,6 +724,7 @@ sub checkScrobble {
 			\&checkScrobble,
 			$track,
 			$checktime,
+			$rating,
 		);
 		
 		return;
@@ -717,13 +741,18 @@ sub checkScrobble {
 		i    => int( $client->currentPlaylistChangeTime() ),
 		o    => $source,
 		r    => $rating, # L for thumbs-up for Pandora/Lastfm, B for Lastfm ban, S for Lastfm skip
-		l    => ( $track->secs ? int( $track->secs ) : '' ),
+		l    => ( $duration ? int( $duration ) : '' ),
 		b    => uri_escape_utf8( $album ),
 		n    => $tracknum,
 		m    => ( $track->musicbrainz_id || '' ),
 	};
 	
 	setQueue( $client, $queue );
+	
+	# If the URL wasn't a Last.fm station and the user loved the track, report the Love
+	if ( $rating && $rating eq 'L' && $cururl !~ /^lfm/ ) {
+		submitLoveTrack( $client, $queue->[-1] );
+	}
 	
 	#warn "Queue is now: " . Data::Dump::dump($queue) . "\n";
 	
@@ -995,6 +1024,11 @@ sub loveTrack {
 			
 			setQueue( $client, $queue );
 			
+			# If the URL wasn't a Last.fm station, report the Love
+			if ( $url !~ /^lfm/ ) {
+				submitLoveTrack( $client, $item );
+			}
+			
 			return 1;
 		}
 	}
@@ -1009,6 +1043,47 @@ sub loveTrack {
 	checkScrobble( $client, $track, 0, 'L' );
 	
 	return 1;
+}
+
+sub submitLoveTrack {
+	my ( $client, $item ) = @_;
+	
+	my $username = $prefs->client($client)->get('account');
+	my $accounts = $prefs->get('accounts') || [];
+	my $password;
+	
+	for my $account ( @{$accounts} ) {
+		if ( $account->{username} eq $username ) {
+			$password = $account->{password};
+			last;
+		}
+	}
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		sub {
+			my $http = shift;
+			$log->debug( 'Love track response: ' . $http->content );
+		},
+		sub {
+			my $http = shift;
+			$log->debug( 'Love track error: ' . $http->error );
+		},
+		{
+			client => $client,
+		},
+	);
+	
+	my $url = Slim::Networking::SqueezeNetwork->url(
+		'/api/lastfm/v1/scrobbling/love'
+		. '?username='  . $username
+		. '&authToken=' . md5_hex( $username . $password )
+		. '&artist='    . $item->{a}
+		. '&track='     . $item->{t}
+	);
+	
+	$log->debug( 'Submitting loved track to Last.fm' );
+	
+	$http->get( $url );
 }
 
 sub banTrack {
@@ -1082,19 +1157,31 @@ sub canScrobble {
 	
 	return unless $enable_scrobbling;
 	
-	# Must be over 30 seconds
-	return if $track->secs && $track->secs < 30;
-	
-	# Remote tracks must provide a source
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
-		if ( $handler && $handler->can('audioScrobblerSource') ) {
-			if ( my $source = $handler->audioScrobblerSource( $client, $track->url ) ) {
-				return 1;
+		if ( $handler ) {
+			
+			# Must be over 30 seconds
+			if ( $handler->can('getMetadataFor') ) {
+				my $meta = $handler->getMetadataFor( $client, $track->url, 'forceCurrent' );
+				my $duration = $meta->{duration} || $track->secs;
+				if ( !$duration || $duration < 30 ) {
+					return;
+				}
+			}
+			
+			# Must provide a source
+			if ( $handler->can('audioScrobblerSource') ) {
+				if ( my $source = $handler->audioScrobblerSource( $client, $track->url ) ) {
+					return 1;
+				}
 			}
 		}
 	}
 	else {
+		# Must be over 30 seconds
+		return if !$track->secs || $track->secs < 30;
+		
 		return 1;
 	}
 
@@ -1123,4 +1210,32 @@ sub setQueue {
 	$prefs->client($client)->set( queue => $queue );
 }
 
+sub infoLoveTrack {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	# Ignore if the current track can't be scrobbled
+	if ( !__PACKAGE__->canScrobble( $client, $track ) ) {
+		return;
+	}
+	
+	return {
+		type        => 'link',
+		name        => $client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK'),
+		url         => \&infoLoveTrackSubmit,
+		passthrough => [ $url ],
+	};
+}
+
+sub infoLoveTrackSubmit {
+	my ( $client, $callback, $url ) = @_;
+	
+	$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
+	
+	$callback->( {
+		type        => 'text',
+		name        => $client->string('PLUGIN_AUDIOSCROBBLER_TRACK_LOVED'),
+		showBriefly => 1,
+	} );
+}
+		
 1;
