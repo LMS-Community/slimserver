@@ -92,12 +92,16 @@ sub read {
 				my $title = $entry->{TITLE};
 				my $refs  = $entry->{REF} || [];
 			
+				REF:
 				for my $ref ( @{$refs} ) {
 					if ( my $href = $ref->{HREF} ) {
 						push @entries, {
 							title => $title,
 							href  => $href,
 						};
+						
+						# Only one link in a REF station should be played
+						last REF;
 					}
 				}
 			}
