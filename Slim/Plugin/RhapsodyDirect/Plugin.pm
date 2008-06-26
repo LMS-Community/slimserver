@@ -260,7 +260,7 @@ sub trackInfoMenu {
 			. uri_escape_utf8($title)
 	);
 	
-	if ( $artist || $album || $title ) {
+	if ( $artist && ( $album || $title ) ) {
 		return {
 			type => 'link',
 			name => $client->string('PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY'),

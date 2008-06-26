@@ -196,7 +196,7 @@ sub trackInfoMenu {
 			. uri_escape_utf8($title)
 	);
 	
-	if ( $artist || $title ) {
+	if ( $artist && $title ) {
 		return {
 			type => 'link',
 			name => $client->string('PLUGIN_PANDORA_ON_PANDORA'),
