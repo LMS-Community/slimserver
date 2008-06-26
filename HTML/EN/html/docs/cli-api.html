@@ -42,6 +42,21 @@
 	&quot;--stdio&quot; command line option.
 </p>
 
+<hr>
+<h4 id="7">Changes starting from SqueezeCenter 7.2</h4>
+<p>
+	The following syntax changes apply to the CLI in SqueezeCenter 7.2. <strong>These 
+	changes may impact CLI clients.</strong>
+</p>
+<ul>
+	<li>
+		The <a href="#alarm">&quot;alarm&quot;</a> and <a href="#alarms">&quot;alarms&quot;</a> 
+		command and query have been modified to match the improved alarm functionality. Most
+		important change is the switch back to Sun=0 to Sat=6 days, instead of 0-7, where 0 meant
+		"everyday" and Sun=7.
+	</li>
+</ul>
+
  
 <hr>
 <h4 id="7">Changes starting from SqueezeCenter 7.0</h4>
@@ -2425,57 +2440,36 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>cmd</td>
-		<td>Mandatory parameter, one of &quot;clear&quot;, &quot;set&quot; or 
-			&quot;update&quot;. Use &quot;clear&quot; to reset all parameters of
-			the alarm for the day &quot;dow&quot; to their standard values 
-			(disabled alarm, no playlist, volume 50, 12:00AM). Use 
-			&quot;set&quot; to change the parameters of the alarm, starting from
-			a standard one as defined above. Use &quot;update&quot; to change 
-			the parameters of the alarm, starting from the alarm as currently 
-			defined. If all alarm parameters are provided, there is no 
-			difference between &quot;set&quot; and &quot;update&quot;. But if 
-			the caller just wants to enable or disable an alarm already defined,
-			using &quot;update&quot; allows to provide just the &quot;enable&quot;
-			parameter, the other parameters being taken from the currently
-			defined alarm (see the example below).</td>
+		<td>One of &quot;add&quot; or &quot;delete&quot;. If you don't define
+		a command, you'll have to at least define an ID. In this case the given
+		alarm will be updated. </td>
 	</tr>
-	<tr>		
+	<tr>
+		<td>id</td>
+		<td>The id of an existing alarm. This value is mandatory unless you &quot;add&quot;
+		a new alarm.</td>
+	</tr>
+	<tr>
 		<td>dow</td>
-		<td>Mandatory. Day Of Week to &quot;clear&quot;, 
-			&quot;set&quot; or &quot;update&quot;. 0 is every day, 1 is Monday,
-			etc. up to 7 being Sunday.</td>
+		<td>Day Of Week. 0 is Sunday, 1 is Monday, etc. up to 6 being Saturday.
+		You can define a group of days by concatenating them with "," as separator.
+		Default: 0-6.</td>
 	</tr>
 	<tr>
 		<td>enabled</td>
-		<td>Optional, 1 if the alarm is enabled.</td>
+		<td>1 if the alarm is enabled. Default: 0.</td>
 	</tr>
 	<tr>
 		<td>time</td>
-		<td>Optional, time of the alarm, in seconds from midnight.</td>
+		<td>Mandatory, time of the alarm, in seconds from midnight.</td>
 	</tr>
 	<tr>
 		<td>volume</td>
-		<td>Optional, mixer volume of the alarm.</td>
+		<td>Mixer volume of the alarm. Default: 50.</td>
 	</tr>
 	<tr>
 		<td>url</td>
-		<td>Optional, URL of the alarm playlist, or one of &quot;CURRENT_PLAYLIST&quot;,
-			&quot;PLUGIN_RANDOM_TRACK&quot;, &quot;PLUGIN_RANDOM_ALBUM&quot;, or
-			&quot;PLUGIN_RANDOM_CONTRIBUTOR&quot;. This takes precedence over
-			&quot;playlist_id&quot; if both are provided; the recommended
-			procedure is to use &quot;url&quot; <b>or</b> 
-			&quot;playlist_id&quot;. when defining alarms.</td>
-	</tr>
-	<tr>
-		<td>playlist_id</td>
-		<td>Optional, Playlist ID of the alarm playlist (use the &quot;url&quot; parameter
-			to set a special playlist).</td>
-	</tr>
-	<tr>		
-		<td>fade</td>
-		<td>Optional. If set to 1, the alarms fade in. This is a global setting 
-			for all alarms. The parameter can only be changed along with an
-			alarm &quot;set&quot; or &quot;update&quot;.</td>
+		<td>URL of the alarm playlist. Default: the current playlist.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -2485,24 +2479,23 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td><b>Description</b></td>
 	</tr>
 	<tr>
-		<td>count</td>
-		<td>1 if the command succeeded changing the alarm.</td>
+		<td>id</td>
+		<td>The id of the newly created or edited alarm.</td>
 	</tr>
 </table>
 <p>Examples:</p>
 <blockquote> 
   <p><b>Defining a new alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:set dow:1 enabled:1 
-	playlist_id:22 time:9000&lt;LF&gt;&quot;
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:add dow:1 enabled:1 
+	playlist:file://some/playlist.m3u time:9000&lt;LF&gt;&quot;
 <br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:set dow:1 enabled:1 
-	playlist_id:22 time:9000 count:1&lt;LF&gt;&quot;</p>
-  <p><b>Clearing an alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:clear dow:1&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:clear dow:1 count:1
-	&lt;LF&gt;&quot;</p>
-  <p><b>Enabling a previously defined alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:update dow:1 enabled:1&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:update dow:1 enabled:1 count:1
+	playlist:file://some/playlist.m3u time:9000 id:eaf39&lt;LF&gt;&quot;</p>
+  <p><b>Deleting an alarm</b>
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:delete id:eaf39&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:delete id:eaf39&lt;LF&gt;&quot;</p>
+  <p><b>Enabling a previously defined alarm for Mo-Fr</b>
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm id:eaf39 dow:1,2,3,4,5 enabled:1&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm id:eaf39 dow:1,2,3,4,5 enabled:1 count:1
 	&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -2525,10 +2518,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>filter</td>
-		<td>One of &quot;all&quot;, &quot;defined&quot; or &quot;enabled&quot; 
-		(the default). To get all 8 possible alarms, use &quot;all&quot;. To
-		get only alarms with defined values (different than the default values),
-		use &quot;defined&quot;. To get only enabled alarms, use 
+		<td>One of &quot;all&quot; or &quot;enabled&quot; (the default).
+		To get all possible alarms, use &quot;all&quot;. To get only enabled alarms, use 
 		&quot;enabled&quot;</td>
 	</tr>
 	<tr>
@@ -2557,7 +2548,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;<b>dow</b></td>
-		<td>Day Of Week of this alarm. Item delimiter.</td>
+		<td>Days Of Week of this alarm.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;enabled</td>
@@ -2576,12 +2567,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>URL of the alarm playlist, or one of &quot;CURRENT_PLAYLIST&quot;,
 			&quot;PLUGIN_RANDOM_TRACK&quot;, &quot;PLUGIN_RANDOM_ALBUM&quot;, or
 			&quot;PLUGIN_RANDOM_CONTRIBUTOR&quot;.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;playlist_id</td>
-		<td>Playlist ID of the alarm playlist or -1, -2, -3 or -4 for the
-		    special playlists (respectively as defined in the &quot;url&quot; 
-		    parameter).</td>
 	</tr>
 </table>
 <p>Example:</p>

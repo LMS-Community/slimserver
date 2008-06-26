@@ -419,7 +419,6 @@ use Tie::IxHash;
 
 use Slim::Control::Commands;
 use Slim::Control::Queries;
-use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 

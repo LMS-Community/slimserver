@@ -152,12 +152,18 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['randomplaygenreselectall', '_value'],
 	[1, 0, 0, \&genreSelectAllOrNone]);
 	
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','contributor');
-
 	Slim::Player::ProtocolHandlers->registerHandler(
 		randomplay => 'Slim::Plugin::RandomPlay::ProtocolHandler'
+	);
+
+	# register playlists for each mix type with the alarm clock so they can be chosen as alarm playlists
+	Slim::Utils::Alarm->addPlaylists('PLUGIN_RANDOMPLAY',
+		{
+			'{PLUGIN_RANDOM_TRACK}'		=> 'randomplay://track',
+			'{PLUGIN_RANDOM_CONTRIBUTOR}'	=> 'randomplay://contributor',
+			'{PLUGIN_RANDOM_ALBUM}'		=> 'randomplay://album',
+			'{PLUGIN_RANDOM_YEAR}'		=> 'randomplay://year',
+		}
 	);
 
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]

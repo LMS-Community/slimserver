@@ -1353,6 +1353,27 @@ ALARM_SET_VOLUME_SHORT
 	SV	Väckningsvolym
 	ZH_CN	闹钟音量：
 
+ALARM_DEFAULT_VOLUME
+	EN	Default Alarm Volume
+
+ALARM_USE_DEFAULT_VOLUME
+	EN	Use Default
+
+ALARM_ADD
+	EN	Add Alarm
+
+ALARM_ADD_DESC
+	EN	You can add as many alarms as you like. They can be set up to be triggered daily, some days only, or only once. Just press "Add Alarm" to get a new set of alarm settings.
+
+ALARM_DELETE
+	EN	Remove Alarm
+
+ALARM_ALARM_ENABLED
+	EN	Alarm Enabled
+
+ALARM_ALARMS_ENABLED
+	EN	Alarms Enabled
+
 ALARM_FADE
 	DA	Fade alarmer ind
 	DE	Weckerwiedergabe einblenden
@@ -1383,6 +1404,12 @@ ALARM_SET_ENTRY
 	SV	Ställ väckningstid
 	ZH_CN	闹钟时间配置
 
+ALARM_SET_TIME
+	EN	Set Time
+
+ALARM_SET_DAYS
+	EN	Choose Days
+
 ALARM_SAVING
 	DE	Wecker wird gespeichert...
 	EN	Saving Alarm...
@@ -1390,6 +1417,9 @@ ALARM_SAVING
 	FR	Enregistrement du réveil...
 	IT	Salvataggio sveglia...
 	NL	Wekker wordt opgeslagen...
+
+ALARM_DELETING
+	EN	Removing Alarm...
 
 ALARM_TURNING_ON
 	CS	Zapnout buzení...
@@ -1443,12 +1473,10 @@ ALARM_NOW_PLAYING
 	ZH_CN	闹钟播放中
 
 ALARM_SNOOZE
-	DE	Weckwiederholung aktiv...
-	EN	Snoozing...
-	ES	Repitiendo...
-	FR	Répétition...
-	IT	Snooze in corso...
-	NL	Bezig met snoozen...
+	EN	Snoozing Alarm...
+
+ALARM_SNOOZE_ENDED
+	EN	Snooze Ended
 
 ALARM_STOPPED
 	DE	Wecker angehalten
@@ -1457,22 +1485,6 @@ ALARM_STOPPED
 	FR	Réveil arrêté
 	IT	Sveglia interrotta
 	NL	Wekker gestopt
-
-ALARM_SNOOZE_STOPPED
-	DE	Weckwiederholung angehalten
-	EN	Snooze Stopped
-	ES	Repetición detenida
-	FR	Répétition arrêtée
-	IT	Snooze interrotto
-	NL	Snooze gestopt
-
-ALARM_WAKEUP
-	DE	Es ist Zeit, aufzuwachen...
-	EN	Time to wake up...
-	ES	Hora de levantarse...
-	FR	Heure de réveil...
-	IT	È ora di svegliarsi...
-	NL	Tijd om wakker te worden...
 
 ALARM_WEEKDAYS
 	DA	Alarm hverdage
@@ -1488,7 +1500,7 @@ ALARM_WEEKDAYS
 	SV	Väckning veckodagar
 	ZH_CN	周日闹钟
 
-ALARM_DAY0
+ALARM_EVERY_DAY
 	DA	Daglig
 	DE	Täglich
 	EN	Every Day
@@ -1501,6 +1513,20 @@ ALARM_DAY0
 	NO	Hver dag
 	SV	Varje dag
 	ZH_CN	每一天
+
+ALARM_DAY0
+	DA	Søndag
+	DE	Sonntag
+	EN	Sunday
+	ES	Domingo
+	FI	Sunnuntai
+	FR	Dimanche
+	HE	יום ראשון
+	IT	Domenica
+	NL	Zondag
+	NO	Søndag
+	SV	Söndag
+	ZH_CN	星期日
 
 ALARM_DAY1
 	DA	Mandag
@@ -1586,19 +1612,26 @@ ALARM_DAY6
 	SV	Lördag
 	ZH_CN	星期六
 
-ALARM_DAY7
-	DA	Søndag
-	DE	Sonntag
-	EN	Sunday
-	ES	Domingo
-	FI	Sunnuntai
-	FR	Dimanche
-	HE	יום ראשון
-	IT	Domenica
-	NL	Zondag
-	NO	Søndag
-	SV	Söndag
-	ZH_CN	星期日
+ALARM_SHORT_DAY_0
+	EN	Su
+
+ALARM_SHORT_DAY_1
+	EN	Mo
+
+ALARM_SHORT_DAY_2
+	EN	Tu
+
+ALARM_SHORT_DAY_3
+	EN	We
+
+ALARM_SHORT_DAY_4
+	EN	Th
+
+ALARM_SHORT_DAY_5
+	EN	Fr
+
+ALARM_SHORT_DAY_6
+	EN	Sa
 
 SLIMP3
 	DA	SLIMP3

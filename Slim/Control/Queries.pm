@@ -39,7 +39,7 @@ use Scalar::Util qw(blessed);
 use URI::Escape;
 
 use Slim::Utils::Misc qw( specified validMacAddress );
-use Slim::Utils::Alarms;
+use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
@@ -76,40 +76,23 @@ sub alarmsQuery {
 	my $alarmDOW = $request->getParam('dow');
 	
 	
+	# being nice: we'll still be accepting 'defined' though this doesn't make sense any longer
 	if ($request->paramNotOneOfIfDefined($filter, ['all', 'defined', 'enabled'])) {
 		$request->setStatusBadParams();
 		return;
 	}
 	
-	my @results;
-
-	if (defined $alarmDOW) {
-
-		$results[0] = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
-
-	} else {
-
-		my $i = 0;
-
-		$filter = 'enabled' if !defined $filter;
-
-		for $alarmDOW (0..7) {
-
-			my $alarm = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
-			
-			my $wanted = ( 
-				($filter eq 'all') ||
-				($filter eq 'defined' && !$alarm->undefined()) ||
-				($filter eq 'enabled' && $alarm->enabled())
-			);
-
-			$results[$i++] = $alarm if $wanted;
-		}
-	}
-
-	my $count = scalar @results;
-
 	$request->addResult('fade', $prefs->client($client)->get('alarmfadeseconds'));
+	
+	$filter = 'enabled' if !defined $filter;
+
+	my @alarms = grep {
+		defined $alarmDOW
+			? $_->day() == $alarmDOW
+			: ($filter eq 'all' || ($filter eq 'enabled' && $_->enabled()))
+	} Slim::Utils::Alarm->getAlarms($client, 1);
+
+	my $count = scalar @alarms;
 	$count += 0;
 	$request->addResult('count', $count);
 
@@ -120,13 +103,19 @@ sub alarmsQuery {
 		my $loopname = 'alarms_loop';
 		my $cnt = 0;
 		
-		for my $eachitem (@results[$start..$end]) {
-			$request->addResultLoop($loopname, $cnt, 'dow', $eachitem->dow());
-			$request->addResultLoop($loopname, $cnt, 'enabled', $eachitem->enabled());
-			$request->addResultLoop($loopname, $cnt, 'time', $eachitem->time());
-			$request->addResultLoop($loopname, $cnt, 'volume', $eachitem->volume());
-			$request->addResultLoop($loopname, $cnt, 'url', $eachitem->playlist());
-			$request->addResultLoop($loopname, $cnt, 'playlist_id', $eachitem->playlistid());
+		for my $alarm (@alarms[$start..$end]) {
+
+			my @dow;
+			foreach ([0..6]) {
+				push @dow, $_ if $alarm->day($_);
+			}
+
+			$request->addResultLoop($loopname, $cnt, 'id', $alarm->id());
+			$request->addResultLoop($loopname, $cnt, 'dow', join(',', @dow));
+			$request->addResultLoop($loopname, $cnt, 'enabled', $alarm->enabled());
+			$request->addResultLoop($loopname, $cnt, 'time', $alarm->time());
+			$request->addResultLoop($loopname, $cnt, 'volume', $alarm->volume());
+			$request->addResultLoop($loopname, $cnt, 'url', $alarm->playlist() || 'CURRENT_PLAYLIST');
 			$cnt++;
 		}
 	}

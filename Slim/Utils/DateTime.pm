@@ -122,7 +122,7 @@ sub fracSecToMinSec {
 
 =head2 secsToPrettyTime( $seconds )
 
-Turns seconds into HH:MM AM/PM
+Turns seconds into HH:MM AM/PM.  Format returned is 12h or 24h depending on the user's preferences.
 
 =cut
 
@@ -195,6 +195,32 @@ sub splitTime {
 	}
 
 	return ($h, $m, $p);
+}
+
+=head2 bcdTime ( $time )
+
+This function converts a time value in seconds since midnight into hours, mins and secs in BCD format.  It's used when working
+with the RTC in Boom and other devices.
+
+If $time is omitted, the current time is used.
+
+=cut
+
+sub bcdTime {
+	my $time = @_ ? shift : localtime;  
+
+	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime($time);
+	my $h_10 = int( $hour / 10);
+	my $h_1 = $hour % 10;
+	my $m_10 = int( $min / 10);
+	my $m_1 = $min % 10;
+	my $s_10 = int( $sec / 10);
+	my $s_1 = $sec % 10;
+	my $hhhBCD = $h_10 * 16 + $h_1;
+	my $mmmBCD = $m_10 * 16 + $m_1;
+	my $sssBCD = $s_10 * 16 + $s_1;
+
+	return ($hhhBCD, $mmmBCD, $sssBCD);
 }
 
 =head2 hourMinToTime ( $h, $m, $p)

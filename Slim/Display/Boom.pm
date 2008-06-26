@@ -136,12 +136,18 @@ sub init {
 		Slim::Display::Lib::Fonts::loadFonts(1);
 	}
 
-	$prefs->client($display->client)->init($defaultPrefs);
-	$prefs->client($display->client)->init($defaultFontPrefs);
-
 	$display->SUPER::init();
 
 	$display->validateFonts($defaultFontPrefs);
+}
+
+sub initPrefs {
+	my $display = shift;
+
+	$prefs->client($display->client)->init($defaultPrefs);
+	$prefs->client($display->client)->init($defaultFontPrefs);
+
+	$display->SUPER::initPrefs();
 }
 
 sub modes {

@@ -599,7 +599,7 @@ sub numberButton {
 
 L<Slim::Buttons::Common>
 
-L<Slim::Buttons::AlarmClock>
+L<Slim::Buttons::Alarm>
 
 =cut
 

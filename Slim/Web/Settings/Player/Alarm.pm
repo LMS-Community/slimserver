@@ -31,76 +31,44 @@ sub handler {
 
 	my $prefs = preferences('server');
 
-	my @prefs = qw(alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist);
+	my @prefs = ();
 
-	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
-
-		for my $pref (@prefs) {
-
-			if ($pref eq 'alarmfadeseconds') {
-
-				$prefs->client($client)->set($pref, $paramRef->{$pref} ? 1 : 0 );
-
+		for my $alarm (Slim::Utils::Alarm->getAlarms($client, 1)) {
+			if ($paramRef->{'Remove'.$alarm->id}) {
+				$alarm->delete;
 			} else {
+				$alarm->volume($paramRef->{'alarmvolume'.$alarm->id});
+				$alarm->playlist($paramRef->{'alarmplaylist'.$alarm->id});
 
-				my $array = $prefs->client($client)->get($pref);
+				my $t = Slim::Utils::DateTime::prettyTimeToSecs($paramRef->{'alarmtime'.$alarm->id});
+				my ($h, $m) = Slim::Utils::DateTime::splitTime($t);
+				# don't accept hours > midnight
+				$t = Slim::Utils::DateTime::prettyTimeToSecs($h % 24 . ":$m") if ($h > 23);
+				$alarm->time($t);
 
-				for my $i (0..7) {
-
-					if ($pref eq 'alarmtime') {
-
-						$array->[$i] = Slim::Utils::DateTime::prettyTimeToSecs($paramRef->{$pref.$i});
-
-					} else {
-
-						$array->[$i] = $paramRef->{$pref.$i};
-					}
+				$alarm->enabled($paramRef->{'alarm_enable'.$alarm->id});
+				for my $day (1 .. 7) {
+					$alarm->day($day,$paramRef->{'alarmday'.$alarm->id.$day} ? 1 : 0);
 				}
-
-				$prefs->client($client)->set($pref, $array);
+				$alarm->save;
 			}
+		}
+		if ($paramRef->{'AddAlarm'}) {
+				my $newAlarm = Slim::Utils::Alarm->new($client,0);
+				$newAlarm->enabled(1);
+				$newAlarm->save;
 		}
 	}
 
-	# Load any option lists for dynamic options.
-	my $playlists = {
-		'' => undef,
-	};
+	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
+	
+	$paramRef->{'playlistOptions'} = \%playlistTypes;
+	$paramRef->{'defaultVolume'}   = Slim::Utils::Alarm->defaultVolume($client);
 
-	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
-
-		$playlists->{$playlist->url} = Slim::Music::Info::standardTitle(undef, $playlist);
-	}
-
-	my $specialPlaylists = \%Slim::Buttons::AlarmClock::specialPlaylists;
-
-	for my $key (keys %{$specialPlaylists}) {
-
-		$playlists->{$key} = Slim::Utils::Strings::string($key);
-	}
-
-	$paramRef->{'playlistOptions'} = $playlists;
-
-	# Set current values for prefs
-	# load into prefs hash so that web template can detect exists/!exists
-	for my $pref (@prefs) {
-
-		if ($pref eq 'alarmtime') {
-
-			my $time = $prefs->client($client)->get('alarmtime');
-
-			for my $i (0..7) {
-
-				${$paramRef->{'prefs'}->{'alarmtime'}}[$i] = Slim::Utils::DateTime::secsToPrettyTime($time->[$i]);
-			}
-
-		} else {
-
-			$paramRef->{'prefs'}->{$pref} = $prefs->client($client)->get($pref);
-		}
-	}
-
+	# Get the non-calendar alarms for this client
+	$paramRef->{'prefs'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
+	
 	return $class->SUPER::handler($client, $paramRef);
 }
 

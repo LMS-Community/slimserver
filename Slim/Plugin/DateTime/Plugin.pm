@@ -73,25 +73,15 @@ sub screensaverDateTimelines {
 	my $nextUpdate = $client->periodicUpdateTime();
 	my $updateInterval = $client->modeParam('modeUpdateInterval');
 
-	if ($client->alarmActive || $client->snoozeActive) {
+	my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+	if (defined $currentAlarm) {
 		# An alarm is currently active - flash the symbol
 		my $time = Time::HiRes::time;
 		$alarmOn = ($time - int($time)) < 0.5;
 	} else {
 		# No alarm active, show symbol if alarm scheduled in next 24 hours
-		my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-		# the alarm's days are sunday=7 based - 0 is daily
-		$wday = 7 if !$wday;
-
-		my $alarm = preferences('server')->client($client)->get('alarm');
-
-		my $alarmtime = preferences('server')->client($client)->get('alarmtime');
-		my $currtime = $sec + 60*$min + 60*60*$hour;
-		my $tomorrow = ($wday+1) % 7 || 7;
-
-		$alarmOn = $alarm->[ 0 ] 
-				|| ($alarm->[ $wday ] && $alarmtime->[ $wday ] > $currtime)
-				|| ($alarm->[ $tomorrow ] && $alarmtime->[ $tomorrow ] < $currtime);
+		my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
+		$alarmOn = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400); 
 	}
 
 	# Keep update time on the second or 1/2 second
@@ -111,7 +101,7 @@ sub screensaverDateTimelines {
 
 	my $overlay = undef;
 	if ($alarmOn) {
-		if ($client->snoozeActive) {
+		if (defined $currentAlarm && $currentAlarm->snoozeActive) {
 			$overlay = $client->symbols('sleep');
 		} else {
 			$overlay = $client->symbols('bell');
@@ -126,7 +116,7 @@ sub screensaverDateTimelines {
 
 	# Arrange for $client->update to be called periodically.
 	# Updates are done every second unless the alarm symbol needs to be flashed
-	my $newUpdateInterval = $client->alarmActive ? 0.5 : 1;
+	my $newUpdateInterval = defined $currentAlarm ? 0.5 : 1;
 	if (! $updateInterval || $newUpdateInterval != $updateInterval) {
 		$client->modeParam('modeUpdateInterval', $newUpdateInterval); # seconds
 		Slim::Buttons::Common::startPeriodicUpdates($client, int(Time::HiRes::time) + $newUpdateInterval);

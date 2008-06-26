@@ -18,6 +18,7 @@ use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;
+use Slim::Utils::DateTime;
 use Slim::Hardware::BacklightLED;
 
 my $prefs = preferences('server');
@@ -75,12 +76,18 @@ sub getVolumeDivisor
 sub init {
 	my $client = shift;
 
-	# make sure any preferences unique to this client may not have set are set to the default
-	$prefs->client($client)->init($defaultPrefs);
-
 	Slim::Control::Request::addDispatch(['boomdac', '_command'], [1, 0, 0, \&Slim::Player::Boom::boomI2C]);
 
 	$client->SUPER::init();
+}
+
+sub initPrefs {
+	my $client = shift;
+
+	# make sure any preferences unique to this client may not have set are set to the default
+	$prefs->client($client)->init($defaultPrefs);
+
+	$client->SUPER::initPrefs();
 }
 
 sub model {
@@ -97,6 +104,10 @@ sub hasDigitalOut {
 
 sub hasPowerControl {
 	return 0;
+}
+
+sub hasRTCAlarm {
+	return 1;
 }
 
 sub maxTreble {	return 100; }
@@ -159,11 +170,11 @@ sub setRTCTime {
 	# According to Michael there is a player specific date format, but I was not able
 	#  to test this as I don't know where to set it via web interface
 	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeformat');
-	if( $dateTimeFormat eq "") {
+	if (!defined $dateTimeFormat ||  $dateTimeFormat eq "") {
 		# Try the date time screensaver date format, if set differently from system wide setting
 		$dateTimeFormat = preferences('plugin.datetime')->get('timeformat');
 	}
-	if( $dateTimeFormat eq "") {
+	if (!defined $dateTimeFormat ||  $dateTimeFormat eq "") {
 		# If all else fails, use system wide date format setting
 		$dateTimeFormat = $prefs->get('timeFormat');
 	}
@@ -182,16 +193,7 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 
 	# Sync actual time in RTC
-	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
-	my $h_10 = int( $hour / 10);
-	my $h_1 = $hour % 10;
-	my $m_10 = int( $min / 10);
-	my $m_1 = $min % 10;
-	my $s_10 = int( $sec / 10);
-	my $s_1 = $sec % 10;
-	my $hhhBCD = $h_10 * 16 + $h_1;
-	my $mmmBCD = $m_10 * 16 + $m_1;
-	my $sssBCD = $s_10 * 16 + $s_1;
+	my ($hhhBCD, $mmmBCD, $sssBCD) = Slim::Utils::DateTime::bcdTime;
 
 	$data = pack( 'C', 0x03);	# Set time (hours, minutes and seconds)
 	$data .= pack( 'C', $hhhBCD);
@@ -200,28 +202,30 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 }
 
-# TODO: Sync alarm time whenever needed (i.e. when user changes alarm in SC, ...)
+# Set the RTC alarm clock to a given time or clear it.
+# $time must be in seconds past midnight or undef to clear the alarm
+# Generally called by Slim::Utils::Alarm::scheduleNext
 sub setRTCAlarm {
 	my $client = shift;
+	my $time = shift;
 
-#	Sample how to set alarm
-#	- Alarm time needs to be set always in 24h mode
-#	- Hours and minutes are in BCD format (see setRTCTime)
-#	- Setting the MSB (0x80) makes the hour, minute or both active
+	if (defined $time) {
+		# - Alarm time needs to be set always in 24h mode
+		# - Hours and minutes are in BCD format (see Slim::Utils::DateTime::bcdTime)
+		# - Setting the MSB (0x80) makes the hour, minute or both active
 
-#	$data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
-#	$data .= pack( 'C', $alarmHourBCD | 0x80);
-#	$data .= pack( 'C', $alarmMinuteBCD | 0x80);
-#	$client->sendFrame( 'rtcs', \$data);
-
-
-#	Sample how to clear alarm
-
-#	$data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
-#	$data .= pack( 'C', 0x00);
-#	$data .= pack( 'C', 0x00);
-#	$client->sendFrame( 'rtcs', \$data);
-
+		my ($alarmHourBCD, $alarmMinuteBCD) = Slim::Utils::DateTime::bcdTime($time);
+		my $data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
+		$data .= pack( 'C', $alarmHourBCD | 0x80);
+		$data .= pack( 'C', $alarmMinuteBCD | 0x80);
+		$client->sendFrame( 'rtcs', \$data);
+ 	} else {
+		# Clear the alarm
+		my $data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
+		$data .= pack( 'C', 0x00);
+		$data .= pack( 'C', 0x00);
+		$client->sendFrame( 'rtcs', \$data);
+	}
 }
 
 # Change the analog output mode between headphone and sub-woofer

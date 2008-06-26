@@ -1,54 +1,73 @@
 [% PROCESS settings/header.html %]
-
-	[% WRAPPER setting title="SETUP_GROUP_ALARM" desc="SETUP_GROUP_ALARM_DESC" %]
-		<input type=hidden name="alarmfadeseconds" value="0" />
-		<input type=checkbox [% IF prefs.alarmfadeseconds %]checked [% END %] class="stdedit" name="alarmfadeseconds" id="alarmfadeseconds" value="1" />
-		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
-	[% END %]
-
-	[% FOREACH day = [0 .. 7] %]
-
-		[% WRAPPER setting title="ALARM_DAY$day" desc="" %]
-			<table>
+	[% FOREACH alarm = prefs %]
+		
+		[% WRAPPER setting title="$alarm.displayStr" desc="" %]
+			<table cellspacing="0">
 				<tr>
-					<td><label for="alarm[% day %]" class="stdlabel">[% "SETUP_ALARM" | string %][% "COLON" | string %]</label>&nbsp;</td>
-					<td><select class="stdedit" name="alarm[% day %]" id="alarm[% day %]">
+					<td><label for="alarmtime[% alarm.id %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label>&nbsp;</td>
+					<td><input type="text" class="stdedit" name="alarmtime[% alarm.id %]" id="alarmtime[% alarm.id %]" value="[% alarm.timeStr %]" size="15"></td>
+				</tr>
+
+				<tr>
+					<td><label for="alarmdays[% alarm.id %]" class="stdlabel">[% "ALARM_SET_DAYS" | string %][% "COLON" | string %]</label>&nbsp;</td>
+					<td><table><tr>
+						[% FOREACH day = [1 .. 7] %]
+							[% day = day % 7 %]
+							<td>
+								<input type="checkbox" name="alarmday[% alarm.id %][% day %]" id="alarmday[% alarm.id %][% day %]" value="1" [% alarm.day(day) ? "checked" : "" %]>
+								<label for="alarmday[% alarm.id %][% day %]">[% "ALARM_DAY$day" | string %]</label>
+							</td>
+						[% END %]
+					</tr></table>
+					</td>
+				</tr>
+
+				<tr>
+					<td><label for="alarmplaylist[% alarm.id %]" class="stdlabel">[% "ALARM_SELECT_PLAYLIST" | string %][% "COLON" | string %]</label>&nbsp;</td>
+
+					<td><select class="stdedit" name="alarmplaylist[% alarm.id %]" id="alarmplaylist[% alarm.id %]">
+			
+						[% FOREACH type IN playlistOptions  %]
+							<optgroup label="[% type.key %]">
+								[% FOREACH option IN type.value %]
+									<option [% IF alarm.playlist == option.value %]selected [% END %]value="[% option.value %]">[% option.key %]</option>
+								[%- END -%]
+							</optgroup>
+						[%- END -%]
+					
+					</select></td>
+				</tr>
+
+				<tr>
+					<td><label for="alarmvolume[% alarm.id %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label>&nbsp;</td>
+					<td><input type="text" class="stdedit" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || defaultVolume %]" size="15"></td>
+				</tr>
+
+				<tr>
+					<td><label for="alarm[% alarm.id %]" class="stdlabel">[% "ALARM_ALARM_ENABLED" | string %][% "COLON" | string %]</label>&nbsp;</td>
+					<td><select class="stdedit" name="alarm_enable[% alarm.id %]" id="alarm_enable[% alarm.id %]">
 			
 						[% FOREACH option = {
-							'1' => 'ON',
-							'0' => 'OFF',
+							'1' => 'YES',
+							'0' => 'NO',
 						} %]
-							<option [% IF prefs.alarm.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+							<option [% IF alarm.enabled == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 						[%- END -%]
 					
 					</select></td>
 				</tr>
-			
-				<tr>
-					<td><label for="alarmtime[% day %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label>&nbsp;</td>
-					<td><input type="text" class="stdedit" name="alarmtime[% day %]" id="alarmtime[% day %]" value="[% prefs.alarmtime.$day %]" size="15"></td>
-				</tr>
-			
-				<tr>
-					<td><label for="alarmvolume[% day %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label>&nbsp;</td>
-					<td><input type="text" class="stdedit" name="alarmvolume[% day %]" id="alarmvolume[% day %]" value="[% prefs.alarmvolume.$day %]" size="15"></td>
-				</tr>
-					
-				<tr>
-					<td><label for="alarmplaylist[% day %]" class="stdlabel">[% "ALARM_SELECT_PLAYLIST" | string %][% "COLON" | string %]</label>&nbsp;</td>
 
-					<td><select class="stdedit" name="alarmplaylist[% day %]" id="alarmplaylist[% day %]">
-			
-						[% FOREACH option = playlistOptions  %]
-							<option [% IF prefs.alarmplaylist.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
-						[%- END -%]
-					
-					</select></td>
-				</tr>
+				<tr><td><input name="Remove[% alarm.id %]" type="submit" class="stdclick" value="[% "ALARM_DELETE" | string %]">
+				</td></tr>
 			</table>
 	
 		[% END %]
+		
+	[% END %]
 
+	[% WRAPPER setting title="ALARM" desc=(prefs.size ? "ALARM_ADD_DESC" : "") %]
+		[% IF !prefs.size %]<div class="prefDesc">[% "ALARM_ADD_DESC" | string %]</div>[% END %]
+		<input name="AddAlarm" type="submit" class="stdclick" value="[% "ALARM_ADD" | string %]">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

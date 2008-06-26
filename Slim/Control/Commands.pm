@@ -37,7 +37,7 @@ use File::Basename qw(basename);
 use Net::IP;
 use JSON::XS::VersionOneAndTwo;
 
-use Slim::Utils::Alarms;
+use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
@@ -81,55 +81,58 @@ sub alarmCommand {
 	# but for some commands, the parameters name start with _ and are defined
 	# in the big dispatch table (see Request.pm).
 	my $client      = $request->client();
+	my $id          = $request->getParam('id');
 	my $cmd         = $request->getParam('cmd');
-	my $fade        = $request->getParam('fade');
 	my $dow         = $request->getParam('dow');
 	my $enable      = $request->getParam('enabled');
 	my $time        = $request->getParam('time');
 	my $volume      = $request->getParam('volume');
 	my $playlisturl = $request->getParam('url');
-	my $playlistid  = $request->getParam('playlist_id');
 	
 	# validate the parameters using request's convenient functions
-	if ($request->paramUndefinedOrNotOneOf($cmd, ['set', 'clear', 'update']) ||
-		$request->paramNotOneOfIfDefined($fade, ['0', '1']) ||
-		$request->paramNotOneOfIfDefined($dow, ['0', '1', '2', '3', '4', '5', '6', '7']) ) {
+	if ($request->paramUndefinedOrNotOneOf($cmd, ['add', 'delete']) ||
+		(defined $dow && $dow !~ /^[0-6](?:,[0-6])*$/) ||
+		(! defined $id && $cmd ne 'add') || ! defined $client || ! $time || $time =~ /\D/) {
 		
 		# set an appropriate error state if something is wrong
 		$request->setStatusBadParams();
 		return;
 	}
-	
-	# more parameter checking and reporting
-	if (!defined $fade && !defined $dow) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
+
 	my $alarm;
 	
-	if ($cmd eq 'update') {
-		$alarm = Slim::Utils::Alarms->newLoaded($client, $dow);
-	} else {
-		$alarm = Slim::Utils::Alarms->new($client, $dow);
+	if ($cmd eq 'add') {
+		$alarm = Slim::Utils::Alarm->new($client);
 	}
-	
+	else {
+		$alarm = Slim::Utils::Alarm->getAlarm($client, $id);
+	}
+
 	if (defined $alarm) {
-		if ($cmd eq 'set' || $cmd eq 'update') {
+
+		if ($cmd eq 'delete') {
+
+			$alarm->delete($client);
+		}
+
+		else {
 		
-			$prefs->client($client)->set('alarmfadeseconds', $fade) if defined $fade;
 			$alarm->time($time) if defined $time;
-			$alarm->playlistid($playlistid) if defined $playlistid;
 			$alarm->playlist($playlisturl) if defined $playlisturl;
 			$alarm->volume($volume) if defined $volume;
 			$alarm->enabled($enable) if defined $enable;
+
+			foreach (0..6) {
+				my $set = !defined $dow || $dow =~ /$_/; 
+				$alarm->day($_, $set);
+			}
 		}
 
 		$alarm->save();
 		
 		# we add a result for the benefit of the caller (in this case, most
 		# likely the CLI).
-		$request->addResult('count', 1);
+		$request->addResult('id', $alarm->id);
 	}
 	
 	# indicate the request is done. This enables execute to continue with

@@ -117,7 +117,7 @@ sub init {
 	# Initialise main settings menu next
 	Slim::Buttons::Settings::init();
 	
-	Slim::Buttons::AlarmClock::init();
+	Slim::Buttons::Alarm::init();
 	Slim::Buttons::Block::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
@@ -967,8 +967,9 @@ our %functions = (
 	'snooze' => sub  {
 		my $client = shift;
 
-		if ($client->alarmActive) {
-			Slim::Buttons::AlarmClock::snooze($client);
+		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+		if (defined $currentAlarm) {
+			$currentAlarm->snooze;
 		} else {
 			pushButton('datetime', $client);
 		}
@@ -978,10 +979,11 @@ our %functions = (
 		my $client = shift;
 		
 		# sleep function is overridden when alarm activates
-		if ($client->alarmActive) {
+		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+		if (defined $currentAlarm) {
 			
 			$log->info("Alarm Active: sleep function override for snooze");
-			Slim::Buttons::AlarmClock::snooze($client);
+			$currentAlarm->snooze;
 			return;
 		}
 		

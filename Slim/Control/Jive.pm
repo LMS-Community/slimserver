@@ -18,10 +18,9 @@ use Slim::Utils::Prefs;
 use Slim::Player::Playlist;
 use Slim::Buttons::Information;
 use Slim::Buttons::Synchronize;
-use Slim::Buttons::AlarmClock;
 use Slim::Player::Sync;
 use Slim::Player::Client;
-use Data::Dump;
+#use Data::Dump;
 
 
 =head1 NAME

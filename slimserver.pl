@@ -406,6 +406,9 @@ sub init {
 	$log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
 
+	$log->info('SqueezeCenter Alarms init...');
+	Slim::Utils::Alarm->init();
+
 	# load plugins before Jive init so MusicMagic hooks to cached artist/genre queries from Jive->init() will take root
 	$log->info("SqueezeCenter Plugins init...");
 	Slim::Utils::PluginManager->init();

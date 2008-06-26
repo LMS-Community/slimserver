@@ -125,7 +125,7 @@ sub screenSaver {
 
 		# don't change modes when none (just dim) is the screensaver.
 	
-	} elsif ($client->alarmActive && $mode eq 'SCREENSAVER.datetime') {
+	} elsif (Slim::Utils::Alarm->getCurrentAlarm($client) && $mode eq Slim::Utils::Alarm->alarmScreensaver) {
 
 		# don't change modes if the alarmclock has activated the datetime screensaver
 

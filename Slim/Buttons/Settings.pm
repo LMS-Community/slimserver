@@ -21,7 +21,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
-use Slim::Buttons::AlarmClock;
+use Slim::Buttons::Alarm;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;

@@ -34,11 +34,12 @@ my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'maxBitrate'       => undef, # will be set by the client device OR default to server pref when accessed.
-	'alarmvolume'      => [50,50,50,50,50,50,50,50],
-	'alarmfadeseconds' => 0, # fade in alarm, 0 means disabled
-	'alarm'            => [0,0,0,0,0,0,0,0],
-	'alarmtime'        => [0,0,0,0,0,0,0,0],
-	'alarmplaylist'	   => ['','','','','','','',''],
+	# Alarm prefs
+	'alarms'           => {},	
+	'alarmsEnabled'    => 1,
+	'alarmDefaultVolume' => 50, # if this is changed, also change the hardcoded value in the prefs migration code in Prefs.pm
+	'alarmSnoozeSeconds' => 540, # 9 minutes
+
 	'lameQuality'      => 9,
 	'playername'       => \&_makeDefaultName,
 	'repeat'           => 2,
@@ -82,7 +83,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								_tempVolume musicInfoTextCache metaTitle languageOverride password scanData currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								signalStrengthLog bufferFullnessLog slimprotoQLenLog
-								alarmActive snoozeActive
+								alarmData
 							));
 
 	__PACKAGE__->mk_accessor('array', qw(
@@ -246,8 +247,7 @@ sub new {
 		slimprotoQLenLog        => Slim::Utils::PerfMon->new("Slimproto QLen ($id)",  [1, 2, 5, 10, 20]),
 
 		# alarm state
-		alarmActive		=> undef,		# boolean.  Time when current alarm began.
-		snoozeActive		=> undef,		# boolean.  Time when current snooze began.
+		alarmData		=> {},			# Stored alarm data for this client.  Private.
 
 		# other
 		_tempVolume             => undef,
@@ -618,6 +618,7 @@ sub hasDisableDac() { return 0; }
 sub hasPolarityInversion() { return 0; }
 sub hasFrontPanel() { return 0; }
 sub hasServ { return 0; }
+sub hasRTCAlarm { return 0; }
 
 sub maxBrightness() { return undef; }
 
