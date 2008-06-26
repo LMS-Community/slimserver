@@ -118,8 +118,11 @@
 				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
 					[% IF item.weblink %]
 						<a href="[% item.weblink %]" target="_blank">
-					[% ELSIF item.type == 'redirect' && item.web.url %]
+					[% ELSIF item.type == 'redirect' %]
+						[% IF item.web.url %]
 						<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
+						[% ELSE; NEXT %]
+						[% END %]
 					[% ELSIF item.type != 'text' %]
 						<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 					[% END %]

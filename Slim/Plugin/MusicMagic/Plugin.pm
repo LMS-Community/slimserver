@@ -224,7 +224,7 @@ sub initPlugin {
 
 		# Track Info handler
 		Slim::Menu::TrackInfo->registerInfoProvider( musicmagic => (
-			menuMode => 1,
+			#menuMode => 1,
 			above    => 'favorites',
 			func     => \&trackInfoHandler,
 		) );
@@ -252,7 +252,7 @@ sub initPlugin {
 
 	$mixFunctions{'play'} = \&playMix;
 
-	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
+	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions, \&setMixMode);
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
 
 	Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
@@ -483,6 +483,18 @@ sub setMoodMode {
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
 }
 
+sub setMixMode {
+	my $client = shift;
+	my $method = shift;
+
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	mixerFunction($client, $prefs->get('player_settings') ? 1 : 0);
+}
+
 sub specialPushLeft {
 	my $client   = shift;
 	my $step     = shift;
@@ -510,23 +522,11 @@ sub specialPushLeft {
 	}
 }
 
-sub trackInfoCreateMix {
-	my ( $client, $callback, $track ) = @_;
-	if ( $prefs->get('player_settings') ) {
-		mixerFunction($client, 1, $track);
-	} else {
-		mixerFunction($client, 0, $track);
-	}
-}
-
 sub mixerFunction {
 	my ($client, $noSettings, $track) = @_;
 
-	my $trackinfo = ( defined($track) && blessed($track) && $track->path ) ? 1 : 0;
-
 	# look for parentParams (needed when multiple mixers have been used)
 	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
-	
 	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
 	if ($prefs->get('player_settings') && !$noSettings) {
 
@@ -534,6 +534,9 @@ sub mixerFunction {
 		return;
 
 	}
+
+	$track ||= $paramref->{'track'};
+	my $trackinfo = ( defined($track) && blessed($track) && $track->path ) ? 1 : 0;
 
 	my $listIndex = $paramref->{'listIndex'};
 	my $items     = $paramref->{'listRef'};
@@ -1207,17 +1210,28 @@ sub trackInfoHandler {
 
 		$jive->{actions} = $actions;
 		return {
-			type        => 'text',
-			name        => $client->string('MUSICIP_CREATEMIX'),
-			jive        => $jive,
+			type => 'text',
+			name => $client->string('MUSICIP_CREATEMIX'),
+			jive => $jive,
 		};
 	} else {
 		if ( $mixable ) {
 			return {
-				type        => 'link',
-				name        => $client->string('MUSICIP_CREATEMIX'),
-				url         => \&trackInfoCreateMix,
-				passthrough => [ $track ],
+				type   => 'redirect',
+				name   => $client->string('MUSICIP_CREATEMIX'),
+
+				player => {
+					mode => 'musicmagic_mix',
+					modeParams => {
+						track => $track,
+					},
+				},
+
+				web  => {
+					group => 'mixers',
+					url   => 'plugins/MusicMagic/musicmagic_mix.html?song=' . $track->id,
+					item  => mixerlink($track),
+				},
 			};
 		}
 	
