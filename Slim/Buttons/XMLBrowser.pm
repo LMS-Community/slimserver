@@ -583,7 +583,7 @@ sub gotOPML {
 				Slim::Buttons::Common::pushModeLeft( 
 					$client, 
 					$item->{player}->{mode}, 
-					@{ $item->{player}->{modeParams} } 
+					$item->{player}->{modeParams} 
 				);
 				return;
 			}
