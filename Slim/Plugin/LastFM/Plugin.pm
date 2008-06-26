@@ -72,7 +72,7 @@ sub initPlugin {
 				
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					feed    => Slim::Plugin::LastFM::ProtocolHandler->trackInfoURL( $client, $url ),
-					path    => 'trackinfo.html',
+					path    => 'plugins/lastfm/trackinfo.html',
 					title   => 'Last.fm Track Info',
 					timeout => 35,
 					args    => \@_

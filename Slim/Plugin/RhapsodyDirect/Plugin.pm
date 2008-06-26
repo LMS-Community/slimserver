@@ -94,7 +94,7 @@ sub initPlugin {
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					client  => $client,
 					feed    => Slim::Plugin::RhapsodyDirect::ProtocolHandler->trackInfoURL( $client, $url ),
-					path    => 'trackinfo.html',
+					path    => 'plugins/rhapsodydirect/trackinfo.html',
 					title   => 'Rhapsody Direct Track Info',
 					timeout => 35,
 					args    => \@_
