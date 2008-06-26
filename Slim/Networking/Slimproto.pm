@@ -79,6 +79,7 @@ our %message_handlers = (
 	'SETD' => \&_settings_handler,
 	'STAT' => \&_stat_handler,
 	'UREQ' => \&_update_request_handler,
+	'ALSS' => \&_ambient_light_sensor_handler,
 );
 
 sub addHandler {
@@ -515,6 +516,14 @@ sub _raw_ir_handler {
 		$callbackRAWI = $callbacksRAWI{$callbackRAWI};
 		&$callbackRAWI( $client, $$data_ref);
 	}
+}
+
+sub _ambient_light_sensor_handler {
+	my $client = shift;
+	my $data_ref = shift;
+	my ($packet_rev, $time, $lux, $channel_0, $channel_1) = unpack("CNNnn", $$data_ref);
+	# print "ALS: $time, $lux, $channel_0, $channel_1\n";
+	# Do something with the Ambient lightsensor data here.
 }
 
 sub _http_response_handler {
