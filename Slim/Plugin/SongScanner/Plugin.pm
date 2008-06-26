@@ -331,8 +331,7 @@ sub lines {
 	return {'line'    => [$line1, $line2],}
 }
 
-sub setMode {
-	my $class  = shift;
+sub setScanMode {
 	my $client = shift;
 	my $method = shift;
 
@@ -427,5 +426,7 @@ sub initPlugin {
 		'fwd.hold' => 'dead', 'rew.hold' => 'dead'}, 1);
 
 	Slim::Buttons::Common::setFunction('song_scanner', \&_jumptoscanner);
+	Slim::Buttons::Common::addMode($modeName, $class->getFunctions, \&setScanMode);
+
 	$class->SUPER::initPlugin();
 }

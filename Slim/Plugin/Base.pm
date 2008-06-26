@@ -41,6 +41,7 @@ sub initPlugin {
 
 		# Add new submenus to Extras but only if they aren't main top-level menus
 		my $topLevel = {
+			HOME           => 1,
 			BROWSE_MUSIC   => 1,
 			RADIO          => 1,
 			MUSIC_SERVICES => 1,
