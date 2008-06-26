@@ -8,6 +8,7 @@
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
+	<playerMenu>SETTINGS</playerMenu>        
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<optionsURL>plugins/AudioScrobbler/settings/basic.html</optionsURL>
 	<type>2</type>
