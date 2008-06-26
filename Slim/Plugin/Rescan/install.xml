@@ -2,23 +2,23 @@
 
 <extension>
 	<id>665291B7-02A3-4623-9152-FD30B6217C8B</id>
-        <name>PLUGIN_RESCAN_MUSIC_LIBRARY</name>
-        <module>Slim::Plugin::Rescan::Plugin</module>
-        <version>1.0</version>
-        <description>PLUGIN_RESCAN_MUSIC_LIBRARY_DESC</description>
-        <creator>Slim Devices/Logitech</creator>
-        <email>support@slimdevices.com</email>
+	<name>PLUGIN_RESCAN_MUSIC_LIBRARY</name>
+	<module>Slim::Plugin::Rescan::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_RESCAN_MUSIC_LIBRARY_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>
         
-        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<playerMenu>SETTINGS</playerMenu>        
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<optionsURL>plugins/Rescan/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 
-        <targetApplication>
-  	        <id>SqueezeCenter</id>
-                <minVersion>7.0a</minVersion>
-                <maxVersion>*</maxVersion>
-        </targetApplication>
-
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
 </extension>
