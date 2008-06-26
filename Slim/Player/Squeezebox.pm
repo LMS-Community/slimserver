@@ -945,12 +945,14 @@ sub stream {
 					# Check WMA metadata to see if this remote stream is being served from a
 					# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
 					# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
-					if ( my $meta = $client->scanData->{metadata} ) {
-						if ( $meta->info('flags')->{broadcast} == 0 ) {
-							if ( $client->scanData->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
-								# The server didn't return the expected ASF header content-type,
-								# so we assume it's not a Windows Media server
-								$pcmsamplesize = 0;
+					if ( my $scanData = $client->scanData->{ $server_url } ) {
+						if ( my $meta = $scanData->{metadata} ) {
+							if ( $meta->info('flags')->{broadcast} == 0 ) {
+								if ( $scanData->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
+									# The server didn't return the expected ASF header content-type,
+									# so we assume it's not a Windows Media server
+									$pcmsamplesize = 0;
+								}
 							}
 						}
 					}

@@ -380,7 +380,7 @@ sub onDecoderUnderrun {
 		} );
 		
 		if ( my $nextEntry = $playlist->getNextEntry( { after => $client->remotePlaylistCurrentEntry } ) ) {
-			$log->debug( 'Playlist contains more tracks, not scanning next track' );
+			$log->debug( 'Playlist contains more tracks, not scanning next track, waiting for underrun' );
 			return;
 		}
 	}
@@ -420,7 +420,9 @@ sub onUnderrun {
 			
 			$log->debug( "Jumping to same track to play the next entry in the playlist" );
 
-			Slim::Music::Info::setCurrentTitle( $playlist->url, $nextEntry->title );
+			if ( $nextEntry->title !~ /^(?:http|mms)/ ) {
+				Slim::Music::Info::setCurrentTitle( $playlist->url, $nextEntry->title );
+			}
 
 			Slim::Player::Source::jumpto( $client, '+0' );
 			

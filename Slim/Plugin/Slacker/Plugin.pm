@@ -231,7 +231,7 @@ sub trackInfoMenu {
 		return;
 	}
 	
-	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/slacker/v1/opml/search?q=' . uri_escape_utf8($artist)

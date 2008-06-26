@@ -223,7 +223,7 @@ sub trackInfoMenu {
 		return;
 	}
 	
-	my $artist = $remoteMeta->{artist} || ( $track->artist ? $track->artist->name : undef );
+	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/lastfm/v1/opml/search_artist?q=' . uri_escape_utf8($artist)

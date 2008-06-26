@@ -135,7 +135,7 @@ sub getNextEntry {
 			if ( $args->{after} ) {
 				if ( $args->{after}->url eq $track->url ) {
 					# We are looking for the track after this one
-					$log->debug( "Skipping " . $track->url . " we want the one after" );
+					$log->debug( "Skipping " . $track->url . ", we want the one after" );
 					delete $args->{after};
 				}
 				else {
@@ -157,21 +157,7 @@ sub getNextEntry {
 			
 			if ( my $result = $self->getNextEntry( { %{$args}, playlist => $track } ) ) {
 				$log->debug( 'Found audio URL in nested playlist: ' . $result->url );
-				
-				if ( $args->{after} ) {
-					if ( $args->{after}->url eq $result->url ) {
-						# We are looking for the track after this one
-						$log->debug( "Skipping " . $result->url . " we want the one after" );
-						delete $args->{after};
-					}
-					else {
-						$log->debug( "Skipping" . $result->url . ", haven't seen " . $args->{after}->url . " yet" );
-					}
-				}
-				else {
-					$log->debug( "Next playlist entry is " . $result->url );
-					return $result;
-				}
+				return $result;
 			}
 		}
 	}
