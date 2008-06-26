@@ -30,7 +30,7 @@ our $defaultPrefs = {
 	'analogOutMode'        => 1,      # default sub-out
 	'bass'                 => 0,
 	'treble'               => 0,
-	'stereoxl'             => 0,
+	'stereoxl'             => minXL(),
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -77,6 +77,12 @@ sub init {
 	my $client = shift;
 
 	Slim::Control::Request::addDispatch(['boomdac', '_command'], [1, 0, 0, \&Slim::Player::Boom::boomI2C]);
+	Slim::Control::Request::addDispatch(['boombright', 
+					     '_bkk', '_gcp1', '_gcp2', '_bk2',
+					     '_filament_v', '_filament_p',
+					     '_annode_v',   '_anode_p',
+					    ],
+					    [1, 0, 0, \&Slim::Player::Boom::boomBright]);
 
 	$client->SUPER::init();
 }
@@ -110,27 +116,40 @@ sub hasRTCAlarm {
 	return 1;
 }
 
-sub maxTreble {	return 100; }
-sub minTreble {	return -100; }
+sub maxTreble {	return 23; }
+sub minTreble {	return -23; }
 
-sub maxBass {	return 100; }
-sub minBass {	return -100; }
+sub maxBass {	return 23; }
+sub minBass {	return -23; }
+
+sub toneI2CAddress { return 55; }
 
 sub maxXL {	return 10; }
 sub minXL {	return -90; }
 
-sub stereoXL {
+sub stereoxl {
 	my $client = shift;
 	my $newvalue = shift;
 
-	my $bass = $client->_mixerPrefs('stereoxl', 'maxXL', 'minXL', $newvalue);
-
+	my $StereoXL = $client->_mixerPrefs('stereoxl', 'maxXL', 'minXL', $newvalue);
+	my $depth_db = $StereoXL;
+	print "$newvalue, $StereoXL\n";
 	if (defined($newvalue)) {
-		#do bass bdac code here, then you can remove the warning
-		warn "stereoxl adjusted to $newvalue";
+		my $depth = 0;
+		if ($depth_db eq 'off') {
+			$depth = 0;
+		} else {
+			$depth = 10.0**($depth_db/20.0);
+		}
+		my $depth_int  = (int(($depth  * 0x00800000)+0.5)) & 0xFFFFFFFF ;
+		my $depth_int_ = (-int(($depth * 0x00800000)+0.5)) & 0xFFFFFFFF ;
+		my $stereoxl_i2c_address = 41;
+		my $i2cData = pack("CNNNN", $stereoxl_i2c_address, $depth_int, $depth_int_, 0, 0);
+		print "$stereoxl_i2c_address, $depth_int, $depth_int_, 0, 0\n";
+		sendBDACFrame($client, 'DACI2CGEN', $i2cData);
 	}
 
-	return $bass;
+	return $StereoXL;
 }
 
 sub reconnect {
@@ -247,11 +266,11 @@ sub setAnalogOutMode {
 sub bass {
 	my $client = shift;
 	my $newbass = shift;
-
 	my $bass = $client->SUPER::bass($newbass);
+	my $treble = $client->SUPER::treble();
+
 	if (defined($newbass)) {
-		#do bass bdac code here, then you can remove the warning
-		warn "bass adjusted to $newbass";
+		sendTone($client, $bass, $treble);
 	}
 
 	return $bass;
@@ -261,14 +280,46 @@ sub treble {
 	my $client = shift;
 	my $newtreble = shift;
 
+	my $bass = $client->SUPER::bass();
 	my $treble = $client->SUPER::treble($newtreble);
 	if (defined($newtreble)) {
-		#do treble bdac code here, then you can remove the warning
-		warn "treble adjusted to $newtreble";
+		sendTone($client, $bass, $treble);
 	}
 	return $treble;
 }
 
+# sendTone
+# Both bass and treble must be sent at the same time.
+sub sendTone
+{
+	my ($client, $bass, $treble) = @_;
+	$bass = -$bass     - minBass();
+	$treble = -$treble - minTreble();
+	# Do a little safety checking on the parameters.  It can get really ugly otherwise with 
+	# loud scary noises coming out of boom.
+	# We should probably send the tone settings in a special packet, rather than 
+	# raw I2C.  
+	$treble = $treble & 0xff;
+	$bass   = $bass   & 0xff;
+	if ($treble >47) {
+		$treble = 47;
+	} 
+	if ($treble < 0) {
+		$treble = 0;
+	}
+	if ($bass >47) {
+		$bass = 47;
+	}
+	if ($bass < 0) {
+		$bass = 0;
+	}
+	
+	
+	my $i2cData = pack("CCCCC", toneI2CAddress(),0,0, $treble, $bass);
+
+	print "$treble, $bass\n";
+	sendBDACFrame($client, 'DACI2CGEN', $i2cData);
+}
 sub sendBDACFrame {
 	my ($client, $type, $data) = @_;
 
@@ -304,7 +355,7 @@ sub sendBDACFrame {
 		$buf = pack('C',3);
 
 	} elsif($type eq 'DACI2CGEN') {
-		my $length = length($data)/8;
+		my $length = length($data);
 
 		$log->info("Sending BDAC I2C GENERAL DATA $length chunks");
 
@@ -448,7 +499,7 @@ sub boomI2C {
 	my $msg = "Sending data to i2c bus :[";
 	
 	foreach my $d (@d) {
-		$msg .= sprintf("0x%02x ", $d);
+		$msg .= sprintf("0x%02x ", ($d & 0xFF));
 	}
 	
 	$msg .= "]";
@@ -456,6 +507,51 @@ sub boomI2C {
 	$log->debug($msg);
 	
 	$client->sendFrame('bdac', \$data);
+	
+	$request->setStatusDone();
+}
+
+#
+#  boomBright
+#  Control boom brightness.
+sub boomBright {
+	my $request = shift;
+
+	my $client     = $request->client();
+		
+
+	my $log = logger('player.firmware');
+	
+	# get the parameters
+
+	my $bkk        = $request->getParam('_bkk');
+	my $gcp1       = $request->getParam('_gcp1');
+	my $gcp2       = $request->getParam('_gcp2');
+	my $bk2        = $request->getParam('_bk2');
+	my $filament_v = $request->getParam('_filament_v');
+	my $filament_p = $request->getParam('_filament_p');
+	my $annode_v   = $request->getParam('_annode_v');
+	my $anode_p    = $request->getParam('_anode_p');
+
+	if (
+		(!defined $bkk) ||
+		(!defined $gcp1)   ||
+		(!defined $gcp2)||
+		(!defined $bk2)||
+		(!defined $filament_v)||
+		(!defined $filament_p)||
+		(!defined $annode_v)||
+		(!defined $anode_p))
+	    
+	{
+		$request->setStatusBadParams();
+		return;
+	}
+	
+
+	my $data = pack('CCCCCCCC', $bkk, $gcp1, $gcp2, $bk2, $filament_v, $filament_p, $annode_v, $anode_p);
+	
+	$client->sendFrame('brir', \$data);
 	
 	$request->setStatusDone();
 }
