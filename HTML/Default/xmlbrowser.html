@@ -233,8 +233,11 @@ END %]
 
 					[% IF item.weblink %]
 						<a href="[% item.weblink %]" target="_blank">
-					[% ELSIF item.type == 'redirect' && item.web.url %]
+					[% ELSIF item.type == 'redirect' %]
+						[% IF item.web.url %]
 						<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
+						[% ELSE; NEXT %]
+						[% END %]
 					[% ELSIF item.type != 'text' %]
 						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 					[% END %]
