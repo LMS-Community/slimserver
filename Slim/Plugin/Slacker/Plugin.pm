@@ -61,7 +61,7 @@ sub initPlugin {
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					client  => $client,
 					feed    => Slim::Plugin::Slacker::ProtocolHandler->trackInfoURL( $client, $url ),
-					path    => 'trackinfo.html',
+					path    => 'plugins/slacker/trackinfo.html',
 					title   => 'Slacker Track Info',
 					timeout => 35,
 					args    => \@_
