@@ -149,9 +149,10 @@ sub requestString {
 		"Pragma: xClientGUID={" . randomGUID() . "}",
 	);
 	
-	my $streamNum = $client->scanData->{streamNum} || 1;
-	my $metadata  = $client->scanData->{metadata};
-	my $seekdata  = $client->scanData->{seekdata}  || {};
+	my $scanData  = $client->scanData->{ $url } || {};
+	my $streamNum = $scanData->{streamNum} || 1;
+	my $metadata  = $scanData->{metadata};
+	my $seekdata  = $client->scanData->{seekdata} || {};
 	
 	# Handle our metadata
 	if ( $metadata ) {
@@ -230,7 +231,9 @@ sub parseMetadata {
 	my ( $client, $url, $metadata ) = @_;
 	
 	my $wma       = Audio::WMA->parseObject( $metadata );
-	my $streamNum = $client->scanData->{streamNum} || 1;
+	
+	my $scanData  = $client->scanData->{ $url } || {};
+	my $streamNum = $scanData->{streamNum} || 1;
 
 	setMetadata( $client, $url, $wma, $streamNum );
 	
@@ -357,10 +360,11 @@ sub canSeek {
 	$client = $client->masterOrSelf;
 	
 	# Remote stream must be seekable
-	if ( my $headers = $client->scanData->{headers} ) {
+	my $scanData = $client->scanData->{ $url } || {};
+	if ( my $headers = $scanData->{headers} ) {
 		if ( $headers->content_type eq 'application/vnd.ms.wms-hdr.asfv1' ) {
 			# Stream is from a Windows Media server and we can seek if seekable flag is true
-			if ( $client->scanData->{metadata}->info('flags')->{seekable} ) {
+			if ( $scanData->{metadata}->info('flags')->{seekable} ) {
 				return 1;
 			}
 		}
@@ -374,7 +378,8 @@ sub canSeekError {
 	
 	$client = $client->masterOrSelf;
 	
-	if ( my $metadata = $client->scanData->{metadata} ) {
+	my $scanData = $client->scanData->{ $url } || {};
+	if ( my $metadata = $scanData->{metadata} ) {
 		if ( $metadata->info('flags')->{broadcast} ) {
 			return 'SEEK_ERROR_LIVE';
 		}
@@ -391,7 +396,8 @@ sub getSeekData {
 	# Determine byte offset and song length in bytes
 	my $data = {};
 	
-	if ( my $metadata = $client->scanData->{metadata} ) {
+	my $scanData = $client->scanData->{ $url } || {};
+	if ( my $metadata = $scanData->{metadata} ) {
 		my $bitrate = Slim::Music::Info::getBitrate( $url ) || return;
 		my $seconds = $metadata->info('playtime_seconds')   || return;
 		

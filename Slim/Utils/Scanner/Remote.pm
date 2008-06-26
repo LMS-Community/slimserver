@@ -67,6 +67,9 @@ sub scanURL {
 	
 	$args->{depth} ||= 0;
 	
+	# Clear scanData for this client
+	$client->scanData( {} );
+	
 	if ( !$url ) {
 		return $cb->( undef, 'SCANNER_REMOTE_NO_URL_PROVIDED', @{$pt} );
 	}
@@ -448,13 +451,14 @@ sub parseWMAHeader {
 	}
 	
 	# Save this metadata for the MMS protocol handler to use
-	# XXX: this won't work right with concurrent scanning
 	if ( $client ) {
-		$client->scanData( {
+		my $scanData = $client->scanData || {};
+		$scanData->{ $track->url } = {
 			streamNum => $streamNum,
 			metadata  => $wma,
 			headers   => $http->response->headers,
-		} );
+		};
+		$client->scanData( $scanData );
 	}
 	
 	# All done
