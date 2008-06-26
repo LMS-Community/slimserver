@@ -1219,11 +1219,18 @@ sub trackInfoHandler {
 			return {
 				type   => 'redirect',
 				name   => $client->string('MUSICIP_CREATEMIX'),
+
 				player => {
 					mode => 'musicmagic_mix',
 					modeParams => {
 						track => $track,
 					},
+				},
+
+				web  => {
+					group => 'mixers',
+					url   => 'plugins/MusicMagic/musicmagic_mix.html?song=' . $track->id,
+					item  => mixerlink($track),
 				},
 			};
 		}
