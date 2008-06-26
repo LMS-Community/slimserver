@@ -58,7 +58,7 @@ sub initPlugin {
 				Slim::Web::XMLBrowser->handleWebIndex( {
 					client  => $client,
 					feed    => Slim::Plugin::Pandora::ProtocolHandler->trackInfoURL( $client, $url ),
-					path    => 'trackinfo.html',
+					path    => 'plugins/pandora/trackinfo.html',
 					title   => 'Pandora Track Info',
 					timeout => 35,
 					args    => \@_
