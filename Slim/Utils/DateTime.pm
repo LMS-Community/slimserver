@@ -77,10 +77,13 @@ sub shortDateF {
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
-=head2 timeF( $time, $format )
+=head2 timeF( $time, $format, $timeIsUTC )
 
 Returns a string of the time passed (or current time if none passed),
 using the passed format (or pref: timeFormat if not passed).
+
+The $timeIsUTC param is optional and indicates whether the passed time is in UTC
+or the local time zone.  By default it is interpreted in the local time zone.
 
 Encoding is the current locale.
 
@@ -89,9 +92,12 @@ Encoding is the current locale.
 sub timeF {
 	my $ltime = shift || time();
 	my $format = shift || $prefs->get('timeFormat');
+	my $timeIsUTC = shift;
+	
+	my @timeDigits = $timeIsUTC ? gmtime($ltime) : localtime($ltime);
 
 	# remove leading zero if another digit follows
-	my $time  = strftime($format, localtime($ltime));
+	my $time  = strftime($format, @timeDigits);
 	   $time =~ s/\|0?(\d+)/$1/;
 
 	return Slim::Utils::Unicode::utf8decode_locale($time);

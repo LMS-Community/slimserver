@@ -74,13 +74,14 @@ sub screensaverDateTimelines {
 	my $updateInterval = $client->modeParam('modeUpdateInterval');
 
 	my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
+
 	if (defined $currentAlarm) {
 		# An alarm is currently active - flash the symbol
 		my $time = Time::HiRes::time;
 		$alarmOn = ($time - int($time)) < 0.5;
 	} else {
 		# No alarm active, show symbol if alarm scheduled in next 24 hours
-		my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
 		$alarmOn = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400); 
 	}
 
@@ -105,6 +106,10 @@ sub screensaverDateTimelines {
 			$overlay = $client->symbols('sleep');
 		} else {
 			$overlay = $client->symbols('bell');
+			if (! defined $currentAlarm) {
+				# Add next alarm time
+				$overlay .=  ' ' . Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
+			}
 		}
 	}
 	my $display = {
