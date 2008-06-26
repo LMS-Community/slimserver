@@ -1008,8 +1008,10 @@ sub commandCallback {
 	my $request = shift;
 	my $client  = $request->client();
 
-	# Don't respond to callback for ourself.
-	if ($request->source && $request->source eq 'PLUGIN_RANDOMPLAY') {
+	# Don't respond to callback for ourself or for requests originating from the alarm clock.  This is necessary,
+	# as the alarm clock uses a playlist play command to start random mixes and we then get notified of them so
+	# could end up stopping immediately.
+	if ($request->source && ($request->source eq 'PLUGIN_RANDOMPLAY' || $request->source eq 'ALARM')) {
 		return;
 	}
 
