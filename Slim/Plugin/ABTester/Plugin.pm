@@ -1871,7 +1871,7 @@ sub _isPluginsInstalled {
 sub _isOperatingSystem {
 	my $client = shift;
 	my $osList = shift;
-	foreach my $os (split /,/, $osList) {
+	foreach my $os (split /,/, $osList) { # emacs /
 		if($os eq Slim::Utils::OSDetect::OS()) {
 			return 1;
 		}
@@ -1883,7 +1883,7 @@ sub _isOperatingSystem {
 sub _isPlayerModels {
 	my $client = shift;
 	my $modelList = shift;
-	foreach my $model (split /,/, $modelList) {
+	foreach my $model (split /,/, $modelList) {  # emacs /
 		if($model eq $client->model) {
 			return 1;
 		}
