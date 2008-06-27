@@ -492,7 +492,10 @@ sub init {
 	addDispatch(['mixer',          'bass',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'bass',           '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'muting',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',          'muting',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+	addDispatch(['mixer',          'muting',         '_newvalue'],                                    
+[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+	addDispatch(['mixer',          'stereoxl',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+addDispatch(['mixer',          'stereoxl',          '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'pitch',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'pitch',          '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'treble',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
