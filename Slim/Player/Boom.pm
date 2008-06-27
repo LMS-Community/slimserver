@@ -212,7 +212,7 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 
 	# Sync actual time in RTC
-	my ($hhhBCD, $mmmBCD, $sssBCD) = Slim::Utils::DateTime::bcdTime;
+	my ($sssBCD, $mmmBCD, $hhhBCD) = Slim::Utils::DateTime::bcdTime((localtime())[0..2]);
 
 	$data = pack( 'C', 0x03);	# Set time (hours, minutes and seconds)
 	$data .= pack( 'C', $hhhBCD);
@@ -223,6 +223,7 @@ sub setRTCTime {
 
 # Set the RTC alarm clock to a given time or clear it.
 # $time must be in seconds past midnight or undef to clear the alarm
+# $time should be adjusted as necessary for local time before being passed to this sub.
 # Generally called by Slim::Utils::Alarm::scheduleNext
 sub setRTCAlarm {
 	my $client = shift;
@@ -233,10 +234,10 @@ sub setRTCAlarm {
 		# - Hours and minutes are in BCD format (see Slim::Utils::DateTime::bcdTime)
 		# - Setting the MSB (0x80) makes the hour, minute or both active
 
-		my ($alarmHourBCD, $alarmMinuteBCD) = Slim::Utils::DateTime::bcdTime($time);
+		my ($alarmSecBCD, $alarmMinBCD, $alarmHourBCD) = Slim::Utils::DateTime::bcdTime((gmtime($time))[0..2]);
 		my $data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
 		$data .= pack( 'C', $alarmHourBCD | 0x80);
-		$data .= pack( 'C', $alarmMinuteBCD | 0x80);
+		$data .= pack( 'C', $alarmMinBCD | 0x80);
 		$client->sendFrame( 'rtcs', \$data);
  	} else {
 		# Clear the alarm

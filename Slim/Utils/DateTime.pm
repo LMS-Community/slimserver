@@ -205,17 +205,14 @@ sub splitTime {
 
 =head2 bcdTime ( $time )
 
-This function converts a time value in seconds since midnight into hours, mins and secs in BCD format.  It's used when working
+This function converts a time value in seconds, minutes and hours into BCD format.  It's used when working
 with the RTC in Boom and other devices.
-
-If $time is omitted, the current time is used.
 
 =cut
 
 sub bcdTime {
-	my $time = @_ ? shift : time;  
+	my ($sec, $min, $hour) = @_;
 
-	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime($time);
 	my $h_10 = int( $hour / 10);
 	my $h_1 = $hour % 10;
 	my $m_10 = int( $min / 10);
@@ -226,7 +223,7 @@ sub bcdTime {
 	my $mmmBCD = $m_10 * 16 + $m_1;
 	my $sssBCD = $s_10 * 16 + $s_1;
 
-	return ($hhhBCD, $mmmBCD, $sssBCD);
+	return ($sssBCD, $mmmBCD, $hhhBCD);
 }
 
 =head2 hourMinToTime ( $h, $m, $p)
