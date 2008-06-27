@@ -124,16 +124,27 @@ sub minBass {	return -23; }
 
 sub toneI2CAddress { return 55; }
 
-sub maxXL {	return 10; }
-sub minXL {	return -90; }
+sub maxXL {	return 3; }
+sub minXL {	return 0; }
 
 sub stereoxl {
 	my $client = shift;
 	my $newvalue = shift;
 
 	my $StereoXL = $client->_mixerPrefs('stereoxl', 'maxXL', 'minXL', $newvalue);
-	my $depth_db = $StereoXL;
-	print "$newvalue, $StereoXL\n";
+	my $depth_db;
+	if ($StereoXL == 0) {
+		$depth_db = 'off';
+	} elsif ($StereoXL == 1) {
+		$depth_db = -6;
+	} elsif ($StereoXL == 2) {
+		$depth_db = 0; 
+	} elsif ($StereoXL == 3) {
+		$depth_db = 6; 
+	} else {
+		$depth_db = 'off';
+		logger('player.streaming.direct')->warn("Invalid stereoXL setting ($StereoXL)");
+	}
 	if (defined($newvalue)) {
 		my $depth = 0;
 		if ($depth_db eq 'off') {
@@ -145,7 +156,8 @@ sub stereoxl {
 		my $depth_int_ = (-int(($depth * 0x00800000)+0.5)) & 0xFFFFFFFF ;
 		my $stereoxl_i2c_address = 41;
 		my $i2cData = pack("CNNNN", $stereoxl_i2c_address, $depth_int, $depth_int_, 0, 0);
-		print "$stereoxl_i2c_address, $depth_int, $depth_int_, 0, 0\n";
+		# print "len = " . length ($i2cData) . "\n";
+		# printf ("$stereoxl_i2c_address, %08x, %08x \n", $depth_int, $depth_int_);
 		sendBDACFrame($client, 'DACI2CGEN', $i2cData);
 	}
 
