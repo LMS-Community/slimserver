@@ -1022,11 +1022,12 @@ sub scheduleNext {
 			$log->debug('No future alarms found');
 		}
 
-		# Set/clear the client's RTC alarm if supported
-		$class->setRTCAlarm($client);
 	} else {
 		$log->debug('Alarms are disabled');
 	}
+
+	# Set/clear the client's RTC alarm if supported
+	$class->setRTCAlarm($client);
 }
 
 =head2 setRTCAlarm( $client )
