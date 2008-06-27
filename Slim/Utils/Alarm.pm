@@ -481,10 +481,12 @@ sub sound {
 		}
 
 		# Play alarm playlist, falling back to the current playlist if undef
-		#TODO: check that playlist is still valid
+		#TODO: check that playlist is still valid (Bug 8577)
 		if (defined $self->playlist) {
 			$request = $client->execute(['playlist', 'play', $self->playlist]);
 			$request->source('ALARM');
+
+			#TODO: need to know if this succeeded and fallback to something if it didn't (Bug 8577)
 		} else {
 			# Check that the current playlist isn't empty
 			my $playlistLen = Slim::Player::Playlist::count($client);
@@ -494,9 +496,13 @@ sub sound {
 			} else {
 				$log->debug('Current playlist is empty');
 
-				#TODO: Bug 8499 would be nice here!
+				#TODO: Would be nice to have some alarm tones to fall back to (Bug 8499)
 
-				#TODO: Just play something.
+				# For now, just grab 10 random tracks and play them
+				$log->debug('Playing 10 random tracks');
+				my @tracks = Slim::Schema->rs('track')->search({audio => 1}, {rows => 10, order_by => \'RAND()'})->all;
+				$request = $client->execute(['playlist', 'loadtracks', 'listRef', \@tracks ]);
+				$request->source('ALARM');
 			}
 		}
 
