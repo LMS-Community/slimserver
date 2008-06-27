@@ -518,8 +518,16 @@ sub sound {
 
 			my $line2; 
 			if (defined $self->playlist) {
-				# Get the string that was given when the current playlist url was registered
-				$line2 = $alarmPlaylists{$self->playlist};
+				# Get the string that was given when the current playlist url was registered and stringify
+				# if necessary
+				my $playlistString = $alarmPlaylists{$self->playlist};
+				my ($stringKey) = $playlistString =~ /^{(.*)}$/; 
+
+				if (defined $stringKey) {
+					$line2 = $client->string($stringKey);
+				} else {
+					$line2 = $playlistString;
+				}
 			} else {
 				$line2 = $client->string('CURRENT_PLAYLIST');
 			}
@@ -590,14 +598,18 @@ sub snooze {
 
 =head3
 
-stopSnooze( )
+stopSnooze( [ $unPause = 1 ] )
 
 Stop this alarm from snoozing.  Has no effect if the alarm isn't snoozing.
+
+Unless $unPause is set to 0, this will cause music to be unpaused.  This is only normally desirable if this sub
+is being called at the end of a snooze timer.
 
 =cut
 
 sub stopSnooze {
 	my $self = shift;
+	my $unPause = @_ ? shift : 1;
 
 	$log->debug('Snooze expired');
 
@@ -608,9 +620,11 @@ sub stopSnooze {
 
 	$self->{_snoozeActive} = 0;
 	
-	# Resume music
-	my $request = $client->execute(['pause', 0]);
-	$request->source('ALARM');
+	if ($unPause) {
+		$log->debug('unpausing music');
+		my $request = $client->execute(['pause', 0]);
+		$request->source('ALARM');
+	}
 
 	$client->showBriefly({
 		line     => [$client->string('ALARM_SNOOZE_ENDED')],
@@ -1171,7 +1185,7 @@ sub addPlaylists {
 
 	foreach my $playlist (keys %$playlists) {
 		# Create a mapping from the url to its display name
-		$alarmPlaylists{$playlist} = $playlists->{$playlist}; 		
+		$alarmPlaylists{$playlists->{$playlist}} = $playlist; 		
 
 		# Create a mapping from the playlist type to its associated playlists
 		#TODO: Allow already defined types to be added to?
@@ -1364,18 +1378,18 @@ sub _alarmEnd {
 
 	Slim::Control::Request::unsubscribe(\&_alarmEnd, $client);
 
-	if ($currentAlarm->{_snoozeActive}) {
+	# power always ends the alarm, whether snoozing or not
+	if ($currentAlarm->{_snoozeActive} && $request->getRequest(0) ne 'power') {
 		# When snoozing we should end on 'playlist jump' but can only filter on playlist
 		if ($request->getRequest(0) eq 'playlist' && $request->getRequest(1) ne 'jump') {
 			$log->debug('Ignoring playlist command that isn\'t jump');
 			return;
 		}
 
-		# Stop the snooze expiry timer, resume music and set a new alarm subscription
-		# for events that should end the alarm
+		# Stop the snooze expiry timer and set a new alarm subscription for events that should end the alarm
 		$log->debug('Stopping snooze');
 		Slim::Utils::Timers::killTimers($currentAlarm, \&stopSnooze);
-		$currentAlarm->stopSnooze();
+		$currentAlarm->stopSnooze(0);
 	} else {
 		$log->debug('Stopping alarm');
 		$currentAlarm->stop;

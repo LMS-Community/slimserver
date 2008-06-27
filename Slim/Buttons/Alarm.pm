@@ -14,8 +14,7 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-# TODO: Remove
-use Data::Dumper;
+#use Data::Dumper;
 
 my $log = logger('player.alarmclock');
 my $prefs = preferences('server');
