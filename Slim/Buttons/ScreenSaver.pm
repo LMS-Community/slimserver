@@ -89,26 +89,26 @@ sub screenSaver {
 
 	my $savermode = $saver eq 'playlist' ? 'screensaver' : $saver;  # mode when in screensaver, not always same as $saver 
 	
-#	# if we are already in now playing, jump back screensaver is redundant and confusing
-#	if ($saver eq 'screensaver' && $mode eq 'playlist') {
-#		$saver = 'playlist'; 
-#	}
-	
-	# automatically control brightness if set to do so.
-	if (defined $display->brightness()) {
+	# automatically control brightness unless in the middle of showBriefly
+	if (defined $display->brightness() && $display->animateState() != 5) {
+
+		if ($client->power) {
 		
-		# dim the screen if we're not playing...  will restore brightness on next IR input.
-		# only need to do this once, but its hard to ensure all cases, so it might be repeated.
-		if ( $timeout && 
-				$irtime && $irtime < $now - $timeout && 
-				$mode ne 'block' && $client->power()) {
-	
-			$display->brightness($dim) if $display->brightness() != $dim;
+			# dim the screen...  will restore brightness on next IR input.
+			# only need to do this once, but its hard to ensure all cases, so it might be repeated.
+			if ( $timeout && 
+				 $irtime && $irtime < $now - $timeout && 
+				 $mode ne 'block' ) {
+
+				$display->brightness($dim) if $display->brightness() != $dim;
 		
-		} elsif ($client->power && $display->brightness() != $prefs->client($client)->get('powerOnBrightness')) {
-			$display->brightness($prefs->client($client)->get('powerOnBrightness'));
+			} elsif ($display->brightness() != $prefs->client($client)->get('powerOnBrightness')) {
+
+				$display->brightness($prefs->client($client)->get('powerOnBrightness'));
+			}
 		
-		} elsif (!$client->power && $display->brightness() != $prefs->client($client)->get('powerOffBrightness')) {
+		} elsif ($display->brightness() != $prefs->client($client)->get('powerOffBrightness')) {
+
 			$display->brightness($prefs->client($client)->get('powerOffBrightness'));
 		}
 	}
