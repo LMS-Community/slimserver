@@ -60,7 +60,8 @@ my $FADE_SECONDS = 20;
 my $SHOW_BRIEFLY_DUR = 3;
 
 # Screensaver used during alarms
-my $alarmScreensaver = 'SCREENSAVER.datetime';
+my $DEF_ALARM_SCREENSAVER = 'SCREENSAVER.datetime';
+my $alarmScreensaver = $DEF_ALARM_SCREENSAVER; 
 
 # Hash storing the playlists that alarms can use.  Keys are playlist URLs.  Values are the string descriptions for each URL.
 # e.g. 
@@ -882,23 +883,24 @@ sub getNextAlarm {
 	return $client->alarmData->{nextAlarm};
 }
 
-=head2 getAlarms( $client, [ $excludeCalAlarms = 0 ] )
+=head2 getAlarms( $client, [ $excludeCalAlarms = 1 ] )
 
 Return an unordered list of the alarms for a client.
-#TODO: Make it ordered!
 
-If $excludeCalAlarms is true, only daily alarms will be returned. 
+Unless $excludeCalAlarms is explicitly set to false, only daily alarms will be returned. 
 
 =cut
 
 sub getAlarms {
 	my $class = shift;
 	my $client = shift;
-	my $excludeCalAlarms = shift;
+	my $excludeCalAlarms = @_ ? shift : 1;
+
+	my $alarmHash = $client->alarmData->{alarms};
 
 	my @alarms;
-	for my $alarm ( keys %{$client->alarmData->{alarms}} ) { 
-		$alarm = $client->alarmData->{alarms}->{$alarm};
+	foreach my $alarm (sort {$alarmHash->{$a}->displayStr cmp $alarmHash->{$b}->displayStr} keys %{$alarmHash}) {
+		$alarm = $alarmHash->{$alarm};
 		if ($excludeCalAlarms && $alarm->calendarAlarm) {
 			next;
 		}
@@ -1238,6 +1240,18 @@ sub alarmScreensaver {
 	}
 
 	return $alarmScreensaver;
+}
+
+=head2 getDefaultAlarmScreensaver( )
+
+Returns the mode name of the default alarm screensaver.
+
+=cut
+
+sub getDefaultAlarmScreensaver {
+	my $class = shift;
+
+	return $DEF_ALARM_SCREENSAVER;
 }
 
 =head2 pushAlarmScreensaver( $client )

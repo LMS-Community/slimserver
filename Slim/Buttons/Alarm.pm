@@ -321,12 +321,10 @@ sub buildTopMenu {
 	my $client = shift;
 	my $listRef = shift;
 	
-	# Get any existing alarms and add them to the top of the menu.  Exclude
-	# calendar alarms.
-	my @alarms = Slim::Utils::Alarm->getAlarms($client, 1);
+	# Get any existing alarms and add them to the top of the menu.
+	my @alarms = Slim::Utils::Alarm->getAlarms($client);
 	@$listRef = ();
-	#TODO: Better sorting?
-	foreach my $alarm (sort {$a->displayStr cmp $b->displayStr} @alarms) {
+	foreach my $alarm (@alarms) {
 		push @$listRef, {
 					title		=> sub { $alarm->displayStr },
 					type		=> 'menu',

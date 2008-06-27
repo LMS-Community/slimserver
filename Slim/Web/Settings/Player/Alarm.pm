@@ -34,7 +34,7 @@ sub handler {
 	my @prefs = ();
 
 	if ($paramRef->{'saveSettings'}) {
-		for my $alarm (Slim::Utils::Alarm->getAlarms($client, 1)) {
+		for my $alarm (Slim::Utils::Alarm->getAlarms($client)) {
 			if ($paramRef->{'Remove'.$alarm->id}) {
 				$alarm->delete;
 			} else {
