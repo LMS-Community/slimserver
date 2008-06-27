@@ -213,7 +213,7 @@ If $time is omitted, the current time is used.
 =cut
 
 sub bcdTime {
-	my $time = @_ ? shift : localtime;  
+	my $time = @_ ? shift : time;  
 
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime($time);
 	my $h_10 = int( $hour / 10);
