@@ -662,7 +662,7 @@ sub setModeFromInternet {
 				# Use Slim::Buttons::XMLBrowser based mode for the "From Internet/Test cases" menu
 				# TODO: Verify the url below when Logitech has put up the opml files
 				my %params = (
-					url => 'http://www.slimdevices.com/abtester/testcases.opml',
+					url => 'http://eng.slimdevices.com/abtester/testcases.opml',
 					title => $client->string($item),
 					parser => "Slim::Plugin::ABTester::TestcaseZipParser",
 				);
@@ -671,7 +671,7 @@ sub setModeFromInternet {
 				# Use Slim::Buttons::XMLBrowser based mode for the "From Internet/Images" menu
 				# TODO: Verify the url below when Logitech has put up the opml files
 				my %params = (
-					url => 'http://www.slimdevices.com/abtester/images.opml',
+					url => 'http://eng.slimdevices.com/abtester/images.opml',
 					title => $client->string($item),
 					parser => "Slim::Plugin::ABTester::ImageZipParser",
 				);
