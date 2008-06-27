@@ -664,6 +664,7 @@ sub setModeFromInternet {
 				my %params = (
 					url => 'http://eng.slimdevices.com/abtester/testcases.opml',
 					title => $client->string($item),
+					expires => 10,
 					parser => "Slim::Plugin::ABTester::TestcaseZipParser",
 				);
 				Slim::Buttons::Common::pushMode($client,'xmlbrowser',\%params);
@@ -673,6 +674,7 @@ sub setModeFromInternet {
 				my %params = (
 					url => 'http://eng.slimdevices.com/abtester/images.opml',
 					title => $client->string($item),
+					expires => 10,
 					parser => "Slim::Plugin::ABTester::ImageZipParser",
 				);
 				Slim::Buttons::Common::pushMode($client,'xmlbrowser',\%params);
