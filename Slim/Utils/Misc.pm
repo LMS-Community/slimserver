@@ -46,6 +46,7 @@ use Time::HiRes;
 use URI;
 use URI::Escape;
 use URI::file;
+use Digest::SHA1 qw(sha1_hex);
 
 # These must be 'required', as they use functions from the Misc module!
 require Slim::Music::Info;
@@ -57,6 +58,7 @@ require Slim::Utils::Unicode;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Network ();
 
 my $prefs = preferences('server');
 my $canFollowAlias = 0;
@@ -1525,6 +1527,16 @@ sub detectBrowser {
 		$return = 'IE';
 	}
 	return $return;
+}
+
+=head2 createUUID ( )
+
+Generate a new UUID and return it.
+
+=cut
+
+sub createUUID {
+	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 
 =head1 SEE ALSO

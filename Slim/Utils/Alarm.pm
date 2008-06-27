@@ -41,11 +41,7 @@ Two types of alarm are implemented - daily alarms and calendar alarms.  Daily al
 
 =cut
 
-#TODO: Remove
-use Data::Dumper;
-# For uuid
-use Digest::SHA1 qw(sha1_hex);
-use Scalar::Util qw(blessed);
+#use Data::Dumper;
 use Time::HiRes;
 
 use Slim::Player::Client;
@@ -764,7 +760,7 @@ sub _createSaveable {
 	# Add alarm to client object if it hasn't been saved before
 	if (! defined $self->{_id}) {
 		# Create unique id for alarm
-		$self->{_id} = new_uuid();
+		$self->{_id} = Slim::Utils::Misc::createUUID();
 
 		$client->alarmData->{alarms}->{$self->{_id}} = $self;
 	}
@@ -1009,7 +1005,7 @@ sub scheduleNext {
 				$nextAlarm->sound;
 			} else {
 				# TODO: schedule a bit early to allow for timers firing late.  Once this is done and the early
-				# timer fails, check every second to see if the alarm should sound.  10 secs early should be more
+				# timer fires, check every second to see if the alarm should sound.  10 secs early should be more
 				# than enough.  This is only really needed for SqueezeNetwork where 1000s of clients can lead
 				# to timers firing a few seconds late.
 				my $alarmTime = $nextAlarm->{_nextDue};
@@ -1364,12 +1360,6 @@ sub _alarmEnd {
 		$log->debug('Stopping alarm');
 		$currentAlarm->stop;
 	}
-}
-
-# Create a new UUID
-# TODO: move this into Utils and change Web/Cometd.pm to use it as well
-sub new_uuid {
-	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 
 1;
