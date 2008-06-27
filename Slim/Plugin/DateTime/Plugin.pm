@@ -100,13 +100,14 @@ sub screensaverDateTimelines {
 		}
 	}
 
+	my $twoLines = $client->linesPerScreen == 2;
 	my $overlay = undef;
 	if ($alarmOn) {
 		if (defined $currentAlarm && $currentAlarm->snoozeActive) {
 			$overlay = $client->symbols('sleep');
 		} else {
 			$overlay = $client->symbols('bell');
-			if (! defined $currentAlarm) {
+			if (! defined $currentAlarm && $twoLines) {
 				# Add next alarm time, removing seconds
 				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
 				$timeStr =~ s/(\d?\d:\d\d):\d\d/\1/;
@@ -116,15 +117,20 @@ sub screensaverDateTimelines {
 	}
 	my $display = {
 		'center2' => Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')),
-		'overlay1'=> $overlay,
 		'fonts'  => $fontDef,
 	};
 	# If we're displaying next alarm time, use short date format and left-align in order to fit it all on narrow displays
 	# This is basically just a hack - there should be a better way!
-	if ($alarmOn && ! defined $currentAlarm) {
-		$display->{line1} = Slim::Utils::DateTime::shortDateF(),
+	# This code should handle narrow displays specifically - traditional ones can probably fit it all in easily.
+	if ($twoLines) {
+		if ($alarmOn && ! defined $currentAlarm) {
+			$display->{line1} = Slim::Utils::DateTime::shortDateF(),
+		} else {
+			$display->{center1} = Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat'));
+		}
+		$display->{overlay1} = $overlay,
 	} else {
-		$display->{center1} = Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat'));
+		$display->{overlay2} = $overlay,
 	}
 
 	# Arrange for $client->update to be called periodically.
