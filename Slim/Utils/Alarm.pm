@@ -252,6 +252,8 @@ sub time {
 
 Returns the unique id for this alarm.
 
+Alarms that have not have been saved will not have an id defined - this method will return undef in this case.
+
 =cut
 
 sub id {

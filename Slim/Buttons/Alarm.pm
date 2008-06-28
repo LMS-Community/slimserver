@@ -231,10 +231,17 @@ sub saveAlarm {
 	$log->debug('Saving alarm...');
 
 	if (defined $alarm->time) {
+		my $newAlarm = ! $alarm->id; # Unsaved alarms don't have an id
 		$alarm->save;
 
-		# A new alarm has been added so rebuild the top-level menu to include it
-		buildTopMenu($client, $client->modeParameterStack(-1 - $client->modeParam('alarm_depth'))->{listRef});
+		if ($newAlarm) {
+			# A new alarm has been added so rebuild the top-level menu to include it
+			my $depth = $client->modeParam('alarm_depth');
+			buildTopMenu($client, $client->modeParameterStack(-1 - $depth)->{listRef});
+			# Update the alarm's header string so it no longer says Add Alarm (assume that the alarm menu
+			# is always at depth 1).  Bit of a hack... ;-)
+			$client->modeParameterStack(-$depth)->{alarm_menuTitle} = sub { $alarm->displayStr };
+		}
 	} else {
 		$log->debug('Alarm has no time set.  Not saving');
 	}
@@ -302,6 +309,7 @@ sub setMode {
 		return;
 	}
 
+	# Add saved alarms to the top menu
 	my @topMenu;
 	buildTopMenu($client, \@topMenu);
 
@@ -312,10 +320,12 @@ sub setMode {
 		alarm_menuTitle	=> 'ALARM',
 		# How many sub-menus deep we are in the alarm button mode
 		alarm_depth	=> 0,
+		#modeName	=> 'alarm',
 	);
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
+# Rebuild the listref for the supplied top menu to include all the currently defined alarms
 sub buildTopMenu {
 	my $client = shift;
 	my $listRef = shift;
@@ -411,7 +421,13 @@ sub getHeader {
 	my $client = shift;
 	my $item = shift;
 
-	return $client->modeParam('alarm_menuTitle') . ' {count}';
+	my $menuTitle = $client->modeParam('alarm_menuTitle');
+
+	if (ref $menuTitle eq 'CODE') {
+		$menuTitle = $menuTitle->();
+	}
+
+	return $menuTitle . ' {count}';
 }
 
 sub getOverlay {
@@ -488,9 +504,8 @@ sub exitRightHandler {
 				$modeParams{listRef} = $item->{items};
 			}
 
-			# Set the header for the next menu
-			# TODO: This should be updated if an alarm time is edited and the header displays the alarm time
-			$modeParams{alarm_menuTitle} = getName($client, $item);
+			# Set the header for the next menu (use a closure so it's kept up to date when alarms are edited)
+			$modeParams{alarm_menuTitle} = sub { return getName($client, $item) };
 
 			# If an exit function has been requested for the next mode, store it in the new mode so it can be called
 			if (defined $item->{exitFunc}) {
@@ -508,6 +523,9 @@ sub exitRightHandler {
 				$log->debug('creating new alarm');
 				$modeParams{alarm_alarm} = Slim::Utils::Alarm->new($client);
 			}
+
+			# Supply a unique mode name to INPUT.Choice so it can keep track of where the user is
+			#$modeParams{modeName} = 'alarm_' . $item->{title} . $client->modeParam('alarm_depth');
 
 		} elsif ($type eq 'time') {
 			$nextMode = 'INPUT.Time';
