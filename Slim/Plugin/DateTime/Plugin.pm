@@ -101,36 +101,46 @@ sub screensaverDateTimelines {
 	}
 
 	my $twoLines = $client->linesPerScreen == 2;
+	my $narrow = $client->display->isa('Slim::Display::Boom');
 	my $overlay = undef;
 	if ($alarmOn) {
 		if (defined $currentAlarm && $currentAlarm->snoozeActive) {
 			$overlay = $client->symbols('sleep');
 		} else {
 			$overlay = $client->symbols('bell');
-			if (! defined $currentAlarm && $twoLines) {
-				# Add next alarm time, removing seconds
+			# Include the next alarm time in the overlay if there's room
+			if (! defined $currentAlarm && ($twoLines || ! $narrow)) {
+				# Remove seconds from alarm time
 				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
-				$timeStr =~ s/(\d?\d:\d\d):\d\d/\1/;
-				$overlay .=  " $timeStr";
+				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/\1/;
+				$overlay .=  "$timeStr";
 			}
 		}
 	}
+
 	my $display = {
-		'center2' => Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')),
-		'fonts'  => $fontDef,
+		fonts  => $fontDef,
 	};
-	# If we're displaying next alarm time, use short date format and left-align in order to fit it all on narrow displays
-	# This is basically just a hack - there should be a better way!
-	# This code should handle narrow displays specifically - traditional ones can probably fit it all in easily.
+	my $timeStr = Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat'));
 	if ($twoLines) {
-		if ($alarmOn && ! defined $currentAlarm) {
-			$display->{line1} = Slim::Utils::DateTime::shortDateF(),
+		$display->{center}->[1] = $timeStr;
+		# If we're displaying next alarm time on boom, use short date format and left-align in order to fit it all in
+		if ($narrow && $alarmOn && ! defined $currentAlarm) {
+			$display->{line}->[0] = Slim::Utils::DateTime::shortDateF(),
 		} else {
-			$display->{center1} = Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat'));
+			$display->{center}->[0] = Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat'));
 		}
-		$display->{overlay1} = $overlay,
+		$display->{overlay}->[0] = $overlay,
 	} else {
-		$display->{overlay2} = $overlay,
+		# Use left-align if we're also displaying the bell/snooze symbol
+		# Also need to use left-align if the symbol is flashing otherwise the time jumps around as the overlay appears
+		# and disappears.
+		if ($alarmOn || defined $currentAlarm) {
+			$display->{line}->[1] = $timeStr;
+		} else {
+			$display->{center}->[1] = $timeStr;
+		}
+		$display->{overlay}->[1] = $overlay,
 	}
 
 	# Arrange for $client->update to be called periodically.
