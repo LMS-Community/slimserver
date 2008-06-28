@@ -1182,8 +1182,9 @@ sub trackInfoHandler {
 	
 	my $mixable = $track->musicmagic_mixable;
 
+	my $jive = {};
 	if ( $tags->{menuMode} ) {
-		my ($jive, $actions);
+		my $actions;
 		if ( $mixable ) {
 			$actions = {
 				go => {
@@ -1209,32 +1210,27 @@ sub trackInfoHandler {
 		}
 
 		$jive->{actions} = $actions;
+	}
+
+	if ( $mixable ) {
 		return {
-			type => 'text',
-			name => $client->string('MUSICIP_CREATEMIX'),
-			jive => $jive,
+			type   => 'redirect',
+			jive   => $jive,
+			name   => $client->string('MUSICIP_CREATEMIX'),
+
+			player => {
+				mode => 'musicmagic_mix',
+				modeParams => {
+					track => $track,
+				},
+				},
+
+			web  => {
+				group => 'mixers',
+				url   => 'plugins/MusicMagic/musicmagic_mix.html?song=' . $track->id,
+				item  => mixerlink($track),
+			},
 		};
-	} else {
-		if ( $mixable ) {
-			return {
-				type   => 'redirect',
-				name   => $client->string('MUSICIP_CREATEMIX'),
-
-				player => {
-					mode => 'musicmagic_mix',
-					modeParams => {
-						track => $track,
-					},
-				},
-
-				web  => {
-					group => 'mixers',
-					url   => 'plugins/MusicMagic/musicmagic_mix.html?song=' . $track->id,
-					item  => mixerlink($track),
-				},
-			};
-		}
-	
 	}
 
 	return;
