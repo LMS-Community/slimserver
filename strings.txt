@@ -12437,6 +12437,9 @@ RADIO_TUNEIN
 	NL	URL instellen
 	ZH_CN	收音机网址
 
+URL
+	EN	URL
+
 RADIO_TUNEIN_NOW
 	DA	Indstil nu
 	DE	Sender jetzt wählen
