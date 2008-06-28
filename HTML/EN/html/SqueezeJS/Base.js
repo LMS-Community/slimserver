@@ -93,7 +93,7 @@ function _init() {
 										}
 
 										// display information if the player needs a firmware upgrade
-										if (response.player_needs_upgrade) {
+										if (response.player_needs_upgrade && !response.player_is_upgrading) {
 											this.fireEvent('playlistchange');
 										}
 									}
