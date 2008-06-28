@@ -50,9 +50,9 @@ sub registerDefaultInfoProviders {
 	
 	# The 'top', 'middle' and 'bottom' groups
 	# so that we can add items in absolute positions
-    $class->registerInfoProvider( top    => ( isa => '' ) );
-    $class->registerInfoProvider( middle => ( isa => '' ) );
-    $class->registerInfoProvider( bottom => ( isa => '' ) );
+	$class->registerInfoProvider( top    => ( isa => '' ) );
+	$class->registerInfoProvider( middle => ( isa => '' ) );
+	$class->registerInfoProvider( bottom => ( isa => '' ) );
 
 	$class->registerInfoProvider( playtrack => (
 		menuMode  => 1,
@@ -429,7 +429,7 @@ sub infoContributors {
 	if ( $remoteMeta->{artist} ) {
 		push @{$items}, {
 			type => 'text',
-			name => $client->string('ARTIST') . ': ' . $remoteMeta->{artist},
+			name => $client->string('ARTIST') . $client->string('COLON') . ' ' . $remoteMeta->{artist},
 		};
 	}
 	else {
@@ -456,7 +456,7 @@ sub infoContributors {
 				# Slim::Menu::Library::Contributor
 				push @{$items}, {
 					type => 'redirect',
-					name => $client->string( uc $role ) . ': ' . $contributor->name,
+					name => $client->string( uc $role ) . $client->string('COLON') . ' ' . $contributor->name,
 
 					db   => $db,
 
@@ -670,7 +670,7 @@ sub infoAlbum {
 	if ( $remoteMeta->{album} ) {
 		$item = {
 			type => 'text',
-			name => $client->string('ALBUM') . ': ' . $remoteMeta->{album},
+			name => $client->string('ALBUM') . $client->string('COLON') . ' ' . $remoteMeta->{album},
 		};
 	}
 	elsif ( my $album = $track->album ) {
@@ -692,7 +692,7 @@ sub infoAlbum {
 		
 		$item = {
 			type => 'redirect',
-			name => $client->string('ALBUM') . ': ' . $album->name,
+			name => $client->string('ALBUM') . $client->string('COLON') . ' ' . $album->name,
 
 			db   => $db,
 
@@ -778,7 +778,7 @@ sub infoGenres {
 		
 		push @{$items}, {
 			type => 'redirect',
-			name => $client->string('GENRE') . ': ' . $genre->name,
+			name => $client->string('GENRE') . $client->string('COLON') . ' ' . $genre->name,
 
 			db   => $db,
 
@@ -980,7 +980,7 @@ sub infoContentType {
 		
 		$item = {
 			type => 'text',
-			name => $client->string('TYPE') . ': ' . $client->string( uc($ct) ),
+			name => $client->string('TYPE') . $client->string('COLON') . ' ' . $client->string( uc($ct) ),
 		};
 	}
 	
@@ -1012,7 +1012,7 @@ sub infoReplayGain {
 	if ( my $replaygain = $track->replay_gain ) {
 		push @{$items}, {
 			type => 'text',
-			name => $client->string('REPLAYGAIN') . ': ' . sprintf( "%2.2f", $replaygain ) . ' dB',
+			name => $client->string('REPLAYGAIN') . $client->string('COLON') . ' ' . sprintf( "%2.2f", $replaygain ) . ' dB',
 		};
 	}
 	
@@ -1020,7 +1020,7 @@ sub infoReplayGain {
 		if ( my $albumreplaygain = $album->replay_gain ) {
 			push @{$items}, {
 				type => 'text',
-				name => $client->string('ALBUMREPLAYGAIN') . ': ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
+				name => $client->string('ALBUMREPLAYGAIN') . $client->string('COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
 			};
 		}
 	}
@@ -1036,7 +1036,7 @@ sub infoRating {
 	if ( my $rating = $track->rating ) {
 		$item = {
 			type => 'text',
-			name => $client->string('RATING') . ': ' . sprintf( "%d", $rating ) . ' /100',
+			name => $client->string('RATING') . $client->string('COLON') . ' ' . sprintf( "%d", $rating ) . ' /100',
 		};
 	}
 	
@@ -1087,7 +1087,7 @@ sub infoSampleRate {
 	if ( $track->samplerate ) {
 		$item = {
 			type => 'text',
-			name => $client->string('SAMPLERATE') . ': ' . $track->prettySampleRate,
+			name => $client->string('SAMPLERATE') . $client->string('COLON') . ' ' . $track->prettySampleRate,
 		};
 	}
 	
@@ -1118,7 +1118,7 @@ sub infoFileSize {
 	if ( my $len = $track->filesize ) {
 		$item = {
 			type => 'text',
-			name => $client->string('FILELENGTH') . ': ' . Slim::Utils::Misc::delimitThousands($len),
+			name => $client->string('FILELENGTH') . $client->string('COLON') . ' ' . Slim::Utils::Misc::delimitThousands($len),
 		};
 	}
 	
@@ -1133,7 +1133,7 @@ sub infoUrl {
 	if ( my $turl = $track->url ) {
 		$item = {
 			type => 'text',
-			name => 'URL: ' . Slim::Utils::Misc::unescape($turl),
+			name => $client->string('LOCATION') . $client->string('COLON') . ' ' . Slim::Utils::Unicode::utf8on( Slim::Utils::Misc::pathFromFileURL($turl) ),
 		};
 	}
 	
