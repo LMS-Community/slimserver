@@ -39,7 +39,7 @@ sub playlist {
 		$params->{'playercount'} = 0;
 		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	
-	} elsif ($client->needsUpgrade()) {
+	} elsif ($client->needsUpgrade() && !$client->isUpgrading()) {
 
 		$params->{'player_needs_upgrade'} = '1';
 		return Slim::Web::HTTP::filltemplatefile("playlist_needs_upgrade.html", $params);
