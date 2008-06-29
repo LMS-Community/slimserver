@@ -2923,7 +2923,8 @@ sub _playlistXtracksCommand_parseDbItem {
 	my $client  = shift;
 	my $url     = shift;
 
-	my $class   = 'Track';
+	my %classes;
+	my $class   = undef;
 	my $obj     = undef;
 
 	$log->debug("Begin Function");
@@ -2935,39 +2936,64 @@ sub _playlistXtracksCommand_parseDbItem {
 	# db:contributor.namesearch=BEATLES
 	#
 	# Remote playlists are Track objects, not Playlist objects.
-	if ($url =~ /^db:(\w+)\.(\w+)=(.+)/) {
+	if ($url =~ /^db:(\w+\.\w+=.+)$/) {
+	  
+		for my $term ( split '&', $1 ) {
 
-		$class = ucfirst($1);
-		$obj   = Slim::Schema->single($class, { $2 => Slim::Utils::Misc::unescape($3) });
+			# If $terms has a leading &, split will generate an initial empty string
+			next if !$term;
 
-	} elsif (Slim::Music::Info::isPlaylist($url) && !Slim::Music::Info::isRemoteURL($url)) {
+			if ($term =~ /^(\w+)\.(\w+)=(.*)$/) {
 
-		$class = 'Playlist';
+				my $key   = URI::Escape::uri_unescape($2);
+				my $value = URI::Escape::uri_unescape($3);
+
+				$class = ucfirst($1);
+				$obj   = Slim::Schema->single( $class, { $key => $value } );
+				
+				$classes{$class} = $obj;
+			}
+		}
+
 	}
+	elsif ( Slim::Music::Info::isPlaylist($url) && !Slim::Music::Info::isRemoteURL($url) ) {
 
-	# else we assume it's a track
-	if ($class eq 'Track' || $class eq 'Playlist') {
+		%classes = (
+			Playlist => Slim::Schema->rs($class)->objectForUrl( {
+				url => $url,
+			} )
+		);
+	}
+	else {
 
-		$obj = Slim::Schema->rs($class)->objectForUrl({
-			'url'      => $url,
-		});
+		# else we assume it's a track
+		%classes = (
+			Track => Slim::Schema->rs($class)->objectForUrl( {
+				url => $url,
+			} )
+		);
 	}
 
 	# Bug 4790: we get a track object of content type 'dir' if a fileurl for a directory is passed
 	# this needs scanning so pass empty list back to playlistXitemCommand in this case
-	if (blessed($obj) && (
-		$class eq 'Album' || 
-		$class eq 'Contributor' || 
-		$class eq 'Genre' ||
-		$class eq 'Year' ||
-		($obj->can('content_type') && $obj->content_type ne 'dir'))) {
-
-		my $terms = sprintf('%s.id=%d', lc($class), $obj->id);
-
-		return _playlistXtracksCommand_parseSearchTerms($client, $terms);
-
-	} else {
-
+	my $terms = "";
+	while ( ($class, $obj) = each %classes ) {
+		if ( blessed($obj) && (
+			$class eq 'Album' || 
+			$class eq 'Contributor' || 
+			$class eq 'Genre' ||
+			$class eq 'Year' ||
+			( $obj->can('content_type') && $obj->content_type ne 'dir') 
+		) ) {
+			$terms .= "&" if ( $terms ne "" );
+			$terms .= sprintf( '%s.id=%d', lc($class), $obj->id );
+		}
+	}
+	
+	if ( $terms ne "" ) {
+			return _playlistXtracksCommand_parseSearchTerms($client, $terms);
+	}
+	else {
 		return ();
 	}
 }

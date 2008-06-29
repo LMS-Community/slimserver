@@ -42,6 +42,7 @@ our @EXPORT_OK = qw(string);
 
 use POSIX qw(setlocale LC_TIME);
 use File::Spec::Functions qw(:ALL);
+use Scalar::Util qw(blessed);
 use Storable;
 
 use Slim::Utils::Log;
@@ -401,6 +402,23 @@ sub string {
 	}
 	
 	return $string;
+}
+
+=head2 clientString( $client, $token )
+
+Same as string but uses $client->string if client is available.
+
+=cut
+
+sub clientString {
+	my $client = shift;
+	
+	if ( blessed($client) ) {
+		return $client->string(@_);
+	}
+	else {
+		return string(@_);
+	}
 }
 
 =head2 getString ( $token )
