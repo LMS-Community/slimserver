@@ -405,6 +405,22 @@ sub parseRSS {
 sub parseAtom {
 	my $xml = shift;
 	
+	# Handle text constructs
+	for my $field ( qw(title subtitle tagline) ) {
+		if ( ref $xml->{$field} eq 'HASH' ) {
+			$xml->{$field} = $xml->{$field}->{content};
+		}
+	}
+	
+	# Support Person construct
+	if ( ref $xml->{author} eq 'HASH' ) {
+		my $name = $xml->{author}->{name};
+		if ( my $email = $xml->{author}->{email} ) {
+			$name .= ' (' . $email . ')';
+		}
+		$xml->{author} = $name;
+	}
+	
 	my %feed = (
 		'type'           => 'rss',
 		'items'          => [],
@@ -425,6 +441,13 @@ sub parseAtom {
 	my $items = $xml->{'entry'} || [];
 
 	for my $itemXML ( @{$items} ) {
+		
+		# Handle text constructs
+		for my $field ( qw(summary title) ) {
+			if ( ref $itemXML->{$field} eq 'HASH' ) {
+				$itemXML->{$field} = $itemXML->{$field}->{content};
+			}
+		}
 		
 		my %item = (
 			'description' => unescapeAndTrim($itemXML->{'summary'}),
