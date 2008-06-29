@@ -1303,61 +1303,16 @@ ALARM_OFF
 	ZH_CN	撤销
 
 ALARM_SELECT_PLAYLIST
-	CS	Vyber playlist pro budík
-	DA	Vælg spilleliste for alarm
-	DE	Wecker-Wiedergabeliste
-	EN	Alarm Playlist
-	ES	Lista de reproducción de alarma
-	FI	Herätyskellon soittolista
-	FR	Liste de lecture pour le réveil
-	HE	רשימת ההשמעה של השעון המעורר
-	IT	Elenco di riproduzione sveglia
-	JA	アラーム曲をセットして下さい
-	NL	Playlist voor wekker
-	NO	Velg spilleliste for alarm
-	PT	Escolha a Playlist para o Alarme
-	SV	Välj låtlista för väckning
-	ZH_CN	可当闹钟用的播放表
+	EN	Choose Playlist
 
 ALARM_USE_CURRENT_PLAYLIST
 	EN	Use Current Playlist
 
 ALARM_SET_VOLUME
-	CS	Nastavit hlasitost buzení
-	DA	Indstil volume for alarmen
-	DE	Weckerlautstärke
-	EN	Alarm Volume
-	ES	Volumen de alarma
-	FI	Hälytyksen äänenvoimakkuus
-	FR	Volume du réveil
-	HE	עוצמת הקול של התראות
-	IT	Volume sveglia
-	JA	アラーム ボリュームをセットして下さい
-	NL	Weksignaalvolume
-	NO	Sett volum for alarm
-	PT	Mudar Volume do Alarme
-	SV	Ställ in volym för väckning
-	ZH_CN	配置闹钟音量
-
-ALARM_SET_VOLUME_SHORT
-	CS	Hlasitost
-	DA	Alarm vol:
-	DE	Weckerlautstärke
-	EN	Alarm Vol
-	ES	Vol. alarma
-	FI	Hälyytyksen voimakkuus
-	FR	Volume réveil
-	HE	עוצמת הקול של התראות
-	IT	Vol. sveglia
-	JA	アラーム ボリューム
-	NL	Weksignaalvol.
-	NO	Alarmvolum
-	PT	Volume do Alarme
-	SV	Väckningsvolym
-	ZH_CN	闹钟音量：
+	EN	Set Volume
 
 ALARM_DEFAULT_VOLUME
-	EN	Default Alarm Volume
+	EN	Default Volume
 
 ALARM_USE_DEFAULT_VOLUME
 	EN	Use Default
@@ -1366,16 +1321,16 @@ ALARM_ADD
 	EN	Add Alarm
 
 ALARM_ADD_DESC
-	EN	You can add as many alarms as you like. They can be set up to be triggered daily, some days only, or only once. Just press "Add Alarm" to get a new set of alarm settings.
+	EN	You can add as many alarms as you like.  Each alarm can be set to go off every day, on particular days only, or just once.  Select "Add Alarm" to start adding a new alarm.
 
 ALARM_DELETE
 	EN	Remove Alarm
 
 ALARM_ALARM_ENABLED
-	EN	Alarm Enabled
+	EN	Enabled
 
 ALARM_ALARM_REPEAT
-	EN	Alarm Repeats
+	EN	Repeat Alarm
 
 ALARM_ALARMS_ENABLED
 	EN	Alarms Enabled

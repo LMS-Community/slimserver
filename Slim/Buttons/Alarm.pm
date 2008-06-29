@@ -120,7 +120,24 @@ my @deleteMenu = (
 );
 
 # Add/edit alarm sub-menu
+# N.B. The set up of @menu has code which relies on the order of items in this menu.  Do not change the order or add/remove
+# items without updating that code!
 my @alarmMenu = (
+	{
+		title	=> 'ALARM_ALARM_ENABLED',
+		type	=> 'checkbox',
+		checked => sub {
+				my $client = shift;
+				return $client->modeParam('alarm_alarm')->enabled;
+			},
+		toggleFunc => sub {  
+				my $client = shift;
+				my $alarm = $client->modeParam('alarm_alarm');
+				$alarm->enabled(! $alarm->enabled);
+				saveAlarm($client, $alarm);
+			},
+
+	},
 	{
 		title	=> 'ALARM_SET_TIME',
 		type	=> 'time',
@@ -148,11 +165,6 @@ my @alarmMenu = (
 		items => \@volumeMenu,
 	},
 	{
-		title	=> 'ALARM_DELETE',
-		type	=> 'menu',
-		items	=> \@deleteMenu,
-	},
-	{
 		title	=> 'ALARM_ALARM_REPEAT',
 		type	=> 'checkbox',
 		checked => sub {
@@ -168,19 +180,9 @@ my @alarmMenu = (
 
 	},
 	{
-		title	=> 'ALARM_ALARM_ENABLED',
-		type	=> 'checkbox',
-		checked => sub {
-				my $client = shift;
-				return $client->modeParam('alarm_alarm')->enabled;
-			},
-		toggleFunc => sub {  
-				my $client = shift;
-				my $alarm = $client->modeParam('alarm_alarm');
-				$alarm->enabled(! $alarm->enabled);
-				saveAlarm($client, $alarm);
-			},
-
+		title	=> 'ALARM_DELETE',
+		type	=> 'menu',
+		items	=> \@deleteMenu,
 	},
 );
 
@@ -191,7 +193,9 @@ my @menu = (
 		# Add alarm
 		title		=> 'ALARM_ADD',
 		type		=> 'menu',
-		items		=> \@alarmMenu,
+		# Move Enabled to end of item list for a new alarm - it's normally at the top.  Set Time will now be first.
+		# Discard the Remove Alarm option, which is at the end.
+		items		=> [@alarmMenu[1 .. $#alarmMenu - 1, 0]],
 	},
 	{
 		# Default alarm volume
@@ -221,7 +225,6 @@ my @menu = (
 					Slim::Utils::Alarm->alarmsEnabled($client, ! Slim::Utils::Alarm->alarmsEnabled($client));
 				},
 	},
-
 );
 
 
@@ -332,7 +335,7 @@ sub setMode {
 	my %params = (
 		%choiceBaseParams,
 		listRef		=> \@topMenu,
-		alarm_menuTitle	=> 'ALARM',
+		alarm_menuTitle	=> '{ALARM}',
 		# How many sub-menus deep we are in the alarm button mode
 		alarm_depth	=> 0,
 		#modeName	=> 'alarm',
