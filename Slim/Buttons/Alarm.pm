@@ -153,6 +153,21 @@ my @alarmMenu = (
 		items	=> \@deleteMenu,
 	},
 	{
+		title	=> 'ALARM_ALARM_REPEAT',
+		type	=> 'checkbox',
+		checked => sub {
+				my $client = shift;
+				return $client->modeParam('alarm_alarm')->repeat;
+			},
+		toggleFunc => sub {  
+				my $client = shift;
+				my $alarm = $client->modeParam('alarm_alarm');
+				$alarm->repeat(! $alarm->repeat);
+				saveAlarm($client, $alarm);
+			},
+
+	},
+	{
 		title	=> 'ALARM_ALARM_ENABLED',
 		type	=> 'checkbox',
 		checked => sub {

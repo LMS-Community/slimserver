@@ -110,6 +110,7 @@ sub new {
 		# 0=Sun 6=Sat. undef indicates a calendar alarm
 		_days => (! defined $time || $time < 86400) ? [(1) x 7] : undef,
 		_enabled => 0,
+		_repeat => 1,
 		_playlist => undef,
 		_volume => undef, # Use default volume
 		_active => 0,
@@ -224,6 +225,24 @@ sub enabled {
 	$self->{_enabled} = $newValue if defined $newValue;
 	
 	return $self->{_enabled};
+}
+
+=head3 repeat ( [0/1] )
+
+Sets/returns whether this alarm repeats.  Non-repeating alarms will be automatically disabled once they have sounded.
+
+Non-repeating alarms that are set to sound on multiple days, will be disabled after they sound for the first time and so will
+not then sound on the other days unless they are then re-enabled manually.
+
+=cut
+
+sub repeat {
+	my $self = shift;
+	my $newValue = shift;
+
+	$self->{_repeat} = $newValue if defined $newValue;
+	
+	return $self->{_repeat};
 }
 
 =head3 time( [ $time ] )
@@ -442,6 +461,12 @@ sub sound {
 			$log->debug("Alarm is $delta seconds late - ignoring");
 			$soundAlarm = 0;
 		}
+	}
+
+	# Disable alarm if it doesn't repeat
+	if (! $self->{_repeat}) {
+		$log->debug('Alarm does not repeat so disabling for next time');
+		$self->{_enabled} = 0;
 	}
 
 	if ($soundAlarm) {
@@ -679,6 +704,7 @@ Returns a short, single-line string describing this alarm.  e.g. 09:00 Mo Sa Sj
 
 =cut
 
+#TODO: Make this shorter.  Maybe Mo-We Fr Su, Mo-Fr, Mo Tu Fr-Su ?  Take argument for longer strings
 sub displayStr {
 	my $self = shift;
 

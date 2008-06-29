@@ -57,6 +57,20 @@
 					</select></td>
 				</tr>
 
+				<tr>
+					<td><label for="alarm[% alarm.id %]" class="stdlabel">[% "ALARM_ALARM_REPEAT" | string %][% "COLON" | string %]</label>&nbsp;</td>
+					<td><select class="stdedit" name="alarm_repeat[% alarm.id %]" id="alarm_repeat[% alarm.id %]">
+			
+						[% FOREACH option = {
+							'1' => 'YES',
+							'0' => 'NO',
+						} %]
+							<option [% IF alarm.repeat == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						[%- END -%]
+					
+					</select></td>
+				</tr>
+
 				<tr><td><input name="Remove[% alarm.id %]" type="submit" class="stdclick" value="[% "ALARM_DELETE" | string %]">
 				</td></tr>
 			</table>

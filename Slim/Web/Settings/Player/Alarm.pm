@@ -48,6 +48,7 @@ sub handler {
 				$alarm->time($t);
 
 				$alarm->enabled($paramRef->{'alarm_enable'.$alarm->id});
+				$alarm->repeat($paramRef->{'alarm_repeat'.$alarm->id});
 				for my $day (1 .. 7) {
 					$alarm->day($day,$paramRef->{'alarmday'.$alarm->id.$day} ? 1 : 0);
 				}

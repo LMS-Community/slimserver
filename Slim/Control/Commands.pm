@@ -85,6 +85,7 @@ sub alarmCommand {
 	my $cmd         = $request->getParam('cmd');
 	my $dow         = $request->getParam('dow');
 	my $enable      = $request->getParam('enabled');
+	my $repeat      = $request->getParam('repeat');
 	my $time        = $request->getParam('time');
 	my $volume      = $request->getParam('volume');
 	my $playlisturl = $request->getParam('url');
@@ -121,6 +122,7 @@ sub alarmCommand {
 			$alarm->playlist($playlisturl) if defined $playlisturl;
 			$alarm->volume($volume) if defined $volume;
 			$alarm->enabled($enable) if defined $enable;
+			$alarm->repeat($repeat) if defined $repeat;
 
 			foreach (0..6) {
 				my $set = !defined $dow || $dow =~ /$_/; 
