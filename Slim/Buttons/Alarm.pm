@@ -379,8 +379,12 @@ sub buildPlaylistMenu {
 		# Get the playlist names for this type and build up a sub-menu of the playlists
 		my @names = sort keys %{$playlistTypes{$type}};
 
+		my $useSubMenu;
 		foreach my $playlistName (@names) {
 			my $playlistUrl = $playlistTypes{$type}->{$playlistName};
+
+			# Don't put the current playlist in a sub menu (current playlist has url == undef)
+			$useSubMenu = defined $playlistUrl;
 
 			push @subMenu, {
 					title		=> $playlistName,
@@ -397,8 +401,8 @@ sub buildPlaylistMenu {
 				};
 		}
 
-		if (scalar @subMenu == 1) {
-			# For types with only one entry, put the checkbox at the top-level rather than in a sub-menu
+		if (scalar @subMenu == 1 && ! $useSubMenu) {
+			# This should be the current playlist entry so put it at the top-level
 			push @menu, $subMenu[0];
 		} else {
 			# For types with more than one entry, create a sub-menu

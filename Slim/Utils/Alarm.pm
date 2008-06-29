@@ -75,7 +75,7 @@ my %alarmPlaylists = ();
 # Initialise to just contain the current playlist, which is a special case where url is undef.
 my %alarmPlaylistTypes = (
 	'CURRENT_PLAYLIST'	=> {
-		'{CURRENT_PLAYLIST}'	=> undef,	
+		'{ALARM_USE_CURRENT_PLAYLIST}'	=> undef,	
 	},
 );
 

@@ -1319,6 +1319,9 @@ ALARM_SELECT_PLAYLIST
 	SV	Välj låtlista för väckning
 	ZH_CN	可当闹钟用的播放表
 
+ALARM_USE_CURRENT_PLAYLIST
+	EN	Use Current Playlist
+
 ALARM_SET_VOLUME
 	CS	Nastavit hlasitost buzení
 	DA	Indstil volume for alarmen
