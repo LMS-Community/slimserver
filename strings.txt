@@ -13406,15 +13406,15 @@ NOT
 COLON
 	CS	:
 	DE	:
-	EN	: 
+	EN	:
 	ES	:
 	FR	 :
-	HE	: 
+	HE	:
 	IT	:
 	JA	:
 	NL	:
 	NO	:
-	SV	: 
+	SV	:
 	ZH_CN	：
 
 SETUP_GROUP_RADIO_DESC

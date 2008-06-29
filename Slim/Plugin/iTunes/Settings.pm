@@ -38,10 +38,17 @@ $prefs->setValidate('dir', 'music_path');
 
 $prefs->setChange(
 	sub {
-		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Plugin', $_[1]);
+		my $value = $_[1];
+		
+		Slim::Music::Import->useImporter('Slim::Plugin::iTunes::Plugin', $value);
 
 		for my $c (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($c);
+		}
+		
+		# Default TPE2 as Album Artist pref if using iTunes
+		if ( $value ) {
+			preferences('server')->set( useTPE2AsAlbumArtist => 1 );
 		}
 	},
 'itunes');

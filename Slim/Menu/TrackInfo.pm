@@ -32,6 +32,8 @@ my $log = logger('menu.trackinfo');
 my %infoProvider;
 my @infoOrdering;
 
+*cstring = \&Slim::Utils::Strings::clientString;
+
 sub init {
 	my $class = shift;
 	
@@ -204,6 +206,7 @@ after: Place this menu after the given menu item.
 before: Place this menu before the given menu item.
 
 func: Callback to produce the menu.  Is passed $client, $url, $track, $remoteMeta.
+Note that $client may be undef if browsing track info without a client (i.e. from the web).
 
 The special values 'top', 'middle', and 'bottom' may be used if you don't
 want exact placement in the menu.
@@ -279,7 +282,7 @@ sub menu {
 	
 	# Get plugin metadata for remote tracks
 	my $remoteMeta = {};
-	if ( $track->remote ) {
+	if ( $track->remote && blessed($client) ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		if ( $handler && $handler->can('getMetadataFor') ) {
 			$remoteMeta = $handler->getMetadataFor( $client, $url );
@@ -359,7 +362,6 @@ sub menu {
 # 'after', 'before' and 'isa' requirements that the
 # registered providers have requested.
 #
-# @param[in]  $client   The client we're ordering for
 # @param[in]  $name     The name of the item to add
 # @param[in]  $previous The item before this one, for 'before' processing
 sub generateInfoOrderingItem {
@@ -429,7 +431,7 @@ sub infoContributors {
 	if ( $remoteMeta->{artist} ) {
 		push @{$items}, {
 			type => 'text',
-			name => $client->string('ARTIST') . $client->string('COLON') . ' ' . $remoteMeta->{artist},
+			name => cstring($client, 'ARTIST') . cstring($client, 'COLON') . ' ' . $remoteMeta->{artist},
 		};
 	}
 	else {
@@ -456,7 +458,7 @@ sub infoContributors {
 				# Slim::Menu::Library::Contributor
 				push @{$items}, {
 					type => 'redirect',
-					name => $client->string( uc $role ) . $client->string('COLON') . ' ' . $contributor->name,
+					name => cstring($client,  uc $role) . cstring($client, 'COLON') . ' ' . $contributor->name,
 
 					db   => $db,
 
@@ -535,7 +537,7 @@ sub showArtwork {
 
 	push @{$items}, {
 		type => 'text',
-		name => $client->string('SHOW_ARTWORK'),
+		name => cstring($client, 'SHOW_ARTWORK'),
 		jive => $jive, 
 	};
 	
@@ -559,15 +561,15 @@ sub playAddTrack {
 	
 	my ($play_string, $add_string, $delete_string, $jump_string);
 	if ( $track->remote ) {
-		$play_string   = $client->string('PLAY');
-		$add_string    = $client->string('ADD');
-		$delete_string = $client->string('REMOVE_FROM_PLAYLIST');
-		$jump_string   = $client->string('PLAY');
+		$play_string   = cstring($client, 'PLAY');
+		$add_string    = cstring($client, 'ADD');
+		$delete_string = cstring($client, 'REMOVE_FROM_PLAYLIST');
+		$jump_string   = cstring($client, 'PLAY');
 	} else {
-		$play_string   = $client->string('JIVE_PLAY_THIS_SONG');
-		$add_string    = $client->string('JIVE_ADD_THIS_SONG');
-		$delete_string = $client->string('REMOVE_FROM_PLAYLIST');
-		$jump_string   = $client->string('JIVE_PLAY_THIS_SONG');
+		$play_string   = cstring($client, 'JIVE_PLAY_THIS_SONG');
+		$add_string    = cstring($client, 'JIVE_ADD_THIS_SONG');
+		$delete_string = cstring($client, 'REMOVE_FROM_PLAYLIST');
+		$jump_string   = cstring($client, 'JIVE_PLAY_THIS_SONG');
 	}	
 
 	# setup hash for different items between play and add
@@ -670,7 +672,7 @@ sub infoAlbum {
 	if ( $remoteMeta->{album} ) {
 		$item = {
 			type => 'text',
-			name => $client->string('ALBUM') . $client->string('COLON') . ' ' . $remoteMeta->{album},
+			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $remoteMeta->{album},
 		};
 	}
 	elsif ( my $album = $track->album ) {
@@ -692,7 +694,7 @@ sub infoAlbum {
 		
 		$item = {
 			type => 'redirect',
-			name => $client->string('ALBUM') . $client->string('COLON') . ' ' . $album->name,
+			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $album->name,
 
 			db   => $db,
 
@@ -778,7 +780,7 @@ sub infoGenres {
 		
 		push @{$items}, {
 			type => 'redirect',
-			name => $client->string('GENRE') . $client->string('COLON') . ' ' . $genre->name,
+			name => cstring($client, 'GENRE') . cstring($client, 'COLON') . ' ' . $genre->name,
 
 			db   => $db,
 
@@ -852,7 +854,7 @@ sub infoYear {
 
 		$item = {
 			type => 'redirect',
-			name => $client->string('YEAR') . $client->string('COLON') . " $year",
+			name => cstring($client, 'YEAR') . cstring($client, 'COLON') . " $year",
 
 			db   => $db,
 
@@ -924,7 +926,7 @@ sub infoComment {
 	
 	if ( my $comment = $track->comment ) {
 		$item = {
-			name  => $client->string('COMMENT'),
+			name  => cstring($client, 'COMMENT'),
 			items => [
 				{
 					type => 'text',
@@ -942,7 +944,7 @@ sub infoMoreInfo {
 	my ( $client, $url, $track ) = @_;
 	
 	return {
-		name => $client->string('MOREINFO'),
+		name => cstring($client, 'MOREINFO'),
 
 		web  => {
 			group => 'moreinfo',
@@ -959,7 +961,7 @@ sub infoTrackNum {
 	if ( my $tracknum = $track->tracknum ) {
 		$item = {
 			type => 'text',
-			name => $client->string('TRACK_NUMBER') . $client->string('COLON') . " $tracknum",
+			name => cstring($client, 'TRACK_NUMBER') . cstring($client, 'COLON') . " $tracknum",
 		};
 	}
 	
@@ -980,7 +982,7 @@ sub infoContentType {
 		
 		$item = {
 			type => 'text',
-			name => $client->string('TYPE') . $client->string('COLON') . ' ' . $client->string( uc($ct) ),
+			name => cstring($client, 'TYPE') . cstring($client, 'COLON') . ' ' . cstring($client,  uc($ct) ),
 		};
 	}
 	
@@ -995,7 +997,7 @@ sub infoDuration {
 	if ( my $duration = $track->duration ) {
 		$item = {
 			type => 'text',
-			name => $client->string('LENGTH') . $client->string('COLON') . " $duration",
+			name => cstring($client, 'LENGTH') . cstring($client, 'COLON') . " $duration",
 		};
 	}
 	
@@ -1012,7 +1014,7 @@ sub infoReplayGain {
 	if ( my $replaygain = $track->replay_gain ) {
 		push @{$items}, {
 			type => 'text',
-			name => $client->string('REPLAYGAIN') . $client->string('COLON') . ' ' . sprintf( "%2.2f", $replaygain ) . ' dB',
+			name => cstring($client, 'REPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $replaygain ) . ' dB',
 		};
 	}
 	
@@ -1020,7 +1022,7 @@ sub infoReplayGain {
 		if ( my $albumreplaygain = $album->replay_gain ) {
 			push @{$items}, {
 				type => 'text',
-				name => $client->string('ALBUMREPLAYGAIN') . $client->string('COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
+				name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
 			};
 		}
 	}
@@ -1036,7 +1038,7 @@ sub infoRating {
 	if ( my $rating = $track->rating ) {
 		$item = {
 			type => 'text',
-			name => $client->string('RATING') . $client->string('COLON') . ' ' . sprintf( "%d", $rating ) . ' /100',
+			name => cstring($client, 'RATING') . cstring($client, 'COLON') . ' ' . sprintf( "%d", $rating ) . ' /100',
 		};
 	}
 	
@@ -1059,18 +1061,18 @@ sub infoBitrate {
 
 			if ( !$undermax ) {
 
-				$rate = Slim::Utils::Prefs::maxRate($client) . $client->string('KBPS') . " ABR";
+				$rate = Slim::Utils::Prefs::maxRate($client) . cstring($client, 'KBPS') . " ABR";
 			}
 
 			# XXX: used to be shown only if modeParam 'current' was set
 			if ( defined $undermax && !$undermax ) { 
-				$convert = sprintf( '(%s %s)', $client->string('CONVERTED_TO'), $rate );
+				$convert = sprintf( '(%s %s)', cstring($client, 'CONVERTED_TO'), $rate );
 			}
 			
 			$item = {
 				type => 'text',
 				name => sprintf( "%s: %s %s",
-					$client->string('BITRATE'), $bitrate, $convert,
+					cstring($client, 'BITRATE'), $bitrate, $convert,
 				),
 			};
 		}
@@ -1087,7 +1089,7 @@ sub infoSampleRate {
 	if ( $track->samplerate ) {
 		$item = {
 			type => 'text',
-			name => $client->string('SAMPLERATE') . $client->string('COLON') . ' ' . $track->prettySampleRate,
+			name => cstring($client, 'SAMPLERATE') . cstring($client, 'COLON') . ' ' . $track->prettySampleRate,
 		};
 	}
 	
@@ -1103,7 +1105,7 @@ sub infoSampleSize {
 	if ( my $samplesize = $track->samplesize ) {
 		$item = {
 			type => 'text',
-			name => $client->string('SAMPLESIZE') . $client->string('COLON') . " $samplesize " . $client->string('BITS'),
+			name => cstring($client, 'SAMPLESIZE') . cstring($client, 'COLON') . " $samplesize " . cstring($client, 'BITS'),
 		};
 	}
 	
@@ -1118,7 +1120,7 @@ sub infoFileSize {
 	if ( my $len = $track->filesize ) {
 		$item = {
 			type => 'text',
-			name => $client->string('FILELENGTH') . $client->string('COLON') . ' ' . Slim::Utils::Misc::delimitThousands($len),
+			name => cstring($client, 'FILELENGTH') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($len),
 		};
 	}
 	
@@ -1134,8 +1136,8 @@ sub infoUrl {
 		$item = {
 			type => 'text',
 			name => $track->isRemoteURL($turl)
-				? $client->string('URL') . $client->string('COLON') . ' ' . Slim::Utils::Misc::unescape($turl)
-				: $client->string('LOCATION') . $client->string('COLON') . ' ' . Slim::Utils::Unicode::utf8on( Slim::Utils::Misc::pathFromFileURL($turl) ),
+				? cstring($client, 'URL') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::unescape($turl)
+				: cstring($client, 'LOCATION') . cstring($client, 'COLON') . ' ' . Slim::Utils::Unicode::utf8on( Slim::Utils::Misc::pathFromFileURL($turl) ),
 		};
 	}
 	
@@ -1151,7 +1153,7 @@ sub infoFileModTime {
 		if ( my $age = $track->modificationTime ) {
 			$item = {
 				type => 'text',
-				name => $client->string('MODTIME') . $client->string('COLON') . " $age",
+				name => cstring($client, 'MODTIME') . cstring($client, 'COLON') . " $age",
 			};
 		}
 	}
@@ -1167,7 +1169,7 @@ sub infoTagVersion {
 	if ( my $ver = $track->tagversion ) {
 		$item = {
 			type => 'text',
-			name => $client->string('TAGVERSION') . $client->string('COLON') . " $ver",
+			name => cstring($client, 'TAGVERSION') . cstring($client, 'COLON') . " $ver",
 		};
 	}
 	
