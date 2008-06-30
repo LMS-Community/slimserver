@@ -182,7 +182,7 @@ SqueezeJS.UI = {
 
 			el.setStyle({ cursor: 'progress' });
 
-			window.setTimeout("Ext.get('" + el.id + "').setStyle({cursor:'" + oldCursor + "'})", timeout || 1000);
+			window.setTimeout("function() { el.setStyle({cursor:'" + oldCursor + "'}) }", timeout || 1000);
 		}
 	},
 	
