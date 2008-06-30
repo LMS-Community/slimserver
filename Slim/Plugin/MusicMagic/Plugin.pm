@@ -1214,9 +1214,10 @@ sub trackInfoHandler {
 
 	if ( $mixable ) {
 		return {
-			type   => 'redirect',
-			jive   => $jive,
-			name   => cstring($client, 'MUSICIP_CREATEMIX'),
+			type      => 'redirect',
+			jive      => $jive,
+			name      => cstring($client, 'MUSICIP_CREATEMIX'),
+			favorites => 0,
 
 			player => {
 				mode => 'musicmagic_mix',

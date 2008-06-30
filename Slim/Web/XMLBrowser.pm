@@ -494,9 +494,9 @@ sub handleFeed {
 				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );
 			}
 		}
-	
+
 		for my $item (@items) {
-			if ($item->{'url'}) {
+			if ($item->{'url'} && !defined $item->{'favorites'}) {
 				$item->{'favorites'} = $favs->hasUrl( $item->{'play'} || $item->{'url'} ) ? 2 : 1;
 			}
 		}

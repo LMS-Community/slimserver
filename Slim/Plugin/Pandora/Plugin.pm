@@ -201,9 +201,10 @@ sub trackInfoMenu {
 	
 	if ( $artist && $title ) {
 		return {
-			type => 'link',
-			name => $client->string('PLUGIN_PANDORA_ON_PANDORA'),
-			url  => $snURL,
+			type      => 'link',
+			name      => $client->string('PLUGIN_PANDORA_ON_PANDORA'),
+			url       => $snURL,
+			favorites => 0,
 		};
 	}
 }

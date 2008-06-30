@@ -265,9 +265,10 @@ sub trackInfoMenu {
 	
 	if ( $artist && ( $album || $title ) ) {
 		return {
-			type => 'link',
-			name => $client->string('PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY'),
-			url  => $snURL,
+			type      => 'link',
+			name      => $client->string('PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY'),
+			url       => $snURL,
+			favorites => 0,
 		};
 	}
 }

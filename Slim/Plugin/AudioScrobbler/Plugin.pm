@@ -1225,6 +1225,7 @@ sub infoLoveTrack {
 		name        => $client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK'),
 		url         => \&infoLoveTrackSubmit,
 		passthrough => [ $url ],
+		favorites   => 0,
 	};
 }
 
@@ -1237,6 +1238,7 @@ sub infoLoveTrackSubmit {
 		type        => 'text',
 		name        => $client->string('PLUGIN_AUDIOSCROBBLER_TRACK_LOVED'),
 		showBriefly => 1,
+		favorites   => 0,
 	} );
 }
 		
