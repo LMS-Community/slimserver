@@ -14,6 +14,8 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 sub name {
 	return Slim::Web::HTTP::protectName('ALARM_SETTINGS');
 }
@@ -26,12 +28,18 @@ sub needsClient {
 	return 1;
 }
 
+sub prefs {
+	my ($class, $client) = @_;
+
+	return ($prefs->client($client), qw(alarmSnoozeSeconds alarmfadeseconds));
+}
+
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	my $prefs = preferences('server');
 
-	my @prefs = ();
+	my ($prefsClass, @prefs) = $class->prefs($client);
 
 	if ($paramRef->{'saveSettings'}) {
 		for my $alarm (Slim::Utils::Alarm->getAlarms($client)) {
@@ -68,7 +76,7 @@ sub handler {
 	$paramRef->{'defaultVolume'}   = Slim::Utils::Alarm->defaultVolume($client);
 
 	# Get the non-calendar alarms for this client
-	$paramRef->{'prefs'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
+	$paramRef->{'prefs'}->{'alarms'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
 	
 	return $class->SUPER::handler($client, $paramRef);
 }

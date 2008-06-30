@@ -1,5 +1,14 @@
 [% PROCESS settings/header.html %]
-	[% FOREACH alarm = prefs %]
+
+	[% WRAPPER setting title="SETUP_SNOOZE_SECONDS" desc="SETUP_SNOOZE_SECONDS_DESC" %]
+		<input type="text" class="stdedit" name="pref_alarmSnoozeSeconds" id="playername" value="[% prefs.pref_alarmSnoozeSeconds %]" size="20">
+	[% END %]
+
+	[% WRAPPER setting title="ALARM_FADE" desc="" %]
+		<input type=checkbox [% IF prefs.pref_alarmfadeseconds %]checked [% END %] class="stdedit" name="pref_alarmfadeseconds" id="alarmfadeseconds" value="1" />
+	[% END %]
+
+	[% FOREACH alarm = prefs.alarms %]
 		
 		[% WRAPPER setting title="$alarm.displayStr" desc="" %]
 			<table cellspacing="0">
@@ -79,7 +88,7 @@
 		
 	[% END %]
 
-	[% WRAPPER setting title="ALARM" desc=(prefs.size ? "ALARM_ADD_DESC" : "") %]
+	[% WRAPPER setting title="ALARM" desc=(prefs.alarms.size ? "ALARM_ADD_DESC" : "") %]
 		[% IF !prefs.size %]<div class="prefDesc">[% "ALARM_ADD_DESC" | string %]</div>[% END %]
 		<input name="AddAlarm" type="submit" class="stdclick" value="[% "ALARM_ADD" | string %]">
 	[% END %]

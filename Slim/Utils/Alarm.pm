@@ -948,10 +948,15 @@ sub getAlarms {
 
 	my @alarms;
 	foreach my $alarm (sort {$alarmHash->{$a}->displayStr cmp $alarmHash->{$b}->displayStr} keys %{$alarmHash}) {
+				
 		$alarm = $alarmHash->{$alarm};
+		
+		next unless $alarm && $alarm->id;
+
 		if ($excludeCalAlarms && $alarm->calendarAlarm) {
 			next;
 		}
+		
 		push @alarms, $alarm;
 	}
 	return @alarms;
