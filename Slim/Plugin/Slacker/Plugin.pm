@@ -226,6 +226,8 @@ sub deleteStation {
 
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
+
+	return unless $client;
 	
 	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'slacker' ) ) {
 		return;
