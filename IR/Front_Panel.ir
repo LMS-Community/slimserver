@@ -17,9 +17,7 @@ power.down				= 0001000a
 arrow_up.down			= 0001000b
 arrow_down.down			= 0001000c
 arrow_left.down			= 0001000d
-
-#arrow_right.down		= 0001000e
-
+arrow_right.down		= 0001000e
 search.down				= 0001000f
 rew.down				= 00010010
 fwd.down				= 00010011
@@ -45,7 +43,6 @@ preset_6.down			= 00010025	# Boom: Preset 6
 snooze.down			= 00010026	# Boom: Sleep
 knob_left			= 0001005a	# Boom: Knob left
 knob_right			= 0001005b	# Boom: Knob right
-knob_push.down		= 0001000e	
 
 
 0.up					= 00020000
@@ -62,9 +59,7 @@ power.up				= 0002000a
 arrow_up.up				= 0002000b
 arrow_down.up			= 0002000c
 arrow_left.up			= 0002000d
-
-#arrow_right.up			= 0002000e
-
+arrow_right.up			= 0002000e
 search.up				= 0002000f
 rew.up					= 00020010
 fwd.up					= 00020011
@@ -87,5 +82,4 @@ preset_3.up			= 00020022	# Boom: Preset 3
 preset_4.up			= 00020023	# Boom: Preset 4
 preset_5.up			= 00020024	# Boom: Preset 5
 preset_6.up			= 00020025	# Boom: Preset 6
-knob_push.up		= 0002000e
 snooze.up			= 00020026	# Boom: Sleep
