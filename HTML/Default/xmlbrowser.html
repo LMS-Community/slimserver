@@ -186,7 +186,6 @@ END %]
 		END;
 
 		new_index = 0;
-#'<pre>';USE Dumper; Dumper.dump(details.unfold);'</pre>';
 		FOREACH group = details.unfold.keys;
 			start = details.unfold.${group}.start + new_index;
 			CALL items.splice(start, 1, details.unfold.${group}.items);
