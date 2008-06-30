@@ -36,8 +36,8 @@
 		<div class="[% lineclass || 'browsedbListItem' %][% IF ((item.image || (levelName == 'album' || levelName == 'age')) && !(artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content | indent(4) %]</div>
 			<span class="browsedbControls">
-				[%- IF leftcontrols && leftcontrols != controls; PROCESS $leftcontrols; END %]
 				[%- IF rightcontrols && rightcontrols != controls; PROCESS $rightcontrols; END %]
+				[%- IF leftcontrols && leftcontrols != controls; PROCESS $leftcontrols; END %]
 				[%- IF controls; PROCESS $controls; END %]
 			</span>
 		</div></div></div></div></div>
