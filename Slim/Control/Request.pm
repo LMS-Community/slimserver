@@ -422,6 +422,7 @@ use Slim::Control::Queries;
 use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(cstring);
 
 our %dispatchDB;                # contains a multi-level hash pointing to
                                 # each command or query subroutine
@@ -1515,7 +1516,7 @@ sub string {
 
 	my $client = $self->client();
 
-	return Slim::Utils::Strings::clientString($client, $string);
+	return cstring($client, $string);
 }
 
 

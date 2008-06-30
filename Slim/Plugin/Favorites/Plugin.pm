@@ -25,7 +25,7 @@ use Slim::Web::XMLBrowser;
 use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings qw(string);
+use Slim::Utils::Strings qw(string cstring);
 use Slim::Music::Info;
 use Slim::Utils::Prefs;
 
@@ -980,13 +980,13 @@ sub trackInfoHandler {
 			$jive->{actions} = $actions;
 			return {
 				type        => 'text',
-				name        => Slim::Utils::Strings::clientString($client, 'JIVE_ADD_TO_FAVORITES'),
+				name        => cstring($client, 'JIVE_ADD_TO_FAVORITES'),
 				jive        => $jive,
 			};
 		} else {
 			return {
 				type        => 'link',
-				name        => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_ADD'),
+				name        => cstring($client, 'PLUGIN_FAVORITES_ADD'),
 				url         => \&trackInfoAddFavorite,
 				passthrough => [ $track ],
 			};
@@ -1011,14 +1011,14 @@ sub trackInfoHandler {
 			$jive->{actions} = $actions;
 			return {
 				type        => 'text',
-				name        => Slim::Utils::Strings::clientString($client, 'JIVE_DELETE_FROM_FAVORITES'),
+				name        => cstring($client, 'JIVE_DELETE_FROM_FAVORITES'),
 				jive        => $jive,
 			};
 	
 		} else {
 			return {
 				type        => 'link',
-				name        => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_REMOVE'),
+				name        => cstring($client, 'PLUGIN_FAVORITES_REMOVE'),
 				url         => \&trackInfoRemoveFavorite,
 				passthrough => [ $track ],
 			};
@@ -1043,7 +1043,7 @@ sub trackInfoAddFavorite {
 	
 	my $menu = {
 		type        => 'text',
-		name        => Slim::Utils::Strings::clientString($client, 'FAVORITES_ADDING'),
+		name        => cstring($client, 'FAVORITES_ADDING'),
 		showBriefly => 1,
 		refresh     => 1,
 	};
@@ -1057,13 +1057,13 @@ sub trackInfoRemoveFavorite {
 	my $menu = [
 		{
 			type => 'link',
-			name => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_CANCEL'),
+			name => cstring($client, 'PLUGIN_FAVORITES_CANCEL'),
 			url  => sub {
 				my $callback = $_[1];
 				
 				$callback->( {
 					type        => 'text',
-					name        => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_CANCELLING'),
+					name        => cstring($client, 'PLUGIN_FAVORITES_CANCELLING'),
 					showBriefly => 1,
 					popback     => 2,
 				} );
@@ -1071,7 +1071,7 @@ sub trackInfoRemoveFavorite {
 		},
 		{
 			type => 'link',
-			name => $client->string('FAVORITES_RIGHT_TO_DELETE'),
+			name => cstring($client, 'FAVORITES_RIGHT_TO_DELETE'),
 			url  => sub {
 				my $callback = $_[1];
 				
@@ -1082,7 +1082,7 @@ sub trackInfoRemoveFavorite {
 				
 				my $menu2 = {
 					type        => 'text',
-					name        => Slim::Utils::Strings::clientString($client, 'FAVORITES_DELETING'),
+					name        => cstring($client, 'FAVORITES_DELETING'),
 					showBriefly => 1,
 					popback     => 2,
 					refresh     => 1,

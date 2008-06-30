@@ -26,13 +26,12 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
+use Slim::Utils::Strings qw(cstring);
 
 my $log = logger('menu.trackinfo');
 
 my %infoProvider;
 my @infoOrdering;
-
-*cstring = \&Slim::Utils::Strings::clientString;
 
 sub init {
 	my $class = shift;
