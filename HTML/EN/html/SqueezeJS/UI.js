@@ -1640,6 +1640,7 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 		if (!this.getPlEl())
 			return;
 
+		this.Highlighter.unHighlight();
 		this._initSortable();
 		this.highlightCurrent();
 
