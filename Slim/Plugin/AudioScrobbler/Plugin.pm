@@ -1212,6 +1212,8 @@ sub setQueue {
 
 sub infoLoveTrack {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
+
+	return unless $client;
 	
 	# Ignore if the current track can't be scrobbled
 	if ( !__PACKAGE__->canScrobble( $client, $track ) ) {

@@ -182,6 +182,9 @@ sub skipTrack {
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
+	# can't browse without a player connected
+	return unless $client;
+	
 	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' ) ) {
 		return;
 	}

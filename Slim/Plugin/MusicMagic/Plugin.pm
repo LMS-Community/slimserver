@@ -1216,7 +1216,7 @@ sub trackInfoHandler {
 		return {
 			type   => 'redirect',
 			jive   => $jive,
-			name   => $client->string('MUSICIP_CREATEMIX'),
+			name   => Slim::Utils::Strings::clientString($client, 'MUSICIP_CREATEMIX'),
 
 			player => {
 				mode => 'musicmagic_mix',
