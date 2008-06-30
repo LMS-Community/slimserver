@@ -243,6 +243,9 @@ sub gotCreatePlaylistError {
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
+	# can't access rhapsody without a player
+	return unless $client;
+	
 	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'rhapsody' ) ) {
 		return;
 	}

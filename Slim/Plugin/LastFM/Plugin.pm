@@ -232,7 +232,7 @@ sub trackInfoMenu {
 	if ( $artist ) {
 		return {
 			type => 'link',
-			name => $client->string('PLUGIN_LFM_ON_LASTFM'),
+			name => Slim::Utils::Strings::clientString('PLUGIN_LFM_ON_LASTFM'),
 			url  => $snURL,
 		};
 	}
