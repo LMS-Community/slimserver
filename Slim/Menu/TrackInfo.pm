@@ -109,6 +109,12 @@ sub registerDefaultInfoProviders {
 		after  => 'moreinfo',
 		func   => \&infoTrackNum,
 	) );
+	
+	$class->registerInfoProvider( disc => (
+		parent => 'moreinfo',
+		after  => 'moreinfo',
+		func   => \&infoDisc,
+	) );
 
 	$class->registerInfoProvider( type => (
 		parent => 'moreinfo',
@@ -929,7 +935,7 @@ sub infoComment {
 				{
 					type => 'text',
 					wrap => 1,
-					name => $comment,
+					name => cstring($client, 'COMMENT') . cstring($client, 'COLON') . " $comment",
 				},
 			],
 			
@@ -966,6 +972,23 @@ sub infoTrackNum {
 		$item = {
 			type => 'text',
 			name => cstring($client, 'TRACK_NUMBER') . cstring($client, 'COLON') . " $tracknum",
+		};
+	}
+	
+	return $item;
+}
+
+sub infoDisc {
+	my ( $client, $url, $track ) = @_;
+	
+	my $item;
+	my ($disc, $discc);
+	my $album = $track->album;
+	
+	if ( blessed($album) && ($disc = $album->disc) && ($discc = $album->discc) ) {
+		$item = {
+			type => 'text',
+			name => cstring($client, 'DISC') . cstring($client, 'COLON') . " $disc/$discc",
 		};
 	}
 	
