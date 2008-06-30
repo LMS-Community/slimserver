@@ -10,6 +10,7 @@ use base qw(Slim::Plugin::OPMLBased);
 use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::LastFM::ProtocolHandler;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Unicode;
 
 use URI::Escape qw(uri_escape_utf8);
@@ -232,7 +233,7 @@ sub trackInfoMenu {
 	if ( $artist ) {
 		return {
 			type => 'link',
-			name => Slim::Utils::Strings::clientString($client, 'PLUGIN_LFM_ON_LASTFM'),
+			name => cstring($client, 'PLUGIN_LFM_ON_LASTFM'),
 			url  => $snURL,
 		};
 	}
