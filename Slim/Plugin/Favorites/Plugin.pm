@@ -980,13 +980,13 @@ sub trackInfoHandler {
 			$jive->{actions} = $actions;
 			return {
 				type        => 'text',
-				name        => $client->string('JIVE_ADD_TO_FAVORITES'),
+				name        => Slim::Utils::Strings::clientString($client, 'JIVE_ADD_TO_FAVORITES'),
 				jive        => $jive,
 			};
 		} else {
 			return {
 				type        => 'link',
-				name        => $client->string('PLUGIN_FAVORITES_ADD'),
+				name        => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_ADD'),
 				url         => \&trackInfoAddFavorite,
 				passthrough => [ $track ],
 			};
@@ -1011,14 +1011,14 @@ sub trackInfoHandler {
 			$jive->{actions} = $actions;
 			return {
 				type        => 'text',
-				name        => $client->string('JIVE_DELETE_FROM_FAVORITES'),
+				name        => Slim::Utils::Strings::clientString($client, 'JIVE_DELETE_FROM_FAVORITES'),
 				jive        => $jive,
 			};
 	
 		} else {
 			return {
 				type        => 'link',
-				name        => $client->string('PLUGIN_FAVORITES_REMOVE'),
+				name        => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_REMOVE'),
 				url         => \&trackInfoRemoveFavorite,
 				passthrough => [ $track ],
 			};
@@ -1043,7 +1043,7 @@ sub trackInfoAddFavorite {
 	
 	my $menu = {
 		type        => 'text',
-		name        => $client->string('FAVORITES_ADDING'),
+		name        => Slim::Utils::Strings::clientString($client, 'FAVORITES_ADDING'),
 		showBriefly => 1,
 		refresh     => 1,
 	};
@@ -1057,13 +1057,13 @@ sub trackInfoRemoveFavorite {
 	my $menu = [
 		{
 			type => 'link',
-			name => $client->string('PLUGIN_FAVORITES_CANCEL'),
+			name => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_CANCEL'),
 			url  => sub {
 				my $callback = $_[1];
 				
 				$callback->( {
 					type        => 'text',
-					name        => $client->string('PLUGIN_FAVORITES_CANCELLING'),
+					name        => Slim::Utils::Strings::clientString($client, 'PLUGIN_FAVORITES_CANCELLING'),
 					showBriefly => 1,
 					popback     => 2,
 				} );
@@ -1082,7 +1082,7 @@ sub trackInfoRemoveFavorite {
 				
 				my $menu2 = {
 					type        => 'text',
-					name        => $client->string('FAVORITES_DELETING'),
+					name        => Slim::Utils::Strings::clientString($client, 'FAVORITES_DELETING'),
 					showBriefly => 1,
 					popback     => 2,
 					refresh     => 1,

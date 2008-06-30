@@ -1515,7 +1515,7 @@ sub string {
 
 	my $client = $self->client();
 
-	return $client ? $client->string($string) : Slim::Utils::Strings::string($string);
+	return Slim::Utils::Strings::clientString($client, $string);
 }
 
 
