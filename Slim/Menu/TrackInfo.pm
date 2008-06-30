@@ -94,8 +94,6 @@ sub registerDefaultInfoProviders {
 		func  => \&infoYear,
 	) );
 	
-	# XXX: Show Artwork (Jive only)
-	
 	$class->registerInfoProvider( comment => (
 		after => 'year',
 		func  => \&infoComment,
@@ -934,6 +932,11 @@ sub infoComment {
 					name => $comment,
 				},
 			],
+			
+			web   => {
+				group  => 'comment',
+				unfold => 1,
+			}
 		};
 	}
 	
@@ -947,7 +950,8 @@ sub infoMoreInfo {
 		name => cstring($client, 'MOREINFO'),
 
 		web  => {
-			group => 'moreinfo',
+			group  => 'moreinfo',
+			unfold => 1,
 		},
 
 	};

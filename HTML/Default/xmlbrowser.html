@@ -125,8 +125,7 @@ END %]
 	IF path == 'trackinfo.html';
 		details = {};
 		mixerlinks = {};
-		moreinfo_start = 0;
-		moreinfo_index = 0;
+		isFavorite;
 
 		FOREACH item = items;
 			IF item.web;
@@ -139,15 +138,6 @@ END %]
 						name = item.web.value
 						id   = item.db.findCriteria.${'contributor.id'}
 					});
-
-				ELSIF item.web.group == 'moreinfo';
-					# Change the index value for the moreinfo items
-					moreinfo = item.items;
-					moreinfo_start = loop.index;
-					FOREACH moreitem = moreinfo;
-						moreitem.index = item.index _ '.' _ moreinfo_index;
-						moreinfo_index = moreinfo_index + 1;
-					END;
 
 				ELSIF item.web.group == 'mixers';
 
@@ -162,6 +152,22 @@ END %]
 
 					FOREACH param IN item.web.item.pairs;
 						details.mixers.0.${param.key} = param.value;
+					END;
+
+				# unfold items which are folded for smaller UIs;
+				ELSIF item.web.group && item.items && item.web.unfold;
+					UNLESS details.unfold; details.unfold = {}; END;
+					UNLESS details.unfold.${item.web.group}; details.unfold.${item.web.group} = {}; END;
+					
+					details.unfold.${item.web.group}.items = item.items;
+					details.unfold.${item.web.group}.start = loop.index;
+
+					# Change the index value for the moreinfo items
+					new_index = 0;
+					
+					FOREACH moreitem = details.unfold.${item.web.group}.items;
+						moreitem.index = item.index _ '.' _ new_index;
+						new_index = new_index + 1;
 					END;
 
 				ELSIF item.web.group;
@@ -179,8 +185,12 @@ END %]
 			END;
 		END;
 
-		IF moreinfo;
-			CALL items.splice(moreinfo_start, 1, moreinfo);
+		new_index = 0;
+#'<pre>';USE Dumper; Dumper.dump(details.unfold);'</pre>';
+		FOREACH group = details.unfold.keys;
+			start = details.unfold.${group}.start + new_index;
+			CALL items.splice(start, 1, details.unfold.${group}.items);
+			new_index = details.unfold.${group}.items.max;
 		END;
 
 		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
