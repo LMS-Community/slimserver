@@ -16,7 +16,7 @@ use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
-use Slim::Utils::Strings;
+use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Prefs;
 
 use Slim::Plugin::MusicMagic::Settings;
@@ -1216,7 +1216,7 @@ sub trackInfoHandler {
 		return {
 			type   => 'redirect',
 			jive   => $jive,
-			name   => Slim::Utils::Strings::clientString($client, 'MUSICIP_CREATEMIX'),
+			name   => cstring($client, 'MUSICIP_CREATEMIX'),
 
 			player => {
 				mode => 'musicmagic_mix',

@@ -38,7 +38,7 @@ string()
 use strict;
 use Exporter::Lite;
 
-our @EXPORT_OK = qw(string);
+our @EXPORT_OK = qw(string cstring clientString);
 
 use POSIX qw(setlocale LC_TIME);
 use File::Spec::Functions qw(:ALL);
@@ -407,6 +407,7 @@ sub string {
 =head2 clientString( $client, $token )
 
 Same as string but uses $client->string if client is available.
+Also available as cstring().
 
 =cut
 
@@ -420,6 +421,8 @@ sub clientString {
 		return string(@_);
 	}
 }
+
+*cstring = \&clientString;
 
 =head2 getString ( $token )
 
