@@ -79,25 +79,25 @@
 [%# taken from EN/cmdwrappers as an override %]
 [% BLOCK contentitem -%]
 <div class="[% odd ? "odd" : "even" %]" 
-	onmouseover="this.className='[% odd ? "odd" : "even" %]active';showElements(['browsedbControls[% itemid %]'], 'inline');" 
-	onmouseout="this.className='[% odd ? "odd" : "even" %]';hideElements(['browsedbControls[% itemid %]']);">
+	onmouseover="this.className='[% odd ? "odd" : "even" %]active';showElements(['browsedbControls[% itemid || loop.index %]'], 'inline');" 
+	onmouseout="this.className='[% odd ? "odd" : "even" %]';hideElements(['browsedbControls[% itemid || loop.index %]']);">
 	[%- IF anchor %]
 		<a name="[% anchor | uri %]"></a>
 	[%- END -%]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
 		[%- IF leftcontrols -%]
-			<span class="browsedbLeftControls" id="browsedbLeftControls[% itemid %]">
+			<span class="browsedbLeftControls" id="browsedbLeftControls[% itemid || loop.index %]">
 			[%- PROCESS $leftcontrols -%]
 			</span>
 		[%- END %]
 		[%- content | indent(4) %]
 		[%- IF rightcontrols -%]
-			<span class="browsedbRightControls" id="browsedbRightControls[% itemid %]">
+			<span class="browsedbRightControls" id="browsedbRightControls[% itemid || loop.index %]">
 			[%- PROCESS $rightcontrols -%]
 			</span>
 		[%- ELSIF controls -%]
-			<span class="browsedbControls" id="browsedbControls[% itemid %]" style="display:none;">
+			<span class="browsedbControls" id="browsedbControls[% itemid || loop.index %]" style="display:none;">
 			[%- PROCESS $controls -%]
 			</span>
 		[%- END %]
