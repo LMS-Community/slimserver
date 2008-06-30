@@ -564,6 +564,11 @@ div.pagetitleWithIcon {
 	position: relative;
 }
 
+.thumbArtwork {
+	position: relative;
+	text-align: center;
+}
+
 .thumbArtwork span.browsedbControls {
 	position: absolute;
 	top: auto;

@@ -989,6 +989,7 @@ sub trackInfoHandler {
 				name        => cstring($client, 'PLUGIN_FAVORITES_ADD'),
 				url         => \&trackInfoAddFavorite,
 				passthrough => [ $track ],
+				favorites   => 0,
 			};
 		}
 	}
@@ -1021,6 +1022,7 @@ sub trackInfoHandler {
 				name        => cstring($client, 'PLUGIN_FAVORITES_REMOVE'),
 				url         => \&trackInfoRemoveFavorite,
 				passthrough => [ $track ],
+				favorites   => 0,
 			};
 		}
 	}
@@ -1046,6 +1048,7 @@ sub trackInfoAddFavorite {
 		name        => cstring($client, 'FAVORITES_ADDING'),
 		showBriefly => 1,
 		refresh     => 1,
+		favorites   => 0,
 	};
 	
 	$callback->( $menu );
@@ -1066,6 +1069,7 @@ sub trackInfoRemoveFavorite {
 					name        => cstring($client, 'PLUGIN_FAVORITES_CANCELLING'),
 					showBriefly => 1,
 					popback     => 2,
+					favorites   => 0,
 				} );
 			},
 		},
@@ -1086,6 +1090,7 @@ sub trackInfoRemoveFavorite {
 					showBriefly => 1,
 					popback     => 2,
 					refresh     => 1,
+					favorites   => 0,
 				};
 				
 				$callback->( $menu2 );

@@ -232,9 +232,10 @@ sub trackInfoMenu {
 	
 	if ( $artist ) {
 		return {
-			type => 'link',
-			name => cstring($client, 'PLUGIN_LFM_ON_LASTFM'),
-			url  => $snURL,
+			type        => 'link',
+			name        => cstring($client, 'PLUGIN_LFM_ON_LASTFM'),
+			url         => $snURL,
+			favorites   => 0,
 		};
 	}
 	

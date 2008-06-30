@@ -241,9 +241,10 @@ sub trackInfoMenu {
 	
 	if ( $artist ) {
 		return {
-			type => 'link',
-			name => $client->string('PLUGIN_SLACKER_ON_SLACKER'),
-			url  => $snURL,
+			type      => 'link',
+			name      => $client->string('PLUGIN_SLACKER_ON_SLACKER'),
+			url       => $snURL,
+			favorites => 0,
 		};
 	}
 }
