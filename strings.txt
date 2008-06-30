@@ -10708,21 +10708,6 @@ BASIC_PLAYER_SETTINGS
 	SV	Grundinställningar
 	ZH_CN	基本配置
 
-ALARM_SETTINGS
-	CS	Budík nastavení
-	DA	Alarm
-	DE	Wecker
-	EN	Alarm
-	ES	Alarma
-	FI	Herätys
-	FR	Réveil
-	HE	התראה
-	IT	Sveglia
-	JA	アラーム
-	NL	Wekker
-	SV	Väckning
-	ZH_CN	闹钟
-
 MENU_SETTINGS
 	CS	Menu
 	DA	Menuer

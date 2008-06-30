@@ -17,7 +17,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 sub name {
-	return Slim::Web::HTTP::protectName('ALARM_SETTINGS');
+	return Slim::Web::HTTP::protectName('ALARM');
 }
 
 sub page {
