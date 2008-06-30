@@ -8,7 +8,7 @@ package Slim::Formats::WavPack;
 #   for easy retrieval. Also reads the metadata from the file - sample rate etc.
 #   WavPack also supports embedded album art, this is read using getCoverArt
 #
-#   Copyright (c) 2007 Peter McQuillan, beatofthedrum AT gmail DOT com
+#   Copyright (c) 2007 - 2008 Peter McQuillan, beatofthedrum AT gmail DOT com
 #
 ###############################################################################
 
@@ -43,7 +43,7 @@ sub getTag {
 
 	my $tags = tags($wvp) || {};
 
-	# Check that the WAvPack file has been processed
+	# Check that the WavPack file has been processed
 
 	if (!defined $wvp->{'sampleFreq'}) {
 		return {};
@@ -284,86 +284,123 @@ sub _getAudioInfo {
 
 	my @samplFreq = (6000, 8000, 9600, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 64000, 88200, 96000, 192000);
 
-	my ($buffer,$earlyVer,$wvpHdrFlags,$totalSamples,$totalSeconds,$tmp,$bytesPerSample,$metatmp,$wpmdid,$read_buffer,$numread,$output_time,$input_size);
+	my ($blockSize,$buffer,$earlyVer,$wvpHdrFlags,$totalSamples,$totalSeconds,$tmp,$bytesPerSample,$metatmp,$wpmdid,$read_buffer,$numread,$output_time,$input_size);
+
+	my $headerChecker = 0;
 
 	# Seek to beginning of header information
 	seek $fh, $self->{'startHeaderInfo'}, 0;
 
-	# Start parsing the bytes
-
-	# Next 4 bytes are the block size
-	$numread = read $fh, $buffer, 4;
-
-	if($numread != 4)
+	while($headerChecker == 0)
 	{
-		return -1;
-	}
 
-	# We do certain checks on the block size to ensure this is a WavPack file
+		# Start parsing the bytes
 
-	my @sizechars = split '', $buffer;
+		# Next 4 bytes are the block size
+		$numread = read $fh, $buffer, 4;
 
-	$tmp = unpack "C", $sizechars[2];
+		if($numread != 4)
+		{
+			return -1;
+		}
 
-	if($tmp > 15)
-	{
-		return -1;
-	}
+		$blockSize = unpack "L", $buffer;
 
-	$tmp = unpack "C", $sizechars[3];
+		# We do certain checks on the block size to ensure this is a WavPack file
 
-	if($tmp != 0)
-	{
-		return -1;
-	}
+		my @sizechars = split '', $buffer;
 
-	# Next 2 bytes are the version of WavPack used to encode the file
+		$tmp = unpack "C", $sizechars[2];
 
-	$numread = read $fh, $buffer, 2;
+		if($tmp > 15)
+		{
+			return -1;
+		}
 
-	if($numread != 2)
-	{
-		return -1;
-	}
+		$tmp = unpack "C", $sizechars[3];
 
-	# Check that this is a valid WavPack header (we check the version used to encode this file)
+		if($tmp != 0)
+		{
+			return -1;
+		}
 
-	my @chars = split '', $buffer;
+		# Next 2 bytes are the version of WavPack used to encode the file
 
-	$tmp = unpack "C", $chars[1];
+		$numread = read $fh, $buffer, 2;
 
-	if($tmp != 4)
-	{
-		return -1;
-	}
+		if($numread != 2)
+		{
+			return -1;
+		}
 
-	# Next 2 bytes are the track number and index number
+		# Check that this is a valid WavPack header (we check the version used to encode this file)
 
-	$numread = read $fh, $buffer, 2;
+		my @chars = split '', $buffer;
 
-	if($numread != 2)
-	{
-		return -1;
-	}
+		$tmp = unpack "C", $chars[1];
 
-	# Next 4 bytes are the total samples in the WavPack file
+		if($tmp != 4)
+		{
+			return -1;
+		}
 
-	$numread = read $fh, $buffer, 4;
+		# Next 2 bytes are the track number and index number
 
-	if($numread != 4)
-	{
-		return -1;
-	}
+		$numread = read $fh, $buffer, 2;
 
-	$totalSamples =  unpack "L", $buffer;
+		if($numread != 2)
+		{
+			return -1;
+		}
 
-	# Next 8 bytes are the block index and block samples
+		# Next 4 bytes are the total samples in the WavPack file
 
-	$numread = read $fh, $buffer, 8;
+		$numread = read $fh, $buffer, 4;
 
-	if($numread != 8)
-	{
-		return -1;
+		if($numread != 4)
+		{
+			return -1;
+		}
+
+		$totalSamples =  unpack "L", $buffer;
+
+		# Next 4 bytes are the block index
+
+		$numread = read $fh, $buffer, 4;
+
+		if($numread != 4)
+		{
+			return -1;
+		}
+
+		# Next 4 bytes are the block samples. If this is zero then we skip
+		# this block and move to the next block
+
+		$numread = read $fh, $buffer, 4;
+
+		if($numread != 4)
+		{
+			return -1;
+		}
+
+		$tmp = unpack "L", $buffer;
+
+		if($tmp != 0)
+		{
+			$headerChecker = 1;
+		}
+		else
+		{
+			# block samples are zero, need to jump to next header
+			$blockSize = $blockSize - 16;   # the number of bytes we have already read in this block
+			seek $fh, $blockSize, 1;
+
+			$numread = read $fh, $buffer, 4;
+			if ($buffer ne WVPHEADERFLAG) 
+			{
+				return -1;
+			}
+		}
 	}
 
 	# Next 4 bytes are the WavPack header flags for the WavPack file
@@ -575,7 +612,7 @@ sub _read_metadata_buff {
 
 	if ($bytelength == 0 || $wpmdid == 0xa )  # check if ID_WV_BITSTREAM)
 	{
-		return (1, 0xa, " ");
+		return (1, $wpmdid, " ");
 	}
 
 	$bytes_to_read = $bytelength + ($bytelength & 1);
