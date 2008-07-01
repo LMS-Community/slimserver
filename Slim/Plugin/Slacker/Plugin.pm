@@ -23,6 +23,11 @@ sub initPlugin {
 		slacker => 'Slim::Plugin::Slacker::ProtocolHandler'
 	);
 	
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr|squeezenetwork\.com.*/api/slacker/|, 
+		sub { Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon'); }
+	);
+
 	# Track Info item
 	Slim::Menu::TrackInfo->registerInfoProvider( slacker => (
 		after => 'middle',

@@ -10,6 +10,11 @@ use base qw(Slim::Plugin::OPMLBased);
 sub initPlugin {
 	my $class = shift;
 
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/(?:squeezenetwork|slimdevices)\.com.*\/picks\//, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	$class->SUPER::initPlugin(
 		feed   => 'http://www.slimdevices.com/picks/split/picks.opml',
 		tag    => 'picks',
