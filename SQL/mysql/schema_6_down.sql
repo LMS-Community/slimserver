@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS tracks_metadata;
+DROP TABLE IF EXISTS tracks_persistent;
 
 ALTER TABLE tracks ADD rating tinyint(1) unsigned AFTER drm;
 ALTER TABLE tracks ADD INDEX trackRatingIndex (rating);
