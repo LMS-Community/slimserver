@@ -27,4 +27,6 @@ DELETE FROM unreadable_tracks;
 
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
 
+UPDATE tracks_persistent SET track = NULL;
+
 SET foreign_key_checks = 1;

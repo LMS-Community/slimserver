@@ -189,6 +189,7 @@ sub init {
 		'useBandAsAlbumArtist'  => 0,
 		'useTPE2AsAlbumArtist'  => 0,
 		'variousArtistsString'  => undef,
+		'ratingImplementation'  => 'LOCAL_RATING_STORAGE',
 		# Server Settings - FileTypes
 		'disabledextensionsaudio'    => '',
 		'disabledextensionsplaylist' => '',

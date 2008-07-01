@@ -5359,6 +5359,15 @@ SETUP_SAVESHUFFLED_0
 	SV	Spara låtlistor i orginalordning
 	ZH_CN	保存播放表原来次序
 
+SETUP_RATINGIMPLEMENTATION
+	EN	Rating storage
+
+SETUP_RATINGIMPLEMENTATION_DESC
+	EN	Rating storage to use when storing or viewing ratings
+
+LOCAL_RATING_STORAGE
+	EN	SqueezeCenter Database
+
 SETUP_CHECKVERSION
 	CS	Automatická aktualizace
 	DA	Softwareopdateringer
