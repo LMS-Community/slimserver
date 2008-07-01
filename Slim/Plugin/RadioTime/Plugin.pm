@@ -42,6 +42,11 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/radiotime\.com/, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	Slim::Plugin::RadioTime::Settings->new;
 
 #        |requires Client

@@ -659,30 +659,10 @@ sub getMetadataFor {
 sub getIcon {
 	my ( $class, $url ) = @_;
 
-	if ( $url =~ /mp3tunes\.com/ || $url =~ m|squeezenetwork\.com.*/mp3tunes| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MP3tunes::Plugin') ) {
-			return Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
-		}
-	}
-	elsif ( $url =~ /archive\.org/ || $url =~ m|squeezenetwork\.com.*/lma/| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
-			return Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
-		}
-	}
-	elsif ( $url =~ /2917.+voxel\.net:\d{4}/ ||  $url =~ /\.radioio\.com/ ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RadioIO::Plugin') ) {
-			return Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
-		}
-	}
-	elsif ( $url =~ /\.shoutcast\.com/ || $url =~ m|squeezenetwork\.com.*/shoutcast/| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::ShoutcastBrowser::Plugin') ) {
-			return Slim::Plugin::ShoutcastBrowser::Plugin->_pluginDataFor('icon');
-		}
-	}
-	elsif ( $url =~ m|squeezenetwork\.com.*/api/slacker/| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Slacker::Plugin') ) {
-			return Slim::Plugin::Slacker::Plugin->_pluginDataFor('icon');
-		}
+	my $handler;
+
+	if ( ($handler = Slim::Player::ProtocolHandlers->iconHandlerForURL($url)) && ref $handler eq 'CODE' ) {
+		return &{$handler};
 	}
 
 	return 'html/images/radio.png';

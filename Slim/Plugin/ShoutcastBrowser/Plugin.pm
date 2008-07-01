@@ -30,6 +30,11 @@ my $cli_next;
 sub initPlugin {
 	my $class = shift;
 
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/(?:shoutcast\.com|squeezenetwork\.com.*\/shoutcast\/)/, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 #        |requires Client
 #        |  |is a Query
 #        |  |  |has Tags

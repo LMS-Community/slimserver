@@ -12,6 +12,11 @@ use Slim::Networking::SqueezeNetwork;
 sub initPlugin {
 	my $class = shift;
 
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/(?:squeezenetwork\.com.*\/mp3tunes|mp3tunes\.com\/)/,
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	$class->SUPER::initPlugin(
 		feed           => Slim::Networking::SqueezeNetwork->url('/api/mp3tunes/v1/opml'),
 		tag            => 'mp3tunes',
