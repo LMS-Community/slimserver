@@ -926,8 +926,25 @@ sub infoComment {
 	my ( $client, $url, $track ) = @_;
 	
 	my $item;
+	my $comment;
+
+	# make urls in comments into links
+	for my $c ($track->comment) {
+
+		next unless defined $c && $c !~ /^\s*$/;
+
+		if (!($c =~ s!\b(http://[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"$1\" target=\"_blank\">$1</a>!igo)) {
+
+			# handle emusic-type urls which don't have http://
+			$c =~ s!\b(www\.[A-Za-z0-9\-_\.\!~*'();/?:@&=+$,]+)!<a href=\"http://$1\" target=\"_blank\">$1</a>!igo;
+		}
+
+		$comment .= $c;
+	}
 	
-	if ( my $comment = $track->comment ) {
+	if ( $comment ) {
+
+
 		$item = {
 			name  => cstring($client, 'COMMENT'),
 			items => [
