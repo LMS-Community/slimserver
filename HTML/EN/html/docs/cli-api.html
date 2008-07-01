@@ -57,6 +57,16 @@
 	</li>
 </ul>
 
+<p>
+	The following changes or new commands &amp; queries are available starting with
+	SqueezeCenter 7.2. These changes should not have any impact on existing 
+	clients:
+</p>
+<ul>
+	<li>
+		New notification mechanism for alarms: "<a href="#alarmNotify">alarm &lt;sound|end|snooze|snooze_end&gt; &lt;id&gt;</a>".
+	</li>
+</ul>
  
 <hr>
 <h4 id="7">Changes starting from SqueezeCenter 7.0</h4>
@@ -2460,12 +2470,16 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>1 if the alarm is enabled. Default: 0.</td>
 	</tr>
 	<tr>
+		<td>repeat</td>
+		<td>1 if the alarm repeats. Default: 1.</td>
+	</tr>
+	<tr>
 		<td>time</td>
 		<td>Mandatory, time of the alarm, in seconds from midnight.</td>
 	</tr>
 	<tr>
 		<td>volume</td>
-		<td>Mixer volume of the alarm. Default: 50.</td>
+		<td>Mixer volume of the alarm. Default: use the default volume for alarms.</td>
 	</tr>
 	<tr>
 		<td>url</td>
@@ -2555,6 +2569,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>1 if the alarm is enabled.</td>
 	</tr>
 	<tr>
+		<td>&nbsp;&nbsp;repeat</td>
+		<td>1 if the alarm repeats.</td>
+	</tr>
+	<tr>
 		<td>&nbsp;&nbsp;time</td>
 		<td>Time of the alarm, in seconds from midnight.</td>
 	</tr>
@@ -2564,9 +2582,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;url</td>
-		<td>URL of the alarm playlist, or one of &quot;CURRENT_PLAYLIST&quot;,
-			&quot;PLUGIN_RANDOM_TRACK&quot;, &quot;PLUGIN_RANDOM_ALBUM&quot;, or
-			&quot;PLUGIN_RANDOM_CONTRIBUTOR&quot;.</td>
+		<td>URL of the alarm playlist, or &quot;CURRENT_PLAYLIST&quot;</td>
 	</tr>
 </table>
 <p>Example:</p>
@@ -2574,7 +2590,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
   <p>Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
 <br>Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
-	time:3600 volume:50 playlist url:PLUGIN_RANDOM_TRACK dow:5 enabled:1 time:81000 
+	time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000 
 	volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
 	&lt;LF&gt;&quot;</p>
 </blockquote>
@@ -7499,6 +7515,22 @@ in the saved playlists folder.</p>
 <p>
 	Sent everytime the favorite database is changed, for any reason, by
 	any process (so the favorites command below will result in this notification being sent).
+</p>
+
+<br>
+<p id="alarmNotify">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			alarm
+			&lt;sound|end|snooze|snooze_end&gt;
+			&lt;id&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	"alarm sound" is sent when an alarm sounds; "alarm end", when an alarm ends; "alarm snooze" when an alarm is snoozed;
+        "alarm snooze_end" when a snooze ends (and the alarm resumes).  "id" gives the id of the alarm.
 </p>
 
 

@@ -189,6 +189,10 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    rescan          done
  Y    unknownir       <ircode>                    <timestamp>
  N    prefset         <namespace>                 <prefname>                  <newvalue>
+ Y    alarm           sound                       <id>
+ Y    alarm           end                         <id>
+ Y    alarm           snooze                      <id>
+ Y    alarm           snooze_end                  <id>
 
 =head2 PLUGINS
 
@@ -623,6 +627,10 @@ addDispatch(['mixer',          'stereoxl',          '_newvalue'],               
 	addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
 	addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
 	addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
+	addDispatch(['alarm',          'sound',          '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['alarm',          'end',            '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['alarm',          'snooze',         '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['alarm',          'snooze_end',     '_id'],                                           [1, 0, 0, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);

@@ -481,6 +481,9 @@ sub sound {
 		# Bug 7818, count this as user interaction, even though it isn't really
 		$client->lastActivityTime($now);
 
+		# Send out notification
+		Slim::Control::Request::notifyFromArray($client, ['alarm', 'sound', $self->{_id}]);
+
 		my $request = $client->execute(['stop']);
 		$request->source('ALARM');
 		$request = $client->execute(['power', 1]);
@@ -602,6 +605,9 @@ sub snooze {
 		my $snoozeSeconds = $prefs->client($client)->alarmSnoozeSeconds;
 		$log->debug("Snoozing for $snoozeSeconds seconds");
 
+		# Send notification
+		Slim::Control::Request::notifyFromArray($client, ['alarm', 'snooze', $self->{_id}]);
+
 		# Pause the music
 		my $request = $client->execute(['pause', 1]);
 		$request->source('ALARM');
@@ -660,6 +666,9 @@ sub stopSnooze {
 	
 	# Reset the subscription to end the alarm on user activity
 	$class->_setAlarmSubscription($client);
+
+	# Send notifications
+	Slim::Control::Request::notifyFromArray($client, ['alarm', 'snooze_end', $self->{_id}]);
 }
 
 
@@ -694,6 +703,9 @@ sub stop {
 		line => [$client->string('ALARM_STOPPED')],
 		duration => $SHOW_BRIEFLY_DUR,
 	});
+
+	# Send notifications
+	Slim::Control::Request::notifyFromArray($client, ['alarm', 'end', $self->{_id}]);
 }
 
 =head3
