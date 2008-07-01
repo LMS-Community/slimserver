@@ -107,6 +107,33 @@
 		</ul>
 	</ul>
 	<br />
+	<li>
+		Improved alarm clock functionality:
+		<ul>
+			<li>Alarms can be set for any combination of days at a specified time, allowing weekday alarms, weekend alarms etc (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=2263">#2263</a>)</li>
+			<li>Alarms can now be snoozed</li>
+			<li>The time is displayed on screen during an alarm with feedback about the current alarm or snooze</li>
+			<li>The Date Time screensaver now indicates when the next alarm will go off</li>
+			<li>Alarms can be configured as one-off alarms that disable themselves after they go off</li>
+			<li>Ability to quickly disable all alarms (holiday mode)</li>
+			<li>Can choose to one volume setting for all alarms, allowing the volume to be quickly changed</li>
+			<li>
+				Back end:
+				<ul>
+					<li>The CLI alarm and alarms commands have changed!  External callers will need to be updated to remain compatible</li>
+					<li>INPUT.Time now exits on both left and right.  Plugins that use this mode will need to be updated to handle the new exit conditions.</li>
+					<li>
+						New Slim::Utils::Alarm class provides easy access to alarm functionality
+						<ul>
+							<li>The screensaver used during an alarm is configurable (via calls into Slim::Utils::Alarm)</li>
+							<li>Plugins can register new playlists that can then be selected by the user as alarm playlists</li>
+							<li>See docs in Slim::Utils::Alarm for more details
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
 </ul>
 
 <h2><a name="v7.1" id="v7.1"></a>Version 7.1 - 2008-xx-xx</h2>
