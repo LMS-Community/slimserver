@@ -2988,7 +2988,7 @@ sub _playlistXtracksCommand_parseDbItem {
 	my $url     = shift;
 
 	my %classes;
-	my $class   = undef;
+	my $class   = 'Track';
 	my $obj     = undef;
 
 	$log->debug("Begin Function");
