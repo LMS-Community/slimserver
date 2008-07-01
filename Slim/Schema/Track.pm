@@ -21,7 +21,7 @@ our @allColumns = (qw(
 	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
-	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
+	musicbrainz_id lossless lyrics replay_gain replay_peak
 ));
 
 {
@@ -36,6 +36,8 @@ our @allColumns = (qw(
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::Schema::Album');
 
+	$class->might_have('persistent'      => 'Slim::Schema::TrackPersistent' => 'track');
+	
 	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
 	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
 
@@ -437,6 +439,61 @@ sub displayAsHTML {
 			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, 0);
 		}
 	}
+}
+
+sub _retrievePersistent {
+	my $self = shift;
+
+	my $trackPersistent;
+	
+	# Match on musicbrainz_id first
+	if ( $self->musicbrainz_id ) {
+		$trackPersistent = Slim::Schema->resultset('TrackPersistent')->single( { musicbrainz_id => $self->musicbrainz_id } );
+	}
+	else {
+		$trackPersistent = Slim::Schema->resultset('TrackPersistent')->single( { url => $self->url } );
+	}
+
+	if ( blessed($trackPersistent) ) {
+		return $trackPersistent;
+	}
+
+	return undef;
+}
+
+# The methods below are stored in the persistent table
+
+sub playcount { 
+	my ( $self, $val ) = @_;
+	
+	if ( defined $val ) {
+		$self->persistent->set( playcount => $val );
+		$self->persistent->update;
+	}
+	
+	return $self->persistent->playcount;
+}
+
+sub rating { 
+	my ( $self, $val ) = @_;
+	
+	if ( defined $val ) {
+		$self->persistent->set( rating => $val );
+		$self->persistent->update;
+	}
+	
+	return $self->persistent->rating;
+}
+
+sub lastplayed { 
+	my ( $self, $val ) = @_;
+	
+	if ( defined $val ) {
+		$self->persistent->set( lastplayed => $val );
+		$self->persistent->update;
+	}
+	
+	return $self->persistent->lastplayed;
 }
 
 1;

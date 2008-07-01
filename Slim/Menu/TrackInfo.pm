@@ -1078,10 +1078,10 @@ sub infoRating {
 	
 	my $item;
 	
-	if ( my $rating = $track->rating ) {
+	if ( my $rating = Slim::Schema->rating($track) ) {
 		$item = {
 			type => 'text',
-			name => cstring($client, 'RATING') . cstring($client, 'COLON') . ' ' . sprintf( "%d", $rating ) . ' /100',
+			name => cstring($client, 'RATING') . cstring($client, 'COLON') . ' ' . $rating,
 		};
 	}
 	
