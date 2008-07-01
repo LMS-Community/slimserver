@@ -25,6 +25,11 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler(
 		rhapd => 'Slim::Plugin::RhapsodyDirect::ProtocolHandler'
 	);
+
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr|squeezenetwork\.com.*/api/rhapsody/|, 
+		sub { Slim::Plugin::RhapsodyDirect::ProtocolHandler->getIcon(); }
+	);
 	
 	Slim::Networking::Slimproto::addHandler( 
 		RPDS => \&Slim::Plugin::RhapsodyDirect::RPDS::rpds_handler

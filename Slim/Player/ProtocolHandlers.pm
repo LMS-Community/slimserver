@@ -30,6 +30,8 @@ my %protocolHandlers = (
 
 my %loadedHandlers = ();
 
+my %iconHandlers = ();
+
 sub isValidHandler {
 	my ($class, $protocol) = @_;
 
@@ -54,6 +56,12 @@ sub registerHandler {
 	my ($class, $protocol, $classToRegister) = @_;
 	
 	$protocolHandlers{$protocol} = $classToRegister;
+}
+
+sub registerIconHandler {
+	my ($class, $regex, $ref) = @_;
+
+	$iconHandlers{$regex} = $ref;
 }
 
 sub openRemoteStream {
@@ -101,11 +109,27 @@ sub handlerForURL {
 	return $handler =~ /::/ ? $handler : undef;
 }
 
+sub iconHandlerForURL {
+	my ($class, $url) = @_;
+
+	return undef unless $url;
+	
+	my $handler;
+	foreach (keys %iconHandlers) {
+		if ($url =~ /$_/) {
+			$handler = $iconHandlers{$_};
+			last;
+		}
+	}
+
+	return $handler;
+}
+
+
 sub iconForURL {
 	my ($class, $url, $client) = @_;
 
 	if (my $handler = $class->handlerForURL($url)) {
-
 		if ($client && $handler->can('getMetadataFor')) {
 			return $handler->getMetadataFor($client, $url)->{cover};
 		}

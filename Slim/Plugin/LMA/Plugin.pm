@@ -11,7 +11,12 @@ use Slim::Networking::SqueezeNetwork;
 
 sub initPlugin {
 	my $class = shift;
-	
+
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/(?:archive\.org|squeezenetwork\.com.*\/lma\/)/, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	$class->SUPER::initPlugin(
 		feed      => Slim::Networking::SqueezeNetwork->url( '/api/lma/v1/opml' ),
 		tag       => 'lma',
