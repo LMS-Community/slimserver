@@ -30,6 +30,11 @@ sub initPlugin {
 		lfm => 'Slim::Plugin::LastFM::ProtocolHandler'
 	);
 	
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/squeezenetwork\.com.*\/lastfm\//, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	# Track Info item
 	Slim::Menu::TrackInfo->registerInfoProvider( lfm => (
 		after => 'middle',

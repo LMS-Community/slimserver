@@ -20,6 +20,11 @@ use Slim::Networking::SqueezeNetwork;
 sub initPlugin {
 	my $class = shift;
 
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/(?:\.radioio\.com|2917.+voxel\.net:\d{4})/, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	$class->SUPER::initPlugin(
 		feed           => Slim::Networking::SqueezeNetwork->url('/api/radioio/v1/opml'),
 		tag            => 'radioio',

@@ -18,6 +18,11 @@ sub initPlugin {
 		live365 => 'Slim::Plugin::Live365::ProtocolHandler'
 	);
 
+	Slim::Player::ProtocolHandlers->registerIconHandler(
+		qr/squeezenetwork\.com.*\/live365\//, 
+		sub { return $class->_pluginDataFor('icon'); }
+	);
+
 	$class->SUPER::initPlugin(
 		feed   => Slim::Networking::SqueezeNetwork->url('/api/live365/v1/opml'),
 		tag    => 'live365',
