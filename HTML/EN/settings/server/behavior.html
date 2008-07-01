@@ -102,5 +102,18 @@
 		</select>
 	[% END %]
 
+	[%# Only display this setting if there is more than 1 rating implementation installed %]
+	[% IF ratingImplementations.size > 1 %]
+		[% WRAPPER setting title="SETUP_RATINGIMPLEMENTATION" desc="SETUP_RATINGIMPLEMENTATION_DESC" %]
+			<select class="stdedit" name="ratingImplementation" id="ratingImplementation">
+
+			[% FOREACH option IN ratingImplementations %]
+				<option [% IF prefs.ratingImplementation == option %]selected [% END %]value="[% option %]">[% option |string %]</option>
+			[%- END -%]
+		
+			</select>
+		[% END %]
+	[% END %]
+
 [% PROCESS settings/footer.html %]
 

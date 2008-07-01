@@ -16,7 +16,7 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^hitlist\.(?:htm|xml)/,\&hitlist);
 }
 
-# Histlist fills variables for populating an html file. 
+# Hitlist fills variables for populating an html file. 
 sub hitlist {
 	my ($client, $params) = @_;
 
@@ -26,13 +26,13 @@ sub hitlist {
 	# Fetch 50 tracks that have been played at least once.
 	# Limit is hardcoded for now..
 	my $rs = Slim::Schema->search('Track',
-		{ 'playcount' => { '>' => 0 } },
-		{ 'order_by'  => 'me.playcount desc' },
+		{ 'persistent.playcount' => { '>' => 0 } },
+		{ 'join' => qw(persistent), 'order_by'  => 'persistent.playcount desc' },
 	)->slice(0, 49);
 
 	while (my $track = $rs->next) {
 
-		my $playCount = $track->playcount;
+		my $playCount = $track->persistent->playcount;
 
 		if ($maxPlayed == 0) {
 			$maxPlayed = $playCount;

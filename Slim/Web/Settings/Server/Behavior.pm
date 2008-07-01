@@ -25,9 +25,18 @@ sub prefs {
 			qw(noGenreFilter searchSubString ignoredarticles splitList
 			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists
 			   conductorInArtists bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist 
-			   useTPE2AsAlbumArtist variousArtistsString)
+			   useTPE2AsAlbumArtist variousArtistsString ratingImplementation)
 		   );
 }
+
+sub handler {
+	my ( $class, $client, $paramRef ) = @_;
+	
+	$paramRef->{ratingImplementations} = Slim::Schema->ratingImplementations;
+
+	return $class->SUPER::handler( $client, $paramRef );
+}
+
 
 1;
 

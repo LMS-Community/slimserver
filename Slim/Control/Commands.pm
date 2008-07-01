@@ -2553,6 +2553,68 @@ sub wipecacheCommand {
 	$request->setStatusDone();
 }
 
+sub ratingCommand {
+	my $request = shift;
+
+	$log->debug("Begin Function");
+
+	# check this is the correct command.
+	if ( $request->isNotCommand( [['rating']] ) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $item   = $request->getParam('_item');      #p1
+	my $rating = $request->getParam('_rating');    #p2, optional
+
+	if ( !defined $item ) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if ( defined $rating ) {
+		$log->info("Setting rating for $item to $rating");
+	}
+
+	my $track = blessed($item);
+
+	if ( !$track ) {
+		# Look for track based on ID or URL
+		if ( $item =~ /^\d+$/ ) {
+			$track = Slim::Schema->resultset('Track')->find($item);
+		}
+		else {
+			my $url = Slim::Utils::Misc::fileURLFromPath($item);
+			if ( $url ) {
+				$track = Slim::Schema->rs('Track')->objectForUrl( { url => $url } );
+			}
+		}
+	}
+
+	if ( !blessed($track) || $track->audio != 1 ) {
+		$log->warn("Can't find track: $item");
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if ( defined $rating ) {
+		if ( $rating < 0 || $rating > 100 ) {
+			$request->setStatusBadParams();
+			return;
+		}
+
+		Slim::Schema->rating( $track, $rating );
+	}
+	else {
+		$rating = Slim::Schema->rating($track);
+		
+		$request->addResult( '_rating', defined $rating ? $rating : 0 );
+	}
+
+	$request->setStatusDone();
+}
+
 ################################################################################
 # Helper functions
 ################################################################################

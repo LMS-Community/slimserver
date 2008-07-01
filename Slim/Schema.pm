@@ -79,8 +79,13 @@ my %tagMapping = (
 # will be built in init using _buildValidHierarchies
 my %validHierarchies = ();
 
-our $initialized = 0;
-my $trackAttrs   = {};
+our $initialized         = 0;
+my $trackAttrs           = {};
+my $trackPersistentAttrs = {};
+
+my %ratingImplementations = (
+	'LOCAL_RATING_STORAGE' => \&_defaultRatingImplementation,
+);
 
 =head1 METHODS
 
@@ -175,12 +180,13 @@ sub init {
 		PlaylistTrack
 		Rescan
 		Track
+		TrackPersistent
 		Year
 		Progress
 	/);
 
 	# Build all our class accessors and populate them.
-	for my $accessor (qw(lastTrackURL lastTrack trackAttrs driver schemaUpdated)) {
+	for my $accessor (qw(lastTrackURL lastTrack trackAttrs trackPersistentAttrs driver schemaUpdated)) {
 
 		$class->mk_classaccessor($accessor);
 	}
@@ -191,6 +197,7 @@ sub init {
 	}
 
 	$trackAttrs = Slim::Schema::Track->attributes;
+	$trackPersistentAttrs = Slim::Schema::TrackPersistent->attributes;
 	$class->driver($driver);
 
 	# Use our debug and stats class to get logging and perfmon for db queries
@@ -840,6 +847,7 @@ sub newTrack {
 
 	# Creating the track only wants lower case values from valid columns.
 	my $columnValueHash = {};
+	my $persistentColumnValueHash = {};
 
 	# Walk our list of valid attributes, and turn them into something ->create() can use.
 	$log->debug("Creating $source with columns:");
@@ -858,6 +866,18 @@ sub newTrack {
 			$log->debug("  $key : $val");
 
 			$columnValueHash->{$key} = $val;
+		}
+
+		# Metadata is only included if it contains a non zero value
+		if ( $val && exists $trackPersistentAttrs->{$key} ) {
+			# Bug 7731, filter out duplicate keys that end up as array refs
+			if ( ref $val eq 'ARRAY' ) {
+				$val = $val->[0];
+			}
+			
+			$log->debug("  (persistent) $key : $val");
+
+			$persistentColumnValueHash->{$key} = $val;
 		}
 	}
 
@@ -881,6 +901,44 @@ sub newTrack {
 
 	if ($track->title) {
 		$log->info(sprintf("Created track '%s' (id: [%d])", $track->title, $track->id));
+	}
+
+	if ( $track->audio ) {
+		# Pull the track persistent object for the DB
+		my $trackPersistent = $track->_retrievePersistent();
+
+		# We only want to store real musicbrainz_id's (conversion programs sometimes generate invalid musicbrainz_id's during conversion)
+		if ( exists $persistentColumnValueHash->{musicbrainz_id} && length( $persistentColumnValueHash->{musicbrainz_id} ) != 36 ) {
+			delete $persistentColumnValueHash->{musicbrainz_id};
+		}
+
+		# _retrievePersistent will always return undef or a track metadata object
+		if ( !blessed $trackPersistent ) {
+			$persistentColumnValueHash->{added} = $track->timestamp;
+			$persistentColumnValueHash->{track} = $track->id;
+			$persistentColumnValueHash->{url}   = $track->url;
+
+			# Create the track metadata object- or bail. ->throw_exception will emit a backtrace.
+			$trackPersistent = Slim::Schema->resultset('TrackPersistent')->create($persistentColumnValueHash);
+	
+			if ( $@ || !blessed $trackPersistent ) {
+		
+				logError("Failed to create TrackPersistent for $url : $@");
+				return;
+			}
+		}
+		else {
+			while ( my ($key, $val) = each %{$persistentColumnValueHash} ) {
+
+				$log->info("Updating persistent $url : $key to $val");
+				$trackPersistent->set_column( $key => $val );
+			}
+			
+			$trackPersistent->set_column( track => $track->id );
+			$trackPersistent->set_column( url => $track->url );
+			
+			$trackPersistent->update;
+		}
 	}
 
 	# Now that we've created the track, and possibly an album object -
@@ -989,6 +1047,9 @@ sub updateOrCreate {
 			return $track;
 		}
 
+		# Pull the track metadata object for the DB if available
+		my $trackPersistent = $track->_retrievePersistent();
+	
 		# Bug: 2335 - readTags is set in Slim::Formats::Playlists::CUE - when
 		# we create/update a cue sheet to have a CT of 'cur'
 		if (defined $attributeHash->{'CONTENT_TYPE'} && $attributeHash->{'CONTENT_TYPE'} eq 'cur') {
@@ -1019,6 +1080,14 @@ sub updateOrCreate {
 				$log->info("Updating $url : $key to $val");
 
 				$track->set_column($key, $val);
+			}
+
+			# Metadata is only included if it contains a non zero value
+			if ( $val && blessed($trackPersistent) && exists $trackPersistentAttrs->{$key} ) {
+
+				$log->info("Updating persistent $url : $key to $val");
+
+				$trackPersistent->set_column( $key => $val );
 			}
 		}
 
@@ -1446,9 +1515,45 @@ sub artistOnlyRoles {
 	return undef;
 }
 
+sub registerRatingImplementation {
+	my ( $class, $source, $impl ) = @_;
+
+	if ( ref $impl eq 'CODE' ) {
+		$ratingImplementations{$source} = $impl;
+	}
+}
+
+sub ratingImplementations {
+	return [ sort keys %ratingImplementations ];
+}
+
+sub rating {
+	my ( $class, $track, $rating ) = @_;
+
+	my $impl = $prefs->get('ratingImplementation');
+	
+	if ( !$impl || !exists $ratingImplementations{$impl} ) {
+		$impl = 'LOCAL_RATING_STORAGE';
+	}
+
+	return $ratingImplementations{$impl}->( $track, $rating );
+}
+
 #
 # Private methods:
 #
+
+sub _defaultRatingImplementation {
+	my ( $track, $rating ) = @_;
+
+	if ( defined $rating ) {
+		$track->rating($rating);
+		$track->update;
+		Slim::Schema->forceCommit;
+	}
+	
+	return $track->rating;
+}
 
 sub _retrieveTrack {
 	my ($self, $url, $playlist) = @_;
@@ -1480,6 +1585,26 @@ sub _retrieveTrack {
 		}
 
 		return $track;
+	}
+
+	return undef;
+}
+
+sub _retrieveTrackMetadata {
+	my ($self, $url, $musicbrainz_id) = @_;
+
+	return undef if !$url;
+	return undef if ref($url);
+
+	my $trackMetadata;
+
+	$trackMetadata = $self->resultset('TrackMetadata')->single({ 'url' => $url });
+
+	if (blessed($trackMetadata)) {
+		return $trackMetadata;
+	}elsif($musicbrainz_id) {
+		$trackMetadata = $self->resultset('TrackMetadata')->single({ 'musicbrainz_id' => $musicbrainz_id });
+		return $trackMetadata if blessed($trackMetadata);
 	}
 
 	return undef;
