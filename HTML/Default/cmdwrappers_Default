@@ -32,7 +32,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker [% addClasses %]" onmouseover="Highlighter.highlight(this);" [% IF itemobj.id.defined %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF ((item.image || (levelName == 'album' || levelName == 'age')) && !(artwork > 0)) || (levelName == 'playlisttrack' && artwork != 2) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			<div style="overflow:auto">[%- content | indent(4) %]</div>
 			<span class="browsedbControls">
