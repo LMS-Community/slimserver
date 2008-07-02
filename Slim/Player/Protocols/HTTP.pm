@@ -221,40 +221,6 @@ sub sysread {
 			$log->debug("The shoutcast metadata overshot the interval.");
 		}	
 	}
-	
-	# Use MPEG::Audio::Frame to detect the bitrate if we didn't see an icy header
-	if ( !$self->bitrate && $self->contentType =~ /^(?:mp3|audio\/mpeg)$/ ) {
-
-		my $io = IO::String->new($_[1]);
-
-		$log->info("Trying to read bitrate from stream");
-
-		my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate($io);
-
-		Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate, $vbr );
-		${*$self}{'bitrate'} = $bitrate;
-		
-		if ( $self->client && $self->bitrate > 0 && $self->contentLength > 0 ) {
-
-			# if we know the bitrate and length of a stream, display a progress bar
-			if ( $self->bitrate < 1000 ) {
-				${*$self}{'bitrate'} *= 1000;
-			}
-			
-			# But don't update the progress bar if it was already set in parseHeaders
-			# using previously-known duration info
-			unless ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
-								
-				$self->client->streamingProgressBar( {
-					'url'     => $self->url,
-					'bitrate' => $self->bitrate,
-					'length'  => $self->contentLength,
-				} );
-			}
-		}
-	}
-	
-	# XXX: Add scanBitrate support for non-directstreaming Ogg and FLAC
 
 	return $readLength;
 }
@@ -319,28 +285,6 @@ sub parseDirectHeaders {
 	}
 	
 	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
-}
-
-sub parseDirectBody {
-	my ( $class, $client, $url, $body ) = @_;
-
-	logger('player.streaming.direct')->info("Parsing body for bitrate.");
-
-	my $contentType = Slim::Music::Info::contentType($url);
-
-	my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate( $body, $contentType, $url );
-
-	if ( $bitrate ) {
-		Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
-	}
-
-	# Must return a track object to play
-	my $track = Slim::Schema->rs('Track')->objectForUrl({
-		'url'      => $url,
-		'readTags' => 1
-	});
-
-	return $track;
 }
 
 # Whether or not to display buffering info while a track is loading
