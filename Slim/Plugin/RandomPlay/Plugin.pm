@@ -408,27 +408,51 @@ sub findAndAdd {
 
 				push @joins, 'genreTracks';
 			}
+			
+			if ( $find->{'persistent.lastPlayed'} ) {
+				push @joins, 'persistent';
+			}
 
 		} elsif ($type eq 'album') {
 
 			if ($find->{'genreTracks.genre'}) {
-
-				push @joins, { 'tracks' => 'genreTracks' };
+				
+				if ( $find->{'persistent.lastPlayed'} ) {
+					push @joins, { 'tracks' => [ 'genreTracks', 'persistent' ] };
+				}
+				else {
+					push @joins, { 'tracks' => 'genreTracks' };
+				}
 
 			} else {
 
-				push @joins, 'tracks';
+				if ( $find->{'persistent.lastPlayed'} ) {
+					push @joins, { 'tracks' => 'persistent' };
+				}
+				else {
+					push @joins, 'tracks';
+				}
 			}
 
 		} elsif ($type eq 'contributor') {
 
 			if ($find->{'genreTracks.genre'}) {
 
-				push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
+				if ( $find->{'persistent.lastPlayed'} ) {
+					push @joins, { 'contributorTracks' => { 'track' => [ 'genreTracks', 'persistent' ] } };
+				}
+				else {
+					push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
+				}
 
 			} else {
 
-				push @joins, { 'contributorTracks' => 'track' };
+				if ( $find->{'persistent.lastPlayed'} ) {
+					push @joins, { 'contributorTracks' => { 'track' => 'persistent' } };
+				}
+				else {
+					push @joins, { 'contributorTracks' => 'track' };
+				}
 			}
 		}
 
@@ -684,7 +708,7 @@ sub playRandom {
 		# This fails when multiple clients are playing random mixes. -- Max
 		if ($mixInfo{$client->masterOrSelf->id}->{'startTime'}) {
 
-			$find->{'lastPlayed'} = [
+			$find->{'persistent.lastPlayed'} = [
 				{ '=' => undef },
 				{ '<' => $mixInfo{$client->masterOrSelf->id}->{'startTime'} }
 			];
