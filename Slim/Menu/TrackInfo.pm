@@ -181,7 +181,6 @@ sub registerDefaultInfoProviders {
 		func   => \&infoTagVersion,
 	) );
 	
-	# XXX: Create Mix (from MusicIP plugin)
 }
 
 =head1 METHODS
@@ -424,8 +423,6 @@ sub generateInfoOrderingItem {
 	}
 }
 
-# XXX: No MusicIP support here (play-hold)
-
 sub infoContributors {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
@@ -459,7 +456,7 @@ sub infoContributors {
 
 				# XXX: Ideally this would point to another OPML provider like
 				# Slim::Menu::Library::Contributor
-				push @{$items}, {
+				my $item = {
 					type => 'redirect',
 					name => cstring($client,  uc $role) . cstring($client, 'COLON') . ' ' . $contributor->name,
 
@@ -519,6 +516,9 @@ sub infoContributors {
 						},
 					},
 				};
+				( $item->{'jive'}{'actions'}{'play-hold'}, $item->{'jive'}{'playHoldAction'} ) = 
+					_mixerItemHandler(obj => $contributor, 'obj_param' => 'artist_id' );
+				push @{$items}, $item;
 			}
 		}
 	}
@@ -755,6 +755,10 @@ sub infoAlbum {
 				},
 			},
 		};
+
+		( $item->{'jive'}{'actions'}{'play-hold'}, $item->{'jive'}{'playHoldAction'} ) = 
+			_mixerItemHandler(obj => $album, 'obj_param' => 'album_id' );
+
 	}
 	
 	return $item;
@@ -781,7 +785,7 @@ sub infoGenres {
 			},
 		};
 		
-		push @{$items}, {
+		my $item = {
 			type => 'redirect',
 			name => cstring($client, 'GENRE') . cstring($client, 'COLON') . ' ' . $genre->name,
 
@@ -831,6 +835,9 @@ sub infoGenres {
 				}, 
 			},
 		};
+		( $item->{'jive'}{'actions'}{'play-hold'}, $item->{'jive'}{'playHoldAction'} ) = 
+			_mixerItemHandler(obj => $genre, 'obj_param' => 'genre_id' );
+		push @{$items}, $item;
 	}
 	
 	return $items;
@@ -1231,6 +1238,63 @@ sub _findDBCriteria {
 	return $findCriteria;
 }
 
+sub _mixers {
+	my $Imports = Slim::Music::Import->importers;
+	my @mixers = ();
+	for my $import (keys %{$Imports}) {
+		next if !$Imports->{$import}->{'mixer'};
+		next if !$Imports->{$import}->{'use'};
+		next if !$Imports->{$import}->{'cliBase'};
+		next if !$Imports->{$import}->{'contextToken'};
+		push @mixers, $import;
+	}
+	return ($Imports, \@mixers);
+}
+
+sub _mixerItemHandler {
+	my %args       = @_;
+	my $obj        = $args{'obj'};
+	my $obj_param  = $args{'obj_param'};
+
+	my $playHoldAction = undef;
+	my ($Imports, $mixers) = _mixers();
+	
+	if (scalar(@$mixers) == 1 && blessed($obj)) {
+		my $mixer = $mixers->[0];
+		if ($mixer->can('mixable') && $mixer->mixable($obj)) {
+			$playHoldAction = 'go';
+			# pull in cliBase with Storable::dclone so we can manipulate without affecting the object itself
+			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
+			$command->{'params'}{'menu'} = 1;
+			$command->{'params'}{$obj_param} = $obj->id;
+			return $command, $playHoldAction;
+		} else {
+			return (
+				{
+					player => 0,
+					cmd    => ['jiveunmixable'],
+					params => {
+						contextToken => $Imports->{$mixer}->{contextToken},
+					},
+				},
+				$playHoldAction,
+			);
+			
+		}
+	} elsif ( scalar(@$mixers) && blessed($obj) ) {
+		return {
+			player => 0,
+			cmd    => ['contextmenu'],
+			params => {
+				menu => '1',
+				$obj_param => $obj->id,
+			},
+			$playHoldAction,
+		};
+	} else {
+		return undef, undef;
+	}
+}
 
 =head1 CREATING MENUS
 
