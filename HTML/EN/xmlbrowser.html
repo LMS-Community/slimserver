@@ -126,7 +126,7 @@
 					[% ELSIF item.type != 'text' %]
 						<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 					[% END %]
-					[% item.name || item.title %]
+					[% item.web.value || item.name || item.title %]
 					[% IF item.weblink || item.type != 'text' %]
 					</a>
 					[% END %]
