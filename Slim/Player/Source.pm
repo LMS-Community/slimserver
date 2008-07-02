@@ -2227,11 +2227,13 @@ sub openSong {
 		# XXXX - this really needs to happen in the caller!
 		# No database access here. - dsully
 		# keep track of some stats for this track
-		$track->persistent->set( playcount  => ( $track->persistent->playcount || 0 ) + 1 );
-		$track->persistent->set( lastplayed => time() );
-		$track->persistent->update;
+		if ( $track->persistent ) {
+			$track->persistent->set( playcount  => ( $track->persistent->playcount || 0 ) + 1 );
+			$track->persistent->set( lastplayed => time() );
+			$track->persistent->update;
 
-		Slim::Schema->forceCommit();
+			Slim::Schema->forceCommit();
+		}
 
 	} else {
 
