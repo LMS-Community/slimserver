@@ -439,7 +439,7 @@ sub init {
 					if ($volume->[$day] != 50) {
 						$newAlarm->volume($volume->[$day]);
 					}
-					if (defined $playlistMap{$playlist->[$day]}) {
+					if (exists $playlistMap{$playlist->[$day]}) {
 						$newAlarm->playlist($playlistMap{$playlist->[$day]});
 					} else {
 						$newAlarm->playlist($playlist->[$day]);
