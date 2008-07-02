@@ -181,7 +181,6 @@ sub registerDefaultInfoProviders {
 		func   => \&infoTagVersion,
 	) );
 	
-	# XXX: Create Mix (from MusicIP plugin)
 }
 
 =head1 METHODS
@@ -423,8 +422,6 @@ sub generateInfoOrderingItem {
 		$class->generateInfoOrderingItem( $item, $name );
 	}
 }
-
-# XXX: No MusicIP support here (play-hold)
 
 sub infoContributors {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
