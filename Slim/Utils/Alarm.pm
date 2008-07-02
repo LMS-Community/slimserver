@@ -64,9 +64,10 @@ my $DEF_ALARM_SCREENSAVER = 'SCREENSAVER.datetime';
 my $alarmScreensaver = $DEF_ALARM_SCREENSAVER; 
 
 # Hash storing the playlists that alarms can use.  Keys are playlist URLs.  Values are the string descriptions for each URL.
+# Values that should be passed through client->string are surrounded with curly braces.
 # e.g. 
 # {
-#	'randomplay://albums' => 'PLUGIN_RANDOM_ALBUMS',
+#	'randomplay://albums' => '{PLUGIN_RANDOM_ALBUMS}',
 # }
 my %alarmPlaylists = (); 
 
@@ -511,13 +512,13 @@ sub sound {
 		}
 
 		# Play alarm playlist, falling back to the current playlist if undef
-		#TODO: check that playlist is still valid (Bug 8577)
 		if (defined $self->playlist) {
+			$log->debug('Alarm playlist url: ' . $self->playlist);
 			$request = $client->execute(['playlist', 'play', $self->playlist]);
 			$request->source('ALARM');
 
-			#TODO: need to know if this succeeded and fallback to something if it didn't (Bug 8577)
 		} else {
+			$log->debug('Current playlist selected for alarm playlist');
 			# Check that the current playlist isn't empty
 			my $playlistLen = Slim::Player::Playlist::count($client);
 			if ($playlistLen) {
@@ -526,15 +527,12 @@ sub sound {
 			} else {
 				$log->debug('Current playlist is empty');
 
-				#TODO: Would be nice to have some alarm tones to fall back to (Bug 8499)
-
-				# For now, just grab 10 random tracks and play them
-				$log->debug('Playing 10 random tracks');
-				my @tracks = Slim::Schema->rs('track')->search({audio => 1}, {rows => 10, order_by => \'RAND()'})->all;
-				$request = $client->execute(['playlist', 'loadtracks', 'listRef', \@tracks ]);
-				$request->source('ALARM');
+				$self->_playFallback();
 			}
 		}
+
+		# Set a callback to check we managed to play something
+		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 20, \&_checkPlaying);
 
 		# Allow a slight delay for things to load up then tell the user what's going on
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, sub {
@@ -551,12 +549,16 @@ sub sound {
 				# Get the string that was given when the current playlist url was registered and stringify
 				# if necessary
 				my $playlistString = $alarmPlaylists{$self->playlist};
-				my ($stringKey) = $playlistString =~ /^{(.*)}$/; 
+				if (defined $playlistString) {
+					my ($stringKey) = $playlistString =~ /^{(.*)}$/; 
 
-				if (defined $stringKey) {
-					$line2 = $client->string($stringKey);
+					if (defined $stringKey) {
+						$line2 = $client->string($stringKey);
+					} else {
+						$line2 = $playlistString;
+					}
 				} else {
-					$line2 = $playlistString;
+					$line2 = Slim::Music::Info::standardTitle($client, $self->playlist);
 				}
 			} else {
 				$line2 = $client->string('CURRENT_PLAYLIST');
@@ -608,9 +610,14 @@ sub snooze {
 		# Send notification
 		Slim::Control::Request::notifyFromArray($client, ['alarm', 'snooze', $self->{_id}]);
 
-		# Pause the music
-		my $request = $client->execute(['pause', 1]);
-		$request->source('ALARM');
+		# Kill the callback to check for playback
+		Slim::Utils::Timers::killTimers($self, \&_checkPlaying);
+
+		# Pause the music (check if it's playing first or we'll generate a 'playlist jump' command)
+		if ($client->playmode =~ /play/) {
+			my $request = $client->execute(['pause', 1]);
+			$request->source('ALARM');
+		}
 
 		$self->{_snoozeActive} = 1;
 
@@ -692,6 +699,9 @@ sub stop {
 	}
 	$self->{_active} = 0;
 	$self->{_snoozeActive} = 0;
+
+	# Kill the callback to check for playback
+	Slim::Utils::Timers::killTimers($self, \&_checkPlaying);
 
 	# Restore analogOutMode to previous setting
 	$client->can('setAnalogOutMode') && $client->setAnalogOutMode();
@@ -866,6 +876,38 @@ sub delete {
 	}
 };
 
+# Check whether the alarm's client is playing something and trigger a fallback if not
+sub _checkPlaying {
+	my $self = shift;
+
+	$log->debug('Checking whether client is playing for alarm ' . $self->id);
+
+	# Do nothing if the alarm is no longer active or the user has already hit snooze (something must have woken them!)
+	return if ! $self->active || $self->snoozeActive;
+
+	my $client = $self->client;
+
+	if (! ($client->playmode =~ /play/)) {
+		$log->debug('Alarm active but client not playing');
+		$self->_playFallback();
+	}
+}
+
+# Play something as a fallback for when the alarm playlist has failed for some reason 
+sub _playFallback {
+	my $self = shift;
+
+	my $client = $self->client;
+
+	$log->debug('Starting fallback sounds');
+	# Would be nice to have some alarm tones to fall back to (Bug 8499).  For now, just
+	# grab 10 random tracks and play them
+	$log->debug('Playing 10 random tracks');
+	my @tracks = Slim::Schema->rs('track')->search({audio => 1}, {rows => 10, order_by => \'RAND()'})->all;
+	my $request = $client->execute(['playlist', 'loadtracks', 'listRef', \@tracks ]);
+	$request->source('ALARM');
+}
+
 
 ################################################################################
 =head1 CLASS METHODS
@@ -910,9 +952,10 @@ sub _setAlarmSubscription {
 		# fwd/rew and (hopefully) commands that load a new playlist result in 'playlist jump'
 		$stopCommands = ['power', 'pause', 'stop', 'playlist'];
 	} else {
-		# The alarm should be cancelled on anything the user does that would stop the music:
-		# power results in pause or stop depending on prefs
-		$stopCommands =  ['pause', 'stop'];
+		# The alarm should be cancelled on anything the user does that would stop the music
+		# power needs to be caught on its own as the music could potentially be stopped if the alarm playlist failed
+		# for some reason
+		$stopCommands =  ['pause', 'stop', 'power'];
 	}
 	Slim::Control::Request::subscribe(\&_alarmEnd, [$stopCommands], $client);
 }
