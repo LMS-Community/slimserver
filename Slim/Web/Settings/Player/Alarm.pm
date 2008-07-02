@@ -57,7 +57,7 @@ sub handler {
 
 				$alarm->enabled($paramRef->{'alarm_enable'.$alarm->id});
 				$alarm->repeat($paramRef->{'alarm_repeat'.$alarm->id});
-				for my $day (1 .. 7) {
+				for my $day (0 .. 6) {
 					$alarm->day($day,$paramRef->{'alarmday'.$alarm->id.$day} ? 1 : 0);
 				}
 				$alarm->save;
