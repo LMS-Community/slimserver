@@ -1189,11 +1189,12 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 	},
 
 	_selectPlayer: function(ev){
-		this.setText('');
 		if (ev) {
 			this.setText(ev.text || '');
 			SqueezeJS.Controller.selectPlayer(ev.value);
 		}
+		else
+			this.setText('');		
 	},
 
 	_confirmSwitchPlayer: function(ev){
