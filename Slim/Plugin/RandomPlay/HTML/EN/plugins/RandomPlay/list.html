@@ -19,7 +19,8 @@
 <script type="text/javascript">
 	var RandomPlay = function(){
 		return {
-			mix: function(type, addOnly){
+			mix: function(type, addOnly) {
+				SqueezeJS.UI.setProgressCursor();
 				document.genreForm.type.value = type;
 				document.genreForm.addOnly.value = addOnly;
 				Ext.get('randomStatus').load(
