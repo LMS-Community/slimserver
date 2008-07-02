@@ -730,7 +730,32 @@ SqueezeJS.clearCookie = function(name, failover) {
 
 
 
-// some legacy calls....
+// XXX some legacy stuff - should eventually go away
+// there to be compatible across different skins
+
+function ajaxUpdate(url, params, callback) {
+	var el = Ext.get('mainbody');
+
+	if (el) {
+		var um = el.getUpdateManager();
+
+		if (um)
+			um.loadScripts = true;
+
+		el.load(url, params + '&ajaxUpdate=1&player=' + player, callback || SqueezeJS.UI.ScrollPanel.init);
+	}
+}
+
+function ajaxRequest(url, params, callback) {
+	Ext.Ajax.request({
+		method: 'GET',
+		url: url,
+		params: params,
+		timeout: 5000,
+		disableCaching: true,
+		callback: callback || function(){}
+	});
+}
 
 // update the status if the Player is available
 function refreshStatus() {
