@@ -48,8 +48,8 @@
 			</div>
 		[% END %]
 		<div class="playlistControls">
-			<img onclick="SqueezeJS.UI.setProgressCursor(500);Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
-			<img onclick="SqueezeJS.UI.setProgressCursor(500);Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
+			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
+			<img onclick="SqueezeJS.UI.setProgressCursor();Main.playlist.request('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
 			[% FOREACH mixer = item.mixerlinks.values.sort %]
 				[% PROCESS $mixer %]
 			[% END %]
