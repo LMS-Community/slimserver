@@ -173,17 +173,30 @@ SqueezeJS.UI = {
 		}
 	}),
 
-	setProgressCursor : function(el, timeout){
-		if (el = Ext.get(el)) {
-			var oldCursor = el.getStyle('cursor');
+	progressCursorTimer : new Ext.util.DelayedTask(),
+	
+	setProgressCursor : function(timeout){
+		var el = Ext.get(document.body);
 
-			if (oldCursor == 'progress')
-				return;
+		// don't want to overwrite Ext.Element.mask, thus partially copying
+        if (el._maskMsg)
+            el._maskMsg.remove();
 
-			el.setStyle({ cursor: 'progress' });
+        if(el._mask)
+            el._mask.remove();
 
-			window.setTimeout("Ext.get('" + el.id + "').setStyle({cursor:'" + oldCursor + "'})", timeout || 1000);
-		}
+        el._mask = Ext.DomHelper.append(el.dom, {cls:"waitingCursorMask"}, true);
+
+        el.addClass("x-masked");
+        el._mask.setDisplayed(true);
+
+        if(Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && el.getStyle('height') == 'auto'){ // ie will not expand full height automatically
+            el._mask.setSize(el.dom.clientWidth, el.getHeight());
+        }
+		
+		this.progressCursorTimer.delay(timeout || 500, function(){
+			el.unmask();
+		});
 	},
 	
 	Buttons : {}

@@ -671,6 +671,7 @@ SqueezeJS.Utils = {
 	toggleFavorite : function(el, url, title) {
 		var el = Ext.get(el);
 		if (el) {
+			SqueezeJS.UI.setProgressCursor(250);
 			el.getUpdateManager().showLoadIndicator = false;
 			el.load({
 				url: 'plugins/Favorites/favcontrol.html?url=' + url + '&title=' + title + '&player=' + player,
