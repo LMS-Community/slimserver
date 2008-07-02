@@ -586,6 +586,7 @@ div.pagetitleWithIcon {
 	bottom: 5px;
 	right: 5px;
 	padding: 2px;
+	text-align: right;
 	background-color: #c4c4c4;
 }
 
