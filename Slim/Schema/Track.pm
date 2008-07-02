@@ -466,34 +466,34 @@ sub _retrievePersistent {
 sub playcount { 
 	my ( $self, $val ) = @_;
 	
-	if ( defined $val ) {
+	if ( defined $val && $self->persistent ) {
 		$self->persistent->set( playcount => $val );
 		$self->persistent->update;
 	}
 	
-	return $self->persistent->playcount;
+	return $self->persistent ? $self->persistent->playcount : undef;
 }
 
 sub rating { 
 	my ( $self, $val ) = @_;
 	
-	if ( defined $val ) {
+	if ( defined $val && $self->persistent ) {
 		$self->persistent->set( rating => $val );
 		$self->persistent->update;
 	}
 	
-	return $self->persistent->rating;
+	return $self->persistent ? $self->persistent->rating : undef;
 }
 
 sub lastplayed { 
 	my ( $self, $val ) = @_;
 	
-	if ( defined $val ) {
+	if ( defined $val && $self->persistent ) {
 		$self->persistent->set( lastplayed => $val );
 		$self->persistent->update;
 	}
 	
-	return $self->persistent->lastplayed;
+	return $self->persistent ? $self->persistent->lastplayed : undef;
 }
 
 1;
