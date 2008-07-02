@@ -747,6 +747,9 @@ function ajaxUpdate(url, params, callback) {
 }
 
 function ajaxRequest(url, params, callback) {
+	if (typeof params == 'object')
+		params = Ext.util.JSON.encode(params);
+
 	Ext.Ajax.request({
 		method: 'GET',
 		url: url,
