@@ -293,6 +293,12 @@ sub readRemoteHeaders {
 		}
 		
 		if ( $update ) {
+			$log->debug( "Updating redirected URL $url" );
+			
+			# Update the URL of the original track object
+			$track->url( $url );
+			$track->update;
+
 			$log->debug( "Updating content-type for redirected URL $url to $type" );
 			Slim::Music::Info::setContentType( $url, $type );
 		}
