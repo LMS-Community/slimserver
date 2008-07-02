@@ -15,7 +15,7 @@
 	[%- END %]
 
 
-	[% BLOCK cmdHRef -%]onclick="SqueezeJS.UI.setProgressCursor(Ext.get(this).child('img'));SqueezeJS.Controller.playlistRequest('[%
+	[% BLOCK cmdHRef -%]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.playlistRequest('[%
 		# single quotes aren't url encoded, but can con fuse JS
 		IF itemobj.url;
 			itemobj.url = itemobj.url | replace("'", "%27");
