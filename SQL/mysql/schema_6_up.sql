@@ -18,7 +18,7 @@ CREATE TABLE tracks_persistent (
   INDEX trackLastPlayedIndex (lastPlayed),
   PRIMARY KEY (id),
   UNIQUE KEY (track)
-) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 ALTER TABLE tracks DROP rating;
 ALTER TABLE tracks DROP playCount;

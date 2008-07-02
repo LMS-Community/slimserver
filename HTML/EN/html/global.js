@@ -79,8 +79,11 @@ function getStatusData(params, action) {
 	ajaxRequest(url, params, action);
 }
 
-function ajaxRequest(thisurl,params, action) {
+function ajaxRequest(thisurl, params, action) {
 	var requesttype = 'post';
+
+	if (typeof params == 'object')
+		params = Object.toJSON(params);
 
 	if (!Prototype.Browser.IE) {
 		requesttype = 'get';
