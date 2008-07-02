@@ -419,7 +419,9 @@ sub init {
 								)
 							)  {
 								# Same as an existing alarm - just add the day to it
-								$newAlarm->day($day % 7, 1);
+								if ($alarm->[$day]) {
+									$newAlarm->day($day % 7, 1);
+								}
 								$duplicate = 1;
 								last;
 							}
@@ -429,7 +431,7 @@ sub init {
 
 				if (! $duplicate) {
 					my $newAlarm = Slim::Utils::Alarm->new($client, $time->[$day]);
-					$newAlarm->enabled(1);
+					$newAlarm->enabled($alarm->[$day]);
 					$newAlarm->everyDay(0);
 					if ($day == 0) {
 						$newAlarm->everyDay(1);
