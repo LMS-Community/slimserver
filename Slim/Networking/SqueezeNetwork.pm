@@ -261,27 +261,40 @@ sub login {
 	$self->get( $url );
 }
 
-# Override to add session cookie header
-sub _createHTTPRequest {
-	my ( $self, $type, $url, @args ) = @_;
+sub getHeaders {
+	my ( $self, $client ) = @_;
+	
+	my @headers;
 	
 	# Indicate our language preference
-	unshift @args, 'Accept-Language', lc( $prefs->get('language') ) || 'en';
+	push @headers, 'Accept-Language', lc( $prefs->get('language') ) || 'en';
 	
-	# Add session cookie if we have it
-	if ( my $client = $self->params('client') ) {
-		unshift @args, 'X-Player-MAC', $client->masterOrSelf->id;
+	# Add player ID data
+	if ( $client ) {
+		push @headers, 'X-Player-MAC', $client->masterOrSelf->id;
 		if ( my $uuid = $client->masterOrSelf->uuid ) {
-			unshift @args, 'X-Player-UUID', $uuid;
+			push @headers, 'X-Player-UUID', $uuid;
+		}
+		
+		# Add device id/firmware info
+		if ( $client->deviceid ) {
+			push @headers, 'X-Player-DeviceInfo', $client->deviceid . ':' . $client->revision;
 		}
 	}
 	
+	return @headers;
+}
+
+sub getCookie {
+	my ( $self, $client ) = @_;
+	
+	# Add session cookie if we have it
 	if ( $ENV{SLIM_SERVICE} ) {
 		# Get sid directly if running on SN
-		if ( my $client = $self->params('client') ) {
+		if ( $client ) {
 			my $user = $client->playerData->userid;
 			my $sid  = $user->sso . ':' . $user->password;
-			unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+			return 'sdi_squeezenetwork_session=' . uri_escape($sid);
 		}
 		else {
 			bt();
@@ -289,19 +302,35 @@ sub _createHTTPRequest {
 		}
 	}
 	elsif ( my $sid = $prefs->get('sn_session') ) {
-		unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+		return 'sdi_squeezenetwork_session=' . uri_escape($sid);
 	}
-	elsif ( $url !~ m{api/v1/login} ) {
+	
+	return;
+}
+
+# Override to add session cookie header
+sub _createHTTPRequest {
+	my ( $self, $type, $url, @args ) = @_;
+	
+	# Add SN-specific headers
+	unshift @args, $self->getHeaders( $self->params('client') );
+	
+	my $cookie;
+	if ( $cookie = $self->getCookie( $self->params('client') ) ) {
+		unshift @args, 'Cookie', $cookie;
+	}
+	
+	if ( !$cookie && $url !~ m{api/v1/login} ) {
 		$log->info("Logging in to SqueezeNetwork to obtain session ID");
 	
 		# Login and get a session ID
 		$self->login(
 			client => $self->params('client'),
 			cb     => sub {
-				if ( my $sid = $prefs->get('sn_session') ) {
-					unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+				if ( my $cookie = $self->getCookie( $self->params('client') ) ) {
+					unshift @args, 'Cookie', $cookie;
 		
-					$log->info("Got SqueezeNetwork session ID: $sid");
+					$log->info('Got SqueezeNetwork session ID');
 				}
 		
 				$self->SUPER::_createHTTPRequest( $type, $url, @args );
