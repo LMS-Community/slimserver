@@ -726,20 +726,23 @@ Returns a short, single-line string describing this alarm.  e.g. 09:00 Mo Sa Sj
 
 =cut
 
-#TODO: Make this shorter.  Maybe Mo-We Fr Su, Mo-Fr, Mo Tu Fr-Su ?  Take argument for longer strings
 sub displayStr {
 	my $self = shift;
 
-	my $displayStr = Slim::Utils::DateTime::secsToPrettyTime($self->{_time});
+	my $displayStr;
+	
+	if ($self->{_enabled}) {
+		$displayStr = Slim::Utils::DateTime::secsToPrettyTime($self->{_time});
 
-	if ($self->everyDay) {
-		$displayStr .= ' ' . $self->client->string('ALARM_EVERY_DAY');
-	} else {
-		foreach my $day (1 .. 6, 0) { 
-			if ($self->day($day)) {
-				$displayStr .= ' ' . $self->client->string('ALARM_SHORT_DAY_' . $day);
+		if (! $self->everyDay) {
+			foreach my $day (1 .. 6, 0) { 
+				if ($self->day($day)) {
+					$displayStr .= ' ' . $self->client->string('ALARM_SHORT_DAY_' . $day);
+				}
 			}
 		}
+	} else {
+		$displayStr = $self->client->string('ALARM_OFF');
 	}
 
 	return $displayStr;
@@ -988,7 +991,7 @@ sub getNextAlarm {
 
 =head2 getAlarms( $client, [ $excludeCalAlarms = 1 ] )
 
-Return an unordered list of the alarms for a client.
+Return a sorted list of the alarms for a client.
 
 Unless $excludeCalAlarms is explicitly set to false, only daily alarms will be returned. 
 

@@ -1,5 +1,4 @@
 package Slim::Buttons::Alarm;
-use base qw(Slim::Plugin::Base);
 use strict;
 
 # Max Spicer, May 2008
@@ -99,10 +98,12 @@ my @deleteMenu = (
 					my $client = shift;
 					my $alarm = shift;
 
-					my $depth = $client->modeParam('alarm_depth');
 					$alarm->delete;
-					# Rebuild the top-level menu to remove the deleted alarm 
-					buildTopMenu($client, $client->modeParameterStack(-1 - $depth)->{listRef});
+
+					# Rebuild the top-level menu to remove the deleted alarm and reset the listIndex to 0
+					buildTopMenu($client, 0);
+
+					my $depth = $client->modeParam('alarm_depth');
 					$client->showBriefly(
 						{
 							line => [$client->string('ALARM_DELETING')]
@@ -252,14 +253,9 @@ sub saveAlarm {
 		my $newAlarm = ! $alarm->id; # Unsaved alarms don't have an id
 		$alarm->save;
 
-		if ($newAlarm) {
-			# A new alarm has been added so rebuild the top-level menu to include it
-			my $depth = $client->modeParam('alarm_depth');
-			buildTopMenu($client, $client->modeParameterStack(-1 - $depth)->{listRef});
-			# Update the alarm's header string so it no longer says Add Alarm (assume that the alarm menu
-			# is always at depth 1).  Bit of a hack... ;-)
-			$client->modeParameterStack(-$depth)->{alarm_menuTitle} = sub { $alarm->displayStr };
-		}
+		# Rebuild top-level menu to reflect changes but preserve selected alarm
+		buildTopMenu($client, $alarm->id);
+
 	} else {
 		$log->debug('Alarm has no time set.  Not saving');
 	}
@@ -329,7 +325,7 @@ sub setMode {
 
 	# Add saved alarms to the top menu
 	my @topMenu;
-	buildTopMenu($client, \@topMenu);
+	buildTopMenu($client, undef, \@topMenu);
 
 	# Push into the top-level menu
 	my %params = (
@@ -346,18 +342,35 @@ sub setMode {
 # Rebuild the listref for the supplied top menu to include all the currently defined alarms
 sub buildTopMenu {
 	my $client = shift;
+	my $selectedId = shift; # ID of the alarm to select in the top menu
 	my $listRef = shift;
-	
+
+	my $mode;
+	if (! $listRef) {
+		my $depth = $client->modeParam('alarm_depth');
+		$mode = $client->modeParameterStack(-1 - $depth);
+		$listRef = $mode->{listRef};
+	}
+
 	# Get any existing alarms and add them to the top of the menu.
 	my @alarms = Slim::Utils::Alarm->getAlarms($client);
 	@$listRef = ();
+	my $count = 0;
 	foreach my $alarm (@alarms) {
-		push @$listRef, {
-					title		=> sub { $alarm->displayStr },
-					type		=> 'menu',
-					items		=> \@alarmMenu,
-					alarm		=> $alarm,
-				};
+		$count++;
+		my $name = $client->string('ALARM_ALARM') . " $count";
+		my $item = {
+				title		=> $name . ' (' . $alarm->displayStr . ')',
+				stringTitle	=> 1,
+				headerTitle	=> $name,
+				type		=> 'menu',
+				items		=> \@alarmMenu,
+				alarm		=> $alarm,
+			};
+		push @$listRef, $item;
+		if (defined $selectedId && defined $mode && $alarm->id eq $selectedId) {
+			$mode->{listIndex} = $count - 1;
+		}
 	}
 	push @$listRef, @menu;
 }
@@ -526,8 +539,12 @@ sub exitRightHandler {
 				$modeParams{listRef} = $item->{items};
 			}
 
-			# Set the header for the next menu (use a closure so it's kept up to date when alarms are edited)
-			$modeParams{alarm_menuTitle} = sub { return getName($client, $item) };
+			# Set the header for the next menu
+			if ($item->{headerTitle}) {
+				$modeParams{alarm_menuTitle} = $item->{headerTitle};
+			} else {
+				$modeParams{alarm_menuTitle} = sub { return getName($client, $item) };
+			}
 
 			# If an exit function has been requested for the next mode, store it in the new mode so it can be called
 			if (defined $item->{exitFunc}) {

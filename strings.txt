@@ -1260,6 +1260,9 @@ ALARM
 	SV	Väckarklocka
 	ZH_CN	闹钟
 
+ALARM_ALARM
+	EN	Alarm
+
 ALARM_SET
 	DE	Weckzeit einstellen
 	EN	Alarm Time
