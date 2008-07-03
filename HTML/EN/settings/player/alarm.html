@@ -1,7 +1,19 @@
 [% IF useExtJS; extJsScripts = BLOCK %]   
-	<script TYPE="text/javascript">   
+	<script TYPE="text/javascript">
 		Ext.onReady(function(){
-			tip = {
+			Alarm.initSliders();
+			Alarm.initDefaultVolumeBtns();
+
+			[% IF prefs.alarms.size %]   
+			if (el = Ext.get('alarm[% newAlarmID %]'))
+				el.setDisplayed('none');
+			[% END %]
+		});
+
+		var Alarm = {
+			sliders: new Array(),
+
+			tip: {
 				init : function(slider){
 					slider.on('dragstart', this.onSlide, this);
 					slider.on('drag', this.onSlide, this);
@@ -11,57 +23,89 @@
 				onSlide : function(slider){
 					slider.input.dom.value = slider.getValue();
 				}
-			};
+			},
 
-			var tpl = new Ext.Template('<span class="settingsSlider" id="alarmvolume_slider_{id}"></span>');
-			var items = Ext.DomQuery.select('input.volumeSlider');
-			
-			for(var i = 0; i < items.length; i++) {
+			initSliders: function() {
+				var tpl = new Ext.Template('<span class="settingsSlider" id="alarmvolume_slider_{id}"></span>');
+				var items = Ext.DomQuery.select('input.volumeSlider');
+				
+				for (var i = 0; i < items.length; i++) {
+					var el;
+	
+					if (el = Ext.get(items[i].id)) {
+	
+						var sliderEl = tpl.insertBefore(el, {id:el.id}, true);	
+						
+						this.sliders[el.id] = new Ext.Slider({
+							renderTo: sliderEl,
+							width: 200,
+							minValue: 0,
+							maxValue: 100,
+							plugins: this.tip,
+							value: el.dom.value,
+					 		input: el,
+					 		setVolume: function(v){
+								v = parseInt(v);
+								if (isNaN(v))
+									v = 0;
+									
+								this.setValue(v);
+							}
+						});
+	
+						el.on({
+							change: {
+								fn: function(ev, i){
+									this.setVolume(i.value);
+								},
+								scope: this.sliders[el.id]
+							},
+							keyup: {
+								fn: function(ev, i){
+									this.setVolume(i.value);
+								},
+								scope: this.sliders[el.id]
+							}
+						});
+					}
+				}
+			},
+
+			useDefaultVolume: function(id, enabled){
+
+				if ( id.match(/usesDefaultVolume(.*)/) )
+					id = RegExp.$1;
+
+				console.debug(id, enabled);
 				var el;
+				if (el = Ext.get('alarmvolume' + id))
+					el.dom.disabled = enabled;
 
-				if (el = Ext.get(items[i].id)) {
-
-					var sliderEl = tpl.insertBefore(el, {id:el.id}, true);	
-					
-					var slider = new Ext.Slider({
-						renderTo: sliderEl,
-						width: 200,
-						minValue: 0,
-						maxValue: 100,
-						plugins: tip,
-						value: el.dom.value,
-				 		input: el,
-				 		setVolume: function(v){
-							v = parseInt(v);
-							if (isNaN(v))
-								v = 0;
-								
-							this.setValue(v);
-						}
-					});
-
-					el.on({
-						change: {
-							fn: function(ev, i){
-								this.setVolume(i.value);
-							},
-							scope: slider
-						},
-						keyup: {
-							fn: function(ev, i){
-								this.setVolume(i.value);
-							},
-							scope: slider
-						}
-					});
+				if (this.sliders['alarmvolume' + id])
+					this.sliders['alarmvolume' + id].setDisabled(enabled);
+			},
+			
+			initDefaultVolumeBtns: function(){
+				var items = Ext.DomQuery.select('input.usesDefaultVolume');
+				
+				for (var i = 0; i < items.length; i++) {
+	
+					this.useDefaultVolume(items[i].id, items[i].checked);
+		
+					var el;
+					if (el = Ext.get(items[i].id)) {
+						el.on({
+							change: {
+								fn: function(ev, i){
+									this.useDefaultVolume(i.id, i.checked);
+								},
+								scope: this
+							}
+						});
+					}
 				}
 			}
-
-			[% IF prefs.alarms.size %]   
-			if (el = Ext.get('alarm[% newAlarmID %]'))
-				el.setDisplayed('none');
-			[% END %]
-		});
+		};
 	</script>   
 [% END; END %]
 [% BLOCK alarmSetting %]
@@ -106,7 +150,11 @@
 
 		<tr>
 			<td><label for="alarmvolume[% alarm.id %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label>&nbsp;</td>
-			<td><input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || defaultVolume %]" size="3"></td>
+			<td>
+				<input type="checkbox" name="usesDefaultVolume[% alarm.id %]" class="usesDefaultVolume" id="usesDefaultVolume[% alarm.id %]" value="1"  [% alarm.usesDefaultVolume() ? "checked" : "" %]>
+				<label for="usesDefaultVolume[% alarm.id %]" class="stdlabel">[% "ALARM_USE_DEFAULT_VOLUME" | string %]</label><br/>
+				<input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || alarmDefaultVolume %]" size="3">
+			</td>
 		</tr>
 
 		<tr>
@@ -174,8 +222,12 @@
 		
 	[% END %]
 
+	[% WRAPPER setting title="ALARM_DEFAULT_VOLUME" desc="" %]
+		<input type="text" class="stdedit volumeSlider" name="pref_alarmDefaultVolume" id="alarmDefaultVolume" value="[% prefs.pref_alarmDefaultVolume %]" size="3">
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_SNOOZE_SECONDS" desc="SETUP_SNOOZE_SECONDS_DESC" %]
-		<input type="text" class="stdedit" name="pref_alarmSnoozeSeconds" id="playername" value="[% prefs.pref_alarmSnoozeSeconds %]" size="20">
+		<input type="text" class="stdedit" name="pref_alarmSnoozeSeconds" id="alarmSnoozeSeconds" value="[% prefs.pref_alarmSnoozeSeconds %]" size="20">
 	[% END %]
 
 	[% WRAPPER setting title="ALARM_FADE" desc="" %]

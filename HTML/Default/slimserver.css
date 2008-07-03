@@ -1204,6 +1204,10 @@ div.buttonbarSpacer {
 	vertical-align: top;
 }
 
+.prefs td {
+	padding-bottom: 2px;
+}
+
 .settingsSlider {
 	margin-top: -2px;
 	float: left;

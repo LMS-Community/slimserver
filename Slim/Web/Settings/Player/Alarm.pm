@@ -41,7 +41,7 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	return ($prefs->client($client), qw(alarmSnoozeSeconds alarmfadeseconds alarmsEnabled));
+	return ($prefs->client($client), qw(alarmSnoozeSeconds alarmfadeseconds alarmsEnabled alarmDefaultVolume));
 }
 
 sub handler {
@@ -95,7 +95,6 @@ sub handler {
 	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
 	
 	$paramRef->{'playlistOptions'} = \%playlistTypes;
-	$paramRef->{'defaultVolume'}   = Slim::Utils::Alarm->defaultVolume($client);
 	$paramRef->{'newAlarmID'}      = NEWALARMID;
 
 	# Get the non-calendar alarms for this client
@@ -110,6 +109,7 @@ sub saveAlarm {
 	my $paramRef = shift;
 	
 	$alarm->volume( $paramRef->{'alarmvolume' . $id} );
+	$alarm->usesDefaultVolume( $paramRef->{'usesDefaultVolume' . $id} );
 	$alarm->playlist( $paramRef->{'alarmplaylist' . $id} );
 
 	# don't accept hours > midnight
