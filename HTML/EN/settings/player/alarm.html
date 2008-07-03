@@ -76,7 +76,6 @@
 				if ( id.match(/usesDefaultVolume(.*)/) )
 					id = RegExp.$1;
 
-				console.debug(id, enabled);
 				var el;
 				if (el = Ext.get('alarmvolume' + id))
 					el.dom.disabled = enabled;
