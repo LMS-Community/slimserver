@@ -713,6 +713,14 @@ our $pref_settings = {
 		firmwareid => 4,
 		pack => 'C',
 	},
+	'fxloopSource' => { # (Transporter only)
+		firmwareid => 5,
+		pack => 'C',
+	},
+	'fxloopClock' => { # (Transporter only)
+		firmwareid => 6,
+		pack => 'C',
+	},
 };
 
 $prefs->setChange( sub { my ($pref, $val, $client) = @_; $client->setPlayerSetting($pref, $val); }, keys %{$pref_settings});

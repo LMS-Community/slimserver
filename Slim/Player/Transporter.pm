@@ -71,8 +71,16 @@ sub reconnect {
 	$client->getPlayerSetting('fxloopSource');
 	$client->getPlayerSetting('fxloopClock');
 
-	$client->updateClockSource();
-	$client->updateEffectsLoop();
+	# We need to wait for the fxloop settings
+	# to come back from the player before using them
+	Slim::Utils::Timers::setTimer(
+		undef,
+		Time::HiRes::time() + 1,
+		sub {
+			$client->updateClockSource();
+			$client->updateEffectsLoop();
+		},
+	);
 
 	# Update the knob in reconnect - as that's the last function that is
 	# called when a new or pre-existing client connects to the server.
