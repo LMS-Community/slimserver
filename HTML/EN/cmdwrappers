@@ -369,7 +369,7 @@ END %]
 [% END -%]
 
 [% BLOCK settingSection %]
-	<div class="settingSection">
+	<div class="settingSection" [% IF sectionID %]id="[% sectionID %]"[% END %]>
 		[% content %]
 	</div>
 [% END -%]

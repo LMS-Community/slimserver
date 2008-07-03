@@ -1320,6 +1320,9 @@ ALARM_USE_DEFAULT_VOLUME
 ALARM_ADD
 	EN	Add Alarm
 
+ALARM_NEW
+	EN	New Alarm
+
 ALARM_ADD_DESC
 	EN	You can add as many alarms as you like.  Each alarm can be set to go off every day, on particular days only, or just once.  Select "Add Alarm" to start adding a new alarm.
 

@@ -14,6 +14,8 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+use constant NEWALARMID => '_new';
+
 my $prefs = preferences('server');
 
 sub new {
@@ -49,44 +51,67 @@ sub handler {
 
 	my ($prefsClass, @prefs) = $class->prefs($client);
 
-	if ($paramRef->{'saveSettings'}) {
-		for my $alarm (Slim::Utils::Alarm->getAlarms($client)) {
-			if ($paramRef->{'Remove'.$alarm->id}) {
-				$alarm->delete;
-			} else {
-				$alarm->volume($paramRef->{'alarmvolume'.$alarm->id});
-				$alarm->playlist($paramRef->{'alarmplaylist'.$alarm->id});
+	for my $alarm (Slim::Utils::Alarm->getAlarms($client)) {
 
-				my $t = Slim::Utils::DateTime::prettyTimeToSecs($paramRef->{'alarmtime'.$alarm->id});
-				my ($h, $m) = Slim::Utils::DateTime::splitTime($t);
-				# don't accept hours > midnight
-				$t = Slim::Utils::DateTime::prettyTimeToSecs($h % 24 . ":$m") if ($h > 23);
-				$alarm->time($t);
+		if ($paramRef->{'Remove'.$alarm->id}) {
 
-				$alarm->enabled($paramRef->{'alarm_enable'.$alarm->id});
-				$alarm->repeat($paramRef->{'alarm_repeat'.$alarm->id});
-				for my $day (0 .. 6) {
-					$alarm->day($day,$paramRef->{'alarmday'.$alarm->id.$day} ? 1 : 0);
-				}
-				$alarm->save;
-			}
+			$alarm->delete;
+
 		}
-		if ($paramRef->{'AddAlarm'}) {
-				my $newAlarm = Slim::Utils::Alarm->new($client,0);
-				$newAlarm->enabled(1);
-				$newAlarm->save;
+			
+		if ($paramRef->{'saveSettings'}) {
+
+			saveAlarm($alarm, $alarm->id, $paramRef);
+
 		}
+	}
+
+	if ($paramRef->{'saveSettings'} && $paramRef->{ 'alarmtime' . NEWALARMID }) {
+
+		my $newAlarm = Slim::Utils::Alarm->new($client, 0);
+		saveAlarm($newAlarm, NEWALARMID, $paramRef);
+
 	}
 
 	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
 	
 	$paramRef->{'playlistOptions'} = \%playlistTypes;
 	$paramRef->{'defaultVolume'}   = Slim::Utils::Alarm->defaultVolume($client);
+	$paramRef->{'newAlarmID'}      = NEWALARMID;
 
 	# Get the non-calendar alarms for this client
 	$paramRef->{'prefs'}->{'alarms'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
 	
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+sub saveAlarm {
+	my $alarm    = shift;
+	my $id       = shift;
+	my $paramRef = shift;
+	
+	$alarm->volume( $paramRef->{'alarmvolume' . $id} );
+	$alarm->playlist( $paramRef->{'alarmplaylist' . $id} );
+
+	# don't accept hours > midnight
+	my $t       = Slim::Utils::DateTime::prettyTimeToSecs( $paramRef->{'alarmtime' . $id} );
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($t);
+
+	if ($h > 23) {
+		
+		$t = Slim::Utils::DateTime::prettyTimeToSecs($h % 24 . ":$m");
+	}
+
+	$alarm->time($t);
+	$alarm->enabled( $paramRef->{'alarm_enable' . $id} );
+	$alarm->repeat( $paramRef->{'alarm_repeat' . $id} );
+
+	for my $day (0 .. 6) {
+
+		$alarm->day($day, $paramRef->{'alarmday' . $id . $day} ? 1 : 0);
+	}
+
+	$alarm->save;
 }
 
 1;
