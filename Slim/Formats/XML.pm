@@ -107,48 +107,33 @@ sub getFeedAsync {
 		$log->info("URL requires SqueezeNetwork session");
 		
 		# Sometimes from the web we won't have a client, so pick a random one
-		$params->{'client'} ||= Slim::Player::Client::clientRandom();
+		$params->{client} ||= Slim::Player::Client::clientRandom();
 
-		if ( !$params->{'client'} ) {
+		if ( !$params->{client} ) {
 			# No player connected, cannot continue
 			$ecb->( string('SQUEEZENETWORK_NO_PLAYER_CONNECTED'), $params );
 			return;
 		}
 		
-		if ( $ENV{SLIM_SERVICE} ) {
-			# Get sid directly if running on SN
-			my $user = $params->{client}->playerData->userid;
-			my $sid  = $user->sso . ':' . $user->password;
-			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-			$headers{'X-Player-MAC'} = $params->{'client'}->masterOrSelf->id;
-			if ( my $uuid = $params->{'client'}->masterOrSelf->uuid ) {
-				$headers{'X-Player-UUID'} = $uuid;
-			}
+		my %snHeaders = Slim::Networking::SqueezeNetwork->getHeaders( $params->{client} );
+		while ( my ($k, $v) = each %snHeaders ) {
+			$headers{$k} = $v;
 		}
-		elsif ( my $sid = $prefs->get('sn_session') ) {
-			$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-			$headers{'X-Player-MAC'} = $params->{'client'}->masterOrSelf->id;
-			if ( my $uuid = $params->{'client'}->masterOrSelf->uuid ) {
-				$headers{'X-Player-UUID'} = $uuid;
-			}
-			
-			$log->info("Using existing SN session ID $sid");
+		
+		if ( my $snCookie = Slim::Networking::SqueezeNetwork->getCookie( $params->{client} ) ) {
+			$headers{Cookie} = $snCookie;
 		}
 		else {
 			$log->info("Logging in to SqueezeNetwork to obtain session ID");
 		
 			# Login and get a session ID
 			Slim::Networking::SqueezeNetwork->login(
-				client => $params->{'client'},
+				client => $params->{client},
 				cb     => sub {
-					if ( my $sid = $prefs->get('sn_session') ) {
-						$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-						$headers{'X-Player-MAC'} = $params->{'client'}->masterOrSelf->id;
-						if ( my $uuid = $params->{'client'}->masterOrSelf->uuid ) {
-							$headers{'X-Player-UUID'} = $uuid;
-						}
-						
-						$log->info("Got SqueezeNetwork session ID: $sid");
+					if ( my $snCookie = Slim::Networking::SqueezeNetwork->getCookie( $params->{client} ) ) {
+						$headers{Cookie} = $snCookie;
+
+						$log->info('Got SqueezeNetwork session ID');
 					}
 				
 					$http->get( $url, %headers );
