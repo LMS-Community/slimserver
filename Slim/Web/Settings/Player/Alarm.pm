@@ -51,26 +51,45 @@ sub handler {
 
 	my ($prefsClass, @prefs) = $class->prefs($client);
 
-	for my $alarm (Slim::Utils::Alarm->getAlarms($client)) {
+	my $editedAlarms = {
+		id     => [],
+		remove => [],
+	};
+	
+	foreach (keys %{ $paramRef }) {
+		
+		if (/alarm_(id|remove)_(.+)/) {
+			
+			push @{ $editedAlarms->{$1} }, $2; 
+		}
+	}
 
-		if ($paramRef->{'Remove'.$alarm->id}) {
+	if ($paramRef->{'saveSettings'}) {
+
+		for my $alarmID ( @{ $editedAlarms->{id} } ) {
+
+			if ($alarmID eq NEWALARMID) {
+
+				if ($paramRef->{'alarmtime' . NEWALARMID} && (my $alarm = Slim::Utils::Alarm->new($client, 0))) {
+					
+					saveAlarm($alarm, NEWALARMID, $paramRef);
+				}		
+			}
+
+			elsif (my $alarm = Slim::Utils::Alarm->getAlarm($client, $alarmID)) {
+				
+				saveAlarm($alarm, $alarmID, $paramRef);
+			}
+		}
+	}
+
+	for my $alarmID ( @{ $editedAlarms->{remove} } ) {
+
+		if (my $alarm = Slim::Utils::Alarm->getAlarm($client, $alarmID)) {
 
 			$alarm->delete;
 
 		}
-			
-		if ($paramRef->{'saveSettings'}) {
-
-			saveAlarm($alarm, $alarm->id, $paramRef);
-
-		}
-	}
-
-	if ($paramRef->{'saveSettings'} && $paramRef->{ 'alarmtime' . NEWALARMID }) {
-
-		my $newAlarm = Slim::Utils::Alarm->new($client, 0);
-		saveAlarm($newAlarm, NEWALARMID, $paramRef);
-
 	}
 
 	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
