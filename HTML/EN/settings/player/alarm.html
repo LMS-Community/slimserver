@@ -7,6 +7,19 @@
 				Alarm.initDefaultVolumeBtns();
 			}
 
+			var el;
+			if (el = Ext.get('alarm_remove_[% newAlarmID %]')) {
+				el.on({
+					click: {
+						fn: function() {
+							Ext.get('alarmtime[% newAlarmID %]').dom.value = '';
+							Ext.get('alarm[% newAlarmID %]').setDisplayed('none');
+							Ext.get('button[% newAlarmID %]').show();
+						}
+					}
+				});
+			}
+
 			[% IF prefs.alarms.size %]   
 			if (el = Ext.get('alarm[% newAlarmID %]'))
 				el.setDisplayed('none');
@@ -155,7 +168,7 @@
 			<td>
 				<input type="checkbox" name="usesDefaultVolume[% alarm.id %]" class="usesDefaultVolume" id="usesDefaultVolume[% alarm.id %]" value="1"  [% alarm.usesDefaultVolume() ? "checked" : "" %]>
 				<label for="usesDefaultVolume[% alarm.id %]" class="stdlabel">[% "ALARM_USE_DEFAULT_VOLUME" | string %]</label><br/>
-				<input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || alarmDefaultVolume %]" size="3">
+				<input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || prefs.pref_alarmDefaultVolume %]" size="3">
 			</td>
 		</tr>
 
@@ -187,9 +200,9 @@
 			</select></td>
 		</tr>
 
-		[% IF alarm.id != newAlarmID %]
+		[% IF alarm.id != newAlarmID || useExtJS %]
 		<tr><td>
-			<input name="alarm_remove_[% alarm.id %]" type="submit" class="stdclick" value="[% "ALARM_DELETE" | string %]">
+			<input name="alarm_remove_[% alarm.id %]" type="[% useExtJS && alarm.id == newAlarmID ? 'button' : 'submit' %]" class="stdclick" value="[% "ALARM_DELETE" | string %]" id="alarm_remove_[% alarm.id %]">
 		</td></tr>
 		[% END %]
 	</table>
