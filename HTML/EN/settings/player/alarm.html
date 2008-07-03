@@ -1,8 +1,66 @@
-[% IF useExtJS && prefs.alarms.size; extJsScripts = BLOCK %]   
+[% IF useExtJS; extJsScripts = BLOCK %]   
 	<script TYPE="text/javascript">   
 		Ext.onReady(function(){
+			tip = {
+				init : function(slider){
+					slider.on('dragstart', this.onSlide, this);
+					slider.on('drag', this.onSlide, this);
+					slider.on('change', this.onSlide, this);
+				},
+			
+				onSlide : function(slider){
+					slider.input.dom.value = slider.getValue();
+				}
+			};
+
+			var tpl = new Ext.Template('<span class="settingsSlider" id="alarmvolume_slider_{id}"></span>');
+			var items = Ext.DomQuery.select('input.volumeSlider');
+			
+			for(var i = 0; i < items.length; i++) {
+				var el;
+
+				if (el = Ext.get(items[i].id)) {
+
+					var sliderEl = tpl.insertBefore(el, {id:el.id}, true);	
+					
+					var slider = new Ext.Slider({
+						renderTo: sliderEl,
+						width: 200,
+						minValue: 0,
+						maxValue: 100,
+						plugins: tip,
+						value: el.dom.value,
+				 		input: el,
+				 		setVolume: function(v){
+							v = parseInt(v);
+							if (isNaN(v))
+								v = 0;
+								
+							this.setValue(v);
+						}
+					});
+
+					el.on({
+						change: {
+							fn: function(ev, i){
+								this.setVolume(i.value);
+							},
+							scope: slider
+						},
+						keyup: {
+							fn: function(ev, i){
+								this.setVolume(i.value);
+							},
+							scope: slider
+						}
+					});
+				}
+			}
+
+			[% IF prefs.alarms.size %]   
 			if (el = Ext.get('alarm[% newAlarmID %]'))
 				el.setDisplayed('none');
+			[% END %]
 		});
 	</script>   
 [% END; END %]
@@ -10,7 +68,10 @@
 	<table cellspacing="0">
 		<tr>
 			<td><label for="alarmtime[% alarm.id %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label>&nbsp;</td>
-			<td><input type="text" class="stdedit" name="alarmtime[% alarm.id %]" id="alarmtime[% alarm.id %]" value="[% alarm.timeStr %]" size="15"></td>
+			<td>
+				<input type="text" class="stdedit" name="alarmtime[% alarm.id %]" id="alarmtime[% alarm.id %]" value="[% alarm.timeStr %]" size="15">
+				<input type="hidden" name="alarm_id_[% alarm.id %]" value="1">
+			</td>
 		</tr>
 
 		<tr>
@@ -45,7 +106,7 @@
 
 		<tr>
 			<td><label for="alarmvolume[% alarm.id %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label>&nbsp;</td>
-			<td><input type="text" class="stdedit" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || defaultVolume %]" size="15"></td>
+			<td><input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || defaultVolume %]" size="3"></td>
 		</tr>
 
 		<tr>
@@ -78,7 +139,7 @@
 
 		[% IF alarm.id != newAlarmID %]
 		<tr><td>
-			<input name="Remove[% alarm.id %]" type="submit" class="stdclick" value="[% "ALARM_DELETE" | string %]">
+			<input name="alarm_remove_[% alarm.id %]" type="submit" class="stdclick" value="[% "ALARM_DELETE" | string %]">
 		</td></tr>
 		[% END %]
 	</table>

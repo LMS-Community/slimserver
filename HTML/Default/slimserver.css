@@ -1204,6 +1204,12 @@ div.buttonbarSpacer {
 	vertical-align: top;
 }
 
+.settingsSlider {
+	margin-top: -2px;
+	float: left;
+	margin-right: 5px;
+}
+
 /* don't show the checkbox in the tooltip */
 .x-tip-bd input.pluginEnablerCheckbox {
 	display: none;

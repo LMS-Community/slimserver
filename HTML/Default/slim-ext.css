@@ -258,3 +258,7 @@ body.x-body-masked .x-window-plain .x-window-mc,
 .x-tip .x-tip-bd-left, .x-tip .x-tip-bd-right{
 	background-image: url(html/images/slim-ext/tip-sprite.gif);
 }
+
+.x-slider-horz .x-slider-thumb {
+	background-image: url(html/images/slim-ext/slider-thumb.png);
+}
