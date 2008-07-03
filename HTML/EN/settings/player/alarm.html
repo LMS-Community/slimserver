@@ -196,7 +196,16 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="ALARM_ALARMS_ENABLED" desc="ALARM_ALARMS_ENABLED_DESC" %]
-		<input type=checkbox [% IF prefs.pref_alarmsEnabled %]checked [% END %] class="stdedit" name="pref_alarmsEnabled" id="pref_alarmsEnabled" value="1" />
+		<select class="stdedit" name="pref_alarmsEnabled" id="pref_alarmsEnabled">
+	
+			[% FOREACH option = {
+				'1' => 'YES',
+				'0' => 'NO',
+			} %]
+				<option [% IF prefs.pref_alarmsEnabled %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+			[%- END -%]
+			
+		</select>
 	[% END %]
 
 	[% IF useExtJS && prefs.alarms.size %]
@@ -231,7 +240,16 @@
 	[% END %]
 
 	[% WRAPPER setting title="ALARM_FADE" desc="" %]
-		<input type=checkbox [% IF prefs.pref_alarmfadeseconds %]checked [% END %] class="stdedit" name="pref_alarmfadeseconds" id="alarmfadeseconds" value="1" />
+		<select class="stdedit" name="pref_alarmfadeseconds" id="pref_alarmfadeseconds">
+	
+			[% FOREACH option = {
+				'1' => 'YES',
+				'0' => 'NO',
+			} %]
+				<option [% IF prefs.pref_alarmfadeseconds %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+			[%- END -%]
+			
+		</select>
 	[% END %]
 
 [% PROCESS settings/footer.html %]
