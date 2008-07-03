@@ -41,7 +41,7 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	return ($prefs->client($client), qw(alarmSnoozeSeconds alarmfadeseconds));
+	return ($prefs->client($client), qw(alarmSnoozeSeconds alarmfadeseconds alarmsEnabled));
 }
 
 sub handler {

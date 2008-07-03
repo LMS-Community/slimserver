@@ -86,6 +86,10 @@
 
 [% PROCESS settings/header.html %]
 
+	[% WRAPPER setting title="ALARM_ALARMS_ENABLED" desc="ALARM_ALARMS_ENABLED_DESC" %]
+		<input type=checkbox [% IF prefs.pref_alarmsEnabled %]checked [% END %] class="stdedit" name="pref_alarmsEnabled" id="pref_alarmsEnabled" value="1" />
+	[% END %]
+
 	[% IF useExtJS && prefs.alarms.size %]
 		[% WRAPPER setting title="ALARM" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
 			<input name="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]" onclick="Ext.get('alarm[% newAlarmID %]').show();Ext.get('button[% newAlarmID %]').setDisplayed('none');">

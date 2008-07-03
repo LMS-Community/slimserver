@@ -1338,6 +1338,9 @@ ALARM_ALARM_REPEAT
 ALARM_ALARMS_ENABLED
 	EN	Alarms Enabled
 
+ALARM_ALARMS_ENABLED_DESC
+	EN	This setting allows you to enable/disable all alarms at once. If this setting is disabled, then no alarm will play.
+
 ALARM_FADE
 	DA	Fade alarmer ind
 	DE	Weckerwiedergabe einblenden
