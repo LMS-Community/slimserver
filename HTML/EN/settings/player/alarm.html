@@ -1,8 +1,11 @@
 [% IF useExtJS; extJsScripts = BLOCK %]   
 	<script TYPE="text/javascript">
-		Ext.onReady(function(){
-			Alarm.initSliders();
-			Alarm.initDefaultVolumeBtns();
+		Ext.onReady(function() {
+			// I'm sorry IE6 laggers
+			if (!Ext.isIE6) {
+				Alarm.initSliders();
+				Alarm.initDefaultVolumeBtns();
+			}
 
 			[% IF prefs.alarms.size %]   
 			if (el = Ext.get('alarm[% newAlarmID %]'))
@@ -42,7 +45,7 @@
 							minValue: 0,
 							maxValue: 100,
 							plugins: this.tip,
-							value: el.dom.value,
+							value: isNaN(parseInt(el.dom.value)) ? 0 : parseInt(el.dom.value),
 					 		input: el,
 					 		setVolume: function(v){
 								v = parseInt(v);
@@ -52,7 +55,7 @@
 								this.setValue(v);
 							}
 						});
-	
+
 						el.on({
 							change: {
 								fn: function(ev, i){
