@@ -29,7 +29,7 @@ sub initPlugin {
 		'SCREENSAVER.datetime',
 		getScreensaverDatetime(),
 		\&setScreensaverDateTimeMode,
-		undef,
+		\&exitScreensaverDateTimeMode,
 		getDisplayName(),
 	);
 }
@@ -54,7 +54,16 @@ sub getScreensaverDatetime {
 
 sub setScreensaverDateTimeMode() {
 	my $client = shift;
+
 	$client->lines(\&screensaverDateTimelines);
+
+	$client->modeParam('modeUpdateInterval', 1);
+}
+
+sub exitScreensaverDateTimeMode {
+	my $client = shift;
+
+	Slim::Utils::Timers::killTimers($client, \&_flashAlarm);
 }
 
 # following is a an optimisation for graphics rendering given the frequency DateTime is displayed
@@ -68,42 +77,20 @@ my $fontDef = {
 
 sub screensaverDateTimelines {
 	my $client = shift;
-
-	my $alarmOn = 0; # Whether to display the alarm/snooze symbol
-	my $nextUpdate = $client->periodicUpdateTime();
-	my $updateInterval = $client->modeParam('modeUpdateInterval');
+	my $flash  = shift; # set when called from animation callback
 
 	my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
 
-	if (defined $currentAlarm) {
-		# An alarm is currently active - flash the symbol
-		my $time = Time::HiRes::time;
-		$alarmOn = ($time - int($time)) < 0.5;
-	} else {
-		# No alarm active, show symbol if alarm scheduled in next 24 hours
-		$alarmOn = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400); 
-	}
-
-	# Keep update time on the second or 1/2 second
-	if ($updateInterval) {
-		my $correctUpdate = int($nextUpdate);
-		my $delta = $nextUpdate - $correctUpdate;	
-		if ($updateInterval == 0.5) {
-			if ($delta >= 0.5) {
-				$delta -= 0.5;
-				$correctUpdate += 0.5;
-			}
-		}
-		if ($delta > 0.01) {
-			Slim::Buttons::Common::syncPeriodicUpdates($client, $correctUpdate);
-		}
-	}
+	# show alarm symbol if active or set for next 24 hours
+	my $alarmOn = defined $currentAlarm || ( defined $nextAlarm && ($nextAlarm->nextDue - time < 86400) );
 
 	my $twoLines = $client->linesPerScreen == 2;
 	my $narrow = $client->display->isa('Slim::Display::Boom');
+
 	my $overlay = undef;
-	if ($alarmOn) {
+
+	if ($alarmOn && !$flash) {
 		if (defined $currentAlarm && $currentAlarm->snoozeActive) {
 			$overlay = $client->symbols('sleep');
 		} else {
@@ -119,9 +106,12 @@ sub screensaverDateTimelines {
 	}
 
 	my $display = {
-		fonts  => $fontDef,
+		fonts   => $fontDef,
+		overlay => [ $overlay ],
 	};
+
 	my $timeStr = Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat'));
+
 	if ($twoLines) {
 		$display->{center}->[1] = $timeStr;
 		# If we're displaying next alarm time on boom, use short date format and left-align in order to fit it all in
@@ -130,25 +120,20 @@ sub screensaverDateTimelines {
 		} else {
 			$display->{center}->[0] = Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat'));
 		}
-		$display->{overlay}->[0] = $overlay,
 	} else {
 		# Use left-align if we're also displaying the bell/snooze symbol
 		# Also need to use left-align if the symbol is flashing otherwise the time jumps around as the overlay appears
 		# and disappears.
-		if ($alarmOn || defined $currentAlarm) {
+		if ($narrow && $alarmOn) {
 			$display->{line}->[1] = $timeStr;
 		} else {
 			$display->{center}->[1] = $timeStr;
 		}
-		$display->{overlay}->[1] = $overlay,
 	}
 
-	# Arrange for $client->update to be called periodically.
-	# Updates are done every second unless the alarm symbol needs to be flashed
-	my $newUpdateInterval = defined $currentAlarm ? 0.5 : 1;
-	if (! $updateInterval || $newUpdateInterval != $updateInterval) {
-		$client->modeParam('modeUpdateInterval', $newUpdateInterval); # seconds
-		Slim::Buttons::Common::startPeriodicUpdates($client, int(Time::HiRes::time) + $newUpdateInterval);
+	if ($currentAlarm && !$flash) {
+		# schedule another update to remove the alarm symbol during alarm
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time + 0.5, \&_flashAlarm);
 	}
 	
 # BUG 3964: comment out until Dean has a final word on the UI for this.	
@@ -161,6 +146,12 @@ sub screensaverDateTimelines {
 # 	}
 
 	return $display;
+}
+
+sub _flashAlarm {
+	my $client = shift;
+	
+	$client->update( screensaverDateTimelines($client, 'flash') );
 }
 
 1;
