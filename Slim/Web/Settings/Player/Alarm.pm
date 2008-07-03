@@ -16,6 +16,14 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+sub new {
+	my $class = shift;
+
+	Slim::Web::Pages->addPageLinks('plugins', { $class->name => $class->page });
+	
+	$class->SUPER::new();
+}
+
 sub name {
 	return Slim::Web::HTTP::protectName('ALARM');
 }
