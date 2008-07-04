@@ -85,7 +85,7 @@ function ajaxRequest(thisurl, params, action) {
 	if (typeof params == 'object')
 		params = Object.toJSON(params);
 
-	if (!Prototype.Browser.IE) {
+	else if (!Prototype.Browser.IE) {
 		requesttype = 'get';
 	}
 

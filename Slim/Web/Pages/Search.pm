@@ -387,7 +387,7 @@ sub fillInSearchResults {
 		}
 
 		if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($obj->url)) {
-			$form{'isFavorite'} = Slim::Utils::Favorites->new($client)->findUrl($obj->url) || 0;
+			$form{'isFavorite'} = defined Slim::Utils::Favorites->new($client)->findUrl($obj->url);
 		}
 
 		$obj->displayAsHTML(\%form, $descend);
