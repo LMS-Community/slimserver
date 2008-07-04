@@ -108,6 +108,10 @@ sub handler {
 	$paramRef->{'timeFormat'} =~ s/\%S/s/g;
 	$paramRef->{'timeFormat'} =~ s/\%p/A/g;
 
+	# if we're using a "am/pm" format, make it case independant
+	$paramRef->{'altFormats'} = $paramRef->{'timeFormat'};
+	$paramRef->{'altFormats'} =~ s/A/a/g;
+
 	# Get the non-calendar alarms for this client
 	$paramRef->{'prefs'}->{'alarms'} = [Slim::Utils::Alarm->getAlarms($client, 1)];
 	

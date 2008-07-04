@@ -3,7 +3,7 @@
 		Ext.onReady(function() {
 			// I'm sorry IE6 laggers
 			if (!Ext.isIE6) {
-				Settings.Alarm.initTimeControls('[% timeFormat %]');
+				Settings.Alarm.initTimeControls('[% timeFormat %]', '[% altFormats %]');
 				Settings.Alarm.initSliders();
 				Settings.Alarm.initDefaultVolumeBtns();
 			}
