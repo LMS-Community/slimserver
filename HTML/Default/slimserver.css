@@ -1141,6 +1141,10 @@ body.settingsMenu {
 	margin-bottom: 15px;
 }
 
+.alarmSection .settingGroup {
+	margin-bottom: 5px;
+}
+
 .pluginSection .settingGroup {
 	padding-left: 400px;
 }
