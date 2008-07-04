@@ -11025,6 +11025,9 @@ DEBUG_NETWORK_SQUEEZENETWORK
 	IT	Registrazione di SqueezeNetwork
 	NL	SqueezeNetwork-registratie
 
+DEBUG_MENU_TRACKINFO
+	EN	Track information menu
+
 DEBUG_NETWORK_COMETD
 	DA	Cometd protokol
 	DE	Cometd-Protokoll
