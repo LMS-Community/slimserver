@@ -100,36 +100,17 @@ sub screensaverDateTimelines {
 				# Remove seconds from alarm time
 				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
 				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/\1/;
-				$overlay .=  "$timeStr";
+				$overlay .=  " $timeStr";
 			}
 		}
 	}
 
 	my $display = {
-		fonts   => $fontDef,
-		overlay => [ $overlay ],
+		'center' => [ Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat')),
+					  Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')) ],
+		'overlay'=> [ $overlay ],
+		'fonts'  => $fontDef,
 	};
-
-	my $timeStr = Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat'));
-
-	if ($twoLines) {
-		$display->{center}->[1] = $timeStr;
-		# If we're displaying next alarm time on boom, use short date format and left-align in order to fit it all in
-		if ($narrow && $alarmOn && ! defined $currentAlarm) {
-			$display->{line}->[0] = Slim::Utils::DateTime::shortDateF(),
-		} else {
-			$display->{center}->[0] = Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat'));
-		}
-	} else {
-		# Use left-align if we're also displaying the bell/snooze symbol
-		# Also need to use left-align if the symbol is flashing otherwise the time jumps around as the overlay appears
-		# and disappears.
-		if ($narrow && $alarmOn) {
-			$display->{line}->[1] = $timeStr;
-		} else {
-			$display->{center}->[1] = $timeStr;
-		}
-	}
 
 	if ($currentAlarm && !$flash) {
 		# schedule another update to remove the alarm symbol during alarm
