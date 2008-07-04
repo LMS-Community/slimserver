@@ -96,7 +96,7 @@ sub screensaverDateTimelines {
 		} else {
 			$overlay = $client->symbols('bell');
 			# Include the next alarm time in the overlay if there's room
-			if (! defined $currentAlarm && ($twoLines || ! $narrow)) {
+			if (!$narrow && !defined $currentAlarm) {
 				# Remove seconds from alarm time
 				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
 				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/\1/;
