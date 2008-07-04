@@ -31,6 +31,7 @@
 [% BLOCK alarmSetting %]
 	[% WRAPPER settingSection %]
 
+		[% alarmTitle = "ALARM_ALARM" | string %]
 		[% WRAPPER settingGroup title=alarmTitle _ " " _ loop.count desc="" %]
 			<select class="stdedit" name="alarm_enable[% alarm.id %]" id="alarm_enable[% alarm.id %]">
 		
@@ -52,7 +53,8 @@
 			&nbsp;</div>
 		</div>
 	
-		[% alarmTitle = "ALARM_SET_DAYS" | string; WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+		[% alarmTitle = "ALARM_SET_DAYS" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
 			[% FOREACH day = [1 .. 7] %]
 				[% day = day % 7 %]
 				<input type="checkbox" name="alarmday[% alarm.id %][% day %]" id="alarmday[% alarm.id %][% day %]" value="1" [% alarm.day(day) ? "checked" : "" %]>
@@ -60,8 +62,8 @@
 			[% END %]
 		[% END %]
 	
-	
-		[% alarmTitle = "ALARM_SELECT_PLAYLIST" | string; WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+		[% alarmTitle = "ALARM_SELECT_PLAYLIST" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
 			<select class="stdedit" name="alarmplaylist[% alarm.id %]" id="alarmplaylist[% alarm.id %]">
 		
 				[% FOREACH type IN playlistOptions  %]
@@ -75,13 +77,15 @@
 			</select>
 		[% END %]
 	
-		[% alarmTitle = "SETUP_ALARMVOLUME" | string; WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+		[% alarmTitle = "SETUP_ALARMVOLUME" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
 			<input type="checkbox" name="usesDefaultVolume[% alarm.id %]" class="usesDefaultVolume" id="usesDefaultVolume[% alarm.id %]" value="1"  [% alarm.usesDefaultVolume() ? "checked" : "" %]>
 			<label for="usesDefaultVolume[% alarm.id %]" class="stdlabel">[% "ALARM_USE_DEFAULT_VOLUME" | string %]</label><br/>
 			<input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || prefs.pref_alarmDefaultVolume %]" size="3">
 		[% END %]
 	
-		[% alarmTitle = "ALARM_ALARM_REPEAT" | string; WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+		[% alarmTitle = "ALARM_ALARM_REPEAT" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
 			<select class="stdedit" name="alarm_repeat[% alarm.id %]" id="alarm_repeat[% alarm.id %]">
 		
 				[% FOREACH option = {
@@ -136,11 +140,8 @@
 	</div>
 
 	<div class="alarmSection">
-	[% alarmTitle = "ALARM_ALARM" | string %]
 	[% FOREACH alarm = prefs.alarms %]
-		
 		[% PROCESS alarmSetting %]
-		
 	[% END %]
 	</div>
 	
@@ -165,4 +166,5 @@
 		</select>
 	[% END %]
 
+	<div>&nbsp;</div>
 [% PROCESS settings/footer.html %]
