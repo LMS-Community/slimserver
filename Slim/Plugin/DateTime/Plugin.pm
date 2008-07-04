@@ -71,7 +71,7 @@ sub exitScreensaverDateTimeMode {
 my $fontDef = {
 	'graphic-280x16'  => { 'overlay' => [ 'small.1'    ] },
 	'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
-	'graphic-160x32'  => { 'overlay' => [ 'threeline.1' ] },
+	'graphic-160x32'  => { 'overlay' => [ 'standard.1' ] },
 	'text'            => { 'displayoverlays' => 1        },
 };
 
@@ -96,11 +96,11 @@ sub screensaverDateTimelines {
 		} else {
 			$overlay = $client->symbols('bell');
 			# Include the next alarm time in the overlay if there's room
-			if (!($narrow && $twoLines) && !defined $currentAlarm) {
+			if (!$narrow && !defined $currentAlarm) {
 				# Remove seconds from alarm time
 				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
 				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/\1/;
-				$overlay .=  ($narrow ? '' : ' ') . $timeStr;
+				$overlay .=  " $timeStr";
 			}
 		}
 	}
