@@ -58,7 +58,7 @@
 			[% FOREACH day = [1 .. 7] %]
 				[% day = day % 7 %]
 				<input type="checkbox" name="alarmday[% alarm.id %][% day %]" id="alarmday[% alarm.id %][% day %]" value="1" [% alarm.day(day) ? "checked" : "" %]>
-				<label for="alarmday[% alarm.id %][% day %]">[% "ALARM_DAY$day" | string %]</label>
+				<label for="alarmday[% alarm.id %][% day %]">[% "ALARM_DAY$day" | string %]&nbsp;&nbsp;</label>
 			[% END %]
 		[% END %]
 	
