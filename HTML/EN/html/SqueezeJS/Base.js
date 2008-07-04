@@ -751,7 +751,7 @@ function ajaxRequest(url, params, callback) {
 		params = Ext.util.JSON.encode(params);
 
 	Ext.Ajax.request({
-		method: 'GET',
+		method: 'POST',
 		url: url,
 		params: params,
 		timeout: 5000,
