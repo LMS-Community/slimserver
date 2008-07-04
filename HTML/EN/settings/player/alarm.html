@@ -238,9 +238,10 @@
 		} %]
 	[% END %]
 
+	[% alarmTitle = "ALARM_ALARM" | string %]
 	[% FOREACH alarm = prefs.alarms %]
 		
-		[% WRAPPER setting title="$alarm.displayStr" desc="" %]
+		[% WRAPPER setting title=alarmTitle _ " " _ loop.count desc="" %]
 			[% PROCESS alarmSetting %]
 		[% END %]
 		
