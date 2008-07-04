@@ -96,6 +96,17 @@ sub handler {
 	
 	$paramRef->{'playlistOptions'} = \%playlistTypes;
 	$paramRef->{'newAlarmID'}      = NEWALARMID;
+	
+	# need to convert our timeformat into JS/PHP compatible format
+	$paramRef->{'timeFormat'} = $prefs->get('timeFormat');
+	$paramRef->{'timeFormat'} =~ s/h//g;
+	$paramRef->{'timeFormat'} =~ s/\|\%I/g/g;
+	$paramRef->{'timeFormat'} =~ s/\%I/h/g;
+	$paramRef->{'timeFormat'} =~ s/\|\%H/G/g;
+	$paramRef->{'timeFormat'} =~ s/\%H/H/g;
+	$paramRef->{'timeFormat'} =~ s/\%M/i/g;
+	$paramRef->{'timeFormat'} =~ s/\%S/s/g;
+	$paramRef->{'timeFormat'} =~ s/\%p/A/g;
 
 	# Get the non-calendar alarms for this client
 	$paramRef->{'prefs'}->{'alarms'} = [Slim::Utils::Alarm->getAlarms($client, 1)];

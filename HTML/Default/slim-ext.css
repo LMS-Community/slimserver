@@ -74,6 +74,22 @@ a.x-menu-item:hover {
 	background-image: url(html/images/slim-ext/group-checked.gif);
 }
 
+.x-combo-list,
+.x-form-focus, textarea.x-form-focus {
+	border-color: #b5b8c8;
+}
+
+.x-combo-list .x-combo-selected {
+	background-color: light-grey;
+	border-color: #b5b8c8;
+}
+
+.prefs .x-form-text {
+	height: 12px;
+	padding: 0;
+	background-image: none;
+}
+
 /* tabs and tab panel (settings) */
 .x-border-layout-ct .x-tab-panel,
 ul.x-tab-strip-top {

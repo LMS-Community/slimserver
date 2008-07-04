@@ -423,3 +423,115 @@ Settings.Page = function(){
 		}
 	};
 }();
+
+Settings.Alarm = function() {
+	return {
+		sliders: new Array(),
+
+		tip: {
+			init : function(slider){
+				slider.on('dragstart', this.onSlide, this);
+				slider.on('drag', this.onSlide, this);
+				slider.on('change', this.onSlide, this);
+			},
+		
+			onSlide : function(slider){
+				slider.input.dom.value = slider.getValue();
+			}
+		},	
+		
+		initTimeControls: function(timeFormat) {
+			var items = Ext.DomQuery.select('input.timeControl');
+			
+			for (var i = 0; i < items.length; i++) {
+
+				new Ext.form.TimeField({
+					applyTo: items[i],
+					altFormats: timeFormat,
+					format: timeFormat,
+					hideTrigger: true
+				});
+			}
+		},
+
+		initSliders: function() {
+			var tpl = new Ext.Template('<span class="settingsSlider" id="alarmvolume_slider_{id}"></span>');
+			var items = Ext.DomQuery.select('input.volumeSlider');
+			
+			for (var i = 0; i < items.length; i++) {
+				var el;
+
+				if (el = Ext.get(items[i].id)) {
+
+					var sliderEl = tpl.insertBefore(el, {id:el.id}, true);	
+					
+					this.sliders[el.id] = new Ext.Slider({
+						renderTo: sliderEl,
+						width: 200,
+						minValue: 0,
+						maxValue: 100,
+						plugins: this.tip,
+						value: isNaN(parseInt(el.dom.value)) ? 0 : parseInt(el.dom.value),
+				 		input: el,
+				 		setVolume: function(v){
+							v = parseInt(v);
+							if (isNaN(v))
+								v = 0;
+								
+							this.setValue(v);
+						}
+					});
+
+					el.on({
+						change: {
+							fn: function(ev, i){
+								this.setVolume(i.value);
+							},
+							scope: this.sliders[el.id]
+						},
+						keyup: {
+							fn: function(ev, i){
+								this.setVolume(i.value);
+							},
+							scope: this.sliders[el.id]
+						}
+					});
+				}
+			}
+		},
+
+		useDefaultVolume: function(id, enabled){
+
+			if ( id.match(/usesDefaultVolume(.*)/) )
+				id = RegExp.$1;
+
+			var el;
+			if (el = Ext.get('alarmvolume' + id))
+				el.dom.disabled = enabled;
+
+			if (this.sliders['alarmvolume' + id])
+				this.sliders['alarmvolume' + id].setDisabled(enabled);
+		},
+		
+		initDefaultVolumeBtns: function(){
+			var items = Ext.DomQuery.select('input.usesDefaultVolume');
+			
+			for (var i = 0; i < items.length; i++) {
+
+				this.useDefaultVolume(items[i].id, items[i].checked);
+	
+				var el;
+				if (el = Ext.get(items[i].id)) {
+					el.on({
+						change: {
+							fn: function(ev, i){
+								this.useDefaultVolume(i.id, i.checked);
+							},
+							scope: this
+						}
+					});
+				}
+			}
+		}
+	};
+}();

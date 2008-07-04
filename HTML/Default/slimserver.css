@@ -1214,6 +1214,11 @@ div.buttonbarSpacer {
 	margin-right: 5px;
 }
 
+.prefs .timeControl.x-form-invalid {
+	background-color: #ffcccc;
+}
+
+
 /* don't show the checkbox in the tooltip */
 .x-tip-bd input.pluginEnablerCheckbox {
 	display: none;
