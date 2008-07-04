@@ -757,7 +757,10 @@ Returns the formatted time string for this alarm.
 sub timeStr {
 	my $self = shift;
 
-	return Slim::Utils::DateTime::secsToPrettyTime($self->{_time});
+	my $time = Slim::Utils::DateTime::secsToPrettyTime($self->{_time});
+	$time =~ s/^\s//g;
+	
+	return $time;
 }
 
 =head3 active( )
