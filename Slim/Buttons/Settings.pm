@@ -92,7 +92,7 @@ sub init {
 								push @opts, $setting;
 							}
 						}
-					
+
 						#@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
 					
 						$client->modeParam('listRef', \@opts);
@@ -691,7 +691,7 @@ sub settingsMenu {
 		}
 	}
 
-	#@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
+	@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
 
 	$client->modeParam('listRef', \@settingsChoices);
 }
