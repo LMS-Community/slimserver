@@ -227,7 +227,7 @@ sub webPages {
 sub addEditLink {
 	my $enabled = $prefs->get('opmleditor');
 
-	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
+	Slim::Web::Pages->addPageLinks('plugins', { 'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
 }
 
 sub toggleButtonHandler {
@@ -244,7 +244,7 @@ sub toggleButtonHandler {
 
 	if ($favs && $params->{url}) {
 
-		if ($favs->findUrl($params->{url})) {
+		if (defined $favs->findUrl($params->{url})) {
 
 			$favs->deleteUrl( $params->{'url'} );
 			$params->{item}->{isFavorite} = 0;
@@ -253,7 +253,7 @@ sub toggleButtonHandler {
 		else {
 
 			$favs->add( $params->{url}, $params->{title} || $params->{url} );
-			$params->{item}->{isFavorite} = $favs->findUrl($params->{url});
+			$params->{item}->{isFavorite} = defined $favs->findUrl($params->{url});
 		}
 	}
 
