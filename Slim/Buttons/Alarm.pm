@@ -372,7 +372,7 @@ sub buildTopMenu {
 			};
 		push @$listRef, $item;
 		if (defined $selectedId && defined $mode && $alarm->id eq $selectedId) {
-			$mode->{listIndex} = $count - 1;
+			$mode->{listIndex} = $count;
 		}
 	}
 	push @$listRef, @menu[1 .. $#menu];
