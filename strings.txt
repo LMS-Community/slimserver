@@ -1338,11 +1338,11 @@ ALARM_ALARM_ENABLED
 ALARM_ALARM_REPEAT
 	EN	Repeat Alarm
 
-ALARM_ALARMS_ENABLED
-	EN	Alarms Enabled
+ALARM_ALL_ALARMS
+	EN	All Alarms
 
 ALARM_ALARMS_ENABLED_DESC
-	EN	This setting allows you to enable/disable all alarms at once. If this setting is disabled, then no alarm will play.
+	EN	This setting allows you to turn on/off all alarms at once. If set to Off, no alarm will go off.
 
 ALARM_FADE
 	DA	Fade alarmer ind

@@ -125,8 +125,9 @@ my @deleteMenu = (
 # items without updating that code!
 my @alarmMenu = (
 	{
-		title	=> 'ALARM_ALARM_ENABLED',
-		type	=> 'checkbox',
+		# Alarm on/off
+		title	=> 'ALARM_ALARM',
+		type	=> 'onOff',
 		checked => sub {
 				my $client = shift;
 				return $client->modeParam('alarm_alarm')->enabled;
@@ -191,6 +192,21 @@ my @alarmMenu = (
 # Items are automatically added to the top of this menu for the current client's saved alarms
 my @menu = (
 	{
+		# All Alarms   On/Off
+		# N.B. buildTopMenu assumes that this is the first item in the menu
+		title		=> 'ALARM_ALL_ALARMS',
+		type		=> 'onOff',
+		checked		=> sub {
+					my $client = shift;
+
+					return Slim::Utils::Alarm->alarmsEnabled($client);
+				},
+		toggleFunc	 => sub {  
+					my $client = shift;
+					Slim::Utils::Alarm->alarmsEnabled($client, ! Slim::Utils::Alarm->alarmsEnabled($client));
+				},
+	},
+	{
 		# Add alarm
 		title		=> 'ALARM_ADD',
 		type		=> 'menu',
@@ -211,20 +227,6 @@ my @menu = (
 			my $delta = shift; # will be +1, -1 etc
 			Slim::Utils::Alarm->defaultVolume($client, Slim::Utils::Alarm->defaultVolume($client) + $delta);
 		},
-	},
-	{
-		# Enable/disable all alarms on this client
-		title		=> 'ALARM_ALARMS_ENABLED',
-		type		=> 'checkbox',
-		checked		=> sub {
-					my $client = shift;
-
-					return Slim::Utils::Alarm->alarmsEnabled($client);
-				},
-		toggleFunc	 => sub {  
-					my $client = shift;
-					Slim::Utils::Alarm->alarmsEnabled($client, ! Slim::Utils::Alarm->alarmsEnabled($client));
-				},
 	},
 );
 
@@ -352,9 +354,10 @@ sub buildTopMenu {
 		$listRef = $mode->{listRef};
 	}
 
-	# Get any existing alarms and add them to the top of the menu.
+	# Get any existing alarms and add them to the menu
+	# but keep All Alarms  On/Off at the top 
+	@$listRef = ($menu[0]);
 	my @alarms = Slim::Utils::Alarm->getAlarms($client);
-	@$listRef = ();
 	my $count = 0;
 	foreach my $alarm (@alarms) {
 		$count++;
@@ -372,7 +375,7 @@ sub buildTopMenu {
 			$mode->{listIndex} = $count - 1;
 		}
 	}
-	push @$listRef, @menu;
+	push @$listRef, @menu[1 .. $#menu];
 }
 
 # Dynamically builds the alarm playlist menu and returns it as an arrayref
@@ -471,7 +474,7 @@ sub getOverlay {
 
 	my $type = $item->{type};
 
-	if (defined $type && ($type eq 'checkbox' || $type eq 'radio')) {
+	if (defined $type && ($type eq 'checkbox' || $type eq 'radio' || $type eq 'onOff')) {
 		my $checked = $item->{checked};
 		if (ref $checked eq 'CODE') {
 			$checked = $checked->($client, $item);
@@ -479,6 +482,8 @@ sub getOverlay {
 
 		if ($type eq 'checkbox') {
 			return [ undef, Slim::Buttons::Common::checkBoxOverlay($client, $checked ? 1 : 0) ];  
+		} elsif ($type eq 'onOff') {
+			return [ undef, $client->string( $checked ? 'ALARM_ON' : 'ALARM_OFF' ) ];
 		} else { 
 			return [ undef, Slim::Buttons::Common::radioButtonOverlay($client, $checked ? 1 : 0) ];  
 		}
@@ -605,7 +610,7 @@ sub exitRightHandler {
 
 			$modeParams{alarm_alarm} = $alarm;
 
-		} elsif ($type eq 'checkbox' || $type eq 'radio') {
+		} elsif ($type eq 'checkbox' || $type eq 'radio' || $type eq 'onOff') {
 			# Invoke the item's toggle function
 			my $toggleFunc = $item->{toggleFunc};
 			if (defined $toggleFunc && ref $toggleFunc eq 'CODE') {
