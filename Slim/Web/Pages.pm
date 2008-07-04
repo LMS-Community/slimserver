@@ -337,7 +337,7 @@ sub addSongInfo {
 
 		$params->{favoritesEnabled} = Slim::Utils::Favorites->enabled;
 		if ($params->{favoritesEnabled} && Slim::Music::Info::isURL($url)) {
-			$params->{isFavorite} = Slim::Utils::Favorites->new($client)->findUrl($url) || 0;
+			$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($url);
 		}
 
 		# make urls in comments into links

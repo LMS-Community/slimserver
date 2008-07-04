@@ -1549,6 +1549,9 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 		if (this.songInfo)
 			this.title = '&nbsp;';
  
+		this.dismissDelay = 0;
+		this.hideDelay = 500;
+			
 		SqueezeJS.UI.CoverartPopup.superclass.initComponent.call(this);
 		// let's try to size the width at a maximum of 80% of the current screen size
 		this.maxWidth = Math.min(Ext.lib.Dom.getViewWidth(), Ext.lib.Dom.getViewHeight()) * 0.8;

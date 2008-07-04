@@ -811,7 +811,7 @@ sub musicmagic_moods {
 	my ($client, $params) = @_;
 
 	my $mood_list;
-	map { $mood_list->{$_}->{isFavorite} = Slim::Utils::Favorites->new($client)->findUrl("mood://$_") || 0 } @{ grabMoods() };
+	map { $mood_list->{$_}->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl("mood://$_") } @{ grabMoods() };
 
 	$params->{'mood_list'} = $mood_list;
 

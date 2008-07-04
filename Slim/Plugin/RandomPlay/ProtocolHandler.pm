@@ -33,13 +33,7 @@ sub new {
 	return $class;
 }
 
-sub canDirectStream {
-	return 0;
-}
-
-sub isAudioUrl {
-	return 1;
-}
+sub canDirectStream { 0 }
 
 sub contentType {
 	return 'rnd';
