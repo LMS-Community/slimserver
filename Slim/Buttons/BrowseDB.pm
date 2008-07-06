@@ -153,7 +153,7 @@ sub init {
 			} else {
 
 				$line1 = $client->string($string);
-				$line2 = browsedbItemName($client, $currentItem);
+				$line2 = $client->modeParam('itemTitle') || browsedbItemName($client, $currentItem);
 			}
 
 			$client->showBriefly({
