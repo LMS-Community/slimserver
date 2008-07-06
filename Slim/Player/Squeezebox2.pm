@@ -367,8 +367,13 @@ sub directHeaders {
 			# Always prefer the title returned in the headers of a radio station
 			if ( $title ) {
 				$log->info( "Setting new title for $url, $title" );
-				Slim::Music::Info::setTitle( $url, $title );
 				Slim::Music::Info::setCurrentTitle( $url, $title );
+				
+				# Bug 7979, Only update the database title if this item doesn't already have a title
+				my $curTitle = Slim::Music::Info::title($url);
+				if ( !$curTitle || $curTitle =~ /^(?:http|mms)/ ) {
+					Slim::Music::Info::setTitle( $url, $title );
+				}
 			}
 			
 			# Bitrate may have been set in Scanner by reading the mp3 stream

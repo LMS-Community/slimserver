@@ -1087,6 +1087,23 @@ sub playItem {
 		$url  = $item->{'playlist'};
 		$type = 'playlist';
 	}
+	elsif ( $item->{'type'} eq 'redirect' && $item->{'player'} 
+		&& $item->{'player'}->{'mode'} && $item->{'player'}->{'mode'} eq 'browsedb'
+		&& $item->{'player'}->{'modeParams'}) {
+
+		my $functions = Slim::Buttons::BrowseDB::getFunctions();
+
+		if ($functions->{'play'}) {
+
+			foreach (keys %{ $item->{'player'}->{'modeParams'} }) {
+				$client->modeParam($_, $item->{'player'}->{'modeParams'}->{$_}); 
+			}
+			$client->modeParam('itemTitle', $item->{'name'});
+						
+			$functions->{'play'}->($client, $action, lc($action) eq 'add' ? 1 : 0);
+		} 
+		
+	}
 	
 	$log->debug("Playing item, action: $action, type: $type, $url");
 	
