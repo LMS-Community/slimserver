@@ -81,18 +81,16 @@
 			[% PROCESS songInfoItem title = "YEAR" %]
 		[% END %]
 
-		[% IF headOnly %]
-			[% IF albumDuration %] 
-				[% item = albumDuration; title = "LENGTH"; PROCESS songInfoItem %]
-			[% END %]
-		
-			[% IF itemobj.album.compilation %] 
-				[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
-			[% END %]
-		
-			[% IF itemobj.album.replay_gain.defined %] 
-				[% item = itemobj.album.replay_gain | format('%2.2f') |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
-			[% END %]
+		[% IF albumDuration %] 
+			[% item = albumDuration; title = "LENGTH"; PROCESS songInfoItem %]
+		[% END %]
+	
+		[% IF itemobj.album.compilation %] 
+			[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
+		[% END %]
+	
+		[% IF itemobj.album.replay_gain.defined %] 
+			[% item = itemobj.album.replay_gain | format('%2.2f') |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
 		[% END %]
 	</div>
 
