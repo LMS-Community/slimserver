@@ -332,11 +332,11 @@ sub client_readable {
 					
 					# Check for previous partial data
 					if ( my $partial = delete ${*$s}{_partial} ) {
-						$buf = $partial . $buf;
-
 						if ( $log->is_debug ) {
 							$log->debug( "Client sent additional header / data: " . Data::Dump::dump($buf) );
 						}
+						
+						$buf = $partial . $buf;
 					}
 					
 					# Make sure we have at op and len
@@ -357,7 +357,8 @@ sub client_readable {
 					if ( length($buf) < $len + 8 ) {
 
 						if ( $log->is_debug ) {
-							$log->debug( "Client sent partial data: $op / $len / " . Data::Dump::dump(substr($buf,8)) );
+							my $partial = substr $buf, 8;
+							$log->debug( "Client sent partial data: $op / $len / " . Data::Dump::dump($partial) );
 						}
 
 						${*$s}{_partial} = $buf;
