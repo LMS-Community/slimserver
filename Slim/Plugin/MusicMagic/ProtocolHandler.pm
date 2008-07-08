@@ -13,14 +13,9 @@ package Slim::Plugin::MusicMagic::ProtocolHandler;
 # GNU General Public License for more details.
 
 use strict;
-use base qw(FileHandle);
 
-sub new {
-	my $class  = shift;
-	my $args   = shift;
-
-	my $url    = $args->{'url'};
-	my $client = $args->{'client'};
+sub overridePlayback {
+	my ( $class, $client, $url ) = @_;
 
 	if ($url !~ m|^mood://(.*)$|) {
 		return undef;
@@ -29,7 +24,7 @@ sub new {
 	$client->execute(["musicip", "mix", "mood:$1"]);
 	$client->execute(["musicip", "play"]);
 
-	return $class;
+	return 1;
 }
 
 sub canDirectStream { 0 }

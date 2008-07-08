@@ -358,7 +358,6 @@ sub handleFeed {
 			} );
 		
 			if ( $play ) {
-				$client->execute([ 'playlist', 'clear' ]);
 				$client->execute([ 'playlist', 'play', $url ]);
 			}
 			else {

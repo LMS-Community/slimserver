@@ -1032,6 +1032,15 @@ sub commandCallback {
 	if (!defined $client || !defined $mixInfo{$client->masterOrSelf->id}->{'type'} || !$prefs->get('continuous')) {
 		return;
 	}
+	
+	# Bug 8652, ignore playlist play commands for our randomplay:// URL
+	if ( $request->isCommand( [['playlist'], ['play']] ) ) {
+		my $url  = $request->getParam('_item');
+		my $type = $mixInfo{ $client->masterOrSelf->id }->{'type'};
+		if ( $url eq "randomplay://$type" ) {
+			return;
+		}
+	}
 
 	if ( $log->is_debug ) {
 		$log->debug(sprintf("Received command %s", $request->getRequestString));
