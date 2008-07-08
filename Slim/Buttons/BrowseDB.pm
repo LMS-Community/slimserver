@@ -184,7 +184,7 @@ sub init {
 
 				if ($levelName eq 'contributor') {
 
-					$field = 'contributor.titlesearch';
+					$field = 'contributor.namesearch';
 
 				} elsif ($levelName eq 'album') {
 
@@ -778,7 +778,7 @@ sub setMode {
 	}
 
 	# Then see if we have to add an ALL option
-	if (($descend || $search) && $count > 1 && !$rs->suppressAll && $level) {
+	if ( ( ($descend && $level) || $search ) && $count > 1 && !$rs->suppressAll ) {
 
 		# Use the ALL_ version of the next level down in the hirearchy
 		if ($descend) {

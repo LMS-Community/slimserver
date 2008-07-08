@@ -5147,7 +5147,14 @@ sub _jiveDeletePlaylist {
 	# Add the actual favorites item if we're in the last chunk
 	if ( $lastChunk ) {
 		my $token = 'JIVE_DELETE_PLAYLIST';
-		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string($token));
+
+		###
+		# FIXME: bug 8670. This is the 7.1 workaround to deal with the %s in the EN string
+		my $string = $request->client->string($token, $playlistTitle);
+		$string =~ s/\\n/ /g;
+		$request->addResultLoop($loopname, $chunkCount, 'text', $string);
+		### 
+
 		my $actions = {
 			'go' => {
 				player => 0,
