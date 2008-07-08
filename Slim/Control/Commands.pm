@@ -1413,8 +1413,9 @@ sub playlistXtracksCommand {
 	# parse the param
 	my @tracks = ();
 
-	if ($what =~ /listRef/i) {
-
+	if ($what =~ /urllist/i) {
+		@tracks = _playlistXtracksCommand_constructTrackList($client, $what, $listref);
+	} elsif ($what =~ /listRef/i) {
 		@tracks = _playlistXtracksCommand_parseListRef($client, $what, $listref);
 
 	} elsif ($what =~ /searchRef/i) {
@@ -2933,6 +2934,22 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		return Slim::Schema->rs('Track')->search(\%find, \%attrs)->distinct->all;
 	}
+}
+
+sub _playlistXtracksCommand_constructTrackList {
+	my $client  = shift;
+	my $term    = shift;
+	my $list    = shift;
+	$log->debug("Begin Function");
+	my @list = split /,/, $list;
+	my @tracks = ();
+	for my $url ( @list ) {
+		my $track = Slim::Schema->rs('Track')->objectForUrl($url);
+		push @tracks, $track if blessed($track) && $track->id;
+	}
+
+	return @tracks;
+
 }
 
 sub _playlistXtracksCommand_parseListRef {
