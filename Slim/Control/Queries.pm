@@ -1597,6 +1597,12 @@ sub musicfolderQuery {
 
 	# now build the result
 	
+	my $playalbum = $prefs->client($request->client)->get('playtrackalbum');
+	# if player pref for playtrack album is not set, get the old server pref.
+	if ( !defined $playalbum ) { 
+		$playalbum = $prefs->get('playtrackalbum'); 
+	}
+
 	if ($menuMode) {
 
 		# decide what is the next step down
@@ -1644,6 +1650,7 @@ sub musicfolderQuery {
 			},
 		};
 		$request->addResult('base', $base);
+
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1654,6 +1661,15 @@ sub musicfolderQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
+	my @playlist = ();
+	if ( $playalbum ) {
+		for my $eachitem (@data[$start..$end]) {
+			if (Slim::Music::Info::isSong($eachitem)) {
+				push @playlist, $eachitem->url;
+			}
+		}
+	}
+
 	if ($valid) {
 		
 		my $loopname =  $menuMode?'item_loop':'folder_loop';
@@ -1663,6 +1679,7 @@ sub musicfolderQuery {
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
+		my $listIndex = 0;
 
 		for my $eachitem (@data[$start..$end]) {
 
@@ -1763,7 +1780,22 @@ sub musicfolderQuery {
 							},
 						},
 					};
+					if ( $playalbum ) {
+						# send the track list as a comma separated single string
+						my $playlist = join(',', @playlist);
+						$actions->{'play'} = {
+							player => 0,
+							cmd    => ['jiveplaytrackalbum'],
+							params => {
+								list_index => $listIndex,
+								playlist   => $playlist,
+							},
+						};
+					}
+
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+
+					$listIndex++;
 
 				# not sure
 				} else {
@@ -4278,8 +4310,13 @@ sub titlesQuery {
 
 	my $count = $rs->count;
 
+	my $playalbum = $prefs->client($request->client)->get('playtrackalbum');
+	# if player pref for playtrack album is not set, get the old server pref.
+	if ( !defined $playalbum ) { 
+		$playalbum = $prefs->get('playtrackalbum'); 
+	}
+
 	# now build the result
-	
 	if ($menuMode) {
 
 		# decide what is the next step down
@@ -4328,8 +4365,18 @@ sub titlesQuery {
 			}
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
-		$request->addResult('base', $base);
 		
+		# Bug 5981
+		# special play handler for "play all tracks in album
+		if ($playalbum && $albumID ) {
+			$base->{'actions'}{'play'} = {
+				player => 0,
+				cmd    => ['jiveplaytrackalbum'],
+				itemsParams => 'params',
+			};
+		}
+
+		$request->addResult('base', $base);
 	}
 
 	if (Slim::Music::Import->stillScanning) {
@@ -4357,16 +4404,23 @@ sub titlesQuery {
 		}
 
 
+		my $listIndex = 0;
+
 		for my $item ($rs->slice($start, $end)) {
-			
+
+
 			# jive formatting
 			if ($menuMode) {
 				
 				my $id = $item->id();
 				$id += 0;
 				my $params = {
-					'track_id' =>  $id, 
+					track_id      =>  $id, 
 				};
+				if ( $playalbum && $albumID ) {
+					$params->{'album_id'}   = $albumID;
+					$params->{'list_index'} = $listIndex;
+				}
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			
 			
@@ -4424,6 +4478,7 @@ sub titlesQuery {
 			}
 			
 			$chunkCount++;
+			$listIndex++;
 			
 			# give peace a chance...
 			if ($chunkCount % 5) {
