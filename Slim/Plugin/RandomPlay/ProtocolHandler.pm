@@ -13,24 +13,19 @@ package Slim::Plugin::RandomPlay::ProtocolHandler;
 # GNU General Public License for more details.
 
 use strict;
-use base qw(FileHandle);
 
 use Slim::Plugin::RandomPlay::Plugin;
 
-sub new {
-	my $class  = shift;
-	my $args   = shift;
-
-	my $url    = $args->{'url'};
-	my $client = $args->{'client'};
+sub overridePlayback {
+	my ( $class, $client, $url ) = @_;
 
 	if ($url !~ m|^randomplay://(.*)$|) {
 		return undef;
 	}
 
 	$client->execute(["randomplay", "$1"]);
-
-	return $class;
+	
+	return 1;
 }
 
 sub canDirectStream { 0 }
