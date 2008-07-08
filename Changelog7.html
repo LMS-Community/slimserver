@@ -4,11 +4,31 @@
 
 	<li>Firmware updates:
 	<ul>
-		<li>
-			Transporter - Version 42
+		<li>Squeezebox 2/3 - Version 97<br />
+			Transporter - Version 45<br />
+			Receiver - Version 32
 		</li>
 		<ul>
-			<li>Fixed bug with volume control breaking digital inputs.</li>
+			<li>Updated Rhapsody Direct to higher quality 192k MP3.</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5720">#5720</a> - Gapless MP3 not possible if file has CRC</li>
+		</ul>
+		<li>Transporter-specific features and fixes</li>
+		<ul>
+			<li>Added "effects loop" feature for hooking in an external DSP via S/PDIF.</li>
+			<li>New programmable logic: Xilinx CPLD will be automatically upgraded,	but if you subsequently downgrade to an earlier firmware, it must be manually re-flashed to the older rev (press '1' on startup).</li>
+			<li>Added support for native 88.2k playback.</li>
+			<li>CPU optimizations in UART and IR blaster, freed up over 20 MIPS. Should prevent 24/96 FLAC from ever being able to max out the CPU, even with replaygain and spectrum analyzer enabled.</li>
+			<li>Word clock and effects loop settings take effect immediately - no need to reconnect or restart the track.</li>
+			<li>Changed "fixed digital levels" to fix both digital and analog levels. This was necessitated by an architectural change to support 88.2k.</li>
+			<li>Make word clock and effects loop settings take effect immediately instead of on player's initial connection to the server.</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4322">#4322</a> - Digital input does not come back from pause reliably</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4436">#4436</a> - No AES output when wordclock signal is disconnected then reconnected</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4634">#4634</a> - Cannot slave to 96k external word clock</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4712">#4712</a> - Support for 88.2kHz sample rate</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4834">#4834</a> - After Switching to digital input device will not play music without a complete reset</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4895">#4895</a> - Lack of audio output after turning on</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6937">#6937</a> - Rhapsody fails to play in bridged mode</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7269">#7269</a> - Volume control breaking digital inputs</li>
 		</ul>
 	</ul>
 	<br />

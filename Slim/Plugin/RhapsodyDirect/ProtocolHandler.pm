@@ -26,7 +26,10 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('server');
 
-sub getFormatForURL { 'wma' }
+sub getFormatForURL { 'mp3' }
+
+# default buffer 3 seconds of 192k audio
+sub bufferThreshold { 24 * ( $prefs->get('bufferSecs') || 3 ) }
 
 # Source for AudioScrobbler
 sub audioScrobblerSource {
@@ -61,7 +64,7 @@ sub parseDirectHeaders {
 	}
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, 128000, 0, '', 'wma', $length, undef);
+	return (undef, 192000, 0, '', 'mp3', $length, undef);
 }
 
 # Don't allow looping if the tracks are short
@@ -542,7 +545,7 @@ sub getNextTrackInfo {
 	# When synced, the below code is run for only the last player to reach here
 	
 	# Get track URL for the next track
-	my ($trackId) = $nextURL =~ m{rhapd://(.+)\.wma};
+	my ($trackId) = $nextURL =~ m{rhapd://(.+)\.mp3};
 	
 	my @clients;
 	
@@ -649,8 +652,8 @@ sub gotBulkMetadata {
 		
 		my $meta = {
 			%{$track},
-			bitrate   => '128k CBR',
-			type      => 'WMA (Rhapsody)',
+			bitrate   => '192k CBR',
+			type      => 'MP3 (Rhapsody)',
 			info_link => 'plugins/rhapsodydirect/trackinfo.html',
 			icon      => $icon,
 		};
@@ -756,7 +759,7 @@ sub gotNextRadioTrack {
 	$client->execute(["playlist", "repeat", 2]);
 
 	# set metadata for track, will be set on playlist newsong callback
-	my $url   = 'rhapd://' . $track->{trackId} . '.wma';
+	my $url   = 'rhapd://' . $track->{trackId} . '.mp3';
 	my $title = $track->{name} . ' ' . 
 			$client->string('BY') . ' ' . $track->{displayArtistName} . ' ' . 
 			$client->string('FROM') . ' ' . $track->{displayAlbumName};
@@ -771,8 +774,8 @@ sub gotNextRadioTrack {
 		album     => $track->{displayAlbumName},
 		title     => $track->{name},
 		cover     => $track->{cover},
-		bitrate   => '128k CBR',
-		type      => 'WMA (Rhapsody)',
+		bitrate   => '192k CBR',
+		type      => 'MP3 (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
 		buttons   => {
@@ -849,7 +852,7 @@ sub gotTrackInfo {
 	
 	(undef, $mediaUrl) = unpack 'cn/a*', $mediaUrl;
 	
-	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
+	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
 	
 	# Save the media URL for use in strm
 	$client->pluginData( mediaUrl => $mediaUrl );
@@ -980,7 +983,7 @@ sub canDirectStream {
 	}
 	
 	# Return the RAD URL here
-	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
+	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
 	
 	# Needed so stopCallback can have the URL after a 'playlist clear'
 	$client->pluginData( lastURL => $url );
@@ -1108,7 +1111,7 @@ sub trackInfoURL {
 		$stationId = $1;
 	}
 
-	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
+	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
@@ -1157,7 +1160,7 @@ sub getMetadataFor {
 	my $cache = Slim::Utils::Cache->new;
 	
 	# If metadata is not here, fetch it so the next poll will include the data
-	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
+	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
 	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
 	
 	if ( !$meta && !$client->pluginData('fetchingMeta') ) {
@@ -1166,7 +1169,7 @@ sub getMetadataFor {
 		
 		for my $track ( @{ $client->playlist } ) {
 			my $trackURL = blessed($track) ? $track->url : $track;
-			if ( $trackURL =~ m{rhapd://(.+)\.wma} ) {
+			if ( $trackURL =~ m{rhapd://(.+)\.mp3} ) {
 				my $id = $1;
 				if ( !$cache->get("rhapsody_meta_$id") ) {
 					push @need, $id;
@@ -1203,8 +1206,8 @@ sub getMetadataFor {
 	my $icon = $class->getIcon();
 	
 	return $meta || {
-		bitrate   => '128k CBR',
-		type      => 'WMA (Rhapsody)',
+		bitrate   => '192k CBR',
+		type      => 'MP3 (Rhapsody)',
 		icon      => $icon,
 		cover     => $icon,
 	};
