@@ -79,6 +79,7 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivesetalbumsort'], [1, 0, 1, \&jiveSetAlbumSort]);
 	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
 	Slim::Control::Request::addDispatch(['jiverecentsearches'], [0, 1, 0, \&jiveRecentSearchQuery]);
+	Slim::Control::Request::addDispatch(['jiveplaytrackalbum'], [1, 0, 1, \&jivePlayTrackAlbumCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
@@ -1854,6 +1855,33 @@ sub menuNotification {
 	my $dataRef          = $request->getParam('_data')   || return;
 	my $action   	     = $request->getParam('_action') || 'add';
 #	$log->warn(Data::Dump::dump($dataRef));
+}
+
+sub jivePlayTrackAlbumCommand {
+
+	$log->info("Begin function");
+
+	my $request    = shift;
+	my $client     = $request->client || return;
+	my $albumID    = $request->getParam('album_id');
+	my $playlist   = $request->getParam('playlist')|| undef;
+	my $listIndex  = $request->getParam('list_index');
+	
+	$client->execute( ["playlist", "clear"] );
+
+	# Database album browse is the simple case
+	if ( $albumID ) {
+		$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
+		$client->execute( ["playlist", "jump", $listIndex] );
+
+	# hard case is Browse Music Folder-- send a comma separated string as the urllist. 
+	# Commands.pm will split this into an array and look up the tracks
+	} elsif ( $playlist ) {
+		$client->execute(['playlist', 'addtracks', 'urllist', $playlist]);
+		$client->execute(['playlist', 'jump', $listIndex]);
+	}
+
+	$request->setStatusDone();
 }
 
 sub jivePlaylistsCommand {
