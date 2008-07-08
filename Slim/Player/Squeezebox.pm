@@ -165,18 +165,18 @@ sub play {
 		
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $params->{url} );
 
+		# Reduce threshold if protocol handler wants to
+		if ( $handler && $handler->can('bufferThreshold') ) {
+			$params->{bufferThreshold} = $handler->bufferThreshold( $client, $params->{url} );
+		}
+
 		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
-		if ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
+		elsif ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
 			my $bufferSecs = $prefs->get('bufferSecs') || 3;
 			$params->{bufferThreshold} = ( int($bitrate / 8) * $bufferSecs ) / 1000;
 			
 			# Max threshold is 255
 			$params->{bufferThreshold} = 255 if $params->{bufferThreshold} > 255;
-		}
-		
-		# Reduce threshold if protocol handler wants to
-		if ( $handler && $handler->can('bufferThreshold') ) {
-			$params->{bufferThreshold} = $handler->bufferThreshold( $client, $params->{url} );
 		}
 		
 		# Check with the protocol handler on whether or not to show buffering messages
@@ -924,29 +924,19 @@ sub stream {
 			# going to have the mms/http chunking headers.
 			if ($server_url) {
 
-				if ( $server_url =~ /\.rad$/ ) {
-					# Rhapsody Direct
-					$pcmsamplesize = 3;
-				}
-				elsif ( $server_url =~ /^rhap:/ ) {
-					# Rhapsody UPnP
-					$pcmsamplesize = 2;
-				}
-				else {
-					$pcmsamplesize = 1;
-					
-					# Bugs 5631, 7762
-					# Check WMA metadata to see if this remote stream is being served from a
-					# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
-					# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
-					if ( my $scanData = $client->scanData->{ $server_url } ) {
-						if ( my $meta = $scanData->{metadata} ) {
-							if ( $meta->info('flags')->{broadcast} == 0 ) {
-								if ( $scanData->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
-									# The server didn't return the expected ASF header content-type,
-									# so we assume it's not a Windows Media server
-									$pcmsamplesize = 0;
-								}
+				$pcmsamplesize = 1;
+				
+				# Bugs 5631, 7762
+				# Check WMA metadata to see if this remote stream is being served from a
+				# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
+				# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
+				if ( my $scanData = $client->scanData->{ $server_url } ) {
+					if ( my $meta = $scanData->{metadata} ) {
+						if ( $meta->info('flags')->{broadcast} == 0 ) {
+							if ( $scanData->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
+								# The server didn't return the expected ASF header content-type,
+								# so we assume it's not a Windows Media server
+								$pcmsamplesize = 0;
 							}
 						}
 					}
@@ -982,6 +972,12 @@ sub stream {
 			$pcmendian       = '?';
 			$pcmchannels     = '?';
 			$outputThreshold = 0;
+			
+			# Change pcmsamplesize to indicate Rhapsody Direct
+			if ( $server_url && $server_url =~ /\.rad$/ ) {
+				# Rhapsody Direct
+				$pcmsamplesize = 3;
+			}
 			
 			# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
 			# other audio types, resulting in static. 
