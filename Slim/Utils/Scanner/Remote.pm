@@ -412,7 +412,7 @@ sub parseWMAHeader {
 	}
 	
 	if ( $log->is_debug ) {
-		$log->debug( 'WMA header data: ' . Data::Dump::dump($wma) );
+		$log->debug( 'WMA header data for ' . $track->url . ': ' . Data::Dump::dump($wma) );
 	}
 	
 	my $streamNum = 1;
@@ -426,8 +426,13 @@ sub parseWMAHeader {
 		my $max = preferences('server')->get('maxWMArate') || 9999;
 	
 		my $bitrate = 0;
+		my $valid   = 0;
+		
 		for my $stream ( @{ $wma->stream } ) {
 			next unless defined $stream->{streamNumber};
+
+			# Skip non-audio streams or audio codecs we can't play
+			next unless $stream->{audio} && $stream->{audio}->{codec} eq 'Windows Media Audio V7 / V8 / V9';
 		
 			my $streamBitrate = int( $stream->{bitrate} / 1000 );
 		
@@ -437,6 +442,18 @@ sub parseWMAHeader {
 				$streamNum = $stream->{streamNumber};
 				$bitrate   = $stream->{bitrate};
 			}
+			
+			$valid++;
+		}
+		
+		# If we saw no valid streams, such as a stream with only MP3 codec, give up
+		if ( !$valid ) {
+			$log->debug('WMA contains no valid audio streams');
+			
+			# Delete bad item
+			$track->delete;
+			
+			return $cb->( undef, 'ASF_UNABLE_TO_PARSE', @{$pt} );
 		}
 	
 		if ( !$bitrate && ref $wma->stream(0) ) {
