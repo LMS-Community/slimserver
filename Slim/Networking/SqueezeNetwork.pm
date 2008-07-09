@@ -116,7 +116,6 @@ sub _init_done {
 		}
 	}
 	
-	# XXX: probably should poll for this, or include with players response
 	if ( $json->{active_services} ) {
 		$prefs->set( sn_active_services => $json->{active_services} );
 	}
