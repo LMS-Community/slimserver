@@ -251,6 +251,17 @@ sub setRTCAlarm {
 		$data .= pack( 'C', $alarmHourBCD | 0x80);
 		$data .= pack( 'C', $alarmMinBCD | 0x80);
 		$client->sendFrame( 'rtcs', \$data);
+
+# TODO: Get the alarm volume matching the alarm
+		my $alarmVolume = 50;
+
+		# Set alarm volume
+		$data = pack( 'C', 0x05);	# Set alarm volume (0 - 100)
+		$data .= pack( 'C', $alarmVolume);
+		$client->sendFrame( 'rtcs', \$data);
+
+
+
  	} else {
 		# Clear the alarm
 		my $data = pack( 'C', 0x04);	# Set alarm (hours and minutes)
