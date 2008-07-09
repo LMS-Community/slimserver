@@ -378,6 +378,11 @@ sub browsedbExitCallback {
 		my $levelRS     = Slim::Schema->rs($levels[$level]);
 
 		my $all         = 0;
+		
+		# Bump on text items ("All Songs", etc)
+		if ( !ref $currentItem ) {
+			$currentItem = undef;
+		}
 
 		if (defined $currentItem && $levels[$level+1]) {
 
@@ -388,11 +393,6 @@ sub browsedbExitCallback {
 				$all = 1;
 			}
 
-		} elsif (!ref($currentItem) && $levels[$level] eq 'track') {
-
-			# If we're at all and the track level - bump right.
-			# Getting the same list of songs again is pointless.
-			$currentItem = undef;
 		}
 
 		if (!defined $currentItem) {
@@ -628,19 +628,8 @@ sub browsedbOverlay {
 
 	} elsif (!ref($item)) {
 
-		# A text item means ALL_, so overlay a note & arrow. But not
-		# for the track item, which we're already at the lowest level.
-		if ($levels[$level] ne 'track') {
-
-			return (undef, join('', 
-				$client->symbols('notesymbol'),
-				$client->symbols('rightarrow')
-			));
-
-		} else {
-
-			return (undef, $client->symbols('notesymbol'));
-		}
+		# A text item means ALL_, so overlay a note
+		return (undef, $client->symbols('notesymbol'));
 
 	} else {
 
