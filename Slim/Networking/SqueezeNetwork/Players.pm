@@ -6,6 +6,7 @@ package Slim::Networking::SqueezeNetwork::Players;
 
 use strict;
 
+use Data::URIEncode qw(complex_to_query);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Control::Request;
@@ -103,6 +104,18 @@ sub _players_done {
 	
 	# Update player list
 	$PLAYERS = $res->{players};
+	
+	# Update list of active music services
+	if ( $res->{active_services} ) {
+		# Avoid updating the pref unless things have changed
+		my $new = complex_to_query( $res->{active_services} );
+		my $cur = complex_to_query( $prefs->get('sn_active_services') || {} );
+		
+		if ( $cur ne $new ) {
+			$log->debug( 'Updating active services from SN' );
+			$prefs->set( sn_active_services => $res->{active_services} );
+		}
+	}
 	
 	# Clear error count if any
 	if ( $prefs->get('snPlayersErrors') ) {
