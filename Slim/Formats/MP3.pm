@@ -623,4 +623,19 @@ sub scanBitrate {
 	return (-1, undef);
 }	
 
+# Read the initial audio frame, this supports seeking while preserving
+# the Xing header needed for gapless playback
+sub getInitialAudioBlock {
+	my ( $class, $fh ) = @_;
+	
+	open my $localFh, '<&=', $fh;
+	seek $localFh, 0, 0;
+	
+	my $frame = MPEG::Audio::Frame->read( $localFh );
+	
+	close $localFh;
+	
+	return $frame->asbin;
+}
+
 1;

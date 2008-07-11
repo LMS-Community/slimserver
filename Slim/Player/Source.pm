@@ -2103,7 +2103,7 @@ sub openSong {
 			if ($client->audioFilehandle->open($filepath)) {
 
 				# Bug 6836 - support CUE files for Ogg
-				if ($offset) {
+				if ( $offset && $format eq 'ogg' ) {
 
 					my $streamClass = _streamClassForFormat($client);
 
