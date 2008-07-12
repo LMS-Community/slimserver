@@ -183,7 +183,7 @@ sub init {
 							'onChange'     =>  \&executeCommand,
 							'command'      => 'mixer',
 							'subcommand'   => 'stereoxl',
-							'initialValue' => sub { return $_[0]->stereoXL() },
+							'initialValue' => sub { return $_[0]->stereoxl() },
 							'condition'   => sub {
 								my $client = shift;
 								return $client->can('maxXL') ? $client->maxXL() - $client->minXL() : 0;
