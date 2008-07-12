@@ -63,6 +63,12 @@ sub remove_connection {
 	$log->debug("remove_connection: $clid");
 }
 
+sub get_connection {
+	my ( $self, $clid ) = @_;
+	
+	return $self->{conn}->{$clid};
+}		
+
 sub clid_for_connection {
 	my ( $self, $conn ) = @_;
 	
