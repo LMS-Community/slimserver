@@ -296,6 +296,13 @@ sub handler {
 						# Tell HTTP client our transport
 						$conn->[HTTP_CLIENT]->transport( 'streaming' );
 					}
+					
+					# Bug 8707, Find previous streaming connection using the
+					# same clientId and mark it as 'old'
+					if ( my $old = $manager->get_connection( $clid ) ) {
+						$log->debug( 'Marking connection ' . $old->[HTTP_CLIENT] . ' as old' );
+						$old->[HTTP_CLIENT]->transport( 'streaming-old' );
+					}
 				
 					# Tell the manager about the new connection
 					$manager->register_connection( $clid, $conn );
