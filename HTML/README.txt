@@ -17,7 +17,7 @@ EN:
 	Description: Base template elements and generic fallback HTML for other skins.
 
 Fishbone:
-	Owner: Kevin Deane-Freeman
+	Owner: Slim Devices
 	Description: Lots of features - and multi-CSS available.
 
 Handheld:
