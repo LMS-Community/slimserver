@@ -98,6 +98,11 @@ sub registerDefaultInfoProviders {
 		func  => \&infoComment,
 	) );
 	
+	$class->registerInfoProvider( lyrics => (
+		after => 'comment',
+		func  => \&infoLyrics,
+	) );
+	
 	$class->registerInfoProvider( moreinfo => (
 		after => 'comment',
 		func  => \&infoMoreInfo,
@@ -964,6 +969,33 @@ sub infoComment {
 			
 			web   => {
 				group  => 'comment',
+				unfold => 1,
+			}
+		};
+	}
+	
+	return $item;
+}
+
+sub infoLyrics {
+	my ( $client, $url, $track ) = @_;
+	
+	my $item;
+	
+	if ( my $lyrics = $track->lyrics ) {
+
+		$item = {
+			name  => cstring($client, 'LYRICS'),
+			items => [
+				{
+					type => 'text',
+					wrap => 1,
+					name => cstring($client, 'LYRICS') . cstring($client, 'COLON') . " $lyrics",
+				},
+			],
+			
+			web   => {
+				group  => 'lyrics',
 				unfold => 1,
 			}
 		};
