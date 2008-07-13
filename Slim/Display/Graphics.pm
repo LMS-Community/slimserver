@@ -663,9 +663,9 @@ sub sliderBar {
 
 			# create end lobes
 			# check for midpoint and cursor position to skip the lobe when a left half exists.
-			if ((($i == $divider +1) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 1) {
+			if ((($i == $divider +1) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 1) {
 				$chart .= $reverse ? $prog1 : $prog1e;
-			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 2) {
+			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 2) {
 				$chart .= $reverse ? $prog2 : $prog2e;
 			} else {
 				$chart .= $reverse ? $prog3 : $prog3e;
@@ -675,9 +675,9 @@ sub sliderBar {
 			if (defined $cursor && $i == $cursor) {
 				$chart .= $cursorSymbol;
 				$chart .= $pos ? $prog3 : $prog3e;
-			} elsif ((($i == $divider +1) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 1) {
+			} elsif ((($i == $divider +1) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 1) {
 				$chart .= $pos ? $prog1e : $prog1;
-			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider)) || $i == $spaces - 2) {
+			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 2) {
 				$chart .= $pos ? $prog2e : $prog2;
 			} else {
 				$chart .= $pos ? $prog3e : $prog3;
