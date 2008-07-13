@@ -85,6 +85,8 @@ sub browse {
 
 	if (preferences('server')->get('variousArtistAutoIdentification')) {
 
+		$cond->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
+
 		push @joins, { 'contributorAlbums' => 'album' };
 
 	} elsif ($roles) {
