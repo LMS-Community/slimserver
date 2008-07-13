@@ -248,7 +248,7 @@ END %]
 				[% END %]
 			[% ELSE %]
 				[%- WRAPPER $contentwrapper controls = 'gencontrol' addClasses = item.type=='text' ? 'defaultCursor' : '' %]
-					[% IF artwork == 1;
+					[% IF artwork == 1 || path == 'trackinfo.html';
 						item.size = 100;
 						itemobj.id = loop.count;
 					END %]
