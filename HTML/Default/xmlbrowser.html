@@ -155,19 +155,20 @@ END %]
 
 				# unfold items which are folded for smaller UIs;
 				ELSIF item.web.group && item.items && item.web.unfold;
-					UNLESS details.unfold; details.unfold = {}; END;
-					UNLESS details.unfold.${item.web.group}; details.unfold.${item.web.group} = {}; END;
-					
-					details.unfold.${item.web.group}.items = item.items;
-					details.unfold.${item.web.group}.start = loop.index;
+					UNLESS details.unfold; details.unfold = []; END;
 
 					# Change the index value for the moreinfo items
 					new_index = 0;
 					
-					FOREACH moreitem = details.unfold.${item.web.group}.items;
+					FOREACH moreitem = item.items;
 						moreitem.index = item.index _ '.' _ new_index;
 						new_index = new_index + 1;
 					END;
+
+					details.unfold.push({
+						items = item.items
+						start = loop.index
+					});
 
 				ELSIF item.web.group;
 
@@ -185,10 +186,10 @@ END %]
 		END;
 
 		new_index = 0;
-		FOREACH group = details.unfold.keys;
-			start = details.unfold.${group}.start + new_index;
-			CALL items.splice(start, 1, details.unfold.${group}.items);
-			new_index = details.unfold.${group}.items.max;
+		FOREACH group = details.unfold;
+			start = group.start + new_index;
+			CALL items.splice(start, 1, group.items);
+			new_index = group.items.max;
 		END;
 
 		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
