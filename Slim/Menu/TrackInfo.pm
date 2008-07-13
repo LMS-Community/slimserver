@@ -984,6 +984,8 @@ sub infoLyrics {
 	
 	if ( my $lyrics = $track->lyrics ) {
 
+		$lyrics =~ s/\r//g;
+
 		$item = {
 			name  => cstring($client, 'LYRICS'),
 			items => [

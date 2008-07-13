@@ -271,7 +271,7 @@ END %]
 						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 					[% END %]
 
-					[% item.web.value || item.name || item.title %]
+					[% (item.web.value || item.name || item.title) | html_line_break %]
 
 					[% IF item.weblink || item.type != 'text' %]
 						</a>
