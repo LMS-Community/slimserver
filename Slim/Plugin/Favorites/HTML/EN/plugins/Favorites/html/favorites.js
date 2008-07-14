@@ -98,6 +98,7 @@ function editCancel(id, session, remove) {
 
 function editSave(id, session) {
 	var element = document.getElementById('dragitem_' + id);
+	var reload = false;
 	
 	var newTitle = $('edit_title_' + id);
 	var params = 'action=editset&index=' + id + '&entrytitle=' + escape(newTitle.value) + '&sess=' + session;
@@ -106,7 +107,20 @@ function editSave(id, session) {
 		var newURL = escape($('edit_url_'   + id).value);
 		params     = params + '&entryurl=' + newURL
 	}
-	
+
+	if ($('entryhotkey')) {
+		var hk = $('entryhotkey'); 
+
+		var newHotkey = escape(hk.value);
+		params        = params + '&entryhotkey=' + newHotkey
+		
+		// if we're overwriting an existing hotkey, we'll have to reload the page
+		if (newHotkey > 0 && hk.options[newHotkey].text > newHotkey
+			&& hk.options[newHotkey].text.indexOf(newTitle.value) == -1)
+			reload = true;
+
+	}
+
 	showElements(['defaultform']);
 	
 	// get an update of the edited line item
@@ -117,6 +131,9 @@ function editSave(id, session) {
 		postBody: params,
 		asynchronous: true,
 		onSuccess: function(t) {
+			if (reload)
+				document.location.reload();
+				
 			delete editHTML[id];
 			element.innerHTML = t.responseText;
 			new Effect.Highlight('dragitem_' + id, { endcolor: "#d5d5d5" });
