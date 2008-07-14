@@ -127,10 +127,13 @@ sub set {
 		$root->save;
 
 		if ($change && (!defined $old || !defined $new || $old ne $new || ref $new)) {
-
-			$log->debug('executing on change function');
-
-			$change->($pref, $new, $class->_obj);
+			for my $func ( @{$change} ) {
+				if ( $log->is_debug ) {
+					$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
+				}
+				
+				$func->($pref, $new, $class->_obj);
+			}
 		}
 
 		Slim::Control::Request::notifyFromArray(
