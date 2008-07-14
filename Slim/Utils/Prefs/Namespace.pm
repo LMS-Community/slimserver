@@ -153,15 +153,10 @@ sub setChange {
 		if ( $log->isInitialized && $log->is_debug ) {
 			$log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($change));
 		}
+		
+		$class->{'onchange'}->{ $pref } ||= [];
 
-		if ($class->{'onchange'}->{ $pref }) {
-			$log->warn(sprintf("duplicate on change function for $class->{'namespace'}:$pref %s %s", 
-							   Slim::Utils::PerlRunTime::realNameForCodeRef($class->{'onchange'}->{ $pref }),
-							   Slim::Utils::PerlRunTime::realNameForCodeRef($change),
-							  ));
-		}
-
-		$class->{'onchange'}->{ $pref } = $change;
+		push @{ $class->{'onchange'}->{ $pref } }, $change;
 	}
 }
 
