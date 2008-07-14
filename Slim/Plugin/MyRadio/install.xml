@@ -9,7 +9,7 @@
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
-	<icon>html/images/radio.png</icon>
+	<icon>plugins/MyRadio/html/images/icon.png</icon>
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
