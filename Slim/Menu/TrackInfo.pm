@@ -88,6 +88,11 @@ sub registerDefaultInfoProviders {
 		func  => \&infoGenres,
 	) );
 
+	$class->registerInfoProvider( remotetitle => (
+		after => 'album',
+		func  => \&infoRemoteTitle,
+	) );
+	
 	$class->registerInfoProvider( year => (
 		after => 'genres',
 		func  => \&infoYear,
@@ -437,6 +442,12 @@ sub infoContributors {
 		push @{$items}, {
 			type => 'text',
 			name => cstring($client, 'ARTIST') . cstring($client, 'COLON') . ' ' . $remoteMeta->{artist},
+
+			web  => {
+				type  => 'contributor',
+				group => 'ARTIST',
+				value => $remoteMeta->{artist},
+			},
 		};
 	}
 	else {
@@ -681,6 +692,11 @@ sub infoAlbum {
 		$item = {
 			type => 'text',
 			name => cstring($client, 'ALBUM') . cstring($client, 'COLON') . ' ' . $remoteMeta->{album},
+
+			web  => {
+				group => 'album',
+				value => $remoteMeta->{album},
+			},
 		};
 	}
 	elsif ( my $album = $track->album ) {
@@ -1205,6 +1221,26 @@ sub infoFileSize {
 		$item = {
 			type => 'text',
 			name => cstring($client, 'FILELENGTH') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::delimitThousands($len),
+		};
+	}
+	
+	return $item;
+}
+
+sub infoRemoteTitle {
+	my ( $client, $url, $track, $remoteMeta ) = @_;
+	
+	my $item;
+	
+	if ( $track->remote && $remoteMeta->{title} ) {
+		$item = {
+			type => 'text',
+			name => cstring($client, 'TITLE') . cstring($client, 'COLON') . ' ' . $remoteMeta->{title},
+
+			web  => {
+				group => 'title',
+				value => $remoteMeta->{title},
+			},
 		};
 	}
 	
