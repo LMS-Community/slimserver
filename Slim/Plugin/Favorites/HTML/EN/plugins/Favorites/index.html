@@ -49,10 +49,10 @@ function(){
 								}, Favorites);
 							</script>
 						[% ELSE %]
-							<select size="1" name="entryhotkey">
+							<select size="1" name="entryhotkey" id="entryhotkey">
 								<option value=""></option>
 								[% FOREACH k IN hotkeys %]
-									<option [% IF k.key == entry.hotkey %]selected[% END %] value="[% k.key %]">[% k.key %][% IF k.used %] [% k.title %][% END %]</option>
+									<option [% IF k.key == entry.hotkey %]selected[% END %] value="[% k.key %]">[% k.key %][% IF k.title %] [% k.title %][% END %]</option>
 								[% END %]
 							</select>
 						[% END %]

@@ -248,6 +248,8 @@ Settings.Page = function(){
 									target: helpEl,
 									html: desc,
 									title: title,
+									dismissDelay: 0,
+									hideDelay: 500,
 									maxWidth: 300
 								})
 						});
