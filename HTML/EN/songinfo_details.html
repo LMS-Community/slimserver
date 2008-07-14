@@ -30,6 +30,10 @@
 
 		[% IF albumFirst; albumInfo; END %]
 
+		[% IF plugin_meta.title %] 
+			[% item = BLOCK %][% plugin_meta.title | html %][% END %]
+			[% PROCESS songInfoItem title = "TITLE" %]
+		[% END %]
 
 		[% FOREACH role = itemobj.contributorRoles.sort %]
 
@@ -42,7 +46,13 @@
 					
 					[% UNLESS notarget; target = "target=\"browser\""; END %]
 	
-					[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" $target>$contributor.name</a>" %]
+					[% 
+					IF $contributor.id;
+						contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" $target>$contributor.name</a>";
+					ELSE;
+						contributorHTMLFrag = contributor.name;
+					END
+					%]
 	
 					[% contributorsHTML.push(contributorHTMLFrag) %]
 	
@@ -53,11 +63,6 @@
 				[% title = role | upper; PROCESS songInfoItem %]
 			[% END %]
 	
-		[% END %]
-
-		[% IF plugin_meta.title %] 
-			[% item = BLOCK %][% plugin_meta.title | html %][% END %]
-			[% PROCESS songInfoItem title = "TITLE" %]
 		[% END %]
 	
 		[% IF plugin_meta.artist %] 
