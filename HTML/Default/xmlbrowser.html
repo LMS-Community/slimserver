@@ -194,14 +194,18 @@ END %]
 
 		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
 
-		PROCESS songinfo_details.html albumFirst = 1 itemobj = {
-			id => sess,
-			album => details.album.0,
-			contributorRoles => details.contributors.keys,
-			contributors => details.contributors,
-			genres => details.genre,
-			year => details.year.0.id
-		};
+		PROCESS songinfo_details.html albumFirst = 1
+			itemobj = {
+				id => sess,
+				album => details.album.0,
+				contributorRoles => details.contributors.keys,
+				contributors => details.contributors,
+				genres => details.genre,
+				year => details.year.0.id
+			}
+			plugin_meta = {
+				title => details.title.0.name 
+			};
 
 		image = undef;
 	END %]
