@@ -125,18 +125,14 @@ sub _timerHandler {
 		Slim::Player::Source::gototime($client, $client->pluginData('offset'), 1);
 		$client->suppressStatus(undef);
 		$client->pluginData(lastUpdateTime => 0);
-		$lastUpdateTime = 0;
+		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	}
 
 	# Pop the mode if nothing has happend for EXITMODE_TIME
-	if (!$lastUpdateTime) {
-		if (my $exitTime = $client->pluginData('exitModeTime')) {
-			if (Time::HiRes::time() > $exitTime) {
-				Slim::Buttons::Common::popModeRight($client);
-				return;
-			}
-		} else {
-			$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
+	if (my $exitTime = $client->pluginData('exitModeTime')) {
+		if (Time::HiRes::time() > $exitTime) {
+			Slim::Buttons::Common::popModeRight($client);
+			return;
 		}
 	}
 
