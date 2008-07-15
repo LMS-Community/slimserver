@@ -3,8 +3,8 @@
 # from        to
 # from1..from2 to
 
-1..100 100
+1..101 101
 
 # future versions may be downgraded to this one
-* 100
+* 101
 
