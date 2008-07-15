@@ -10,7 +10,9 @@ use base qw(Slim::Plugin::Base);
 use Slim::Utils::DateTime;
 use Slim::Utils::Prefs;
 
-use Slim::Plugin::DateTime::Settings;
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Plugin::DateTime::Settings;
+}
 
 my $prefs = preferences('plugin.datetime');
 
@@ -23,7 +25,9 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	Slim::Plugin::DateTime::Settings->new;
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Plugin::DateTime::Settings->new;
+	}
 
 	Slim::Buttons::Common::addSaver(
 		'SCREENSAVER.datetime',
@@ -70,6 +74,44 @@ my $fontDef = {
 
 sub screensaverDateTimelines {
 	my $client = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		# We use the same method as alarm clock, to align updates at each minute change
+		# so we only have to run once a minute instead of every few seconds
+		my $sec = (localtime(time))[0];
+		if ( $sec == 59 ) {
+			# This method is called 1 extra time after we change modeUpdateInterval,
+			# so use sec=59 to get it to actually update exactly on the minute
+			$client->modeParam('modeUpdateInterval', 60);
+		}
+		# if we end up falling behind, go back to checking each second
+		elsif ( $sec >= 50 ) {
+			$client->modeParam('modeUpdateInterval', 1);
+		}
+		
+		my $timezone 
+			=  preferences('server')->client($client)->get('timezone') 
+			|| $client->playerData->userid->timezone 
+			|| 'America/Los_Angeles';
+		
+		my $dt = DateTime->now( 
+			time_zone => $timezone
+		);
+		
+		my $alarmOn 
+			 = preferences('server')->client($client)->get('alarm')->[0]
+			|| preferences('server')->client($client)->get('alarm')->[ $dt->day_of_week ];
+		
+		my $nextUpdate = $client->periodicUpdateTime();
+		Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
+		
+		return {
+			center  => [ $client->longDateF(), $client->timeF() ],
+			overlay => [ ($alarmOn ? $client->symbols('bell') : undef) ],
+			fonts   => $fontDef,
+		};
+	}
+	
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 
 	# the alarm's days are sunday=7 based - 0 is daily

@@ -48,6 +48,10 @@ sub IP {
 	return $detectedIP;
 }
 
+sub IP_port {
+	return IP() . ':' . $main::SLIMPROTO_PORT;
+}
+
 sub _init {
 
 	if ($detectedIP) {

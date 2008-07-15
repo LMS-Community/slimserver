@@ -680,6 +680,10 @@ sub defaultConfigFile {
 	my $class = shift;
 
 	my $dir = Slim::Utils::Prefs::dir() || Slim::Utils::OSDetect::dirsFor('prefs');
+	
+	if ( main::SLIM_SERVICE ) {
+		$dir = Slim::Utils::OSDetect::dirsFor('log');
+	}
 
 	if (defined $dir && -d $dir) {
 

@@ -18,6 +18,8 @@ use warnings;
 use FindBin qw($Bin);
 use lib $Bin;
 
+use constant SLIM_SERVICE => 0;
+
 # Tell PerlApp to bundle these modules
 if (0) {
 	require Encode::CN;

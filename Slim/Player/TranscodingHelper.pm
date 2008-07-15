@@ -59,6 +59,13 @@ sub loadConversionTables {
 		push @convertFiles, catdir($baseDir, 'custom-convert.conf');
 	}
 	
+	if ( main::SLIM_SERVICE ) {
+		# save time by only including native formats on SN
+		@convertFiles = (
+			catdir($FindBin::Bin, 'slimservice-convert.conf'),
+		);
+	}
+	
 	foreach my $convertFileName (@convertFiles) {
 
 		# can't read? next.
@@ -356,7 +363,8 @@ sub tokenizeConvertCommand {
 		}
 		else {
 			# Bug 8118, only decode if filename can't be found
-			if ( !-e $filepath ) {
+			# Bug 8682, but always decode on OSX
+			if ( Slim::Utils::OSDetect::OS() eq 'mac' || !-e $filepath ) {
 				$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
 			}
 		}

@@ -70,6 +70,20 @@ our $defaultPrefs = {
 	'playDelay'            => 0,	# ms
 };
 
+if ( main::SLIM_SERVICE ) {
+	# Note: Menu items are also listed in S::P::Transporter
+	$defaultPrefs->{menuItem} = [ qw(
+		NOW_PLAYING
+		MY_MUSIC
+		RADIO
+		MUSIC_SERVICES
+		FAVORITES
+		OTHER_SERVICES
+		SETTINGS
+		PLUGIN_CHOOSESERVER
+	) ];
+}
+
 sub new {
 	my ($class, $id, $paddr, $rev, $s, $deviceid, $uuid) = @_;
 
@@ -249,8 +263,18 @@ sub power {
 
 		my $oneline = ($client->linesPerScreen() == 1);
 		
+		my ($line1, $line2);		
+		if ( main::SLIM_SERVICE ) {
+			$line1 = $client->string('WELCOME_TO_APPLICATION');
+			$line2 = $client->string('WELCOME_MESSAGE');
+		}
+		else {
+			$line1 = $client->string('WELCOME_TO_' . $client->model);
+			$line2 = $client->string('FREE_YOUR_MUSIC');
+		}
+		
 		$client->showBriefly( {
-			'center' => [ $client->string('WELCOME_TO_' . $client->model), $client->string('FREE_YOUR_MUSIC') ],
+			'center' => [ $line1, $line2 ],
 			'fonts' => { 
 					'graphic-320x32' => 'standard',
 					'graphic-280x16' => 'medium',
@@ -598,8 +622,28 @@ sub nowPlayingModeLines {
 	my $overlay;
 	my $fractioncomplete = 0;
 	my $songtime = '';
-
-	my $mode = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
+	
+	my $modes;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Allow buffer fullness display to work on SN where we don't have a playingDisplayModes pref
+		if ( $client->isa('Slim::Player::Transporter') ) {
+			if ( $prefs->client($client)->get('playingDisplayMode') == 6 ) {
+				$modes = [0..6];
+			}
+		}
+		else {
+			if ( $prefs->client($client)->get('playingDisplayMode') == 12 ) {
+				$modes = [0..12];
+			}
+		}
+	}
+	
+	if ( !defined $modes ) {
+		$modes = $prefs->client($client)->get('playingDisplayModes');
+	}
+	
+	my $mode = $modes->[ $prefs->client($client)->get('playingDisplayMode') ];
 
 	unless (defined $mode) { $mode = 1; };
 

@@ -30,8 +30,12 @@ use base qw(Slim::Plugin::Base);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Source;
-use Slim::Plugin::AudioScrobbler::Settings;
-use Slim::Plugin::AudioScrobbler::PlayerSettings;
+
+if ( !main::SLIM_SERVICE ) {
+	require Slim::Plugin::AudioScrobbler::Settings;
+	require Slim::Plugin::AudioScrobbler::PlayerSettings;
+}
+
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -51,7 +55,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 } );
 
 use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com/';
-use constant CLIENT_ID     => $ENV{SLIM_SERVICE} ? 'snw' : 'ss7';
+use constant CLIENT_ID     => main::SLIM_SERVICE ? 'snw' : 'ss7';
 use constant CLIENT_VER    => 'sc' . $::VERSION;
 
 sub getDisplayName {
@@ -63,7 +67,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	if ( !$ENV{SLIM_SERVICE} ) {
+	if ( !main::SLIM_SERVICE ) {
 		Slim::Plugin::AudioScrobbler::Settings->new;
 		Slim::Plugin::AudioScrobbler::PlayerSettings->new;
 	}
@@ -114,7 +118,7 @@ sub setMode {
 	
 	my $accounts = $prefs->get('accounts') || [];
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$accounts = $prefs->client($client)->get('accounts') || [];
 	
 		if ( !ref $accounts ) {
@@ -243,7 +247,7 @@ sub handshake {
 			
 			my $accounts = $prefs->get('accounts') || [];
 			
-			if ( $ENV{SLIM_SERVICE} ) {
+			if ( main::SLIM_SERVICE ) {
 				$accounts = $prefs->client($client)->get('accounts') || [];
 			
 				if ( !ref $accounts ) {
@@ -397,7 +401,7 @@ sub newsongCallback {
 	
 	my $enable_scrobbling;
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
 	}
 	else {
@@ -1004,7 +1008,7 @@ sub loveTrack {
 	return if !$prefs->client($client)->get('account');
 	
 	my $enable_scrobbling;
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
 	}
 	else {
@@ -1104,7 +1108,7 @@ sub banTrack {
 	return if !$prefs->client($client)->get('account');
 	
 	my $enable_scrobbling;
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
 	}
 	else {
@@ -1148,7 +1152,7 @@ sub canScrobble {
 	return if !$prefs->client($client)->get('account');
 
 	my $enable_scrobbling;
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
 	}
 	else {
@@ -1193,7 +1197,7 @@ sub getQueue {
 	
 	my $queue = $prefs->client($client)->get('queue') || [];
 	
-	if ( $ENV{SLIM_SERVICE} && !ref $queue ) {
+	if ( main::SLIM_SERVICE && !ref $queue ) {
 		$queue = from_json( $queue );
 	}
 	
@@ -1203,7 +1207,7 @@ sub getQueue {
 sub setQueue {
 	my ( $client, $queue ) = @_;
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$queue = to_json( $queue );
 	}
 	

@@ -48,7 +48,7 @@ sub initPlugin {
 		weight => 20,
 	);
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		# Also add to the My Music menu
 		my $my_menu = {
 			useMode => sub { $class->myLibraryMode(@_) },
@@ -76,7 +76,7 @@ sub initPlugin {
 		);
 	}
 	
-	if ( !$ENV{SLIM_SERVICE} ) {
+	if ( !main::SLIM_SERVICE ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::HTTP::addPageFunction( 
 			'plugins/rhapsodydirect/trackinfo.html',
@@ -172,7 +172,7 @@ sub handleError {
 			listRef => [ $error ],
 		} );
 		
-		if ( $ENV{SLIM_SERVICE} ) {
+		if ( main::SLIM_SERVICE ) {
 		    logError( $client, $error );
 		}
 	}

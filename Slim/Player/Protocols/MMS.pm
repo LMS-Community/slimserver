@@ -109,6 +109,11 @@ sub randomGUID {
 
 sub canDirectStream {
 	my ($classOrSelf, $client, $url) = @_;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Strip noscan info from URL
+		$url =~ s/#slim:.+$//;
+	}
 
 	# Bug 3181 & Others. Check the available types - if the user has
 	# disabled built-in WMA, return false. This is required for streams
@@ -134,7 +139,15 @@ sub requestString {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
 	# Use full path for proxy servers
-	my $proxy = $prefs->get('webproxy');
+	my $proxy;
+	
+	if ( main::SLIM_SERVICE ) {
+		$proxy = $prefs->client($client)->get('webproxy');
+	}
+	else {
+		$proxy = $prefs->get('webproxy');
+	}
+	
 	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
 		$path = "http://$server:$port$path";
 	}
@@ -433,6 +446,14 @@ sub setSeekData {
 			newoffset => $newoffset,
 		};
 	}
+}
+
+# reinit is used on SN to maintain seamless playback when bumped to another instance
+sub reinit {
+	my $class = shift;
+	
+	# Same as HTTP::reinit
+	Slim::Player::Protocols::HTTP->reinit( @_ );
 }
 
 1;

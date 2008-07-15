@@ -52,6 +52,11 @@ use Slim::Buttons::XMLBrowser;
 use Slim::Buttons::Volume;
 use Slim::Utils::Prefs;
 
+if ( main::SLIM_SERVICE ) {
+	# intro mode for SN
+	require SDI::Service::Buttons::SetupWizard;
+}
+
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
 
@@ -127,11 +132,17 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();
-	Slim::Buttons::SqueezeNetwork::init();
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Buttons::SqueezeNetwork::init();
+	}
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
 	Slim::Buttons::Volume::init();
+	
+	if ( main::SLIM_SERVICE ) {
+		SDI::Service::Buttons::SetupWizard::init();
+	}
 
 	$savers{'playlist'} = 'NOW_PLAYING';
 }
@@ -707,6 +718,12 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
+		
+		if ( main::SLIM_SERVICE ) {
+			# For SqueezeNetwork, disable search
+			$client->showBriefly("", "Coming Soon...");
+			return;
+		}
 
 		# Repeat presses of 'search' will step through search menu
 		if ($client->curSelection($client->curDepth) eq 'SEARCH' && mode($client) eq 'INPUT.List') {
@@ -1623,6 +1640,11 @@ sub mode {
 
 	assert($client);
 
+	if ( main::SLIM_SERVICE ) {
+		# Sometimes we crash here without a client
+		return unless $client;
+	}
+
 	return $client->modeStack(-1);
 }
 
@@ -1977,10 +1999,22 @@ sub suppressStatus {
 
 sub dateTime {
 	my $client = shift;
-
-	return {
-		'center' => [ Slim::Utils::DateTime::longDateF(), Slim::Utils::DateTime::timeF() ]
-	};
+	
+	my $line;
+	
+	if ( main::SLIM_SERVICE ) {
+		# client-specific date/time on SN
+		$line = {
+			'center' => [ $client->longDateF(), $client->timeF() ],
+		};
+	}
+	else {
+		$line = {
+			'center' => [ Slim::Utils::DateTime::longDateF(), Slim::Utils::DateTime::timeF() ]
+		};
+	}
+	
+	return $line;
 }
 
 sub startPeriodicUpdates {

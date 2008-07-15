@@ -101,13 +101,21 @@ sub getFeedAsync {
 		'Icy-Metadata' => '',
 	);
 	
+	if ( main::SLIM_SERVICE && $url =~ /radiotime/ ) {
+		# Add real client IP for Radiotime so they can do proper geo-location
+		$headers{'X-Forwarded-For'} = $params->{client}->ip;
+	}
+	
 	# If the URL is on SqueezeNetwork, add session headers or login first
 	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
 
 		$log->info("URL requires SqueezeNetwork session");
 		
 		# Sometimes from the web we won't have a client, so pick a random one
-		$params->{client} ||= Slim::Player::Client::clientRandom();
+		# (Never use random client on SN)
+		if ( !main::SLIM_SERVICE ) {
+			$params->{client} ||= Slim::Player::Client::clientRandom();
+		}
 
 		if ( !$params->{client} ) {
 			# No player connected, cannot continue

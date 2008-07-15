@@ -681,6 +681,11 @@ sub hasServ {
 	return 1;
 }
 
+# SN only, this checks that the player's firmware version supports compression
+sub hasCompression {
+	return shift->revision >= 80;
+}
+
 sub audio_outputs_enable { 
 	my $client = shift;
 	my $enabled = shift;

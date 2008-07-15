@@ -87,6 +87,14 @@ MX: $mx
 	$sock->mcast_send( $ssdp_header, $mcast_addr );
 }
 
+# SLIM_SERVICE only, a way for code to add a device
+sub addDevice {
+	my $device = shift;
+	
+	$devices->{ $device->getudn } = $device;
+}
+# /SLIM_SERVICE
+
 # Stop listening for UPnP events
 sub shutdown {
 	my $class = shift;

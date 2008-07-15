@@ -3405,6 +3405,12 @@ sub statusQuery {
 		$songCount += 0;
 		# add two for playlist save/clear to the count if the playlist is non-empty
 		my $menuCount = $songCount?$songCount+2:0;
+			
+		if ( main::SLIM_SERVICE ) {
+			# Bug 7437, No Playlist Save on SN
+			$menuCount--;
+		}
+		
 		$request->addResult("count", $menuCount);
 		
 		my $base = {
@@ -4887,6 +4893,12 @@ sub _addJivePlaylistControls {
 	$request->addResultLoop($loop, $count, 'count', 2);
 	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
 	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
+	
+	if ( main::SLIM_SERVICE ) {
+		# Bug 7110, move images
+		use Slim::Networking::SqueezeNetwork;
+		$request->addResultLoop( $loop, $count, 'icon', Slim::Networking::SqueezeNetwork->url('/static/jive/images/blank.png', 1) );
+	}
 
 	# save playlist
 	my $input = {
@@ -4908,13 +4920,21 @@ sub _addJivePlaylistControls {
 	};
 	$count++;
 
-	$text = $client->string('SAVE_PLAYLIST');
-	$request->addResultLoop($loop, $count, 'text', $text);
-	$request->addResultLoop($loop, $count, 'icon-id', '/html/images/blank.png');
-	$request->addResultLoop($loop, $count, 'input', $input);
-	$request->addResultLoop($loop, $count, 'actions', $actions);
-	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
-
+	# Bug 7437, don't display Save Playlist on SN
+	if ( !main::SLIM_SERVICE ) {
+		$text = $client->string('SAVE_PLAYLIST');
+		$request->addResultLoop($loop, $count, 'text', $text);
+		$request->addResultLoop($loop, $count, 'icon-id', '/html/images/blank.png');
+		$request->addResultLoop($loop, $count, 'input', $input);
+		$request->addResultLoop($loop, $count, 'actions', $actions);
+		$request->addResultLoop($loop, $count, 'window', { titleStyle => 'playlist' } );
+	}
+	
+	# Bug 7110, move images
+	if ( main::SLIM_SERVICE ) {
+		use Slim::Networking::SqueezeNetwork;
+		$request->addResultLoop( $loop, $count, 'icon', Slim::Networking::SqueezeNetwork->url('/static/jive/images/blank.png', 1) );
+	}
 }
 
 sub _addJiveSong {

@@ -642,6 +642,9 @@ sub init {
 	
 ######################################################################################################################################################################
 
+	# No web code on SN
+	return if main::SLIM_SERVICE;
+
 	# Normal SqueezeCenter commands can be accessed with URLs like
 	#   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
 	# Use the protectCommand() API to prevent CSRF attacks on commands -- including commands

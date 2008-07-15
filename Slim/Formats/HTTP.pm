@@ -32,6 +32,8 @@ use Slim::Utils::Prefs;
 
 use constant DEFAULT_TYPE => 'mp3';
 
+my $prefs = preferences('server');
+
 =head2 getTag( $url )
 
 Class constructor for just reading metadata from the stream / remote playlist.
@@ -80,7 +82,16 @@ sub requestString {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
  
 	# Use full path for proxy servers
-	my $proxy = preferences('server')->get('webproxy');
+	my $proxy;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Let user specify their own proxy to use
+		$proxy = $prefs->client($client)->get('webproxy');
+	}
+	else {
+		$proxy = $prefs->get('webproxy');
+	}
+	
 	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
 		$path = "http://$server:$port$path";
 	}
@@ -132,7 +143,7 @@ sub requestString {
 	}
 	
 	# Bug 5858, add cookies to the request
-	if ( !$ENV{SLIM_SERVICE} ) {
+	if ( !main::SLIM_SERVICE ) {
 		my $request_object = HTTP::Request->parse($request);
 		$request_object->uri($url);
 		Slim::Networking::Async::HTTP::cookie_jar->add_cookie_header( $request_object );

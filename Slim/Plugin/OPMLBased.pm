@@ -152,6 +152,14 @@ sub cliRadiosQuery {
 					titleStyle => 'album',
 				},
 			};
+			
+			if ( main::SLIM_SERVICE ) {
+				# Bug 7110, icons are full URLs so we must use icon not icon-id
+				$data->{icon} = delete $data->{'icon-id'};
+				
+				# Bug 7230, send pre-thumbnailed URL
+				$data->{icon} =~ s/\.png$/_56x56_p\.png/;
+			}
 		}
 		else {
 			$data = {
@@ -161,8 +169,17 @@ sub cliRadiosQuery {
 			};
 		}
 		
+		# XXX: SLIM_SERVICE, exclude beta plugins here
+		
 		# Exclude disabled plugins
-		if ( my $disabled = $prefs->get('sn_disabled_plugins') ) {
+		my $disabled = $prefs->get('sn_disabled_plugins');
+		
+		if ( main::SLIM_SERVICE ) {
+			my $client = $request->client();
+			$disabled  = $client->playerData->userid->allowedServices->{disabled};
+		}
+		
+		if ( $disabled ) {
 			for my $plugin ( @{$disabled} ) {
 				if ( $class =~ /^Slim::Plugin::${plugin}::/ ) {
 					$data = {};

@@ -107,7 +107,46 @@ sub scanURL {
 	
 	# In some cases, a remote protocol may always be audio and not need scanning
 	# This is not used by any core code, but some plugins require it
-	if ( Slim::Music::Info::isAudioURL($url) ) { 	 
+	my $isAudio = Slim::Music::Info::isAudioURL($url);
+	
+	if ( main::SLIM_SERVICE ) {
+		# We use a special fragment in the URL starting with #slim to force certain things:
+		# noscan - don't scan the URL, needed for UK-only stations
+		# aid=N  - when not scanning, we won't know what audio stream to use, so aid will force
+		#          a specific stream to use, needed for BBC which uses stream 2 for 48kbps
+		#
+		# Example: mms://wmlive-acl.bbc.co.uk/wms/radio1/radio1_nb_e1s1#slim:noscan=1,aid=2
+		if ( $url =~ /#slim:(.+)$/ ) {
+			my $opts   = $1;
+			my $params = {};
+			
+			$url =~ s/#slim:.+$//;
+			
+			$track->url( $url );
+			$track->update;
+
+			for my $p ( split /,/, $opts ) {
+				my ($key, $value) = split /=/, $p;
+				$params->{$key} = $value;
+			}
+			
+			if ( $params->{noscan} ) {
+				$isAudio = 1;
+			}
+			
+			if ( $params->{aid} ) {
+				my $scanData = $client->scanData || {};
+				$scanData->{ $url } = {
+					streamNum => $params->{aid},
+					metadata  => undef,
+					headers   => undef,
+				};
+				$client->scanData( $scanData );
+			}
+		}
+	}
+	
+	if ( $isAudio ) { 	 
 		$log->debug( "Remote stream $url known to be audio" ); 	 
 
 		# Set this track's content type from protocol handler getFormatForURL method 	 
