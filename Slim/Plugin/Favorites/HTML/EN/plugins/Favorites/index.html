@@ -291,7 +291,7 @@ function(){
 	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="sess" value="[% sess %]">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input id="importfilename" type="text" class="stdedit selectFile selectFile_opml selectFile_m3u selectFile_pls" name="filename" style="width: 66%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
+		<input id="importfilename" type="text" class="stdedit selectFile selectFile_opml selectFile_m3u selectFile_pls selectFile_asx selectFile_cue selectFile_wpl" name="filename" style="width: 66%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
 		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="ajaxUpdate('index.html', 'importfile&amp;index=[% levelindex %]&amp;sess=[% sess %]&amp;filename=' + escape([% IF useExtJS %]Ext.get('importfilename').dom[% ELSE %]$('importfilename')[% END %].value)[% IF initCall; ', ' _ initCall; END %]);" />
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('importfile'); showElements(['defaultform']);" />
