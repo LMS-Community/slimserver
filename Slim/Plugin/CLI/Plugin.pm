@@ -11,7 +11,9 @@ use IO::Socket;
 use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
-use Slim::Plugin::CLI::Settings;
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Plugin::CLI::Settings;
+}
 
 use Slim::Control::Request;
 use Slim::Utils::Log;
@@ -74,7 +76,9 @@ sub initPlugin {
 
 	$log->info("Initializing");
 
-	Slim::Plugin::CLI::Settings->new;
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Plugin::CLI::Settings->new;
+	}
 
 	# register our functions
 	
@@ -92,7 +96,11 @@ sub initPlugin {
         [0, 1, 0, \&listenQuery]);
     Slim::Control::Request::addDispatch(['subscribe', '_functions'], 
         [0, 0, 0, \&subscribeCommand]);
-
+	
+	if ( main::SLIM_SERVICE ) {
+		# Increase max connections on SN
+		$prefsServer->set( tcpConnectMaximum => 100 );
+	}
 	
 	# open our socket
 	cli_socket_change();
@@ -553,9 +561,12 @@ sub cli_process {
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
 	
-		$client = Slim::Player::Client::clientRandom();
-		$clientid = blessed($client) ? $client->id() : undef;
-		$request->clientid($clientid);
+		# Never assign a random client on SN
+		if ( !main::SLIM_SERVICE ) {
+			$client = Slim::Player::Client::clientRandom();
+			$clientid = blessed($client) ? $client->id() : undef;
+			$request->clientid($clientid);
+		}
 		
 		if ($log->is_info) {
 

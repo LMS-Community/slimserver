@@ -42,7 +42,11 @@ use Slim::Formats;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::MySQLHelper;
+
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Utils::MySQLHelper;
+}
+
 use Slim::Utils::OSDetect;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Strings qw(string);
@@ -134,7 +138,7 @@ sub init {
 	# Tell the DB that we're handing it UTF-8
 	# MySQL < 4.1 doesn't support this - which really shouldn't matter to
 	# us. But some users *ahem*kdf*ahem* are stuck running 4.0.x
-	if (Slim::Utils::MySQLHelper->mysqlVersion($dbh) > 4.0) {
+	if ( main::SLIM_SERVICE || Slim::Utils::MySQLHelper->mysqlVersion($dbh) > 4.0 ) {
 
 		eval { $dbh->do('SET NAMES UTF8;') };
 	}
@@ -153,7 +157,7 @@ sub init {
 	# If we couldn't select our new 'name' column, then drop the
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
-	if ($@) {
+	if ( $@ && !main::SLIM_SERVICE ) {
 		logWarning("Creating new database - empty database or database from 6.3.x found");
 
 		eval {
@@ -162,7 +166,14 @@ sub init {
 		}
 	}
 
-	my $update = $class->migrateDB;
+	my $update;
+	
+	if ( main::SLIM_SERVICE ) {
+		$update = 1;
+	}
+	else {
+		$update = $class->migrateDB;
+	}
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
@@ -281,14 +292,24 @@ sub sourceInformation {
 	my $source   = sprintf($prefs->get('dbsource'), 'slimserver');
 	my $username = $prefs->get('dbusername');
 	my $password = $prefs->get('dbpassword');
+	
+	if ( main::SLIM_SERVICE ) {
+		my $config = SDI::Util::SNConfig::get_config();
+		$source   = $config->{database}->{dsn};
+		$username = $config->{database}->{username};
+		$password = $config->{database}->{password};
+	}
+	
 	my ($driver) = ($source =~ /^dbi:(\w+):/);
 
-	# Bug 3443 - append a socket if needed
-	# Windows doesn't use named sockets (it uses TCP instead)
-	if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
+	if ( !main::SLIM_SERVICE ) {
+		# Bug 3443 - append a socket if needed
+		# Windows doesn't use named sockets (it uses TCP instead)
+		if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
 
-		if (Slim::Utils::MySQLHelper->socketFile) {
-			$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
+			if (Slim::Utils::MySQLHelper->socketFile) {
+				$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
+			}
 		}
 	}
 
@@ -306,6 +327,10 @@ WARNING - All data in the database will be dropped!
 
 sub wipeDB {
 	my $class = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		return;
+	}
 
 	logger('scan.import')->info("Start schema_clear");
 
@@ -338,6 +363,10 @@ Calls the schema_optimize.sql script for the current database driver.
 
 sub optimizeDB {
 	my $class = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		return;
+	}
 
 	logger('scan.import')->info("Start schema_optimize");
 
@@ -372,6 +401,10 @@ data files handed to L<DBIx::Migration>.
 
 sub migrateDB {
 	my $class = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		return;
+	}
 
 	my ($driver, $source, $username, $password) = $class->sourceInformation;
 
@@ -439,6 +472,10 @@ Change the collation for tables where sorting is important.
 
 sub changeCollation {
 	my ( $class, $collation ) = @_;
+	
+	if ( main::SLIM_SERVICE ) {
+		return;
+	}
 	
 	my $dbh = $class->storage->dbh;
 	
@@ -2503,15 +2540,17 @@ sub _postCheckAttributes {
 		Slim::Schema->rs('Year')->find_or_create({ 'id' => $year });
 	}
 
-	# Add comments if we have them:
-	for my $comment (@{$attributes->{'COMMENT'}}) {
+	if ( !main::SLIM_SERVICE ) {
+		# Add comments if we have them:
+		for my $comment (@{$attributes->{'COMMENT'}}) {
 
-		$self->resultset('Comment')->find_or_create({
-			'track' => $trackId,
-			'value' => $comment,
-		});
+			$self->resultset('Comment')->find_or_create({
+				'track' => $trackId,
+				'value' => $comment,
+			});
 
-		$log->debug("-- Track has comment '$comment'");
+			$log->debug("-- Track has comment '$comment'");
+		}
 	}
 
 	# refcount--

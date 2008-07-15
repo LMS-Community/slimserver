@@ -54,7 +54,7 @@ sub initPlugin {
 		menu => 'music_services',
 	);
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		my $menu = {
 			useMode => sub { $class->setMode(@_) },
 			header  => 'PLUGIN_LFM_MODULE_NAME',
@@ -67,7 +67,7 @@ sub initPlugin {
 		);
 	}
 	
-	if ( !$ENV{SLIM_SERVICE} ) {
+	if ( !main::SLIM_SERVICE ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::HTTP::addPageFunction( 
 			'plugins/lastfm/trackinfo.html',

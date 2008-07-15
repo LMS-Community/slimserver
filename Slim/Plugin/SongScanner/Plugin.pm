@@ -387,7 +387,7 @@ sub setScanMode {
 			}
 		);
 		# Make sure the jumpToMode flag isn't left over for next the mode is entered
-		$client->pluginData->{jumpToMode => 0};
+		$client->pluginData( jumpToMode => 0 );
 		return;		
 	}
 	$client->update;

@@ -17,11 +17,17 @@ use base qw(Slim::Plugin::Base);
 
 use URI::Escape qw(uri_escape);
 
-use Slim::Plugin::RadioTime::Settings;
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Plugin::RadioTime::Settings;
+}
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
-use Slim::Web::XMLBrowser;
+
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Web::XMLBrowser;
+}
+
 use Slim::Utils::Prefs;
 
 my $FEED = 'http://opml.radiotime.com/Index.aspx';
@@ -47,7 +53,9 @@ sub initPlugin {
 		sub { return $class->_pluginDataFor('icon'); }
 	);
 
-	Slim::Plugin::RadioTime::Settings->new;
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Plugin::RadioTime::Settings->new;
+	}
 
 #        |requires Client
 #        |  |is a Query
@@ -60,7 +68,10 @@ sub initPlugin {
 		[1, 1, 1, \&cliQuery]);
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
-	Slim::Web::HTTP::protectCommand([qw|radiotime radios|]);
+		
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Web::HTTP::protectCommand([qw|radiotime radios|]);
+	}
 }
 
 # add "hidden" item to Jive home menu 
@@ -126,7 +137,14 @@ sub setMode {
 sub radioTimeURL {
 	my $client = shift;
 	
-	my $username = $prefs->get('username');
+	my $username;
+	
+	if ( main::SLIM_SERVICE ) {
+		$username = preferences('server')->client($client)->get('plugin_radiotime_username', 'force');
+	}
+	else {
+		$username = $prefs->get('username');
+	}
 	
 	my $url = $FEED;
 	
@@ -201,6 +219,14 @@ sub cliRadiosQuery {
 				titleStyle => 'album',
 			},
 		};
+		
+		if ( main::SLIM_SERVICE ) {
+			# Bug 7110, icons are full URLs so we must use icon not icon-id
+			$data->{icon} = delete $data->{'icon-id'};
+			
+			# Bug 7230, send pre-thumbnailed URL
+			$data->{icon} =~ s/\.png$/_56x56_p\.png/;
+		}
 	}
 	else {
 		$data = {

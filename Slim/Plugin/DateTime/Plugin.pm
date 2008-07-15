@@ -10,7 +10,9 @@ use base qw(Slim::Plugin::Base);
 use Slim::Utils::DateTime;
 use Slim::Utils::Prefs;
 
-use Slim::Plugin::DateTime::Settings;
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Plugin::DateTime::Settings;
+}
 
 my $prefs = preferences('plugin.datetime');
 
@@ -23,7 +25,9 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	Slim::Plugin::DateTime::Settings->new;
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Plugin::DateTime::Settings->new;
+	}
 
 	Slim::Buttons::Common::addSaver(
 		'SCREENSAVER.datetime',
@@ -78,6 +82,8 @@ my $fontDef = {
 sub screensaverDateTimelines {
 	my $client = shift;
 	my $flash  = shift; # set when called from animation callback
+
+	# XXX: SLIM_SERVICE
 
 	my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);

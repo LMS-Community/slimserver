@@ -46,6 +46,12 @@ BEGIN {
 	sub hasZlib {
 		return $hasZlib if defined $hasZlib;
 		
+		if ( main::SLIM_SERVICE ) {
+			# Disable gzip overhead on SN
+			$hasZlib = 0;
+			return;
+		}
+		
 		$hasZlib = 0;
 		eval { 
 			require Compress::Zlib;

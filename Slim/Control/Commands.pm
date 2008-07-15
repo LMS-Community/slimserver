@@ -206,7 +206,13 @@ sub clientConnectCommand {
 		
 		$client->sendFrame( serv => \$packed );
 		
-		$client->execute([ 'client', 'forget' ]);
+		if ( main::SLIM_SERVICE ) {
+			# Bug 7973, forget client immediately
+			$client->forgetClient;
+		}
+		else {
+			$client->execute([ 'client', 'forget' ]);
+		}
 	}
 	
 	$request->setStatusDone();
@@ -1119,6 +1125,19 @@ sub playlistXitemCommand {
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
 	
+	if ( main::SLIM_SERVICE ) {
+		# If the item is a base64+storable string, decode it.
+		# This is used for sending multiple URLs from the web
+		# XXX: JSON::XS is faster than Storable
+		use MIME::Base64 qw(decode_base64);
+		use Storable qw(thaw);
+		
+		if ( !ref $item && $item =~ /^base64:/ ) {
+			$item =~ s/^base64://;
+			$item = thaw( decode_base64( $item ) );
+		}
+	}
+	
 	# If we're playing a list of URLs (from XMLBrowser), only work on the first item
 	my $list;
 	if ( ref $item eq 'ARRAY' ) {
@@ -1292,6 +1311,10 @@ sub playlistXitemCommand {
 			
 				my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
 				my $line2 = Slim::Music::Info::title($path) || $path;
+				
+				if ( main::SLIM_SERVICE ) {
+					$line2 = SDI::Service::Control->bestTitleForUrl( $client, $url );
+				}
 			
 				if ( $client->linesPerScreen() == 1 ) {
 			
@@ -2759,6 +2782,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	# Bug: 3629 - sort by album, then disc, tracknum, titlesort
 	my $albumSort = "concat(album.titlesort, '0'), me.disc, me.tracknum, concat(me.titlesort, '0')";
 	my $trackSort = "me.disc, me.tracknum, concat(me.titlesort, '0')";
+	
+	if ( main::SLIM_SERVICE ) {
+		# XXX: this should never be called on SN, but have seen it happen
+		return ();
+	}
 
 	# Setup joins as needed - we want to end up with Tracks in the end.
 	my %joinMap = ();

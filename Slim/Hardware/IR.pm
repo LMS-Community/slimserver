@@ -364,6 +364,11 @@ sub loadIRFile {
 	delete $irCodes{$file};
 
 	my @lines = file($file)->slurp('chomp' => 1);
+	
+	if ( main::SLIM_SERVICE ) {
+		# On SN, we want to store codes using only the basename, not the full path
+		$file = basename($file);
+	}
 
 	for (@lines) {
 
@@ -401,7 +406,7 @@ sub initClient {
 
 	my $map = $prefs->client($client)->get('irmap');
 
-	if (!-e $map) {
+	if ( $map && !-e $map ) {
 		# older prefs didn't track pathname
 		# resave the pref with path also stripping to basename as a way to try to fix an invalid path
 		my @dirs = IRFileDirs();
@@ -411,7 +416,7 @@ sub initClient {
 
 	my @maps = ( \%{ $irMap{$defaultMapFile} } );
 
-	if ($map ne $defaultMapFile) {
+	if ( $map && $map ne $defaultMapFile ) {
 		$log->info("Client: " . $client->id . " Using mapfile: $map");
 		unshift @maps, \%{ $irMap{$map} };
 	}

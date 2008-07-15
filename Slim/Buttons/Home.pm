@@ -78,6 +78,35 @@ sub init {
 			if (defined $client && $client->linesPerScreen() == 1) {
 				return $client->doubleString($string);
 			}
+			
+			# special case for SN - show alarm settings & PIN code
+			if ( main::SLIM_SERVICE ) {
+				
+				if ($string eq 'ALARM') {
+					# if alarm set, show "enabled" text
+					# XXX: This used to show the time, but with multi-day alarms, that doesn't make sense now
+					my $append = '';
+					
+					my $tz 
+						=  $prefs->client($client)->get('timezone')
+						|| $client->playerData->userid->timezone
+						|| 'America/Los_Angeles';
+					
+					my $dt = DateTime->now( time_zone => $tz );
+
+					my $alarmOn 
+						= $prefs->client($client)->get('alarm')->[0] 
+						|| $prefs->client($client)->get('alarm')->[ $dt->day_of_week ];
+					
+					if ( $alarmOn ) {
+						$append = " (" . $client->string('MCON'). ")";
+					}
+					return $client->string($string) . $append;
+				}
+				elsif ( $string eq 'SQUEEZENETWORK_PIN' ) {
+					return sprintf $client->string($string), $client->pin;
+				}
+			}
 
 			return $client->string($string);
 		},
@@ -104,6 +133,17 @@ sub init {
 			'useMode' => 'playlist'
 		},
 	);
+	
+	if ( main::SLIM_SERVICE ) {
+		$home{ALARM} = {
+			'useMode'   => 'alarm',
+			'externRef' => sub {return 'test';},
+		};
+		
+		$home{SQUEEZENETWORK_PIN} = {
+			'useMode' => 'setup.pinhelp',
+		},
+	}
 
 	# This is also a big source of the inconsistency in "play" and "add" functions.
 	# We might want to make this a simple...'add' = clear playlist, 'play' = play everything
@@ -299,6 +339,14 @@ sub setMode {
 		}
 
 		return;
+	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# if player not yet linked to an account, force client to register PIN
+		if ( $client->playerData->userid == 1 ) {
+			Slim::Buttons::Common::pushMode( $client, 'setup.finish', undef );
+			return;
+		}
 	}
 	
 	updateMenu($client);
@@ -531,7 +579,22 @@ sub createList {
 	my $weighted = shift;
 
 	my @list = ();
+	
+	# SLIM_SERVICE, user can hide menu items
+	my %disabledMenus = ();
+	if ( main::SLIM_SERVICE ) {
+		my $disabledPref  
+			 = $prefs->client($client)->get('disabledMenus')
+			|| $prefs->client($client)->set( 'disabledMenus', [] );
+		
+		for my $item ( @{ $disabledPref } ) {
+			# Only look at '_sub' items, the others are top-level menu items
+			next unless $item =~ s/_sub$//;
+			$disabledMenus{$item} = 1;
+		}
+	}
 
+	SUB:
 	for my $sub (sort {($weighted && ($prefs->get("rank-$b") || 0) <=> 
 		($prefs->get("rank-$a") || 0)) || 
 		(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
@@ -540,6 +603,27 @@ sub createList {
 		# Leakage of the DigitalInput plugin..
 		if ($sub eq 'PLUGIN_DIGITAL_INPUT' && !$client->hasDigitalIn) {
 			next;
+		}
+		
+		if ( main::SLIM_SERVICE ) {
+			# Hide disabled menus
+			if ( exists $disabledMenus{$sub} ) {
+				next;
+			}
+			
+			# XXX: hide beta plugins here
+			
+			# Hide out-of-country services on SN
+			my $allowed = $client->playerData->userid->allowedServices();
+
+			my $check = $sub;
+			$check   =~ s/_//g;
+
+			for my $plugin ( keys %{ $allowed->{disabled} } ) {
+				if ( $check =~ /$plugin/i ) {
+					next SUB;
+				}
+			}
 		}
 
 		push @list, $sub;
@@ -620,6 +704,16 @@ Requires $client object.
 
 sub homeheader {
 	my $client = $_[0];
+
+	if ( main::SLIM_SERVICE ) {
+		my $config = SDI::Util::SNConfig::get_config();
+		if ( $config->{dcname} =~ /^(?:sv|dc|de)$/ ) {
+			return $client->string('SQUEEZENETWORK_HOME');
+		}
+		else {
+			return $client->string('SQUEEZENETWORK_HOME_TEST');
+		}
+	}
 
 	if ($client->isa("Slim::Player::SLIMP3")) {
 
@@ -733,6 +827,24 @@ sub updateMenu {
 	my $client = shift;
 	my @home = ();
 	
+	# User can hide menu items on SN
+	my %disabledMenus = ();
+	if ( main::SLIM_SERVICE ) {
+		my $disabledPref  
+			 = $prefs->client($client)->get('disabledMenus')
+			|| $prefs->client($client)->set( 'disabledMenus', [] );
+	
+		if ( !ref $disabledPref ) {
+			$disabledPref = [ $disabledPref ];
+		}
+
+		for my $item ( @{ $disabledPref } ) {
+			# Only look at non-sub item
+			next if $item =~ /_sub$/;
+			$disabledMenus{$item} = 1;
+		}
+	}
+	
 	for my $menuItem (@{ $prefs->client($client)->get('menuItem') }) {
 
 		my $plugin = Slim::Utils::PluginManager->dataForPlugin($menuItem);
@@ -746,7 +858,19 @@ sub updateMenu {
 
 			$menuItem = $plugin->{'name'};
 		}
-
+		
+		if ( main::SLIM_SERVICE ) {
+			next if exists $disabledMenus{$menuItem};
+			
+			if ( $menuItem eq 'PLUGIN_CHOOSESERVER' ) {
+				# Bug 3157, add PIN to main menu if the player isn't linked to a
+				# SN account
+				if ( $client->playerData->userid == 1 ) {
+					push @home, 'SQUEEZENETWORK_PIN';
+				}
+			}
+		}
+		
 		push @home, $menuItem;
 	}
 

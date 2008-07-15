@@ -173,6 +173,12 @@ sub play {
 		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
 		elsif ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
 			my $bufferSecs = $prefs->get('bufferSecs') || 3;
+			
+			if ( main::SLIM_SERVICE ) {
+				# Per-client buffer secs pref on SN
+				$bufferSecs = $prefs->client($client)->get('bufferSecs') || 3;
+			}
+			
 			$params->{bufferThreshold} = ( int($bitrate / 8) * $bufferSecs ) / 1000;
 			
 			# Max threshold is 255
@@ -339,7 +345,13 @@ sub buffering {
 	# Find the track title
 	if ( $client->linesPerScreen() > 1 ) {
 		my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
-		$line2  = Slim::Music::Info::title( $url );
+		
+		if ( main::SLIM_SERVICE ) {
+			$line2 = SDI::Service::Control->bestTitleForUrl( $client, $url );
+		}
+		else {
+			$line2 = Slim::Music::Info::title( $url );
+		}
 	}
 	
 	# Only show buffering status if no user activity on player or we're on the Now Playing screen
@@ -1012,7 +1024,14 @@ sub stream {
 				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
 				
 				# If a proxy server is set, change ip/port
-				my $proxy = $prefs->get('webproxy');
+				my $proxy;
+				if ( main::SLIM_SERVICE ) {
+					$proxy = $prefs->client($client)->get('webproxy');
+				}
+				else {
+					$proxy = $prefs->get('webproxy');
+				}
+				
 				if ( $proxy ) {
 					my ($pserver, $pport) = split /:/, $proxy;
 					$server = $pserver;
@@ -1227,7 +1246,36 @@ sub sendFrame {
 
 	assert(length($type) == 4);
 	
-	my $frame = pack('n', $len + 4) . $type . $$dataRef;
+	my $frame;
+	
+	# Compress all graphic frames on SN, saves a huge amount of bandwidth
+	if ( main::SLIM_SERVICE && $type eq 'grfe' && $client->hasCompression ) {
+		# Compress only graphic frames, other frames are very small
+		# or don't compress well.
+		my $compressed = Compress::LZF::compress($$dataRef);
+		
+		# XXX: This should be fixed in a future version of Compress::LZF
+		# Replace Perl header with C header so we can decompress
+		# properly in the firmware
+		if ( ord( substr $compressed, 0, 1 ) == 0 ) {
+			# The data wasn't able to be compressed
+			my $c_header = "ZV\0" . pack('n', $len);
+			substr $compressed, 0, 1, $c_header;
+		}
+		else {
+			my $csize = length($compressed) - 2;
+			my $c_header = "ZV\1" . pack('n', $csize) . pack('n', $len);
+			substr $compressed, 0, 2, $c_header;
+		}
+		
+		$frame
+			= pack( 'n', length($compressed) + 4 ) 
+			. ( $type | pack( 'N', 0x80000000 ) )
+			. $compressed;
+	}
+	else {
+		$frame = pack('n', $len + 4) . $type . $$dataRef;
+	}
 
 	logger('network.protocol.slimproto')->debug("sending squeezebox frame: $type, length: $len");
 

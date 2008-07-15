@@ -89,7 +89,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivewallpapers'], [0, 1, 0, \&downloadQuery]);
 	Slim::Control::Request::addDispatch(['jivesounds'], [0, 1, 0, \&downloadQuery]);
 	
-	Slim::Web::HTTP::addRawDownload('^jive(applet|wallpaper|sound)/', \&downloadFile, 'binary');
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Web::HTTP::addRawDownload('^jive(applet|wallpaper|sound)/', \&downloadFile, 'binary');
+	}
 
 	# setup the menustatus dispatch and subscription
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'], [0, 0, 0, sub { warn "menustatus query\n" }]);
@@ -98,8 +100,10 @@ sub init {
 	# setup a cli command for jive that returns nothing; can be useful in some situations
 	Slim::Control::Request::addDispatch( ['jiveblankcommand'], [0, 0, 0, sub { return 1; }]);
 
-	# Load memory caches to help with menu performance
-	buildCaches();
+	if ( !main::SLIM_SERVICE ) {
+		# Load memory caches to help with menu performance
+		buildCaches();
+	}
 	
 	# Re-build the caches after a rescan
 	Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
@@ -245,6 +249,94 @@ sub mainMenu {
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},
 	);
+	
+	# SN Jive Menu
+	if ( main::SLIM_SERVICE ) {
+		@menu = map {
+			$_->{text} = $client->string($_->{stringToken}) if ($_->{stringToken});
+			$_;
+		} (
+			{
+				text           => $client->string('MY_MUSIC'),
+				id             => 'myMusic',
+				node           => 'home',
+				displayWhenOff => 0,
+				weight         => 15,
+				actions        => {
+					go => {
+						cmd => ['my_music'],
+						params => {
+							menu => 'my_music',
+						},
+					},
+				},
+				window        => {
+					menuStyle  => 'album',
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text           => $client->string('RADIO'),
+				id             => 'radio',
+				node           => 'home',
+				displayWhenOff => 0,
+				weight         => 20,
+				actions        => {
+					go => {
+						cmd => ['radios'],
+						params => {
+							menu => 'radio',
+						},
+					},
+				},
+				window        => {
+					menuStyle => 'album',
+					titleStyle => 'internetradio',
+				},
+			},
+			{
+				text           => $client->string('MUSIC_SERVICES'),
+				id             => 'ondemand',
+				node           => 'home',
+				weight         => 30,
+				displayWhenOff => 0,
+				actions => {
+					go => {
+						cmd => ['music_services'],
+						params => {
+							menu => 'music_services',
+						},
+					},
+				},
+				window        => {
+					menuStyle => 'album',
+					titleStyle => 'internetradio',
+				},
+			},
+			{
+				text           => $client->string('FAVORITES'),
+				id             => 'favorites',
+				node           => 'home',
+				displayWhenOff => 0,
+				weight         => 40,
+				actions        => {
+					go => {
+						cmd => ['favorites', 'items'],
+						params => {
+							menu     => 'favorites',
+						},
+					},
+				},
+				window        => {
+					titleStyle => 'favorites',
+				},
+			},
+			@pluginMenus,
+			@{playerPower($client, 1)},
+			@{Slim::Plugin::DigitalInput::Plugin::digitalInputItem($client)},
+			@{playerSettingsMenu($client, 1)},
+		);
+	}
 
 	_notifyJive(\@menu, $client);
 }
@@ -1050,11 +1142,34 @@ sub howManyPlayersToSyncWith {
 	my $client = shift;
 	my @playerSyncList = Slim::Player::Client::clients();
 	my $synchablePlayers = 0;
+	
+	# Restrict based on players with same userid on SN
+	my $userid;
+	if ( main::SLIM_SERVICE ) {
+		$userid = $client->playerData->userid;
+	}
+	
 	for my $player (@playerSyncList) {
 		# skip ourself
 		next if ($client eq $player);
 		# we only sync slimproto devices
 		next if (!$player->isPlayer());
+		
+		# On SN, only sync with players on the current account
+		if ( main::SLIM_SERVICE ) {
+			next if $userid == 1;
+			next if $userid != $player->playerData->userid;
+			
+			# Skip players with old firmware
+			if (
+				( $player->model eq 'squeezebox2' && $player->revision < 82 )
+				||
+				( $player->model eq 'transporter' && $player->revision < 32 )
+			) {
+				next;
+			}
+		}
+		
 		$synchablePlayers++;
 	}
 	return $synchablePlayers;
@@ -1064,11 +1179,34 @@ sub getPlayersToSyncWith() {
 	my $client = shift;
 	my @playerSyncList = Slim::Player::Client::clients();
 	my @return = ();
+	
+	# Restrict based on players with same userid on SN
+	my $userid;
+	if ( main::SLIM_SERVICE ) {
+		$userid = $client->playerData->userid;
+	}
+	
 	for my $player (@playerSyncList) {
 		# skip ourself
 		next if ($client eq $player);
 		# we only sync slimproto devices
 		next if (!$player->isPlayer());
+		
+		# On SN, only sync with players on the current account
+		if ( main::SLIM_SERVICE ) {
+			next if $userid == 1;
+			next if $userid != $player->playerData->userid;
+			
+			# Skip players with old firmware
+			if (
+				( $player->model eq 'squeezebox2' && $player->revision < 82 )
+				||
+				( $player->model eq 'transporter' && $player->revision < 32 )
+			) {
+				next;
+			}
+		}
+		
 		my $val = Slim::Player::Sync::isSyncedWith($client, $player); 
 		push @return, { 
 			text => $player->name(), 
@@ -1093,6 +1231,25 @@ sub dateQuery {
 
 	if ( $request->isNotQuery([['date']]) ) {
 		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# Use timezone on user's account
+		my $client = $request->client;
+		
+		my $tz 
+			=  preferences('server')->client($client)->get('timezone')
+			|| $client->playerData->userid->timezone 
+			|| 'America/Los_Angeles';
+		
+		my $datestr = DateTime->now( time_zone => $tz )->strftime("%Y-%m-%dT%H:%M:%S%z");
+		$datestr =~ s/(\d\d)$/:$1/; # change -0500 to -05:00
+		
+		$request->addResult( 'date', $datestr );
+		
+		$request->setStatusDone();
+		
 		return;
 	}
 	

@@ -156,25 +156,32 @@ sub parseMetadata {
 sub canDirectStream {
 	my ($classOrSelf, $client, $url) = @_;
 	
-	# When synced, we don't direct stream so that the server can proxy a single
-	# stream for all players
-	if ( Slim::Player::Sync::isSynced($client) ) {
+	if ( !main::SLIM_SERVICE ) {
+		# When synced, we don't direct stream so that the server can proxy a single
+		# stream for all players
+		if ( Slim::Player::Sync::isSynced($client) ) {
 
-		if ( logger('player.streaming.direct')->is_info ) {
-			logger('player.streaming.direct')->info(sprintf(
-				"[%s] Not direct streaming because player is synced", $client->id
-			));
-		}
+			if ( logger('player.streaming.direct')->is_info ) {
+				logger('player.streaming.direct')->info(sprintf(
+					"[%s] Not direct streaming because player is synced", $client->id
+				));
+			}
 
-		return 0;
-	}
-
-	# Allow user pref to select the method for streaming
-	if ( my $method = preferences('server')->client($client)->get('mp3StreamingMethod') ) {
-		if ( $method == 1 ) {
-			logger('player.streaming.direct')->debug("Not direct streaming because of mp3StreamingMethod pref");
 			return 0;
 		}
+
+		# Allow user pref to select the method for streaming
+		if ( my $method = preferences('server')->client($client)->get('mp3StreamingMethod') ) {
+			if ( $method == 1 ) {
+				logger('player.streaming.direct')->debug("Not direct streaming because of mp3StreamingMethod pref");
+				return 0;
+			}
+		}
+	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# Strip noscan info from URL
+		$url =~ s/#slim:.+$//;
 	}
 
 	# Check the available types - direct stream MP3, but not Ogg.
@@ -743,6 +750,29 @@ sub onOpen {
 	}
 	
 	return $track;
+}
+
+# reinit is used on SN to maintain seamless playback when bumped to another instance
+sub reinit {
+	my ( $class, $client, $playlist, $newsong ) = @_;
+	
+	my $url = $playlist->[0];
+	
+	$log->debug("Re-init HTTP");
+	
+	# Re-add playlist item
+	$client->execute( [ 'playlist', 'add', $url ] );
+	
+	# Back to Now Playing
+	Slim::Buttons::Common::pushMode( $client, 'playlist' );
+	
+	# Trigger event logging timer for this stream
+	Slim::Control::Request::notifyFromArray(
+		$client,
+		[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $url ), 0 ]
+	);
+	
+	return 1;
 }
 
 1;

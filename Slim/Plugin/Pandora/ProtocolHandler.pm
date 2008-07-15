@@ -73,7 +73,7 @@ sub handleError {
 			listRef => [ $error ],
 		} );
 		
-		if ( $ENV{SLIM_SERVICE} ) {
+		if ( main::SLIM_SERVICE ) {
 		    logError( $client, $error );
 		}
 	}
@@ -359,7 +359,7 @@ sub handleDirectError {
 	
 	$http->get( $snURL );
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		logError( $client, "[$response] $status_line" );
 	}
 	
@@ -623,6 +623,58 @@ sub getIcon {
 	my ( $class, $url ) = @_;
 
 	return Slim::Plugin::Pandora::Plugin->_pluginDataFor('icon');
+}
+
+# SN only
+# Re-init Pandora when a player reconnects
+sub reinit {
+	my ( $class, $client, $playlist ) = @_;
+	
+	my $url = $playlist->[0];
+	
+	if ( my $track = $client->pluginData('currentTrack') ) {
+		# We have previous data about the currently-playing song
+		
+		$log->debug("Re-init Pandora");
+		
+		# Re-add playlist item
+		$client->execute( [ 'playlist', 'add', $url ] );
+	
+		# Reset track title
+		my $title = $track->{songName}   . ' ' . $client->string('BY')   . ' '
+				  . $track->{artistName} . ' ' . $client->string('FROM') . ' '
+				  . $track->{albumName};
+				
+		setCurrentTitle( $client, $url, $title );
+		
+		# Back to Now Playing
+		Slim::Buttons::Common::pushMode( $client, 'playlist' );
+		
+		# Reset song duration/progress bar
+		if ( $track->{duration} ) {
+			# On a timer because $client->currentsongqueue does not exist yet
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time(),
+				sub {
+					my $client = shift;
+					
+					$client->streamingProgressBar( {
+						url      => $url,
+						duration => $track->{duration},
+					} );
+				},
+			);
+		}
+	}
+	else {
+		# No data, just restart the current station
+		$log->debug("No data about playing track, restarting station");
+
+		$client->execute( [ 'playlist', 'play', $url ] );
+	}
+	
+	return 1;
 }
 
 1;

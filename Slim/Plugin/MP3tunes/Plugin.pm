@@ -23,6 +23,27 @@ sub initPlugin {
 		menu           => 'music_services',
 		weight         => 40,
 	);
+	
+	if ( main::SLIM_SERVICE ) {
+		# Also add to MY_MUSIC menu
+		my $menu = {
+			useMode => sub { $class->setMode(@_) },
+			header  => 'PLUGIN_MP3TUNES_MODULE_NAME',
+		};
+		
+		Slim::Buttons::Home::addSubMenu(
+			'MY_MUSIC',
+			'PLUGIN_MP3TUNES_MODULE_NAME',
+			$menu,
+		);
+		
+		# Setup additional CLI methods for this menu
+		$class->initCLI(
+			feed => Slim::Networking::SqueezeNetwork->url('/api/mp3tunes/v1/opml'),
+			tag  => 'mp3tunes_my_music',
+			menu => 'my_music',
+		);
+	}
 }
 
 sub playerMenu () {
