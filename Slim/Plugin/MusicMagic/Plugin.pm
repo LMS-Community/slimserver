@@ -1224,7 +1224,7 @@ sub trackInfoHandler {
 				modeParams => {
 					track => $track,
 				},
-				},
+			},
 
 			web  => {
 				group => 'mixers',

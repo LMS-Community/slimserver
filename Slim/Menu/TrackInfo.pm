@@ -1257,7 +1257,7 @@ sub infoUrl {
 			type => 'text',
 			name => $track->isRemoteURL($turl)
 				? cstring($client, 'URL') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::unescape($turl)
-				: cstring($client, 'LOCATION') . cstring($client, 'COLON') . ' ' . Slim::Utils::Unicode::utf8on( Slim::Utils::Misc::pathFromFileURL($turl) ),
+				: cstring($client, 'LOCATION') . cstring($client, 'COLON') . ' ' . Slim::Utils::Unicode::utf8decode( Slim::Utils::Misc::pathFromFileURL($turl) ),
 		};
 	}
 	
