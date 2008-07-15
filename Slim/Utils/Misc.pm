@@ -61,7 +61,7 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 my $canFollowAlias = 0;
 
-{
+if ( !main::SLIM_SERVICE ) {
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
@@ -680,7 +680,7 @@ sub fixPath {
 	my $fixed;
 
 	if (Slim::Music::Info::isURL($file)) { 
-
+		
 		my $uri = URI->new($file) || return $file;
 
 		if ($uri->scheme() eq 'file') {
@@ -689,6 +689,11 @@ sub fixPath {
 		}
 
 		return $uri->as_string;
+	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# Abort early if on SN
+		return $file;
 	}
 
 	if (Slim::Music::Info::isFileURL($base)) {
@@ -1193,13 +1198,14 @@ sub userAgentString {
 	my $osDetails = Slim::Utils::OSDetect::details();
 
 	# We masquerade as iTunes for radio stations that really want it.
-	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) SqueezeCenter/$::VERSION/$::REVISION",
+	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) %s/$::VERSION/$::REVISION",
 
 		$osDetails->{'os'},
 		$osDetails->{'osName'},
 		($osDetails->{'osArch'} || 'Unknown'),
 		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
+		main::SLIM_SERVICE ? 'SqueezeNetwork' : 'SqueezeCenter',
 	);
 
 	return $userAgentString;

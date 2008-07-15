@@ -14,7 +14,18 @@ package Slim::Player::Transporter;
 #
 
 use strict;
-use base qw(Slim::Player::Squeezebox2);
+use vars qw(@ISA);
+
+BEGIN {
+	if ( main::SLIM_SERVICE ) {
+		require SDI::Service::Player::SqueezeNetworkClient;
+		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
+	}
+	else {
+		require Slim::Player::Squeezebox2;
+		push @ISA, qw(Slim::Player::Squeezebox2);
+	}
+}
 
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
@@ -50,6 +61,20 @@ our $defaultPrefs = {
 		SQUEEZENETWORK_CONNECT
 	)],
 };
+
+if ( main::SLIM_SERVICE ) {
+	$defaultPrefs->{menuItem} = [ qw(
+		NOW_PLAYING
+		MY_MUSIC
+		RADIO
+		MUSIC_SERVICES
+		FAVORITES
+		OTHER_SERVICES
+		SETTINGS
+		PLUGIN_DIGITAL_INPUT
+		PLUGIN_CHOOSESERVER
+	) ];
+}
 
 sub initPrefs {
 	my $client = shift;
@@ -356,6 +381,11 @@ sub hasPolarityInversion {
 
 sub hasPreAmp {
         return 0;
+}
+
+# SN only, this checks that the player's firmware version supports compression
+sub hasCompression {
+	return shift->revision >= 30;
 }
 
 sub voltage {

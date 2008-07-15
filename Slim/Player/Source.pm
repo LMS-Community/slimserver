@@ -801,7 +801,7 @@ sub outputUnderrun {
 	}
 	
 	# If playing Rhapsody, underrun means getEA may be failing, so log it
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		my $url = Slim::Player::Playlist::url($client);
 		
 		if ( $url =~ /^rhapd:/ ) {
@@ -825,7 +825,13 @@ sub outputUnderrun {
 	} 	 
 	else { 	 
 		my $url = Slim::Player::Playlist::url($client); 	 
-		$line2  = Slim::Music::Info::title($url);
+		
+		if ( main::SLIM_SERVICE ) {
+			$line2 = SDI::Service::Control->bestTitleForUrl( $client, $url );
+		}
+		else {
+			$line2 = Slim::Music::Info::title($url);
+		}
 	}
 	
 	$client->showBriefly( {
@@ -917,7 +923,13 @@ sub rebuffer {
 			} 	 
 			else { 	 
 				my $url = Slim::Player::Playlist::url($client); 	 
-				$line2  = Slim::Music::Info::title($url);
+				
+				if ( main::SLIM_SERVICE ) {
+					$line2 = SDI::Service::Control->bestTitleForUrl( $client, $url );
+				}
+				else {	 
+					$line2  = Slim::Music::Info::title($url);
+				}
 			}
 
 			$client->showBriefly( {

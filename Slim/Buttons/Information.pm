@@ -183,6 +183,78 @@ sub init {
 			'menuName' => 'module',
 		}
 	);
+	
+	# Change the menu for SN
+	if ( main::SLIM_SERVICE ) {
+		my $_ss_version = 'r0';
+		my $_sn_version = 'r0';
+		my $_versions_mtime = 0;
+		my $_versions_last_checked = 0;
+
+		my $getSNVersions = sub {
+			my $time = time();
+
+			if ( ($time - $_versions_last_checked) > 60 ) {
+				$_versions_last_checked = $time;
+
+				my @stats = stat('/etc/sn/versions');
+				my $mtime = $stats[9] || -1;
+
+				if ( $mtime != $_versions_mtime ) {
+					$_versions_mtime = $mtime;
+
+					my $ok = open(my $vfile, '<', '/etc/sn/versions');
+					if($ok) {
+						while(<$vfile>) {
+							chomp;
+							next unless /^(S[NS]):([^:]+)$/;
+							$_sn_version = $2 if $1 eq 'SN';
+
+							# SS version is only read once because this instance may
+							# be running an older version than the server has
+							if ( $_ss_version eq 'r0' ) {
+								$_ss_version = $2 if $1 eq 'SS';
+							}
+						}
+						close($vfile);
+					}
+				}
+			}
+
+			return 'SS: ' . $_ss_version . ', SN: ' . $_sn_version;
+		};
+
+		my $getSNDatacenter = sub {
+			my $config = SDI::Util::SNConfig::get_config();
+			my $dcname =  $config->{dcname};
+
+			return 
+				  $dcname eq 'sv'  ? 'Sunnyvale, CA'
+				: $dcname eq 'dc'  ? 'Ashburn, VA'
+				: $dcname eq 'de'  ? 'Frankfurt, Germany'
+				: $dcname eq 'okc' ? 'Oklahoma City (Test)'
+				: $dcname eq 'dfw' ? 'Dallas (Test)'
+				:                    'Unknown';
+		};
+		
+		delete $menuParams{ 'main/library' };
+		delete $menuParams{ 'main/module' };
+		
+		$menuParams{main}->{listRef} = [ 'player', 'server' ];
+		
+		$menuParams{ 'main/server' }->{listRef} = [
+			qw(VERSION DATACENTER SN_ACCOUNT)
+		];
+		
+		# Initialize SN version info
+		$getSNVersions->();
+		
+		$menuParams{ 'main/server' }->{valueFunctRef} = [
+			$getSNVersions,
+			$getSNDatacenter,
+			sub { shift->playerData->userid->email },
+		];
+	}
 }
 
 =head2 forgetClient ( $client )

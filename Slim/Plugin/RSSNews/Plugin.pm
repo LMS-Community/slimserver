@@ -32,7 +32,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-use Slim::Plugin::RSSNews::Settings;
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Plugin::RSSNews::Settings;
+}
 
 my $prefs = preferences('plugin.rssnews');
 
@@ -50,7 +52,9 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	Slim::Plugin::RSSNews::Settings->new;
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Plugin::RSSNews::Settings->new;
+	}
 
 	Slim::Buttons::Common::addMode('PLUGIN.RSS', getFunctions(), \&setMode);
 
@@ -69,6 +73,11 @@ sub initPlugin {
 		\&leaveScreenSaverRssNews,
 		'PLUGIN_RSSNEWS_SCREENSAVER'
 	);
+	
+	if ( main::SLIM_SERVICE ) {
+		# Feeds are per-client on SN, so don't try to load global feeds
+		return;
+	}
 
 	if ($log->is_debug) {
 
@@ -102,11 +111,16 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-
+	
+	my @feeds = ();
+	if ( main::SLIM_SERVICE ) {
+		@feeds = feedsForClient($client);
+	}
+	
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header => '{PLUGIN_RSSNEWS} {count}',
-		listRef => $prefs->get('feeds'),
+		listRef => main::SLIM_SERVICE ? \@feeds : $prefs->get('feeds'),
 		modeName => 'RSS Plugin',
 		onRight => sub {
 			my $client = shift;
@@ -228,7 +242,13 @@ sub tickerUpdate {
 sub getNextFeed {
 	my $client = shift;
 
-	my @feeds = @{ $prefs->get('feeds') };
+	my @feeds = ();
+	if ( main::SLIM_SERVICE ) {
+		@feeds = feedsForClient($client);
+	}
+	else {
+		@feeds = @{ $prefs->get('feeds') };
+	}
 	
 	# select the next feed and fetch it
 	my $index = $savers->{$client}->{feed_index} || 0;
@@ -465,9 +485,17 @@ sub tickerLines {
 		my $format = preferences('server')->get('timeFormat');
 		$format =~ s/.\%S//i;
 		
+		my $overlay;
+		if ( main::SLIM_SERVICE ) {
+			$overlay = $client->timeF();
+		}
+		else {
+			$overlay = Slim::Utils::DateTime::timeF(undef,$format);
+		}
+		
 		$parts = {
 			'line'   => [ $line1 ],
-			'overlay' => [ Slim::Utils::DateTime::timeF(undef,$format) ],
+			'overlay' => [ $overlay ],
 			'ticker' => [ undef, $line2 ],
 		};
 
@@ -486,6 +514,40 @@ sub tickerLines {
 	$savers->{$client}->{newfeed} = $new_feed_next;
 
 	return $parts;
+}
+
+# SN only
+sub feedsForClient {
+	my $client = shift;
+	
+	my $userid = $client->playerData->userid->id;
+	
+	my @f = SDI::Service::Model::FavoriteFeed->search(
+		userid => $userid,
+		{ order_by => 'num' }
+	);
+													  
+	my @feeds = map { 
+		{ 
+			name  => Slim::Utils::Unicode::utf8decode($_->title), 
+			value => $_->url,
+		}
+	} @f;
+	
+	# check if the user deleted feeds so we don't load the defaults
+	my $deletedFeeds = preferences('server')->client($client)->get('deleted_feeds');
+	
+	# Populate with all default feeds
+	if ( !scalar @feeds && !$deletedFeeds ) {
+		@feeds = map { 
+			{ 
+				name  => $_->title, 
+				value => $_->url,
+			}
+		} SDI::Service::Model::FavoriteFeed->addDefaults( $userid );
+	}
+	
+	return @feeds;
 }
 
 1;

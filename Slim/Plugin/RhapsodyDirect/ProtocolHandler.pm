@@ -62,6 +62,11 @@ sub parseDirectHeaders {
 			last;
 		}
 	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# On SN, save length for reinit
+		$client->pluginData( length => $length );
+	}
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, 192000, 0, '', 'mp3', $length, undef);
@@ -112,7 +117,7 @@ sub handleDirectError {
 		scroll => 1,
 	} );
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		SDI::Service::EventLog::logEvent(
 			$client->id, 'rhapsody_error', "$response - $status_line"
 		);
@@ -199,6 +204,29 @@ sub tooManySynced {
 
 sub getAccount {
 	my ( $class, $client ) = @_;
+	
+	# Always pull account info directly from the database on SN
+	if ( main::SLIM_SERVICE ) {
+		my @username = $prefs->client($client)->get('plugin_rhapsody_direct_username');
+		my @password = $prefs->client($client)->get('plugin_rhapsody_direct_password');
+		my $defaults = {};
+		
+		if ( scalar @username > 1 ) {
+			if ( my $default = $prefs->client($client)->get('plugin_rhapsody_direct_account') ) {
+				$defaults->{ $client->id } = $default;
+			}
+		}
+		
+		my $account = {
+			username   => \@username,
+			password   => \@password,
+			defaults   => $defaults,
+			cobrandId  => 40134,
+			clientType => 'slimdevices',
+		};
+		
+		return $account;
+	}
 	
 	my $account = $client->pluginData('account');
 	
@@ -354,7 +382,7 @@ sub onJump {
 		$log->debug( 'Handling command "jump", playmode: ' . $client->playmode );
 	}
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		SDI::Service::EventLog::logEvent(
 			$client->id, 'rhapsody_jump', "-> $nextURL",
 		);
@@ -583,7 +611,7 @@ sub onUnderrun {
 		$log->debug( 'Underrun, stopping, playmode: ' . $client->playmode );
 	}
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		SDI::Service::EventLog::logEvent(
 			$client->id, 'rhapsody_underrun'
 		);
@@ -935,7 +963,7 @@ sub gotTrackError {
 	
 	$log->debug("Error during getTrackInfo: $error");
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		SDI::Service::EventLog::logEvent(
 			$client->id, 'rhapsody_track_error', $error
 		);
@@ -1020,7 +1048,7 @@ sub stopCallback {
 			return;
 		}
 		
-		if ( $ENV{SLIM_SERVICE} ) {
+		if ( main::SLIM_SERVICE ) {
 			SDI::Service::EventLog::logEvent(
 				$client->id, 'rhapsody_stop'
 			);
