@@ -465,6 +465,91 @@ sub handleFeed {
 			my @slice = @items [ $start .. $finish - 1 ];
 			$stash->{'items'} = \@slice;
 		}
+
+		if ($stash->{'path'} =~ /trackinfo.html/) {
+			my $details = {};
+			my $mixerlinks = {};
+			my $i = 0;
+			
+			foreach my $item ( @{ $stash->{'items'} } ) {
+
+				$item->{'index'} = $i;
+
+				if ($item->{'web'} && (my $group = $item->{'web'}->{'group'})) {
+
+					if ($item->{'web'}->{'type'} && $item->{'web'}->{'type'} eq 'contributor') {
+
+						$details->{'contributors'} ||= {};
+						$details->{'contributors'}->{$group} ||= [];
+
+						push @{ $details->{'contributors'}->{ $group } }, {
+							name => $item->{'web'}->{'value'},
+							id   => $item->{'db'}->{'findCriteria'}->{'contributor.id'},
+						};
+
+					}
+
+					elsif ($group eq 'mixers') {
+						
+						$details->{'mixers'} ||= [];
+						
+						my $mixer = {
+							item => $stash->{'sess'}
+						};
+						
+						my ($mixerkey, $mixerlink) = each %{ $item->{'web'}->{'item'}->{'mixerlinks'} };
+						$stash->{'mixerlinks'}->{$mixerkey} = $mixerlink;
+						
+						foreach ( keys %{ $item->{'web'}->{'item'}} ) {
+							$mixer->{$_} = $item->{'web'}->{'item'}->{$_};
+						}
+
+						push @{ $details->{'mixers'} }, $mixer;
+					}
+
+					# unfold items which are folded for smaller UIs;
+					elsif ($item->{'items'} && $item->{'web'}->{'unfold'}) {
+						
+						$details->{'unfold'} ||= [];
+						
+						my $new_index = 0;
+						foreach my $moreItem ( @{ $item->{'items'} } ) {
+							$moreItem->{'index'} = $item->{'index'} . '.' . $new_index;
+							$new_index++;
+						}
+						
+						push @{ $details->{'unfold'} }, {
+							items => $item->{'items'},
+							start => $i,
+						};
+					}
+					
+					else {
+						
+						$details->{$group} ||= [];
+												
+						push @{ $details->{$group} }, {
+							name => $item->{'web'}->{'value'},
+							id   => $item->{'db'}->{'findCriteria'}->{ $group . '.id' },
+						};
+					}
+					
+				}
+
+				$i++;
+			}
+
+			# unfold nested groups of additional items
+			my $new_index;
+			foreach my $group (@{ $details->{'unfold'} }) {
+				
+				splice @{ $stash->{'items'} }, ($group->{'start'} + $new_index), 1, @{ $group->{'items'} };
+				$new_index = @{ $group->{'items'} };
+			}
+
+			$stash->{'details'} = $details;
+
+		}
 	}
 
 	if ($favs) {

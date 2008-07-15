@@ -83,11 +83,6 @@ END %]
 END %]
 
 [%- IF items.size -%]
-	[%- # Maintain correct index values
-		FOREACH item = items;
-			item.index = index _ (start + loop.index);
-		END;
-	%]
 
 	<div id="browsedbHeader">
 		[% IF hasPagebar %]
@@ -104,17 +99,17 @@ END %]
 	[%- BLOCK gencontrol -%]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				href="[% path %]?action=favadd&index=[% item.index | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
+				href="[% path %]?action=favadd&index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				href="[% path %]?action=favdel&index=[% item.index | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
+				href="[% path %]?action=favdel&index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"
 			[% END %]
 		[% END %]
 
 		[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-			[% WRAPPER playlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
-			[% WRAPPER addlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
+			[% WRAPPER playlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]', false, SqueezeJS.string('connecting_for'));"[% END %]
+			[% WRAPPER addlink %]onclick="SqueezeJS.UI.setProgressCursor();SqueezeJS.Controller.urlRequest(location.pathname + '?[% searchquery | replace("'", "%27") | uri %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]');"[% END %]
 		[% ELSE %]
 			[% PROCESS dummylink %]
 			[% PROCESS dummylink %]
@@ -123,74 +118,6 @@ END %]
 
 	[%- # treat track information specially
 	IF path == 'trackinfo.html';
-		details = {};
-		mixerlinks = {};
-
-		FOREACH item = items;
-			IF item.web;
-
-				IF item.web.type == 'contributor';
-
-					UNLESS details.contributors.${item.web.group}; details.contributors.${item.web.group} = []; END;
-
-					details.contributors.${item.web.group}.push({
-						name = item.web.value
-						id   = item.db.findCriteria.${'contributor.id'}
-					});
-
-				ELSIF item.web.group == 'mixers';
-
-					UNLESS details.${item.web.group}; details.${item.web.group} = []; END;
-
-					details.${item.web.group}.push({
-						item = sess
-					});
-
-					mixerkey = item.web.item.mixerlinks.keys.0;
-					mixerlinks.${mixerkey} = item.web.item.mixerlinks.${mixerkey};
-
-					FOREACH param IN item.web.item.pairs;
-						details.mixers.0.${param.key} = param.value;
-					END;
-
-				# unfold items which are folded for smaller UIs;
-				ELSIF item.web.group && item.items && item.web.unfold;
-					UNLESS details.unfold; details.unfold = []; END;
-
-					# Change the index value for the moreinfo items
-					new_index = 0;
-					
-					FOREACH moreitem = item.items;
-						moreitem.index = item.index _ '.' _ new_index;
-						new_index = new_index + 1;
-					END;
-
-					details.unfold.push({
-						items = item.items
-						start = loop.index
-					});
-
-				ELSIF item.web.group;
-
-					UNLESS details.${item.web.group}; details.${item.web.group} = []; END;
-
-					id = item.web.group _ '.id';
-					details.${item.web.group}.push({
-						name = item.web.value
-						id   = item.db.findCriteria.${id}
-					});
-
-				END;
-
-			END;
-		END;
-
-		new_index = 0;
-		FOREACH group = details.unfold;
-			start = group.start + new_index;
-			CALL items.splice(start, 1, group.items);
-			new_index = group.items.max;
-		END;
 
 		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
 
@@ -241,10 +168,10 @@ END %]
 					END;
 					item.name || item.title %]
 					<span class="browsedbControls">
-						<form id="searchForm[% item.index %]" method="GET">
+						<form id="searchForm[% item.index || index _ (start + loop.index) %]" method="GET">
 							<input type="hidden" value="[% player %]" name="player" />
 							<input type="hidden" value="[% sess %]" name="sess" />
-							<input type="hidden" value="[% item.index %]" name="index" />
+							<input type="hidden" value="[% item.index || index _ (start + loop.index) %]" name="index" />
 		 					<input type="hidden" name="submit" class="stdclick" value="[% "SEARCH" | string %]"/>
 							<input type="text" class="x-form-focus searchInput" name="q" value=""/>
 							<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
@@ -273,7 +200,7 @@ END %]
 						[% ELSE; NEXT %]
 						[% END %]
 					[% ELSIF item.type != 'text' %]
-						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% item.index | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
+						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 					[% END %]
 
 					[% (item.web.value || item.name || item.title) | html_line_break %]
