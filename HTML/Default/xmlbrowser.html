@@ -194,7 +194,7 @@ END %]
 
 		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
 
-		PROCESS songinfo_details.html albumFirst = 1
+		PROCESS songinfo_header.html albumFirst = 1
 			itemobj = {
 				id => sess,
 				album => details.album.0,
