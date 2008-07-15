@@ -71,6 +71,27 @@
 		[% END %]</span>
 	[% END %]
 	
+	[%- # treat track information specially
+	IF path == 'trackinfo.html';
+
+		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
+
+		PROCESS songinfo_header.html albumFirst = 1
+			itemobj = {
+				id => sess,
+				album => details.album.0,
+				contributorRoles => details.contributors.keys,
+				contributors => details.contributors,
+				genres => details.genre,
+				year => details.year.0.id
+			}
+			plugin_meta = {
+				title => details.title.0.name 
+			};
+
+		image = undef;
+	END %]
+
 	[%- WRAPPER contentcontainer %]
 		[% IF image %]
 		<ul>
@@ -92,6 +113,9 @@
 		[% END %]
 		
 		[%- FOREACH item = items %]
+
+			[% lctype = item.web.group | lower; IF details.${ lctype } || details.contributors.${item.web.group}; NEXT; END %]
+
 			[%- BLOCK gencontrol -%]
 				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
 					[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]"[% END %]
