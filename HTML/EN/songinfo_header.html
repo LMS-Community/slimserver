@@ -1,4 +1,5 @@
 <div id="songInfo">
+
 	<div id="COVERART">
 		<span class="songInfoText">
 			[% IF image || plugin_meta.cover || plugin_meta.icon %]
@@ -47,7 +48,7 @@
 					[% UNLESS notarget; target = "target=\"browser\""; END %]
 	
 					[% 
-					IF $contributor.id;
+					IF contributor.id;
 						contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" $target>$contributor.name</a>";
 					ELSE;
 						contributorHTMLFrag = contributor.name;
