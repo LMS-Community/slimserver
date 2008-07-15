@@ -245,21 +245,7 @@ sub albumsQuery {
 	
 	# Jive menu mode, needs contributor data and only a subset of columns
 	if ( $menuMode ) {
-		# Bug 8012, don't join directly from albums -> contributor as we may have a null
-		# contributor, but go via contributorAlbums
-		if ( $attr->{'join'}->[0] eq 'contributor' ) {
-			# Remove existing contributor join set above, if any
-			pop @{ $attr->{'join'} };
-		}
-		
-		if ( $attr->{'join'}->[0] ne 'contributorAlbums' ) {
-			# Add contributorAlbums join unless it was already added above
-			push @{ $attr->{'join'} }, 'contributorAlbums';
-		}
-		
-		# Join to contributor via contributorAlbums
-		push @{ $attr->{'join'} }, { contributorAlbums => 'contributor' };
-		$attr->{'distinct'} = 1;
+		push @{ $attr->{'join'} }, 'contributor';
 		
 		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable ) ];
 	}

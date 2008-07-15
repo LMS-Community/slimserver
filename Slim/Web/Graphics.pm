@@ -64,6 +64,7 @@ sub processCoverArtRequest {
 	
 	my $actualPathToImage;
 	my $requestedContentType = "image/" . $suffix;
+	$requestedContentType =~ s/jpg/jpeg/;
 	$requestedContentType =~ s/\.//;
 	$actualContentType = $requestedContentType;
 
