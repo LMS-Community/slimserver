@@ -67,10 +67,10 @@ sub welcomeScreen {
 
 sub getVolumeDivisor
 {
-	# Use 0.62 dB steps for Boom.  This allows boom to get very quiet for the bedroom.
+	# Use 1/1.3=0.76dB steps for Boom.  This allows boom to get very quiet for the bedroom.
 	my $client = shift;
 	my $model = $client->model();
-	return 1.6;
+	return 1.3;
 }
 
 sub init {
