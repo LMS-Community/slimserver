@@ -70,7 +70,7 @@ sub handleError {
 			listRef => [ $error ],
 		} );
 		
-		if ( $ENV{SLIM_SERVICE} ) {
+		if ( main::SLIM_SERVICE ) {
 		    #logError( $client, $error );
 		}
 	}

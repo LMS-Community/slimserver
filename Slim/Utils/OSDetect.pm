@@ -152,6 +152,11 @@ sub dirsFor {
 	my @dirs    = ();
 	my $OS      = OS();
 	my $details = details();
+	
+	# Force OS for SlimService, in case you're testing on a Mac
+	if ( main::SLIM_SERVICE ) {
+		$OS = 'linux';
+	}
 
 	if ($dir eq "Plugins") {
 		push @dirs, catdir($Bin, 'Slim', 'Plugin');
@@ -336,6 +341,34 @@ sub dirsFor {
 		} else {
 
 			push @dirs, catdir($Bin, $dir);
+		}
+
+	} elsif ( main::SLIM_SERVICE ) {
+
+		# slimservice on squeezenetwork
+		if ( $dir =~ /^(?:strings|revision|convert|types)$/ ) {
+			push @dirs, $Bin;
+		}
+		elsif ( $dir eq 'log' ) {
+			if ( $^O eq 'linux' ) {
+				push @dirs, '/home/svcprod/ss/logs';
+			}
+			else {
+				push @dirs, catdir( $Bin, $dir );
+			}
+		}
+		elsif ( $dir eq 'cache' ) {
+			push @dirs, '/home/svcprod/ss/cache';
+		}
+		elsif ( $dir eq 'prefs' ) {
+			push @dirs, '/home/svcprod/ss/prefs';
+
+		}
+		elsif ( $dir =~ /^(?:music|playlists)$/ ) {
+			push @dirs, '';
+		}
+		else {
+			push @dirs, catdir( $Bin, $dir );
 		}
 
 	} else {

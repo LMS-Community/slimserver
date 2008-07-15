@@ -105,7 +105,7 @@ sub handleError {
 			listRef => [ $error ],
 		} );
 		
-		if ( $ENV{SLIM_SERVICE} ) {
+		if ( main::SLIM_SERVICE ) {
 		    logError( $client, $error );
 		}
 		
@@ -295,6 +295,39 @@ sub getIcon {
 	my ( $class, $url ) = @_;
 
 	return Slim::Plugin::Live365::Plugin->_pluginDataFor('icon');
+}
+
+# SN only
+sub reinit {
+	my ( $class, $client, $playlist, $newsong ) = @_;
+	
+	my $url = $playlist->[0];
+	
+	$log->debug("Re-init Live365");
+	
+	# Re-add playlist item
+	$client->execute( [ 'playlist', 'add', $url ] );
+	
+	# Back to Now Playing
+	Slim::Buttons::Common::pushMode( $client, 'playlist' );
+	
+	# Trigger event logging timer for this stream
+	Slim::Control::Request::notifyFromArray(
+		$client,
+		[ 'playlist', 'newsong', Slim::Music::Info::standardTitle( $client, $url ), 0 ]
+	);
+	
+	# Restart metadata timer
+	Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
+		
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time(),
+		\&getPlaylist,
+		$url,
+	);
+	
+	return 1;
 }
 
 1;

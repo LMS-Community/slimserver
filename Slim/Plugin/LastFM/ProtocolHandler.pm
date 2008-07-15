@@ -84,7 +84,7 @@ sub handleError {
 			listRef => [ $error ],
 		} );
 		
-		if ( $ENV{SLIM_SERVICE} ) {
+		if ( main::SLIM_SERVICE ) {
 		    logError( $client, $error );
 		}
 	}
@@ -114,7 +114,7 @@ sub getNextTrack {
 	
 	# Get Scrobbling prefs
 	my $enable_scrobbling;
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		$enable_scrobbling = $prefs->client($client)->get('enable_scrobbling');
 	}
 	else {
@@ -564,7 +564,7 @@ sub getIcon {
 	return Slim::Plugin::LastFM::Plugin->_pluginDataFor('icon');
 }
 
-# SLIM_SERVICE
+# SN only
 # Re-init Last.fm when a player reconnects
 sub reinit {
 	my ( $class, $client, $playlist ) = @_;

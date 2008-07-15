@@ -138,6 +138,11 @@ sub pluginCacheFile {
 
 sub writePluginCache {
 	my $class = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Don't bother with cache, assume all plugins are OK
+		return;
+	}
 
 	$log->info("Writing out plugin data file.");
 
@@ -151,6 +156,11 @@ sub writePluginCache {
 
 sub loadPluginCache {
 	my $class = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Don't bother with cache, assume all plugins are OK
+		return;
+	}
 
 	$log->info("Loading plugin data file.");
 
@@ -360,8 +370,32 @@ sub enablePlugins {
 
 	my @incDirs = ();
 	my @loaded  = ();
+	
+	# On SN, skip some SC-only plugins
+	my %skip = ();
+	if ( main::SLIM_SERVICE ) {
+		%skip = (
+			'Slim::Plugin::Health::Plugin'         => 1,
+			'Slim::Plugin::JiveExtras::Plugin'     => 1,
+			'Slim::Plugin::MusicMagic::Plugin'     => 1,
+			'Slim::Plugin::PreventStandby::Plugin' => 1,
+			'Slim::Plugin::RS232::Plugin'          => 1,
+			'Slim::Plugin::RandomPlay::Plugin'     => 1,
+			'Slim::Plugin::Rescan::Plugin'         => 1,
+			'Slim::Plugin::SavePlaylist::Plugin'   => 1,
+			'Slim::Plugin::SlimTris::Plugin'       => 1,
+			'Slim::Plugin::Snow::Plugin'           => 1,
+			'Slim::Plugin::iTunes::Plugin'         => 1,
+			'Slim::Plugin::xPL::Plugin'            => 1,
+		);
+	}
 
 	for my $name (sort keys %$plugins) {
+		
+		if ( exists $skip{$name} ) {
+			$log->debug("Skipping plugin: $name - disabled for SN");
+			next;
+		}
 
 		my $manifest = $plugins->{$name};
 
@@ -448,6 +482,11 @@ sub enablePlugins {
 
 				push @loaded, $module;
 			}
+		}
+		
+		if ( main::SLIM_SERVICE ) {
+			# no web stuff for SN
+			next;
 		}
 
 		# Add any available HTML to TT's INCLUDE_PATH

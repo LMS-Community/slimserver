@@ -51,6 +51,14 @@ my @defaultAlarmChoices = (
 	'ALARM_WEEKDAYS',
 );
 
+my %alarmHash = ();
+if ( main::SLIM_SERVICE ) {
+	require Slim::Utils::Favorites;
+	require YAML::Syck;
+	
+	$defaultAlarmChoices[1] = 'ALARM_SELECT_SOUND';
+}
+
 # get current weekday, 0 is every day 1-7 is Monday to Sunday respectively
 sub weekDay {
 	my $client = shift;
@@ -242,6 +250,208 @@ sub init {
 			'overlayRefArgs'   => 'CI',
 		},
 	);
+	
+	if ( main::SLIM_SERVICE ) {
+		# load all alarm sounds and cache them
+		# This used to pull from the database, but in an effort to
+		# reduce startup db queries I've switched to a YAML file.
+		%alarmHash = %{ YAML::Syck::LoadFile( $main::SN_PATH . "/config/alarmSounds.yml" ) };
+		
+		my @alarmCategories = keys %alarmHash;
+
+		# Mode used when selecting a natural sound for alarm
+		my %alarmSoundParams = (
+			'useMode' => 'INPUT.Choice',
+			'listRef' => undef, # fill this in before using mode!
+
+			'initialValue' => sub { 
+				my $client = shift;
+				return $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+			},
+
+			'onRight' => sub {
+				my $client = shift;
+				my $item = shift;
+				
+				my $playlist = $prefs->client($client)->get('alarmplaylist');
+				$playlist->[ weekDay($client) ] = $item->{value};
+				$prefs->client($client)->set( 'alarmplaylist', $playlist );
+				
+				# Initialize the title for this playlist if it's a sound
+				if ( $item->{value} =~ /^loop/ ) {
+					my $name = $item->{name};
+					$name =~ s/[{}]//g;
+					Slim::Music::Info::setTitle( $item->{value}, $client->string($name) );
+				}
+				
+				$client->update();
+				return;
+			},
+
+			'overlayRef' => sub {
+				my $client = shift;
+				my $item = shift;
+				my $currentplaylist = $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+				
+				my $overlay = $client->symbols('notesymbol');
+
+				if ($currentplaylist && ($item->{'value'} eq $currentplaylist)) {
+					$overlay .= Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
+				} else {
+					$overlay .= Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
+				}
+				
+				return [undef, $overlay];
+			},
+
+			'onPlay' => sub {
+				my ($client, $item) = @_;
+
+				$client->execute( ["playlist", "play", $item->{value}, $item->{name} ] );
+			},
+		);
+		
+		$menuParams{'alarm/ALARM_SELECT_SOUND'} = {
+			'useMode' => 'INPUT.Choice',
+
+			header => sub {
+				# different header for categories vs. stations
+				my $client = shift;
+				my $item = shift;
+				my $header = '{ALARM_SELECT_SOUND} {count} ';
+				
+				# is it a station, or a category
+				if ( ref $item ) {
+					# its a station.
+					my $playlist = $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+					
+					if (
+						   defined $item->{'value'} 
+						&& defined $playlist
+						&& $item->{'value'} eq $playlist
+					) {
+						$header .= '{SELECTED}';
+					} else {
+						$header .= '{PRESS_TO_SELECT_SHORT}';
+					}
+				}
+				
+				return $header;
+			},
+
+			'stringHeader' => 1,
+			'listRef' => \@alarmCategories,
+			'init' => sub {
+				# if client has favorites, prepend to list of alarm sounds
+				my $client = shift;
+				my $favs = Slim::Utils::Favorites->new($client)->all;
+
+				my @favorites = map { 
+					{
+						name  => $_->title,
+						value => $_->url,
+					}
+				} @$favs;
+
+				my $listRef = [@favorites, @alarmCategories];
+
+				# also, if current choice is an alarm sound,
+				# include it in the menu.
+				my $initialValue = $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+				
+				if ( $initialValue =~ /^loop/ ) {
+					CATEGORY:
+					for my $category ( @alarmCategories ) {
+						for my $sound ( @{ $alarmHash{ $category } } ) {
+							if ( $sound->{value} eq $initialValue ) {
+								unshift @{$listRef}, $sound;
+								last CATEGORY;
+							}
+						}
+					}
+				}
+
+				$client->modeParam('listRef', $listRef);
+
+			},
+
+			'name' => sub {
+				my $client = shift;
+				my $item = shift;
+				$item =~ s/\//_/g;
+				return $client->string($item);
+			},
+			'initialValue' => sub { 
+				my $client = shift;
+				return $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+			},
+
+			'onRight' => sub {
+				my $client = shift;
+				my $item = shift;
+				# if item is a favorite, select it.
+				if ( ref $item ) {
+					my $playlist = $prefs->client($client)->get('alarmplaylist');
+					$playlist->[ weekDay($client) ] = $item->{'value'};
+					$prefs->client($client)->set( 'alarmplaylist', $playlist );
+					
+					# Initialize the title for this playlist if it's a sound
+					if ( $item->{value} =~ /^loop/ ) {
+						my $name = $item->{name};
+						$name =~ s/[{}]//g;
+						Slim::Music::Info::setTitle( $item->{value}, $client->string($name) );
+					}
+					
+					$client->update();
+					return;
+				} else {
+					# not a favorite, its a category
+					my %params = %alarmSoundParams;
+					$params{'listRef'} = $alarmHash{$item};
+					$item =~ s/\//_/g; #replace '/' with '_'
+					$params{'header'} = "{$item} {count} {PRESS_TO_SELECT_SHORT}";
+					$params{'day'}    = $client->modeParam('day');
+					Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+				}
+			},
+			overlayRef => sub {
+				# display either a right arrow or checkmark
+				my $client = shift;
+				my $item   = shift;
+				
+				# is it a station, or a category
+				if ( ref $item ) {
+					
+					my $overlay = $client->symbols('notesymbol');
+					
+					my $playlist = $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+
+					# its a station.
+					if (
+						   defined $item->{'value'} 
+						&& defined $playlist
+						&& $item->{'value'} eq $playlist
+					) {
+						$overlay .= Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
+					} else {
+						$overlay .= Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
+					}
+					
+					return [undef, $overlay];
+
+				} else {
+					return [undef, $client->symbols('rightarrow')];
+				}
+			},
+			'onPlay' => sub {
+				my ($client, $item) = @_;
+				# if a favorite, we can play
+				if (ref($item)) {
+					$client->execute(["playlist", "play", $item->{'value'}]);
+				}
+			},
+		};
+	}
 }
 
 sub addSpecialPlaylist {
@@ -469,6 +679,20 @@ sub checkAlarms {
 	}
 
 	foreach my $client (Slim::Player::Client::clients()) {
+		
+		# Timezone support for SN
+		if ( main::SLIM_SERVICE ) {
+			my $timezone  
+				=  $prefs->client($client)->get('timezone') 
+				|| $client->playerData->userid->timezone 
+				|| 'America/Los_Angeles';
+
+			my $dt = DateTime->now( time_zone => $timezone );
+
+			# get the correct time and day of week for the user's time zone
+			$wday = $dt->day_of_week; # 1=Monday, 7=Sunday
+			$time = $dt->hour * 60 * 60 + $dt->min * 60;
+		}
 
 		for my $day (0, $wday) {
 
@@ -515,20 +739,27 @@ sub checkAlarms {
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
 					
+					# on SN, simply play the URL
+					if ( main::SLIM_SERVICE ) {
+						$client->execute( [ 'playlist', 'play', $playlist ], \&playDone, [$client, $day] );
+						setTimer();
+						return;
+					}
+					
 					my $playlistObj = Slim::Schema->rs('Playlist')->objectForUrl({
 						'url' => $playlist,
 					});
 
 					if (blessed($playlistObj) && $playlistObj->can('id')) {
 
-						$client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id], \&playDone, [$client]);
+						$client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id], \&playDone, [$client, $day]);
 						setTimer();
 						return;
 					
 					#if all else fails, just try to play the current playlist.
 					} else {
 						# no object, so try to play the current playlist
-						$client->execute(['play'], \&playDone, [$client]);
+						$client->execute(['play'], \&playDone, [$client, $day]);
 					}
 
 				#fallback to current playlist if all else fails.
@@ -539,7 +770,7 @@ sub checkAlarms {
 				}
 				
 				# slight delay for things to load up before showing the temporary alarm lines.
-				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client, $day);
 			}
 		}
 	}
@@ -550,21 +781,23 @@ sub checkAlarms {
 # on a playlist load, call this after the playlist loading is complete to set the timer for the visible alert 2 seconds in the future.
 sub playDone {
 	my $client = shift;
+	my $day    = shift;
 
 	Slim::Buttons::Block::unblock($client);
 
 	# show the alarm screen after a couple of seconds when the song has started playing and the display is updated
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client, $day);	
 }
 
 # temporary lines shown after alarm triggers, just to let the user know why the music started.
 sub alarmLines {
 	my $client = shift;
+	my $day    = shift;
 
 	my $line1 = $client->string('ALARM_NOW_PLAYING');
 	my $line2 = '';
 
-	my $playlist = $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
+	my $playlist = $prefs->client($client)->get('alarmplaylist')->[ $day || 0 ];
 	
 	# special playlists, just show the localised string for the option
 	if (exists $specialPlaylists{$playlist}) {
@@ -583,9 +816,10 @@ sub alarmLines {
 
 sub visibleAlarm {
 	my $client = shift;
+	my $day    = $_[1];
 
 	# show visible alert for 30s
-	$client->showBriefly(alarmLines($client), 30);
+	$client->showBriefly(alarmLines($client, $day), 30);
 }
 
 sub overlayFunc {

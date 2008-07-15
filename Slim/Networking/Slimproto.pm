@@ -32,6 +32,10 @@ use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
+if ( main::SLIM_SERVICE ) {
+	require SDI::Service::Player::SqueezeNetworkClient;
+}
+
 use constant SLIMPROTO_PORT   => 3483;
 use constant LATENCY_LIST_MAX => 10;
 use constant LATENCY_LIST_MIN => 6;
@@ -39,10 +43,20 @@ use constant LATENCY_LIST_MIN => 6;
 my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller');
 my $log       = logger('network.protocol.slimproto');
 
+if ( main::SLIM_SERVICE ) {
+	# SN only allows SB2 or higher to connect
+	$deviceids[2] = undef;
+}
+
 my $forget_disconnected_time = 60; # disconnected clients will be forgotten unless they reconnect before this
 
 my $check_all_clients_time = 5; # how often to look for disconnected clients
 my $check_time;                 # time scheduled for next check_all_clients
+
+if ( main::SLIM_SERVICE ) {
+	# don't check as often on SN
+	$check_all_clients_time = 30;
+}
 
 my $slimproto_socket;
 
@@ -98,6 +112,11 @@ sub clearCallbackRAWI {
 
 sub init {
 	my $listenerport = SLIMPROTO_PORT;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Let SlimService run on any port
+		$listenerport = $main::SLIMPROTO_PORT;
+	}
 
 	# Some combinations of Perl / OSes don't define this Macro. Yet it is
 	# near constant on all machines. Define if we don't have it.
@@ -227,6 +246,7 @@ sub check_all_clients {
 
 sub slimproto_close {
 	my $clientsock = shift;
+	my $reconnect  = shift;
 
 	$log->info("connection closed");
 
@@ -245,32 +265,36 @@ sub slimproto_close {
 		delete $latency{ $client };
 		delete $latencyList{ $client };
 
-		# check client not forgotten and this is the active slimproto socket for this client
-		if ( Slim::Player::Client::getClient( $client->id ) ) {
+		# If we're closing an old socket for a reconnecting client, we don't
+		# need to do any of this disconnect stuff
+		if ( !$reconnect ) {
+			# check client not forgotten and this is the active slimproto socket for this client
+			if ( Slim::Player::Client::getClient( $client->id ) ) {
 			
-			# notify of disconnect
-			Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
+				# notify of disconnect
+				Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 			
-			# Bug 2707, If a synced player disconnects, unsync it temporarily
-			if ( Slim::Player::Sync::isSynced($client) ) {
+				# Bug 2707, If a synced player disconnects, unsync it temporarily
+				if ( Slim::Player::Sync::isSynced($client) ) {
 
-				if ( logger('player.sync')->is_info ) {
-					logger('player.sync')->info("Player disconnected, temporary unsync " . $client->id);
+					if ( logger('player.sync')->is_info ) {
+						logger('player.sync')->info("Player disconnected, temporary unsync " . $client->id);
+					}
+
+					Slim::Player::Sync::unsync($client, 1);
 				}
-
-				Slim::Player::Sync::unsync($client, 1);
-			}
 			
-			# Bug 6714, delete the cached needsUpgrade value, as the player
-			# may change firmware versions before coming back
-			$client->_needsUpgrade(undef);
+				# Bug 6714, delete the cached needsUpgrade value, as the player
+				# may change firmware versions before coming back
+				$client->_needsUpgrade(undef);
 
-			# set timer to forget client
-			if ( $forget_disconnected_time ) {
-				Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&forget_disconnected_client);
-			}
-			else {
-				forget_disconnected_client($client);
+				# set timer to forget client
+				if ( $forget_disconnected_time ) {
+					Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&forget_disconnected_client);
+				}
+				else {
+					forget_disconnected_client($client);
+				}
 			}
 		}
 	}
@@ -801,6 +825,15 @@ sub _update_request_handler {
 	# Bug 3881, stop watching this client
 	delete $heartbeat{ $client->id };
 	
+	# On SN, if the player requests a firmware update, send the latest version available
+	# not just the current version as SlimServer does
+	if ( main::SLIM_SERVICE ) {
+		# Wipe cached needsUpgrade value
+		$client->_needsUpgrade(undef);
+		# Set client revision to 1 to force an upgrade
+		$client->revision(1);
+	}
+	
 	$client->upgradeFirmware();
 }
 	
@@ -969,7 +1002,15 @@ sub _hello_handler {
 
 		slimproto_close($s);
 		return;
-	}			
+	}
+	
+	if ( main::SLIM_SERVICE ) {		
+		# SqueezeNetwork clients use a different client class
+		# Note: Other player classes use SNClient directly
+		if ( $client_class eq 'Slim::Player::Squeezebox2' ) {
+			$client_class = 'SDI::Service::Player::SqueezeNetworkClient';
+		}
+	}
 
 	if (defined $client && blessed($client) && blessed($client) ne $client_class) {
 
@@ -1035,7 +1076,7 @@ sub _hello_handler {
 				);
 			}
 
-			slimproto_close($client->tcpsock);
+			slimproto_close( $client->tcpsock, 'reconnect' );
 		}
 
 		Slim::Utils::Timers::killTimers($client, \&forget_disconnected_client);
@@ -1056,6 +1097,54 @@ sub _hello_handler {
 	
 	# add the player to the list of clients we're watching for signs of life
 	$heartbeat{ $client->id } = Time::HiRes::time();
+	
+	if ( main::SLIM_SERVICE ) {
+		# Bug 6979, if this is a Ray and is on the same account as an MP Jive,
+		# workaround short timeout issue by not updating firmware yet
+		if ( $client->deviceid == 7 && $client->needsUpgrade ) {
+			
+			# workaround to handle multiple firmware versions causing blocking modes to stack
+			while (Slim::Buttons::Common::mode($client) eq 'block') {
+				$client->unblock();
+			}
+
+			# make sure volume is set, without changing temp setting
+			$client->audio_outputs_enable($client->power());
+			$client->volume($client->volume(), defined($client->tempVolume()));
+			
+			# There is a possible race condition between when jived links a new Ray to Jive
+			# and when the Ray connects to SN, so we want to impose a bit of a delay here before checking
+			# if we should do a firmware update.
+			Slim::Utils::Timers::setTimer(
+				undef,
+				time() + 3,
+				sub {
+					my $jives = $client->playerData->active_jives();
+			
+					if ( logger('player.firmware')->is_debug ) {
+						logger('player.firmware')->debug(
+							"Ray needs upgrade, active jives: " . Data::Dump::dump($jives)
+						)
+					}
+			
+					for my $jive ( @{$jives} ) {
+						if ( $jive->{rev} =~ /r(?:1220|1425)$/ ) { # MP firmware
+							logger('player.firmware')->debug('Not updating Ray, MP Jive is connected');
+							return;
+						}
+					}
+					
+					# Tell Ray to update now, unless we're already updating
+					if ( $client->revision != 1 ) {
+						$client->execute( [ 'stop' ] );
+						$client->sendFrame('ureq');
+					}
+				},
+			);
+			
+			return;			
+		}
+	}
 
 	if ($client->needsUpgrade()) {
 

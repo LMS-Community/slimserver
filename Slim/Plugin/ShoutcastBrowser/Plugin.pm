@@ -10,7 +10,11 @@ use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Web::XMLBrowser;
+
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Web::XMLBrowser;
+}
+
 use Slim::Networking::SqueezeNetwork;
 
 sub FEED {
@@ -142,6 +146,14 @@ sub cliRadiosQuery {
 				titleStyle => 'album',
 			},
 		};
+		
+		if ( main::SLIM_SERVICE ) {
+			# Bug 7110, icons are full URLs so we must use icon not icon-id
+			$data->{icon} = delete $data->{'icon-id'};
+			
+			# Bug 7230, send pre-thumbnailed URL
+			$data->{icon} =~ s/\.png$/_56x56_p\.png/;
+		}
 	}
 	else {
 		$data = {

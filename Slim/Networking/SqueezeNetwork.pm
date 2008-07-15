@@ -11,9 +11,13 @@ use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape);
 
-use Slim::Networking::SqueezeNetwork::Players;
-use Slim::Networking::SqueezeNetwork::PrefSync;
-use Slim::Networking::SqueezeNetwork::Stats;
+if ( !main::SLIM_SERVICE ) {
+	# init() is never called on SN so these aren't used
+ 	require Slim::Networking::SqueezeNetwork::Players;
+ 	require Slim::Networking::SqueezeNetwork::PrefSync;
+ 	require Slim::Networking::SqueezeNetwork::Stats;
+}
+
 use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -33,6 +37,29 @@ my $_Servers = {
 	update  => 'update.slimdevices.com',
 	test    => 'www.test.squeezenetwork.com',
 };
+
+# Used only on SN
+my $internal_http_host;
+my $_sn_hosts;
+my $_sn_hosts_re;
+
+if ( main::SLIM_SERVICE ) {
+	$internal_http_host = SDI::Util::SNConfig::get_config_value('internal_http_host');
+	
+	$_sn_hosts = join(q{|},
+	        map { qr/\Q$_\E/ } (
+			__PACKAGE__->get_server('sn'),
+			$internal_http_host,
+			($ENV{SN_DEV} ? '127.0.0.1' : ())
+		)
+	);
+	$_sn_hosts_re = qr{
+		^http://
+		(?:$_sn_hosts)  # literally: (?:\Qsome.host\E|\Qother.host\E)
+		(?::\d+)?	# optional port specification
+		(?:/|$)		# /|$ prevents matching www.squeezenetwork.com.foo.com,
+	}x;
+}
 
 sub get_server {
 	my ($class, $stype) = @_;
@@ -176,7 +203,7 @@ sub shutdown {
 
 # Return a correct URL for SqueezeNetwork
 sub url {
-	my ( $class, $path ) = @_;
+	my ( $class, $path, $external ) = @_;
 	
 	# There are 3 scenarios:
 	# 1. Local dev, running SN on localhost:3000
@@ -186,15 +213,16 @@ sub url {
 	
 	$path ||= '';
 	
-	if ( $ENV{SLIM_SERVICE} || $ENV{SN_DEV} ) {
-		my $ip = Slim::Utils::IPDetect::IP();
-		$base  = ( $ip =~ /^192.168.254/ ) 
-			? 'http://192.168.254.200' # Production
-			: 'http://127.0.0.1:3000';  # Local dev
+	if ( !$external ) {
+		if ( main::SLIM_SERVICE ) {
+			$base = 'http://' . $internal_http_host;
+        }
+        elsif ( $ENV{SN_DEV} ) {
+			$base = 'http://127.0.0.1:3000';  # Local dev
+		}
 	}
-	else {
-		$base = 'http://' . $class->get_server('sn');
-	}
+	
+	$base ||= 'http://' . $class->get_server('sn');
 	
 	return $base . $path;
 }
@@ -202,6 +230,10 @@ sub url {
 # Is a URL on SN?
 sub isSNURL {
 	my ( $class, $url ) = @_;
+	
+	if ( main::SLIM_SERVICE ) {
+		return $url =~ /$_sn_hosts_re/o;
+	}
 	
 	my $snBase = $class->url();
 	
@@ -266,7 +298,9 @@ sub getHeaders {
 	my @headers;
 	
 	# Indicate our language preference
-	push @headers, 'Accept-Language', lc( $prefs->get('language') ) || 'en';
+	if ( !main::SLIM_SERVICE ) {
+		push @headers, 'Accept-Language', lc( $prefs->get('language') ) || 'en';
+	}
 	
 	# Add player ID data
 	if ( $client ) {
@@ -279,6 +313,12 @@ sub getHeaders {
 		if ( $client->deviceid ) {
 			push @headers, 'X-Player-DeviceInfo', $client->deviceid . ':' . $client->revision;
 		}
+		
+		if ( main::SLIM_SERVICE ) {
+			# XXX: this is redundant
+			push @headers, 'X-Player-Firmware', $client->model . '_' . $client->revision;
+			push @headers, 'X-Player-IP', $client->ip;
+		}
 	}
 	
 	return @headers;
@@ -288,7 +328,7 @@ sub getCookie {
 	my ( $self, $client ) = @_;
 	
 	# Add session cookie if we have it
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		# Get sid directly if running on SN
 		if ( $client ) {
 			my $user = $client->playerData->userid;
@@ -402,7 +442,7 @@ sub _construct_url {
 sub hasAccount {
 	my ( $class, $client, $type ) = @_;
 		
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( main::SLIM_SERVICE ) {
 		my $type_pref = {
 			pandora  => 'pandora_username',
 			rhapsody => 'plugin_rhapsody_direct_username',

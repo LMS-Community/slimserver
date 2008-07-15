@@ -35,10 +35,110 @@ Returns the current value of preference $prefname.
 
 (A preference value may also be accessed using $prefname as an accessor method.)
 
+On SLIM_SERVICE, this pulls the value from the database if it doesn't already exist.
+
 =cut
 
 sub get {
-	shift->{'prefs'}->{ $_[0] };
+	my ( $class, $key ) = ( shift, shift );
+	
+	my $value = $class->{prefs}->{ $key };
+	
+	if ( main::SLIM_SERVICE ) {
+		# Callers can force retrieval from the database
+		my $force = shift;
+	
+		if ( !defined $value || $force ) {
+		
+			if ( $class->{clientid} ) {
+				
+				# Prepend namespace to key if it's not 'server'
+				my $nskey = $key;
+				if ( $class->namespace ne 'server' ) {
+					my $ns = $class->namespace;
+					$ns =~ s/\./_/g;
+					$nskey = $ns . '_' . $key;
+				}
+				
+				$value = $class->getFromDB($nskey);
+
+				$class->{prefs}->{ $key } = $value;
+			}
+		}
+		
+		# Special handling for disabledirsets when there is only one disabled item
+		if ( $key eq 'disabledirsets' && !ref $value ) {
+			$value = [ $value ];
+		}
+		
+		# More special handling for alarm prefs
+		elsif ( $key =~ /^alarm/ && $key ne 'alarmfadeseconds' && !ref $value ) {
+			$value = [ $value ];
+		}
+		
+		if ( wantarray && ref $value eq 'ARRAY' ) {
+			return @{$value};
+		}
+	}
+	
+	return $value;
+}
+
+=head2 getFromDB( $prefname )
+
+SLIM_SERVICE only. Pulls a pref from the database.
+
+=cut
+
+sub getFromDB {
+	my ( $class, $key ) = ( shift, shift );
+	
+	my $client = Slim::Player::Client::getClient( $class->{clientid} ) || return;
+	
+	# First search the player pref table
+	my @prefs = SDI::Service::Model::Pref->search( {
+		player => $client->playerData,
+		name   => $key,
+	} );
+	
+	my $count = scalar @prefs;
+
+	if ( !$count ) {
+		# If not found in player prefs, search user prefs
+		@prefs = SDI::Service::Model::UserPref->search( {
+			user => $client->playerData->userid,
+			name => $key
+		} );
+		
+		$count = scalar @prefs;
+	}
+	
+	my $value;
+	
+	if ( $count == 1 ) {
+		# scalar pref		
+		# NULL in DB is indicates empty string
+		$value = defined $prefs[0]->value ? $prefs[0]->value : '';
+	}
+	elsif ( $count > 1 )  {
+		# array pref
+		$value = [];
+		for my $pref ( @prefs ) {
+			$value->[ $pref->idx ] = $pref->value;
+		}
+	}
+	else {
+		# nothing found
+	}
+
+	if ( $log->is_debug ) {
+		$log->debug( sprintf( 
+			"getFromDB: retrieved client pref %s-%s = %s",
+			$client->id, $key, (defined($value) ? $value : 'undef')
+		) );
+	}
+	
+	return $value;
 }
 
 =head2 exists( $prefname )
@@ -109,7 +209,7 @@ sub set {
 		return wantarray ? ($old, 0) : $old;
 	}
 
-	if ($valid && $pref !~ /^_/) {
+	if ( $valid && ( main::SLIM_SERVICE || $pref !~ /^_/ ) ) {
 
 		if ( $log->is_debug ) {
 			$log->debug(
@@ -119,14 +219,49 @@ sub set {
 				)
 			);
 		}
+		
+		if ( main::SLIM_SERVICE ) {
+			# If old pref was an array but new is not, force it to stay an array
+			if ( ref $old eq 'ARRAY' && !ref $new ) {
+				$new = [ $new ];
+			}
+		}
 
 		$class->{'prefs'}->{ $pref } = $new;
 		
-		$class->{'prefs'}->{ '_ts_' . $pref } = time();
+		if ( !main::SLIM_SERVICE ) { # SN's timestamps are stored automatically
+			$class->{'prefs'}->{ '_ts_' . $pref } = time();
+		}
 
 		$root->save;
+		
+		my $client = Slim::Player::Client::getClient($clientid);
+		
+		if ( !defined $old || !defined $new || $old ne $new || ref $new ) {
+			
+			if ( main::SLIM_SERVICE && $clientid ) {
+				# Skip param lets routines like initPersistedPrefs avoid writing right back to the db
+				my $skip = shift || 0;
 
-		if ($change && (!defined $old || !defined $new || $old ne $new || ref $new)) {
+				if ( !$skip ) {
+					# Save the pref to the db
+					
+					my $nspref = $pref;
+					if ( $class->namespace ne 'server' ) {
+						my $ns = $class->namespace;
+						$ns =~ s/\./_/g;
+						$nspref = $ns . '_' . $pref;
+					}
+					
+					if ( ref $new eq 'ARRAY' ) {
+						SDI::Service::Model::Pref->quick_update_array( $client->playerData, $nspref, $new );
+					}
+					else {
+						SDI::Service::Model::Pref->quick_update( $client->playerData, $nspref, $new );
+					}
+				}
+			}
+
 			for my $func ( @{$change} ) {
 				if ( $log->is_debug ) {
 					$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
@@ -137,7 +272,7 @@ sub set {
 		}
 
 		Slim::Control::Request::notifyFromArray(
-			$clientid ? Slim::Player::Client::getClient($clientid) : undef,
+			$clientid ? $client : undef,
 			['prefset', $namespace, $pref, $new]
 		);
 
@@ -202,7 +337,9 @@ sub init {
 
 			$class->{'prefs'}->{ $pref } = $value;
 			
-			$class->{'prefs'}->{ '_ts_' . $pref } = time();
+			if ( !main::SLIM_SERVICE ) { # SN's timestamps are stored automatically
+				$class->{'prefs'}->{ '_ts_' . $pref } = time();
+			}
 		}
 	}
 
@@ -228,7 +365,18 @@ sub remove {
 
 		delete $class->{'prefs'}->{ $pref };
 		
-		delete $class->{'prefs'}->{ '_ts_' . $pref };
+		if ( !main::SLIM_SERVICE ) {
+			delete $class->{'prefs'}->{ '_ts_' . $pref };
+		}
+		
+		if ( main::SLIM_SERVICE && $class->{clientid} ) {
+			# Remove the pref from the database
+			my $client = Slim::Player::Client::getClient( $class->{clientid} );
+			SDI::Service::Model::Pref->sql_clear_array->execute(
+				$client->playerData->id,
+				$pref,
+			);
+		}
 	}
 
 	$class->_root->save;
@@ -250,6 +398,34 @@ sub all {
 	}
 
 	return \%prefs;
+}
+
+=head2 clear ( )
+
+Clears all preferences. SLIM_SERVICE only.
+
+=cut
+
+sub clear {
+	my $class = shift;
+	
+	for my $pref ( keys %{ $class->{prefs} } ) {
+		delete $class->{prefs}->{$pref};
+	}
+}
+
+=head2 loadHash ( $prefs )
+
+Load all prefs at once from a hashref. SLIM_SERVICE only.
+
+=cut
+
+sub loadHash {
+	my ( $class, $hash ) = @_;
+	
+	while ( my ($pref, $value) = each %{$hash} ) {
+		$class->{prefs}->{ $pref } = $value;
+	}
 }
 
 =head2 hasValidator( $pref )
@@ -285,6 +461,10 @@ Returns last-modified timestamp for this preference
 
 sub timestamp {
 	my ( $class, $pref, $wipe ) = @_;
+	
+	if ( main::SLIM_SERVICE ) {
+		return 0;
+	}
 	
 	if ( $wipe ) {
 		$class->{'prefs'}->{ '_ts_' . $pref } = -1;

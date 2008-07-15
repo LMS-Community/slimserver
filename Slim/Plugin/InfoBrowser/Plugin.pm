@@ -52,7 +52,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-use Slim::Plugin::InfoBrowser::Settings;
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Plugin::InfoBrowser::Settings;
+}
 
 my $prefsServer = preferences('server');
 
@@ -62,14 +64,19 @@ my @searchDirs; # search directories for menu opml files
 sub initPlugin {
 	my $class = shift;
 
-	Slim::Plugin::InfoBrowser::Settings->new($class);
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Plugin::InfoBrowser::Settings->new($class);
+	}
 
 	$class->SUPER::initPlugin;
 
-	$menuUrl    = $class->_menuUrl;
-	@searchDirs = $class->_searchDirs;
-
-	Slim::Plugin::InfoBrowser::Settings->importNewMenuFiles;
+	if ( !main::SLIM_SERVICE ) {
+		$menuUrl    = $class->_menuUrl;
+		@searchDirs = $class->_searchDirs;
+		
+		Slim::Plugin::InfoBrowser::Settings->importNewMenuFiles;
+	}
+	
 
 	Slim::Control::Request::addDispatch(['infobrowser', 'items', '_index', '_quantity'],
 		[0, 1, 1, \&cliQuery]);
@@ -110,6 +117,16 @@ sub webPages {
 
 sub cliQuery {
 	my $request = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		my $client = $request->client;
+		
+		use Slim::Networking::SqueezeNetwork;
+		my $url = Slim::Networking::SqueezeNetwork->url( '/public/opml/' . $client->playerData->userid->emailHash . '/rss.opml' );
+		
+		Slim::Buttons::XMLBrowser::cliQuery('infobrowser', $url, $request);
+		return;
+	}
 
 	Slim::Buttons::XMLBrowser::cliQuery('infobrowser', $menuUrl, $request);
 }

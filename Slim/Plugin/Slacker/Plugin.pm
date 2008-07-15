@@ -54,7 +54,7 @@ sub initPlugin {
 		weight => 30,
 	);
 	
-	if ( !$ENV{SLIM_SERVICE} ) {
+	if ( !main::SLIM_SERVICE ) {
 		# Add a function to view trackinfo in the web
 		Slim::Web::HTTP::addPageFunction( 
 			'plugins/slacker/trackinfo.html',

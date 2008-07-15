@@ -15,6 +15,8 @@ require 5.008_001;
 use strict;
 use warnings;
 
+use constant SLIM_SERVICE => 0;
+
 # This package section is used for the windows service version of the application, 
 # as built with ActiveState's PerlSvc
 package PerlSvc;
