@@ -46,6 +46,9 @@ BEGIN {
 		chomp $SN_PATH;
 	}
 	
+	# Load SN modules before CPAN modules, to allow for newer modules such as DBD::mysql
+	push @SlimINC, $SN_PATH . '/lib';
+	
 	my $arch = $Config::Config{'archname'};
 	   $arch =~ s/^i[3456]86-/i386-/;
 	   $arch =~ s/gnu-//;
@@ -66,9 +69,6 @@ BEGIN {
 	);
 
 	unshift @INC, @SlimINC;
-
-	# Add SN module path
-	push @INC, $SN_PATH . '/lib';
 	
 	# Pull in DeploymentDefaults
 	require SDI::Util::SNConfig;
