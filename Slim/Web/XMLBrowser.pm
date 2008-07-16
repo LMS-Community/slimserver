@@ -544,7 +544,7 @@ sub handleFeed {
 			foreach my $group (@{ $details->{'unfold'} }) {
 				
 				splice @{ $stash->{'items'} }, ($group->{'start'} + $new_index), 1, @{ $group->{'items'} };
-				$new_index = @{ $group->{'items'} };
+				$new_index = $#{ $group->{'items'} };
 			}
 
 			$stash->{'details'} = $details;
