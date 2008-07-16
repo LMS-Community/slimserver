@@ -15,6 +15,14 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
 	FR	Rhapsody
 	IT	Rhapsody
 	NL	Rhapsody
+	
+PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
+	DE	Rhapsody-Bibliothek
+	EN	Rhapsody Library
+	ES	Biblioteca Rhapsody
+	FR	Bibliothèque Rhapsody
+	IT	Libreria Rhapsody
+	NL	Rhapsody-collectie
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
 	DA	Rhapsody Fejl
