@@ -57,7 +57,7 @@ BEGIN {
 		# Local development
 		my $conf = "$FindBin::Bin/slimservice.conf";
 		if ( !-e $conf ) {
-			die "Please create $conf with the path to the SqueezeNetwork lib directory\n";
+			die "Please create $conf with the path to the SqueezeNetwork directory\n";
 		}
 		$SN_PATH = File::Slurp::read_file( $conf );
 		chomp $SN_PATH;
