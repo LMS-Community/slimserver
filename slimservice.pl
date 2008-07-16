@@ -30,23 +30,6 @@ our $SN_PATH; # path to squeezenetwork directory
 BEGIN {
 	my @SlimINC = ($Bin);
 	
-	my $arch = $Config::Config{'archname'};
-	   $arch =~ s/^i[3456]86-/i386-/;
-	   $arch =~ s/gnu-//;
-	
-	push @SlimINC, (
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
-		catdir($Bin, 'lib'),
-		catdir($Bin, 'CPAN'),
-	);
-
-	unshift @INC, @SlimINC;
-
 	# SLIM_SERVICE
 	# Get path to SN modules
 	if ( -d '/opt/sn/lib' ) {
@@ -57,14 +40,34 @@ BEGIN {
 		# Local development
 		my $conf = "$FindBin::Bin/slimservice.conf";
 		if ( !-e $conf ) {
-			die "Please create $conf with the path to the SqueezeNetwork lib directory\n";
+			die "Please create $conf with the path to the SqueezeNetwork directory\n";
 		}
 		$SN_PATH = File::Slurp::read_file( $conf );
 		chomp $SN_PATH;
 	}
 	
-	push @INC, $SN_PATH . '/lib';
+	# Load SN modules before CPAN modules, to allow for newer modules such as DBD::mysql
+	push @SlimINC, $SN_PATH . '/lib';
 	
+	my $arch = $Config::Config{'archname'};
+	   $arch =~ s/^i[3456]86-/i386-/;
+	   $arch =~ s/gnu-//;
+
+	# Include custom x86_64 module binaries on production
+	push @SlimINC, (
+		catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+		catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
+	);
+	
+	push @SlimINC, (
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
+		catdir($Bin, 'lib'),
+		catdir($Bin, 'CPAN'),
+	);
+
+	unshift @INC, @SlimINC;
+
 	# Pull in DeploymentDefaults
 	require SDI::Util::SNConfig;
 	$sn_config = SDI::Util::SNConfig::get_config( $SN_PATH );
