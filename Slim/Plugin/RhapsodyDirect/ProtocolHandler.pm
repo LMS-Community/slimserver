@@ -118,8 +118,8 @@ sub handleDirectError {
 	} );
 	
 	if ( main::SLIM_SERVICE ) {
-		SDI::Service::EventLog::logEvent(
-			$client->id, 'rhapsody_error', "$response - $status_line"
+		SDI::Service::EventLog->log(
+			$client, 'rhapsody_error', "$response - $status_line"
 		);
 	}
 	
@@ -383,8 +383,8 @@ sub onJump {
 	}
 	
 	if ( main::SLIM_SERVICE ) {
-		SDI::Service::EventLog::logEvent(
-			$client->id, 'rhapsody_jump', "-> $nextURL",
+		SDI::Service::EventLog->log(
+			$client, 'rhapsody_jump', "-> $nextURL",
 		);
 	}
 	
@@ -612,8 +612,8 @@ sub onUnderrun {
 	}
 	
 	if ( main::SLIM_SERVICE ) {
-		SDI::Service::EventLog::logEvent(
-			$client->id, 'rhapsody_underrun'
+		SDI::Service::EventLog->log(
+			$client, 'rhapsody_underrun'
 		);
 	}
 	
@@ -942,7 +942,7 @@ sub gotTrackInfo {
 	if ( !$client->pluginData('radioTrackURL') ) {
 		if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
 			my $pingURL = Slim::Networking::SqueezeNetwork->url(
-				"/api/rhapsody/v1/playback/gotTrack?trackId=$trackId"
+				"/api/rhapsody/v1/playback/gotTrack?trackId=$trackId&format=mp3"
 			);
 			
 			my $http = Slim::Networking::SqueezeNetwork->new(
@@ -964,8 +964,8 @@ sub gotTrackError {
 	$log->debug("Error during getTrackInfo: $error");
 	
 	if ( main::SLIM_SERVICE ) {
-		SDI::Service::EventLog::logEvent(
-			$client->id, 'rhapsody_track_error', $error
+		SDI::Service::EventLog->log(
+			$client, 'rhapsody_track_error', $error
 		);
 	}
 	
@@ -1049,8 +1049,8 @@ sub stopCallback {
 		}
 		
 		if ( main::SLIM_SERVICE ) {
-			SDI::Service::EventLog::logEvent(
-				$client->id, 'rhapsody_stop'
+			SDI::Service::EventLog->log(
+				$client, 'rhapsody_stop'
 			);
 		}
 
@@ -1253,8 +1253,8 @@ sub reinit {
 	
 	$log->debug('Re-init Rhapsody');
 	
-	SDI::Service::EventLog::logEvent(
-		$client->id, 'rhapsody_reconnect'
+	SDI::Service::EventLog->log(
+		$client, 'rhapsody_reconnect'
 	);
 	
 	# If in radio mode, re-add only the single item
