@@ -176,11 +176,11 @@ A.linkbtn:link {
 	line-height: 100%;
 }	
 
-.songInfo {
+#songInfo {
 	background: #fcf2d4;
 }
 
-.songInfo {
+#songInfo {
 	/* the list of song info items */
 	background-color: #fcf2d4;
 }
