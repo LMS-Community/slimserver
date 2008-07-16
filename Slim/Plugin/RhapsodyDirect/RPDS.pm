@@ -32,8 +32,8 @@ sub handleError {
 sub logError {
 	my ( $client, $error ) = @_;
 	
-	SDI::Service::EventLog::logEvent( 
-		$client->id, 'rhapsody_error', $error,
+	SDI::Service::EventLog->log( 
+		$client, 'rhapsody_error', $error,
 	);
 }
 
@@ -67,12 +67,13 @@ sub rpds {
 
 	if ( main::SLIM_SERVICE ) {
 		# Log full RPDS unless it's RPDS 2 (contains passwords)
+		my $log = $sent;
 		if ( $sent != 2 ) {
-			$sent = Data::Dump::dump($data);
+			$log = Data::Dump::dump($data);
 		}
 		
-		SDI::Service::EventLog::logEvent( 
-			$client->id, 'rpds', $sent,
+		SDI::Service::EventLog->log( 
+			$client, 'rpds', $log,
 		);
 	}
 	

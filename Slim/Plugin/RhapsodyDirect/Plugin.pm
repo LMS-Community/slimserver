@@ -181,8 +181,8 @@ sub handleError {
 sub logError {
 	my ( $client, $error ) = @_;
 	
-	SDI::Service::EventLog::logEvent( 
-		$client->id, 'rhapsody_error', $error,
+	SDI::Service::EventLog->log( 
+		$client, 'rhapsody_error', $error,
 	);
 }
 
