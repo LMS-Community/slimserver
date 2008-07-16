@@ -54,12 +54,10 @@ BEGIN {
 	   $arch =~ s/gnu-//;
 
 	# Include custom x86_64 module binaries on production
-	if ( $arch =~ /x86_64-linux/ ) {
-		push @SlimINC, (
-			catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
-			catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
-		);
-	}
+	push @SlimINC, (
+		catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+		catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
+	);
 	
 	push @SlimINC, (
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
@@ -69,7 +67,7 @@ BEGIN {
 	);
 
 	unshift @INC, @SlimINC;
-	
+
 	# Pull in DeploymentDefaults
 	require SDI::Util::SNConfig;
 	$sn_config = SDI::Util::SNConfig::get_config( $SN_PATH );
