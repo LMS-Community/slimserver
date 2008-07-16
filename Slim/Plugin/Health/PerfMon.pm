@@ -23,8 +23,8 @@ use Slim::Utils::Strings qw(string);
 
 # Perfmon logs managed by this plugin module
 my @perfmonLogs = (
-	{ 'type' => 'server', 'name' => 'response',  'monitor' => \$Slim::Networking::Select::responseTime, 'warn' => 1 },
-	{ 'type' => 'server', 'name' => 'select',    'monitor' => \$Slim::Networking::Select::selectTask,   'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'response',  'monitor' => \$Slim::Networking::IO::Select::responseTime, 'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'select',    'monitor' => \$Slim::Networking::IO::Select::selectTask,   'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'timer',     'monitor' => \$Slim::Utils::Timers::timerTask,         'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'request',   'monitor' => \$Slim::Control::Request::requestTask,    'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'scheduler', 'monitor' => \$Slim::Utils::Scheduler::schedulerTask,  'warn' => 1 },
@@ -113,7 +113,7 @@ sub clearAllCounters {
 			}
 		}
 	}
-	$Slim::Networking::Select::endSelectTime = undef;
+	$Slim::Networking::IO::Select::endSelectTime = undef;
 }
 
 # Summary info which attempts to categorise common problems based on performance measurments taken
@@ -187,10 +187,10 @@ sub summary {
 		push @warn, string("PLUGIN_HEALTH_NO_PLAYER_DESC");
 	}
 
-	if ($Slim::Networking::Select::responseTime->percentAbove(1) < 0.01 || 
-		$Slim::Networking::Select::responseTime->above(1) < 3 ) {
+	if ($Slim::Networking::IO::Select::responseTime->percentAbove(1) < 0.01 || 
+		$Slim::Networking::IO::Select::responseTime->above(1) < 3 ) {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_OK");
-	} elsif ($Slim::Networking::Select::responseTime->percentAbove(1) < 0.5) {
+	} elsif ($Slim::Networking::IO::Select::responseTime->percentAbove(1) < 0.5) {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_RESPONSE_INTERMIT");
 		push @warn, string("PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC");
 	} else {
