@@ -260,11 +260,15 @@ Main = {
 			size: 96
 		});
 
-		new SqueezeJS.UI.CoverartPopup({ target: 'ctrlCurrentArt' });
+		new SqueezeJS.UI.CoverartPopup({
+			target: 'ctrlCurrentArt',
+			defaultAlign: 'tl-bl'
+		});
 
 		// display song information with coverart in the collapsed mode
 		new SqueezeJS.UI.CoverartPopup({
 			target: 'nowPlayingIcon',
+			defaultAlign: 'tl-bl',
 			songInfo: true
 		});
 
