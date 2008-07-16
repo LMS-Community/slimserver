@@ -30,23 +30,6 @@ our $SN_PATH; # path to squeezenetwork directory
 BEGIN {
 	my @SlimINC = ($Bin);
 	
-	my $arch = $Config::Config{'archname'};
-	   $arch =~ s/^i[3456]86-/i386-/;
-	   $arch =~ s/gnu-//;
-	
-	push @SlimINC, (
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
-		catdir($Bin, 'lib'),
-		catdir($Bin, 'CPAN'),
-	);
-
-	unshift @INC, @SlimINC;
-
 	# SLIM_SERVICE
 	# Get path to SN modules
 	if ( -d '/opt/sn/lib' ) {
@@ -63,6 +46,28 @@ BEGIN {
 		chomp $SN_PATH;
 	}
 	
+	my $arch = $Config::Config{'archname'};
+	   $arch =~ s/^i[3456]86-/i386-/;
+	   $arch =~ s/gnu-//;
+
+	# Include custom x86_64 module binaries on production
+	if ( $arch =~ /x86_64-linux/ ) {
+		push @SlimINC, (
+			catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+			catdir($SN_PATH,'lib','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
+		);
+	}
+	
+	push @SlimINC, (
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
+		catdir($Bin, 'lib'),
+		catdir($Bin, 'CPAN'),
+	);
+
+	unshift @INC, @SlimINC;
+
+	# Add SN module path
 	push @INC, $SN_PATH . '/lib';
 	
 	# Pull in DeploymentDefaults
