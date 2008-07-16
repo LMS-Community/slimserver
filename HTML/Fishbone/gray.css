@@ -31,6 +31,12 @@ DIV {
 	_height: 0%;
 }
 
+#songInfo {
+	/* the list of song info items */
+	background-color: #222222;
+	clear: none;
+}
+
 .small {
 	font-size : 5pt;
 }
