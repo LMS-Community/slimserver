@@ -394,7 +394,7 @@ sub init {
 							'useMode'         => 'INPUT.List',
 							'listRef'         => ['SETUP_POWERONBRIGHTNESS', 'SETUP_POWEROFFBRIGHTNESS', 'SETUP_IDLEBRIGHTNESS'],
 							'stringExternRef' => 1,
-							'header'          => 'BRIGHTNESS',
+							'header'          => 'SETUP_GROUP_BRIGHTNESS',
 							'stringHeader'    => 1,
 							'headerAddCount'  => 1,
 							'overlayRef'      => sub { 
