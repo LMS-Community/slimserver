@@ -1085,7 +1085,10 @@ sub updateOrCreate {
 		}
 
 		# Pull the track metadata object for the DB if available
-		my $trackPersistent = $track->_retrievePersistent();
+		my $trackPersistent;
+		if ( !main::SLIM_SERVICE ) {
+			$trackPersistent = $track->_retrievePersistent();
+		}
 	
 		# Bug: 2335 - readTags is set in Slim::Formats::Playlists::CUE - when
 		# we create/update a cue sheet to have a CT of 'cur'
