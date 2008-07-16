@@ -315,8 +315,8 @@ sub getHeaders {
 		}
 		
 		if ( main::SLIM_SERVICE ) {
-			# XXX: this is redundant
-			push @headers, 'X-Player-Firmware', $client->model . '_' . $client->revision;
+			# Indicate player is on SN and provide real client IP
+			push @headers, 'X-Player-SN', 1;
 			push @headers, 'X-Player-IP', $client->ip;
 		}
 	}
@@ -332,7 +332,7 @@ sub getCookie {
 		# Get sid directly if running on SN
 		if ( $client ) {
 			my $user = $client->playerData->userid;
-			my $sid  = $user->sso . ':' . $user->password;
+			my $sid  = $user->id . ':' . $user->password;
 			return 'sdi_squeezenetwork_session=' . uri_escape($sid);
 		}
 		else {
