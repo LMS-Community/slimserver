@@ -12835,7 +12835,7 @@ INFORMATION_MENU_LIBRARY
 	CS	Statistiky archivu
 	DA	Statistik for Musikbibliotek
 	DE	Musikbibliotheksstatistik
-	EN	Library statistics
+	EN	Library Statistics
 	ES	Estadísticas de biblioteca
 	FI	Kirjaston tilastot
 	FR	Statistiques de la collection musicale
