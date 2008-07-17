@@ -176,7 +176,7 @@ sub cliRadiosQuery {
 		
 		if ( main::SLIM_SERVICE ) {
 			my $client = $request->client();
-			$disabled  = $client->playerData->userid->allowedServices->{disabled};
+			$disabled  = [ keys %{ $client->playerData->userid->allowedServices->{disabled} } ];
 		}
 		
 		if ( $disabled ) {

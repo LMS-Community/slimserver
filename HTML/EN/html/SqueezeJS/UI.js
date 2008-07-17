@@ -616,7 +616,7 @@ SqueezeJS.UI.Sortable.prototype = {
 		if (this.highlighter)
 			this.highlighter.isDragging = false;
 	},
-
+	
 	addDDProxy: function(item, el, config){
 		return new SqueezeJS.DDProxy(item, el, config);
 	},
@@ -629,10 +629,11 @@ SqueezeJS.UI.Sortable.prototype = {
 			if (sourcePos >= 0 && targetPos >= 0) {
 				if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
 					targetPos += position;
+					target = Ext.DomQuery.selectNode(this.selector + ':nth(' + (targetPos+position) + ')');
 				}
 			}
 
-			if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
+			if (target && sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
 				if (position == 0)
 					source.remove();
 
@@ -641,7 +642,6 @@ SqueezeJS.UI.Sortable.prototype = {
 
 				else
 					source.insertAfter(target);
-
 
 				this.onDropCmd(sourcePos, targetPos, position);
 				this.init();
