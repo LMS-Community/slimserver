@@ -369,12 +369,12 @@ sub addSongInfo {
 
 
 			my $Imports = Slim::Music::Import->importers;
-		
+	
+			$params->{mixeritems} = { item => $params->{item} };	
 			for my $mixer (keys %{$Imports}) {
 			
 				if (defined $Imports->{$mixer}->{'mixerlink'}) {
 					
-					$params->{mixeritems} = { item => $params->{item} };
 					&{$Imports->{$mixer}->{'mixerlink'}}($track, $params->{mixeritems});
 
 				}
