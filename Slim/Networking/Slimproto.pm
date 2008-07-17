@@ -40,7 +40,7 @@ use constant SLIMPROTO_PORT   => 3483;
 use constant LATENCY_LIST_MAX => 10;
 use constant LATENCY_LIST_MIN => 6;
 
-my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller');
+our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller');
 my $log       = logger('network.protocol.slimproto');
 
 if ( main::SLIM_SERVICE ) {
