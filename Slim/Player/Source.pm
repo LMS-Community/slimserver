@@ -808,8 +808,8 @@ sub outputUnderrun {
 			my $decoder = $client->bufferFullness();
 			my $output  = $client->outputBufferFullness();
 		
-			SDI::Service::EventLog::logEvent( 
-				$client->id, 'rhapsody_error', 'UNDERRUN', "decoder: $decoder / output: $output",
+			SDI::Service::EventLog->log( 
+				$client, 'rhapsody_error', 'UNDERRUN', "decoder: $decoder / output: $output",
 			);
 		}
 	}
