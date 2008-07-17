@@ -653,6 +653,8 @@ sub parsePlaylist {
 							$playlist = Slim::Music::Info::setTitle( $playlist->url, $entry->title || $playlist->url );
 						}
 						
+						$log->debug('Found at least one audio URL in playlist');
+						
 						$cb->( $playlist, undef, @{$pt} );
 					}
 					else {

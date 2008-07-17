@@ -130,6 +130,10 @@ sub getNextEntry {
 	for my $track ( $playlist->tracks ) {
 		my $type = $track->content_type;
 		
+		if ( $log->is_debug ) {
+			$log->debug( "Considering " . $track->url . " ($type)" );
+		}
+		
 		if ( Slim::Music::Info::isSong( $track, $type ) ) {
 			# An audio URL
 			if ( $args->{after} ) {

@@ -263,27 +263,6 @@ sub onJump {
 	# Get next track
 	my ($stationId) = $nextURL =~ m{^pandora://([^.]+)\.mp3};
 	
-	# If the user was playing a different Pandora station, report a stationChange event
-	my $prevTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
-	if ( $prevTrack && $prevTrack->{stationToken} ne $stationId ) {
-		my $snURL = Slim::Networking::SqueezeNetwork->url(
-			  '/api/pandora/v1/playback/stationChange?stationId=' . $prevTrack->{stationToken} 
-			. '&trackId=' . $prevTrack->{trackToken}
-		);
-
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			sub {},
-			sub {},
-			{
-				client  => $client,
-				timeout => 35,
-			},
-		);
-
-		$log->debug('Reporting station change to SqueezeNetwork');
-		$http->get( $snURL );
-	}
-	
 	getNextTrack( $client, {
 		stationId => $stationId,
 		callback  => $callback,
