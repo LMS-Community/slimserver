@@ -485,12 +485,12 @@ sub browsedb {
 			&& (defined $params->{'album.id'})
 		) {
 			my $Imports = Slim::Music::Import->importers;
-	
+
+			$params->{mixeritems} = { album => $params->{'album.id'} };	
 			for my $mixer (keys %{$Imports}) {
 	
 				if (defined $Imports->{$mixer}->{'mixerlink'}) {
 	
-					$params->{mixeritems} = { album => $params->{'album.id'} };
 					&{$Imports->{$mixer}->{'mixerlink'}}($firstItem->album, $params->{mixeritems}, 1);
 	
 				}
