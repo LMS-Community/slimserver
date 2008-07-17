@@ -3493,62 +3493,22 @@ SETUP_SYNCPOWER_DESC
 	ZH_CN	您可以选择将这个播放机的电源切断独立化、或与其他播放机小组一起切断。请选择并点击《更动》。
 
 SETUP_DIGITALVOLUMECONTROL_ON
-	DA	Lydstyrke-kontrollen aktiveret for den digitale udgang.
-	DE	Lautstärkeregelung der digitalen Ausgabe über Fernbedienung
-	EN	Volume controls adjust digital outputs
-	ES	Los controles de volumen ajustan las salidas digitales
-	FR	Niveau sortie numérique contrôlé par boutons de volume
-	HE	בקרי עוצמת הקול מכוונים פלט דיגיטלי
-	IT	Il controllo del volume regola le uscite digitali
-	JA	ボリュームは、デジタル出力を調整します。
-	NL	Volumeknoppen regelen digitale uitgangen
-	NO	Lydstyrkekontrollen påvirker digitalutgangen
-	SV	Volymkontrollen påverkar den digitala utsignalen
-	ZH_CN	音量控制可调节数码输出
+	DE	Lautstärkeregelung über Fernbedienung
+	EN	Volume controls adjust outputs
+	FR	Niveau contrôlé par boutons de volume
 
 SETUP_DIGITALVOLUMECONTROL_OFF
-	CS	Digitální výstupní hlasitost je nastavena
-	DA	Digitalt udgangsnivau er fast
-	DE	Lautstärke der digitalen Ausgabe ist fixiert
-	EN	Digital output level is fixed
-	ES	El nivel de la salida digital es fijo
-	FR	Niveau sortie numérique fixe
-	HE	רמת הפלט הדיגיטלי קבועה
-	IT	Il livello dell'uscita digitale è fisso
-	JA	デジタル出力は固定です
-	NL	Digitaal uitvoerniveau is vastgezet
-	NO	Digital utgangsnivå er fast
-	SV	Den digitala utnivån är fast
-	ZH_CN	数码式输出量固定化
+	DE	Lautstärke ist fixiert auf Maximum
+	EN	Output level is fixed at 100%
+	FR	Niveau sortie fixe à 100%
 
 SETUP_DIGITALVOLUMECONTROL
-	CS	Digitální ovladač hlasitosti
-	DA	Digital lydstyrkekontrol
-	DE	Lautstärkeregelung für den digitalen Ausgang
-	EN	Digital Volume Control
-	ES	Control digital de volumen
-	FR	Niveau sortie numérique
-	HE	בקרת עוצמת הקול של פלט דיגיטלי
-	IT	Controllo digitale del volume
-	JA	デジタルボリューム調整
-	NL	Digitale volumeregeling
-	NO	Digital lydstyrkekontroll
-	SV	Digital volymkontroll
-	ZH_CN	数码式音量控制
+	DE	Lautstärkeregelung
+	EN	Volume Control
+	FR	Niveau sortie
 
 SETUP_DIGITALVOLUMECONTROL_DESC
-	DA	Du kan vælge at lydstyrken på digitale udgangsnivau skal være fast på maksimum nivau eller at det skal kontrolleres af lydstyrke-kontrollen. Ved begge indstillinger reguleres det analoge udgangsnivau af lydstyrke-kontrollen.
-	DE	Sie können bestimmen, ob die Lautstärke der digitalen Ausgabe auf dem maximalen Pegel fixiert oder über die Fernbedienung geregelt werden soll. Bei beiden Einstellungen wird die analoge Lautstärke über die Tasten der Fernbedienung geregelt.
-	EN	You can choose to have the digital audio output on your player be fixed at maximum level or be controlled by the volume buttons.  With either setting, the analog output levels are adjusted by the volume buttons.
-	ES	Se puede optar por que la salida de audio digital del reproductor quede fija en el nivel máximo o por que se pueda controlar mediante los botones de volumen. Con cualquiera de las dos opciones, los niveles de las salidas analógicas se ajustan mediante los botones de volumen.
-	FR	Le niveau de la sortie audio numérique de votre platine peut être fixé à son maximum ou contrôlé par les boutons de volume. Dans les deux cas, le niveau de la sortie analogique est contrôlé par les boutons de volume.
-	HE	באפשרותך לבחור להגדיר את פלט השמע הדיגיטלי בנגן כקבוע ברמה מרבית או לשלוט עליו באמצעות לחצני עוצמת הקול. בכל אחת מההגדרות, הרמות של פלט אנלוגי מכוונות באמצעות לחצני עוצמת הקול.
-	IT	Si può scegliere di mantenere fissa sul livello massimo l'uscita audio digitale del lettore o di controllarla tramite i pulsanti del volume. Con entrambe le impostazioni, il livello dell'uscita analogica viene regolato dai pulsanti del volume.
-	JA	デジタル出力のボリュームを固定、あるいは調整可能にできます。どちらのセッティングでも、音量はボリュームボタンで調節することができます。
-	NL	Je kunt de digitale audio-uitvoer van je muzieksysteem op een vast maximumniveau zetten, of dit via de volumeknoppen regelen. De analoge uitvoerniveaus worden bij beide instellingen altijd met de volumeknoppen aangepast.
-	NO	Du kan velge mellom å la digital lydstyrke være fast på maks nivå eller la den styres av lydstyrkekontrollen. Uansett innstilling påvirkes analog lydstyrke av lydstyrkeknappene.
-	SV	Du kan välja mellan att låta digital volym vara fast på maximal nivå, eller låta den styras av volymknapparna. Oavsett inställning påverkas analog volym av volymknapparna.
-	ZH_CN	您可以选择将数码式音频输出固定在最高水平或由音量按钮控制。无论如何，模拟式输出量都是由音量按钮调节。
+	EN	You can fix the volume control at 100% if you are using the volume control on your amplifier to control loudness or need perfect digital passthrough. This affects both digital and analog volume.
 
 SETUP_PREAMPVOLUMECONTROL
 	DA	Lydstyrke-kontrol for forforstærker
