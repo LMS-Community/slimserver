@@ -623,15 +623,13 @@ SqueezeJS.UI.Sortable.prototype = {
 
 	onDrop: function(source, target, position) {
 		if (target && source) {
-			var items = Ext.DomQuery.select(this.selector);
-
 			var sourcePos = Ext.get(source.id).dd.config.position;
 			var targetPos = Ext.get(target.id).dd.config.position;
 
 			if (sourcePos >= 0 && targetPos >= 0) {
 				if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
 					targetPos += position;
-					target = Ext.get(items[targetPos]);
+					target = Ext.DomQuery.selectNode(this.selector + ':nth(' + (targetPos+position) + ')');
 				}
 			}
 
