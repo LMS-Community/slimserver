@@ -25,6 +25,17 @@ var myGlobalHandlers = {
 				if (callInProgress(request.transport)) {
 					request.transport.abort();
 					
+					Ajax.activeRequestCount--;
+					if(Ajax.activeRequestCount == 0) {
+						if ($('systemWorking')) {
+							Element.hide('systemWorking');
+						}
+						
+						if ($('systemNotWorking')) {
+							Element.show('systemNotWorking');
+						}
+					}
+					
 					if (request.options['onFailure']) {
 						request.options['onFailure'](request.transport, request.json);
 					}
