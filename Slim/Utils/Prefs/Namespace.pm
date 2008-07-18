@@ -61,8 +61,11 @@ sub new {
 
 	# split namespace into dir and filename if appropriate
 	if ($namespace =~ /(.*)\.(.*)/) {
-		$path     = catdir($path, $1);
-		$filename = catdir($path, "$2.prefs");
+		# Work around a weird win32 bug where path can be constructed wrong
+		my ($one, $two) = ($1, $2);
+
+		$path     = catdir($path, $one);
+		$filename = catdir($path, "$two.prefs");
 		mkdir $path unless -d $path;
 	} else {
 		$filename = catdir($path, "$namespace.prefs");
