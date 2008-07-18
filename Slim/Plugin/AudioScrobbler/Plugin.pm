@@ -1224,6 +1224,12 @@ sub infoLoveTrack {
 		return;
 	}
 	
+	# Ignore if this track isn't currently playing, you can only love
+	# something that is playing and being scrobbled
+	if ( $track->url ne Slim::Player::Playlist::url($client) ) {
+		return;
+	}
+	
 	return {
 		type        => 'link',
 		name        => $client->string('PLUGIN_AUDIOSCROBBLER_LOVE_TRACK'),
