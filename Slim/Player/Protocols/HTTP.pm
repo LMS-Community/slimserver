@@ -410,6 +410,8 @@ sub scanHTTPTrack {
 	
 	$client = $client->masterOrSelf;
 	
+	my $log = logger('player.source');
+	
 	# Clear previous playlist entry if any
 	$client->remotePlaylistCurrentEntry( undef );
 	
@@ -420,6 +422,11 @@ sub scanHTTPTrack {
 			my ( $track, $error ) = @_;
 			
 			if ( $track ) {
+				
+				if ( $log->is_debug ) {
+					$log->debug( "Remote scan finished for " . $track->url );
+				}
+				
 				# An HTTP URL may really be an MMS URL,
 				# check now and if so, change the URL before playback
 				if ( $track->content_type eq 'wma' ) {
@@ -428,22 +435,26 @@ sub scanHTTPTrack {
 					$mmsURL =~ s/^http/mms/i;
 					$track->url( $mmsURL );
 					$track->update;
-					
-					# Replace the item on the playlist so it has the new URL
-					my $i = 0;
-					for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
-						my $itemURL = blessed($item) ? $item->url : $item;
-						if ( $itemURL eq $nextURL ) {
-							splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, $track;
-							last;
-						}
-						$i++;
+				}
+				
+				# Replace the item on the playlist in case it was changed due to
+				# a redirect or the above MMS code
+				my $i = 0;
+				for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
+					my $itemURL = blessed($item) ? $item->url : $item;
+					if ( $itemURL eq $nextURL ) {
+						$log->debug( "Replacing playlist item $i with new track object" );
+						splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, $track;
+						last;
 					}
+					$i++;
 				}
 				
 				$callback->();
 			}
 			else {
+				$log->debug( "Remote scanning returned error: $error" );
+				
 				my $line1;
 				$error ||= 'PROBLEM_OPENING_REMOTE_URL';
 
@@ -739,7 +750,9 @@ sub onOpen {
 			url => $track->url,
 		} );
 		
-		$log->debug( "Getting next audio URL from playlist" );
+		if ( $log->is_debug ) {
+			$log->debug( "Getting next audio URL from playlist " . $track->url );
+		}
 		
 		my $next = $playlist->getNextEntry;
 		
