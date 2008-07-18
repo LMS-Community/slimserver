@@ -50,6 +50,14 @@
 
 [%- odd = 1 %]
 [%- IF items.size -%]
+	 [%- # Maintain correct index values 	
+	 	UNLESS path == 'trackinfo.html'; 
+			FOREACH item = items; 	 
+				item.index = index _ (start + loop.index); 	 
+			END; 	 
+		END;
+	%]
+
 	[% IF hasPagebar %]
 		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
 		[% PROCESS pagebar %]
