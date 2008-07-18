@@ -83,6 +83,13 @@ END %]
 END %]
 
 [%- IF items.size -%]
+	 [%- # Maintain correct index values 	
+	 	UNLESS path == 'trackinfo.html'; 
+			FOREACH item = items; 	 
+				item.index = index _ (start + loop.index); 	 
+			END; 	 
+		END;
+	%]
 
 	<div id="browsedbHeader">
 		[% IF hasPagebar %]
