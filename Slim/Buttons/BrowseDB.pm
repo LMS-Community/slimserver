@@ -371,6 +371,7 @@ sub browsedbExitCallback {
 		my $hierarchy   = $client->modeParam('hierarchy');
 		my $level       = $client->modeParam('level');
 		my $descend     = $client->modeParam('descend');
+		my $search      = $client->modeParam('search');
 
 		my $currentItem = $items->[$listIndex];
 		my @levels      = split(',', $hierarchy);
@@ -379,9 +380,17 @@ sub browsedbExitCallback {
 
 		my $all         = 0;
 		
-		# Bump on text items ("All Songs", etc)
 		if ( !ref $currentItem ) {
-			$currentItem = undef;
+			if ( $levels[$level] eq 'track' ) {
+				# If we're at 'All' and the track level - bump right. 	 
+				# Getting the same list of songs again is pointless. 	 
+				$currentItem = undef;
+			}
+			
+			if ( $search ) {
+				# Bug 8107, Also bump on 'All' items within search results
+				$currentItem = undef;
+			}
 		}
 
 		if (defined $currentItem && $levels[$level+1]) {
@@ -392,7 +401,6 @@ sub browsedbExitCallback {
 
 				$all = 1;
 			}
-
 		}
 
 		if (!defined $currentItem) {
@@ -619,6 +627,7 @@ sub browsedbOverlay {
 
 	my $hierarchy = $client->modeParam('hierarchy');
 	my $level     = $client->modeParam('level') || 0;
+	my $search    = $client->modeParam('search');
 	my @levels    = split(',', $hierarchy);
 
 	# No overlay if the list is empty
@@ -627,9 +636,18 @@ sub browsedbOverlay {
 		return (undef, undef);
 
 	} elsif (!ref($item)) {
-
-		# A text item means ALL_, so overlay a note
-		return (undef, $client->symbols('notesymbol'));
+		
+		# Overlay arrow + note for 'All' items, unless within search results
+		# or track lists
+		if ( $levels[$level] ne 'track' && !$search ) {
+			return ( undef, join( '', 	 
+				$client->symbols('notesymbol'), 	 
+				$client->symbols('rightarrow') 	 
+			) );
+		}
+		else {
+			return (undef, $client->symbols('notesymbol'));
+		}
 
 	} else {
 
