@@ -74,7 +74,9 @@ sub handleError {
 		} );
 		
 		if ( main::SLIM_SERVICE ) {
-		    logError( $client, $error );
+			SDI::Service::EventLog->log(
+				$client, 'pandora_error', $error,
+			);
 		}
 	}
 }
@@ -390,7 +392,9 @@ sub handleDirectError {
 	$http->get( $snURL );
 	
 	if ( main::SLIM_SERVICE ) {
-		logError( $client, "[$response] $status_line" );
+		SDI::Service::EventLog->log(
+			$client, 'pandora_error', "[$response] $status_line",
+		);
 	}
 	
 	# XXX: Stop after a certain number of errors in a row
