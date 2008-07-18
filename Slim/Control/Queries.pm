@@ -2710,7 +2710,7 @@ sub readDirectoryQuery {
 
 	# return all folders plus files of type
 	elsif ($filter =~ /^filetype:(.*)/) {
-		my $filterRE = qr/\.$1$/;
+		my $filterRE = qr/(?:\.$1)$/;
 		@fsitems = grep { $fsitems{$_}->{d} || $_ =~ $filterRE } @fsitems;
 	}
 
