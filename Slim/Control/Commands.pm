@@ -860,7 +860,7 @@ sub playlistJumpCommand {
 		
 		# Allow Pandora and Slacker to disallow skip
 		if ( 
-			$client->playmode =~ /play/
+			$client->playmode =~ /play|pause/
 			&& $handler
 			&& $handler->can('canDoAction')
 			&& !$handler->canDoAction( $client, $jumpURL, 'stop' )
