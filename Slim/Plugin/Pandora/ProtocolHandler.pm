@@ -196,6 +196,46 @@ sub gotNextTrack {
 	# Save metadata for this track, and save the previous track
 	$client->pluginData( currentTrack => $track );
 	
+	# Bug 8781, Seek if instructed by SN
+	# This happens when the skip limit is reached and the station has been stopped and restarted.
+	if ( $track->{startOffset} ) {
+		my @clients;
+
+		if ( Slim::Player::Sync::isSynced($client) ) {
+			# if synced, save seek data for all players
+			my $master = Slim::Player::Sync::masterOrSelf($client);
+			push @clients, $master, @{ $master->slaves };
+		}
+		else {
+			push @clients, $client;
+		}
+
+		for my $c ( @clients ) {
+			# Save the new seek point
+			$c->scanData( {
+				seekdata => {
+					newtime   => $track->{startOffset},
+					newoffset => ( 128_000 / 8 ) * $track->{startOffset},
+				},
+			} );
+		}
+		
+		# Trigger the seek after the callback
+		Slim::Utils::Timers::setTimer(
+			undef,
+			time(),
+			sub {
+				Slim::Player::Source::gototime( $client, $track->{startOffset}, 1 );
+				
+				# Fix progress bar
+				$client->streamingProgressBar( {
+					url      => Slim::Player::Playlist::url($client),
+					duration => $track->{secs},
+				} );
+			},
+		);
+	}
+	
 	my $cb = $params->{callback};
 	$cb->();
 }
@@ -208,6 +248,17 @@ sub gotNextTrackError {
 	
 	# Make sure we re-enable readNextChunkOk
 	$client->readNextChunkOk(1);
+}
+
+sub getSeekData {
+	my ( $class, $client, $url, $newtime ) = @_;
+	
+	my $track = $client->pluginData('currentTrack') || return {};
+	
+	return {
+		newoffset         => ( 128_000 / 8 ) * $newtime,
+		songLengthInBytes => ( 128_000 / 8 ) * $track->{secs},
+	};
 }
 
 # Handle normal advances to the next track
@@ -365,6 +416,9 @@ sub canDoAction {
 	if ( $action eq 'stop' && !canSkip($client) ) {
 		# Is skip allowed?
 		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
+		
+		my $track = $client->pluginData('currentTrack');
+		return 0 if $track->{ad};
 		
 		my $line1 = $client->string('PLUGIN_PANDORA_ERROR');
 		my $line2 = $client->string('PLUGIN_PANDORA_SKIPS_EXCEEDED');
@@ -630,7 +684,7 @@ sub reinit {
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );
 		
 		# Reset song duration/progress bar
-		if ( $track->{duration} ) {
+		if ( $track->{secs} ) {
 			# On a timer because $client->currentsongqueue does not exist yet
 			Slim::Utils::Timers::setTimer(
 				$client,
@@ -640,7 +694,7 @@ sub reinit {
 					
 					$client->streamingProgressBar( {
 						url      => $url,
-						duration => $track->{duration},
+						duration => $track->{secs},
 					} );
 				},
 			);

@@ -139,7 +139,7 @@ sub requestString {
 		$request .= $CRLF . $post . $CRLF;
 
 	} else {
-		$request .= $CRLF;
+		$request .= $CRLF . $CRLF;
 	}
 	
 	# Bug 5858, add cookies to the request
