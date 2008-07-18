@@ -71,7 +71,9 @@ sub handleError {
 		} );
 		
 		if ( main::SLIM_SERVICE ) {
-		    #logError( $client, $error );
+			SDI::Service::EventLog->log(
+				$client, 'slacker_error', $error,
+			);
 		}
 	}
 }
