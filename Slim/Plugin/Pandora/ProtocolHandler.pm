@@ -366,6 +366,9 @@ sub canDoAction {
 		# Is skip allowed?
 		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
 		
+		my $track = $client->pluginData('currentTrack');
+		return 0 if $track->{ad};
+		
 		my $line1 = $client->string('PLUGIN_PANDORA_ERROR');
 		my $line2 = $client->string('PLUGIN_PANDORA_SKIPS_EXCEEDED');
 		
