@@ -360,8 +360,7 @@ sub string {
 	my $newFontname = '';
 	my $font = $defaultFont;
 	my $interspace = $defaultFont->[0];
-	my $cursorpos = undef;
-	my $cursorend = 0;
+	my $cursorpos = 0;
 
 	# special characters:
 	# \x1d [29] = 'tight'  - suppress inter character space
@@ -407,7 +406,7 @@ sub string {
 
 		} elsif ($ord == 10) {
 
-			$cursorpos = length($bits);
+			$cursorpos = 1;
 
 		} else {
 
@@ -452,8 +451,9 @@ sub string {
 					$TTFCache{$defaultFontname}{$ord} = $bits_tmp if $useTTFCache;
 				}
 
-				if (defined($cursorpos) && !$cursorend) { 
-					$cursorend = length($bits_tmp) / length($defaultFont->[$ord0a]);
+				if ($cursorpos) {
+					$bits_tmp |= substr($defaultFont->[$ord0a] x length($bits_tmp), 0, length($bits_tmp));
+					$cursorpos = 0;
 				}
 
 				$bits .= $bits_tmp;
@@ -466,24 +466,31 @@ sub string {
 					$ord = 63; # 63 == '?'
 				}
 
-				if (defined($cursorpos) && !$cursorend) { 
+				if ($cursorpos) {
 
-					$cursorend = length($font->[$ord]) / length($font->[$ord0a]); 
+					my $bits_tmp = $font->[$ord];
+
+					# pad narrow characters so the cursor is wide enough to see
+					if (length($bits_tmp) < 3 * length($interspace) ) {
+						$bits_tmp = $interspace . $bits_tmp . $interspace;
+					}
+
+					$bits_tmp |= substr($defaultFont->[$ord0a] x length($bits_tmp), 0, length($bits_tmp));
+					$bits .= $bits_tmp;
+
+					$cursorpos = 0;
+
+				} else {
+
+					$bits .= $font->[$ord];
 				}
 
-				$bits .= $font->[$ord];
-
-				# add inter charater space except at end of string
+				# add inter character space except at end of string
 				if ($remaining) {
 					$bits .= $interspace;
 				}
 			}
 		}
-	}
-
-	if (defined($cursorpos)) {
-
-		$bits |= ($char0 x $cursorpos) . ($font->[$ord0a] x $cursorend);
 	}
 		
 	return ($reverse, $bits);
