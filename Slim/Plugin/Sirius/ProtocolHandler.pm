@@ -214,7 +214,9 @@ sub handleError {
 		} );
 		
 		if ( main::SLIM_SERVICE ) {
-		    #logError( $client, $error );
+			SDI::Service::EventLog->log(
+				$client, 'sirius_error', $error,
+			);
 		}
 	}
 }
