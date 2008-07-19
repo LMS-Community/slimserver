@@ -38,6 +38,9 @@ sub initPlugin {
 			
 	Slim::Control::Request::addDispatch(['pandora', 'skipTrack'],
 		[0, 1, 1, \&skipTrack]);
+	
+	Slim::Control::Request::addDispatch(['pandora', 'stationDeleted', '_stationId'],
+		[0, 1, 1, \&stationDeleted]);
 
 	$class->SUPER::initPlugin(
 		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/v1/opml'),
@@ -191,6 +194,8 @@ sub skipTrack {
 	$client->pluginData( banMode => 1 );
 	
 	$client->execute( [ "playlist", "jump", "+1" ] );
+	
+	$request->setStatusDone();
 }
 
 sub trackInfoMenu {
@@ -221,6 +226,28 @@ sub trackInfoMenu {
 			favorites => 0,
 		};
 	}
+}
+
+sub stationDeleted {
+	my $request = shift;
+	my $client  = $request->client();
+	
+	return unless defined $client;
+	
+	# ignore if user is not using Pandora
+	my $url = Slim::Player::Playlist::url($client) || return;
+	return unless $url =~ /^pandora/;
+	
+	my $stationId = $request->getParam('_stationId');
+	
+	# If user was playing this station, stop the player
+	if ( $url eq "pandora://${stationId}.mp3" ) {
+		$log->debug( 'Currently playing station was deleted, stopping playback' );
+		
+		Slim::Player::Source::playmode( $client, 'stop' );
+	}
+	
+	$request->setStatusDone();
 }
 
 1;
