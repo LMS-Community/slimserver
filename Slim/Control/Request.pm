@@ -559,7 +559,7 @@ addDispatch(['mixer',          'stereoxl',          '_newvalue'],               
 	addDispatch(['playlist',       'move',           '_fromindex', '_toindex'],                        [1, 0, 0, \&Slim::Control::Commands::playlistMoveCommand]);
 	addDispatch(['playlist',       'name',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'path',           '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
-	addDispatch(['playlist',       'play',           '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'play',           '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'playalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'playlistsinfo'],                                                   [1, 1, 1, \&Slim::Control::Queries::playlistPlaylistsinfoQuery]);
 	addDispatch(['playlist',       'playtracks',     '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);

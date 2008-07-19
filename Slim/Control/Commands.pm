@@ -1116,14 +1116,14 @@ sub playlistXitemCommand {
 	my $client   = $request->client();
 	my $cmd      = $request->getRequest(1); #p1
 	my $item     = $request->getParam('_item'); #p2
+	my $title    = $request->getParam('_title') || ''; #p3
 
 	if (!defined $item) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	$log->info("cmd : $cmd");
-	$log->info("item: $item");
+	$log->info("cmd: $cmd, item: $item, title: $title");
 
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
@@ -1164,6 +1164,12 @@ sub playlistXitemCommand {
 	$log->info("url: $url");
 
 	my $path = $url;
+	
+	# Set title if supplied
+	if ( $title ) {
+		Slim::Music::Info::setTitle( $url, $title );
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+	}
 
 	# check whether url is potentially for a local file or db entry, if so pass to playlistXtracksCommand
 	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
