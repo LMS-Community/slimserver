@@ -378,6 +378,7 @@ sub enablePlugins {
 			'Slim::Plugin::Health::Plugin'         => 1,
 			'Slim::Plugin::JiveExtras::Plugin'     => 1,
 			'Slim::Plugin::MusicMagic::Plugin'     => 1,
+			'Slim::Plugin::MyRadio::Plugin'        => 1,
 			'Slim::Plugin::PreventStandby::Plugin' => 1,
 			'Slim::Plugin::RS232::Plugin'          => 1,
 			'Slim::Plugin::RandomPlay::Plugin'     => 1,

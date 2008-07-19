@@ -587,6 +587,10 @@ sub createList {
 			 = $prefs->client($client)->get('disabledMenus')
 			|| $prefs->client($client)->set( 'disabledMenus', [] );
 		
+		if ( !ref $disabledPref ) {
+			$disabledPref = [ $disabledPref ];
+		}
+		
 		for my $item ( @{ $disabledPref } ) {
 			# Only look at '_sub' items, the others are top-level menu items
 			next unless $item =~ s/_sub$//;
@@ -608,6 +612,11 @@ sub createList {
 		if ( main::SLIM_SERVICE ) {
 			# Hide disabled menus
 			if ( exists $disabledMenus{$sub} ) {
+				next;
+			}
+			
+			# Don't display Info Browser in player UI
+			if ( $sub eq 'PLUGIN_INFOBROWSER' ) {
 				next;
 			}
 			
