@@ -615,6 +615,11 @@ sub createList {
 				next;
 			}
 			
+			# Don't display Info Browser in player UI
+			if ( $sub eq 'PLUGIN_INFOBROWSER' ) {
+				next;
+			}
+			
 			# XXX: hide beta plugins here
 			
 			# Hide out-of-country services on SN
