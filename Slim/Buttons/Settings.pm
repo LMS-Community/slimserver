@@ -25,8 +25,11 @@ use Slim::Buttons::AlarmClock;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
-use Slim::Networking::Discovery::Server;
 use Slim::Buttons::SqueezeNetwork;
+
+if ( !main::SLIM_SERVICE ) {
+	require Slim::Networking::Discovery::Server;
+}
 
 my $prefs = preferences('server');
 
@@ -672,8 +675,15 @@ sub updateVisualMode {
 sub serverListInit {
 	my $client = shift;
 
-	my @servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
-	unshift @servers, 'SQUEEZENETWORK';
+	my @servers;
+
+	if ( main::SLIM_SERVICE ) {
+		@servers = ('SqueezeCenter');
+	}
+	else {
+	 	@servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
+		unshift @servers, 'SQUEEZENETWORK';
+	}
 
 	$client->modeParam('listRef', \@servers);
 }
@@ -722,7 +732,13 @@ sub switchServer {
 						$client
 					);
 
-					$client->execute( [ 'connect', Slim::Networking::Discovery::Server::getServerAddress($server) ] );
+					if ( main::SLIM_SERVICE ) {
+						# Connect player back to their last SC
+						$client->execute( [ 'connect', 0 ] );
+					}
+					else {
+						$client->execute( [ 'connect', Slim::Networking::Discovery::Server::getServerAddress($server) ] );
+					}
 
 				}, $server);
 		

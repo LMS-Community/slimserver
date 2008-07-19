@@ -994,6 +994,11 @@ sub generateHTTPResponse {
 	if ( $path =~ $rawFilesRegexp ) {
 		$contentType = 'application/octet-stream';
 	}
+	
+	if ( $path =~ /music\/\d+\/download/ ) {
+		# Avoid generating templates for download URLs
+		$contentType = 'application/octet-stream';
+	}
 
 	# setup our defaults
 	$response->content_type($contentType);
@@ -1363,15 +1368,56 @@ sub sendStreamingFile {
 	
 	# Send the file down - and hint to the browser
 	# the correct filename to save it as.
+	my $size = -s $file;
+	
 	$response->content_type( $contentType );
-	$response->content_length( -s $file );
+	$response->content_length( $size );
 	$response->header('Content-Disposition', 
 		sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($file)))
 	);
+	
+	my $fh = FileHandle->new($file);
+	
+	# Support Range requests
+	if ( my $range = $response->request->header('Range') ) {
+		# Only support a single range request, and no support for suffix requests
+		if ( $range =~ m/^bytes=(\d+)-(\d+)?$/ ) {
+			my $first = $1 || 0;
+			my $last  = $2 || $size - 1;
+			my $total = $last - $first + 1;
+			
+			if ( $first > $size ) {
+				# invalid
+				$response->code(416);
+				$httpClient->send_response($response);
+				closeHTTPSocket($httpClient);
+				return;
+			}
+		
+			if ( $last >= $size ) {
+				$last = $size - 1;
+			}
+		
+			$log->debug("Handling Range request: $first-$last");
+		
+			seek $fh, $first, 0;
+		
+			$response->code( 206 );
+			$response->header( 'Content-Range' => "bytes $first-$last/$size" );
+			$response->content_length( $total );
+		
+			# Save total value for use later in sendStreamingResponse
+			${*$fh}{rangeTotal}   = $total;
+			${*$fh}{rangeCounter} = 0;
+		}
+	}
 
 	my $headers = _stringifyHeaders($response) . $CRLF;
-
-	my $fh = FileHandle->new($file);
+	
+	# For a range request, reduce rangeCounter to account for header size
+	if ( ${*$fh}{rangeTotal} ) {
+		${*$fh}{rangeCounter} -= length $headers;
+	}
 	
 	$streamingFiles{$httpClient} = $fh;
 
@@ -1861,6 +1907,16 @@ sub sendStreamingResponse {
 	my $silence = 0;
 	
 	$log->info("sendStreaming response begun...");
+	
+	# Keep track of where we need to stop if this is a range request
+	my $rangeTotal;
+	my $rangeCounter;
+	if ( $streamingFile && ${*$streamingFile}{rangeTotal} ) {
+		$rangeTotal   = ${*$streamingFile}{rangeTotal};
+		$rangeCounter = ${*$streamingFile}{rangeCounter};
+		
+		$log->debug( "  range request, sending $rangeTotal bytes ($rangeCounter sent)" );
+	}
 
 	if ($client && 
 			$client->isa("Slim::Player::Squeezebox") && 
@@ -1935,8 +1991,17 @@ sub sendStreamingResponse {
 			if (defined($streamingFile)) {
 
 				my $chunk = undef;
+				my $len   = MAXCHUNKSIZE;
+				
+				# Reduce len if needed for a range request
+				if ( $rangeTotal && ( $rangeCounter + $len > $rangeTotal ) ) {
+					$len = $rangeTotal - $rangeCounter;
+					$log->debug( "Reduced read length to $len for range request" );
+				}
 
-				$streamingFile->sysread($chunk, MAXCHUNKSIZE);
+				if ( $len ) {
+					$streamingFile->sysread( $chunk, $len );
+				}
 
 				if (defined($chunk) && length($chunk)) {
 
@@ -2112,6 +2177,11 @@ sub sendStreamingResponse {
 	if ($sentbytes) {
 
 		$log->info("Streamed $sentbytes to $peeraddr{$httpClient}");
+		
+		# Update sent counter if this is a range request
+		if ( $rangeTotal ) {	
+			${*$streamingFile}{rangeCounter} += $sentbytes;
+		}
 	}
 
 	return $sentbytes;
