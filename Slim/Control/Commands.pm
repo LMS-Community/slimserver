@@ -1111,7 +1111,7 @@ sub playlistXitemCommand {
 	my $client   = $request->client();
 	my $cmd      = $request->getRequest(1); #p1
 	my $item     = $request->getParam('_item'); #p2
-	my $title    = $request->getParam('_title'); #p3
+	my $title    = $request->getParam('_title') || ''; #p3
 
 	if (!defined $item) {
 		$request->setStatusBadParams();
