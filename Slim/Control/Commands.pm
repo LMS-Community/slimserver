@@ -185,6 +185,9 @@ sub clientConnectCommand {
 		elsif ( $host =~ /^www.test.squeezenetwork.com$/i ) {
 			$host = 2;
 		}
+		elsif ( $host eq '0' ) {
+			# SqueezeCenter (used on SN)
+		}
 		else {
 			my $ip = Net::IP->new($host);
 			if ( !defined $ip ) {
