@@ -131,6 +131,12 @@ sub _players_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
+	# don't report errors when querying access protected server etc.
+	if ($error =~ /(?:401\b)/) {
+		$log->info( "Unable to get players: $error" );
+		return;
+	}
+
 	$log->error( "Unable to get players: $error" );
 }
 
