@@ -156,6 +156,10 @@ function _init() {
 						&& this.playerStatus.playtime >= this.playerStatus.duration-1
 						&& this.playerStatus.playtime <= this.playerStatus.duration + 2)
 						this.getStatus();
+	
+					// force 0 for current time when stopped
+					if (this.playerStatus.mode == 'stop')
+						this.playerStatus.playtime = 0;
 
 					this.fireEvent('playtimeupdate', {
 						current: this.playerStatus.playtime,
@@ -163,12 +167,8 @@ function _init() {
 						remaining: this.playerStatus.duration ? parseInt(this.playerStatus.playtime) - this.playerStatus.duration : 0
 					})
 	
-					// force 0 for current time when stopped
-					if (this.playerStatus.mode == 'stop')
-						this.playerStatus.playtime = 0;
-	
 					// only increment interim value if playing and not scanning (FWD/RWD)
-					else if (this.playerStatus.mode == 'play' && this.playerStatus.rate == 1)
+					if (this.playerStatus.mode == 'play' && this.playerStatus.rate == 1)
 						this.playerStatus.playtime += 0.5;
 	
 					self.timer.delay(500);
