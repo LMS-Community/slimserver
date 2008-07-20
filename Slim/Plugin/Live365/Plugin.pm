@@ -11,6 +11,12 @@ use Slim::Networking::SqueezeNetwork;
 use Slim::Player::ProtocolHandlers;
 use Slim::Plugin::Live365::ProtocolHandler;
 
+my $log = Slim::Utils::Log->addLogCategory( {
+	category     => 'plugin.live365',
+	defaultLevel => 'ERROR',
+	description  => 'PLUGIN_LIVE365_MODULE_NAME',
+} );
+
 sub initPlugin {
 	my $class = shift;
 	
