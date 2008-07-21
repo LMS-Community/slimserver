@@ -14,24 +14,7 @@
 	</script>
 [% UNLESS noEdit %]
 	<script type="text/javascript">
-		Ext.onReady(function(){
-			new SqueezeJS.UI.Sortable({
-				el: 'browsedbList',
-				selector: '#browsedbList div.draggableSong',
-				onDropCmd: function(sourcePos, targetPos) {
-					SqueezeJS.Controller.request({
-						params: [ '', [
-							'playlists',
-							'edit',
-							'playlist_id:' + [% playlist.id || 0 %],
-							'cmd:move',
-							'index:' + sourcePos,
-							'toindex:' + targetPos
-						]]
-					});
-				}
-			})
-		});
+		Ext.onReady(function(){ Browse.initPlaylistEditing([% playlist.id || 0 %]); });
 	</script>
 [% END; END %]
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]

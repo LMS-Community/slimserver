@@ -87,9 +87,20 @@
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50" noby=0 %][% IF item.hierarchy %]</a>[% END -%]
 				</span>
 				<div class="browseItemDetail">
-					[% IF levelName == 'playlisttrack'; PROCESS trackinfo; ELSE -%]
+					[% IF levelName == 'playlisttrack';
+						includeArtist = item.includeArtist;
+						includeAlbum = item.includeAlbum;
+						PROCESS trackinfo item.includeArtist = 0 item.includeAlbum = 0; 
+						item.includeArtist = includeArtist;
+						item.includeAlbum = includeAlbum;
+					ELSE -%]
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END; END -%]
 				</div>
+				[% IF levelName == 'playlisttrack' && item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
+					<div class="browseItemDetail">
+						<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
+					</div>
+				[% END %]
 				[% IF item.showYear && item.year -%]
 					<div class="browseItemDetail">
 						<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
