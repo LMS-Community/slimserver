@@ -801,7 +801,7 @@ sub getMix {
 
 		$log->debug("Original $songs[$j] : New $newPath");
 
-		if ( -e $newPath ) {
+		if ( -e $newPath || -e Slim::Utils::Unicode::utf8encode_locale($newPath) ) {
 			push @mix, Slim::Utils::Misc::fileURLFromPath($newPath);
 		} else {
 			$log->error('MIP attempted to mix in a song at ' . $newPath . ' that can\'t be found at that location');

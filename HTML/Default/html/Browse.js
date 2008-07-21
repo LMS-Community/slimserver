@@ -124,6 +124,26 @@ Browse = {
 
 		SqueezeJS.setCookie('SqueezeCenter-orderBy', option);
 		location.search = params;
+	},
+
+	initPlaylistEditing: function(id){
+		new SqueezeJS.UI.Sortable({
+			el: 'browsedbList',
+			selector: '#browsedbList div.draggableSong',
+			highlighter: Highlighter,
+			onDropCmd: function(sourcePos, targetPos) {
+				SqueezeJS.Controller.request({
+					params: [ '', [
+						'playlists',
+						'edit',
+						'playlist_id:' + id,
+						'cmd:move',
+						'index:' + sourcePos,
+						'toindex:' + targetPos
+					]]
+				});
+			}
+		})
 	}
 };
 
