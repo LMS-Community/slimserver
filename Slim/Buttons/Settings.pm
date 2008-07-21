@@ -916,7 +916,7 @@ sub serverListInit {
 }
 
 sub switchServer {
-	my ($client, $exittype) = @_;
+	my ($client, $exittype, $server) = @_;
 
 	$exittype = uc($exittype);
 					
@@ -926,7 +926,7 @@ sub switchServer {
 					
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $server = ${$client->modeParam('valueRef')}; 
+		$server ||= ${$client->modeParam('valueRef')}; 
 
 		if ($server eq 'SQUEEZENETWORK') {
 

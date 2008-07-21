@@ -677,7 +677,11 @@ sub tuneIn {
 	my ($client, $params) = @_;
 	
 	if ( $params->{'url'} ) {
-		$client->execute( [ 'playlist', 'play', $params->{'url'} ] );
+		$client->execute( [ 
+			'playlist', 
+			$params->{'tuneInAdd'} ? 'add' : 'play', 
+			$params->{'url'} 
+		] );
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
