@@ -8574,6 +8574,9 @@ NONE
 	NO	Ingen
 	ZH_CN	无
 
+LOW
+	EN	Low
+
 HIGH
 	CS	Vysoký
 	DA	Høj

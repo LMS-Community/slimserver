@@ -192,17 +192,32 @@ sub init {
 						},
 				
 						'STEREOXL'           => {
-							'useMode'      => 'INPUT.Bar',
-							'header'       => 'STEREOXL',
-							'stringHeader' => 1,
-							'headerValue'  => 'unscaled',
-							'min'          => sub { shift->minXL(); },
-							'max'          => sub { shift->maxXL(); },
-							'increment'    => 1,
-							'cursor'       => 0,
-							'onChange'     =>  \&executeCommand,
-							'command'      => 'mixer',
-							'subcommand'   => 'stereoxl',
+							'useMode'      => 'INPUT.Choice',
+							'listRef'      => [
+								{
+									name   => '{CHOICE_OFF}',
+									value  => 0,
+								},
+								{
+									name   => '{LOW}',
+									value  => 1,
+								},
+								{
+									name   => '{HIGH}',
+									value  => 2,
+								},
+							],
+							'onPlay'       => sub { 
+								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
+							},
+							'onAdd'        => sub { 
+								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
+							},
+							'onRight'      => sub { 
+								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
+							},
+							'header'       => '{STEREOXL}{count}',
+							'pref'            => "stereoxl",
 							'initialValue' => sub { return $_[0]->stereoxl() },
 							'condition'   => sub {
 								my $client = shift;
