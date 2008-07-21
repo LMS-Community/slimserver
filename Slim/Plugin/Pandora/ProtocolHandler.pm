@@ -406,7 +406,9 @@ sub handleDirectError {
 sub canSkip {
 	my $client = shift;
 	
-	if ( my $track = $client->pluginData('currentTrack') ) {
+	my $track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	
+	if ( $track ) {
 		return $track->{canSkip};
 	}
 	
@@ -421,7 +423,7 @@ sub canDoAction {
 		# Is skip allowed?
 		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
 		
-		my $track = $client->pluginData('currentTrack');
+		my $track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 		return 0 if $track->{ad};
 		
 		my $line1 = $client->string('PLUGIN_PANDORA_ERROR');
