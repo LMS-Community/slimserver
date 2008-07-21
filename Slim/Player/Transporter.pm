@@ -123,18 +123,11 @@ sub play {
 	if ($url) {
 
 		if (Slim::Music::Info::isDigitalInput($url)) {
-
-			# Bug 8560, stop the player before starting a new one
-			Slim::Player::Source::playmode($client, 'stop');
-			
-			$client->setDigitalInput($url);
-			$client->directURL($url);
-			Slim::Player::Source::trackStartEvent($client);
-
+			# The Digital Input plugin will handle this, so just return
 			return 1;
 
-		} else {
-
+		}
+		else {
 			logger('player.source')->info("Setting DigitalInput to 0 for [$url]");
 
 			$client->setDigitalInput(0);
