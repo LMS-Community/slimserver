@@ -12,23 +12,21 @@ package Slim::Plugin::DigitalInput::ProtocolHandler;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
-# Fake out Slim::Player::Source::openSong() into thinking we're a direct stream.
-
 use strict;
-use base qw(FileHandle);
 
-sub new {
-	my $class  = shift;
-	my $args   = shift;
+use Slim::Utils::Log;
 
-	my $url    = $args->{'url'};
-	my $client = $args->{'client'};
+my $log = logger('player.source');
 
-	if ($url !~ /^source:/) {
-		return undef;
-	}
+sub overridePlayback {
+	my ( $class, $client, $url ) = @_;
+	
+	$log->debug( "Switching to digital input $url" );
+	
+	$client->setDigitalInput($url);
+	$client->directURL($url);
 
-	return $class->SUPER::new();
+	return 1;
 }
 
 sub canDirectStream {
