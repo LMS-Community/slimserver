@@ -66,6 +66,9 @@
 	<li>
 		New notification mechanism for alarms: "<a href="#alarmNotify">alarm &lt;sound|end|snooze|snooze_end&gt; &lt;id&gt;</a>".
 	</li>
+	<li>
+		New query to get localized strings: "<a href="#getstring">getstring &lt;STRINGTOKEN1[,STRINGTOKEN2...]&gt;</a>".
+	</li>
 </ul>
  
 <hr>
@@ -618,6 +621,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#pref">pref</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#getstring">getstring</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#debug">debug</a></code></strong>
 	</li>
 	<li>
@@ -897,6 +903,36 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;pref validate audiodir %2fsome%2fincorrect%2ffilepath&quot;
 		<br>
 		Response: &quot;pref validate audiodir valid:0&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="getstring">
+	<strong>
+		<code>
+			getstring 
+			&lt;STRINGTOKEN1[,STRINGTOKEN2...]&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;getstring&quot; command allows the caller to query
+	one or several localized strings. String tokens can be passed as a single,
+	concatenated value.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;getstring HOME &lt;LF&gt;&quot;
+		<br>
+		Response: &quot;getstring HOME:Startseite &lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request:  &quot;getstring SETTINGS,SCREENSAVERS,HOME &lt;LF&gt;&quot;
+		<br>
+		Response: &quot;getstring SETTINGS:Einstellungen SCREENSAVERS:Bildschirmschoner HOME:Startseite &lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

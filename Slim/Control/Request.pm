@@ -489,6 +489,7 @@ sub init {
 	addDispatch(['readdirectory',  '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::readDirectoryQuery]);
 	addDispatch(['genre',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['genres',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::genresQuery]);
+	addDispatch(['getstring',      '_tokens'],                                                         [0, 1, 0, \&Slim::Control::Queries::getStringQuery]);
 	addDispatch(['info',           'total',          'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'artists',    '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'genres',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
@@ -500,10 +501,9 @@ sub init {
 	addDispatch(['mixer',          'bass',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'bass',           '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'muting',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',          'muting',         '_newvalue'],                                    
-[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-	addDispatch(['mixer',          'stereoxl',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-addDispatch(['mixer',          'stereoxl',          '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+	addDispatch(['mixer',          'muting',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+	addDispatch(['mixer',          'stereoxl',       '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+	addDispatch(['mixer',          'stereoxl',       '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'pitch',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'pitch',          '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'treble',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);

@@ -1398,6 +1398,28 @@ sub genresQuery {
 }
 
 
+sub getStringQuery {
+	my $request = shift;
+	
+	$log->info("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['getstring']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $tokenlist = $request->getParam('_tokens');
+
+	foreach my $token (split /,/, $tokenlist) {
+		$request->addResult($token, $request->string($token));
+	}
+	
+	$request->setStatusDone();
+}
+
+
 sub infoTotalQuery {
 	my $request = shift;
 	
