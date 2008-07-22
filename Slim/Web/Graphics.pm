@@ -156,11 +156,9 @@ sub processCoverArtRequest {
 
 	my ($obj, $imageData, $cachedImage, $cacheKey);
 	
-	# Check for a cached resize of an album cover
-	if ( $trackid =~ /^\d+$/ ) {
-		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour, $suffix);
-		
-		$log->info("  artwork cache key: $cacheKey");
+	# Check for a cached resize
+	if ( $trackid ne 'current' ) {
+		$cacheKey = $path;
 		
 		if ( $cachedImage = $cache->get($cacheKey) ) {
 			my $artworkFile = $cachedImage->{'orig'};
