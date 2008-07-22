@@ -123,7 +123,7 @@
 		</select>
 	[% END %]
 
-	[% IF useExtJS && prefs.alarms.size %]
+	[% IF useExtJS %]
 		[% WRAPPER setting title="ALARM" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
 			<input name="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]" onclick="Ext.get('alarm[% newAlarmID %]').show();Ext.get('button[% newAlarmID %]').setDisplayed('none');">
 		[% END %]
