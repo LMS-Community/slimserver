@@ -1719,6 +1719,14 @@ sub _cliQuery_done {
 							$cnt++;
 						}
 						
+						if ( my $desc = $hash{description} ) {
+							my $text = $request->client->string('DESCRIPTION') . ": $desc";
+							$request->addResultLoop($loopname, $cnt, 'text', $text);
+							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
+							$request->addResultLoop($loopname, $cnt, 'action', 'none');
+							$cnt++;
+						}
+
 						if ( my $bitrate = $hash{bitrate} ) {
 							my $text = $request->client->string('BITRATE') . ": $bitrate " . $request->client->string('KBPS');
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
