@@ -2411,22 +2411,17 @@ sub _getFileContent {
 	$path = fixHttpPath($skin, $path) || return;
 
 	$log->info("Reading http file for ($path)");
+	
+	if ( $statOnly ) {
+		($inode, $size, $mtime) = (stat($path))[1,7,9];
+		return (\$content, $mtime, $inode, $size);
+	}
 
 	open($template, $path);
 
-
 	if ($template) {
 		($inode, $size, $mtime) = (stat($template))[1,7,9];
-	}
-
-	# If we only want the file attributes and not the content - close the
-	# filehandle before slurping in the bits.
-	if ($statOnly && $template) {
-
-		close $template;
-
-	} elsif ($template) {
-
+		
 		local $/ = undef;
 		binmode($template) if $binary;
 		$content = <$template>;
