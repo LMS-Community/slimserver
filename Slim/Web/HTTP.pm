@@ -133,6 +133,9 @@ sub init {
 
 		$Template::Config::STASH = 'Template::Stash::XS';
 	}
+	
+	# Preload skins so they aren't loaded on the first request
+	%skins = skins();
 
 	# Initialize all the web page handlers.
 	Slim::Web::Pages::init();
