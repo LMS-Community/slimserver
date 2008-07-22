@@ -511,6 +511,49 @@ Settings.Alarm = function() {
 				}
 			}
 		},
+		
+		initSnoozeSlider: function() {
+			var el;
+
+			if (el = Ext.get('alarmSnoozeMinutes')) {
+
+				var tpl = new Ext.Template('<span class="settingsSlider" id="snooze_slider"></span>');
+				var sliderEl = tpl.insertBefore(el, {id:el.id}, true);	
+				
+				this.sliders[el.id] = new Ext.Slider({
+					renderTo: sliderEl,
+					width: 200,
+					minValue: 1,
+					maxValue: 180,
+					increment: 1,
+					plugins: this.tip,
+					value: isNaN(parseInt(el.dom.value)) ? 5 : parseInt(el.dom.value),
+			 		input: el,
+			 		setSnooze: function(v){
+						v = parseInt(v);
+						if (isNaN(v))
+							v = 5;
+							
+						this.setValue(v);
+					}
+				});
+
+				el.on({
+					change: {
+						fn: function(ev, i){
+							this.setSnooze(i.value);
+						},
+						scope: this.sliders[el.id]
+					},
+					keyup: {
+						fn: function(ev, i){
+							this.setSnooze(i.value);
+						},
+						scope: this.sliders[el.id]
+					}
+				});
+			}
+		},
 
 		useDefaultVolume: function(id, enabled){
 

@@ -5,6 +5,7 @@
 			if (!Ext.isIE6) {
 				Settings.Alarm.initTimeControls('[% timeFormat %]', '[% altFormats %]');
 				Settings.Alarm.initSliders();
+				Settings.Alarm.initSnoozeSlider();
 				Settings.Alarm.initDefaultVolumeBtns();
 			}
 
@@ -149,8 +150,8 @@
 		<input type="text" class="stdedit volumeSlider" name="pref_alarmDefaultVolume" id="alarmDefaultVolume" value="[% prefs.pref_alarmDefaultVolume %]" size="3">
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_SNOOZE_SECONDS" desc="SETUP_SNOOZE_SECONDS_DESC" %]
-		<input type="text" class="stdedit" name="pref_alarmSnoozeSeconds" id="alarmSnoozeSeconds" value="[% prefs.pref_alarmSnoozeSeconds %]" size="20">
+	[% WRAPPER setting title="SETUP_SNOOZE_MINUTES" desc="SETUP_SNOOZE_MINUTES_DESC" %]
+		<input type="text" class="stdedit" name="pref_alarmSnoozeMinutes" id="alarmSnoozeMinutes" value="[% prefs.pref_alarmSnoozeMinutes %]" size="3">
 	[% END %]
 
 	[% WRAPPER setting title="ALARM_FADE" desc="" %]

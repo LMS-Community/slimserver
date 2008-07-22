@@ -41,13 +41,11 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	return ($prefs->client($client), qw(alarmSnoozeSeconds alarmfadeseconds alarmsEnabled alarmDefaultVolume));
+	return ($prefs->client($client), qw(alarmfadeseconds alarmsEnabled alarmDefaultVolume));
 }
 
 sub handler {
 	my ($class, $client, $paramRef) = @_;
-
-	my $prefs = preferences('server');
 
 	my ($prefsClass, @prefs) = $class->prefs($client);
 
@@ -65,6 +63,8 @@ sub handler {
 	}
 
 	if ($paramRef->{'saveSettings'}) {
+
+		$prefsClass->set('alarmSnoozeSeconds', $paramRef->{'pref_alarmSnoozeMinutes'} * 60);
 
 		for my $alarmID ( @{ $editedAlarms->{id} } ) {
 
@@ -91,6 +91,8 @@ sub handler {
 
 		}
 	}
+
+	$paramRef->{'prefs'}->{'pref_alarmSnoozeMinutes'} = $prefsClass->get('alarmSnoozeSeconds') / 60;
 
 	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
 	

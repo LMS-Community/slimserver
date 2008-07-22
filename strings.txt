@@ -1448,11 +1448,11 @@ ALARM_SNOOZE
 ALARM_SNOOZE_ENDED
 	EN	Snooze Ended
 
-SETUP_SNOOZE_SECONDS
-	EN	Snooze time in seconds
+SETUP_SNOOZE_MINUTES
+	EN	Snooze time in minutes
 
-SETUP_SNOOZE_SECONDS_DESC
-	EN	Define the time in seconds you'd like the alarm to pause when you hit the snooze button. 
+SETUP_SNOOZE_MINUTES_DESC
+	EN	Define the time in minutes you'd like the alarm to pause when you hit the snooze button. 
 
 ALARM_STOPPED
 	DE	Wecker angehalten
