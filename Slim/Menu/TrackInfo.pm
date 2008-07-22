@@ -1258,6 +1258,10 @@ sub infoUrl {
 			name => $track->isRemoteURL($turl)
 				? cstring($client, 'URL') . cstring($client, 'COLON') . ' ' . Slim::Utils::Misc::unescape($turl)
 				: cstring($client, 'LOCATION') . cstring($client, 'COLON') . ' ' . Slim::Utils::Unicode::utf8decode( Slim::Utils::Misc::pathFromFileURL($turl) ),
+				
+			weblink => $track->isRemoteURL($turl)
+				? undef
+				: '/music/' . $track->id . '/download',
 		};
 	}
 	
