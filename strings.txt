@@ -12785,14 +12785,14 @@ INFORMATION_SPECIFIC_PLAYER
 
 INFORMATION_MENU_SERVER
 	CS	Informace serveru
-	DA	SqueezeCenter Information
-	DE	SqueezeCenter Informationen
-	EN	SqueezeCenter Information
-	ES	Información de SqueezeCenter
+	DA	SqueezeCenter
+	DE	SqueezeCenter
+	EN	SqueezeCenter
+	ES	SqueezeCenter
 	FI	Palvelimen tiedot
-	FR	Informations sur le SqueezeCenter
+	FR	SqueezeCenter
 	HE	מידע אודות השרת
-	IT	Informazioni sul SqueezeCenter
+	IT	SqueezeCenter
 	JA	サーバー情報
 	NL	Serverinformatie
 	NO	Server informasjon
