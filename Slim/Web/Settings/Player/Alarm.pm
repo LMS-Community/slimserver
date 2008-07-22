@@ -97,8 +97,10 @@ sub handler {
 	$paramRef->{'playlistOptions'} = \%playlistTypes;
 	$paramRef->{'newAlarmID'}      = NEWALARMID;
 	
-	# need to convert our timeformat into JS/PHP compatible format
 	$paramRef->{'timeFormat'} = $prefs->get('timeFormat');
+	# need to remove seconds
+	$paramRef->{'timeFormat'} =~ s/[\.,:]{1}\%S//g;
+	# need to convert our timeformat into JS/PHP compatible format
 	$paramRef->{'timeFormat'} =~ s/h/\\\\h/g;
 	$paramRef->{'timeFormat'} =~ s/\|\%I/g/g;
 	$paramRef->{'timeFormat'} =~ s/\%I/h/g;
