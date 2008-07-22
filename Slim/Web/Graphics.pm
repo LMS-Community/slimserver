@@ -13,6 +13,8 @@ use Slim::Utils::Prefs;
 use File::Basename;
 use File::Spec::Functions qw(:ALL);
 
+my $prefs = preferences('server');
+
 my %typeToMethod = (
 	'image/gif'  => 'newFromGifData',
 	'image/jpeg' => 'newFromJpegData',
@@ -391,8 +393,6 @@ sub processCoverArtRequest {
 						$returnedWidth  = $requestedWidth;
 						$returnedHeight = $requestedHeight;
 
-						my $prefs = preferences('server');
-
 						# don't cache if width or height not set so pref can be changed
 						unless (defined($returnedWidth)) {
 							$returnedWidth = $prefs->get('thumbSize') || 100;
@@ -591,6 +591,13 @@ sub processCoverArtRequest {
 		
 		my $imageFilePath = blessed($obj) ? $obj->cover : 0;
 		$imageFilePath = $obj->path if $imageFilePath eq 1;
+		
+		if ( $trackid eq 'notCoverArt' ) {
+			# Cache the path to a non-cover icon image
+			my $skin = $params->{'skinOverride'} || $prefs->get('skin');
+			
+			$imageFilePath = Slim::Web::HTTP::fixHttpPath($skin, $actualPathToImage);
+		}
 		
 		my $cached = {
 			'orig'        => $imageFilePath, # '0' means no file to check mtime against
