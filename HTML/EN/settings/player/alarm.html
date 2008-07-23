@@ -48,7 +48,7 @@
 [% BLOCK alarmSetting %]
 	[% WRAPPER settingSection %]
 
-		[% alarmTitle = "ALARM_ALARM" | string %]
+		[% alarmTitle = (alarmTitle ? alarmTitle : "ALARM_ALARM") | string %]
 		[% WRAPPER settingGroup title=alarmTitle _ " " _ loop.count desc="" %]
 			<select class="stdedit" name="alarm_enable[% alarm.id %]" id="alarm_enable[% alarm.id %]">
 		
@@ -141,19 +141,20 @@
 	[% END %]
 
 	[% IF useExtJS %]
-		[% WRAPPER setting title="ALARM" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
+		[% WRAPPER setting title="ALARM_NEW" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
 			<input name="AddAlarm" id="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]">
 		[% END %]
 	[% END %]
 
 	<div class="alarmSection">
-	[% alarmTitle = "ALARM_NEW" | string; sectionID="alarm" _ newAlarmID %]
+	[% alarmTitle = "ALARM_NEW"; sectionID="alarm" _ newAlarmID %]
 	[% PROCESS alarmSetting alarm = { 
 		id      => newAlarmID
 		day     => 1
 		enabled => 1
 		repeat  => 1
 	} %]
+	[% alarmTitle = "" %]
 	</div>
 
 	<div class="alarmSection">
