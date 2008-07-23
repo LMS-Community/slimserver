@@ -10,6 +10,7 @@ use warnings;
 use HTML::Entities qw(encode_entities);
 use JSON::XS::VersionOneAndTwo;
 use MIME::Base64 qw(decode_base64);
+use Net::IP;
 use Scalar::Util qw(blessed);
 
 use Slim::Plugin::RhapsodyDirect::RPDS;
@@ -234,7 +235,35 @@ sub getAccount {
 }
 
 sub getPlaybackSession {
-	my ( $client, $data, $url, $callback ) = @_;
+	my ( $client, $data, $url, $callback, $sentip ) = @_;
+	
+	if ( !$sentip ) {
+		# Lookup the correct address for secure-direct and inform the players
+		# The firmware has a hardcoded address but it may change
+		my $dns = Slim::Networking::Async->new;
+		$dns->open( {
+			Host    => 'secure-direct.rhapsody.com',
+			onDNS   => sub {
+				my $ip = shift;
+				
+				$log->debug( "Found IP for secure-direct.rhapsody.com: $ip" );
+				
+				$ip = Net::IP->new($ip);
+				
+				rpds( $client, {
+					data        => pack( 'cNn', 0, $ip->intip, 443 ),
+					_noresponse => 1,
+				} );
+				
+				getPlaybackSession( $client, $data, $url, $callback, 1 );
+			},
+			onError => sub {
+				handleError( $client->string('PLUGIN_RHAPSODY_DIRECT_DNS_ERROR'), $client );
+			},
+		} );
+		
+		return;
+	}
 	
 	# Always get a new playback session
 	if ( $log->is_debug ) {
@@ -458,7 +487,7 @@ sub onJump {
 			# Sometimes while changing tracks we get a 'playlist clear' after
 			# this runs, so set a flag to ignore this
 			$client->pluginData( trackStarting => 1 );
-
+			
 			rpds( $client, {
 				data        => pack( 'c', 6 ),
 				callback    => \&getPlaybackSession,
