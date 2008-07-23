@@ -629,7 +629,6 @@ SqueezeJS.UI.Sortable.prototype = {
 			if (sourcePos >= 0 && targetPos >= 0) {
 				if ((sourcePos > targetPos && position > 0) || (sourcePos < targetPos && position < 0)) {
 					targetPos += position;
-					target = Ext.DomQuery.selectNode(this.selector + ':nth(' + (targetPos+position) + ')');
 				}
 			}
 
@@ -637,7 +636,7 @@ SqueezeJS.UI.Sortable.prototype = {
 				if (position == 0)
 					source.remove();
 
-				else if (sourcePos > targetPos)
+				else if (position < 0)
 					source.insertBefore(target);
 
 				else
