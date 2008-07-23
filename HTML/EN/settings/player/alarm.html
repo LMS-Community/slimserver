@@ -3,45 +3,9 @@
 		Ext.onReady(function() {
 			// I'm sorry IE6 laggers
 			if (!Ext.isIE6) {
+				Settings.Alarm.init('[% newAlarmID %]', [% prefs.alarms.size %]);
 				Settings.Alarm.initTimeControls('[% timeFormat %]', '[% altFormats %]');
-				Settings.Alarm.initSliders();
-				Settings.Alarm.initSnoozeSlider();
-				Settings.Alarm.initDefaultVolumeBtns();
 			}
-
-			var el;
-			if (el = Ext.get('alarm_remove_[% newAlarmID %]')) {
-				el.on({
-					click: {
-						fn: function() {
-							Ext.get('alarmtime[% newAlarmID %]').dom.value = '';
-							Ext.get('alarm[% newAlarmID %]').setDisplayed('none');
-							Ext.get('button[% newAlarmID %]').show();
-						}
-					}
-				});
-			}
-
-			if (el = Ext.get('AddAlarm')) {
-				el.on({
-					click: {
-						fn: function() {
-							Ext.get('alarm[% newAlarmID %]').show();
-							Ext.get('button[% newAlarmID %]').setDisplayed('none');
-						}
-					}
-				});
-
-				[% IF !prefs.alarms.size %]
-					Ext.get('alarm[% newAlarmID %]').show();
-					Ext.get('button[% newAlarmID %]').setDisplayed('none');
-				[% END %]
-			}
-
-			[% IF prefs.alarms.size %]
-			if (el = Ext.get('alarm[% newAlarmID %]'))
-				el.setDisplayed('none');
-			[% END %]
 		});
 	</script>
 [% END; END %]

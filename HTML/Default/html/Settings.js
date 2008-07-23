@@ -430,16 +430,42 @@ Settings.Alarm = function() {
 	return {
 		sliders: new Array(),
 
-		tip: {
-			init : function(slider){
-				slider.on('dragstart', this.onSlide, this);
-				slider.on('drag', this.onSlide, this);
-				slider.on('change', this.onSlide, this);
-			},
-		
-			onSlide : function(slider){
-				slider.input.dom.value = slider.getValue();
+		init: function(alarmId, alarmCount) {
+			this.initSliders();
+			this.initSnoozeSlider();
+			this.initDefaultVolumeBtns();
+
+			var el;
+			if (el = Ext.get('alarm_remove_' + alarmId)) {
+				el.on({
+					click: {
+						fn: function() {
+							Ext.get('alarmtime' + alarmId).dom.value = '';
+							Ext.get('alarm' + alarmId).setDisplayed('none');
+							Ext.get('button' + alarmId).show();
+						}
+					}
+				});
 			}
+
+			if (el = Ext.get('AddAlarm')) {
+				el.on({
+					click: {
+						fn: function() {
+							Ext.get('alarm' + alarmId).show();
+							Ext.get('button' + alarmId).setDisplayed('none');
+						}
+					}
+				});
+
+				if (alarmCount == 0) {
+					Ext.get('alarm' + alarmId).show();
+					Ext.get('button' + alarmId).setDisplayed('none');
+				}
+			}
+
+			if (alarmCount > 0 && (el = Ext.get('alarm' + alarmId)))
+				el.setDisplayed('none');
 		},	
 		
 		initTimeControls: function(timeFormat, altFormats) {
