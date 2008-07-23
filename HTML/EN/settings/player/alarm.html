@@ -22,7 +22,23 @@
 				});
 			}
 
-			[% IF prefs.alarms.size %]   
+			if (el = Ext.get('AddAlarm')) {
+				el.on({
+					click: {
+						fn: function() {
+							Ext.get('alarm[% newAlarmID %]').show();
+							Ext.get('button[% newAlarmID %]').setDisplayed('none');
+						}
+					}
+				});
+
+				[% IF !prefs.alarms.size %]
+					Ext.get('alarm[% newAlarmID %]').show();
+					Ext.get('button[% newAlarmID %]').setDisplayed('none');
+				[% END %]
+			}
+
+			[% IF prefs.alarms.size %]
 			if (el = Ext.get('alarm[% newAlarmID %]'))
 				el.setDisplayed('none');
 			[% END %]
@@ -126,7 +142,7 @@
 
 	[% IF useExtJS %]
 		[% WRAPPER setting title="ALARM" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
-			<input name="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]" onclick="Ext.get('alarm[% newAlarmID %]').show();Ext.get('button[% newAlarmID %]').setDisplayed('none');">
+			<input name="AddAlarm" id="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]">
 		[% END %]
 	[% END %]
 
