@@ -40,7 +40,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_ITEMSPERPAGE" desc="SETUP_ITEMSPERPAGE_DESC" %]
-		<input type="text" class="stdedit" name="pref_itemsPerPage" id="itemsPerPage" value="[% prefs.pref_itemsPerPage %]" size="15">
+		<input type="text" class="stdedit sliderInput_10_500_10" name="pref_itemsPerPage" id="itemsPerPage" value="[% prefs.pref_itemsPerPage %]" size="15">
 	[% END %]
 
 	[% IF useExtJS %]   
@@ -50,11 +50,11 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_REFRESHRATE" desc="SETUP_REFRESHRATE_DESC" %]
-		<input type="text" class="stdedit" name="pref_refreshRate" id="refreshRate" value="[% prefs.pref_refreshRate %]" size="15">
+		<input type="text" class="stdedit sliderInput_2_300_5" name="pref_refreshRate" id="refreshRate" value="[% prefs.pref_refreshRate %]" size="15">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_THUMBSIZE" desc="SETUP_THUMBSIZE_DESC" %]
-		<input type="text" class="stdedit" name="pref_thumbSize" id="thumbSize" value="[% prefs.pref_thumbSize %]" size="15">
+		<input type="text" class="stdedit sliderInput_25_250" name="pref_thumbSize" id="thumbSize" value="[% prefs.pref_thumbSize %]" size="15">
 	[% END %]
 
 	[% WRAPPER settingSection %]
@@ -96,7 +96,7 @@
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_DISPLAYTEXTTIMEOUT" desc="SETUP_DISPLAYTEXTTIMEOUT_DESC"%]
-		<input type=text class="stdedit" name="pref_displaytexttimeout" id="displaytexttimeout" value="[% prefs.pref_displaytexttimeout || 0 %]" size="15">
+		<input type=text class="stdedit sliderInput_1_100" name="pref_displaytexttimeout" id="displaytexttimeout" value="[% prefs.pref_displaytexttimeout || 0 %]" size="15">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

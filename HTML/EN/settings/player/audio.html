@@ -163,7 +163,7 @@
 			[% END %]
 	
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
-				<input type="text" class="stdedit" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="15">
+				<input type="text" class="stdedit sliderInput_0_10" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="15">
 			[% END %]
 
 		[% END %]
@@ -188,7 +188,7 @@
 	
 			[% IF prefs.exists('preampVolumeControl') %]
 				[% WRAPPER settingGroup title="SETUP_PREAMPVOLUMECONTROL" desc="SETUP_PREAMPVOLUMECONTROL_DESC" %]
-					<input type="text" class="stdedit" name="preampVolumeControl" id="preampVolumeControl" value="[% prefs.preampVolumeControl %]" size="15">	
+					<input type="text" class="stdedit sliderInput_0_63" name="preampVolumeControl" id="preampVolumeControl" value="[% prefs.preampVolumeControl %]" size="15">	
 				[% END %]
 			[% END %]
 	
