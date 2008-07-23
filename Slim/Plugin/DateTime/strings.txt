@@ -4,63 +4,81 @@
 
 PLUGIN_SCREENSAVER_DATETIME
 	CS	Datumový spořič
-	DA	Pauseskærm dato og tid
+	DA	Pauseskærm med dato og klokkeslæt
 	DE	Bildschirmschoner: Datum/Zeit
 	EN	Date and Time Screensaver
 	ES	Protector de pantalla de fecha y hora
+	FI	Päivämäärä ja aika -näytönsäästäjä
 	FR	Ecran de veille Date/Heure
 	HE	שומר מסך של תאריך ושעה
 	IT	Screen saver con data e ora
 	NL	Datum en tijd-schermbeveiliger
+	NO	Skjermsparer som viser dato og klokkeslett
+	SV	Skärmsläckare med datum och tid
 
 PLUGIN_SCREENSAVER_DATETIME_DESC
 	CS	Datumový spořič
-	DA	Pauseskærm dato og tid
+	DA	Pauseskærm med dato og klokkeslæt
 	DE	Bildschirmschoner: Datum/Zeit
 	EN	Date and Time Screensaver
 	ES	Protector de pantalla de fecha y hora
+	FI	Päivämäärä ja aika -näytönsäästäjä
 	FR	Ecran de veille Date/Heure
 	HE	שומר מסך של תאריך ושעה
 	IT	Screen saver con data e ora
 	NL	Datum en tijd-schermbeveiliger
+	NO	Skjermsparer som viser dato og klokkeslett
+	SV	Skärmsläckare med datum och tid
 
 SETUP_GROUP_DATETIME
-	DA	Indstillinger for pauseskærmen dato og tid
+	DA	Indstillinger for pauseskærm med dato og klokkeslæt
 	DE	Einstellungen für den Bildschirmschoner 'Datum/Zeit'
 	EN	Date and Time Screensaver Settings
 	ES	Configuración de protector de pantalla de fecha y hora
+	FI	Päivämäärä ja aika -näytönsäästäjän asetukset
 	FR	Paramètres Ecran de veille Date/Heure
 	HE	הגדרות שומר המסך של תאריך ושעה
 	IT	Impostazioni screen saver con data e ora
 	NL	Instellingen datum en tijd-schermbeveiliger
+	NO	Innstillinger for skjermsparer som viser dato og klokkeslett
+	SV	Inställningar för Skärmsläckare med datum och tid
 
 SETUP_GROUP_DATETIME_DESC
-	DA	Disse indstillinger kontrollerer opførselen for pauseskærmen dato og tid.
+	DA	Disse indstillinger er bestemmende for hvordan pauseskærmen Dato og klokkeslæt fungerer.
 	DE	Hier können Sie das Format des Bildschirmschoners 'Datum/Zeit' festlegen.
 	EN	These settings control the behavior of the Date and Time Screensaver
 	ES	Estos parámetros controlan el comportamiento del protector de pantalla de fecha y hora
+	FI	Näillä asetuksilla ohjataan päivämäärä ja aika -näytönsäästäjän toimintaa
 	FR	Ces réglages ajustent les paramètres de l'Ecran de veille Date/Heure.
 	HE	הגדרות אלה שולטות בהתנהגות של שומר המסך של תאריך ושעה.
 	IT	Queste impostazioni consentono di controllare il funzionamento dello screen saver con data e ora
 	NL	Deze instellingen bepalen het gedrag van de datum en tijd-schermbeveiliger
+	NO	Disse innstillingene kontrollerer virkemåten til skjermspareren som viser dato og klokkeslett
+	SV	De här inställningar styr hur skärmsläckaren med datum och tid fungerar
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
 	DA	SqueezeCenter standard
 	DE	SqueezeCenter-Standard
 	EN	SqueezeCenter Default
 	ES	Predeterminado de SqueezeCenter
+	FI	SqueezeCenter-oletus
 	FR	Défaut serveur
 	HE	ברירת המחדל של SqueezeCenter
 	IT	Impostazioni predefinite di SqueezeCenter
 	NL	SqueezeCenter-standaardinstellingen
+	NO	SqueezeCenter-standard
+	SV	SqueezeCenter-standard
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
 	DA	SqueezeCenter standard
 	DE	SqueezeCenter-Standard
 	EN	SqueezeCenter Default
 	ES	Predeterminado de SqueezeCenter
+	FI	SqueezeCenter-oletus
 	FR	Défaut serveur
 	HE	ברירת המחדל של SqueezeCenter
 	IT	Impostazioni predefinite di SqueezeCenter
 	NL	SqueezeCenter-standaardinstellingen
+	NO	SqueezeCenter-standard
+	SV	SqueezeCenter-standard
 

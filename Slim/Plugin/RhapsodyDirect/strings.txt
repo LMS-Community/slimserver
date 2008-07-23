@@ -3,19 +3,25 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
 	DE	Rhapsody
 	EN	Rhapsody
 	ES	Rhapsody
+	FI	Rhapsody
 	FR	Rhapsody
 	IT	Rhapsody
 	NL	Rhapsody
+	NO	Rhapsody
+	SV	Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
 	DA	Rhapsody
 	DE	Rhapsody
 	EN	Rhapsody
 	ES	Rhapsody
+	FI	Rhapsody
 	FR	Rhapsody
 	IT	Rhapsody
 	NL	Rhapsody
-	
+	NO	Rhapsody
+	SV	Rhapsody
+
 PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
 	DE	Rhapsody-Bibliothek
 	EN	Rhapsody Library
@@ -25,138 +31,184 @@ PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
 	NL	Rhapsody-collectie
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
-	DA	Rhapsody Fejl
+	DA	Rhapsody-fejl
 	DE	Rhapsody-Fehler
 	EN	Rhapsody Error
 	ES	Error de Rhapsody
+	FI	Rhapsodyn virhe
 	FR	Erreur Rhapsody
 	IT	Errore di Rhapsody
 	NL	Rhapsody-foutmelding
+	NO	Rhapsody-feil
+	SV	Rhapsody-fel
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
-	DA	Intern Rhapsody Fejl: %s
+	DA	Intern Rhapsody-fejl: %s
 	DE	Interner Rhapsody-Fehler: %s
 	EN	Internal Rhapsody Error: %s
 	ES	Error interno de Rhapsody: %s
+	FI	Sisäinen Rhapsodyn virhe: %s
 	FR	Erreur interne Rhapsody: %s
 	IT	Errore interno di Rhapsody: %s
 	NL	Interne Rhapsody-foutmelding: %s
+	NO	Intern Rhapsody-feil: %s
+	SV	Internt Rhapsody-fel: %s
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
-	DA	Ugyldig Rhapsody svar fra Afspiller.
+	DA	Ugyldigt Rhapsody-svar fra afspilleren.
 	DE	Ungültige Rhapsody-Reaktion vom Player.
 	EN	Invalid Rhapsody response from player.
 	ES	Respuesta no válida de Rhapsody desde reproductor.
+	FI	Virheellinen Rhapsodyn vastaus soittimelta.
 	FR	Réponse Rhapsody non valide de la part de la platine.
 	IT	Risposta Rhapsody non valida dal lettore.
 	NL	Ongeldige Rhapsody-respons van muzieksysteem.
+	NO	Ugyldig Rhapsody-respons fra spilleren.
+	SV	Ogiltigt Rhapsody-svar från spelaren.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
-	DA	Kunne ikke kommunikere med Rhapsody.
+	DA	Det var ikke muligt at kommunikere med Rhapsody.
 	DE	Verbindung mit Rhapsody nicht möglich.
 	EN	Unable to communicate with Rhapsody.
 	ES	Imposible comunicarse con Rhapsody.
+	FI	Tietoliikenne Rhapsodyn kanssa ei onnistu.
 	FR	Communication avec Rhapsody impossible.
 	IT	Impossibile comunicare con Rhapsody.
 	NL	Geen communicatie mogelijk met Rhapsody.
+	NO	Kan ikke kommunisere med Rhapsody.
+	SV	Det går inte att kommunicera med Rhapsody.
 
 PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
 	DA	Afspilleren kunne ikke kommunikere med Rhapsody.
 	DE	Player konnnte keine Verbindung mit Rhapsody herstellen.
 	EN	Player was unable to communicate with Rhapsody.
 	ES	El reproductor no se pudo comunicar con Rhapsody.
+	FI	Soitin ei voinut kommunikoida Rhapsodyn kanssa.
 	FR	La platine n'a pas pu communiquer avec Rhapsody.
 	IT	Il lettore non è stato in grado di comunicare con Rhapsody.
 	NL	Muzieksysteem kan niet met Rhapsody communiceren.
+	NO	Spilleren kunne ikke kommunisere med Rhapsody.
+	SV	Det gick inte att upprätta någon kommunikation mellan spelaren och Rhapsody.
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
-	DA	Vælg venligst Squeezebox 2, 3 eller Transporter for brug med Rhapsody.
+	DA	Du skal vælge en Squeezebox 2, 3 eller Transporter til brug med Rhapsody.
 	DE	Für Rhapsody ist Squeezebox 2, 3 oder Transporter erforderlich.
 	EN	Please select a Squeezebox 2, 3, or Transporter to use Rhapsody.
 	ES	Seleccione Squeezebox 2, 3 o Transporter para usar Rhapsody.
+	FI	Valitse Squeezebox 2 tai 3 tai Transporter käyttämään Rhapsodya.
 	FR	Sélectionnez une Squeezebox2, 3 ou Transporter pour utiliser Rhapsody.
 	IT	Per usare Rhapsody, selezionare uno Squeezebox 2 o 3 o un Transporter.
 	NL	Selecteer een Squeezebox 2, 3, of Transporter om Rhapsody te gebruiken.
+	NO	Velg en Squeezebox 2, 3 eller Transporter for å bruke Rhapsody.
+	SV	Välj en Squeezebox 2 / 3 eller Transporter där Rhapsody ska användas.
 
 PLUGIN_RHAPSODY_DIRECT_US_ONLY
-	DA	Beklager, Rhapsody er kun tilgængeligt i USA.
+	DA	Beklager, men Rhapsody kan foreløbig kun benyttes i USA.
 	DE	Rhapsody ist leider derzeit nur in den USA verfügbar.
 	EN	Sorry, Rhapsody is currently available in the U.S. only.
 	ES	Rhapsody sólo está disponible en EE UU.
+	FI	Rhapsody on tällä hetkellä tarjolla vain Yhdysvalloissa.
 	FR	Rhapsody est uniquement disponible aux Etats-Unis actuellement.
 	IT	Spiacenti, al momento Rhapsody è disponibile solo negli USA.
 	NL	Sorry, Rhapsody is momenteel alleen beschikbaar in de VS.
+	NO	Beklager, Rhapsody er for øyeblikket bare tilgjengelig i USA.
+	SV	Rhapsody är för närvarande endast tillgängligt i USA.
 
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
-	DA	Lydstrøm fejlet, springer til næste spor.
+	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
 	ES	Error de secuencia de audio; salto a pista siguiente.
+	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan raitaan.
 	FR	Echec du flux audio, lecture du morceau suivant.
 	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
+	NO	Lyddatastrøm mislyktes, hopper til neste spor.
+	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
 
 PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
-	DA	Logger ind på Rhapsody...
+	DA	Logger på Rhapsody...
 	DE	Anmelden bei Rhapsody läuft ...
 	EN	Logging in to Rhapsody...
 	ES	Iniciando sesión en Rhapsody...
+	FI	Kirjaudutaan Rhapsodyyn...
 	FR	Connexion à Rhapsody...
 	IT	Accesso a Rhapsody...
 	NL	Bezig met aanmelden bij Rhapsody...
+	NO	Logger på Rhapsody...
+	SV	Loggar in på Rhapsody ...
 
 PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
-	DA	Henter information om spor...
+	DA	Henter oplysninger om nummer...
 	DE	Titelinfos werden geladen ...
 	EN	Getting track info...
 	ES	Obteniendo información de pista...
+	FI	Haetaan raidan tietoja...
 	FR	Obtention des informations sur le morceau...
 	IT	Recupero info su brano...
 	NL	Nummerinfo wordt opgehaald...
+	NO	Henter informasjon om spor...
+	SV	Hämtar spårinformation ...
 
 PLUGIN_RHAPSODY_DIRECT_NO_TRACK
-	DA	Kunne ikke hente spor fra kanal.
+	DA	Nummeret kunne ikke hentes fra kanalen.
 	DE	Titel für Sender konnte nicht geladen werden.
 	EN	Unable to retrieve track for channel.
 	ES	Imposible obtener pista para canal.
+	FI	Ei voi noutaa raitaa kanavaa varten.
 	FR	Impossible de récupérer le morceau pour le canal.
 	IT	Impossibile recuperare brano per canale.
 	NL	Kan nummer voor kanaal niet ophalen.
+	NO	Kan ikke hente spor for kanalen.
+	SV	Det går inte att hämta spåret till kanalen.
 
 PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
-	DA	Kunne ikke hente næste spor, tryk PLAY for at forsøge igen.
+	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
+	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
-	DA	Kunne ikke hente kontodetaljer fra SqueezeNetwork.
+	DA	Det var ikke muligt at hente kontodetaljer fra SqueezeNetwork.
 	DE	Konnte über das SqueezeNetwork keine Account-Informationen finden.
 	EN	Unable to retrieve account details from SqueezeNetwork.
 	ES	Imposible obtener detalles de cuenta SqueezeNetwork.
+	FI	Tilitietojen hakeminen SqueezeNetwork-verkosta ei onnistu.
 	FR	Impossible de récupérer les détails du compte de SqueezeNetwork.
 	IT	Impossibile recuperare i dettagli dell'account di SqueezeNetwork.
 	NL	Kan accountgegevens niet van SqueezeNetwork ophalen.
+	NO	Får ikke til å hente kontodetaljer fra SqueezeNetwork.
+	SV	Det gick inte att hämta kontodetaljer från SqueezeNetwork.
 
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
-	DA	Ugyldig afspillings-session.
+	DA	Ugyldig afspilningssession.
 	DE	Ungültige Wiedergabesitzung.
 	EN	Invalid playback session.
 	ES	Sesión de reproducción no válida.
+	FI	Toistoistunto ei kelpaa.
 	FR	Session de lecture non valide.
 	IT	Sessione di riproduzione non valida.
 	NL	Ongeldige afspeelsessie.
+	NO	Ugyldig avspillingsøkt.
+	SV	Ogiltig uppspelningssession.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
+	DA	Rhapsody kan ikke spille når der er så mange synkroniserede afspillere. Du skal ophæve synkroniseringen med en eller flere afspillere.
 	DE	Rhapsody funktioniert nicht, wenn so viele Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
 	EN	Rhapsody cannot play with this many players synced.  Please unsync one or more players.
 	ES	Rhapsody no puede reproducir con tantos reproductores sincronizados. Debe desincronizar al menos uno de ellos.
+	FI	Rhapsody ei toimi, jos näin monta soitinta on synkronoitu.  Poista yhden tai useamman soittimen synkronointi.
 	FR	Rhapsody ne peut fonctionner avec autant de platines synchronisées. Veuillez désynchroniser au moins une platine.
 	IT	Impossibile utilizzare Rhapsody con un numero così elevato di lettori sincronizzati. Annullare la sincronizzazione di uno o più lettori.
 	NL	Rhapsody kan niet spelen wanneer er zoveel muzieksystemen gesynchroniseerd zijn. Hef de synchronisatie van een of meer systemen op.
+	NO	Rhapsody kan ikke brukes med så mange synkroniserte spillere. Du må fjerne én eller flere spillere fra synkroniseringen.
+	SV	Det går inte att spela upp från Rhapsody när så många spelare har synkroniserats.  Ta bort en eller flera spelare ur synkroniseringsgruppen.
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
 	DE	Auf Rhapsody

@@ -3,38 +3,46 @@
 # $Id: strings.txt 11049 2006-12-28 09:47:38Z mherger $
 
 PLUGIN_SCREENSAVER_SNOW
-	DA	Pauseskærm: Sne
+	DA	Pauseskærm:
 	DE	Bildschirmschoner: Schnee
 	EN	Snow Screensaver
 	ES	Protector de pantalla de nieve
-	FI	Lumi ruudunsäästäjä
+	FI	Luminäytönsäästäjä
 	FR	Ecran de veille Neige
 	HE	שומר מסך שלג
 	IT	Screen saver con neve
 	NL	Sneeuw-schermbeveiliger
+	NO	Skjermsparer med snø
+	SV	Snöskärmsläckare
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	DA	Vis indstillinger for pauseskærm
 	DE	Schnee-Einstellungen
 	EN	Snow Screensaver settings
 	ES	Configuración de protector de pantalla de nieve
+	FI	Luminäytönsäästäjän asetukset
 	FR	Réglages Ecran de veille Neige
 	HE	הגדרות שומר מסך שלג
 	IT	Impostazioni screen saver con neve
 	NL	Instellingen van sneeuw-schermbeveiliger
+	NO	Innstillinger for skjermsparer med snø
+	SV	Inställningar för snöskärmsläckare
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
-	DA	Anvend standard pauseskærm (ikke Sne)
+	DA	Anvend standardpauseskærm (ikke sne)
 	DE	Standard-Bildschirmschoner aktivieren (nicht Schnee)
 	EN	Use default screensaver (not Snow)
 	ES	Usar protector de pantalla predeterminado (no de nieve)
+	FI	Käytä oletusnäytönsäästäjää (älä lunta)
 	FR	Utiliser écran de veille par défaut (hors Neige)
 	HE	השתמש בשומר המסך הנוכחי (לא שלג)
 	IT	Usa screen saver predefinito (non con neve)
 	NL	Standaardschermbeveiliger gebruiken (geen sneeuw)
+	NO	Bruk standard skjermsparer (ikke snø)
+	SV	Använd standardskärmsläckare (inte snöskärmsläckaren).
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
-	DA	Kvalitet
+	DA	Sneens kvalitet
 	DE	Schneemenge
 	EN	Quantity of snow
 	ES	Cantidad de nieve
@@ -43,216 +51,279 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	HE	כמות שלג
 	IT	Quantità di neve
 	NL	Hoeveelheid sneeuw
+	NO	Snømengde
+	SV	Snömängd
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
-	DA	Pauseskærm: Sne, Kvalitet
+	DA	Pauseskærm: sneens kvalitet
 	DE	Bildschirmschoner 'Schnee': Schneemenge
 	EN	Snow Screensaver: Quantity of snow
 	ES	Protector de pantalla de nieve: Cantidad de nieve
+	FI	Luminäytönsäästäjä: lumen määrä
 	FR	Ecran de veille neige: Intensité
 	HE	שומר מסך שלג: כמות שלג
 	IT	Screen saver con neve: quantità di neve
 	NL	Sneeuw-schermbeveiliger: hoeveelheid sneeuw
+	NO	Skjermsparer med snø: Snømengde
+	SV	Snöskärmsläckare: snömängd
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	DA	Let byge
 	DE	Ein paar Flocken
 	EN	Light flurries
 	ES	Ráfagas ligeras
-	FI	Kevyitä hiutaleita
+	FI	Kevyitä lumikuuroja
 	FR	Quelques flocons
 	HE	משקעי שלג מתונים
 	IT	Leggero turbinio
 	NL	Lichte sneeuwbui
+	NO	Lette fnugg
+	SV	Snöbyar
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	DA	Juleagtigt
 	DE	Weiße Weihnachten
 	EN	Christmassy
 	ES	Estilo navidad
+	FI	Jouluinen
 	FR	C'est Noël!
 	HE	בסגנון חג המולד
 	IT	Natalizia
 	NL	Kerstmisachtig
+	NO	Julete
+	SV	Julstämning
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	DA	Snestorm
 	DE	Schneesturm
 	EN	Blizzard
 	ES	Ventisca
+	FI	Lumimyrsky
 	FR	Tempête
 	HE	סופת שלג
 	IT	Bufera
 	NL	Sneeuwstorm
+	NO	Snøstorm
+	SV	Snöstorm
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	DA	Hvidt
 	DE	Dichtes Schneetreiben
 	EN	Whiteout
 	ES	Tormenta de nieve
+	FI	Kokonaan valkoinen
 	FR	Tout blanc
 	HE	סופת שלג עזה
 	IT	Tutto coperto
 	NL	Zware sneeuwstorm
+	NO	Blank
+	SV	Igensnöat
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
-	DA	Sne-udseende når tændt
+	DA	Sneens udseende når afspilleren er tændt
 	DE	Schnee bei Aktivierung
 	EN	Style of snow when on
 	ES	Estilo de nieve cuando se activa
-	FI	Lumen tyyli kun päällä
+	FI	Lumen tyyppi, kun päällä
 	FR	Type neige (activé)
 	HE	סגנון שלג במצב מופעל
 	IT	Tipo di neve quando attivo
 	NL	Sneeuwstijl wanneer aan
+	NO	Snøtype når påslått
+	SV	Snötyp i påslaget läge
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
-	DA	Sne-udseende når slukket
+	DA	Sneens udseende når afspilleren er slukket
 	DE	Schnee bei Deaktivierung
 	EN	Style of snow when off
 	ES	Estilo de nieve cuando se desactiva
+	FI	Lumen tyyppi, kun pois päältä
 	FR	Type neige (désactivé)
 	HE	סגנון שלג במצב כבוי
 	IT	Tipo di neve quando disattivo
 	NL	Sneeuwstijl wanneer uit
+	NO	Snøtype når avslått
+	SV	Snötyp i avstängt läge
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
-	DA	Pauseskærm: Sne, Sne-udseende
+	DA	Pauseskærm: Sneens stil
 	DE	Bildschirmschoner 'Schnee': Schneeart
 	EN	Snow Screensaver: Style of snow
 	ES	Protector de pantalla de nieve: Estilo de nieve
+	FI	Luminäytönsäästäjä: lumen tyyppi
 	FR	Ecran de veille Neige: Type
 	HE	שומר מסך שלג: סגנון שלג
 	IT	Screen saver con neve: Tipo di neve
 	NL	Sneeuw-schermbeveiliger: sneeuwstijl
+	NO	Skjermsparer med snø: Snøtype
+	SV	Snöskärmsläckare: Snötyp
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
-	DA	Aktiv Spilleliste, sne falder bagved
+	DA	Nu spiller: sne falder bagved
 	DE	Aktuelle Wiedergabe mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
 	ES	Reproduciendo, la nieve cae detrás
+	FI	Nyt soi, taustalla sataa lunta
 	FR	Lecture + neige en arrière-plan
 	HE	מושמע כעת, שלג נופל מאחור
 	IT	Riproduzione in corso. Nevicata sullo sfondo.
 	NL	Speelt nu, sneeuw valt achter
+	NO	Spilles nå, med snø i bakgrunnen
+	SV	Snö i bakgrunden när Aktuellt spår visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
-	DA	Aktuel Spilleliste, sne falder foran
+	DA	Nu spiller: sne falder foran
 	DE	Aktuelle Wiedergabe mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
 	ES	Reproduciendo, la nieve cae delante
+	FI	Nyt soi, edustassa sataa lunta
 	FR	Lecture + neige au premier plan
 	HE	מושמע כעת, שלג נופל מלפנים
 	IT	Riproduzione in corso. Nevicata in primo piano.
 	NL	Speelt nu, sneeuw valt voor
+	NO	Spilles nå, med snø i forgrunnen
+	SV	Snö i förgrunden när Aktuellt spår visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
-	DA	Dato/Tid
+	DA	Dato/klokkeslæt
 	DE	Datum/Zeit
 	EN	Date/Time
 	ES	Fecha/Hora
+	FI	Pvm/aika
 	FR	Date/Heure
 	HE	תאריך/שעה
 	IT	Data/ora
 	NL	Datum/tijd
+	NO	Dato/tid
+	SV	Datum/Tid
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
-	DA	Kun Sne
+	DA	Kun sne
 	DE	Nur Schnee
 	EN	Just snow
 	ES	Sólo nieve
+	FI	Pelkkää lunta
 	FR	Neige seule
 	HE	שלג בלבד
 	IT	Solo neve
 	NL	Alleen sneeuw
+	NO	Bare snø
+	SV	Vanlig snö
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	DA	Automatisk
 	DE	Automatisch
 	EN	Automatic
 	ES	Automático
+	FI	Automaattinen
 	FR	Automatique
 	HE	אוטומטי
 	IT	Automatico
 	NL	Automatisch
+	NO	Automatisk
+	SV	Automatiskt
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
-	DA	Årstidens hilsen!
+	DA	Glædelig jul
 	DE	Frohe Feiertage!
 	EN	Season's Greetings
 	ES	Felices fiestas
+	FI	Hyvää joulua
 	FR	Vœux
 	HE	ברכות לחגים
 	IT	Buone feste
 	NL	Prettige feestdagen
+	NO	God jul!
+	SV	Julhälsning
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	DA	5
 	DE	5
 	EN	5
 	ES	5
+	FI	5
 	FR	5
 	HE	5
 	IT	5
 	NL	5
+	NO	5
+	SV	5
 
 PLUGIN_SCREENSAVER_SNOW_WORD_0
-	DA	GOD
+	DA	GLÆDELIG
 	DE	FROHE
 	EN	MERRY
 	ES	FELIZ
+	FI	ILOISTA
 	FR	JOYEUX
 	HE	חג
 	IT	BUON
 	NL	Vrolijk
+	NO	GOD
+	SV	GOD
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
 	DA	JUL
 	DE	WEIHNACHTEN
 	EN	CHRISTMAS
 	ES	NAVIDAD
+	FI	JOULUA
 	FR	NOEL
 	HE	שמח
 	IT	NATALE
 	NL	Kerstmis
+	NO	JUL
+	SV	JUL
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
-	DA	OG ET GODT
+	DA	OG ET RIGTIG
 	DE	UND EIN GUTES
 	EN	AND A VERY
 	ES	Y UN MUY
+	FI	JA ERITTÄIN
 	FR	ET
 	HE	לכל
 	IT	E FELICE
 	NL	en een heel
+	NO	OG ET
+	SV	OCH ETT
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
-	DA	LYKKELIG
+	DA	GODT
 	DE	GLÜCKLICHES
 	EN	HAPPY
 	ES	PRÓSPERO
+	FI	ILOISTA
 	FR	BONNE
 	HE	עם
 	IT	ANNO
 	NL	gelukkig
+	NO	GODT
+	SV	GOTT
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
-	DA	NYT ÅR!
+	DA	NYTÅR!
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
 	ES	AÑO NUEVO.
+	FI	UUTTA VUOTTA!
 	FR	ANNEE!
 	HE	ישראל!
 	IT	NUOVO!
 	NL	nieuwjaar!
+	NO	NYTTÅR!
+	SV	NYTT ÅR!
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
-	DA	Beklager, Sne virker ikke på denne afspiller.
+	DA	Sne virker desværre ikke på denne afspiller.
 	DE	Schnee kann auf diesem Player nicht angezeigt werden.
 	EN	Sorry, Snow doesn't work with this player.
 	ES	La nieve no funciona con este reproductor.
+	FI	Lumi ei toimi tämän soittimen kanssa.
 	FR	Désolé, Neige ne fonctionne pas sur cette platine.
 	HE	מצטערים, אין אפשרות להציג שלג בנגן זה.
 	IT	L'effetto neve non funziona con questo lettore.
 	NL	Sorry, sneeuw werkt niet met dit muzieksysteem.
+	NO	Beklager, snøeffekten fungerer ikke på denne spilleren.
+	SV	Den här spelaren har inte stöd för snöskärmsläckaren.
 

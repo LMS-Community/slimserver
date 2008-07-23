@@ -7,67 +7,88 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	DE	RadioTime
 	EN	RadioTime
 	ES	RadioTime
+	FI	RadioTime
 	FR	RadioTime
 	HE	RadioTime
 	IT	RadioTime
 	NL	RadioTime
+	NO	RadioTime
+	SV	RadioTime
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
-	DA	RadioTime - Lokal Internet Radio
+	DA	RadioTime: Lokal internetradio
 	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
 	EN	RadioTime - Local Internet Radio
 	ES	RadioTime - Radio por Internet local
+	FI	RadioTime - paikallinen internet-radio
 	FR	RadioTime – Radio Internet locale
 	IT	RadioTime: radio Internet locale
 	NL	RadioTime - Lokale internetradio
+	NO	RadioTime: Lokal Internett-radio
+	SV	RadioTime – Lokal webbradio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
 	DA	radiotime
 	DE	radiotime
 	EN	radiotime
 	ES	radiotime
+	FI	radiotime
 	FR	radiotime
 	HE	radiotime
 	IT	radiotime
 	NL	radiotime
+	NO	radiotime
+	SV	radiotime
 
 PLUGIN_RADIOTIME_LOADING
 	DA	Indlæser RadioTime...
 	DE	RadioTime wird geladen ...
 	EN	Loading RadioTime...
 	ES	Cargando RadioTime...
+	FI	Ladataan RadioTime...
 	FR	Chargement RadioTime...
 	HE	טוען את RadioTime...
 	IT	Caricamento RadioTime in corso...
 	NL	RadioTime wordt geladen...
+	NO	Laster RadioTime...
+	SV	Läser in RadioTime ...
 
 SETUP_GROUP_PLUGIN_RADIOTIME_DESC
-	DA	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> for at finde din favorit lokale og globale debat, sports, religion, eller musik radio kanal - <b>gratis</b>.
+	DA	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 	DE	Auf <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> können Sie die interessantesten lokalen und globalen Radiosender suchen: Wort, Sport, Musik oder Religion - alles <b>gratis</b>.
 	EN	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 	ES	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para encontrar sus emisoras de radio favoritas de debate, deportes, religión y música tanto locales como internacionales. Y <b>gratis</b>.
+	FI	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 	FR	Parcourez <b>gratuitement</b> <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> pour trouver vos stations préférées: infos, sport, musique, etc.
 	HE	השתמש באתר <a href='http://www.radiotime.com'
 	IT	Usare <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> per trovare canali <b>gratuiti</b> di sport, religione, discussione e musica sia locali che internazionali.
 	NL	Gebruik <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je favoriete religieuze, praat-, sport- en muziekprogramma's op de radio te vinden, plaatselijk en wereldwijd - allemaal <b>gratis</b>.
+	NO	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
+	SV	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME
-	DA	Indtast dit RadioTime brugernavn.
+	DA	Indtast dit RadioTime-brugernavn.
 	DE	Geben Sie Ihren RadioTime-Benutzernamen ein.
 	EN	Enter your RadioTime username.
 	ES	Introduzca el nombre de usuario de RadioTime.
+	FI	Anna RadioTime-käyttäjätunnuksesi.
 	FR	Spécifiez votre nom d'utilisateur RadioTime
 	HE	הזן את שם המשתמש שלך עבור RadioTime.
 	IT	Inserire il nome utente RadioTime.
 	NL	Voer je RadioTime-gebruikersnaam in.
+	NO	Angi brukernavn fra RadioTime.
+	SV	Ange ditt användarnamn för RadioTime.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
-	DA	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> for at registrere <b>gratis</b>. Tilføj stationer og udsendelser til My Radio og lyt tid dem på din Squeezebox eller Transporter.
+	DA	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> for at tilmelde dig <b>gratis</b>. Du kan føje stationer og programmer til Min radio og derefter lytte til dem på din Squeezebox eller Transporter.
 	DE	Melden Sie sich bei <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> <b>kostenlos</b> an. Fügen Sie Sender oder Sendungen zu ihrer 'My Radio'-Liste hinzu und geben Sie sie auf Squeezebox oder Transporter wieder.
 	EN	Visit <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to sign up for <b>free</b>.  Add stations and shows to My Radio then listen on your Squeezebox or Transporter.
 	ES	Visite <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para registrarse <b>gratis</b>. Agregue emisoras y programas a Mi radio y escuche en Squeezebox o Transporter.
+	FI	Käy osoitteessa <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> ja avaa tili <b>ilmaiseksi</b>.  Lisää kanavia ja ohjelmia omaan radioosi ja kuuntele niitä Squeezeboxilla tai Transporterilla.
 	FR	Inscrivez-vous <b>gratuitement</b> sur <a href='http://www.radiotime.com' target='_new'>radiotime.com</a>. Ajoutez des stations et des émissions à votre liste et écoutez-les sur la Squeezebox ou sur Transporter.
 	HE	עבור לכתובת <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> כדי להירשם ללא תשלום. הוסף תחנות ותוכניות ל'הרדיו שלי' ולאחר מכן האזן להן בנגן Squeezebox או Transporter שברשותך.
 	IT	Per eseguire la registrazione <b>gratuita</b>, accedere a <a href='http://www.radiotime.com' target='_new'>radiotime.com</a>. È possibile aggiungere stazioni e programmi a My Radio (La mia radio) e ascoltarli su Squeezebox o Transporter.
 	NL	Ga naar <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je <b>gratis</b> aan te melden. Voeg stations en programma's toe aan 'My Radio' en luister ernaar op je Squeezebox of Transporter.
+	NO	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> og registrer deg <b>gratis</b>. Legg til stasjoner og programmer under Min radio, så kan du lytte til dem på Squeezebox eller Transporter.
+	SV	Besök <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om du vill registrera dig <b>gratis </b>.  Lägg till stationer till My Radio och spela upp dem på Squeezebox- eller Transporter-spelaren.
 

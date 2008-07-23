@@ -1,9 +1,12 @@
 PLUGIN_SOUNDS_MODULE_NAME
-	DA	Lyde & Effekter
+	DA	Lyde og effekter
 	DE	Sounds & Effekte
 	EN	Sounds & Effects
 	ES	Sonidos y efectos
+	FI	Äänet ja tehosteet
 	FR	Effets sonores
 	IT	Suoni ed effetti
 	NL	Geluiden en effecten
+	NO	Lyder og effekter
+	SV	Ljud och effekter
 

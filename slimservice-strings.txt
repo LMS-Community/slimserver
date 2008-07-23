@@ -8,17 +8,20 @@ CHOOSE_A_TIMEZONE
 	NL	Kies een tijdzone
 
 SERVER_VERSION
+	DA	SqueezeNetwork-version
 	DE	SqueezeNetwork Version
 	EN	SqueezeNetwork Version
 	ES	SqueezeNetwork versión
+	FI	SqueezeNetworkin versio
 	FR	Version de SqueezeNetwork
 	HE	גרסת SqueezeNetwork
 	IT	Versione di SqueezeNetwork
 	JP	スリムサーバー・バージョン
 	NL	SqueezeNetwork-versie
-	NO	SqueezeNetwork versjon
+	NO	SqueezeNetwork-versjon
 	PT	Versão do SqueezeNetwork
 	SE	SqueezeNetwork-version
+	SV	SqueezeNetwork-version
 
 SQUEEZENETWORK_HOME
 	EN	SqueezeNetwork
@@ -36,19 +39,21 @@ APPLICATION
 	NL	SqueezeNetwork
 
 ABOUT
+	DA	SqueezeNetwork version %s, skrevet af:
 	DE	SqueezeNetwork V.%s, entwickelt von:
 	DK	SqueezeNetwork V.%s, skrevet af:
 	EN	SqueezeNetwork V.%s, written by:
 	ES	SqueezeNetwork v. %s, escrito por:
-	FI	SqueezeNetwork V.%s, tekijä:
+	FI	SqueezeNetwork V.%s, teksti:
 	FR	SqueezeNetwork V.%s, écrit par :
 	HE	‏SqueezeNetwork V.%s, נכתב על-ידי:
 	IT	SqueezeNetwork V.%s, scritto da:
 	JP	SqueezeNetwork V.%s, 製作:
 	NL	SqueezeNetwork V.%s, geschreven door:
-	NO	SqueezeNetwork V.%s, skrevet av:
+	NO	SqueezeNetwork versjon %s, skrevet av:
 	PT	SqueezeNetwork v.%s, escrito por
 	SE	SqueezeNetwork v.%s, skriven av:
+	SV	SqueezeNetwork v.%s, skriven av:
 
 OTHER_SERVICES
 	DE	Extras
@@ -69,13 +74,17 @@ ADDING_TO_FAVORITES
 	NL	Toevoegen aan favorieten:
 
 ALARM_SET
+	DA	Vækketidspunkt
 	DE	Weckzeit
 	EN	Alarm Time
 	ES	Hora de alarma
+	FI	Herätysaika
 	FR	Heure du réveil
 	HE	שעת התראה
 	IT	Orario sveglia
 	NL	Wektijd
+	NO	Still vekkerklokke
+	SV	Alarmtid
 
 ALARM_SELECT_SOUND
 	DE	Wecker Klang
@@ -96,13 +105,17 @@ ALARM_SAVE_SOUND
 	NL	Weksignaal instellen
 
 ALARM_SET_VOLUME
+	DA	Indstil lydstyrken for vækkeuret
 	DE	Wecker Lautstärke
 	EN	Alarm Volume
 	ES	Volumen de alarma
+	FI	Herätyskellon äänenvoimakkuus
 	FR	Volume du réveil
 	HE	עוצמת התראה
 	IT	Volume sveglia
 	NL	Wekvolume
+	NO	Sett volum for vekkerklokke
+	SV	Alarmets volym
 
 ALARM_SNOOZING
 	DE	Wecker schlummert...
@@ -171,13 +184,17 @@ SQUEEZENETWORK_WELCOME
 	EN	Your player is now registered, press RIGHT to begin!
 
 SETUP_GROUP_MENUITEMS
+	DA	Tilpas hovedmenuen
 	DE	Hauptmenü Einstellungen
 	EN	Home Menu Customization
 	ES	Pers. menú Inicio
+	FI	Kotivalikko
 	FR	Personnalisation du menu d'accueil
 	HE	התאמה אישית של התפריט הראשי
 	IT	Personalizzazione menu iniziale
 	NL	Hoofdmenu aanpassen
+	NO	Hovedmeny
+	SV	Menyn Hem
 
 SETUP_PLAYER_CODE
 	DE	Player-PIN
@@ -899,13 +916,17 @@ TZ_PACIFIC_TONGATAPU
 	NL	Nuku'alofa
 
 FAVORITES
+	DA	Favoritter
 	DE	Favoriten
 	EN	Favorites
 	ES	Favoritos
+	FI	Suosikit
 	FR	Favoris
 	HE	מועדפים
 	IT	Preferiti
 	NL	Favorieten
+	NO	Favoritter
+	SV	Favoriter
 
 SQUEEZENETWORK_SIGNUP
 	EN	Visit www.squeezenetwork.com to register
@@ -947,22 +968,30 @@ INVALID_MAC
 	NL	Probleem: Het MAC-adres van je speler moet opnieuw ingesteld worden. Neem contact op via support@slimdevices.com voor hulp.
 
 PLAYLIST_NO_ITEMS_FOUND
+	DA	Fejl: Der er ikke noget på afspilningslisten
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron elementos en la lista de reproducción
+	FI	Virhe: soittoluettelosta ei löytynyt kohteita
 	FR	Erreur: la liste de lecture ne contient aucun élément
 	HE	שגיאה: לא נמצאו פריטים ברשימת ההשמעה
 	IT	Errore: nessun elemento in elenco di riproduzione
 	NL	Fout: Geen items gevonden in playlist
+	NO	Feil: Spillelisten er tom
+	SV	Fel: Spellistan är tom.
 
 PLAYLIST_PROBLEM_CONNECTING
+	DA	Fejl: Der kan ikke etableres forbindelse, så afspilningslisten kan ikke hentes
 	DE	Fehler: Wiedergabeliste kann nicht abgerufen werden
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener lista de reproducción
+	FI	Virhe: ei voi muodostaa yhteyttä soittoluettelon noutoa varten
 	FR	Erreur: connexion impossible pour récupérer la liste de lecture
 	HE	שגיאה: לא ניתן להתחבר לאחזור רשימת ההשמעה
 	IT	Errore: impossibile connettersi per recupero elenco riprod.
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
+	NO	Feil: Kan ikke kople til for å hente spilleliste
+	SV	Fel: Det går inte att ansluta för att hämta spellistan.
 
 PLAYLIST_NOT_A_PLAYLIST
 	DE	Fehler: URL ist keine Wiedergabeliste
@@ -1586,7 +1615,11 @@ SOUNDS_WIND_CHIME
 	NL	Windklok
 
 INFORMATION_MENU_SERVER
+	DA	Oplysninger om SqueezeNetwork
 	EN	SqueezeNetwork Information
+	FI	SqueezeNetworkin tiedot
+	NO	SqueezeNetwork-informasjon
+	SV	SqueezeNetwork-information
 
 INFORMATION_DATACENTER
 	EN	Datacenter

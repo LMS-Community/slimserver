@@ -3,21 +3,27 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PREVENTSTANDBY
-	DA	Windows: Forhindrer at systemet går i hviletilstand under afspilning
+	DA	Windows: Forhindrer at systemet går på standby under afspilning
 	DE	Windows: Standbymodus während der Wiedergabe verhindern
 	EN	Windows: Prevent System Standby While Playing
 	ES	Windows: Impedir modo de espera del sistema al reproducir
+	FI	Windows: estä järjestelmän siirtyminen valmiustilaan toiston aikana
 	FR	Windows: empêcher la mise en veille du système lors de la lecture
 	HE	במערכת Windows: הימנע מכניסת המערכת למצב המתנה במהלך השמעת מוסיקה
 	IT	Windows: impedisci standby del sistema durante la riproduzione
 	NL	Windows: Voorkomen dat systeem naar stand-by gaat tijdens afspelen
+	NO	Windows: Hindre hvilemodus under avspilling
+	SV	Windows: Förhindra viloläge under uppspelning
 
 PLUGIN_PREVENTSTANDBY_DESC
-	DA	Forhindrer at Windows maskiner går i hviletilstand.
+	DA	Forhindrer at maskiner med Windows går på standby.
 	DE	Standby Modus während der Musik-Wiedergabe verhindern (nur unter Windows verfügbar)
 	EN	Prevent Windows machines from going into Standby mode.
 	ES	Evitar que los equipos Windows pasen al modo de suspensión.
+	FI	Estää tietokoneita, joissa on käytössä Windows-käyttöjärjestelmä, siirtymästä valmiustilaan.
 	FR	Empêcher les ordinateurs Windows de se mettre en veille.
 	IT	Impedisce l'attivazione della modalità standby nei computer Windows.
 	NL	Voorkom dat Windows-machines in stand-bymodus gaan.
+	NO	Hindre at Windows-maskiner går i hvilemodus.
+	SV	Förhindra viloläge på Windows-datorer.
 
