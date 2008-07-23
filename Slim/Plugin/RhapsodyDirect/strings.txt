@@ -165,3 +165,6 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
 	FR	Sur Rhapsody
 	IT	Su Rhapsody
 	NL	Op Rhapsody
+
+PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
+	EN	Unable to find address for Rhapsody.

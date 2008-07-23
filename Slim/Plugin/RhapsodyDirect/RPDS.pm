@@ -83,6 +83,12 @@ sub rpds {
 		}
 		$log->warn( $client->id . " RPDS packet sent: $sent" );
 	}
+	
+	# RPDS 0 doesn't send a confirmation, so don't wait for it
+	if ( $args->{_noresponse} ) {
+		delete $rpds_args->{$client};
+		return;
+	}
 
 	# Timeout in case the player is not responding
 	Slim::Utils::Timers::setTimer(
