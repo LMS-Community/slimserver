@@ -217,6 +217,8 @@ Settings.Page = function(){
 			Ext.select('input, textarea, select').on('change', function(ev){
 				modified = true;
 			});
+			
+			this.initSliders();
 
 			this.showWarning();
 		},
@@ -340,6 +342,44 @@ Settings.Page = function(){
 				);
 			}
 		},
+		
+		initSliders : function() {
+			var items = Ext.query('input[class*=sliderInput_]');
+			var inputEl;
+			
+			for(var i = 0; i < items.length; i++) {
+	
+				if (inputEl = Ext.get(items[i])) {
+					var min, max, increment;
+					min = 0;
+					max = 100;
+					increment = 1;
+
+					var params = inputEl.dom.className.match(/sliderInput_(\d+)_(\d+)_(\d+)/);
+
+					if (params == null) {
+						params = inputEl.dom.className.match(/sliderInput_(\d+)_(\d+)/);
+						min = RegExp.$1;
+						max = RegExp.$2;
+					}
+
+					else {
+						min = RegExp.$1;
+						max = RegExp.$2;
+						increment = RegExp.$3;
+					}
+
+					new SqueezeJS.UI.SliderInput({
+						width: 200,
+						minValue: min,
+						maxValue: max,
+						increment: increment,
+				 		input: inputEl,
+				 		cls: 'settingsSlider'
+					});
+				}
+			}			
+		},
 
 		validatePref : function(myPref, namespace) {
 			SqueezeJS.Controller.request({
@@ -432,7 +472,6 @@ Settings.Alarm = function() {
 
 		init: function(alarmId, alarmCount) {
 			this.initSliders();
-			this.initSnoozeSlider();
 			this.initDefaultVolumeBtns();
 
 			var el;
@@ -507,21 +546,6 @@ Settings.Alarm = function() {
 				 		cls: 'settingsSlider'
 					});
 				}
-			}
-		},
-		
-		initSnoozeSlider: function() {
-			var el;
-
-			if (el = Ext.get('alarmSnoozeMinutes')) {
-
-				new SqueezeJS.UI.SliderInput({
-					width: 200,
-					minValue: 1,
-					maxValue: 90,
-			 		input: el,
-			 		cls: 'settingsSlider'
-				});
 			}
 		},
 
