@@ -1737,6 +1737,64 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 	}
 });
 
+
+SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
+	tpl: new Ext.Template('<span></span>'),
+
+	initComponent : function(){
+		this.input = Ext.get(this.initialConfig.input);
+
+		this.renderTo = this.tpl.insertBefore(this.input, {}, true);	
+
+		SqueezeJS.UI.SliderInput.superclass.initComponent.call(this);
+		
+		this.on({
+			dragstart: {
+				fn: this.onSlide
+			},
+			drag: {
+				fn: this.onSlide
+			},
+			change: {
+				fn: this.onSlide
+			}
+		});
+		
+		this.input.on({
+			change: {
+				fn: function(ev, i){
+					this.setInputValue(i.value);
+				},
+				scope: this
+			},
+			keyup: {
+				fn: function(ev, i){
+					this.setInputValue(i.value);
+				},
+				scope: this
+			}
+		});
+		
+		// if no initial value has been configured,
+		// try reading it from our input field
+		if (this.initialConfig.value == null)
+			this.value = isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value);
+	},
+
+	setInputValue: function(v){
+		v = parseInt(v);
+		if (isNaN(v))
+			v = 0;
+			
+		this.setValue(v);
+	},
+	
+	onSlide : function(){
+		this.input.dom.value = this.getValue();
+	}
+});
+
+
 SqueezeJS.UI.ShowBriefly = Ext.extend(Ext.Component, {
 	initComponent : function(){
 		SqueezeJS.UI.ShowBriefly.superclass.initComponent.call(this);
