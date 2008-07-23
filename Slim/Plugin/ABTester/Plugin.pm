@@ -1351,7 +1351,12 @@ sub _executeInitCommands {
 sub _executeCommand {
 	my ($client, $testcase, $cmd) = @_;
 
-	if($cmd->{'type'} eq 'cli') {
+	if($cmd->{'type'} eq 'image') {
+		my $imageString = $cmd->{'content'};
+		my $image = catfile(_getImageDir($testcase), $imageString);
+		$log->debug("Loading image $image");
+		loadImage($client, $image);
+	} elsif($cmd->{'type'} eq 'cli') {
 		my $execString = $cmd->{'content'};
 
 		# Replace special keywords in the CLI command
@@ -1360,10 +1365,7 @@ sub _executeCommand {
 		# Call the CLI Command
 		my @cmdParts = split(/ /,$execString);
 		if(scalar(@cmdParts)>0) {
-			my @executeCmds = ();
-			foreach my $part (@cmdParts) {
-				push @executeCmds,URI::Escape::uri_unescape($part);
-			}
+			my @executeCmds = URI::Escape::uri_unescape(@cmdParts);
 			$log->debug("Executing CLI: $execString");
 			$client->execute(\@executeCmds);
 		}else {
