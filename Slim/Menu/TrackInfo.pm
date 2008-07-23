@@ -1058,7 +1058,7 @@ sub infoDisc {
 	my ($disc, $discc);
 	my $album = $track->album;
 	
-	if ( blessed($album) && ($disc = $album->disc) && ($discc = $album->discc) ) {
+	if ( blessed($album) && ($disc = ($track->disc || $album->disc)) && ($discc = $album->discc) ) {
 		$item = {
 			type => 'text',
 			name => cstring($client, 'DISC') . cstring($client, 'COLON') . " $disc/$discc",
