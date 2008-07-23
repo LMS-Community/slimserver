@@ -54,17 +54,17 @@ PLUGIN_RADIOTIME_LOADING
 	SV	Läser in RadioTime ...
 
 SETUP_GROUP_PLUGIN_RADIOTIME_DESC
-	DA	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
+	DA	På <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> kan du finde dine foretrukne lokalradiostationer eller globale stationer som er specialiseret i alt fra debatprogrammer og sport til religion og musik, og alt sammen helt <b>gratis</b>.
 	DE	Auf <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> können Sie die interessantesten lokalen und globalen Radiosender suchen: Wort, Sport, Musik oder Religion - alles <b>gratis</b>.
 	EN	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 	ES	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para encontrar sus emisoras de radio favoritas de debate, deportes, religión y música tanto locales como internacionales. Y <b>gratis</b>.
-	FI	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
+	FI	<a href='http://www.radiotime.com' target='_new'>radiotime.com</a>-palvelun avulla löydät paikalliset ja kansainväliset puheohjelmat, urheiluohjelmat, uskonnolliset ohjelmat ja musiikkiohjelmat – aivan <b>filmaiseksi</b>.
 	FR	Parcourez <b>gratuitement</b> <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> pour trouver vos stations préférées: infos, sport, musique, etc.
 	HE	השתמש באתר <a href='http://www.radiotime.com'
 	IT	Usare <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> per trovare canali <b>gratuiti</b> di sport, religione, discussione e musica sia locali che internazionali.
 	NL	Gebruik <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je favoriete religieuze, praat-, sport- en muziekprogramma's op de radio te vinden, plaatselijk en wereldwijd - allemaal <b>gratis</b>.
-	NO	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
-	SV	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
+	NO	Du kan bruke <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> til å finne lokale og internasjonale prateprogrammer, sport, religiøse programmer og musikk, og alt er <b>gratis</b>.
+	SV	Med hjälp av <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> kan du hitta dina favoritkanaler för lokala och globala nyheter och samtal, sport, religion och musik. <b>Allt utan kostnad!</b>.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME
 	DA	Indtast dit RadioTime-brugernavn.
