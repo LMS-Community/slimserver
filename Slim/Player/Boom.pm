@@ -37,6 +37,7 @@ our $defaultPrefs = {
 		RADIO
 		MUSIC_SERVICES
 		FAVORITES
+		PLUGIN_LINE_IN
 		PLUGINS
 		ALARM
 		SETTINGS
@@ -116,6 +117,11 @@ sub hasRTCAlarm {
 	return 1;
 }
 
+sub hasLineIn {
+	return 1;
+}
+
+
 sub maxTreble {	return 23; }
 sub minTreble {	return -23; }
 
@@ -179,11 +185,62 @@ sub reconnect {
 	setRTCTime( $client);
 }
 
+sub play {
+	my ($client, $params) = @_;
+
+	# If the url to play is a source: value, that means the Line In
+	# are being used. The LineIn plugin handles setting the audp
+	# value for those. If the user then goes and pressed play on a
+	# standard file:// or http:// URL, we need to set the value back to 0,
+	# IE: input from the network.
+	my $url = $params->{'url'};
+
+	if ($url) {
+		if (Slim::Music::Info::isLineIn($url)) {
+			# The LineIn plugin will handle this, so just return
+			return 1;
+		}
+		else {
+			logger('player.source')->info("Setting LineIn to 0 for [$url]");
+			$client->setLineIn(0);
+		}
+	}
+	return $client->SUPER::play($params);
+}
+
+sub pause {
+	my $client = shift;
+
+	$client->SUPER::pause(@_);
+	if (Slim::Music::Info::isLineIn(Slim::Player::Playlist::url($client))) {
+		$client->setLineIn(0);
+	}
+}
+
+sub stop {
+	my $client = shift;
+
+	$client->SUPER::stop(@_);
+	if (Slim::Music::Info::isLineIn(Slim::Player::Playlist::url($client))) {
+		$client->setLineIn(0);
+	}
+}
+
+sub resume {
+	my $client = shift;
+
+	$client->SUPER::resume(@_);
+	if (Slim::Music::Info::isLineIn(Slim::Player::Playlist::url($client))) {
+		$client->setLineIn(Slim::Player::Playlist::url($client));
+	}
+}
+
 sub power {
 	my $client = shift;
 	my $on = $_[0];
 	my $currOn = $prefs->client( $client)->get( 'power') || 0;
 
+	# Turn led backlight on and off
 	if( defined( $on) && (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on))) {
 		if( $on == 1) {
 			Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_ALL);
@@ -191,7 +248,42 @@ sub power {
 			Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_POWER);
 		}
 	}
-	return $client->SUPER::power(@_);
+
+	my $result = $client->SUPER::power($on);
+
+	# Start playing line in on power on, if line in was selected before
+	if( defined( $on) && (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on))) {
+		if( $on == 1) {
+			if (Slim::Music::Info::isLineIn(Slim::Player::Playlist::url($client))) {
+				$client->execute(["play"]);
+			}
+		}
+	}
+
+	return $result;
+}
+
+sub setLineIn {
+	my $client = shift;
+	my $input  = shift;
+
+	my $log    = logger('player.source');
+
+	# convert a source: url to a number, otherwise, just use the number
+	if (Slim::Music::Info::isLineIn($input)) {
+	
+		$log->info("Got source: url: [$input]");
+
+		if ($INC{'Slim/Plugin/LineIn/Plugin.pm'}) {
+
+			$input = Slim::Plugin::LineIn::Plugin::valueForSourceName($input);
+		}
+	}
+
+	$log->info("Switching to line in $input");
+
+	$prefs->client($client)->set('lineIn', $input);
+	$client->sendFrame('audp', \pack('C', $input));
 }
 
 sub setRTCTime {

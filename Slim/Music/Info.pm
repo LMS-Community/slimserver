@@ -1096,6 +1096,10 @@ sub isAudioURL {
 		return 1; 	 
 	} 	 
 
+	if (isLineIn($url)) { 	 
+		return 1; 	 
+	} 	 
+
 	# Let the protocol handler determine audio status 	 
 	if ( $url !~ /^(?:http|mms)/ ) { 	 
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url ); 	 
@@ -1159,6 +1163,12 @@ sub isType {
 }
 
 sub isDigitalInput {
+	my $pathOrObj = shift;
+
+	return isType($pathOrObj, 'src', @_);
+}
+
+sub isLineIn {
 	my $pathOrObj = shift;
 
 	return isType($pathOrObj, 'src', @_);

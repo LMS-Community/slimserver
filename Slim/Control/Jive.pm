@@ -242,6 +242,14 @@ sub mainMenu {
 				[];
 			}
 		},
+		@{
+			# The Line In plugin could be disabled
+			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+				Slim::Plugin::LineIn::Plugin::lineInItem($client);
+			} else {
+				[];
+			}
+		},
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
 		@{playerSettingsMenu($client, 1)},
@@ -334,6 +342,7 @@ sub mainMenu {
 			@pluginMenus,
 			@{playerPower($client, 1)},
 			@{Slim::Plugin::DigitalInput::Plugin::digitalInputItem($client)},
+			@{Slim::Plugin::LineIn::Plugin::lineInItem($client)},
 			@{playerSettingsMenu($client, 1)},
 		);
 	}

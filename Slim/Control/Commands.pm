@@ -1287,7 +1287,7 @@ sub playlistXitemCommand {
 				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
-		if ( $cmd eq 'insert' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
+		if ( $cmd eq 'insert' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
 
 			my $insert = Slim::Music::Info::title($path) || $path;
 			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', $insert);
@@ -1300,7 +1300,7 @@ sub playlistXitemCommand {
 	} else {
 		
 		# Display some feedback for the player on remote URLs
-		if ( $cmd eq 'play' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
+		if ( $cmd eq 'play' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
 			
 			# Bug 8112, if playing a track that needs to be scanned first,
 			# we want to turn on the power
@@ -1335,7 +1335,7 @@ sub playlistXitemCommand {
 					'jive' => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
 				}, { 'duration' => 30 });
 			}
-		} elsif ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
+		} elsif ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
 
 			my $insert = Slim::Music::Info::title($path) || $path;
 			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', $insert);

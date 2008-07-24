@@ -133,6 +133,13 @@ sub home {
 		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
 	}
 
+	# More leakage from the LineIn 'plugin'
+	#
+	# If our current player has line in, show the menu.
+	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+		Slim::Plugin::LineIn::Plugin->webPages($client->hasLineIn);
+	}
+
 	# add favorites to first level of Default skin
 	if (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Default') {
 		my $favs = Slim::Utils::Favorites->new($client);

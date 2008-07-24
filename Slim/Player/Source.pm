@@ -624,6 +624,10 @@ sub decoderUnderrun {
 	# in the case that we're starting up a digital input, 
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
+
+	# in the case that we're starting up a line in, 
+	# we want to defer until the output underruns, not the decoder
+	return if (Slim::Music::Info::isLineIn(Slim::Player::Playlist::song($client, nextsong($client))));
 	
 	my $queue = $client->currentsongqueue();
 	

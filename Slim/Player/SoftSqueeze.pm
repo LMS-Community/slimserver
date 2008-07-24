@@ -86,6 +86,14 @@ sub hasPolarityInversion() {
 	return 0;
 }
 
+sub hasRTCAlarm {
+	return 0;
+}
+
+sub hasLineIn() {
+	return 0;
+}
+
 sub canDirectStream {
 	my $client = shift;
 	my $url = shift;

@@ -1,0 +1,50 @@
+[%- pagetitle = 'PLUGIN_LINE_IN' | string; pageicon = icons.PLUGIN_LINE_IN -%]
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/LineIn/list.html?player=[% player | uri %]">
+		[% "PLUGIN_LINE_IN" | string %]
+	</a>
+[% END -%]
+[%- pageHeaderInfo = BLOCK %]
+
+		[% IF lineInCurrent %]
+		<strong>[% "NOW_PLAYING" | string %][% "COLON" | string %]</strong>
+		<span class="exboldnowplaying">[% lineInCurrent %]</span>
+		[% END %]
+
+[% END -%]
+[%- PROCESS pageheader.html %]
+
+[%# Following block generates links that submit the form if javascript is enabled.  This allows
+     users to make setting changes then click on a new mix without having to press the submit button. %]
+[% BLOCK href %]
+href="[% webroot %]plugins/LineIn/set.html?type=[% type %]&player=[% player | uri %]"
+		 onclick='refreshStatus(); return true;'
+[% END %]
+
+[% BLOCK lineinselection %]
+		[% WRAPPER playlink noTarget=1 %]
+			[% PROCESS href %]
+		[% END %]
+[% END %]
+
+[% IF player == '' %]
+	<p>[% "NO_PLAYER_FOUND" | string %]</p>
+[% ELSE %]
+
+		<p>[% "PLUGIN_LINE_IN_CHOOSE_BELOW" | string %]</p>
+
+		[% odd = 1 %]
+		[% FOREACH type IN ['', 'LINE_IN'] %]
+
+			[% UNLESS type; NEXT; END %]
+
+			[% BLOCK controls %]
+				[% PROCESS lineinselection type="$loop.index" %]
+			[% END %]
+			[%- WRAPPER contentitem controls='controls' %]
+				[% 'PLUGIN_LINE_IN_' _ type | string %]
+			[% END %]
+			[% odd = (not odd) %]
+		[% END %]
+[% END %]
+[% PROCESS pagefooter.html %]

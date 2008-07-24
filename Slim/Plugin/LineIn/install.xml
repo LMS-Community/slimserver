@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<extension>
+	<id>BB7E7AAF-4711-4711-4711-CB6EE6AA6715</id>
+	<name>PLUGIN_LINE_IN</name>
+	<module>Slim::Plugin::LineIn::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_LINE_IN_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/LineIn/html/images/icon.png</icon>
+	<type>2</type>
+
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+</extension>

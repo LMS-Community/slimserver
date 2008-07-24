@@ -609,6 +609,11 @@ sub createList {
 			next;
 		}
 		
+		# Leakage of the LineIn plugin..
+		if ($sub eq 'PLUGIN_LINE_IN' && !$client->hasLineIn) {
+			next;
+		}
+
 		if ( main::SLIM_SERVICE ) {
 			# Hide disabled menus
 			if ( exists $disabledMenus{$sub} ) {
@@ -803,6 +808,11 @@ sub unusedMenuOptions {
 	# Leakage from Digital Input Plugin
 	if (defined $menuChoices{'PLUGIN_DIGITAL_INPUT'} && !$client->hasDigitalIn) {
 		delete $menuChoices{'PLUGIN_DIGITAL_INPUT'};
+	}
+
+	# Leakage from Line In Plugin
+	if (defined $menuChoices{'PLUGIN_LINE_IN'} && !$client->hasLineIn) {
+		delete $menuChoices{'PLUGIN_LINE_IN'};
 	}
 
 	for my $usedOption (@{$homeChoices{$client}}) {
