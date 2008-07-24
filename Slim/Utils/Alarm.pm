@@ -1317,6 +1317,11 @@ sub getPlaylists {
 	}
 	$class->addPlaylists('PLAYLISTS', \%playlistHash);
 
+	# Add favorites flattened out into a single level, only including audio & playlist entries
+	if (my $favs = Slim::Utils::Favorites->new($client)) {
+		$class->addPlaylists('FAVORITES', $favs->all);
+	}
+
 	# Reconstruct %alarmPlaylistType, stringifying keys for client as necessary
 	my %stringified;
 	foreach my $type (keys %alarmPlaylistTypes) {

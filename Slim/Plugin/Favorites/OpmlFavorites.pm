@@ -170,6 +170,26 @@ sub xmlbrowser {
 	return $class->{'xmlhash'};
 }
 
+sub all {
+	my $class  = shift;
+	my $typeRE = shift || qr/audio|playlist/;
+	my $level  = shift || $class->toplevel;
+	my $return = shift || {};
+
+	for my $entry (@{$level}) {
+
+		if ($entry->{'type'} && $entry->{'type'} =~ /$typeRE/) {
+			$return->{ $entry->{'text' } } = $entry->{'URL'} || $entry->{'url'};
+		}
+
+		if ($entry->{'outline'}) {
+			$class->all($typeRE, $entry->{'outline'}, $return);
+		}
+	}
+
+	return $return;
+}
+
 sub add {
 	my $class  = shift;
 	my $url    = shift;
