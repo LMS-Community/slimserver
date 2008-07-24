@@ -373,11 +373,11 @@ sub changePos {
 
 		} elsif ($dir < 0)  {
 			
-			$client->pushUp(undef, lines($client, 'show'));
+			$client->pushUp();
 
 		} else {
 			
-			$client->pushDown(undef, lines($client, 'show'));
+			$client->pushDown();
 		}
 
 	}
@@ -423,13 +423,7 @@ sub formatString {
 
 sub lines {
 	my $client = shift;
-	my $showCount = shift;
-
-	# FIXME: demo - to be removed - used to show the count for the first call of lines (from pushMode)
-	if (!$showCount && $client->modeParam('firstLines')) {
-		$showCount = 1;
-		$client->modeParam('firstLines', undef)
-	}
+	my $args   = shift;
 
 	my ($line1, $line2);
 
@@ -480,8 +474,9 @@ sub lines {
 		}
 	}
 
+	# show count if we are the new screen of a push transition
 	# count is shown in the overlay but we still support {count} in the header for backward compat
-	if ($showCount && ($client->modeParam('headerAddCount') || $header =~ /{count}/)) {
+	if ($args->{'trans'} && ($client->modeParam('headerAddCount') || $header =~ /{count}/)) {
 		$overlay1 = ' ' .  ($listIndex + 1) . ' ' . $client->string('OF') . ' ' . scalar(@$listRef);
 	}
 
@@ -500,9 +495,6 @@ sub getFunctions {
 sub setMode {
 	my $client    = shift;
 	my $setMethod = shift;
-
-	# FIXME: demo to be removed
-	$client->modeParam('firstLines', 1);
 
 	if (!init($client, $setMethod)) {
 		Slim::Buttons::Common::popModeRight($client);

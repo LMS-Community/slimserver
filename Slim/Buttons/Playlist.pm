@@ -206,11 +206,11 @@ sub init {
 
 			if ($client->display->showExtendedText()) {
 
-				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist') );
+				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist', { trans => 'pushModeRight' }) );
 
 			} else {
 
-				$client->pushRight($oldlines, $client->curLines());
+				$client->pushRight($oldlines, $client->curLines({ trans => 'pushModeRight' }));
 			}
 		},
 

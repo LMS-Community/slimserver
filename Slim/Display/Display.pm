@@ -461,7 +461,7 @@ sub curLines {
 	my $parts;
 
 	if (defined $linefunc) {
-		$parts = eval { &$linefunc($client) };
+		$parts = eval { &$linefunc($client, @_) };
 
 		if ($@) {
 			logError("bad lines function: $@");

@@ -218,24 +218,18 @@ sub changePos {
 
 		} elsif ($dir < 0)  {
 			
-			$client->pushUp(undef, lines($client, 'show'));
+			$client->pushUp();
 
 		} else {
 			
-			$client->pushDown(undef, lines($client, 'show'));
+			$client->pushDown();
 		}
 	}
 }
 
 sub lines {
 	my $client = shift;
-	my $showCount = shift;
-
-	# FIXME: demo - to be removed - used to show the count for the first call of lines (from pushMode)
-	if (!$showCount && $client->modeParam('firstLines')) {
-		$showCount = 1;
-		$client->modeParam('firstLines', undef)
-	}
+	my $args   = shift;
 
 	my ($line1, $line2);
 	my $listIndex = $client->modeParam('listIndex');
@@ -268,7 +262,8 @@ sub lines {
 
 	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
 
-	if ($showCount && $client->modeParam('headerAddCount')) {
+	# show count if we are the new screen of a push transition
+	if ($args->{'trans'} && $client->modeParam('headerAddCount')) {
 		$overlay1 = ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
 	}
 
@@ -332,9 +327,6 @@ sub setMode {
 	my $client    = shift;
 	my $setMethod = shift;
 
-	# FIXME: demo to be removed
-	$client->modeParam('firstLines', 1);
-	
 	#possibly skip the init if we are popping back to this mode
 	#if ($setMethod ne 'pop') {
 	

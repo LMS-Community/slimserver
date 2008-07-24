@@ -325,7 +325,7 @@ sub scrollHeader {
 sub pushLeft {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushLeft' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'r');
@@ -334,7 +334,7 @@ sub pushLeft {
 sub pushRight {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushRight' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'l');
@@ -343,7 +343,7 @@ sub pushRight {
 sub pushUp {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushUp' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'u', $render->{screen1}->{extent});
@@ -352,7 +352,7 @@ sub pushUp {
 sub pushDown {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushDown' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'd', $render->{screen1}->{extent});

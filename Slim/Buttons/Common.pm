@@ -1970,7 +1970,7 @@ sub pushModeLeft {
 		pushMode($client, $setmode, $paramHashRef);
 
 		if (!$client->modeParam('handledTransition')) {
-			$display->pushLeft($oldlines, $display->curLines());
+			$display->pushLeft($oldlines, $display->curLines({ trans => 'pushModeLeft' }));
 			$client->modeParam('handledTransition',0);
 		}
 
@@ -1981,7 +1981,7 @@ sub pushModeLeft {
 		pushMode($client, $setmode, $paramHashRef);
 
 		if (!$client->modeParam('handledTransition')) {
-			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2));
+			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2), display->curLines({ trans => 'pushModeLeft' }));
 			$client->modeParam('handledTransition',0);
 		}
 	}
@@ -1997,7 +1997,7 @@ sub popModeRight {
 
 		Slim::Buttons::Common::popMode($client);
 
-		$display->pushRight($oldlines, $display->curLines());
+		$display->pushRight($oldlines, $display->curLines({ trans => 'pushModeRight'}));
 
 	} else {
 
@@ -2005,17 +2005,16 @@ sub popModeRight {
 
 		Slim::Buttons::Common::popMode($client, 1);
 
-		$display->pushRight($oldlines, pushpopScreen2($client, $oldscreen2));
+		$display->pushRight($oldlines, pushpopScreen2($client, $oldscreen2, $display->curLines({ trans => 'pushModeRight' })));
 	}
 }
 
 sub pushpopScreen2 {
 	my $client = shift;
 	my $oldscreen2 = shift;
+	my $newlines = shift;
 
 	my $display = $client->display;
-
-	my $newlines = $display->curLines();
 
 	my $newscreen2 = $client->modeParam('screen2active');
 

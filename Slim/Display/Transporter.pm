@@ -223,7 +223,7 @@ sub scrollHeader {
 sub pushUp {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushUp' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'u', $render->{screen1}->{extent}, $render->{screen2}->{extent});
@@ -232,7 +232,7 @@ sub pushUp {
 sub pushDown {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushDown' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'd', $render->{screen1}->{extent}, $render->{screen2}->{extent});
