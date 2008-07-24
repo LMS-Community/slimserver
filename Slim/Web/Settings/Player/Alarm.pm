@@ -22,6 +22,7 @@ sub new {
 	my $class = shift;
 
 	Slim::Web::Pages->addPageLinks('plugins', { $class->name => $class->page });
+	Slim::Web::Pages->addPageLinks('icons', { 'ALARM' => 'html/images/alarm.png' });
 	
 	$class->SUPER::new();
 }
