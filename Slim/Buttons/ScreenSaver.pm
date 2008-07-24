@@ -113,9 +113,9 @@ sub screenSaver {
 		}
 	}
 
-	if ($display->updateMode() == 2 || $display->animateState() ) {
+	if ($display->inhibitSaver) {
 
-		# don't change whilst updates blocked or animating (non scrolling)
+		# don't change if display state inhibits at present
 
 	} elsif ($mode eq 'block') {
 

@@ -608,6 +608,7 @@ sub scrollInit {
 		'paused'        => 0,
 		'overlaystart'  => $screen->{overlaystart}[$screen->{scrollline}],
 		'ticker'        => $ticker,
+		'inhibitsaver'  => $ticker ? 0 : 1,
 	};
 
 	if (defined($screen->{bitsref})) {
@@ -760,8 +761,10 @@ sub scrollUpdate {
 			} elsif ($scroll->{pauseInt} > 0) {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
+				$scroll->{inhibitsaver} = 0;
 			} else {
 				$scroll->{offset} = $scroll->{scrollstart};
+				$scroll->{inhibitsaver} = 0;
 			}
 		}
 		# fast timer during scroll
@@ -780,6 +783,17 @@ sub endAnimation {
 	$display->endShowBriefly() if ($animate == 5);
 	$display->update($screen);
 }	
+
+# called by Screensaver to check whether we should change state into screensaver mode
+sub inhibitSaver {
+	my $display = shift;
+
+	# don't switch to screensaver if blocked, performing animation or on first scroll
+	return
+		$display->updateMode() == 2 ||
+		$display->animateState()    ||
+		($display->scrollState(1) == 1 && $display->scrollData(1)->{inhibitsaver});
+}
 
 sub resetDisplay {}
 sub killAnimation {}
