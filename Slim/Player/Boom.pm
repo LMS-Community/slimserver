@@ -328,11 +328,13 @@ sub setRTCTime {
 # Set the RTC alarm clock to a given time or clear it.
 # $time must be in seconds past midnight or undef to clear the alarm
 # $time should be adjusted as necessary for local time before being passed to this sub.
+# $volume is the volume at which the alarm should sound (0-100)
 # Generally called by Slim::Utils::Alarm::scheduleNext
 sub setRTCAlarm {
 	my $client = shift;
 	my $time = shift;
-
+	my $volume = shift;
+	
 	if (defined $time) {
 		# - Alarm time needs to be set always in 24h mode
 		# - Hours and minutes are in BCD format (see Slim::Utils::DateTime::bcdTime)
@@ -344,12 +346,9 @@ sub setRTCAlarm {
 		$data .= pack( 'C', $alarmMinBCD | 0x80);
 		$client->sendFrame( 'rtcs', \$data);
 
-# TODO: Get the alarm volume matching the alarm
-		my $alarmVolume = 50;
-
 		# Set alarm volume
 		$data = pack( 'C', 0x05);	# Set alarm volume (0 - 100)
-		$data .= pack( 'C', $alarmVolume);
+		$data .= pack( 'C', $volume);
 		$client->sendFrame( 'rtcs', \$data);
 
 
