@@ -7357,6 +7357,30 @@ SETUP_PASSWORD
 	SV	Lösenord
 	ZH_CN	密码
 
+SETUP_PASSWORD_REPEAT
+	DA	Bekræft adgangskode
+	DE	Kennwort bestätigen
+	EN	Confirm Password
+	ES	Confirmar contraseña
+	FI	Vahvista salasana
+	FR	Confirmer le mot de passe
+	IT	Conferma password
+	NL	Wachtwoord bevestigen
+	NO	Bekreft passord
+	SV	Bekräfta lösenord
+
+SETUP_PASSWORD_MISMATCH
+	DA	Adgangskoderne er ikke ens.
+	DE	Die eingegebenen Kennwörter stimmen nicht überein.
+	EN	The passwords you entered do not match.
+	ES	Las contraseñas que ha introducido no coinciden.
+	FI	Antamasi salasanat eivät täsmää.
+	FR	Les mots de passe saisis ne coïncident pas.
+	IT	Le password inserite non corrispondono.
+	NL	De ingevoerde wachtwoorden komen niet overeen.
+	NO	Passordene du anga stemte ikke.
+	SV	Lösenorden stämmer inte överens.
+
 SETUP_DONT_CACHE
 	CS	Necachovat
 	DA	Brug ikke cachelager
