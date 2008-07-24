@@ -110,6 +110,10 @@ ul.x-tab-strip-top {
 	font-weight: normal;
 }
 
+.x-tab-strip-active span.x-tab-strip-text {
+	color: #333333;
+}
+
 ul.x-tab-strip-top {
 	border-bottom-color: black;
 }

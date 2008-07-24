@@ -28,7 +28,7 @@ Settings = {
 							region: 'north',
 							contentEl: 'inner_header',
 							border: false,
-							height: 33,
+							height: 32,
 							margins: '0 15'
 						},
 						{
