@@ -27,6 +27,7 @@ use Slim::Display::Lib::Fonts;
 use base qw(Slim::Display::Display);
 
 use Slim::Utils::Prefs;
+use Slim::Utils::Log;
 
 my $prefs = preferences('server');
 
@@ -102,9 +103,8 @@ sub render {
 	my $s2periodic = shift;  # this render is for a periodic screen 2 update - suppress some state changes
 	my $client = $display->client;
 
-	if ((ref($parts) ne 'HASH')) {
-		$parts = $display->parseLines($parts);
-
+	if (ref $parts ne 'HASH') {
+		logError("bad lines function - non hash based display formats are depreciated");
 	} elsif (!exists($parts->{screen1}) &&
 		(exists($parts->{line1}) || exists($parts->{line2}) || exists($parts->{center1}) || exists($parts->{center2})) ) {
 		# Backwards compatibility with 6.2 display hash

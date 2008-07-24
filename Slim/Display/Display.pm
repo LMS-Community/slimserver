@@ -456,19 +456,12 @@ sub curDisplay {
 
 sub curLines {
 	my $display = shift;
-
-	unless ($display->isa('Slim::Display::Display')) {
-		# not called as a display method
-		logBacktrace("This function is depreciated, please call \$client->curLines() or \$display->curLines()");
-		return;
-	}
-
 	my $client = $display->client;
 	my $linefunc = $client->lines;
 	my $parts;
 
 	if (defined $linefunc) {
-		$parts = eval {  $display->parseLines(&$linefunc($client)) };
+		$parts = eval { &$linefunc($client) };
 
 		if ($@) {
 			logError("bad lines function: $@");
@@ -491,77 +484,6 @@ sub curLines {
 	}
 
 	return $parts;
-}
-
-# Parse lines into the latest hash format.  Provides backward compatibility for array and escaped lines definitions
-# NB will not convert 6.2 hash into a 6.5 hash - this is done in render
-sub parseLines {
-	my $display = shift;
-	my $lines = shift;
-	my ($line1, $line2, $line3, $line4, $overlay1, $overlay2, $center1, $center2, $bits);
-
-	return $lines if (ref($lines) eq 'HASH');
-
-	logBacktrace("lines function not using display hash, please update to display hash as this will be depreciated");
-
-	if (ref($lines) eq 'SCALAR') {
-		$line1 = $$lines;
-	} else {
-		if (ref($lines) eq 'ARRAY') {
-			$line1= $lines->[0];
-			$line2= $lines->[1];
-			$line3= $lines->[2];
-			$line4= $lines->[3];
-		} else {
-			$line1 = $lines;
-			$line2 = shift;
-			$line3 = shift;
-			$line4 = shift;
-		}
-		
-		return $line1 if (ref($line1) eq 'HASH');
-		
-		if (!defined($line1)) { $line1 = ''; }
-		if (!defined($line2)) { $line2 = ''; }
-
-		$line1 .= "\x1eright\x1e" . $line3 if (defined($line3));
-
-		$line2 .= "\x1eright\x1e" . $line4 if (defined($line4));
-
-		if (length($line2)) { 
-			$line1 .= "\x1elinebreak\x1e" . $line2;
-		}
-	}
-
-	while ($line1 =~ s/\x1eframebuf\x1e(.*)\x1e\/framebuf\x1e//s) {
-		$bits |= $1;
-	}
-
-	$line1 = $display->symbols($line1) || '';
-	($line1, $line2) = split("\x1elinebreak\x1e", $line1);
-
-	if (!defined($line2)) { $line2 = '';}
-	
-	($line1, $overlay1) = split("\x1eright\x1e", $line1) if $line1;
-	($line2, $overlay2) = split("\x1eright\x1e", $line2) if $line2;
-
-	($line1, $center1) = split("\x1ecenter\x1e", $line1) if $line1;
-	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
-
-	$line1 = '' if (!defined($line1));
-
-	return {
-		'bits'    => $bits,
-		'line'    => [ $line1, $line2 ],
-		'overlay' => [ $overlay1, $overlay2 ],
-		'center'  => [ $center1, $center2 ],
-	};
-}
-
-sub renderOverlay {
-	logBacktrace("renderOverlay depreciated - please use parseLines()");
-
-	return shift->parseLines(@_);
 }
 
 sub sliderBar {}
