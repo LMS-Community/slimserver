@@ -1294,6 +1294,8 @@ sub playItem {
 # Fit a title into the available display, truncating if necessary
 sub fitTitle {
 	my ( $client, $title, $numItems ) = @_;
+
+	return $title . '{count}';
 	
 	# number of items in the list, to fit the (xx of xx) text properly
 	$numItems ||= 2;

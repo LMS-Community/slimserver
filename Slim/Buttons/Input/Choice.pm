@@ -14,7 +14,8 @@ Slim::Buttons::Input::Choice
 =head1 SYNOPSIS
 
  my %params = (
-	header   => $client->modeParam('header') || ($title . ' {count}'),
+	header   => $client->modeParam('header') || $title,
+	addHeaderCount => 1,
 	listRef  => \@list,
 	url      => $url,
 	title    => $title,
@@ -365,15 +366,18 @@ sub changePos {
 		if ($pushDir eq 'up')  {
 			
 			$client->pushUp();
+
 		} elsif ($pushDir eq 'down') {
 			
 			$client->pushDown();
+
 		} elsif ($dir < 0)  {
 			
-			$client->pushUp();
+			$client->pushUp(undef, lines($client, 'show'));
+
 		} else {
 			
-			$client->pushDown();
+			$client->pushDown(undef, lines($client, 'show'));
 		}
 
 	}
@@ -396,7 +400,7 @@ sub changePos {
 # and the behavior will be 
 # 'text' will go through unchanged
 # '{STRING}' will be replaced with STRING translated
-# '{count}' will be replaced with (m of N) (i.e. like addHeaderCount in List mode)
+# '{count}' is stripped out as it is now shown in the overlay (modeParam addHeaderCount is preferred)
 sub formatString {
 	my $client    = shift;
 	my $string    = shift;
@@ -406,8 +410,8 @@ sub formatString {
 	while ($string =~ /(.*?)\{(.*?)\}(.*)/) {
 
 		if ($2 eq 'count') {
-			# replace {count} with (n of M)
-			$string = $1 . ' (' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')' . $3;
+			# strip out {count} - for backward compat - use modeParam headerAddCount now
+			$string = $1 . $3;
 		} else {
 			# translate {STRING}
 			$string = $1 . $client->string($2) . $3;
@@ -419,6 +423,8 @@ sub formatString {
 
 sub lines {
 	my $client = shift;
+	my $showCount = shift;
+
 	my ($line1, $line2);
 
 	my $listIndex = $client->modeParam('listIndex');
@@ -466,6 +472,11 @@ sub lines {
 		} else {
 			$overlay2 = Slim::Buttons::Common::radioButtonOverlay($client, $val eq getItemValue($client));
 		}
+	}
+
+	# count is shown in the overlay but we still support {count} in the header for backward compat
+	if ($showCount && ($client->modeParam('headerAddCount') || $header =~ /{count}/)) {
+		$overlay1 = ' ' .  ($listIndex + 1) . ' ' . $client->string('OF') . ' ' . scalar(@$listRef);
 	}
 
 	my $parts = {

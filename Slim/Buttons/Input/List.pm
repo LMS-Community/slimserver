@@ -211,21 +211,25 @@ sub changePos {
 		if ($pushDir eq 'up')  {
 			
 			$client->pushUp();
+
 		} elsif ($pushDir eq 'down') {
 			
 			$client->pushDown();
+
 		} elsif ($dir < 0)  {
 			
-			$client->pushUp();
+			$client->pushUp(undef, lines($client, 'show'));
+
 		} else {
 			
-			$client->pushDown();
+			$client->pushDown(undef, lines($client, 'show'));
 		}
 	}
 }
 
 sub lines {
 	my $client = shift;
+	my $showCount = shift;
 
 	my ($line1, $line2);
 	my $listIndex = $client->modeParam('listIndex');
@@ -249,18 +253,18 @@ sub lines {
 
 	} else {
 
-		if ($client->modeParam('headerAddCount')) {
-			$line1 .= ' (' . ($listIndex + 1)
-				. ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')';
-		}
-
 		$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
 
 		if ($client->modeParam('stringExternRef') && Slim::Utils::Strings::stringExists($line2)) {
 			$line2 = $client->linesPerScreen() == 1 ? $client->doubleString($line2) : $client->string($line2);
 		}
 	}
+
 	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
+
+	if ($showCount && $client->modeParam('headerAddCount')) {
+		$overlay1 = ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
+	}
 
 	my $parts = {
 		'line'    => [ $line1, $line2 ],
