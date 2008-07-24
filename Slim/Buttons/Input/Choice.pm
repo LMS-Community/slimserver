@@ -425,6 +425,12 @@ sub lines {
 	my $client = shift;
 	my $showCount = shift;
 
+	# FIXME: demo - to be removed - used to show the count for the first call of lines (from pushMode)
+	if (!$showCount && $client->modeParam('firstLines')) {
+		$showCount = 1;
+		$client->modeParam('firstLines', undef)
+	}
+
 	my ($line1, $line2);
 
 	my $listIndex = $client->modeParam('listIndex');
@@ -494,6 +500,9 @@ sub getFunctions {
 sub setMode {
 	my $client    = shift;
 	my $setMethod = shift;
+
+	# FIXME: demo to be removed
+	$client->modeParam('firstLines', 1);
 
 	if (!init($client, $setMethod)) {
 		Slim::Buttons::Common::popModeRight($client);

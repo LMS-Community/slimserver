@@ -231,6 +231,12 @@ sub lines {
 	my $client = shift;
 	my $showCount = shift;
 
+	# FIXME: demo - to be removed - used to show the count for the first call of lines (from pushMode)
+	if (!$showCount && $client->modeParam('firstLines')) {
+		$showCount = 1;
+		$client->modeParam('firstLines', undef)
+	}
+
 	my ($line1, $line2);
 	my $listIndex = $client->modeParam('listIndex');
 	my $listRef = $client->modeParam('listRef');
@@ -325,6 +331,9 @@ sub getFunctions {
 sub setMode {
 	my $client    = shift;
 	my $setMethod = shift;
+
+	# FIXME: demo to be removed
+	$client->modeParam('firstLines', 1);
 	
 	#possibly skip the init if we are popping back to this mode
 	#if ($setMethod ne 'pop') {
