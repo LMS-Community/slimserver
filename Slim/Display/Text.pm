@@ -26,6 +26,7 @@ use base qw(Slim::Display::Display);
 
 use Slim::Display::Lib::TextVFD;
 use Slim::Utils::Prefs;
+use Slim::Utils::Log;
 
 my $prefs = preferences('server');
 
@@ -141,7 +142,9 @@ sub render {
 	my $displayoverlays;
 
 	if ((ref($parts) ne 'HASH')) {
-		$parts = $client->parseLines($parts);
+
+		logError("bad lines function - non hash based display formats are depreciated");
+		$parts = {};
 
 	} elsif (!exists($parts->{screen1}) &&
 		(exists($parts->{line1}) || exists($parts->{line2}) || exists($parts->{center1}) || exists($parts->{center2})) ) {

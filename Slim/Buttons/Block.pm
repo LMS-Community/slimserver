@@ -103,7 +103,7 @@ sub block {
 	}
 	elsif (ref($line1) ne 'HASH') {
 
-		$parts = $client->parseLines( { 'line' => [ $line1, shift] } );
+		$parts = { 'line' => [ $line1, shift ] };
 	}
 
 	my $blockName = shift;  # associate name with blocked mode

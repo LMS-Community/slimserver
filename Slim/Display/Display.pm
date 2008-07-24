@@ -727,6 +727,11 @@ sub nmodes { 0 }
 sub hasScreen2 { 0 }
 sub vfdmodel {}
 
+# depreciated
+sub parseLines {}
+sub renderOverlay {}
+
+
 sub forgetDisplay {
 	my $display = shift;
 	Slim::Utils::Timers::forgetTimer($display);

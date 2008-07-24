@@ -38,8 +38,6 @@ sub prevline1 {}
 sub prevline2 {}
 sub curDisplay {}
 sub curLines {}
-sub parseLines {}
-sub renderOverlay {}
 sub progressBar {}
 sub balanceBar {}
 sub scrollInit {}
