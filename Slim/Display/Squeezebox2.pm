@@ -405,7 +405,7 @@ sub clientAnimationComplete {
 
 	$display->animateState(2);
 	$display->updateMode(0);
-	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 0.5, \&Slim::Display::Display::update);
+	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1.0, \&Slim::Display::Display::update);
 }
 
 sub killAnimation {
