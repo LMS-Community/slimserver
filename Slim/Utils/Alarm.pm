@@ -614,7 +614,7 @@ sub snooze {
 		Slim::Utils::Timers::killTimers($self, \&_checkPlaying);
 
 		# Pause the music (check if it's playing first or we'll generate a 'playlist jump' command)
-		if ($client->playmode =~ /play/) {
+		if (Slim::Player::Source::playmode($client) =~ /play/) {
 			my $request = $client->execute(['pause', 1]);
 			$request->source('ALARM');
 		}
@@ -893,7 +893,7 @@ sub _checkPlaying {
 
 	my $client = $self->client;
 
-	if (! ($client->playmode =~ /play/)) {
+	if (! (Slim::Player::Source::playmode($client) =~ /play/)) {
 		$log->debug('Alarm active but client not playing');
 		$self->_playFallback();
 	}
