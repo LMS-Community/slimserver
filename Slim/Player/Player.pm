@@ -426,9 +426,11 @@ sub sendFrame {};
 
 sub currentSongLines {
 	my $client = shift;
-	my $suppressScreen2 = shift; # suppress the screen2 display
-	my $suppressDisplay = shift; # suppress both displays [leaving just jive hash]
-	my $retrieveMetadata = shift || 0;
+	my $args   = shift;
+
+	my $onScreen2        = $args->{'screen2'};         # return as screen2
+	my $suppressDisplay  = $args->{'suppressDisplay'}; # suppress both displays [leaving just jive hash]
+	my $retrieveMetadata = $args->{'retrieveMetadata'} || 0;
 
 	my $parts;
 	my $status;
@@ -446,7 +448,7 @@ sub currentSongLines {
 
 		@lines = ( $client->string('NOW_PLAYING'), $client->string('NOTHING') );
 
-		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
+		if ($client->display->showExtendedText() && !$suppressDisplay && !$onScreen2) {
 			$screen2 = {};
 		}
 
@@ -523,7 +525,7 @@ sub currentSongLines {
 		$overlay[1] = $client->symbols('notesymbol');
 
 		# add screen2 information if required
-		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
+		if ($client->display->showExtendedText() && !$suppressDisplay && !$onScreen2) {
 			
 			my ($s2line1, $s2line2);
 
@@ -595,13 +597,23 @@ sub currentSongLines {
 
 	if (!$suppressDisplay) {
 
-		$parts->{'line'}    = \@lines;
-		$parts->{'overlay'} = \@overlay;
-		$parts->{'screen2'} = $screen2 if defined $screen2;
-		$parts->{'jive'}    = $jive if defined $jive;
+		if (!$onScreen2) {
 
-		# add in the progress bar and time
-		$client->nowPlayingModeLines($parts, $suppressScreen2) unless ($playlistlen < 1);
+			# build display for screen1 and possibly screen2
+			$parts->{'line'}    = \@lines;
+			$parts->{'overlay'} = \@overlay;
+			$parts->{'screen2'} = $screen2 if defined $screen2;
+			$client->addNowPlayingProgress($parts, undef) unless ($playlistlen < 1);
+
+		} else {
+
+			# build display on screen2
+			$parts->{'screen2'}->{'line'}    = \@lines;
+			$parts->{'screen2'}->{'overlay'} = \@overlay;
+			$client->addNowPlayingProgress($parts->{'screen2'}, 1) unless ($playlistlen < 1);
+		}
+
+		$parts->{'jive'} = $jive if defined $jive;
 
 	} elsif ($suppressDisplay ne 'all') {
 
@@ -611,7 +623,7 @@ sub currentSongLines {
 	return $parts;
 }
 
-sub nowPlayingModeLines {
+sub addNowPlayingProgress {
 	my ($client, $parts, $screen2) = @_;
 
 	my $display = $client->display;
@@ -782,7 +794,7 @@ sub mixerDisplay {
 
 		if (my $linefunc = $client->customVolumeLines()) {
 
-			$parts = &$linefunc($client, $featureValue);
+			$parts = &$linefunc($client, { value => $featureValue });
 
 		} else {
 			
@@ -809,7 +821,9 @@ sub mixerDisplay {
 		$client->modeParam('visu', [0]);
 	}
 
-	$parts ||= Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
+	$parts ||= Slim::Buttons::Input::Bar::lines($client, {
+		'value'     => $featureValue,
+		'header'    => $featureHeader,
 		'min'       => $client->mixerConstant($feature, 'min'),
 		'mid'       => $mid,
 		'max'       => $client->mixerConstant($feature, 'max'),

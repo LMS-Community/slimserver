@@ -635,7 +635,7 @@ sub playcontrolCommand {
 
 			# give user feedback of new mode and current song
 			if ($client->isPlayer()) {
-				my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client));
+				my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) });
 				$client->showBriefly($parts) if $parts;
 			}
 		}
@@ -836,7 +836,10 @@ sub playlistJumpCommand {
 
 		# update the display unless suppressed
 		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
+			my $parts = $client->currentSongLines({ 
+				suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
+				retrieveMetadata => 1,
+			});
 			$client->showBriefly($parts) if $parts;
 		}
 		

@@ -385,15 +385,14 @@ sub changePos {
 
 sub lines {
 	my $client = shift;
-
-	# These parameters are used when calling this function from Slim::Player::Player::mixerDisplay
-	my $value  = shift;
-	my $header = shift;
 	my $args   = shift;
 
-	my $min = $args->{'min'};
-	my $mid = $args->{'mid'};
-	my $max = $args->{'max'};
+	# These parameters are used when calling this function from Slim::Player::Player::mixerDisplay
+	my $value  = $args->{'value'};
+	my $header = $args->{'header'};
+	my $min    = $args->{'min'};
+	my $mid    = $args->{'mid'};
+	my $max    = $args->{'max'};
 	my $noOverlay = $args->{'noOverlay'} || 0;
 
 	my ($line1, $line2);

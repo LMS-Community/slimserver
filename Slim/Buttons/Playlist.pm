@@ -422,6 +422,7 @@ sub newTitle {
 #		
 sub lines {
 	my $client = shift;
+	my $args   = shift;
 
 	my $parts;
 
@@ -429,7 +430,7 @@ sub lines {
 
 	if ($nowPlaying || (Slim::Player::Playlist::count($client) < 1)) {
 
-		$parts = $client->currentSongLines();
+		$parts = $client->currentSongLines($args);
 
 	} else {
 
@@ -437,18 +438,19 @@ sub lines {
 			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
 		}
 
-		my $line1 = sprintf("%s (%d %s %d) ", 
-			$client->string('PLAYLIST'),
-			browseplaylistindex($client) + 1,
-			$client->string('OUT_OF'),
-			Slim::Player::Playlist::count($client)
-		);
+		my $line1 = $client->string('PLAYLIST');
+		my $overlay1;
+
+		if ($args->{'trans'}) {
+			$overlay1 = ' ' . (browseplaylistindex($client) + 1) . ' ' . $client->string('OUT_OF') . ' ' . 
+				Slim::Player::Playlist::count($client);
+		}
 
 		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client) );
 		
 		$parts = {
 			'line'    => [ $line1, Slim::Music::Info::standardTitle($client, $song) ],
-			'overlay' => [ undef, $client->symbols('notesymbol') ],
+			'overlay' => [ $overlay1, $client->symbols('notesymbol') ],
 		};
 
 		if ($client->display->showExtendedText()) {

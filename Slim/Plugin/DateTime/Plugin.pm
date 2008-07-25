@@ -81,7 +81,9 @@ my $fontDef = {
 
 sub screensaverDateTimelines {
 	my $client = shift;
-	my $flash  = shift; # set when called from animation callback
+	my $args   = shift;
+
+	my $flash  = $args->{'flash'}; # set when called from animation callback
 
 	# XXX: SLIM_SERVICE
 
@@ -138,7 +140,7 @@ sub screensaverDateTimelines {
 sub _flashAlarm {
 	my $client = shift;
 	
-	$client->update( screensaverDateTimelines($client, 'flash') );
+	$client->update( screensaverDateTimelines($client, { flash => 1 }) );
 }
 
 1;

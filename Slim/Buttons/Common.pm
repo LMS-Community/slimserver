@@ -2020,7 +2020,7 @@ sub pushpopScreen2 {
 
 	if ($newscreen2 && $newscreen2 eq 'periodic' && (!$oldscreen2 || $oldscreen2 ne 'periodic')) {
 		my $linesfunc = $client->lines2periodic();
-		$newlines->{'screen2'} = &$linesfunc($client);
+		$newlines->{'screen2'} = $linesfunc->($client, { screen2 => 1 })->{'screen2'};
 
 	} elsif ($oldscreen2 && !$newscreen2) {
 		$newlines->{'screen2'} = {};
@@ -2160,13 +2160,13 @@ sub _periodicUpdate {
 
 	if ($update2 && (!$display->updateMode || $display->screen2updateOK) && (my $linefunc = $client->lines2periodic()) ) {
 
-		my $screen2 = eval { &$linefunc($client, 1) };
+		my $screen2 = eval { &$linefunc($client, { screen2 => 1, periodic => 1 }) };
 
 		if ($@) {
 			logError("bad screen2 lines: $@");
 		}
 
-		$client->display->update({ 'screen2' => $screen2 }, undef, 1);
+		$display->update($screen2, undef, 1);
 	}
 }
 
