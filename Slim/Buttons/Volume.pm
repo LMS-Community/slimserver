@@ -55,6 +55,12 @@ sub volumeExitHandler {
 		} else {
 
 			Slim::Buttons::Common::popMode($client);
+
+			# If the exposed mode is a screensaver pop this too
+			if ($exittype && $exittype =~ /LEFT|EXIT/ && Slim::Buttons::Common::mode($client) =~ /^screensaver/i) {
+				Slim::Buttons::Common::popMode($client);
+			}
+			
 			$client->update();
 		}
 
