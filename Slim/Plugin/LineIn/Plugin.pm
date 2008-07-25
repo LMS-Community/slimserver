@@ -13,11 +13,11 @@ use Scalar::Util qw(blessed);
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 
-my $line_in = 0;
-
-my @line_ins = ();
-
-my $source_name = 'source';
+my $line_in = {
+	'name'  => '{PLUGIN_LINE_IN_LINE_IN}',
+	'value' => 1,
+	'url'   => "source:linein",
+};
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.linein',
@@ -35,14 +35,6 @@ sub initPlugin {
 	$log->info("Initializing");
 	
 	$class->SUPER::initPlugin();
-
-	@line_ins = (
-		{
-			'name'  => '{PLUGIN_LINE_IN_LINE_IN}',
-			'value' => 1,
-			'url'   => "$source_name:linein",
-		},
-	);
 
 	Slim::Player::ProtocolHandlers->registerHandler('source', 'Slim::Plugin::LineIn::ProtocolHandler');
 
@@ -144,12 +136,9 @@ sub enabled {
 sub valueForSourceName {
 	my $sourceName = shift || return 0;
 
-	for my $input (@line_ins) {
+	if ($sourceName eq $line_in->{'url'}) {
 
-		if ($input->{'url'} eq $sourceName) {
-
-			return $input->{'value'};
-		}
+		return $line_in->{'value'};
 	}
 
 	return 0;
@@ -157,11 +146,9 @@ sub valueForSourceName {
 
 sub updateLineIn {
 	my $client = shift;
-	my $valueRef = shift;
 
-	my $name  = $valueRef->{'name'};
-	my $value = $valueRef->{'value'};
-	my $url   = $valueRef->{'url'};
+	my $name  = $line_in->{'name'};
+	my $url   = $line_in->{'url'};
 
 	# Strip off INPUT.Choice brackets.
 	$name =~ s/[{}]//g;
@@ -213,23 +200,15 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+	
+	updateLineIn($client);
 
-	# use INPUT.Choice to display the list of feeds
-	my %params = (
-		'header'       => '{PLUGIN_LINE_IN} {count}',
-		'listRef'      => \@line_ins,
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', {
+		'stringHeader' => 1,
+		'header'       => $class->getDisplayName(),
+		'listRef'      => [ $client->string('PLUGIN_LINE_IN_IN_USE') ],
 		'modeName'     => 'Line In Plugin',
-		'onPlay'       => \&updateLineIn,
-		'overlayRef'   => sub { return [ undef, shift->symbols('notesymbol') ] },
-	);
-
-	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
-}
-
-sub getFunctions {
-	return {
-		'linein'     => sub { updateLineIn(shift, $line_ins[ 0 ]) },
-	};
+	});
 }
 
 # This plugin leaks into the main server, Slim::Web::Pages::Home() needs to
@@ -265,11 +244,8 @@ sub handleWebList {
 
 		
 			my $name;
-			for my $input (@line_ins) {
-				if ($url && $url eq $input->{'url'}) {
-					$name = $input->{'name'};
-					last;
-				}
+			if ($url && $url eq $line_in->{'url'}) {
+				$name = $line_in->{'name'};
 			}
 	
 			if (defined $name) {
@@ -290,7 +266,7 @@ sub handleSetting {
 
 	if (defined $client) {
 
-		updateLineIn($client, $line_ins[ ($params->{'type'} - 1) ]);
+		updateLineIn($client);
 	}
 
 	handleWebList($client, $params);

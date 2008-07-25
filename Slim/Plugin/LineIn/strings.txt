@@ -11,6 +11,9 @@ PLUGIN_LINE_IN_DESC
 PLUGIN_LINE_IN_LINE_IN
 	EN	Line In
 
+PLUGIN_LINE_IN_IN_USE
+	EN	Line In is active
+
 PLUGIN_LINE_IN_CHOOSE_BELOW
 	EN	Choose a Line In option below:
 
