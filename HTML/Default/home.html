@@ -107,6 +107,10 @@ ELSE %]
 				link.value = webroot _ 'settings/index.html?activePage=ALARM&amp;';
 				link.target = 'sc_settings';
 			END;
+			IF link.key == 'PLUGIN_LINE_IN';
+				link.value = 'PLUGIN_LINE_IN_IN_USE' | getstring;
+				link.value = "javascript:Home.setLineIn('" _ link.value _"');\" \"";
+			END;
 			# we want an icon for every item in the Extras menu...
 			additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 			PROCESS menuItem;

@@ -9,6 +9,7 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Scalar::Util qw(blessed);
+use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
@@ -18,6 +19,8 @@ my $line_in = {
 	'value' => 1,
 	'url'   => "source:linein",
 };
+
+my $url = 'plugins/LineIn/set.html';
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.linein',
@@ -211,65 +214,40 @@ sub setMode {
 	});
 }
 
+sub getFunctions {
+	return {
+		'linein' => sub { updateLineIn(shift) },
+	};
+}
+
 # This plugin leaks into the main server, Slim::Web::Pages::Home() needs to
 # call this function to decide to show the Line In menu or not.
 sub webPages {
-	my $class        = shift;
+	my $class     = shift;
 	my $hasLineIn = shift;
 
-	my $urlBase = 'plugins/LineIn';
-
 	if ($hasLineIn) {
-		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => "$urlBase/list.html" });
+		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => $url });
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => undef });
 	}
 	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 
-	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
-	Slim::Web::HTTP::addPageFunction("$urlBase/set.html", \&handleSetting);
+	Slim::Web::HTTP::addPageFunction($url, \&handleSetting);
 }
 
-# Draws the plugin's web page
-sub handleWebList {
-	my ($client, $params) = @_;
-	my $url;
-
-	if ($client) {
-
-		my $song = Slim::Player::Playlist::song($client);
-		
-		if ($song) {
-			$url = $song->url;
-
-		
-			my $name;
-			if ($url && $url eq $line_in->{'url'}) {
-				$name = $line_in->{'name'};
-			}
-	
-			if (defined $name) {
-				# pre-localised string served to template
-				$params->{'lineInCurrent'} = Slim::Buttons::Input::Choice::formatString(
-					$client, $name,
-				);
-			}
-		}
-	}
-
-	return Slim::Web::HTTP::filltemplatefile('plugins/LineIn/list.html', $params);
-}
-
-# Handles play requests from plugin's web page
 sub handleSetting {
-	my ($client, $params) = @_;
+	my ($client, $params, $gugus, $httpClient, $response) = @_;
 
 	if (defined $client) {
 
 		updateLineIn($client);
 	}
 
-	handleWebList($client, $params);
+	$response->code(RC_MOVED_TEMPORARILY);
+	$response->header('Location' => $params->{webroot} . 'home.html');
+
+	return Slim::Web::HTTP::filltemplatefile($url, $params);
 }
 
 1;

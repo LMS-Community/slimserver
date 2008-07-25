@@ -100,6 +100,14 @@ var Home = {
 		});
 	},
 
+	setLineIn: function(msg){
+		SqueezeJS.UI.setProgressCursor();
+		SqueezeJS.Controller.playerRequest({
+			params: [ 'setlinein', 'linein' ],
+			showBriefly: msg
+		});
+	},
+
 	onResize : function(){
 		var size = Ext.get('content').getViewSize();
 		Ext.select('div.homeMenuSection').setWidth(size[0]);
