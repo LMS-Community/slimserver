@@ -99,7 +99,6 @@ sub init {
 			'listRef' => ['library','player','server','module'],
 			'overlayRef' => sub { return (undef,shift->symbols('rightarrow')) },
 			'overlayRefArgs' => 'C',
-			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'callback' => \&mainExitHandler,
 		},
 
@@ -120,7 +119,6 @@ sub init {
 				\&Slim::Utils::Misc::delimitThousands,
 				\&Slim::Utils::Misc::delimitThousands,
 			],
-			'fonts' => { 'graphic-160x32' => 'light_n' },
 
 			'valueFunctRef' => [
 				sub { return Slim::Schema->totalTime },
@@ -143,7 +141,6 @@ sub init {
 			'externRefArgs' => 'CV',
 			'overlayRef' => \&infoDisplayOverlay,
 			'overlayRefArgs' => 'CV',
-			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'valueFunctRef' => [], # this is replaced in mainExitHandler
 			'menuName' => 'player'
 		},
@@ -158,7 +155,6 @@ sub init {
 			'externRefArgs' => 'CV',
 			'overlayRef' => \&infoDisplayOverlay,
 			'overlayRefArgs' => 'CV',
-			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'formatRef' => [
 				undef,
 				undef,
@@ -166,7 +162,7 @@ sub init {
 				undef,
 				undef,
 				\&Slim::Utils::Misc::delimitThousands,
-				'left',
+				undef,
 			],
 
 			'valueFunctRef' => [
@@ -190,7 +186,6 @@ sub init {
 			'listRef' => \&moduleList,
 			'externRef' => \&moduleDisplay,
 			'externRefArgs' => 'CV',
-			'fonts' => { 'graphic-160x32' => 'light_n' },
 			'menuName' => 'module',
 		}
 	);
@@ -296,15 +291,7 @@ sub timeFormat {
 sub infoDisplay {
 	my ($client,$value) = @_;
 
-	my $listIndex     = $client->modeParam('listIndex');
-	my $formatRef     = $client->modeParam('formatRef');
-	my $valueFunctRef = $client->modeParam('valueFunctRef');
-	
-	if (defined($formatRef) && defined($formatRef->[$listIndex]) && $formatRef->[$listIndex] eq 'left') {
-		return $valueFunctRef->[$listIndex]->($client);
-	}
-
-	return $client->string('INFORMATION_' . uc($value));
+	return (_infoDisplaySplit($client, $value))[0];
 }
 
 # function providing the overlay portion of the display for the
@@ -312,19 +299,41 @@ sub infoDisplay {
 sub infoDisplayOverlay {
 	my ($client,$value) = @_;
 
+	return ( undef, (_infoDisplaySplit($client, $value))[1] );
+}
+
+# Decide whether to put the information in the overlay (if won't cause scolling) or append to line itself
+# Called once for each of above function with the same params due to the wonders of Input.List...
+sub _infoDisplaySplit {
+	my $client = shift;
+	my $value  = shift;
+
 	my $listIndex     = $client->modeParam('listIndex');
 	my $formatRef     = $client->modeParam('formatRef');
 	my $valueFunctRef = $client->modeParam('valueFunctRef');
 	
+	my $prefix = $client->string('INFORMATION_' . uc($value));
+	my $info;
+	my $line;
+	my $overlay;
+
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
-		if ($formatRef->[$listIndex] eq 'left') {
-			return ( undef, undef );
-		} else {
-			return ( undef, $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client)) );
-		}
+		$info = $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client));
 	} else {
-		return ( undef, $valueFunctRef->[$listIndex]->($client) );
+		$info = $valueFunctRef->[$listIndex]->($client);
 	}
+
+	if ($value =~ /SIGNAL_STRENGTH|VOLTAGE/ || $client->measureText($prefix . $info, 2, 1) < $client->displayWidth) {
+		# put info in the overlay as it will change (signal strenght or voltage) or no scrolling will occur
+		$line = $prefix;
+		$overlay = $info
+	} else {
+		# append info to ident string as it does not fit on the screen so let the whole string scroll
+		$line = $prefix . '  ' . $info;
+		$overlay = undef;
+	}
+
+	return ($line, $overlay);
 }
 
 # function defining the list of plugins to display
