@@ -117,6 +117,7 @@ sub new {
 		_active => 0,
 		_snoozeActive => 0,
 		_nextDue => undef,
+		_timeoutTimer => undef, # Timer ref to the alarm timeout timer
 	};
 
 	bless $self, $class;
@@ -572,6 +573,13 @@ sub sound {
 
 		# Set up subscription to end the alarm on user activity
 		$class->_setAlarmSubscription($client);
+
+		# Set up subscription to automatically end the alarm if requested
+		my $timeout = $prefs->client($client)->get('alarmTimeoutSeconds');
+		if ($timeout) {
+			$log->debug("Scheduling time out in $timeout seconds");
+			$self->{_timeoutTimer} = Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $timeout, \&_timeout);
+		}
 	}
 
 	$self->{_timerRef} = undef;
@@ -612,6 +620,15 @@ sub snooze {
 
 		# Kill the callback to check for playback
 		Slim::Utils::Timers::killTimers($self, \&_checkPlaying);
+
+		# Reset the alarm timeout timer so the alarm will now time out in timeoutSeconds + snoozeTime
+		if (defined $self->{_timeoutTimer}) {
+			my $timeout = $prefs->client($client)->get('alarmTimeoutSeconds');
+			Slim::Utils::Timers::killSpecific($self->{_timeoutTimer});
+			$log->debug(sub {'Scheduling automatic timeout in ' . ($timeout + $snoozeSeconds) . ' seconds'});
+			$self->{_timeoutTimer} =
+				Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $timeout + $snoozeSeconds, \&_timeout);
+		}
 
 		# Pause the music (check if it's playing first or we'll generate a 'playlist jump' command)
 		if (Slim::Player::Source::playmode($client) =~ /play/) {
@@ -683,7 +700,7 @@ sub stopSnooze {
 
 stop( )
 
-Stop this alarm from sounding.  Has no effect if the alarm is not sounding.
+Stops this alarm.  Has no effect if the alarm is not sounding.
 
 =cut
 
@@ -700,8 +717,17 @@ sub stop {
 	$self->{_active} = 0;
 	$self->{_snoozeActive} = 0;
 
+	# Kill the subscription to automatically end this alarm on user activity
+	Slim::Control::Request::unsubscribe(\&_alarmEnd, $client);
+
 	# Kill the callback to check for playback
 	Slim::Utils::Timers::killTimers($self, \&_checkPlaying);
+
+	# Kill the callback to time out the alarm
+	if (defined $self->{_timeoutTimer}) {
+		Slim::Utils::Timers::killSpecific($self->{_timeoutTimer});
+		$self->{_timeoutTimer} = undef;
+	}
 
 	# Restore analogOutMode to previous setting
 	$client->can('setAnalogOutMode') && $client->setAnalogOutMode();
@@ -912,6 +938,21 @@ sub _playFallback {
 	my @tracks = Slim::Schema->rs('track')->search({audio => 1}, {rows => 10, order_by => \'RAND()'})->all;
 	my $request = $client->execute(['playlist', 'loadtracks', 'listRef', \@tracks ]);
 	$request->source('ALARM');
+}
+
+# Handle the alarm timeout timer firing
+sub _timeout {
+	my $self = shift;
+
+	my $client = $self->client;
+
+	$log->debug('Alarm ' . $self->id . ' ending automatically due to timeout');
+
+	# Pause the music.  Should we turn off?  Probably only if the player was off to start with.
+	my $request = $client->execute(['pause', 1]);
+	$request->source('ALARM');
+
+	$self->stop;
 }
 
 
@@ -1474,8 +1515,6 @@ sub _alarmEnd {
 		$log->debug('Ignoring self-created request');
 		return;
 	}
-
-	Slim::Control::Request::unsubscribe(\&_alarmEnd, $client);
 
 	# power always ends the alarm, whether snoozing or not
 	if ($currentAlarm->{_snoozeActive} && $request->getRequest(0) ne 'power') {

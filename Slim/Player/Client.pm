@@ -43,6 +43,7 @@ our $defaultPrefs = {
 	'alarmDefaultVolume' => 50, # if this is changed, also change the hardcoded value in the prefs migration code in Prefs.pm
 	'alarmSnoozeSeconds' => 540, # 9 minutes
 	'alarmfadeseconds' => 1, # whether to fade in the volume for alarms.  Boolean only, despite the name! 
+	'alarmTimeoutSeconds' => 3600, # time after which to automatically end an alarm.  false to never end
 
 	'lameQuality'      => 9,
 	'playername'       => \&_makeDefaultName,
