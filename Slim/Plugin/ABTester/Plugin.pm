@@ -1354,8 +1354,12 @@ sub _executeCommand {
 	if($cmd->{'type'} eq 'image') {
 		my $imageString = $cmd->{'content'};
 		my $image = catfile(_getImageDir($testcase), $imageString);
-		$log->debug("Loading image $image");
-		loadImage($client, $image);
+		if(-e $image) {
+			$log->debug("Loading image $image");
+			loadImage($client, $image);
+		}else {
+			$log->warn("Image file $image does not exist");
+		}
 	} elsif($cmd->{'type'} eq 'cli') {
 		my $execString = $cmd->{'content'};
 
