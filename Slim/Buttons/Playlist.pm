@@ -432,6 +432,10 @@ sub lines {
 
 		$parts = $client->currentSongLines($args);
 
+	} elsif ($args->{'periodic'} && $client->animateState) {
+
+		return {};
+
 	} else {
 
 		if ( browseplaylistindex($client) + 1 > Slim::Player::Playlist::count($client)) {
