@@ -65,7 +65,7 @@ sub init {
 
 	$client->SUPER::init();
 
-	$client->periodicScreenRefresh(); 
+	$client->display->periodicScreenRefresh(); 
 }
 
 sub initPrefs {
@@ -74,15 +74,6 @@ sub initPrefs {
 	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::initPrefs();
-}
-
-# periodic screen refresh
-sub periodicScreenRefresh {
-	my $client = shift;
-
-	$client->update() unless ($client->updateMode() || $client->scrollState() == 2 || $client->modeParam('modeUpdateInterval'));
-
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }
 
 sub connected {

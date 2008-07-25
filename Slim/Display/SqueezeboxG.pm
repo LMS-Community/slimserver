@@ -175,7 +175,7 @@ sub scrollHeader {
 sub pushLeft {
 	my $display = shift;
 	my $start = shift || $display->renderCache();
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushLeft' });
 
 	my $startbits = $display->render($start)->{screen1}->{bitsref};
 	my $endbits = $display->render($end)->{screen1}->{bitsref};
@@ -189,7 +189,7 @@ sub pushLeft {
 sub pushRight {
 	my $display = shift;
 	my $start = shift || $display->renderCache();
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushRight' });
 
 	my $startbits = $display->render($start)->{screen1}->{bitsref};
 	my $endbits = $display->render($end)->{screen1}->{bitsref};
@@ -200,8 +200,21 @@ sub pushRight {
 	$display->pushUpdate([\$allbits, $display->screenBytes(), 0 - $display->screenBytes() / 8, 0, 0.025]);
 }
 
-sub pushUp { shift->update(@_); }
-sub pushDown { shift->update(@_); }
+sub pushUp {
+	my $display = shift;
+
+	$display->killAnimation();
+	$display->update($display->curLines({ trans => 'pushUp' }));
+	$display->simulateANIC;
+}
+
+sub pushDown {
+	my $display = shift;
+
+	$display->killAnimation();
+	$display->update($display->curLines({ trans => 'pushDown' }));
+	$display->simulateANIC;
+}
 
 sub bumpLeft {
 	my $display = shift;
@@ -239,7 +252,7 @@ sub pushUpdate {
 		$display->animateState(3);
 		Slim::Utils::Timers::setHighTimer($display,Time::HiRes::time() + $deltatime,\&pushUpdate,[$allbits,$offset,$delta,$end,$deltatime]);
 	} else {
-		$display->endAnimation();
+		$display->simulateANIC;
 	}
 }
 
@@ -273,6 +286,13 @@ sub bumpDown {
 	Slim::Utils::Timers::setHighTimer($display,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
+sub simulateANIC {
+	my $display = shift;
+
+	$display->animateState(2);
+	Slim::Utils::Timers::setHighTimer($display, Time::HiRes::time() + 1.5, \&Slim::Display::Display::update);
+}
+
 sub endAnimation {
 	shift->SUPER::endAnimation(@_);
 }
@@ -284,6 +304,7 @@ sub killAnimation {
 
 	my $animate = $display->animateState();
 
+	Slim::Utils::Timers::killHighTimers($display, \&Slim::Display::Display::update) if ($animate == 2);
 	Slim::Utils::Timers::killHighTimers($display, \&pushUpdate) if ($animate == 3);	
 	Slim::Utils::Timers::killHighTimers($display, \&endAnimation) if ($animate == 4);
 	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 5);

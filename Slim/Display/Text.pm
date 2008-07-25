@@ -461,7 +461,7 @@ sub updateScreen {
 sub pushLeft {
 	my $display = shift;
 	my $start = shift || $display->renderCache();
-	my $end = shift || $display->client->curLines();
+	my $end = shift || $display->client->curLines({ trans => 'pushLeft' });
 
 	my $renderstart = $display->render($start);
 	my ($line1start, $line2start) = ($renderstart->{screen1}->{lineref}[0], $renderstart->{screen1}->{lineref}[1]);
@@ -478,7 +478,7 @@ sub pushLeft {
 sub pushRight {
 	my $display = shift;
 	my $start = shift || $display->renderCache();
-	my $end = shift || $display->client->curLines();
+	my $end = shift || $display->client->curLines({ trans => 'pushRight' });
 
 	my $renderstart = $display->render($start);
 	my ($line1start, $line2start) = ($renderstart->{screen1}->{lineref}[0], $renderstart->{screen1}->{lineref}[1]);
@@ -492,8 +492,21 @@ sub pushRight {
 	$display->pushUpdate([\$line1, \$line2, 40, -5, 0,  0.02]);
 }
 
-sub pushUp { shift->update(@_); }
-sub pushDown { shift->update(@_); }
+sub pushUp {
+	my $display = shift;
+
+	$display->killAnimation();
+	$display->update($display->curLines({ trans => 'pushUp' }));
+	$display->simulateANIC;
+}
+
+sub pushDown {
+	my $display = shift;
+
+	$display->killAnimation();
+	$display->update($display->curLines({ trans => 'pushDown' }));
+	$display->simulateANIC;
+}
 
 sub bumpRight {
 	my $display = shift;
@@ -534,7 +547,7 @@ sub pushUpdate {
 		$display->animateState(3);
 		Slim::Utils::Timers::setHighTimer($display,Time::HiRes::time() + $deltatime,\&pushUpdate,[$line1,$line2,$offset,$delta,$end,$deltatime]);
 	} else {
-		$display->endAnimation();
+		$display->simulateANIC;
 	}
 }
 
@@ -665,6 +678,13 @@ sub scrollUpdateTicker {
 	$scroll->{scrollline} = $scrollline;
 }
 
+sub simulateANIC {
+	my $display = shift;
+
+	$display->animateState(2);
+	Slim::Utils::Timers::setHighTimer($display, Time::HiRes::time() + 1.5, \&Slim::Display::Display::update);
+}
+
 sub endAnimation {
 	shift->SUPER::endAnimation(@_);
 }
@@ -675,9 +695,12 @@ sub killAnimation {
 	my $exceptScroll = shift; # all but scrolling to be killed
 
 	my $animate = $display->animateState();
+
+	Slim::Utils::Timers::killHighTimers($display, \&Slim::Display::Display::update) if ($animate == 2);
 	Slim::Utils::Timers::killHighTimers($display, \&pushUpdate) if ($animate == 3);	
 	Slim::Utils::Timers::killHighTimers($display, \&endAnimation) if ($animate == 4);
 	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 5);
+
 	$display->scrollStop() if (($display->scrollState() > 0) && !$exceptScroll) ;
 	$display->animateState(0);
 	$display->updateMode(0);

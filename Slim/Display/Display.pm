@@ -44,7 +44,7 @@ my $prefs = preferences('server');
 # animateState: (single value for all screens)         Slimp3/SB1      SB1G      SB2/3/Transporter   
 #   0 = no animation                                        x             x        x
 #   1 = client side push/bump animations                                           x
-#   2 = update scheduled (timer set to callback update)                            x   
+#   2 = update scheduled (timer set to callback update)     x             x        x   
 #   3 = server side push & bumpLeft/Right                   x             x
 #   4 = server side bumpUp/Down                             x             x 
 #   5 = server side showBriefly                             x             x        x
@@ -716,6 +716,22 @@ sub inhibitSaver {
 		$display->animateState()    ||
 		($display->scrollState(1) == 1 && $display->scrollData(1)->{inhibitsaver});
 }
+
+# periodic screen refresh for players requiring it (SB1 and Slimp3)
+sub periodicScreenRefresh {
+	my $display = shift;
+
+	unless ($display->updateMode > 0  || 
+			$display->scrollState == 2 ||
+			$display->animateState > 0 && $display->animateState <= 4 ||
+			$display->client->modeParam('modeUpdateInterval') ) {
+
+		$display->update($display->renderCache);
+	}
+
+	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1, \&periodicScreenRefresh);
+}
+
 
 sub resetDisplay {}
 sub killAnimation {}
