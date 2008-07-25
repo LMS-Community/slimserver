@@ -1981,7 +1981,7 @@ sub pushModeLeft {
 		pushMode($client, $setmode, $paramHashRef);
 
 		if (!$client->modeParam('handledTransition')) {
-			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2), display->curLines({ trans => 'pushModeLeft' }));
+			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2), $display->curLines({ trans => 'pushModeLeft' }));
 			$client->modeParam('handledTransition',0);
 		}
 	}
