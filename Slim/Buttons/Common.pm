@@ -144,7 +144,7 @@ sub init {
 		SDI::Service::Buttons::SetupWizard::init();
 	}
 
-	$savers{'playlist'} = 'NOW_PLAYING';
+	$savers{'playlist'} = 'SCREENSAVER_JUMP_TO_NOW_PLAYING';
 }
 
 =head2 forgetClient ( $client )

@@ -5972,20 +5972,25 @@ SETUP_SCREENSAVERTIMEOUT
 	ZH_CN	屏幕保护程序介入前的等候时间（秒）
 
 SCREENSAVER_JUMP_BACK_NAME
-	CS	Nyní hraje (Skočí zpátky při probuzení.)
-	DA	Nu spiller (spring tilbage ved aktivitet)
-	DE	Aktuelle Wiedergabe (beim Aufwachen zurückspringen)
-	EN	Now Playing (Jump back on wake.)
-	ES	Reproduciendo (volver atrás al reactivar).
-	FI	Nyt soi (palaa tähän herätyksessä)
-	FR	Lecture (retour veille)
-	HE	מושמע כעת (דילוג לאחור עם ההפעלה.)
-	IT	Riproduzione in corso. Torna indietro all'attivazione.
-	JA	現在再生中（解くと元の場所に戻ります）
-	NL	Speelt nu (terugspringen bij aanzetten)
-	NO	Spilles nå (Hopp tilbake ved oppstart)
-	SV	Aktuellt spår (Hoppa tillbaka vid aktivitet).
-	ZH_CN	播放中（在苏醒时跳回）
+	CS	Nyní hraje
+	DA	Nu spiller
+	DE	Aktueller Titel
+	EN	Now Playing
+	ES	Reproduciendo
+	FI	Nyt soi
+	FR	Lecture
+	HE	מושמע כעת
+	IT	Riproduzione in corso
+	JA	再生中
+	NL	Speelt nu
+	NO	Spilles nå
+	PT	A tocar...
+	SV	Aktuellt spår
+	ZH_CN	播放中
+
+SCREENSAVER_JUMP_TO_NOW_PLAYING
+	DE	Zu "Aktueller Titel" springen
+	EN	Jump To Now Playing
 
 SCREENSAVER_NONE
 	DA	Ingen
