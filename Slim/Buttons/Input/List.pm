@@ -267,6 +267,20 @@ sub lines {
 		$overlay1 = ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
 	}
 
+	# truncate long strings in the header with '...'
+	my $len   = $client->measureText($line1, 1);
+	my $width = $client->displayWidth;
+	my $trunc = '...';
+
+	if ($len > $width) {
+		$width -= $client->measureText($trunc, 1);
+		while ($len > $width) {
+			$line1 = substr $line1, 0, -1;
+			$len = $client->measureText($line1, 1);
+		}
+		$line1 .= $trunc;
+	}
+
 	my $parts = {
 		'line'    => [ $line1, $line2 ],
 		'overlay' => [ $overlay1, $overlay2 ]
