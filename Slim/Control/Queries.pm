@@ -1619,8 +1619,12 @@ sub musicfolderQuery {
 	$count = scalar(@data);
 
 	# now build the result
-	
-	my $playalbum = $prefs->client($request->client)->get('playtrackalbum');
+
+	my $playalbum;
+	if ( $request->client ) {
+		$playalbum = $prefs->client($request->client)->get('playtrackalbum');
+	}
+
 	# if player pref for playtrack album is not set, get the old server pref.
 	if ( !defined $playalbum ) { 
 		$playalbum = $prefs->get('playtrackalbum'); 
@@ -4339,7 +4343,11 @@ sub titlesQuery {
 
 	my $count = $rs->count;
 
-	my $playalbum = $prefs->client($request->client)->get('playtrackalbum');
+	my $playalbum;
+	if ( $request->client ) {
+		$playalbum = $prefs->client($request->client)->get('playtrackalbum');
+	}
+
 	# if player pref for playtrack album is not set, get the old server pref.
 	if ( !defined $playalbum ) { 
 		$playalbum = $prefs->get('playtrackalbum'); 
