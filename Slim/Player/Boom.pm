@@ -73,7 +73,7 @@ sub welcomeScreen {
 # dead-of-night-time listening to shower time.  
 # Additionally, we want 50% volume to be reasonable
 #
-# So....  A total dynamic range of 65dB over 100 steps is okay, the problem is how to 
+# So....  A total dynamic range of 74dB over 100 steps is okay, the problem is how to 
 # distribute those steps.  When distributed evenly, center volume is way too quiet.
 # So, This algorithm moves what would be 50% (i.e. -76*.5=38dB) and moves it to the 25%
 # position.
@@ -84,7 +84,7 @@ sub getVolumeParameters
 {
 	my $params = 
 	{
-		totalVolumeRange => -65,   # dB
+		totalVolumeRange => -74,   # dB
 		stepPoint        => 25,    # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
 		stepFraction     => .5     # fraction of totalVolumeRange where alternate volume ramp kicks in.
 	};
