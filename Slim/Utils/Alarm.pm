@@ -475,6 +475,12 @@ sub sound {
 		# Sound an Alarm (HWV 63)
 		$log->debug('Sounding alarm');
 
+		# Stop any other current alarm
+		if ($client->alarmData->{currentAlarm}) {
+			$log->debug('Stopping other current alarm');
+			$client->alarmData->{currentAlarm}->stop;
+		}
+
 		$client->alarmData->{lastAlarmTime} = $self->{_nextDue};
 		$self->{_active} = 1;
 		$client->alarmData->{currentAlarm} = $self;
