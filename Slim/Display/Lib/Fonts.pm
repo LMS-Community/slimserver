@@ -126,13 +126,14 @@ my %font2TTF = (
 $font2TTF{'standard_n.1'} = $font2TTF{'standard.1'};
 $font2TTF{'standard_n.2'} = $font2TTF{'standard.2'};
 $font2TTF{'light_n.1'}    = $font2TTF{'light.1'};
-$font2TTF{'light_n.1'}    = $font2TTF{'light.1'};
+$font2TTF{'light_n.2'}    = $font2TTF{'light.2'};
 $font2TTF{'full_n.2'}     = $font2TTF{'full.2'};
 
 
 # When using TTF to replace the following fonts, the string is has uc() run on it first
 my %font2uc = ( 
-	'standard.1' => 1,
+	'standard.1'   => 1,
+	'standard_n.1' => 1,
 );
 
 # Our bitmap fonts are actually cp1252 (Windows-Latin1), NOT iso-8859-1.
