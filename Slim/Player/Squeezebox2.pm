@@ -137,12 +137,50 @@ sub dBToFixed {
 		return int(($floatmult * (1 << 16)) + 0.5);
 	}
 }
-sub getVolumeDivisor
+sub getVolumeParameters
 {
-	# Use 0.5 dB steps for Squeezebox2.
-	my $client = shift;
-	my $model = $client->model();
-	return 2;
+	# A negative stepPoint ensures that the alternate (low level) ramp never kicks in.
+	my $params = 
+	{
+		totalVolumeRange => -50,    # dB
+		stepPoint        => -1,    # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
+		stepFraction     => 1      # fraction of totalVolumeRange where alternate volume ramp kicks in.
+	};
+	return $params;
+}
+
+sub getVolume
+{
+	my ($client, $volume, $volume_parameters) = @_;
+	my $totalVolumeRange  = $volume_parameters->{totalVolumeRange};
+	my $stepPoint         = $volume_parameters->{stepPoint};
+	my $stepdB            = $volume_parameters->{totalVolumeRange} * $volume_parameters->{stepFraction};
+
+	# Equation for a line:  
+	# y = mx+b
+	# y1 = mx1+b, y2 = mx2+b.  
+	# y2-y1 = m(x2 - x1)
+	# y2 = m(x2 - x1) + y1
+	my $slope_high = (0-$stepdB)/(100-$stepPoint) ;
+	my $slope_low  = ($stepdB-$totalVolumeRange)/($stepPoint-0);
+	
+	my $x2 = $volume;
+	my $m  = undef;
+	my $x1 = undef;
+	my $y1 = undef;
+	if ($x2 > $stepPoint) {
+		$m  = $slope_high;
+		$x1 = 100;
+		$y1 = 0;
+	} else {
+		$m  = $slope_low;
+		$x1 = 0;
+		$y1 = $totalVolumeRange;
+	}
+	my $y2 = $m * ($x2 - $x1) + $y1;
+	# print "$m, ($x1, $y1), ($x2, $y2)\n";
+	return $y2;
+	
 }
 
 sub volume {
@@ -161,7 +199,7 @@ sub volume {
 			$newGain = 0;
 		}
 		else {
-			my $db = ($volume - 100)/$client->getVolumeDivisor();	
+			my $db = $client->getVolume($volume, $client->getVolumeParameters());
 			$newGain = dBToFixed($db);
 		}
 
