@@ -573,7 +573,7 @@ sub sound {
 
 			$client->showBriefly({
 				line => [ $line1, $line2 ],
-				duration => $SHOW_BRIEFLY_DUR,
+				duration => $showBrieflyDur,
 			});
 		} );
 
