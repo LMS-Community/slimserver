@@ -88,7 +88,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								_tempVolume musicInfoTextCache metaTitle languageOverride password scanData currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								signalStrengthLog bufferFullnessLog slimprotoQLenLog
-								alarmData
+								alarmData knobData
 							));
 
 	__PACKAGE__->mk_accessor('array', qw(
@@ -253,6 +253,9 @@ sub new {
 
 		# alarm state
 		alarmData		=> {},			# Stored alarm data for this client.  Private.
+		
+		# Knob data
+		knobData		=> {},			# Stored knob data for this client
 
 		# other
 		_tempVolume             => undef,

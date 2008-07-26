@@ -1243,7 +1243,6 @@ sub getFunction {
 	my $clientMode = shift || mode($client);
 
  	my $coderef;
-
 	if ($coderef = $modeFunctions{$clientMode}{$function}) {
 
  		return $coderef;
@@ -1251,7 +1250,7 @@ sub getFunction {
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$clientMode}{$1})) {
 
  		return ($coderef, $2);
-
+ 
  	} elsif ($coderef = $functions{$function}) {
 
  		return $coderef;
@@ -1330,6 +1329,88 @@ sub scroll_dynamic {
 	my $scrollParams = $scrollClientHash->{$client}{scrollParams};
 
 	my $result = undef;
+	if ($client->knobData->{'_knobEvent'}) {
+		# This is a boom knob event.  Calculate acceleration for this case.
+		$result=$currentPosition;
+		my $velocity      = $client->knobData->{'_velocity'};
+		my $acceleration  = $client->knobData->{'_acceleration'};
+		my $deltatime     = $client->knobData->{'_deltatime'};
+		if ($velocity == 0) {
+			$result = $currentPosition + (($direction > 0) ? 1 : -1);
+			if ($deltatime < 2) {
+				# We just changed directions, or stopped for a bit and restarted the same direction
+				# So, just update the start and end estimates.
+				if ($direction > 0) {
+					# Moving up in list, stopped, and kept moving up
+					$scrollParams->{estimateStart} = $currentPosition;
+					$scrollParams->{estimateEnd}   = $scrollParams->{estimateEnd} - ($scrollParams->{estimateEnd} - $currentPosition)/2;
+				} elsif ($direction < 0) {
+					$scrollParams->{estimateStart} = $scrollParams->{estimateStart} + ($currentPosition - $scrollParams->{estimateStart})/2;
+					$scrollParams->{estimateEnd}   = $currentPosition;
+				}
+				if ($scrollParams->{estimateEnd} > $listlength) {
+					$scrollParams->{estimateEnd} = $listlength;
+				}
+				if ($scrollParams->{estimateStart} < 0) {
+					$scrollParams->{estimateStart} = 0;
+				}
+			} else {
+				# We just starting moving
+				$scrollParams->{estimateStart} = 0;
+				$scrollParams->{estimateEnd}   = $listlength;
+			}
+			$scrollParams->{A}             = 0;
+			$scrollParams->{V}             = 0;
+			$scrollParams->{t0}            = $client->knobData->{'_time'};
+			$scrollParams->{time}          = 0;
+			$scrollParams->{lasttime}      = 0;
+			if ($result < 0) {
+				$result = $listlength;
+			} elsif ($result >= $listlength) {
+				$result = 0;
+			}
+		} else {
+			# We should start accelerating now...
+			my $timeToCompleteList = $scrollParams->{Kc} / $velocity; # seconds/full_list
+			my $estimatedLength = $scrollParams->{estimateEnd} - $scrollParams->{estimateStart};
+			# We can calculate the needed acceleration by the formula
+			$scrollParams->{time} += $deltatime;
+			my $time     = $scrollParams->{time};
+			my $lasttime = $scrollParams->{lasttime};
+			$scrollParams->{A} = 2* $estimatedLength/($timeToCompleteList*$timeToCompleteList) ;
+			$scrollParams->{V} = $scrollParams->{V} + $scrollParams->{A} * $deltatime;
+			my $deltaX = .5 * $scrollParams->{A} * ($time*$time - $lasttime*$lasttime);
+			if ($deltaX < 1) {
+				$deltaX = 1;
+			}
+			$deltaX = int($deltaX);
+			if ($velocity < 0) {
+				$deltaX = - $deltaX;
+			}
+			$result = $currentPosition + $deltaX;
+#			if ($result => ($listlength-1)) {
+#				$result = $listlength-1;
+#			}
+#			if ($result <0) {
+#				$result = 0;
+#			}
+			$scrollParams->{lasttime} = $time;
+			if ($result > $scrollParams->{estimateEnd}) {
+				$scrollParams->{estimateEnd} = $scrollParams->{estimateEnd} + ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
+			}
+			if ($result < $scrollParams->{estimateStart}) {
+				$scrollParams->{estimateStart} = $scrollParams->{estimateStart} - ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
+			}
+			if ($scrollParams->{estimateStart} < 0) {
+				$scrollParams->{estimateStart} = 0;
+			}
+			if ($scrollParams->{estimateEnd} > $listlength) {
+				$scrollParams->{estimateEnd} = $listlength;
+			}
+		}
+		
+	} else {
+	
 	if ($holdTime == 0) {
 		# define behavior for button press, before any acceleration
 		# kicks in.
@@ -1406,6 +1487,7 @@ sub scroll_dynamic {
 		$scrollParams->{V} = $velocity;
 		$scrollParams->{lastHoldTime} = $holdTime;
 	}
+	}
 	if ($result >= $listlength) {
 		$result = $listlength - 1;
 	}
@@ -1454,6 +1536,12 @@ sub scroll_getInitialScrollParams {
 		# Items/second.  Don't go any slower than this under any circumstances. 
 		minimumVelocity => $minimumVelocity,  
 					
+		# Knob -> acceleration constant.  
+		# This constant converts wheel speed (ticks/second) into 'time to complete full list' (seconds for list_items)
+		# For example, if you're spinning the knob .5 revolution (10 ticks) per second, and Kc is 2,
+		# We should traverse the entire list in 2 / 0.5 = 4 seconds.   
+		Kc              => 100,
+		    
 		# seconds.  Finishs a list in this many seconds. 
 		Tc              => 5,   
 

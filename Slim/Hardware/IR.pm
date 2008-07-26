@@ -15,6 +15,22 @@ Slim::Hardware::IR
 
 L<Slim::Hardware::IR>
 
+Example Processing Pathway for an IR 'up' button command:
+    Slimproto.pm receives a BUTN slimproto packet and dispatches to Slimproto::_button_handler
+    It enqueue's an even to to Slim::Hardware::IR::enqueue with the button command, and time as reported by the player.
+    Slim::Hardware::IR::enque calculates the time difference between the server time and the time the IR command was sent. The IR Event is pushed onto an even stack.
+    Slim::Hardware::IR::idle    pulls events off the IR stack.  If it's been too long between the IR event and its processing, the whole IR queue is cleared.  Otherwise, idle() looks up the event handler and runs Client::execute('ir', <ircode>, <irtimefromclient>)
+    This calls Slim::Control::Request::execute, which looks up 'ir' in its dispatch table, and executes Slim::Control::Commands::irCommand as a result.
+    Slim::Control::Commands::irCommand calls Slim::Hardware::IR::processIR
+    Slim::Hardware::IR::processIR does a little work, then looks up the client function to call with lookupFunction, then executes it with processCode.
+    processCode calls $client->execute with the 'button' command, which once again goes back to Slim::Control::Request and looks up the 'button' function, and then calls Slim::Control::Commands::buttonCommand
+    Slim::Control::Commands::buttonCommand calls Slim::Hardware::IR::executeButton with the client, button and time
+    Slim::Hardware::IR::executeButton calls lookupFunction which finds the IR handler function to call.  It looks this up in Default.map under 'common'
+    For knob_right or knob_left (and others), this currently calls 'up' or 'down'
+    executeButton then calls Slim::Buttons::Common::getFunction, which looks up INPUT.List, up, which is defined in Slim::Buttons::Input::List.pm
+    Slim::Buttons::Input::List, up calls Slim::Buttons::Input::List::changePos 
+    Slim::Buttons::Input::List::changePos calls Slim::Buttons::Common::scroll.  This is where the acceleration algorithm takes place.
+
 =cut
 
 use strict;
@@ -662,6 +678,12 @@ sub processIR {
 	$client->irtimediff($timediff);
 	$client->lastirtime($irTime);
 
+	if (!($code =~ /^knob/)) {
+		## Any button other than knob resets the knob state
+		$client->knobData->{'_velocity'} = 0;
+		$client->knobData->{'_acceleration'} = 0;
+		$client->knobData->{'_knobEvent'} = 0;
+	}
 	if ( $log->is_info ) {
 		$log->info("$irCodeBytes\t$irTime\t" . Time::HiRes::time());
 	}
@@ -679,15 +701,27 @@ sub processIR {
 	} elsif ($code =~ /^knob/) {
 
 		$log->info("Knob code detected, processing $code");
-
+		$client->knobData->{'_knobEvent'} = 1;
+		$client->knobData->{'_time'} = $irTime;
+		$client->knobData->{'_lasttime'} = $client->lastirtime();
+		$client->knobData->{'_deltatime'} = $timediff;
 		if ($irCodeBytes eq $client->lastircodebytes && $timediff < 0.5) {
-
+			# The knob is spinning.  We can make useful calculations of speed and acceleration.
+			my $velocity = 1/$timediff;
+			if ($code =~ m:knob_left:) {
+				$velocity = -$velocity;
+			}
+			my $acceleration = ($velocity - $client->knobData->{'_velocity'}) / $timediff;
+			$client->knobData->{'_acceleration'} = $acceleration;
+			$client->knobData->{'_velocity'} = $velocity;
 			$code .= ".repeat";
 
 		} else {
 
 			$client->lastircodebytes($irCodeBytes);
 			$client->irrepeattime(0);
+			$client->knobData->{'_velocity'} = 0;
+			$client->knobData->{'_acceleration'} = 0;
 		}
 
 		# The S:B:C:scroll code rate limits scrolling unless this is reset for every update
@@ -696,7 +730,7 @@ sub processIR {
 		$client->lastirbutton($code);
 
 		my $irCode = lookupFunction($client, $code);
-
+		
 		processCode($client, $irCode, $irTime);
 
 	} elsif (($irCodeBytes eq $client->lastircodebytes) # same button press as last one
