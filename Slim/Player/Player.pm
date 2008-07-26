@@ -603,14 +603,14 @@ sub currentSongLines {
 			$parts->{'line'}    = \@lines;
 			$parts->{'overlay'} = \@overlay;
 			$parts->{'screen2'} = $screen2 if defined $screen2;
-			$client->addNowPlayingProgress($parts, undef) unless ($playlistlen < 1);
+			$client->nowPlayingModeLines($parts, undef) unless ($playlistlen < 1);
 
 		} else {
 
 			# build display on screen2
 			$parts->{'screen2'}->{'line'}    = \@lines;
 			$parts->{'screen2'}->{'overlay'} = \@overlay;
-			$client->addNowPlayingProgress($parts->{'screen2'}, 1) unless ($playlistlen < 1);
+			$client->nowPlayingModeLines($parts->{'screen2'}, 1) unless ($playlistlen < 1);
 		}
 
 		$parts->{'jive'} = $jive if defined $jive;
@@ -623,7 +623,9 @@ sub currentSongLines {
 	return $parts;
 }
 
-sub addNowPlayingProgress {
+# This method is misnamed - it adds in the progress overlay only
+# Call currentSongLines to get the full display
+sub nowPlayingModeLines {
 	my ($client, $parts, $screen2) = @_;
 
 	my $display = $client->display;
