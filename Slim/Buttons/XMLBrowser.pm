@@ -329,7 +329,8 @@ sub gotRSS {
 		'modeName' => 
 			( defined $params->{remember} && $params->{remember} == 0 ) 
 			? undef : "XMLBrowser:$url",
-		'header'   => fitTitle( $client, $feed->{'title'} ),
+		'header'   => $feed->{'title'},
+		'headerAddCount' => 1,
 
 		# TODO: we show only items here, we skip the description of the entire channel
 		'listRef'  => $feed->{'items'},
@@ -397,7 +398,8 @@ sub gotOPML {
 		my %params = (
 			'url'    => $url,
 			'title'  => $title,
-			'header' => fitTitle($client, $title),
+			'header' => $title,
+			'headerAddCount' => 1,
 		);
 
 		if (!defined $url) {
@@ -550,7 +552,8 @@ sub gotOPML {
 		'modeName' => 
 			( defined $params->{remember} && $params->{remember} == 0 ) 
 			? undef : "XMLBrowser:$url:$title",
-		'header'     => fitTitle( $client, $title, scalar @{ $opml->{'items'} } ),
+		'header'     => $title,
+		'headerAddCount' => 1,
 		'listRef'    => $opml->{'items'},
 
 		'isSorted'   => $opml->{sorted} || 0,
@@ -658,7 +661,8 @@ sub gotOPML {
 					'url'     => $itemURL,
 					'timeout' => $timeout,
 					'title'   => $title,
-					'header'  => fitTitle( $client, $title ),
+					'header'  => $title,
+					'headerAddCount' => 1,
 					'item'    => $item,
 					'parser'  => $parser,
 				);
@@ -951,7 +955,8 @@ sub displayItemDescription {
 
 		# its a remote audio source, use remotetrackinfo
 		my %params = (
-			'header'    => fitTitle( $client, $item->{'title'} ),
+			'header'    => $item->{'title'},
+			'headerAddCount' => 1,
 			'title'     => $item->{'title'},
 			'url'       => $item->{'enclosure'}->{'url'},
 			'details'   => \@lines,
@@ -1039,7 +1044,8 @@ sub displayFeedDescription {
 		'url'       => $client->modeParam('url'),
 		'title'     => $feed->{'title'},
 		'feed'      => $feed,
-		'header'    => fitTitle( $client, $feed->{'title'} ),
+		'header'    => $feed->{'title'},
+		'headerAddCount' => 1,
 		'details'   => \@lines,
 		'hideTitle' => 1,
 		'hideURL'   => 1,
@@ -1278,7 +1284,8 @@ sub playItem {
 			'url'     => $url,
 			'timeout' => $client->modeParam('timeout'),
 			'title'   => $title,
-			'header'  => fitTitle( $client, $title ),
+			'header'  => $title,
+			'headerAddCount' => 1,
 			'parser'  => $parser,
 			'item'    => $item,
 		);
@@ -1289,29 +1296,6 @@ sub playItem {
 
 		$client->bumpRight();
 	}
-}
-
-# Fit a title into the available display, truncating if necessary
-sub fitTitle {
-	my ( $client, $title, $numItems ) = @_;
-
-	return $title . '{count}';
-	
-	# number of items in the list, to fit the (xx of xx) text properly
-	$numItems ||= 2;
-	my $num = '?' x length $numItems;
-	
-	my $max    = $client->displayWidth;
-	my $length = $client->measureText( $title . " ($num of $num) ", 1 );
-	
-	return $title . ' {count}' if $length <= $max;
-	
-	while ( $length > $max ) {
-		$title  = substr $title, 0, -1;
-		$length = $client->measureText( $title . "... ($num of $num) ", 1 );
-	}
-	
-	return $title . '... {count}';
 }
 
 sub cliQuery {
