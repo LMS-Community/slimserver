@@ -74,7 +74,8 @@ sub setMode {
 
 		#TODO: display the error on the client
 		my %params = (
-			'header'  => "{XML_ERROR} {count}",
+			'header'  => "{XML_ERROR}",
+			'headerAddCount' => 1,
 			'listRef' => \@lines,
 		);
 
@@ -208,7 +209,8 @@ sub gotError {
 
 	#TODO: display the error on the client
 	my %params = (
-		'header'  => "{XML_ERROR} {count}",
+		'header'  => "{XML_ERROR}",
+		'headerAddCount' => 1, 
 		'listRef' => [ $err ],
 	);
 
@@ -971,7 +973,8 @@ sub displayItemDescription {
 
 		my %params = (
 			'item'    => $item,
-			'header'  => $item->{'title'} . ' {count}',
+			'header'  => $item->{'title'},
+			'headerAddCount' => 1,
 			'listRef' => \@lines,
 
 			'onRight' => sub {

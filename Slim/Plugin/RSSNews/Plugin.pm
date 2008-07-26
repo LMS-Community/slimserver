@@ -119,7 +119,8 @@ sub setMode {
 	
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		header => '{PLUGIN_RSSNEWS} {count}',
+		header => '{PLUGIN_RSSNEWS}',
+		headerAddCount => 1,
 		listRef => main::SLIM_SERVICE ? \@feeds : $prefs->get('feeds'),
 		modeName => 'RSS Plugin',
 		onRight => sub {

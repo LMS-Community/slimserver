@@ -282,10 +282,11 @@ sub setMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		'header'       => '{PLUGIN_DIGITAL_INPUT} {count}',
+		'header'       => '{PLUGIN_DIGITAL_INPUT}',
 		'listRef'      => \@digital_inputs,
 		'modeName'     => 'Digital Input Plugin',
 		'onPlay'       => \&updateDigitalInput,
+		'headerAddCount' => 1,
 		'overlayRef'   => sub { return [ undef, shift->symbols('notesymbol') ] },
 	);
 

@@ -123,7 +123,8 @@ sub setMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		header => '{PLUGIN_PODCAST} {count}',
+		header => '{PLUGIN_PODCAST}',
+		headerAddCount => 1,
 		listRef => main::SLIM_SERVICE ? \@feeds : $prefs->get('feeds'),
 		modeName => 'Podcast Plugin',
 		onRight => sub {

@@ -216,7 +216,8 @@ sub init {
 							'onRight'      => sub { 
 								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
 							},
-							'header'       => '{STEREOXL}{count}',
+							'header'       => '{STEREOXL}',
+							'headerAddCount' => 1,
 							'pref'            => "stereoxl",
 							'initialValue' => sub { return $_[0]->stereoxl() },
 							'condition'   => sub {
@@ -240,7 +241,8 @@ sub init {
 							'onPlay'       => \&setPref,
 							'onAdd'        => \&setPref,
 							'onRight'      => \&setPref,
-							'header'       => '{SETUP_ANALOGOUTMODE}{count}',
+							'header'       => '{SETUP_ANALOGOUTMODE}',
+							'headerAddCount' => 1,
 							'pref'            => "analogOutMode",
 							'initialValue'    => sub { $prefs->client(shift)->get('analogOutMode') },
 							'condition'   => sub {
@@ -276,7 +278,8 @@ sub init {
 							'onPlay'       => \&setPref,
 							'onAdd'        => \&setPref,
 							'onRight'      => \&setPref,
-							'header'       => '{SETUP_TRANSITIONTYPE}{count}',
+							'header'       => '{SETUP_TRANSITIONTYPE}',
+							'headerAddCount' => 1,
 							'pref'         => 'transitionType',
 							'initialValue' => sub { $prefs->client(shift)->get('transitionType') },
 							'condition'    => sub { return $_[0]->isa('Slim::Player::Squeezebox2') },
@@ -305,7 +308,8 @@ sub init {
 							'onPlay'       => \&setPref,
 							'onAdd'        => \&setPref,
 							'onRight'      => \&setPref,
-							'header'       => '{REPLAYGAIN}{count}',
+							'header'       => '{REPLAYGAIN}',
+							'headerAddCount'  => 1,
 							'pref'            => "replayGainMode",
 							'initialValue'    => sub { $prefs->client(shift)->get('replayGainMode') },
 							'condition'   => sub {
@@ -349,7 +353,8 @@ sub init {
 					'submenus'        => {
 						'TITLEFORMAT'      => {
 							'useMode'      => 'INPUT.Choice',
-							'header'       => '{TITLEFORMAT}{count}',
+							'header'       => '{TITLEFORMAT}',
+							'headerAddCount' => 1,
 							'onPlay'       => \&setPref,
 							'onAdd'        => \&setPref,
 							'onRight'      => \&setPref,
@@ -376,7 +381,8 @@ sub init {
 		
 						'TEXTSIZE'      => {
 							'useMode'      => 'INPUT.Choice',
-							'header'       => '{TEXTSIZE}{count}',
+							'header'       => '{TEXTSIZE}',
+							'headerAddCount' => 1,
 							'onPlay'       => sub { 
 								$_[0]->textSize($_[1]->{'value'})
 							},
@@ -428,7 +434,8 @@ sub init {
 									'onAdd'         => \&setPref,
 									'onRight'       => \&setPref,
 									'pref'          => "powerOnBrightness",
-									'header'        => '{SETUP_POWERONBRIGHTNESS}{count}',
+									'header'        => '{SETUP_POWERONBRIGHTNESS}',
+									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('powerOnBrightness') },
 									'init'          => \&brightnessInit,
 								},
@@ -439,7 +446,8 @@ sub init {
 									'onAdd'         => \&setPref,
 									'onRight'       => \&setPref,
 									'pref'          => "powerOffBrightness",
-									'header'        => '{SETUP_POWEROFFBRIGHTNESS}{count}',
+									'header'        => '{SETUP_POWEROFFBRIGHTNESS}',
+									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('powerOffBrightness') },
 									'init'          => \&brightnessInit,
 								},
@@ -450,7 +458,8 @@ sub init {
 									'onAdd'         => \&setPref,
 									'onRight'       => \&setPref,
 									'pref'          => "idleBrightness",
-									'header'        => '{SETUP_IDLEBRIGHTNESS}{count}',
+									'header'        => '{SETUP_IDLEBRIGHTNESS}',
+									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('idleBrightness') },
 									'init'          => \&brightnessInit,
 								},
@@ -476,7 +485,8 @@ sub init {
 									'onAdd'         => \&setPref,
 									'onRight'       => \&setPref,
 									'pref'          => "screensaver",
-									'header'        => '{SETUP_SCREENSAVER}{count}',
+									'header'        => '{SETUP_SCREENSAVER}',
+									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('screensaver') },
 									'init'          => \&screensaverInit,
 								},
@@ -487,7 +497,8 @@ sub init {
 									'onAdd'         => \&setPref,
 									'onRight'       => \&setPref,
 									'pref'          => "offsaver",
-									'header'        => '{SETUP_OFFSAVER}{count}',
+									'header'        => '{SETUP_OFFSAVER}',
+									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('offsaver') },
 									'init'          => \&screensaverInit,
 								},
@@ -498,7 +509,8 @@ sub init {
 									'onAdd'         => \&setPref,
 									'onRight'       => \&setPref,
 									'pref'          => "idlesaver",
-									'header'        => '{SETUP_IDLESAVER}{count}',
+									'header'        => '{SETUP_IDLESAVER}',
+									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('idlesaver') },
 									'init'          => \&screensaverInit,
 								},
@@ -507,7 +519,8 @@ sub init {
 		
 						'SETUP_PLAYINGDISPLAYMODE'      => {
 							'useMode'      => 'INPUT.Choice',
-							'header'       => '{SETUP_PLAYINGDISPLAYMODE}{count}',
+							'header'       => '{SETUP_PLAYINGDISPLAYMODE}',
+							'headerAddCount'=> 1,
 							'onPlay'       => \&setPref,
 							'onAdd'        => \&setPref,
 							'onRight'      => \&setPref,
@@ -543,7 +556,8 @@ sub init {
 							'onPlay'       => \&updateVisualMode,
 							'onAdd'        => \&updateVisualMode,
 							'onRight'      => \&updateVisualMode,
-							'header'       => '{SETUP_VISUALIZERMODE}{count}',
+							'header'       => '{SETUP_VISUALIZERMODE}',
+							'headerAddCount'=> 1,
 							'pref'         => 'visualMode',
 							'initialValue' => sub { $prefs->client(shift)->get('visualMode') },
 							'condition'    => sub { return $_[0]->display->isa('Slim::Display::Transporter') },
@@ -571,7 +585,8 @@ sub init {
 					'onPlay'       => \&executeCommand,
 					'onAdd'        => \&executeCommand,
 					'onRight'      => \&executeCommand,
-					'header'       => '{REPEAT}{count}',
+					'header'       => '{REPEAT}',
+					'headerAddCount'=> 1,
 					'condition'    => sub { 1 },
 					'pref'         => sub { Slim::Player::Playlist::repeat(shift) },
 					'initialValue' => sub { Slim::Player::Playlist::repeat(shift) },
@@ -598,7 +613,8 @@ sub init {
 					'onPlay'       => \&executeCommand,
 					'onAdd'        => \&executeCommand,
 					'onRight'      => \&executeCommand,
-					'header'       => '{SHUFFLE}{count}',
+					'header'       => '{SHUFFLE}',
+					'headerAddCount'=> 1,
 					'condition'    => sub { 1 },
 					'pref'         => sub{ return Slim::Player::Playlist::shuffle(shift)},
 					'initialValue' => sub{ return Slim::Player::Playlist::shuffle(shift)},
@@ -650,7 +666,8 @@ sub init {
 			'useMode'        => 'INPUT.Choice',
 			'listRef'        => \@languageChoices,
 			'headerArgs'     => 'C',
-			'header'         => '{SETUP_LANGUAGE}{count}',
+			'header'         => '{SETUP_LANGUAGE}',
+			'headerAddCount'=> 1,
 			'pref'           => 'language',
 			'initialValue'   => sub { $prefs->client($_[0])->get('language') },
 			'onRight'        => sub {
@@ -666,7 +683,8 @@ sub init {
 		$menuParams{'SETTINGS'}->{'submenus'}->{'TIMEZONE'} = {
 			'useMode' => 'INPUT.Choice',
 			'listRef' => $timezones,
-			'header'  => '{TIMEZONE}{count}',
+			'header'  => '{TIMEZONE}',
+			'headerAddCount'=> 1,
 			'onRight' => sub {
 				my ($client, $item) = @_;
 				$prefs->client($client)->set('timezone', $item->value);
@@ -718,7 +736,8 @@ sub init {
 		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_TIMEFORMAT'} = {
 			'useMode'      => 'INPUT.Choice',
 			'listRef'      => \@timeFormatChoices,
-			'header'       => "{SETUP_TIMEFORMAT}{count}",
+			'header'       => "{SETUP_TIMEFORMAT}",
+			'headerAddCount'=> 1,
 			'name'         => sub {
 				my ($client, $item) = @_;
 				# format current time in current format option
@@ -749,7 +768,8 @@ sub init {
 		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_LONGDATEFORMAT'} = {
 			'useMode'     => 'INPUT.Choice',
 			'listRef'     => \@dateFormatChoices,
-			'header'      => "{SETUP_LONGDATEFORMAT}{count}",
+			'header'      => "{SETUP_LONGDATEFORMAT}",
+			'headerAddCount'=> 1,
 			'name'        => sub {
 				my ($client, $item) = @_;
 				# format current time in current format option

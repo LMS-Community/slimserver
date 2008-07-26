@@ -114,7 +114,8 @@ sub setMode {
 
 	# now use another mode for the heavy lifting
 	my %params = (
-		'header'   => $client->modeParam('header') || ($title . ' {count}'),
+		'header'   => $client->modeParam('header') || $title,
+		'headerAddCount' => 1,
 		'listRef'  => \@list,
 		'url'      => $url,
 		'title'    => $title,

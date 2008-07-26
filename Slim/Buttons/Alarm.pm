@@ -26,6 +26,7 @@ my %choiceBaseParams = (
 	name		=> \&getName,
 	header		=> \&getHeader,
 	overlayRef	=> \&getOverlay,
+	headerAddCount => 1,
 );
 
 ###############################################################################
@@ -465,7 +466,7 @@ sub getHeader {
 		$menuTitle = $menuTitle->();
 	}
 
-	return $menuTitle . ' {count}';
+	return $menuTitle;
 }
 
 sub getOverlay {

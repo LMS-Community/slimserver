@@ -426,7 +426,8 @@ sub setModeRecordTestcase {
 	push @listRef,\%saveEntry;
 	
 	my %params = (
-		header     => '{PLUGIN_ABTESTER} {count}',
+		header     => '{PLUGIN_ABTESTER}',
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		name       => sub {
 			my ($client, $item) = @_;
@@ -514,7 +515,8 @@ sub setModeRecordTestcase {
 				my @empty = ();
 				$recordedData{$client->id}->{$item->{'value'}} = \@empty;
 				my %params = (
-					header     => '{PLUGIN_ABTESTER} {count}',
+					header     => '{PLUGIN_ABTESTER}',
+					headerAddCount => 1,
 					listRef    => \@recording,
 					modeName   => 'ABTester.Recording.'.$item->{'value'},
 					onPlay     => sub {
@@ -561,7 +563,8 @@ sub setMode {
 
 	# Prepare mode parameters and move player into the new mode
 	my %params = (
-		header     => '{PLUGIN_ABTESTER} {count}',
+		header     => '{PLUGIN_ABTESTER}',
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
@@ -596,7 +599,8 @@ sub setMode {
 				my $currentTestcases = $testcases{$client->id};
 				push @testCases, sort keys %$currentTestcases;
 				my %params = (
-					header     => '{PLUGIN_ABTESTER} {count}',
+					header     => '{PLUGIN_ABTESTER}',
+					headerAddCount => 1,
 					listRef    => \@testCases,
 					overlayRef => sub {
 						return [undef, $client->symbols('rightarrow')];
@@ -645,7 +649,8 @@ sub setModeFromInternet {
 
 	# Prepare mode parameters and move player into the new mode
 	my %params = (
-		header     => '{PLUGIN_ABTESTER} {count}',
+		header     => '{PLUGIN_ABTESTER}',
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
@@ -730,7 +735,8 @@ sub setModeDefaultImages {
 
 	# Prepare mode parameters and move player into the new mode
 	my %params = (
-		header     => '{PLUGIN_ABTESTER} {count}',
+		header     => '{PLUGIN_ABTESTER}',
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
@@ -923,6 +929,7 @@ sub setModeABXTest {
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
+		headerAddCount => 1,
 		testcase   => $testcase,
 		currentData => \%currentData,
 		initialValue => $initialValue,
@@ -1110,6 +1117,7 @@ sub setModeABCDTest {
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		overlayRef => sub {
 			my ($client, $item) = @_;
@@ -1239,6 +1247,7 @@ sub setModeQuestions {
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		overlayRef => sub {
 			return [undef, $client->symbols('rightarrow')];
@@ -1291,6 +1300,7 @@ sub setModeRequestQuestionAnswer {
 				my $item = shift;
 				return getHeaderText($client,$item);
 			},
+		headerAddCount => 1,
 		listRef    => \@listRef,
 		initialValue => $currentRating,
 		overlayRef => sub {
@@ -1328,9 +1338,9 @@ sub getHeaderText {
 
 	my $currentData = $client->modeParam('currentData');
 	if(defined($currentData->{'image'})) {
-		return uc($testcases{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_DATA} '.$currentData->{'image'}.' {count}';
+		return uc($testcases{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_DATA} '.$currentData->{'image'};
 	}else {
-		return uc($testcases{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_NONE} {count}';
+		return uc($testcases{$client->id}->{$client->modeParam('testcase')}->{'id'}).' {PLUGIN_ABTESTER_NONE}';
 	}
 }
 

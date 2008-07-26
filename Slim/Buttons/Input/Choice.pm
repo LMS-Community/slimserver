@@ -400,7 +400,7 @@ sub changePos {
 # and the behavior will be 
 # 'text' will go through unchanged
 # '{STRING}' will be replaced with STRING translated
-# '{count}' is stripped out as it is now shown in the overlay (modeParam addHeaderCount is preferred)
+# '{count}' is stripped out as it is now shown in the overlay (modeParam headerAddCount is preferred)
 sub formatString {
 	my $client    = shift;
 	my $string    = shift;

@@ -973,7 +973,8 @@ sub setMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		header     => '{PLUGIN_RANDOMPLAY} {count}',
+		header     => '{PLUGIN_RANDOMPLAY}',
+		headerAddCount => 1,
 		listRef    => [qw(track album contributor year genreFilter)],
 		name       => \&getDisplayText,
 		overlayRef => \&getOverlay,
@@ -1005,7 +1006,8 @@ sub setMode {
 				}
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
-					header     => '{PLUGIN_RANDOM_GENRE_FILTER} {count}',
+					header     => '{PLUGIN_RANDOM_GENRE_FILTER}',
+					headerAddCount => 1,
 					listRef    => \@listRef,
 					modeName   => 'RandomPlayGenreFilter',
 					overlayRef => \&getGenreOverlay,
