@@ -150,7 +150,7 @@ sub setMode {
 
 		overlayRef => sub {
 			my $client = shift;
-			return [ undef, $client->symbols('notesymbol') . $client->symbols('rightarrow') ];
+			return [ undef, $client->symbols('rightarrow') ];
 		},
 	);
 

@@ -836,23 +836,18 @@ sub handleSearch {
 sub overlaySymbol {
 	my ($client, $item) = @_;
 
-	my $overlay = '';
+	my $overlay;
 
-	if ( hasAudio($item) ) {
-
-		$overlay .= $client->symbols('notesymbol');
-	}
-	
-	$item->{type} ||= ''; # avoid warning but still display right arrow
-	
-	if ( $item->{type} eq 'radio' ) {
+	if ( $item->{type} && $item->{type} eq 'radio' ) {
 		# Display check box overlay for type=radio
 		my $default = $item->{default};
 		$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, $default eq $item->{name} );
 	}
-	elsif ( $item->{type} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
-
-		$overlay .= $client->symbols('rightarrow');
+	elsif ( hasAudio($item) ) {
+		$overlay = $client->symbols('notesymbol');
+	}
+	elsif ( $item->{type} ne 'text' ) {
+		$overlay = $client->symbols('rightarrow');
 	}
 
 	return [ undef, $overlay ];
