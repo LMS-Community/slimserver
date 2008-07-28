@@ -188,22 +188,10 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	NL	Opmerking: Als je je Last.fm-account wilt configureren, klik je op de tab Geavanceerd en selecteer je het item Last.fm Audioscrobbler.
 
 PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
-	DA	Indsend ikke fra denne afspiller
-	DE	Kein Scrobbling für diesen Player
-	EN	Do not scrobble this player
-	ES	No hacer scrobble en este reproductor
-	FR	Ne pas envoyer les informations de cette platine
-	IT	Non monitorare questo lettore
-	NL	Dit muzieksysteem niet scrobbelen
+	EN	Do not scrobble
 
 PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
-	DA	Indsend til konto: %s
-	DE	Scrobble an Konto: %s
-	EN	Scrobble to account: %s
-	ES	Scrobble en cuenta: %s
-	FR	Envoyer vers le compte: %s
-	IT	Invia ad account: %s
-	NL	Scrobbelen naar account: %s
+	EN	Use account: %s
 
 PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
 	DA	Last.fm: Elsk dette nummer
