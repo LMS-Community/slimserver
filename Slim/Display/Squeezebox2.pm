@@ -165,6 +165,8 @@ sub resetDisplay {
 	$display->killAnimation();
 }	
 
+sub periodicScreenRefresh {} # noop for this player
+
 sub bytesPerColumn {
 	return 4;
 }

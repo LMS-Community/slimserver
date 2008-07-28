@@ -32,6 +32,7 @@ sub showBriefly {
 	}
 }
 
+sub periodicScreenRefresh {}
 sub update {}
 sub brightness {}
 sub prevline1 {}

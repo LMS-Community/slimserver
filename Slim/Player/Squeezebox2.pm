@@ -209,11 +209,6 @@ sub volume {
 	return $volume;
 }
 
-sub periodicScreenRefresh {
-    my $client = shift;
-    # noop for this player - not required
-}    
-
 sub upgradeFirmware {
 	my $client = shift;
 
