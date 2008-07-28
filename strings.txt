@@ -5858,7 +5858,7 @@ SETUP_OFFSAVER
 	SV	Skärmsläckare i avstängt läge
 	ZH_CN	屏幕保护程序（关机时）
 
-SETUP_OFFSAVER
+SETUP_OFFSAVER_ABBR
 	EN	When Off
 
 SETUP_IDLESAVER
