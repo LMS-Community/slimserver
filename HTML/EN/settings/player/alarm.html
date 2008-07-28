@@ -118,14 +118,14 @@
 	[% END %]
 
 	<div class="alarmSection">
-	[% alarmTitle = "ALARM_NEW"; sectionID="alarm" _ newAlarmID %]
+	[% alarmTitle = "ALARM_NEW"; sectionID="alarm" _ newAlarmID; customStyle = useExtJS ? 'display:none' : '' %]
 	[% PROCESS alarmSetting alarm = { 
 		id      => newAlarmID
 		day     => 1
 		enabled => 1
 		repeat  => 1
 	} %]
-	[% alarmTitle = "" %]
+	[% alarmTitle = ''; customStyle = '' %]
 	</div>
 
 	<div class="alarmSection">

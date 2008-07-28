@@ -497,9 +497,6 @@ Settings.Alarm = function() {
 					}
 				});
 			}
-
-			if (el = Ext.get('alarm' + alarmId))
-				el.setDisplayed('none');
 		},	
 		
 		initTimeControls: function(timeFormat, altFormats) {
