@@ -1524,6 +1524,12 @@ SETUP_SNOOZE_MINUTES
 SETUP_SNOOZE_MINUTES_DESC
 	EN	Define the time in minutes you'd like the alarm to pause when you hit the snooze button. 
 
+SETUP_ALARM_TIMEOUT
+	EN	Alarm Timeout
+
+SETUP_ALARM_TIMEOUT_DESC
+	EN	Alarms can time out automatically after a configurable amount of time. If the timeout value is set to a 0, then the timeout is disabled completely.
+
 ALARM_STOPPED
 	DA	Vækkeuret er stoppet
 	DE	Wecker angehalten

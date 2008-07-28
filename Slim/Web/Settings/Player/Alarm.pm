@@ -65,7 +65,9 @@ sub handler {
 
 	if ($paramRef->{'saveSettings'}) {
 
+		# pref is in seconds, we only want to expose minutes in the web UI
 		$prefsClass->set('alarmSnoozeSeconds', $paramRef->{'pref_alarmSnoozeMinutes'} * 60);
+		$prefsClass->set('alarmTimeoutSeconds', $paramRef->{'pref_alarmTimeoutMinutes'} * 60);
 
 		for my $alarmID ( @{ $editedAlarms->{id} } ) {
 
@@ -94,6 +96,7 @@ sub handler {
 	}
 
 	$paramRef->{'prefs'}->{'pref_alarmSnoozeMinutes'} = $prefsClass->get('alarmSnoozeSeconds') / 60;
+	$paramRef->{'prefs'}->{'pref_alarmTimeoutMinutes'} = $prefsClass->get('alarmTimeoutSeconds') / 60;
 
 	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
 	
