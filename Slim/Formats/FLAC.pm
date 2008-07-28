@@ -693,7 +693,7 @@ sub _getCDDBTags {
 		if ($key =~ /TTITLE(\d+)/) {
 			my $tracknum = $1;
 
-			if ($tags->{$key} =~ m|^(.+\S)\s*/\s*(.+)$|) {
+			if ($tags->{$key} =~ m|^(.+\S)\s+/\s+(.+)$|) {
 				
 				if ($order eq "standard") {
 					$tracks->{$tracknum}->{'ARTIST'} = $1;
