@@ -1904,6 +1904,11 @@ sub pushMode {
 		$paramHashRef = {};
 	}
 
+	# Bug 8864: copy state of screen2 into new mode so case of recursively pushing modes can see existing state
+	if ($client->display->hasScreen2) {
+		$paramHashRef->{'screen2active'} = $client->modeParam('screen2active');
+	}
+
 	push @{$client->modeParameterStack}, $paramHashRef;
 
 	my $newModeFunction = $modes{$setmode};
