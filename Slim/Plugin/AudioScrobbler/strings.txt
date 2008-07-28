@@ -245,26 +245,12 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	SV	Obs! Om du vill konfigurera Last.fm-kontot klickar du på fliken Avancerat och väljer sedan Last.fm Audioscrobbler.
 
 PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
-	DA	Indsend ikke fra denne afspiller
-	DE	Kein Scrobbling für diesen Player
-	EN	Do not scrobble this player
-	ES	No hacer scrobble en este reproductor
-	FI	Älä lähetä tietoa tällä soittimella soitetuista kappaleista
-	FR	Ne pas envoyer les informations de cette platine
-	IT	Non monitorare questo lettore
-	NL	Dit muzieksysteem niet scrobbelen
+	EN	Do not scrobble
 	NO	Ikke scrobble denne spilleren
 	SV	Skrobbla inte från en här spelaren
 
 PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
-	DA	Indsend til konto: %s
-	DE	Scrobble an Konto: %s
-	EN	Scrobble to account: %s
-	ES	Scrobble en cuenta: %s
-	FI	Lähetä tiliin: %s
-	FR	Envoyer vers le compte: %s
-	IT	Invia ad account: %s
-	NL	Scrobbelen naar account: %s
+	EN	Use account: %s
 	NO	Scrobble til konto: %s
 	SV	Skrobbla till kontot: %s
 
