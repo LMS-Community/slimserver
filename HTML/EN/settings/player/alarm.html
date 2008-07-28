@@ -60,7 +60,7 @@
 	
 		[% alarmTitle = "SETUP_ALARMVOLUME" | string %]
 		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
-			<input type="checkbox" name="usesDefaultVolume[% alarm.id %]" class="usesDefaultVolume" id="usesDefaultVolume[% alarm.id %]" value="1"  [% alarm.usesDefaultVolume() ? "checked" : "" %]>
+			<input type="checkbox" name="usesDefaultVolume[% alarm.id %]" class="usesDefaultVolume" id="usesDefaultVolume[% alarm.id %]" value="1"  [% alarm.usesDefaultVolume() || (alarm.id = newAlarmID) ? "checked" : "" %]>
 			<label for="usesDefaultVolume[% alarm.id %]" class="stdlabel">[% "ALARM_USE_DEFAULT_VOLUME" | string %]</label><br/>
 			<input type="text" class="stdedit volumeSlider" name="alarmvolume[% alarm.id %]" id="alarmvolume[% alarm.id %]" value="[% alarm.volume || prefs.pref_alarmDefaultVolume %]" size="3">
 		[% END %]
@@ -80,9 +80,16 @@
 	
 			[% IF alarm.id != newAlarmID || useExtJS %]
 				<div>
-					<br/><input name="alarm_remove_[% alarm.id %]" type="[% useExtJS && alarm.id == newAlarmID ? 'button' : 'submit' %]" class="stdclick" value="[% "ALARM_DELETE" | string %]" id="alarm_remove_[% alarm.id %]">
+					<br/>
+					<input name="alarm_remove_[% alarm.id %]" 
+						type="[% useExtJS && alarm.id == newAlarmID ? 'button' : 'submit' %]" 
+						class="stdclick removeButton" 
+						value="[% (useExtJS && alarm.id == newAlarmID ? 'CANCEL' : 'ALARM_DELETE') | string %]" 
+						onClick="[% useExtJS && alarm.id == newAlarmID ? 'return false;' : '' %]" 
+						id="alarm_remove_[% alarm.id %]">
 				</div>
 			[% END %]
+		[% alarmTitle = '' %]
 		[% END %]
 
 	[% END %]

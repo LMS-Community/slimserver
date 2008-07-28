@@ -496,14 +496,9 @@ Settings.Alarm = function() {
 						}
 					}
 				});
-
-				if (alarmCount == 0) {
-					Ext.get('alarm' + alarmId).show();
-					Ext.get('button' + alarmId).setDisplayed('none');
-				}
 			}
 
-			if (alarmCount > 0 && (el = Ext.get('alarm' + alarmId)))
+			if (el = Ext.get('alarm' + alarmId))
 				el.setDisplayed('none');
 		},	
 		
