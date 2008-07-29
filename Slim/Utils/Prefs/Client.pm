@@ -48,10 +48,12 @@ sub new {
 	};
 
 	if (!$nomigrate) {
+		
+		my $cversion = $class->get( '_version', 'force' ); # On SN, force _version to come from the DB
 
 		for my $version (sort keys %{$parent->{'migratecb'}}) {
 			
-			if ($class->get('_version') < $version) {
+			if ( $cversion < $version ) {
 				
 				if ($parent->{'migratecb'}->{ $version }->($class, $client)) {
 					
