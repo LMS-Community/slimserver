@@ -14,6 +14,8 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
+use constant SN_DEBUG => 0;
+
 our @EXPORT = qw(rpds cancel_rpds);
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -65,7 +67,7 @@ sub rpds {
 	# Log all RPDS sends for debugging
 	my $sent  = unpack('cC/a*', $data);
 
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		# Log full RPDS unless it's RPDS 2 (contains passwords)
 		my $log = $sent;
 		if ( $sent != 2 ) {
@@ -110,7 +112,7 @@ sub rpds_timeout {
 	
 	my $sent  = unpack('cC/a*', $args->{data});
 
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		# Log full RPDS unless it's RPDS 2 (contains passwords)
 		if ( $sent != 2 ) {
 			$sent = Data::Dump::dump( $args->{data} );
@@ -148,7 +150,7 @@ sub rpds_handler {
 	
 	# Check for -5 getEA failures here, so we don't screw up any other rpds commands
 	if ( $got_cmd eq '-5' ) {
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_EA_FAILED' );
 		}
 		$log->debug('RPDS: getEA failed');
@@ -169,7 +171,7 @@ sub rpds_handler {
 			$log->warn( $client->id . " Received RPDS fault: $faultCode - $faultString");
 		}
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_FAULT', "$sent_cmd / $faultString" );
 		}
 		
@@ -253,7 +255,7 @@ sub rpds_handler {
 			$log->warn( $client->id . " Received RPDS -2, player needs a new session");
 		}
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_NO_SESSION' );
 		}
 		
@@ -268,7 +270,7 @@ sub rpds_handler {
 			$log->warn( $client->id . " Received RPDS -3, SSL connection error");
 		}
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_SSL_ERROR' );
 		}
 		
@@ -287,7 +289,7 @@ sub rpds_handler {
 			$log->warn( $client->id . " Received RPDS -4, SSL connection already in use, retrying later");
 		}
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_SSL_IN_USE' );
 		}
 		
@@ -308,7 +310,7 @@ sub rpds_handler {
 			$log->warn( $client->id . " Ignoring unrequested or old RPDS packet (got $got_cmd, expected $sent_cmd)" );
 		}
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_OLD', "got $got_cmd, ignoring" );
 		}
 		

@@ -19,6 +19,8 @@ use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+use constant SN_DEBUG => 0;
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
 	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
@@ -118,7 +120,7 @@ sub handleDirectError {
 		scroll => 1,
 	} );
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
 			$client, 'rhapsody_error', "$response - $status_line"
 		);
@@ -411,7 +413,7 @@ sub onJump {
 		$log->debug( 'Handling command "jump", playmode: ' . $client->playmode );
 	}
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
 			$client, 'rhapsody_jump', "-> $nextURL",
 		);
@@ -640,7 +642,7 @@ sub onUnderrun {
 		$log->debug( 'Underrun, stopping, playmode: ' . $client->playmode );
 	}
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
 			$client, 'rhapsody_underrun'
 		);
@@ -992,7 +994,7 @@ sub gotTrackError {
 	
 	$log->debug("Error during getTrackInfo: $error");
 	
-	if ( main::SLIM_SERVICE ) {
+	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
 			$client, 'rhapsody_track_error', $error
 		);
@@ -1077,7 +1079,7 @@ sub stopCallback {
 			return;
 		}
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			SDI::Service::EventLog->log(
 				$client, 'rhapsody_stop'
 			);
