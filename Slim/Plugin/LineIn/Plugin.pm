@@ -65,7 +65,7 @@ sub lineInItem {
 		stringToken    => getDisplayName(),
 		weight         => 45,
 		id             => 'linein',
-		node           => 'home',
+		node           => 'extras',
 		'icon-id'      => Slim::Plugin::LineIn::Plugin->_pluginDataFor('icon'),
 		displayWhenOff => 0,
 		window         => { titleStyle => 'album' },
