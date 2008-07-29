@@ -351,7 +351,7 @@
 						[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]
 						[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
 					</div>
-					<div id="audiodirselector" class="folderselector"></div>
+					<div id="audiodirselector" class="folderselector" style="position:relative"></div>
 					<div>
 						<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="wz_path">
 					</div>
