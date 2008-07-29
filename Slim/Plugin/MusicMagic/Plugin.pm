@@ -757,16 +757,7 @@ sub getMix {
 
 	# url encode the request, but not the argstring
 	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
-	# We might need to do the same on Linux, but I can't get UTF-8 files
-	# to show up properly in MMM right now.
-	if ($OS eq 'win' || $OS eq 'mac') {
-
-		$mixArgs = URI::Escape::uri_escape($mixArgs);
-
-	} else {
-
-		$mixArgs = Slim::Utils::Misc::escape($mixArgs);
-	}
+	$mixArgs = URI::Escape::uri_escape($mixArgs);
 	
 	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 
