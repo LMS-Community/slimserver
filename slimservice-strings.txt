@@ -29,6 +29,9 @@ SQUEEZENETWORK_HOME
 SQUEEZENETWORK_HOME_TEST
 	EN	SqueezeNetwork - Test
 
+SQUEEZENETWORK_HOME_VAR
+	EN	SqueezeNetwork - %s
+
 APPLICATION
 	DE	SqueezeNetwork
 	EN	SqueezeNetwork
@@ -930,6 +933,9 @@ FAVORITES
 
 SQUEEZENETWORK_SIGNUP
 	EN	Visit www.squeezenetwork.com to register
+
+SQUEEZENETWORK_SIGNUP_BOOMCAT
+	EN	Visit boom.squeezenetwork.com to register
 
 SQUEEZENETWORK_PIN
 	DE	Player-PIN: %s
