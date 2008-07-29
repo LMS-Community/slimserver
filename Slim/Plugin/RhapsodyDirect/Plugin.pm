@@ -13,6 +13,8 @@ use Slim::Plugin::RhapsodyDirect::RPDS ();
 
 use URI::Escape qw(uri_escape_utf8);
 
+use constant SN_DEBUG => 0;
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
 	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
@@ -180,6 +182,8 @@ sub handleError {
 
 sub logError {
 	my ( $client, $error ) = @_;
+	
+	return unless SN_DEBUG;
 	
 	SDI::Service::EventLog->log( 
 		$client, 'rhapsody_error', $error,
