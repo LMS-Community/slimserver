@@ -53,6 +53,12 @@ our $defaultPrefs = {
 	'titleFormatCurr'  => 1,
 };
 
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Utils::Alarm->alarmsEnabled($client, $value);
+}, 'alarmsEnabled' );
+
 # deprecated, use $client->maxVolume
 our $maxVolume = 100;
 
