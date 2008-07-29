@@ -478,7 +478,7 @@ sub lines {
 
 	# show count if we are the new screen of a push transition or pref set
 	# count is shown in the overlay but we still support {count} in the header for backward compat
-	if ( ($args->{'trans'} || $prefs->client($client)->get('alwaysShowMenuCount')) &&
+	if ( ($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) &&
 		 ($client->modeParam('headerAddCount') || $header =~ /{count}/) ) {
 		$overlay1 = ' ' .  ($listIndex + 1) . ' ' . $client->string('OF') . ' ' . scalar(@$listRef);
 	}
