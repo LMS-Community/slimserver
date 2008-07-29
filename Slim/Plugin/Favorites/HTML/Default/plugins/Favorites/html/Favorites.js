@@ -2,7 +2,7 @@ var Favorites = function(){
 	return {
 		init : function(session, index){
 
-			if (index == 'undefined' || index == 'null')
+			if (index == 'undefined' || index == 'null')
 				index = null;
 
 			SqueezeJS.UI.ScrollPanel.init();
