@@ -50,6 +50,40 @@ our %screensaverDateTimeFunctions = (
 			Slim::Hardware::IR::resendButton($client);
 		}
 	},
+
+	'snooze' => sub {
+		my $client = shift;
+
+		my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
+		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+
+		# snooze if alarm is currently playing
+		if (defined $currentAlarm) {
+			$currentAlarm->snooze;
+		}
+
+		# display next alarm time if alarm is within the next 24h		
+		elsif (defined $nextAlarm && ($nextAlarm->nextDue - time < 86400)) {
+
+			my $line = $client->symbols('bell');
+
+			# Remove seconds from alarm time
+			my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
+			$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
+			$line .=  " $timeStr";
+
+	 		# briefly display the next alarm
+	 		$client->showBriefly(
+		 		{
+					'center' => [ 
+						$client->string('ALARM_ALARM') . $client->string('COLON') . ' ' . $client->string('ALARM_ALARM_ENABLED'),
+						$line,
+					]
+				},
+				{ 'duration' => 3 }
+			);
+		}
+	},
 );
 
 sub getScreensaverDatetime {
