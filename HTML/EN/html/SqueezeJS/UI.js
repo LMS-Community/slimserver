@@ -1718,11 +1718,25 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 				el = Ext.get(el);
 				if (el.getTop() > plPos.top + plView.height
 					|| el.getBottom() < plPos.top)
-						el.scrollIntoView(this.playlistEl);
+						this.scrollIntoView(el);
 			}
 		}
 	},
 
+	// overwriting Element.scrollIntoView
+	// to have the element centered, not at the top/bottom border
+	scrollIntoView : function(el) {
+		var c = Ext.getDom(this.playlistEl);
+		var elDom = el.dom;
+		
+		var o = el.getOffsetsTo(c),
+		    t = o[1] + c.scrollTop,
+		    b = t + elDom.offsetHeight;
+
+		c.scrollTop = b - c.clientHeight + this.container.dom.scrollHeight / 2;;
+		c.scrollTop = c.scrollTop; // corrects IE, other browsers will ignore
+	},
+			
 	request : function(cmd, el) {
 		// don't accept new commands while the playlist is updating
 		var um = this.getPlEl().getUpdateManager();
