@@ -1,6 +1,10 @@
 var Favorites = function(){
 	return {
 		init : function(session, index){
+
+			if (index == 'undefined' || index == 'null')
+				index = null;
+
 			SqueezeJS.UI.ScrollPanel.init();
 
 			var favlist = new SqueezeJS.UI.Sortable({
