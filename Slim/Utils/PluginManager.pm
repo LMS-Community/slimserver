@@ -375,6 +375,7 @@ sub enablePlugins {
 	my %skip = ();
 	if ( main::SLIM_SERVICE ) {
 		%skip = (
+			'Slim::Plugin::ABTester::Plugin'       => 1,
 			'Slim::Plugin::Health::Plugin'         => 1,
 			'Slim::Plugin::JiveExtras::Plugin'     => 1,
 			'Slim::Plugin::MusicMagic::Plugin'     => 1,

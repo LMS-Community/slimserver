@@ -285,12 +285,18 @@ sub power {
 sub welcomeScreen {
 	my $client = shift;
 
-	# XXX: SLIM_SERVICE
+	# SLIM_SERVICE
+	my $line1 = ( main::SLIM_SERVICE ) 
+		? $client->string('WELCOME_TO_APPLICATION')
+		: $client->string('WELCOME_TO_' . $client->model);
+	my $line2 = ( main::SLIM_SERVICE )
+		? $client->string('WELCOME_MESSAGE')
+		: $client->string('FREE_YOUR_MUSIC');
 
 	$client->showBriefly( {
 		'center' => [ 
-				$client->string('WELCOME_TO_' . $client->model), 
-				$client->string('FREE_YOUR_MUSIC')
+				$line1,
+				$line2
 			],
 		'fonts' => { 
 				'graphic-320x32' => 'standard',

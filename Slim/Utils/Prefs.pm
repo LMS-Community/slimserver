@@ -322,64 +322,74 @@ sub init {
 		
 			1;
 		});
-
-		# migrate client prefs to version 2 - sync prefs changed
-		$prefs->migrateClient(2, sub {
-			my $cprefs = shift;
-			my $defaults = $Slim::Player::Player::defaultPrefs;
-			$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if ($cprefs->get('syncBufferThreshold') > 255);
-			$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if ($cprefs->get('minSyncAdjust') < 1);
-			$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
-			1;
-		});
-	
-		# migrate menuItem pref so everyone gets the correct menu structure
-		$prefs->migrateClient( 3, sub {
-			my ( $cprefs, $client ) = @_;
-			my $defaults = $Slim::Player::Player::defaultPrefs;
-		
-			if ( $client->hasDigitalIn ) {
-				$defaults = $Slim::Player::Transporter::defaultPrefs;
-			}
-		
-			if ( $client->isa('Slim::Player::Boom') ) {
-				$defaults = $Slim::Player::Boom::defaultPrefs;
-			}
-		
-			$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) ); # clone for each client
-			1;
-		} );
-	
-		# migrate 'play other songs' pref from server to per-player
-		$prefs->migrateClient( 4, sub {
-			my ( $cprefs, $client ) = @_;
-			my $playtrackalbum = preferences('server')->get('playtrackalbum');
-		
-			# copy server pref as a default client pref
-			unless (defined $cprefs->get( 'playtrackalbum' )) {
-				$cprefs->set( 'playtrackalbum', $playtrackalbum );
-			}
-			1;
-		} );
-		
-		# Bug 8690, reset fixed digital volume pref because it now affects analog outputs
-		$prefs->migrateClient( 5, sub {
-			my ( $cprefs, $client ) = @_;
-			my $dvc = $cprefs->get('digitalVolumeControl');
-			if ( defined $dvc && $dvc == 0 ) {
-				$cprefs->set( digitalVolumeControl => 1 );
-				if ( $cprefs->get('volume') > 50 ) {
-					$cprefs->set( volume => 50 );
-				}
-			}
-			
-			return 1;
-		} );
 	}
 
-	# migrate old alarm clock prefs into new alarms
+	# migrate client prefs to version 2 - sync prefs changed
+	$prefs->migrateClient(2, sub {
+		my $cprefs = shift;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
+		$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if ($cprefs->get('syncBufferThreshold') > 255);
+		$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if ($cprefs->get('minSyncAdjust') < 1);
+		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
+		1;
+	});
+
+	# migrate menuItem pref so everyone gets the correct menu structure
+	$prefs->migrateClient( 3, sub {
+		my ( $cprefs, $client ) = @_;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
+	
+		if ( $client->hasDigitalIn ) {
+			$defaults = $Slim::Player::Transporter::defaultPrefs;
+		}
+	
+		if ( $client->isa('Slim::Player::Boom') ) {
+			$defaults = $Slim::Player::Boom::defaultPrefs;
+		}
+	
+		$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) ); # clone for each client
+		1;
+	} );
+
+	# migrate 'play other songs' pref from server to per-player
+	$prefs->migrateClient( 4, sub {
+		my ( $cprefs, $client ) = @_;
+		my $playtrackalbum = preferences('server')->get('playtrackalbum');
+	
+		# copy server pref as a default client pref
+		unless (defined $cprefs->get( 'playtrackalbum' )) {
+			$cprefs->set( 'playtrackalbum', $playtrackalbum );
+		}
+		1;
+	} );
+	
+	# Bug 8690, reset fixed digital volume pref because it now affects analog outputs
 	$prefs->migrateClient( 5, sub {
 		my ( $cprefs, $client ) = @_;
+		my $dvc = $cprefs->get('digitalVolumeControl');
+		if ( defined $dvc && $dvc == 0 ) {
+			$cprefs->set( digitalVolumeControl => 1 );
+			if ( $cprefs->get('volume') > 50 ) {
+				$cprefs->set( volume => 50 );
+			}
+		}
+		
+		return 1;
+	} );
+
+	# migrate old alarm clock prefs into new alarms
+	$prefs->migrateClient( 6, sub {
+		my ( $cprefs, $client ) = @_;
+		
+		# Don't migrate if new 'alarms' pref is already here
+		if ( $cprefs->get('alarms') ) {
+			$cprefs->remove('alarm');
+			$cprefs->remove('alarmtime');
+			$cprefs->remove('alarmplaylist');
+			$cprefs->remove('alarmvolume');
+			
+			return 1;
+		}
 
 		my $alarm    = $cprefs->get('alarm');
 		my $time     = $cprefs->get('alarmtime');
@@ -477,8 +487,14 @@ sub init {
 		}
 
 		$cprefs->set('alarms', $prefAlarms);
+		
+		# Remove old alarm prefs
+		$cprefs->remove('alarm');
+		$cprefs->remove('alarmtime');
+		$cprefs->remove('alarmplaylist');
+		$cprefs->remove('alarmvolume');
 
-		1;
+		return 1;
 	} );
 
 	# initialise any new prefs

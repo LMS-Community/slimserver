@@ -11,7 +11,18 @@ package Slim::Player::Boom;
 # GNU General Public License for more details.
 
 use strict;
-use base qw(Slim::Player::Squeezebox2);
+use vars qw(@ISA);
+
+BEGIN {
+	if ( main::SLIM_SERVICE ) {
+		require SDI::Service::Player::SqueezeNetworkClient;
+		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
+	}
+	else {
+		require Slim::Player::Squeezebox2;
+		push @ISA, qw(Slim::Player::Squeezebox2);
+	}
+}
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Transporter;
@@ -45,6 +56,20 @@ our $defaultPrefs = {
 	)],
 	'titleFormatCurr'      => 4,
 };
+
+if ( main::SLIM_SERVICE ) {
+	$defaultPrefs->{menuItem} = [ qw(
+		NOW_PLAYING
+		MY_MUSIC
+		RADIO
+		MUSIC_SERVICES
+		FAVORITES
+		PLUGIN_LINE_IN
+		PLUGINS
+		ALARM
+		SETTINGS
+	) ];
+}
 
 sub new {
 	my $class = shift;

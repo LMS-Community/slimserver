@@ -107,7 +107,7 @@ sub screensaverDateTimelines {
 			if (!$narrow && !defined $currentAlarm) {
 				# Remove seconds from alarm time
 				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
-				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/\1/;
+				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
 				$overlay .=  " $timeStr";
 			}
 		}

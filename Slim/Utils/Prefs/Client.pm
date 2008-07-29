@@ -51,13 +51,19 @@ sub new {
 
 		for my $version (sort keys %{$parent->{'migratecb'}}) {
 			
-			if ($class->{'prefs'}->{'_version'} < $version) {
+			if ($class->get('_version') < $version) {
 				
 				if ($parent->{'migratecb'}->{ $version }->($class, $client)) {
 					
 					$log->info("migrating client prefs $parent->{'namespace'}:$class->{'clientid'} to version $version");
 					
-					$class->{'prefs'}->{'_version'} = $version;
+					if ( main::SLIM_SERVICE ) {
+						# Store _version in the database on SN
+						$class->set( '_version' => $version );
+					}
+					else {
+						$class->{'prefs'}->{'_version'} = $version;
+					}
 					
 				} else {
 					

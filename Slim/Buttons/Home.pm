@@ -724,6 +724,9 @@ sub homeheader {
 		if ( $config->{dcname} =~ /^(?:sv|dc|de)$/ ) {
 			return $client->string('SQUEEZENETWORK_HOME');
 		}
+		elsif ( $config->{dcname} eq 'bm' ) {
+			return $client->string( 'SQUEEZENETWORK_HOME_VAR', 'Boom' );
+		}
 		else {
 			return $client->string('SQUEEZENETWORK_HOME_TEST');
 		}
