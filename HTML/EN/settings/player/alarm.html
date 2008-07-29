@@ -66,7 +66,7 @@
 		[% END %]
 	
 		[% alarmTitle = "ALARM_ALARM_REPEAT" | string %]
-		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="ALARM_ALARM_REPEAT_DESC" %]
 			<select class="stdedit" name="alarm_repeat[% alarm.id %]" id="alarm_repeat[% alarm.id %]">
 		
 				[% FOREACH option = {
@@ -134,7 +134,7 @@
 	[% END %]
 	</div>
 	
-	[% WRAPPER setting title="ALARM_DEFAULT_VOLUME" desc="" %]
+	[% WRAPPER setting title="ALARM_DEFAULT_VOLUME" desc="ALARM_DEFAULT_VOLUME_DESC" %]
 		<input type="text" class="stdedit volumeSlider" name="pref_alarmDefaultVolume" id="alarmDefaultVolume" value="[% prefs.pref_alarmDefaultVolume %]" size="3">
 	[% END %]
 

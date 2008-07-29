@@ -1372,23 +1372,29 @@ ALARM_SELECT_PLAYLIST
 ALARM_USE_CURRENT_PLAYLIST
 	EN	Use Current Playlist
 
+ALARM_CHOOSE_VOLUME
+	EN	Choose Volume
+
 ALARM_SET_VOLUME
 	EN	Set Volume
 
 ALARM_DEFAULT_VOLUME
 	EN	Default Volume
 
+ALARM_DEFAULT_VOLUME_DESC
+	EN	This setting allows you to choose a volume level that is used for all alarms that have Use Default Volume selected.  This lets you change the volume for several alarms at once.
+
 ALARM_USE_DEFAULT_VOLUME
-	EN	Use Default
+	EN	Use Default Volume
 
 ALARM_ADD
 	EN	Add Alarm
 
-ALARM_NEW
-	EN	New Alarm
-
 ALARM_ADD_DESC
 	EN	You can add as many alarms as you like.  Each alarm can be set to go off every day, on particular days only, or just once.  Select "Add Alarm" to start adding a new alarm.
+
+ALARM_NEW
+	EN	New Alarm
 
 ALARM_DELETE
 	EN	Remove Alarm
@@ -1398,6 +1404,9 @@ ALARM_ALARM_ENABLED
 
 ALARM_ALARM_REPEAT
 	EN	Repeat Alarm
+
+ALARM_ALARM_REPEAT_DESC
+	EN	This setting lets you choose whether this alarm will go off more than once.  If set to No, this alarm will automatically turn off after it has gone off.  This alarm will not then go off again until you turn it on.
 
 ALARM_ALL_ALARMS
 	EN	All Alarms
@@ -1519,16 +1528,16 @@ ALARM_SNOOZE_ENDED
 	EN	Snooze Ended
 
 SETUP_SNOOZE_MINUTES
-	EN	Snooze time in minutes
+	EN	Snooze Length (in minutes)
 
 SETUP_SNOOZE_MINUTES_DESC
-	EN	Define the time in minutes you'd like the alarm to pause when you hit the snooze button. 
+	EN	This setting allows you to choose how long an alarm pauses for when you hit the snooze button.
 
 SETUP_ALARM_TIMEOUT
-	EN	Alarm Timeout
+	EN	Alarm Timeout (in minutes)
 
 SETUP_ALARM_TIMEOUT_DESC
-	EN	Alarms can time out automatically after a configurable amount of time. If the timeout value is set to a 0, then the timeout is disabled completely.
+	EN	This setting allows you to choose how long alarms will play for before they stop automatically. If set to 0, alarms will continue playing until they are stopped manually.
 
 ALARM_STOPPED
 	DA	Vækkeuret er stoppet

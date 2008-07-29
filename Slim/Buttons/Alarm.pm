@@ -163,7 +163,7 @@ my @alarmMenu = (
 		items => \&buildPlaylistMenu, 
 	},
 	{
-		title	=> 'ALARM_SET_VOLUME',
+		title	=> 'ALARM_CHOOSE_VOLUME',
 		type	=> 'menu',
 		items => \@volumeMenu,
 	},
