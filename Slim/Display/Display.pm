@@ -65,6 +65,7 @@ our $defaultPrefs = {
 	'scrollPauseDouble'    => 3.6,
 	'scrollRate'           => 0.15,
 	'scrollRateDouble'     => 0.1,
+	'alwaysShowCount'      => 1,
 };
 
 {

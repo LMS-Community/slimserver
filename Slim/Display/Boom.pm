@@ -118,6 +118,7 @@ our $defaultPrefs = {
 	'scrollPauseDouble'    => 1.5,
 	'scrollRate'           => 0.1,
 	'scrollRateDouble'     => 0.1,
+	'alwaysShowCount'      => 0,
 };
 
 our $defaultFontPrefs = {

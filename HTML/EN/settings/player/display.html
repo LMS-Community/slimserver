@@ -108,6 +108,21 @@
 		[% END %]
 	[% END %]
 
+	[% IF prefs.exists('pref_alwaysShowCount') %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_SHOWCOUNT" desc="SETUP_SHOWCOUNT_DESC" %]
+				<select class="stdedit" name="pref_alwaysShowCount" id="alwaysShowCount">
+					[% FOREACH option = {
+						'0' => 'SETUP_SHOWCOUNT_TEMP',
+						'1' => 'SETUP_SHOWCOUNT_ALWAYS'
+					} %]
+						<option [% IF prefs.pref_alwaysShowCount == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
+		[% END %]
+	[% END %]
+
 	[% IF prefs.exists('pref_scrollMode') %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="SETUP_SCROLLMODE" desc="SETUP_SCROLLMODE_DESC" %]

@@ -48,8 +48,11 @@ use strict;
 use warnings;
 
 use Slim::Buttons::Common;
+use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+my $prefs = preferences('server');
 
 Slim::Buttons::Common::addMode('INPUT.List', getFunctions(), \&setMode);
 
@@ -262,8 +265,8 @@ sub lines {
 
 	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
 
-	# show count if we are the new screen of a push transition
-	if ($args->{'trans'} && $client->modeParam('headerAddCount')) {
+	# show count if we are the new screen of a push transition or pref is set
+	if (($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) && $client->modeParam('headerAddCount')) {
 		$overlay1 = ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
 	}
 

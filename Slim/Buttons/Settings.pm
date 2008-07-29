@@ -321,7 +321,7 @@ sub init {
 				},
 				'DISPLAY_SETTINGS'          => {
 					'useMode'         => 'INPUT.List',
-					'listRef'         => ['SETUP_GROUP_BRIGHTNESS', 'TEXTSIZE', 'TITLEFORMAT', 'SCREENSAVERS', 'SETUP_PLAYINGDISPLAYMODE', 'SETUP_VISUALIZERMODE'],
+					'listRef'         => ['SETUP_GROUP_BRIGHTNESS', 'TEXTSIZE', 'TITLEFORMAT', 'SCREENSAVERS', 'SETUP_PLAYINGDISPLAYMODE', 'SETUP_VISUALIZERMODE', 'SETUP_SHOWCOUNT'],
 					'stringExternRef' => 1,
 					'header'          => 'DISPLAY_SETTINGS',
 					'stringHeader'    => 1,
@@ -562,6 +562,28 @@ sub init {
 							'initialValue' => sub { $prefs->client(shift)->get('visualMode') },
 							'condition'    => sub { return $_[0]->display->isa('Slim::Display::Transporter') },
 							'init'         => \&visualInit,
+						},
+
+						'SETUP_SHOWCOUNT'              => {
+							'useMode'      => 'INPUT.Choice',
+							'onPlay'       => \&setPref,
+							'onAdd'        => \&setPref,
+							'onRight'      => \&setPref,
+							'header'       => '{SETUP_SHOWCOUNT}',
+							'headerAddCount'=> 1,
+							'pref'         => 'alwaysShowCount',
+							'initialValue' => sub { $prefs->client(shift)->get('alwaysShowCount') },
+							'condition'    => sub { 1 },
+							'listRef'      => [
+								{
+									name   => '{SETUP_SHOWCOUNT_TEMP}',
+									value  => 0,
+								},
+								{
+									name   => '{SETUP_SHOWCOUNT_ALWAYS}',
+									value  => 1,
+								},
+							],
 						},
 					},
 				},

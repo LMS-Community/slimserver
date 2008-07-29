@@ -58,6 +58,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 # TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
 our %browseCache = (); # remember where each client is browsing
 
@@ -474,9 +476,10 @@ sub lines {
 		}
 	}
 
-	# show count if we are the new screen of a push transition
+	# show count if we are the new screen of a push transition or pref set
 	# count is shown in the overlay but we still support {count} in the header for backward compat
-	if ($args->{'trans'} && ($client->modeParam('headerAddCount') || $header =~ /{count}/)) {
+	if ( ($args->{'trans'} || $prefs->client($client)->get('alwaysShowMenuCount')) &&
+		 ($client->modeParam('headerAddCount') || $header =~ /{count}/) ) {
 		$overlay1 = ' ' .  ($listIndex + 1) . ' ' . $client->string('OF') . ' ' . scalar(@$listRef);
 	}
 

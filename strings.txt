@@ -17866,3 +17866,15 @@ SETTING_PLAYER_BRIGHTNESS_TO
 
 MOREINFO
 	EN	More Info
+
+SETUP_SHOWCOUNT
+	EN	Show Menu Count
+
+SETUP_SHOWCOUNT_DESC
+	EN	You can select whether to always show the position in the menu or to only show it while you are scrolling through menu items. The position is displayed in the format 1 of 6, indicating the first item of a menu list of 6 items.
+
+SETUP_SHOWCOUNT_ALWAYS
+	EN	Show Always
+
+SETUP_SHOWCOUNT_TEMP
+	EN	While Scrolling
