@@ -33,7 +33,13 @@ sub all {
 		}
 	);
 	
-	return \@favs;
+	my $all = {};
+	
+	for my $fav ( @favs ) {
+		$all->{ $fav->title } = $fav->url;
+	}
+	
+	return $all;
 }
 
 sub add {
