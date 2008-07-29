@@ -372,6 +372,8 @@ sub init {
 					$cprefs->set( volume => 50 );
 				}
 			}
+			
+			return 1;
 		} );
 	}
 
