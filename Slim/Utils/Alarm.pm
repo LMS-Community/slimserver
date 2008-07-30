@@ -1176,8 +1176,6 @@ sub scheduleNext {
 				$nextAlarm->{_timerRef} = Slim::Utils::Timers::setTimer($nextAlarm, $alarmTime, \&sound, $alarmTime);
 
 				$client->alarmData->{nextAlarm} = $nextAlarm;
-				
-				$client->update;
 			}
 		} else {
 			$log->debug('No future alarms found');
@@ -1499,7 +1497,10 @@ sub _clientManager {
 
 	if ($request->isCommand([['client'], ['new']])) {
 		$log->debug('New client: ' . $client->name . ' (' . $client->id . ')');
-		$class->loadAlarms($client);	
+		$class->loadAlarms($client);
+		
+		# Update the display in case an alarm was enabled
+		$client->update;
 	}
 }
 
