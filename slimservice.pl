@@ -135,6 +135,7 @@ use Slim::Control::Request;
 use Slim::Display::Lib::Fonts;
 #use Slim::Web::HTTP;
 use Slim::Hardware::IR;
+use Slim::Menu::TrackInfo;
 use Slim::Music::Info;
 #use Slim::Music::Import;
 #use Slim::Music::MusicFolderScan;
@@ -330,12 +331,15 @@ sub init {
 	$log->info("Source conversion init..");
 	Slim::Player::Source::init();
 	
-	$log->info("SqueezeCenter Jive init...");
-	Slim::Control::Jive->init();
+	$log->info('Menu init...');
+	Slim::Menu::TrackInfo->init();
 
 	$log->info("SlimServer Plugins init...");
 	Slim::Utils::PluginManager->init();
 	
+	$log->info("SqueezeCenter Jive init...");
+	Slim::Control::Jive->init();
+
 	if ( SLIM_SERVICE ) {
 		# start SlimService specific stuff
 		SDI::Service::Heartbeat->init();
