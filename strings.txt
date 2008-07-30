@@ -16007,3 +16007,12 @@ SETTING_PLAYER_BRIGHTNESS_TO
 
 MOREINFO
 	EN	More Info
+
+SQUEEZECENTER_CONNECT
+	DE	Zu SqueezeCenter verbinden
+	EN	Connect to SqueezeCenter
+	ES	Conectar a SqueezeCenter
+	FR	Connexion au SqueezeCenter
+	HE	התחבר ל-SqueezeCenter
+	IT	Connetti a SqueezeCenter
+	NL	Verbinding maken met SqueezeCenter
