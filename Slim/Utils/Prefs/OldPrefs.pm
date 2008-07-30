@@ -95,9 +95,9 @@ sub _oldPath {
 
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		if (Slim::Utils::OSDetect::isVista() && -r catdir(Slim::Utils::OSDetect::winWritablePath(), 'slimserver.pref')) {
+		if (Slim::Utils::OSDetect::isVista() && -r catdir(Slim::Utils::Win32::writablePath(), 'slimserver.pref')) {
 
-			$oldPrefs = catdir(Slim::Utils::OSDetect::winWritablePath(), 'slimserver.pref');
+			$oldPrefs = catdir(Slim::Utils::Win32::writablePath(), 'slimserver.pref');
 
 		} elsif (-r catdir($Bin, 'slimserver.pref'))  {
 

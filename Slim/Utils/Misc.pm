@@ -67,12 +67,12 @@ if ( !main::SLIM_SERVICE ) {
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
-		require Win32::DriveInfo;
 		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
 		require Win32::Service;
 		require Win32::Shortcut;
+		require Slim::Utils::Win32;
 	}
 	
 	elsif ($^O =~/darwin/i) {
@@ -1020,7 +1020,7 @@ sub readDirectory {
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		my ($volume) = splitpath($dirname);
 
-		if ($volume && isWinDrive($volume) && !Win32::DriveInfo::IsReady($volume)) {
+		if ($volume && isWinDrive($volume) && !Slim::Utils::Win32::isDriveReady($volume)) {
 			
 			$log->debug("drive [$dirname] not ready");
 

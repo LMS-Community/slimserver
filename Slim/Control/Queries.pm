@@ -46,7 +46,7 @@ use Slim::Utils::Prefs;
 
 {
 	if ($^O =~ /Win32/) {
-		require Win32::DriveInfo;
+		require Slim::Utils::Win32;
 	}
 }
 
@@ -2693,12 +2693,12 @@ sub readDirectoryQuery {
 
 	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
 		@fsitems = sort map {
-			$fsitems{"$_:"} = {
+			$fsitems{"$_"} = {
 				d => 1,
 				f => 0
 			};
-			"$_:"; 
-		} Win32::DriveInfo::DrivesInUse();
+			"$_"; 
+		} Slim::Utils::Win32::getDrives();
 		$folder = '';
 	}
 	else {
