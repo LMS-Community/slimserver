@@ -145,4 +145,10 @@ sub entry {
 	return;
 }
 
+sub hasHotkey {
+	my ( $self, $digit ) = @_;
+	
+	return $digit - 1;
+}
+
 1;
