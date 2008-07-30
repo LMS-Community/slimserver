@@ -132,9 +132,7 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();
-	if ( !main::SLIM_SERVICE ) {
-		Slim::Buttons::SqueezeNetwork::init();
-	}
+	Slim::Buttons::SqueezeNetwork::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();

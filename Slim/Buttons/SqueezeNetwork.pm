@@ -33,9 +33,18 @@ sub init {
 	Slim::Buttons::Common::addMode('squeezenetwork.connect',
 				       getFunctions(),
 				       \&setMode);
-
+	
+	Slim::Buttons::Common::addMode(
+		'squeezecenter.connect',
+		getFunctions(),
+		\&connectSC,
+	);
+	
 	Slim::Buttons::Home::addMenuOption('SQUEEZENETWORK_CONNECT',
 				{useMode => 'squeezenetwork.connect'});
+	
+	Slim::Buttons::Home::addMenuOption('SQUEEZECENTER_CONNECT',
+				{useMode => 'squeezecenter.connect'});
 }
 
 sub setMode {
@@ -59,6 +68,12 @@ sub setMode {
 
 	# this flag prevents disconnect if user has popped out of this mode
 	$client->modeParam('squeezenetwork.connect', 1);
+}
+
+sub connectSC {
+	my ( $client, $method ) = @_;
+	
+	Slim::Buttons::Settings::switchServer( $client, 'RIGHT', 'SqueezeCenter' );
 }
 
 our %functions = (
