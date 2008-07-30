@@ -17878,3 +17878,12 @@ SETUP_SHOWCOUNT_ALWAYS
 
 SETUP_SHOWCOUNT_TEMP
 	EN	While Scrolling
+
+SQUEEZECENTER_CONNECT
+	DE	Zu SqueezeCenter verbinden
+	EN	Connect to SqueezeCenter
+	ES	Conectar a SqueezeCenter
+	FR	Connexion au SqueezeCenter
+	HE	התחבר ל-SqueezeCenter
+	IT	Connetti a SqueezeCenter
+	NL	Verbinding maken met SqueezeCenter
