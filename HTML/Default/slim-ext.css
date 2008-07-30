@@ -90,6 +90,10 @@ a.x-menu-item:hover {
 	background-image: none;
 }
 
+.prefs .timeControl {
+	height: 16px;
+}
+
 /* tabs and tab panel (settings) */
 .x-border-layout-ct .x-tab-panel,
 ul.x-tab-strip-top {
