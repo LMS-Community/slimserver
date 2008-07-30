@@ -68,6 +68,7 @@ if ( main::SLIM_SERVICE ) {
 		PLUGINS
 		ALARM
 		SETTINGS
+		SQUEEZENETWORK_CONNECT
 	) ];
 }
 
