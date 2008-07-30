@@ -54,6 +54,7 @@ sub init {
 		'aif' => 'Slim::Formats::AIFF',
 		'wma' => 'Slim::Formats::WMA',
 		'mov' => 'Slim::Formats::Movie',
+		'alc' => 'Slim::Formats::Movie',
 		'shn' => 'Slim::Formats::Shorten',
 		'mpc' => 'Slim::Formats::Musepack',
 		'ape' => 'Slim::Formats::APE',

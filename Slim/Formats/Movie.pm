@@ -53,8 +53,9 @@ sub getTag {
 	# If encoding is alac, the file is lossless.
 	if ($tags->{'ENCODING'} && $tags->{'ENCODING'} eq 'alac') {
 
-		$tags->{'LOSSLESS'} = 1;
-		$tags->{'VBR_SCALE'} = 1;
+		$tags->{'LOSSLESS'}     = 1;
+		$tags->{'VBR_SCALE'}    = 1;
+		$tags->{'CONTENT_TYPE'} = 'alc';
 	}
 
 	# Unroll the disc info.
