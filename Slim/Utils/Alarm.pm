@@ -377,10 +377,29 @@ sub findNextTime {
 	if (! $self->{_enabled}) {
 		return undef;
 	}
+	
+	my $client = $self->client;
 
 	if (defined $self->{_days}) {
 		# Convert base time into a weekday number and time
 		my ($sec, $min, $hour, $mday, $mon, $year, $wday)  = localtime($baseTime);
+		
+		if ( main::SLIM_SERVICE ) {
+			# Adjust for the user's timezone
+			my $timezone = $prefs->client($client)->get('timezone') 
+				|| $client->playerData->userid->timezone 
+				|| 'America/Los_Angeles';
+
+			my $dt = DateTime->now( 
+				time_zone => $timezone
+			);
+			
+			$wday = $dt->day_of_week;
+			$min  = $dt->min;
+			$hour = $dt->hour;
+			
+			$log->debug( "SN time adjusted for $timezone to wday $wday $hour:$min:$sec" );
+		}
 
 		# Find the first enabled alarm starting at baseTime's day num 
 		my $day = $wday;
@@ -400,7 +419,6 @@ sub findNextTime {
 
 					# Make sure this isn't the alarm that's just sounded or another alarm with the
 					# same time.
-					my $client = $self->client;
 					my $lastAlarmTime = $client->alarmData->{lastAlarmTime};
 					defined $lastAlarmTime && $log->debug(sub {'Last alarm due: ' . _timeStr($lastAlarmTime)});
 					if (! defined $lastAlarmTime || $absAlarmTime != $lastAlarmTime) {
@@ -1233,7 +1251,7 @@ sub setRTCAlarm {
 			}
 
 			# Alarm times are "floating" so no need to adjust for local time
-			$log->debug('Setting RTC alarm');
+			$log->debug("Setting RTC alarm to $alarmTime");
 			$client->setRTCAlarm($alarmTime, $nextAlarm->volume);
 
 			$clearRTCAlarm = 0;

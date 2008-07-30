@@ -14,6 +14,10 @@ if ( !main::SLIM_SERVICE ) {
  	require Slim::Plugin::DateTime::Settings;
 }
 
+if ( main::SLIM_SERVICE ) {
+	require DateTime;
+}
+
 my $prefs = preferences('plugin.datetime');
 
 sub getDisplayName {
@@ -118,8 +122,26 @@ sub screensaverDateTimelines {
 	my $args   = shift;
 
 	my $flash  = $args->{'flash'}; # set when called from animation callback
-
-	# XXX: SLIM_SERVICE
+	
+	my ($timezone, $dt);
+	
+	if ( main::SLIM_SERVICE ) {
+		$timezone = preferences('server')->client($client)->get('timezone') 
+			|| $client->playerData->userid->timezone 
+			|| 'America/Los_Angeles';
+	
+	 	$dt = DateTime->now( 
+			time_zone => $timezone
+		);
+		
+		# We use the same method as alarm clock, to align updates at each minute change
+		# so we only have to run once a minute instead of every few seconds
+		my $sec = (localtime(time))[0];
+		my $snInterval = 60 - $sec;
+		
+		$client->modeParam( modeUpdateInterval => $snInterval );
+		Slim::Buttons::Common::startPeriodicUpdates( $client, time() + $snInterval );
+	}
 
 	my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
@@ -146,13 +168,24 @@ sub screensaverDateTimelines {
 			}
 		}
 	}
-
-	my $display = {
-		'center' => [ Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat')),
-					  Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')) ],
-		'overlay'=> [ $overlay ],
-		'fonts'  => $fontDef,
-	};
+	
+	my $display;
+	
+	if ( main::SLIM_SERVICE ) {
+		$display = {
+			center  => [ $client->longDateF(), $client->timeF() ],
+			overlay => [ $overlay ],
+			fonts   => $fontDef,
+		};
+	}
+	else {
+	 	$display = {
+			'center'  => [ Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat')),
+					      Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')) ],
+			'overlay' => [ $overlay ],
+			'fonts'   => $fontDef,
+		};
+	}
 
 	if ($currentAlarm && !$flash) {
 		# schedule another update to remove the alarm symbol during alarm

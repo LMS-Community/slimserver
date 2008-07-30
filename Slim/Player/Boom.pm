@@ -359,7 +359,27 @@ sub setRTCTime {
 	$client->sendFrame( 'rtcs', \$data);
 
 	# Sync actual time in RTC
-	my ($sssBCD, $mmmBCD, $hhhBCD) = Slim::Utils::DateTime::bcdTime((localtime())[0..2]);
+	my ($sec, $min, $hour);
+	
+	if ( main::SLIM_SERVICE ) {
+		# Adjust for the user's timezone
+		my $timezone = $prefs->client($client)->get('timezone') 
+			|| $client->playerData->userid->timezone 
+			|| 'America/Los_Angeles';
+
+		my $dt = DateTime->now( 
+			time_zone => $timezone
+		);
+		
+		$sec  = $dt->sec;
+		$min  = $dt->min;
+		$hour = $dt->hour;
+	}
+	else {
+		($sec, $min, $hour) = (localtime())[0..2];
+	}
+	
+	my ($sssBCD, $mmmBCD, $hhhBCD) = Slim::Utils::DateTime::bcdTime($sec, $min, $hour);
 
 	$data = pack( 'C', 0x03);	# Set time (hours, minutes and seconds)
 	$data .= pack( 'C', $hhhBCD);
