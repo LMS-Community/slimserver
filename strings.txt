@@ -17887,3 +17887,6 @@ SQUEEZECENTER_CONNECT
 	HE	התחבר ל-SqueezeCenter
 	IT	Connetti a SqueezeCenter
 	NL	Verbinding maken met SqueezeCenter
+
+SQUEEZECENTER_CONNECT_ABBR
+	EN	SqueezeCenter
