@@ -1220,7 +1220,13 @@ sub getMetadataFor {
 	
 	# If metadata is not here, fetch it so the next poll will include the data
 	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
-	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
+	
+	if ( !$trackId ) {
+		$log->error( "getMetadataFor for bad URL: $url" );
+		return {};
+	}
+	
+	my $meta = $cache->get( 'rhapsody_meta_' . $trackId );
 	
 	if ( !$meta && !$client->pluginData('fetchingMeta') ) {
 		# Go fetch metadata for all tracks on the playlist without metadata
