@@ -8931,6 +8931,13 @@ ADD
 	SV	Lägg till
 	ZH_CN	列入
 
+PLAY_NEXT
+	DE	Als nächstes spielen
+	EN	Play next
+	ES	Reproducir a continuación
+	FR	Lire à la suite
+	NL	Als volgende af te spelen
+
 SHUFFLE
 	CS	Náhodně
 	DA	Bland
