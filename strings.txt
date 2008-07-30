@@ -9202,7 +9202,7 @@ BASS
 	ZH_CN	低音
 
 STEREOXL
-	EN	stereoXL
+	EN	StereoXL
 
 PITCH
 	CS	Odstup
