@@ -407,7 +407,8 @@ sub getBrightnessOptions {
 			for my $brightness (4 .. $maxBrightness) {
 				if ($brightnessMap[$brightness] > 255 ) {
 		
-					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
+#					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
+					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT');
 					$maxBrightness--;
 				}
 			}
