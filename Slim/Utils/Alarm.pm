@@ -1176,6 +1176,8 @@ sub scheduleNext {
 				$nextAlarm->{_timerRef} = Slim::Utils::Timers::setTimer($nextAlarm, $alarmTime, \&sound, $alarmTime);
 
 				$client->alarmData->{nextAlarm} = $nextAlarm;
+				
+				$client->update;
 			}
 		} else {
 			$log->debug('No future alarms found');
