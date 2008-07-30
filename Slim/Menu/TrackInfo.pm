@@ -310,14 +310,16 @@ sub menu {
 			my $item = eval { $ref->{func}->( $client, $url, $track, $remoteMeta, $tags ) };
 			if ( $@ ) {
 				$log->error( 'TrackInfo menu item "' . $ref->{name} . '" failed: ' . $@ );
-				next;
+				return;
 			}
 			
-			next unless defined $item;
+			return unless defined $item;
+			
 			# skip jive-only items for non-jive UIs
-			next if $ref->{menuMode} && !$tags->{menuMode};
+			return if $ref->{menuMode} && !$tags->{menuMode};
+			
 			# show artwork item to jive only if artwork exists
-			next if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
+			return if $ref->{menuMode} && $tags->{menuMode} && $ref->{name} eq 'artwork' && !$track->coverArtExists;
 			
 			if ( ref $item eq 'ARRAY' ) {
 				if ( scalar @{$item} ) {
@@ -325,7 +327,7 @@ sub menu {
 				}
 			}
 			elsif ( ref $item eq 'HASH' ) {
-				next if $ref->{menuMode} && !$tags->{menuMode};
+				return if $ref->{menuMode} && !$tags->{menuMode};
 				if ( scalar keys %{$item} ) {
 					push @{$items}, $item;
 				}
@@ -1132,6 +1134,10 @@ sub infoReplayGain {
 
 sub infoRating {
 	my ( $client, $url, $track ) = @_;
+	
+	if ( main::SLIM_SERVICE ) {
+		return;
+	}
 	
 	my $item;
 	
