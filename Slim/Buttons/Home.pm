@@ -145,47 +145,16 @@ sub init {
 		},
 	}
 
-	# This is also a big source of the inconsistency in "play" and "add" functions.
-	# We might want to make this a simple...'add' = clear playlist, 'play' = play everything
+	# Align actions as per Bug 8929 - in home menu add and play just go right
 	%functions = (
 		'add' => sub  {
 			my $client = shift;
-		
-			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
-
-				$client->showBriefly( {
-					'line' => [ "", $client->string('CLEARING_PLAYLIST') ]
-				});
-				$client->execute(['playlist', 'clear']);
-
-			} else {
-
-				Slim::Buttons::Common::pushModeLeft($client,'playlist');
-			}	
+			Slim::Buttons::Input::List::exitInput($client, 'right');		
 		},
 
 		'play' => sub  {
 			my $client = shift;
-
-			my $selection = $client->curSelection($client->curDepth());
-			if ($selection eq 'NOW_PLAYING') {
-
-				$client->execute(['play']);
-
-				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-
-			} elsif ($selection eq 'SAVED_PLAYLISTS'
-						|| ($selection =~ /^BROWSE_/
-							&& $selection ne 'BROWSE_MUSIC')) {
-							
-				# If we're in a Browse mode and the user
-				# presses play, just go right, per Dean
-				Slim::Buttons::Input::List::exitInput($client, 'right');
-
-			} else {
-
-				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-			}
+			Slim::Buttons::Input::List::exitInput($client, 'right');		
 		},
 	);
 }

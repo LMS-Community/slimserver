@@ -151,7 +151,6 @@ menu_now_playing		= menu_now_playing
 menu_synchronize		= menu_synchronize
 
 [home]
-add.*					= add
 arrow_left.hold			= dead
 
 [off]
