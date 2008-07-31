@@ -36,16 +36,11 @@ my $prefs = preferences('server');
 our @defaultSettingsChoices = qw(SHUFFLE REPEAT ALARM SYNCHRONIZE AUDIO_SETTINGS DISPLAY_SETTINGS);
 
 if ( main::SLIM_SERVICE ) {
-	@defaultSettingsChoices = qw(
+	push @defaultSettingsChoices, qw(
 		LANGUAGE
 		TIMEZONE
 		SETUP_TIMEFORMAT
 		SETUP_LONGDATEFORMAT
-		VOLUME
-		REPEAT
-		SHUFFLE
-		TEXTSIZE
-		SCREENSAVERS
 		SETUP_PLAYER_CODE
 	);
 	
@@ -686,6 +681,7 @@ sub init {
 	
 		$menuParams{'SETTINGS'}->{'submenus'}->{'LANGUAGE'} = {
 			'useMode'        => 'INPUT.Choice',
+			'condition'      => sub { 1 },
 			'listRef'        => \@languageChoices,
 			'headerArgs'     => 'C',
 			'header'         => '{SETUP_LANGUAGE}',
@@ -704,9 +700,10 @@ sub init {
 		
 		$menuParams{'SETTINGS'}->{'submenus'}->{'TIMEZONE'} = {
 			'useMode' => 'INPUT.Choice',
+			'condition' => sub { 1 },
 			'listRef' => $timezones,
 			'header'  => '{TIMEZONE}',
-			'headerAddCount'=> 1,
+			'headerAddCount' => 1,
 			'onRight' => sub {
 				my ($client, $item) = @_;
 				$prefs->client($client)->set('timezone', $item->value);
@@ -757,6 +754,7 @@ sub init {
 		
 		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_TIMEFORMAT'} = {
 			'useMode'      => 'INPUT.Choice',
+			'condition'    => sub { 1 },
 			'listRef'      => \@timeFormatChoices,
 			'header'       => "{SETUP_TIMEFORMAT}",
 			'headerAddCount'=> 1,
@@ -789,6 +787,7 @@ sub init {
 		
 		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_LONGDATEFORMAT'} = {
 			'useMode'     => 'INPUT.Choice',
+			'condition'   => sub { 1 },
 			'listRef'     => \@dateFormatChoices,
 			'header'      => "{SETUP_LONGDATEFORMAT}",
 			'headerAddCount'=> 1,
@@ -808,6 +807,7 @@ sub init {
 		
 		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_PLAYER_CODE'} = {
 			'useMode'      => 'INPUT.Choice',
+			'condition'    => sub { 1 },
 			'listRef'      => [ 'foo' ],
 			'name'         => sub {
 				my ($client, $item) = @_;
@@ -817,8 +817,8 @@ sub init {
 		};
 		
 		# Delete menu items we don't want on SN
-		delete $menuParams{'SETTINGS'}->{'submenus'}->{'TITLEFORMAT'};
-		delete $menuParams{'SETTINGS'}->{'submenus'}->{'REPLAYGAIN'};
+		delete $menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'submenus'}->{'TITLEFORMAT'};
+		delete $menuParams{'SETTINGS'}->{'submenus'}->{'AUDIO_SETTINGS'}->{'submenus'}->{'REPLAYGAIN'};
 	}
 
 	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
