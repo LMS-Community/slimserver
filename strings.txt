@@ -480,7 +480,7 @@ MUSIC_SERVICES
 	EN	Music Services
 	ES	Servicios de música
 	FI	Musiikkipalvelut
-	FR	Music Services
+	FR	Services musicaux
 	IT	Servizi di musica
 	NL	Muziekservices
 	NO	Musikktjenester
