@@ -431,7 +431,7 @@ div.pagetitleWithIcon {
 /* Home menu */
 .homeMenuSection_expanded .homeMenuItem {
 	padding-left: 34px;
-	min-height: 14px;
+	min-height: 15px;
 }
 
 .homeMenuItem {
@@ -456,7 +456,7 @@ div.pagetitleWithIcon {
 .expandableHomeMenuItem { display: none; }
 
 .homeMenuItem .browseCover {
-	padding-top: 0;
+	padding-top: 1px;
 	top: -7px;
 }
 
