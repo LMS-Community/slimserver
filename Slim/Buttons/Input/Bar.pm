@@ -330,8 +330,47 @@ sub changePos {
 	}
 
 	my $currVal     = $listIndex;
-	my $newposition = $listIndex + $dir;
-
+	my $newposition = undef;
+	
+	if ($client->knobData->{'_knobEvent'}) {
+		# Knob event
+		my $knobAccelerationConstant = undef;
+		#
+		# TODO make down and up parameterized so that 
+		# we can have different speeds for different controls.  
+		# I.e. volume should go down faster than up, but bass and treble should 
+		# be the same in both cases.
+		# 
+		if ($dir > 0) {
+			$knobAccelerationConstant = .1; # Accel going up.
+		} else {
+			$knobAccelerationConstant = .1; # Accel going down. 
+		}
+		my $velocity      = $client->knobData->{'_velocity'};
+		my $acceleration  = $client->knobData->{'_acceleration'};
+		my $deltatime     = $client->knobData->{'_deltatime'};
+		my $deltaX = $velocity * $knobAccelerationConstant;
+		if ($deltaX > 0) {
+			if ($deltaX < 1) {
+				$deltaX = 1;
+			}
+		} elsif ($deltaX < 0) {
+			if ($deltaX > 1) {
+				$deltaX = -1;
+			}
+		} else {
+			# deltaX == 0, follow the dir.
+			$deltaX = $dir;
+		}
+		$deltaX = int($deltaX);
+		$newposition = $listIndex + $deltaX;
+		
+	} else {
+		# Not _knobEvent (i.e. regular button event.);
+		$newposition = $listIndex + $dir;
+	}
+	
+	
 	if ($dir > 0) {
 
 		if ($currVal < ($midpoint - .5) && ($currVal + $dir) >= ($midpoint - .5)) {
