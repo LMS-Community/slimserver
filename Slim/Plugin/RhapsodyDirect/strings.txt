@@ -23,12 +23,16 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
 	SV	Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
+	DA	Rhapsody-bibliotek
 	DE	Rhapsody-Bibliothek
 	EN	Rhapsody Library
 	ES	Biblioteca Rhapsody
-	FR	Bibliothèque Rhapsody
+	FI	Rhapsody-kirjastoni
+	FR	Bibliothèque en ligne Rhapsody
 	IT	Libreria Rhapsody
 	NL	Rhapsody-collectie
+	NO	Rhapsody-bibliotek
+	SV	Rhapsody-bibliotek
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
 	DA	Rhapsody-fejl
@@ -140,11 +144,11 @@ PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
 
 PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
 	DA	Henter oplysninger om nummer...
-	DE	Titelinfos werden geladen ...
+	DE	Titelinfos werden geladen...
 	EN	Getting track info...
 	ES	Obteniendo información de pista...
 	FI	Haetaan raidan tietoja...
-	FR	Obtention des informations sur le morceau...
+	FR	Obtention des informations sur la piste...
 	IT	Recupero info su brano...
 	NL	Nummerinfo wordt opgehaald...
 	NO	Henter informasjon om spor...
@@ -156,7 +160,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_TRACK
 	EN	Unable to retrieve track for channel.
 	ES	Imposible obtener pista para canal.
 	FI	Ei voi noutaa raitaa kanavaa varten.
-	FR	Impossible de récupérer le morceau pour le canal.
+	FR	Impossible de récupérer la piste pour la chaîne.
 	IT	Impossibile recuperare brano per canale.
 	NL	Kan nummer voor kanaal niet ophalen.
 	NO	Kan ikke hente spor for kanalen.

@@ -480,7 +480,7 @@ MUSIC_SERVICES
 	EN	Music Services
 	ES	Servicios de música
 	FI	Musiikkipalvelut
-	FR	Services musicaux
+	FR	Services de musique
 	IT	Servizi di musica
 	NL	Muziekservices
 	NO	Musikktjenester
@@ -2245,12 +2245,12 @@ ASF_UNABLE_TO_PARSE
 
 HOME
 	CS	Hlavní menu
-	DA	Hovedmenu
+	DA	Startside
 	DE	Startseite
 	EN	Home
 	ES	Inicio
 	FI	Koti
-	FR	Menu
+	FR	Accueil
 	HE	תפריט ראשי
 	IT	Pagina iniziale
 	JA	メニュー
@@ -3251,18 +3251,18 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 
 PLAYER_TYPE
 	CS	Typ přehrávače
-	DA	Afspillertype
-	DE	Gerätetyp
+	DA	Type
+	DE	Typ
 	EN	Player Type
-	ES	Tipo de reproductor
-	FI	Soittimen tyyppi
-	FR	Type platine
+	ES	Tipo
+	FI	Kirjoita
+	FR	Type
 	HE	סוג הנגן
-	IT	Tipo lettore
+	IT	Tipo
 	JA	プレーヤー タイプ
-	NL	Type muzieksysteem
-	NO	Spillertype
-	SV	Spelartyp
+	NL	Type
+	NO	Type
+	SV	Typ
 	ZH_CN	播放机类别
 
 PLAYER_ID
@@ -9121,7 +9121,7 @@ VOLUME
 	DE	Lautstärke
 	EN	Volume
 	ES	Volumen
-	FI	Tilavuus
+	FI	Äänenvoimakkuus
 	FR	Volume
 	HE	עוצמת קול
 	IT	Volume
@@ -13419,8 +13419,13 @@ RADIO_TUNEIN
 
 URL
 	DA	Internetadresse
+	DE	URL
 	EN	URL
+	ES	URL
 	FI	URL
+	FR	URL
+	IT	URL
+	NL	URL
 	NO	Url
 	SV	Webbadress
 

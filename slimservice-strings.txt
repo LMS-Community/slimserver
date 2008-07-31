@@ -263,660 +263,952 @@ TIMEZONE
 	NL	Tijdzone
 
 TZ_PACIFIC_APIA
-	DE	Midway-Inseln
+	DA	Midwayøerne, Samoa
+	DE	Midway-Inseln, Samoa
 	EN	Midway Island
-	ES	Isla Midway
-	FR	Iles Midway
-	IT	Atollo di Midway
-	NL	Midway-eiland
+	ES	Isla Midway, Samoa
+	FI	Midwaysaaret, Samoa
+	FR	Iles Midway, Samoa
+	IT	Isole Midway, Samoa
+	NL	Midwayeilanden, Samoa
+	NO	Midwayøyene, Samoa
+	SV	Midwayöarna, Samoa
 
 TZ_PACIFIC_HONOLULU
+	DA	Hawaii
 	DE	Hawaii
 	EN	Hawaii
 	ES	Hawaii
+	FI	Havaiji
 	FR	Hawaï
 	HE	הוואי
 	IT	Hawaii
 	NL	Hawaï
+	NO	Hawaii
+	SV	Hawaii
 
 TZ_AMERICA_ANCHORAGE
+	DA	Alaska
 	DE	Alaska
 	EN	Alaska
 	ES	Alaska
+	FI	Alaska
 	FR	Alaska
 	HE	אלסקה
 	IT	Alaska
 	NL	Alaska
+	NO	Alaska
+	SV	Alaska
 
 TZ_AMERICA_LOS_ANGELES
-	DE	San Francisco
+	DA	Pacific Time (USA og Canada); Tijuana
+	DE	Pacific Time (USA und Kanada); Tijuana
 	EN	San Francisco
-	ES	San Francisco
-	FR	San Francisco
+	ES	Hora del Pacífico (EE.UU. y Canadá); Tijuana
+	FI	Tyynenmeren normaaliaika (Yhdysvallat ja Kanada), Tijuana
+	FR	Heure du Pacifique (Etats-Unis et Canada), Tijuana
 	HE	סן פרנסיסקו
-	IT	San Francisco
-	NL	San Francisco
+	IT	Ora costa pacifica (USA e Canada); Tijuana
+	NL	Pacific Time (VS en Canada); Tijuana
+	NO	Stillehavskysten (USA og Canada); Tijuana
+	SV	Stilla havstid (USA och Kanada), Tijuana
 
 TZ_AMERICA_PHOENIX
+	DA	Arizona
 	DE	Arizona
 	EN	Arizona
 	ES	Arizona
+	FI	Arizona
 	FR	Arizona
 	HE	אריזונה
 	IT	Arizona
 	NL	Arizona
+	NO	Arizona
+	SV	Arizona
 
 TZ_AMERICA_DENVER
-	DE	Denver
+	DA	Mountain Time (USA og Canada)
+	DE	Mountain Time (USA u. Kanada)
 	EN	Denver
-	ES	Denver
-	FR	Denver
+	ES	Hora de las Montañas Rocosas (EE UU y Canadá)
+	FI	Kalliovuorten normaaliaika (Yhdysvallat ja Kanada)
+	FR	Heure normale des Rocheuses (Etats-Unis et Canada)
 	HE	דנבר
-	IT	Denver
-	NL	Denver
+	IT	Fuso occidentale (USA e Canada)
+	NL	Mountain Time (VS en Canada)
+	NO	Mountain Time (USA og Canada)
+	SV	Mountain Time (USA och Kanada)
 
 TZ_AMERICA_CHIHUAHUA
-	DE	La Paz, Mazatlan
+	DA	Chihuahua, La Paz, Mazatlan
+	DE	Chihuahua, La Paz, Mazatlan
 	EN	La Paz, Mazatlan
-	ES	La Paz, Mazatlán
-	FR	La Paz, Mazatlan
+	ES	Chihuahua, La Paz, Mazatlán
+	FI	Chihuahua, La Paz, Mazatlan
+	FR	Chihuahua, La Paz, Mazatlan
 	HE	לה פאס, מזטלן
-	IT	La Paz, Mazatlan
-	NL	La Paz, Mazatlan
+	IT	Chihuahua, La Paz, Mazatlan
+	NL	Chihuahua, La Paz, Mazatlán
+	NO	Chihuahua, La Paz, Mazatlan
+	SV	Chihuahua, La Paz, Mazatlan
 
 TZ_AMERICA_REGINA
+	DA	Saskatchewan
 	DE	Saskatchewan
 	EN	Saskatchewan
 	ES	Saskatchewan
+	FI	Saskatchewan
 	FR	Saskatchewan
 	HE	ססקצ'וון
 	IT	Saskatchewan
 	NL	Saskatchewan
+	NO	Saskatchewan
+	SV	Saskatchewan
 
 TZ_AMERICA_MEXICO_CITY
-	DE	Mexiko-Stadt
+	DA	Guadalajara, Mexico City, Monterrey
+	DE	Guadalajara, Mexiko-Stadt, Monterrey
 	EN	Mexico City
-	ES	Ciudad de México
-	FR	Mexico
+	ES	Guadalajara, Ciudad de México, Monterrey
+	FI	Guadalajara, Mexico City, Monterrey
+	FR	Guadalajara, Mexico, Monterrey
 	HE	מקסיקו סיטי
-	IT	Città del Messico
-	NL	Mexico-stad
+	IT	Guadalajara, Città del Messico, Monterrey
+	NL	Guadalajara, Mexico-stad, Monterrey
+	NO	Guadalajara, Mexico by, Monterrey
+	SV	Guadalajara, Mexico City, Monterrey
 
 TZ_AMERICA_CHICAGO
-	DE	Chicago
+	DA	Central Time (USA og Canada)
+	DE	Central Time (USA u. Kanada)
 	EN	Chicago
-	ES	Chicago
-	FR	Chicago
+	ES	Hora central (EE UU y Canadá)
+	FI	Keskinen normaaliaika (Yhdysvallat ja Kanada)
+	FR	Heure normale du Centre (Etats-Unis et Canada)
 	HE	שיקגו
-	IT	Chicago
-	NL	Chicago
+	IT	Fuso centrale (USA e Canada)
+	NL	Central Time (VS en Canada)
+	NO	Central Time (USA & Canada)
+	SV	Central Time (USA och Kanada)
 
 TZ_AMERICA_INDIANAPOLIS
-	DE	Indiana (Ost)
+	DA	Indiana (øst)
+	DE	Indiana (East)
 	EN	Indiana (East)
 	ES	Indiana (Este)
-	FR	Indiana (est)
+	FI	Indiana (Itä)
+	FR	Indiana (Est)
 	HE	אינדיאנה (מזרח)
 	IT	Indiana (Est)
-	NL	Indiana (oost)
+	NL	Indiana (East)
+	NO	Indiana (øst)
+	SV	Indiana (öst)
 
 TZ_AMERICA_BOGOTA
-	DE	Bogota, Lima
+	DA	Bogota, Lima, Quito
+	DE	Bogota, Lima, Quito
 	EN	Bogota, Lima
-	ES	Bogotá, Lima
-	FR	Bogota, Lima
+	ES	Bogotá, Lima, Quito
+	FI	Bogota, Lima, Quito
+	FR	Bogota, Lima, Quito
 	HE	בוגוטה, לימה
-	IT	Bogotà, Lima
-	NL	Bogotá, Lima
+	IT	Bogotà, Lima, Quito
+	NL	Bogotá, Lima, Quito
+	NO	Bogotá, Lima, Quito
+	SV	Bogotá, Lima, Quito
 
 TZ_AMERICA_NEW_YORK
-	DE	New York
+	DA	Eastern Time (USA og Canada)
+	DE	Eastern Time (USA u. Kanada)
 	EN	New York
-	ES	Nueva York
-	FR	New York
+	ES	Hora oriental (EE UU y Canadá)
+	FI	Itäinen normaaliaika (Yhdysvallat ja Kanada)
+	FR	Heure normale de l'Est (Etats-Unis et Canada)
 	HE	ניו יורק
-	IT	New York
-	NL	New York
+	IT	Fuso orientale (USA e Canada)
+	NL	Eastern Time (VS en Canada)
+	NO	Eastern Time (USA og Canada)
+	SV	Eastern Time (USA och Kanada)
 
 TZ_AMERICA_CARACAS
+	DA	Caracas, La Paz
 	DE	Caracas, La Paz
 	EN	Caracas, La Paz
 	ES	Caracas, La Paz
+	FI	Caracas, La Paz
 	FR	Caracas, La Paz
 	HE	קראקס, לה פאס
 	IT	Caracas, La Paz
 	NL	Caracas, La Paz
+	NO	Caracas, La Paz
+	SV	Caracas, La Paz
 
 TZ_AMERICA_SANTIAGO
+	DA	Santiago
 	DE	Santiago
 	EN	Santiago
 	ES	Santiago
+	FI	Santiago
 	FR	Santiago
 	HE	סנטיאגו
 	IT	Santiago
 	NL	Santiago
+	NO	Santiago
+	SV	Santiago
 
 TZ_AMERICA_HALIFAX
-	DE	Halifax
+	DA	Atlantic Time (Canada)
+	DE	Atlantic Time (Kanada)
 	EN	Halifax
-	ES	Halifax
-	FR	Halifax
+	ES	Hora del Atlántico (Canadá)
+	FI	Atlantin normaaliaika (Kanada)
+	FR	Heure de l'Atlantique (Canada)
 	HE	הליפקס
-	IT	Halifax
-	NL	Halifax
+	IT	Ora costa atlantica (Canada)
+	NL	Atlantic Time (Canada)
+	NO	Atlanterhavskysten
+	SV	Atlantic Time (Kanada)
 
 TZ_AMERICA_ST_JOHNS
+	DA	Newfoundland
 	DE	Neufundland
 	EN	Newfoundland
 	ES	Terranova
+	FI	Newfoundland
 	FR	Terre-Neuve
 	HE	ניופאונלנד
 	IT	Terranova
 	NL	Newfoundland
+	NO	Newfoundland
+	SV	Newfoundland
 
 TZ_AMERICA_BUENOS_AIRES
-	DE	Buenos Aires
+	DA	Buenos Aires, Georgetown
+	DE	Buenos Aires, Georgetown
 	EN	Buenos Aires
-	ES	Buenos Aires
-	FR	Buenos Aires
+	ES	Buenos Aires, Georgetown
+	FI	Buenos Aires, Georgetown
+	FR	Buenos Aires, Georgetown
 	HE	בואנוס איירס
-	IT	Buenos Aires
-	NL	Buenos Aires
+	IT	Buenos Aires, Georgetown
+	NL	Buenos Aires, Georgetown
+	NO	Brasilia, Buenos Aires, Georgetown
+	SV	Buenos Aires, Georgetown
 
 TZ_AMERICA_GODTHAB
+	DA	Grønland
 	DE	Grönland
 	EN	Greenland
 	ES	Groenlandia
+	FI	Grönlanti
 	FR	Groenland
 	HE	גרינלנד
 	IT	Groenlandia
 	NL	Groenland
+	NO	Grønland
+	SV	Grönland
 
 TZ_AMERICA_SAO_PAULO
+	DA	Brasilia
 	DE	Brasilia
 	EN	Brasilia
 	ES	Brasilia
+	FI	Brasilia
 	FR	Brasilia
 	HE	ברזיליה
 	IT	Brasilia
 	NL	Brasilia
+	NO	Brasilia
+	SV	Brasilia
 
 TZ_AMERICA_NORONHA
+	DA	Mid-Atlantic
 	DE	Mittelatlantik
 	EN	Mid-Atlantic
 	ES	Atlántico Central
-	FR	Est de l'Amérique du Nord
+	FI	Keski-Atlantti
+	FR	Centre de l'Atlantique
 	HE	האוקיינוס האטלנטי
 	IT	Medioatlantico
-	NL	Mid-Atlantisch
+	NL	Mid-Atlantic
+	NO	Midt-Atlanteren
+	SV	Centralatlantisk tid
 
 TZ_ATLANTIC_CAPE_VERDE
-	DE	Kap Verde
+	DA	Kap Verde
+	DE	Kapverdische Inseln
 	EN	Cape Verde Is.
-	ES	Cabo Verde
-	FR	Cap Vert
+	ES	Islas de Cabo Verde
+	FI	Kap Verde
+	FR	Iles du Cap-Vert.
 	HE	כף ורדה
-	IT	Is. Capo Verde
+	IT	Capo Verde.
 	NL	Kaapverdische eilanden
+	NO	Kapp Verdeøyene
+	SV	Kap Verde
 
 TZ_ATLANTIC_AZORES
+	DA	Azorerne
 	DE	Azoren
 	EN	Azores
 	ES	Azores
+	FI	Azorit
 	FR	Açores
 	HE	האיים האזוריים
 	IT	Azzorre
 	NL	Azoren
+	NO	Azorene
+	SV	Azorerna
 
 TZ_AFRICA_CASABLANCA
-	DE	Casablanca
+	DA	Casablanca, Monrovia
+	DE	Casablanca, Monrovia
 	EN	Casablanca
-	ES	Casablanca
-	FR	Casablanca
+	ES	Casablanca, Monrovia
+	FI	Casablanca, Monrovia
+	FR	Casablanca, Monrovia
 	HE	קזבלנקה
-	IT	Casablanca
-	NL	Casablanca
+	IT	Casablanca, Monrovia
+	NL	Casablanca, Monrovia
+	NO	Casablanca, Monrovia
+	SV	Casablanca, Monrovia
 
 TZ_EUROPE_LONDON
-	DE	London
+	DA	Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London
+	DE	Greenwich Mean Time : Dublin, Edinburgh, Lissabon, London
 	EN	London
-	ES	Londres
-	FR	Londres
+	ES	Hora media de Greenwich: Dublín, Edimburgo, Lisboa, Londres
+	FI	Greenwichin aika: Dublin, Edinburgh, Lissabon, Lontoo
+	FR	Temps universel: Dublin, Edimbourg, Lisbonne, Londres
 	HE	לונדון
-	IT	Londra
-	NL	Londen
+	IT	Ora di Greenwich: Dublino, Edimburgo, Lisbona, Londra
+	NL	Greenwich Mean Time : Dublin, Edinburgh, Lissabon, Londen
+	NO	Greenwich middeltid : Dublin, Edinburgh, Lisboa, London
+	SV	Greenwichtid: Dublin, Edinburgh, Lissabon, London
 
 TZ_AFRICA_LAGOS
-	DE	Lagos
+	DA	Vestlige Centralafrika
+	DE	West-Zentralafrika
 	EN	Lagos
-	ES	Lagos
-	FR	Lagos
+	ES	África Central Occidental
+	FI	Läntinen Keski-Afrikka
+	FR	Afrique du centre-ouest
 	HE	לגוס
-	IT	Lagos
-	NL	Lagos
+	IT	Repubblica centrafricana occidentale
+	NL	West-Centraal-Afrika
+	NO	Vestlige Sentral-Afrika
+	SV	Västra Centralafrika
 
 TZ_EUROPE_BERLIN
-	DE	Berlin
+	DA	Amsterdam, Berlin, Bern, Rom, Stockholm, Wien
+	DE	Amsterdam, Berlin, Bern, Rom, Stockholm, Wien
 	EN	Berlin
-	ES	Berlín
-	FR	Berlin
+	ES	Amsterdam, Berlín, Berna, Roma, Estocolmo, Viena
+	FI	Amsterdam, Berliini, Bern, Rooma, Tukholma, Wien
+	FR	Amsterdam, Berlin, Berne, Rome, Stockholm, Vienne
 	HE	ברלין
-	IT	Berlino
-	NL	Berlijn
+	IT	Amsterdam, Berlino, Berna, Roma, Stoccolma, Vienna
+	NL	Amsterdam, Berlijn, Bern, Rome, Stockholm, Wenen
+	NO	Amsterdam, Berlin, Bern, Roma, Stockholm, Wien
+	SV	Amsterdam, Berlin, Bern, Rom, Stockholm, Wien
 
 TZ_EUROPE_PARIS
-	DE	Paris
+	DA	København, Brüxelles, Madrid, Paris
+	DE	Brüssel, Kopenhagen, Madrid, Paris
 	EN	Paris
-	ES	París
-	FR	Paris
+	ES	Bruselas, Copenhague, Madrid, París
+	FI	Bryssel, Kööpenhamina, Madrid, Pariisi
+	FR	Bruxelles, Copenhague, Madrid, Paris
 	HE	פריז
-	IT	Parigi
-	NL	Parijs
+	IT	Bruxelles, Copenhagen, Madrid, Parigi
+	NL	Brussel, Kopenhagen, Madrid, Parijs
+	NO	Brussel, København, Madrid, Paris
+	SV	Bryssel, Köpenhamn, Madrid, Paris
 
 TZ_EUROPE_SARAJEVO
-	DE	Sarajevo
+	DA	Sarajevo, Skopje, Warszawa, Zagreb
+	DE	Sarajewo, Skopje, Warschau, Zagreb
 	EN	Sarajevo
-	ES	Sarajevo
-	FR	Sarajevo
+	ES	Sarajevo, Skopje, Varsovia, Zagreb
+	FI	Sarajevo, Skopje, Varsova, Zagreb
+	FR	Sarajevo, Skopje, Varsovie, Zagreb
 	HE	סרייבו
-	IT	Sarajevo
-	NL	Sarajevo
+	IT	Sarajevo, Skopje, Varsavia, Zagabria
+	NL	Sarajevo, Skopje, Warschau, Zagreb
+	NO	Sarajevo, Skopje, Warsawa, Zagreb
+	SV	Sarajevo, Skopje, Warszawa, Zagreb
 
 TZ_EUROPE_BELGRADE
-	DE	Belgrad
+	DA	Beograd, Bratislava, Budapest, Ljubljana, Prag
+	DE	Belgrad, Bratislava, Budapest, Ljubljana, Prag
 	EN	Belgrade
-	ES	Belgrado
-	FR	Belgrade
+	ES	Belgrado, Bratislava, Budapest, Lubiana, Praga
+	FI	Belgrad, Bratislava, Budapest, Ljubljana, Praha
+	FR	Belgrade, Bratislava, Budapest, Ljubljana, Prague
 	HE	בלגרד
-	IT	Belgrado
-	NL	Belgrado
+	IT	Belgrado, Bratislava, Budapest, Lubiana, Praga
+	NL	Belgrado, Bratislava, Boedapest, Ljubljana, Praag
+	NO	Beograd, Bratislava, Budapest, Ljubljana, Praha
+	SV	Belgrad, Bratislava, Budapest, Ljubljana, Prag
 
 TZ_AFRICA_JOHANNESBURG
-	DE	Johannesburg
+	DA	Harare, Pretoria
+	DE	Harare, Pretoria
 	EN	Johannesburg
-	ES	Johannesburgo
-	FR	Johannesburg
+	ES	Harare, Pretoria
+	FI	Harare, Pretoria
+	FR	Harare, Pretoria
 	HE	יוהנסבורג
-	IT	Johannesburg
-	NL	Johannesburg
+	IT	Harare, Pretoria
+	NL	Harare, Pretoria
+	NO	Harare, Pretoria
+	SV	Harare, Pretoria
 
 TZ_ASIA_JERUSALEM
+	DA	Jerusalem
 	DE	Jerusalem
 	EN	Jerusalem
 	ES	Jerusalén
+	FI	Jerusalem
 	FR	Jérusalem
 	HE	ירושלים
 	IT	Gerusalemme
 	NL	Jeruzalem
+	NO	Jerusalem
+	SV	Jerusalem
 
 TZ_EUROPE_ISTANBUL
-	DE	Athen
+	DA	Athen, Istanbul, Minsk
+	DE	Athen, Istanbul, Minsk
 	EN	Athens
-	ES	Atenas
-	FR	Athènes
+	ES	Atenas, Estambul, Minsk
+	FI	Ateena, Istanbul, Minsk
+	FR	Athènes, Istanbul, Minsk
 	HE	אתונה
-	IT	Atene
-	NL	Athene
+	IT	Atene, Istanbul, Minsk
+	NL	Athene, Istanbul, Minsk
+	NO	Athen, Istanbul, Minsk
+	SV	Athen, Istanbul, Minsk
 
 TZ_EUROPE_HELSINKI
-	DE	Helsinki
+	DA	Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius
+	DE	Helsinki, Kiew, Riga, Sofia, Tallinn, Wilna
 	EN	Helsinki
-	ES	Helsinki
-	FR	Helsinki
+	ES	Helsinki, Kiev, Riga, Sofía, Tallinn, Vilnius
+	FI	Helsinki, Kiova, Riika, Sofia, Tallinna, Vilna
+	FR	Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius
 	HE	הלסינקי
-	IT	Helsinki
-	NL	Helsinki
+	IT	Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius
+	NL	Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius
+	NO	Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius
+	SV	Helsingfors, Kiev, Riga, Sofia, Tallinn, Vilnius
 
 TZ_AFRICA_CAIRO
+	DA	Kairo
 	DE	Kairo
 	EN	Cairo
-	ES	Cairo
+	ES	El Cairo
+	FI	Kairo
 	FR	Le Caire
 	HE	קהיר
 	IT	Cairo
 	NL	Caïro
+	NO	Kairo
+	SV	Kairo
 
 TZ_EUROPE_BUCHAREST
-	DE	Bucharest
+	DA	Bukarest
+	DE	Bukarest
 	EN	Bucharest
 	ES	Bucarest
+	FI	Bukarest
 	FR	Bucarest
 	HE	בוקרשט
 	IT	Bucarest
 	NL	Boekarest
+	NO	Bucuresti
+	SV	Bukarest
 
 TZ_AFRICA_NAIROBI
+	DA	Nairobi
 	DE	Nairobi
 	EN	Nairobi
 	ES	Nairobi
+	FI	Nairobi
 	FR	Nairobi
 	HE	ניירובי
 	IT	Nairobi
 	NL	Nairobi
+	NO	Nairobi
+	SV	Nairobi
 
 TZ_ASIA_RIYADH
-	DE	Kuwait, Riyadh
+	DA	Kuwait, Riyadh
+	DE	Kuwait, Riad
 	EN	Kuwait, Riyadh
 	ES	Kuwait, Riad
+	FI	Kuwait, Riad
 	FR	Koweït, Riyad
 	HE	כווית, ריאד
 	IT	Kuwait, Riyadh
 	NL	Koeweit, Riyadh
+	NO	Kuwait, Riyadh
+	SV	Kuwait, Riyadh
 
 TZ_EUROPE_MOSCOW
-	DE	Moskau
+	DA	Moskva, Skt. Petersborg, Volgograd
+	DE	Moskau, St. Petersburg, Volgograd
 	EN	Moscow
-	ES	Moscú
-	FR	Moscou
+	ES	Moscú, San Petersburgo, Volgogrado
+	FI	Moskova, Pietari, Volgograd
+	FR	Moscou, Saint Pétersbourg, Volgograd
 	HE	מוסקבה
-	IT	Mosca
-	NL	Moskou
+	IT	Mosca, S. Pietroburgo, Volgograd
+	NL	Moskou, St. Petersburg, Wolgograd
+	NO	Moskva, St. Petersburg, Volgograd
+	SV	Moskva, Sankt Petersburg, Volgograd
 
 TZ_ASIA_BAGHDAD
+	DA	Baghdad
 	DE	Bagdad
 	EN	Baghdad
-	ES	Bagdad
+	ES	Baghdad
+	FI	Bagdad
 	FR	Bagdad
 	HE	בגדד
 	IT	Baghdad
 	NL	Bagdad
+	NO	Bagdad
+	SV	Bagdad
 
 TZ_ASIA_TEHRAN
+	DA	Tehran
 	DE	Teheran
 	EN	Tehran
 	ES	Teherán
+	FI	Teheran
 	FR	Téhéran
 	HE	טהרן
-	IT	Teheran
+	IT	Tehran
 	NL	Teheran
+	NO	Teheran
+	SV	Teheran
 
 TZ_ASIA_MUSCAT
-	DE	Abu Dhabi, Muskat
+	DA	Abu Dhabi, Muscat
+	DE	Abu Dhabi, Maskat
 	EN	Abu Dhabi, Muscat
 	ES	Abu Dhabi, Muscat
-	FR	Abu Dhabi, Mascate
+	FI	Abu Dhabi, Muscat
+	FR	Abu Dhabi, Muscat
 	HE	אבו דאבי, מוסקט
 	IT	Abu Dhabi, Muscat
-	NL	Abu Dhabi, Muscat
+	NL	Abu Dhabi, Masqat
+	NO	Abu Dhabi, Muscat, Baku, Tbilisi, Jerevan
+	SV	Abu Dhabi, Muskat
 
 TZ_ASIA_TBILISI
-	DE	Tiflis
+	DA	Baku, Tbilisi, Yerevan
+	DE	Baku, Tiflis, Eriwan
 	EN	Tbilisi
-	ES	Tiflis
-	FR	Tbilisi
+	ES	Baku, Tbilisi, Yerevan
+	FI	Baku, Tbilisi, Jerevan
+	FR	Bakou, Tbilissi, Erevan
 	HE	טביליסי
-	IT	Tbilisi
-	NL	Tbilisi
+	IT	Baku, Tbilisi, Yerevan
+	NL	Bakoe, Tbilisi, Jerevan
+	NO	Abu Dhabi, Muscat, Baku, Tbilisi, Jerevan
+	SV	Baku, Tbilisi, Jerevan
 
 TZ_ASIA_KABUL
+	DA	Kabul
 	DE	Kabul
 	EN	Kabul
 	ES	Kabul
+	FI	Kabul
 	FR	Kaboul
 	HE	קאבול
 	IT	Kabul
-	NL	Kabul
+	NL	Kaboel
+	NO	Kabul
+	SV	Kabul
 
 TZ_ASIA_KARACHI
-	DE	Karachi
+	DA	Islamabad, Karachi, Tasjkent
+	DE	Islamabad, Karatschi, Taschkent
 	EN	Karachi
-	ES	Karachi
-	FR	Karachi
+	ES	Islamabad, Karachi, Tashkent
+	FI	Islamabad, Karachi, Taškent
+	FR	Islamabad, Karachi, Tachkent
 	HE	קראצ'י
-	IT	Karachi
-	NL	Karachi
+	IT	Islamabad, Karachi, Tashkent
+	NL	Islamabad, Karachi, Tasjkent
+	NO	Islamabad, Karachi, Tasjkent
+	SV	Islamabad, Karachi, Tasjkent
 
 TZ_ASIA_YEKATERINBURG
+	DA	Ekaterinburg
 	DE	Jekaterinburg
 	EN	Ekaterinburg
-	ES	Ekaterimburgo
-	FR	Iekaterinbourg
+	ES	Ekaterinburgo
+	FI	Jekaterinburg
+	FR	Ekaterinbourg
 	HE	יקטרינבורג
 	IT	Ekaterinburg
-	NL	Jekaterinburg
+	NL	Jekaterinenburg
+	NO	Jekaterinburg
+	SV	Jekaterinburg
 
 TZ_ASIA_CALCUTTA
-	DE	Kalkutta
+	DA	Chennai, Kolkata, Mumbai, New Delhi
+	DE	Chennai, Kalkutta, Mumbai, New Delhi
 	EN	Calcutta
-	ES	Calcuta
-	FR	Kokalta
+	ES	Chennai, Calcuta, Mumbai, Nueva Delhi
+	FI	Chennai, Kolkata, Mumbai, New Delhi
+	FR	Chennai, Calcutta, Mumbai, New Delhi
 	HE	כלכותה
-	IT	Calcutta
-	NL	Calcutta
+	IT	Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi
+	NL	Madras, Calcutta, Bombay, New Delhi
+	NO	Chennai, Kolkata, Mumbai, New Delhi
+	SV	Chennai (Madras), Kolkata (Calcutta), Mumbai (Bombay), New Delhi
 
 TZ_ASIA_KATMANDU
+	DA	Kathmandu
 	DE	Kathmandu
 	EN	Kathmandu
 	ES	Katmandú
+	FI	Kathmandu
 	FR	Katmandou
 	HE	קטמנדו
 	IT	Kathmandu
 	NL	Kathmandu
+	NO	Katmandu
+	SV	Katmandu
 
 TZ_ASIA_COLOMBO
-	DE	Colombo
+	DA	Sri Jayawardenepura
+	DE	Sri Jayawardenepura
 	EN	Colombo
-	ES	Colombo
-	FR	Colombo
+	ES	Sri Jayawardenepura
+	FI	Sri Jayawardenepura
+	FR	Sri Jayawardenepura
 	HE	קולומבו
-	IT	Colombo
-	NL	Colombo
+	IT	Sri Jayawardenepura
+	NL	Sri Jayawardenepura
+	NO	Sri Jayawardenepura
+	SV	Sri Jayawardenepura
 
 TZ_ASIA_DHAKA
-	DE	Astana, Dakka
+	DA	Astana, Dhaka
+	DE	Astana, Dhaka
 	EN	Astana, Dhaka
-	ES	Astaná, Dacca
-	FR	Astana, Dhâkâ
+	ES	Astana, Dacca
+	FI	Astana, Dhaka
+	FR	Astana, Dhaka
 	HE	אסטנה, דאקה
 	IT	Astana, Dhaka
 	NL	Astana, Dhaka
+	NO	Astana, Dhaka
+	SV	Astana, Dhaka
 
 TZ_ASIA_NOVOSIBIRSK
-	DE	Nowosibirsk
+	DA	Almaty, Novosibirsk
+	DE	Almaty, Nowosibirsk
 	EN	Novosibirsk
-	ES	Novosibirsk
-	FR	Novosibirsk
+	ES	Almaty, Novosibirsk
+	FI	Almaty, Novosibirsk
+	FR	Almaty, Novosibirsk
 	HE	נובוסיבירסק 
-	IT	Novosibirsk
-	NL	Novosibirsk
+	IT	Almaty, Novosibirsk
+	NL	Alma-Atay, Novosibirsk
+	NO	Almaty, Novosibirsk
+	SV	Alma-ata, Novosibirsk
 
 TZ_ASIA_RANGOON
+	DA	Rangoon
 	DE	Rangun
 	EN	Rangoon
 	ES	Rangún
-	FR	Yangon
+	FI	Rangoon
+	FR	Rangoon
 	HE	רנגון
 	IT	Rangoon
 	NL	Rangoon
+	NO	Rangoon
+	SV	Rangoon
 
 TZ_ASIA_BANGKOK
-	DE	Bangkok
+	DA	Bangkok, Hanoi, Jakarta
+	DE	Bangkok, Hanoi, Jakarta
 	EN	Bangkok
-	ES	Bangkok
-	FR	Bangkok
+	ES	Bangkok, Hanoi, Yakarta
+	FI	Bangkok, Hanoi, Jakarta
+	FR	Bangkok, Hanoï, Djakarta
 	HE	בנגקוק
-	IT	Bangkok
-	NL	Bangkok
+	IT	Bangkok, Hanoi, Giacarta
+	NL	Bangkok, Hanoi, Djakarta
+	NO	Bangkok, Hanoi, Djakarta, Krasnojarsk
+	SV	Bangkok, Hanoi, Jakarta
 
 TZ_ASIA_KRASNOYARSK
+	DA	Krasnoyarsk
 	DE	Krasnojarsk
 	EN	Krasnoyarsk
 	ES	Krasnoyarsk
+	FI	Krasnojarsk
 	FR	Krasnoïarsk
 	HE	קרסנויירסק
 	IT	Krasnoyarsk
-	NL	Krasnojarsk
+	NL	Kraj Krasnojarsk
+	NO	Krasnojarsk
+	SV	Krasnojarsk
 
 TZ_AUSTRALIA_PERTH
+	DA	Perth
 	DE	Perth
 	EN	Perth
 	ES	Perth
+	FI	Perth
 	FR	Perth
 	HE	פרת'
 	IT	Perth
 	NL	Perth
+	NO	Perth
+	SV	Perth
 
 TZ_ASIA_TAIPEI
+	DA	Taipei
 	DE	Taipeh
 	EN	Taipei
 	ES	Taipei
+	FI	Taipei
 	FR	Taipei
 	HE	טאיפה
 	IT	Taipei
 	NL	Taipei
+	NO	Taipei
+	SV	Taipei
 
 TZ_ASIA_SINGAPORE
-	DE	Singapur
+	DA	Kuala Lumpur, Singapore
+	DE	Kuala Lumpur, Singapur
 	EN	Singapore
-	ES	Singapur
-	FR	Singapour
+	ES	Kuala Lumpur, Singapur
+	FI	Kuala Lumpur, Singapore
+	FR	Kuala Lumpur, Singapour
 	HE	סינגפור
-	IT	Singapore
-	NL	Singapore
+	IT	Kuala Lumpur, Singapore
+	NL	Kuala Lumpur, Singapore
+	NO	Kuala Lumpur, Singapore
+	SV	Kuala Lumpur, Singapore
 
 TZ_ASIA_HONG_KONG
-	DE	Hongkong
+	DA	Beijing, Chongqing, Hongkong, Urumqi
+	DE	Peking, Chongqing, Hongkong, Urumqi
 	EN	Hong Kong
-	ES	Hong Kong
-	FR	Hong Kong
+	ES	Beijing, Chongqing, Hong Kong, Urumqi
+	FI	Peking, Chongqing, Hongkong, Ürümqi
+	FR	Pekin, Chongqing, Hong Kong, Urumqi
 	HE	הונג קונג
-	IT	Hong Kong
-	NL	Hongkong
+	IT	Pechino, Chongqing, Hong Kong, Urumqi
+	NL	Peking, Tsjoengking, Hongkong, Ürümqi
+	NO	Beijing, Chongqing, Hongkong, Ürümqi
+	SV	Beijing, Chongqing, Hong Kong, Urumqi
 
 TZ_ASIA_IRKUTSK
-	DE	Irkutsk
+	DA	Irkutsk, Ulaanbataar
+	DE	Irkutsk, Ulaanbataar
 	EN	Irkutsk
-	ES	Irkutsk
-	FR	Irkoutsk
+	ES	Irkutsk, Ulan Bator
+	FI	Irkutsk, Ulan Bator
+	FR	Irkoutsk, Oulan Bator
 	HE	אירקוטסק
-	IT	Irkutsk
-	NL	Irkoetsk
+	IT	Irkutsk, Ulaan Bataar
+	NL	Irkoetsk, Ulaan Bataar
+	NO	Irkutsk, Ulan Bator
+	SV	Irkutsk, Ulan Bator
 
 TZ_ASIA_TOKYO
-	DE	Tokio
+	DA	Osaka, Sapporo, Tokyo
+	DE	Osaka, Sapporo, Tokio
 	EN	Tokyo
-	ES	Tokio
-	FR	Tokyo
+	ES	Osaka, Sapporo, Tokio
+	FI	Osaka, Sapporo, Tokio
+	FR	Osaka, Sapporo, Tokyo
 	HE	טוקיו
-	IT	Tokyo
-	NL	Tokio
+	IT	Osaka, Sapporo, Tokyo
+	NL	Osaka, Sapporo, Tokio
+	NO	Osaka, Sapporo, Tokyo, Seoul, Jakutsk
+	SV	Osaka, Sapporo, Tokyo
 
 TZ_ASIA_SEOUL
+	DA	Seoul
 	DE	Seoul
 	EN	Seoul
-	ES	Seúl
+	ES	Seul
+	FI	Soul
 	FR	Séoul
 	HE	סיאול
 	IT	Seoul
-	NL	Seoul
+	NL	Seoel
+	NO	Seoul
+	SV	Seoul
 
 TZ_ASIA_YAKUTSK
+	DA	Yakutsk
 	DE	Jakutsk
 	EN	Yakutsk
 	ES	Yakutsk
+	FI	Jakutsk
 	FR	Iakoutsk
 	HE	יקוטסק
 	IT	Yakutsk
 	NL	Jakoetsk
+	NO	Jakutsk
+	SV	Jakutsk
 
 TZ_AUSTRALIA_DARWIN
+	DA	Darwin
 	DE	Darwin
 	EN	Darwin
 	ES	Darwin
+	FI	Darwin
 	FR	Darwin
 	HE	דרווין
 	IT	Darwin
 	NL	Darwin
+	NO	Adelaide, Darwin
+	SV	Darwin
 
 TZ_AUSTRALIA_ADELAIDE
+	DA	Adelaide
 	DE	Adelaide
 	EN	Adelaide
 	ES	Adelaida
+	FI	Adelaide
 	FR	Adelaïde
 	HE	אדלייד
 	IT	Adelaide
 	NL	Adelaide
+	NO	Adelaide
+	SV	Adelaide
 
 TZ_PACIFIC_GUAM
-	DE	Guam
+	DA	Guam, Port Moresby
+	DE	Guam, Port Moresby
 	EN	Guam
-	ES	Guam
-	FR	Guam
+	ES	Guam, Port Moresby
+	FI	Guam, Port Moresby
+	FR	Guam, Port Moresby
 	HE	גואם
-	IT	Guam
-	NL	Guam
+	IT	Guam, Port Moresby
+	NL	Guam, Port Moresby
+	NO	Guam, Port Moresby
+	SV	Guam, Port Moresby
 
 TZ_AUSTRALIA_BRISBANE
+	DA	Brisbane
 	DE	Brisbane
 	EN	Brisbane
 	ES	Brisbane
+	FI	Brisbane
 	FR	Brisbane
 	HE	בריסביין
 	IT	Brisbane
 	NL	Brisbane
+	NO	Brisbane
+	SV	Brisbane
 
 TZ_ASIA_VLADIVOSTOK
+	DA	Vladivostok
 	DE	Wladiwostok
 	EN	Vladivostok
 	ES	Vladivostok
+	FI	Vladivostok
 	FR	Vladivostok
 	HE	ולדיווסטוק
 	IT	Vladivostok
-	NL	Vladivostok
+	NL	Wladiwostok
+	NO	Vladivostok
+	SV	Vladivostok
 
 TZ_AUSTRALIA_HOBART
+	DA	Hobart
 	DE	Hobart
 	EN	Hobart
 	ES	Hobart
+	FI	Hobart
 	FR	Hobart
 	HE	הובארט
 	IT	Hobart
 	NL	Hobart
+	NO	Hobart
+	SV	Hobart
 
 TZ_AUSTRALIA_SYDNEY
-	DE	Sydney
+	DA	Canberra, Melbourne, Sydney
+	DE	Canberra, Melbourne, Sydney
 	EN	Sydney
-	ES	Sydney
-	FR	Sydney
+	ES	Canberra, Melbourne, Sidney
+	FI	Canberra, Melbourne, Sydney
+	FR	Canberra, Melbourne, Sydney
 	HE	סידני
-	IT	Sydney
-	NL	Sydney
+	IT	Canberra, Melbourne, Sydney
+	NL	Canberra, Melbourne, Sydney
+	NO	Canberra, Melbourne, Sydney
+	SV	Canberra, Melbourne, Sydney
 
 TZ_ASIA_MAGADAN
-	DE	Magadan
+	DA	Magadan, Solomonøerne, Ny Caledonien
+	DE	Magadan, Solomoninseln, Neukaledonien
 	EN	Magadan
-	ES	Magadan
-	FR	Magadan
+	ES	Magadán, Islas Salomón, Nueva Caledonia
+	FI	Magadan, Salomonsaaret, Uusi-Kaledonia
+	FR	Magadan, Iles Salomon, Nouvelle-Calédonie
 	HE	מגדן
-	IT	Magadan
-	NL	Magadan
+	IT	Magadan, Isole Salomone, Nuova Caledonia
+	NL	Magadan, Salomonseilanden, Nieuw-Caledonië
+	NO	Magadan, Solomonøyene, Ny-Caledonia
+	SV	Magadan, Salomonöarna, Nya Kaledonien
 
 TZ_PACIFIC_FIJI
-	DE	Fidschi
+	DA	Fiji, Kamchatka, Marshalløerne.
+	DE	Fidschi, Kamtschatka, Marshallinseln
 	EN	Fiji
-	ES	Fiyi
-	FR	Fidji
+	ES	Fiji, Kamchatka, Islas Marshall
+	FI	Fidži, Kamtšatka, Marshallinsaaret
+	FR	Fidji, Kamchatka, Iles Marshall.
 	HE	פיג'י
-	IT	Fiji
-	NL	Fiji
+	IT	Figi, Kamchatka, Is. Marshal
+	NL	Fiji, Kamtsjatka, Marshalleilanden.
+	NO	Fiji, Kamtsjatka, Marshalløyene
+	SV	Fiji, Kamtjatka, Marshallöarna
 
 TZ_PACIFIC_AUCKLAND
-	DE	Auckland
+	DA	Auckland, Wellington
+	DE	Auckland, Wellington
 	EN	Auckland
-	ES	Auckland
-	FR	Auckland
+	ES	Auckland, Wellington
+	FI	Auckland, Wellington
+	FR	Auckland, Wellington
 	HE	אוקלנד
-	IT	Auckland
-	NL	Auckland
+	IT	Auckland, Wellington
+	NL	Auckland, Wellington
+	NO	Auckland, Wellington
+	SV	Auckland, Wellington
 
 TZ_PACIFIC_TONGATAPU
+	DA	Nuku'alofa
 	DE	Nuku'alofa
 	EN	Nuku'alofa
 	ES	Nuku'alofa
+	FI	Nuku'alofa
 	FR	Nuku'alofa
 	HE	נוקואלופה
-	IT	Nukualofa
+	IT	Nuku'alofa
 	NL	Nuku'alofa
+	NO	Nuku'alofa
+	SV	Nukualofa
 
 FAVORITES
 	DA	Favoritter
@@ -1021,604 +1313,904 @@ SYNC_FIRMWARE_UPGRADE
 	EN	To enable sync support, press and hold BRIGHTNESS to update on all players you wish to sync.
 
 SOUNDS_EFFECTS
+	DA	Lydeffekter
 	DE	Soundeffekte
 	EN	Sound Effects
 	ES	Efectos de sonido
+	FI	Äänitehosteet
 	FR	Effets sonores
 	IT	Effetti sonori
 	NL	Geluidseffecten
+	NO	Lydeffekter
+	SV	Ljudeffekter
 
 SOUNDS_NATURAL
+	DA	Naturlige lyde
 	DE	Naturgeräusche
 	EN	Natural Sounds
 	ES	Sonidos de naturaleza
+	FI	Luonnonääniä
 	FR	Sons naturels
 	IT	Suoni della natura
 	NL	Natuurlijke geluiden
+	NO	Naturlyder
+	SV	Naturljud
 
 SOUNDS_MUSICAL
+	DA	Musik
 	DE	Musik
 	EN	Music
 	ES	Música
+	FI	Musiikki
 	FR	Musique
 	IT	Musica
 	NL	Muziek
+	NO	Musikk
+	SV	Musik
 
 SOUNDS_BARN_FIRE
+	DA	Laden brænder
 	DE	Scheunenbrand
 	EN	Barn Fire
 	ES	Incendio de granero
+	FI	Palava lato
 	FR	Grange en feu
 	IT	Fienile in fiamme
 	NL	Schuurbrand
+	NO	Låvebrann
+	SV	Barn Fire
 
 SOUNDS_BLUE_HENRY
+	DA	Blue Henry
 	DE	Blue Henry
 	EN	Blue Henry
 	ES	Blue Henry
+	FI	Blue Henry
 	FR	Blue Henry
 	IT	Aspirapolvere
 	NL	Blue Henry
+	NO	Blue Henry
+	SV	Blue Henry
 
 SOUNDS_BLUE_ORCHID
+	DA	Blue Orchid
 	DE	Blaue Orchidee
 	EN	Blue Orchid
 	ES	Orquídea azul
+	FI	Sininen orkidea
 	FR	Blue Orchid
 	IT	Orchidea blu
 	NL	Blauwe orchidee
+	NO	Blue Orchid
+	SV	Blue Orchid
 
 SOUNDS_BONGO_TECH
+	DA	Bongotech
 	DE	Bongo Tech
 	EN	Bongo Tech
 	ES	Bongo Tech
+	FI	Bongo Tech
 	FR	Bongo Tech
 	IT	Bongo
 	NL	Bongo Tech
+	NO	Bongo Tech
+	SV	Bongo Tech
 
 SOUNDS_BRAINFLUID
+	DA	Hjernemasse
 	DE	Hirnflüssigkeit
 	EN	Brainfluid
 	ES	Fluido cerebral
+	FI	Aivoneste
 	FR	Liquide cérébral
 	IT	Fluido cerebrale
 	NL	Hersenvloeistof
+	NO	Hjernevæske
+	SV	Brainfluid
 
 SOUNDS_BUTTERY
+	DA	Buttery
 	DE	Cafeteria
 	EN	Buttery
 	ES	Despensa
+	FI	Buttery
 	FR	Butyreux
 	IT	Buttery
 	NL	Kantine
+	NO	Buttery
+	SV	Buttery
 
 SOUNDS_CAPPUCINO
+	DA	Cappuccino
 	DE	Cappucino
 	EN	Cappucino
 	ES	Capuchino
+	FI	Cappucino
 	FR	Cappucino
 	IT	Cappuccino
 	NL	Cappucino
+	NO	Cappucino
+	SV	Cappuccino
 
 SOUNDS_COOL_CATS
+	DA	Cool Cats
 	DE	Coole Katzen
 	EN	Cool Cats
 	ES	Gatos
+	FI	Cool Cats
 	FR	Chats
 	IT	Cool Cats
 	NL	Cool Cats
+	NO	Cool Cats
+	SV	Cool Cats
 
 SOUNDS_CORNFLOWER
+	DA	Kornblomst
 	DE	Kornblume
 	EN	Cornflower
 	ES	Aciano
+	FI	Ruiskukka
 	FR	Bleuet
 	IT	Fiordaliso
 	NL	Cornflower
+	NO	Kornblomst
+	SV	Cornflower
 
 SOUNDS_CRYSTALIZE
+	DA	Crystalize
 	DE	Kristall
 	EN	Crystalize
 	ES	Cristalización
+	FI	Crystalize
 	FR	Cristallisation
 	IT	Cristallizzazione
 	NL	Crystalize
+	NO	Crystalize
+	SV	Crystalize
 
 SOUNDS_EXPERIMENTAL
+	DA	Eksperimental
 	DE	Experimentell
 	EN	Experimental
 	ES	Experimental
+	FI	Kokeellinen
 	FR	Expérimental
 	IT	Sperimentale
 	NL	Experimenteel
+	NO	Eksperimentell
+	SV	Experimental
 
 SOUNDS_HIBISCUS
+	DA	Hibiscus
 	DE	Hibiskus
 	EN	Hibiscus
 	ES	Hibisco
+	FI	Hibiscus
 	FR	Hibiscus
 	IT	Ibisco
 	NL	Hibiscus
+	NO	Hibiscus
+	SV	Hibiscus
 
 SOUNDS_JUNK_ARMOR
+	DA	Skrammelrustning
 	DE	Schrott
 	EN	Junk Armor
 	ES	Blindaje
+	FI	Romuhaarniska
 	FR	Armure
 	IT	Junk Armor
 	NL	Junk Armor
+	NO	Søppelrustning
+	SV	Junk Armor
 
 SOUNDS_MELANCHOLY_DAY
+	DA	Melankolsk dag
 	DE	Melancholischer Tag
 	EN	Melancholy Day
 	ES	Melancolía
+	FI	Alakuloinen päivä
 	FR	Journée mélancolique
 	IT	Giorno malinconico
 	NL	Melancholy Day
+	NO	Melankolsk dag
+	SV	Melancholy Day
 
 SOUNDS_SLICKBABY
+	DA	Slickbaby
 	DE	Slickbaby
 	EN	Slickbaby
 	ES	Slickbaby
+	FI	Slickbaby
 	FR	Slickbaby
 	IT	Slickbaby
 	NL	Slickbaby
+	NO	Slickbaby
+	SV	Slick baby
 
 SOUNDS_SLOG_IT_OUT
+	DA	Slog It Out
 	DE	Rauferei
 	EN	Slog It Out
 	ES	Dale que dale
+	FI	Anna palaa
 	FR	Slog It Out
 	IT	Discussione animata
 	NL	Slog It Out
+	NO	Slog It Out
+	SV	Slog It Out
 
 SOUNDS_SOFT_HORIZON
+	DA	Soft Horizon
 	DE	Weicher Horizont
 	EN	Soft Horizon
 	ES	Horizonte
+	FI	Soft Horizon
 	FR	Soft Horizon
 	IT	Soft Horizon
 	NL	Zachte horizon
+	NO	Soft Horizon
+	SV	Soft Horizon
 
 SOUNDS_SRI_LAMA
+	DA	Sri Lama
 	DE	Sri Lama
 	EN	Sri Lama
 	ES	Sri Lama
+	FI	Sri Lama
 	FR	Sri Lama
 	IT	Sri Lama
 	NL	Sri Lama
+	NO	Sri Lama
+	SV	Sri Lama
 
 SOUNDS_STARGAZER
+	DA	Stargazer
 	DE	Sternengucker
 	EN	Stargazer
 	ES	Astrónomo
+	FI	Stargazer
 	FR	Stargazer
 	IT	Sognatore
 	NL	Sterrenkijker
+	NO	Stargazer
+	SV	Stargazer
 
 SOUNDS_SUPER_CHEESE
+	DA	Super Cheese
 	DE	Superkäse
 	EN	Super Cheese
 	ES	Superqueso
+	FI	Super Cheese
 	FR	Super Cheese
 	IT	Super Cheese
 	NL	Super Cheese
+	NO	Super Cheese
+	SV	Super Cheese
 
 SOUNDS_TAIL_HONKER
+	DA	Båthorn
 	DE	Hupe
 	EN	Tail Honker
 	ES	Tail Honker
+	FI	Töötöttäjä
 	FR	Tail Honker
 	IT	Tail Honker
 	NL	Tail Honker
+	NO	Tuting
+	SV	Tail Honker
 
 SOUNDS_TONGUE_CHEEK
+	DA	Tongue & Cheek
 	DE	Zunge und Wange
 	EN	Tongue & Cheek
 	ES	Chasquido
+	FI	Tongue & Cheek
 	FR	Claquement de langue
 	IT	Tongue & Cheek
 	NL	Tongue & Cheek
+	NO	Tongue & Cheek
+	SV	Tongue & Cheek
 
 SOUNDS_TRANSLAB
+	DA	TransLab
 	DE	TransLab
 	EN	TransLab
 	ES	Laboratorio
+	FI	TransLab
 	FR	TransLab
 	IT	TransLab
 	NL	TransLab
+	NO	TransLab
+	SV	TransLab
 
 SOUNDS_TWEEDLEDUM
+	DA	Tweedledum
 	DE	Tweedledum
 	EN	Tweedledum
 	ES	Tweedledum
+	FI	Tweedledum
 	FR	Tweedledum
 	IT	Tweedledum
 	NL	Tweedledum
+	NO	Tweedledum
+	SV	Tweedledum
 
 SOUNDS_TWENSA
+	DA	Twensa
 	DE	Twensa
 	EN	Twensa
 	ES	Twensa
+	FI	Twensa
 	FR	Twensa
 	IT	Twensa
 	NL	Twensa
+	NO	Twensa
+	SV	Twensa
 
 SOUNDS_BABBLING_BROOK
+	DA	Rislende bæk
 	DE	Plätschernder Bach
 	EN	Babbling Brook
 	ES	Arroyo
+	FI	Soliseva puro
 	FR	Cascade ruisselante
 	IT	Gorgoglio di ruscello
 	NL	Kabbelend beekje
+	NO	Klukkende bekk
+	SV	Porlande bäck
 
 SOUNDS_BUBBLES
+	DA	Bobler
 	DE	Seifenblasen
 	EN	Bubbles
 	ES	Burbujas
+	FI	Kuplia
 	FR	Bulles
 	IT	Bollicine
 	NL	Luchtbellen
+	NO	Bobler
+	SV	Bubblor
 
 SOUNDS_CRICKETS
+	DA	Fårekyllinger
 	DE	Grillen
 	EN	Crickets
 	ES	Grillos
+	FI	Sirkkoja
 	FR	Grillons
 	IT	Grilli
 	NL	Crickets
+	NO	Gresshopper
+	SV	Syrsor
 
 SOUNDS_FIRE
+	DA	Ild
 	DE	Feuer
 	EN	Fire
 	ES	Disparo
+	FI	Tuli
 	FR	Fire (Feu)
 	IT	Fuoco
 	NL	Brand
+	NO	Brann
+	SV	Eld
 
 SOUNDS_HARD_RAIN_THUNDER
+	DA	Hård regn og torden
 	DE	Heftiger Regen und Donner
 	EN	Hard Rain & Thunder
 	ES	Aguacero y trueno
+	FI	Rankkasade ja ukkonen
 	FR	Trombes de pluie et tonnerre
 	IT	Pioggia battente e tuoni
 	NL	Hard Rain & Thunder
+	NO	Kraftig regn og torden
+	SV	Ösregn och åska
 
 SOUNDS_HEARTBEAT_FAST
+	DA	Hurtig hjertebanken
 	DE	Schnelles Herzklopfen
 	EN	Heartbeat Fast
 	ES	Latido rápido
+	FI	Nopeita sydämenlyöntejä
 	FR	Battements de cœur rapides
 	IT	Battito cardiaco veloce
 	NL	Snelle hartklopping
+	NO	Raske hjerteslag
+	SV	Snabba hjärtslag
 
 SOUNDS_HEARTBEAT
+	DA	Hjerteslag
 	DE	Herzschlag
 	EN	Heartbeat
 	ES	Latido
+	FI	Sydämenlyöntejä
 	FR	Battements de cœur
 	IT	Battito cardiaco
 	NL	Hartslag
+	NO	Hjerteslag
+	SV	Hjärtslag
 
 SOUNDS_HORSE_WALKING
+	DA	Hest der traver
 	DE	Gehendes Pferd
 	EN	Horse Walking
 	ES	Cascos de caballo
+	FI	Hevonen kävelee
 	FR	Cheval au pas
 	IT	Zoccoli di cavallo
 	NL	Lopend paard
+	NO	Lyden av hestehover
+	SV	Häst i skritt
 
 SOUNDS_HORSE_WHINNY
+	DA	Vrinskende hest
 	DE	Pferdewiehern
 	EN	Horse Whinny
 	ES	Relincho
+	FI	Hevosen hirnuntaa
 	FR	Faible hennissement
 	IT	Nitrito di cavallo
 	NL	Gehinnik
+	NO	Hestevrinsk
+	SV	Hästgnägg
 
 SOUNDS_LAPPING_WAVES
+	DA	Bølgeskvulp
 	DE	Schwappende Wellen
 	EN	Lapping Waves
 	ES	Olas pequeñas
+	FI	Aaltojen liplatusta
 	FR	Clapotement de vagues
 	IT	Sciabordio di onde
 	NL	Gebabbel van de golven
+	NO	Skvalpende bølger
+	SV	Skvalpande vågor
 
 SOUNDS_MEADOWLARK
+	DA	Lærke
 	DE	Vogelgezwitscher
 	EN	Meadowlark
 	ES	Alondra
+	FI	Kiurutrupiaali
 	FR	Meadowlark
 	IT	Sturnella
 	NL	Meadowlark
+	NO	Lerke
+	SV	Stare
 
 SOUNDS_OCEAN_SURF
+	DA	Bølgeslag
 	DE	Brandung
 	EN	Ocean Surf
 	ES	Olas
+	FI	Meren tyrskyjä
 	FR	Océan
 	IT	Onde dell'oceano
 	NL	Oceaansurf
+	NO	Dønninger
+	SV	Surfning
 
 SOUNDS_RAIN_THUNDER
+	DA	Regn og torden
 	DE	Regen und Donner
 	EN	Rain & Thunder
 	ES	Lluvia y truenos
+	FI	Sade ja ukkonen
 	FR	Pluie et tonnerre
 	IT	Pioggia e tuoni
 	NL	Regen en onweer
+	NO	Regn og torden
+	SV	Regn och åska
 
 SOUNDS_RAIN_OUTSIDE
+	DA	Regn udenfor
 	DE	Regen draußen
 	EN	Rain Outside
 	ES	Lluvia en el exterior
+	FI	Ulkona sataa
 	FR	Pluie dehors
 	IT	Pioggia
 	NL	Regen buiten
+	NO	Regn ute
+	SV	Regn utanför
 
 SOUNDS_RAIN_SPLASHING
+	DA	Plaskende regn
 	DE	Regentropfen
 	EN	Rain Splashing
 	ES	Lluvia
+	FI	Sateen ropinaa
 	FR	Pluie
 	IT	Pioggia battente
 	NL	Spattende regen
+	NO	Regndråper
+	SV	Regn
 
 SOUNDS_RIVER
+	DA	Flod
 	DE	Fluss
 	EN	River
 	ES	Río
+	FI	Joki
 	FR	Rivière
 	IT	Fiume
 	NL	Rivier
+	NO	Elv
+	SV	Flod
 
 SOUNDS_ROBINS
+	DA	Rødkælke
 	DE	Rotkehlchen
 	EN	Robins
 	ES	Petirrojos
+	FI	Punarintoja
 	FR	Rouges-gorges
 	IT	Pettirossi
 	NL	Roodborstjes
+	NO	Meiser
+	SV	Rödhakar
 
 SOUNDS_ROOSTER_CROW
+	DA	Hanegal
 	DE	Krähender Hahn
 	EN	Rooster Crow
 	ES	Canto de gallo
+	FI	Kukko kiekuu
 	FR	Chant du coq
 	IT	Canto del gallo
 	NL	Hanengekraai
+	NO	Hanegal
+	SV	Tuppgalande
 
 SOUNDS_RURAL
+	DA	Landliv
 	DE	Land
 	EN	Rural
 	ES	Rural
+	FI	Maaseutu
 	FR	Rural
 	IT	Rurale
 	NL	Landelijk
+	NO	Landlig
+	SV	Landsbyggd
 
 SOUNDS_SHORE_SEAGULLS
+	DA	Strand og måger
 	DE	Küste & Möwen
 	EN	Shore & Seagulls
 	ES	Gaviotas en la costa
+	FI	Ranta ja lokkeja
 	FR	Mouettes
 	IT	Mare e gabbiani
 	NL	Kust en zeemeeuwen
+	NO	Kyst og måker
+	SV	Strand med måsar
 
 SOUNDS_SPRING_PEEPERS
+	DA	Løvfrø
 	DE	Froschquaken
 	EN	Spring Peepers
 	ES	Ranas americanas
+	FI	Kevään sirkuttajia
 	FR	Grenouilles
 	IT	Rane
 	NL	Kruisboomkikkers
+	NO	Småfugler
+	SV	Grodor
 
 SOUNDS_STREAM_BIRDS
+	DA	Bæk og fugle
 	DE	Vögel am Bach
 	EN	Stream & Birds
 	ES	Riachuelo y pájaros
+	FI	Puro ja lintuja
 	FR	Ruisseau et oiseaux
 	IT	Ruscello e uccelli
 	NL	Stroom en vogels
+	NO	Bekk og fugler
+	SV	Bäck och fågelkvitter
 
 SOUNDS_STREAM
+	DA	Bæk
 	DE	Stream
 	EN	Stream
 	ES	Secuencia
+	FI	Virta
 	FR	Flux
-	IT	Flusso
+	IT	Stream
 	NL	Stream
+	NO	Strøm
+	SV	Ström
 
 SOUNDS_TROPICAL_AMBIENCE
+	DA	Tropiske stemninger
 	DE	Tropengeräusche
 	EN	Tropical Ambience
 	ES	Ambiente tropical
+	FI	Trooppinen tunnelma
 	FR	Ambiance tropicale
 	IT	Ambiente tropicale
 	NL	Tropische sfeer
+	NO	Tropical Ambience
+	SV	Tropisk atmosfär
 
 SOUNDS_WAVES
+	DA	Bølger
 	DE	Wellen
 	EN	Waves
 	ES	Oleaje
+	FI	Aallot
 	FR	Vagues
 	IT	Onde
 	NL	Golven
+	NO	Bølger
+	SV	Vågor
 
 SOUNDS_WIND_WHISTLE
+	DA	Vindens fløjten
 	DE	Pfeifender Wind
 	EN	Wind Whistle
 	ES	Silbido de viento
+	FI	Tuulipilli
 	FR	Souffle du vent
 	IT	Sibilo del vento
 	NL	Wind Whistle
+	NO	Vind
+	SV	Vindpipa
 
 SOUNDS_WIND
+	DA	Vind
 	DE	Wind
 	EN	Wind
 	ES	Viento
+	FI	Tuuli
 	FR	Vent
 	IT	Vento
 	NL	Wind
+	NO	Wind
+	SV	Vind
 
 SOUNDS_AMBULANCE
+	DA	Ambulance
 	DE	Martinshorn
 	EN	Ambulance
 	ES	Ambulancia
+	FI	Ambulanssi
 	FR	Ambulance
 	IT	Ambulanza
 	NL	Ambulance
+	NO	Ambulanse
+	SV	Ambulans
 
 SOUNDS_BLENDER
+	DA	Blender
 	DE	Mixer
 	EN	Blender
 	ES	Licuadora
+	FI	Tehosekoitin
 	FR	Mixeur
 	IT	Frullatore
 	NL	Blender
+	NO	Blender
+	SV	Mixer
 
 SOUNDS_CITY
+	DA	By
 	DE	Stadt
 	EN	City
 	ES	Población
+	FI	Kaupunki
 	FR	Ville
 	IT	Città
 	NL	Plaats
+	NO	By
+	SV	Ort
 
 SOUNDS_COINS
+	DA	Mønter
 	DE	Münzen
 	EN	Coins
 	ES	Monedas
+	FI	Kolikoita
 	FR	Pièces
 	IT	Monete
 	NL	Munten
+	NO	Mynter
+	SV	Mynt
 
 SOUNDS_CROSSING_BELLS
+	DA	Signal fra jernbaneoverskæring
 	DE	Glockengeläut
 	EN	Crossing Bells
 	ES	Campana de cruce
-	FR	Sonnerie d'approche
+	FI	Ristikelloja
+	FR	Passage à niveau
 	IT	Campanelle
 	NL	Belsignaal
+	NO	Planovergang
+	SV	Varningsklockor
 
 SOUNDS_ELECTRO_FUZZ
+	DA	Elektroniske lyde
 	DE	Elektrisches Britzeln
 	EN	Electro Fuzz
 	ES	Electro Fuzz
+	FI	Sähkön huminaa
 	FR	Electro Fuzz
 	IT	Electro Fuzz
 	NL	Electro Fuzz
+	NO	Elektrofuzz
+	SV	Elektroniska ljud
 
 SOUNDS_FOGHORN
+	DA	Tågehorn
 	DE	Nebelhorn
 	EN	Foghorn
 	ES	Sirena antiniebla
+	FI	Sumutorvi
 	FR	Corne de brume
 	IT	Sirena da nebbia
 	NL	Misthoorn
+	NO	Tåkelur
+	SV	Mistlur
 
 SOUNDS_FREIGHT_TRAIN_PASSING
+	DA	Godstog kører forbi
 	DE	Vorbeifahrender Güterzug
 	EN	Freight Train Passing
 	ES	Mercancías en marcha
+	FI	Tavarajuna
 	FR	Train de marchandises au loin
 	IT	Passaggio di treno merci
 	NL	Voorbijgaande goederentrein
+	NO	Passerende tog
+	SV	Godståg kör förbi
 
 SOUNDS_FREIGHT_TRAIN
+	DA	Godstog
 	DE	Güterzug
 	EN	Freight Train
 	ES	Tren de mercancías
+	FI	Tavarajuna
 	FR	Train de marchandises
 	IT	Treno merci
 	NL	Freight Train
+	NO	Godstog
+	SV	Godståg
 
 SOUNDS_HAIR_DRYER
+	DA	Hårtørrer
 	DE	Fön
 	EN	Hair Dryer
 	ES	Secador de pelo
+	FI	Hiustenkuivaaja
 	FR	Sèche-cheveux
 	IT	Asciugacapelli
 	NL	Haardroger
+	NO	Hårføner
+	SV	Hårtork
 
 SOUNDS_MAGNETO_VAPOR
+	DA	Magneto Vapor
 	DE	Magneto Vapor
 	EN	Magneto Vapor
 	ES	Magneto Vapor
+	FI	Magneto Vapor
 	FR	Vapeur magnétique
 	IT	Magneto Vapor
 	NL	Magneto Vapor
+	NO	Magneto Vapor
+	SV	Magneto Vapor
 
 SOUNDS_MOTORCYCLES
+	DA	Motorcykler
 	DE	Motorräder
 	EN	Motorcycles
 	ES	Motos
+	FI	Moottoripyöriä
 	FR	Motos
 	IT	Motocicli
 	NL	Motorcycles
+	NO	Motorsykler
+	SV	Motorcyklar
 
 SOUNDS_SCUBA_DIVER
+	DA	Dykker
 	DE	Taucher
 	EN	Scuba Diver
 	ES	Buceador
+	FI	Sukeltaja
 	FR	Plongeur
 	IT	Sommozzatore
 	NL	Scubaduiker
+	NO	Dykker
+	SV	Dykare
 
 SOUNDS_SPOOKY_FEEDBACK
+	DA	Uhyggelig feedback
 	DE	Unheimliche Rückkopplung
 	EN	Spooky Feedback
 	ES	Retroalimentación fantasmagórica
+	FI	Pelottava palaute
 	FR	Spooky
 	IT	Spooky Feedback
 	NL	Spooky Feedback
+	NO	Skummel feedback
+	SV	Spöklik rundgång
 
 SOUNDS_STEAM_TRAIN_WHISTLE
+	DA	Damplokomotiv og fløjte
 	DE	Dampflokomotive und -pfeife
 	EN	Steam Train & Whistle
 	ES	Locomotora y pitido
+	FI	Höyryjuna ja pilli
 	FR	Train à vapeur et coup de sifflet
 	IT	Locomotiva a vapore e fischio
 	NL	Steam Train & Whistle
+	NO	Damptog og fløyte
+	SV	Ånglok och vissla
 
 SOUNDS_SUB_ALERT
+	DA	Underadvarsel
 	DE	U-Boot-Alarm
 	EN	Sub Alert
 	ES	Alarma de submarino
-	FR	Sous-alerte
+	FI	Alihälytys
+	FR	En plongée
 	IT	Sub Alert
 	NL	Subwaarschuwing
+	NO	Undervannsalarm
+	SV	Dyklarm
 
 SOUNDS_TEA_KETTLE
+	DA	Vandkedel
 	DE	Teekessel
 	EN	Tea Kettle
 	ES	Pitido
+	FI	Teepannu
 	FR	Bouilloire
 	IT	Bollitore
 	NL	Tea Kettle
+	NO	Tekjele
+	SV	Tekanna
 
 SOUNDS_TRAFFIC
+	DA	Trafik
 	DE	Verkehr
 	EN	Traffic
 	ES	Tráfico
+	FI	Liikenne
 	FR	Trafic
 	IT	Traffico
 	NL	Verkeer
+	NO	Trafikk
+	SV	Trafik
 
 SOUNDS_WIND_CHIME_FLOURISH
+	DA	Vindharpe der svinger
 	DE	Windspiel mit Schwung
 	EN	Wind Chime Flourish
 	ES	Repiqueteo
+	FI	Tuulikellon kilinää
 	FR	Carillons éoliens
 	IT	Tintinnio forte
 	NL	Wind Chime Flourish
+	NO	Lengre vindorgel
+	SV	Vindspelstoner
 
 SOUNDS_WIND_CHIME
+	DA	Vindharpe
 	DE	Windspiel
 	EN	Wind Chime
 	ES	Campanillas
+	FI	Tuulikello
 	FR	Carillon
 	IT	Tintinnio
 	NL	Windklok
+	NO	Vindorgel
+	SV	Vindspel
 
 INFORMATION_MENU_SERVER
 	DA	Oplysninger om SqueezeNetwork
