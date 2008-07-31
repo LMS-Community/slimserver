@@ -54,6 +54,8 @@ Avilable Parameters and their defaults:
  'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to 
                            # smooth the movement of the bar.
 
+ 'knobaccelup'     = 0.05  # Constant that determines how fast the Bar accelerates when 
+ 'knobacceldown'   = 0.05  # using a knob.   up and down accelerations are different.
 =cut
 
 use strict;
