@@ -58,6 +58,7 @@ our $defaultPrefs = {
 		PLUGIN_DIGITAL_INPUT
 		PLUGINS
 		SETTINGS
+		SQUEEZENETWORK_CONNECT
 	)],
 };
 
