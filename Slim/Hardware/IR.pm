@@ -884,9 +884,15 @@ sub resetHoldStart {
 
 sub resendButton {
 	my $client = shift;
-	my $ircode = lookup($client, $client->lastircodebytes);
+
+	my $ircode = lookupCodeBytes($client, $client->lastircodebytes);
 
 	if (defined $ircode) {
+
+		# strip off down and up modifiers from front panel buttons
+		$ircode =~ s/\.down|\.up//;
+		$ircode = lookupFunction($client, $ircode);
+
 		processCode($client, $ircode, $client->lastirtime);
 	}
 }
