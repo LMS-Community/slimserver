@@ -1394,7 +1394,17 @@ sub getPlaylists {
 	if (my $favs = Slim::Utils::Favorites->new($client)) {
 		$class->addPlaylists('FAVORITES', $favs->all);
 	}
-
+	
+	# Add Natural Sounds
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Sounds::Plugin') ) {
+		if ( my $sounds = Slim::Plugin::Sounds::Plugin->alarmMenu() ) {
+			$class->addPlaylists(
+				'PLUGIN_SOUNDS_MODULE_NAME',
+				$sounds,
+			);
+		}
+	}
+		
 	# Reconstruct %alarmPlaylistType, stringifying keys for client as necessary
 	my %stringified;
 	foreach my $type (keys %alarmPlaylistTypes) {
