@@ -828,19 +828,23 @@ sub playlistJumpCommand {
 	my $index  = $request->getParam('_index');;
 	my $noplay = $request->getParam('_noplay');;
 	
-	my $jumpCallback = sub {	
-		Slim::Player::Source::jumpto($client, $index, $noplay);
+	my $jumpCallback = sub {
+		# Bug 8776, if player was powered off during an async operation like
+		# scanning a radio stream, don't continue playing
+		if ( $client->power ) {
+			Slim::Player::Source::jumpto($client, $index, $noplay);
 
-		# Does the above change the playlist?
-		Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+			# Does the above change the playlist?
+			Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
-		# update the display unless suppressed
-		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines({ 
-				suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
-				retrieveMetadata => 1,
-			});
-			$client->showBriefly($parts) if $parts;
+			# update the display unless suppressed
+			if ($client->isPlayer()) {
+				my $parts = $client->currentSongLines({ 
+					suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
+					retrieveMetadata => 1,
+				});
+				$client->showBriefly($parts) if $parts;
+			}
 		}
 		
 		$request->setStatusDone();
