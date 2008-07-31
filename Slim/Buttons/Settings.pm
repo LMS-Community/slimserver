@@ -39,8 +39,6 @@ if ( main::SLIM_SERVICE ) {
 	push @defaultSettingsChoices, qw(
 		LANGUAGE
 		TIMEZONE
-		SETUP_TIMEFORMAT
-		SETUP_LONGDATEFORMAT
 		SETUP_PLAYER_CODE
 	);
 	
@@ -83,7 +81,16 @@ sub init {
 				# Brightness submenus
 				'AUDIO_SETTINGS'      => {
 					'useMode'         => 'INPUT.List',
-					'listRef'         => ['BASS','TREBLE','PITCH', 'VOLUME', 'REPLAYGAIN','SETUP_TRANSITIONTYPE', 'SETUP_ANALOGOUTMODE', 'STEREOXL'],
+					'listRef'         => [ 
+						'BASS',
+						'TREBLE',
+						'PITCH',
+						'SETUP_TRANSITIONTYPE',
+						'VOLUME',
+						'REPLAYGAIN',
+						'SETUP_ANALOGOUTMODE',
+						'STEREOXL',
+					],
 					'stringExternRef' => 1,
 					'header'          => 'AUDIO_SETTINGS',
 					'stringHeader'    => 1,
@@ -316,7 +323,15 @@ sub init {
 				},
 				'DISPLAY_SETTINGS'          => {
 					'useMode'         => 'INPUT.List',
-					'listRef'         => ['SETUP_GROUP_BRIGHTNESS', 'TEXTSIZE', 'TITLEFORMAT', 'SCREENSAVERS', 'SETUP_PLAYINGDISPLAYMODE', 'SETUP_VISUALIZERMODE', 'SETUP_SHOWCOUNT'],
+					'listRef'         => [
+						'SETUP_GROUP_BRIGHTNESS',
+						'TEXTSIZE',
+						'TITLEFORMAT',
+						'SETUP_VISUALIZERMODE',
+						'SCREENSAVERS',
+						'SETUP_PLAYINGDISPLAYMODE',
+						'SETUP_SHOWCOUNT',
+					],
 					'stringExternRef' => 1,
 					'header'          => 'DISPLAY_SETTINGS',
 					'stringHeader'    => 1,
@@ -464,7 +479,11 @@ sub init {
 						# Screensavers submenus
 						'SCREENSAVERS'        => {
 							'useMode'         => 'INPUT.List',
-							'listRef'         => ['SETUP_SCREENSAVER', 'SETUP_OFFSAVER', 'SETUP_IDLESAVER'],
+							'listRef'         => [
+								'SETUP_OFFSAVER',
+								'SETUP_IDLESAVER',
+								'SETUP_SCREENSAVER',
+							],
 							'stringExternRef' => 1,
 							'header'          => 'SCREENSAVERS',
 							'stringHeader'    => 1,
@@ -735,6 +754,13 @@ sub init {
 			},
 		};
 		
+		# Insert Time/Date format menu items in Display
+		my @old = splice @{ $menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'listRef'} }, 5, 2, qw(
+			SETUP_TIMEFORMAT
+			SETUP_LONGDATEFORMAT
+		);		
+		push @{ $menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'listRef'} }, @old;
+		
 		# time format choices
 		# list copied from Slim::Web::Setup.
 		# choices showing seconds removed
@@ -752,7 +778,7 @@ sub init {
 
 		my @timeFormatChoices = keys %timeFormatDetail;
 		
-		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_TIMEFORMAT'} = {
+		$menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'submenus'}->{'SETUP_TIMEFORMAT'} = {
 			'useMode'      => 'INPUT.Choice',
 			'condition'    => sub { 1 },
 			'listRef'      => \@timeFormatChoices,
@@ -785,7 +811,7 @@ sub init {
 			q(%a %e. %b %Y),
 		);
 		
-		$menuParams{'SETTINGS'}->{'submenus'}->{'SETUP_LONGDATEFORMAT'} = {
+		$menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'submenus'}->{'SETUP_LONGDATEFORMAT'} = {
 			'useMode'     => 'INPUT.Choice',
 			'condition'   => sub { 1 },
 			'listRef'     => \@dateFormatChoices,
@@ -915,8 +941,6 @@ sub settingsMenu {
 			push @settingsChoices, $setting;
 		}
 	}
-
-	@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
 
 	$client->modeParam('listRef', \@settingsChoices);
 }
