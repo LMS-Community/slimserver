@@ -225,7 +225,7 @@ sub reconnect {
 		Slim::Hardware::BacklightLED::setBacklightLED( $client, $LED_POWER);
 	}
 
-	setRTCTime( $client);
+	setRTCTime( $client );
 }
 
 sub play {
@@ -333,23 +333,14 @@ sub setRTCTime {
 	my $client = shift;
 	my $data;
 
-	# According to Michael there is a player specific date format, but I was not able
-	#  to test this as I don't know where to set it via web interface
-	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeformat');
-	if (!defined $dateTimeFormat ||  $dateTimeFormat eq "") {
-		# Try the date time screensaver date format, if set differently from system wide setting
-		$dateTimeFormat = preferences('plugin.datetime')->get('timeformat');
-	}
-	if (!defined $dateTimeFormat ||  $dateTimeFormat eq "") {
-		# If all else fails, use system wide date format setting
-		$dateTimeFormat = $prefs->get('timeFormat');
-	}
+	my $dateTimeFormat = preferences('plugin.datetime')->get('timeformat') || $prefs->get('timeFormat');
 
 	# Set 12h / 24h display mode accordingly
 	# Internal RTC format must always be set to 24h mode (bit 1)
 	# Display format is stored in SC0 (bit 2) (meaning: 0 = 12h mode, 1 = 24h mode)
 	$data = pack( 'C', 0x00); 	# Status register 1
 	# 12h mode
+
 	if( $dateTimeFormat =~ /%p/) {
 		$data .= pack( 'C', 0b00000010);	# Reset SC0 (=display format 12h), keep internal format at 24h mode
 	# 24h mode

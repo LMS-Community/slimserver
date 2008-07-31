@@ -18,6 +18,15 @@ $prefs->migrate(1, sub {
 	1;
 });
 
+$prefs->setChange( sub {
+	foreach my $client ( Slim::Player::Client::clients() ) {
+		if ($client->isa("Slim::Player::Boom")) {
+			$client->setRTCTime();
+		}		
+	}
+}, 'timeformat');
+
+
 my $timeFormats = Slim::Utils::DateTime::timeFormats();
 
 my $dateFormats = {

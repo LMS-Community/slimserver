@@ -619,6 +619,14 @@ sub init {
 		my $client = $_[2] || return;
 		Slim::Player::Boom::setAnalogOutMode($client);
 	}, 'analogOutMode');
+	
+	$prefs->setChange( sub {
+		foreach my $client ( Slim::Player::Client::clients() ) {
+			if ($client->isa("Slim::Player::Boom")) {
+				$client->setRTCTime();
+			}		
+		}
+	}, 'timeFormat');
 
 	# Clear SN cookies from the cookie jar if the session changes
 	if ( !main::SLIM_SERVICE ) {
