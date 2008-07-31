@@ -287,6 +287,8 @@ sub id {
 
 Sets/returns the volume at which this alarm will sound.
 
+N.B.  This feature is not exposed in the default interfaces.  Alarms all use the default volume.
+
 =cut
 
 sub volume {
@@ -311,6 +313,8 @@ sub volume {
 Sets/returns whether this alarm uses the default volume or has it's own volume setting.  Set to 1 to use the default.
 
 To stop an alarm using the default volume, set its volume to something.
+
+N.B.  This feature is not exposed in the default interfaces.  Alarms all use the default volume.
 
 =cut
 
@@ -1271,6 +1275,10 @@ sub setRTCAlarm {
 =head2 defaultVolume( [ $volume ] )
 
 Sets/returns the volume level that is used for all alarms on a given client that don't have an explicit volume level set.
+
+N.B.  The ability to change an individual alarm's volume is not exposed in the default interfaces, so all alarms created
+using them will use the default volume.  Nevertheless, the correct way to find the volume level for an alarm is to do
+$alarm->volume NOT $class->defaultVolume.  This allows plugins etc to utilise the hidden volume functionality if desired.
 
 =cut
 

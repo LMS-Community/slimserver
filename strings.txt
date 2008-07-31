@@ -1372,20 +1372,11 @@ ALARM_SELECT_PLAYLIST
 ALARM_USE_CURRENT_PLAYLIST
 	EN	Use Current Playlist
 
-ALARM_CHOOSE_VOLUME
-	EN	Choose Volume
+ALARM_VOLUME
+	EN	Alarm Volume
 
-ALARM_SET_VOLUME
-	EN	Set Volume
-
-ALARM_DEFAULT_VOLUME
-	EN	Default Volume
-
-ALARM_DEFAULT_VOLUME_DESC
-	EN	This setting allows you to choose a volume level that is used for all alarms that have Use Default Volume selected.  This lets you change the volume for several alarms at once.
-
-ALARM_USE_DEFAULT_VOLUME
-	EN	Use Default Volume
+ALARM_VOLUME_DESC
+	EN	This setting allows you to choose the volume level that is used when an alarm goes off.
 
 ALARM_ADD
 	EN	Add Alarm

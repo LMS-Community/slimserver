@@ -33,44 +33,6 @@ my %choiceBaseParams = (
 # Menu definitions
 ###############################################################################
 
-# Alarm volume settings
-my @volumeMenu = (
-	{
-		title => 'ALARM_USE_DEFAULT_VOLUME',
-		type => 'checkbox',
-		checked => sub {
-				my $client = shift;
-				return $client->modeParam('alarm_alarm')->usesDefaultVolume;
-			},
-		toggleFunc => sub {  
-				my $client = shift;
-				my $alarm = $client->modeParam('alarm_alarm');
-				if ($alarm->usesDefaultVolume) {
-					# Explicitly set the alarm's volume to the current value of the default volume
-					$alarm->volume(ref($alarm)->defaultVolume($client));
-				} else {
-					$alarm->usesDefaultVolume(1);
-				}
-				saveAlarm($client, $alarm);
-			},
-	},
-	{
-		title => 'ALARM_SET_VOLUME',
-		type => 'volume',
-		initialValue => sub {
-					my $client = shift;
-					return $client->modeParam('alarm_alarm')->volume;
-				},
-		changeFunc => sub {
-			my $client = shift;
-			my $delta = shift; # will be +1, -1 etc
-			my $alarm = $client->modeParam('alarm_alarm');
-			$alarm->volume($alarm->volume + $delta);
-			saveAlarm($client, $alarm);
-		},
-	},
-);
-
 # Alarm day selection menu (days for which a given alarm should sound)
 my @daysMenu = (
 	{ title => 'ALARM_EVERY_DAY', type => 'checkbox', checked => \&dayEnabled, toggleFunc => \&toggleDay, params => {day => 'all'} },
@@ -163,11 +125,6 @@ my @alarmMenu = (
 		items => \&buildPlaylistMenu, 
 	},
 	{
-		title	=> 'ALARM_CHOOSE_VOLUME',
-		type	=> 'menu',
-		items => \@volumeMenu,
-	},
-	{
 		title	=> 'ALARM_ALARM_REPEAT',
 		type	=> 'checkbox',
 		checked => sub {
@@ -216,10 +173,10 @@ my @menu = (
 		items		=> [@alarmMenu[1 .. $#alarmMenu - 1, 0]],
 	},
 	{
-		# Default alarm volume
-		title		=> 'ALARM_DEFAULT_VOLUME',
-		type => 'volume',
-		initialValue => sub {
+		# Volume level to use for alarms
+		title		=> 'ALARM_VOLUME',
+		type 		=> 'volume',
+		initialValue	=> sub {
 					my $client = shift;
 					return Slim::Utils::Alarm->defaultVolume($client);
 				},
