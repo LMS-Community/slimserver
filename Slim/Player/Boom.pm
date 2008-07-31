@@ -494,7 +494,6 @@ sub sendTone
 	
 	my $i2cData = pack("CCCCC", toneI2CAddress(),0,0, $treble, $bass);
 
-	print "$treble, $bass\n";
 	sendBDACFrame($client, 'DACI2CGEN', $i2cData);
 }
 sub sendBDACFrame {
