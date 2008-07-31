@@ -335,17 +335,25 @@ sub setRTCTime {
 
 	my $dateTimeFormat = preferences('plugin.datetime')->get('timeformat') || $prefs->get('timeFormat');
 
-	# Set 12h / 24h display mode accordingly
-	# Internal RTC format must always be set to 24h mode (bit 1)
-	# Display format is stored in SC0 (bit 2) (meaning: 0 = 12h mode, 1 = 24h mode)
+	# Set 12h / 24h display mode accordingly; mark time as being valid (i.e. set)
+	#
+	# Bit 1: Internal RTC format must always be set to 24h mode (0 = 12h mode, 1 = 24h mode)
+	# Bit 2: Display format is stored in SC0 (0 = 12h mode, 1 = 24h mode)
+	# Bit 3: Set SC1 (bit 3) to mark the time as being valid (i.e. set)
 	$data = pack( 'C', 0x00); 	# Status register 1
-	# 12h mode
 
+	# 12h mode
 	if( $dateTimeFormat =~ /%p/) {
-		$data .= pack( 'C', 0b00000010);	# Reset SC0 (=display format 12h), keep internal format at 24h mode
+		# Bit 1: always set (internal RTC format is always 24h)
+		# Bit 2: clear for 12h display format
+		# Bit 3: set to mark time as being valid (i.e. set)
+		$data .= pack( 'C', 0b00001010);
 	# 24h mode
 	} else {
-		$data .= pack( 'C', 0b00000110);	# Set SC0 (=display format 24h), keep internal format at 24h mode
+		# Bit 1: always set (internal RTC format is always 24h)
+		# Bit 2: set for 24h display format
+		# Bit 3: set to mark time as being valid (i.e. set)
+		$data .= pack( 'C', 0b00001110);
 	}
 	$client->sendFrame( 'rtcs', \$data);
 
