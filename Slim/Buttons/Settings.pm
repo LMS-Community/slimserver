@@ -126,6 +126,7 @@ sub init {
 							'header'       => 'VOLUME',
 							'stringHeader' => 1,
 							'increment'    => 1,
+							'knobaccelup'  => 0.05,
 							'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
 							'onChange'     => \&executeCommand,
 							'command'      => 'mixer',

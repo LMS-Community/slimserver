@@ -342,9 +342,9 @@ sub changePos {
 		# be the same in both cases.
 		# 
 		if ($dir > 0) {
-			$knobAccelerationConstant = .1; # Accel going up.
+			$knobAccelerationConstant = $client->modeParam('knobaccelup') || .1; # Accel going up.
 		} else {
-			$knobAccelerationConstant = .1; # Accel going down. 
+			$knobAccelerationConstant = $client->modeParam('knobacceldown') ||.1; # Accel going down. 
 		}
 		my $velocity      = $client->knobData->{'_velocity'};
 		my $acceleration  = $client->knobData->{'_acceleration'};

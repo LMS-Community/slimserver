@@ -99,6 +99,7 @@ sub setMode {
 		'valueRef'     => $prefs->client($client)->get('volume'),
 		'callback'     => \&volumeExitHandler,
 		'increment'    => 1,
+		'knobaccelup'  => 0.05,
 		'lines'        => $client->customVolumeLines(),
 		'screen2'      => 'inherit',
 		'visu'         => [0],
