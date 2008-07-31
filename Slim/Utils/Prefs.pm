@@ -422,29 +422,15 @@ sub init {
 							last;
 						} else {
 							if (
-								(
-									(defined $newAlarm->{_volume}
-									&& $newAlarm->{_volume} == $volume->[$day])
-
-									||
-
-									(! defined $newAlarm->{_volume}
-									&& $volume->[$day] == 50)
+								(defined $newAlarm->playlist
+								&& (defined $playlistMap{$playlist->[$day]} && $newAlarm->playlist eq $playlistMap{$playlist->[$day]})
+								|| $newAlarm->playlist eq $playlist->[$day]
 								)
-							
-								&& 
 
-								(
-									(defined $newAlarm->playlist
-									&& (defined $playlistMap{$playlist->[$day]} && $newAlarm->playlist eq $playlistMap{$playlist->[$day]})
-									|| $newAlarm->playlist eq $playlist->[$day]
-									)
+								||
 
-									||
-
-									(! defined $newAlarm->playlist
-									&& ($playlist->[$day] eq 'CURRENT_PLAYLIST' || $playlist->[$day] eq ''))
-								)
+								(! defined $newAlarm->playlist
+								&& ($playlist->[$day] eq 'CURRENT_PLAYLIST' || $playlist->[$day] eq ''))
 							)  {
 								# Same as an existing alarm - just add the day to it
 								if ($alarm->[$day]) {
@@ -465,9 +451,6 @@ sub init {
 						$newAlarm->everyDay(1);
 					} else {
 						$newAlarm->day($day % 7, 1);
-					}
-					if ($volume->[$day] != 50) {
-						$newAlarm->volume($volume->[$day]);
 					}
 					if (exists $playlistMap{$playlist->[$day]}) {
 						$newAlarm->playlist($playlistMap{$playlist->[$day]});
