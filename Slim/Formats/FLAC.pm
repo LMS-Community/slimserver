@@ -119,6 +119,11 @@ sub getTag {
 	# get the tracks from the cuesheet - tell parseCUE that we're dealing
 	# with an embedded cue sheet.
 	my $tracks = Slim::Formats::Playlists::CUE->parse($cuesheet, dirname($file), 1);
+	
+	# Fail if bad cuesheet was found
+	if ( !$tracks || !scalar keys %{$tracks} ) {
+		return $tags;
+	}
 
 	# suck in metadata for all these tags
 	my $items = $class->_getSubFileTags($flac, $tracks);

@@ -2063,7 +2063,7 @@ sub _cliQuery_done {
 					# items array contains items
 					my $hasItems = 0;
 					
-					if ( $item->{type} && $item->{type} !~ /^(?:text|audio)$/i ) {
+					if ( !defined $item->{type} || $item->{type} !~ /^(?:text|audio)$/i ) {
 						$hasItems = 1;
 					}
 					elsif ( ref $item->{items} eq 'ARRAY' ) {
