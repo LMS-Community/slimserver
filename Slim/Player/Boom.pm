@@ -42,6 +42,7 @@ our $defaultPrefs = {
 	'bass'                 => 0,
 	'treble'               => 0,
 	'stereoxl'             => minXL(),
+	'replayGainMode'       => 3,      # smart replay gain
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
