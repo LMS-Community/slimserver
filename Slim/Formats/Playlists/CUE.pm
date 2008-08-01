@@ -286,6 +286,12 @@ sub parse {
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
 	}
+	
+	# Bug 8443, if no tracks contain a URI element, it's an invalid cue
+	if ( !grep { defined $tracks->{$_}->{URI} } keys %{$tracks} ) {
+		$log->debug('Invalid cue sheet detected');
+		return;
+	}
 
 	return $tracks;
 }
