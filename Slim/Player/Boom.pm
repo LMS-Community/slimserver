@@ -226,6 +226,10 @@ sub reconnect {
 	}
 
 	setRTCTime( $client );
+	# Uncommenting the following will modify the woofer bass extension table.  This is a map that maps 
+	# volume (in 16.16 format) to a biquad index. Index 0 provides the most bass extension, index 9 
+	# provides the least.
+	# sendBDACFrame($client, 'DACWOOFERBQ', [65537, 65537, 65537, 65537, 65537, 65537, 65537, 65537, 65537]);
 }
 
 sub play {
@@ -505,6 +509,7 @@ sub sendBDACFrame {
 
 	my $buf = undef; 
 
+	print "Sending BDAC FRAME\n";
 	if ($type eq 'DACRESET') {
 
 		$log->info("Sending BDAC DAC RESET");
@@ -536,6 +541,13 @@ sub sendBDACFrame {
 		$log->info("Sending BDAC I2C GENERAL DATA $length chunks");
 
 		$buf = pack('C',4).pack('C',$length).$data;
+	} elsif($type eq 'DACALSFLOOD') {
+		$log->info("Starting Lightsensor flood");
+		$buf = pack('C',5);
+	} elsif($type eq 'DACWOOFERBQ') {
+		$log->info("Updating the BDAC bass_eq volume table");
+		my $count = @$data;
+		$buf = pack('C',6).pack('C',$count).pack("N$count", @$data);
 	}
 	
 	if (defined $buf) {
