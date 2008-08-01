@@ -229,7 +229,10 @@ sub reconnect {
 	# Uncommenting the following will modify the woofer bass extension table.  This is a map that maps 
 	# volume (in 16.16 format) to a biquad index. Index 0 provides the most bass extension, index 9 
 	# provides the least.
-	# sendBDACFrame($client, 'DACWOOFERBQ', [65537, 65537, 65537, 65537, 65537, 65537, 65537, 65537, 65537]);
+	# sendBDACFrame($client, 'DACWOOFERBQ',[   658,   980, 1729, 2816, 5120, 8960, 14848, 26368, 0x8fffffff]);  # <--default built into firmware.
+	# sendBDACFrame($client, 'DACWOOFERBQ',[   658*2,   980*2, 1729*2, 2816*2, 5120*2, 8960*2, 14848*2, 26368*2, 0x8fffffff]);
+	# sendBDACFrame($client, 'DACWOOFERBQ',  [    0,     0,     0,     0,     0,     0,     0,     0,     0]);
+	# sendBDACFrame($client, 'DACWOOFERBQ',  [2264,   3526,  5200,  5800, 10200, 15889, 27031,  45000,     0x8FFFFFFF]);
 }
 
 sub play {
@@ -509,7 +512,6 @@ sub sendBDACFrame {
 
 	my $buf = undef; 
 
-	print "Sending BDAC FRAME\n";
 	if ($type eq 'DACRESET') {
 
 		$log->info("Sending BDAC DAC RESET");
