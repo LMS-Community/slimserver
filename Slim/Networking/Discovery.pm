@@ -119,6 +119,20 @@ my %TLVhandlers = (
 	'JVID' => sub { $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
 );
 
+=head2 addTLVHandler( $hash )
+
+Add entries to tlv handler in format { $key => $handler }
+
+=cut
+
+sub addTLVHandler {
+	my $hash = shift;
+
+	for my $key (keys %$hash) {
+		$TLVhandlers{$key} = $hash->{$key};
+	}
+}
+
 =head2 gotTLVRequest( $udpsock, $clientpaddr, $msg )
 
 Process TLV based discovery request and send appropriate response.
