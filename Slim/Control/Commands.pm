@@ -81,57 +81,161 @@ sub alarmCommand {
 	# but for some commands, the parameters name start with _ and are defined
 	# in the big dispatch table (see Request.pm).
 	my $client      = $request->client();
-	my $id          = $request->getParam('id');
-	my $cmd         = $request->getParam('cmd');
-	my $dow         = $request->getParam('dow');
-	my $enable      = $request->getParam('enabled');
-	my $repeat      = $request->getParam('repeat');
-	my $time        = $request->getParam('time');
-	my $volume      = $request->getParam('volume');
-	my $playlisturl = $request->getParam('url');
-	
+	my $cmd         = $request->getParam('_cmd');
+
+	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume playlisturl cmd );
+
+	# legacy support for "bare" alarm cli command (i.e., sending all tagged params)
+	my $params;
+	my $skip;
+	if ($cmd =~ /:/) {
+		my ( $tag, $val ) = split /:/, $cmd;
+		$params->{$tag} = $val;
+		$skip = $tag;
+	} else {
+		$params->{cmd} = $cmd;
+		$skip = 'cmd';
+	}
+
+	for my $tag (@tags) {
+		# skip this if we already got it from the _cmd param in the first slot of the command
+		next if $tag eq $skip;
+		$params->{$tag} = $request->getParam($tag);
+	}
+
 	# validate the parameters using request's convenient functions
-	if ($request->paramUndefinedOrNotOneOf($cmd, ['add', 'delete']) ||
-		(defined $dow && $dow !~ /^[0-6](?:,[0-6])*$/) ||
-		(! defined $id && $cmd ne 'add') || ! defined $client || ! $time || $time =~ /\D/) {
-		
-		# set an appropriate error state if something is wrong
+	# take this command by command to avoid logical insanity
+
+	# command needs to be one of 6 different things
+	if ( $request->paramUndefinedOrNotOneOf($params->{cmd}, ['add', 'delete', 'update', 'enableall', 'disableall', 'defaultvolume' ]) ) {
+		$request->setStatusBadParams();
+		return;
+	}
+ 
+	# required param for 'defaultvolume' is volume
+	if ( $params->{cmd} eq 'defaultvolume' && ! defined $params->{volume} ) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# required param for 'add' is time, given as numbers only
+	# client needs to be given
+	# dow needs to be properly formatted
+	if ( $params->{cmd} eq 'add' && 
+		(
+			! defined $params->{time} ||
+			$params->{time} =~ /\D/ ||
+			! defined $client ||
+			( defined $params->{dow} && $params->{dow} !~ /^[0-6](?:,[0-6])*$/ )
+		) 
+	) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# required param for 'delete' is id, and needs a client
+	if ( $params->{cmd} eq 'delete' && ( ! $params->{id} || ! $client ) ) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# required param for 'update' is id, and needs a client
+	if ( $params->{cmd} eq 'update' && ( ! $params->{id} || ! $client ) ) {
 		$request->setStatusBadParams();
 		return;
 	}
 
 	my $alarm;
 	
-	if ($cmd eq 'add') {
+	if ($params->{cmd} eq 'add') {
 		$alarm = Slim::Utils::Alarm->new($client);
+		$client->showBriefly({
+			'jive' => { 
+				'type'    => 'popupplay',
+				'text'    => [ $client->string('ALARM_SAVING') ],
+			}
+		});
+	}
+	elsif ($params->{cmd} eq 'enableall') {
+		$prefs->client($client)->alarmsEnabled(1);
+		$client->showBriefly({
+			'jive' => { 
+				'type'    => 'popupplay',
+				# FIXME: this string will get translated post-7.2 release
+				# 'text'    => [ $client->string('ALARM_ALL_ALARMS_ENABLED') ],
+				'text'    => [ $client->string('ENABLED') ],
+			}
+		});
+
+	}
+	elsif ($params->{cmd} eq 'disableall') {
+		$prefs->client($client)->alarmsEnabled(0);
+		$client->showBriefly({
+			'jive' => { 
+				'type'    => 'popupplay',
+				# FIXME: this string will get translated post-7.2 release
+				# 'text'    => [ $client->string('ALARM_ALL_ALARMS_DISABLED') ],
+				'text'    => [ $client->string('DISABLED') ],
+			}
+		});
+	}
+	elsif ($params->{cmd} eq 'defaultvolume') {
+		# set the volume
+		Slim::Utils::Alarm->defaultVolume($client, $params->{volume});
 	}
 	else {
-		$alarm = Slim::Utils::Alarm->getAlarm($client, $id);
+		$alarm = Slim::Utils::Alarm->getAlarm($client, $params->{id});
 	}
 
 	if (defined $alarm) {
 
-		if ($cmd eq 'delete') {
+		if ($params->{cmd} eq 'delete') {
 
-			$alarm->delete($client);
+			$alarm->delete;
+			$client->showBriefly({
+				'jive' => { 
+					'type'    => 'popupplay',
+					'text'    => [ $client->string('ALARM_DELETING') ],
+				}
+			});
 		}
 
 		else {
 		
-			$alarm->time($time) if defined $time;
-			$alarm->playlist($playlisturl) if defined $playlisturl;
-			$alarm->volume($volume) if defined $volume;
-			$alarm->enabled($enable) if defined $enable;
-			$alarm->repeat($repeat) if defined $repeat;
+			$alarm->time($params->{time}) if defined $params->{time};
+			$alarm->playlist($params->{playlisturl}) if defined $params->{playlisturl};
 
-			foreach (0..6) {
-				my $set = !defined $dow || $dow =~ /$_/; 
-				$alarm->day($_, $set);
+			# special case for sending 0 for playlisturl 
+			# (needed for proper jive support for selecting "Current Playlist")
+			if ($params->{playlisturl} eq '0') {
+				$alarm->playlist(undef);
 			}
+
+			$alarm->volume($params->{volume}) if defined $params->{volume};
+			$alarm->enabled($params->{enabled}) if defined $params->{enabled};
+			$alarm->repeat($params->{repeat}) if defined $params->{repeat};
+
+			# handle dow tag, if defined
+			if ( defined $params->{dow} ) {
+				foreach (0..6) {
+					my $set = $params->{dow} =~ /$_/; 
+					$alarm->day($_, $set);
+				}
+			}
+	
+			# allow for a dowAdd and dowDel param for adding/deleting individual days
+			# these directives take precendence over anything that's in dow
+			if ( defined $params->{dowAdd} ) {
+				$alarm->day($params->{dowAdd}, 1);
+			}
+			if ( defined $params->{dowDel} ) {
+				$alarm->day($params->{dowDel}, 0);
+			}
+			
+			$alarm->save();
+
 		}
 
-		$alarm->save();
-		
 		# we add a result for the benefit of the caller (in this case, most
 		# likely the CLI).
 		$request->addResult('id', $alarm->id);
@@ -141,7 +245,6 @@ sub alarmCommand {
 	# calling the callback and notifying, etc...
 	$request->setStatusDone();
 }
-
 
 sub buttonCommand {
 	my $request = shift;
@@ -828,23 +931,19 @@ sub playlistJumpCommand {
 	my $index  = $request->getParam('_index');;
 	my $noplay = $request->getParam('_noplay');;
 	
-	my $jumpCallback = sub {
-		# Bug 8776, if player was powered off during an async operation like
-		# scanning a radio stream, don't continue playing
-		if ( $client->power ) {
-			Slim::Player::Source::jumpto($client, $index, $noplay);
+	my $jumpCallback = sub {	
+		Slim::Player::Source::jumpto($client, $index, $noplay);
 
-			# Does the above change the playlist?
-			Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+		# Does the above change the playlist?
+		Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
-			# update the display unless suppressed
-			if ($client->isPlayer()) {
-				my $parts = $client->currentSongLines({ 
-					suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
-					retrieveMetadata => 1,
-				});
-				$client->showBriefly($parts) if $parts;
-			}
+		# update the display unless suppressed
+		if ($client->isPlayer()) {
+			my $parts = $client->currentSongLines({ 
+				suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
+				retrieveMetadata => 1,
+			});
+			$client->showBriefly($parts) if $parts;
 		}
 		
 		$request->setStatusDone();

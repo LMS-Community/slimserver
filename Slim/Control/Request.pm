@@ -466,7 +466,7 @@ sub init {
 ######################################################################################################################################################################
 
 	addDispatch(['abortscan'],                                                                         [0, 0, 0, \&Slim::Control::Commands::abortScanCommand]);
-	addDispatch(['alarm'],                                                                             [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
+	addDispatch(['alarm',          '_cmd'],                                                                     [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
 	addDispatch(['alarms',         '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::alarmsQuery]);
 	addDispatch(['album',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['albums',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::albumsQuery]);

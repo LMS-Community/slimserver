@@ -2469,6 +2469,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			alarm
+			&lt;add|update|delete|enableall|disableall|defaultvolume&gt;
 			&lt;taggedParameters&gt;
 		</code>
 	</strong>
@@ -2484,12 +2485,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td width="100"><b>Tag</b></td>
 		<td><b>Description</b></td>
 	</tr>
+	<!--
 	<tr>
 		<td>cmd</td>
 		<td>One of &quot;add&quot; or &quot;delete&quot;. If you don't define
 		a command, you'll have to at least define an ID. In this case the given
 		alarm will be updated. </td>
 	</tr>
+	-->
 	<tr>
 		<td>id</td>
 		<td>The id of an existing alarm. This value is mandatory unless you &quot;add&quot;
@@ -2502,6 +2505,18 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Default: 0-6.</td>
 	</tr>
 	<tr>
+		<td>dowAdd</td>
+		<td>Add a single day of the week to the alarm list
+		This takes precendence over anything sent in the dow tag
+		</td>
+	</tr>
+	<tr>
+		<td>dowDel</td>
+		<td>Removes a single day (0-6) of the week from the alarm list
+		This takes precendence over anything sent in the dow tag
+		</td>
+	</tr>
+	<tr>
 		<td>enabled</td>
 		<td>1 if the alarm is enabled. Default: 0.</td>
 	</tr>
@@ -2511,11 +2526,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>time</td>
-		<td>Mandatory, time of the alarm, in seconds from midnight.</td>
+		<td>Time of the alarm, in seconds from midnight. Mandatory when add command is issued</td>
 	</tr>
 	<tr>
 		<td>volume</td>
-		<td>Mixer volume of the alarm. Default: use the default volume for alarms.</td>
+		<td>Mixer volume of the alarm. Default: use the default volume for alarms. Mandatory when defaultvolume command is issued</td>
 	</tr>
 	<tr>
 		<td>url</td>
@@ -2536,16 +2551,16 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>Examples:</p>
 <blockquote> 
   <p><b>Defining a new alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:add dow:1 enabled:1 
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
 	playlist:file://some/playlist.m3u time:9000&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:set dow:1 enabled:1 
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
 	playlist:file://some/playlist.m3u time:9000 id:eaf39&lt;LF&gt;&quot;</p>
   <p><b>Deleting an alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:delete id:eaf39&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:delete id:eaf39&lt;LF&gt;&quot;</p>
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;</p>
   <p><b>Enabling a previously defined alarm for Mo-Fr</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm id:eaf39 dow:1,2,3,4,5 enabled:1&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm id:eaf39 dow:1,2,3,4,5 enabled:1 count:1
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm update id:eaf39 dow:1,2,3,4,5 enabled:1&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm update id:eaf39 dow:1,2,3,4,5 enabled:1 count:1
 	&lt;LF&gt;&quot;</p>
 </blockquote>
 

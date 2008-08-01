@@ -22,6 +22,7 @@ use Slim::Player::Sync;
 use Slim::Player::Client;
 #use Data::Dump;
 
+my $prefs   = preferences("server");
 
 =head1 NAME
 
@@ -54,51 +55,90 @@ sub init {
 
 	# register our functions
 	
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
+       #        |requires Client
+       #        |  |is a Query
+       #        |  |  |has Tags
+       #        |  |  |  |Function to call
+       #        C  Q  T  F
 
-    Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
-        [0, 1, 1, \&menuQuery]);
+	Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
+		[0, 1, 1, \&menuQuery]);
 
-	Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], [1, 1, 1, \&alarmSettingsQuery]);
-	Slim::Control::Request::addDispatch(['alarmweekdays', '_index', '_quantity'], [1, 1, 1, \&alarmWeekdayMenu]);
-	Slim::Control::Request::addDispatch(['alarmweekdaysettings', '_day'], [1, 1, 1, \&alarmWeekdaySettingsQuery]);
-	Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'], [1, 1, 1, \&syncSettingsQuery]);
-	Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'], [1, 1, 1, \&sleepSettingsQuery]);
-	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
-	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
-	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'], [1, 1, 1, \&playerInformationQuery]);
-	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ], [1, 0, 1, \&jiveFavoritesCommand]);
-	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings'], [1, 0, 0, \&playerBrightnessMenu]);
-	Slim::Control::Request::addDispatch(['jiveunmixable'], [1, 1, 1, \&jiveUnmixableMessage]);
-	Slim::Control::Request::addDispatch(['jivealbumsortsettings'], [1, 0, 1, \&albumSortSettingsMenu]);
-	Slim::Control::Request::addDispatch(['jivesetalbumsort'], [1, 0, 1, \&jiveSetAlbumSort]);
-	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ], [1, 0, 1, \&jivePlaylistsCommand]);
-	Slim::Control::Request::addDispatch(['jiverecentsearches'], [0, 1, 0, \&jiveRecentSearchQuery]);
-	Slim::Control::Request::addDispatch(['jiveplaytrackalbum'], [1, 0, 1, \&jivePlayTrackAlbumCommand]);
+	Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], 
+		[1, 1, 1, \&alarmSettingsQuery]);
+
+	Slim::Control::Request::addDispatch(['jiveupdatealarm', '_index', '_quantity'], 
+		[1, 1, 1, \&alarmUpdateMenu]);
+
+	Slim::Control::Request::addDispatch(['jiveupdatealarmdays', '_index', '_quantity'], 
+		[1, 1, 1, \&alarmUpdateDays]);
+
+	Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'],
+		[1, 1, 1, \&syncSettingsQuery]);
+
+	Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'],
+		[1, 1, 1, \&sleepSettingsQuery]);
+
+	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'],
+		[1, 1, 1, \&crossfadeSettingsQuery]);
+
+	Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'],
+		[1, 1, 1, \&replaygainSettingsQuery]);
+
+	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'],
+		[1, 1, 1, \&playerInformationQuery]);
+
+	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
+		[1, 0, 1, \&jiveFavoritesCommand]);
+
+	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings'],
+		[1, 0, 0, \&playerBrightnessMenu]);
+
+	Slim::Control::Request::addDispatch(['jiveunmixable'],
+		[1, 1, 1, \&jiveUnmixableMessage]);
+
+	Slim::Control::Request::addDispatch(['jivealbumsortsettings'],
+		[1, 0, 1, \&albumSortSettingsMenu]);
+
+	Slim::Control::Request::addDispatch(['jivesetalbumsort'],
+		[1, 0, 1, \&jiveSetAlbumSort]);
+
+	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ],
+		[1, 0, 1, \&jivePlaylistsCommand]);
+
+	Slim::Control::Request::addDispatch(['jiverecentsearches'],
+		[0, 1, 0, \&jiveRecentSearchQuery]);
+
+	Slim::Control::Request::addDispatch(['jiveplaytrackalbum'],
+		[1, 0, 1, \&jivePlayTrackAlbumCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
+
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
 		[0, 1, 1, \&firmwareUpgradeQuery]);
 
-	Slim::Control::Request::addDispatch(['jiveapplets'], [0, 1, 0, \&downloadQuery]);
-	Slim::Control::Request::addDispatch(['jivewallpapers'], [0, 1, 0, \&downloadQuery]);
-	Slim::Control::Request::addDispatch(['jivesounds'], [0, 1, 0, \&downloadQuery]);
+	Slim::Control::Request::addDispatch(['jiveapplets'],
+		[0, 1, 0, \&downloadQuery]);
+
+	Slim::Control::Request::addDispatch(['jivewallpapers'],
+		[0, 1, 0, \&downloadQuery]);
+
+	Slim::Control::Request::addDispatch(['jivesounds'],
+		[0, 1, 0, \&downloadQuery]);
 	
 	if ( !main::SLIM_SERVICE ) {
 		Slim::Web::HTTP::addRawDownload('^jive(applet|wallpaper|sound)/', \&downloadFile, 'binary');
 	}
 
 	# setup the menustatus dispatch and subscription
-	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'], [0, 0, 0, sub { warn "menustatus query\n" }]);
+	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'],
+		[0, 0, 0, sub { warn "menustatus query\n" }]);
 	Slim::Control::Request::subscribe( \&menuNotification, [['menustatus']] );
 	
 	# setup a cli command for jive that returns nothing; can be useful in some situations
-	Slim::Control::Request::addDispatch( ['jiveblankcommand'], [0, 0, 0, sub { return 1; }]);
+	Slim::Control::Request::addDispatch( ['jiveblankcommand'],
+		[0, 0, 0, sub { return 1; }]);
 
 	if ( !main::SLIM_SERVICE ) {
 		# Load memory caches to help with menu performance
@@ -111,7 +151,6 @@ sub init {
 
 sub buildCaches {
 	$log->info("Begin function");
-	my $prefs   = preferences("server");
 	my $sort    = $prefs->get('jivealbumsort') || 'artistalbum';
 	# Pre-cache albums query
 	if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
@@ -354,7 +393,6 @@ sub jiveSetAlbumSort {
 	my $request = shift;
 	my $client  = $request->client;
 	my $sort = $request->getParam('sortMe');
-	my $prefs = preferences("server");
 	$prefs->set('jivealbumsort', $sort);
 	# resend the myMusic menus with the new sort pref set
 	myMusicMenu(0, $client);
@@ -365,7 +403,6 @@ sub albumSortSettingsMenu {
 	$log->info("Begin function");
 	my $request = shift;
 	my $client = $request->client;
-	my $prefs   = preferences("server");
 	my $sort    = $prefs->get('jivealbumsort');
 	my %sortMethods = (
 		artistalbum =>	'SORT_ARTISTALBUM',
@@ -542,79 +579,487 @@ sub _purgeMenu {
 	return \@purgedMenu;
 }
 
+
 sub alarmSettingsQuery {
 
 	$log->info("Begin function");
 	my $request = shift;
-	my $client = $request->client();
+	my $client  = $request->client();
 
-	# alarm clock, display for slim proto players
-	# still need to pick up saved playlists as list items
-	# need to figure out how to handle 24h vs. 12h clock format
+	my @menu = ();
+	return \@menu unless $client;
 
-	# array ref with 5 elements, each of which is a hashref
-	my $day0 = populateAlarmElements($client, 0);
+	# All Alarms On/Off
 
-	my @weekDays;
+	my $val = $prefs->client($client)->get('alarmsEnabled');
 
-	my $weekDayAlarms = {
-		text      => $client->string("ALARM_WEEKDAYS"),
-		window    => { titleStyle => 'settings' },
-		actions => {
-			go => {
-				player => 0,
-				cmd    => [ 'alarmweekdays' ],
+	my @alarmStrings = ('ON', 'OFF');
+	my @translatedAlarmStrings = map { ucfirst($client->string($_)) } @alarmStrings;
+
+# FIXME: choice items are not currently available for regular, non _menuSink items in SlimBrowser
+# needs a jive-side change
+my $onOff;
+if (0) {
+	$onOff = {
+		text           => $client->string("ALARM_ALL_ALARMS"),
+		choiceStrings  => [ @translatedAlarmStrings ],
+		selectedIndex  => $val + 1, # 1 is added to make it count like Lua
+		actions        => {
+			do => { 
+				choices => [ 
+					{
+						player => 0,
+						cmd    => [ 'alarm', 'enableall' ],
+					},
+					{
+						player => 0,
+						cmd    => [ 'alarm', 'disableall' ],
+					},
+				], 
 			},
 		},
 	};
+}
 
-	# one item_loop to rule them all
-	my @menu = ( @$day0, $weekDayAlarms );
+# just use radios instead for now
+if (1) {
+	$onOff = {
+		window   => { titleStyle => 'settings' },
+		text     => $client->string("ALARM_ALL_ALARMS"),
+		help     => { text => $client->string("ALARM_ALARMS_ENABLED_DESC") },
+		checkbox => ($val == 1) + 0,
+		actions  => {
+			on  => {
+				player => 0,
+				cmd    => [ 'alarm', 'enableall' ],
+			},
+			off => {
+				player => 0,
+				cmd    => [ 'alarm', 'disableall' ],
+			},
+		},		
+	};
+}
+	push @menu, $onOff;
+
+	my $setAlarms = getCurrentAlarms($client);
+
+	if ( scalar(@$setAlarms) ) {
+		push @menu, @$setAlarms;
+	}
+
+	my $addAlarm = {
+		text           => $client->string("ALARM_ADD"),
+		input   => {
+			initialText  => 0, # this will need to be formatted correctly
+			_inputStyle  => 'time',
+			len          => 1,
+			help         => {
+				text => $client->string('JIVE_ALARMSET_HELP')
+			},
+		},
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'alarm', 'add' ],
+				params => {
+					time => '__TAGGEDINPUT__',	
+					enabled => 1,
+				},
+			},
+		},
+		nextWindow => 'parent',
+		window         => { titleStyle => 'settings' },
+	};
+	push @menu, $addAlarm;
+
+	my $defaultVolLevel = Slim::Utils::Alarm->defaultVolume($client);
+	my $defaultVolumeLevels = alarmVolumeSettings($defaultVolLevel, undef, $client->string('ALARM_VOLUME'));
+	push @menu, $defaultVolumeLevels;
 
 	sliceAndShip($request, $client, \@menu);
 
 }
 
-sub alarmWeekdayMenu {
-	$log->info("Begin function");
-	my $request = shift;
-	my $client = $request->client();
+sub alarmUpdateMenu {
 
-	# setup the individual calls to weekday alarms
-	my @menu;
-	for my $weekday (1..7) {
-		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
-		my $string = "ALARM_DAY$weekday";
-		my $day = {
-			text      => $client->string($string),
+	my $request = shift;
+	my $client  = $request->client();
+	my $params;
+
+	my @tags = qw( id enabled days time playlist );
+	for my $tag (@tags) {
+		$params->{$tag} = $request->getParam($tag);
+	}
+
+	my $alarm = Slim::Utils::Alarm->getAlarm($client, $params->{id});
+	my @menu = ();
+
+	my $enabled = $alarm->enabled();
+	my $onOff = {
+		window   => { titleStyle => 'settings' },
+		text     => $client->string("ALARM_ALARM_ENABLED"),
+		checkbox => ($enabled == 1) + 0,
+		actions  => {
+			on  => {
+				player => 0,
+				cmd    => [ 'alarm', 'update' ],
+				params => {
+					id      => $params->{id},
+					enabled => 1,
+				},
+			},
+			off => {
+				player => 0,
+				cmd    => [ 'alarm', 'update' ],
+				params => {
+					id      => $params->{id},
+					enabled => 0,
+				},
+			},
+		},		
+		nextWindow => 'refresh',
+	};
+	push @menu, $onOff;
+
+	my $setTime = {
+		text           => $client->string("ALARM_SET_TIME"),
+		input   => {
+			initialText  => $params->{time}, # this will need to be formatted correctly
+			_inputStyle  => 'time',
+			len          => 1,
+			help         => {
+				text => $client->string('JIVE_ALARMSET_HELP')
+			},
+		},
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'alarm', 'update' ],
+				params => {
+					id   => $params->{id},
+					time => '__TAGGEDINPUT__',	
+				},
+			},
+		},
+		nextWindow => 'grandparent',
+		window         => { titleStyle => 'settings' },
+	};
+	push @menu, $setTime;
+
+
+	my $setDays = {
+		text      => $client->string("ALARM_SET_DAYS"),
+		actions   => {
+			go => {
+				player => 0,
+				cmd    => [ 'jiveupdatealarmdays' ],
+				params => {
+					id => $params->{id},
+				},
+			},
+		},
+		window    => { titleStyle => 'settings' },
+	};
+	push @menu, $setDays;
+
+	# XXX: playlists is currently a HoL; subject to change in the near future to a different structure
+	my %playlists = Slim::Utils::Alarm->getPlaylists($client);
+
+	my $currentSetting = $alarm->playlist();
+
+	my @playlistChoices;
+	for my $type (keys %playlists) {
+		my @choices = ();
+		my $href = $playlists{$type};
+		for my $choice (sort keys %$href) {
+
+			my $radio = 0;
+			if ( 
+				( $currentSetting eq $href->{$choice} ) || 
+				( ! defined $href->{$choice} && ! defined $currentSetting )
+			) { 
+				$radio = 1;				
+			}
+			my $subitem = {
+				text    => $choice,
+				radio   => $radio,
+				actions => {
+					do => {
+						cmd    => [ 'alarm', 'update' ],
+						params => {
+							id          => $params->{id},
+							playlisturl => $href->{$choice} || 0, # send 0 for "current playlist"
+						},
+					},
+				},
+			};
+
+			if ( defined($href->{$choice}) ) {
+				push @choices, $subitem;
+			# use current playlist doesn't need a submenu
+			} else {
+				push @playlistChoices, $subitem;
+			}
+		}
+
+		if ( scalar(@choices) ) {
+		
+		# FIXME: making submenus for the various $type(s) doesn't work because 
+		# radio buttons can't trigger a refresh of a jive window right now
+		#	my $item = {
+		#		text      => $type,
+		#		offset    => 0,
+		#		count     => scalar(@choices),
+		#		item_loop => \@choices,
+		#	};
+		#	push @playlistChoices, $item;
+
+		# so for now, flatten the hashes into one menu of radios
+			my $divider = {
+				text  => $type,
+				style => 'itemNoAction',
+			};
+			push @playlistChoices, $divider, @choices;
+		}
+	}
+	# wrap it all up
+	my $playlistChoice = {
+		text      => $client->string('ALARM_SELECT_PLAYLIST'),
+		offset    => 0,
+		count     => scalar(@playlistChoices),
+		item_loop => \@playlistChoices,
+	};
+	push @menu, $playlistChoice;
+
+	my $repeat = $alarm->repeat();
+	my $repeatOnOff = {
+		window   => { titleStyle => 'settings' },
+		text     => $client->string("ALARM_ALARM_REPEAT"),
+		checkbox => ($repeat == 1) + 0,
+		actions  => {
+			on  => {
+				player => 0,
+				cmd    => [ 'alarm', 'update' ],
+				params => {
+					id      => $params->{id},
+					repeat => 1,
+				},
+			},
+			off => {
+				player => 0,
+				cmd    => [ 'alarm', 'update' ],
+				params => {
+					id      => $params->{id},
+					repeat => 0,
+				},
+			},
+		},		
+		nextWindow => 'refresh',
+	};
+	push @menu, $repeatOnOff;
+
+
+	my @delete_menu= (
+		{
+			text    => $client->string('CANCEL'),
 			actions => {
 				go => {
 					player => 0,
-					cmd    => [ 'alarmweekdaysettings', $weekday ],
+					cmd    => [ 'jiveblankcommand' ],
+				},
+			},
+			nextWindow => 'parent',
+		},
+		{
+			text    => $client->string('ALARM_DELETE'),
+			actions => {
+				go => {
+					player => 0,
+					cmd    => ['alarm', 'delete'],
+					params => {
+						id => $params->{id},
+					},
+				},
+			},
+			nextWindow => 'grandparent',
+		},
+	);
+	my $removeAlarm = {
+		text      => $client->string('ALARM_DELETE'),
+		count     => scalar(@delete_menu),
+		offset    => 0,
+		item_loop => \@delete_menu,
+	};
+	push @menu, $removeAlarm;
+
+	sliceAndShip($request, $client, \@menu);
+}
+
+sub alarmUpdateDays {
+
+	my $request = shift;
+	my $client  = $request->client;
+
+	my @params  = qw/ id /;
+	my $params;
+	for my $key (@params) {
+		$params->{$key} = $request->getParam($key);
+	}
+	my $alarm = Slim::Utils::Alarm->getAlarm($client, $params->{id});
+
+	my @days_menu = (
+		{
+			text => $client->string('ALARM_EVERY_DAY'),
+			actions => {
+				go => {
+					cmd => [ 'alarm', 'update' ],
+					params => {
+						id => $params->{id},
+						dow => '0,1,2,3,4,5,6',
+					},
+				},
+			},
+			nextWindow => 'refresh',
+		},
+		{
+			text => $client->string('ALARM_WEEKDAYS'),
+			actions => {
+				go => {
+					cmd => [ 'alarm', 'update' ],
+					params => {
+						id => $params->{id},
+						dow => '1,2,3,4,5',
+					},
+				},
+			},
+			nextWindow => 'refresh',
+		},
+	);
+
+	for my $day (0..6) {
+		my $dayActive = $alarm->day($day);
+		my $string = "ALARM_DAY$day";
+
+		my $day = {
+			text      => $client->string($string),
+			checkbox => $dayActive + 0,
+			actions => {
+				nextWindow => 'refreshOrigin',
+				on => {
+				nextWindow => 'refreshOrigin',
+					player => 0,
+					cmd    => [ 'alarm', 'update' ],
+					params => {
+						id => $params->{id},
+						dowAdd => $day,
+					},
+				},
+				off => {
+				nextWindow => 'refreshOrigin',
+					player => 0,
+					cmd    => [ 'alarm', 'update' ],
+					params => {
+						id => $params->{id},
+						dowDel => $day,
+					},
+				},
+	
+			},
+		};
+		push @days_menu, $day;
+	}
+
+	sliceAndShip($request, $client, \@days_menu);
+
+	$request->setStatusDone();
+}
+	
+sub getCurrentAlarms {
+	
+	my $client = shift;
+	my @return = ();
+	my @alarms = Slim::Utils::Alarm->getAlarms($client);
+	#Data::Dump::dump(@alarms);
+	my $count = 1;
+	for my $alarm (@alarms) {
+		my @days;
+		for (0..6) {
+			push @days, $_ if $alarm->day($_);
+		}
+		my $name = $client->string('ALARM_ALARM') . ": " . $alarm->displayStr;
+		my $daysString = join(',', @days);
+		my $thisAlarm = {
+			text           => $name,
+			actions        => {
+				go => {
+					cmd    => ['jiveupdatealarm'],
+					params => {
+						id       => $alarm->id,
+						enabled  => $alarm->enabled || 0,
+						days     => $daysString,
+						time     => $alarm->time || 0,
+						playlist => $alarm->playlist || 0, # don't pass an undef to jive
+					},
+					player => 0,
+				},
+			},
+			window         => { titleStyle => 'settings' },
+		};
+		push @return, $thisAlarm;
+		$count++;
+	}
+	return \@return;
+}
+
+sub alarmVolumeSettings {
+
+	my $current_setting = shift || 50;
+	my $id              = shift || 0;
+	my $string          = shift;
+
+	my @vol_settings;
+	my $inBetweenSetting = $current_setting % 10;
+	for (my $i = 10; $i <= 100; $i = $i + 10) {
+		if ($inBetweenSetting && $i > $current_setting) {
+			my $volSetting = {
+				text    => $current_setting,
+				radio   => 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd    => [ 'alarm', 'defaultvolume' ],
+						params => {
+							volume => $current_setting,
+						},
+					},
+				},
+			};
+			push @vol_settings, $volSetting;
+			$inBetweenSetting = 0;
+		}
+		my $volSetting = {
+			text    => $i,
+			radio   => ($i == $current_setting) + 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'alarm', 'defaultvolume' ],
+					params => {
+						volume => $i,
+					},
 				},
 			},
 		};
-		push @menu, $day;
+		push @vol_settings, $volSetting;
 	}
-	sliceAndShip($request, $client, \@menu);
-	$request->setStatusDone();
-
-}
-
-sub alarmWeekdaySettingsQuery {
-	$log->info("Begin function");
-	my $request = shift;
-	my $client = $request->client();
-	my $day = $request->getParam('_day');
-	my $dayMenu = populateAlarmElements($client, $day);
-	$request->addResult('count', scalar(@$dayMenu));
-	$request->addResult('offset', 0);
-	my $cnt = 0;
-	for my $menu (@$dayMenu) {
-		$request->setResultLoopHash('item_loop', $cnt, $menu);
-		$cnt++;
-	}
-	
+	my $return = { 
+		text      => $string,
+		count     => scalar(@vol_settings),
+		offset    => 0,
+		item_loop => \@vol_settings,
+	};
+	return $return;
 }
 
 sub playerInformationQuery {
@@ -664,7 +1109,6 @@ sub crossfadeSettingsQuery {
 	$log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
-	my $prefs   = preferences("server");
 	my $val     = $prefs->client($client)->get('transitionType');
 	my @strings = (
 		'TRANSITION_NONE', 'TRANSITION_CROSSFADE', 
@@ -688,7 +1132,6 @@ sub replaygainSettingsQuery {
 	$log->info("Begin function");
 	my $request = shift;
 	my $client  = $request->client();
-	my $prefs   = preferences("server");
 	my $val     = $prefs->client($client)->get('replayGainMode');
 	my @strings = (
 		'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN', 
@@ -824,7 +1267,7 @@ sub playerSettingsMenu {
 			id             => 'settingsAlarm',
 			node           => 'settings',
 			displayWhenOff => 0,
-			weight         => 30,
+			weight         => 29,
 			actions        => {
 				go => {
 					cmd    => ['alarmsettings'],
@@ -1015,7 +1458,6 @@ sub browseMusicFolder {
 	my $batch = shift;
 
 	# first we decide if $audiodir has been configured. If not, don't show this
-	my $prefs    = preferences("server");
 	my $audiodir = $prefs->get('audiodir');
 
 	my $return = 0;
@@ -1349,278 +1791,6 @@ sub firmwareUpgradeQuery {
 
 }
 
-sub alarmOnHash {
-	my ($client, $prefs, $day) = @_;
-	my $val = $prefs->client($client)->get('alarm')->[ $day ];
-	my %return = (
-		text     => $client->string("ENABLED"),
-		checkbox => ($val == 1) + 0,
-		actions  => {
-			on  => {
-				player => 0,
-				cmd    => ['alarm'],
-				params => { 
-					cmd     => 'update',
-					dow     => $day,
-					enabled => 1,
-				},
-			},
-			off => {
-				player => 0,
-				cmd    => ['alarm'],
-				params => { 
-					cmd     => 'update',
-					dow     => $day,
-					enabled => 0,
-				},
-			},
-		},
-	);
-	return \%return;
-}
-
-sub alarmSetHash {
-	my ($client, $prefs, $day) = @_;
-	my $current_setting = $prefs->client($client)->get('alarmtime')->[ $day ];
-	my %return = 
-	( 
-		text    => $client->string("ALARM_SET"),
-		input   => {
-			initialText  => $current_setting, # this will need to be formatted correctly
-			_inputStyle  => 'time',
-			len          => 1,
-			help         => {
-				text => $client->string('JIVE_ALARMSET_HELP')
-			},
-		},
-		actions => {
-			do => {
-				player => 0,
-				cmd    => ['alarm'],
-				params => {
-					cmd => 'update',
-					dow =>	$day,
-					time => '__TAGGEDINPUT__',	
-				},
-			},
-		},
-		nextWindow => 'refreshOrigin',
-	);
-	return \%return;
-}
-
-sub alarmPlaylistHash {
-	my ($client, $prefs, $day) = @_;
-	my $alarm_playlist = $prefs->client($client)->get('alarmplaylist')->[ $day ];
-	my @allPlaylists = (
-		{
-			text    => $client->string("CURRENT_PLAYLIST"),
-			radio	=> ($alarm_playlist ne '' && 
-				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -1) + 0, # 0 is added to force the data type to number
-			
-			actions => {
-				do => {
-					player => 0,
-					cmd    => ['alarm'],
-					params => {
-						cmd         => 'update',
-						playlist_id => '-1',
-						dow         => $day,
-					},
-				},
-			},
-		},
-		{
-			text    => $client->string("PLUGIN_RANDOM_TRACK"),
-			radio	=> ($alarm_playlist ne '' && 
-				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -2) + 0, # 0 is added to force the data type to number
-			
-			actions => {
-				do => {
-					player => 0,
-					cmd    => ['alarm'],
-					params => {
-						cmd         => 'update',
-						playlist_id => '-2',
-						dow         => $day,
-					},
-				},
-			},
-		},
-		{
-			text    => $client->string("PLUGIN_RANDOM_ALBUM"),
-			radio	=> ($alarm_playlist ne '' && 
-				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -3) + 0, # 0 is added to force the data type to number
-			
-			actions => {
-				do => {
-					player => 0,
-					cmd    => ['alarm'],
-					params => {
-						cmd         => 'update',
-						playlist_id => '-3',
-						dow         => $day,
-					},
-				},
-			},
-		},
-		{
-			text    => $client->string("PLUGIN_RANDOM_CONTRIBUTOR"),
-			radio	=> ($alarm_playlist ne '' && 
-				$Slim::Utils::Alarms::possibleSpecialPlaylistsIDs{$alarm_playlist} == -4) + 0, # 0 is added to force the data type to number
-			
-			actions => {
-				do => {
-					player => 0,
-					cmd    => ['alarm'],
-					params => {
-						cmd         => 'update',
-						playlist_id => '-4',
-						dow         => $day,
-					},
-				},
-			},
-		},
-	);
-	## here we need to figure out how to populate the remaining playlist items from saved playlists
-	push @allPlaylists, getCustomPlaylists($client,$alarm_playlist,$day);
-
-	my %return = 
-	( 
-		text => $client->string("ALARM_SELECT_PLAYLIST"),
-		count     => scalar @allPlaylists,
-		offset    => 0,
-		item_loop => \@allPlaylists,
-	);
-	return \%return;
-}
-
-sub getCustomPlaylists {
-	my ($client, $alarm_playlist, $day) = @_;
-	
-	my @return = ();
-	
-	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
-		push @return,{
-			text    => Slim::Music::Info::standardTitle($client,$playlist->url),
-			radio	=> ($alarm_playlist ne '' && $alarm_playlist eq $playlist->url) + 0, # 0 is added to force the data type to number
-			
-			actions => {
-				do => {
-					player => 0,
-					cmd    => ['alarm'],
-					params => {
-						cmd         => 'update',
-						playlist_id => $playlist->id,
-						dow         => $day,
-					},
-				},
-			},
-		};
-	}
-	
-	return @return;
-}
-
-sub alarmVolumeHash {
-	my ($client, $prefs, $day) = @_;
-	my $current_setting = $prefs->client($client)->get('alarmvolume')->[ $day ];
-	my @vol_settings;
-	for (my $i = 10; $i <= 100; $i = $i + 10) {
-		my %hash = (
-			text    => $i,
-			radio   => ($i == $current_setting) + 0,
-			actions => {
-				do => {
-					player => 0,
-					cmd    => ['alarm'],
-					params => {
-						cmd => 'update',
-						volume => $i,
-						dow => $day,
-					},
-				},
-			},
-		);
-		push @vol_settings, \%hash;
-	}
-	my %return = 
-	( 
-		text      => $client->string("ALARM_SET_VOLUME"),
-		count     => 10,
-		offset    => 0,
-		item_loop => \@vol_settings,
-	);
-	return \%return;
-}
-
-sub alarmFadeHash {
-	my ($client, $prefs, $day) = @_;
-	my $current_setting = $prefs->client($client)->get('alarmfadeseconds');
-	my %return = 
-	( 
-		text     => $client->string("ALARM_FADE"),
-		checkbox => ($current_setting > 0) + 0,
-		actions  => {
-			on  => {
-				player => 0,
-				cmd    => ['alarm'],
-				params => { 
-					cmd     => 'update',
-					dow     => 0,
-					fade    => 1,
-				},
-			},
-			off  => {
-				player => 0,
-				cmd    => ['alarm'],
-				params => { 
-					cmd     => 'update',
-					dow     => 0,
-					fade    => 0,
-				},
-			},
-		},
-	);
-	return \%return;
-}
-
-sub populateAlarmElements {
-	my $client = shift;
-	my $day = shift;
-	my $prefs = preferences("server");
-
-	my $alarm_on       = alarmOnHash($client, $prefs, $day);
-	my $alarm_set      = alarmSetHash($client, $prefs, $day);
-	my $alarm_playlist = alarmPlaylistHash($client, $prefs, $day);
-	my $alarm_volume   = alarmVolumeHash($client, $prefs, $day);
-	my $alarm_fade     = alarmFadeHash($client, $prefs, $day);
-
-	my @return = ( 
-		$alarm_on,
-		$alarm_set,
-		$alarm_playlist,
-		$alarm_volume,
-	);
-	push @return, $alarm_fade if $day == 0;
-	#Data::Dump::dump(@return) if $day == 1;
-	return \@return;
-}
-
-sub populateAlarmHash {
-	my $client = shift;
-	my $day = shift;
-	my $elements = populateAlarmElements($client, $day);
-	my $string = 'ALARM_DAY' . $day;
-	my %return = (
-		text      => $client->string($string),
-		count     => scalar(@$elements),
-		offset    => 0,
-		item_loop => $elements,
-	);
-	return \%return;
-}
-
 sub playerPower {
 
 	my $client = shift;
@@ -1720,7 +1890,6 @@ sub myMusicMenu {
 	$log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
-	my $prefs  = preferences("server");
 	my $sort   = $prefs->get('jivealbumsort') || 'artistalbum';
 	my @myMusicMenu = (
 			{
@@ -2456,7 +2625,6 @@ sub downloadQuery {
 		return;
 	}
 
-	my $prefs = preferences("server");
 
 	my $cnt = 0;
 	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . "/jive$type/";
