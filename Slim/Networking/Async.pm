@@ -97,12 +97,13 @@ sub _dns_error {
 	
 	my $host = $args->{Host};
 
-	$log->error("Couldn't resolve IP address for: $host");
-	
 	# Call back to the caller's error handler
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];
 		$ecb->( $self, "Couldn't resolve IP address for: $host", @{$passthrough} );
+	}
+	else {
+		$log->error("Couldn't resolve IP address for: $host");
 	}
 	
 	$self->disconnect;
@@ -154,8 +155,6 @@ sub _connect_error {
 	# Kill the timeout timer
 	Slim::Utils::Timers::killTimers( $socket, \&_connect_error );
 
-	$log->error("Failed to connect: $!");
-
 	# close the socket
 	if ( defined $socket ) {
 		$socket->close;
@@ -165,7 +164,10 @@ sub _connect_error {
 	my $ecb = $args->{onError};
 	if ( $ecb ) {
 		my $passthrough = $args->{passthrough} || [];
-		$ecb->( $self, 'Connect timed out', @{$passthrough} );
+		$ecb->( $self, "Connect timed out: $!", @{$passthrough} );
+	}
+	else {
+		$log->error("Failed to connect: $!");
 	}
 }
 
@@ -253,11 +255,12 @@ sub _async_error {
 	
 	$self->disconnect;
 	
-	$log->error("Error: [$error]");
-	
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];
 		$ecb->( $self, $error, @{$passthrough} );
+	}
+	else {
+		$log->error("Error: $error");
 	}
 }
 
