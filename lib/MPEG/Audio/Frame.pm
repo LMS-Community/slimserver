@@ -611,14 +611,20 @@ sub broken { # was the crc broken?
 			
 		$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ord((substr($self->{binhead},2,1)))) & 0xff];
 		$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ord((substr($self->{binhead},3,1)))) & 0xff];
+		
+		my $clen = CORE::length( $self->{content} );
 
 		for ($i = 0; $bits >= 32; do { $bits-=32; $i+=4 }){
+			next if $clen < $i;
+			
 			my $data = unpack("N",substr($self->{content},$i,4));
-				
-			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >> 24)) & 0xff];
-			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >> 16)) & 0xff];
-			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >>  8)) & 0xff];
-			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >>  0)) & 0xff];
+			
+			if ( defined $data ) {
+				$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >> 24)) & 0xff];
+				$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >> 16)) & 0xff];
+				$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >>  8)) & 0xff];
+				$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >>  0)) & 0xff];
+			}
 				
 		}
 		while ($bits >= 8){
