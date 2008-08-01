@@ -89,6 +89,7 @@ sub welcomeScreen {
 		'fonts' => {
 				'graphic-160x32' => { 'line' => [ 'standard_n.1', 'logoSB2.2' ] },
 			},
+		'jive' => undef,
 	}, undef, undef, 1);
 }
 
