@@ -260,12 +260,14 @@ sub _http_error {
 	my ( $self, $error, $args ) = @_;
 	
 	$self->disconnect;
-	
-	$log->error("Error: [$error]");
 
+	# Bug 8801, Only print an error if the caller doesn't have an onError handler	
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];
 		$ecb->( $self, $error, @{$passthrough} );
+	}
+	else {
+		$log->error("Error: [$error]");
 	}
 }
 
@@ -275,11 +277,7 @@ sub _http_read {
 	my ($code, $mess, @h) = eval { $self->socket->read_response_headers };
 	
 	if ($@) {
-
-		$log->error("Error reading headers: $@");
-
 		$self->_http_error( "Error reading headers: $@", $args );
-
 		return;
 	}
 	
