@@ -346,7 +346,7 @@ sub isMusicLibraryFileChanged {
 		my $scanInterval = $prefs->get('scan_interval');
 
 		if ( $log->is_debug ) {
-			$log->debug("MusicMagic: music library has changed!");
+			$log->debug("MusicIP: music library has changed!");
 			$log->debug("Details:");
 			$log->debug("\tCurrCacheID  - $fileMTime");
 			$log->debug("\tLastCacheID  - $lastMMMChange");
