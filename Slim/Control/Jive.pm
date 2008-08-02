@@ -1253,7 +1253,17 @@ sub playerSettingsMenu {
 
 	my @menu = ();
 	return \@menu unless $client;
- 
+
+ 	push @menu, {
+		text           => $client->string('AUDIO_SETTINGS'),
+		id             => 'settingsAudio',
+		node           => 'settings',
+		isANode        => 1,
+		displayWhenOff => 0,
+		weight         => 35,
+		window         => { titleStyle => 'settings', },
+	};
+	
 	# always add repeat
 	push @menu, repeatSettings($client, 1);
 
@@ -1380,7 +1390,7 @@ sub playerSettingsMenu {
 		push @menu, {
 			text           => $client->string("SETUP_TRANSITIONTYPE"),
 			id             => 'settingsXfade',
-			node           => 'advancedSettings',
+			node           => 'settingsAudio',
 			displayWhenOff => 0,
 			actions        => {
 				go => {
@@ -1398,7 +1408,7 @@ sub playerSettingsMenu {
 			displayWhenOff => 0,
 			text           => $client->string("REPLAYGAIN"),
 			id             => 'settingsReplayGain',
-			node           => 'advancedSettings',
+			node           => 'settingsAudio',
 			actions        => {
 				  go => {
 					cmd    => ['replaygainsettings'],
