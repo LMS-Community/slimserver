@@ -17,7 +17,7 @@ use Slim::Utils::Log;
 my $line_in = {
 	'name'  => '{PLUGIN_LINE_IN_LINE_IN}',
 	'value' => 1,
-	'url'   => "source:linein",
+	'url'   => "linein:1",
 };
 
 my $url = 'plugins/LineIn/set.html';
@@ -39,7 +39,7 @@ sub initPlugin {
 	
 	$class->SUPER::initPlugin();
 
-	Slim::Player::ProtocolHandlers->registerHandler('source', 'Slim::Plugin::LineIn::ProtocolHandler');
+	Slim::Player::ProtocolHandlers->registerHandler('linein', 'Slim::Plugin::LineIn::ProtocolHandler');
 
 #        |requires Client
 #        |  |is a Query
