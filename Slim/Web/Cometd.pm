@@ -884,7 +884,7 @@ sub webCloseHandler {
 			$log->debug( "Lost connection from $peer, clid: $clid, transport: " . ( $transport || 'none' ) );
 		}
 		
-		if ( $transport eq 'streaming' ) {
+		if ( $transport && $transport eq 'streaming' ) {
 			$manager->remove_connection( $clid );
 			
 			Slim::Utils::Timers::setTimer(
