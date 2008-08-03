@@ -1367,21 +1367,21 @@ Return the current possible alarm playlists with names stringified for the given
 The returned datastructure is somewhat complex and is best explained by example:
 	[
 		{
-			type => 'PLUGIN_RANDOMPLAY',
+			type => 'Random Mix',
 			items => [
-				{ title => '{PLUGIN_RANDOM_TRACK}', url => 'randomplay://albums' },
-				{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://artists' },
+				{ title => 'Song Mix', url => 'randomplay://albums' },
+				{ title => 'Album Mix', url => 'randomplay://artists' },
 				...
 			],
 		},
 		{
-			type => 'FAVORITES',
+			type => 'Favorites',
 			items => [
 				...
 			],
 		},
 		{
-			type => 'CURRENT_PLAYLIST',
+			type => 'Use Current Playlist',
 			items => [
 				{ title => 'The Current Playlist', url => ... }, 
 			],
