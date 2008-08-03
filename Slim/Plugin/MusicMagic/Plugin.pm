@@ -139,115 +139,114 @@ sub initPlugin {
 
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'     => "http://$MMSHost:$MMSport/api/version",
-		'create'  => 0,
-		'timeout' => 5,
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_initStageTwo,
+		\&_musicipError,
+		{
+			timeout => 30,
+			class   => $class,
+			error   => "Can't connect to port $MMSport - MusicIP disabled.",
+		},
+	);
+	
+	$http->get( "http://$MMSHost:$MMSport/api/version" );
+	
+	$initialized = 0;
+}
+
+sub _initStageTwo {
+	my $http   = shift;
+	my $class  = $http->params('class');
+	
+	my $content = $http->content;
+
+	if ( $log->is_info ) {
+		$log->info($content);
+	}
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_powerSearchResult,
+		\&_musicipError,
+		{
+			timeout => 30,
+			class   => $class,
+			error   => "bad response from power search filter query",
+		},
+	);
+	
+	$http->get( "http://$MMSHost:$MMSport/api/mix?filter=?length>120&length=1" );
+
+	Slim::Plugin::MusicMagic::PlayerSettings::init();
+
+	# Note: Check version restrictions if any
+	$initialized = $content;
+
+	checker($initialized);
+
+	# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
+	Slim::Music::Import->addImporter($class, {
+		'mixer'     => \&mixerFunction,
+		'mixerlink' => \&mixerlink,
+		'use'       => $prefs->get('musicip'),
+		'cliBase'   => {
+				player => 0,
+				cmd    => ['musicip', 'mix'],
+				params => {
+					menu => '1',
+				},
+				itemsParams => 'params',
+		},
+		'contextToken' => 'MUSICMAGIC_MIX',
 	});
 
-	if (!$http) {
+	Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
-		$initialized = 0;
+	Slim::Plugin::MusicMagic::ClientSettings->new;
 
-		$log->error("Can't connect to port $MMSport - MusicIP disabled.");
+	Slim::Control::Request::addDispatch(['musicip', 'mix'],
+		[1, 1, 1, \&cliMix]);
 
-	} else {
+	Slim::Control::Request::addDispatch(['musicip', 'moods'],
+		[1, 1, 0, \&cliMoods]);
 
-		my $content = $http->content;
+	Slim::Control::Request::addDispatch(['musicip', 'play'],
+		[1, 0, 0, \&cliPlayMix]);
 
-		if ( $log->is_info ) {
-			$log->info($content);
-		}
+	Slim::Control::Request::addDispatch(['musicip', 'add'],
+		[1, 0, 0, \&cliPlayMix]);
 
-		$http->close;
+	Slim::Control::Request::addDispatch(['musicip', 'insert'],
+		[1, 0, 0, \&cliPlayMix]);
 
-		# this query should return an API error if Power Search is not available
-		$http = Slim::Player::Protocols::HTTP->new({
-			'url'    => "http://$MMSHost:$MMSport/api/mix?filter=?length>120&length=1",
-			'create' => 0,
-			'timeout' => 5,
+	Slim::Player::ProtocolHandlers->registerHandler(
+		mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
+	);
+
+	# Track Info handler
+	Slim::Menu::TrackInfo->registerInfoProvider( musicmagic => (
+		#menuMode => 1,
+		above    => 'favorites',
+		func     => \&trackInfoHandler,
+	) );
+
+	if (scalar @{grabMoods()}) {
+
+		Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
+
+		my $params = {
+			'useMode'  => 'musicmagic_moods',
+			'mood'     => 'none',
+		}; 
+		Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
+
+		Slim::Web::Pages->addPageLinks("browse", {
+			'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
 		});
 
-		if ($http && $http->content !~ /MusicIP API error/i) {
-			$canPowerSearch = 1;
-
-			$log->info('Power Search enabled');
-
-			$http->close;		
-		}
-
-		Slim::Plugin::MusicMagic::PlayerSettings::init();
-
-		# Note: Check version restrictions if any
-		$initialized = $content;
-
-		checker($initialized);
-
-		# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
-		Slim::Music::Import->addImporter($class, {
-			'mixer'     => \&mixerFunction,
-			'mixerlink' => \&mixerlink,
-			'use'       => $prefs->get('musicip'),
-			'cliBase'   => {
-					player => 0,
-					cmd    => ['musicip', 'mix'],
-					params => {
-						menu => '1',
-					},
-					itemsParams => 'params',
-			},
-			'contextToken' => 'MUSICMAGIC_MIX',
+		Slim::Web::Pages->addPageLinks("icons", {
+			'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
 		});
-
-		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
-
-		Slim::Plugin::MusicMagic::ClientSettings->new;
-
-		Slim::Control::Request::addDispatch(['musicip', 'mix'],
-			[1, 1, 1, \&cliMix]);
-
-		Slim::Control::Request::addDispatch(['musicip', 'moods'],
-			[1, 1, 0, \&cliMoods]);
-
-		Slim::Control::Request::addDispatch(['musicip', 'play'],
-			[1, 0, 0, \&cliPlayMix]);
-
-		Slim::Control::Request::addDispatch(['musicip', 'add'],
-			[1, 0, 0, \&cliPlayMix]);
-
-		Slim::Control::Request::addDispatch(['musicip', 'insert'],
-			[1, 0, 0, \&cliPlayMix]);
-
-		Slim::Player::ProtocolHandlers->registerHandler(
-			mood => 'Slim::Plugin::MusicMagic::ProtocolHandler'
-		);
-
-		# Track Info handler
-		Slim::Menu::TrackInfo->registerInfoProvider( musicmagic => (
-			#menuMode => 1,
-			above    => 'favorites',
-			func     => \&trackInfoHandler,
-		) );
-
-		if (scalar @{grabMoods()}) {
-
-			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
-
-			my $params = {
-				'useMode'  => 'musicmagic_moods',
-				'mood'     => 'none',
-			}; 
-			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
-			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
-
-			Slim::Web::Pages->addPageLinks("browse", {
-				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
-			});
-
-			Slim::Web::Pages->addPageLinks("icons", {
-				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
-			});
-		}
 	}
 
 	$mixFunctions{'play'} = \&playMix;
@@ -257,8 +256,17 @@ sub initPlugin {
 
 	Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
 	Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
+}
 
-	return $initialized;
+sub _powerSearchResult {
+	my $http   = shift;
+	my $class  = $http->params('class');
+	
+	if ($http && $http->content !~ /MusicIP API error/i) {
+		$canPowerSearch = 1;
+
+		$log->info('Power Search enabled');
+	}
 }
 
 sub defaultMap {
@@ -308,31 +316,27 @@ sub playMix {
 
 sub isMusicLibraryFileChanged {
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/cacheid?contents",
-		'create' => 0,
-		'timeout' => 5,
-	}) || return 0;
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_cacheidOK,
+		\&_musicipError,
+		{
+			timeout => 30,
+		},
+	);
+	
+	$http->get( "http://$MMSHost:$MMSport/api/cacheid?contents" );
+}
 
-	my $fileMTime = $http->content;
-
-	chomp($fileMTime);
-
-	$log->info("Read cacheid of $fileMTime");
-
-	$http->close;
-
-	$http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/getStatus",
-		'create' => 0,
-		'timeout' => 5,
-	}) || return 0;
-
-	if ( $log->is_info ) {
-		$log->info("Got status: ", $http->content);
-	}
-
-	$http->close;
+sub _statusOK {
+	my $http   = shift;
+	my $params = $http->params('params');
+	
+	my $content = $http->content;
+	chomp($content);
+	
+	$log->debug( "Read status $content" );
+		
+	my $fileMTime = $params->{fileMTime};
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
@@ -364,7 +368,7 @@ sub isMusicLibraryFileChanged {
 
 		if ((time - $lastScanTime) > $scanInterval) {
 
-			return 1;
+			Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 
 		$log->info("Waiting for $scanInterval seconds to pass before rescanning");
@@ -380,9 +384,9 @@ sub checker {
 		return;
 	}
 
-	if (!$firstTime && !Slim::Music::Import->stillScanning && isMusicLibraryFileChanged()) {
-
-		Slim::Control::Request::executeRequest(undef, ['rescan']);
+	if (!$firstTime && !Slim::Music::Import->stillScanning) {
+	
+		isMusicLibraryFileChanged();
 	}
 
 	# make sure we aren't doing this more than once...
@@ -390,6 +394,39 @@ sub checker {
 
 	# Call ourselves again after 120 seconds
 	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 120), \&checker);
+}
+
+sub _cacheidOK {
+	my $http   = shift;
+	my $params = $http->params('params');
+	
+	my $content = $http->content;
+	chomp($content);
+	
+	$log->debug( "Read cacheid of $content" );
+		
+	$params->{fileMTime} = $content;
+	
+	#do status check
+	$http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_statusOK,
+		\&_musicipError,
+		{
+			params  => $params,
+			timeout => 30,
+			error   => "Can't read status",
+		},
+	);
+	
+	$http->get( "http://$MMSHost:$MMSport/api/getStatus" );
+}
+
+sub _musicipError {
+	my $http   = shift;
+	my $error  = $http->params('error');
+	my $params = $http->params('params');
+
+	$log->error( $error || "MusicIP: http error, no response.");
 }
 
 sub prefName {
