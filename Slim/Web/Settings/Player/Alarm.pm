@@ -98,9 +98,7 @@ sub handler {
 	$paramRef->{'prefs'}->{'pref_alarmSnoozeMinutes'} = $prefsClass->get('alarmSnoozeSeconds') / 60;
 	$paramRef->{'prefs'}->{'pref_alarmTimeoutMinutes'} = $prefsClass->get('alarmTimeoutSeconds') / 60;
 
-	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
-	
-	$paramRef->{'playlistOptions'} = \%playlistTypes;
+	$paramRef->{'playlistOptions'} = Slim::Utils::Alarm->getPlaylists($client);
 	$paramRef->{'newAlarmID'}      = NEWALARMID;
 	
 	$paramRef->{'timeFormat'} = $prefs->get('timeFormat');
@@ -133,7 +131,11 @@ sub saveAlarm {
 	
 	$alarm->volume( $paramRef->{'alarmvolume' . $id} );
 	$alarm->usesDefaultVolume( $paramRef->{'usesDefaultVolume' . $id} );
-	$alarm->playlist( $paramRef->{'alarmplaylist' . $id} );
+	my $playlist = $paramRef->{'alarmplaylist' . $id};
+	if ($playlist eq '') {
+		$playlist = undef;
+	}
+	$alarm->playlist($playlist);
 
 	# don't accept hours > midnight
 	my $t       = Slim::Utils::DateTime::prettyTimeToSecs( $paramRef->{'alarmtime' . $id} );

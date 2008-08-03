@@ -344,47 +344,41 @@ sub buildPlaylistMenu {
 	#TODO: Handle a saved playlist no longer being valid.  Just display a selected entry of Unknown, but remove entry the
 	# moment something else is selected?
 
-	# playlistTypes is a hash of hashes.  Keys of first hash are the playlist types.  Keys of second hash are the playlist
-	# names, values are playlist urls.  All keys are returned stringified for $client.
-	my %playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
+	# Get playlists, with titles stringified for this client
+	my $playlistTypes = Slim::Utils::Alarm->getPlaylists($client);
 
 	my @menu;
 
 	# Loop through the playlist types and add them to the menu
-	foreach my $type (sort keys %playlistTypes) {
+	foreach my $type (@$playlistTypes) {
 		my @subMenu;
 		# Get the playlist names for this type and build up a sub-menu of the playlists
-		my @names = sort keys %{$playlistTypes{$type}};
-
-		my $useSubMenu;
-		foreach my $playlistName (@names) {
-			my $playlistUrl = $playlistTypes{$type}->{$playlistName};
-
-			# Don't put the current playlist in a sub menu (current playlist has url == undef)
-			$useSubMenu = defined $playlistUrl;
-
+		foreach my $playlist (@{$type->{items}}) {
 			push @subMenu, {
-					title		=> $playlistName,
+					title		=> $playlist->{title},
 					stringTitle	=> 1,
 					type		=> 'radio',
 					checked		=> sub {
-								return (! defined $alarm->playlist && ! defined $playlistUrl)
-									|| (defined $alarm->playlist && defined $playlistUrl && $alarm->playlist eq $playlistUrl);
+								return (! defined $alarm->playlist && ! defined $playlist->{url})
+									|| (defined $alarm->playlist
+										&& defined $playlist->{url}
+										&& $alarm->playlist eq $playlist->{url}
+									);
 							},
 					toggleFunc	=> sub {
-								$alarm->playlist($playlistUrl);
+								$alarm->playlist($playlist->{url});
 								saveAlarm($client, $alarm);
 							},
 				};
 		}
 
-		if (scalar @subMenu == 1 && ! $useSubMenu) {
-			# This should be the current playlist entry so put it at the top-level
+		if (scalar @subMenu == 1 && $type->{singleItem}) {
+			# Special single-item playlist so put it at the top-level not in a sub-menu
 			push @menu, $subMenu[0];
 		} else {
 			# For types with more than one entry, create a sub-menu
 			push @menu, {
-				title		=> $type,
+				title		=> $type->{type},
 				stringTitle	=> 1,
 				type		=> 'menu',
 				items		=> \@subMenu,

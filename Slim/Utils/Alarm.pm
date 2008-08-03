@@ -71,14 +71,9 @@ my $alarmScreensaver = $DEF_ALARM_SCREENSAVER;
 # }
 my %alarmPlaylists = (); 
 
-# The possible playlists for alarms.  See docs for getPlaylists()
-# Any url in this hash must be a key in %alarmPlayLists.
-# Initialise to just contain the current playlist, which is a special case where url is undef.
-my %alarmPlaylistTypes = (
-	'CURRENT_PLAYLIST'	=> {
-		'{ALARM_USE_CURRENT_PLAYLIST}'	=> undef,	
-	},
-);
+# Playlist types that have been registered using addPlaylist.  Keys are the playlist type, values
+# are the playlists datastructure.  See docs for addPlaylist.
+my %extraPlaylistTypes; 
 
 
 ################################################################################
@@ -1320,28 +1315,34 @@ sub alarmsEnabled {
 
 =head2 addPlaylists( $type, $playlists )
 
-Adds playlists to the list of possible playlists that alarms can play when sounding.  This method should be called by modules
-that offer new playlist types and wish to register them for alarms e.g. random mix, favorites etc.
+Adds playlists to the list of possible playlists that alarms can play when sounding.  This method
+should be called by modules that offer new playlist types and wish to register them for alarms.
 
-$type is a string identifying the type of playlist that is being added.  It may be displayed to the user, for example as a
-a heading to group multiple playlists of the same type.  $type will be passed through string().
+$type is a string identifying the type of playlist that is being added.  It may be displayed to the
+user, for example as a heading to group multiple playlists of the same type.  $type will be passed
+through string().  $type is used as a key - any previous playlists registered with the same type will
+be replaced!
 
-$playlists is a hash reference whose keys are the display names for the playlists and whose values are the urls for the playlists.
-If the keys are to be passed through string, they should be enclosed in curly braces.
+$playlists is a reference to an array of hash references.  The array items should be presented in
+the order in which they should be presented to the end-user.  Each hash represents a playlist to be
+added and should contain a title key, whose value is the display name for a playlist, and an url
+key, whose value is the url for the playlist.  The title values will be passed through
+$client->string if they are enclosed in curly braces.
 
-For example, the RandomPlay plugin would register its mixes as possible alarm playlists as follows:
+For example, the RandomPlay plugin could register its mixes as possible alarm playlists as follows
+(in fact, RandomPlay is special and is registered differently, but you get the idea...):
 
 	Slim::Utils::Alarm->addPlaylists('PLUGIN_RANDOMPLAY',
-		{
-			'{PLUGIN_RANDOM_TRACK}'		=> 'randomplay:track',
-			'{PLUGIN_RANDOM_CONTRIBUTOR}'	=> 'randomplay:contributor',
-			'{PLUGIN_RANDOM_ALBUM}'		=> 'randomplay:album',
-			'{PLUGIN_RANDOM_YEAR}'		=> 'randomplay:year',
-		}
+		[
+			{ title => '{PLUGIN_RANDOM_TRACK}', url => 'randomplay:track' },
+			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay:contributor' },
+			{ title => '{PLUGIN_RANDOM_ALBUM}', url => 'randomplay:album' },
+			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay:year' },
+		]
 	);
 
-This could result in the user being presented with four new alarm playlists to chose from, all grouped under the heading of
-PLUGIN_RANDOMPLAY.
+This could result in the user being presented with four new alarm playlists to chose from, all
+grouped under the heading of PLUGIN_RANDOMPLAY.
 
 =cut
 
@@ -1350,31 +1351,51 @@ sub addPlaylists {
 	my $type = shift;
 	my $playlists = shift;
 
-	foreach my $playlist (keys %$playlists) {
+	foreach my $playlist (@$playlists) {
 		# Create a mapping from the url to its display name
-		$alarmPlaylists{$playlists->{$playlist}} = $playlist; 		
-
-		# Create a mapping from the playlist type to its associated playlists
-		#TODO: Allow already defined types to be added to?
-		$alarmPlaylistTypes{$type} = $playlists;
+		$alarmPlaylists{$playlist->{url}} = $playlist->{title}; 		
 	}
+
+	# Create a mapping from the playlist type to its associated playlists
+	$extraPlaylistTypes{$type} = $playlists;
 }
 
 =head2 getPlaylists( )
 
 Return the current possible alarm playlists with names stringified for the given client.
 
-The returned value is a hash of hashes, mapping playlist types to the URLs available under that type. 
-e.g.
-	{
-		'Random Mix' => {
-			'Random Song Mix' => 'randomplay://albums',
-			'Random Artist Mix' => 'randomplay://artists',
+The returned datastructure is somewhat complex and is best explained by example:
+	[
+		{
+			type => 'PLUGIN_RANDOMPLAY',
+			items => [
+				{ title => '{PLUGIN_RANDOM_TRACK}', url => 'randomplay://albums' },
+				{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://artists' },
+				...
+			],
 		},
-		'Playlists' => {
-			...,
+		{
+			type => 'FAVORITES',
+			items => [
+				...
+			],
 		},
-	}
+		{
+			type => 'CURRENT_PLAYLIST',
+			items => [
+				{ title => 'The Current Playlist', url => ... }, 
+			],
+			# This playlist type will only ever contain one item
+			singleItem => 1,
+		},
+		...
+	]
+
+The outer array reference contains an ordered set of playlist types.  Each playlist type contains
+an ordered list of playlists.
+
+The singleItem key for a playlist type is effectively a rendering hint.  The player ui uses this to
+present Current Playlist as a top-level item rather than as a sub-menu.
 
 =cut
 
@@ -1382,47 +1403,93 @@ sub getPlaylists {
 	my $class = shift;
 	my $client = shift;
 
-	# Add the current saved playlists
-	my @playlists = Slim::Schema->rs('Playlist')->getPlaylists;
-	my %playlistHash;
-	foreach my $playlist (@playlists) {
-		$playlistHash{Slim::Music::Info::standardTitle($client, $playlist->url)} = $playlist->url;
-	}
-	$class->addPlaylists('PLAYLISTS', \%playlistHash);
+	my @playlists;
+	
+	# Add the current playlist option
+	push @playlists, {
+			type => 'CURRENT_PLAYLIST',
+			items => [ { title => '{ALARM_USE_CURRENT_PLAYLIST}', url => undef } ],
+			singleItem => 1,
+		};
 
 	# Add favorites flattened out into a single level, only including audio & playlist entries
-	if (my $favs = Slim::Utils::Favorites->new($client)) {
-		$class->addPlaylists('FAVORITES', $favs->all);
-	}
-	
-	# Add Natural Sounds
-	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Sounds::Plugin') ) {
-		if ( my $sounds = Slim::Plugin::Sounds::Plugin->alarmMenu() ) {
-			$class->addPlaylists(
-				'PLUGIN_SOUNDS_MODULE_NAME',
-				$sounds,
-			);
+	# XXX: This code should be elsewhere - it should use the getPlaylists model, as per RandomPlay
+	if (my $favsObject = Slim::Utils::Favorites->new($client)) {
+		my $favs = $favsObject->all;
+		my @favsArray;
+		foreach my $favName (keys %$favs) {
+			push @favsArray, { title => $favName, url => $favs->{$favName} };
 		}
-	}
-		
-	# Reconstruct %alarmPlaylistType, stringifying keys for client as necessary
-	my %stringified;
-	foreach my $type (keys %alarmPlaylistTypes) {
-		my $playlists = {};
-		foreach my $playlist (keys %{$alarmPlaylistTypes{$type}}) {
-			# Stringify keys that are enclosed in curly braces
-			my ($stringKey) = $playlist =~ /^{(.*)}$/; 
-			if (defined $stringKey) {
-				$stringKey = $client->string($stringKey);
-			} else {
-				$stringKey = $playlist;
-			}
-			$playlists->{$stringKey} = $alarmPlaylistTypes{$type}->{$playlist};
-		}
-		$stringified{$client->string($type)} = $playlists;
+		push @playlists, {
+				type => 'FAVORITES',
+				items => \@favsArray,
+			};
 	}
 
-	return %stringified;
+	# Add the current saved playlists
+	# XXX: This code would ideally also be elsewhere
+	my @saved = Slim::Schema->rs('Playlist')->getPlaylists;
+	my @savedArray;
+	foreach my $playlist (@saved) {
+		push @savedArray, {
+				title => Slim::Music::Info::standardTitle($client, $playlist->url),
+				url => $playlist->url
+			};
+	}
+	@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
+	push @playlists, {
+			type => 'PLAYLISTS',
+			items => \@savedArray,
+		};
+
+	# Add random mixes
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
+		if ( my $mixes = Slim::Plugin::RandomPlay::Plugin->getAlarmPlaylists() ) {
+			foreach my $mixType (@$mixes) {
+				push @playlists, {
+						type => $mixType->{type},
+						items => $mixType->{items},
+					};
+			}
+		}
+	}
+
+	# Add natural sounds
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Sounds::Plugin') ) {
+		if ( my $sounds = Slim::Plugin::Sounds::Plugin->getAlarmPlaylists() ) {
+			foreach my $soundType (@$sounds) {
+				push @playlists, {
+						type => $soundType->{type},
+						items => $soundType->{items},
+					};
+			}
+		}
+	}
+
+	# Add any alarm playlists that have been registered via addPlaylists
+	foreach my $playlist (keys %extraPlaylistTypes) {
+		push @playlists, {
+				type => "$playlist",
+				items => $extraPlaylistTypes{$playlist},
+			};
+	}
+
+	# Stringify keys for given client if they have been enclosed in curly braces 
+	foreach my $type (@playlists) {
+		$type->{type} = $client->string($type->{type});
+		foreach my $playlist (@{$type->{items}}) {
+			# Stringify keys that are enclosed in curly braces
+			my ($stringTitle) = $playlist->{title} =~ /^{(.*)}$/; 
+			if (defined $stringTitle) {
+				$stringTitle = $client->string($stringTitle);
+			} else {
+				$stringTitle = $playlist->{title};
+			}
+			$playlist->{title} = $stringTitle;
+		}
+	}
+
+	return \@playlists;
 }
 
 =head2 alarmScreensaver( $modeName )

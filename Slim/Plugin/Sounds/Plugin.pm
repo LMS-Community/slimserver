@@ -14,7 +14,7 @@ use Slim::Plugin::Sounds::ProtocolHandler;
 use Slim::Utils::Log;
 
 # Flat list of sounds to use for alarms
-my $alarmMenu;
+my $alarmPlaylists;
 
 sub initPlugin {
 	my $class = shift;
@@ -64,23 +64,28 @@ sub getDisplayName {
 	return 'PLUGIN_SOUNDS_MODULE_NAME';
 }
 
-sub alarmMenu {
-	return $alarmMenu;
+# Called by Slim::Utils::Alarm to get the playlists that should be presented as options
+# for an alarm playlist.
+sub getAlarmPlaylists {
+	return $alarmPlaylists;
 }
 
 sub _gotSounds {
 	my ( $feed, $params ) = @_;
 	
-	$alarmMenu = {};
-	
+	my $alarmItems = [];
+
 	# Flatten the list
 	for my $first ( @{ $feed->{items} } ) {
 		my $cat = $first->{name};
 		for my $second ( @{ $first->{items} } ) {
 			# XXX: Could display the category too, but it makes the line too long
-			$alarmMenu->{ $second->{name} } = $second->{url};
+			push @$alarmItems, { title => $second->{name}, url => $second->{url} };
 		}
 	}
+
+	$alarmPlaylists = [ { type => 'PLUGIN_SOUNDS_MODULE_NAME', items => $alarmItems } ];
+
 }
 
 sub _gotSoundsError {
@@ -89,7 +94,7 @@ sub _gotSoundsError {
 	logError( 'Unable to cache Sounds & Effects menu from SN: ' . $error );
 	
 	# Give up, Sounds won't be available in Alarm menu
-	$alarmMenu = undef;
+	$alarmPlaylists = undef;
 }
 
 1;

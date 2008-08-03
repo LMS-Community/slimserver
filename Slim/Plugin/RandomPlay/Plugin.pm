@@ -156,16 +156,6 @@ sub initPlugin {
 		randomplay => 'Slim::Plugin::RandomPlay::ProtocolHandler'
 	);
 
-	# register playlists for each mix type with the alarm clock so they can be chosen as alarm playlists
-	Slim::Utils::Alarm->addPlaylists('PLUGIN_RANDOMPLAY',
-		{
-			'{PLUGIN_RANDOM_TRACK}'		=> 'randomplay://track',
-			'{PLUGIN_RANDOM_CONTRIBUTOR}'	=> 'randomplay://contributor',
-			'{PLUGIN_RANDOM_ALBUM}'		=> 'randomplay://album',
-			'{PLUGIN_RANDOM_YEAR}'		=> 'randomplay://year',
-		}
-	);
-
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
 
@@ -1259,6 +1249,22 @@ sub active {
 	}
 	
 	return 0;
+}
+
+# Called by Slim::Utils::Alarm to get the playlists that should be presented as options
+# for an alarm playlist.
+sub getAlarmPlaylists {
+	my $class = shift;
+
+	return [ {
+		type => 'PLUGIN_RANDOMPLAY',
+		items => [
+			{ title => '{PLUGIN_RANDOM_TRACK}', url	=> 'randomplay://track' },
+			{ title => '{PLUGIN_RANDOM_ALBUM}', url	=> 'randomplay://album' },
+			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://contributor' },
+			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay://year' },
+		]
+	} ];
 }
 
 1;

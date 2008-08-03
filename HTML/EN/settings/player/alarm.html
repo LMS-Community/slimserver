@@ -47,10 +47,10 @@
 		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
 			<select class="stdedit" name="alarmplaylist[% alarm.id %]" id="alarmplaylist[% alarm.id %]">
 		
-				[% FOREACH type IN playlistOptions  %]
-					<optgroup label="[% type.key %]">
-						[% FOREACH option IN type.value %]
-							<option [% IF alarm.playlist == option.value %]selected [% END %]value="[% option.value %]">[% option.key %]</option>
+				[% FOREACH playlistType IN playlistOptions  %]
+					<optgroup label="[% playlistType.type %]">
+						[% FOREACH playlist IN playlistType.items %]
+							<option [% IF alarm.playlist == playlist.url %]selected [% END %]value="[% playlist.url %]">[% playlist.title %]</option>
 						[%- END -%]
 					</optgroup>
 				[%- END -%]
