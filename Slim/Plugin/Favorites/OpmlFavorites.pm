@@ -174,12 +174,15 @@ sub all {
 	my $class  = shift;
 	my $typeRE = shift || qr/audio|playlist/;
 	my $level  = shift || $class->toplevel;
-	my $return = shift || {};
+	my $return = shift || [];
 
 	for my $entry (@{$level}) {
 
 		if ($entry->{'type'} && $entry->{'type'} =~ /$typeRE/) {
-			$return->{ $entry->{'text' } } = $entry->{'URL'} || $entry->{'url'};
+			push @$return, {
+				'title' => $entry->{'text' },
+				'url'   => $entry->{'URL'} || $entry->{'url'},
+			}
 		}
 
 		if ($entry->{'outline'}) {

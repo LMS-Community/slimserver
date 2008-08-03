@@ -1413,16 +1413,10 @@ sub getPlaylists {
 		};
 
 	# Add favorites flattened out into a single level, only including audio & playlist entries
-	# XXX: This code should be elsewhere - it should use the getPlaylists model, as per RandomPlay
 	if (my $favsObject = Slim::Utils::Favorites->new($client)) {
-		my $favs = $favsObject->all;
-		my @favsArray;
-		foreach my $favName (keys %$favs) {
-			push @favsArray, { title => $favName, url => $favs->{$favName} };
-		}
 		push @playlists, {
 				type => 'FAVORITES',
-				items => \@favsArray,
+				items => $favsObject->all,
 			};
 	}
 
