@@ -51,6 +51,6 @@ sub enabled {
 # sub findUrl     ( $class, $url         ) - returns index or undef for $url
 # sub deleteUrl   ( $class, $url         ) - deletes $url from favorites
 # sub deleteIndex ( $class, $index       ) - deletes favorite with index $index
-# all             ( $class               ) - return a hash of all playable favorites
+# all             ( $class               ) - return array of hashes for all playable favorites
 
 __END__
