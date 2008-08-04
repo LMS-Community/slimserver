@@ -669,14 +669,22 @@ sub init {
 				},
 		
 				'MUSICSOURCE' => {
-					'useMode'        => 'INPUT.List',
-					'callback'       => \&switchServer,
-					'header'         => 'MUSICSOURCE',
-					'stringHeader'   => 1,
+					'useMode'        => 'INPUT.Choice',
+					'onRight'        => \&switchServer,
+					'onPlay'         => \&switchServer,
+					'onAdd'          => \&switchServer,
+					'header'         => '{MUSICSOURCE}',
 					'headerAddCount' => 1,
-					'externRef'      => sub { $_[1] eq 'SQUEEZENETWORK' ? $_[0]->string($_[1]) : $_[1] },
-					'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
 					'init'           => \&serverListInit,
+					'initialValue'   => Slim::Utils::Network::serverAddr(),
+					'overlayRef'     => sub {
+						my ($client, $item) = @_;
+						return [undef, 
+							Slim::Networking::Discovery::Server::is_self($item->{value})
+							? Slim::Buttons::Common::checkBoxOverlay($client, 1)
+							: $client->symbols('rightarrow')
+						];
+					},
 					'condition'      => sub { shift->hasServ(); },
 				},
 			},
@@ -984,78 +992,79 @@ sub serverListInit {
 	my $client = shift;
 
 	my @servers;
-
+	
 	if ( main::SLIM_SERVICE ) {
-		@servers = ('SqueezeCenter');
+		@servers = ({
+			name => $client->string('SQUEEZECENTER'),
+			value => 0
+		});
 	}
 	else {
-	 	@servers = keys %{Slim::Networking::Discovery::Server::getServerList()};
-		unshift @servers, 'SQUEEZENETWORK';
+		my $servers = Slim::Networking::Discovery::Server::getServerList();
+
+		foreach (sort keys %$servers) {
+			push @servers, {
+				name => Slim::Utils::Strings::getString($_),
+				value => Slim::Networking::Discovery::Server::getServerAddress($_)
+			};
+		}	
 	}
+
+	push @servers, {
+		name => $client->string('SQUEEZENETWORK'),
+		value => 'SQUEEZENETWORK'
+	};
 
 	$client->modeParam('listRef', \@servers);
 }
 
 sub switchServer {
-	my ($client, $exittype, $server) = @_;
+	my ($client, $server) = @_;
+	
+	if ($server->{value} eq 'SQUEEZENETWORK') {
 
-	$exittype = uc($exittype);
-					
-	if ($exittype eq 'LEFT') {
-					
-		Slim::Buttons::Common::popModeRight($client);
-					
-	} elsif ($exittype eq 'RIGHT') {
+		Slim::Buttons::Common::pushModeLeft($client, 'squeezenetwork.connect');
 
-		$server ||= ${$client->modeParam('valueRef')}; 
+	} 
 
-		if ($server eq 'SQUEEZENETWORK') {
-
-			Slim::Buttons::Common::pushModeLeft($client, 'squeezenetwork.connect');
-
-		} elsif ($server) {
-
-			$client->showBriefly({
-				'line' => [
-					$client->string('MUSICSOURCE'),
-					$client->string('SQUEEZECENTER_CONNECTING', $server) 
-				]
-			});
-
-			# we want to disconnect, but not immediately, because that
-			# makes the UI jerky.  Postpone disconnect for a short while
-			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
-				sub {
-					my ($client, $server) = @_;
-					
-					# don't disconnect unless we're still in this mode.
-					return unless ($client->modeParam('server.switch'));
-
-					$client->execute([ 'stop' ]);
-
-					# ensure client has disconnected before forgetting him
-					Slim::Control::Request::subscribe(
-						\&_forgetPlayer, 
-						[['client'],['disconnect']], 
-						$client
-					);
-
-					if ( main::SLIM_SERVICE ) {
-						# Connect player back to their last SC
-						$client->execute( [ 'connect', 0 ] );
-					}
-					else {
-						$client->execute( [ 'connect', Slim::Networking::Discovery::Server::getServerAddress($server) ] );
-					}
-
-				}, $server);
+	elsif (Slim::Networking::Discovery::Server::is_self($server->{value})) {
 		
-			# this flag prevents disconnect if user has popped out of this mode
-			$client->modeParam('server.switch', 1);
-		} else {
+		$client->bumpRight();
+	}
 
-			$client->bumpRight();
-		}
+	else {
+
+		$client->showBriefly({
+			'line' => [
+				$client->string('MUSICSOURCE'),
+				$client->string('SQUEEZECENTER_CONNECTING', $server->{name}) 
+			]
+		});
+
+		# we want to disconnect, but not immediately, because that
+		# makes the UI jerky.  Postpone disconnect for a short while
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1,
+			sub {
+				my ($client, $server) = @_;
+					
+				# don't disconnect unless we're still in this mode.
+				return unless ($client->modeParam('server.switch'));
+
+				$client->execute([ 'stop' ]);
+
+				# ensure client has disconnected before forgetting him
+				Slim::Control::Request::subscribe(
+					\&_forgetPlayer, 
+					[['client'],['disconnect']], 
+					$client
+				);
+
+				$client->execute( [ 'connect', $server ] );
+
+			}, $server->{value});
+		
+		# this flag prevents disconnect if user has popped out of this mode
+		$client->modeParam('server.switch', 1);
 	}
 }
 
