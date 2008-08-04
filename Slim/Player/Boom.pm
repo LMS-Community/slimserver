@@ -24,13 +24,14 @@ BEGIN {
 	}
 }
 
+use Slim::Hardware::BacklightLED;
+use Slim::Networking::Slimproto;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;
 use Slim::Utils::DateTime;
-use Slim::Hardware::BacklightLED;
 
 my $prefs = preferences('server');
 
@@ -70,6 +71,11 @@ if ( main::SLIM_SERVICE ) {
 		SETTINGS
 		SQUEEZECENTER_CONNECT
 	) ];
+}
+
+INIT {
+	# Add a handler for line-in/out status changes
+	Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
 }
 
 sub new {
@@ -753,6 +759,12 @@ sub lineInConnected {
 
 sub lineOutConnected {
 	Slim::Networking::Slimproto::voltage(shift) & 0x02;
+}
+
+sub lineInOutStatus {
+	my ( $client, $data_ref ) = @_;
+	
+	# XXX: TODO
 }
 
 1;
