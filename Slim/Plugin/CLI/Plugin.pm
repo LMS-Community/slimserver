@@ -105,11 +105,13 @@ sub initPlugin {
 	# open our socket
 	cli_socket_change();
 
-	# register handlers for discovery packets
-	Slim::Networking::Discovery::addTLVHandler({
-		'CLIA' => sub { $::cliaddr },          # cli address
-		'CLIP' => sub { $cli_socket_port },    # cli port
-	});
+	if ( !main::SLIM_SERVICE ) {
+		# register handlers for discovery packets
+		Slim::Networking::Discovery::addTLVHandler({
+			'CLIA' => sub { $::cliaddr },          # cli address
+			'CLIP' => sub { $cli_socket_port },    # cli port
+		});
+	}
 }
 
 # plugin: name of our plugin
