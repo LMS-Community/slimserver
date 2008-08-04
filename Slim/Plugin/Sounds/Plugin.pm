@@ -73,19 +73,24 @@ sub getAlarmPlaylists {
 sub _gotSounds {
 	my ( $feed, $params ) = @_;
 	
-	my $alarmItems = [];
+	$alarmPlaylists = [];
 
 	# Flatten the list
 	for my $first ( @{ $feed->{items} } ) {
-		my $cat = $first->{name};
+		my $category = {
+			type  => $first->{name},
+			items => [],
+		};
+		
 		for my $second ( @{ $first->{items} } ) {
-			# XXX: Could display the category too, but it makes the line too long
-			push @$alarmItems, { title => $second->{name}, url => $second->{url} };
+			push @{ $category->{items} }, {
+				title => $second->{name},
+				url   => $second->{url},
+			};
 		}
+		
+		push @{$alarmPlaylists}, $category;
 	}
-
-	$alarmPlaylists = [ { type => 'PLUGIN_SOUNDS_MODULE_NAME', items => $alarmItems } ];
-
 }
 
 sub _gotSoundsError {

@@ -1470,7 +1470,10 @@ sub getPlaylists {
 
 	# Stringify keys for given client if they have been enclosed in curly braces 
 	foreach my $type (@playlists) {
-		$type->{type} = $client->string($type->{type});
+		if ( $type->{type} eq uc( $type->{type} ) ) {
+			$type->{type} = $client->string( $type->{type} );
+		}
+		
 		foreach my $playlist (@{$type->{items}}) {
 			# Stringify keys that are enclosed in curly braces
 			my ($stringTitle) = $playlist->{title} =~ /^{(.*)}$/; 
