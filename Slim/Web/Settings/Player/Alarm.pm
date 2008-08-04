@@ -135,6 +135,9 @@ sub saveAlarm {
 	}
 	$alarm->playlist($playlist);
 
+	# prettyTimeToSecs() can only handle : as a separator
+	$paramRef->{'alarmtime' . $id} =~ s/[\.,]/:/g;
+
 	# don't accept hours > midnight
 	my $t       = Slim::Utils::DateTime::prettyTimeToSecs( $paramRef->{'alarmtime' . $id} );
 	my ($h, $m) = Slim::Utils::DateTime::splitTime($t);
