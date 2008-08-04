@@ -33,10 +33,13 @@ sub all {
 		}
 	);
 	
-	my $all = {};
+	my $all = [];
 	
 	for my $fav ( @favs ) {
-		$all->{ $fav->title } = $fav->url;
+		push @{$all}, {
+			title => $fav->title,
+			url   => $fav->url,
+		};
 	}
 	
 	return $all;
