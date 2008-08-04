@@ -759,6 +759,7 @@ sub _stat_handler {
 			"\tbytes_received   $status{$client}->{'bytes_received'}",
 			"\tsignal_strength: $status{$client}->{'signal_strength'}",
 			"\tjiffies:         $status{$client}->{'jiffies'}",
+			"\tvoltage:         $status{$client}->{'voltage'}",
 			""
 		);
 

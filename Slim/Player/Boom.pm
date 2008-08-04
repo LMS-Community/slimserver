@@ -747,6 +747,14 @@ sub boomBright {
 	$request->setStatusDone();
 }
 
+sub lineInConnected {
+	Slim::Networking::Slimproto::voltage(shift) & 0x01;
+}
+
+sub lineOutConnected {
+	Slim::Networking::Slimproto::voltage(shift) & 0x02;
+}
+
 1;
 
 __END__
