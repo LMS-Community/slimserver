@@ -63,6 +63,26 @@ my $cacheInfo      = {};
 my $prefs = preferences('plugin.state');
 my $log   = logger('server.plugins');
 
+# On SN, disable some SC-only plugins
+my %SKIP = ();
+if ( main::SLIM_SERVICE ) {
+	%SKIP = (
+		'Slim::Plugin::Health::Plugin'         => 1,
+		'Slim::Plugin::JiveExtras::Plugin'     => 1,
+		'Slim::Plugin::MusicMagic::Plugin'     => 1,
+		'Slim::Plugin::MyRadio::Plugin'        => 1,
+		'Slim::Plugin::PreventStandby::Plugin' => 1,
+		'Slim::Plugin::RS232::Plugin'          => 1,
+		'Slim::Plugin::RandomPlay::Plugin'     => 1,
+		'Slim::Plugin::Rescan::Plugin'         => 1,
+		'Slim::Plugin::SavePlaylist::Plugin'   => 1,
+		'Slim::Plugin::SlimTris::Plugin'       => 1,
+		'Slim::Plugin::Snow::Plugin'           => 1,
+		'Slim::Plugin::iTunes::Plugin'         => 1,
+		'Slim::Plugin::xPL::Plugin'            => 1,
+	);
+}
+
 sub init {
 	my $class = shift;
 	
@@ -371,29 +391,9 @@ sub enablePlugins {
 	my @incDirs = ();
 	my @loaded  = ();
 	
-	# On SN, skip some SC-only plugins
-	my %skip = ();
-	if ( main::SLIM_SERVICE ) {
-		%skip = (
-			'Slim::Plugin::Health::Plugin'         => 1,
-			'Slim::Plugin::JiveExtras::Plugin'     => 1,
-			'Slim::Plugin::MusicMagic::Plugin'     => 1,
-			'Slim::Plugin::MyRadio::Plugin'        => 1,
-			'Slim::Plugin::PreventStandby::Plugin' => 1,
-			'Slim::Plugin::RS232::Plugin'          => 1,
-			'Slim::Plugin::RandomPlay::Plugin'     => 1,
-			'Slim::Plugin::Rescan::Plugin'         => 1,
-			'Slim::Plugin::SavePlaylist::Plugin'   => 1,
-			'Slim::Plugin::SlimTris::Plugin'       => 1,
-			'Slim::Plugin::Snow::Plugin'           => 1,
-			'Slim::Plugin::iTunes::Plugin'         => 1,
-			'Slim::Plugin::xPL::Plugin'            => 1,
-		);
-	}
-
 	for my $name (sort keys %$plugins) {
 		
-		if ( exists $skip{$name} ) {
+		if ( exists $SKIP{$name} ) {
 			$log->debug("Skipping plugin: $name - disabled for SN");
 			next;
 		}
@@ -657,6 +657,11 @@ sub enabledPlugins {
 sub isEnabled {
 	my $class  = shift;
 	my $plugin = shift;
+	
+	if ( exists $SKIP{$plugin} ) {
+		# Disabled on SN
+		return;
+	}
 
 	my %found  = map { $_ => 1 } $class->enabledPlugins;
 
