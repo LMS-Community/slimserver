@@ -104,7 +104,7 @@ WELCOME_MESSAGE
 	EN	Rock your world!
 
 SQUEEZENETWORK_WELCOME
-	EN	Your player is now registered, press RIGHT to begin!
+	EN	Your player is now registered. Press RIGHT to begin!
 
 SETUP_GROUP_MENUITEMS
 	DA	Tilpas hovedmenuen
