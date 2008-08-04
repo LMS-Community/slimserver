@@ -285,6 +285,11 @@ sub initPrefs {
 
 	# make sure any preferences unique to this client may not have set are set to the default
 	$prefs->client($client)->init($defaultPrefs);
+
+	# init display including setting any display specific preferences to default
+	if ($client->display) {
+		$client->display->initPrefs();
+	}
 }
 
 
