@@ -1378,6 +1378,9 @@ ALARM_VOLUME
 ALARM_VOLUME_DESC
 	EN	This setting allows you to choose the volume level that is used when an alarm goes off.
 
+ALARM_NEXT_ALARM
+	EN	Next Alarm:
+
 ALARM_ADD
 	EN	Add Alarm
 

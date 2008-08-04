@@ -80,7 +80,7 @@ our %screensaverDateTimeFunctions = (
 	 		$client->showBriefly(
 		 		{
 					'center' => [ 
-						$client->string('ALARM_ALARM') . $client->string('COLON') . ' ' . $client->string('ALARM_ALARM_ENABLED'),
+						$client->string('ALARM_NEXT_ALARM'),
 						$line,
 					]
 				},
