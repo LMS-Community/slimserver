@@ -71,14 +71,14 @@
 			
 			</select>
 
-			[% IF alarm.id != newAlarmID || useExtJS %]
+			[% IF alarm.id != newAlarmID || useAJAX || useExtJS %]
 				<div>
 					<br/>
 					<input name="alarm_remove_[% alarm.id %]" 
 						type="[% useExtJS && alarm.id == newAlarmID ? 'button' : 'submit' %]" 
 						class="stdclick removeButton" 
-						value="[% (useExtJS && alarm.id == newAlarmID ? 'CANCEL' : 'ALARM_DELETE') | string %]" 
-						onClick="[% useExtJS && alarm.id == newAlarmID ? 'return false;' : '' %]" 
+						value="[% (alarm.id == newAlarmID ? 'CANCEL' : 'ALARM_DELETE') | string %]" 
+						onClick="[% alarm.id == newAlarmID ? 'return false;' : '' %]" 
 						id="alarm_remove_[% alarm.id %]">
 				</div>
 			[% END %]
@@ -104,7 +104,7 @@
 		</select>
 	[% END %]
 
-	[% IF useExtJS %]
+	[% IF useExtJS || useAJAX %]
 		[% WRAPPER setting title="ALARM_NEW" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
 			<input name="AddAlarm" id="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]">
 		[% END %]
@@ -153,4 +153,9 @@
 	[% END %]
 
 	<div>&nbsp;</div>
+	[% IF useAJAX %]
+	<script TYPE="text/javascript">
+		initNewAlarm('[% newAlarmID %]');
+	</script>
+	[% END %]
 [% PROCESS settings/footer.html %]
