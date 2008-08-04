@@ -529,6 +529,10 @@ sub init {
 		}
 	}, 'allowedHosts');
 
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 100 }, 'alarmDefaultVolume');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1                }, 'alarmSnoozeSeconds');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0                }, 'alarmTimeoutSeconds');
+
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
 	
