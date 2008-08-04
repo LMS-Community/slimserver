@@ -129,8 +129,6 @@ sub saveAlarm {
 	my $id       = shift;
 	my $paramRef = shift;
 	
-	$alarm->volume( $paramRef->{'alarmvolume' . $id} );
-	$alarm->usesDefaultVolume( $paramRef->{'usesDefaultVolume' . $id} );
 	my $playlist = $paramRef->{'alarmplaylist' . $id};
 	if ($playlist eq '') {
 		$playlist = undef;
