@@ -86,41 +86,25 @@ Settings = {
 			items: settingsTabs
 		});
 
-		this.tp.on('beforetabchange', function(tb, tab, ev){
+		this.tp.on('beforetabchange', function(tb, tab, ev) {
 			var modified = false;
-
+			
 			try { modified = frames.settings.Settings.Page.isModified(); }
 			catch(e){}
+			
+			if (!modified)
+				return true;
+				
+			return Settings._confirmPageChange(function(btn, a, b){
+				if (btn == 'no' || btn == 'yes') {
+					if (btn == 'yes')
+						this.submitSettings();
 
-			if (modified) {
-				Ext.Msg.show({
-					title: SqueezeJS.string('settings'),
-					msg: SqueezeJS.string('settings_changed_confirm'),
-					width: 300,
-					closable: false,
-					buttons: {
-						yes: SqueezeJS.string('yes'),
-						no: SqueezeJS.string('no'),
-						cancel: SqueezeJS.string('cancel')
-					},
-					fn: function(btn, a, b){
-						if (btn == 'yes') {
-							if (this.submitSettings()) {
-								this._resetModified();
-								tb.activate(tab);
-							}
-						}
+					this._resetModified();
+					tb.activate(tab);
+				}
 
-						else if (btn == 'no') {
-							this._resetModified();
-							tb.activate(tab);
-						}
-					},
-					scope: this
-				});
-
-				return false;
-			}
+			}.createDelegate(this));
 		}, this);
 
 		new Ext.Button({
@@ -165,7 +149,16 @@ Settings = {
 	},
 
 	submitSettings : function() {
-		try { frames.settings.Settings.Page.submit() }
+		try { 
+			frames.settings.Settings.Page.submit();
+			// dirty hack to give Opera a second to finish the submit...
+			if (Ext.isOpera) {
+				var date = new Date();
+				var curDate = null;
+				do { curDate = new Date(); } 
+				while(curDate-date < 500);
+			}
+		}
 		catch(e){ return false; }
 		return true;
 	},
@@ -180,6 +173,39 @@ Settings = {
 	_resetModified : function() {
 		try { frames.settings.Settings.Page.resetModified(); }
 		catch(e){}
+	},
+
+	_isModified : function() {
+		var modified = false;
+		try { modified = frames.settings.Settings.Page.isModified(); }
+		catch(e){}
+		return modified;
+	},
+	
+	_confirmPageChange : function(cb) {
+		if (typeof cb == 'string') {
+			var url = cb;
+			cb = function(btn, a, b){
+				if (btn == 'no' || btn == 'yes') {
+					if (btn == 'yes')
+						this.submitSettings();
+
+					this._resetModified();
+					frames.settings.location = url;
+				}
+			};
+		}
+
+		Ext.Msg.show({
+			title: SqueezeJS.string('settings'),
+			msg: SqueezeJS.string('settings_changed_confirm'),
+			width: 300,
+			closable: false,
+			buttons: Ext.Msg.YESNOCANCEL,
+			fn: cb,
+			scope: this
+		});
+		return false;
 	}
 }
 
@@ -297,9 +323,12 @@ Settings.Page = function(){
 						checked: playerList[x].current,
 						cls: 'playerList',
 						group: 'playerList',
-						handler: function(ev){
-							location = location.pathname + '?player=' + ev.value + '&playerid=' + ev.value;
-						}
+						handler: function(ev) {
+							this._confirmPageChange(
+								location.pathname + '?player=' + ev.value + '&playerid=' + ev.value
+							);
+						},
+						scope: this
 					})
 				);
 			}
@@ -335,9 +364,12 @@ Settings.Page = function(){
 						checked: settingsList[x].current,
 						cls: 'settingsList',
 						group: 'settingsList',
-						handler: function(ev){
-							location = webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid;
-						}
+						handler: function(ev) {
+							this._confirmPageChange(
+								webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid
+							);
+						},
+						scope: this
 					})
 				);
 			}
@@ -401,8 +433,8 @@ Settings.Page = function(){
 				
 			});
 		},
-
-		submit : function(){
+		
+		submit : function(ajax, cb) {
 			var items = Ext.query('input.invalid');
 
 			for(var i = 0; i < items.length; i++) {
@@ -414,8 +446,9 @@ Settings.Page = function(){
 			}
 
 			// block first attempt to save if there are invalid values
-			if (items.length == 0 || invalidWarned)
+			if (items.length == 0 || invalidWarned) {
 				document.forms.settingsForm.submit();
+			}
 			else
 				invalidWarned = true;
 
@@ -456,13 +489,32 @@ Settings.Page = function(){
 			return modified;
 		},
 
+		setModified : function(){
+			modified = true;	
+		},
+		
 		resetModified : function(){
 			modified = false;
 		},
 
 		onResize : function(width, height){
 			Ext.util.CSS.updateRule('.x-menu-list', 'max-height', (height - 50) + 'px');
+		},
+
+		_confirmPageChange : function(url) {
+			var modified = this.isModified();
+
+			if (modified) {
+				try { parent.Settings._confirmPageChange(url); }
+				catch(e) {}
+				return false;
+			}
+			else {
+				location = url;
+			}
+			return true;
 		}
+
 	};
 }();
 
@@ -537,6 +589,11 @@ Settings.Alarm = function() {
 				 		input: el,
 				 		cls: 'settingsSlider'
 					});
+					this.sliders[el.id].on({
+			 			change: {
+			 				fn: Settings.Page.setModified
+			 			}
+			 		});
 				}
 			}
 		},
