@@ -113,6 +113,7 @@ sub new {
 		_snoozeActive => 0,
 		_nextDue => undef,
 		_timeoutTimer => undef, # Timer ref to the alarm timeout timer
+		_createTime => Time::HiRes::time,
 	};
 
 	bless $self, $class;
@@ -842,16 +843,20 @@ sub snoozeActive {
 # Persistence management
 ################################################################################
 
-=head3 save( )
+=head3 save( [ $reschedule = 1 ] )
 
 Save/update alarm.  This must be called on an alarm once changes have finished being made to it. 
 Changes to existing alarms will not be persisted unless this method is called.  New alarms will
 not be scheduled unless they have first been saved.
 
+Unless $reschedule is set to 0, alarms will be rescheduled after this call.  This is almost always
+what you want!
+
 =cut
 
 sub save {
 	my $self = shift;
+	my $reschedule = @_ ? shift : 1;
 
 	my $class = ref $self;
 	my $client = $self->client;
@@ -865,8 +870,10 @@ sub save {
 	$prefs->client($client)->alarms($prefAlarms);
 
 	# There's a new/updated alarm so reschedule
-	$log->debug('Alarm saved with id ' . $self->{_id} .  ' Rescheduling alarms...');
-	$class->scheduleNext($client);
+	if ($reschedule) {
+		$log->debug('Alarm saved with id ' . $self->{_id} .  ' Rescheduling alarms...');
+		$class->scheduleNext($client);
+	}
 }
 
 # Return a saveable version of the alarm and add the alarm to the client object.
@@ -900,6 +907,7 @@ sub _createSaveable {
 		_volume => $self->{_volume},
 		_comment => $self->{_comment},
 		_id => $self->{_id},
+		_createTime => $self->{_createTime},
 	};
 }
 
@@ -1072,7 +1080,7 @@ sub getAlarms {
 	my $alarmHash = $client->alarmData->{alarms};
 
 	my @alarms;
-	foreach my $alarm (sort {$alarmHash->{$a}->displayStr cmp $alarmHash->{$b}->displayStr} keys %{$alarmHash}) {
+	foreach my $alarm (sort { $alarmHash->{$a}->{_createTime} <=> $alarmHash->{$b}->{_createTime} } keys %{$alarmHash}) {
 				
 		$alarm = $alarmHash->{$alarm};
 		
@@ -1124,8 +1132,22 @@ sub loadAlarms {
 		$alarm->{_volume} = $prefAlarm->{_volume};
 		$alarm->{_comment} = $prefAlarm->{_comment};
 		$alarm->{_id} = $prefAlarm->{_id};
+		# Fix up createTime for alarms that pre-date its introduction
+		my $needsSaving = 0;
+		if (! defined $prefAlarm->{_createTime}) {
+			$log->debug('Alarm has no createTime - assigning one');
+			$needsSaving = 1;
+			$alarm->{_createTime} = Time::HiRes::time;
+		} else {
+			$alarm->{_createTime} = $prefAlarm->{_createTime};
+		}
 
 		$client->alarmData->{alarms}->{$alarm->{_id}} = $alarm; 
+
+		if ($needsSaving) {
+			# Disable rescheduling after save as we'll do it soon anyway
+			$alarm->save(0);
+		}
 	}
 
 	$log->debug('Alarms loaded.  Rescheduling...');
