@@ -885,8 +885,8 @@ SqueezeJS.UI.Buttons.Shuffle = Ext.extend(SqueezeJS.UI.Button, {
 	updateState: function(newState){
 		this.state = newState || 0;
 		this.setIcon('');
-		this.setTooltip(SqueezeJS.string('shuffle' + ' - ' + SqueezeJS.string('shuffle' + this.state)));
-		this.setText(SqueezeJS.string('shuffle' + ' - ' + SqueezeJS.string('shuffle' + this.state)));
+		this.setTooltip(SqueezeJS.string('shuffle') + ' - ' + SqueezeJS.string('shuffle' + this.state));
+		this.setText(SqueezeJS.string('shuffle') + ' - ' + SqueezeJS.string('shuffle' + this.state));
 		this.setClass('btn-shuffle-' + this.state);
 	}
 });
