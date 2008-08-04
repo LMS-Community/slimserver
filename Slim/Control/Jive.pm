@@ -763,39 +763,39 @@ sub alarmUpdateMenu {
 	};
 	push @menu, $setDays;
 
-	# XXX: playlists is currently a HoL; subject to change in the near future to a different structure
-	my %playlists = Slim::Utils::Alarm->getPlaylists($client);
+	my $playlists = Slim::Utils::Alarm->getPlaylists($client);
 
 	my $currentSetting = $alarm->playlist();
 
 	my @playlistChoices;
-	for my $type (keys %playlists) {
+	for my $typeRef (@$playlists) {
+		my $type = $typeRef->{type};
 		my @choices = ();
-		my $href = $playlists{$type};
-		for my $choice (sort keys %$href) {
+		my $aref = $typeRef->{items};
+		for my $choice (@$aref) {
 
 			my $radio = 0;
 			if ( 
-				( $currentSetting eq $href->{$choice} ) || 
-				( ! defined $href->{$choice} && ! defined $currentSetting )
+				( $currentSetting eq $choice->{url} ) || 
+				( ! defined $choice->{url} && ! defined $currentSetting )
 			) { 
 				$radio = 1;				
 			}
 			my $subitem = {
-				text    => $choice,
+				text    => $choice->{title},
 				radio   => $radio,
 				actions => {
 					do => {
 						cmd    => [ 'alarm', 'update' ],
 						params => {
 							id          => $params->{id},
-							playlisturl => $href->{$choice} || 0, # send 0 for "current playlist"
+							playlisturl => $choice->{url} || 0, # send 0 for "current playlist"
 						},
 					},
 				},
 			};
 
-			if ( defined($href->{$choice}) ) {
+			if ( defined($choice->{url}) ) {
 				push @choices, $subitem;
 			# use current playlist doesn't need a submenu
 			} else {
