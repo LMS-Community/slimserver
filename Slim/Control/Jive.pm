@@ -987,7 +987,7 @@ sub getCurrentAlarms {
 		for (0..6) {
 			push @days, $_ if $alarm->day($_);
 		}
-		my $name = $client->string('ALARM_ALARM') . ": " . $alarm->displayStr;
+		my $name = $client->string('ALARM_ALARM') . " $count: " . $alarm->displayStr;
 		my $daysString = join(',', @days);
 		my $thisAlarm = {
 			text           => $name,
