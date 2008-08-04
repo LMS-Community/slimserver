@@ -1775,15 +1775,11 @@ SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
 		
 		this.input.on({
 			change: {
-				fn: function(ev, i){
-					this.setInputValue(i.value);
-				},
+				fn: this._onChange,
 				scope: this
 			},
 			keyup: {
-				fn: function(ev, i){
-					this.setInputValue(i.value);
-				},
+				fn: this._onChange,
 				scope: this
 			}
 		});
@@ -1792,6 +1788,16 @@ SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
 		// try reading it from our input field
 		if (this.initialConfig.value == null)
 			this.value = isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value);
+	},
+	
+	_onChange: function(ev, input) {
+		// sanity check input values, don't accept non-numerical values
+		if (input.value != '' && isNaN(parseInt(input.value)))
+			input.value = input.defaultValue;
+		else if (input.value != '')
+			input.value = parseInt(input.value);
+
+		this.setInputValue(input.value);
 	},
 
 	setInputValue: function(v){
