@@ -422,13 +422,58 @@ sub processAnchor {
 			
 	$startbytes -= $startbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
 	$endbytes   -= $endbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
+	
+	# Bug 8877, if this is an MP3 file, we need to split on a frame boundary
+	# XXX: This may be broken for other formats too, i.e. Ogg
+	# XXX: Needs lots more work, I plan to use the technique pcutmp3 uses
+	# to add silence frame(s) and rewrite LAME tags to achieve proper splitting
+	# http://www.hydrogenaudio.org/forums/index.php?showtopic=35654
+	# http://jaybeee.themixingbowl.org/other/pcutmp3.jar
+	if ( $attributesHash->{'CONTENT_TYPE'} eq 'mp3' ) {
+		my $path = Slim::Utils::Misc::pathFromFileURL( $attributesHash->{'FILENAME'} );
+		open my $fh, '<', $path;
+		
+		if ( $startbytes > 0 ) {
+			$startbytes = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + $startbytes );	
+			$attributesHash->{'AUDIO_OFFSET'} = $startbytes;
+		}
+		else {
+			$attributesHash->{'AUDIO_OFFSET'} = $header;
 			
-	$attributesHash->{'AUDIO_OFFSET'} = $header + $startbytes;
-	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
+			# We need to skip past the LAME header so the first chunk
+			# doesn't get truncated by the firmware thinking it needs to remove encoder padding
+			seek $fh, $header, 0;
+			my $next = MPEG::Audio::Frame->read( $fh, 1 );
+			if ( $next && $next->content =~ /Info|LAME/ ) {
+				$attributesHash->{'AUDIO_OFFSET'} += $next->length;
+			}
+		}
+		
+		my $newend = Slim::Formats::MP3->findFrameBoundaries( $fh, $header + $endbytes );
+		if ( $newend ) {
+			$endbytes = $newend;
+		}
+		
+		$attributesHash->{'SIZE'} = $endbytes - $attributesHash->{'AUDIO_OFFSET'};
+		
+		close $fh;
+	}
+	else {
+		$attributesHash->{'AUDIO_OFFSET'} = $header + $startbytes;
+		$attributesHash->{'SIZE'} = $endbytes - $startbytes;
+	}
+	
 	$attributesHash->{'SECS'} = $duration;
 
-	$log->debug("Calculating duration for anchor: $duration");
-	$log->debug("Calculating header $header, startbytes $startbytes and endbytes $endbytes");
+	if ( $log->is_debug ) {
+		$log->debug( sprintf(
+			"New virtual track ($start-$end): start: %d, end: %d, size: %d, length: %d",
+			$attributesHash->{'AUDIO_OFFSET'},
+			$attributesHash->{'SIZE'} + $attributesHash->{'AUDIO_OFFSET'},
+			$attributesHash->{'SIZE'},
+			$attributesHash->{'SECS'},
+		) );
+	}
 }
 
 1;
