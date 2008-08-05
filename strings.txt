@@ -9345,6 +9345,9 @@ NONE
 LOW
 	EN	Low
 
+OUTDOOR
+	EN	Outdoor
+
 HIGH
 	CS	Vysoký
 	DA	Høj

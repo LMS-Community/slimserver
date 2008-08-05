@@ -208,6 +208,10 @@ sub init {
 									name   => '{HIGH}',
 									value  => 2,
 								},
+								{
+									name   => '{OUTDOOR}',
+									value  => 3,
+								},
 							],
 							'onPlay'       => sub { 
 								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
