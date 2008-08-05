@@ -1364,7 +1364,7 @@ ALARM_OFF
 
 ALARM_SELECT_PLAYLIST
 	DA	Vælg afspilningsliste til vækkeur
-	EN	Choose Playlist
+	EN	Alarm Sound
 	FI	Herätyksen soittoluettelo
 	NO	Spilleliste for vekkerklokke
 	SV	Spellista för alarm
