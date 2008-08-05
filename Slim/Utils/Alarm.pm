@@ -714,6 +714,12 @@ sub stopSnooze {
 		$log->debug('unpausing music');
 		my $request = $client->execute(['pause', 0]);
 		$request->source('ALARM');
+
+		# Fade volume if requested 
+		if ( $prefs->client($client)->get('alarmfadeseconds') ) {
+			$log->debug('Fading volume');
+			$client->fade_volume( $FADE_SECONDS );
+		}
 	}
 
 	$client->showBriefly({
