@@ -85,6 +85,18 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivetoneadjust'],
 		[1, 0, 1, \&toneAdjustCommand]);
 
+	Slim::Control::Request::addDispatch(['jivestereoxl', '_index', '_quantity'],
+		[1, 1, 1, \&stereoXLQuery]);
+
+	Slim::Control::Request::addDispatch(['jivesetstereoxl'],
+		[1, 0, 1, \&stereoXLCommand]);
+
+	Slim::Control::Request::addDispatch(['jivelineout', '_index', '_quantity'],
+		[1, 1, 1, \&lineOutQuery]);
+
+	Slim::Control::Request::addDispatch(['jivesetlineout'],
+		[1, 0, 1, \&lineOutCommand]);
+
 	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'],
 		[1, 1, 1, \&crossfadeSettingsQuery]);
 
@@ -1103,6 +1115,90 @@ sub sleepSettingsQuery {
 	sliceAndShip($request, $client, \@menu);
 }
 
+sub stereoXLQuery {
+
+	$log->info("Begin function");
+	my $request        = shift;
+	my $client         = $request->client();
+	my $currentSetting = $client->stereoxl();
+	my @strings = qw/ CHOICE_OFF LOW MEDIUM HIGH /;
+	my @menu = ();
+	for my $i (0..3) {
+		my $xlSetting = {
+			text    => $client->string($strings[$i]),
+			radio   => ($i == $currentSetting) + 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'jivesetstereoxl' ],
+					params => {
+						value  => $i,
+					},
+				},
+			},
+		};
+		push @menu, $xlSetting;
+	}
+
+	sliceAndShip($request, $client, \@menu);
+
+	$request->setStatusDone();
+
+}
+
+sub stereoXLCommand {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $value   = $request->getParam('value');
+
+	$client->stereoxl($value);
+
+	$request->setStatusDone();
+}
+
+sub lineOutQuery {
+
+	$log->info("Begin function");
+	my $request        = shift;
+	my $client         = $request->client();
+	my $currentSetting = $prefs->client($client)->get('analogOutMode');
+	my @strings = qw/ ANALOGOUTMODE_HEADPHONE ANALOGOUTMODE_SUBOUT /;
+	my @menu = ();
+	for my $i (0..1) {
+		my $lineOutSetting = {
+			text    => $client->string($strings[$i]),
+			radio   => ($i == $currentSetting) + 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'jivesetlineout' ],
+					params => {
+						value  => $i,
+					},
+				},
+			},
+		};
+		push @menu, $lineOutSetting;
+	}
+
+	sliceAndShip($request, $client, \@menu);
+
+	$request->setStatusDone();
+
+}
+
+sub lineOutCommand {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $value   = $request->getParam('value');
+
+	$client->setAnalogOutMode($value);
+
+	$request->setStatusDone();
+}
+
 sub toneSettingsQuery {
 
 	$log->info("Begin function");
@@ -1169,6 +1265,7 @@ sub toneAdjustCommand {
 
 	$request->setStatusDone();
 }
+
 sub crossfadeSettingsQuery {
 
 	$log->info("Begin function");
@@ -1388,6 +1485,42 @@ sub playerSettingsMenu {
 			window         => { titleStyle => 'settings' },
 		};
 	}
+
+	# stereoXL, if available
+	if ( $client->can('maxXL') ) {
+		push @menu, {
+			text           => $client->string("STEREOXL"),
+			id             => 'settingsStereoXL',
+			node           => 'settingsAudio',
+			weight         => 90,
+			actions        => {
+				go => {
+					cmd    => ['jivestereoxl'],
+					player => 0,
+				},
+			},
+			window         => { titleStyle => 'settings' },
+		};
+	}
+
+	# lineOut, if available
+	my $lineOutCapable = $prefs->client($client)->get('analogOutMode');
+	if ( defined $lineOutCapable ) {
+		push @menu, {
+			text           => $client->string("SETUP_ANALOGOUTMODE"),
+			id             => 'settingsLineOut',
+			node           => 'settingsAudio',
+			weight         => 80,
+			actions        => {
+				go => {
+					cmd    => ['jivelineout'],
+					player => 0,
+				},
+			},
+			window         => { titleStyle => 'settings' },
+		};
+	}
+
 
 	# sleep setting (always)
 	push @menu, {

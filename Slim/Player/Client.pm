@@ -859,7 +859,11 @@ sub pitch {
 	return $client->_mixerPrefs('pitch', 'maxPitch', 'minPitch', $value);
 }
 
-sub stereoXL {};
+sub stereoXL {
+	my ($client, $value) = @_;
+
+	return $client->_mixerPrefs('stereoxl', 'maxXL', 'minXL', $value);
+};
 
 sub _mixerPrefs {
 	my ($client, $pref, $max, $min, $value) = @_;
