@@ -333,6 +333,9 @@ sub init {
 	
 	$log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
+	
+	$log->info('SqueezeCenter Alarms init...');
+	Slim::Utils::Alarm->init();
 
 	$log->info("SlimServer Plugins init...");
 	Slim::Utils::PluginManager->init();
