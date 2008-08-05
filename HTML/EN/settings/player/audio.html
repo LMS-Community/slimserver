@@ -163,9 +163,40 @@
 			[% END %]
 	
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
-				<input type="text" class="stdedit sliderInput_0_10" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="15">
+				<input type="text" class="stdedit sliderInput_0_10" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="5">
 			[% END %]
 
+		[% END %]
+	[% END %]
+
+	[% IF prefs.exists('bass') || prefs.exists('treble') || prefs.exists('stereoxl') %]
+		[% WRAPPER settingSection %]
+			[% IF prefs.exists('bass') %]
+				[% WRAPPER settingGroup title="BASS" desc="" %]
+				<input type="text" class="stdedit sliderInput_-23_23" name="bass" id="bass" value="[% prefs.bass %]" size="5">
+				[% END %]
+			[% END %]
+		
+			[% IF prefs.exists('treble') %]
+				[% WRAPPER settingGroup title="TREBLE" desc="" %]
+				<input type="text" class="stdedit sliderInput_-23_23" name="treble" id="treble" value="[% prefs.treble %]" size="5">
+				[% END %]
+			[% END %]
+		
+			[% IF prefs.exists('stereoxl') %]
+				[% WRAPPER settingGroup title="STEREOXL" desc="" %]
+					<select class="stdedit" name="stereoxl" id="stereoxl">
+						[% FOREACH option = {
+							'0' => 'OFF',
+							'1' => 'LOW',
+							'2' => 'HIGH',
+							'3' => 'OUTDOOR'
+						} %]
+							<option [% IF prefs.stereoxl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						[%- END -%]
+					</select>
+				[% END %]
+			[% END %]
 		[% END %]
 	[% END %]
 

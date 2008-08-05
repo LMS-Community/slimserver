@@ -87,7 +87,7 @@ sub handler {
 	}
 
 	if ($client->isa('Slim::Player::Boom')) {
-		push @prefs,'analogOutMode';
+		push @prefs, 'analogOutMode', 'bass', 'treble', 'stereoxl';
 	}
 	
 	if ( $client->isa('Slim::Player::Squeezebox2') ) {
