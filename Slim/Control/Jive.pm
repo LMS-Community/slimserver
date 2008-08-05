@@ -79,6 +79,12 @@ sub init {
 	Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'],
 		[1, 1, 1, \&sleepSettingsQuery]);
 
+	Slim::Control::Request::addDispatch(['jivetonesettings', '_index', '_quantity'],
+		[1, 1, 1, \&toneSettingsQuery]);
+
+	Slim::Control::Request::addDispatch(['jivetoneadjust'],
+		[1, 0, 1, \&toneAdjustCommand]);
+
 	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'],
 		[1, 1, 1, \&crossfadeSettingsQuery]);
 
@@ -246,7 +252,6 @@ sub mainMenu {
 		{
 			stringToken    => 'MY_MUSIC',
 			weight         => 11,
-			displayWhenOff => 0,
 			id             => 'myMusic',
 			isANode        => 1,
 			node           => 'home',
@@ -256,7 +261,6 @@ sub mainMenu {
 			stringToken    => 'FAVORITES',
 			id             => 'favorites',
 			node           => 'home',
-			displayWhenOff => 0,
 			weight         => 40,
 			actions => {
 				go => {
@@ -307,7 +311,6 @@ sub mainMenu {
 				text           => $client->string('MY_MUSIC'),
 				id             => 'myMusic',
 				node           => 'home',
-				displayWhenOff => 0,
 				weight         => 15,
 				actions        => {
 					go => {
@@ -326,7 +329,6 @@ sub mainMenu {
 				text           => $client->string('RADIO'),
 				id             => 'radio',
 				node           => 'home',
-				displayWhenOff => 0,
 				weight         => 20,
 				actions        => {
 					go => {
@@ -346,7 +348,6 @@ sub mainMenu {
 				id             => 'ondemand',
 				node           => 'home',
 				weight         => 30,
-				displayWhenOff => 0,
 				actions => {
 					go => {
 						cmd => ['music_services'],
@@ -364,7 +365,6 @@ sub mainMenu {
 				text           => $client->string('FAVORITES'),
 				id             => 'favorites',
 				node           => 'home',
-				displayWhenOff => 0,
 				weight         => 40,
 				actions        => {
 					go => {
@@ -442,7 +442,6 @@ sub albumSortSettingsItem {
 		text           => $client->string('ALBUMS_SORT_METHOD'),
 		id             => 'settingsAlbumSettings',
 		node           => 'advancedSettings',
-		displayWhenOff => 0,
 		weight         => 100,
 			actions        => {
 			go => {
@@ -1104,6 +1103,72 @@ sub sleepSettingsQuery {
 	sliceAndShip($request, $client, \@menu);
 }
 
+sub toneSettingsQuery {
+
+	$log->info("Begin function");
+	my $request = shift;
+	my $client  = $request->client();
+	my $tone    = $request->getParam('cmd');
+
+	my @items = (
+		# raise $tone
+		{
+			text => $client->string('UP'),
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'jivetoneadjust' ],
+					params => {
+						delta => 1,
+						tone  => $tone,
+					},
+				},
+			},
+		},
+		# lower $tone
+		{
+			text => $client->string('DOWN'),
+			actions => {
+				do => {
+					player => 0,
+					cmd    => [ 'jivetoneadjust' ],
+					params => {
+						delta => -1,
+						tone  => $tone,
+					},
+				},
+			},
+		},
+	);
+
+	sliceAndShip($request, $client, \@items);
+
+	$request->setStatusDone();
+
+}
+
+sub toneAdjustCommand {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $tone    = $request->getParam('tone');
+	my $delta   = $request->getParam('delta');
+
+	my $val     = $client->$tone();
+	my $newVal  = $val + $delta;
+
+	$val = $client->$tone($newVal);
+
+	my $string = $client->string($tone) . ": " . $val;
+	$client->showBriefly({
+		'jive' => {
+			type    => 'popupplay',
+			text    => [ $string ],
+		}
+	});
+
+	$request->setStatusDone();
+}
 sub crossfadeSettingsQuery {
 
 	$log->info("Begin function");
@@ -1186,7 +1251,6 @@ sub internetRadioMenu {
 			text           => $client->string('RADIO'),
 			id             => 'radios',
 			node           => 'home',
-			displayWhenOff => 0,
 			weight         => 20,
 			actions        => {
 				go => {
@@ -1225,7 +1289,6 @@ sub musicServicesMenu {
 			id             => 'music_services',
 			node           => 'home',
 			weight         => 30,
-			displayWhenOff => 0,
 			actions => {
 				go => {
 					cmd => ['music_services'],
@@ -1259,7 +1322,6 @@ sub playerSettingsMenu {
 		id             => 'settingsAudio',
 		node           => 'settings',
 		isANode        => 1,
-		displayWhenOff => 0,
 		weight         => 35,
 		window         => { titleStyle => 'settings', },
 	};
@@ -1276,7 +1338,6 @@ sub playerSettingsMenu {
 			text           => $client->string("ALARM"),
 			id             => 'settingsAlarm',
 			node           => 'settings',
-			displayWhenOff => 0,
 			weight         => 29,
 			actions        => {
 				go => {
@@ -1288,12 +1349,51 @@ sub playerSettingsMenu {
 		};
 	}
 
+	# bass, if available
+	if ( $client->maxBass() - $client->minBass() > 0 ) {
+		push @menu, {
+			text           => $client->string("BASS"),
+			id             => 'settingsBass',
+			node           => 'settingsAudio',
+			weight         => 10,
+			actions        => {
+				go => {
+					cmd    => ['jivetonesettings'],
+					player => 0,
+					params => {
+						'cmd' => 'bass',
+					},
+				},
+			},
+			window         => { titleStyle => 'settings' },
+		};
+	}
+
+	# treble, if available
+	if ( $client->maxTreble() - $client->minTreble() > 0 ) {
+		push @menu, {
+			text           => $client->string("TREBLE"),
+			id             => 'settingsTreble',
+			node           => 'settingsAudio',
+			weight         => 20,
+			actions        => {
+				go => {
+					cmd    => ['jivetonesettings'],
+					player => 0,
+					params => {
+						'cmd' => 'treble',
+					},
+				},
+			},
+			window         => { titleStyle => 'settings' },
+		};
+	}
+
 	# sleep setting (always)
 	push @menu, {
 		text           => $client->string("PLAYER_SLEEP"),
 		id             => 'settingsSleep',
 		node           => 'settings',
-		displayWhenOff => 0,
 		weight         => 40,
 		actions        => {
 			go => {
@@ -1311,7 +1411,6 @@ sub playerSettingsMenu {
 			text           => $client->string("SYNCHRONIZE"),
 			id             => 'settingsSync',
 			node           => 'settings',
-			displayWhenOff => 0,
 			weight         => 70,
 			actions        => {
 				go => {
@@ -1342,7 +1441,6 @@ sub playerSettingsMenu {
 		text           => $playerInfoText,
 		id             => 'settingsPlayerInformation',
 		node           => 'advancedSettings',
-		displayWhenOff => 0,
 		textArea       => $playerInfoTextArea,
 		weight         => 4,
 		window         => { titleStyle => 'settings' },
@@ -1361,7 +1459,6 @@ sub playerSettingsMenu {
 		text           => $client->string('INFORMATION_PLAYER_NAME'),
 		id             => 'settingsPlayerNameChange',
 		node           => 'advancedSettings',
-		displayWhenOff => 0,
 		input          => {	
 			initialText  => $client->name(),
 			len          => 1, # For those that want to name their player "X"
@@ -1391,7 +1488,7 @@ sub playerSettingsMenu {
 			text           => $client->string("SETUP_TRANSITIONTYPE"),
 			id             => 'settingsXfade',
 			node           => 'settingsAudio',
-			displayWhenOff => 0,
+			weight         => 30,
 			actions        => {
 				go => {
 					cmd    => ['crossfadesettings'],
@@ -1405,10 +1502,10 @@ sub playerSettingsMenu {
 	# replay gain (aka volume adjustment)
 	if ($client->canDoReplayGain(0)) {
 		push @menu, {
-			displayWhenOff => 0,
 			text           => $client->string("REPLAYGAIN"),
 			id             => 'settingsReplayGain',
 			node           => 'settingsAudio',
+			weight         => 40,
 			actions        => {
 				  go => {
 					cmd    => ['replaygainsettings'],
@@ -1477,7 +1574,6 @@ sub browseMusicFolder {
 				text           => $client->string('BROWSE_MUSIC_FOLDER'),
 				id             => 'myMusicMusicFolder',
 				node           => 'myMusic',
-				displayWhenOff => 0,
 				weight         => 70,
 				actions        => {
 					go => {
@@ -1523,7 +1619,6 @@ sub repeatSettings {
 		text           => $client->string("REPEAT"),
 		id             => 'settingsRepeat',
 		node           => 'settings',
-		displayWhenOff => 0,
 		weight         => 20,
 		choiceStrings  => [ @translated_repeat_strings ],
 		selectedIndex  => $repeat_setting + 1, # 1 is added to make it count like Lua
@@ -1562,7 +1657,6 @@ sub shuffleSettings {
 		id             => 'settingsShuffle',
 		node           => 'settings',
 		selectedIndex  => $shuffle_setting + 1,
-		displayWhenOff => 0,
 		weight         => 10,
 		choiceStrings  => [ @translated_shuffle_strings ],
 		actions        => {
@@ -1826,7 +1920,6 @@ sub playerPower {
 		text           => $text,
 		id             => 'playerpower',
 		node           => 'home',
-		displayWhenOff => 1,
 		weight         => 100,
 		actions        => {
 			do  => {
@@ -1907,7 +2000,6 @@ sub myMusicMenu {
 				homeMenuText   => $client->string('BROWSE_ARTISTS'),
 				id             => 'myMusicArtists',
 				node           => 'myMusic',
-				displayWhenOff => 0,
 				weight         => 10,
 				actions        => {
 					go => {
@@ -1927,7 +2019,6 @@ sub myMusicMenu {
 				id             => 'myMusicAlbums',
 				node           => 'myMusic',
 				weight         => 20,
-				displayWhenOff => 0,
 				actions        => {
 					go => {
 						cmd    => ['albums'],
@@ -1948,7 +2039,6 @@ sub myMusicMenu {
 				homeMenuText   => $client->string('BROWSE_GENRES'),
 				id             => 'myMusicGenres',
 				node           => 'myMusic',
-				displayWhenOff => 0,
 				weight         => 30,
 				actions        => {
 					go => {
@@ -1967,7 +2057,6 @@ sub myMusicMenu {
 				homeMenuText   => $client->string('BROWSE_YEARS'),
 				id             => 'myMusicYears',
 				node           => 'myMusic',
-				displayWhenOff => 0,
 				weight         => 40,
 				actions        => {
 					go => {
@@ -1985,7 +2074,6 @@ sub myMusicMenu {
 				text           => $client->string('BROWSE_NEW_MUSIC'),
 				id             => 'myMusicNewMusic',
 				node           => 'myMusic',
-				displayWhenOff => 0,
 				weight         => 50,
 				actions        => {
 					go => {
@@ -2005,7 +2093,6 @@ sub myMusicMenu {
 				text           => $client->string('SAVED_PLAYLISTS'),
 				id             => 'myMusicPlaylists',
 				node           => 'myMusic',
-				displayWhenOff => 0,
 				weight         => 80,
 				actions        => {
 					go => {
@@ -2024,7 +2111,6 @@ sub myMusicMenu {
 				id             => 'myMusicSearch',
 				node           => 'myMusic',
 				isANode        => 1,
-				displayWhenOff => 0,
 				weight         => 90,
 				window         => { titleStyle => 'search', },
 			},
@@ -2055,7 +2141,6 @@ sub searchMenu {
 		homeMenuText   => $client->string('ARTIST_SEARCH'),
 		id             => 'myMusicSearchArtists',
 		node           => 'myMusicSearch',
-		displayWhenOff => 0,
 		weight         => 10,
 		input => {
 			len  => 1, #bug 5318
@@ -2087,7 +2172,6 @@ sub searchMenu {
 		homeMenuText   => $client->string('ALBUM_SEARCH'),
 		id             => 'myMusicSearchAlbums',
 		node           => 'myMusicSearch',
-		displayWhenOff => 0,
 		weight         => 20,
 		input => {
 			len  => 1, #bug 5318
@@ -2120,7 +2204,6 @@ sub searchMenu {
 		homeMenuText   => $client->string('TRACK_SEARCH'),
 		id             => 'myMusicSearchSongs',
 		node           => 'myMusicSearch',
-		displayWhenOff => 0,
 		weight         => 30,
 		input => {
 			len  => 1, #bug 5318
@@ -2154,7 +2237,6 @@ sub searchMenu {
 		homeMenuText   => $client->string('PLAYLIST_SEARCH'),
 		id             => 'myMusicSearchPlaylists',
 		node           => 'myMusicSearch',
-		displayWhenOff => 0,
 		weight         => 40,
 		input => {
 			len  => 1, #bug 5318
@@ -2375,7 +2457,6 @@ sub recentSearchMenu {
 			text           => $client->string('RECENT_SEARCHES'),
 			id             => 'homeSearchRecent',
 			node           => 'home',
-			displayWhenOff => 0,
 			weight         => 80,
 			actions => {
 				go => {
@@ -2393,7 +2474,6 @@ sub recentSearchMenu {
 			id             => 'myMusicSearchRecent',
 			node           => 'myMusicSearch',
 			noCustom       => 1,
-			displayWhenOff => 0,
 			weight         => 50,
 			actions => {
 				go => {
