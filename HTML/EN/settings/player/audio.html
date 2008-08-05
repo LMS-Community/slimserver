@@ -189,8 +189,8 @@
 						[% FOREACH option = {
 							'0' => 'OFF',
 							'1' => 'LOW',
-							'2' => 'HIGH',
-							'3' => 'OUTDOOR'
+							'2' => 'MEDIUM',
+							'3' => 'HIGH'
 						} %]
 							<option [% IF prefs.stereoxl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 						[%- END -%]
