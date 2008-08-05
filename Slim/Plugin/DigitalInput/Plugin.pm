@@ -297,7 +297,7 @@ sub getFunctions {
 	return {
 		'aes-ebu'     => sub { updateDigitalInput(shift, $digital_inputs[ 0 ]) },
 		'bnc-spdif'   => sub { updateDigitalInput(shift, $digital_inputs[ 1 ]) },
-		'rcs-spdif'   => sub { updateDigitalInput(shift, $digital_inputs[ 2 ]) },
+		'rca-spdif'   => sub { updateDigitalInput(shift, $digital_inputs[ 2 ]) },
 		'toslink'     => sub { updateDigitalInput(shift, $digital_inputs[ 3 ]) },
 	};
 }
