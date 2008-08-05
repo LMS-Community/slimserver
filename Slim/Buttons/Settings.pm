@@ -205,11 +205,11 @@ sub init {
 									value  => 1,
 								},
 								{
-									name   => '{HIGH}',
+									name   => '{MEDIUM}',
 									value  => 2,
 								},
 								{
-									name   => '{OUTDOOR}',
+									name   => '{HIGH}',
 									value  => 3,
 								},
 							],
