@@ -103,6 +103,10 @@ function _init() {
 									if (this.playerStatus.rescan != response.result.rescan) {
 										this.playerStatus.rescan = response.result.rescan;
 										this.fireEvent('scannerupdate', response.result);
+										
+										var updater = this.observers.get('serverstatus');
+										if (updater)
+											updater.timer.delay(750);
 									}
 								}
 							},
@@ -137,7 +141,8 @@ function _init() {
 							if (response && response.result) {
 								this.fireEvent('playerlistupdate', response.result);
 
-								if (response.result.rescan) {
+								if (response.result.rescan || this.playerStatus.rescan) {
+									this.playerStatus.rescan = response.result.rescan;
 									this.fireEvent('scannerupdate', response.result);
 								}
 							}
