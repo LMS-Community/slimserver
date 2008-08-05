@@ -1296,7 +1296,8 @@ sub setRTCAlarm {
 			}
 
 			# Alarm times are "floating" so no need to adjust for local time
-			$log->debug("Setting RTC alarm to $alarmTime");
+			$log->debug( "Setting RTC alarm to $alarmTime, volume " . $nextAlarm->volume );
+			
 			$client->setRTCAlarm($alarmTime, $nextAlarm->volume);
 
 			$clearRTCAlarm = 0;
