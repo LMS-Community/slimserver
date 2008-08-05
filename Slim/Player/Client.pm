@@ -59,6 +59,12 @@ $prefs->setChange( sub {
 	Slim::Utils::Alarm->alarmsEnabled($client, $value);
 }, 'alarmsEnabled' );
 
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Utils::Alarm->defaultVolume($client, $value);
+}, 'alarmDefaultVolume' );
+
 # deprecated, use $client->maxVolume
 our $maxVolume = 100;
 

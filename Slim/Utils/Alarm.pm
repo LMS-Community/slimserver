@@ -290,10 +290,19 @@ N.B.  This feature is not exposed in the default interfaces.  Alarms all use the
 sub volume {
 	my $self = shift;
 
+	my $client = $self->client;
+	my $class = ref $self;
+
 	if (@_) {
 		my $newValue = shift;
 	
 		$self->{_volume} = $newValue;
+
+		# Update the RTC volume if needed
+	        if ($client->alarmData->{nextAlarm} == $self) {
+			$class->setRTCAlarm($client);
+		};
+
 	}
 
 	if (defined $self->{_volume}) {
@@ -1313,8 +1322,10 @@ sub defaultVolume {
 	my $client = shift;
 	my $volume = shift;
 
-	if (defined $volume) {
+	if (defined $volume && $volume != $prefs->client($client)->alarmDefaultVolume) {
 		$prefs->client($client)->alarmDefaultVolume($volume);
+		# Update the RTC volume
+		$class->setRTCAlarm($client);
 	}
 
 	return $prefs->client($client)->alarmDefaultVolume;
@@ -1333,7 +1344,7 @@ sub alarmsEnabled {
 	my $client = shift;
 	my $enabled = shift;
 
-	if (defined $enabled) {
+	if (defined $enabled && $enabled != $prefs->client($client)->alarmsEnabled) {
 		$prefs->client($client)->alarmsEnabled($enabled);
 		
 		# Reschedule to enable/disable
