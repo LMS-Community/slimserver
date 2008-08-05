@@ -981,6 +981,13 @@ our %functions = (
 
 	'snooze' => sub  {
 		my $client = shift;
+		
+		# Bug 8860, if setting the sleep timer, a single snooze press will
+		# also adjust the timer
+		if ( $client->modeParam('sleepMode') ) {
+			Slim::Hardware::IR::executeButton( $client, 'sleep', undef, undef, 1 );
+			return;
+		}
 
 		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 		if (defined $currentAlarm) {
@@ -1051,16 +1058,22 @@ our %functions = (
 		}
 
 		$client->execute(["sleep", $sleepTime * 60]);
+		
+		# This is used to enable the ability to press the snooze bar
+		# again to quickly adjust the sleep time
+		$client->modeParam( sleepMode => 1 );
 
-		if ($sleepTime == 0) {
-			$client->showBriefly( {
-				'line' => [ "", $client->string('CANCEL_SLEEP') ]
-			});
-		} else {
-			$client->showBriefly( {
-				'line' => [ "", $client->prettySleepTime ]
-			});
-		}
+		my $line = $sleepTime == 0 ? $client->string('CANCEL_SLEEP') : $client->prettySleepTime;
+
+		$client->showBriefly( {
+			line => [ "", $line ],
+		},
+		{
+			scroll   => 1,
+			callback => sub {
+				$client->modeParam( sleepMode => 0 );
+			}
+		} );
 	},
 
 	'power' => sub  {
