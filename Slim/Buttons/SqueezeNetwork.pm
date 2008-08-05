@@ -73,7 +73,10 @@ sub setMode {
 sub connectSC {
 	my ( $client, $method ) = @_;
 	
-	Slim::Buttons::Settings::switchServer( $client, 'RIGHT', 'SqueezeCenter' );
+	Slim::Buttons::Settings::switchServer( $client, {
+		name  => 'SqueezeCenter',
+		value => 0,
+	} );
 }
 
 our %functions = (

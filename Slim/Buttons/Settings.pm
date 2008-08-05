@@ -1026,16 +1026,12 @@ sub switchServer {
 	my ($client, $server) = @_;
 	
 	if ($server->{value} eq 'SQUEEZENETWORK') {
-
 		Slim::Buttons::Common::pushModeLeft($client, 'squeezenetwork.connect');
-
 	} 
 
-	elsif (Slim::Networking::Discovery::Server::is_self($server->{value})) {
-		
+	elsif ( !main::SLIM_SERVICE && Slim::Networking::Discovery::Server::is_self($server->{value}) ) {
 		$client->bumpRight();
 	}
-
 	else {
 
 		$client->showBriefly({
