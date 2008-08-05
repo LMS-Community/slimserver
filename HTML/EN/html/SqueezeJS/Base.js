@@ -103,6 +103,10 @@ function _init() {
 									if (this.playerStatus.rescan != response.result.rescan) {
 										this.playerStatus.rescan = response.result.rescan;
 										this.fireEvent('scannerupdate', response.result);
+										
+										var updater = this.observers.get('serverstatus');
+										if (updater)
+											updater.timer.delay(750);
 									}
 								}
 							},
@@ -137,7 +141,8 @@ function _init() {
 							if (response && response.result) {
 								this.fireEvent('playerlistupdate', response.result);
 
-								if (response.result.rescan) {
+								if (response.result.rescan || this.playerStatus.rescan) {
+									this.playerStatus.rescan = response.result.rescan;
 									this.fireEvent('scannerupdate', response.result);
 								}
 							}
@@ -465,14 +470,14 @@ SqueezeJS.SonginfoParser = {
 			album : new Ext.Template('{album}'),
 			contributor : new Ext.Template('{contributor}'),
 			year : new Ext.Template('{year}'),
-			coverart : new Ext.Template('<img src="{src}" width="{width}" height="{width}">')
+			coverart : new Ext.Template('<img src="{src}" {width} {height}>')
 		},
 		linked : {
 			title : new Ext.Template('<a href="' + webroot +'{link}?player={player}&amp;item={id}" target="browser">{title}</a>'),
 			album : new Ext.Template('<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id={id}&amp;player={player}" target="browser">{album}</a>'),
 			contributor : new Ext.Template('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id={id}&amp;level=1&amp;player={player}" target="browser">{contributor}</a>'),
 			year : new Ext.Template('<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id={year}&amp;player={player}" target="browser">{year}</a>'),
-			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" width="{width}" height="{width}"></a>')
+			coverart : new Ext.Template('<a href="' + webroot + '{link}?player={player}&amp;item={id}" target="browser"><img src="{src}" {width} {height}></a>')
 		}
 	},
 
@@ -604,7 +609,8 @@ SqueezeJS.SonginfoParser = {
 		return this.tpl[((noLink || id == null) ? 'raw' : 'linked')].coverart.apply({
 			id: id,
 			src: coverart,
-			width: width,
+			width: width ? 'width="' + width + '"' : '',
+			height: width ? 'height="' + width + '"' : '',
 			link: link
 		});
 	},
