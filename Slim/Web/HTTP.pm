@@ -803,7 +803,7 @@ sub processURL {
 
 	for (my $i = 0; $i <= scalar keys %{$params}; $i++) {
 		last unless defined $params->{"p$i"};
-		$p[$i] = $params->{"p$i"};
+		$p[$i] = Slim::Utils::Unicode::utf8encode_locale($params->{"p$i"});
 	}
 
 	# This is trumped by query parameters 'command' and 'subcommand'.
