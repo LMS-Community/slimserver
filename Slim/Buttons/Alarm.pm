@@ -146,13 +146,12 @@ my @alarmMenu = (
 	},
 );
 
-# The top-level menu items
-# Items are automatically added to the top of this menu for the current client's saved alarms
-my @menu = (
+# The top-level menu items.
+my %menu = (
+	# Prevent any alarm from sounding
+	alarmsEnabled => 
 	{
-		# All Alarms   On/Off
-		# N.B. buildTopMenu assumes that this is the first item in the menu
-		title		=> 'ALARM_ALL_ALARMS',
+		title		=> 'ALARM',
 		type		=> 'onOff',
 		checked		=> sub {
 					my $client = shift;
@@ -164,16 +163,20 @@ my @menu = (
 					Slim::Utils::Alarm->alarmsEnabled($client, ! Slim::Utils::Alarm->alarmsEnabled($client));
 				},
 	},
+
+	# Add new alarm
+	addAlarm => 
 	{
-		# Add alarm
 		title		=> 'ALARM_ADD',
 		type		=> 'menu',
 		# Move Enabled to end of item list for a new alarm - it's normally at the top.  Set Time will now be first.
 		# Discard the Remove Alarm option, which is at the end.
 		items		=> [@alarmMenu[1 .. $#alarmMenu - 1, 0]],
 	},
+
+	# Volume level to use for all alarms
+	volume =>
 	{
-		# Volume level to use for alarms
 		title		=> 'ALARM_VOLUME',
 		type 		=> 'volume',
 		initialValue	=> sub {
@@ -312,9 +315,9 @@ sub buildTopMenu {
 		$listRef = $mode->{listRef};
 	}
 
-	# Get any existing alarms and add them to the menu
-	# but keep All Alarms  On/Off at the top 
-	@$listRef = ($menu[0]);
+	@$listRef = ();
+
+	# Get any existing alarms and add them to the menu 
 	my @alarms = Slim::Utils::Alarm->getAlarms($client);
 	my $count = 0;
 	foreach my $alarm (@alarms) {
@@ -333,7 +336,21 @@ sub buildTopMenu {
 			$mode->{listIndex} = $count;
 		}
 	}
-	push @$listRef, @menu[1 .. $#menu];
+
+	# Add alarm comes next
+	push @$listRef, $menu{addAlarm};
+	
+	# Alarm volume
+	push @$listRef, $menu{volume};
+
+	# Alarm clock on/off goes at the top, unless there are no defined
+	# alarms, in which case it goes to the bottom
+	if (scalar @alarms) {
+		unshift @$listRef, $menu{alarmsEnabled};
+	} else {
+		push @$listRef, $menu{alarmsEnabled};
+	}
+
 }
 
 # Dynamically builds the alarm playlist menu and returns it as an arrayref

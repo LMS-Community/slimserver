@@ -869,6 +869,14 @@ sub save {
 	$prefAlarms->{$self->{_id}} = $alarmPref;
 	$prefs->client($client)->alarms($prefAlarms);
 
+	# If there are no other alarms, force alarmsEnabled to 1 to make sure
+	# the new alarm sounds.  Otherwise assume that if all alarms were turned
+	# off it was with good reason and leave things as they are.
+	if (keys(%$prefAlarms) == 1) {
+		$log->debug('Forcing alarmsEnabled to 1');
+		$prefs->client($client)->alarmsEnabled(1);
+	}
+
 	# There's a new/updated alarm so reschedule
 	if ($reschedule) {
 		$log->debug('Alarm saved with id ' . $self->{_id} .  ' Rescheduling alarms...');
@@ -1311,7 +1319,7 @@ sub defaultVolume {
 	return $prefs->client($client)->alarmDefaultVolume;
 }
 
-=head2 enabled( [0/1] )
+=head2 alarmsEnabled ( [0/1] )
 
 Sets/returns whether alarms are enabled for a given client.
 
