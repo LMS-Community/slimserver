@@ -915,6 +915,7 @@ sub _createSaveable {
 		_volume => $self->{_volume},
 		_comment => $self->{_comment},
 		_id => $self->{_id},
+		_repeat => $self->{_repeat},
 		_createTime => $self->{_createTime},
 	};
 }
