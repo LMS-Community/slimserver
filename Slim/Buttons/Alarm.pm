@@ -151,7 +151,7 @@ my %menu = (
 	# Prevent any alarm from sounding
 	alarmsEnabled => 
 	{
-		title		=> 'ALARM',
+		title		=> 'ALARM_ALL_ALARMS',
 		type		=> 'onOff',
 		checked		=> sub {
 					my $client = shift;
