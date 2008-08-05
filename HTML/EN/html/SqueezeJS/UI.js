@@ -1792,9 +1792,9 @@ SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
 	
 	_onChange: function(ev, input) {
 		// sanity check input values, don't accept non-numerical values
-		if (input.value != '' && isNaN(parseInt(input.value)))
+		if (input.value != '' && input.value != '-' && isNaN(parseInt(input.value)))
 			input.value = input.defaultValue;
-		else if (input.value != '')
+		else if (input.value != '' && input.value != '-')
 			input.value = parseInt(input.value);
 
 		this.setInputValue(input.value);

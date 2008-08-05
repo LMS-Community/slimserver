@@ -387,10 +387,10 @@ Settings.Page = function(){
 					max = 100;
 					increment = 1;
 
-					var params = inputEl.dom.className.match(/sliderInput_(\d+)_(\d+)_(\d+)/);
+					var params = inputEl.dom.className.match(/sliderInput_([-]?\d+)_(\d+)_(\d+)/);
 
 					if (params == null) {
-						params = inputEl.dom.className.match(/sliderInput_(\d+)_(\d+)/);
+						params = inputEl.dom.className.match(/sliderInput_([-]?\d+)_(\d+)/);
 						min = RegExp.$1;
 						max = RegExp.$2;
 					}
