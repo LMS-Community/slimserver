@@ -47,6 +47,8 @@ sub audioScrobblerSource {
 	return 'P';
 }
 
+sub isRemote { 1 }
+
 sub handleError {
     return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
 }

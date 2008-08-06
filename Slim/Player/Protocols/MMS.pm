@@ -75,6 +75,8 @@ sub new {
 	return $self;
 }
 
+sub isRemote { 1 }
+
 sub contentType {
 	my $self = shift;
 

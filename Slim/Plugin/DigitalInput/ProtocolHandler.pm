@@ -37,4 +37,6 @@ sub contentType {
 	return 'src';
 }
 
+sub isRemote { 0 }
+
 1;

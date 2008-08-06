@@ -47,6 +47,8 @@ sub new {
 	return $self;
 }
 
+sub isRemote { 1 }
+
 sub readMetaData {
 	my $self = shift;
 	my $client = ${*$self}{'client'};
