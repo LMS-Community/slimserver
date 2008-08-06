@@ -1022,11 +1022,9 @@ Initialise SqueezeCenter alarm functionality.  This must be called on server sta
 
 sub init {
 	my $class = shift;
+	my $client = shift;
 
 	$log->debug('Alarm initing...');
-
-	# Set up subscriptions to track new clients
-	Slim::Control::Request::subscribe(\&_clientManager, [['client'], ['new']]);
 }
 
 # Subscribe to commands that should stop the alarm
@@ -1469,30 +1467,32 @@ sub getPlaylists {
 			};
 	}
 
-	# Add the current saved playlists
-	# XXX: This code would ideally also be elsewhere
-	my @saved = Slim::Schema->rs('Playlist')->getPlaylists;
-	my @savedArray;
-	foreach my $playlist (@saved) {
-		push @savedArray, {
-				title => Slim::Music::Info::standardTitle($client, $playlist->url),
-				url => $playlist->url
+	if (!main::SLIM_SERVICE) {
+		# Add the current saved playlists
+		# XXX: This code would ideally also be elsewhere
+		my @saved = Slim::Schema->rs('Playlist')->getPlaylists;
+		my @savedArray;
+		foreach my $playlist (@saved) {
+			push @savedArray, {
+					title => Slim::Music::Info::standardTitle($client, $playlist->url),
+					url => $playlist->url
+				};
+		}
+		@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
+		push @playlists, {
+				type => 'PLAYLISTS',
+				items => \@savedArray,
 			};
-	}
-	@savedArray = sort { $a->{title} cmp $b->{title} } @savedArray; 
-	push @playlists, {
-			type => 'PLAYLISTS',
-			items => \@savedArray,
-		};
 
-	# Add random mixes
-	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
-		if ( my $mixes = Slim::Plugin::RandomPlay::Plugin->getAlarmPlaylists() ) {
-			foreach my $mixType (@$mixes) {
-				push @playlists, {
-						type => $mixType->{type},
-						items => $mixType->{items},
-					};
+		# Add random mixes
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RandomPlay::Plugin') ) {
+			if ( my $mixes = Slim::Plugin::RandomPlay::Plugin->getAlarmPlaylists() ) {
+				foreach my $mixType (@$mixes) {
+					push @playlists, {
+							type => $mixType->{type},
+							items => $mixType->{items},
+						};
+				}
 			}
 		}
 	}
@@ -1633,25 +1633,6 @@ sub _timeStr {
 }
 
 # Callback handlers.  (These have to be package methods as can only take $request as their argument)
-
-# Handle new client notifications by loading alarms for that client.  Called as a callback
-# function for Slim::Control::Request::subscribe
-sub _clientManager {
-	my $request = shift;
-
-	my $client = $request->client;
-	my $class = __PACKAGE__;
-
-	$log->debug('_clientManager callback called for cmd: ' . $request->getRequestString);
-
-	if ($request->isCommand([['client'], ['new']])) {
-		$log->debug('New client: ' . $client->name . ' (' . $client->id . ')');
-		$class->loadAlarms($client);
-		
-		# Update the display in case an alarm was enabled
-		$client->update;
-	}
-}
 
 # Handle events that should stop the alarm/snooze.  This doesn't cover the case of the snooze timer firing.
 sub _alarmEnd {

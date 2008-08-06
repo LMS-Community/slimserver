@@ -299,6 +299,8 @@ sub init {
 	if ($client->display) {
 		$client->display->init();
 	}
+
+	Slim::Utils::Alarm->loadAlarms($client);
 }
 
 sub initPrefs {
