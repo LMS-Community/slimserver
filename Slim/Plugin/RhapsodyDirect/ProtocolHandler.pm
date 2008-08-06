@@ -421,6 +421,29 @@ sub onJump {
 		);
 	}
 	
+	if ( main::SLIM_SERVICE ) {
+		# Fail if firmware doesn't support mp3
+		my $old;
+		
+		my $deviceid = $client->deviceid;
+		my $rev      = $client->revision;
+		
+		if ( $deviceid == 4 && $rev < 97 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 5 && $rev < 45 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 7 && $rev < 32 ) {
+			$old = 1;
+		}
+		
+		if ( $old ) {
+			handleError( $client->string('PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED'), $client );
+			return;
+		}
+	}
+	
 	# Get login info from SN if we don't already have it
 	my $account = $class->getAccount($client);
 	

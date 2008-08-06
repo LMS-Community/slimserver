@@ -224,3 +224,15 @@ PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
 
 PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
 	EN	Unable to find address for Rhapsody.
+
+PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
+	DA	Hvis du vil bruge Rhapsody, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
+	DE	Wenn Sie Rhapsody nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
+	EN	To use Rhapsody, press and hold BRIGHTNESS to update your firmware.
+	ES	Para usar Rhapsody, mantenga pulsado BRIGHTNESS para actualizar el firmware.
+	FI	Jos haluat käyttää Rhapsodyä, päivitä laitteisto-ohjelmisto pitämällä Kirkkaus-painike pohjassa.
+	FR	Pour utiliser Rhapsody, appuyez sur le bouton BRIGHTNESS et maintenez-le enfoncé afin de mettre à jour le micrologiciel.
+	IT	Per usare Rhapsody, tenere premuto BRIGHTNESS per aggiornare il firmware.
+	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
+	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
+	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
