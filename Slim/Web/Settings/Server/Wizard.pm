@@ -121,8 +121,11 @@ sub handler {
 	# set right-to-left orientation for Hebrew users
 	$paramRef->{rtl} = 1 if ($paramRef->{prefs}->{language} eq 'HE');
 
-	foreach my $namespace (keys %prefs) {
+	# bug 8986: sort namespaces to have "plugins < server", as setting audiodir
+	# before iTunes/MusicIP would result in a wrong scan type
+	foreach my $namespace (sort keys %prefs) {
 		foreach my $pref (@{$prefs{$namespace}}) {
+
 			if ($paramRef->{saveSettings}) {
 				
 				# Skip SN prefs, they were set earlier
@@ -154,10 +157,9 @@ sub handler {
 
 	# if the wizard has been run for the first time, redirect to the main we page
 	if ($paramRef->{firstTimeRunCompleted}) {
+
 		$response->code(RC_MOVED_TEMPORARILY);
 		$response->header('Location' => '/');
-
-		main::checkDataSource();
 	}
 
 	else {
