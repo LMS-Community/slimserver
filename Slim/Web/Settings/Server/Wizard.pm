@@ -160,6 +160,8 @@ sub handler {
 
 		$response->code(RC_MOVED_TEMPORARILY);
 		$response->header('Location' => '/');
+
+		main::checkDataSource();
 	}
 
 	else {
