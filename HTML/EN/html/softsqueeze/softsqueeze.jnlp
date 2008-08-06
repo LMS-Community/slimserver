@@ -14,9 +14,8 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>SoftSqueeze CVS_BUILD</title>
+    <title>SoftSqueeze 3.7b0</title>
     <vendor>Richard Titmuss, et.al.</vendor>
-    <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>SoftsSqueeze Squeezebox Emulator</description>
     <description kind="short">SoftSqueeze Squeezebox Emulator</description>
     <icon width="400" height="200" kind="splash" href="icons/splash.gif" />
