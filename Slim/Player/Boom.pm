@@ -76,6 +76,12 @@ if ( main::SLIM_SERVICE ) {
 INIT {
 	# Add a handler for line-in/out status changes
 	Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
+	
+	# Create a new event for sending LIOS updates
+	Slim::Control::Request::addDispatch(
+		['lios', '_state'],
+		[1, 0, 0, undef],
+	);
 }
 
 sub new {
@@ -764,7 +770,11 @@ sub lineOutConnected {
 sub lineInOutStatus {
 	my ( $client, $data_ref ) = @_;
 	
-	# XXX: TODO
+	my $state = unpack 'n', $$data_ref;
+	
+	Slim::Networking::Slimproto::voltage( $client, $state );
+	
+	Slim::Control::Request::notifyFromArray( $client, [ 'lios', $state ] );
 }
 
 1;

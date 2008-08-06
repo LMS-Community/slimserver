@@ -462,6 +462,11 @@ sub signalStrength {
 
 sub voltage {
 	my $client = shift;
+	my $val    = shift;
+	
+	if ( defined $val && exists $status{$client} ) {
+		$status{$client}->{'voltage'} = $val;
+	}
 
 	if (exists($status{$client}) && ($status{$client}->{'voltage'} > 0)) {
 		return $status{$client}->{'voltage'};
