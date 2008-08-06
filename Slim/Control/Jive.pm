@@ -73,6 +73,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveupdatealarmdays', '_index', '_quantity'], 
 		[1, 1, 1, \&alarmUpdateDays]);
 
+	Slim::Control::Request::addDispatch(['jiveupdateplaylist', '_index', '_quantity'], 
+		[1, 1, 1, \&alarmUpdatePlaylistQuery]);
+
 	Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'],
 		[1, 1, 1, \&syncSettingsQuery]);
 
@@ -749,6 +752,22 @@ sub alarmUpdateMenu {
 	};
 	push @menu, $setDays;
 
+	my $playlistChoice = {
+		text      => $client->string('ALARM_SELECT_PLAYLIST'),
+		actions   => {
+			go => {
+				player => 0,
+				cmd    => [ 'jiveupdateplaylist' ],
+				params => {
+					id => $params->{id},
+				},
+			},
+		},
+		window    => { titleStyle => 'settings' },
+	};
+	push @menu, $playlistChoice;
+
+if (0) {
 	my $playlists = Slim::Utils::Alarm->getPlaylists($client);
 
 	my $currentSetting = $alarm->playlist();
@@ -770,6 +789,7 @@ sub alarmUpdateMenu {
 			my $subitem = {
 				text    => $choice->{title},
 				radio   => $radio,
+				nextWindow => 'refresh',
 				actions => {
 					do => {
 						cmd    => [ 'alarm', 'update' ],
@@ -817,6 +837,7 @@ sub alarmUpdateMenu {
 		item_loop => \@playlistChoices,
 	};
 	push @menu, $playlistChoice;
+}
 
 	my $repeat = $alarm->repeat();
 	my $repeatOnOff = {
@@ -928,12 +949,11 @@ sub alarmUpdateDays {
 		my $string = "ALARM_DAY$day";
 
 		my $day = {
-			text      => $client->string($string),
-			checkbox => $dayActive + 0,
+			text       => $client->string($string),
+			checkbox   => $dayActive + 0,
+			nextWindow => 'refreshOrigin',
 			actions => {
-				nextWindow => 'refreshOrigin',
 				on => {
-				nextWindow => 'refreshOrigin',
 					player => 0,
 					cmd    => [ 'alarm', 'update' ],
 					params => {
@@ -942,7 +962,6 @@ sub alarmUpdateDays {
 					},
 				},
 				off => {
-				nextWindow => 'refreshOrigin',
 					player => 0,
 					cmd    => [ 'alarm', 'update' ],
 					params => {
@@ -960,7 +979,74 @@ sub alarmUpdateDays {
 
 	$request->setStatusDone();
 }
-	
+
+sub alarmUpdatePlaylistQuery {
+
+	my $request = shift;
+	my $client  = $request->client;
+	my @tags  = qw/ id /;
+	my $params;
+	for my $tag (@tags) {
+		$params->{$tag} = $request->getParam($tag);
+	}
+
+	my $playlists      = Slim::Utils::Alarm->getPlaylists($client);
+	my $alarm          = Slim::Utils::Alarm->getAlarm($client, $params->{id});
+	my $currentSetting = $alarm->playlist();
+
+	my @playlistChoices;
+	for my $typeRef (@$playlists) {
+		my $type = $typeRef->{type};
+		my @choices = ();
+		my $aref = $typeRef->{items};
+		for my $choice (@$aref) {
+
+			my $radio = 0;
+			if ( 
+				( $currentSetting eq $choice->{url} ) || 
+				( ! defined $choice->{url} && ! defined $currentSetting )
+			) { 
+				$radio = 1;				
+			}
+			my $subitem = {
+				text    => $choice->{title},
+				radio   => $radio,
+				nextWindow => 'refreshOrigin',
+				actions => {
+					do => {
+						cmd    => [ 'alarm', 'update' ],
+						params => {
+							id          => $params->{id},
+							playlisturl => $choice->{url} || 0, # send 0 for "current playlist"
+						},
+					},
+				},
+			};
+
+			if ( defined($choice->{url}) ) {
+				push @choices, $subitem;
+			# use current playlist doesn't need a submenu
+			} else {
+				$subitem->{'nextWindow'} = 'refresh';
+				push @playlistChoices, $subitem;
+			}
+		}
+
+		if ( scalar(@choices) ) {
+			my $item = {
+				text      => $type,
+				offset    => 0,
+				count     => scalar(@choices),
+				item_loop => \@choices,
+			};
+			push @playlistChoices, $item;
+		}
+	}
+
+	sliceAndShip($request, $client, \@playlistChoices);
+	$request->setStatusDone;
+}
+
 sub getCurrentAlarms {
 	
 	my $client = shift;
