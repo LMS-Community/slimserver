@@ -578,8 +578,24 @@ SqueezeJS.UI.Highlight.prototype = {
 		var el = target.child('a.browseItemLink');
 		if (el && el.dom.href) {
 			if (el.dom.target) {
-				try { parent.frames[el.dom.target].location.href = el.dom.href; }
-				catch(e) { location.href = el.dom.href; }
+				try {
+					if (parent.frames[el.dom.target]) {
+						console.debug('parent');
+						parent.frames[el.dom.target].location.href = el.dom.href;
+						
+					}
+					else if (frames[el.dom.target]) {
+						console.debug('child');
+						parent.frames[el.dom.target].location.href = el.dom.href;
+					}
+					// can't always open a new window as eg. settings will cause a CSRF warning
+					// just enforce clicking the exact link instead of the highlighter in these cases
+//					else
+//						window.open(el.dom.href, el.dom.target);
+				}
+				catch(e) {
+					location.href = el.dom.href;
+				}
 			}
 			else {
 				location.href = el.dom.href;
