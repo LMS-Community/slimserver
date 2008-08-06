@@ -608,7 +608,7 @@ sub alarmSettingsQuery {
 	my @translatedAlarmStrings = map { ucfirst($client->string($_)) } @alarmStrings;
 
 	my $onOff = {
-		text           => $client->string("ALARM"),
+		text           => $client->string("ALARM_ALL_ALARMS"),
 		choiceStrings  => [ @translatedAlarmStrings ],
 		selectedIndex  => $val + 1, # 1 is added to make it count like Lua
 		actions        => {
