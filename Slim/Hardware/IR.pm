@@ -690,13 +690,19 @@ sub processIR {
 
 	if ($code =~ /(.*?)\.(up|down)$/) {
 
+		my $dir = $2;
+
 		$log->info("Front panel code detected, processing $code");
+
+		if ($dir eq 'down' && $irCodeBytes eq $client->lastircodebytes && $timediff < 0.5) {
+			$dir = 'repeat';
+		}
 
 		$client->startirhold($irTime);
 		$client->lastircodebytes($irCodeBytes);
 		$client->irrepeattime(0);
 
-		processFrontPanel($client, $1, $2, $irTime);
+		processFrontPanel($client, $1, $dir, $irTime);
 
 	} elsif ($code =~ /^knob/) {
 
@@ -795,7 +801,21 @@ sub processFrontPanel {
 	my $dir    = shift;
 	my $irTime = shift;
 
-	if ($dir eq 'down') {
+	if ($dir eq 'repeat') {
+
+		$code .= '.repeat';
+
+		$log->info("IR: Front panel button press: $code");
+
+		# we don't restart the hold timers as we also want to generate .hold events
+
+		my $irCode = lookupFunction($client, $code);
+
+		$client->lastirbutton($code);
+
+		processCode($client, $irCode, $irTime);
+
+	} elsif ($dir eq 'down') {
 
 		$log->info("IR: Front panel button press: $code");
 		
@@ -818,7 +838,7 @@ sub processFrontPanel {
 			$client->lastircodebytes
 		);
 
-	} else {
+	} else { # dir is up
 
 		my $timediff = $client->irtimediff;
 
