@@ -607,12 +607,8 @@ sub alarmSettingsQuery {
 	my @alarmStrings = ('ON', 'OFF');
 	my @translatedAlarmStrings = map { ucfirst($client->string($_)) } @alarmStrings;
 
-# FIXME: choice items are not currently available for regular, non _menuSink items in SlimBrowser
-# needs a jive-side change
-my $onOff;
-if (0) {
-	$onOff = {
-		text           => $client->string("ALARM_ALL_ALARMS"),
+	my $onOff = {
+		text           => $client->string("ALARM"),
 		choiceStrings  => [ @translatedAlarmStrings ],
 		selectedIndex  => $val + 1, # 1 is added to make it count like Lua
 		actions        => {
@@ -630,27 +626,6 @@ if (0) {
 			},
 		},
 	};
-}
-
-# just use radios instead for now
-if (1) {
-	$onOff = {
-		window   => { titleStyle => 'settings' },
-		text     => $client->string("ALARM_ALL_ALARMS"),
-		help     => { text => $client->string("ALARM_ALARMS_ENABLED_DESC") },
-		checkbox => ($val == 1) + 0,
-		actions  => {
-			on  => {
-				player => 0,
-				cmd    => [ 'alarm', 'enableall' ],
-			},
-			off => {
-				player => 0,
-				cmd    => [ 'alarm', 'disableall' ],
-			},
-		},		
-	};
-}
 	push @menu, $onOff;
 
 	my $setAlarms = getCurrentAlarms($client);
