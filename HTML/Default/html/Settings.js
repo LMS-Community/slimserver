@@ -347,8 +347,8 @@ Settings.Page = function(){
 					this.fireEvent('arrowclick', this, ev);
 				},
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				tooltip: SqueezeJS.string('advanced_settings'),
-				arrowTooltip: SqueezeJS.string('advanced_settings'),
+				tooltip: SqueezeJS.string('settings'),
+				arrowTooltip: SqueezeJS.string('settings'),
 				tooltipType: 'title'
 			});
 
