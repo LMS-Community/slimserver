@@ -77,7 +77,7 @@ sub handler {
 					
 					saveAlarm($alarm, NEWALARMID, $paramRef);
 	
-					# savaAlarm() might have enabled alarms again, if this was the very first alarm
+					# saveAlarm() might have enabled alarms again, if this was the very first alarm
 					if (@{ $editedAlarms->{id} } == 1) {
 						$paramRef->{'pref_alarmsEnabled'} = $prefsClass->get('alarmsEnabled');
 					}

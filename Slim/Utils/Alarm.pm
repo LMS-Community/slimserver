@@ -885,16 +885,18 @@ sub save {
 
 	$log->debug('Saving alarm.');
 
+	my $newAlarm = ! $self->{_id};
+
 	my $alarmPref = $self->_createSaveable;
 
 	my $prefAlarms = $prefs->client($client)->alarms;
 	$prefAlarms->{$self->{_id}} = $alarmPref;
 	$prefs->client($client)->alarms($prefAlarms);
 
-	# If there are no other alarms, force alarmsEnabled to 1 to make sure
-	# the new alarm sounds.  Otherwise assume that if all alarms were turned
-	# off it was with good reason and leave things as they are.
-	if (keys(%$prefAlarms) == 1) {
+	# If there are no other alarms and this is new, force alarmsEnabled to
+	# 1 to make sure the alarm sounds.  Otherwise assume that if all alarms
+	# were turned off it was with good reason and leave things as they are.
+	if ($newAlarm && keys(%$prefAlarms) == 1) {
 		$log->debug('Forcing alarmsEnabled to 1');
 		$prefs->client($client)->alarmsEnabled(1);
 	}
@@ -1334,13 +1336,30 @@ sub defaultVolume {
 	my $client = shift;
 	my $volume = shift;
 
-	if (defined $volume && $volume != $prefs->client($client)->alarmDefaultVolume) {
+	if (defined $volume) {
+		# prefs onchange handler will do the rest
 		$prefs->client($client)->alarmDefaultVolume($volume);
-		# Update the RTC volume
-		$class->setRTCAlarm($client);
 	}
 
 	return $prefs->client($client)->alarmDefaultVolume;
+}
+
+=head2 defaultVolumeChanged( $client )
+
+Handle the defaultVolume pref changing state.
+
+Generally called via an on change handler for the preference, registered in
+Slim::Player::Client.
+
+=cut
+
+sub defaultVolumeChanged {
+	my $class = shift;
+	my $client = shift;
+
+	# Update the RTC volume
+	$log->debug('defaultVolume has changed');
+	$class->setRTCAlarm($client);
 }
 
 =head2 alarmsEnabled ( [0/1] )
@@ -1356,15 +1375,30 @@ sub alarmsEnabled {
 	my $client = shift;
 	my $enabled = shift;
 
-	if (defined $enabled && $enabled != $prefs->client($client)->alarmsEnabled) {
+	if (defined $enabled) {
+		# prefs onchange handler will do the rest
 		$prefs->client($client)->alarmsEnabled($enabled);
-		
-		# Reschedule to enable/disable
-		$log->debug('Alarms enabled state changed - rescheduling alarms...');
-		$class->scheduleNext($client);
 	}
 
 	return $prefs->client($client)->alarmsEnabled;
+}
+
+=head2 alarmsEnabledChanged( $client )
+
+Handle the alarmsEnabled pref changing state.
+
+Generally called via an on change handler for the preference, registered in
+Slim::Player::Client.
+
+=cut
+
+sub alarmsEnabledChanged {
+	my $class = shift;
+	my $client = shift;
+
+	# Reschedule to enable/disable
+	$log->debug('Alarms enabled state changed - rescheduling alarms...');
+	$class->scheduleNext($client);
 }
 
 =head2 addPlaylists( $type, $playlists )
