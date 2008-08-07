@@ -167,7 +167,7 @@ sub rotate {
 	}
 	# check the position we rotated into and rotate back if it's bad
 	if (!move($client, 0,0)) {
-		rotate(-1 * $direction);
+		rotate($client, -1 * $direction);
 	}
 }
 
