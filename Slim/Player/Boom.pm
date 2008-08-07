@@ -39,7 +39,7 @@ my $LED_ALL = 0xFFFF;
 my $LED_POWER = 0x0200;
 
 our $defaultPrefs = {
-	'analogOutMode'        => 1,      # default sub-out
+	'analogOutMode'        => -1,      # flag as not set - let the user decide when he first connects
 	'bass'                 => 0,
 	'treble'               => 0,
 	'stereoxl'             => minXL(),
@@ -832,6 +832,37 @@ sub lineInOutStatus {
 	}
 	
 	if ($oldState->{out} != $client->lineOutConnected()) {
+
+		# ask what out mode to use if user is plugging in for the first time		
+		if ($prefs->client( $client)->get( 'analogOutMode' ) == -1) {
+
+			# default to headphone
+			$prefs->client( $client)->set( 'analogOutMode', 0 );
+
+			# can't jump to settings menu - we'll have to fake it
+			my $mode = {
+				'listRef'      => [
+					{
+						name   => '{ANALOGOUTMODE_HEADPHONE}',
+						value  => 0,
+					},
+					{
+						name   => '{ANALOGOUTMODE_SUBOUT}',
+						value  => 1,
+					},
+				],
+				'onPlay'       => \&Slim::Buttons::Settings::setPref,
+				'onAdd'        => \&Slim::Buttons::Settings::setPref,
+				'onRight'      => \&Slim::Buttons::Settings::setPref,
+				'header'       => '{SETUP_ANALOGOUTMODE}',
+				'headerAddCount' => 1,
+				'pref'            => "analogOutMode",
+				'initialValue'    => 0,
+			};
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', $mode);
+			
+		}
+		
 		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'lineout', $client->lineOutConnected() ] );
 	}
 }
