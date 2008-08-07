@@ -82,6 +82,16 @@ INIT {
 		['lios', '_state'],
 		[1, 0, 0, undef],
 	);
+
+	Slim::Control::Request::addDispatch(
+		['lios', 'linein', '_state'],
+		[1, 0, 0, undef],
+	);
+
+	Slim::Control::Request::addDispatch(
+		['lios', 'lineout', '_state'],
+		[1, 0, 0, undef],
+	);
 }
 
 sub new {
@@ -771,10 +781,23 @@ sub lineInOutStatus {
 	my ( $client, $data_ref ) = @_;
 	
 	my $state = unpack 'n', $$data_ref;
+
+	my $oldState = {
+		in => $client->lineInConnected(),
+		out => $client->lineOutConnected()
+	};
 	
 	Slim::Networking::Slimproto::voltage( $client, $state );
-	
+
 	Slim::Control::Request::notifyFromArray( $client, [ 'lios', $state ] );
+	
+	if ($oldState->{in} != $client->lineInConnected()) {
+		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'linein', $client->lineInConnected() ] );
+	}
+	
+	if ($oldState->{out} != $client->lineOutConnected()) {
+		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'lineout', $client->lineInConnected() ] );
+	}
 }
 
 1;
