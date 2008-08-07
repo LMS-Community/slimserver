@@ -265,7 +265,7 @@ sub _liosCallback {
 	
 	my $enabled = $request->getParam('_state');
 	
-	$log->debug( 'Line In/Out state changed: ' . $enabled );
+	$log->debug( 'Line In state changed: ' . $enabled );
 	
 	if ($enabled) {
 		# XXX - not sure it's a good idea to delete current playlist?
