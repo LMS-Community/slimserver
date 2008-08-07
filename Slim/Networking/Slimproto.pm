@@ -814,6 +814,14 @@ sub _stat_handler {
 
 	Slim::Player::Sync::checkSync($client);
 	
+	if ( main::SLIM_SERVICE ) {
+		# Bug 8995, Update signal strength on SN
+		if ( !$client->playerData->signal ) {
+			$client->playerData->signal( $status{$client}->{signal_strength} );
+			$client->playerData->update;
+		}
+	}
+	
 	my $callback = $callbacks{$status{$client}->{'event_code'}};
 
 	&$callback($client) if $callback;
