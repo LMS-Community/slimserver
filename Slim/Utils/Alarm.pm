@@ -539,12 +539,6 @@ sub sound {
 			$client->volume($self->volume);
 		}
 
-		# Fade volume change if requested 
-		if ( $prefs->client($client)->get('alarmfadeseconds') ) {
-			$log->debug('Fading volume');
-			$client->fade_volume( $FADE_SECONDS );
-		}
-
 		# Play alarm playlist, falling back to the current playlist if undef
 		if (defined $self->playlist) {
 			$log->debug('Alarm playlist url: ' . $self->playlist);
@@ -563,6 +557,13 @@ sub sound {
 
 				$self->_playFallback();
 			}
+		}
+
+		# Fade volume change if requested (do this after playing as playing
+		# seems to sometimes cancel the fade)
+		if ( $prefs->client($client)->get('alarmfadeseconds') ) {
+			$log->debug('Fading volume');
+			$client->fade_volume( $FADE_SECONDS );
 		}
 
 		# Set a callback to check we managed to play something
