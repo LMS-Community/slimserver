@@ -663,10 +663,17 @@ sub snooze {
 				Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $timeout + $snoozeSeconds, \&_timeout);
 		}
 
-		# Pause the music (check if it's playing first or we'll generate a 'playlist jump' command)
-		if (Slim::Player::Source::playmode($client) =~ /play/) {
-			my $request = $client->execute(['pause', 1]);
+		if (Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
+			# Stop rather than pause for remote urls in order to keep radio in real time after a snooze
+			$log->debug('Remote url being played - stopping');
+			my $request = $client->execute(['stop']);
 			$request->source('ALARM');
+		} else {
+			# Pause the music (check if it's playing first or we'll generate a 'playlist jump' command)
+			if (Slim::Player::Source::playmode($client) =~ /play/) {
+				my $request = $client->execute(['pause', 1]);
+				$request->source('ALARM');
+			}
 		}
 
 		$self->{_snoozeActive} = 1;
