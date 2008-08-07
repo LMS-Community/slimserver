@@ -796,7 +796,7 @@ sub lineInOutStatus {
 	}
 	
 	if ($oldState->{out} != $client->lineOutConnected()) {
-		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'lineout', $client->lineInConnected() ] );
+		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'lineout', $client->lineOutConnected() ] );
 	}
 }
 
