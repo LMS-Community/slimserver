@@ -262,17 +262,19 @@ sub _liosCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
 	
-	my $state = $request->getParam('_state');
+	my $enabled = $request->getParam('_state');
 	
-	$log->debug( 'Line In/Out state changed: ' . $state );
+	$log->debug( 'Line In/Out state changed: ' . $enabled );
 	
-	if ($state) {
+	if ($enabled) {
 		# XXX - not sure it's a good idea to delete current playlist?
+		# maybe we should just insert the linein:1 at the current position and play it?
 		updateLineIn($client);
 	}
 	else {
 		# remove linein item from current playlist
 		$client->execute([ 'playlist', 'deleteitem', $line_in->{'url'} ] );
+		$client->setLineIn(0);
 	}
 }
 
