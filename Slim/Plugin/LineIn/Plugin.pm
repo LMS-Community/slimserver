@@ -13,6 +13,7 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
+use Slim::Plugin::LineIn::Settings;
 
 my $line_in = {
 	'name'  => '{PLUGIN_LINE_IN_LINE_IN}',
@@ -38,8 +39,13 @@ sub initPlugin {
 	$log->info("Initializing");
 	
 	$class->SUPER::initPlugin();
+	Slim::Plugin::LineIn::Settings->new;
 
 	Slim::Player::ProtocolHandlers->registerHandler('linein', 'Slim::Plugin::LineIn::ProtocolHandler');
+
+	# Subscribe to line in/out events
+	Slim::Control::Request::subscribe(\&_liosCallback, [['lios'], ['linein']]);
+
 
 #        |requires Client
 #        |  |is a Query
@@ -248,6 +254,26 @@ sub handleSetting {
 	$response->header('Location' => $params->{webroot} . 'home.html');
 
 	return Slim::Web::HTTP::filltemplatefile($url, $params);
+}
+
+
+# line in/out event handler
+sub _liosCallback {
+	my $request = shift;
+	my $client  = $request->client() || return;
+	
+	my $state = $request->getParam('_state');
+	
+	$log->debug( 'Line In/Out state changed: ' . $state );
+	
+	if ($state) {
+		# XXX - not sure it's a good idea to delete current playlist?
+		updateLineIn($client);
+	}
+	else {
+		# remove linein item from current playlist
+		$client->execute([ 'playlist', 'deleteitem', $line_in->{'url'} ] );
+	}
 }
 
 1;

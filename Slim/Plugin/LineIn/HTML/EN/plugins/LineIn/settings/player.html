@@ -1,0 +1,19 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="LINE_IN_LEVEL" desc="LINE_IN_LEVEL_DESC" %]
+		<input type="text" class="stdedit sliderInput_0_100" name="pref_lineInLevel" id="lineInLevel" value="[% prefs.lineInLevel %]" size="5">
+	[% END %]
+
+	[% WRAPPER setting title="LINE_IN_ALWAYS_ON" desc="LINE_IN_ALWAYS_ON_DESC" %]
+		<select class="stdedit" name="pref_lineInAlwaysOn" id="lineInAlwaysOn">
+			<option [% IF prefs.pref_lineInAlwaysOn %]selected="selected" [% END %]value="1">
+				[% 'YES' | string %]
+			</option>
+			<option [% IF !prefs.pref_lineInAlwaysOn %]selected="selected" [% END %]value="0">
+				[% 'NO' | string %]
+			</option>
+		</select>
+	[% END %]
+
+[% PROCESS settings/footer.html %]
+

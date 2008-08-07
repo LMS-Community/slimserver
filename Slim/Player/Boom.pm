@@ -56,7 +56,25 @@ our $defaultPrefs = {
 		SQUEEZENETWORK_CONNECT
 	)],
 	'titleFormatCurr'      => 4,
+	'lineInAlwaysOn'       => 0, 
+	'lineInLevel'          => 50, 
 };
+
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 100 }, 'lineInLevel');
+$prefs->setChange(\&setLineInLevel, 'lineInLevel');
+
+$prefs->setChange(sub {
+	my ($name, $enabled, $client) = @_;
+	
+	if ($enabled) { $client->setLineIn(1); }
+	
+	# turn off if line is not playing
+	elsif (!Slim::Music::Info::isLineIn(Slim::Player::Playlist::url($client))) {
+		$client->setLineIn(0);
+	}
+	
+}, 'lineInAlwaysOn');
+
 
 if ( main::SLIM_SERVICE ) {
 	$defaultPrefs->{menuItem} = [ qw(
@@ -353,10 +371,28 @@ sub setLineIn {
 		}
 	}
 
+	# turn off linein if nothing's plugged in
+	if (!$client->lineInConnected()) {
+		$input = 0;
+	}
+
+	# override the input value if the alwaysOn option is set
+	elsif ($prefs->get('lineInAlwaysOn')) {
+		$input = 1;
+	}
+
 	$log->info("Switching to line in $input");
 
 	$prefs->client($client)->set('lineIn', $input);
 	$client->sendFrame('audp', \pack('C', $input));
+}
+
+sub setLineInLevel {
+	my $level = $_[1];
+	my $client = $_[2];
+	
+	# TODO - set new input level
+	logger('player.source')->warn("Input level would be set to $level - but no handler defined");
 }
 
 sub setRTCTime {
