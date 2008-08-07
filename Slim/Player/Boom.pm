@@ -377,7 +377,7 @@ sub setLineIn {
 	}
 
 	# override the input value if the alwaysOn option is set
-	elsif ($prefs->get('lineInAlwaysOn')) {
+	elsif ($prefs->client($client)->get('lineInAlwaysOn')) {
 		$input = 1;
 	}
 
