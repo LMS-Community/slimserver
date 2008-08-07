@@ -1982,7 +1982,7 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 
 			if (result['message']) {
 				if (result['total_time'])
-					Ext.get('message').update(result.message + timestring + result.total_time);
+					Ext.get('message').update(result.message + ' ' + SqueezeJS.string('total_time') + '&nbsp;' + result.total_time);
 
 				else
 					Ext.get('message').update(result.message);

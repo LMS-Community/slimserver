@@ -13,9 +13,8 @@
 [% bodyscript = 'onload="ajaxProgressRefresh();"' %]
 
 [% extJsScripts = BLOCK %]
-	<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript">
-		var timestring = '';
+		[% PROCESS jsString id='TOTAL_TIME' %]
 		progressbarlen = '40';
 		progresstype   = 'importer';
 
