@@ -837,6 +837,10 @@ sub updateMenu {
 	}
 	
 	for my $menuItem (@{ $prefs->client($client)->get('menuItem') }) {
+		# more leakage of the LineIn plugin..
+		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
+			next;
+		}
 
 		my $plugin = Slim::Utils::PluginManager->dataForPlugin($menuItem);
 

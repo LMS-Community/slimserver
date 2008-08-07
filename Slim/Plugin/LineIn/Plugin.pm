@@ -65,7 +65,8 @@ sub lineInItem {
 	return [] unless blessed($client)
 		&& $client->isPlayer()
 		&& Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')
-		&& $client->hasLineIn();
+		&& $client->hasLineIn()
+		&& $client->lineInConnected();
 
 	return [{
 		stringToken    => getDisplayName(),
@@ -229,10 +230,10 @@ sub getFunctions {
 # This plugin leaks into the main server, Slim::Web::Pages::Home() needs to
 # call this function to decide to show the Line In menu or not.
 sub webPages {
-	my $class     = shift;
-	my $hasLineIn = shift;
+	my $class  = shift;
+	my $client = shift || return;
 
-	if ($hasLineIn) {
+	if ($client->hasLineIn && $client->lineInConnected) {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => $url });
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => undef });
@@ -272,10 +273,12 @@ sub _liosCallback {
 		updateLineIn($client);
 	}
 	else {
-		# remove linein item from current playlist
+		# remove linein item from current playlist, menus etc.
 		$client->execute([ 'playlist', 'deleteitem', $line_in->{'url'} ] );
 		$client->setLineIn(0);
 	}
+
+	Slim::Buttons::Home::updateMenu($client);
 }
 
 1;

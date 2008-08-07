@@ -137,7 +137,7 @@ sub home {
 	#
 	# If our current player has line in, show the menu.
 	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
-		Slim::Plugin::LineIn::Plugin->webPages($client->hasLineIn);
+		Slim::Plugin::LineIn::Plugin->webPages($client);
 	}
 
 	# add favorites to first level of Default skin
