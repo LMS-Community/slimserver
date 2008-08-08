@@ -698,7 +698,6 @@ sub processIR {
 			$dir = 'repeat';
 		}
 
-		$client->startirhold($irTime);
 		$client->lastircodebytes($irCodeBytes);
 		$client->irrepeattime(0);
 
@@ -828,6 +827,8 @@ sub processFrontPanel {
 
 		processCode($client, $irCode, $irTime);
 
+		$client->startirhold($irTime);
+
 		# start timing for hold time, preparing the .hold event for later.
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -840,7 +841,7 @@ sub processFrontPanel {
 
 	} else { # dir is up
 
-		my $timediff = $client->irtimediff;
+		my $timediff = $irTime - $client->startirhold;
 
 		$log->info("IR: Front panel button release after $timediff: $code");
 
