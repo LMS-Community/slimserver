@@ -28,15 +28,12 @@ sub needsClient {
 	return 1;
 }
 
-sub handler {
-	my ($class, $client, $paramRef) = @_;
+sub prefs {
+	my ($class, $client) = @_;
 
-	my @prefs = qw(powerOnResume maxBitrate lameQuality);
+#	my @prefs = qw(powerOnResume maxBitrate lameQuality);
+	my @prefs = qw(powerOnResume lameQuality);
 
-	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-		push @prefs,qw(synchronize syncVolume syncPower syncBufferThreshold startDelay maintainSync playDelay packetLatency minSyncAdjust);
-	} 
-	
 	if ($client->hasPowerControl()) {
 		push @prefs,'powerOffDac';
 	}
@@ -80,7 +77,6 @@ sub handler {
 	if ($client->hasDigitalIn()) {
 		push @prefs,'wordClockOutput';
 	}
-
 	
 	if ($client->canDoReplayGain(0)) {
 		push @prefs,'replayGainMode';
@@ -93,29 +89,21 @@ sub handler {
 	if ( $client->isa('Slim::Player::Squeezebox2') ) {
 		push @prefs, 'mp3StreamingMethod';
 	}
-	
+
+	return ($prefs->client($client), @prefs);
+}
+
+
+sub handler {
+	my ($class, $client, $paramRef) = @_;
+
 	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
-
-		for my $pref (@prefs) {
-
-			if ($pref eq 'synchronize') {
-			
-				if (my $otherClient = Slim::Player::Client::getClient($paramRef->{$pref})) {
-					$otherClient->execute( [ 'sync', $client->id ] );
-				} else {
-					$client->execute( [ 'sync', '-' ] );
-				}
-			
-			} else {
-
-				$prefs->client($client)->set($pref, $paramRef->{$pref}) if defined $paramRef->{$pref};
-			}
-		}
+		# maxBitrate can't be handled by the generic handler
+		$prefs->client($client)->set('maxBitrate', $paramRef->{maxBitrate}) if defined $paramRef->{maxBitrate};
 	}
 
 	# Load any option lists for dynamic options.
-	$paramRef->{'syncGroups'} = syncGroups($client);
 	$paramRef->{'lamefound'}  = Slim::Utils::Misc::findbin('lame');
 	
 	my @formats = $client->formats();
@@ -124,68 +112,9 @@ sub handler {
 		$paramRef->{'allowNoLimit'} = 1;
 	}
 
-	# Set current values for prefs
-	# load into prefs hash so that web template can detect exists/!exists
-	for my $pref (@prefs) {
-
-		if ($pref eq 'synchronize') {
-
-			$paramRef->{'prefs'}->{$pref} =  -1;
-
-			if (Slim::Player::Sync::isSynced($client)) {
-
-				$paramRef->{'prefs'}->{$pref} = $client->masterOrSelf->id();
-
-			} elsif ( my $syncgroupid = $prefs->client($client)->get('syncgroupid') ) {
-
-				# Bug 3284, we want to show powered off players that will resync when turned on
-				my @players = Slim::Player::Client::clients();
-
-				foreach my $other (@players) {
-
-					next if $other eq $client;
-
-					my $othersyncgroupid = $prefs->client($other)->get('syncgroupid');
-
-					if ( $syncgroupid == $othersyncgroupid ) {
-
-						$paramRef->{'prefs'}->{$pref} = $other->id;
-					}
-				}
-			}
-
-		} elsif ($pref eq 'maxBitrate') {
-			
-			$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::maxRate($client, 1);
-
-		} else {
-
-			$paramRef->{'prefs'}->{$pref} = $prefs->client($client)->get($pref);
-		}
-	}
+	$paramRef->{'prefs'}->{maxBitrate} = Slim::Utils::Prefs::maxRate($client, 1);
 	
 	return $class->SUPER::handler($client, $paramRef);
-}
-
-# returns a hash reference to syncGroups available for a client
-sub syncGroups {
-	my $client = shift;
-
-	my %clients = ();
-
-	for my $eachclient (Slim::Player::Sync::canSyncWith($client)) {
-
-		$clients{$eachclient->id} = Slim::Player::Sync::syncname($eachclient, $client);
-	}
-
-	if (Slim::Player::Sync::isMaster($client)) {
-
-		$clients{$client->id} = Slim::Player::Sync::syncname($client, $client);
-	}
-
-	$clients{-1} = string('SETUP_NO_SYNCHRONIZATION');
-
-	return \%clients;
 }
 
 1;

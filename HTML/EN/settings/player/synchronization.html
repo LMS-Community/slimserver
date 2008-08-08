@@ -1,0 +1,65 @@
+[% PROCESS settings/header.html %]
+
+	[% IF prefs.exists('synchronize') %]
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_SYNCHRONIZE" desc="SETUP_SYNCHRONIZE_DESC" %]
+				<select class="stdedit" name="synchronize" id="synchronize">
+					[% FOREACH option = syncGroups %]
+						<option [% IF prefs.synchronize == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_SYNCVOLUME" desc="SETUP_SYNCVOLUME_DESC" %]
+				<select class="stdedit" name="pref_syncVolume" id="pref_syncVolume">
+					[% FOREACH option = {
+						'1' => 'SETUP_SYNCVOLUME_ON',
+						'0' => 'SETUP_SYNCVOLUME_OFF'
+					} %]
+						<option [% IF prefs.pref_syncVolume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_SYNCPOWER" desc="SETUP_SYNCPOWER_DESC" %]
+				<select class="stdedit" name="pref_syncPower" id="pref_syncPower">
+					[% FOREACH option = {
+						'1' => 'SETUP_SYNCPOWER_ON',
+						'0' => 'SETUP_SYNCPOWER_OFF'
+					} %]
+						<option [% IF prefs.pref_syncPower == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_MAINTAINSYNC" desc="SETUP_MAINTAINSYNC_DESC" %]
+				<select class="stdedit" name="pref_maintainSync" id="pref_maintainSync">
+					[% FOREACH option = {
+						'1' => 'SETUP_MAINTAINSYNC_ON',
+						'0' => 'SETUP_MAINTAINSYNC_OFF'
+					} %]
+						<option [% IF prefs.pref_maintainSync == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_STARTDELAY" desc="SETUP_STARTDELAY_DESC" %]
+				<input type=text class="stdedit sliderInput_0_1000" name="pref_startDelay" id="pref_startDelay" value="[% prefs.pref_startDelay %]" size="5">
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_PLAYDELAY" desc="SETUP_PLAYDELAY_DESC" %]
+				<input type=text class="stdedit sliderInput_0_1000" name="pref_playDelay" id="pref_playDelay" value="[% prefs.pref_playDelay %]" size="5">
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_MINSYNCADJUST" desc="SETUP_MINSYNCADJUST_DESC" %]
+				<input type=text class="stdedit sliderInput_10_1000" name="pref_minSyncAdjust" id="pref_minSyncAdjust" value="[% prefs.pref_minSyncAdjust %]" size="5">
+			[% END %]
+	
+			[% WRAPPER settingGroup title="SETUP_PACKETLATENCY" desc="SETUP_PACKETLATENCY_DESC" %]
+				<input type=text class="stdedit sliderInput_0_1000" name="pref_packetLatency" id="pref_packetLatency" value="[% prefs.pref_packetLatency %]" size="5">
+			[% END %]
+
+		[% END %]
+	[% END %]
+
+[% PROCESS settings/footer.html %]
