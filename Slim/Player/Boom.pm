@@ -839,27 +839,11 @@ sub lineInOutStatus {
 			# default to headphone
 			$prefs->client( $client)->set( 'analogOutMode', 0 );
 
-			# can't jump to settings menu - we'll have to fake it
-			my $mode = {
-				'listRef'      => [
-					{
-						name   => '{ANALOGOUTMODE_HEADPHONE}',
-						value  => 0,
-					},
-					{
-						name   => '{ANALOGOUTMODE_SUBOUT}',
-						value  => 1,
-					},
-				],
-				'onPlay'       => \&Slim::Buttons::Settings::setPref,
-				'onAdd'        => \&Slim::Buttons::Settings::setPref,
-				'onRight'      => \&Slim::Buttons::Settings::setPref,
-				'header'       => '{SETUP_ANALOGOUTMODE}',
-				'headerAddCount' => 1,
-				'pref'            => "analogOutMode",
-				'initialValue'    => 0,
-			};
-			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', $mode);
+			Slim::Buttons::Common::pushModeLeft(
+				$client,
+				'INPUT.Choice',
+				Slim::Buttons::Settings::analogOutMenu()
+			);
 			
 		}
 		

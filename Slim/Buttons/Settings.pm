@@ -234,30 +234,7 @@ sub init {
 							},
 						},
 
-						'SETUP_ANALOGOUTMODE'       => {
-							'useMode'      => 'INPUT.Choice',
-							'listRef'      => [
-								{
-									name   => '{ANALOGOUTMODE_HEADPHONE}',
-									value  => 0,
-								},
-								{
-									name   => '{ANALOGOUTMODE_SUBOUT}',
-									value  => 1,
-								},
-							],
-							'onPlay'       => \&setPref,
-							'onAdd'        => \&setPref,
-							'onRight'      => \&setPref,
-							'header'       => '{SETUP_ANALOGOUTMODE}',
-							'headerAddCount' => 1,
-							'pref'            => "analogOutMode",
-							'initialValue'    => sub { $prefs->client(shift)->get('analogOutMode') },
-							'condition'   => sub {
-								my $client = shift;
-								return $client->isa('Slim::Player::Boom');
-							},
-						},
+						'SETUP_ANALOGOUTMODE' => analogOutMenu(),
 
 						'LINE_IN_LEVEL'    => {
 							'useMode'      => 'INPUT.Bar',
@@ -1005,6 +982,33 @@ sub settingsMenu {
 	}
 
 	$client->modeParam('listRef', \@settingsChoices);
+}
+
+sub analogOutMenu {
+	return {
+		'useMode'      => 'INPUT.Choice',
+		'listRef'      => [
+			{
+				name   => '{ANALOGOUTMODE_HEADPHONE}',
+				value  => 0,
+			},
+			{
+				name   => '{ANALOGOUTMODE_SUBOUT}',
+				value  => 1,
+			},
+		],
+		'onPlay'       => \&setPref,
+		'onAdd'        => \&setPref,
+		'onRight'      => \&setPref,
+		'header'       => '{SETUP_ANALOGOUTMODE}',
+		'headerAddCount' => 1,
+		'pref'            => "analogOutMode",
+		'initialValue'    => sub { $prefs->client(shift)->get('analogOutMode') },
+		'condition'   => sub {
+			my $client = shift;
+			return $client->isa('Slim::Player::Boom');
+		},
+	};
 }
 
 sub visualInit {
