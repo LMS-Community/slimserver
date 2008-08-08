@@ -145,11 +145,23 @@ sub init {
 		},
 	}
 
-	# Align actions as per Bug 8929 - in home menu add and play just go right
+	# Align actions as per Bug 8929 - in home menu add and play just go right.
+	# When on Now Playing item, preserve the Clear Playlist shortcut
 	%functions = (
 		'add' => sub  {
 			my $client = shift;
-			Slim::Buttons::Input::List::exitInput($client, 'right');		
+		
+			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
+
+				$client->showBriefly( {
+					'line' => [ "", $client->string('CLEARING_PLAYLIST') ]
+				});
+				$client->execute(['playlist', 'clear']);
+
+			} else {
+
+				Slim::Buttons::Input::List::exitInput($client, 'right');
+			}
 		},
 
 		'play' => sub  {
