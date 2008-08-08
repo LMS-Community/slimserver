@@ -653,6 +653,11 @@ sub nowPlayingModeLines {
 				$modes = [0..6];
 			}
 		}
+		elsif ( $client->isa('Slim::Player::Boom') ) {
+			if ( $prefs->client($client)->get('playingDisplayMode') == 10 ) {
+				$modes = [0..10];
+			}
+		}
 		else {
 			if ( $prefs->client($client)->get('playingDisplayMode') == 12 ) {
 				$modes = [0..12];
