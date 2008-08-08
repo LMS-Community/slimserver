@@ -3,8 +3,8 @@
 # from        to
 # from1..from2 to
 
-1..42 42
+1..45 45
 
 # future versions may be downgraded to this one
-* 42
+* 45
 
