@@ -806,11 +806,13 @@ sub boomBright {
 }
 
 sub lineInConnected {
-	Slim::Networking::Slimproto::voltage(shift) & 0x01;
+	my $state = Slim::Networking::Slimproto::voltage(shift) || return 0;
+	return $state & 0x01 || 0;
 }
 
 sub lineOutConnected {
-	Slim::Networking::Slimproto::voltage(shift) & 0x02;
+	my $state = Slim::Networking::Slimproto::voltage(shift) || return 0;
+	return $state & 0x02 || 0;
 }
 
 sub lineInOutStatus {
@@ -819,8 +821,8 @@ sub lineInOutStatus {
 	my $state = unpack 'n', $$data_ref;
 
 	my $oldState = {
-		in => $client->lineInConnected(),
-		out => $client->lineOutConnected()
+		in  => $client->lineInConnected(),
+		out => $client->lineOutConnected(),
 	};
 	
 	Slim::Networking::Slimproto::voltage( $client, $state );
