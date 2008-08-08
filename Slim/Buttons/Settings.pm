@@ -511,9 +511,9 @@ sub init {
 						'SCREENSAVERS'        => {
 							'useMode'         => 'INPUT.List',
 							'listRef'         => [
-								'SETUP_SCREENSAVER',
-								'SETUP_IDLESAVER',
 								'SETUP_OFFSAVER',
+								'SETUP_IDLESAVER',
+								'SETUP_SCREENSAVER',
 							],
 							'stringExternRef' => 1,
 							'header'          => 'SCREENSAVERS',
@@ -924,9 +924,8 @@ sub executeCommand {
 
 sub screensaverInit {
 	my $client = shift;
-	my $pref = $client->modeParam('pref');
 	
-	my %hash = %{ Slim::Buttons::Common::validSavers($client)->{$pref} };
+	my %hash  = %{&Slim::Buttons::Common::hash_of_savers};
 	my @savers;
 	
 	for (sort {$client->string($hash{$a}) cmp $client->string($hash{$b})} keys %hash) {

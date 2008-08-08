@@ -39,7 +39,10 @@ sub prefs {
 
 		push @prefs, qw(titleFormatCurr playingDisplayMode);
 
-		push @prefs, qw(screensaver idlesaver offsaver screensavertimeout);
+		if (scalar(keys %{ Slim::Buttons::Common::hash_of_savers() }) > 0) {
+
+			push @prefs, qw(screensaver idlesaver offsaver screensavertimeout);
+		}
 
 		if ($client->display->isa('Slim::Display::Transporter')) {
 
@@ -113,7 +116,7 @@ sub handler {
 	if ($client && !$client->display->isa('Slim::Display::NoDisplay')) {
 		$paramRef->{'playingDisplayOptions'} = getPlayingDisplayModes($client);
 		$paramRef->{'visualModeOptions'}     = getVisualModes($client);
-		$paramRef->{'saveropts'}             = Slim::Buttons::Common::validSavers($client);
+		$paramRef->{'screensavers'}          = Slim::Buttons::Common::hash_of_savers();
 	}
 
 	$paramRef->{'version'}        = $client->revision;
