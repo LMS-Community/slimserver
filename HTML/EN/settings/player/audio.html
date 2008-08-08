@@ -17,19 +17,40 @@
 		</select>
 	[% END %]
 
-	[% IF prefs.exists('pref_analogOutMode') %]
+	[% IF prefs.exists('pref_analogOutMode') || prefs.exists('pref_lineInLevel') || prefs.exists('pref_lineInAlwaysOn') %]
 		[% WRAPPER settingSection %]
-			[% WRAPPER settingGroup title="SETUP_ANALOGOUTMODE" desc="SETUP_ANALOGOUTMODE_DESC" %]
-				<select class="stdedit" name="pref_analogOutMode" id="pref_analogOutMode">
-		
-				[% FOREACH option = {
-					'1' => 'ANALOGOUTMODE_SUBOUT',
-					'0' => 'ANALOGOUTMODE_HEADPHONE'
-				} %]
-					<option [% IF prefs.pref_analogOutMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-				[%- END -%]
-				
-				</select>
+			[% IF prefs.exists('pref_analogOutMode') %]
+				[% WRAPPER settingGroup title="SETUP_ANALOGOUTMODE" desc="SETUP_ANALOGOUTMODE_DESC" %]
+					<select class="stdedit" name="pref_analogOutMode" id="pref_analogOutMode">
+			
+					[% FOREACH option = {
+						'1' => 'ANALOGOUTMODE_SUBOUT',
+						'0' => 'ANALOGOUTMODE_HEADPHONE'
+					} %]
+						<option [% IF prefs.pref_analogOutMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+					
+					</select>
+				[% END %]
+			[% END %]
+			
+			[% IF prefs.exists('pref_lineInLevel') %]
+				[% WRAPPER settingGroup title="LINE_IN_LEVEL" desc="LINE_IN_LEVEL_DESC" %]
+					<input type="text" class="stdedit sliderInput_0_100" name="pref_lineInLevel" id="lineInLevel" value="[% prefs.lineInLevel %]" size="5">
+				[% END %]
+			[% END %]
+			
+			[% IF prefs.exists('pref_lineInAlwaysOn') %]
+				[% WRAPPER settingGroup title="LINE_IN_ALWAYS_ON" desc="LINE_IN_ALWAYS_ON_DESC" %]
+					<select class="stdedit" name="pref_lineInAlwaysOn" id="lineInAlwaysOn">
+						<option [% IF prefs.pref_lineInAlwaysOn %]selected="selected" [% END %]value="1">
+							[% 'YES' | string %]
+						</option>
+						<option [% IF !prefs.pref_lineInAlwaysOn %]selected="selected" [% END %]value="0">
+							[% 'NO' | string %]
+						</option>
+					</select>
+				[% END %]
 			[% END %]
 		[% END %]
 	[% END %]

@@ -83,6 +83,10 @@ sub prefs {
 
 	if ($client->isa('Slim::Player::Boom')) {
 		push @prefs, 'analogOutMode', 'bass', 'treble', 'stereoxl';
+		
+		if (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+			push @prefs, 'lineInLevel', 'lineInAlwaysOn';
+		}
 	}
 	
 	if ( $client->isa('Slim::Player::Squeezebox2') ) {

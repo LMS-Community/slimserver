@@ -89,6 +89,8 @@ sub init {
 						'VOLUME',
 						'REPLAYGAIN',
 						'SETUP_ANALOGOUTMODE',
+						'LINE_IN_LEVEL',
+						'LINE_IN_ALWAYS_ON',
 						'STEREOXL',
 					],
 					'stringExternRef' => 1,
@@ -254,6 +256,54 @@ sub init {
 							'condition'   => sub {
 								my $client = shift;
 								return $client->isa('Slim::Player::Boom');
+							},
+						},
+
+						'LINE_IN_LEVEL'    => {
+							'useMode'      => 'INPUT.Bar',
+							'header'       => 'LINE_IN_LEVEL',
+							'stringHeader' => 1,
+							'headerValue'  => 'unscaled',
+							'min'          => 0,
+							'max'          => 100,
+							'increment'    => 1,
+							'onChange'     => sub {
+								my ($client, $value) = @_;
+								
+								$value = $prefs->client($client)->get('lineInLevel') + $value;
+								$prefs->client($client)->set('lineInLevel', $value);
+							},
+							
+							'pref'         => "lineInLevel",
+							'initialValue' => sub { $prefs->client(shift)->get('lineInLevel') },
+							'condition'    => sub {
+								my $client = shift;
+								return $client->isa('Slim::Player::Boom') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
+							},
+						},
+
+						'LINE_IN_ALWAYS_ON'=> {
+							'useMode'      => 'INPUT.Choice',
+							'listRef'      => [
+								{
+									name   => '{OFF}',
+									value  => 0,
+								},
+								{
+									name   => '{ON}',
+									value  => 1,
+								},
+							],
+							'onPlay'       => \&setPref,
+							'onAdd'        => \&setPref,
+							'onRight'      => \&setPref,
+							'header'       => '{LINE_IN_ALWAYS_ON}',
+							'headerAddCount'=> 1,
+							'pref'         => "lineInAlwaysOn",
+							'initialValue' => sub { $prefs->client(shift)->get('lineInAlwaysOn') },
+							'condition'    => sub {
+								my $client = shift;
+								return $client->isa('Slim::Player::Boom') && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin');
 							},
 						},
 				

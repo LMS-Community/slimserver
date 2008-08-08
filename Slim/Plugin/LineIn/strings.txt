@@ -15,13 +15,13 @@ PLUGIN_LINE_IN_IN_USE
 	EN	Line In is active
 
 LINE_IN_LEVEL
-	EN	Input Level
+	EN	Line In Level
 
 LINE_IN_LEVEL_DESC
 	EN	Using this setting you can adjust the line in gain.
 
 LINE_IN_ALWAYS_ON
-	EN	Line In always on
+	EN	Line In Always On
 
 LINE_IN_ALWAYS_ON_DESC
 	EN	This option turns on the line input all the time, to let users who want to mix in the line in all the time (eg. for Karaoke)

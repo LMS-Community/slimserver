@@ -13,7 +13,6 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
-use Slim::Plugin::LineIn::Settings;
 
 my $line_in = {
 	'name'  => '{PLUGIN_LINE_IN_LINE_IN}',
@@ -39,7 +38,6 @@ sub initPlugin {
 	$log->info("Initializing");
 	
 	$class->SUPER::initPlugin();
-	Slim::Plugin::LineIn::Settings->new;
 
 	Slim::Player::ProtocolHandlers->registerHandler('linein', 'Slim::Plugin::LineIn::ProtocolHandler');
 
