@@ -146,10 +146,16 @@ sub rpds_handler {
 		$log->warn( $client->id . " Got RPDS packet: " . Data::Dump::dump($data_ref) );
 	}
 	
-	my $got_cmd = unpack 'c', $$data_ref;
+	my $got_cmd = unpack 'C', $$data_ref;
+	
+	# Check for specific decoding error codes
+	if ( $got_cmd >= 100 && $got_cmd < 200 ) {
+		$log->error("Rhapsody decoding failure: code $got_cmd");
+		return;
+	}
 	
 	# Check for -5 getEA failures here, so we don't screw up any other rpds commands
-	if ( $got_cmd eq '-5' ) {
+	if ( $got_cmd == 251 ) {
 		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, 'RPDS_EA_FAILED' );
 		}
@@ -163,7 +169,7 @@ sub rpds_handler {
 	my $sent_cmd = $rpds->{data} ? unpack( 'c', $rpds->{data} ) : 'N/A';
 	
 	# Check for errors sent by the player
-	if ( $got_cmd eq '-1' ) {
+	if ( $got_cmd == 255 ) {
 		# SOAP Fault
 		my (undef, $faultCode, $faultString ) = unpack 'cn/a*n/a*', $$data_ref;
 		
@@ -241,7 +247,7 @@ sub rpds_handler {
 		$cb->( $string, $client, @{$pt} );
 		return;
 	}
-	elsif ( $got_cmd eq '-2' ) {
+	elsif ( $got_cmd == 254 ) {
 		# Player indicates it needs a new session
 		
 		# Ignore if command was 6 to end a session
@@ -264,7 +270,7 @@ sub rpds_handler {
 
 		return;
 	}
-	elsif ( $got_cmd eq '-3' ) {
+	elsif ( $got_cmd == 253 ) {
 		# SSL connection error
 		if ( $log->is_warn ) {
 			$log->warn( $client->id . " Received RPDS -3, SSL connection error");
@@ -281,7 +287,7 @@ sub rpds_handler {
 		
 		return;
 	}
-	elsif ( $got_cmd eq '-4' ) {
+	elsif ( $got_cmd == 252 ) {
 		# Another SSL connection is still in progress, we need to wait and try
 		# sending the request again
 		
