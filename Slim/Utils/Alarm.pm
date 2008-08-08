@@ -496,6 +496,7 @@ sub sound {
 	if (! $self->{_repeat}) {
 		$log->debug('Alarm does not repeat so disabling for next time');
 		$self->{_enabled} = 0;
+		$self->save(0);
 	}
 
 	if ($soundAlarm) {
