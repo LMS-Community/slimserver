@@ -1231,8 +1231,11 @@ sub _get_v2tagdata {
 		$v2 = $info;
 	}
 
-	seek $fh, $v2h->{offset}, SEEK_SET;
-	read $fh, $wholetag, $end;
+	# Bug 8939, Trying to read past the end of the file may crash on win32 
+	if ( $v2h->{offset} + $end <= -s $fh ) {
+		seek $fh, $v2h->{offset}, SEEK_SET;
+		read $fh, $wholetag, $end;
+	}
 
         # JRF: The discrepency between ID3v2.3 and ID3v2.4 is that :
         #          2.3: unsync flag indicates that unsync is used on the entire tag
@@ -1557,11 +1560,13 @@ sub get_mp3info {
 		$@ = "No file specified";
 		return undef;
 	}
+	
+	my $size = -s $file;
 
 	if (ref $file) { # filehandle passed
 		$fh = $file;
 	} else {
-		if (not -s $file) {
+		if ( !$size ) {
 			$@ = "File is empty";
 			return undef;
 		}
@@ -1586,6 +1591,12 @@ sub get_mp3info {
 
 	if (my $v2h = _get_v2head($fh)) {
 		$tot += $off += $v2h->{tag_size};
+		
+		if ( $off > $size - 10 ) {
+			# Invalid v2 tag size
+			$off = 0;
+		}
+		
 		seek $fh, $off, SEEK_SET;
 		read $fh, $byte, 4;
 	}
