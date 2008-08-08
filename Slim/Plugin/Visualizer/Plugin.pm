@@ -122,6 +122,8 @@ sub initPlugin {
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
 		'VISUALIZER_SPECTRUM_ANALYZER',
+		'PLAY',
+		\&valid,
 	);
 
 	Slim::Buttons::Common::addSaver(
@@ -130,6 +132,8 @@ sub initPlugin {
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
 		'VISUALIZER_ANALOG_VUMETER',
+		'PLAY',
+		\&valid,
 	);
 
 	Slim::Buttons::Common::addSaver(
@@ -138,8 +142,13 @@ sub initPlugin {
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
 		'VISUALIZER_DIGITAL_VUMETER',
+		'PLAY',
+		\&valid,
 	);
 }
+
+sub valid { shift->isa('Slim::Player::Squeezebox2') }
+	
 
 ##################################################
 ### Screensaver display mode

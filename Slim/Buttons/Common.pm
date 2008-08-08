@@ -71,8 +71,8 @@ my $SCAN_RATE_MAX_MULTIPLIER = 256;
 # below to have the module add its mode itself
 our %modes = ();
 
-# Hashed list for registered Screensavers. Register these using addSaver. 
-our %savers = ();
+# Store of registered Screensavers. Register these using addSaver.
+our $savers = {};
 
 # Map the numbers on the remote to their corresponding letter sequences.
 our @numberLetters = (
@@ -142,7 +142,7 @@ sub init {
 		SDI::Service::Buttons::SetupWizard::init();
 	}
 
-	$savers{'playlist'} = 'SCREENSAVER_JUMP_TO_NOW_PLAYING';
+	addSaver('playlist', undef, undef, undef, 'SCREENSAVER_JUMP_TO_NOW_PLAYING', 'PLAY');
 }
 
 =head2 forgetClient ( $client )
@@ -157,7 +157,7 @@ sub forgetClient {
 	delete $scrollClientHash->{ $client };
 }
 
-=head2 addSaver ( $name, [ $buttonFunctions ], [ $setModeFunction ], [ $leaveModeFunction ], $displayName )
+=head2 addSaver ( $name, [ $buttonFunctions ], [ $setModeFunction ], [ $leaveModeFunction ], $displayName, [ $type ], [ $valid ] )
 
 This function registers a screensaver mode.  The required $name argument should be a unique string,
 identifying the mode, $displayName is also required and must be a valid string token (all caps, with
@@ -173,6 +173,13 @@ of existing INPUT.* modes.
 
 $leaveModeFunction is an optional reference to a routine to run when exiting the screensaver mode.
 
+$displayName is a string token for the screensaver (non optional)
+
+$type is a string containing one or more tokens: PLAY IDLE OFF to indicate the type of saver, e.g. "PLAY-IDLE"
+If omitted it defaults to "PLAY-IDLE-OFF", i.e. the saver is valid for all screensaver types.
+
+$valid is an optional callback to verify if the saver is valid for a specific player.  It is passed $client when called.
+
 =cut
 
 sub addSaver {
@@ -181,29 +188,50 @@ sub addSaver {
 	my $setModeFunction = shift;
 	my $leaveModeFunction = shift;
 	my $displayName = shift;
+	my $type = shift || 'PLAY-IDLE-OFF';
+	my $valid = shift;
 
-	$savers{$name} = $displayName;
+	logger('player.ui')->info("Registering screensaver $displayName $type");
 
-	logger('player.ui')->info("Registering screensaver $displayName");
-
+	$savers->{$name} = {
+		'name'  => $displayName,
+		'type'  => $type,
+		'valid' => ($valid && ref $valid eq 'CODE' ? $valid : undef),
+	};
+		
 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 
-	if ($name =~ s/^SCREENSAVER\./OFF\./) {
+	if ($type =~ /OFF/ && $name =~ s/^SCREENSAVER\./OFF\./) {
 
 		addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 	}
 }
 
-=head2 hash_of_savers ( )
+=head2 validSavers ( $client )
 
-Taking no arguments, this function returns a reference to the current hash of screensavers. Called from settings routines
-in Slim::Web::Setup and Slim::Buttons::Settings
+Returns hash of valid savers for this client.
+Called from settings routines in Slim::Web::Setup and Slim::Buttons::Settings
 
 =cut
 
-sub hash_of_savers {
+sub validSavers {
+	my $client = shift;
 
-	return {%savers};
+	my $ret = { 'screensaver' => {}, 'idlesaver' => {}, 'offsaver' => {} };
+
+	for my $name (keys %$savers) {
+
+		my $saver = $savers->{$name};
+
+		if ( !$saver->{'valid'} || $saver->{'valid'}->($client) ) {
+
+			$ret->{'screensaver'}->{$name} = $saver->{'name'} if $saver->{'type'} =~ /PLAY/;
+			$ret->{'idlesaver'}->{$name}   = $saver->{'name'} if $saver->{'type'} =~ /IDLE/;
+			$ret->{'offsaver'}->{$name}    = $saver->{'name'} if $saver->{'type'} =~ /OFF/;
+		}
+	}
+	
+	return $ret;
 }
 
 =head2 addMode ( )
