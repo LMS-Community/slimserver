@@ -85,7 +85,7 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 			[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
 				[% WRAPPER settingGroup title="SETUP_" _ saver %]
 					<select class="stdedit" name="pref_[% saver %]" id="[% saver %]">
-						[% FOREACH option = screensavers %]
+						[% FOREACH option = saveropts.$saver %]
 							<option [% IF prefs.${"pref_$saver"} == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 						[%- END -%]
 					</select>		
