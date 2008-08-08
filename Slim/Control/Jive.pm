@@ -1125,6 +1125,7 @@ sub alarmVolumeSettings {
 		};
 		push @vol_settings, $volSetting;
 	}
+
 	my $return = { 
 		text      => $string,
 		count     => scalar(@vol_settings),
@@ -1263,45 +1264,37 @@ sub lineOutCommand {
 sub toneSettingsQuery {
 
 	$log->info("Begin function");
-	my $request = shift;
-	my $client  = $request->client();
-	my $tone    = $request->getParam('cmd');
+	my $request        = shift;
+	my $client         = $request->client();
+	my $tone           = $request->getParam('cmd');
 
-	my @items = (
-		# raise $tone
-		{
-			text => $client->string('UP'),
-			actions => {
-				do => {
-					player => 0,
-					cmd    => [ 'jivetoneadjust' ],
-					params => {
-						delta => 1,
-						tone  => $tone,
-					},
+	my $val     = $client->$tone();
+
+	my @menu = ();
+	my $slider = {
+		slider  => 1,
+		min     => -23 + 0,
+		max     => 23,
+		adjust  => 24, # slider currently doesn't like a slider starting at or below 0
+		initial => $val,
+		#help    => NO_HELP_STRING_YET,
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'jivetoneadjust' ],
+				params => {
+					tone   => $tone,
+					valtag => 'value',
 				},
 			},
 		},
-		# lower $tone
-		{
-			text => $client->string('DOWN'),
-			actions => {
-				do => {
-					player => 0,
-					cmd    => [ 'jivetoneadjust' ],
-					params => {
-						delta => -1,
-						tone  => $tone,
-					},
-				},
-			},
-		},
-	);
+	};
 
-	sliceAndShip($request, $client, \@items);
+	push @menu, $slider;
+
+	sliceAndShip($request, $client, \@menu);
 
 	$request->setStatusDone();
-
 }
 
 sub toneAdjustCommand {
@@ -1310,9 +1303,13 @@ sub toneAdjustCommand {
 	my $client  = $request->client();
 	my $tone    = $request->getParam('tone');
 	my $delta   = $request->getParam('delta');
+	my $newVal  = $request->getParam('value');
 
 	my $val     = $client->$tone();
-	my $newVal  = $val + $delta;
+
+	if (!defined $newVal) {
+		$newVal  = $val + $delta;
+	}
 
 	$val = $client->$tone($newVal);
 
