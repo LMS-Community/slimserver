@@ -1267,6 +1267,8 @@ sub _get_v2tagdata {
 	# files - and in any case couldn't guarentee I'd get it right.
 
 	$myseek = sub {
+		return unless $wholetag;
+		
 		my $bytes = substr($wholetag, $off, $hlen);
 
 		# iTunes is stupid and sticks ID3v2.2 3 byte frames in a
