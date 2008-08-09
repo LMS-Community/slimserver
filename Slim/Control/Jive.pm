@@ -1091,40 +1091,26 @@ sub alarmVolumeSettings {
 	my $string          = shift;
 
 	my @vol_settings;
-	my $inBetweenSetting = $current_setting % 10;
-	for (my $i = 10; $i <= 100; $i = $i + 10) {
-		if ($inBetweenSetting && $i > $current_setting) {
-			my $volSetting = {
-				text    => $current_setting,
-				radio   => 1,
-				actions => {
-					do => {
-						player => 0,
-						cmd    => [ 'alarm', 'defaultvolume' ],
-						params => {
-							volume => $current_setting,
-						},
-					},
-				},
-			};
-			push @vol_settings, $volSetting;
-			$inBetweenSetting = 0;
-		}
-		my $volSetting = {
-			text    => $i,
-			radio   => ($i == $current_setting) + 0,
-			actions => {
-				do => {
-					player => 0,
-					cmd    => [ 'alarm', 'defaultvolume' ],
-					params => {
-						volume => $i,
-					},
+
+	my $slider = {
+		slider      => 1,
+		min         => 1,
+		max         => 100,
+		sliderIcons => 'volume',
+		initial     => $current_setting,
+		#help    => NO_HELP_STRING_YET,
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'alarm', 'defaultvolume' ],
+				params => {
+					valtag => 'volume',
 				},
 			},
-		};
-		push @vol_settings, $volSetting;
-	}
+		},
+	};
+
+	push @vol_settings, $slider;
 
 	my $return = { 
 		text      => $string,
