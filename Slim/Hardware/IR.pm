@@ -825,9 +825,9 @@ sub processFrontPanel {
 
 		$client->lastirbutton($code);
 
-		processCode($client, $irCode, $irTime);
-
 		$client->startirhold($irTime);
+
+		processCode($client, $irCode, $irTime);
 
 		# start timing for hold time, preparing the .hold event for later.
 		Slim::Utils::Timers::setTimer(
