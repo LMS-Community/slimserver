@@ -445,7 +445,7 @@ sub lines {
 		my $line1 = $client->string('PLAYLIST');
 		my $overlay1;
 
-		if ($args->{'trans'}) {
+		if ($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) {
 			$overlay1 = ' ' . (browseplaylistindex($client) + 1) . ' ' . $client->string('OUT_OF') . ' ' . 
 				Slim::Player::Playlist::count($client);
 		}
