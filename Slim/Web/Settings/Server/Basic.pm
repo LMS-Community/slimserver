@@ -72,8 +72,6 @@ sub handler {
 		Slim::Control::Request::executeRequest(undef, $rescanType);
 	}
 
-	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
-
 	if ( $paramRef->{'saveSettings'} ) {
 		my $curLang = preferences('server')->get('language');
 		my $lang    = $paramRef->{'pref_language'};
@@ -116,6 +114,11 @@ sub handler {
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+sub beforeRender {
+	my ($class, $paramRef) = @_;
+	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
 }
 
 1;

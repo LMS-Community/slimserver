@@ -118,6 +118,14 @@ sub prefs {
 	return ();
 }
 
+=head2 beforeRender( )
+
+A sub called before the page is rendered, but after the prefs have been processed/saved
+
+=cut
+sub beforeRender {}
+
+
 =head2 handler( )
 
 Basic handler for setting page template, records changed prefs and presents current prefs to the user.
@@ -252,6 +260,8 @@ sub handler {
 
 		$paramRef->{'orderedLinks'} = \@orderedLinks;
 	}
+	
+	$class->beforeRender($paramRef, $client);
 
 	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);
 }

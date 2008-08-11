@@ -31,7 +31,7 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	my @prefs = qw(powerOnResume lameQuality);
+	my @prefs = qw(powerOnResume lameQuality maxBitrate);
 
 	if ($client->hasPowerControl()) {
 		push @prefs,'powerOffDac';
@@ -97,14 +97,8 @@ sub prefs {
 }
 
 
-sub handler {
-	my ($class, $client, $paramRef) = @_;
-
-	# If this is a settings update
-	if ($paramRef->{'saveSettings'}) {
-		# maxBitrate can't be handled by the generic handler
-		$prefs->client($client)->set('maxBitrate', $paramRef->{pref_maxBitrate}) if defined $paramRef->{pref_maxBitrate};
-	}
+sub beforeRender {
+	my ($class, $paramRef, $client) = @_;
 
 	# Load any option lists for dynamic options.
 	$paramRef->{'lamefound'}  = Slim::Utils::Misc::findbin('lame');
@@ -116,8 +110,6 @@ sub handler {
 	}
 
 	$paramRef->{'prefs'}->{pref_maxBitrate} = Slim::Utils::Prefs::maxRate($client, 1);
-	
-	return $class->SUPER::handler($client, $paramRef);
 }
 
 1;
