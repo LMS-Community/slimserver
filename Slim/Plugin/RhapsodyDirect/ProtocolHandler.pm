@@ -140,6 +140,9 @@ sub handleDirectError {
 			$log->debug("Skipping to next track ($nextsong)");
 			$client->execute([ 'playlist', 'jump', $nextsong ]);
 		}
+		else {
+			$client->execute([ 'stop' ]);
+		}
 	}
 }
 

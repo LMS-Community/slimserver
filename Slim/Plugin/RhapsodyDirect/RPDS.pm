@@ -241,6 +241,17 @@ sub rpds_handler {
 			return;
 		}
 		
+		# Treat failure to get EA like a direct stream error
+		if ( $faultCode =~ /NoContentFoundException/ ) {
+			Slim::Plugin::RhapsodyDirect::ProtocolHandler->handleDirectError(
+				$client,
+				Slim::Player::Playlist::url($client),
+				$faultCode,
+				$faultString,
+			);
+			return;
+		}
+		
 		my $cb = $rpds->{onError} || sub {};
 		my $pt = $rpds->{passthrough} || [];
 		my $string = sprintf( $client->string('PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT'), $faultString );
