@@ -1084,7 +1084,15 @@ sub canSeek {
 		if ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
 			@errorString = ('SEEK_ERROR_TRANSCODED');
 		} else {
-			$canSeek = 1;
+			# No seeking supported in WMA files yet
+			my $track = Slim::Player::Playlist::song($client);
+			if ( $track->content_type eq 'wma' ) {
+				$canSeek = 0;
+				@errorString = ('SEEK_ERROR_TYPE_NOT_SUPPORTED', 'WMA');
+			}
+			else {
+				$canSeek = 1;
+			}
 		}	
 	}
 	return (wantarray ? ($canSeek, @errorString) : $canSeek);
