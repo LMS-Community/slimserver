@@ -518,6 +518,11 @@ sub initDetailsForWin32 {
 	$osDetails{'osName'} =~ s/Win/Windows /;
 	$osDetails{'osName'} =~ s/\/.Net//;
 	$osDetails{'osName'} =~ s/2003/Server 2003/;
+	
+	# TODO: remove this code as soon as Win32::GetOSName supports Windows 2008 Server
+	if ($osDetails{'osName'} =~ /Vista/i && (Win32::GetOSVersion())[8] > 1) {
+		$osDetails{'osName'} = 'Windows 2008 Server';
+	}
 }
 
 sub initDetailsForOSX {
