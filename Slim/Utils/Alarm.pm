@@ -1207,11 +1207,8 @@ sub scheduleNext {
 		if (defined $nextAlarm->{_timerRef}) {
 			$log->debug('Previous scheduled alarm wasn\'t triggered.  Clearing nextAlarm and killing timer');
 			Slim::Utils::Timers::killSpecific($nextAlarm->{_timerRef});
-
-			# As the next alarm hasn't actually sounded, do a complete reschedule.  This allows
-			# the same alarm to be scheduled again if it's still next
-			$client->alarmData->{nextAlarm} = undef;
 		}
+		$client->alarmData->{nextAlarm} = undef;
 	}
 
 	if ($class->alarmsEnabled($client)) {
