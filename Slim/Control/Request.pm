@@ -2309,12 +2309,11 @@ sub __isCmdQuery {
 			# check each request term matches one of the passed params
 			for (my $i = 0; $i < $possibleNamesCount; $i++) {
 
-				my $name = $self->{'_request'}->[$i];;
+				my $name = $self->{'_request'}->[$i];
 
 				# return as soon we fail
-				if (!grep(/^$name$/, @{$possibleNames->[$i]})) {
-
-					return 0;
+				for ( @{ $possibleNames->[$i] } ) {
+					return 0 if $name ne $_;
 				}
 			}
 
