@@ -2310,10 +2310,9 @@ sub __isCmdQuery {
 			for (my $i = 0; $i < $possibleNamesCount; $i++) {
 
 				my $name = $self->{'_request'}->[$i];
-
-				# return as soon we fail
-				for ( @{ $possibleNames->[$i] } ) {
-					return 0 if $name ne $_;
+			
+				if (!grep(/^$name$/, @{$possibleNames->[$i]})) {
+					return 0;
 				}
 			}
 
