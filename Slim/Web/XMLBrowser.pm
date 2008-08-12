@@ -473,7 +473,10 @@ sub handleFeed {
 			
 			foreach my $item ( @{ $stash->{'items'} } ) {
 
-				$item->{'index'} = $i;
+				# Bug 7854, don't set an index value unless we're at the top-level trackinfo page
+				if ( !$stash->{'index'} ) {
+					$item->{'index'} = $i;
+				}
 
 				if ($item->{'web'} && (my $group = $item->{'web'}->{'group'})) {
 
