@@ -1416,6 +1416,7 @@ sub scroll_dynamic {
 			$scrollParams->{A}             = 0;
 			$scrollParams->{V}             = 0;
 			$scrollParams->{t0}            = $client->knobData->{'_time'};
+			$scrollParams->{hitEndTime}    = undef;
 			$scrollParams->{time}          = 0;
 			$scrollParams->{lasttime}      = 0;
 			if ($result < 0) {
@@ -1447,6 +1448,28 @@ sub scroll_dynamic {
 				$deltaX = - $deltaX;
 			}
 			$result = $currentPosition + $deltaX;
+			if ($result < 0 || $result > $listlength-1) {
+				my $rollover = 0;
+				if (!defined $scrollParams->{hitEndTime}) {
+					$scrollParams->{hitEndTime} = $client->knobData->{'_time'};
+				} else {
+					# We hit the end previously.  Calculate the difference in time between then and now.
+					my $deltaT = $client->knobData->{'_time'} - $scrollParams->{hitEndTime};
+					my $rolloverTime = $scrollParams->{KrolloverTime};
+					if ($deltaT > $rolloverTime) {
+						$rollover = 1;
+						$scrollParams->{hitEndTime} = undef;
+					}
+				}
+				if ($rollover) {
+					if ($result < 0) {
+						$result = $listlength-1;
+					} else {
+						$result = 0;
+					}
+				}
+			}
+				
 			$scrollParams->{lasttime} = $time;
 			if ($result > $scrollParams->{estimateEnd}) {
 				$scrollParams->{estimateEnd} = $scrollParams->{estimateEnd} + ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
@@ -1597,6 +1620,8 @@ sub scroll_getInitialScrollParams {
 		Kc              => 100,
 		
 		KmaxScrollPct   => 1, # Maximum step, in percentage of list length
+		
+		KrolloverTime   => 0.8, # Time that it takes while spinning knob to roll over.
 
 		# seconds.  Finishs a list in this many seconds. 
 		Tc              => 5,   
