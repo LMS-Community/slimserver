@@ -713,7 +713,7 @@ sub nowPlayingModeLines {
 				# Only show output buffer status on SB2 and higher
 				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
 				$songtime  = ' ' . sprintf "%s / %.1f", $decodeBuffer, $outputBuffer;
-				$songtime .= ' ' . $client->string('SECONDS');
+				$songtime .= ' ' . $client->string('SECONDS') unless $client->isa('Slim::Player::Boom');
 			}
 			else {
 				$songtime  = ' ' . sprintf "%s", $decodeBuffer;
