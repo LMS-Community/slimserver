@@ -198,7 +198,7 @@ SETUP_REJECT_TYPE_DESC
 SETUP_REJECT_SIZE
 	DA	MusicIP: afvisningsstørrelse
 	DE	MusicIP - Ablehnungsgröße
-	EN	MusicIP Reject Size.
+	EN	MusicIP Reject Size
 	ES	Tamaño de rechazo de MusicIP
 	FI	MusicIP:n hylkäyskoko
 	FR	Taille de rejet MusicIP
