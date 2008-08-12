@@ -148,7 +148,7 @@ sub findFilesMatching {
 			# Bug: 2485:
 			# Use Path::Class to determine if the file points to a
 			# directory above us - if so, that's a loop and we need to break it.
-			if (dir($file)->subsumes($topDir)) {
+			if (dir($file)->subsumes($topDir) || dir($file)->subsumes(preferences('server')->get('audiodir'))) {
 
 				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
 				next;
