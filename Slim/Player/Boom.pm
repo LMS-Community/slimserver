@@ -274,6 +274,7 @@ sub reconnect {
 	# sendBDACFrame($client, 'DACWOOFERBQ',[   658*2,   980*2, 1729*2, 2816*2, 5120*2, 8960*2, 14848*2, 26368*2, 0x8fffffff]);
 	# sendBDACFrame($client, 'DACWOOFERBQ',  [    0,     0,     0,     0,     0,     0,     0,     0,     0]);
 	# sendBDACFrame($client, 'DACWOOFERBQ',  [2264,   3526,  5200,  5800, 10200, 15889, 27031,  45000,     0x8FFFFFFF]);
+	sendBDACFrame($client, 'DACWOOFERBQ',[   658,   980, 1729, 2816, 5120, 8960, 0x8fffffff, 0x8fffffff, 0x8fffffff]);  # <--default built into firmware.
 }
 
 sub play {
