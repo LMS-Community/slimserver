@@ -29,6 +29,8 @@ use base qw(Slim::Display::Display);
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
+use Memoize;
+
 my $prefs = preferences('server');
 
 # constants
@@ -591,6 +593,13 @@ sub measureText {
 # $value should be pre-processed to be from 0-100
 # $midpoint specifies the position of the divider from 0-100 (use 0 for progressBar)
 # $reverse reverses fill for progressBar only (0 midpoint)
+
+# Cache results of sliderBar as it doesn't need to be recomputed each time
+memoize( 'sliderBar', NORMALIZER => 'sliderBar_key' );
+
+sub sliderBar_key {
+	join( ',', shift->vfdmodel, @_ );
+}
 
 sub sliderBar {
 	my $display = shift;
