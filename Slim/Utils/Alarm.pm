@@ -937,11 +937,11 @@ sub _createSaveable {
 		_time => $self->{_time},
 		_days => $self->{_days},
 		_enabled => $self->{_enabled},
+		_repeat => $self->{_repeat},
 		_playlist => $self->{_playlist},
 		_volume => $self->{_volume},
 		_comment => $self->{_comment},
 		_id => $self->{_id},
-		_repeat => $self->{_repeat},
 		_createTime => $self->{_createTime},
 	};
 }
@@ -1161,6 +1161,7 @@ sub loadAlarms {
 		my $alarm = $class->new($client, $prefAlarm->{_time});
 		$alarm->{_days} = $prefAlarm->{_days};
 		$alarm->{_enabled} = $prefAlarm->{_enabled};
+		$alarm->{_repeat} = $prefAlarm->{_repeat};
 		$alarm->{_playlist} = $prefAlarm->{_playlist};
 		$alarm->{_volume} = $prefAlarm->{_volume};
 		$alarm->{_comment} = $prefAlarm->{_comment};
