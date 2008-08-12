@@ -52,6 +52,12 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 
 {
+	if ($^O =~ /Win32/) {
+		require Win32;
+	}
+}
+
+{
 	my $class = __PACKAGE__;
 
 	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly useFolderImporter scanningProcess)) {
@@ -91,7 +97,13 @@ sub launchScan {
 
 	Slim::Utils::Prefs->writeAll;
 
-	$args->{ "prefsdir=" . Slim::Utils::Prefs->dir } = 1;
+	my $path = Slim::Utils::Prefs->dir;
+	
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		$path = Win32::GetShortPathName($path);
+	}
+
+	$args->{ "prefsdir=$path" } = 1;
 
 	if ( my $logconfig = Slim::Utils::Log->defaultConfigFile ) {
 
