@@ -4,7 +4,7 @@
 			SqueezeJS.Controller.request({   
 				params: [ playerid, [ 'client', 'forget' ]]   
 			});   
-		}   
+		}
 	</script>   
 [% END;
 ELSIF !macaddress; pageHeaderScripts = BLOCK %]   
@@ -21,7 +21,22 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 		}   
 		
 		function dummyCallback() {}   
+
+
+		function resetPlayer(url) {
+			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
+				location = url;
+		}
 	</script>   
+[% END; 
+ELSIF !useExtJS; pageHeaderScripts = BLOCK %]   
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>   
+	<script TYPE="text/javascript" language="JavaScript">   
+		function resetPlayer(url) {
+			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
+				location = url;
+		}
+	</script>
 [% END; END %] 
 [% PROCESS settings/header.html %]
 
@@ -109,7 +124,7 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_RESET_PLAYER" desc="SETUP_RESET_PLAYER_DESC" %]
-		<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1">[% "SETUP_RESET_PLAYER" | string %]</a>
+		<input type="button" onclick="[% useExtJS ? "Settings." : '' %]resetPlayer('[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1')" value="[% "SETUP_RESET_PLAYER" | string %]">
 	[% END %]
 
 	[% IF !macaddress; WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]   

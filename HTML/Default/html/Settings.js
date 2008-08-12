@@ -185,7 +185,7 @@ Settings = {
 	_confirmPageChange : function(cb) {
 		if (typeof cb == 'string') {
 			var url = cb;
-			cb = function(btn, a, b){
+			cb = function(btn){
 				if (btn == 'no' || btn == 'yes') {
 					if (btn == 'yes')
 						this.submitSettings();
@@ -206,6 +206,22 @@ Settings = {
 			scope: this
 		});
 		return false;
+	},
+	
+	resetPlayer : function(url) {
+		Ext.Msg.show({
+			title: SqueezeJS.string('reset_player'),
+			msg: SqueezeJS.string('reset_player_confirm'),
+			width: 300,
+			closable: false,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn) {
+				if (btn == 'yes') {
+					location = url;
+				}
+			},
+			scope: this
+		});
 	}
 }
 

@@ -3408,6 +3408,11 @@ SETUP_RESET_PLAYER
 SETUP_RESET_PLAYER_DESC
 	EN	You can reset a player's settings like player name, title format, menus etc. to factory defaults. Please note that this will not reset the player's hardware settings like eg. networking parameters.
 
+SETUP_RESET_PLAYER_CONFIRM
+	DE	Wollen Sie ihren Player wirklich auf die Fabrikeinstellungen zurücksetzen?
+	EN	Do you really want to reset your player to factory defaults?
+	FR	Êtes-vous sûr de vouloir réinitialiser votre platine? 
+
 SETUP_POWERONBRIGHTNESS
 	DA	Lysstyrke når den tændes
 	DE	Helligkeit im eingeschalteten Zustand
