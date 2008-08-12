@@ -28,6 +28,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Which qw(which);
 use Proc::Background;
 use Template;
+use Time::HiRes qw(sleep);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -280,11 +281,10 @@ sub startServer {
 		$process = Proc::Background->new(@commands);
 	}
 
-	my $dbh  = undef;
-	my $secs = 30;
+	my $dbh = undef;
 
 	# Give MySQL time to get going..
-	for (my $i = 0; $i < $secs; $i++) {
+	for (my $i = 0; $i < 300; $i++) {
 
 		# If we can connect, the server is up.
 		if ($dbh = $class->dbh) {
@@ -292,12 +292,12 @@ sub startServer {
 			last;
 		}
 
-		sleep 1;
+		sleep 0.1;
 	}
 
 	if ($@) {
 
-		$log->logdie("FATAL: Server didn't startup in $secs seconds! Exiting!");
+		$log->logdie("FATAL: Server didn't startup in 30 seconds! Exiting!");
 	}
 
 	$class->processObj($process);
@@ -392,7 +392,7 @@ sub stopServer {
 sub _checkForDeadProcess {
 	my $class = shift;
 
-	for (my $i = 0; $i < 10; $i++) {
+	for (my $i = 0; $i < 100; $i++) {
 
 		if (!-r $class->pidFile) {
 
@@ -400,7 +400,7 @@ sub _checkForDeadProcess {
 			return 1;
 		}
 
-		sleep 1;
+		sleep 0.1;
 	}
 
 	return 0;
