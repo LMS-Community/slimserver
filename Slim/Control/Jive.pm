@@ -112,8 +112,11 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
 		[1, 0, 1, \&jiveFavoritesCommand]);
 
-	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings'],
-		[1, 0, 0, \&playerBrightnessMenu]);
+	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings', '_index', '_quantity'],
+		[1, 1, 0, \&playerBrightnessMenu]);
+
+	Slim::Control::Request::addDispatch(['jivebrightnessadjust'],
+		[1, 0, 1, \&playerBrightnessAdjustCommand]);
 
 	Slim::Control::Request::addDispatch(['jiveunmixable'],
 		[1, 1, 1, \&jiveUnmixableMessage]);
@@ -766,78 +769,6 @@ sub alarmUpdateMenu {
 		window    => { titleStyle => 'settings' },
 	};
 	push @menu, $playlistChoice;
-
-if (0) {
-	my $playlists = Slim::Utils::Alarm->getPlaylists($client);
-
-	my $currentSetting = $alarm->playlist();
-
-	my @playlistChoices;
-	for my $typeRef (@$playlists) {
-		my $type = $typeRef->{type};
-		my @choices = ();
-		my $aref = $typeRef->{items};
-		for my $choice (@$aref) {
-
-			my $radio = 0;
-			if ( 
-				( $currentSetting eq $choice->{url} ) || 
-				( ! defined $choice->{url} && ! defined $currentSetting )
-			) { 
-				$radio = 1;				
-			}
-			my $subitem = {
-				text    => $choice->{title},
-				radio   => $radio,
-				nextWindow => 'refresh',
-				actions => {
-					do => {
-						cmd    => [ 'alarm', 'update' ],
-						params => {
-							id          => $params->{id},
-							playlisturl => $choice->{url} || 0, # send 0 for "current playlist"
-						},
-					},
-				},
-			};
-
-			if ( defined($choice->{url}) ) {
-				push @choices, $subitem;
-			# use current playlist doesn't need a submenu
-			} else {
-				push @playlistChoices, $subitem;
-			}
-		}
-
-		if ( scalar(@choices) ) {
-		
-		# FIXME: making submenus for the various $type(s) doesn't work because 
-		# radio buttons can't trigger a refresh of a jive window right now
-		#	my $item = {
-		#		text      => $type,
-		#		offset    => 0,
-		#		count     => scalar(@choices),
-		#		item_loop => \@choices,
-		#	};
-		#	push @playlistChoices, $item;
-
-		# so for now, flatten the hashes into one menu of radios
-			my $divider = {
-				text  => $type,
-				style => 'itemNoAction',
-			};
-			push @playlistChoices, $divider, @choices;
-		}
-	}
-	# wrap it all up
-	my $playlistChoice = {
-		text      => $client->string('ALARM_SELECT_PLAYLIST'),
-		offset    => 0,
-		count     => scalar(@playlistChoices),
-		item_loop => \@playlistChoices,
-	};
-	push @menu, $playlistChoice;
-}
 
 	my $repeat = $alarm->repeat();
 	my $repeatOnOff = {
@@ -1700,8 +1631,8 @@ sub playerSettingsMenu {
 			id             => 'settingsPlayerBrightness',
 			node           => 'advancedSettings',
 			actions        => {
-				  do => {
-					cmd    => ['jiveplayerbrightnesssettings'],
+				  go => {
+					cmd    => [ 'jiveplayerbrightnesssettings' ],
 					player => 0,
 				  },
 			},
@@ -1722,19 +1653,75 @@ sub playerBrightnessMenu {
 	my $request    = shift;
 	my $client     = $request->client();
 
-	Slim::Hardware::IR::executeButton($client, 'brightness_toggle', undef, undef, 1);
+	my @menu = ();
 
-	my $newBrightness = $client->brightness();
-	$client->showBriefly({
-		'jive' => {
-			'type'    => 'popupplay',
-			'text'    => [ $client->string('SETTING_PLAYER_BRIGHTNESS_TO', $client->name(), $newBrightness) ],
-                       }
-                });
+	# WHILE ON, WHILE OFF, IDLE
+	my @options = (
+		{
+			string => 'SETUP_POWERONBRIGHTNESS_ABBR',
+			pref   => 'powerOnBrightness',
+		},
+		{
+			string => 'SETUP_POWEROFFBRIGHTNESS_ABBR',
+			pref   => 'powerOffBrightness',
+		},
+		{
+			string => 'SETUP_IDLEBRIGHTNESS_ABBR',
+			pref   => 'idleBrightness',
+		},
+	);
+
+	for my $href (@options) {
+		my @radios = ();
+		my $currentSetting = $prefs->client($client)->get($href->{pref});
+
+		# assemble radio buttons based on what's available for that player
+		my $hash  = $client->display->getBrightnessOptions();
+		for my $setting (sort { $a <=> $b } keys %$hash) {
+			my $item = {
+				text => $hash->{$setting},
+				radio => ($currentSetting == $setting) + 0,
+				actions => {
+					do    => {
+						cmd    => [ 'jivebrightnessadjust' ],
+						player => 0,
+						params => {
+							value => "$setting",
+							mode  => $href->{pref},
+						},
+					},
+				},
+			};
+			push @radios, $item;
+		}
+
+		my $item = {
+			text    => $client->string($href->{string}),
+			count   => scalar(@radios),
+			offset  => 0,
+			item_loop => \@radios,
+		};
+		push @menu, $item;
+	}
+	sliceAndShip($request, $client, \@menu);
 
 	$request->setStatusDone();
 
 }
+
+sub playerBrightnessAdjustCommand {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $mode    = $request->getParam('mode');
+	my $newVal  = $request->getParam('value');
+
+	my $val = preferences('server')->client($client)->set($mode,$newVal);
+
+	$request->setStatusDone();
+
+}
+
 
 sub browseMusicFolder {
 	$log->info("Begin function");
