@@ -112,16 +112,16 @@ sub requestString {
 		"User-Agent: " . Slim::Utils::Misc::userAgentString(),
 		"Icy-MetaData: 1",
 		"Connection: close",
-		"Host: $host" . $CRLF
+		"Host: $host",
 	));
 	
 	if (defined($user) && defined($password)) {
-		$request .= "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'') . $CRLF;
+		$request .= $CRLF . "Authorization: Basic " . MIME::Base64::encode_base64($user . ":" . $password,'');
 	}
 	
 	# If seeking, add Range header
 	if ($client && (my $seekdata = $client->scanData->{seekdata} )) {
-		$request .= 'Range: bytes=' . int( $seekdata->{newoffset} ) . '-';
+		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{newoffset} ) . '-';
 		
 		# Fix progress bar
 		$client->masterOrSelf->currentsongqueue()->[-1]->{startOffset} = $seekdata->{newtime};
@@ -134,9 +134,9 @@ sub requestString {
 	# Send additional information if we're POSTing
 	if ($post) {
 
-		$request .= "Content-Type: application/x-www-form-urlencoded$CRLF";
-		$request .= sprintf("Content-Length: %d$CRLF", length($post));
-		$request .= $CRLF . $post . $CRLF;
+		$request .= $CRLF . "Content-Type: application/x-www-form-urlencoded";
+		$request .= $CRLF . sprintf("Content-Length: %d", length($post));
+		$request .= $CRLF . $CRLF . $post . $CRLF;
 
 	} else {
 		$request .= $CRLF . $CRLF;
