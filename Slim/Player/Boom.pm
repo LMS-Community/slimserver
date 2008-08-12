@@ -393,8 +393,16 @@ sub setLineInLevel {
 	my $level = $_[1];
 	my $client = $_[2];
 	
-	# TODO - set new input level
-	logger('player.source')->warn("Input level would be set to $level - but no handler defined");
+	logger('player.source')->info("Setting line in level to $level");
+	
+	# map level to volume:
+	my $newGain = 0;
+	if ($level != 0) {
+		my $db = $client->getVolume($level, $client->getVolumeParameters());
+		$newGain = $client->dBToFixed($db);
+	}
+	
+	sendBDACFrame($client, 'DACLINEINGAIN', $newGain);
 }
 
 sub setRTCTime {
@@ -615,7 +623,10 @@ sub sendBDACFrame {
 		$log->info("Updating the BDAC bass_eq volume table for the subwoofer");
 		my $count = @$data;
 		$buf = pack('C',7).pack('C',$count).pack("N$count", @$data);
-	}
+	} elsif ($type eq 'DACLINEINGAIN') {
+		$log->info("Setting line in gain");
+		$buf = pack('C',8).pack('N',$data);
+	} 
 	
 	if (defined $buf) {
 		$client->sendFrame('bdac', \$buf);

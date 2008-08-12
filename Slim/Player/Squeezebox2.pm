@@ -123,6 +123,7 @@ my @volume_map = (
  );
 
 sub dBToFixed {
+	my $client = shift;
 	my $db = shift;
 
 	# Map a floating point dB value to a 16.16 fixed point value to
@@ -200,7 +201,7 @@ sub volume {
 		}
 		else {
 			my $db = $client->getVolume($volume, $client->getVolumeParameters());
-			$newGain = dBToFixed($db);
+			$newGain = $client->dBToFixed($db);
 		}
 
 		my $data = pack('NNCCNN', $oldGain, $oldGain, $prefs->client($client)->get('digitalVolumeControl'), $preamp, $newGain, $newGain);
@@ -701,7 +702,7 @@ sub canDoReplayGain {
 	my $replay_gain = shift;
 
 	if (defined($replay_gain)) {
-		return dBToFixed($replay_gain);
+		return $client->dBToFixed($replay_gain);
 	}
 
 	return 0;
