@@ -623,7 +623,7 @@ sub browsedbOverlay {
 	my $client = shift;
 	my $item   = shift;
 
-	my ($overlay1, $overlay2) = (undef, '');
+	my ($overlay1, $overlay2);
 
 	my $hierarchy = $client->modeParam('hierarchy');
 	my $level     = $client->modeParam('level') || 0;
@@ -656,15 +656,15 @@ sub browsedbOverlay {
 
 		for my $import (keys %{$Imports}) {
 			if ($import->can('mixable') && $import->mixable($item)) {
-				$overlay2 = $client->symbols('mixable');
+				$overlay1 = $client->symbols('mixable');
 			}
 		}
 	}
 
 	if ($client->modeParam('descend')) {
-		$overlay2 .= $client->symbols('rightarrow');
+		$overlay2 = $client->symbols('rightarrow');
 	} else {
-		$overlay2 .= $client->symbols('notesymbol');
+		$overlay2 = $client->symbols('notesymbol');
 	}
 
 	return ($overlay1, $overlay2);

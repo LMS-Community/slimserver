@@ -267,7 +267,7 @@ sub lines {
 
 	# show count if we are the new screen of a push transition or pref is set
 	if (($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) && $client->modeParam('headerAddCount')) {
-		$overlay1 = ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
+		$overlay1 .= ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
 	}
 
 	# truncate long strings in the header with '...'
