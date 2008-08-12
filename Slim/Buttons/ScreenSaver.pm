@@ -71,20 +71,22 @@ sub screenSaver {
 	my $now  = Time::HiRes::time();
 	my $log  = logger('server.timers');
 	my $mode = Slim::Buttons::Common::mode($client);
+	
+	my $cprefs = $prefs->client($client);
 
 	assert($mode);
 
 	if ($log->is_info) {
 
-		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $prefs->client($client)->get('screensavertimeout');
+		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $cprefs->get('screensavertimeout');
 
 		$log->info("screenSaver idle display [$diff] (mode: [$mode])");
 	}
 
 	# some variables, to save us calling the same functions multiple times.
-	my $saver   = $prefs->client($client)->get(Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver');
-	my $dim     = $prefs->client($client)->get('idleBrightness');
-	my $timeout = $prefs->client($client)->get('screensavertimeout');
+	my $saver   = $cprefs->get(Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver');
+	my $dim     = $cprefs->get('idleBrightness');
+	my $timeout = $cprefs->get('screensavertimeout');
 	my $irtime  = Slim::Hardware::IR::lastIRTime($client);
 
 	my $savermode = $saver eq 'playlist' ? 'screensaver' : $saver;  # mode when in screensaver, not always same as $saver 
@@ -102,14 +104,14 @@ sub screenSaver {
 
 				$display->brightness($dim) if $display->brightness() != $dim;
 		
-			} elsif ($display->brightness() != $prefs->client($client)->get('powerOnBrightness')) {
+			} elsif ($display->brightness() != $cprefs->get('powerOnBrightness')) {
 
-				$display->brightness($prefs->client($client)->get('powerOnBrightness'));
+				$display->brightness($cprefs->get('powerOnBrightness'));
 			}
 		
-		} elsif ($display->brightness() != $prefs->client($client)->get('powerOffBrightness')) {
+		} elsif ($display->brightness() != $cprefs->get('powerOffBrightness')) {
 
-			$display->brightness($prefs->client($client)->get('powerOffBrightness'));
+			$display->brightness($cprefs->get('powerOffBrightness'));
 		}
 	}
 
@@ -182,7 +184,7 @@ sub screenSaver {
 
 	} elsif (!$client->power()) {
 
-		$savermode = $prefs->client($client)->get('offsaver');
+		$savermode = $cprefs->get('offsaver');
 		$savermode =~ s/^SCREENSAVER\./OFF\./;
 
 		if ($savermode eq 'nosaver') {
@@ -233,10 +235,12 @@ sub wakeup {
 
 	my $curBrightnessPref;
 	
+	my $cprefs = $prefs->client($client);
+	
 	if (Slim::Buttons::Common::mode($client) eq 'off' || !$client->power()) {
-		$curBrightnessPref = $prefs->client($client)->get('powerOffBrightness');
+		$curBrightnessPref = $cprefs->get('powerOffBrightness');
 	} else {
-		$curBrightnessPref = $prefs->client($client)->get('powerOnBrightness');
+		$curBrightnessPref = $cprefs->get('powerOnBrightness');
 	} 
 	
 	if ($curBrightnessPref != $display->brightness()) {
@@ -256,7 +260,7 @@ sub wakeup {
 		$button ne 'brightness_toggle' &&
 		$display->brightness() == 0 &&
 		$client->power()) { 
-			$prefs->client($client)->set('powerOnBrightness', 1);
+			$cprefs->set('powerOnBrightness', 1);
 			$display->brightness(1);
 	}
 } 

@@ -182,8 +182,12 @@ sub displayWidth {
 	# if we're showing the always-on visualizer & the current buttonmode 
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
-	my $mode = ($display->showVisualizer() && !defined($client->modeParam('visu'))) ?
-		$prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ] : 0;
+	my $mode = 0;
+	
+	if ( $display->showVisualizer() && !defined($client->modeParam('visu')) ) {
+		my $cprefs = $prefs->client($client);
+		$mode = $cprefs->get('playingDisplayModes')->[ $cprefs->get('playingDisplayMode') ];
+	}
 
 	return $display->widthOverride || $display->modes->[$mode || 0]{width};
 }
@@ -280,7 +284,9 @@ sub visualizerParams {
 	my $display = shift;
 	my $client = $display->client;
 
-	my $visu = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
+	my $cprefs = $prefs->client($client);
+
+	my $visu = $cprefs->get('playingDisplayModes')->[ $cprefs->get('playingDisplayMode') ];
 	
 	$visu = 0 if (!$display->showVisualizer());
 	
