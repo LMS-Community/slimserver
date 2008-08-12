@@ -1331,6 +1331,17 @@ sub pushButton {
 	&$subref($client, $sub, $subarg);
 }
 
+# Return the sign of the argument as -1 or 1.  If arg is 0, then return 1.
+sub sign {
+	my $arg = shift;
+	if ($arg < 0) {
+		return -1;
+	} else {
+		return 1;
+	}
+}
+
+
 sub scroll {
 	scroll_dynamic(@_);
 }
@@ -1423,6 +1434,11 @@ sub scroll_dynamic {
 			$scrollParams->{A} = 2* $estimatedLength/($timeToCompleteList*$timeToCompleteList) ;
 			$scrollParams->{V} = $scrollParams->{V} + $scrollParams->{A} * $deltatime;
 			my $deltaX = .5 * $scrollParams->{A} * ($time*$time - $lasttime*$lasttime);
+			my $maxDeltaXPercent = $scrollParams->{KmaxScrollPct} / 100;
+			my $maxDeltaX = ($maxDeltaXPercent * $listlength);
+			if (abs($deltaX) > $maxDeltaX) {
+				$deltaX = $maxDeltaX * sign($deltaX);
+			}
 			if ($deltaX < 1) {
 				$deltaX = 1;
 			}
@@ -1431,12 +1447,6 @@ sub scroll_dynamic {
 				$deltaX = - $deltaX;
 			}
 			$result = $currentPosition + $deltaX;
-#			if ($result => ($listlength-1)) {
-#				$result = $listlength-1;
-#			}
-#			if ($result <0) {
-#				$result = 0;
-#			}
 			$scrollParams->{lasttime} = $time;
 			if ($result > $scrollParams->{estimateEnd}) {
 				$scrollParams->{estimateEnd} = $scrollParams->{estimateEnd} + ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
@@ -1450,6 +1460,7 @@ sub scroll_dynamic {
 			if ($scrollParams->{estimateEnd} > $listlength) {
 				$scrollParams->{estimateEnd} = $listlength;
 			}
+			
 		}
 		
 	} else {
@@ -1584,7 +1595,9 @@ sub scroll_getInitialScrollParams {
 		# For example, if you're spinning the knob .5 revolution (10 ticks) per second, and Kc is 2,
 		# We should traverse the entire list in 2 / 0.5 = 4 seconds.   
 		Kc              => 100,
-		    
+		
+		KmaxScrollPct   => 1, # Maximum step, in percentage of list length
+
 		# seconds.  Finishs a list in this many seconds. 
 		Tc              => 5,   
 
