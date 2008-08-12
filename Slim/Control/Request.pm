@@ -1952,28 +1952,20 @@ sub notify {
 					next;
 				}
 			}
-
-			my $funcName = $listener;
-
-			if ($log->is_debug && ref($notifyFuncRef) eq 'CODE') {
-				$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
-			}
 		
-			if (defined($requestsRef)) {
-
+			if ( defined $requestsRef ) {
 				if ($self->isNotCommand($requestsRef)) {
-
-					if ( $log->is_debug ) {
-						$log->debug(sprintf("Don't notify %s of %s !~ %s",
-							$funcName, $self->getRequestString, __filterString($requestsRef)
-						));
-					}
-
 					next;
 				}
 			}
 
 			if ( $log->is_debug ) {
+				my $funcName = $listener;
+
+				if ( ref($notifyFuncRef) eq 'CODE' ) {
+					$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
+				}
+				
 				$log->debug(sprintf("Notifying %s of %s =~ %s",
 					$funcName, $self->getRequestString, __filterString($requestsRef)
 				));
