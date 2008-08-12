@@ -677,12 +677,14 @@ sub processIR {
 
 	$client->irtimediff($timediff);
 	$client->lastirtime($irTime);
+	
+	my $knobData = $client->knobData;
 
 	if (!($code =~ /^knob/)) {
 		## Any button other than knob resets the knob state
-		$client->knobData->{'_velocity'} = 0;
-		$client->knobData->{'_acceleration'} = 0;
-		$client->knobData->{'_knobEvent'} = 0;
+		$knobData->{'_velocity'} = 0;
+		$knobData->{'_acceleration'} = 0;
+		$knobData->{'_knobEvent'} = 0;
 	}
 	if ( $log->is_info ) {
 		$log->info("$irCodeBytes\t$irTime\t" . Time::HiRes::time());
@@ -706,27 +708,27 @@ sub processIR {
 	} elsif ($code =~ /^knob/) {
 
 		$log->info("Knob code detected, processing $code");
-		$client->knobData->{'_knobEvent'} = 1;
-		$client->knobData->{'_time'} = $irTime;
-		$client->knobData->{'_lasttime'} = $client->lastirtime();
-		$client->knobData->{'_deltatime'} = $timediff;
+		$knobData->{'_knobEvent'} = 1;
+		$knobData->{'_time'} = $irTime;
+		$knobData->{'_lasttime'} = $client->lastirtime();
+		$knobData->{'_deltatime'} = $timediff;
 		if ($irCodeBytes eq $client->lastircodebytes && $timediff < 0.5) {
 			# The knob is spinning.  We can make useful calculations of speed and acceleration.
 			my $velocity = 1/$timediff;
 			if ($code =~ m:knob_left:) {
 				$velocity = -$velocity;
 			}
-			my $acceleration = ($velocity - $client->knobData->{'_velocity'}) / $timediff;
-			$client->knobData->{'_acceleration'} = $acceleration;
-			$client->knobData->{'_velocity'} = $velocity;
+			my $acceleration = ($velocity - $knobData->{'_velocity'}) / $timediff;
+			$knobData->{'_acceleration'} = $acceleration;
+			$knobData->{'_velocity'} = $velocity;
 			$code .= ".repeat";
 
 		} else {
 
 			$client->lastircodebytes($irCodeBytes);
 			$client->irrepeattime(0);
-			$client->knobData->{'_velocity'} = 0;
-			$client->knobData->{'_acceleration'} = 0;
+			$knobData->{'_velocity'} = 0;
+			$knobData->{'_acceleration'} = 0;
 		}
 
 		# The S:B:C:scroll code rate limits scrolling unless this is reset for every update
