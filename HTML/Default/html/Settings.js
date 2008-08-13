@@ -191,7 +191,8 @@ Settings = {
 						this.submitSettings();
 
 					this._resetModified();
-					frames.settings.location = url;
+					try { frames.settings.location = url; }
+					catch(e) { location = url; }
 				}
 			};
 		}
