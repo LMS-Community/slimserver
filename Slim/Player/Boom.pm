@@ -852,6 +852,9 @@ sub lineInOutStatus {
 	
 	if ($oldState->{in} != $client->lineInConnected()) {
 		Slim::Control::Request::notifyFromArray( $client, [ 'lios', 'linein', $client->lineInConnected() ] );
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+			Slim::Plugin::LineIn::Plugin::lineInItem($client, 1);
+		}
 	}
 	
 	if ($oldState->{out} != $client->lineOutConnected()) {

@@ -301,6 +301,7 @@ sub mainMenu {
 
 		@pluginMenus,
 		@{playerPower($client, 1)},
+		@{playerSettingsMenu($client, 1)},
 		@{
 			# The Digital Input plugin could be disabled
 			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::DigitalInput::Plugin')) {
@@ -312,14 +313,13 @@ sub mainMenu {
 		@{
 			# The Line In plugin could be disabled
 			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
-				Slim::Plugin::LineIn::Plugin::lineInItem($client);
+				Slim::Plugin::LineIn::Plugin::lineInItem($client, 0);
 			} else {
 				[];
 			}
 		},
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
-		@{playerSettingsMenu($client, 1)},
 		@{albumSortSettingsItem($client, 1)},
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},

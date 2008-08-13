@@ -12,6 +12,7 @@ use Scalar::Util qw(blessed);
 use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
 my $line_in = {
@@ -20,7 +21,8 @@ my $line_in = {
 	'url'   => "linein:1",
 };
 
-my $url = 'plugins/LineIn/set.html';
+my $url   = 'plugins/LineIn/set.html';
+my $prefs = preferences("server");
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.linein',
@@ -49,71 +51,167 @@ sub initPlugin {
 #        |  |is a Query
 #        |  |  |has Tags
 #        |  |  |  |Function to call
-	Slim::Control::Request::addDispatch(['lineinmenu'],
-	[1, 1, 0, \&lineInMenu]);
+	Slim::Control::Request::addDispatch(['lineinalwaysoncommand'],
+	[1, 0, 1, \&lineInAlwaysOnCommand]);
+	Slim::Control::Request::addDispatch(['lineinlevel'],
+	[1, 1, 0, \&lineInLevelMenu]);
+	Slim::Control::Request::addDispatch(['lineinlevelcommand'],
+	[1, 0, 1, \&lineInLevelCommand]);
 	Slim::Control::Request::addDispatch(['setlinein', '_which'],
 	[1, 0, 0, \&setLineIn]);
 }
 
-# Called every time Jive main menu is updated after a player switch
-# Adds Line In menu item for Boom
+# Called every time Jive main menu is updated after a player switch with $notify set to 0
+# Adds Line In settings menus when main menu is updated, and Home menu Line In item if something is currently connected
+
+# Called every time with $notify flag when something is connected/disconnected from LineIn jack:
+# Adds/Removes Line In Home menu item as applicable
+
 sub lineInItem {
 	my $client = shift;
+	my $notify = shift;
 
 	return [] unless blessed($client)
 		&& $client->isPlayer()
 		&& Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')
-		&& $client->hasLineIn()
-		&& $client->lineInConnected();
+		&& $client->hasLineIn();
 
-	return [{
-		stringToken    => getDisplayName(),
+	my $lineInItem = {
+		text           => $client->string(getDisplayName()),
 		weight         => 45,
+		style          => 'itemplay',
 		id             => 'linein',
-		node           => 'extras',
-		'icon-id'      => Slim::Plugin::LineIn::Plugin->_pluginDataFor('icon'),
-		displayWhenOff => 0,
-		window         => { titleStyle => 'album' },
+		node           => 'home',
 		actions => {
-			go =>          {
+			do =>          {
 				player => 0,
-				cmd    => [ 'lineinmenu' ],
+				cmd    => [ 'setlinein', 'linein' ],
+			},
+			play =>          {
+				player => 0,
+				cmd    => [ 'setlinein', 'linein' ],
 			},
 		},
-	}];
+	};
+
+	if ($notify) {
+		if ($client->lineInConnected) {
+			Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', [ $lineInItem ], 'add',    $client->id() ] );
+		} else {
+			Slim::Control::Request::notifyFromArray( $client, [ 'menustatus', [ $lineInItem ], 'remove', $client->id() ] );
+		}
+	} else {
+
+		my @strings           = qw/ OFF ON /;
+	        my @translatedStrings = map { ucfirst($client->string($_)) } @strings;
+		my $currentSetting    = $prefs->client($client)->get('lineInAlwaysOn'); 
+
+		my @choiceActions;
+		for my $i (0..$#strings) {
+			push @choiceActions, 
+			{
+				player => 0,
+				cmd    => [ 'lineinalwaysoncommand' ],
+				params => {
+					value  => $i,
+				},
+			},
+		}
+
+		my @lineInSettings = (
+			{
+				text           => $client->string("LINE_IN_LEVEL"),
+				id             => 'settingsLineInLevel',
+				node           => 'settingsAudio',
+				weight         => 83,
+				actions        => {
+					go => {
+						cmd    => ['lineinlevel'],
+						player => 0,
+					},
+				},
+				window         => { titleStyle => 'settings' },
+			},
+			{
+				text           => $client->string("LINE_IN_ALWAYS_ON"),
+				id             => 'settingsLineInAlwaysOn',
+				node           => 'settingsAudio',
+				selectedIndex  => $currentSetting + 1,
+				weight         => 86,
+				choiceStrings  => [ @translatedStrings ],
+				actions        => {
+					do => {
+						choices => [ @choiceActions ],
+					},
+				},
+			},
+		);
+
+		if ($client->lineInConnected) {
+			return [ $lineInItem, @lineInSettings ];
+		} else {
+			return [ @lineInSettings ];
+		}
+	}
 }
 
-sub lineInMenu {
+sub lineInLevelMenu {
+
 	my $request = shift;
 	my $client = $request->client();
-	my @menu = (
-		{
-			text  => $client->string('PLUGIN_LINE_IN_LINE_IN'),
-			id  => 'linein',
-			weight  => 10,
-			style   => 'itemplay',
-			nextWindow => 'nowPlaying',
-			actions => {
-				play => {
-					player => 0,
-					cmd    => [ 'setlinein' , 'linein' ],
-				},
-				go => {
-					player => 0,
-					cmd    => [ 'setlinein' , 'linein' ],
+
+	my $currentSetting    = $prefs->client($client)->get('lineInLevel'); 
+
+	my $slider = {
+		slider      => 1,
+		min         => 1,
+		max         => 100,
+		sliderIcons => 'volume',
+		initial     => $currentSetting + 0,
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'lineinlevelcommand' ],
+				params => {
+					valtag => 'value',
 				},
 			},
 		},
-	);
+	};
 
-	my $numitems = scalar(@menu);
-	$request->addResult("count", $numitems);
+	$request->addResult("count", 1);
 	$request->addResult("offset", 0);
-	my $cnt = 0;
-	for my $eachItem (@menu[0..$#menu]) {
-		$request->setResultLoopHash('item_loop', $cnt, $eachItem);
-		$cnt++;
-	}
+	$request->setResultLoopHash('item_loop', 0, $slider);
+
+	$request->setStatusDone();
+}
+
+sub lineInLevelCommand {
+	my $request = shift;
+	my $client  = $request->client();
+	my $value   = $request->getParam('value');
+
+	$prefs->client($client)->set('lineInLevel', $value);
+
+	my $string = $client->string("LINE_IN_LEVEL") . ": " . $value;
+
+	$client->showBriefly({
+		'jive' => {
+			type    => 'popupplay',
+			text    => [ $string ],
+		}
+	});
+
+	$request->setStatusDone();
+}
+
+sub lineInAlwaysOnCommand {
+	my $request = shift;
+	my $client  = $request->client();
+	my $value   = $request->getParam('value');
+
+	$prefs->client($client)->set('lineInAlwaysOn', $value);
+
 	$request->setStatusDone();
 }
 
@@ -129,6 +227,17 @@ sub setLineIn {
 	}
 
 	&{$$functions{$which}}($client);
+
+	if ($which eq 'linein') {
+		$client->showBriefly(
+			{ 'jive' =>
+				{
+					'type'    => 'popupplay',
+					'text'    => [ $client->string('PLUGIN_LINE_IN_IN_USE') ],
+				},
+			}
+		);	
+	}
 
 	$request->setStatusDone()
 }
