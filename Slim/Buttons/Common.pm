@@ -1174,7 +1174,7 @@ our %functions = (
 		my $client = shift;
 
  		# briefly display the time/date
- 		$client->showBriefly(dateTime(), {
+ 		$client->showBriefly( dateTime($client), {
 			'brightness' => 'powerOn',
 			'duration' => 3
 		});
