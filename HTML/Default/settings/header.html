@@ -36,9 +36,6 @@
 			pageLink = orderedLinks.grep(pageId);
 			-%]
 
-			// pages using the fileselector may set a filter (see iTunes)
-			var fsFilter = new Array();
-
 			Ext.onReady(function(){
 				[% IF needsClient;
 					USE Clients;
