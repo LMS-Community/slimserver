@@ -189,6 +189,10 @@ sub hasFrontPanel {
 	return 1;
 }
 
+sub hasDisableDac {
+	return 0;
+}
+
 sub hasDigitalOut {
 	return 0;
 }
