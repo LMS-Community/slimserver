@@ -154,5 +154,6 @@
 				<input type=hidden value="1" name="saveSettings">
 				<input type=hidden value="0" name="useAJAX">
 				<input type=hidden value="[% page %]" name="page">
+				[% IF noSettingsList %]<input type=hidden value="1" name="noSettingsList">[% END %]
 				[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
 				[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
