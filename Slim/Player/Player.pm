@@ -702,7 +702,7 @@ sub nowPlayingModeLines {
 			
 			# Display decode buffer as seconds if we know the bitrate, otherwise show KB
 			my $bitrate = Slim::Music::Info::getBitrate($url);
-			if ( $bitrate > 0 ) {
+			if ( $bitrate && $bitrate > 0 ) {
 				$decodeBuffer = sprintf( "%.1f", $client->bufferFullness() / ( int($bitrate / 8) ) );
 			}
 			else {
