@@ -1806,14 +1806,19 @@ SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
 			this.value = isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value);
 	},
 	
-	_onChange: function(ev, input) {
-		// sanity check input values, don't accept non-numerical values
-		if (input.value != '' && input.value != '-' && isNaN(parseInt(input.value)))
-			input.value = input.defaultValue;
-		else if (input.value != '' && input.value != '-')
-			input.value = parseInt(input.value);
+	inputChangeDelay: new Ext.util.DelayedTask(),
 
-		this.setInputValue(input.value);
+	_onChange: function(ev, input) {
+		this.inputChangeDelay.delay(500, function(input){
+			// sanity check input values, don't accept non-numerical values
+			if (input.value != '' && input.value != '-' && isNaN(parseInt(input.value)))
+				input.value = input.defaultValue;
+			else if (input.value != '' && input.value != '-')
+				input.value = parseInt(input.value);
+	
+			this.setInputValue(input.value);
+	
+		}, this, [input]);
 	},
 
 	setInputValue: function(v){
