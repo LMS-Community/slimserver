@@ -304,6 +304,12 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 
 		SqueezeJS.UI.FileSelector.superclass.initComponent.call(this);
 
+		// workaround for IE7's inability to overflow unless position:relative is set
+		if (Ext.isIE7) {
+			var parentEl = Ext.get(this.renderTo).parent();
+			parentEl.setStyle('position', 'relative');
+		}
+		
 		this.on({
 			click: this.onClick,
 			collapse: this.onCollapse
