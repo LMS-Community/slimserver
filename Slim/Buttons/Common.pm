@@ -2254,8 +2254,8 @@ sub dateTime {
 	}
 	else {
 		$line = {
-			'center' => [ Slim::Utils::DateTime::longDateF(undef, preferences('plugin.datetime')->get('dateformat')),
-					      Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->get('timeformat')) ]
+			'center' => [ Slim::Utils::DateTime::longDateF(undef, preferences('plugin.datetime')->client($client)->get('dateformat')),
+					      Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->client($client)->get('timeformat')) ]
 		};
 	}
 	
