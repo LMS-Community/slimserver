@@ -6702,6 +6702,18 @@ SETUP_LONGDATEFORMAT_DEFAULT
 	NO	%A, %B |%d, %Y
 	SV	%A, %B |%d, %Y
 
+SETUP_LONGDATEFORMAT_DEFAULT_N
+	DA	%a, %b |%d, '%y
+	DE	%a, |%d. %b %Y
+	EN	%a, %b |%d, %Y
+	ES	%d/%m/%Y
+	FI	%d/%m/%Y
+	FR	%d/%m/%Y
+	IT	%d/%m/%Y
+	NL	%d-%m-%Y
+	NO	%d/%m/%Y
+	SV	%Y/%m/%d
+
 SETUP_SHORTDATEFORMAT
 	CS	Formát datumu krátký
 	DA	Kort datoformat
@@ -10251,6 +10263,20 @@ MODTIME
 	PT	Última Alteração
 	SV	Senast ändrat
 	ZH_CN	日期已更改
+
+DATE
+	DA	Dato
+	DE	Datum
+	EN	Date
+	ES	Fecha
+	FI	Pvm
+	FR	Date
+	HE	תאריך
+	IT	Data
+	NL	Datum
+	NO	Dato
+	SV	Datum
+	ZH_CN	日期
 
 COVERART
 	CS	Obal

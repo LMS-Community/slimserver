@@ -30,19 +30,6 @@ PLUGIN_SCREENSAVER_DATETIME_DESC
 	NO	Skjermsparer som viser dato og klokkeslett
 	SV	Skärmsläckare med datum och tid
 
-SETUP_GROUP_DATETIME
-	DA	Indstillinger for pauseskærm med dato og klokkeslæt
-	DE	Einstellungen für den Bildschirmschoner 'Datum/Zeit'
-	EN	Date and Time Screensaver Settings
-	ES	Configuración de protector de pantalla de fecha y hora
-	FI	Päivämäärä ja aika -näytönsäästäjän asetukset
-	FR	Paramètres Ecran de veille Date/Heure
-	HE	הגדרות שומר המסך של תאריך ושעה
-	IT	Impostazioni screen saver con data e ora
-	NL	Instellingen datum en tijd-schermbeveiliger
-	NO	Innstillinger for skjermsparer som viser dato og klokkeslett
-	SV	Inställningar för Skärmsläckare med datum och tid
-
 SETUP_GROUP_DATETIME_DESC
 	DA	Disse indstillinger er bestemmende for hvordan pauseskærmen Dato og klokkeslæt fungerer.
 	DE	Hier können Sie das Format des Bildschirmschoners 'Datum/Zeit' festlegen.

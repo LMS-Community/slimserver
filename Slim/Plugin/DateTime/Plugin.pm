@@ -72,7 +72,7 @@ our %screensaverDateTimeFunctions = (
 			my $line = $client->symbols('bell');
 
 			# Remove seconds from alarm time
-			my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
+			my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->timeformat, 1);
 			$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
 			$line .=  " $timeStr";
 
@@ -162,7 +162,7 @@ sub screensaverDateTimelines {
 			# Include the next alarm time in the overlay if there's room
 			if (!$narrow && !defined $currentAlarm) {
 				# Remove seconds from alarm time
-				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->timeformat, 1);
+				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->timeformat, 1);
 				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
 				$overlay .=  " $timeStr";
 			}
@@ -180,8 +180,8 @@ sub screensaverDateTimelines {
 	}
 	else {
 	 	$display = {
-			'center'  => [ Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat')),
-					      Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')) ],
+			'center'  => [ Slim::Utils::DateTime::longDateF(undef, $prefs->client($client)->get('dateformat')),
+					      Slim::Utils::DateTime::timeF(undef, $prefs->client($client)->get('timeformat')) ],
 			'overlay' => [ $overlay ],
 			'fonts'   => $fontDef,
 		};
