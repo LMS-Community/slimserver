@@ -606,7 +606,10 @@ sub createList {
 				next;
 			}
 			
-			# XXX: hide beta plugins here
+			# Hide plugins if necessary (private, beta, etc)
+			if ( !$client->playerData->userid->canSeePlugin($sub) ) {
+				next;
+			}
 			
 			# Hide out-of-country services on SN
 			my $allowed = $client->playerData->userid->allowedServices();

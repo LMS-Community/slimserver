@@ -81,6 +81,9 @@ if ( main::SLIM_SERVICE ) {
 		'Slim::Plugin::iTunes::Plugin'         => 1,
 		'Slim::Plugin::xPL::Plugin'            => 1,
 	);
+	
+	# Load SN-only plugins
+	push @pluginDirs, catdir( $main::SN_PATH, 'lib', 'Slim', 'Plugin' );
 }
 
 sub init {
