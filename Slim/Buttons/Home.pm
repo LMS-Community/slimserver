@@ -704,16 +704,7 @@ sub homeheader {
 	my $client = $_[0];
 
 	if ( main::SLIM_SERVICE ) {
-		my $config = SDI::Util::SNConfig::get_config();
-		if ( $config->{dcname} =~ /^(?:sv|dc|de)$/ ) {
-			return $client->string('SQUEEZENETWORK_HOME');
-		}
-		elsif ( $config->{dcname} eq 'bm' ) {
-			return $client->string( 'SQUEEZENETWORK_HOME_VAR', 'Boom' );
-		}
-		else {
-			return $client->string('SQUEEZENETWORK_HOME_TEST');
-		}
+		return $client->snHomeName();
 	}
 
 	if ($client->isa("Slim::Player::SLIMP3")) {
