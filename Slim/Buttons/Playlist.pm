@@ -57,48 +57,7 @@ sub init {
 
 	# Each button on the remote has a function:
 	%functions = (
-		'playdisp' => sub {
-			# toggle display mod for now playing...
-			my $client = shift;
-			my $button = shift;
-			my $buttonarg = shift;
-			my $pdm = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
-			my $index = -1;
-			
-			#find index of the existing display mode in the pref array
-			for (@{ $prefs->client($client)->get('playingDisplayModes') }) {
-				$index++;
-				last if $pdm == $_;
-			}
-
-			$pdm = $index unless $index == -1;
-
-			unless (defined $pdm) { $pdm = 1; };
-			unless (defined $buttonarg) { $buttonarg = 'toggle'; };
-
-			if ($button eq 'playdisp_toggle') {
-
-				my $playlistlen = Slim::Player::Playlist::count($client);
-
-				if (($playlistlen > 0) && (showingNowPlaying($client))) {
-
-					$pdm = ($pdm + 1) % (scalar @{ $prefs->client($client)->get('playingDisplayModes') });
-
-				} elsif ($playlistlen > 0) {
-
-					browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
-				}
-
-			} else {
-				if ($buttonarg && $buttonarg < scalar @{ $prefs->client($client)->get('playingDisplayModes') }) {
-					$pdm = $buttonarg;
-				}
-			}
-
-			#find mode number at the new index, and save to the prefs
-			$prefs->client($client)->set('playingDisplayMode', $pdm);
-			$client->update();
-		},
+		'playdisp' => \&playdisp,
 
 		'knob' => sub {
 				my ($client, $funct, $functarg) = @_;
@@ -312,6 +271,54 @@ sub init {
 		}
 	);
 	
+}
+
+=head2 playdisp ( $client, $button, $buttonarg )
+
+Handler for the now playing display mode so it can be accessed from S:B:Screensaver as well as here
+
+=cut
+
+sub playdisp {
+	my $client = shift;
+	my $button = shift;
+	my $buttonarg = shift;
+	my $pdm = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
+	my $index = -1;
+	
+	#find index of the existing display mode in the pref array
+	for (@{ $prefs->client($client)->get('playingDisplayModes') }) {
+		$index++;
+		last if $pdm == $_;
+	}
+	
+	$pdm = $index unless $index == -1;
+	
+	unless (defined $pdm) { $pdm = 1; };
+	unless (defined $buttonarg) { $buttonarg = 'toggle'; };
+	
+	if ($button eq 'playdisp_toggle') {
+		
+		my $playlistlen = Slim::Player::Playlist::count($client);
+		
+		if (($playlistlen > 0) && (showingNowPlaying($client))) {
+			
+			$pdm = ($pdm + 1) % (scalar @{ $prefs->client($client)->get('playingDisplayModes') });
+			
+		} elsif ($playlistlen > 0) {
+			
+			browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
+		}
+		
+	} else {
+		if ($buttonarg && $buttonarg < scalar @{ $prefs->client($client)->get('playingDisplayModes') }) {
+			$pdm = $buttonarg;
+		}
+	}
+	
+	#find mode number at the new index, and save to the prefs
+	$prefs->client($client)->set('playingDisplayMode', $pdm);
+	$client->update();
 }
 
 =head2 forgetClient ( $client )

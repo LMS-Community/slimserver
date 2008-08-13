@@ -40,6 +40,9 @@ sub init {
 
 	# Each button on the remote has a function:
 	%functions = (
+
+		'playdisp' => \&Slim::Buttons::Playlist::playdisp,
+
 		'done' => sub  {
 			my ($client ,$funct ,$functarg) = @_;
 
