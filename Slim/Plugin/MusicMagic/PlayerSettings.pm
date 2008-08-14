@@ -236,7 +236,7 @@ sub settingsExitHandler {
 			}
 
 			if ($nextmenu eq 'MMMsettings/mix_filter') {
-				my $filters = Slim::Plugin::MusicMagic::Settings::grabFilters();
+				my $filters = Slim::Plugin::MusicMagic::Settings->getFilterList();
 				
 				$nextParams{'listRef'} = [keys %{$filters}];
 				$nextParams{'externRef'} = $filters;
