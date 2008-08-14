@@ -84,6 +84,11 @@ sub scanPathOrURL {
 
 			$pathOrUrl = Slim::Utils::Misc::fixPathCase($pathOrUrl);
 		}
+		
+		# Bug 9097, don't try to scan non-remote protocol handlers like randomplay://
+		if ( $pathOrUrl =~ /^([^:]+)/ && $1 ne 'file' ) {
+			return $cb->( [ $pathOrUrl ] );
+		}
 
 		# Always let the user know what's going on..
 		$log->info("Finding valid files in: $pathOrUrl");
