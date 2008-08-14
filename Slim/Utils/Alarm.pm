@@ -1156,6 +1156,8 @@ sub loadAlarms {
 	$log->debug('Loading saved alarms from prefs for ' . $client->name);
 	my $prefAlarms = $prefs->client($client)->alarms;
 
+	$client->alarmData->{alarms} = {};
+
 	foreach my $prefAlarm (keys %$prefAlarms) {
 		$prefAlarm = $prefAlarms->{$prefAlarm};
 		my $alarm = $class->new($client, $prefAlarm->{_time});
