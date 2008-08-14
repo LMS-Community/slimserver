@@ -779,6 +779,11 @@ sub getMix {
 		# NYI
 		$log->warn("Warning: Couldn't get mix: $mixArgs\&$argString");
 
+		if ($filter) {
+			$log->warn("Filter was involved - we might need to update the filter list");
+			Slim::Plugin::MusicMagic::Settings->grabFilters();
+		}
+
 		return @mix;
 	}
 
