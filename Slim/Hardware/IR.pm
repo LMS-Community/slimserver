@@ -696,7 +696,7 @@ sub processIR {
 
 		$log->info("Front panel code detected, processing $code");
 
-		if ($dir eq 'down' && $irCodeBytes eq $client->lastircodebytes && $timediff < 0.5) {
+		if ($dir eq 'down' && $irCodeBytes eq $client->lastircodebytes) {
 			$dir = 'repeat';
 		}
 
