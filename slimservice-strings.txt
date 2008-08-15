@@ -24,7 +24,6 @@ SERVER_VERSION
 	NL	SqueezeNetwork-versie
 	NO	SqueezeNetwork-versjon
 	PT	Versão do SqueezeNetwork
-	SE	SqueezeNetwork-version
 	SV	SqueezeNetwork-version
 
 SQUEEZENETWORK_HOME
@@ -90,7 +89,6 @@ ABOUT
 	NL	SqueezeNetwork V.%s, geschreven door:
 	NO	SqueezeNetwork versjon %s, skrevet av:
 	PT	SqueezeNetwork v.%s, escrito por
-	SE	SqueezeNetwork v.%s, skriven av:
 	SV	SqueezeNetwork v.%s, skriven av:
 
 OTHER_SERVICES
@@ -146,7 +144,6 @@ WELCOME_TO_APPLICATION
 	NL	Welkom bij SqueezeNetwork
 	NO	Velkommen til SqueezeNetwork
 	PT	Bem-vindo ao SqueezeNetwork
-	SE	Välkommen till SqueezeNetwork
 	SV	Välkommen till SqueezeNetwork
 
 WELCOME_MESSAGE
