@@ -169,7 +169,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	IT	Riproduzione in corso. Nevicata sullo sfondo.
 	NL	Speelt nu, sneeuw valt achter
 	NO	Spilles nå, med snø i bakgrunnen
-	SV	Snö i bakgrunden när Aktuellt spår visas
+	SV	Snö i bakgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	DA	Nu spiller: sne falder foran
@@ -182,7 +182,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	IT	Riproduzione in corso. Nevicata in primo piano.
 	NL	Speelt nu, sneeuw valt voor
 	NO	Spilles nå, med snø i forgrunnen
-	SV	Snö i förgrunden när Aktuellt spår visas
+	SV	Snö i förgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	DA	Dato/klokkeslæt

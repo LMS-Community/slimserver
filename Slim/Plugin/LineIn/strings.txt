@@ -3,16 +3,52 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_LINE_IN
+	DA	Linjeindgang
+	DE	Line-In
 	EN	Line In
+	ES	Entrada de línea
+	FI	Linjatulo
+	FR	Entrée ligne
+	IT	Ingresso
+	NL	Lijningang
+	NO	Lydinngang
+	SV	Ljudingång
 
 PLUGIN_LINE_IN_DESC
+	DA	Linjeindgang på Boom
+	DE	Line-In für Boom
 	EN	Line In for Boom
+	ES	Entrada de línea para Boom
+	FI	Boomin linjatulo
+	FR	Entrée ligne pour Boom
+	IT	Ingresso Boom
+	NL	Lijningang voor boom
+	NO	Lydinngang for Boom
+	SV	Ljudingång för Boom
 
 PLUGIN_LINE_IN_LINE_IN
+	DA	Linjeindgang
+	DE	Line-In
 	EN	Line In
+	ES	Entrada de línea
+	FI	Linjatulo
+	FR	Entrée ligne
+	IT	Ingresso
+	NL	Lijningang
+	NO	Lydinngang
+	SV	Ljudingång
 
 PLUGIN_LINE_IN_IN_USE
+	DA	Linjeindgangen er valgt
+	DE	Line-In ist aktiv
 	EN	Line In is active
+	ES	Entrada de línea activa
+	FI	Linjatulo on aktiivinen
+	FR	L'entrée ligne est active.
+	IT	Ingresso attivo
+	NL	Lijningang is actief
+	NO	Lydinngang aktiv
+	SV	Ljudingången är aktiv
 
 LINE_IN_LEVEL
 	EN	Line In Level

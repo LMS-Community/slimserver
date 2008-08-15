@@ -480,7 +480,7 @@ MUSIC_SERVICES
 	EN	Music Services
 	ES	Servicios de música
 	FI	Musiikkipalvelut
-	FR	Services de musique
+	FR	Services musicaux
 	IT	Servizi di musica
 	NL	Muziekservices
 	NO	Musikktjenester
@@ -592,7 +592,7 @@ NOW_PLAYING
 	NL	Speelt nu
 	NO	Spilles nå
 	PT	A tocar...
-	SV	Aktuellt spår
+	SV	Nu spelas
 	ZH_CN	播放中
 
 NOW_SCANNING
@@ -672,7 +672,7 @@ PLAYING
 	NL	Speelt nu
 	NO	Spilles nå
 	PT	A tocar
-	SV	Aktuellt spår
+	SV	Nu spelas
 	ZH_CN	播放中
 
 PLAYING_RANDOMLY
@@ -684,12 +684,12 @@ PLAYING_RANDOMLY
 	FI	Nyt soi
 	FR	Lecture
 	HE	מושמע כעת
-	IT	Riproduzione in corso casuale
+	IT	Riproduzione in corso
 	JA	再生中
 	NL	Speelt nu
 	NO	Spilles nå
 	PT	A tocar...
-	SV	Aktuellt spår
+	SV	Nu spelas
 	ZH_CN	播放中
 
 OUT_OF
@@ -947,7 +947,7 @@ VIEWING_PLAYLIST
 	NL	Speelt nu...
 	NO	Spiller av nå...
 	PT	Playlist a Tocar...
-	SV	Aktuellt spår ...
+	SV	Nu spelas ...
 	ZH_CN	播放中...
 
 PLAYLIST_EMPTY
@@ -998,7 +998,7 @@ NOW_PLAYING_FROM
 	NL	Speelt nu van:
 	NO	Spiller av fra:
 	PT	A tocar de
-	SV	Aktuellt spår från:
+	SV	Nu spelas från:
 	ZH_CN	播放中：
 
 NOW_PLAYING_FROM_DBL
@@ -1098,7 +1098,16 @@ REPEAT_ONE
 	ZH_CN	重复一曲模式
 
 REPEAT_ONE_ABBR
+	DA	Gentag nummer
+	DE	Titel wiederholen
 	EN	Repeat Song
+	ES	Repetir canción
+	FI	Soita kappale uudelleen
+	FR	Répéter le morceau
+	IT	Ripeti brano
+	NL	Nummer herhalen
+	NO	Gjenta sang
+	SV	Upprepa låt
 
 REPEAT_ALL
 	CS	Opakovat playlist
@@ -1159,7 +1168,16 @@ SLEEPING_IN_X_MINUTES
 	SV	Växlar till viloläge om %s minuter.
 
 X_MINUTES
+	DA	%s minutter
+	DE	%s Minuten
 	EN	%s minutes
+	ES	%s minutos
+	FI	%s minuuttia
+	FR	%s minutes
+	IT	%s minuti
+	NL	%s minuten
+	NO	%s minutter
+	SV	%s minuter
 
 SLEEPING_IN
 	CS	Sleep za
@@ -1214,7 +1232,7 @@ PLAYER_SLEEP
 	FI	Soittimen lepotila
 	FR	Mise en veille de la platine
 	IT	Sospendi
-	NL	Sluimermodus speler
+	NL	Sluimermodus muzieksysteem
 	NO	Spiller i hvilemodus
 	SV	Viloläge för spelare
 
@@ -1318,83 +1336,173 @@ ALARM
 	ZH_CN	闹钟
 
 ALARM_ALARM
+	DA	Vækkeur
+	DE	Wecker
 	EN	Alarm
+	ES	Alarma
+	FI	Herätys
+	FR	Réveil
+	IT	Sveglia
+	NL	Wekker
+	NO	Vekkerklokke
+	SV	Alarm
 
 ALARM_SET
+	DA	Vækketidspunkt
 	DE	Weckzeit einstellen
 	EN	Alarm Time
 	ES	Establecer hora de alarma
+	FI	Herätysaika
 	FR	Définir l'heure de réveil
 	IT	Imposta orario sveglia
 	NL	Wektijd instellen
+	NO	Still vekkerklokke
+	SV	Alarmtid
 
 ALARM_ON
 	CS	Budík zapnut
-	DA	Til (tryk på højre for at slå fra)
+	DA	Til
 	DE	Ein
 	EN	On
 	ES	Activada
-	FI	Päällä (siirry oikealle ja sammuta)
-	FR	Activé
+	FI	Päällä
+	FR	Activée
 	HE	מופעל (עבור ימינה לכיבוי)
-	IT	Acceso
+	IT	Attivato
 	JA	アラーム オン
 	NL	Aan
-	NO	På (gå til høyre for å slå av)
+	NO	På
 	PT	Ligad
-	SV	På (Gå till höger för att avaktivera)
+	SV	På
 	ZH_CN	启用
 
 ALARM_OFF
 	CS	Budík vypnut
-	DA	Fra (tryk på højre for at slå den til)
+	DA	Fra
 	DE	Aus
 	EN	Off
 	ES	Desactivada
-	FI	Pois päältä (siirry oikealle ja laita päälle)
-	FR	Désactivé
+	FI	Pois päältä
+	FR	Éteint
 	HE	כבוי (עבור ימינה להפעלה)
-	IT	Spento
+	IT	Disattivato
 	JA	アラーム オフ）
 	NL	Uit
-	NO	Av (Gå til høyre for å slå på)
+	NO	Av
 	PT	Desligado
-	SV	Av (Gå till höger för att aktivera)
+	SV	Av
 	ZH_CN	撤销
 
 ALARM_SELECT_PLAYLIST
-	DA	Vælg afspilningsliste til vækkeur
+	DA	Vælg afspilningsliste
+	DE	Wiedergabeliste wählen
 	EN	Alarm Sound
-	FI	Herätyksen soittoluettelo
-	NO	Spilleliste for vekkerklokke
-	SV	Spellista för alarm
+	ES	Elegir lista de reproducción
+	FI	Valitse soittoluettelo
+	FR	Choisir la liste de lecture
+	IT	Scegli elenco di riproduzione
+	NL	Playlist kiezen
+	NO	Velg spilleliste
+	SV	Välj spellista
 
 ALARM_USE_CURRENT_PLAYLIST
+	DA	Brug nuværende afspilningsliste
+	DE	Aktuelle Wiedergabeliste verwenden
 	EN	Use Current Playlist
+	ES	Usar lista de reproducción actual
+	FI	Käytä nykyistä soittoluetteloa
+	FR	Utiliser la liste de lecture en cours
+	IT	Utilizza elenco di riproduzione corrente
+	NL	Huidige playlist gebruiken
+	NO	Bruk gjeldende spilleliste
+	SV	Använd aktuell spellista
 
 ALARM_VOLUME
+	DA	Lydstyrke for vækkeur
+	DE	Weckerlautstärke
 	EN	Alarm Volume
+	ES	Volumen de alarma
+	FI	Herätyskellon äänenvoimakkuus
+	FR	Volume du réveil
+	IT	Volume sveglia
+	NL	Weksignaalvolume
+	NO	Vekkerklokkevolum
+	SV	Alarmvolym
 
 ALARM_VOLUME_DESC
+	DA	Du bruger denne indstilling til at angive hvor højt vækkeuret skal ringe/spille.
+	DE	Mit dieser Einstellung können Sie die Lautstärke für den Wecker festlegen.
 	EN	This setting allows you to choose the volume level that is used when an alarm goes off.
+	ES	Esta opción le permite determinar el volumen de la alarma.
+	FI	Tällä asetuksella valitset herätyksen äänenvoimakkuuden.
+	FR	Ce paramètre vous permet de choisir le niveau de volume utilisé lorsqu'un réveil se déclenche.
+	IT	Questa impostazione consente di impostare il volume usato quando suona una sveglia.
+	NL	Met deze instelling kun je het volumeniveau voor het weksignaal instellen.
+	NO	Med denne innstillingen kan du angi volumet på vekkingen.
+	SV	Med den här inställningen väljer du volymen för alarmet.
 
 ALARM_NEXT_ALARM
 	EN	Next Alarm:
 
 ALARM_ADD
+	DA	Tilføj vækkeur
+	DE	Wecker hinzufügen
 	EN	Add Alarm
+	ES	Agregar alarma
+	FI	Lisää herätys
+	FR	Ajouter un réveil
+	IT	Aggiungi sveglia
+	NL	Weksignaal toevoegen
+	NO	Legg til vekking
+	SV	Lägg till alarm
 
 ALARM_ADD_DESC
+	DA	Du kan tilføje lige så mange vækkeure som du vil. Hvert vækkeur kan indstilles til at ringe hver dag, på bestemte dage eller kun en enkelt gang. Vælg Tilføj vækkeur for at indstille et nyt.
+	DE	Sie können beliebig viele Wecker einrichten. Ein Wecker kann jeden Tag, nur an bestimmten Tagen oder nur einmal gelten. Wählen Sie "Wecker hinzufügen", um einen neuen Wecker hinzuzufügen.
 	EN	You can add as many alarms as you like.  Each alarm can be set to go off every day, on particular days only, or just once.  Select "Add Alarm" to start adding a new alarm.
+	ES	Puede agregar todas las alarmas que desee. Cada alarma puede programarse para que se active todos los días, sólo en días determinados, o una vez. Seleccione "Agregar alarma" para agregar una alarma nueva.
+	FI	Voit lisätä niin monta herätystä kuin haluat.  Jokainen herätys voidaan asettaa käynnistymään joka päivä, vain tiettyinä päivinä, tai vain kerran.  Aloita uuden herätyksen lisääminen valitsemalla Lisää herätys.
+	FR	Vous pouvez ajouter autant de réveils que vous le désirez. Chaque réveil peut être défini pour se déclencher tous les jours, uniquement certains jours ou une seule fois. Sélectionnez Ajouter un réveil pour débuter l'ajout d'un nouveau réveil.
+	IT	È possibile aggiungere il numero di sveglie desiderato. Ciascuna sveglia può essere impostata in modo da suonare tutti i giorni, in giorni specifici oppure solo una volta. Selezionare Aggiungi sveglia per aggiungere una nuova sveglia.
+	NL	Je kunt zoveel weksignalen toevoegen als je wilt.  Elk weksignaal kan ingesteld worden om elke dag af te gaan, alleen op specifieke dagen of slechts eenmaal.  Selecteer 'Weksignaal toevoegen' om een nieuw signaal toe te voegen.
+	NO	Du kan legge inn så mange vekkinger du ønsker. Hver vekking kan stilles inn til å gå hver dag, på visse dager eller bare én gang. Velg Legg til vekking for å legge til en ny vekking.
+	SV	Du kan ställa in hur många alarm du vill. För varje alarm kan du ange om det ska ringa varje dag, vissa bestämda dagar eller bara vid ett tillfälle. Välj Lägg till alarm om du vill ställa in ett nytt alarm.
 
 ALARM_NEW
+	DA	Nyt vækkeur
+	DE	Neuer Wecker
 	EN	New Alarm
+	ES	Nueva alarma
+	FI	Uusi herätys
+	FR	Nouveau réveil
+	IT	Nuova sveglia
+	NL	Nieuw weksignaal
+	NO	Ny vekking
+	SV	Nytt alarm
 
 ALARM_DELETE
+	DA	Slet vækkeur
+	DE	Wecker entfernen
 	EN	Remove Alarm
+	ES	Eliminar alarma
+	FI	Poista herätys
+	FR	Supprimer le réveil
+	IT	Rimuovi sveglia
+	NL	Weksignaal verwijderen
+	NO	Fjern vekking
+	SV	Ta bort alarm
 
 ALARM_ALARM_ENABLED
+	DA	Aktiveret
+	DE	Aktiviert
 	EN	Enabled
+	ES	Activada
+	FI	Käytössä
+	FR	Activé
+	IT	Abilitato
+	NL	Ingeschakeld
+	NO	Aktivert
+	SV	Aktiverat
 
 ALARM_ALL_ALARMS_ENABLED
 	EN	All Alarms Enabled
@@ -1403,16 +1511,52 @@ ALARM_ALL_ALARMS_DISABLED
 	EN	All Alarms Disabled
 
 ALARM_ALARM_REPEAT
+	DA	Gentag vækning
+	DE	Wecker wiederholen
 	EN	Repeat Alarm
+	ES	Repetir alarma
+	FI	Toista herätys
+	FR	Répéter le réveil
+	IT	Ripeti sveglia
+	NL	Weksignaal herhalen
+	NO	Gjenta vekking
+	SV	Upprepa alarm
 
 ALARM_ALARM_REPEAT_DESC
+	DA	Indstillingen bruges til at angive om dette vækkeur skal ringe mere end én gang. Hvis du vælger Nej, bliver det automatisk slået fra når det har ringet. derefter vil vækkeuret ikke ringe igen før du slår det til igen.
+	DE	Hier können Sie bestimmen, ob dieser Wecker mehrmals ausgelöst werden soll. Wenn Sie 'Nein' wählen, wird der Wecker automatisch deaktiviert, nachdem er ausgelöst wurde. Dieser Wecker wird dann erst wieder ausgelöst, wenn Sie ihn aktivieren.
 	EN	This setting lets you choose whether this alarm will go off more than once.  If set to No, this alarm will automatically turn off after it has gone off.  This alarm will not then go off again until you turn it on.
+	ES	Esta opción le permite determinar si esta alarma debe activarse más de una vez. Si elige No, la alarma se desactivará de forma automática cuando deje de sonar. Tras ello, la alarma no volverá a sonar hasta que no la active.
+	FI	Tällä asetuksella voit valita, käynnistetäänkö herätys useammin kuin kerran.  Jos asetus on Ei, herätys menee automaattisesti pois päältä sen jälkeen, kun se on suoritettu.  Herätystä ei suoriteta enää uudelleen, ennen kuin otat sen käyttöön.
+	FR	Ce paramètre vous permet de choisir si ce réveil doit se déclencher plus d'une fois. S'il est défini sur Non, ce réveil se désactivera automatiquement une fois terminé. Il ne se déclenchera de nouveau que si vous l'activez.
+	IT	Questa impostazione consente di specificare se si desidera attivare la sveglia più di una volta. Se si seleziona No, la sveglia verrà attivata solo una volta e per suonare di nuovo dovrà essere riattivata manualmente dall'utente.
+	NL	Hiermee kun je instellen of dit weksignaal meermaals moet afgaan. Als je 'Nee' instelt, wordt het signaal automatisch uitgeschakeld nadat het is afgegaan. Het signaal gaat pas weer af als je het weer inschakelt.
+	NO	Med denne innstillingen kan du velge om vekkingen skal spilles mer enn én gang. Hvis innstillingen settes til Nei, vil vekkingen automatisk slås av etter at den har blitt spilt. Denne vekkingen spilles altså ikke igjen før du slår den på.
+	SV	Med den här inställningen väljer du om alarmet ska ringa mer än en gång. Om du anger Nej avaktiveras alarmet automatiskt när det har ringt. Alarmet ringer sedan inte igen förrän du aktiverar det igen.
 
 ALARM_ALL_ALARMS
+	DA	Alle vækkeure
+	DE	Alle Wecker
 	EN	All Alarms
+	ES	Todas las alarmas
+	FI	Kaikki herätykset
+	FR	Tous les réveils
+	IT	Tutte le sveglie
+	NL	Alle weksignalen
+	NO	Alle vekkinger
+	SV	Alla alarm
 
 ALARM_ALARMS_ENABLED_DESC
+	DA	Denne indstilling bruges til at slå alle vækkeure til/fra samtidig. Hvis den står på Fra, vil ingen af vækkeurene ringe.
+	DE	Mit dieser Einstellung können Sie alle Wecker gleichzeitig aktivieren bzw. deaktivieren. Ist die Einstellung 'Aus', wird kein Wecker ausgelöst.
 	EN	This setting allows you to turn on/off all alarms at once. If set to Off, no alarm will go off.
+	ES	Esta opción le permite activar o desactivar todas las alarmas a la vez. Si la desactiva, no se activará ninguna alarma.
+	FI	Tällä asetuksella voit ottaa kerralla kaikki herätykset käyttöön tai poistaa ne käytöstä. Jos asetus on Pois päältä, herätystä ei suoriteta.
+	FR	Ce paramètre vous permet d'activer/de désactiver tous les réveils en une seule fois. S'il est défini sur Eteint, aucun réveil ne se déclenchera.
+	IT	Questa impostazione consente di attivare/disattivare tutte le sveglie con un'unica operazione. Se impostata su Disattivato, tutte le sveglie sono disattivate.
+	NL	Hiermee kun je alle weksignalen tegelijk in-/uitschakelen. Als dit op 'Uit' is ingesteld, gaat er geen weksignaal af.
+	NO	Med denne innstillingen kan du slå av og på alle vekkinger samtidig. Hvis innstillingen settes til Av, blir ingen vekkinger aktivert.
+	SV	Med den här inställningen kan du aktivera/avaktivera alla alarm på en gång.Om du väljer inställningen Av avaktiveras alla alarm.
 
 ALARM_FADE
 	DA	Skru langsomt op for vækkeur
@@ -1446,10 +1590,28 @@ ALARM_SET_ENTRY
 	ZH_CN	闹钟时间配置
 
 ALARM_SET_TIME
+	DA	Indstil uret
+	DE	Zeit einrichten
 	EN	Set Time
+	ES	Configurar hora
+	FI	Aseta aika
+	FR	Régler l'heure
+	IT	Imposta l'ora
+	NL	Tijd instellen
+	NO	Still klokken
+	SV	Ställ klockan
 
 ALARM_SET_DAYS
+	DA	Vælg dage
+	DE	Tage wählen
 	EN	Choose Days
+	ES	Elegir días
+	FI	Valitse päivät
+	FR	Choisissez les jours
+	IT	Scegli giorni
+	NL	Dagen kiezen
+	NO	Velg dager
+	SV	Välj dagar
 
 ALARM_SAVING
 	DA	Gemmer vækkeur...
@@ -1464,7 +1626,16 @@ ALARM_SAVING
 	SV	Sparar alarm ...
 
 ALARM_DELETING
+	DA	Sletter vækkeur...
+	DE	Wecker wird entfernt...
 	EN	Removing Alarm...
+	ES	Eliminando alarma...
+	FI	Herätys poistetaan...
+	FR	Suppression du réveil...
+	IT	Rimozione sveglia...
+	NL	Bezig met verwijderen van weksignaal...
+	NO	Fjerner vekking...
+	SV	Tar bort alarm ...
 
 ALARM_TURNING_ON
 	CS	Zapnout buzení...
@@ -1514,30 +1685,80 @@ ALARM_NOW_PLAYING
 	NL	Weksignaal speelt nu
 	NO	Vekkerklokken spiller nå
 	PT	A Tocar o Alarme
-	SV	Aktuellt spår för alarmfunktion
+	SV	Alarmfunktionen Nu spelas
 	ZH_CN	闹钟播放中
 
 ALARM_SNOOZE
 	DA	Slumrer...
+	DE	Weckwiederholung aktiv...
 	EN	Snoozing Alarm...
-	FI	Torkkutilassa...
-	NO	Slumrer...
-	SV	Aktiverar snooze-läge ...
+	ES	Repitiendo alarma...
+	FI	Torkkuherätys...
+	FR	Activation de la répétition du réveil...
+	IT	Snooze sveglia in corso...
+	NL	Weksignaal wordt gesnoozed...
+	NO	Slumrer vekkerklokken ...
+	SV	Aktiverar snooze-funktion ...
 
 ALARM_SNOOZE_ENDED
+	DA	Slumrefunktionen er slut
+	DE	Weckwiederholung beendet
 	EN	Snooze Ended
+	ES	Repetición terminada
+	FI	Torkkutila päättyi
+	FR	Répétition arrêtée
+	IT	Snooze interrotto
+	NL	Snooze beëindigd
+	NO	Slumring over
+	SV	Snooze-funktion avslutad
 
 SETUP_SNOOZE_MINUTES
+	DA	Længde af slumretid (i minutter)
+	DE	Länge der Weckwiederholung (in Minuten)
 	EN	Snooze Length (in minutes)
+	ES	Duración de repetición (en minutos)
+	FI	Torkkutilan pituus (minuutteina)
+	FR	Durée de la fonction de répétition (en minutes)
+	IT	Durata snooze (in minuti)
+	NL	Snoozeduur (in minuten)
+	NO	Slumretid (minutter)
+	SV	Snooze-tid (i minuter)
 
 SETUP_SNOOZE_MINUTES_DESC
+	DA	Du bruger denne indstilling til at angive hvor lang tid vækkeuret skal være midlertidigt slukket når du trykker på slumreknappen.
+	DE	Mit dieser Einstellung können Sie bestimmen, nach welcher Zeit nach dem Drücken der Snooze-Taste der Wecker wiederholt wird.
 	EN	This setting allows you to choose how long an alarm pauses for when you hit the snooze button.
+	ES	Esta opción le permite elegir cuánto tiempo se detiene la alarma al pulsar el botón de repetición.
+	FI	Tällä asetuksella voit määrittää, kuinka pitkäksi ajaksi herätys taukoaa, kun painat torkkupainiketta.
+	FR	Ce paramètre vous permet de choisir la durée de pause du réveil lorsque vous appuyez sur le bouton de répétition.
+	IT	Questa impostazione consente di specificare la durata della pausa della sveglia quando si preme il pulsante di snooze.
+	NL	Hiermee kun je instellen hoelang een weksignaal wordt gepauzeerd wanneer je op de snoozeknop drukt.
+	NO	Med denne innstillingen kan du velge hvor lenge en vekking skal stoppe når du trykker på slumreknappen.
+	SV	Med den här inställningen anger du hur länge alarmet ska avaktiveras när du trycker på snooze-knappen.
 
 SETUP_ALARM_TIMEOUT
+	DA	Sluk efter (i minutter)
+	DE	Weckerlaufzeit (in Minuten)
 	EN	Alarm Timeout (in minutes)
+	ES	Tiempo de espera para alarma (en minutos)
+	FI	Herätyksen aikakatkaisu (minuutteina)
+	FR	Durée du réveil (en minutes)
+	IT	Timeout sveglia (in minuti)
+	NL	Time-out van weksignaal (in minuten)
+	NO	Tidsavbrudd for vekkerklokke (minutter)
+	SV	Tidsgräns för alarm (i minuter)
 
 SETUP_ALARM_TIMEOUT_DESC
+	DA	Denne indstilling bruges til at angive hvor længe vækkeuret skal ringe/spille før det automatisk slukkes. Hvis du vælger 0 (nul), ringer/spiller det indtil du slukker det manuelt.
+	DE	Hier können Sie bestimmen, wie lange ein Wecker läuft, bevor er automatisch beendet wird. Ist der Wert 0, läuft der Wecker, bis er manuell beendet wird.
 	EN	This setting allows you to choose how long alarms will play for before they stop automatically. If set to 0, alarms will continue playing until they are stopped manually.
+	ES	Esta opción le permite determinar la duración de las alarmas hasta su detención automática. Si elige 0, las alarmas seguirán sonando hasta que se detengan manualmente.
+	FI	Tällä asetuksella voit valita, kuinka pitkään herätys jatkuu, ennen kuin se katkaistaan automaattisesti. Jos asetus on 0, herätys jatkuu, kunnes käyttäjä katkaisee sen.
+	FR	Ce paramètre vous permet de choisir la durée de retentissement des réveils avant leur arrêt automatique. S'il est défini sur 0, ils retentiront jusqu'à ce que vous les arrêtiez manuellement.
+	IT	Questa impostazione consente di specificare la durata della suoneria della sveglia prima che venga disattivata automaticamente. Se si specifica 0, la sveglia continuerà a suonare fino a quando non verrà disattivata manualmente.
+	NL	Hiermee kun je kiezen hoelang weksignalen afgaan voordat ze automatisch stoppen. Als deze optie op 0 is ingesteld, gaan weksignalen af tot ze handmatig worden gestopt.
+	NO	Med denne innstillingen kan du velge hvor lenge vekkinger skal spilles av før de stopper automatisk. Hvis innstillingen settes til 0, vil vekkingen spille helt til den slås av manuelt.
+	SV	Med den här inställningen anger du hur länge alarmen ringer innan de stängs av automatiskt. Om du anger 0 ringer alarmen tills de stängs av manuellt.
 
 ALARM_STOPPED
 	DA	Vækkeuret er stoppet
@@ -1566,7 +1787,7 @@ ALARM_WEEKDAYS
 	ZH_CN	周日闹钟
 
 ALARM_EVERY_DAY
-	DA	Daglig
+	DA	Dagligt
 	DE	Täglich
 	EN	Every Day
 	ES	Todos los días
@@ -1580,17 +1801,17 @@ ALARM_EVERY_DAY
 	ZH_CN	每一天
 
 ALARM_DAY0
-	DA	Dagligt
+	DA	Søndag
 	DE	Sonntag
 	EN	Sunday
 	ES	Domingo
-	FI	Joka päivä
+	FI	sunnuntai
 	FR	Dimanche
 	HE	יום ראשון
 	IT	Domenica
 	NL	Zondag
-	NO	Hver dag
-	SV	Varje dag
+	NO	søndag
+	SV	Söndag
 	ZH_CN	星期日
 
 ALARM_DAY1
@@ -1678,25 +1899,88 @@ ALARM_DAY6
 	ZH_CN	星期六
 
 ALARM_SHORT_DAY_0
+	DA	Søn
+	DE	So
 	EN	Su
+	ES	Do
+	FI	su
+	FR	Di
+	IT	Do
+	NL	zo
+	NO	søn
+	SV	Sö
 
 ALARM_SHORT_DAY_1
+	DA	Man
+	DE	Mo
 	EN	Mo
+	ES	Lu
+	FI	ma
+	FR	Lu
+	IT	Lu
+	NL	ma
+	NO	man
+	SV	Må
 
 ALARM_SHORT_DAY_2
+	DA	Tir
+	DE	Di
 	EN	Tu
+	ES	Ma
+	FI	ti
+	FR	Ma
+	IT	Ma
+	NL	di
+	NO	tirs
+	SV	Ti
 
 ALARM_SHORT_DAY_3
+	DA	Ons
+	DE	Mi
 	EN	We
+	ES	Mi
+	FI	ke
+	FR	Me
+	IT	Me
+	NL	wo
+	NO	ons
+	SV	On
 
 ALARM_SHORT_DAY_4
+	DA	Tor
+	DE	Do
 	EN	Th
+	ES	Ju
+	FI	to
+	FR	Je
+	IT	Gi
+	NL	do
+	NO	tors
+	SV	To
 
 ALARM_SHORT_DAY_5
+	DA	Fre
+	DE	Fr
 	EN	Fr
+	ES	Vi
+	FI	pe
+	FR	Ve
+	IT	Ve
+	NL	vr
+	NO	fre
+	SV	Fr
 
 ALARM_SHORT_DAY_6
+	DA	Lør
+	DE	Sa
 	EN	Sa
+	ES	Sá
+	FI	la
+	FR	Sa
+	IT	Sa
+	NL	za
+	NO	lør
+	SV	Lö
 
 SLIMP3
 	DA	SLIMP3
@@ -2254,12 +2538,12 @@ ASF_UNABLE_TO_PARSE
 
 HOME
 	CS	Hlavní menu
-	DA	Startside
+	DA	Hovedmenu
 	DE	Startseite
 	EN	Home
 	ES	Inicio
 	FI	Koti
-	FR	Accueil
+	FR	Menu
 	HE	תפריט ראשי
 	IT	Pagina iniziale
 	JA	メニュー
@@ -2654,7 +2938,7 @@ SETUP_GROUP_MENUITEMS
 	CS	Hlavní menu
 	DA	Tilpas hovedmenuen
 	DE	Hauptmenü
-	EN	Home Menu
+	EN	Home Menu Customization
 	ES	Menú Inicio
 	FI	Päävalikko
 	FR	Personnalisation du Menu principal
@@ -2912,31 +3196,31 @@ SETUP_SCROLLRATEDOUBLE
 	ZH_CN	大字体卷动速度
 
 SETUP_SCROLLRATE_DESC
-	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden er bestemmende for hvor lang tid der går mellem at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles. De to indstillinger bestemmer tilsammen hastigheden og billedkvaliteten: Teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder. På en afspiller med et tegndisplay er indstillingen bestemmende for hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,15 sekund er standard ved enkeltlinjer, 0,1 sekund for dobbeltlinjer.
+	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden er bestemmende for hvor lang tid der går mellem at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles. De to indstillinger bestemmer tilsammen hastigheden og billedkvaliteten: Teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder. På en afspiller med et tegndisplay er indstillingen bestemmende for hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,15 sekund er standard ved enkeltlinjer, 0,1 sekund for stor skrift.
 	DE	Sie können festlegen, wie schnell sich die Laufschrift bewegt. Die Laufschriftgeschwindigkeit bestimmt die Zeit, die zwischen Aktualisierungen des Display vergeht. Bei Playern mit grafischem Display können Sie diese Einstellung zusammen mit 'Laufschrift: Pixel' anpassen, um das optimale Ergebnis zu erzielen. Der Text bewegt sich um den Wert in Pixeln pro als Geschwindigkeit angegebenem Intervall. Auf Playern mit Zeichendisplay wird die Länge der Zeit bis zum nächsten Zeichen festgelegt. Geben Sie den gewünschten Wert in Sekunden ein. Ein niedrigerer Wert hat eine höhere Geschwindigkeit zur Folge. Der Standardwert für eine Zeile ist 0,15 für zwei Zeilen 0,1 Sekunden.
 	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.15 seconds is the default for single-line, 0.1 seconds for large text.
-	ES	Se puede ajustar la velocidad a la que el texto se desplaza por la pantalla. La velocidad de desplazamiento define el tiempo que se tarda entre actualizaciones de pantalla. En un reproductor con una pantalla gráfica, se puede ajustar junto con Píxeles de desplazamiento para establecer la velocidad y la calidad de desplazamiento (el texto se moverá según el valor de Píxeles de desplazamiento en cada valor en segundos de Velocidad de desplazamiento). En un reproductor con una pantalla de caracteres, esto define la duración antes del desplazamiento al próximo carácter. Introduzca un valor, en segundos, para el tiempo de espera entre actualizaciones. Los número bajos hacen que el desplazamiento sea más rápido. 0,15 segundos es el valor predeterminado para una sola línea; 0,1 segundos para dos líneas.
-	FI	Voit säätää nopeutta, jolla teksti liikkuu näytön poikki. Vieritysnopeus määrää näytön päivitysten välillä kuluvan ajan.  Jos soittimessa on graafinen näyttö, nopeuden lisäksi voidaan säätää vierityksen kuvapisteiden määrää. Näin vieritysnopeuden lisäksi voidaan säätää myös vierityksen kuvatarkkuutta. Teksti liikkuu määritettyjen kuvapisteiden verran kerran vieritysnopeudessa määritettynä ajanjaksona.  Jos soittimessa on merkkinäyttö, nopeus määrää ajan, joka kuluu, ennen kuin siirrytään seuraavaan merkkiin.  Anna sekunteina aika, joka kuluu näytön päivitysten välillä.  Alhainen luku tekee vierityksestä nopeampaa.  Yhden rivin oletusaika on 0,15 sekuntia, kahden rivin 0,1.
-	FR	Vous pouvez ajuster la vitesse de défilement du texte à l'écran. La vitesse de défilement permet de définir l'intervalle de temps entre les rafraîchissements de l'écran. Pour une platine dotée d'un affichage graphique, vous pouvez ajuster cette valeur en combinaison avec la valeur de Pixels de défilement pour définir la vitesse et la qualité du défilement. Le texte se déplace d'un certain nombre de pixels après le nombre de secondes défini. Pour une platine dotée d'un affichage par caractères, cette valeur définir l'intervalle de temps avant le défilement vers le caractère suivant. Spécifiez une valeur en secondes pour cet intervalle. Plus la valeur est faible, plus le défilement est rapide. La valeur par défaut 0,15 s pour l'affichage sur une seule ligne et 0,1 s pour l'affichage sur deux lignes.
+	ES	Se puede ajustar la velocidad a la que el texto se desplaza por la pantalla. La velocidad de desplazamiento define el tiempo que se tarda entre actualizaciones de pantalla. En un reproductor con una pantalla gráfica, se puede ajustar junto con Píxeles de desplazamiento para establecer la velocidad y la calidad de desplazamiento (el texto se moverá según el valor de Píxeles de desplazamiento en cada valor en segundos de Velocidad de desplazamiento). En un reproductor con una pantalla de caracteres, esto define la duración antes del desplazamiento al próximo carácter. Introduzca un valor, en segundos, para el tiempo de espera entre actualizaciones. Los número bajos hacen que el desplazamiento sea más rápido. 0,15 segundos es el valor predeterminado para una sola línea; 0,1 segundos para texto grande.
+	FI	Voi säätää millä nopeudella teksti vierii ruudulla. Vieritysnopeus määrittelee ruudunpäivitysten välisen ajan. Graafisen näytön omaavissa soittimissa, tätä voidaan säätää vierityspikselien kanssa vierityksen laadun määrittämiseksi. Merkkipohjaisissa näytöissä, tämä määrittelee kuinka kauan odotetaan, ennenkuin vieritetään seuraavaan merkkiin. Syötä arvo sekunneissa. Pienemmät arvot nopeuttavat vieritystä. 0.15 on yksirivisen näytön oletusarvo ja 0.1 suuren tekstin.
+	FR	Vous pouvez ajuster la vitesse de défilement du texte à l'écran. La vitesse de défilement permet de définir l'intervalle de temps entre les actualisations de l'écran. Pour une platine dotée d'un affichage graphique, vous pouvez ajuster cette valeur en combinaison avec la valeur de Pixels de défilement pour définir la vitesse et la qualité du défilement. Le texte se déplace d'un certain nombre de pixels après le nombre de secondes défini. Pour une platine dotée d'un affichage par caractères, cette valeur définit l'intervalle de temps avant le défilement vers le caractère suivant. Spécifiez une valeur en secondes pour cet intervalle. Plus la valeur est faible, plus le défilement est rapide. La valeur par défaut est 0,15 s pour l'affichage sur une seule ligne et 0,1 s pour la grande police.
 	HE	באפשרותך לכוונן את הקצב שבו טקסט נגלל נע על-פני המסך. קצב הגלילה מגדיר את משך הזמן בין עדכוני התצוגה. בנגן עם תצוגה גרפית, ניתן לכוונן הגדרה זו בשילוב עם ההגדרה של פיקסלים לגלילה כדי להגדיר את המהירות והכמות של הגלילה (הטקסט ינוע לפי 'פיקסלים לגלילה' בכל מספר השניות המוגדר ב'קצב גלילה'). בנגן עם תצוגת תווים, הגדרה זו קובעת את משך הזמן לפני הגלילה לתו הבא. הזן ערך, בשניות, עבור פרק הזמן בין עדכונים. ככל שהמספר נמוך יותר, הגלילה מהירה יותר. ערך ברירת המחדל הוא 0.15 עבור שורה אחת; 0.1 שניות עבור שורה כפולה.
-	IT	È possibile regolare la velocità alla quale il testo scorre sullo lo schermo. La velocità di scorrimento definisce l'intervallo di aggiornamento dello schermo. Su un lettore con schermo grafico può essere regolata congiuntamente all'impostazione di Pixel scorrimento per impostare la velocità e la qualità dello scorrimento (il testo si sposta del numero di pixel impostato e dopo l'intervallo di tempo impostato per la velocità di scorrimento). Su un lettore con uno schermo a caratteri questo valore definisce la durata tra la visualizzazione di un carattere e il successivo. Inserire un valore in secondi. Valori più bassi rendono lo scorrimento più veloce. Il valor predefinito per una riga singola è di 0,15 secondi e 0,1 secondi per una riga doppia.
+	IT	È possibile regolare la velocità alla quale il testo scorre sullo lo schermo. La velocità di scorrimento definisce l'intervallo di aggiornamento dello schermo. Su un lettore con schermo grafico può essere regolata congiuntamente all'impostazione di Pixel scorrimento per impostare la velocità e la qualità dello scorrimento (il testo si sposta del numero di pixel impostato e dopo l'intervallo di tempo impostato per la velocità di scorrimento). Su un lettore con uno schermo a caratteri questo valore definisce la durata tra la visualizzazione di un carattere e il successivo. Inserire un valore in secondi. Valori più bassi rendono lo scorrimento più veloce. Il valore predefinito per una riga singola è di 0,15 secondi e 0,1 secondi per testo di grandi dimensioni.
 	JA	ディスプレイテキストの別の文字をスクロール開始するまでの時間を調節することができます。秒数を入力してください。出荷時設定は、1行フォントであれば0.15秒、2行フォントであれば0.10秒です。
-	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muzieksysteem met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens volgens het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een systeem met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde in, in seconden, voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. 0,15 seconden is de standaardwaarde voor tekst met enkele regelhoogte. 0,1 seconden is de standaardwaarde voor tekst met dubbele regelhoogte.
-	NO	Du kan endre hvor raskt tekst ruller over skjermen. Rullefrekvens angir tiden mellom skjermoppdateringer. Hvis spilleren har en grafisk skjerm kan dette justeres sammen med Rullepiksler for å angi hastighet og kvalitet på rullingen. (Teksten beveger seg tilsvarende verdien i Rullepiksler per tidsintervall angitt i Rullefrekvens.) På en spiller med tegndisplay vil dette definere tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere nummer gir raskere rulling. 0,15 sekunder er standard for enlinjet skjerm, 0,1 er standard for tolinjet skjerm.
-	SV	Du kan justera hastigheten för textremsan som rullar över displayen. Texthastigheten bestämmer hur ofta displayinformationen visas.  På spelare med grafisk display kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter varje gång det angivna antalet sekunder förlöpt.  På spelare med teckendisplay anger detta tiden innan nästa tecken visas.  Ange ett värde i sekunder för tiden mellan visningarna.  Ju lägre tal, desto snabbare rullar texten.  0,15 sekunder är standard för enradsvisning, 0,1 för tvåradsvising.
+	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muzieksysteem met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens na het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een systeem met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde in, in seconden, voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. 0,15 seconden is de standaardwaarde voor tekst met enkele regelhoogte. 0,1 seconden is de standaardwaarde voor grote tekst.
+	NO	Du kan justere hastigheten for rullende tekst på skjermen. Rullefrekvensen angir tiden mellom oppdateringer av displayet. På en spiller med grafisk display kan denne innstillingen benyttes sammen med Rullepiksler for å styre hastighet og kvalitet for rullingen. (Teksten vil rulle Rullepiksler for hvert Rullefrekvens-sekund.) På en spiller med tegndisplay vil dette angi tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere nummer vil gjøre rullingen raskere. 0,15 sekunder er standard for enkeltlinje-display, mens 0,1 sekunder er standard for stor skrift.
+	SV	Du kan justera hastigheten för textremsan som rullar över displayen.Texthastigheten bestämmer hur ofta displayinformationen uppdateras. På spelare med grafisk display kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter varje gång det angivna antalet sekunder förlöpt. På spelare med teckendisplay anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,15 sekunder är standard för enradsvisning, 0,1 för stor text.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE-LINE
-	DA	Dobbeltstørrelse
-	DE	Doppelte Größe
+	DA	Stor skrift
+	DE	Großer Text
 	EN	Large Text
-	ES	Tamaño doble
-	FI	Kaksoiskoko
-	FR	Taille double
-	IT	Raddoppia
-	NL	Dubbele hoogte
-	NO	Dobbeltlinje
-	SV	Dubbel storlek
+	ES	Texto grande
+	FI	Suuri teksti
+	FR	Grande police
+	IT	Testo esteso
+	NL	Grote tekst
+	NO	Stor skrift
+	SV	Stor text
 
 SETUP_GROUP_ALARM
 	CS	Budík
@@ -3260,18 +3544,18 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 
 PLAYER_TYPE
 	CS	Typ přehrávače
-	DA	Type
-	DE	Typ
+	DA	Afspillertype
+	DE	Gerätetyp
 	EN	Player Type
-	ES	Tipo
-	FI	Kirjoita
-	FR	Type
+	ES	Tipo de reproductor
+	FI	Soittimen tyyppi
+	FR	Type platine
 	HE	סוג הנגן
-	IT	Tipo
+	IT	Tipo lettore
 	JA	プレーヤー タイプ
-	NL	Type
-	NO	Type
-	SV	Typ
+	NL	Type muzieksysteem
+	NO	Spillertype
+	SV	Spelartyp
 	ZH_CN	播放机类别
 
 PLAYER_ID
@@ -3403,10 +3687,28 @@ SETUP_PLAYERNAME_CHOOSE
 	ZH_CN	播放机名字：
 
 SETUP_RESET_PLAYER
+	DA	Nulstil indstillinger for afspiller
+	DE	Player-Einstellungen zurücksetzen
 	EN	Reset player preferences
+	ES	Restablecer preferencias de reproductor
+	FI	Palauta soittimen määritykset
+	FR	Réinitialiser les préférences de platine
+	IT	Reimposta preferenze lettore
+	NL	Voorkeuren van muzieksysteem opnieuw instellen
+	NO	Tilbakestill spillerinnstillinger
+	SV	Återställ spelarinställningar
 
 SETUP_RESET_PLAYER_DESC
+	DA	Du kan nulstille en afspillers indstillinger, fx navnet, titelformatet og menuerne. Bemærk at afspillerens hardwareindstillinger, fx netværkskonfiguration, ikke bliver nulstillet.
+	DE	Player-Einstellungen wie Player-Name, Titelformat, Menüs usw. können nicht auf Standardwerte zurückgesetzt werden. Beachten Sie, dass Hardware-Einstellungen wie Netzwerkparameter nicht zurückgesetzt werden.
 	EN	You can reset a player's settings like player name, title format, menus etc. to factory defaults. Please note that this will not reset the player's hardware settings like eg. networking parameters.
+	ES	Puede restablecer la configuración de un reproductor (nombre de reproductor, formato de título, menús, etc.) a los ajustes de fábrica. Esta acción no restablecerá la configuración del hardware del reproductor (por ejemplo, los parámetros de red).
+	FI	Voit palauttaa soittimen asetukset, esimerkiksi nimen, nimen muodon tai valikot tehdasasetuksiin. Huomaa, että tämä ei palauta soittimen laitteistoasetuksia, esimerkiksi verkkoasetuksia.
+	FR	Vous pouvez réinitialiser les paramètres d'une platine tels que le nom de platine, le format de titre, les menus, etc., pour rétablir les paramètres d'usine par défaut. Notez que cela ne réinitialisera pas les paramètres matériels de la platine tels que les paramètres réseau.
+	IT	È possibile ripristinare le impostazioni di fabbrica di un lettore, quali nome, formato del titolo e così via. Questa operazione non ripristina le impostazioni hardware del lettore, quali i parametri di rete.
+	NL	Je kunt de muzieksysteeminstellingen, zoals spelernaam, titelformaat, menu's, enz., op de fabriekswaarden terugzetten. De hardware-instellingen van het systeem, zoals netwerkparameters, worden niet teruggezet.
+	NO	Du kan tilbakestille spillerinnstillinger som spillernavn, tittelformat, menyer osv. til fabrikkinnstillingene. Dette tilbakestiller ikke spillerens maskinvareinnstillinger, som for eksempel nettverksparametre.
+	SV	Du kan återställa en spelares inställningar, t.ex. spelarnamn, titelformat och menyer, till fabriksinställningarna. Observera att spelarens maskinvaruinställningar, t.ex. nätverksparametrar, inte återställs.
 
 SETUP_RESET_PLAYER_CONFIRM
 	DE	Wollen Sie ihren Player wirklich auf die Fabrikeinstellungen zurücksetzen?
@@ -3450,13 +3752,40 @@ SETUP_IDLEBRIGHTNESS
 	SV	Ljusstyrka i viloläge
 
 SETUP_POWERONBRIGHTNESS_ABBR
+	DA	Mens den er tændt
+	DE	Wenn aktiv
 	EN	While On
+	ES	Mientras está encendido
+	FI	Laitteen ollessa päällä
+	FR	En état activé
+	IT	Se attivato
+	NL	Wanneer aan
+	NO	Når på
+	SV	I påslaget läge
 
 SETUP_POWEROFFBRIGHTNESS_ABBR
+	DA	Mens den er slukket
+	DE	Wenn aus
 	EN	While Off
+	ES	Cuando esté desactivado
+	FI	Laitteen ollessa pois päältä
+	FR	En état éteint
+	IT	Quando disattivato
+	NL	Wanneer uit
+	NO	Når av
+	SV	I avstängt läge
 
 SETUP_IDLEBRIGHTNESS_ABBR
+	DA	Lysstyrke når afspilleren ikke bruges
+	DE	Helligkeit im Standbymodus
 	EN	Idle Brightness
+	ES	Brillo en inactividad
+	FI	Kirkkaus käyttämättömänä
+	FR	Luminosité (inactif)
+	IT	Luminosità quando inattivo
+	NL	Helderheid in ruststand
+	NO	Lysstyrke i hvilemodus
+	SV	Ljusstyrka i viloläge
 
 SETUP_ALARM
 	CS	Budík
@@ -3487,7 +3816,7 @@ SETUP_ALARMVOLUME
 	IT	Volume sveglia (0-100)
 	JA	アラームのボリュームをセットして下さい (0-100)
 	NL	Weksignaalvolume (0-100)
-	NO	Velg lydstyrke for vekkerklokke (0–100)
+	NO	Velg volum for vekkerklokke (0–100)
 	PT	Mudar Volume do Alarme (0-100)
 	SV	Volym för alarm (0–100)
 	ZH_CN	设置闹钟音量(0-100)
@@ -3522,11 +3851,20 @@ SETUP_PLAYINGDISPLAYMODE
 	JA	現在再生中の曲の情報
 	NL	Speelt nu-informatie
 	NO	Informasjon under avspilling
-	SV	Information om Aktuellt spår
+	SV	Nu spelas-information
 	ZH_CN	播放中信息
 
 SETUP_PLAYINGDISPLAYMODE_ABBR
+	DA	Oplysninger om nummer der spiller
+	DE	Aktueller Titel - Info
 	EN	Now Playing Info
+	ES	Información de reproducción actual
+	FI	Nyt soi - tiedot
+	FR	Lecture des informations en cours
+	IT	Info brani in corso di riproduzione
+	NL	Info Speelt nu
+	NO	Informasjon om Spilles nå
+	SV	Nu spelas-information
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DA	Afspilleren vil nu vise status for afspilningen således:
@@ -3638,7 +3976,7 @@ SETUP_SYNCVOLUME_ON
 	IT	Sincronizza il volume dei lettori
 	JA	プレーヤーのボリュームをシンクロさせる
 	NL	Volume van muzieksysteem synchroniseren
-	NO	Synkroniser spillerens lydstyrke
+	NO	Synkroniser spillerens volum
 	PT	Sincronizar o volume do cliente
 	SV	Synkronisera spelarens volym
 	ZH_CN	把播放机的音量同步化
@@ -3655,7 +3993,7 @@ SETUP_SYNCVOLUME_OFF
 	IT	Non sincronizzare il volume dei lettori
 	JA	プレーヤーのボリュームをシンクロさせない
 	NL	Volume van muzieksysteem niet synchroniseren
-	NO	Ikke synkroniser spillerens lydstyrke
+	NO	Ikke synkroniser spillerens volum
 	PT	Não sincronizar o volume do cliente
 	SV	Synkronisera inte spelarens volym
 	ZH_CN	不要把播放机的音量同步化
@@ -3672,7 +4010,7 @@ SETUP_SYNCVOLUME
 	IT	Sincronizza il volume
 	JA	シンクロ ボリューム
 	NL	Volume synchroniseren
-	NO	Synkroniser lydstyrke
+	NO	Synkroniser volum
 	PT	Sincronizar o volume
 	SV	Synkronisera volym
 	ZH_CN	音量同步化
@@ -3754,38 +4092,52 @@ SETUP_SYNCPOWER_DESC
 	ZH_CN	您可以选择将这个播放机的电源切断独立化、或与其他播放机小组一起切断。请选择并点击《更动》。
 
 SETUP_DIGITALVOLUMECONTROL_ON
-	DA	Lydstyrkekontrol er aktiveret for de digitale udgange
-	DE	Lautstärkeregelung über Fernbedienung
+	DA	Lydstyrkekontrol er aktiveret for udgange
+	DE	Lautstärkeregelung regelt Ausgabepegel
 	EN	Volume controls adjust outputs
-	FI	Äänenvoimakkuuden säätimillä säädetään digitaalisia lähtöjä
-	FR	Niveau contrôlé par boutons de volume
-	NO	Volumkontrollen kontrollerer digitalutgangen
-	SV	Den digitala utsignalen justeras med volymkontrollerna
+	ES	Los controles de volumen ajustan las salidas
+	FI	Äänenvoimakkuuden säätimillä säädetään lähtöjä
+	FR	Sorties de réglage des commandes de volume
+	IT	Il controllo del volume regola le uscite
+	NL	Volumeknoppen regelen uitgangen
+	NO	Volumkontrollen justerer utganger
+	SV	Utsignalen justeras med volymkontrollerna
 
 SETUP_DIGITALVOLUMECONTROL_OFF
-	DA	Digitalt udgangsnivau er fast
-	DE	Lautstärke ist fixiert auf Maximum
+	DA	Udgangsnivau er fast 100%
+	DE	Ausgabepegel ist fixiert auf 100%
 	EN	Output level is fixed at 100%
-	FI	Digitaalisen lähdön taso on kiinteä
-	FR	Niveau sortie fixe à 100%
-	NO	Digitalt utgangsnivå er fast
-	SV	Nivån för digital utsignal är fast
+	ES	El nivel de la salida se fija en 100 %
+	FI	Lähdön taso on kiinteä 100 %
+	FR	Niveau de sortie fixé à 100 %
+	IT	Il livello dell'uscita è fissato a 100%
+	NL	Uitvoerniveau is vastgezet op 100%
+	NO	Utgangsnivået er fastsatt til 100 %
+	SV	Nivån för utsignalen är konstant 100 %
 
 SETUP_DIGITALVOLUMECONTROL
-	DA	Digital lydstyrkekontrol
+	DA	Justering af lydstyrke
 	DE	Lautstärkeregelung
 	EN	Volume Control
-	FI	Digitaaliäänen voimakkuuden säädin
-	FR	Niveau sortie
-	NO	Digital lydstyrkekontroll
-	SV	Digital volymkontroll
+	ES	Control de volumen
+	FI	Äänenvoimakkuuden säätö
+	FR	Réglage du volume
+	IT	Controllo volume
+	NL	Volumeregelaar
+	NO	Volumkontroll
+	SV	Volymknappar
 
 SETUP_DIGITALVOLUMECONTROL_DESC
-	DA	Du kan vælge at indstille lydniveauet fra den digitale udgang til et fast niveau eller lade det være afhængigt af volumenknappen. I begge tilfælde regulerer volumenknapperne de analoge udgangssignaler.
+	DA	Du kan vælge at indstille lydniveauet til altid at være 100% hvis du bruger volumenknappen på forstærkeren til at skrue op og ned eller vil have et perfekt gennemgangssignal. Indstillingen gælder styrken af både det analoge og digitale signal.
+	DE	Sie können den Pegel auf 100% festlegen, wenn Sie den Lautstärkeregler des Verstärkers verwenden oder ein perfektes digitales Durchschleifsignal benötigen. Dies gilt sowohl für die digitale und die analoge Lautstärke.
 	EN	You can fix the volume control at 100% if you are using the volume control on your amplifier to control loudness or need perfect digital passthrough. This affects both digital and analog volume.
-	FI	Voit asettaa soittimen digitaaliäänen lähtötason kiinteäksi tai voit valita, että sitä voidaan säätää äänenvoimakkuuden säätimillä.  Kummallakin asetuksella analogista lähtötasoa säädetään äänenvoimakkuuden säätimillä.
-	NO	Du kan velge mellom å la digital lydstyrke fra spilleren være fast på maks nivå, eller å styre nivået med volumknappene. Uansett innstilling styres analog lydstyrke av volumknappene.
-	SV	Du kan välja mellan att fixera volymen för den digitala utsignalen på maximal nivå, eller låta att låta den styras av volymknapparna. Oavsett vilken inställning du väljer justeras den analoga utsignalens volym med volymknapparna.
+	ES	Puede fijar el control de volumen en 100% si utiliza el control de volumen de su amplificador para controlar la sonoridad o si necesita un paso a través digital perfecto. Esto afecta tanto al volumen digital como al volumen analógico.
+	FI	Voit asettaa äänenvoimakkuuden kiinteästi 100 prosenttiin, jos hallitset äänenvoimakkuutta vahvistimen äänenvoimakkuuden säätimillä tai jos tarvitset täydellisen digitaalisen läpikulun. Tämä vaikuttaa sekä digitaaliseen että analogiseen äänenvoimakkuuteen.
+	FR	Vous pouvez choisir de fixer le réglage du volume à 100 % si vous l'utilisez sur votre amplificateur pour contrôler l'intensité ou si vous voulez un relais numérique parfait. Cela affecte les volumes numérique et analogique.
+	IT	Se si utilizza il controllo del volume dell'amplificatore per regolare l'audio oppure si desidera ottenere un passthrough digitale perfetto, è possibile mantenere il controllo del volume fisso su 100%. Questa impostazione ha effetto sia sul volume digitale sia su quello analogico.
+	NL	Je kunt de volumeregeling op 100% vastzetten als je de volumeregeling op je versterker gebruikt voor geluidssterkte of als perfecte digitale doorvoer is vereist. Dit is zowel op digitaal als analoog volume van invloed.
+	NO	Du kan fastsette volumet til 100 % hvis du bruker volumkontrollen på forsterkeren til å styre lydnivået, eller hvis du trenger perfekt digital gjennomgang. Dette påvirker både digitalt og analogt volum.
+	SV	Du kan ställa in volymen på 100 % om du använder volymkontrollen på förstärkaren för att justera ljudnivån eller om du vill ha perfekt digital genomströmning. Detta påverkar både digital och analog volym.
 
 SETUP_PREAMPVOLUMECONTROL
 	DA	Lydstyrkekontrol for forforstærker
@@ -4366,12 +4718,21 @@ REPLAYGAIN_DISABLED
 	HE	השבתת האפשרות לכוונון עוצמת הקול
 	IT	Disattiva regolazione volume
 	NL	Volumeaanpassing uitschakelen
-	NO	Skru av lydstyrkekontroll
+	NO	Skru av volumkontroll
 	SV	Ingen volymjustering
 	ZH_CN	关闭音量调整
 
 REPLAYGAIN_DISABLED_ABBR
+	DA	Ingen
+	DE	Keine
 	EN	None
+	ES	No
+	FI	Ei mitään
+	FR	Aucun
+	IT	Nessuna
+	NL	Geen
+	NO	Ingen
+	SV	Inget
 
 REPLAYGAIN_TRACK_GAIN
 	DA	Forstærkning af nummer
@@ -4404,13 +4765,13 @@ REPLAYGAIN_ALBUM_GAIN
 REPLAYGAIN_SMART_GAIN
 	DA	Dynamisk forstærkning
 	DE	'Intelligente' Normalisierung
-	EN	Smart Gain 
-	ES	Selección de ganancia "inteligente"
-	FI	"Älykäs" äänenvoimakkuus
-	FR	Utiliser le gain intelligent
+	EN	Smart Gain
+	ES	Selección de ganancia inteligente
+	FI	Älykäs äänenvoimakkuus
+	FR	Gain intelligent
 	HE	בחירת הגברה חכמה
-	IT	Selezione guadagno intelligente
-	NL	'Slimme' aanpassingsselectie
+	IT	Guadagno intelligente
+	NL	Slimme versterking
 	NO	Smart gain
 	SV	Smart volymjustering
 	ZH_CN	智慧型增益选择
@@ -4505,7 +4866,7 @@ SETUP_TRANSITIONTYPE
 	HE	מעבר הדרגתי
 	IT	Dissolvenza
 	NL	Crossfade
-	NO	Overtoning
+	NO	Krysstoning
 	SV	Korstoning
 	ZH_CN	音频同时淡出淡入
 
@@ -4627,16 +4988,52 @@ TRANSITION_FADE_IN_OUT
 	ZH_CN	音频同时淡出淡入
 
 SETUP_TRANSITIONSMART
+	DA	Dynamisk ind- og udtoning
+	DE	Intelligente Überblendung
 	EN	Smart Crossfade
+	ES	Encadenado inteligente
+	FI	Älykäs ristihäivytys
+	FR	Transitions intelligentes
+	IT	Dissolvenza intelligente
+	NL	Slim crossfaden
+	NO	Smart krysstoning
+	SV	Smart korstoning
 
 SETUP_TRANSITIONSMART_DESC
+	DA	Hvis Dynamisk ind- og udtoning er slået til, vil der ikke være en blød overgang mellem numre fra samme album der spilles efter hinanden.
+	DE	Ist die Intelligente Überblendung aktiviert, werden aufeinanderfolgende Titel desselben Albums ohne Überblendung wiedergegeben.
 	EN	If Smart Crossfade is enabled, successive tracks played from the same album will not use the Crossfade setting.
+	ES	Si se activa el encadenado inteligente, las pistas sucesivas procedentes del mismo álbum no utilizarán la configuración de Encadenado.
+	FI	Jos älykäs ristihäivytys on käytössä, samalta levyltä peräkkäin soitettujen kappaleiden välillä ei käytetä ristihäivytystä.
+	FR	Si les transitions intelligentes sont activées, les pistes consécutives lues à partir du même album n'utiliseront pas le paramètre Transitions.
+	IT	Se la dissolvenza intelligente è stata abilitata, i brani consecutivi che appartengono allo stesso album non utilizzeranno l'impostazione di dissolvenza.
+	NL	Als 'Slim crossfaden' is ingeschakeld, wordt de crossfade-instelling niet gebruikt als er opeenvolgende nummers van hetzelfde album worden afgespeeld.
+	NO	Hvis Smart krysstoning er aktivert, vil ikke påfølgende spor fra samme album bruke krysstoning
+	SV	Om Smart korstoning har aktiverats korstonas inte låtar som ligger efter varandra på samma album.
 
 SETUP_TRANSITIONSMART_ON
+	DA	Aktiver dynamisk ind- og udtoning
+	DE	Intelligente Überblendung aktivieren
 	EN	Enable Smart Crossfade
+	ES	Activar encadenado inteligente
+	FI	Ota käyttöön älykäs ristihäivytys
+	FR	Activer les transitions intelligentes
+	IT	Abilita dissolvenza intelligente
+	NL	Slim crossfaden inschakelen
+	NO	Aktiver Smart krysstoning
+	SV	Aktivera smart korstoning
 
 SETUP_TRANSITIONSMART_OFF
+	DA	Deaktiver dynamisk ind- og udtoning
+	DE	Intelligente Überblendung deaktivieren
 	EN	Disable Smart Crossfade
+	ES	Desactivar encadenado inteligente
+	FI	Poista älykäs ristihäivytys käytöstä
+	FR	Désactiver les transitions intelligentes
+	IT	Disattiva dissolvenza intelligente
+	NL	Slim crossfaden uitschakelen
+	NO	Deaktiver Smart krysstoning
+	SV	Avaktivera smart korstoning
 
 SETUP_TITLEFORMATCURR
 	CS	Aktuální formát názvu skladby
@@ -5363,10 +5760,28 @@ RESCANNING_SHORT
 	ZH_CN	重新扫描音乐库中...
 
 ABORT_SCAN
+	DA	Afbryd gennemsøgning
+	DE	Durchsuchen abbrechen
 	EN	Abort scan
+	ES	Cancelar examen
+	FI	Keskeytä tarkistus
+	FR	Interrompre l'analyse
+	IT	Annulla analisi
+	NL	Scan afbreken
+	NO	Avbryt søk
+	SV	Avbryt söknng
 
 SCAN_ABORTED
+	DA	Gennemsøgningen er afbrudt. Du skal foretage gennemsøgningen en gang til for at få fuld adgang til musikbiblioteket.
+	DE	Der Scan wurde abgebrochen. Beachten Sie, dass Sie die Suche wiederholen müssen, um vollständigen Zugriff auf Ihre Musiksammlung zu erhalten.
 	EN	The scan has been aborted. Please note that you'll have to re-run a scan to get full access to your music library.
+	ES	Se ha cancelado el examen. Tenga en cuenta que para tener acceso completo a la biblioteca de música deberá volver a ejecutar un examen.
+	FI	Tarkistus keskeytettiin. Huomaa, että tarkistus täytyy suorittaa uudelleen, jotta voit käyttää musiikkikirjastoa täysin.
+	FR	L'analyse a été interrompue. Notez que vous devrez exécuter une nouvelle fois une analyse afin d'obtenir l'accès complet à votre collection musicale.
+	IT	L'analisi è stata annullata. È necessario eseguire di nuovo un'analisi completa per avere accesso alla libreria musicale.
+	NL	De scan is afgebroken. Je moet opnieuw een scan uitvoeren om volledige toegang tot je muziekcollectie te verkrijgen.
+	NO	Søket ble avbrutt. Du må kjøre søket på nytt for å få full tilgang til musikkbiblioteket.
+	SV	Sökningen har avbrutits. Observera att du måste göra en ny sökning innan du får full tillgång till musikbiblioteket.
 
 # advanced server settings
 
@@ -5767,13 +6182,40 @@ SETUP_SAVESHUFFLED_0
 	ZH_CN	保存播放表原来次序
 
 SETUP_RATINGIMPLEMENTATION
+	DA	Gem bedømmelser
+	DE	Bewertung speichern
 	EN	Rating storage
+	ES	Almacenamiento de clasificación
+	FI	Luokituksen tallennus
+	FR	Classement du stockage
+	IT	Memorizzazione classificazione
+	NL	Beoordelingsopslag
+	NO	Rangeringslagring
+	SV	Lagring av betygsättning
 
 SETUP_RATINGIMPLEMENTATION_DESC
+	DA	Hvilken database der skal bruges når du vil se eller gemme bedømmelser
+	DE	Beim Speichern oder Anzeigen zu verwendender Bewertungsspeicher.
 	EN	Rating storage to use when storing or viewing ratings
+	ES	Almacenamiento de clasificación que debe utilizarse al almacenar o ver clasificaciones
+	FI	Luokituksen tallennus, jota käytetään luokituksia tallennettaessa tai tarkasteltaessa
+	FR	Stockage du classement à utiliser lors du stockage ou de l'affichage des classements
+	IT	Memorizzazione classificazione da utilizzare durante la memorizzazione o la visualizzazione delle classificazioni
+	NL	Te gebruiken beoordelingsopslag wanneer beoordelingen worden opgeslagen of bekeken
+	NO	Rangeringslagring til bruk ved lagring eller visning av rangeringer
+	SV	Lagring av betyg som ska användas när betygsättning visas eller lagras
 
 LOCAL_RATING_STORAGE
+	DA	SqueezeCenter-database
+	DE	SqueezeCenter-Datenbank
 	EN	SqueezeCenter Database
+	ES	Base de datos de SqueezeCenter
+	FI	SqueezeCenterin tietokanta
+	FR	Base de données SqueezeCenter
+	IT	Database SqueezeCenter
+	NL	SqueezeCenter-database
+	NO	SqueezeCenter-database
+	SV	SqueezeCenter-databas
 
 SETUP_CHECKVERSION
 	CS	Automatická aktualizace
@@ -5861,7 +6303,16 @@ SETUP_SCREENSAVER
 	ZH_CN	屏幕保护程序（播放时）
 
 SETUP_SCREENSAVER_ABBR
+	DA	Under afspilning
+	DE	Bei Wiedergabe
 	EN	When Playing
+	ES	Al reproducir
+	FI	Toistettaessa
+	FR	Pendant la lecture
+	IT	Durante la riproduzione
+	NL	Tijdens afspelen
+	NO	Ved avspilling
+	SV	Vid uppspelning
 
 SETUP_OFFSAVER
 	CS	Spořič (vypnut)
@@ -5879,7 +6330,16 @@ SETUP_OFFSAVER
 	ZH_CN	屏幕保护程序（关机时）
 
 SETUP_OFFSAVER_ABBR
+	DA	Når den er slukket
+	DE	Wenn aus
 	EN	When Off
+	ES	Al apagar
+	FI	Laitteen ollessa pois päältä
+	FR	En état éteint
+	IT	Se disattivato
+	NL	Wanneer uit
+	NO	Når av
+	SV	I avstängt läge
 
 SETUP_IDLESAVER
 	CS	Spořič (zastaven)
@@ -5897,7 +6357,16 @@ SETUP_IDLESAVER
 	ZH_CN	屏幕保护程序（停止播放时）
 
 SETUP_IDLESAVER_ABBR
+	DA	På pause
+	DE	Bei Pause
 	EN	When Stopped
+	ES	Al detener
+	FI	Keskeytettynä
+	FR	A l'arrêt
+	IT	Quando la riproduzione è interrotta
+	NL	Wanneer gestopt
+	NO	Ved stopp
+	SV	I stoppat läge
 
 SETUP_SCREENSAVER_USE
 	DA	Anvend som pauseskærm
@@ -5998,19 +6467,27 @@ SCREENSAVER_JUMP_BACK_NAME
 	EN	Now Playing
 	ES	Reproduciendo
 	FI	Nyt soi
-	FR	Lecture
+	FR	Lecture en cours
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
 	NL	Speelt nu
 	NO	Spilles nå
 	PT	A tocar...
-	SV	Aktuellt spår
+	SV	Nu spelas
 	ZH_CN	播放中
 
 SCREENSAVER_JUMP_TO_NOW_PLAYING
-	DE	Zu "Aktueller Titel" springen
+	DA	Gå til Nu spiller
+	DE	In 'Aktuelle Wiedergabe' wechseln
 	EN	Jump To Now Playing
+	ES	Ir a reproducción actual
+	FI	Hyppää kohtaan Nyt soi
+	FR	Accéder à Lecture en cours
+	IT	Passa ai brani in corso di riproduzione
+	NL	Springen naar Speelt nu
+	NO	Hopp til Spilles nå
+	SV	Hoppa till Nu spelas
 
 SCREENSAVER_NONE
 	DA	Ingen
@@ -6061,10 +6538,28 @@ SETUP_DISPLAYTEXTTIMEOUT_DESC
 	ZH_CN	当您通过播放机输入文字进行搜查行动时，播放机会在您输入的每一个字符后等待片刻才向下一个字符移动。您可以在这里调整该等待时间。
 
 SETUP_ADDITIONAL_PLAYLIST_BUTTONS
+	DA	Flere knapper til afspilningsliste
+	DE	Zusätzliche Wiedergabelistentasten
 	EN	Additional Playlist Buttons
+	ES	Botones adicionales de lista de reproducción
+	FI	Lisäsoittoluettelopainikkeet
+	FR	Boutons de liste de lecture supplémentaires
+	IT	Pulsanti aggiuntivi elenco di riproduzione
+	NL	Extra playlistknoppen
+	NO	Ekstra spillelisteknapper
+	SV	Ytterligare spellisteknappar
 
 SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
+	DA	Nogle temaer kan vise flere knapper, fx Spil næste, Fjern fra afspilningsliste.<br/><br/>Bemærk: Denne indstilling gemmes kun i browseren, så du skal indstille den i samtlige browsere hvor den skal bruges.
+	DE	Bestimmte Skins können wahlweise zusätzliche Wiedergabe-Schaltflächen (z.B. 'Nächsten wiedergeben' oder 'Aus Wiedergabeliste entfernen' enthalten.<br/><br/>Beachten Sie, dass diese Einstellung nur im aktuellen Browser gespeichert wird. Wenn Sie einen anderen Browser verwenden, müssen Sie sie dort ebenfalls ändern.
 	EN	Some skins optionally can display additional buttons for playable items, like eg. "Play next" or "Remove from playlist".<br/><br/>Please note: this preference is stored in your browser only - you'll have to set it on all browsers you want to use it.
+	ES	Algunas máscaras ofrecen la opción de mostrar botones adicionales para los elementos que se pueden reproducir, como por ejemplo "Reproducir a continuación" o "Quitar de la lista de reproducción".<br/><br/>Tenga en cuenta que esta preferencia sólo se guarda en su navegador (deberá elegirla en todos los navegadotes que vaya a utilizar).
+	FI	Jotkin olemukset voivat näyttää valinnaisesti lisäpainikkeita soitettaville kohteille, esimerkiksi Soita seuraava tai Poista soittoluettelosta.<br/><br/>Huomautus: asetus tallennetaan ainoastaan selaimeen - se täytyy määrittää erikseen kaikissa selaimissa, joita haluat käyttää.
+	FR	Certains habillages peuvent facultativement afficher des boutons supplémentaires pour les éléments lisibles tels que Lire à la suite ou Enlever de la liste de lecture.<br/><br/>Notez que cette préférence est stockée uniquement dans votre navigateur. Vous devrez la définir sur tous les navigateurs sur lesquels vous voulez l'utiliser.
+	IT	In alcune interfacce è possibile visualizzare pulsanti di riproduzione aggiuntivi, quali Brano successivo o Rimuovi dall'elenco di riproduzione.<br/><br/>Nota: poiché questa impostazione viene salvata nel browser, è necessario specificarla individualmente in ogni browser che si intende utilizzare.
+	NL	Sommige skins kunnen desgewenst extra knoppen voor afspeelbare items weergeven, zoals 'Volgende afspelen' of 'Uit playlist verwijderen'.<br/><br/>N.B. Deze voorkeursinstelling wordt alleen in je browser opgeslagen. Als je de instelling op andere browsers wilt gebruiken, moet je deze apart instellen.
+	NO	Noen maler kan vise tilleggsknapper for spillbare elementer, for eksempel Spill av neste eller Fjern fra spillelisten.<br/><br/>Merk: Denne innstillingen lagres kun i leseren, så du må konfigurere denne innstillingen i alle lesere du vil bruke den på.
+	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.<br/><br/>Observera att det här alternativet endast sparas i webbläsaren. Du måste alltså ställa in varje webbläsare som du vill använda separat.
 
 SETUP_THROTTLESCAN
 	DA	Hastighed ved musiksøgning
@@ -6797,11 +7292,11 @@ SETUP_TIMEFORMAT_DEFAULT
 	DA	|%I:%M %p
 	DE	%H:%M
 	EN	|%I:%M %p
-	ES	|%I:%M %p
+	ES	|%H:%M
 	FI	|%I:%M %p
-	FR	|%I:%M %p
-	IT	|%I:%M %p
-	NL	|%I:%M %p
+	FR	%H:%M
+	IT	|%H.%M
+	NL	|%H:%M
 	NO	|%I:%M %p
 	SV	|%I:%M %p
 
@@ -7873,16 +8368,16 @@ SETUP_SN_PASSWORD_DESC
 	SV	Ange lösenordet för ditt SqueezeNetwork-konto.
 
 SETUP_SN_INVALID_LOGIN
-	DA	Vi kunne ikke finde dine kontooplysninger. Indtast oplysningerne en gang til og prøv igen. Hvis du ikke har en konto, skal du klikke på <a href="http://%s" target="_blank">Jeg har brug for en konto</a> for at fortsætte.
-	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf "<a href="http://%s" target="_blank">Ich brauche ein Konto</a>".
-	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://%s" target="_blank">I need an account</a>” to continue.
-	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://%s" target="_blank">Necesito una cuenta</a>" para continuar.
-	FI	Tilitietojasi ei löytynyt. Anna tiedot uudelleen ja yritä uudelleen. Jos sinulla ei ole tiliä, jatka valitsemalla "<a href="http://%s" target="_blank">Haluan avata tilin</a>".
-	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://%s" target="_blank">Je souhaite créer un compte</a> pour continuer.
-	IT	Impossibile recuperare le informazioni account. Inserire nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://%s" target="_blank">Nuovo account</a> per continuare.
+	DA	Vi kunne ikke finde dine kontooplysninger. Derfor beder vi dig angive dem igen. Hvis du ikke har en brugerkonto, skal du klikke på <a href="http://%s" target="_blank">Jeg har brug for en konto</a> for at fortsætte.
+	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf "<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>".
+	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click "<a href="http://%s" target="_blank">I need an account</a>" to continue.
+	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en "<a href="http://www.squeezenetwork.com" target="_blank">Necesito una cuenta</a>" para continuar.
+	FI	Tilitietojasi ei löytynyt. Anna tietosi ja yritä uudelleen. Jos sinulla ei ole tiliä, valitse "<a href="http://%s" target="_blank">Haluan avata tilin</a>".
+	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne possédez pas de compte, cliquez sur <a href="http://www.squeezenetwork.com" target="_blank">Je souhaite créer un compte</a> pour continuer.
+	IT	Impossibile recuperare le informazioni account. Inserire nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://www.squeezenetwork.com" target="_blank">Nuovo account</a> per continuare.
 	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Heb je geen account, klik dan op <a href="http://%s" target="_blank">Ik heb een account nodig</a> om verder te gaan.
-	NO	Finner ikke kontoinformasjonen, angi informasjonen igjen og prøv på nytt. Hvis du ikke har en konto, kan du klikke på «<a href="http://%s" target="_blank">Jeg må åpne en konto</a>» for å fortsette.
-	SV	Det gick inte att hitta din kontoinformation. Ange informationen på nytt och försök igen. Om du inte har något konto klickar du på <a href="http://%s" target="_blank">Jag behöver ett konto</a> för att fortsätta.
+	NO	Vi fant ikke kontoinformasjonen din. Oppgi informasjonen og prøv på nytt. Hvis du ikke har en konto, klikker du på <a href="http://%s" target="_blank">Jeg trenger en konto</a>  for å fortsette.
+	SV	Det gick inte att hitta din kontoinformation. Ange informationen på nytt och försök igen. Om du inte har något konto klickar du på  "<a href="http://%s" target="_blank">Jag behöver ett konto</a>" för att fortsätta.
 
 SETUP_SN_VALID_LOGIN
 	DA	Der er etableret forbindelse til SqueezeNetwork.
@@ -8572,7 +9067,7 @@ NOW_PLAYING_ON
 	NL	Speelt nu op het muzieksysteem van
 	NO	Spilles nå på
 	PT	A tocar no cliente Slim Player em
-	SV	Aktuellt spår på spelaren
+	SV	Nu spelas på spelaren
 	ZH_CN	播放机播放中：
 
 SKIP
@@ -8949,11 +9444,16 @@ ADD
 	ZH_CN	列入
 
 PLAY_NEXT
-	DE	Als nächstes spielen
+	DA	Spil næste
+	DE	Nächsten wiedergeben
 	EN	Play next
 	ES	Reproducir a continuación
+	FI	Soita seuraava
 	FR	Lire à la suite
-	NL	Als volgende af te spelen
+	IT	Brano successivo
+	NL	Volgende afspelen
+	NO	Spill av neste
+	SV	Spela härnäst
 
 SHUFFLE
 	CS	Náhodně
@@ -9147,13 +9647,13 @@ VOLUME
 	DE	Lautstärke
 	EN	Volume
 	ES	Volumen
-	FI	Äänenvoimakkuus
+	FI	Tilavuus
 	FR	Volume
 	HE	עוצמת קול
 	IT	Volume
 	JA	ボリューム
 	NL	Volume
-	NO	Lydstyrke
+	NO	Volum
 	PT	Volume
 	SV	Volym
 	ZH_CN	音量
@@ -9226,7 +9726,16 @@ BASS
 	ZH_CN	低音
 
 STEREOXL
+	DA	StereoXL
+	DE	StereoXL
 	EN	StereoXL
+	ES	StereoXL
+	FI	StereoXL
+	FR	StereoXL
+	IT	StereoXL
+	NL	StereoXL
+	NO	StereoXL
+	SV	StereoXL
 
 PITCH
 	CS	Odstup
@@ -9360,7 +9869,16 @@ NONE
 	ZH_CN	无
 
 LOW
+	DA	Lav
+	DE	Niedrig
 	EN	Low
+	ES	Bajo
+	FI	Heikko
+	FR	Faible
+	IT	Bassa
+	NL	Laag
+	NO	Lav
+	SV	Dålig
 
 OUTDOOR
 	EN	Outdoor
@@ -9637,7 +10155,16 @@ THIS_PLAYLIST_AS
 	ZH_CN	此播放表为：
 
 SAVED_THIS_PLAYLIST_AS
+	DA	Gemte afspilningslisten som:\n\n%s
+	DE	Wiedergabeliste gespeichert unter:\n\n%s
 	EN	Saved this playlist as:\n\n%s
+	ES	Esta lista de reproducción se ha guardado como:\n\n%s
+	FI	Soittoluettelo tallennettiin nimellä:\n\n%s
+	FR	Cette liste de lecture a été enregistrée en tant que:\n\n%s
+	IT	Elenco di riproduzione salvato come:\n\n%s
+	NL	Deze playlist opslaan als:\n\n%s
+	NO	Lagret denne spillelisten som:\n\n%s
+	SV	Spellistan sparad som: \n\n%s
 
 SAVE_THIS_PLAYLIST_AS
 	CS	Uložit playlist jako:
@@ -9772,7 +10299,16 @@ TRACK
 	ZH_CN	音轨
 
 TRACK_NUMBER
+	DA	Nummer
+	DE	Titelnummer
 	EN	Track Number
+	ES	Número de pista
+	FI	Raidan numero
+	FR	Numéro de piste
+	IT	Numero brano
+	NL	Tracknummer
+	NO	Spornummer
+	SV	Spårnummer
 
 SONGTITLE
 	CS	Název skladby
@@ -11962,7 +12498,16 @@ DEBUG_NETWORK_SQUEEZENETWORK
 	SV	SqueezeNetwork-loggning
 
 DEBUG_MENU_TRACKINFO
+	DA	Menu med oplysninger om nummer
+	DE	Menü 'Titelinformationen'
 	EN	Track information menu
+	ES	Menú de información de pistas
+	FI	Kappaleen tietojen valikko
+	FR	Menu d'informations sur les pistes
+	IT	Menu informazioni sui brani
+	NL	Menu Nummerinformatie
+	NO	Sporinformasjonsmeny
+	SV	Spårinformationsmeny
 
 DEBUG_NETWORK_COMETD
 	DA	Logføring af Cometd-protokol
@@ -12112,25 +12657,52 @@ BRIGHTNESS_DIMMEST
 	SV	Svagast
 
 BRIGHTNESS_AMBIENT
-	DA	Brug sensoren for omgivende lys
-	DE	Umgebungssensor verwenden
+	DA	Automatisk
+	DE	Automatisch
 	EN	Automatic
-	ES	Utilizar sensor ambiental
-	FI	Käytä ympäristösensoria
-	FR	Utiliser le capteur ambiant
-	IT	Utilizzare sensore ambiente
-	NL	Omgevingssensor gebruiken
-	NO	Bruk romlyssensor
-	SV	Använd ljussensor
+	ES	Automático
+	FI	Automaattinen
+	FR	Automatique
+	IT	Automatico
+	NL	Automatisch
+	NO	Automatisk
+	SV	Automatiskt
 
 LIGHT_N
+	DA	Let og smal
+	DE	Schwach eng
 	EN	Light Narrow
+	ES	Estrecha fina
+	FI	Kevyt kapea
+	FR	Etroit faible
+	IT	Stretto chiaro
+	NL	Licht smal
+	NO	Litt smalere tekst
+	SV	Lätt, smal
 
 STANDARD_N
+	DA	Almindelig smal
+	DE	Standard eng
 	EN	Standard Narrow
+	ES	Estrecha estándar
+	FI	Vakio kapea
+	FR	Etroit standard
+	IT	Standard stretto
+	NL	Standaard smal
+	NO	Standard smal tekst
+	SV	Standard, smal
 
 FULL_N
+	DA	Fuld og smal
+	DE	Voll eng
 	EN	Full Narrow
+	ES	Estrecha gruesa
+	FI	Täysi kapea
+	FR	Etroit complet
+	IT	Intero stretto
+	NL	Volledig small
+	NO	Helt smal tekst
+	SV	Fyllig, smal
 
 BRIGHTNESS_DARK
 	CS	Tmavý
@@ -13331,19 +13903,19 @@ TRACKMATCHING
 
 TRACKSMATCHING
 	CS	Názvů skladeb, které obsahují
-	DA	Titler der matcher
+	DA	Numre der matcher
 	DE	Passende Titel
 	EN	Songs matching
-	ES	Títulos de canción coincidentes con
-	FI	Vastaavat kappaleiden nimet
+	ES	Canciones coincidentes con
+	FI	Vastaavat kappaleet
 	FR	Morceaux trouvés
 	HE	התאמת שמות שירים
-	IT	Titoli corrispondenti a
+	IT	Brani corrispondenti
 	JA	曲タイトル照合
 	NL	Zoekresultaten voor titels
-	NO	Treff på sangtitler
+	NO	Treff på sanger
 	PT	Músicas encontradas
-	SV	Låttitlar som matchar
+	SV	Låtar som matchar
 	ZH_CN	歌曲标¢匹配
 
 GENREMATCHING
@@ -13400,36 +13972,36 @@ MORE_MATCHES
 
 SYNC_WITH
 	CS	Zmáčkněte tlačítko DOPRAVA pro synchornizaci s:
-	DA	Tryk på højrepilen igen for at synkronisere med:
-	DE	Zum Synchronisieren RECHTS drücken:
+	DA	Synkroniser med:
+	DE	Synchronisieren mit:
 	EN	Sync with:
-	ES	Pulse DERECHA para sincronizar con:
-	FI	Siirry suoraan synkroniin:
-	FR	Appuyez sur DROITE pour se synchroniser à:
+	ES	Sincronizar con:
+	FI	Synkronoi:
+	FR	Synchroniser à:
 	HE	עבור ימינה לסינכרון עם:
-	IT	Premere DESTRA per sincronizzare con:
+	IT	Sincronizza con:
 	JA	シンクロするためにはRIGHTを押してください :
-	NL	Naar rechts om te synchroniseren met:
-	NO	Gåå til høyre for å synkronisere med:
+	NL	Synchroniseren met:
+	NO	Synkroniser med:
 	PT	Prima DIREITA outra vez para sincronizar com
-	SV	Tryck på höger navigeringsknapp för att synkronisera med:
+	SV	Synkronisera med:
 	ZH_CN	请按右方向键来同步：
 
 UNSYNC_WITH
 	CS	Stiskněte 'DOPRAVA' pro zrušení synchronizace
-	DA	Tryk på højrepilen igen for at afslutte synkronisering med:
-	DE	Zum Aufheben der Synchronisierung RECHTS drücken:
+	DA	Afslut synkronisering med:
+	DE	Synchronisierung aufheben:
 	EN	Unsync with:
-	ES	Pulse DERECHA para desincronizar con:
-	FI	Siirry epäsynkroniin:
-	FR	Appuyez sur Droite pour annuler la synchronisation avec:
+	ES	Desincronizar con:
+	FI	Epäsynkronoi:
+	FR	Annuler la synchronisation avec:
 	HE	עבור ימינה לביטול הסינכרון עם:
-	IT	Premere DESTRA per rimuovere la sincronizzazione con:
+	IT	Rimuovi sincronizzazione con:
 	JA	シンクロを外す為にはRIGHTを押してください:
-	NL	Naar rechts voor opheffen van synchronisatie met:
-	NO	Gå til høyre igjen for å avbryte synkronisering med:
+	NL	Synchronisatie opheffen met:
+	NO	Avbryt synkronisering med:
 	PT	Prima DIREITA outra vez para dessincronizar com
-	SV	Gå till höger om du vill avbryta synkroniseringen med:
+	SV	Avbryt synkroniseringen med:
 	ZH_CN	请按右方向键来撤销同步：
 
 CREATE_MIX
@@ -13877,7 +14449,7 @@ INFORMATION_MENU_SERVER
 INFORMATION_MENU_LIBRARY
 	CS	Statistiky archivu
 	DA	Statistik for musikbibliotek
-	DE	Musikbibliotheksstatistik
+	DE	Musiksammlungsstatistik
 	EN	Library Statistics
 	ES	Estadísticas de biblioteca
 	FI	Kirjaston tilastot
@@ -13886,7 +14458,7 @@ INFORMATION_MENU_LIBRARY
 	IT	Statistiche libreria
 	JA	ライブラリー統計
 	NL	Collectiestatistieken
-	NO	Bibliotekstatistikk
+	NO	Biblioteksstatistikk
 	SV	Biblioteksstatistik
 	ZH_CN	音乐库统计
 
@@ -14945,7 +15517,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	DA	Du kan vælge at vise kompilationsalbum samlet under Diverse kunstnere, eller under hver kunstner på kompilationen.
 	DE	Sie können Kompilationen (Alben mit mehreren Interpreten) zusammen unter 'Diverse Interpreten' aufführen oder die einzelnen Lieder unter den einzelnen Interpreten.
-	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
+	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation.
 	ES	Se puede optar por hacer que los álbumes recopilatorios aparezcan juntos en "Varios artistas" o que aparezcan por cada artista de la recopilación.
 	FI	Voit valita, että kaikki kokoelmalevyt näkyvät Eri artistit -kohdan alla, tai voit valita, että ne näkyvät kokoelman eri artistien nimen alla.
 	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
@@ -14987,7 +15559,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 SETUP_VARIOUSARTISTSSTRING_DESC
 	DA	Når numrene på kompilationsalbum grupperes, vises de som standard under Diverse. Du kan ændre navnet nedenfor.
 	DE	Gruppierte Kompilationen werden standardmäßig unter 'Diverse Interpreten' angezeigt. Sie können diesen Namen unten ändern.
-	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
+	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below.
 	ES	Cuando se agrupan álbumes recopilatorios, aparecen de forma predeterminada en "Varios artistas". Ese nombre se puede cambiar a continuación.
 	FI	Kun kokoelmalevyjä laitetaan samaan ryhmään, ne näkyvät oletuksena kohdassa Eri artistit.  Voit vaihtaa nimen alla.
 	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
@@ -15096,13 +15668,40 @@ SETUP_USEBANDASALBUMARTIST_0
 	ZH_CN	专辑按艺人列出
 
 SETUP_USETPE2ASALBUMARTIST_DESC
+	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i SqueezeCenter. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
+	DE	Das MP3-Tag-Format bietet keine Standardmöglichkeit zum Definieren des Interpreten des Albums. Manche MP3-Anwendungen (iTunes, Winamp, Windows Media Player) nutzen das Feld TPE2 für den Interpreten des Albums, andere nutzen es für den eigentlichen Zweck (Band/Orchester). Wählen Sie die gewünschte Bedeutung. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	The MP3 tag format does not provide a standard way of defining an Album Artist.  Some MP3 tagging tools use the TPE2 field for Album Artist (iTunes, Winamp, Windows Media Player) while others may use it for the intended meaning of "Band/orchestra".  Select the meaning you would like SqueezeCenter to use.  Changing this setting will start a rescan of your music library.
+	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice SqueezeCenter. Si cambia esta configuración se volverá a examinar la biblioteca de música.
+	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat SqueezeCenterin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
+	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que SqueezeCenter doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre collection musicale.
+	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il complesso o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
+	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de bedoelde betekenis van 'Band/orkest'. Selecteer de betekenis die SqueezeCenter moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
+	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan SqueezeCenter skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
+	SV	Det finns inget standardsätt att definiera albumartister med mp3-taggar. I vissa mp3-taggningsverktyg används TPE2-fältet för att ange albumartist (t.ex. iTunes, Winamp, Windows Media Player), medan det i andra verktyg används för att ange band/orkester. Välj vilket alternativ du vill att SqueezeCenter använder. Om du ändrar den här inställningen startas en ny sökning av musikbiblioteket.
 
 SETUP_USETPE2ASALBUMARTIST_1
+	DA	Opfat TPE2 MP3-koder som Albumkunstner
+	DE	TPE2 MP3-Tag als Interpreten des Albums behandeln
 	EN	Treat TPE2 MP3 tag as Album Artist
+	ES	Tratar etiqueta TPE2 MP3 como artista de álbum
+	FI	Käsittele TPE2 MP3 -tagia levyartistina
+	FR	Traiter l'étiquette TPE2 MP3 en tant que Artiste, Album
+	IT	Considera il tag MP3 TPE2 come artista dell'album
+	NL	TPE2 MP3-label als albumartiest behandelen
+	NO	Behandle TPE2 mp3-etiketter som albumartist
+	SV	Behandla mp3-taggen TPE2 som albumartist
 
 SETUP_USETPE2ASALBUMARTIST_0
+	DA	Opfat TPE2 MP3-koder som Band
+	DE	TPE2 MP3-Tag als Band behandeln
 	EN	Treat TPE2 MP3 tag as Band
+	ES	Tratar etiqueta TPE2 MP3 como banda
+	FI	Käsittele TPE2 MP3 -tagia yhtyeenä
+	FR	Traiter l'étiquette TPE2 MP3 en tant que Groupe
+	IT	Considera il tag MP3 TPE2 come Gruppo
+	NL	TPE2 MP3-tag als Band behandelen
+	NO	Behandle TPE2 mp3-etikett som gruppe
+	SV	Behandla mp3-taggen TPE2 som band
 
 LYRICS
 	DA	Tekster
@@ -15675,7 +16274,7 @@ SETUP_RESAMPLEARTWORK
 SETUP_RESAMPLEARTWORK_DESC
 	DA	På maskiner med lave specifikationer, fx visse populære NAS-enheder, kan det tage lang tid at behandle albumcovere. Behandlingstiden kan forkortes ved at bruge en enklere metode, men det går ud over billedkvaliteten. Du kan gøre behandlingen af albumcovere hurtigere hvis du vælger Tilpas størrelse i stedet for Genbehandling.
 	DE	Auf Rechnern mit niedriger Leistung (z.B. bestimmten beliebten NAS-Geräten) kann das Resampling von Plattenhüllen langsam sein. Wenn Sie ein einfacheres Verfahren wählen, wird der Vorgang schneller, worunder allerdings die Bildqualität leidet. Soll die Verarbeitung von Plattenhüllen schneller ablaufen, wählen Sie "Größe der Plattenhülle ändern" statt "Plattenhülle neu berechnen".
-	EN	On low-end machines like eg. some popular NAS devices, resampling artwork can be slow. By using a simpler method the time needed for the artwork processing can be improved at the cost of image quality. Select "Resizing" instead of "Resampling" if you want to speed up artwork handling. 
+	EN	On low-end machines like eg. some popular NAS devices, resampling artwork can be slow. By using a simpler method the time needed for the artwork processing can be improved at the cost of image quality. Select "Resizing" instead of "Resampling" if you want to speed up artwork handling.
 	ES	Con aparatos de gama baja (p. ej. algunos dispositivos NAS de uso extendido) la repetición del muestreo de carátula puede ser un proceso lento. Un método más sencillo puede agilizar la tarea, aunque con una reducción de calidad de imagen. Para ello, seleccione "Cambiar tamaño" en lugar de "Nuevo muestreo".
 	FI	Tehottomammissa koneissa, esimerkiksi eräissä suosituissa NAS-laitteissa, kansitaiteen kuvan uudelleenluonti näytteistä saattaa olla hidasta. Yksinkertaisempaa menetelmää käyttämällä kuvien käsittelyyn tarvittavaa aikaa voidaan lyhentää kuvanlaadusta tinkimällä. Valitse "kuvan koon muuttaminen" äläkä "kuvan uudelleenluonti näytteistä", jos haluat nopeuttaa kuvien käsittelyä.
 	FR	Sur certains appareils bas de gamme, tels que les dispositifs NAS, le rééchantillonnage de pochette peut être lent. En utilisant un procédé plus simple, le traitement de la pochette peut être accéléré au détriment de la qualité de l'image. Pour accélérer le traitement des pochettes, sélectionnez "Redimensionner la pochette" plutôt que "Rééchantillonner la pochette".
@@ -15709,16 +16308,52 @@ SETUP_USE_RESIZE
 	SV	Ändra storlek på albumomslag (snabbare, lägre kvalitet)
 
 SETUP_PRECACHEARTWORK
+	DA	Gemmer coverbilleder i cachelager
+	DE	Plattenhüllen zwischenspeichern
 	EN	Artwork Pre-caching
+	ES	Guardando carátula en caché previamente
+	FI	Levykansien tallentaminen valmiiksi välimuistiin
+	FR	Mise en pré-cache de la pochette
+	IT	Immissione copertina in pre-cache
+	NL	Hoesafbeeldingen vooraf in cache opslaan
+	NO	Hurtigbufrer omslag på forhånd
+	SV	Cachelagring av albumomslag
 
 SETUP_PRECACHEARTWORK_DESC
+	DA	Som standard tilpasses størrelsen af de albumcovere der findes ved gennemsøgningen, og de gemmes i et cachelager. Dermed går det hurtigere når du bruger Squeezebox Controller eller den webbaserede brugerflade. Det gør dog gennemsøgningen langsommere, så funktionen kan deaktiveres her.
+	DE	Standardmäßig werden alle während der Suche gefundenen Plattenhüllen automatisch in der Größe angepasst und zwischengespeichert, um die Leistung zu verbessern, wenn der Squeezebox Controller oder die Web-Benutzeroberfläche genutzt wird.  Da dies die Suche verlangsamt, können Sie den Vorgang hier deaktivieren.
 	EN	By default, all cover art found during the scanning phase is automatically resized and cached to improve performance when using Squeezebox Controller or the web interface.  This does slow down the scan process, so it can be disabled here.
+	ES	De forma predeterminada, se cambia el tamaño de todas las cubiertas de álbum que se encuentran durante la fase de examen y éstas se guardan en la memoria caché para mejorar el funcionamiento de Squeezebox Controller o la interfaz Web. Esto puede ralentizar el proceso de examen, por lo que puede desactivarse desde aquí.
+	FI	Tarkistuksessa löydettyjen levykansien koot muutetaan ja tallennetaan välimuistiin oletuksena. Tämä parantaa suorituskykyä, kun käytetään Squeezebox-kaukosäädintä tai internet-käyttöliittymää.  Tämä hidastaa tarkistusta, joten toiminto voidaan poistaa käytöstä täällä.
+	FR	Par défaut, toutes les couvertures détectées lors de la phase d'analyse sont automatiquement redimensionnées et mises en cache pour améliorer les performances lors de l'utilisation du Squeezebox Controller ou de l'interface Web. Cette fonction ralentissant le processus d'analyse, vous pouvez la désactiver ici.
+	IT	Per impostazione predefinita, tutte le copertine rilevate durante l'analisi vengono ridimensionate e inserite nella cache al fine di migliorare le prestazioni durante l'utilizzo di Squeezebox Controller o dell'interfaccia Web. Poiché questa operazione rallenta il processo di analisi, è possibile disattivarla qui.
+	NL	De grootte van alle hoesafbeeldingen die tijdens de scanfase worden gevonden, wordt standaard aangepast en de afbeeldingen worden in cache opgeslagen om prestaties te verbeteren wanneer Squeezebox Controller of de webinterface wordt gebruikt. Aangezien  het scanproces hierdoor wordt vertraagd, kun je het hier desgewenst uitschakelen.
+	NO	Som standard tilpasses størrelsen på albumomslag som finnes i søk, og det hurtigbufres for å forbedre ytelsen ved bruk av Squeezebox Controller eller webgrensesnittet. Dette gjør søket tregere, så derfor kan det deaktiveres her.
+	SV	Som standard storleksanpassas och cachelagras alla albumomslag som hittas i genomsökningsfasen för högre prestanda när Squeezebox Controller eller webbgränssnittet används. Detta gör dock att sökningen tar längre tid, och därför kan du avaktivera funktionen här.
 
 SETUP_PRECACHEARTWORK_ENABLED
+	DA	Gem coverbilleder i cachelager
+	DE	Plattenhüllen zwischenspeichern
 	EN	Pre-cache artwork
+	ES	Guardar carátula en caché previamente
+	FI	Tallenna levykannet valmiiksi välimuistiin
+	FR	Mettre la pochette en pré-cache
+	IT	Copertina in pre-cache
+	NL	Hoesafbeeldingen vooraf in cache opslaan
+	NO	Hurtigbufre omslag på forhånd
+	SV	Cachelagra albumomslag
 
 SETUP_PRECACHEARTWORK_DISABLED
+	DA	Gem ikke coverbilleder i cachelager
+	DE	Plattenhüllen nicht zwischenspeichern
 	EN	Do not pre-cache artwork
+	ES	No guardar carátula en caché previamente
+	FI	Älä tallenna levykansia valmiiksi välimuistiin
+	FR	Ne pas mettre la pochette en pré-cache
+	IT	Non inserire le copertine nella pre-cache
+	NL	Hoesafbeeldingen niet vooraf in cache opslaan
+	NO	Ikke hurtigbufre omslag på forhånd
+	SV	Cachelagra inte albumomslag
 
 SETUP_SERVERPRIORITY
 	DA	Serverprioritet
@@ -16149,16 +16784,16 @@ DISABLEDAC_WHENOFF
 	ZH_CN	关机后撤销输出
 
 SETUP_ANALOGOUTMODE
-	DA	Hovedtelefoner/Subwooferudgang
-	DE	Kopfhörer/Sub Out
+	DA	Linjeudgang
+	DE	Line-Out
 	EN	Line Out
-	ES	Salida de auriculares/subwoofer
-	FI	Kuulokkeiden/subwooferin lähtö
-	FR	Sortie casque/sub
-	IT	Uscita cuffia/subwoofer
-	NL	Koptelefoon-/subwooferuitgang
-	NO	Utgang for hodetelefoner/basshøyttaler
-	SV	Utgång för hörlurar / subwoofer
+	ES	Salida de línea
+	FI	Linjalähtö
+	FR	Sortie ligne
+	IT	Uscita
+	NL	Lijnuitgang
+	NO	Utgang for ledning
+	SV	Utgång
 
 SETUP_ANALOGOUTMODE_DESC
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra.
@@ -16733,7 +17368,7 @@ DEBUG_PLAYER_UI
 DEBUG_PLAYER_DISPLAY
 	DA	Oplysninger om afspillerens display
 	DE	Player-Anzeige
-	EN	Player Display Information 
+	EN	Player Display Information
 	ES	Información de pantalla de reproductor
 	FI	Soittimen näyttötiedot
 	FR	Informations de l'affichage de la platine
@@ -17408,7 +18043,16 @@ JIVE_PLAY_ALL
 	SV	Spela upp alla
 
 JIVE_ALL_SONGS
+	DA	Alle numre
+	DE	Alle Titel
 	EN	All songs
+	ES	Todas las canciones
+	FI	Kaikki kappaleet
+	FR	Tous les morceaux
+	IT	Tutti i brani
+	NL	Alle nummers
+	NO	Alle sanger
+	SV	Alla låtar
 
 JIVE_ADD_ALL_SONGS
 	DA	Tilføj alle numre
@@ -17435,16 +18079,16 @@ JIVE_ADD_ALL
 	SV	Lägg till alla
 
 JIVE_DELETE_PLAYLIST
-	DA	Slet afspilningsliste
-	DE	Wiedergabeliste löschen
+	DA	Slet afspilningsliste\n%s
+	DE	Wiedergabeliste löschen\n%s
 	EN	Delete Playlist\n%s
-	ES	Eliminar lista de reproducción
-	FI	Poista soittoluettelo
-	FR	Supprimer la liste de lecture
-	IT	Elimina elenco di riproduzione
-	NL	Playlist verwijderen
-	NO	Slett spilleliste
-	SV	Ta bort spellista
+	ES	Eliminar lista de reproducción\n%s
+	FI	Poista soittoluettelo\n%s
+	FR	Supprimer la liste de lecture\n%s
+	IT	Elimina elenco di riproduzione\n%s
+	NL	Playlist verwijderen\n%s
+	NO	Slett spillelisten\n%s
+	SV	Ta bort spellistan\n%s
 
 JIVE_DELETE_FROM_FAVORITES
 	DA	Slet favorit
@@ -17556,28 +18200,28 @@ JIVE_SAVEPLAYLIST_HELP
 	SV	Markera en bokstav med rullningshjulet och tryck sedan på mittknappen för att välja bokstaven. Tryck på mittknappen igen när du vill spara spellistan.
 
 JIVE_ALLOWEDCHARS_WITHCAPS
-	DA	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	DA	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	DE	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	EN	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	ES	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	FI	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	FI	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	FR	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	IT	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	NL	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	NO	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	SV	abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	NO	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	SV	 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 
 JIVE_ALLOWEDCHARS_NOCAPS
-	DA	abcdefghijklmnopqrstuvwxyz !@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	DA	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	DE	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	EN	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	ES	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	FI	abcdefghijklmnopqrstuvwxyz !@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	FI	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	FR	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	IT	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 	NL	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	NO	abcdefghijklmnopqrstuvwxyz !@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
-	SV	abcdefghijklmnopqrstuvwxyz !@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	NO	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
+	SV	 abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"'<>?-=,./~`[];0123456789
 
 JIVE_ALARMSET_HELP
 	DA	Brug drejeknappen til at skifte tal på uret, og tryk på midterknappen for at vælge det. Tryk på midterknappen når klokkeslættet er angivet for at indstille vækketidspunktet.
@@ -17592,10 +18236,28 @@ JIVE_ALARMSET_HELP
 	SV	Markera en klocksiffra med rullningshjulet och tryck sedan på mittknappen för att välja siffran. När du har angett tiden trycker du på mittknappen för att ställa in tiden för alarmet.
 
 JIVE_POPUP_ADDING_TO_PLAYLIST
+	DA	Føjer\n%s\ntil afspilningsliste...
+	DE	%s\nwird zur Wiedergabeliste\nhinzugefügt...
 	EN	Adding\n%s\nto Playlist...
+	ES	Agregando\n%s\na lista de reproducción...
+	FI	Lisätään\n%s\nsoittoluetteloon...
+	FR	Ajout de\n%s\nà la liste de lecture...
+	IT	Aggiunta di\n%s\na elenco di riproduzione...
+	NL	Bezig met toevoegen van\n%s\naan playlist...
+	NO	Legger\n%s\ntil spillelisten...
+	SV	Lägger till\n%s\ni spellistan ...
 
 JIVE_POPUP_ADDING_TO_PLAY_NEXT
+	DA	Føjer\n%s\ntil spil næste gang...
+	DE	\n%s\nhinzufügen und als nächstes spielen...
 	EN	Adding\n%s\nto play next...
+	ES	Agregando\n%s\npara reproducir a continuación...
+	FI	Lisätään\n%s\nsoitettavaksi seuraavaksi...
+	FR	Ajout de\n%s\naprès le morceau en cours:
+	IT	Aggiunta di\n%s\ncome brano successivo...
+	NL	Bezig met toevoegen van\n%s\nom als volgende af te spelen...
+	NO	Legger\n%s\ntil som neste spor ...
+	SV	Lägger till\n%s\n som nästa låt ...
 
 JIVE_POPUP_ADDING
 	DA	Tilføjer
@@ -17622,7 +18284,16 @@ JIVE_POPUP_REMOVING
 	SV	Tar bort
 
 JIVE_POPUP_REMOVING_FROM_PLAYLIST
+	DA	Fjerner\n%s\nfra afspilningsliste...
+	DE	\n%s\nwird aus Wiedergabeliste entfernt...
 	EN	Removing\n%s\nfrom Playlist...
+	ES	Quitando\n%s\nde la lista de reproducción...
+	FI	Poistetaan\n%s\nsoittoluettelosta...
+	FR	Suppression de\n%s\nde la liste de lecture...
+	IT	Eliminazione di\n%s\ndall'elenco di riproduzione...
+	NL	Bezig met verwijderen van\n%s\nuit playlist...
+	NO	Fjerner\n%s\nfra spillelisten ...
+	SV	Tar bort\n%s\nfrån spellistan ...
 
 JIVE_POPUP_TO_PLAY_NEXT
 	DA	bliver spillet næste gang...
@@ -17661,16 +18332,16 @@ JIVE_POPUP_FROM_PLAYLIST
 	SV	från spellista ...
 
 JIVE_POPUP_NOW_PLAYING
-	DA	Nu spiller
-	DE	Aktueller Titel
+	DA	Nu spiller\n%s
+	DE	Aktueller Titel\n%s
 	EN	Now Playing\n%s
-	ES	Reproducción en curso
-	FI	Nyt soi
-	FR	Lecture
-	IT	Riproduzione in corso
-	NL	Speelt nu
-	NO	Spilles nå
-	SV	Aktuellt spår
+	ES	Reproducción en curso\n%s
+	FI	Nyt soi\n%s
+	FR	Lecture \n%s en cours
+	IT	Riproduzione in corso di\n%s
+	NL	Speelt nu\n%s
+	NO	Spilles nå\n%s
+	SV	Nu spelas\n%s
 
 JIVE_TURN_PLAYER_ON
 	DA	Tænd for %s
@@ -17829,20 +18500,28 @@ SEEK_ERROR_TYPE_NOT_SUPPORTED
 	SV	Det går inte att söka i strömmar av typen: %s.
 
 SEEK_ERROR_REMOTE
+	DA	Numre der er gemt et andet sted, kan ikke analyseres
 	DE	Scannen von Remote-Titeln nicht möglich
 	EN	Cannot scan through remote tracks
 	ES	No se pueden examinar las pistas remotas
+	FI	Etäraitoja ei voi etsiä
 	FR	Impossible d'analyser des pistes distantes
 	IT	Impossibile analizzare brani remoti
 	NL	Kan niet door externe nummers scannen
+	NO	Kan ikke søke på eksterne spor
+	SV	Det går inte att söka igenom spår som är sparade på andra datorer
 
 SEEK_ERROR_TRANSCODED
+	DA	Numre der er omkodet, kan ikke analyseres
 	DE	Scannen von transkodierten Titeln nicht möglich
 	EN	Cannot scan through transcoded track
 	ES	No se puede examinar la pista transcodificada
+	FI	Koodattuja kappaleita ei voi etsiä
 	FR	Impossible d'analyser une piste transcodée
 	IT	Impossibile analizzare brani transcodificati
 	NL	Kan niet door getranscodeerd nummer scannen
+	NO	Kan ikke søke på transkodet spor
+	SV	Det går inte att söka igenom omkodade spår
 
 SCANNER_REMOTE_NO_URL_PROVIDED
 	DA	Det var ikke muligt af søge: Der blev ikke fundet en adresse
@@ -17893,46 +18572,159 @@ RECENT_SEARCHES
 	SV	Nyligen gjorda sökningar
 
 ALBUMS_SORT_METHOD
+	DA	Sorteringsmetode af album
+	DE	Sortierverfahren für Alben
 	EN	Albums Sort Method
+	ES	Método de ordenación de álbumes
+	FI	Levyjen lajittelutapa
+	FR	Méthode de tri des albums
+	IT	Metodo ordinamento album
+	NL	Sorteermethode voor albums
+	NO	Albumsortering
+	SV	Sorteringsmetod för album
 
 UPDATING_DSP
+	DA	Opdaterer DSP...
+	DE	DSP wird aktualisiert...
 	EN	Updating DSP...
+	ES	Actualizando DSP...
+	FI	Päivitetään DSP...
+	FR	Mise à jour DSP...
+	IT	Aggiornamento di DSP...
+	NL	Bezig met bijwerken van DSP...
+	NO	Oppdaterer DSP ...
+	SV	Updaterar DSP ...
 
 UPDATE_DSP_FAILURE_RESTORE
+	DA	Opdateringen mislykkedes. Standardkonfigurationen gendannes
+	DE	Aktualisierung fehlgeschlagen! Standard wird wiederhergestellt
 	EN	Update failed!, restoring default
+	ES	Error al actualizar. Restaurando valores predeterminados
+	FI	Päivitys epäonnistui, palautetaan oletus
+	FR	Echec de la mise à jour; restauration des paramètres par défaut.
+	IT	Aggiornamento non riuscito; verrà ripristinato il valore predefinito
+	NL	Update mislukt! Standaardinstelling wordt hersteld
+	NO	Oppdatering mislyktes, gjenoppretter standard
+	SV	Det gick inte att uppdatera. Återställer standard
 
 UNMIXABLE
+	DA	%s kan ikke vælges til dette nummer
+	DE	%s für dieses Element nicht verfügbar
 	EN	%s not available for this item
+	ES	%s no disponible para este elemento
+	FI	%s ei ole käytettävissä tälle kohteelle
+	FR	%s n'est pas disponible pour cet élément
+	IT	%s non disponibile per questa voce
+	NL	%s niet beschikbaar voor dit item
+	NO	%s er ikke tilgjengelig for dette elementet
+	SV	%s är inte tillgängligt för det här objektet
 
 PLAYER_BRIGHTNESS
+	DA	Afspillerens lysstyrke
+	DE	Player-Helligkeit
 	EN	Player Brightness
+	ES	Brillo de reproductor
+	FI	Soittimen kirkkaus
+	FR	Luminosité de la platine
+	IT	Luminosità lettore
+	NL	Helderheid van muzieksysteem
+	NO	Lysstyrke på spiller
+	SV	Ljusstyrka för spelare
 
 SETTING_PLAYER_BRIGHTNESS_TO
+	DA	Indstiller lysstyrken på %s til %s
+	DE	%s-Helligkeit wird auf %s eingestellt
 	EN	Setting %s brightness to %s
+	ES	Configurando brillo de %s a %s
+	FI	Asetetaan kohteen %s kirkkaudeksi %s
+	FR	Définir la luminosité de %s sur %s
+	IT	Impostazione luminosità %s su %s
+	NL	Helderheid van %s wordt op %s ingesteld
+	NO	Setter lysstyrken på %s til %s
+	SV	Anger %s-ljusstyrkan %s
 
 MOREINFO
+	DA	Flere oplysninger
+	DE	Weitere Infos
 	EN	More Info
+	ES	Más información
+	FI	Lisätietoja
+	FR	Plus d'infos
+	IT	Ulteriori informazioni
+	NL	Meer info
+	NO	Mer informasjon
+	SV	Mer information
 
 SETUP_SHOWCOUNT
+	DA	Vis placering på menu
+	DE	Position im Menü anzeigen
 	EN	Show Menu Count
+	ES	Mostrar recuento de menú
+	FI	Näytä paikka valikossa
+	FR	Afficher la position dans le menu
+	IT	Mostra num. voci menu
+	NL	Aantal menu's weergeven
+	NO	Vis antall menyelementer
+	SV	Visa menyplacering
 
 SETUP_SHOWCOUNT_DESC
+	DA	Du kan angive om placeringen i menuen altid skal vises, eller om placeringen kun skal vises mens du gennemser menupunkterne. Placeringen vises i formatet 1 af 6, dvs. det første punkt i en menu med 6 punkter.
+	DE	Sie können bestimmen, ob die Position im Menü immer oder nur dann angezeigt wird, wenn Sie durch Menüpunkte schalten. Die Position wird im Format 1 von 6 angezeigt, d.h. der erste Befehl in einer Liste von 6.
 	EN	You can select whether to always show the position in the menu or to only show it while you are scrolling through menu items. The position is displayed in the format 1 of 6, indicating the first item of a menu list of 6 items.
+	ES	Puede elegir si desea que siempre se muestre la posición en el menú o si desea que se muestre sólo al desplazarse por los elementos del menú. La posición se muestra en el formato 1 de 6, lo cual indica que se encuentra en el primer elemento de una lista de 6 elementos.
+	FI	Voit valita, näytetäänkö paikka valikossa aina vai ainoastaan valikoissa liikuttaessa. Paikka esitetään muodossa 1/6, joka osoittaa ensimmäistä kuudesta valikkokohteesta.
+	FR	Vous pouvez choisir de toujours afficher la position dans le menu ou de ne l'afficher que lorsque vous faites défiler les éléments du menu. La position s'affiche au format 1 sur 6, indiquant le premier élément d'une liste de 6 éléments.
+	IT	È possibile specificare se si desidera visualizzare sempre la posizione all'interno del menu oppure solo quando si scorrono le voci di menu. La posizione viene visualizzata nel formato 1 di 6, a indicare la prima di sei voci contenute nel menu.
+	NL	Je kunt de positie in het menu altijd laten weergeven of alleen terwijl je door menuopties scrolt. De positie wordt in de notatie 1 van 6 aangegeven, wat wil zeggen dat het de eerste optie in een menu met 6 opties is.
+	NO	Du kan velge om plasseringen i menyen skal vises hele tiden, eller bare vises når du blar gjennom menyelementer. Plasseringen vises i formatet 1 til 6, som indikerer det første elementet i en meny med seks elementer.
+	SV	Välj om objektets placering alltid ska visas i menyn eller endast när du bläddrar bland menyobjekten. Placeringen visas i formatet 1 av 6, där 1 motsvarar det första objektet i en menylista med 6 objekt.
 
 SETUP_SHOWCOUNT_ALWAYS
+	DA	Vis altid
+	DE	Immer anzeigen
 	EN	Show Always
+	ES	Mostrar siempre
+	FI	Näytä aina
+	FR	Toujours afficher
+	IT	Mostra sempre
+	NL	Altijd weergeven
+	NO	Vis alltid
+	SV	Visa alltid
 
 SETUP_SHOWCOUNT_TEMP
+	DA	Mens der rulles
+	DE	Bei Laufschrift
 	EN	While Scrolling
+	ES	Al desplazarse
+	FI	Vierityksen aikana
+	FR	Lors du défilement
+	IT	Durante scorrimento
+	NL	Tijdens scrollen
+	NO	Ved rulling
+	SV	Vid rullning
 
 SQUEEZECENTER_CONNECT
-	DE	Zu SqueezeCenter verbinden
+	DA	Etabler forbindelse til SqueezeCenter
+	DE	Mit SqueezeCenter verbinden
 	EN	Connect to SqueezeCenter
 	ES	Conectar a SqueezeCenter
-	FR	Connexion au SqueezeCenter
+	FI	Muodosta yhteys SqueezeCenteriin
+	FR	Se connecter à SqueezeCenter
 	HE	התחבר ל-SqueezeCenter
 	IT	Connetti a SqueezeCenter
 	NL	Verbinding maken met SqueezeCenter
+	NO	Kople til SqueezeCenter
+	SV	Anslut till SqueezeCenter
 
 SQUEEZECENTER_CONNECT_ABBR
+	DA	SqueezeCenter
+	DE	SqueezeCenter
 	EN	SqueezeCenter
+	ES	SqueezeCenter
+	FI	SqueezeCenter
+	FR	SqueezeCenter
+	IT	SqueezeCenter
+	NL	SqueezeCenter
+	NO	SqueezeCenter
+	SV	SqueezeCenter
+

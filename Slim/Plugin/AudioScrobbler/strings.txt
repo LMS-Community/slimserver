@@ -23,34 +23,40 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
 	SV	Last.fm-konto(n)
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
-	DA	Skriv dit brugernavn og adgangskoden til Last.fm. Du kan angive flere konti hvis du vil indsende oplysninger fra forskellige afspillere til forskellige konti. Hvis du vil slette en eksisterende konto, skal du markere feltet ud for den.
+	DA	Skriv dit brugernavn og adgangskoden til Last.fm. Du kan angive flere konti hvis du vil indsende oplysninger fra forskellige afspillere til forskellige konti.
 	DE	Geben Sie Benutzername und Kennwort für Last.fm ein. Sie können mehrere Konten eingeben, um Titel aus verschiedenen Playern an verschiedene Konten zu senden.
 	EN	Enter your Last.fm username and password.  Multiple accounts may be entered if you wish to submit tracks from different players to different accounts.
-	ES	Se han verificado correctamente el nombre de usuario y la contraseña para Last.fm. Puede introducir varias cuentas si desea enviar pistas de reproductores diversos a distintas cuentas.
-	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana.  Voit antaa useita tilejä, jos haluat lähettää tiedot kuunnelluista kappaleista eri soittimista eri tileihin.  Jos haluat poistaa tilin, lisää merkki sen vieressä olevaan ruutuun.
+	ES	Introduzca su nombre de usuario y contraseña para Last.fm. Puede introducir varias cuentas si desea enviar pistas de reproductores diversos a distintas cuentas.
+	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana.  Voit antaa useita tilejä, jos haluat lähettää tiedot kuunnelluista kappaleista eri soittimista eri tileihin.
 	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm. Vous pouvez spécifier plusieurs comptes si vous souhaitez envoyer des morceaux de platines différentes vers des comptes différents.
-	IT	Inserire il nome utente e la password Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account.
+	IT	Inserire il nome utente e la password di Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account.
 	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende muzieksystemen bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren.
-	NO	Angi brukernavn og passord for Last.fm. Du kan angi flere kontoer hvis du vil sende spor fra ulike spillere til ulike kontoer. Merk av ved en eksisterende konto for å slette den.
-	SV	Ange användarnamn och lösenord för Last.fm.  Du kan ange flera konton om du vill skicka spår från olika spelare till olika konton.  Om du vill ta bort ett befintligt konto markerar du motsvarande kryssruta.
+	NO	Angi brukernavn og passord for Last.fm. Du kan angi flere kontoer hvis du vil sende spor fra ulike spillere til ulike kontoer.
+	SV	Ange användarnamn och lösenord för Last.fm.  Du kan ange flera konton för att skicka spår från olika spelare till olika konton.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DELETE
-	DA	Marker en konto for at slette den.
+	DA	Hvis du vil slette en eksisterende konto, skal du markere feltet ud for den.
 	DE	Zum Löschen eines vorhandenen Kontos aktivieren Sie das entsprechende Kontrollkästchen.
 	EN	To delete an existing account, check the box next to it.
 	ES	Para eliminar una cuenta existente, seleccione la casilla correspondiente.
+	FI	Jos haluat poistaa tilin, lisää merkki sen vieressä olevaan ruutuun.
 	FR	Pour supprimer un compte existant, cochez la case appropriée.
-	IT	Per eliminare un account esistente, selezionare la casella corrispondente.
-	NL	Je verwijdert een bestaande account door het bijbehorende vakje te selecteren.
+	IT	Per eliminare un account esistente, selezionare la casella di controllo accanto a esso.
+	NL	Hef de selectie van het vakje naast een bestaande account op om deze te verwijderen.
+	NO	Merk av boksen ved siden av en konto for å slette den.
+	SV	Om du vill ta bort ett befintligt konto, markerar du motsvarande kryssruta.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_USERNAME_PASSWORD
-	DA	Indtast dit brugernavn og kodeord på Last.fm.
+	DA	Skriv dit brugernavn og adgangskoden til Last.fm.
 	DE	Geben Sie Benutzername und Kennwort für Last.fm ein.
 	EN	Enter your Last.fm username and password.
-	ES	Se han verificado correctamente el nombre de usuario y la contraseña para Last.fm.
-	FR	Spécifiez votre nom d'utilisateur et votre mot de passe Last.fm.
-	IT	Inserire il nome utente e la password Last.fm.
+	ES	Introduzca su nombre de usuario y su contraseña de Last.fm.
+	FI	Anna Last.fm-tilin käyttäjätunnus ja salasana.
+	FR	Saisissez votre nom d'utilisateur et votre mot de passe Last.fm.
+	IT	Immettere nome utente e password di Last.fm.
 	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in.
+	NO	Oppgi brukernavn og passord for Last.fm.
+	SV	Ange användarnamn och lösenord för Last.fm
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	DA	Indsend (scrobble) oplysninger om alle afspillede numre til Last.fm
@@ -245,14 +251,28 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	SV	Obs! Om du vill konfigurera Last.fm-kontot klickar du på fliken Avancerat och väljer sedan Last.fm Audioscrobbler.
 
 PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
+	DA	Indsend ikke
+	DE	Nicht scrobbeln
 	EN	Do not scrobble
-	NO	Ikke scrobble denne spilleren
-	SV	Skrobbla inte från en här spelaren
+	ES	No hacer scrobble
+	FI	Älä lähetä tietoa soitetuista kappaleista
+	FR	Ne pas envoyer les informations
+	IT	Non monitorare
+	NL	Niet scrobbelen
+	NO	Ikke scrobble
+	SV	Skrobbla inte
 
 PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
+	DA	Brug denne konto: %s
+	DE	Konto verwenden: %s
 	EN	Use account: %s
-	NO	Scrobble til konto: %s
-	SV	Skrobbla till kontot: %s
+	ES	Usar cuenta: %s
+	FI	Käytä tiliä: %s
+	FR	Utiliser le compte: %s
+	IT	Utilizza account: %s
+	NL	Gebruik account: %s
+	NO	Bruk konto %s
+	SV	Använd kontot: %s
 
 PLUGIN_AUDIOSCROBBLER_LOVE_TRACK
 	DA	Last.fm: Jeg er vild med dette nummer

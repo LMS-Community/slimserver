@@ -907,9 +907,14 @@ PLUGIN_PANDORA_MAINTENANCE_MODE
 	SV	Pandora ligger nere för planerade förbättringar av tjänsten.  Besök oss snart igen och njut av musiken.
 
 PLUGIN_PANDORA_ON_PANDORA
+	DA	På Pandora
 	DE	Auf Pandora
 	EN	On Pandora
 	ES	En Pandora
+	FI	Pandorassa
 	FR	Sur Pandora
 	IT	Su Pandora
 	NL	Op Pandora
+	NO	På Pandora
+	SV	På Pandora
+

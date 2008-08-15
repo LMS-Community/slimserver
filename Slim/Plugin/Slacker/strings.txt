@@ -133,9 +133,14 @@ PLUGIN_SLACKER_BAN_TRACK
 	SV	Spärra den här låten
 
 PLUGIN_SLACKER_ON_SLACKER
+	DA	På Slacker
 	DE	Auf Slacker
 	EN	On Slacker
 	ES	En Slacker
+	FI	Slackerissa
 	FR	Sur Slacker
 	IT	Su Slacker
 	NL	Op Slacker
+	NO	På Slacker
+	SV	På Slacker
+

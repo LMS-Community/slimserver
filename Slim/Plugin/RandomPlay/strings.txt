@@ -41,16 +41,16 @@ PLUGIN_RANDOM_DISABLED
 	SV	Den slumpmässiga mixen har stoppats
 
 PLUGIN_RANDOM_TRACK
-	DA	Miks baseret på tilfældig numre
-	DE	Zufälliger Titelmix
+	DA	Miks baseret på tilfældige numre
+	DE	Titelmix
 	EN	Song Mix
-	ES	Mezcla de canciones aleatoria
-	FI	Satunnainen kappalevalikoima
+	ES	Mezcla de canciones
+	FI	Kappalevalikoima
 	FR	Morceaux aléatoires
-	IT	Raccolta casuale di brani
-	NL	Willekeurige liedjesmix
-	NO	Tilfeldig sangmiks
-	SV	Mix med slumpmässigt valda låtar
+	IT	Raccolta di brani
+	NL	Nummermix
+	NO	Sangmiks
+	SV	Låtmix
 
 PLUGIN_RANDOM_TRACK_PLAYING
 	DA	Afspiller tilfældige numre
@@ -80,15 +80,15 @@ PLUGIN_RANDOM_TRACK_DISABLE
 
 PLUGIN_RANDOM_ALBUM
 	DA	Miks baseret på tilfældigt album
-	DE	Zufälliger Albummix
+	DE	Albummix
 	EN	Album Mix
-	ES	Mezcla aleatoria de álbum
-	FI	Satunnainen levyvalikoima
+	ES	Mezcla de álbumes
+	FI	Levyvalikoima
 	FR	Albums aléatoires
-	IT	Raccolta casuale di album
-	NL	Willekeurige albummix
-	NO	Miks av tilfeldige album
-	SV	Mix med slumpmässigt valda album
+	IT	Raccolta di album
+	NL	Albummix
+	NO	Albummiks
+	SV	Albummix
 
 PLUGIN_RANDOM_ALBUM_ITEM
 	DA	Tilfældigt album
@@ -131,15 +131,15 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 
 PLUGIN_RANDOM_CONTRIBUTOR
 	DA	Miks baseret på tilfældig kunstner
-	DE	Zufälliger Interpretenmix
+	DE	Interpretenmix
 	EN	Artist Mix
-	ES	Mezcla de artista aleatoria
-	FI	Satunnainen artistivalikoima
+	ES	Mezcla de artistas
+	FI	Artistivalikoima
 	FR	Artistes aléatoires
-	IT	Raccolta casuale di artisti
-	NL	Willekeurige artiestmix
-	NO	Miks fra tilfeldige artister
-	SV	Mix med slumpmässigt valda artister
+	IT	Raccolta di artisti
+	NL	Artiestenmix
+	NO	Miks fra artister
+	SV	Artistmix
 
 PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	DA	Miks baseret på tilfældig kunstner
@@ -181,16 +181,16 @@ PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	SV	sluta lägga till artister
 
 PLUGIN_RANDOM_YEAR
-	DA	Miks baseret på tilfældig år
-	DE	Zufälliger Jahrgangsmix
+	DA	Miks baseret på tilfældigt årstal
+	DE	Jahrgangsmix
 	EN	Year Mix
-	ES	Mezcla de años aleatorios
-	FI	Satunnaisten vuosivalikoima
+	ES	Mezcla de años
+	FI	Vuosivalikoima
 	FR	Années aléatoires
-	IT	Raccolta casuale di anni
-	NL	Willekeurige jaarmix
-	NO	Miks fra tilfeldig år
-	SV	Mix med slumpmässigt valda år
+	IT	Raccolta di anni
+	NL	Jaarmix
+	NO	Miks fra år
+	SV	Årsmix
 
 PLUGIN_RANDOM_YEAR_ITEM
 	DA	Tilfældigt år
@@ -232,16 +232,16 @@ PLUGIN_RANDOM_YEAR_DISABLE
 	SV	sluta lägga till år
 
 PLUGIN_RANDOM_GENRE_FILTER
-	DA	Vælg genrer som skal medtages
-	DE	Einzuschließende Stilrichtungen wählen
+	DA	Medtag genrer
+	DE	Stilrichtungen einschließen
 	EN	Include Genres
-	ES	Seleccionar géneros a incluir
-	FI	Valitse sisällytettävät genret
-	FR	Sélectionnez les genres à inclure
-	IT	Selezionare i generi musicali da includere
-	NL	Toe te voegen genres selecteren
-	NO	Velg hvilke sjangere som skal inkluderes
-	SV	Välj genrer som ska tas med
+	ES	Incluir géneros
+	FI	Sisällytä genret
+	FR	Inclure les genres
+	IT	Includi generi musicali
+	NL	Genres toevoegen
+	NO	Inkluder sjangere
+	SV	Inkludera genrer
 
 PLUGIN_RANDOM_SELECT_ALL
 	DA	Vælg alle
@@ -370,7 +370,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	IT	Vengono visualizzati i brani in corso di riproduzione
 	NL	'Speelt nu' toont:
 	NO	Viser Spilles nå
-	SV	Som Aktuellt spår visas
+	SV	Nu spelas visas
 
 PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	DA	kommende numre og

@@ -24,11 +24,11 @@ PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
 
 PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY
 	DA	Rhapsody-bibliotek
-	DE	Rhapsody-Bibliothek
+	DE	Rhapsody Library
 	EN	Rhapsody Library
 	ES	Biblioteca Rhapsody
-	FI	Rhapsody-kirjastoni
-	FR	Bibliothèque en ligne Rhapsody
+	FI	Rhapsody-kirjasto
+	FR	Collection Rhapsody
 	IT	Libreria Rhapsody
 	NL	Rhapsody-collectie
 	NO	Rhapsody-bibliotek
@@ -144,11 +144,11 @@ PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
 
 PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
 	DA	Henter oplysninger om nummer...
-	DE	Titelinfos werden geladen...
+	DE	Titelinfos werden geladen ...
 	EN	Getting track info...
 	ES	Obteniendo información de pista...
 	FI	Haetaan raidan tietoja...
-	FR	Obtention des informations sur la piste...
+	FR	Obtention des informations sur le morceau...
 	IT	Recupero info su brano...
 	NL	Nummerinfo wordt opgehaald...
 	NO	Henter informasjon om spor...
@@ -160,7 +160,7 @@ PLUGIN_RHAPSODY_DIRECT_NO_TRACK
 	EN	Unable to retrieve track for channel.
 	ES	Imposible obtener pista para canal.
 	FI	Ei voi noutaa raitaa kanavaa varten.
-	FR	Impossible de récupérer la piste pour la chaîne.
+	FR	Impossible de récupérer le morceau pour le canal.
 	IT	Impossibile recuperare brano per canale.
 	NL	Kan nummer voor kanaal niet ophalen.
 	NO	Kan ikke hente spor for kanalen.
@@ -215,15 +215,28 @@ PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
 	SV	Det går inte att spela upp från Rhapsody när så många spelare har synkroniserats.  Ta bort en eller flera spelare ur synkroniseringsgruppen.
 
 PLUGIN_RHAPSODY_DIRECT_ON_RHAPSODY
+	DA	På Rhapsody
 	DE	Auf Rhapsody
 	EN	On Rhapsody
 	ES	En Rhapsody
+	FI	Rhapsodyssa
 	FR	Sur Rhapsody
 	IT	Su Rhapsody
 	NL	Op Rhapsody
+	NO	På Rhapsody
+	SV	På Rhapsody
 
 PLUGIN_RHAPSODY_DIRECT_DNS_ERROR
+	DA	Adressen til Rhapsody blev ikke fundet.
+	DE	Adresse für Rhapsody nicht gefunden.
 	EN	Unable to find address for Rhapsody.
+	ES	No se puede encontrar la dirección de Rhapsody.
+	FI	Rhapsodyn osoitetta ei löydy.
+	FR	Adresse de Rhapsody introuvable.
+	IT	Impossibile trovare l'indirizzo di Rhapsody.
+	NL	Kan adres voor Rhapsody niet vinden.
+	NO	Fant ikke adresse til Rhapsody.
+	SV	Det gick inte att hitta någon Rhapsody-adress.
 
 PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	DA	Hvis du vil bruge Rhapsody, skal du holde BRIGHTNESS nede for at opdatere firmwaren.

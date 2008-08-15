@@ -797,7 +797,7 @@ PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 PLUGIN_HEALTH_WARNING_DESC
 	DA	Du kan definere en grænseværdi der udløser en advarsel, for hvert mål. Hændelser som ligger over denne grænseværdi, bliver registreret i en logfil. Logfilen gemmes her:
 	DE	Sie können für jede Messung Warngrenzwerte festlegen. Im Serverprotokoll wird aufgezeichnet, wenn dieser Grenzwert überschritten wird. Die letzten Protokolleinträge können <a href="/log.txt" target="log"><u>hier angezeigt werden</u></a>.
-	EN	You may set warning thresholds for each measurement.  Events which exceed this threshold will be logged to a log file.  The log is stored at: 
+	EN	You may set warning thresholds for each measurement.  Events which exceed this threshold will be logged to a log file.  The log is stored at:
 	ES	Se pueden establecer umbrales de advertencia para cada medición. Siempre que se exceda el umbral, se registrarán en el registro del servidor. Aquí <a href="/log.txt" target="log"><u>se pueden ver las entradas más recientes del registro</u></a>.
 	FI	Voit määrittää varoituskynnykset kullekin mittaukselle.  Kynnyksen ylittävät tapahtumat kirjataan lokitiedostoon.  Lokitiedosto on tallennettu tänne:
 	FR	Vous pouvez définir des seuils d'alerte pour chaque mesure. Chaque franchissement de seuil est reporté dans le journal d'activités du serveur. Vous pouvez consulter les entrées les plus récentes <a href="/log.txt" target="log"><u>ici</u></a>.
