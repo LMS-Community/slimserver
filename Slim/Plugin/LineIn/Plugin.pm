@@ -303,6 +303,9 @@ sub updateLineIn {
 	});
 
 	if (blessed($obj)) {
+		if ($client->syncgroupid) {
+			Slim::Player::Sync::unsync($client);	
+		}
 		$client->execute([ 'playlist', 'clear' ] );
 		$client->execute([ 'playlist', 'playtracks', 'listRef', [ $obj ] ]);
 	}
