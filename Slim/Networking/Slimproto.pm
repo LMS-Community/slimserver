@@ -854,8 +854,15 @@ sub _update_request_handler {
 	if ( main::SLIM_SERVICE ) {
 		# Wipe cached needsUpgrade value
 		$client->_needsUpgrade(undef);
-		# Set client revision to 1 to force an upgrade
-		$client->revision(1);
+		
+		if ( $client->deviceid == 10 && $client->revision >= 30 ) {
+			# Special case, Boom 2-stage upgrade can't use 1, must use 30 as lowest
+			$client->revision(30);
+		}
+		else {
+			# Set client revision to 1 to force an upgrade
+			$client->revision(1);
+		}
 	}
 	
 	$client->upgradeFirmware();
