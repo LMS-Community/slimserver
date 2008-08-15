@@ -103,6 +103,26 @@ sub shutdownPlugin {
 	Slim::Control::Request::unsubscribe( \&newsongCallback );
 }
 
+# Only show player UI settings menu if account is available
+sub condition {
+	my ( $class, $client ) = @_;
+	
+	my $accounts;
+	
+	if ( main::SLIM_SERVICE ) {
+		$accounts = $prefs->client($client)->get('accounts');
+	}
+	else {
+		$accounts = $prefs->get('accounts');
+	}
+	
+	if ( ref $accounts eq 'ARRAY' && scalar @{$accounts} ) {
+		return 1;
+	}
+	
+	return;
+}
+
 # Button interface to change account or toggle scrobbling
 sub setMode {
 	my $class  = shift;
