@@ -749,7 +749,7 @@ sub processHTTP {
 		# Touch is similar in most ways and works nicely with IE
 		# BUG: 5093 make sure that Nokia Opera isn't spoofing as IE, causing incorrect redirect
 
-		if ($params->{'browserType'} eq 'IE' &&
+		if ($params->{'browserType'} =~ /^IE\d?$/ &&
 		($params->{'skinOverride'} || $prefs->get('skin')) eq 'Nokia770') 
 		{
 			$log->debug("Internet Explorer Detected with Nokia Skin, redirecting to Touch");
