@@ -4222,16 +4222,16 @@ SETUP_MAXWMARATE_DESC
 	SV	Vissa WMA-strömmar har flera olika bithastigheter.  Som standard väljer SqueezeCenter den högsta tillgängliga bithastigheten. Om du har en långsammare internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
 
 SETUP_SYNCSTARTDELAY
-	DA	Forsinkelse ved start af synkroniserede afspillere
-	DE	Startverzögerung für synchronisierte Player
-	EN	Synchronized Players Startup Delay
-	ES	Retraso de inicio de reproductores sincronizados
-	FI	Synkronoitujen soitinten käynnistysviive
-	FR	Délai de démarrage des platines synchronisées
-	IT	Ritardo avvio lettori sincronizzati
-	NL	Vertraging bij opstarten gesynchroniseerde muzieksystemen
-	NO	Forsinkelse ved oppstart av synkroniserte spillere
-	SV	Fördröjning vid start av synkroniserade spelare
+	DA	Forsinkelse ved start af synkroniserede afspillere (ms)
+	DE	Startverzögerung für synchronisierte Player (ms)
+	EN	Synchronized Players Startup Delay (ms)
+	ES	Retraso de inicio de reproductores sincronizados (ms)
+	FI	Synkronoitujen soitinten käynnistysviive (ms)
+	FR	Délai de démarrage des platines synchronisées (ms)
+	IT	Ritardo avvio lettori sincronizzati (ms)
+	NL	Vertraging bij opstarten gesynchroniseerde muzieksystemen (ms)
+	NO	Forsinkelse ved oppstart av synkroniserte spillere (ms)
+	SV	Fördröjning vid start av synkroniserade spelare (ms)
 
 SETUP_SYNCSTARTDELAY_DESC
 	DA	Når flere afspillere er synkroniseret, vil SqueezeCenter sikre at alle afspillere starter nummeret på samme tid. For at være sikker på at alle afspillere har modtaget startkommandoen før afspilningen starter, sendes kommandoen forud, og hver afspiller venter til det rigtige tidspunkt før nummeret starter. Hvis netværket er overbelastet, hvilket kan ske hvis der er mange afspillere og/eller hvis netværket er trådløst, vil standardværdien for forsinkelsen på 100 ms måske ikke være tilstrækkelig. Du kan ændre standardværdien her hvis nødvendigt.
@@ -4258,16 +4258,16 @@ SETUP_SYNCSTARTDELAY_CHOOSE
 	SV	Fördröjning för synkroniserad start (millisekunder):
 
 SETUP_STARTDELAY
-	DA	Forsinkelse ved start af afspiller
-	DE	Startverzögerung des Players
-	EN	Player Start Delay
-	ES	Retraso de inicio de reproductor
-	FI	Soittimen käynnistysviive
-	FR	Délai de démarrage de la platine
-	IT	Ritardo avvio lettore
-	NL	Vertraging bij opstarten muzieksysteem
-	NO	Forsinket oppstart av spiller
-	SV	Fördröjning för spelarstart
+	DA	Forsinkelse ved start af afspiller (ms)
+	DE	Startverzögerung des Players (ms)
+	EN	Player Start Delay (ms)
+	ES	Retraso de inicio de reproductor (ms)
+	FI	Soittimen käynnistysviive (ms)
+	FR	Délai de démarrage de la platine (ms)
+	IT	Ritardo avvio lettore (ms)
+	NL	Vertraging bij opstarten muzieksysteem (ms)
+	NO	Forsinket oppstart av spiller (ms)
+	SV	Fördröjning för spelarstart (ms)
 
 SETUP_STARTDELAY_DESC
 	DA	Det kan vare lidt fra du klikker på startknappen i SqueezeCenter til afspilningen begynder (før du kan høre noget). Det kan forekomme når de digitale udgange bruges (afhængigt af hvad der er tilsluttet) eller i forbindelse med softwareafspillere på nogle platforme. I så fald kan du indstille en forsinkelse her sådan at SqueezeCenter ved hvor meget tidligere afspilleren skal startes sådan at lyden på alle de synkroniserede afspillere startes på samme tid. Bemærk: Denne indstilling er i tillæg til en permanent indstilling af Lydforsinkelse for afspiller (nedenfor).
@@ -4342,16 +4342,16 @@ SETUP_MAINTAINSYNC_OFF
 	SV	Upprätthåll inte synkronisering
 
 SETUP_PLAYDELAY
-	DA	Lydforsinkelse for afspiller
-	DE	Audioverzögerung des Players
-	EN	Player Audio Delay
-	ES	Retraso de audio de reproductor
-	FI	Soittimen ääniviive
-	FR	Délai audio de la platine
-	IT	Ritardo audio lettore
-	NL	Audiovertraging muzieksysteem
-	NO	Lydforsinkelse for spiller
-	SV	Ljudfördröjning för spelare
+	DA	Lydforsinkelse for afspiller (ms)
+	DE	Audioverzögerung des Players (ms)
+	EN	Player Audio Delay (ms)
+	ES	Retraso de audio de reproductor (ms)
+	FI	Soittimen ääniviive (ms)
+	FR	Délai audio de la platine (ms)
+	IT	Ritardo audio lettore (ms)
+	NL	Audiovertraging muzieksysteem (ms)
+	NO	Lydforsinkelse for spiller (ms)
+	SV	Ljudfördröjning för spelare (ms)
 
 SETUP_PLAYDELAY_DESC
 	DA	Der kan være en mærkbar forskel mellem hvor meget af et nummer en afspiller meddeler SqueezeCenter at den har afspillet, og hvor meget hørbar lyd som er udsendt. Det kan forekomme når de digitale udgange bruges (afhængigt af hvad der er tilsluttet) eller i forbindelse med softwareafspillere på nogle platforme. I sådanne tilfælde kan der her angives en forsinkelse således at SqueezeCenter kan medtage denne værdi når synkroniseringen justeres.
@@ -4378,16 +4378,16 @@ SETUP_PLAYDELAY_CHOOSE
 	SV	Ljudfördröjning för spelare (millisekunder):
 
 SETUP_MINSYNCADJUST
-	DA	Mindste justering ved synkronisering
-	DE	Minimale Synchronisationsanpassung
-	EN	Minimum Synchronization Adjustment
-	ES	Ajuste mínimo de sincronización
-	FI	Synkronisoinnin vähimmäissäätö
-	FR	Ajustement minimal de synchronisation
-	IT	Regolazione minima della sincronizzazione
-	NL	Minimale synchronisatieaanpassing
-	NO	Minimumsjustering for synkronisering
-	SV	Minsta skillnad som justeras
+	DA	Mindste justering ved synkronisering (ms)
+	DE	Minimale Synchronisationsanpassung (ms)
+	EN	Minimum Synchronization Adjustment (ms)
+	ES	Ajuste mínimo de sincronización (ms)
+	FI	Synkronisoinnin vähimmäissäätö (ms)
+	FR	Ajustement minimal de synchronisation (ms)
+	IT	Regolazione minima della sincronizzazione (ms)
+	NL	Minimale synchronisatieaanpassing (ms)
+	NO	Minimumsjustering for synkronisering (ms)
+	SV	Minsta skillnad som justeras (ms)
 
 SETUP_MINSYNCADJUST_DESC
 	DA	Når SqueezeCenter registrerer at to synkroniserede afspillere ikke er helt synkroniseret, foretages der en mindre justering, normalt af den afspiller som er bagud. Du kan indstille hvor meget en afspiller højst må justeres. Jo større interval, jo sjældnere foretages justeringerne, og jo mere kan afspillerne miste deres synkronisering.
@@ -4414,16 +4414,16 @@ SETUP_MINSYNCADJUST_CHOOSE
 	SV	Minsta skillnad som justeras (millisekunder):
 
 SETUP_PACKETLATENCY
-	DA	Netværkspakkeforsinkelse
-	DE	Netzwerkpaket-Wartezeit
-	EN	Network Packet Latency
-	ES	Latencia de paquete de red
-	FI	Verkkopaketin viive
-	FR	Latence des paquets réseau
-	IT	Latenza pacchetto di rete
-	NL	Vertraging netwerkpakket
-	NO	Forsinkelser i nettverkspakker
-	SV	Svarstid för nätverkspaket
+	DA	Netværkspakkeforsinkelse (ms)
+	DE	Netzwerkpaket-Wartezeit (ms)
+	EN	Network Packet Latency (ms)
+	ES	Latencia de paquete de red (ms)
+	FI	Verkkopaketin viive (ms)
+	FR	Latence des paquets réseau (ms)
+	IT	Latenza pacchetto di rete (ms)
+	NL	Vertraging netwerkpakket (ms)
+	NO	Forsinkelser i nettverkspakker (ms)
+	SV	Svarstid för nätverkspaket (ms)
 
 SETUP_PACKETLATENCY_DESC
 	DA	SqueezeCenter måler automatisk netværksforsinkelsen mellem sig selv og afspilleren. Det er vigtigt når synkroniseringen skal opretholdes. Det sker at disse mål er for inkonsistente til at være praktisk anvendelige, og i så fald kan du angive en gennemsnitsværdi her.
