@@ -34,6 +34,8 @@ use HTTP::Request;
 
 our $callbackTask = Slim::Utils::PerfMon->new('Async Callback', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
+my $prefs = preferences('server');
+
 my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_classaccessors( qw(
@@ -133,7 +135,7 @@ sub _createHTTPRequest {
 	my $timeout 
 		=  $self->{params}->{Timeout}
 		|| $self->{params}->{timeout}
-		|| preferences('server')->get('remotestreamtimeout')
+		|| $prefs->get('remotestreamtimeout')
 		|| 10;
 		
 	my $request = HTTP::Request->new( $type => $url );
@@ -154,6 +156,21 @@ sub _createHTTPRequest {
 	if ( hasZlib() && !$self->{params}->{saveAs} ) {
 		unshift @_, (
 			'Accept-Encoding' => 'gzip, deflate',
+		);
+	}
+	
+	# Add Accept-Language header if we have a client
+	if ( my $client = $self->{params}->{params}->{client} ) {
+		my $lang;
+		if ( main::SLIM_SERVICE ) {
+			$lang = $prefs->client($client)->get('language');
+		}
+		else {
+			$lang = $prefs->get('language');
+		}
+		
+		unshift @_, (
+			'Accept-Language' => lc( $lang || 'en' ),
 		);
 	}
 	
