@@ -9913,7 +9913,7 @@ FULL
 
 LIGHT
 	DA	Let
-	DE	Klein
+	DE	Leicht
 	EN	Light
 	ES	Fina
 	FI	Kevyt
