@@ -576,10 +576,25 @@ sub upgradeFirmware_SDK5 {
 	my $size = -s $filename;
 	
 	$log->info("Updating firmware: Sending $size bytes");
+	
+	my $line = $client->string('UPDATING_FIRMWARE_' . uc($client->model()));
+	
+	# Display 1 of 2, 2 of 2 during Boom 2-stage upgrade
+	if ( $client->deviceid == 10 ) {
+		my $from = $client->revision();
+		my $to   = $client->needsUpgrade();
+		
+		if ( $to == 30 ) {
+			$line .= ' (1 ' . $client->string('OUT_OF') . ' 2)';
+		}
+		elsif ( $from == 30 ) {
+			$line .= ' (2 ' . $client->string('OUT_OF') . ' 2)';
+		}
+	}
 
 	# place in block mode so that brightness key is now ignored
 	$client->block( {
-		'line'  => [ $client->string('UPDATING_FIRMWARE_' . uc($client->model())) ],
+		'line'  => [ $line ],
 		'fonts' => { 
 			'graphic-320x32' => 'light',
 			'graphic-160x32' => 'light_n',
@@ -610,9 +625,10 @@ sub upgradeFirmware_SDK5 {
 
 			$client->showBriefly( {
 
-				'line'  => [ $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
-					 $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
-
+				'line'  => [ 
+					$line,
+					$client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size))
+				],
 				'fonts' => { 
 					'graphic-320x32' => 'light',
 					'graphic-160x32' => 'light_n',
