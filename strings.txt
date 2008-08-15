@@ -2056,7 +2056,7 @@ WELCOME_TO_SLIMP3
 	FI	Tervetuloa SLIMP3:n pariin
 	FR	Bienvenue sur le SLIMP3
 	HE	ברוך הבא ל-SLIMP3
-	IT	SLIMP3
+	IT	Benvenuti in SLIMP3
 	JA	SLIMP3へようこそ
 	NL	Welkom bij SLIMP3
 	NO	Velkommen til SLIMP3
@@ -2073,7 +2073,7 @@ WELCOME_TO_SQUEEZECENTER
 	FI	Tervetuloa SqueezeCenteriin
 	FR	Bienvenue sur le SqueezeCenter
 	HE	ברוך הבא ל-SqueezeCenter
-	IT	SqueezeCenter
+	IT	Benvenuti in SqueezeCenter
 	JA	SqueezeCenterへようこそ
 	NL	Welkom bij SqueezeCenter
 	NO	Velkommen til SqueezeCenter
@@ -2090,7 +2090,7 @@ WELCOME_TO_SQUEEZEBOX
 	FI	Tervetuloa Squeezeboxiin
 	FR	Bienvenue dans la Squeezebox
 	HE	ברוך הבא ל-Squeezebox
-	IT	Squeezebox
+	IT	Benvenuti in Squeezebox
 	JA	Squeezeboxへようこそ
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
@@ -2107,7 +2107,7 @@ WELCOME_TO_SQUEEZEBOX2
 	FI	Tervetuloa Squeezeboxiin
 	FR	Bienvenue dans la Squeezebox
 	HE	ברוך הבא ל-Squeezebox
-	IT	Squeezebox
+	IT	Benvenuti in Squeezebox
 	JA	Squeezeboxへようこそ
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
@@ -2124,7 +2124,7 @@ WELCOME_TO_TRANSPORTER
 	FI	Tervetuloa Transporteriin
 	FR	Bienvenue sur Transporter
 	HE	ברוך הבא ל-Transporter
-	IT	Transporter
+	IT	Benvenuti in Transporter
 	JA	Transporterへようこそ
 	NL	Welkom bij Transporter
 	NO	Velkommen til Transporter
@@ -2141,7 +2141,7 @@ WELCOME_TO_SOFTSQUEEZE
 	FI	Tervetuloa SoftSqueezen pariin
 	FR	Bienvenue sur SoftSqueeze
 	HE	ברוך הבא ל-SoftSqueeze
-	IT	SoftSqueeze
+	IT	Benvenuti in SoftSqueeze
 	JA	SoftSqueezeへようこそ
 	NL	Welkom bij SoftSqueeze
 	NO	Velkommen til SoftSqueeze
@@ -2156,7 +2156,7 @@ WELCOME_TO_RECEIVER
 	ES	Bienvenido a Squeezebox
 	FI	Tervetuloa Squeezeboxiin
 	FR	Bienvenue dans la Squeezebox
-	IT	Squeezebox
+	IT	Benvenuti in Squeezebox
 	NL	Welkom bij Squeezebox
 	NO	Velkommen til Squeezebox
 	SV	Välkommen till Squeezebox!
