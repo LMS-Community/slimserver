@@ -101,12 +101,10 @@ use constant KNOB_NOACCELERATION => 0x02;
 								sleepTime pendingPrefChanges _pluginData
 								signalStrengthLog bufferFullnessLog slimprotoQLenLog
 								alarmData knobData
+								modeStack modeParameterStack playlist currentsongqueue chunks
+								shufflelist slaves syncSelections searchTerm
 							));
-
-	__PACKAGE__->mk_accessor('array', qw(
-								modeStack modeParameterStack searchTerm trackInfoLines trackInfoContent slaves syncSelections
-								currentsongqueue chunks playlist shufflelist
-							));
+							
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection
 							));
@@ -239,8 +237,6 @@ sub new {
 		lastDigitTime           => 0,
 		searchFor               => undef,
 		searchTerm              => [],
-		trackInfoLines          => [],
-		trackInfoContent        => [],
 		lastID3Selection        => {},
 
 		# sync state
@@ -995,7 +991,7 @@ sub param {
 
 	logBacktrace("Use of \$client->param is deprecated, use \$client->modeParam instead");
 
-	my $mode   = $client->modeParameterStack(-1) || return undef;
+	my $mode   = $client->modeParameterStack->[-1] || return undef;
 
 	if (defined $value) {
 
@@ -1011,7 +1007,7 @@ sub param {
 sub modeParam {
 	my $client = shift;
 	my $name   = shift;
-	my $mode   = $client->modeParameterStack(-1) || return undef;
+	my $mode   = $client->modeParameterStack->[-1] || return undef;
 
 	@_ ? ($mode->{$name} = shift) : $mode->{$name};
 }
@@ -1024,7 +1020,7 @@ sub modeParams {
 
 sub getMode {
 	my $client = shift;
-	return $client->modeStack(-1);
+	return $client->modeStack->[-1];
 }
 
 =head2 masterOrSelf( $client )

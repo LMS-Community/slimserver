@@ -28,6 +28,22 @@ use Slim::Utils::Log;
 
 my $log = logger('server');
 
+BEGIN {
+	my $hasXS;
+
+	sub hasXS {
+		return $hasXS if defined $hasXS;
+	
+		$hasXS = 0;
+		eval {
+			require Class::XSAccessor::Array;
+			$hasXS = 1;
+		};
+	
+		return $hasXS;
+	}
+}
+
 my %slot;
 
 sub new {
@@ -75,19 +91,33 @@ sub mk_accessor {
 		my $n = $class->_slot($field);
 
 		if ($type eq 'rw') {
-
-			$accessor = sub {
-				return $_[0]->[$n]                    if @_ == 1;
-				return $_[0]->[$n] = $_[1]            if @_ == 2;
-			};
+			
+			if ( hasXS() ) {
+				Class::XSAccessor::Array::_generate_accessor(
+					$class,	$field,	$n, 0, 'accessor',
+				);
+			}
+			else {
+				$accessor = sub {
+					return $_[0]->[$n]                    if @_ == 1;
+					return $_[0]->[$n] = $_[1]            if @_ == 2;
+				};
+			}
 
 		} elsif ($type eq 'ro') {
-
-			$accessor = sub {
-				return $_[0]->[$n]                    if @_ == 1;
-				$log->error("Attempt to set ro accessor $field");
-				return $_[0]->[$n];
-			};
+			
+			if ( hasXS() ) {
+				Class::XSAccessor::Array::_generate_accessor(
+					$class,	$field,	$n, 0, 'getter',
+				);
+			}
+			else {
+				$accessor = sub {
+					return $_[0]->[$n]                    if @_ == 1;
+					$log->error("Attempt to set ro accessor $field");
+					return $_[0]->[$n];
+				};
+			}
 
 		} elsif ($type eq 'weak') {
 

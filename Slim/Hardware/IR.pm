@@ -500,7 +500,7 @@ sub lookupFunction {
 
 	if (!defined $mode) {
 		# find the current mode
-		$mode = $client->modeStack(-1);
+		$mode = $client->modeStack->[-1];
 	}
 
 	my @maps  = @{$client->irmaps};
@@ -509,7 +509,7 @@ sub lookupFunction {
 	if ($mode =~ /^(.+)\..+/) {
 		if ($1 eq 'INPUT') {
 			# add the previous mode so we can provide specific mappings for callers of INPUT.*
-			splice @order, 1, 0, $client->modeStack(-2);
+			splice @order, 1, 0, $client->modeStack->[-2];
 		} else {
 			# add the class name so modes of the form class.name can share maps entries
 			splice @order, 1, 0, lc($1);

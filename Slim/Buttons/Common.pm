@@ -1855,7 +1855,7 @@ sub mode {
 		return unless $client;
 	}
 
-	return $client->modeStack(-1);
+	return $client->modeStack->[-1];
 }
 
 =head2 validMode ( $client)

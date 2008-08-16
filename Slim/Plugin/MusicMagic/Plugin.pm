@@ -555,7 +555,7 @@ sub mixerFunction {
 	my ($client, $noSettings, $track) = @_;
 
 	# look for parentParams (needed when multiple mixers have been used)
-	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
+	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack->[-1];
 	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
 	if ($prefs->get('player_settings') && !$noSettings) {
 

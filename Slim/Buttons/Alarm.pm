@@ -311,7 +311,7 @@ sub buildTopMenu {
 	my $mode;
 	if (! $listRef) {
 		my $depth = $client->modeParam('alarm_depth');
-		$mode = $client->modeParameterStack(-1 - $depth);
+		$mode = $client->modeParameterStack->[-1 - $depth];
 		$listRef = $mode->{listRef};
 	}
 

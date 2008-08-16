@@ -206,7 +206,7 @@ sub init {
 
 				# store existing browsedb params for use later.
 				my $params = {
-					'parentParams'    => $client->modeParameterStack(-1),
+					'parentParams'    => $client->modeParameterStack->[-1],
 					'listRef'         => \@mixers,
 					'externRef'       => sub { return $_[0]->string($_[1]->title) },
 					'externRefArgs'   => 'CV',
