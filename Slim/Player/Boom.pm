@@ -125,9 +125,9 @@ sub welcomeScreen {
 	my $client = shift;
 
 	$client->showBriefly( {
-		'line' => [ '', '0' ],
+		'center' => [ '', '0' ],
 		'fonts' => {
-				'graphic-160x32' => { 'line' => [ 'standard_n.1', 'logoSB2.2' ] },
+				'graphic-160x32' => { 'center' => [ 'standard_n.1', 'logoSB2.2' ] },
 			},
 		'jive' => undef,
 	}, undef, undef, 1);
