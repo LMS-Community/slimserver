@@ -461,7 +461,11 @@ sub isDebian {
 	}
 
 	# ReadyNAS is running a customized Debian
-	return isReadyNAS();
+	if ( isReadyNAS() && $0 =~ m{^/usr/sbin/squeezecenter} ) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 sub isRHorSUSE {
