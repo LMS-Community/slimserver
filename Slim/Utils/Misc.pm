@@ -1272,11 +1272,9 @@ sub settingsDiagString {
 =cut
 
 sub assert {
-	my $exp = shift;
-	my $msg = shift;
+	$_[0] && return;
 	
-	defined($exp) && $exp && return;
-	
+	my $msg = $_[1];
 	msg($msg) if $msg;
 	
 	bt();
