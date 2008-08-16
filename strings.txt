@@ -2266,11 +2266,11 @@ UPDATING_FIRMWARE_RECEIVER
 
 UPDATING_FIRMWARE_BOOM
 	DA	Opdaterer firmware.
-	DE	Firmware wird aktualisiert.
+	DE	Firmware Update.
 	EN	Updating Firmware.
 	ES	Actualizando firmware.
 	FI	Laitteisto-ohjelmisto päivitetään.
-	FR	Mise à jour du micrologiciel.
+	FR	Mise à jour.
 	IT	Aggiornamento firmware in corso.
 	NL	Firmware wordt bijgewerkt.
 	NO	Oppdaterer fastvare.
