@@ -213,7 +213,7 @@ sub addSaver {
 
 =head2 validSavers ( $client )
 
-Returns hash of valid savers for this client.
+Returns hash of valid savers for this client. Pass no $client ref for a full list of savers.
 Called from settings routines in Slim::Web::Setup and Slim::Buttons::Settings
 
 =cut
@@ -227,7 +227,7 @@ sub validSavers {
 
 		my $saver = $savers->{$name};
 
-		if ( !$saver->{'valid'} || $saver->{'valid'}->($client) ) {
+		if ( (!defined($client)) || !$saver->{'valid'} || $saver->{'valid'}->($client) ) {
 
 			$ret->{'screensaver'}->{$name} = $saver->{'name'} if $saver->{'type'} =~ /PLAY/;
 			$ret->{'idlesaver'}->{$name}   = $saver->{'name'} if $saver->{'type'} =~ /IDLE/;
