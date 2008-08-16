@@ -55,6 +55,11 @@ sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 	
 	my $length;
+	
+	# Clear previous duration, since we're using the same URL for all tracks
+	if ( $url =~ /\.rdr$/ ) {
+		Slim::Music::Info::setDuration( $url, 0 );
+	}
 
 	foreach my $header (@headers) {
 
