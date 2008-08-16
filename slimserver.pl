@@ -313,6 +313,20 @@ sub init {
 	
 	# Uncomment to enable crash debugging.
 	#$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
+	
+	# Start/stop profiler during runtime (requires Devel::NYTProf)
+	# and NYTPROF env var set to 'start=no'
+	if ( $INC{'Devel/NYTProf.pm'} && $ENV{NYTPROF} =~ /start=no/ ) {
+		$SIG{USR1} = sub {
+			DB::enable_profile();
+			warn "Profiling enabled...\n";
+		};
+	
+		$SIG{USR2} = sub {
+			DB::disable_profile();
+			warn "Profiling disabled...\n";
+		};
+	}
 
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
