@@ -43,6 +43,10 @@ use constant LATENCY_LIST_MIN => 6;
 
 our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom');
 my $log       = logger('network.protocol.slimproto');
+my $faclog    = logger('factorytest');
+my $synclog   = logger('player.sync');
+my $firmlog   = logger('player.firmware');
+my $psdlog    = logger('player.streaming.direct');
 
 if ( main::SLIM_SERVICE ) {
 	# SN only allows SB2 or higher to connect
@@ -279,8 +283,8 @@ sub slimproto_close {
 				# Bug 2707, If a synced player disconnects, unsync it temporarily
 				if ( Slim::Player::Sync::isSynced($client) ) {
 
-					if ( logger('player.sync')->is_info ) {
-						logger('player.sync')->info("Player disconnected, temporary unsync " . $client->id);
+					if ( $synclog->is_info ) {
+						$synclog->info("Player disconnected, temporary unsync " . $client->id);
 					}
 
 					Slim::Player::Sync::unsync($client, 1);
@@ -526,8 +530,8 @@ sub _ir_handler {
 
 	Slim::Hardware::IR::enqueue($client, $irCode, $irTime) if $client->irenable();
 
-	if ( logger('factorytest')->is_debug ) {
-		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=ir\tmac=%s\tcode=%s", $client->id, $irCode));
+	if ( $faclog->is_debug ) {
+		$faclog->debug(sprintf("FACTORYTEST\tevent=ir\tmac=%s\tcode=%s", $client->id, $irCode));
 	}
 }
 
@@ -575,8 +579,8 @@ sub _debug_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	if ( logger('player.firmware')->is_info ) {
-		logger('player.firmware')->info(sprintf("[%s] %s", $client->id, $$data_ref));
+	if ( $firmlog->is_info ) {
+		$firmlog->info(sprintf("[%s] %s", $client->id, $$data_ref));
 	}
 }
 
@@ -742,8 +746,8 @@ sub _stat_handler {
 	$::perfmon && ($status{$client}->{'signal_strength'} <= 100) &&
 		$client->signalStrengthLog()->log($status{$client}->{'signal_strength'});
 	
-	if ( logger('factorytest')->is_debug ) {
-		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=stat\tmac=%s\tsignalstrength=%s",
+	if ( $faclog->is_debug ) {
+		$faclog->debug(sprintf("FACTORYTEST\tevent=stat\tmac=%s\tsignalstrength=%s",
 			$client->id, $status{$client}->{'signal_strength'}
 		));
 	}
@@ -879,8 +883,8 @@ sub _http_metadata_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	if ( logger('player.streaming.direct')->is_info ) {
-		logger('player.streaming.direct')->info("metadata (len: ". length($$data_ref) .")");
+	if ( $psdlog->is_info ) {
+		$psdlog->info("metadata (len: ". length($$data_ref) .")");
 	}
 
 	if ($client->can('directMetadata')) {
@@ -962,8 +966,8 @@ sub _hello_handler {
 		}
 	}
 
-	if ( logger('factorytest')->is_debug ) {
-		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=helo\tmac=%s\tdeviceid=%s\trevision=%s\ttwlan_channellist=%s",
+	if ( $faclog->is_debug ) {
+		$faclog->debug(sprintf("FACTORYTEST\tevent=helo\tmac=%s\tdeviceid=%s\trevision=%s\ttwlan_channellist=%s",
 			$mac, $deviceid, $revision, $wlan_channellist
 		));
 	}
@@ -1162,15 +1166,15 @@ sub _hello_handler {
 				sub {
 					my $jives = $client->playerData->active_jives();
 			
-					if ( logger('player.firmware')->is_debug ) {
-						logger('player.firmware')->debug(
+					if ( $firmlog->is_debug ) {
+						$firmlog->debug(
 							"Ray needs upgrade, active jives: " . Data::Dump::dump($jives)
 						)
 					}
 			
 					for my $jive ( @{$jives} ) {
 						if ( $jive->{rev} =~ /r(?:1220|1425)$/ ) { # MP firmware
-							logger('player.firmware')->debug('Not updating Ray, MP Jive is connected');
+							$firmlog->debug('Not updating Ray, MP Jive is connected');
 							return;
 						}
 					}
@@ -1204,8 +1208,8 @@ sub _hello_handler {
 		# Unsync players that need an update
 		if ( Slim::Player::Sync::isSynced($client) ) {
 
-			if ( logger('player.sync')->is_info ) {
-				logger('player.sync')->info("Player needs update, temporary unsync " . $client->id);
+			if ( $synclog->is_info ) {
+				$synclog->info("Player needs update, temporary unsync " . $client->id);
 			}
 
 			Slim::Player::Sync::unsync($client, 1);
