@@ -23,6 +23,13 @@ package Slim::Plugin::InfoBrowser::Plugin;
 # Plugins::InfoBrowserAddons::Folder::File::parser to parse the content into a hash which xmlbrowser will understand.
 # This allows arbitary web pages to be parsed by adding the appropriate perl parser files.  The perl module will be dynamically loaded. 
 #
+# The parser may be passed a parameter string by including it after ? in the parser specification.  The parser definition is split
+# on either side of the ? to specify the perl module to load and a string to pass as third param to its parse method. 
+#
+# <outline text="Menu text" URL="url to fetch" parser="Plugins::InfoBrowserAddons::Folder::File?param1=1&param2=2" />
+#
+# In this case Plugins::InfoBrowserAddons::parse gets called with ( $class, $html, $paramstring ).
+#
 # Addons are stored in Plugins/InfoBrowserAddons.  It is suggested that each addon is a separate directory within this top level
 # directory containing the opml menu and any associated parser files.  InfoBrowser will search this entire directory tree for
 # opml files and add them to the main information browser menu.

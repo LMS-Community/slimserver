@@ -174,11 +174,17 @@ sub gotViaHTTP {
 
 		$log->info("Parsing with parser $parser");
 
+		my $parserParams;
+
+		if ($parser =~ /(.*)\?(.*)/) {
+			($parser, $parserParams) = ($1, $2);
+		}
+
 		eval "use $parser";
 
 		$log->warn("$@") if $@;
 
-		$feed = eval { $parser->parse($http) };
+		$feed = eval { $parser->parse($http, $parserParams) };
 
 		if ($feed->{'type'} && $feed->{'type'} eq 'redirect') {
 
