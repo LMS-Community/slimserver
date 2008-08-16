@@ -115,11 +115,7 @@ sub enqueue {
 
 sub idle {
 	# return 0 only if no IR in queue
-	if (!scalar @irQueue) {
-		return 0;
-	}
-
-	my $entry = shift @irQueue;
+	my $entry = shift @irQueue || return 0;
 	my $client = $entry->{'client'};
 
 	my $now = Time::HiRes::time();
