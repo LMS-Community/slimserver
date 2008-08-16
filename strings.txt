@@ -326,7 +326,7 @@ SOFTSQUEEZE_HOME
 
 HOMEMENU
 	DA	Hovedmenu
-	DE	Start
+	DE	Hauptmenü
 	EN	Home
 	ES	Inicio
 	FI	Koti
