@@ -22,6 +22,8 @@ use strict;
 
 use base qw(Slim::Utils::Accessor);
 
+use Scalar::Util qw(weaken);
+
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
@@ -69,7 +71,7 @@ our $defaultPrefs = {
 };
 
 {
-	__PACKAGE__->mk_accessor('weak', qw(client));
+	__PACKAGE__->mk_accessor('rw', 'client'); # Note: Always keep client as the first accessor
 	__PACKAGE__->mk_accessor('rw',   qw(updateMode screen2updateOK animateState renderCache currBrightness
 										lastVisMode sbCallbackData sbOldDisplay sbName displayStrings notifyLevel hideVisu));
 	__PACKAGE__->mk_accessor('arraydefault', 1, qw(scrollState scrollData widthOverride));
@@ -83,7 +85,8 @@ sub new {
 	my $display = $class->SUPER::new;
 
 	# set default state
-	$display->client($client);    # set via accessor so reference is weakened
+	$display->client($client);
+	weaken( $display->[0] );
 
 	$display->init_accessor(
 		updateMode     => 0,      # 0 = normal, 1 = periodic update blocked, 2 = all updates blocked
