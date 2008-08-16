@@ -1381,14 +1381,16 @@ sub scroll_dynamic {
 	}
 
 	my $scrollParams = $scrollClientHash->{$client}{scrollParams};
+	
+	my $knobData = $client->knobData;
 
 	my $result = undef;
-	if ($client->knobData->{'_knobEvent'}) {
+	if ($knobData->{'_knobEvent'}) {
 		# This is a boom knob event.  Calculate acceleration for this case.
 		$result=$currentPosition;
-		my $velocity      = $client->knobData->{'_velocity'};
-		my $acceleration  = $client->knobData->{'_acceleration'};
-		my $deltatime     = $client->knobData->{'_deltatime'};
+		my $velocity      = $knobData->{'_velocity'};
+		my $acceleration  = $knobData->{'_acceleration'};
+		my $deltatime     = $knobData->{'_deltatime'};
 		if ($velocity == 0) {
 			$result = $currentPosition + (($direction > 0) ? 1 : -1);
 			if ($deltatime < 2) {
@@ -1415,7 +1417,7 @@ sub scroll_dynamic {
 			}
 			$scrollParams->{A}             = 0;
 			$scrollParams->{V}             = 0;
-			$scrollParams->{t0}            = $client->knobData->{'_time'};
+			$scrollParams->{t0}            = $knobData->{'_time'};
 			$scrollParams->{hitEndTime}    = undef;
 			$scrollParams->{time}          = 0;
 			$scrollParams->{lasttime}      = 0;
@@ -1451,10 +1453,10 @@ sub scroll_dynamic {
 			if ($result < 0 || $result > $listlength-1) {
 				my $rollover = 0;
 				if (!defined $scrollParams->{hitEndTime}) {
-					$scrollParams->{hitEndTime} = $client->knobData->{'_time'};
+					$scrollParams->{hitEndTime} = $knobData->{'_time'};
 				} else {
 					# We hit the end previously.  Calculate the difference in time between then and now.
-					my $deltaT = $client->knobData->{'_time'} - $scrollParams->{hitEndTime};
+					my $deltaT = $knobData->{'_time'} - $scrollParams->{hitEndTime};
 					my $rolloverTime = $scrollParams->{KrolloverTime};
 					if ($deltaT > $rolloverTime) {
 						$rollover = 1;

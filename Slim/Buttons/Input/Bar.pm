@@ -334,7 +334,9 @@ sub changePos {
 	my $currVal     = $listIndex;
 	my $newposition = undef;
 	
-	if ($client->knobData->{'_knobEvent'}) {
+	my $knobData = $client->knobData;
+	
+	if ($knobData->{'_knobEvent'}) {
 		# Knob event
 		my $knobAccelerationConstant = undef;
 		#
@@ -348,9 +350,9 @@ sub changePos {
 		} else {
 			$knobAccelerationConstant = $client->modeParam('knobacceldown') ||.05; # Accel going down. 
 		}
-		my $velocity      = $client->knobData->{'_velocity'};
-		my $acceleration  = $client->knobData->{'_acceleration'};
-		my $deltatime     = $client->knobData->{'_deltatime'};
+		my $velocity      = $knobData->{'_velocity'};
+		my $acceleration  = $knobData->{'_acceleration'};
+		my $deltatime     = $knobData->{'_deltatime'};
 		my $deltaX = $velocity * $knobAccelerationConstant;
 		if ($deltaX > 0) {
 			if ($deltaX < 1) {
