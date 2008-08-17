@@ -1,11 +1,8 @@
 [% IF useExtJS; extJsScripts = BLOCK %]   
 	<script TYPE="text/javascript">
 		Ext.onReady(function() {
-			// I'm sorry IE6 laggers
-			if (!Ext.isIE6) {
-				Settings.Alarm.init('[% newAlarmID %]', [% prefs.alarms.size %]);
-				Settings.Alarm.initTimeControls('[% timeFormat %]', '[% altFormats %]');
-			}
+			Settings.Alarm.init('[% newAlarmID %]', [% prefs.alarms.size %]);
+			Settings.Alarm.initTimeControls('[% timeFormat %]', '[% altFormats %]');
 		});
 	</script>
 [% END; END %]

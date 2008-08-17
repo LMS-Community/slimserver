@@ -597,6 +597,10 @@ Settings.Alarm = function() {
 		},
 
 		initSliders: function() {
+			// sliders are broken in IE6 - don't use them
+			if (Ext.isIE6)
+				return;
+	
 			var items = Ext.DomQuery.select('input.volumeSlider');
 			
 			for (var i = 0; i < items.length; i++) {
