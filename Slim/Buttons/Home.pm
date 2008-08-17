@@ -475,7 +475,8 @@ sub homeExitHandler {
 			$params{'header'}  = $client->string($containerLevel);
 
 			# move reference to new depth
-			$client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
+			my $curDepth = $client->curDepth();
+			$client->curDepth( $curDepth . "-" . $client->curSelection($curDepth) );
 			
 			# check for disalbed plugins in item list.
 			# Bug: 7089 - sort by ranking unless it's the plugins menu
