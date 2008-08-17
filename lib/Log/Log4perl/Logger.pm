@@ -773,11 +773,22 @@ sub create_log_level_methods {
 
   # Added these to have is_xxx functions as fast as xxx functions
   # -ms
+  
+  my $islevel   = "is_" . $level;
+  my $islclevel = "is_" . $lclevel;
 
-  *{__PACKAGE__ . "::is_$lclevel"} = sub {
-      $_[0]->{"is_" . $level}->($_[0], "is_" . $lclevel) if
-          defined $_[0]->{$level};
-  };
+  if ( defined $Log::Log4perl::Config::WATCHER ) {
+    *{__PACKAGE__ . "::is_$lclevel"} = sub {
+        $_[0]->{$islevel}->($_[0], $islclevel);
+    };
+  }
+  else {
+    # XXX: Not passing the args breaks a few Log4perl tests,
+    # but we don't use watcher so it's OK
+    *{__PACKAGE__ . "::is_$lclevel"} = sub {
+        $_[0]->{$islevel}->();
+    };
+  }
   
   # Add the isXxxEnabled() methods as identical to the is_xxx
   # functions. - dviner
