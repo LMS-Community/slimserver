@@ -297,7 +297,7 @@ sub _parseInstallManifest {
 
 	if (ref($installManifest->{'targetPlatform'}) eq 'ARRAY') {
 
-		@platforms = @$installManifest->{'targetPlatform'};
+		@platforms = @{ $installManifest->{'targetPlatform'} };
 	}
 
 	for my $platform (@platforms) {
