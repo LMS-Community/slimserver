@@ -497,10 +497,13 @@ Check if the information currently displayed on a player is the currently playin
 sub showingNowPlaying {
 	my $client = shift;
 
-	return ( defined Slim::Buttons::Common::mode($client) && 
-			 ( (Slim::Buttons::Common::mode($client) eq 'screensaver') || 
-			   ((Slim::Buttons::Common::mode($client) eq 'playlist') && 
-			   ((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client)) )) );
+	my $mode = Slim::Buttons::Common::mode($client);
+
+	return (
+		defined $mode &&
+		( $mode eq 'screensaver' || 
+		 ($mode eq 'playlist' && ((browseplaylistindex($client) || 0) == Slim::Player::Source::playingSongIndex($client)) ) )
+	);
 }
 
 
