@@ -28,7 +28,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-my $log = logger('player.ui');
+my $log     = logger('player.ui');
+my $nplog   = logger('network.protocol');
+my $synclog = logger('player.sync');
 
 my $prefs = preferences('server');
 
@@ -200,8 +202,8 @@ sub power {
 
 		if (defined $sync && $sync == 0) {
 
-			if ( logger('player.sync')->is_info && Slim::Player::Sync::isSynced($client) ) {
-				logger('player.sync')->info("Temporary Unsync " . $client->id);
+			if ( $synclog->is_info && Slim::Player::Sync::isSynced($client) ) {
+				$synclog->info("Temporary Unsync " . $client->id);
 			}
 
 			Slim::Player::Sync::unsync($client, 1);
@@ -875,16 +877,16 @@ sub trackJiffiesEpoch {
 	my $offset      = $timestamp - $jiffiesTime;
 	my $epoch       = $client->jiffiesEpoch || 0;
 
-	if ( logger('network.protocol')->is_debug ) {
-		logger('network.protocol')->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
+	if ( $nplog->is_debug ) {
+		$nplog->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
 	}
 
 	if (   $offset < $epoch			# simply a better estimate, or
 		|| $offset - $epoch > 50	# we have had wrap-around (or first time)
 	) {
-		if ( logger('player.sync')->is_debug ) {
+		if ( $synclog->is_debug ) {
 			if ( abs($offset - $epoch) > 0.001 ) {
-				logger('player.sync')->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
+				$synclog->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
 			}
 		}
 		
@@ -906,8 +908,8 @@ sub trackJiffiesEpoch {
 			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST ) {
 				$min_diff = JIFFIES_EPOCH_MAX_ADJUST;
 			}
-			if ( logger('player.sync')->is_debug ) {
-				logger('player.sync')->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
+			if ( $synclog->is_debug ) {
+				$synclog->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
 			}
 			$client->jiffiesEpoch($epoch += $min_diff);
 			$diff -= $min_diff;
@@ -952,8 +954,8 @@ sub apparentStreamStartTime {
 
 	my $apparentStreamStartTime = $statusTime - $timePlayed;
 
-	if ( logger('player.sync')->is_debug ) {
-		logger('player.sync')->debug(
+	if ( $synclog->is_debug ) {
+		$synclog->debug(
 			$client->id()
 			. " apparentStreamStartTime: $apparentStreamStartTime @ $statusTime \n"
 			. "timePlayed:$timePlayed (bytesReceived:" . $client->bytesReceived()
@@ -994,8 +996,8 @@ sub publishPlayPoint {
 			# Ok, good enough, publish it!
 			$client->playPoint( [$statusTime, $meanStartTime] );
 			
-			if ( 0 && logger('player.sync')->is_debug ) {
-				logger('player.sync')->debug(
+			if ( 0 && $synclog->is_debug ) {
+				$synclog->debug(
 					$client->id()
 					. " publishPlayPoint: $meanStartTime @ $statusTime"
 				);
