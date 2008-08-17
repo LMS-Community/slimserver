@@ -393,6 +393,10 @@ Settings.Page = function(){
 		},
 		
 		initSliders : function() {
+			// sliders are broken in IE6 - don't use them
+			if (Ext.isIE6)
+				return;
+	
 			var items = Ext.query('input[class*=sliderInput_]');
 			var inputEl;
 			
