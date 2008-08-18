@@ -188,13 +188,8 @@ sub settingsOverlay {
 	my $overlay1;
 
 	if ($client->linesPerScreen == 2) {
-		if ($client->display->isa('Slim::Display::Boom')) {
-			# Use icons for MIXRIGHT on boom as text is too long
-			$overlay1 = $client->symbols('mixable') . $client->symbols('rightarrow');
-
-		} else {
-			$overlay1 = $client->string('MUSICMAGIC_MIXRIGHT');
-		}
+		# Use icons for MIXRIGHT as text is too long in some languages
+		$overlay1 = $client->symbols('mixable') . $client->symbols('rightarrow');
 	}
 
 	return ( $overlay1, undef );
