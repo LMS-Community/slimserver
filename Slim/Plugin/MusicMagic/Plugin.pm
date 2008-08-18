@@ -132,9 +132,9 @@ sub initPlugin {
 	# don't test the connection if MIP integration is disabled
 	return unless $prefs->get('musicip'); 
 
-	$log->info("Testing for API on $MMSHost:$MMSport");
-
 	my $response = _syncHTTPRequest("/api/version");
+
+	$log->info("Testing for API on $MMSHost:$MMSport");
 
 	if ($response->is_error) {
 
