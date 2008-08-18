@@ -525,8 +525,6 @@ sub _ir_handler {
 	}
 
 	my ($irTime, $irCode) = unpack('NxxH8', $$data_ref);
-	
-	$client->trackJiffiesEpoch($irTime, Time::HiRes::time());
 
 	Slim::Hardware::IR::enqueue($client, $irCode, $irTime) if $client->irenable();
 
@@ -1250,8 +1248,6 @@ sub _button_handler {
 
 	# handle hard buttons
 	my ($time, $button) = unpack( 'NH8', $$data_ref);
-	
-	$client->trackJiffiesEpoch($time, Time::HiRes::time());
 
 	Slim::Hardware::IR::enqueue($client, $button, $time);
 
@@ -1264,8 +1260,6 @@ sub _knob_handler {
 
 	# handle knob movement
 	my ($time, $position, $sync) = unpack('NNC', $$data_ref);
-	
-	$client->trackJiffiesEpoch($time, Time::HiRes::time());
 
 	# Perl doesn't have an unsigned network long format.
 	if ($position & 1<<31) {
