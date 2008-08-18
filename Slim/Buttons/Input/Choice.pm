@@ -60,6 +60,8 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log = logger('player.ui');
+
 # TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
 our %browseCache = (); # remember where each client is browsing
 
@@ -334,8 +336,8 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 	
-	if ( logger('player.ui')->is_debug ) {
-		logger('player.ui')->debug(
+	if ( $log->is_debug ) {
+		$log->debug(
 			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
 		);
 	}

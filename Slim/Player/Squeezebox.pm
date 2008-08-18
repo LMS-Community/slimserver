@@ -30,6 +30,10 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log       = logger('network.protocol.slimproto');
+my $sourcelog = logger('player.source');
+my $directlog = logger('player.streaming.direct');
+
 # We inherit new() completely from our parent class.
 
 sub init {
@@ -47,8 +51,6 @@ sub reconnect {
 	my $tcpsock = shift;
 	my $reconnect = shift;
 	my $bytes_received = shift;
-	
-	my $log = logger('player.source');
 
 	$client->tcpsock($tcpsock);
 	$client->paddr($paddr);
@@ -89,7 +91,8 @@ sub reconnect {
 					$bytes_received = 0;
 				}
 				
-				$log->info($client->id . " restaring play on pseudo-reconnect at $bytes_received bytes");
+				$sourcelog->is_info && $sourcelog->info($client->id . " restaring play on pseudo-reconnect at $bytes_received bytes");
+				
 				Slim::Player::Source::playmode($client, "play", $bytes_received);
 	
 			} elsif ($client->playmode() eq 'pause') {
@@ -103,7 +106,7 @@ sub reconnect {
 
 			# Ensure that a new client is stopped, but only on sb2s
 			if ( $client->isa('Slim::Player::Squeezebox2') ) {
-				$log->info($client->id . " forcing stop on pseudo-reconnect");
+				$sourcelog->is_info && $sourcelog->info($client->id . " forcing stop on pseudo-reconnect");
 				$client->stop();
 			}
 		}
@@ -277,8 +280,6 @@ sub flush {
 sub buffering {
 	my ( $client, $threshold ) = @_;
 	
-	my $log = logger('player.source');
-	
 	# If the track has started, stop displaying buffering status
 	# trackStartTime is set to time() after a track start event
 	if ( $client->masterOrSelf->trackStartTime() > $client->bufferStarted() ) {
@@ -290,7 +291,7 @@ sub buffering {
 	
 	my $fullness = $client->bufferFullness();
 	
-	$log->info("Buffering... $fullness / $threshold");
+	$sourcelog->is_info && $sourcelog->info("Buffering... $fullness / $threshold");
 	
 	# Bug 1827, display better buffering feedback while we wait for data
 	my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
@@ -824,7 +825,6 @@ sub opened {
 sub stream {
 	my ($client, $command, $params) = @_;
 
-	my $log    = logger('network.protocol.slimproto');
 	my $format = $params->{'format'};
 
 	if ($client->opened()) {
@@ -833,9 +833,9 @@ sub stream {
 			$log->info(sprintf("stream called: $command paused: %s format: %s url: %s",
 				($params->{'paused'} || 'undef'), ($format || 'undef'), ($params->{'url'} || 'undef')
 			));
+			
+			#$log->debug( sub { bt(1) } );
 		}
-
-		$log->debug( sub { bt(1) } );
 
 		my $autostart = 1;
 
@@ -971,7 +971,7 @@ sub stream {
 				$pcmsamplesize = 0;
 			}
 			
-			logger('player.streaming.direct')->debug( "WMA PCM sample size set to $pcmsamplesize" );
+			$directlog->is_debug && $directlog->debug( "WMA PCM sample size set to $pcmsamplesize" );
 
 			$pcmsamplerate   = chr(1);
 			$pcmendian       = '?';
@@ -1022,10 +1022,7 @@ sub stream {
 			
 			if ($server_url) {
 
-				# Logger for direct streaming
-				my $log = logger('player.streaming.direct');
-
-				$log->info("This player supports direct streaming for $params->{'url'} as $server_url, let's do it.");
+				$directlog->is_info && $directlog->info("This player supports direct streaming for $params->{'url'} as $server_url, let's do it.");
 		
 				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
 				
@@ -1055,7 +1052,7 @@ sub stream {
 
 				if (!$server_port || !$server_ip) {
 
-					$log->info("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.");
+					$directlog->info("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.");
 
 					$client->failedDirectStream();
 					Slim::Networking::Slimproto::stop($client);
@@ -1063,8 +1060,10 @@ sub stream {
 
 				} else {
 
-					$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
-					$log->info("request string: $request_string");
+					if ( $directlog->is_info ) {
+						$directlog->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
+						$directlog->info("request string: $request_string");
+					}
 
 					$client->directURL($params->{url});
 				}
@@ -1108,7 +1107,7 @@ sub stream {
 			return;
 		}
 
-		if ( $log->is_info && $command eq 's' ) {
+		if ( $command eq 's' && $log->is_info ) {
 			$log->info(sprintf(
 				"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
 				$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
@@ -1147,7 +1146,7 @@ sub stream {
 			$bufferThreshold = 10;
 		}
 
-		$log->debug("flags: $flags");
+		$log->is_debug && $log->debug("flags: $flags");
 
 		my $transitionType = $prefs->client($client)->get('transitionType') || 0;
 		
@@ -1283,7 +1282,7 @@ sub sendFrame {
 		$frame = pack('n', $len + 4) . $type . $$dataRef;
 	}
 
-	logger('network.protocol.slimproto')->debug("sending squeezebox frame: $type, length: $len");
+	$log->is_debug && $log->debug("sending squeezebox frame: $type, length: $len");
 
 	$::perfmon && $client->slimprotoQLenLog()->log(Slim::Networking::Select::writeNoBlockQLen($client->tcpsock));
 
@@ -1311,11 +1310,6 @@ sub i2c {
 	my ($client, $data) = @_;
 
 	if ($client->opened()) {
-
-		if ( logger('network.protocol.slimproto')->is_debug ) {
-			logger('network.protocol.slimproto')->debug("sending " . length($data) . " bytes");
-		}
-
 		$client->sendFrame('i2cc', \$data);
 	}
 }

@@ -31,6 +31,9 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log       = logger('player.ui.screensaver');
+my $timerslog = logger('server.timers');
+
 our %functions = ();
 
 sub init {
@@ -72,18 +75,17 @@ sub screenSaver {
 	my $display = $client->display;
 
 	my $now  = Time::HiRes::time();
-	my $log  = logger('server.timers');
 	my $mode = Slim::Buttons::Common::mode($client);
 	
 	my $cprefs = $prefs->client($client);
 
 	assert($mode);
 
-	if ($log->is_info) {
+	if ( $timerslog->is_info ) {
 
 		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $cprefs->get('screensavertimeout');
 
-		$log->info("screenSaver idle display [$diff] (mode: [$mode])");
+		$timerslog->info("screenSaver idle display [$diff] (mode: [$mode])");
 	}
 
 	# some variables, to save us calling the same functions multiple times.
@@ -177,7 +179,7 @@ sub screenSaver {
 
 			} else {
 
-				logger('player.ui.screensaver')->warn("Mode [$savermode] not found, using default");
+				$log->warn("Mode [$savermode] not found, using default");
 
 				Slim::Buttons::Common::pushMode($client, 'screensaver');
 			}
@@ -202,7 +204,7 @@ sub screenSaver {
 
 			} else {
 
-				logger('player.ui.screensaver')->warn("Mode [$savermode] not found, using default");
+				$log->warn("Mode [$savermode] not found, using default");
 
 				if ($mode ne 'off') {
 					Slim::Buttons::Common::setMode($client, 'off');
@@ -271,7 +273,7 @@ sub wakeup {
 sub setMode {
 	my $client = shift;
 
-	logger('player.ui.screensaver')->debug("Going into screensaver mode.");
+	$log->is_debug && $log->debug("Going into screensaver mode.");
 
 	$client->lines( $client->customPlaylistLines() || \&Slim::Buttons::Playlist::lines );
 

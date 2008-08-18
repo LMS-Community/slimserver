@@ -39,6 +39,10 @@ use Slim::Utils::Strings qw(string);
 
 my $prefs = preferences('server');
 
+my $log        = logger('formats.audio');
+my $scannerlog = logger('scan.scanner');
+my $sourcelog  = logger('player.source');
+
 my %tagMapping = (
 	'Unique file identifier'            => 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ ALBUM ARTIST'          => 'ALBUMARTIST',
@@ -123,8 +127,8 @@ Extract and return audio information & any embedded metadata found.
 sub getTag {
 	my $class = shift;
 	my $file  = shift;
-
-	my $log   = logger('formats.audio');
+	
+	my $isDebug = $log->is_debug;
 
 	if (!$file) {
 
@@ -153,7 +157,7 @@ sub getTag {
 	# get_mp3tag, as we need custom logic.
 	my (%tags, %ape) = ();
 
-	$log->debug("Trying to read ID3v2 tags from $file");
+	$isDebug && $log->debug("Trying to read ID3v2 tags from $file");
 
 	# Always take a v2 tag if we have it.
 	MP3::Info::_get_v2tag($fh, 2, 0, \%tags);
@@ -162,7 +166,7 @@ sub getTag {
 	# tag properly, or it's bogus. Look for a ID3v1 tag.
 	if ((!scalar keys %tags) || (scalar keys %tags == 1 && defined $tags{'TAGVERSION'})) {
 
-		$log->debug("Didn't find any ID3v2 tags, trying v1 tags.");
+		$isDebug && $log->debug("Didn't find any ID3v2 tags, trying v1 tags.");
 
 		# Only use v1 tags if there are no v2 tags.
 		MP3::Info::_get_v1tag($fh, \%tags);
@@ -173,7 +177,7 @@ sub getTag {
 
 		if (scalar keys %ape) {
 
-			$log->debug("Found APE tags as well.");
+			$isDebug && $log->debug("Found APE tags as well.");
 
 			%tags = (%tags, %ape);
 		}
@@ -186,7 +190,7 @@ sub getTag {
 	# accessable. So try seeking in a bit further.
 	if (!scalar keys %$info) {
 
-		$log->debug("Didn't find audio information in first pass - trying harder.");
+		$isDebug && $log->debug("Didn't find audio information in first pass - trying harder.");
 
 		$MP3::Info::try_harder = 6;
 
@@ -298,7 +302,7 @@ sub getTag {
 			# SoundCheck did not find a gain value, restore previous value
 			$info->{'REPLAYGAIN_TRACK_GAIN'} = $rva_gain || $txxx_gain;
 			
-			$log->is_debug && $log->debug( 
+			$isDebug && $log->debug( 
 				'No iTunNORM SoundCheck data found, track gain set to '
 				. $info->{'REPLAYGAIN_TRACK_GAIN'}
 				. ' from '
@@ -306,7 +310,7 @@ sub getTag {
 			);
 		}
 		else {
-			$log->debug( 'iTunNORM SoundCheck data found, track gain set to ' . $info->{'REPLAYGAIN_TRACK_GAIN'} );
+			$isDebug && $log->debug( 'iTunNORM SoundCheck data found, track gain set to ' . $info->{'REPLAYGAIN_TRACK_GAIN'} );
 		}
 	}
 	
@@ -432,7 +436,7 @@ sub findFrameBoundaries {
 
 	close($mpeg);
 
-	logger('player.source')->debug("start: [$start] end: [$end]");
+	$sourcelog->is_debug && $sourcelog->debug("start: [$start] end: [$end]");
 
 	if (defined $seek) {
 		return ($start, $end);
@@ -489,7 +493,6 @@ sub scanBitrate {
 	
 	# We can also read ID3 tags from this header to use for title information
 	my %tags  = ();
-	my $log   = logger('scan.scanner');
 
 	if ( !MP3::Info::_get_v2tag( $fh, 2, 0, \%tags ) ) {
 
@@ -522,8 +525,8 @@ sub scanBitrate {
 			},
 		});
 		
-		if ( $log->is_debug ) {
-			$log->debug("Read ID3 tags from stream: " . Data::Dump::dump(\%tags));
+		if ( $scannerlog->is_debug ) {
+			$scannerlog->debug("Read ID3 tags from stream: " . Data::Dump::dump(\%tags));
 		}
 		
 		my $title = $tags{TITLE};
@@ -551,7 +554,7 @@ sub scanBitrate {
 				$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
 			}
 			
-			$log->debug( 'Found embedded cover art, saving for ' . $track->url );
+			$scannerlog->is_debug && $scannerlog->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
 	}
 
@@ -589,7 +592,7 @@ sub scanBitrate {
 		my $mfs = $frame->sample / ( $frame->version ? 144000 : 72000 );
 		my $bitrate = sprintf "%.0f", $vbr->{bytes} / $vbr->{frames} * $mfs;
 		
-		$log->debug("Found Xing VBR header in stream, bitrate: $bitrate kbps VBR");
+		$scannerlog->is_debug && $scannerlog->debug("Found Xing VBR header in stream, bitrate: $bitrate kbps VBR");
 		
 		return ($bitrate * 1000, 1);
 	}
@@ -617,14 +620,14 @@ sub scanBitrate {
 			$vbr = 1;
 		}
 		
-		if ( $log->is_debug ) {
-			$log->debug("Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ));
+		if ( $scannerlog->is_debug ) {
+			$scannerlog->debug("Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ));
 		}
 		
 		return ($avg * 1000, $vbr);
 	}
 	
-	$log->warn("Unable to find any MP3 frames in stream!");
+	$scannerlog->warn("Unable to find any MP3 frames in stream!");
 
 	return (-1, undef);
 }	

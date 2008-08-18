@@ -25,7 +25,9 @@ use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
 
-my $log = logger('player.streaming.remote');
+my $log       = logger('player.streaming.remote');
+my $directlog = logger('player.streaming.direct');
+my $sourcelog = logger('player.source');
 
 sub new {
 	my $class = shift;
@@ -163,8 +165,8 @@ sub canDirectStream {
 		# stream for all players
 		if ( Slim::Player::Sync::isSynced($client) ) {
 
-			if ( logger('player.streaming.direct')->is_info ) {
-				logger('player.streaming.direct')->info(sprintf(
+			if ( $directlog->is_info ) {
+				$directlog->info(sprintf(
 					"[%s] Not direct streaming because player is synced", $client->id
 				));
 			}
@@ -175,7 +177,7 @@ sub canDirectStream {
 		# Allow user pref to select the method for streaming
 		if ( my $method = preferences('server')->client($client)->get('mp3StreamingMethod') ) {
 			if ( $method == 1 ) {
-				logger('player.streaming.direct')->debug("Not direct streaming because of mp3StreamingMethod pref");
+				$directlog->debug("Not direct streaming because of mp3StreamingMethod pref");
 				return 0;
 			}
 		}
@@ -237,11 +239,13 @@ sub sysread {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 	
+	my $isDebug = $directlog->is_debug;
+	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 	
 	foreach my $header (@headers) {
 	
-		logger('player.streaming.direct')->debug("header-ds: $header");
+		$isDebug && $directlog->debug("header-ds: $header");
 
 		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {
 			
@@ -285,11 +289,11 @@ sub parseDirectHeaders {
 	}
 	
 	if ( $length && $contentType eq 'mp3' ) {
-		logger('player.streaming.direct')->debug("Stream supports seeking");
+		$directlog->debug("Stream supports seeking");
 		$client->scanData->{mp3_can_seek} = 1;
 	}
 	else {
-		logger('player.streaming.direct')->debug("Stream does not support seeking");
+		$directlog->debug("Stream does not support seeking");
 		delete $client->scanData->{mp3_can_seek};
 	}
 	
@@ -412,8 +416,6 @@ sub scanHTTPTrack {
 	
 	$client = $client->masterOrSelf;
 	
-	my $log = logger('player.source');
-	
 	# Clear previous playlist entry if any
 	$client->remotePlaylistCurrentEntry( undef );
 	
@@ -425,14 +427,14 @@ sub scanHTTPTrack {
 			
 			if ( $track ) {
 				
-				if ( $log->is_debug ) {
-					$log->debug( "Remote scan finished for " . $track->url );
+				if ( $sourcelog->is_debug ) {
+					$sourcelog->debug( "Remote scan finished for " . $track->url );
 				}
 				
 				# An HTTP URL may really be an MMS URL,
 				# check now and if so, change the URL before playback
 				if ( $track->content_type eq 'wma' ) {
-					$log->debug( "Changing URL to MMS protocol: $nextURL" );
+					$sourcelog->debug( "Changing URL to MMS protocol: $nextURL" );
 					my $mmsURL = $nextURL;
 					$mmsURL =~ s/^http/mms/i;
 					$track->url( $mmsURL );
@@ -445,7 +447,7 @@ sub scanHTTPTrack {
 				for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
 					my $itemURL = blessed($item) ? $item->url : $item;
 					if ( $itemURL eq $nextURL ) {
-						$log->debug( "Replacing playlist item $i with new track object" );
+						$sourcelog->debug( "Replacing playlist item $i with new track object" );
 						splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, $track;
 						last;
 					}
@@ -455,7 +457,7 @@ sub scanHTTPTrack {
 				$callback->();
 			}
 			else {
-				$log->debug( "Remote scanning returned error: $error" );
+				$sourcelog->debug( "Remote scanning returned error: $error" );
 				
 				my $line1;
 				$error ||= 'PROBLEM_OPENING_REMOTE_URL';

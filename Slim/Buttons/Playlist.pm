@@ -33,6 +33,9 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log         = logger('player.ui');
+my $playlistlog = logger('player.playlist');
+
 our %functions = ();
 my %playlistParams = ();
 
@@ -72,8 +75,8 @@ sub init {
 					playlistNowPlaying($client, 0);
 				}
 
-				if ( logger('player.ui')->is_debug ) {
-					logger('player.ui')->debug(
+				if ( $log->is_debug ) {
+					$log->debug(
 						"funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]",
 						browseplaylistindex($client)
 					);
@@ -407,7 +410,7 @@ sub jump {
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
 	
-		logger('player.playlist')->info("Jumping to song index: $pos");
+		$playlistlog->info("Jumping to song index: $pos");
 	
 		browseplaylistindex($client,$pos);
 	}
@@ -564,9 +567,7 @@ The optional argument, $playlistindex sets the zero-based position for browsing 
 sub browseplaylistindex {
 	my $client = shift;
 
-	my $log = logger('player.playlist');
-
-	if ($log->is_debug && @_) {
+	if ( @_ && $playlistlog->is_debug ) {
 
 		$log->debug("New playlistindex: $_[0]");
 	}

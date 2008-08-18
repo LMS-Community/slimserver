@@ -20,6 +20,8 @@ use base qw(Slim::Player::Player);
 
 my $prefs = preferences('server');
 
+my $log = logger('network.protocol.slimp3');
+
 our $SLIMP3Connected = 0;
 
 our $defaultPrefs = {
@@ -45,7 +47,7 @@ sub new {
 	# Load these modules on the fly to save approx 700k of memory.
 	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::SliMP3::Stream Slim::Display::Text)) {
 
-		logger('network.protocol.slimp3')->info("Loading module: $module");
+		$log->info("Loading module: $module");
 
 		Slim::bootstrap::tryModuleLoad($module);
 
@@ -238,8 +240,8 @@ sub udpstream {
 sub i2c {
 	my ($client, $data) = @_;
 
-	if ( logger('network.protocol.slimp3')->is_debug ) {
-		logger('network.protocol.slimp3')->debug(sprintf("sending [%d] bytes", length($data)));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("sending [%d] bytes", length($data)));
 	}
 
 	send($client->udpsock, '2                 '.$data, 0, $client->paddr);
@@ -257,8 +259,8 @@ sub volume {
 	
 		my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume) ** 2));
 		
-		if ( logger('network.protocol.slimp3')->is_debug ) {
-			logger('network.protocol.slimp3')->debug($client->id() . " volume: newvolume=$newvolume volume=$volume level=$level");
+		if ( $log->is_debug ) {
+			$log->debug($client->id() . " volume: newvolume=$newvolume volume=$volume level=$level");
 		}
 		
 		$client->i2c(

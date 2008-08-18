@@ -61,6 +61,9 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Network ();
 
 my $prefs = preferences('server');
+
+my $scannerlog = logger('scan.scanner');
+
 my $canFollowAlias = 0;
 
 if ( !main::SLIM_SERVICE ) {
@@ -1153,13 +1156,13 @@ sub findAndScanDirectoryTree {
 	my $fsMTime = (stat($path))[9] || 0;
 	my $dbMTime = $topLevelObj->timestamp || 0;
 	
-	logger('scan.scanner')->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
+	$scannerlog->is_debug && $scannerlog->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
 
 	if ($fsMTime != $dbMTime) {
 
-		if ( logger('scan.scanner')->is_info ) {
-			logger('scan.scanner')->info("mtime db: $dbMTime : " . localtime($dbMTime));
-			logger('scan.scanner')->info("mtime fs: $fsMTime : " . localtime($fsMTime));
+		if ( $scannerlog->is_info ) {
+			$scannerlog->info("mtime db: $dbMTime : " . localtime($dbMTime));
+			$scannerlog->info("mtime fs: $fsMTime : " . localtime($fsMTime));
 		}
 
 		# Update the mtime in the db.

@@ -54,6 +54,8 @@ use Slim::Utils::Misc;
 
 my $prefs = preferences('server');
 
+my $log = logger('player.ui');
+
 Slim::Buttons::Common::addMode('INPUT.List', getFunctions(), \&setMode);
 
 ###########################
@@ -171,8 +173,8 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 
-	if ( logger('player.ui')->is_debug ) {
-		logger('player.ui')->debug(
+	if ( $log->is_debug ) {
+		$log->debug(
 			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
 		);
 	}

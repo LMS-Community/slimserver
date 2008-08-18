@@ -31,6 +31,8 @@ use Slim::Utils::Progress;
 
 my $prefs = preferences('server');
 
+my $sqllog = logger('database.sql');
+
 our %additionalLinks = ();
 
 our %hierarchy = (
@@ -230,15 +232,15 @@ sub addLibraryStats {
 		$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 	};
 	if ( $@ ) {
-		logger('database.sql')->error("Error building library counts: $@");
+		$sqllog->error("Error building library counts: $@");
 		
 		$params->{'song_count'}   = 0;
 		$params->{'album_count'}  = 0;
 		$params->{'artist_count'} = 0;
 	}
 
-	if ( logger('database.sql')->is_info ) {
-		logger('database.sql')->info(sprintf("(Level: $level, previousLevel: $previousLevel) Found %s, %s & %s", 
+	if ( $sqllog->is_info ) {
+		$sqllog->info(sprintf("(Level: $level, previousLevel: $previousLevel) Found %s, %s & %s", 
 			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 		));
 	}

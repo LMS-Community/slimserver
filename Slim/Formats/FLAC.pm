@@ -37,6 +37,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
+my $log       = logger('formats.playlists');
+my $sourcelog = logger('player.source');
+
 my %tagMapping = (
 	'TRACKNUMBER'               => 'TRACKNUM',
 	'DISCNUMBER'                => 'DISC',
@@ -451,7 +454,6 @@ sub _getXMLTags {
 
 	# grab artist info
 	my $artistHash = {};
-	my $log = logger('formats.playlists');
 
 	while ($xml =~ s|<mm:Artist\s+rdf:about="([^"]+)">(.+?)</mm:Artist>||s) { #"
 
@@ -476,7 +478,7 @@ sub _getXMLTags {
 			$artistHash->{$artistid}->{'ARTISTSORT'} = $1;
 		}
 
-		$log->debug($message);
+		$log->is_debug && $log->debug($message);
 	}
 
 	# $tracks is keyed to the cuesheet TRACK number, which is sequential
@@ -487,7 +489,7 @@ sub _getXMLTags {
 
 		my $tracknumber = 0;
 
-		$log->debug("    ALBUM: " . $albumHash->{$album}->{'ALBUM'});
+		$log->is_debug && $log->debug("    ALBUM: " . $albumHash->{$album}->{'ALBUM'});
 
 		for my $track (@{$albumHash->{$album}->{'TRACKLIST'}}) {
 
@@ -500,11 +502,11 @@ sub _getXMLTags {
 				next;
 			}
 
-			$log->debug("    processing track $cuesheetTrack -- $track");
+			$log->is_debug && $log->debug("    processing track $cuesheetTrack -- $track");
 
 			$tracks->{$cuesheetTrack}->{'TRACKNUM'} = $tracknumber;
 
-			$log->debug("    TRACKNUM: $tracknumber");
+			$log->is_debug && $log->debug("    TRACKNUM: $tracknumber");
 
 			%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$albumHash->{$album}});
 
@@ -516,14 +518,14 @@ sub _getXMLTags {
 
 					$tracks->{$cuesheetTrack}->{'TITLE'} = $1;
 
-					$log->debug("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'});
+					$log->is_debug && $log->debug("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'});
 				}
 
 				if ($trackSegment =~ m|<dc:creator rdf:resource="([^"]+)"/>|s) { #"
 
 					%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$artistHash->{$1}});
 
-					$log->debug("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'});
+					$log->is_debug && $log->debug("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'});
 				}
 			}
 
@@ -538,6 +540,8 @@ sub _getXMLTags {
 
 sub _getNumberedVCs {
 	my ($class, $flac, $tracks) = @_;
+	
+	my $isDebug = $log->is_debug;
 
 	# parse numbered vorbis comments
 	# this looks for parenthetical numbers on comment keys, and
@@ -586,8 +590,6 @@ sub _getNumberedVCs {
 		$cuetracks++ if $track =~ /^\s*TRACK/i;
 	}
 
-	my $log = logger('formats.playlists');
-
 	if ($titletags != $cuetracks) {
 
 		logError("This file has tags for $titletags tracks but the cuesheet has $cuetracks tracks");
@@ -609,7 +611,7 @@ sub _getNumberedVCs {
 			my $tkey  = uc($1);
 			my $value = $2;
 
-			$log->debug("matched: $tkey = $value");
+			$isDebug && $log->debug("matched: $tkey = $value");
 
 			# Match track number
 			my $group;
@@ -618,7 +620,7 @@ sub _getNumberedVCs {
 				$tkey = $1;
 				$group = $2 + 0;
 
-				$log->debug("grouped as track $group");
+				$isDebug && $log->debug("grouped as track $group");
 			}
 
 			if (defined $group) {
@@ -644,6 +646,8 @@ sub _getNumberedVCs {
 
 sub _getCDDBTags {
 	my ($class, $flac, $tracks) = @_;
+	
+	my $isDebug = $log->is_debug;
 
 	my $items = 0;
 
@@ -656,7 +660,6 @@ sub _getCDDBTags {
 	my $order = 'standard';
 
 	my $tags  = $flac->tags() || {};
-	my $log   = logger('formats.playlists');
 
 	# Detect CDDB style tags by presence of DTITLE, or return.
 	if (!defined $tags->{'DTITLE'}) {
@@ -670,8 +673,8 @@ sub _getCDDBTags {
 
 		delete $tags->{'DTITLE'};
 
-		$log->debug("    ARTIST: $tags->{'ARTIST'}");
-		$log->debug("    ALBUM: $tags->{'ALBUM'}");
+		$isDebug && $log->debug("    ARTIST: $tags->{'ARTIST'}");
+		$isDebug && $log->debug("    ALBUM: $tags->{'ALBUM'}");
 	}
 
 	if (exists $tags->{'DGENRE'}) {
@@ -679,7 +682,7 @@ sub _getCDDBTags {
 		$tags->{'GENRE'} = $tags->{'DGENRE'};
 		delete $tags->{'DGENRE'};
 
-		$log->debug("    GENRE: $tags->{'GENRE'}");
+		$isDebug && $log->debug("    GENRE: $tags->{'GENRE'}");
 	}
 
 	if (exists $tags->{'DYEAR'}) {
@@ -687,7 +690,7 @@ sub _getCDDBTags {
 		$tags->{'YEAR'} = $tags->{'DYEAR'};
 		delete $tags->{'DYEAR'};
 
-		$log->debug("    YEAR: $tags->{'YEAR'}");
+		$isDebug && $log->debug("    YEAR: $tags->{'YEAR'}");
 	}
 
 	# grab the cuesheet and process the individual tracks
@@ -708,7 +711,7 @@ sub _getCDDBTags {
 					$tracks->{$tracknum}->{'TITLE'} = $1;
 				}
 
-				$log->debug("    ARTIST: $tracks->{$tracknum}->{'ARTIST'}");
+				$isDebug && $log->debug("    ARTIST: $tracks->{$tracknum}->{'ARTIST'}");
 
 			} else {
 
@@ -718,8 +721,8 @@ sub _getCDDBTags {
 
 			$tracks->{$tracknum}->{'TRACKNUM'} = $tracknum;
 
-			$log->debug("    TITLE: $tracks->{$tracknum}->{'TITLE'}");
-			$log->debug("    TRACKNUM: $tracks->{$tracknum}->{'TRACKNUM'}");
+			$isDebug && $log->debug("    TITLE: $tracks->{$tracknum}->{'TITLE'}");
+			$isDebug && $log->debug("    TRACKNUM: $tracks->{$tracknum}->{'TRACKNUM'}");
 
 			delete $tags->{$key};
 
@@ -1001,9 +1004,8 @@ sub _isFLACHeader {
 		     $sample_size == 0x7 ||
 		     $padding);
 	
-	my $log = logger('player.source');
-	if ( $log->is_debug ) {
-		$log->debug( "Found FLAC header: block_size: $block_size, sample_rate: $sample_rate, channel: $channel, sample_size: $sample_size, padding: $padding" );
+	if ( $sourcelog->is_debug ) {
+		$sourcelog->debug( "Found FLAC header: block_size: $block_size, sample_rate: $sample_rate, channel: $channel, sample_size: $sample_size, padding: $padding" );
 	}
 	
 	my $len = 4;
@@ -1083,9 +1085,8 @@ sub _seekNextFrame {
 	}
 
 	my $seekto = ($direction == 1) ? $startoffset : $startoffset - $MAXDISTANCE;
-	my $log    = logger('player.source');
 
-	$log->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
+	$sourcelog->is_debug && $sourcelog->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
 
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread($fh, my $buf, $MAXDISTANCE, 0);
@@ -1094,7 +1095,7 @@ sub _seekNextFrame {
 
 	if ($len < 16) {
 
-		$log->warn("Got less than 16 bytes");
+		$sourcelog->warn("Got less than 16 bytes");
 
 		return 0;
 	}
@@ -1109,7 +1110,7 @@ sub _seekNextFrame {
 		$end   = 0;
 	}
 
-	$log->debug("Scanning: len = $len, start = $start, end = $end");
+	$sourcelog->is_debug && $sourcelog->debug("Scanning: len = $len, start = $start, end = $end");
 
 	for (my $pos = $start; $pos != $end; $pos += $direction) {
 
@@ -1125,12 +1126,12 @@ sub _seekNextFrame {
 
 		my $found_at_offset = $seekto + $pos;
 
-		$log->debug("Found frame header at $found_at_offset");
+		$sourcelog->is_debug && $sourcelog->debug("Found frame header at $found_at_offset");
 
 		return $found_at_offset;
 	}
 
-	$log->warn("Couldn't find any frame header");
+	$sourcelog->warn("Couldn't find any frame header");
 
 	return 0;
 }
