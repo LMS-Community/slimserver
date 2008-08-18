@@ -1954,6 +1954,9 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 				timeout: 3000,
 				disableCaching: true,
 				success: this._updatePage,
+				failure: function() {
+					progressTimer.delay(5000);
+				},
 				scope: this
 			});
 			
