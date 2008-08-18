@@ -1763,8 +1763,6 @@ sub normalize {
 # execute the request
 sub execute {
 	my $self = shift;
-	
-	$log->debug('Enter');
 
 	if ($log->is_info) {
 		$self->dump("Request");

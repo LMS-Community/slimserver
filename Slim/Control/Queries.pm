@@ -60,8 +60,6 @@ my $cache = {};
 sub alarmsQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['alarms']])) {
 		$request->setStatusBadDispatch();
@@ -126,8 +124,6 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -519,8 +515,6 @@ sub albumsQuery {
 sub artistsQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['artists']])) {
 		$request->setStatusBadDispatch();
@@ -838,8 +832,6 @@ sub artistsQuery {
 
 sub cursonginfoQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre',
@@ -902,8 +894,6 @@ sub cursonginfoQuery {
 
 sub connectedQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['connected']])) {
@@ -922,8 +912,6 @@ sub connectedQuery {
 
 sub debugQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['debug']])) {
@@ -957,8 +945,6 @@ sub debugQuery {
 
 sub displayQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['display']])) {
@@ -980,8 +966,6 @@ sub displayQuery {
 
 sub displaynowQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['displaynow']])) {
@@ -1183,8 +1167,6 @@ sub _displaystatusCleanupEmulated {
 
 sub genresQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['genres']])) {
@@ -1400,8 +1382,6 @@ sub genresQuery {
 
 sub getStringQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['getstring']])) {
@@ -1422,8 +1402,6 @@ sub getStringQuery {
 
 sub infoTotalQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs']])) {
@@ -1456,8 +1434,6 @@ sub infoTotalQuery {
 
 sub irenableQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['irenable']])) {
@@ -1476,8 +1452,6 @@ sub irenableQuery {
 
 sub linesperscreenQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['linesperscreen']])) {
@@ -1496,8 +1470,6 @@ sub linesperscreenQuery {
 
 sub mixerQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
@@ -1524,8 +1496,6 @@ sub mixerQuery {
 
 sub modeQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mode']])) {
@@ -1903,8 +1873,6 @@ sub musicfolderQuery {
 sub nameQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['name']])) {
 		$request->setStatusBadDispatch();
@@ -1922,8 +1890,6 @@ sub nameQuery {
 
 sub playerXQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'isplayer', 'canpoweroff', 'uuid']])) {
@@ -1991,8 +1957,6 @@ sub playerXQuery {
 
 sub playersQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['players']])) {
@@ -2067,8 +2031,6 @@ sub playersQuery {
 
 sub playlistPlaylistsinfoQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['playlistsinfo']])) {
@@ -2099,8 +2061,6 @@ sub playlistPlaylistsinfoQuery {
 
 sub playlistXQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
@@ -2178,9 +2138,7 @@ sub playlistXQuery {
 
 sub playlistsTracksQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
-
+	
 	# check this is the correct query.
 	# "playlisttracks" is deprecated (July 06).
 	if ($request->isNotQuery([['playlisttracks']]) &&
@@ -2343,8 +2301,6 @@ sub playlistsTracksQuery {
 sub playlistsQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['playlists']])) {
 		$request->setStatusBadDispatch();
@@ -2500,8 +2456,6 @@ sub playlistsQuery {
 
 sub playerprefQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playerpref']])) {
@@ -2533,8 +2487,6 @@ sub playerprefQuery {
 
 sub playerprefValidateQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playerpref'], ['validate']])) {
@@ -2567,8 +2519,6 @@ sub playerprefValidateQuery {
 
 sub powerQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['power']])) {
@@ -2587,8 +2537,6 @@ sub powerQuery {
 
 sub prefQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['pref']])) {
@@ -2619,8 +2567,6 @@ sub prefQuery {
 
 sub prefValidateQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['pref'], ['validate']])) {
@@ -2652,8 +2598,6 @@ sub prefValidateQuery {
 
 sub rateQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rate']])) {
@@ -2778,8 +2722,6 @@ sub readDirectoryQuery {
 
 sub rescanQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rescan']])) {
@@ -2797,8 +2739,6 @@ sub rescanQuery {
 
 sub rescanprogressQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rescanprogress']])) {
@@ -2849,8 +2789,6 @@ sub rescanprogressQuery {
 
 sub searchQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['search']])) {
@@ -3157,8 +3095,6 @@ sub serverstatusQuery {
 
 sub signalstrengthQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['signalstrength']])) {
@@ -3177,8 +3113,6 @@ sub signalstrengthQuery {
 
 sub sleepQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sleep']])) {
@@ -3574,8 +3508,6 @@ sub statusQuery {
 # XXX: deprecated
 sub songinfoQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['songinfo']])) {
@@ -4191,8 +4123,6 @@ sub songinfoQuery {
 
 sub syncQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sync']])) {
@@ -4220,8 +4150,6 @@ sub syncQuery {
 
 sub timeQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['time', 'gototime']])) {
@@ -4239,8 +4167,6 @@ sub timeQuery {
 
 sub titlesQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -4569,8 +4495,6 @@ sub titlesQuery {
 
 sub versionQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['version']])) {
@@ -4588,8 +4512,6 @@ sub versionQuery {
 
 sub yearsQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['years']])) {
@@ -4775,8 +4697,6 @@ sub dynamicAutoQuery {
 	my $query   = shift || return;             # query name
 	my $funcptr = shift;                       # data returned by addDispatch
 	my $data    = shift || return;             # data to add to results
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query]])) {
@@ -5571,8 +5491,6 @@ sub _songData {
 }
 
 sub _playAll {
-
-	$log->info('Begin function');
 	my %args       = @_;
 	my $start      = $args{'start'};
 	my $end        = $args{'end'};

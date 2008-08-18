@@ -61,9 +61,6 @@ sub alarmCommand {
 	# functions designed to execute requests have a single parameter, the
 	# Request object
 	my $request = shift;
-	
-	# this is convenient to check the mapping in debug mode.
-	$log->debug("Begin Function");
 
 	# check this is the correct command. In theory this should never happen
 	# but we check anyway since it is easy to err in the big dispatch table.
@@ -248,8 +245,6 @@ sub alarmCommand {
 
 sub buttonCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['button']])) {
@@ -326,8 +321,6 @@ sub clientConnectCommand {
 
 sub clientForgetCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotCommand([['client'], ['forget']])) {
@@ -358,8 +351,6 @@ sub clientForgetCommand {
 
 sub debugCommand {
 	my $request = shift;
-
-	$log->debug("Begin Function");
 
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotCommand([['debug']])) {
@@ -398,8 +389,6 @@ sub debugCommand {
 # this is done by doing a "connect" call to the remote server
 sub disconnectCommand {
 	my $request = shift;
-
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['disconnect']])) {
@@ -450,8 +439,6 @@ sub disconnectCommand {
 
 sub displayCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['display']])) {
@@ -482,8 +469,6 @@ sub displayCommand {
 
 sub irCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['ir']])) {
@@ -509,8 +494,6 @@ sub irCommand {
 
 sub irenableCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['irenable']])) {
@@ -536,8 +519,6 @@ sub irenableCommand {
 
 sub mixerCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch', 'stereoxl']])) {
@@ -631,7 +612,6 @@ sub mixerCommand {
 
 sub nameCommand {
 	my $request = shift;
-	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['name']])) {
 		$request->setStatusBadDispatch();
@@ -661,8 +641,6 @@ sub nameCommand {
 
 sub playcontrolCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	# "mode" is deprecated
@@ -750,8 +728,6 @@ sub playcontrolCommand {
 
 sub playlistClearCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['clear']])) {
@@ -791,8 +767,6 @@ sub playlistClearCommand {
 
 sub playlistDeleteCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['delete']])) {
@@ -835,8 +809,6 @@ sub playlistDeleteCommand {
 
 sub playlistDeleteitemCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['deleteitem']])) {
@@ -917,8 +889,6 @@ sub playlistDeleteitemCommand {
 
 sub playlistJumpCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['jump', 'index']])) {
@@ -996,8 +966,6 @@ sub playlistJumpCommand {
 
 sub playlistMoveCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['move']])) {
@@ -1028,8 +996,6 @@ sub playlistMoveCommand {
 
 sub playlistRepeatCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['repeat']])) {
@@ -1054,8 +1020,6 @@ sub playlistRepeatCommand {
 
 sub playlistSaveCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['save']])) {
@@ -1126,8 +1090,6 @@ sub playlistSaveCommand {
 
 sub playlistShuffleCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['shuffle']])) {
@@ -1157,8 +1119,6 @@ sub playlistShuffleCommand {
 
 sub playlistXalbumCommand {
 	my $request = shift;
-
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['playalbum', 'loadalbum', 'addalbum', 'insertalbum', 'deletealbum']])) {
@@ -1209,8 +1169,6 @@ sub playlistXalbumCommand {
 
 sub playlistXitemCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['add', 'append', 'insert', 'insertlist', 'load', 'play', 'resume']])) {
@@ -1498,8 +1456,6 @@ sub playlistXitemCommand {
 sub playlistXitemCommand_done {
 	my ( $client, $request, $path ) = @_;
 
-	$log->debug("Begin Function");
-
 	# The callback, if any, will be called by _load/_insert_done, so
 	# don't call it now
 	# Hmm, in fact the request is not done until load/insert is called.
@@ -1519,8 +1475,6 @@ sub playlistXitemCommand_done {
 
 sub playlistXtracksCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['playtracks', 'loadtracks', 'addtracks', 'inserttracks', 'deletetracks']])) {
@@ -1624,8 +1578,6 @@ sub playlistXtracksCommand {
 
 sub playlistZapCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['zap']])) {
@@ -1910,8 +1862,6 @@ sub playlistcontrolCommand {
 
 sub playlistsEditCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['edit']])) {
@@ -2070,8 +2020,6 @@ sub playlistsEditCommand {
 
 sub playlistsDeleteCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['delete']])) {
@@ -2124,8 +2072,6 @@ sub playlistsDeleteCommand {
 
 sub playlistsNewCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['new']])) {
@@ -2187,8 +2133,6 @@ sub playlistsNewCommand {
 
 sub playlistsRenameCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['rename']])) {
@@ -2265,8 +2209,6 @@ sub playlistsRenameCommand {
 
 sub playerprefCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['playerpref']])) {
 		$request->setStatusBadDispatch();
@@ -2298,8 +2240,6 @@ sub playerprefCommand {
 
 sub powerCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['power']])) {
@@ -2346,8 +2286,6 @@ sub powerCommand {
 
 sub prefCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['pref']])) {
 		$request->setStatusBadDispatch();
@@ -2378,8 +2316,6 @@ sub prefCommand {
 
 sub rateCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['rate']])) {
@@ -2409,8 +2345,6 @@ sub rateCommand {
 
 sub rescanCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['rescan']])) {
 		$request->setStatusBadDispatch();
@@ -2441,8 +2375,6 @@ sub rescanCommand {
 
 sub showCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['show']])) {
@@ -2516,8 +2448,6 @@ sub showCommand {
 
 sub sleepCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['sleep']])) {
@@ -2594,8 +2524,6 @@ sub sleepCommand {
 
 sub syncCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['sync']])) {
@@ -2638,8 +2566,6 @@ sub syncCommand {
 
 sub timeCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	# "gototime" is deprecated
@@ -2665,8 +2591,6 @@ sub timeCommand {
 
 sub wipecacheCommand {
 	my $request = shift;
-	
-	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['wipecache']])) {
 		$request->setStatusBadDispatch();
@@ -2694,8 +2618,6 @@ sub wipecacheCommand {
 
 sub ratingCommand {
 	my $request = shift;
-
-	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ( $request->isNotCommand( [['rating']] ) ) {
@@ -2761,8 +2683,6 @@ sub ratingCommand {
 sub _sleepStartFade {
 	my $client = shift;
 	my $fadeDuration = shift;
-
-	$log->debug("Begin Function");
 	
 	if ($client->isPlayer()) {
 		$client->fade_volume(-$fadeDuration);
@@ -2771,8 +2691,6 @@ sub _sleepStartFade {
 
 sub _sleepPowerOff {
 	my $client = shift;
-	
-	$log->debug("Begin Function");
 
 	$client->sleepTime(0);
 	$client->currentSleepTime(0);
@@ -2785,15 +2703,11 @@ sub _sleepPowerOff {
 sub _mixer_mute {
 	my $client = shift;
 
-	$log->debug("Begin Function");
-
 	$client->mute();
 }
 
 sub _playlistXitem_load_done {
 	my ($client, $index, $request, $count, $url, $error, $noShuffle) = @_;
-
-	$log->debug("Begin Function");
 	
 	# dont' keep current song on loading a playlist
 	if ( !$noShuffle ) {
@@ -2823,8 +2737,6 @@ sub _playlistXitem_load_done {
 
 sub _insert_done {
 	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
-
-	$log->debug("Begin Function");
 
 	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
 	my @reshuffled;
@@ -2880,8 +2792,6 @@ sub _playlistXalbum_singletonRef {
 sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
-
-	$log->debug("Begin Function");
 
 	# if there isn't an = sign, then change the first : to a =
 	if ($what !~ /=/) {
@@ -3090,7 +3000,7 @@ sub _playlistXtracksCommand_constructTrackList {
 	my $client  = shift;
 	my $term    = shift;
 	my $list    = shift;
-	$log->debug("Begin Function");
+	
 	my @list = split /,/, $list;
 	my @tracks = ();
 	for my $url ( @list ) {
@@ -3107,8 +3017,6 @@ sub _playlistXtracksCommand_parseListRef {
 	my $term    = shift;
 	my $listRef = shift;
 
-	$log->debug("Begin Function");
-
 	if ($term =~ /listref=(\w+)&?/i) {
 		$listRef = $client->modeParam($1);
 	}
@@ -3123,8 +3031,6 @@ sub _playlistXtracksCommand_parseSearchRef {
 	my $client    = shift;
 	my $term      = shift;
 	my $searchRef = shift;
-
-	$log->debug("Begin Function");
 
 	if ($term =~ /searchRef=(\w+)&?/i) {
 		$searchRef = $client->modeParam($1);
@@ -3150,8 +3056,6 @@ sub _playlistXtracksCommand_parseDbItem {
 	my %classes;
 	my $class   = 'Track';
 	my $obj     = undef;
-
-	$log->debug("Begin Function");
 
 	# Bug: 2569
 	# We need to ask for the right type of object.
@@ -3224,8 +3128,6 @@ sub _playlistXtracksCommand_parseDbItem {
 
 sub _showCommand_done {
 	my $args = shift;
-	
-	$log->debug("Begin Function");
 
 	my $request = $args->{'request'};
 	my $client = $request->client();
