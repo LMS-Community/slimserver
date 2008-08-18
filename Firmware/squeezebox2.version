@@ -3,8 +3,8 @@
 # from        to
 # from1..from2 to
 
-1..111 111
+1..112 112
 
 # future versions may be downgraded to this one
-* 111
+* 112
 
