@@ -1989,18 +1989,20 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 
 					}
 				}
+				
+				// hide results from previous scans
+				for (var i=scans.length; i<=10; i++) {
+					Ext.get('progress'+i).setDisplayed(false);
+				}
 			}
 
-			if (result['message']) {
-				if (result['total_time'])
-					Ext.get('message').update(result.message + ' ' + SqueezeJS.string('total_time') + '&nbsp;' + result.total_time);
-
-				else
-					Ext.get('message').update(result.message);
-			} 
+			if (result.message && result['total_time'])
+				Ext.get('message').update(result.message + ' ' + SqueezeJS.string('total_time') + '&nbsp;' + result.total_time);
 
 			else
-				progressTimer.delay(5000)
+				Ext.get('message').update(result.message);
+
+			progressTimer.delay(5000)
 		}
 	};
 }();
