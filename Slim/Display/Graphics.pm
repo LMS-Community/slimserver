@@ -29,8 +29,6 @@ use base qw(Slim::Display::Display);
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
-use Memoize;
-
 my $prefs = preferences('server');
 
 # constants
@@ -594,13 +592,6 @@ sub measureText {
 # $midpoint specifies the position of the divider from 0-100 (use 0 for progressBar)
 # $reverse reverses fill for progressBar only (0 midpoint)
 
-# Cache results of sliderBar as it doesn't need to be recomputed each time
-memoize( 'sliderBar', NORMALIZER => 'sliderBar_key' );
-
-sub sliderBar_key {
-	join( ',', shift->vfdmodel, @_ );
-}
-
 sub sliderBar {
 	my $display = shift;
 	my $width = shift;
@@ -696,6 +687,33 @@ sub sliderBar {
 	$chart .= $progEnd . $display->symbols('/tight');
 
 	return $chart;
+}
+
+# optimised simple slide bar for volume display which returns a bitmap rather than string of symbols
+sub simpleSliderBar {
+	my $display = shift;
+	my $width   = shift;
+	my $val     = shift;
+	my $line    = shift; # which line it appears on
+
+	my $cache   = $display->renderCache();
+	my $fonts   = $display->fonts();
+
+	my $sbinfo  = $cache->{sbinfo} ||= {
+		width => -1,
+	};
+
+	if ($width != $sbinfo->{width} || $fonts != $sbinfo->{fonts} || $line != $sbinfo->{line}) {
+		$sbinfo->{width} = $width;
+		$sbinfo->{fonts} = $fonts;
+		$sbinfo->{line}  = $line;
+		$sbinfo->{full}  = (Slim::Display::Lib::Fonts::string($fonts->{line}[$line], $display->sliderBar($width, 100)))[1];
+		$sbinfo->{empty} = (Slim::Display::Lib::Fonts::string($fonts->{line}[$line], $display->sliderBar($width, 0)))[1];
+	}
+
+	my $splicePoint = int($width * $val / 100) * $display->bytesPerColumn;
+				
+	return substr($sbinfo->{full}, 0, $splicePoint) . substr($sbinfo->{empty}, $splicePoint);
 }
 
 sub fonts {

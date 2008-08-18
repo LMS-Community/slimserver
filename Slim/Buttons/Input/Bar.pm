@@ -56,6 +56,7 @@ Avilable Parameters and their defaults:
 
  'knobaccelup'     = 0.05  # Constant that determines how fast the Bar accelerates when 
  'knobacceldown'   = 0.05  # using a knob.   up and down accelerations are different.
+
 =cut
 
 use strict;
@@ -63,6 +64,8 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+use constant UPDATE_DELAY => 0.05; # time to delay screen updates by
 
 my %functions = ();
 
@@ -423,7 +426,21 @@ sub changePos {
 		$onChange->(@args);
 	}
 
+	# update the screen on a callback so we can rate limit the number of screen updates
+	if (!$client->updatePending) {
+
+		$client->updatePending(1);
+
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + UPDATE_DELAY, \&_updateScreen);
+	}
+}
+
+sub _updateScreen {
+	my $client = shift;
+
 	$client->update;
+
+	$client->updatePending(0);
 }
 
 sub lines {
@@ -479,8 +496,6 @@ sub lines {
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
 	my $fullstep = 1 unless $client->modeParam('smoothing');
 
-	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep,0,$cursor);
-
 	my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef') unless $noOverlay;
 
 	if ($client->linesPerScreen() == 1) {
@@ -498,8 +513,8 @@ sub lines {
 	}
 
 	my $parts = {
-		'line'    => [ $line1, $line2 ],
-		'overlay' => [ $overlay1, $overlay2 ]
+		'line' => [ $line1, $line2 ],
+		'bits' => $client->display->simpleSliderBar($client->displayWidth, $val, 1),
 	};
 
 	return $parts;
@@ -522,11 +537,16 @@ sub setMode {
 		}
 	#}
 
+	$client->updatePending(0);
+
 	$client->lines( $client->modeParam('lines') || \&lines );
 }
 
 sub _leaveModeHandler {
 	my ($client, $exittype) = @_;
+
+	Slim::Utils::Timers::killTimers($client, \&_updateScreen);
+	$client->updatePending(0);
 	
 	if ($exittype eq 'pop') {
 		return;	# to avoid recursion

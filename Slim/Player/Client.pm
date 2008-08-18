@@ -103,6 +103,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								alarmData knobData
 								modeStack modeParameterStack playlist currentsongqueue chunks
 								shufflelist slaves syncSelections searchTerm
+								updatePending
 							));
 							
 	__PACKAGE__->mk_accessor('hash', qw(
@@ -276,6 +277,7 @@ sub new {
 		sleepTime               => 0,
 		pendingPrefChanges      => {},
 		_pluginData             => {},
+		updatePending           => 0,
 	
 	);
 
