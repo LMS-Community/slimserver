@@ -86,7 +86,7 @@ sub scanPathOrURL {
 		}
 		
 		# Bug 9097, don't try to scan non-remote protocol handlers like randomplay://
-		if ( $pathOrUrl =~ /^([^:]+)/ && $1 ne 'file' ) {
+		if ( $pathOrUrl =~ /^([^:]+):/ && $1 ne 'file' ) {
 			return $cb->( [ $pathOrUrl ] );
 		}
 
