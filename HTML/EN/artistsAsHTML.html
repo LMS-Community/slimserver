@@ -5,13 +5,17 @@
 [% contributors = item.artistsWithAttributes || itemobj.artistsWithAttributes %]
 
 [% FOREACH contributorTuple IN contributors %]
+	[% IF maxContributors && loop.count > maxContributors;
+		contributorsHTML.push("...");
+		LAST;
+	END %]
 
 	[% attrs  = contributorTuple.attributes | html %]
 	[% target = notarget ? '' : 'target="browser"' %]
 	[% contrib = contributorTuple.name | html %]
 	
 	[% IF artwork || artwork == 0; artparam = "&amp;artwork=$artwork"; END %]
-	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;$attrs$artparam&amp;level=1&amp;player=$playerURI\" $target class=\"browseItemLink\"><span>$contrib</span></a>" %]
+	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;$attrs$artparam&amp;level=1&amp;player=$playerURI\" $target class=\"browseItemLink\"><span style=\"display:inline\">$contrib</span></a>" %]
 
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 

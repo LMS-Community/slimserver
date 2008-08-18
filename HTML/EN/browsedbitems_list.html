@@ -1,5 +1,6 @@
 [%- IF artwork == 1 && tree != 1 && (item.levelName == 'album' || item.levelName == 'age') && !query;
 	contentwrapper = 'galleryitem';
+	maxContributors = 3;
 ELSE;
 	contentwrapper = 'contentitem';
 END;
