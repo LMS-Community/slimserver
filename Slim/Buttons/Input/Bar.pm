@@ -455,7 +455,7 @@ sub lines {
 	my $max    = $args->{'max'};
 	my $noOverlay = $args->{'noOverlay'} || 0;
 
-	my ($line1, $line2);
+	my $line1;
 
 	my $valueRef = $client->modeParam('valueRef');
 
@@ -496,26 +496,34 @@ sub lines {
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
 	my $fullstep = 1 unless $client->modeParam('smoothing');
 
-	my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef') unless $noOverlay;
+	my $parts = {};
 
-	if ($client->linesPerScreen() == 1) {
+	my $singleLine = ($client->linesPerScreen() == 1);
 
-		if ($client->modeParam('barOnDouble')) {
+	unless ($noOverlay) {
 
-			$line1 = $line2;
-			$line2 = '';
+		my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef');
 
-		} else {
-
-			$line2 = $line1;
-			$overlay2 = $overlay1;
-		}
+		$parts->{overlay} = $singleLine ? [ undef, $overlay1 ] : [ $overlay1, $overlay2 ];
 	}
 
-	my $parts = {
-		'line' => [ $line1, $line2 ],
-		'bits' => $client->display->simpleSliderBar($client->displayWidth, $val, 1),
-	};
+	if ($client->display->can('simpleSliderBar') && !$singleLine && $mid == 0 && !defined $cursor) {
+
+		# optimised case - use fast simpleSliderBar which produces a bitmap
+		$parts->{bits} = $client->display->simpleSliderBar($client->displayWidth, $val, 1);
+		$parts->{line} = [ $line1, undef ];
+
+	} elsif ($singleLine && !$client->modeParam('barOnDouble')) {
+
+		$parts->{line} = [ undef, $line1 ];
+
+	} else {
+
+		$parts->{line} = [
+			$line1,
+			$client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep,0,$cursor),
+		];
+	}
 
 	return $parts;
 }
