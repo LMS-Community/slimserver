@@ -12,8 +12,6 @@ use strict;
 use Scalar::Util qw(blessed);
 use LWP::UserAgent;
 
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
