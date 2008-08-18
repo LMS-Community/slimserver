@@ -72,6 +72,8 @@ our $maxVolume = 100;
 # Use the access functions.
 our %clientHash = ();
 
+my $modeParameterStackIndex;
+
 use constant KNOB_NOWRAP => 0x01;
 use constant KNOB_NOACCELERATION => 0x02;
 
@@ -109,6 +111,9 @@ use constant KNOB_NOACCELERATION => 0x02;
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection
 							));
+							
+	# modeParameterStack is called a lot, cache the index to avoid many accessor calls
+	$modeParameterStackIndex = __PACKAGE__->_slot('modeParameterStack');
 }
 
 =head1 NAME
@@ -1006,12 +1011,11 @@ sub param {
 }
 
 # this is a replacement for param that allows you to pass undef to clear a parameter
+# Looks a bit ugly but this is to improve performance and avoid an accessor call
 sub modeParam {
-	my $client = shift;
-	my $name   = shift;
-	my $mode   = $client->modeParameterStack->[-1] || return undef;
+	my $mode = $_[0]->[ $modeParameterStackIndex ]->[-1] || return undef;
 
-	@_ ? ($mode->{$name} = shift) : $mode->{$name};
+	@_ > 2 ? ( $mode->{ $_[1] } = $_[2] ) : $mode->{ $_[1] };
 }
 
 sub modeParams {
