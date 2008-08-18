@@ -881,6 +881,28 @@ if (Slim::Utils::OSDetect::OS() eq 'mac') {
 	)
 }
 
+elsif (Slim::Utils::OSDetect::isReadyNAS()) {
+	%_ignoredItems = (
+		'bin'       => 1,
+		'dev'       => 1,
+		'etc'       => 1,
+		'frontview' => 1,
+		'home'      => 1,
+		'initrd'    => 1,
+		'lib'       => 1,
+		'mnt'       => 1,
+		'opt'       => 1,
+		'proc'      => 1,
+		'ramfs'     => 1,
+		'root'      => 1,
+		'sbin'      => 1,
+		'sys'       => 1,
+		'tmp'       => 1,
+		'USB'       => 1,
+		'usr'       => 1,	
+	)
+}
+
 elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 	%_ignoredItems = (
 		# Items we should ignore  on a Windows volume
