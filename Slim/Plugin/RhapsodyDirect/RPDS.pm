@@ -32,10 +32,10 @@ sub handleError {
 }
 
 sub logError {
-	my ( $client, $error ) = @_;
+	my ( $client, $error, $arg2 ) = @_;
 	
 	SDI::Service::EventLog->log( 
-		$client, 'rhapsody_error', $error,
+		$client, 'rhapsody_error', $error, $arg2,
 	);
 }
 
@@ -331,7 +331,7 @@ sub rpds_handler {
 		}
 		
 		if ( main::SLIM_SERVICE && SN_DEBUG ) {
-			logError( $client, 'RPDS_OLD', "got $got_cmd, ignoring" );
+			logError( $client, "RPDS_OLD: $got_cmd" );
 		}
 		
 		return;
