@@ -150,6 +150,9 @@ sub rpds_handler {
 	
 	# Check for specific decoding error codes
 	if ( $got_cmd >= 100 && $got_cmd < 200 ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
+			logError( $client, "decoding failure: code $got_cmd" );
+		}
 		$log->error("Rhapsody decoding failure: code $got_cmd");
 		return;
 	}
