@@ -19,7 +19,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-use constant SN_DEBUG => 0;
+use constant SN_DEBUG => 1;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',

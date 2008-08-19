@@ -14,7 +14,7 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
-use constant SN_DEBUG => 0;
+use constant SN_DEBUG => 1;
 
 our @EXPORT = qw(rpds cancel_rpds);
 
