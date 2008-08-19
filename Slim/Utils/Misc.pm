@@ -903,6 +903,8 @@ elsif (Slim::Utils::OSDetect::isReadyNAS()) {
 		'tmp'       => 1,
 		'USB'       => 1,
 		'usr'       => 1,	
+		'var'       => 1,
+		'lost+found'=> 1,
 	)
 }
 
@@ -924,7 +926,7 @@ else {
 }
 
 # always ignore . and ..
-$_ignoredItems{'.'}	= 1;
+$_ignoredItems{'.'}	    = 1;
 $_ignoredItems{'..'}	= 1;
 
 # Don't include old Shoutcast recently played items.
