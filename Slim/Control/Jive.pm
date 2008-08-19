@@ -616,7 +616,7 @@ sub alarmSettingsQuery {
 
 	my $val = $prefs->client($client)->get('alarmsEnabled');
 
-	my @alarmStrings = ('ON', 'OFF');
+	my @alarmStrings = ('OFF', 'ON');
 	my @translatedAlarmStrings = map { ucfirst($client->string($_)) } @alarmStrings;
 
 	my $onOff = {
@@ -628,11 +628,11 @@ sub alarmSettingsQuery {
 				choices => [ 
 					{
 						player => 0,
-						cmd    => [ 'alarm', 'enableall' ],
+						cmd    => [ 'alarm', 'disableall' ],
 					},
 					{
 						player => 0,
-						cmd    => [ 'alarm', 'disableall' ],
+						cmd    => [ 'alarm', 'enableall' ],
 					},
 				], 
 			},
