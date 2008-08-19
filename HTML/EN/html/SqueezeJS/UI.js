@@ -315,7 +315,7 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 			collapse: this.onCollapse
 		});
 
-		this.selectMyPath();	
+		this.selectMyPath();
 
 		// activate button to add path to the selector box
 		var gotoBtn;
@@ -474,7 +474,6 @@ SqueezeJS.UI.FilesystemBrowser = {
 	show: function(inputField, filter){
 		var filesystemDlg = new Ext.Window({
 			modal: true,
-			closable: false,
 			collapsible: false,
 			width: 350,
 			height: 400,
@@ -483,26 +482,31 @@ SqueezeJS.UI.FilesystemBrowser = {
 			buttons: [{
 				text: SqueezeJS.string('close'),
 				handler: function(){
-					filesystemDlg.hide()
+					filesystemDlg.close()
 				},
 				scope: filesystemDlg
-			}]
+			}],
+			listeners: {
+				resize: this.onResize
+			}
 		});
 
 		filesystemDlg.setTitle(SqueezeJS.string(filter == 'foldersonly' ? 'choose_folder' : 'choose_file'));
 		filesystemDlg.show();
-
-		var el = Ext.get('filesystembrowser');
-		if (el && (el = el.parent())) {
-			el.setWidth(el.getWidth()-12);
-			el.setStyle({ overflow: 'auto' })
-		}
 
 		new SqueezeJS.UI.FileSelector({
 			renderTo: 'filesystembrowser',
 			input: inputField,
 			filter: filter
 		});
+	},
+	
+	onResize: function() {
+		var el = Ext.get('filesystembrowser');
+		if (el && (el = el.parent())) {
+			el.setWidth(el.getWidth()-12);
+			el.setStyle({ overflow: 'auto' })
+		}
 	}
 };
 
