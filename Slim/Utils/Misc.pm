@@ -852,11 +852,13 @@ sub _checkInFolder {
 }
 
 my %_ignoredItems;
+# the hash's value is the parent path from which a file should be excluded
+# 1 means "from all folders", "/" -> "subfolders in root only" etc.
 
 if (Slim::Utils::OSDetect::OS() eq 'mac') {
 	%_ignoredItems = (
 		# Items we should ignore on a mac volume
-		'Icon' => 1,
+		'Icon' => '/',
 		'TheVolumeSettingsFolder' => 1,
 		'TheFindByContentFolder' => 1,
 		'Network Trash Folder' => 1,
@@ -868,42 +870,42 @@ if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		'.DS_Store' => 1,
 		# Dean: "Essentially hide anything you can't see in the finder or explorer"
 		'automount' => 1,
-		'cores'     => 1,
-		'bin'       => 1,
-		'dev'       => 1,
-		'etc'       => 1,
-		'home'      => 1,
-		'net'       => 1,
-#		'Network'   => 1,
-		'private'   => 1,
+		'cores'     => '/',
+		'bin'       => '/',
+		'dev'       => '/',
+		'etc'       => '/',
+		'home'      => '/',
+		'net'       => '/',
+		'Network'   => '/',
+		'private'   => '/',
 		'sbin'      => 1,
 		'tmp'       => 1,
 		'usr'       => 1,
-		'var'       => 1,
-		'opt'       => 1,	
+		'var'       => '/',
+		'opt'       => '/',	
 	)
 }
 
 elsif (Slim::Utils::OSDetect::isReadyNAS()) {
 	%_ignoredItems = (
-		'bin'       => 1,
-		'dev'       => 1,
-		'etc'       => 1,
-		'frontview' => 1,
-		'home'      => 1,
+		'bin'       => '/',
+		'dev'       => '/',
+		'etc'       => '/',
+		'frontview' => '/',
+		'home'      => '/',
 		'initrd'    => 1,
-		'lib'       => 1,
-		'mnt'       => 1,
-		'opt'       => 1,
-		'proc'      => 1,
-		'ramfs'     => 1,
-		'root'      => 1,
-		'sbin'      => 1,
-		'sys'       => 1,
-		'tmp'       => 1,
-		'USB'       => 1,
-		'usr'       => 1,	
-		'var'       => 1,
+		'lib'       => '/',
+		'mnt'       => '/',
+		'opt'       => '/',
+		'proc'      => '/',
+		'ramfs'     => '/',
+		'root'      => '/',
+		'sbin'      => '/',
+		'sys'       => '/',
+		'tmp'       => '/',
+		'USB'       => '/',
+		'usr'       => '/',	
+		'var'       => '/',
 		'lost+found'=> 1,
 	)
 }
@@ -911,9 +913,9 @@ elsif (Slim::Utils::OSDetect::isReadyNAS()) {
 elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 	%_ignoredItems = (
 		# Items we should ignore  on a Windows volume
-		'System Volume Information' => 1,
-		'RECYCLER' => 1,
-		'Recycled' => 1,	
+		'System Volume Information' => '/',
+		'RECYCLER' => '/',
+		'Recycled' => '/',	
 	)
 }
 
@@ -926,8 +928,8 @@ else {
 }
 
 # always ignore . and ..
-$_ignoredItems{'.'}	    = 1;
-$_ignoredItems{'..'}	= 1;
+$_ignoredItems{'.'}  = 1;
+$_ignoredItems{'..'} = 1;
 
 # Don't include old Shoutcast recently played items.
 $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
@@ -945,7 +947,20 @@ sub fileFilter {
 	my $item    = shift;
 	my $validRE = shift || Slim::Music::Info::validTypeExtensions();
 
-	return 0 if exists $_ignoredItems{$item};
+	if (my $filter = $_ignoredItems{$item}) {
+		
+		# '1' items are always to be ignored
+		return 0 if $filter eq '1';
+
+		my @parts = splitpath($dirname);
+		if ($parts[1] && (!defined $parts[2] || length($parts[2]) == 0)) {
+			# replace back slashes on Windows
+			$parts[1] =~ s/\\/\//g;
+			
+			return 0 if $filter eq $parts[1];
+		}
+
+	}
 
 	# Ignore special named files and directories
 	# __ is a match against our old __history and __mac playlists.
