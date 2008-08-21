@@ -120,7 +120,7 @@ sub init {
 
 		} elsif ($cacheInfo->{'mtimesum'} != $sum) {
 
-			$cacheInvalid = 'manefest checksum differs';
+			$cacheInvalid = 'manifest checksum differs';
 		}
 
 	} else {
