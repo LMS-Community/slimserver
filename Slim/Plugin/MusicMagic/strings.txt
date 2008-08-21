@@ -196,17 +196,17 @@ SETUP_REJECT_TYPE_DESC
 	ZH_CN	配置拒绝量单位（确省：音轨）
 
 SETUP_REJECT_SIZE
-	DA	MusicIP: afvisningsstørrelse
+	DA	MusicIP afvisningsstørrelse
 	DE	MusicIP - Ablehnungsgröße
 	EN	MusicIP Reject Size
 	ES	Tamaño de rechazo de MusicIP
 	FI	MusicIP:n hylkäyskoko
 	FR	Taille de rejet MusicIP
 	HE	גודל הפסילות ב-MusicIP.
-	IT	N. elementi da scartare in MusicIP.
-	NL	MusicIP-afkeurgrootte.
-	NO	MusicIP avvisningsstørrelse.
-	SV	MusicIP: Avvisningsstorlek
+	IT	N. elementi da scartare in MusicIP
+	NL	MusicIP-afkeurgrootte
+	NO	MusicIP avvisningsstørrelse
+	SV	Avvisningstyp för MusicIP
 	ZH_CN	MusicIP拒绝量
 
 SETUP_REJECT_SIZE_DESC

@@ -111,7 +111,7 @@ LOADING_SQUEEZECENTER
 BASE_SKIN
 	CS	Světlý
 	DA	Let
-	DE	Hell
+	DE	Leicht
 	EN	Light
 	ES	Ligera
 	FI	Valo
@@ -1394,16 +1394,16 @@ ALARM_OFF
 	ZH_CN	撤销
 
 ALARM_SELECT_PLAYLIST
-	DA	Vælg afspilningsliste
-	DE	Wiedergabeliste wählen
+	DA	Vækkelyd
+	DE	Weckton
 	EN	Alarm Sound
-	ES	Elegir lista de reproducción
-	FI	Valitse soittoluettelo
-	FR	Choisir la liste de lecture
-	IT	Scegli elenco di riproduzione
-	NL	Playlist kiezen
-	NO	Velg spilleliste
-	SV	Välj spellista
+	ES	Sonido de alarma
+	FI	Herätyksen ääni
+	FR	Son du réveil
+	IT	Suono sveglia
+	NL	Weksignaal
+	NO	Vekkerklokkelyd
+	SV	Larmsignal
 
 ALARM_USE_CURRENT_PLAYLIST
 	DA	Brug nuværende afspilningsliste
@@ -1442,7 +1442,16 @@ ALARM_VOLUME_DESC
 	SV	Med den här inställningen väljer du volymen för alarmet.
 
 ALARM_NEXT_ALARM
+	DA	Næste vækkeur:
+	DE	Nächster Wecker:
 	EN	Next Alarm:
+	ES	Alarma siguiente:
+	FI	Seuraava herätys:
+	FR	Prochain réveil:
+	IT	Sveglia successiva:
+	NL	Volgend weksignaal:
+	NO	Neste vekking:
+	SV	Nästa alarm:
 
 ALARM_ADD
 	DA	Tilføj vækkeur
@@ -1505,10 +1514,28 @@ ALARM_ALARM_ENABLED
 	SV	Aktiverat
 
 ALARM_ALL_ALARMS_ENABLED
+	DA	Alle vækkeure er slået til
+	DE	Alle Wecker aktiviert
 	EN	All Alarms Enabled
+	ES	Activadas todas las alarmas
+	FI	Kaikki herätykset käytössä
+	FR	Tous les réveils activés
+	IT	Tutte le sveglie attivate
+	NL	Alle weksignalen ingeschakeld
+	NO	Alle vekkinger aktivert
+	SV	Alla alarm har aktiverats
 
 ALARM_ALL_ALARMS_DISABLED
+	DA	Alle vækkeure er slået fra
+	DE	Alle Wecker deaktiviert
 	EN	All Alarms Disabled
+	ES	Desactivadas todas las alarmas
+	FI	Kaikki herätykset poistettu käytöstä
+	FR	Tous les réveils désactivés
+	IT	Tutte le sveglie disattivate
+	NL	Alle weksignalen uitgeschakeld
+	NO	Alle vekkinger deaktivert
+	SV	Alla alarm har avaktiverats
 
 ALARM_ALARM_REPEAT
 	DA	Gentag vækning
@@ -2050,7 +2077,7 @@ SOFTSQUEEZE
 WELCOME_TO_SLIMP3
 	CS	Vítá Vás SLIMP3
 	DA	Velkommen til SLIMP3
-	DE	Willkommen!
+	DE	Willkommen bei SLIMP3!
 	EN	Welcome to SLIMP3
 	ES	Bienvenido a SLIMP3
 	FI	Tervetuloa SLIMP3:n pariin
@@ -2067,7 +2094,7 @@ WELCOME_TO_SLIMP3
 WELCOME_TO_SQUEEZECENTER
 	CS	Vitejte na radi(o)ctarna
 	DA	Velkommen til SqueezeCenter
-	DE	Willkommen!
+	DE	Willkommen bei SqueezeCenter
 	EN	Welcome to SqueezeCenter
 	ES	Bienvenido a SqueezeCenter
 	FI	Tervetuloa SqueezeCenteriin
@@ -2084,7 +2111,7 @@ WELCOME_TO_SQUEEZECENTER
 WELCOME_TO_SQUEEZEBOX
 	CS	Vítá Vás Squeezebox
 	DA	Velkommen til Squeezebox
-	DE	Willkommen!
+	DE	Willkommen bei Squeezebox
 	EN	Welcome to Squeezebox
 	ES	Bienvenido a Squeezebox
 	FI	Tervetuloa Squeezeboxiin
@@ -2101,7 +2128,7 @@ WELCOME_TO_SQUEEZEBOX
 WELCOME_TO_SQUEEZEBOX2
 	CS	Vítá Vás Squeezebox
 	DA	Velkommen til Squeezebox
-	DE	Willkommen!
+	DE	Willkommen bei Squeezebox
 	EN	Welcome to Squeezebox
 	ES	Bienvenido a Squeezebox
 	FI	Tervetuloa Squeezeboxiin
@@ -2118,7 +2145,7 @@ WELCOME_TO_SQUEEZEBOX2
 WELCOME_TO_TRANSPORTER
 	CS	Vítá Vás Transporter
 	DA	Velkommen til Transporter
-	DE	Willkommen!
+	DE	Willkommen bei Transporter
 	EN	Welcome to Transporter
 	ES	Bienvenido a Transporter
 	FI	Tervetuloa Transporteriin
@@ -2135,7 +2162,7 @@ WELCOME_TO_TRANSPORTER
 WELCOME_TO_SOFTSQUEEZE
 	CS	Vítejte v SoftSqueeze
 	DA	Velkommen til SoftSqueeze
-	DE	Willkommen!
+	DE	Willkommen bei SoftSqueeze
 	EN	Welcome to SoftSqueeze
 	ES	Bienvenido a SoftSqueeze
 	FI	Tervetuloa SoftSqueezen pariin
@@ -2151,7 +2178,7 @@ WELCOME_TO_SOFTSQUEEZE
 
 WELCOME_TO_RECEIVER
 	DA	Velkommen til Squeezebox
-	DE	Willkommen!
+	DE	Willkommen bei Squeezebox
 	EN	Welcome to Squeezebox
 	ES	Bienvenido a Squeezebox
 	FI	Tervetuloa Squeezeboxiin
@@ -2163,7 +2190,7 @@ WELCOME_TO_RECEIVER
 
 WELCOME_TO_SQUEEZESLAVE
 	DA	Velkommen til SqueezeSlave
-	DE	Willkommen!
+	DE	Willkommen bei SqueezeSlave
 	EN	Welcome to SqueezeSlave
 	ES	Bienvenido a SqueezeSlave
 	FI	Tervetuloa SqueezeSlaveen
@@ -2266,15 +2293,15 @@ UPDATING_FIRMWARE_RECEIVER
 
 UPDATING_FIRMWARE_BOOM
 	DA	Opdaterer firmware.
-	DE	Firmware Update.
+	DE	Firmware wird aktualisiert.
 	EN	Updating Firmware.
 	ES	Actualizando firmware.
-	FI	Laitteisto-ohjelmisto päivitetään.
-	FR	Mise à jour.
-	IT	Aggiornamento firmware in corso.
+	FI	Laiteohjelmisto päivitetään.
+	FR	Mise à jour du micrologiciel.
+	IT	Aggiornamento firmware.
 	NL	Firmware wordt bijgewerkt.
 	NO	Oppdaterer fastvare.
-	SV	Den inbyggda programvaran uppdateras
+	SV	Inbyggt program uppdateras
 
 FIRMWARE_MISSING
 	DA	Fejl: Manglende firmware
@@ -2539,7 +2566,7 @@ ASF_UNABLE_TO_PARSE
 HOME
 	CS	Hlavní menu
 	DA	Hovedmenu
-	DE	Startseite
+	DE	Hauptmenü
 	EN	Home
 	ES	Inicio
 	FI	Koti
@@ -3711,9 +3738,16 @@ SETUP_RESET_PLAYER_DESC
 	SV	Du kan återställa en spelares inställningar, t.ex. spelarnamn, titelformat och menyer, till fabriksinställningarna. Observera att spelarens maskinvaruinställningar, t.ex. nätverksparametrar, inte återställs.
 
 SETUP_RESET_PLAYER_CONFIRM
-	DE	Wollen Sie ihren Player wirklich auf die Fabrikeinstellungen zurücksetzen?
+	DA	Vil du nulstille afspilleren til fabriksindstillingerne?
+	DE	Sollen die Einstellungen des Players wirklich auf die Standardwerte zurückgesetzt werden?
 	EN	Do you really want to reset your player to factory defaults?
-	FR	Êtes-vous sûr de vouloir réinitialiser votre platine? 
+	ES	¿Confirma que desea restablecer los valores predeterminados de fábrica en el reproductor?
+	FI	Haluatko varmasti palauttaa soittimen tehdasasetuksiin?
+	FR	Etes-vous sûr de vouloir rétablir les paramètres par défaut de votre platine?
+	IT	Ripristinare le impostazioni di fabbrica del lettore?
+	NL	Wilt u uw muzieksysteem echt terugzetten op de beginwaarden?
+	NO	Er du sikker på at du vil tilbakestille spilleren til fabrikkinnstillingene?
+	SV	Vill du återställa spelarens fabriksinställningar?
 
 SETUP_POWERONBRIGHTNESS
 	DA	Lysstyrke når den tændes
@@ -4387,7 +4421,7 @@ SETUP_MINSYNCADJUST
 	IT	Regolazione minima della sincronizzazione (ms)
 	NL	Minimale synchronisatieaanpassing (ms)
 	NO	Minimumsjustering for synkronisering (ms)
-	SV	Minsta skillnad som justeras (ms)
+	SV	Minsta justering vid synkronisering (ms)
 
 SETUP_MINSYNCADJUST_DESC
 	DA	Når SqueezeCenter registrerer at to synkroniserede afspillere ikke er helt synkroniseret, foretages der en mindre justering, normalt af den afspiller som er bagud. Du kan indstille hvor meget en afspiller højst må justeres. Jo større interval, jo sjældnere foretages justeringerne, og jo mere kan afspillerne miste deres synkronisering.
@@ -4420,7 +4454,7 @@ SETUP_PACKETLATENCY
 	ES	Latencia de paquete de red (ms)
 	FI	Verkkopaketin viive (ms)
 	FR	Latence des paquets réseau (ms)
-	IT	Latenza pacchetto di rete (ms)
+	IT	Latenza pacchetti di rete (ms)
 	NL	Vertraging netwerkpakket (ms)
 	NO	Forsinkelser i nettverkspakker (ms)
 	SV	Svarstid för nätverkspaket (ms)
@@ -9881,7 +9915,16 @@ LOW
 	SV	Dålig
 
 OUTDOOR
+	DA	Udendørs
+	DE	Tageslicht
 	EN	Outdoor
+	ES	Exterior
+	FI	Ulkoilma
+	FR	Extérieur
+	IT	Esterna
+	NL	Buiten
+	NO	Utendørs
+	SV	Utomhus
 
 HIGH
 	CS	Vysoký
@@ -9913,7 +9956,7 @@ FULL
 
 LIGHT
 	DA	Let
-	DE	Leicht
+	DE	Klein
 	EN	Light
 	ES	Fina
 	FI	Kevyt

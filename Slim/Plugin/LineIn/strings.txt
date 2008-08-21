@@ -51,13 +51,50 @@ PLUGIN_LINE_IN_IN_USE
 	SV	Ljudingången är aktiv
 
 LINE_IN_LEVEL
+	DA	Niveau for linjeindgang
+	DE	Line-In-Pegel
 	EN	Line In Level
+	ES	Nivel de entrada de línea
+	FI	Linjatulon äänenvoimakkuus
+	FR	Niveau de l'entrée ligne
+	IT	Livello ingresso
+	NL	Niveau van lijningang
+	NO	Lydinngangsnivå
+	SV	Nivå för linjeingång
 
 LINE_IN_LEVEL_DESC
+	DA	Du kan bruge denne indstiling til at justere forstærkningen af linjeindgangens signal.
+	DE	Mit dieser Einstellung können Sie die Line-In-Verstärkung anpassen.
 	EN	Using this setting you can adjust the line in gain.
+	ES	Mediante este valor puede ajustar la ganancia de entrada de línea.
+	FI	Tällä asetuksella voit säätää linjatulon äänenvoimakkuutta.
+	FR	A l'aide de ce paramètre, vous pouvez régler le gain de l'entrée ligne.
+	IT	Questa impostazione consente di regolare il guadagno dell'ingresso.
+	NL	Met deze instelling kunt u de lijningangsaanpassing bijstellen.
+	NO	Du kan bruke denne innstillingen til å justere gain for lydinngang.
+	SV	Med det här alternativet kan du justera hur linjeingångens signal förstärks.
 
 LINE_IN_ALWAYS_ON
+	DA	Linjeindgang altid til
+	DE	Line-In immer aktiv
 	EN	Line In Always On
+	ES	Entrada de línea siempre activada
+	FI	Linjatulo jatkuvasti käytössä
+	FR	Entrée ligne toujours activée
+	IT	Ingresso sempre attivato
+	NL	Lijningang altijd ingeschakeld
+	NO	Lydinngang alltid på
+	SV	Linjeingång alltid på
 
 LINE_IN_ALWAYS_ON_DESC
+	DA	Denne indstilling aktiverer linjeindgangen hele tiden sådan at man kan mikse linjeindgangens signal ind over lydsporet, fx ved Karaoke
+	DE	Diese Option aktiviert den Line-In-Eingang permanent, damit er jederzeit nutzbar ist (z.B. für Karaoke).
 	EN	This option turns on the line input all the time, to let users who want to mix in the line in all the time (eg. for Karaoke)
+	ES	Esta opción activa la entrada de línea todo el tiempo, para permitir que los usuarios mezclen la entrada de línea todo el tiempo (p. ej., para Karaoke) si lo desean
+	FI	Tällä asetuksella linjan äänenvoimakkuus otetaan jatkuvaan käyttöön, jos linjatulo halutaan esimerkiksi miksata äänivirran kanssa (esim. karaokea varten).
+	FR	Cette option active l'entrée ligne en permanence pour les utilisateurs qui veulent incorporer l'entrée ligne en permanence (par exemple pour le karaoké).
+	IT	Questa opzione mantiene sempre attivato l'ingresso di linea per consentire in ogni momento il missaggio dell'audio proveniente da tale ingresso (ad esempio per il karaoke)
+	NL	Met deze optie wordt de lijningang ingeschakeld, voor gebruikers die de lijningang continu willen mixen (bijvoorbeeld voor karaoke)
+	NO	Hvis du velger dette alternativet, er lydinngangen på hele tiden, slik at brukere kan mikse i lydinngangen hele tiden (for eksempel for karaoke)
+	SV	Med det här alternativet är linjeingången aktiverad hela tiden, så att du kan mixa linjeingångens signal över ljudspåret när som helst (t.ex. för karaoke)
+
