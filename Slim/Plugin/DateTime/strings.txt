@@ -5,11 +5,11 @@
 PLUGIN_SCREENSAVER_DATETIME
 	CS	Datumový spořič
 	DA	Pauseskærm med dato og klokkeslæt
-	DE	Bildschirmschoner: Datum/Zeit
-	EN	Date and Time Screensaver
+	DE	Datum/Zeit
+	EN	Date and Time
 	ES	Protector de pantalla de fecha y hora
 	FI	Päivämäärä ja aika -näytönsäästäjä
-	FR	Ecran de veille Date/Heure
+	FR	Date/Heure
 	HE	שומר מסך של תאריך ושעה
 	IT	Screen saver con data e ora
 	NL	Datum en tijd-schermbeveiliger

@@ -4,7 +4,7 @@
 
 PLUGIN_SCREENSAVER_SNOW
 	DA	Pauseskærm:
-	DE	Bildschirmschoner: Schnee
+	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
 	ES	Protector de pantalla de nieve
 	FI	Luminäytönsäästäjä
