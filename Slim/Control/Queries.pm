@@ -43,6 +43,7 @@ use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
+use Slim::Utils::Text;
 
 {
 	if ($^O =~ /Win32/) {
@@ -407,7 +408,7 @@ sub albumsQuery {
 				# the favorites url to be sent to jive is the album title here
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $url = 'db:album.titlesearch=' . $eachitem->title;
+				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->title) );
 
 				my $params = {
 					'album_id'        => $id,
@@ -760,7 +761,7 @@ sub artistsQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $obj->name);
 
 				# the favorites url to be sent to jive is the artist name here
-				my $url = 'db:contributor.namesearch=' . $obj->name;
+				my $url = 'db:contributor.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($obj->name) );
 
 				my $params = {
 					'favorites_url'   => $url,
@@ -1344,7 +1345,7 @@ sub genresQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
 				
 				# here the url is the genre name
-				my $url = 'db:genre.namesearch=' . $eachitem->name;
+				my $url = 'db:genre.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->name) );
 				my $params = {
 					'genre_id'        => $id,
 					'genre_string'    => $eachitem->name,
