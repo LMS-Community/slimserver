@@ -818,7 +818,8 @@ sub outputUnderrun {
 		}
 	}
 	
-	playmode( $client, 'pause' );
+	# Pause immediately without a fade
+	playmode( $client, 'pausenow' );
 	
 	my ( $line1, $line2 ); 	 
 
