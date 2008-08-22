@@ -152,10 +152,12 @@ sub findFilesMatching {
 			$url  = Slim::Utils::Misc::fileURLFromWinShortcut($url) || next;
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 
+			my $audiodir = preferences('server')->get('audiodir');
+
 			# Bug: 2485:
 			# Use Path::Class to determine if the file points to a
 			# directory above us - if so, that's a loop and we need to break it.
-			if (dir($file)->subsumes($topDir) || dir($file)->subsumes(preferences('server')->get('audiodir'))) {
+			if ( dir($file)->subsumes($topDir) || ($audiodir && dir($file)->subsumes($audiodir)) ) {
 
 				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
 				next;
