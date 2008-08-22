@@ -88,11 +88,16 @@ sub initPlugin {
 				
 				my $url;
 				
-				if ( $params->{item} ) {
+				my $id = $params->{sess} || $params->{item};
+				
+				if ( $id ) {
 					# The user clicked on a different URL than is currently playing
-					if ( my $track = Slim::Schema->find( Track => $params->{item} ) ) {
+					if ( my $track = Slim::Schema->find( Track => $id ) ) {
 						$url = $track->url;
 					}
+					
+					# Pass-through track ID as sess param
+					$params->{sess} = $id;
 				}
 				else {
 					$url = Slim::Player::Playlist::url($client);
