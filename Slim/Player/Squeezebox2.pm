@@ -161,12 +161,14 @@ sub getVolume
 	my $stepPoint         = $volume_parameters->{stepPoint};
 	my $stepdB            = $volume_parameters->{totalVolumeRange} * $volume_parameters->{stepFraction};
 
+	my $maxVolumedB = (defined $volume_parameters->{maximumVolume}) ? $volume_parameters->{maximumVolume} : 0;
+	
 	# Equation for a line:  
 	# y = mx+b
 	# y1 = mx1+b, y2 = mx2+b.  
 	# y2-y1 = m(x2 - x1)
 	# y2 = m(x2 - x1) + y1
-	my $slope_high = (0-$stepdB)/(100-$stepPoint) ;
+	my $slope_high = ($maxVolumedB-$stepdB)/(100-$stepPoint) ;
 	my $slope_low  = ($stepdB-$totalVolumeRange)/($stepPoint-0);
 	
 	my $x2 = $volume;
@@ -176,7 +178,7 @@ sub getVolume
 	if ($x2 > $stepPoint) {
 		$m  = $slope_high;
 		$x1 = 100;
-		$y1 = 0;
+		$y1 = $maxVolumedB;;
 	} else {
 		$m  = $slope_low;
 		$x1 = 0;

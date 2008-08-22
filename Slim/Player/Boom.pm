@@ -155,13 +155,24 @@ sub getVolumeParameters
 {
 	my $params = 
 	{
-		totalVolumeRange => -74,   # dB
-		stepPoint        => 25,    # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
-		stepFraction     => .5     # fraction of totalVolumeRange where alternate volume ramp kicks in.
+		totalVolumeRange => -74,       # dB
+		stepPoint        => 25,        # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
+		stepFraction     => .5,        # fraction of totalVolumeRange where alternate volume ramp kicks in.
 	};
 	return $params;
 }
 
+sub getLineInVolumeParameters
+{
+	my $params = 
+	{
+		totalVolumeRange => -74,       # dB
+		stepPoint        => 25,        # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
+		stepFraction     => .5,        # fraction of totalVolumeRange where alternate volume ramp kicks in.
+		maximumVolume    => 24         # + 24 dB
+	};
+	return $params;
+}
 sub init {
 	my $client = shift;
 
@@ -406,7 +417,7 @@ sub setLineInLevel {
 	# map level to volume:
 	my $newGain = 0;
 	if ($level != 0) {
-		my $db = $client->getVolume($level, $client->getVolumeParameters());
+		my $db = $client->getVolume($level, $client->getLineInVolumeParameters());
 		$newGain = $client->dBToFixed($db);
 	}
 	
