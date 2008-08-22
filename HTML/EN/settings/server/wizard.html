@@ -184,7 +184,7 @@
 				[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
 				SqueezeJS.Strings['summary_playlistdir'] += '[% "COLON" | string %]';
 				[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
-				[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicmagic' %]
+				[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicip' %]
 
 				try { Wizard.init([% wizardDone ? "true" : "false" %]); }
 				catch(e) {
@@ -336,7 +336,7 @@
 							<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
 						</tr>
 						<tr>
-							<td><input type="checkbox" name="musicip" id="musicmagic" [% IF prefs.musicip %]checked="1" [% END %] value="1"></td>
+							<td><input type="checkbox" name="musicip" id="musicip" [% IF prefs.musicip %]checked="1" [% END %] value="1"></td>
 							<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
 						</tr>
 					</table></div>

@@ -206,7 +206,7 @@ Wizard = {
 
 				musicip_p: {
 					skip: function(){
-						var el = Ext.get('musicmagic');
+						var el = Ext.get('musicip');
 						return !(el && el.dom.checked);
 					}
 				},
@@ -215,7 +215,7 @@ Wizard = {
 					skip: function(){
 						// just update the summary, ...
 						Ext.get('summary').update(
-							(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicmagic').dom.checked) 
+							(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicip').dom.checked) 
 								? '<li>' + SqueezeJS.string('summary_none') + '</li>' 
 								: '') 
 							+ (Ext.get('useAudiodir').dom.checked 
@@ -225,8 +225,8 @@ Wizard = {
 							(Ext.get('itunes').dom.checked 
 								? '<li>' + SqueezeJS.string('summary_itunes') + '</li>' 
 								: '') +
-							(Ext.get('musicmagic').dom.checked 
-								? '<li>' + SqueezeJS.string('summary_musicmagic') + '</li>' 
+							(Ext.get('musicip').dom.checked 
+								? '<li>' + SqueezeJS.string('summary_musicip') + '</li>' 
 								: '')
 						);
 						// ...but never skip
