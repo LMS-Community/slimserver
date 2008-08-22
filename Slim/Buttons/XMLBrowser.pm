@@ -1080,11 +1080,11 @@ sub playItem {
 	my $others = shift || [];      # other items to add to playlist (action=play only)
 
 	# verbose debug
-	#warn Data::Dump::dump($item, $others);
+	#warn "playItem: " . Data::Dump::dump($item, $others) . "\n";
 
 	my $url   = $item->{'url'}  || $item->{'enclosure'}->{'url'};
 	my $title = $item->{'name'} || $item->{'title'} || 'Unknown';
-	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
+	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || 'audio';
 	my $parser= $item->{'parser'};
 	
 	# If the item has a 'play' attribute, use that URL to play
@@ -1112,7 +1112,6 @@ sub playItem {
 						
 			$functions->{'play'}->($client, $action, lc($action) eq 'add' ? 1 : 0);
 		} 
-		
 	}
 	
 	$log->debug("Playing item, action: $action, type: $type, $url");
