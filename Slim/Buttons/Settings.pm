@@ -215,15 +215,9 @@ sub init {
 									value  => 3,
 								},
 							],
-							'onPlay'       => sub { 
-								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
-							},
-							'onAdd'        => sub { 
-								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
-							},
-							'onRight'      => sub { 
-								$_[0]->execute(['mixer', 'stereoxl', $_[1]->{'value'}]);
-							},
+							'onPlay'       => \&setPref,
+							'onAdd'        => \&setPref,
+							'onRight'      => \&setPref,
 							'header'       => '{STEREOXL}',
 							'headerAddCount' => 1,
 							'pref'            => "stereoxl",
