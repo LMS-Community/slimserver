@@ -323,7 +323,7 @@ sub _http_read {
 		}
 		
 		# Handle redirects
-		if ( $code =~ /30[12]/ ) {
+		if ( $code =~ /^30\d/ ) {
 
 			my $location = $self->response->header('Location');
 			
