@@ -112,7 +112,7 @@ sub shutdownPlugin {
 	Slim::Utils::Timers::killTimers(undef, \&checker);
 
 	# disable protocol handler?
-	Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
+	Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
 
 	$initialized = 0;
 
@@ -183,7 +183,7 @@ sub initPlugin {
 			'contextToken' => 'MUSICMAGIC_MIX',
 		});
 
-		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
+		Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
 
 		Slim::Plugin::MusicMagic::ClientSettings->new;
 
@@ -574,7 +574,7 @@ sub mixerFunction {
 
 	} elsif ($levels[$level] eq 'contributor') {
 		
-		# MusicMagic uses artist instead of contributor.
+		# MusicIP uses artist instead of contributor.
 		$levels[$level] = 'artist';
 		$mixSeed = $currentItem->name;
 	
@@ -1098,7 +1098,7 @@ sub _prepare_mix {
 			if ($obj->musicmagic_mixable) {
 
 				my $playlist = $obj->path;
-				if ($obj->url =~ /musicmagicplaylist:(.*?)$/) {
+				if ($obj->url =~ /musicipplaylist:(.*?)$/) {
 					$playlist = Slim::Utils::Misc::unescape($1);
 				}
 

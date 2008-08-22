@@ -1170,7 +1170,7 @@ sub playlistXitemCommand {
 	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
 	
 	# XXX: hardcoding these protocols isn't the best way to do this. We should have a flag in ProtocolHandler to get this list
-	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicmagicplaylist:/) {
+	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicipplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 

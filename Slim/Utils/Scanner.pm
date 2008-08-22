@@ -203,7 +203,7 @@ sub findFilesMatching {
 =head2 findFilesForRescan( $topDir, $args )
 
 Wrapper around L<findNewAndChangedFiles>(), so that other callers (iTunes,
-MusicMagic can reuse the logic.
+MusicIP can reuse the logic.
 
 =cut
 
