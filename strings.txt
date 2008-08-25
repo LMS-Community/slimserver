@@ -105,7 +105,7 @@ LOADING_SQUEEZECENTER
 	IT	Caricamento di SqueezeCenter in corso...
 	NL	SqueezeCenter wordt geladen...
 
-BASE_SKIN
+EN_SKIN
 	CS	Světlý
 	DA	Lys
 	DE	Hell
