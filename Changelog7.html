@@ -1,4 +1,4 @@
-<h2><a name="v7.2" id="v7.2"></a>Version 7.2 - 2008-xx-xx</h2>
+<h2><a name="v7.2" id="v7.2"></a>Version 7.2 - 2008-08-28</h2>
 <ul>
 	<li>International:
 	<ul>
@@ -8,68 +8,11 @@
 
 	<li>Firmware updates:</li>
 	<ul>
-		<!-- XXX: Remove all this Boom history before release -->
-		<li>Boom - Version 31</li>
+		<li>Boom - Version 32</li>
 		<ul>
-			<li>Fix for two line strings, where top line sting is to long, preventing bottom line string to show at all</li>
-			<li>Changed ambient light sensor formula to generally increase display brightness</li>
-			<li>Bug 8648: Enable repeat for all front panel buttons</li>
+			<li>Initial Boom firmware.</li>
 		</ul>
-		
-		<li>Boom - Version 26</li>
-		<ul>
-			<li>Set line out default to headphone</li>
-			<li>Fix a minor second line animation glitch when reconnecting to SC/SN</li>
-		</ul>
-		
-		<li>Boom - Version 23</li>
-		<ul>
-			<li>Some additional DSP changes by Caleb</li>
-			<li>Bug 8318: Add slimproto LIOS message for line in/out plugged in status</li>
-			<li>Re-enabled ambient light sensor formula so both channels are used</li>
-			<li>Bug 8648: Add repeat code for fwd/rew</li>
-			<li>Fix cut off RTC alarm sign</li>
-		</ul>
-			
-		<li>Boom - Version 22</li>
-		<ul>
-			<li>Bug 8887, 8888: String tweaks</li>
-			<li>Bug 8899: Fixed ALSS packet flood</li>
-			<li>Bug 8770: Don't show RTC clock if it's never been set</li>
-			<li>Changed RTC alarm tone to multi tone</li>
-		</ul>
-		
-		<li>Boom - Version 21</li>
-		<ul>
-			<li>Added better bass management control.</li>
-			<li>Bug 8339: Subwoofer line out only drives right channel</li>
-			<li>Bug 8234: Buttons sometimes get 'stuck' and repeat</li>
-			<li>Bug 8851: push animation wrong and clock kicks in too early when connecting sometimes</li>
-			<li>Bug 8062: Second line scrolling in setup sometimes scrolls only once</li>
-			<li>Bug 8065: Second line scrolling doesn't scroll if string is 1 character too long</li>
-			<li>Bug 8385: Text does not Scroll All screens are from "Setting up the Network"</li>
-			<li>Bug 8903: enable xilinx reset from front panel</li>
-			<li>Bug 8430: "This may take a minute." maybe should come back</li>
-			<li>Bug 8227: Boom disconnecting when scrolling fast through SN lists</li>
-		</ul>
-		
-		<li>Boom - Version 19</li>
-		<ul>
-			<li>Bug 8771: Advance to first menu on splash screen if wheel is turned</li>
-			<li>Bugs 8833, 7975: Line in volume from 0 to 100 instead of dB</li>
-			<li>Bug 8701:
-			<ul>
-			 	<li>Report line in/out status via slimproto STAT</li>
-				<li>Line in: Note symbol when playing (i.e. unpaused)</li>
-				<li>Automatically switch to line in if something gets plugged in (offline mode)</li>
-			</ul>
-			</li>
-			<li>Bug 8698: Fix another reference to 'knob' in app.strings</li>
-			<li>Bug 8281: Add 'Board revision' option in 'Factory Test'</li>
-			<li>Bug 8702: Remove 'Auto Upgrade' option in 'Current Settings' - it's	always on</li>
-			<li>Bug 8280: Always use max brightness during firmware update (overriding ambient light sensor value)</li>
-		</ul>			
-		
+				
 		<li>Squeezebox 2/3 - Version 112<br />
 			Transporter - Version 62<br />
 			Receiver - Version 47
@@ -95,140 +38,6 @@
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9005">#9005</a> - RS-232 broken</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9058">#9058</a> - Panic due to incorrect AC line voltage measurement</li>
 		</ul>
-		
-		<li>Boom - Version 18</li>
-		<ul>
-			<li>Bugs 8592, 8538: Show clock and bell sign if alarm is set when losing connection to SC</li>
-			<li>Bugs 8349, 8329: Show error message if connecting to too old SC (which does not support Boom)</li>
-			<li>Bug 8582: Fixed 12:01 PM (noon) and 12:01 AM (midnight) display</li>
-			<li>Bug 8538:
-			<ul>
-				<li>Added bell sign to rtc clock if alarm is set</li>
-				<li>Bell sign blinks during alarm</li>
-				<li>Alarm tone still needs to be improved/changed (currently main volume dependent)</li>
-			</ul>
-			</li>
-			<li>Updated Rhapsody Direct to higher quality 192k MP3.</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5720">#5720</a> - Gapless MP3 not possible if file has CRC</li>		
-		</ul>
-		
-		<li>Boom - Version 17 (unreleased)</li>
-		<ul>
-			<li>Latest translated strings</li>
-			<li>Changed all words 'knob' to 'wheel' for Boom to match the QSG</li>
-		</ul>
-		
-		<li>Boom - Version 14 (unreleased)</li>
-		<ul>
-			<li>Fixed bug with new volume setting</li>
-			<li>Made ambient light sensor display 'Ambient Light Sensor' on the top line</li>
-			<li>Implemented DAC based volume control</li>
-			<li>Made line in gain to be unity when turned on</li>
-		</ul>
-		
-		<li>Boom - Version 12</li>
-		<ul>
-			<li>Bug 8367: Loud music played at 100% causes unit to reboot after 5 seconds</li>
-			<li>Bug 8368: Update Snooze Button Test to Match Hardware</li>
-		</ul>
-		<li>Boom - Version 11</li>
-		<ul>
-			<li>String changes</li>
-		</ul>
-		<li>Boom - Version 9</li>
-		<ul>
-			<li>Change knob direction while in setup mode (to be aligned with TR knob and SBC wheel) when entering WPA key, SSID, IP address, hostname, etc.</li>
-			<li>Added brightness history to make the display brightness less jumpy</li>
-			<li>Added possibility to change how VFD / LED brightness are calculated while in Current Settings - Factory Test - Lightsensor</li>
-			<li>Additional factory audio test by Caleb</li>
-			<li>Latest translated strings update</li>
-		</ul>
-		<li>Boom - Version 8</li>
-		<ul>
-			<li>Bug 8152: Sanity check for RTC to prevent alarm on PQP1 and older units, where RTC I2C communication has issues when hot</li>
-			<li>Reset alarm when unit is factory reset</li>
-			<li>Fix home button on remote while in setup mode</li>
-			<li>Bug 8040:
-			<ul>
-				<li>Only light up Power button LED when off</li>
-				<li>Allow SC to control background LEDs</li>
-			</ul>
-			<li>Bug 8145: Move Text Viewer, button and snooze button test into new Factory Test menu in Current Settings.</li>
-			<li>Bug 7891: Debounce code for buttons (including knob push button)</li>
-			<li>Bug 7623: Fix chopped off logo</li>
-			<li>Bug 8050:
-			<ul>
-				<li>Prevent second line scrolling while entering WEP or WPA key</li>
-				<li>Make sure cursor stays on screen while entering WEP key</li>
-			</ul>
-			<li>Make Text Viewer a per player define</li>
-		</ul>
-		<li>Boom - Version 7</li>
-		<ul>
-			<li>Additional knob debouncing (needed for PQP2 Booms)</li>
-			<li>DAC changes from Caleb</li>
-			<li>Support for both TAOS light sensors</li>
-			<li>Line in with a fixed low volume</li>
-			<li>RTC alarm with snooze (to be set / clear via SC)</li>
-		</ul>
-		<li>Boom - Version 6</li>
-		<ul>
-			<li>Bug 7867: Add new audio command 'audo' to allow setting of analog output mode (0 = headphone, 1 = sub out)</li>
-			<li>Bug 8015: Made push animation a tad faster again</li>	
-			<li>Bugs 7788, 7743, 7717:
-			<ul>
-				<li>Tweak brightness and greyscale levels</li>
-				<li>Added option to allow setting brightness to auto, which then uses the light sensor value</li>
-				<li>If a brightness like 0, 1, 2, 3, 4 is set, it's used as before as a fixed brightness</li>
-				<li>If a brightness like 0x0201 is set, the higher byte is used as divider and the lower byte as offset (brightness = light sensor value / divider + offset)</li>
-				<li>As long as auto brightness is set the brightness is recalculated and applied every second</li>
-			</ul>
-			</li>
-		</ul>
-		<li>Boom - Version 5</li>
-		<ul>
-			<li>Caleb's DAC changes</li>
-			<li>Fixed button test - blinking LED was broken</li>
-			<li>Fixed sorting of language selector - now they can be sorted w/o breaking internal index</li>
-			<li>Added second line horizontal scrolling (for Boom only)</li>
-			<li>TAOS light sensor lux calculation</li>
-			<li>Changed factory test to report TAOS light sensor value</li>
-			<li>Tweaked shift left/right animation to take about the same amount of time as on SB screen</li>
-		</ul>
-		<li>Boom - Version 4</li>
-		<ul>
-			<li>Caleb's DAC changes</li>
-			<li>Caleb's tweaks to the display brightness levels</li>
-			<li>New setting: Line out mode: headphone or sub out</li>
-			<li>Latest strings and translations (10 languages)</li>
-			<li>Text Viewer: Allow switching between all 10 languages by pressing number buttons on remote</li>
-			<li>Simple LED backlight</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7009">#7009</a>Music source selection</li>
-		</ul>
-		<li>Boom - Version 3</li>
-		<ul>
-			<li>Latest firmware strings from Brian/Mike</li>
-			<li>Double line text viewer</li>
-			<li>Auto update on</li>
-			<li>Light sensor factory test (readout of actual value in lux using full 12 bit resolution)</li>
-			<li>RTC factory test (readout of seconds, can be used to see if RTC is running and if crystal is mounted)</li>
-			<li>Snoozebutton (sends BUTTON_SLEEP to SC7)</li>
-			<li>Separate font for Boom (to make later tweaking easier)</li>
-			<li>Line in framework (no sound yet, sorry)</li>
-			<li>Snoozebutton test (all five buttons can be tested seperately)</li>
-			<li>Wireless card missing, MAC not set and UUID not set message only shows up from time to time</li>
-			<li>Light sensor readout in Current Settings</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7608">#7608</a> - Volume button repeat</li>
-		</ul>
-		<li>Boom - Version 2</li>
-		<ul>
-			<li>Preset buttons have their own button code</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=15">#15</a> - DHCP fails with Mac OS X network sharing DHCP server</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6513">#6513</a> - WPA / WPA2 Personal: Setting passphrase to more than 63 characters shows garbage characters and crashes the Squeezebox</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=6994">#6994</a> - Problems connecting WPA and WPA2 to Netgear WNR3500</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7415">#7415</a> - Apple Time Capsule, Airport Express N don't work with Squeezebox</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7637">#7637</a> - Change serv 2 to www.test.squeezenetwork.com</li>
-		</ul>
 	</ul>
 	<br />
 
@@ -249,6 +58,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8926">#8926</a> - CLI interface not returning hasitems correctly for Staff Picks</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8939">#8939</a> - MP3 file with invalid id3v2 data causes the scanner to crash</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8986">#8986</a> - make sure iTunes/MusicIP settings are saved before audiodir, as changing audiodir automatically launches a rescan</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9031">#9031</a> - Shuffle tooltip undefined</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9065">#9065</a> - Windows Server 2008 and not Windows Vista</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9112">#9112</a> - Last.fm settings menu is useless when no account is registered</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9144">#9144</a> - Non-Default skin settings pages broken in Safari 3.1.2 on OS X</li>
@@ -291,15 +101,6 @@
 			</li>
 		</ul>
 	</li>
-</ul>
-
-<h2><a name="v7.1.1" id="v7.1.1"></a>Version 7.1.1 - xxxx-xx-xx</h2>
-
-<ul>
-
-	<li>Bug Fixes:<ul>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9031">#9031</a> - Shuffle tooltip undefined</li>
-	</ul>
 </ul>
 
 <h2><a name="v7.1" id="v7.1"></a>Version 7.1 - 2008-07-28</h2>
