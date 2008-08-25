@@ -57,6 +57,7 @@ sub initPlugin {
 	$localip = inet_ntoa((gethostbyname($computername))[4]);
 
 	$xpl_interval =	$prefs->get('interval');
+	$xpl_ir       = $prefs->get('ir');
 
 	$xpl_port = 50000;
 
