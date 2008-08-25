@@ -318,10 +318,18 @@ sub skins {
 
 			$log->info("skin entry: $dir");
 
-			$dir = Slim::Utils::Misc::unescape($dir);
-			my $name = Slim::Utils::Strings::getString( uc($dir) . '_SKIN' );
+			if ($UI) {
+				
+				$dir = Slim::Utils::Misc::unescape($dir);
+				my $name = Slim::Utils::Strings::getString( uc($dir) . '_SKIN' );
 
-			$skinlist{ $UI ? $dir : uc $dir } = $name eq uc($dir) . '_SKIN' ? $dir : $name;
+				$skinlist{ $dir } = $name eq uc($dir) . '_SKIN' ? $dir : $name;
+			}
+			
+			else {
+				
+				$skinlist{ uc $dir } = $dir;
+			}
 		}
 	}
 
