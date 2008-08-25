@@ -14,7 +14,7 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>SoftSqueeze 3.6</title>
+    <title>SoftSqueeze 3.7</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>SoftsSqueeze Squeezebox Emulator</description>
