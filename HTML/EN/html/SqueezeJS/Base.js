@@ -174,9 +174,9 @@ function _init() {
 	
 					// only increment interim value if playing and not scanning (FWD/RWD)
 					if (this.playerStatus.mode == 'play' && this.playerStatus.rate == 1)
-						this.playerStatus.playtime += 0.5;
+						this.playerStatus.playtime++;
 	
-					self.timer.delay(500);
+					self.timer.delay(950);
 				}
 			});
 
