@@ -28,6 +28,10 @@ Nokia770:
 	Owner: Ben Klaas
 	Description: Skin optimised for Nokia770/800 style web tablets
 
+ScreenReader:
+	Owner: Michael Herger
+	Description: Skin based on Handheld, with some optimizations for screen readers as used by our blind users.
+
 Touch:
 	Owner: N/A
 	Description: Looks good for Tablet computers?

@@ -138,6 +138,10 @@ DEFAULT_SKIN
 	SV	Standard
 	ZH_CN	缺省
 
+SCREENREADER_SKIN
+	DE	Bildschirmleser
+	EN	Screen Reader
+
 DEFAULT_MAP
 	CS	Standardní
 	DA	Standard
@@ -9988,6 +9992,10 @@ PAGES
 	PT	Páginas
 	SV	Sidor
 	ZH_CN	页
+
+PAGEINDEX
+	DE	Seitenindex
+	EN	Page index
 
 ITEMS
 	CS	Položky

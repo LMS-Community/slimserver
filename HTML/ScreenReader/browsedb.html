@@ -1,0 +1,52 @@
+	[% pagetitle = browseby | string %]
+	[% pageHeaderScripts = BLOCK %]
+		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>   
+		<script TYPE="text/javascript">
+			function playlistCmd(thisurl, params) {
+				var myAjax = new Ajax.Request(
+				thisurl,
+				{
+					method: 'POST',
+					postBody: params
+				});
+				return false;
+			}
+		</script>
+	[% END %]
+	[% PROCESS pageheader.html noSubMenu="1" noLabel="1" %]
+
+	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
+		[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]<a href="#pagebar">[% "PAGEINDEX" | string %]</a>[% END %]
+	[%- END -%]
+	
+	[% IF warn %]
+		<p><b>[% "NOTE" | string %]</b>
+		[% "SCAN_WARNING" | string %] 
+		[% IF audiodir %]
+			[% "SCAN_CLICK" | string %] <a href="browsetree.html?player=[% playerURI %]">[% "HERE" | string %]</a>.
+		[% END %]
+		<hr></p>
+	[% END %]
+	
+	<table cellspacing="0" border="0" cellpadding="0" width="100%">
+		[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
+				container = 'gallerycontainer'; %]
+		[%- ELSE;
+				container = 'contentcontainer';
+			END;
+		%]
+		[% WRAPPER $container %]
+			[% IF coverArt %]
+				<p align="center"><a href="/music/[% coverArt %]/cover.jpg"><img src="/music/[% coverArt %]/cover_180x180_f_000000.jpg"></a></p>
+			[% END %]
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
+			[% END %]
+		[% END %]
+	</table>
+
+	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]<p><a name="pagebar">[% PROCESS pagebar addSummary = 1 %]</a></p>[% END %]
+	
+	[% PROCESS pagefooter.html %]

@@ -1,0 +1,61 @@
+[%- FILTER null %]
+
+[% BLOCK cmdlink -%]
+<td>
+[% IF content.search("href=") %]
+<a [% content %]>[% cmdtitle | string %]</a>
+[%- ELSE -%]
+<a href="#" [% content %]>[% cmdtitle | string %]</a>
+[%- END %]
+</td>
+[%- END %]
+
+[% BLOCK dummylink -%]
+	<td>&nbsp;</td>
+[%- END %]
+
+[% BLOCK cmdHRef -%]onclick="playlistCmd('[% webroot %]status_header.html', '[%
+	# single quotes aren't url encoded, but can con fuse JS
+	IF itemobj.url;
+		itemobj.url = itemobj.url | replace("'", "%27");
+	END;
+
+	IF numcmdFor.$cmdType; # better way to determine this?
+		PROCESS cmdNumericQuery;
+	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+		PROCESS cmdRemoteURLQuery;
+	ELSE;
+		PROCESS cmdLocalQuery;
+	END; %]&amp;player=[% playerURI %]&amp;ajaxRequest=1&amp;force=1');alert('asdfad');return false;"
+[%- END %]
+
+
+[% BLOCK contentitem -%]
+<table>
+	<tr>
+		<td>
+		
+		[%- IF anchor %]
+			<a name="[% anchor | uri%]"></a>
+		[%- END %]
+		
+		[%- content | indent(4) %]
+		</td>
+		[%- IF leftcontrols -%]
+			[%- PROCESS $leftcontrols -%]
+		[%- END %]
+		
+		[%- IF rightcontrols -%]
+			[%- PROCESS $rightcontrols -%]
+		[%- ELSIF controls -%]
+			[%- PROCESS $controls -%]
+		[%- END %]
+	</tr>
+</table>
+[%- END %]
+
+[% BLOCK galleryitem %]
+[% PROCESS contentitem %]
+[% END %]
+
+[% END -%]
