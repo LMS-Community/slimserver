@@ -9,9 +9,8 @@
 
 		[% PROCESS standardheader.html %]
 
-		<script type="text/javascript" src="html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script type="text/javascript" src="/html/js.html?r=[% revision %]"></script>
 
 		<style>
 			body {
@@ -20,10 +19,7 @@
 			}
 		</style>
 
-		<script type="text/javascript" src="[% webroot %]html/SqueezeJS/Base.js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/SqueezeJS/Strings.js %]</script>
-		<script type="text/javascript" src="[% webroot %]html/SqueezeJS/UI.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="[% webroot %]html/Main.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			var strings = new Array();
 

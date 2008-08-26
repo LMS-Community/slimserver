@@ -76,13 +76,9 @@
 			document.getElementById('loading').style.display = 'block';
 		</script>
 
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
- 		<script type="text/javascript" src="/html/SqueezeJS/Base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/js.html?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/SqueezeJS/Strings.js %]</script>
-		<script type="text/javascript" src="/html/SqueezeJS/UI.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="[% webroot %]html/Main.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
 			[% IF moreThanThis != "" %]SqueezeJS.setCookie( 'SqueezeCenter-allLinks', "[% moreThanThis %]" )[% END %]

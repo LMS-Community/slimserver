@@ -17,7 +17,6 @@
 
 ELSE %]
 	[% extJsScripts = BLOCK %]
-		<script type="text/javascript" src="[% webroot %]html/Home.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			Ext.onReady(function(){
 				Home.init();
@@ -216,7 +215,7 @@ ELSE %]
 	</div>
 	[% END %]
 
-	[% PROCESS pageheader.html noHomeLink=1 %]
+	[% PROCESS pageheader.html noHomeLink=1 useSpecialExt="-browse" %]
 
 	[% menu %]
 

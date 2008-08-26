@@ -147,5 +147,3 @@ Browse = {
 	}
 };
 
-Ext.onReady(Browse.init, Browse, true);
-

@@ -50,7 +50,7 @@ END %]
 	[% END %]
 [% END # filter -%]
 
-[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll = (streaminfo ? 0 : 1) %][% IF !streaminfo %]<div id="mainbody">[% END %][% END %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll = (streaminfo ? 0 : 1) useSpecialExt="-browse" %][% IF !streaminfo %]<div id="mainbody">[% END %][% END %]
 
 [% IF msg %][% WRAPPER contentcontainer %]
 	<div class="message">[% msg %]</div>

@@ -25,9 +25,13 @@
 				'[% "SORT_GENREARTISTALBUM" | string %]': 'genre.namesort,contributor.namesort,album.titlesort'
 			}
 		[% END %]
-	</script>
+
+		Ext.onReady(function(){
+			Browse.init();
+		});
+ 	</script>
 [%- END -%]
-[%- PROCESS pageheader.html dontscroll=1 -%]
+[%- PROCESS pageheader.html dontscroll=1 useSpecialExt="-browse" -%]
 
 	<div id="browsedbHeader">
 		[% IF !(artwork == 1 && (levelName == 'album' || levelName == 'age')) -%]

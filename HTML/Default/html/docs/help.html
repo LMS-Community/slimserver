@@ -19,12 +19,9 @@
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->
 
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
- 		<script type="text/javascript" src="/html/SqueezeJS/Base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/js.html?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/SqueezeJS/Strings.js %]</script>
-		<script type="text/javascript" src="[% webroot %]html/Help.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
 			Ext.onReady(Help.init, Help, true);
