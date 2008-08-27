@@ -152,7 +152,7 @@ WELCOME_MESSAGE
 SQUEEZENETWORK_WELCOME
 	DA	Nu er afspilleren registreret; tryk højre for at begynde.
 	DE	Der Player ist registriert, drücken Sie RECHTS!
-	EN	Your player is now registered, press RIGHT to begin!
+	EN	Your player is now registered. Press RIGHT to begin!
 	ES	Se ha registrado el reproductor, pulse DERECHA para comenzar.
 	FI	Soitin on rekisteröity. Aloita painamalla OIKEAA painiketta.
 	FR	Votre platine est maintenant inscrite. Appuyez sur DROITE pour commencer!
