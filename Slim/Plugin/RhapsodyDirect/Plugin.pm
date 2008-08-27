@@ -13,7 +13,7 @@ use Slim::Plugin::RhapsodyDirect::RPDS ();
 
 use URI::Escape qw(uri_escape_utf8);
 
-use constant SN_DEBUG => 1;
+use constant SN_DEBUG => 0;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
