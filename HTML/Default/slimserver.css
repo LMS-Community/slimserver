@@ -1269,3 +1269,265 @@ ul.x-tree-node-ct {
 #titleheader {
 	margin: 5px 10px;
 }
+
+
+/* these styles overwrites the default ExtJS stylesheet */
+.x-panel-body {
+	background: none;
+}
+
+
+.x-tree-node-leaf .x-tree-node-alwayscollapsed {
+	background-image:url(/html/ext/resources/images/default/tree/folder.gif);
+}
+
+.x-tree-node .x-tree-selected {
+	background-color: #eeeeee;
+}
+
+.x-layout-container {
+	background-color: transparent;
+}
+
+.x-layout-panel-body {
+	background-color: transparent;
+}
+
+.x-layout-panel {
+	border: 0px none;
+	background-color: transparent;
+}
+
+.x-form-field, .x-combo-list-item {
+	font-size: 11px;
+}
+
+.ext-strict .x-form-text {
+	height: 16px;
+}
+
+.x-form-focus, textarea.x-form-focus {
+	border-color: #008d89;
+}
+
+/* drop down menu */
+.x-menu {
+	background-image: url(html/images/slim-ext/menu.gif);
+	border-color: #949494;
+}
+
+.x-menu-list {
+	border: none;
+	overflow: auto;
+}
+
+.x-menu-item {
+	color: #494949;
+}
+
+a.x-menu-item:hover {
+	text-decoration: none;
+}
+
+.x-menu-item-active {
+	border-color: #bfbfbf;
+	background-color: #dedede;
+	background-image: url();
+}
+
+.x-menu-item-active a.x-menu-item {
+	color: #494949;
+}
+
+.x-menu-sep {
+	border-bottom-color: #494949;
+}
+
+.x-menu-item-checked .x-menu-group-item .x-menu-item-icon {
+	background-image: url(html/images/slim-ext/group-checked.gif);
+}
+
+/* tabs and tab panel (settings) */
+.x-border-layout-ct .x-tab-panel,
+ul.x-tab-strip-top {
+	background: none;
+}
+
+.x-tab-strip-top .x-tab-right,
+.x-tab-strip-top .x-tab-left,
+.x-tab-strip-top .x-tab-strip-inner {
+	background-image: url(html/images/slim-ext/tab-sprite.gif);
+}
+
+.x-tab-strip span.x-tab-strip-text,
+.x-tab-strip-active span.x-tab-strip-text,
+.x-tab-strip-over span.x-tab-strip-text {
+	color: #dedede;
+	font-family: sans-serif;
+	font-weight: normal;
+}
+
+ul.x-tab-strip-top {
+	border-bottom-color: black;
+}
+
+.x-tab-strip span.x-tab-strip-text {
+	padding: 4px 0 6px;
+}
+
+.x-tab-scroller-right {
+	background-image: url(html/images/slim-ext/tab-scroll-right.gif);
+}
+
+.x-tab-scroller-left {
+	background-image: url(html/images/slim-ext/tab-scroll-left.gif);
+}
+
+/* buttons */
+.x-btn {
+	display: inline-table;
+	font-family: sans-serif;
+}
+
+.x-btn-menu-arrow-wrap .x-btn-center button {
+	height: 19px;
+	background-image: url(html/images/slim-ext/btn-arrow.gif);
+}
+
+/* standard buttons */
+.x-btn-text, .x-btn button {
+	color: #d1d1d1;
+	font-family: sans-serif;
+	font-weight: bold;
+}
+
+.x-panel-btns-ct .x-btn-focus .x-btn-left,
+.x-btn-left {
+	width: 5px;
+	height: 19px;
+	background: url(html/images/slim-ext/btn-generic.png) no-repeat 0 0;
+}
+
+.x-panel-btns-ct .x-btn-focus .x-btn-right,
+.x-btn-right {
+	width: 5px;
+	height: 19px;
+	background: url(html/images/slim-ext/btn-generic.png) no-repeat 0 -19px;
+}
+
+.x-panel-btns-ct .x-btn-focus .x-btn-center,
+.x-btn-center {
+	background: url(html/images/slim-ext/btn-generic.png) repeat-x 0 -38px;
+	vertical-align: middle;
+	text-align: center;
+	padding: 0 5px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.x-btn-left i, .x-btn-right i{
+    width: 5px;
+}
+
+.x-window .x-btn-over .x-btn-left,
+.x-btn-over .x-btn-left,
+.x-btn-menu-active .x-btn-left {
+	background-position: 0 -57px;
+}
+
+.x-window .x-btn-over .x-btn-right,
+.x-btn-over .x-btn-right, 
+.x-btn-menu-active .x-btn-right {
+	background-position: 0 -76px;
+}
+
+.x-window .x-btn-over .x-btn-center,
+.x-btn-over .x-btn-center,
+.x-btn-menu-active .x-btn-center {
+	background-position: 0 -95px;
+}
+
+.x-window .x-btn-click .x-btn-left,
+.x-btn-click .x-btn-left,
+.x-btn-pressed .x-btn-left {
+	background-position: 0 -114px;
+}
+
+.x-window .x-btn-click .x-btn-right,
+.x-btn-click .x-btn-right,
+.x-btn-pressed .x-btn-right {
+	background-position: 0 -133px;
+}
+
+.x-window .x-btn-click .x-btn-center,
+.x-btn-click .x-btn-center,
+.x-btn-pressed .x-btn-center {
+	background-position: 0 -152px;
+}
+
+/* dialog */
+.x-window .x-window-tl, .x-panel-ghost .x-window-tl {
+	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat 0 0;
+	padding-left: 14px;
+}
+
+.x-window .x-window-tr, .x-panel-ghost .x-window-tr {
+	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat right -41px;
+	padding-right: 14px;
+}
+
+.x-window .x-window-header, .x-panel-ghost .x-window-header {
+	background: url(html/images/slim-ext/hd-sprite.gif) repeat-x right -82px;
+	padding-top: 16px;
+	padding-bottom: 9px;
+}
+
+.x-window-header-text {
+	font-size: 110%;
+	color: white;
+	cursor: default;
+}
+
+.x-panel-ghost ul,
+.x-window-bwrap {
+	background-image: url(html/images/slim-ext/dlg-bg.gif);
+	border: none;
+	padding: 0 8px 8px 8px;
+}
+
+body.x-body-masked .x-window-plain .x-window-mc,
+.x-window-plain .x-window-body,
+.x-window-mc, .x-window-bc,
+.x-window-ml, .x-window-bl,
+.x-window-mr, .x-window-br {
+	background-color: white;
+	background-image: none;
+	border: none;
+}
+
+.x-panel-ghost .x-tool-close,
+.x-window .ext-mb-icon,
+.x-window .x-tool-close {
+	background-image: none;
+}
+
+.x-window .ext-mb-icon {
+	height: 0;
+	width: 0;
+}
+
+.x-window-dlg .ext-mb-text {
+	font-size: 100%;
+}
+
+.x-window-dlg .x-window-body {
+	padding: 5px 15px 5px 0;
+}
+
+
+/* tool tips */
+.x-tip .x-tip-top, .x-tip .x-tip-top-left, .x-tip .x-tip-top-right, 
+.x-tip .x-tip-ft, .x-tip .x-tip-ft-left, .x-tip .x-tip-ft-right,
+.x-tip .x-tip-bd-left, .x-tip .x-tip-bd-right{
+	background-image: url(html/images/slim-ext/tip-sprite.gif);
+}
