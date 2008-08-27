@@ -72,9 +72,11 @@ sub get {
 			$value = [ $value ];
 		}
 		
-		# More special handling for alarm prefs
-		elsif ( $key =~ /^alarm/ && $key ne 'alarmfadeseconds' && !ref $value ) {
-			$value = [ $value ];
+		# More special handling for alarm prefs, ugh
+		elsif ( $key =~ /^alarm/ && !ref $value ) {
+			if ( $key !~ /alarmfadeseconds|alarmsEnabled/ ) {
+				$value = [ $value ];
+			}
 		}
 		
 		if ( wantarray && ref $value eq 'ARRAY' ) {
