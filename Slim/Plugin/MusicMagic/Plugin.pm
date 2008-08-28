@@ -760,7 +760,6 @@ sub getMix {
 	my $mixArgs = "$validMixTypes{$for}=$id";
 
 	# url encode the request, but not the argstring
-	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
 	$mixArgs = URI::Escape::uri_escape($mixArgs);
 	
 	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
