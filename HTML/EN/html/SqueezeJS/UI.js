@@ -1796,6 +1796,13 @@ SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
 			},
 			change: {
 				fn: this.onSlide
+			},
+			dragend: {
+				fn: function(){
+					// trigger validation for settings
+					this.input.focus();
+					this.input.blur();
+				}
 			}
 		});
 		

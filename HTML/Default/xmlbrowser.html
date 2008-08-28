@@ -126,17 +126,23 @@ END %]
 	[%- # treat track information specially
 	IF path == 'trackinfo.html';
 
-		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
+		itemobj = {
+			id => sess,
+			album => details.album.0,
+			contributorRoles => details.contributors.keys,
+			contributors => details.contributors,
+			genres => details.genre,
+			year => details.year.0.id
+			title => pagetitle
+			url => itemUrl
+		};
 
-		PROCESS songinfo_header.html albumFirst = 1
-			itemobj = {
-				id => sess,
-				album => details.album.0,
-				contributorRoles => details.contributors.keys,
-				contributors => details.contributors,
-				genres => details.genre,
-				year => details.year.0.id
-			}
+		songInfoPlayLinks = BLOCK;
+			PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0;
+		END;
+
+		PROCESS songinfo_header.html 
+			albumFirst = 1
 			plugin_meta = {
 				title => details.title.0.name 
 			};

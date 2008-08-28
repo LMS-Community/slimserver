@@ -330,7 +330,9 @@ sub timeFormats {
 		,q(%Hh%M:%S)	=> q{hh'h'mm:ss (24h 03h00:00 15h00:00)}
 		,q(%Hh%M)	=> q{hh'h'mm (24h 03h00 15h00)}
 		,q(|%I:%M:%S %p)	=> q{h:mm:ss pm (12h)}
+		,q(|%I:%M:%S)	=> q{h:mm:ss (12h)}
 		,q(|%I:%M %p)		=> q{h:mm pm (12h)}
+		,q(|%I:%M)		=> q{h:mm (12h)}
 		,q(|%H:%M:%S)		=> q{h:mm:ss (24h)}
 		,q(|%H:%M)		=> q{h:mm (24h)}
 		,q(|%H.%M.%S)		=> q{h.mm.ss (24h)}
@@ -338,8 +340,8 @@ sub timeFormats {
 		,q(|%H,%M,%S)		=> q{h,mm,ss (24h)}
 		,q(|%H,%M)		=> q{h,mm (24h)}
 		# no idea what the separator between minutes and seconds should be here
-		,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 03h00:00 15h00:00)}
-		,q(|%Hh%M)		=> q{h'h'mm (24h 03h00 15h00)}
+		,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 3h00:00 15h00:00)}
+		,q(|%Hh%M)		=> q{h'h'mm (24h 3h00 15h00)}
 	};
 }
 

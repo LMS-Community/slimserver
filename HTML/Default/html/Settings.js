@@ -232,12 +232,18 @@ Settings.Page = function(){
 
 	return {
 		init : function(){
+			this.initSliders();
+			this.showWarning();
 			this.initDescPopup();
+
 			SqueezeJS.UI.FilesystemBrowser.init();
 			SqueezeJS.UI.ScrollPanel.init();
 
+			this.onResize(0, Ext.lib.Dom.getViewHeight());
+			Ext.EventManager.onWindowResize(this.onResize);
+
 			var items = Ext.query('input');
-			for(var i = 0; i < items.length; i++) {
+			for (var i = 0; i < items.length; i++) {
 				var inputEl;
 
 				if (inputEl = Ext.get(items[i])) {
@@ -254,16 +260,14 @@ Settings.Page = function(){
 				}
 			}
 
-			this.onResize(0, Ext.lib.Dom.getViewHeight());
-			Ext.EventManager.onWindowResize(this.onResize);
-
-			Ext.select('input, textarea, select').on('change', function(ev){
-				modified = true;
+			Ext.select('input, textarea, select').on({
+				change: {
+					fn: this._checkModified
+				},
+				blur: {
+					fn: this._checkModified
+				}
 			});
-			
-			this.initSliders();
-
-			this.showWarning();
 		},
 
 		initDescPopup : function(){
@@ -510,6 +514,10 @@ Settings.Page = function(){
 			return modified;
 		},
 
+		_checkModified : function(ev, input){
+			modified = modified || (input.value != input.defaultValue);
+		},
+
 		setModified : function(){
 			modified = true;	
 		},
@@ -544,9 +552,6 @@ Settings.Alarm = function() {
 		sliders: new Array(),
 
 		init: function(alarmId, alarmCount) {
-			this.initSliders();
-			this.initDefaultVolumeBtns();
-
 			var el;
 			if (el = Ext.get('alarm_remove_' + alarmId)) {
 				el.on({
@@ -593,67 +598,6 @@ Settings.Alarm = function() {
 						}
 					}
 				});
-			}
-		},
-
-		initSliders: function() {
-			// sliders are broken in IE6 - don't use them
-			if (Ext.isIE6)
-				return;
-	
-			var items = Ext.DomQuery.select('input.volumeSlider');
-			
-			for (var i = 0; i < items.length; i++) {
-				var el;
-
-				if (el = Ext.get(items[i].id)) {					
-					this.sliders[el.id] = new SqueezeJS.UI.SliderInput({
-						width: 200,
-						minValue: 0,
-						maxValue: 100,
-				 		input: el,
-				 		cls: 'settingsSlider'
-					});
-					this.sliders[el.id].on({
-			 			change: {
-			 				fn: Settings.Page.setModified
-			 			}
-			 		});
-				}
-			}
-		},
-
-		useDefaultVolume: function(id, enabled){
-
-			if ( id.match(/usesDefaultVolume(.*)/) )
-				id = RegExp.$1;
-
-			var el;
-			if (el = Ext.get('alarmvolume' + id))
-				el.dom.disabled = enabled;
-
-			if (this.sliders['alarmvolume' + id])
-				this.sliders['alarmvolume' + id].setDisabled(enabled);
-		},
-		
-		initDefaultVolumeBtns: function(){
-			var items = Ext.DomQuery.select('input.usesDefaultVolume');
-			
-			for (var i = 0; i < items.length; i++) {
-
-				this.useDefaultVolume(items[i].id, items[i].checked);
-	
-				var el;
-				if (el = Ext.get(items[i].id)) {
-					el.on({
-						change: {
-							fn: function(ev, i){
-								this.useDefaultVolume(i.id, i.checked);
-							},
-							scope: this
-						}
-					});
-				}
 			}
 		}
 	};

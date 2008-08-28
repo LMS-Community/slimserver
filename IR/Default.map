@@ -295,10 +295,6 @@ add						= dead
 add.single				= play_1
 add.hold				= play_2
 
-[moodlogic_instant_mix]
-play.single				= play_0
-add.single				= play_1
-
 [browsemenu]
 play					= right
 add						= right
@@ -386,7 +382,7 @@ search						= exit_search
 play.*						= dead
 play						= exit_play
 add.*						= dead
-add						= exit_add
+add						= letter_space
 
 [INPUT.List]
 arrow_left					= exit_left

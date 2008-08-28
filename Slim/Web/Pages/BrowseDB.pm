@@ -492,6 +492,10 @@ sub browsedb {
 				}
 			}
 			$params->{mixerlinks} = $params->{mixeritems}->{mixerlinks};
+
+			# additional information for the album favorite button on the track list view
+			$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($firstItem->album->url);
+			$params->{itemUrl}    = $firstItem->album->url;
 		}
 
 	}
@@ -587,6 +591,10 @@ sub trackinfo {
 	
 	my $menu = Slim::Menu::TrackInfo->menu( $client, $track->url, $track );
 	
+	# some additional parameters for the nice favorites button at the top
+	$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($track->url);
+	$params->{itemUrl}    = $track->url;
+
 	# Pass-through track ID as sess param
 	$params->{sess} = $id;
 	

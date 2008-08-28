@@ -221,6 +221,8 @@ our %functions = (
 
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
 
+		$functarg = ' ' if $functarg eq 'space';
+
 		my $index = $client->modeParam('charsInd')->{ $functarg };
 
 		return unless defined($index);

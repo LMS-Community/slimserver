@@ -109,6 +109,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['playerinformation', '_index', '_quantity'],
 		[1, 1, 1, \&playerInformationQuery]);
 
+	Slim::Control::Request::addDispatch(['jivedummycommand', '_index', '_quantity'],
+		[1, 1, 1, \&jiveDummyCommand]);
+
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
 		[1, 0, 1, \&jiveFavoritesCommand]);
 
@@ -1059,7 +1062,36 @@ sub alarmVolumeSettings {
 }
 
 sub playerInformationQuery {
-	return;
+	my $request = shift;
+	my $client  = $request->client();
+
+	# information, always display
+	my $playerInfoText = $client->string( 'INFORMATION_SPECIFIC_PLAYER', $client->name() );
+	my $playerInfoTextArea = 
+			$client->string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
+			$client->name() . "\n\n" . 
+			$client->string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
+			Slim::Buttons::Information::playerModel($client) . "\n\n" .
+			$client->string("INFORMATION_FIRMWARE_ABBR") . ": " . 
+			$client->revision() . "\n\n" .
+			$client->string("INFORMATION_PLAYER_IP_ABBR") . ": " .
+			$client->ipport() . "\n\n" .
+			$client->string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
+			uc($client->macaddress()) . "\n\n" .
+			($client->signalStrength ? $client->string("INFORMATION_PLAYER_SIGNAL_STRENGTH") . ": " . 	 
+			$client->signalStrength . "\n\n" : '') .
+			($client->voltage ? $client->string("INFORMATION_PLAYER_VOLTAGE") . ": " .
+			$client->voltage . "\n\n" : '');
+	my @menu = (
+		{
+			textArea => $playerInfoTextArea,
+		},
+	);
+	sliceAndShip($request, $client, \@menu);
+
+	$request->setStatusDone();
+
+	#return;
 }
 
 sub syncSettingsQuery {
@@ -1538,24 +1570,10 @@ sub playerSettingsMenu {
 
 	# information, always display
 	my $playerInfoText = $client->string( 'INFORMATION_SPECIFIC_PLAYER', $client->name() );
-	my $playerInfoTextArea = 
-			$client->string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
-			$client->name() . "\n\n" . 
-			$client->string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
-			Slim::Buttons::Information::playerModel($client) . "\n\n" .
-			$client->string("INFORMATION_FIRMWARE_ABBR") . ": " . 
-			$client->revision() . "\n\n" .
-			$client->string("INFORMATION_PLAYER_IP_ABBR") . ": " .
-			$client->ipport() . "\n\n" .
-			$client->string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
-			uc($client->macaddress()) . "\n\n" .
-			($client->voltage ? $client->string("INFORMATION_PLAYER_VOLTAGE") . ": " .
-			$client->voltage . "\n\n" : '');
 	push @menu, {
 		text           => $playerInfoText,
 		id             => 'settingsPlayerInformation',
 		node           => 'advancedSettings',
-		textArea       => $playerInfoTextArea,
 		weight         => 4,
 		window         => { titleStyle => 'settings' },
 		actions        => {
@@ -1566,7 +1584,6 @@ sub playerSettingsMenu {
 					},
 				},
 	};
-
 
 	# player name change, always display
 	push @menu, {
@@ -2998,6 +3015,10 @@ sub downloadQuery {
 	$request->addResult("count", $cnt);
 
 	$request->setStatusDone();
+}
+
+sub jiveDummyCommand {
+	return;
 }
 
 # convert path to location for download

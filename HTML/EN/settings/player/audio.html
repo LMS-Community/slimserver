@@ -305,7 +305,7 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MAXBITRATE" %]
-				<select class="stdedit" name="pref_maxBitrate" id="pref_maxBitrate">
+				<select class="stdedit" name="pref_maxBitrate" id="pref_maxBitrate" [% !lamefound && "disabled" %]>
 				
 				[% IF allowNoLimit %]
 					<option [% IF prefs.pref_maxBitrate == '0' %]selected [% END %]value="0">[% "NO_LIMIT" | string %]</option>
@@ -324,7 +324,7 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_LAMEQUALITY" desc="SETUP_LAMEQUALITY_DESC" %]
-			<select class="stdedit" name="pref_lameQuality" id="pref_lameQuality">
+			<select class="stdedit" name="pref_lameQuality" id="pref_lameQuality" [% !lamefound && "disabled" %]>
 	
 			[% FOREACH option = [0 .. 9] %]
 				<option [% IF prefs.pref_lameQuality == option %]selected [% END %]value="[%option %]">
