@@ -26,6 +26,8 @@ sub canSeek { 0 }
 
 sub isAudioURL { 1 }
 
+sub isRemote { 1 }
+
 sub getMetadataFor {
 	my $class = shift;
 	

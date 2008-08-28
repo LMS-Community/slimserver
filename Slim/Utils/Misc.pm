@@ -46,6 +46,7 @@ use Time::HiRes;
 use URI;
 use URI::Escape;
 use URI::file;
+use Digest::SHA1 qw(sha1_hex);
 
 # These must be 'required', as they use functions from the Misc module!
 require Slim::Music::Info;
@@ -57,20 +58,24 @@ require Slim::Utils::Unicode;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Network ();
 
 my $prefs = preferences('server');
+
+my $scannerlog = logger('scan.scanner');
+
 my $canFollowAlias = 0;
 
 if ( !main::SLIM_SERVICE ) {
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
-		require Win32::DriveInfo;
 		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
 		require Win32::Service;
 		require Win32::Shortcut;
+		require Slim::Utils::Win32;
 	}
 	
 	elsif ($^O =~/darwin/i) {
@@ -847,11 +852,13 @@ sub _checkInFolder {
 }
 
 my %_ignoredItems;
+# the hash's value is the parent path from which a file should be excluded
+# 1 means "from all folders", "/" -> "subfolders in root only" etc.
 
 if (Slim::Utils::OSDetect::OS() eq 'mac') {
 	%_ignoredItems = (
 		# Items we should ignore on a mac volume
-		'Icon' => 1,
+		'Icon' => '/',
 		'TheVolumeSettingsFolder' => 1,
 		'TheFindByContentFolder' => 1,
 		'Network Trash Folder' => 1,
@@ -863,28 +870,52 @@ if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		'.DS_Store' => 1,
 		# Dean: "Essentially hide anything you can't see in the finder or explorer"
 		'automount' => 1,
-		'cores'     => 1,
-		'bin'       => 1,
-		'dev'       => 1,
-		'etc'       => 1,
-		'home'      => 1,
-		'net'       => 1,
-#		'Network'   => 1,
-		'private'   => 1,
+		'cores'     => '/',
+		'bin'       => '/',
+		'dev'       => '/',
+		'etc'       => '/',
+		'home'      => '/',
+		'net'       => '/',
+		'Network'   => '/',
+		'private'   => '/',
 		'sbin'      => 1,
 		'tmp'       => 1,
 		'usr'       => 1,
-		'var'       => 1,
-		'opt'       => 1,	
+		'var'       => '/',
+		'opt'       => '/',	
+	)
+}
+
+elsif (Slim::Utils::OSDetect::isReadyNAS()) {
+	%_ignoredItems = (
+		'bin'       => '/',
+		'dev'       => '/',
+		'etc'       => '/',
+		'frontview' => '/',
+		'home'      => '/',
+		'initrd'    => 1,
+		'lib'       => '/',
+		'mnt'       => '/',
+		'opt'       => '/',
+		'proc'      => '/',
+		'ramfs'     => '/',
+		'root'      => '/',
+		'sbin'      => '/',
+		'sys'       => '/',
+		'tmp'       => '/',
+		'USB'       => '/',
+		'usr'       => '/',	
+		'var'       => '/',
+		'lost+found'=> 1,
 	)
 }
 
 elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 	%_ignoredItems = (
 		# Items we should ignore  on a Windows volume
-		'System Volume Information' => 1,
-		'RECYCLER' => 1,
-		'Recycled' => 1,	
+		'System Volume Information' => '/',
+		'RECYCLER' => '/',
+		'Recycled' => '/',	
 	)
 }
 
@@ -897,8 +928,8 @@ else {
 }
 
 # always ignore . and ..
-$_ignoredItems{'.'}	= 1;
-$_ignoredItems{'..'}	= 1;
+$_ignoredItems{'.'}  = 1;
+$_ignoredItems{'..'} = 1;
 
 # Don't include old Shoutcast recently played items.
 $_ignoredItems{'ShoutcastBrowser_Recently_Played'} = 1;
@@ -916,7 +947,20 @@ sub fileFilter {
 	my $item    = shift;
 	my $validRE = shift || Slim::Music::Info::validTypeExtensions();
 
-	return 0 if exists $_ignoredItems{$item};
+	if (my $filter = $_ignoredItems{$item}) {
+		
+		# '1' items are always to be ignored
+		return 0 if $filter eq '1';
+
+		my @parts = splitpath($dirname);
+		if ($parts[1] && (!defined $parts[2] || length($parts[2]) == 0)) {
+			# replace back slashes on Windows
+			$parts[1] =~ s/\\/\//g;
+			
+			return 0 if $filter eq $parts[1];
+		}
+
+	}
 
 	# Ignore special named files and directories
 	# __ is a match against our old __history and __mac playlists.
@@ -1018,7 +1062,7 @@ sub readDirectory {
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		my ($volume) = splitpath($dirname);
 
-		if ($volume && isWinDrive($volume) && !Win32::DriveInfo::IsReady($volume)) {
+		if ($volume && isWinDrive($volume) && !Slim::Utils::Win32::isDriveReady($volume)) {
 			
 			$log->debug("drive [$dirname] not ready");
 
@@ -1129,13 +1173,13 @@ sub findAndScanDirectoryTree {
 	my $fsMTime = (stat($path))[9] || 0;
 	my $dbMTime = $topLevelObj->timestamp || 0;
 	
-	logger('scan.scanner')->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
+	$scannerlog->is_debug && $scannerlog->debug( "findAndScanDirectoryTree( $path ): fsMTime: $fsMTime, dbMTime: $dbMTime" );
 
 	if ($fsMTime != $dbMTime) {
 
-		if ( logger('scan.scanner')->is_info ) {
-			logger('scan.scanner')->info("mtime db: $dbMTime : " . localtime($dbMTime));
-			logger('scan.scanner')->info("mtime fs: $fsMTime : " . localtime($fsMTime));
+		if ( $scannerlog->is_info ) {
+			$scannerlog->info("mtime db: $dbMTime : " . localtime($dbMTime));
+			$scannerlog->info("mtime fs: $fsMTime : " . localtime($fsMTime));
 		}
 
 		# Update the mtime in the db.
@@ -1270,11 +1314,9 @@ sub settingsDiagString {
 =cut
 
 sub assert {
-	my $exp = shift;
-	my $msg = shift;
+	$_[0] && return;
 	
-	defined($exp) && $exp && return;
-	
+	my $msg = $_[1];
 	msg($msg) if $msg;
 	
 	bt();
@@ -1531,6 +1573,16 @@ sub detectBrowser {
 		$return = 'IE';
 	}
 	return $return;
+}
+
+=head2 createUUID ( )
+
+Generate a new UUID and return it.
+
+=cut
+
+sub createUUID {
+	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 
 =head1 SEE ALSO

@@ -50,8 +50,9 @@ my %screensaver_info = (
 	'SCREENSAVER.visualizer_spectrum' => {
 		name => 'VISUALIZER_SPECTRUM_ANALYZER',
 		params => {
-				'transporter' =>     [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 320, 0, 4, 1, 1, 1, 3, 320, 320, 1, 4, 1, 1, 1, 3],
+				'transporter' => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 320, 0, 4, 1, 1, 1, 3, 320, 320, 1, 4, 1, 1, 1, 3],
 				'squeezebox2' => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
+				'boom'        => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80,  0, 3, 1, 1, 1, 3,  81,  80, 1, 3, 1, 1, 1, 3],
 			},
 		showtext => 1,
 		hidevisu => 0,
@@ -69,8 +70,9 @@ my %screensaver_info = (
 	'SCREENSAVER.visualizer_analog_vumeter' => {
 		name => 'VISUALIZER_ANALOG_VUMETER',
 		params => {
-				'transporter' => [$VISUALIZER_VUMETER, 0, 1, 0 + 320, 160, 160 + 320, 160],
+				'transporter' => [$VISUALIZER_VUMETER, 0, 1, 0 + 80, 160, 320 + 80, 160],
 				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
+				'boom'        => [$VISUALIZER_VUMETER, 1, 1, 0, 160],
 			},
 		showtext => 0,
 		hidevisu => 1,
@@ -78,8 +80,9 @@ my %screensaver_info = (
 	'SCREENSAVER.visualizer_digital_vumeter' => {
 		name => 'VISUALIZER_DIGITAL_VUMETER',
 		params => {
-				'transporter' =>     [$VISUALIZER_VUMETER, 0, 0, 20, 280, 340, 280],
+				'transporter' => [$VISUALIZER_VUMETER, 0, 0, 20, 280, 340, 280],
 				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
+				'boom'        => [$VISUALIZER_VUMETER, 0, 0, 10, 60, 90, 60],
 			},
 		showtext => 1,
 		hidevisu => 1,
@@ -119,6 +122,8 @@ sub initPlugin {
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
 		'VISUALIZER_SPECTRUM_ANALYZER',
+		'PLAY',
+		\&valid,
 	);
 
 	Slim::Buttons::Common::addSaver(
@@ -127,6 +132,8 @@ sub initPlugin {
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
 		'VISUALIZER_ANALOG_VUMETER',
+		'PLAY',
+		\&valid,
 	);
 
 	Slim::Buttons::Common::addSaver(
@@ -135,8 +142,13 @@ sub initPlugin {
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
 		'VISUALIZER_DIGITAL_VUMETER',
+		'PLAY',
+		\&valid,
 	);
 }
+
+sub valid { shift->isa('Slim::Player::Squeezebox2') }
+	
 
 ##################################################
 ### Screensaver display mode
@@ -169,13 +181,6 @@ sub setVisualizerMode {
 	my $client = shift;
 	my $method = shift;
 
-	# If we're popping back into this mode, it's because another screensaver
-	# got stacked above us...so we really shouldn't be here.
-	if (defined($method) && $method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
 	my $mode = Slim::Buttons::Common::mode($client);
 	my $paramsRef;
 
@@ -188,6 +193,10 @@ sub setVisualizerMode {
 		if ($client->display->isa('Slim::Display::Transporter')) {
 
 			$paramsRef = $screensaver_info{$mode}->{params}->{'transporter'};
+
+		} elsif ($client->display->isa('Slim::Display::Boom')) {
+
+			$paramsRef = $screensaver_info{$mode}->{params}->{'boom'};
 
 		} elsif ($client->display->isa('Slim::Display::Squeezebox2')) {
 
@@ -241,10 +250,11 @@ sub _pushon {
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
+	my $prefix = $client->display->isa('Slim::Display::Boom') ? '' : $client->string('NOW_PLAYING') . ': ';
+
 	my $screen = {
-		'fonts' => { 'graphic-320x32' => 'high' },
-		'line' => [ '', $client->string('NOW_PLAYING') . ': ' . 
-			Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)) ]
+		'fonts' => { 'graphic-320x32' => 'high',  'graphic-160x32' => 'high' },
+		'line' => [ '', $prefix . Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)) ]
 	};
 	
 	$client->pushLeft(undef, $screen);

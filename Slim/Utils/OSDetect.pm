@@ -36,9 +36,8 @@ use FindBin qw($Bin);
 BEGIN {
 
 	if ($^O =~ /Win32/) {
-		require Win32;
-		require Win32::FileSecurity;
 		require Win32::TieRegistry;
+		require Slim::Utils::Win32;
 	}
 }
 
@@ -307,15 +306,15 @@ sub dirsFor {
 
 		} elsif ($dir eq 'log') {
 
-			push @dirs, winWritablePath('Logs');
+			push @dirs, Slim::Utils::Win32::writablePath('Logs');
 
 		} elsif ($dir eq 'cache') {
 
-			push @dirs, winWritablePath('Cache');
+			push @dirs, Slim::Utils::Win32::writablePath('Cache');
 
 		} elsif ($dir eq 'prefs') {
 
-			push @dirs, winWritablePath('prefs');
+			push @dirs, Slim::Utils::Win32::writablePath('prefs');
 
 		} elsif ($dir =~ /^(?:music|playlists)$/) {
 
@@ -462,7 +461,11 @@ sub isDebian {
 	}
 
 	# ReadyNAS is running a customized Debian
-	return isReadyNAS();
+	if ( isReadyNAS() && $0 =~ m{^/usr/sbin/squeezecenter} ) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 sub isRHorSUSE {
@@ -623,55 +626,20 @@ sub initDetailsForUnix {
 	$osDetails{'osArch'} = $Config{'myarchname'};
 }
 
-
-# Return a path which is expected to be writable by all users on Windows without virtualisation on Vista
-# this should mean that the server always sees consistent versions of files under this path
-
+# legacy calls - leave in for backwards compatibility
 sub winWritablePath {
-	my $folder = shift;
-	my ($root, $path);
-
-	# use the "Common Application Data" folder to store SqueezeCenter configuration etc.
-	# c:\documents and settings\all users\application data - on Windows 2000/XP
-	# c:\ProgramData - on Vista
-	my $swKey = $Win32::TieRegistry::Registry->Open(
-		'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-		{ 
-			Access => Win32::TieRegistry::KEY_READ(), 
-			Delimiter =>'/' 
-		}
+	Slim::Utils::Log::logger('os.paths')->error(
+		'Slim::Utils::OSDetect::winWritablePath() is a legacy call - please use Slim::Utils::Win32::writablePath() instead.'
 	);
-
-	if (defined $swKey && $swKey->{'Common AppData'}) {
-		$root = catdir($swKey->{'Common AppData'}, 'SqueezeCenter');
-	}
-	elsif ($ENV{'ProgramData'}) {
-		$root = catdir($ENV{'ProgramData'}, 'SqueezeCenter');
-	}
-	else {
-		$root = $Bin;
-	}
-
-	$path = catdir($root, $folder);
-
-	return $path if -d $path;
-
-	if (! -d $root) {
-		mkdir $root;
-	}
-
-	mkdir $path;
-
-	return $path;
+	Slim::Utils::Win32::writablePath(@_);
 }
 
-# legacy call: this used to do what winWritablePath() does now
-# keep it for backwards compatibility
-sub vistaWritablePath {
-	my $folder = shift;
-	Slim::Utils::Log::logger('os.paths')->warn('Slim::Utils::OSDetect::vistaWritablePath() is a legacy call - please use winWritablePath() instead.');
-	return winWritablePath($folder);
-}
+# to be removed unless there are too many complaints
+#sub vistaWritablePath {
+#	my $folder = shift;
+#	Slim::Utils::Log::logger('os.paths')->warn('Slim::Utils::OSDetect::vistaWritablePath() is a legacy call - please use winWritablePath() instead.');
+#	return winWritablePath($folder);
+#}
 
 1;
 

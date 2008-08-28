@@ -47,6 +47,8 @@ sub audioScrobblerSource {
 	return 'P';
 }
 
+sub isRemote { 1 }
+
 sub handleError {
     return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
 }
@@ -1224,17 +1226,30 @@ sub getMetadataFor {
 sub getUsername {
 	my $client = shift;
 	
-	my $account = $client->pluginData('account') || return;
-	
-	my $username = $account->{username}->[0];
-	
-	if ( $account->{defaults} ) {
-		if ( my $default = $account->{defaults}->{ $client->id } ) {
-			return $default;
+	if ( main::SLIM_SERVICE ) {
+		my @username = $prefs->client($client)->get('plugin_rhapsody_direct_username');
+		
+		if ( scalar @username > 1 ) {
+			if ( my $default = $prefs->client($client)->get('plugin_rhapsody_direct_account') ) {
+				return $default;
+			}
 		}
+		
+		return $username[0];
 	}
+	else {
+	 	my $account = $client->pluginData('account') || return;
 	
-	return $username;
+		my $username = $account->{username}->[0];
+	
+		if ( $account->{defaults} ) {
+			if ( my $default = $account->{defaults}->{ $client->id } ) {
+				return $default;
+			}
+		}
+	
+		return $username;
+	}
 }	
 
 sub sendLogging {

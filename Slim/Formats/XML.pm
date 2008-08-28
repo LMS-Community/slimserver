@@ -107,7 +107,7 @@ sub getFeedAsync {
 	}
 	
 	# If the URL is on SqueezeNetwork, add session headers or login first
-	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
+	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) && !$params->{no_sn} ) {
 
 		$log->info("URL requires SqueezeNetwork session");
 		

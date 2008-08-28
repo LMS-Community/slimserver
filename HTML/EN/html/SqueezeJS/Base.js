@@ -8,6 +8,72 @@ var SqueezeJS = {
 	Controller : null
 };
 
+// TODO MH: remove when updating ExtJS post 2.1 
+// patch against Ext.Slider v2.1 to fix handle position with minValue <> 0 (bug 8919)
+
+Ext.override(Ext.Slider, {
+	onClickChange : function(local){
+		if(local.top > this.clickRange[0] && local.top < this.clickRange[1]){
+			this.setValue(Math.round(this.reverseValue(local.left)), undefined, true);
+		}
+	},
+
+	getRatio : function(){
+		var w = this.innerEl.getWidth();
+		var v = this.maxValue - this.minValue;
+		return v == 0 ? w : (w/v);
+	},
+
+	setValue : function(v, animate, changeComplete){
+		v = this.normalizeValue(v);
+		if(v !== this.value && this.fireEvent('beforechange', this, v, this.value) !== false){
+			this.value = v;
+			this.moveThumb(this.translateValue(v), animate !== false);
+			this.fireEvent('change', this, v);
+			if(changeComplete){
+				this.fireEvent('changecomplete', this, v);
+			}
+		}
+	},
+
+	translateValue : function(v){
+		var ratio = this.getRatio();
+		return (v * ratio)-(this.minValue * ratio)-this.halfThumb;
+	},
+	
+	reverseValue : function(pos){
+		var ratio = this.getRatio();
+		return (pos+this.halfThumb+(this.minValue * ratio))/ratio;
+	},
+
+	onMouseDown : function(e){
+		if(this.disabled) {return;}
+		if(this.clickToChange && e.target != this.thumb.dom){
+			var local = this.innerEl.translatePoints(e.getXY());
+			local.left -= 5;
+			this.onClickChange(local);
+		}
+		this.focus();
+	},
+
+	onDrag: function(e){
+		var pos = this.innerEl.translatePoints(this.tracker.getXY());
+		this.setValue(Math.round(this.reverseValue(pos.left-5)), false);
+		this.fireEvent('drag', this, e);
+	},
+
+	onResize : function(w, h){
+		this.innerEl.setWidth(w - (this.el.getPadding('l') + this.endEl.getPadding('r')));
+		this.syncThumb();
+	},
+	
+	syncThumb : function(){
+		if(this.rendered){
+			this.moveThumb(this.translateValue(this.value));
+		}
+	}
+
+});
 
 _init();
 

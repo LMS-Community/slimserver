@@ -71,8 +71,8 @@ my $SCAN_RATE_MAX_MULTIPLIER = 256;
 # below to have the module add its mode itself
 our %modes = ();
 
-# Hashed list for registered Screensavers. Register these using addSaver. 
-our %savers = ();
+# Store of registered Screensavers. Register these using addSaver.
+our $savers = {};
 
 # Map the numbers on the remote to their corresponding letter sequences.
 our @numberLetters = (
@@ -122,7 +122,7 @@ sub init {
 	# Initialise main settings menu next
 	Slim::Buttons::Settings::init();
 	
-	Slim::Buttons::AlarmClock::init();
+	Slim::Buttons::Alarm::init();
 	Slim::Buttons::Block::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
@@ -142,7 +142,7 @@ sub init {
 		SDI::Service::Buttons::SetupWizard::init();
 	}
 
-	$savers{'playlist'} = 'NOW_PLAYING';
+	addSaver('playlist', undef, undef, undef, 'SCREENSAVER_JUMP_TO_NOW_PLAYING', 'PLAY');
 }
 
 =head2 forgetClient ( $client )
@@ -157,7 +157,7 @@ sub forgetClient {
 	delete $scrollClientHash->{ $client };
 }
 
-=head2 addSaver ( $name, [ $buttonFunctions ], [ $setModeFunction ], [ $leaveModeFunction ], $displayName )
+=head2 addSaver ( $name, [ $buttonFunctions ], [ $setModeFunction ], [ $leaveModeFunction ], $displayName, [ $type ], [ $valid ] )
 
 This function registers a screensaver mode.  The required $name argument should be a unique string,
 identifying the mode, $displayName is also required and must be a valid string token (all caps, with
@@ -173,6 +173,13 @@ of existing INPUT.* modes.
 
 $leaveModeFunction is an optional reference to a routine to run when exiting the screensaver mode.
 
+$displayName is a string token for the screensaver (non optional)
+
+$type is a string containing one or more tokens: PLAY IDLE OFF to indicate the type of saver, e.g. "PLAY-IDLE"
+If omitted it defaults to "PLAY-IDLE-OFF", i.e. the saver is valid for all screensaver types.
+
+$valid is an optional callback to verify if the saver is valid for a specific player.  It is passed $client when called.
+
 =cut
 
 sub addSaver {
@@ -181,29 +188,54 @@ sub addSaver {
 	my $setModeFunction = shift;
 	my $leaveModeFunction = shift;
 	my $displayName = shift;
+	my $type = shift || 'PLAY-IDLE-OFF';
+	my $valid = shift;
 
-	$savers{$name} = $displayName;
+	logger('player.ui')->info("Registering screensaver $displayName $type");
 
-	logger('player.ui')->info("Registering screensaver $displayName");
+	$savers->{$name} = {
+		'name'  => $displayName,
+		'type'  => $type,
+		'valid' => ($valid && ref $valid eq 'CODE' ? $valid : undef),
+	};
+
+	# playlist is a special case as it is shared with a non screensaver mode
+	# bypass addMode for the screensaver version
+	if ($name eq 'playlist') { return };
 
 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 
-	if ($name =~ s/^SCREENSAVER\./OFF\./) {
+	if ($type =~ /OFF/ && $name =~ s/^SCREENSAVER\./OFF\./) {
 
 		addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 	}
 }
 
-=head2 hash_of_savers ( )
+=head2 validSavers ( $client )
 
-Taking no arguments, this function returns a reference to the current hash of screensavers. Called from settings routines
-in Slim::Web::Setup and Slim::Buttons::Settings
+Returns hash of valid savers for this client. Pass no $client ref for a full list of savers.
+Called from settings routines in Slim::Web::Setup and Slim::Buttons::Settings
 
 =cut
 
-sub hash_of_savers {
+sub validSavers {
+	my $client = shift;
 
-	return {%savers};
+	my $ret = { 'screensaver' => {}, 'idlesaver' => {}, 'offsaver' => {} };
+
+	for my $name (keys %$savers) {
+
+		my $saver = $savers->{$name};
+
+		if ( (!defined($client)) || !$saver->{'valid'} || $saver->{'valid'}->($client) ) {
+
+			$ret->{'screensaver'}->{$name} = $saver->{'name'} if $saver->{'type'} =~ /PLAY/;
+			$ret->{'idlesaver'}->{$name}   = $saver->{'name'} if $saver->{'type'} =~ /IDLE/;
+			$ret->{'offsaver'}->{$name}    = $saver->{'name'} if $saver->{'type'} =~ /OFF/;
+		}
+	}
+	
+	return $ret;
 }
 
 =head2 addMode ( )
@@ -595,16 +627,10 @@ our %functions = (
 			$brightmode = 'powerOnBrightness';
 
 			my $lastIR  = Slim::Hardware::IR::lastIRTime($client);
-			my $saver   = 0;
 			my $timeout = Time::HiRes::time() - $prefs->client($client)->get('screensavertimeout');
+			my $mode    = Slim::Buttons::Common::mode($client);
 
-			if ($mode eq $prefs->client($client)->get('screensaver') ||
-			    $mode eq $prefs->client($client)->get('idlesaver')) {
-
-				$saver = 1;
-			}
-
-			if (($saver || $prefs->client($client)->get('autobrightness')) && ($lastIR && $lastIR < $timeout)) {
+			if (($mode ne 'block') && ($lastIR && $lastIR < $timeout)) {
 
 				$brightmode = 'idleBrightness';
 			}
@@ -763,7 +789,9 @@ our %functions = (
 		my $buttonarg = shift;
 		my $playdisp  = undef;
 
-		if (defined $buttonarg && $buttonarg eq "add") {
+		if (defined $buttonarg && $buttonarg =~ /^add$|^add(\d+)/) {
+
+			my $hotkey = $1;
 
 			# First lets try for a listRef from INPUT.*
 			my $list = $client->modeParam('listRef');
@@ -835,8 +863,25 @@ our %functions = (
 				$title = $client->modeParam('title');
 			}
 
-			if ($url && $title) {
-				my (undef, $hotkey) = Slim::Utils::Favorites->new($client)->add($url, $title, $type || 'audio', $parser, 'hotkey', $icon);
+			my $favs = Slim::Utils::Favorites->new($client);
+
+			if ($url && $title && $favs) {
+
+				if (defined $hotkey) {
+					
+					my $oldindex = $favs->hasHotkey($hotkey);
+
+					$favs->setHotkey($oldindex, undef) if defined $oldindex;
+
+					my $newindex = $favs->add($url, $title, $type || 'audio', $parser);
+
+					$favs->setHotkey($newindex, $hotkey);
+
+				} else {
+
+					my (undef, $hotkey) = $favs->add($url, $title, $type || 'audio', $parser, 'hotkey', $icon);
+				}
+
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
 				} );
@@ -899,9 +944,11 @@ our %functions = (
 		}
 	},
 
-	# XXXX This mode is used by the Transporter knob - _NOT_ by the remote
-	# volume buttons, which are defined below. They should be combined.
-	# See Slim::Buttons::Volume
+	# Volume always pushes into Slim::Buttons::Volume to allow Transporter and Boom knobs to be used
+	# - from the volumemode front panel button use a push transition with 3 sec timeout
+	# - for a remote volume up/down button just push the mode with 1 sec timeout
+	# - for the front panel volume up/down push the mode with 3 sec timeout
+
 	'volumemode' => sub {
 		my $client = shift;
 		my $button = shift;
@@ -912,7 +959,7 @@ our %functions = (
 		if ($client->modeParam('parentMode') && $client->modeParam('parentMode') eq 'volume') {
 			popModeRight($client);
 		} else {
-			pushModeLeft($client, 'volume');
+			pushModeLeft($client, 'volume', { 'timeout' => 3, 'transition' => 1, 'passthrough' => 0 });
 		}
 	},
 
@@ -923,7 +970,12 @@ our %functions = (
 
 		return if (!$client->hasVolumeControl());
 
-		mixer($client, 'volume', $buttonarg);
+		my $timeout = $buttonarg && $buttonarg eq 'front' ? 3 : 1;
+
+		if (!$client->modeParam('parentMode') || $client->modeParam('parentMode') ne 'volume') {
+			pushMode($client, 'volume', {'timeout' => $timeout, 'transition' => 0, 'passthrough' => 1});
+			$client->update;
+		}
 	},
 
 	'pitch' => sub {
@@ -959,8 +1011,35 @@ our %functions = (
 		$client->execute(["mixer", "muting", $mute]);
 	},
 
+	'snooze' => sub  {
+		my $client = shift;
+		
+		# Bug 8860, if setting the sleep timer, a single snooze press will
+		# also adjust the timer
+		if ( $client->modeParam('sleepMode') ) {
+			Slim::Hardware::IR::executeButton( $client, 'sleep', undef, undef, 1 );
+			return;
+		}
+
+		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+		if (defined $currentAlarm) {
+			$currentAlarm->snooze;
+		} else {
+			pushButton('datetime', $client);
+		}
+	},
+	
 	'sleep' => sub  {
 		my $client = shift;
+		
+		# sleep function is overridden when alarm activates
+		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+		if (defined $currentAlarm) {
+			
+			$log->info("Alarm Active: sleep function override for snooze");
+			$currentAlarm->snooze;
+			return;
+		}
 		
 		# Bug: 2151 some extra stuff to add the option to sleep after the current song.
 		# first make sure we're playing, and its a valid song.
@@ -1011,16 +1090,22 @@ our %functions = (
 		}
 
 		$client->execute(["sleep", $sleepTime * 60]);
+		
+		# This is used to enable the ability to press the snooze bar
+		# again to quickly adjust the sleep time
+		$client->modeParam( sleepMode => 1 );
 
-		if ($sleepTime == 0) {
-			$client->showBriefly( {
-				'line' => [ "", $client->string('CANCEL_SLEEP') ]
-			});
-		} else {
-			$client->showBriefly( {
-				'line' => [ "", $client->prettySleepTime ]
-			});
-		}
+		my $line = $sleepTime == 0 ? $client->string('CANCEL_SLEEP') : $client->prettySleepTime;
+
+		$client->showBriefly( {
+			line => [ "", $line ],
+		},
+		{
+			scroll   => 1,
+			callback => sub {
+				$client->modeParam( sleepMode => 0 );
+			}
+		} );
 	},
 
 	'power' => sub  {
@@ -1089,7 +1174,8 @@ our %functions = (
 		my $client = shift;
 
  		# briefly display the time/date
- 		$client->showBriefly(dateTime(), {
+ 		$client->showBriefly( dateTime($client), {
+			'brightness' => 'powerOn',
 			'duration' => 3
 		});
  	},
@@ -1200,7 +1286,6 @@ sub getFunction {
 	my $clientMode = shift || mode($client);
 
  	my $coderef;
-
 	if ($coderef = $modeFunctions{$clientMode}{$function}) {
 
  		return $coderef;
@@ -1208,7 +1293,7 @@ sub getFunction {
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$clientMode}{$1})) {
 
  		return ($coderef, $2);
-
+ 
  	} elsif ($coderef = $functions{$function}) {
 
  		return $coderef;
@@ -1245,6 +1330,17 @@ sub pushButton {
 
 	&$subref($client, $sub, $subarg);
 }
+
+# Return the sign of the argument as -1 or 1.  If arg is 0, then return 1.
+sub sign {
+	my $arg = shift;
+	if ($arg < 0) {
+		return -1;
+	} else {
+		return 1;
+	}
+}
+
 
 sub scroll {
 	scroll_dynamic(@_);
@@ -1285,8 +1381,115 @@ sub scroll_dynamic {
 	}
 
 	my $scrollParams = $scrollClientHash->{$client}{scrollParams};
+	
+	my $knobData = $client->knobData;
 
 	my $result = undef;
+	if ($knobData->{'_knobEvent'}) {
+		# This is a boom knob event.  Calculate acceleration for this case.
+		$result=$currentPosition;
+		my $velocity      = $knobData->{'_velocity'};
+		my $acceleration  = $knobData->{'_acceleration'};
+		my $deltatime     = $knobData->{'_deltatime'};
+		if ($velocity == 0) {
+			$result = $currentPosition + (($direction > 0) ? 1 : -1);
+			if ($deltatime < 2) {
+				# We just changed directions, or stopped for a bit and restarted the same direction
+				# So, just update the start and end estimates.
+				if ($direction > 0) {
+					# Moving up in list, stopped, and kept moving up
+					$scrollParams->{estimateStart} = $currentPosition;
+					$scrollParams->{estimateEnd}   = $scrollParams->{estimateEnd} - ($scrollParams->{estimateEnd} - $currentPosition)/2;
+				} elsif ($direction < 0) {
+					$scrollParams->{estimateStart} = $scrollParams->{estimateStart} + ($currentPosition - $scrollParams->{estimateStart})/2;
+					$scrollParams->{estimateEnd}   = $currentPosition;
+				}
+				if ($scrollParams->{estimateEnd} > $listlength) {
+					$scrollParams->{estimateEnd} = $listlength;
+				}
+				if ($scrollParams->{estimateStart} < 0) {
+					$scrollParams->{estimateStart} = 0;
+				}
+			} else {
+				# We just starting moving
+				$scrollParams->{estimateStart} = 0;
+				$scrollParams->{estimateEnd}   = $listlength;
+			}
+			$scrollParams->{A}             = 0;
+			$scrollParams->{V}             = 0;
+			$scrollParams->{t0}            = $knobData->{'_time'};
+			$scrollParams->{hitEndTime}    = undef;
+			$scrollParams->{time}          = 0;
+			$scrollParams->{lasttime}      = 0;
+			if ($result < 0) {
+				$result = $listlength;
+			} elsif ($result >= $listlength) {
+				$result = 0;
+			}
+		} else {
+			# We should start accelerating now...
+			my $timeToCompleteList = $scrollParams->{Kc} / $velocity; # seconds/full_list
+			my $estimatedLength = $scrollParams->{estimateEnd} - $scrollParams->{estimateStart};
+			# We can calculate the needed acceleration by the formula
+			$scrollParams->{time} += $deltatime;
+			my $time     = $scrollParams->{time};
+			my $lasttime = $scrollParams->{lasttime};
+			$scrollParams->{A} = 2* $estimatedLength/($timeToCompleteList*$timeToCompleteList) ;
+			$scrollParams->{V} = $scrollParams->{V} + $scrollParams->{A} * $deltatime;
+			my $deltaX = .5 * $scrollParams->{A} * ($time*$time - $lasttime*$lasttime);
+			my $maxDeltaXPercent = $scrollParams->{KmaxScrollPct} / 100;
+			my $maxDeltaX = ($maxDeltaXPercent * $listlength);
+			if (abs($deltaX) > $maxDeltaX) {
+				$deltaX = $maxDeltaX * sign($deltaX);
+			}
+			if ($deltaX < 1) {
+				$deltaX = 1;
+			}
+			$deltaX = int($deltaX);
+			if ($velocity < 0) {
+				$deltaX = - $deltaX;
+			}
+			$result = $currentPosition + $deltaX;
+			if ($result < 0 || $result > $listlength-1) {
+				my $rollover = 0;
+				if (!defined $scrollParams->{hitEndTime}) {
+					$scrollParams->{hitEndTime} = $knobData->{'_time'};
+				} else {
+					# We hit the end previously.  Calculate the difference in time between then and now.
+					my $deltaT = $knobData->{'_time'} - $scrollParams->{hitEndTime};
+					my $rolloverTime = $scrollParams->{KrolloverTime};
+					if ($deltaT > $rolloverTime) {
+						$rollover = 1;
+						$scrollParams->{hitEndTime} = undef;
+					}
+				}
+				if ($rollover) {
+					if ($result < 0) {
+						$result = $listlength-1;
+					} else {
+						$result = 0;
+					}
+				}
+			}
+				
+			$scrollParams->{lasttime} = $time;
+			if ($result > $scrollParams->{estimateEnd}) {
+				$scrollParams->{estimateEnd} = $scrollParams->{estimateEnd} + ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
+			}
+			if ($result < $scrollParams->{estimateStart}) {
+				$scrollParams->{estimateStart} = $scrollParams->{estimateStart} - ($scrollParams->{estimateEnd} - $scrollParams->{estimateStart});
+			}
+			if ($scrollParams->{estimateStart} < 0) {
+				$scrollParams->{estimateStart} = 0;
+			}
+			if ($scrollParams->{estimateEnd} > $listlength) {
+				$scrollParams->{estimateEnd} = $listlength;
+			}
+			
+		}
+		
+	} else {
+	
 	if ($holdTime == 0) {
 		# define behavior for button press, before any acceleration
 		# kicks in.
@@ -1363,6 +1566,7 @@ sub scroll_dynamic {
 		$scrollParams->{V} = $velocity;
 		$scrollParams->{lastHoldTime} = $holdTime;
 	}
+	}
 	if ($result >= $listlength) {
 		$result = $listlength - 1;
 	}
@@ -1411,6 +1615,16 @@ sub scroll_getInitialScrollParams {
 		# Items/second.  Don't go any slower than this under any circumstances. 
 		minimumVelocity => $minimumVelocity,  
 					
+		# Knob -> acceleration constant.  
+		# This constant converts wheel speed (ticks/second) into 'time to complete full list' (seconds for list_items)
+		# For example, if you're spinning the knob .5 revolution (10 ticks) per second, and Kc is 2,
+		# We should traverse the entire list in 2 / 0.5 = 4 seconds.   
+		Kc              => 100,
+		
+		KmaxScrollPct   => 1, # Maximum step, in percentage of list length
+		
+		KrolloverTime   => 0.8, # Time that it takes while spinning knob to roll over.
+
 		# seconds.  Finishs a list in this many seconds. 
 		Tc              => 5,   
 
@@ -1643,7 +1857,7 @@ sub mode {
 		return unless $client;
 	}
 
-	return $client->modeStack(-1);
+	return $client->modeStack->[-1];
 }
 
 =head2 validMode ( $client)
@@ -1660,25 +1874,53 @@ sub validMode {
 
 =head2 checkBoxOverlay ( $client, $value)
 
-Update audio mixer settings
+This is a standard UI widget for showing a multi-selected item in a list, or a true/false state of a setting
 
-This is a standard UI widget for showing a single selected item in a list, or a true/false state of a setting
-
-If the $client argument is a valid client object, graphics capable players will show a 'radio button'-style ui.
+If the $client argument is a valid client object, graphics capable players will show a 'check box'-style ui.
 Otherwise, an text-based check box will be marked wtih an X for true and empty for false.
 
 The $value argument is a boolean result provided by the caller to determine if the box is checked or not.
 
 =cut
 
-# standard UI feature enable/disable a setting
+# standard UI feature multi-select list
 sub checkBoxOverlay {
 	my $client = shift;
 	my $value = shift;
 
 	unless (blessed($client) && $client->isa('Slim::Player::Client')) {
 
-		logBacktrace("Plugins must now provide client when calling checkBoxOverlay!");
+		logBacktrace("Plugins must provide client when calling checkBoxOverlay!");
+
+		$value = $client;
+
+	} elsif ($client->display->isa('Slim::Display::Graphics')) {
+
+		return $client->symbols( $value ? 'filledsquare' : 'square' );
+	}
+
+	return $value ? "[X]" : "[ ]";
+}
+
+=head2 radioButtonOverlay ( $client, $value)
+
+This is a standard UI widget for showing a single-selected item in a list
+
+If the $client argument is a valid client object, graphics capable players will show a 'radio button'-style ui.
+Otherwise, an text-based radio button will be marked wtih an O for true and empty for false.
+
+The $value argument is a boolean result provided by the caller to determine if the box is checked or not.
+
+=cut
+
+# standard UI feature enable/disable a setting
+sub radioButtonOverlay {
+	my $client = shift;
+	my $value = shift;
+
+	unless (blessed($client) && $client->isa('Slim::Player::Client')) {
+
+		logBacktrace("Plugins must now provide client when calling radioButtonOverlay!");
 
 		$value = $client;
 
@@ -1687,8 +1929,10 @@ sub checkBoxOverlay {
 		return $client->symbols( $value ? 'filledcircle' : 'circle' );
 	}
 
-	return $value ? "[X]" : "[ ]";
+	return $value ? "(O)" : "( )";
 }
+
+
 
 sub param {
 	my $client = shift;
@@ -1902,7 +2146,7 @@ sub pushModeLeft {
 		pushMode($client, $setmode, $paramHashRef);
 
 		if (!$client->modeParam('handledTransition')) {
-			$display->pushLeft($oldlines, $display->curLines());
+			$display->pushLeft($oldlines, $display->curLines({ trans => 'pushModeLeft' }));
 			$client->modeParam('handledTransition',0);
 		}
 
@@ -1913,7 +2157,7 @@ sub pushModeLeft {
 		pushMode($client, $setmode, $paramHashRef);
 
 		if (!$client->modeParam('handledTransition')) {
-			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2));
+			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2, $display->curLines({ trans => 'pushModeLeft' })));
 			$client->modeParam('handledTransition',0);
 		}
 	}
@@ -1929,7 +2173,7 @@ sub popModeRight {
 
 		Slim::Buttons::Common::popMode($client);
 
-		$display->pushRight($oldlines, $display->curLines());
+		$display->pushRight($oldlines, $display->curLines({ trans => 'pushModeRight'}));
 
 	} else {
 
@@ -1937,23 +2181,22 @@ sub popModeRight {
 
 		Slim::Buttons::Common::popMode($client, 1);
 
-		$display->pushRight($oldlines, pushpopScreen2($client, $oldscreen2));
+		$display->pushRight($oldlines, pushpopScreen2($client, $oldscreen2, $display->curLines({ trans => 'pushModeRight' })));
 	}
 }
 
 sub pushpopScreen2 {
 	my $client = shift;
 	my $oldscreen2 = shift;
+	my $newlines = shift;
 
 	my $display = $client->display;
-
-	my $newlines = $display->curLines();
 
 	my $newscreen2 = $client->modeParam('screen2active');
 
 	if ($newscreen2 && $newscreen2 eq 'periodic' && (!$oldscreen2 || $oldscreen2 ne 'periodic')) {
 		my $linesfunc = $client->lines2periodic();
-		$newlines->{'screen2'} = &$linesfunc($client);
+		$newlines->{'screen2'} = $linesfunc->($client, { screen2 => 1 })->{'screen2'};
 
 	} elsif ($oldscreen2 && !$newscreen2) {
 		$newlines->{'screen2'} = {};
@@ -2013,7 +2256,8 @@ sub dateTime {
 	}
 	else {
 		$line = {
-			'center' => [ Slim::Utils::DateTime::longDateF(), Slim::Utils::DateTime::timeF() ]
+			'center' => [ Slim::Utils::DateTime::longDateF(undef, preferences('plugin.datetime')->client($client)->get('dateformat')),
+					      Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->client($client)->get('timeformat')) ]
 		};
 	}
 	
@@ -2022,6 +2266,8 @@ sub dateTime {
 
 sub startPeriodicUpdates {
 	my $client = shift;
+	# Optional time for first update
+	my $startTime = shift;
 
 	# unset any previous timers
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
@@ -2038,14 +2284,14 @@ sub startPeriodicUpdates {
 
 	return unless ($interval || $interval2);
 
-	my $time = Time::HiRes::time() + ($interval || 0.05);
+	my $time = $startTime || (Time::HiRes::time() + ($interval || 0.05));
 
 	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
 
 	$client->periodicUpdateTime($time);
 }
 
-# resych periodic updates to $time - to synchonise updates with time/elaspsed time
+# resync periodic updates to $time - to synchronise updates with time/elapsed time
 sub syncPeriodicUpdates {
 	my $client = shift;
 	my $time = shift || Time::HiRes::time();
@@ -2086,18 +2332,18 @@ sub _periodicUpdate {
 	my $display = $client->display;
 
 	if ($update && !$display->updateMode) {
-		$display->update();
+		$display->update( $client->curLines({ periodic => 1 }) );
 	}
 
 	if ($update2 && (!$display->updateMode || $display->screen2updateOK) && (my $linefunc = $client->lines2periodic()) ) {
 
-		my $screen2 = eval { &$linefunc($client, 1) };
+		my $screen2 = eval { &$linefunc($client, { screen2 => 1, periodic => 1 }) };
 
 		if ($@) {
 			logError("bad screen2 lines: $@");
 		}
 
-		$client->display->update({ 'screen2' => $screen2 }, undef, 1);
+		$display->update($screen2, undef, 1);
 	}
 }
 

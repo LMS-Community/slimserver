@@ -7,114 +7,150 @@ PLUGIN_PODCAST
 	DE	Podcasts
 	EN	Podcasts
 	ES	Podcasts
+	FI	Podcast-lähetykset
 	FR	Podcasts
 	HE	פריטי Podcast
 	IT	Podcast
 	NL	Podcasts
+	NO	Podkaster
+	SV	Poddsändningar
 
 PLUGIN_PODCAST_DESC
-	DA	Adgang til Podcasts
+	DA	Adgang til podcasts
 	DE	Zugang zu Podcasts
 	EN	Access to Podcasts
 	ES	Acceso a Podcasts
+	FI	Podcastien käyttö
 	FR	Accès aux podcasts
 	IT	Accesso ai podcast
 	NL	Toegang tot Podcasts
+	NO	Tilgang til podkaster
+	SV	Tillgång till poddsändningar
 
 PODCAST_NOTHING_TO_PLAY
-	DA	Ikke noget at spille
+	DA	Der er ikke noget at spille
 	DE	Kein Material vorhanden
 	EN	Nothing to play
 	ES	Nada para reproducir
+	FI	Ei soitettavaa
 	FR	Aucun podcast à lire
 	HE	אין פריטים להפעלה
 	IT	Niente da riprodurre
 	NL	Niets om af te spelen
+	NO	Ingenting å spille av
+	SV	Det finns inget att spela.
 
 PODCAST_GROUP_DESC
-	DA	Udvidelsesmodulet for Podcast Læsning giver mulighed for at se og høre podcasts.
+	DA	Udvidelsesmodulet til podcasts giver dig mulighed for at se og høre podcasts.
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 	ES	El complemento Examinador de podcasts permite ver y escuchar podcasts.
+	FI	Podcast-selainlaajennus mahdollistaa podcast-lähetysten katselun ja kuuntelun.
 	FR	L'extra Podcast vous permet d'afficher et d'écouter des podcasts.
 	HE	יישום ה-Plugin 'דפדפן Podcast' מאפשר לך להציג ולהאזין לפריטי Podcast.
 	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
 	NL	Met de Podcast-browserplugin kun je podcasts bekijken en beluisteren.
+	NO	Med plugin-modulen for podkastlesing kan du se og høre på podkaster.
+	SV	Med plugin-programmet för poddsändningsläsaren kan du visa och lyssna på poddsändningar.
 
 PODCAST_RESET_BUTTON
 	DA	Nulstil
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Restablecer
+	FI	Palauta
 	FR	Réinitialiser
 	HE	איפוס
 	IT	Reimposta
 	NL	Opnieuw instellen
+	NO	Tilbakestill
+	SV	Återställ
 
 PODCAST_RESETTING
-	DA	Nulstiller til standard podcasts
+	DA	Standardpodcasts bliver valgt igen
 	DE	Standard-Podcasts werden wiederhergestellt
 	EN	Resetting to default podcasts
 	ES	Restableciendo podcasts predeterminados
+	FI	Palautetaan oletus-podcasteihin
 	FR	Réinitialisation des podcasts par défaut
 	HE	איפוס לפריטי ה-Podcast המוגדרים כברירת מחדל
 	IT	Reimpostazione dei podcast predefiniti
 	NL	Standaard-podcasts worden opnieuw ingesteld
+	NO	Tilbakestiller til standardpodkaster
+	SV	Återställer till standardpoddsändningarna
 
 PODCAST_FEEDS_CHANGE
-	DA	Podcast liste ændret.
+	DA	Podcastlisten er ændret.
 	DE	Die Podcast-Liste wurde geändert.
 	EN	Podcast list changed.
 	ES	La lista de podcasts ha cambiado.
+	FI	Podcast-luetteloa muutettiin.
 	FR	Liste des podcasts modifiée.
 	HE	רשימת פריטי ה-Podcast השתנתה.
 	IT	Elenco Podcast modificato.
 	NL	Podcast-lijst gewijzigd.
+	NO	Podkast-liste endret.
+	SV	Poddsändningslistan har ändrats.
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	DA	Podcasts
 	DE	Podcasts
 	EN	Podcasts
 	ES	Podcasts
+	FI	Podcast-lähetykset
 	FR	Podcasts
 	HE	פריטי Podcast
 	IT	Podcast
 	NL	Podcasts
+	NO	Podkaster
+	SV	Poddsändningar
 
 SETUP_PLUGIN_PODCAST_RESET
-	DA	Nulstil standard podcasts
+	DA	Gendan standardpodcasts
 	DE	Standard-Podcasts zurücksetzen
 	EN	Reset default Podcasts
 	ES	Restablecer podcasts predeterminados
+	FI	Palauta oletus-podcastit
 	FR	Rétablir la liste des podcasts par défaut
 	HE	איפוס פריטי Podcast המוגדרים כברירת מחדל
 	IT	Reimposta podcast predefiniti
 	NL	Standaard-podcasts opnieuw instellen
+	NO	Tilbakestill standardpodkaster
+	SV	Återställ till standardpoddsändningarna
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
-	DA	Tilføj nyt feed:
+	DA	Tilføj et nyt feed:
 	DE	Neuen Feed hinzufügen:
 	EN	Add a new feed:
 	ES	Agregar fuente nueva:
+	FI	Lisää uusi syöte:
 	FR	Ajouter un flux
 	IT	Aggiungi nuovo feed:
 	NL	Nieuw kanaal toevoegen:
+	NO	Legg til en ny feed:
+	SV	Lägg till nytt flöde:
 
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	DA	Eksisterende feeds:
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
 	ES	Fuentes existentes:
+	FI	Olemassa olevat syötteet:
 	FR	Flux existants:
 	IT	Feed esistenti:
 	NL	Bestaande kanalen:
+	NO	Eksisterende feeder:
+	SV	Befintliga flöden:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
-	DA	Ugyldigt Feed - %s
+	DA	Ugyldigt feed: %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
 	ES	Fuente no válida - %s
+	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
 	IT	Feed non valido. %s
 	NL	Ongeldig kanaal - %s
+	NO	Ugyldig feed: %s
+	SV	Ogiltigt RSS-flöde –%s
 

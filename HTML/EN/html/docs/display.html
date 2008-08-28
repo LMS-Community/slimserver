@@ -416,6 +416,7 @@ $client->update() is called.</p>
 
 <pre>sub lines {
     my $client = shift;
+    my $args   = shift;
 
     return {
        'line'      => [ 'Line1 text', 'Line2 text' ],
@@ -434,6 +435,11 @@ $client->update() is called.</p>
 for converting symbol names to symbol characters.  The lines function
 should therefore call $client->symbols() on any text which contains
 symbols prior to adding to the display hash.</p>
+
+<p>Note: A lines function may be passed an args hash to give information
+relating to the caller.  When called by menu transition code, the key 'trans'
+defines the animation which is calling the lines function.  This allows
+the display to be altered on per transition basis.</p>
 
 <h5>$client->symbols()</h5>
 
@@ -737,19 +743,15 @@ sub newClient {
 
 sub lines {
     my $client = shift;
-    return {
+    my $args   = shift;
+    return {'screen2'}->{
         'line' => [ 'top line', 'bottom line' ]
     };
 }
 </pre>
 
-<p>Note that the lines function should return 'line', 'overlay',
-'center' etc components without specifying 'screen2'.  This is because
-the calling code will force them into a screen2 component.</p>
-
-<p>Note also that the lines function registered for lines2periodic
-will be called with a second parameter of '1'.  This is a flag used
-internally to the server and should be ignored.</p>
+<p>Note that the lines function will be called with $args->{'screen2'}
+set to indicate that the response is for screen2 only.</p>
 
 <hr></hr>
 <h4>Custom Server Mode Displays</h4>

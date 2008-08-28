@@ -9,11 +9,11 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_BUFFERSECS" desc="SETUP_BUFFERSECS_DESC" %]
-			<input type=text class="stdedit" name="pref_bufferSecs" id="bufferSecs" value="[% prefs.pref_bufferSecs %]" size="15">
+			<input type=text class="stdedit sliderInput_3_30_1" name="pref_bufferSecs" id="bufferSecs" value="[% prefs.pref_bufferSecs %]" size="15">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_REMOTESTREAMTIMEOUT" desc="SETUP_REMOTESTREAMTIMEOUT_DESC" %]
-			<input type=text class="stdedit" name="pref_remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.pref_remotestreamtimeout %]" size="15">
+			<input type=text class="stdedit sliderInput_1_60" name="pref_remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.pref_remotestreamtimeout %]" size="15">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MAXWMARATE" desc="SETUP_MAXWMARATE_DESC" %]

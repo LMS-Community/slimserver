@@ -3,106 +3,144 @@ PLUGIN_SLACKER_MODULE_NAME
 	DE	Slacker
 	EN	Slacker
 	ES	Slacker
+	FI	Slacker
 	FR	Slacker
 	IT	Slacker
 	NL	Slacker
+	NO	Slacker
+	SV	Slacker
 
 PLUGIN_SLACKER_GETTING_TRACK_DETAILS
-	DA	Henter detaljer om spor...
+	DA	Henter detaljer om nummer...
 	DE	Titelinfos werden geladen ...
 	EN	Fetching track details...
 	ES	Obteniendo detalles de pista...
+	FI	Noudetaan raidan tietoja...
 	FR	Récupération des détails du morceau...
 	IT	Recupero informazioni brano...
 	NL	Nummerdetails worden opgehaald...
+	NO	Henter spordetaljer...
+	SV	Hämtar spårinformation ...
 
 PLUGIN_SLACKER_ERROR
-	DA	Slacker Fejl
+	DA	Slacker-fejl
 	DE	Slacker-Fehler
 	EN	Slacker Error
 	ES	Error de Slacker
+	FI	Slackerin virhe
 	FR	Erreur Slacker
 	IT	Errore di Slacker
 	NL	Slacker-foutmelding
+	NO	Slacker-feil
+	SV	Slacker-fel
 
 PLUGIN_SLACKER_SESSION_BUMPED
-	DA	Du er logget ind på en anden tjeneste, tryk PLAY for at genstarte.
+	DA	Du er logget på en anden enhed. Tryk på Afspil for at genstarte.
 	DE	Sie haben sich an einem anderen Gerät angemeldet. Zum Neustart PLAY drücken.
 	EN	You have logged in on another device, press PLAY to restart.
 	ES	Ha iniciado sesión en otro dispositivo, pulse PLAY para reiniciar.
+	FI	Olet kirjautunut toiseen laitteeseen, käynnistä uudelleen painamalla toistonäppäintä.
 	FR	Vous vous êtes connecté à un autre dispositif, appuyez sur PLAY pour redémarrer.
 	IT	Ci si è connessi a un altro dispositivo. Premere PLAY per ricominciare.
 	NL	Je hebt je bij een ander apparaat aangemeld, druk op PLAY om opnieuw te starten.
+	NO	Du har logget på via en annen enhet. Trykk PLAY for å starte på nytt.
+	SV	Du har loggat in på en annan enhet. Tryck på Play om du vill starta om.
 
 PLUGIN_SLACKER_NO_TRACKS
-	DA	Kunne ikke hente spor, tryk PLAY for at forsøge igen.
+	DA	Det næste spor kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
+	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_SLACKER_STREAM_FAILED
-	DA	Forbindelse til Lydstrøm tabt, springer til næste spor.
+	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
+	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan raitaan.
 	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
 	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+	NO	Lyddatastrøm frakoplet, hopper til neste spor.
+	SV	Anslutningen till ljudströmmen bröts, hoppar till nästa spår.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED
-	DA	Det er ikke muligt at springe over flere gange denne time, du kan springe over senere.
+	DA	Det er ikke muligt at springe flere over i denne time, men du kan springe over igen senere.
 	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
 	EN	Hourly skip limit exceeded, you may skip again later.
 	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
+	FI	Tunnittaisten ohitusten raja ylittyi, voit ohittaa myöhemmin uudelleen.
 	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
 	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
 	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
 	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
+	NO	Grensen for hvor mange sanger du kan hoppe over per time har blitt overskredet, du kan hoppe over igjen senere.
+	SV	Du har använt alla dina överhoppningar för den här timmen. Du kan hoppa över låtar senare.
 
 PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
-	DA	Station ikke tilgængelig: du kan ikke springe over. Du kan skifte til en anden station og forsøge igen senere.
+	DA	Stationen er ikke tilgængelig: Det er ikke muligt at springe over flere numre i denne time. Du kan skifte til en anden station eller prøve igen senere.
 	DE	Sender nicht verfügbar: Kein Überspringen mehr möglich. Sie auf anderen Sender aufrufen oder es später erneut versuchen.
 	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
 	ES	Emisora no disponible: se ha excedido el límite de omisiones por hora. Puede cambiar a otra emisora o volver a intentarlo más tarde.
+	FI	Asema ei ole käytettävissä: tunnittainen ohitusraja ylittyi.  Vaihda toiselle kanavalle tai yritä myöhemmin uudelleen.
 	FR	Station non disponible: nombre limite de sauts par heure dépassé. Vous pouvez basculer vers une autre station ou réessayer ultérieurement.
 	IT	Stazione non disponibile: limite orario superato. È possibile passare a un'altra stazione o riprovare più tardi.
 	NL	Station niet beschikbaar: uurlimiet voor springen overschreden. Je kunt naar een ander station overschakelen of het later opnieuw proberen.
+	NO	Stasjonen er utilgjengelig: grensen for hvor mange sanger du kan hoppe over per time har blitt overskredet. Du kan bytte stasjon eller prøve på nytt senere.
+	SV	Station är inte tillgänglig: Du har använt alla dina överhoppningar för den här timmen. Du kan byta till en annan station eller försöka igen senare.
 
 PLUGIN_SLACKER_FAVORITE_TRACK
-	DA	Marker som Slacker Favorit
+	DA	Marker som Slacker-favorit
 	DE	Als Slacker-Favorit kennzeichnen
 	EN	Mark as Slacker favorite
 	ES	Marcar como favorito de Slacker
+	FI	Merkitse Slacker-suosikiksi
 	FR	Marquer comme favori Slacker
 	IT	Contrassegna come preferito Slacker
 	NL	Als Slacker-favoriet markeren
+	NO	Marker som Slacker-favoritt
+	SV	Ange som Slacker-favorit
 
 PLUGIN_SLACKER_UNMARK_FAVORITE
-	DA	Fjern markering som Slacker Favorit
+	DA	Fjern markering som Slacker-favorit
 	DE	Kennzeichnung als Slacker-Favorit aufheben
 	EN	Unmark as Slacker favorite
 	ES	Anular marca de favorito de Slacker
+	FI	Poista Slacker-suosikeista
 	FR	Désélectionner comme favori Slacker
 	IT	Rimuovi come preferito Slacker
 	NL	Markering als Slacker-favoriet opheffen
+	NO	Fjern markering som Slacker-favoritt
+	SV	Ta bort som Slacker-favorit
 
 PLUGIN_SLACKER_BAN_TRACK
 	DA	Forbyd dette nummer
 	DE	Diesen Titel sperren
 	EN	Ban this track
 	ES	Prohibir esta pista
+	FI	Kiellä tämä kappale
 	FR	Exclure ce morceau
 	IT	Bandisci questo brano
 	NL	Dit nummer verbieden
+	NO	Sperr dette sporet
+	SV	Spärra den här låten
 
 PLUGIN_SLACKER_ON_SLACKER
+	DA	På Slacker
 	DE	Auf Slacker
 	EN	On Slacker
 	ES	En Slacker
+	FI	Slackerissa
 	FR	Sur Slacker
 	IT	Su Slacker
 	NL	Op Slacker
+	NO	På Slacker
+	SV	På Slacker
+

@@ -308,31 +308,27 @@ sub playMix {
 
 sub isMusicLibraryFileChanged {
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/cacheid?contents",
-		'create' => 0,
-		'timeout' => 5,
-	}) || return 0;
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_cacheidOK,
+		\&_musicipError,
+		{
+			timeout => 30,
+		},
+	);
+	
+	$http->get( "http://$MMSHost:$MMSport/api/cacheid?contents" );
+}
 
-	my $fileMTime = $http->content;
-
-	chomp($fileMTime);
-
-	$log->info("Read cacheid of $fileMTime");
-
-	$http->close;
-
-	$http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/getStatus",
-		'create' => 0,
-		'timeout' => 5,
-	}) || return 0;
-
-	if ( $log->is_info ) {
-		$log->info("Got status: ", $http->content);
-	}
-
-	$http->close;
+sub _statusOK {
+	my $http   = shift;
+	my $params = $http->params('params');
+	
+	my $content = $http->content;
+	chomp($content);
+	
+	$log->debug( "Read status $content" );
+		
+	my $fileMTime = $params->{fileMTime};
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
@@ -364,7 +360,7 @@ sub isMusicLibraryFileChanged {
 
 		if ((time - $lastScanTime) > $scanInterval) {
 
-			return 1;
+			Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 
 		$log->info("Waiting for $scanInterval seconds to pass before rescanning");
@@ -380,9 +376,9 @@ sub checker {
 		return;
 	}
 
-	if (!$firstTime && !Slim::Music::Import->stillScanning && isMusicLibraryFileChanged()) {
-
-		Slim::Control::Request::executeRequest(undef, ['rescan']);
+	if (!$firstTime && !Slim::Music::Import->stillScanning) {
+	
+		isMusicLibraryFileChanged();
 	}
 
 	# make sure we aren't doing this more than once...
@@ -390,6 +386,39 @@ sub checker {
 
 	# Call ourselves again after 120 seconds
 	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 120), \&checker);
+}
+
+sub _cacheidOK {
+	my $http   = shift;
+	my $params = $http->params('params');
+	
+	my $content = $http->content;
+	chomp($content);
+	
+	$log->debug( "Read cacheid of $content" );
+		
+	$params->{fileMTime} = $content;
+	
+	#do status check
+	$http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_statusOK,
+		\&_musicipError,
+		{
+			params  => $params,
+			timeout => 30,
+			error   => "Can't read status",
+		},
+	);
+	
+	$http->get( "http://$MMSHost:$MMSport/api/getStatus" );
+}
+
+sub _musicipError {
+	my $http   = shift;
+	my $error  = $http->params('error');
+	my $params = $http->params('params');
+
+	$log->error( $error || "MusicIP: http error, no response.");
 }
 
 sub prefName {
@@ -526,7 +555,7 @@ sub mixerFunction {
 	my ($client, $noSettings, $track) = @_;
 
 	# look for parentParams (needed when multiple mixers have been used)
-	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
+	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack->[-1];
 	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
 	if ($prefs->get('player_settings') && !$noSettings) {
 
@@ -757,16 +786,7 @@ sub getMix {
 
 	# url encode the request, but not the argstring
 	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
-	# We might need to do the same on Linux, but I can't get UTF-8 files
-	# to show up properly in MMM right now.
-	if ($OS eq 'win' || $OS eq 'mac') {
-
-		$mixArgs = URI::Escape::uri_escape($mixArgs);
-
-	} else {
-
-		$mixArgs = Slim::Utils::Misc::escape($mixArgs);
-	}
+	$mixArgs = URI::Escape::uri_escape($mixArgs);
 	
 	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 

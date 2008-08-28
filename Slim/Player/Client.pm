@@ -37,25 +37,42 @@ my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'maxBitrate'       => undef, # will be set by the client device OR default to server pref when accessed.
-	'alarmvolume'      => [50,50,50,50,50,50,50,50],
-	'alarmfadeseconds' => 0, # fade in alarm, 0 means disabled
-	'alarm'            => [0,0,0,0,0,0,0,0],
-	'alarmtime'        => [0,0,0,0,0,0,0,0],
-	'alarmplaylist'	   => ['','','','','','','',''],
+	# Alarm prefs
+	'alarms'           => {},	
+	'alarmsEnabled'    => 1,
+	'alarmDefaultVolume' => 50, # if this is changed, also change the hardcoded value in the prefs migration code in Prefs.pm
+	'alarmSnoozeSeconds' => 540, # 9 minutes
+	'alarmfadeseconds' => 1, # whether to fade in the volume for alarms.  Boolean only, despite the name! 
+	'alarmTimeoutSeconds' => 3600, # time after which to automatically end an alarm.  false to never end
+
 	'lameQuality'      => 9,
 	'playername'       => \&_makeDefaultName,
 	'repeat'           => 2,
 	'shuffle'          => 0,
-	'titleFormat'      => [5, 1, 3, 6],
+	'titleFormat'      => [5, 1, 3, 6, 0],
 	'titleFormatCurr'  => 1,
 };
 
-# depricated, use $client->maxVolume
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Utils::Alarm->alarmsEnabledChanged($client);
+}, 'alarmsEnabled' );
+
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Utils::Alarm->defaultVolumeChanged($client);
+}, 'alarmDefaultVolume' );
+
+# deprecated, use $client->maxVolume
 our $maxVolume = 100;
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
 our %clientHash = ();
+
+my $modeParameterStackIndex;
 
 use constant KNOB_NOWRAP => 0x01;
 use constant KNOB_NOACCELERATION => 0x02;
@@ -85,15 +102,18 @@ use constant KNOB_NOACCELERATION => 0x02;
 								_tempVolume musicInfoTextCache metaTitle languageOverride password scanData currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								signalStrengthLog bufferFullnessLog slimprotoQLenLog
+								alarmData knobData
+								modeStack modeParameterStack playlist currentsongqueue chunks
+								shufflelist slaves syncSelections searchTerm
+								updatePending
 							));
-
-	__PACKAGE__->mk_accessor('array', qw(
-								modeStack modeParameterStack searchTerm trackInfoLines trackInfoContent slaves syncSelections
-								currentsongqueue chunks playlist shufflelist
-							));
+							
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection
 							));
+							
+	# modeParameterStack is called a lot, cache the index to avoid many accessor calls
+	$modeParameterStackIndex = __PACKAGE__->_slot('modeParameterStack');
 }
 
 =head1 NAME
@@ -117,9 +137,8 @@ sub new {
 
 	assert(!defined(getClient($id)));
 
-	# XXX: Ignore UUID from non-Receivers, this will be fixed by bug 6899
-	# in a future version
-	if ( $uuid && $deviceid != 7 ) {
+	# Ignore UUID if all zeros (bug 6899)
+	if ( $uuid eq '0' x 32 ) {
 		$uuid = undef;
 	}
 
@@ -224,8 +243,6 @@ sub new {
 		lastDigitTime           => 0,
 		searchFor               => undef,
 		searchTerm              => [],
-		trackInfoLines          => [],
-		trackInfoContent        => [],
 		lastID3Selection        => {},
 
 		# sync state
@@ -248,6 +265,12 @@ sub new {
 		bufferFullnessLog       => Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]),
 		slimprotoQLenLog        => Slim::Utils::PerfMon->new("Slimproto QLen ($id)",  [1, 2, 5, 10, 20]),
 
+		# alarm state
+		alarmData		=> {},			# Stored alarm data for this client.  Private.
+		
+		# Knob data
+		knobData		=> {},			# Stored knob data for this client
+
 		# other
 		_tempVolume             => undef,
 		musicInfoTextCache      => undef,
@@ -259,6 +282,7 @@ sub new {
 		sleepTime               => 0,
 		pendingPrefChanges      => {},
 		_pluginData             => {},
+		updatePending           => 0,
 	
 	);
 
@@ -278,6 +302,8 @@ sub init {
 	if ($client->display) {
 		$client->display->init();
 	}
+
+	Slim::Utils::Alarm->loadAlarms($client);
 }
 
 sub initPrefs {
@@ -637,7 +663,10 @@ sub hasAesbeu() { return 0; }
 sub hasPowerControl() { return 0; }
 sub hasDisableDac() { return 0; }
 sub hasPolarityInversion() { return 0; }
+sub hasFrontPanel() { return 0; }
 sub hasServ { return 0; }
+sub hasRTCAlarm { return 0; }
+sub hasLineIn() { return 0; }
 
 sub maxBrightness() { return undef; }
 
@@ -841,6 +870,12 @@ sub pitch {
 	return $client->_mixerPrefs('pitch', 'maxPitch', 'minPitch', $value);
 }
 
+sub stereoXL {
+	my ($client, $value) = @_;
+
+	return $client->_mixerPrefs('stereoxl', 'maxXL', 'minXL', $value);
+};
+
 sub _mixerPrefs {
 	my ($client, $pref, $max, $min, $value) = @_;
 
@@ -963,7 +998,7 @@ sub param {
 
 	logBacktrace("Use of \$client->param is deprecated, use \$client->modeParam instead");
 
-	my $mode   = $client->modeParameterStack(-1) || return undef;
+	my $mode   = $client->modeParameterStack->[-1] || return undef;
 
 	if (defined $value) {
 
@@ -976,12 +1011,11 @@ sub param {
 }
 
 # this is a replacement for param that allows you to pass undef to clear a parameter
+# Looks a bit ugly but this is to improve performance and avoid an accessor call
 sub modeParam {
-	my $client = shift;
-	my $name   = shift;
-	my $mode   = $client->modeParameterStack(-1) || return undef;
+	my $mode = $_[0]->[ $modeParameterStackIndex ]->[-1] || return undef;
 
-	@_ ? ($mode->{$name} = shift) : $mode->{$name};
+	@_ > 2 ? ( $mode->{ $_[1] } = $_[2] ) : $mode->{ $_[1] };
 }
 
 sub modeParams {
@@ -992,7 +1026,7 @@ sub modeParams {
 
 sub getMode {
 	my $client = shift;
-	return $client->modeStack(-1);
+	return $client->modeStack->[-1];
 }
 
 =head2 masterOrSelf( $client )
@@ -1238,6 +1272,5 @@ sub playPoint {
 		return $client->_playPoint;
 	}
 }
-
 
 1;

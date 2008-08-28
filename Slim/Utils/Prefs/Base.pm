@@ -20,6 +20,7 @@ Base class for preference objects implementing methods which can be used on glob
 
 use strict;
 
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 use Storable;
 
@@ -71,9 +72,11 @@ sub get {
 			$value = [ $value ];
 		}
 		
-		# More special handling for alarm prefs
-		elsif ( $key =~ /^alarm/ && $key ne 'alarmfadeseconds' && !ref $value ) {
-			$value = [ $value ];
+		# More special handling for alarm prefs, ugh
+		elsif ( $key =~ /^alarm/ && !ref $value ) {
+			if ( $key !~ /alarmfadeseconds|alarmsEnabled/ ) {
+				$value = [ $value ];
+			}
 		}
 		
 		if ( wantarray && ref $value eq 'ARRAY' ) {
@@ -116,9 +119,21 @@ sub getFromDB {
 	my $value;
 	
 	if ( $count == 1 ) {
-		# scalar pref		
-		# NULL in DB is indicates empty string
-		$value = defined $prefs[0]->value ? $prefs[0]->value : '';
+		# scalar pref or JSON pref
+		$value = $prefs[0]->value;
+		
+		if ( !defined $value ) {
+			# NULL in DB is indicates empty string
+			$value = '';
+		}
+			
+		if ( $value =~ s/^json:// ) {
+			$value = eval { from_json($value) };
+			if ( $@ ) {
+				$log->error( $client->id . " Bad JSON pref $key: $@" );
+				$value = '';
+			}
+		}
 	}
 	elsif ( $count > 1 )  {
 		# array pref
@@ -255,6 +270,9 @@ sub set {
 					
 					if ( ref $new eq 'ARRAY' ) {
 						SDI::Service::Model::Pref->quick_update_array( $client->playerData, $nspref, $new );
+					}
+					elsif ( ref $new eq 'HASH' ) {
+						SDI::Service::Model::Pref->quick_update( $client->playerData, $nspref, 'json:' . to_json( $new ) );
 					}
 					else {
 						SDI::Service::Model::Pref->quick_update( $client->playerData, $nspref, $new );

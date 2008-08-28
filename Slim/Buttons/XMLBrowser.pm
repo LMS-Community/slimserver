@@ -74,7 +74,8 @@ sub setMode {
 
 		#TODO: display the error on the client
 		my %params = (
-			'header'  => "{XML_ERROR} {count}",
+			'header'  => "{XML_ERROR}",
+			'headerAddCount' => 1,
 			'listRef' => \@lines,
 		);
 
@@ -208,7 +209,8 @@ sub gotError {
 
 	#TODO: display the error on the client
 	my %params = (
-		'header'  => "{XML_ERROR} {count}",
+		'header'  => "{XML_ERROR}",
+		'headerAddCount' => 1, 
 		'listRef' => [ $err ],
 	);
 
@@ -329,7 +331,8 @@ sub gotRSS {
 		'modeName' => 
 			( defined $params->{remember} && $params->{remember} == 0 ) 
 			? undef : "XMLBrowser:$url",
-		'header'   => fitTitle( $client, $feed->{'title'} ),
+		'header'   => $feed->{'title'},
+		'headerAddCount' => 1,
 
 		# TODO: we show only items here, we skip the description of the entire channel
 		'listRef'  => $feed->{'items'},
@@ -397,7 +400,8 @@ sub gotOPML {
 		my %params = (
 			'url'    => $url,
 			'title'  => $title,
-			'header' => fitTitle($client, $title),
+			'header' => $title,
+			'headerAddCount' => 1,
 		);
 
 		if (!defined $url) {
@@ -550,7 +554,8 @@ sub gotOPML {
 		'modeName' => 
 			( defined $params->{remember} && $params->{remember} == 0 ) 
 			? undef : "XMLBrowser:$url:$title",
-		'header'     => fitTitle( $client, $title, scalar @{ $opml->{'items'} } ),
+		'header'     => $title,
+		'headerAddCount' => 1,
 		'listRef'    => $opml->{'items'},
 
 		'isSorted'   => $opml->{sorted} || 0,
@@ -658,7 +663,8 @@ sub gotOPML {
 					'url'     => $itemURL,
 					'timeout' => $timeout,
 					'title'   => $title,
-					'header'  => fitTitle( $client, $title ),
+					'header'  => $title,
+					'headerAddCount' => 1,
 					'item'    => $item,
 					'parser'  => $parser,
 				);
@@ -832,23 +838,18 @@ sub handleSearch {
 sub overlaySymbol {
 	my ($client, $item) = @_;
 
-	my $overlay = '';
+	my $overlay;
 
-	if ( hasAudio($item) ) {
-
-		$overlay .= $client->symbols('notesymbol');
-	}
-	
-	$item->{type} ||= ''; # avoid warning but still display right arrow
-	
-	if ( $item->{type} eq 'radio' ) {
+	if ( $item->{type} && $item->{type} eq 'radio' ) {
 		# Display check box overlay for type=radio
 		my $default = $item->{default};
-		$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, $default eq $item->{name} );
+		$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, $default eq $item->{name} );
 	}
-	elsif ( $item->{type} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
-
-		$overlay .= $client->symbols('rightarrow');
+	elsif ( hasAudio($item) ) {
+		$overlay = $client->symbols('notesymbol');
+	}
+	elsif ( $item->{type} ne 'text' ) {
+		$overlay = $client->symbols('rightarrow');
 	}
 
 	return [ undef, $overlay ];
@@ -951,7 +952,8 @@ sub displayItemDescription {
 
 		# its a remote audio source, use remotetrackinfo
 		my %params = (
-			'header'    => fitTitle( $client, $item->{'title'} ),
+			'header'    => $item->{'title'},
+			'headerAddCount' => 1,
 			'title'     => $item->{'title'},
 			'url'       => $item->{'enclosure'}->{'url'},
 			'details'   => \@lines,
@@ -971,7 +973,8 @@ sub displayItemDescription {
 
 		my %params = (
 			'item'    => $item,
-			'header'  => $item->{'title'} . ' {count}',
+			'header'  => $item->{'title'},
+			'headerAddCount' => 1,
 			'listRef' => \@lines,
 
 			'onRight' => sub {
@@ -1039,7 +1042,8 @@ sub displayFeedDescription {
 		'url'       => $client->modeParam('url'),
 		'title'     => $feed->{'title'},
 		'feed'      => $feed,
-		'header'    => fitTitle( $client, $feed->{'title'} ),
+		'header'    => $feed->{'title'},
+		'headerAddCount' => 1,
 		'details'   => \@lines,
 		'hideTitle' => 1,
 		'hideURL'   => 1,
@@ -1277,7 +1281,8 @@ sub playItem {
 			'url'     => $url,
 			'timeout' => $client->modeParam('timeout'),
 			'title'   => $title,
-			'header'  => fitTitle( $client, $title ),
+			'header'  => $title,
+			'headerAddCount' => 1,
 			'parser'  => $parser,
 			'item'    => $item,
 		);
@@ -1288,27 +1293,6 @@ sub playItem {
 
 		$client->bumpRight();
 	}
-}
-
-# Fit a title into the available display, truncating if necessary
-sub fitTitle {
-	my ( $client, $title, $numItems ) = @_;
-	
-	# number of items in the list, to fit the (xx of xx) text properly
-	$numItems ||= 2;
-	my $num = '?' x length $numItems;
-	
-	my $max    = $client->displayWidth;
-	my $length = $client->measureText( $title . " ($num of $num) ", 1 );
-	
-	return $title . ' {count}' if $length <= $max;
-	
-	while ( $length > $max ) {
-		$title  = substr $title, 0, -1;
-		$length = $client->measureText( $title . "... ($num of $num) ", 1 );
-	}
-	
-	return $title . '... {count}';
 }
 
 sub cliQuery {

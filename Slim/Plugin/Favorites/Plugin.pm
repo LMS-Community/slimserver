@@ -216,7 +216,7 @@ sub playFavorite {
 
 			Slim::Music::Info::setTitle($url, $title);
 			
-			$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+			$client->showBriefly($client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) }));
 			
 			$client->execute(['playlist', 'play', $url]);
 		}

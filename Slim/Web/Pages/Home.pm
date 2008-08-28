@@ -133,13 +133,15 @@ sub home {
 		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
 	}
 
-	# add favorites to first level of Default skin
-	if (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Default') {
-		my $favs = Slim::Utils::Favorites->new($client);
+	# More leakage from the LineIn 'plugin'
+	#
+	# If our current player has line in, show the menu.
+	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
+		Slim::Plugin::LineIn::Plugin->webPages($client);
+	}
 
-		if ($favs) {
-			$params->{'favorites'} = $favs->toplevel;
-		}
+	if (my $favs = Slim::Utils::Favorites->new($client)) {
+		$params->{'favorites'} = $favs->toplevel;
 	}
 	
 	# Bug 4125, sort all additionalLinks submenus properly

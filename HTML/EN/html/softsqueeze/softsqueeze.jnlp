@@ -16,7 +16,7 @@
   <information>
     <title>SoftSqueeze 3.7</title>
     <vendor>Richard Titmuss, et.al.</vendor>
-    <homepage href="http://softsqueeze.sourceforge.net"/>
+    <homepage href="http://wiki.slimdevices.com/index.php/SoftSqueeze"/>
     <description>SoftsSqueeze Squeezebox Emulator</description>
     <description kind="short">SoftSqueeze Squeezebox Emulator</description>
     <icon width="400" height="200" kind="splash" href="icons/splash.gif" />

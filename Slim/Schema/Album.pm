@@ -10,6 +10,8 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log = logger('database.info');
+
 {
 	my $class = __PACKAGE__;
 
@@ -198,8 +200,8 @@ sub artists {
 
 	} elsif (scalar @artists == 0) {
 
-		if ( logger('database.info')->is_debug ) {
-			logger('database.info')->debug(sprintf("\%artists == 0 && \$self->contributor - returning: [%s]", $self->contributors));
+		if ( $log->is_debug ) {
+			$log->debug(sprintf("\%artists == 0 && \$self->contributor - returning: [%s]", $self->contributors));
 		}
 
 		@artists = $self->contributors;

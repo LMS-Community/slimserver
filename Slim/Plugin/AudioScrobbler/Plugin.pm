@@ -172,9 +172,9 @@ sub setMode {
 			my $curAccount = $prefs->client($client)->get('account') || 0;
 
 			if ( $account eq $curAccount ) {
-				$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
+				$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, 1 );
 			} else {
-				$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
+				$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, 0 );
 			}
 			
 			return ( undef, $overlay );

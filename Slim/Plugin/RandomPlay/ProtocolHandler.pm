@@ -34,6 +34,8 @@ sub contentType {
 	return 'rnd';
 }
 
+sub isRemote { 0 }
+
 sub getIcon {
 	return Slim::Plugin::RandomPlay::Plugin->_pluginDataFor('icon');
 }

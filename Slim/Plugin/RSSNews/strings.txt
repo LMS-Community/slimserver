@@ -3,236 +3,305 @@
 # $Id: strings.txt 11049 2006-12-28 09:47:38Z mherger $
 
 PLUGIN_RSSNEWS
-	DA	RSS Nyhedsticker
+	DA	RSS-lysavis med nyheder
 	DE	RSS-Nachrichtenticker
 	EN	RSS News Ticker
 	ES	Teletipo de noticias RSS
+	FI	RSS-uutisnauha
 	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
 	IT	RSS News Ticker
 	NL	RSS-nieuwsberichten
+	NO	Rss-nyhetstelegraf
+	SV	RSS-nyhetsticker
 
 PLUGIN_RSSNEWS_DESC
-	DA	Adgang til RSS nyhedsfeeds
+	DA	Adgang til RSS-nyhedsfeeds
 	DE	Zugriff auf RSS News Feeds
 	EN	Access to RSS News Feeds
 	ES	Acceso a fuentes RSS nuevas
+	FI	RSS-uutissyötteiden käyttö
 	FR	Accès aux flux d'informations RSS
 	IT	Accesso ai nuovi feed RSS
 	NL	Toegang tot RSS-nieuwskanalen
+	NO	Tilgang til nyhets-feeder på rss
+	SV	Tillgång till RSS-nyhetsflöden
 
 PLUGIN_RSSNEWS_ADD_NEW
-	DA	Tilføj ny feed -->
+	DA	Tilføj nyt feed -->
 	DE	Neuen Feed hinzufügen -->
 	EN	Add new feed -->
 	ES	Agregar fuente nueva -->
+	FI	Lisää uusi syöte -->
 	FR	Ajouter flux -->
 	HE	הוסף הזנה חדשה -->
 	IT	Aggiungi un nuovo feed -->
 	NL	Nieuw kanaal toevoegen -->
+	NO	Legg til ny feed –>
+	SV	Lägg till nytt flöde >
 
 PLUGIN_RSSNEWS_WAIT
-	DA	Vent venligst, anmoder om feed...
+	DA	Vent lidt. Anmoder om feed...
 	DE	Feed wird angefordert. Bitte warten ...
 	EN	Please wait, requesting feed...
 	ES	Espere, solicitando fuente...
+	FI	Odota, pyydetään syötettä...
 	FR	Veuillez patienter, connexion au flux...
 	HE	אנא המתן, מבקש הזנה...
 	IT	Attendere. Richiesta feed in corso...
 	NL	Kanaal wordt opgevraagd. Een ogenblik geduld.
+	NO	Vent litt, sender forespørsel om feed...
+	SV	Begär flöde. Vänta ...
 
 PLUGIN_RSSNEWS_ERROR
-	DA	Fejl opstod ved hentning af RSS feed
+	DA	Det lykkedes ikke at hente RSS-feed
 	DE	Fehler beim Laden des RSS-Feed
 	EN	Failed to retrieve RSS feed
 	ES	Fallo al obtener fuente RSS
+	FI	RSS-syötettä ei voitu noutaa
 	FR	Impossible de charger le flux
 	HE	כשל באחזור הזנת RSS
 	IT	Impossibile recuperare feed RSS
 	NL	Fout bij ophalen RSS-kanaal
+	NO	Innhenting av rss-feed mislyktes
+	SV	Det gick inte att hämta RSS-flödet
 
 PLUGIN_RSSNEWS_NO_DESCRIPTION
-	DA	Beskrivelse ikke tilgængelig
+	DA	Der er ingen beskrivelse
 	DE	Keine Beschreibung verfügbar
 	EN	Description not available
 	ES	Descripción no disponible
+	FI	Kuvausta ei ole saatavilla
 	FR	Description non disponible
 	HE	אין תיאור זמין
 	IT	Descrizione non disponibile
 	NL	Beschrijving niet beschikbaarg
+	NO	Ingen beskrivelse tilgjengelig
+	SV	Beskrivning ej tillgänglig
 
 PLUGIN_RSSNEWS_NO_TITLE
 	CS	Název není dostupný
-	DA	Titel er ikke tilgængelig
+	DA	Titlen er ikke tilgængelig
 	DE	Kein Titel verfübar
 	EN	Title not available
 	ES	Título no disponible
+	FI	Kappale ei ole käytettävissä
 	FR	Titre non disponible
 	HE	אין כותרת זמינה
 	IT	Titolo non disponibile
 	NL	Titel niet beschikbaar
+	NO	Tittelen er ikke tilgjengelig
+	SV	Titel ej tillgänglig
 
 PLUGIN_RSSNEWS_SCREENSAVER
-	DA	RSS nyhedsticker
+	DA	RSS-lysavis med nyheder
 	DE	RSS-Nachrichtenticker
 	EN	RSS News Ticker
 	ES	Teletipo de noticias RSS
+	FI	RSS-uutisnauha
 	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
 	IT	RSS News Ticker
 	NL	RSS-nieuwsberichten
+	NO	Rss-nyhetstelegraf
+	SV	RSS-nyhetsticker
 
 PLUGIN_RSSNEWS_NAME
-	DA	RSS nyhedsticker
+	DA	RSS-lysavis med nyheder
 	DE	RSS-Nachrichtenticker
 	EN	RSS News Ticker
 	ES	Teletipo de noticias RSS
+	FI	RSS-uutisnauha
 	FR	Agrégateur RSS
 	HE	טיקר RSS של חדשות
 	IT	RSS News Ticker
 	NL	RSS-nieuwsberichten
+	NO	Rss-nyhetstelegraf
+	SV	RSS-nyhetsticker
 
 PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
-	DA	Indstillinger for RSS nyhedspauseskærm
+	DA	Indstillinger for pauseskærm med RSS-nyheder
 	DE	Einstellungen für RSS-Nachrichten-Bildschirmschoner
 	EN	RSS News Screensaver Settings
 	ES	Configuración de protector de pantalla de noticias RSS
+	FI	RSS News -näytönsäästäjän asetukset
 	FR	Paramètres Ecran de veille Aggrégateur RSS
 	HE	הגדרות שומר המסך של RSS של חדשות
 	IT	Impostazioni screen saver RSS News
 	NL	Instellingen van RSS-nieuwsschermbeveiliger
+	NO	Innstilling for skjermspareren med rss-nyheter
+	SV	Inställningar för RSS-nyhetsskärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
-	DA	Vælg aktuel pauseskærm
+	DA	Vælg pauseskærm
 	DE	Aktuellen Bildschirmschoner wählen
 	EN	Select Current Screensaver
 	ES	Seleccionar protector de pantalla actual
+	FI	Valitse nykyinen näytönsäästäjä
 	FR	Sélectionner l'écran de veille en cours
 	HE	בחר את שומר המסך הנוכחי
 	IT	Seleziona lo screen saver corrente
 	NL	Huidige schermbeveiliger selecteren
+	NO	Velg gjeldende skjermsparer
+	SV	Välj aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
 	CS	Aktuální spořič
-	DA	Aktuel pauseskærm
+	DA	Nuværende pauseskærm
 	DE	Aktueller Bildschirmschoner
 	EN	Current Screensaver
 	ES	Protector de pantalla actual
+	FI	Nykyinen näytönsäästäjä
 	FR	Ecran de veille en cours
 	HE	שומר המסך הנוכחי
 	IT	Screen saver corrente
 	NL	Huidige schermbeveiliger
+	NO	Gjeldende skjermsparer
+	SV	Aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
 	CS	Použít RSS News jako aktuální spořič
-	DA	Vælg RSS nyhedr som aktuel pauseskærm
+	DA	Vælg RSS-nyheder som pauseskærm
 	DE	RSS-Nachrichten als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
 	ES	Usar noticias RSS como protector de pantalla actual
+	FI	Käytä RSS Newsiä nykyisenä näytönsäästäjänä
 	FR	Utiliser l'aggrégateur RSS comme écran de veille
 	HE	השתמש ב-RSS של חדשות כשומר המסך הנוכחי
 	IT	Usa RSS News come screen saver corrente
 	NL	RSS-nieuws als huidige schermbeveiliger gebruiken
+	NO	Bruk rss-nyheter som standard skjermsparer
+	SV	Använd RSS-nyheter som aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT
-	DA	Anvend standard pausskærm (ikke RSS nyheder)
+	DA	Brug standardpauseskærm (ikke RSS-nyheder)
 	DE	Standard-Bildschirmschoner verwenden (nicht RSS-Nachrichten)
 	EN	Use default screensaver (not RSS News)
 	ES	Usar protector de pantalla predeterminado (no noticias RSS)
+	FI	Käytä oletusnäytönsäästäjää (älä RSS Newsiä)
 	FR	Utiliser l'écran de veille par défaut (hors aggrégateur RSS)
 	HE	השתמש בשומר המסך הנוכחי (לא RSS של חדשות)
 	IT	Usa lo screen saver predefinito (non RSS News)
 	NL	Standaardschermbeveiliger gebruiken (niet RSS-nieuws)
+	NO	Bruk standard skjermsparer (ikke rss-nyheter)
+	SV	Använd standardskärmsläckare (inte RSS-nyheter).
 
 PLUGIN_RSSNEWS_SCREENSAVER_ENABLE
-	DA	Aktiverer ticker som aktuel pauseskærm...
+	DA	Aktiverer lysavis som pauseskærm...
 	DE	Nachrichtenticker wird als Bildschirmschoner aktiviert ...
 	EN	Activating ticker as current screensaver
 	ES	Activando teletipo como nuevo protector de pantalla
+	FI	Lennätinnauha aktivoidaan nykyisenä näytönsäästäjänä
 	FR	Activation de l'aggrégateur RSS comme écran de veille
 	HE	מפעיל את הטיקר כשומר המסך הנוכחי
 	IT	Attivazione del ticker come screen saver corrente
 	NL	RSS-nieuwsberichten worden als schermbeveiliger ingeschakeld
+	NO	Aktiverer telegraftekst som skjermsparer
+	SV	Aktiverar ticker som aktuell skärmsläckare
 
 PLUGIN_RSSNEWS_SCREENSAVER_DISABLE
-	DA	Vender tilbage til standard pausskærm
+	DA	Vender tilbage til standardpauseskærm
 	DE	Standard-Bildschirmschoner wird aktiviert ...
 	EN	Returning to default screensaver
 	ES	Volviendo al protector de pantalla predeterminado
+	FI	Palataan oletusnäytönsäästäjään
 	FR	Rétablissement de l'écran de veille par défaut
 	HE	חזרה לשומר המסך המוגדר כברירת מחדל
 	IT	Ritorno allo screen saver predefinito
 	NL	Terug naar standaardschermbeveiliger
+	NO	Går tilbake til standard skjermsparer
+	SV	Återställ till standardskärmsläckare
 
 PLUGIN_RSSNEWS_ERROR_IN_FEED
-	DA	Fejl ved parsning af RSS feed
+	DA	Fejl ved fortolkning af RSS-feed
 	DE	Fehler beim Parsen des RSS Feed
 	EN	Error parsing RSS feed
 	ES	Error al analizar fuente RSS
+	FI	Virhe RSS-syötteen jäsentämisessä
 	FR	Erreur de lecture du flux
 	HE	שגיאה בניתוח הזנת RSS
 	IT	Errore durante l'analisi del feed RSS
 	NL	Fout bij parseren RSS-kanaal
+	NO	Feil ved analyse av rss-feed
+	SV	Fel vid tolkning av RSS-flöde
 
 PLUGIN_RSSNEWS_LOADING_FEED
-	DA	Indlæser RSS feed...
+	DA	Indlæser RSS-feed...
 	DE	RSS-Feed wird geladen...
 	EN	Loading RSS feed...
 	ES	Cargando fuente RSS
+	FI	Ladataan RSS-syöte...
 	FR	Chargement du flux...
 	HE	טוען הזנת RSS...
 	IT	Caricamento del feed RSS...
 	NL	RSS-kanaal wordt geladen...
+	NO	Laster inn rss-feed...
+	SV	Läser in RSS-flöde ...
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
-	DA	Udvidelsesmodulet for RSS nyhedsticker anvendes til at gennemse og vise elementer fra RSS feeds. Indstillingerne nedenunder kan anvendes til at definere hvilke RSS feeds som skal bruges og hvordan de skal vises. Klik Ændre når du er færdig.
+	DA	Udvidelsesmodulet til lysavisen med RSS-nyheder kan bruges til at se nyheder fra RSS-feeds. I indstillingerne nedenfor kan du vælge hvilke RSS-feeds der skal bruges, og hvordan de skal vises. Klik på Skift når du har valgt indstillinger.
 	DE	Mit dem Plugin 'RSS-Nachrichtenticker' können Artikel aus RSS-Feeds angezeigt werden. Mit den folgenden Einstellungen können Sie festlegen, welche RSS-Feeds wie angezeigt werden sollen. Klicken Sie auf 'Ändern', wenn Sie fertig sind.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
 	ES	El complemento de teletipo de noticias RSS se puede usar para examinar y mostrar elementos de fuentes RSS. Las preferencias siguientes se pueden usar para determinar qué fuentes RSS se deben usar y para controlar cómo deben mostrarse. Haga clic en el botón Cambiar cuando haya finalizado.
+	FI	RSS News Ticker -laajennuksen avulla voidaan selata ja näyttää RSS-syötteiden kohteita. Alla olevilla asetuksilla voidaan määrittää, mitä RSS-syötteitä käytetään ja miten syötteet näytetään. Kun olet valmis, valitse Muuta.
 	FR	Le plugin Aggrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les modifications effectuées.
 	HE	ניתן להשתמש ביישום ה-Plugin 'טיקר RSS של חדשות' לעיון בפריטים מהזנות RSS ולהצגתם. ניתן להשתמש בהעדפות שלהלן כדי לקבוע באילו הזנות RSS להשתמש וכדי לשלוט באופן ההצגה שלהן. לסיום, לחץ על הלחצן 'שנה'.
 	IT	È possibile utilizzare il plugin RSS News Ticker per sfogliare e visualizzare argomenti dei feed RSS. Per specificare i feed RSS da utilizzare e impostarne il tipo di visualizzazione, utilizzare le preferenze indicate di seguito. Al termine delle operazioni, fare clic sul pulsante Cambia.
 	NL	Met de plug-in voor RSS-nieuwsberichten kun je items van RSS-kanalen bekijken en weergeven. Met de instellingen hieronder kun je bepalen welke RSS-kanalen je wilt gebruiken en hoe ze worden weergegeven. Klik op de knop 'Veranderen' wanneer je klaar bent.
+	NO	Plugin-modulen rss-nyhetstelegraf kan brukes til å lese og vise elementer fra rss-feeder. Du kan bruke innstillingene nedenfor til å avgjøre hvilke rss-feeder du vil bruke, og kontrollere hvordan de vises. Klikk på Endre når du er ferdig.
+	SV	Med plugin-programmet RSS-nyhetsticker kan du söka efter och visa innehåll från RSS-flöden. Nedan kan du ange vilka RSS-flöden som ska användas och hur de ska visas.  Klicka på Ändra när du är klar.
 
 SETUP_PLUGIN_RSSNEWS_FEEDS
-	DA	Ændre RSS feeds
+	DA	Rediger RSS-feeds
 	DE	RSS-Feeds ändern
 	EN	Modify RSS feeds
 	ES	Modificar fuentes RSS
+	FI	Muokkaa RSS-syötteitä
 	FR	Modifier les flux RSS
 	HE	שינוי הזנות RSS
 	IT	Modifica i feed RSS
 	NL	RSS-kanalen wijzigen
+	NO	Endre rss-feeder
+	SV	Ändra RSS-flöden
 
 SETUP_PLUGIN_RSSNEWS_RESET
-	DA	Nulstil til standard RSS feeds
+	DA	Gendan RSS-standardfeeds
 	DE	Standard-Feeds wiederherstellen
 	EN	Reset default RSS feeds
 	ES	Restablecer fuentes RSS predeterminadas
+	FI	Palauta RSS-oletussyötteet
 	FR	Réinitialiser les flux RSS par défaut
 	HE	איפוס הזנות ה-RSS המוגדרות כברירת מחדל
 	IT	Reimposta i feed RSS predefiniti
 	NL	Standaard RSS-kanalen opnieuw instellen
+	NO	Tilbakestill standard rss-feeder
+	SV	Återställ till standard-RSS-flöden.
 
 SETUP_PLUGIN_RSSNEWS_RESET_DESC
-	DA	Klik Nulstil knappen for at genoprette standard RSS feeds.
+	DA	Klik Nulstil for at gendanne RSS-standardfeeds.
 	DE	Klicken Sie auf 'Zurücksetzen', um die Standard-RSS-Feeds wiederherzustellen.
 	EN	Click the Reset button to revert to the default set of RSS Feeds.
 	ES	Haga clic en el botón Restablecer para volver al conjunto de fuentes RSS predeterminado.
+	FI	Palaa RSS-syötteiden oletusjoukkoon napsauttamalla Palauta-painiketta.
 	FR	Cliquez sur Réinitialiser pour rétablir la liste par défaut des flux RSS.
 	HE	לחץ על הלחצן 'איפוס' כדי לחזור אל ערכת ברירת המחדל של הזנות RSS.
 	IT	Premere il pulsante Reimposta per ritornare al set di feed RSS predefinito.
 	NL	Klik op de knop Opnieuw instellen om de standaardset RSS-kanalen te herstellen.
+	NO	Klikk på tilbakestillingsknappen for å tilbakestille til standardsettet av rss-feeder.
+	SV	Klicka på knappen Återställ om du vill återgå till standarduppsättningen av RSS-flöden.
 
 PLUGIN_RSSNEWS_RESETTING
-	DA	Genopretter standard RSS feeds.
+	DA	Gendanner RSS-standardfeeds.
 	DE	Standard-RSS-Feeds werden wiederhergestellt ...
 	EN	Resetting to default RSS Feeds.
 	ES	Restableciendo las fuentes RSS predeterminadas
+	FI	Palautetaan RSS-oletussyötteet.
 	FR	Réinitialisation des flux par défaut.
 	HE	איפוס להזנות RSS המוגדרות כברירת מחדל.
 	IT	Reimpostazione sui feed RSS predefiniti.
 	NL	Standaard RSS-kanalen worden hersteld.
+	NO	Tilbakestiller til standard rss-feeder.
+	SV	Återställer till standard-RSS-flödena.
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
 	CS	Resetovat
@@ -240,46 +309,61 @@ SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Restablecer
+	FI	Palauta
 	FR	Réinitialiser
 	HE	איפוס
 	IT	Reimposta
 	NL	Opnieuw instellen
+	NO	Tilbakestill
+	SV	Återställ
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
-	DA	Antal elementer vist per kanal
+	DA	Antal elementer vist pr. kanal
 	DE	Anzahl Einträge pro Feed
 	EN	Items displayed per channel
 	ES	Elementos mostrados por canal
+	FI	Kanavaa kohti näytetyt kohteet
 	FR	Nombre d'éléments par canal
 	HE	פריטים מוצגים לפי ערוץ
 	IT	Argomenti visualizzati per canale
 	NL	Weergegeven items per kanaal
+	NO	Elementer som vises per kanal
+	SV	Visade objekt per kanal
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
-	DA	Maksimum antal elementer som vises for hvert feed når pauseskærmen er aktiv. En høj værdi betyder at pauseskærmen vil vise flere elementer inden den skifter til næste feed.
+	DA	Det maksimale antal overskrifter fra hvert feed der kan vises mens pauseskærmen er aktiv. En høj værdi betyder at der vises flere overskrifter før der skiftes til det næste feed.
 	DE	Die Anzahl Einträge, die im Bildschirmschonermodus pro Feed angezeigt werden sollen. Eine größere Anzahl bedeutet, dass mehr Einträge angezeigt werden, bevor der nächste Feed angezeigt wird.
 	EN	The maximum number of items displayed for each feed while the screensaver is active. A larger value implies that the screensaver will display more items before switching to the next feed.
 	ES	El número máximo de elementos mostrados para cada fuente mientras el protector de pantalla está activo. Un valor más alto implica que el protector de pantalla mostrará más elementos antes de pasar a la fuente siguiente.
+	FI	Enimmäismäärä kohteita, jotka näytetään syötettä kohden, kun näytönsäästäjä on aktiivinen. Suuri arvo merkitsee sitä, että näytönsäästäjä näyttää useampia kohteita, ennen kuin se vaihtaa seuraavaan syötteeseen.
 	FR	Nombre maximal d'éléments affichés pour chaque flux lorsque l'écran de veille est actif. Un nombre élevé signifie que l'écran de veille affiche plus d'éléments avant de passer au flux suivant.
 	HE	המספר המרבי של פריטים המוצגים עבור כל הזנה בשעה ששומר המסך פעיל. ערך גבוה מסמל שיוצגו בשומר המסך יותר פריטים לפני מעבר להזנה הבאה.
 	IT	Numero massimo di argomenti visualizzati per ogni feed quando lo screen saver è attivo. Se si imposta un valore maggiore sullo screen saver viene visualizzato un numero di argomenti maggiore prima di passare al feed successivo.
 	NL	Het maximumaantal items dat per kanaal wordt weergegeven terwijl de schermbeveiliger actief is. Een hogere waarde betekent dat de schermbeveiliger meer items laat zien, voordat deze naar het volgende kanaal springt.
+	NO	Maksimalt antall elementer som vises for hver feed mens skjermspareren er aktiv. En høyere verdi gjør at skjermspareren viser flere elementer før den bytter til neste feed.
+	SV	Maximalt antal objekt ur varje flöde som visas medan skärmsläckaren är aktiv. Ett större antal innebär att skärmsläckaren visar fler objekt innan den växlar över till nästa flöde.
 
 SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	DA	Eksisterende feeds:
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
 	ES	Fuentes existentes:
+	FI	Olemassa olevat syötteet:
 	FR	Flux existants:
 	IT	Feed esistenti:
 	NL	Bestaande kanalen:
+	NO	Eksisterende feeder:
+	SV	Befintliga flöden:
 
 SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
 	ES	Fuente no válida - %s
+	FI	Virheellinen syöte - %s
 	FR	Flux incorrect - %s
 	IT	Feed non valido. %s
 	NL	Ongeldig kanaal - %s
+	NO	Ugyldig feed: %s
+	SV	Ogiltigt flöde –%s
 

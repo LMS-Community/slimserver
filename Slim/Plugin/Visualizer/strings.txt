@@ -3,35 +3,43 @@
 # $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
 
 PLUGIN_SCREENSAVER_VISUALIZER
-	DA	Visualiseriongs Pauseskærm
+	DA	Visualiseringspauseskærm
 	DE	Visualisierungs-Bildschirmschoner
 	EN	Visualizer Screensaver
 	ES	Protector de pantalla de visualizador
-	FI	Visualisointi ruudunsäästäjä
+	FI	Visualisointinäytönsäästäjä
 	FR	Ecran de veille Visualisation
 	HE	שומר מסך מייצג ויזואלי
 	IT	Screen saver con visualizzatore
 	NL	Visualisatieschermbeveiliger
+	NO	Skjermsparer med effektvisning
+	SV	Skärmsläckare med mätare
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	DA	Kræver Squeezebox2
 	DE	Squeezebox2 erforderlich
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
+	FI	Tarvitaan Squeezebox2
 	FR	Squeezebox2 requise
 	HE	יש צורך בנגן Squeezebox2
 	IT	È richiesto Squeezebox2
 	NL	Vereist Squeezebox2
+	NO	Krever Squeezebox2
+	SV	Kräver Squeezebox 2
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
-	DA	Tryk HØJRE for at aktivere denne pauseskærm
+	DA	Tryk på -> for at aktivere denne pauseskærm
 	DE	Drücken Sie RECHTS zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver
 	ES	Pulse -> para activar este protector de pantalla
+	FI	Ota tämä näytönsäästäjä käyttöön painamalla ->
 	FR	Appuyez sur DROITE pour activer cet écran de veille
 	HE	לחץ על ‎->‎ כדי לאפשר את הפעלת שומר המסך
 	IT	Premere -> per attivare questo screen saver
 	NL	Druk op -> om deze schermbeveiliger te activeren
+	NO	Gå til høyre for å aktivere denne skjermspareren
+	SV	Tryck på höger navigeringsknapp om du vill aktivera den här skärmsläckaren
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	CS	Spořič je nastaven
@@ -39,20 +47,25 @@ PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este protector de pantalla está activo
-	FI	Tämä ruudunsäästäjä on kytketty
+	FI	Tämä näytönsäästäjä on käytössä
 	FR	Cet écran de veille est activé
 	HE	שומר המסך מופעל
 	IT	Questo screen saver è attivato
 	NL	Deze schermbeveiliger is actief
+	NO	Denne skjermspareren er aktivert
+	SV	Den här skärmsläckaren har aktiverats
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CS	Výchozí spořič
-	DA	Standard pauseskærm
+	DA	Standardpauseskærm
 	DE	Standard-Bildschirmschoner
 	EN	Default screensaver
 	ES	Protector de pantalla predeterminado
+	FI	Oletusnäytönsäästäjä
 	FR	Ecran de veille par défaut
 	HE	ברירת מחדל
 	IT	Screen saver predefinito
 	NL	Standaardschermbeveiliger
+	NO	Standard skjermsparer
+	SV	Standardskärmsläckare
 

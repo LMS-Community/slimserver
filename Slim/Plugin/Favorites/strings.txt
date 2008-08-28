@@ -15,18 +15,20 @@ FAVORITES
 	SV	Favoriter
 
 FAVORITES_NOT_DEFINED
-	DA	Favoritte nr. %s er ikke definieret.
+	DA	Favorit nr. %s er ikke defineret.
 	DE	Favorit Nr. %s existiert nicht
 	EN	Favorite #%s not defined.
 	ES	No se ha definido el favorito nº %s.
+	FI	Suosikkia #%s ei määritetty.
 	FR	Favori n°%s non défini
 	HE	פריט מועדף ‎#%s לא מוגדר.
 	IT	Preferito #%s non definito.
 	NL	Favoriet #%s niet gedefinieerd.
+	NO	Favoritt nr. %s er ikke angitt.
 	SV	Favorit nr %s finns inte.
 
 FAVORITES_NONE_DEFINED
-	DA	Der findes ingen Favoritter
+	DA	Der findes ingen favoritter
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
 	ES	No existen favoritos
@@ -35,17 +37,20 @@ FAVORITES_NONE_DEFINED
 	HE	לא קיימים פריטים מועדפים
 	IT	Nessun preferito
 	NL	Er zijn geen favorieten
-	SV	Det finns inga favoriter ännu
+	NO	Finner ingen favoritter
+	SV	Det finns inga favoriter
 
 FAVORITES_PLAYING
-	DA	Afspiller Favorit nr. %s
+	DA	Afspiller favorit nr. %s
 	DE	Favorit Nr. %s läuft ...
 	EN	Playing favorite #%s
 	ES	Reproduciendo favorito nº %s
+	FI	Soitetaan suosikki #%s
 	FR	Lecture du favori n°%s
 	HE	השמעת פריט מועדף ‎#%s
 	IT	Riproduzione del brano preferito #%s
 	NL	Favoriet #%s wordt afgespeeld
+	NO	Spiller favoritt nr. %s
 	SV	Spelar favorit nr %s
 
 FAVORITES_FAVORITE_NUM
@@ -53,41 +58,53 @@ FAVORITES_FAVORITE_NUM
 	DE	Favorit Nr.
 	EN	Favorite #
 	ES	Nº de favorito
-	FI	Suosikki nro
+	FI	Suosikki #
 	FR	Favori n°
 	HE	פריט מועדף #
 	IT	Preferito #
 	NL	Favorietnr.
+	NO	Favoritt nr.
 	SV	Favorit nr
 	ZH_CN	最喜爱#
 
 FAVORITES_HOTKEYS
+	DA	Genvejstaster
 	DE	Abkürzungstasten
 	EN	Hotkeys
 	ES	Teclas de acceso rápido
+	FI	Pikanäppäimet
 	FR	Raccourcis
 	IT	Tasti di scelta rapida
 	NL	Sneltoetsen
+	NO	Hurtigknapper
+	SV	Snabbtangenter
 
 FAVORITES_FAVORITE
 	DA	Favorit
 	DE	Favorit
 	EN	Favorite
 	ES	Favorito
+	FI	Suosikki
 	FR	Favori
 	IT	Preferito
 	NL	Favoriet
+	NO	Favoritt
+	SV	Favorit
 
 FAVORITES_RIGHT_TO_DELETE
-	DE	Favorit löschen
+	DA	Slet favorit
+	DE	Favorit entfernen
 	EN	Remove Favorite
-	ES	Eliminar favorito
-	FR	Supprimer
-	IT	Elimina preferito
+	ES	Quitar favorito
+	FI	Poista suosikki
+	FR	Supprimer le favori
+	IT	Rimuovi preferito
 	NL	Favoriet verwijderen
+	NO	Fjern favoritt
+	SV	Ta bort favorit
 
 FAVORITES_NOT_A_FAVORITE
-	DA	Ikke en Favorit
+	DA	Ikke en favorit
 	DE	Kein Favorit
 	EN	Not a favorite
 	ES	No es un favorito
@@ -96,271 +113,369 @@ FAVORITES_NOT_A_FAVORITE
 	HE	לא מוגדר כפריט מועדף
 	IT	Non è un preferito
 	NL	Geen favoriet
+	NO	Ikke en favoritt
 	SV	Ingen favorit
 	ZH_CN	不是最喜爱的
 
 FAVORITES_ADDING
-	DA	Gemmer Favoritter...
+	DA	Gemmer favoritter...
 	DE	Favoriten werden gespeichert ...
 	EN	Saving favorites...
 	ES	Guardando favoritos...
-	FI	Tallentaa suosikkeja...
+	FI	Tallennetaan suosikit...
 	FR	Enregistrement des favoris...
 	HE	שומר פריטים מועדפים...
 	IT	Salvataggio preferiti in corso...
 	NL	Favorieten worden opgeslagen...
-	SV	Sparar favoriter...
+	NO	Lagrer favoritter...
+	SV	Sparar favoriter ...
 	ZH_CN	保存最喜爱的...
 
 FAVORITES_DELETING
-	DE	Favorit wird gelöscht ...
+	DA	Sletter favorit...
+	DE	Favorit wird entfernt...
 	EN	Removing favorite...
-	ES	Eliminando favorito...
+	ES	Quitando favorito...
+	FI	Poistetaan suosikki...
 	FR	Suppression du favori...
-	IT	Eliminazione preferito in corso...
+	IT	Rimozione preferito in corso...
 	NL	Favoriet wordt verwijderd...
+	NO	Fjerner favoritt ...
+	SV	Tar bort favorit ...
 
 PLUGIN_FAVORITES_DESC
-	DA	Gem og rediger dine Favoritter
+	DA	Gem og rediger dine favoritter
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
 	ES	Guardar y editar favoritos
+	FI	Suosikkien tallennus ja muokkaus
 	FR	Enregistrer et modifier les favoris
 	IT	Salva e modifica i preferiti
 	NL	Je Favorieten opslaan en bewerken
+	NO	Lagre og rediger favoritter
+	SV	Spara och redigera favoriter
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
-	DA	OPML spilleliste viser & editor
+	DA	Se og rediger OPML-afspilningslister
 	DE	OPML Wiedergabelisten bearbeiten
 	EN	OPML Playlist Browser & Editor
 	ES	Navegador/Editor de listas de reproducción OPML
+	FI	OPML-soittoluettelon selain ja editori
 	FR	Navigateur et éditeur de listes de lecture OPML
 	IT	Browser ed editor degli elenchi di riproduzione OPML
 	NL	OPML Playlist Browser & Editor
+	NO	Redigerings- og leseprogram for opml-spillelister
+	SV	Bläddring och redigering för opml-spellistor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
-	DA	Udvidelsesmodulet Favoritter lader dig også gennemse opml baserede spillelister og redigere opml spillelister som er gemt på din server. Vælg dette for at tilføje dette udvidelsesmodul under menuen 'Extras' på web-grænsefladen.
+	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
 	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
+	FI	Suosikit-laajennuksen avulla voit selata opml-pohjaisia soittoluetteloita ja muokata palvelimeen tallennettuja opml-soittoluetteloita. Lisää tämä tila kohtaan Muut palvelimen kotisivulla valitsemalla alla oleva vaihtoehto.
 	FR	Le plugin des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous Extras sur la page d'accueil du serveur.
 	IT	Il plugin dei preferiti consente anche di sfogliare gli elenchi di riproduzione in formato OPML e di modificare gli elenchi di riproduzione OPML memorizzati nel server. Selezionare l'opzione sottostante per aggiungere questa modalità negli Extra nella home page del server.
 	NL	Met behulp van de extra Favorieten kun je opml-playlists die op je server zijn opgeslagen, doorkijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het serverhoofdmenu.
+	NO	Med plugin-modulen for favoritter kan du bla i opml-baserte spillelister, og redigere opml-baserte spillelister som er lagret på serveren din. Du kan legge til denne modusen under "Tillegg" i hovedmenyen til serveren ved å velge alternativet nedenfor.
+	SV	Plugin-programmet för favoriter ger dig också möjlighet att bläddra i opml-baserade spellistor och att redigera opml-spellistor som sparats på din server. Markera alternativet nedan om du vill lägga till det här läget under Extrafunktioner på det webbaserade användargränssnittet.
 
 PLUGIN_FAVORITES_LOAD
-	DA	Indlæser
+	DA	Indlæs
 	DE	Laden
 	EN	Load
 	ES	Cargar
+	FI	Lataa
 	FR	Charger
 	IT	Carica
 	NL	Laden
+	NO	Last inn
+	SV	Läs in
 
 PLUGIN_FAVORITES_SAVE
 	DA	Gem
 	DE	Speichern
 	EN	Save
 	ES	Guardar
+	FI	Tallenna
 	FR	Enregistrer
 	IT	Salva
 	NL	Opslaan
+	NO	Lagre
+	SV	Spara
 
 PLUGIN_FAVORITES_IMPORT
 	DA	Importer
 	DE	Importieren
 	EN	Import
 	ES	Importar
+	FI	Tuo
 	FR	Importer
 	IT	Importa
 	NL	Importeren
+	NO	Importer
+	SV	Importera
 
 PLUGIN_FAVORITES_LOADFILE
-	DA	URL eller filnavn
+	DA	Adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
+	FI	URL tai tiedostonimi
 	FR	URL ou nom du fichier
 	IT	URL o nome file
 	NL	URL of bestandsnaam
+	NO	Url eller filnavn
+	SV	Webbadress eller filnamn
 
 PLUGIN_FAVORITES_SAVEFILE
 	DA	Filnavn
 	DE	Dateiname
 	EN	File Name
 	ES	Nombre de archivo
+	FI	Tiedostonimi
 	FR	Nom du fichier
 	IT	Nome file
 	NL	Bestandsnaam
+	NO	Filnavn
+	SV	Filnamn
 
 PLUGIN_FAVORITES_IMPORTFILE
-	DA	URL eller filnavn
+	DA	Adresse eller filnavn
 	DE	URL oder Dateiname
 	EN	URL or File Name
 	ES	URL o nombre de archivo
+	FI	URL tai tiedostonimi
 	FR	URL ou nom du fichier
 	IT	URL o nome file
 	NL	URL of bestandsnaam
+	NO	Url eller filnavn
+	SV	Webbadress eller filnamn
 
 PLUGIN_FAVORITES_NOFILE
-	DA	Fil kan ikke findes
+	DA	Filen blev ikke fundet
 	DE	Datei nicht gefunden
 	EN	File Not Found
 	ES	Archivo no encontrado
+	FI	Tiedostoa ei löydy
 	FR	Fichier introuvable
 	IT	File non trovato
 	NL	Bestand niet gevonden
+	NO	Finner ikke filen
+	SV	Det går inte att hitta filen
 
 PLUGIN_FAVORITES_CANCEL
-	DA	Afbryd
+	DA	Annuller
 	DE	Abbrechen
 	EN	Cancel
 	ES	Cancelar
+	FI	Peruuta
 	FR	Annuler
 	IT	Annulla
 	NL	Annuleren
+	NO	Avbryt
+	SV	Avbryt
 
 PLUGIN_FAVORITES_CANCELLING
+	DA	Annullerer...
+	DE	Wird abgebrochen...
 	EN	Cancelling...
+	ES	Cancelando...
+	FI	Peruutetaan...
+	FR	Annulation...
+	IT	Annullamento in corso...
+	NL	Bezig met annuleren...
+	NO	Avbryter ...
+	SV	Avbryter ...
 
 PLUGIN_FAVORITES_CUT
+	DA	Klip
 	DE	Ausschneiden
 	EN	Cut
 	ES	Cortar
+	FI	Leikkaa
 	FR	Couper
 	IT	Taglia
 	NL	Knippen
+	NO	Klipp ut
+	SV	Klipp ut
 
 PLUGIN_FAVORITES_PASTE
+	DA	Sæt ind
 	DE	Einfügen
 	EN	Paste
 	ES	Pegar
+	FI	Liitä
 	FR	Coller
 	IT	Incolla
 	NL	Plakken
+	NO	Lim inn
+	SV	Klistra in
 
 PLUGIN_FAVORITES_LOADING
-	DA	Indlæser Favoritter
+	DA	Indlæser Favoritter...
 	DE	Lade Favoriten...
 	EN	Loading Favorites...
 	ES	Cargando favoritos...
+	FI	Ladataan suosikkeja...
 	FR	Chargement des favoris...
 	IT	Caricamento dei preferiti in corso...
 	NL	Favorieten worden geladen...
+	NO	Laster favoritter...
+	SV	Läs in favoriter ...
 
 PLUGIN_FAVORITES_NEWFOLDER
 	DA	Ny mappe
 	DE	Neuer Ordner
 	EN	New Folder
 	ES	Carpeta nueva
+	FI	Uusi kansio
 	FR	Nouveau dossier
 	IT	Nuova cartella
 	NL	Nieuwe map
+	NO	Ny mappe
+	SV	Ny mapp
 
 PLUGIN_FAVORITES_NEWENTRY
-	DA	Nyt element
+	DA	Ny
 	DE	Neuer Eintrag
 	EN	New Entry
 	ES	Entrada nueva
+	FI	Uusi kohde
 	FR	Nouvelle entrée
 	IT	Nuova voce
 	NL	Nieuwe ingang
+	NO	Ny oppføring
+	SV	Ny post
 
 PLUGIN_FAVORITES_NEWFAVORITE
-	DA	Ny Favorit
+	DA	Ny favorit
 	DE	Neuer Favorit
 	EN	New Favorite
 	ES	Favorito nuevo
+	FI	Uusi suosikki
 	FR	Nouveau favori
 	IT	Nuovo preferito
 	NL	Nieuwe favoriet
+	NO	Ny favoritt
+	SV	Ny favorit
 
 PLUGIN_FAVORITES_NEWURL
-	DA	Ny URL
+	DA	Ny adresse
 	DE	Neue URL
 	EN	New URL
 	ES	URL nueva
+	FI	Uusi URL
 	FR	Nouvelle URL
 	IT	Nuovo URL
 	NL	Nieuwe URL
+	NO	Ny url
+	SV	Ny webbadress
 
 PLUGIN_FAVORITES_LOADERROR
 	DA	Fejl ved indlæsning af fil
 	DE	Fehler beim Laden der Datei
 	EN	Error Loading File
 	ES	Error al cargar archivo
+	FI	Virhe ladattaessa tiedostoa
 	FR	Erreur de chargement du fichier
 	IT	Errore durante il caricamento del file
 	NL	Fout tijdens laden bestand
+	NO	Feil ved lasting av fil
+	SV	Fel vid inläsning av filen
 
 PLUGIN_FAVORITES_REMOTELOADERROR
-	DA	Fejl ved indlæsning af URL
+	DA	Fejl ved indlæsning af adresse
 	DE	Fehler beim Lesen der URL
 	EN	Error Loading URL
 	ES	Error al cargar URL
+	FI	Virhe URL:n latauksessa
 	FR	Erreur de chargement de l'URL
 	IT	Errore durante il caricamento dell'URL
 	NL	Fout tijdens laden URL
+	NO	Feil ved lasting av url
+	SV	Fel vid inläsning av webbadressen
 
 PLUGIN_FAVORITES_SAVEERROR
-	DA	Fejl ved gemning af fil
+	DA	Der opstod en fejl da filen skulle gemmes
 	DE	Fehler beim Speichern der Datei
 	EN	Error Saving File
 	ES	Error al guardar archivo
+	FI	Virhe tallennettaessa tiedostoa
 	FR	Erreur d'enregistrement du fichier
 	IT	Errore durante il salvataggio del file
 	NL	Fout tijdens opslaan bestand
+	NO	Feil ved lagring av fil
+	SV	Fel vid sparande av filen
 
 PLUGIN_FAVORITES_IMPORTERROR
-	DA	Fejl ved importering af spilleliste
+	DA	Fejl ved import af afspilningsliste
 	DE	Fehler beim Import von Wiedergabelisten
-	EN	Error Importing Playlist	
+	EN	Error Importing Playlist
 	ES	Error al importar lista de reproducción
+	FI	Virhe soittoluettelon tuomisessa
 	FR	Erreur au cours de l'importation de la liste de lecture
 	IT	Errore durante l'importazione dell'elenco di riproduzione
 	NL	Fout tijdens importeren van playlist
+	NO	Feil ved importering av spilleliste
+	SV	Fel vid import av spellista
 
 PLUGIN_FAVORITES_NOTITLE
 	DA	Igen titel
 	DE	Ohne Titel
 	EN	No Title
 	ES	Sin título
+	FI	Ei nimeä
 	FR	Pas de titre
 	IT	Nessun titolo
 	NL	Geen titel
+	NO	Ingen tittel
+	SV	Ingen titel
 
 PLUGIN_FAVORITES_NAME
 	DA	Navn
 	DE	Name
 	EN	Name
 	ES	Nombre
+	FI	Nimi
 	FR	Nom
 	IT	Nome
 	NL	Naam
+	NO	Navn
+	SV	Namn
 
 PLUGIN_FAVORITES_URL
-	DA	URL
+	DA	Internetadresse
 	DE	URL
 	EN	URL
 	ES	URL
+	FI	URL
 	FR	URL
 	IT	URL
 	NL	URL
+	NO	Url
+	SV	Webbadress
 
 PLUGIN_FAVORITES_ADD
-	DA	Tilføj til Favoritter
+	DA	Føj til favoritter
 	DE	Zu Favoriten hinzufügen
 	EN	Add to Favorites
 	ES	Agregar a favoritos
+	FI	Lisää suosikkeihin
 	FR	Ajouter aux favoris
 	IT	Aggiungi ai preferiti
 	NL	Toevoegen aan Favorieten
+	NO	Legg til i favoritter
+	SV	Lägg till i favoriter
 
 PLUGIN_FAVORITES_REMOVE
 	DA	Fjern fra Favoritter
 	DE	Aus Favoriten entfernen
 	EN	Remove from Favorites
 	ES	Quitar de Favoritos
+	FI	Poista suosikeista
 	FR	Supprimer des favoris
 	IT	Rimuovi dai preferiti
 	NL	Uit Favorieten verwijderen
+	NO	Fjern fra favoritter
+	SV	Ta bort från favoriter
 

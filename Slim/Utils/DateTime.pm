@@ -77,10 +77,13 @@ sub shortDateF {
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
-=head2 timeF( $time, $format )
+=head2 timeF( $time, $format, $timeIsUTC )
 
 Returns a string of the time passed (or current time if none passed),
 using the passed format (or pref: timeFormat if not passed).
+
+The $timeIsUTC param is optional and indicates whether the passed time is in UTC
+or the local time zone.  By default it is interpreted in the local time zone.
 
 Encoding is the current locale.
 
@@ -89,9 +92,12 @@ Encoding is the current locale.
 sub timeF {
 	my $ltime = shift || time();
 	my $format = shift || $prefs->get('timeFormat');
+	my $timeIsUTC = shift;
+	
+	my @timeDigits = $timeIsUTC ? gmtime($ltime) : localtime($ltime);
 
 	# remove leading zero if another digit follows
-	my $time  = strftime($format, localtime($ltime));
+	my $time  = strftime($format, @timeDigits);
 	   $time =~ s/\|0?(\d+)/$1/;
 
 	return Slim::Utils::Unicode::utf8decode_locale($time);
@@ -122,7 +128,7 @@ sub fracSecToMinSec {
 
 =head2 secsToPrettyTime( $seconds )
 
-Turns seconds into HH:MM AM/PM
+Turns seconds into HH:MM AM/PM.  Format returned is 12h or 24h depending on the user's preferences.
 
 =cut
 
@@ -161,36 +167,92 @@ sub prettyTimeToSecs {
 	return ($hh*3600) + ($mm*60);
 }
 
-=head2 timeDigits( $time )
+=head2 splitTime ($time, $24h )
 
-This function converts a unix time value to the individual values for hours, minutes and am/pm
+This function converts a unix time value to hours, minutes and am/pm if applicable.  am/pm is given as undef or 0/1.
 
-Takes as arguments, the $client object/structure and a reference to the scalar time value.
+Takes as arguments, a scalar time value or a reference to one and optionally whether the time should be returned in 12h (true) or 24h (false) format.  The default format returned is based on the current timeFormat pref.
 
 =cut
 
-sub timeDigits {
-	my $timeRef = shift;
-	my $time;
+sub splitTime {
+	my $time = shift;
+	my $twelveHour = shift;
 
-	if (ref($timeRef))  {
-		$time = $$timeRef || 0;
-
-	} else {
-		$time = $timeRef || 0;
+	if (! defined $twelveHour) {
+		$twelveHour = $prefs->get('timeFormat') =~ /%p/;
 	}
+
+	if (ref($time))  {
+		$time = $$time;
+	}
+	$time = $time || 0;
 
 	my $h = int($time / (60*60));
 	my $m = int(($time - $h * 60 * 60) / 60);
 	my $p = undef;
 
-	if ($prefs->get('timeFormat') =~ /%p/) {
-		$p = 'AM';
+	if ($twelveHour) {
+		$p = 0;
 
-		if ($h > 11) { $h -= 12; $p = 'PM'; }
+		if ($h > 11) { $h -= 12; $p = 1; }
 
 		if ($h == 0) { $h = 12; }
-	} #else { $p = " "; };
+	}
+
+	return ($h, $m, $p);
+}
+
+=head2 bcdTime ( $time )
+
+This function converts a time value in seconds, minutes and hours into BCD format.  It's used when working
+with the RTC in Boom and other devices.
+
+=cut
+
+sub bcdTime {
+	my ($sec, $min, $hour) = @_;
+
+	my $h_10 = int( $hour / 10);
+	my $h_1 = $hour % 10;
+	my $m_10 = int( $min / 10);
+	my $m_1 = $min % 10;
+	my $s_10 = int( $sec / 10);
+	my $s_1 = $sec % 10;
+	my $hhhBCD = $h_10 * 16 + $h_1;
+	my $mmmBCD = $m_10 * 16 + $m_1;
+	my $sssBCD = $s_10 * 16 + $s_1;
+
+	return ($sssBCD, $mmmBCD, $hhhBCD);
+}
+
+=head2 hourMinToTime ( $h, $m, $p)
+
+This function converts discrete time values into a scalar time value.  It is the reverse of splitTime().
+
+Takes as arguments, the hour ($h), minute ($m) and whether time is am or pm if applicable ($p).
+
+=cut
+
+sub hourMinToTime {
+	my ($h, $m, $p) = @_;
+
+	$p ||= 0;
+	return (((($p * 12) + $h) * 60) + $m) * 60;
+}
+
+=head2 timeDigits( $time )
+
+This function converts a unix time value to the individual digits for hours, minutes and am/pm.  am/pm is returned as 'AM' or 'PM'.
+
+Takes as arguments, a scalar time value or a reference to one.
+
+=cut
+
+sub timeDigits {
+	my $time = shift;
+	
+	my ($h, $m, $p) = splitTime($time);
 
 	if ($h < 10) { $h = '0' . $h; }
 
@@ -201,25 +263,43 @@ sub timeDigits {
 	my $m0 = substr($m, 0, 1);
 	my $m1 = substr($m, 1, 1);
 
+	if (defined $p) {
+		$p = $p ? 'PM' : 'AM';
+	}
+
 	return ($h0, $h1, $m0, $m1, $p);
 }
 
 =head2 timeDigitsToTime( $h0, $h1, $m0, $m1, $p)
+timeDigitsToTime( $h, $m, $p)
 
-This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits()
+This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits().
 
-Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
+Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p).
 
 =cut
 
 sub timeDigitsToTime {
 	my ($h0, $h1, $m0, $m1, $p) = @_;
 
-	$p ||= 0;
-	
+	my $h = $h0 * 10 + $h1;
+	if (defined $p) {
+		# 12h - treat 12am as midnight and 12pm as noon
+		if ($h == 12) {
+			if ($p) {
+				$h = 12;
+				$p = 0;
+			} else {
+				$h = 0;
+			}
+		}
+	} else {
+		$p = 0;
+	}
+
 	my $time = (((($p * 12)            # pm adds 12 hours
-	         + ($h0 * 10) + $h1) * 60) # convert hours to minutes
-	         + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
+		 + $h) * 60)               # convert hours to minutes
+		 + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
 
 	return $time;
 }
@@ -250,7 +330,9 @@ sub timeFormats {
 		,q(%Hh%M:%S)	=> q{hh'h'mm:ss (24h 03h00:00 15h00:00)}
 		,q(%Hh%M)	=> q{hh'h'mm (24h 03h00 15h00)}
 		,q(|%I:%M:%S %p)	=> q{h:mm:ss pm (12h)}
+		,q(|%I:%M:%S)	=> q{h:mm:ss (12h)}
 		,q(|%I:%M %p)		=> q{h:mm pm (12h)}
+		,q(|%I:%M)		=> q{h:mm (12h)}
 		,q(|%H:%M:%S)		=> q{h:mm:ss (24h)}
 		,q(|%H:%M)		=> q{h:mm (24h)}
 		,q(|%H.%M.%S)		=> q{h.mm.ss (24h)}
@@ -258,8 +340,8 @@ sub timeFormats {
 		,q(|%H,%M,%S)		=> q{h,mm,ss (24h)}
 		,q(|%H,%M)		=> q{h,mm (24h)}
 		# no idea what the separator between minutes and seconds should be here
-		,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 03h00:00 15h00:00)}
-		,q(|%Hh%M)		=> q{h'h'mm (24h 03h00 15h00)}
+		,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 3h00:00 15h00:00)}
+		,q(|%Hh%M)		=> q{h'h'mm (24h 3h00 15h00)}
 	};
 }
 

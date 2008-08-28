@@ -15,8 +15,7 @@ use File::Spec::Functions qw(:ALL);
 
 BEGIN {
         if ($^O =~ /Win32/) {
-                require Win32::File;
-                require Win32::DriveInfo;
+        		require Slim::Utils::Win32;
         }
 }
 
@@ -72,7 +71,7 @@ sub handler {
 		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
 		if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
 			$log->debug('getting Windows drive list');
-			@subdirs = _getDriveList();
+			@subdirs = Slim::Utils::Win32::getDrives();
 		}
 		elsif (!@subdirs && !$parent) {
 			@subdirs = _mapDirectories($currDir);
@@ -84,10 +83,6 @@ sub handler {
 	$paramRef->{'folders'} = \@subdirs;
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);	
-}
-
-sub _getDriveList {
-	return map { "$_:" } grep /^[^AB]/i, Win32::DriveInfo::DrivesInUse();
 }
 
 sub _mapDirectories {

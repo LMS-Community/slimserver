@@ -414,8 +414,7 @@ sub setScanMode {
 # Set up scanner to be called by default on fwd.hold and rew.hold from all modes
 sub initPlugin {
 	my $class = shift;
-	# Single press of fwd/rew triggers ffwd/rewind
-	Slim::Hardware::IR::addModeDefaultMapping('common', {'fwd.hold' => 'song_scanner', 'rew.hold' => 'song_scanner'}, 1);
+
 	# Holding fwd and rew moves the scanner bar left/right
 	Slim::Hardware::IR::addModeDefaultMapping($modeName,
 		{'fwd.repeat' => 'song_scanner_fwd', 'rew.repeat' => 'song_scanner_rew',

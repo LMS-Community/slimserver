@@ -22,8 +22,6 @@ sub initPrefs {
 	my $client = shift;
 
 	$client->SUPER::initPrefs(@_);
-
-	preferences('server')->client($client)->set('autobrightness', 0);
 }
 
 sub reconnect {
@@ -85,6 +83,14 @@ sub hasPowerControl() {
 }
 
 sub hasPolarityInversion() {
+	return 0;
+}
+
+sub hasRTCAlarm {
+	return 0;
+}
+
+sub hasLineIn() {
 	return 0;
 }
 

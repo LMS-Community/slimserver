@@ -221,6 +221,8 @@ our %functions = (
 
 		Slim::Utils::Timers::killTimers($client, \&nextChar);
 
+		$functarg = ' ' if $functarg eq 'space';
+
 		my $index = $client->modeParam('charsInd')->{ $functarg };
 
 		return unless defined($index);
@@ -340,6 +342,11 @@ sub lines {
 	my $last = $arrayRef->[ $#{$arrayRef} ];
 
 	$line2 .= defined $last && defined $charsRef->[$last] ? $charsRef->[$last] : $client->symbols('rightarrow');
+
+	# trim left of string if too long for display
+	while ($client->measureText($line2, 2) > $client->displayWidth) {
+		$line2 = substr($line2, 1);
+	}
 
 	return { 'line' => [ $line1, $line2 ] };
 }

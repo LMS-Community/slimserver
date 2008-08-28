@@ -92,7 +92,8 @@ sub gotContainer {
 		my $item = $children->[0];
 		
 		my %params = (
-			header  => $title . ' {count}',
+			header  => $title,
+			headerAddCount => 1,
 			title   => $title,
 			url     => $item->{url},
 		);
@@ -119,7 +120,8 @@ sub gotContainer {
 	}
 
 	my %params = (
-		header         => $title . ' {count}',
+		header         => $title,
+		headerAddCount => 1,
 		modeName       => "$device:$id",
 		listRef        => $children,
 		overlayRef     => \&listOverlayCallback,

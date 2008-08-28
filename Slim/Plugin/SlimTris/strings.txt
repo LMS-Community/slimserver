@@ -7,17 +7,23 @@ SLIMTRIS
 	DE	SlimTris
 	EN	SlimTris
 	ES	SlimTris
+	FI	SlimTris
 	FR	SlimTris
 	HE	טטריס
 	IT	SlimTris
 	NL	SlimTris
+	NO	SlimTris
+	SV	SlimTris
 
 SLIMTRIS_DESC
-	DA	Tetris til din Squeezebox eller Transporter!
+	DA	Tetris til din Squeezebox eller Transporter
 	DE	Tetris für ihre Squeezebox oder den Transporter!
 	EN	Tetris for your Squeezebox or Transporter!
 	ES	¡Tetris para Squeezebox o Transporter!
+	FI	Tetris Squeezeboxille tai Transporterille
 	FR	Jouez à Tetris sur la Squeezebox ou sur Transporter.
 	IT	Tetris per Squeezebox o Transporter
 	NL	Tetris voor je Squeezebox of Transporter!
+	NO	Tetris for Squeezebox eller Transporter.
+	SV	Tetris för Squeezebox eller Transporter!
 

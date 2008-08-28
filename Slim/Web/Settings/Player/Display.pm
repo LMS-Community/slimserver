@@ -46,9 +46,9 @@ sub prefs {
 		return ();
 	}
 
-	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness autobrightness
-				   scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble
-				  );
+	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness 
+				scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble alwaysShowCount
+				);
 
 	if ($client->display->isa("Slim::Display::Graphics")) {
 
@@ -93,7 +93,7 @@ sub handler {
 		}
 
 		# Load any option lists for dynamic options.
-		$paramRef->{'brightnessOptions' } = getBrightnessOptions($client);
+		$paramRef->{'brightnessOptions' } = $client->display->getBrightnessOptions();
 		$paramRef->{'maxBrightness' }     = $client->maxBrightness;
 		$paramRef->{'fontOptions'}        = getFontOptions($client);
 
@@ -137,34 +137,6 @@ sub getFontOptions {
 	}
 
 	return $fonts;
-}
-
-sub getBrightnessOptions {
-	my $client = shift;
-
-	my %brightnesses = (
-		0 => '0 ('.string('BRIGHTNESS_DARK').')',
-		1 => '1',
-		2 => '2',
-		3 => '3',
-		4 => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
-	);
-
-	if (!defined $client) {
-
-		return \%brightnesses;
-	}
-
-	if (defined $client->maxBrightness) {
-
-		$brightnesses{4} = 4;
-
-		$brightnesses{$client->maxBrightness} = sprintf('%s (%s)',
-			$client->maxBrightness, string('BRIGHTNESS_BRIGHTEST')
-		);
-	}
-
-	return \%brightnesses;
 }
 
 1;

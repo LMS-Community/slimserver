@@ -28,7 +28,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-my $log = logger('player.ui');
+my $log     = logger('player.ui');
+my $nplog   = logger('network.protocol');
+my $synclog = logger('player.sync');
 
 my $prefs = preferences('server');
 
@@ -51,9 +53,7 @@ our $defaultPrefs = {
 	'mp3SilencePrelude'    => 0,
 	'pitch'                => 100,
 	'power'                => 1,
-	'powerOffBrightness'   => 1,
-	'powerOnBrightness'    => 4,
-	'screensaver'          => 'playlist',
+	'screensaver'          => 'screensaver',
 	'idlesaver'            => 'nosaver',
 	'offsaver'             => 'SCREENSAVER.datetime',
 	'screensavertimeout'   => 30,
@@ -202,8 +202,8 @@ sub power {
 
 		if (defined $sync && $sync == 0) {
 
-			if ( logger('player.sync')->is_info && Slim::Player::Sync::isSynced($client) ) {
-				logger('player.sync')->info("Temporary Unsync " . $client->id);
+			if ( $synclog->is_info && Slim::Player::Sync::isSynced($client) ) {
+				$synclog->info("Temporary Unsync " . $client->id);
 			}
 
 			Slim::Player::Sync::unsync($client, 1);
@@ -263,27 +263,8 @@ sub power {
 		$client->brightness($powerOnBrightness);
 
 		my $oneline = ($client->linesPerScreen() == 1);
-		
-		my ($line1, $line2);		
-		if ( main::SLIM_SERVICE ) {
-			$line1 = $client->string('WELCOME_TO_APPLICATION');
-			$line2 = $client->string('WELCOME_MESSAGE');
-		}
-		else {
-			$line1 = $client->string('WELCOME_TO_' . $client->model);
-			$line2 = $client->string('FREE_YOUR_MUSIC');
-		}
-		
-		$client->showBriefly( {
-			'center' => [ $line1, $line2 ],
-			'fonts' => { 
-					'graphic-320x32' => 'standard',
-					'graphic-280x16' => 'medium',
-					'text'           => 2,
-				},
-			'screen2' => {},
-			'jive' => undef,
-		}, undef, undef, 1);
+
+		$client->welcomeScreen();		
 
 		# check if there is a sync group to restore
 		Slim::Player::Sync::restoreSync($client);
@@ -303,6 +284,33 @@ sub power {
 			}
 		}		
 	}
+}
+
+sub welcomeScreen {
+	my $client = shift;
+
+	# SLIM_SERVICE
+	my $line1 = ( main::SLIM_SERVICE ) 
+		? $client->string('WELCOME_TO_APPLICATION')
+		: $client->string('WELCOME_TO_' . $client->model);
+	my $line2 = ( main::SLIM_SERVICE )
+		? $client->string('WELCOME_MESSAGE')
+		: $client->string('FREE_YOUR_MUSIC');
+
+	$client->showBriefly( {
+		'center' => [ 
+				$line1,
+				$line2
+			],
+		'fonts' => { 
+				'graphic-320x32' => 'standard',
+				'graphic-160x32' => 'standard_n',
+				'graphic-280x16' => 'medium',
+				'text'           => 2,
+			},
+		'screen2' => {},
+		'jive' => undef,
+	}, undef, undef, 1);
 }
 
 sub audio_outputs_enable { }
@@ -428,9 +436,11 @@ sub sendFrame {};
 
 sub currentSongLines {
 	my $client = shift;
-	my $suppressScreen2 = shift; # suppress the screen2 display
-	my $suppressDisplay = shift; # suppress both displays [leaving just jive hash]
-	my $retrieveMetadata = shift || 0;
+	my $args   = shift;
+
+	my $onScreen2        = $args->{'screen2'};         # return as screen2
+	my $suppressDisplay  = $args->{'suppressDisplay'}; # suppress both displays [leaving just jive hash]
+	my $retrieveMetadata = $args->{'retrieveMetadata'} || 0;
 
 	my $parts;
 	my $status;
@@ -448,7 +458,7 @@ sub currentSongLines {
 
 		@lines = ( $client->string('NOW_PLAYING'), $client->string('NOTHING') );
 
-		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
+		if ($client->display->showExtendedText() && !$suppressDisplay && !$onScreen2) {
 			$screen2 = {};
 		}
 
@@ -525,7 +535,7 @@ sub currentSongLines {
 		$overlay[1] = $client->symbols('notesymbol');
 
 		# add screen2 information if required
-		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
+		if ($client->display->showExtendedText() && !$suppressDisplay && !$onScreen2) {
 			
 			my ($s2line1, $s2line2);
 
@@ -597,13 +607,23 @@ sub currentSongLines {
 
 	if (!$suppressDisplay) {
 
-		$parts->{'line'}    = \@lines;
-		$parts->{'overlay'} = \@overlay;
-		$parts->{'screen2'} = $screen2 if defined $screen2;
-		$parts->{'jive'}    = $jive if defined $jive;
+		if (!$onScreen2) {
 
-		# add in the progress bar and time
-		$client->nowPlayingModeLines($parts, $suppressScreen2) unless ($playlistlen < 1);
+			# build display for screen1 and possibly screen2
+			$parts->{'line'}    = \@lines;
+			$parts->{'overlay'} = \@overlay;
+			$parts->{'screen2'} = $screen2 if defined $screen2;
+			$client->nowPlayingModeLines($parts, undef) unless ($playlistlen < 1);
+
+		} else {
+
+			# build display on screen2
+			$parts->{'screen2'}->{'line'}    = \@lines;
+			$parts->{'screen2'}->{'overlay'} = \@overlay;
+			$client->nowPlayingModeLines($parts->{'screen2'}, 1) unless ($playlistlen < 1);
+		}
+
+		$parts->{'jive'} = $jive if defined $jive;
 
 	} elsif ($suppressDisplay ne 'all') {
 
@@ -613,6 +633,8 @@ sub currentSongLines {
 	return $parts;
 }
 
+# This method is misnamed - it adds in the progress overlay only
+# Call currentSongLines to get the full display
 sub nowPlayingModeLines {
 	my ($client, $parts, $screen2) = @_;
 
@@ -631,6 +653,11 @@ sub nowPlayingModeLines {
 		if ( $client->isa('Slim::Player::Transporter') ) {
 			if ( $prefs->client($client)->get('playingDisplayMode') == 6 ) {
 				$modes = [0..6];
+			}
+		}
+		elsif ( $client->isa('Slim::Player::Boom') ) {
+			if ( $prefs->client($client)->get('playingDisplayMode') == 10 ) {
+				$modes = [0..10];
 			}
 		}
 		else {
@@ -677,7 +704,7 @@ sub nowPlayingModeLines {
 			
 			# Display decode buffer as seconds if we know the bitrate, otherwise show KB
 			my $bitrate = Slim::Music::Info::getBitrate($url);
-			if ( $bitrate > 0 ) {
+			if ( $bitrate && $bitrate > 0 ) {
 				$decodeBuffer = sprintf( "%.1f", $client->bufferFullness() / ( int($bitrate / 8) ) );
 			}
 			else {
@@ -688,7 +715,7 @@ sub nowPlayingModeLines {
 				# Only show output buffer status on SB2 and higher
 				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
 				$songtime  = ' ' . sprintf "%s / %.1f", $decodeBuffer, $outputBuffer;
-				$songtime .= ' ' . $client->string('SECONDS');
+				$songtime .= ' ' . $client->string('SECONDS') unless $client->isa('Slim::Player::Boom');
 			}
 			else {
 				$songtime  = ' ' . sprintf "%s", $decodeBuffer;
@@ -706,7 +733,7 @@ sub nowPlayingModeLines {
 	if ($showBar) {
 		# show both the bar and the time
 		my $leftLength = $display->measureText($parts->{line}[0], 1);
-		my $barlen = $displayWidth - $leftLength - $display->measureText($overlay, 1);
+		my $barlen = $displayWidth - $leftLength - $display->measureText($overlay, 1, 1);
 		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete, ($showBar < 0)));
 
 		$overlay = $bar . $songtime;
@@ -784,7 +811,7 @@ sub mixerDisplay {
 
 		if (my $linefunc = $client->customVolumeLines()) {
 
-			$parts = &$linefunc($client, $featureValue);
+			$parts = &$linefunc($client, { value => $featureValue });
 
 		} else {
 			
@@ -804,14 +831,16 @@ sub mixerDisplay {
 
 	my $featureHeader = join('', $client->string(uc($feature)), $headerValue);
 
-	if (blessed($client->display) eq 'Slim::Display::Squeezebox2') {
+	if (blessed($client->display) =~ /Squeezebox2|Boom/) {
 		# XXXX hack attack: turn off visualizer when showing volume, etc.		
 		$oldvisu = $client->modeParam('visu');
 		$savedvisu = 1;
 		$client->modeParam('visu', [0]);
 	}
 
-	$parts ||= Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
+	$parts ||= Slim::Buttons::Input::Bar::lines($client, {
+		'value'     => $featureValue,
+		'header'    => $featureHeader,
 		'min'       => $client->mixerConstant($feature, 'min'),
 		'mid'       => $mid,
 		'max'       => $client->mixerConstant($feature, 'max'),
@@ -848,16 +877,16 @@ sub trackJiffiesEpoch {
 	my $offset      = $timestamp - $jiffiesTime;
 	my $epoch       = $client->jiffiesEpoch || 0;
 
-	if ( logger('network.protocol')->is_debug ) {
-		logger('network.protocol')->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
+	if ( $nplog->is_debug ) {
+		$nplog->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
 	}
 
 	if (   $offset < $epoch			# simply a better estimate, or
 		|| $offset - $epoch > 50	# we have had wrap-around (or first time)
 	) {
-		if ( logger('player.sync')->is_debug ) {
+		if ( $synclog->is_debug ) {
 			if ( abs($offset - $epoch) > 0.001 ) {
-				logger('player.sync')->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
+				$synclog->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
 			}
 		}
 		
@@ -879,8 +908,8 @@ sub trackJiffiesEpoch {
 			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST ) {
 				$min_diff = JIFFIES_EPOCH_MAX_ADJUST;
 			}
-			if ( logger('player.sync')->is_debug ) {
-				logger('player.sync')->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
+			if ( $synclog->is_debug ) {
+				$synclog->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
 			}
 			$client->jiffiesEpoch($epoch += $min_diff);
 			$diff -= $min_diff;
@@ -925,8 +954,8 @@ sub apparentStreamStartTime {
 
 	my $apparentStreamStartTime = $statusTime - $timePlayed;
 
-	if ( logger('player.sync')->is_debug ) {
-		logger('player.sync')->debug(
+	if ( $synclog->is_debug ) {
+		$synclog->debug(
 			$client->id()
 			. " apparentStreamStartTime: $apparentStreamStartTime @ $statusTime \n"
 			. "timePlayed:$timePlayed (bytesReceived:" . $client->bytesReceived()
@@ -967,8 +996,8 @@ sub publishPlayPoint {
 			# Ok, good enough, publish it!
 			$client->playPoint( [$statusTime, $meanStartTime] );
 			
-			if ( 0 && logger('player.sync')->is_debug ) {
-				logger('player.sync')->debug(
+			if ( 0 && $synclog->is_debug ) {
+				$synclog->debug(
 					$client->id()
 					. " publishPlayPoint: $meanStartTime @ $statusTime"
 				);

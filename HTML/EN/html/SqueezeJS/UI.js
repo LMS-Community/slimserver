@@ -304,12 +304,18 @@ SqueezeJS.UI.FileSelector = Ext.extend(Ext.tree.TreePanel, {
 
 		SqueezeJS.UI.FileSelector.superclass.initComponent.call(this);
 
+		// workaround for IE7's inability to overflow unless position:relative is set
+		if (Ext.isIE7) {
+			var parentEl = Ext.get(this.renderTo).parent();
+			parentEl.setStyle('position', 'relative');
+		}
+		
 		this.on({
 			click: this.onClick,
 			collapse: this.onCollapse
 		});
 
-		this.selectMyPath();	
+		this.selectMyPath();
 
 		// activate button to add path to the selector box
 		var gotoBtn;
@@ -468,7 +474,6 @@ SqueezeJS.UI.FilesystemBrowser = {
 	show: function(inputField, filter){
 		var filesystemDlg = new Ext.Window({
 			modal: true,
-			closable: false,
 			collapsible: false,
 			width: 350,
 			height: 400,
@@ -477,26 +482,31 @@ SqueezeJS.UI.FilesystemBrowser = {
 			buttons: [{
 				text: SqueezeJS.string('close'),
 				handler: function(){
-					filesystemDlg.hide()
+					filesystemDlg.close()
 				},
 				scope: filesystemDlg
-			}]
+			}],
+			listeners: {
+				resize: this.onResize
+			}
 		});
 
 		filesystemDlg.setTitle(SqueezeJS.string(filter == 'foldersonly' ? 'choose_folder' : 'choose_file'));
 		filesystemDlg.show();
-
-		var el = Ext.get('filesystembrowser');
-		if (el && (el = el.parent())) {
-			el.setWidth(el.getWidth()-12);
-			el.setStyle({ overflow: 'auto' })
-		}
 
 		new SqueezeJS.UI.FileSelector({
 			renderTo: 'filesystembrowser',
 			input: inputField,
 			filter: filter
 		});
+	},
+	
+	onResize: function() {
+		var el = Ext.get('filesystembrowser');
+		if (el && (el = el.parent())) {
+			el.setWidth(el.getWidth()-12);
+			el.setStyle({ overflow: 'auto' })
+		}
 	}
 };
 
@@ -578,8 +588,24 @@ SqueezeJS.UI.Highlight.prototype = {
 		var el = target.child('a.browseItemLink');
 		if (el && el.dom.href) {
 			if (el.dom.target) {
-				try { parent.frames[el.dom.target].location.href = el.dom.href; }
-				catch(e) { location.href = el.dom.href; }
+				try {
+					if (parent.frames[el.dom.target]) {
+						console.debug('parent');
+						parent.frames[el.dom.target].location.href = el.dom.href;
+						
+					}
+					else if (frames[el.dom.target]) {
+						console.debug('child');
+						parent.frames[el.dom.target].location.href = el.dom.href;
+					}
+					// can't always open a new window as eg. settings will cause a CSRF warning
+					// just enforce clicking the exact link instead of the highlighter in these cases
+//					else
+//						window.open(el.dom.href, el.dom.target);
+				}
+				catch(e) {
+					location.href = el.dom.href;
+				}
 			}
 			else {
 				location.href = el.dom.href;
@@ -1750,6 +1776,82 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 	}
 });
 
+
+SqueezeJS.UI.SliderInput = Ext.extend(Ext.Slider, {
+	tpl: new Ext.Template('<span></span>'),
+
+	initComponent : function(){
+		this.input = Ext.get(this.initialConfig.input);
+
+		this.renderTo = this.tpl.insertBefore(this.input, {}, true);	
+
+		SqueezeJS.UI.SliderInput.superclass.initComponent.call(this);
+		
+		this.on({
+			dragstart: {
+				fn: this.onSlide
+			},
+			drag: {
+				fn: this.onSlide
+			},
+			change: {
+				fn: this.onSlide
+			},
+			dragend: {
+				fn: function(){
+					// trigger validation for settings
+					this.input.focus();
+					this.input.blur();
+				}
+			}
+		});
+		
+		this.input.on({
+			change: {
+				fn: this._onChange,
+				scope: this
+			},
+			keyup: {
+				fn: this._onChange,
+				scope: this
+			}
+		});
+		
+		// if no initial value has been configured,
+		// try reading it from our input field
+		if (this.initialConfig.value == null)
+			this.value = isNaN(parseInt(this.input.dom.value)) ? this.minValue : parseInt(this.input.dom.value);
+	},
+	
+	inputChangeDelay: new Ext.util.DelayedTask(),
+
+	_onChange: function(ev, input) {
+		this.inputChangeDelay.delay(500, function(input){
+			// sanity check input values, don't accept non-numerical values
+			if (input.value != '' && input.value != '-' && isNaN(parseInt(input.value)))
+				input.value = input.defaultValue;
+			else if (input.value != '' && input.value != '-')
+				input.value = parseInt(input.value);
+	
+			this.setInputValue(input.value);
+	
+		}, this, [input]);
+	},
+
+	setInputValue: function(v){
+		v = parseInt(v);
+		if (isNaN(v))
+			v = 0;
+			
+		this.setValue(v);
+	},
+	
+	onSlide : function(){
+		this.input.dom.value = this.getValue();
+	}
+});
+
+
 SqueezeJS.UI.ShowBriefly = Ext.extend(Ext.Component, {
 	initComponent : function(){
 		SqueezeJS.UI.ShowBriefly.superclass.initComponent.call(this);
@@ -1863,6 +1965,9 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 				timeout: 3000,
 				disableCaching: true,
 				success: this._updatePage,
+				failure: function() {
+					progressTimer.delay(5000);
+				},
 				scope: this
 			});
 			
@@ -1898,18 +2003,20 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 
 					}
 				}
+				
+				// hide results from previous scans
+				for (var i=scans.length; i<=10; i++) {
+					Ext.get('progress'+i).setDisplayed(false);
+				}
 			}
 
-			if (result['message']) {
-				if (result['total_time'])
-					Ext.get('message').update(result.message + timestring + result.total_time);
-
-				else
-					Ext.get('message').update(result.message);
-			} 
+			if (result.message && result['total_time'])
+				Ext.get('message').update(result.message + ' ' + SqueezeJS.string('total_time') + '&nbsp;' + result.total_time);
 
 			else
-				progressTimer.delay(5000)
+				Ext.get('message').update(result.message);
+
+			progressTimer.delay(5000)
 		}
 	};
 }();

@@ -13,11 +13,12 @@
 7.down					= 00010007
 8.down					= 00010008
 9.down					= 00010009
-power.down				= 0001000a
+power_front.down			= 0001000a
 arrow_up.down			= 0001000b
 arrow_down.down			= 0001000c
 arrow_left.down			= 0001000d
-arrow_right.down		= 0001000e
+#arrow_right.down		= 0001000e
+knob_push.down			= 0001000e
 search.down				= 0001000f
 rew.down				= 00010010
 fwd.down				= 00010011
@@ -28,11 +29,22 @@ now_playing.down		= 00010015
 
 pause.down				= 00010017
 browse.down				= 00010018
-volup.down				= 00010019
-voldown.down			= 0001001a
+volup_front.down		= 00010019
+voldown_front.down		= 0001001a
 size.down				= 0001001b
 visual.down				= 0001001c
 volumemode.down			= 0001001d
+
+preset_1.down			= 00010020	# Boom: Preset 1
+preset_2.down			= 00010021	# Boom: Preset 2
+preset_3.down			= 00010022	# Boom: Preset 3
+preset_4.down			= 00010023	# Boom: Preset 4
+preset_5.down			= 00010024	# Boom: Preset 5
+preset_6.down			= 00010025	# Boom: Preset 6
+snooze.down			= 00010026	# Boom: Sleep
+knob_left			= 0001005a	# Boom: Knob left
+knob_right			= 0001005b	# Boom: Knob right
+
 
 0.up					= 00020000
 1.up					= 00020001
@@ -44,11 +56,12 @@ volumemode.down			= 0001001d
 7.up					= 00020007
 8.up					= 00020008
 9.up					= 00020009
-power.up				= 0002000a
+power_front.up				= 0002000a
 arrow_up.up				= 0002000b
 arrow_down.up			= 0002000c
 arrow_left.up			= 0002000d
-arrow_right.up			= 0002000e
+#arrow_right.up			= 0002000e
+knob_push.up			= 0002000e
 search.up				= 0002000f
 rew.up					= 00020010
 fwd.up					= 00020011
@@ -59,8 +72,16 @@ now_playing.up			= 00020015
 
 pause.up				= 00020017
 browse.up				= 00020018
-volup.up				= 00020019
-voldown.up				= 0002001a
+volup_front.up			= 00020019
+voldown_font.up			= 0002001a
 size.up					= 0002001b
 visual.up				= 0002001c
 volumemode.up			= 0002001d
+
+preset_1.up			= 00020020	# Boom: Preset 1
+preset_2.up			= 00020021	# Boom: Preset 2
+preset_3.up			= 00020022	# Boom: Preset 3
+preset_4.up			= 00020023	# Boom: Preset 4
+preset_5.up			= 00020024	# Boom: Preset 5
+preset_6.up			= 00020025	# Boom: Preset 6
+snooze.up			= 00020026	# Boom: Sleep

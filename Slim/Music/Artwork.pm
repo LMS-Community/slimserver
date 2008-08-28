@@ -40,6 +40,7 @@ use Slim::Web::Graphics;
 # Global caches:
 my $artworkDir = '';
 my $log        = logger('artwork');
+my $importlog  = logger('scan.import');
 
 my $prefs = preferences('server');
 
@@ -49,6 +50,8 @@ tie my %lastFile, 'Tie::Cache::LRU', 32;
 sub findArtwork {
 	my $class = shift;
 	my $track = shift;
+	
+	my $isDebug = $importlog->is_debug;
 	
 	# Initialize graphics resizing
 	Slim::Web::Graphics::init();
@@ -93,10 +96,8 @@ sub findArtwork {
 
 			my $album = $track->album;
 
-			if (!$progress) {
-				if ( logger('scan.import')->is_debug ) {
-					logger('scan.import')->debug(sprintf("Album [%s] has artwork.", $album->name));
-				}
+			if ( !$progress ) {
+				$isDebug && $importlog->debug(sprintf("Album [%s] has artwork.", $album->name));
 			}
 
 			$album->artwork($track->id);
@@ -112,13 +113,13 @@ sub findArtwork {
 				push @dims, $prefs->get('thumbSize') || 100;
 			
 				for my $dim ( @dims ) {
-					logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p" );
+					$isDebug && $importlog->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p" );
 					eval {
 						Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p" );
 					};
 				}
 				eval {
-					logger('scan.import')->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_o.jpg" );
+					$isDebug && $importlog->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_o.jpg" );
 					Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_o.jpg" );
 				};
 			}
@@ -151,7 +152,7 @@ sub getImageContentAndType {
 		return ($content, $class->_imageContentType(\$content));
 	}
 
-	logger('artwork')->debug("Image File empty or couldn't read: $path : $! [$@]");
+	$log->is_debug && $log->debug("Image File empty or couldn't read: $path : $! [$@]");
 
 	return undef;
 }
@@ -219,7 +220,9 @@ sub _readCoverArtTags {
 	my $track = shift;
 	my $file  = shift;
 
-	$log->info("Looking for a cover art image in the tags of: [$file]");
+	my $isInfo = $log->is_info;
+
+	$isInfo && $log->info("Looking for a cover art image in the tags of: [$file]");
 
 	if (blessed($track) && $track->can('audio') && $track->audio) {
 
@@ -236,16 +239,14 @@ sub _readCoverArtTags {
 
 			my $contentType = $class->_imageContentType(\$body);
 			
-			if ( $log->is_info ) {
-				$log->info(sprintf("Found image of length [%d] bytes with type: [$contentType]", length($body)));
-			}
+			$isInfo && $log->info(sprintf("Found image of length [%d] bytes with type: [$contentType]", length($body)));
 
 			return ($body, $contentType, 1);
 		}
 
  	} else {
 
-		$log->info("Not file we can extract artwork from. Skipping.");
+		$isInfo && $log->info("Not file we can extract artwork from. Skipping.");
 	}
 
 	return undef;
@@ -255,6 +256,8 @@ sub _readCoverArtFiles {
 	my $class = shift;
 	my $track = shift;
 	my $path  = shift;
+	
+	my $isInfo = $log->is_info;
 
 	my @names      = qw(cover Cover thumb Thumb album Album folder Folder);
 	my @ext        = qw(png jpg jpeg gif);
@@ -263,7 +266,7 @@ sub _readCoverArtFiles {
 	my $parentDir  = $file->dir;
 	my $trackId    = $track->id;
 
-	$log->info("Looking for image files in $parentDir");
+	$isInfo && $log->info("Looking for image files in $parentDir");
 
 	my %nameslist  = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
 	
@@ -282,7 +285,7 @@ sub _readCoverArtFiles {
 		
 			$artwork = $prefix . $suffix;
 	
-			$log->info("Variable cover: $artwork from $1");
+			$isInfo && $log->info("Variable cover: $artwork from $1");
 	
 			if (Slim::Utils::OSDetect::OS() eq 'win') {
 				# Remove illegal characters from filename.
@@ -304,13 +307,13 @@ sub _readCoverArtFiles {
 	
 			if ($body && $contentType) {
 	
-				$log->info("Found image file: $artPath");
+				$isInfo && $log->info("Found image file: $artPath");
 	
 				return ($body, $contentType, $artPath);
 			}
 		} else {
 			
-			$log->info("Variable cover: no match from $1");
+			$isInfo && $log->info("Variable cover: no match from $1");
 		}
 
 	} elsif (defined $artwork) {
@@ -322,7 +325,7 @@ sub _readCoverArtFiles {
 
 		if (exists $lastFile{$trackId} && $lastFile{$trackId} ne 1) {
 
-			$log->info("Using existing image: $lastFile{$trackId}");
+			$isInfo && $log->info("Using existing image: $lastFile{$trackId}");
 
 			my ($body, $contentType) = $class->getImageContentAndType($lastFile{$trackId});
 
@@ -330,7 +333,7 @@ sub _readCoverArtFiles {
 
 		} elsif (exists $lastFile{$trackId}) {
 
-			$log->info("No image in $artworkDir");
+			$isInfo && $log->info("No image in $artworkDir");
 
 			return undef;
 		}
@@ -351,7 +354,7 @@ sub _readCoverArtFiles {
 
 		if ($body && $contentType) {
 
-			$log->info("Found image file: $file");
+			$isInfo && $log->info("Found image file: $file");
 
 			$lastFile{$trackId} = $file;
 

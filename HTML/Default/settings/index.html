@@ -7,6 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css?r=[% revision %]" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
 
 		<style>
 			html { background: #666666; }
@@ -45,7 +46,14 @@
 					[%- ELSIF tab.0 == 'SERVER_STATUS'; tab.0 = 'STATUS' -%]
 					[%- END -%]
 
-					[% IF tab.0 == activePage; activeTab = loop.index; END %]
+					[%-
+					IF tab.0 == activePage;
+						activeTab = loop.index; 
+					ELSIF activePage && tab.0 == 'PLAYER' && playersetup.${activePage};
+						activeTab = loop.index;
+						tab.1 = playersetup.${activePage}; 
+					END 
+					-%]
 
 					{
 						title: '[% tab.0 | string %]',

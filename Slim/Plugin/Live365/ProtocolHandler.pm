@@ -59,6 +59,8 @@ sub getFormatForURL () { 'mp3' }
 # Source for AudioScrobbler (R = Radio)
 sub audioScrobblerSource () { 'R' }
 
+sub isRemote { 1 }
+
 sub gotURL {
 	my $http     = shift;
 	my $client   = $http->params->{client};

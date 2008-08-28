@@ -34,6 +34,8 @@ sub getFormatForURL { 'wma' }
 
 sub isAudioURL { 1 }
 
+sub isRemote { 1 }
+
 # Support transcoding
 sub new {
 	my $class = shift;

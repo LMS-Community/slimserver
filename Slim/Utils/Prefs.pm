@@ -322,56 +322,163 @@ sub init {
 		
 			1;
 		});
+	}
 
-		# migrate client prefs to version 2 - sync prefs changed
-		$prefs->migrateClient(2, sub {
-			my $cprefs = shift;
-			my $defaults = $Slim::Player::Player::defaultPrefs;
-			$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if ($cprefs->get('syncBufferThreshold') > 255);
-			$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if ($cprefs->get('minSyncAdjust') < 1);
-			$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
-			1;
-		});
+	# migrate client prefs to version 2 - sync prefs changed
+	$prefs->migrateClient(2, sub {
+		my $cprefs = shift;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
+		$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if ($cprefs->get('syncBufferThreshold') > 255);
+		$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if ($cprefs->get('minSyncAdjust') < 1);
+		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
+		1;
+	});
+
+	# migrate menuItem pref so everyone gets the correct menu structure
+	$prefs->migrateClient( 3, sub {
+		my ( $cprefs, $client ) = @_;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
 	
-		# migrate menuItem pref so everyone gets the correct menu structure
-		$prefs->migrateClient( 3, sub {
-			my ( $cprefs, $client ) = @_;
-			my $defaults = $Slim::Player::Player::defaultPrefs;
-		
-			if ( $client->hasDigitalIn ) {
-				$defaults = $Slim::Player::Transporter::defaultPrefs;
-			}
-		
-			$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) ); # clone for each client
-			1;
-		} );
+		if ( $client->hasDigitalIn ) {
+			$defaults = $Slim::Player::Transporter::defaultPrefs;
+		}
 	
-		# migrate 'play other songs' pref from server to per-player
-		$prefs->migrateClient( 4, sub {
-			my ( $cprefs, $client ) = @_;
-			my $playtrackalbum = preferences('server')->get('playtrackalbum');
-		
-			# copy server pref as a default client pref
-			unless (defined $cprefs->get( 'playtrackalbum' )) {
-				$cprefs->set( 'playtrackalbum', $playtrackalbum );
+		if ( $client->isa('Slim::Player::Boom') ) {
+			$defaults = $Slim::Player::Boom::defaultPrefs;
+		}
+	
+		$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) ); # clone for each client
+		1;
+	} );
+
+	# migrate 'play other songs' pref from server to per-player
+	$prefs->migrateClient( 4, sub {
+		my ( $cprefs, $client ) = @_;
+		my $playtrackalbum = preferences('server')->get('playtrackalbum');
+	
+		# copy server pref as a default client pref
+		unless (defined $cprefs->get( 'playtrackalbum' )) {
+			$cprefs->set( 'playtrackalbum', $playtrackalbum );
+		}
+		1;
+	} );
+	
+	# Bug 8690, reset fixed digital volume pref because it now affects analog outputs
+	$prefs->migrateClient( 5, sub {
+		my ( $cprefs, $client ) = @_;
+		my $dvc = $cprefs->get('digitalVolumeControl');
+		if ( defined $dvc && $dvc == 0 ) {
+			$cprefs->set( digitalVolumeControl => 1 );
+			if ( $cprefs->get('volume') > 50 ) {
+				$cprefs->set( volume => 50 );
 			}
-			1;
-		} );
+		}
 		
-		# Bug 8690, reset fixed digital volume pref because it now affects analog outputs
-		$prefs->migrateClient( 5, sub {
-			my ( $cprefs, $client ) = @_;
-			my $dvc = $cprefs->get('digitalVolumeControl');
-			if ( defined $dvc && $dvc == 0 ) {
-				$cprefs->set( digitalVolumeControl => 1 );
-				if ( $cprefs->get('volume') > 50 ) {
-					$cprefs->set( volume => 50 );
-				}
-			}
+		return 1;
+	} );
+
+	# migrate old alarm clock prefs into new alarms
+	$prefs->migrateClient( 6, sub {
+		my ( $cprefs, $client ) = @_;
+		
+		# Don't migrate if new 'alarms' pref is already here
+		if ( $cprefs->get('alarms') ) {
+			$cprefs->remove('alarm');
+			$cprefs->remove('alarmtime');
+			$cprefs->remove('alarmplaylist');
+			$cprefs->remove('alarmvolume');
 			
 			return 1;
-		} );
-	}
+		}
+
+		my $alarm    = $cprefs->get('alarm');
+		my $time     = $cprefs->get('alarmtime');
+		my $playlist = $cprefs->get('alarmplaylist');
+		my $volume   = $cprefs->get('alarmvolume');
+		
+		my @newAlarms;
+
+		my %playlistMap = (
+			CURRENT_PLAYLIST => undef,
+			'' => undef,
+			PLUGIN_RANDOM_TRACK => 'randomplay://track',
+			PLUGIN_RANDOM_ALBUM => 'randomplay://album',
+			PLUGIN_RANDOM_CONTRIBUTOR => 'randomplay://contributor',
+		);
+
+		# Old alarms: day 0 is every day, days 1..7 are mon..sun
+		# New alarms: days 0..6 are sun..sat
+
+		# Migrate any alarm that is enabled or has a time that isn't 0
+		for (my $day = 0; $day < 8; $day++) {
+			if ($alarm->[$day] || $time->[$day]) {
+				my $duplicate = 0;
+				foreach my $newAlarm (@newAlarms) {
+					# Won't get here for day 0
+					if ($newAlarm->time == $time->[$day]) {
+						if ($newAlarm->day($day % 7)) {
+							# Alarm has same time as an everyday alarm.  Ignore.
+							$duplicate = 1;
+							last;
+						} else {
+							if (
+								(defined $newAlarm->playlist
+								&& (defined $playlistMap{$playlist->[$day]} && $newAlarm->playlist eq $playlistMap{$playlist->[$day]})
+								|| $newAlarm->playlist eq $playlist->[$day]
+								)
+
+								||
+
+								(! defined $newAlarm->playlist
+								&& ($playlist->[$day] eq 'CURRENT_PLAYLIST' || $playlist->[$day] eq ''))
+							)  {
+								# Same as an existing alarm - just add the day to it
+								if ($alarm->[$day]) {
+									$newAlarm->day($day % 7, 1);
+								}
+								$duplicate = 1;
+								last;
+							}
+						}
+					}
+				}
+
+				if (! $duplicate) {
+					my $newAlarm = Slim::Utils::Alarm->new($client, $time->[$day]);
+					$newAlarm->enabled($alarm->[$day]);
+					$newAlarm->everyDay(0);
+					if ($day == 0) {
+						$newAlarm->everyDay(1);
+					} else {
+						$newAlarm->day($day % 7, 1);
+					}
+					if (exists $playlistMap{$playlist->[$day]}) {
+						$newAlarm->playlist($playlistMap{$playlist->[$day]});
+					} else {
+						$newAlarm->playlist($playlist->[$day]);
+					}
+					push @newAlarms, $newAlarm;
+				}
+			}
+		}
+
+		# Save the new alarms in one batch to avoid calling $alarm->save, which would create an infinite
+		# loop when it tried to read prefs (thus causing them to migrate)
+		my $prefAlarms = {};
+		foreach my $newAlarm (@newAlarms) {
+			$prefAlarms->{$newAlarm->id} = $newAlarm->_createSaveable;
+		}
+
+		$cprefs->set('alarms', $prefAlarms);
+		
+		# Remove old alarm prefs
+		$cprefs->remove('alarm');
+		$cprefs->remove('alarmtime');
+		$cprefs->remove('alarmplaylist');
+		$cprefs->remove('alarmvolume');
+
+		return 1;
+	} );
 
 	# initialise any new prefs
 	$prefs->init(\%defaults);
@@ -421,6 +528,10 @@ sub init {
 			return 1;
 		}
 	}, 'allowedHosts');
+
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 100 }, 'alarmDefaultVolume');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1                }, 'alarmSnoozeSeconds');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0                }, 'alarmTimeoutSeconds');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
@@ -490,6 +601,19 @@ sub init {
 		my $client = $_[2] || return;
 		$client->display->renderCache()->{'defaultfont'} = undef;
 	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
+
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
+		Slim::Player::Boom::setAnalogOutMode($client);
+	}, 'analogOutMode');
+	
+	$prefs->setChange( sub {
+		foreach my $client ( Slim::Player::Client::clients() ) {
+			if ($client->isa("Slim::Player::Boom")) {
+				$client->setRTCTime();
+			}		
+		}
+	}, 'timeFormat');
 
 	# Clear SN cookies from the cookie jar if the session changes
 	if ( !main::SLIM_SERVICE ) {

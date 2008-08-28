@@ -183,3 +183,19 @@ Object.extend(Object.extend(Ajax.FileSelector.prototype, Ajax.Autocompleter.prot
 		Element.show(this.options.indicator);
 	}
 });
+
+function initNewAlarm(alarmId) {
+	$('alarm_remove_' + alarmId).observe('click', function() {
+		$('alarmtime' + alarmId).value = '';
+		$('alarm' + alarmId).hide();
+		$('button' + alarmId).show();
+	});
+
+	$('AddAlarm').observe('click', function() {
+		$('alarm' + alarmId).show();
+		$('button' + alarmId).hide();
+	});
+
+	$('alarm' + alarmId).hide();
+	$('button' + alarmId).show();
+}

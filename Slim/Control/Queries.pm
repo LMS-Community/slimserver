@@ -39,14 +39,15 @@ use Scalar::Util qw(blessed);
 use URI::Escape;
 
 use Slim::Utils::Misc qw( specified validMacAddress );
-use Slim::Utils::Alarms;
+use Slim::Utils::Alarm;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
+use Slim::Utils::Text;
 
 {
 	if ($^O =~ /Win32/) {
-		require Win32::DriveInfo;
+		require Slim::Utils::Win32;
 	}
 }
 
@@ -59,8 +60,6 @@ my $cache = {};
 
 sub alarmsQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['alarms']])) {
@@ -76,40 +75,23 @@ sub alarmsQuery {
 	my $alarmDOW = $request->getParam('dow');
 	
 	
+	# being nice: we'll still be accepting 'defined' though this doesn't make sense any longer
 	if ($request->paramNotOneOfIfDefined($filter, ['all', 'defined', 'enabled'])) {
 		$request->setStatusBadParams();
 		return;
 	}
 	
-	my @results;
-
-	if (defined $alarmDOW) {
-
-		$results[0] = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
-
-	} else {
-
-		my $i = 0;
-
-		$filter = 'enabled' if !defined $filter;
-
-		for $alarmDOW (0..7) {
-
-			my $alarm = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
-			
-			my $wanted = ( 
-				($filter eq 'all') ||
-				($filter eq 'defined' && !$alarm->undefined()) ||
-				($filter eq 'enabled' && $alarm->enabled())
-			);
-
-			$results[$i++] = $alarm if $wanted;
-		}
-	}
-
-	my $count = scalar @results;
-
 	$request->addResult('fade', $prefs->client($client)->get('alarmfadeseconds'));
+	
+	$filter = 'enabled' if !defined $filter;
+
+	my @alarms = grep {
+		defined $alarmDOW
+			? $_->day() == $alarmDOW
+			: ($filter eq 'all' || ($filter eq 'enabled' && $_->enabled()))
+	} Slim::Utils::Alarm->getAlarms($client, 1);
+
+	my $count = scalar @alarms;
 	$count += 0;
 	$request->addResult('count', $count);
 
@@ -120,13 +102,20 @@ sub alarmsQuery {
 		my $loopname = 'alarms_loop';
 		my $cnt = 0;
 		
-		for my $eachitem (@results[$start..$end]) {
-			$request->addResultLoop($loopname, $cnt, 'dow', $eachitem->dow());
-			$request->addResultLoop($loopname, $cnt, 'enabled', $eachitem->enabled());
-			$request->addResultLoop($loopname, $cnt, 'time', $eachitem->time());
-			$request->addResultLoop($loopname, $cnt, 'volume', $eachitem->volume());
-			$request->addResultLoop($loopname, $cnt, 'url', $eachitem->playlist());
-			$request->addResultLoop($loopname, $cnt, 'playlist_id', $eachitem->playlistid());
+		for my $alarm (@alarms[$start..$end]) {
+
+			my @dow;
+			foreach ([0..6]) {
+				push @dow, $_ if $alarm->day($_);
+			}
+
+			$request->addResultLoop($loopname, $cnt, 'id', $alarm->id());
+			$request->addResultLoop($loopname, $cnt, 'dow', join(',', @dow));
+			$request->addResultLoop($loopname, $cnt, 'enabled', $alarm->enabled());
+			$request->addResultLoop($loopname, $cnt, 'repeat', $alarm->repeat());
+			$request->addResultLoop($loopname, $cnt, 'time', $alarm->time());
+			$request->addResultLoop($loopname, $cnt, 'volume', $alarm->volume());
+			$request->addResultLoop($loopname, $cnt, 'url', $alarm->playlist() || 'CURRENT_PLAYLIST');
 			$cnt++;
 		}
 	}
@@ -136,8 +125,6 @@ sub alarmsQuery {
 
 sub albumsQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -421,7 +408,7 @@ sub albumsQuery {
 				# the favorites url to be sent to jive is the album title here
 				# album id would be (much) better, but that would screw up the favorite on a rescan
 				# title is a really stupid thing to use, since there's no assurance it's unique
-				my $url = 'db:album.titlesearch=' . $eachitem->title;
+				my $url = 'db:album.titlesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->title) );
 
 				my $params = {
 					'album_id'        => $id,
@@ -528,8 +515,6 @@ sub albumsQuery {
 
 sub artistsQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['artists']])) {
@@ -776,7 +761,7 @@ sub artistsQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $obj->name);
 
 				# the favorites url to be sent to jive is the artist name here
-				my $url = 'db:contributor.namesearch=' . $obj->name;
+				my $url = 'db:contributor.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($obj->name) );
 
 				my $params = {
 					'favorites_url'   => $url,
@@ -848,8 +833,6 @@ sub artistsQuery {
 
 sub cursonginfoQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre',
@@ -912,8 +895,6 @@ sub cursonginfoQuery {
 
 sub connectedQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['connected']])) {
@@ -932,8 +913,6 @@ sub connectedQuery {
 
 sub debugQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['debug']])) {
@@ -967,8 +946,6 @@ sub debugQuery {
 
 sub displayQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['display']])) {
@@ -979,7 +956,7 @@ sub displayQuery {
 	# get our parameters
 	my $client = $request->client();
 	
-	my $parsed = $client->parseLines($client->curLines());
+	my $parsed = $client->curLines();
 
 	$request->addResult('_line1', $parsed->{line}[0] || '');
 	$request->addResult('_line2', $parsed->{line}[1] || '');
@@ -990,8 +967,6 @@ sub displayQuery {
 
 sub displaynowQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['displaynow']])) {
@@ -1194,8 +1169,6 @@ sub _displaystatusCleanupEmulated {
 sub genresQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['genres']])) {
 		$request->setStatusBadDispatch();
@@ -1372,7 +1345,7 @@ sub genresQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
 				
 				# here the url is the genre name
-				my $url = 'db:genre.namesearch=' . $eachitem->name;
+				my $url = 'db:genre.namesearch=' . URI::Escape::uri_escape_utf8( Slim::Utils::Text::ignoreCaseArticles($eachitem->name) );
 				my $params = {
 					'genre_id'        => $id,
 					'genre_string'    => $eachitem->name,
@@ -1408,10 +1381,28 @@ sub genresQuery {
 }
 
 
+sub getStringQuery {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['getstring']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $tokenlist = $request->getParam('_tokens');
+
+	foreach my $token (split /,/, $tokenlist) {
+		$request->addResult($token, $request->string($token));
+	}
+	
+	$request->setStatusDone();
+}
+
+
 sub infoTotalQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs']])) {
@@ -1444,8 +1435,6 @@ sub infoTotalQuery {
 
 sub irenableQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['irenable']])) {
@@ -1464,8 +1453,6 @@ sub irenableQuery {
 
 sub linesperscreenQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['linesperscreen']])) {
@@ -1484,8 +1471,6 @@ sub linesperscreenQuery {
 
 sub mixerQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
@@ -1512,8 +1497,6 @@ sub mixerQuery {
 
 sub modeQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mode']])) {
@@ -1891,8 +1874,6 @@ sub musicfolderQuery {
 sub nameQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['name']])) {
 		$request->setStatusBadDispatch();
@@ -1910,8 +1891,6 @@ sub nameQuery {
 
 sub playerXQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'isplayer', 'canpoweroff', 'uuid']])) {
@@ -1979,8 +1958,6 @@ sub playerXQuery {
 
 sub playersQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['players']])) {
@@ -2055,8 +2032,6 @@ sub playersQuery {
 
 sub playlistPlaylistsinfoQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['playlistsinfo']])) {
@@ -2087,8 +2062,6 @@ sub playlistPlaylistsinfoQuery {
 
 sub playlistXQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
@@ -2166,9 +2139,7 @@ sub playlistXQuery {
 
 sub playlistsTracksQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
-
+	
 	# check this is the correct query.
 	# "playlisttracks" is deprecated (July 06).
 	if ($request->isNotQuery([['playlisttracks']]) &&
@@ -2331,8 +2302,6 @@ sub playlistsTracksQuery {
 sub playlistsQuery {
 	my $request = shift;
 
-	$log->info("Begin Function");
-
 	# check this is the correct query.
 	if ($request->isNotQuery([['playlists']])) {
 		$request->setStatusBadDispatch();
@@ -2488,8 +2457,6 @@ sub playlistsQuery {
 
 sub playerprefQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playerpref']])) {
@@ -2521,8 +2488,6 @@ sub playerprefQuery {
 
 sub playerprefValidateQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playerpref'], ['validate']])) {
@@ -2555,8 +2520,6 @@ sub playerprefValidateQuery {
 
 sub powerQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['power']])) {
@@ -2575,8 +2538,6 @@ sub powerQuery {
 
 sub prefQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['pref']])) {
@@ -2607,8 +2568,6 @@ sub prefQuery {
 
 sub prefValidateQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['pref'], ['validate']])) {
@@ -2640,8 +2599,6 @@ sub prefValidateQuery {
 
 sub rateQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rate']])) {
@@ -2681,12 +2638,12 @@ sub readDirectoryQuery {
 
 	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
 		@fsitems = sort map {
-			$fsitems{"$_:"} = {
+			$fsitems{"$_"} = {
 				d => 1,
 				f => 0
 			};
-			"$_:"; 
-		} Win32::DriveInfo::DrivesInUse();
+			"$_"; 
+		} Slim::Utils::Win32::getDrives();
 		$folder = '';
 	}
 	else {
@@ -2766,8 +2723,6 @@ sub readDirectoryQuery {
 
 sub rescanQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rescan']])) {
@@ -2785,8 +2740,6 @@ sub rescanQuery {
 
 sub rescanprogressQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rescanprogress']])) {
@@ -2837,8 +2790,6 @@ sub rescanprogressQuery {
 
 sub searchQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['search']])) {
@@ -3145,8 +3096,6 @@ sub serverstatusQuery {
 
 sub signalstrengthQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['signalstrength']])) {
@@ -3165,8 +3114,6 @@ sub signalstrengthQuery {
 
 sub sleepQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sleep']])) {
@@ -3562,8 +3509,6 @@ sub statusQuery {
 # XXX: deprecated
 sub songinfoQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['songinfo']])) {
@@ -4179,8 +4124,6 @@ sub songinfoQuery {
 
 sub syncQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sync']])) {
@@ -4208,8 +4151,6 @@ sub syncQuery {
 
 sub timeQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['time', 'gototime']])) {
@@ -4227,8 +4168,6 @@ sub timeQuery {
 
 sub titlesQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -4557,8 +4496,6 @@ sub titlesQuery {
 
 sub versionQuery {
 	my $request = shift;
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['version']])) {
@@ -4576,8 +4513,6 @@ sub versionQuery {
 
 sub yearsQuery {
 	my $request = shift;
-
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['years']])) {
@@ -4763,8 +4698,6 @@ sub dynamicAutoQuery {
 	my $query   = shift || return;             # query name
 	my $funcptr = shift;                       # data returned by addDispatch
 	my $data    = shift || return;             # data to add to results
-	
-	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query]])) {
@@ -5559,8 +5492,6 @@ sub _songData {
 }
 
 sub _playAll {
-
-	$log->info('Begin function');
 	my %args       = @_;
 	my $start      = $args{'start'};
 	my $end        = $args{'end'};

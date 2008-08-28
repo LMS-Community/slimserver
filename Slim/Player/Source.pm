@@ -624,6 +624,10 @@ sub decoderUnderrun {
 	# in the case that we're starting up a digital input, 
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
+
+	# in the case that we're starting up a line in, 
+	# we want to defer until the output underruns, not the decoder
+	return if (Slim::Music::Info::isLineIn(Slim::Player::Playlist::song($client, nextsong($client))));
 	
 	my $queue = $client->currentsongqueue();
 	
@@ -1839,19 +1843,19 @@ sub openSong {
 	my $fullpath = $track->url;
 
 	$log->info("Trying to open: $fullpath");
+	
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $fullpath );		
+
+	# Allow protocol handler to override playback and do something else,
+	# used by Random Play, MusicIP, to provide URLs
+	if ( $handler && $handler->can('overridePlayback') ) {
+		$log->debug("Protocol Handler for $fullpath overriding playback");
+		return $handler->overridePlayback( $client, $fullpath );
+	}
 
 	####################
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
-		
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $fullpath );		
-
-		# Allow protocol handler to override playback and do something else,
-		# used by Random Play, MusicIP, to provide URLs
-		if ( $handler && $handler->can('overridePlayback') ) {
-			$log->debug("Protocol Handler for $fullpath overriding playback");
-			return $handler->overridePlayback( $client, $fullpath );
-		}
 
 		# Allow protocol handler to change the actual item we'll be streaming,
 		# if for example we are trying to play a remote playlist item

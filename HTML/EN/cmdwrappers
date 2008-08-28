@@ -65,7 +65,7 @@
 [%# this is to wrap around an href which does an insert command %]
 [%- BLOCK insertlink -%]
 	[%- PROCESS cmdlink
-		cmdtitle = "NEXT"
+		cmdtitle = "PLAY_NEXT"
 		cmdimage = "b_queue.gif" -%]
 [%- END -%]
 
@@ -264,7 +264,7 @@ END %]
 			END; 
 
 			WRAPPER $linktype noTarget=1;
-				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'SqueezeJS.Utils.'; END %]toggleFavorite(this, '[% itemobj.url | uri  | replace("'", "%27") %]', '[% (item.text || itemobj.title) | uri  | replace("'", "%27") %]')"[% END;
+				IF !ajaxRequest %]href="javascript:void(0);" onClick="[% IF useExtJS; 'SqueezeJS.Utils.'; END %]toggleFavorite(this, '[% (itemobj.url || item.url) | uri  | replace("'", "%27") %]', '[% (item.text || itemobj.title) | uri  | replace("'", "%27") %]')"[% END;
 			END;
 		END -%]
 [% END %]
@@ -369,7 +369,7 @@ END %]
 [% END -%]
 
 [% BLOCK settingSection %]
-	<div class="settingSection">
+	<div class="settingSection" [% IF sectionID %]id="[% sectionID %]"[% END %]  [% IF customStyle %]style="[% customStyle %]"[% END %]>
 		[% content %]
 	</div>
 [% END -%]

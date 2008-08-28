@@ -57,6 +57,9 @@ my $ord0a = ord("\x0a");
 
 my $maxLines = 3; # Max lines any display will render
 
+# Keep a cache of measure text results to avoid calling string which is expensive
+tie my %measureTextCache, 'Tie::Cache::LRU', 32;
+
 # TrueType support by using GD
 my $canUseGD = eval {
 	require GD;
@@ -122,9 +125,18 @@ my %font2TTF = (
 	},
 );
 
+# narrow fonts for Boom
+$font2TTF{'standard_n.1'} = $font2TTF{'standard.1'};
+$font2TTF{'standard_n.2'} = $font2TTF{'standard.2'};
+$font2TTF{'light_n.1'}    = $font2TTF{'light.1'};
+$font2TTF{'light_n.2'}    = $font2TTF{'light.2'};
+$font2TTF{'full_n.2'}     = $font2TTF{'full.2'};
+
+
 # When using TTF to replace the following fonts, the string is has uc() run on it first
 my %font2uc = ( 
-	'standard.1' => 1,
+	'standard.1'   => 1,
+	'standard_n.1' => 1,
 );
 
 # Our bitmap fonts are actually cp1252 (Windows-Latin1), NOT iso-8859-1.
@@ -295,7 +307,7 @@ sub loadExtent {
 sub string {
 	my $defaultFontname = shift || return (0, '');
 	my $string = shift;
-	
+
 	if (!defined $string) {
 		return (0, '');
 	}
@@ -360,8 +372,7 @@ sub string {
 	my $newFontname = '';
 	my $font = $defaultFont;
 	my $interspace = $defaultFont->[0];
-	my $cursorpos = undef;
-	my $cursorend = 0;
+	my $cursorpos = 0;
 
 	# special characters:
 	# \x1d [29] = 'tight'  - suppress inter character space
@@ -369,7 +380,11 @@ sub string {
 	# \x1b [27] = font change - new fontname enclosed in \x1b chars, null name = back to default font
 	# \x0a [10] = 'cursorpos' - set cursor for next character
 
+	my $remaining = scalar @ords;
+
 	for my $ord (@ords) {
+
+		$remaining--;
 
 		if ($fontChange) {
 
@@ -403,7 +418,7 @@ sub string {
 
 		} elsif ($ord == 10) {
 
-			$cursorpos = length($bits);
+			$cursorpos = 1;
 
 		} else {
 
@@ -448,8 +463,9 @@ sub string {
 					$TTFCache{$defaultFontname}{$ord} = $bits_tmp if $useTTFCache;
 				}
 
-				if (defined($cursorpos) && !$cursorend) { 
-					$cursorend = length($bits_tmp) / length($defaultFont->[$ord0a]);
+				if ($cursorpos) {
+					$bits_tmp |= substr($defaultFont->[$ord0a] x length($bits_tmp), 0, length($bits_tmp));
+					$cursorpos = 0;
 				}
 
 				$bits .= $bits_tmp;
@@ -462,19 +478,31 @@ sub string {
 					$ord = 63; # 63 == '?'
 				}
 
-				if (defined($cursorpos) && !$cursorend) { 
+				if ($cursorpos) {
 
-					$cursorend = length($font->[$ord]) / length($font->[$ord0a]); 
+					my $bits_tmp = $font->[$ord];
+
+					# pad narrow characters so the cursor is wide enough to see
+					if (length($bits_tmp) < 3 * length($interspace) ) {
+						$bits_tmp = $interspace . $bits_tmp . $interspace;
+					}
+
+					$bits_tmp |= substr($defaultFont->[$ord0a] x length($bits_tmp), 0, length($bits_tmp));
+					$bits .= $bits_tmp;
+
+					$cursorpos = 0;
+
+				} else {
+
+					$bits .= $font->[$ord];
 				}
 
-				$bits .= $font->[$ord] . $interspace;
+				# add inter character space except at end of string
+				if ($remaining) {
+					$bits .= $interspace;
+				}
 			}
 		}
-	}
-
-	if (defined($cursorpos)) {
-
-		$bits |= ($char0 x $cursorpos) . ($font->[$ord0a] x $cursorend);
 	}
 		
 	return ($reverse, $bits);
@@ -483,9 +511,16 @@ sub string {
 sub measureText {
 	my $fontname = shift;
 	my $string = shift;
+
+	my $cacheKey = "$fontname-$string";
+
+	return $measureTextCache{$cacheKey} if $measureTextCache{$cacheKey};
+
 	my $bits = string($fontname, $string);
 	return 0 if (!$fontname || !$fontheight->{$fontname});
 	my $len = length($bits)/($fontheight->{$fontname}/8);
+
+	$measureTextCache{$cacheKey} = $len;
 	
 	return $len;
 }

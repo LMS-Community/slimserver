@@ -22,6 +22,8 @@ use strict;
 
 use base qw(Slim::Utils::Accessor);
 
+use Scalar::Util qw(weaken);
+
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
@@ -44,7 +46,7 @@ my $prefs = preferences('server');
 # animateState: (single value for all screens)         Slimp3/SB1      SB1G      SB2/3/Transporter   
 #   0 = no animation                                        x             x        x
 #   1 = client side push/bump animations                                           x
-#   2 = update scheduled (timer set to callback update)                            x   
+#   2 = update scheduled (timer set to callback update)     x             x        x   
 #   3 = server side push & bumpLeft/Right                   x             x
 #   4 = server side bumpUp/Down                             x             x 
 #   5 = server side showBriefly                             x             x        x
@@ -59,17 +61,17 @@ my $prefs = preferences('server');
 my $log = logger('player.display');
 
 our $defaultPrefs = {
-	'autobrightness'       => 1,
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
 	'scrollPause'          => 3.6,
 	'scrollPauseDouble'    => 3.6,
 	'scrollRate'           => 0.15,
 	'scrollRateDouble'     => 0.1,
+	'alwaysShowCount'      => 1,
 };
 
 {
-	__PACKAGE__->mk_accessor('weak', qw(client));
+	__PACKAGE__->mk_accessor('rw', 'client'); # Note: Always keep client as the first accessor
 	__PACKAGE__->mk_accessor('rw',   qw(updateMode screen2updateOK animateState renderCache currBrightness
 										lastVisMode sbCallbackData sbOldDisplay sbName displayStrings notifyLevel hideVisu));
 	__PACKAGE__->mk_accessor('arraydefault', 1, qw(scrollState scrollData widthOverride));
@@ -83,7 +85,8 @@ sub new {
 	my $display = $class->SUPER::new;
 
 	# set default state
-	$display->client($client);    # set via accessor so reference is weakened
+	$display->client($client);
+	weaken( $display->[0] );
 
 	$display->init_accessor(
 		updateMode     => 0,      # 0 = normal, 1 = periodic update blocked, 2 = all updates blocked
@@ -377,6 +380,53 @@ sub brightness {
 	return $brightness;
 }
 
+sub getBrightnessOptions {
+	my $display = shift;
+
+	my %brightnesses = (
+		0 => '0 ('.$display->client->string('BRIGHTNESS_DARK').')',
+		1 => '1 ('.$display->client->string('BRIGHTNESS_DIMMEST').')',
+		2 => '2',
+		3 => '3',
+		4 => '4 ('.$display->client->string('BRIGHTNESS_BRIGHTEST').')',
+	);
+
+	if (!defined $display) {
+
+		return \%brightnesses;
+	}
+
+	if (defined $display->maxBrightness) {
+	
+		my $maxBrightness = $display->maxBrightness;
+
+		$brightnesses{4} = 4;
+
+		my @brightnessMap = $display->brightnessMap();
+		
+		# for large values at the end of the brightnessMap, we assume these are ambient index values
+		if ($brightnessMap[$maxBrightness] > 255 ) {
+
+			for my $brightness (4 .. $maxBrightness) {
+				if ($brightnessMap[$brightness] > 255 ) {
+		
+#					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT').' ('.sprintf("%4X",$brightnessMap[$brightness]).')';
+					$brightnesses{$brightness} = $display->client->string('BRIGHTNESS_AMBIENT');
+					$maxBrightness--;
+				}
+			}
+		}
+		
+		
+		$brightnesses{$maxBrightness} = sprintf('%s (%s)',
+			$maxBrightness, $display->client->string('BRIGHTNESS_BRIGHTEST')
+		);
+
+	}
+
+	return \%brightnesses;
+}
+
 sub prevline1 {
 	my $display = shift;
 	my $cache = $display->renderCache() || return;
@@ -411,19 +461,12 @@ sub curDisplay {
 
 sub curLines {
 	my $display = shift;
-
-	unless ($display->isa('Slim::Display::Display')) {
-		# not called as a display method
-		logBacktrace("This function is depreciated, please call \$client->curLines() or \$display->curLines()");
-		return;
-	}
-
 	my $client = $display->client;
 	my $linefunc = $client->lines;
 	my $parts;
 
 	if (defined $linefunc) {
-		$parts = eval {  $display->parseLines(&$linefunc($client)) };
+		$parts = eval { &$linefunc($client, @_) };
 
 		if ($@) {
 			logError("bad lines function: $@");
@@ -446,77 +489,6 @@ sub curLines {
 	}
 
 	return $parts;
-}
-
-# Parse lines into the latest hash format.  Provides backward compatibility for array and escaped lines definitions
-# NB will not convert 6.2 hash into a 6.5 hash - this is done in render
-sub parseLines {
-	my $display = shift;
-	my $lines = shift;
-	my ($line1, $line2, $line3, $line4, $overlay1, $overlay2, $center1, $center2, $bits);
-
-	return $lines if (ref($lines) eq 'HASH');
-
-	logBacktrace("lines function not using display hash, please update to display hash as this will be depreciated");
-
-	if (ref($lines) eq 'SCALAR') {
-		$line1 = $$lines;
-	} else {
-		if (ref($lines) eq 'ARRAY') {
-			$line1= $lines->[0];
-			$line2= $lines->[1];
-			$line3= $lines->[2];
-			$line4= $lines->[3];
-		} else {
-			$line1 = $lines;
-			$line2 = shift;
-			$line3 = shift;
-			$line4 = shift;
-		}
-		
-		return $line1 if (ref($line1) eq 'HASH');
-		
-		if (!defined($line1)) { $line1 = ''; }
-		if (!defined($line2)) { $line2 = ''; }
-
-		$line1 .= "\x1eright\x1e" . $line3 if (defined($line3));
-
-		$line2 .= "\x1eright\x1e" . $line4 if (defined($line4));
-
-		if (length($line2)) { 
-			$line1 .= "\x1elinebreak\x1e" . $line2;
-		}
-	}
-
-	while ($line1 =~ s/\x1eframebuf\x1e(.*)\x1e\/framebuf\x1e//s) {
-		$bits |= $1;
-	}
-
-	$line1 = $display->symbols($line1) || '';
-	($line1, $line2) = split("\x1elinebreak\x1e", $line1);
-
-	if (!defined($line2)) { $line2 = '';}
-	
-	($line1, $overlay1) = split("\x1eright\x1e", $line1) if $line1;
-	($line2, $overlay2) = split("\x1eright\x1e", $line2) if $line2;
-
-	($line1, $center1) = split("\x1ecenter\x1e", $line1) if $line1;
-	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
-
-	$line1 = '' if (!defined($line1));
-
-	return {
-		'bits'    => $bits,
-		'line'    => [ $line1, $line2 ],
-		'overlay' => [ $overlay1, $overlay2 ],
-		'center'  => [ $center1, $center2 ],
-	};
-}
-
-sub renderOverlay {
-	logBacktrace("renderOverlay depreciated - please use parseLines()");
-
-	return shift->parseLines(@_);
 }
 
 sub sliderBar {}
@@ -563,6 +535,7 @@ sub scrollInit {
 		'paused'        => 0,
 		'overlaystart'  => $screen->{overlaystart}[$screen->{scrollline}],
 		'ticker'        => $ticker,
+		'inhibitsaver'  => $ticker ? 0 : 1,
 	};
 
 	if (defined($screen->{bitsref})) {
@@ -715,8 +688,10 @@ sub scrollUpdate {
 			} elsif ($scroll->{pauseInt} > 0) {
 				$scroll->{offset} = $scroll->{scrollstart};
 				$scroll->{pauseUntil} = $scroll->{refreshTime} + $scroll->{pauseInt};
+				$scroll->{inhibitsaver} = 0;
 			} else {
 				$scroll->{offset} = $scroll->{scrollstart};
+				$scroll->{inhibitsaver} = 0;
 			}
 		}
 		# fast timer during scroll
@@ -736,6 +711,33 @@ sub endAnimation {
 	$display->update($screen);
 }	
 
+# called by Screensaver to check whether we should change state into screensaver mode
+sub inhibitSaver {
+	my $display = shift;
+
+	# don't switch to screensaver if blocked, performing animation or on first scroll
+	return
+		$display->updateMode() == 2 ||
+		$display->animateState()    ||
+		($display->scrollState(1) == 1 && $display->scrollData(1)->{inhibitsaver});
+}
+
+# periodic screen refresh for players requiring it (SB1 and Slimp3)
+sub periodicScreenRefresh {
+	my $display = shift;
+
+	unless ($display->updateMode > 0  || 
+			$display->scrollState == 2 ||
+			$display->animateState > 0 && $display->animateState <= 4 ||
+			$display->client->modeParam('modeUpdateInterval') ) {
+
+		$display->update($display->renderCache);
+	}
+
+	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1, \&periodicScreenRefresh);
+}
+
+
 sub resetDisplay {}
 sub killAnimation {}
 sub fonts {}
@@ -745,6 +747,11 @@ sub modes { [] }
 sub nmodes { 0 }
 sub hasScreen2 { 0 }
 sub vfdmodel {}
+
+# depreciated
+sub parseLines {}
+sub renderOverlay {}
+
 
 sub forgetDisplay {
 	my $display = shift;

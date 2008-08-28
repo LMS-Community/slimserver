@@ -126,17 +126,23 @@ END %]
 	[%- # treat track information specially
 	IF path == 'trackinfo.html';
 
-		songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0; END;
+		itemobj = {
+			id => sess,
+			album => details.album.0,
+			contributorRoles => details.contributors.keys,
+			contributors => details.contributors,
+			genres => details.genre,
+			year => details.year.0.id
+			title => pagetitle
+			url => itemUrl
+		};
 
-		PROCESS songinfo_header.html albumFirst = 1
-			itemobj = {
-				id => sess,
-				album => details.album.0,
-				contributorRoles => details.contributors.keys,
-				contributors => details.contributors,
-				genres => details.genre,
-				year => details.year.0.id
-			}
+		songInfoPlayLinks = BLOCK;
+			PROCESS songInfoPlayLinks attributes = "&track.id=" _ sess item = details.mixers.0;
+		END;
+
+		PROCESS songinfo_header.html 
+			albumFirst = 1
 			plugin_meta = {
 				title => details.title.0.name 
 			};
@@ -199,21 +205,25 @@ END %]
 						<div class="browseItemDetail">
 					[% END %]
 
-					[% IF item.weblink %]
-						<a href="[% item.weblink %]" target="_blank">
-					[% ELSIF item.type == 'redirect' %]
-						[% IF item.web.url %]
-						<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
-						[% ELSE; NEXT %]
+					[% IF item.web.type == 'htmltemplate' %]
+						[% PROCESS $item.web.value %]
+					[% ELSE %]
+						[% IF item.weblink %]
+							<a href="[% item.weblink %]" target="_blank">
+						[% ELSIF item.type == 'redirect' %]
+							[% IF item.web.url %]
+							<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
+							[% ELSE; NEXT %]
+							[% END %]
+						[% ELSIF item.type != 'text' %]
+							<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
 						[% END %]
-					[% ELSIF item.type != 'text' %]
-						<a href="[% path %]?[% searchquery | replace("'", "%27") | uri %]index=[% (item.index || index _ (start + loop.index)) | replace("'", "%27") | uri %]&amp;player=[% player | uri %]&amp;sess=[% sess %]" class="browseItemLink">
-					[% END %]
-
-					[% (item.web.value || item.name || item.title) | html_line_break %]
-
-					[% IF item.weblink || item.type != 'text' %]
-						</a>
+	
+						[% (item.web.value || item.name || item.title) | html_line_break %]
+	
+						[% IF item.weblink || item.type != 'text' %]
+							</a>
+						[% END %]
 					[% END %]
 
 					[% IF item.image && !(artwork > 0) %]
