@@ -360,7 +360,7 @@ sub checker {
 		return;
 	}
 
-	if (!$firstTime && !Slim::Music::Import->stillScanning && isMusicLibraryFileChanged()) {
+	if (!$firstTime && !Slim::Music::Import->stillScanning) {
 	
 		isMusicLibraryFileChanged();
 	}
