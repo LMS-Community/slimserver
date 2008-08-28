@@ -11,6 +11,10 @@
 # GNU General Public License for more details.
 #
 
+# Sometimes changes are made only in the SN code but that require
+# restarting slimservice.  Force slimservice to reload by changing
+# this text.
+
 require 5.008_001;
 use strict;
 use warnings;
@@ -185,7 +189,7 @@ our @AUTHORS = (
 );
 my $prefs        = preferences('server');
 
-our $VERSION     = '7.1-sn';
+our $VERSION     = '7.2-sn';
 our $REVISION    = undef;
 our $audiodir    = undef
 our $playlistdir = undef;
