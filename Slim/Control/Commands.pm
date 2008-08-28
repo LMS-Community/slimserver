@@ -338,10 +338,7 @@ sub clientForgetCommand {
 		return;
 	}
 	
-	# Bug 3115, temporarily unsync player when disconnecting
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		Slim::Player::Sync::unsync( $client, 'temp' );
-	}
+	$client->controller()->playerInactive($client);
 
 	$client->forgetClient();
 	
@@ -534,8 +531,8 @@ sub mixerCommand {
 	my @buddies;
 
 	# if we're sync'd, get our buddies
-	if (Slim::Player::Sync::isSynced($client)) {
-		@buddies = Slim::Player::Sync::syncedWith($client);
+	if ($client->isSynced()) {
+		@buddies = $client->syncedWith();
 	}
 	
 	if ($entity eq 'muting') {
@@ -711,9 +708,6 @@ sub playcontrolCommand {
 			# set new playmode
 			Slim::Player::Source::playmode($client, $wantmode);
 			
-			# reset rate in all cases
-			Slim::Player::Source::rate($client, 1);
-
 			# give user feedback of new mode and current song
 			if ($client->isPlayer()) {
 				my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) });
@@ -898,70 +892,86 @@ sub playlistJumpCommand {
 
 	# get the parameters
 	my $client = $request->client();
-	my $index  = $request->getParam('_index');;
-	my $noplay = $request->getParam('_noplay');;
+	my $index  = $request->getParam('_index');
+	my $noplay = $request->getParam('_noplay');
+	my $seekdata = $request->getParam('_seekdata');
 	
-	my $jumpCallback = sub {	
-		Slim::Player::Source::jumpto($client, $index, $noplay);
+	my $songcount = Slim::Player::Playlist::count($client) || return;
+	
+	my $newIndex = 0;
+	my $isStopped = $client->isStopped();
+	
+	if (!$client->power()) {
+		$client->execute([ 'power', 1, 1 ]);
+	}
 
-		# Does the above change the playlist?
-		Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+	# Is this a relative jump, etc.
+	if ( defined $index && $index =~ /[+-]/ ) {
+		
+		if (!$isStopped) {
+			my $handler = $client->playingSong()->currentTrackHandler();
+			my $url     = $client->playingSong()->currentTrack()->url();
 
-		# update the display unless suppressed
-		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines({ 
-				suppressDisplay => Slim::Buttons::Common::suppressStatus($client),
-				retrieveMetadata => 1,
-			});
-			$client->showBriefly($parts) if $parts;
+			if ( ($songcount == 1 && $index eq '-1') || $index eq '+0' ) {
+				# User is trying to restart the current track
+				$client->controller()->jumpToTime(0, 1);
+				$request->setStatusDone();
+				return;	
+			} elsif ($index eq '+1') {
+				# User is trying to skip to the next track
+				$client->controller()->skip();		
+				$request->setStatusDone();
+				return;	
+			}
+			
 		}
 		
-		$request->setStatusDone();
-	};
-	
-	if ( defined $index ) {
-		my $jumpIndex = $index;
+		$newIndex = Slim::Player::Source::playingSongIndex($client) + $index;
+		$log->info("Jumping by $index");
 		
-		if ( $index =~ /[+-]/ ) {
-			$jumpIndex = Slim::Player::Source::playingSongIndex($client) + $index;
-			
-			# Handle skip in repeat mode
-			if ( $jumpIndex >= Slim::Player::Playlist::count($client) ) {
-				# play the next song and start over if necessary
-				if (Slim::Player::Playlist::shuffle($client) && 
-					Slim::Player::Playlist::repeat($client) == 2 &&
-					$prefs->get('reshuffleOnRepeat')) {
+		# Handle skip in repeat mode
+		if ( $newIndex >= $songcount ) {
+			# play the next song and start over if necessary
+			if (Slim::Player::Playlist::shuffle($client) && 
+				Slim::Player::Playlist::repeat($client) == 2 &&
+				$prefs->get('reshuffleOnRepeat')) {
 
-					Slim::Player::Playlist::reshuffle($client, 1);
-				}
-
-				$jumpIndex = 0;
+				Slim::Player::Playlist::reshuffle($client, 1);
 			}
 		}
-
-		my $jumpURL   = Slim::Player::Playlist::url( $client, $jumpIndex );
-		my $handler   = Slim::Player::ProtocolHandlers->handlerForURL($jumpURL);
 		
-		# Allow Pandora and Slacker to disallow skip
-		if ( 
-			$client->playmode =~ /play|pause/
-			&& $handler
-			&& $handler->can('canDoAction')
-			&& !$handler->canDoAction( $client, $jumpURL, 'stop' )
-		) {
-			$log->debug("Skip for $jumpURL disallowed by protocol handler");
-			$request->setStatusDone();
-			return;
-		}
-		
-		# Allow protocol handler to perform async handling before jumpto is called
-		if ( $handler && $handler->can('onJump') ) {
-			$handler->onJump( $client, $jumpURL, $jumpCallback );
-			return;
-		}
+	} else {
+		$newIndex = $index if defined $index;
+		$log->info("Jumping to $index");
 	}
 	
-	$jumpCallback->();
+	# Check for wrap-around
+	if ($newIndex >= $songcount) {
+		$newIndex %=  $songcount;
+	} elsif ($newIndex < 0) {
+		$newIndex =  ($newIndex + $songcount) % $songcount;
+	}
+	
+	if ($noplay && $isStopped) {
+		Slim::Player::Source::streamingSongIndex($client, $newIndex, 1);
+	} else {
+		$log->info("playing $index");
+		$client->controller()->play($newIndex, $seekdata);
+	}	
+
+	# Does the above change the playlist?
+	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+
+	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
+
+# should be done by StreamingController
+#	# update the display unless suppressed
+#	if ($client->isPlayer()) {
+#		my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
+#		$client->showBriefly($parts) if $parts;
+#	}
+		
+	$request->setStatusDone();
 }
 
 sub playlistMoveCommand {
@@ -1239,7 +1249,7 @@ sub playlistXitemCommand {
 	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
 	
 	# XXX: hardcoding these protocols isn't the best way to do this. We should have a flag in ProtocolHandler to get this list
-	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicipplaylist:/) {
+	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicmagicplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 
@@ -1364,42 +1374,8 @@ sub playlistXitemCommand {
 	} else {
 		
 		# Display some feedback for the player on remote URLs
-		if ( $cmd eq 'play' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
-			
-			# Bug 8112, if playing a track that needs to be scanned first,
-			# we want to turn on the power
-			if ( !$client->power ) {
-				$client->power(1);
-			}
-		
-			my $showBuffering = 1;
-			
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($path);
-			if ( $handler && $handler->can('showBuffering') ) {
-				$showBuffering = $handler->showBuffering( $client, $path );
-			}
-			
-			if ( $showBuffering ) {
-				$log->info("Display some feedback for the player on remote URLs");
-			
-				my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
-				my $line2 = Slim::Music::Info::title($path) || $path;
-				
-				if ( main::SLIM_SERVICE ) {
-					$line2 = SDI::Service::Control->bestTitleForUrl( $client, $url );
-				}
-			
-				if ( $client->linesPerScreen() == 1 ) {
-			
-					$line2 = $client->string('CHECKING_STREAM');
-				}
-
-				$client->showBriefly({
-					'line' => [$line1, $line2],
-					'jive' => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
-				}, { 'duration' => 30 });
-			}
-		} elsif ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
+		# XXX - why only remote URLs?
+		if ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
 
 			my $insert = Slim::Music::Info::title($path) || $path;
 			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', $insert);
@@ -2250,24 +2226,30 @@ sub powerCommand {
 	# get our parameters
 	my $client   = $request->client();
 	my $newpower = $request->getParam('_newvalue');
+	my $noplay   = $request->getParam('_noplay');
 	
 	# handle toggle
 	if (!defined $newpower) {
-
 		$newpower = $client->power() ? 0 : 1;
 	}
 
+	if ($newpower == $client->power()) {return;}
+	
 	# handle sync'd players
-	if (Slim::Player::Sync::isSynced($client)) {
+	if ($client->isSynced()) {
 
-		my @buddies = Slim::Player::Sync::syncedWith($client);
+		my @buddies = $client->syncedWith();
 		
 		for my $eachclient (@buddies) {
-			$eachclient->power($newpower) if $prefs->client($eachclient)->get('syncPower');
+			$eachclient->power($newpower, 1) if $prefs->client($eachclient)->get('syncPower');
+			
+			# send an update for Jive player power menu
+			Slim::Control::Jive::playerPower($client);
+			
 		}
 	}
 
-	$client->power($newpower);
+	$client->power($newpower, $noplay);
 
 	# Powering off cancels sleep...
 	if ($newpower eq "0") {
@@ -2312,36 +2294,6 @@ sub prefCommand {
 	
 	$request->setStatusDone();
 }
-
-
-sub rateCommand {
-	my $request = shift;
-
-	# check this is the correct command.
-	if ($request->isNotCommand([['rate']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $client  = $request->client();
-	my $newrate = $request->getParam('_newvalue');
-	
-	if (!defined $newrate) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
-	if ($client->directURL() || $client->audioFilehandleIsSocket) {
-		Slim::Player::Source::rate($client, 1);
-		# shouldn't we return an error here ???
-	} else {
-		Slim::Player::Source::rate($client, $newrate);
-	}
-	
-	$request->setStatusDone();
-}
-
 
 sub rescanCommand {
 	my $request = shift;
@@ -2542,7 +2494,7 @@ sub syncCommand {
 	
 	if ($newbuddy eq '-') {
 	
-		Slim::Player::Sync::unsync($client);
+		$client->controller()->unsync($client);
 		
 	} else {
 
@@ -2557,7 +2509,7 @@ sub syncCommand {
 			}
 		}
 		
-		Slim::Player::Sync::sync($buddy, $client) if defined $buddy;
+		$client->controller()->sync($buddy) if defined $buddy;
 	}
 	
 	$request->setStatusDone();
@@ -2747,7 +2699,7 @@ sub _insert_done {
 			push @reshuffled, ($listsize + $i);
 		};
 			
-		$client = Slim::Player::Sync::masterOrSelf($client);
+		$client = $client->master();
 		
 		if (Slim::Player::Playlist::count($client) != $size) {	
 			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;

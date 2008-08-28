@@ -27,10 +27,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 # Can't use pluginData with coderefs because it's serialized
 my $rpds_args = {};
 
-sub handleError {
-    return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
-}
-
 sub logError {
 	my ( $client, $error, $arg2 ) = @_;
 	
@@ -194,25 +190,12 @@ sub rpds_handler {
 			# Track session errors so we don't get in a loop
 			my $sessionErrors = $client->pluginData('sessionErrors') || 0;
 			$sessionErrors++;
+			$client->pluginData( sessionErrors => $sessionErrors );
 			
 			$log->debug("Got invalid session error # $sessionErrors");
 			
-			if ( $sessionErrors > 1 ) {
-				# On the second error, give up
-				$log->debug("Giving up after multiple invalid session errors");
-				
-				# Stop the player
-				Slim::Player::Source::playmode( $client, 'stop' );
-				
-				handleError( $error, $client );
-				
-				return;
-			}
-			
-			$client->pluginData( sessionErrors => $sessionErrors );
-			
 			# Retry if command was 3 to get track info
-			if ( $sent_cmd eq '3' ) {
+			if ( $sessionErrors < 2 && $sent_cmd eq '3' ) {
 				if ( $log->is_debug ) {
 					$log->debug( $client->id, ' Getting a new session and retrying' );
 				}
@@ -220,25 +203,12 @@ sub rpds_handler {
 				return;
 			}
 			
-			# Stop the player
-			Slim::Player::Source::playmode( $client, 'stop' );
-			
-			my $restart = sub {
-				# Clear radio data if any, so we always get a new radio track
-				$client->pluginData( radioTrack => 0 );
-				
-				Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotTrackError(
-					$error, $client
-				);
-			};
-			
-			# call endPlaybackSession and then restart playback, which
-			# will get a new session
+			# call endPlaybackSession 
 			rpds( $client, {
 				data        => pack( 'c', 6 ),
-				callback    => $restart,
-				onError     => $restart,
-				passthrough => [],
+				callback    => $rpds->{onError} || sub {},
+				onError     => $rpds->{onError} || sub {},
+				passthrough => $rpds->{passthrough} || [],
 			} );
 			
 			return;
@@ -384,8 +354,10 @@ sub retry_new_session {
 				},
 				ecb    => sub {
 					my $error = shift;
-					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
-					handleError( $error, $client );
+					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR') . ": $error";
+					my $cb = $rpds->{onError} || sub {};
+					my $pt = $rpds->{passthrough} || [];
+					$cb->( $error, $client, @{$pt} );
 				},
 			},
 		);
@@ -431,7 +403,13 @@ sub retry_new_session {
 	rpds( $client, {
 		data        => $packet,
 		callback    => \&rpds_resend,
-		onError     => \&handleError,
+		onError     => sub {
+			my $error = shift;
+			$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
+			my $cb = $rpds->{onError} || sub {};
+			my $pt = $rpds->{passthrough} || [];
+			$cb->( $error, $client, @{$pt} );
+		},
 		passthrough => [ $rpds ],
 	} );
 }

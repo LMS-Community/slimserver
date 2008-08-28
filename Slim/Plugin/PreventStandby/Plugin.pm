@@ -53,11 +53,7 @@ sub checkClientActivity {
 
 	for my $client (Slim::Player::Client::clients()) {
 
-		my $playmode = $client->playmode();
-
-		$log->info(sprintf("Client %s in playmode %s", $client->name, $playmode));
-
-		if ($playmode ne 'stop' && $playmode ne 'pause') {
+		if ($client->isPlaying()) {
 
 			$log->info("Setting thread execution state");
 

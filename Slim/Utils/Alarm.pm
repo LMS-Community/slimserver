@@ -985,7 +985,7 @@ sub _checkPlaying {
 
 	my $client = $self->client;
 
-	if (! (Slim::Player::Source::playmode($client) =~ /play/)) {
+	if (!$client->isPlaying) {
 		$log->debug('Alarm active but client not playing');
 		$self->_playFallback();
 	}

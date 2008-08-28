@@ -23,6 +23,7 @@ use Scalar::Util qw(blessed);
 use Slim::Hardware::IR;
 use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::ReplayGain;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -32,7 +33,6 @@ my $prefs = preferences('server');
 
 my $log       = logger('network.protocol.slimproto');
 my $sourcelog = logger('player.source');
-my $directlog = logger('player.streaming.direct');
 
 # We inherit new() completely from our parent class.
 
@@ -40,9 +40,11 @@ sub init {
 	my $client = shift;
 
 	$client->SUPER::init();
-
-	$client->display->periodicScreenRefresh(); 
 }
+
+sub modelName { 'Squeezebox' }
+
+sub needsWeightedPlayPoint { 0 }
 
 sub reconnect {
 	my $client = shift;
@@ -75,34 +77,38 @@ sub reconnect {
 
 	if (!$reconnect) {
 
-		if (!Slim::Player::Sync::isSynced($client)) {
+		if ($client->power()) {
+			$client->controller()->playerActive($client);
+		}
+		
+		if (!$client->isSynced()) {
 			
 			# Only do this if not synced as restoreSync will have done any restart in that case
 			
-			if ($client->playmode() eq 'play') {
+			if ($client->isPlaying()) {
 	
 				# If bytes_received was sent and we're dealing 
 				# with a seekable source, just resume streaming
 				# else stop and restart.    
 	
-				if (!$bytes_received || $client->audioFilehandleIsSocket()) {
-	
+				if (!$bytes_received) {
 					Slim::Player::Source::playmode($client, "stop");
-					$bytes_received = 0;
 				}
 				
 				$sourcelog->is_info && $sourcelog->info($client->id . " restaring play on pseudo-reconnect at $bytes_received bytes");
 				
-				Slim::Player::Source::playmode($client, "play", $bytes_received);
+				Slim::Player::Source::playmode($client, "play",
+					$bytes_received ? {playingStreamOffset => $bytes_received} : undef,
+					1);
 	
-			} elsif ($client->playmode() eq 'pause') {
+			} elsif ($client->isPaused()) {
 	
 				Slim::Player::Source::playmode($client, "stop");
 			}
 
 		} 
 		
-		if ($client->playmode() eq 'stop') {
+		if ($client->isStopped()) {
 
 			# Ensure that a new client is stopped, but only on sb2s
 			if ( $client->isa('Slim::Player::Squeezebox2') ) {
@@ -134,32 +140,24 @@ sub connected {
 	return ($client->tcpsock() && $client->tcpsock->connected()) ? 1 : 0;
 }
 
-sub model {
-	return 'squeezebox';
-}
-sub modelName { 'Squeezebox' }
-
 sub ticspersec {
 	return 1000;
-}
-
-sub decoder {
-	return 'mas35x9';
 }
 
 sub play {
 	my $client = shift;
 	my $params = shift;
 	
+	my $controller = $params->{'controller'};
+	my $handler = $controller->protocolHandler();
+
 	# Calculate the correct buffer threshold for remote URLs
-	if ( Slim::Music::Info::isRemoteURL( $params->{url} ) ) {
+	if ( $handler->isRemote() ) {
 		# begin playback once we have this much data in the decode buffer (in KB)
 		$params->{bufferThreshold} = 20;
 		
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $params->{url} );
-
 		# Reduce threshold if protocol handler wants to
-		if ( $handler && $handler->can('bufferThreshold') ) {
+		if ( $handler->can('bufferThreshold') ) {
 			$params->{bufferThreshold} = $handler->bufferThreshold( $client, $params->{url} );
 		}
 
@@ -178,34 +176,15 @@ sub play {
 			$params->{bufferThreshold} = 255 if $params->{bufferThreshold} > 255;
 		}
 		
-		# Check with the protocol handler on whether or not to show buffering messages
-		my $showBuffering = 1;
-		
-		if ( $handler && $handler->can('showBuffering') ) {
-			$showBuffering = $handler->showBuffering( $client, $params->{url} );
-		}
-		
-		# Set a timer for feedback during buffering
-		if ( $showBuffering ) {
-			$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering
-			Slim::Utils::Timers::killTimers( $client, \&buffering );
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time() + 0.125,
-				\&buffering,
-				$params->{bufferThreshold} * 1024
-			);
-		}
+		$client->buffering($params->{bufferThreshold} * 1024);
 	}
 
-	$client->stream('s', $params);
+	my $ret = $client->stream_s($params);
 
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(), defined($client->tempVolume()));
 
-	$client->lastSong($params->{url});
-
-	return 1;
+	return $ret;
 }
 
 #
@@ -214,29 +193,8 @@ sub play {
 sub resume {
 	my $client = shift;
 	
-	Slim::Utils::Timers::killTimers($client, \&buffering);
-
 	$client->stream('u');
 	$client->SUPER::resume();
-	return 1;
-}
-
-sub startAt {
-	my ($client, $at) = @_;
-
-	Slim::Utils::Timers::killTimers($client, \&buffering);
-	Slim::Utils::Timers::setHighTimer(
-			$client,
-			$at - $client->packetLatency(),
-			\&_unpauseAfterInterval
-		);
-	return 1;
-}
-
-sub _unpauseAfterInterval {
-	my $client = shift;
-	$client->stream('u');
-	$client->playPoint(undef);
 	return 1;
 }
 
@@ -245,8 +203,6 @@ sub _unpauseAfterInterval {
 #
 sub pause {
 	my $client = shift;
-
-	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('p');
 	$client->playPoint(undef);
@@ -257,128 +213,13 @@ sub pause {
 sub stop {
 	my $client = shift;
 
-	Slim::Utils::Timers::killTimers($client, \&buffering);
-
 	$client->stream('q');
 	$client->playPoint(undef);
 	Slim::Networking::Slimproto::stop($client);
 	# disassociate the streaming socket to the client from the client.  HTTP.pm will close the socket on the next select.
 	$client->streamingsocket(undef);
-	$client->lastSong(undef);
-}
-
-sub flush {
-	my $client = shift;
-
-	Slim::Utils::Timers::killTimers($client, \&buffering);
-
-	$client->stream('f');
-	$client->SUPER::flush();
-	return 1;
-}
-
-sub buffering {
-	my ( $client, $threshold ) = @_;
-	
-	# If the track has started, stop displaying buffering status
-	# trackStartTime is set to time() after a track start event
-	if ( $client->masterOrSelf->trackStartTime() > $client->bufferStarted() ) {
-		$client->update();
-		return;
-	}
-
-	$client->requestStatus();
-	
-	my $fullness = $client->bufferFullness();
-	
-	$sourcelog->is_info && $sourcelog->info("Buffering... $fullness / $threshold");
-	
-	# Bug 1827, display better buffering feedback while we wait for data
-	my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
-	
-	my $stillBuffering = ( $percent < 100 ) ? 1 : 0;
-	
-	my ( $line1, $line2 );
-	
-	if ( $percent == 0 ) {
-		my $string = 'CONNECTING_FOR';
-		$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
-		
-		if ( $client->linesPerScreen() == 1 ) {
-			$line2 = $client->string($string);
-		}
-	}
-	else {
-		my $status;
-		
-		# When synced, a player may have to wait longer than the buffering time
-		if ( Slim::Player::Sync::isSynced($client) && $percent >= 100 ) {
-			$status = $client->string('WAITING_TO_SYNC');
-			$stillBuffering = 1;
-		}
-		else {
-			if ( $percent > 100 ) {
-				$percent = 99;
-			}
-			
-			my $string = 'BUFFERING';
-			$status = $client->string($string) . ' ' . $percent . '%';
-		}
-		
-		$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
-		
-		# Display only buffering text in large text mode
-		if ( $client->linesPerScreen() == 1 ) {
-			$line2 = $status;
-		}
-	}
-	
-	# Find the track title
-	if ( $client->linesPerScreen() > 1 ) {
-		my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
-		
-		if ( main::SLIM_SERVICE ) {
-			$line2 = SDI::Service::Control->bestTitleForUrl( $client, $url );
-		}
-		else {
-			$line2 = Slim::Music::Info::title( $url );
-		}
-	}
-	
-	# Only show buffering status if no user activity on player or we're on the Now Playing screen
-	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
-	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
-	
-	if ( !$client->display->sbName() && ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
-
-		$client->showBriefly( {
-			line => [ $line1, $line2 ], 
-			jive => undef, 
-			cli  => undef
-		}, 10 );
-		
-		# Call again unless we've reached the threshold
-		if ( $stillBuffering ) {
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time() + 0.400, # was .125 but too fast sometimes in wireless settings
-				\&buffering,
-				$threshold,
-			);
-		}
-		else {
-			# All done buffering, refresh the screen
-			$client->update;
-		}
-	}
-}
-
-#
-# playout - play out what's in the buffer
-#
-sub playout {
-	my $client = shift;
-	return 1;
+	$client->readyToStream(1);
+	$client->SUPER::stop();
 }
 
 sub bufferFullness {
@@ -655,127 +496,6 @@ sub upgradeFirmware_SDK5 {
 	return undef;
 }
 
-# the old way: connect to 31337 and dump the file
-sub upgradeFirmware_SDK4 {
-	my ($client, $filename) = @_;
-
-	use bytes;
-
-	my $ip;
-
-	if (ref $client ) {
-
-		$ip = $client->ip;
-		$prefs->client($client)->set('powerOnBrightness', 4);
-		$prefs->client($client)->set('powerOffBrightness', 1);
-		$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
-
-	} else {
-
-		$ip = $client;
-	}
-
-	my $port    = 31337;  # upgrade port
-	my $iaddr   = inet_aton($ip) || return("Bad IP address: $ip\n");
-	my $paddr   = sockaddr_in($port, $iaddr);
-	my $proto   = getprotobyname('tcp');
-
-	socket(SOCK, PF_INET, SOCK_STREAM, $proto) || return("Couldn't open socket: $!\n");
-	binmode SOCK;
-
-	connect(SOCK, $paddr) || return("Connect failed $!\n");
-	
-	open FS, $filename || return("can't open $filename");
-	binmode FS;
-	
-	my $size = -s $filename;	
-	my $log  = logger('player.firmware');
-
-	$log->info("Updating firmware: Sending $size bytes");
-	
-	my $bytesread      = 0;
-	my $totalbytesread = 0;
-
-	while ($bytesread = read(FS, my $buf, 256)) {
-
-		syswrite(SOCK, $buf);
-
-		$totalbytesread += $bytesread;
-
-		$log->info("Updating firmware: $totalbytesread / $size");
-	}
-	
-	$log->info("Firmware updated successfully.");
-
-	close (SOCK) || return("Couldn't close socket to player.");
-
-	return undef; 
-}
-
-sub upgradeFirmware {
-	my $client = shift;
-
-	my $to_version;
-
-	if (ref $client ) {
-		$to_version = $client->needsUpgrade();
-	} else {
-		# for the "upgrade by ip address" web form:
-		$to_version = 10;
-	}
-
-	# if no upgrade path is given, then "upgrade" the client to itself.
-	$to_version = $client->revision unless $to_version;
-
-	my $file = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
-	my $log  = logger('player.firmware');
-
-	if (!-f $file) {
-
-		logWarning("File does not exist: $file");
-
-		return 0;
-	}
-	
-	$client->isUpgrading(1);
-	
-	# Notify about firmware upgrade starting
-	Slim::Control::Request::notifyFromArray( $client, [ 'firmware_upgrade' ] );
-
-	my $err;
-
-	if ((!ref $client) || ($client->revision <= 10)) {
-
-		$log->info("Using old update mechanism");
-
-		# not calling as a client method, because it might just be an
-		# IP address, if triggered from the web page.
-		$err = upgradeFirmware_SDK4($client, $file);
-
-	} else {
-
-		$log->info("Using new update mechanism");
-
-		$err = $client->upgradeFirmware_SDK5($file);
-	}
-
-	if (defined($err)) {
-
-		logWarning("Upgrade failed: $err");
-
-	} else {
-
-		$client->forgetClient();
-	}
-}
-
-# in order of preference based on whether we're connected via wired or wireless...
-sub formats {
-	my $client = shift;
-	
-	return qw(aif wav mp3);
-}
-
 sub vfd {
 	my $client = shift;
 	my $data = shift;
@@ -822,383 +542,414 @@ sub opened {
 #				// ____
 #				// [24]
 #
-sub stream {
-	my ($client, $command, $params) = @_;
+sub stream_s {
+	my ($client, $params) = @_;
 
 	my $format = $params->{'format'};
 
-	if ($client->opened()) {
-
-		if ( $log->is_info && $command eq 's' || $log->is_debug) {
-			$log->info(sprintf("stream called: $command paused: %s format: %s url: %s",
-				($params->{'paused'} || 'undef'), ($format || 'undef'), ($params->{'url'} || 'undef')
-			));
-			
-			#$log->debug( sub { bt(1) } );
-		}
-
-		my $autostart = 1;
-
-		# autostart off when pausing or stopping, otherwise 75%
-		if ($params->{'paused'} || $command =~ /^[pq]$/) {
-			$autostart = 0;
-		}
-
-		my $bufferThreshold;
-
-		if ($params->{'paused'}) {
-			$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('syncBufferThreshold');
-		}
-		else {
-			$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('bufferThreshold');
-		}
+	return unless ($client->opened());
 		
-		my $formatbyte;
-		my $pcmsamplesize;
-		my $pcmsamplerate;
-		my $pcmendian;
-		my $pcmchannels;
-		my $outputThreshold;
+	my $controller = $params->{'controller'};
+	my $url        = $controller->streamUrl();
+	my $track      = $controller->track();
+	my $handler    = $controller->protocolHandler();
+	my $isDirect   = $controller->isDirect();
+	my $master     = $client->master();
+
+	if ( $log->is_info) {
+		$log->info(sprintf("stream_s called:%s format: %s url: %s",
+			($params->{'paused'} ? ' paused' : ''), ($format || 'undef'), ($params->{'url'} || 'undef')
+		));
+	}
+
+	# autostart off when pausing, otherwise 75%
+	my $autostart = $params->{'paused'} ? 0 : 1;
+
+	my $bufferThreshold;
+
+	if ($params->{'paused'}) {
+		$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('syncBufferThreshold');
+	}
+	else {
+		$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('bufferThreshold');
+	}
+	
+	my $formatbyte;
+	my $pcmsamplesize;
+	my $pcmsamplerate;
+	my $pcmendian;
+	my $pcmchannels;
+	my $outputThreshold;
+	
+	if ($isDirect) {
+		# use getFormatForURL only if the format is not already given
+		# This method is bad because it only looks at the URL suffix and can cause
+		# (for example) Ogg HTTP streams to be played using the mp3 decoder!
+		if ( !$format && $handler->can("getFormatForURL") ) {
+			$format = $handler->getFormatForURL($url);
+		}
+	}
 		
-		my $track;
-		if ( $params->{url} ) {
-			$track = Slim::Schema->rs('Track')->objectForUrl( {
-				url => $params->{url},
-			} );
+	if ( !$format ) {
+		logBacktrace("*** stream('s') called with no format, defaulting to mp3 decoder, url: $params->{'url'}");
+	}
+
+	$format ||= 'mp3';
+
+	if ($format eq 'wav') {
+
+		$formatbyte      = 'p';
+		$pcmsamplesize   = 1;
+		$pcmsamplerate   = 3;
+		$pcmendian       = 1;
+		$pcmchannels     = 2;
+		$outputThreshold = 0;
+
+		if ( $track ) {
+			$pcmsamplesize = $client->pcm_sample_sizes($track);
+			$pcmsamplerate = $client->pcm_sample_rates($track);
+			$pcmchannels   = $track->channels() || '2';
 		}
 
-		my $handler;
-		my $server_url = $client->canDirectStream($params->{'url'});
+	} elsif ($format eq 'aif') {
 
-		if ($server_url) {
+		my $track = Slim::Schema->rs('Track')->objectForUrl({
+			'url' => $params->{url},
+		});
 
-			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);
+		$formatbyte      = 'p';
+		$pcmsamplesize   = 1;
+		$pcmsamplerate   = 3;
+		$pcmendian       = 0;
+		$pcmchannels     = 2;
+		$outputThreshold = 0;
 
-			# use getFormatForURL only if the format is not already given
-			# This method is bad because it only looks at the URL suffix and can cause
-			# (for example) Ogg HTTP streams to be played using the mp3 decoder!
-			if ( !$format && $handler->can("getFormatForURL") ) {
-				$format = $handler->getFormatForURL($server_url, $format);
+		if ( $track ) {
+			$pcmsamplesize = $client->pcm_sample_sizes($track);
+			$pcmsamplerate = $client->pcm_sample_rates($track);
+			$pcmchannels   = $track->channels() || '2';
+		 }
+
+	} elsif ($format eq 'flc') {
+
+		$formatbyte      = 'f';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 0;
+
+		# Threshold the output buffer for high sample-rate flac.
+		if ( $track ) {
+			if ( $track->samplerate() && $track->samplerate() >= 88200 ) {
+		    	$outputThreshold = 20;
 			}
 		}
-		
-		if ( !$format && $command eq 's' ) {
 
-			logBacktrace("*** stream('s') called with no format, defaulting to mp3 decoder, url: $params->{'url'}");
-		}
+	} elsif ( $format =~ /(?:wma|asx)/ ) {
 
-		$format ||= 'mp3';
+		$formatbyte = 'w';
 
-		if ($format eq 'wav') {
-
-			$formatbyte      = 'p';
-			$pcmsamplesize   = 1;
-			$pcmsamplerate   = 3;
-			$pcmendian       = 1;
-			$pcmchannels     = 2;
-			$outputThreshold = 0;
-
-			if ( $track ) {
-				$pcmsamplesize = $client->pcm_sample_sizes($track);
-				$pcmsamplerate = $client->pcm_sample_rates($track);
-				$pcmchannels   = $track->channels() || '2';
-			}
-
-		} elsif ($format eq 'aif') {
-
-			my $track = Slim::Schema->rs('Track')->objectForUrl({
-				'url' => $params->{url},
-			});
-
-			$formatbyte      = 'p';
-			$pcmsamplesize   = 1;
-			$pcmsamplerate   = 3;
-			$pcmendian       = 0;
-			$pcmchannels     = 2;
-			$outputThreshold = 0;
-
-			if ( $track ) {
-				$pcmsamplesize = $client->pcm_sample_sizes($track);
-				$pcmsamplerate = $client->pcm_sample_rates($track);
-				$pcmchannels   = $track->channels() || '2';
-			 }
-
-		} elsif ($format eq 'flc') {
-
-			$formatbyte      = 'f';
-			$pcmsamplesize   = '?';
-			$pcmsamplerate   = '?';
-			$pcmendian       = '?';
-			$pcmchannels     = '?';
-			$outputThreshold = 0;
-
-			# Threshold the output buffer for high sample-rate flac.
-			if ( $track ) {
-				if ( $track->samplerate() && $track->samplerate() >= 88200 ) {
-			    	$outputThreshold = 20;
-				}
-			}
-
-		} elsif ( $format =~ /(?:wma|asx)/ ) {
-
-			$formatbyte = 'w';
-
-			# Commandeer the unused pcmsamplesize field
-			# to indicate whether the data coming in is
-			# going to have the mms/http chunking headers.
-			if ($server_url) {
-
-				$pcmsamplesize = 1;
+		# Commandeer the unused pcmsamplesize field
+		# to indicate whether the data coming in is
+		# going to have the mms/http chunking headers.
+		if ($isDirect) {
+			$pcmsamplesize = 1;
 				
-				# Bugs 5631, 7762
-				# Check WMA metadata to see if this remote stream is being served from a
-				# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
-				# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
-				if ( my $scanData = $client->scanData->{ $server_url } ) {
-					if ( my $meta = $scanData->{metadata} ) {
-						if ( $meta->info('flags')->{broadcast} == 0 ) {
-							if ( $scanData->{headers}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
-								# The server didn't return the expected ASF header content-type,
-								# so we assume it's not a Windows Media server
-								$pcmsamplesize = 0;
-							}
-						}
+			# Bugs 5631, 7762
+			# Check WMA metadata to see if this remote stream is being served from a
+			# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
+			# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
+			my ($scanData, $meta);
+			if ( ($scanData = $controller->song()->{'scanData'}) 
+				&& ($scanData = $scanData->{$url})
+				&& ($meta = $scanData->{'metadata'}) )
+			{
+				if ( $meta->info('flags')->{'broadcast'} == 0 ) {
+					if ( $scanData->{'headers'}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
+						# The server didn't return the expected ASF header content-type,
+						# so we assume it's not a Windows Media server
+						$pcmsamplesize = 0;
 					}
 				}
-
-			} else {
-
-				$pcmsamplesize = 0;
 			}
-			
-			$directlog->is_debug && $directlog->debug( "WMA PCM sample size set to $pcmsamplesize" );
-
-			$pcmsamplerate   = chr(1);
-			$pcmendian       = '?';
-			$pcmchannels     = '?';
-			$outputThreshold = 10;
-
-		} elsif ($format eq 'ogg') {
-
-                        $formatbyte      = 'o';
-                        $pcmsamplesize   = '?';
-                        $pcmsamplerate   = '?';
-                        $pcmendian       = '?';
-                        $pcmchannels     = '?';
-			$outputThreshold = 20;
 
 		} else {
 
-			# assume MP3
-			$formatbyte      = 'm';
-			$pcmsamplesize   = '?';
-			$pcmsamplerate   = '?';
-			$pcmendian       = '?';
-			$pcmchannels     = '?';
-			$outputThreshold = 0;
+			$pcmsamplesize = 0;
+		}
 			
-			# Change pcmsamplesize to indicate Rhapsody Direct
-			if ( $server_url && $server_url =~ /\.rad$/ ) {
-				# Rhapsody Direct
-				$pcmsamplesize = 3;
-			}
-			
-			# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
-			# other audio types, resulting in static. 
-			if ( $format ne 'mp3' ) {
+		logger('player.streaming.direct')->debug( "WMA PCM sample size set to $pcmsamplesize" );
 
-				logBacktrace("*** mp3 decoder used for format: $format, url: $params->{'url'}");
-			}
-		}
-		
-		my $request_string = '';
-		my ($server_port, $server_ip);
+		$pcmsamplerate   = chr(1);
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 10;
 
-		if ($command eq 's') {
-			
-			# When streaming a new song, we reset the buffer fullness value so buffering()
-			# doesn't get an outdated fullness result
-			Slim::Networking::Slimproto::fullness( $client, 0 );
-			
-			if ($server_url) {
+	} elsif ($format eq 'ogg') {
 
-				$directlog->is_info && $directlog->info("This player supports direct streaming for $params->{'url'} as $server_url, let's do it.");
-		
-				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
-				
-				# If a proxy server is set, change ip/port
-				my $proxy;
-				if ( main::SLIM_SERVICE ) {
-					$proxy = $prefs->client($client)->get('webproxy');
-				}
-				else {
-					$proxy = $prefs->get('webproxy');
-				}
-				
-				if ( $proxy ) {
-					my ($pserver, $pport) = split /:/, $proxy;
-					$server = $pserver;
-					$port   = $pport;
-				}
-				
-				my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
-				if ($port && $addrs[0]) {
-					$server_port = $port;
-					$server_ip = unpack('N',$addrs[0]);
-				}
+		$formatbyte      = 'o';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 20;
 
-				$request_string = $handler->requestString($client, $server_url, undef, 1);  
-				$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
+	} else {
 
-				if (!$server_port || !$server_ip) {
+		# assume MP3
+		$formatbyte      = 'm';
+		$pcmsamplesize   = '?';
+		$pcmsamplerate   = '?';
+		$pcmendian       = '?';
+		$pcmchannels     = '?';
+		$outputThreshold = 0;
 
-					$directlog->info("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.");
+		# Change pcmsamplesize to indicate Rhapsody Direct
+		if ( $url && $url =~ /\.rad$/ ) {
+			# Rhapsody Direct
+			$pcmsamplesize = 3;
+		}	
 
-					$client->failedDirectStream();
-					Slim::Networking::Slimproto::stop($client);
-					return;
-
-				} else {
-
-					if ( $directlog->is_info ) {
-						$directlog->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
-						$directlog->info("request string: $request_string");
-					}
-
-					$client->directURL($params->{url});
-				}
-				
-				if ( $format =~ /(?:wma|asx)/ ) {
-					# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
-					# so the firmware knows which stream to play
-					if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
-						$pcmsamplerate = chr($streamNum);
-					}
-				}
-	
-			} else {
-
-				$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0\n", $client->id);
-			
-				if ($prefs->get('authorize')) {
-
-					$client->password(generate_random_string(10));
-				
-					my $password = encode_base64('squeezeboxXXX:' . $client->password);
-				
-					$request_string .= "Authorization: Basic $password\n";
-				}
-
-				$server_port = $prefs->get('httpport');
-
-				# server IP of 0 means use IP of control server
-				$server_ip = 0;
-				$request_string .= "\n";
-
-				if (length($request_string) % 2) {
-					$request_string .= "\n";
-				}
-			}
-		}
-
-		# If we're sending an 's' command but got no request string, don't send it
-		# This is used when syncing Rhapsody radio stations so slaves don't request the radio playlist
-		if ( $command eq 's' && !$request_string ) {
-			return;
-		}
-
-		if ( $command eq 's' && $log->is_info ) {
-			$log->info(sprintf(
-				"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
-				$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
-			));
-		}
-
-		my $flags = 0;
-		$flags |= 0x40 if $params->{reconnect};
-		$flags |= 0x80 if $params->{loop};
-		$flags |= ($prefs->client($client)->get('polarityInversion') || 0);
-		
-		# ReplayGain field is also used for startAt, pauseAt, unpauseAt, timestamp
-		my $replayGain = 0;
-		my $interval = $params->{interval} || 0;
-		if ($command eq 'a' || $command eq 'p') {
-			$replayGain = int($interval * 1000);
-		}
-		elsif ($command eq 'u') {
-			 $replayGain = $interval;
-		}
-		elsif ($command eq 't') {
-			$replayGain = int(Time::HiRes::time() * 1000 % 0xffffffff);
-		}
-		else {
-			$replayGain = $client->canDoReplayGain($params->{replay_gain});
-		}
-		
-		# Reduce buffer threshold if a remote file is really small
-		if ( $track && $track->remote && $track->filesize && $track->filesize < ( $bufferThreshold * 1024 ) ) {
-			$bufferThreshold = int( $track->filesize / 1024 ) - 1;
-			$log->info( "Reducing buffer threshold to $bufferThreshold" );
-		}
-		
-		# If looping, reduce the threshold, some of our sounds are really short
-		if ( $params->{loop} ) {
-			$bufferThreshold = 10;
-		}
-
-		$log->is_debug && $log->debug("flags: $flags");
-
-		my $transitionType = $prefs->client($client)->get('transitionType') || 0;
-		
-		if ( $command eq 's' ) {
-			# If we need to determine dynamically
-			if (
-				$prefs->client($client)->get('transitionSmart') 
-				&&
-				( Slim::Player::ReplayGain->trackAlbumMatch( $client, -1 ) 
-				  ||
-				  Slim::Player::ReplayGain->trackAlbumMatch( $client, 1 )
-				)
-			) {
-				$log->info('Using smart transition mode');
-				$transitionType = 0;
-			}
-		}
-
-		my $frame = pack 'aaaaaaaCCCaCCCNnN', (
-			$command,	# command
-			$autostart,
-			$formatbyte,
-			$pcmsamplesize,
-			$pcmsamplerate,
-			$pcmchannels,
-			$pcmendian,
-			$bufferThreshold,
-			0,		# s/pdif auto
-			$prefs->client($client)->get('transitionDuration') || 0,
-			$transitionType,
-			$flags,		# flags	     
-			$outputThreshold,
-			0,		# reserved
-			$replayGain,	
-			$server_port || $prefs->get('httpport'),  # use slim server's IP
-			$server_ip || 0,
-		);
-	
-		assert(length($frame) == 24);
-	
-		$frame .= $request_string;
-
-		if ( $log->is_debug ) {
-			$log->info("sending strm frame of length: " . length($frame) . " request string: [$request_string]");
-		}
-
-		$client->sendFrame('strm', \$frame);
-
-		if ($client->pitch() != 100 && $command eq 's') {
-			$client->sendPitch($client->pitch());
+		# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
+		# other audio types, resulting in static. 
+		if ( $format ne 'mp3' ) {
+			logBacktrace("*** mp3 decoder used for format: $format, url: $params->{'url'}");
 		}
 	}
+		
+	my $request_string = '';
+	my ($server_port, $server_ip);
+	
+	# When streaming a new song, we reset the buffer fullness value so buffering()
+	# doesn't get an outdated fullness result
+	Slim::Networking::Slimproto::fullness( $client, 0 );
+			
+	if ($isDirect) {
+
+		# Logger for direct streaming
+		my $log = logger('player.streaming.direct');
+
+		$log->info("This player supports direct streaming for $params->{'url'} as $url, let's do it.");
+		
+		my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
+				
+		# If a proxy server is set, change ip/port
+		my $proxy;
+		if ( main::SLIM_SERVICE ) {
+			$proxy = $prefs->client($client)->get('webproxy');
+		}
+		else {
+			$proxy = $prefs->get('webproxy');
+		}
+		
+		if ( $proxy ) {
+			my ($pserver, $pport) = split /:/, $proxy;
+			$server = $pserver;
+			$port   = $pport;
+		}
+				
+		my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
+		if ($port && $addrs[0]) {
+			$server_port = $port;
+			$server_ip = unpack('N',$addrs[0]);
+		}
+
+		$request_string = $handler->requestString($client, $url, undef, $params->{'seekdata'});  
+		$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
+
+		if (!$server_port || !$server_ip) {
+
+			$log->info("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.");
+
+				$client->failedDirectStream();
+				Slim::Networking::Slimproto::stop($client);
+				return 0;
+
+			} else {
+
+				$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
+				$log->info("request string: $request_string");
+			}
+				
+			if ( $format =~ /(?:wma|asx)/ ) {
+				# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
+				# so the firmware knows which stream to play
+				if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
+					$pcmsamplerate = chr($streamNum);
+			}
+		}
+	
+	} else {
+
+		$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0\n", $client->id);
+			
+		if ($prefs->get('authorize')) {
+
+			$client->password(generate_random_string(10));
+				
+			my $password = encode_base64('squeezeboxXXX:' . $client->password);
+				
+			$request_string .= "Authorization: Basic $password\n";
+		}
+
+		$server_port = $prefs->get('httpport');
+
+		# server IP of 0 means use IP of control server
+		$server_ip = 0;
+		$request_string .= "\n";
+
+		if (length($request_string) % 2) {
+			$request_string .= "\n";
+		}
+	}
+
+
+	# If we're sending an 's' command but got no request string, don't send it
+	# This is used when syncing Rhapsody radio stations so slaves don't request the radio playlist
+	if ( !$request_string ) {
+		return;
+	}
+
+	if ( $log->is_info ) {
+		$log->info(sprintf(
+			"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
+			$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
+		));
+	}
+
+	my $flags = 0;
+	$flags |= 0x40 if $params->{reconnect};
+	$flags |= 0x80 if $params->{loop};
+	$flags |= ($prefs->client($client)->get('polarityInversion') || 0);
+		
+	my $replayGain = $client->canDoReplayGain($params->{replay_gain});
+		
+	# Reduce buffer threshold if a file is really small
+	if ( $track && $track->filesize && $track->filesize < ( $bufferThreshold * 1024 ) ) {
+		$bufferThreshold = int( $track->filesize / 1024 ) - 1;
+		$log->info( "Reducing buffer threshold to $bufferThreshold due to small file" );
+	}
+		
+	# If looping, reduce the threshold, some of our sounds are really short
+	if ( $params->{loop} ) {
+		$bufferThreshold = 10;
+	}
+
+	$log->debug("flags: $flags");
+
+	my $transitionType = $prefs->client($master)->get('transitionType') || 0;
+	
+	# If we need to determine dynamically
+	if (
+		$prefs->client($master)->get('transitionSmart') 
+		&&
+		( Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
+		  ||
+		  Slim::Player::ReplayGain->trackAlbumMatch( $master, 1 )
+		)
+	) {
+		$log->info('Using smart transition mode');
+		$transitionType = 0;
+	}
+
+	my $frame = pack 'aaaaaaaCCCaCCCNnN', (
+		's',	# command
+		$autostart,
+		$formatbyte,
+		$pcmsamplesize,
+		$pcmsamplerate,
+		$pcmchannels,
+		$pcmendian,
+		$bufferThreshold,
+		0,		# s/pdif auto
+		$prefs->client($master)->get('transitionDuration') || 0,
+		$transitionType,
+		$flags,		# flags	     
+		$outputThreshold,
+		0,		# reserved
+		$replayGain,	
+		$server_port || $prefs->get('httpport'),  # use slim server's IP
+		$server_ip || 0,
+	);
+	
+	assert(length($frame) == 24);
+	
+	$frame .= $request_string;
+
+	if ( $log->is_debug ) {
+		$log->info("sending strm frame of length: " . length($frame) . " request string: [$request_string]");
+	}
+
+	$client->sendFrame('strm', \$frame);
+	
+	$client->readyToStream(0);
+
+	if ($client->pitch() != 100) {
+		$client->sendPitch($client->pitch());
+	}
+	
+	return 1;
+}
+
+# Everything except 's' command
+sub stream {
+	my ($client, $command, $params) = @_;
+
+	my $log    = logger('network.protocol.slimproto');
+
+	return unless ($client->opened());
+	
+	if ( ($log->is_info && $command ne 't') || $log->is_debug) {
+		$log->info("strm-$command");
+	}
+
+	my $flags = 0;
+	$flags |= ($prefs->client($client)->get('polarityInversion') || 0);
+		
+	# ReplayGain field is also used for startAt, pauseAt, unpauseAt, timestamp
+	my $replayGain = 0;
+	my $interval = $params->{interval} || 0;
+	if ($command eq 'a' || $command eq 'p') {
+		$replayGain = int($interval * 1000);
+	}
+	elsif ($command eq 'u') {
+		 $replayGain = $interval;
+	}
+	elsif ($command eq 't') {
+		$replayGain = int(Time::HiRes::time() * 1000 % 0xffffffff);
+	}
+	else {
+		$replayGain = $client->canDoReplayGain($params->{replay_gain});
+	}
+		
+	my $frame = pack 'aaaaaaaCCCaCCCNnN', (
+		$command,	# command
+		0,		# autostart
+		'm',	# format byte
+		'?',
+		'?',
+		'?',
+		'?',
+		0,		# bufferTthreshold
+		0,		# s/pdif auto
+		0,		# transition duration
+		0,		# transition type
+		$flags,	# flags	     
+		0,		# outputThreshold
+		0,		# reserved
+		$replayGain,	
+		0,		# server_port 
+		0,		# server_ip 
+	);
+
+	assert(length($frame) == 24);
+	
+	if ( $log->is_debug ) {
+		$log->info("sending strm frame of length: " . length($frame));
+	}
+
+	$client->sendFrame('strm', \$frame);	
 }
 
 sub pcm_sample_sizes {
@@ -1211,25 +962,9 @@ sub pcm_sample_sizes {
 				 32 => '3',
 				 );
 
-	my $size = $pcm_sample_sizes{$track->samplesize()};
+	my $size = $pcm_sample_sizes{$track->samplesize() || 16};
 
 	return defined $size ? $size : '1';
-}
-
-sub pcm_sample_rates {
-	my $client = shift;
-	my $track = shift;
-
-    	my %pcm_sample_rates = ( 11025 => '0',				 
-				 22050 => '1',				 
-				 32000 => '2',
-				 44100 => '3',
-				 48000 => '4',
-				 );
-
-	my $rate = $pcm_sample_rates{$track->samplerate()};
-
-	return defined $rate ? $rate : '3';
 }
 
 sub sendFrame {
@@ -1321,100 +1056,6 @@ sub i2c {
 	}
 }
 
-# set the mas35x9 pitch rate as a percentage of the normal rate, where 100% is 100.
-sub pitch {
-	my $client = shift;
-	my $newpitch = shift;
-	
-	my $pitch = $client->SUPER::pitch($newpitch, @_) || $newpitch;
-
-	if (defined($newpitch)) {
-		$client->sendPitch($pitch);
-	}
-
-	return $pitch;
-}
-
-sub sendPitch {
-	my $client = shift;
-	my $pitch = shift;
-	
-	my $freq = int(18432 / ($pitch / 100));
-	my $freqHex = sprintf('%05X', $freq);
-
-	# This only works for mp3 - only change pitch for mp3 format
-	if ($client->masterOrSelf->streamformat() && ($client->masterOrSelf->streamformat() eq 'mp3')) {
-
-		$client->i2c(
-			Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
-				Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
-				Slim::Hardware::mas35x9::masWrite('IOControlMain', '00015')     # MP3
-		);
-
-		logger('player')->debug("Pitch frequency set to $freq ($freqHex)");
-	}
-}
-	
-sub maxPitch {
-	return 110;
-}
-
-sub minPitch {
-	return 80;
-}
-
-sub volume {
-	my $client = shift;
-	my $newvolume = shift;
-
-	my $volume = $client->SUPER::volume($newvolume, @_);
-
-	if (defined($newvolume)) {
-		# really the only way to make everyone happy will be use a combination of digital and analog volume controls as the 
-		# default, but then have knobs so you can tune it for max headphone power, lowest noise at low volume, 
-		# fixed/variable s/pdif, etc.
-	
-		if ($prefs->client($client)->get('digitalVolumeControl')) {
-			# here's one way to do it: adjust digital gains, leave fixed 3db boost on the main volume control
-			# this does achieve good analog output voltage (important for headphone power) but is not optimal
-			# for low volume levels. If only the analog outputs are being used, and digital gain is not required, then 
-			# use the other method.
-			#
-			# When the main volume control is set to +3db (0x7600), there is no clipping at the analog outputs 
-			# at max volume, for the loudest 1KHz sine wave I could record.
-			#
-			# At +12db, the clipping level is around 23/40 (on our thermometer bar).
-			#
-			# The higher the analog gain is set, the closer it can "match" (3v pk-pk) the max S/PDIF level. 
-			# However, at any more than +3db it starts to get noisy, so +3db is the max we should use without 
-			# some clever tricks to combine the two gain controls.
-			#
-	
-			my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume)**2));
-
-			$client->i2c(
-				Slim::Hardware::mas35x9::masWrite('out_LL', $level) .
-				Slim::Hardware::mas35x9::masWrite('out_RR', $level) .
-				Slim::Hardware::mas35x9::masWrite('VOLUME', '7600')
-			);
-	
-		} else {
-
-			# or: leave the digital controls always at 0db and vary the main volume:
-			# much better for the analog outputs, but this does force the S/PDIF level to be fixed.
-			my $level = sprintf('%02X00', 0x73 * ($volume / $client->maxVolume)**0.1);
-	
-			$client->i2c(
-				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000') .
-				Slim::Hardware::mas35x9::masWrite('out_RR', '80000') .
-				Slim::Hardware::mas35x9::masWrite('VOLUME', $level)
-			);
-		}
-	}
-
-	return $volume;
-}
-
 sub mixerConstant {
 	my ($client, $feature, $aspect) = @_;
 
@@ -1440,30 +1081,6 @@ sub volumeString {
 	}
 
 	return sprintf(' (%i)', $volume);
-}
-
-sub bass {
-	my $client = shift;
-	my $newbass = shift;
-
-	my $bass = $client->SUPER::bass($newbass);
-	$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));	
-
-	return $bass;
-}
-
-sub treble {
-	my $client = shift;
-	my $newtreble = shift;
-
-	my $treble = $client->SUPER::treble($newtreble);
-	$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));	
-
-	return $treble;
-}
-
-sub requestStatus {
-	shift->sendFrame('i2cc');
 }
 
 1;

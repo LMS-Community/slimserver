@@ -166,9 +166,6 @@ sub handleError {
 	# Strip long number string from front of error
 	$error =~ s/\d+( : )?//;
 	
-	# Allow status updates again
-	$client->suppressStatus(0);
-	
 	# XXX: Need to give error feedback for web requests
 
 	if ( $client ) {

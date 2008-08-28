@@ -31,6 +31,8 @@ use constant DEFAULT_TYPE => 'wma';
 # Use the same random GUID for all connections
 our $guid;
 
+sub isRemote { 1 }
+
 =head2 new ( $class, $args )
 
 Create a new instance of the MMS protocol handler, only for transcoding using wmadec or
@@ -83,13 +85,6 @@ sub contentType {
 	return ${*$self}{'contentType'};
 }
 
-# Whether or not to display buffering info while a track is loading
-sub showBuffering {
-	my ( $class, $client, $url ) = @_;
-	
-	return $client->showBuffering;
-}
-
 sub randomGUID {
 
 	return $guid if $guid;
@@ -110,7 +105,7 @@ sub randomGUID {
 }
 
 sub canDirectStream {
-	my ($classOrSelf, $client, $url) = @_;
+	my ($classOrSelf, $client, $url, $inType) = @_;
 	
 	if ( main::SLIM_SERVICE ) {
 		# Strip noscan info from URL
@@ -120,7 +115,7 @@ sub canDirectStream {
 	# Bug 3181 & Others. Check the available types - if the user has
 	# disabled built-in WMA, return false. This is required for streams
 	# that are MMS only, or for WMA codecs we don't support in firmware.
-	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, DEFAULT_TYPE);
+	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, $inType || DEFAULT_TYPE);
 
 	if (defined $command && $command eq '-') {
 		return $url;
@@ -137,6 +132,8 @@ sub requestString {
 	my $classOrSelf = shift;
 	my $client      = shift;
 	my $url         = shift;
+	my $post		= shift; # not used
+	my $seekdata    = shift || {};
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
@@ -164,17 +161,23 @@ sub requestString {
 		"Pragma: xClientGUID={" . randomGUID() . "}",
 	);
 	
-	my $scanData  = $client->scanData->{ $url } || {};
-	my $streamNum = $scanData->{streamNum} || 1;
-	my $metadata  = $scanData->{metadata};
-	my $seekdata  = $client->scanData->{seekdata} || {};
+	my $song = $client->streamingSong();
+	my $streamNum = 1;
+	my $metadata;
+	my $scanData;
+	
+	if ($song && ($scanData = $song->{'scanData'}) && ($scanData = $scanData->{$url})) {
+		$log->info("Getting scanData from song");
+		$streamNum = $scanData->{'streamNum'};
+		$metadata  = $scanData->{'metadata'};
+	}
 	
 	# Handle our metadata
 	if ( $metadata ) {
 		setMetadata( $client, $url, $metadata, $streamNum );
 	}
 	
-	my $newtime = $seekdata->{newtime};
+	my $newtime = $seekdata->{timeOffset};
 	
 	my $context    = $newtime ? 4 : 2;
 	my $streamtime = $newtime ? $newtime * 1000 : 0;
@@ -192,11 +195,8 @@ sub requestString {
 	
 	# Fix progress bar if seeking
 	if ( $newtime ) {
-		$client->masterOrSelf->currentsongqueue()->[-1]->{startOffset} = $newtime;
-		$client->masterOrSelf->remoteStreamStartTime( Time::HiRes::time() - $newtime );
-		
-		# Remove seek data
-		delete $client->scanData->{seekdata};
+		$client->master()->currentsongqueue()->[-1]->{startOffset} = $newtime;
+		$client->master()->remoteStreamStartTime( Time::HiRes::time() - $newtime );
 	}
 
 	# make the request
@@ -245,14 +245,12 @@ sub parseDirectHeaders {
 }
 
 sub parseMetadata {
-	my ( $client, $url, $metadata ) = @_;
+	my ( $client, $song, $metadata ) = @_;
 	
 	my $wma       = Audio::WMA->parseObject( $metadata );
-	
-	my $scanData  = $client->scanData->{ $url } || {};
-	my $streamNum = $scanData->{streamNum} || 1;
+	my $streamNum = $song->{'scanData'}->{$song->{'streamUrl'}}->{'streamNum'} || 1;
 
-	setMetadata( $client, $url, $wma, $streamNum );
+	setMetadata( $client, $song->{'streamUrl'}, $wma, $streamNum );
 	
 	return;
 }
@@ -329,7 +327,7 @@ sub setMetadata {
 
 			Slim::Music::Info::setCurrentTitle($url, $title);
 
-			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+			for my $everybuddy ( $client->syncGroupActiveMembers()) {
 				$everybuddy->update();
 			}
 		
@@ -338,47 +336,23 @@ sub setMetadata {
 	}
 }
 
-# Handle normal advances to the next track
-sub onDecoderUnderrun {
-	my ( $class, $client, $nextURL, $callback ) = @_;
-	
-	# Flag that we don't want any buffering messages while loading the next track,
-	$client->showBuffering( 0 );
-	
-	$log->debug( 'Scanning next HTTP track before playback' );
-	
-	Slim::Player::Protocols::HTTP->scanHTTPTrack( $client, $nextURL, $callback );
-}
 
-# On skip, load the next track before playback
-sub onJump {
-	my ( $class, $client, $nextURL, $callback ) = @_;
-	
-	# If seeking, we can avoid scanning	
-	if ( $client->scanData->{seekdata} ) {
-		# XXX: we could set showBuffering to 0 but on slow
-		# streams there would be no feedback
-		
-		$callback->();
-		return;
-	}
-
-	# Display buffering info on loading the next track
-	$client->showBuffering( 1 );
-	
-	$log->debug( 'Scanning next HTTP track before playback' );
-	
-	Slim::Player::Protocols::HTTP->scanHTTPTrack( $client, $nextURL, $callback );
+sub scanUrl {
+	my ( $class, $url, $args ) = @_;
+	Slim::Player::Protocols::HTTP->scanUrl($url, $args);
 }
 
 sub canSeek {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	$client = $client->masterOrSelf;
+	$client = $client->master();
 	
 	# Remote stream must be seekable
-	my $scanData = $client->scanData->{ $url } || {};
-	if ( my $headers = $scanData->{headers} ) {
+	my ($headers, $scanData);
+	if ( ($scanData = $song->{'scanData'})
+		&& ($scanData = $scanData->{$song->currentTrack()->url})
+		&& ($headers = $scanData->{headers}) )
+	{
 		if ( $headers->content_type eq 'application/vnd.ms.wms-hdr.asfv1' ) {
 			# Stream is from a Windows Media server and we can seek if seekable flag is true
 			if ( $scanData->{metadata}->info('flags')->{seekable} ) {
@@ -391,12 +365,13 @@ sub canSeek {
 }
 
 sub canSeekError {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	$client = $client->masterOrSelf;
-	
-	my $scanData = $client->scanData->{ $url } || {};
-	if ( my $metadata = $scanData->{metadata} ) {
+	my ($metadata, $scanData);
+	if ( ($scanData = $song->{'scanData'})
+		&& ($scanData = $scanData->{$song->currentTrack()->url})
+		&& ($metadata = $scanData->{metadata}) )
+	{
 		if ( $metadata->info('flags')->{broadcast} ) {
 			return 'SEEK_ERROR_LIVE';
 		}
@@ -406,50 +381,28 @@ sub canSeekError {
 }
 
 sub getSeekData {
-	my ( $class, $client, $url, $newtime ) = @_;
-	
-	$client = $client->masterOrSelf;
-	
+	my ( $class, $client, $song, $newtime ) = @_;
+		
 	# Determine byte offset and song length in bytes
-	my $data = {};
-	
-	my $scanData = $client->scanData->{ $url } || {};
-	if ( my $metadata = $scanData->{metadata} ) {
-		my $bitrate = Slim::Music::Info::getBitrate( $url ) || return;
-		my $seconds = $metadata->info('playtime_seconds')   || return;
+
+	my ($metadata, $scanData);
+	if ( ($scanData = $song->{'scanData'})
+		&& ($scanData = $scanData->{$song->currentTrack()->url})
+		&& ($metadata = $scanData->{metadata}) )
+	{
+		my $bitrate = Slim::Music::Info::getBitrate( $song->currentTrack()->url ) || return;
 		
 		$bitrate /= 1000;
 		
-		$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream of $seconds length" );
-		
-		$data->{newoffset}         = ( ( $bitrate * 1024 ) / 8 ) * $newtime;
-		$data->{songLengthInBytes} = ( ( $bitrate * 1024 ) / 8 ) * $seconds;
-	}
-	
-	return $data;
-}
+		$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream" );
 
-sub setSeekData {
-	my ( $class, $client, $url, $newtime, $newoffset ) = @_;
-	
-	my @clients;
-	
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# if synced, save seek data for all players
-		my $master = Slim::Player::Sync::masterOrSelf($client);
-		push @clients, $master, @{ $master->slaves };
-	}
-	else {
-		push @clients, $client;
+		return {
+			sourceStreamOffset   => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
+			timeOffset           => $newtime,
+		};		
 	}
 	
-	for my $client ( @clients ) {
-		# Save the new seek point
-		$client->scanData->{seekdata} = {
-			newtime   => $newtime,
-			newoffset => $newoffset,
-		};
-	}
+	return undef;
 }
 
 # reinit is used on SN to maintain seamless playback when bumped to another instance

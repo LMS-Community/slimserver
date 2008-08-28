@@ -434,4 +434,6 @@ sub _isOggPageHeader {
 	return 1;
 }
 
+sub canSeek {1}
+
 1;

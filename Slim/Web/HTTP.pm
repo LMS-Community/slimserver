@@ -68,13 +68,19 @@ BEGIN {
 	}
 }
 
+use constant defaultSkin => 'Default';
 use constant baseSkin	 => 'EN';
 use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 
 use constant METADATAINTERVAL => 32768;
 use constant MAXCHUNKSIZE     => 32768;
 
-use constant RETRY_TIME       => 0.05; # normal retry time
+# This used to be 0.05s but the CPU load associated with such fast retries is 
+# really noticeable when playing remote streams. I guess that it is possible
+# that certain combinations of pipe buffers in a transcoding pipeline
+# (others than those covered by PIPE_BUF_THRES/RETRY_TIME_FAST)
+# might get caught by this but I have not been able to think of any - Alan.
+use constant RETRY_TIME       => 0.40; # normal retry time
 use constant RETRY_TIME_FAST  => 0.02; # faster retry for streaming pcm on platforms with small pipe buffer
 use constant PIPE_BUF_THRES   => 4096; # threshold for switching between retry times
 
@@ -318,17 +324,12 @@ sub skins {
 
 			$log->info("skin entry: $dir");
 
-			if ($UI) {
-				
-				$dir = Slim::Utils::Misc::unescape($dir);
-				my $name = Slim::Utils::Strings::getString( uc($dir) . '_SKIN' );
-
-				$skinlist{ $dir } = $name eq uc($dir) . '_SKIN' ? $dir : $name;
-			}
-			
-			else {
-				
-				$skinlist{ uc $dir } = $dir;
+			if ($dir eq defaultSkin()) {
+				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('DEFAULT_SKIN') : defaultSkin();
+			} elsif ($dir eq baseSkin()) {
+				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('BASE_SKIN') : baseSkin();
+			} else {
+				$skinlist{ $UI ? $dir : uc $dir } = Slim::Utils::Misc::unescape($dir);
 			}
 		}
 	}
@@ -1074,18 +1075,11 @@ sub generateHTTPResponse {
 	}
 
 	# this might do well to break up into methods
-	if ($contentType =~ /(?:image|javascript|css)/ || $path =~ /html\//) {
- 
-		my $max = 60 * 60;
-		
-		# increase expiry to a week for static content, but not cover art
-		unless ($contentType =~ /image/ && $path !~ /html\//) {
-			$max = $max * 24 * 7;
-		}
-		
- 		# static content should expire from cache in one hour
-		$response->expires( time() + $max );
-		$response->header('Cache-Control' => 'max-age=' . $max);
+	if ($contentType =~ /(?:image|javascript|css)/) {
+
+		# static content should expire from cache in one hour
+		$response->expires( time() + 3600 );
+		$response->header('Cache-Control' => 'max-age=3600');
 	}
 
 	if ($contentType =~ /text/ && $path !~ /memoryusage/) {
@@ -2061,25 +2055,32 @@ sub sendStreamingResponse {
 
 			} else {
 
-				$chunkRef = Slim::Player::Source::nextChunk($client, MAXCHUNKSIZE);
+				$chunkRef = $client->nextChunk(MAXCHUNKSIZE);
 			}
 
 			# otherwise, queue up the next chunk of sound
-			if ($chunkRef && length($$chunkRef)) {
-
-				if ( $log->is_info ) {
-					$log->info("(audio: " . length($$chunkRef) . " bytes)");
+			if ($chunkRef) {
+					
+				if (length($$chunkRef)) {
+	
+					if ( $log->is_info ) {
+						$log->info("(audio: " . length($$chunkRef) . " bytes)");
+					}
+	
+					my %segment = ( 
+						'data'   => $chunkRef,
+						'offset' => 0,
+						'length' => length($$chunkRef)
+					);
+	
+					$lastSegLen{$httpClient} = length($$chunkRef);
+	
+					unshift @{$outbuf{$httpClient}},\%segment;
+					
+				} else {
+					$log->info("Found an empty chunk on the queue - dropping the streaming connection.");
+					forgetClient($client);
 				}
-
-				my %segment = ( 
-					'data'   => $chunkRef,
-					'offset' => 0,
-					'length' => length($$chunkRef)
-				);
-
-				$lastSegLen{$httpClient} = length($$chunkRef);
-
-				unshift @{$outbuf{$httpClient}},\%segment;
 
 			} else {
 
@@ -2556,7 +2557,7 @@ sub buildStatusHeaders {
 			my $track = Slim::Schema->rs('Track')->objectForUrl(Slim::Player::Playlist::song($client));
 	
 			$headers{"x-playertrack"} = Slim::Player::Playlist::url($client); 
-			$headers{"x-playerindex"} = Slim::Player::Source::currentSongIndex($client) + 1;
+			$headers{"x-playerindex"} = Slim::Player::Source::streamingSongIndex($client) + 1;
 			$headers{"x-playertime"}  = Slim::Player::Source::songTime($client);
 
 			if (blessed($track) && $track->can('artist')) {

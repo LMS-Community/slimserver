@@ -67,7 +67,7 @@ sub getFormatForURL {
 	return DEFAULT_TYPE;
 }
 
-=head2 requestString( $client, $url, [ $post ] )
+=head2 requestString( $client, $url, [ $post, [ $seekdata ] ] )
 
 Generate a HTTP request string suitable for sending to a HTTP server.
 
@@ -78,6 +78,7 @@ sub requestString {
 	my $client = shift;
 	my $url    = shift;
 	my $post   = shift;
+	my $seekdata = shift;
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
  
@@ -120,15 +121,12 @@ sub requestString {
 	}
 	
 	# If seeking, add Range header
-	if ($client && (my $seekdata = $client->scanData->{seekdata} )) {
-		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{newoffset} ) . '-';
+	if ($client && $seekdata) {
+		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{sourceStreamOffset} ) . '-';
 		
 		# Fix progress bar
-		$client->masterOrSelf->currentsongqueue()->[-1]->{startOffset} = $seekdata->{newtime};
-		$client->masterOrSelf->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{newtime} );
-
-		# Remove seek data
-		delete $client->scanData->{seekdata};
+		$client->master()->currentsongqueue()->[-1]->{startOffset} = $seekdata->{timeOffset};
+		$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
 	}
 
 	# Send additional information if we're POSTing
@@ -284,16 +282,7 @@ sub parseHeaders {
 			} );
 		}
 	}
-	
-	if ( $self->contentLength && Slim::Music::Info::mimeToType( $self->contentType ) eq 'mp3' ) {
-		$log->debug("Stream supports seeking");
-		$client->scanData->{mp3_can_seek} = 1;
-	}
-	else {
-		$log->debug("Stream does not support seeking");
-		delete $client->scanData->{mp3_can_seek};
-	}
-	
+		
 	# Bug 6482, refresh the cached Track object in the client playlist from the database
 	# so it picks up any changed data such as title, bitrate, etc
 	Slim::Player::Playlist::refreshTrack( $client, $self->url );

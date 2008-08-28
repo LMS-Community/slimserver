@@ -10,9 +10,9 @@ package Slim::Plugin::MusicMagic::Plugin;
 use strict;
 
 use Scalar::Util qw(blessed);
-use LWP::UserAgent;
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -112,7 +112,7 @@ sub shutdownPlugin {
 	Slim::Utils::Timers::killTimers(undef, \&checker);
 
 	# disable protocol handler?
-	Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
+	Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 	$initialized = 0;
 
@@ -128,16 +128,24 @@ sub initPlugin {
 	return 1 if $initialized;
 	
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
+	
+	$MMSport = $prefs->get('port');
+	$MMSHost = $prefs->get('host');
+
 	Slim::Plugin::MusicMagic::Settings->new;
 
 	# don't test the connection if MIP integration is disabled
 	return unless $prefs->get('musicip'); 
 
-	my $response = _syncHTTPRequest("/api/version");
-
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
-	if ($response->is_error) {
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'     => "http://$MMSHost:$MMSport/api/version",
+		'create'  => 0,
+		'timeout' => 5,
+	});
+
+	if (!$http) {
 
 		$initialized = 0;
 
@@ -145,19 +153,27 @@ sub initPlugin {
 
 	} else {
 
-		my $content = $response->decoded_content;
+		my $content = $http->content;
 
 		if ( $log->is_info ) {
 			$log->info($content);
 		}
 
-		# this query should return an API error if Power Search is not available
-		$response = _syncHTTPRequest("/api/mix?filter=?length>120&length=1");
+		$http->close;
 
-		if ($response->is_success && $response->content !~ /MusicIP API error/i) {
+		# this query should return an API error if Power Search is not available
+		$http = Slim::Player::Protocols::HTTP->new({
+			'url'    => "http://$MMSHost:$MMSport/api/mix?filter=?length>120&length=1",
+			'create' => 0,
+			'timeout' => 5,
+		});
+
+		if ($http && $http->content !~ /MusicIP API error/i) {
 			$canPowerSearch = 1;
 
 			$log->info('Power Search enabled');
+
+			$http->close;		
 		}
 
 		Slim::Plugin::MusicMagic::PlayerSettings::init();
@@ -183,7 +199,7 @@ sub initPlugin {
 			'contextToken' => 'MUSICMAGIC_MIX',
 		});
 
-		Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
+		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 		Slim::Plugin::MusicMagic::ClientSettings->new;
 
@@ -435,11 +451,20 @@ sub grabMoods {
 		return;
 	}
 
-	my $response = _syncHTTPRequest('/api/moods');
+	$MMSport = $prefs->get('port') unless $MMSport;
+	$MMSHost = $prefs->get('host') unless $MMSHost;
 
-	if ($response->is_success) {
+	$log->debug("Get moods list");
 
-		@moods = split(/\n/, $response->decoded_content);
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/moods",
+		'create' => 0,
+	});
+
+	if ($http) {
+
+		@moods = split(/\n/, $http->content);
+		$http->close;
 
 		if ($log->is_debug && scalar @moods) {
 
@@ -574,7 +599,7 @@ sub mixerFunction {
 
 	} elsif ($levels[$level] eq 'contributor') {
 		
-		# MusicIP uses artist instead of contributor.
+		# MusicMagic uses artist instead of contributor.
 		$levels[$level] = 'artist';
 		$mixSeed = $currentItem->name;
 	
@@ -760,38 +785,27 @@ sub getMix {
 	my $mixArgs = "$validMixTypes{$for}=$id";
 
 	# url encode the request, but not the argstring
+	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
 	$mixArgs = URI::Escape::uri_escape($mixArgs);
 	
 	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 
-	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString",
+		'create' => 0,
+	});
 
-	if ($response->is_error) {
+	if (!$http) {
+		# NYI
+		$log->warn("Warning: Couldn't get mix: $mixArgs\&$argString");
 
-		if ($response->code == 500 && $filter) {
-			
-			::idleStreams();
-
-			# try again without the filter
-
-			$log->warn("No mix returned with filter involved - we might want to try without it");
-			$argString =~ s/filter=/xfilter=/;
-			$response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
-
-			Slim::Plugin::MusicMagic::Settings->grabFilters();
-		}
-
-		if ($response->is_error) {
-			
-			$log->warn("Warning: Couldn't get mix: $mixArgs\&$argString");
-			$log->debug($response->as_string);
-	
-			return \@mix;
-		}
+		return @mix;
 	}
 
-	my @songs = split(/\n/, $response->decoded_content);
+	my @songs = split(/\n/, $http->content);
 	my $count = scalar @songs;
+
+	$http->close;
 
 	for (my $j = 0; $j < $count; $j++) {
 
@@ -1097,7 +1111,7 @@ sub _prepare_mix {
 			if ($obj->musicmagic_mixable) {
 
 				my $playlist = $obj->path;
-				if ($obj->url =~ /musicipplaylist:(.*?)$/) {
+				if ($obj->url =~ /musicmagicplaylist:(.*?)$/) {
 					$playlist = Slim::Utils::Misc::unescape($1);
 				}
 
@@ -1246,19 +1260,6 @@ sub trackInfoHandler {
 
 	return;
 
-}
-
-sub _syncHTTPRequest {
-	my $url = shift;
-	
-	$MMSport = $prefs->get('port') unless $MMSport;
-	$MMSHost = $prefs->get('host') unless $MMSHost;
-	
-	my $http = LWP::UserAgent->new({
-		timeout => 5
-	});
-
-	return $http->get("http://$MMSHost:$MMSport$url");
 }
 
 1;

@@ -261,9 +261,9 @@ sub addPlayerList {
 
 			$clientlist{$eachclient->id()} =  $eachclient->name();
 
-			if (Slim::Player::Sync::isSynced($eachclient)) {
+			if ($eachclient->isSynced()) {
 				$clientlist{$eachclient->id()} .= " (".string('SYNCHRONIZED_WITH')." ".
-					Slim::Player::Sync::syncwith($eachclient).")";
+					$eachclient->syncedWithNames() .")";
 			}	
 		}
 

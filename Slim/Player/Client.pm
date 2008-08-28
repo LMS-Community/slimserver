@@ -28,6 +28,7 @@ use Slim::Utils::PerfMon;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Utils::Timers;
+use Slim::Player::StreamingController;
 
 if ( !main::SLIM_SERVICE ) {
  	require Slim::Web::HTTP;
@@ -87,27 +88,28 @@ use constant KNOB_NOACCELERATION => 0x02;
 								irRefTime irRefTimeStored ircodes irmaps lastirtime lastircode lastircodebytes lastirbutton
 								startirhold irtimediff irrepeattime irenable _epochirtime lastActivityTime
 								knobPos knobTime knobSync
-								streamformat streamingsocket audioFilehandle audioFilehandleIsSocket remoteStreamStartTime
-								trackStartTime playmode rate outputBufferFullness bytesReceived songBytes pauseTime
-								bytesReceivedOffset streamBytes songElapsedSeconds bufferSize trickSegmentRemaining bufferStarted
-								resumePlaymode streamAtTrackStart readNextChunkOk lastSong _currentplayingsong
-								directURL directBody
-								startupPlaylistLoading remotePlaylistCurrentEntry currentPlaylistModified currentPlaylistRender
+								controller
+								bufferReady readyToStream
+								streamformat streamingsocket remoteStreamStartTime
+								trackStartTime outputBufferFullness bytesReceived songBytes pauseTime
+								bytesReceivedOffset streamBytes songElapsedSeconds bufferSize bufferStarted
+								_currentplayingsong
+								directBody
+								startupPlaylistLoading currentPlaylistModified currentPlaylistRender
 								_currentPlaylist _currentPlaylistUpdateTime _currentPlaylistChangeTime
 								display lines customVolumeLines customPlaylistLines lines2periodic periodicUpdateTime
-								blocklines suppressStatus showBuffering
+								blocklines suppressStatus
 								curDepth lastLetterIndex lastLetterDigit lastLetterTime lastDigitIndex lastDigitTime searchFor
-								readytosync master syncgroupid syncSelection initialStreamBuffer _playPoint playPoints
-								jiffiesEpoch jiffiesOffsetList frameData initialAudioBlockRemaining
-								_tempVolume musicInfoTextCache metaTitle languageOverride password scanData currentSleepTime
+								syncSelection _playPoint playPoints
+								jiffiesEpoch jiffiesOffsetList
+								_tempVolume musicInfoTextCache metaTitle languageOverride password currentSleepTime
 								sleepTime pendingPrefChanges _pluginData
 								signalStrengthLog bufferFullnessLog slimprotoQLenLog
 								alarmData knobData
-								modeStack modeParameterStack playlist currentsongqueue chunks
-								shufflelist slaves syncSelections searchTerm
+								modeStack modeParameterStack playlist chunks
+								shufflelist syncSelections searchTerm
 								updatePending
 							));
-							
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection
 							));
@@ -178,16 +180,17 @@ sub new {
 		knobPos                 => undef,
 		knobTime                => undef,
 		knobSync                => 0,
+		
+		# streaming control
+		controller              => undef,
+		bufferReady             => 0,
+		readyToStream           => 1, 
 
 		# streaming state
 		streamformat            => undef,
 		streamingsocket         => undef,
-		audioFilehandle         => undef,
-		audioFilehandleIsSocket => 0,
 		remoteStreamStartTime   => 0,
 		trackStartTime          => 0,
-		playmode                => 'stop',
-		rate                    => 1,
 		outputBufferFullness    => undef,
 		bytesReceived           => 0,
 		songBytes               => 0,
@@ -196,24 +199,16 @@ sub new {
 		streamBytes             => 0,
 		songElapsedSeconds      => undef,
 		bufferSize              => 0,
-		trickSegmentRemaining   => undef,
-		directURL               => undef,
 		directBody              => undef,
-		currentsongqueue        => [],
 		chunks                  => [],
-		bufferStarted           => 0,
-		resumePlaymode          => undef,
-		streamAtTrackStart      => 0,
-		readNextChunkOk         => 1,                  # flag used when we are waiting for an async response in readNextChunk
+		bufferStarted           => 0,                  # when we started buffering/rebuffering
 
-		lastSong                => undef,              # FIXME - is this used ???? - Last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
 		_currentplayingsong     => '',                 # FIXME - is this used ????
 
 		# playlist state
 		playlist                => [],
 		shufflelist             => [],
 		startupPlaylistLoading  => undef,
-		remotePlaylistCurrentEntry => undef,
 		_currentPlaylist        => undef,
 		currentPlaylistModified => undef,
 		currentPlaylistRender   => undef,
@@ -229,7 +224,6 @@ sub new {
 		periodicUpdateTime      => 0,
 		blocklines              => undef,
 		suppressStatus          => undef,
-		showBuffering           => 1,
 
 		# button mode state
 		modeStack               => [],
@@ -246,19 +240,13 @@ sub new {
 		lastID3Selection        => {},
 
 		# sync state
-		readytosync             => 0,
-		master                  => undef,
-		slaves                  => [],
-		syncgroupid             => undef,
 		syncSelection           => undef,
 		syncSelections          => [],
-		initialStreamBuffer     => undef,              # cache of initially-streamed data to calculate rate
 		_playPoint              => undef,              # (timeStamp, apparentStartTime) tuple
 		playPoints              => undef,              # set of (timeStamp, apparentStartTime) tuples to determine consistency
 		jiffiesEpoch            => undef,
 		jiffiesOffsetList       => [],                 # array tracking the relative deviations relative to our clock
-		frameData               => undef,              # array of (stream-byte-offset, stream-time-offset) tuples
-		initialAudioBlockRemaining => 0,
+		
 
 		# perfmon logs
 		signalStrengthLog       => Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]),
@@ -277,7 +265,6 @@ sub new {
 		metaTitle               => undef,
 		languageOverride        => undef,
 		password                => undef,
-		scanData                => {},                 # used to store info obtained from scan that is needed later
 		currentSleepTime        => 0,
 		sleepTime               => 0,
 		pendingPrefChanges      => {},
@@ -285,8 +272,10 @@ sub new {
 		updatePending           => 0,
 	
 	);
-
+	
 	$clientHash{$id} = $client;
+
+	$client->controller(Slim::Player::StreamingController->new($client));
 
 	Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
 
@@ -524,6 +513,8 @@ sub forgetClient {
 	my $client = shift;
 	
 	if ($client) {
+		$client->controller()->unsync($client);
+		
 		$client->display->forgetDisplay();
 		
 		# Clean up global variables used in various modules
@@ -552,7 +543,7 @@ sub startup {
 	Slim::Player::Sync::restoreSync($client);
 	
 	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
-	if (!Slim::Player::Sync::isSynced($client) && $prefs->get('persistPlaylists')) {
+	if (!$client->isSynced() && $prefs->get('persistPlaylists')) {
 
 		my $playlist = Slim::Music::Info::playlistForClient($client);
 		my $currsong = $prefs->client($client)->get('currentSong');
@@ -1029,19 +1020,6 @@ sub getMode {
 	return $client->modeStack->[-1];
 }
 
-=head2 masterOrSelf( $client )
-
-See L<Slim::Player::Sync> for more information.
-
-Returns the the master L<Slim::Player::Client> object if one exists, otherwise
-returns ourself.
-
-=cut
-
-sub masterOrSelf {
-	Slim::Player::Sync::masterOrSelf(@_)
-}
-
 sub requestStatus {
 }
 
@@ -1109,7 +1087,9 @@ Duration can be calculatd from bitrate + length.
 
 sub streamingProgressBar {
 	my ( $client, $args ) = @_;
-	
+
+	my $log = logger('player.streaming');
+
 	my $url = $args->{'url'};
 	
 	# Duration specified directly (i.e. from a plugin)
@@ -1118,6 +1098,15 @@ sub streamingProgressBar {
 	# Duration can be calculated from bitrate + length
 	my $bitrate = $args->{'bitrate'};
 	my $length  = $args->{'length'};
+	
+	if ($log->is_info) {
+		$log->info(sprintf("url=%s, duration=%s, bitrate=%s, contentLength=%s",
+			$url,
+			(defined($duration) ? $duration : 'undef'),
+			(defined($bitrate) ? $bitrate : 'undef'),
+			(defined($length) ? $length : 'undef'))
+		);
+	}
 	
 	my $secs;
 	
@@ -1140,12 +1129,10 @@ sub streamingProgressBar {
 	Slim::Music::Info::setDuration( $url, $secs );
 	
 	# Set the duration so the progress bar appears
-	if ( ref $client->currentsongqueue->[0] eq 'HASH' ) {
+	if ( my $song = $client->streamingSong()) {
 
-		$client->currentsongqueue()->[0]->{'duration'} = $secs;
+		$song->{'duration'} = $secs;
 
-		my $log = logger('player.streaming');
-		
 		if ( $log->is_info ) {
 			if ( $duration ) {
 
@@ -1156,8 +1143,12 @@ sub streamingProgressBar {
 				$log->info("Duration of stream set to $secs seconds based on length of $length and bitrate of $bitrate");
 			}
 		}
+	} else {
+		$log->info("not setting duration as no current song!");
 	}
 }
+
+sub currentsongqueue {return $_[0]->controller()->songqueue();}
 
 sub epochirtime {
 	my $client = shift;
@@ -1174,14 +1165,14 @@ sub epochirtime {
 }
 
 sub currentplayingsong {
-	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my $client = shift->master();
 
 	return $client->_currentplayingsong(@_);
 }
 
 sub currentPlaylistUpdateTime {
 	# This needs to be the same for all synced clients
-	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my $client = shift->master();
 
 	if (@_) {
 		my $time = shift;
@@ -1195,7 +1186,7 @@ sub currentPlaylistUpdateTime {
 }
 
 sub currentPlaylist {
-	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my $client = shift->master();
 
 	if (@_) {
 		$client->_currentPlaylist(shift);
@@ -1214,7 +1205,7 @@ sub currentPlaylist {
 
 sub currentPlaylistChangeTime {
 	# This needs to be the same for all synced clients
-	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my $client = shift->master();
 
 	$client->_currentPlaylistChangeTime(@_);
 }
@@ -1222,7 +1213,7 @@ sub currentPlaylistChangeTime {
 sub pluginData {
 	my ( $client, $key, $value ) = @_;
 	
-	$client = Slim::Player::Sync::masterOrSelf($client);
+	$client = $client->master();
 	
 	my $namespace;
 	
@@ -1273,4 +1264,62 @@ sub playPoint {
 	}
 }
 
+sub nextChunk {
+	return Slim::Player::Source::nextChunk(@_);
+}
+
+##############################################################
+# Methods to delegate to our StreamingController.
+# TODO - review to see which are still necessary.
+
+sub master {return $_[0]->controller()->master();}
+
+sub streamingSong {return $_[0]->controller()->streamingSong();}
+sub playingSong {return $_[0]->controller()->playingSong();}
+	
+sub isPlaying {return $_[0]->controller()->isPlaying($_[1]);}
+sub isPaused {return $_[0]->controller()->isPaused();}
+sub isStopped {return $_[0]->controller()->isStopped();}
+
+sub currentTrackForUrl {
+	my ($client, $url) = @_;
+	
+	my $song = $client->controller()->currentSongForUrl($url);
+	if ( $song ) {
+		return $song->currentTrack();
+	}
+}
+
+sub currentSongForUrl {
+	my ($client, $url) = @_;
+	
+	return $client->controller()->currentSongForUrl($url);
+}
+
+# These probably belong in Player.pm - (most) should not be called for non-players
+
+sub syncGroupActiveMembers {return $_[0]->controller()->activePlayers();}
+
+sub isSynced {return ($_[0]->controller()->allPlayers() > 1);}
+
+sub isSyncedWith {return $_[0]->controller() == $_[1]->controller();}
+
+sub syncedWith {
+	my $client  = shift || return undef;
+	my $exclude = shift;
+
+	my @slaves;
+	foreach my $player ($client->controller()->allPlayers()) {
+			next if ($exclude && $exclude == $player);
+			push (@slaves, $player) unless $client == $player;
+	}
+
+	return @slaves;
+}
+
+sub syncedWithNames {
+	return undef unless isSynced($_[0]);
+	return join(' & ', map { $_->name || $_->id } syncedWith($_[0]));
+}
+	
 1;

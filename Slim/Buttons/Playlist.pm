@@ -256,10 +256,6 @@ sub init {
 
 					$client->execute(["pause"]);
 
-				} elsif (Slim::Player::Source::rate($client) != 1) {
-
-					$client->execute(["rate", 1]);
-
 				} else {
 
 					$client->execute(["playlist", "jump", browseplaylistindex($client)]);

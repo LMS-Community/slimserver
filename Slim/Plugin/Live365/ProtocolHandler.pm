@@ -22,33 +22,36 @@ sub new {
 	
 	my $url    = $args->{url};
 	my $client = $args->{client};
-	my $self   = $args->{self};
+	my $song   = $args->{'song'};
+	my $self;
 	
-	my $realURL = $client->pluginData('audioURL');
+	my $realURL = $args->{'song'}->{'streamUrl'};
 
 	if ( $url =~ m{^live365://} && $realURL ) {
 
 		$log->info("Requested: $url, streaming real URL $realURL");
 
 		$self = $class->SUPER::new( { 
-			url     => $realURL, 
+			url     => $realURL,
+			song    => $song, 
 			client  => $client, 
 			infoUrl => $url,
 			create  => 1,
 		} );
 		
-		Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
+		Slim::Utils::Timers::killTimers( $song, \&getPlaylist );
 
 		Slim::Utils::Timers::setTimer(
-			$client,
+			$song,
 			Time::HiRes::time(),
 			\&getPlaylist,
-			$url,
 		);
 
 	}
-	else {		
-		handleError( $client->string('PLUGIN_LIVE365_NO_URL'), $client );
+	else {
+		if ( $log->is_error ) {
+			$log->error( $client->string('PLUGIN_LIVE365_NO_URL') );
+		}
 	}
 
 	return $self;
@@ -63,9 +66,8 @@ sub isRemote { 1 }
 
 sub gotURL {
 	my $http     = shift;
-	my $client   = $http->params->{client};
-	my $url      = $http->params->{url};
-	my $callback = $http->params->{callback};
+	my $params   = $http->params;
+	my $song     = $params->{'song'};
 	
 	my $info = eval { from_json( $http->content ) };
 	if ( $@ || $info->{error} ) {
@@ -75,64 +77,47 @@ sub gotURL {
 	
 	$log->debug( "Got Live365 URL from SN: " . $info->{url} );
 	
-	$client->pluginData( audioURL => $info->{url} );
+	$song->{'streamUrl'} = $info->{url};
 	
-	$callback->();
+	$params->{callback}->();
 }
 
 sub gotURLError {
 	my $http     = shift;
-	my $client   = $http->params->{client};
-	my $url      = $http->params->{url};
-	my $callback = $http->params->{callback};
 	
 	if ( $log->is_error ) {
 		$log->error( "Error getting Live365 URL: " . $http->error );
 	}
 	
-	handleError( $http->error, $client );
-	
-	# Make sure we re-enable readNextChunkOk
-	$client->readNextChunkOk(1);
+	$http->params->{errorCallback}->('PLUGIN_LIVE365_ERROR', $http->error);	
 }
 
-sub handleError {
-    my ( $error, $client ) = @_;
-
-	if ( $client ) {
-		$client->unblock;
-		
-		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Choice', {
-			header  => '{PLUGIN_LIVE365_ERROR}',
-			listRef => [ $error ],
-		} );
-		
-		if ( main::SLIM_SERVICE ) {
-		    logError( $client, $error );
-		}
-		
-		# XXX: log to SC event log
-	}
+sub scanUrl {
+	my ($class, $url, $args) = @_;
+	$args->{'cb'}->($args->{'song'}->currentTrack());
 }
 
-# On skip, get the audio URL before playback
-sub onJump {
-    my ( $class, $client, $nextURL, $callback ) = @_;
+sub getNextTrack {
+	my ($class, $song, $successCb, $errorCb) = @_;
 	
+	my $nextURL = $song->currentTrack()->url;
 	# Remove any existing session id
 	$nextURL =~ s/\?+//;
 	
+	# Talk to SN and get the channel info for this station
 	my $getAudioURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/live365/v1/playback/getAudioURL?url=' . uri_escape($nextURL)
 	);
-
+	
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&gotURL,
 		\&gotURLError,
 		{
-			client   => $client,
-			url      => $nextURL,
-			callback => $callback,
+			client        => $song->master(),
+			url           => $nextURL,
+			song          => $song,
+			callback      => $successCb,
+			errorCallback => $errorCb,
 		},
 	);
 	
@@ -141,42 +126,33 @@ sub onJump {
 	$http->get( $getAudioURL );
 }
 
-sub canDirectStream {
-	my ( $class, $client, $url ) = @_;
+sub canDirectStreamSong {
+	my ( $class, $client, $song ) = @_;
+	
+	my $streamUrl = $song->{'streamUrl'} || return undef;
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	my $base = $class->SUPER::canDirectStream( $client, $url );
-	if ( !$base ) {
-		return 0;
-	}
-
-	Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
+	$class->SUPER::canDirectStream( $client, $streamUrl ) || return undef;
 	
-	my $audioURL = $client->pluginData('audioURL');
-	return 0 unless $audioURL;
-		
+	Slim::Utils::Timers::killTimers( $song, \&getPlaylist );
+
 	Slim::Utils::Timers::setTimer(
-		$client,
+		$song,
 		Time::HiRes::time(),
 		\&getPlaylist,
-		$url,
 	);
 
-	return $audioURL;
+	return $streamUrl;
 }
 
 sub getPlaylist {
-	my ( $client, $url ) = @_;
+	my ( $song ) = @_;
 
-	if ( !defined $client ) {
-		return;
-	}
+	my $client = $song->master();
+	my $url    = $song->currentTrack()->url;
 
-	my $currentSong = Slim::Player::Playlist::url($client);
-	my $currentMode = Slim::Player::Source::playmode($client);
-	 
-	if ( $currentSong ne $url || $currentMode ne 'play' ) {
+	if ( $song != $client->streamingSong() ||  $client->isStopped() ) {
 		$log->debug( "Track changed, stopping playlist fetch" );
 		return;
 	}
@@ -194,6 +170,7 @@ sub getPlaylist {
 		{
 			client => $client,
 			url    => $url,
+			song   => $song,
 		},
 	);
 	
@@ -206,6 +183,7 @@ sub gotPlaylist {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	my $url    = $http->params->{url};
+	my $song   = $http->params->{'song'};
 	
 	my $track = eval { from_json( $http->content ) };
 	
@@ -223,7 +201,7 @@ sub gotPlaylist {
 		return;
 	}
 	
-	$client->pluginData( currentTrack => $track );
+	$song->{'pluginData'} = $track;
 
 	my $newTitle = $track->{title};
 	
@@ -244,10 +222,9 @@ sub gotPlaylist {
 	Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
 	
 	Slim::Utils::Timers::setTimer(
-		$client,
+		$song,
 		Time::HiRes::time() + $track->{refresh},
 		\&getPlaylist,
-		$url,
 	);
 }
 
@@ -255,12 +232,12 @@ sub gotPlaylistError {
 	my $http  = shift;
 	my $error = $http->error;
 	
-	my $client = $http->params->{client};
 	my $url    = $http->params->{url};
-	
+	my $song   = $http->params->{'song'};
+		
 	$log->error( "Error getting current track: $error, will retry in 30 seconds" );
 	
-	$client->pluginData( currentTrack => 0 );
+	$song->{'pluginData'} = undef;
 	
 	# Display the station name
 	my $title = Slim::Music::Info::title($url);
@@ -268,17 +245,17 @@ sub gotPlaylistError {
 	
 	# Try again
 	Slim::Utils::Timers::setTimer(
-		$client,
+		$song,
 		Time::HiRes::time() + 30,
 		\&getPlaylist,
-		$url,
 	);
 }
 
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
-	my $track = $client->pluginData('currentTrack');
+	my $song = $client->currentSongForUrl($url);
+	my $track = $song->{'pluginData'} if $song;
 	
 	my $icon = $class->getIcon();
 	

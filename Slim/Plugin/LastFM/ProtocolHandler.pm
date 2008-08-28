@@ -27,10 +27,8 @@ sub new {
 	my $class  = shift;
 	my $args   = shift;
 
-	my $client = $args->{client};
-	my $url    = $args->{url};
-	
-	my $track  = $client->pluginData('currentTrack') || {};
+	my $song   = $args->{'song'};
+	my $track  = $song->{'pluginData'} || {};
 	
 	$log->debug( 'Remote streaming Last.fm track: ' . $track->{location} );
 
@@ -38,15 +36,13 @@ sub new {
 
 	my $sock = $class->SUPER::new( {
 		url     => $track->{location},
-		client  => $client,
+		client  => $args->{client},
+		song    => $song,
 		bitrate => 128_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
 
-	# XXX: Time counter is not right, it starts from 0:00 as soon as next track 
-	# begins streaming (slimp3/SB1 only)
-	
 	return $sock;
 }
 
@@ -59,37 +55,22 @@ sub shouldLoop () { 0 }
 
 sub canSeek { 0 }
 
-sub isRemote { 1 }
+sub isRepeatingStream {
+	return 1;
+}
 
 # Source for AudioScrobbler (L = Last.fm)
 # Must append trackauth value as well
 sub audioScrobblerSource {
 	my ( $class, $client, $url ) = @_;
 	
-	my $track = $client->pluginData('currentTrack');
+	my $track = $client->streamingSong()->{'pluginData'};
 	
 	if ( $track ) {
 		return 'L' . $track->{extension}->{trackauth};
 	}
 	
 	return;
-}
-
-sub handleError {
-    my ( $error, $client ) = @_;
-
-	if ( $client ) {
-		$client->unblock;
-		
-		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Choice', {
-			header  => '{PLUGIN_LFM_ERROR}',
-			listRef => [ $error ],
-		} );
-		
-		if ( main::SLIM_SERVICE ) {
-		    logError( $client, $error );
-		}
-	}
 }
 
 sub logError {
@@ -100,20 +81,16 @@ sub logError {
 	);
 }
 
-# Whether or not to display buffering info while a track is loading
-sub showBuffering {
-	my ( $class, $client, $url ) = @_;
-	
-	my $showBuffering = $client->pluginData('showBuffering');
-	
-	return ( defined $showBuffering ) ? $showBuffering : 1;
+sub scanUrl {
+	my ($class, $url, $args) = @_;
+	$args->{'cb'}->($args->{'song'}->currentTrack());
 }
 
 sub getNextTrack {
-	my ( $client, $params ) = @_;
+	my ($class, $song, $successCb, $errorCb) = @_;
 	
-	my $station = $params->{station};
-	
+	my $client = $song->master();
+
 	# Get Scrobbling prefs
 	my $enable_scrobbling;
 	if ( main::SLIM_SERVICE ) {
@@ -127,6 +104,8 @@ sub getNextTrack {
 	my $isScrobbling = ( $account && $enable_scrobbling ) ? 1 : 0;
 	my $discovery    = $prefs->client($client)->get('discovery') || 0;
 	
+	my ($station) = $song->currentTrack()->url =~ m{^lfm://(.+)};
+	
 	# Talk to SN and get the next track to play
 	my $trackURL = Slim::Networking::SqueezeNetwork->url(
 		"/api/lastfm/v1/playback/getNextTrack?station=" . uri_escape_utf8($station)
@@ -136,11 +115,16 @@ sub getNextTrack {
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotNextTrack,
-		\&gotNextTrackError,
+		\&_gotNextTrack,
+		\&_gotNextTrackError,
 		{
 			client  => $client,
-			params  => $params,
+			params  => {
+				station       => $station,
+				song          => $song,
+				callback      => $successCb,
+				errorCallback => $errorCb,
+			},
 			timeout => 35,
 		},
 	);
@@ -150,7 +134,7 @@ sub getNextTrack {
 	$http->get( $trackURL );
 }
 
-sub gotNextTrack {
+sub _gotNextTrack {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	my $params = $http->params->{params};
@@ -158,31 +142,16 @@ sub gotNextTrack {
 	my $track = eval { from_json( $http->content ) };
 	
 	if ( $@ || $track->{error} ) {
-		# We didn't get the next track to play
+		# We didn't get the info to play		
 		if ( $log->is_warn ) {
 			$log->warn( 'Last.fm error getting next track: ' . ( $@ || $track->{error} ) );
 		}
-		
-		my $url = Slim::Player::Playlist::url($client);
 
-		setCurrentTitle( $client, $url, $track->{error} || $client->string('PLUGIN_LFM_NO_TRACKS') );
-		
-		$client->showBriefly( {
-			line => [ 
-				$client->string('PLUGIN_LFM_MODULE_NAME'),
-				$track->{error} || $client->string('PLUGIN_LFM_NO_TRACKS')
-			],
-		},
-		{
-			scroll => 1,
-			block  => 1,
-		} );
-
-		Slim::Player::Source::playmode( $client, 'stop' );
-	
+		my $title = $track->{error} || $client->string('PLUGIN_LFM_NO_TRACKS');
+		$params->{'errorCallback'}->('PLUGIN_LFM_MODULE_NAME', $title);
 		return;
 	}
-	
+
 	if ( $log->is_debug ) {
 		$log->debug( 'Got Last.fm track: ' . Data::Dump::dump($track) );
 	}
@@ -190,101 +159,26 @@ sub gotNextTrack {
 	# Watch for playlist commands
 	Slim::Control::Request::subscribe( 
 		\&playlistCallback, 
-		[['playlist'], ['repeat', 'newsong']],
+		[['playlist'], ['newsong']],
 		$client,
 	);
 	
-	# Save existing repeat setting
-	my $repeat = Slim::Player::Playlist::repeat($client);
-	if ( $repeat != 2 ) {
-		$log->debug( "Saving existing repeat value: $repeat" );
-		$client->pluginData( oldRepeat => $repeat );
-	}
+	# Save metadata for this track
+	$params->{'song'}->{'pluginData'} = $track;
 	
-	# Force repeating
-	$client->execute(["playlist", "repeat", 2]);
-	
-	# Save the previous track's metadata, in case the user wants track info
-	# after the next track begins buffering
-	$client->pluginData( prevTrack => $client->pluginData('currentTrack') );
-	
-	# Save metadata for this track, and save the previous track
-	$client->pluginData( currentTrack => $track );
-	
-	my $cb = $params->{callback};
-	$cb->();
+	$params->{'callback'}->();
 }
 
-sub gotNextTrackError {
+sub _gotNextTrackError {
 	my $http   = shift;
-	my $client = $http->params('client');
 	
-	handleError( $http->error, $client );
-	
-	# Make sure we re-enable readNextChunkOk
-	$client->readNextChunkOk(1);
+	$http->params->{'params'}->{'errorCallback'}->('PLUGIN_LFM_ERROR', $http->error);
+
+	if ( main::SLIM_SERVICE ) {
+	    logError( $http->params('client'), $http->error );
+	}
 }
 
-# Handle normal advances to the next track
-sub onDecoderUnderrun {
-	my ( $class, $client, $nextURL, $callback ) = @_;
-	
-	# Special handling needed when synced
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		if ( !Slim::Player::Sync::isMaster($client) ) {
-			# Only the master needs to fetch next track info
-			$log->debug('Letting sync master fetch next Last.fm track');
-			return;
-		}
-	}
-
-	# Flag that we don't want any buffering messages while loading the next track,
-	$client->pluginData( showBuffering => 0 );
-	
-	# Get next track
-	my ($station) = $nextURL =~ m{^lfm://(.+)};
-	
-	getNextTrack( $client, {
-		station  => $station,
-		callback => $callback,
-	} );
-	
-	return;
-}
-
-# On skip, load the next track before playback
-sub onJump {
-    my ( $class, $client, $nextURL, $callback ) = @_;
-
-	# Display buffering info on loading the next track
-	# unless we shouldn't (when rating down)
-	if ( $client->pluginData('banMode') ) {
-		$client->pluginData( showBuffering => 0 );
-		$client->pluginData( banMode => 0 );
-	}
-	else {
-		$client->pluginData( showBuffering => 1 );
-	}
-	
-	# If synced and we already fetched a track in onDecoderUnderrun,
-	# just callback, don't fetch another track.  Checks prevTrack to
-	# make sure there is actually a track ready to be played.
-	if ( Slim::Player::Sync::isSynced($client) && $client->pluginData('prevTrack') ) {
-		$log->debug( 'onJump while synced, but already got the next track to play' );
-		$callback->();
-		return;
-	}
-	
-	# Get next track
-	my ($station) = $nextURL =~ m{^lfm://(.+)};
-	
-	getNextTrack( $client, {
-		station  => $station,
-		callback => $callback,
-	} );
-	
-	return;
-}
 
 sub parseDirectHeaders {
 	my $class   = shift;
@@ -299,19 +193,14 @@ sub parseDirectHeaders {
 	Slim::Music::Info::setDuration( $url, 0 );
 	
 	# Grab content-length for progress bar
-	my ($length, $redir);
+	my $length;
 	foreach my $header (@headers) {
 		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
 		}
-		elsif ( $header =~ /^Location:\s*(.*)/i ) {
-			$redir = $1;
-		}
-	}
+	}	
 	
-	if ( $redir ) {
-		$client->pluginData( redir => $redir );
-	}
+	$client->streamingSong->{'duration'} = $length * 8 / $bitrate;
 	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, $length, undef);
@@ -323,24 +212,14 @@ sub handleDirectError {
 	
 	$log->info("Direct stream failed: [$response] $status_line");
 	
-	$client->showBriefly( {
-		line => [ $client->string('PLUGIN_LFM_ERROR'), $client->string('PLUGIN_LFM_STREAM_FAILED') ]
-	},
-	{
-		block  => 1,
-		scroll => 1,
-	} );
-	
-	# XXX: Stop after a certain number of errors in a row
-	
-	$client->execute([ 'playlist', 'play', $url ]);
+	$client->controller()->playerStreamingFailed($client, 'PLUGIN_LFM_ERROR', $client->string('PLUGIN_LFM_STREAM_FAILED'));
 }
 
 # Check if player is allowed to skip, using canSkip value from SN
 sub canSkip {
 	my $client = shift;
 	
-	if ( my $track = $client->pluginData('currentTrack') ) {
+	if ( my $track = $client->playingSong->{'pluginData'} ) {
 		return $track->{canSkip};
 	}
 	
@@ -355,8 +234,17 @@ sub canDoAction {
 		# Is skip allowed?
 		$log->debug("Last.fm: Skip limit exceeded, disallowing skip");
 
+		my $line1 = $client->string('PLUGIN_LFM_MODULE_NAME');
+		my $line2 = $client->string('PLUGIN_LFM_SKIPS_EXCEEDED');
+
 		$client->showBriefly( {
-			line => [ $client->string('PLUGIN_LFM_MODULE_NAME'), $client->string('PLUGIN_LFM_SKIPS_EXCEEDED') ]
+			line1 => $line1,
+			line2 => $line2,
+			jive  => {
+				type => 'popupplay',
+				text => [ $line1, $line2 ],
+			},
+			
 		},
 		{
 			scroll => 1,
@@ -373,19 +261,14 @@ sub canDoAction {
 	return 1;
 }
 
-sub canDirectStream {
-	my ( $class, $client, $url ) = @_;
+sub canDirectStreamSong {
+	my ( $class, $client, $song ) = @_;
+	
+	my $track = $song->{'pluginData'} || {};
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	my $base = $class->SUPER::canDirectStream( $client, $url );
-	if ( !$base ) {
-		return 0;
-	}
-	
-	my $track = $client->pluginData('currentTrack') || {};
-	
-	return $track->{location} || 0;
+	return $class->SUPER::canDirectStream( $client, $track->{location}, $class->getFormatForURL());
 }
 
 sub playlistCallback {
@@ -396,42 +279,20 @@ sub playlistCallback {
 	
 	return unless defined $client;
 	
-	# ignore if user is not using Pandora
-	my $url = Slim::Player::Playlist::url($client);
-	
-	if ( !$url || $url !~ /^lfm/ ) {
-		# User stopped playing Last.fm, reset old repeat setting if any
-		my $repeat = $client->pluginData('oldRepeat');
-		if ( defined $repeat ) {
-			$log->debug( "Stopped Last.fm, restoring old repeat setting: $repeat" );
-			$client->execute(["playlist", "repeat", $repeat]);
-		}
-		
+	my $song = $client->playingSong() || return;
+	my $url  = $song->currentTrack()->url;
+			
+	if ($url !~ /^lfm/) {
 		$log->debug( "Stopped Last.fm, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
 		
 		return;
 	}
 	
-	$log->debug("Got playlist event: $p1");
-	
-	# The user has changed the repeat setting.  Pandora requires a repeat
-	# setting of '2' (repeat all) to work properly, or it will cause the
-	# "stops after every song" bug
-	if ( $p1 eq 'repeat' ) {
-		if ( $request->getParam('_newvalue') != 2 ) {
-			$log->debug("User changed repeat setting, forcing back to 2");
+	if ( $p1 eq 'newsong' ) {
 		
-			$client->execute(["playlist", "repeat", 2]);
-		
-			if ( $client->playmode =~ /playout/ ) {
-				$client->playmode( 'playout-play' );
-			}
-		}
-	}
-	elsif ( $p1 eq 'newsong' ) {
 		# A new song has started playing.  We use this to change titles
-		my $track = $client->pluginData('currentTrack');
+		my $track = $client->playingSong()->{'pluginData'};
 		
 		my $title 
 			= $track->{title} . ' ' . $client->string('BY') . ' '
@@ -443,9 +304,6 @@ sub playlistCallback {
 		}
 		
 		setCurrentTitle( $client, $url, $title );
-		
-		# Remove the previous track metadata
-		$client->pluginData( prevTrack => 0 );
 	}
 }
 
@@ -482,7 +340,7 @@ sub trackInfoURL {
 	my $account = $prefs->client($client)->get('account');
 	
 	# Get the current track
-	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	my $currentTrack = $client->currentSongForUrl($url)->{'pluginData'};
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
@@ -499,7 +357,7 @@ sub setCurrentTitle {
 	
 	# We can't use the normal getCurrentTitle method because it would cause multiple
 	# players playing the same station to get the same titles
-	$client->pluginData( currentTitle => $title );
+	$client->currentSongForUrl($url)->{'currentTitle'} = $title;
 	
 	# Call the normal setCurrentTitle method anyway, so it triggers callbacks to
 	# update the display
@@ -509,23 +367,17 @@ sub setCurrentTitle {
 sub getCurrentTitle {
 	my ( $class, $client, $url ) = @_;
 	
-	return $client->pluginData('currentTitle');
+	return $client->currentSongForUrl($url)->{'currentTitle'};
 }
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
-	my $track;
+	my $song = $forceCurrent ? $client->streamingSong() : $client->playingSong();
+	return unless $song;
 	
-	if ( $forceCurrent ) {
-		$track = $client->pluginData('currentTrack');
-	}
-	else {
-		$track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack')
-	}
-	
-	return unless $track;
+	my $track = $song->{'pluginData'} || return;
 	
 	my $icon = $class->getIcon();
 	
@@ -573,7 +425,7 @@ sub reinit {
 	
 	my $url = $playlist->[0];
 	
-	if ( my $track = $client->pluginData('currentTrack') ) {
+	if ( my $track = $client->streamingSong()->{'pluginData'} ) {
 		# We have previous data about the currently-playing song
 		
 		$log->debug("Re-init Last.fm");

@@ -101,16 +101,8 @@ sub status {
 		}
 
 		#
-		if (Slim::Player::Source::rate($client) > 1) {
-			$params->{'rate'} = 'ffwd';
-		} elsif (Slim::Player::Source::rate($client) < 0) {
-			$params->{'rate'} = 'rew';
-		} else {
-			$params->{'rate'} = 'norm';
-		}
 		
-		$params->{'rateval'} = Slim::Player::Source::rate($client);
-		$params->{'sync'}    = Slim::Player::Sync::syncwith($client);
+		$params->{'sync'}    = $client->syncedWithNames();
 		$params->{'mode'}    = $client->power() ? 'on' : 'off';
 
 		if ($client->isPlayer()) {

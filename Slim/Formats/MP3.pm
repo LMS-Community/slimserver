@@ -630,7 +630,9 @@ sub scanBitrate {
 	$scannerlog->warn("Unable to find any MP3 frames in stream!");
 
 	return (-1, undef);
-}	
+}
+
+sub canSeek {1}	
 
 # Read the initial audio frame, this supports seeking while preserving
 # the Xing header needed for gapless playback

@@ -109,7 +109,7 @@ sub initPlugin {
 			'use'          => $prefs->get('musicip'),
 		});
 
-		Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
+		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 	} else {
 
@@ -370,7 +370,7 @@ sub exportPlaylists {
 	}
 }
 
-# Create playlists containing the duplicate items as identified by MusicIP
+# Create playlists containing the duplicate items as identified by MusicMagic
 sub exportDuplicates {
 	my $class = shift;
 
@@ -398,7 +398,7 @@ sub _updatePlaylist {
 	}
 
 	my %attributes = ();
-	my $url        = 'musicipplaylist:' . Slim::Utils::Misc::escape($name);
+	my $url        = 'musicmagicplaylist:' . Slim::Utils::Misc::escape($name);
 
 	# add this list of duplicates to our playlist library
 	$attributes{'TITLE'} = join('', 

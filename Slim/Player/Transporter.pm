@@ -120,7 +120,7 @@ sub play {
 	# value for those. If the user then goes and pressed play on a
 	# standard file:// or http:// URL, we need to set the value back to 0,
 	# IE: input from the network.
-	my $url = $params->{'url'};
+	my $url = $params->{'controller'}->streamUrl();
 
 	if ($url) {
 

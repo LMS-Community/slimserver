@@ -111,7 +111,14 @@ sub init {
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+
+	$client->periodicScreenRefresh(); 
 }
+
+# noop for most players
+sub periodicScreenRefresh {}    
+
+sub reportsTrackStart { 1 }
 
 sub initPrefs {
 	my $client = shift;
@@ -180,57 +187,63 @@ sub isPlayer {
 
 sub power {
 	my $client = shift;
-	my $on = shift;
+	my $on     = shift;
+	my $noplay = shift;
 	
 	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
 	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
 
-	$client->display->renderCache()->{defaultfont} = undef;
-
-	$prefs->client($client)->set('power', $on);
-
-	my $resume = Slim::Player::Sync::syncGroupPref($client, 'powerOnResume') || $prefs->client($client)->get('powerOnResume');
+	my $resume = $prefs->client($client)->get('powerOnResume');
 	$resume =~ /(.*)Off-(.*)On/;
 	my ($resumeOff, $resumeOn) = ($1,$2);
+	
+	my $controller = $client->controller();
 
 	if (!$on) {
-		
 		# turning player off - unsync/pause/stop player and move to off mode
-		my $sync = $prefs->client($client)->get('syncPower');
-
-		if (defined $sync && $sync == 0) {
-
-			if ( $synclog->is_info && Slim::Player::Sync::isSynced($client) ) {
-				$synclog->info("Temporary Unsync " . $client->id);
-			}
-
-			Slim::Player::Sync::unsync($client, 1);
-  		}
-  		
-  		# Bug 7996: Since unsync can change the playing state we need to wait until now to
-  		# find out if we are playing. If unsync() stopped us then that is fine. 
-		my $playing = (Slim::Player::Source::playmode($client) eq 'play');
-		$prefs->client($client)->set('playingAtPowerOff', $playing);
-
-		if ($playing) {
-
-			if (Slim::Player::Playlist::song($client) && 
-				Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
-				# always stop if currently playing remote stream
-				$client->execute(["stop"]);
-			
-			} elsif ($resumeOff eq 'Pause') {
-				# Pause client mid track
-				$client->execute(["pause", 1]);
-  		
-			} else {
-				# Stop client
-				$client->execute(["stop"]);
+		
+		my $justUnsync = 0;
+		
+		for my $other ($client->syncedWith()) {
+			if (!$prefs->client($other)->get('syncPower')) {
+				$justUnsync = 1;
+				last;				
 			}
 		}
 
+		if ($justUnsync) {
+			# Just stop this player if more than one in sync group & not all syncing-off
+			$controller->playerInactive($client);
+			$prefs->client($client)->set('playingAtPowerOff', 0);
+ 		} else {	
+			my $playing = $controller->isPlaying() || $controller->isPaused();
+			$prefs->client($client)->set('playingAtPowerOff', $playing);
+	
+			if ($playing) {
+	
+				if ($controller->playingSong()->isRemote()) {
+					# always stop if currently playing remote stream
+					$client->execute(["stop"]);
+				
+				} elsif ($resumeOff eq 'Pause') {
+					# Pause client mid track
+					$client->execute(["pause", 1]);
+	  		
+				} else {
+					# Stop client
+					$client->execute(["stop"]);
+				}
+
+			}
+	 	}
+
+		$client->display->renderCache()->{defaultfont} = undef;
+	 	
+	 	# Do now, not earlier so that playmode changes still work
+	 	$prefs->client($client)->set('power', $on); # Do now, not earlier so that 
+	 	
 		# turn off audio outputs
 		$client->audio_outputs_enable(0);
 
@@ -242,6 +255,10 @@ sub power {
 
 	} else {
 
+		$client->display->renderCache()->{defaultfont} = undef;
+
+		$prefs->client($client)->set('power', $on);
+		
 		# turning player on - reset mode & brightness, display welcome and sync/start playing
 		$client->audio_outputs_enable(1);
 
@@ -264,12 +281,11 @@ sub power {
 
 		my $oneline = ($client->linesPerScreen() == 1);
 
-		$client->welcomeScreen();		
+		$client->welcomeScreen();
 
-		# check if there is a sync group to restore
-		Slim::Player::Sync::restoreSync($client);
+		$controller->playerActive($client);
 
-		if (Slim::Player::Source::playmode($client) ne 'play') {
+		if (!$controller->isPlaying() && !$noplay) {
 			
 			if ($resumeOn =~ /Reset/) {
 				# reset playlist to start
@@ -280,7 +296,7 @@ sub power {
 				&& $prefs->client($client)->get('playingAtPowerOff')) {
 				# play even if current playlist item is a remote url (bug 7426)
 				# but only if we were playing at power-off (bug 7061)
-				$client->execute(["play"]);
+				$client->execute(["play"]); # will resume if paused
 			}
 		}		
 	}
@@ -342,7 +358,7 @@ sub fade_volume {
 		'startVol' => ($fade > 0) ? 0 : $vol,
 		'endVol'   => ($fade > 0) ? $vol : 0,
 		'startTime'=> $now,
-		'endTime'  => Slim::Player::Sync::isSynced($client) ? $now + $fade : undef,
+		'endTime'  => $callback ? $now + $fade : undef,
 		'int'      => $int,
 		'rate'     => ($vol && $fade) ? $vol / $fade : 0,
 		'cb'       => $callback,
@@ -502,11 +518,7 @@ sub currentSongLines {
 
 			$status = $client->string('PLAYING');
 
-			if (Slim::Player::Source::rate($client) != 1) {
-
-				$status = $lines[0] = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
-
-			} elsif (Slim::Player::Playlist::shuffle($client)) {
+			if (Slim::Player::Playlist::shuffle($client)) {
 
 				$lines[0] = $client->string('PLAYING_RANDOMLY');
 
@@ -938,7 +950,7 @@ sub apparentStreamStartTime {
 						- $client->bufferFullness()
 						- ($client->model() eq 'slimp3' ? 2000 : 2048);
 
-	my $format = Slim::Player::Sync::masterOrSelf($client)->streamformat();
+	my $format = $client->master()->streamformat() || '';
 
 	my $timePlayed;
 
@@ -1005,6 +1017,242 @@ sub publishPlayPoint {
 		}
 	}
 }
+
+sub isBufferReady {
+	my $client = shift;
+	return $client->bufferReady();
+}
+
+sub isReadyToStream {
+	my ($client, $song) = @_;
+	return $client->readyToStream();
+}
+
+sub rebuffer {
+	my ($client) = @_;
+	my $threshold = 80 * 1024; # 5 seconds of 128k
+
+	my $song = $client->playingSong();
+	my $url = $song->currentTrack()->url;
+	my $title = Slim::Music::Info::title($url);
+	my $handler = $song->currentTrackHandler();
+	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
+	
+	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
+	
+	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+		$threshold = 5 * ( int($bitrate / 8) );
+	}
+	
+	if ($threshold > $client->bufferSize() - 4000) {
+		$threshold = $client->bufferSize() - 4000;	# cheating , really for SliMP3s
+	}
+	
+	# We restart playback based on the decode buffer, 
+	# as the output buffer is not updated in pause mode.
+	my $fullness = $client->bufferFullness();
+	
+	$log->info( "Rebuffering: $fullness / $threshold" );
+	
+	$client->bufferReady(0);
+	
+	$client->bufferStarted( Time::HiRes::time() ); # track when we started rebuffering
+	Slim::Utils::Timers::killTimers( $client, \&_buffering );
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + 0.125,
+		\&_buffering,
+		{threshold => $threshold, title => $title, cover => $cover}
+	);
+}
+
+sub buffering {
+	my ($client, $bufferThreshold) = @_;
+	
+	my $song = $client->streamingSong();
+	my $url = $song->currentTrack()->url;
+	my $title = Slim::Music::Info::title($url);
+	my $handler = $song->currentTrackHandler();
+	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
+	
+	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
+	
+	# Set a timer for feedback during buffering
+	$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering
+	Slim::Utils::Timers::killTimers( $client, \&_buffering );
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + 0.125,
+		\&_buffering,
+		{threshold => $bufferThreshold, title => $title, cover => $cover}
+	);
+}
+
+sub _buffering {
+	my ( $client, $args ) = @_;
+	
+	my $log = logger('player.source');
+	
+	my $threshold = $args->{'threshold'};
+	
+	my $controller = $client->controller();
+	my $buffering = $controller->buffering();
+	my $syncWait = $controller->isWaitingToSync();
+	
+	# If the track has started, stop displaying buffering status
+	if ( (!$buffering && !$syncWait)
+		|| !$client->power) # Bug 6549, if the user powers off, stop rebuffering
+	{
+		$client->update();
+		$client->bufferStarted(0); # marker that we are no longer rebuffering
+		return;
+	}
+	
+	# Bug 6712, give up after 30s
+	if ( $buffering == 2 && (time() > $client->bufferStarted() + 30) ) {
+		# Only show rebuffering failed status if no user activity on player or we're on the Now Playing screen
+		my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
+		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+
+		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
+			my ( $line1, $line2 );
+		
+			my $failedString = $client->string('REBUFFERING_FAILED');
+			$line1 = $client->string('NOW_PLAYING') . ': ' . $failedString; 
+			if ( $client->linesPerScreen() == 1 ) { 	 
+				$line2 = $failedString; 	 
+			} 	 
+			else { 	 
+				$line2  = $args->{'title'};
+			}
+
+			$client->showBriefly( {
+				line => [ $line1, $line2 ],
+				jive => { 'type' => 'popupplay', text => [ $failedString ], 'icon-id' => $args->{'cover'} },
+				cli  => undef,
+			}, 2 ) unless $client->display->sbName();
+		}
+		
+		$client->bufferStarted(0);
+		$controller->jumpToTime($controller->playingSongElapsed(), 1); # restart
+		return;
+	}
+	
+
+	my $fullness = $client->bufferFullness();
+	
+	$log->info("Buffering... $fullness / $threshold");
+	
+	# Bug 1827, display better buffering feedback while we wait for data
+	my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
+	
+	my $stillBuffering = ( $percent < 100 ) ? 1 : 0;
+	
+	# TODO - add output-buffer calculations
+	
+	if (!$stillBuffering && $buffering == 2 && $client->bufferStarted()) {
+		$client->bufferReady(1);
+		$controller->playerBufferReady($client);
+		$client->bufferStarted(0); # marker that we are no longer rebuffering
+	}
+	
+	my ( $line1, $jive1, $line2 );
+	
+	if ( $percent == 0 && $buffering == 1) {
+		my $string = $client->string('CONNECTING_FOR');
+		$line1 = $client->string('NOW_PLAYING') . " ($string)";
+		$jive1 = $string;
+		if ( $client->linesPerScreen() == 1 ) {
+			$line2 = $jive1;
+		}
+	}
+	else {
+		my $status;
+		
+		# When synced, a player may have to wait longer than the buffering time
+		if ( $syncWait && $percent >= 100 ) {
+			$status = $client->string('WAITING_TO_SYNC');
+			$stillBuffering = 1;
+		}
+		else {
+			if ( $percent > 100 ) {
+				$percent = 99;
+			}
+			
+			my $string = $buffering < 2 ? 'BUFFERING' : 'REBUFFERING';
+			$status = $client->string($string) . ' ' . $percent . '%';
+		}
+		
+		$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
+		$jive1 = $status;
+		
+		# Display only buffering text in large text mode
+		if ( $client->linesPerScreen() == 1 ) {
+			$line2 = $status;
+		}
+	}
+	
+	# Find the track title
+	if ( $client->linesPerScreen() > 1 ) {
+			$line2  = $args->{'title'};
+	}
+	
+	# Only show buffering status if no user activity on player or we're on the Now Playing screen
+	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
+	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+	
+	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
+
+		$client->showBriefly( {
+			line => [ $line1, $line2 ], 
+			jive => { 'type' => 'song', text => [ $jive1, $args->{'title'} ], 'icon-id' => $args->{'cover'} }, 
+			cli  => undef
+		}, 1 ) unless $client->display->sbName();
+		
+	}
+	
+	# Call again unless we've reached the threshold
+	if ( $stillBuffering ) {
+		Slim::Utils::Timers::setTimer(
+			$client,
+			Time::HiRes::time() + 0.300, # was .125 but too fast sometimes in wireless settings
+			\&_buffering,
+			$args,
+		);
+		
+		$client->requestStatus(); # so we get another up date soon
+	}
+	else {
+		# All done buffering, refresh the screen
+		$client->update;
+	}
+}
+
+sub resume {
+	my $client = shift;
+	Slim::Utils::Timers::killTimers($client, \&_buffering);
+	$client->SUPER::resume();
+	return 1;
+}
+
+sub pause {
+	my $client = shift;
+	Slim::Utils::Timers::killTimers($client, \&_buffering);
+	$client->SUPER::pause();
+	return 1;
+}
+
+sub stop {
+	my $client = shift;
+	Slim::Utils::Timers::killTimers($client, \&_buffering);
+}
+
+sub flush {
+	my $client = shift;
+	Slim::Utils::Timers::killTimers($client, \&_buffering);
+	$client->SUPER::flush();
+}
+
 
 1;
 

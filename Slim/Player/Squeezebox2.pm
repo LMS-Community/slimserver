@@ -86,7 +86,6 @@ sub minPitch { 100 };
 sub model {
 	return 'squeezebox2';
 }
-sub modelName { 'Squeezebox' }
 
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
@@ -95,6 +94,39 @@ sub formats {
 	return qw(wma ogg flc aif wav mp3);
 }
 
+sub statHandler {
+	my ($client, $code) = @_;
+	
+	if ($code eq 'STMd') {
+		$client->readyToStream(1);
+		$client->controller()->playerReadyToStream($client);
+	} elsif ($code eq 'STMn') {
+		$client->readyToStream(1);
+		logError($client->id(). ": Decoder does not support file format");
+		$client->controller()->playerStreamingFailed($client, 'PROBLEM_OPENING');
+	} elsif ($code eq 'STMl') {
+		$client->bufferReady(1);
+		$client->controller()->playerBufferReady($client);
+	} elsif ($code eq 'STMu') {
+		$client->readyToStream(1);
+		$client->controller()->playerStopped($client);
+	} elsif ($code eq 'STMa') {
+		$client->bufferReady(1);
+	} elsif ($code eq 'STMc') {
+		$client->readyToStream(0);
+		$client->bufferReady(0);
+	} elsif ($code eq 'STMs') {
+		$client->controller()->playerTrackStarted($client);
+	} elsif ($code eq 'STMo') {
+		$client->controller()->playerOutputUnderrun($client);
+	} elsif ($code eq 'EoS') {
+		$client->controller()->playerEndOfStream($client);
+	} else {
+		$client->controller->playerStatusHeartbeat($client);
+	}	
+	
+}
+	
 # The original Squeezebox2 firmware supported a fairly narrow volume range
 # below unity gain - 129 levels on a linear scale represented by a 1.7
 # fixed point number (no sign, 1 integer, 7 fractional bits).
@@ -274,13 +306,18 @@ sub maxTransitionDuration {
 	return 10;
 }
 
-sub reportsTrackStart {
-	return 1;
-}
-
 sub requestStatus {
 	shift->stream('t');
 }
+
+sub flush {
+	my $client = shift;
+
+	$client->stream('f');
+	$client->SUPER::flush();
+	return 1;
+}
+
 
 sub stop {
 	my $client = shift;
@@ -316,10 +353,13 @@ sub songElapsedSeconds {
 sub canDirectStream {
 	my $client = shift;
 	my $url = shift;
+	my $song = shift;
 
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
-	if ($handler && $handler->can("canDirectStream")) {
+	if ($song && $handler && $handler->can("canDirectStreamSong")) {
+		return $handler->canDirectStreamSong($client, $song);
+	} elsif ($handler && $handler->can("canDirectStream")) {
 		return $handler->canDirectStream($client, $url);
 	}
 
@@ -332,7 +372,13 @@ sub directHeaders {
 
 	$directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
 
-	my $url = $client->directURL || return;
+	my $controller = $client->controller()->songStreamController();
+
+	unless ($controller && $controller->isDirect()) {return;}
+
+	my $url = $controller->streamUrl();
+	my $handler = $controller->protocolHandler();
+	my $songHandler = $controller->songProtocolHandler();
 	
 	# We involve the protocol handler in the header parsing process.
 	# The current iteration of the firmware only knows about HTTP 
@@ -341,7 +387,6 @@ sub directHeaders {
 	# to return a specific number of bytes or look for a specific 
 	# byte sequence and make this less HTTP specific. For now, we only
 	# support this type of direct streaming for HTTP-esque protocols.
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);	
 
 	# Trim embedded nulls 
 	$headers =~ s/[\0]*$//;
@@ -393,8 +438,14 @@ sub directHeaders {
 				$directlog->info("Processing " . scalar(@headers) . " headers");
 			}
 
-			if ($handler && $handler->can("parseDirectHeaders")) {
+			if ($songHandler && $songHandler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
+				$directlog->info("Calling $songHandler ::parseDirectHeaders");
+				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) 
+					= $songHandler->parseDirectHeaders($client, $controller->song()->currentTrack(), @headers);
+			} elsif ($handler->can("parseDirectHeaders")) {
+				# Could use a hash ref for header parameters
+				$directlog->info("Calling $handler ::parseDirectHeaders");
 				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $handler->parseDirectHeaders($client, $url, @headers);
 			}
 
@@ -465,17 +516,20 @@ sub directHeaders {
 
 			if ($redir) {
 
-				$directlog->is_info && $directlog->info("Redirecting to: $redir");
+				$directlog->info("Redirecting to: $redir" . (defined($controller->song->{'seekdata'}) ? ' with seekdata' : ''));
 				
 				# Store the old URL so we can update its bitrate/content-type/etc
 				$redirects->{ $redir } = $url;			
 				
 				$client->stop();
 
+				$controller->song->{'streamUrl'} = $redir;
 				$client->play({
-					'paused' => Slim::Player::Sync::isSynced($client), 
-					'format' => ($client->masterOrSelf())->streamformat(), 
-					'url'    => $redir,
+					'paused'     => ($client->syncGroupActiveMembers() > 1), 
+					'format'     => ($client->master())->streamformat(), 
+					'url'        => $redir,
+					'controller' => $controller,
+					'seekdata'   => $controller->song->{'seekdata'},
 				});
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
@@ -534,8 +588,12 @@ sub directBodyFrame {
 	
 	my $isInfo = $directlog->is_info;
 
-	my $url     = $client->directURL();
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	my $controller = $client->controller()->songStreamController();
+
+	unless ($controller && $controller->isDirect()) {return;}
+
+	my $url = $controller->streamUrl();
+	my $handler = $controller->protocolHandler();
 	my $done    = 0;
 
 	$isInfo && $directlog->info("Got some body from the player, length " . length($body));
@@ -567,7 +625,9 @@ sub directBodyFrame {
 
 	} else {
 
-		$isInfo && $directlog->info("Empty body means we should parse what we have for " . $client->directURL);
+		if ( $directlog->is_info ) {
+			$directlog->info("Empty body means we should parse what we have for " . $url);
+		}
 
 		$done = 1;
 	}
@@ -617,12 +677,17 @@ sub directBodyFrame {
 sub directMetadata {
 	my $client = shift;
 	my $metadata = shift;
+
+	my $controller = $client->controller()->songStreamController();
+
+	unless ($controller && $controller->isDirect()) {return;}
+
+	my $url = $controller->streamUrl();
 	
-	my $url = $client->directURL;
 	my $type = Slim::Music::Info::contentType($url);
 	
 	if ( $type eq 'wma' ) {
-		Slim::Player::Protocols::MMS::parseMetadata( $client, $url, $metadata );
+		Slim::Player::Protocols::MMS::parseMetadata( $client, $controller->song(), $metadata );
 	}
 	else {
 		Slim::Player::Protocols::HTTP::parseMetadata( $client, Slim::Player::Playlist::url($client), $metadata );
@@ -636,30 +701,16 @@ sub failedDirectStream {
 	my $client = shift;
 	my $error  = shift;
 
-	my $url    = $client->directURL();
+	my $controller = $client->controller()->songStreamController();;
 
+	if (!$controller) {return;}
+
+	my $url = $controller->streamUrl();
 	$directlog->warn("Oh, well failed to do a direct stream for: $url [$error]");
 
-	$client->directURL(undef);
 	$client->directBody(undef);
-
-	Slim::Player::Source::errorOpening( $client, $error || $client->string("PROBLEM_CONNECTING") );
-
-	# Similar to an underrun, but only continue if we're not at the
-	# end of a playlist (irrespective of the repeat mode).
-	if ($client->playmode eq 'playout-play' &&
-		Slim::Player::Source::streamingSongIndex($client) != (Slim::Player::Playlist::count($client) - 1)) {
-
-		Slim::Player::Source::skipahead($client);
-
-	} else {
-
-		Slim::Player::Source::playmode($client, 'stop');
-	}
-
-	# 6.3 Rhapsody code added this, why?
-	# 1 means underrun due to error
-	# Slim::Player::Source::underrun($client, 1);
+	
+	$client->controller()->playerStreamingFailed($client, $error || 'PROBLEM_CONNECTING');
 }
 
 # Should we use the inifinite looping option that some players
@@ -794,7 +845,7 @@ sub setPlayerSetting {
 
 	my $currpref = $pref_settings->{$pref};
 
-	if ($client->playmode() eq 'stop') {
+	if ($client->isStopped()) {
 
 		my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
 		$client->sendFrame('setd', \$data);

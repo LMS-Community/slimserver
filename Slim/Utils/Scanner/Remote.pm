@@ -67,9 +67,6 @@ sub scanURL {
 	
 	$args->{depth} ||= 0;
 	
-	# Clear scanData for this client
-	$client->scanData( {} );
-	
 	if ( !$url ) {
 		return $cb->( undef, 'SCANNER_REMOTE_NO_URL_PROVIDED', @{$pt} );
 	}
@@ -96,7 +93,7 @@ sub scanURL {
 	# Check if the protocol handler has a custom scanning method
 	# This is used to allow plugins to add scanning routines for exteral stream types
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-	if ( $handler && $handler->can('scanStream') ) {
+	if ($handler && $handler->can('scanStream') ) {
 		$log->debug( "Scanning remote stream $url using protocol hander $handler" );
 		
 		# Allow protocol hander to scan the stream and then call the callback
@@ -345,7 +342,7 @@ sub readRemoteHeaders {
 
 	# Is this an audio stream or a playlist?
 	if ( Slim::Music::Info::isSong( $track, $type ) ) {
-		$log->debug('This URL is an audio stream');
+		$log->info('This URL is an audio stream [$type]: ' . $track->url);
 		
 		if ( $type eq 'wma' ) {
 			# WMA streams require extra processing, we must parse the Describe header info
@@ -398,7 +395,7 @@ sub readRemoteHeaders {
 		}
 	}
 	else {
-		$log->debug('This URL is a playlist');
+		$log->debug('This URL is a playlist: ' . $track->url);
 		
 		# Read the rest of the playlist
 		$http->read_body( {
@@ -513,14 +510,13 @@ sub parseWMAHeader {
 	}
 	
 	# Save this metadata for the MMS protocol handler to use
-	if ( $client ) {
-		my $scanData = $client->scanData || {};
-		$scanData->{ $track->url } = {
+	if ( my $song = $args->{'song'} ) {
+		$song->{'scanData'} ||= {}; 
+		$song->{'scanData'}->{$track->url} = {
 			streamNum => $streamNum,
 			metadata  => $wma,
 			headers   => $http->response->headers,
 		};
-		$client->scanData( $scanData );
 	}
 	
 	# All done
@@ -616,8 +612,8 @@ sub parsePlaylist {
 	# Link the found tracks with the playlist
 	$playlist->setTracks( \@results );
 	
-	if ( $log->is_debug ) {
-		$log->debug( 'Found ' . scalar( @results ) . ' items in playlist ' . $playlist->url );
+	if ( $log->is_info ) {
+		$log->info( 'Found ' . scalar( @results ) . ' items in playlist ' . $playlist->url );
 		$log->debug( map { $_->url . "\n" } @results );
 	}
 	
@@ -630,6 +626,7 @@ sub parsePlaylist {
 	for my $entry ( @results ) {
 		__PACKAGE__->scanURL( $entry->url, {
 			client => $client,
+			song   => $args->{'song'},
 			depth  => $args->{depth} + 1,
 			cb     => sub {
 				my ( $result, $error ) = @_;

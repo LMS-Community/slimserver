@@ -33,8 +33,8 @@ sub loadList {
 	
 	@{$client->syncSelections} = Slim::Player::Sync::canSyncWith($client);
 	
-	# add ourselves (for unsyncing) if we're already part of a synced.
-	if (Slim::Player::Sync::isSynced($client)) { push @{$client->syncSelections}, $client };
+	# add ourselves (for unsyncing) if we're the master fo a sync-group.
+	if (Slim::Player::Sync::isMaster($client)) { push @{$client->syncSelections}, $client };
 
 	if (!defined($client->syncSelection()) || $client->syncSelection >= @{$client->syncSelections}) {
 		$client->syncSelection(0);
@@ -57,7 +57,7 @@ sub lines {
 			# get the currently selected client
 			my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
 			
-			if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || $selectedClient eq $client) {
+			if ($client->isSyncedWith($selectedClient) || $selectedClient eq $client) {
 				$line1 = $client->string('UNSYNC_WITH');
 			} else {
 				$line1 = $client->string('SYNC_WITH');
@@ -73,12 +73,6 @@ sub buddies {
 
 	my @buddies = ();
 	my $list = '';
-	
-	foreach my $buddy (Slim::Player::Sync::syncedWith($selectedClient)) {
-		if ($buddy ne $client) {
-			push @buddies, $buddy;	
-		}
-	}
 	
 	if ($selectedClient ne $client) {
 		push @buddies, $selectedClient;
@@ -156,7 +150,7 @@ sub syncExitHandler {
 	
 		my @oldlines = $client->curLines();
 	
-		if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
+		if ($client->isSyncedWith($selectedClient) || ($client eq $selectedClient)) {
 			$client->execute( [ 'sync', '-' ] );
 		} else {
 			$selectedClient->execute( [ 'sync', $client->id ] );

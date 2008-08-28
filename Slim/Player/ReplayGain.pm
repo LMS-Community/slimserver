@@ -23,30 +23,20 @@ my $prefs = preferences('server');
 sub fetchGainMode {
 	my $class  = shift;
 	my $client = shift;
+	my $song   = shift;
 	my $rgmode = $prefs->client($client)->get('replayGainMode');
 
-	my $url = Slim::Player::Playlist::url($client, Slim::Player::Source::streamingSongIndex($client));
+	my $track  = $song->currentTrack();
+	my $url    = $track->url;
 	
 	# Allow plugins to override replaygain (i.e. Pandora should always use track gain)
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
-	if ( $handler && $handler->can('trackGain') ) {
+	my $handler = $song->currentTrackHandler();
+	if ( $handler->can('trackGain') ) {
 		return $handler->trackGain( $client, $url );
 	}
 	
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
-
-	if (!$url) {
-
-		logError("Invalid URL for client song!: [$url]");
-		return 0;
-	}
-
-	my $track = Slim::Schema->rs('Track')->objectForUrl({
-		'url'      => $url,
-		'create'   => 1,
-		'readTags' => 1,
-	});
 
 	if (!blessed($track) || !$track->can('replay_gain')) {
 

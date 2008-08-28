@@ -42,7 +42,7 @@ sub new {
 	my $args  = shift;
 
 	my $client = $args->{client};
-	my $url    = $client->pluginData('url');
+	my $url    = $args->{'song'}->{'streamUrl'};
 	
 	return unless $url;
 
@@ -52,75 +52,40 @@ sub new {
 	} );
 }
 
-sub onJump {
-	my ( $class, $client, $nextURL, $callback ) = @_;
+sub getNextTrack {
+	my ($class, $song, $successCb, $errorCb) = @_;
 	
-	my ($channelId) = $nextURL =~ m{^sirius://(.+)};
-	
-	getChannelInfo( $client, {
-		channelId => $channelId,
-		callback  => $callback,
-	} );
-	
-	# Update the 'Connecting...' text
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time(),
-		sub {
-			displayStatus( $client, $nextURL, 'PLUGIN_SIRIUS_GETTING_STREAM_INFO', 60 );
-		},
-	);
-
-	return;
-}
-
-sub displayStatus {
-	my ( $client, $url, $string, $time ) = @_;
-	
-	my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
-	my $line2 = Slim::Music::Info::title($url) || $url;
-	
-	if ( $client->linesPerScreen() == 1 ) {
-		$line2 = $client->string($string);
-	}
-
-	$client->showBriefly( {
-		line => [ $line1, $line2 ],
-	},
-	{
-		duration => $time,
-	} );
-}
-
-sub getChannelInfo {
-	my ( $client, $params ) = @_;
+	my ($channelId) = $song->currentTrack()->url =~ m{^sirius://(.+)};
 	
 	# Talk to SN and get the channel info for this station
 	my $infoURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/sirius/v1/playback/getChannelInfo?channelId=" . $params->{channelId}
+		"/api/sirius/v1/playback/getChannelInfo?channelId=" . $channelId
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotChannelInfo,
-		\&gotChannelInfoError,
+		sub {gotChannelInfo($song, @_);},		# use closure to hang onto song reference
+		sub {gotChannelInfoError($song, @_);},
 		{
-			client  => $client,
-			params  => $params,
+			client  => $song->master(),
+			params  => {
+				channelId     => $channelId,
+				callback      => $successCb,
+				errorCallback => $errorCb,
+			},
 			timeout => 60, # Sirius can be pretty slow
 		},
 	);
 	
-	$log->debug("Getting channel info from SqueezeNetwork for " . $params->{channelId} );
+	$log->debug("Getting channel info from SqueezeNetwork for " . $channelId );
 	
 	$http->get( $infoURL );
 }
 
 sub gotChannelInfo {
+	my $song   = shift;
 	my $http   = shift;
-	my $client = $http->params->{client};
-	my $params = $http->params->{params};
-	
-	my $url = Slim::Player::Playlist::url($client);
+	my $params = $http->params->{'params'};
+	my $url    = $song->currentTrack()->url;
 	
 	my $info = eval { from_json( $http->content ) };
 	
@@ -136,16 +101,8 @@ sub gotChannelInfo {
 	
 	if ( $info->{error} ) {
 		# We didn't get the info to play		
-		my $title = $client->string('PLUGIN_SIRIUS_NO_INFO') . ' (' . $info->{error} . ')';
-		
-		$client->showBriefly( {
-			line1 => $client->string('PLUGIN_SIRIUS_ERROR'),
-			line2 => $title,
-		},
-		{
-			scroll => 1,
-		} );
-	
+		my $title = $http->params->{'client'}->string('PLUGIN_SIRIUS_NO_INFO') . ' (' . $info->{error} . ')';
+		$params->{'errorCallback'}->('PLUGIN_SIRIUS_ERROR', $title);
 		return;
 	}
 	
@@ -166,18 +123,18 @@ sub gotChannelInfo {
 	$streamURL =~ s/^http/mms/;
 	
 	# Save metadata for this track
-	$client->pluginData( url     => $streamURL );
-	$client->pluginData( bitrate => $bitrate );
-	$client->pluginData( logo    => $info->{logo} );
+	$song->{'streamUrl'} = $streamURL;
+	$song->{'bitrate'}   = $bitrate;
+	$song->{'coverArt'}  = $info->{logo};
 	
 	# Connect to the metadata sub-stream for this station
-	connectMetadataStream( $client, $streamURL );
+	connectMetadataStream( $song, $streamURL );
 	
 	# Start a timer to check status at the defined interval
 	$log->debug( 'Polling status in ' . $info->{status}->{PollingInterval} . ' seconds' );
-	Slim::Utils::Timers::killTimers( $client, \&pollStatus );
+	Slim::Utils::Timers::killTimers( $song, \&pollStatus );
 	Slim::Utils::Timers::setTimer( 
-		$client,
+		$song,
 		Time::HiRes::time() + $info->{status}->{PollingInterval},
 		\&pollStatus,
 		$info->{status},
@@ -185,73 +142,48 @@ sub gotChannelInfo {
 
 	# Start a timer to make sure the user remains active
 	$log->debug( "Checking activity in $activityInterval seconds" );
-	Slim::Utils::Timers::killTimers( $client, \&checkActivity );
+	Slim::Utils::Timers::killTimers( $song, \&checkActivity );
 	Slim::Utils::Timers::setTimer(
-		$client,
+		$song,
 		Time::HiRes::time() + $activityInterval,
 		\&checkActivity,
 		$activityInterval,
 	);
 	
-	my $cb = $params->{callback};
-	$cb->();
+	$params->{'callback'}->();
 }
 
 sub gotChannelInfoError {
+	my $song   = shift;
 	my $http   = shift;
-	my $client = $http->params('client');
 	
-	handleError( $http->error, $client );
+	$http->params->{'params'}->{'errorCallback'}->('PLUGIN_SIRIUS_ERROR', $http->error);
 }
 
-sub handleError {
-    my ( $error, $client ) = @_;
-
-	if ( $client ) {
-		$client->unblock;
-		
-		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Choice', {
-			header  => '{PLUGIN_SIRIUS_ERROR}',
-			listRef => [ $error ],
-		} );
-		
-		if ( main::SLIM_SERVICE ) {
-			SDI::Service::EventLog->log(
-				$client, 'sirius_error', $error,
-			);
-		}
-	}
-}
-
-sub canDirectStream {
-	my ( $class, $client, $url ) = @_;
+sub canDirectStreamSong {
+	my ( $class, $client, $song ) = @_;
 	
-	if ( my $url = $client->pluginData('url') ) {
-		return $url;
-	}
-	
-	return 0;
+	return $class->SUPER::canDirectStream($client, $song->{'streamUrl'}, $class->getFormatForURL());
 }
 
 sub parseDirectHeaders {
 	my $class   = shift;
 	my $client  = shift || return;
 	my $url     = shift;
-	my @headers = @_;
+#	my @headers = @_;
 	
 	my $contentType = 'wma';
-	my $bitrate     = $client->pluginData('bitrate');
+	my $bitrate     = $client->streamingSong()->{'bitrate'};
 	
 	# title, bitrate, metaint, redir, type, length, body
 	return (undef, $bitrate, 0, undef, $contentType, undef, undef);
 }
 
 sub pollStatus {
-	my ( $client, $status ) = @_;
+	my ( $song, $status ) = @_;
 	
 	# Make sure we're still playing Sirius
-	my $url = Slim::Player::Playlist::url($client);
-	return unless $client->playmode =~ /play|pause/ && $url =~ /^sirius/;
+	return if !$song->isActive();
 	
 	$log->debug("Polling status...");
 
@@ -260,10 +192,10 @@ sub pollStatus {
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotPollStatus,
-		\&gotPollStatusError,
+		sub {gotPollStatus($song, @_);},
+		sub {gotPollStatusError($song, @_);},
 		{
-			client  => $client,
+			client  => $song->master(),
 			status  => $status,
 			timeout => 60,
 		},
@@ -273,8 +205,8 @@ sub pollStatus {
 }
 
 sub gotPollStatus {
+	my $song   = shift;
 	my $http   = shift;
-	my $client = $http->params('client');
 	my $status = $http->params('status');
 	
 	my $info = eval { from_json( $http->content ) };
@@ -293,9 +225,9 @@ sub gotPollStatus {
 		# We didn't get the status, try again using the previous poll interval
 		$log->error( "Error getting Sirius stream status: " . $info->{error} );
 		
-		Slim::Utils::Timers::killTimers( $client, \&pollStatus );
+		Slim::Utils::Timers::killTimers( $song, \&pollStatus );
 		Slim::Utils::Timers::setTimer( 
-			$client,
+			$song,
 			Time::HiRes::time() + $status->{PollingInterval},
 			\&pollStatus,
 			$status,
@@ -304,7 +236,7 @@ sub gotPollStatus {
 	}
 	
 	if ( $info->{Status} ne 'open' ) {
-		stopStreaming( $client, 'PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED' );
+		stopStreaming( $song, 'PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED' );
 		return;
 	}
 	
@@ -314,9 +246,9 @@ sub gotPollStatus {
 	$log->debug( "Sirius stream status OK, polling again in " . $info->{PollingInterval} );
 	
 	# Stream is OK, setup next poll
-	Slim::Utils::Timers::killTimers( $client, \&pollStatus );
+	Slim::Utils::Timers::killTimers( $song, \&pollStatus );
 	Slim::Utils::Timers::setTimer( 
-		$client,
+		$song,
 		Time::HiRes::time() + $info->{PollingInterval},
 		\&pollStatus,
 		$info,
@@ -324,17 +256,17 @@ sub gotPollStatus {
 }
 
 sub gotPollStatusError {
+	my $song   = shift;
 	my $http   = shift;
 	my $error  = $http->error;
-	my $client = $http->params('client');
 	my $status = $http->params('status');
 	
 	$log->error( "Error getting Sirius stream status: " . $error );
 	
 	# Retry getting status later
-	Slim::Utils::Timers::killTimers( $client, \&pollStatus );
+	Slim::Utils::Timers::killTimers( $song, \&pollStatus );
 	Slim::Utils::Timers::setTimer( 
-		$client,
+		$song,
 		Time::HiRes::time() + $status->{PollingInterval},
 		\&pollStatus,
 		$status,
@@ -343,65 +275,63 @@ sub gotPollStatusError {
 	
 
 sub checkActivity {
-	my ( $client, $interval ) = @_;
+	my ( $song, $interval ) = @_;
 	
 	# Make sure we're still playing Sirius
-	my $url = Slim::Player::Playlist::url($client);
-	return unless $client->playmode =~ /play|pause/ && $url =~ /^sirius/;
+	return unless $song->isActive();
 	
 	# Check for activity within last $interval seconds
 	# If idle time has been exceeded, stop playback
 	my $now          = Time::HiRes::time();
-	my $lastActivity = $client->lastActivityTime();
+	my $lastActivity = $song->master()->lastActivityTime();
 	if ( $now - $lastActivity >= $interval ) {
-		
 		$log->debug("User has been inactive for at least $interval seconds, stopping");
-		
-		stopStreaming( $client, 'PLUGIN_SIRIUS_STOPPING_INACTIVE' );
+		stopStreaming( $song, 'PLUGIN_SIRIUS_STOPPING_INACTIVE' );
+		return;
 	}
-	else {
-		
-		if ( $log->is_debug ) {
-			my $inactive  = $now - $lastActivity;
-			my $nextCheck = $interval - $inactive;
-			$log->debug( "User has been inactive for only $inactive seconds, next check in $nextCheck" );
-		}
-		
-		# Check again when the user would next be inactive for $interval seconds
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + ( $interval - ( $now - $lastActivity ) ),
-			\&checkActivity,
-			$interval,
-		);
+
+	if ( $log->is_debug ) {
+		my $inactive  = $now - $lastActivity;
+		my $nextCheck = $interval - $inactive;
+		$log->debug( "User has been inactive for only $inactive seconds, next check in $nextCheck" );
 	}
+	
+	# Check again when the user would next be inactive for $interval seconds
+	Slim::Utils::Timers::setTimer(
+		$song,
+		Time::HiRes::time() + ( $interval - ( $now - $lastActivity ) ),
+		\&checkActivity,
+		$interval,
+	);
+
 }
 
 sub stopStreaming {
-	my ( $client, $string ) = @_;
+	my ( $song, $string ) = @_;
+	
+	my $client     = $song->master();
 	
 	# Change the stream title to the error message
-	my $url = Slim::Player::Playlist::url($client);
-	Slim::Music::Info::setCurrentTitle( $url, $client->string($string) );
+	Slim::Music::Info::setCurrentTitle( $song->currentTrack()->url, $client->string($string) );
 	
 	$client->update();
 	
 	# Kill all timers
-	Slim::Utils::Timers::killTimers( $client, \&pollStatus );
-	Slim::Utils::Timers::killTimers( $client, \&checkActivity );
+	Slim::Utils::Timers::killTimers( $song, \&pollStatus );
+	Slim::Utils::Timers::killTimers( $song, \&checkActivity );
 	
 	$client->execute( [ 'stop' ] );
 }
 
 sub connectMetadataStream {
-	my ( $client, $url ) = @_;
+	my ( $song, $streamUrl ) = @_;
 	
 	$log->debug( 'Connecting to Sirius metadata stream...' );
 	
-	$url =~ s/^mms/http/;
+	$streamUrl =~ s/^mms/http/;
 	
 	# Construct the request for stream #2
-	my $request = HTTP::Request->new( GET => $url );
+	my $request = HTTP::Request->new( GET => $streamUrl );
 	my $h = $request->headers;
 	$h->header( Accept => '*/*' );
 	$h->header( 'User-Agent' => 'NSPlayer/8.0.0.3802' );
@@ -421,36 +351,24 @@ sub connectMetadataStream {
 	$http->send_request( {
 		request     => $request,
 		Timeout     => 60,
-		onStream    => \&handleMetadataStream,
+		onStream    => sub {handleMetadataStream($song, @_);},
 		onError     => sub {
 			my ( $http, $error ) = @_;
 
 			$log->error("Error on metadata stream: $error.");
 		},
-		passthrough => [ $client, $url ],
+		passthrough => [ $streamUrl ],
 	} );
 }
 
 sub handleMetadataStream {
-	my ( $http, $data_ref, $client, $url ) = @_;
+	my ( $song, $http, $data_ref, $mmsURL ) = @_;
 	
-	return 0 if !blessed $client;
-	
+	my $url = $song->currentTrack()->url;
+		
 	# Make sure we're still playing Sirius
-	my $playlistURL = Slim::Player::Playlist::url($client);
-	if ( $client->playmode !~ /play|pause/ || $playlistURL !~ /^sirius/ ) {
-		$log->debug( "Player stopped or changed streams (playmode: " . $client->playmode . ", url: $playlistURL), disconnecting from metadata stream for $url" );
-		return 0;
-	}
-	
-	# Get the real URL of the playing station to compare with the metadata URL
-	my $realURL = $client->pluginData('url');
-	my $mmsURL  = $url;
-	$mmsURL    =~ s/^http/mms/;
-	
-	# See if they changed Sirius stations
-	if ( $realURL ne $mmsURL ) {
-		$log->debug( "Playlist changed, disconnecting from metadata stream ($realURL ne $mmsURL)" );
+	if ( !$song->isActive() ) {
+		$log->debug( "Player stopped or changed streams, url: $url), disconnecting from metadata stream for $mmsURL" );
 		return 0;
 	}
 	
@@ -477,7 +395,7 @@ sub handleMetadataStream {
 			$title = "$artist - $title";
 		}
 		
-		Slim::Music::Info::setDelayedTitle( $client, $playlistURL, $title );
+		Slim::Music::Info::setDelayedTitle( $song->master(), $url, $title );
 	}
 	
 	# Signal we want more data
@@ -501,8 +419,19 @@ sub getMetadataFor {
 		}
 	}
 	
-	my $bitrate = $client->pluginData('bitrate') / 1000;
-	my $logo    = $class->getIcon($url, $client);
+	# try to find song
+	my $song = $client->streamingSong();
+	
+	my $bitrate;
+	my $logo;
+	
+	if ($song && $song->currentTrack()->url eq $url || $song->{'streamUrl'} eq $url) {
+		my $bitrate = $song->{'bitrate'} / 1000;
+		my $logo    = $song->{'coverArt'};
+	}
+	
+	$bitrate ||= 128;
+	$logo    ||= $class->getIcon($url);
 	
 	return {
 		artist  => $artist,
@@ -514,10 +443,6 @@ sub getMetadataFor {
 }
 
 sub getIcon {
-	my ( $class, $url, $client ) = @_;
-
-	return $client->pluginData('logo') if ($client && $client->pluginData('logo'));
-
 	return Slim::Plugin::Sirius::Plugin->_pluginDataFor('icon');
 }
 

@@ -18,8 +18,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'ERROR',
 });
 
-my %filterHash = ();
-
 my $prefs = preferences('plugin.musicip');
 
 $prefs->migrate(1, sub {
@@ -100,16 +98,6 @@ $prefs->setChange(
 	},
 'scan_interval');
 
-
-sub new {
-	my $class = shift;
-
-	# initialize the filter list
-	$class->grabFilters();
-
-	return $class->SUPER::new($class);
-}
-
 sub name {
 	return Slim::Web::HTTP::protectName('MUSICMAGIC');
 }
@@ -124,61 +112,34 @@ sub prefs {
 }
 
 sub handler {
-	my ($class, $client, $params, $callback, @args) = @_;
+	my ($class, $client, $params) = @_;
 
 	# Cleanup the checkbox
 	$params->{'pref_musicip'} = defined $params->{'pref_musicip'} ? 1 : 0;
 
-	if ( !$params->{'saveSettings'} ) {
-
-		$class->grabFilters($client, $params, $callback, @args);
-		
-		return undef;
-	}
-	
-	$params->{'filters'} = getFilterList();
+	$params->{'filters'}  = grabFilters();
 
 	return $class->SUPER::handler($client, $params);
 }
 
 sub grabFilters {
-	my ($class, $client, $params, $callback, @args) = @_;
+	my @filters    = ();
+	my %filterHash = ();
 	
 	my $MMSport = $prefs->get('port');
 	my $MMSHost = $prefs->get('host');
 
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_gotFilters,
-		sub {
-			$log->error('Failed fetching filters from MusicIP');
-			_fetchingFiltersDone(shift);
-		},
-		{
-			client   => $client,
-			params   => $params,
-			callback => $callback,
-			class    => $class,
-			args     => \@args,
-			timeout  => 5,
-#			cacheTime => 0
-		}
-	);
+	$log->debug("Get filters list");
 
-	$http->get( "http://$MMSHost:$MMSport/api/filters" );
-}
-
-sub getFilterList {
-	return \%filterHash;
-}
-
-sub _gotFilters {
-	my $http = shift;
-
-	my @filters = ();
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/filters",
+		'create' => 0,
+	});
 
 	if ($http) {
 
 		@filters = split(/\n/, $http->content);
+		$http->close;
 
 		if ($log->is_debug && scalar @filters) {
 
@@ -194,7 +155,6 @@ sub _gotFilters {
 	my $none = sprintf('(%s)', Slim::Utils::Strings::string('NONE'));
 
 	push @filters, $none;
-	%filterHash = ();
 
 	foreach my $filter ( @filters ) {
 
@@ -207,43 +167,7 @@ sub _gotFilters {
 		$filterHash{$filter} = $filter;
 	}
 
-	# remove filter from client settings if it doesn't exist any more
-	foreach my $client (Slim::Player::Client::clients()) {
-
-		unless ( $filterHash{ $prefs->client($client)->get('mix_filter') } ) {
-
-			$log->warn('Filter "' . $prefs->client($client)->get('mix_filter') . '" does no longer exist - resetting');
-			$prefs->client($client)->set('mix_filter', 0);
-
-		}
-
-	}
-
-	unless ( $filterHash{ $prefs->get('mix_filter') } ) {
-
-		$log->warn('Filter "' . $prefs->get('mix_filter') . '" does no longer exist - resetting');
-		$prefs->set('mix_filter', 0);
-
-	}
-	
-	_fetchingFiltersDone($http);
-}
-
-sub _fetchingFiltersDone {
-	my $http = shift;
-
-	my $client   = $http->params('client');
-	my $params   = $http->params('params');
-	my $callback = $http->params('callback');
-	my $class    = $http->params('class');
-	my @args     = @{$http->params('args')};
-
-	$params->{'filters'} = \%filterHash;
-
-	if ($callback && $class) {		
-		my $body = $class->SUPER::handler($client, $params);
-		$callback->( $client, $params, $body, @args );	
-	}
+	return \%filterHash;
 }
 
 1;

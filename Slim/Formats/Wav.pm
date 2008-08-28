@@ -77,4 +77,6 @@ sub getTag {
 	return $tags;
 }
 
+sub canSeek {1}
+
 1;

@@ -29,10 +29,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('server');
 
-sub getFormatForURL { 'mp3' }
+sub isRemote { 1 }
 
-# default buffer 3 seconds of 192k audio
-sub bufferThreshold { 24 * ( $prefs->get('bufferSecs') || 3 ) }
+sub getFormatForURL { 'mp3' }
 
 # Source for AudioScrobbler
 sub audioScrobblerSource {
@@ -45,12 +44,6 @@ sub audioScrobblerSource {
 
 	# P = Chosen by the user
 	return 'P';
-}
-
-sub isRemote { 1 }
-
-sub handleError {
-    return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
 }
 
 sub parseDirectHeaders {
@@ -82,8 +75,14 @@ sub parseDirectHeaders {
 	return (undef, 192000, 0, '', 'mp3', $length, undef);
 }
 
-# Don't allow looping if the tracks are short
+# Don't allow looping
 sub shouldLoop { 0 }
+
+sub isRepeatingStream {
+	my (undef, $song) = @_;
+	
+	return $song->{'track'}->url =~ /\.rdr$/;
+}
 
 sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
@@ -96,36 +95,10 @@ sub canDoAction {
 	return 1;
 }
 
-# Whether or not to display buffering info while a track is loading
-sub showBuffering {
-	my ( $class, $client, $url ) = @_;
-	
-	my $showBuffering = $client->pluginData('showBuffering');
-	
-	return ( defined $showBuffering ) ? $showBuffering : 1;
-}
-
-# If an audio stream fails, keep playing
 sub handleDirectError {
 	my ( $class, $client, $url, $response, $status_line ) = @_;
 	
 	$log->debug("Direct stream failed: [$response] $status_line\n");
-	
-	my $line1 = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR');
-	my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED');
-	
-	$client->showBriefly( {
-		line1 => $line1,
-		line2 => $line2,
-		jive  => {
-			type => 'popupplay',
-			text => [ $line1, $line2 ],
-		},
-	},
-	{
-		block  => 1,
-		scroll => 1,
-	} );
 	
 	if ( main::SLIM_SERVICE && SN_DEBUG ) {
 		SDI::Service::EventLog->log(
@@ -133,39 +106,74 @@ sub handleDirectError {
 		);
 	}
 	
-	# If it was a radio track, play again, we'll get a new track
-	if ( $url =~ /\.rdr$/ ) {
-		$log->debug('Radio track failed, restarting');
-		$client->execute([ 'playlist', 'play', $url ]);
+	$client->controller()->playerStreamingFailed($client, 'PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED');
+}
+
+sub _handleClientError {
+	my ($error, $client, $params) = @_;
+	
+	my $song    = $params->{'song'};
+	
+	return if $song->pluginData('abandonSong');
+	
+	# Tell other clients to give up
+	$song->pluginData(abandonSong => 1);
+	
+	$params->{'errorCb'}->($error);
+}
+
+sub getNextTrack {
+	my ($class, $song, $successCb, $errorCb) = @_;
+	
+	my $client = $song->master();
+	my $url    = $song->{'track'}->url;
+	
+	$song->pluginData( radioTrackURL => undef );
+	$song->pluginData( radioTitle    => undef );
+	$song->pluginData( radioTrack    => undef );
+	$song->pluginData( abandonSong   => 0 );
+	
+	if (_tooManySynced($client)) {
+		$errorCb->('PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED');
+		return;
 	}
-	else {
-		# Otherwise, skip
-		my $nextsong = Slim::Player::Source::nextsong($client);
-		if ( $client->playmode !~ /stop/ && defined $nextsong ) {
-			$log->debug("Skipping to next track ($nextsong)");
-			$client->execute([ 'playlist', 'jump', $nextsong ]);
-		}
-		else {
-			$client->execute([ 'stop' ]);
-		}
+	
+	my $params = {
+		song      => $song,
+		url       => $url,
+		successCb => $successCb,
+		errorCb   => $errorCb,
+	};
+	
+	# 0. If playing Rhapsody, log track-played (handled via onDecode callback)
+	
+	# 1. If this is a radio-station then get next track info
+	if ($class->isRepeatingStream($song)) {
+		_getNextRadioTrack($params);
+	} else {
+		_getTrack($params);
 	}
+	
+	# 2. For each player in sync-group:
+	
+	# 2.1 Get account if necessary 
+	# 2.2 Get playback-session if necessary (if playingSong != Rhapsody)
+	# 2.3 Get mediaURL (rpds 3)
+
 }
 
 # Only allow 3 players synced, throw an error if more are synced
-sub tooManySynced {
+sub _tooManySynced {
 	my $client = shift;
 	
-	return unless Slim::Player::Sync::isSynced($client);
+	my @clients =  $client->syncGroupActiveMembers();
 	
-	my @clients;
-	
-	my $master = Slim::Player::Sync::masterOrSelf($client);
-	push @clients, $master, @{ $master->slaves };
+	return unless @clients > 1;
 	
 	my $tooMany  = 0;
 	my %accounts = ();
 
-	if ( my $account = __PACKAGE__->getAccount($client) ) {
+	if ( my $account = _getAccount($client) ) {
 		for my $client ( @clients ) {
 			if ( $account->{defaults} ) {
 				if ( my $default = $account->{defaults}->{ $client->id } ) {
@@ -187,36 +195,11 @@ sub tooManySynced {
 	# If any one account has more than 3 players on it, sync will fail
 	$tooMany = grep { $_ > 3 } values %accounts;
 	
-	if ( $tooMany ) {
-		$log->debug('Too many players synced, not playing');
-		
-		my $line1 = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR');
-		my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED');
-		
-		# Show message on all players
-		for my $client ( @clients ) {			
-			$client->showBriefly( {
-				line1 => $line1,
-				line2 => $line2,
-				jive  => {
-					type => 'popupplay',
-					text => [ $line1, $line2 ],
-				},
-			},
-			{
-				block  => 1,
-				scroll => 1,
-			} );
-		}
-		
-		return 1;
-	}
-	
-	return;
+	return $tooMany;
 }
 
-sub getAccount {
-	my ( $class, $client ) = @_;
+sub _getAccount {
+	my $client= shift;
 	
 	# Always pull account info directly from the database on SN
 	if ( main::SLIM_SERVICE ) {
@@ -246,54 +229,305 @@ sub getAccount {
 	return $account;
 }
 
-sub getPlaybackSession {
-	my ( $client, $data, $url, $callback, $sentip ) = @_;
+sub _getCurrentUser {
+	my $client = shift;
 	
-	if ( !$sentip ) {
-		# Lookup the correct address for secure-direct and inform the players
-		# The firmware has a hardcoded address but it may change
-		my $dns = Slim::Networking::Async->new;
-		$dns->open( {
-			Host    => 'secure-direct.rhapsody.com',
-			onDNS   => sub {
-				my $ip = shift;
-				
-				$log->debug( "Found IP for secure-direct.rhapsody.com: $ip" );
-				
-				$ip = Net::IP->new($ip);
-				
-				rpds( $client, {
-					data        => pack( 'cNn', 0, $ip->intip, 443 ),
-					_noresponse => 1,
-				} );
-				
-				getPlaybackSession( $client, $data, $url, $callback, 1 );
+	my $account = _getAccount($client);
+	
+	# Choose the correct account to use for this player's session
+	my $username = $account->{username}->[0];
+	
+	if ( $account->{defaults} ) {
+		if ( my $default = $account->{defaults}->{ $client->id } ) {
+			
+			my $i = 0;
+			for my $user ( @{ $account->{username} } ) {
+				if ( $default eq $user ) {
+					$username = $account->{username}->[ $i ];
+					last;
+				}
+				$i++;
+			}
+		}
+	}
+	
+	return $username;
+}
+
+# 1. If this is a radio-station then get next track info
+sub _getNextRadioTrack {
+	my ($params) = @_;
+		
+	my ($stationId) = $params->{'url'} =~ m{rhapd://(.+)\.rdr};
+	
+	# Talk to SN and get the next track to play
+	my $radioURL = Slim::Networking::SqueezeNetwork->url(
+		"/api/rhapsody/v1/radio/getNextTrack?stationId=$stationId"
+	);
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_gotNextRadioTrack,
+		\&_gotNextRadioTrackError,
+		{
+			client => $params->{'song'}->master(),
+			params => $params,
+		},
+	);
+	
+	$log->debug("Getting next radio track from SqueezeNetwork");
+	
+	$http->get( $radioURL );
+}
+
+# 1.1a If this is a radio-station then get next track info
+sub _gotNextRadioTrack {
+	my $http   = shift;
+	my $client = $http->params->{client};
+	my $params = $http->params->{params};
+	my $song   = $params->{'song'};
+	my $url    = $song->{'track'}->url;
+	
+	my $track = eval { from_json( $http->content ) };
+	
+	if ( $log->is_debug ) {
+		$log->debug( 'Got next radio track: ' . Data::Dump::dump($track) );
+	}
+	
+	if ( $track->{error} ) {
+		# We didn't get the next track to play
+		
+		my $error = ( $client->isPlaying(1) && $client->playingSong()->{'track'}->url =~ /\.rdr/ )
+					? 'PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK'
+					: 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK';
+		
+		$params->{'errorCb'}->($error, $url);
+
+		# Set the title after the errro callback so the current title
+		# is still the radio-station name during the callback
+		Slim::Music::Info::setCurrentTitle( $url, $client->string('PLUGIN_RHAPSODY_DIRECT_NO_TRACK') );
+			
+		return;
+	}
+	
+	# set metadata for track, will be set on playlist newsong callback
+	$url      = 'rhapd://' . $track->{trackId} . '.mp3';
+	my $title = $track->{name} . ' ' . 
+			$client->string('BY') . ' ' . $track->{displayArtistName} . ' ' . 
+			$client->string('FROM') . ' ' . $track->{displayAlbumName};
+	
+	$song->pluginData( radioTrackURL => $url );
+	$song->pluginData( radioTitle    => $title );
+	$song->pluginData( radioTrack    => $track );
+	
+	# We already have the metadata for this track, so can save calling getTrack
+	my $meta = {
+		artist    => $track->{displayArtistName},
+		album     => $track->{displayAlbumName},
+		title     => $track->{name},
+		cover     => $track->{cover},
+		bitrate   => '192k CBR',
+		type      => 'MP3 (Rhapsody)',
+		info_link => 'plugins/rhapsodydirect/trackinfo.html',
+		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
+		buttons   => {
+			# disable REW/Previous button in radio mode
+			rew => 0,
+		},
+	};
+	
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'rhapsody_meta_' . $track->{trackId}, $meta, 86400 );
+	
+	$params->{'url'} = $url;
+	_getTrack($params);
+}
+
+# 1.1b If this is a radio-station then get next track info
+sub _gotNextRadioTrackError {
+	my $http   = shift;
+	my $client = $http->params('client');
+	
+	_handleClientError( $http->error, $client, $http->params->{params} );
+}
+
+# 2. For each player in sync-group: get accounrt, session, track-info as necessary
+sub _getTrack {
+	my $params  = shift;
+	
+	my $song    = $params->{'song'};
+	my @players = $song->master()->syncGroupActiveMembers();
+	
+	$song->pluginData(playersNotReady => scalar @players);
+	
+	my $playingSong = $song->master()->playingSong();
+	my $needNewSession = 1;
+	
+	# We can skip getting a new session if we were just playing another Rhapsody track
+	if (   $playingSong 
+		&& $playingSong->currentTrackHandler eq __PACKAGE__
+	) {
+		$needNewSession = 0;
+	}
+	
+	for my $client (@players) {
+		_getTrackByClient($client, $params, $needNewSession);
+	}
+}
+
+# 2.1 Get account if necessary 
+# 2.2 Get playback-session if necessary (if playingSong != Rhapsody)
+sub _getTrackByClient {
+	my $client     = shift;
+	my $params     = shift;
+	my $getSession = shift;
+	
+	if ( main::SLIM_SERVICE ) {
+		# Fail if firmware doesn't support mp3
+		my $old;
+		
+		my $deviceid = $client->deviceid;
+		my $rev      = $client->revision;
+		
+		if ( $deviceid == 4 && $rev < 97 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 5 && $rev < 45 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 7 && $rev < 32 ) {
+			$old = 1;
+		}
+		
+		if ( $old ) {
+			handleError( $client->string('PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED'), $client );
+			return;
+		}
+	}
+	
+	# Get login info from SN if we don't already have it
+	my $account = _getAccount($client);
+	
+	if ( !$account ) {
+		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
+		
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&gotAccount,
+			\&gotAccountError,
+			{
+				client => $client,
+				cb     => sub {
+					return if $params->{'song'}->pluginData('abandonSong');
+					_getTrackByClient( $client, $params, $getSession );
+				},
+				ecb    => sub {
+					my $error = shift;
+					return if $params->{'song'}->pluginData('abandonSong');
+					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
+					_handleClientError( $error, $client, $params );
+				},
 			},
-			onError => sub {
-				handleError( $client->string('PLUGIN_RHAPSODY_DIRECT_DNS_ERROR'), $client );
+		);
+		
+		$log->debug("Getting Rhapsody account from SqueezeNetwork");
+		
+		$http->get( $accountURL );
+		
+		return;
+	}
+	
+	if ( $getSession ) {
+		
+		if ( !$params->{_sentip} ) {
+			# Lookup the correct address for secure-direct and inform the players
+			# The firmware has a hardcoded address but it may change
+			my $dns = Slim::Networking::Async->new;
+			$dns->open( {
+				Host    => 'secure-direct.rhapsody.com',
+				onDNS   => sub {
+					my $ip = shift;
+
+					$log->debug( "Found IP for secure-direct.rhapsody.com: $ip" );
+
+					$ip = Net::IP->new($ip);
+
+					rpds( $client, {
+						data        => pack( 'cNn', 0, $ip->intip, 443 ),
+						_noresponse => 1,
+					} );
+
+					$params->{_sentip} = 1;
+
+					_getTrackByClient( $client, $params, $getSession );
+				},
+				onError => sub {
+					_handleClientError( $client->string('PLUGIN_RHAPSODY_DIRECT_DNS_ERROR'), $client, $params );
+				},
+			} );
+
+			return;
+		}
+		
+		$log->debug("Ending any previous playback session");
+
+		# Clear any previous outstanding rpds queries
+		cancel_rpds($client);
+
+		rpds( $client, {
+			data        => pack( 'c', 6 ),
+			callback    => \&_getPlaybackSession,
+			onError     => sub {
+				_getPlaybackSession( $client, undef, $params );
 			},
+			passthrough => [ $params ],
 		} );
 		
 		return;
 	}
+
+	_getTrackInfo($client, undef, $params);
+}
+
+# 2.1a Get account if necessary
+sub gotAccount {
+	my $http  = shift;
+	my $params = $http->params;
+	my $client = $params->{client};
+	
+	my $account = eval { from_json( $http->content ) };
+	
+	if ( ref $account eq 'HASH' ) {
+		$client->pluginData( account => $account );
+		
+		if ( $log->is_debug ) {
+			$log->debug( "Got Rhapsody account info from SN" );
+		}
+		
+		$params->{cb}->();
+	}
+	else {
+		$params->{ecb}->($@);
+	}
+}
+
+# 2.1b Get account if necessary
+sub gotAccountError {
+	my $http   = shift;
+	my $params = $http->params;
+	
+	$params->{ecb}->( $http->error );
+}
+
+# 2.2 Get playback-session if necessary (if playingSong != Rhapsody)
+sub _getPlaybackSession {
+	my ( $client, undef, $params ) = @_;
 	
 	# Always get a new playback session
 	if ( $log->is_debug ) {
 		$log->debug( $client->id, ' Requesting new playback session...');
 	}
 	
-	# Update the 'Connecting...' text
-	$client->suppressStatus(1);
-	displayStatus( $client, $url, 'PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO', 30 );
-	
-	# Clear old radio data if any
-	$client->pluginData( radioTrackURL => 0 );
-	
-	# Display buffering info on loading the next track
-	$client->pluginData( showBuffering => 1 );
-	
 	# Get login info
-	my $account = __PACKAGE__->getAccount($client);
+	my $account = _getAccount($client);
 	
 	# Choose the correct account to use for this player's session
 	my $username = $account->{username}->[0];
@@ -326,343 +560,165 @@ sub getPlaybackSession {
 	
 	rpds( $client, {
 		data        => $packet,
-		callback    => \&getNextTrackInfo,
-		onError     => \&handleError,
-		passthrough => [ $url, $callback ],
+		callback    => \&_getTrackInfo,
+		onError     => \&_handleClientError,
+		passthrough => [ $params ],
 	} );
 }
 
-sub gotAccount {
-	my $http  = shift;
-	my $params = $http->params;
-	my $client = $params->{client};
+# 2.3 Get mediaURL (rpds 3)
+sub _getTrackInfo {
+    my ( $client, undef, $params ) = @_;
+
+	my $song    = $params->{'song'};
 	
-	my $account = eval { from_json( $http->content ) };
+	return if $song->pluginData('abandonSong');
+
+	# Get track URL for the next track
+	my ($trackId) = $params->{'url'} =~ m{rhapd://(.+)\.mp3};
 	
-	if ( ref $account eq 'HASH' ) {
-		$client->pluginData( account => $account );
-		
-		if ( $log->is_debug ) {
-			$log->debug( "Got Rhapsody account info from SN" );
-		}
-		
-		$params->{cb}->();
-	}
-	else {
-		$params->{ecb}->($@);
-	}
+	rpds( $client, {
+		data        => pack( 'cC/a*', 3, $trackId ),
+		callback    => \&_gotTrackInfo,
+		onError     => \&_gotTrackError,
+		passthrough => [ $params ],
+	} );
 }
 
-sub gotAccountError {
-	my $http   = shift;
-	my $params = $http->params;
+# 2.3a Get mediaURL 
+sub _gotTrackInfo {
+	my ( $client, $mediaUrl, $params ) = @_;
 	
-	$params->{ecb}->( $http->error );
-}
-
-# Handle normal advances to the next track
-sub onDecoderUnderrun {
-	my ( $class, $client, $nextURL, $callback ) = @_;
-
-	# Flag that we don't want any buffering messages while loading the next track
-	$client->pluginData( showBuffering => 0 );
-
-	# For decoder underrun, we log the full play time of the song
-	my $playtime = Slim::Player::Source::playingSongDuration($client);
+    my $song = $params->{'song'};
+    
+    return if $song->pluginData('abandonSong');
+    
+	(undef, $mediaUrl) = unpack 'cn/a*', $mediaUrl;
 	
-	if ( $playtime > 0 ) {
-		$log->debug("End of track, logging usage info ($playtime seconds)...");
+	# Save the media URL for use in strm
+	$song->pluginData( mediaUrl => $mediaUrl );
 	
-		my $url = Slim::Player::Playlist::url($client);
-		
-		sendLogging( $client, $url, $playtime );
-	}
-	
-	# Clear radio data if any, so we always get a new radio track
-	$client->pluginData( radioTrackURL => 0 );
-	
-	# Go to the next track
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		$callback->();
-	}
-	else {
-		getNextTrackInfo( $client, undef, $nextURL, $callback );
-	}
-}
-
-# On skip, load the next track before playback
-sub onJump {
-	my ( $class, $client, $nextURL, $callback ) = @_;
-	
-	if ( $log->is_debug ) {
-		$log->debug( 'Handling command "jump", playmode: ' . $client->playmode );
-	}
-	
-	if ( main::SLIM_SERVICE && SN_DEBUG ) {
-		SDI::Service::EventLog->log(
-			$client, 'rhapsody_jump', "-> $nextURL",
-		);
-	}
-	
-	if ( main::SLIM_SERVICE ) {
-		# Fail if firmware doesn't support mp3
-		my $old;
-		
-		my $deviceid = $client->deviceid;
-		my $rev      = $client->revision;
-		
-		if ( $deviceid == 4 && $rev < 97 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 5 && $rev < 45 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 7 && $rev < 32 ) {
-			$old = 1;
-		}
-		
-		if ( $old ) {
-			handleError( $client->string('PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED'), $client );
-			return;
-		}
-	}
-	
-	# Get login info from SN if we don't already have it
-	my $account = $class->getAccount($client);
-	
-	if ( !$account ) {
-		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
-		
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&gotAccount,
-			\&gotAccountError,
-			{
-				client => $client,
-				cb     => sub {
-					$class->onJump( $client, $nextURL, $callback );
-				},
-				ecb    => sub {
-					my $error = shift;
-					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
-					handleError( $error, $client );
-				},
-			},
-		);
-		
-		$log->debug("Getting Rhapsody account from SqueezeNetwork");
-		
-		$http->get( $accountURL );
-		
-		return;
-	}
-	
-	return if tooManySynced($client);
-	
-	# Clear any previous outstanding rpds queries
-	cancel_rpds($client);
-
-	# Update the 'Connecting...' text
-	$client->suppressStatus(1);
-	displayStatus( $client, $nextURL, 'PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO', 30 );
-	
-	# Display buffering info on loading the next track
-	$client->pluginData( showBuffering => 1 );
-	
-	my @clients;
-
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# if synced, send this packet to all slave players
-		my $master = $client->masterOrSelf;
-		push @clients, $master, @{ $master->slaves };
-	}
-	else {
-		push @clients, $client;
-	}
-	
-	my $url = Slim::Player::Playlist::url($client);
-	
-	# If user was not previously playing Rhapsody, get a new playback session first
-	# XXX: it's not possible to get the previously playing track here, the playlist
-	# is updated before we're called
-	if ( $url !~ /^rhapd/ || $client->playmode !~ /play/ ) {
-		$log->debug("Ending any previous playback session");
-
-		for my $client ( @clients ) {
-			# Clear any previous outstanding rpds queries
-			cancel_rpds($client);
-			
-			# Clear radio data if any, so we always get a new radio track
-			$client->pluginData( radioTrackURL => 0 );
-
-			# Sometimes while changing tracks we get a 'playlist clear' after
-			# this runs, so set a flag to ignore this
-			$client->pluginData( trackStarting => 1 );
-			
-			rpds( $client, {
-				data        => pack( 'c', 6 ),
-				callback    => \&getPlaybackSession,
-				onError     => sub {
-					getPlaybackSession( $client, undef, $nextURL, $callback );
-				},
-				passthrough => [ $nextURL, $callback ],
-			} );
-		}
-		
-		return;
-	}
-	
-	# For a skip use only the amount of time we've played the song
-	my $songtime = Slim::Player::Source::songTime($client);
-
-	if ( $client->playmode =~ /play/ && $songtime > 0 && !$client->pluginData('syncUnderrun') ) {
-
-		# logMeteringInfo, param is playtime in seconds
-		
-		$log->debug("Track skip, logging usage info ($songtime seconds)...");
-		
-		my $url = Slim::Player::Playlist::url($client);
-
-		sendLogging( $client, $url, $songtime );
-	}
-	
-	# Clear radio data if any, so we always get a new radio track
-	$client->pluginData( radioTrackURL => 0 );
-
-	# Get the next track info
-	for my $c ( @clients ) {
-		getNextTrackInfo( $c, undef, $nextURL, $callback );
-	}
-}
-
-sub getNextTrackInfo {
-    my ( $client, undef, $nextURL, $callback ) = @_;
-
-	# Radio mode, get next track ID
-	if ( my ($stationId) = $nextURL =~ m{rhapd://(.+)\.rdr} ) {
-		# Check if we've got the next track URL
-		if ( my $radioTrackURL = $client->pluginData('radioTrackURL') ) {
-			$nextURL = $radioTrackURL;
-
-			$log->debug("Radio mode: Next track is $nextURL");
-		}
-		else {
-			
-			if ( Slim::Player::Sync::isSynced($client) && !Slim::Player::Sync::isMaster($client) ) {
-				$log->debug('Radio mode: Letting master get next track');
-			}
-			else {
-				# Get the next track and call us back
-				$log->debug("Radio mode: Getting next track ($nextURL)...");
-		
-				getNextRadioTrack( $client, {
-					stationId   => $stationId,
-					callback    => \&getNextTrackInfo,
-					passthrough => [ $client, undef, $nextURL, $callback ],
-				} );
-				
-				return;
-			}
-		}
-	}
-	
-	# If synced and we're not the last player to get here, don't do anything
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		my $ready     = $client->pluginData('syncReady') || 1;
-		my $syncCount = scalar @{ $client->masterOrSelf->slaves } + 1;
-		
-		if ( $ready == $syncCount ) {
-			$log->debug( 'All synced players ready for track info' );
-			$client->pluginData( syncReady => 0 );
-		}
-		else {
-			$log->debug( 'Waiting for ' . ( $syncCount - $ready ) . ' more player(s) before getting track info' );
-			$client->pluginData( syncReady => $ready + 1 );
-			return;
-		}
-	}
+	my $playersNotReady = $song->pluginData('playersNotReady') - 1;
+    $song->pluginData('playersNotReady' => $playersNotReady);
+    
+    return if $playersNotReady > 0;
 	
 	# When synced, the below code is run for only the last player to reach here
 	
-	# Get track URL for the next track
-	my ($trackId) = $nextURL =~ m{rhapd://(.+)\.mp3};
+	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
+	# When done, callback will continue on to playback
+	my $dns = Slim::Networking::Async->new;
+	$dns->open( {
+		Host        => URI->new($mediaUrl)->host,
+		Timeout     => 3, # Default timeout of 10 is too long, 
+		                  # by the time it fails player will underrun and stop
+		onDNS       => $params->{'successCb'},
+		onError     => $params->{'successCb'}, # even if it errors, keep going
+		passthrough => [],
+	} );
 	
-	my @clients;
-	
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# if synced, send this packet to all slave players
-		my $master = $client->masterOrSelf;
-		push @clients, $master, @{ $master->slaves };
-	}
-	else {
-		push @clients, $client;
-	}
-	
-	for my $client ( @clients ) {
-		rpds( $client, {
-			data        => pack( 'cC/a*', 3, $trackId ),
-			callback    => \&gotTrackInfo,
-			onError     => \&gotTrackError,
-			passthrough => [ $nextURL, $callback ],
-		} );
-	}
+	# Watch for playlist commands
+	Slim::Control::Request::subscribe( 
+		\&_playlistCallback, 
+		[['playlist'], ['newsong']],
+		$song->master(),
+	);
 }
 
-# On an underrun, restart radio or skip to next track
-sub onUnderrun {
-	my ( $class, $client, $url, $callback ) = @_;
-
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		$log->debug("Ignoring underrun while synced");
-		$client->pluginData( syncUnderrun => 1 );
-		$callback->();
-		return;
-	}
-
-	if ( $log->is_debug ) {
-		$log->debug( 'Underrun, stopping, playmode: ' . $client->playmode );
-	}
+# 2.3b Get mediaURL 
+sub _gotTrackError {
+	my ( $error, $client, $params ) = @_;
 	
-	if ( main::SLIM_SERVICE && SN_DEBUG ) {
+	$log->debug("Error during getTrackInfo: $error");
+
+	return if $params->{'song'}->pluginData('abandonSong');
+    
+	if ( main::SLIM_SERVICE ) {
 		SDI::Service::EventLog->log(
-			$client, 'rhapsody_underrun'
+			$client, 'rhapsody_track_error', $error
 		);
 	}
+
+	_handleClientError( $error, $client, $params );
+}
+
+# Metadata for a URL, used by CLI/JSON clients
+sub getMetadataFor {
+	my ( $class, $client, $url ) = @_;
 	
-	# If it was a radio track, play again, we'll get a new track
+	my $icon = $class->getIcon();
+	
 	if ( $url =~ /\.rdr$/ ) {
-		$log->debug('Radio track failed, trying to restart');
-		
-		# Clear radio data if any, so we always get a new radio track
-		$client->pluginData( radioTrackURL => 0 );
-		
-		$client->execute([ 'playlist', 'play', $url ]);
-	}
-	else {
-		# Skip to the next track if possible
-		
-		my $nextsong = Slim::Player::Source::nextsong($client);
-		if ( $client->playmode !~ /stop/ && defined $nextsong ) {
-			
-			# Force playmode to playout-stop so Source doesn't try to skipahead
-			$client->playmode( 'playout-stop' );
-			
-			# This is on a timer so the underrun callback will stop the player first
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					my $client = shift;
-					$log->debug("Skipping to next track ($nextsong)");
-					$client->execute([ 'playlist', 'jump', $nextsong ]);
-				},
-			);
+		my $song = $client->currentSongForUrl($url);
+		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
+			return {
+				bitrate   => '192k CBR',
+				type      => 'MP3 (Rhapsody)',
+				icon      => $icon,
+				cover     => $icon,
+			};
 		}
 	}
 	
-	$callback->();
+	return {} unless $url;
+	
+	my $cache = Slim::Utils::Cache->new;
+	
+	# If metadata is not here, fetch it so the next poll will include the data
+	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
+	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
+	
+	if ( !$meta && !$client->pluginData('fetchingMeta') ) {
+		# Go fetch metadata for all tracks on the playlist without metadata
+		my @need;
+		
+		for my $track ( @{ $client->playlist } ) {
+			my $trackURL = blessed($track) ? $track->url : $track;
+			if ( $trackURL =~ m{rhapd://(.+)\.mp3} ) {
+				my $id = $1;
+				if ( !$cache->get("rhapsody_meta_$id") ) {
+					push @need, $id;
+				}
+			}
+		}
+		
+		if ( $log->is_debug ) {
+			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
+		}
+		
+		$client->pluginData( fetchingMeta => 1 );
+		
+		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
+			"/api/rhapsody/v1/playback/getBulkMetadata"
+		);
+		
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&_gotBulkMetadata,
+			\&_gotBulkMetadataError,
+			{
+				client  => $client,
+				timeout => 60,
+			},
+		);
+
+		$http->post(
+			$metaUrl,
+			'Content-Type' => 'application/x-www-form-urlencoded',
+			'trackIds=' . join( ',', @need ),
+		);
+	}
+	
+	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
+	
+	return $meta || {
+		bitrate   => '192k CBR',
+		type      => 'MP3 (Rhapsody)',
+		icon      => $icon,
+		cover     => $icon,
+	};
 }
 
-sub gotBulkMetadata {
+sub _gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	
@@ -704,7 +760,7 @@ sub gotBulkMetadata {
 	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
 }
 
-sub gotBulkMetadataError {
+sub _gotBulkMetadataError {
 	my $http   = shift;
 	my $client = $http->params('client');
 	my $error  = $http->error;
@@ -712,133 +768,7 @@ sub gotBulkMetadataError {
 	$log->warn("Error getting track metadata from SN: $error");
 }
 
-sub getNextRadioTrack {
-	my ( $client, $params ) = @_;
-	
-	my $stationId = $params->{stationId};
-	
-	# Talk to SN and get the next track to play
-	my $radioURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/v1/radio/getNextTrack?stationId=$stationId"
-	);
-	
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotNextRadioTrack,
-		\&gotNextRadioTrackError,
-		{
-			client => $client,
-			params => $params,
-		},
-	);
-	
-	$log->debug("Getting next radio track from SqueezeNetwork");
-	
-	$http->get( $radioURL );
-}
-
-sub gotNextRadioTrack {
-	my $http   = shift;
-	my $client = $http->params->{client};
-	my $params = $http->params->{params};
-	
-	my $track = eval { from_json( $http->content ) };
-	
-	if ( $log->is_debug ) {
-		$log->debug( 'Got next radio track: ' . Data::Dump::dump($track) );
-	}
-	
-	if ( $track->{error} ) {
-		# We didn't get the next track to play
-		
-		my $url = Slim::Player::Playlist::url($client);
-		if ( $url && $url =~ /\.rdr/ ) {
-			# User was already playing, display 'unable to get track' error
-			Slim::Music::Info::setCurrentTitle( $url, $client->string('PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK') );
-		
-			$client->update();
-
-			Slim::Player::Source::playmode( $client, 'stop' );
-		}
-		else {
-			# User was just starting a radio station
-			my $line1 = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR');
-			my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_NO_TRACK');
-			
-			$client->showBriefly( {
-				line1 => $line1,
-				line2 => $line2,
-				jive  => {
-					type => 'popupplay',
-					text => [ $line1, $line2 ],
-				},
-			},
-			{
-				scroll => 1,
-			} );
-		}
-		
-		return;
-	}
-	
-	# Save existing repeat setting
-	my $repeat = Slim::Player::Playlist::repeat($client);
-	if ( $repeat != 2 ) {
-		$log->debug( "Saving existing repeat value: $repeat" );
-		$client->pluginData( oldRepeat => $repeat );
-	}
-	
-	# Watch for playlist commands in radio mode
-	Slim::Control::Request::subscribe( 
-		\&playlistCallback, 
-		[['playlist'], ['repeat', 'newsong']],
-		$client,
-	);
-
-	# Force repeating for Rhapsody radio
-	$client->execute(["playlist", "repeat", 2]);
-
-	# set metadata for track, will be set on playlist newsong callback
-	my $url   = 'rhapd://' . $track->{trackId} . '.mp3';
-	my $title = $track->{name} . ' ' . 
-			$client->string('BY') . ' ' . $track->{displayArtistName} . ' ' . 
-			$client->string('FROM') . ' ' . $track->{displayAlbumName};
-	
-	$client->pluginData( radioTrackURL => $url );
-	$client->pluginData( radioTitle    => $title );
-	$client->pluginData( radioTrack    => $track );
-	
-	# We already have the metadata for this track, so can save calling getTrack
-	my $meta = {
-		artist    => $track->{displayArtistName},
-		album     => $track->{displayAlbumName},
-		title     => $track->{name},
-		cover     => $track->{cover},
-		bitrate   => '192k CBR',
-		type      => 'MP3 (Rhapsody)',
-		info_link => 'plugins/rhapsodydirect/trackinfo.html',
-		icon      => Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon'),
-		buttons   => {
-			# disable REW/Previous button in radio mode
-			rew => 0,
-		},
-	};
-	
-	my $cache = Slim::Utils::Cache->new;
-	$cache->set( 'rhapsody_meta_' . $track->{trackId}, $meta, 86400 );
-	
-	my $cb = $params->{callback};
-	my $pt = $params->{passthrough} || [];
-	$cb->( @{$pt} );
-}
-
-sub gotNextRadioTrackError {
-	my $http   = shift;
-	my $client = $http->params('client');
-	
-	handleError( $http->error, $client );
-}
-
-sub playlistCallback {
+sub _playlistCallback {
 	my $request = shift;
 	my $client  = $request->client();
 	my $p1      = $request->getRequest(1);
@@ -846,169 +776,34 @@ sub playlistCallback {
 	return unless defined $client;
 	
 	# check that user is still using Rhapsody Radio
-	my $url = Slim::Player::Playlist::url($client) || return;
+	my $song = $client->playingSong();
 	
-	if ( !$url || $url !~ /\.rdr$/ ) {
-		# User stopped playing Rhapsody Radio, reset old repeat setting if any
-		my $repeat = $client->pluginData('oldRepeat');
-		if ( defined $repeat ) {
-			$log->debug( "Stopped Rhapsody Radio, restoring old repeat setting: $repeat" );
-			$client->execute(["playlist", "repeat", $repeat]);
-		}
+	if ( !$song || $song->currentTrackHandler ne __PACKAGE__ ) {
+		# User stopped playing Rhapsody, 
 
-		$log->debug( "Stopped Rhapsody Radio, unsubscribing from playlistCallback" );
-		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
+		$log->debug( "Stopped Rhapsody, unsubscribing from playlistCallback" );
+		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
+		
+		# XXX maybe end session
 		
 		return;
 	}
 	
-	# The user has changed the repeat setting.  Radio requires a repeat
-	# setting of '2' (repeat all) to work properly
-	if ( $p1 eq 'repeat' ) {
-		if ( $request->getParam('_newvalue') != 2 ) {
-			$log->debug("Radio mode, user changed repeat setting, forcing back to 2");
-		
-			$client->execute(["playlist", "repeat", 2]);
-		
-			if ( $client->playmode =~ /playout/ ) {
-				$client->playmode( 'playout-play' );
-			}
-		}
-	}
-	elsif ( $p1 eq 'newsong' ) {
+	if ( $song->pluginData('radioTrackURL') && $p1 eq 'newsong' ) {
 		# A new song has started playing.  We use this to change titles
 		
-		my $title = $client->pluginData('radioTitle');
+		my $title = $song->pluginData('radioTitle');
 		
 		$log->debug("Setting title for radio station to $title");
 		
-		Slim::Music::Info::setCurrentTitle( $url, $title );
+		Slim::Music::Info::setCurrentTitle( $song->{'track'}->url, $title );
 	}
 }
 
-sub gotTrackInfo {
-	my ( $client, $mediaUrl, $url, $callback ) = @_;
+sub canDirectStreamSong {
+	my ( $class, $client, $song ) = @_;
 	
-	(undef, $mediaUrl) = unpack 'cn/a*', $mediaUrl;
-	
-	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
-	
-	# Save the media URL for use in strm
-	$client->pluginData( mediaUrl => $mediaUrl );
-	
-	# Allow status updates again
-	$client->suppressStatus(0);
-	
-	# Clear radio error counter
-	$client->pluginData( radioError => 0 );
-	
-	# Clear syncUnderrun flag
-	$client->pluginData( syncUnderrun => 0 );
-	
-	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
-	# When done, callback to Scanner, which will continue on to playback
-	# This is a callback to Source::decoderUnderrun if we are loading the next track
-	my $done = sub {
-		my $dns = Slim::Networking::Async->new;
-		$dns->open( {
-			Host        => URI->new($mediaUrl)->host,
-			Timeout     => 3, # Default timeout of 10 is too long, 
-			                  # by the time it fails player will underrun and stop
-			onDNS       => $callback,
-			onError     => $callback, # even if it errors, keep going
-			passthrough => [],
-		} );
-	};
-	
-	if ( !Slim::Player::Sync::isSynced($client) ) {
-		$done->();
-	}
-	else {
-		# Bug 8122, wait until all synced players have a response to rpds 3 before continuing
-		my $ready     = $client->pluginData('syncReady') || 1;
-		my $syncCount = scalar @{ $client->masterOrSelf->slaves } + 1;
-		
-		if ( $ready == $syncCount ) {
-			$log->debug( 'All synced players have track info, beginning playback' );
-			$client->pluginData( syncReady => 0 );
-			$done->();
-		}
-		else {
-			$log->debug( 'Waiting for ' . ( $syncCount - $ready ) . ' more player(s) to get track info' );
-			$client->pluginData( syncReady => $ready + 1 );
-		}
-	}
-	
-	# Watch for stop commands for logging purposes
-	Slim::Control::Request::subscribe( 
-		\&stopCallback, 
-		[['stop', 'playlist']],
-		$client,
-	);
-	
-	# Clear the trackStarting flag
-	$client->pluginData( trackStarting => 0 );
-}
-
-sub gotTrackError {
-	my ( $error, $client ) = @_;
-	
-	$log->debug("Error during getTrackInfo: $error");
-	
-	if ( main::SLIM_SERVICE && SN_DEBUG ) {
-		SDI::Service::EventLog->log(
-			$client, 'rhapsody_track_error', $error
-		);
-	}
-	
-	my $url = Slim::Player::Playlist::url($client);
-	
-	if ( $url =~ /\.rdr$/ ) {
-		# In radio mode, try to restart one time		
-		# If we've already tried and get another error,
-		# give up so we don't loop forever
-		
-		if ( $client->pluginData('radioError') ) {
-			$client->execute([ 'stop' ]);
-			handleError( $error, $client );
-		}
-		else {
-			$client->pluginData( radioError => 1 );
-			$client->execute([ 'playlist', 'play', $url ]);
-		}
-		
-		return;
-	}
-	
-	# Normal playlist mode: Skip forward 1 unless we are at the end of the playlist
-	if ( Slim::Player::Source::noMoreValidTracks($client) ) {
-		# Stop and display error when there are no more tracks to try
-		$client->execute([ 'stop' ]);
-		handleError( $error, $client );
-	}
-	else {
-		$client->execute([ 'playlist', 'jump', '+1' ]);
-		#Slim::Player::Source::jumpto( $client, '+1' );
-	}
-}
-
-sub canDirectStream {
-	my ( $class, $client, $url ) = @_;
-	
-	# Might be a radio station
-	if ( my ($stationId) = $url =~ m{rhapd://(.+)\.rdr} ) {
-		if ( my $radioTrackURL = $client->pluginData('radioTrackURL') ) {
-			$url = $radioTrackURL;
-		}
-	}
-	
-	# Return the RAD URL here
-	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
-	
-	# Needed so stopCallback can have the URL after a 'playlist clear'
-	$client->pluginData( lastURL => $url );
-	
-	my $mediaUrl = $client->pluginData('mediaUrl');
+	my $mediaUrl = $song->pluginData('mediaUrl');
 
 	return $mediaUrl || 0;
 }
@@ -1049,30 +844,41 @@ sub stopCallback {
 		my $songtime = Slim::Player::Source::songTime($client);
 		
 		if ( $songtime > 0 ) {	
-			$log->debug("Player stopped ($p0 $p1), logging usage info ($songtime seconds)...");
+			if ($log->is_debug) {
+				$log->debug("Player stopped ($p0 $p1), logging usage info ($songtime seconds)...");
+			}
 			
-			my $url = Slim::Player::Playlist::url($client);
+			# There are different log methods for normal vs. radio play
+			my $data;
 
-			sendLogging( $client, $url, $songtime );
+			if ( my ($stationId) = $url =~ m{rhapd://(.+)\.rdr} ) {
+				# logMeteringInfoForStationTrackPlay
+				$data = pack( 'cC/a*C/a*', 5, $songtime, $stationId );
+			}
+			else {
+				# logMeteringInfo
+				$data = pack( 'cC/a*', 4, $songtime );
+			}
+			
+			my @clients = $client->syncGroupActiveMembers();
+			
+			for my $eachClient ( @clients ) {
+				rpds( $eachClient, {
+					data        => $data,
+					callback    => \&endPlaybackSession,
+					onError     => sub {
+						# We don't really care if the logging call fails,
+						# so allow onError to work like the normal callback
+						endPlaybackSession( $eachClient	 );
+					},
+					passthrough => [],
+				} );
+			}
 		}
 		else {
-			$log->debug("Player stopped ($p0 $p1) but songtime was $songtime, ignoring");
-		}
-		
-		# End playback session on all synced players
-		my @clients;
-
-		if ( Slim::Player::Sync::isSynced($client) ) {
-			# if synced, send this packet to all slave players
-			my $master = Slim::Player::Sync::masterOrSelf($client);
-			push @clients, $master, @{ $master->slaves };
-		}
-		else {
-			push @clients, $client;
-		}
-		
-		for my $client ( @clients ) {
-			endPlaybackSession($client);
+			if ($log->is_debug) {
+				$log->debug("Player stopped ($p0 $p1) but songtime was $songtime, ignoring");
+			}
 		}
 	}
 }
@@ -1088,21 +894,6 @@ sub endPlaybackSession {
 	} );
 }
 
-sub displayStatus {
-	my ( $client, $url, $string, $time ) = @_;
-	
-	my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
-	my $line2 = Slim::Music::Info::title($url) || $url;
-	
-	if ( $client->linesPerScreen() == 1 ) {
-		$line2 = $client->string($string);
-	}
-
-	$client->showBriefly( {
-		line => [ $line1, $line2 ],
-	}, $time );
-}
-
 # URL used for CLI trackinfo queries
 sub trackInfoURL {
 	my ( $class, $client, $url ) = @_;
@@ -1110,8 +901,10 @@ sub trackInfoURL {
 	my $stationId;
 	
 	if ( $url =~ m{rhapd://(.+)\.rdr} ) {
+		my $song = $client->currentSongForUrl($url);
+		
 		# Radio mode, pull track ID from lastURL
-		$url = $client->pluginData('lastURL');
+		$url = $song->pluginData('radioTrackURL');
 		$stationId = $1;
 	}
 
@@ -1151,127 +944,51 @@ sub trackInfo {
 	$client->modeParam( 'handledTransition', 1 );
 }
 
-# Metadata for a URL, used by CLI/JSON clients
-sub getMetadataFor {
-	my ( $class, $client, $url ) = @_;
-	
-	if ( $url =~ /\.rdr$/ ) {
-		$url = $client->pluginData('radioTrackURL');
-	}
-	
-	return {} unless $url;
-	
-	my $cache = Slim::Utils::Cache->new;
-	
-	# If metadata is not here, fetch it so the next poll will include the data
-	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
-	
-	if ( !$trackId ) {
-		$log->error( "getMetadataFor for bad URL: $url" );
-		return {};
-	}
-	
-	my $meta = $cache->get( 'rhapsody_meta_' . $trackId );
-	
-	if ( !$meta && !$client->pluginData('fetchingMeta') ) {
-		# Go fetch metadata for all tracks on the playlist without metadata
-		my @need;
-		
-		for my $track ( @{ $client->playlist } ) {
-			my $trackURL = blessed($track) ? $track->url : $track;
-			if ( $trackURL =~ m{rhapd://(.+)\.mp3} ) {
-				my $id = $1;
-				if ( !$cache->get("rhapsody_meta_$id") ) {
-					push @need, $id;
-				}
-			}
-		}
-		
-		if ( $log->is_debug ) {
-			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
-		}
-		
-		$client->pluginData( fetchingMeta => 1 );
-		
-		my $url = Slim::Networking::SqueezeNetwork->url(
-			"/api/rhapsody/v1/playback/getBulkMetadata"
-		);
-		
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			\&gotBulkMetadata,
-			\&gotBulkMetadataError,
-			{
-				client  => $client,
-				timeout => 60,
-			},
-		);
+sub getIcon {
+	my ( $class, $url ) = @_;
 
-		$http->post(
-			$url,
-			'Content-Type' => 'application/x-www-form-urlencoded',
-			'trackIds=' . join( ',', @need ),
-		);
-	}
-	
-	my $icon = $class->getIcon();
-	
-	return $meta || {
-		bitrate   => '192k CBR',
-		type      => 'MP3 (Rhapsody)',
-		icon      => $icon,
-		cover     => $icon,
-	};
+	return Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
 }
 
-sub getUsername {
-	my $client = shift;
+sub onStop {
+	my ($class, $song) = @_;
 	
-	if ( main::SLIM_SERVICE ) {
-		my @username = $prefs->client($client)->get('plugin_rhapsody_direct_username');
-		
-		if ( scalar @username > 1 ) {
-			if ( my $default = $prefs->client($client)->get('plugin_rhapsody_direct_account') ) {
-				return $default;
-			}
-		}
-		
-		return $username[0];
-	}
-	else {
-	 	my $account = $client->pluginData('account') || return;
-	
-		my $username = $account->{username}->[0];
-	
-		if ( $account->{defaults} ) {
-			if ( my $default = $account->{defaults}->{ $client->id } ) {
-				return $default;
-			}
-		}
-	
-		return $username;
-	}
-}	
+	_doLog(Slim::Player::Source::songTime($song->master()), $song);
+}
 
-sub sendLogging {
-	my ( $client, $url, $playtime ) = @_;
+sub onPlayout {
+	my ($class, $song) = @_;
 	
-	my $username = getUsername($client) || return;
+	_doLog($song->duration(), $song);
+}
+
+sub _doLog {
+	my ($time, $song) = @_;
 	
-	my ($trackId)   = $url =~ m{rhapd://(.+)\.mp3};
-	my ($stationId) = $url =~ m{rhapd://(.+)\.rdr};
+	$log->debug("Log metering: $time");
 	
-	if ( $stationId ) {
-		my $radioURL = $client->pluginData('radioTrackURL') || return;
-		($trackId) = $radioURL =~ m{rhapd://(.+)\.mp3};
+	# There are different log methods for normal vs. radio play
+	my $stationId;
+	my $trackId;
+
+	if ( ($stationId) = $song->{track}->url =~ m{rhapd://(.+)\.rdr} ) {
+		# logMeteringInfoForStationTrackPlay
+		$song = $song->master()->currentSongForUrl( $song->{track}->url );
+		
+		my $url = $song->pluginData('radioTrackURL');
+		
+		($trackId) = $url =~ m{rhapd://(.+)\.mp3};		
 	}
 	else {
+		# logMeteringInfo
 		$stationId = '';
+		($trackId) = $song->{track}->url =~ m{rhapd://(.+)\.mp3};
 	}
 	
-	return unless $trackId;
+	my $username = _getCurrentUser( $song->master() );
 	
 	my $logURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/v1/playback/log?account=$username&stationId=$stationId&trackId=$trackId&playtime=$playtime"
+		"/api/rhapsody/v1/playback/log?account=$username&stationId=$stationId&trackId=$trackId&playtime=$time"
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -1283,20 +1000,15 @@ sub sendLogging {
 		},
 		sub {},
 		{
-			client => $client,
+			client => $song->master(),
 		},
 	);
 	
-	$log->debug("Logging track playback: $playtime seconds, trackId: $trackId, stationId: $stationId, user: $username");
+	$log->debug("Logging track playback: $time seconds, trackId: $trackId, stationId: $stationId, user: $username");
 	
 	$http->get( $logURL );
 }
 
-sub getIcon {
-	my ( $class, $url ) = @_;
-
-	return Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
-}
 
 # SN only, re-init upon reconnection
 sub reinit {

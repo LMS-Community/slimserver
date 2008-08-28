@@ -2597,24 +2597,6 @@ sub prefValidateQuery {
 }
 
 
-sub rateQuery {
-	my $request = shift;
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['rate']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-	
-	# get the parameters
-	my $client = $request->client();
-
-	$request->addResult('_rate', Slim::Player::Source::rate($client));
-	
-	$request->setStatusDone();
-}
-
-
 sub readDirectoryQuery {
 	my $request = shift;
 
@@ -3258,33 +3240,26 @@ sub statusQuery {
 	}
 	
 	my $playlist_cur_index;
-	# this will be true for http class players
 	
 		$request->addResult('mode', Slim::Player::Source::playmode($client));
 
-		if (my $song = Slim::Player::Playlist::url($client)) {
+		if (my $song = $client->playingSong()) {
 
-			if (Slim::Music::Info::isRemoteURL($song)) {
+			if ($song->isRemote()) {
 				$request->addResult('remote', 1);
 				$request->addResult('current_title', 
-					Slim::Music::Info::getCurrentTitle($client, $song));
+					Slim::Music::Info::getCurrentTitle($client, $song->currentTrack()->url));
 			}
 			
 			$request->addResult('time', 
 				Slim::Player::Source::songTime($client));
-			$request->addResult('rate', 
-				Slim::Player::Source::rate($client));
+
+			# This is just here for backward compatibility with older SBC firmware
+			$request->addResult('rate', 1);
 			
-			my $track = Slim::Schema->rs('Track')->objectForUrl($song);
-
-			if (blessed($track) && $track->can('secs')) {
-
-				my $dur = $track->secs;
-
-				if ($dur) {
-					$dur += 0;
-					$request->addResult('duration', $dur);
-				}
+			if (my $dur = $song->duration()) {
+				$dur += 0;
+				$request->addResult('duration', $dur);
 			}
 			
 			my $canSeek = Slim::Music::Info::canSeek($client, $song);
@@ -3300,9 +3275,9 @@ sub statusQuery {
 			$request->addResult('will_sleep_in', ($sleep < 0 ? 0 : $sleep));
 		}
 		
-		if (Slim::Player::Sync::isSynced($client)) {
+		if ($client->isSynced()) {
 
-			my $master = Slim::Player::Sync::masterOrSelf($client);
+			my $master = $client->master();
 
 			$request->addResult('sync_master', $master->id());
 
@@ -4134,10 +4109,9 @@ sub syncQuery {
 	# get the parameters
 	my $client = $request->client();
 
-	if (Slim::Player::Sync::isSynced($client)) {
+	if ($client->isSynced()) {
 	
-		my @buddies = Slim::Player::Sync::syncedWith($client);
-		my @sync_buddies = map { $_->id() } @buddies;
+		my @sync_buddies = map { $_->id() } $client->syncedWith();
 
 		$request->addResult('_sync', join(",", @sync_buddies));
 	} else {

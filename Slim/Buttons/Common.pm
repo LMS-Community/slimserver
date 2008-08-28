@@ -272,13 +272,8 @@ our %functions = (
 	'fwd' => sub  {
 		my $client = shift;
 
-		# ignore if we aren't playing anything or if we're scanning
-		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate = Slim::Player::Source::rate($client);
-
-		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
-			return;
-		}
+		# ignore if we aren't playing anything 
+		return unless Slim::Player::Playlist::count($client);
 
 		$client->execute(["playlist", "jump", "+1"]);
 	},
@@ -286,13 +281,8 @@ our %functions = (
 	'rew' => sub  {
 		my $client = shift;
 
-		# ignore if we aren't playing anything or if we're scanning
-		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate = Slim::Player::Source::rate($client);
-
-		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
-			return;
-		}
+		# ignore if we aren't playing anything
+		return unless Slim::Player::Playlist::count($client);
 
 		# either starts the same song over, or the previous one, depending on whether we jumped back.
 		if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < 1.0) {
@@ -312,33 +302,11 @@ our %functions = (
 		my $funct    = shift;
 		my $functarg = shift;
 
-		# ignore if we aren't playing anything or if we're scanning
-		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate        = Slim::Player::Source::rate($client);
-
-		if ($playlistlen == 0) {
-			return;
-		}
+		# ignore if we aren't playing anything
+		return unless Slim::Player::Playlist::count($client);
 
 		if (!defined $functarg) {
 			$functarg = '';
-		}
-
-		# ignore if we're scanning that way already			
-		if ($rate > 1 && $functarg eq 'fwd') {
-			return;
-		}
-
-		if ($rate < 0 && $functarg eq 'rew') {
-			return;
-		}
-
-		# if we aren't scanning that way, then use it to stop scanning  and just play.
-		if ($rate != 0 && $rate != 1) {
-
-			$client->execute(["play"]);
-
-			return;	
 		}
 
 		# either starts the same song over, or the previous one, or
@@ -400,47 +368,6 @@ our %functions = (
 		}
 
 		$client->execute(['gototime', $dir]);
-	},
-
-	'scan' => sub {
-		my ($client, $funct, $functarg) = @_;
-
-		my $rate = Slim::Player::Source::rate($client);
-
-		if (!defined $functarg) {
-
-			return;
-
-		} elsif ($functarg eq 'fwd') {
-
-			Slim::Buttons::Common::pushMode($client, 'playlist');
-
-			if ($rate < 0) {
-				$rate = 1;
-			}
-
-			if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
-				return;
-			}
-
-			$client->execute(['rate', $rate * $SCAN_RATE_MULTIPLIER]);
-
-		} elsif ($functarg eq 'rew') {
-
-			Slim::Buttons::Common::pushMode($client, 'playlist');
-
-			if ($rate > 0) {
-				$rate = 1;
-			}
-
-			if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
-				return;
-			}
-
-			$client->execute(['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
-		}
-
-		$client->update();
 	},
 
 	'pause' => sub  {
@@ -1045,9 +972,9 @@ our %functions = (
 		# first make sure we're playing, and its a valid song.
 		my $remaining = 0;
 
-		if (Slim::Player::Source::playingSong($client) && $client->playmode =~ /play/) { 
+		if ($client->isPlaying()) { 
 
-			my $dur = Slim::Player::Source::playingSongDuration($client);
+			my $dur = $client->controller()->playingSongDuration();
 
 			# calculate the time based remaining, in seconds then into fractional minutes.
 			$remaining = $dur - Slim::Player::Source::songTime($client);

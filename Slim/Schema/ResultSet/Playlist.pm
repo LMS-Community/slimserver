@@ -43,7 +43,7 @@ sub clearExternalPlaylists {
 	my $url  = shift;
 
 	# We can specify a url prefix to only delete certain types of external
-	# playlists - ie: only iTunes, or only MusicIP.
+	# playlists - ie: only iTunes, or only MusicMagic.
 	for my $track ($self->getPlaylists('external')) {
 
 		# XXX - exception should go here. Comming soon.

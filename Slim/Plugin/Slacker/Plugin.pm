@@ -189,10 +189,6 @@ sub skipTrack {
 	my $url = Slim::Player::Playlist::url($client) || return;
 	return unless $url =~ /^slacker/;
 	
-	# Tell onJump not to display buffering info, so we don't
-	# mess up the showBriefly message
-	$client->pluginData( banMode => 1 );
-	
 	$client->execute( [ 'playlist', 'jump', '+1' ] );
 }
 

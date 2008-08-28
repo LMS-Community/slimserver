@@ -24,7 +24,6 @@ my $ACK_TIMEOUT           = 30.0; # in seconds
 
 my $MAX_PACKET_SIZE       = 1400;
 my $BUFFER_SIZE           = 131072; # in bytes
-my $PAUSE_THRESHOLD       = $MAX_PACKET_SIZE; # pause until we refill the buffer
 my $UNPAUSE_THRESHOLD     = $BUFFER_SIZE / 2; # fraction of buffer needed full in order to start playing
 my $BUFFER_FULL_THRESHOLD = $BUFFER_SIZE - $MAX_PACKET_SIZE * 2; # fraction of buffer to consider full up
 
@@ -42,6 +41,7 @@ our %emptyPktInFlight;	# hash of references of the empty packet in flight to thi
 our %fullness;			# number of bytes in the buffer as of the last packet
 our %lastAck;			# timeout in the case that the player disappears completely.
 our %lastByte;			# if we get an odd number of bytes from the upper level, hold on to the last one.
+our %sentUnderrun;		# have we sent an underrun since the last time we were started or unpaused
 
 # the following are used to track and correct synchronization with other players
 
@@ -100,6 +100,7 @@ sub newStream {
 	
 	$bytesSent{$client} = 0;
 	$curWptr{$client}   = 0;
+	$lastByte{$client}  = undef;
 	
 	if (!defined($seq{$client})) {
 		$seq{$client} = 1;
@@ -109,6 +110,7 @@ sub newStream {
 	$dataPktInFlight{$client} = undef;
 	$emptyPktInFlight{$client} = undef;
 	$lastAck{$client} = Time::HiRes::time();
+	$sentUnderrun{$client} = 0;
 	
 	if (!defined($latencyList{$client})) {
 		$latencyList{$client} = [];
@@ -116,6 +118,10 @@ sub newStream {
 	
 	$client->playPoint(undef);
 	$pauseUntil{$client} = 0;
+	
+	$client->readyToStream(0);
+	$client->bufferReady(0);
+	$client->bytesReceived(0);
 
 	Slim::Utils::Timers::killOneTimer($client, \&sendNextChunk);
 	
@@ -206,21 +212,12 @@ sub stop {
 	sendEmptyChunk($client);	
 
 	$client->bytesReceived(0);
+	$client->readyToStream(1);
 	
 	$fullness{$client} = 0;
 	$client->playPoint(undef);
 
 	return 1;
-}
-
-sub playout {
-	my ($client) = @_;
-
-	if ( $log->is_info ) {
-		$log->info($client->id, " stream play out");
-	}
-
-	$streamState{$client} = 'eof';
 }
 
 =head2 unpause( $client )
@@ -253,6 +250,7 @@ sub unpause {
 	} elsif  ($streamState{$client} eq 'paused') {
 
 		$streamState{$client} = 'play';
+		$sentUnderrun{$client} = 0;
 		
 		if ($at) {
 			$pauseUntil{$client} = $at - 0.010;
@@ -299,6 +297,12 @@ my %streamControlCodes = (
         'stop'	=> 1, # Halt decoder but don't reset rptr
         'reset'	=> 3  # Halt decoder and reset rptr  
 );
+
+sub isPlaying {
+	my $client = shift;
+	my $state = $streamState{$client};
+	return $state eq 'play';
+}
 
 # send a packet
 sub sendStreamPkt {
@@ -401,7 +405,7 @@ sub timeout {
 	if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
 
 		# we haven't gotten an ack in a long time.  shut it down and don't bother resending.
-		Slim::Player::Sync::unsync($client, 1);
+		$client->controller()->playerInactive($client);
 		$dataPktInFlight{$client}  = undef;
 		$emptyPktInFlight{$client} = undef;
 		$client->execute(["stop"]);
@@ -487,7 +491,7 @@ sub gotAck {
 		#
 		# The following calculations are costly, so only do when necessary, and not too frequently.
 		my $medianLatency;
-		if (   Slim::Player::Sync::isSynced($client)
+		if (   $client->syncGroupActiveMembers() > 1
 			&& ($streamState{$client} eq 'play' || $streamState{$client} eq 'eof')
 			&& $msgTimeStamp > $samplePlayPointAfter{$client}
 			&& defined($medianLatency = getMedianLatencyMicroSeconds($client))
@@ -506,23 +510,36 @@ sub gotAck {
 	
 	my $state = $streamState{$client};
 
-	if ($fullness <= 512) { 
-
-		if ( $log->is_debug ) {
-			if ( $state eq 'play' || $state eq 'eof' ) {
-				$log->debug("***Stream underrun: $fullness");
-			}
-		}
-		
-		if ( $state eq 'play' ) {
-			Slim::Player::Source::outputUnderrun($client);
-		}
-		elsif ( $state eq 'eof' ) { 
-			Slim::Player::Source::underrun($client);
-			$state = $streamState{$client} = 'stop';
-		}
+	if ( $fullness <= 512 && !$sentUnderrun{$client} && ($state eq 'play' || $state eq 'eof') ) {
+		$log->debug("***Stream underrun: $fullness");
+		$sentUnderrun{$client} = 1;	
+		$client->underrun(); # xxx - need to send this only once
 	}
+	elsif ($fullness > $UNPAUSE_THRESHOLD) {
+		if	($state eq 'buffering') {
 
+			$streamState{$client} ='play';
+	
+			$log->info($client->id, " Buffer full, starting playback");
+	
+			$client->currentplayingsong(Slim::Player::Playlist::song($client));
+			$client->remoteStreamStartTime(time());
+			
+			$client->bufferReady(1);
+			$client->autostart();
+			
+		} elsif ($state eq 'paused') {
+			if (!$client->bufferReady()) {
+				$client->bufferReady(1);
+				$client->controller()->playerBufferReady($client);
+			}
+		} else {
+			$client->heartbeat();
+		}
+	} else {
+		$client->heartbeat() if $state eq 'play';
+	}
+	
 	sendNextChunk($client) unless ($state eq 'stop');
 }
 
@@ -614,7 +631,8 @@ sub sendNextChunk {
 	## TODO - if we are just about to unpause, then send an empty packet rather than waste time
 	# getting another chunk.
 
-	my $chunkRef = Slim::Player::Source::nextChunk($client, $requestedChunkSize);
+	my $chunkRef = $client->nextChunk($requestedChunkSize)
+		unless $streamState{$client} eq 'eof';
 	
 	if (!defined($chunkRef)) {
 
@@ -626,10 +644,17 @@ sub sendNextChunk {
 		return 0;
 	}
 	
+	elsif (!length($$chunkRef)) {
+		$log->info($client->id, " stream play out");
+		$streamState{$client} = 'eof';
+	}
+	
 	if (defined($lastByte{$client})) {
-
-		$$chunkRef = $lastByte{$client} . $$chunkRef;
-
+		
+		# need to copy in case another client has reference to the same chunk (unlikely)
+		my $newChunk = $lastByte{$client} . $$chunkRef;
+		$chunkRef = \$newChunk;
+		
 		delete($lastByte{$client});	
 	}
 
@@ -642,27 +667,6 @@ sub sendNextChunk {
 		$$chunkRef = substr($$chunkRef, 0, -1);
 		$len--;
 	} 
-
-	if (($fullness > $UNPAUSE_THRESHOLD) && ($streamState eq 'buffering')) {
-
-		$streamState{$client}='play';
-
-		if ( $log->is_info ) {
-			$log->info($client->id, " Buffer full, starting playback");
-		}
-
-		$client->currentplayingsong(Slim::Player::Playlist::song($client));
-		$client->remoteStreamStartTime(time());
-
-	} elsif (($fullness < $PAUSE_THRESHOLD) && ($streamState eq 'play')) {
-
-		if ( $log->is_info ) {
-			$log->info($client->id, " Buffer drained, pausing playback");
-		}
-
-		$streamState{$client} = 'buffering';
-		Slim::Player::Source::outputUnderrun($client);
-	}
 
 	my $pkt = {
 		'wptr'     => $curWptr,

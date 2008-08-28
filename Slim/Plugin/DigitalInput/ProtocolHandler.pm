@@ -24,13 +24,12 @@ sub overridePlayback {
 	$log->debug( "Switching to digital input $url" );
 	
 	$client->setDigitalInput($url);
-	$client->directURL($url);
 
 	return 1;
 }
 
 sub canDirectStream {
-	return 1;
+	return $_[2];
 }
 
 sub contentType {

@@ -60,8 +60,6 @@ sub processMessage {
 		
 		Slim::Networking::SliMP3::Stream::gotAck($client, $wptr, $rptr, $seq, $msgTimeStamp);
 
-		Slim::Player::Sync::checkSync($client);
-
 	} else {
 
 		$log->warn("Unknown type: [$type]");

@@ -2017,6 +2017,7 @@ sub getPlayersToSyncWith() {
 		next if ($client eq $player);
 		# we only sync slimproto devices
 		next if (!$player->isPlayer());
+		my $val = $client->isSyncedWith($player); 
 		
 		# On SN, only sync with players on the current account
 		if ( main::SLIM_SERVICE ) {
@@ -2033,7 +2034,6 @@ sub getPlayersToSyncWith() {
 			}
 		}
 		
-		my $val = Slim::Player::Sync::isSyncedWith($client, $player); 
 		push @return, { 
 			text => $player->name(), 
 			checkbox => ($val == 1) + 0,

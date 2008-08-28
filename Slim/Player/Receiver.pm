@@ -25,7 +25,6 @@ BEGIN {
 }
 
 use Slim::Player::ProtocolHandlers;
-use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 use Slim::Hardware::TriLED;
 

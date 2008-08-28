@@ -688,7 +688,7 @@ sub init {
 					'condition' => sub {
 						my $client = shift;
 
-						return Slim::Player::Sync::isSynced($client) || 
+						return $client->isSynced() || 
 							(scalar(Slim::Player::Sync::canSyncWith($client)) > 0);
 					},
 				},

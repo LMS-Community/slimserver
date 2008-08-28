@@ -107,7 +107,10 @@ sub canDirectStream {
 	return undef;
 }
 
+
 # Need to use weighted play-point
+sub needsWeightedPlayPoint { 1 }
+
 sub playPoint {
 	return Slim::Player::Client::playPoint(@_);
 }

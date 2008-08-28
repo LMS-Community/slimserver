@@ -817,7 +817,7 @@ sub maxRate {
 	}
 	
 	# if we're the master, make sure we return the lowest common denominator bitrate.
-	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
+	my @playergroup = ($client->syncGroupActiveMembers());
 	
 	for my $everyclient (@playergroup) {
 

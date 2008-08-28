@@ -1202,6 +1202,8 @@ sub scanBitrate {
 	return (-1, undef);
 }
 
+sub canSeek {1}
+
 =head1 SEE ALSO
 
 L<Slim::Formats>

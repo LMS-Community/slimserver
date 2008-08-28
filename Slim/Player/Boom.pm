@@ -27,7 +27,6 @@ BEGIN {
 use Slim::Hardware::BacklightLED;
 use Slim::Networking::Slimproto;
 use Slim::Player::ProtocolHandlers;
-use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;

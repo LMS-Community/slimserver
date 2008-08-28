@@ -1,0 +1,510 @@
+package Slim::Player::Song;
+
+# $Id$
+
+# SqueezeCenter Copyright 2001-2007 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
+use bytes;
+use strict;
+use warnings;
+
+use Slim::Utils::Log;
+use Slim::Schema;
+use Slim::Utils::Prefs;
+use Slim::Utils::Misc;
+use Slim::Player::SongStreamController;
+
+use Scalar::Util qw(blessed);
+
+use constant STATUS_READY     => 0;
+use constant STATUS_STREAMING => 1;
+use constant STATUS_PLAYING   => 2;
+use constant STATUS_FAILED    => 3;
+use constant STATUS_FINISHED  => 4;
+
+my $log = logger('player.source');
+my $prefs = preferences('server');
+
+my $_liveCount = 0;
+
+sub new {
+	my ($class, $owner, $index, $seekdata) = @_;
+
+	my $client = $owner->master();
+	
+	my $objOrUrl = Slim::Player::Playlist::song($client, $index) || return undef;
+	
+	# Bug: 3390 - reload the track if it's changed.
+	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;
+	
+ 	my $track    = Slim::Schema->rs('Track')->objectForUrl({
+		'url'      => $url,
+		'readTags' => 1
+	});
+
+	if (!blessed($track) || !$track->can('url')) {
+		# Try and create the track if we weren't able to fetch it.
+		$track = Slim::Schema->rs('Track')->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1
+		});
+		if (!blessed($track) || !$track->can('url')) {
+			logError("Could not find an object for [$objOrUrl]!");
+			return undef;
+		}
+	}
+	
+	$url = $track->url;
+
+	$log->info("index $index -> $url");
+
+# XXX - thsi test does not work with last.fm - not sure why it was here in the first place
+#	if (!Slim::Music::Info::isURL($url)) {
+#		logError("[$url] Unrecognized type " . Slim::Music::Info::contentType($url));
+#
+#		logError($client->string('PROBLEM_CONVERT_FILE'));
+#		return undef;
+#	}
+
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+
+	my $self = {
+		index           => $index,
+		status          => STATUS_READY,
+		owner           => $owner,
+		playlist        => Slim::Music::Info::isPlaylist($track, $track->content_type ) ? 1 : 0,
+							# 0 = simple stream, 1 = playlist, 2 = repeating stream
+		startOffset     => 0,
+		handler         => $handler,
+		track           => $track,
+		streamUrl       => $url,	# May get updated later, either here or in handler
+	};
+	$self->{'seekdata'} = $seekdata if $seekdata;
+	
+
+	bless $self, $class;
+
+	if ($handler->can('isRepeatingStream') && $handler->isRepeatingStream($self)) {
+		$self->{'playlist'} = 2;
+	}
+
+	$_liveCount++;
+	if ($log->is_debug)	{
+		$log->debug("live=$_liveCount");
+	}
+		
+	return $self;
+}
+
+sub DESTROY {
+	my $self = shift;
+	$_liveCount--;
+	if ($log->is_debug)	{
+		$log->debug(sprintf("live=$_liveCount: index=%d, url=%s", $self->{'index'}, $self->{'track'}->url));
+	}
+}
+
+sub clonePlaylistSong {
+	my ($old) = @_;
+	
+	assert($old->isPlaylist());
+	
+	my %new = %{$old};
+	$new{'status'}        = STATUS_READY;
+	$new{'startOffset'}   = 0;
+	$new{'seekdata'}      = undef;
+	$new{'duration'}      = undef;
+	$new{'bitrate'}       = undef;
+	delete $new{'streambitrate'};
+		
+	my $self = \%new;
+	bless $self, ref $old;
+
+	my $next = $self->_getNextPlaylistTrack();
+	return undef unless $next;
+	
+	return $self;	
+}
+
+sub resetSeekdata {
+	$_[0]->{'seekdata'} = undef;
+}
+
+sub _getNextPlaylistTrack {
+	my ($self) = @_;
+	
+	if ($self->{'playlist'} == 2) {
+		# leave it to the protocol handler
+		$self->{'currentTrack'} = $self->{'track'};
+		return $self->{'track'};
+	}
+	
+	# Get the next good audio track
+	my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( {url => $self->{'track'}->url} );
+	$log->debug( "Getting next audio URL from playlist" );	
+	my $track = $playlist->getNextEntry($self->{'currentTrack'} ? {after => $self->{'currentTrack'}} : undef);
+	if ($track) {
+		$self->{'currentTrack'}        = $track;
+		$self->{'currentTrackHandler'} = Slim::Player::ProtocolHandlers->handlerForURL($track->url);
+		$self->{'streamUrl'}           = $track->url;
+		$log->info( "Got next URL from playlist; track is: " . $track->url );	
+		
+	}
+	return $track;
+}
+
+sub getNextSong {
+	my ($self, $successCb, $failCb) = @_;
+
+	my $handler = $self->currentTrackHandler();
+	
+	$log->info($self->currentTrack()->url);
+
+	#	if (playlist and no-track and (scanned or not scannable)) {
+	if (!$self->{'currentTrack'}
+		&& $self->isPlaylist()
+		&& ($self->{'scanDone'} || !$handler->can('scanStream')))
+	{
+		if (!$self->_getNextPlaylistTrack()) {
+			&$failCb('PLAYLIST_NO_ITEMS_FOUND', $self->{'track'}->url);
+			return;
+		}
+		$handler = $self->currentTrackHandler();
+	}
+	
+	my $track   = $self->currentTrack();
+	my $url     = $track->url;
+	my $client  = $self->master();
+	
+	# If we have (a) a scannable playlist track,
+	# or (b) a scannable track that is not yet scanned and could be a playlist ...
+	if ($handler->can('scanUrl') && !$self->{'scanDone'}) {
+		$self->{'scanDone'} = 1;
+		$log->info("scanning URL $url");
+		$handler->scanUrl($url, {
+			client => $client,
+			song   => $self,
+			cb     => sub {
+				my ( $newTrack, $error ) = @_;
+				
+				if ($newTrack) {
+					
+					if ($track != $newTrack) {
+					
+						if ($self->{'track'} == $track) {
+							# Update of original track, by playlist or redirection
+							$self->{'track'} = $newTrack;
+							
+							$log->info("Track updated by scan: $url -> " . $newTrack->url);
+							
+							# Replace the item on the playlist so it has the new track/URL
+							my $i = 0;
+							for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
+								my $itemURL = blessed($item) ? $item->url : $item;
+								if ( $itemURL eq $url ) {
+									splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, $newTrack;
+									last;
+								}
+								$i++;
+							}
+						} elsif ($self->{'currentTrack'} && $self->{'currentTrack'} == $track) {
+							# The current, playlist track got updated, maybe by redirection
+							# Probably should not happen as redirection should have been
+							# resolved during recursive scan of playlist.
+							
+							# Cannot update $self->{'currentTrack'} as would mess up playlist traversal
+							$log->warn("Unexpected update of playlist track: $url -> " . $newTrack->url);
+						}
+					
+						$track = $newTrack;
+					}
+										
+					# maybe we just found or scanned a playlist
+					if (!$self->{'currentTrack'} && !$self->{'playlist'}) {
+						$self->{'playlist'} = 
+							Slim::Music::Info::isPlaylist($track, $track->content_type) ? 1 : 0;
+					}
+					
+					# if we just found a playlist					
+					if (!$self->{'currentTrack'} && $self->isPlaylist()) {
+						$log->info("Found a playlist");
+						$self->getNextSong($successCb, $failCb);	# recurse
+					} else {
+						$self->getNextSong($successCb, $failCb);	# recurse
+						# $successCb->();
+					}
+				}
+				else {
+					$error ||= 'PROBLEM_OPENING_REMOTE_URL';
+					$failCb->($error, $url);
+				}
+			},
+		} );
+		return;
+	}
+
+	if ($handler->can('getNextTrack')) {
+		$handler->getNextTrack($self, $successCb, $failCb);
+		return;
+	}
+
+	# Hooks for unconverted handlers
+	elsif ($handler->can('onDecoderUnderrun') || $handler->can('onJump')) {
+		if ($handler->can('onJump') && 
+			!($self->{'owner'}->{'playingState'} != Slim::Player::StreamingController::STOPPED()
+			&& $handler->can('onDecoderUnderrun')))
+		{
+			$handler->onJump(master($self), $url, $self->{'seekdata'}, $successCb);
+		} else {
+			$handler->onDecoderUnderrun(master($self), $url, $successCb);
+		}			
+	} 
+	
+	else {
+		# the simple case
+		&$successCb();
+	}
+
+}
+
+sub open {
+	my ($self, $seekdata) = @_;
+	
+	my $handler = $self->currentTrackHandler();
+	my $client  = $self->master();
+	my $track   = $self->currentTrack();
+	assert($track);
+	my $url     = $track->url;
+	
+	# Reset seekOffset - handlers will set this if necessary
+	$self->{'startOffset'} = 0;
+	
+	$log->info($url);
+	
+	$self->{'seekdata'} = $seekdata if $seekdata;
+	
+	# TODO work this out for each player in the sync-group
+	if (my $directUrl = $client->canDirectStream($url, $self)) {
+		$log->info( "URL supports direct streaming [$url->$directUrl]" );
+		$self->{'directstream'} = 1;
+		$self->{'streamUrl'} = $directUrl;
+	}
+	
+	my $sock;
+	my $format = Slim::Music::Info::contentType($track);
+
+	if (!$self->{'directstream'}) {
+
+		$log->info("URL is (no direct streaming) [$url]");
+
+		$sock = Slim::Player::ProtocolHandlers->openStream($self, $client);
+	
+		if (!$sock) {
+			logWarning("stream failed to open [$url].");
+			$self->{'status'} = STATUS_FAILED;
+			return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
+		}
+				
+		my $contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;
+
+		# if it's an audio stream, try to stream,
+		# either directly, or via transcoding.
+		if (Slim::Music::Info::isSong($track, $contentType)) {
+
+			$log->info("URL is a song (audio): $url, type=$contentType");
+
+			if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
+				logError("Can't set remote stream nonblocking for url: [$url]");
+				return (undef, 'PROBLEM_OPENING', $url);
+			}
+
+			# XXX: getConvertCommand is already called above during canDirectStream
+			# We shouldn't run it twice...
+			my ($command, $type);
+			($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand(
+				$client, $track, $contentType,
+			);
+
+			if (!defined $command) {
+				logError("Couldn't create command line for $type playback for [$url]");
+				return (undef, 'PROBLEM_CONVERT_FILE', $url);
+			}
+
+			$log->info("URL command $command type $type format $format");
+			$log->info("URL stream format : $contentType");
+
+			# this case is when we play the file through as-is
+			if ($command ne '-') {
+
+				my $maxRate = Slim::Utils::Prefs::maxRate($client);
+				my $quality = $prefs->client($client)->get('lameQuality');
+				
+				$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
+					$command, $type, '-', $url, 0 , $maxRate, 1, $quality
+				);
+
+				if (!defined($command)) {
+					logError("Couldn't create command line for $type playback for [$url]");
+					return (undef, 'PROBLEM_CONVERT_FILE', $url);
+				}
+
+				$log->info("Tokenized command $command");
+
+				my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+
+				if (!defined($pipeline)) {
+					$sock->close();
+					logError("While creating conversion pipeline for: [$url]");
+					return (undef, 'PROBLEM_CONVERT_STREAM', $url);
+				}
+	
+				$sock = $pipeline;
+				
+				# Hack to set up stream bitrate for songTime for SliMP3/SB1
+				if ($format eq 'mp3') {
+					$self->{'bitrate'} = ($maxRate || 320) * 1000;
+				} elsif ($format eq 'wav' || $format eq 'aif') {
+					# Just assume standard rate
+					$self->{'bitrate'} = 44_100 * 16 * 2;
+				}
+			}
+
+			$client->remoteStreamStartTime(Time::HiRes::time());
+			$client->pauseTime(0);
+
+		}
+		
+		# if it's one of our playlists, parse it...
+		elsif (Slim::Music::Info::isList($track, $contentType)) {
+
+			# handle the case that we've actually
+			# got a playlist in the list, rather
+			# than a stream.
+
+			# parse out the list
+			my @items = Slim::Formats::Playlists->parseList($url, $sock);
+
+			# hack to preserve the title of a song redirected through a playlist
+			if (scalar(@items) == 1 && $items[0] && defined($track->title)) {
+				Slim::Music::Info::setTitle($items[0], $track->title);
+			}
+
+			# close the socket
+			$sock->close();
+			$sock = undef;
+
+			Slim::Player::Source::explodeSong($client, \@items);
+
+			my $new = $self->new ($self->{'owner'}, $self->{'index'});
+			%$self = %$new;
+			
+			# try to open the first item in the list, if there is one.
+			$self->getNextSong (
+				sub {return $self->open();}, # success
+				sub {return(undef, @_);}    # fail
+			);
+			
+		} else {
+			logWarning("Don't know how to handle content for [$url] type: $contentType");
+
+			$sock->close();
+			$sock = undef;
+		}
+	}
+
+	my $streamControler;
+	
+	######################
+	# make sure the filehandle was actually set
+	if ($sock || $self->{'directstream'}) {
+
+		if ($sock && $sock->opened()) {
+			binmode($sock);
+		}
+
+		# XXXX - this really needs to happen in the caller!
+		# No database access here. - dsully
+		# keep track of some stats for this track
+		if ( $track->persistent ) {
+			$track->persistent->set( playcount  => ( $track->persistent->playcount || 0 ) + 1 );
+			$track->persistent->set( lastplayed => time() );
+			$track->persistent->update;
+			Slim::Schema->forceCommit();
+		}
+		
+		$self->{'streamFormat'} = $format;
+		$client->streamformat($format); # XXX legacy
+
+		$streamControler = Slim::Player::SongStreamController->new($self, $sock);
+
+	} else {
+
+		logError("Can't open [$url] : $!");
+		return (undef, 'PROBLEM_OPENING', $url);
+	}
+
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'open', $url]);
+
+	$self->{'status'} = STATUS_STREAMING;
+	
+	return $streamControler;
+}
+
+sub pluginData {
+	my ( $self, $key, $value ) = @_;
+	
+	my $namespace;
+	
+	# if called from a plugin, we automatically use the plugin's namespace for keys
+	my $package = caller(0);
+	if ( $package =~ /^(?:Slim::Plugin|Plugins)::(\w+)/ ) {
+		$namespace = $1;
+	}
+	
+	if (!defined $self->{'pluginData'}) {
+		$self->{'pluginData'} = {};
+	}	
+	
+	my $ref;
+	if ($namespace) {
+		if (!defined $self->{'pluginData'}->{$namespace}) {
+			$self->{'pluginData'}->{$namespace} = {};
+		}
+		$ref = $self->{'pluginData'}->{$namespace};
+	} else {
+		$ref = $self->{'pluginData'};
+	}	
+
+	if ( !defined $key ) {
+		return $ref;
+	}
+	
+	if ( defined $value ) {
+		$ref->{$key} = $value;
+	}
+	
+	return $ref->{$key};
+}
+
+
+sub isActive            {return $_[0]->{'status'} < STATUS_FAILED;}
+sub master              {return $_[0]->{'owner'}->master();}
+sub currentTrack        {return $_[0]->{'currentTrack'}        || $_[0]->{'track'};}
+sub currentTrackHandler {return $_[0]->{'currentTrackHandler'} || $_[0]->{'handler'};}
+sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}  
+sub duration            {return $_[0]->{'duration'} || $_[0]->currentTrack()->durationSeconds();}
+sub bitrate             {return $_[0]->{'bitrate'} || $_[0]->currentTrack()->bitrate();}
+sub streamformat        {return $_[0]->{'streamFormat'} || Slim::Music::Info::contentType($_[0]->currentTrack());}
+sub isPlaylist          {return $_[0]->{'playlist'};}
+
+sub streambitrate {
+	my $self = shift;
+	return (exists $self->{'streambitrate'} ? $self->{'streambitrate'} : $self->bitrate());
+}
+
+
+1;

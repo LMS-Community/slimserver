@@ -33,17 +33,20 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 
-	if (!$args->{'url'}) {
+	if (!$args->{'song'}) {
 
-		logWarning("No url passed!");
-		return undef;
+		logWarning("No song passed!");
+		
+		# XXX: MusicIP abuses this as a non-async HTTP client, can't return undef
+		# return undef;
 	}
 
 	my $self = $class->open($args);
 
 	if (defined($self)) {
-		${*$self}{'url'}     = $args->{'url'};
+		${*$self}{'song'}    = $args->{'song'};
 		${*$self}{'client'}  = $args->{'client'};
+		${*$self}{'url'}     = $args->{'url'};
 	}
 
 	return $self;
@@ -158,12 +161,12 @@ sub parseMetadata {
 }
 
 sub canDirectStream {
-	my ($classOrSelf, $client, $url) = @_;
+	my ($classOrSelf, $client, $url, $inType) = @_;
 	
 	if ( !main::SLIM_SERVICE ) {
 		# When synced, we don't direct stream so that the server can proxy a single
 		# stream for all players
-		if ( Slim::Player::Sync::isSynced($client) ) {
+		if ( $client->syncGroupActiveMembers() > 1 ) {
 
 			if ( $directlog->is_info ) {
 				$directlog->info(sprintf(
@@ -189,7 +192,7 @@ sub canDirectStream {
 	}
 
 	# Check the available types - direct stream MP3, but not Ogg.
-	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url);
+	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, $inType);
 
 	if (defined $command && $command eq '-' || $format eq 'mp3') {
 		return $url;
@@ -287,203 +290,33 @@ sub parseDirectHeaders {
 		# or send an invalid type we don't include in types.conf
 		$contentType = 'mp3';
 	}
-	
-	if ( $length && $contentType eq 'mp3' ) {
-		$directlog->debug("Stream supports seeking");
-		$client->scanData->{mp3_can_seek} = 1;
-	}
-	else {
-		$directlog->debug("Stream does not support seeking");
-		delete $client->scanData->{mp3_can_seek};
-	}
-	
+		
 	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 }
 
-# Whether or not to display buffering info while a track is loading
-sub showBuffering {
-	my ( $class, $client, $url ) = @_;
+sub scanUrl {
+	my ( $class, $url, $args ) = @_;
 	
-	return $client->showBuffering;
-}
-
-# Handle normal advances to the next track
-sub onDecoderUnderrun {
-	my ( $class, $client, $nextURL, $callback ) = @_;
+	my $callersCallback = $args->{'cb'};
 	
-	# Flag that we don't want any buffering messages while loading the next track,
-	$client->showBuffering( 0 );
-	
-	# Special handling needed when synced since onDecoderUnderrun is
-	# called for all players
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		if ( !Slim::Player::Sync::isMaster($client) ) {
-			# Only the master needs to scan the track
-			$log->debug('Letting sync master scan next track');
-			
-			$callback->();
-			
-			return;
-		}
-	}
-	
-	# If user was listening to a playlist, it may contain non-infinite tracks
-	# so this lets us advance to the next entry in the playlist.  We just
-	# want to skip scanHTTPTrack in this case, and the onUnderrun callback
-	# will handle playing the next entry
-	if ( $client->remotePlaylistCurrentEntry ) {
-		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( { 	 
-			url => Slim::Player::Playlist::url($client), 	 
-		} );
-		
-		if ( my $nextEntry = $playlist->getNextEntry( { after => $client->remotePlaylistCurrentEntry } ) ) {
-			$log->debug( 'Playlist contains more tracks, not scanning next track, waiting for underrun' );
-			return;
-		}
-	}
-	
-	$log->debug( 'Scanning next HTTP track before playback' );
-	
-	$class->scanHTTPTrack( $client, $nextURL, $callback );
-}
-
-sub onUnderrun {
-	my ( $class, $client, $url, $callback ) = @_;
-	
-	# Special handling needed when synced since onUnderrun is
-	# called for all players
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		if ( !Slim::Player::Sync::isMaster($client) ) {
-			# Only the master needs to scan the track
-			$log->debug('Letting sync master handle onUnderrun');
-			
-			$callback->();
-			
-			return;
-		}
-	}
-	
-	# If user was listening to a playlist, it may contain non-infinite tracks
-	# so this lets us advance to the next entry in the playlist
-	if ( $client->remotePlaylistCurrentEntry ) {
-		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( { 	 
-			url => Slim::Player::Playlist::url($client), 	 
-		} );
-		
-		if ( my $nextEntry = $playlist->getNextEntry( { after => $client->remotePlaylistCurrentEntry } ) ) {
-			# Jump to the same track where we'll play the next item in the playlist
-			
-			$client->remotePlaylistCurrentEntry( $nextEntry );
-			
-			$log->debug( "Jumping to same track to play the next entry in the playlist" );
-
-			if ( $nextEntry->title !~ /^(?:http|mms)/ ) {
-				Slim::Music::Info::setCurrentTitle( $playlist->url, $nextEntry->title );
+	$args->{'cb'} = sub {
+		my ( $track ) = @_;
+		if ( $track ) {
+			# An HTTP URL may really be an MMS URL,
+			# check now and if so, change the URL before playback
+			if ( $track->content_type eq 'wma' ) {
+				$log->debug( "Changing URL to MMS protocol: " . $track->url);
+				my $mmsURL = $track->url;
+				$mmsURL =~ s/^http/mms/i;
+				$track->url( $mmsURL );
+				$track->update;
 			}
-
-			Slim::Player::Source::jumpto( $client, '+0' );
-			
-			return;
 		}
-	}
-	
-	$callback->();
-}
-
-# On skip, load the next track before playback
-sub onJump {
-	my ( $class, $client, $nextURL, $callback ) = @_;
-	
-	# If seeking, we can avoid scanning
-	if ( $client->scanData->{seekdata} ) {
-		# XXX: we could set showBuffering to 0 but on slow
-		# streams there would be no feedback
 		
-		$callback->();
-		return;
-	}
-
-	# Display buffering info on loading the next track
-	$client->showBuffering( 1 );
-
-	$log->debug( 'Scanning next HTTP track before playback' );
-		
-	$class->scanHTTPTrack( $client, $nextURL, $callback );
-}
-
-sub scanHTTPTrack {
-	my ( $class, $client, $nextURL, $callback ) = @_;
+		$callersCallback->(@_);
+	};
 	
-	$client = $client->masterOrSelf;
-	
-	# Clear previous playlist entry if any
-	$client->remotePlaylistCurrentEntry( undef );
-	
-	# Bug 7739, Scan the next track/playlist before we play it
-	Slim::Utils::Scanner::Remote->scanURL( $nextURL, {
-		client => $client,
-		cb     => sub {
-			my ( $track, $error ) = @_;
-			
-			if ( $track ) {
-				
-				if ( $sourcelog->is_debug ) {
-					$sourcelog->debug( "Remote scan finished for " . $track->url );
-				}
-				
-				# An HTTP URL may really be an MMS URL,
-				# check now and if so, change the URL before playback
-				if ( $track->content_type eq 'wma' ) {
-					$sourcelog->debug( "Changing URL to MMS protocol: $nextURL" );
-					my $mmsURL = $nextURL;
-					$mmsURL =~ s/^http/mms/i;
-					$track->url( $mmsURL );
-					$track->update;
-				}
-				
-				# Replace the item on the playlist in case it was changed due to
-				# a redirect or the above MMS code
-				my $i = 0;
-				for my $item ( @{ Slim::Player::Playlist::playList($client) } ) {
-					my $itemURL = blessed($item) ? $item->url : $item;
-					if ( $itemURL eq $nextURL ) {
-						$sourcelog->debug( "Replacing playlist item $i with new track object" );
-						splice @{ Slim::Player::Playlist::playList($client) }, $i, 1, $track;
-						last;
-					}
-					$i++;
-				}
-				
-				$callback->();
-			}
-			else {
-				$sourcelog->debug( "Remote scanning returned error: $error" );
-				
-				my $line1;
-				$error ||= 'PROBLEM_OPENING_REMOTE_URL';
-
-				# If the playlist was unable to load a remote URL, notify
-				# This is used for logging broken stream links
-				Slim::Control::Request::notifyFromArray( $client, [ 'playlist', 'cant_open', $nextURL, $error ] );
-
-				if ( uc($error) eq $error ) {
-					$line1 = $client->string($error);
-				}
-				else {
-					$line1 = $error;
-				}
-
-				# Show an error message
-				$client->showBriefly( {
-					line => [ $line1, $nextURL ],
-				}, {
-					scroll    => 1,
-					firstline => 1,
-					duration  => 5,
-				} );
-			}
-		},
-	} );
+	Slim::Utils::Scanner::Remote->scanURL($url, $args);
 }
 
 # Allow mp3tunes tracks to be scrobbled
@@ -524,8 +357,8 @@ sub getMetadataFor {
 	
 	# Item may be a playlist, so get the real URL playing
 	if ( Slim::Music::Info::isPlaylist($url) ) {
-		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
-			$url = $entry->url;
+		if (my $cur = $client->currentTrackForUrl($url)) {
+			$url = $cur->url;
 		}
 	}
 	
@@ -635,43 +468,27 @@ sub getIcon {
 }
 
 sub canSeek {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	$client = $client->masterOrSelf;
-	
-	if ( Slim::Music::Info::isPlaylist($url) ) {
-		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
-			$url = $entry->url;
-		}
-	}
+	$client = $client->master();
 	
 	# Can only seek if bitrate and duration are known
-	my $bitrate = Slim::Music::Info::getBitrate( $url );
-	my $seconds = Slim::Music::Info::getDuration( $url );
+	my $bitrate = Slim::Music::Info::getBitrate( $song->currentTrack()->url );
+	my $seconds = $song->duration();
 	
 	if ( !$bitrate || !$seconds ) {
 		#$log->debug( "bitrate: $bitrate, duration: $seconds" );
 		#$log->debug( "Unknown bitrate or duration, seek disabled" );
 		return 0;
 	}
-	
-	if ( $client->scanData->{mp3_can_seek} ) {
-		return 1;
-	}
-	
-	#$log->debug( "Seek not possible, content-length missing or wrong content-type" );
-	
-	return 0;
+		
+	return 1;
 }
 
 sub canSeekError {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	if ( Slim::Music::Info::isPlaylist($url) ) {
-		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
-			$url = $entry->url;
-		}
-	}
+	my $url = $song->currentTrack()->url;
 	
 	my $ct = Slim::Music::Info::contentType($url);
 	
@@ -680,9 +497,10 @@ sub canSeekError {
 	} 
 	
 	if ( !Slim::Music::Info::getBitrate( $url ) ) {
+		$log->info("bitrate unknown for: " . $url);
 		return 'SEEK_ERROR_MP3_UNKNOWN_BITRATE';
 	}
-	elsif ( !Slim::Music::Info::getDuration( $url ) ) {
+	elsif ( !$song->duration() ) {
 		return 'SEEK_ERROR_MP3_UNKNOWN_DURATION';
 	}
 	
@@ -690,83 +508,19 @@ sub canSeekError {
 }
 
 sub getSeekData {
-	my ( $class, $client, $url, $newtime ) = @_;
-	
-	if ( Slim::Music::Info::isPlaylist($url) ) {
-		if ( my $entry = $client->remotePlaylistCurrentEntry ) {
-			$url = $entry->url;
-		}
-	}
+	my ( $class, $client, $song, $newtime ) = @_;
 	
 	# Determine byte offset and song length in bytes
-	my $bitrate = Slim::Music::Info::getBitrate( $url ) || return;
-	my $seconds = Slim::Music::Info::getDuration( $url ) || return;
+	my $bitrate = $song->bitrate() || return;
 		
 	$bitrate /= 1000;
 		
-	$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream of $seconds length" );
+	$log->info( "Trying to seek $newtime seconds into $bitrate kbps" );
 	
-	my $data = {
-		newoffset         => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
-		songLengthInBytes => ( ( $bitrate * 1024 ) / 8 ) * $seconds,
+	return {
+		sourceStreamOffset   => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
+		timeOffset           => $newtime,
 	};
-	
-	return $data;
-}
-
-sub setSeekData {
-	my ( $class, $client, $url, $newtime, $newoffset ) = @_;
-	
-	my @clients;
-	
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# if synced, save seek data for all players
-		my $master = Slim::Player::Sync::masterOrSelf($client);
-		push @clients, $master, @{ $master->slaves };
-	}
-	else {
-		push @clients, $client;
-	}
-	
-	for my $client ( @clients ) {
-		# Save the new seek point
-		$client->scanData( {
-			seekdata => {
-				newtime   => $newtime,
-				newoffset => $newoffset,
-			},
-		} );
-	}
-}
-
-sub onOpen {
-	my ( $class, $client, $track ) = @_;
-	
-	$client = $client->masterOrSelf;
-	
-	if ( Slim::Music::Info::isPlaylist( $track, $track->content_type ) ) {
-		if ( my $next = $client->remotePlaylistCurrentEntry ) {
-			return $next;
-		}
-		
-		# Return the first good audio track
-		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl( {
-			url => $track->url,
-		} );
-		
-		if ( $log->is_debug ) {
-			$log->debug( "Getting next audio URL from playlist " . $track->url );
-		}
-		
-		my $next = $playlist->getNextEntry;
-		
-		# Save the current playlist entry being used
-		$client->remotePlaylistCurrentEntry( $next );
-		
-		return $next;
-	}
-	
-	return $track;
 }
 
 # reinit is used on SN to maintain seamless playback when bumped to another instance

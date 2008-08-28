@@ -29,6 +29,10 @@ my $log = logger('player.streaming.remote');
 
 my $prefs = preferences('server');
 
+sub isRemote {
+	return 1;
+}
+
 sub open {
 	my $class = shift;
 	my $args  = shift;
@@ -127,7 +131,7 @@ sub request {
 	my $post    = $args->{'post'};
 
 	my $class   = ref $self;
-	my $request = $self->requestString($args->{'client'}, $url, $post);
+	my $request = $self->requestString($args->{'client'}, $url, $post, $args->{'song'} ? $args->{'song'}->{'seekdata'} : undef);
 	
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'create'}  = $args->{'create'};
@@ -193,6 +197,7 @@ sub request {
 
 		return $class->open({
 			'url'     => $redir,
+			'song'    => $args->{'song'},
 			'infoUrl' => $self->infoUrl,
 			'post'    => $post,
 			'create'  => $args->{'create'},

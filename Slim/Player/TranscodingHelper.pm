@@ -206,7 +206,7 @@ sub getConvertCommand {
 
 	if (defined($client)) {
 
-		my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
+		my @playergroup = $client->syncGroupActiveMembers();
 
 		$player   = $client->model();
 		$clientid = $client->id();	

@@ -116,8 +116,10 @@ sub rateTrack {
 	
 	return unless defined $client;
 	
+	my $song = $client->playingSong() || return;
+	
 	# ignore if user is not using Last.fm
-	my $url = Slim::Player::Playlist::url($client) || return;
+	my $url = $song->currentTrack()->url;
 	return unless $url =~ /^lfm/;
 	
 	my $rating = $request->getParam('_rating');
@@ -128,8 +130,7 @@ sub rateTrack {
 	}
 	
 	# Get the current track
-	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
-	return unless $currentTrack;
+	my $currentTrack = $song->{'pluginData'} || return;
 	
 	my ($station) = $url =~ m{^lfm://(.+)};
 	
@@ -210,15 +211,12 @@ sub skipTrack {
 	return unless defined $client;
 	
 	# ignore if user is not using Last.fm
-	my $url = Slim::Player::Playlist::url($client) || return;
+	my $song = $client->playingSong() || return;
+	my $url = $song->currentTrack()->url;
 	return unless $url =~ /^lfm/;
 		
 	$log->debug("Last.fm: Skip requested");
-	
-	# Tell onJump not to display buffering info, so we don't
-	# mess up the showBriefly message
-	$client->pluginData( banMode => 1 );
-	
+		
 	$client->execute( [ "playlist", "jump", "+1" ] );
 }
 

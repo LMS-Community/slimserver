@@ -567,7 +567,7 @@ sub setDelayedTitle {
 
 				setCurrentTitle( $url, $newTitle );
 
-				for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+				for my $everybuddy ( $client->syncGroupActiveMembers()) {
 					$everybuddy->update();
 				}
 
@@ -1014,27 +1014,9 @@ sub isMMSURL {
 sub isRemoteURL {
 	my $url = shift || return 0;
 
-	if ( $url =~ /^([a-zA-Z0-9\-]+):/ ) {
-		my $proto = $1;
-		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url) ) {
-			if ( $handler->can('isRemote') ) {
-				return $handler->isRemote();
-			}
-			else {
-				# Backwards-compat for 3rd party plugins not implementing isRemote
-				return 1;
-			}
-		}
-		elsif ( Slim::Player::ProtocolHandlers->isValidHandler( lc($proto) ) ) {
-			# Backwards-compat for handlers without a handler class
-			
-			# Special case a few of our internal protocols that aren't remote
-			if ( $proto =~ /^(?:db|itunesplaylist|musicmagicplaylist)$/ ) {
-				return 0;
-			}
-			
-			return 1;
-		}
+	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidRemoteHandler( lc($1) )) {
+
+		return 1;
 	}
 
 	return 0;
@@ -1046,57 +1028,24 @@ sub canSeek {
 	my @errorString;
 	my $canSeek = 0;
 	
-	if ( Slim::Music::Info::isRemoteURL($playingSong) ) {
-
-		my $playingUrl;
-		if (Slim::Music::Info::isPlaylist($playingSong)) {
-			$log->info("Playing list $playingSong");
-			my $entry = $client->remotePlaylistCurrentEntry;
-			if (defined ($entry)) {
-				$playingUrl = $entry->url;
-			} else {
-				$log->info("No current entry in remoteplaylist $playingSong ");
+	# Check with protocol handler to determine if the stream is seekable
+	my $handler = $playingSong->currentTrackHandler();
+	if ( $handler->can('canSeek') ) {
+		$log->debug( "Checking with protocol handler $handler for canSeek" );
+		if ( !$handler->canSeek( $client, $playingSong ) ) {
+			if (wantarray) {
+				@errorString = $handler->can('canSeekError') 
+					? $handler->canSeekError( $client, $playingSong )
+					: ('SEEK_ERROR_REMOTE');
 			}
 		} else {
-			$playingUrl = $playingSong;
-		} ;
-
-		# Check with protocol handler to determine if the remote stream is seekable
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($playingUrl);
-		if ( $handler && $handler->can('canSeek') ) {
-			$log->debug( "Checking with protocol handler $handler for canSeek" );
-			if ( !$handler->canSeek( $client, $playingUrl ) ) {
-				if (wantarray) {
-					@errorString = $handler->can('canSeekError') 
-						? $handler->canSeekError( $client, $playingUrl )
-						: ('SEEK_ERROR_REMOTE');
-				}
-			} else {
-				$canSeek = 1;
-			}
+			$canSeek = 1;
 		}
-		else {
-			@errorString = ('SEEK_ERROR_REMOTE');
-		}
-	} 		
-	# XXX: need a better way to determine if a stream is transcoded
-	# because we want to prevent seek with real transcoding but not
-	# proxied streaming
-	else {
-		if ( $client->masterOrSelf()->audioFilehandleIsSocket() ) {
-			@errorString = ('SEEK_ERROR_TRANSCODED');
-		} else {
-			# No seeking supported in WMA files yet
-			my $track = Slim::Player::Playlist::song($client);
-			if ( $track->content_type eq 'wma' ) {
-				$canSeek = 0;
-				@errorString = ('SEEK_ERROR_TYPE_NOT_SUPPORTED', 'WMA');
-			}
-			else {
-				$canSeek = 1;
-			}
-		}	
 	}
+	else {
+		@errorString = ('SEEK_ERROR_REMOTE');
+	}
+
 	return (wantarray ? ($canSeek, @errorString) : $canSeek);
 }
 

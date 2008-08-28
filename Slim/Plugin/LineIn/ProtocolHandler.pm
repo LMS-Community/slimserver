@@ -24,7 +24,6 @@ sub overridePlayback {
 	$log->debug( "Switching to line in $url" );
 	
 	$client->setLineIn($url);
-	$client->directURL($url);
 
 	return 1;
 }

@@ -46,7 +46,7 @@ sub playlist {
 	}
 	
 	# If synced, use the master's playlist
-	$client = Slim::Player::Sync::masterOrSelf($client);
+	$client = $client->master();
 
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	

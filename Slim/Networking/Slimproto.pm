@@ -9,24 +9,17 @@ package Slim::Networking::Slimproto;
 
 use strict;
 
-use Errno qw(:POSIX);
+use Slim::Utils::Errno;
 use FindBin qw($Bin);
 use Socket qw(inet_ntoa SOMAXCONN);
-use IO::Socket;
-use FileHandle;
+use IO::Socket qw(sockaddr_in);
+#use FileHandle;
 use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
 use Math::VecStat;
 use Scalar::Util qw(blessed);
 
 use Slim::Networking::Select;
-use Slim::Player::Squeezebox;
-use Slim::Player::Squeezebox2;
-use Slim::Player::Transporter;
-use Slim::Player::SoftSqueeze;
-use Slim::Player::Receiver;
-use Slim::Player::Boom;
-use Slim::Player::SqueezeSlave;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -41,7 +34,7 @@ use constant SLIMPROTO_PORT   => 3483;
 use constant LATENCY_LIST_MAX => 10;
 use constant LATENCY_LIST_MIN => 6;
 
-our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom');
+our @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3', 'receiver', 'squeezeslave', 'controller', 'boom', 'softboom', 'squeezeplay');
 my $log       = logger('network.protocol.slimproto');
 my $faclog    = logger('factorytest');
 my $synclog   = logger('player.sync');
@@ -72,29 +65,22 @@ our %status;
 our %latencyList;        # last few latencies
 our %latency;            # current published latency
 
-our %callbacks;
 our %callbacksRAWI;
 
-sub setEventCallback {
-	my $event	= shift;
-	my $funcptr = shift;
-	$callbacks{$event} = $funcptr;
-}
-
 our %message_handlers = (
-	'ANIC' => \&_animation_complete_handler,
-	'BODY' => \&_http_body_handler,
-	'BUTN' => \&_button_handler,
-	'BYE!' => \&_bye_handler,	
-	'DBUG' => \&_debug_handler,
+	'ANIC' => \&_animation_complete_handler,	# SB2+
+	'BODY' => \&_http_body_handler,				# SB2+
+	'BUTN' => \&_button_handler,				# SB2+ (TP, Boom)
+	'BYE!' => \&_bye_handler,					# SB2+
+	'DBUG' => \&_debug_handler,					# SB2+
 	'DSCO' => \&_disco_handler,
 	'HELO' => \&_hello_handler,
 	'IR  ' => \&_ir_handler,
-	'KNOB' => \&_knob_handler,
-	'META' => \&_http_metadata_handler,
+	'KNOB' => \&_knob_handler,					# SB2+ (TP, Boom)
+	'META' => \&_http_metadata_handler,			# SB2+
 	'RAWI' => \&_raw_ir_handler,
 	'RESP' => \&_http_response_handler,
-	'SETD' => \&_settings_handler,
+	'SETD' => \&_settings_handler,				# SB2+
 	'STAT' => \&_stat_handler,
 	'UREQ' => \&_update_request_handler,
 	'ALSS' => \&_ambient_light_sensor_handler,
@@ -280,15 +266,7 @@ sub slimproto_close {
 				# notify of disconnect
 				Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 			
-				# Bug 2707, If a synced player disconnects, unsync it temporarily
-				if ( Slim::Player::Sync::isSynced($client) ) {
-
-					if ( $synclog->is_info ) {
-						$synclog->info("Player disconnected, temporary unsync " . $client->id);
-					}
-
-					Slim::Player::Sync::unsync($client, 1);
-				}
+				$client->controller()->playerInactive($client);
 			
 				# Bug 6714, delete the cached needsUpgrade value, as the player
 				# may change firmware versions before coming back
@@ -601,15 +579,18 @@ sub _disco_handler {
 
 	if ($reason) {
 		# Report failure via protocol handler if available
-		if ( my $url = $client->directURL ) {
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-			if ( $handler && $handler->can("handleDirectError") ) {
-				$handler->handleDirectError( $client, $url, $reason, $reasons{$reason} );
+		my $controller = $client->controller()->songStreamController();
+		if ($controller && $controller->isDirect() ) {
+			my $handler = $controller->protocolHandler();
+			if ($handler->can("handleDirectError") ) {
+				$handler->handleDirectError( $client, $controller->streamUrl(), $reason, $reasons{$reason} );
 				return;
 			}
 		}
 		
 		$client->failedDirectStream( $reasons{$reason} );
+	} else {
+		$client->statHandler('EoS');
 	}
 }
 
@@ -674,6 +655,8 @@ sub _stat_handler {
 	#	STMd - DECODE_READY	// decoder has no more data
 	#	STMs - TRACK_STARTED	// a new track started playing
 	#	STMn - NOT_SUPPORTED	// decoder does not support the track format
+	
+	#   STMz - pseudo-status defived from DSCO meaning end-of-stream
 
 	my ($fullnessA, $fullnessB);
 	
@@ -740,7 +723,7 @@ sub _stat_handler {
 		$client->outputBufferFullness($status{$client}->{'output_buffer_fullness'});
 	}
 
-	$::perfmon && ($client->playmode() eq 'play') && $client->bufferFullnessLog()->log($client->usage()*100);
+	$::perfmon && ($client->isPlaying()) && $client->bufferFullnessLog()->log($client->usage()*100);
 	$::perfmon && ($status{$client}->{'signal_strength'} <= 100) &&
 		$client->signalStrengthLog()->log($status{$client}->{'signal_strength'});
 	
@@ -748,6 +731,13 @@ sub _stat_handler {
 		$faclog->debug(sprintf("FACTORYTEST\tevent=stat\tmac=%s\tsignalstrength=%s",
 			$client->id, $status{$client}->{'signal_strength'}
 		));
+	}
+	
+	if ($log->is_info) {
+		$log->info(sprintf("%s: STAT-%s: fullness=%d, output_fullness=%d, elapsed=%.3f",
+			$client->id(), $status{$client}->{'event_code'}, $status{$client}->{'fullness'},
+			$status{$client}->{'output_buffer_fullness'} || -1,
+			defined($status{$client}->{'elapsed_milliseconds'}) ? $status{$client}->{'elapsed_milliseconds'} /1000 : -1  ))
 	}
 
 	if ($log->is_debug) {
@@ -798,24 +788,21 @@ sub _stat_handler {
 		}
 	}
 	
-	if (Slim::Player::Sync::isSynced($client)
-		&& Slim::Player::Source::playmode($client) eq 'play')
-	{
+	if ($client->isSynced() && $client->isPlaying(1) && $client->needsWeightedPlayPoint()) {
 		my $statusTime = $client->jiffiesToTimestamp( $status{$client}->{'jiffies'} );
 		my $apparentStreamStartTime;
-		if ($client->model() eq 'squeezebox') {
-			$apparentStreamStartTime = $client->apparentStreamStartTime($statusTime);
-		} elsif (($client->model() eq 'squeezeslave' || $client->model() eq 'softsqueeze')
-				 && $status{$client}->{'elapsed_milliseconds'}) {
+		if ($status{$client}->{'elapsed_milliseconds'}) {
 			$apparentStreamStartTime = $statusTime - ($status{$client}->{'elapsed_milliseconds'} / 1000);
+		} else {
+			$apparentStreamStartTime = $client->apparentStreamStartTime($statusTime);
 		}
 		if ($apparentStreamStartTime) {
 			$client->publishPlayPoint( $statusTime, $apparentStreamStartTime, undef );
 		}
 	}
-
-	Slim::Player::Sync::checkSync($client);
 	
+	$client->statHandler($status{$client}->{'event_code'});
+
 	if ( main::SLIM_SERVICE ) {
 		# Bug 8995, Update signal strength on SN
 		if ( !$client->playerData->signal ) {
@@ -823,10 +810,6 @@ sub _stat_handler {
 			$client->playerData->update;
 		}
 	}
-	
-	my $callback = $callbacks{$status{$client}->{'event_code'}};
-
-	&$callback($client) if $callback;
 }
 
 sub getLatency {
@@ -1008,7 +991,7 @@ sub _hello_handler {
 
 	} elsif ($deviceids[$deviceid] eq 'squeezebox') {	
 
-		$client_class  = 'Slim::Player::Squeezebox';
+		$client_class  = 'Slim::Player::Squeezebox1';
 
 		if ($bitmapped) {
 
@@ -1037,6 +1020,11 @@ sub _hello_handler {
 	} elsif ($deviceids[$deviceid] eq 'squeezeslave') {
 
 		$client_class = 'Slim::Player::SqueezeSlave';
+		$display_class = 'Slim::Display::NoDisplay';
+
+	} elsif ($deviceids[$deviceid] eq 'squeezeplay') {
+
+		$client_class  = 'Slim::Player::SqueezePlay';
 		$display_class = 'Slim::Display::NoDisplay';
 
 	} else {
@@ -1082,6 +1070,13 @@ sub _hello_handler {
 	if (!defined($client)) {
 
 		$log->info("Creating new client, id: $id ipport: $ipport{$s}");
+
+		Slim::bootstrap::tryModuleLoad($client_class);
+
+		if ($@) {
+			$log->logBacktrace;
+			$log->logdie("FATAL: Couldn't load module: $client_class: [$@]");
+		}
 
 		$client = $client_class->new(
 			$id,        # mac
@@ -1203,15 +1198,7 @@ sub _hello_handler {
 		$client->modeParam('visu', [0]);
 		$client->modeParam('screen2active', undef);
 		
-		# Unsync players that need an update
-		if ( Slim::Player::Sync::isSynced($client) ) {
-
-			if ( $synclog->is_info ) {
-				$synclog->info("Player needs update, temporary unsync " . $client->id);
-			}
-
-			Slim::Player::Sync::unsync($client, 1);
-		}
+		$client->controller()->playerInactive($client);
 		
 		$client->block( {
 			'screen1' => {
@@ -1262,7 +1249,7 @@ sub _knob_handler {
 	my ($time, $position, $sync) = unpack('NNC', $$data_ref);
 
 	# Perl doesn't have an unsigned network long format.
-	if ($position & 1<<31) {
+	if ($position & 1 << 31) {
 		$position = -($position & 0x7FFFFFFF);
 	}
 

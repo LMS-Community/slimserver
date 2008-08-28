@@ -412,7 +412,7 @@ sub newsongCallback {
 	my $client  = $request->client() || return;
 	
 	# If synced, only listen to the master
-	if ( Slim::Player::Sync::isSynced($client) ) {
+	if ( $client->isSynced() ) {
 		return unless Slim::Player::Sync::isMaster($client);
 	}
 
@@ -678,7 +678,7 @@ sub checkScrobble {
 	return unless $client;
 	
 	# Make sure player is either playing or paused
-	if ( $client->playmode !~ /play|pause/ ) {
+	if ( $client->isStopped() ) {
 		$log->debug( $client->id . ' no longer playing or paused, not scrobbling' );
 		return;
 	}

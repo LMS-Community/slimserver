@@ -304,8 +304,8 @@ sub getHeaders {
 	
 	# Add player ID data
 	if ( $client ) {
-		push @headers, 'X-Player-MAC', $client->masterOrSelf->id;
-		if ( my $uuid = $client->masterOrSelf->uuid ) {
+		push @headers, 'X-Player-MAC', $client->master()->id;
+		if ( my $uuid = $client->master()->uuid ) {
 			push @headers, 'X-Player-UUID', $uuid;
 		}
 		

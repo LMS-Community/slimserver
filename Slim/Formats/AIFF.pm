@@ -292,5 +292,6 @@ sub getCoverArt {
 	return undef;
 }
 
+sub canSeek {1}	
 
 1;

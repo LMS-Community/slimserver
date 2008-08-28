@@ -186,7 +186,7 @@ sub test {
 		return;
 	}
 
-	if ($client->playmode =~ /play/) {
+	if ($client->isPlaying()) {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}

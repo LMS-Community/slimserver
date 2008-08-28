@@ -24,7 +24,6 @@ sub new {
 	my $args   = shift;
 
 	my $client = $args->{client};
-	my $url    = $args->{url};
 	
 	my $track  = $client->pluginData('currentTrack') || {};
 	
@@ -34,6 +33,7 @@ sub new {
 
 	my $sock = $class->SUPER::new( {
 		url     => $track->{URL},
+		song    => $args->{'song'},
 		client  => $client,
 		bitrate => 128_000,
 	} ) || return;
@@ -80,16 +80,12 @@ sub handleError {
 	}
 }
 
-# Whether or not to display buffering info while a track is loading
-sub showBuffering {
-	my ( $class, $client, $url ) = @_;
-	
-	my $showBuffering = $client->pluginData('showBuffering');
-	
-	return ( defined $showBuffering ) ? $showBuffering : 1;
+sub scanUrl {
+	my ($class, $url, $args) = @_;
+	$args->{'cb'}->($args->{'song'}->currentTrack());
 }
 
-sub getNextTrack {
+sub _getNextTrack {
 	my ( $client, $params ) = @_;
 	
 	my $url   = Slim::Player::Playlist::url($client);
@@ -168,7 +164,7 @@ sub gotNextTrack {
 			$title = $client->string('PLUGIN_SLACKER_NO_TRACKS') . ' (' . $track->{error} . ')';
 		}
 		
-		if ( $client->playmode =~ /play/ ) {
+		if ( $client->isPlaying() ) {
 			setCurrentTitle( $client, $url, $title );
 		
 			$client->update();
@@ -235,9 +231,6 @@ sub gotNextTrackError {
 	my $client = $http->params('client');
 	
 	handleError( $http->error, $client );
-	
-	# Make sure we re-enable readNextChunkOk
-	#$client->readNextChunkOk(1);
 }
 
 # Handle normal advances to the next track
@@ -245,7 +238,7 @@ sub onDecoderUnderrun {
 	my ( $class, $client, $nextURL, $callback ) = @_;
 	
 	# Special handling needed when synced
-	if ( Slim::Player::Sync::isSynced($client) ) {
+	if ( $client->isSynced() ) {
 		if ( !Slim::Player::Sync::isMaster($client) ) {
 			# Only the master needs to fetch next track info
 			$log->debug('Letting sync master fetch next Slacker track');
@@ -253,13 +246,10 @@ sub onDecoderUnderrun {
 		}
 	}
 	
-	# Flag that we don't want any buffering messages while loading the next track,
-	$client->pluginData( showBuffering => 0 );
-	
 	# Get next track
 	my ($stationId) = $nextURL =~ m{^slacker://([^.]+)\.mp3};
 	
-	getNextTrack( $client, {
+	_getNextTrack( $client, {
 		stationId => $stationId,
 		callback  => $callback,
 		mode      => 'end',
@@ -270,22 +260,12 @@ sub onDecoderUnderrun {
 
 # On skip, load the next track before playback
 sub onJump {
-    my ( $class, $client, $nextURL, $callback ) = @_;
-
-	# Display buffering info on loading the next track
-	# unless we shouldn't (when banning tracks)
-	if ( $client->pluginData('banMode') ) {
-		$client->pluginData( showBuffering => 0 );
-		$client->pluginData( banMode => 0 );
-	}
-	else {
-		$client->pluginData( showBuffering => 1 );
-	}
+    my ( $class, $client, $nextURL, $seekdata, $callback ) = @_;
 	
 	# If synced and we already fetched a track in onDecoderUnderrun,
 	# just callback, don't fetch another track.  Checks prevTrack to
 	# make sure there is actually a track ready to be played.
-	if ( Slim::Player::Sync::isSynced($client) && $client->pluginData('prevTrack') ) {
+	if ( $client->isSynced() && $client->pluginData('prevTrack') ) {
 		$log->debug( 'onJump while synced, but already got the next track to play' );
 		$callback->();
 		return;
@@ -294,9 +274,9 @@ sub onJump {
 	# Get next track
 	my ($stationId) = $nextURL =~ m{^slacker://([^.]+)\.mp3};
 	
-	my $mode = ( $client->playmode =~ /play/ ) ? 'skip' : '';
+	my $mode = ( $client->isPlaying() ) ? 'skip' : '';
 	
-	getNextTrack( $client, {
+	_getNextTrack( $client, {
 		stationId => $stationId,
 		callback  => $callback,
 		mode      => $mode,
@@ -455,10 +435,6 @@ sub playlistCallback {
 			$log->debug("User changed repeat setting, forcing back to 2");
 		
 			$client->execute(["playlist", "repeat", 2]);
-		
-			if ( $client->playmode =~ /playout/ ) {
-				$client->playmode( 'playout-play' );
-			}
 		}
 	}
 	elsif ( $p1 eq 'newsong' ) {

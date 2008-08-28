@@ -207,7 +207,7 @@ sub browsedb {
 		}
 	}
 
-	# Bug 3311, disable editing for iTunes and MusicIP playlists
+	# Bug 3311, disable editing for iTunes and MusicMagic playlists
 	if (ref $params->{'playlist'}) {
 
 		if ($params->{'playlist'}->content_type =~ /(?:itu|mmp)/) {

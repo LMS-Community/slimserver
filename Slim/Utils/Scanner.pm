@@ -212,7 +212,7 @@ sub findFilesMatching {
 =head2 findFilesForRescan( $topDir, $args )
 
 Wrapper around L<findNewAndChangedFiles>(), so that other callers (iTunes,
-MusicIP can reuse the logic.
+MusicMagic can reuse the logic.
 
 =cut
 
@@ -474,6 +474,30 @@ sub scanPlaylistFileHandle {
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
 }
+
+=head2 scanBitrate( $fh, $contentType, $url )
+
+Scan a remote stream for bitrate information using a temporary file.
+
+Currently supports MP3, Ogg, and FLAC streams (any format class that implements 'scanBitrate')
+
+=cut
+
+sub scanBitrate {
+	my ( $fh, $contentType, $url ) = @_;
+
+	my $formatClass = Slim::Formats->classForFormat($contentType);
+
+	if ($formatClass && Slim::Formats->loadTagFormatForType($contentType) && $formatClass->can('scanBitrate')) {
+
+		return $formatClass->scanBitrate( $fh, $url );
+	}
+
+	$log->warn("Unable to scan content-type: $contentType");
+
+	return (-1, undef);
+}
+
 
 1;
 

@@ -19,13 +19,17 @@ use Slim::Music::Info;
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
 # have a zero value
 my %protocolHandlers = ( 
+	file     => qw(Slim::Player::Protocols::File),
 	http     => qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
 	rtsp     => 1,
-	file     => 0,
 	playlist => 0,
 	db       => 1,
+);
+
+my %localHandlers = (
+	file     => 1,
 );
 
 my %loadedHandlers = ();
@@ -46,6 +50,13 @@ sub isValidHandler {
 	return undef;
 }
 
+sub isValidRemoteHandler {
+	my ($class, $protocol) = @_;
+	
+	return isValidHandler(@_) && !$localHandlers{$protocol};
+	
+}
+
 sub registeredHandlers {
 	my $class = shift;
 
@@ -58,18 +69,13 @@ sub registerHandler {
 	$protocolHandlers{$protocol} = $classToRegister;
 }
 
-sub registerIconHandler {
-	my ($class, $regex, $ref) = @_;
-
-	$iconHandlers{$regex} = $ref;
-}
-
-sub openRemoteStream {
-	my $class  = shift;
-	my $url    = shift;
-	my $client = shift;
-
-	my $protoClass = $class->handlerForURL($url);
+sub openStream {
+	my $class    = shift;
+	my $song     = shift;
+	my $client   = shift;
+	
+	my $url        = $song->currentTrack()->url;
+	my $protoClass = $song->currentTrackHandler();
 	my $log        = logger('player.source');
 
 	$log->info("Trying to open protocol stream for $url");
@@ -79,14 +85,21 @@ sub openRemoteStream {
 		$log->info("Found handler for $url - using $protoClass");
 
 		return $protoClass->new({
-			'url'    => $url,
-			'client' => $client,
+			url      => $url, # it is just easier if we always include the URL here
+			client   => $client,
+			song     => $song,
 		});
 	}
 
 	$log->warn("Couldn't find protocol handler for $url");
 
 	return undef;
+}
+
+sub registerIconHandler {
+        my ($class, $regex, $ref) = @_;
+
+        $iconHandlers{$regex} = $ref;
 }
 
 sub handlerForURL {

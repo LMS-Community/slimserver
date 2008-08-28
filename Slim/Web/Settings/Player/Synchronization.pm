@@ -30,7 +30,7 @@ sub validFor {
 	my $class = shift;
 	my $client = shift;
 
-	return Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0);
+	return $client->isSynced() || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0);
 }
 
 sub prefs {
@@ -64,28 +64,9 @@ sub handler {
 	# load into prefs hash so that web template can detect exists/!exists
 	$paramRef->{'prefs'}->{synchronize} =  -1;
 
-	if (Slim::Player::Sync::isSynced($client)) {
-
-		$paramRef->{'prefs'}->{synchronize} = $client->masterOrSelf->id();
+	if ($client->isSynced()) {
+		$paramRef->{'prefs'}->{synchronize} = $client->master()->id();
 	} 
-		
-	elsif ( my $syncgroupid = $prefs->client($client)->get('syncgroupid') ) {
-
-		# Bug 3284, we want to show powered off players that will resync when turned on
-		my @players = Slim::Player::Client::clients();
-
-		foreach my $other (@players) {
-
-			next if $other eq $client;
-
-			my $othersyncgroupid = $prefs->client($other)->get('syncgroupid');
-
-			if ( $syncgroupid == $othersyncgroupid ) {
-
-				$paramRef->{'prefs'}->{synchronize} = $other->id;
-			}
-		}
-	}
 	
 	return $class->SUPER::handler($client, $paramRef);
 }

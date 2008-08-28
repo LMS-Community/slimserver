@@ -115,12 +115,14 @@ sub launchScan {
 	}
 
 	# Add in the various importer flags
+	# TODO: rework to only access prefs IF Importer is active
 	for my $importer (qw(iTunes MusicIP)) {
+		my $prefs = preferences("plugin.".lc($importer));
 
 		# TODO: one day we'll have to fully rename MusicMagic to MusicIP...
-		if (Slim::Utils::PluginManager->isEnabled("Slim::Plugin::" . ($importer eq 'MusicIP' ? 'MusicMagic' : $importer) . "::Plugin")) {
+		if (Slim::Utils::PluginManager->isEnabled("Slim::Plugin::" . ($importer eq 'MusicIP' ? 'MusicMagic' : $importer) . "::Plugin") && $prefs->get(lc($importer))) {
 
-			$args->{lc($importer)} = preferences("plugin." . lc($importer))->get(lc($importer)) ? 1 : 0;
+			$args->{lc($importer)} = 1;
 		}
 	}
 

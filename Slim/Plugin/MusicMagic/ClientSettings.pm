@@ -68,17 +68,9 @@ sub needsClient {
 }
 
 sub handler {
-	my ($class, $client, $params, $callback, @args) = @_;
+	my ($class, $client, $params) = @_;
 
-	if ( !$params->{'saveSettings'} ) {
-
-		Slim::Plugin::MusicMagic::Settings::grabFilters($class, $client, $params, $callback, @args);
-		
-		return undef;
-	}
-
-
-	$params->{'filters'} = Slim::Plugin::MusicMagic::Settings->getFilterList();
+	$params->{'filters'}  = Slim::Plugin::MusicMagic::Settings::grabFilters();
 
 	return $class->SUPER::handler($client, $params);
 }
