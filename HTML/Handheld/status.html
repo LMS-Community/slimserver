@@ -1,3 +1,4 @@
+[% UNLESS ajaxRequest %]
 	[% IF refresh;
 		refreshurl = "url=status.html?start=$start&refresh=1";
 	   END %]
@@ -105,3 +106,6 @@
 	</table>
 	
 	[% PROCESS pagefooter.html %]
+[% ELSE %]
+1
+[% END %]

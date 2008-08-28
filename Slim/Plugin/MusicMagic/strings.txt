@@ -7,65 +7,79 @@ MUSICMAGIC
 	DE	MusicIP
 	EN	MusicIP
 	ES	MusicIP
+	FI	MusicIP
 	FR	MusicIP
 	IT	MusicIP
 	NL	MusicIP
+	NO	MusicIP
+	SV	MusicIP
 
 MUSICMAGIC_DESC
-	DA	MusicIP integration
+	DA	Integration med MusicIP
 	DE	MusicIP Integration
 	EN	MusicIP integration
 	ES	Integración de MusicIP
+	FI	MusicIP-integraatio
 	FR	Intégration MusicIP
 	IT	Integrazione di MusicIP
 	NL	MusicIP-integratie
+	NO	MusicIP-integrering
+	SV	MusicIP-integration
 
 SETUP_MUSICMAGICPLAYLISTFORMAT
-	DA	Format for MusicIP spillelister
+	DA	Format af MusicIP-afspilningslister
 	DE	MusicIP-Wiedergabelistenformat
 	EN	MusicIP Playlist Format
 	ES	Formato de lista de reproducción de MusicIP
+	FI	MusicIP-soittoluetteloiden muoto
 	FR	Format des listes de lecture MusicIP
 	HE	תבנית רשימות ההשמעה של MusicIP
 	IT	Formato dell'elenco di riproduzione di MusicIP
 	NL	MusicIP-playlistformaat
-	NO	MusicIP spilleliste format
-	SV	MusicIP låtlistsformat
+	NO	MusicIP spillelisteformat
+	SV	Format för MusicIP-spellistor
 	ZH_CN	MusicIP播放表格式
 
 SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
-	DA	Denne indstilling definerer formatet som anvendes ved import af MusicIP spillelister.
+	DA	Denne indstillinger definerer formatet som anvendes ved import af MusicIP-afspilningslister.
 	DE	Diese Option definiert das Format, in welcher MusicIP-Wiedergabelisten importiert werden.
 	EN	This option determines the format used when importing MusicIP playlists.
 	ES	Esta opción determina el formato usado cuando se importan listas de reproducción de MusicIP.
+	FI	Tällä asetuksella määritetään MusicIP-soittoluetteloiden muoto, kun soittoluettelot tuodaan.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicIP.
 	HE	אפשרות זו קובעת את התבנית שזה נעשה שימוש בעת ייבוא רשימות השמעה של MusicIP.
 	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione degli elenchi di riproduzione di MusicIP.
 	NL	Deze optie bepaalt welk formaat bij het importeren van MusicIP-playlists gebruikt wordt.
-	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MusicIP spillelister.
-	SV	Denna inställning styr format vid import av MusicIP-låtlistor
+	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av MusicIP-spillelister.
+	SV	Här anger du format vid import av MusicIP-spellistor.
 	ZH_CN	这个选项决定了导入MusicIP播放表所使用的格式。
 
 SETUP_MIX_TYPE
-	DA	MusicIP Mix type
+	DA	MusicIP Mix-type
 	DE	MusicIP-Mix: Typ
 	EN	MusicIP Mix Type
 	ES	Tipo de mezcla de MusicIP
+	FI	MusicIP-miksin tyyppi
 	FR	Type de mix MusicIP
 	HE	סוג מיקס של MusicIP
 	IT	Tipo di raccolta MusicIP
 	NL	MusicIP-mixtype
+	NO	MusicIP-mikstype
+	SV	MusicIP Mix: Typ
 	ZH_CN	MusicIP混音类型
 
 SETUP_MIX_TYPE_DESC
-	DA	Størrelsen af MusicIP Mix kan indstilles ved antal: Spor, Minutter, MegaByte (standardværdi Spor)
+	DA	Størrelsen af et MusicIP Mix kan defineres på tre måder: Antal numre, minutter eller megabyte (standard er numre)
 	DE	Die Grösse des gewünschten MusicIP-Mixes kann über drei Typen definiert werden: Titel, Minuten, MegaByte (Standardwert: Titel)
 	EN	Your MusicIP Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
 	ES	El tamaño de la mezcla de MusicIP se puede establecer según el número de tres tipos: pistas, minutos, megabytes (valor predeterminado: pistas)
+	FI	MusicIP-miksin koko voidaan määrittää kolmella eri perusteella: raidat, minuutit, megatavut (oletus: raidat)
 	FR	La taille du mix MusicIP peut être définie en fonction de trois éléments: les pistes, les minutes et le nombre de Mo (par défaut: les pistes).
 	HE	ניתן לקבוע את גודל המיקס של MusicIP לפי שלושה סוגי מספרים: רצועות, דקות, מגה-בתים (רצועות ברירת מחדל)
 	IT	È possibile impostare le dimensioni della raccolta MusicIP in base al numero di brani (impostazione predefinita), minuti o megabyte
 	NL	Je kunt de MusicIP-mixgrootte volgens drie typen instellen: tracks, minuten, megabytes (standaardtracks)
+	NO	Miksestørrelsen for MusicIP kan angis etter tre måleverdier: antall spor, antall minutter og antall megabyte (standardspor)
+	SV	MusicIP Mix-storleken kan anges på tre olika sätt: spår, minuter och megabyte (standardspår).
 	ZH_CN	您的MusicIP混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
 
 SETUP_MIX_SIZE
@@ -73,22 +87,28 @@ SETUP_MIX_SIZE
 	DE	MusicIP-Mix: Größe
 	EN	MusicIP Mix Size
 	ES	Tamaño de mezcla de MusicIP
+	FI	MusicIP-miksin koko
 	FR	Taille du mix MusicIP
 	HE	גודל מיקס של MusicIP
 	IT	Dimensioni della raccolta MusicIP
 	NL	MusicIP-mixgrootte
+	NO	MusicIP miksstørrelse
+	SV	MusicIP Mix: Storlek
 	ZH_CN	MusicIP混音量
 
 SETUP_MIX_SIZE_DESC
 	CS	Vyberte Mix Size
-	DA	Vælg Mix størrelse
+	DA	Vælg størrelse af miks
 	DE	Mix-Größe wählen
 	EN	Choose Mix Size
 	ES	Elegir tamaño de mezcla
+	FI	Valitse miksin koko
 	FR	Sélectionner la taille du mix
 	HE	בחירת גודל מיקס
 	IT	Scegliere le dimensioni della raccolta
 	NL	Mixgrootte kiezen
+	NO	Velg størrelse på miks
+	SV	Välj mixstorlek
 	ZH_CN	请选择MusicIP混音量
 
 SETUP_MIX_FILTER
@@ -96,21 +116,27 @@ SETUP_MIX_FILTER
 	DE	MusicIP-Mixfilter
 	EN	MusicIP Mix Filter
 	ES	Filtro de mezcla de MusicIP
+	FI	MusicIP-miksin suodatin
 	FR	Filtre de mix MusicIP
 	HE	מסנן מיקסים של MusicIP
 	IT	Filtro per raccolte MusicIP
 	NL	MusicIP-mixfilter
+	NO	MusicIP miksefilter
+	SV	MusicIP Mix: Filter
 	ZH_CN	MusicIP混音过滤器
 
 SETUP_MIX_FILTER_DESC
-	DA	Du kan definere navngivne filter betingelser i MusicIP og her vælge at anvende disse filter på MusicIP Mixes i SqueezeCenter.
+	DA	Du kan definere navngivne filterbetingelser i MusicIP og vælge at anvende disse filtre på miks fra MusicIP i SqueezeCenter.
 	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im SqueezeCenter angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in SqueezeCenter.
 	ES	Se pueden crear conjuntos con nombre de condiciones de filtro creadas en MusicIP y se puede elegir de esta lista para aplicar esos filtros a las mezclas de MusicIP en SqueezeCenter.
+	FI	Voit luoda nimettyjä suodatinehtojoukkoja MusicIP:ssä, valita haluamasi suodattimet tässä olevasta luettelosta ja ottaa nämä suodattimet käyttöön MusicIP-mikseissä SqueezeCenterissä.
 	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans le SqueezeCenter.
 	HE	באפשרותך ליצור ערכות בעלות שם של תנאי סינון ב-MusicIP ולבחור מהרשימה שמופיעה כאן להחיל את המסננים על מיקסים של MusicIP ב-SqueezeCenter.
 	IT	È possibile creare in MusicIP gruppi di condizioni di filtro con nome e scegliere da questo elenco le raccolte MusicIP a cui applicare tali filtri in SqueezeCenter.
 	NL	Je kunt benoemde sets met filtercondities maken in MusicIP. Maak vervolgens een keuze uit de lijst hier om de filtersets op MusicIP-mixes in SqueezeCenter toe te passen.
+	NO	Du kan lage og gi navn til dine egne sett med filterbetingelser i MusicIP, og velge fra denne listen for å bruke disse filtrene på MusicIP-mikser i SqueezeCenter.
+	SV	Du kan skapa olika uppsättningar filtervilkor i MusicIP och sedan använda dem med MusicIP Mix i SqueezeCenter. Välj filter i listan.
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在SqueezeCenter内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE
@@ -118,109 +144,139 @@ SETUP_MIX_GENRE
 	DE	MusicIP-Mix: Musikstil
 	EN	MusicIP Mix Genre
 	ES	Género de mezcla de MusicIP
+	FI	MusicIP-miksin genre
 	FR	Genre de mix MusicIP
 	HE	סגנון מיקס של MusicIP
 	IT	Genere della raccolta MusicIP
 	NL	MusicIP-mixgenre
+	NO	MusicIP sjangermiks
+	SV	MusicIP Mix: Genre
 	ZH_CN	MusicIP混音曲风
 
 SETUP_MIX_GENRE_DESC
-	DA	Begræns mix til samme genre som seedet (Standardværdi: Nej)
+	DA	Begræns miks til samme genre som det første valg (Standardværdi: Nej)
 	DE	Beschränkung des Mix auf die Musikstile des Seeds (Standardwert: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
 	ES	Restringir la mezcla al género de la canción inicial (valor predeterminado: no)
+	FI	Rajoita miksi siemenen genreen (oletus: ei)
 	FR	Limiter le mix au genre de la source (par défaut: non)
 	HE	הגבלת המיקס לסגנון המקור (ברירת המחדל: לא)
 	IT	Consente di limitare il filtro al genere musicale. L'impostazione predefinita è no.
 	NL	Mix beperken tot het genre van de bron (standaard: Nee)
+	NO	Begrens miksen til sjangeren til elementet miksen startet med (Standard: nei)
+	SV	Begränsa mixen till startobjektets genre (Standard är Nej)
 	ZH_CN	将混音限制于种子的曲风（确省：不）
 
 SETUP_REJECT_TYPE
-	DA	MusicIP afvisningstype
+	DA	MusicIP-afvisningstype
 	DE	MusicIP - Ablehnungsart
 	EN	MusicIP Reject Type
 	ES	Tipo de rechazo de MusicIP
+	FI	MusicIP-hylkäystyyppi
 	FR	Type de rejet MusicIP
 	HE	סוג פסילות ב-MusicIP
 	IT	Tipo di elementi da scartare in MusicIP
 	NL	MusicIP-afkeurtype
+	NO	MusicIP-avvisningstype
+	SV	Avvisningstyp för MusicIP
 	ZH_CN	MusicIP拒绝种类
 
 SETUP_REJECT_TYPE_DESC
-	DA	Indstil enhed for afvisningstype. (Standardværdi: Nummer)
+	DA	Indstil enhed for afvisningsstørrelse. (Standard: numre)
 	DE	Definieren Sie den Typ für die Ablehnungsgrösse. (Standardwert: Titel)
 	EN	Set the units for reject size. (Default: tracks)
 	ES	Establecer las unidades para el tamaño del rechazo. (Valor predeterminado: pistas)
+	FI	Määritä hylkäyskoon yksiköt. (Oletus: raidat)
 	FR	Définissez les unités pour la taille de rejet. Par défaut: pistes.
 	HE	הגדר את היחידות עבור גודל הפסילות. (ברירת המחדל: רצועות)
 	IT	Consente di impostare il tipo di unità che si desidera scartare. I brani rappresentano l'impostazione predefinita.
 	NL	Stel de eenheden voor afkeurgrootte in (standaard: tracks).
+	NO	Angi enheter for avvisningsstørrelse. (Standard: spor)
+	SV	Ange enheterna för avvisningsstorlek. (Standard är spår)
 	ZH_CN	配置拒绝量单位（确省：音轨）
 
 SETUP_REJECT_SIZE
 	DA	MusicIP afvisningsstørrelse
 	DE	MusicIP - Ablehnungsgröße
-	EN	MusicIP Reject Size.
+	EN	MusicIP Reject Size
 	ES	Tamaño de rechazo de MusicIP
+	FI	MusicIP:n hylkäyskoko
 	FR	Taille de rejet MusicIP
 	HE	גודל הפסילות ב-MusicIP.
-	IT	N. elementi da scartare in MusicIP.
-	NL	MusicIP-afkeurgrootte.
+	IT	N. elementi da scartare in MusicIP
+	NL	MusicIP-afkeurgrootte
+	NO	MusicIP avvisningsstørrelse
+	SV	Avvisningstyp för MusicIP
 	ZH_CN	MusicIP拒绝量
 
 SETUP_REJECT_SIZE_DESC
-	DA	Indstil antal elementer som skal springes over før en type gentages. (Standardværdi: 12)
+	DA	Indstil antal elementer som skal springes over før en type gentages. (Standard: 12)
 	DE	Definieren Sie die Anzahl von Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird. (Standardwert: 12)
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
 	ES	Establecer el número de elementos a omitir antes de repetir un tipo. (Valor predeterminado: 12)
+	FI	Määritä ohitettavien kohteiden määrä ennen tyypin toistamista. (Oletus: 12)
 	FR	Définissez le nombre d'éléments à ignorer avant de répéter un type. La valeur par défaut est 12.
 	HE	הגדר את מספר הפריטים שיש לדלג עליהם לפני חזרה על סוג. (ברירת המחדל: 12)
 	IT	Consente di impostare il numero di elementi da saltare prima di ripetere un tipo. Il valore predefinito è 12.
 	NL	Slet het aantal items in dat overgeslagen moet worden, voordat een type herhaald wordt (standaard: 12).
+	NO	Angi hvor mange elementer som skal hoppes over før en type gjentas. (Standard: 12)
+	SV	Ange antalet objekt som ska hoppas över innan en typ upprepas. Standard är 12.
 	ZH_CN	配置重播一类别前跳过的数量（确省:12)
 
 SETUP_MMSHOST
-	DA	MusicIP HTTP vært
+	DA	MusicIP HTTP-vært
 	DE	MusicIP - HTTP-Host
 	EN	MusicIP HTTP Host
 	ES	Host HTTP de MusicIP
+	FI	MusicIP:n HTTP-isäntä
 	FR	Hôte HTTP MusicIP
 	HE	מארח HTTP של MusicIP
 	IT	Host HTTP MusicIP
 	NL	MusicIP-HTTP-host
+	NO	MusicIP http-vert
+	SV	HTTP-värd för MusicIP
 	ZH_CN	MusicIP HTTP主机
 
 SETUP_MMSHOST_DESC
-	DA	Indstil værtsnavnet eller IP adressen for fjern- eller lokal MusicIP serveren
+	DA	Vælg værtsnavnet eller IP-adressen for den eksterne eller lokale MusicIP-server
 	DE	Wählen Sie den Hostnamen bzw. die IP-Adresse des MusicIP-Servers
 	EN	Choose the hostname or ip of the remote or local MusicIP server
 	ES	Elegir el nombre de host o dirección IP del servidor MusicIP, local o remoto
+	FI	Valitse MusicIP-etäpalvelimen tai paikallisen MusicIP-palvelimen isäntänimi tai IP-osoite
 	FR	Sélectionnez le nom d'hôte ou l'adresse IP du serveur MusicIP local ou distant.
 	HE	בחירת שם המארח או ה-IP של השלט-רחוק של שרת MusicIP המקומי
 	IT	Scegliere il nome host o l'indirizzo IP del server MusicIP remoto o locale
 	NL	De hostnaam of het IP-adres van de externe of lokale MusicIP-server kiezen
+	NO	Velg vertsnavn eller ip for den eksterne eller lokale MusicIP-serveren
+	SV	Välj värdnamnet eller IP-adressen för den lokala eller fjärrstyrda MusicIP-servern.
 	ZH_CN	请选择主机名或远程或本地的MusicIP服务器的IP地址
 
 SETUP_MIX_STYLE
-	DA	MusicIP Mix Stil
+	DA	MusicIP Mix: Stil
 	DE	MusicIP-Mix - Stil
 	EN	MusicIP Mix Style
 	ES	Estilo de mezcla de MusicIP
+	FI	MusicIP-miksin tyyli
 	FR	Style du mix MusicIP
 	HE	סגנון מיקס של MusicIP
 	IT	Stile della raccolta MusicIP
 	NL	MusicIP-mixstijl
+	NO	MusicIP-stilmiks
+	SV	MusicIP Mix: Stil
 	ZH_CN	MusicIP混音风格
 
 SETUP_MIX_STYLE_DESC
-	DA	Hvor meget som kunstnerens stil (0 = ignorer (standard), 200 = stræng)
+	DA	Hvor meget som kunstnerens stil (0 = ignorer (standard), 200 = streng)
 	DE	Wie ähnlich soll der Stil des Interpreten sein? 0=ignorieren (Standard), 200=sehr ähnlich
 	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
 	ES	Nivel de parecido con el estilo del artista (0 = omitir [predeterminado], 200 = estricto)
+	FI	Kuinka paljon pidät artistin tyylistä ( 0 = ohita (oletus), 200 = tiukka )
 	FR	Similarité au style de l'artiste (0=ignorer (par défaut), 200=stricte)
 	HE	רמת הדמיון לסגנון המבצע (0 = התעלמות (ברירת מחדל), 200 = מדויק)
 	IT	Corrispondenza con lo stile dell'artista. 0 indica che viene ignorato lo stile dell'artista, 200 indica uno stile identico a quello dell'artista.
 	NL	Hoeveel lijkend op de artieststijl (0 = negeren (standaard), 200 = strikt)
+	NO	Hvor stor likhet med artistens stil (0 = ignorer (standard), 200 = streng)
+	SV	Hur mycket jag tycker om artistens stil (0 = ignorera (standard), 200 = strängt)
 	ZH_CN	有多接近艺人的风格 （0=不理睬（缺省），200=严格）
 
 SETUP_MIX_VARIETY
@@ -228,10 +284,13 @@ SETUP_MIX_VARIETY
 	DE	MusicIP-Mix: Vielseitigkeit
 	EN	MusicIP Mix Variety
 	ES	Variedad de mezcla de MusicIP
+	FI	MusicIP-miksivalikoima
 	FR	Variété du mix MusicIP
 	HE	מגוון במיקס של MusicIP
 	IT	Varietà della raccolta MusicIP
 	NL	Variatie van MusicIP-mixen
+	NO	MusicIP blandingsmiks
+	SV	MusicIP Mix: Urval
 	ZH_CN	MusicIP混音品种变化
 
 SETUP_MIX_VARIETY_DESC
@@ -239,87 +298,111 @@ SETUP_MIX_VARIETY_DESC
 	DE	Wie vielseitig soll der Mix sein? 0 = weniger (Standard), 9 = mehr
 	EN	How much variety in the mix ( 0 = less (default), 9 = more )
 	ES	Nivel de variedad en la mezcla (0 = menos [predeterminado], 9 = más)
+	FI	Kuinka paljon vaihtelua miksissä ( 0 = vähemmän (oletus), 9 = enemmän )
 	FR	Variété du mix (0=faible (par défaut), 9=élevée)
 	HE	רמת המגוון במיקס (0 = פחות (ברירת המחדל), 9 = יותר)
 	IT	Livello di varietà della raccolta. 0 indica il livello minimo (impostazione predefinita), 9 quello massimo.
 	NL	Hoeveel variatie in de mix (0 = weinig (standaard), 9 = meer)
+	NO	Hvor stor variasjon i miksen (0 = mindre (standard), 9 = mer)
+	SV	Hur stor variation i mixen (0 = mindre (standard), 9 = mer)
 	ZH_CN	混音的变化程度 （0=少（缺省），9=多）
 
 MUSICMAGIC_MIXING
-	DA	MusicIP Mixing
+	DA	MusicIP: Miksning
 	DE	MusicIP-Mixing
 	EN	MusicIP Mixing
 	ES	Mezcla de MusicIP
+	FI	MusicIP:n miksaus
 	FR	Mixage MusicIP Mix
 	HE	עריכת מיקס של MusicIP
 	IT	Raccolta MusicIP
 	NL	MusicIP-mixing
+	NO	MusicIP-miksing
+	SV	MusicIP-mixning
 	ZH_CN	MusicIP混音
 
 SETUP_MMMPLAYERSETTINGS
-	DA	MusipIP afspiller indstillinger for hver Mix
+	DA	MusicIP: afspillerindstillinger for hvert miks
 	DE	MusicIP-Mix - Player-Einstellungen
 	EN	MusicIP Player Settings for Each Mix
 	ES	Configuración de reproductor MusicIP para cada mezcla
+	FI	MusicIP-soittimen asetukset kutakin miksiä varten
 	FR	Réglages de la platine MusicIP pour chaque mix
 	HE	הגדרות נגן MusicIP עבור כל מיקס
 	IT	Impostazioni del lettore MusicIP per ciascuna raccolta
 	NL	Instellingen van MusicIP-muzieksysteem voor elke mix
+	NO	MusicIP spillerinnstillinger for hver miks
+	SV	MusicIP-spelarinställningar för varje mix
 	ZH_CN	MusicIP播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
-	DA	Du kan vælge at give alle afspiller tilgang til indstillingerne for MusicIP Mix inden mixet genereres. Afpillerindstillinger vil tilsidesætte server indstillinger og forblive sådan indtil de igen ændres fra afspilleren. Ønsker du at springe dette trin over og direkte generere mixet ud fra eksisterende afpspiller/server indtillinger, skal du vælge Nej.
+	DA	Du kan vælge at give hver enkelt afspiller adgang til indstillingerne for MusicIP Mix før du opretter et miks. Alle indstillinger som vælges på afspilleren, har forrang frem for serverindstillingerne indtil de ændres igen på afspilleren. Hvis du vil gå videre og begynde at oprette et miks vha. de eksisterende indstillinger på afspilleren og serveren, skal du vælge Nej.
 	DE	Vor dem Erzeugen eines Mix können Sie jedem Player Zugriff auf die MusicIP-Mix-Einstellungen geben. Auf dem Player gewählte Einstellungen setzen die Server-Einstellungen außer Kraft und werden gespeichert, bis Sie wieder am Player geändert werden. Wenn Sie gleich einen Mix mit den vorhandenen Server- bzw. Player-Einstellungen erstellen möchten, wählen Sie 'Nein'.
 	EN	You may choose to give each player access to the MusicIP mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
 	ES	Se puede optar por conceder a cada reproductor acceso a la configuración de mezcla de MusicIP antes de que se genere una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración del servidor y se conservará hasta que se cambie desde el reproductor. Si desea pasar directamente a la creación de una mezcla, usando sólo la configuración de reproductor/servidor existente, elija No.
+	FI	Halutessasi voit sallia MusicIP-miksin asetusten käytön kullekin soittimelle ennen miksin luomista.  Soittimen valitsemat asetukset korvaavat palvelimen asetukset ja säilyvät, kunnes niitä muutetaan soittimessa. Jos haluat hypätä suoraan miksin luomiseen ja käyttää ainoastaan soittimen tai palvelimen olemassa olevia asetuksia, valitse ei.
 	FR	Vous pouvez choisir de donner à chaque platine accès aux réglages du mix MusicIP avant de générer un mix. Tous les réglages définis à partir de la platine remplacent les réglages du serveur, jusqu'à ce qu'ils soient à nouveau modifiés à partir de la platine. Si vous souhaitez passer cette étape et créer directement un mix à l'aide des paramètres du serveur ou de la platine existants, sélectionnez non.
 	HE	באפשרותך לבחור להעניק לכל נגן גישה להגדרות המיקס של MusicIP לפני הפקת מיקס. הגדרות שנבחרו בנגן יעקפו הגדרות שנבחרו בשרת ויישארו בתוקף עד שישונו שוב בנגן. אם ברצונך לדלג ישירות לשלב של יצירת מיקס, באמצעות ההגדרות הנוכחיות של הנגן/השרת בלבד, בחר 'לא'.
 	IT	È possibile impostare i singoli lettori per l'accesso alle impostazioni del mix MusicIP prima di creare il mix. Le impostazioni del lettore sostituiscono quelle del server e vengono mantenute fino a quando non vengono eseguite altre modifiche utilizzando il lettore stesso. Se si desidera passare direttamente alla creazione di un mix, utilizzare solo le impostazioni del lettore/server esistenti, quindi scegliere no.
 	NL	Je kunt ervoor kiezen elk muzieksysteem toegang te geven tot de MusicIP-mixinstellingen voordat er een mix gegenereerd wordt. Muzieksysteeminstellingen vervangen de serverinstellingen en blijven van kracht tot ze via het systeem veranderd worden. Kies 'Nee' als je direct een mix wilt maken met de huidige systeem-/serverinstellingen.
+	NO	Du kan velge å gi hver spiller tilgang til mikseinnstillingene til MusicIP før du lager en miks. Enhver brukervalgt innstilling overstyrer serverinnstillinger, og brukervalgte innstillinger forblir aktive til de endres igjen fra spilleren. Hvis du vil gå rett til å lage en miks med bare eksisterende spiller- og serverinnstillinger, velger du nei.
+	SV	Du kan välja att ge varje spelare tillgång till mixinställningarna för MusicIP innan du mixar.  Spelarinställningar åsidosätter serverinställningar och gäller tills de ändras från spelaren. Välj Nej om du vill hoppa över det här steget och mixa direkt med endast befintliga spelar-/serverinställningar.
 	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicIP混音设置的特权。任何播放机上的特定设置将藐视服务器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
 
 SETUP_MMMSETTINGS
-	DA	MusicIP Mix: Indstillinger
+	DA	Indstillinger for MusicIP Mix
 	DE	MusicIP-Mix: Einstellungen
 	EN	MusicIP Mix Settings
 	ES	Configuración de mezcla de MusicIP
+	FI	MusicIP-miksin asetukset
 	FR	Réglages du mix MusicIP
 	HE	הגדרות מיקס של MusicIP
 	IT	Impostazioni per la raccolta MusicIP
 	NL	MusicIP-mixinstellingen
+	NO	Mikseinnstillinger for MusicIP
+	SV	MusicIP Mix: Inställningar
 	ZH_CN	MusicIP混音设置
 
 MUSICMAGIC_MIXRIGHT
-	DA	(Tryk Højre for at mixe)
+	DA	(Tryk på højre for at mikse)
 	DE	(Zum Mixen RECHTS drücken)
 	EN	(Go right to Mix)
 	ES	(Pulse DERECHA para mezclar)
+	FI	(siirry suoraan miksiin)
 	FR	(DROITE pour accéder au mix)
 	HE	(עבור ימינה אל 'מיקס')
 	IT	(Premere DESTRA per creare raccolta)
 	NL	(Rechts voor mixen)
+	NO	(Gå til høyre for å mikse)
+	SV	(Gå till höger för att mixa)
 	ZH_CN	（按右方向键开始混音）
 
 SETUP_MUSICMAGICPLAYLISTPREFIX
-	DA	Præfiks for MuscIP spillelister ændret til:
+	DA	Præfiks for MusicIP's afspilningslister ændret til:
 	DE	Das Präfix für MusicIP-Wiedergabelisten wurde geändert in:
 	EN	MusicIP playlist prefix changed to:
 	ES	Prefijo de listas de reproducción de MusicIP cambiado a:
+	FI	MusicIP-soittoluettelon etuliite muutettiin muotoon:
 	FR	Préfixe de liste de lecture MusicIP modifié:
 	HE	קידומת רשימות ההשמעה של MusicIP השתנתה ל:
 	IT	Prefisso degli elenchi di riproduzione di MusicIP modificato in:
 	NL	MusicIP-playlistvoorvoegsel gewijzigd in:
+	NO	Prefiks for MusicIP-spillelister er endret til:
+	SV	Prefix för MusicIP-spellistor ändrat till:
 	ZH_CN	MusicIP播放表前缀被改为：
 
 SETUP_MUSICMAGICPLAYLISTSUFFIX
-	DA	Suffiks for MusicIP spillelister ændret til:
+	DA	Suffiks for MusicIP's afspilningslister er ændret til:
 	DE	Das Suffix für MusicIP-Wiedergabelisten wurde geändert in:
 	EN	MusicIP playlist suffix changed to:
 	ES	Sufijo de listas de reproducción de MusicIP cambiado a:
+	FI	MusicIP-soittoluettelon jälkiliite muutettiin muotoon:
 	FR	Suffixe de liste de lecture MusicIP modifié:
 	HE	סיומת רשימות ההשמעה של MusicIP השתנתה ל:
 	IT	Suffisso degli elenchi di riproduzione di MusicIP modificato in:
 	NL	MusicIP-playlistachtervoegsel gewijzigd in:
+	NO	Filetternavn for MusicIP-spillelister er endret til:
+	SV	Suffix för MusicIP-spellistor ändrat till:
 	ZH_CN	MusicIP播放表词尾被改为：
 
 USE_MUSICMAGIC
@@ -328,7 +411,7 @@ USE_MUSICMAGIC
 	DE	MusicIP verwenden
 	EN	Use MusicIP
 	ES	Usar MusicIP
-	FI	Käytä MusicIPiä
+	FI	Käytä MusicIP:tä
 	FR	Utiliser MusicIP
 	HE	שימוש ב-MusicIP
 	IT	Usa MusicIP
@@ -344,6 +427,7 @@ DONT_USE_MUSICMAGIC
 	DE	MusicIP nicht verwenden
 	EN	Don't use MusicIP
 	ES	No usar MusicIP
+	FI	Älä käytä MusicIP:tä
 	FR	Ne pas utiliser MusicIP
 	HE	ללא שימוש ב-MusicIP
 	IT	Non usare MusicIP
@@ -358,34 +442,42 @@ SETUP_MUSICMAGIC
 	DE	MusicIP
 	EN	MusicIP
 	ES	MusicIP
+	FI	MusicIP
 	FR	MusicIP
 	HE	MusicIP
 	IT	MusicIP
 	NL	MusicIP
+	NO	MusicIP
+	SV	MusicIP
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
-	DA	SqueezeCenter kan anvnede MusicIP som kilde for titel og genre information. Derudover kan du umiddelbart generere Mix baseret på genre, kunstner og spor. Marker nedenunder for at importere information fra dit MusicIP Bibliotek.
+	DA	SqueezeCenter kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Du skal markere feltet nedenfor hvis du vil importere oplysninger om MusicIP-biblioteket.
 	DE	SqueezeCenter kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Außerdem können Sie Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene erstellen. Aktivieren Sie das Kontrollkästchen unten, um die MusicIP-Datenbank zu importieren.
 	EN	SqueezeCenter can use your MusicIP program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicIP Library information.
 	ES	SqueezeCenter puede usar el programa MusicIP como origen para la información de título y de género. Además, se pueden generar mezclas instantáneas por género, artista y canción. Seleccione la casilla siguiente para importar la información de la biblioteca de MusicIP.
+	FI	SqueezeCenter voi käyttää MusicIP-ohjelmaa nimi- ja genretietojen lähteenä. Voit myös luoda välittömiä miksejä genre-, artisti- ja kappaletasolla. Tuo MusicIP-kirjaston tiedot lisäämällä valintamerkki alla olevaan ruutuun.
 	FR	Le SqueezeCenter peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer des mix instantanés par genre, par artiste ou par morceau. Cochez la case pour importer les données de votre bibliothèque MusicIP.
 	HE	SqueezeCenter יכול להשתמש בתוכנית MusicIP כמקור עבור מידע שמות וסגנונות. בנוסף, באפשרותך להפיק מיקסים מיידיים ברמת הסגנון, המבצע והשיר. סמן את התיבה שלהלן כדי לייבא את המידע של ספריית MusicIP.
 	IT	In SqueezeCenter il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. È inoltre possibile generare raccolte rapide in base al genere, all'artista e ai brani. Selezionare la casella seguente per importare i dati della libreria MusicIP.
 	NL	SqueezeCenter kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Ook kun je instantmixen maken op genre, artiest en liedje. Selecteer het vakje hieronder om je MusicIP-collectiegegevens te importeren.
+	NO	SqueezeCenter kan bruke MusicIP-programmet som kilde for tittel- og sjangerinformasjon. I tillegg kan du lage mikser på et øyeblikk ut fra sjanger, artist og sang. Merk av i boksen nedenfor hvis du vil importere biblioteksinformasjon fra MusicIP.
+	SV	SqueezeCenter kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre- artist- eller låtnivå.  Markera kryssrutan nedan om du vill att musikbiblioteksinformationen från MusicIP ska importeras.
 	ZH_CN	SqueezeCenter可以使用您的MusicIP节目表作为标题和音乐风格信息的来源。您也能以音乐曲风、艺人和歌曲音量水平生成即时混音。单击如下的复选框以导入您的MusicIP音乐库信息。
 
 MMMMIXTYPE_TRACKS
 	CS	Číslo skladby
-	DA	Antal spor
+	DA	Antal numre
 	DE	Anzahl Titel
 	EN	Number of Tracks
 	ES	Número de pistas
-	FI	Kappaleiden määrä
+	FI	Raitojen määrä
 	FR	Nombre de pistes
 	HE	מספר רצועות
 	IT	Numero di brani
 	NL	Aantal tracks
+	NO	Antall spor
+	SV	Antal spår
 	ZH_CN	音轨数量
 
 MMMMIXTYPE_MIN
@@ -394,24 +486,28 @@ MMMMIXTYPE_MIN
 	DE	Dauer in Minuten
 	EN	Number of Minutes
 	ES	Número de minutos
-	FI	Minuutteja
+	FI	Minuuttien määrä
 	FR	Nombre de minutes
 	HE	מספר דקות
 	IT	Numero di minuti
 	NL	Aantal minuten
+	NO	Antall minutter
+	SV	Antal minuter
 	ZH_CN	分钟总数
 
 MMMMIXTYPE_MBYTES
 	CS	MB
-	DA	Antal Megabyte
+	DA	Antal megabyte
 	DE	Anzahl Megabyte
 	EN	Number of MegaBytes
 	ES	Número de megabytes
-	FI	Megatavuja
+	FI	Megatavujen määrä
 	FR	Nombre de Mo
 	HE	מספר מגה-בתים (MB)
 	IT	Numero di megabyte
 	NL	Aantal megabytes
+	NO	Antall MB
+	SV	Antal megabyte
 	ZH_CN	兆字节总数
 
 SETUP_MUSICMAGICSCANINTERVAL
@@ -419,43 +515,55 @@ SETUP_MUSICMAGICSCANINTERVAL
 	DE	MusicIP-Aktualisierungsintervall
 	EN	MusicIP Reload Interval
 	ES	Intervalo de recarga de MusicIP
+	FI	MusicIP:n latausväli
 	FR	Intervalle de chargement MusicIP
 	HE	מרווח הזמן לטעינה חוזרת של MusicIP
 	IT	Intervallo di ricaricamento di MusicIP
 	NL	MusicIP-herlaadinterval
+	NO	MusicIP oppdateringsintervall
+	SV	Uppdateringsintervall för MusicIP
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	DA	Når der foretages ændringer i din MusicIP database vil SqueezeCenter automatisk importere information fra biblioteket. Du angive en mindste tid (i sekunder) SqueezeCenter venter inden dit MusicIP bibliotek genindlæses. Værdien 0 deaktiverer genindlæsning.
+	DA	Når noget i MusicIP-databasen ændres, importeres disse oplysninger automatisk i SqueezeCenter. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før MusicIP-databasen genindlæses i SqueezeCenter. Hvis værdien er 0, genindlæses den ikke.
 	DE	Wenn sich die MusicIP-Datenbank ändert, importiert SqueezeCenter die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SqueezeCenter mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your MusicIP Database changes, SqueezeCenter will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SqueezeCenter will wait before reloading your MusicIP Database again. A value of zero disables the reload.
 	ES	Cuando cambie la base de datos de MusicIP, SqueezeCenter importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que SqueezeCenter esperará antes de volver a cargar la base de datos de MusicIP. Un valor de cero deshabilita la recarga.
+	FI	Jos MusicIP-tietokanta muuttuu, SqueezeCenter tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka SqueezeCenter odottaa, ennen kuin se lataa MusicIP-tietokannan uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
 	FR	Le SqueezeCenter importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le SqueezeCenter actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר מסד הנתונים של MusicIP משתנה, SqueezeCenter מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על SqueezeCenter להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
 	IT	Se si modifica il database di MusicIP, SqueezeCenter importa automaticamente i dati della libreria. È possibile specificare per SqueezeCenter il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
 	NL	Wanneer je MusicIP-database verandert, worden de collectiegegevens automatisch door SqueezeCenter geïmporteerd. Je kunt opgeven (in seconden) hoe lang SqueezeCenter minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NO	Når databasen til MusicIP endres, importerer SqueezeCenter automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge SqueezeCenter skal vente med å laste inn databasen til MusicIP igjen. Hvis verdien er null, deaktiveres innlasting.
+	SV	När din MusicIP-databas ändras importeras biblioteksinformationen automatiskt till SqueezeCenter.  Du kan ange en minimitid (i sekunder) som SqueezeCenter ska vänta mellan varje gång informationen från MusicIP-databasen uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的MusicIP数据库改变时，SqueezeCenter将自动地导入最新音乐库信息。您可以指定SqueezeCenter再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MMSPORT
-	DA	MusicIP HTTP port
+	DA	MusicIP HTTP-port
 	DE	MusicIP - HTTP-Anschluss
 	EN	MusicIP HTTP Port
 	ES	Puerto HTTP de MusicIP
+	FI	MusicIP:n HTTP-portti
 	FR	Port HTTP MusicIP
 	HE	יציאת HTTP של MusicIP
 	IT	Porta HTTP MusicIP
 	NL	MusicIP-HTTP-poort
+	NO	Http-port for MusicIP
+	SV	HTTP-port för MusicIP
 	ZH_CN	MusicIP HTTP端口
 
 SETUP_MMSPORT_DESC
-	DA	MusipIP's tjeneste API giver mulighed for at vælge http port som skal anvendes ved forespørgsler til MusicIP API. Indtast et portnumret her som passer med indstillingen du har valgt i indstillinger for MusicIP Mixer.
+	DA	I grænsesnittet til MusicIP-tjenesten kan man definere en http-port der skal bruges ved forespørgsler til MusicIP. Her skal du angive det portnummer som svarer til det du valgte i indstillingerne for MusicIP Mixer.
 	DE	Mit dem MusicIP Service API können Sie einen HTTP-Anschluss für Anfragen an das MusicIP API auswählen. Geben Sie dieselbe Anschlussnummer wie in MusicIP Mixer ein.
 	EN	The MusicIP Service API allows the selection of an http port to use for queries to the MusicIP API. Enter the port number here to match the setting you have chosen in MusicIP Mixer settings.
 	ES	La API de servicios de MusicIP permite seleccionar un puerto HTTP para usarlo para consultas a la API de MusicIP. Introduzca aquí el número de puerto para que coincida con el elegido en la configuración del mezclador de MusicIP.
+	FI	MusicIP-palvelun API sallii MusicIP:n API-pyynnöissä käytetyn HTTP-portin valinnan. Kirjoita tähän portin numero, joka vastaa MusicIP Mixerin asetuksissa valitsemaasi portin numeroa.
 	FR	L'API du service MusicIP permet de sélectionner un port HTTP à utiliser pour les requêtes. Saisissez ici le numéro de port spécifié dans les réglages MusicIP Mixer.
 	HE	ממשק תוכנת היישום (API) של שירות MusicIP מאפשרת לבחור יציאת http לשימוש עבור שאילתות ל-API של MusicIP. הזן בשדה זה את מספר היציאה בהתאם להגדרה שבחרת בהגדרות יוצר המיקסים של MusicIP.
 	IT	La API del servizio MusicIP consente di selezionare una porta HTTP da utilizzare per l'invio di query all'API di MusicIP. Inserire qui il numero di porta corrispondente a quello indicato nelle impostazioni della raccolta MusicIP.
 	NL	De MusicIP-service API biedt de mogelijkheid om een HTTP-poort te gebruiken voor vragen aan de MusicIP-API Geef hier het poortnummer op dat je in de MusicIP-mixerinstellingen hebt gekozen.
+	NO	I tjeneste-API-en for MusicIP kan du velge en http-port til henvendelser til MusicIP-API-en. Angi det samme portnummeret her som du har angitt i innstillingene for MusicIP-mikseren.
+	SV	I gränssnittet till MusicIP-tjänstens kan man ange en HTTP-port som ska användas vid förfrågningar till MusicIP. Ange ett portnummer här som motsvarar inställningen du gjort i Inställningar för MusicIP Mixer.
 	ZH_CN	您可以通过MusicIP的服务应用程序接口来选择用来询问MusicIP应用程序接口的http端口。请在此输入匹配您在MusicIP里已设置好的端口号。
 
 MUSICMAGIC_MIX
@@ -463,54 +571,74 @@ MUSICMAGIC_MIX
 	DE	MusicIP-Mix
 	EN	MusicIP Mix
 	ES	Mezcla de MusicIP
+	FI	MusicIP-miksi
 	FR	Mix MusicIP
 	HE	מיקס של MusicIP
 	IT	Raccolta MusicIP
 	NL	MusicIP-mix
+	NO	MusicIP-miks
+	SV	MusicIP Mix
 	ZH_CN	MusicIP混音
 
 MUSICMAGIC_MOODS
-	DA	MusicIP Stemnings Mix
+	DA	MusicIP Mood Mix
 	DE	MusicIP-Stimmungs-Mix
 	EN	MusicIP Mood Mix
 	ES	Mezcla de ambiente de MusicIP
+	FI	MusicIP Mood Mix
 	FR	Mix d'ambiances MusicIP
 	HE	מיקס מצב רוח של MusicIP
 	IT	Raccolta MusicIP per stati d'animo
 	NL	MusicIP-stemmingsmix
+	NO	MusicIP Mood Mix
+	SV	MusicIP Mood Mix
 	ZH_CN	MusicIP气氛混音
 
 DEBUG_PLUGIN_MUSICIP
-	DA	MusicIP Mix & Eksporter
+	DA	Logføring af MusicIP Mix og eksport
 	DE	MusicIP-Mix & Export
 	EN	MusicIP Mix & Export Logging
 	ES	Registro de mezclas y exportación de MusicIP
+	FI	MusicIP-miksin ja -viennin kirjaus
 	FR	Journalisation des mix et exportations MusicIP
 	IT	Registrazione esportazione e mix MusicIP
 	NL	Registratie van MusicIP-mix en -export
+	NO	Loggføring av miksing og eksportering for MusicIP
+	SV	MusicIP Mix och exportloggning
 
 MUSICIP_PROGRESS
-	DA	MusicIP import
+	DA	MusicIP: Import
 	DE	MusicIP-Import
 	EN	MusicIP Import
 	ES	Importación de MusicIP
+	FI	MusicIP:n tuonti
 	FR	Importation MusicIP
 	IT	Importa MusicIP
 	NL	MusicIP-import
+	NO	MusicIP-importering
+	SV	MusicIP-import
 
 MUSICIP_PLAYTHISMIX
+	DA	Afspil dette miks
 	DE	Diesen Mix wiedergeben
 	EN	Play this mix
 	ES	Reproducir esta mezcla
+	FI	Soita tämä miksi
 	FR	Lire ce mix
 	IT	Riproduci raccolta
 	NL	Deze mix afspelen
+	NO	Spill av denne miksen
+	SV	Spela upp den här mixen
 
 MUSICIP_CREATEMIX
+	DA	Opret MusicIP Mix
 	DE	MusicIP-Mix erstellen
 	EN	Create MusicIP Mix
 	ES	Crear mezcla de MusicIP
+	FI	Luo MusicIP-miksi
 	FR	Créer un mix MusicIP
 	IT	Crea raccolta MusicIP
 	NL	MusicIP-mix maken
+	NO	Lag MusicIP-miks
+	SV	Skapa MusicIP Mix
 

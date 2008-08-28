@@ -101,6 +101,15 @@ ELSE %]
 
 	pluginsItems = BLOCK;
 		FOREACH link = additionalLinks.plugins;
+			IF link.key == 'ALARM';
+				NEXT UNLESS player;
+				link.value = webroot _ 'settings/index.html?activePage=ALARM&amp;';
+				link.target = 'sc_settings';
+			END;
+			IF link.key == 'PLUGIN_LINE_IN';
+				link.value = 'PLUGIN_LINE_IN_IN_USE' | getstring;
+				link.value = "javascript:Home.setLineIn('" _ link.value _"');\" \"";
+			END;
 			# we want an icon for every item in the Extras menu...
 			additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 			PROCESS menuItem;
@@ -114,25 +123,27 @@ ELSE %]
 					[% IF expandable %]
 						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
-						<a href="[% link.value %]player=[% player %]" class="browseItemLink">
+						<a href="[% link.value %]player=[% player %]" class="browseItemLink" [% IF link.target; 'target="' _ link.target _ '"'; END %]>
 					[% END %]
-						[% IF (additionalLinks.icons.${link.key} || link.icon) && !noIcon;
-							link.icon = additionalLinks.icons.${link.key} || link.icon;
 
-							# have local artwork resized
-							UNLESS link.icon.match('^http:');
-								link.icon = webroot _ link.icon.replace('.png', "_25x25_f.png");
-							END
-						%]
-							<span class="browseCover">
-								<img src="[% link.icon %]" width="25" border="0" alt="[% link.key | getstring %]">
-							</span>
-							<div class="smallBrowseItemDetail">
-						[% END %]
-						[% IF dontGetString; link.key; ELSE; link.key | getstring; END %]
-						[% IF link.icon && !noIcon %]
-							</div>
-						[% END %]
+					[% IF (additionalLinks.icons.${link.key} || link.icon) && !noIcon;
+						link.icon = additionalLinks.icons.${link.key} || link.icon;
+
+						# have local artwork resized
+						UNLESS link.icon.match('^http:');
+							link.icon = webroot _ link.icon.replace('.png', "_25x25_f.png");
+						END
+					%]
+						<span class="browseCover">
+							<img src="[% link.icon %]" width="25" border="0" alt="[% link.key | getstring %]">
+						</span>
+						<div class="smallBrowseItemDetail">
+					[% END %]
+					[% IF dontGetString; link.key; ELSE; link.key | getstring; END %]
+					[% IF link.icon && !noIcon %]
+						</div>
+					[% END %]
+
 					[% IF !expandable %]
 						</a>
 					[% END %]

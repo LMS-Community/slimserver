@@ -44,3 +44,7 @@ SqueezeJS.Strings['volume'] += '[% "COLON" | string %]';
 [% PROCESS jsString id='BROWSE' jsId='' %]
 [% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
 [% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
+
+Ext.MessageBox.buttonText.yes = '[% "YES" | string %]';
+Ext.MessageBox.buttonText.no = '[% "NO" | string %]';
+Ext.MessageBox.buttonText.cancel = '[% "CANCEL" | string %]';

@@ -44,10 +44,25 @@ sub volumeExitHandler {
 		$exittype = uc($exittype);
 	}
 
-	if (!$exittype || $exittype eq 'LEFT') {
+	if (!$exittype || $exittype =~ /LEFT|PASSBACK|EXIT/) {
 
 		Slim::Utils::Timers::killTimers($client, \&_volumeIdleChecker);
-		Slim::Buttons::Common::popModeRight($client);
+
+		if ($client->modeParam('transition')) {
+
+			Slim::Buttons::Common::popModeRight($client);
+
+		} else {
+
+			Slim::Buttons::Common::popMode($client);
+
+			# If the exposed mode is a screensaver pop this too
+			if ($exittype && $exittype =~ /LEFT|EXIT/ && Slim::Buttons::Common::mode($client) =~ /^screensaver/i) {
+				Slim::Buttons::Common::popMode($client);
+			}
+			
+			$client->update();
+		}
 
 	} elsif ($exittype eq 'RIGHT') {
 
@@ -69,7 +84,11 @@ sub setMode {
 		return;
 	}
 
-	Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', {
+	my $timeout = $client->modeParam('timeout') || $AUTO_EXIT_TIME;
+	my $passthrough = $client->modeParam('passthrough');
+	my $transition = $client->modeParam('transition');
+
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Volume', {
 		'header'       => 'VOLUME',
 		'stringHeader' => 1,
 		'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
@@ -82,17 +101,24 @@ sub setMode {
 		'increment'    => 1,
 		'lines'        => $client->customVolumeLines(),
 		'screen2'      => 'inherit',
+		'visu'         => [0],
+		'transition'   => $transition,
 	});
 
-	_volumeIdleChecker($client);
+	if ($passthrough) {
+		Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime);
+	}
+
+	_volumeIdleChecker($client, $timeout);
 }
 
 sub _volumeIdleChecker {
 	my $client = shift;
+	my $timeout= shift;
 
-	if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < $AUTO_EXIT_TIME) {
+	if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < $timeout) {
 
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1.0, \&_volumeIdleChecker, $client);
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.5, \&_volumeIdleChecker, $timeout);
 
 	} else {
 

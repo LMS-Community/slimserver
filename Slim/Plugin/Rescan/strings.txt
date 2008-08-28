@@ -4,70 +4,97 @@
 
 PLUGIN_RESCAN_MUSIC_LIBRARY
 	CS	Aktualizovat informace z hudebního archivu
-	DA	Genindlæser Musik Biblioteket
+	DA	Gennemsøg musikbibliotek igen
 	DE	Musiksammlung erneut durchsuchen
 	EN	Rescan Music Library
 	ES	Volver a examinar la biblioteca de música
-	FI	Sekoitukseen haluamasi tyylilajit:
+	FI	Tarkista musiikkikirjasto uudelleen
 	FR	Analyser la collection musicale
 	HE	סריקה חוזרת של ספריית המוסיקה
 	IT	Ripeti analisi della libreria musicale
 	NL	Muziekcollectie opnieuw scannen
+	NO	Søk gjennom musikkbiblioteket
+	SV	Sök igenom musikbiblioteket igen
 
 PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
-	DA	Automatisk genindlæsning af musik biblioteket
+	DA	Automatisk gennemsøgning af musikbiblioteket
 	DE	Automatisches Durchsuchen der Musiksammlung
 	EN	Automatic Library Scanning
 	ES	Examen automático de biblioteca
+	FI	Kirjaston automaattinen tarkistus
 	FR	Analyse de bibliothèque automatique
 	IT	Analisi automatica della libreria in corso...
 	NL	Automatisch collectie scannen
+	NO	Automatisk bibliotekssøk
+	SV	Automatisk bibliotekssökning
 
 PLUGIN_RESCAN_RESCANNING
 	CS	Server právě aktualizuje informace z hudebního archivu
-	DA	Server genindlæser...
+	DA	Serveren gennemsøger...
 	DE	Server durchsucht Ordner ...
 	EN	Server now rescanning...
 	ES	El servidor está volviendo a examinar...
-	FI	Palvelin lukee hakemistojen sisältöä...
+	FI	Palvelin suorittaa uudelleentarkistuksen...
 	FR	Analyse en cours...
 	HE	השרת מבצע סריקה חוזרת...
 	IT	Ripetizione analisi in corso...
 	NL	Server is nu bezig met opnieuw scannen...
+	NO	Serveren søker på nytt...
+	SV	Servern genomför en ny sökning ...
 
 PLUGIN_RESCAN_PRESS_PLAY
 	CS	Stiskněte PLAY a aktualizujte informace z  hudebního archivu.
-	DA	Tryk PLAY for at genindlæse nu.
+	DA	Tryk på Afspil for at gennemsøge nu.
 	DE	Drücken Sie PLAY, um das Einlesen zu starten
 	EN	Press PLAY to rescan now.
 	ES	Pulse PLAY para volver a examinar ahora.
-	FI	Paina "PLAY" lukeaksesi hakemiston sisältö nyt.
+	FI	Suorita uudelleentarkistus painamalla toistopainiketta.
 	FR	Appuyez sur PLAY pour analyser
 	HE	לחץ על PLAY (הפעלה) כדי לבצע סריקה חוזרת כעת.
 	IT	Premere PLAY per ripetere l'analisi ora.
 	NL	Druk op PLAY om nu opnieuw te scannen.
+	NO	Trykk på PLAY for å søke på nytt nå.
+	SV	Tryck på Play om du vill genomföra en ny sökning nu.
 
 PLUGIN_RESCAN_TIMER_NAME
 	CS	Časovač aktualizace
-	DA	Timer for genindlæsning
+	DA	Timer for gennemsøgning
 	DE	Automatisches Durchsuchen
 	EN	Rescan Timer
 	ES	Temporizador para volver a examinar
+	FI	Uudelleentarkistusajastin
 	FR	Programmation de l'analyse
 	HE	קוצב-זמן לסריקה חוזרת
 	IT	Timer analisi
 	NL	Timer voor opnieuw scannen
+	NO	Søkekontroll
+	SV	Sökningstimer
 
 PLUGIN_RESCAN_TIMER_SET
 	CS	Nastavte čas pravidelné aktualizace
-	DA	Indstil tid for genindlæsning
+	DA	Foretag gennemsøgning kl.
 	DE	Startzeit für erneutes Durchsuchen festlegen
 	EN	Set Rescan Time
 	ES	Establecer hora para volver a examinar
+	FI	Aseta uudelleentarkistusaika
 	FR	Heure de l'analyse
 	HE	הגדרת קוצב-זמן לסריקה חוזרת
 	IT	Imposta ora analisi
 	NL	Tijd voor opnieuw scannen instellen
+	NO	Angi tidspunkt for søk
+	SV	Ange tid för ny sökning
+
+PLUGIN_RESCAN_TIMER_SAVED
+	DA	Gemmer klokkeslæt...
+	DE	Zeit wird gespeichert...
+	EN	Saving Time...
+	ES	Guardando hora...
+	FI	Tallennetaan aika...
+	FR	Enregistrement de l'heure...
+	IT	Salvataggio ora...
+	NL	Tijd wordt opgeslagen...
+	NO	Lagrer tidspunkt...
+	SV	Sparar tid ...
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
 	CS	Vypínám automatickou aktualizaci...
@@ -75,71 +102,92 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	DE	Automatisches Durchsuchen wird deaktiviert ...
 	EN	Turning rescan timer off...
 	ES	Desactivando el temporizador para volver a examinar...
+	FI	Uudelleentarkistuksen ajastin kytketään pois päältä...
 	FR	Désactivation de l'analyse...
 	HE	מכבה את קוצב-הזמן לסריקה חוזרת...
 	IT	Disattivazione timer analisi...
 	NL	Timer voor opnieuw scannen wordt uitgezet...
+	NO	Slår av søkekontroll...
+	SV	Avaktiverar sökningstimern ...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
 	CS	Zapínám automatickou aktualizaci...
-	DA	Slår timer for genindlæsning til...
+	DA	Slår timer for gennemsøgning til...
 	DE	Automatisches Durchsuchen wird aktiviert ...
 	EN	Turning rescan timer on...
 	ES	Activando el temporizador para volver a examinar...
+	FI	Uudelleentarkistuksen ajastin kytketään päälle...
 	FR	Activation de l'analyse...
 	HE	מפעיל את קוצב-הזמן לסריקה חוזרת...
 	IT	Attivazione timer analisi...
 	NL	Timer voor opnieuw scannen wordt aangezet...
+	NO	Slår på søkekontroll...
+	SV	Aktiverar sökningstimern ...
 
 PLUGIN_RESCAN_TIMER_ON
 	CS	Časovač aktualizace zapnut
-	DA	Timer for genindlæsning TIL
+	DA	Timer for gennemsøgning TIL
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
 	ES	Temporizador para volver a examinar ACTIVADO
+	FI	Uudelleentarkistusajastin PÄÄLLÄ
 	FR	Analyse activée
 	HE	קוצב-זמן לסריקה חוזרת מופעל
 	IT	Timer analisi ATTIVATO
 	NL	Timer voor opnieuw scannen AAN
+	NO	Søkekontroll er på
+	SV	Sökningstimern är aktiverad.
 
 PLUGIN_RESCAN_TIMER_DESC
 	CS	Můžete zvolit automatickou denní aktualizaci informací z hudebního archivu. Nastavte čas, kdy se má aktualizace provést a volbou ON tuto funkci aktivujte.
-	DA	Du kan vælge at tillade planlagt genindlæsning af dit musik bibliotek hver 24. time. Indstil tiden og set timeren for genindlæsning på TIL for at anvende denne funktionalitet.
+	DA	Du kan vælge at musikbiblioteket skal gennemsøges en gang i døgnet. Du indstiller klokkeslættet og indstiller Timer for gennemsøgning til TIL
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie 'Automatisches Durchsuchen'.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede optar por permitir que se vuelva a examinar la biblioteca de música de forma programada cada 24 horas. Establezca la hora y el Temporizador para volver a examinar en ACTIVADO para utilizar esta característica.
+	FI	Voit sallia musiikkikirjastosi ajoitetun uudelleentarkistuksen 24 tunnin välein.  Voit ottaa toiminnon käyttöön määrittämällä ajan ja asettamalla uudelleentarkistuksen ajastimen päälle.
 	FR	Vous pouvez faire en sorte que le SqueezeCenter analyse à nouveau le contenu de votre bibliothèque toutes les 24 heures. Définissez l'heure et activez Programmation de l'analyse pour utiliser cette fonctionnalité.
 	HE	באפשרותך לבחור לאפשר סריקה חוזרת מתוזמנת של ספריית המוסיקה שלך מדי 24 שעות. קבע את השעה והגדר את 'קוצב-זמן לסריקה חוזרת' ל'מופעל' כדי להשתמש במאפיין זה.
 	IT	È possibile impostare la pianificazione dell'analisi della libreria musicale ogni 24 ore. Per utilizzare questa funzione, è sufficiente impostare l'ora di esecuzione e attivare il timer dell'analisi.
 	NL	Je kunt je muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de 'Timer voor opnieuw scannen' op AAN om deze functie te gebruiken.
+	NO	Du kan velge at musikkbiblioteket skal gjennomsøkes en gang i døgnet. Angi tidspunkt og slå Søkekontroll på for å bruke funksjonen.
+	SV	Du kan välja att aktivera en schemalagd sökning av ditt musikbibliotek en gång per dygn.  Ange ett klockslag och aktivera sökningstimern om du vill använda den här funktionen.
 
 PLUGIN_RESCAN_TIMER_OFF
 	CS	Časovač aktualizace vypnut
-	DA	Timer for genindlæsning FRA
+	DA	Timer for gennemsøgning FRA
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
 	ES	Temporizador para volver a examinar DESACTIVADO
+	FI	Uudelleentarkistusajastin POIS
 	FR	Analyse désactivée
 	HE	קוצב-זמן לסריקה חוזרת כבוי
 	IT	Timer analisi DISATTIVATO
 	NL	Timer voor opnieuw scannen UIT
+	NO	Søkekontroll er av
+	SV	Sökningstimern är avaktiverad.
 
 PLUGIN_RESCAN_TIMER_TYPE
-	DA	Genindlæsnings type
+	DA	Gennemsøgningstype
 	DE	Durchsuchmodus
 	EN	Rescan Type
 	ES	Tipo de volver a examinar
+	FI	Uudelleentarkistustyyppi
 	FR	Type d'analyse
 	HE	סוג סריקה חוזרת
 	IT	Tipo di analisi
 	NL	Type voor opnieuw scannen
+	NO	Søketype
+	SV	Typ av ny sökning
 
 PLUGIN_RESCAN_PLEASE_WAIT
-	DA	Vent venligst
+	DA	Vent lidt
 	DE	Bitte warten
 	EN	Please Wait
 	ES	Espere un momento
+	FI	Odota
 	FR	Veuillez patienter
 	IT	Attendere
 	NL	Even wachten
+	NO	Vent litt
+	SV	Ett ögonblick ...
 

@@ -1,49 +1,111 @@
 PLUGIN_LFM_MODULE_NAME
+	DA	Last.fm-radio
+	DE	Last.fm-Radio
 	EN	Last.fm Radio
+	ES	Radio Last.fm
+	FI	Last.fm-radio
+	FR	Radio Last.fm
+	IT	Radio Last.fm
+	NL	Last.fm-radio
+	NO	Last.fm radio
+	SV	Last.fm-radio
 
 PLUGIN_LFM_MODULE_NAME_DESC
+	DA	Lyt til radiostationer på Last.fm som er tilpasset ud fra hvad du har lyttet til tidligere.
+	DE	Auf Last.fm werden für Sie Radiosender basierend auf den gehörten Titeln erstellt.
 	EN	Listen to customized Last.fm Radio stations based on your listening history.
+	ES	Escuche emisoras de radio de Last.fm personalizadas según su historial de reproducción.
+	FI	Kuuntele Last.fm-radiokanavia, jotka on mukautettu kuunteluhistoriasi mukaan.
+	FR	Ecoutez les stations de radio Last.fm personnalisées en fonction de votre historique d'écoute.
+	IT	Ascolta stazioni radio Last.fm personalizzate in base alle tue preferenze di ascolto.
+	NL	Luister naar aangepaste Last.fm-radiostations op basis van je luistergeschiedenis.
+	NO	Lytt til tilpassede Last.fm-radiostasjoner som er basert på lyttehistorien din.
+	SV	Lyssna på anpassade Last.fm-radiostationer som baserats på din lyssningshistorik.
 
 PLUGIN_LFM_ERROR
+	DA	Last.fm-fejl
+	DE	Last.fm-Fehler
 	EN	Last.fm Error
+	ES	Error de Last.fm
+	FI	Last.fm:n virhe
+	FR	Erreur Last.fm
+	IT	Errore di Last.fm
+	NL	Last.fm-fout
+	NO	Last.fm-feil
+	SV	Last.fm-fel
 
 PLUGIN_LFM_NO_TRACKS
+	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
 	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
 	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
 	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+	NO	Klarer ikke å hente neste spor, trykk på PLAY for å prøve på nytt.
+	SV	Det gick inte att hämta nästa spår. Tryck på Play om du vill försöka igen.
 
 PLUGIN_LFM_STREAM_FAILED
+	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
 	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
 	EN	Audio stream disconnected, skipping to next track.
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
-	FR	Flux audio déconnecté, lecture du morceau suivant.
+	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan raitaan.
+	FR	Flux audio déconnecté; lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
-	IT	Flusso audio disconnesso. Passaggio al brano seguente.
+	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+	NO	Lyddatastrøm frakoplet, hopper til neste spor.
+	SV	Anslutningen till ljudströmmen bröts, hoppar till nästa spår.
 
 PLUGIN_LFM_SKIPS_EXCEEDED
+	DA	Det er ikke muligt at springe over flere numre i denne time, men du kan springe over flere numre igen senere.
 	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
 	EN	Hourly skip limit exceeded, you may skip again later.
 	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
+	FI	Tunnittaisten ohitusten raja ylittyi, voit ohittaa myöhemmin uudelleen.
 	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
 	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
 	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
-	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
+	NL	Uurlimiet voor 'skips' overschreden. Je kunt het later opnieuw proberen.
+	NO	Grensen for hvor mange sanger du kan hoppe over per time har blitt overskredet, du kan hoppe over igjen senere.
+	SV	Du har använt alla dina överhoppningar för den här timmen. Du kan hoppa över låtar senare.
 
 PLUGIN_LFM_LOVE
+	DA	Jeg er vild med dette nummer
+	DE	Diesen Titel lieben
 	EN	Love this track
+	ES	Esta pista es un favorito
+	FI	Pidä tästä kappaleesta
+	FR	Piste très appréciée
+	IT	Mi piace questo brano
+	NL	Geweldig nummer
+	NO	Ros dette sporet
+	SV	Jag älskar den här låten
 
 PLUGIN_LFM_BAN
+	DA	Forbyd dette nummer
+	DE	Diesen Titel bannen
 	EN	Ban this track
+	ES	Prohibir esta pista
+	FI	Kiellä tämä kappale
+	FR	Exclure ce morceau
+	IT	Bandisci questo brano
+	NL	Dit nummer verbieden
+	NO	Sperr dette sporet
+	SV	Spärra den här låten
 
 PLUGIN_LFM_ON_LASTFM
+	DA	På Last.fm-radio
 	DE	Auf Last.fm Radio
 	EN	On Last.fm Radio
 	ES	En Last.fm Radio
+	FI	Last.fm-radiossa
 	FR	Sur Last.fm Radio
 	IT	Su Last.fm Radio
-	NL	Op Last.fm Radio
+	NL	Op Last.fm-radio
+	NO	På Last.fm Radio
+	SV	På Last.fm Radio
+

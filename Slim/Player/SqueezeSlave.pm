@@ -162,10 +162,6 @@ sub volume {
 	return $volume;
 }
 
-sub periodicScreenRefresh {
-    # noop for this player - not required
-}    
-
 sub upgradeFirmware {
 	
 }

@@ -353,6 +353,10 @@ img#background {
 	padding-bottom: 3px;
 }
 
+#current_playlist_name {
+	margin-right: 65px;
+}
+
 .pagetitle {
 	padding-left: 10px;
 	font-size: 14px;
@@ -422,7 +426,7 @@ div.pagetitleWithIcon {
 /* Home menu */
 .homeMenuSection_expanded .homeMenuItem {
 	padding-left: 34px;
-	min-height: 14px;
+	min-height: 15px;
 }
 
 .homeMenuItem {
@@ -447,7 +451,7 @@ div.pagetitleWithIcon {
 .expandableHomeMenuItem { display: none; }
 
 .homeMenuItem .browseCover {
-	padding-top: 0;
+	padding-top: 1px;
 	top: -7px;
 }
 
@@ -1132,6 +1136,10 @@ body.settingsMenu {
 	margin-bottom: 15px;
 }
 
+.alarmSection .settingGroup {
+	margin-bottom: 5px;
+}
+
 .pluginSection .settingGroup {
 	padding-left: 400px;
 }
@@ -1194,6 +1202,21 @@ div.buttonbarSpacer {
 .settings select.stdedit {
 	vertical-align: top;
 }
+
+.prefs td {
+	padding-bottom: 2px;
+}
+
+.settingsSlider {
+	margin-top: -2px;
+	float: left;
+	margin-right: 5px;
+}
+
+.prefs .timeControl.x-form-invalid {
+	background-color: #ffcccc;
+}
+
 
 /* don't show the checkbox in the tooltip */
 .x-tip-bd input.pluginEnablerCheckbox {

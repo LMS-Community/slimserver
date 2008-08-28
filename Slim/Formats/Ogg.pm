@@ -34,6 +34,9 @@ use Slim::Utils::Unicode;
 use MIME::Base64 qw(decode_base64);
 use Ogg::Vorbis::Header::PurePerl;
 
+my $log       = logger('scan.scanner');
+my $sourcelog = logger('player.source');
+
 my %tagMapping = (
 	'TRACKNUMBER'               => 'TRACKNUM',
 	'DISCNUMBER'                => 'DISC',
@@ -205,8 +208,9 @@ sub scanBitrate {
 	my $fh    = shift;
 	my $url   = shift;
 	
+	my $isDebug = $log->is_debug;
+	
 	my $ogg;
-	my $log   = logger('scan.scanner');
 	
 	# some ogg files can blow up - especially if they are invalid.
 	eval {
@@ -241,9 +245,7 @@ sub scanBitrate {
 			},
 		});
 
-		if ( $log->is_debug ) {
-			$log->debug("Read Ogg tags from stream: " . Data::Dump::dump( $ogg->{COMMENTS} ));
-		}
+		$isDebug && $log->debug("Read Ogg tags from stream: " . Data::Dump::dump( $ogg->{COMMENTS} ));
 		
 		$title .= ' ' . string('BY') . ' ' . $artist if $artist;
 		$title .= ' ' . string('FROM') . ' ' . $album if $album;
@@ -266,7 +268,7 @@ sub scanBitrate {
 			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
 			$cache->set( "cover_$url", $data, $Cache::Cache::EXPIRES_NEVER );
 
-			$log->debug( 'Found embedded cover art, saving for ' . $track->url );
+			$isDebug && $log->debug( 'Found embedded cover art, saving for ' . $track->url );
 		}
 	}
 	
@@ -282,9 +284,7 @@ sub scanBitrate {
 	
 	if ( my $bitrate = $ogg->info('bitrate_nominal') ) {
 
-		if ( $log->is_debug ) {
-			$log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
-		}
+		$isDebug && $log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
 
 		return ( $bitrate, $vbr );
 	}
@@ -355,6 +355,8 @@ my $MAXDISTANCE = 255 * 255 + 26 + 256;
 
 sub _seekNextFrame {
 	my ($class, $fh, $startoffset, $direction) = @_;
+	
+	my $isDebug = $sourcelog->is_debug;
 
 	use bytes;
 
@@ -371,9 +373,8 @@ sub _seekNextFrame {
 	# TODO: MAXDISTANCE is far too far to seek backwards in most cases, so we don't
 	# use negative direction for the moment.
 	my $seekto = ($direction == 1) ? $startoffset : $startoffset - $MAXDISTANCE;
-	my $log    = logger('player.source');
 
-	$log->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
+	$isDebug && $sourcelog->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
 
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread($fh, my $buf, $MAXDISTANCE, 0);
@@ -381,7 +382,7 @@ sub _seekNextFrame {
 	my $len = length($buf);
 
 	if ($len < $HEADERLEN) {
-		$log->warn("Got less than $HEADERLEN bytes");
+		$sourcelog->warn("Got less than $HEADERLEN bytes");
 		return 0;
 	}
 
@@ -395,7 +396,7 @@ sub _seekNextFrame {
 		$end   = 0;
 	}
 
-	$log->debug("Scanning: len = $len, start = $start, end = $end");
+ 	$isDebug && $sourcelog->debug("Scanning: len = $len, start = $start, end = $end");
 
 	for (my $pos = $start; $pos != $end; $pos += $direction) {
 
@@ -407,12 +408,12 @@ sub _seekNextFrame {
 
 		my $found_at_offset = $seekto + $pos;
 
-		$log->debug("Found frame header at $found_at_offset");
+		$isDebug && $sourcelog->debug("Found frame header at $found_at_offset");
 
 		return $found_at_offset;
 	}
 
-	$log->warn("Couldn't find any frame header");
+	$sourcelog->warn("Couldn't find any frame header");
 
 	return 0;
 }

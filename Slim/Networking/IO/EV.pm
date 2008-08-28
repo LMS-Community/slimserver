@@ -163,7 +163,8 @@ sub _io_callback {
 		eval { $callback->( $sock, @{$passthrough} ) };
 		
 		if ( $@ ) {
-			logError("Select task failed: $@");
+			my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
+			logError("Select task failed calling $func: $@");
 		}
 		
 		# Conditionally readUDP if there are SLIMP3's connected.

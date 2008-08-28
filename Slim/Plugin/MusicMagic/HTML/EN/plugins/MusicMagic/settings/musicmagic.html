@@ -33,11 +33,11 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_STYLE" desc="SETUP_MIX_STYLE_DESC" %]
-			<input type="text" class="stdedit" name="pref_mix_style" id="mix_style" value="[% prefs.pref_mix_style %]" size="5">
+			<input type="text" class="stdedit sliderInput_0_200" name="pref_mix_style" id="mix_style" value="[% prefs.pref_mix_style %]" size="5">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_VARIETY" desc="SETUP_MIX_VARIETY_DESC" %]
-			<input type="text" class="stdedit" name="pref_mix_variety" id="mix_variety" value="[% prefs.pref_mix_variety %]" size="5">
+			<input type="text" class="stdedit sliderInput_0_9" name="pref_mix_variety" id="mix_variety" value="[% prefs.pref_mix_variety %]" size="5">
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MIX_GENRE" desc="SETUP_MIX_GENRE_DESC" %]
@@ -78,7 +78,7 @@
 	[% WRAPPER settingSection %]
 		[% IF prefs.exists('pref_scan_interval') %]
 			[% WRAPPER settingGroup title="SETUP_MUSICMAGICSCANINTERVAL" desc="SETUP_MUSICMAGICSCANINTERVAL_DESC" %]
-				<input type="text" class="stdedit" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval %]" size="5">
+				<input type="text" class="stdedit sliderInput_0_86400_300" name="pref_scan_interval" id="scan_interval" value="[% prefs.pref_scan_interval %]" size="5">
 			[% END %]
 		[% END %]
 

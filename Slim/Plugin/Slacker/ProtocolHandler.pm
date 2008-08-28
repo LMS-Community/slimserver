@@ -59,6 +59,8 @@ sub audioScrobblerSource () { 'E' }
 # Some ad content is small, use a small buffer threshold
 sub bufferThreshold { 20 }
 
+sub isRemote { 1 }
+
 sub handleError {
     my ( $error, $client ) = @_;
 

@@ -54,6 +54,9 @@ Avilable Parameters and their defaults:
  'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to 
                            # smooth the movement of the bar.
 
+ 'knobaccelup'     = 0.05  # Constant that determines how fast the Bar accelerates when 
+ 'knobacceldown'   = 0.05  # using a knob.   up and down accelerations are different.
+
 =cut
 
 use strict;
@@ -62,11 +65,14 @@ use Slim::Buttons::Common;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
+use constant UPDATE_DELAY => 0.05; # time to delay screen updates by
+
 my %functions = ();
 
 # XXXX - This should this be in init() - but we don't init Input methods
 # before trying to use them.
 Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode, \&_leaveModeHandler);
+Slim::Buttons::Common::addMode('INPUT.Volume', getFunctions(), \&setMode, \&_leaveModeHandler);
 
 sub init {
 	my $client = shift;
@@ -112,11 +118,12 @@ sub init {
 		}
 	}
 	
-	my $min  = $client->modeParam('min');
-	my $mid  = $client->modeParam('mid');
-	my $max  = $client->modeParam('max');
+	my $min  = getExtVal($client, 'min');
+	my $mid  = getExtVal($client, 'mid');
+	my $max  = getExtVal($client, 'max');
+	
 	my $step = $client->modeParam('increment');
-
+	
 	my $listRef = [];
 	my $j = 0;
 
@@ -246,13 +253,17 @@ sub scaledValue {
 	my $value  = shift;
 
 	if ($client->modeParam('midIsZero')) {
-		$value -= $client->modeParam('mid');
+		$value -= getExtVal($client, 'mid');
 	}
 
 	my $increment = $client->modeParam('increment');
 
 	$value /= $increment if $increment;
-	$value = int($value + 0.5);
+	if ($value > 0) {
+		$value = int($value + 0.5);
+	} else {
+		$value = int($value);
+	}
 
 	my $unit = $client->modeParam('headerValueUnit');
 
@@ -268,10 +279,14 @@ sub unscaledValue {
 	my $value  = shift;
 
 	if ($client->modeParam('midIsZero')) {
-		$value -= $client->modeParam('mid');
+		$value -= getExtVal($client, 'mid');
 	}
 
-	$value = int($value + 0.5);
+	if ($value > 0) {
+		$value = int($value + 0.5);
+	} else {
+		$value = int($value);
+	}
 
 	my $unit = $client->modeParam('headerValueUnit');
 
@@ -308,9 +323,9 @@ sub changePos {
 	
 	my $accel = 8; # Hz/sec
 	my $rate  = 50; # Hz
-	my $mid   = $client->modeParam('mid')||0;
-	my $min   = $client->modeParam('min')||0;
-	my $max   = $client->modeParam('max')||100;
+	my $mid   = getExtVal($client, 'mid') || 0;
+	my $min   = getExtVal($client, 'min') || 0;
+	my $max   = getExtVal($client, 'max') || 100;
 
 	my $midpoint = ($mid-$min)/($max-$min)*(scalar(@$listRef) - 1);
 
@@ -320,8 +335,49 @@ sub changePos {
 	}
 
 	my $currVal     = $listIndex;
-	my $newposition = $listIndex + $dir;
-
+	my $newposition = undef;
+	
+	my $knobData = $client->knobData;
+	
+	if ($knobData->{'_knobEvent'}) {
+		# Knob event
+		my $knobAccelerationConstant = undef;
+		#
+		# TODO make down and up parameterized so that 
+		# we can have different speeds for different controls.  
+		# I.e. volume should go down faster than up, but bass and treble should 
+		# be the same in both cases.
+		# 
+		if ($dir > 0) {
+			$knobAccelerationConstant = $client->modeParam('knobaccelup') || .05; # Accel going up.
+		} else {
+			$knobAccelerationConstant = $client->modeParam('knobacceldown') ||.05; # Accel going down. 
+		}
+		my $velocity      = $knobData->{'_velocity'};
+		my $acceleration  = $knobData->{'_acceleration'};
+		my $deltatime     = $knobData->{'_deltatime'};
+		my $deltaX = $velocity * $knobAccelerationConstant;
+		if ($deltaX > 0) {
+			if ($deltaX < 1) {
+				$deltaX = 1;
+			}
+		} elsif ($deltaX < 0) {
+			if ($deltaX > -1) {
+				$deltaX = -1;
+			}
+		} else {
+			# deltaX == 0, follow the dir.
+			$deltaX = $dir;
+		}
+		$deltaX = int($deltaX);
+		$newposition = $listIndex + $deltaX;
+		
+	} else {
+		# Not _knobEvent (i.e. regular button event.);
+		$newposition = $listIndex + $dir;
+	}
+	
+	
 	if ($dir > 0) {
 
 		if ($currVal < ($midpoint - .5) && ($currVal + $dir) >= ($midpoint - .5)) {
@@ -345,6 +401,13 @@ sub changePos {
 	$newposition = 0 if $newposition < 0;
 
 	$$valueRef   = $listRef->[$newposition];
+	
+	my $val;
+	if ($dir > 0) {
+		$val = '+'.abs($listRef->[$newposition] - $listRef->[$listIndex]);
+	} else {
+		$val = '-'.abs($listRef->[$newposition] - $listRef->[$listIndex]);
+	}
 
 	$client->modeParam('listIndex', int($newposition));
 
@@ -358,28 +421,41 @@ sub changePos {
 		my @args = ();
 
 		push @args, $client if $onChangeArgs =~ /c/i;
-		push @args, $$valueRef if $onChangeArgs =~ /v/i;
+		push @args, $val if $onChangeArgs =~ /v/i;
 
 		$onChange->(@args);
 	}
 
+	# update the screen on a callback so we can rate limit the number of screen updates
+	if (!$client->updatePending) {
+
+		$client->updatePending(1);
+
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + UPDATE_DELAY, \&_updateScreen);
+	}
+}
+
+sub _updateScreen {
+	my $client = shift;
+
 	$client->update;
+
+	$client->updatePending(0);
 }
 
 sub lines {
 	my $client = shift;
-
-	# These parameters are used when calling this function from Slim::Player::Player::mixerDisplay
-	my $value  = shift;
-	my $header = shift;
 	my $args   = shift;
 
-	my $min = $args->{'min'};
-	my $mid = $args->{'mid'};
-	my $max = $args->{'max'};
+	# These parameters are used when calling this function from Slim::Player::Player::mixerDisplay
+	my $value  = $args->{'value'};
+	my $header = $args->{'header'};
+	my $min    = $args->{'min'};
+	my $mid    = $args->{'mid'};
+	my $max    = $args->{'max'};
 	my $noOverlay = $args->{'noOverlay'} || 0;
 
-	my ($line1, $line2);
+	my $line1;
 
 	my $valueRef = $client->modeParam('valueRef');
 
@@ -408,9 +484,9 @@ sub lines {
 		}
 	}
 	
-	$min = $client->modeParam('min') || 0 unless defined $min;
-	$mid = $client->modeParam('mid') || 0 unless defined $mid;
-	$max = $client->modeParam('max') || 100 unless defined $max;
+	$min = getExtVal($client, 'min') || 0 unless defined $min;
+	$mid = getExtVal($client, 'mid') || 0 unless defined $mid;
+	$max = getExtVal($client, 'max') || 100 unless defined $max;
 	
 	my $cursor = $client->modeParam('cursor');
 	if (defined($cursor)) {
@@ -420,28 +496,34 @@ sub lines {
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
 	my $fullstep = 1 unless $client->modeParam('smoothing');
 
-	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep,0,$cursor);
+	my $parts = {};
 
-	my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef') unless $noOverlay;
+	my $singleLine = ($client->linesPerScreen() == 1);
 
-	if ($client->linesPerScreen() == 1) {
+	unless ($noOverlay) {
 
-		if ($client->modeParam('barOnDouble')) {
+		my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef');
 
-			$line1 = $line2;
-			$line2 = '';
-
-		} else {
-
-			$line2 = $line1;
-			$overlay2 = $overlay1;
-		}
+		$parts->{overlay} = $singleLine ? [ undef, $overlay1 ] : [ $overlay1, $overlay2 ];
 	}
 
-	my $parts = {
-		'line'    => [ $line1, $line2 ],
-		'overlay' => [ $overlay1, $overlay2 ]
-	};
+	if ($client->display->can('simpleSliderBar') && !$singleLine && $mid == 0 && !defined $cursor) {
+
+		# optimised case - use fast simpleSliderBar which produces a bitmap
+		$parts->{bits} = $client->display->simpleSliderBar($client->displayWidth, $val, 1);
+		$parts->{line} = [ $line1, undef ];
+
+	} elsif ($singleLine && !$client->modeParam('barOnDouble')) {
+
+		$parts->{line} = [ undef, $line1 ];
+
+	} else {
+
+		$parts->{line} = [
+			$line1,
+			$client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep,0,$cursor),
+		];
+	}
 
 	return $parts;
 }
@@ -463,11 +545,16 @@ sub setMode {
 		}
 	#}
 
+	$client->updatePending(0);
+
 	$client->lines( $client->modeParam('lines') || \&lines );
 }
 
 sub _leaveModeHandler {
 	my ($client, $exittype) = @_;
+
+	Slim::Utils::Timers::killTimers($client, \&_updateScreen);
+	$client->updatePending(0);
 	
 	if ($exittype eq 'pop') {
 		return;	# to avoid recursion
@@ -493,6 +580,11 @@ sub exitInput {
 
 			Slim::Buttons::Common::popModeRight($client);
 
+		} elsif ($exitType eq 'passback') {
+
+			Slim::Buttons::Common::popMode($client);
+			Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime, Slim::Buttons::Common::mode($client));
+
 		} else {
 
 			Slim::Buttons::Common::popMode($client);
@@ -502,6 +594,32 @@ sub exitInput {
 	}
 
 	$callbackFunct->(@_);
+
+	if ($exitType eq 'passback') {
+		Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime, Slim::Buttons::Common::mode($client));
+	}
+}
+
+sub getExtVal {
+	my $client = shift;
+	my $value  = shift;
+
+	if (ref $client->modeParam($value) eq 'CODE') {
+
+		my $ret = eval { $client->modeParam($value)->($client) };
+
+		if ($@) {
+
+			logError("Couldn't run coderef. [$@]");
+			return '';
+		}
+
+		return $ret;
+
+	} else {
+
+		return $client->modeParam($value);
+	}
 }
 
 =head1 SEE ALSO

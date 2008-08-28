@@ -674,14 +674,16 @@ sub standardTitleFormat {
 		# in array syntax this would be
 		# $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]] get
 		# the title format
+		
+		my $cprefs = $prefs->client($client);
 
 		return $prefs->get('titleFormat')->[
 			# at the array index of the client titleformat array
-			$prefs->client($client)->get('titleFormat')->[
+			$cprefs->get('titleFormat')->[
 				# which is currently selected
-				$prefs->client($client)->get('titleFormatCurr')
+				$cprefs->get('titleFormatCurr')
 			]
-		   ];
+		];
 
 	} else {
 
@@ -1012,9 +1014,27 @@ sub isMMSURL {
 sub isRemoteURL {
 	my $url = shift || return 0;
 
-	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler( lc($1) )) {
-
-		return 1;
+	if ( $url =~ /^([a-zA-Z0-9\-]+):/ ) {
+		my $proto = $1;
+		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url) ) {
+			if ( $handler->can('isRemote') ) {
+				return $handler->isRemote();
+			}
+			else {
+				# Backwards-compat for 3rd party plugins not implementing isRemote
+				return 1;
+			}
+		}
+		elsif ( Slim::Player::ProtocolHandlers->isValidHandler( lc($proto) ) ) {
+			# Backwards-compat for handlers without a handler class
+			
+			# Special case a few of our internal protocols that aren't remote
+			if ( $proto =~ /^(?:db|itunesplaylist|musicmagicplaylist)$/ ) {
+				return 0;
+			}
+			
+			return 1;
+		}
 	}
 
 	return 0;
@@ -1104,6 +1124,10 @@ sub isAudioURL {
 		return 1; 	 
 	} 	 
 
+	if (isLineIn($url)) { 	 
+		return 1; 	 
+	} 	 
+
 	# Let the protocol handler determine audio status 	 
 	if ( $url !~ /^(?:http|mms)/ ) { 	 
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url ); 	 
@@ -1167,6 +1191,12 @@ sub isType {
 }
 
 sub isDigitalInput {
+	my $pathOrObj = shift;
+
+	return isType($pathOrObj, 'src', @_);
+}
+
+sub isLineIn {
 	my $pathOrObj = shift;
 
 	return isType($pathOrObj, 'src', @_);

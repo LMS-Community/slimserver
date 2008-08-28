@@ -14,7 +14,8 @@ Slim::Buttons::Input::Choice
 =head1 SYNOPSIS
 
  my %params = (
-	header   => $client->modeParam('header') || ($title . ' {count}'),
+	header   => $client->modeParam('header') || $title,
+	addHeaderCount => 1,
 	listRef  => \@list,
 	url      => $url,
 	title    => $title,
@@ -56,6 +57,10 @@ use Slim::Buttons::Common;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
+my $log = logger('player.ui');
 
 # TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
 our %browseCache = (); # remember where each client is browsing
@@ -331,8 +336,8 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 	
-	if ( logger('player.ui')->is_debug ) {
-		logger('player.ui')->debug(
+	if ( $log->is_debug ) {
+		$log->debug(
 			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
 		);
 	}
@@ -365,12 +370,15 @@ sub changePos {
 		if ($pushDir eq 'up')  {
 			
 			$client->pushUp();
+
 		} elsif ($pushDir eq 'down') {
 			
 			$client->pushDown();
+
 		} elsif ($dir < 0)  {
 			
 			$client->pushUp();
+
 		} else {
 			
 			$client->pushDown();
@@ -396,7 +404,7 @@ sub changePos {
 # and the behavior will be 
 # 'text' will go through unchanged
 # '{STRING}' will be replaced with STRING translated
-# '{count}' will be replaced with (m of N) (i.e. like addHeaderCount in List mode)
+# '{count}' is stripped out as it is now shown in the overlay (modeParam headerAddCount is preferred)
 sub formatString {
 	my $client    = shift;
 	my $string    = shift;
@@ -406,8 +414,8 @@ sub formatString {
 	while ($string =~ /(.*?)\{(.*?)\}(.*)/) {
 
 		if ($2 eq 'count') {
-			# replace {count} with (n of M)
-			$string = $1 . ' (' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')' . $3;
+			# strip out {count} - for backward compat - use modeParam headerAddCount now
+			$string = $1 . $3;
 		} else {
 			# translate {STRING}
 			$string = $1 . $client->string($2) . $3;
@@ -419,6 +427,8 @@ sub formatString {
 
 sub lines {
 	my $client = shift;
+	my $args   = shift;
+
 	my ($line1, $line2);
 
 	my $listIndex = $client->modeParam('listIndex');
@@ -461,7 +471,32 @@ sub lines {
 		
 		# assume a single non-descending list of items, 'pref' item must be given in the params
 		my $val = ref $pref eq 'CODE' ? $pref->($client) : preferences('server')->client($client)->get($pref);
-		$overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $val eq getItemValue($client));
+		if (scalar(@$listRef) == 1) {
+			$overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $val eq getItemValue($client));
+		} else {
+			$overlay2 = Slim::Buttons::Common::radioButtonOverlay($client, $val eq getItemValue($client));
+		}
+	}
+
+	# show count if we are the new screen of a push transition or pref set
+	# count is shown in the overlay but we still support {count} in the header for backward compat
+	if ( ($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) &&
+		 ($client->modeParam('headerAddCount') || $header =~ /{count}/) ) {
+		$overlay1 .= ' ' .  ($listIndex + 1) . ' ' . $client->string('OF') . ' ' . scalar(@$listRef);
+	}
+
+	# truncate long strings in the header with '...'
+	my $len   = $client->measureText($line1, 1);
+	my $width = $client->displayWidth;
+	my $trunc = '...';
+
+	if ($len > $width) {
+		$width -= $client->measureText($trunc, 1);
+		while ($len > $width) {
+			$line1 = substr $line1, 0, -1;
+			$len = $client->measureText($line1, 1);
+		}
+		$line1 .= $trunc;
 	}
 
 	my $parts = {

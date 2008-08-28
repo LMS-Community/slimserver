@@ -27,6 +27,7 @@ use Slim::Display::Lib::Fonts;
 use base qw(Slim::Display::Display);
 
 use Slim::Utils::Prefs;
+use Slim::Utils::Log;
 
 my $prefs = preferences('server');
 
@@ -37,6 +38,9 @@ my $scroll_pad_ticker = 60; # lines of padding in ticker mode
 our $defaultPrefs = {
 	'scrollPixels'		   => 7,
 	'scrollPixelsDouble'   => 7,
+	'idleBrightness'       => 2,
+	'powerOffBrightness'   => 1,
+	'powerOnBrightness'    => 4,
 };
 
 sub initPrefs {
@@ -99,9 +103,8 @@ sub render {
 	my $s2periodic = shift;  # this render is for a periodic screen 2 update - suppress some state changes
 	my $client = $display->client;
 
-	if ((ref($parts) ne 'HASH')) {
-		$parts = $display->parseLines($parts);
-
+	if (ref $parts ne 'HASH') {
+		logError("bad lines function - non hash based display formats are depreciated");
 	} elsif (!exists($parts->{screen1}) &&
 		(exists($parts->{line1}) || exists($parts->{line2}) || exists($parts->{center1}) || exists($parts->{center2})) ) {
 		# Backwards compatibility with 6.2 display hash
@@ -249,6 +252,7 @@ sub render {
 				}
 
 				$sc->{fonts} = $sfonts;
+				$sc->{extent} = Slim::Display::Lib::Fonts::extent($sfonts->{line}[1]||$dfonts->{line}[1]);
 			}
 
 			if (!$scroll || $changed) { 
@@ -570,8 +574,14 @@ sub measureText {
 	my $display = shift;
 	my $text = shift;
 	my $line = shift;
+	my $overlay = shift;
 	
 	my $fonts = $display->fonts();
+
+	# add the padding space to the string for the overlay so we include this in the length
+	if ($overlay) {
+		$text = "\x00" . $text;
+	}
 
 	my $len = Slim::Display::Lib::Fonts::measureText($fonts->{"line"}[$line-1], $display->symbols($text));
 	return $len;
@@ -599,8 +609,8 @@ sub sliderBar {
 
 	my $spaces = int($width) - 4;
 	my $dots   = int($value/100 * $spaces);
-	my $divider= ($midpoint/100) * ($spaces);
-	if ($cursor) {
+	my $divider= int($midpoint/100 * $spaces);
+	if (defined $cursor) {
 		$cursor = int($cursor/100 * $spaces);
 	}	
 
@@ -616,37 +626,46 @@ sub sliderBar {
 	my $cursorSymbol = $display->symbols('cursor');
 
 	my $chart = $display->symbols('tight') . $progEnd;
-	
+
 	if ($midpoint) {
 		#left half
 		for (my $i = 0; $i < $divider; $i++) {
 			if ($value >= $midpoint) {
-				if ($i == 0 || $i == $spaces/2 - 1) {
+				if ((($i == $divider - 1) && !(defined $cursor && $cursor == $divider)) || $i == 0) {
 					$chart .= $prog1e;
-				} elsif ($i == 1 || $i == $spaces/2 - 2) {
+				} elsif ((($i == $divider - 2) && !(defined $cursor && $cursor == $divider)) || $i == 1) {
 					$chart .= $prog2e;
 				} else {
 					$chart .= $prog3e;
 				}
 			} else {
-				if ($i == 0 || $i == $divider - 1) {
+				if ((($i == $divider - 1) && !(defined $cursor && $midpoint && $cursor == $divider)) || $i == 0) {
 					$chart .= ($i < $dots) ? $prog1e : $prog1;
-				} elsif ($i == 1 || $i == $divider - 2) {
+				} elsif ((($i == $divider - 2) && !(defined $cursor && $midpoint && $cursor == $divider)) || $i == 1) {
 					$chart .= ($i < $dots) ? $prog2e : $prog2;
 				} else {
 					$chart .= ($i < $dots) ? $prog3e : $prog3;
 				}
 			}
 		}
-		$chart .= $progEnd;
+		
+		if (defined $cursor && $cursor == $divider) {
+			$chart .= $cursorSymbol;
+			$chart .= $prog3;
+		} else {
+			$chart .= $progEnd;
+		}
 	}
 	
 	# right half
 	for (my $i = $divider + 1; $i < $spaces; $i++) {
 		if ($value <= $midpoint) {
-			if ($i == $divider +1 || $i == $spaces - 1) {
+
+			# create end lobes
+			# check for midpoint and cursor position to skip the lobe when a left half exists.
+			if ((($i == $divider +1) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 1) {
 				$chart .= $reverse ? $prog1 : $prog1e;
-			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
+			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 2) {
 				$chart .= $reverse ? $prog2 : $prog2e;
 			} else {
 				$chart .= $reverse ? $prog3 : $prog3e;
@@ -656,9 +675,9 @@ sub sliderBar {
 			if (defined $cursor && $i == $cursor) {
 				$chart .= $cursorSymbol;
 				$chart .= $pos ? $prog3 : $prog3e;
-			} elsif ($i == $divider +1 || $i == $spaces - 1) {
+			} elsif ((($i == $divider +1) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 1) {
 				$chart .= $pos ? $prog1e : $prog1;
-			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
+			} elsif ((($i == $divider +2) && !(defined $cursor && $cursor == $divider && $midpoint)) || $i == $spaces - 2) {
 				$chart .= $pos ? $prog2e : $prog2;
 			} else {
 				$chart .= $pos ? $prog3e : $prog3;
@@ -668,6 +687,33 @@ sub sliderBar {
 	$chart .= $progEnd . $display->symbols('/tight');
 
 	return $chart;
+}
+
+# optimised simple slide bar for volume display which returns a bitmap rather than string of symbols
+sub simpleSliderBar {
+	my $display = shift;
+	my $width   = shift;
+	my $val     = shift;
+	my $line    = shift; # which line it appears on
+
+	my $cache   = $display->renderCache();
+	my $fonts   = $display->fonts();
+
+	my $sbinfo  = $cache->{sbinfo} ||= {
+		width => -1,
+	};
+
+	if ($width != $sbinfo->{width} || $fonts != $sbinfo->{fonts} || $line != $sbinfo->{line}) {
+		$sbinfo->{width} = $width;
+		$sbinfo->{fonts} = $fonts;
+		$sbinfo->{line}  = $line;
+		$sbinfo->{full}  = (Slim::Display::Lib::Fonts::string($fonts->{line}[$line], $display->sliderBar($width, 100)))[1];
+		$sbinfo->{empty} = (Slim::Display::Lib::Fonts::string($fonts->{line}[$line], $display->sliderBar($width, 0)))[1];
+	}
+
+	my $splicePoint = int($width * $val / 100) * $display->bytesPerColumn;
+				
+	return substr($sbinfo->{full}, 0, $splicePoint) . substr($sbinfo->{empty}, $splicePoint);
 }
 
 sub fonts {
@@ -715,6 +761,7 @@ my %fontSymbols = (
 	'square'      => "\x0e",
 	'filledsquare'=> "\x0f",
 	'bell'	      => "\x10",
+	'sleep'       => "\x11",
 	'hardspace'   => "\x20",
 
 	# following are commands rather than symbols

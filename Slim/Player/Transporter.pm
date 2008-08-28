@@ -357,7 +357,7 @@ sub hasEffectsLoop {
 }
 
 sub hasAesbeu {
-    	return 1;
+	return 1;
 }
 
 sub hasPowerControl {
@@ -373,7 +373,11 @@ sub hasPolarityInversion {
 }
 
 sub hasPreAmp {
-        return 0;
+	return 0;
+}
+
+sub hasFrontPanel {
+	return 1;
 }
 
 # SN only, this checks that the player's firmware version supports compression

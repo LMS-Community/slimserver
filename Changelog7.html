@@ -1,24 +1,18 @@
-<h2><a name="v7.3" id="v7.3"></a>Version 7.3 - 2008-xx-xx</h2>
-
+<h2><a name="v7.2" id="v7.2"></a>Version 7.2 - 2008-08-28</h2>
 <ul>
-
-	<li>Web UI<ul>
-		<li>New ScreenReader skin - based on Handheld, with some optimizations for screen readers as used by blind users.</li>
+	<li>International:
+	<ul>
+		<li>Four new official translations: Danish, Suomi, Norsk, Svenska</li>
 	</ul>
 	<br />
-	
-	<li>Bug Fixes:<ul>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8766">#8766</a> - Deleted MusicIP filters should not be used anymore by SC</li>
-	</ul>
-	
-</ul>		
 
-<h2><a name="v7.2" id="v7.2"></a>Version 7.2 - 2008-xx-xx</h2>
-
-<ul>
-	
 	<li>Firmware updates:</li>
 	<ul>
+		<li>Boom - Version 32</li>
+		<ul>
+			<li>Initial Boom firmware.</li>
+		</ul>
+				
 		<li>Squeezebox 2/3 - Version 112<br />
 			Transporter - Version 62<br />
 			Receiver - Version 47
@@ -29,7 +23,7 @@
 				<a href="http://bugs.slimdevices.com/show_bug.cgi?id=7773">#7773</a>,
 				<a href="http://bugs.slimdevices.com/show_bug.cgi?id=8665">#8665</a> - Fix crash when switching between different wireless encryption modes.
 			</li>
-			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7594">#7594</a> - Revert latest WOL change and learn SC address again always (broke SC behind some wireless bridges)</li>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7594">#7594</a> - Revert latest WOL change and learn SC address again always (this will break setups where SC is behind a wireless bridge reporting its own instead of SCs MAC address)</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8959">#8959</a> - Local Control when SqueezeCenter/Network Down</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9003">#9003</a> - Occasional loud noises when moving to a new Rhapsody track</li>
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9099">#9099</a> - SB3 Factory reset - due to single key on Bose Wave Radio remote</li>
@@ -49,31 +43,64 @@
 
 	<li>Web UI<ul>
 		<li>Improved performance of web interface.</li>
+		<li>Ask for confirmation when setting a password to prevent typos in web page protection.</li>
+		<li>Split up Audio settings page into Audio and separate Synchronization pages</li>
 	</ul>
 	<br />
 
 	<li>Bug Fixes:<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=7586">#7586</a> - FLAC.pm should be a little stricter parsing track titles from CDDB tags</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8116">#8116</a> - SongScanner key defs should be in default.map</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8443">#8443</a> - FLAC file with invalid embedded cue sheet isn't scanned properly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8689">#8689</a> - Missing important encodings for XML parsing</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8704">#8704</a> - Seek: FFWD/REW scanner UI timer doesn't reset with each button press</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8797">#8797</a> - Support for LAME 3.98 default endianness change</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8926">#8926</a> - CLI interface not returning hasitems correctly for Staff Picks</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8939">#8939</a> - MP3 file with invalid id3v2 data causes the scanner to crash</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8986">#8986</a> - make sure iTunes/MusicIP settings are saved before audiodir, as changing audiodir automatically launches a rescan</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9031">#9031</a> - Shuffle tooltip undefined</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9065">#9065</a> - Windows Server 2008 and not Windows Vista</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9112">#9112</a> - Last.fm settings menu is useless when no account is registered</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9144">#9144</a> - Non-Default skin settings pages broken in Safari 3.1.2 on OS X</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9168">#9168</a> - PluginManager fails with more than one targetPlatform in install.xml</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9170">#9170</a> - xPL IR Code Broadcast Broken</li>
 	</ul>
+	<br />
 	
-</ul>		
-
-<h2><a name="v7.1.1" id="v7.1.1"></a>Version 7.1.1 - xxxx-xx-xx</h2>
-
-<ul>
-
-	<li>Bug Fixes:<ul>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9031">#9031</a> - Shuffle tooltip undefined</li>
+	<li>Softsqueeze<ul>
+		<li>Bumped Version to 3.7b0 (eternal beta now).</li>
+		<li>Fixed version check to last through 7.5, followed by more appropriate warning after.</li>
+		<li>New Boom skin and remote.</li>
 	</ul>
+	<br />
+
+	<li>
+		Improved alarm clock functionality:
+		<ul>
+			<li>Alarms can be set for any combination of days at a specified time, allowing weekday alarms, weekend alarms etc (<a href="http://bugs.slimdevices.com/show_bug.cgi?id=2263">#2263</a>)</li>
+			<li>Alarms can now be snoozed</li>
+			<li>The time is displayed on screen during an alarm with feedback about the current alarm or snooze</li>
+			<li>The Date Time screensaver now indicates when the next alarm will go off</li>
+			<li>Alarms can be configured as one-off alarms that disable themselves after they go off</li>
+			<li>Ability to quickly disable all alarms (holiday mode)</li>
+			<li>Can choose to one volume setting for all alarms, allowing the volume to be quickly changed</li>
+			<li>
+				Back end:
+				<ul>
+					<li>The CLI alarm and alarms commands have changed!  External callers will need to be updated to remain compatible</li>
+					<li>INPUT.Time now exits on both left and right.  Plugins that use this mode will need to be updated to handle the new exit conditions.</li>
+					<li>
+						New Slim::Utils::Alarm class provides easy access to alarm functionality
+						<ul>
+							<li>The screensaver used during an alarm is configurable (via calls into Slim::Utils::Alarm)</li>
+							<li>Plugins can register new playlists that can then be selected by the user as alarm playlists</li>
+							<li>See docs in Slim::Utils::Alarm for more details
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</li>
 </ul>
 
 <h2><a name="v7.1" id="v7.1"></a>Version 7.1 - 2008-07-28</h2>

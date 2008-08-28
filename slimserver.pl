@@ -313,6 +313,20 @@ sub init {
 	
 	# Uncomment to enable crash debugging.
 	#$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
+	
+	# Start/stop profiler during runtime (requires Devel::NYTProf)
+	# and NYTPROF env var set to 'start=no'
+	if ( $INC{'Devel/NYTProf.pm'} && $ENV{NYTPROF} =~ /start=no/ ) {
+		$SIG{USR1} = sub {
+			DB::enable_profile();
+			warn "Profiling enabled...\n";
+		};
+	
+		$SIG{USR2} = sub {
+			DB::disable_profile();
+			warn "Profiling disabled...\n";
+		};
+	}
 
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
@@ -408,7 +422,10 @@ sub init {
 	$log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
 
-	# load plugins before Jive init so MusicIP hooks to cached artist/genre queries from Jive->init() will take root
+	$log->info('SqueezeCenter Alarms init...');
+	Slim::Utils::Alarm->init();
+
+	# load plugins before Jive init so MusicMagic hooks to cached artist/genre queries from Jive->init() will take root
 	$log->info("SqueezeCenter Plugins init...");
 	Slim::Utils::PluginManager->init();
 

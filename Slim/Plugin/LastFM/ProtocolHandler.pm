@@ -59,6 +59,8 @@ sub shouldLoop () { 0 }
 
 sub canSeek { 0 }
 
+sub isRemote { 1 }
+
 # Source for AudioScrobbler (L = Last.fm)
 # Must append trackauth value as well
 sub audioScrobblerSource {

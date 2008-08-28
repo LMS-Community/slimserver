@@ -340,8 +340,6 @@ sub rescanExitHandler {
 			my %params = (
 				'header' => $client->string('PLUGIN_RESCAN_TIMER_SET'),
 				'valueRef' => \$value,
-				'cursorPos' => 1,
-				'pref' => 'time',
 				'callback' => \&settingsExitHandler
 			);
 			
@@ -383,7 +381,8 @@ sub rescanExitHandler {
 				'onPlay'       => sub { $prefs->set('type', $_[1]->{'value'}); },
 				'onAdd'        => sub { $prefs->set('type', $_[1]->{'value'}); },
 				'onRight'      => sub { $prefs->set('type', $_[1]->{'value'}); },
-				'header'       => '{PLUGIN_RESCAN_TIMER_TYPE}{count}',
+				'header'       => '{PLUGIN_RESCAN_TIMER_TYPE}',
+				'headerAddCount' => 1,
 				'pref'         => sub { return $prefs->get('type'); },
 				'initialValue' => sub { return $prefs->get('type'); },
 				'valueRef'     => \$value,
@@ -404,15 +403,13 @@ sub settingsExitHandler {
 
 	$exittype = uc($exittype);
 
-	if ($exittype eq 'LEFT') {
+	if ($exittype eq 'LEFT' || $exittype eq 'RIGHT') {
 
 		$prefs->set($client->modeParam('pref'), ${$client->modeParam('valueRef')});
 
-		Slim::Buttons::Common::popModeRight($client);
+		$client->showBriefly({line=>[$client->string('PLUGIN_RESCAN_TIMER_SAVED')]});
 
-	} elsif ($exittype eq 'RIGHT') {
-
-		$client->bumpRight();
+		Slim::Buttons::Common::popMode($client);
 	}
 }
 

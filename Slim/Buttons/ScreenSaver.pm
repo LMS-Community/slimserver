@@ -31,15 +31,21 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log       = logger('player.ui.screensaver');
+my $timerslog = logger('server.timers');
+
 our %functions = ();
 
 sub init {
 
-	Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, 'SCREENSAVER_JUMP_BACK_NAME');
-	Slim::Buttons::Common::addSaver('nosaver', undef, undef, undef, 'SCREENSAVER_NONE');
+	Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, 'SCREENSAVER_JUMP_BACK_NAME', 'PLAY');
+	Slim::Buttons::Common::addSaver('nosaver', undef, undef, undef, 'SCREENSAVER_NONE', 'PLAY-IDLE-OFF');
 
 	# Each button on the remote has a function:
 	%functions = (
+
+		'playdisp' => \&Slim::Buttons::Playlist::playdisp,
+
 		'done' => sub  {
 			my ($client ,$funct ,$functarg) = @_;
 
@@ -50,6 +56,12 @@ sub init {
 			if (defined $functarg && $functarg eq 'passback') {
 				Slim::Hardware::IR::resendButton($client);
 			}
+
+			# passback only if exposed mode is playlist
+			if (defined $functarg && $functarg eq 'passbackplaylist' && Slim::Buttons::Common::mode($client) eq 'playlist') {
+				Slim::Hardware::IR::resendButton($client);
+			}
+
 		}
 	);
 }
@@ -63,51 +75,54 @@ sub screenSaver {
 	my $display = $client->display;
 
 	my $now  = Time::HiRes::time();
-	my $log  = logger('server.timers');
 	my $mode = Slim::Buttons::Common::mode($client);
+	
+	my $cprefs = $prefs->client($client);
 
 	assert($mode);
 
-	if ($log->is_info) {
+	if ( $timerslog->is_info ) {
 
-		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $prefs->client($client)->get('screensavertimeout');
+		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $cprefs->get('screensavertimeout');
 
-		$log->info("screenSaver idle display [$diff] (mode: [$mode])");
+		$timerslog->info("screenSaver idle display [$diff] (mode: [$mode])");
 	}
 
-	# some variables, so save us calling the same functions multiple times.
-	my $saver   = $prefs->client($client)->get(Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver');
-	my $dim     = $prefs->client($client)->get('idleBrightness');
-	my $timeout = $prefs->client($client)->get('screensavertimeout');
+	# some variables, to save us calling the same functions multiple times.
+	my $saver   = $cprefs->get(Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver');
+	my $dim     = $cprefs->get('idleBrightness');
+	my $timeout = $cprefs->get('screensavertimeout');
 	my $irtime  = Slim::Hardware::IR::lastIRTime($client);
+
+	my $savermode = $saver eq 'playlist' ? 'screensaver' : $saver;  # mode when in screensaver, not always same as $saver 
 	
-	# if we are already in now playing, jump back screensaver is redundant and confusing
-	if ($saver eq 'screensaver' && $mode eq 'playlist') {
-		$saver = 'playlist'; 
-	}
-	
-	# automatically control brightness if set to do so.
-	if ($prefs->client($client)->get('autobrightness') && defined $display->brightness()) {
+	# automatically control brightness unless in the middle of showBriefly
+	if (defined $display->brightness() && $display->animateState() != 5) {
+
+		if ($client->power) {
 		
-		# dim the screen if we're not playing...  will restore brightness on next IR input.
-		# only need to do this once, but its hard to ensure all cases, so it might be repeated.
-		if ( $timeout && 
-				$irtime && $irtime < $now - $timeout && 
-				$mode ne 'block' && $client->power()) {
-	
-			$display->brightness($dim) if $display->brightness() != $dim;
+			# dim the screen...  will restore brightness on next IR input.
+			# only need to do this once, but its hard to ensure all cases, so it might be repeated.
+			if ( $timeout && 
+				 $irtime && $irtime < $now - $timeout && 
+				 $mode ne 'block' ) {
+
+				$display->brightness($dim) if $display->brightness() != $dim;
 		
-		} elsif ($client->power && $display->brightness() != $prefs->client($client)->get('powerOnBrightness')) {
-			$display->brightness($prefs->client($client)->get('powerOnBrightness'));
+			} elsif ($display->brightness() != $cprefs->get('powerOnBrightness')) {
+
+				$display->brightness($cprefs->get('powerOnBrightness'));
+			}
 		
-		} elsif (!$client->power && $display->brightness() != $prefs->client($client)->get('powerOffBrightness')) {
-			$display->brightness($prefs->client($client)->get('powerOffBrightness'));
+		} elsif ($display->brightness() != $cprefs->get('powerOffBrightness')) {
+
+			$display->brightness($cprefs->get('powerOffBrightness'));
 		}
 	}
 
-	if ($display->updateMode() == 2 || $display->animateState() ) {
+	if ($display->inhibitSaver) {
 
-		# don't change whilst updates blocked or animating (non scrolling)
+		# don't change if display state inhibits at present
 
 	} elsif ($mode eq 'block') {
 
@@ -116,6 +131,10 @@ sub screenSaver {
 	} elsif ($saver eq 'nosaver' && $client->power()) {
 
 		# don't change modes when none (just dim) is the screensaver.
+	
+	} elsif (Slim::Utils::Alarm->getCurrentAlarm($client) && $mode eq Slim::Utils::Alarm->alarmScreensaver) {
+
+		# don't change modes if the alarmclock has activated the datetime screensaver
 
 	} elsif ($timeout && 
 			
@@ -123,11 +142,11 @@ sub screenSaver {
 			$irtime < $now - $timeout && 
 			
 			# make sure it's not already in a valid saver mode.
-			( ($mode ne $saver && Slim::Buttons::Common::validMode($saver)) || 
+			( ($mode ne $savermode && Slim::Buttons::Common::validMode($savermode)) || 
 				# in case the saver is 'now playing' and we're browsing another song
 				($mode eq 'playlist' && !Slim::Buttons::Playlist::showingNowPlaying($client)) ||
 				# just in case it falls into default, we dont want recursive pushModes
-				($mode ne 'screensaver' && !Slim::Buttons::Common::validMode($saver)) ) &&
+				($mode ne 'screensaver' && !Slim::Buttons::Common::validMode($savermode)) ) &&
 			
 			# not blocked and power is on
 			$mode ne 'block' && $client->power()) {
@@ -138,22 +157,29 @@ sub screenSaver {
 
 			if ($mode eq 'playlist') {
 
+				# set playlist to playing song
 				Slim::Buttons::Playlist::browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
 
 			} else {
 
+				# clear mode stack and set mode to playlist
+				Slim::Buttons::Common::setMode($client, 'home');
+				Slim::Buttons::Home::jump($client, 'playlist');
 				Slim::Buttons::Common::pushMode($client,'playlist');
 			}
 
+			# cover playlist mode with screensaver mode so we get screensaver button functions
+			Slim::Buttons::Common::pushMode($client, 'screensaver');
+
 		} else {
 
-			if (Slim::Buttons::Common::validMode($saver)) {
+			if (Slim::Buttons::Common::validMode($savermode)) {
 
-				Slim::Buttons::Common::pushMode($client, $saver);
+				Slim::Buttons::Common::pushMode($client, $savermode);
 
 			} else {
 
-				logger('player.ui.screensaver')->warn("Mode [$saver] not found, using default");
+				$log->warn("Mode [$savermode] not found, using default");
 
 				Slim::Buttons::Common::pushMode($client, 'screensaver');
 			}
@@ -163,22 +189,22 @@ sub screenSaver {
 
 	} elsif (!$client->power()) {
 
-		$saver = $prefs->client($client)->get('offsaver');
-		$saver =~ s/^SCREENSAVER\./OFF\./;
+		$savermode = $cprefs->get('offsaver');
+		$savermode =~ s/^SCREENSAVER\./OFF\./;
 
-		if ($saver eq 'nosaver') {
+		if ($savermode eq 'nosaver') {
 
 			# do nothing
 
-		} elsif ($mode ne $saver) {
+		} elsif ($mode ne $savermode) {
 
-			if (Slim::Buttons::Common::validMode($saver)) {
+			if (Slim::Buttons::Common::validMode($savermode)) {
 
-				Slim::Buttons::Common::pushMode($client, $saver);
+				Slim::Buttons::Common::pushMode($client, $savermode);
 
 			} else {
 
-				logger('player.ui.screensaver')->warn("Mode [$saver] not found, using default");
+				$log->warn("Mode [$savermode] not found, using default");
 
 				if ($mode ne 'off') {
 					Slim::Buttons::Common::setMode($client, 'off');
@@ -212,14 +238,14 @@ sub wakeup {
 	
 	Slim::Hardware::IR::setLastIRTime($client, Time::HiRes::time());
 
-	if (!$prefs->client($client)->get('autobrightness')) { return; };
-	
 	my $curBrightnessPref;
 	
+	my $cprefs = $prefs->client($client);
+	
 	if (Slim::Buttons::Common::mode($client) eq 'off' || !$client->power()) {
-		$curBrightnessPref = $prefs->client($client)->get('powerOffBrightness');
+		$curBrightnessPref = $cprefs->get('powerOffBrightness');
 	} else {
-		$curBrightnessPref = $prefs->client($client)->get('powerOnBrightness');
+		$curBrightnessPref = $cprefs->get('powerOnBrightness');
 	} 
 	
 	if ($curBrightnessPref != $display->brightness()) {
@@ -239,7 +265,7 @@ sub wakeup {
 		$button ne 'brightness_toggle' &&
 		$display->brightness() == 0 &&
 		$client->power()) { 
-			$prefs->client($client)->set('powerOnBrightness', 1);
+			$cprefs->set('powerOnBrightness', 1);
 			$display->brightness(1);
 	}
 } 
@@ -247,7 +273,7 @@ sub wakeup {
 sub setMode {
 	my $client = shift;
 
-	logger('player.ui.screensaver')->debug("Going into screensaver mode.");
+	$log->is_debug && $log->debug("Going into screensaver mode.");
 
 	$client->lines( $client->customPlaylistLines() || \&Slim::Buttons::Playlist::lines );
 

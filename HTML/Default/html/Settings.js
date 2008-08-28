@@ -28,7 +28,7 @@ Settings = {
 							region: 'north',
 							contentEl: 'inner_header',
 							border: false,
-							height: 33,
+							height: 32,
 							margins: '0 15'
 						},
 						{
@@ -86,41 +86,25 @@ Settings = {
 			items: settingsTabs
 		});
 
-		this.tp.on('beforetabchange', function(tb, tab, ev){
+		this.tp.on('beforetabchange', function(tb, tab, ev) {
 			var modified = false;
-
+			
 			try { modified = frames.settings.Settings.Page.isModified(); }
 			catch(e){}
+			
+			if (!modified)
+				return true;
+				
+			return Settings._confirmPageChange(function(btn, a, b){
+				if (btn == 'no' || btn == 'yes') {
+					if (btn == 'yes')
+						this.submitSettings();
 
-			if (modified) {
-				Ext.Msg.show({
-					title: SqueezeJS.string('settings'),
-					msg: SqueezeJS.string('settings_changed_confirm'),
-					width: 300,
-					closable: false,
-					buttons: {
-						yes: SqueezeJS.string('yes'),
-						no: SqueezeJS.string('no'),
-						cancel: SqueezeJS.string('cancel')
-					},
-					fn: function(btn, a, b){
-						if (btn == 'yes') {
-							if (this.submitSettings()) {
-								this._resetModified();
-								tb.activate(tab);
-							}
-						}
+					this._resetModified();
+					tb.activate(tab);
+				}
 
-						else if (btn == 'no') {
-							this._resetModified();
-							tb.activate(tab);
-						}
-					},
-					scope: this
-				});
-
-				return false;
-			}
+			}.createDelegate(this));
 		}, this);
 
 		new Ext.Button({
@@ -165,7 +149,16 @@ Settings = {
 	},
 
 	submitSettings : function() {
-		try { frames.settings.Settings.Page.submit() }
+		try { 
+			frames.settings.Settings.Page.submit();
+			// dirty hack to give Opera a second to finish the submit...
+			if (Ext.isOpera) {
+				var date = new Date();
+				var curDate = null;
+				do { curDate = new Date(); } 
+				while(curDate-date < 500);
+			}
+		}
 		catch(e){ return false; }
 		return true;
 	},
@@ -180,6 +173,56 @@ Settings = {
 	_resetModified : function() {
 		try { frames.settings.Settings.Page.resetModified(); }
 		catch(e){}
+	},
+
+	_isModified : function() {
+		var modified = false;
+		try { modified = frames.settings.Settings.Page.isModified(); }
+		catch(e){}
+		return modified;
+	},
+	
+	_confirmPageChange : function(cb) {
+		if (typeof cb == 'string') {
+			var url = cb;
+			cb = function(btn){
+				if (btn == 'no' || btn == 'yes') {
+					if (btn == 'yes')
+						this.submitSettings();
+
+					this._resetModified();
+					try { frames.settings.location = url; }
+					catch(e) { location = url; }
+				}
+			};
+		}
+
+		Ext.Msg.show({
+			title: SqueezeJS.string('settings'),
+			msg: SqueezeJS.string('settings_changed_confirm'),
+			width: 300,
+			closable: false,
+			buttons: Ext.Msg.YESNOCANCEL,
+			fn: cb,
+			scope: this
+		});
+		return false;
+	},
+	
+	resetPlayer : function(url) {
+		Ext.Msg.show({
+			title: SqueezeJS.string('reset_player'),
+			msg: SqueezeJS.string('reset_player_confirm'),
+			width: 300,
+			closable: false,
+			buttons: Ext.Msg.YESNO,
+			fn: function(btn) {
+				if (btn == 'yes') {
+					location = url;
+				}
+			},
+			scope: this
+		});
 	}
 }
 
@@ -189,12 +232,18 @@ Settings.Page = function(){
 
 	return {
 		init : function(){
+			this.initSliders();
+			this.showWarning();
 			this.initDescPopup();
+
 			SqueezeJS.UI.FilesystemBrowser.init();
 			SqueezeJS.UI.ScrollPanel.init();
 
+			this.onResize(0, Ext.lib.Dom.getViewHeight());
+			Ext.EventManager.onWindowResize(this.onResize);
+
 			var items = Ext.query('input');
-			for(var i = 0; i < items.length; i++) {
+			for (var i = 0; i < items.length; i++) {
 				var inputEl;
 
 				if (inputEl = Ext.get(items[i])) {
@@ -211,14 +260,14 @@ Settings.Page = function(){
 				}
 			}
 
-			this.onResize(0, Ext.lib.Dom.getViewHeight());
-			Ext.EventManager.onWindowResize(this.onResize);
-
-			Ext.select('input, textarea, select').on('change', function(ev){
-				modified = true;
+			Ext.select('input, textarea, select').on({
+				change: {
+					fn: this._checkModified
+				},
+				blur: {
+					fn: this._checkModified
+				}
 			});
-
-			this.showWarning();
 		},
 
 		initDescPopup : function(){
@@ -295,9 +344,12 @@ Settings.Page = function(){
 						checked: playerList[x].current,
 						cls: 'playerList',
 						group: 'playerList',
-						handler: function(ev){
-							location = location.pathname + '?player=' + ev.value + '&playerid=' + ev.value;
-						}
+						handler: function(ev) {
+							this._confirmPageChange(
+								location.pathname + '?player=' + ev.value + '&playerid=' + ev.value
+							);
+						},
+						scope: this
 					})
 				);
 			}
@@ -316,8 +368,8 @@ Settings.Page = function(){
 					this.fireEvent('arrowclick', this, ev);
 				},
 				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
-				tooltip: SqueezeJS.string('advanced_settings'),
-				arrowTooltip: SqueezeJS.string('advanced_settings'),
+				tooltip: SqueezeJS.string('settings'),
+				arrowTooltip: SqueezeJS.string('settings'),
 				tooltipType: 'title'
 			});
 
@@ -333,12 +385,57 @@ Settings.Page = function(){
 						checked: settingsList[x].current,
 						cls: 'settingsList',
 						group: 'settingsList',
-						handler: function(ev){
-							location = webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid;
-						}
+						handler: function(ev) {
+							this._confirmPageChange(
+								webroot + ev.value + 'player=' + playerid + '&playerid=' + playerid
+							);
+						},
+						scope: this
 					})
 				);
 			}
+		},
+		
+		initSliders : function() {
+			// sliders are broken in IE6 - don't use them
+			if (Ext.isIE6)
+				return;
+	
+			var items = Ext.query('input[class*=sliderInput_]');
+			var inputEl;
+			
+			for(var i = 0; i < items.length; i++) {
+	
+				if (inputEl = Ext.get(items[i])) {
+					var min, max, increment;
+					min = 0;
+					max = 100;
+					increment = 1;
+
+					var params = inputEl.dom.className.match(/sliderInput_([-]?\d+)_(\d+)_(\d+)/);
+
+					if (params == null) {
+						params = inputEl.dom.className.match(/sliderInput_([-]?\d+)_(\d+)/);
+						min = RegExp.$1;
+						max = RegExp.$2;
+					}
+
+					else {
+						min = RegExp.$1;
+						max = RegExp.$2;
+						increment = RegExp.$3;
+					}
+
+					new SqueezeJS.UI.SliderInput({
+						width: 200,
+						minValue: min,
+						maxValue: max,
+						increment: increment,
+				 		input: inputEl,
+				 		cls: 'settingsSlider'
+					});
+				}
+			}			
 		},
 
 		validatePref : function(myPref, namespace) {
@@ -361,8 +458,8 @@ Settings.Page = function(){
 				
 			});
 		},
-
-		submit : function(){
+		
+		submit : function(ajax, cb) {
 			var items = Ext.query('input.invalid');
 
 			for(var i = 0; i < items.length; i++) {
@@ -374,8 +471,9 @@ Settings.Page = function(){
 			}
 
 			// block first attempt to save if there are invalid values
-			if (items.length == 0 || invalidWarned)
+			if (items.length == 0 || invalidWarned) {
 				document.forms.settingsForm.submit();
+			}
 			else
 				invalidWarned = true;
 
@@ -416,12 +514,91 @@ Settings.Page = function(){
 			return modified;
 		},
 
+		_checkModified : function(ev, input){
+			modified = modified || (input.value != input.defaultValue);
+		},
+
+		setModified : function(){
+			modified = true;	
+		},
+		
 		resetModified : function(){
 			modified = false;
 		},
 
 		onResize : function(width, height){
 			Ext.util.CSS.updateRule('.x-menu-list', 'max-height', (height - 50) + 'px');
+		},
+
+		_confirmPageChange : function(url) {
+			var modified = this.isModified();
+
+			if (modified) {
+				try { parent.Settings._confirmPageChange(url); }
+				catch(e) {}
+				return false;
+			}
+			else {
+				location = url;
+			}
+			return true;
+		}
+
+	};
+}();
+
+Settings.Alarm = function() {
+	return {
+		sliders: new Array(),
+
+		init: function(alarmId, alarmCount) {
+			var el;
+			if (el = Ext.get('alarm_remove_' + alarmId)) {
+				el.on({
+					click: {
+						fn: function() {
+							Ext.get('alarmtime' + alarmId).dom.value = '';
+							Ext.get('alarm' + alarmId).setDisplayed('none');
+							Ext.get('button' + alarmId).show();
+						}
+					}
+				});
+			}
+
+			if (el = Ext.get('AddAlarm')) {
+				el.on({
+					click: {
+						fn: function() {
+							Ext.get('alarm' + alarmId).show();
+							Ext.get('button' + alarmId).setDisplayed('none');
+						}
+					}
+				});
+			}
+		},	
+		
+		initTimeControls: function(timeFormat, altFormats) {
+			var items = Ext.DomQuery.select('input.timeControl');
+			
+			for (var i = 0; i < items.length; i++) {
+
+				new Ext.form.TimeField({
+					applyTo: items[i],
+					altFormats: "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H" + (altFormats ? '|' + altFormats : ''),
+					increment: 5,
+					format: timeFormat,
+					hideTrigger: true,
+					// overwriting the original code to make it case insensitive
+					// XXX - replace Ext.form.DateField with fixed version when available
+					// see http://extjs.com/forum/showthread.php?t=35353
+					beforeBlur : function(){
+						var v = this.parseDate(this.getRawValue().toUpperCase());
+						if(v){
+							this.setValue(v.dateFormat(this.format));
+						}
+					}
+				});
+			}
 		}
 	};
 }();

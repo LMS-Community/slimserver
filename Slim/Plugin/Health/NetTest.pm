@@ -239,14 +239,23 @@ sub lines {
 	my $rate = $params->{'rate'};
 	my $inst = $params->{'inst'};
 	my $avg  = $params->{'log'}->avg;
-	my $barWidth = $client->displayWidth > 40 ? 100 : 40;
+	my $text = sprintf("%i kbps : %3i%% Avg: %3i%%", $rate, $inst, $avg);
+
+	my ($line, $overlay);
+
+	if ($client->displayWidth > 160) {
+		$line    = [ $client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE') ];
+		$overlay = [ $client->symbols($client->progressBar(100, $inst/100)), $text ];
+	} else {
+		$line    = [ $text, $client->symbols($client->progressBar($client->displayWidth, $inst/100)) ];
+	}
 
 	return {
-		'line'    => [$client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE') ],
-		'overlay' => [ $client->symbols($client->progressBar($barWidth, $inst/100)),
-					   sprintf("%i kbps : %3i%% Avg: %3i%%", $rate, $inst, $avg) ],
+		'line'    => $line,
+		'overlay' => $overlay,
 		'fonts'    => {
 			'graphic-320x32' => 'standard',
+			'graphic-160x32' => 'light_n',
 			'graphic-280x16' => 'medium',
 			'text' => 2,
 		}

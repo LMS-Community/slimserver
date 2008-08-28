@@ -192,6 +192,10 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    rescan          done
  Y    unknownir       <ircode>                    <timestamp>
  N    prefset         <namespace>                 <prefname>                  <newvalue>
+ Y    alarm           sound                       <id>
+ Y    alarm           end                         <id>
+ Y    alarm           snooze                      <id>
+ Y    alarm           snooze_end                  <id>
 
 =head2 PLUGINS
 
@@ -422,7 +426,6 @@ use Tie::IxHash;
 
 use Slim::Control::Commands;
 use Slim::Control::Queries;
-use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(cstring);
@@ -463,7 +466,7 @@ sub init {
 ######################################################################################################################################################################
 
 	addDispatch(['abortscan'],                                                                         [0, 0, 0, \&Slim::Control::Commands::abortScanCommand]);
-	addDispatch(['alarm'],                                                                             [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
+	addDispatch(['alarm',          '_cmd'],                                                                     [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
 	addDispatch(['alarms',         '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::alarmsQuery]);
 	addDispatch(['album',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['albums',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::albumsQuery]);
@@ -486,6 +489,7 @@ sub init {
 	addDispatch(['readdirectory',  '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::readDirectoryQuery]);
 	addDispatch(['genre',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['genres',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::genresQuery]);
+	addDispatch(['getstring',      '_tokens'],                                                         [0, 1, 0, \&Slim::Control::Queries::getStringQuery]);
 	addDispatch(['info',           'total',          'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'artists',    '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'genres',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
@@ -498,6 +502,8 @@ sub init {
 	addDispatch(['mixer',          'bass',           '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'muting',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'muting',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+	addDispatch(['mixer',          'stereoxl',       '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+	addDispatch(['mixer',          'stereoxl',       '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'pitch',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'pitch',          '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'treble',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
@@ -626,6 +632,10 @@ sub init {
 	addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
 	addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
 	addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
+	addDispatch(['alarm',          'sound',          '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['alarm',          'end',            '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['alarm',          'snooze',         '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['alarm',          'snooze_end',     '_id'],                                           [1, 0, 0, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
@@ -1753,8 +1763,6 @@ sub normalize {
 # execute the request
 sub execute {
 	my $self = shift;
-	
-	$log->debug('Enter');
 
 	if ($log->is_info) {
 		$self->dump("Request");
@@ -1942,28 +1950,20 @@ sub notify {
 					next;
 				}
 			}
-
-			my $funcName = $listener;
-
-			if ($log->is_debug && ref($notifyFuncRef) eq 'CODE') {
-				$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
-			}
 		
-			if (defined($requestsRef)) {
-
+			if ( defined $requestsRef ) {
 				if ($self->isNotCommand($requestsRef)) {
-
-					if ( $log->is_debug ) {
-						$log->debug(sprintf("Don't notify %s of %s !~ %s",
-							$funcName, $self->getRequestString, __filterString($requestsRef)
-						));
-					}
-
 					next;
 				}
 			}
 
 			if ( $log->is_debug ) {
+				my $funcName = $listener;
+
+				if ( ref($notifyFuncRef) eq 'CODE' ) {
+					$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
+				}
+				
 				$log->debug(sprintf("Notifying %s of %s =~ %s",
 					$funcName, $self->getRequestString, __filterString($requestsRef)
 				));
@@ -2307,11 +2307,9 @@ sub __isCmdQuery {
 			# check each request term matches one of the passed params
 			for (my $i = 0; $i < $possibleNamesCount; $i++) {
 
-				my $name = $self->{'_request'}->[$i];;
-
-				# return as soon we fail
+				my $name = $self->{'_request'}->[$i];
+			
 				if (!grep(/^$name$/, @{$possibleNames->[$i]})) {
-
 					return 0;
 				}
 			}

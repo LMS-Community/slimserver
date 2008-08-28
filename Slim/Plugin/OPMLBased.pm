@@ -169,14 +169,17 @@ sub cliRadiosQuery {
 			};
 		}
 		
-		# XXX: SLIM_SERVICE, exclude beta plugins here
-		
 		# Exclude disabled plugins
 		my $disabled = $prefs->get('sn_disabled_plugins');
 		
 		if ( main::SLIM_SERVICE ) {
 			my $client = $request->client();
 			$disabled  = [ keys %{ $client->playerData->userid->allowedServices->{disabled} } ];
+			
+			# Hide plugins if necessary (private, beta, etc)
+			if ( !$client->playerData->userid->canSeePlugin($tag) ) {
+				$data = {};
+			}
 		}
 		
 		if ( $disabled ) {

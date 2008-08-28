@@ -152,10 +152,6 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['randomplaygenreselectall', '_value'],
 	[1, 0, 0, \&genreSelectAllOrNone]);
 	
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','contributor');
-
 	Slim::Player::ProtocolHandlers->registerHandler(
 		randomplay => 'Slim::Plugin::RandomPlay::ProtocolHandler'
 	);
@@ -676,9 +672,11 @@ sub playRandom {
 
 	if ($numItems) {
 
-		if (!$addOnly) {
-			$client->execute(['stop']);
-			$client->execute(['power', '1']);
+		if (0 && !$addOnly) {
+			my $request = $client->execute(['stop']);
+			$request->source('PLUGIN_RANDOMPLAY');
+			$request = $client->execute(['power', '1']);
+			$request->source('PLUGIN_RANDOMPLAY');
 		}
 
 		my $find = {};
@@ -965,7 +963,8 @@ sub setMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		header     => '{PLUGIN_RANDOMPLAY} {count}',
+		header     => '{PLUGIN_RANDOMPLAY}',
+		headerAddCount => 1,
 		listRef    => [qw(track album contributor year genreFilter)],
 		name       => \&getDisplayText,
 		overlayRef => \&getOverlay,
@@ -997,7 +996,8 @@ sub setMode {
 				}
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
-					header     => '{PLUGIN_RANDOM_GENRE_FILTER} {count}',
+					header     => '{PLUGIN_RANDOM_GENRE_FILTER}',
+					headerAddCount => 1,
 					listRef    => \@listRef,
 					modeName   => 'RandomPlayGenreFilter',
 					overlayRef => \&getGenreOverlay,
@@ -1024,8 +1024,10 @@ sub commandCallback {
 	my $request = shift;
 	my $client  = $request->client();
 
-	# Don't respond to callback for ourself.
-	if ($request->source && $request->source eq 'PLUGIN_RANDOMPLAY') {
+	# Don't respond to callback for ourself or for requests originating from the alarm clock.  This is necessary,
+	# as the alarm clock uses a playlist play command to start random mixes and we then get notified of them so
+	# could end up stopping immediately.
+	if ($request->source && ($request->source eq 'PLUGIN_RANDOMPLAY' || $request->source eq 'ALARM')) {
 		return;
 	}
 
@@ -1247,6 +1249,22 @@ sub active {
 	}
 	
 	return 0;
+}
+
+# Called by Slim::Utils::Alarm to get the playlists that should be presented as options
+# for an alarm playlist.
+sub getAlarmPlaylists {
+	my $class = shift;
+
+	return [ {
+		type => 'PLUGIN_RANDOMPLAY',
+		items => [
+			{ title => '{PLUGIN_RANDOM_TRACK}', url	=> 'randomplay://track' },
+			{ title => '{PLUGIN_RANDOM_ALBUM}', url	=> 'randomplay://album' },
+			{ title => '{PLUGIN_RANDOM_CONTRIBUTOR}', url => 'randomplay://contributor' },
+			{ title => '{PLUGIN_RANDOM_YEAR}', url => 'randomplay://year' },
+		]
+	} ];
 }
 
 1;

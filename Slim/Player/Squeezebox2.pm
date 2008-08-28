@@ -34,6 +34,10 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $prefslog  = logger('prefs');
+my $directlog = logger('player.streaming.direct');
+my $synclog   = logger('player.sync');
+
 our $defaultPrefs = {
 	'transitionType'     => 0,
 	'transitionDuration' => 10,
@@ -123,6 +127,7 @@ my @volume_map = (
  );
 
 sub dBToFixed {
+	my $client = shift;
 	my $db = shift;
 
 	# Map a floating point dB value to a 16.16 fixed point value to
@@ -136,6 +141,53 @@ sub dBToFixed {
 	else {
 		return int(($floatmult * (1 << 16)) + 0.5);
 	}
+}
+sub getVolumeParameters
+{
+	# A negative stepPoint ensures that the alternate (low level) ramp never kicks in.
+	my $params = 
+	{
+		totalVolumeRange => -50,    # dB
+		stepPoint        => -1,    # Number of steps, up from the bottom, where a 2nd volume ramp kicks in.
+		stepFraction     => 1      # fraction of totalVolumeRange where alternate volume ramp kicks in.
+	};
+	return $params;
+}
+
+sub getVolume
+{
+	my ($client, $volume, $volume_parameters) = @_;
+	my $totalVolumeRange  = $volume_parameters->{totalVolumeRange};
+	my $stepPoint         = $volume_parameters->{stepPoint};
+	my $stepdB            = $volume_parameters->{totalVolumeRange} * $volume_parameters->{stepFraction};
+
+	my $maxVolumedB = (defined $volume_parameters->{maximumVolume}) ? $volume_parameters->{maximumVolume} : 0;
+	
+	# Equation for a line:  
+	# y = mx+b
+	# y1 = mx1+b, y2 = mx2+b.  
+	# y2-y1 = m(x2 - x1)
+	# y2 = m(x2 - x1) + y1
+	my $slope_high = ($maxVolumedB-$stepdB)/(100-$stepPoint) ;
+	my $slope_low  = ($stepdB-$totalVolumeRange)/($stepPoint-0);
+	
+	my $x2 = $volume;
+	my $m  = undef;
+	my $x1 = undef;
+	my $y1 = undef;
+	if ($x2 > $stepPoint) {
+		$m  = $slope_high;
+		$x1 = 100;
+		$y1 = $maxVolumedB;;
+	} else {
+		$m  = $slope_low;
+		$x1 = 0;
+		$y1 = $totalVolumeRange;
+	}
+	my $y2 = $m * ($x2 - $x1) + $y1;
+	# print "$m, ($x1, $y1), ($x2, $y2)\n";
+	return $y2;
+	
 }
 
 sub volume {
@@ -154,10 +206,8 @@ sub volume {
 			$newGain = 0;
 		}
 		else {
-			# With new style volume, let's try -49.5dB as the lowest
-			# value.
-			my $db = ($volume - 100)/2;	
-			$newGain = dBToFixed($db);
+			my $db = $client->getVolume($volume, $client->getVolumeParameters());
+			$newGain = $client->dBToFixed($db);
 		}
 
 		my $data = pack('NNCCNN', $oldGain, $oldGain, $prefs->client($client)->get('digitalVolumeControl'), $preamp, $newGain, $newGain);
@@ -165,11 +215,6 @@ sub volume {
 	}
 	return $volume;
 }
-
-sub periodicScreenRefresh {
-    my $client = shift;
-    # noop for this player - not required
-}    
 
 sub upgradeFirmware {
 	my $client = shift;
@@ -285,9 +330,7 @@ sub directHeaders {
 	my $client = shift;
 	my $headers = shift;
 
-	my $log = logger('player.streaming.direct');
-
-	$log->info("Processing headers for direct streaming:\n$headers");
+	$directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
 
 	my $url = $client->directURL || return;
 	
@@ -314,7 +357,7 @@ sub directHeaders {
 	
 	if (!$response || $response !~ m/ (\d\d\d)/) {
 
-		$log->warn("Invalid response code ($response) from remote stream $url");
+		$directlog->warn("Invalid response code ($response) from remote stream $url");
 
 		$client->failedDirectStream($response);
 
@@ -325,7 +368,7 @@ sub directHeaders {
 		
 		if (($response < 200) || $response > 399) {
 
-			$log->warn("Invalid response code ($response) from remote stream $url");
+			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
 			if ($handler && $handler->can("handleDirectError")) {
 
@@ -346,8 +389,8 @@ sub directHeaders {
 			my $bitrate;
 			my $body;
 
-			if ( $log->is_info ) {
-				$log->info("Processing " . scalar(@headers) . " headers");
+			if ( $directlog->is_info ) {
+				$directlog->info("Processing " . scalar(@headers) . " headers");
 			}
 
 			if ($handler && $handler->can("parseDirectHeaders")) {
@@ -361,7 +404,7 @@ sub directHeaders {
 			
 			# Always prefer the title returned in the headers of a radio station
 			if ( $title ) {
-				$log->info( "Setting new title for $url, $title" );
+				$directlog->is_info && $directlog->info( "Setting new title for $url, $title" );
 				Slim::Music::Info::setCurrentTitle( $url, $title );
 				
 				# Bug 7979, Only update the database title if this item doesn't already have a title
@@ -404,7 +447,7 @@ sub directHeaders {
 				}
 			}
 
-			$log->info("Got a stream type: $contentType bitrate: $bitrate title: $title");
+			$directlog->is_info && $directlog->info("Got a stream type: $contentType bitrate: $bitrate title: $title");
 
 			if ($contentType eq 'wma') {
 				push @guids, @WMA_FILE_PROPERTIES_OBJECT_GUID;
@@ -422,7 +465,7 @@ sub directHeaders {
 
 			if ($redir) {
 
-				$log->info("Redirecting to: $redir");
+				$directlog->is_info && $directlog->info("Redirecting to: $redir");
 				
 				# Store the old URL so we can update its bitrate/content-type/etc
 				$redirects->{ $redir } = $url;			
@@ -437,7 +480,7 @@ sub directHeaders {
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
 
-				$log->info("Direct stream is list, get body to explode");
+				$directlog->info("Direct stream is list, get body to explode");
 
 				$client->directBody(undef);
 
@@ -456,7 +499,7 @@ sub directHeaders {
 					Slim::Music::Info::setTitle( $url, $title ) if $title;
 				}
 
-				$log->info("Beginning direct stream!");
+				$directlog->is_info && $directlog->info("Beginning direct stream!");
 
 				my $loop = $client->shouldLoop($length);
 				
@@ -465,7 +508,7 @@ sub directHeaders {
 				if ( $loop ) {
 					Slim::Music::Info::setDuration( $url, 0 );
 					
-					$log->info('Using infinite loop mode');
+					$directlog->info('Using infinite loop mode');
 				}
 
 				$client->streamformat($contentType);
@@ -473,7 +516,7 @@ sub directHeaders {
 
 			} else {
 
-				$log->warn("Direct stream failed for url: [$url]");
+				$directlog->warn("Direct stream failed for url: [$url]");
 
 				$client->failedDirectStream();
 			}
@@ -488,19 +531,18 @@ sub directHeaders {
 sub directBodyFrame {
 	my $client  = shift;
 	my $body    = shift;
+	
+	my $isInfo = $directlog->is_info;
 
-	my $log     = logger('player.streaming.direct');
 	my $url     = $client->directURL();
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	my $done    = 0;
 
-	if ( $log->is_info ) {
-		$log->info("Got some body from the player, length " . length($body));
-	}
+	$isInfo && $directlog->info("Got some body from the player, length " . length($body));
 	
 	if (length($body)) {
 
-		$log->info("Saving away that body message until we get an empty body");
+		$isInfo && $directlog->info("Saving away that body message until we get an empty body");
 
 		if ($handler && $handler->can('handleBodyFrame')) {
 
@@ -517,9 +559,7 @@ sub directBodyFrame {
 				my $fh = File::Temp->new();
 				$client->directBody( $fh );
 
-				if ( $log->is_info ) {
-					$log->info("directBodyFrame: Saving to temp file: " . $fh->filename);
-				}
+				$isInfo && $directlog->info("directBodyFrame: Saving to temp file: " . $fh->filename);
 			}
 			
 			$client->directBody->write( $body, length($body) );
@@ -527,9 +567,7 @@ sub directBodyFrame {
 
 	} else {
 
-		if ( $log->is_info ) {
-			$log->info("Empty body means we should parse what we have for " . $client->directURL);
-		}
+		$isInfo && $directlog->info("Empty body means we should parse what we have for " . $client->directURL);
 
 		$done = 1;
 	}
@@ -561,7 +599,7 @@ sub directBodyFrame {
 
 			} else {
 
-				$log->warn("Body had no parsable items in it.");
+				$directlog->warn("Body had no parsable items in it.");
 
 				$client->failedDirectStream( $client->string('PLAYLIST_NO_ITEMS_FOUND') );
 			}
@@ -571,7 +609,7 @@ sub directBodyFrame {
 
 		} else {
 
-			$log->warn("Actually, the body was empty. Got nobody...");
+			$directlog->warn("Actually, the body was empty. Got nobody...");
 		}
 	}
 }
@@ -598,10 +636,9 @@ sub failedDirectStream {
 	my $client = shift;
 	my $error  = shift;
 
-	my $log    = logger('player.streaming.direct');
 	my $url    = $client->directURL();
 
-	$log->warn("Oh, well failed to do a direct stream for: $url [$error]");
+	$directlog->warn("Oh, well failed to do a direct stream for: $url [$error]");
 
 	$client->directURL(undef);
 	$client->directBody(undef);
@@ -663,7 +700,7 @@ sub canDoReplayGain {
 	my $replay_gain = shift;
 
 	if (defined($replay_gain)) {
-		return dBToFixed($replay_gain);
+		return $client->dBToFixed($replay_gain);
 	}
 
 	return 0;
@@ -735,7 +772,7 @@ sub getPlayerSetting {
 	my $client = shift;
 	my $pref   = shift;
 
-	logger('prefs')->info("Getting pref: [$pref]");
+	$prefslog->is_info && $prefslog->info("Getting pref: [$pref]");
 
 	my $currpref = $pref_settings->{$pref};
 
@@ -750,8 +787,10 @@ sub setPlayerSetting {
 	my $value  = shift;
 
 	return unless defined $value;
+	
+	my $isInfo = $prefslog->is_info;
 
-	logger('prefs')->info("Setting pref: [$pref] to [$value]");
+	$isInfo && $prefslog->info("Setting pref: [$pref] to [$value]");
 
 	my $currpref = $pref_settings->{$pref};
 
@@ -765,7 +804,7 @@ sub setPlayerSetting {
 	else {
 
 		# we can't update the pref's while playing, cache this change for later
-		logger('prefs')->info("Pending change for $pref");
+		$isInfo && $prefslog->info("Pending change for $pref");
 
 		$client->pendingPrefChanges()->{$pref} = 1;
 	}
@@ -775,6 +814,8 @@ sub setPlayerSetting {
 sub playerSettingsFrame {
 	my $client   = shift;
 	my $data_ref = shift;
+	
+	my $isInfo = $prefslog->is_info;
 
 	my $id = unpack('C', $$data_ref);
 
@@ -791,9 +832,7 @@ sub playerSettingsFrame {
 			$value = undef;
 		}
 
-		if ( logger('prefs')->is_info ) {
-			logger('prefs')->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
-		}
+		$isInfo && $prefslog->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
 
 		if ( !defined $value ) {
 			# Only send the value to the firmware if we actually have one
@@ -863,9 +902,7 @@ sub playPoint {
 sub startAt {
 	my ($client, $at) = @_;
 	
-	if ( logger('player.sync')->is_debug ) {
-		logger('player.sync')->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
-	}
+	$synclog->is_debug && $synclog->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
 
 	$client->stream( 'u', { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } );
 	return 1;

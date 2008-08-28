@@ -43,7 +43,7 @@ function(){
 								Ext.onReady(function(){
 									Favorites.initHotkeyList(new Array(
 									[% FOREACH k IN hotkeys %]
-										'[% k.key _ (k.title ? '&nbsp;-&nbsp;' _ k.title : '') %]'[% UNLESS loop.last; ','; END %]
+										'[% k.key _ (k.title ? '&nbsp;-&nbsp;' _ k.title : '') | replace("'", "%27") %]'[% UNLESS loop.last; ','; END %]
 									[% END %]
 									), '[% entry.hotkey %]', 'hotkey', 'entryhotkey')
 								}, Favorites);

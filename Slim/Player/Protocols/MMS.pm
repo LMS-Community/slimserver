@@ -75,6 +75,8 @@ sub new {
 	return $self;
 }
 
+sub isRemote { 1 }
+
 sub contentType {
 	my $self = shift;
 
@@ -210,11 +212,13 @@ sub getFormatForURL {
 sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 	
+	my $isDebug = $log->is_debug;
+	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 	
 	foreach my $header (@headers) {
 	
-		logger('player.streaming.direct')->debug("header-ds: $header");
+		$isDebug && $log->debug("header-ds: $header");
 
 		if ($header =~ /^Location:\s*(.*)/i) {
 			$redir = $1;

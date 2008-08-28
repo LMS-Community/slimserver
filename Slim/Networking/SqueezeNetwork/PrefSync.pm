@@ -282,6 +282,11 @@ sub _syncDown_done {
 					# Wipe timestamp values so the pref is
 					# not immediately synced back up to SN
 					$cprefs->timestamp( $pref, 'wipe' );
+					
+					if ( $pref eq 'alarms' ) {
+						# Reload any changed alarms
+					 	Slim::Utils::Alarm->loadAlarms($client);
+					}
 				}
 			}
 		}

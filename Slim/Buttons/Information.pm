@@ -110,6 +110,8 @@ sub init {
 			'listRef' => ['TIME','ALBUMS','TRACKS','ARTISTS','GENRES'],
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
+			'overlayRef' => \&infoDisplayOverlay,
+			'overlayRefArgs' => 'CV',
 			'formatRef' => [
 				\&timeFormat,
 				\&Slim::Utils::Misc::delimitThousands,
@@ -137,6 +139,8 @@ sub init {
 			'listRef' => [],       # this is replaced in mainExitHandler
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
+			'overlayRef' => \&infoDisplayOverlay,
+			'overlayRefArgs' => 'CV',
 			'valueFunctRef' => [], # this is replaced in mainExitHandler
 			'menuName' => 'player'
 		},
@@ -146,27 +150,29 @@ sub init {
 			'header' => 'INFORMATION_MENU_SERVER',
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
-			'listRef' => [qw(VERSION DIAGSTRING SERVER_PORT SERVER_HTTP HOSTNAME HOSTIP CLIENTS)],
+			'listRef' => [qw(VERSION SERVER_PORT SERVER_HTTP HOSTNAME HOSTIP CLIENTS DIAGSTRING)],
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
+			'overlayRef' => \&infoDisplayOverlay,
+			'overlayRefArgs' => 'CV',
 			'formatRef' => [
 				undef,
 				undef,
 				undef,
 				undef,
 				undef,
-				undef,
 				\&Slim::Utils::Misc::delimitThousands,
+				undef,
 			],
 
 			'valueFunctRef' => [
 				sub { $::VERSION },
-				\&Slim::Utils::Misc::settingsDiagString,
 				sub { 3483 },
 				sub { preferences('server')->get('httpport') },
 				\&Slim::Utils::Network::hostName,
 				\&Slim::Utils::Network::serverAddr,
 				\&Slim::Player::Client::clientCount,
+				\&Slim::Utils::Misc::settingsDiagString,
 			],
 
 			'menuName' => 'server'
@@ -285,17 +291,49 @@ sub timeFormat {
 sub infoDisplay {
 	my ($client,$value) = @_;
 
+	return (_infoDisplaySplit($client, $value))[0];
+}
+
+# function providing the overlay portion of the display for the
+# library, server, and player menus
+sub infoDisplayOverlay {
+	my ($client,$value) = @_;
+
+	return ( undef, (_infoDisplaySplit($client, $value))[1] );
+}
+
+# Decide whether to put the information in the overlay (if won't cause scolling) or append to line itself
+# Called once for each of above function with the same params due to the wonders of Input.List...
+sub _infoDisplaySplit {
+	my $client = shift;
+	my $value  = shift;
+
 	my $listIndex     = $client->modeParam('listIndex');
 	my $formatRef     = $client->modeParam('formatRef');
 	my $valueFunctRef = $client->modeParam('valueFunctRef');
+	
+	my $prefix = $client->string('INFORMATION_' . uc($value));
+	my $info;
+	my $line;
+	my $overlay;
 
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
-		return $client->string('INFORMATION_' . uc($value)) . ': '
-		. $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client));
+		$info = $formatRef->[$listIndex]->($valueFunctRef->[$listIndex]->($client));
 	} else {
-		return $client->string('INFORMATION_' . uc($value)) . ': '
-		. $valueFunctRef->[$listIndex]->($client);
+		$info = $valueFunctRef->[$listIndex]->($client);
 	}
+
+	if ($value =~ /SIGNAL_STRENGTH|VOLTAGE/ || $client->measureText($prefix . $info, 2, 1) < $client->displayWidth) {
+		# put info in the overlay as it will change (signal strenght or voltage) or no scrolling will occur
+		$line = $prefix;
+		$overlay = $info
+	} else {
+		# append info to ident string as it does not fit on the screen so let the whole string scroll
+		$line = $prefix . '  ' . $info;
+		$overlay = undef;
+	}
+
+	return ($line, $overlay);
 }
 
 # function defining the list of plugins to display

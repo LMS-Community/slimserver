@@ -94,7 +94,7 @@ sub gotDiscoveryRequest {
 
 		$response = 'D'. pack('C', 0) x 17; 
 
-	} elsif ($deviceid >= 2 || $deviceid <= 4) {
+	} elsif ($deviceid >= 2 || $deviceid <= 4) {  ## FIXME always true
 
 		$log->info("It's a Squeezebox");
 

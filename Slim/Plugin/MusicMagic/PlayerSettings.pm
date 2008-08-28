@@ -68,7 +68,7 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "mix_size",
 			'initialValue'   => "mix_size",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 
@@ -85,7 +85,7 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "mix_type",
 			'initialValue'   => "mix_type",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 
@@ -96,10 +96,11 @@ sub init {
 			'headerValue'    => 'unscaled',
 			'min'            => 0,
 			'max'            => 200,
+			'increment'      => 1,
 			'onChange'       => \&setPref,
 			'pref'           => "mix_style",
 			'initialValue'   => "mix_style",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 
@@ -114,7 +115,7 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "mix_variety",
 			'initialValue'   => "mix_variety",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 
@@ -127,7 +128,7 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "mix_filter",
 			'initialValue'   => "mix_filter",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 
@@ -143,7 +144,7 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "mix_genre",
 			'initialValue'   => "mix_genre",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 		
@@ -160,7 +161,7 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "reject_type",
 			'initialValue'   => "reject_type",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 		
@@ -175,10 +176,23 @@ sub init {
 			'onChange'       => \&setPref,
 			'pref'           => "reject_size",
 			'initialValue'   => "reject_size",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRef'     => \&settingsOverlay,
 			'overlayRefArgs' => 'C',
 		},
 	);
+}
+
+sub settingsOverlay {
+	my $client = shift;
+
+	my $overlay1;
+
+	if ($client->linesPerScreen == 2) {
+		# Use icons for MIXRIGHT as text is too long in some languages
+		$overlay1 = $client->symbols('mixable') . $client->symbols('rightarrow');
+	}
+
+	return ( $overlay1, undef );
 }
 
 sub setPref {
@@ -187,7 +201,9 @@ sub setPref {
 	
 	my $pref = $client->modeParam('pref');
 	
-	$prefs->client($client)->set($pref, $value);
+	my $newvalue = $prefs->client($client)->get($pref) + $value;
+	
+	$prefs->client($client)->set($pref, $newvalue);
 }
 
 sub executeCommand {

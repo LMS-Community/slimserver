@@ -145,8 +145,8 @@ sub init {
 		},
 	}
 
-	# This is also a big source of the inconsistency in "play" and "add" functions.
-	# We might want to make this a simple...'add' = clear playlist, 'play' = play everything
+	# Align actions as per Bug 8929 - in home menu add and play just go right.
+	# When on Now Playing item, preserve the Clear Playlist shortcut
 	%functions = (
 		'add' => sub  {
 			my $client = shift;
@@ -160,32 +160,13 @@ sub init {
 
 			} else {
 
-				Slim::Buttons::Common::pushModeLeft($client,'playlist');
-			}	
+				Slim::Buttons::Input::List::exitInput($client, 'right');
+			}
 		},
 
 		'play' => sub  {
 			my $client = shift;
-
-			my $selection = $client->curSelection($client->curDepth());
-			if ($selection eq 'NOW_PLAYING') {
-
-				$client->execute(['play']);
-
-				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-
-			} elsif ($selection eq 'SAVED_PLAYLISTS'
-						|| ($selection =~ /^BROWSE_/
-							&& $selection ne 'BROWSE_MUSIC')) {
-							
-				# If we're in a Browse mode and the user
-				# presses play, just go right, per Dean
-				Slim::Buttons::Input::List::exitInput($client, 'right');
-
-			} else {
-
-				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
-			}
+			Slim::Buttons::Input::List::exitInput($client, 'right');		
 		},
 	);
 }
@@ -494,7 +475,8 @@ sub homeExitHandler {
 			$params{'header'}  = $client->string($containerLevel);
 
 			# move reference to new depth
-			$client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
+			my $curDepth = $client->curDepth();
+			$client->curDepth( $curDepth . "-" . $client->curSelection($curDepth) );
 			
 			# check for disalbed plugins in item list.
 			# Bug: 7089 - sort by ranking unless it's the plugins menu
@@ -609,6 +591,11 @@ sub createList {
 			next;
 		}
 		
+		# Leakage of the LineIn plugin..
+		if ($sub eq 'PLUGIN_LINE_IN' && !$client->hasLineIn) {
+			next;
+		}
+
 		if ( main::SLIM_SERVICE ) {
 			# Hide disabled menus
 			if ( exists $disabledMenus{$sub} ) {
@@ -620,7 +607,10 @@ sub createList {
 				next;
 			}
 			
-			# XXX: hide beta plugins here
+			# Hide plugins if necessary (private, beta, etc)
+			if ( !$client->playerData->userid->canSeePlugin($sub) ) {
+				next;
+			}
 			
 			# Hide out-of-country services on SN
 			my $allowed = $client->playerData->userid->allowedServices();
@@ -715,13 +705,7 @@ sub homeheader {
 	my $client = $_[0];
 
 	if ( main::SLIM_SERVICE ) {
-		my $config = SDI::Util::SNConfig::get_config();
-		if ( $config->{dcname} =~ /^(?:sv|dc|de)$/ ) {
-			return $client->string('SQUEEZENETWORK_HOME');
-		}
-		else {
-			return $client->string('SQUEEZENETWORK_HOME_TEST');
-		}
+		return $client->snHomeName();
 	}
 
 	if ($client->isa("Slim::Player::SLIMP3")) {
@@ -735,6 +719,10 @@ sub homeheader {
 	} elsif ($client->isa("Slim::Player::Transporter")) {
 
 		return $client->string('TRANSPORTER_HOME');
+
+	} elsif ($client->isa("Slim::Player::Boom")) {
+
+		return $client->string('HOMEMENU');
 
 	} else {
 
@@ -801,6 +789,11 @@ sub unusedMenuOptions {
 		delete $menuChoices{'PLUGIN_DIGITAL_INPUT'};
 	}
 
+	# Leakage from Line In Plugin
+	if (defined $menuChoices{'PLUGIN_LINE_IN'} && !$client->hasLineIn) {
+		delete $menuChoices{'PLUGIN_LINE_IN'};
+	}
+
 	for my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
@@ -851,6 +844,10 @@ sub updateMenu {
 	}
 	
 	for my $menuItem (@{ $prefs->client($client)->get('menuItem') }) {
+		# more leakage of the LineIn plugin..
+		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
+			next;
+		}
 
 		my $plugin = Slim::Utils::PluginManager->dataForPlugin($menuItem);
 

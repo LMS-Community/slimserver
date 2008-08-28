@@ -1,53 +1,77 @@
 PLUGIN_SIRIUS_MODULE_NAME
+	DA	Sirius Internetradio
 	DE	SIRIUS Internet Radio
 	EN	SIRIUS Internet Radio
 	ES	SIRIUS Internet Radio
+	FI	SIRIUS-internet-radio
 	FR	Radio Internet SIRIUS
 	HE	רדיו אינטרנט ‏SIRIUS
 	IT	Radio Internet SIRIUS
 	NL	SIRIUS-internetradio
+	NO	SIRIUS Internett-radio
+	SV	Sirius-webbradio
 
 PLUGIN_SIRIUS_ERROR
+	DA	Sirius-fejl
 	DE	SIRIUS-Fehler
 	EN	SIRIUS Error
 	ES	Error de SIRIUS
+	FI	SIRIUS - virhe
 	FR	Erreur SIRIUS
 	HE	שגיאה ב-SIRIUS
 	IT	Errore di SIRIUS
 	NL	SIRIUS-fout
+	NO	SIRIUS-feil
+	SV	Sirius-fel
 
 PLUGIN_SIRIUS_NO_INFO
+	DA	Der kunne ikke hentes oplysninger om kanalen.
 	DE	Senderinfos konnten nicht geladen werden.
 	EN	Unable to retrieve channel info.
 	ES	Imposible obtener información de canal.
+	FI	Kanavatietojen noutaminen ei onnistu.
 	FR	Impossible de récupérer les informations du canal.
 	IT	Impossibile recuperare le informazioni sul canale.
 	NL	Kan kanaalinfo niet ophalen.
+	NO	Får ikke til å hente informasjon om kanalen.
+	SV	Det går inte att hämta någon kanalinformation.
 
 PLUGIN_SIRIUS_GETTING_STREAM_INFO
+	DA	Henter oplysninger om stream...
 	DE	Streaminfos werden geladen ...
 	EN	Getting stream info...
 	ES	Obteniendo información de secuencia...
+	FI	Haetaan virran tietoja...
 	FR	Obtention des informations de flux...
 	HE	מקבל פרטי זרימה...
 	IT	Recupero info su stream...
 	NL	Stroominfo wordt opgehaald...
+	NO	Henter informasjon om strøm...
+	SV	Hämtar ströminformation ...
 
 PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED
+	DA	Streamen er stoppet. Du har ikke længere ret til at høre den.
 	DE	Stream angehalten, Berechtigung zum Hören erloschen.
 	EN	Stream stopped, you are no longer authorized to listen.
 	ES	Se ha detenido la secuencia. No tiene autorización para escuchar.
+	FI	Virta pysäytettiin, sinulla ei ole enää kuunteluoikeuksia.
 	FR	Flux arrêté, vous n'êtes plus autorisé à l'écouter.
 	HE	הזרימה הופסקה, אינך מורשה עוד להאזין.
 	IT	Stream interrotto. Non si è più autorizzati all'ascolto.
 	NL	Stroom gestopt; je hebt geen rechten meer om te luisteren.
+	NO	Strømmen stanset, du har ikke lenger tillatelse til å lytte.
+	SV	Strömmen har stoppats eftersom du inte längre har behörighet att lyssna.
 
 PLUGIN_SIRIUS_STOPPING_INACTIVE
+	DA	Grænsen for inaktivitet på Sirius er overskredet. Tryk på Afspil for at fortsætte med at lytte.
 	DE	Erlaubte SIRIUS-Pause überschritten, drücken Sie zum Weiterhören PLAY.
 	EN	SIRIUS idle time exceeded, press PLAY to continue listening.
 	ES	Se ha excedido el tiempo de inactividad en SIRIUS. Pulse PLAY para continuar escuchando.
+	FI	SIRIUSin joutoaika ylittyi. Jatka kuuntelua painamalla toistonäppäintä.
 	FR	Temps d'inactivité SIRIUS dépassé, appuyez sur PLAY pour continuer l'écoute.
 	HE	חריגה מפרק הזמן שהוקצב לחוסר פעילות של SIRIUS, לחץ על PLAY (הפעלה) כדי להמשיך בהאזנה.
 	IT	Tempo di inattività di SIRIUS superato. Premere PLAY per proseguire l'ascolto.
 	NL	Niet-actieve tijd van SIRIUS overschreden. Druk op PLAY om door te gaan.
+	NO	SIRIUS' terskel for inaktivitet er nådd, trykk PLAY for å fortsette å lytte.
+	SV	Sirius har varit inaktivt för länge. Tryck på Play om du vill fortsätta lyssna.
 

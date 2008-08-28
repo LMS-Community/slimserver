@@ -24,7 +24,7 @@
 
 		[% extJsScripts = BLOCK %]
 		<script TYPE="text/javascript">
-			timestring     = "[% 'TOTAL_TIME' | string %]";
+			[% PROCESS jsString id='TOTAL_TIME' %]
 			progressbarlen = "[% barlen %]";
 			progresstype   = "[% type %]";
 

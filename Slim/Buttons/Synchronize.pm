@@ -55,7 +55,7 @@ sub lines {
 
 	} else {
 			# get the currently selected client
-			my $selectedClient = $client->syncSelections($client->syncSelection);
+			my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
 			
 			if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || $selectedClient eq $client) {
 				$line1 = $client->string('UNSYNC_WITH');
@@ -69,7 +69,7 @@ sub lines {
 
 sub buddies {
 	my $client = shift;
-	my $selectedClient = shift || $client->syncSelections($client->syncSelection);;
+	my $selectedClient = shift || $client->syncSelections->[ $client->syncSelection ];
 
 	my @buddies = ();
 	my $list = '';
@@ -152,7 +152,7 @@ sub syncExitHandler {
 		Slim::Buttons::Common::popModeRight($client);
 		
 	} elsif ($exittype eq 'RIGHT') {
-		my $selectedClient = $client->syncSelections($client->syncSelection);
+		my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
 	
 		my @oldlines = $client->curLines();
 	

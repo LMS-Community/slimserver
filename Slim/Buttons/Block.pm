@@ -18,8 +18,8 @@ Slim::Buttons::Block::unblock($client);
 =head1 DESCRIPTION
 
 L<Slim::Buttons::Block> is a mode for locking out further remote control interaction 
-until a longer process has compeleted.  It is also used to provide feedback to the user
-in the form of an apropriate message and animated display during the wait for a long operation to
+until a longer process has completed.  It is also used to provide feedback to the user
+in the form of an appropriate message and animated display during the wait for a long operation to
 complete.
 
 =cut
@@ -103,7 +103,7 @@ sub block {
 	}
 	elsif (ref($line1) ne 'HASH') {
 
-		$parts = $client->parseLines( { 'line' => [ $line1, shift] } );
+		$parts = { 'line' => [ $line1, shift ] };
 	}
 
 	my $blockName = shift;  # associate name with blocked mode
@@ -171,7 +171,7 @@ sub lines {
 			# For graphics players animation cycles through characters in one of the following fonts:
 			# SB2 - blockanimateSB2.1, SBG - blockanimateSBG.1
 			my $vfd   = $client->display->vfdmodel(); 
-			my $model = $vfd eq 'graphic-320x32' ? 'SB2' : 'SBG';
+			my $model = $vfd =~ /graphic-\d+x32/ ? 'SB2' : 'SBG';
 			my $font  = "blockanimate$model.1";
 			my $chars = Slim::Display::Lib::Fonts::fontchars($font);
 

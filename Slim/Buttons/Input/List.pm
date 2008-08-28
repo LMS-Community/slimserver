@@ -48,8 +48,13 @@ use strict;
 use warnings;
 
 use Slim::Buttons::Common;
+use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+my $prefs = preferences('server');
+
+my $log = logger('player.ui');
 
 Slim::Buttons::Common::addMode('INPUT.List', getFunctions(), \&setMode);
 
@@ -168,8 +173,8 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 
-	if ( logger('player.ui')->is_debug ) {
-		logger('player.ui')->debug(
+	if ( $log->is_debug ) {
+		$log->debug(
 			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
 		);
 	}
@@ -211,12 +216,15 @@ sub changePos {
 		if ($pushDir eq 'up')  {
 			
 			$client->pushUp();
+
 		} elsif ($pushDir eq 'down') {
 			
 			$client->pushDown();
+
 		} elsif ($dir < 0)  {
 			
 			$client->pushUp();
+
 		} else {
 			
 			$client->pushDown();
@@ -226,6 +234,7 @@ sub changePos {
 
 sub lines {
 	my $client = shift;
+	my $args   = shift;
 
 	my ($line1, $line2);
 	my $listIndex = $client->modeParam('listIndex');
@@ -249,23 +258,42 @@ sub lines {
 
 	} else {
 
-		if ($client->modeParam('headerAddCount')) {
-			$line1 .= ' (' . ($listIndex + 1)
-				. ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')';
-		}
-
 		$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
 
 		if ($client->modeParam('stringExternRef') && Slim::Utils::Strings::stringExists($line2)) {
 			$line2 = $client->linesPerScreen() == 1 ? $client->doubleString($line2) : $client->string($line2);
 		}
 	}
+
 	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
+
+	# show count if we are the new screen of a push transition or pref is set
+	if (($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) && $client->modeParam('headerAddCount')) {
+		$overlay1 .= ' ' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef);
+	}
+
+	# truncate long strings in the header with '...'
+	my $len   = $client->measureText($line1, 1);
+	my $width = $client->displayWidth;
+	my $trunc = '...';
+
+	if ($len > $width) {
+		$width -= $client->measureText($trunc, 1);
+		while ($len > $width) {
+			$line1 = substr $line1, 0, -1;
+			$len = $client->measureText($line1, 1);
+		}
+		$line1 .= $trunc;
+	}
 
 	my $parts = {
 		'line'    => [ $line1, $line2 ],
 		'overlay' => [ $overlay1, $overlay2 ]
 	};
+
+	if ($client->modeParam('fonts')) {
+		$parts->{'fonts'} = $client->modeParam('fonts');
+	}
 
 	return $parts;
 }
@@ -317,7 +345,7 @@ sub getFunctions {
 sub setMode {
 	my $client    = shift;
 	my $setMethod = shift;
-	
+
 	#possibly skip the init if we are popping back to this mode
 	#if ($setMethod ne 'pop') {
 	
@@ -333,7 +361,7 @@ sub setMode {
 # listRef = none # reference to list of internal values, exit mode if not supplied
 # header = 'Select item:' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs
-# headerArgs = CV # accepts C and V
+# headerArgs = CV # accepts C, V and I (I is the 1-based index)
 # stringHeader = undef # if true, put the value of header through the string function
 	# before displaying it.
 # headerAddCount = undef # if true add (I of T) to end of header

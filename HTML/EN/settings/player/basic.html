@@ -4,7 +4,7 @@
 			SqueezeJS.Controller.request({   
 				params: [ playerid, [ 'client', 'forget' ]]   
 			});   
-		}   
+		}
 	</script>   
 [% END;
 ELSIF !macaddress; pageHeaderScripts = BLOCK %]   
@@ -21,7 +21,22 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 		}   
 		
 		function dummyCallback() {}   
+
+
+		function resetPlayer(url) {
+			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
+				location = url;
+		}
 	</script>   
+[% END; 
+ELSIF !useExtJS; pageHeaderScripts = BLOCK %]   
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>   
+	<script TYPE="text/javascript" language="JavaScript">   
+		function resetPlayer(url) {
+			if (window.confirm('[% "SETUP_RESET_PLAYER_CONFIRM" | string %]'))
+				location = url;
+		}
+	</script>
 [% END; END %] 
 [% PROCESS settings/header.html %]
 
@@ -85,7 +100,7 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 			[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
 				[% WRAPPER settingGroup title="SETUP_" _ saver %]
 					<select class="stdedit" name="pref_[% saver %]" id="[% saver %]">
-						[% FOREACH option = screensavers %]
+						[% FOREACH option = saveropts.$saver %]
 							<option [% IF prefs.${"pref_$saver"} == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 						[%- END -%]
 					</select>		
@@ -94,7 +109,7 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 			[% END %]
 
 			[% WRAPPER settingGroup title="SETUP_SCREENSAVERTIMEOUT" desc="" %]
-				<input type="text" class="stdedit" name="pref_screensavertimeout" id="screensavertimeout" value="[% prefs.pref_screensavertimeout %]" size="15">
+				<input type="text" class="stdedit sliderInput_0_300" name="pref_screensavertimeout" id="screensavertimeout" value="[% prefs.pref_screensavertimeout %]" size="15">
 			[% END %]
 		[% END %]
 	[% END %]
@@ -109,7 +124,7 @@ ELSIF !macaddress; pageHeaderScripts = BLOCK %]
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_RESET_PLAYER" desc="SETUP_RESET_PLAYER_DESC" %]
-		<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1">[% "SETUP_RESET_PLAYER" | string %]</a>
+		<input type="button" onclick="[% useExtJS ? "Settings." : '' %]resetPlayer('[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;resetprefs=1')" value="[% "SETUP_RESET_PLAYER" | string %]">
 	[% END %]
 
 	[% IF !macaddress; WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]   

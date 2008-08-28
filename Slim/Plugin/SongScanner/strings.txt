@@ -3,58 +3,86 @@
 # $Id: strings.txt,v 1.1 2007-11-07 07:38:15 fishbone Exp $
 
 PLUGIN_SONGSCANNER
+	DA	Analyse af nummer
 	DE	Titel-Scanner
 	EN	Song Scanner
 	ES	Examen de canciones
+	FI	Kappaleen haku
 	FR	Analyseur de morceau
 	IT	Analisi brano
 	NL	Nummerscanner
+	NO	Sangsøk
+	SV	Låtsökaren
 
 PLUGIN_SONGSCANNER_DESC
+	DA	Kontrolpanel til at springe til vilkårlige steder i det nummer som spilles
 	DE	Player-Schnittstelle zum Springen an zufällige Positionen im aktuellen Titel
 	EN	Player interface for jumping to arbitrary positions within the currently playing song
 	ES	Interfaz del reproductor para saltar a posiciones aleatorias dentro de la canción que se está reproduciendo en ese momento
+	FI	Soittimen käyttöliittymä satunnaisiin paikkoihin hyppäämiseen toistetun kappaleen sisällä
 	FR	Interface de la platine permettant d'accéder à des emplacements arbitraires du morceau en cours de lecture
 	IT	Interfaccia lettore per passare a posizioni casuali all'interno del brano in corso di riproduzione
 	NL	Muzieksysteeminterface om naar willekeurige posities in het huidige nummer te springen
+	NO	Spillergrensesnitt for å gå til vilkårlige plasseringer i sangen som spilles av
+	SV	Spelargränssnitt för att hoppa till godtyckliga ställen i låten som spelas upp
 
 PLUGIN_SONGSCANNER_SET
+	DA	Spilletid:
 	DE	Zeit:
 	EN	Time:
 	ES	Tiempo:
+	FI	Aika:
 	FR	Heure:
 	IT	Ora:
 	NL	Tijd:
+	NO	Tid:
+	SV	Tid:
 
 PLUGIN_SONGSCANNER_ERR_UNKNOWNSIZE
+	DA	Nummeret kan ikke analyseres hurtigere da dets længde er ukendt
 	DE	Scannen im Titel nicht möglich, da Dauer unbekannt
 	EN	Cannot scan through track because duration unknown
 	ES	No se puede examinar la pista porque se desconoce su duración
+	FI	Raitaa ei voi selata, koska sen kestoa ei tunneta
 	FR	Impossible d'analyser la piste car la durée est inconnue
 	IT	Impossibile analizzare il brano poiché non se ne conosce la durata
 	NL	Kan niet door nummer scannen omdat duur onbekend is
+	NO	Kan ikke søke igjennom sporet fordi varigheten er ukjent
+	SV	Det går inte att söka igenom spåret eftersom varaktigheten är okänd
 
 PLUGIN_SONGSCANNER_ERR_NOTRACK
+	DA	Ingen numre
 	DE	Kein Titel
 	EN	No track
 	ES	No hay ninguna pista
+	FI	Ei raitaa
 	FR	Aucune piste
 	IT	Nessun brano
 	NL	Geen nummer
+	NO	Ingen spor
+	SV	Inget spår
 
 PLUGIN_SONGSCANNER_MAX_RATE_FWD
+	DA	Der kan ikke spoles hurtigere
 	DE	Maximale Vorspulgeschwindigkeit erreicht
 	EN	Maximum fast-forward rate reached
 	ES	Se ha alcanzado la velocidad máxima de avance rápido
+	FI	Suurin kelausnopeus saavutettiin
 	FR	Le débit maximal d'avance rapide a été atteint
 	IT	È stata raggiunta la velocità di avanzamento massima
 	NL	Maximale vooruitspoelsnelheid bereikt
+	NO	Maks spolingshastighet forover er nådd
+	SV	Maximal framspolningstakt har uppnåtts
 
 PLUGIN_SONGSCANNER_MAX_RATE_REW
+	DA	Der kan ikke spoles hurtigere
 	DE	Maximale Rückspulgeschwindigkeit erreicht
 	EN	Maximum rewind rate reached
 	ES	Se ha alcanzado la velocidad máxima de rebobinado
+	FI	Suurin kelausnopeus saavutettiin
 	FR	Le débit maximal de retour rapide a été atteint
 	IT	È stata raggiunta la velocità di riavvolgimento massima
 	NL	Maximale terugspoelsnelheid bereikt
+	NO	Maks spolingshastighet bakover er nådd
+	SV	Maximal tillbakaspolningstakt har uppnåtts
 

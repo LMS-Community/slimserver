@@ -796,6 +796,7 @@ sub _defaultCategories {
 		
 		'menu.trackinfo'             => 'ERROR',
 
+		'player.alarmclock'          => 'ERROR',
 		'player.display'             => 'ERROR',
 		'player.fonts'               => 'ERROR',
 		'player.firmware'            => 'ERROR',

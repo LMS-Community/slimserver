@@ -85,6 +85,13 @@ sub scanPathOrURL {
 			$pathOrUrl = Slim::Utils::Misc::fixPathCase($pathOrUrl);
 		}
 
+		# Bug 9097, don't try to scan non-remote protocol handlers like randomplay://
+		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL($pathOrUrl) ) {
+			unless ( $handler ne 'file' ) {
+				return $cb->( [ $pathOrUrl ] );
+			}
+		}
+
 		# Always let the user know what's going on..
 		$log->info("Finding valid files in: $pathOrUrl");
 
@@ -145,10 +152,12 @@ sub findFilesMatching {
 			$url  = Slim::Utils::Misc::fileURLFromWinShortcut($url) || next;
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 
+			my $audiodir = preferences('server')->get('audiodir');
+
 			# Bug: 2485:
 			# Use Path::Class to determine if the file points to a
 			# directory above us - if so, that's a loop and we need to break it.
-			if (dir($file)->subsumes($topDir)) {
+			if ( dir($file)->subsumes($topDir) || ($audiodir && dir($file)->subsumes($audiodir)) ) {
 
 				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
 				next;

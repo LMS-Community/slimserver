@@ -9,7 +9,7 @@
 	<optionsURL>plugins/JiveExtras/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
-		<id>SlimServer</id>
+		<id>SqueezeCenter</id>
 		<minVersion>7.0a</minVersion>
         <maxVersion>*</maxVersion>
 	</targetApplication>

@@ -118,10 +118,7 @@ my @modes = (
 	  params => [$VISUALIZER_NONE], },
 );
 
-my $nmodes = $#modes;
-
 our $defaultPrefs = {
-	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 5,
 	'playingDisplayModes' => [0..11]
 };
@@ -168,6 +165,8 @@ sub resetDisplay {
 	$display->killAnimation();
 }	
 
+sub periodicScreenRefresh {} # noop for this player
+
 sub bytesPerColumn {
 	return 4;
 }
@@ -183,8 +182,12 @@ sub displayWidth {
 	# if we're showing the always-on visualizer & the current buttonmode 
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
-	my $mode = ($display->showVisualizer() && !defined($client->modeParam('visu'))) ?
-		$prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ] : 0;
+	my $mode = 0;
+	
+	if ( $display->showVisualizer() && !defined($client->modeParam('visu')) ) {
+		my $cprefs = $prefs->client($client);
+		$mode = $cprefs->get('playingDisplayModes')->[ $cprefs->get('playingDisplayMode') ];
+	}
 
 	return $display->widthOverride || $display->modes->[$mode || 0]{width};
 }
@@ -281,7 +284,9 @@ sub visualizerParams {
 	my $display = shift;
 	my $client = $display->client;
 
-	my $visu = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
+	my $cprefs = $prefs->client($client);
+
+	my $visu = $cprefs->get('playingDisplayModes')->[ $cprefs->get('playingDisplayMode') ];
 	
 	$visu = 0 if (!$display->showVisualizer());
 	
@@ -289,10 +294,10 @@ sub visualizerParams {
 		$visu = 0; 
 	}
 	
-	if ($visu > $nmodes) {
-		$visu = $nmodes;
+	if ($visu > $display->nmodes) {
+		$visu = $display->nmodes;
 	}
-	
+
 	return $display->modes()->[$visu]{params};
 }
 
@@ -301,7 +306,7 @@ sub modes {
 }
 
 sub nmodes {
-	return $nmodes;
+	return $#modes;
 }
 
 # update visualizer and init scrolling
@@ -328,7 +333,7 @@ sub scrollHeader {
 sub pushLeft {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushLeft' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'r');
@@ -337,7 +342,7 @@ sub pushLeft {
 sub pushRight {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushRight' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'l');
@@ -346,7 +351,7 @@ sub pushRight {
 sub pushUp {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushUp' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'u', $render->{screen1}->{extent});
@@ -355,7 +360,7 @@ sub pushUp {
 sub pushDown {
 	my $display = shift;
 	my $start = shift;
-	my $end = shift || $display->curLines();
+	my $end = shift || $display->curLines({ trans => 'pushDown' });
 
 	my $render = $display->render($end);
 	$display->pushBumpAnimate($render, 'd', $render->{screen1}->{extent});
@@ -408,7 +413,7 @@ sub clientAnimationComplete {
 
 	$display->animateState(2);
 	$display->updateMode(0);
-	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 0.5, \&Slim::Display::Display::update, $display->renderCache());
+	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 1.0, \&Slim::Display::Display::update);
 }
 
 sub killAnimation {

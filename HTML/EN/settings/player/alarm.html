@@ -1,54 +1,158 @@
+[% IF useExtJS; extJsScripts = BLOCK %]   
+	<script TYPE="text/javascript">
+		Ext.onReady(function() {
+			Settings.Alarm.init('[% newAlarmID %]', [% prefs.alarms.size %]);
+			Settings.Alarm.initTimeControls('[% timeFormat %]', '[% altFormats %]');
+		});
+	</script>
+[% END; END %]
+[% BLOCK alarmSetting %]
+	[% WRAPPER settingSection %]
+
+		[% alarmTitle = (alarmTitle ? alarmTitle : "ALARM_ALARM") | string %]
+		[% WRAPPER settingGroup title=alarmTitle _ " " _ loop.count desc="" %]
+			<select class="stdedit" name="alarm_enable[% alarm.id %]" id="alarm_enable[% alarm.id %]">
+		
+				[% FOREACH option = {
+					'1' => 'ALARM_ON',
+					'0' => 'ALARM_OFF',
+				} %]
+					<option [% IF alarm.enabled == option.key %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+				
+			</select>
+			<input type="hidden" name="alarm_id_[% alarm.id %]" value="1">
+		[% END %]
+	
+		<div class="settingGroup">
+			<div class="prefHead" style="font-weight:normal;">[% "ALARM_SET" | string %]</div>
+			<div class="prefs" style="max-height:14px">
+				<input type="text" class="stdedit timeControl" name="alarmtime[% alarm.id %]" id="alarmtime[% alarm.id %]" value="[% alarm.timeStr %]" size="15">
+			&nbsp;</div>
+		</div>
+	
+		[% alarmTitle = "ALARM_SET_DAYS" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+			[% FOREACH day = [1 .. 7] %]
+				[% day = day % 7 %]
+				<input type="checkbox" name="alarmday[% alarm.id %][% day %]" id="alarmday[% alarm.id %][% day %]" value="1" [% alarm.day(day) ? "checked" : "" %]>
+				<label for="alarmday[% alarm.id %][% day %]">[% "ALARM_DAY$day" | string %]&nbsp;&nbsp;</label>
+			[% END %]
+		[% END %]
+	
+		[% alarmTitle = "ALARM_SELECT_PLAYLIST" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="" %]
+			<select class="stdedit" name="alarmplaylist[% alarm.id %]" id="alarmplaylist[% alarm.id %]">
+		
+				[% FOREACH playlistType IN playlistOptions  %]
+					<optgroup label="[% playlistType.type %]">
+						[% FOREACH playlist IN playlistType.items %]
+							<option [% IF alarm.playlist == playlist.url %]selected [% END %]value="[% playlist.url %]">[% playlist.title %]</option>
+						[%- END -%]
+					</optgroup>
+				[%- END -%]
+				
+			</select>
+		[% END %]
+	
+		[% alarmTitle = "ALARM_ALARM_REPEAT" | string %]
+		[% WRAPPER settingGroup title='<div style="font-weight:normal;">' _ alarmTitle _ "</div>" desc="ALARM_ALARM_REPEAT_DESC" %]
+			<select class="stdedit" name="alarm_repeat[% alarm.id %]" id="alarm_repeat[% alarm.id %]">
+		
+				[% FOREACH option = {
+					'1' => 'YES',
+					'0' => 'NO',
+				} %]
+					<option [% IF alarm.repeat == option.key %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				[%- END -%]
+			
+			</select>
+
+			[% IF alarm.id != newAlarmID || useAJAX || useExtJS %]
+				<div>
+					<br/>
+					<input name="alarm_remove_[% alarm.id %]" 
+						type="[% useExtJS && alarm.id == newAlarmID ? 'button' : 'submit' %]" 
+						class="stdclick removeButton" 
+						value="[% (alarm.id == newAlarmID ? 'CANCEL' : 'ALARM_DELETE') | string %]" 
+						onClick="[% alarm.id == newAlarmID ? 'return false;' : '' %]" 
+						id="alarm_remove_[% alarm.id %]">
+				</div>
+			[% END %]
+		[% END %]
+		[% alarmTitle = '' %]
+	
+	[% END %]
+
+[% END %]
+
 [% PROCESS settings/header.html %]
 
-	[% WRAPPER setting title="SETUP_GROUP_ALARM" desc="SETUP_GROUP_ALARM_DESC" %]
-		<input type=hidden name="alarmfadeseconds" value="0" />
-		<input type=checkbox [% IF prefs.alarmfadeseconds %]checked [% END %] class="stdedit" name="alarmfadeseconds" id="alarmfadeseconds" value="1" />
-		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
-	[% END %]
-
-	[% FOREACH day = [0 .. 7] %]
-
-		[% WRAPPER setting title="ALARM_DAY$day" desc="" %]
-			<table>
-				<tr>
-					<td><label for="alarm[% day %]" class="stdlabel">[% "SETUP_ALARM" | string %][% "COLON" | string %]</label>&nbsp;</td>
-					<td><select class="stdedit" name="alarm[% day %]" id="alarm[% day %]">
-			
-						[% FOREACH option = {
-							'1' => 'ON',
-							'0' => 'OFF',
-						} %]
-							<option [% IF prefs.alarm.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-						[%- END -%]
-					
-					</select></td>
-				</tr>
-			
-				<tr>
-					<td><label for="alarmtime[% day %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label>&nbsp;</td>
-					<td><input type="text" class="stdedit" name="alarmtime[% day %]" id="alarmtime[% day %]" value="[% prefs.alarmtime.$day %]" size="15"></td>
-				</tr>
-			
-				<tr>
-					<td><label for="alarmvolume[% day %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label>&nbsp;</td>
-					<td><input type="text" class="stdedit" name="alarmvolume[% day %]" id="alarmvolume[% day %]" value="[% prefs.alarmvolume.$day %]" size="15"></td>
-				</tr>
-					
-				<tr>
-					<td><label for="alarmplaylist[% day %]" class="stdlabel">[% "ALARM_SELECT_PLAYLIST" | string %][% "COLON" | string %]</label>&nbsp;</td>
-
-					<td><select class="stdedit" name="alarmplaylist[% day %]" id="alarmplaylist[% day %]">
-			
-						[% FOREACH option = playlistOptions  %]
-							<option [% IF prefs.alarmplaylist.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
-						[%- END -%]
-					
-					</select></td>
-				</tr>
-			</table>
+	[% WRAPPER setting title="ALARM_ALL_ALARMS" desc="ALARM_ALARMS_ENABLED_DESC" %]
+		<select class="stdedit" name="pref_alarmsEnabled" id="pref_alarmsEnabled">
 	
-		[% END %]
-
+			[% FOREACH option = {
+				'1' => 'ALARM_ON',
+				'0' => 'ALARM_OFF',
+			} %]
+				<option [% IF prefs.pref_alarmsEnabled %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+			[%- END -%]
+			
+		</select>
 	[% END %]
 
+	[% IF useExtJS || useAJAX %]
+		[% WRAPPER setting title="ALARM_NEW" desc="ALARM_ADD_DESC" sectionID="button" _ newAlarmID %]
+			<input name="AddAlarm" id="AddAlarm" type="button" class="stdclick" value="[% "ALARM_ADD" | string %]">
+		[% END %]
+	[% END %]
+
+	<div class="alarmSection">
+	[% alarmTitle = "ALARM_NEW"; sectionID="alarm" _ newAlarmID; customStyle = useExtJS ? 'display:none' : '' %]
+	[% PROCESS alarmSetting alarm = { 
+		id      => newAlarmID
+		day     => 1
+		enabled => 1
+		repeat  => 1
+	} %]
+	[% alarmTitle = ''; customStyle = '' %]
+	</div>
+
+	<div class="alarmSection">
+	[% FOREACH alarm = prefs.alarms %]
+		[% PROCESS alarmSetting %]
+	[% END %]
+	</div>
+	
+	[% WRAPPER setting title="ALARM_VOLUME" desc="ALARM_VOLUME_DESC" %]
+		<input type="text" class="stdedit sliderInput_0_100" name="pref_alarmDefaultVolume" id="alarmDefaultVolume" value="[% prefs.pref_alarmDefaultVolume %]" size="3">
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_SNOOZE_MINUTES" desc="SETUP_SNOOZE_MINUTES_DESC" %]
+		<input type="text" class="stdedit sliderInput_1_30" name="pref_alarmSnoozeMinutes" id="alarmSnoozeMinutes" value="[% prefs.pref_alarmSnoozeMinutes %]" size="3">
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_ALARM_TIMEOUT" desc="SETUP_ALARM_TIMEOUT_DESC" %]
+		<input type="text" class="stdedit sliderInput_0_90" name="pref_alarmTimeoutMinutes" id="pref_alarmTimeoutMinutes" value="[% prefs.pref_alarmTimeoutMinutes %]" size="3">
+	[% END %]
+
+	[% WRAPPER setting title="ALARM_FADE" desc="" %]
+		<select class="stdedit" name="pref_alarmfadeseconds" id="pref_alarmfadeseconds">
+	
+			[% FOREACH option = {
+				'1' => 'YES',
+				'0' => 'NO',
+			} %]
+				<option [% IF prefs.pref_alarmfadeseconds %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+			[%- END -%]
+			
+		</select>
+	[% END %]
+
+	<div>&nbsp;</div>
+	[% IF useAJAX %]
+	<script TYPE="text/javascript">
+		initNewAlarm('[% newAlarmID %]');
+	</script>
+	[% END %]
 [% PROCESS settings/footer.html %]

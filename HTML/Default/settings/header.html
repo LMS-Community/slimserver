@@ -11,6 +11,7 @@
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
 
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script type="text/javascript" src="/html/js.html?r=[% revision %]"></script>
@@ -19,6 +20,9 @@
 		<script type="text/javascript">
 			[% PROCESS jsString id='SETTINGS' jsId='' %]
 			[% PROCESS jsString id='ADVANCED_SETTINGS' jsId='' %]
+			[% PROCESS jsString id='SETUP_RESET_PLAYER' jsId='reset_player' %]
+			[% PROCESS jsString id='SETUP_RESET_PLAYER_CONFIRM' jsId='reset_player_confirm' %]
+			[% PROCESS jsString id='SETTINGS_CHANGED_CONFIRM' jsId='' %]
 
 			[% playerid = playerid || player %]
 			// display player list if we're in the player settings
@@ -26,9 +30,6 @@
 			pageId = '^' _ page _ '$';
 			pageLink = orderedLinks.grep(pageId);
 			-%]
-
-			// pages using the fileselector may set a filter (see iTunes)
-			var fsFilter = new Array();
 
 			Ext.onReady(function(){
 				[% IF needsClient;
@@ -148,5 +149,6 @@
 				<input type=hidden value="1" name="saveSettings">
 				<input type=hidden value="0" name="useAJAX">
 				<input type=hidden value="[% page %]" name="page">
+				[% IF noSettingsList %]<input type=hidden value="1" name="noSettingsList">[% END %]
 				[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
 				[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]

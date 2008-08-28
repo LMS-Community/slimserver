@@ -33,8 +33,8 @@ Slim::Buttons::Common::pushMode($client, 'INPUT.Time', \%params);
 
 L<Slim::Buttons::Input::Time> is a reusable SqueezeCenter module to create a standard UI
 for entering Time formatted strings.  This is a slimmed down variation of Input::Text 
-with custom handling for limting characters based on the timeFormat server preference
-and typicall formatting of time strings. Callers include Sli::Buttons::AlarmCLock
+with custom handling for limiting characters based on the timeFormat server preference
+and typical formatting of time strings. Callers include Slim::Buttons::AlarmCLock
 
 =cut
 
@@ -49,11 +49,8 @@ my $prefs = preferences('server');
 
 Slim::Buttons::Common::addMode('INPUT.Time',getFunctions(),\&setMode);
 
-###########################
-#Button mode specific junk#
-###########################
 our %functions = (
-	#change character at cursorPos (both up and down)
+	# change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;
 
@@ -67,41 +64,35 @@ our %functions = (
 		}
 
 	,'knob' => sub {
+			#warn 'knob';
 			my ($client,$funct,$functarg) = @_;
 
-			my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
+			my @timedigits = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0);
+			# Manually set the am/pm bit
+			$timedigits[2] = $timedigits[0] > 11 ? 1 : 0;
 
-			scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
+			# Don't scroll if on right arrow
+			if (defined $timedigits[$client->modeParam('cursorPos')]) {
+				scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
+			}
 		}
 
-	#moving one position to the left, exiting on leftmost position
+	# move one position to the left, exiting on leftmost position
 	,'left' => sub {
 			my ($client,$funct,$functarg) = @_;
-			Slim::Utils::Timers::killTimers($client, \&nextChar);
 
-			my $cursorPos = $client->modeParam('cursorPos');
-			$cursorPos--;
-
-			if ($cursorPos < 0) {
-				exitInput($client,'left');
-				return;
-			}
-
-			$client->modeParam('cursorPos',$cursorPos);
-			$client->update();
+			moveCursor($client,-1);
 		}
 
-	#advance to next character, exiting if last char is right arrow
+	# advance to next character, exiting if last char is right arrow
 	,'right' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			Slim::Utils::Timers::killTimers($client, \&nextChar);
-			moveCursor($client,1,1);
+			moveCursor($client,1);
 		}
-	#move cursor left/right, exiting at edges
+	# move cursor left/right, exiting at edges
 	,'cursor' => sub {
 			my ($client,$funct,$functarg) = @_;
-			Slim::Utils::Timers::killTimers($client, \&nextChar);
 
 			my $increment = $functarg =~ m/_(\d+)$/;
 			$increment = $increment || 1;
@@ -110,114 +101,15 @@ our %functions = (
 				$increment = -$increment;
 			}
 
-			moveCursor($client,$increment,0);
+			moveCursor($client,$increment);
 		}
 
-	#use numbers to enter characters
-	,'numberLetter' => sub {
-			my ($client,$button,$digit) = @_;
-			
-			Slim::Utils::Timers::killTimers($client, \&nextChar);
-	
-			# if it's a different number, then skip ahead
-			if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit)) {
-				nextChar($client);
-			}
-			
-			my $valueRef = $client->modeParam('valueRef');
-			my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
+	# use numbers to enter ... er... numbers ;-)
+	,'numberLetter' => \&numberButton
 
-			$p = (defined $p && $p eq 'PM') ? 1 : 0;
-			
-			my $c = $client->modeParam('cursorPos');
-
-			my $ampm = ($prefs->get('timeFormat') =~ /%p/);
-
-			my $max = 9;
-			if ($c == 0) {
-
-				$max = ($ampm ? 1 : 2);
-				$h0 = $digit unless ($digit > $max);
-
-				if ($ampm) {
-
-					if ($h0 == 1 && $h1 > 2) {
-						$h1 = 2;
-					}
-
-				} else {
-
-					if ($h0 == 2 && $h1 > 3) {
-						$h1 = 3;
-					}
-				}
-
-			} elsif ($c == 1) {
-
-				if ($ampm) {
-
-					if ($h0 == 1) {
-						$max = 2;
-					}
-
-				} else {
-
-					if ($h0 == 2) {
-						$max = 3;
-					}
-				}
-
-				$h1 = $digit unless ($digit > $max);
-
-			} elsif ($c == 2) {
-				$m0 = $digit unless ($digit > 5);
-
-			} elsif ($c == 3) {
-				$m1 = $digit unless ($digit > 9);
-
-			} elsif ($c == 4) {
-				$p = $digit unless ($digit > 1);
-			}
-			
-			if ($h0 == 0 && $h1 == 0 && $ampm) {
-				$h1 = 1;
-			}
-			
-			if ($ampm && $h0 && $h1 == 2) {
-
-				if ($p) {
-					$p = 0;
-
-				} else {
-					$h0 = 0; 
-					$h1 = 0;
-				}
-			}
-			
-			$$valueRef = Slim::Utils::DateTime::timeDigitsToTime($h0, $h1, $m0, $m1, $p);
-	
-			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $prefs->get('displaytexttimeout'), \&nextChar);
-			
-			#update the display
-			my $onChange = $client->modeParam('onChange');
-
-			if (ref($onChange) eq 'CODE') {
-				my $onChangeArgs = $client->modeParam('onChangeArgs');
-				my @args;
-
-				push @args, $client if $onChangeArgs =~ /c/i;
-				push @args, $$valueRef if $onChangeArgs =~ /v/i;
-				$onChange->(@args);
-			}
-			
-			$client->update();
-		}
-
-	#call callback procedure
+	# call callback procedure
 	,'exit' => sub {
 			my ($client,$funct,$functarg) = @_;
-
-			Slim::Utils::Timers::killTimers($client, \&nextChar);
 
 			if (!defined($functarg) || $functarg eq '') {
 				$functarg = 'exit'
@@ -278,11 +170,7 @@ sub setMode {
 
 	$client->lines(\&lines);
 
-	# The knob on Transporter needs to be prepopulated with list lengths
-	# for proper scrolling.
-	my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
-
-	prepKnob($client, \@timedigits);
+	prepKnob($client, 1);
 }
 
 =head1 METHODS
@@ -293,12 +181,11 @@ This function sets up the params for INPUT.Time.  The optional params and their 
 
  'header'       = 'Enter Time:'   # message displayed on top line
  'valueRef'     = \""             # string to be edited
- 'cursorPos'    = len($$valueRef) # position within string actively being edited
+ 'cursorPos'    = 0		 # position within string actively being edited
  'callback'     = undef           # function to call to exit mode
  'parentMode'   = $client->modeStack->[-2]
 				 mode to which to pass button presses mapped to the passback function
-				 defaults to mode in second to last position on call stack (which is
-				 the mode that called INPUT.Text)
+				 defaults to the first non-INPUT mode in or before second to last position on call stack (which should be the mode that called INPUT.Time), 
  'onChange'     = undef           # subroutine reference called when the value changes
  'onChangeArgs' = CV              # arguments provided to onChange subroutine, C= client object, V= current value
 
@@ -348,7 +235,7 @@ This function converts the discrete time digits into a time string for use with 
 
 Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
 
-$c is the current cursor position for redering in teh display
+$c is the current cursor position for rendering in the display - set to -1 to not display a cursor
 
 =cut
 
@@ -358,8 +245,29 @@ sub timeString {
 	my $cs = $client->symbols('cursorpos');
 
 	$c = $c || $client->modeParam('cursorPos') || 0;
-	
-	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
+
+	my $timestring =
+		($h0 == 0 && defined($p) ? '' : $h0) .
+		($c == 0 ? $cs : '') .  $h1 .  ':' .
+		$m0 .
+		($c == 1 ? $cs : '') . $m1;
+
+	# Add am/pm
+	if (defined($p)) {
+		if ($c == 2) {
+			# Put the cursor before 2nd char of $p
+			my @ampm = split(//, $p);
+			$timestring .= ' ' . shift(@ampm) . $cs . shift(@ampm);
+			
+		} else {
+			$timestring .= ' ' . $p;
+		}
+	}
+		
+	# Add right arrow if cursor is in last position
+	if ($c == 2 && ! defined($p) || $c == 3) {
+		$timestring .= $client->symbols('rightarrow');
+	}
 
 	return ($timestring);
 }
@@ -371,6 +279,7 @@ sub exitInput {
 	
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		Slim::Buttons::Common::popMode($client);
+		$client->update();
 		return;
 	}
 
@@ -379,11 +288,34 @@ sub exitInput {
 	return;
 }
 
+# Call the requested onChange function
+sub callOnChange {
+	#warn 'onChange';
+	my $client = shift;
+
+	my $onChange = $client->modeParam('onChange');
+	
+	if (ref($onChange) eq 'CODE') {
+		my $onChangeArgs = $client->modeParam('onChangeArgs');
+		my @args;
+
+		push @args, $client if $onChangeArgs =~ /c/i;
+		if ($onChangeArgs =~ /v/i) {
+			my $valueRef = $client->modeParam('valueRef');
+			push @args, $$valueRef;
+		}
+		$onChange->(@args);
+	}
+}
+
 sub nextChar {
 	my $client = shift;
-	my $increment = shift || 1;
-	
-	moveCursor($client,$increment);
+	my $increment = shift || +1;
+
+	$client->lastLetterTime(0);
+	$client->lastLetterDigit('');
+	moveCursor($client, $increment);
+	callOnChange($client);
 }
 
 sub moveCursor {
@@ -405,7 +337,7 @@ sub moveCursor {
 
 	my $charIndex;
 
-	if ($cursorPos > (($prefs->get('timeFormat') =~ /%p/) ? 4 : 3)) {
+	if ($cursorPos > (($prefs->get('timeFormat') =~ /%p/) ? 3 : 2)) {
 		exitInput($client,'right');
 		return;
 	}
@@ -413,66 +345,67 @@ sub moveCursor {
 	$client->modeParam('cursorPos',$cursorPos);
 	$client->update();
 	
-	prepKnob($client, [ Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef')) ]);
+	prepKnob($client, 1);
 }
 
 sub scroll {
-	my ($client,$dir) = @_;
+	my ($client, $dir) = @_;
 	
+	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
+	my $c = $client->modeParam('cursorPos');
+	# Don't scroll on the right arrow
+	return if ($ampm && $c == 3 || ! $ampm && $c == 2);
+
+	my $valueRef = $client->modeParam('valueRef');
+	my $oldTime = $$valueRef;
 	my $time = scrollTime($client,$dir);
-	my $onChange = $client->modeParam('onChange');
-	
-	if (ref($onChange) eq 'CODE') {
-		my $onChangeArgs = $client->modeParam('onChangeArgs');
-		my @args;
 
-		push @args, $client if $onChangeArgs =~ /c/i;
-		push @args, $time if $onChangeArgs =~ /v/i;
-		$onChange->(@args);
-	}
+	return if $time == $oldTime;
 
-	my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
+	callOnChange($client);
 
-	$client->modeParam('listIndex', $timedigits[$client->modeParam('cursorPos')]);
-	$client->updateKnob();
+	prepKnob($client, 0);
 
 	$client->update();
 }
 
-=head2 prepKnob( $client, $client, $digits )
+=head2 prepKnob( $client, $digits )
 
 This function is required for updating the Transporter knob.  The knob extents are based on the listLen param, 
 which changes in this mode depending on which column of the time display is being adjusted.
 
-Takes as arguments, the $client structure and a reference to the array of discret digits returned by timeDigits.
+Takes as arguments, the $client structure and whether the knob is now scrolling through a diferent list. 
 
 =cut
 
 sub prepKnob {
-	my ($client, $digits) = @_;
+	my ($client, $newList) = @_;
+
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0);
 	
+	my $c = $client->modeParam('cursorPos');
+
 	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
-	my $c    = $client->modeParam('cursorPos');
 	
 	if ($c == 0) {
-		$client->modeParam('listLen', $ampm ? 2 : 3);
+		$client->modeParam('listLen', 24);
+		$client->modeParam('listIndex', $h);
 
 	} elsif ($c == 1) {
-		$client->modeParam('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
+		$client->modeParam('listLen', 60);
+		$client->modeParam('listIndex', $m);
 
-	} elsif ($c == 2) { 
-		$client->modeParam('listLen', 6);
-
-	} elsif ($c == 3) { 
-		$client->modeParam('listLen', 10);
-
-	} elsif ($c == 4) { 
+	} elsif ($c == 2 && $ampm) { 
+		my $p = $h > 11 ? 1 : 0;
 		$client->modeParam('listLen', 2);
+		$client->modeParam('listIndex', $p);
+	} else {
+		# Right arrow
+		$client->modeParam('listLen', 1);
+		$client->modeParam('listIndex', 0);
 	}
 
-	$client->modeParam('listIndex', $digits->[$c]);
-
-	$client->updateKnob(1);
+	$client->updateKnob($newList);
 }
 
 =head2 scrollTime( $client,$dir,$valueRef,$c)
@@ -484,7 +417,7 @@ Takes the $client object as the first argument.
 
 $dir specifies the direction to scroll. 
 $valueRef is a reference to the scalar time value.
-$c specifies the current cursor position where the digit is intended to scrol.
+$c specifies the current cursor position at which the digit should be scrolled.
 
 =cut
 
@@ -505,69 +438,168 @@ sub scrollTime {
 		$valueRef = $client->modeParam('valueRef');
 	}
 	
-	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($valueRef, 0);
 
 	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
-	
-	$p = ($p && $p eq 'PM') ? 1 : 0;
 
 	if ($c == 0) {
-		$h0 = Slim::Buttons::Common::scroll($client, $dir, $ampm ? 2 : 3, $h0);
-		
-		if ($ampm) {
-			if ($h0 == 0 && $h1 == 0) {
-				$h1 = 1;
-			}	
-			
-			if ($h0 && $h1 > 2) {
-				$h1 = 0;
-			}
-		} else {
+		# Scrolling is done in 24h mode regardless of 12h preference as in 12h mode it goes from 12am through to 11pm
+		$h = Slim::Buttons::Common::scroll($client, $dir, 24, $h);
+	} elsif ($c == 1) { 
+		$m = Slim::Buttons::Common::scroll($client, $dir, 60, $m);
+	# 2 is the right arrow unless we're using 12 hour clock
+	} elsif ($ampm && $c == 2) { 
+		# Scrolling on am/pm simply alters the hour value by +-12
+		my $p = $h > 11 ? 1 : 0;
+		$p = Slim::Buttons::Common::scroll($client, $dir, 2, $p);
+		$h = ($h + ($p ? 12 : -12)) % 24; 
+	}
 
-			if ($h0 == 2 && $h1 > 3) {
-				$h1 = 0;
+	$$valueRef = Slim::Utils::DateTime::hourMinToTime($h, $m);
+	
+	return $$valueRef;
+}
+
+=head2 numberButton ( )
+
+Handle times being entered using the number buttons.
+
+=cut
+sub numberButton {
+	my ($client,$button,$digit) = @_;
+
+	#warn "$button $digit";
+	
+	my $now = Time::HiRes::time();
+
+	my $valueRef = $client->modeParam('valueRef');
+	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
+
+	my $ampm = defined $p;
+	if ($ampm) {
+		$p = $p eq 'PM' ? 1 : 0;
+	}
+	
+	my $c = $client->modeParam('cursorPos');
+
+	# Don't do anything if on the right arrow
+	return if $c == 2 && ! $ampm || $c > 3;
+
+	my $changed = 0;
+	my $passOn = undef;
+
+	if ($c == 0) {
+		if ($client->lastLetterTime()) {
+			#warn "2nd letter $digit";
+			# Entering the 2nd digit of an already started number
+			$h0 = $client->lastLetterDigit();
+			my $maxDigit = 0;
+			if ($h0 == 0) {
+				$maxDigit = 10;
+			} elsif ($h0 == 1) {
+				$maxDigit = $ampm ? 3 : 10;
+			} elsif ($h0 == 2) {
+				$maxDigit = 4;
+			}
+			if ($digit < $maxDigit) {
+				$h1 = $digit;
+				$changed = 1;
+			} else {
+				# Ignore the digit for this position and pass it on to the next position
+				$h1 = $h0;
+				$h0 = 0;
+				$passOn = $digit;
+			}
+			Slim::Utils::Timers::killOneTimer($client, \&nextChar);
+			$client->lastLetterTime(0);
+			$client->lastLetterDigit('');
+			moveCursor($client, +1);
+		} else {
+			# First digit of new number
+			#warn "1st letter $digit";
+			if (! $ampm || $digit != 0) {
+				$h0 = 0;
+				$h1 = $digit;
+				# Move on immediately if digit couldn't go in h0 slot
+				if (($ampm && $digit > 1) || $digit > 2) {
+					$changed = 1;
+					moveCursor($client, +1);
+				} else {
+					$client->lastLetterTime($now);
+					$client->lastLetterDigit($digit);
+					Slim::Utils::Timers::setTimer($client,
+						Time::HiRes::time() + preferences('server')->get('displaytexttimeout'),
+						\&nextChar
+					);
+				}
+			} else {
+				# Ignore 0 key in 12h mode, but allow it to be used as a quick way of entering a single digit hour (e.g. 08) without having to press Right or waiting for the timeout.  If the timeout occurs before any other key is pressed, just pretend nothing happened.
+				$client->lastLetterTime($now);
+				$client->lastLetterDigit($digit);
+				Slim::Utils::Timers::setTimer($client,
+					Time::HiRes::time() + preferences('server')->get('displaytexttimeout'),
+					sub {
+						$client->lastLetterTime(0);
+						$client->lastLetterDigit('');
+					}
+				);
 			}
 		}
 	} elsif ($c == 1) {
-		my $max = $ampm ? ($h0 ? 3 : 10) : ($h0 == 2 ? 4 : 10);
-
-		$h1 = Slim::Buttons::Common::scroll($client, $dir, $max, $h1);
-
-		if ($ampm && $h1 == 0 && $h0 == 0) {
-			$h1 = $dir > 0 ? 1 : ($max - 1);
-		}
-
-	} elsif ($c == 2) { 
-		$m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0);
-
-	} elsif ($c == 3) { 
-		$m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1);
-
-	} elsif ($c == 4) { 
-		$p = Slim::Buttons::Common::scroll($client, +1, 2, $p);
-	}
-
-	if ($ampm && $h0 && $h1 == 2) {
-
-		if ($p) {
-			$p = 0;
-
+		if ($client->lastLetterTime()) {
+			#warn '2nd letter';
+			# Entering the 2nd digit of an already started number
+			$m0 = $client->lastLetterDigit();
+			$m1 = $digit;
+			$changed = 1;
+			Slim::Utils::Timers::killOneTimer($client, \&nextChar);
+			$client->lastLetterTime(0);
+			$client->lastLetterDigit('');
+			moveCursor($client, +1);
 		} else {
-			$h0 = 0; 
-			$h1 = 0;
+			# First digit of new number
+			#warn '1st letter';
+			$m0 = 0;
+			$m1 = $digit;
+			# Move on immediately if digit couldn't go in m0 slot
+			if ($digit > 5) {
+				$changed = 1;
+				moveCursor($client, +1);
+			} else {
+				$client->lastLetterTime($now);
+				$client->lastLetterDigit($digit);
+				Slim::Utils::Timers::setTimer($client,
+					Time::HiRes::time() + preferences('server')->get('displaytexttimeout'),
+					\&nextChar
+				);
+			}
+		}
+	} elsif ($c == 2 && $ampm) {
+		# 2 for AM, 7 for PM (corresponding letter keys for A and P)
+		if ($digit == 2 || $digit == 7) {
+			$p = ($digit == 2 ? 0 : 1);
+			$changed = 1;
+			moveCursor($client, +1);
 		}
 	}
-	
+
 	$$valueRef = Slim::Utils::DateTime::timeDigitsToTime($h0, $h1, $m0, $m1, $p);
-	
-	return $$valueRef;
+
+	if ($changed) {
+		callOnChange($client);
+	}
+
+	$client->update();
+	if (defined $passOn) {
+		numberButton($client, undef, $passOn);
+	}
 }
 
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>
 
-L<Slim::Buttons::AlarmClock>
+L<Slim::Buttons::Alarm>
 
 =cut
 

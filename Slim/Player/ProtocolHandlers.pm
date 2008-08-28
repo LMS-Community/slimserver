@@ -106,7 +106,7 @@ sub handlerForURL {
 	my $handler = $class->loadHandler($protocol);
 	
 	# Handler should be a class, not '1' for rtsp
-	return $handler =~ /::/ ? $handler : undef;
+	return $handler && $handler =~ /::/ ? $handler : undef;
 }
 
 sub iconHandlerForURL {

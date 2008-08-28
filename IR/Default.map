@@ -27,20 +27,25 @@
 9.hold					= playFavorite_9
 arrow_down				= down
 arrow_down.repeat		= down_repeat
+knob_right              = down
+knob_right.repeat       = down_repeat
 arrow_left				= left
 arrow_left.hold			= home
 arrow_right				= right
+knob_push				= right
 arrow_up				= up
 arrow_up.repeat			= up_repeat
+knob_left				= up
+knob_left.repeat		= up_repeat
 rew.single				= jump_rew
-rew.hold				= scan_rew
+rew.hold				= song_scanner
 brightness_down			= brightness_down
 brightness_up			= brightness_up
 brightness.single		= brightness_toggle
 brightness.hold			= dead
 brightness				= dead
 fwd.single				= jump_fwd
-fwd.hold				= scan_fwd
+fwd.hold				= song_scanner
 format					= titleFormat
 muting					= muting
 pause.single			= pause
@@ -48,16 +53,24 @@ pause.hold				= stop
 play.single				= play
 play.hold				= play
 power					= power_toggle
+power_front				= power_toggle
 power_off				= power_off
 power_on				= power_on
 add.single				= add
 add.hold				= zap
-sleep					= sleep
+sleep.single			= sleep
+sleep.hold				= sleep
+snooze.single			= snooze
+snooze.hold				= sleep
 stop					= stop
-voldown					= volume_down
-voldown.repeat			= volume_down
-volup					= volume_up
-volup.repeat			= volume_up
+voldown					= volume
+voldown.repeat			= volume
+volup					= volume
+volup.repeat			= volume
+volup_front             = volume_front
+volup_front.repeat      = volume_front
+voldown_front           = volume_front
+voldown_front.repeat    = volume_front      
 pitchdown				= pitch_down
 pitchdown.repeat		= pitch_down
 pitchup					= pitch_up
@@ -72,6 +85,19 @@ trebleup				= treble_up
 trebleup.repeat			= treble_up
 volume					= volume
 volumemode				= volumemode
+home					= home
+preset_1.single			= playFavorite_1
+preset_2.single			= playFavorite_2
+preset_3.single			= playFavorite_3
+preset_4.single			= playFavorite_4
+preset_5.single			= playFavorite_5
+preset_6.single			= playFavorite_6
+preset_1.hold			= favorites_add1
+preset_2.hold			= favorites_add2
+preset_3.hold			= favorites_add3
+preset_4.hold			= favorites_add4
+preset_5.hold			= favorites_add5
+preset_6.hold			= favorites_add6
 
 # playing display modes
 now_playing				= playdisp_toggle
@@ -125,7 +151,6 @@ menu_now_playing		= menu_now_playing
 menu_synchronize		= menu_synchronize
 
 [home]
-add.*					= add
 arrow_left.hold			= dead
 
 [off]
@@ -133,9 +158,12 @@ arrow_left.hold			= dead
 play.single				= modefunction_off->play
 add.*					= dead
 arrow_right.*			= dead
+knob_push.*			= dead
 arrow_left.*			= dead
 arrow_down.*			= dead
 arrow_up.*				= dead
+knob_left.*				= dead
+knob_right.*			= dead
 format					= dead
 fwd.*					= dead
 menu_browse_album		= dead
@@ -151,7 +179,7 @@ menu_search_album		= dead
 menu_search_artist		= dead
 menu_search_song		= dead
 menu_settings			= dead
-menu_now_playing		= dead 
+menu_now_playing		= dead
 muting					= dead
 now_playing				= dead
 pause.*					= dead
@@ -176,10 +204,14 @@ shuffle_on				= dead
 search					= dead
 browse.*				= dead
 favorites.*				= dead
-sleep					= dead
+sleep.*					= dead
+snooze.single			= snooze
+snooze.hold				= dead
 stop					= dead
 voldown.*				= dead
 volup.*					= dead
+volup_front.*			= dead
+voldown_front.*			= dead
 0						= dead
 1						= dead
 2						= dead
@@ -198,6 +230,7 @@ trebledown.*			= dead
 trebleup.*				= dead
 volumemode.*			= dead
 visual.*				= dead
+home.*					= dead
 
 [block]
 # When the player is blocked during a long operations, most buttons are dead
@@ -206,7 +239,10 @@ add.*					= dead
 arrow_down.*			= dead
 arrow_left				= dead
 arrow_right				= dead
+knob_push				= dead
 arrow_up.*				= dead
+knob_left.*				= dead
+knob_right.*			= dead
 format					= dead
 fwd.*					= dead
 menu_browse_album		= dead
@@ -224,6 +260,7 @@ menu_search_song		= dead
 menu_settings			= dead
 now_playing				= dead
 power					= dead
+power_front				= dead
 power_off				= dead
 power_on				= dead
 rew.*					= dead
@@ -232,6 +269,7 @@ shuffle_off				= dead
 shuffle_on				= dead
 sleep					= dead
 stop					= dead
+home.*					= dead
 
 [browsedb]
 play					= dead
@@ -257,10 +295,6 @@ add						= dead
 add.single				= play_1
 add.hold				= play_2
 
-[moodlogic_instant_mix]
-play.single				= play_0
-add.single				= play_1
-
 [browsemenu]
 play					= right
 add						= right
@@ -273,12 +307,6 @@ add						= right
 play					= right
 add						= right
 
-[volume]
-arrow_up				= volume_up
-arrow_down				= volume_down
-arrow_up.repeat			= volume_up
-arrow_down.repeat		= volume_down
-
 [screensaver]
 0						= done
 1						= done
@@ -290,14 +318,17 @@ arrow_down.repeat		= volume_down
 7						= done
 8						= done
 9						= done
-arrow_down				= done
-arrow_left				= done
-arrow_right				= done
-arrow_up				= done
+arrow_down				= done_passbackplaylist
+arrow_left				= done_passbackplaylist
+arrow_right				= done_passbackplaylist
+knob_push				= done_passbackplaylist
+arrow_up				= done_passbackplaylist
 play					= done
 add						= done
 stop					= done_passback
 knob					= done
+knob_left				= volume
+knob_right				= volume
 
 [INPUT.Time]
 0						= numberLetter_0
@@ -312,12 +343,16 @@ knob					= done
 9						= numberLetter_9
 arrow_left					= left
 arrow_right					= right
+knob_push					= right
 search						= exit_search
 play.*						= dead
 play						= exit_play
 add.*						= dead
 add						= exit_add
-
+knob_left					= down
+knob_left.repeat			= down
+knob_right					= up
+knob_right.repeat			= up
 
 [INPUT.Text]
 0						= numberLetter_0
@@ -342,15 +377,17 @@ add						= exit_add
 9.hold						= letter_9
 arrow_left					= backspace
 arrow_right					= nextChar
+knob_push					= nextChar
 search						= exit_search
 play.*						= dead
 play						= exit_play
 add.*						= dead
-add						= exit_add
+add						= letter_space
 
 [INPUT.List]
 arrow_left					= exit_left
 arrow_right					= exit_right
+knob_push					= exit_right
 play.*						= passback
 add.*						= passback
 search.*					= passback
@@ -360,6 +397,7 @@ pause.*						= passback
 [INPUT.Choice]
 arrow_left					= exit_left
 arrow_right					= exit_right
+knob_push					= exit_right
 play.*						= dead
 play						= play
 add.*						= dead
@@ -369,8 +407,13 @@ stop.*						= passback
 pause.*						= passback
 
 [INPUT.Bar]
+knob_left					= down
+knob_left.repeat			= down
+knob_right					= up
+knob_right.repeat			= up
 arrow_left					= exit_left
 arrow_right					= exit_right
+knob_push					= exit_right
 play.*						= passback
 add.*						= passback
 search.*					= passback
@@ -378,3 +421,31 @@ stop.*						= passback
 pause.*						= passback
 fwd.*						= passback
 rew.*						= passback
+
+[INPUT.Volume]
+knob_left					= down
+knob_left.repeat			= down
+knob_right					= up
+knob_right.repeat			= up
+arrow_up					= up
+arrow_down					= down
+arrow_up.repeat				= up
+arrow_down.repeat			= down
+volup						= up
+volup.repeat				= up
+voldown						= down
+voldown.repeat				= down
+volup_front					= up
+volup_front.repeat			= up
+voldown_front				= down
+voldown_front.repeat		= down
+arrow_left					= exit_left
+arrow_right					= exit
+knob_push					= exit
+play.*						= exit_passback
+add.*						= exit_passback
+search.*					= exit_passback
+stop.*						= exit_passback
+pause.*						= exit_passback
+fwd.*						= exit_passback
+rew.*						= exit_passback

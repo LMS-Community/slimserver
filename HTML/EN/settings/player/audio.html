@@ -1,69 +1,7 @@
 [% PROCESS settings/header.html %]
 
-	[% IF prefs.exists('synchronize') %]
-		[% WRAPPER settingSection %]
-			[% WRAPPER settingGroup title="SETUP_SYNCHRONIZE" desc="SETUP_SYNCHRONIZE_DESC" %]
-				<select class="stdedit" name="synchronize" id="synchronize">
-					[% FOREACH option = syncGroups %]
-						<option [% IF prefs.synchronize == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
-					[%- END -%]
-				</select>
-			[% END %]
-
-			[% WRAPPER settingGroup title="SETUP_SYNCVOLUME" desc="SETUP_SYNCVOLUME_DESC" %]
-				<select class="stdedit" name="syncVolume" id="syncVolume">
-					[% FOREACH option = {
-						'1' => 'SETUP_SYNCVOLUME_ON',
-						'0' => 'SETUP_SYNCVOLUME_OFF'
-					} %]
-						<option [% IF prefs.syncVolume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-					[%- END -%]
-				</select>
-			[% END %]
-
-			[% WRAPPER settingGroup title="SETUP_SYNCPOWER" desc="SETUP_SYNCPOWER_DESC" %]
-				<select class="stdedit" name="syncPower" id="syncPower">
-					[% FOREACH option = {
-						'1' => 'SETUP_SYNCPOWER_ON',
-						'0' => 'SETUP_SYNCPOWER_OFF'
-					} %]
-						<option [% IF prefs.syncPower == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-					[%- END -%]
-				</select>
-			[% END %]
-
-			[% WRAPPER settingGroup title="SETUP_MAINTAINSYNC" desc="SETUP_MAINTAINSYNC_DESC" %]
-				<select class="stdedit" name="maintainSync" id="maintainSync">
-					[% FOREACH option = {
-						'1' => 'SETUP_MAINTAINSYNC_ON',
-						'0' => 'SETUP_MAINTAINSYNC_OFF'
-					} %]
-						<option [% IF prefs.maintainSync == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-					[%- END -%]
-				</select>
-			[% END %]
-
-			[% WRAPPER settingGroup title="SETUP_STARTDELAY" desc="SETUP_STARTDELAY_DESC" %]
-				<input type=text class="stdedit" name="startDelay" id="startDelay" value="[% prefs.startDelay %]" size="5">
-			[% END %]
-
-			[% WRAPPER settingGroup title="SETUP_PLAYDELAY" desc="SETUP_PLAYDELAY_DESC" %]
-				<input type=text class="stdedit" name="playDelay" id="playDelay" value="[% prefs.playDelay %]" size="5">
-			[% END %]
-
-			[% WRAPPER settingGroup title="SETUP_MINSYNCADJUST" desc="SETUP_MINSYNCADJUST_DESC" %]
-				<input type=text class="stdedit" name="minSyncAdjust" id="minSyncAdjust" value="[% prefs.minSyncAdjust %]" size="5">
-			[% END %]
-	
-			[% WRAPPER settingGroup title="SETUP_PACKETLATENCY" desc="SETUP_PACKETLATENCY_DESC" %]
-				<input type=text class="stdedit" name="packetLatency" id="packetLatency" value="[% prefs.packetLatency %]" size="5">
-			[% END %]
-
-		[% END %]
-	[% END %]
-
 	[% WRAPPER setting title="SETUP_POWERONRESUME" desc="SETUP_POWERONRESUME_DESC" %]
-		<select class="stdedit" name="powerOnResume" id="powerOnResume">
+		<select class="stdedit" name="pref_powerOnResume" id="pref_powerOnResume">
 
 			[% FOREACH option = {
 				'PauseOff-NoneOn'     => 'SETUP_POWERONRESUME_PAUSEOFF_NONEON',
@@ -73,38 +11,76 @@
 				'StopOff-ResetPlayOn' => 'SETUP_POWERONRESUME_STOPOFF_RESETPLAYON',
 				'StopOff-ResetOn'     => 'SETUP_POWERONRESUME_STOPOFF_RESETON',
 			} %]
-				<option [% IF prefs.powerOnResume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_powerOnResume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 			[%- END -%]
 		
 		</select>
 	[% END %]
 
-	[% IF prefs.exists('powerOffDac') || prefs.exists('disableDac') %]
+	[% IF prefs.exists('pref_analogOutMode') || prefs.exists('pref_lineInLevel') || prefs.exists('pref_lineInAlwaysOn') %]
 		[% WRAPPER settingSection %]
-			[% IF prefs.exists('powerOffDac') %]
+			[% IF prefs.exists('pref_analogOutMode') %]
+				[% WRAPPER settingGroup title="SETUP_ANALOGOUTMODE" desc="SETUP_ANALOGOUTMODE_DESC" %]
+					<select class="stdedit" name="pref_analogOutMode" id="pref_analogOutMode">
+			
+					[% FOREACH option = {
+						'1' => 'ANALOGOUTMODE_SUBOUT',
+						'0' => 'ANALOGOUTMODE_HEADPHONE'
+					} %]
+						<option [% IF prefs.pref_analogOutMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+					
+					</select>
+				[% END %]
+			[% END %]
+			
+			[% IF prefs.exists('pref_lineInLevel') %]
+				[% WRAPPER settingGroup title="LINE_IN_LEVEL" desc="LINE_IN_LEVEL_DESC" %]
+					<input type="text" class="stdedit sliderInput_0_100" name="pref_lineInLevel" id="lineInLevel" value="[% prefs.lineInLevel %]" size="5">
+				[% END %]
+			[% END %]
+			
+			[% IF prefs.exists('pref_lineInAlwaysOn') %]
+				[% WRAPPER settingGroup title="LINE_IN_ALWAYS_ON" desc="LINE_IN_ALWAYS_ON_DESC" %]
+					<select class="stdedit" name="pref_lineInAlwaysOn" id="lineInAlwaysOn">
+						<option [% IF prefs.pref_lineInAlwaysOn %]selected="selected" [% END %]value="1">
+							[% 'YES' | string %]
+						</option>
+						<option [% IF !prefs.pref_lineInAlwaysOn %]selected="selected" [% END %]value="0">
+							[% 'NO' | string %]
+						</option>
+					</select>
+				[% END %]
+			[% END %]
+		[% END %]
+	[% END %]
+
+	[% IF prefs.exists('pref_powerOffDac') || prefs.exists('pref_disableDac') %]
+		[% WRAPPER settingSection %]
+			[% IF prefs.exists('pref_powerOffDac') %]
 				[% WRAPPER settingGroup title="SETUP_POWEROFFDAC" desc="SETUP_POWEROFFDAC_DESC" %]
-					<select class="stdedit" name="powerOffDac" id="powerOffDac">
+					<select class="stdedit" name="pref_powerOffDac" id="pref_powerOffDac">
 			
 					[% FOREACH option = {
 						'1' => 'POWEROFFDAC_WHENOFF',
 						'0' => 'POWEROFFDAC_ALWAYSON'
 					} %]
-						<option [% IF prefs.powerOffDac == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_powerOffDac == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>
 				[% END %]
 			[% END %]
 	
-			[% IF prefs.exists('disableDac') %]
+			[% IF prefs.exists('pref_disableDac') %]
 				[% WRAPPER settingGroup title="SETUP_DISABLEDAC" desc="SETUP_DISABLEDAC_DESC" %]
-					<select class="stdedit" name="disableDac" id="disableDac">
+					<select class="stdedit" name="pref_disableDac" id="pref_disableDac">
 			
 					[% FOREACH option = {
 						'1' => 'DISABLEDAC_WHENOFF',
 						'0' => 'DISABLEDAC_ALWAYSON'
 					} %]
-						<option [% IF prefs.disableDac == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_disableDac == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>	
@@ -114,10 +90,10 @@
 		[% END %]
 	[% END %]
 
-	[% IF prefs.exists('transitionType') %]
+	[% IF prefs.exists('pref_transitionType') %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONTYPE" desc="SETUP_TRANSITIONTYPE_DESC" %]
-				<select class="stdedit" name="transitionType" id="transitionType">
+				<select class="stdedit" name="pref_transitionType" id="pref_transitionType">
 		
 				[% FOREACH option = {
 					'0' => 'TRANSITION_NONE',
@@ -126,70 +102,101 @@
 					'3' => 'TRANSITION_FADE_OUT',
 					'4' => 'TRANSITION_FADE_IN_OUT',
 				} %]
-					<option [% IF prefs.transitionType == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_transitionType == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 				[%- END -%]
 				
 				</select>
 			[% END %]
 			
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONSMART" desc="SETUP_TRANSITIONSMART_DESC" %]
-				<select class="stdedit" name="transitionSmart" id="transitionSmart">
+				<select class="stdedit" name="pref_transitionSmart" id="pref_pref_transitionSmart">
 					
 				[% FOREACH option = {
 					'0' => 'SETUP_TRANSITIONSMART_OFF',
 					'1' => 'SETUP_TRANSITIONSMART_ON',
 				} %]
-					<option [% IF prefs.transitionSmart == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_transitionSmart == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 				[%- END -%]
 				
 				</select>
 			[% END %]
 	
 			[% WRAPPER settingGroup title="SETUP_TRANSITIONDURATION" desc="SETUP_TRANSITIONDURATION_DESC" %]
-				<input type="text" class="stdedit" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="15">
+				<input type="text" class="stdedit sliderInput_0_10" name="pref_transitionDuration" id="pref_transitionDuration" value="[% prefs.pref_transitionDuration %]" size="5">
 			[% END %]
 
 		[% END %]
 	[% END %]
 
-	[% IF prefs.exists('digitalVolumeControl') %]
+	[% IF prefs.exists('pref_bass') || prefs.exists('pref_treble') || prefs.exists('pref_stereoxl') %]
+		[% WRAPPER settingSection %]
+			[% IF prefs.exists('pref_bass') %]
+				[% WRAPPER settingGroup title="BASS" desc="" %]
+				<input type="text" class="stdedit sliderInput_-23_23" name="pref_bass" id="pref_bass" value="[% prefs.pref_bass %]" size="5">
+				[% END %]
+			[% END %]
+		
+			[% IF prefs.exists('pref_treble') %]
+				[% WRAPPER settingGroup title="TREBLE" desc="" %]
+				<input type="text" class="stdedit sliderInput_-23_23" name="pref_treble" id="pref_treble" value="[% prefs.pref_treble %]" size="5">
+				[% END %]
+			[% END %]
+		
+			[% IF prefs.exists('pref_stereoxl') %]
+				[% WRAPPER settingGroup title="STEREOXL" desc="" %]
+					<select class="stdedit" name="pref_stereoxl" id="pref_stereoxl">
+						[% FOREACH option = {
+							'0' => 'OFF',
+							'1' => 'LOW',
+							'2' => 'MEDIUM',
+							'3' => 'HIGH'
+						} %]
+							<option [% IF prefs.pref_stereoxl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						[%- END -%]
+					</select>
+				[% END %]
+			[% END %]
+		[% END %]
+	[% END %]
+
+	[% IF prefs.exists('pref_digitalVolumeControl') %]
 		[% WRAPPER settingSection %]
 
 			[% WRAPPER settingGroup title="SETUP_DIGITALVOLUMECONTROL" desc="SETUP_DIGITALVOLUMECONTROL_DESC" %]
-				<select class="stdedit" name="digitalVolumeControl" id="digitalVolumeControl">
+				<select class="stdedit" name="pref_digitalVolumeControl" id="pref_digitalVolumeControl">
 		
 				[% FOREACH option = {
 					'1' => 'SETUP_DIGITALVOLUMECONTROL_ON',
 					'0' => 'SETUP_DIGITALVOLUMECONTROL_OFF'
 				} %]
-					<option [% IF prefs.digitalVolumeControl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					<option [% IF prefs.pref_digitalVolumeControl == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 				[%- END -%]
 				
 				</select>
 			[% END %]
 	
 	
-			[% IF prefs.exists('preampVolumeControl') %]
+			[% IF prefs.exists('pref_preampVolumeControl') %]
 				[% WRAPPER settingGroup title="SETUP_PREAMPVOLUMECONTROL" desc="SETUP_PREAMPVOLUMECONTROL_DESC" %]
-					<input type="text" class="stdedit" name="preampVolumeControl" id="preampVolumeControl" value="[% prefs.preampVolumeControl %]" size="15">	
+					<input type="text" class="stdedit sliderInput_0_63" name="pref_preampVolumeControl" id="pref_preampVolumeControl" value="[% prefs.pref_preampVolumeControl %]" size="15">	
 				[% END %]
 			[% END %]
 	
 			[% WRAPPER settingGroup title="SETUP_MP3SILENCEPRELUDE" desc="SETUP_MP3SILENCEPRELUDE_DESC" %]
-				<input type="text" class="stdedit" name="mp3SilencePrelude" id="mp3SilencePrelude" value="[% prefs.mp3SilencePrelude %]" size="15">
+				<input type="text" class="stdedit" name="pref_mp3SilencePrelude" id="pref_mp3SilencePrelude" value="[% prefs.pref_mp3SilencePrelude %]" size="15">
 			[% END %]
 	
 	
-			[% IF prefs.exists('digitalOutputEncoding') %]
+			[% IF prefs.exists('pref_digitalOutputEncoding') %]
 	
 				[% WRAPPER settingGroup title="SETUP_DIGITALOUTPUTENCODING" desc="SETUP_DIGITALOUTPUTENCODING_DESC" %]
-					<select class="stdedit" name="digitalOutputEncoding" id="digitalOutputEncoding">
+					<select class="stdedit" name="pref_digitalOutputEncoding" id="pref_digitalOutputEncoding">
 			
 					[% FOREACH option = {
 						'0' => 'DIGITALOUTPUTENCODING_SPDIF',
 						'1' => 'DIGITALOUTPUTENCODING_AESEBU',
 					} %]
-						<option [% IF prefs.digitalOutputEncoding == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_digitalOutputEncoding == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>
@@ -197,10 +204,10 @@
 	
 			[% END %]
 	
-			[% IF prefs.exists('clockSource') %]
+			[% IF prefs.exists('pref_clockSource') %]
 	
 				[% WRAPPER settingGroup title="SETUP_CLOCKSOURCE" desc="SETUP_CLOCKSOURCE_DESC" %]
-					<select class="stdedit" name="clockSource" id="clockSource">
+					<select class="stdedit" name="pref_clockSource" id="pref_clockSource">
 			
 					[% FOREACH option = {
 						'0' => 'CLOCKSOURCE_INTERNAL',
@@ -210,7 +217,7 @@
 						'4' => 'AUDIO_SOURCE_RCA_SPDIF',
 						'5' => 'AUDIO_SOURCE_OPTICAL_SPDIF',
 					} %]
-						<option [% IF prefs.clockSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_clockSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>
@@ -218,10 +225,10 @@
 				
 			[% END %]
 
-			[% IF prefs.exists('fxloopSource') %]
+			[% IF prefs.exists('pref_fxloopSource') %]
 	
 				[% WRAPPER settingGroup title="SETUP_FXLOOPSOURCE" desc="SETUP_FXLOOPSOURCE_DESC" %]
-					<select class="stdedit" name="fxloopSource" id="fxloopSource">
+					<select class="stdedit" name="pref_fxloopSource" id="pref_fxloopSource">
 			
 					[% FOREACH option = {
 						'0' => 'FXLOOPSOURCE_DISABLED',
@@ -230,7 +237,7 @@
 						'3' => 'AUDIO_SOURCE_RCA_SPDIF',
 						'4' => 'AUDIO_SOURCE_OPTICAL_SPDIF',
 					} %]
-						<option [% IF prefs.fxloopSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_fxloopSource == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>
@@ -238,16 +245,16 @@
 				
 			[% END %]
 
-			[% IF prefs.exists('fxloopClock') %]
+			[% IF prefs.exists('pref_fxloopClock') %]
 	
 				[% WRAPPER settingGroup title="SETUP_FXLOOPCLOCK" desc="SETUP_FXLOOPCLOCK_DESC" %]
-					<select class="stdedit" name="fxloopClock" id="fxloopClock">
+					<select class="stdedit" name="pref_fxloopClock" id="pref_fxloopClock">
 			
 					[% FOREACH option = {
 						'0' => 'FXLOOPCLOCK_SYNCHRONOUS',
 						'1' => 'FXLOOPCLOCK_ASYNCHRONOUS',
 					} %]
-						<option [% IF prefs.fxloopClock == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_fxloopClock == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>
@@ -255,16 +262,16 @@
 				
 			[% END %]
 
-			[% IF prefs.exists('polarityInversion') %]
+			[% IF prefs.exists('pref_polarityInversion') %]
 	
 				[% WRAPPER settingGroup title="SETUP_POLARITYINVERSION" desc="SETUP_POLARITYINVERSION_DESC" %]
-					<select class="stdedit" name="polarityInversion" id="polarityInversion">
+					<select class="stdedit" name="pref_polarityInversion" id="pref_polarityInversion">
 			
 					[% FOREACH option = {
 						'0' => 'POLARITYINVERSION_NORMAL',
 						'3' => 'POLARITYINVERSION_INVERTED',
 					} %]
-						<option [% IF prefs.polarityInversion == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						<option [% IF prefs.pref_polarityInversion == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]
 					
 					</select>
@@ -275,15 +282,15 @@
 
 	[% END %]
 
-	[% IF prefs.exists('wordClockOutput') %]
+	[% IF prefs.exists('pref_wordClockOutput') %]
 		[% WRAPPER setting title="SETUP_WORDCLOCKOUTPUT" desc="SETUP_WORDCLOCKOUTPUT_DESC" %]
-			<select class="stdedit" name="wordClockOutput" id="wordClockOutput">
+			<select class="stdedit" name="pref_wordClockOutput" id="pref_wordClockOutput">
 	
 			[% FOREACH option = {
 				'0' => 'WORDCLOCKOUTPUT_DISABLED',
 				'1' => 'WORDCLOCKOUTPUT_ENABLED',
 			} %]
-				<option [% IF prefs.wordClockOutput == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_wordClockOutput == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 			[%- END -%]
 			
 			</select>
@@ -298,13 +305,13 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_MAXBITRATE" %]
-				<select class="stdedit" name="maxBitrate" id="maxBitrate">
+				<select class="stdedit" name="pref_maxBitrate" id="pref_maxBitrate" [% !lamefound && "disabled" %]>
 				
 				[% IF allowNoLimit %]
-					<option [% IF prefs.maxBitrate == '0' %]selected [% END %]value="0">[% "NO_LIMIT" | string %]</option>
+					<option [% IF prefs.pref_maxBitrate == '0' %]selected [% END %]value="0">[% "NO_LIMIT" | string %]</option>
 				[% END %]
 				[% FOREACH option = ['64', '96', '128', '160', '192', '256', '320'] %]
-					<option [% IF prefs.maxBitrate == option %]selected [% END %]value="[% option %]">[% option %] [% "KBPS" | string %]</option>
+					<option [% IF prefs.pref_maxBitrate == option %]selected [% END %]value="[% option %]">[% option %] [% "KBPS" | string %]</option>
 				[%- END -%]
 				
 				</select>
@@ -317,10 +324,10 @@
 		[% END %]
 
 		[% WRAPPER settingGroup title="SETUP_LAMEQUALITY" desc="SETUP_LAMEQUALITY_DESC" %]
-			<select class="stdedit" name="lameQuality" id="lameQuality">
+			<select class="stdedit" name="pref_lameQuality" id="pref_lameQuality" [% !lamefound && "disabled" %]>
 	
 			[% FOREACH option = [0 .. 9] %]
-				<option [% IF prefs.lameQuality == option %]selected [% END %]value="[%option %]">
+				<option [% IF prefs.pref_lameQuality == option %]selected [% END %]value="[%option %]">
 					[% option %] [% IF loop.first %] ([% "LAME0" | string %])
 					[% ELSIF loop.last %] ([% "LAME9" | string %])[% END %]
 				</option>
@@ -331,9 +338,9 @@
 
 	[% END %]
 
-	[% IF prefs.exists('replayGainMode') %]
+	[% IF prefs.exists('pref_replayGainMode') %]
 		[% WRAPPER setting title="SETUP_REPLAYGAINMODE" desc="SETUP_REPLAYGAINMODE_DESC" %]
-			<select class="stdedit" name="replayGainMode" id="replayGainMode">
+			<select class="stdedit" name="pref_replayGainMode" id="pref_replayGainMode">
 	
 			[% FOREACH option = {
 				'0' => 'REPLAYGAIN_DISABLED',
@@ -341,22 +348,22 @@
 				'2' => 'REPLAYGAIN_ALBUM_GAIN',
 				'3' => 'REPLAYGAIN_SMART_GAIN',
 			} %]
-				<option [% IF prefs.replayGainMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_replayGainMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 			[%- END -%]
 			
 			</select>
 		[% END %]
 	[% END %]
 	
-	[% IF prefs.exists('mp3StreamingMethod') %]
+	[% IF prefs.exists('pref_mp3StreamingMethod') %]
 		[% WRAPPER setting title="SETUP_MP3STREAMINGMETHOD" desc="SETUP_MP3STREAMINGMETHOD_DESC" %]
-			<select class="stdedit" name="mp3StreamingMethod" id="mp3StreamingMethod">
+			<select class="stdedit" name="pref_mp3StreamingMethod" id="pref_mp3StreamingMethod">
 	
 			[% FOREACH option = {
 				'0' => 'MP3_STREAMING_DIRECT',
 				'1' => 'MP3_STREAMING_PROXIED',
 			} %]
-				<option [% IF prefs.mp3StreamingMethod == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+				<option [% IF prefs.pref_mp3StreamingMethod == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 			[%- END -%]
 	
 			</select>	

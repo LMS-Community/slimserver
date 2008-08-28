@@ -33,6 +33,9 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+my $log         = logger('player.ui');
+my $playlistlog = logger('player.playlist');
+
 our %functions = ();
 my %playlistParams = ();
 
@@ -57,48 +60,7 @@ sub init {
 
 	# Each button on the remote has a function:
 	%functions = (
-		'playdisp' => sub {
-			# toggle display mod for now playing...
-			my $client = shift;
-			my $button = shift;
-			my $buttonarg = shift;
-			my $pdm = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
-			my $index = -1;
-			
-			#find index of the existing display mode in the pref array
-			for (@{ $prefs->client($client)->get('playingDisplayModes') }) {
-				$index++;
-				last if $pdm == $_;
-			}
-
-			$pdm = $index unless $index == -1;
-
-			unless (defined $pdm) { $pdm = 1; };
-			unless (defined $buttonarg) { $buttonarg = 'toggle'; };
-
-			if ($button eq 'playdisp_toggle') {
-
-				my $playlistlen = Slim::Player::Playlist::count($client);
-
-				if (($playlistlen > 0) && (showingNowPlaying($client))) {
-
-					$pdm = ($pdm + 1) % (scalar @{ $prefs->client($client)->get('playingDisplayModes') });
-
-				} elsif ($playlistlen > 0) {
-
-					browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
-				}
-
-			} else {
-				if ($buttonarg && $buttonarg < scalar @{ $prefs->client($client)->get('playingDisplayModes') }) {
-					$pdm = $buttonarg;
-				}
-			}
-
-			#find mode number at the new index, and save to the prefs
-			$prefs->client($client)->set('playingDisplayMode', $pdm);
-			$client->update();
-		},
+		'playdisp' => \&playdisp,
 
 		'knob' => sub {
 				my ($client, $funct, $functarg) = @_;
@@ -113,8 +75,8 @@ sub init {
 					playlistNowPlaying($client, 0);
 				}
 
-				if ( logger('player.ui')->is_debug ) {
-					logger('player.ui')->debug(
+				if ( $log->is_debug ) {
+					$log->debug(
 						"funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]",
 						browseplaylistindex($client)
 					);
@@ -206,11 +168,11 @@ sub init {
 
 			if ($client->display->showExtendedText()) {
 
-				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist') );
+				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist', $client->curLines({ trans => 'pushModeRight' })));
 
 			} else {
 
-				$client->pushRight($oldlines, $client->curLines());
+				$client->pushRight($oldlines, $client->curLines({ trans => 'pushModeRight' }));
 			}
 		},
 
@@ -314,6 +276,54 @@ sub init {
 	
 }
 
+=head2 playdisp ( $client, $button, $buttonarg )
+
+Handler for the now playing display mode so it can be accessed from S:B:Screensaver as well as here
+
+=cut
+
+sub playdisp {
+	my $client = shift;
+	my $button = shift;
+	my $buttonarg = shift;
+	my $pdm = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
+	my $index = -1;
+	
+	#find index of the existing display mode in the pref array
+	for (@{ $prefs->client($client)->get('playingDisplayModes') }) {
+		$index++;
+		last if $pdm == $_;
+	}
+	
+	$pdm = $index unless $index == -1;
+	
+	unless (defined $pdm) { $pdm = 1; };
+	unless (defined $buttonarg) { $buttonarg = 'toggle'; };
+	
+	if ($button eq 'playdisp_toggle') {
+		
+		my $playlistlen = Slim::Player::Playlist::count($client);
+		
+		if (($playlistlen > 0) && (showingNowPlaying($client))) {
+			
+			$pdm = ($pdm + 1) % (scalar @{ $prefs->client($client)->get('playingDisplayModes') });
+			
+		} elsif ($playlistlen > 0) {
+			
+			browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
+		}
+		
+	} else {
+		if ($buttonarg && $buttonarg < scalar @{ $prefs->client($client)->get('playingDisplayModes') }) {
+			$pdm = $buttonarg;
+		}
+	}
+	
+	#find mode number at the new index, and save to the prefs
+	$prefs->client($client)->set('playingDisplayMode', $pdm);
+	$client->update();
+}
+
 =head2 forgetClient ( $client )
 
 Clean up global hash when a client is gone
@@ -400,7 +410,7 @@ sub jump {
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
 	
-		logger('player.playlist')->info("Jumping to song index: $pos");
+		$playlistlog->info("Jumping to song index: $pos");
 	
 		browseplaylistindex($client,$pos);
 	}
@@ -422,6 +432,7 @@ sub newTitle {
 #		
 sub lines {
 	my $client = shift;
+	my $args   = shift;
 
 	my $parts;
 
@@ -429,7 +440,11 @@ sub lines {
 
 	if ($nowPlaying || (Slim::Player::Playlist::count($client) < 1)) {
 
-		$parts = $client->currentSongLines();
+		$parts = $client->currentSongLines($args);
+
+	} elsif ($args->{'periodic'} && $client->animateState) {
+
+		return {};
 
 	} else {
 
@@ -437,18 +452,19 @@ sub lines {
 			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
 		}
 
-		my $line1 = sprintf("%s (%d %s %d) ", 
-			$client->string('PLAYLIST'),
-			browseplaylistindex($client) + 1,
-			$client->string('OUT_OF'),
-			Slim::Player::Playlist::count($client)
-		);
+		my $line1 = $client->string('PLAYLIST');
+		my $overlay1;
+
+		if ($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) {
+			$overlay1 = ' ' . (browseplaylistindex($client) + 1) . ' ' . $client->string('OUT_OF') . ' ' . 
+				Slim::Player::Playlist::count($client);
+		}
 
 		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client) );
 		
 		$parts = {
 			'line'    => [ $line1, Slim::Music::Info::standardTitle($client, $song) ],
-			'overlay' => [ undef, $client->symbols('notesymbol') ],
+			'overlay' => [ $overlay1, $client->symbols('notesymbol') ],
 		};
 
 		if ($client->display->showExtendedText()) {
@@ -484,10 +500,13 @@ Check if the information currently displayed on a player is the currently playin
 sub showingNowPlaying {
 	my $client = shift;
 
-	return ( defined Slim::Buttons::Common::mode($client) && 
-			 ( (Slim::Buttons::Common::mode($client) eq 'screensaver') || 
-			   ((Slim::Buttons::Common::mode($client) eq 'playlist') && 
-			   ((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client)) )) );
+	my $mode = Slim::Buttons::Common::mode($client);
+
+	return (
+		defined $mode &&
+		( $mode eq 'screensaver' || 
+		 ($mode eq 'playlist' && ((browseplaylistindex($client) || 0) == Slim::Player::Source::playingSongIndex($client)) ) )
+	);
 }
 
 
@@ -548,9 +567,7 @@ The optional argument, $playlistindex sets the zero-based position for browsing 
 sub browseplaylistindex {
 	my $client = shift;
 
-	my $log = logger('player.playlist');
-
-	if ($log->is_debug && @_) {
+	if ( @_ && $playlistlog->is_debug ) {
 
 		$log->debug("New playlistindex: $_[0]");
 	}

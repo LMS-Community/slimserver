@@ -59,6 +59,8 @@ sub shouldLoop () { 0 }
 
 sub canSeek { 0 }
 
+sub isRemote { 1 }
+
 # Source for AudioScrobbler (E = Personalised recommendation except Last.fm)
 sub audioScrobblerSource () { 'E' }
 

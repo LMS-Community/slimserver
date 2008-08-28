@@ -33,7 +33,16 @@ sub all {
 		}
 	);
 	
-	return \@favs;
+	my $all = [];
+	
+	for my $fav ( @favs ) {
+		push @{$all}, {
+			title => $fav->title,
+			url   => $fav->url,
+		};
+	}
+	
+	return $all;
 }
 
 sub add {
@@ -137,6 +146,7 @@ sub entry {
 	if ( $fav ) {
 		return {
 			title => $fav->title,
+			text  => $fav->title,
 			URL   => $fav->url,
 			type  => 'audio',
 		};
@@ -148,7 +158,32 @@ sub entry {
 sub hasHotkey {
 	my ( $self, $digit ) = @_;
 	
-	return $digit - 1;
+	my ($fav) = SDI::Service::Model::Favorite->search(
+		userid => $self->{userid},
+		hotkey => $digit,
+	);
+	
+	if ( $fav ) {
+		return $fav->num - 1;
+	}
+	
+	return;
+}
+
+sub setHotkey {
+	my ( $self, $index, $key ) = @_;
+	
+	my ($fav) = SDI::Service::Model::Favorite->search(
+		userid => $self->{userid},
+		num    => $index,
+	);
+	
+	if ( $fav ) {
+		$fav->hotkey( $key );
+		$fav->update;
+	}
+	
+	return 1;
 }
 
 1;
