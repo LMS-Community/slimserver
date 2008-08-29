@@ -1,0 +1,38 @@
+Ext JS - JavaScript Library
+Copyright (c) 2006-2008, Ext JS, LLC
+All rights reserved.
+licensing@extjs.com
+
+http://extjs.com/license
+
+Open Source License
+------------------------------------------------------------------------------------------
+Ext is licensed under the terms of the Open Source GPL 3.0 license. You may wish to use
+our open source license if you:
+ * Want to use Ext in an open source project that is compatible with the GPL
+ * Plan to use Ext in a personal, educational or non-profit manner
+
+http://www.gnu.org/licenses/gpl.html
+
+
+Commercial License
+------------------------------------------------------------------------------------------
+If you are using this library for commercial purposes, we encourage you to purchase
+a commercial license. Please visit http://extjs.com/license for more details.
+
+
+OEM / Reseller License
+------------------------------------------------------------------------------------------
+If you plan to distribute Ext in a product that will be packaged or sold as a software
+development library, toolkit or plug-in-based framework ("LIBRARY"), we require that you
+work with us to establish a specific license that is appropriate. Use of the open source
+license in a LIBRARY is not permitted without explicit permission from Ext JS, LLC.
+
+For more details, please visit: http://extjs.com/license.
+
+--
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
