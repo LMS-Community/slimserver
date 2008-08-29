@@ -896,8 +896,6 @@ sub stream_s {
 sub stream {
 	my ($client, $command, $params) = @_;
 
-	my $log    = logger('network.protocol.slimproto');
-
 	return unless ($client->opened());
 	
 	if ( ($log->is_info && $command ne 't') || $log->is_debug) {
