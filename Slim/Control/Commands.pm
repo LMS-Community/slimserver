@@ -678,11 +678,9 @@ sub playcontrolCommand {
 		if (defined $newvalue) {
 			$wantmode = $newvalue ? 'pause' : 'play';
 		} else {
-			$wantmode = ($curmode eq 'pause') ? 'play' : 'pause';
+			# Toggle, or start upon a pause command if player is currently in stop mode
+			$wantmode = ($curmode eq 'pause' || $curmode eq 'stop') ? 'play' : 'pause';
 		}
-
-		# Start a player upon a pause command if player is currently in stop mode
-		$wantmode = 'play' if ($curmode eq 'stop');
 	}
 
 	# Adjust for resume: if we're paused and asked to play, we resume
