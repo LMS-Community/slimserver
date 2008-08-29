@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -9,8 +9,8 @@
 /**
  * @class Ext.menu.Menu
  * @extends Ext.util.Observable
- * A menu object.  This is the container to which you add all other menu items.  Menu can also serve a as a base class
- * when you want a specialzed menu based off of another component (like {@link Ext.menu.DateMenu} for example).
+ * A menu object.  This is the container to which you add all other menu items.  Menu can also serve as a base class
+ * when you want a specialized menu based off of another component (like {@link Ext.menu.DateMenu} for example).
  * @constructor
  * Creates a new Menu
  * @param {Object} config Configuration options
@@ -128,9 +128,16 @@ Ext.extend(Ext.menu.Menu, Ext.util.Observable, {
      * @cfg {Boolean} allowOtherMenus True to allow multiple menus to be displayed at the same time (defaults to false)
      */
     allowOtherMenus : false,
+    /**
+     * @cfg {Boolean} ignoreParentClicks True to ignore clicks on any item in this menu that is a parent item (displays
+     * a submenu) so that the submenu is not dismissed when clicking the parent item (defaults to false).
+     */
+    ignoreParentClicks : false,
 
+    // private
     hidden:true,
 
+    // private
     createEl : function(){
         return new Ext.Layer({
             cls: "x-menu",
@@ -213,8 +220,12 @@ Ext.extend(Ext.menu.Menu, Ext.util.Observable, {
     onClick : function(e){
         var t;
         if(t = this.findTargetItem(e)){
-            t.onClick(e);
-            this.fireEvent("click", this, t, e);
+            if(t.menu && this.ignoreParentClicks){
+                t.expandMenu();
+            }else{
+                t.onClick(e);
+                this.fireEvent("click", this, t, e);
+            }
         }
     },
 
@@ -252,6 +263,7 @@ Ext.extend(Ext.menu.Menu, Ext.util.Observable, {
                 this.setActiveItem(t, true);
             }
         }
+        this.over = true;
         this.fireEvent("mouseover", this, e, t);
     },
 
@@ -264,6 +276,7 @@ Ext.extend(Ext.menu.Menu, Ext.util.Observable, {
                 delete this.activeItem;
             }
         }
+        this.over = false;
         this.fireEvent("mouseout", this, e, t);
     },
 
@@ -350,7 +363,7 @@ Ext.extend(Ext.menu.Menu, Ext.util.Observable, {
      * Addds one or more items of any type supported by the Menu class, or that can be converted into menu items.
      * Any of the following are valid:
      * <ul>
-     * <li>Any menu item object based on {@link Ext.menu.Item}</li>
+     * <li>Any menu item object based on {@link Ext.menu.BaseItem}</li>
      * <li>An HTMLElement object which will be converted to a menu item</li>
      * <li>A menu item config object that will be created as a new menu item</li>
      * <li>A string, which can either be '-' or 'separator' to add a menu separator, otherwise
@@ -427,7 +440,7 @@ var item = menu.add(
     },
 
     /**
-     * Adds an existing object based on {@link Ext.menu.Item} to the menu
+     * Adds an existing object based on {@link Ext.menu.BaseItem} to the menu
      * @param {Ext.menu.Item} item The menu item to add
      * @return {Ext.menu.Item} The menu item that was added
      */
@@ -469,7 +482,7 @@ var item = menu.add(
     },
 
     /**
-     * Inserts an existing object based on {@link Ext.menu.Item} to the menu at a specified index
+     * Inserts an existing object based on {@link Ext.menu.BaseItem} to the menu at a specified index
      * @param {Number} index The index in the menu's list of current items where the new item should be inserted
      * @param {Ext.menu.Item} item The menu item to add
      * @return {Ext.menu.Item} The menu item that was added

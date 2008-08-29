@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -71,6 +71,14 @@ Ext.extend(Ext.tree.TreeDragZone, Ext.dd.DragZone, {
         var sm = this.tree.getSelectionModel();
         sm.clearSelections();
         sm.select(this.dragData.node);
+    },
+    
+    // private
+    afterRepair : function(){
+        if (Ext.enableFx && this.tree.hlDrop) {
+            Ext.Element.fly(this.dragData.ddel).highlight(this.hlColor || "c3daf9");
+        }
+        this.dragging = false;
     }
 });
 }

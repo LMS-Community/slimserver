@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -230,7 +230,7 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
     },
 
     /**
-     * Add Records to the Store and fires the add event.
+     * Add Records to the Store and fires the {@link #add} event.
      * @param {Ext.data.Record[]} records An Array of Ext.data.Record objects to add to the cache.
      */
     add : function(records){
@@ -250,8 +250,8 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
     },
 
     /**
-     * (Local sort only) Inserts the passed the record in the Store at the index where it
-     * should go based on the current sort information
+     * (Local sort only) Inserts the passed Record into the Store at the index where it
+     * should go based on the current sort information.
      * @param {Ext.data.Record} record
      */
     addSorted : function(record){
@@ -260,7 +260,7 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
     },
 
     /**
-     * Remove a Record from the Store and fires the remove event.
+     * Remove a Record from the Store and fires the {@link #remove} event.
      * @param {Ext.data.Record} record Th Ext.data.Record object to remove from the cache.
      */
     remove : function(record){
@@ -276,7 +276,7 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
     },
 
     /**
-     * Remove all Records from the Store and fires the clear event.
+     * Remove all Records from the Store and fires the {@link #clear} event.
      */
     removeAll : function(){
         this.data.clear();
@@ -290,7 +290,7 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
     },
 
     /**
-     * Inserts Records to the Store at the given index and fires the add event.
+     * Inserts Records into the Store at the given index and fires the {@link #add} event.
      * @param {Number} index The start index at which to insert the passed Records.
      * @param {Ext.data.Record[]} records An Array of Ext.data.Record objects to add to the cache.
      */
@@ -445,7 +445,7 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
     },
 
     /**
-     * Loads data from a passed data block. A Reader which understands the format of the data
+     * Loads data from a passed data block and fires the {@link #load} event. A Reader which understands the format of the data
      * must have been configured in the constructor.
      * @param {Object} data The data block from which to read the Records.  The format of the data expected
      * is dependent on the type of Reader that is configured and should correspond to that Reader's readRecords parameter.

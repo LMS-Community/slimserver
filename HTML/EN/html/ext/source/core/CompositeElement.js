@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -145,6 +145,7 @@ Ext.CompositeElement.prototype = {
 
     /**
      * Returns true if this composite contains the passed element
+     * @param el {Mixed} The id of an element, or an Ext.Element, or an HtmlElement to find within the composite collection.
      * @return Boolean
      */
     contains : function(el){
@@ -152,8 +153,9 @@ Ext.CompositeElement.prototype = {
     },
 
     /**
-     * Returns true if this composite contains the passed element
-     * @return Boolean
+     * Find the index of the passed element within the composite collection.
+     * @param el {Mixed} The id of an element, or an Ext.Element, or an HtmlElement to find within the composite collection.
+     * @return Number The index of the passed Ext.Element in the composite collection, or -1 if not found.
      */
     indexOf : function(el){
         return this.elements.indexOf(Ext.get(el));

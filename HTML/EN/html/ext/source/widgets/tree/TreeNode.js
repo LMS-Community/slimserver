@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -172,6 +172,11 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
         return this.ui;
     },
 
+    getLoader : function(){
+        var owner;
+        return this.loader || ((owner = this.getOwnerTree()) && owner.loader ? owner.loader : new Ext.tree.TreeLoader());
+    },
+
     // private override
     setFirstChild : function(node){
         var of = this.firstChild;
@@ -198,8 +203,11 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
 
     // these methods are overridden to provide lazy rendering support
     // private override
-    appendChild : function(){
-        var node = Ext.tree.TreeNode.superclass.appendChild.apply(this, arguments);
+    appendChild : function(n){
+        if(!n.render && !Ext.isArray(n)){
+            n = this.getLoader().createNode(n);
+        }
+        var node = Ext.tree.TreeNode.superclass.appendChild.call(this, n);
         if(node && this.childrenRendered){
             node.render();
         }
@@ -228,6 +236,9 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
 
     // private override
     insertBefore : function(node, refNode){
+        if(!node.render){ 
+            node = this.getLoader().createNode(node);
+        }
         var newNode = Ext.tree.TreeNode.superclass.insertBefore.apply(this, arguments);
         if(newNode && refNode && this.childrenRendered){
             node.render();
@@ -499,12 +510,16 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
     },
 
     destroy : function(){
-        for(var i = 0,l = this.childNodes.length; i < l; i++){
-            this.childNodes[i].destroy();
+        if(this.childNodes){
+	        for(var i = 0,l = this.childNodes.length; i < l; i++){
+	            this.childNodes[i].destroy();
+	        }
+            this.childNodes = null;
         }
-        this.childNodes = null;
         if(this.ui.destroy){
             this.ui.destroy();
         }
     }
 });
+
+Ext.tree.TreePanel.nodeTypes.node = Ext.tree.TreeNode;

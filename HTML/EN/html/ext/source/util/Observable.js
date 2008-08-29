@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -162,9 +162,9 @@ foo.on({
     },
 
     /**
-     * Relays selected events from this Observable to a different Observable
-     * @param {Object} o The Observable to relay events to
-     * @param {Array} events Array of event names to relay
+     * Relays selected events from the specified Observable as if the events were fired by <tt><b>this</b></tt>.
+     * @param {Object} o The Observable whose events this object is to relay.
+     * @param {Array} events Array of event names to relay.
      */
     relayEvents : function(o, events){
         var createHandler = function(ename){

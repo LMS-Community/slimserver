@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -58,7 +58,7 @@ Ext.Button = Ext.extend(Ext.Component, {
 
     /**
      * @cfg {Boolean} allowDepress
-     * True to allow a pressed Button to be depressed (defaults to false). Only valid when {@link #enableToggle} is true.
+     * False to not allow a pressed Button to be depressed (defaults to undefined). Only valid when {@link #enableToggle} is true.
      */
 
     /**
@@ -496,7 +496,10 @@ Ext.Button = Ext.extend(Ext.Component, {
             var internal = e.within(this.el,  true);
             if(!internal){
                 this.el.addClass("x-btn-over");
-                Ext.getDoc().on('mouseover', this.monitorMouseOver, this);
+                if(!this.monitoringMouseOver){
+                    Ext.getDoc().on('mouseover', this.monitorMouseOver, this);
+                    this.monitoringMouseOver = true;
+                }
                 this.fireEvent('mouseover', this, e);
             }
             if(this.isMenuTriggerOver(e, internal)){
@@ -508,7 +511,10 @@ Ext.Button = Ext.extend(Ext.Component, {
     // private
     monitorMouseOver : function(e){
         if(e.target != this.el.dom && !e.within(this.el)){
-            Ext.getDoc().un('mouseover', this.monitorMouseOver, this);
+            if(this.monitoringMouseOver){
+                Ext.getDoc().un('mouseover', this.monitorMouseOver, this);
+                this.monitoringMouseOver = false;
+            }
             this.onMouseOut(e);
         }
     },

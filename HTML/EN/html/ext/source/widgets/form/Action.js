@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -8,18 +8,16 @@
 
 /**
  * @class Ext.form.Action
- * The subclasses of this class provide actions to perform upon {@link Ext.form.BasicForm Form}s.
- * <br><br>
- * Instances of this class are only created by a {@link Ext.form.BasicForm Form} when
+ * <p>The subclasses of this class provide actions to perform upon {@link Ext.form.BasicForm Form}s.</p>
+ * <p>Instances of this class are only created by a {@link Ext.form.BasicForm Form} when
  * the Form needs to perform an action such as submit or load. The Configuration options
  * listed for this class are set through the Form's action methods: {@link Ext.form.BasicForm#submit submit},
- * {@link Ext.form.BasicForm#load load} and {@link Ext.form.BasicForm#doAction doAction}.
- * <br><br>
- * The instance of Action which performed the action is passed to the success
+ * {@link Ext.form.BasicForm#load load} and {@link Ext.form.BasicForm#doAction doAction}</p>
+ * <p>The instance of Action which performed the action is passed to the success
  * and failure callbacks of the Form's action methods ({@link Ext.form.BasicForm#submit submit},
  * {@link Ext.form.BasicForm#load load} and {@link Ext.form.BasicForm#doAction doAction}),
  * and to the {@link Ext.form.BasicForm#actioncomplete actioncomplete} and
- * {@link Ext.form.BasicForm#actionfailed actionfailed} event handlers.
+ * {@link Ext.form.BasicForm#actionfailed actionfailed} event handlers.</p>
  */
 Ext.form.Action = function(form, options){
     this.form = form;
@@ -59,6 +57,12 @@ Ext.form.Action.LOAD_FAILURE = 'load';
 Ext.form.Action.prototype = {
 /**
  * @cfg {String} url The URL that the Action is to invoke.
+ */
+/**
+ * @cfg {Boolean} reset When set to <tt><b>true</b></tt>, causes the Form to be
+ * {@link Ext.form.BasicForm.reset reset} on Action success. If specified, this happens
+ * <b>before</b> the {@link #success} callback is called and before the Form's
+ * {@link Ext.form.BasicForm.actioncomplete actioncomplete} event fires.
  */
 /**
  * @cfg {String} method The HTTP method to use to access the requested URL. Defaults to the
@@ -207,19 +211,15 @@ Ext.form.Action.prototype = {
 /**
  * @class Ext.form.Action.Submit
  * @extends Ext.form.Action
- * A class which handles submission of data from {@link Ext.form.BasicForm Form}s
- * and processes the returned response.
- * <br><br>
- * Instances of this class are only created by a {@link Ext.form.BasicForm Form} when
- * submitting.
- * <br><br>
- * A response packet must contain a boolean <tt style="font-weight:bold">success</tt> property, and, optionally
+ * <p>A class which handles submission of data from {@link Ext.form.BasicForm Form}s
+ * and processes the returned response.</p>
+ * <p>Instances of this class are only created by a {@link Ext.form.BasicForm Form} when
+ * {@link Ext.form.BasicForm#submit submit}ting.</p>
+ * <p>A response packet must contain a boolean <tt style="font-weight:bold">success</tt> property, and, optionally
  * an <tt style="font-weight:bold">errors</tt> property. The <tt style="font-weight:bold">errors</tt> property contains error
- * messages for invalid fields.
- * <br><br>
- * By default, response packets are assumed to be JSON, so a typical response
- * packet may look like this:
- * <br><br><pre><code>
+ * messages for invalid fields.</p>
+ * <p>By default, response packets are assumed to be JSON, so a typical response
+ * packet may look like this:</p><pre><code>
 {
     success: false,
     errors: {
@@ -227,15 +227,45 @@ Ext.form.Action.prototype = {
         portOfLoading: "This field must not be null"
     }
 }</code></pre>
- * <br><br>
- * Other data may be placed into the response for processing the the {@link Ext.form.BasicForm}'s callback
- * or event handler methods. The object decoded from this JSON is available in the {@link #result} property.
+ * <p>Other data may be placed into the response for processing by the {@link Ext.form.BasicForm}'s callback
+ * or event handler methods. The object decoded from this JSON is available in the {@link #result} property.</p>
+ * <p>Alternatively, if an {@link #errorReader} is specified as an {@link Ext.data.XmlReader XmlReader}:</p><pre><code>
+    errorReader: new Ext.data.XmlReader({
+            record : 'field',
+            success: '@success'
+        }, [
+            'id', 'msg'
+        ]
+    )
+</code></pre>
+ * <p>then the results may be sent back in XML format:</p><pre><code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;message success="false"&gt;
+&lt;errors&gt;
+    &lt;field&gt;
+        &lt;id&gt;clientCode&lt;/id&gt;
+        &lt;msg&gt;&lt;![CDATA[Code not found. &lt;br /&gt;&lt;i&gt;This is a test validation message from the server &lt;/i&gt;]]&gt;&lt;/msg&gt;
+    &lt;/field&gt;
+    &lt;field&gt;
+        &lt;id&gt;portOfLoading&lt;/id&gt;
+        &lt;msg&gt;&lt;![CDATA[Port not found. &lt;br /&gt;&lt;i&gt;This is a test validation message from the server &lt;/i&gt;]]&gt;&lt;/msg&gt;
+    &lt;/field&gt;
+&lt;/errors&gt;
+&lt;/message&gt;
+</code></pre>
+ * <p>Other elements may be placed into the response XML for processing by the {@link Ext.form.BasicForm}'s callback
+ * or event handler methods. The XML document is available in the {@link #errorReader}'s {@link Ext.data.XmlReader#xmlData xmlData} property.</p>
  */
 Ext.form.Action.Submit = function(form, options){
     Ext.form.Action.Submit.superclass.constructor.call(this, form, options);
 };
 
 Ext.extend(Ext.form.Action.Submit, Ext.form.Action, {
+    /**
+    * @cfg {Ext.data.DataReader} errorReader <b>Optional. JSON is interpreted with no need for an errorReader.</b>
+    * <p>A Reader which reads a single record from the returned data. The DataReader's <b>success</b> property specifies
+    * how submission success is determined. The Record's data provides the error messages to apply to any invalid form Fields.</p>.
+    */
     /**
     * @cfg {boolean} clientValidation Determines whether a Form's fields are validated
     * in a final call to {@link Ext.form.BasicForm#isValid isValid} prior to submission.
@@ -305,20 +335,15 @@ Ext.extend(Ext.form.Action.Submit, Ext.form.Action, {
 /**
  * @class Ext.form.Action.Load
  * @extends Ext.form.Action
- * A class which handles loading of data from a server into the Fields of
- * an {@link Ext.form.BasicForm}.
- * <br><br>
- * Instances of this class are only created by a {@link Ext.form.BasicForm Form} when
- * submitting.
- * <br><br>
- * A response packet <b>must</b> contain a boolean <tt style="font-weight:bold">success</tt> property, and
- * a <tt style="font-weight:bold">data</tt> property. The <tt style="font-weight:bold">data</tt> property contains the
- * values of Fields to load. The individual value object for each Field
- * is passed to the Field's {@link Ext.form.Field#setValue setValue} method.
- * <br><br>
- * By default, response packets are assumed to be JSON, so a typical response
- * packet may look like this:
- * <br><br><pre><code>
+ * <p>A class which handles loading of data from a server into the Fields of an {@link Ext.form.BasicForm}.</p>
+ * <p>Instances of this class are only created by a {@link Ext.form.BasicForm Form} when
+ * {@link Ext.form.BasicForm#load load}ing.</p>
+ * <p>A response packet <b>must</b> contain a boolean <tt style="font-weight:bold">success</tt> property, and
+ * a <tt style="font-weight:bold">data</tt> property. The <tt style="font-weight:bold">data</tt> property
+ * contains the values of Fields to load. The individual value object for each Field
+ * is passed to the Field's {@link Ext.form.Field#setValue setValue} method.</p>
+ * <p>By default, response packets are assumed to be JSON, so a typical response
+ * packet may look like this:</p><pre><code>
 {
     success: true,
     data: {
@@ -327,9 +352,8 @@ Ext.extend(Ext.form.Action.Submit, Ext.form.Action, {
         portOfDischarge: "OSL"
     }
 }</code></pre>
- * <br><br>
- * Other data may be placed into the response for processing the the {@link Ext.form.BasicForm Form}'s callback
- * or event handler methods. The object decoded from this JSON is available in the {@link #result} property.
+ * <p>Other data may be placed into the response for processing the {@link Ext.form.BasicForm Form}'s callback
+ * or event handler methods. The object decoded from this JSON is available in the {@link #result} property.</p>
  */
 Ext.form.Action.Load = function(form, options){
     Ext.form.Action.Load.superclass.constructor.call(this, form, options);

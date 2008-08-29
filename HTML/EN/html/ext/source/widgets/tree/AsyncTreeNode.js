@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -14,7 +14,7 @@
  * @param {Object/String} attributes The attributes/config for the node or just a string with the text for the node 
  */
  Ext.tree.AsyncTreeNode = function(config){
-    this.loaded = false;
+    this.loaded = config && config.loaded === true;
     this.loading = false;
     Ext.tree.AsyncTreeNode.superclass.constructor.apply(this, arguments);
     /**
@@ -111,3 +111,5 @@ Ext.extend(Ext.tree.AsyncTreeNode, Ext.tree.TreeNode, {
         this.expand(false, false, callback);
     }
 });
+
+Ext.tree.TreePanel.nodeTypes.async = Ext.tree.AsyncTreeNode;

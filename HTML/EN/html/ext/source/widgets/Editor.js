@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -33,7 +33,7 @@ Ext.extend(Ext.Editor, Ext.Component, {
      */
     /**
      * @cfg {Boolean} ignoreNoChange
-     * True to skip the the edit completion process (no save, no events fired) if the user completes an edit and
+     * True to skip the edit completion process (no save, no events fired) if the user completes an edit and
      * the value has not changed (defaults to false).  Applies only to string values - edits for other data types
      * will never be ignored.
      */
@@ -116,6 +116,14 @@ Ext.extend(Ext.Editor, Ext.Component, {
              */
             "complete",
             /**
+             * @event canceledit
+             * Fires after editing has been canceled and the editor's value has been reset.
+             * @param {Editor} this
+             * @param {Mixed} value The user-entered field value that was discarded
+             * @param {Mixed} startValue The original field value that was set back into the editor after cancel
+             */
+            "canceledit",
+            /**
              * @event specialkey
              * Fires when any key related to navigation (arrows, tab, enter, esc, etc.) is pressed.  You can check
              * {@link Ext.EventObject#getKey} to determine which key was pressed.
@@ -157,14 +165,19 @@ Ext.extend(Ext.Editor, Ext.Component, {
         }
     },
 
+    // private
     onSpecialKey : function(field, e){
-        if(this.completeOnEnter && e.getKey() == e.ENTER){
+        var key = e.getKey();
+        if(this.completeOnEnter && key == e.ENTER){
             e.stopEvent();
             this.completeEdit();
-        }else if(this.cancelOnEsc && e.getKey() == e.ESC){
+        }else if(this.cancelOnEsc && key == e.ESC){
             this.cancelEdit();
         }else{
             this.fireEvent('specialkey', field, e);
+        }
+        if(this.field.triggerBlur && (key == e.ENTER || key == e.ESC || key == e.TAB)){
+            this.field.triggerBlur();
         }
     },
 
@@ -220,6 +233,10 @@ Ext.extend(Ext.Editor, Ext.Component, {
         delete this.field.lastSize;
         this.field.setSize(w, h);
         if(this.el){
+	        if(Ext.isGecko2 || Ext.isOpera){
+	            // prevent layer scrollbars
+	            this.el.setSize(w, h);
+	        }
             this.el.sync();
         }
     },
@@ -291,10 +308,12 @@ Ext.extend(Ext.Editor, Ext.Component, {
      */
     cancelEdit : function(remainVisible){
         if(this.editing){
+            var v = this.getValue();
             this.setValue(this.startValue);
             if(remainVisible !== true){
                 this.hide();
             }
+            this.fireEvent("canceledit", this, v, this.startValue);
         }
     },
 

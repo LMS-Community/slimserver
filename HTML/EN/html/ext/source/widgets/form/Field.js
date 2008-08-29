@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -59,9 +59,10 @@ new Ext.FormPanel({
 </code></pre>
      */
     /**
-     * @cfg {String} inputType The type attribute for input fields -- e.g. radio, text, etc. (defaults to "text").
-     * The types "file" and "password" must be used to render those field types currently -- there are no separate
-     * Ext components for those.
+     * @cfg {String} inputType The type attribute for input fields -- e.g. radio, text, password, file (defaults 
+     * to "text"). The types "file" and "password" must be used to render those field types currently -- there are 
+     * no separate Ext components for those. Note that if you use <tt>inputType:'file'</tt>, {@link #emptyText} 
+     * is not supported and should be avoided.
      */
     /**
      * @cfg {Number} tabIndex The tabIndex for this field. Note this only applies to fields that are rendered,
@@ -232,16 +233,17 @@ side          Add an error icon to the right of the field with a popup on hover
         }
 
         this.el.addClass([this.fieldClass, this.cls]);
-        this.initValue();
     },
 
     // private
     initValue : function(){
         if(this.value !== undefined){
             this.setValue(this.value);
-        }else if(this.el.dom.value.length > 0){
+        }else if(this.el.dom.value.length > 0 && this.el.dom.value != this.emptyText){
             this.setValue(this.el.dom.value);
         }
+        // reference to original value for reset
+        this.originalValue = this.getValue();
     },
 
     /**
@@ -258,6 +260,7 @@ side          Add an error icon to the right of the field with a popup on hover
     afterRender : function(){
         Ext.form.Field.superclass.afterRender.call(this);
         this.initEvents();
+        this.initValue();
     },
 
     // private
@@ -279,7 +282,10 @@ side          Add an error icon to the right of the field with a popup on hover
     initEvents : function(){
         this.el.on(Ext.isIE || Ext.isSafari3 ? "keydown" : "keypress", this.fireKey,  this);
         this.el.on("focus", this.onFocus,  this);
-        this.el.on("blur", this.onBlur,  this);
+        
+        // fix weird FF/Win editor issue when changing OS window focus
+        var o = this.inEditor && Ext.isWindows && Ext.isGecko ? {buffer:10} : null;
+        this.el.on("blur", this.onBlur,  this, o);
 
         // reference to original value for reset
         this.originalValue = this.getValue();
@@ -297,6 +303,7 @@ side          Add an error icon to the right of the field with a popup on hover
         }
     },
 
+    // private
     beforeBlur : Ext.emptyFn,
 
     // private
@@ -366,6 +373,7 @@ side          Add an error icon to the right of the field with a popup on hover
         }
         this.el.addClass(this.invalidClass);
         msg = msg || this.invalidText;
+
         switch(this.msgTarget){
             case 'qtip':
                 this.el.dom.qtip = msg;
@@ -380,6 +388,10 @@ side          Add an error icon to the right of the field with a popup on hover
             case 'under':
                 if(!this.errorEl){
                     var elp = this.getErrorCt();
+                    if(!elp){ // field has no container el
+                        this.el.dom.title = msg;
+                        break;
+                    }
                     this.errorEl = elp.createChild({cls:'x-form-invalid-msg'});
                     this.errorEl.setWidth(elp.getWidth(true)-20);
                 }
@@ -389,6 +401,10 @@ side          Add an error icon to the right of the field with a popup on hover
             case 'side':
                 if(!this.errorIcon){
                     var elp = this.getErrorCt();
+                    if(!elp){ // field has no container el
+                        this.el.dom.title = msg;
+                        break;
+                    }
                     this.errorIcon = elp.createChild({cls:'x-form-invalid-icon'});
                 }
                 this.alignErrorIcon();
@@ -483,6 +499,7 @@ side          Add an error icon to the right of the field with a popup on hover
     /**
      * Sets the underlying DOM field's value directly, bypassing validation.  To set the value with validation see {@link #setValue}.
      * @param {Mixed} value The value to set
+     * @return {Mixed} value The field value that is set
      */
     setRawValue : function(v){
         return this.el.dom.value = (v === null || v === undefined ? '' : v);
@@ -500,12 +517,14 @@ side          Add an error icon to the right of the field with a popup on hover
         }
     },
 
+    // private
     adjustSize : function(w, h){
         var s = Ext.form.Field.superclass.adjustSize.call(this, w, h);
         s.width = this.adjustWidth(this.el.dom.tagName, s.width);
         return s;
     },
 
+    // private
     adjustWidth : function(tag, w){
         tag = tag.toLowerCase();
         if(typeof w == 'number' && !Ext.isSafari){
@@ -542,6 +561,85 @@ side          Add an error icon to the right of the field with a popup on hover
      * @cfg {String} autoEl @hide
      */
 });
+
+Ext.form.MessageTargets = {
+    'qtip' : {
+        mark: function(f){
+            this.el.dom.qtip = msg;
+            this.el.dom.qclass = 'x-form-invalid-tip';
+            if(Ext.QuickTips){ // fix for floating editors interacting with DND
+                Ext.QuickTips.enable();
+            }
+        },
+        clear: function(f){
+            this.el.dom.qtip = '';
+        }
+    },
+    'title' : {
+        mark: function(f){
+            this.el.dom.title = msg;
+        },
+        clear: function(f){
+            this.el.dom.title = '';
+        }
+    },
+    'under' : {
+        mark: function(f){
+            if(!this.errorEl){
+                var elp = this.getErrorCt();
+                if(!elp){ // field has no container el
+                    this.el.dom.title = msg;
+                    return;
+                }
+                this.errorEl = elp.createChild({cls:'x-form-invalid-msg'});
+                this.errorEl.setWidth(elp.getWidth(true)-20);
+            }
+            this.errorEl.update(msg);
+            Ext.form.Field.msgFx[this.msgFx].show(this.errorEl, this);
+        },
+        clear: function(f){
+            if(this.errorEl){
+                Ext.form.Field.msgFx[this.msgFx].hide(this.errorEl, this);
+            }else{
+                this.el.dom.title = '';
+            }
+        }
+    },
+    'side' : {
+        mark: function(f){
+            if(!this.errorIcon){
+                var elp = this.getErrorCt();
+                if(!elp){ // field has no container el
+                    this.el.dom.title = msg;
+                    return;
+                }
+                this.errorIcon = elp.createChild({cls:'x-form-invalid-icon'});
+            }
+            this.alignErrorIcon();
+            this.errorIcon.dom.qtip = msg;
+            this.errorIcon.dom.qclass = 'x-form-invalid-tip';
+            this.errorIcon.show();
+            this.on('resize', this.alignErrorIcon, this);
+        },
+        clear: function(f){
+            if(this.errorIcon){
+                this.errorIcon.dom.qtip = '';
+                this.errorIcon.hide();
+                this.un('resize', this.alignErrorIcon, this);
+            }else{
+                this.el.dom.title = '';
+            }
+        }
+    },
+    'around' : {
+        mark: function(f){
+
+        },
+        clear: function(f){
+
+        }
+    }
+};
 
 
 // anything other than normal should be considered experimental

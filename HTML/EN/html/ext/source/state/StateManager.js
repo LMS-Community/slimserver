@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -10,18 +10,14 @@
  * @class Ext.state.Manager
  * This is the global state manager. By default all components that are "state aware" check this class
  * for state information if you don't pass them a custom state provider. In order for this class
- * to be useful, it must be initialized with a provider when your application initializes.
+ * to be useful, it must be initialized with a provider when your application initializes. Example usage:
  <pre><code>
 // in your initialization function
 init : function(){
    Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-   ...
-   // supposed you have a {@link Ext.BorderLayout}
-   var layout = new Ext.BorderLayout(...);
-   layout.restoreState();
-   // or a {Ext.BasicDialog}
-   var dialog = new Ext.BasicDialog(...);
-   dialog.restoreState();
+   var win = new Window(...);
+   win.restoreState();
+}
  </code></pre>
  * @singleton
  */

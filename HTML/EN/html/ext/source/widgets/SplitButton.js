@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -22,7 +22,7 @@ new Ext.SplitButton({
         items: [
         	// these items will render as dropdown menu items when the arrow is clicked:
 	        {text: 'Item 1', handler: item1Handler},
-	        {text: 'Item 2', handler: item2Handler},
+	        {text: 'Item 2', handler: item2Handler}
         ]
    	})
 });

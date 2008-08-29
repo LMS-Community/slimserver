@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -100,6 +100,12 @@ tip.showAt([50,100]);
         }
         bw += this.getFrameWidth() + (this.closable ? 20 : 0) + this.body.getPadding("lr");
         this.setWidth(bw.constrain(this.minWidth, this.maxWidth));
+        
+        // IE7 repaint bug on initial show
+        if(Ext.isIE7 && !this.repainted){
+            this.el.repaint();
+            this.repainted = true;
+        }
     },
 
     /**

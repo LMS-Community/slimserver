@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -27,7 +27,7 @@
  ]);
  </code></pre>
  * <p>
- * The config options listed for this class are options which may appear in each
+ * The config options <b>defined by</b< this class are options which may appear in each
  * individual column definition.
  * @constructor
  * @param {Object} config An Array of column config objects. See this class's
@@ -92,7 +92,7 @@ Ext.grid.ColumnModel = function(config){
         // deprecated - to be removed
         "columnlockchange",
         /**
-         * @event configchanged
+         * @event configchange
          * Fires when the configuration is changed
          * @param {ColumnModel} this
          */
@@ -121,8 +121,7 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
      * specified, the column's index is used as an index into the Record's data Array.
      */
     /**
-     * @cfg {Number} width (optional) The initial width in pixels of the column. Using this
-     * instead of {@link Ext.grid.GridPanel#autoSizeColumns} is more efficient.
+     * @cfg {Number} width (optional) The initial width in pixels of the column.
      */
     /**
      * @cfg {Boolean} sortable (optional) True if sorting is to be allowed on this column.
@@ -158,7 +157,9 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
      * @cfg {String} css (optional) Set custom CSS for all table cells in the column (excluding headers).  Defaults to undefined.
      */
     /**
-     * @cfg {Boolean} hideable (optional) Specify as <tt>false</tt> to prevent the user from hiding this column.  Defaults to true.
+     * @cfg {Boolean} hideable (optional) Specify as <tt>false</tt> to prevent the user from hiding this column
+     * (defaults to true).  To disallow column hiding globally for all columns in the grid, use
+     * {@link Ext.grid.GridPanel#enableColumnHide} instead.
      */
     /**
      * @cfg {Ext.form.Field} editor (optional) The {@link Ext.form.Field} to use when editing values in this column if
@@ -232,7 +233,11 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
         return -1;
     },
 
-    // private
+    /**
+     * Moves a column from one position to another.
+     * @param {Number} oldIndex The index of the column to move.
+     * @param {Number} newIndex The position at which to reinsert the coolumn.
+     */
     moveColumn : function(oldIndex, newIndex){
         var c = this.config[oldIndex];
         this.config.splice(oldIndex, 1);

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -78,7 +78,9 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
 
     // private
     alignErrorIcon : function(){
-        this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+        if(this.wrap){
+            this.errorIcon.alignTo(this.wrap, 'tl-tr', [2, 0]);
+        }
     },
 
     // private
@@ -93,6 +95,15 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
         this.initTrigger();
         if(!this.width){
             this.wrap.setWidth(this.el.getWidth()+this.trigger.getWidth());
+        }
+    },
+
+    afterRender : function(){
+        Ext.form.TriggerField.superclass.afterRender.call(this);
+        var y;
+        if(Ext.isIE && this.el.getY() != (y = this.trigger.getY())){
+            this.el.position();
+            this.el.setY(y);
         }
     },
 
@@ -150,7 +161,7 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
     // private
     triggerBlur : function(){
         this.mimicing = false;
-        Ext.get(Ext.isIE ? document.body : document).un("mousedown", this.mimicBlur);
+        Ext.get(Ext.isIE ? document.body : document).un("mousedown", this.mimicBlur, this);
         if(this.monitorTab){
             this.el.un("keydown", this.checkTab, this);
         }
@@ -171,7 +182,8 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
     onDisable : function(){
         Ext.form.TriggerField.superclass.onDisable.call(this);
         if(this.wrap){
-            this.wrap.addClass('x-item-disabled');
+            this.wrap.addClass(this.disabledClass);
+            this.el.removeClass(this.disabledClass);
         }
     },
 
@@ -179,10 +191,9 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
     onEnable : function(){
         Ext.form.TriggerField.superclass.onEnable.call(this);
         if(this.wrap){
-            this.wrap.removeClass('x-item-disabled');
+            this.wrap.removeClass(this.disabledClass);
         }
     },
-
 
     // private
     onShow : function(){

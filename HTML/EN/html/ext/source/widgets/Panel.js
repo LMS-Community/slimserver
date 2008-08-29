@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -61,13 +61,13 @@ Ext.Panel = Ext.extend(Ext.Container, {
      */
     /**
      * @cfg {Object/Array} tbar
-     * The top toolbar of the panel.  This can be either an {@link Ext.Toolbar} object or an array of
+     * The top toolbar of the panel. This can be a {@link Ext.Toolbar} object, a toolbar config, or an array of
      * buttons/button configs to be added to the toolbar.  Note that this is not available as a property after render.
      * To access the top toolbar after render, use {@link #getTopToolbar}.
      */
     /**
      * @cfg {Object/Array} bbar
-     * The bottom toolbar of the panel.  This can be a {@link Ext.Toolbar} object, a toolbar config, or an array of
+     * The bottom toolbar of the panel. This can be a {@link Ext.Toolbar} object, a toolbar config, or an array of
      * buttons/button configs to be added to the toolbar.  Note that this is not available as a property after render.
      * To access the bottom toolbar after render, use {@link #getBottomToolbar}.
      */
@@ -92,7 +92,7 @@ Ext.Panel = Ext.extend(Ext.Container, {
      */
     /**
      * @cfg {Array} buttons
-     * An array of {@link Ext.Button} <b>configs</b> used to add buttons to the footer of this panel.
+     * An array of {@link Ext.Button}s or {@link Ext.Button} configs used to add buttons to the footer of this panel.
      */
     /**
      * @cfg {Object/String/Function} autoLoad
@@ -293,7 +293,27 @@ new Ext.Panel({
        * Adds a tooltip when mousing over the tab of a Ext.Panel which is an item of a Ext.TabPanel. Ext.QuickTips.init()
        * must be called in order for the tips to render.
      */
-
+    /**
+     * @cfg {Boolean} disabled
+     * Render this panel disabled (default is false). An important note when using the disabled config on panels is
+     * that IE will often fail to initialize the disabled mask element correectly if the panel's layout has not yet 
+     * completed by the time the Panel is disabled during the render process. If you experience this issue, you may 
+     * need to instead use the {@link afterlayout} event to initialize the disabled state:
+     * <pre><code>
+new Ext.Panel({
+    ...
+    listeners: {
+        'afterlayout': {
+            fn: function(p){
+                p.disable();
+            },
+            single: true // important, as many layouts can occur
+        }
+    }
+});
+</code></pre>
+     */
+    
 
     /**
     * @cfg {String} baseCls
@@ -367,6 +387,7 @@ new Ext.Panel({
     toolTarget : 'header',
     collapseEl : 'bwrap',
     slideAnchor : 't',
+    disabledClass: '',
 
     // private, notify box this class will handle heights
     deferHeight: true,
@@ -499,6 +520,7 @@ new Ext.Panel({
             this.buttons = [];
             for(var i = 0, len = btns.length; i < len; i++) {
                 if(btns[i].render){ // button instance
+                    btns[i].ownerCt = this;
                     this.buttons.push(btns[i]);
                 }else{
                     this.addButton(btns[i]);
@@ -882,11 +904,14 @@ new Ext.Panel({
         Ext.Panel.superclass.afterRender.call(this); // do sizing calcs last
         this.initEvents();
     },
-    
+
     // private
     setAutoScroll : function(){
         if(this.rendered && this.autoScroll){
-            this.body.setOverflow('auto');
+            var el = this.body || this.el;
+            if(el){
+                el.setOverflow('auto');
+            }
         }
     },
 
@@ -1073,6 +1098,10 @@ new Ext.Panel({
                 }else if(h == 'auto'){
                     this.body.setHeight(h);
                 }
+                
+                if(this.disabled && this.el._mask){
+                    this.el._mask.setSize(this.el.dom.clientWidth, this.el.getHeight());
+                }
             }else{
                 this.queuedBodySize = {width: w, height: h};
                 if(!this.queuedExpand && this.allowQueuedExpand !== false){
@@ -1102,25 +1131,6 @@ new Ext.Panel({
     // private
     onPosition : function(){
         this.syncShadow();
-    },
-
-    // private
-    onDestroy : function(){
-        if(this.tools){
-            for(var k in this.tools){
-                Ext.destroy(this.tools[k]);
-            }
-        }
-        if(this.buttons){
-            for(var b in this.buttons){
-                Ext.destroy(this.buttons[b]);
-            }
-        }
-        Ext.destroy(
-            this.topToolbar,
-            this.bottomToolbar
-        );
-        Ext.Panel.superclass.onDestroy.call(this);
     },
 
     /**
@@ -1196,7 +1206,7 @@ new Ext.Panel({
     /**
      * Sets the title text for the panel and optionally the icon class.
      * @param {String} title The title text to set
-     * @param {String} (optional) iconCls A custon, user-defined CSS class that provides the icon image for this panel
+     * @param {String} iconCls (optional) iconCls A user-defined CSS class that provides the icon image for this panel
      */
     setTitle : function(title, iconCls){
         this.title = title;
@@ -1254,6 +1264,21 @@ panel.load({
             this.footer,
             this.body
         );
+        if(this.tools){
+            for(var k in this.tools){
+                Ext.destroy(this.tools[k]);
+            }
+        }
+        if(this.buttons){
+            for(var b in this.buttons){
+                Ext.destroy(this.buttons[b]);
+            }
+        }
+        Ext.destroy(
+            this.topToolbar,
+            this.bottomToolbar
+        );
+        Ext.Panel.superclass.beforeDestroy.call(this);
     },
 
     // private

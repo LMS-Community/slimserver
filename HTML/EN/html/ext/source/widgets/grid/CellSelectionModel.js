@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -102,8 +102,8 @@ Ext.extend(Ext.grid.CellSelectionModel, Ext.grid.AbstractSelectionModel,  {
     },
 
 	/**
-	 * Returns the currently selected cell,.
-	 * @return {Object} The selected cell or null if none selected.
+	 * Returns the currently selected cell's row and column indexes as an array (e.g., [0, 0]).
+	 * @return {Array} An array containing the row and column indexes of the selected cell, or null if none selected.
 	 */
     getSelectedCell : function(){
         return this.selection ? this.selection.cell : null;

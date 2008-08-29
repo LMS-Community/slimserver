@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -106,6 +106,14 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
      * @cfg {String} emptyText Default text to display in the grid body when no rows are available (defaults to '').
      */
     /**
+     * @property dragZone
+     * @type Ext.grid.GridDragZone
+     * <p><b>This will only be present if the owning GridPanel was configured with {@link Ext.grid.GridPanel#enableDragDrop enableDragDrop}<b> <tt>true</tt></b>.</p>
+     * <p><b>This will only be present after the owning GridPanel has been rendered</b>.</p>
+     * <p>A customized implementation of a {@link Ext.dd.DragZone DragZone} which provides default implementations of the
+     * template methods of DragZone to enable dragging of the selected rows of a GridPanel. See {@link Ext.grid.GridDragZone} for details.</p>
+     */
+    /**
      * @cfg {Boolean} deferEmptyText True to defer emptyText being applied until the store's first load
      */
     deferEmptyText: true,
@@ -145,6 +153,26 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
 
     // private
     borderWidth: 2,
+    tdClass: 'x-grid3-cell',
+    hdCls: 'x-grid3-hd',
+
+    /**
+     * @cfg {Number} cellSelectorDepth The number of levels to search for cells in event delegation (defaults to 4)
+     */
+    cellSelectorDepth: 4,
+    /**
+     * @cfg {Number} rowSelectorDepth The number of levels to search for rows in event delegation (defaults to 10)
+     */
+    rowSelectorDepth: 10,
+
+    /**
+     * @cfg {String} cellSelector The selector used to find cells internally
+     */
+    cellSelector: 'td.x-grid3-cell',
+    /**
+     * @cfg {String} rowSelector The selector used to find rows internally
+     */
+    rowSelector: 'div.x-grid3-row',
 
     /* -------------------------------- UI Specific ----------------------------- */
 
@@ -210,11 +238,6 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         }
 
         this.templates = ts;
-
-        this.tdClass = 'x-grid3-cell';
-        this.cellSelector = 'td.x-grid3-cell';
-        this.hdCls = 'x-grid3-hd';
-        this.rowSelector = 'div.x-grid3-row';
         this.colRe = new RegExp("x-grid3-td-([^\\s]+)", "");
     },
 
@@ -274,7 +297,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         if(!el){
             return false;
         }
-        return this.fly(el).findParent(this.cellSelector, 3);
+        return this.fly(el).findParent(this.cellSelector, this.cellSelectorDepth);
     },
 
     // private
@@ -313,7 +336,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         if(!el){
             return false;
         }
-        return this.fly(el).findParent(this.rowSelector, 10);
+        return this.fly(el).findParent(this.rowSelector, this.rowSelectorDepth);
     },
 
     // private
@@ -373,14 +396,16 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     // private
     removeRow : function(row){
         Ext.removeNode(this.getRow(row));
+        this.focusRow(row);
     },
-
+    
     // private
     removeRows : function(firstRow, lastRow){
         var bd = this.mainBody.dom;
         for(var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++){
             Ext.removeNode(bd.childNodes[firstRow]);
         }
+        this.focusRow(firstRow);
     },
 
     // scrolling stuff
@@ -566,6 +591,15 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         }
     },
 
+    afterRender: function(){
+        this.mainBody.dom.innerHTML = this.renderRows();
+        this.processRows(0, true);
+
+        if(this.deferEmptyText !== true){
+            this.applyEmptyText();
+        }
+    },
+
     // private
     renderUI : function(){
 
@@ -583,14 +617,6 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         g.getGridEl().dom.innerHTML = html;
 
         this.initElements();
-
-
-        this.mainBody.dom.innerHTML = this.renderRows();
-        this.processRows(0, true);
-
-        if(this.deferEmptyText !== true){
-            this.applyEmptyText();
-        }
 
         // get mousedowns early
         Ext.fly(this.innerHd).on("click", this.handleHdDown, this);
@@ -778,8 +804,10 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
      * @param {Number} col The column index
      */
     focusCell : function(row, col, hscroll){
+        row = Math.min(row, Math.max(0, this.getRows().length-1));
         var xy = this.ensureVisible(row, col, hscroll);
-        this.focusEl.setXY(xy);
+        this.focusEl.setXY(xy||this.scroller.getXY());
+        
         if(Ext.isGecko){
             this.focusEl.focus();
         }else{
@@ -845,12 +873,12 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
                 c.scrollLeft = cright-c.clientWidth;
             }
         }
-        return cellEl ? Ext.fly(cellEl).getXY() : [c.scrollLeft, Ext.fly(rowEl).getY()];
+        return cellEl ? Ext.fly(cellEl).getXY() : [c.scrollLeft+this.el.getX(), Ext.fly(rowEl).getY()];
     },
 
     // private
     insertRows : function(dm, firstRow, lastRow, isUpdate){
-        if(!isUpdate && firstRow === 0 && lastRow == dm.getCount()-1){
+        if(!isUpdate && firstRow === 0 && lastRow >= dm.getCount()-1){
             this.refresh();
         }else{
             if(!isUpdate){
@@ -868,6 +896,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
                 this.processRows(firstRow);
             }
         }
+        this.focusRow(firstRow);
     },
 
     // private
@@ -1145,9 +1174,6 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     // private
     render : function(){
 
-        var cm = this.cm;
-        var colCount = cm.getColumnCount();
-
         if(this.autoFill){
             this.fitColumns(true, true);
         }else if(this.forceFit){
@@ -1189,6 +1215,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
             this.cm.un("columnlockchange", this.onColumnLock, this);
         }
         if(cm){
+            delete this.lastViewWidth;
             cm.on("configchange", this.onColConfigChange, this);
             cm.on("widthchange", this.onColWidthChange, this);
             cm.on("headerchange", this.onHeaderChange, this);

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -99,7 +99,7 @@ Ext.dd.DragDrop.prototype = {
     dragElId: null,
 
     /**
-     * the id of the element that initiates the drag operation.  By default
+     * The ID of the element that initiates the drag operation.  By default
      * this is the linked element, but could be changed to be a child of this
      * element.  This lets us do things like only starting the drag when the
      * header element within the linked html element is clicked.
@@ -110,24 +110,33 @@ Ext.dd.DragDrop.prototype = {
     handleElId: null,
 
     /**
-     * An associative array of HTML tags that will be ignored if clicked.
+     * An object who's property names identify HTML tags to be considered invalid as drag handles.
+     * A non-null property value identifies the tag as invalid. Defaults to the 
+     * following value which prevents drag operations from being initiated by &lt;a> elements:<pre><code>
+{
+    A: "A"
+}</code></pre>
      * @property invalidHandleTypes
-     * @type {string: string}
+     * @type Object
      */
     invalidHandleTypes: null,
 
     /**
-     * An associative array of ids for elements that will be ignored if clicked
+     * An object who's property names identify the IDs of elements to be considered invalid as drag handles.
+     * A non-null property value identifies the ID as invalid. For example, to prevent
+     * dragging from being initiated on element ID "foo", use:<pre><code>
+{
+    foo: true
+}</code></pre>
      * @property invalidHandleIds
-     * @type {string: string}
+     * @type Object
      */
     invalidHandleIds: null,
 
     /**
-     * An indexted array of css class names for elements that will be ignored
-     * if clicked.
+     * An Array of CSS class names for elements to be considered in valid as drag handles.
      * @property invalidHandleClasses
-     * @type string[]
+     * @type Array
      */
     invalidHandleClasses: null,
 
@@ -942,7 +951,7 @@ Ext.dd.DragDrop.prototype = {
         valid = valid && !this.invalidHandleIds[node.id];
 
         for (var i=0, len=this.invalidHandleClasses.length; valid && i<len; ++i) {
-            valid = !Dom.hasClass(node, this.invalidHandleClasses[i]);
+            valid = !Ext.fly(node).hasClass(this.invalidHandleClasses[i]);
         }
 
 

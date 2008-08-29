@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -8,7 +8,21 @@
 
 /**
  * @class Ext.dd.ScrollManager
- * Provides automatic scrolling of overflow regions in the page during drag operations.<br><br>
+ * <p>Provides automatic scrolling of overflow regions in the page during drag operations.</p>
+ * <p>The ScrollManager configs will be used as the defaults for any scroll container registered with it,
+ * but you can also override most of the configs per scroll container by adding a 
+ * <tt>ddScrollConfig</tt> object to the target element that contains these properties: {@link #hthresh},
+ * {@link #vthresh}, {@link #increment} and {@link #frequency}.  Example usage:
+ * <pre><code>
+var el = Ext.get('scroll-ct');
+el.ddScrollConfig = {
+    vthresh: 50,
+    hthresh: -1,
+    frequency: 100,
+    increment: 200
+};
+Ext.dd.ScrollManager.register(el);
+</code></pre>
  * <b>Note: This class uses "Point Mode" and is untested in "Intersect Mode".</b>
  * @singleton
  */
@@ -57,7 +71,9 @@ Ext.dd.ScrollManager = function(){
         clearProc();
         proc.el = el;
         proc.dir = dir;
-        proc.id = setInterval(doScroll, Ext.dd.ScrollManager.frequency);
+        var freq = (el.ddScrollConfig && el.ddScrollConfig.frequency) ? 
+                el.ddScrollConfig.frequency : Ext.dd.ScrollManager.frequency;
+        proc.id = setInterval(doScroll, freq);
     };
     
     var onFire = function(e, isDrop){

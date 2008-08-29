@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -9,41 +9,44 @@
 /**
  * @class Ext.data.JsonReader
  * @extends Ext.data.DataReader
- * Data reader class to create an Array of Ext.data.Record objects from a JSON response
- * based on mappings in a provided Ext.data.Record constructor.<br>
+ * Data reader class to create an Array of {@link Ext.data.Record} objects from a JSON response
+ * based on mappings in a provided {@link Ext.data.Record} constructor.<br>
  * <p>
  * Example code:
  * <pre><code>
 var Employee = Ext.data.Record.create([
-    {name: 'name', mapping: 'name'},     // "mapping" property not needed if it's the same as "name"
-    {name: 'occupation'}                 // This field will use "occupation" as the mapping.
+    {name: 'firstname'},                  // Map the Record's "firstname" field to the row object's key of the same name
+    {name: 'job', mapping: 'occupation'}  // Map the "job" field to the row object's "occupation" key
 ]);
 var myReader = new Ext.data.JsonReader({
-    totalProperty: "results",    // The property which contains the total dataset size (optional)
-    root: "rows",                // The property which contains an Array of row objects
-    id: "id"                     // The property within each row object that provides an ID for the record (optional)
+    totalProperty: "results",             // The property which contains the total dataset size (optional)
+    root: "rows",                         // The property which contains an Array of row objects
+    id: "id"                              // The property within each row object that provides an ID for the record (optional)
 }, Employee);
 </code></pre>
  * <p>
- * This would consume a JSON file like this:
+ * This would consume a JSON object of the form:
  * <pre><code>
-{ 'results': 2, 'rows': [
-    { 'id': 1, 'name': 'Bill', occupation: 'Gardener' },
-    { 'id': 2, 'name': 'Ben', occupation: 'Horticulturalist' } ]
+{
+    'results': 2,
+    'rows': [
+        { 'id': 1, 'firstname': 'Bill', occupation: 'Gardener' },         // a row object
+        { 'id': 2, 'firstname': 'Ben' , occupation: 'Horticulturalist' }  // another row object
+    ]
 }
 </code></pre>
  * <p>It is possible to change a JsonReader's metadata at any time by including a
- * <b><tt>MetaData</tt></b> property in the data object. If this is detected in the
+ * <b><tt>metaData</tt></b> property in the data object. If this is detected in the
  * object, a {@link Ext.data.Store Store} object using this Reader will fire its
  * {@link Ext.data.Store#metachange metachange} event.</p>
- * <p>The <b><tt>MetaData</tt></b> property may contain any of the configuration
+ * <p>The <b><tt>metaData</tt></b> property may contain any of the configuration
  * options for this class. Additionally, it may contain a <b><tt>fields</tt></b>
- * property which the JsonReader will use as an argument to {@link Ext.data.Record.create}
+ * property which the JsonReader will use as an argument to {@link Ext.data.Record#create}
  * to configure the layout of the Records which it will produce.<p>
- * Using the <b><tt>MetaData</tt></b> property, and the Store's {@link Ext.data.Store#metachange metachange} event,
+ * Using the <b><tt>metaData</tt></b> property, and the Store's {@link Ext.data.Store#metachange metachange} event,
  * it is possible to have a Store-driven control initialize itself. The metachange
- * event handler may interrogate the <b><tt>MetaData</tt></b> property (which
- * may contain any user-defined properties needed) and the <b><tt>MetaData.fields</tt></b>
+ * event handler may interrogate the <b><tt>metaData</tt></b> property (which
+ * may contain any user-defined properties needed) and the <b><tt>metaData.fields</tt></b>
  * property to perform any configuration required.</p>
  * <p>To use this facility to send the same data as the above example without
  * having to code the creation of the Record constructor, you would create the
@@ -85,7 +88,7 @@ Ext.data.JsonReader = function(meta, recordType){
 Ext.extend(Ext.data.JsonReader, Ext.data.DataReader, {
     /**
      * This JsonReader's metadata as passed to the constructor, or as passed in
-     * the last data packet's <b><tt>MetaData</tt></b> property.
+     * the last data packet's <b><tt>metaData</tt></b> property.
      * @type Mixed
      * @property meta
      */

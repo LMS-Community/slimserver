@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -59,7 +59,7 @@ Ext.extend(Ext.ColorPalette, Ext.Component, {
     ctype: "Ext.ColorPalette",
 
     /**
-     * @cfg {Boolean} allowReselect If set to true then reselecting a color that is already selected fires the selection event
+     * @cfg {Boolean} allowReselect If set to true then reselecting a color that is already selected fires the {@link #select} event
      */
     allowReselect : false,
 
@@ -125,7 +125,7 @@ cp.colors = ["000000", "993300", "333300"];
     },
 
     /**
-     * Selects the specified color in the palette (fires the select event)
+     * Selects the specified color in the palette (fires the {@link #select} event)
      * @param {String} color A valid 6-digit color hex code (# will be stripped if included)
      */
     select : function(color){

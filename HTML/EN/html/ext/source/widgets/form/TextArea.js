@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -78,11 +78,12 @@ Ext.form.TextArea = Ext.extend(Ext.form.TextField,  {
         if(!e.isNavKeyPress() || e.getKey() == e.ENTER){
             this.autoSize();
         }
+        Ext.form.TextArea.superclass.onKeyUp.call(this, e);
     },
 
     /**
      * Automatically grows the field to accomodate the height of the text up to the maximum field height allowed.
-     * This only takes effect if grow = true, and fires the autosize event if the height changes.
+     * This only takes effect if grow = true, and fires the {@link #autosize} event if the height changes.
      */
     autoSize : function(){
         if(!this.grow || !this.textSizeEl){

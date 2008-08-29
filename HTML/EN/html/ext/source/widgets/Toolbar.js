@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -253,14 +253,14 @@ Ext.extend(T, Ext.BoxComponent, {
      * Adds a dynamically rendered Ext.form field (TextField, ComboBox, etc). Note: the field should not have
      * been rendered yet. For a field that has already been rendered, use {@link #addElement}.
      * @param {Ext.form.Field} field
-     * @return {Ext.ToolbarItem}
+     * @return {Ext.Toolbar.Item}
      */
     addField : function(field){
         var td = this.nextBlock();
         field.render(td);
         var ti = new T.Item(td.firstChild);
         ti.render(td);
-        this.items.add(ti);
+        this.items.add(field);
         return ti;
     },
 
@@ -573,7 +573,7 @@ new Ext.Panel({
 		        items: [
 		        	// These items will display in a dropdown menu when the split arrow is clicked
 			        {text: 'Item 1', handler: item1Handler},
-			        {text: 'Item 2', handler: item2Handler},
+			        {text: 'Item 2', handler: item2Handler}
 		        ]
 		   	})
 		}

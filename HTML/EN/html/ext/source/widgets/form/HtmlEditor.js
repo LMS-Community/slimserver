@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -221,7 +221,7 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             e.preventDefault();
         });
 
-        if(this.enableFont && !Ext.isSafari){
+        if(this.enableFont && !Ext.isSafari2){
             this.fontSelect = tb.el.createChild({
                 tag:'select',
                 cls:'x-font-select',
@@ -312,7 +312,7 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             );
         };
 
-        if(!Ext.isSafari){
+        if(!Ext.isSafari2){
             if(this.enableLinks){
                 tb.add(
                     '-',
@@ -355,6 +355,16 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
     },
 
     // private
+    getDoc : function(){
+        return Ext.isIE ? this.getWin().document : (this.iframe.contentDocument || this.getWin().document);
+    },
+
+    // private
+    getWin : function(){
+        return Ext.isIE ? this.iframe.contentWindow : window.frames[this.iframe.name];
+    },
+
+    // private
     onRender : function(ct, position){
         Ext.form.HtmlEditor.superclass.onRender.call(this, ct, position);
         this.el.dom.style.border = '0 none';
@@ -377,25 +387,36 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
 
         var iframe = document.createElement('iframe');
         iframe.name = Ext.id();
-        iframe.frameBorder = 'no';
+        iframe.frameBorder = '0';
 
-        iframe.src=(Ext.SSL_SECURE_URL || "javascript:false");
+        iframe.src = Ext.isIE ? Ext.SSL_SECURE_URL : "javascript:;";
 
         this.wrap.dom.appendChild(iframe);
 
         this.iframe = iframe;
 
-        if(Ext.isIE){
-            iframe.contentWindow.document.designMode = 'on';
-            this.doc = iframe.contentWindow.document;
-            this.win = iframe.contentWindow;
-        } else {
-            this.doc = (iframe.contentDocument || window.frames[iframe.name].document);
-            this.win = window.frames[iframe.name];
-            this.doc.designMode = 'on';
+        this.initFrame();
+
+        if(this.autoMonitorDesignMode !== false){
+            this.monitorTask = Ext.TaskMgr.start({
+                run: this.checkDesignMode,
+                scope: this,
+                interval:100
+            });
         }
+
+        if(!this.width){
+            var sz = this.el.getSize();
+            this.setSize(sz.width, this.height || sz.height);
+        }
+    },
+
+    initFrame : function(){
+        this.doc = this.getDoc();
+        this.win = this.getWin();
+
         this.doc.open();
-        this.doc.write(this.getDocMarkup())
+        this.doc.write(this.getDocMarkup());
         this.doc.close();
 
         var task = { // must defer to wait for browser to be ready
@@ -411,9 +432,18 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             scope: this
         };
         Ext.TaskMgr.start(task);
+    },
 
-        if(!this.width){
-            this.setSize(this.el.getSize());
+
+    checkDesignMode : function(){
+        if(this.wrap && this.wrap.dom.offsetWidth){
+            var doc = this.getDoc();
+            if(!doc){
+                return;
+            }
+            if(!doc.editorInitialized || String(doc.designMode).toLowerCase() != 'on'){
+                this.initFrame();
+            }
         }
     },
 
@@ -605,7 +635,17 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
         var ss = this.el.getStyles('font-size', 'font-family', 'background-image', 'background-repeat');
         ss['background-attachment'] = 'fixed'; // w3c
         dbody.bgProperties = 'fixed'; // ie
+
         Ext.DomHelper.applyStyles(dbody, ss);
+
+        if(this.doc){
+            try{
+                Ext.EventManager.removeAll(this.doc);
+            }catch(e){}
+        }
+
+        this.doc = this.getDoc();
+
         Ext.EventManager.on(this.doc, {
             'mousedown': this.onEditorEvent,
             'dblclick': this.onEditorEvent,
@@ -614,6 +654,7 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             buffer:100,
             scope: this
         });
+
         if(Ext.isGecko){
             Ext.EventManager.on(this.doc, 'keypress', this.applyCommand, this);
         }
@@ -623,11 +664,17 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
         this.initialized = true;
 
         this.fireEvent('initialize', this);
+
+        this.doc.editorInitialized = true;
+
         this.pushValue();
     },
 
     // private
     onDestroy : function(){
+        if(this.monitorTask){
+            Ext.TaskMgr.stop(this.monitorTask);
+        }
         if(this.rendered){
             this.tb.items.each(function(item){
                 if(item.menu){
@@ -716,7 +763,7 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
 
         var btns = this.tb.items.map, doc = this.doc;
 
-        if(this.enableFont && !Ext.isSafari){
+        if(this.enableFont && !Ext.isSafari2){
             var name = (this.doc.queryCommandValue('FontName')||this.defaultFont).toLowerCase();
             if(name != this.fontSelect.dom.value){
                 this.fontSelect.dom.value = name;
@@ -732,7 +779,7 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             btns.justifycenter.toggle(doc.queryCommandState('justifycenter'));
             btns.justifyright.toggle(doc.queryCommandState('justifyright'));
         }
-        if(!Ext.isSafari && this.enableLists){
+        if(!Ext.isSafari2 && this.enableLists){
             btns.insertorderedlist.toggle(doc.queryCommandState('insertorderedlist'));
             btns.insertunorderedlist.toggle(doc.queryCommandState('insertunorderedlist'));
         }
@@ -754,10 +801,11 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
      * @param {String/Boolean} value (optional) The value to pass to the command (defaults to null)
      */
     relayCmd : function(cmd, value){
-        this.win.focus();
-        this.execCmd(cmd, value);
-        this.updateToolbar();
-        this.deferFocus();
+        (function(){
+            this.focus();
+            this.execCmd(cmd, value);
+            this.updateToolbar();
+        }).defer(10, this);
     },
 
     /**

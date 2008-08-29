@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -156,6 +156,13 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
         }
         if(this.selectOnFocus || this.emptyText){
             this.on("focus", this.preFocus, this);
+            this.el.on('mousedown', function(){
+                if(!this.hasFocus){
+                    this.el.on('mouseup', function(e){
+                        e.preventDefault();
+                    }, this, {single:true});
+                }
+            }, this);
             if(this.emptyText){
                 this.on('blur', this.postBlur, this);
                 this.applyEmptyText();
@@ -251,12 +258,15 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
 
     // private
     filterKeys : function(e){
+        if(e.ctrlKey){
+            return;
+        }
         var k = e.getKey();
-        if(!Ext.isIE && (e.isNavKeyPress() || k == e.BACKSPACE || (k == e.DELETE && e.button == -1))){
+        if(Ext.isGecko && (e.isNavKeyPress() || k == e.BACKSPACE || (k == e.DELETE && e.button == -1))){
             return;
         }
         var c = e.getCharCode(), cc = String.fromCharCode(c);
-        if(Ext.isIE && (e.isSpecialKey() || !cc)){
+        if(!Ext.isGecko && e.isSpecialKey() && !cc){
             return;
         }
         if(!this.maskRe.test(cc)){
@@ -342,7 +352,7 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
 
     /**
      * Automatically grows the field to accomodate the width of the text up to the maximum field width allowed.
-     * This only takes effect if grow = true, and fires the autosize event.
+     * This only takes effect if grow = true, and fires the {@link #autosize} event.
      */
     autoSize : function(){
         if(!this.grow || !this.rendered){

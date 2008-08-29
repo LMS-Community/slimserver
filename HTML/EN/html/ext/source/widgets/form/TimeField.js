@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -9,22 +9,29 @@
 /**
  * @class Ext.form.TimeField
  * @extends Ext.form.ComboBox
- * Provides a time input field with a time dropdown and automatic time validation.
-* @constructor
-* Create a new TimeField
-* @param {Object} config
+ * Provides a time input field with a time dropdown and automatic time validation.  Example usage:
+ * <pre><code>
+new Ext.form.TimeField({
+    minValue: '9:00 AM',
+    maxValue: '6:00 PM',
+    increment: 30
+});
+</code></pre>
+ * @constructor
+ * Create a new TimeField
+ * @param {Object} config
  */
 Ext.form.TimeField = Ext.extend(Ext.form.ComboBox, {
     /**
      * @cfg {Date/String} minValue
-     * The minimum allowed time. Can be either a Javascript date object or a string date in a
-     * valid format (defaults to null).
+     * The minimum allowed time. Can be either a Javascript date object with a valid time value or a string 
+     * time in a valid format -- see {@link #format} and {@link #altFormats} (defaults to null).
      */
     minValue : null,
     /**
      * @cfg {Date/String} maxValue
-     * The maximum allowed time. Can be either a Javascript date object or a string date in a
-     * valid format (defaults to null).
+     * The maximum allowed time. Can be either a Javascript date object with a valid time value or a string 
+     * time in a valid format -- see {@link #format} and {@link #altFormats} (defaults to null).
      */
     maxValue : null,
     /**
@@ -42,19 +49,20 @@ Ext.form.TimeField = Ext.extend(Ext.form.ComboBox, {
     /**
      * @cfg {String} invalidText
      * The error text to display when the time in the field is invalid (defaults to
-     * '{value} is not a valid time - it must be in the format {format}').
+     * '{value} is not a valid time').
      */
     invalidText : "{0} is not a valid time",
     /**
      * @cfg {String} format
-     * The default date format string which can be overriden for localization support.  The format must be
-     * valid according to {@link Date#parseDate} (defaults to 'm/d/y').
+     * The default time format string which can be overriden for localization support.  The format must be
+     * valid according to {@link Date#parseDate} (defaults to 'g:i A', e.g., '3:15 PM').  For 24-hour time
+     * format try 'H:i' instead.
      */
     format : "g:i A",
     /**
      * @cfg {String} altFormats
      * Multiple date formats separated by "|" to try when parsing a user input value and it doesn't match the defined
-     * format (defaults to 'm/d/Y|m-d-y|m-d-Y|m/d|m-d|d').
+     * format (defaults to 'g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H').
      */
     altFormats : "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H",
     /**
@@ -69,6 +77,11 @@ Ext.form.TimeField = Ext.extend(Ext.form.ComboBox, {
     triggerAction: 'all',
     // private override
     typeAhead: false,
+    
+    // private - This is the date to use when generating time values in the absence of either minValue
+    // or maxValue.  Using the current date causes DST issues on DST boundary dates, so this is an 
+    // arbitrary "safe" date that can be any date aside from DST boundary dates.
+    initDate: '1/1/2008',
 
     // private
     initComponent : function(){
@@ -84,11 +97,11 @@ Ext.form.TimeField = Ext.extend(Ext.form.ComboBox, {
         if(!this.store){
             var min = this.parseDate(this.minValue);
             if(!min){
-                min = new Date().clearTime();
+                min = new Date(this.initDate).clearTime();
             }
             var max = this.parseDate(this.maxValue);
             if(!max){
-                max = new Date().clearTime().add('mi', (24 * 60) - 1);
+                max = new Date(this.initDate).clearTime().add('mi', (24 * 60) - 1);
             }
             var times = [];
             while(min <= max){

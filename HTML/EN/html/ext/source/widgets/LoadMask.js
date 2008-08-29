@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -12,6 +12,12 @@
  * config option is specified, the masking will be automatically synchronized with the store's loading
  * process and the mask element will be cached for reuse.  For all other elements, this mask will replace the
  * element's Updater load indicator and will be destroyed after the initial load.
+ * <p>Example usage:</p>
+ *<pre><code>
+// Basic mask:
+var myMask = new Ext.LoadMask(Ext.getBody(), {msg:"Please wait..."});
+myMask.show();
+</code></pre>
  * @constructor
  * Create a new LoadMask
  * @param {Mixed} el The element or DOM node, or its id

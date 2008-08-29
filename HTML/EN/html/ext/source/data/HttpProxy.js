@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -20,13 +20,13 @@
  * Be aware that to enable the browser to parse an XML document, the server must set
  * the Content-Type header in the HTTP response to "text/xml".
  * @constructor
- * @param {Object} conn an {@link Ext.data.Connection} object, or options parameter to {@link Ext.Ajax.request}.
+ * @param {Object} conn an {@link Ext.data.Connection} object, or options parameter to {@link Ext.Ajax#request}.
  * If an options parameter is passed, the singleton {@link Ext.Ajax} object will be used to make the request.
  */
 Ext.data.HttpProxy = function(conn){
     Ext.data.HttpProxy.superclass.constructor.call(this);
     /**
-     * The Connection object (Or options parameter to {@link Ext.Ajax.request}) which this HttpProxy uses to make requests to the server.
+     * The Connection object (Or options parameter to {@link Ext.Ajax#request}) which this HttpProxy uses to make requests to the server.
      * Properties of this object may be changed dynamically to change the way data is requested.
      * @property
      */

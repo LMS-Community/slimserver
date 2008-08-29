@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -49,7 +49,7 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
      * @cfg {Boolean} autoWidth
      * True to use width:'auto', false to use fixed width. Note: although many components inherit this config option, not all will function as expected with a width of 'auto'. (defaults to false).
      */
-	
+
     /* // private internal config
      * {Boolean} deferHeight
      * True to defer height calculations to an external component, false to allow this component to set its own
@@ -87,7 +87,7 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
     deferHeight: false,
 
     /**
-     * Sets the width and height of the component.  This method fires the resize event.  This method can accept
+     * Sets the width and height of the component.  This method fires the {@link #resize} event.  This method can accept
      * either width and height as separate numeric arguments, or you can pass a size object like {width:10, height:20}.
      * @param {Number/Object} width The new width to set, or a size object in the format {width, height}
      * @param {Number} height The new height to set (not required if a size object is passed as the first arg)
@@ -129,7 +129,7 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
     },
 
     /**
-     * Sets the width of the component.  This method fires the resize event.
+     * Sets the width of the component.  This method fires the {@link #resize} event.
      * @param {Number} width The new width to set
      * @return {Ext.BoxComponent} this
      */
@@ -138,7 +138,7 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
     },
 
     /**
-     * Sets the height of the component.  This method fires the resize event.
+     * Sets the height of the component.  This method fires the {@link #resize} event.
      * @param {Number} height The new height to set
      * @return {Ext.BoxComponent} this
      */
@@ -207,7 +207,7 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
 
     /**
      * Sets the left and top of the component.  To set the page XY position instead, use {@link #setPagePosition}.
-     * This method fires the move event.
+     * This method fires the {@link #move} event.
      * @param {Number} left The new left
      * @param {Number} top The new top
      * @return {Ext.BoxComponent} this
@@ -242,7 +242,7 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
 
     /**
      * Sets the page XY position of the component.  To set the left and top instead, use {@link #setPosition}.
-     * This method fires the move event.
+     * This method fires the {@link #move} event.
      * @param {Number} x The new x position
      * @param {Number} y The new y position
      * @return {Ext.BoxComponent} this

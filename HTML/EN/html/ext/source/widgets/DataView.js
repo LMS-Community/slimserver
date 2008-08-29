@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -118,9 +118,14 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
      * @cfg {Boolean} deferEmptyText True to defer emptyText being applied until the store's first load
      */
     deferEmptyText: true,
+    /**
+     * @cfg {Boolean} trackOver True to enable mouseenter and mouseleave events
+     */
+    trackOver: false,
 
     //private
     last: false,
+
 
     // private
     initComponent : function(){
@@ -148,6 +153,24 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
              * @param {Ext.EventObject} e The raw event object
              */
             "click",
+            /**
+             * @event mouseenter
+             * Fires when the mouse enters a template node. trackOver:true or an overCls must be set to enable this event.
+             * @param {Ext.DataView} this
+             * @param {Number} index The index of the target node
+             * @param {HTMLElement} node The target node
+             * @param {Ext.EventObject} e The raw event object
+             */
+            "mouseenter",
+            /**
+             * @event mouseleave
+             * Fires when the mouse leaves a template node. trackOver:true or an overCls must be set to enable this event.
+             * @param {Ext.DataView} this
+             * @param {Number} index The index of the target node
+             * @param {HTMLElement} node The target node
+             * @param {Ext.EventObject} e The raw event object
+             */
+            "mouseleave",
             /**
              * @event containerclick
              * Fires when a click occurs and it is not on a template node.
@@ -215,7 +238,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
             scope:this
         });
 
-        if(this.overClass){
+        if(this.overClass || this.trackOver){
             this.el.on({
                 "mouseover": this.onMouseOver,
                 "mouseout": this.onMouseOut,
@@ -234,7 +257,6 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
     refresh : function(){
         this.clearSelections(false, true);
         this.el.update("");
-        var html = [];
         var records = this.store.getRange();
         if(records.length < 1){
             if(!this.deferEmptyText || this.hasSkippedEmptyText){
@@ -250,17 +272,29 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
     },
 
     /**
-     * Function that can be overridden to provide custom formatting for the data that is sent to the template for each node.
-     * @param {Array/Object} data The raw data (array of colData for a data model bound view or
-     * a JSON object for an Updater bound view).
-     * @return {Array/Object} The formatted data in a format expected by the internal {@link #tpl}'s overwrite() method.
+     * Function which can be overridden to provide custom formatting for each Record that is used by this
+     * DataView's {@link #tpl template} to render each node.
+     * @param {Array/Object} data The raw data object that was used to create the Record.
+     * @param {Number} recordIndex the index number of the Record being prepared for rendering.
+     * @param {Record} record The Record being prepared for rendering.
+     * @return {Array/Object} The formatted data in a format expected by the internal {@link #tpl template}'s overwrite() method.
      * (either an array if your params are numeric (i.e. {0}) or an object (i.e. {foo: 'bar'}))
      */
     prepareData : function(data){
         return data;
     },
 
-    // private
+    /**
+     * <p>Function which can be overridden which returns the data object passed to this
+     * DataView's {@link #tpl template} to render the whole DataView.</p>
+     * <p>This is usually an Array of data objects, each element of which is processed by an
+     * {@link Ext.XTemplate XTemplate} which uses <tt>'&lt;tpl for="."&gt;'</tt> to iterate over its supplied
+     * data object as an Array. However, <i>named</i> properties may be placed into the data object to
+     * provide non-repeating data such as headings, totals etc.</p>
+     * @param records {Array} An Array of {@link Ext.data.Record}s to be rendered into the DataView.
+     * @return {Array} An Array of data objects to be processed by a repeating XTemplate. May also
+     * contain <i>named</i> properties.
+     */
     collectData : function(records, startIndex){
         var r = [];
         for(var i = 0, len = records.length; i < len; i++){
@@ -407,6 +441,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
         if(item && item !== this.lastItem){
             this.lastItem = item;
             Ext.fly(item).addClass(this.overClass);
+            this.fireEvent("mouseenter", this, this.indexOf(item), item, e);
         }
     },
 
@@ -415,6 +450,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
         if(this.lastItem){
             if(!e.within(this.lastItem, true)){
                 Ext.fly(this.lastItem).removeClass(this.overClass);
+                this.fireEvent("mouseleave", this, this.indexOf(this.lastItem), this.lastItem, e);
                 delete this.lastItem;
             }
         }
@@ -553,7 +589,7 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
      */
     deselect : function(node){
         if(this.isSelected(node)){
-            var node = this.getNode(node);
+            node = this.getNode(node);
             this.selected.removeElement(node);
             if(this.last == node.viewIndex){
                 this.last = false;
@@ -628,21 +664,21 @@ Ext.DataView = Ext.extend(Ext.BoxComponent, {
 
     /**
      * Gets a range nodes.
-     * @param {Number} start The index of the first node in the range
-     * @param {Number} end The index of the last node in the range
+     * @param {Number} start (optional) The index of the first node in the range
+     * @param {Number} end (optional) The index of the last node in the range
      * @return {Array} An array of nodes
      */
     getNodes : function(start, end){
         var ns = this.all.elements;
         start = start || 0;
-        end = typeof end == "undefined" ? ns.length - 1 : end;
+        end = typeof end == "undefined" ? Math.max(ns.length - 1, 0) : end;
         var nodes = [], i;
         if(start <= end){
-            for(i = start; i <= end; i++){
+            for(i = start; i <= end && ns[i]; i++){
                 nodes.push(ns[i]);
             }
         } else{
-            for(i = start; i >= end; i--){
+            for(i = start; i >= end && ns[i]; i--){
                 nodes.push(ns[i]);
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -36,16 +36,6 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
      */
     todayTip : "{0} (Spacebar)",
     /**
-     * @cfg {Date} minDate
-     * Minimum allowable date (JavaScript date object, defaults to null)
-     */
-    minDate : null,
-    /**
-     * @cfg {Date} maxDate
-     * Maximum allowable date (JavaScript date object, defaults to null)
-     */
-    maxDate : null,
-    /**
      * @cfg {String} minText
      * The error text to display if the minDate validation fails (defaults to "This date is before the minimum date")
      */
@@ -62,28 +52,18 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
      */
     format : "m/d/y",
     /**
-     * @cfg {Array} disabledDays
-     * An array of days to disable, 0-based. For example, [0, 6] disables Sunday and Saturday (defaults to null).
-     */
-    disabledDays : null,
-    /**
      * @cfg {String} disabledDaysText
-     * The tooltip to display when the date falls on a disabled day (defaults to "")
+     * The tooltip to display when the date falls on a disabled day (defaults to "Disabled")
      */
-    disabledDaysText : "",
-    /**
-     * @cfg {RegExp} disabledDatesRE
-     * JavaScript regular expression used to disable a pattern of dates (defaults to null)
-     */
-    disabledDatesRE : null,
+    disabledDaysText : "Disabled",
     /**
      * @cfg {String} disabledDatesText
-     * The tooltip text to display when the date falls on a disabled date (defaults to "")
+     * The tooltip text to display when the date falls on a disabled date (defaults to "Disabled")
      */
-    disabledDatesText : "",
+    disabledDatesText : "Disabled",
     /**
      * @cfg {Boolean} constrainToViewport
-     * True to constrain the date picker to the viewport (defaults to true)
+     * <b>Deprecated</b> (not currently used). True to constrain the date picker to the viewport (defaults to true)
      */
     constrainToViewport : true,
     /**
@@ -116,7 +96,47 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
      * Day index at which the week should begin, 0-based (defaults to 0, which is Sunday)
      */
     startDay : 0,
+    /**
+     * @cfg {Boolean} showToday
+     * False to hide the footer area containing the Today button and disable the keyboard handler for spacebar
+     * that selects the current date (defaults to true).
+     */
+    showToday : true,
+    /**
+     * @cfg {Date} minDate
+     * Minimum allowable date (JavaScript date object, defaults to null)
+     */
+    /**
+     * @cfg {Date} maxDate
+     * Maximum allowable date (JavaScript date object, defaults to null)
+     */
+    /**
+     * @cfg {Array} disabledDays
+     * An array of days to disable, 0-based. For example, [0, 6] disables Sunday and Saturday (defaults to null).
+     */
+    /**
+     * @cfg {RegExp} disabledDatesRE
+     * JavaScript regular expression used to disable a pattern of dates (defaults to null).  The {@link #disabledDates}
+     * config will generate this regex internally, but if you specify disabledDatesRE it will take precedence over the 
+     * disabledDates value.
+     */
+    /**
+     * @cfg {Array} disabledDates
+     * An array of "dates" to disable, as strings. These strings will be used to build a dynamic regular
+     * expression so they are very powerful. Some examples:
+     * <ul>
+     * <li>["03/08/2003", "09/16/2003"] would disable those exact dates</li>
+     * <li>["03/08", "09/16"] would disable those days for every year</li>
+     * <li>["^03/08"] would only match the beginning (useful if you are using short years)</li>
+     * <li>["03/../2006"] would disable every day in March 2006</li>
+     * <li>["^03"] would disable every day in every March</li>
+     * </ul>
+     * Note that the format of the dates included in the array should exactly match the {@link #format} config.
+     * In order to support regular expressions, if you are using a date format that has "." in it, you will have to
+     * escape the dot when restricting dates. For example: ["03\\.08\\.03"].
+     */
 
+    // private
     initComponent : function(){
         Ext.DatePicker.superclass.initComponent.call(this);
 
@@ -151,6 +171,50 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
             }
             this.disabledDatesRE = new RegExp(re + ")");
         }
+    },
+    
+    /**
+     * Replaces any existing disabled dates with new values and refreshes the DatePicker.
+     * @param {Array/RegExp} disabledDates An array of date strings (see the {@link #disabledDates} config
+     * for details on supported values), or a JavaScript regular expression used to disable a pattern of dates.
+     */
+    setDisabledDates : function(dd){
+        if(Ext.isArray(dd)){
+            this.disabledDates = dd;
+            this.disabledDatesRE = null;
+        }else{
+            this.disabledDatesRE = dd;
+        }
+        this.initDisabledDays();
+        this.update(this.value, true);
+    },
+    
+    /**
+     * Replaces any existing disabled days (by index, 0-6) with new values and refreshes the DatePicker.
+     * @param {Array} disabledDays An array of disabled day indexes. See the {@link #disabledDays} config
+     * for details on supported values.
+     */
+    setDisabledDays : function(dd){
+        this.disabledDays = dd;
+        this.update(this.value, true);
+    },
+    
+    /**
+     * Replaces any existing {@link #minDate} with the new value and refreshes the DatePicker.
+     * @param {Date} value The minimum date that can be selected
+     */
+    setMinDate : function(dt){
+        this.minDate = dt;
+        this.update(this.value, true);
+    },
+    
+    /**
+     * Replaces any existing {@link #maxDate} with the new value and refreshes the DatePicker.
+     * @param {Date} value The maximum date that can be selected
+     */
+    setMaxDate : function(dt){
+        this.maxDate = dt;
+        this.update(this.value, true);
     },
 
     /**
@@ -201,7 +265,9 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
             }
             m[m.length] = '<td><a href="#" hidefocus="on" class="x-date-date" tabIndex="1"><em><span></span></em></a></td>';
         }
-        m[m.length] = '</tr></tbody></table></td></tr><tr><td colspan="3" class="x-date-bottom" align="center"></td></tr></table><div class="x-date-mp"></div>';
+        m.push('</tr></tbody></table></td></tr>', 
+                this.showToday ? '<tr><td colspan="3" class="x-date-bottom" align="center"></td></tr>' : '', 
+                '</table><div class="x-date-mp"></div>');
 
         var el = document.createElement("div");
         el.className = "x-date-picker";
@@ -274,8 +340,6 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
 
         this.eventEl.on("click", this.handleDateClick,  this, {delegate: "a.x-date-date"});
 
-        this.eventEl.addKeyListener(Ext.EventObject.SPACE, this.selectToday,  this);
-
         this.el.unselectable();
         
         this.cells = this.el.select("table.x-date-inner tbody td");
@@ -290,15 +354,17 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         this.mbtn.on('click', this.showMonthPicker, this);
         this.mbtn.el.child(this.mbtn.menuClassTarget).addClass("x-btn-with-menu");
 
-
-        var today = (new Date()).dateFormat(this.format);
-        this.todayBtn = new Ext.Button({
-            renderTo: this.el.child("td.x-date-bottom", true),
-            text: String.format(this.todayText, today),
-            tooltip: String.format(this.todayTip, today),
-            handler: this.selectToday,
-            scope: this
-        });
+        if(this.showToday){
+            this.todayKeyListener = this.eventEl.addKeyListener(Ext.EventObject.SPACE, this.selectToday,  this);
+            var today = (new Date()).dateFormat(this.format);
+            this.todayBtn = new Ext.Button({
+                renderTo: this.el.child("td.x-date-bottom", true),
+                text: String.format(this.todayText, today),
+                tooltip: String.format(this.todayTip, today),
+                handler: this.selectToday,
+                scope: this
+            });
+        }
         
         if(Ext.isIE){
             this.el.repaint();
@@ -306,6 +372,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         this.update(this.value);
     },
 
+    // private
     createMonthPicker : function(){
         if(!this.monthPicker.dom.firstChild){
             var buf = ['<table border="0" cellspacing="0">'];
@@ -344,6 +411,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         }
     },
 
+    // private
     showMonthPicker : function(){
         this.createMonthPicker();
         var size = this.el.getSize();
@@ -358,6 +426,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         this.monthPicker.slideIn('t', {duration:.2});
     },
 
+    // private
     updateMPYear : function(y){
         this.mpyear = y;
         var ys = this.mpYears.elements;
@@ -376,16 +445,19 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         }
     },
 
+    // private
     updateMPMonth : function(sm){
         this.mpMonths.each(function(m, a, i){
             m[m.dom.xmonth == sm ? 'addClass' : 'removeClass']('x-date-mp-sel');
         });
     },
 
+    // private
     selectMPMonth: function(m){
         
     },
 
+    // private
     onMonthClick : function(e, t){
         e.stopEvent();
         var el = new Ext.Element(t), pn;
@@ -419,6 +491,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         }
     },
 
+    // private
     onMonthDblClick : function(e, t){
         e.stopEvent();
         var el = new Ext.Element(t), pn;
@@ -432,6 +505,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         }
     },
 
+    // private
     hideMonthPicker : function(disableAnim){
         if(this.monthPicker){
             if(disableAnim === true){
@@ -485,15 +559,17 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
 
     // private
     selectToday : function(){
-        this.setValue(new Date().clearTime());
-        this.fireEvent("select", this, this.value);
+        if(this.todayBtn && !this.todayBtn.disabled){
+	        this.setValue(new Date().clearTime());
+	        this.fireEvent("select", this, this.value);
+        }
     },
 
     // private
-    update : function(date){
+    update : function(date, forceRefresh){
         var vd = this.activeDate;
         this.activeDate = date;
-        if(vd && this.el){
+        if(!forceRefresh && vd && this.el){
             var t = date.getTime();
             if(vd.getMonth() == date.getMonth() && vd.getFullYear() == date.getFullYear()){
                 this.cells.removeClass("x-date-selected");
@@ -536,6 +612,16 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         var ddays = this.disabledDays ? this.disabledDays.join("") : false;
         var ddaysText = this.disabledDaysText;
         var format = this.format;
+        
+        if(this.showToday){
+            var td = new Date().clearTime();
+            var disable = (td < min || td > max || 
+                (ddMatch && format && ddMatch.test(td.dateFormat(format))) || 
+                (ddays && ddays.indexOf(td.getDay()) != -1));
+                        
+            this.todayBtn.setDisabled(disable);
+            this.todayKeyListener[disable ? 'disable' : 'enable']();
+        }
 
         var setCellClass = function(cal, cell){
             cell.title = "";
@@ -621,8 +707,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
     // private
     beforeDestroy : function() {
         if(this.rendered){
-	        this.mbtn.destroy();
-	        this.todayBtn.destroy();
+            Ext.destroy(this.mbtn, this.todayBtn);
         }
     }
 

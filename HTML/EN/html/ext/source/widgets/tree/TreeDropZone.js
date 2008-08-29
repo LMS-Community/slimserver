@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -249,7 +249,7 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
             }
         }
         n.ui.focus();
-        if(this.tree.hlDrop){
+        if(Ext.enableFx && this.tree.hlDrop){
             n.ui.highlight();
         }
         t.ui.endDrop();
@@ -258,7 +258,7 @@ Ext.extend(Ext.tree.TreeDropZone, Ext.dd.DropZone, {
 
     // private
     afterNodeMoved : function(dd, data, e, targetNode, dropNode){
-        if(this.tree.hlDrop){
+        if(Ext.enableFx && this.tree.hlDrop){
             dropNode.ui.focus();
             dropNode.ui.highlight();
         }

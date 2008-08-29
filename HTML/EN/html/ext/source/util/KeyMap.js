@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -82,6 +82,7 @@ alt         Boolean          True to handle key only when alt is pressed (defaul
 handler     Function         The function to call when KeyMap finds the expected key combination
 fn          Function         Alias of handler (for backwards-compatibility)
 scope       Object           The scope of the callback function
+stopEvent   Boolean          True to stop the event 
 </pre>
      *
      * Usage:
@@ -116,6 +117,10 @@ map.addBinding({
             alt = config.alt,
             fn = config.fn || config.handler,
             scope = config.scope;
+	
+	if (config.stopEvent) {
+	    this.stopEvent = config.stopEvent;    
+	}	
 
         if(typeof keyCode == "string"){
             var ks = [];

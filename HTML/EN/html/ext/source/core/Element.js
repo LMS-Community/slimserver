@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -386,7 +386,7 @@ El.prototype = {
      * @param {String} selector The CSS selector
      * @return {Array} An array of the matched nodes
      */
-    query : function(selector, unique){
+    query : function(selector){
         return Ext.DomQuery.select(selector, this.dom);
     },
 
@@ -1112,7 +1112,7 @@ El.prototype = {
     },
 
     /**
-     * Sets the element's position and size the the specified region. If animation is true then width, height, x and y will be animated concurrently.
+     * Sets the element's position and size the specified region. If animation is true then width, height, x and y will be animated concurrently.
      * @param {Ext.lib.Region} region The region to fill
      * @param {Boolean/Object} animate (optional) true for the default animation or a standard Element animation config object
      * @return {Ext.Element} this
@@ -1130,7 +1130,7 @@ El.prototype = {
      * <li>evt : EventObject<div class="sub-desc">The {@link Ext.EventObject EventObject} describing the event.</div></li>
      * <li>t : Element<div class="sub-desc">The {@link Ext.Element Element} which was the target of the event.
      * Note that this may be filtered by using the <tt>delegate</tt> option.</div></li>
-     * <li>o : Object<div class="sub-desc">The the options object from the addListener call.</div></li>
+     * <li>o : Object<div class="sub-desc">The options object from the addListener call.</div></li>
      * </ul>
      * @param {Object} scope (optional) The scope (The <tt>this</tt> reference) of the handler function. Defaults
      * to this Element.
@@ -1207,10 +1207,12 @@ el.un('click', this.handlerFn);
 </code></pre>
      * @param {String} eventName the type of event to remove
      * @param {Function} fn the method the event invokes
+     * @param {Object} scope (optional) The scope (The <tt>this</tt> reference) of the handler function. Defaults
+     * to this Element.
      * @return {Ext.Element} this
      */
-    removeListener : function(eventName, fn){
-        Ext.EventManager.removeListener(this.dom,  eventName, fn);
+    removeListener : function(eventName, fn, scope){
+        Ext.EventManager.removeListener(this.dom,  eventName, fn, scope || this);
         return this;
     },
 
@@ -1219,7 +1221,7 @@ el.un('click', this.handlerFn);
      * @return {Ext.Element} this
      */
     removeAllListeners : function(){
-        E.purgeElement(this.dom);
+        Ext.EventManager.removeAll(this.dom);
         return this;
     },
 
@@ -1423,14 +1425,14 @@ el.un('click', this.handlerFn);
 
     // private
 	setOverflow : function(v){
-    	if(v=='auto' && Ext.isMac && Ext.isGecko){ // work around stupid FF 2.0/Mac scroll bar bug
+    	if(v=='auto' && Ext.isMac && Ext.isGecko2){ // work around stupid FF 2.0/Mac scroll bar bug
     		this.dom.style.overflow = 'hidden';
         	(function(){this.dom.style.overflow = 'auto';}).defer(1, this);
     	}else{
     		this.dom.style.overflow = v;
     	}
 	},
-	
+
     /**
      * Quick set left and top adding default units
      * @param {String} left The left CSS property value
@@ -1445,7 +1447,7 @@ el.un('click', this.handlerFn);
 
     /**
      * Move this element relative to its current position.
-     * @param {String} direction Possible values are: "l","left" - "r","right" - "t","top","up" - "b","bottom","down".
+     * @param {String} direction Possible values are: "l" (or "left"), "r" (or "right"), "t" (or "top", or "up"), "b" (or "bottom", or "down").
      * @param {Number} distance How far to move the element in pixels
      * @param {Boolean/Object} animate (optional) true for the default animation or a standard Element animation config object
      * @return {Ext.Element} this
@@ -1915,11 +1917,8 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
     },
 
     /**
-     * Direct access to the Updater {@link Ext.Updater#update} method (takes the same parameters).
-     * @param {String/Function} url The url for this request or a function to call to get the url
-     * @param {String/Object} params (optional) The parameters to pass as either a url encoded string "param1=1&amp;param2=2" or an object {param1: 1, param2: 2}
-     * @param {Function} callback (optional) Callback when transaction is complete - called with signature (oElement, bSuccess)
-     * @param {Boolean} discardUrl (optional) By default when you execute an update the defaultUrl is changed to the last used url. If true, it will not store the url.
+     * Direct access to the Updater {@link Ext.Updater#update} method. The method takes the same object
+     * parameter as {@link Ext.Updater#update}
      * @return {Ext.Element} this
      */
     load : function(){
@@ -2168,7 +2167,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
      */
     createShim : function(){
         var el = document.createElement('iframe');
-        el.frameBorder = 'no';
+        el.frameBorder = '0';
         el.className = 'ext-shim';
         if(Ext.isIE && Ext.isSecure){
             el.src = Ext.SSL_SECURE_URL;
@@ -2607,7 +2606,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
     /**
      * Scrolls this element the specified direction. Does bounds checking to make sure the scroll is
      * within this element's scrollable range.
-     * @param {String} direction Possible values are: "l","left" - "r","right" - "t","top","up" - "b","bottom","down".
+     * @param {String} direction Possible values are: "l" (or "left"), "r" (or "right"), "t" (or "top", or "up"), "b" (or "bottom", or "down").
      * @param {Number} distance How far to scroll the element in pixels
      * @param {Boolean/Object} animate (optional) true for the default animation or a standard Element animation config object
      * @return {Boolean} Returns true if a scroll was triggered or false if the element
@@ -2791,6 +2790,13 @@ Ext.get("foo").boxWrap().addClass("x-box-blue");
         return d.getAttributeNS(ns, name) || d.getAttribute(ns+":"+name) || d.getAttribute(name) || d[name];
     },
 
+    /**
+     * Returns the width in pixels of the passed text, or the width of the text in this Element.
+     * @param {String} text The text to measure. Defaults to the innerHTML of the element.
+     * @param {Number} min (Optional) The minumum value to return.
+     * @param {Number} max (Optional) The maximum value to return.
+     * @return {Number} The text width in pixels.
+     */
     getTextWidth : function(text, min, max){
         return (Ext.util.TextMetrics.measure(this.dom, Ext.value(text, this.dom.innerHTML, true)).width).constrain(min || 0, max || 1000000);
     }
@@ -2970,7 +2976,7 @@ El.garbageCollect = function(){
         if(!d || !d.parentNode || (!d.offsetParent && !document.getElementById(eid))){
             delete El.cache[eid];
             if(d && Ext.enableListenerCollection){
-                E.purgeElement(d);
+                Ext.EventManager.removeAll(d);
             }
         }
     }

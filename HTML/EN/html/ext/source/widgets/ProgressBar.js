@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -117,11 +117,13 @@ Ext.ProgressBar = Ext.extend(Ext.BoxComponent, {
         if(text){
             this.updateText(text);
         }
-        var w = Math.floor(value*this.el.dom.firstChild.offsetWidth);
-        this.progressBar.setWidth(w);
-        if(this.textTopEl){
-            //textTopEl should be the same width as the bar so overflow will clip as the bar moves
-            this.textTopEl.removeClass('x-hidden').setWidth(w);
+        if(this.rendered){
+	        var w = Math.floor(value*this.el.dom.firstChild.offsetWidth);
+	        this.progressBar.setWidth(w);
+	        if(this.textTopEl){
+	            //textTopEl should be the same width as the bar so overflow will clip as the bar moves
+	            this.textTopEl.removeClass('x-hidden').setWidth(w);
+	        }
         }
         this.fireEvent('update', this, value, text);
         return this;
@@ -144,6 +146,7 @@ interval   Number        The length of time in milliseconds between each progres
 increment  Number        The number of progress update segments to display within the progress
                          bar (defaults to 10).  If the bar reaches the end and is still
                          updating, it will automatically wrap back to the beginning.
+text       String        Optional text to display in the progress bar element (defaults to '').
 fn         Function      A callback function to execute after the progress bar finishes auto-
                          updating.  The function will be called with no arguments.  This function
                          will be ignored if duration is not specified since in that case the
@@ -164,6 +167,7 @@ p.wait({
    interval: 100, //bar will move fast!
    duration: 5000,
    increment: 15,
+   text: 'Updating...',
    scope: this,
    fn: function(){
       Ext.fly('status').update('Done!');
@@ -184,6 +188,7 @@ myAction.on('complete', function(){
         if(!this.waitTimer){
             var scope = this;
             o = o || {};
+            this.updateText(o.text);
             this.waitTimer = Ext.TaskMgr.start({
                 run: function(i){
                     var inc = o.increment || 10;
@@ -219,7 +224,22 @@ myAction.on('complete', function(){
      */
     updateText : function(text){
         this.text = text || '&#160;';
-        this.textEl.update(this.text);
+        if(this.rendered){
+            this.textEl.update(this.text);
+        }
+        return this;
+    },
+    
+    /**
+     * Synchronizes the inner bar width to the proper proportion of the total componet width based
+     * on the current progress {@link #value}.  This will be called automatically when the ProgressBar
+     * is resized by a layout, but if it is rendered auto width, this method can be called from
+     * another resize handler to sync the ProgressBar if necessary.
+     */
+    syncProgressBar : function(){
+        if(this.value){
+            this.updateProgress(this.value, this.text);
+        }
         return this;
     },
 
@@ -235,6 +255,7 @@ myAction.on('complete', function(){
             var inner = this.el.dom.firstChild;
             this.textEl.setSize(inner.offsetWidth, inner.offsetHeight);
         }
+        this.syncProgressBar();
         return this;
     },
 

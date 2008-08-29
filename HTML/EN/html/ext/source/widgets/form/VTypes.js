@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -21,7 +21,11 @@ Ext.form.VTypes = function(){
     // All these messages and functions are configurable
     return {
         /**
-         * The function used to validate email addresses
+         * The function used to validate email addresses.  Note that this is a very basic validation -- complete
+         * validation per the email RFC specifications is very complex and beyond the scope of this class, although
+         * this function can be overridden if a more comprehensive validation scheme is desired.  See the validation
+         * section of the <a href="http://en.wikipedia.org/wiki/E-mail_address">Wikipedia article on email addresses</a> 
+         * for additional information.
          * @param {String} value The email address
          */
         'email' : function(v){
@@ -33,7 +37,8 @@ Ext.form.VTypes = function(){
          */
         'emailText' : 'This field should be an e-mail address in the format "user@domain.com"',
         /**
-         * The keystroke filter mask to be applied on email input
+         * The keystroke filter mask to be applied on email input.  See the {@link #email} method for 
+         * information about more complex email validation.
          * @type RegExp
          */
         'emailMask' : /[a-z0-9_\.\-@]/i,

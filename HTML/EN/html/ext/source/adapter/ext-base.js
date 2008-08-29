@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -783,7 +783,7 @@
 
         useDefaultHeader:true,
 
-        defaultPostHeader:'application/x-www-form-urlencoded',
+        defaultPostHeader:'application/x-www-form-urlencoded; charset=UTF-8',
 
         useDefaultXhrHeader:true,
 

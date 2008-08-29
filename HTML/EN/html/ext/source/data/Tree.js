@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -343,8 +343,21 @@ Ext.extend(Ext.data.Node, Ext.util.Observable, {
        return (!this.parentNode ? true : this.parentNode.firstChild == this);
     },
 
+    /**
+     * Returns true if this node has one or more child nodes, else false.
+     * @return {Boolean}
+     */
     hasChildNodes : function(){
         return !this.isLeaf() && this.childNodes.length > 0;
+    },
+    
+    /**
+     * Returns true if this node has one or more child nodes, or if the <tt>expandable</tt>
+     * node attribute is explicitly specified as true (see {@link #attributes}), otherwise returns false.
+     * @return {Boolean}
+     */
+    isExpandable : function(){
+        return this.attributes.expandable || this.hasChildNodes();
     },
 
     /**
@@ -644,7 +657,7 @@ Ext.extend(Ext.data.Node, Ext.util.Observable, {
     },
 
     /**
-     * Interates the child nodes of this node, calling the specified function with each node. The scope (<i>this</i>) of
+     * Iterates the child nodes of this node, calling the specified function with each node. The scope (<i>this</i>) of
      * function call will be the scope provided or the current node. The arguments to the function
      * will be the args provided or the current node. If the function returns false at any point,
      * the iteration stops.

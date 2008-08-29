@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -7,7 +7,7 @@
  */
 
 
-Ext = {version: '2.1'};
+Ext = {version: '2.2'};
 
 // for old browsers
 window["undefined"] = window["undefined"];
@@ -50,6 +50,7 @@ Ext.apply = function(o, c, defaults){
         isIE = !isOpera && ua.indexOf("msie") > -1,
         isIE7 = !isOpera && ua.indexOf("msie 7") > -1,
         isGecko = !isSafari && ua.indexOf("gecko") > -1,
+        isGecko3 = !isSafari && ua.indexOf("rv:1.9") > -1,
         isBorderBox = isIE && !isStrict,
         isWindows = (ua.indexOf("windows") != -1 || ua.indexOf("win32") != -1),
         isMac = (ua.indexOf("macintosh") != -1 || ua.indexOf("mac os x") != -1),
@@ -66,7 +67,7 @@ Ext.apply = function(o, c, defaults){
 
     Ext.apply(Ext, {
         /**
-         * True if the browser is in strict mode
+         * True if the browser is in strict (standards-compliant) mode, as opposed to quirks mode
          * @type Boolean
          */
         isStrict : isStrict,
@@ -231,7 +232,7 @@ Ext.addBehaviors({
                 }
             };
             var oc = Object.prototype.constructor;
-            
+
             return function(sb, sp, overrides){
                 if(typeof sp == 'object'){
                     overrides = sp;
@@ -380,7 +381,7 @@ Company.data.CustomStore = function(config) { ... }
          * @param {Object} scope
          */
         each : function(array, fn, scope){
-            if(!Ext.isArray(array)){
+            if(typeof array.length == "undefined" || typeof array == "string"){
                 array = [array];
             }
             for(var i = 0, len = array.length; i < len; i++){
@@ -582,7 +583,7 @@ Company.data.CustomStore = function(config) { ... }
          * @return {Boolean}
          */
 		isArray : function(v){
-			return v && typeof v.pop == 'function';
+			return v && typeof v.length == 'number' && typeof v.splice == 'function';
 		},
 
 		/**
@@ -594,31 +595,80 @@ Company.data.CustomStore = function(config) { ... }
 			return v && typeof v.getFullYear == 'function';
 		},
 
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Opera.
+         * @type Boolean
+         */
         isOpera : isOpera,
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Safari.
+         * @type Boolean
+         */
         isSafari : isSafari,
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Safari 3.x.
+         * @type Boolean
+         */
         isSafari3 : isSafari3,
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Safari 2.x.
+         * @type Boolean
+         */
         isSafari2 : isSafari && !isSafari3,
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Internet Explorer.
+         * @type Boolean
+         */
         isIE : isIE,
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Internet Explorer 6.x.
+         * @type Boolean
+         */
         isIE6 : isIE && !isIE7,
-        /** @type Boolean */
+        /**
+         * True if the detected browser is Internet Explorer 7.x.
+         * @type Boolean
+         */
         isIE7 : isIE7,
-        /** @type Boolean */
+        /**
+         * True if the detected browser uses the Gecko layout engine (e.g. Mozilla, Firefox).
+         * @type Boolean
+         */
         isGecko : isGecko,
-        /** @type Boolean */
+        /**
+         * True if the detected browser uses a pre-Gecko 1.9 layout engine (e.g. Firefox 2.x).
+         * @type Boolean
+         */
+        isGecko2 : isGecko && !isGecko3,
+        /**
+         * True if the detected browser uses a Gecko 1.9+ layout engine (e.g. Firefox 3.x).
+         * @type Boolean
+         */
+        isGecko3 : isGecko3,
+        /**
+         * True if the detected browser is Internet Explorer running in non-strict mode.
+         * @type Boolean
+         */
         isBorderBox : isBorderBox,
-        /** @type Boolean */
+        /**
+         * True if the detected platform is Linux.
+         * @type Boolean
+         */
         isLinux : isLinux,
-        /** @type Boolean */
+        /**
+         * True if the detected platform is Windows.
+         * @type Boolean
+         */
         isWindows : isWindows,
-        /** @type Boolean */
+        /**
+         * True if the detected platform is Mac OS.
+         * @type Boolean
+         */
         isMac : isMac,
-        /** @type Boolean */
+        /**
+         * True if the detected platform is Adobe Air.
+         * @type Boolean
+         */
         isAir : isAir,
 
 	    /**
@@ -626,7 +676,7 @@ Company.data.CustomStore = function(config) { ... }
 	     * you may want to set this to true.
 	     * @type Boolean
 	     */
-        useShims : ((isIE && !isIE7) || (isGecko && isMac))
+        useShims : ((isIE && !isIE7) || (isMac && isGecko && !isGecko3))
     });
 
     // in intellij using keyword "namespace" causes parsing errors
@@ -649,7 +699,7 @@ Ext.apply(Function.prototype, {
      * callback, use {@link #createDelegate} instead.</b> The function returned by createCallback always
      * executes in the window scope.
      * <p>This method is required when you want to pass arguments to a callback function.  If no arguments
-     * are needed, you can simply pass a reference to the function as a callback (e.g., callback: myFn).  
+     * are needed, you can simply pass a reference to the function as a callback (e.g., callback: myFn).
      * However, if you tried to pass a function with arguments (e.g., callback: myFn(arg1, arg2)) the function
      * would simply execute immediately when the code is parsed. Example usage:
      * <pre><code>
@@ -695,7 +745,7 @@ var btn = new Ext.Button({
 });
 
 // This callback will execute in the scope of the
-// button instance. Clicking the button alerts 
+// button instance. Clicking the button alerts
 // "Hi, Fred. You clicked the "Say Hi" button."
 btn.on('click', sayHi.createDelegate(btn, ['Fred']));
 </code></pre>
@@ -734,7 +784,7 @@ sayHi('Fred');
 // executes after 2 seconds:
 sayHi.defer(2000, this, ['Fred']);
 
-// this syntax is sometimes useful for deferring 
+// this syntax is sometimes useful for deferring
 // execution of an anonymous function:
 (function(){
     alert('Anonymous');
@@ -755,7 +805,7 @@ sayHi.defer(2000, this, ['Fred']);
         fn();
         return 0;
     },
-    
+
     /**
      * Create a combined function call sequence of the original function + the passed function.
      * The resulting function returns the results of the original function.
@@ -790,7 +840,7 @@ sayGoodbye('Fred'); // both alerts show
     },
 
     /**
-     * Creates an interceptor function. The passed fcn is called before the original one. If it returns false, 
+     * Creates an interceptor function. The passed fcn is called before the original one. If it returns false,
      * the original one is not called. The resulting function returns the results of the original function.
      * The passed fcn is called with the parameters of the original function. Example usage:
      * <pre><code>

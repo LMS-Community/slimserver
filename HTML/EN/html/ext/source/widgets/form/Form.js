@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -11,6 +11,10 @@
  * @extends Ext.Panel
  * Standard form container.
  * <p><b>Although they are not listed, this class also accepts all the config options required to configure its internal {@link Ext.form.BasicForm}</b></p>
+ * <p>The BasicForm is configured using the {@link #initialConfig} of the FormPanel - that is the configuration object passed to the constructor.
+ * This means that if you subclass FormPanel, and you wish to configure the BasicForm, you will need to insert any configuration options
+ * for the BasicForm into the <tt><b>initialConfig</b></tt> property. Applying BasicForm configuration settings to <b><tt>this</tt></b> will
+ * not affect the BasicForm's configuration.</p>
  * <br><br>
  * FormPanel uses a {@link Ext.layout.FormLayout} internally, and that is required for fields and labels to work correctly
  * within the FormPanel's layout.  To nest additional layout styles within a FormPanel, you should nest additional Panels
@@ -33,7 +37,8 @@ Ext.FormPanel = Ext.extend(Ext.Panel, {
 	 * @cfg {String} formId (optional) The id of the FORM tag (defaults to an auto-generated id).
 	 */
     /**
-     * @cfg {Number} labelWidth The width of labels. This property cascades to child containers.
+     * @cfg {Number} labelWidth The width of labels. This property cascades to child containers and can be overridden
+     * on any child container (e.g., a fieldset can specify a different labelWidth for its fields).
      */
     /**
      * @cfg {String} itemCls A css class to apply to the x-form-item of fields. This property cascades to child containers.
@@ -50,7 +55,8 @@ Ext.FormPanel = Ext.extend(Ext.Panel, {
 
     /**
      * @cfg {String} labelAlign Valid values are "left," "top" and "right" (defaults to "left").
-     * This property cascades to child containers if not set.
+     * This property cascades to child containers and can be overridden on any child container 
+     * (e.g., a fieldset can specify a different labelAlign for its fields).
      */
     labelAlign:'left',
 
@@ -74,7 +80,17 @@ Ext.FormPanel = Ext.extend(Ext.Panel, {
     // private
     initComponent :function(){
         this.form = this.createForm();
-        
+
+        this.bodyCfg = {
+            tag: 'form',
+            cls: this.baseCls + '-body',
+            method : this.method || 'POST',
+            id : this.formId || Ext.id()
+        };
+        if(this.fileUpload) {
+            this.bodyCfg.enctype = 'multipart/form-data';
+        }
+
         Ext.FormPanel.superclass.initComponent.call(this);
 
         this.addEvents(
@@ -101,7 +117,9 @@ Ext.FormPanel = Ext.extend(Ext.Panel, {
         var f = this.form;
         var formPanel = this;
         var fn = function(c){
-            if(c.doLayout && c != formPanel){
+            if(c.isFormField){
+                f.add(c);
+            }else if(c.doLayout && c != formPanel){
                 Ext.applyIf(c, {
                     labelAlign: c.ownerCt.labelAlign,
                     labelWidth: c.ownerCt.labelWidth,
@@ -110,8 +128,6 @@ Ext.FormPanel = Ext.extend(Ext.Panel, {
                 if(c.items){
                     c.items.each(fn);
                 }
-            }else if(c.isFormField){
-                f.add(c);
             }
         }
         this.items.each(fn);
@@ -135,20 +151,13 @@ Ext.FormPanel = Ext.extend(Ext.Panel, {
         this.initFields();
 
         Ext.FormPanel.superclass.onRender.call(this, ct, position);
-        var o = {
-            tag: 'form',
-            method : this.method || 'POST',
-            id : this.formId || Ext.id()
-        };
-        if(this.fileUpload) {
-            o.enctype = 'multipart/form-data';
-        }
-        this.form.initEl(this.body.createChild(o));
+        this.form.initEl(this.body);
     },
     
     // private
     beforeDestroy: function(){
         Ext.FormPanel.superclass.beforeDestroy.call(this);
+        this.stopMonitoring();
         Ext.destroy(this.form);
     },
 

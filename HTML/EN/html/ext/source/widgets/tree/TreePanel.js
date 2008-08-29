@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -54,6 +54,17 @@ Ext.tree.TreePanel = Ext.extend(Ext.Panel, {
         if(!this.eventModel){
             this.eventModel = new Ext.tree.TreeEventModel(this);
         }
+        
+        // initialize the loader
+        var l = this.loader;
+        if(!l){
+            l = new Ext.tree.TreeLoader({
+                dataUrl: this.dataUrl
+            });
+        }else if(typeof l == 'object' && !l.load){
+            l = new Ext.tree.TreeLoader(l);
+        }
+        this.loader = l;
         
         this.nodeHash = {};
 
@@ -225,7 +236,48 @@ Ext.tree.TreePanel = Ext.extend(Ext.Panel, {
             "dblclick",
             /**
             * @event contextmenu
-            * Fires when a node is right clicked
+            * Fires when a node is right clicked. To display a context menu in response to this
+            * event, first create a Menu object (see {@link Ext.menu.Menu} for details), then add
+            * a handler for this event:<code><pre>
+new Ext.tree.TreePanel({
+    title: 'My TreePanel',
+    root: new Ext.tree.AsyncTreeNode({
+        text: 'The Root',
+        children: [
+            { text: 'Child node 1', leaf: true },
+            { text: 'Child node 2', leaf: true }
+        ]
+    }),
+    contextMenu: new Ext.menu.Menu({
+        items: [{
+            id: 'delete-node',
+            text: 'Delete Node'
+        }],
+        listeners: {
+            itemclick: function(item) {
+                switch (item.id) {
+                    case 'delete-node':
+                        var n = item.parentMenu.contextNode;
+                        if (n.parentNode) {
+                            n.remove();
+                        }
+                        break;
+                }
+            }
+        }
+    }),
+    listeners: {
+        contextmenu: function(node, e) {
+//          Register the context node with the menu so that a Menu Item's handler function can access
+//          it via its {@link Ext.menu.BaseItem#parentMenu parentMenu} property.
+            node.select();
+            var c = node.getOwnerTree().contextMenu;
+            c.contextNode = node;
+            c.showAt(e.getXY());
+        }
+    }
+});
+</pre></code>
             * @param {Node} node The node
             * @param {Ext.EventObject} e The event object
             */
@@ -344,6 +396,9 @@ Ext.tree.TreePanel = Ext.extend(Ext.Panel, {
      * @return {Node}
      */
     setRootNode : function(node){
+        if(!node.render){ // attributes passed
+            node = this.loader.createNode(node);
+        }
         this.root = node;
         node.ownerTree = this;
         node.isRoot = true;
@@ -765,4 +820,7 @@ Ext.tree.TreePanel = Ext.extend(Ext.Panel, {
      * @hide
      */
 });
+
+Ext.tree.TreePanel.nodeTypes = {};
+
 Ext.reg('treepanel', Ext.tree.TreePanel);

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -12,11 +12,14 @@
  * Adds a static text string to a menu, usually used as either a heading or group separator.
  * @constructor
  * Creates a new TextItem
- * @param {String} text The text to display
+ * @param {Object/String} config If config is a string, it is used as the text to display, otherwise it
+ * is applied as a config object (and should contain a <tt>text</tt> property).
  */
-Ext.menu.TextItem = function(text){
-    this.text = text;
-    Ext.menu.TextItem.superclass.constructor.call(this);
+Ext.menu.TextItem = function(cfg){
+    if(typeof cfg == 'string'){
+        cfg = {text: cfg}
+    }
+    Ext.menu.TextItem.superclass.constructor.call(this, cfg);
 };
 
 Ext.extend(Ext.menu.TextItem, Ext.menu.BaseItem, {

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -209,16 +209,19 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     ed.on("specialkey", this.selModel.onEditorKey, this.selModel);
                     this.activeEditor = ed;
                     var v = this.preEditValue(r, field);
-                    ed.startEdit(this.view.getCell(row, col), v);
+                    ed.startEdit(this.view.getCell(row, col).firstChild, v);
                 }).defer(50, this);
             }
         }
     },
     
+    // private
 	preEditValue : function(r, field){
-		return this.autoEncode && typeof value == 'string' ? Ext.util.Format.htmlDecode(r.data[field]) : r.data[field];
+        var value = r.data[field];
+		return this.autoEncode && typeof value == 'string' ? Ext.util.Format.htmlDecode(value) : value;
 	},
 	
+    // private
 	postEditValue : function(value, originalValue, r, field){
 		return this.autoEncode && typeof value == 'string' ? Ext.util.Format.htmlEncode(value) : value;
 	},
@@ -232,6 +235,18 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
             this.activeEditor[cancel === true ? 'cancelEdit' : 'completeEdit']();
         }
         this.activeEditor = null;
+    },
+    
+    // private
+    onDestroy: function() {
+        if(this.rendered){
+            var cols = this.colModel.config;
+            for(var i = 0, len = cols.length; i < len; i++){
+                var c = cols[i];
+                Ext.destroy(c.editor);
+            }
+        }
+        Ext.grid.EditorGridPanel.superclass.onDestroy.call(this);
     }
 });
 Ext.reg('editorgrid', Ext.grid.EditorGridPanel);

@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -9,10 +9,12 @@
 /**
  * @class Ext.Container
  * @extends Ext.BoxComponent
- * <p>Base class for any {@link Ext.BoxComponent} that can contain other components.  Containers handle the basic
- * behavior of containing items, namely adding, inserting and removing them.  The specific layout logic required
- * to visually render contained items is delegated to any one of the different {@link #layout} classes available.
- * This class is intended to be extended and should generally not need to be created directly via the new keyword.</p>
+ * <p>Base class for any {@link Ext.BoxComponent} that can contain other components. This class is intended
+ * to be extended and should generally not need to be created directly via the new keyword. {@link Ext.Panel},
+ * {@link Ext.Window} and {@link Ext.TabPanel} are the most commonly used Container classes.</p>
+ * Containers handle the basic behavior of containing items, namely adding, inserting and removing them.
+ * The specific layout logic required to visually render contained items is delegated to any one of the different
+ * {@link #layout} classes available.</p>
  * <p>When either specifying child {@link #items} of a Container, or dynamically adding components to a Container,
  * remember to consider how you wish the Container to arrange those child elements, and whether those child elements
  * need to be sized using one of Ext's built-in layout schemes.</p>
@@ -25,13 +27,15 @@
  * the GridPanel <i>inside</i> a wrapping Panel and add that wrapping Panel to the TabPanel. This misses the point that
  * Ext's inheritance means that a GridPanel <b>is</b> a Component which can be added unadorned into a Container. If
  * that wrapping Panel has no layout configuration, then the GridPanel will not be sized as expected.<p>
- * <p>Below is an example of adding a newly created GridPanel to a TabPanel. This requires prior knowledge of how
- * to create GridPanels. See {@link Ext.grid.GridPanel}, {@link Ext.data.Store} and {@link Ext.data.JsonReader} as
- * well as the grid examples in the Ext installation's <tt>examples/grid</tt> directory.</p><pre><code>
+ * <p>Below is an example of adding a newly created GridPanel to a TabPanel. A TabPanel uses {@link Ext.layout.CardLayout}
+ * as its layout manager which means all its child items are sized to fit exactly into its client area. The following
+ * code requires prior knowledge of how to create GridPanels. See {@link Ext.grid.GridPanel}, {@link Ext.data.Store}
+ * and {@link Ext.data.JsonReader} as well as the grid examples in the Ext installation's <tt>examples/grid</tt>
+ * directory.</p><pre><code>
 //  Create the GridPanel.
 myGrid = new Ext.grid.GridPanel({
-    myStore,
-    myColumnModel,
+    store: myStore,
+    columns: myColumnModel,
     title: 'Results',
 });
 
@@ -112,8 +116,10 @@ Ext.Container = Ext.extend(Ext.BoxComponent, {
      * border settings (defaults to false).
      */
     /** @cfg {String} defaultType
-     * The default type of container represented by this object as registered in {@link Ext.ComponentMgr}
-     * (defaults to 'panel').
+     * <p>The default {@link Ext.Component xtype} of child Components to create in this Container when
+     * a child item is specified as a raw configuration object, rather than as an instantiated Component.</p>
+     * <p>This usually defaults to 'panel', but for {@link Ext.form.FormPanel} and {@link Ext.form.FieldSet},
+     * the defaultType is 'textfield'.</p>
      */
     defaultType: 'panel',
 
@@ -232,22 +238,44 @@ Ext.Container = Ext.extend(Ext.BoxComponent, {
     },
 
     /**
-     * Adds a component to this container. Fires the beforeadd event before adding,
-     * then fires the add event after the component has been added.  If the container is
-     * already rendered when add is called, you may need to call {@link #doLayout} to refresh
-     * the view.  This is required so that you can add multiple child components if needed
-     * while only refreshing the layout once.
-     * @param {Ext.Component/Object} component The component to add.<br><br>
+     * <p>Adds a {@link Ext.Component Component} to this Container. Fires the {@link #beforeadd} event before
+     * adding, then fires the {@link #add} event after the component has been added.</p>
+     * <p>You will never call the render method of a child Component when using a Container.
+     * Child Components are rendered by this Container's {@link #layout} manager when
+     * this Container is first rendered.</p>
+     * <p>Certain layout managers allow dynamic addition of child components. Those that do
+     * include {@link Ext.layout.CardLayout}, {@link Ext.layout.AnchorLayout},
+     * {@link Ext.layout.FormLayout}, {@link Ext.layout.TableLayout}.</p>
+     * <p>If the Container is already rendered when add is called, you may need to call
+     * {@link #doLayout} to refresh the view which causes any unrendered child Components
+     * to be rendered. This is required so that you can add multiple child components if needed
+     * while only refreshing the layout once.</p>
+     * <p>When creating complex UIs, it is important to remember that sizing and positioning
+     * of child items is the responsibility of the Container's {@link #layout} manager. If
+     * you expect child items to be sized in response to user interactions, you must
+     * specify a layout manager which creates and manages the type of layout you have in mind.</p>
+     * <p><b>Omitting the {@link #layout} config means that a basic layout manager is
+     * used which does nothnig but render child components sequentially into the Container.
+     * No sizing or positioning will be performed in this situation.</b></p>
+     * @param {Ext.Component/Object} component The Component to add.<br><br>
      * Ext uses lazy rendering, and will only render the added Component should
-     * it become necessary.<br><br>
-     * A Component config object may be passed in order to avoid the overhead of
-     * constructing a real Component object if lazy rendering might mean that the
-     * added Component will not be rendered immediately. To take advantage of this
-     * "lazy instantiation", set the {@link Ext.Component#xtype} config property to
-     * the registered type of the Component wanted.<br><br>
+     * it become necessary, that is: when the Container is layed out either on first render
+     * or in response to a {@link #doLayout} call.<br><br>
+     * A Component config object may be passed instead of an instantiated Component object.
+     * The type of Component created from a config object is determined by the {@link Ext.Component#xtype xtype}
+     * config property. If no xtype is configured, the Container's {@link #defaultType}
+     * is used.<br><br>
      * For a list of all available xtypes, see {@link Ext.Component}.
      * @return {Ext.Component} component The Component (or config object) that was
      * added with the Container's default config values applied.
+     * <p>example:</p><pre><code>
+var myNewGrid = new Ext.grid.GridPanel({
+    store: myStore,
+    colModel: myColModel
+});
+myTabPanel.add(myNewGrid);
+myTabPanel.setActiveTab(myNewGrid);
+</code></pre>
      */
     add : function(comp){
         if(!this.items){
@@ -272,7 +300,7 @@ Ext.Container = Ext.extend(Ext.BoxComponent, {
 
     /**
      * Inserts a Component into this Container at a specified index. Fires the
-     * beforeadd event before inserting, then fires the add event after the
+     * {@link #beforeadd} event before inserting, then fires the {@link #add} event after the
      * Component has been inserted.
      * @param {Number} index The index at which the Component will be inserted
      * into the Container's items collection
@@ -339,10 +367,11 @@ Ext.Container = Ext.extend(Ext.BoxComponent, {
     },
 
     /**
-     * Removes a component from this container.  Fires the beforeremove event before removing, then fires
-     * the remove event after the component has been removed.
-     * @param {Component/String} component The component reference or id to remove
-     * @param {Boolean} autoDestroy (optional) True to automatically invoke the component's {@link Ext.Component#destroy} function
+     * Removes a component from this container.  Fires the {@link #beforeremove} event before removing, then fires
+     * the {@link #remove} event after the component has been removed.
+     * @param {Component/String} component The component reference or id to remove.
+     * @param {Boolean} autoDestroy (optional) True to automatically invoke the removed Component's {@link Ext.Component#destroy} function.
+     * Defaults to the value of this Container's {@link #autoDestroy} config.
      */
     remove : function(comp, autoDestroy){
         var c = this.getComponent(comp);
@@ -422,17 +451,17 @@ Ext.Container = Ext.extend(Ext.BoxComponent, {
     },
 
     // private
-    onDestroy : function(){
+    beforeDestroy : function(){
         if(this.items){
-            var cs = this.items.items;
-            for(var i = 0, len = cs.length; i < len; i++) {
-                Ext.destroy(cs[i]);
-            }
+            Ext.destroy.apply(Ext, this.items.items);
         }
         if(this.monitorResize){
             Ext.EventManager.removeResizeListener(this.doLayout, this);
         }
-        Ext.Container.superclass.onDestroy.call(this);
+        if (this.layout && this.layout.destroy) {
+            this.layout.destroy();
+        }
+        Ext.Container.superclass.beforeDestroy.call(this);
     },
 
     /**
@@ -472,7 +501,7 @@ Ext.Container = Ext.extend(Ext.BoxComponent, {
                     if(cs[i].cascade){
                         cs[i].cascade(fn, scope, args);
                     }else{
-                        fn.apply(scope || this, args || [cs[i]]);
+                        fn.apply(scope || cs[i], args || [cs[i]]);
                     }
                 }
             }

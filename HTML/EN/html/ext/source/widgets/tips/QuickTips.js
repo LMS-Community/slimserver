@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -79,11 +79,21 @@ Ext.QuickTips = function(){
     return {
         /**
          * Initialize the global QuickTips instance and prepare any quick tips.
+         * @param {Boolean} autoRender True to render the QuickTips container immediately to preload images. (Defaults to true) 
          */
-        init : function(){
-            if(!tip){
-                tip = new Ext.QuickTip({elements:'header,body'});
-            }
+        init : function(autoRender){
+		    if(!tip){
+		        if(!Ext.isReady){
+		            Ext.onReady(function(){
+		                Ext.QuickTips.init(autoRender);
+		            });
+		            return;
+		        }
+		        tip = new Ext.QuickTip({elements:'header,body'});
+		        if(autoRender !== false){
+		            tip.render(Ext.getBody());
+		        }
+		    }
         },
 
         /**

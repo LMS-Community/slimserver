@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -33,15 +33,15 @@
     title:'Framed with Checkbox Selection and Horizontal Scrolling',
     iconCls:'icon-grid'
 });</code></pre>
- * <b>Notes:</b> <br/>
- * - Although this class inherits many configuration options from base classes, some of them
- * (such as autoScroll, layout, items, etc) won't function as they do with the base Panel class.<br>
- * <br>
- * - A grid <b>requires</b> a width of some kind in order to calculate columns. That width can either be a normal width
- * set via the width: X config option or a width automatically set by using the grid in an Ext Layout.<br>
- * <br>
- * - To access the data in a Grid, it is necessary to use the data model encapsulated
- * by the {@link #store Store}. See the {@link #cellclick} event.
+ * <b>Notes:</b><ul>
+ * <li>Although this class inherits many configuration options from base classes, some of them
+ * (such as autoScroll, layout, items, etc) are not used by this class, and will have no effect.</li>
+ * <li>A grid <b>requires</b> a width in which to scroll its columns, and a height in which to scroll its rows. The dimensions can either
+ * be set through the {@link #height} and {@link #width} configuration options or automatically set by using the grid in a {@link Ext.Container Container}
+ * who's {@link Ext.Container#layout layout} provides sizing of its child items.</li>
+ * <li>To access the data in a Grid, it is necessary to use the data model encapsulated
+ * by the {@link #store Store}. See the {@link #cellclick} event.</li>
+ * </ul>
  * @constructor
  * @param {Object} config The config object
  */
@@ -100,7 +100,14 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
      */
     trackMouseOver : true,
     /**
-     * @cfg {Boolean} enableDragDrop True to enable drag and drop of rows.
+     * @cfg {Boolean} <p>enableDragDrop True to enable dragging of the selected rows of the GridPanel.</p>
+     * <p>Setting this to <b><tt>true</tt></b> causes this GridPanel's {@link #getView GridView} to create an instance of 
+     * {@link Ext.grid.GridDragZone}. This is available <b>(only after the Grid has been rendered)</b> as the
+     * GridView's {@link Ext.grid.GridView#dragZone dragZone} property.</p>
+     * <p>A cooperating {@link Ext.dd.DropZone DropZone} must be created who's implementations of
+     * {@link Ext.dd.DropZone#onNodeEnter onNodeEnter}, {@link Ext.dd.DropZone#onNodeOver onNodeOver},
+     * {@link Ext.dd.DropZone#onNodeOut onNodeOut} and {@link Ext.dd.DropZone#onNodeDrop onNodeDrop}</p> are able
+     * to process the {@link Ext.grid.GridDragZone#getDragData data} which is provided.
      */
     enableDragDrop : false,
     /**
@@ -140,6 +147,11 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
      * @cfg {Object} loadMask An {@link Ext.LoadMask} config or true to mask the grid while loading (defaults to false).
      */
     loadMask : false,
+
+    /**
+     * @cfg {Boolean} deferRowRender True to enable deferred row rendering. Default is true.
+     */
+    deferRowRender : true,
 
     // private
     rendered : false,
@@ -459,6 +471,11 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
     afterRender : function(){
         Ext.grid.GridPanel.superclass.afterRender.call(this);
         this.view.layout();
+        if(this.deferRowRender){
+            this.view.afterRender.defer(10, this.view);
+        }else{
+            this.view.afterRender();
+        }
         this.viewReady = true;
     },
 

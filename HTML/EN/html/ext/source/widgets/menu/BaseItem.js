@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 2.1
+ * Ext JS Library 2.2
  * Copyright(c) 2006-2008, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -79,6 +79,11 @@ Ext.extend(Ext.menu.BaseItem, Ext.Component, {
 
     // private
     render : function(container, parentMenu){
+        /**
+         * The parent Menu of this Item.
+         * @property parentMenu
+         * @type Ext.menu.Menu
+         */
         this.parentMenu = parentMenu;
         Ext.menu.BaseItem.superclass.render.call(this, container);
         this.container.menuItemId = this.id;
