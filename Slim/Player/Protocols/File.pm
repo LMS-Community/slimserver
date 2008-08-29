@@ -253,10 +253,11 @@ sub _timeToOffset {
 	my $align    = $song->{'blockalign'};
 
 	# Short circuit the computation if the time for which we're asking
-	# the offset is the duration of the song - in that case, it's just
-	# the length of the song.
-	if ($time == $duration) {
+	# is outside the song boundaries
+	if ($time >= $duration) {
 		return $size;
+	} elsif ($time < 0) {
+		return $offset;
 	}
 
 	my $byterate = $duration ? ($size / $duration) : 0;

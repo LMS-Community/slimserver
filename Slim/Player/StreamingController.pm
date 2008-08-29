@@ -782,7 +782,7 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 	my $restartIfNoSeek = $params->{'restartIfNoSeek'};
 
 	my $song = playingSong($self);
-	my $handler = $self->songStreamController()->protocolHandler();
+	my $handler = $song->currentTrackHandler();
 
 	if ($newtime !~ /^[\+\-]/ && $newtime == 0) {
 		# User is trying to restart the current track
@@ -800,9 +800,16 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 	}
 
 	if ($newtime =~ /^[\+\-]/) {
-		my $oldtime = songTime($self);
+		my $oldtime = playingSongElapsed($self);
 		$log->info("Relative jump $newtime from current time $oldtime");
 		$newtime += $oldtime;
+		
+		if ($newtime < 0) {
+			$newtime = 0;
+		} elsif ($newtime > $self->playingSongDuration()) {
+			_Skip($self, $event);
+			return;
+		}
 	}
 	
 	my $seekdata;
