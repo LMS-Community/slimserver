@@ -42,6 +42,15 @@ sub playPoint {
 	return Slim::Player::Client::playPoint(@_);
 }
 
+sub skipAhead {
+	my $client = shift;
+	
+	my $ret = $client->SUPER::skipAhead(@_);
+	
+	$client->playPoint(undef);
+	
+	return $ret;
+}
 1;
 
 __END__
