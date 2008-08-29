@@ -1004,6 +1004,11 @@ sub _playFallback {
 	my @tracks = Slim::Schema->rs('track')->search({audio => 1}, {rows => 10, order_by => \'RAND()'})->all;
 	my $request = $client->execute(['playlist', 'loadtracks', 'listRef', \@tracks ]);
 	$request->source('ALARM');
+
+	if ( $prefs->client($client)->get('alarmfadeseconds') ) {
+		$log->debug('Fading volume');
+		$client->fade_volume( $FADE_SECONDS );
+	}
 }
 
 # Handle the alarm timeout timer firing
