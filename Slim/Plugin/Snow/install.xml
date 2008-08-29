@@ -8,7 +8,7 @@
 	<description>PLUGIN_SCREENSAVER_SNOW</description>
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
-	<defaultState>enabled</defaultState>
+	<defaultState>disabled</defaultState>
 	<playerMenu>SETTINGS</playerMenu>
 
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
