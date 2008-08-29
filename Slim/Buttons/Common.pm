@@ -205,9 +205,18 @@ sub addSaver {
 
 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 
-	if ($type =~ /OFF/ && $name =~ s/^SCREENSAVER\./OFF\./) {
+	# add an extra mode entry to use as an idle saver
+	my $saver = $name;
+	if ($type =~ /IDLE/ && $saver =~ s/^SCREENSAVER\./IDLESAVER\./) {
 
-		addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
+		addMode($saver, $buttonFunctions, $setModeFunction, $leaveModeFunction);
+	}
+
+	# add an extra mode entry to use as an off saver
+	$saver = $name;
+	if ($type =~ /OFF/ && $saver =~ s/^SCREENSAVER\./OFF\./) {
+
+		addMode($saver, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 	}
 }
 

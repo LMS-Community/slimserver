@@ -330,6 +330,29 @@ knob					= done
 knob_left				= volume
 knob_right				= volume
 
+[idlesaver]
+0						= done
+1						= done
+2						= done
+3						= done
+4						= done
+5						= done
+6						= done
+7						= done
+8						= done
+9						= done
+arrow_down				= done_passbackplaylist
+arrow_left				= done_passbackplaylist
+arrow_right				= done_passbackplaylist
+knob_push				= done_passbackplaylist
+arrow_up				= done_passbackplaylist
+play					= done
+add						= done
+stop					= done_passback
+knob					= done
+knob_left				= done_passback
+knob_right				= done_passback
+
 [INPUT.Time]
 0						= numberLetter_0
 1						= numberLetter_1

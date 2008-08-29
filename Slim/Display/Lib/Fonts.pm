@@ -514,7 +514,7 @@ sub measureText {
 
 	my $cacheKey = "$fontname-$string";
 
-	return $measureTextCache{$cacheKey} if $measureTextCache{$cacheKey};
+	return $measureTextCache{$cacheKey} if exists $measureTextCache{$cacheKey};
 
 	my $bits = string($fontname, $string);
 	return 0 if (!$fontname || !$fontheight->{$fontname});

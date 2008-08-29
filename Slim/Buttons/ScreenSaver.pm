@@ -89,12 +89,17 @@ sub screenSaver {
 	}
 
 	# some variables, to save us calling the same functions multiple times.
-	my $saver   = $cprefs->get(Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver');
+	my $type    = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+	my $saver   = $cprefs->get($type);
 	my $dim     = $cprefs->get('idleBrightness');
 	my $timeout = $cprefs->get('screensavertimeout');
 	my $irtime  = Slim::Hardware::IR::lastIRTime($client);
 
 	my $savermode = $saver eq 'playlist' ? 'screensaver' : $saver;  # mode when in screensaver, not always same as $saver 
+
+	if ($type eq 'idlesaver') {
+		$savermode =~ s/^SCREENSAVER\./IDLESAVER\./;
+	}
 	
 	# automatically control brightness unless in the middle of showBriefly
 	if (defined $display->brightness() && $display->animateState() != 5) {
