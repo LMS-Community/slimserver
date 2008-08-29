@@ -1,15 +1,17 @@
 [%
 
 IF debug;
-	INCLUDE "html/ext/adapter/ext/ext-base.js";
-	INCLUDE "html/ext/ext-all-debug.js";
+	INSERT "html/ext/adapter/ext/ext-base.js";
+	INSERT "html/ext/ext-all-debug.js";
 ELSE;
-	INCLUDE "html/ext/ext-browse.js";
+#	INSERT "html/ext/ext-browse.js";
+	INSERT "html/ext/adapter/ext/ext-base.js";
+	INSERT "html/ext/ext-all.js";
 END;
 
-INCLUDE "html/SqueezeJS/Base.js";
-INCLUDE "html/SqueezeJS/UI.js";
-INCLUDE "html/Home.js";
-INCLUDE "html/Browse.js";
+INSERT "html/SqueezeJS/Base.js";
+INSERT "html/SqueezeJS/UI.js";
+INSERT "html/Home.js";
+INSERT "html/Browse.js";
 
 %]
