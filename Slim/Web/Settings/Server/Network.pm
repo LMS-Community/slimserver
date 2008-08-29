@@ -68,6 +68,8 @@ sub handler {
 	}
 	
 	if ( defined $paramRef->{'pref_noupnp'} && $paramRef->{'pref_noupnp'} ne $prefs->get('noupnp') ) {
+		require Slim::Utils::UPnPMediaServer;
+
 		# Shut down all UPnP activity
 		Slim::Utils::UPnPMediaServer::shutdown();
 		
