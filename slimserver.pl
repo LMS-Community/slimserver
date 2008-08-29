@@ -188,7 +188,6 @@ use Slim::Utils::MySQLHelper;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
-use Slim::Utils::UPnPMediaServer;
 use Slim::Control::Jive;
 
 our @AUTHORS = (
@@ -404,6 +403,7 @@ sub init {
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		$log->info("UPnP init...");
+		require Slim::Utils::UPnPMediaServer;
 		Slim::Utils::UPnPMediaServer::init();
 	}
 
