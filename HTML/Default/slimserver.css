@@ -1361,6 +1361,26 @@ a.x-menu-item:hover {
 	background-image: url(html/images/slim-ext/group-checked.gif);
 }
 
+.x-combo-list,
+.x-form-focus, textarea.x-form-focus {
+	border-color: #b5b8c8;
+}
+
+.x-combo-list .x-combo-selected {
+	background-color: light-grey;
+	border-color: #b5b8c8;
+}
+
+.prefs .x-form-text {
+	height: 12px;
+	padding: 0;
+	background-image: none;
+}
+
+.prefs .timeControl {
+	height: 16px;
+}
+
 /* tabs and tab panel (settings) */
 .x-border-layout-ct .x-tab-panel,
 ul.x-tab-strip-top {
@@ -1379,6 +1399,10 @@ ul.x-tab-strip-top {
 	color: #dedede;
 	font-family: sans-serif;
 	font-weight: normal;
+}
+
+.x-tab-strip-active span.x-tab-strip-text {
+	color: #333333;
 }
 
 ul.x-tab-strip-top {
@@ -1544,4 +1568,8 @@ body.x-body-masked .x-window-plain .x-window-mc,
 .x-tip .x-tip-ft, .x-tip .x-tip-ft-left, .x-tip .x-tip-ft-right,
 .x-tip .x-tip-bd-left, .x-tip .x-tip-bd-right{
 	background-image: url(html/images/slim-ext/tip-sprite.gif);
+}
+
+.x-slider-horz .x-slider-thumb {
+	background-image: url(html/images/slim-ext/slider-thumb.png);
 }
