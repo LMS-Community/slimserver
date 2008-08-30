@@ -123,7 +123,9 @@ sub reconnect {
 
 	$client->update( { 'screen1' => {}, 'screen2' => {} } );
 
-	$client->update();	
+	# put something on the display unless we are about to show the upgrade screen
+	$client->update() unless $client->needsUpgrade;	
+
 	$client->display->visualizer(1) if ($client->display->isa('Slim::Display::Squeezebox2'));
 }
 
