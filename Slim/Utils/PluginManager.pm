@@ -88,11 +88,6 @@ if ( main::SLIM_SERVICE ) {
 
 sub init {
 	my $class = shift;
-	
-	# Bug 6196, Delay PAR loading to init phase so any temp directories
-	# are created as the proper user
-	require PAR;
-	PAR->import;
 
 	my ($manifestFiles, $sum) = $class->findInstallManifests;
 
@@ -446,6 +441,7 @@ sub enablePlugins {
 
 					$loadModule = 1;
 
+					require PAR;
 					PAR->import({ file => $file->stringify });
 
 					last;
