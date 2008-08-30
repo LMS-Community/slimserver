@@ -198,6 +198,15 @@ sub handler {
 				\&Slim::Web::Settings::Server::SqueezeNetwork::reportStatsDisabled,
 			);
 		}
+		
+		# Disable iTunes and MusicIP if they aren't being used
+		if ( !$paramRef->{itunes} ) {
+			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::iTunes::Plugin');
+		}
+		
+		if ( !$paramRef->{musicip} ) {
+			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::MusicMagic::Plugin');
+		}
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
