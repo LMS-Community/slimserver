@@ -825,6 +825,7 @@ sub stream_s {
 	my $replayGain = $client->canDoReplayGain($params->{replay_gain});
 		
 	# Reduce buffer threshold if a file is really small
+	# Probably not necessary with fixes for bug 8861 and/or bug 9125 in place
 	if ( $track && $track->filesize && $track->filesize < ( $bufferThreshold * 1024 ) ) {
 		$bufferThreshold = int( $track->filesize / 1024 ) - 1;
 		$log->info( "Reducing buffer threshold to $bufferThreshold due to small file" );

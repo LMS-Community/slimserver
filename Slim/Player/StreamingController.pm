@@ -199,7 +199,7 @@ EndOfStream =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
 	[	\&_BadState,	\&_StartStreamout,\&_Start,		\&_BadState],		# BUFFERING; _Start in Streamout to counter Bug 9125
 	[	\&_BadState,	\&_StartStreamout,\&_Start,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_Streamout,	\&_NoOp,		\&_Invalid],		# PLAYING
+	[	\&_Invalid,		\&_AutoStart,	\&_AutoStart,	\&_Invalid],		# PLAYING
 	[	\&_Invalid,		\&_Streamout,	\&_NoOp,		\&_Invalid],		# PAUSED
 ],
 ReadyToStream =>
@@ -1079,6 +1079,23 @@ sub _Pause {				# pause -> Paused
 		} else {
 			$player->fade_volume(-(FADEVOLUME));
 		}
+	}
+}
+
+# Bug 8861
+# Force a start in case a track was too short to trigger autostart
+# This code should not be necessary if bug 9125 is fixed in firmware
+sub _AutoStart {			# [streaming-track-not-playing] start -> Streamout
+	my ($self, $event, $params) = @_;
+	
+	_setStreamingState($self, STREAMOUT);
+	
+	if ($self->streamingSong->{status} != Slim::Player::Song::STATUS_PLAYING) {
+		$log->info('autostart possibly short track');
+		foreach my $player (@{$self->{'players'}})	{
+			$player->resume();
+		}
+		# we still rely on a track-start-event from the player
 	}
 }
 
