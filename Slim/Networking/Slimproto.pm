@@ -1018,6 +1018,9 @@ sub _hello_handler {
 
 			$display_class = 'Slim::Display::Text';
 		}
+		
+		# Load SB1 hardware module only if needed
+		require Slim::Hardware::mas35x9;
 
 	} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
 

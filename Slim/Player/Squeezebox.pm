@@ -21,7 +21,6 @@ use MIME::Base64;
 use Scalar::Util qw(blessed);
 
 use Slim::Hardware::IR;
-use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
