@@ -2268,8 +2268,8 @@ sub __matchingRequest {
 	my $i = 0;
 
 	for my $names (@{$_[1]}) {
-
-		if (!grep($_ eq $request->[$i++], @$names)) {
+		my $req = $request->[$i++];
+		if (!grep($_ eq $req, @$names)) {
 			return 0;
 		}
 	}
