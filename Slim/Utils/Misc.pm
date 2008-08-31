@@ -80,7 +80,7 @@ if ( !main::SLIM_SERVICE ) {
 	
 	elsif ($^O =~/darwin/i) {
 		# OSX 10.3 doesn't have the modules needed to follow aliases
-		$canFollowAlias = !Slim::bootstrap::tryModuleLoad('Mac::Errors', 'Mac::Files', 'Mac::Resources', 'nowarn');
+		$canFollowAlias = !Slim::bootstrap::tryModuleLoad('Mac::Files', 'Mac::Resources', 'nowarn');
 	}
 }
 
