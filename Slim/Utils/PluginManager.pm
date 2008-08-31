@@ -697,6 +697,8 @@ sub disablePlugin {
 		$log->debug("Can't disable plugin: $plugin - 'enforce' set in install.xml");
 		return;
 	}
+	
+	$log->debug("Disabling plugin $plugin");
 
 	my $opType = $plugins->{$plugin}->{'opType'};
 

@@ -539,10 +539,10 @@ sub fontCacheFile {
 		Slim::Utils::OSDetect::OS() eq 'unix' ? 'fontcache' : 'fonts.bin');
 }
 
-# returns a hash of filenames/external names and newest modification time
+# returns a hash of filenames/external names and the sum of mtimes as a cache verification key
 sub fontfiles {
 	my %fonts  = ();
-	my $newest = 0;
+	my $mtimesum = 0;
 
 	for my $fontFileDir (graphicsDirs()) {
 
@@ -559,31 +559,27 @@ sub fontfiles {
 			if ($file =~ /[\/\\](.+?)\.font\.bmp$/) {
 
 				$fonts{basename($1)} = $file;
-
-				my $moddate = (stat($file))[9]; 
-
-				if ($moddate > $newest) {
-					$newest = $moddate;
-				}
+				
+				$mtimesum += (stat($file))[9]; 
 
 				$log->debug(" found: $file");
 			}
 		}
 	}
 
-	return ($newest, %fonts);
+	return ($mtimesum, %fonts);
 }
 
 sub loadFonts {
 	my $forceParse = shift;
 
-	my ($newest, %fontfiles) = fontfiles();
+	my ($mtimesum, %fontfiles) = fontfiles();
 	my $fontCache = fontCacheFile();
 
-	my $fontCacheVersion = 1; # version number of fontcache matching this code
+	my $fontCacheVersion = 2; # version number of fontcache matching this code
 
 	# use stored fontCache if newer than all font files and correct version
-	if (!$forceParse && -r $fontCache && ($newest < (stat($fontCache))[9])) { 
+	if (!$forceParse && -r $fontCache) { 
 
 		# check cache for consitency
 		my $cacheOK = 1;
@@ -604,6 +600,12 @@ sub loadFonts {
 			$cacheOK     = 0;
 		}
 
+		# check for version of fontcache & mtime checksum
+		if (!$fonts->{version} || $fonts->{version} != $fontCacheVersion || $fonts->{mtimesum} != $mtimesum) {
+
+			$cacheOK = 0;
+		}
+
 		# check for font files being removed
 		for my $font (keys %{$fontheight}) {
 
@@ -612,20 +614,14 @@ sub loadFonts {
 			}
 		}
 
-		# check for new fonts being added (with old modification date)
+		# check for new fonts being added
 		for my $font (keys %fontfiles) {
 
 			if (!exists($fontheight->{$font})) {
 				$cacheOK = 0;
 			}
 		}
-
-		# check for version of fontcache
-		if (!$fonts->{version} || !$fontCacheVersion || $fonts->{version} != $fontCacheVersion) {
-
-			$cacheOK = 0;
-		}
-		
+	
 		if ( $cacheOK ) {
 			# If we loaded a cached SBG font, mark it already loaded
 			if ( exists $fonts->{'medium.1'} ) {
@@ -679,6 +675,7 @@ sub loadFonts {
 	$log->info("Writing font cache: $fontCache");
 
 	$fonts->{'version'} = $fontCacheVersion;
+	$fonts->{'mtimesum'} = $mtimesum;
 
 	store($fonts, $fontCache);
 }
