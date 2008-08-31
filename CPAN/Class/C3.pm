@@ -4,10 +4,29 @@ package Class::C3;
 use strict;
 use warnings;
 
-use Scalar::Util 'blessed';
-use Algorithm::C3;
+our $VERSION = '0.19';
 
-our $VERSION = '0.14';
+our $C3_IN_CORE;
+our $C3_XS;
+
+BEGIN {
+    if($] > 5.009_004) {
+        $C3_IN_CORE = 1;
+        require mro;
+    }
+    else {
+        eval "require Class::C3::XS";
+        my $error = $@;
+        if(!$error) {
+            $C3_XS = 1;
+        }
+        else {
+            die $error if $error !~ /\blocate\b/;
+            require Algorithm::C3;
+            require Class::C3::next;
+        }
+    }
+}
 
 # this is our global stash of both 
 # MRO's and method dispatch tables
@@ -37,7 +56,10 @@ sub import {
     # skip if the caller is main::
     # since that is clearly not relevant
     return if $class eq 'main';
+
     return if $TURN_OFF_C3;
+    mro::set_mro($class, 'c3') if $C3_IN_CORE;
+
     # make a note to calculate $class 
     # during INIT phase
     $MRO{$class} = undef unless exists $MRO{$class};
@@ -46,24 +68,34 @@ sub import {
 ## initializers
 
 sub initialize {
+    %next::METHOD_CACHE = ();
     # why bother if we don't have anything ...
     return unless keys %MRO;
-    if($_initialized) {
-        uninitialize();
-        $MRO{$_} = undef foreach keys %MRO;
+    if($C3_IN_CORE) {
+        mro::set_mro($_, 'c3') for keys %MRO;
     }
-    _calculate_method_dispatch_tables();
-    _apply_method_dispatch_tables();
-    %next::METHOD_CACHE = ();
-    $_initialized = 1;
+    else {
+        if($_initialized) {
+            uninitialize();
+            $MRO{$_} = undef foreach keys %MRO;
+        }
+        _calculate_method_dispatch_tables();
+        _apply_method_dispatch_tables();
+        $_initialized = 1;
+    }
 }
 
 sub uninitialize {
     # why bother if we don't have anything ...
-    return unless keys %MRO;    
-    _remove_method_dispatch_tables();    
     %next::METHOD_CACHE = ();
-    $_initialized = 0;
+    return unless keys %MRO;    
+    if($C3_IN_CORE) {
+        mro::set_mro($_, 'dfs') for keys %MRO;
+    }
+    else {
+        _remove_method_dispatch_tables();    
+        $_initialized = 0;
+    }
 }
 
 sub reinitialize { goto &initialize }
@@ -71,6 +103,7 @@ sub reinitialize { goto &initialize }
 ## functions for applying C3 to classes
 
 sub _calculate_method_dispatch_tables {
+    return if $C3_IN_CORE;
     my %merge_cache;
     foreach my $class (keys %MRO) {
         _calculate_method_dispatch_table($class, \%merge_cache);
@@ -78,11 +111,12 @@ sub _calculate_method_dispatch_tables {
 }
 
 sub _calculate_method_dispatch_table {
+    return if $C3_IN_CORE;
     my ($class, $merge_cache) = @_;
     no strict 'refs';
     my @MRO = calculateMRO($class, $merge_cache);
     $MRO{$class} = { MRO => \@MRO };
-    my $has_overload_fallback = 0;
+    my $has_overload_fallback;
     my %methods;
     # NOTE: 
     # we do @MRO[1 .. $#MRO] here because it
@@ -93,7 +127,7 @@ sub _calculate_method_dispatch_table {
         # have use "fallback", then we want to
         # grab that value 
         $has_overload_fallback = ${"${local}::()"} 
-            if defined ${"${local}::()"};
+            if !defined $has_overload_fallback && defined ${"${local}::()"};
         foreach my $method (grep { defined &{"${local}::$_"} } keys %{"${local}::"}) {
             # skip if already overriden in local class
             next unless !defined *{"${class}::$method"}{CODE};
@@ -109,28 +143,37 @@ sub _calculate_method_dispatch_table {
 }
 
 sub _apply_method_dispatch_tables {
+    return if $C3_IN_CORE;
     foreach my $class (keys %MRO) {
         _apply_method_dispatch_table($class);
     }     
 }
 
 sub _apply_method_dispatch_table {
+    return if $C3_IN_CORE;
     my $class = shift;
     no strict 'refs';
     ${"${class}::()"} = $MRO{$class}->{has_overload_fallback}
-        if $MRO{$class}->{has_overload_fallback};
+        if !defined &{"${class}::()"}
+           && defined $MRO{$class}->{has_overload_fallback};
     foreach my $method (keys %{$MRO{$class}->{methods}}) {
+        if ( $method =~ /^\(/ ) {
+            my $orig = $MRO{$class}->{methods}->{$method}->{orig};
+            ${"${class}::$method"} = $$orig if defined $$orig;
+        }
         *{"${class}::$method"} = $MRO{$class}->{methods}->{$method}->{code};
     }    
 }
 
 sub _remove_method_dispatch_tables {
+    return if $C3_IN_CORE;
     foreach my $class (keys %MRO) {
         _remove_method_dispatch_table($class);
-    }       
+    }
 }
 
 sub _remove_method_dispatch_table {
+    return if $C3_IN_CORE;
     my $class = shift;
     no strict 'refs';
     delete ${"${class}::"}{"()"} if $MRO{$class}->{has_overload_fallback};    
@@ -138,85 +181,32 @@ sub _remove_method_dispatch_table {
         delete ${"${class}::"}{$method}
             if defined *{"${class}::${method}"}{CODE} && 
                (*{"${class}::${method}"}{CODE} eq $MRO{$class}->{methods}->{$method}->{code});       
-    }   
+    }
 }
-
-## functions for calculating C3 MRO
 
 sub calculateMRO {
     my ($class, $merge_cache) = @_;
+
     return Algorithm::C3::merge($class, sub { 
         no strict 'refs'; 
         @{$_[0] . '::ISA'};
     }, $merge_cache);
 }
 
-package  # hide me from PAUSE
-    next; 
+# Method overrides to support 5.9.5+ or Class::C3::XS
 
-use strict;
-use warnings;
+sub _core_calculateMRO { @{mro::get_linear_isa($_[0], 'c3')} }
 
-use Scalar::Util 'blessed';
-
-our $VERSION = '0.05';
-
-our %METHOD_CACHE;
-
-sub method {
-    my $indirect = caller() =~ /^(?:next|maybe::next)$/;
-    my $level = $indirect ? 2 : 1;
-     
-    my ($method_caller, $label, @label);
-    while ($method_caller = (caller($level++))[3]) {
-      @label = (split '::', $method_caller);
-      $label = pop @label;
-      last unless
-        $label eq '(eval)' ||
-        $label eq '__ANON__';
-    }
-    my $caller   = join '::' => @label;    
-    my $self     = $_[0];
-    my $class    = blessed($self) || $self;
-    
-    my $method = $METHOD_CACHE{"$class|$caller|$label"} ||= do {
-        
-        my @MRO = Class::C3::calculateMRO($class);
-        
-        my $current;
-        while ($current = shift @MRO) {
-            last if $caller eq $current;
-        }
-        
-        no strict 'refs';
-        my $found;
-        foreach my $class (@MRO) {
-            next if (defined $Class::C3::MRO{$class} && 
-                     defined $Class::C3::MRO{$class}{methods}{$label});          
-            last if (defined ($found = *{$class . '::' . $label}{CODE}));
-        }
-        
-        $found;
-    };
-
-    return $method if $indirect;
-
-    die "No next::method '$label' found for $self" if !$method;
-
-    goto &{$method};
+if($C3_IN_CORE) {
+    no warnings 'redefine';
+    *Class::C3::calculateMRO = \&_core_calculateMRO;
 }
-
-sub can { method($_[0]) }
-
-package  # hide me from PAUSE
-    maybe::next; 
-
-use strict;
-use warnings;
-
-our $VERSION = '0.01';
-
-sub method { (next::method($_[0]) || return)->(@_) }
+elsif($C3_XS) {
+    no warnings 'redefine';
+    *Class::C3::calculateMRO = \&Class::C3::XS::calculateMRO;
+    *Class::C3::_calculate_method_dispatch_table
+        = \&Class::C3::XS::_calculate_method_dispatch_table;
+}
 
 1;
 
@@ -486,18 +476,19 @@ limitation of this module.
 
 =back
 
+=head1 COMPATIBILITY
+
+If your software requires Perl 5.9.5 or higher, you do not need L<Class::C3>, you can simply C<use mro 'c3'>, and not worry about C<initialize()>, avoid some of the above caveats, and get the best possible performance.  See L<mro> for more details.
+
+If your software is meant to work on earlier Perls, use L<Class::C3> as documented here.  L<Class::C3> will detect Perl 5.9.5+ and take advantage of the core support when available.
+
+=head1 Class::C3::XS
+
+This module will load L<Class::C3::XS> if it's installed and you are running on a Perl version older than 5.9.5.  Installing this is recommended when possible, as it results in significant performance improvements (but unlike the 5.9.5+ core support, it still has all of the same caveats as L<Class::C3>).
+
 =head1 CODE COVERAGE
 
-I use B<Devel::Cover> to test the code coverage of my tests, below is the B<Devel::Cover> report on this 
-module's test suite.
-
- ---------------------------- ------ ------ ------ ------ ------ ------ ------
- File                           stmt   bran   cond    sub    pod   time  total
- ---------------------------- ------ ------ ------ ------ ------ ------ ------
- Class/C3.pm                    98.3   84.4   80.0   96.2  100.0   98.4   94.4
- ---------------------------- ------ ------ ------ ------ ------ ------ ------
- Total                          98.3   84.4   80.0   96.2  100.0   98.4   94.4
- ---------------------------- ------ ------ ------ ------ ------ ------ ------
+L<Devel::Cover> was reporting 94.4% overall test coverage earlier in this module's life.  Currently, the test suite does things that break under coverage testing, but it is fair to assume the coverage is still close to that value.
 
 =head1 SEE ALSO
 
