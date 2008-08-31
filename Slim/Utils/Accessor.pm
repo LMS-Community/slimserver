@@ -32,17 +32,12 @@ BEGIN {
 	my $hasXS;
 
 	sub hasXS {
-		# XXX: There may be a bug in XSAccessor, don't want to risk it now
-		# $client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
-		# The above statement does not work the same using XS, curDepth is modified with "-" before the call
-		# to curSelection.
-		return 0;
-		
 		return $hasXS if defined $hasXS;
 	
 		$hasXS = 0;
 		eval {
 			require Class::XSAccessor::Array;
+			die if $Class::XSAccessor::Array::VERSION lt '0.05';
 			$hasXS = 1;
 		};
 	
@@ -100,7 +95,7 @@ sub mk_accessor {
 			
 			if ( hasXS() ) {
 				Class::XSAccessor::Array::_generate_accessor(
-					$class,	$field,	$n, 0, 'accessor',
+					$class,	$field,	$n, 0, 0, 'accessor',
 				);
 			}
 			else {
@@ -114,7 +109,7 @@ sub mk_accessor {
 			
 			if ( hasXS() ) {
 				Class::XSAccessor::Array::_generate_accessor(
-					$class,	$field,	$n, 0, 'getter',
+					$class,	$field,	$n, 0, 0, 'getter',
 				);
 			}
 			else {

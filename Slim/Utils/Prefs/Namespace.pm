@@ -205,10 +205,8 @@ $prefs->client($client)->get('pref1');
 =cut
 
 sub client {
-	my $class  = shift;
-	my $client = shift;
-	
-	return $class->{'clients'}->{ $client->id } ||= Slim::Utils::Prefs::Client->new($class, $client);
+	# opimised due to frequency of being called
+	return $_[0]->{'clients'}->{ $_[1]->id } ||= Slim::Utils::Prefs::Client->new($_[0], $_[1]);
 }
 
 =head2 allClients()
