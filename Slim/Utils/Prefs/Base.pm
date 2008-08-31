@@ -40,7 +40,13 @@ On SLIM_SERVICE, this pulls the value from the database if it doesn't already ex
 
 =cut
 
-sub get {
+*get = main::SLIM_SERVICE ? \&get_SN : \&get_SC;
+
+sub get_SC {
+	$_[0]->{prefs}->{ $_[1] };
+}
+
+sub get_SN {
 	my ( $class, $key ) = ( shift, shift );
 	
 	my $value = $class->{prefs}->{ $key };
@@ -513,7 +519,7 @@ sub AUTOLOAD {
 		}
 
 		no strict 'refs';
-		*{ $AUTOLOAD } = sub { @_ == 1 ? shift->{'prefs'}->{ $pref } : shift->set($pref, shift) };
+		*{ $AUTOLOAD } = sub { @_ == 1 ? $_[0]->{'prefs'}->{ $pref } : $_[0]->set($pref, $_[1]) };
 	}
 
 	return @_ == 0 ? $class->{'prefs'}->{ $pref } : $class->set($pref, shift);
