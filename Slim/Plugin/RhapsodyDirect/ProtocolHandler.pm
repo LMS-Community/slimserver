@@ -230,12 +230,28 @@ sub getAccount {
 			}
 		}
 		
+		my $clientType = 'squeezebox3.logitech';
+		my $deviceid   = $client->deviceid;
+		
+		if ( $deviceid == 5 ) {
+			$clientType = 'transporter.logitech';
+		}
+		elsif ( $deviceid == 7 ) {
+			$clientType = 'receiver.logitech';
+		}
+		elsif ( $deviceid == 10 ) {
+			$clientType = 'boom.logitech';
+		}
+		elsif ( $deviceid == 9 ) {
+			$clientType = 'squeezeplay.logitech';
+		}
+		
 		my $account = {
 			username   => \@username,
 			password   => \@password,
 			defaults   => $defaults,
 			cobrandId  => 40134,
-			clientType => 'slimdevices',
+			clientType => $clientType,
 		};
 		
 		return $account;
