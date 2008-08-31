@@ -441,6 +441,9 @@ our %subscribers = ();          # contains the requests being subscribed to
                                 
 our @notificationQueue;         # contains the Requests waiting to be notified
 
+my $listenerSuperRE = qr/::/;   # regexp to screen out request which no listeners are interested in
+                                # (maintained by __updateListenerSuperRE, :: = won't match)
+
 our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $log = logger('control.command');
@@ -767,12 +770,15 @@ sub subscribe {
 	my $client = shift;
 	
 	if ( blessed($client) ) {
-		$listeners{ $client->id . $subscriberFuncRef } = [ $subscriberFuncRef, $requestsRef, $client->id ];
+		$listeners{ $client->id . $subscriberFuncRef } = [ __requestRE($requestsRef), $subscriberFuncRef, $requestsRef, $client->id ];
 	}
 	else {
-		$listeners{$subscriberFuncRef} = [ $subscriberFuncRef, $requestsRef ];
+		$listeners{$subscriberFuncRef} = [ __requestRE($requestsRef), $subscriberFuncRef, $requestsRef ];
 	}
 	
+	# rebuild the super regexp for the current list of listeners
+	__updateListenerSuperRE();
+
 	if ( $log->is_info ) {
 		$log->info(sprintf(
 			"Request from: %s - (%d listeners)\n",
@@ -793,6 +799,9 @@ sub unsubscribe {
 	else {
 		delete $listeners{$subscriberFuncRef};
 	}
+
+	# rebuild the super regexp for the current list of listeners
+	__updateListenerSuperRE();
 
 	if ( $log->is_info ) {
 		$log->info(sprintf(
@@ -828,7 +837,8 @@ sub checkNotifications {
 
 	# notify first entry on queue
 	my $request = shift @notificationQueue;
-	$request->notify() if blessed($request);
+
+	$request->notify();
 
 	return 1;
 }
@@ -935,6 +945,7 @@ sub new {
 	
 	my $self = {
 		'_request'           => [],
+		'_requeststr'        => '',
 		'_isQuery'           => 0,
 		'_clientid'          => $clientid,
 		'_needClient'        => 0,
@@ -983,7 +994,8 @@ sub virginCopy {
 	$copy->{'_ae_filter'} = $self->{'_ae_filter'};
 	$copy->{'_ae_cleanup'} = $self->{'_ae_cleanup'};
 	$copy->{'_curparam'} = $self->{'_curparam'};
-	
+	$copy->{'_requeststr'} = $self->{'_requeststr'};
+
 	# duplicate the arrays and hashes
 	my @request = @{$self->{'_request'}};
 	$copy->{'_request'} = \@request;
@@ -1205,134 +1217,109 @@ sub validate {
 
 	if (ref($self->{'_func'}) ne 'CODE') {
 
-		$self->setStatusNotDispatchable();
+		$self->{'_status'}   = 104;
 
-	} elsif ($self->{'_needClient'} && 
-				(!defined $self->{'_clientid'} || 
-				!defined Slim::Player::Client::getClient($self->{'_clientid'}))){
+	} elsif ($self->{'_needClient'} && !defined Slim::Player::Client::getClient($self->{'_clientid'})){
 
-		$self->setStatusNeedsClient();
+		$self->{'_status'}   = 103;
 		$self->{'_clientid'} = undef;
 
 	} else {
 
-		$self->setStatusDispatchable();
+		$self->{'_status'}   = 1;
 	}
 }
 
 sub isStatusNew {
-	my $self = shift;
-	return ($self->__status() == 0);
+	return ($_[0]->{'_status'} == 0);
 }
 
 sub setStatusDispatchable {
-	my $self = shift;
-	$self->__status(1);
+	$_[0]->{'_status'} = 1;
 }
 
 sub isStatusDispatchable {
-	my $self = shift;
-	return ($self->__status() == 1);
+	return ($_[0]->{'_status'} == 1);
 }
 
 sub setStatusDispatched {
-	my $self = shift;
-	$self->__status(2);
+	$_[0]->{'_status'} = 2;
 }
 
 sub isStatusDispatched {
-	my $self = shift;
-	return ($self->__status() == 2);
+	return ($_[0]->{'_status'} == 2);
 }
 
 sub wasStatusDispatched {
-	my $self = shift;
-	return ($self->__status() > 1);
+	return ($_[0]->{'_status'} > 1);
 }
 
 sub setStatusProcessing {
-	my $self = shift;
-	$self->__status(3);
+	$_[0]->{'_status'} = 3;
 }
 
 sub isStatusProcessing {
-	my $self = shift;
-	return ($self->__status() == 3);
+	return ($_[0]->{'_status'} == 3);
 }
 
 sub setStatusDone {
-	my $self = shift;
-	
 	# if we are in processing state, we need to call executeDone AFTER setting
 	# the status to Done...
-	my $callDone = $self->isStatusProcessing();
-	$self->__status(10);
-	$self->executeDone() if $callDone;
+	my $callDone = ($_[0]->{'_status'} == 3);
+	$_[0]->{'_status'} = 10;
+	$_[0]->executeDone() if $callDone;
 }
 
 sub isStatusDone {
-	my $self = shift;
-	return ($self->__status() == 10);
+	return ($_[0]->{'_status'} == 10);
 }
 
 sub isStatusError {
-	my $self = shift;
-	return ($self->__status() > 100);
+	return ($_[0]->{'_status'} > 100);
 }
 
 sub setStatusBadDispatch {
-	my $self = shift;	
-	$self->__status(101);
+	$_[0]->{'_status'} = 101;
 }
 
 sub isStatusBadDispatch {
-	my $self = shift;
-	return ($self->__status() == 101);
+	return ($_[0]->{'_status'} == 101);
 }
 
 sub setStatusBadParams {
-	my $self = shift;	
-	$self->__status(102);
+	$_[0]->{'_status'} = 102;
 }
 
 sub isStatusBadParams {
-	my $self = shift;
-	return ($self->__status() == 102);
+	return ($_[0]->{'_status'} == 102);
 }
 
 sub setStatusNeedsClient {
-	my $self = shift;	
-	$self->__status(103);
+	$_[0]->{'_status'} = 103;
 }
 
 sub isStatusNeedsClient {
-	my $self = shift;
-	return ($self->__status() == 103);
+	return ($_[0]->{'_status'} == 103);
 }
 
 sub setStatusNotDispatchable {
-	my $self = shift;	
-	$self->__status(104);
+	$_[0]->{'_status'} = 104;
 }
 
 sub isStatusNotDispatchable {
-	my $self = shift;
-	return ($self->__status() == 104);
+	return ($_[0]->{'_status'} == 104);
 }
 
 sub setStatusBadConfig {
-	my $self = shift;	
-	$self->__status(105);
+	$_[0]->{'_status'} = 105;
 }
 
 sub isStatusBadConfig {
-	my $self = shift;
-	return ($self->__status() == 105);
+	return ($_[0]->{'_status'} == 105);
 }
 
 sub getStatusText {
-	my $self = shift;
-	return ($statusMap{$self->__status()});
+	return ($statusMap{$_[0]->{'_status'}});
 }
 ################################################################################
 # Request mgmt
@@ -1653,32 +1640,20 @@ sub cleanResults {
 # queries to check the dispatcher did not send them a wrong request.
 # See Queries.pm for usage examples, for example infoTotalQuery.
 sub isNotQuery {
-	my $self = shift;
-	my $possibleNames = shift;
-	
-	return !$self->__isCmdQuery(1, $possibleNames);
+	return !$_[0]->{'_isQuery'} || !$_[0]->__matchingRequest($_[1]);
 }
 
 # same for commands
 sub isNotCommand {
-	my $self = shift;
-	my $possibleNames = shift;
-	
-	return !$self->__isCmdQuery(0, $possibleNames);
+	return $_[0]->{'_isQuery'} || !$_[0]->__matchingRequest($_[1]);
 }
 
 sub isCommand{
-	my $self = shift;
-	my $possibleNames = shift;
-	
-	return $self->__isCmdQuery(0, $possibleNames);
+	return !$_[0]->{'_isQuery'} && $_[0]->__matchingRequest($_[1]);
 }
 
 sub isQuery{
-	my $self = shift;
-	my $possibleNames = shift;
-	
-	return $self->__isCmdQuery(1, $possibleNames);
+	return $_[0]->{'_isQuery'} && $_[0]->__matchingRequest($_[1]);
 }
 
 
@@ -1702,7 +1677,7 @@ sub paramUndefinedOrNotOneOf {
 
 	return 1 if !defined $param;
 	return 1 if !defined $possibleValues;
-	return !grep(/$param/, @{$possibleValues});
+	return !grep($_ eq $param, @{$possibleValues});
 }
 
 # returns true if $param being defined, it is not one of the possible values
@@ -1715,7 +1690,7 @@ sub paramNotOneOfIfDefined {
 
 	return 0 if !defined $param;
 	return 1 if !defined $possibleValues;
-	return !grep(/$param/, @{$possibleValues});
+	return !grep($_ eq $param, @{$possibleValues});
 }
 
 # not really a method on request data members but defined as such since it is
@@ -1933,15 +1908,16 @@ sub notify {
 		$log->debug(sprintf("Notifying %s", $self->getRequestString()));
 	}
 
-	for my $listener ($specific || keys %listeners) {
+	# process listeners if we match the super regexp (i.e. there is an interested listener)
+	if ($self->{'_requeststr'} =~ $listenerSuperRE) {
+		
+		for my $listener (values %listeners) {
 
-		if ( $listeners{$listener} ) {
+			# skip unless we match the listener filter
+			next unless $self->{'_requeststr'} =~ $listener->[0];
 
-			# filter based on desired requests
-			# undef means no filter
-			my $notifyFuncRef = $listeners{$listener}->[0];
-			my $requestsRef   = $listeners{$listener}->[1];
-			my $clientid      = $listeners{$listener}->[2];
+			my $notifyFuncRef = $listener->[1];
+			my $clientid      = $listener->[3];
 			
 			# If this listener is client-specific, ignore unless we have that client
 			if ( $clientid ) {
@@ -1950,35 +1926,28 @@ sub notify {
 					next;
 				}
 			}
-		
-			if ( defined $requestsRef ) {
-				if ($self->isNotCommand($requestsRef)) {
-					next;
-				}
-			}
 
 			if ( $log->is_debug ) {
 				my $funcName = $listener;
-
+				
 				if ( ref($notifyFuncRef) eq 'CODE' ) {
 					$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
 				}
 				
 				$log->debug(sprintf("Notifying %s of %s =~ %s",
-					$funcName, $self->getRequestString, __filterString($requestsRef)
-				));
+									$funcName, $self->getRequestString, __filterString($listener->[2])
+								   ));
 			}
-
+			
 			$::perfmon && (my $now = Time::HiRes::time());
-
+			
 			eval { &$notifyFuncRef($self) };
-
+			
 			if ($@) {
 				logError("Failed notify: $@");
 			}
-
+			
 			$::perfmon && $requestTask->log(Time::HiRes::time() - $now, "Notify: ", $notifyFuncRef);
-
 		}
 	}
 	
@@ -2290,49 +2259,64 @@ sub dump {
 ################################################################################
 # Private methods
 ################################################################################
-sub __isCmdQuery {
-	my $self = shift;
-	my $isQuery = shift;
-	my $possibleNames = shift;
 
-	# the query state must match
-	if ($isQuery == $self->{'_isQuery'}) {
+# this is hot so optimised for speed
+sub __matchingRequest {
+	# $_[0] = self
+	# $_[1] = possibleNames in the form of an arrayref of arrayrefs
+	my $request = $_[0]->{'_request'};
+	my $i = 0;
 
-		my $possibleNamesCount = scalar (@{$possibleNames});
+	for my $names (@{$_[1]}) {
 
-		# we must have the same number (or more) of request terms
-		# than of passed names
-		if ((scalar(@{$self->{'_request'}})) >= $possibleNamesCount) {
-
-			# check each request term matches one of the passed params
-			for (my $i = 0; $i < $possibleNamesCount; $i++) {
-
-				my $name = $self->{'_request'}->[$i];
-			
-				if (!grep(/^$name$/, @{$possibleNames->[$i]})) {
-					return 0;
-				}
-			}
-
-			# everything matched
-			return 1;
+		if (!grep($_ eq $request->[$i++], @$names)) {
+			return 0;
 		}
 	}
 
-	return 0;
+	return 1;
 }
 
-# sets/returns the status state of the request
-sub __status {
-	my $self = shift;
-	my $status = shift;
+# return compiled regexp representing the $possibleNames array of arrays
+sub __requestRE {
+	my $possibleNames = shift || return qr /./; 
+	my $regexp = '';
 
-	if (defined $status) {
+	my $i = 0;
 
-		$self->{'_status'} = $status;
+	for my $names (@$possibleNames) {
+		$regexp .= ',' if $i++;
+		$regexp .= (scalar @$names > 1) ? '(?:' . join('|', @$names) . ')' : $names->[0];
 	}
 
-	return $self->{'_status'};
+	return qr /$regexp/;
+}
+
+# update the super filter used by notify
+# this builds a regexp matching any of the first level verbs the listeners are interested in
+# or /./ if there is a listener with no requestRef filter specified
+sub __updateListenerSuperRE {
+
+	my %names;
+	my $regexp;
+
+	for my $listener (values %listeners) {
+
+		my $requestsRef = $listener->[2];
+
+		if (!defined $requestsRef) {
+			$regexp = '.';
+			last;
+		}
+
+		map { $names{$_} = 1 } @{$requestsRef->[0]};
+	}
+
+	$regexp ||= join('|', keys %names);
+
+	$listenerSuperRE = qr /$regexp/;
+
+	$log->debug("updated listener superRE: $listenerSuperRE");
 }
 
 # returns a string corresponding to the notification filter, used for 
@@ -2485,6 +2469,9 @@ sub __parse {
 		}
 	}
 
+	# create a string containg all request verbs to test against with a regexp
+	$self->{'_requeststr'} = join(',', @{$self->{'_request'}});
+
 	if (defined $found) {
 		# 0: needs client
 		# 1: is a query
@@ -2509,7 +2496,7 @@ sub __parse {
 		$self->{'_needClient'} = $found->[0];
 		$self->{'_isQuery'} = $found->[1];
 		$self->{'_func'} = $found->[3];
-				
+
 	} else {
 
 		# don't complain loudly here
