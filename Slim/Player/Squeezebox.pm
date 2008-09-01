@@ -1340,6 +1340,9 @@ sub sendPitch {
 	my $client = shift;
 	my $pitch = shift;
 	
+	# SB1 only
+	return unless $client->deviceid == 2;
+	
 	my $freq = int(18432 / ($pitch / 100));
 	my $freqHex = sprintf('%05X', $freq);
 
@@ -1448,7 +1451,12 @@ sub bass {
 	my $newbass = shift;
 
 	my $bass = $client->SUPER::bass($newbass);
-	$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));	
+	
+	warn "bass: $bass\n";
+	
+	if ( $client->deviceid == 2 ) {
+		$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));
+	}
 
 	return $bass;
 }
@@ -1458,7 +1466,10 @@ sub treble {
 	my $newtreble = shift;
 
 	my $treble = $client->SUPER::treble($newtreble);
-	$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));	
+	
+	if ( $client->deviceid == 2 ) {
+		$client->i2c( Slim::Hardware::mas35x9::masWrite('TREBLE', Slim::Hardware::mas35x9::getToneCode($treble,'treble'))) if (defined($newtreble));
+	}
 
 	return $treble;
 }
