@@ -1452,8 +1452,6 @@ sub bass {
 
 	my $bass = $client->SUPER::bass($newbass);
 	
-	warn "bass: $bass\n";
-	
 	if ( $client->deviceid == 2 ) {
 		$client->i2c( Slim::Hardware::mas35x9::masWrite('BASS', Slim::Hardware::mas35x9::getToneCode($bass,'bass'))) if (defined($newbass));
 	}
