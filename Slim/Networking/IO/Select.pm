@@ -249,6 +249,11 @@ sub select {
 
 				if ($@) {
 					logError("Select task failed: $@");
+					
+					if ( main::SLIM_SERVICE ) {
+						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
+						SDI::Service::Control->mailError( "IO callback crash: $name", $@ );
+					}
 				}
 
 				$::perfmon && $now && $selectTask->log(Time::HiRes::time() - $now, undef, $callback);

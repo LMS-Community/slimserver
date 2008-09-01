@@ -1907,6 +1907,11 @@ sub pushMode {
 
 			if ($@) {
 				logError("Couldn't execute mode exit function: $@");
+				
+				if ( main::SLIM_SERVICE ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
+					SDI::Service::Control->mailError( "Button crash: $exitFun", $@ );
+				}
 			}
 		}
 	}
@@ -1941,6 +1946,11 @@ sub pushMode {
 
 	if ($@) {
 		logError("Couldn't push into new mode: [$setmode] !: $@");
+		
+		if ( main::SLIM_SERVICE ) {
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($newModeFunction);
+			SDI::Service::Control->mailError( "Button crash: $name", $@ );
+		}
 
 		pop @{$scrollClientHash->{$client}{scrollParamsStack}};
 		pop @{$client->modeStack};
@@ -2003,6 +2013,11 @@ sub popMode {
 
 			if ($@) {
 				logError("Couldn't execute mode exit function: $@");
+				
+				if ( main::SLIM_SERVICE ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($exitFun);
+					SDI::Service::Control->mailError( "Button crash: $name", $@ );
+				}
 			}
 		}
 	}
@@ -2023,6 +2038,11 @@ sub popMode {
 
 		if ($@) {
 			logError("Couldn't execute setMode on pop: $@");
+			
+			if ( main::SLIM_SERVICE ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($fun);
+				SDI::Service::Control->mailError( "Button crash: $name", $@ );
+			}
 		}
 	}
 
@@ -2277,6 +2297,11 @@ sub _periodicUpdate {
 
 		if ($@) {
 			logError("bad screen2 lines: $@");
+			
+			if ( main::SLIM_SERVICE ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
+				SDI::Service::Control->mailError( "Button crash: $name", $@ );
+			}
 		}
 
 		$display->update($screen2, undef, 1);

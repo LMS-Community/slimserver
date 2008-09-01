@@ -173,6 +173,12 @@ sub getExtVal {
 		if ($@) {
 
 			logError("Couldn't run coderef. [$@]");
+			
+			if ( main::SLIM_SERVICE ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($value);
+				SDI::Service::Control->mailError( "Button Choice crash: $name", $@ );
+			}
+			
 			return '';
 		}
 
@@ -236,6 +242,11 @@ my %functions = (
 
 				if ($@) {
 					logError("numberScroll caught error: [$@]");
+					
+					if ( main::SLIM_SERVICE ) {
+						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($onChange);
+						SDI::Service::Control->mailError( "Button Choice crash: $name", $@ );
+					}
 				}
 			}
 		}
@@ -301,6 +312,11 @@ sub callCallback {
 		if ($@) {
 
 			logError("Couldn't run callback: [$callbackName] : $@");
+			
+			if ( main::SLIM_SERVICE ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
+				SDI::Service::Control->mailError( "Button Choice crash: $name", $@ );
+			}
 		
 		} elsif (getParam($client,'pref')) {
 		
