@@ -140,7 +140,16 @@ sub checkTimers {
 
 		if ( $high_subptr ) {	
 
-			$high_subptr->($high_objRef, @{$high_args});
+			eval { $high_subptr->($high_objRef, @{$high_args}) };
+			
+			if ($@) {
+				logError("Timer failed: $@");
+				
+				if ( main::SLIM_SERVICE ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($high_subptr);
+					SDI::Service::Control->mailError( "Timer crash: $name", $@ );
+				}
+			}
 
 		} else {
 
@@ -199,6 +208,11 @@ sub checkTimers {
 
 			if ($@) {
 				logError("Timer failed: $@");
+				
+				if ( main::SLIM_SERVICE ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+					SDI::Service::Control->mailError( "Timer crash: $name", $@ );
+				}
 			}
 
 		} else {

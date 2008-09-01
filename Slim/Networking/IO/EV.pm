@@ -165,6 +165,10 @@ sub _io_callback {
 		if ( $@ ) {
 			my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
 			logError("Select task failed calling $func: $@");
+			
+			if ( main::SLIM_SERVICE ) {
+				SDI::Service::Control->mailError( "IO callback crash: $func", $@ );
+			}
 		}
 		
 		# Conditionally readUDP if there are SLIMP3's connected.

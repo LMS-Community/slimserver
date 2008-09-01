@@ -4742,6 +4742,11 @@ sub dynamicAutoQuery {
 				logError("While trying to run function coderef: [$@]");
 				$request->setStatusBadDispatch();
 				$request->dump('Request');
+				
+				if ( main::SLIM_SERVICE ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcptr);
+					SDI::Service::Control->mailError( "Queries crash: $name", $@ );
+				}
 			}
 		}
 		

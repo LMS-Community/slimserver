@@ -470,6 +470,11 @@ sub curLines {
 
 		if ($@) {
 			logError("bad lines function: $@");
+			
+			if ( main::SLIM_SERVICE ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
+				SDI::Service::Control->mailError( "Display crash: $name", $@ );
+			}
 		}
 	}
 

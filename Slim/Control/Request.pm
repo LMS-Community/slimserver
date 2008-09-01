@@ -1775,6 +1775,10 @@ sub execute {
 			logError("While trying to run function coderef [$funcName]: [$@]");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
+			
+			if ( main::SLIM_SERVICE ) {
+				SDI::Service::Control->mailError( "Request crash: $funcName", $@ );
+			}
 		}
 	}
 	
@@ -1844,6 +1848,11 @@ sub jumpbacktofunc {
 
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
+			
+			if ( main::SLIM_SERVICE ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+				SDI::Service::Control->mailError( "Request crash: $name", $@ );
+			}
 		}
 	}
 	
@@ -1872,6 +1881,11 @@ sub callback {
 				if ($@) { 
 					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
+					
+					if ( main::SLIM_SERVICE ) {
+						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+						SDI::Service::Control->mailError( "Request crash: $name", $@ );
+					}
 				}
 			
 			# else use the provided arguments
@@ -1889,6 +1903,11 @@ sub callback {
 				if ($@) { 
 					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
+					
+					if ( main::SLIM_SERVICE ) {
+						my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+						SDI::Service::Control->mailError( "Request crash: $name", $@ );
+					}
 				}
 			}
 		}
@@ -1945,6 +1964,11 @@ sub notify {
 			
 			if ($@) {
 				logError("Failed notify: $@");
+				
+				if ( main::SLIM_SERVICE ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
+					SDI::Service::Control->mailError( "Request crash: $name", $@ );
+				}
 			}
 			
 			$::perfmon && $requestTask->log(Time::HiRes::time() - $now, "Notify: ", $notifyFuncRef);
@@ -1972,6 +1996,11 @@ sub notify {
 						if ($@) {
 							my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 							logError("While trying to run function coderef [$funcName]: [$@]");
+							
+							if ( main::SLIM_SERVICE ) {
+								SDI::Service::Control->mailError( "Request crash: $funcName", $@ );
+							}
+							
 							next;
 						}
 					}
@@ -2548,6 +2577,10 @@ sub __autoexecute{
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 		logError("While trying to run function coderef [$funcName]: [$@] => deleting subscription");
 		$deleteSub = 1;
+		
+		if ( main::SLIM_SERVICE ) {
+			SDI::Service::Control->mailError( "Request crash: $funcName", $@ );
+		}
 	}
 	
 	if ($deleteSub) {
