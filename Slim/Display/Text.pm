@@ -593,6 +593,10 @@ sub maxBrightness {
 	return $Slim::Display::Lib::TextVFD::MAXBRIGHTNESS;
 }
 
+sub brightnessMap {
+	return (0 .. maxBrightness());
+}
+
 sub modes {
 	return \@modes;
 }
