@@ -230,12 +230,12 @@ sub set_output_methods {
             print "  ($priority{$levelname} <= $level)\n"
                   if _INTERNAL_DEBUG;
             $self->{$levelname}      = $coderef;
-            $self->{"is_$levelname"} = generate_is_xxx_coderef("1");
+            $self->{"is_$levelname"} = 1;
             #$self->{"is_$levelname"} = sub { 1 };
         }else{
             print "  ($priority{$levelname} > $level)\n" if _INTERNAL_DEBUG;
             $self->{$levelname}      = $noop;
-            $self->{"is_$levelname"} = generate_is_xxx_coderef("0");
+            $self->{"is_$levelname"} = 0;
             #$self->{"is_$levelname"} = sub { 0 };
         }
 
@@ -786,7 +786,7 @@ sub create_log_level_methods {
     # XXX: Not passing the args breaks a few Log4perl tests,
     # but we don't use watcher so it's OK
     *{__PACKAGE__ . "::is_$lclevel"} = sub {
-        $_[0]->{$islevel}->();
+        $_[0]->{$islevel};
     };
   }
   
