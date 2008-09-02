@@ -287,7 +287,7 @@ sub statHandler {
 	} elsif ($code eq 'EoS') {
 		$client->controller()->playerEndOfStream($client);
 	} else {		
-		if ( !$client->bufferReady() && ($client->outputBufferFullness() > 40_000) && $client->isSynced() ) {
+		if ( !$client->bufferReady() && ($client->outputBufferFullness() > 40_000) && $client->isSynced(1) ) {
 			# Fake up buffer ready (0.25s audio)
 			$client->bufferReady(1);	# to stop multiple starts 
 			$client->controller()->playerBufferReady($client);

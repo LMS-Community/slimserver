@@ -525,7 +525,7 @@ sub directHeaders {
 
 				$controller->song->{'streamUrl'} = $redir;
 				$client->play({
-					'paused'     => ($client->syncGroupActiveMembers() > 1), 
+					'paused'     => ($client->isSynced(1)), 
 					'format'     => ($client->master())->streamformat(), 
 					'url'        => $redir,
 					'controller' => $controller,

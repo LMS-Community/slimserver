@@ -788,7 +788,7 @@ sub _stat_handler {
 		}
 	}
 	
-	if ($client->isSynced() && $client->isPlaying(1) && $client->needsWeightedPlayPoint()) {
+	if ($client->isSynced(1) && $client->isPlaying(1) && $client->needsWeightedPlayPoint()) {
 		my $statusTime = $client->jiffiesToTimestamp( $status{$client}->{'jiffies'} );
 		my $apparentStreamStartTime;
 		if ($status{$client}->{'elapsed_milliseconds'}) {

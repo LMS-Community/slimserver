@@ -106,7 +106,7 @@ sub nextChunk {
 		# EndOfStream
 		$client->controller()->playerEndOfStream($client);
 		
-		if ($client->isSynced()) {
+		if ($client->isSynced(1)) {
 			return $chunk;	# playout
 		} else {
 			# We may not actually be prepared to stream the next track yet 
@@ -158,7 +158,7 @@ sub isReadyToStream {
 	
 	return 1 if $client->readyToStream();
 	
-	return 0 if $client->isSynced();
+	return 0 if $client->isSynced(1);
 	
 	return 1; # assume safe to stream one file after another, even if frame rates different
 }
@@ -168,7 +168,7 @@ sub play {
 	my $params = shift;
 	
 	if (Slim::Networking::SliMP3::Stream::isPlaying($client)) {
-		assert(!$client->isSynced());
+		assert(!$client->isSynced(1));
 		
 		$client->bytesReceivedOffset($client->streamBytes());
 		$client->bufferReady(0);

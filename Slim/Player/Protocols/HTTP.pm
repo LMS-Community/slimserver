@@ -166,7 +166,7 @@ sub canDirectStream {
 	if ( !main::SLIM_SERVICE ) {
 		# When synced, we don't direct stream so that the server can proxy a single
 		# stream for all players
-		if ( $client->syncGroupActiveMembers() > 1 ) {
+		if ( $client->isSynced(1) ) {
 
 			if ( $directlog->is_info ) {
 				$directlog->info(sprintf(

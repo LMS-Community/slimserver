@@ -1300,7 +1300,13 @@ sub currentSongForUrl {
 
 sub syncGroupActiveMembers {return $_[0]->controller()->activePlayers();}
 
-sub isSynced {return ($_[0]->controller()->allPlayers() > 1);}
+sub isSynced {
+	my ($client, $active) = @_;
+	return ($active 
+				? $client->controller()->activePlayers() 
+				: $client->controller()->allPlayers()
+			) > 1;
+}
 
 sub isSyncedWith {return $_[0]->controller() == $_[1]->controller();}
 

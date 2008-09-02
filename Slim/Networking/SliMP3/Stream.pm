@@ -491,7 +491,7 @@ sub gotAck {
 		#
 		# The following calculations are costly, so only do when necessary, and not too frequently.
 		my $medianLatency;
-		if (   $client->syncGroupActiveMembers() > 1
+		if (   $client->isSynced(1)
 			&& ($streamState{$client} eq 'play' || $streamState{$client} eq 'eof')
 			&& $msgTimeStamp > $samplePlayPointAfter{$client}
 			&& defined($medianLatency = getMedianLatencyMicroSeconds($client))

@@ -532,7 +532,7 @@ sub streamBitrate {
 
 	# Only do this for sync play, although there is no real reason not to do it otherwise
 	# Need to change this if we allow clients to join in mid song.
-	if( !$client->isSynced() ) {
+	if( !$client->isSynced(1) ) {
 		return 0;
 	}
 

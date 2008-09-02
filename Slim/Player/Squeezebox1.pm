@@ -84,7 +84,7 @@ sub play {
 	my $client = shift;
 	
 	if ($client->streamingsocket) {
-		assert(!$client->isSynced());
+		assert(!$client->isSynced(1));
 		
 		$client->bytesReceivedOffset($client->streamBytes());
 		$client->bufferReady(0);
@@ -105,7 +105,7 @@ sub nextChunk {
 		# EndOfStream
 		$client->controller()->playerEndOfStream($client);
 		
-		if ($client->isSynced()) {
+		if ($client->isSynced(1)) {
 			return $chunk;
 		} else {
 			# We may not actually be prepared to stream the next track yet 
@@ -126,7 +126,7 @@ sub isReadyToStream {
 		
 	return 1 if $client->readyToStream();
 	
-	return 0 if $client->isSynced();
+	return 0 if $client->isSynced(1);
 	
 	# Only try to gapless stream sequential MP3 files. This will miss
 	# sequential WAV files with same characteristics or sequential streams

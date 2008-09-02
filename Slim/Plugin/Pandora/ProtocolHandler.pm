@@ -102,7 +102,7 @@ sub getNextTrack {
 		my $lastActivity = $client->lastActivityTime();
 	
 		# If synced, check slave players to see if they have newer activity time
-		if ( $client->isSynced() ) {
+		if ( $client->isSynced(1) ) {
 			for my $c ( $client->syncGroupActiveMembers() ) {
 				my $slaveActivity = $c->lastActivityTime();
 				if ( $slaveActivity > $lastActivity ) {
