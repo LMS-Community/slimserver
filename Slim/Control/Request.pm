@@ -443,6 +443,9 @@ our @notificationQueue;         # contains the Requests waiting to be notified
 my $listenerSuperRE = qr/::/;   # regexp to screen out request which no listeners are interested in
                                 # (maintained by __updateListenerSuperRE, :: = won't match)
 
+my $alwaysUseIxHashes = 0;      # global flag which is set when we need to use tied IxHashes
+                                # this is set when a cli subscription is active
+
 our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $log = logger('control.command');
@@ -821,7 +824,9 @@ sub notifyFromArray {
 
 	my $request = Slim::Control::Request->new(
 		(blessed($client) ? $client->id() : undef), 
-		$requestLineRef
+		$requestLineRef,
+		undef,
+		1, # force use of tied ixhash to maintain ordering of the array
 	);
 	
 	push @notificationQueue, $request;
@@ -910,6 +915,19 @@ sub hasSubscribers {
 	return 0;
 }
 
+=head2 alwaysOrder ( $val )
+
+Set the flag to always order elements stored in request objects.  This forces the use of tied IxHashes
+for all requests rather than just those requests which ask for it in Slim::Controll::Request->new()
+
+It is required if renderAsArray is to be called on the request and so is set by the cli handler whenever
+there are cli subscriptions active.
+
+=cut
+sub alwaysOrder {
+	$alwaysUseIxHashes = shift;
+}
+
 ################################################################################
 # Constructors
 ################################################################################
@@ -933,12 +951,18 @@ sub new {
 	my $requestLineRef = shift;    # reference to an array containing the 
                                    # request verbs
 	my $paramsRef      = shift;    # reference to a hash containing the params
-	
+	my $useIxHashes    = shift;    # request requires param ordering to be maintained (cli)
+
+	$useIxHashes ||= $alwaysUseIxHashes; # if a cli subscription exists then always use IxHashes
+
 	if (!defined $paramsRef) {
-		tie (my %paramsHash, "Tie::IxHash");
+		my %paramsHash;
+		tie %paramsHash, "Tie::IxHash" if $useIxHashes;
 		$paramsRef = \%paramsHash;
 	}
-	tie (my %resultHash, "Tie::IxHash");
+
+	my %resultHash;
+	tie %resultHash, "Tie::IxHash" if $useIxHashes;
 	
 	my $self = {
 		'_request'           => [],
@@ -960,6 +984,7 @@ sub new {
 		'_ae_filter'         => undef,
 		'_ae_cleanup'        => undef,
 		'_private'           => undef,
+		'_useixhash'         => $useIxHashes,
 	};
 
 	bless $self, $class;
@@ -992,6 +1017,7 @@ sub virginCopy {
 	$copy->{'_ae_cleanup'} = $self->{'_ae_cleanup'};
 	$copy->{'_curparam'} = $self->{'_curparam'};
 	$copy->{'_requeststr'} = $self->{'_requeststr'};
+	$copy->{'_useixhash'} = $self->{'_useixhash'};
 
 	# duplicate the arrays and hashes
 	my @request = @{$self->{'_request'}};
@@ -1376,10 +1402,7 @@ sub addParamPos {
 
 # get a parameter by name
 sub getParam {
-	my $self = shift;
-	my $key = shift || return;
-	
-	return ${$self->{'_params'}}{$key};
+	return $_[0]->{'_params'}->{ $_[1] };
 }
 
 # delete a parameter by name
@@ -1394,7 +1417,9 @@ sub deleteParam {
 sub getParamsCopy {
 	my $self = shift;
 	
-	tie my %paramHash, 'Tie::IxHash';
+	my %paramHash;
+
+	tie %paramHash, 'Tie::IxHash' if $self->{'_useixhash'};
 	
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 		$paramHash{$key} = $val;
@@ -1422,7 +1447,12 @@ sub setResultFirst {
 	#${$self->{'_results'}}{$key} = $val;
 	
 #	(tied %{$self->{'_results'}})->first($key => $val);
-	(tied %{$self->{'_results'}})->Unshift($key => $val);
+
+	if ($self->{'_useixhash'}) {
+		(tied %{$self->{'_results'}})->Unshift($key => $val);
+	} else {
+		${$self->{'_results'}}{$key} = $val;
+	}
 }
 
 sub addResultLoop {
@@ -1445,7 +1475,8 @@ sub addResultLoop {
 	}
 	
 	if (!defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
-		tie my %paramHash, 'Tie::IxHash';
+		my %paramHash;
+		tie %paramHash, 'Tie::IxHash' if $self->{'_useixhash'};
 		
 		${$self->{'_results'}}{$loop}->[$loopidx] = \%paramHash;
 	}
@@ -1615,7 +1646,9 @@ sub getResultLoop {
 sub cleanResults {
 	my $self = shift;
 
-	tie my %resultHash, 'Tie::IxHash';
+	my %resultHash;
+
+	tie %resultHash, 'Tie::IxHash' if $self->{'_useixhash'};
 	
 	# not sure this helps release memory, but can't hurt
 	delete $self->{'_results'};
@@ -2124,7 +2157,16 @@ sub fixEncoding {
 
 # perform the same feat that the old execute: array in, array out
 sub executeLegacy {
-	my $request = executeRequest(@_);
+	my $client = shift;
+	my $parrayref = shift;
+
+	# create a request from the array - using ixhashes so renderAsArray works
+	my $request = Slim::Control::Request->new( 
+		(blessed($client) ? $client->id() : undef), 
+		$parrayref,
+		undef,
+		1,
+	);
 	
 	if (defined $request) {
 
@@ -2136,7 +2178,11 @@ sub executeLegacy {
 sub renderAsArray {
 	my $self = shift;
 	my $encoding = shift;
-	
+
+	if (!$self->{'_useixhash'}) {
+		logBacktrace("request should set useIxHashes in Slim::Control::Request->new()");
+	}
+
 	my @returnArray;
 	
 	# conventions: 
@@ -2385,6 +2431,9 @@ sub __parse {
 	my $done       = 0;				# are we done yet?
 	my $DBp        = \%dispatchDB;	# pointer in the dispatch table
 	my $match      = $requestLineRef->[$LRindex]; # verb of the command we're trying to match
+	my @request;
+	my $params     = $self->{'_params'};
+	my $curparam   = 0;
 
 	while (!$done) {
 
@@ -2442,7 +2491,8 @@ sub __parse {
 								$log->debug("....not out of verbs, adding param [$key, $match]");
 							}
 
-							$self->addParam($key, $match);
+							$params->{$key} = $match;
+							++$curparam;
 						}
 
 						# and continue with $key...
@@ -2468,7 +2518,7 @@ sub __parse {
 			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
 
 				# add $match to the request list if it is something sensible
-				$self->addRequest($match);
+				push @request, $match;
 			}
 
 			# we're pointing to an array -> done
@@ -2487,7 +2537,7 @@ sub __parse {
 			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
 
 				# add $match to the request list if it is something sensible
-				$self->addRequest($match);
+				push @request, $match;
 			}
 
 			$DBp = \%{$DBp->{$match}};
@@ -2496,7 +2546,8 @@ sub __parse {
 	}
 
 	# create a string containg all request verbs to test against with a regexp
-	$self->{'_requeststr'} = join(',', @{$self->{'_request'}});
+	$self->{'_request'}    = \@request;
+	$self->{'_requeststr'} = join(',', @request);
 
 	if (defined $found) {
 		# 0: needs client
@@ -2510,12 +2561,13 @@ sub __parse {
 			# try tags if we know we have some
 			if ($found->[2] && ($requestLineRef->[$i] =~ /([^:]+):(.*)/)) {
 
-				$self->addParam($1, $2);
+				$params->{$1} = $2;
+				++$curparam;
 
 			} else {
 
 				# default to positional param...
-				$self->addParamPos($requestLineRef->[$i]);
+				$params->{ "_p" . $curparam++ } = $requestLineRef->[$i];
 			}
 		}
 
@@ -2536,9 +2588,11 @@ sub __parse {
 		# only for the benefit of CLI echoing...
 		for (my $i = $LRindex; $i < scalar @{$requestLineRef}; $i++) {
 
-			$self->addParamPos($requestLineRef->[$i]);
+			$params->{ "_p" . $curparam++ } = $requestLineRef->[$i];
 		}
 	}
+
+	$self->{'_curparam'} = $curparam;
 }
 
 # callback for the subscriptions.

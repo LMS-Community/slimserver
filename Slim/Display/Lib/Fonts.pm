@@ -58,7 +58,7 @@ my $ord0a = ord("\x0a");
 my $maxLines = 3; # Max lines any display will render
 
 # Keep a cache of measure text results to avoid calling string which is expensive
-tie my %measureTextCache, 'Tie::Cache::LRU', 32;
+my %measureTextCache;
 
 # TrueType support by using GD
 my $canUseGD = eval {
@@ -512,17 +512,16 @@ sub measureText {
 	my $fontname = shift;
 	my $string = shift;
 
-	my $cacheKey = "$fontname-$string";
+	return $measureTextCache{"$fontname-$string"} if exists $measureTextCache{"$fontname-$string"};
 
-	return $measureTextCache{$cacheKey} if exists $measureTextCache{$cacheKey};
+	# delete an old entry if the cache is too large (faster than LRU)
+	if (keys %measureTextCache > 4) {
+		delete $measureTextCache{ (keys %measureTextCache)[0] };
+	}
 
-	my $bits = string($fontname, $string);
 	return 0 if (!$fontname || !$fontheight->{$fontname});
-	my $len = length($bits)/($fontheight->{$fontname}/8);
 
-	$measureTextCache{$cacheKey} = $len;
-	
-	return $len;
+	return $measureTextCache{"$fontname-$string"} = length( string($fontname, $string) ) / ( $fontheight->{$fontname} / 8 );
 }
 	
 sub graphicsDirs {

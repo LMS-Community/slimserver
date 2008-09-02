@@ -544,7 +544,7 @@ sub cli_process {
 	}
 
 	# create a request
-	my $request = Slim::Control::Request->new($clientid, $arrayRef);
+	my $request = Slim::Control::Request->new($clientid, $arrayRef, undef, 1);
 
 	return if !defined $request;
 
@@ -779,7 +779,7 @@ sub canQuery {
 	} else {
 
 		# create a request with the array...
-		my $testrequest = Slim::Control::Request->new(undef, \@array);
+		my $testrequest = Slim::Control::Request->new(undef, \@array, undef, 1);
 		
 		# ... and return if we found a func for it or not
 		$request->addResult('_can', ($testrequest->isStatusNotDispatchable ? 0 : 1));
@@ -942,11 +942,17 @@ sub cli_subscribe_manage {
 		Slim::Control::Request::subscribe(\&cli_subscribe_notification);
 		$cli_subscribed = 1;
 
+		# force request objects to always order results so we can send on the cli
+		Slim::Control::Request::alwaysOrder(1);
+
 	# unsubscribe
 	} elsif (!$subscribe && $cli_subscribed) {
 
 		Slim::Control::Request::unsubscribe(\&cli_subscribe_notification);
 		$cli_subscribed = 0;
+
+		# turn off ordering as it is expensive and we have no cli listeners
+		Slim::Control::Request::alwaysOrder(0);
 	}
 }
 
