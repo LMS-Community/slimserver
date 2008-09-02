@@ -358,6 +358,11 @@ sub tokenizeConvertCommand {
 			}
 		}
 	}
+	
+	# Hack to avoid passing 0 bitrate to lame
+	if ($command =~ /lame/ && $maxRate == 0) {
+		$maxRate = 320;
+	}
 
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
