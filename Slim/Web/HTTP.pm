@@ -862,7 +862,7 @@ sub processURL {
 	
 		my $address = $peeraddr{$httpClient};
 	
-		$log->is_info && info("processURL found HTTP client at address=$address");
+		$log->is_info && $log->info("processURL found HTTP client at address=$address");
 	
 		$client = Slim::Player::Client::getClient($address);
 		
