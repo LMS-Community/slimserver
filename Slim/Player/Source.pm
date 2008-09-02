@@ -372,7 +372,7 @@ sub _markStreamingTrackAsPlayed {
 	my $client = shift->master();
 	my $song = $client->controller()->streamingSong();
 	if (defined($song)) {
-		$client->controller()->playerTrackStarted();
+		$client->controller()->playerTrackStarted($client);
 	}
 }
 
