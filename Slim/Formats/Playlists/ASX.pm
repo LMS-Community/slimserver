@@ -95,6 +95,7 @@ sub read {
 				REF:
 				for my $ref ( @{$refs} ) {
 					if ( my $href = $ref->{HREF} ) {
+						next if $href !~ /^(http|mms)/i;
 						push @entries, {
 							title => $title,
 							href  => $href,
