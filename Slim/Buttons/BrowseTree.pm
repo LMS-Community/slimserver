@@ -464,7 +464,7 @@ sub setMode {
 			my $index = shift;
 
 			return ref $items->[$index] && $items->[$index]->can('titlesort') ? 
-				$items->[$index]->titlesort : Slim::Utils::Text::ignoreCaseArticles($items->[$index]);
+				$items->[$index]->titlesort : Slim::Utils::Text::ignorePunct($items->[$index]);
 		},
 	);
 
