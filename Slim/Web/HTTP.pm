@@ -317,7 +317,7 @@ sub skins {
 			next if $UI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 
-			$log->info("skin entry: $dir");
+			$log->is_info && $log->info("skin entry: $dir");
 
 			if ($dir eq defaultSkin()) {
 				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('DEFAULT_SKIN') : defaultSkin();
@@ -374,7 +374,7 @@ sub processHTTP {
 	# Remove keep-alive timeout
 	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
-	$log->info("Reading request...");
+	$log->is_info && $log->info("Reading request...");
 
 	my $request    = $httpClient->get_request();
 	# socket half-closed from client
@@ -449,7 +449,7 @@ sub processHTTP {
 			# counter in sendResponse()
 			$response->header('Connection' => 'close');
 
-			$log->info("Hit MAXKEEPALIVES, will close connection.");
+			$log->is_info && $log->info("Hit MAXKEEPALIVES, will close connection.");
 
 		} else {
 
@@ -498,7 +498,7 @@ sub processHTTP {
 		my $uri   = $request->uri();
 		my $path  = $uri->path();
 		
-		$log->debug("Raw path is [$path]");
+		$log->is_debug && $log->debug("Raw path is [$path]");
 
 		# break here for raw HTTP code
 		# we hand the $response object only, it contains the almost unmodified request
@@ -506,7 +506,7 @@ sub processHTTP {
 		# $rawFunc shall call addHTTPResponse
 		if (my $rawFunc = $rawFunctions{$path}) {
 
-			$log->info("Handling [$path] using raw function");
+			$log->is_info && $log->info("Handling [$path] using raw function");
 
 			if (ref($rawFunc) eq 'CODE') {
 				
@@ -617,7 +617,7 @@ sub processHTTP {
 						$params->{$name} = $value;
 					}
 
-					$log->info("HTTP parameter $name = $value");
+					$log->is_info && $log->info("HTTP parameter $name = $value");
 
 					my $csrfName = $name;
 					if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
@@ -630,7 +630,7 @@ sub processHTTP {
 
 					$params->{$name} = 1;
 
-					$log->info("HTTP parameter $name = 1");
+					$log->is_info && $log->info("HTTP parameter $name = 1");
 
 					my $csrfName = $name;
 					if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
@@ -685,7 +685,7 @@ sub processHTTP {
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && isaSkin($1)) {
 
-				$log->info("Alternate skin $1 requested, redirecting to $uri/ append a slash.");
+				$log->is_info && $log->info("Alternate skin $1 requested, redirecting to $uri/ append a slash.");
 
 				$response->code(RC_MOVED_PERMANENTLY);
 				$response->header('Location' => $uri . '/');
@@ -701,13 +701,13 @@ sub processHTTP {
 				my $desiredskin = $1;
 
 				# Requesting a specific skin, verify and set the skinOverride param
-				$log->info("Alternate skin $desiredskin requested");
+				$log->is_info && $log->info("Alternate skin $desiredskin requested");
 
 				my $skinname = isaSkin($desiredskin);
 				
 				if ($skinname) {
 
-					$log->info("Rendering using $skinname");
+					$log->is_info && $log->info("Rendering using $skinname");
 
 					$params->{'skinOverride'} = $skinname;
 					$params->{'webroot'} = $params->{'webroot'} . "$skinname/";
@@ -752,7 +752,7 @@ sub processHTTP {
 		if ($params->{'browserType'} =~ /^IE\d?$/ &&
 		($params->{'skinOverride'} || $prefs->get('skin')) eq 'Nokia770') 
 		{
-			$log->debug("Internet Explorer Detected with Nokia Skin, redirecting to Touch");
+			$log->is_debug && $log->debug("Internet Explorer Detected with Nokia Skin, redirecting to Touch");
 			$params->{'skinOverride'} = 'Touch';
 		}
 
@@ -862,7 +862,7 @@ sub processURL {
 	
 		my $address = $peeraddr{$httpClient};
 	
-		$log->info("processURL found HTTP client at address=$address");
+		$log->is_info && info("processURL found HTTP client at address=$address");
 	
 		$client = Slim::Player::Client::getClient($address);
 		
@@ -870,7 +870,7 @@ sub processURL {
 
 			my $paddr = getpeername($httpClient);
 
-			$log->info("New http client at $address");
+			$log->is_info && $log->info("New http client at $address");
 
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
@@ -913,7 +913,7 @@ sub processURL {
 
 			$prefs->client($client)->set('transcodeBitrate',$temprate); 	 
 
-			$log->info("Setting transcode bitrate to $temprate");
+			$log->is_info && $log->info("Setting transcode bitrate to $temprate");
 
 		} else {
 
@@ -1053,7 +1053,7 @@ sub generateHTTPResponse {
 		);
 	}
 
-	$log->info("Generating response for ($type, $contentType) $path");
+	$log->is_info && $log->info("Generating response for ($type, $contentType) $path");
 
 	# some generally useful form details...
 	if (defined($client) && exists($pageFunctions{$path})) {
@@ -1090,250 +1090,253 @@ sub generateHTTPResponse {
 
 		delete $params->{'params'};
 	}
-
-	if (my $classOrCode = $pageFunctions{$path}) {
-
-		# if we match one of the page functions as defined above,
-		# execute that, and hand it a callback to send the data.
-
-		$::perfmon && (my $startTime = Time::HiRes::time());
-
-		if (ref($classOrCode) eq 'CODE') {
-
-			# XXX: should this use eval?
-
-			$body = &{$classOrCode}(
-				$client,
-				$params,
-				\&prepareResponseForSending,
-				$httpClient,
-				$response,
-			);
-
-		} elsif ($classOrCode->can('handler')) {
-
-			# Pull the player ID out and create a client from it
-			# if we need to use it for player settings. 
-			if (exists $params->{'playerid'} && $classOrCode->needsClient) {
-
-				$client = Slim::Player::Client::getClient($params->{'playerid'});
-			}
-
-			$body = $classOrCode->handler(
-				$client,
-				$params,
-				\&prepareResponseForSending,
-				$httpClient,
-				$response,
-			);
+	
+	# Static files handled here, stream them out to the browser to avoid wasting memory
+	my $isStatic = 0;
+	if ( $path =~ /favicon\.ico/ ) {
+		$path = 'html/mypage.ico';
+		$isStatic = 1;
+	}
+	elsif ( $path =~ /\.css|\.js|robots\.txt/ ) {
+		$isStatic = 1;
+	}
+	elsif (    $path =~ m{html/} 
+			&& $path !~ /\/\w+_(X|\d+)x(X|\d+)
+                    (?:_([sSfFpc]))?        # resizeMode, given by a single character
+                    (?:_[\da-fA-F]+)? 		# background color, optional
+		/x   # extend this to also include any image that gives resizing parameters
+	) {
+		if ( $contentType ne 'text/html' && $contentType ne 'text/xml' && $contentType ne 'application/x-java-jnlp-file' ) {
+			$isStatic = 1;
 		}
-		
-		$::perfmon && $startTime && $pageBuild->log(Time::HiRes::time() - $startTime, "Page: $path");
-
-	} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
-
-		# short circuit here if it's a slim/squeezebox
-		if ($sendMetaData{$httpClient}) {
-			$response->header("icy-metaint" => METADATAINTERVAL);
-			$response->header("icy-name"    => string('WELCOME_TO_SQUEEZECENTER'));
-		}
-
-		my $headers = _stringifyHeaders($response) . $CRLF;
-
-		$metaDataBytes{$httpClient} = - length($headers);
-		
-		addStreamingResponse($httpClient, $headers);
-
-		return 0;
-
-	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)/ || 
-		$path  =~ /\/\w+_(X|\d+)x(X|\d+)
-                        (?:_([sSfFpc]))?        # resizeMode, given by a single character
-                        (?:_[\da-fA-F]+)? 		# background color, optional
-			/x   # extend this to also include any image that gives resizing parameters
-		) {
-
-		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest(
-			$client, 
-			$path, 
-			$params,
-			\&prepareResponseForSending,
-			$httpClient,
-			$response,
-		);
-
-	} elsif ($path =~ /music\/(\d+)\/download/) {
-
-		my $obj = Slim::Schema->find('Track', $1);
-
-		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
-
-			$log->info("Opening $obj to stream...");
-			
-			my $ct = $Slim::Music::Info::types{$obj->content_type()};
-			
-			sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
-			
-			return 0;
-		}
-
-	} elsif ($path =~ /favicon\.ico/) {
-
+	}
+	
+	if ( $isStatic ) {
 		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
 
 		if (contentHasBeenModified($response, $mtime, $inode, $size)) {
 
-			($body, $mtime, $inode, $size) = getStaticContent("html/mypage.ico", $params); 
+			$params->{contentAsFh} = 1;
+
+			# $body contains a filehandle for static content
+			$body = getStaticContent($path, $params);
 		}
+	}
+	else {
+		if (my $classOrCode = $pageFunctions{$path}) {
 
-	} elsif ($path =~ /\.css/) {
+			# if we match one of the page functions as defined above,
+			# execute that, and hand it a callback to send the data.
 
-		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
+			$::perfmon && (my $startTime = Time::HiRes::time());
 
-		if (contentHasBeenModified($response, $mtime, $inode, $size)) {
+			if (ref($classOrCode) eq 'CODE') {
 
-			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
-		}
+				# XXX: should this use eval?
 
-	} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
-		
-		require File::ReadBackwards;
+				$body = &{$classOrCode}(
+					$client,
+					$params,
+					\&prepareResponseForSending,
+					$httpClient,
+					$response,
+				);
 
-		# if the HTTP client has asked for a text file, then always return the text on the display
-		$contentType = "text/plain";
+			} elsif ($classOrCode->can('handler')) {
 
-		$response->header("Refresh" => "10; url=$path" . ($params->{lines} ? '?lines=' . $params->{lines} : ''));
-		$response->header("Content-Type" => "text/plain; charset=utf-8");
-		
-		my $logfile = $1;
-		$logfile =~ s/log/server/;
-		$logfile .= 'LogFile';
-		
-		my $count = $params->{lines} || 50;
+				# Pull the player ID out and create a client from it
+				# if we need to use it for player settings. 
+				if (exists $params->{'playerid'} && $classOrCode->needsClient) {
 
-		$$body ||= '';
-
-		my $file = File::ReadBackwards->new(Slim::Utils::Log->$logfile);
-		
-		if ($file){
-
-			my @lines;
-			while ( --$count && (my $line = $file->readline()) ) {
-				unshift (@lines, $line);
-			}
-			$$body .= join('', @lines);
-
-			$file->close();			
-		};		
-
-	} elsif ($path =~ /(?:status|robots)\.txt/) {
-
-		# if the HTTP client has asked for a text file, then always return the text on the display
-		$contentType = "text/plain";
-
-		$response->header("Refresh" => "30; url=$path");
-		$response->header("Content-Type" => "text/plain; charset=utf-8");
-
-		if ( $path =~ /status/ ) {
-			# This code is deprecated. Jonas Salling is the only user
-			# anymore, and we're trying to move him to use the CLI.
-			buildStatusHeaders($client, $response, $p);
-
-			if (defined($client)) {
-				my $parsed = $client->curLines();
-				my $line1 = $parsed->{line}[0] || '';
-				my $line2 = $parsed->{line}[1] || '';
-				$$body = $line1 . $CRLF . $line2 . $CRLF;
-			}
-		}
-		elsif ( $path =~ /robots/ ) {
-			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
-		}
-
-	} elsif ($path =~ /status\.m3u/) {
-
-		# if the HTTP client has asked for a .m3u file, then always return the current playlist as an M3U
-		if (defined($client)) {
-
-			my $count = Slim::Player::Playlist::count($client) && do {
-				$$body = Slim::Formats::Playlists::M3U->write(\@{Slim::Player::Playlist::playList($client)});
-			};
-		}
-
-	} elsif ($path =~ /html\//) {
-		# content is in the "html" subdirectory within the template directory.
-
-		# if it's HTML then use the template mechanism
-		if ($contentType eq 'text/html' || $contentType eq 'text/xml' || $contentType eq 'application/x-java-jnlp-file') {
-
-			# if the path ends with a slash, then server up the index.html file
-			$path .= 'index.html' if $path =~ m|/$|;
-			$body  = filltemplatefile($path, $params);
-
-		} else {
-
-			($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
-
-			if (contentHasBeenModified($response, $mtime, $inode, $size)) {
-
-				# otherwise just send back the binary file
-				($body, $mtime, $inode, $size) = getStaticContent($path, $params);
-			}
-		}
-
-	} elsif ( $path =~ $rawFilesRegexp ) {
-		# path is for download of known file outside http directory
-		my ($file, $ct);
-
-		for my $key (keys %rawFiles) {
-
-			if ( $path =~ $key ) {
-
-				my $fileinfo = $rawFiles{$key};
-				$file = ref $fileinfo->{file} eq 'CODE' ? $fileinfo->{file}->($path) : $fileinfo->{file};
-				$ct   = ref $fileinfo->{ct}   eq 'CODE' ? $fileinfo->{ct}->($path)   : $fileinfo->{ct};
-
-				if (!-e $file) { 
-					$file = undef;
+					$client = Slim::Player::Client::getClient($params->{'playerid'});
 				}
 
-				last;
+				$body = $classOrCode->handler(
+					$client,
+					$params,
+					\&prepareResponseForSending,
+					$httpClient,
+					$response,
+				);
 			}
-		}
+		
+			$::perfmon && $startTime && $pageBuild->log(Time::HiRes::time() - $startTime, "Page: $path");
 
-		if ($file) {
-			# download the file
-			$log->info("serving file: $file for path: $path");
-			sendStreamingFile( $httpClient, $response, $ct, $file );
+		} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
+
+			# short circuit here if it's a slim/squeezebox
+			if ($sendMetaData{$httpClient}) {
+				$response->header("icy-metaint" => METADATAINTERVAL);
+				$response->header("icy-name"    => string('WELCOME_TO_SQUEEZECENTER'));
+			}
+
+			my $headers = _stringifyHeaders($response) . $CRLF;
+
+			$metaDataBytes{$httpClient} = - length($headers);
+		
+			addStreamingResponse($httpClient, $headers);
+
 			return 0;
 
-		} else {
-			# 404 error
-			$log->warn("unable to find file for path: $path");
+		} elsif ($path =~ /music\/(\w+)\/(cover|thumb)/ || 
+			$path  =~ /\/\w+_(X|\d+)x(X|\d+)
+	                        (?:_([sSfFpc]))?        # resizeMode, given by a single character
+	                        (?:_[\da-fA-F]+)? 		# background color, optional
+				/x   # extend this to also include any image that gives resizing parameters
+			) {
 
-			$response->content_type('text/html');
-			$response->code(RC_NOT_FOUND);
-
-			$body = filltemplatefile('html/errors/404.html', $params);
-
-			return prepareResponseForSending(
-				$client,
+			($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest(
+				$client, 
+				$path, 
 				$params,
-				$body,
+				\&prepareResponseForSending,
 				$httpClient,
 				$response,
 			);
-		}
+
+		} elsif ($path =~ /music\/(\d+)\/download/) {
+
+			my $obj = Slim::Schema->find('Track', $1);
+
+			if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
+
+				$log->is_info && $log->info("Opening $obj to stream...");
 			
-	} else {
-		# who knows why we're here, we just know that something ain't right
-		$$body = undef;
+				my $ct = $Slim::Music::Info::types{$obj->content_type()};
+			
+				sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
+			
+				return 0;
+			}
+
+		} elsif ($path =~ /(server|scanner|perfmon|log)\.(?:log|txt)/) {
+		
+			require File::ReadBackwards;
+
+			# if the HTTP client has asked for a text file, then always return the text on the display
+			$contentType = "text/plain";
+
+			$response->header("Refresh" => "10; url=$path" . ($params->{lines} ? '?lines=' . $params->{lines} : ''));
+			$response->header("Content-Type" => "text/plain; charset=utf-8");
+		
+			my $logfile = $1;
+			$logfile =~ s/log/server/;
+			$logfile .= 'LogFile';
+		
+			my $count = $params->{lines} || 50;
+
+			$$body ||= '';
+
+			my $file = File::ReadBackwards->new(Slim::Utils::Log->$logfile);
+		
+			if ($file){
+
+				my @lines;
+				while ( --$count && (my $line = $file->readline()) ) {
+					unshift (@lines, $line);
+				}
+				$$body .= join('', @lines);
+
+				$file->close();			
+			};		
+
+		} elsif ($path =~ /status\.txt/) {
+
+			# if the HTTP client has asked for a text file, then always return the text on the display
+			$contentType = "text/plain";
+
+			$response->header("Refresh" => "30; url=$path");
+			$response->header("Content-Type" => "text/plain; charset=utf-8");
+
+			if ( $path =~ /status/ ) {
+				# This code is deprecated. Jonas Salling is the only user
+				# anymore, and we're trying to move him to use the CLI.
+				buildStatusHeaders($client, $response, $p);
+
+				if (defined($client)) {
+					my $parsed = $client->curLines();
+					my $line1 = $parsed->{line}[0] || '';
+					my $line2 = $parsed->{line}[1] || '';
+					$$body = $line1 . $CRLF . $line2 . $CRLF;
+				}
+			}
+
+		} elsif ($path =~ /status\.m3u/) {
+
+			# if the HTTP client has asked for a .m3u file, then always return the current playlist as an M3U
+			if (defined($client)) {
+
+				my $count = Slim::Player::Playlist::count($client) && do {
+					$$body = Slim::Formats::Playlists::M3U->write(\@{Slim::Player::Playlist::playList($client)});
+				};
+			}
+
+		} elsif ($path =~ /html\//) {
+			# content is in the "html" subdirectory within the template directory.
+
+			# if it's HTML then use the template mechanism
+			if ($contentType eq 'text/html' || $contentType eq 'text/xml' || $contentType eq 'application/x-java-jnlp-file') {
+
+				# if the path ends with a slash, then server up the index.html file
+				$path .= 'index.html' if $path =~ m|/$|;
+				$body  = filltemplatefile($path, $params);
+
+			}
+
+		} elsif ( $path =~ $rawFilesRegexp ) {
+			# path is for download of known file outside http directory
+			my ($file, $ct);
+
+			for my $key (keys %rawFiles) {
+
+				if ( $path =~ $key ) {
+
+					my $fileinfo = $rawFiles{$key};
+					$file = ref $fileinfo->{file} eq 'CODE' ? $fileinfo->{file}->($path) : $fileinfo->{file};
+					$ct   = ref $fileinfo->{ct}   eq 'CODE' ? $fileinfo->{ct}->($path)   : $fileinfo->{ct};
+
+					if (!-e $file) { 
+						$file = undef;
+					}
+
+					last;
+				}
+			}
+
+			if ($file) {
+				# download the file
+				$log->is_info && $log->info("serving file: $file for path: $path");
+				sendStreamingFile( $httpClient, $response, $ct, $file );
+				return 0;
+
+			} else {
+				# 404 error
+				$log->is_warn && $log->warn("unable to find file for path: $path");
+
+				$response->content_type('text/html');
+				$response->code(RC_NOT_FOUND);
+
+				$body = filltemplatefile('html/errors/404.html', $params);
+
+				return prepareResponseForSending(
+					$client,
+					$params,
+					$body,
+					$httpClient,
+					$response,
+				);
+			}
+			
+		} else {
+			# who knows why we're here, we just know that something ain't right
+			$$body = undef;
+		}
 	}
 
 	# if there's a reference to an empty value, then there is no valid page at all
 	if (!$response->code() || $response->code() ne RC_NOT_MODIFIED) {
 
-		if (defined $body && !defined $$body) {
+		if (defined $body && ref $body eq 'SCALAR' && !defined $$body) {
 
 			$response->code(RC_NOT_FOUND);
 			$body = filltemplatefile('html/errors/404.html', $params);
@@ -1372,7 +1375,14 @@ sub generateHTTPResponse {
 
 		my @etag = ();
 
-		$size ||= length($$body);
+		if ( !defined $size ) {
+			if ( ref $body eq 'SCALAR' ) {
+				$size = length($$body);
+			}
+			elsif ( ref $body eq 'FileHandle' ) {
+				$size = (stat $body)[7];
+			}
+		}
 
 		push @etag, sprintf('%lx', $inode) if $inode;
 		push @etag, sprintf('%lx', $size)  if $size;
@@ -1388,6 +1398,22 @@ sub generateHTTPResponse {
 	#}
 
 	return 0 unless $body;
+	
+	if ( ref $body eq 'FileHandle' ) {
+		$response->content_length( $size );
+		
+		my $headers = _stringifyHeaders($response) . $CRLF;
+
+		$streamingFiles{$httpClient} = $body;
+
+		# we are not a real streaming session, so we need to avoid sendStreamingResponse using the random $client stored in
+		# $peerclient as this will cause streaming to the real client $client to stop.
+		delete $peerclient{$httpClient};
+
+		addStreamingResponse($httpClient, $headers);
+		
+		return;
+	}
 
 	# if the reference to the body is itself undefined, then we've started
 	# generating the page in the background
@@ -1429,7 +1455,7 @@ sub sendStreamingFile {
 				$last = $size - 1;
 			}
 		
-			$log->debug("Handling Range request: $first-$last");
+			$log->is_debug && $log->debug("Handling Range request: $first-$last");
 		
 			seek $fh, $first, 0;
 		
@@ -1489,7 +1515,7 @@ sub contentHasBeenModified {
 
 		if ($ifMatch ne '*' && (!$etag || $etag eq 'W' || $etag ne $ifMatch)) {
 
-			$log->debug("\tifMatch - RC_PRECONDITION_FAILED");
+			$log->is_debug && $log->debug("\tifMatch - RC_PRECONDITION_FAILED");
 			$response->code(RC_PRECONDITION_FAILED);
 		}
 
@@ -1503,7 +1529,7 @@ sub contentHasBeenModified {
 
 		if ($ifUnmodified && time() > $ifUnmodified) {
 
-			 $log->debug("\tifUnmodified - RC_PRECONDITION_FAILED");
+			 $log->is_debug && $log->debug("\tifUnmodified - RC_PRECONDITION_FAILED");
 
 			 $response->code(RC_PRECONDITION_FAILED);
          	}
@@ -1532,7 +1558,7 @@ sub contentHasBeenModified {
 
 		if ($ifNoneMatch eq '*') {
 
-			$log->debug("\tifNoneMatch - * - returning 304");
+			$log->is_debug && $log->debug("\tifNoneMatch - * - returning 304");
  			$response->code(RC_NOT_MODIFIED);
 
 		} elsif ($etag) {
@@ -1541,13 +1567,13 @@ sub contentHasBeenModified {
 
 				if ($etag ne 'W' && $ifNoneMatch eq $etag) {
 
-					$log->debug("\tETag is not weak and ifNoneMatch eq ETag - returning 304");
+					$log->is_debug && $log->debug("\tETag is not weak and ifNoneMatch eq ETag - returning 304");
 					$response->code(RC_NOT_MODIFIED);
 				}
 
 			} elsif ($ifNoneMatch eq $etag) {
 
-				$log->debug("\tifNoneMatch eq ETag - returning 304");
+				$log->is_debug && $log->debug("\tifNoneMatch eq ETag - returning 304");
 				$response->code(RC_NOT_MODIFIED);
 			}
  		}
@@ -1771,7 +1797,7 @@ sub sendResponse {
 	# abort early if we're not connected
 	if (!$httpClient->connected) {
 
-		$log->warn("Not connected with $peeraddr{$httpClient}:$port, closing socket");
+		$log->is_warn && $log->warn("Not connected with $peeraddr{$httpClient}:$port, closing socket");
 
 		closeHTTPSocket($httpClient, 0, 'not connected');
 		return;
@@ -1780,7 +1806,7 @@ sub sendResponse {
 	# abort early if we don't have anything.
 	if (!$segment) {
 
-		$log->info("No segment to send to $peeraddr{$httpClient}:$port, waiting for next request...");
+		$log->is_info && $log->info("No segment to send to $peeraddr{$httpClient}:$port, waiting for next request...");
 
 		# Nothing to send, so we take the socket out of the write list.
 		# When we process the next request, it will get put back on.
@@ -1796,7 +1822,7 @@ sub sendResponse {
 
 	if ($! == EWOULDBLOCK) {
 
-		$log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}:$port");
+		$log->is_info && $log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}:$port");
 
 		if (!defined $sentbytes) {
 			$sentbytes = 0;
@@ -1806,7 +1832,7 @@ sub sendResponse {
 	if (!defined($sentbytes)) {
 
 		# Treat $httpClient with suspicion
-		$log->info("Send to $peeraddr{$httpClient}:$port had error ($!), closing and aborting.");
+		$log->is_info && $log->info("Send to $peeraddr{$httpClient}:$port had error ($!), closing and aborting.");
 
 		closeHTTPSocket($httpClient, 0, "$!");
 
@@ -1822,19 +1848,19 @@ sub sendResponse {
 		
 	} else {
 		
-		$log->info("Sent $sentbytes to $peeraddr{$httpClient}:$port");
+		$log->is_info && $log->info("Sent $sentbytes to $peeraddr{$httpClient}:$port");
 
 		# sent full message
 		if (@{$outbuf{$httpClient}} == 0) {
 
 			# no more messages to send
-			$log->info("No more segments to send to $peeraddr{$httpClient}:$port");
+			$log->is_info && $log->info("No more segments to send to $peeraddr{$httpClient}:$port");
 
 			
 			# close the connection if requested by the higher God pushing segments
 			if ($segment->{'close'} && $segment->{'close'} == 1) {
 				
-				$log->info("End request, connection closing for: $peeraddr{$httpClient}:$port");
+				$log->is_info && $log->info("End request, connection closing for: $peeraddr{$httpClient}:$port");
 
 				closeHTTPSocket($httpClient);
 				return;
@@ -1844,7 +1870,7 @@ sub sendResponse {
 				# We also support pipelined cometd requets, even though this is against the HTTP RFC
 				if ( ${*$httpClient}{httpd_rbuf} ) {
 					if ( ${*$httpClient}{httpd_rbuf} =~ m{^(?:GET|HEAD|POST /cometd)} ) {
-						$log->info("Pipelined request found, processing");
+						$log->is_info && $log->info("Pipelined request found, processing");
 						processHTTP($httpClient);
 						return;
 					}
@@ -1856,7 +1882,7 @@ sub sendResponse {
 
 		} else {
 
-			$log->info("More segments to send to $peeraddr{$httpClient}:$port");
+			$log->is_info && $log->info("More segments to send to $peeraddr{$httpClient}:$port");
 		}
 		
 		# Reset keep-alive timer
@@ -1911,9 +1937,6 @@ sub addStreamingResponse {
 		$client->paddr($newpeeraddr) if $newpeeraddr;
 	}
 	
-	# Disable keep-alive timeout for streaming responses
-	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
-	
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
@@ -1927,7 +1950,11 @@ sub sendStreamingResponse {
 	my $httpClient = shift;
 	my $sentbytes;
 
-	my $client = Slim::Player::Client::getClient($peerclient{$httpClient});
+	my $client;
+	
+	if ( $peerclient{$httpClient} ) {
+		$client = Slim::Player::Client::getClient($peerclient{$httpClient});
+	}
 	
 	# when we are streaming a file, we may not have a client, rather it might just be going to a web browser.
 	# assert($client);
@@ -1937,7 +1964,7 @@ sub sendStreamingResponse {
 
 	my $silence = 0;
 	
-	$log->info("sendStreaming response begun...");
+	$log->is_info && $log->info("sendStreaming response begun...");
 	
 	# Keep track of where we need to stop if this is a range request
 	my $rangeTotal;
@@ -1946,7 +1973,7 @@ sub sendStreamingResponse {
 		$rangeTotal   = ${*$streamingFile}{rangeTotal};
 		$rangeCounter = ${*$streamingFile}{rangeCounter};
 		
-		$log->debug( "  range request, sending $rangeTotal bytes ($rangeCounter sent)" );
+		$log->is_debug && $log->debug( "  range request, sending $rangeTotal bytes ($rangeCounter sent)" );
 	}
 
 	if ($client && 
@@ -1967,7 +1994,7 @@ sub sendStreamingResponse {
 
 		closeStreamingSocket($httpClient);
 
-		$log->info("Streaming client closed connection...");
+		$log->is_info && $log->info("Streaming client closed connection...");
 
 		return undef;
 	}
@@ -1977,7 +2004,7 @@ sub sendStreamingResponse {
 
 		closeStreamingSocket($httpClient);
 
-		$log->info("Squeezebox closed connection...");
+		$log->is_info && $log->info("Squeezebox closed connection...");
 
 		return undef;
 	}
@@ -1994,7 +2021,7 @@ sub sendStreamingResponse {
 		# if we aren't playing something, then queue up some silence
 		if ($silence) {
 
-			$log->info("(silence)");
+			$log->is_info && $log->info("(silence)");
 
 			my $bitrate = Slim::Utils::Prefs::maxRate($client);
 			my $silence = undef;
@@ -2027,7 +2054,7 @@ sub sendStreamingResponse {
 				# Reduce len if needed for a range request
 				if ( $rangeTotal && ( $rangeCounter + $len > $rangeTotal ) ) {
 					$len = $rangeTotal - $rangeCounter;
-					$log->debug( "Reduced read length to $len for range request" );
+					$log->is_debug && $log->debug( "Reduced read length to $len for range request" );
 				}
 
 				if ( $len ) {
@@ -2042,8 +2069,6 @@ sub sendStreamingResponse {
 
 					# we're done streaming this stored file, closing connection.
 					closeStreamingSocket($httpClient);
-
-					$log->info("we're done streaming this stored file, closing connection....");
 
 					return 0;
 				}
@@ -2081,7 +2106,7 @@ sub sendStreamingResponse {
 					$retry = RETRY_TIME_FAST;
 				}
 
-				$log->info("Nothing to stream, let's wait for $retry seconds...");
+				$log->is_info && $log->info("Nothing to stream, let's wait for $retry seconds...");
 				
 				Slim::Networking::Select::removeWrite($httpClient);
 				
@@ -2099,7 +2124,7 @@ sub sendStreamingResponse {
 	if ($sendMetaData{$httpClient}) {
 
 		# if the metadata would appear in the middle of this message, just send the bit before
-		$log->info("metadata bytes: $metaDataBytes{$httpClient}");
+		$log->is_info && $log->info("metadata bytes: $metaDataBytes{$httpClient}");
 
 		if ($metaDataBytes{$httpClient} == METADATAINTERVAL) {
 
@@ -2149,7 +2174,7 @@ sub sendStreamingResponse {
 			
 			$metaDataBytes{$httpClient} += $splitpoint;
 
-			$log->info("splitting message for metadata at $splitpoint");
+			$log->is_info && $log->info("splitting message for metadata at $splitpoint");
 		
 		} elsif (defined $segment) {
 
@@ -2174,7 +2199,7 @@ sub sendStreamingResponse {
 
 				if ($sentbytes) {
 
-					$log->info("sent incomplete chunk, requeuing " . ($segment->{'length'} - $sentbytes). " bytes");
+					$log->is_info && $log->info("sent incomplete chunk, requeuing " . ($segment->{'length'} - $sentbytes). " bytes");
 				}
 
 				$metaDataBytes{$httpClient} -= $segment->{'length'} - $sentbytes;
@@ -2187,7 +2212,7 @@ sub sendStreamingResponse {
 
 		} else {
 
-			$log->info("syswrite returned undef: $!");
+			$log->is_info && $log->info("syswrite returned undef: $!");
 
 			closeStreamingSocket($httpClient);
 
@@ -2195,19 +2220,21 @@ sub sendStreamingResponse {
 		}
 
 	} else {
-		$log->info("\$httpClient is: $httpClient");
-		if (exists $peeraddr{$httpClient}) {
-			$log->info("\$peeraddr{\$httpClient} is: $peeraddr{$httpClient}");
-			$log->info("Got nothing for streaming data to $peeraddr{$httpClient}");
-		} else {
-			$log->info("\$peeraddr{\$httpClient} is undefined");
+		if ( $log->is_info ) {
+			$log->info("\$httpClient is: $httpClient");
+			if (exists $peeraddr{$httpClient}) {
+				$log->info("\$peeraddr{\$httpClient} is: $peeraddr{$httpClient}");
+				$log->info("Got nothing for streaming data to $peeraddr{$httpClient}");
+			} else {
+				$log->info("\$peeraddr{\$httpClient} is undefined");
+			}
 		}
 		return 0;
 	}
 
 	if ($sentbytes) {
 
-		$log->info("Streamed $sentbytes to $peeraddr{$httpClient}");
+		$log->is_info && $log->info("Streamed $sentbytes to $peeraddr{$httpClient}");
 		
 		# Update sent counter if this is a range request
 		if ( $rangeTotal ) {	
@@ -2379,7 +2406,7 @@ sub _generateContentFromFile {
 	$params->{'systemSkin'} = $skin;
 	$params->{'systemLanguage'} = $prefs->get('language');
 
-	$log->info("generating from $path with type: $type");
+	$log->is_info && $log->info("generating from $path with type: $type");
 	
 	# Make sure we have a skin template for fixHttpPath to use.
 	my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
@@ -2411,7 +2438,13 @@ sub _generateContentFromFile {
 		return \$output;
 	}
 
-	my ($content, $mtime, $inode, $size) = _getFileContent($path, $skin, 1, $type eq 'mtime' ? 1 : 0);
+	my ($content, $mtime, $inode, $size) = _getFileContent(
+		$path,
+		$skin,
+		1,
+		$type eq 'mtime' ? 1 : 0,
+		$params->{contentAsFh},
+	);
 
 	if ($type eq 'mtime') {
 
@@ -2432,17 +2465,23 @@ sub _generateContentFromFile {
 # Returns a reference to the file data.
 
 sub _getFileContent {
-	my ($path, $skin, $binary, $statOnly) = @_;
+	my ($path, $skin, $binary, $statOnly, $contentAsFh) = @_;
 
 	my ($content, $template, $mtime, $inode, $size);
 
 	$path = fixHttpPath($skin, $path) || return;
 
-	$log->info("Reading http file for ($path)");
+	$log->is_info && $log->info("Reading http file for ($path)");
 	
 	if ( $statOnly ) {
 		($inode, $size, $mtime) = (stat($path))[1,7,9];
 		return (\$content, $mtime, $inode, $size);
+	}
+	
+	if ( $contentAsFh ) {
+		my $fh = FileHandle->new($path);
+		binmode $fh if $binary;
+		return $fh;
 	}
 
 	open($template, $path);
@@ -2503,13 +2542,13 @@ sub fixHttpPath {
 
 		if ($found) {
 
-			$log->info("Found path $found");
+			$log->is_info && $log->info("Found path $found");
 
 			return $found;
 		}
 	} 
 
-	$log->info("Couldn't find path: $path");
+	$log->is_info && $log->info("Couldn't find path: $path");
 
 	return undef;
 }
@@ -2612,7 +2651,7 @@ sub closeHTTPSocket {
 	
 	$reason ||= 'closed normally';
 	
-	$log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}:" . ($httpClient->peerport || 0). " ($reason)");
+	$log->is_info && $log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}:" . ($httpClient->peerport || 0). " ($reason)");
 	
 	Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
@@ -2657,11 +2696,9 @@ sub closeHTTPSocket {
 sub closeStreamingSocket {
 	my $httpClient = shift;
 	
-	$log->info("Closing streaming socket.");
-	
 	if (defined $streamingFiles{$httpClient}) {
 
-		$log->info("Closing streaming file.");
+		$log->is_info && $log->info("Closing streaming file.");
 
 		close  $streamingFiles{$httpClient};
 		delete $streamingFiles{$httpClient};
@@ -2673,8 +2710,17 @@ sub closeStreamingSocket {
 			$client->streamingsocket(undef);
 		}
 	}
-
-	closeHTTPSocket($httpClient, 1);
+	
+	# Close socket unless it's keep-alive
+	if ( $keepAlives{$httpClient} ) {
+		$log->is_info && $log->info('Keep-alive on streaming socket');
+		Slim::Networking::Select::addRead($httpClient, \&processHTTP);
+		Slim::Networking::Select::removeWrite($httpClient);
+	}
+	else {
+		$log->is_info && $log->info('Closing streaming socket');
+		closeHTTPSocket($httpClient, 1);
+	}
 
 	return;
 }
@@ -2723,7 +2769,7 @@ sub checkAuthorization {
 sub addPageFunction {
 	my ($regexp, $func) = @_;
 
-	$log->info("Adding handler for regular expression /$regexp/");
+	$log->is_info && $log->info("Adding handler for regular expression /$regexp/");
 
 	$pageFunctions{$regexp} = $func;
 }
@@ -2736,7 +2782,7 @@ sub addRawFunction {
 	my ($regexp, $funcPtr) = @_;
 
 	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-	$log->info("Adding RAW handler: /$regexp/ -> $funcName");
+	$log->is_info && $log->info("Adding RAW handler: /$regexp/ -> $funcName");
 
 	$rawFunctions{$regexp} = $funcPtr;
 }
@@ -2748,7 +2794,7 @@ sub addCloseHandler{
 	my $funcPtr = shift;
 	
 	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-	$log->info("Adding Close handler: $funcName");
+	$log->is_info && $log->info("Adding Close handler: $funcName");
 	
 	push @closeHandlers, $funcPtr;
 }
@@ -2757,7 +2803,7 @@ sub addCloseHandler{
 sub addTemplateDirectory {
 	my $dir = shift;
 
-	$log->info("Adding template directory $dir");
+	$log->is_info && $log->info("Adding template directory $dir");
 
 	push @templateDirs, $dir if (not grep({$_ eq $dir} @templateDirs));
 }
