@@ -22,17 +22,19 @@ IF hasArtwork;
 END %]
 
 [%- extJsScripts = BLOCK -%]
-	<script type="text/javascript" src="[% webroot %]html/Browse.js?r=[% revision %]"></script>
-
-	[% IF hasArtwork %]
 	<script type="text/javascript">
-		[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
-		[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
-		[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
-		[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
-		var orderByList;
+		[% IF hasArtwork %]
+			[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+			[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+			[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
+			[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
+			var orderByList;
+		[% END %]
+
+		Ext.onReady(function(){
+			Browse.init();
+		});
 	</script>
-	[% END %]
 [% END %]
 
 [% IF query %]
