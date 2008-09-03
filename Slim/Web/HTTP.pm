@@ -1075,11 +1075,18 @@ sub generateHTTPResponse {
 	}
 
 	# this might do well to break up into methods
-	if ($contentType =~ /(?:image|javascript|css)/) {
-
-		# static content should expire from cache in one hour
-		$response->expires( time() + 3600 );
-		$response->header('Cache-Control' => 'max-age=3600');
+	if ($contentType =~ /(?:image|javascript|css)/ || $path =~ /html\//) {
+ 
+		my $max = 60 * 60;
+		
+		# increase expiry to a week for static content, but not cover art
+		unless ($contentType =~ /image/ && $path !~ /html\//) {
+			$max = $max * 24 * 7;
+		}
+		
+ 		# static content should expire from cache in one hour
+		$response->expires( time() + $max );
+		$response->header('Cache-Control' => 'max-age=' . $max);
 	}
 
 	if ($contentType =~ /text/ && $path !~ /memoryusage/) {
