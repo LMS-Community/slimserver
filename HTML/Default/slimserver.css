@@ -627,17 +627,17 @@ div.thumbwrap {
 	background-repeat: no-repeat;
 }
 
-.x-menu-item-checked .albumListGallery .x-menu-item-icon {
+.x-menu-item-checked .albumListGallery.x-menu-group-item .x-menu-item-icon {
 	background-image: url(html/images/albumlist1_on.gif);
 	background-repeat: no-repeat;
 }
 
-.x-menu-item-checked .albumXList .x-menu-item-icon {
+.x-menu-item-checked .albumXList.x-menu-group-item .x-menu-item-icon {
 	background-image: url(html/images/albumlist0_on.gif);
 	background-repeat: no-repeat;
 }
 
-.x-menu-item-checked .albumList .x-menu-item-icon {
+.x-menu-item-checked .albumList.x-menu-group-item .x-menu-item-icon {
 	background-image: url(html/images/albumlist2_on.gif);
 	background-repeat: no-repeat;
 }
