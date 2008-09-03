@@ -26,18 +26,26 @@ my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
 my %packages = (
-	'Compress::Zlib'     => 'Compress-Zlib-1.41.tar.gz',
-	'DBI'                => 'DBI-1.604.tar.gz',
-	'DBD::mysql'         => 'DBD-mysql-3.0002.tar.gz',
-	'Digest::SHA1'       => 'Digest-SHA1-2.11.tar.gz',
-	'Encode::Detect'     => 'Encode-Detect-1.00.tar.gz',
-	'JSON::XS'           => 'JSON-XS-1.5.tar.gz',
-	'HTML::Parser'       => 'HTML-Parser-3.48.tar.gz',
-	'Template'           => 'Template-Toolkit-2.15.tar.gz',
-	'Time::HiRes'        => 'Time-HiRes-1.86.tar.gz',
-	'XML::Parser::Expat' => 'XML-Parser-2.34.tar.gz',
-	'YAML::Syck'         => 'YAML-Syck-0.64.tar.gz',
+	'Class::XSAccessor::Array' => 'Class-XSAccessor-Array-0.05.tar.gz',
+	'Class::C3::XS'            => 'Class-C3-XS-0.08.tar.gz',
+	'Compress::Zlib'           => 'Compress-Zlib-1.41.tar.gz',
+	'DBI'                      => 'DBI-1.604.tar.gz',
+	'DBD::mysql'               => 'DBD-mysql-3.0002.tar.gz',
+	'Digest::SHA1'             => 'Digest-SHA1-2.11.tar.gz',
+	'Encode::Detect'           => 'Encode-Detect-1.00.tar.gz',
+	'JSON::XS'                 => 'JSON-XS-1.5.tar.gz',
+	'HTML::Parser'             => 'HTML-Parser-3.48.tar.gz',
+	'POE::XS::Queue::Array'    => 'POE-XS-Queue-Array-0.002.tar.gz',
+	'Template'                 => 'Template-Toolkit-2.15.tar.gz',
+	'Time::HiRes'              => 'Time-HiRes-1.86.tar.gz',
+	'XML::Parser::Expat'       => 'XML-Parser-2.34.tar.gz',
+	'YAML::Syck'               => 'YAML-Syck-0.64.tar.gz',
 );
+
+# Don't need Class::C3::XS if you're running 5.10
+if ( $] > 5.009_004 ) {
+	delete $packages{'Class::C3::XS'};
+}
 
 # Options for specific packages
 my %packageOptions = (
