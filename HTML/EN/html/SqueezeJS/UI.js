@@ -1726,6 +1726,9 @@ SqueezeJS.UI.Playlist = Ext.extend(SqueezeJS.UI.Component, {
 		var el = this.container.parent().parent();
 		var plEl = this.getPlEl();
 		
+		if (el == null || plEl == null)
+			return;
+		
 		var height = el.getHeight() + el.getTop() - plEl.getTop();
 		if (el = Ext.get('playlistTab'))
 			height -= el.getHeight();
