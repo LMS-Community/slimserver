@@ -21,6 +21,13 @@
 	[% pagetitle = "HOME" | string %]
 [% END -%]
 
+	[%
+		IF warn && !refresh;
+			refresh = 30;
+			refreshurl = webroot _ '?';
+		END;
+	%]
+
 	[%- PROCESS pageheader.html %]
 
 	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
