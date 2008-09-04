@@ -108,8 +108,12 @@ var Home = {
 		});
 	},
 
-	onResize : function(){
-		var size = Ext.get('content').getViewSize();
-		Ext.select('div.homeMenuSection').setWidth(size[0]);
+	onResize : function() {
+		var size, el;
+		if (size = Ext.get('content'))
+			size.getViewSize();
+			
+		if (el = Ext.select('div.homeMenuSection'))
+			el.setWidth(size[0]);
 	}
 };
