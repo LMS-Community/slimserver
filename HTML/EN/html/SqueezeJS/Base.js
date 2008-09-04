@@ -1,3 +1,9 @@
+Ext.BLANK_IMAGE_URL = '/html/images/spacer.gif';
+	
+// hack to fake IE8 into IE7 mode - let's consider them the same
+Ext.isIE8 = Ext.isIE && navigator.userAgent.toLowerCase().indexOf("msie 8") > -1;
+Ext.isIE7 = Ext.isIE7 || Ext.isIE8;
+
 var SqueezeJS = {
 	Strings : new Array(),
 	string : function(s){ return this.Strings[s]; },
@@ -82,8 +88,6 @@ _init();
 // If one does exist, only create a proxy SqueezeJS.Controller hooking to it,
 // otherwise create new Controller.
 function _init() {
-	Ext.BLANK_IMAGE_URL = '/html/images/spacer.gif';
-
 	var p = (window == window.parent ? null : window.parent);
 	while (p) {
 
