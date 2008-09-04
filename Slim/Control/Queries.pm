@@ -1547,47 +1547,26 @@ sub musicfolderQuery {
 	}
 	
 	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+	my ($topLevelObj, $items, $count);
+
+	# if this is a follow up query ($index > 0), try to read from the cache
+	if ($index > 0 && $cache->{bmf}
+		&& $cache->{bmf}->{id} eq ($params->{url} || $params->{id}) 
+		&& $cache->{bmf}->{ttl} > time()) {
+			
+		$items       = $cache->{bmf}->{items};
+		$topLevelObj = $cache->{bmf}->{topLevelObj};
+		$count       = $cache->{bmf}->{count};
+	}
+	else {
+		
+		($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
+	}
 
 	# create filtered data
 	
 	my $topPath = $topLevelObj->path;
 	my $osName  = Slim::Utils::OSDetect::OS();
-	my @data;
-
-	for my $relPath (@$items) {
-
-		$log->debug("relPath: $relPath" );
-		
-		my $url  = Slim::Utils::Misc::fixPath($relPath, $topPath) || next;
-
-		$log->debug("url: $url" );
-
-		# Amazingly, this just works. :)
-		# Do the cheap compare for osName first - so non-windows users
-		# won't take the penalty for the lookup.
-		if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
-			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
-		}
-	
-		my $item = Slim::Schema->rs('Track')->objectForUrl({
-			'url'      => $url,
-			'create'   => 1,
-			'readTags' => 1,
-		});
-	
-		if (!blessed($item) || !$item->can('content_type')) {
-
-			next;
-		}
-
-		# Bug: 1360 - Don't show files referenced in a cuesheet
-		next if ($item->content_type eq 'cur');
-
-		push @data, $item;
-	}
-
-	$count = scalar(@data);
 
 	# now build the result
 
@@ -1659,91 +1638,78 @@ sub musicfolderQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	my @playlist = ();
-	if ( $playalbum ) {
-		for my $eachitem (@data[$start..$end]) {
-			if (Slim::Music::Info::isSong($eachitem)) {
-				push @playlist, $eachitem->url;
+	if ($valid) {
+
+		my @playlist = ();
+		my %urls;
+
+		for my $eachitem (@$items[$start..$end]) {
+				
+			my $url = Slim::Utils::Misc::fixPath($eachitem, $topPath) || next;
+			$urls{$eachitem} = $url;
+
+			if ( $playalbum && Slim::Music::Info::isSong($url)) {
+				push @playlist, $url;
 			}
 		}
-	}
-
-	if ($valid) {
 		
-		my $loopname =  $menuMode?'item_loop':'folder_loop';
+		my $loopname =  $menuMode ? 'item_loop' : 'folder_loop';
 		my $chunkCount = 0;
-		$request->addResult( 'offset', $request->getParam('_index') ) if $menuMode;
+		$request->addResult( 'offset', $index ) if $menuMode;
 		
 		if ($insertAll) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
 		}
 		my $listIndex = 0;
 
-		for my $eachitem (@data[$start..$end]) {
+		for my $filename (@$items[$start..$end]) {
 
-			next if ($eachitem == undef);
+			my $url = $urls{$filename} || next;
 
-			my $filename = Slim::Music::Info::fileName($eachitem->url());
-			my $id = $eachitem->id();
+			# Amazingly, this just works. :)
+			# Do the cheap compare for osName first - so non-windows users
+			# won't take the penalty for the lookup.
+			if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
+
+				$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
+			}
+			
+			elsif ($osName eq 'mac' && Slim::Utils::Misc::isMacAlias($url)) {
+				
+				$url = Slim::Utils::Misc::pathFromMacAlias($url);
+			}
+	
+			my $item = Slim::Schema->rs('Track')->objectForUrl({
+				'url'      => $url,
+				'create'   => 1,
+				'readTags' => 1,
+			});
+	
+			if (!blessed($item) || !$item->can('content_type')) {
+	
+				next;
+			}
+
+			my $id = $item->id();
 			$id += 0;
 			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
 
 				my $params = {
-					'textkey' => uc(substr($filename, 0, 1)),
+					'textkey' => uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1)),
 				};
 				
 				# each item is different, but most items are folders
 				# the base assumes so above, we override it here
-				
 
 				# assumed case, folder
-				if (Slim::Music::Info::isDir($eachitem) || -d Slim::Utils::Misc::pathFromMacAlias($eachitem->url)) {
+				if (Slim::Music::Info::isDir($item)) {
 
 					$params->{'folder_id'} = $id;
 
-				# playlist
-				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
-					
-					my $actions = {
-						'go' => {
-							'cmd' => ['playlists', 'tracks'],
-							'params' => {
-								menu        => 'trackinfo',
-								menu_all    => '1',
-								playlist_id => $id,
-							},
-						},
-						'play' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'load',
-								'playlist_id' => $id,
-							},
-						},
-						'add' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'add',
-								'playlist_id' => $id,
-							},
-						},
-						'add-hold' => {
-							'player' => 0,
-							'cmd' => ['playlistcontrol'],
-							'params' => {
-								'cmd' => 'insert',
-								'playlist_id' => $id,
-							},
-						},
-					};
-					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
-
 				# song
-				} elsif (Slim::Music::Info::isSong($eachitem)) {
+				} elsif (Slim::Music::Info::isSong($item)) {
 					
 					my $actions = {
 						'go' => {
@@ -1795,6 +1761,45 @@ sub musicfolderQuery {
 
 					$listIndex++;
 
+				# playlist
+				} elsif (Slim::Music::Info::isPlaylist($item)) {
+					
+					my $actions = {
+						'go' => {
+							'cmd' => ['playlists', 'tracks'],
+							'params' => {
+								menu        => 'trackinfo',
+								menu_all    => '1',
+								playlist_id => $id,
+							},
+						},
+						'play' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'load',
+								'playlist_id' => $id,
+							},
+						},
+						'add' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'add',
+								'playlist_id' => $id,
+							},
+						},
+						'add-hold' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'insert',
+								'playlist_id' => $id,
+							},
+						},
+					};
+					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+
 				# not sure
 				} else {
 					
@@ -1842,13 +1847,13 @@ sub musicfolderQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 				$request->addResultLoop($loopname, $chunkCount, 'filename', $filename);
 			
-				if (Slim::Music::Info::isDir($eachitem)) {
+				if (Slim::Music::Info::isDir($item)) {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
-				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
+				} elsif (Slim::Music::Info::isPlaylist($item)) {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'playlist');
-				} elsif (Slim::Music::Info::isSong($eachitem)) {
+				} elsif (Slim::Music::Info::isSong($item)) {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'track');
-				} elsif (-d Slim::Utils::Misc::pathFromMacAlias($eachitem->url)) {
+				} elsif (-d Slim::Utils::Misc::pathFromMacAlias($url)) {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 				} else {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
@@ -1863,6 +1868,16 @@ sub musicfolderQuery {
 	} else {
 		$request->addResult('count', $totalCount);
 	}
+
+	# cache results in case the same folder is queried again shortly 
+	# should speed up Jive BMF, as only the first chunk needs to run the full loop above
+	$cache->{bmf} = {
+		id          => ($params->{url} || $params->{id}),
+		ttl         => (time() + 15),
+		items       => $items,
+		topLevelObj => $topLevelObj,
+		count       => $count,
+	};
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
