@@ -17,6 +17,7 @@
     <include name="util\DelayedTask.js" />
     <include name="util\MixedCollection.js" />
     <include name="util\JSON.js" />
+    <include name="util\CSS.js" />
     <include name="util\KeyNav.js" />
     <include name="util\KeyMap.js" />
     <include name="util\TextMetrics.js" />
@@ -61,6 +62,7 @@
     <include name="widgets\menu\Separator.js" />
     <include name="widgets\menu\Item.js" />
     <include name="widgets\menu\CheckItem.js" />
+    <include name="widgets\Slider.js" />
   </target>
   <file name="layout\LayoutRegionLite.js" path="layout" />
   <file name="DDScrollManager.js" path="" />
