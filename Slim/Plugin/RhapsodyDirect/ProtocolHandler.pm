@@ -1011,6 +1011,8 @@ sub onPlayout {
 sub _doLog {
 	my ($time, $song) = @_;
 	
+	$time = int($time);
+	
 	$log->debug("Log metering: $time");
 	
 	# There are different log methods for normal vs. radio play
