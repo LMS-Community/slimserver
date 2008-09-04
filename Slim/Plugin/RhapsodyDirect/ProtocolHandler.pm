@@ -530,7 +530,7 @@ sub onJump {
 	# If seeking, send special seek information
 	if ( my $seekdata = $client->scanData->{seekdata} ) {		
 		for my $c ( @clients ) {
-			rpds( $client, {
+			rpds( $c, {
 				data        => pack( 'cNN', 7, $seekdata->{eaoffset}, $seekdata->{ealength} ),
 				_noresponse => 1,
 			} );
