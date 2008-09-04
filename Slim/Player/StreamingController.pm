@@ -816,7 +816,7 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 	
 	# get seek data from protocol handler.
 	if ($handler->can('getSeekData')) {
-		$seekdata = $handler->getSeekData(undef, $song, $newtime);
+		$seekdata = $handler->getSeekData($song->master(), $song, $newtime);
 	}	
 	
 	return unless $seekdata || $restartIfNoSeek;
