@@ -2,12 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=7" />
 		<title>[% "SQUEEZECENTER" | string %]</title>
 
 		[% USE Prefs %][% IF Prefs.preferences('server').get('language') == 'HE' %]
 		<meta http-equiv="refresh" content="0; URL=/Classic/">
 		[% END %]
-
+		
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
