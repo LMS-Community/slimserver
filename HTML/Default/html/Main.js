@@ -10,6 +10,8 @@ Main = {
 				'<table border="0" cellpadding="0" cellspacing="0"><tbody><tr>',
 				'<td></td><td><button type="{1}" style="padding:0" class="x-btn-text">{0}</button></td><td></td>',
 				'</tr></tbody></table>');
+		
+		Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
 		var leftpanel = {
 			region: 'center',
@@ -64,7 +66,8 @@ Main = {
 			border: false,
 			split: true,
 			minSize: 400,
-			width: '50%'
+			width: '50%',
+			stateful: true
 		};
 
 		var mainpanel = {
