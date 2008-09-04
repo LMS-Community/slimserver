@@ -68,7 +68,6 @@ BEGIN {
 	}
 }
 
-use constant defaultSkin => 'Default';
 use constant baseSkin	 => 'EN';
 use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 
@@ -324,12 +323,17 @@ sub skins {
 
 			$log->is_info && $log->info("skin entry: $dir");
 
-			if ($dir eq defaultSkin()) {
-				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('DEFAULT_SKIN') : defaultSkin();
-			} elsif ($dir eq baseSkin()) {
-				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('BASE_SKIN') : baseSkin();
-			} else {
-				$skinlist{ $UI ? $dir : uc $dir } = Slim::Utils::Misc::unescape($dir);
+			if ($UI) {
+				
+				$dir = Slim::Utils::Misc::unescape($dir);
+				my $name = Slim::Utils::Strings::getString( uc($dir) . '_SKIN' );
+				
+				$skinlist{ $UI ? $dir : uc $dir } = $name eq uc($dir) . '_SKIN' ? $dir : $name;
+			}
+			
+			else {
+				
+				$skinlist{ uc $dir } = $dir;
 			}
 		}
 	}
