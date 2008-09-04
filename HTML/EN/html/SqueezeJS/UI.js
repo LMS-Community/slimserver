@@ -1554,7 +1554,7 @@ SqueezeJS.UI.PlaytimeProgress = Ext.extend(SqueezeJS.UI.Playtime, {
 	},
 
 	onClick : function(ev) {
-		if (!SqueezeJS.Controller.playerStatus.duration)
+		if (! (SqueezeJS.Controller.playerStatus.duration && SqueezeJS.Controller.playerStatus.canSeek))
 			return;
  
 		var pos = Math.max(ev.xy[0] - this.getX(), 0);

@@ -284,7 +284,8 @@ function _init() {
 				timestamp: null,
 				dontUpdate: false,
 				player: null,
-				rescan: 0
+				rescan: 0,
+				canSeek: false
 			}
 		},
 
@@ -418,6 +419,7 @@ function _init() {
 				track:     response.playlist_tracks > 0 ? response.playlist_loop[0].url : '',
 				index:     response.playlist_cur_index,
 				duration:  parseInt(response.duration) || 0,
+				canSeek:   response.can_seek ? true : false,
 				playtime:  parseInt(response.time),
 				timestamp: response.playlist_timestamp
 			};
