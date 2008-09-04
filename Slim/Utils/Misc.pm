@@ -418,7 +418,7 @@ sub isMacAlias {
 
 	$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
 
-	if (-r $fullpath && (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0))) {
+	if (-f $fullpath && -r _ && (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0))) {
 
 		if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
 

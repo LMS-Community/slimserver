@@ -50,6 +50,7 @@ sub parseDirectHeaders {
 	my ( $class, $client, $url, @headers ) = @_;
 	
 	my $length;
+	my $rangelength;
 	
 	# Clear previous duration, since we're using the same URL for all tracks
 	if ( $url =~ /\.rdr$/ ) {
@@ -60,16 +61,20 @@ sub parseDirectHeaders {
 
 		$log->debug("RhapsodyDirect header: $header");
 
-		if ($header =~ /^Content-Length:\s*(.*)/i) {
+		if ( $header =~ /^Content-Length:\s*(.*)/i ) {
 			$length = $1;
-			last;
+		}
+		elsif ( $header =~ m{^Content-Range: .+/(.*)}i ) {
+			$rangelength = $1;
 		}
 	}
 	
-	if ( main::SLIM_SERVICE ) {
-		# On SN, save length for reinit
-		$client->pluginData( length => $length );
+	if ( $rangelength ) {
+		$length = $rangelength;
 	}
+	
+	# Save length for reinit and seeking
+	$client->pluginData( length => $length );
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, 192000, 0, '', 'mp3', $length, undef);
@@ -1025,6 +1030,74 @@ sub _doLog {
 	$http->get( $logURL );
 }
 
+
+sub getSeekData {
+	my ( $class, $client, $url, $newtime ) = @_;
+	
+	# Determine byte offset and song length in bytes
+	my $meta    = $class->getMetadataFor( $client, $url );
+	
+	my $bitrate = 192;
+	my $seconds = $meta->{duration} || return;
+	
+	if ( $log->is_debug ) {	
+		$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream of $seconds length" );
+	}
+	
+	my $data = {
+		newoffset         => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
+		songLengthInBytes => ( ( $bitrate * 1024 ) / 8 ) * $seconds,
+	};
+	
+	return $data;
+}
+
+sub setSeekData {
+	my ( $class, $client, $url, $newtime, $newoffset ) = @_;
+	
+	my @clients;
+	
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		# if synced, save seek data for all players
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		push @clients, $master, @{ $master->slaves };
+	}
+	else {
+		push @clients, $client;
+	}
+	
+	my $meta     = $class->getMetadataFor( $client, $url );
+	my $duration = $meta->{duration};
+	
+	if ( !$duration ) {
+		$log->debug('Cannot seek in this track yet, unknown duration');
+		return;
+	}
+	
+	# Calculate the RAD and EA offsets for this time offset
+	my $percent   = $newtime / $meta->{duration};
+	my $radlength = $client->pluginData('length') - 36;
+	my $nb        = 1 + int($radlength / 3072);
+	my $ealength  = 36 + (24 * $nb);
+	my $radoffset = ( int($nb * $percent) * 3072 ) + 36;
+	my $eaoffset  = ( int($nb * $percent) * 24 ) + 36;
+	
+	for my $client ( @clients ) {
+		# Save the new seek point
+		$client->scanData( {
+			seekdata => {
+				newtime   => $newtime,
+				newoffset => $radoffset,
+				eaoffset  => $eaoffset,
+				ealength  => $ealength,
+			},
+		} );
+	}
+			
+	if ( $log->is_debug ) {
+		$log->debug( "scanData set to: " . Data::Dump::dump( $clients[0]->scanData->{seekdata} ) );
+	}
+}
 
 # SN only, re-init upon reconnection
 sub reinit {
