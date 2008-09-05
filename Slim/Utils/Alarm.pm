@@ -75,6 +75,16 @@ my %alarmPlaylists = ();
 # are the playlists datastructure.  See docs for addPlaylist.
 my %extraPlaylistTypes; 
 
+# Last time seen by this class - used to spot changes to the system's time, e.g. for DST or
+# a clock adjustment
+my $lastSeenTime;
+# The last seen value of DST i.e. whether it was in effect at $lastSeenTime
+my $lastSeenDST;
+# Timer used to track changes
+my $checkTimeTimerRef;
+
+# Count of the number of scheduled alarms
+my $alarmsScheduled = 0;
 
 ################################################################################
 =head1 INSTANCE METHODS
@@ -617,7 +627,15 @@ sub sound {
 		}
 	}
 
-	$self->{_timerRef} = undef;
+	if (defined $self->{_timerRef}) {
+		# Make sure the timer for this alarm is now defunct
+		Slim::Utils::Timers::killSpecific($self->{_timerRef});
+
+		$self->{_timerRef} = undef;
+
+		$alarmsScheduled--;
+		$class->_startStopTimeCheck;
+	}
 
 	$class->scheduleNext($client);
 }
@@ -1032,7 +1050,7 @@ sub _timeout {
 
 =head2 init
 
-Initialise SqueezeCenter alarm functionality.  This must be called on server startup (probably from slimserver.pl).
+Initialise SqueezeCenter alarm functionality.  This should be called on server startup (probably from slimserver.pl).
 
 =cut
 
@@ -1215,6 +1233,8 @@ sub scheduleNext {
 		if (defined $nextAlarm->{_timerRef}) {
 			$log->debug('Previous scheduled alarm wasn\'t triggered.  Clearing nextAlarm and killing timer');
 			Slim::Utils::Timers::killSpecific($nextAlarm->{_timerRef});
+			$alarmsScheduled--;
+			$class->_startStopTimeCheck;
 		}
 		$client->alarmData->{nextAlarm} = undef;
 	}
@@ -1251,6 +1271,8 @@ sub scheduleNext {
 				my $alarmTime = $nextAlarm->{_nextDue};
 				$log->debug('Scheduling alarm');
 				$nextAlarm->{_timerRef} = Slim::Utils::Timers::setTimer($nextAlarm, $alarmTime, \&sound, $alarmTime);
+				$alarmsScheduled++;
+				$class->_startStopTimeCheck;
 
 				$client->alarmData->{nextAlarm} = $nextAlarm;
 			}
@@ -1660,6 +1682,56 @@ sub popAlarmScreensaver {
 		$log->debug('Popping alarm screensaver');
 		Slim::Buttons::Common::popMode($client);
 	}
+}
+
+# Schedule/deschedule the time checking task as necessary.  This must be called *after* any changes
+# to $alarmsScheduled.
+sub _startStopTimeCheck {
+	my $class = shift;
+
+	return if main::SLIM_SERVICE; # SN does things differently
+
+	$log->debug("$alarmsScheduled scheduled alarm(s)");
+
+	if ($alarmsScheduled && ! $checkTimeTimerRef) {
+		# Start watching the time to track any changes
+		$log->debug('Starting time checker task');
+		$lastSeenTime = CORE::time;
+		$lastSeenDST = (localtime($lastSeenTime))[8];
+		$checkTimeTimerRef = Slim::Utils::Timers::setTimer($class, Time::HiRes::time + 60, \&_checkTime);
+	} elsif ($alarmsScheduled == 0 && $checkTimeTimerRef) {
+		$log->debug('Stopping time checker task');
+		Slim::Utils::Timers::killSpecific($checkTimeTimerRef);
+		$checkTimeTimerRef = undef;
+	}
+}
+
+# Check that the current time is where we expect it to be and reschedule alarms if changes
+# are detected.  On SC, this is called every minute and handles DST and system clock changes.
+sub _checkTime {
+	my $class = shift;
+
+	my $time = CORE::time;
+	my $isdst = (localtime($time))[8];
+	my $delta = $time - $lastSeenTime;
+
+	$checkTimeTimerRef = Slim::Utils::Timers::setTimer($class, Time::HiRes::time + 60, \&_checkTime);
+
+	# We should now be 60 seconds ahead of when the time was last checked.
+	# Timers should never fire early (unless fired manually) so if we appear to be less than
+	# 60 secs ahead, this indicates a backwards-changed time.  For forward-changes, allow a
+	# 10 sec window to allow for timers firing late.
+	if ($delta < 60 || $delta > 70 || $isdst != $lastSeenDST) {
+		$log->debug("System time has changed (delta $delta, lastDST $lastSeenDST, dst: $isdst)"
+				. ' - rescheduling all alarms');
+
+		foreach my $client (Slim::Player::Client::clients()) {
+			$class->scheduleNext($client);
+		}
+	}
+
+	$lastSeenTime = $time;
+	$lastSeenDST = $isdst;
 }
 
 
