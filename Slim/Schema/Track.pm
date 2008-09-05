@@ -260,9 +260,13 @@ sub coverArt {
 	my $list    = shift || 0;
 	
 	my ($body, $contentType, $mtime, $path);
+
+	my $cover = $self->cover;
+	
+	return undef if defined $cover && !$cover;
 	
 	# Remote files may have embedded cover art
-	if ( $self->remote && $self->cover ) {
+	if ( $self->remote && $cover ) {
 		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
 		my $image = $cache->get( 'cover_' . $self->url );
 		if ( $image ) {
@@ -296,22 +300,21 @@ sub coverArt {
 	# metdata tags.
 	# 
 	# Otherwise we'll have a path to a file on disk.
-	my $artwork = $self->cover;
 
-	if ($artwork && $artwork ne 1) {
+	if ($cover && $cover ne 1) {
 
-		($body, $contentType) = Slim::Music::Artwork->getImageContentAndType($artwork);
+		($body, $contentType) = Slim::Music::Artwork->getImageContentAndType($cover);
 
 		if ($body && $contentType) {
 
-			$log->info("Found cached file: $artwork");
+			$log->info("Found cached file: $cover");
 
-			$path = $artwork;
+			$path = $cover;
 		}
 	}
 
 	# If we didn't already store an artwork value - look harder.
-	if (!$artwork || $artwork eq 1 || !$body) {
+	if (!$cover || $cover eq 1 || !$body) {
 
 		# readCoverArt calls into the Format classes, which can throw an error. 
 		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self) };
@@ -329,6 +332,11 @@ sub coverArt {
 
 		# kick this back up to the webserver so we can set last-modified
 		$mtime = $path ne 1 ? (stat($path))[9] : (stat($self->path))[9];
+	}
+	
+	else {
+		$self->cover(0);	# means known not to have artwork, don't ask again
+		$self->update;
 	}
 
 	# This is a hack, as Template::Stash::XS calls us in list context,
@@ -355,7 +363,7 @@ sub coverArtMtime {
 sub coverArtExists {
 	my $self = shift;
 
-	return $self->cover || defined($self->coverArt);
+	return defined($self->cover) ? $self->cover : defined($self->coverArt);
 }
 
 sub path {
