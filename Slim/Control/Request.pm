@@ -1924,13 +1924,6 @@ sub callback {
 			# else use the provided arguments
 			} else {
 
-				# This is a hack to make passing back of the "@p" array work. But limit it to
-				# generateHTTPResponse, as Jonas Salling is the only caller.
-				if (Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) =~ /::generateHTTPResponse$/) {
-
-					push @$args, [ $self->renderAsArray ];
-				}
-
 				eval { &$funcPtr(@$args) };
 
 				if ($@) { 
