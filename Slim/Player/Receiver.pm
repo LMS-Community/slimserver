@@ -45,6 +45,21 @@ sub model {
 	return 'receiver';
 }
 
+sub reconnect {
+	my $client = shift;
+
+	$client->SUPER::reconnect(@_);
+
+	my $prefs = preferences( 'server');
+	my $on = $prefs->client( $client)->get( 'power') || 0;
+	if( $on == 1) {
+		Slim::Hardware::TriLED::setTriLED( $client, $DARK_WHITE_COLOR, 1);
+	} else {
+		Slim::Hardware::TriLED::setTriLED( $client, $OFF_COLOR, 1);
+	}
+
+}
+
 sub stop {
 	my $client = shift;
 
