@@ -620,7 +620,7 @@ sub sound {
 		$class->_setAlarmSubscription($client);
 
 		# Set up subscription to automatically end the alarm if requested
-		my $timeout = $prefs->client($client)->get('alarmTimeoutSeconds');
+		my $timeout = $prefs->client($client)->alarmTimeoutSeconds;
 		if ($timeout) {
 			$log->debug("Scheduling time out in $timeout seconds");
 			$self->{_timeoutTimer} = Slim::Utils::Timers::setTimer($self, Time::HiRes::time + $timeout, \&_timeout);
@@ -676,7 +676,7 @@ sub snooze {
 
 		# Reset the alarm timeout timer so the alarm will now time out in timeoutSeconds + snoozeTime
 		if (defined $self->{_timeoutTimer}) {
-			my $timeout = $prefs->client($client)->get('alarmTimeoutSeconds');
+			my $timeout = $prefs->client($client)->alarmTimeoutSeconds;
 			Slim::Utils::Timers::killSpecific($self->{_timeoutTimer});
 			$log->debug(sub {'Scheduling automatic timeout in ' . ($timeout + $snoozeSeconds) . ' seconds'});
 			$self->{_timeoutTimer} =
