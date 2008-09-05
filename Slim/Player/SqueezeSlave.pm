@@ -186,23 +186,6 @@ sub stop {
 
 }
 
-sub pauseForInterval {
-	my $client   = shift;
-	my $interval = shift;
-
-	# TODO - show resyncing message briefly
-	# TODO - adjust interval for SB1 internal decode buffer
-	
-	$client->playPoint(undef);
-	$client->stream('p');
-	Slim::Utils::Timers::setHighTimer(
-				$client,
-				Time::HiRes::time() + $interval - 0.005,
-				\&_unpauseAfterInterval
-			);
-	return 1;
-}
-
 sub songElapsedSeconds {
 	my $client = shift;
 
