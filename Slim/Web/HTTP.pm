@@ -1311,6 +1311,16 @@ sub generateHTTPResponse {
 			}
 
 			if ($file) {
+				# disable keep-alive for raw files, this is needed to prevent
+				# Jive downloads from timing out
+				if ( $keepAlives{$httpClient} ) {
+					$log->is_info && $log->info("Disabling keep-alive for raw file $file");
+					delete $keepAlives{$httpClient};
+					Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
+					
+					$response->header( Connection => 'close' );
+				}
+				
 				# download the file
 				$log->is_info && $log->info("serving file: $file for path: $path");
 				sendStreamingFile( $httpClient, $response, $ct, $file );
