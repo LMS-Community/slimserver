@@ -167,7 +167,7 @@ sub getNextSong {
 	#	if (playlist and no-track and (scanned or not scannable)) {
 	if (!$self->{'currentTrack'}
 		&& $self->isPlaylist()
-		&& ($self->{'scanDone'} || !$handler->can('scanStream')))
+		&& ($self->{'scanDone'} || !$handler->can('scanUrl')))
 	{
 		if (!$self->_getNextPlaylistTrack()) {
 			&$failCb('PLAYLIST_NO_ITEMS_FOUND', $self->{'track'}->url);
