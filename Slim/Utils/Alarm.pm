@@ -539,7 +539,12 @@ sub sound {
 
 		# Set analogOutMode to subwoofer to force output through main speakers even if headphones are plugged in
 		# This needs doing a lot more thoroughly.  Bug 8146 
-		$client->can('setAnalogOutMode') && $client->setAnalogOutMode(1);
+		if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
+			&& $client->lineOutConnected())
+		{
+			$log->debug('Temporarily forcing line out to subwoofer');
+			$client->setAnalogOutMode(1);
+		}
 
 		# Set up volume
 		my $currentVolume = $client->volume;
@@ -796,7 +801,11 @@ sub stop {
 	}
 
 	# Restore analogOutMode to previous setting
-	$client->can('setAnalogOutMode') && $client->setAnalogOutMode();
+	if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
+		&& $client->lineOutConnected()) {
+		$log->debug('Restoring previous line out mode');
+		$client->setAnalogOutMode();
+	}
 
 	my $class = ref $self;
 	$class->popAlarmScreensaver($client);
