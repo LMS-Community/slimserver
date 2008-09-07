@@ -67,7 +67,7 @@ Main = {
 			split: true,
 			minSize: 400,
 			width: '50%',
-			stateful: true
+			stateful: !Ext.isIE
 		};
 
 		var mainpanel = {
