@@ -1314,8 +1314,6 @@ sub getUsername {
 sub sendLogging {
 	my ( $client, $url, $playtime ) = @_;
 	
-	my $username = getUsername($client) || return;
-	
 	my ($trackId)   = $url =~ m{rhapd://(.+)\.mp3};
 	my ($stationId) = $url =~ m{rhapd://(.+)\.rdr};
 	
@@ -1330,7 +1328,7 @@ sub sendLogging {
 	return unless $trackId;
 	
 	my $logURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/v1/playback/log?account=$username&stationId=$stationId&trackId=$trackId&playtime=$playtime"
+		"/api/rhapsody/v1/playback/log?stationId=$stationId&trackId=$trackId&playtime=$playtime"
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -1346,7 +1344,7 @@ sub sendLogging {
 		},
 	);
 	
-	$log->debug("Logging track playback: $playtime seconds, trackId: $trackId, stationId: $stationId, user: $username");
+	$log->debug("Logging track playback: $playtime seconds, trackId: $trackId, stationId: $stationId");
 	
 	$http->get( $logURL );
 }
