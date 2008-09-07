@@ -17,7 +17,11 @@
 			<script type="text/javascript">
 				[% PROCESS jsString id='LOADING' jsId='loading' %]
 				var hideSearchTimer;
-				var Highlighter;
+				
+				// IE is executing JS very early - add dummy highlighter to prevent crash
+				var Highlighter = {
+					highlight: function(){}
+				};
 
 				Ext.onReady(function(){
 					// overwrite default Ext Button layout
