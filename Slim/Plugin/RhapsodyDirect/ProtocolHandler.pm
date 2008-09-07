@@ -1033,10 +1033,8 @@ sub _doLog {
 		($trackId) = $song->{track}->url =~ m{rhapd://(.+)\.mp3};
 	}
 	
-	my $username = _getCurrentUser( $song->master() );
-	
 	my $logURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/v1/playback/log?account=$username&stationId=$stationId&trackId=$trackId&playtime=$time"
+		"/api/rhapsody/v1/playback/log?stationId=$stationId&trackId=$trackId&playtime=$time"
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -1052,7 +1050,7 @@ sub _doLog {
 		},
 	);
 	
-	$log->debug("Logging track playback: $time seconds, trackId: $trackId, stationId: $stationId, user: $username");
+	$log->debug("Logging track playback: $time seconds, trackId: $trackId, stationId: $stationId");
 	
 	$http->get( $logURL );
 }
