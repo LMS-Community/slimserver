@@ -429,8 +429,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(cstring);
 
-our %dispatchDB;                # contains a multi-level hash pointing to
-                                # each command or query subroutine
+our $dispatchDB = {};           # contains a multi-level hash pointing to
+                                # params and functions to call for each command or query
 
 our %listeners = ();            # contains the clients to the notification
                                 # mechanism (internal to the server)
@@ -680,87 +680,86 @@ sub addDispatch {
 	my $arrayCmdRef  = shift; # the array containing the command or query
 	my $arrayDataRef = shift; # the array containing the function to call
 
-	# parse the first array in parameter to create a multi level hash providing
-	# fast access to 2nd array data, i.e. (the example is incomplete!)
-	# { 
-	#  'rescan' => {
-	#               '?'          => 2nd array associated with ['rescan', '?']
-	#               '_playlists' => 2nd array associated with ['rescan', '_playlists']
-	#              },
-	#  'info'   => {
-	#               'total'      => {
-	#                                'albums'  => 2nd array associated with ['info', 'total', albums']
-	# ...
-	#
-	# this is used by init() above to add the standard commands and queries to the 
-	# table and by the plugin glue code to add plugin-specific and plugin-defined
-	# commands and queries to the system.
-	# Note that for the moment, there is no identified need to ever REMOVE commands
-	# from the dispatch table (and consequently no defined function for that).
+	# the new dispatch table is of the following format:
+	# 
+	# $dispatchDB->{
+	#    verb1 => {
+	#       verb2 => {
+	#          verb3a => {
+	#             :: => [
+	#                [ '_params1', '_params2', '_params3' ], 0, 0, 0, \&func3a_cmd   ],
+	#                [ '_params1', '_params2', '?'        ], 0, 0, 0, \&func3a_query ],
+	#             ],
+	#          },
+	#          verb3b => {
+	#             :: => [
+	#                [ '_params1', '_params2', '_params3' ], 0, 0, 0, \&func3b_cmd   ],
+	#                [ '_params1', '_params2', '?'        ], 0, 0, 0, \&func3b_query ],
+	#             ],
+	#          },
+	# 
+	# the request verbs form the hash keys, with each valid request indicated by a leaf with the special key '::'
+	# within each leaf is an array with two entries - 0 for the cmd and 1 for the query matching this request
+	# (a query is selected if the last entry in $arrayCmdRef is '?')
+	# within each of these arrays are an array of parameters for this request followed by the $arrayDataRef
 
-	my $DBp     = \%dispatchDB;	    # pointer to the current table level
-	my $CRindex = 0;                # current index into $arrayCmdRef
-	my $done    = 0;                # are we done
-	my $oldDR;                      # if we replace, what did we?
+	my @request;
+	my @params;
+	my $query = 0;
+	
+	# split CmdRef into request verbs and param tokens
+	for my $entry (@$arrayCmdRef) {
 
-	while (!$done) {
-	
-		# check if we have a subsequent verb in the command
-		my $haveNextLevel = defined $arrayCmdRef->[$CRindex + 1];
-		
-		# get the verb at the current level of the command
-		my $curVerb       = $arrayCmdRef->[$CRindex];
-	
-		# if the verb is undefined at the current level
-		if (!defined $DBp->{$curVerb}) {
-		
-			# if we have a next verb, prepare a hash for it
-			if ($haveNextLevel) {
-			
-				$DBp->{$curVerb} = {};
-			
-			# else store the 2nd array and we're done
+		if (!@params) {
+
+			if ($entry =~ /^_|^\?$/) {
+				push @params, $entry;
 			} else {
-			
-				$DBp->{$curVerb} = $arrayDataRef;
-				$done = 1;
+				push @request, $entry;
 			}
-		}
-		
-		# if the verb defined at the current level points to an array
-		elsif (ref $DBp->{$curVerb} eq 'ARRAY') {
-		
-			# if we have more terms, move the array to the next level using
-			# an empty verb
-			# (note: at the time of writing these lines, this never occurs with
-			# the commands as defined now)
-			if ($haveNextLevel) {
-			
-				$DBp->{$curVerb} = {'', $DBp->{$curVerb}};
-			
-			# if we're out of terms, something is maybe wrong as we're adding 
-			# twice the same command. In Perl hash fashion, replace silently with
-			# the new value and we're done
-			} else {
-			
-				$oldDR = $DBp->{$curVerb};
-				$DBp->{$curVerb} = $arrayDataRef;
-				$done = 1;
+
+		} else {
+
+			if ($entry !~ /^_|^\?$/) {
+				$log->warn("param $entry invalid - must start with _ or be ?");
+				return;
 			}
-		}
-		
-		# go to next level if not done...
-		if (!$done) {
-		
-			$DBp = \%{$DBp->{$curVerb}};
-			$CRindex++;
+
+			push @params, $entry;
 		}
 	}
-	
-	# return replaced funcptr, if any
-	if (defined $oldDR) {
-		return $oldDR->[3];
+
+	# validate the function array
+	if (ref $arrayDataRef ne 'ARRAY' || @$arrayDataRef != 4 || (defined $arrayDataRef->[3] && ref $arrayDataRef->[3] ne 'CODE')) {
+		$log->warn("invalid data ref");
+		return;
 	}
+
+	# is this a query
+	if ($arrayCmdRef->[-1] eq '?') {
+		if ($arrayDataRef->[1]) {
+			$query = 1;
+		} else {
+			$log->warn("bady formed query - last param is ? but query flag not set");
+		}
+	}
+
+	# find the leaf in the dispatch table or create a new one
+	my $entry = $dispatchDB;
+
+	for my $request (@request) {
+		$entry = $entry->{$request} ||= {};
+	}
+
+	$entry = $entry->{'::'} ||= [];
+
+	# store the old function so a new entry can replace an old one and call it
+	# FIXME - should we check the params for the replacement are the same?
+	my $prevFunc = defined $entry->[$query] ? $entry->[$query]->[4] : undef;
+
+	$entry->[$query] = [ \@params, @$arrayDataRef ];
+
+	return $prevFunc;
 }
 
 # add a subscriber to be notified of requests
@@ -825,7 +824,6 @@ sub notifyFromArray {
 	my $request = Slim::Control::Request->new(
 		(blessed($client) ? $client->id() : undef), 
 		$requestLineRef,
-		undef,
 		1, # force use of tied ixhash to maintain ordering of the array
 	);
 	
@@ -932,7 +930,7 @@ sub alwaysOrder {
 # Constructors
 ################################################################################
 
-=head2 new ( clientid, requestLineRef, paramsRef )
+=head2 new ( clientid, requestLineRef, paramsRef, useIxHashes )
 
 Creates a new Request object. All parameters are optional. clientid is the
 client ID the request applies to. requestLineRef is a reference to an array
@@ -943,57 +941,141 @@ requestLinRef is parsed to match an entry in the dispatch table, and parameters
 found there are added to the params. It best to use requestLineRef for all items
 defined in the dispatch table and paramsRef only for tags.
 
+useIxHashes indicates that the response is expected to serialised on the cli and
+so order of params and results should be maintained using IxHashes.
 
 =cut
+
 sub new {
-	my $class          = shift;    # class to construct
-	my $clientid       = shift;    # clientid, if any, to which the request applies
-	my $requestLineRef = shift;    # reference to an array containing the 
-                                   # request verbs
-	my $paramsRef      = shift;    # reference to a hash containing the params
-	my $useIxHashes    = shift;    # request requires param ordering to be maintained (cli)
+	my $class          = shift;      # class to construct
+	my $clientid       = shift;      # clientid, if any, to which the request applies
+	my $requestLineRef = shift;      # reference to an array containing the 
+                                     # request verbs
+	my $useIxHashes    = shift;      # request requires param ordering to be maintained (cli)
 
 	$useIxHashes ||= $alwaysUseIxHashes; # if a cli subscription exists then always use IxHashes
 
-	if (!defined $paramsRef) {
-		my %paramsHash;
-		tie %paramsHash, "Tie::IxHash" if $useIxHashes;
-		$paramsRef = \%paramsHash;
+	my @request;
+	my %result;
+	my %params;
+
+	if ($useIxHashes) {
+		tie %params, "Tie::IxHash";
+		tie %result, "Tie::IxHash";
 	}
 
-	my %resultHash;
-	tie %resultHash, "Tie::IxHash" if $useIxHashes;
-	
+	# initialise only those keys which do no init to undef
 	my $self = {
-		'_request'           => [],
-		'_requeststr'        => '',
-		'_isQuery'           => 0,
-		'_clientid'          => $clientid,
-		'_needClient'        => 0,
-		'_params'            => $paramsRef,
-		'_curparam'          => 0,
-		'_status'            => 0,
-		'_results'           => \%resultHash,
-		'_func'              => undef,
-		'_cb_enable'         => 1,
-		'_cb_func'           => undef,
-		'_cb_args'           => undef,
-		'_source'            => undef,
-		'_connectionid'      => undef,
-		'_ae_callback'       => undef,
-		'_ae_filter'         => undef,
-		'_ae_cleanup'        => undef,
-		'_private'           => undef,
-		'_useixhash'         => $useIxHashes,
+	   _request   => \@request,
+	   _params    => \%params,
+	   _results   => \%result,
+	   _clientid  => $clientid,
+	   _useixhash => $useIxHashes,
+	   _cb_enable => 1,
 	};
 
 	bless $self, $class;
+
+	# return clean object if there is no request line
+	if (!$requestLineRef) {
+		$self->{'_status'} = 104;
+		return $self;
+	}
+
+	# parse the line
+	my $i = 0;
+	my $found;
+	my $search = $dispatchDB;
 	
-	# parse $requestLineRef to finish create the Request
-	$self->__parse($requestLineRef) if defined $requestLineRef;
+	# traverse the dispatch tree looking for a match on the request verbs
+	while ($search->{ $requestLineRef->[$i] }) {
+		push @request, $requestLineRef->[$i];
+		$search = $search->{ $requestLineRef->[$i++] };
+	}
 	
-	$self->validate();
-	
+	if ($search->{'::'}) { # '::' is the special key indicating a leaf, i.e. verbs match
+
+		# choose the parameter array based on whether last param is '?'
+		# 1 = array for queries ending in ?, 0 otherwise
+
+		if ($requestLineRef->[-1] ne '?') {
+
+			$found = $search->{'::'}->[0];
+
+			# extract the params
+			for my $param (@{$found->[0]}) {
+				$params{$param} = $requestLineRef->[$i++];
+			}
+
+		} else {
+
+			$found = $search->{'::'}->[1];
+
+			# extract the params excluding '?'
+			for my $param (@{$found->[0]}) {
+				$params{$param} = $requestLineRef->[$i] if $param ne '?';
+				$i++;
+			}
+		}
+
+		# found is now an array:
+		# 0 = array of params
+		# 1 = needsClient
+		# 2 = isQuery
+		# 3 = hasTags
+		# 4 = function
+
+		# extract any remaining params
+		for (;$i < scalar @$requestLineRef; $i++) {
+			
+			if ($found->[3] && $requestLineRef->[$i] =~ /([^:]+):(.*)/) {
+				
+				# tagged params
+				$params{$1} = $2;
+				
+			} else {
+				
+				# positional params
+				$params{"_p" . keys %params} = $requestLineRef->[$i];
+			}
+		}
+		
+		$self->{'_requeststr'} = join(',', @request);			
+
+		$self->{'_needClient'} = $found->[1];
+		$self->{'_isQuery'}    = $found->[2];
+		$self->{'_func'}       = $found->[4];
+
+		# perform verificaton based on found
+		if (!$found->[4]) {
+			# Mark as not dispatachable as no function or we ran out of params
+			$self->{'_status'} = 104;
+
+		} elsif ($found->[1] && !$Slim::Player::Client::clientHash{$clientid}) {
+			# Mark as not dispatchable as no client
+			$self->{'_status'} = 103;
+			$self->{'_clientid'} = undef;
+
+		} else {
+			# Mark as dispatchable
+			$self->{'_status'} = 1;
+		}	
+
+
+	} else {
+		
+		# No match in dispatch table - mark as not dispatchable & copy to positional params for cli echoing
+		$self->{'_status'} = 104;
+		
+		for ($i = 0;$i < scalar @$requestLineRef; $i++) {
+			$params{"_p" . keys %params} = $requestLineRef->[$i];
+		}
+
+		if ($log->is_info) {
+			$log->info("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
+		}
+	}
+
 	return $self;
 }
 
@@ -1015,7 +1097,6 @@ sub virginCopy {
 	$copy->{'_ae_callback'} = $self->{'_ae_callback'};
 	$copy->{'_ae_filter'} = $self->{'_ae_filter'};
 	$copy->{'_ae_cleanup'} = $self->{'_ae_cleanup'};
-	$copy->{'_curparam'} = $self->{'_curparam'};
 	$copy->{'_requeststr'} = $self->{'_requeststr'};
 	$copy->{'_useixhash'} = $self->{'_useixhash'};
 
@@ -1242,7 +1323,7 @@ sub validate {
 
 		$self->{'_status'}   = 104;
 
-	} elsif ($self->{'_needClient'} && !defined Slim::Player::Client::getClient($self->{'_clientid'})){
+	} elsif ($self->{'_needClient'} && !$Slim::Player::Client::clientHash{$self->{'_clientid'}}){
 
 		$self->{'_status'}   = 103;
 		$self->{'_clientid'} = undef;
@@ -1361,7 +1442,6 @@ sub addRequest {
 	my $text = shift;
 
 	push @{$self->{'_request'}}, $text;
-	++$self->{'_curparam'};
 }
 
 sub getRequest {
@@ -1389,7 +1469,6 @@ sub addParam {
 	my $val = shift;
 
 	${$self->{'_params'}}{$key} = $val;
-	++$self->{'_curparam'};
 }
 
 # add a nameless parameter
@@ -1397,7 +1476,7 @@ sub addParamPos {
 	my $self = shift;
 	my $val = shift;
 	
-	${$self->{'_params'}}{ "_p" . $self->{'_curparam'}++ } = $val;
+	${$self->{'_params'}}{ "_p" . keys %{$self->{'_params'}} } = $val;
 }
 
 # get a parameter by name
@@ -2157,7 +2236,6 @@ sub executeLegacy {
 	my $request = Slim::Control::Request->new( 
 		(blessed($client) ? $client->id() : undef), 
 		$parrayref,
-		undef,
 		1,
 	);
 	
@@ -2404,188 +2482,6 @@ sub __filterString {
 	}
 		
 	$str .= "]";
-}
-
-# given a command or query in an array, walk down the dispatch DB to find
-# the function to call for it. Used by the Request constructor
-sub __parse {
-	my $self           = shift;
-	my $requestLineRef = shift; # reference to an array containing the query verbs
-
-	my $isDebug    = $log->is_debug;
-
-	if ($isDebug) {
-		$log->debug("Request: parse(" . join(' ', @{$requestLineRef}) . ")");
-	}
-
-	my $found;					# have we found the right command
-	my $outofverbs;					# signals we're out of verbs to try and match
-	my $LRindex    = 0;				# index into $requestLineRef
-	my $done       = 0;				# are we done yet?
-	my $DBp        = \%dispatchDB;	# pointer in the dispatch table
-	my $match      = $requestLineRef->[$LRindex]; # verb of the command we're trying to match
-	my @request;
-	my $params     = $self->{'_params'};
-	my $curparam   = 0;
-
-	while (!$done) {
-
-		# we're out of verbs to check for a match -> try with ''
-		if (!defined $match) {
-
-			$match = '';
-			$outofverbs = 1;
-		}
-
-		if ($isDebug) {
-			$log->debug("..Trying to match [$match]");
-			#$log->debug(Data::Dump::dump($DBp));
-		}
-
-		# our verb does not match in the hash 
-		if (!defined $DBp->{$match}) {
-
-			if ($isDebug) {
-
-				$log->debug("..no match for [$match]");
-			}
-			
-			# if $match is '?', abandon ship
-			if ($match eq '?') {
-
-				$log->debug("...[$match] is ?, done");
-				$done = 1;
-
-			} else {
-
-				my $foundparam = 0;
-
-				# Can we find a key that starts with '_' ?
-				if ($isDebug) {
-					$log->debug("...looking for a key starting with _");
-				}
-
-				for my $key (keys %{$DBp}) {
-
-					if ($isDebug) {
-						$log->debug("....considering [$key]");
-					}
-					
-					if ($key =~ /^_.*/) {
-
-						if ($isDebug) {
-							$log->debug("....[$key] starts with _");
-						}
-
-						# found it, add $key=$match to the params
-						if (!$outofverbs) {
-
-							if ($isDebug) {
-								$log->debug("....not out of verbs, adding param [$key, $match]");
-							}
-
-							$params->{$key} = $match;
-							++$curparam;
-						}
-
-						# and continue with $key...
-						$foundparam = 1;
-						$match = $key;
-						last;
-					}
-				}
-
-				if (!$foundparam) {
-					$done = 1;
-				}
-			}
-		}
-
-		# Our verb matches, and it is an array -> done
-		if (!$done && ref $DBp->{$match} eq 'ARRAY') {
-
-			if ($isDebug) {
-				$log->debug("..[$match] is ARRAY -> done");
-			}
-
-			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
-
-				# add $match to the request list if it is something sensible
-				push @request, $match;
-			}
-
-			# we're pointing to an array -> done
-			$done = 1;
-			$found = $DBp->{$match};
-		}
-
-		# Our verb matches, and it is a hash -> go to next level
-		# (no backtracking...)
-		if (!$done && ref $DBp->{$match} eq 'HASH') {
-
-			if ($isDebug) {	
-				$log->debug("..[$match] is HASH");
-			}
-
-			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
-
-				# add $match to the request list if it is something sensible
-				push @request, $match;
-			}
-
-			$DBp = \%{$DBp->{$match}};
-			$match = $requestLineRef->[++$LRindex];
-		}
-	}
-
-	# create a string containg all request verbs to test against with a regexp
-	$self->{'_request'}    = \@request;
-	$self->{'_requeststr'} = join(',', @request);
-
-	if (defined $found) {
-		# 0: needs client
-		# 1: is a query
-		# 2: has Tags
-		# 3: Function
-		
-		# handle the remaining params
-		for (my $i = ++$LRindex; $i < scalar @{$requestLineRef}; $i++) {
-
-			# try tags if we know we have some
-			if ($found->[2] && ($requestLineRef->[$i] =~ /([^:]+):(.*)/)) {
-
-				$params->{$1} = $2;
-				++$curparam;
-
-			} else {
-
-				# default to positional param...
-				$params->{ "_p" . $curparam++ } = $requestLineRef->[$i];
-			}
-		}
-
-		$self->{'_needClient'} = $found->[0];
-		$self->{'_isQuery'} = $found->[1];
-		$self->{'_func'} = $found->[3];
-
-	} else {
-
-		# don't complain loudly here
-		# the request will end up as invalid. If this causes a problem, the caller can complain.
-		# we do not have to 
-		if ( $log->is_info ) {
-			$log->info("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
-		}
-
-		# handle the remaining params, if any...
-		# only for the benefit of CLI echoing...
-		for (my $i = $LRindex; $i < scalar @{$requestLineRef}; $i++) {
-
-			$params->{ "_p" . $curparam++ } = $requestLineRef->[$i];
-		}
-	}
-
-	$self->{'_curparam'} = $curparam;
 }
 
 # callback for the subscriptions.
