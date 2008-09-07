@@ -544,7 +544,7 @@ sub cli_process {
 	}
 
 	# create a request
-	my $request = Slim::Control::Request->new($clientid, $arrayRef, undef, 1);
+	my $request = Slim::Control::Request->new($clientid, $arrayRef, 1);
 
 	return if !defined $request;
 
@@ -779,7 +779,7 @@ sub canQuery {
 	} else {
 
 		# create a request with the array...
-		my $testrequest = Slim::Control::Request->new(undef, \@array, undef, 1);
+		my $testrequest = Slim::Control::Request->new(undef, \@array, 1);
 		
 		# ... and return if we found a func for it or not
 		$request->addResult('_can', ($testrequest->isStatusNotDispatchable ? 0 : 1));
