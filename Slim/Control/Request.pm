@@ -1067,10 +1067,10 @@ sub new {
 
 	} else {
 		
-		# No match in dispatch table - mark as not dispatchable & copy to positional params for cli echoing
+		# No match in dispatch table - mark as not dispatchable & copy remaining to positional params for cli echoing
 		$self->{'_status'} = 104;
 		
-		for ($i = 0;$i < scalar @$requestLineRef; $i++) {
+		for (;$i < scalar @$requestLineRef; $i++) {
 			$params{"_p" . keys %params} = $requestLineRef->[$i];
 		}
 
