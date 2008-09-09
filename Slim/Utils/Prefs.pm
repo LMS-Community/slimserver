@@ -94,6 +94,7 @@ my %namespaces;
 
 # we need to check for prefsdir being set on cmdline as we are run before the server parses options
 Getopt::Long::GetOptions('prefsdir=s' => \$path);
+$::prefsdir = $path;
 
 $path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 
@@ -256,6 +257,9 @@ sub init {
 		'noupnp'                => 1,
 	);
 
+	# we can have different defaults depending on the OS 
+	Slim::Utils::OSDetect::getOS->initPrefs(\%defaults);
+	
 	# add entry to dispatch table if it is loaded (it isn't in scanner.pl) as migration may call notify for this
 	# this is required as Slim::Control::Request::init will not have run at this point
 	if (exists &Slim::Control::Request::addDispatch) {
@@ -490,7 +494,7 @@ sub init {
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 
 	# allow users to set a port below 1024 on windows which does not require admin for this
-	my $minP = Slim::Utils::OSDetect::OS() eq 'win' ? 1 : 1024;
+	my $minP = Slim::Utils::OSDetect::isWindows() ? 1 : 1024;
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=>  65535 }, 'httpport'    );
 	
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
@@ -727,7 +731,7 @@ sub defaultAudioDir {
 }
 
 sub defaultPlaylistDir {
-	my $path = Slim::Utils::OSDetect::dirsFor('playlists');;
+	my $path = Slim::Utils::OSDetect::dirsFor('playlists');
 
 	if ($path) {
 

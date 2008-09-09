@@ -287,7 +287,7 @@ sub _readCoverArtFiles {
 	
 			$isInfo && $log->info("Variable cover: $artwork from $1");
 	
-			if (Slim::Utils::OSDetect::OS() eq 'win') {
+			if (Slim::Utils::OSDetect::isWindows()) {
 				# Remove illegal characters from filename.
 				$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
 			}

@@ -336,7 +336,7 @@ sub tokenizeConvertCommand {
 	# escape $ and * in file names and URLs.
 	# Except on Windows where $ and ` shouldn't be escaped and "
 	# isn't allowed in filenames.
-	if (Slim::Utils::OSDetect::OS() ne 'win') {
+	if (!Slim::Utils::OSDetect::isWindows()) {
 		$filepath =~ s/([\$\"\`])/\\$1/g;
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
@@ -347,7 +347,7 @@ sub tokenizeConvertCommand {
 	}
 
 	if (Slim::Music::Info::isFile($filepath)) {
-		if (Slim::Utils::OSDetect::OS() eq 'win') {
+		if (Slim::Utils::OSDetect::isWindows()) {
 			$filepath = Win32::GetShortPathName($filepath);
 		}
 		else {
@@ -374,7 +374,7 @@ sub tokenizeConvertCommand {
 	$command =~ s/\$([^\$\\]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
 
 	if (!defined($noPipe)) {
-		$command .= (Slim::Utils::OSDetect::OS() eq 'win') ? '' : ' &';
+		$command .= (Slim::Utils::OSDetect::isWindows()) ? '' : ' &';
 		$command .= ' |';
 	}
 

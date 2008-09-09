@@ -114,7 +114,7 @@ sub findFilesMatching {
 	my $topDir = shift;
 	my $args   = shift;
 
-	my $os     = Slim::Utils::OSDetect::OS();
+	my $isWin  = Slim::Utils::OSDetect::isWindows();
 	my $types  = Slim::Music::Info::validTypeExtensions($args->{'types'});
 
 	my $descend_filter = sub {
@@ -143,7 +143,7 @@ sub findFilesMatching {
 		# Are they named anything other than .lnk? I don't think so.
 		if ($file =~ /\.lnk$/i) {
 
-			if ($os ne 'win') {
+			unless ($isWin) {
 				next;
 			}
 

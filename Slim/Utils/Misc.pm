@@ -68,19 +68,13 @@ my $canFollowAlias = 0;
 
 if ( !main::SLIM_SERVICE ) {
 	if ($^O =~ /Win32/) {
-		require Win32;
-		require Win32::API;
 		require Win32::File;
-		require Win32::FileOp;
-		require Win32::Process;
-		require Win32::Service;
-		require Win32::Shortcut;
-		require Slim::Utils::Win32;
+		require Slim::Utils::OS::Win32;
 	}
 	
 	elsif ($^O =~/darwin/i) {
 		# OSX 10.3 doesn't have the modules needed to follow aliases
-		$canFollowAlias = !Slim::bootstrap::tryModuleLoad('Mac::Files', 'Mac::Resources', 'nowarn');
+		$canFollowAlias = Slim::Utils::OS::OSX->canFollowAlias();
 	}
 }
 
@@ -106,7 +100,7 @@ sub findbin {
 
 	$log->debug("Looking for executable: [$executable]");
 
-	my $isWin = (Slim::Utils::OSDetect::OS() eq "win");
+	my $isWin = Slim::Utils::OSDetect::isWindows();
 
 	if ($isWin && $executable !~ /\.\w{3}$/) {
 
@@ -174,48 +168,7 @@ Set the priority for the server. $priority should be -20 to 20
 =cut
 
 sub setPriority {
-	my $priority = shift;
-	return unless defined $priority && $priority =~ /^-?\d+$/;
-
-	# For *nix, including OSX, set whatever priority the user gives us.
-	# For win32, translate the priority to a priority class and use that
-
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		my ($priorityClass, $priorityClassName) = _priorityClassFromPriority($priority);
-
-		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
-		my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
-
-		if (blessed($setPriorityClass) && blessed($getCurrentProcess)) {
-
-			my $processHandle = eval { $getCurrentProcess->Call(0) };
-
-			if (!$processHandle || $@) {
-
-				logError("Can't get process handle ($^E) [$@]");
-				return;
-			};
-
-			logger('server')->info("SqueezeCenter changing process priority to $priorityClassName");
-
-			eval { $setPriorityClass->Call($processHandle, $priorityClass) };
-
-			if ($@) {
-				logError("Couldn't set priority to $priorityClassName ($^E) [$@]");
-			}
-		}
-
-	} else {
-
-		logger('server')->info("SqueezeCenter changing process priority to $priority");
-
-		eval { setpriority (0, 0, $priority); };
-
-		if ($@) {
-			logError("Couldn't set priority to $priority [$@]");
-		}
-	}
+	Slim::Utils::OSDetect::getOS()->setPriority(shift)
 }
 
 =head2 getPriority( )
@@ -225,86 +178,7 @@ Get the current priority of the server.
 =cut
 
 sub getPriority {
-
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
-		my $getPriorityClass  = Win32::API->new('kernel32', 'GetPriorityClass',  ['N'], 'N');
-
-		if (blessed($getPriorityClass) && blessed($getCurrentProcess)) {
-
-			my $processHandle = eval { $getCurrentProcess->Call(0) };
-
-			if (!$processHandle || $@) {
-
-				logError("Can't get process handle ($^E) [$@]");
-				return;
-			};
-
-			my $priorityClass = eval { $getPriorityClass->Call($processHandle) };
-
-			if ($@) {
-				logError("Can't get priority class ($^E) [$@]");
-			}
-
-			return _priorityFromPriorityClass($priorityClass);
-		}
-
-	} else {
-
-		my $priority = eval { getpriority (0, 0) };
-
-		if ($@) {
-			logError("Can't get priority [$@]");
-		}
-
-		return $priority;
-	}
-}
-
-# Translation between win32 and *nix priorities
-# is as follows:
-# -20  -  -16  HIGH
-# -15  -   -6  ABOVE NORMAL
-#  -5  -    4  NORMAL
-#   5  -   14  BELOW NORMAL
-#  15  -   20  LOW
-
-sub _priorityClassFromPriority {
-	my $priority = shift;
-
-	# ABOVE_NORMAL_PRIORITY_CLASS and BELOW_NORMAL_PRIORITY_CLASS aren't
-	# provided by Win32::Process so their values have been hardcoded.
-
-	if ($priority <= -16 ) {
-		return (Win32::Process::HIGH_PRIORITY_CLASS(), "HIGH");
-	} elsif ($priority <= -6) {
-		return (0x00008000, "ABOVE_NORMAL");
-	} elsif ($priority <= 4) {
-		return (Win32::Process::NORMAL_PRIORITY_CLASS(), "NORMAL");
-	} elsif ($priority <= 14) {
-		return (0x00004000, "BELOW_NORMAL");
-	} else {
-		return (Win32::Process::IDLE_PRIORITY_CLASS(), "LOW");
-	}
-}
-
-sub _priorityFromPriorityClass {
-	my $priorityClass = shift;
-
-	if ($priorityClass == 0x00000100) { # REALTIME
-		return -20;
-	} elsif ($priorityClass == Win32::Process::HIGH_PRIORITY_CLASS()) {
-		return -16;
-	} elsif ($priorityClass == 0x00008000) {
-		return -6;
-	} elsif ($priorityClass == 0x00004000) {
-		return 5;
-	} elsif ($priorityClass == Win32::Process::IDLE_PRIORITY_CLASS()) {
-		return 15;
-	} else {
-		return 0;
-	}
+	return Slim::Utils::OSDetect::getOS()->getPriority(shift)
 }
 
 =head2 pathFromWinShortcut( $path )
@@ -314,50 +188,14 @@ Return the filepath for a given Windows Shortcut
 =cut
 
 sub pathFromWinShortcut {
-	my $fullpath = pathFromFileURL(shift);
 
-	my $path = "";
-	my $log  = logger('os.files');
-
-	if (Slim::Utils::OSDetect::OS() ne "win") {
+	unless (Slim::Utils::OSDetect::isWindows()) {
 
 		logWarning("Windows shortcuts not supported on non-windows platforms!");
-
-		return $path;
+		return shift;
 	}
-
-	my $shortcut = Win32::Shortcut->new($fullpath);
-
-	if (defined($shortcut)) {
-
-		$path = $shortcut->Path();
-
-		# the following pattern match throws out the path returned from the
-		# shortcut if the shortcut is contained in a child directory of the path
-		# to avoid simple loops, loops involving more than one shortcut are still
-		# possible and should be dealt with somewhere, just not here.
-		if (defined($path) && !$path eq "" && $fullpath !~ /^\Q$path\E/i) {
-
-			$path = fileURLFromPath($path);
-
-			#collapse shortcuts to shortcuts into a single hop
-			if (Slim::Music::Info::isWinShortcut($path)) {
-				$path = pathFromWinShortcut($path);
-			}
-
-		} else {
-
-			$log->error("Error: Bad path in $fullpath - path was: [$path]");
-		}
-
-	} else {
-
-		$log->error("Error: Shortcut $fullpath is invalid");
-	}
-
-	$log->info("Got path $path from shortcut $fullpath");
-
-	return $path;
+	
+	return Slim::Utils::OS::Win32->pathFromWinShortcut(shift);
 }
 
 =head2 fileURLFromWinShortcut( $shortcut)
@@ -367,9 +205,7 @@ sub pathFromWinShortcut {
 =cut
 
 sub fileURLFromWinShortcut {
-	my $shortcut = shift;
-
-	return fixPath(pathFromWinShortcut($shortcut));
+	return fixPath(pathFromWinShortcut(shift));
 }
 
 =head2 pathFromMacAlias( $path )
@@ -383,25 +219,8 @@ sub pathFromMacAlias {
 	my $path = '';
 
 	return $path unless $fullpath && $canFollowAlias;
-
-	if (isMacAlias($fullpath)) {
-
-		$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
-
-		if (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0)) {
-			
-			if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
-				
-				$path = Mac::Files::ResolveAlias($alis);
-
-				Mac::Resources::ReleaseResource($alis);
-			}
-
-			Mac::Resources::CloseResFile($rsc);
-		}
-	}
-
-	return $path;
+	
+	return Slim::Utils::OS::OSX->pathFromMacAlias($fullpath);
 }
 
 =head2 isMacAlias( $path )
@@ -416,21 +235,7 @@ sub isMacAlias {
 
 	return unless $fullpath && $canFollowAlias;
 
-	$fullpath = pathFromFileURL($fullpath) unless $fullpath =~ m|^/|;
-
-	if (-f $fullpath && -r _ && (my $rsc = Mac::Resources::FSpOpenResFile($fullpath, 0))) {
-
-		if (my $alis = Mac::Resources::GetIndResource('alis', 1)) {
-
-			$isAlias = 1;
-
-			Mac::Resources::ReleaseResource($alis);
-		}
-
-		Mac::Resources::CloseResFile($rsc);
-	}
-
-	return $isAlias;
+	return Slim::Utils::OS::OSX->isMacAlias($fullpath);
 }
 
 =head2 pathFromFileURL( $url, [ $noCache ])
@@ -643,12 +448,6 @@ sub fixPathCase {
 	my $path = shift;
 	my $orig = $path;
 
-	#if ($^O =~ /Win32/) {
-		# XXX: Bug 2475, we can't call GetLongPathName on an 8.3 path
-		# Commenting out for now, I am not sure if this will break anything
-		#$path = Win32::GetLongPathName($path);
-	#}
-
 	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
 	# But don't for the bogus path we use with embedded cue sheets.
 	if ($^O eq 'darwin' && $path !~ m|^/BOGUS/PATH|) {
@@ -707,7 +506,7 @@ sub fixPath {
 
 	# People sometimes use playlists generated on Windows elsewhere.
 	# See Bug 236
-	if (Slim::Utils::OSDetect::OS() ne 'win') {
+	unless (Slim::Utils::OSDetect::isWindows()) {
 
 		$file =~ s/^[C-Z]://i;
 		$file =~ s/\\/\//g;
@@ -734,7 +533,7 @@ sub fixPath {
 
 		if (file_name_is_absolute($file)) {
 
-			if (Slim::Utils::OSDetect::OS() eq "win") {
+			if (Slim::Utils::OSDetect::isWindows()) {
 
 				my ($volume) = splitpath($file);
 
@@ -748,7 +547,7 @@ sub fixPath {
 
 		} else {
 
-			if (Slim::Utils::OSDetect::OS() eq "win") {
+			if (Slim::Utils::OSDetect::isWindows()) {
 
 				# rel2abs will convert ../../ paths correctly only for windows
 				$fixed = fixPath(rel2abs($file,$base));
@@ -851,81 +650,9 @@ sub _checkInFolder {
 	}
 }
 
-my %_ignoredItems;
 # the hash's value is the parent path from which a file should be excluded
 # 1 means "from all folders", "/" -> "subfolders in root only" etc.
-
-if (Slim::Utils::OSDetect::OS() eq 'mac') {
-	%_ignoredItems = (
-		# Items we should ignore on a mac volume
-		'Icon' => '/',
-		'TheVolumeSettingsFolder' => 1,
-		'TheFindByContentFolder' => 1,
-		'Network Trash Folder' => 1,
-		'Temporary Items' => 1,
-		'.Trashes'  => 1,
-		'.AppleDB'  => 1,
-		'.AppleDouble' => 1,
-		'.Metadata' => 1,
-		'.DS_Store' => 1,
-		# Dean: "Essentially hide anything you can't see in the finder or explorer"
-		'automount' => 1,
-		'cores'     => '/',
-		'bin'       => '/',
-		'dev'       => '/',
-		'etc'       => '/',
-		'home'      => '/',
-		'net'       => '/',
-		'Network'   => '/',
-		'private'   => '/',
-		'sbin'      => 1,
-		'tmp'       => 1,
-		'usr'       => 1,
-		'var'       => '/',
-		'opt'       => '/',	
-	)
-}
-
-elsif (Slim::Utils::OSDetect::isReadyNAS()) {
-	%_ignoredItems = (
-		'bin'       => '/',
-		'dev'       => '/',
-		'etc'       => '/',
-		'frontview' => '/',
-		'home'      => '/',
-		'initrd'    => 1,
-		'lib'       => '/',
-		'mnt'       => '/',
-		'opt'       => '/',
-		'proc'      => '/',
-		'ramfs'     => '/',
-		'root'      => '/',
-		'sbin'      => '/',
-		'sys'       => '/',
-		'tmp'       => '/',
-		'USB'       => '/',
-		'usr'       => '/',	
-		'var'       => '/',
-		'lost+found'=> 1,
-	)
-}
-
-elsif (Slim::Utils::OSDetect::OS() eq 'win') {
-	%_ignoredItems = (
-		# Items we should ignore  on a Windows volume
-		'System Volume Information' => '/',
-		'RECYCLER' => '/',
-		'Recycled' => '/',	
-	)
-}
-
-else {
-	%_ignoredItems = (
-		# Items we should ignore on a linux volume
-		'lost+found' => 1,
-		'@eaDir'     => 1,
-	)	
-}
+my %_ignoredItems = Slim::Utils::OSDetect::getOS->ignoredItems();
 
 # always ignore . and ..
 $_ignoredItems{'.'}  = 1;
@@ -965,7 +692,7 @@ sub fileFilter {
 	# Ignore special named files and directories
 	# __ is a match against our old __history and __mac playlists.
 	return 0 if $item =~ /^__\S+\.m3u$/o;
-	return 0 if ($item =~ /^\./o && Slim::Utils::OSDetect::OS() ne 'win');
+	return 0 if ($item =~ /^\./o && !Slim::Utils::OSDetect::isWindows());
 
 	if ((my $ignore = $prefs->get('ignoreDirRE') || '') ne '') {
 		return 0 if $item =~ /$ignore/;
@@ -975,7 +702,7 @@ sub fileFilter {
 	my $fullpath = $dirname ? catdir(Slim::Utils::Unicode::utf8off($dirname), $item) : $item;
 
 	# Don't display hidden/system files on Windows
-	if (Slim::Utils::OSDetect::OS() eq "win") {
+	if (Slim::Utils::OSDetect::isWindows()) {
 		my $attributes;
 		Win32::File::GetAttributes($fullpath, $attributes);
 		return 0 if ($attributes & Win32::File::HIDDEN()) || ($attributes & Win32::File::SYSTEM());
@@ -1059,10 +786,10 @@ sub readDirectory {
 	my @diritems = ();
 	my $log      = logger('os.files');
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 		my ($volume) = splitpath($dirname);
 
-		if ($volume && isWinDrive($volume) && !Slim::Utils::Win32::isDriveReady($volume)) {
+		if ($volume && isWinDrive($volume) && !Slim::Utils::OS::Win32->isDriveReady($volume)) {
 			
 			$log->debug("drive [$dirname] not ready");
 
@@ -1221,7 +948,7 @@ No low-level check is done whether the drive actually exists.
 sub isWinDrive {
 	my $path = shift;
 
-	return 0 if (Slim::Utils::OSDetect::OS() ne 'win' || length($path) > 3);
+	return 0 if (!Slim::Utils::OSDetect::isWindows() || length($path) > 3);
 
 	return $path =~ /^[a-z]{1}:[\\]?$/i;
 }

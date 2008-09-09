@@ -327,7 +327,7 @@ sub processCoverArtRequest {
 
 			# Bug 6458, filter JPEGs on win32 through Imager to handle any corrupt files
 			# XXX: Remove this when we get a newer build of GD
-			if ( $actualContentType eq 'image/jpeg' && Slim::Utils::OSDetect::OS() eq 'win' ) {
+			if ( $actualContentType eq 'image/jpeg' && Slim::Utils::OSDetect::isWindows() ) {
 				require Imager;
 				my $img = Imager->new;
 				eval {

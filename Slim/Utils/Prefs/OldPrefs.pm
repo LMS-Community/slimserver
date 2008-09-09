@@ -62,7 +62,9 @@ sub _oldPrefs {
 
 	return $oldprefs if $oldprefs;
 
-	if ( my $path = _oldPath() ) {
+	if ( my $path = Slim::Utils::OSDetect::dirsFor('oldprefs') ) {
+
+		$log->info("using old preference file $oldprefs for conversion") if $oldprefs;
 
 		$oldprefs = eval { LoadFile($path) };
 
@@ -78,55 +80,12 @@ sub _oldPrefs {
 		}
 	}
 
-	return $oldprefs = {};
-}
-
-sub _oldPath {
-
-	my $oldPrefs;
-
-	if ($::prefsfile && -r $::prefsfile) {
-
-		$oldPrefs = $::prefsfile;
-
-	} elsif (Slim::Utils::OSDetect::OS() eq 'mac' && -r catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref')) {
-
-		$oldPrefs = catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref');
-
-	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		if (Slim::Utils::OSDetect::isVista() && -r catdir(Slim::Utils::Win32::writablePath(), 'slimserver.pref')) {
-
-			$oldPrefs = catdir(Slim::Utils::Win32::writablePath(), 'slimserver.pref');
-
-		} elsif (-r catdir($Bin, 'slimserver.pref'))  {
-
-			$oldPrefs = catdir($Bin, 'slimserver.pref');
-
-		}
-
-	} elsif (-r '/etc/slimserver.conf') {
-
-		$oldPrefs = '/etc/slimserver.conf';
-
-	} elsif (-r catdir(Slim::Utils::OSDetect::dirsFor('prefs'), 'slimserver.pref')) {
-
-		$oldPrefs = catdir(Slim::Utils::OSDetect::dirsFor('prefs'), 'slimserver.pref');
-
-	} elsif (-r catdir($ENV{'HOME'}, 'slimserver.pref')) {
-
-		$oldPrefs = catdir($ENV{'HOME'}, 'slimserver.pref');
-
-	} else {
+	else {
 
 		$log->warn("no old preference file found - using default preferences");
-
-		return undef;
 	}
 
-	$log->info("using old preference file $oldPrefs for conversion") if $oldPrefs;
-
-	return $oldPrefs;
+	return $oldprefs = {};
 }
 
 =head2 SEE ALSO

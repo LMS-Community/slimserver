@@ -305,7 +305,7 @@ sub sourceInformation {
 	if ( !main::SLIM_SERVICE ) {
 		# Bug 3443 - append a socket if needed
 		# Windows doesn't use named sockets (it uses TCP instead)
-		if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
+		if (!Slim::Utils::OSDetect::isWindows() && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
 
 			if (Slim::Utils::MySQLHelper->socketFile) {
 				$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
@@ -1748,7 +1748,7 @@ sub _hasChanged {
 		# it's likely removable storage and shouldn't be deleted
 		my $offline;
 			
-		if ( Slim::Utils::OSDetect::OS() eq 'win' ) {
+		if ( Slim::Utils::OSDetect::isWindows() ) {
 			# win32, check the drive letter
 			my $parent = Path::Class::File->new($filepath)->dir;
 			if ( my $vol = $parent->volume ) {

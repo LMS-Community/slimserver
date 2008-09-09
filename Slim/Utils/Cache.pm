@@ -243,7 +243,7 @@ sub cleanup {
 		unless ($lastpurge && ($now - $lastpurge) < $PURGE_INTERVAL) {
 			my $start = $now;
 			
-			if ( Slim::Utils::OSDetect::OS() ne 'win' ) {
+			if ( !Slim::Utils::OSDetect::isWindows() ) {
 				# Fork a child to purge the cache, as it's a slow operation
 				if ( my $pid = fork ) {
 					# parent

@@ -14,9 +14,9 @@ use Slim::Utils::Misc qw(readDirectory);
 use File::Spec::Functions qw(:ALL);
 
 BEGIN {
-        if ($^O =~ /Win32/) {
-        		require Slim::Utils::Win32;
-        }
+	if ($^O =~ /Win32/) {
+		require Slim::Utils::OS::Win32;
+	}
 }
 
 my $log = logger('os.files');
@@ -35,7 +35,7 @@ sub handler {
 	my @subdirs;
 	my $currDir = $paramRef->{'currDir'};
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 		$currDir = undef if ($currDir =~ /^\\+$/);
 	}
 
@@ -51,7 +51,7 @@ sub handler {
 
 		# partial file/foldernames - filter the list of the parent folder
 		my ($parent, $file);
-		if ($currDir =~ /^(\\\\\w.*)\\.+/ && Slim::Utils::OSDetect::OS() eq 'win') {
+		if (Slim::Utils::OSDetect::isWindows() && $currDir =~ /^(\\\\\w.*)\\.+/) {
 			$parent = $1;
 		}
 		else {
@@ -69,9 +69,9 @@ sub handler {
 		}
 
 		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
-		if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
+		if (Slim::Utils::OSDetect::isWindows() && !@subdirs) {
 			$log->debug('getting Windows drive list');
-			@subdirs = Slim::Utils::Win32::getDrives();
+			@subdirs = Slim::Utils::OS::Win32->getDrives();
 		}
 		elsif (!@subdirs && !$parent) {
 			@subdirs = _mapDirectories($currDir);

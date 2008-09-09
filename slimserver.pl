@@ -110,13 +110,6 @@ BEGIN {
 	use Slim::Utils::OSDetect;
 
 	Slim::bootstrap->loadModules();
-
-	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
-	if (!Slim::Utils::OSDetect::isDebian()) {
-
-		unlink("$Bin/CPAN/MP3/Info.pm");
-		unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
-	}
 };
 
 use File::Slurp;
@@ -298,7 +291,7 @@ sub init {
 
 	$log->info("SqueezeCenter OS Specific init...");
 
-	if (Slim::Utils::OSDetect::OS() ne 'win') {
+	unless (Slim::Utils::OSDetect::isWindows()) {
 		$SIG{'HUP'} = \&initSettings;
 	}		
 
@@ -328,7 +321,7 @@ sub init {
 	}
 
 	# background if requested
-	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
+	if (!Slim::Utils::OSDetect::isWindows() && $daemon) {
 
 		$log->info("SqueezeCenter daemonizing...");
 		daemonize();
@@ -339,8 +332,10 @@ sub init {
 	}
 
 	# Change UID/GID after the pid & logfiles have been opened.
-	$log->info("SqueezeCenter settings effective user and group if requested...");
-	changeEffectiveUserAndGroup();
+	unless (Slim::Utils::OSDetect::getOS->dontSetUserAndGroup()) {
+		$log->info("SqueezeCenter settings effective user and group if requested...");
+		changeEffectiveUserAndGroup();		
+	}
 
 	# Set priority, command line overrides pref
 	if (defined $priority) {
@@ -350,7 +345,7 @@ sub init {
 	}
 
 	$log->info("SqueezeCenter binary search path init...");
-	Slim::Utils::OSDetect::initSearchPath();
+	Slim::Utils::OSDetect::getOS->initSearchPath();
 
 	$log->info("SqueezeCenter strings init...");
 	Slim::Utils::Strings::init();
@@ -783,11 +778,6 @@ sub daemonize {
 }
 
 sub changeEffectiveUserAndGroup {
-
-	# Windows doesn't have getpwnam, and the uid is always 0.
-	if ($^O eq 'MSWin32') {
-		return;
-	}
 
 	# If we're not root and need to change user and group then die with a
 	# suitable message, else there's nothing more to do, so return.

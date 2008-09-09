@@ -72,6 +72,9 @@ BEGIN {
 
 	unshift @INC, @SlimINC;
 
+	use Slim::Utils::OSDetect;
+	Slim::Utils::OSDetect::init();
+
 	# Pull in DeploymentDefaults
 	require SDI::Util::SNConfig;
 	$sn_config = SDI::Util::SNConfig::get_config( $SN_PATH );
@@ -144,7 +147,6 @@ use Slim::Music::Info;
 #use Slim::Music::Import;
 #use Slim::Music::MusicFolderScan;
 #use Slim::Music::PlaylistFolderScan;
-use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
 use Slim::Player::Source;
@@ -247,9 +249,6 @@ sub init {
 		eval "use diagnostics";
 	}
 
-	msg("SlimServer OSDetect init...\n");
-	Slim::Utils::OSDetect::init();
-
 	# open the log files
 	Slim::Utils::Log->init({
 		'logconf' => $logconf,
@@ -270,7 +269,7 @@ sub init {
 
 	$log->info("SlimServer OS Specific init...");
 
-	if (Slim::Utils::OSDetect::OS() ne 'win') {
+	unless (Slim::Utils::OSDetect::isWindows()) {
 		$SIG{'HUP'} = \&initSettings;
 	}		
 

@@ -87,7 +87,7 @@ sub handler {
 
 		# try to guess the local language setting
 		# only on non-Windows systems, as the Windows installer is setting the langugae
-		if (Slim::Utils::OSDetect::OS() ne 'win' && !$paramRef->{saveLanguage}
+		if (!Slim::Utils::OSDetect::isWindows() && !$paramRef->{saveLanguage}
 			&& defined $response->{_request}->{_headers}->{'accept-language'}) {
 
 			$log->debug("Accepted-Languages: " . $response->{_request}->{_headers}->{'accept-language'});

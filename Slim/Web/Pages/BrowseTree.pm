@@ -99,7 +99,7 @@ sub browsetree {
 	}
 
 	my $topPath = $topLevelObj->path;
-	my $osName  = Slim::Utils::OSDetect::OS();
+	my $isWin   = Slim::Utils::OSDetect::isWindows();
 
 	for my $relPath (@$items[$start..$end]) {
 
@@ -108,7 +108,7 @@ sub browsetree {
 		# Amazingly, this just works. :)
 		# Do the cheap compare for osName first - so non-windows users
 		# won't take the penalty for the lookup.
-		if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
+		if ($isWin && Slim::Music::Info::isWinShortcut($url)) {
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 

@@ -99,7 +99,7 @@ sub launchScan {
 
 	my $path = Slim::Utils::Prefs->dir;
 	
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 		$path = Win32::GetShortPathName($path);
 	}
 
@@ -141,22 +141,7 @@ sub launchScan {
 
 	my @scanArgs = map { "--$_" } keys %{$args};
 
-	my $command  = "$Bin/scanner.pl";
-
-	# Check for different scanner types.
-	if (Slim::Utils::OSDetect::OS() eq 'win' && -x "$Bin/scanner.exe") {
-
-		$command  = "$Bin/scanner.exe";
-
-	} elsif (Slim::Utils::OSDetect::isRHorSUSE()) {
-
-		$command  = '/usr/libexec/squeezecenter-scanner';
-
-	} elsif (Slim::Utils::OSDetect::isDebian()) {
-
-		$command  = '/usr/sbin/squeezecenter-scanner';
-
-	}
+	my $command  = Slim::Utils::OSDetect::getOS->scanner();
 
 	# Bug: 3530 - use the same version of perl we were started with.
 	if ($Config{'perlpath'} && -x $Config{'perlpath'} && $command !~ /\.exe$/) {

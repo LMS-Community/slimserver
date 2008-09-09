@@ -30,7 +30,7 @@ my $MMMVersion  = 0;
 my $MMSHost;
 my $MMSport;
 
-my $OS  = Slim::Utils::OSDetect::OS();
+my $isWin = Slim::Utils::OSDetect::isWindows();
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicip',
@@ -282,7 +282,7 @@ sub processSong {
 	# This breaks Linux however, so only do it on Windows & OS X
 	my @keys  = qw(album artist genre name);
 
-	if ($OS eq 'win') {
+	if ($isWin) {
 
 		push @keys, 'file';
 	}
@@ -411,7 +411,7 @@ sub _updatePlaylist {
 
 	for my $song (@$songs) {
 
-		if ($OS eq 'win') {
+		if ($isWin) {
 
 			$song = Slim::Utils::Unicode::utf8decode_guess(
 				$song, Slim::Utils::Unicode::encodingFromString($song),

@@ -1299,7 +1299,7 @@ sub validTypeExtensions {
 
 	# Always look for Windows shortcuts - but only on Windows machines.
 	# We can't parse them. Bug: 2654
-	if (Slim::Utils::OSDetect::OS() eq 'win' && !$disabled->{'lnk'}) {
+	if (Slim::Utils::OSDetect::isWindows() && !$disabled->{'lnk'}) {
 		push @extensions, 'lnk';
 	}
 
@@ -1430,7 +1430,7 @@ sub typeFromPath {
 
 			if (-f $filepath) {
 
-				if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::OS() eq 'win') {
+				if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::isWindows()) {
 
 					if (Win32::Shortcut->new($filepath)) {
 						$type = 'lnk';

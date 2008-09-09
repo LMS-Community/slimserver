@@ -315,7 +315,7 @@ sub browseTreeItemName {
 		# having to do so at initial load time of possibly hundreds of items.
 		my $url = Slim::Utils::Misc::fixPath($item, $client->modeParam('topLevelPath')) || return;
 
-		if (Slim::Music::Info::isWinShortcut($url)) {
+		if (Slim::Utils::OSDetect::isWindows() && Slim::Music::Info::isWinShortcut($url)) {
 
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}

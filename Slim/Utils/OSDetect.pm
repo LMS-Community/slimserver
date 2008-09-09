@@ -23,7 +23,7 @@ L<Slim::Utils::OSDetect> handles Operating System Specific details.
 		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}
 	
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 
 =cut
 
@@ -33,16 +33,7 @@ use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
-BEGIN {
-
-	if ($^O =~ /Win32/) {
-		require Win32::TieRegistry;
-		require Slim::Utils::Win32;
-	}
-}
-
-my $detectedOS = undef;
-my %osDetails  = ();
+my ($os, $isWindows);
 
 =head1 METHODS
 
@@ -53,394 +44,113 @@ returns a string to indicate the detected operating system currently running Squ
 =cut
 
 sub OS {
-	if (!$detectedOS) { init(); }
-	return $detectedOS;
+	return $os->name;
 }
 
 =head2 init( $newBin)
 
  Figures out where the preferences file should be on our platform, and loads it.
- also sets the global $detectedOS to 'unix' 'win', or 'mac'
 
 =cut
 
 sub init {
 	my $newBin = shift;
+	
+	if ($os) {
+		return;
+	}
 
 	# Allow the caller to pass in a new base dir (for test cases);
 	if (defined $newBin && -d $newBin) {
 		$Bin = $newBin;
 	}
-
-	if ($detectedOS) {
-		return;
-	}
-
-	if ($^O =~/darwin/i) {
-
-		$detectedOS = 'mac';
-
-		initDetailsForOSX();
-
-	} elsif ($^O =~ /^m?s?win/i) {
-
-		$detectedOS = 'win';
-
-		initDetailsForWin32();
-
-	} elsif ($^O =~ /linux/i) {
-
-		$detectedOS = 'unix';
-
-		initDetailsForLinux();
-
-	} else {
-
-		$detectedOS = 'unix';
-
-		initDetailsForUnix();
-	}
-}
-
-=head2 initSearchPath( )
-
-Initialises the binary seach path used by Slim::Utils::Misc::findbin to OS specific locations
-
-=cut
-
-sub initSearchPath {
-	# Initialise search path for findbin - called later in initialisation than init above
-
-	# Reduce all the x86 architectures down to i386, including x86_64, so we only need one directory per *nix OS. 
-	my $arch = $Config::Config{'archname'};
-	$arch =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
-
-	my @paths = ( catdir(dirsFor('Bin'), $arch), catdir(dirsFor('Bin'), $^O), dirsFor('Bin') );
-
-	if ($detectedOS eq 'mac') {
-
-		push @paths, $ENV{'HOME'} ."/Library/iTunes/Scripts/iTunes-LAME.app/Contents/Resources/";
-	}
-
-	if ($detectedOS ne "win") {
-
-		push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /usr/libexec /sw/bin /usr/sbin));
-
-	} else {
-
-		push @paths, 'C:\Perl\bin';
-	}
-
-	$osDetails{'binArch'} = $arch;
 	
-	Slim::Utils::Misc::addFindBinPaths(@paths);
+	# Let's see whether there's a custom OS file (to be used by 3rd party NAS vendors etc.)
+	eval {
+		require Slim::Utils::OS::Custom;
+		$os = Slim::Utils::OS::Custom->new();
+		print STDOUT "Found custom OS support file for " . $os->name . "\n";
+	};
+
+
+	if (!$os) {		
+
+		if ( main::SLIM_SERVICE ) {
+	
+			require Slim::Utils::OS::SlimService;
+			$os = Slim::Utils::OS::SlimService->new();
+	
+		} elsif ($^O =~/darwin/i) {
+			
+			require Slim::Utils::OS::OSX;
+			$os = Slim::Utils::OS::OSX->new();
+	
+		} elsif ($^O =~ /^m?s?win/i) {
+	
+			require Slim::Utils::OS::Win32;
+			$os = Slim::Utils::OS::Win32->new();
+	
+		} elsif ($^O =~ /linux/i) {
+	
+			if (-f '/etc/raidiator_version') {
+	
+				require Slim::Utils::OS::ReadyNAS;
+				$os = Slim::Utils::OS::ReadyNAS->new();
+				
+			} elsif (-f '/etc/debian_version') {
+		
+				require Slim::Utils::OS::Debian;
+				$os = Slim::Utils::OS::Debian->new();
+		
+			} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release') {
+		
+				require Slim::Utils::OS::RedHat;
+				$os = Slim::Utils::OS::RedHat->new();
+		
+			} elsif (-f '/etc/SuSE-release') {
+				
+				require Slim::Utils::OS::Suse;
+				$os = Slim::Utils::OS::Suse->new();
+				
+			} else {
+	
+				require Slim::Utils::OS::Linux;
+				$os = Slim::Utils::OS::Linux->new();
+			}
+	
+		} else {
+	
+			require Slim::Utils::OS::Unix;
+			$os = Slim::Utils::OS::Unix->new();
+	
+		}
+	}
+	
+	$os->initDetails();
+	$isWindows = $os->name eq 'win';
 }
 
-=head2 dirsFor( $dir )
+sub getOS {
+	return $os;
+}
 
-Return OS Specific directories.
+=head2 Backwards compatibility
 
-Argument $dir is a string to indicate which of the SqueezeCenter directories we
-need information for.
+ Keep some helper functions for backwards compatibility.
 
 =cut
 
 sub dirsFor {
-	my $dir     = shift;
-
-	my @dirs    = ();
-	my $OS      = OS();
-	my $details = details();
-	
-	# Force OS for SlimService, in case you're testing on a Mac
-	if ( main::SLIM_SERVICE ) {
-		$OS = 'linux';
-	}
-
-	if ($dir eq "Plugins") {
-		push @dirs, catdir($Bin, 'Slim', 'Plugin');
-	}
-
-	if ($OS eq 'mac') {
-
-		# These are all at the top level.
-		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
-
-			push @dirs, $Bin;
-
-		} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
-
-			# For some reason the dir is lowercase on OS X.
-			# FRED: it may have been eons ago but today it is HTML; most of
-			# the time anyway OS X is not case sensitive so it does not really
-			# matter...
-			#if ($dir eq 'HTML') {
-			#	$dir = lc($dir);
-			#}
-
-			push @dirs, "$ENV{'HOME'}/Library/Application Support/SqueezeCenter/$dir";
-			push @dirs, "/Library/Application Support/SqueezeCenter/$dir";
-			push @dirs, catdir($Bin, $dir);
-
-		} elsif ($dir eq 'log') {
-
-			push @dirs, catdir($ENV{'HOME'}, '/Library/Logs/SqueezeCenter');
-
-		} elsif ($dir eq 'cache') {
-
-			push @dirs, catdir($ENV{'HOME'}, '/Library/Caches/SqueezeCenter');
-
-		} elsif ($dir eq 'prefs') {
-
-			push @dirs, catdir($ENV{'HOME'}, '/Library/Application Support/SqueezeCenter');
-
-		} elsif ($dir eq 'music') {
-
-			push @dirs, catdir($ENV{'HOME'}, '/Music');
-
-		} elsif ($dir eq 'playlists') {
-
-			push @dirs, catdir($ENV{'HOME'}, '/Music/Playlists');
-
-		} else {
-
-			push @dirs, catdir($Bin, $dir);
-		}
-
-	# Debian specific paths.
-	} elsif (isDebian()) {
-
-		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
-
-			push @dirs, "/usr/share/squeezecenter/$dir";
-
-		} elsif ($dir eq 'Plugins') {
-			
-			push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/squeezecenter/Plugins";
-		
-		} elsif ($dir eq 'strings' || $dir eq 'revision') {
-
-			push @dirs, "/usr/share/squeezecenter";
-
-		} elsif ($dir =~ /^(?:types|convert)$/) {
-
-			push @dirs, "/etc/squeezecenter";
-
-		} elsif ($dir =~ /^(?:prefs)$/) {
-
-			push @dirs, "/var/lib/squeezecenter/prefs";
-
-
-		} elsif ($dir eq 'log') {
-
-			push @dirs, "/var/log/squeezecenter";
-
-		} elsif ($dir eq 'cache') {
-
-			push @dirs, "/var/lib/squeezecenter/cache";
-
-		} elsif ($dir eq 'MySQL') {
-
-			# Do nothing - use the depended upon MySQL install.
-
-		} elsif ($dir =~ /^(?:music|playlists)$/) {
-
-			push @dirs, '';
-
-		} else {
-
-			warn "dirsFor: Didn't find a match request: [$dir]\n";
-		}
-
-	# Red Hat/Fedora/SUSE RPM specific paths.
-	} elsif (isRHorSUSE()) {
-
-		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
-
-			push @dirs, "/usr/share/squeezecenter/$dir";
-
-		} elsif ($dir eq 'Plugins') {
-			
-			push @dirs, "/usr/share/squeezecenter/Plugins";
-			push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
-		
-		} elsif ($dir eq 'strings' || $dir eq 'revision') {
-
-			push @dirs, "/usr/share/squeezecenter";
-
-		} elsif ($dir =~ /^(?:types|convert)$/) {
-
-			push @dirs, "/etc/squeezecenter";
-
-		} elsif ($dir eq 'prefs') {
-
-			push @dirs, "/var/lib/squeezecenter/prefs";
-
-		} elsif ($dir eq 'log') {
-
-			push @dirs, "/var/log/squeezecenter";
-
-		} elsif ($dir eq 'cache') {
-
-			push @dirs, "/var/lib/squeezecenter/cache";
-
-		} elsif ($dir eq 'MySQL') {
-
-			# Do nothing - use the depended upon MySQL install.
-
-		} elsif ($dir =~ /^(?:music|playlists)$/) {
-
-			push @dirs, '';
-
-		} else {
-
-			warn "dirsFor: Didn't find a match request: [$dir]\n";
-		}
-
-	# all Windows specific stuff
-	} elsif ($OS eq 'win') {
-
-		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
-
-			push @dirs, $Bin;
-
-		} elsif ($dir eq 'log') {
-
-			push @dirs, Slim::Utils::Win32::writablePath('Logs');
-
-		} elsif ($dir eq 'cache') {
-
-			push @dirs, Slim::Utils::Win32::writablePath('Cache');
-
-		} elsif ($dir eq 'prefs') {
-
-			push @dirs, Slim::Utils::Win32::writablePath('prefs');
-
-		} elsif ($dir =~ /^(?:music|playlists)$/) {
-
-			my $path = '';
-			my $swKey = $Win32::TieRegistry::Registry->Open(
-				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-				{ 
-					Access => Win32::TieRegistry::KEY_READ(), 
-					Delimiter =>'/' 
-				}
-			);
-
-			if (defined $swKey) {
-				if (!($path = $swKey->{'My Music'})) {
-					if ($path = $swKey->{'Personal'}) {
-						$path = $path . '/My Music';
-					}
-				}
-			}
-
-			push @dirs, $path;
-
-		} else {
-
-			push @dirs, catdir($Bin, $dir);
-		}
-
-	} elsif ( main::SLIM_SERVICE ) {
-
-		# slimservice on squeezenetwork
-		if ( $dir =~ /^(?:strings|revision|convert|types)$/ ) {
-			push @dirs, $Bin;
-		}
-		elsif ( $dir eq 'log' ) {
-			if ( $^O eq 'linux' ) {
-				push @dirs, '/home/svcprod/ss/logs';
-			}
-			else {
-				push @dirs, catdir( $Bin, $dir );
-			}
-		}
-		elsif ( $dir eq 'cache' ) {
-			push @dirs, '/home/svcprod/ss/cache';
-		}
-		elsif ( $dir eq 'prefs' ) {
-			push @dirs, '/home/svcprod/ss/prefs';
-
-		}
-		elsif ( $dir =~ /^(?:music|playlists)$/ ) {
-			push @dirs, '';
-		}
-		else {
-			push @dirs, catdir( $Bin, $dir );
-		}
-
-	} else {
-
-		# Everyone else - *nix.
-		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
-
-			push @dirs, $Bin;
-
-		} elsif ($dir eq 'log') {
-
-			push @dirs, catdir($Bin, 'Logs');
-
-		} elsif ($dir eq 'cache') {
-
-			push @dirs, catdir($Bin, 'Cache');
-
-		} elsif ($dir =~ /^(?:music|playlists)$/) {
-
-			push @dirs, '';
-
-		} else {
-
-			push @dirs, catdir($Bin, $dir);
-		}
-	}
-
-	return wantarray() ? @dirs : $dirs[0];
+	return $os->dirsFor(shift);
 }
 
 sub details {
-	return \%osDetails;
+	return $os->details();
 }
-
-
-=head2 getProxy( )
-	Try to read the system's proxy setting by evaluating environment variables,
-	registry and browser settings
-=cut
 
 sub getProxy {
-	my $proxy = '';
-
-	# on Windows read Internet Explorer's proxy setting
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-		my $ieSettings = $Win32::TieRegistry::Registry->Open(
-			'CUser/Software/Microsoft/Windows/CurrentVersion/Internet Settings',
-			{ 
-				Access => Win32::TieRegistry::KEY_READ(), 
-				Delimiter =>'/' 
-			}
-		);
-
-		if (defined $ieSettings && hex($ieSettings->{'ProxyEnable'})) {
-			$proxy = $ieSettings->{'ProxyServer'};
-		}
-
-	}
-	
-	if (!$proxy) {
-		$proxy = $ENV{'http_proxy'};
-		my $proxy_port = $ENV{'http_proxy_port'};
-
-		# remove any leading "http://"
-		if($proxy) {
-			$proxy =~ s/http:\/\///i;
-			$proxy = $proxy . ":" .$proxy_port if($proxy_port);
-		}
-	}
-
-	return $proxy;
+	return $os->getProxy();
 }
-
 
 =head2 isDebian( )
 
@@ -451,195 +161,16 @@ sub getProxy {
 =cut
 
 sub isDebian {
-
-	# Initialize
-	my $OS      = OS();
-	my $details = details();
-
-	if ($details->{'osName'} eq 'Debian' && $0 =~ m{^/usr/sbin/squeezecenter} ) {
-		return 1;
-	}
-
-	# ReadyNAS is running a customized Debian
-	if ( isReadyNAS() && $0 =~ m{^/usr/sbin/squeezecenter} ) {
-		return 1;
-	}
-	
-	return 0;
+	return $os->get('isDebian');
 }
 
 sub isRHorSUSE {
-
-	# Initialize
-	my $OS      = OS();
-	my $details = details();
-
-	if (($details->{'osName'} eq 'Red Hat' || $details->{'osName'} eq 'SUSE') && $0 =~ m{^/usr/libexec/squeezecenter} ) {
-		return 1;
-	}
-
-	return 0;
+	return $os->get('isRedHat', 'isSuse');
 }
 
-sub isReadyNAS {
-
-	# Initialize
-	my $OS      = OS();
-	my $details = details();
-
-	if ($details->{'osName'} eq 'Netgear RAIDiator') {
-		return 1;
-	}
-
-	return 0;
-	
+sub isWindows {
+	return $isWindows;
 }
-
-sub isVista {
-
-	# Initialize
-	my $OS      = OS();
-	my $details = details();
-
-	return ($OS eq 'win' && $details->{'osName'} =~ /Vista/) ? 1 : 0;
-}
-
-sub initDetailsForWin32 {
-
-	%osDetails = (
-		'os'     => 'Windows',
-
-		'osName' => (Win32::GetOSName())[0],
-
-		'osArch' => Win32::GetChipName(),
-
-		'uid'    => Win32::LoginName(),
-
-		'fsType' => (Win32::FsType())[0],
-	);
-
-	# Do a little munging for pretty names.
-	$osDetails{'osName'} =~ s/Win/Windows /;
-	$osDetails{'osName'} =~ s/\/.Net//;
-	$osDetails{'osName'} =~ s/2003/Server 2003/;
-	
-	# TODO: remove this code as soon as Win32::GetOSName supports Windows 2008 Server
-	if ($osDetails{'osName'} =~ /Vista/i && (Win32::GetOSVersion())[8] > 1) {
-		$osDetails{'osName'} = 'Windows 2008 Server';
-	}
-}
-
-sub initDetailsForOSX {
-
-	# Once for OS Version, then again for CPU Type.
-	open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
-
-	while (<SYS>) {
-
-		if (/System Version: (.+)/) {
-
-			$osDetails{'osName'} = $1;
-			last;
-		}
-	}
-
-	close SYS;
-
-	# CPU Type / Processor Name
-	open(SYS, '/usr/sbin/system_profiler SPHardwareDataType |') or return;
-
-	while (<SYS>) {
-
-		if (/Intel/i) {
-
-			$osDetails{'osArch'} = 'x86';
-			last;
-
-		} elsif (/PowerPC/i) {
-
-			$osDetails{'osArch'} = 'ppc';
-		}
-	}
-
-	close SYS;
-
-	$osDetails{'os'}  = 'Darwin';
-	$osDetails{'uid'} = getpwuid($>);
-
-	for my $dir (
-		'Library/Application Support/SqueezeCenter',
-		'Library/Application Support/SqueezeCenter/Plugins', 
-		'Library/Application Support/SqueezeCenter/Graphics',
-		'Library/Application Support/SqueezeCenter/html',
-		'Library/Application Support/SqueezeCenter/IR',
-		'Library/Logs/SqueezeCenter'
-	) {
-
-		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
-	}
-
-	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/SqueezeCenter";
-	unshift @INC, "/Library/Application Support/SqueezeCenter";
-}
-
-sub initDetailsForLinux {
-
-	$osDetails{'os'} = 'Linux';
-
-	if (-f '/etc/raidiator_version') {
-
-		$osDetails{'osName'} = 'Netgear RAIDiator';
-
-	} elsif (-f '/etc/debian_version') {
-
-		$osDetails{'osName'} = 'Debian';
-
-	} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release') {
-
-		$osDetails{'osName'} = 'Red Hat';
-
-	} elsif (-f '/etc/SuSE-release') {
-
-		$osDetails{'osName'} = 'SUSE';
-
-	} else {
-
-		$osDetails{'osName'} = 'Linux';
-	}
-
-	$osDetails{'uid'}    = getpwuid($>);
-	$osDetails{'osArch'} = $Config{'myarchname'};
-
-	# package specific addition to @INC to cater for plugin locations
-	if (isDebian()) {
-
-		unshift @INC, '/usr/share/squeezecenter';
-		unshift @INC, '/usr/share/squeezecenter/CPAN';
-	}
-}
-
-sub initDetailsForUnix {
-
-	$osDetails{'os'}     = 'Unix';
-	$osDetails{'osName'} = $Config{'osname'} || 'Unix';
-	$osDetails{'uid'}    = getpwuid($>);
-	$osDetails{'osArch'} = $Config{'myarchname'};
-}
-
-# legacy calls - leave in for backwards compatibility
-sub winWritablePath {
-	Slim::Utils::Log::logger('os.paths')->error(
-		'Slim::Utils::OSDetect::winWritablePath() is a legacy call - please use Slim::Utils::Win32::writablePath() instead.'
-	);
-	Slim::Utils::Win32::writablePath(@_);
-}
-
-# to be removed unless there are too many complaints
-#sub vistaWritablePath {
-#	my $folder = shift;
-#	Slim::Utils::Log::logger('os.paths')->warn('Slim::Utils::OSDetect::vistaWritablePath() is a legacy call - please use winWritablePath() instead.');
-#	return winWritablePath($folder);
-#}
 
 1;
 

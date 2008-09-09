@@ -30,6 +30,12 @@ use Proc::Background;
 use Template;
 use Time::HiRes qw(sleep);
 
+{
+	if ($^O =~ /Win32/) {
+		require Win32::Service;
+	}
+}
+
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -50,7 +56,7 @@ my $log = logger('database.mysql');
 
 my $prefs = preferences('server');
 
-my $OS  = Slim::Utils::OSDetect::OS();
+my $isWin  = Slim::Utils::OSDetect::isWindows();
 
 my $serviceName = 'SqueezeMySQL';
 
@@ -69,7 +75,7 @@ sub init {
 
 		$log->info("Not starting MySQL - looks to be user configured.");
 
-		if ($OS ne 'win') {
+		unless ($isWin) {
 
 			my $mysql_config = which('mysql_config');
 
@@ -116,7 +122,7 @@ sub init {
 	if (!$class->dbh) {
 
 		# Bring MySQL up as a service on Windows.
-		if ($OS eq 'win') {
+		if ($isWin) {
 
 			$class->startServer(1);
 
@@ -143,20 +149,13 @@ sub createConfig {
 
 	my %config = (
 		'basedir'  => $class->mysqlDir,
-		'language' => $class->mysqlDir,
+		'language' => Slim::Utils::OSDetect::dirsFor('mysql-language') || $class->mysqlDir,
 		'datadir'  => catdir($cacheDir, 'MySQL'),
 		'socket'   => $class->socketFile,
 		'pidFile'  => $class->pidFile,
 		'errorLog' => catdir($cacheDir, 'mysql-error-log.txt'),
 		'bindAddress' => $prefs->get('bindAddress'),
 	);
-
-	# Because we use the system MySQL, we need to point to the right
-	# directory for the errmsg. files. Default to english.
-	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHorSUSE()) {
-
-		$config{'language'} = '/usr/share/mysql/english';
-	}
 
 	# If there's no data dir setup - that also means we need to create the system tables.
 	if (!-d $config{'datadir'}) {
@@ -173,7 +172,7 @@ sub createConfig {
 	}
 
 	# MySQL on Windows wants forward slashes.
-	if ($OS eq 'win') {
+	if ($isWin) {
 
 		for my $key (keys %config) {
 			$config{$key} =~ s/\\/\//g;
@@ -238,7 +237,7 @@ sub startServer {
 	my $process  = undef;
 
 	# Bug: 3461
-	if ($OS eq 'win') {
+	if ($isWin) {
 		$mysqld   = Win32::GetShortPathName($mysqld);
 		$confFile = Win32::GetShortPathName($confFile);
 	}
@@ -251,7 +250,7 @@ sub startServer {
 		));
 	}
 
-	if ($service && $OS eq 'win') {
+	if ($service && $isWin) {
 
 		my %status = ();
 
@@ -319,7 +318,7 @@ sub stopServer {
 	my $class = shift;
 	my $dbh   = shift || $class->dbh;
 
-	if ($OS eq 'win') {
+	if ($isWin) {
 
 		my %status = ();
 		
@@ -464,7 +463,7 @@ sub dbh {
 	my $class = shift;
 	my $dsn   = '';
 
-	if ($OS eq 'win') {
+	if ($isWin) {
 
 		$dsn = $prefs->get('dbsource');
 		$dsn =~ s/;database=.+;?//;

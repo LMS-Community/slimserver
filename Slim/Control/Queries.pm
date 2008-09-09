@@ -47,7 +47,7 @@ use Slim::Utils::Text;
 
 {
 	if ($^O =~ /Win32/) {
-		require Slim::Utils::Win32;
+		require Slim::Utils::OS::Win32;
 	}
 }
 
@@ -2633,14 +2633,14 @@ sub readDirectoryQuery {
 	my @fsitems;		# raw list of items 
 	my %fsitems;		# meta data cache
 
-	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
+	if ($folder eq '/' && Slim::Utils::OSDetect::isWindows()) {
 		@fsitems = sort map {
 			$fsitems{"$_"} = {
 				d => 1,
 				f => 0
 			};
 			"$_"; 
-		} Slim::Utils::Win32::getDrives();
+		} Slim::Utils::OS::Win32->getDrives();
 		$folder = '';
 	}
 	else {

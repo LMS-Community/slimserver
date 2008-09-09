@@ -39,7 +39,7 @@ my %services = ();
 sub init {
 	my $class = shift;
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 
 		$log->debug("Skipping initialization on Windows.");
 

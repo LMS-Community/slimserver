@@ -32,7 +32,7 @@ my $MMSHost;
 my $MMSport;
 my $canPowerSearch;
 
-my $OS  = Slim::Utils::OSDetect::OS();
+my $isWin  = Slim::Utils::OSDetect::isWindows();
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicip',
@@ -810,7 +810,7 @@ sub getMix {
 	for (my $j = 0; $j < $count; $j++) {
 
 		# Bug 4281 - need to convert from UTF-8 on Windows.
-		if ($OS eq 'win') {
+		if ($isWin) {
 
 			my $enc = Slim::Utils::Unicode::encodingFromString($songs[$j]);
 

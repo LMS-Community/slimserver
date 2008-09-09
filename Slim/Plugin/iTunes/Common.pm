@@ -117,7 +117,7 @@ sub findLibraryFromRegistry {
 	my $class = shift;
 	my $path  = undef;
 
-	if (Slim::Utils::OSDetect::OS() ne 'win') {
+	unless (Slim::Utils::OSDetect::isWindows()) {
 		return;
 	}
 

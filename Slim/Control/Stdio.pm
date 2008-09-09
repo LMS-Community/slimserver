@@ -35,7 +35,7 @@ sub init {
 	$stdin = shift;
 	$stdout = shift;
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::isWindows()) {
 		return;
 	}
 
