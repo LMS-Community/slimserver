@@ -4,6 +4,7 @@ use strict;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
+use Scalar::Util qw(blessed);
 use Win32;
 
 use base qw(Slim::Utils::OS);
