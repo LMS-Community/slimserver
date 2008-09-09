@@ -2046,7 +2046,7 @@ sub playlistsDeleteCommand {
 		$request->client->showBriefly({
 			'jive' => {
 				'text'    => [	
-					$request->client->string('JIVE_DELETE_PLAYLIST', $playlistObj->name)
+					$request->string('JIVE_DELETE_PLAYLIST', $playlistObj->name)
 				],
 			},
 		});

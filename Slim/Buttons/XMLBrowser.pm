@@ -1626,13 +1626,13 @@ sub _cliQuery_done {
 						my ($play_string, $add_string);
 						if ( $hash{duration} ) {
 							# Items with a duration are songs
-							$play_string = $request->client->string('JIVE_PLAY_THIS_SONG');
-							$add_string  = $request->client->string('JIVE_ADD_THIS_SONG');
+							$play_string = $request->string('JIVE_PLAY_THIS_SONG');
+							$add_string  = $request->string('JIVE_ADD_THIS_SONG');
 						}
 						else {
 							# Items without duration are streams
-							$play_string = $request->client->string('PLAY');
-							$add_string  = $request->client->string('ADD');
+							$play_string = $request->string('PLAY');
+							$add_string  = $request->string('ADD');
 						}
 						
 						# setup hash for different items between play and add
@@ -1687,7 +1687,7 @@ sub _cliQuery_done {
 						}
 						
 						if ( my $title = $hash{name} ) {
-							my $text = $request->client->string('TITLE') . ": $title";
+							my $text = $request->string('TITLE') . ": $title";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1695,7 +1695,7 @@ sub _cliQuery_done {
 						}
 						
 						if ( my $url = $hash{url} ) {
-							my $text = $request->client->string('URL') . ": $url";
+							my $text = $request->string('URL') . ": $url";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1703,7 +1703,7 @@ sub _cliQuery_done {
 						}
 						
 						if ( my $desc = $hash{description} ) {
-							my $text = $request->client->string('DESCRIPTION') . ": $desc";
+							my $text = $request->string('DESCRIPTION') . ": $desc";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1711,7 +1711,7 @@ sub _cliQuery_done {
 						}
 
 						if ( my $bitrate = $hash{bitrate} ) {
-							my $text = $request->client->string('BITRATE') . ": $bitrate " . $request->client->string('KBPS');
+							my $text = $request->string('BITRATE') . ": $bitrate " . $request->string('KBPS');
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1720,7 +1720,7 @@ sub _cliQuery_done {
 						
 						if ( my $duration = $hash{duration} ) {
 							$duration = sprintf('%s:%02s', int($duration / 60), $duration % 60);
-							my $text = $request->client->string('LENGTH') . ": $duration";
+							my $text = $request->string('LENGTH') . ": $duration";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1729,7 +1729,7 @@ sub _cliQuery_done {
 						
 						if ( my $listeners = $hash{listeners} ) {
 							# Shoutcast
-							my $text = $request->client->string('NUMBER_OF_LISTENERS') . ": $listeners";
+							my $text = $request->string('NUMBER_OF_LISTENERS') . ": $listeners";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1738,7 +1738,7 @@ sub _cliQuery_done {
 						
 						if ( my $current_track = $hash{current_track} ) {
 							# Shoutcast
-							my $text = $request->client->string('NOW_PLAYING') . ": $current_track";
+							my $text = $request->string('NOW_PLAYING') . ": $current_track";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1747,7 +1747,7 @@ sub _cliQuery_done {
 						
 						if ( my $genre = $hash{genre} ) {
 							# Shoutcast
-							my $text = $request->client->string('GENRE') . ": $genre";
+							my $text = $request->string('GENRE') . ": $genre";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1756,7 +1756,7 @@ sub _cliQuery_done {
 						
 						if ( my $source = $hash{source} ) {
 							# LMA
-							my $text = $request->client->string('SOURCE') . ": $source";
+							my $text = $request->string('SOURCE') . ": $source";
 							$request->addResultLoop($loopname, $cnt, 'text', $text);
 							$request->addResultLoop($loopname, $cnt, 'style', 'itemNoAction');
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
@@ -1787,7 +1787,7 @@ sub _cliQuery_done {
 							};
 							$actions->{'go'}{'params'}{'icon'} = $hash{image} if defined($hash{image});
 							$actions->{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
-							my $string = $request->client->string($token);
+							my $string = $request->string($token);
 							$request->addResultLoop($loopname, $cnt, 'text', $string);
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 							$request->addResultLoop($loopname, $cnt, 'style', 'item');
@@ -2163,10 +2163,10 @@ sub _cliQuery_done {
 							my $input = {
 								len  => 3,
 								help => {
-									text => $request->client->string('JIVE_SEARCHFOR_HELP')
+									text => $request->string('JIVE_SEARCHFOR_HELP')
 								},
-								softbutton1 => $request->client->string('INSERT'),
-								softbutton2 => $request->client->string('DELETE'),
+								softbutton1 => $request->string('INSERT'),
+								softbutton2 => $request->string('DELETE'),
 							};
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
