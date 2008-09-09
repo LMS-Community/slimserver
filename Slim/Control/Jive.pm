@@ -2632,12 +2632,12 @@ sub jivePlaylistsCommand {
 sub jiveUnmixableMessage {
 	my $request = shift;
 	my $service = $request->getParam('contextToken');
-	my $serviceString = $request->client->string($service);
+	my $serviceString = $request->string($service);
 	$request->client->showBriefly(
 		{ 'jive' =>
 			{
 				'type'    => 'popupplay',
-				'text'    => [ $request->client->string('UNMIXABLE', $serviceString) ],
+				'text'    => [ $request->string('UNMIXABLE', $serviceString) ],
 			},
 		}
 	);

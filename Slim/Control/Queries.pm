@@ -5116,7 +5116,7 @@ sub _jiveDeletePlaylist {
 
 		###
 		# FIXME: bug 8670. This is the 7.1 workaround to deal with the %s in the EN string
-		my $string = $request->client->string($token, $playlistTitle);
+		my $string = $request->string($token, $playlistTitle);
 		$string =~ s/\\n/ /g;
 		$request->addResultLoop($loopname, $chunkCount, 'text', $string);
 		### 
