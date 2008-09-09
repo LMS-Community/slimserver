@@ -62,12 +62,6 @@ sub initPrefs {
 	$client->SUPER::initPrefs();
 }
 
-sub reconnect {
-	my $client = shift;
-	$client->SUPER::reconnect(@_);
-
-}
-
 sub maxBass { 50 };
 sub minBass { 50 };
 sub maxTreble { 50 };

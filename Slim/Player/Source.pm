@@ -145,8 +145,6 @@ sub playmode {
 	my $controller = $client->controller();
 
 	assert($controller);
-	assert(!$seekdata);	# TODO
-	assert(!$reconnect); # TODO
 	
 	# Short circuit.
 	return _returnPlayMode($controller, $client) unless defined $newmode;

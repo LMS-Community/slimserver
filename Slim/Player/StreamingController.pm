@@ -584,7 +584,7 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 	
 	$song->getNextSong (
 		sub {	# success
-			_nextTrackReady($self, $id, $song);
+			_nextTrackReady($self, $id, $song, { reconnect => $params->{'reconnect'} });
 		},
 		sub {	# fail
 			_nextTrackError($self, $id, $song, @_);
@@ -833,9 +833,11 @@ sub _Stream {				# play -> Buffering, Streaming
 	
 	my $song;
 	my $seekdata;
+	my $reconnect;
 	if ($params) {
 		$seekdata = $params->{'seekdata'};
 		$song = $params->{'song'};
+		$reconnect = $params->{'reconnect'};
 	}
 	
 	if ($song) {
@@ -901,7 +903,7 @@ sub _Stream {				# play -> Buffering, Streaming
 			'format'      => $song->streamformat(), 
 			'controller'  => $songStreamController,
 			'url'         => $songStreamController->streamUrl(), 
-			'reconnect'   => ( 0), # TODO
+			'reconnect'   => $reconnect,
 			'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($self->master(), $song),
 			'seekdata'    => $seekdata,
 			# we never set the 'loop' parameter
