@@ -341,7 +341,11 @@ sub buildTopMenu {
 	push @$listRef, $menu{addAlarm};
 	
 	# Alarm volume
-	push @$listRef, $menu{volume};
+	unless (defined $prefs->client($client)->get('digitalVolumeControl')
+		&& !$prefs->client($client)->get('digitalVolumeControl')) {
+			
+		push @$listRef, $menu{volume};
+	}
 
 	# Alarm clock on/off goes at the top, unless there are no defined
 	# alarms, in which case it goes to the bottom
