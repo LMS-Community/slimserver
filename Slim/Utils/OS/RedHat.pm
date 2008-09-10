@@ -11,8 +11,7 @@ sub initDetails {
 
 	$class->{osDetails} = $class->SUPER::initDetails();
 
-	$class->{osDetails}->{osName} = 'Red Hat';
-	$class->{osDetails}->{isRedHat} = 1 if $0 =~ m{^/usr/libexec/squeezecenter};
+	$class->{osDetails}->{isRedHat} = 1;
 
 	return $class->{osDetails};
 }
@@ -54,13 +53,13 @@ sub dirsFor {
 
 	} elsif ($dir eq 'libpath') {
 
-		push @dirs, "/usr/share/squeezecenter" if $class->{osDetails}->{isRedHat};
+		push @dirs, "/usr/share/squeezecenter";
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
 	} elsif ($dir eq 'mysql-language') {
 
-		push @dirs, "/usr/share/mysql/english" if $class->{osDetails}->{isRedHat};
+		push @dirs, "/usr/share/mysql/english";
 
 	} elsif ($dir =~ /^(?:types|convert)$/) {
 

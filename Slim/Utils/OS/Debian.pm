@@ -11,22 +11,15 @@ sub initDetails {
 
 	$class->{osDetails} = $class->SUPER::initDetails();
 
-	$class->{osDetails}->{osName} = 'Debian';
-
 	# package specific addition to @INC to cater for plugin locations
-	if ($0 =~ m{^/usr/sbin/squeezecenter}) {
-		$class->{osDetails}->{isDebian} = 1 ;
+	$class->{osDetails}->{isDebian} = 1 ;
 
-		unshift @INC, '/usr/share/squeezecenter';
-		unshift @INC, '/usr/share/squeezecenter/CPAN';
-	}
+	unshift @INC, '/usr/share/squeezecenter';
+	unshift @INC, '/usr/share/squeezecenter/CPAN';
 	
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
-	if (!Slim::Utils::OSDetect::isDebian()) {
-
-		unlink("$Bin/CPAN/MP3/Info.pm");
-		unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
-	}
+	unlink("$Bin/CPAN/MP3/Info.pm");
+	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
 
 	return $class->{osDetails};
 }
@@ -67,13 +60,13 @@ sub dirsFor {
 
 	} elsif ($dir eq 'libpath') {
 
-		push @dirs, "/usr/share/squeezecenter" if $class->{osDetails}->{isDebian};
+		push @dirs, "/usr/share/squeezecenter";
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
 	} elsif ($dir eq 'mysql-language') {
 
-		push @dirs, "/usr/share/mysql/english" if $class->{osDetails}->{isDebian};
+		push @dirs, "/usr/share/mysql/english";
 
 	} elsif ($dir =~ /^(?:types|convert)$/) {
 

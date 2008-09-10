@@ -3,16 +3,6 @@ package Slim::Utils::OS::ReadyNAS;
 use strict;
 use base qw(Slim::Utils::OS::Debian);
 
-sub initDetails {
-	my $class = shift;
-
-	$class->{osDetails} = $class->SUPER::initDetails();
-
-	$class->{osDetails}->{osName} = 'Netgear RAIDiator';
-
-	return $class->{osDetails};
-}
-
 sub dontSetUserAndGroup { 1 }
 
 sub initPrefs {

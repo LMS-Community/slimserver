@@ -91,30 +91,33 @@ sub init {
 			$os = Slim::Utils::OS::Win32->new();
 	
 		} elsif ($^O =~ /linux/i) {
+			
+			require Slim::Utils::OS::Linux;
+			$os = Slim::Utils::OS::Linux->getFlavor();
 	
-			if (-f '/etc/raidiator_version') {
+			if ($os =~ /RAIDiator/i) {
 	
 				require Slim::Utils::OS::ReadyNAS;
 				$os = Slim::Utils::OS::ReadyNAS->new();
 				
-			} elsif (-f '/etc/debian_version') {
+			# we only differentiate Debian/Suse/Red Hat if they've been installed from a package
+			} elsif ($os =~ /debian/i && $0 =~ m{^/usr/sbin/squeezecenter}) {
 		
 				require Slim::Utils::OS::Debian;
 				$os = Slim::Utils::OS::Debian->new();
 		
-			} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release') {
+			} elsif ($os =~ /red hat/i && $0 =~ m{^/usr/libexec/squeezecenter}) {
 		
 				require Slim::Utils::OS::RedHat;
 				$os = Slim::Utils::OS::RedHat->new();
 		
-			} elsif (-f '/etc/SuSE-release') {
+			} elsif ($os =~ /suse/i && $0 =~ m{^/usr/libexec/squeezecenter}) {
 				
 				require Slim::Utils::OS::Suse;
 				$os = Slim::Utils::OS::Suse->new();
 				
 			} else {
 	
-				require Slim::Utils::OS::Linux;
 				$os = Slim::Utils::OS::Linux->new();
 			}
 	
