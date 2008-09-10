@@ -374,9 +374,6 @@ Wizard = {
 		Ext.EventManager.onWindowResize(this.onResize, this);
 		this.onResize(this.body.getWidth(), this.body.getHeight());
 
-		if (!wizardDone && !Ext.isIE)
-			window.resizeTo(800, 700);
-			
 		Ext.get('loading').hide();
 		Ext.get('loading-mask').hide();
 	},
