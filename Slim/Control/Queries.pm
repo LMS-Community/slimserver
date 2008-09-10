@@ -4476,7 +4476,7 @@ sub titlesQuery {
 				};
 
 				if ($menuStyle eq 'album') {
-					$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+					$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
 					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
 				} elsif ($menuStyle eq 'allSongs') {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $item->title);
@@ -5151,7 +5151,7 @@ sub _jiveAddToFavorites {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/favorites.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
@@ -5257,7 +5257,7 @@ sub _jiveGenreAllAlbums {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => "$genreString" });
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
@@ -5641,7 +5641,7 @@ sub _playAll {
 		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'albumitem');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		}
 
