@@ -337,7 +337,7 @@ sub setPriority {
 
 	return unless defined $priority && $priority =~ /^-?\d+$/;
 
-	require Win32::API;
+	Slim::bootstrap::tryModuleLoad('Win32::API', 'Win32::Process', 'nowarn');
 
 	# For win32, translate the priority to a priority class and use that
 	my ($priorityClass, $priorityClassName) = _priorityClassFromPriority($priority);
@@ -363,7 +363,6 @@ sub setPriority {
 			Slim::Utils::Log->logError("Couldn't set priority to $priorityClassName ($^E) [$@]");
 		}
 	}
-
 }
 
 =head2 getPriority( )
@@ -374,8 +373,7 @@ Get the current priority of the server.
 
 sub getPriority {
 
-	require Win32::API;
-	require Win32::Process;
+	Slim::bootstrap::tryModuleLoad('Win32::API', 'Win32::Process', 'nowarn');
 
 	my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 	my $getPriorityClass  = Win32::API->new('kernel32', 'GetPriorityClass',  ['N'], 'N');
