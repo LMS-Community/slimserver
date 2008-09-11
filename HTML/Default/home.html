@@ -165,10 +165,8 @@ ELSE %]
 		[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" noIcon=1 %]
 		<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 	
-		[% IF additionalLinks.radios %]
-			[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" noIcon=1 %]
-			<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
-		[% END %]
+		[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" noIcon=1 %]
+		<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
 	
 		[% IF additionalLinks.music_services %]
 			[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" noIcon=1 %]
