@@ -42,7 +42,15 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	return ($prefs->client($client), qw(alarmfadeseconds alarmsEnabled alarmDefaultVolume));
+	my @prefs = qw(alarmfadeseconds alarmsEnabled);
+
+	unless (defined $prefs->client($client)->get('digitalVolumeControl')
+		&& !$prefs->client($client)->get('digitalVolumeControl')) {
+			
+		push @prefs, 'alarmDefaultVolume';
+	}
+
+	return ($prefs->client($client), @prefs);
 }
 
 sub handler {

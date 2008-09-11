@@ -674,9 +674,13 @@ sub alarmSettingsQuery {
 	};
 	push @menu, $addAlarm;
 
-	my $defaultVolLevel = Slim::Utils::Alarm->defaultVolume($client);
-	my $defaultVolumeLevels = alarmVolumeSettings($defaultVolLevel, undef, $client->string('ALARM_VOLUME'));
-	push @menu, $defaultVolumeLevels;
+	# Bug 9226: don't offer alarm volume setting if player is set for fixed volume
+	my $digitalVolumeControl = $prefs->client($client)->get('digitalVolumeControl');
+	if ( ! ( defined $digitalVolumeControl && $digitalVolumeControl == 0 ) ) {
+		my $defaultVolLevel = Slim::Utils::Alarm->defaultVolume($client);
+		my $defaultVolumeLevels = alarmVolumeSettings($defaultVolLevel, undef, $client->string('ALARM_VOLUME'));
+		push @menu, $defaultVolumeLevels;
+	}
 
 	sliceAndShip($request, $client, \@menu);
 
