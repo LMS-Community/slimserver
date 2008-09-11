@@ -101,15 +101,6 @@ $prefs->setChange(
 'scan_interval');
 
 
-sub new {
-	my $class = shift;
-
-	# initialize the filter list
-	$class->grabFilters();
-
-	return $class->SUPER::new($class);
-}
-
 sub name {
 	return Slim::Web::HTTP::protectName('MUSICMAGIC');
 }
@@ -125,9 +116,6 @@ sub prefs {
 
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
-
-	# Cleanup the checkbox
-	$params->{'pref_musicip'} = defined $params->{'pref_musicip'} ? 1 : 0;
 
 	if ( !$params->{'saveSettings'} ) {
 

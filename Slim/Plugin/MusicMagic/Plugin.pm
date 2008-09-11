@@ -185,6 +185,9 @@ sub initPlugin {
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
 
+		# initialize the filter list
+		Slim::Plugin::MusicMagic::Settings->grabFilters();
+		
 		Slim::Plugin::MusicMagic::ClientSettings->new;
 
 		Slim::Control::Request::addDispatch(['musicip', 'mix'],

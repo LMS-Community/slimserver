@@ -39,6 +39,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.musicip');
 
+my @MIPSupportedFormats = ('m4a', 'm4p', 'mp3', 'wma', 'ogg', 'flc', 'wav');
+
 sub useMusicMagic {
 	my $class    = shift;
 	my $newValue = shift;
@@ -172,82 +174,204 @@ sub exportFunction {
 	$MMSport = $prefs->get('port') unless $MMSport;
 	$MMSHost = $prefs->get('host') unless $MMSHost;
 
-	my $count = get("http://$MMSHost:$MMSport/api/getSongCount");
-
-	if ($count) {
-
-		# convert to integer
-		chomp($count);
-
-		$count += 0;
-	}
-
-	$log->info("Got $count song(s).");
-
-	$class->exportSongs($count);
+	$class->exportSongs;
 	$class->exportPlaylists;
 	$class->exportDuplicates;
 }
 
 sub exportSongs {
 	my $class = shift;
-	my $count = shift;
 
-	my $progress = Slim::Utils::Progress->new({ 
-		'type'  => 'importer', 
-		'name'  => 'musicip', 
-		'total' => $count, 
-		'bar'   => 1
-	});
+	my $fullRescan = $::wipe ? 1 : 0;
 
-	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
-	# down the entire library, separated by $LF$LF - this allows us to make
-	# 1 HTTP request, and the process the file.
-	if (Slim::Utils::Versions->compareVersions($MMMVersion, '1.5') >= 0) {
+	if ($fullRescan == 1 || $prefs->get('musicip') == 1) {
+		$log->info("MusicIP mixable status full scan");
 
-		$log->info("Fetching ALL song data via songs/extended..");
-
-		my $MMMSongData = catdir( preferences('server')->get('cachedir'), 'mmm-song-data.txt' );
-
-		my $MMMDataURL  = "http://$MMSHost:$MMSport/api/songs?extended";
-
-		getstore($MMMDataURL, $MMMSongData);
-
-		if (!-r $MMMSongData) {
-
-			logError("Couldn't connect to $MMMDataURL ! : $!");
-			return;
+		my $count = get("http://$MMSHost:$MMSport/api/getSongCount");
+		if ($count) {
+			# convert to integer
+			chomp($count);
+			$count += 0;
 		}
 
-		open(MMMDATA, $MMMSongData) || do {
+		$log->info("Got $count song(s).");
 
-			logError("Couldn't read file: $MMMSongData : $!");
-			return;
-		};
+		my $progress = Slim::Utils::Progress->new({ 
+			'type'  => 'importer', 
+			'name'  => 'musicip', 
+			'total' => $count, 
+			'bar'   => 1
+		});
 
-		$log->info("Finished fetching - processing.");
+		# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
+		# down the entire library, separated by $LF$LF - this allows us to make
+		# 1 HTTP request, and the process the file.
+		if (Slim::Utils::Versions->compareVersions($MMMVersion, '1.5') >= 0) {
+			$log->info("Fetching ALL song data via songs/extended..");
 
-		local $/ = "$LF$LF";
+			my $MMMSongData = catdir( preferences('server')->get('cachedir'), 'mmm-song-data.txt' );
+			my $MMMDataURL  = "http://$MMSHost:$MMSport/api/songs?extended";
 
-		while(my $content = <MMMDATA>) {
+			getstore($MMMDataURL, $MMMSongData);
 
-			$class->processSong($content, $progress);
+			if (!-r $MMMSongData) {
+				logError("Couldn't connect to $MMMDataURL ! : $!");
+				return;
+			}
+
+			open(MMMDATA, $MMMSongData) || do {
+				logError("Couldn't read file: $MMMSongData : $!");
+				return;
+			};
+
+			$log->info("Finished fetching - processing.");
+
+			local $/ = "$LF$LF";
+
+			if ($prefs->get('musicip') != 1) {
+				
+				while(my $content = <MMMDATA>) {
+					$class->setMixable($content, $progress);
+				}
+				
+			} else {
+				
+				while(my $content = <MMMDATA>) {
+					$class->processSong($content, $progress);
+				}
+				
+			}
+
+			close(MMMDATA);
+			unlink($MMMSongData);
+		} else {
+			for (my $scan = 0; $scan <= $count; $scan++) {
+				my $content = get("http://$MMSHost:$MMSport/api/getSong?index=$scan");
+
+				$class->processSong($content, $progress);
+			}
 		}
 
-		close(MMMDATA);
-		unlink($MMMSongData);
+		$progress->final($count) if $progress;
+	}
+	else {
+		$log->info("MusicIP mixable status scan for all songs not currently mixable");
 
-	} else {
+		my @notMixableTracks = Slim::Schema->rs('Track')->search({
+			'audio' => '1', 
+			'remote' => '0', 
+			'musicmagic_mixable' => undef, 
+			'content_type' => { in => \@MIPSupportedFormats}
+		});
 
-		for (my $scan = 0; $scan <= $count; $scan++) {
+		my $count = @notMixableTracks;
+		$log->info("Got $count song(s).");
 
-			my $content = get("http://$MMSHost:$MMSport/api/getSong?index=$scan");
+		my $progress = Slim::Utils::Progress->new({ 
+			'type'  => 'importer', 
+			'name'  => 'musicip', 
+			'total' => $count, 
+			'bar'   => 1
+		});
 
-			$class->processSong($content, $progress);
+		for my $track (@notMixableTracks) {
+			my $trackurl = $track->url;
+
+			$log->debug("trackurl: $trackurl");
+
+			# Convert $track->url to a path and call MusicIP
+			my $path = Slim::Utils::Misc::pathFromFileURL($trackurl);
+
+			my $pathEnc = Slim::Utils::Misc::escape($path);
+
+			# Set musicmagic_mixable on $track object and call $track->update to actually store it.
+			my $result = get("http://$MMSHost:$MMSport/api/status?song=$pathEnc");
+
+			if ($result =~ /^(\w+)\s+(.*)/) {
+
+				my $mixable = $1;
+				if ($mixable eq 1) {
+					$log->debug("track: $path is mixable");
+					$class->setSongMixable($track);
+				}
+				else {
+					$log->warn("track: $path is not mixable");
+				}
+
+			}
+
+			$progress->update($path);
+		}
+
+		$progress->final($count) if $progress;
+	}
+}
+
+sub setMixable
+{
+	my $class    = shift;
+	my $content  = shift || return;
+	my $progress = shift;
+
+	my $file;
+	my $active;
+
+	my @lines = split(/\n/, $content);
+	
+	for my $line (@lines) {
+
+		if ($line =~ /^(\w+)\s+(.*)/) {
+
+			if ($1 eq 'file') {
+				# need conversion to the current charset.
+				$file = Slim::Utils::Unicode::utf8encode_locale($2);
+			}
+			elsif ($1 eq 'active') {
+				$active = $2
+			}
+
 		}
 	}
 
-	$progress->final($count) if $progress;
+	if ($active eq 'yes') {
+		my $fileurl = Slim::Utils::Misc::fileURLFromPath($file);
+	
+		my $track = Slim::Schema->rs('Track')->objectForUrl($fileurl)
+		|| do {
+			$log->warn("Couldn't get track for $fileurl");
+			$progress->update($file);
+			return;
+		};
+
+		$log->debug("track: $file is mixable");
+		$class->setSongMixable($track);
+	}
+
+	$progress->update($file);
+}
+
+sub setSongMixable {
+	my $class = shift;
+	my $track = shift;
+
+	$track->musicmagic_mixable(1);
+	$track->update;
+
+	my $albumObj = $track->album;
+	if (blessed($albumObj)) {
+		$albumObj->musicmagic_mixable(1);
+		$albumObj->update;
+	}
+
+	for my $artistObj ($track->contributors) {
+		$artistObj->musicmagic_mixable(1);
+		$artistObj->update;
+	}
+
+	for my $genreObj ($track->genres) {
+		$genreObj->musicmagic_mixable(1);
+		$genreObj->update;
+	}
 }
 
 sub processSong {
@@ -299,11 +423,11 @@ sub processSong {
 	}
 
 	# Assign these after they may have been verified as UTF-8
-	$attributes{'ALBUM'}  = $songInfo{'album'}  if $songInfo{'album'};
-	$attributes{'TITLE'}  = $songInfo{'name'}   if $songInfo{'name'};
-	$attributes{'ARTIST'} = $songInfo{'artist'} if $songInfo{'artist'};
-	$attributes{'GENRE'}  = $songInfo{'genre'}  if $songInfo{'genre'};
-	$attributes{'MUSICMAGIC_MIXABLE'} = 1       if $songInfo{'active'} eq 'yes';
+ 	$attributes{'ALBUM'}  = $songInfo{'album'}  if $songInfo{'album'} && $songInfo{'album'} ne 'Miscellaneous';
+ 	$attributes{'TITLE'}  = $songInfo{'name'}   if $songInfo{'name'};
+ 	$attributes{'ARTIST'} = $songInfo{'artist'} if $songInfo{'artist'} && $songInfo{'artist'} ne 'Various Artists';
+ 	$attributes{'GENRE'}  = $songInfo{'genre'}  if $songInfo{'genre'} && $songInfo{'genre'} ne 'Miscellaneous';
+ 	$attributes{'MUSICMAGIC_MIXABLE'} = 1       if $songInfo{'active'} eq 'yes';
 
 	# need conversion to the current charset.
 	$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
