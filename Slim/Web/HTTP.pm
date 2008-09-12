@@ -2101,7 +2101,7 @@ sub sendStreamingResponse {
 
 			} else {
 
-				$chunkRef = $client->nextChunk(MAXCHUNKSIZE);
+				$chunkRef = $client->nextChunk(MAXCHUNKSIZE, sub {tryStreamingLater(shift, $httpClient);});
 			}
 
 			# otherwise, queue up the next chunk of sound
@@ -2282,7 +2282,11 @@ sub tryStreamingLater {
 	my $client     = shift;
 	my $httpClient = shift;
 
-	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
+	Slim::Utils::Timers::killTimers($client, \&tryStreamingLater);
+	
+	if ( $httpClient->connected() ) {
+		Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
+	}
 }
 
 sub nonBreaking {

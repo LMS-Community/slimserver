@@ -195,6 +195,7 @@ sub noMoreValidTracks {
 sub nextChunk {
 	my $client       = shift;
 	my $maxChunkSize = shift;
+	my $callback     = shift;
 
 	my $chunk;
 	my $len;
@@ -214,7 +215,7 @@ sub nextChunk {
 		my $controller = $client->controller();
 		my $master = $controller->master();
 
-		$chunk = _readNextChunk($master, $maxChunkSize);
+		$chunk = _readNextChunk($master, $maxChunkSize, defined($callback));
 
 		if (defined($chunk)) {
 
@@ -260,6 +261,10 @@ sub nextChunk {
 						}
 					}
 				}
+			}
+		} else {
+			if ($callback) {
+				$client->streamReadableCallback($callback);
 			}
 		}
 	}
@@ -400,6 +405,7 @@ sub explodeSong {
 sub _readNextChunk {
 	my $client = shift;
 	my $givenChunkSize = shift;
+	my $callback = shift;
 	
 	if (!defined($givenChunkSize)) {
 		$givenChunkSize = $prefs->get('udpChunkSize') * 10;
@@ -450,7 +456,12 @@ sub _readNextChunk {
 
 			if (!defined($readlen)) { 
 				if ($! == EWOULDBLOCK) {
-					#$log->debug("Would have blocked, will try again later.");
+					# $log->debug("Would have blocked, will try again later.");
+					if ($callback) {
+						# This is a hack but I hesitate to use isa(Pileline) or similar.
+						# Suggestions for better, efficient implementation welcome
+						Slim::Networking::Select::addRead(${*$fd}{'pipeline_reader'} || $fd, sub {_wakeupOnReadable(shift, $client);}, 1);
+					}
 					return undef;	
 				} elsif ($! == EINTR) {
 					$log->debug("Got EINTR, will try again later.");
@@ -519,6 +530,22 @@ bail:
 	}
 
 	return \$chunk;
+}
+
+sub _wakeupOnReadable {
+	my ($fd, $master) = @_;
+	my $cb;
+	
+	$log->debug($master->id);
+	
+	Slim::Networking::Select::removeRead($fd);
+	
+	foreach my $client ($master->syncGroupActiveMembers()) {
+		if ($cb = $client->streamReadableCallback) {
+			&$cb($client);
+			$client->streamReadableCallback(undef);
+		}
+	}
 }
 
 use constant FRAME_BYTE_OFFSET => 0;

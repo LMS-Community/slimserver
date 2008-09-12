@@ -93,6 +93,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								streamformat streamingsocket remoteStreamStartTime
 								trackStartTime outputBufferFullness bytesReceived songBytes pauseTime
 								bytesReceivedOffset streamBytes songElapsedSeconds bufferSize bufferStarted
+								streamReadableCallback
 								_currentplayingsong
 								directBody
 								startupPlaylistLoading currentPlaylistModified currentPlaylistRender
@@ -202,6 +203,7 @@ sub new {
 		directBody              => undef,
 		chunks                  => [],
 		bufferStarted           => 0,                  # when we started buffering/rebuffering
+		streamReadableCallback  => undef,
 
 		_currentplayingsong     => '',                 # FIXME - is this used ????
 
