@@ -124,6 +124,11 @@ sub clonePlaylistSong {
 	my $self = \%new;
 	bless $self, ref $old;
 
+	$_liveCount++;
+	if ($log->is_debug)	{
+		$log->debug("live=$_liveCount");
+	}
+
 	my $next = $self->_getNextPlaylistTrack();
 	return undef unless $next;
 	
