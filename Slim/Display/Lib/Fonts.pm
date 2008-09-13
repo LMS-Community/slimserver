@@ -79,6 +79,9 @@ my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF, $FreeSans);
 # Keep a cache of up to 256 characters at a time.
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
 
+# template for unpacking strings: U - unpacks Unicode chars into ords, C - is needed for 5.6 perl's
+my $unpackTemplate = ($] > 5.007) ? 'U*' : 'C*';
+
 # Bug 3535 - perl < 5.8.5 uses a different Bidi property class.
 my $bidiR = ($] <= 5.008004) ? qr/\p{BidiR}/ : qr/\p{BidiClass:R}/;
 my $bidiL = ($] <= 5.008004) ? qr/\p{BidiL}/ : qr/\p{BidiClass:L}/;
@@ -320,12 +323,14 @@ sub string {
 
 	# Fast path when string does not include control symbols or characters not in the bitmap font
 	if ($string !~ /[^\x00-\x09|\x0b-\x1a\|\x1e-\xff]/) {
-		use bytes;
+		my $bits = '';
 		my $len = length $string;
 		my $interspace = $defaultFont->[0];
-		# replace each character with its bitmap + the interspace charcter if not the final character
-		$string =~ s/(\C)/$defaultFont->[ord($1)].(--$len ? $interspace : '')/eg;
-		return (0, $string);
+		for my $ord (unpack($unpackTemplate, $string)) {
+			$bits .= $defaultFont->[$ord];
+			$bits .= $interspace if --$len;
+		}
+		return (0, $bits);
 	}
 
 	my ($GDFontSize, $GDBaseline);
@@ -344,10 +349,6 @@ sub string {
 			$string =~ s/$cp1252re/$cp1252mapping{$1}/ego;
 		}
 	}
-
-	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
-	# C - is needed for older 5.6 perl's
-	my $unpackTemplate = ($] > 5.007) ? 'U*' : 'C*';
 
 	my @ords = unpack($unpackTemplate, $string);
 
