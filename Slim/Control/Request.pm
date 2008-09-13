@@ -2030,7 +2030,7 @@ sub notify {
 	}
 
 	# process listeners if we match the super regexp (i.e. there is an interested listener)
-	if ($self->{'_requeststr'} =~ $listenerSuperRE) {
+	if ($self->{'_requeststr'} && $self->{'_requeststr'} =~ $listenerSuperRE) {
 		
 		for my $listener (values %listeners) {
 
