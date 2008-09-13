@@ -101,7 +101,7 @@ sub setMode {
 		'increment'    => 1,
 		'lines'        => $client->customVolumeLines(),
 		'screen2'      => 'inherit',
-		'visu'         => [0],
+		'visu'         => $client->display->isa('Slim::Display::Transporter') ? undef : [0],
 		'transition'   => $transition,
 	});
 
