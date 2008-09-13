@@ -1257,9 +1257,9 @@ sub _syncHTTPRequest {
 	$MMSport = $prefs->get('port') unless $MMSport;
 	$MMSHost = $prefs->get('host') unless $MMSHost;
 	
-	my $http = LWP::UserAgent->new({
-		timeout => 5
-	});
+	my $http = LWP::UserAgent->new;
+
+	$http->timeout(5);
 
 	return $http->get("http://$MMSHost:$MMSport$url");
 }
