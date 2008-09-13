@@ -306,17 +306,23 @@ sub loadExtent {
 
 sub string {
 	my $defaultFontname = shift || return (0, '');
-	my $string = shift;
-
-	if (!defined $string) {
-		return (0, '');
-	}
+	my $string          = shift || return (0, '');
 
 	my $defaultFont = $fonts->{$defaultFontname} || do {
 
 		logBacktrace(" Invalid font $defaultFontname");
 		return (0, '');
 	};
+
+	# Fast path when string does not include control symbols or characters not in the bitmap font
+	if ($string !~ /[^\x00-\x09|\x0b-\x1a\|\x1e-\xff]/) {
+		use bytes;
+		my $len = length $string;
+		my $interspace = $defaultFont->[0];
+		# replace each character with its bitmap + the interspace charcter if not the final character
+		$string =~ s/(\C)/$defaultFont->[ord($1)].(--$len ? $interspace : '')/eg;
+		return (0, $string);
+	}
 
 	my ($GDFontSize, $GDBaseline);
 	my $useTTFNow = 0;
