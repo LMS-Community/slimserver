@@ -1783,17 +1783,9 @@ Required argument is the $client object for which the current mode information i
 
 =cut
 
+# called very frequently so optimised for speed
 sub mode {
-	my $client = shift;
-
-	assert($client);
-
-	if ( main::SLIM_SERVICE ) {
-		# Sometimes we crash here without a client
-		return unless $client;
-	}
-
-	return $client->modeStack->[-1];
+	$_[0] ? $_[0]->modeStack->[-1] : undef;
 }
 
 =head2 validMode ( $client)
