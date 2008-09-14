@@ -64,10 +64,16 @@ our %screensaverDateTimeFunctions = (
 		# snooze if alarm is currently playing
 		if (defined $currentAlarm) {
 			$currentAlarm->snooze;
-		}
 
+		# show time if brightness is zero
+		} elsif ($client->display->currBrightness() == 0) {
+			$client->showBriefly( dateTimeLines($client), {
+				'brightness' => 'powerOn',
+				'duration' => 3
+			});
+			
 		# display next alarm time if alarm is within the next 24h		
-		elsif (defined $nextAlarm && ($nextAlarm->nextDue - time < 86400)) {
+		} elsif (defined $nextAlarm && ($nextAlarm->nextDue - time < 86400)) {
 
 			my $line = $client->symbols('bell');
 
@@ -134,8 +140,8 @@ sub screensaverDateTimelines {
 			time_zone => $timezone
 		);
 		
-		# We use the same method as alarm clock, to align updates at each minute change
-		# so we only have to run once a minute instead of every few seconds
+		# Align updates at each minute change so we only have to run once a minute instead
+		# of every few seconds
 		my $sec = (localtime(time))[0];
 		my $snInterval = 60 - $sec;
 		
@@ -143,7 +149,31 @@ sub screensaverDateTimelines {
 		Slim::Buttons::Common::startPeriodicUpdates( $client, time() + $snInterval );
 	}
 
+	if (Slim::Utils::Alarm->getCurrentAlarm($client) && !$flash) {
+		# schedule another update to remove the alarm symbol during alarm
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time + 0.5, \&_flashAlarm);
+	}
+	
+# BUG 3964: comment out until Dean has a final word on the UI for this.	
+# 	if ($client->display->hasScreen2) {
+# 		if ($client->display->linesPerScreen == 1) {
+# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateformat'))];
+# 		} else {
+# 			$display->{'screen2'} = {};
+# 		}
+# 	}
+
+	return dateTimeLines($client, $flash);
+}
+
+# Return the lines to display the date and time on a display, along with alarm information
+sub dateTimeLines {
+	my $client = shift;
+	# Boolean.  If false, the whole display is rendered.  Otherwise, the bits which flash aren't included.
+	my $flash = shift;
+
 	my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
+
 	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
 
 	# show alarm symbol if active or set for next 24 hours
@@ -186,20 +216,6 @@ sub screensaverDateTimelines {
 			'fonts'   => $fontDef,
 		};
 	}
-
-	if ($currentAlarm && !$flash) {
-		# schedule another update to remove the alarm symbol during alarm
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time + 0.5, \&_flashAlarm);
-	}
-	
-# BUG 3964: comment out until Dean has a final word on the UI for this.	
-# 	if ($client->display->hasScreen2) {
-# 		if ($client->display->linesPerScreen == 1) {
-# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateformat'))];
-# 		} else {
-# 			$display->{'screen2'} = {};
-# 		}
-# 	}
 
 	return $display;
 }

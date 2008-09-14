@@ -2195,18 +2195,24 @@ sub dateTime {
 	my $client = shift;
 	
 	my $line;
-	
-	if ( main::SLIM_SERVICE ) {
-		# client-specific date/time on SN
-		$line = {
-			'center' => [ $client->longDateF(), $client->timeF() ],
-		};
-	}
-	else {
-		$line = {
-			'center' => [ Slim::Utils::DateTime::longDateF(undef, preferences('plugin.datetime')->client($client)->get('dateformat')),
-					      Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->client($client)->get('timeformat')) ]
-		};
+
+	# Use the DateTime plugin to get the lines if its available
+	if (exists $INC{'Slim/Plugin/DateTime/Plugin.pm'}) {
+		$line = Slim::Plugin::DateTime::Plugin::dateTimeLines($client);
+	} else {
+		# Fall back to a more basic date/time display
+		if ( main::SLIM_SERVICE ) {
+			# client-specific date/time on SN
+			$line = {
+				'center' => [ $client->longDateF(), $client->timeF() ],
+			};
+		}
+		else {
+			$line = {
+				'center' => [ Slim::Utils::DateTime::longDateF(undef, preferences('plugin.datetime')->client($client)->get('dateformat')),
+						      Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->client($client)->get('timeformat')) ]
+			};
+		}
 	}
 	
 	return $line;
