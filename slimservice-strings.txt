@@ -147,6 +147,7 @@ WELCOME_TO_APPLICATION
 	SV	Välkommen till SqueezeNetwork
 
 WELCOME_MESSAGE
+	DE	Rocken Sie los!
 	EN	Rock your world!
 
 SQUEEZENETWORK_WELCOME
@@ -305,7 +306,7 @@ TZ_AMERICA_ANCHORAGE
 
 TZ_AMERICA_LOS_ANGELES
 	DA	San Francisco
-	DE	Pacific Time (USA und Kanada); Tijuana
+	DE	San Francisco
 	EN	San Francisco
 	ES	San Francisco
 	FI	San Francisco
@@ -409,7 +410,7 @@ TZ_AMERICA_INDIANAPOLIS
 
 TZ_AMERICA_BOGOTA
 	DA	Bogota, Lima
-	DE	Bogota, Lima, Quito
+	DE	Bogota, Lima
 	EN	Bogota, Lima
 	ES	Bogotá, Lima
 	FI	Bogota, Lima
@@ -487,7 +488,7 @@ TZ_AMERICA_ST_JOHNS
 
 TZ_AMERICA_BUENOS_AIRES
 	DA	Buenos Aires
-	DE	Buenos Aires, Georgetown
+	DE	Buenos Aires
 	EN	Buenos Aires
 	ES	Buenos Aires
 	FI	Buenos Aires
@@ -565,7 +566,7 @@ TZ_ATLANTIC_AZORES
 
 TZ_AFRICA_CASABLANCA
 	DA	Casablanca
-	DE	Casablanca, Monrovia
+	DE	Casablanca
 	EN	Casablanca
 	ES	Casablanca
 	FI	Casablanca
@@ -604,7 +605,7 @@ TZ_AFRICA_LAGOS
 
 TZ_EUROPE_BERLIN
 	DA	Berlin
-	DE	Berlin, Bern
+	DE	Berlin
 	EN	Berlin
 	ES	Berlín
 	FI	Berliini
@@ -812,7 +813,7 @@ TZ_ASIA_MUSCAT
 
 TZ_ASIA_TBILISI
 	DA	Tbilisi
-	DE	Baku, Tiflis, Eriwan
+	DE	Tiflis
 	EN	Tbilisi
 	ES	Tiflis
 	FI	Tbilisi
@@ -838,7 +839,7 @@ TZ_ASIA_KABUL
 
 TZ_ASIA_KARACHI
 	DA	Karachi
-	DE	Islamabad, Karatschi, Taschkent
+	DE	Karatschi
 	EN	Karachi
 	ES	Karachi
 	FI	Karachi
@@ -864,7 +865,7 @@ TZ_ASIA_YEKATERINBURG
 
 TZ_ASIA_CALCUTTA
 	DA	Calcutta
-	DE	Chennai, Kalkutta, Mumbai, New Delhi
+	DE	Kalkutta
 	EN	Calcutta
 	ES	Calcuta
 	FI	Kolkata
@@ -942,7 +943,7 @@ TZ_ASIA_RANGOON
 
 TZ_ASIA_BANGKOK
 	DA	Bangkok
-	DE	Bangkok, Hanoi, Jakarta
+	DE	Bangkok
 	EN	Bangkok
 	ES	Bangkok
 	FI	Bangkok
@@ -1007,7 +1008,7 @@ TZ_ASIA_SINGAPORE
 
 TZ_ASIA_HONG_KONG
 	DA	Hongkong
-	DE	Peking, Hongkong
+	DE	Hongkong
 	EN	Hong Kong
 	ES	Hong Kong
 	FI	Hongkong
@@ -1098,7 +1099,7 @@ TZ_AUSTRALIA_ADELAIDE
 
 TZ_PACIFIC_GUAM
 	DA	Guam
-	DE	Guam, Port Moresby
+	DE	Guam
 	EN	Guam
 	ES	Guam
 	FI	Guam
@@ -1150,7 +1151,7 @@ TZ_AUSTRALIA_HOBART
 
 TZ_AUSTRALIA_SYDNEY
 	DA	Sydney
-	DE	Canberra, Melbourne, Sydney
+	DE	Sydney
 	EN	Sydney
 	ES	Sydney
 	FI	Sydney
