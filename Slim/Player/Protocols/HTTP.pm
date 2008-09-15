@@ -439,6 +439,9 @@ sub scanHTTPTrack {
 					$mmsURL =~ s/^http/mms/i;
 					$track->url( $mmsURL );
 					$track->update;
+					
+					# Move scanData for this URL
+					$client->scanData->{$mmsURL} = delete $client->scanData->{$nextURL};
 				}
 				
 				# Replace the item on the playlist in case it was changed due to
