@@ -18661,6 +18661,9 @@ UNMIXABLE
 	NO	%s er ikke tilgjengelig for dette elementet
 	SV	%s är inte tillgängligt för det här objektet
 
+NO_MIXERS_AVAILABLE
+	EN	No mixers available
+
 PLAYER_BRIGHTNESS
 	DA	Afspillerens lysstyrke
 	DE	Player-Helligkeit
