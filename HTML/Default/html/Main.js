@@ -13,9 +13,6 @@ Main = {
 		
 		Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-		if (!Ext.isIE)
-			Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-				
 		var leftpanel = {
 			region: 'center',
 			layout: 'border',
