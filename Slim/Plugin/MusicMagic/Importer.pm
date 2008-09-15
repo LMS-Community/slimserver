@@ -39,7 +39,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.musicip');
 
-my @MIPSupportedFormats = ('m4a', 'm4p', 'mp3', 'wma', 'ogg', 'flc', 'wav');
+my @supportedFormats;
 
 sub useMusicMagic {
 	my $class    = shift;
@@ -118,6 +118,18 @@ sub initPlugin {
 		$initialized = 0;
 
 		$log->info("Cannot Connect");
+	}
+
+	# supported file formats differ on platforms
+	# http://www.musicip.com/mixer/mixerfaq.jsp#1
+	if ($isWin) {
+		@supportedFormats = ('m4a', 'm4p', 'mp3', 'wma', 'ogg', 'flc', 'wav');
+	}
+	elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
+		@supportedFormats = ('m4a', 'm4p', 'mp3', 'ogg', 'flc', 'wav');		
+	}
+	else {
+		@supportedFormats = ('mp3', 'ogg', 'flc', 'wav');
 	}
 
 	return $initialized;
@@ -261,7 +273,7 @@ sub exportSongs {
 			'audio' => '1', 
 			'remote' => '0', 
 			'musicmagic_mixable' => undef, 
-			'content_type' => { in => \@MIPSupportedFormats}
+			'content_type' => { in => \@supportedFormats}
 		});
 
 		my $count = @notMixableTracks;
