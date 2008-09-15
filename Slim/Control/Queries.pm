@@ -105,7 +105,7 @@ sub alarmsQuery {
 		for my $alarm (@alarms[$start..$end]) {
 
 			my @dow;
-			foreach ([0..6]) {
+			foreach (0..6) {
 				push @dow, $_ if $alarm->day($_);
 			}
 
