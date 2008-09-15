@@ -413,7 +413,7 @@ sub findNextTime {
 				time_zone => $timezone
 			);
 			
-			$wday = $dt->day_of_week;
+			$wday = $dt->day_of_week % 7;
 			$min  = $dt->min;
 			$hour = $dt->hour;
 			
