@@ -1693,6 +1693,8 @@ sub musicfolderQuery {
 			my $id = $item->id();
 			$id += 0;
 			
+			$filename = Slim::Utils::Unicode::utf8decode_locale($filename);
+
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
 
