@@ -89,7 +89,7 @@ sub newsongCallback {
 	
 	# If this is a radio track (no track length) and doesn't contain a playlist index value
 	# it is the newsong notification from a metadata change, which we want to ignore
-	if ( !$secs && !defined $request->getParam('_p3') ) {
+	if ( !$secs && !defined $request->getParam('_p1') ) {
 		$log->debug( 'Ignoring radio station newsong metadata notification' );
 		return;
 	}
