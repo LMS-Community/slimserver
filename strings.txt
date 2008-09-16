@@ -15636,7 +15636,7 @@ TRACKARTIST
 	HE	מבצע הרצועה
 	IT	Trova artista
 	NL	Artiest van track
-	NO	Spor artist
+	NO	Sporartist
 	SV	Spårets artist
 	ZH_CN	音轨艺人
 
@@ -18662,7 +18662,9 @@ UNMIXABLE
 	SV	%s är inte tillgängligt för det här objektet
 
 NO_MIXERS_AVAILABLE
+	DE	Es stehen keine Mixer zur Verfügung
 	EN	No mixers available
+	NO	Ingen miksere tilgjengelig
 
 PLAYER_BRIGHTNESS
 	DA	Afspillerens lysstyrke
