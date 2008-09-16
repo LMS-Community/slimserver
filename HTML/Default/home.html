@@ -236,5 +236,13 @@ ELSE %]
 		[% END %]
 	[% END %]
 
+	<script type="text/javascript">
+		if (Ext.isIE)
+			Ext.onReady(function(){
+				_init();
+				Home.init();
+			});
+	</script>
+
 	[% PROCESS pagefooter.html %]
 [% END %]
