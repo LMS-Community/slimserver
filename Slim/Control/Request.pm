@@ -1036,7 +1036,7 @@ sub new {
 			} else {
 				
 				# positional params
-				$params{"_p" . keys %params} = $requestLineRef->[$i];
+				$params{"_p$i"} = $requestLineRef->[$i];
 			}
 		}
 		
@@ -1068,7 +1068,7 @@ sub new {
 		$self->{'_status'} = 104;
 		
 		for (;$i < scalar @$requestLineRef; $i++) {
-			$params{"_p" . keys %params} = $requestLineRef->[$i];
+			$params{"_p$i"} = $requestLineRef->[$i];
 		}
 
 		if ($log->is_info) {
