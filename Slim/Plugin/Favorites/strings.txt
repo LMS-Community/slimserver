@@ -12,6 +12,7 @@ FAVORITES
 	HE	מועדפים
 	IT	Preferiti
 	NL	Favorieten
+	NO	Favoritter
 	SV	Favoriter
 
 FAVORITES_NOT_DEFINED

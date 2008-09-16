@@ -58,40 +58,15 @@ our %screensaverDateTimeFunctions = (
 	'snooze' => sub {
 		my $client = shift;
 
-		my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
 		my $currentAlarm = Slim::Utils::Alarm->getCurrentAlarm($client);
 
 		# snooze if alarm is currently playing
 		if (defined $currentAlarm) {
 			$currentAlarm->snooze;
 
-		# show time if brightness is zero
-		} elsif ($client->display->currBrightness() == 0) {
-			$client->showBriefly( dateTimeLines($client), {
-				'brightness' => 'powerOn',
-				'duration' => 3
-			});
-			
-		# display next alarm time if alarm is within the next 24h		
-		} elsif (defined $nextAlarm && ($nextAlarm->nextDue - time < 86400)) {
-
-			my $line = $client->symbols('bell');
-
-			# Remove seconds from alarm time
-			my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->timeformat, 1);
-			$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
-			$line .=  " $timeStr";
-
-	 		# briefly display the next alarm
-	 		$client->showBriefly(
-		 		{
-					'center' => [ 
-						$client->string('ALARM_NEXT_ALARM'),
-						$line,
-					]
-				},
-				{ 'duration' => 3 }
-			);
+		# display info about next alarm and/or current time
+		} else {
+			showTimeOrAlarm($client);
 		}
 	},
 );
@@ -218,6 +193,51 @@ sub dateTimeLines {
 	}
 
 	return $display;
+}
+
+sub showTimeOrAlarm {
+	my $client = shift;
+
+	my $sbName = getDisplayName() . '::showTimeOrAlarm';
+
+	my $currentMode = Slim::Buttons::Common::mode($client);
+	my $currentSbName = $client->display->sbName;
+	$currentSbName = '' unless defined $currentSbName;
+
+	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
+	my $showAlarm = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400);
+
+	# Show time if it isn't already being displayed or it is but there's no next alarm
+	if (($currentMode !~ '\.datetime$' || $client->display->currBrightness() == 0)
+		&& ($currentSbName ne $sbName || ! $showAlarm)) {
+
+		$client->showBriefly( dateTimeLines($client), {
+			'brightness' => 'powerOn',
+			'duration' => 3,
+			'name' => $sbName,
+		});
+		
+	# display next alarm time if alarm is within the next 24h		
+	} elsif ($showAlarm) {
+
+		my $line = $client->symbols('bell');
+
+		# Remove seconds from alarm time
+		my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->timeformat, 1);
+		$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
+		$line .=  " $timeStr";
+
+		# briefly display the next alarm
+		$client->showBriefly(
+			{
+				'center' => [ 
+					$client->string('ALARM_NEXT_ALARM'),
+					$line,
+				]
+			},
+			{ 'duration' => 3, 'brightness' => 'powerOn'},
+		);
+	}
 }
 
 sub _flashAlarm {

@@ -1109,11 +1109,17 @@ our %functions = (
  	'datetime' => sub  {
 		my $client = shift;
 
- 		# briefly display the time/date
- 		$client->showBriefly( dateTime($client), {
-			'brightness' => 'powerOn',
-			'duration' => 3
-		});
+		# Use the DateTime plugin to display time/alarm info if it's available
+		if (exists $INC{'Slim/Plugin/DateTime/Plugin.pm'}) {
+			Slim::Plugin::DateTime::Plugin::showTimeOrAlarm($client);
+
+		# otherwise just show the time and date
+		} else {
+			$client->showBriefly( dateTime($client), {
+				'brightness' => 'powerOn',
+				'duration' => 3
+			});
+		}
  	},
 
 	'textsize' => sub  {
@@ -2196,7 +2202,7 @@ sub dateTime {
 	
 	my $line;
 
-	# Use the DateTime plugin to get the lines if its available
+	# Use the DateTime plugin to get the lines if it's available
 	if (exists $INC{'Slim/Plugin/DateTime/Plugin.pm'}) {
 		$line = Slim::Plugin::DateTime::Plugin::dateTimeLines($client);
 	} else {

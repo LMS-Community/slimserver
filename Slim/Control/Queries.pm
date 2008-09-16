@@ -5660,7 +5660,12 @@ sub showArtwork {
 	# get our parameters
 	my $id = $request->getParam('_artworkid');
 
-	$request->addResult('artworkId'  => $id);
+	if ($id =~ /:\/\//) {
+		$request->addResult('artworkUrl'  => $id);
+	} else {
+		$request->addResult('artworkId'  => $id);
+	}
+
 	$request->addResult('offset', 0);
 	$request->setStatusDone();
 
@@ -5763,7 +5768,6 @@ sub contextMenuQuery {
 
 	my ($Imports, $mixers) = _mixers();
 	
-	$request->addResult('count', scalar(@$mixers) );
 	$request->addResult('offset', 0 );
 	$request->addResult('window', { menuStyle => '' } );
 	my $chunkCount = 0;
@@ -5780,30 +5784,31 @@ sub contextMenuQuery {
 		$obj = Slim::Schema->find('Genre', $obj_id);
 	}
 
+	my @mixable_mixers;
 	for my $mixer (@$mixers) {
-		my $token = $Imports->{$mixer}->{'contextToken'};
-		my $string = $request->string($token);
-		$request->addResultLoop('item_loop', $chunkCount, 'text', $string);
-		my $actions;
-
 		if ( blessed($obj) && $mixer->mixable($obj) ) {
+			push @mixable_mixers, $mixer;
+		}
+	}
+
+	if ( scalar(@mixable_mixers) == 0 ) {
+		$request->addResult('count', 1);
+		$request->addResultLoop('item_loop', 0, 'text', $request->string('NO_MIXERS_AVAILABLE') );
+		$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
+	} else {
+		$request->addResult('count', scalar(@mixable_mixers) );
+		for my $mixer ( @mixable_mixers ) {
+			my $token = $Imports->{$mixer}->{'contextToken'};
+			my $string = $request->string($token);
+			$request->addResultLoop('item_loop', $chunkCount, 'text', $string);
+			my $actions;
 			my $command = Storable::dclone( $Imports->{$mixer}->{cliBase} );
 			$command->{'params'}{'menu'} = 1;
 			$command->{'params'}{$obj_param} = $obj->id;
 			$actions->{go} = $command;
-		} else {
-			$actions = {
-				do => {
-					player => 0,
-					cmd    => ['jiveunmixable'],
-					params => {
-						contextToken => $Imports->{$mixer}->{contextToken},
-					},
-				}
-			};
+			$request->addResultLoop('item_loop', $chunkCount, 'actions', $actions);
+			$chunkCount++;
 		}
-		$request->addResultLoop('item_loop', $chunkCount, 'actions', $actions);
-		$chunkCount++;
 	}
 	$request->setStatusDone();
 
