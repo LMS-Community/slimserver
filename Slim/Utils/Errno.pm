@@ -27,6 +27,8 @@ Platform correct error constants.
 
 =item * ECHILD
 
+=item * EBADF
+
 =back
 
 =cut
@@ -34,17 +36,18 @@ Platform correct error constants.
 use strict;
 use Exporter::Lite;
 
-our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD);
+our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
 
 BEGIN {
         if ($^O =~ /Win32/) {
                 *EINTR       = sub () { 10004 };
+                *EBADF       = sub () { 10009 };
                 *ECHILD      = sub () { 10010 };
                 *EWOULDBLOCK = sub () { 10035 };
                 *EINPROGRESS = sub () { 10036 };
         } else {
                 require Errno;
-                import Errno qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD);
+                import Errno qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD EBADF);
         }
 }
 

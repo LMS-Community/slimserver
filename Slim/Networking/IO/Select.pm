@@ -11,6 +11,7 @@ use strict;
 
 use Exporter::Lite;
 
+use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
@@ -203,11 +204,30 @@ sub select {
 
 	$::perfmon && $endSelectTime && $responseTime->log(Time::HiRes::time() - $endSelectTime);
 
+	$! = 0;
 	my ($r, $w, $e) = ( $idleStreams )
 		? IO::Select->select($selects->{'is_read'}, $selects->{'is_write'}, $selects->{'is_error'}, $select_time)
 		: IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
+
+	# catch EBADF and clear
+	if (!($r || $w || $e) && $! == EBADF) {
+		foreach my $sock (IO::Select::handles($idleStreams ? $selects->{'is_error'} : $selects->{'error'}),
+						  IO::Select::handles($idleStreams ? $selects->{'is_read'} : $selects->{'read'}))
+		{
+			$! = 0;
+			IO::Select->new($sock)->has_exception(0);
+			if ($! == EBADF) {
+				$e = [$sock];
+				removeRead($e);
+				removeWrite($e);
+				removeError($e);
+				$log->error("Clearing bad handle: " . fileno($sock));
+				last;
+			}
+		}
+	}
 
 	# return now if nothing to service - optimisation for most common case
 	return unless ( $r || $w || $e );
