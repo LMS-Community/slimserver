@@ -30,6 +30,9 @@ our %Config = (
 sub Startup {
 	# Tell PerlSvc to bundle these modules
 	if (0) {
+		require version;
+		require 'auto/Compress/Zlib/autosplit.ix';
+		
 		require Encode::CN;
 		require Encode::JP;
 		require Encode::KR;
