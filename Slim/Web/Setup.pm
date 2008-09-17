@@ -14,46 +14,54 @@ use Slim::Utils::Log;
 
 sub initSetup {
 
-	loadSettingsModules();
-}
+	my $base = join('::', qw(Slim Web Settings));
+	
+	my @classes = map { 
+		join('::', qw(Slim Web Settings Player), $_) 
+	} qw(
+		Alarm 
+		Audio 
+		Basic 
+		Display 
+		Menu 
+		Remote 
+		Synchronization
+	);
+	
+	push @classes, map { 
+		join('::', qw(Slim Web Settings Server), $_) 
+	} qw(
+		Basic 
+		Behavior 
+		Debugging 
+		FileSelector 
+		FileTypes 
+		Index 
+		Network 
+		Performance 
+		Plugins 
+		Security 
+		Software 
+		SqueezeNetwork 
+		Status 
+		TextFormatting 
+		UserInterface 
+		Wizard
+	);
+	
+	for my $class (@classes) {
+		eval "use $class";
 
-sub loadSettingsModules {
+		if (!$@) {
 
-	my $base = catdir(qw(Slim Web Settings));
+			$class->new;
 
-	# Pull in the settings modules. Lighter than Module::Pluggable, which
-	# uses File::Find - and 2Mb of memory!
-	for my $dir (@INC) {
+		} else {
 
-		next if !-d catdir($dir, $base);
-
-		for my $sub (qw(Player Server)) {
-
-			opendir(DIR, catdir($dir, $base, $sub));
-
-			while (my $file = readdir(DIR)) {
-
-				next if $file !~ s/\.pm$//;
-
-				my $class = join('::', splitdir($base), $sub, $file);
-
-				eval "use $class";
-
-				if (!$@) {
-
-					$class->new;
-
-				} else {
-
-					logError ("can't load $class - $@");
-				}
-			}
-
-			closedir(DIR);
+			logError ("can't load $class - $@");
 		}
-
-		last;
 	}
+
 }
 
 1;
