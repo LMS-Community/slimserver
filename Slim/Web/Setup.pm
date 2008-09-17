@@ -8,14 +8,10 @@ package Slim::Web::Setup;
 # version 2.
 
 use strict;
-
-use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Log;
 
 sub initSetup {
 
-	my $base = join('::', qw(Slim Web Settings));
-	
 	my @classes = map { 
 		join('::', qw(Slim Web Settings Player), $_) 
 	} qw(
