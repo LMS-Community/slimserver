@@ -56,8 +56,12 @@ sub songProtocolHandler {return shift->song()->{'handler'};}
 sub close {
 	my $self = shift;
 	
-	if ($self->{'streamHandler'}) {
-		$self->{'streamHandler'}->close;
+	my $fd = $self->{'streamHandler'};
+	
+	if (defined $fd) {
+		Slim::Networking::Select::removeError($fd);
+		Slim::Networking::Select::removeRead($fd);
+		$fd->close;
 		delete $self->{'streamHandler'};
 	}
 }

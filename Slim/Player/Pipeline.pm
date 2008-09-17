@@ -334,9 +334,12 @@ sub sysseek {
 sub close {
 	my $self = shift;
 
+
 	my $reader = ${*$self}{'pipeline_reader'};
 
 	if (defined($reader)) {
+		Slim::Networking::Select::removeRead($reader);
+		Slim::Networking::Select::removeError($reader);
 		$reader->close();
 	}
 
