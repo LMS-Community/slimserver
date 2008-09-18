@@ -82,4 +82,24 @@ sub power {
 	return 1;
 }
 
+sub nextChunk {
+	my $client = $_[0];
+	
+	my $chunk = Slim::Player::Source::nextChunk(@_);
+	
+	if (defined($chunk) && length($$chunk) == 0) {
+		# EndOfStream
+		$client->controller()->playerEndOfStream($client);
+		
+		$client->controller()->playerReadyToStream($client);
+
+		return undef;	
+	}
+	
+	return $chunk;
+}
+
+sub isReadyToStream { 1 }
+
+
 1;

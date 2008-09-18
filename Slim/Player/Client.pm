@@ -1270,6 +1270,9 @@ sub nextChunk {
 	return Slim::Player::Source::nextChunk(@_);
 }
 
+sub closeStream { }
+
+
 ##############################################################
 # Methods to delegate to our StreamingController.
 # TODO - review to see which are still necessary.

@@ -16,6 +16,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Player::Song;
+use Slim::Player::ReplayGain;
 
 my $log = logger('player.source');
 
@@ -533,7 +534,7 @@ sub _stopClient {
 	my ($client) = @_;
 	$client->stop;
 	@{$client->chunks} = ();
-	Slim::Web::HTTP::forgetClient($client);
+	$client->closeStream();
 }
 
 sub _getNextTrack {			# getNextTrack -> TrackWait
@@ -889,6 +890,7 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $setVolume = $self->{'playingState'} == STOPPED;
 	
 	my $startedPlayers = 0;
+	my $reportsTrackStart = 0;
 	
 	foreach my $player (@{$self->{'players'}}) {
 		if ($setVolume) {
@@ -908,6 +910,8 @@ sub _Stream {				# play -> Buffering, Streaming
 			'seekdata'    => $seekdata,
 			# we never set the 'loop' parameter
 		} );
+		
+		$reportsTrackStart ||= $player->reportsTrackStart();
 	}	
 	
 	if ($startedPlayers != scalar @{$self->{'players'}}) {
@@ -927,6 +931,10 @@ sub _Stream {				# play -> Buffering, Streaming
 	$self->{'nextTrack'} = undef;
 	if ($self->{'playingState'} == STOPPED) {_setPlayingState( $self, BUFFERING );}
 	_setStreamingState($self, STREAMING);
+	
+	if (!$reportsTrackStart) {
+		_Playing($self);
+	}
 }
 
 sub _PlayIfReady {		# -> Stopped; IF [trackReady] THEN play -> Buffering, Streaming ENDIF

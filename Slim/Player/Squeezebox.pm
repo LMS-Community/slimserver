@@ -141,6 +141,10 @@ sub connected {
 	return ($client->tcpsock() && $client->tcpsock->connected()) ? 1 : 0;
 }
 
+sub closeStream {
+	Slim::Web::HTTP::forgetClient(shift);
+}
+
 sub ticspersec {
 	return 1000;
 }
