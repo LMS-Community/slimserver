@@ -264,65 +264,68 @@ sub sysread {
 		return undef;
 	}
 
-	my $loop;
-	do {
-		$loop = 0;
-		$readlen = $reader->sysread($_[1], $chunksize);
+	# First try to stuff the pipe
+	STUFF_PIPE:	while (defined($source)) {
 
-		# We'd block on the reader, so see if we can write more
-		if (!defined($readlen) && ($! == EWOULDBLOCK) && defined($source)) {
+		my $pendingBytes = ${*$self}{'pipeline_pending_bytes'};
+		my $pendingSize  = ${*$self}{'pipeline_pending_size'};
 
-			my $pendingBytes = ${*$self}{'pipeline_pending_bytes'};
-			my $pendingSize  = ${*$self}{'pipeline_pending_size'};
+		if (!$pendingSize) {
 
-			if ($pendingSize) {
+			$log->debug("Pipeline doesn't have pending bytes - trying to get some from source");
 
-				$log->debug("Pipeline has some pending bytes");
+			my $socketReadlen = $source->sysread($pendingBytes, $chunksize);
 
-			}
-			else {
-
-				$log->debug("Pipeline doesn't have pending bytes - trying to get some from source");
-
-				my $socketReadlen = $source->sysread($pendingBytes, $chunksize);
-
-				if (!$socketReadlen) {
-					return $socketReadlen;
-				}
-
-				$pendingSize = $socketReadlen;
-			}
-
-			$log->debug("Attempting to write to pipeline writer");
-
-			my $writelen = $writer->syswrite($pendingBytes, $pendingSize);
-
-			if ($writelen) {
-
-				$log->debug("Wrote $writelen bytes to pipeline writer");
-
-				if ($writelen != $pendingSize) {
-					${*$self}{'pipeline_pending_bytes'} = substr($pendingBytes, $writelen);
-					${*$self}{'pipeline_pending_size'}  = $pendingSize - $writelen;
-				}
-				else {
-					${*$self}{'pipeline_pending_bytes'} = '';
-					${*$self}{'pipeline_pending_size'}  = 0;
+			if (!$socketReadlen) {
+				if (defined $socketReadlen) {
+					# EOF
+					$log->info("EOF on source stream");
+					undef $source;
+					delete ${*$self}{'pipeline_source'};
+					$writer->close();
+					last STUFF_PIPE;
+				} elsif ($! == EWOULDBLOCK) {
+					last STUFF_PIPE;		
+				} else {
+					return undef; # reflect error to caller
 				}
 			}
-			else {
 
-				${*$self}{'pipeline_pending_bytes'} = $pendingBytes;
-				${*$self}{'pipeline_pending_size'}  = $pendingSize;
-				return $writelen;
-			}
-
-			$loop = 1;
+			$pendingSize = $socketReadlen;
 		}
 
-	} while ($loop);
+		$log->debug("Attempting to write to pipeline writer");
+
+		my $writelen = $writer->syswrite($pendingBytes, $pendingSize);
+
+		if ($writelen) {
+
+			$log->debug("Wrote $writelen bytes to pipeline writer");
+
+			if ($writelen != $pendingSize) {
+				${*$self}{'pipeline_pending_bytes'} = substr($pendingBytes, $writelen);
+				${*$self}{'pipeline_pending_size'}  = $pendingSize - $writelen;
+			}
+			else {
+				${*$self}{'pipeline_pending_bytes'} = '';
+				${*$self}{'pipeline_pending_size'}  = 0;
+			}
+		}
+		else {
+
+			${*$self}{'pipeline_pending_bytes'} = $pendingBytes;
+			${*$self}{'pipeline_pending_size'}  = $pendingSize;
+			
+			if ($! != EWOULDBLOCK) {
+				return undef;	# reflect error to caller
+			}
+				
+			last STUFF_PIPE;
+		}
+
+	}
 	
-	return $readlen;
+	return $reader->sysread($_[1], $chunksize);
 }
 
 sub sysseek {
