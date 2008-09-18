@@ -1152,7 +1152,9 @@ sub updateOrCreate {
 			'playlist'   => $playlist,
 		});
 		
-		$attributeHash->{'CONTENT_TYPE'} = $track->content_type;
+		if ( $track ) {
+			$attributeHash->{'CONTENT_TYPE'} = $track->content_type;
+		}
 	}
 
 	if ($track && $attributeHash->{'CONTENT_TYPE'}) {
