@@ -254,15 +254,15 @@ sub _eventAction {
 		$curPlayingState   = $PlayingStateName[$self->{'playingState'}];
 		$curStreamingState = $StreamingStateName[$self->{'streamingState'}];
 		
+		$log->debug(
+			sprintf("%s: %s in %s-%s -> %s",
+			$self->{'masterId'},
+			$event,
+			$curPlayingState, $curStreamingState,
+			Slim::Utils::PerlRunTime::realNameForCodeRef($action))
+		);
+			
 		if ($params) {
-			$log->debug(
-				sprintf("%s: %s in %s-%s -> %s",
-				$self->{'masterId'},
-				$event,
-				$curPlayingState, $curStreamingState,
-				Slim::Utils::PerlRunTime::realNameForCodeRef($action))
-			);
-				
 			my $s = "params:";
 			foreach my $p (keys %$params) {
 				$s .= " $p => " . (defined $params->{$p} ? $params->{$p} : 'undef');
