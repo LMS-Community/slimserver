@@ -77,11 +77,8 @@ use constant MAXCHUNKSIZE     => 32768;
 # This used to be 0.05s but the CPU load associated with such fast retries is 
 # really noticeable when playing remote streams. I guess that it is possible
 # that certain combinations of pipe buffers in a transcoding pipeline
-# (others than those covered by PIPE_BUF_THRES/RETRY_TIME_FAST)
 # might get caught by this but I have not been able to think of any - Alan.
 use constant RETRY_TIME       => 0.40; # normal retry time
-use constant RETRY_TIME_FAST  => 0.02; # faster retry for streaming pcm on platforms with small pipe buffer
-use constant PIPE_BUF_THRES   => 4096; # threshold for switching between retry times
 
 use constant MAXKEEPALIVES    => -1;   # unlimited keepalive requests
 use constant KEEPALIVETIMEOUT => 75;
@@ -94,8 +91,6 @@ my $connected = 0;
 
 our %outbuf = (); # a hash for each writeable socket containing a queue of output segments
                  #   each segment is a hash of a ref to data, an offset and a length
-
-our %lastSegLen = (); # length of last segment
 
 our %sendMetaData   = ();
 our %metaDataBytes  = ();
@@ -2119,8 +2114,6 @@ sub sendStreamingResponse {
 						'length' => length($$chunkRef)
 					);
 	
-					$lastSegLen{$httpClient} = length($$chunkRef);
-	
 					unshift @{$outbuf{$httpClient}},\%segment;
 					
 				} else {
@@ -2130,14 +2123,8 @@ sub sendStreamingResponse {
 
 			} else {
 
-				# let's try again after RETRY_TIME
+				# let's try again after RETRY_TIME - not really necessary as we are selecting on source, ...
 				my $retry = RETRY_TIME;
-
-				if (defined $lastSegLen{$httpClient} && ($lastSegLen{$httpClient} <= PIPE_BUF_THRES) &&
-					$client->streamformat() ne 'mp3') {
-					# high bit rate on platform with potentially constrained pipe buffer - switch to fast retry
-					$retry = RETRY_TIME_FAST;
-				}
 
 				$log->is_info && $log->info("Nothing to stream, let's wait for $retry seconds...");
 				
@@ -2703,7 +2690,6 @@ sub closeHTTPSocket {
 	delete($peeraddr{$httpClient});
 	delete($keepAlives{$httpClient});
 	delete($peerclient{$httpClient});
-	delete($lastSegLen{$httpClient}) if (defined $lastSegLen{$httpClient});
 	
 	# heads up to handlers, if any
 	for my $func (@closeHandlers) {
