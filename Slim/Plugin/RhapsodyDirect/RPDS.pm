@@ -180,6 +180,11 @@ sub rpds_handler {
 			logError( $client, 'RPDS_FAULT', "$sent_cmd / $faultString" );
 		}
 		
+		# Mail missing EA errors, these need to be reported to Rhapsody
+		if ( main::SLIM_SERVICE && $faultString =~ /Invalid Combination/ ) {
+			SDI::Service::Control->mailError( "Rhapsody Missing EA", "$faultCode - $faultString" );
+		}
+		
 		# If a user's session becomes invalid, the firmware will keep retrying getEA
 		# and report a fault of 'Playback Session id $foo is not a valid session id'
 		# and so we need to stop the player and get a new session
