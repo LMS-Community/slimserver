@@ -101,7 +101,11 @@ my @modes = (
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'REMAINING'],
 	  bar => 0, secs => -1, width => 160,
 	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 80, 0, 3, 1, 1, 1, 1, 81, 80, 1, 3, 1, 1, 1, 1] }, 
-	# mode 10	  
+	# mode 10
+	{ desc => ['CLOCK'],
+	  bar => 0, secs => 0, width => 160, clock => 1,
+	  params => [$VISUALIZER_NONE] },
+	# mode 11	  
 	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 	  bar => 0, secs => 0,  width => 160, fullness => 1,
 	  params => [$VISUALIZER_NONE],
@@ -110,7 +114,7 @@ my @modes = (
 
 our $defaultPrefs = {
 	'playingDisplayMode'  => 1,
-	'playingDisplayModes' => [0..9],
+	'playingDisplayModes' => [0..10],
 	'idleBrightness'       => 6,
 	'powerOnBrightness'    => 6,
 	'powerOffBrightness'   => 6,
