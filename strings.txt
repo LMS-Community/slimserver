@@ -18801,3 +18801,5 @@ SQUEEZECENTER_CONNECT_ABBR
 	NO	SqueezeCenter
 	SV	SqueezeCenter
 
+CLOCK
+	EN	Clock

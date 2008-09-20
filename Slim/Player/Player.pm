@@ -692,6 +692,7 @@ sub nowPlayingModeLines {
 	my $showBar      = $modeOpts->{bar};
 	my $showTime     = $modeOpts->{secs};
 	my $showFullness = $modeOpts->{fullness};
+	my $showClock    = $modeOpts->{clock};
 	my $displayWidth = $display->displayWidth($screen2 ? 2 : 1);
 	
 	# check if we don't know how long the track is...
@@ -734,11 +735,15 @@ sub nowPlayingModeLines {
 				$songtime .= ' ' . $client->string('SECONDS');
 			}
 		}
+
 	} elsif ($showTime) { 
 		$songtime = ' ' . $client->textSongTime($showTime < 0);
+	} elsif ($showClock) {
+		# show the current time in the format defined for datetime screensaver
+		$songtime = ' ' . Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->get('timeformat'));
 	}
 
-	if ($showTime || $showFullness) {
+	if ($showTime || $showFullness || $showClock) {
 		$overlay = $songtime;
 	}
 	

@@ -331,6 +331,8 @@ sub init {
 	my $class = shift;
 	my $hash  = shift;
 
+	my $changed = 0;
+
 	for my $pref (keys %$hash) {
 
 		if (!exists $class->{'prefs'}->{ $pref }) {
@@ -364,10 +366,12 @@ sub init {
 			if ( !main::SLIM_SERVICE ) { # SN's timestamps are stored automatically
 				$class->{'prefs'}->{ '_ts_' . $pref } = time();
 			}
+
+			$changed = 1;
 		}
 	}
 
-	$class->_root->save;
+	$class->_root->save if $changed;
 }
 
 =head2 remove ( list )
