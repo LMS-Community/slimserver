@@ -338,11 +338,12 @@ sub read {
 		crc_sum	=> $sum,		# the bytes of the network order short that is the crc sum
 	);
 	
-	if ($self->broken()) {
-		seek ($fh, $offset + 1, SEEK_SET);
-		# Bad CRC: trying again: must have been a bad sync
-		goto OUTER;
-	}
+# Bug 9291, CRC check is broken for some files
+#	if ($self->broken()) {
+#		seek ($fh, $offset + 1, SEEK_SET);
+#		# Bad CRC: trying again: must have been a bad sync
+#		goto OUTER;
+#	}
 	
 	# Check that this frame is immediately followed by another valid frame header
 	if ($checkNextFrame) {
