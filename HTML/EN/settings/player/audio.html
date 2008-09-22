@@ -310,7 +310,7 @@
 				[% IF allowNoLimit %]
 					<option [% IF prefs.pref_maxBitrate == '0' %]selected [% END %]value="0">[% "NO_LIMIT" | string %]</option>
 				[% END %]
-				[% FOREACH option = ['64', '96', '128', '160', '192', '256', '320'] %]
+				[% FOREACH option = ['64', '96', '128', '160', '192', '224', '256', '320'] %]
 					<option [% IF prefs.pref_maxBitrate == option %]selected [% END %]value="[% option %]">[% option %] [% "KBPS" | string %]</option>
 				[%- END -%]
 				
