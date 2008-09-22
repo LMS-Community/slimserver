@@ -906,7 +906,7 @@ sub processURL {
 			# set to the closest lower value of its not a match
 			my $temprate = $params->{'bitrate'};
 
-			foreach my $i (qw(320 256 244 192 160 128 112 96 80 64 56 48 40 32)) {
+			foreach my $i (qw(320 256 224 192 160 128 112 96 80 64 56 48 40 32)) {
 				$temprate = $i; 	 
 				last if ($i <= $params->{'bitrate'}); 	 
 			}
