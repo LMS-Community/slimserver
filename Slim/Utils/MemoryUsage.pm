@@ -860,8 +860,6 @@ sub noh_b_lexinfo {
 	return \$html;
 }
 
-use Memoize;
-memoize('status_memory_usage');
 sub status_memory_usage {
 	my $class = shift;
 
