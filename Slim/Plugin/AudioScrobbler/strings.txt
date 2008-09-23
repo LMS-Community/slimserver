@@ -250,6 +250,18 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	NO	Merk: Hvis du vil konfigurere Last.fm-kontoen din, klikker du på kategorien Avansert og velger Last.fm Audioscrobbler.
 	SV	Obs! Om du vill konfigurera Last.fm-kontot klickar du på fliken Avancerat och väljer sedan Last.fm Audioscrobbler.
 
+SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO
+	EN	Scrobble Internet Radio.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
+	EN	Scrobbling Internet Radio tracks may cause your Last.fm profile to include unwanted data.  You can disable scrobbling of all radio tracks by changing this option.  Radio tracks may still be loved, however.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES
+	EN	Yes, scrobble Internet Radio tracks.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_NO
+	EN	No, do not scrobble Internet Radio tracks.
+
 PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
 	DA	Indsend ikke
 	DE	Nicht scrobbeln

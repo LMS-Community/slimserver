@@ -711,7 +711,7 @@ sub checkScrobble {
 			}
 			
 			# Make sure user is still listening to the same track
-			if ( $title ne $track->{_plugin_title} ) {
+			if ( $track->{_plugin_title} && $title ne $track->{_plugin_title} ) {
 				$log->debug( $track->{_plugin_title} . ' - Currently playing track has changed, not scrobbling' );
 				return;
 			}
@@ -719,6 +719,21 @@ sub checkScrobble {
 			# Get the source type from the plugin
 			if ( $handler->can('audioScrobblerSource') ) {
 				$source = $handler->audioScrobblerSource( $client, $cururl );
+				
+				# Ignore radio tracks if requested, unless rating = L
+				if ( !defined $rating || $rating ne 'L' ) {
+					my $include_radio;
+					if ( main::SLIM_SERVICE ) {
+						$include_radio = $prefs->client($client)->get('include_radio');
+					}
+					else {
+						$include_radio = $prefs->get('include_radio');
+					}
+					if ( defined $include_radio && !$include_radio && $source =~ /^[RE]$/ ) {
+						$log->debug("Ignoring radio URL $cururl, scrobbling of radio is disabled");
+						return;
+					}
+				}
 			}
 		}
 		else {

@@ -28,5 +28,16 @@
 	[% WRAPPER setting title="" desc="" %]
 		[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE" | string %]
 	[% END %]
+	
+	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO" desc="SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC" %]
+		<select class="stdedit" name="pref_include_radio" id="include_radio">
+			<option [% IF prefs.pref_include_radio == 1 %]selected="selected" [% END %]value="1">
+				[% 'SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES' | string %]
+			</option>
+			<option [% IF prefs.pref_include_radio == 0 %]selected="selected" [% END %]value="0">
+				[% 'SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_NO' | string %]
+			</option>
+		</select>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
