@@ -350,11 +350,11 @@ sub parseRSS {
 	for my $itemXML (@$items) {
 
 		my %item = (
-			'description' => unescapeAndTrim($itemXML->{'description'}),
-			'title'       => unescapeAndTrim($itemXML->{'title'}),
+			'description' => unescapeAndTrim( ref $itemXML->{'description'} eq 'HASH' ? $itemXML->{'description'}->{'content'} : $itemXML->{'description'} ),
+			'title'       => unescapeAndTrim( ref $itemXML->{'title'} eq 'HASH' ? $itemXML->{'title'}->{'content'} : $itemXML->{'title'} ),
 			'link'        => unescapeAndTrim($itemXML->{'link'}),
 			'slim:link'   => unescapeAndTrim($itemXML->{'slim:link'}),
-			'pubdate'     => unescapeAndTrim($itemXML->{'pubDate'}),
+			'pubdate'     => unescapeAndTrim( ref $itemXML->{'pubDate'} eq 'HASH' ? $itemXML->{'pubDate'}->{'content'} : $itemXML->{'pubDate'} ),
 			# image is included in each item due to the way XMLBrowser works
 			'image'       => $feed{'image'},
 		);
