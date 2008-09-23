@@ -418,6 +418,9 @@ sub _read_file {
 		} elsif ( $head eq 'data' ) {
 		    $details{'data_start'} = $self -> {'pos'};
 		    $details{'data_length'} = $chunk_len;
+		} elsif ( $head =~ /^id3[2 ]$/i ) { # Look for 'id3 ' or 'ID32'
+			# Save ID3 tag offset for use by MP3 library if it wants to read the tags
+			$details{'id3_offset'} = $self->{'pos'};
 		} else {
 		    $head =~ s/[^\w]+//g;
 		  	$self -> _error( "ignored unknown block type: $head at $self->{pos} for $chunk_len", 'warn' );

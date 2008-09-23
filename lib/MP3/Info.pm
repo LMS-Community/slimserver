@@ -1100,7 +1100,7 @@ sub _parse_v2tag {
 }
 
 sub _get_v2tag {
-	my ($fh, $ver, $raw, $info) = @_;
+	my ($fh, $ver, $raw, $info, $start) = @_;
 	my $eof;
 	my $gotanyv2 = 0;
 
@@ -1124,7 +1124,7 @@ sub _get_v2tag {
 	}
 
 	# Now read any ID3v2 header
-	$gotanyv2 |= (_get_v2tagdata($fh, $ver, $raw, $info, undef) ? 1 : 0);
+	$gotanyv2 |= (_get_v2tagdata($fh, $ver, $raw, $info, $start) ? 1 : 0);
 
 	# Because we've merged the entries it makes sense to trim any duplicated
 	# values - for example if there's a footer and a header that contain the same
@@ -1232,23 +1232,26 @@ sub _get_v2tagdata {
 	}
 
 	# Bug 8939, Trying to read past the end of the file may crash on win32 
-	if ( $v2h->{offset} + $end <= -s $fh ) {
-		seek $fh, $v2h->{offset}, SEEK_SET;
-		read $fh, $wholetag, $end;
+	my $size = -s $fh;
+	if ( $v2h->{offset} + $end > $size ) {
+		$end -= $v2h->{offset} + $end - $size;
 	}
 
-        # JRF: The discrepency between ID3v2.3 and ID3v2.4 is that :
-        #          2.3: unsync flag indicates that unsync is used on the entire tag
-        #          2.4: unsync flag indicates that all frames have the unsync bit set
-        #      In 2.4 this means that the size of the frames which have the unsync bit
-        #      set will be the unsync'd size (section 4. in the ID3v2.4.0 structure
-        #      specification).
-        #      This means that when processing 2.4 files we should perform all the
-        #      unsynchronisation processing at the frame level, not the tag level.
-        #      The tag unsync bit is redundant (IMO).
-        if ($v2h->{major_version} == 4) {
+	seek $fh, $v2h->{offset}, SEEK_SET;
+	read $fh, $wholetag, $end;
+
+	# JRF: The discrepency between ID3v2.3 and ID3v2.4 is that :
+	#          2.3: unsync flag indicates that unsync is used on the entire tag
+	#          2.4: unsync flag indicates that all frames have the unsync bit set
+	#      In 2.4 this means that the size of the frames which have the unsync bit
+	#      set will be the unsync'd size (section 4. in the ID3v2.4.0 structure
+	#      specification).
+	#      This means that when processing 2.4 files we should perform all the
+	#      unsynchronisation processing at the frame level, not the tag level.
+	#      The tag unsync bit is redundant (IMO).
+	if ($v2h->{major_version} == 4) {
 		$v2h->{unsync} = 0
-        }
+	}
 
 	$wholetag =~ s/\xFF\x00/\xFF/gs if $v2h->{unsync};
 
