@@ -438,10 +438,10 @@ sub init {
 	$client->modeParam('charsInd', $charsInd);
 
 	# create an array of indexes to the charsRef array representing the given string
-	my $i = 0;
 	my @indexArray;
 
-	while (my $char = substr($$valueRef, $i++, 1) ) {
+	for ( my $i = 0; $i < length($$valueRef); ++$i ) {
+		my $char = substr($$valueRef, $i, 1);
 		push @indexArray, $charsInd->{ $char };
 	}
 

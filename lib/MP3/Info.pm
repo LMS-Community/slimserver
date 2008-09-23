@@ -838,7 +838,7 @@ sub _parse_v2tag {
 				my $desc;
 
 				# Comments & Unsyncronized Lyrics have the same format.
-				if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
+				if ($id =~ /^(COM[M ]?|US?LT)$/) { # space for iTunes brokenness
 
 					$data =~ s/^(?:...)//;		# strip language
 				}
@@ -915,7 +915,7 @@ sub _parse_v2tag {
 
 				# We do this after decoding so we could be certain we're dealing
 				# with 8-bit text.
-				if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
+				if ($id =~ /^(COM[M ]?|US?LT)$/) { # space for iTunes brokenness
 
 					$data =~ s/^(.*?)\000//;	# strip up to first NULL(s),
 									# for sub-comments (TODO:

@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	return ( $prefs, qw(accounts enable_scrobbling) );
+	return ( $prefs, qw(accounts enable_scrobbling include_radio) );
 }
 
 sub handler {
