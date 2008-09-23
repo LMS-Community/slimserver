@@ -1,11 +1,18 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="DEBUGGING_SETTINGS" desc="SETUP_GROUP_DEBUG_DESC" %]
-		<div>
-			<input name="persist" id="persist" type="checkbox" [% IF persist %] checked="1" [% END %]>
-			[% "PERSIST_DEBUG_SETTINGS" | string %]
-		</div>
+		<select class="stdedit" name="logging_group">
+
+			<option value="">[% "DEBUG_SELECT_SET" | string %]</option>
+			<option value="DEFAULT">[% "DEBUG_DEFAULT" | string %]</option>
+
+			[% FOREACH option = logging_groups %]
+			<option value="[% option.key %]">[% option.key | string %]</option>
+			[%- END -%]
+		
+		</select>
 	[% END %]
+
 
 	[% FOREACH item IN logs %]
 		[% IF item.items.1 %]
@@ -21,7 +28,15 @@
 		[% END %]
 	[% END %]
 
-	[% WRAPPER setting title="" desc="" %][% END %]
+
+	<p>&nbsp;</p>
+
+	[% WRAPPER setting title="DEBUGGING_ADVANCED" desc="SETUP_GROUP_DEBUG_DESC" %]
+		<div>
+			<input name="persist" id="persist" type="checkbox" [% IF persist %] checked="1" [% END %]>
+			[% "PERSIST_DEBUG_SETTINGS" | string %]
+		</div>
+	[% END %]
 
 	<div class = "settingSection">
 	[% FOREACH category = categories %]

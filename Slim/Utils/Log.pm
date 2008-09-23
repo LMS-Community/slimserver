@@ -749,12 +749,34 @@ sub _readConfig {
 	return %config;
 }
 
-# log4perl.logger
-sub _defaultCategories {
-	my $class = shift;
+sub logGroups {
+	return {
+		DEBUG_SERVER_CHOOSE => {
+			'server'                 => 'DEBUG',
+			'server.plugins'         => 'DEBUG',
+		},
+		DEBUG_RADIO => {
+			'formats.audio'          => 'DEBUG',
+			'network.asyncdns'       => 'DEBUG',
+			'network.squeezenetwork' => 'DEBUG',
+		},
+		DEBUG_TRANSCODING => {
+			'player.source'          => 'DEBUG',
+			'player.streaming'       => 'DEBUG',
+		},
+		DEBUG_SCANNER_CHOOSE => {
+			'scan'                   => 'DEBUG',
+			'scan.scanner'           => 'DEBUG',
+			'scan.import'            => 'DEBUG',
+			'artwork'                => 'DEBUG',
+		},
+	};
+}
 
-	my %defaultCategories = (
-
+sub defaultCategories {
+	my $group = $_[1];
+	
+	my $categories = {
 		'server'                     => 'ERROR',
 		'server.memory'              => 'OFF',
 		'server.plugins'             => 'ERROR',
@@ -815,13 +837,32 @@ sub _defaultCategories {
 		'scan.scanner'               => 'ERROR',
 		'scan.import'                => 'ERROR',
 
+		'wizard'                     => 'ERROR',
+
 		'perfmon'                    => 'WARN, screen-raw, perfmon', # perfmon assumes this is set to WARN
-	);
+	};
+	
+	return $categories unless $group;
+	
+	my $logGroups = logGroups();
+
+	foreach (keys %{ $logGroups->{$group} }) {
+		$categories->{$_} = $logGroups->{$group}->{$_};
+	}
+
+	return $categories;
+}
+
+# log4perl.logger
+sub _defaultCategories {
+	my $class = shift;
+
+	my $defaultCategories = defaultCategories();
 
 	# Map our shortened names to the ones l4p wants.
 	my %mappedCategories = ();
 
-	while (my ($category, $level) = each %defaultCategories) {
+	while (my ($category, $level) = each %$defaultCategories) {
 
 		$mappedCategories{"log4perl.logger.$category"} = $level;
 

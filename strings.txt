@@ -12589,16 +12589,44 @@ DEBUG_NETWORK_COMETD
 	NO	Cometd protokoll-loggføring
 	SV	Loggning av Cometd-protokoll
 
+DEBUG_RADIO
+	DA	Internetradio
+	DE	Internetradio
+	EN	Internet Radio
+	ES	Radio por Internet
+	FI	Internet-radio
+	FR	Radio Internet
+	IT	Radio su Internet
+	NL	Internetradio
+	NO	Internett-radio
+	SV	Webbradio
+
+DEBUG_TRANSCODING
+	EN	Transcoder
+
+DEBUG_SERVER_CHOOSE
+	EN	Server
+	
+DEBUG_SCANNER_CHOOSE
+	EN	Music Scanner
+	
+DEBUG_SELECT_SET
+	EN	Please select log set...
+
+DEBUG_DEFAULT
+	DE	Log-Einstellungen zurücksetzen
+	EN	Reset logging preferences
+
 SETUP_GROUP_DEBUG_DESC
 	DA	SqueezeCenter har en række indstillinger til logføring som kan bruges til at registrere detaljerede oplysninger om SqueezeCenter og musiksøgninger. Hver logføringskategori kan indstilles til at registrere flere eller færre oplysninger. Fejlsøgning giver flest detaljer og Fra ingen.
-	DE	SqueezeCenter enthält eine Reihe von Logging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des SqueezeCenters aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
+	DE	SqueezeCenter enthält eine Reihe von Logging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des SqueezeCenters aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren.
 	EN	SqueezeCenter has a number of logging settings that can be used to record detailed information about SqueezeCenter & scanner operation. Each logging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
-	ES	SqueezeCenter tiene diversos parámetros de depuración que se pueden usar para registrar información detallada del funcionamiento del servidor. Marque los elementos que desea que se registren para mostrarlos y haga clic en Cambiar para iniciar el registro de esa información. Las entradas de registro más recientes se pueden ver <a href="/log.txt" target="log">aquí</a>.
+	ES	SqueezeCenter tiene diversos parámetros de depuración que se pueden usar para registrar información detallada del funcionamiento del servidor. Marque los elementos que desea que se registren para mostrarlos y haga clic en Cambiar para iniciar el registro de esa información.
 	FI	SqueezeCenterissä on useita kirjausasetuksia, joilla voidaan kirjata yksityiskohtaisia tietoja SqueezeCenterin toiminnasta ja hauista. Jokaisessa kirjausluokassa voidaan asettaa kirjauksen aste. "Virheenkorjaus" on niistä monisanaisin, "Ei käytössä" vähäsanaisin.
-	FR	Le SqueezeCenter est doté d'un certain nombre de réglages de débogage pouvant enregistrer des informations détaillées sur le fonctionnement du serveur. Sélectionnez les éléments à enregistrer et cliquez sur "Modifier" pour commencer l'enregistrement des informations. Vous pouvez consulter les entrées les plus récentes <a href="/log.txt" target="log">ici</a>.
-	HE	SqueezeCenter כולל מספר הגדרות של איתור באגים שניתן להשתמש בהן לתיעוד מידע מפורט אודות הפעלת השרת. סמן את הפריטים שברצונך לתעד ביומן לצורך הצגה ולחץ על 'שנה' כדי להתחיל לתעד את המידע ביומן. <a href="/log.txt" target="log">כאן</a> באפשרותך להציג את הרשומות האחרונות שתועדו ביומן.
-	IT	In SqueezeCenter sono disponibili numerose impostazioni di debug utilizzabili per registrare informazioni dettagliate sul funzionamento del server. Selezionare le informazioni che si desidera registrare e visualizzare, quindi fare clic su Cambia per avviarne la registrazione. È possibile visualizzare qui <a href="/log.txt" target="log">le registrazioni più recenti</a>.
-	NL	SqueezeCenter heeft een aantal instellingen voor foutopsporing waarmee gedetailleerde informatie over de serverwerking verzameld kan worden. Selecteer de items die je in het logboek wilt zien, en klik op 'Veranderen' om het loggen te starten. Hier kun je de recentste logboekvermeldingen <a href="/log.txt" target="log">bekijken</a>.
+	FR	Le SqueezeCenter est doté d'un certain nombre de réglages de débogage pouvant enregistrer des informations détaillées sur le fonctionnement du serveur. Sélectionnez les éléments à enregistrer et cliquez sur "Modifier" pour commencer l'enregistrement des informations.
+	HE	SqueezeCenter כולל מספר הגדרות של איתור באגים שניתן להשתמש בהן לתיעוד מידע מפורט אודות הפעלת השרת. סמן את הפריטים שברצונך לתעד ביומן לצורך הצגה ולחץ על 'שנה' כדי להתחיל לתעד את המידע ביומן. באפשרותך להציג את הרשומות האחרונות שתועדו ביומן.
+	IT	In SqueezeCenter sono disponibili numerose impostazioni di debug utilizzabili per registrare informazioni dettagliate sul funzionamento del server. Selezionare le informazioni che si desidera registrare e visualizzare, quindi fare clic su Cambia per avviarne la registrazione.
+	NL	SqueezeCenter heeft een aantal instellingen voor foutopsporing waarmee gedetailleerde informatie over de serverwerking verzameld kan worden. Selecteer de items die je in het logboek wilt zien, en klik op 'Veranderen' om het loggen te starten.
 	NO	SqueezeCenter har flere innstillinger for loggføring som kan brukes til å ta opp detaljert informasjon om SqueezeCenter og søk. Hver loggføringskategori har en alvorlighetsgrad for loggføring. «Feilsøking» er mest detaljert, og «Av» er minst.
 	SV	Det finns ett antal loggninginställningar i SqueezeCenter som du kan använda om du vill registrera information om programaktivitet och sökningar. Du kan ange noggrannhetsnivån för varje loggningskategori. Inställningen Felsökning ger den noggrannaste loggningen och Av den minst noggranna.
 
@@ -12613,6 +12641,10 @@ DEBUGGING_SETTINGS
 	NL	Loggen
 	NO	Loggføring
 	SV	Loggning
+
+DEBUGGING_ADVANCED
+	DE	Erweiterte Log-Einstellungen
+	EN	Advanced Log Settings
 
 CHANGE
 	CS	Změnit
