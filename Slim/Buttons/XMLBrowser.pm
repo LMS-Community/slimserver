@@ -1262,6 +1262,18 @@ sub playItem {
 			return;
 		}
 		
+		# Bug 9492, playlist defined in a single OPML file
+		elsif ( ref $item->{items} eq 'ARRAY' && scalar @{ $item->{items} } ) {
+			gotPlaylist(
+				{
+					items => $item->{items},
+				},
+				$params,
+			);
+			
+			return;
+		}		
+		
 		Slim::Formats::XML->getFeedAsync(
 			\&gotPlaylist,
 			\&gotError,
