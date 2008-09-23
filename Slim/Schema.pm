@@ -1819,6 +1819,11 @@ sub _preCheckAttributes {
 			$attributes->{ uc($tagMapping{lc $key}) } = delete $attributes->{$key};
 		}
 	}
+	
+	# Bug 9359, don't allow tags named 'ID'
+	if ( exists $attributes->{'ID'} ) {
+		delete $attributes->{'ID'};
+	}
 
 	# We've seen people with multiple TITLE tags in the wild.. why I don't
 	# know. Merge them. Do the same for ALBUM, as you never know.
