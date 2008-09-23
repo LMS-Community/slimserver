@@ -52,9 +52,7 @@ sub initPlugin {
 
 	Slim::Plugin::xPL::Settings->new;
 
-	my $computername = Slim::Utils::Network::hostName();
-
-	$localip = inet_ntoa((gethostbyname($computername))[4]);
+	$localip = Slim::Utils::Network::hostAddr();
 
 	$xpl_interval =	$prefs->get('interval');
 	$xpl_ir       = $prefs->get('ir');
