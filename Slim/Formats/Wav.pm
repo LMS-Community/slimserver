@@ -20,7 +20,7 @@ sub getTag {
 	my $file  = shift || return {};
 
 	# This hash will map the keys in the tag to their values.
-	my $tags  = MP3::Info::get_mp3tag($file) || {};
+	my $tags = {};
 
 	# bogus files are considered empty
 	$tags->{'SIZE'} ||= 0;
@@ -51,17 +51,6 @@ sub getTag {
 	if (!$bail) {
 
 		my $details = $read->details();
-
-		$tags->{'OFFSET'} = $read->offset();
-		$tags->{'SIZE'}   = $read->length();
-		$tags->{'SECS'}   = $read->length_seconds();
-		$tags->{'RATE'}   = $details->{'sample_rate'};
-		$tags->{'BITRATE'} = $details->{'bytes_sec'} * 8;
-		$tags->{'CHANNELS'} = $details->{'channels'};
-		$tags->{'SAMPLESIZE'} = $details->{'bits_sample'};
-		$tags->{'BLOCKALIGN'} = $details->{'block_align'};
-		$tags->{'ENDIAN'} = 0;
-		
 		my $wavtags = $read->get_info();
 		
 		if ($wavtags) { 
@@ -72,6 +61,24 @@ sub getTag {
 			$tags->{'COMMENT'} = $wavtags->{'comment'};
 			$tags->{'TRACKNUM'} = $wavtags->{'track'};
 		}
+		elsif ( $details->{'id3_offset'} ) {
+			# Look for ID3 tags in the file starting at id3 offset
+			open my $fh, '<&=', $read->{'handle'};
+			seek $fh, 0, 0;
+			MP3::Info::_get_v2tag( $fh, 2, 0, $tags, $details->{'id3_offset'} );
+			close $fh;
+		}
+		
+		# Add other details about the file
+		$tags->{'OFFSET'} = $read->offset();
+		$tags->{'SIZE'}   = $read->length();
+		$tags->{'SECS'}   = $read->length_seconds();
+		$tags->{'RATE'}   = $details->{'sample_rate'};
+		$tags->{'BITRATE'} = $details->{'bytes_sec'} * 8;
+		$tags->{'CHANNELS'} = $details->{'channels'};
+		$tags->{'SAMPLESIZE'} = $details->{'bits_sample'};
+		$tags->{'BLOCKALIGN'} = $details->{'block_align'};
+		$tags->{'ENDIAN'} = 0;
 	}
 
 	return $tags;
