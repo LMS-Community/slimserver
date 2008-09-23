@@ -2181,36 +2181,6 @@ sub playlistsRenameCommand {
 	$request->setStatusDone();
 }
 
-sub playerprefCommand {
-	my $request = shift;
-
-	if ($request->isNotCommand([['playerpref']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-	
-	# get our parameters
-	my $client   = $request->client();
-	my $prefName = $request->getParam('_prefname');
-	my $newValue = $request->getParam('_newvalue');
-
-	# split pref name from namespace: name.space.pref:
-	my $namespace = 'server';
-	if ($prefName =~ /^(.*):(\w+)$/) {
-		$namespace = $1;
-		$prefName = $2;
-	}
-	
-	if (!defined $prefName || !defined $newValue || !defined $namespace) {
-		$request->setStatusBadParams();
-		return;
-	}	
-
-	preferences($namespace)->client($client)->set($prefName, $newValue);
-	
-	$request->setStatusDone();
-}
-
 
 sub powerCommand {
 	my $request = shift;
@@ -2267,9 +2237,21 @@ sub powerCommand {
 sub prefCommand {
 	my $request = shift;
 
-	if ($request->isNotCommand([['pref']])) {
+	if ($request->isNotCommand([['pref']]) && $request->isNotCommand([['clientpref']]) && $request->isNotCommand([['playerpref']])) {
 		$request->setStatusBadDispatch();
 		return;
+	}
+
+	my $client;
+
+	if ($request->isCommand([['clientpref']]) || $request->isCommand([['playerpref']])) {
+		
+		$client = $request->client();
+		
+		unless ($client) {			
+			$request->setStatusBadDispatch();
+			return;
+		}
 	}
 
 	# get our parameters
@@ -2288,7 +2270,12 @@ sub prefCommand {
 		return;
 	}	
 
-	preferences($namespace)->set($prefName, $newValue);
+	if ($client) {
+		preferences($namespace)->client($client)->set($prefName, $newValue);
+	}
+	else {
+		preferences($namespace)->set($prefName, $newValue);
+	}
 	
 	$request->setStatusDone();
 }

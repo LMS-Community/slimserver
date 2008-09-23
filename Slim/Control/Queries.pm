@@ -2472,69 +2472,6 @@ sub playlistsQuery {
 }
 
 
-sub playerprefQuery {
-	my $request = shift;
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['playerpref']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-	
-	# get the parameters
-	my $client   = $request->client();
-	my $prefName = $request->getParam('_prefname');
-
-	# split pref name from namespace: name.space.pref:
-	my $namespace = 'server';
-	if ($prefName =~ /^(.*):(\w+)$/) {
-		$namespace = $1;
-		$prefName = $2;
-	}
-	
-	if (!defined $prefName || !defined $namespace) {
-		$request->setStatusBadParams();
-		return;
-	}
-
-	$request->addResult('_p2', preferences($namespace)->client($client)->get($prefName));
-	
-	$request->setStatusDone();
-}
-
-
-sub playerprefValidateQuery {
-	my $request = shift;
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['playerpref'], ['validate']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $client   = $request->client();
-	my $prefName = $request->getParam('_prefname');
-	my $newValue = $request->getParam('_newvalue');
-
-	# split pref name from namespace: name.space.pref:
-	my $namespace = 'server';
-	if ($prefName =~ /^(.*):(\w+)$/) {
-		$namespace = $1;
-		$prefName = $2;
-	}
-	
-	if (!defined $prefName || !defined $namespace || !defined $newValue) {
-		$request->setStatusBadParams();
-		return;
-	}
-
-	$request->addResult('valid', preferences($namespace)->client($client)->validate($prefName, $newValue) ? 1 : 0);
-	
-	$request->setStatusDone();
-}
-
-
 sub powerQuery {
 	my $request = shift;
 
@@ -2557,11 +2494,23 @@ sub prefQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['pref']])) {
+	if ($request->isNotQuery([['pref']]) && $request->isNotQuery([['clientpref']]) && $request->isNotQuery([['playerpref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	my $client;
+
+	if ($request->isQuery([['clientpref']]) || $request->isQuery([['playerpref']])) {
+		
+		$client = $request->client();
+		
+		unless ($client) {			
+			$request->setStatusBadDispatch();
+			return;
+		}
+	}
+
 	# get the parameters
 	my $prefName = $request->getParam('_prefname');
 
@@ -2577,7 +2526,10 @@ sub prefQuery {
 		return;
 	}
 
-	$request->addResult('_p2', preferences($namespace)->get($prefName));
+	$request->addResult('_p2', $client
+		? preferences($namespace)->client($client)->get($prefName)
+		: preferences($namespace)->get($prefName)
+	);
 	
 	$request->setStatusDone();
 }
@@ -2587,10 +2539,14 @@ sub prefValidateQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['pref'], ['validate']])) {
+	if ($request->isNotQuery([['pref'], ['validate']]) 
+		&& $request->isNotQuery([['clientpref'], ['validate']])
+		&& $request->isNotQuery([['playerpref'], ['validate']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
+	
+	my $client = $request->client();
 
 	# get our parameters
 	my $prefName = $request->getParam('_prefname');
@@ -2608,7 +2564,13 @@ sub prefValidateQuery {
 		return;
 	}
 
-	$request->addResult('valid', preferences($namespace)->validate($prefName, $newValue) ? 1 : 0);
+	$request->addResult('valid', 
+		($client
+			? preferences($namespace)->client($client)->validate($prefName, $newValue)
+			: preferences($namespace)->validate($prefName, $newValue)
+		) 
+		? 1 : 0
+	);
 	
 	$request->setStatusDone();
 }
