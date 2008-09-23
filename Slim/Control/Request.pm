@@ -481,7 +481,7 @@ sub init {
 	addDispatch(['client',         'forget'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
 	addDispatch(['clientpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::prefQuery]);
 	addDispatch(['clientpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
-	addDispatch(['clientpref',     '_prefname',      '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::prefCommand]);
+	addDispatch(['clientpref',     '_prefname',      '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::prefCommand]);
 	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
 	addDispatch(['connected',      '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
 	addDispatch(['contextmenu',    '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::contextMenuQuery]);
@@ -537,7 +537,7 @@ sub init {
 	addDispatch(['player',         'canpoweroff',    '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['playerpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::prefQuery]);
 	addDispatch(['playerpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
-	addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::prefCommand]);
+	addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::prefCommand]);
 	addDispatch(['players',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playersQuery]);
 	addDispatch(['playlist',       'add',            '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'addalbum',       '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
@@ -593,7 +593,7 @@ sub init {
 	addDispatch(['power',          '_newvalue',      '_noplay'],                                       [1, 0, 0, \&Slim::Control::Commands::powerCommand]);
 	addDispatch(['pref',           '_prefname',      '?'],                                             [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
 	addDispatch(['pref',           'validate',       '_prefname',  '_newvalue'],                       [0, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
-	addDispatch(['pref',           '_prefname',      '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::prefCommand]);
+	addDispatch(['pref',           '_prefname',      '_newvalue'],                                     [0, 0, 1, \&Slim::Control::Commands::prefCommand]);
 	addDispatch(['remote',         '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['rescan',         '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
 	addDispatch(['rescan',         '_playlists'],                                                      [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);

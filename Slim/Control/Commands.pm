@@ -2256,7 +2256,7 @@ sub prefCommand {
 
 	# get our parameters
 	my $prefName = $request->getParam('_prefname');
-	my $newValue = $request->getParam('_newvalue');
+	my $newValue = $request->getParam('_newvalue') || $request->getParam('value');
 
 	# split pref name from namespace: name.space.pref:
 	my $namespace = 'server';
@@ -2265,6 +2265,10 @@ sub prefCommand {
 		$prefName = $2;
 	}
 	
+	if ($newValue =~ /^value:/) {
+		$newValue =~ s/^value://;
+	}
+
 	if (!defined $prefName || !defined $newValue || !defined $namespace) {
 		$request->setStatusBadParams();
 		return;

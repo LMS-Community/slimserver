@@ -85,14 +85,8 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivetonesettings', '_index', '_quantity'],
 		[1, 1, 1, \&toneSettingsQuery]);
 
-	Slim::Control::Request::addDispatch(['jivetoneadjust'],
-		[1, 0, 1, \&toneAdjustCommand]);
-
 	Slim::Control::Request::addDispatch(['jivestereoxl', '_index', '_quantity'],
 		[1, 1, 1, \&stereoXLQuery]);
-
-	Slim::Control::Request::addDispatch(['jivesetstereoxl'],
-		[1, 0, 1, \&stereoXLCommand]);
 
 	Slim::Control::Request::addDispatch(['jivelineout', '_index', '_quantity'],
 		[1, 1, 1, \&lineOutQuery]);
@@ -1151,10 +1145,7 @@ sub stereoXLQuery {
 			actions => {
 				do => {
 					player => 0,
-					cmd    => [ 'jivesetstereoxl' ],
-					params => {
-						value  => $i,
-					},
+					cmd    => [ 'playerpref', 'stereoxl', $i ],
 				},
 			},
 		};
@@ -1165,17 +1156,6 @@ sub stereoXLQuery {
 
 	$request->setStatusDone();
 
-}
-
-sub stereoXLCommand {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $value   = $request->getParam('value');
-
-	$client->stereoxl($value);
-
-	$request->setStatusDone();
 }
 
 sub lineOutQuery {
@@ -1240,9 +1220,8 @@ sub toneSettingsQuery {
 		actions => {
 			do => {
 				player => 0,
-				cmd    => [ 'jivetoneadjust' ],
+				cmd    => [ 'playerpref', $tone ],
 				params => {
-					tone   => $tone,
 					valtag => 'value',
 				},
 			},
@@ -1252,33 +1231,6 @@ sub toneSettingsQuery {
 	push @menu, $slider;
 
 	sliceAndShip($request, $client, \@menu);
-
-	$request->setStatusDone();
-}
-
-sub toneAdjustCommand {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $tone    = $request->getParam('tone');
-	my $delta   = $request->getParam('delta');
-	my $newVal  = $request->getParam('value');
-
-	my $val     = $client->$tone();
-
-	if (!defined $newVal) {
-		$newVal  = $val + $delta;
-	}
-
-	$val = $client->$tone($newVal);
-
-	my $string = $client->string($tone) . ": " . $val;
-	$client->showBriefly({
-		'jive' => {
-			type    => 'popupplay',
-			text    => [ $string ],
-		}
-	});
 
 	$request->setStatusDone();
 }
