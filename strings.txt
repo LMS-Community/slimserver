@@ -12770,7 +12770,7 @@ BRIGHTNESS_AMBIENT
 
 LIGHT_N
 	DA	Let og smal
-	DE	Schwach eng
+	DE	Klein eng
 	EN	Light Narrow
 	ES	Estrecha fina
 	FI	Kevyt kapea
