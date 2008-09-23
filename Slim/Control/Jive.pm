@@ -853,34 +853,7 @@ sub alarmUpdateDays {
 	}
 	my $alarm = Slim::Utils::Alarm->getAlarm($client, $params->{id});
 
-	my @days_menu = (
-		{
-			text => $client->string('ALARM_EVERY_DAY'),
-			actions => {
-				go => {
-					cmd => [ 'alarm', 'update' ],
-					params => {
-						id => $params->{id},
-						dow => '0,1,2,3,4,5,6',
-					},
-				},
-			},
-			nextWindow => 'refresh',
-		},
-		{
-			text => $client->string('ALARM_WEEKDAYS'),
-			actions => {
-				go => {
-					cmd => [ 'alarm', 'update' ],
-					params => {
-						id => $params->{id},
-						dow => '1,2,3,4,5',
-					},
-				},
-			},
-			nextWindow => 'refresh',
-		},
-	);
+	my @days_menu = ();
 
 	for my $day (0..6) {
 		my $dayActive = $alarm->day($day);
