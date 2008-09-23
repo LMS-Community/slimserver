@@ -61,9 +61,6 @@ our $defaultPrefs = {
 
 $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 100 }, 'lineInLevel');
 $prefs->setChange(\&setLineInLevel, 'lineInLevel');
-# TODO: these should probably move to Client.pm when fixing bug 9253
-$prefs->setChange( sub { $_[2]->bass($_[1]); }, 'bass');
-$prefs->setChange( sub { $_[2]->treble($_[1]); }, 'treble');
 $prefs->setChange( sub { $_[2]->stereoxl($_[1]); }, 'stereoxl');
 
 $prefs->setChange(sub {

@@ -71,6 +71,11 @@ our $defaultPrefs = {
 	'playDelay'            => 0,	# ms
 };
 
+$prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
+$prefs->setChange( sub { $_[2]->bass($_[1]); }, 'bass');
+$prefs->setChange( sub { $_[2]->treble($_[1]); }, 'treble');
+$prefs->setChange( sub { $_[2]->pitch($_[1]); }, 'pitch');
+
 if ( main::SLIM_SERVICE ) {
 	# Note: Menu items are also listed in S::P::Transporter
 	$defaultPrefs->{menuItem} = [ qw(
