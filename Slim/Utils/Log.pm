@@ -773,7 +773,7 @@ sub logGroups {
 	};
 }
 
-sub defaultCategories {
+sub logLevels {
 	my $group = $_[1];
 	
 	my $categories = {
@@ -857,7 +857,7 @@ sub defaultCategories {
 sub _defaultCategories {
 	my $class = shift;
 
-	my $defaultCategories = defaultCategories();
+	my $defaultCategories = logLevels();
 
 	# Map our shortened names to the ones l4p wants.
 	my %mappedCategories = ();

@@ -31,7 +31,7 @@ sub handler {
 
 		if ($paramRef->{'logging_group'}) {
 
-			my $levels = Slim::Utils::Log->defaultCategories($paramRef->{'logging_group'});
+			my $levels = Slim::Utils::Log->logLevels($paramRef->{'logging_group'});
 			
 			for my $category (keys %{$categories}) {
 				
