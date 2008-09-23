@@ -162,8 +162,17 @@ sub launchScan {
 	# Clear progress info so scan progress displays are blank
 	$class->clearProgressInfo;
 
+	my $scanType = 'SETUP_STANDARDRESCAN';
+
+	if ($args->{"wipe"}) {
+		$scanType = 'SETUP_WIPEDB';
+
+	} elsif ($args->{"playlists"}) {
+		$scanType = 'SETUP_PLAYLISTRESCAN';
+	}
+
 	# Update a DB flag, so the server knows we're scanning.
-	$class->setIsScanning(1);
+	$class->setIsScanning($scanType);
 
 	# Set a timer to check on the scanning process.
 	Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
@@ -594,7 +603,7 @@ sub endImporter {
 
 =head2 stillScanning( )
 
-Returns true if the server is still scanning your library. False otherwise.
+Returns scan type string token if the server is still scanning your library. False otherwise.
 
 =cut
 
@@ -617,7 +626,7 @@ sub stillScanning {
 	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
 
 	if ($running && $scanning) {
-		return 1;
+		return $scanning;
 	}
 
 	return 0;

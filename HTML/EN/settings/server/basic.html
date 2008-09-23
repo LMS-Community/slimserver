@@ -40,7 +40,7 @@
 			'2wipedb'   => 'SETUP_WIPEDB',
 			'3playlist' => 'SETUP_PLAYLISTRESCAN',
 		} %]
-			<option value="[% option.key %]">[% option.value | string %]</option>
+			<option [% IF scanning == option.value %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 		[%- END -%]
 		
 		</select>

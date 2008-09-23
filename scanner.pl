@@ -160,8 +160,17 @@ sub main {
 	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
 
+	my $scanType = 'SETUP_STANDARDRESCAN';
+
+	if ($wipe) {
+		$scanType = 'SETUP_WIPEDB';
+
+	} elsif ($playlists) {
+		$scanType = 'SETUP_PLAYLISTRESCAN';
+	}
+
 	# Flag the database as being scanned.
-	Slim::Music::Import->setIsScanning(1);
+	Slim::Music::Import->setIsScanning($scanType);
 
 	if ($cleanup) {
 		Slim::Music::Import->cleanupDatabase(1);
