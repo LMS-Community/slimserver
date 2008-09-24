@@ -429,7 +429,7 @@ sub init {
 							},
 							'pref'         => 'activeFont_curr',
 							'initialValue' => sub { $prefs->client(shift)->get('activeFont_curr') },
-							'condition'    => sub { 1 },
+							'condition'    => sub { $_[0]->display->isa('Slim::Display::Graphics'); },
 							'init'         => sub {
 								my $client = shift;
 		
