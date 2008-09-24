@@ -91,9 +91,6 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivelineout', '_index', '_quantity'],
 		[1, 1, 1, \&lineOutQuery]);
 
-	Slim::Control::Request::addDispatch(['jivesetlineout'],
-		[1, 0, 1, \&lineOutCommand]);
-
 	Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'],
 		[1, 1, 1, \&crossfadeSettingsQuery]);
 
@@ -1140,10 +1137,7 @@ sub lineOutQuery {
 			actions => {
 				do => {
 					player => 0,
-					cmd    => [ 'jivesetlineout' ],
-					params => {
-						value  => $i,
-					},
+					cmd    => [ 'playerpref', 'analogOutMode', $i ],
 				},
 			},
 		};
@@ -1154,17 +1148,6 @@ sub lineOutQuery {
 
 	$request->setStatusDone();
 
-}
-
-sub lineOutCommand {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $value   = $request->getParam('value');
-
-	$client->setAnalogOutMode($value);
-
-	$request->setStatusDone();
 }
 
 sub toneSettingsQuery {
