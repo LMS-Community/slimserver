@@ -584,19 +584,10 @@ Settings.Alarm = function() {
 
 				new Ext.form.TimeField({
 					applyTo: items[i],
-					altFormats: "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H" + (altFormats ? '|' + altFormats : ''),
+					altFormats: (altFormats ? '|' + altFormats : '') + "g:iA|g:ia|g:i A|g:i a|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H",
 					increment: 5,
 					format: timeFormat,
-					hideTrigger: true,
-					// overwriting the original code to make it case insensitive
-					// XXX - replace Ext.form.DateField with fixed version when available
-					// see http://extjs.com/forum/showthread.php?t=35353
-					beforeBlur : function(){
-						var v = this.parseDate(this.getRawValue().toUpperCase());
-						if(v){
-							this.setValue(v.dateFormat(this.format));
-						}
-					}
+					hideTrigger: true
 				});
 			}
 		}
