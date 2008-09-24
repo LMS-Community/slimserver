@@ -1072,6 +1072,12 @@ sub rebuffer {
 	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
 	
 	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+		# If bitrate-limiting is in effect, reduce threshold based on that bitrate
+		my $maxrate = Slim::Utils::Prefs::maxRate($client);
+		if ( $maxrate > 0 ) {
+			$bitrate = $maxrate;
+		}
+		
 		$threshold = 5 * ( int($bitrate / 8) );
 	}
 	
