@@ -49,30 +49,7 @@ sub audioScrobblerSource {
 
 sub isRemote { 1 }
 
-sub canSeek {
-	my ( $class, $client ) = @_;
-	
-	# XXX: temporary, will be SN-only after firmware is released
-	my $canSeek = 0;
-	
-	my $deviceid = $client->deviceid;
-	my $rev      = $client->revision;
-	
-	if ( $deviceid == 4 && $rev >= 113 ) {
-		$canSeek = 1;
-	}
-	elsif ( $deviceid == 5 && $rev >= 63 ) {
-		$canSeek = 1;
-	}
-	elsif ( $deviceid == 7 && $rev >= 48 ) {
-		$canSeek = 1;
-	}
-	elsif ( $deviceid == 10 && $rev >= 33 ) {
-		$canSeek = 1;
-	}
-	
-	return $canSeek;
-}
+sub canSeek { 0 }
 
 sub handleError {
     return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
@@ -526,19 +503,6 @@ sub onJump {
 	}
 	
 	my $url = Slim::Player::Playlist::url($client);
-	
-	# If seeking, send special seek information
-	if ( my $seekdata = $client->scanData->{seekdata} ) {		
-		for my $c ( @clients ) {
-			rpds( $c, {
-				data        => pack( 'cNN', 7, $seekdata->{eaoffset}, $seekdata->{ealength} ),
-				_noresponse => 1,
-			} );
-		}
-		
-		$callback->();
-		return;
-	}
 	
 	# If user was not previously playing Rhapsody, get a new playback session first
 	# XXX: it's not possible to get the previously playing track here, the playlist
@@ -1353,74 +1317,6 @@ sub getIcon {
 	my ( $class, $url ) = @_;
 
 	return Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
-}
-
-sub getSeekData {
-	my ( $class, $client, $url, $newtime ) = @_;
-	
-	# Determine byte offset and song length in bytes
-	my $meta    = $class->getMetadataFor( $client, $url );
-	
-	my $bitrate = 192;
-	my $seconds = $meta->{duration} || return;
-	
-	if ( $log->is_debug ) {	
-		$log->debug( "Trying to seek $newtime seconds into $bitrate kbps stream of $seconds length" );
-	}
-	
-	my $data = {
-		newoffset         => ( ( $bitrate * 1024 ) / 8 ) * $newtime,
-		songLengthInBytes => ( ( $bitrate * 1024 ) / 8 ) * $seconds,
-	};
-	
-	return $data;
-}
-
-sub setSeekData {
-	my ( $class, $client, $url, $newtime, $newoffset ) = @_;
-	
-	my @clients;
-	
-	if ( Slim::Player::Sync::isSynced($client) ) {
-		# if synced, save seek data for all players
-		my $master = Slim::Player::Sync::masterOrSelf($client);
-		push @clients, $master, @{ $master->slaves };
-	}
-	else {
-		push @clients, $client;
-	}
-	
-	my $meta     = $class->getMetadataFor( $client, $url );
-	my $duration = $meta->{duration};
-	
-	if ( !$duration ) {
-		$log->debug('Cannot seek in this track yet, unknown duration');
-		return;
-	}
-	
-	# Calculate the RAD and EA offsets for this time offset
-	my $percent   = $newtime / $meta->{duration};
-	my $radlength = $client->pluginData('length') - 36;
-	my $nb        = 1 + int($radlength / 3072);
-	my $ealength  = 36 + (24 * $nb);
-	my $radoffset = ( int($nb * $percent) * 3072 ) + 36;
-	my $eaoffset  = ( int($nb * $percent) * 24 ) + 36;
-	
-	for my $client ( @clients ) {
-		# Save the new seek point
-		$client->scanData( {
-			seekdata => {
-				newtime   => $newtime,
-				newoffset => $radoffset,
-				eaoffset  => $eaoffset,
-				ealength  => $ealength,
-			},
-		} );
-	}
-			
-	if ( $log->is_debug ) {
-		$log->debug( "scanData set to: " . Data::Dump::dump( $clients[0]->scanData->{seekdata} ) );
-	}
 }
 
 # SN only, re-init upon reconnection
