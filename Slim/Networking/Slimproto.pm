@@ -266,7 +266,9 @@ sub slimproto_close {
 				# notify of disconnect
 				Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 			
-				$client->controller()->playerInactive($client);
+				unless ($client->controller()->onlyActivePlayer($client)) {
+					$client->controller()->playerInactive($client);
+				}
 			
 				# Bug 6714, delete the cached needsUpgrade value, as the player
 				# may change firmware versions before coming back
@@ -422,7 +424,7 @@ sub client_readable {
 			next;
 		}
 		else {
-			$log->debug( "Error reading from client: $!" );
+			$log->info( "Error reading from client: $!" );
 			
 			slimproto_close($s);
 			return;

@@ -287,6 +287,12 @@ sub getSeekData {
 	return {timeOffset => $time};
 }
 
+sub getSeekDataByPosition {
+	my (undef, undef, undef, $bytesReceived) = @_;
+	
+	return {playingStreamOffset => $bytesReceived};
+}
+
 sub canSeek {
 	my ($class, $client, $song) = @_;
 	

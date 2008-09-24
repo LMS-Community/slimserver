@@ -119,6 +119,7 @@ sub clonePlaylistSong {
 	$new{'seekdata'}      = undef;
 	$new{'duration'}      = undef;
 	$new{'bitrate'}       = undef;
+	$new{'transcoded'}    = undef;
 	delete $new{'streambitrate'};
 		
 	my $self = \%new;
@@ -342,9 +343,10 @@ sub open {
 			$log->info("URL command $command type $type format $format");
 			$log->info("URL stream format : $contentType");
 
-			# this case is when we play the file through as-is
 			if ($command ne '-') {
 
+				# Need to transcode
+				
 				my $maxRate = Slim::Utils::Prefs::maxRate($client);
 				my $quality = $prefs->client($client)->get('lameQuality');
 				
@@ -368,6 +370,8 @@ sub open {
 				}
 	
 				$sock = $pipeline;
+				
+				$self->{'transcoded'} = 1;
 				
 				# Hack to set up stream bitrate for songTime for SliMP3/SB1
 				if ($format eq 'mp3') {
@@ -505,6 +509,20 @@ sub duration            {return $_[0]->{'duration'} || $_[0]->currentTrack()->du
 sub bitrate             {return $_[0]->{'bitrate'} || $_[0]->currentTrack()->bitrate();}
 sub streamformat        {return $_[0]->{'streamFormat'} || Slim::Music::Info::contentType($_[0]->currentTrack());}
 sub isPlaylist          {return $_[0]->{'playlist'};}
+
+sub getSeekDataByPosition {
+	my ($self, $bytesReceived) = @_;
+	
+	return undef if $self->{'transcoded'};
+	
+	my $handler = $self->currentTrackHandler();
+	
+	if ($handler->can('getSeekDataByPosition')) {
+		return $handler->getSeekDataByPosition($self->master(), $self, $bytesReceived);
+	} else {
+		return undef;
+	}
+}
 
 sub streambitrate {
 	my $self = shift;

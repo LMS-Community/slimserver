@@ -75,40 +75,19 @@ sub reconnect {
 	# paused, then stop.
 
 	if (!$reconnect) {
+		my $controller = $client->controller();
 
 		if ($client->power()) {
-			$client->controller()->playerActive($client);
+			$controller->playerActive($client);
 		}
 		
-		if (!$client->isSynced()) {
-			
-			# Only do this if not synced as restoreSync will have done any restart in that case
-			
-			if ($client->isPlaying()) {
-	
-				# If bytes_received was sent and we're dealing 
-				# with a seekable source, just resume streaming
-				# else stop and restart.    
-	
-				if (!$bytes_received) {
-					Slim::Player::Source::playmode($client, "stop");
-				}
-				
-				$sourcelog->is_info && $sourcelog->info($client->id . " restaring play on pseudo-reconnect at $bytes_received bytes");
-				
-				Slim::Player::Source::playmode($client, "play",
-					$bytes_received ? {playingStreamOffset => $bytes_received} : undef,
-					1);
-	
-			} elsif ($client->isPaused()) {
-	
-				Slim::Player::Source::playmode($client, "stop");
-			}
-
+		if ($controller->onlyActivePlayer($client)) {
+			$sourcelog->is_info && $sourcelog->info($client->id . " restaring play on pseudo-reconnect at "
+				. ($bytes_received ? $bytes_received : 0));
+			$controller->playerReconnect($bytes_received);
 		} 
 		
 		if ($client->isStopped()) {
-
 			# Ensure that a new client is stopped, but only on sb2s
 			if ( $client->isa('Slim::Player::Squeezebox2') ) {
 				$sourcelog->is_info && $sourcelog->info($client->id . " forcing stop on pseudo-reconnect");

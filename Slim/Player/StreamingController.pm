@@ -117,6 +117,13 @@ Play =>
 	[	\&_StopGetNext,	\&_StopGetNext,	\&_StopGetNext,	\&_StopGetNext],	# PLAYING
 	[	\&_Resume,		\&_Resume,		\&_Resume,		\&_Resume],			# PAUSED
 ],
+ContinuePlay =>
+[	[	\&_Stop,		\&_BadState,	\&_BadState,	\&_StopGetNext],	# STOPPED	
+	[	\&_BadState,	\&_StopGetNext,	\&_StopGetNext,	\&_BadState],		# BUFFERING
+	[	\&_BadState,	\&_StopGetNext,	\&_StopGetNext,	\&_BadState],		# WAITING_TO_SYNC
+	[	\&_Continue,	\&_Continue,	\&_Continue,	\&_Continue],		# PLAYING
+	[	\&_Stop,		\&_Stop,		\&_Stop,		\&_Stop],			# PAUSED
+],
 Pause =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
@@ -541,16 +548,18 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 	my ($self, $params, $ifMoreTracks) = @_;
 	
 	my $index = $params->{'index'};
-	my $song;
+	my $song  = $params->{'song'};
 
 	my $id = ++$self->{'nextTrackCallbackId'};
 	$self->{'nextTrack'} = undef;
 	
-	# If we have an existing playlist song then we ask it for the next song.
-	if (!defined($index) && ($song = $self->streamingSong()) && $song->isPlaylist()) {
-		$song = $song->clonePlaylistSong();	# returns undef at end of playlist		
-	} else {
-		$song = undef;
+	if (!$song) {
+		# If we have an existing playlist song then we ask it for the next song.
+		if (!defined($index) && ($song = $self->streamingSong()) && $song->isPlaylist()) {
+			$song = $song->clonePlaylistSong();	# returns undef at end of playlist		
+		} else {
+			$song = undef;
+		}
 	}
 	
 	if (!$song) {
@@ -585,7 +594,7 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 	
 	$song->getNextSong (
 		sub {	# success
-			_nextTrackReady($self, $id, $song, { reconnect => $params->{'reconnect'} });
+			_nextTrackReady($self, $id, $song);
 		},
 		sub {	# fail
 			_nextTrackError($self, $id, $song, @_);
@@ -731,6 +740,28 @@ sub nextsong {
 	return $nextsong;
 }
 
+sub _Continue {
+	my ($self, $event, $params) = @_;
+	my $song          = $params->{'song'};
+	my $bytesReceived = $params->{'bytesReceived'};
+	
+	my $seekdata;
+	
+	if ($bytesReceived) {
+		$seekdata = $song->getSeekDataByPosition($bytesReceived);
+	}	
+	
+	if (!$bytesReceived || $seekdata) {
+		$log->is_info && $log->info("Restarting stream at offset $bytesReceived");
+		_Stream($self, $event, {song => $song, seekdata => $seekdata, reconnect => 1});
+		if ($song == playingSong($self)) {
+			$song->{'status'} = Slim::Player::Song::STATUS_PLAYING;
+		}
+	} else {
+		$log->is_info && $log->info("Restarting playback at time offset: ". $self->playingSongElapsed());
+		_JumpToTime($self, $event, {newtime => $self->playingSongElapsed(), restartIfNoSeek => 1});
+	}
+}
 
 sub _StopGetNext {			# stop, getNextTrack -> Stopped, TrackWait
 	my ($self, $event, $params) = @_;
@@ -1204,6 +1235,14 @@ sub currentSongForUrl {
 	}
 }
 
+sub onlyActivePlayer {
+	my ($self, $client) = @_;
+	
+	my @activePlayers = $self->activePlayers();
+	
+	return (scalar @activePlayers == 1 && $client == $activePlayers[0]);	
+}
+
 sub frameData {
 	my $self = shift;
 	if (@_) {
@@ -1441,6 +1480,18 @@ sub playerInactive {
 	}
 }
 
+sub playerReconnect {
+	my ($self, $bytesReceived) = @_;
+	$log->info($self->{'masterId'});
+	
+	my $song = $self->streamingSong();
+	
+	if ($song) {
+		_eventAction($self, 'ContinuePlay', {bytesReceived => $bytesReceived, song => $song});
+	}
+	
+}
+
 sub activePlayers {
 	return @{$_[0]->{'players'}};
 }
@@ -1456,14 +1507,16 @@ sub closeStream {
 ####################################################################
 # Incoming events - <<interface>> PlayControl
 
-sub stop       {_eventAction($_[0], 'Stop');}
+sub stop       {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Stop');}
 
 sub play       {
+	$log->info($_[0]->{'masterId'});
 	$_[0]->{'consecutiveErrors'} = 0;
-	_eventAction($_[0], 'Play', {index => $_[1], seekdata => $_[2], reconnect => $_[3]});
+	_eventAction($_[0], 'Play', {index => $_[1], seekdata => $_[2]});
 }
 
 sub skip       {
+	$log->info($_[0]->{'masterId'});
 	$_[0]->{'consecutiveErrors'} = 0;
 	_eventAction($_[0], 'Skip');
 }
@@ -1471,6 +1524,8 @@ sub skip       {
 
 sub pause      {
 	my ($self) = @_;
+	
+	$log->info($self->{'masterId'});
 	
 	# Some protocol handlers don't allow pausing of active streams.
 	# We check if that's the case before continuing.
@@ -1488,9 +1543,9 @@ sub pause      {
 }
 
 
-sub resume     {_eventAction($_[0], 'Resume');}
-sub flush      {_eventAction($_[0], 'Flush');}
-sub jumpToTime {_eventAction($_[0], 'JumpToTime', {newtime => $_[1], restartIfNoSeek => $_[2]});}
+sub resume     {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Resume');}
+sub flush      {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Flush');}
+sub jumpToTime {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'JumpToTime', {newtime => $_[1], restartIfNoSeek => $_[2]});}
 
 
 ####################################################################
