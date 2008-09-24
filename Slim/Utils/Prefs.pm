@@ -490,7 +490,7 @@ sub init {
 			my ( $cprefs, $client ) = @_;
 			if ( $client->isa('Slim::Player::Boom') ) {
 				my $existing = $cprefs->get('playingDisplayModes');
-				if (scalar @$existing == 10 && $existing->[0] == 0 && $existing->[-1] == 9) {
+				if (defined $existing && scalar @$existing == 10 && $existing->[0] == 0 && $existing->[-1] == 9) {
 					$cprefs->set('playingDisplayModes', [0..10]);
 				}
 			}
