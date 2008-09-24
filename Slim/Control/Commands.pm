@@ -2237,14 +2237,14 @@ sub powerCommand {
 sub prefCommand {
 	my $request = shift;
 
-	if ($request->isNotCommand([['pref']]) && $request->isNotCommand([['clientpref']]) && $request->isNotCommand([['playerpref']])) {
+	if ($request->isNotCommand([['pref']]) && $request->isNotCommand([['playerpref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
 	my $client;
 
-	if ($request->isCommand([['clientpref']]) || $request->isCommand([['playerpref']])) {
+	if ($request->isCommand([['playerpref']])) {
 		
 		$client = $request->client();
 		

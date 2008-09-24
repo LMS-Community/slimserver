@@ -2494,14 +2494,14 @@ sub prefQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['pref']]) && $request->isNotQuery([['clientpref']]) && $request->isNotQuery([['playerpref']])) {
+	if ($request->isNotQuery([['pref']]) && $request->isNotQuery([['playerpref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
 	my $client;
 
-	if ($request->isQuery([['clientpref']]) || $request->isQuery([['playerpref']])) {
+	if ($request->isQuery([['playerpref']])) {
 		
 		$client = $request->client();
 		
@@ -2539,9 +2539,7 @@ sub prefValidateQuery {
 	my $request = shift;
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['pref'], ['validate']]) 
-		&& $request->isNotQuery([['clientpref'], ['validate']])
-		&& $request->isNotQuery([['playerpref'], ['validate']])) {
+	if ($request->isNotQuery([['pref'], ['validate']]) && $request->isNotQuery([['playerpref'], ['validate']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}

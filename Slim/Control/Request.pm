@@ -479,9 +479,6 @@ sub init {
 	addDispatch(['artists',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::artistsQuery]);
 	addDispatch(['button',         '_buttoncode',    '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
 	addDispatch(['client',         'forget'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
-	addDispatch(['clientpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::prefQuery]);
-	addDispatch(['clientpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
-	addDispatch(['clientpref',     '_prefname',      '_newvalue'],                                     [1, 0, 1, \&Slim::Control::Commands::prefCommand]);
 	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
 	addDispatch(['connected',      '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
 	addDispatch(['contextmenu',    '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::contextMenuQuery]);
@@ -670,7 +667,7 @@ sub init {
 	Slim::Web::HTTP::protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
 					playlistcontrol playlists stop stopserver wipecache prefset mode
 					power rescan sleep sync time gototime
-					mixer clientpref playerpref pref|]);
+					mixer playerpref pref|]);
 	# protect changing setting for command + 1-arg ("?" query always allowed -- except "?" is "%3F" once escaped)
 	#Slim::Web::HTTP::protectCommand(['power', 'rescan', 'sleep', 'sync', 'time', 'gototime'],'[^\?].*');	
 	# protect changing setting for command + 2 args, 2nd as new value ("?" query always allowed)
