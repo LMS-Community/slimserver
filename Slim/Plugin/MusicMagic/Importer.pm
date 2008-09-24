@@ -492,6 +492,14 @@ sub exportPlaylists {
 	if (!scalar @playlists) {
 		return;
 	}
+	
+	# get a list of MIP playlists stored in our database
+	my %mipPlaylists;
+	map { $mipPlaylists{$_->title} = $_; } Slim::Schema->search('Playlist', {
+		title => { 
+			like => $prefs->get('playlist_prefix') . '%' . $prefs->get('playlist_suffix')
+		} 
+	})->all;;
 
 	for (my $i = 0; $i <= scalar @playlists; $i++) {
 
@@ -501,9 +509,28 @@ sub exportPlaylists {
 		if ( $log->is_info ) {
 			$log->info(sprintf("Got playlist %s with %d items", $playlists[$i], scalar @songs));
 		}
-
+		
 		$class->_updatePlaylist($playlists[$i], \@songs);
+		
+		my $name = join('', 
+			$prefs->get('playlist_prefix'),
+			$playlists[$i],
+			$prefs->get('playlist_suffix'),
+		);
+
+		delete $mipPlaylists{$name} if defined $mipPlaylists{$name};
 	}
+
+	# remove MIP playlists which don't exist any more
+	foreach (keys %mipPlaylists) {
+		
+		$log->info( sprintf("Playlist %s no longer available in MusicIP - removing from DB", $_) );
+		
+		Slim::Control::Request::executeRequest(undef, [
+			'playlists', 'delete', 'playlist_id:' . $mipPlaylists{$_}->id
+		]);
+	}
+
 }
 
 # Create playlists containing the duplicate items as identified by MusicIP
