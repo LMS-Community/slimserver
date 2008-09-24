@@ -746,21 +746,21 @@ sub stream_s {
 
 			$log->info("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.");
 
-				$client->failedDirectStream();
-				Slim::Networking::Slimproto::stop($client);
-				return 0;
+			$client->failedDirectStream();
+			Slim::Networking::Slimproto::stop($client);
+			return 0;
 
-			} else {
+		} else {
 
-				$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
-				$log->info("request string: $request_string");
-			}
+			$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
+			$log->info("request string: $request_string");
+		}
 				
-			if ( $format =~ /(?:wma|asx)/ ) {
-				# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
-				# so the firmware knows which stream to play
-				if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
-					$pcmsamplerate = chr($streamNum);
+		if ( $format =~ /(?:wma|asx)/ ) {
+			# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
+			# so the firmware knows which stream to play
+			if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
+				$pcmsamplerate = chr($streamNum);
 			}
 		}
 	
