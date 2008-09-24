@@ -93,6 +93,8 @@ sub nextChunk {
 		
 		$client->controller()->playerReadyToStream($client);
 
+		$client->controller()->playerStopped($client);
+
 		return undef;	
 	}
 	
