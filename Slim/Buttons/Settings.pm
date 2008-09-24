@@ -418,15 +418,7 @@ sub init {
 							'useMode'      => 'INPUT.Choice',
 							'header'       => '{TEXTSIZE}',
 							'headerAddCount' => 1,
-							'onPlay'       => sub { 
-								$_[0]->textSize($_[1]->{'value'})
-							},
-							'onAdd'        => sub { 
-								$_[0]->textSize($_[1]->{'value'})
-							},
-							'onRight'      => sub { 
-								$_[0]->textSize($_[1]->{'value'})
-							},
+							'onChange'     => \&setPref,
 							'pref'         => 'activeFont_curr',
 							'initialValue' => sub { $prefs->client(shift)->get('activeFont_curr') },
 							'condition'    => sub { $_[0]->display->isa('Slim::Display::Graphics'); },

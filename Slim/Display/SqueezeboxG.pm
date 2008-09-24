@@ -45,6 +45,10 @@ our $defaultFontPrefs = {
 	'idleFont_curr'       => 1,
 };
 
+$prefs->setChange( sub { $_[2]->textSize($_[1]) if $_[2]->power(); }, 'activeFont_curr');
+$prefs->setChange( sub { $_[2]->textSize($_[1]) unless $_[2]->power(); }, 'idleFont_curr');
+
+
 # Display Modes
 
 my @modes = (

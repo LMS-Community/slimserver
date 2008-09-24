@@ -112,14 +112,8 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveplayerbrightnesssettings', '_index', '_quantity'],
 		[1, 1, 0, \&playerBrightnessMenu]);
 
-	Slim::Control::Request::addDispatch(['jivebrightnessadjust'],
-		[1, 0, 1, \&playerBrightnessAdjustCommand]);
-
-	Slim::Control::Request::addDispatch(['jiveplayertextsettings', '_index', '_quantity'],
+	Slim::Control::Request::addDispatch(['jiveplayertextsettings', '_whatFont', '_index', '_quantity'],
 		[1, 1, 0, \&playerTextMenu]);
-
-	Slim::Control::Request::addDispatch(['jivetextadjust'],
-		[1, 0, 1, \&playerTextAdjustCommand]);
 
 	Slim::Control::Request::addDispatch(['jiveunmixable'],
 		[1, 1, 1, \&jiveUnmixableMessage]);
@@ -1599,13 +1593,30 @@ sub playerSettingsMenu {
 			},
 			window         => { titleStyle => 'settings' },
 		},
+	}
+
+	# text size settings for players with graphical displays 
+	if ( $client->isPlayer() && $client->display->isa('Slim::Display::Graphics') ) {
+		push @menu, 
 		{
 			text           => $client->string("TEXTSIZE"),
 			id             => 'settingsPlayerTextsize',
 			node           => 'playerDisplaySettings',
 			actions        => {
 				  go => {
-					cmd    => [ 'jiveplayertextsettings' ],
+					cmd    => [ 'jiveplayertextsettings', 'activeFont' ],
+					player => 0,
+				  },
+			},
+			window         => { titleStyle => 'settings' },
+		},
+		{
+			text           => $client->string("OFFDISPLAYSIZE"),
+			id             => 'settingsPlayerOffTextsize',
+			node           => 'playerDisplaySettings',
+			actions        => {
+				  go => {
+					cmd    => [ 'jiveplayertextsettings', 'idleFont' ],
 					player => 0,
 				  },
 			},
@@ -1668,12 +1679,8 @@ sub playerBrightnessMenu {
 				radio => ($currentSetting == $setting) + 0,
 				actions => {
 					do    => {
-						cmd    => [ 'jivebrightnessadjust' ],
+						cmd    => [ 'playerpref', $href->{pref}, $setting ],
 						player => 0,
-						params => {
-							value => "$setting",
-							mode  => $href->{pref},
-						},
 					},
 				},
 			};
@@ -1694,47 +1701,33 @@ sub playerBrightnessMenu {
 
 }
 
-sub playerBrightnessAdjustCommand {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $mode    = $request->getParam('mode');
-	my $newVal  = $request->getParam('value');
-
-	my $val = preferences('server')->client($client)->set($mode,$newVal);
-
-	$request->setStatusDone();
-
-}
-
 sub playerTextMenu {
 
 	my $request    = shift;
 	my $client     = $request->client();
+	my $whatFont   = $request->getParam('_whatFont');
 
 	my @menu = ();
 
 	my @fonts = ();
 	my $i = 0;
-	for my $font ( @{ $prefs->client($client)->get('activeFont') } ) {
+
+	for my $font ( @{ $prefs->client($client)->get($whatFont) } ) {
 		push @fonts, {
-				name  => $client->string($font),
-				value => $i++,
+			name  => $client->string($font),
+			value => $i++,
 		};
 	}
 
-	my $currentSetting = $prefs->client($client)->get('activeFont_curr');
+	my $currentSetting = $prefs->client($client)->get($whatFont . '_curr');
 	for my $font (@fonts) {
 		my $item = {
 			text => $font->{name},
 			radio => ($font->{value} == $currentSetting) + 0,
 			actions => {
 				do    => {
-					cmd    => [ 'jivetextadjust' ],
+					cmd    => [ 'playerpref', $whatFont . '_curr', $font->{value} ],
 					player => 0,
-					params => {
-						value => "$font->{value}",
-					},
 				},
 			},
 		};
@@ -1742,18 +1735,6 @@ sub playerTextMenu {
 	}
 
 	sliceAndShip($request, $client, \@menu);
-
-	$request->setStatusDone();
-
-}
-
-sub playerTextAdjustCommand {
-
-	my $request = shift;
-	my $client  = $request->client();
-	my $newVal  = $request->getParam('value');
-
-	my $val = $client->textSize($newVal);
 
 	$request->setStatusDone();
 
