@@ -547,6 +547,11 @@ sub _stopClient {
 sub _getNextTrack {			# getNextTrack -> TrackWait
 	my ($self, $params, $ifMoreTracks) = @_;
 	
+	if ($self->{'consecutiveErrors'} > Slim::Player::Playlist::count(master($self)))  {
+		$log->warn("Giving up because of too many consecutive errors: " . $self->{'consecutiveErrors'});
+		return;
+	}
+		
 	my $index = $params->{'index'};
 	my $song  = $params->{'song'};
 
@@ -589,7 +594,7 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 			return;
 		}
 	}
-		
+	
 	_setStreamingState($self, TRACKWAIT);
 	
 	$song->getNextSong (
