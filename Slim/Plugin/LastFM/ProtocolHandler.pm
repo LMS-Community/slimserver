@@ -54,6 +54,8 @@ sub isAudioURL () { 1 }
 sub shouldLoop () { 0 }
 
 sub canSeek { 0 }
+sub getSeekDataByPosition { undef }
+sub getSeekData { undef }
 
 sub isRepeatingStream {
 	return 1;

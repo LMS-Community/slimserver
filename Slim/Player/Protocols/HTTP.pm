@@ -523,6 +523,12 @@ sub getSeekData {
 	};
 }
 
+sub getSeekDataByPosition {
+	my ($class, $client, $song, $bytesReceived) = @_;
+	
+	return {sourceStreamOffset => $bytesReceived};
+}
+
 # reinit is used on SN to maintain seamless playback when bumped to another instance
 sub reinit {
 	my ( $class, $client, $playlist, $newsong ) = @_;

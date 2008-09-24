@@ -124,9 +124,11 @@ sub requestString {
 	if ($client && $seekdata) {
 		$request .= $CRLF . 'Range: bytes=' . int( $seekdata->{sourceStreamOffset} ) . '-';
 		
-		# Fix progress bar
-		$client->master()->currentsongqueue()->[-1]->{startOffset} = $seekdata->{timeOffset};
-		$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
+		if (defined $seekdata->{timeOffset}) {
+			# Fix progress bar
+			$client->master()->currentsongqueue()->[-1]->{startOffset} = $seekdata->{timeOffset};
+			$client->master()->remoteStreamStartTime( Time::HiRes::time() - $seekdata->{timeOffset} );
+		}
 	}
 
 	# Send additional information if we're POSTing
