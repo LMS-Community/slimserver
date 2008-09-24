@@ -2256,7 +2256,7 @@ sub prefCommand {
 
 	# get our parameters
 	my $prefName = $request->getParam('_prefname');
-	my $newValue = $request->getParam('_newvalue') || $request->getParam('value');
+	my $newValue = $request->getParam('value') || $request->getParam('_newvalue');
 
 	# split pref name from namespace: name.space.pref:
 	my $namespace = 'server';
