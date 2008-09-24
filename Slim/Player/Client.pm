@@ -1116,7 +1116,7 @@ sub streamingProgressBar {
 		$secs = $duration;
 	}
 	elsif ( $bitrate > 0 && $length > 0 ) {
-		$secs = int( ( $length * 8 ) / $bitrate );
+		$secs = ( $length * 8 ) / $bitrate;
 	}
 	else {
 		return;

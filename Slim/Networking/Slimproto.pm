@@ -718,7 +718,15 @@ sub _stat_handler {
 		$status{$client}->{'fullness'} = $fullnessB;
 	}
 	
-	$client->songElapsedSeconds($status{$client}->{'elapsed_seconds'});
+	# Use milliseconds for the song-elapsed-time if defined and have not suffered truncation
+	my $songElapsed = 0;
+	if (defined $status{$client}->{'elapsed_milliseconds'}) {
+		$songElapsed = $status{$client}->{'elapsed_milliseconds'} / 1000;
+	}
+	if ($songElapsed < ($status{$client}->{'elapsed_seconds'} || 0)) {
+		$songElapsed = $status{$client}->{'elapsed_seconds'};
+	}
+	$client->songElapsedSeconds($songElapsed);
 
 	if (defined($status{$client}->{'output_buffer_fullness'})) {
 

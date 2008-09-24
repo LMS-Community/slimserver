@@ -304,7 +304,7 @@ sub setMetadata {
 	# Set duration and progress bar if available and this is not a broadcast stream
 	if ( $wma->info('playtime_seconds') ) {
 
-		if ( my $secs = int( $wma->info('playtime_seconds') ) ) {
+		if ( my $secs = $wma->info('playtime_seconds') ) {
 
 			if ( $wma->info('flags') && $wma->info('flags')->{'broadcast'} != 1 ) {
 
