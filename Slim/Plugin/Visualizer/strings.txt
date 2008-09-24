@@ -28,33 +28,6 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	NO	Krever Squeezebox2
 	SV	Kräver Squeezebox 2
 
-PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
-	DA	Tryk på -> for at aktivere denne pauseskærm
-	DE	Drücken Sie RECHTS zum Aktivieren des Bildschirmschoners
-	EN	Press -> to enable this screensaver
-	ES	Pulse -> para activar este protector de pantalla
-	FI	Ota tämä näytönsäästäjä käyttöön painamalla ->
-	FR	Appuyez sur DROITE pour activer cet écran de veille
-	HE	לחץ על ‎->‎ כדי לאפשר את הפעלת שומר המסך
-	IT	Premere -> per attivare questo screen saver
-	NL	Druk op -> om deze schermbeveiliger te activeren
-	NO	Gå til høyre for å aktivere denne skjermspareren
-	SV	Tryck på höger navigeringsknapp om du vill aktivera den här skärmsläckaren
-
-PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
-	CS	Spořič je nastaven
-	DA	Denne pauseskærm er aktiveret
-	DE	Bildschirmschoner aktiviert
-	EN	This screensaver is enabled
-	ES	Este protector de pantalla está activo
-	FI	Tämä näytönsäästäjä on käytössä
-	FR	Cet écran de veille est activé
-	HE	שומר המסך מופעל
-	IT	Questo screen saver è attivato
-	NL	Deze schermbeveiliger is actief
-	NO	Denne skjermspareren er aktivert
-	SV	Den här skärmsläckaren har aktiverats
-
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CS	Výchozí spořič
 	DA	Standardpauseskærm

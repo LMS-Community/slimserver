@@ -28,19 +28,6 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	NO	Innstillinger for skjermsparer med snø
 	SV	Inställningar för snöskärmsläckare
 
-PLUGIN_SCREENSAVER_SNOW_DEFAULT
-	DA	Anvend standardpauseskærm (ikke sne)
-	DE	Standard-Bildschirmschoner aktivieren (nicht Schnee)
-	EN	Use default screensaver (not Snow)
-	ES	Usar protector de pantalla predeterminado (no de nieve)
-	FI	Käytä oletusnäytönsäästäjää (älä lunta)
-	FR	Utiliser écran de veille par défaut (hors Neige)
-	HE	השתמש בשומר המסך הנוכחי (לא שלג)
-	IT	Usa screen saver predefinito (non con neve)
-	NL	Standaardschermbeveiliger gebruiken (geen sneeuw)
-	NO	Bruk standard skjermsparer (ikke snø)
-	SV	Använd standardskärmsläckare (inte snöskärmsläckaren).
-
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	DA	Sneens kvalitet
 	DE	Schneemenge
@@ -313,17 +300,3 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	NL	nieuwjaar!
 	NO	NYTTÅR!
 	SV	NYTT ÅR!
-
-PLUGIN_SCREENSAVER_SNOW_SORRY
-	DA	Sne virker desværre ikke på denne afspiller.
-	DE	Schnee kann auf diesem Player nicht angezeigt werden.
-	EN	Sorry, Snow doesn't work with this player.
-	ES	La nieve no funciona con este reproductor.
-	FI	Lumi ei toimi tämän soittimen kanssa.
-	FR	Désolé, Neige ne fonctionne pas sur cette platine.
-	HE	מצטערים, אין אפשרות להציג שלג בנגן זה.
-	IT	L'effetto neve non funziona con questo lettore.
-	NL	Sorry, sneeuw werkt niet met dit muzieksysteem.
-	NO	Beklager, snøeffekten fungerer ikke på denne spilleren.
-	SV	Den här spelaren har inte stöd för snöskärmsläckaren.
-

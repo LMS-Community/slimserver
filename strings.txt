@@ -6424,66 +6424,6 @@ SETUP_IDLESAVER_ABBR
 	NO	Ved stopp
 	SV	I stoppat läge
 
-SETUP_SCREENSAVER_USE
-	DA	Anvend som pauseskærm
-	DE	Als Bildschirmschoner verwenden
-	EN	Use as current screensaver
-	ES	Usar como protector de pantalla actual
-	FI	Käytä näytönsäästäjänä
-	FR	Utiliser comme Ecran de veille en cours
-	HE	שימוש בשומר המסך הנוכחי
-	IT	Usa come screen saver corrente
-	NL	Als huidige schermbeveiliger gebruiken
-	NO	Bruk som aktiv skjermsparer
-	SV	Använd som skärmsläckare
-	ZH_CN	设为当前的有效屏幕保护程序
-
-SETUP_SCREENSAVER_CHOOSE
-	CS	Vyberte spořič pro dobu, kdy přehrávač hraje:
-	DA	Vælg den pauseskærm der skal bruges når der spilles noget:
-	DE	Wählen Sie einen Bildschirmschoner:
-	EN	Choose a screensaver to use when playing:
-	ES	Elegir un protector de pantalla para usar al reproducir:
-	FI	Valitse näytönsäästäjä, jota käytetään toiston aikana:
-	FR	Ecran de veille lorsque la platine est en lecture:
-	HE	בחירת שומר מסך לשימוש כאשר מושמעת מוסיקה:
-	IT	Scegliere uno screen saver da usare durante la riproduzione:
-	JA	お好きなスクリーンセーバーを選んでください:
-	NL	Te gebruiken schermbeveiliger wanneer muzieksysteem afspeelt:
-	NO	Velg en skjermsparer som skal brukes under avspilling:
-	SV	Välj skärmsläckare för uppspelning:
-	ZH_CN	请选择一个在播放时应用的屏幕保护程序：
-
-SETUP_IDLESAVER_CHOOSE
-	CS	Vyberte spořič pro dobu, kdy přehrávač nehraje.
-	DA	Vælg den pauseskærm der skal bruges når der ikke spilles noget:
-	DE	Wählen Sie den Bildschirmschoner, der bei Inaktivität angezeigt werden soll:
-	EN	Choose a screensaver to use when not playing:
-	ES	Elegir un protector de pantalla para usar cuando no se esté reproduciendo:
-	FI	Valitse näytönsäästäjä, jota käytetään, kun soitin ei toista:
-	FR	Ecran de veille lorsque la platine est arrêtée:
-	HE	בחירת שומר מסך לשימוש כאשר לא מושמעת מוסיקה:
-	IT	Scegli screen saver da utilizzare quando viene interrotta la riproduzione:
-	NL	Te gebruiken schermbeveiliger wanneer muzieksysteem niets afspeelt:
-	NO	Velg en skjermsparer for når du ikke spiller av noe:
-	SV	Välj skärmsläckare för stoppat läge:
-	ZH_CN	请选择一个在非播放时应用的屏幕保护程序：
-
-SETUP_OFFSAVER_CHOOSE
-	CS	Vyberte spořič pro dobu, kdy bude přehrávač vypnut:
-	DA	Vælg den pauseskærm der bruges når afspilleren er slukket:
-	DE	Wählen Sie den Bildschirmschoner, der in ausgeschaltetem Zustand angezeigt wird:
-	EN	Choose a screensaver to use when powered off:
-	ES	Elegir un protector de pantalla para usar cuando está apagado:
-	FI	Valitse näytönsäästäjä:
-	FR	Ecran de veille lorsque la platine est éteinte:
-	HE	בחירת שומר מסך לשימוש במצב כבוי:
-	IT	Scegli screen saver da utilizzare quando il dispositivo è spento:
-	NL	Te gebruiken schermbeveiliger wanneer uit:
-	NO	Velg en skjermsparer til bruk når spilleren er avskrudd:
-	SV	Välj vilken skärmsläckare som ska användas när strömmen slås av:
-	ZH_CN	请选择一个在关机时应用的屏幕保护程序：
-
 SETUP_SCREENSAVER_DESC
 	CS	Můžete zvolit spořič k zobrazení informací v době kdy přehrávač neovládáte. Můžete nastavit dobu neaktivity, po které se spořič zobrazí. Můžete si také vybrat různé spořiče, pro různé stavy přehrávače: hraje, je zastaven, vypnut apod.
 	DA	Hvis du ikke har brugt fjernbetjeningen i et stykke tid, kan der vises forskellige oplysninger på displayet som en form for pauseskærm. Du kan vælge at bruge forskellige pauseskærme når afspilleren er hhv. tændt og slukket, når der spilles et nummer og når der ikke gør. Du kan også angive hvor lang tid der skal gå før pauseskærmene aktiveres.
