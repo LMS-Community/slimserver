@@ -239,11 +239,16 @@ sub handler {
 
 	if ($class->needsClient()) {
 
+		my $basic = 'BASIC_PLAYER_SETTINGS';
+
 		my @orderedLinks = 
 			map { $_->[1] }
 			sort { $a->[0] cmp $b->[0] }
-			map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] } 
+			map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] }
+			grep { $_ !~ /$basic/ } 
 			keys %{$paramRef->{'playersetup'}};
+	
+		unshift @orderedLinks, $basic if $paramRef->{'playersetup'}->{$basic};
 	
 		$paramRef->{'orderedLinks'} = \@orderedLinks;
 	}
