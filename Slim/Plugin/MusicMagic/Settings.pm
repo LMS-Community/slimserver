@@ -35,7 +35,7 @@ $prefs->migrate(1, sub {
 	$prefs->set('mix_style',       Slim::Utils::Prefs::OldPrefs->get('MMMStyle') || 0                             );
 	$prefs->set('mix_type',        Slim::Utils::Prefs::OldPrefs->get('MMMMixType')                                );
 	$prefs->set('mix_size',        Slim::Utils::Prefs::OldPrefs->get('MMMSize') || 12                             );
-	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistprefix') || 'MusicIP: '   );
+	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistprefix') || ''   );
 	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistsuffix') || ''            );
 
 	$prefs->set('musicmagic', 0) unless defined $prefs->get('musicmagic'); # default to on if not previously set
@@ -62,8 +62,14 @@ $prefs->migrate(2, sub {
 	$prefs->set('mix_style',       $oldPrefs->get('mix_style') || 0                 );
 	$prefs->set('mix_type',        $oldPrefs->get('mix_type')                       );
 	$prefs->set('mix_size',        $oldPrefs->get('mix_size') || 12                 );
-	$prefs->set('playlist_prefix', $oldPrefs->get('playlist_prefix') || 'MusicIP: ' );
+	$prefs->set('playlist_prefix', $oldPrefs->get('playlist_prefix') || '' );
 	$prefs->set('playlist_suffix', $oldPrefs->get('playlist_suffix') || ''          );
+
+	my $prefix = $prefs->get('playlist_prefix');
+	if ($prefix =~ /MusicMagic/) {
+		$prefix =~ s/MusicMagic/MusicIP/g;
+		$prefs->set('playlist_prefix', $prefix);
+	}
 
 	$prefs->remove('musicmagic');
 	1;

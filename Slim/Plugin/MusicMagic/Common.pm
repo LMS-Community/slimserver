@@ -99,7 +99,7 @@ sub checkDefaults {
 	}
 
 	if (!defined $prefs->get('playlist_prefix')) {
-		$prefs->set('playlist_prefix','MusicIP: ');
+		$prefs->set('playlist_prefix','');
 	}
 
 	if (!defined $prefs->get('playlist_suffix')) {
