@@ -460,6 +460,8 @@ sub open {
 
 	$self->{'status'} = STATUS_STREAMING;
 	
+	$client->metaTitle(undef);
+	
 	return $streamControler;
 }
 
