@@ -1333,4 +1333,23 @@ sub syncedWithNames {
 	return join(' & ', map { $_->name || $_->id } syncedWith($_[0]));
 }
 	
+# return formatted date/time strings - overwritten in SN to respect timezone
+sub timeF {
+	return Slim::Utils::DateTime::timeF(
+		undef, 
+		preferences('plugin.datetime')->client($_[0])->get('timeformat')
+	);
+}
+
+sub longDateF {
+	return Slim::Utils::DateTime::longDateF(
+		undef, 
+		preferences('plugin.datetime')->client($_[0])->get('dateformat')
+	);
+}
+
+sub shortDateF {
+	return Slim::Utils::DateTime::shortDateF();
+}
+
 1;

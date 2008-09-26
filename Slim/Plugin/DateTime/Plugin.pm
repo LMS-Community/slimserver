@@ -176,21 +176,11 @@ sub dateTimeLines {
 	
 	my $display;
 	
-	if ( main::SLIM_SERVICE ) {
-		$display = {
-			center  => [ $client->longDateF(), $client->timeF() ],
-			overlay => [ $overlay ],
-			fonts   => $fontDef,
-		};
-	}
-	else {
-	 	$display = {
-			'center'  => [ Slim::Utils::DateTime::longDateF(undef, $prefs->client($client)->get('dateformat')),
-					      Slim::Utils::DateTime::timeF(undef, $prefs->client($client)->get('timeformat')) ],
-			'overlay' => [ $overlay ],
-			'fonts'   => $fontDef,
-		};
-	}
+	$display = {
+		center  => [ $client->longDateF(), $client->timeF() ],
+		overlay => [ $overlay ],
+		fonts   => $fontDef,
+	};
 
 	return $display;
 }

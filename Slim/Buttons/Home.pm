@@ -826,8 +826,15 @@ sub updateMenu {
 	my @home = ();
 	
 	# User can hide menu items on SN
-	my %disabledMenus = ();
+	my %disabledMenus  = ();
+	my $hasSpecialMenu = 0;
+	
 	if ( main::SLIM_SERVICE ) {
+		# Some players on SN may have specially-defined menus
+		if ( @home = $client->specialMenu() ) {
+			$hasSpecialMenu = 1;
+		}
+		
 		my $disabledPref  
 			 = $prefs->client($client)->get('disabledMenus')
 			|| $prefs->client($client)->set( 'disabledMenus', [] );
@@ -862,6 +869,9 @@ sub updateMenu {
 		}
 		
 		if ( main::SLIM_SERVICE ) {
+			# Skip all other menu items if we got a special menu above
+			next if $hasSpecialMenu;
+			
 			next if exists $disabledMenus{$menuItem};
 			
 			if ( $menuItem eq 'PLUGIN_CHOOSESERVER' ) {
