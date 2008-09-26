@@ -126,7 +126,7 @@ sub fracSecToMinSec {
 	return "$min:$sec.$frac";
 }
 
-=head2 secsToPrettyTime( $seconds )
+=head2 secsToPrettyTime( $seconds, $client )
 
 Turns seconds into HH:MM AM/PM.  Format returned is 12h or 24h depending on the user's preferences.
 
@@ -134,8 +134,9 @@ Turns seconds into HH:MM AM/PM.  Format returned is 12h or 24h depending on the 
 
 sub secsToPrettyTime {
 	my $secs = shift;
+	my $client = shift;
 
-	my ($h0, $h1, $m0, $m1, $p) = timeDigits($secs);
+	my ($h0, $h1, $m0, $m1, $p) = timeDigits($secs, $client);
 
 	my $string = ' ';
 
@@ -167,7 +168,7 @@ sub prettyTimeToSecs {
 	return ($hh*3600) + ($mm*60);
 }
 
-=head2 splitTime ($time, $24h )
+=head2 splitTime ($time, $24h, $client)
 
 This function converts a unix time value to hours, minutes and am/pm if applicable.  am/pm is given as undef or 0/1.
 
@@ -180,7 +181,9 @@ sub splitTime {
 	my $twelveHour = shift;
 
 	if (! defined $twelveHour) {
-		$twelveHour = $prefs->get('timeFormat') =~ /%p/;
+		
+		$twelveHour = hasAmPm(shift);
+
 	}
 
 	if (ref($time))  {
@@ -201,6 +204,19 @@ sub splitTime {
 	}
 
 	return ($h, $m, $p);
+}
+
+sub hasAmPm {
+
+	if (main::SLIM_SERVICE) {
+		
+		return $prefs->client(shift)->get('timeFormat') =~ /%p/;
+	}
+
+	else {
+
+		return $prefs->get('timeFormat') =~ /(?:%p|%I)/;
+	}
 }
 
 =head2 bcdTime ( $time )
@@ -241,7 +257,7 @@ sub hourMinToTime {
 	return (((($p * 12) + $h) * 60) + $m) * 60;
 }
 
-=head2 timeDigits( $time )
+=head2 timeDigits( $time, $client )
 
 This function converts a unix time value to the individual digits for hours, minutes and am/pm.  am/pm is returned as 'AM' or 'PM'.
 
@@ -251,8 +267,9 @@ Takes as arguments, a scalar time value or a reference to one.
 
 sub timeDigits {
 	my $time = shift;
+	my $client = shift;
 	
-	my ($h, $m, $p) = splitTime($time);
+	my ($h, $m, $p) = splitTime($time, undef, $client);
 
 	if ($h < 10) { $h = '0' . $h; }
 

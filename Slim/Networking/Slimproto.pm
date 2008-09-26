@@ -910,7 +910,7 @@ sub _hello_handler {
  
 	Slim::Utils::Timers::killOneTimer($s, \&slimproto_close);
 
-	my ($deviceid, $revision, @mac, $uuid, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
+	my ($deviceid, $revision, @mac, $uuid, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received, $lang);
 
 	# Newer player fw reports a uuid. With uuid, length is 36; without uuid, length is 20
 	my $data_ref_length = length( $$data_ref);
@@ -918,13 +918,13 @@ sub _hello_handler {
 	if( $data_ref_length == 36) {
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5], $uuid,
-			$wlan_channellist, $bytes_received_H, $bytes_received_L
-		) = unpack("CCH2H2H2H2H2H2H32nNN", $$data_ref);
+			$wlan_channellist, $bytes_received_H, $bytes_received_L, $lang
+		) = unpack("CCH2H2H2H2H2H2H32nNNA2", $$data_ref);
 	} else {
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
-			$wlan_channellist, $bytes_received_H, $bytes_received_L
-		) = unpack("CCH2H2H2H2H2H2nNN", $$data_ref);
+			$wlan_channellist, $bytes_received_H, $bytes_received_L, $lang
+		) = unpack("CCH2H2H2H2H2H2nNNA2", $$data_ref);
 	}
 
 	$bitmapped = $wlan_channellist & 0x8000;
@@ -949,6 +949,7 @@ sub _hello_handler {
 			"bitmapped: $bitmapped",
 			"reconnect: $reconnect",
 			"wlan_channellist: $wlan_channellist",
+			"lang: $lang",
 		));
 
 		if (defined($bytes_received)) {
@@ -1105,6 +1106,11 @@ sub _hello_handler {
 		if ($@) {
 			$log->logBacktrace;
 			$log->logdie("FATAL: Couldn't load module: $display_class: [$@]");
+		}
+		
+		# Set default language from firmware language on SN
+		if ( main::SLIM_SERVICE ) {
+			preferences('server')->client($client)->set( language => $lang );
 		}
 
 		$client->display( $display_class->new($client) );
