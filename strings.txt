@@ -2216,6 +2216,17 @@ WELCOME_TO_BOOM
 	NO	Velkommen til Squeezebox
 	SV	Välkommen till Squeezebox!
 
+WELCOME_TO_SQUEEZEPLAY
+	DA	Velkommen til SqueezePlay
+	DE	Willkommen bei SqueezePlay
+	EN	Welcome to SqueezePlay
+	ES	Bienvenido a SqueezePlay
+	FR	Bienvenue dans la SqueezePlay
+	IT	Benvenuti in SqueezePlay
+	NL	Welkom bij SqueezePlay
+	NO	Velkommen til SqueezePlay
+	SV	Välkommen till SqueezePlay!
+
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
 	DA	Lyt til din musik!
