@@ -485,9 +485,10 @@ sub init {
 		$prefs->migrateClient( 7, sub {
 			my ( $cprefs, $client ) = @_;
 			if ( $client->isa('Slim::Player::Boom') ) {
-				my $existing = $cprefs->get('playingDisplayModes');
-				if (scalar @$existing == 10 && $existing->[0] == 0 && $existing->[-1] == 9) {
-					$cprefs->set('playingDisplayModes', [0..10]);
+				if ( my $existing = $cprefs->get('playingDisplayModes') ) {
+					if (scalar @$existing == 10 && $existing->[0] == 0 && $existing->[-1] == 9) {
+						$cprefs->set('playingDisplayModes', [0..10]);
+					}
 				}
 			}
 			1;
