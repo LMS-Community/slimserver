@@ -833,16 +833,22 @@ sub displayStr {
 	my $displayStr;
 	
 	if ($self->{_enabled}) {
-		$displayStr = Slim::Utils::DateTime::secsToPrettyTime($self->{_time});
+		
+		$displayStr = $self->timeStr();
 
 		if (! $self->everyDay) {
+			
 			foreach my $day (1 .. 6, 0) { 
 				if ($self->day($day)) {
 					$displayStr .= ' ' . $self->client->string('ALARM_SHORT_DAY_' . $day);
 				}
 			}
 		}
-	} else {
+
+	}
+	
+	else {
+		
 		$displayStr = $self->client->string('ALARM_OFF');
 	}
 
@@ -858,7 +864,8 @@ Returns the formatted time string for this alarm.
 sub timeStr {
 	my $self = shift;
 
-	my $time = Slim::Utils::DateTime::secsToPrettyTime($self->{_time});
+	my $time = Slim::Utils::DateTime::secsToPrettyTime($self->{_time}, $self->client);		
+	
 	$time =~ s/^\s//g;
 	
 	return $time;

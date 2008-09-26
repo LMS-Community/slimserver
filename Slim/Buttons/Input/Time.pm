@@ -67,7 +67,7 @@ our %functions = (
 			#warn 'knob';
 			my ($client,$funct,$functarg) = @_;
 
-			my @timedigits = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0);
+			my @timedigits = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0, $client);
 			# Manually set the am/pm bit
 			$timedigits[2] = $timedigits[0] > 11 ? 1 : 0;
 
@@ -140,7 +140,7 @@ sub lines {
 	}
 	
 	my $timestring = timeString($client, 
-		Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'))
+		Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'), $client)
 	);
 	
 	if (!defined($timestring)) {
@@ -337,7 +337,7 @@ sub moveCursor {
 
 	my $charIndex;
 
-	if ($cursorPos > (($prefs->get('timeFormat') =~ /%p/) ? 3 : 2)) {
+	if ($cursorPos > (Slim::Utils::DateTime::hasAmPm($client) ? 3 : 2)) {
 		exitInput($client,'right');
 		return;
 	}
@@ -351,7 +351,7 @@ sub moveCursor {
 sub scroll {
 	my ($client, $dir) = @_;
 	
-	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
+	my $ampm = Slim::Utils::DateTime::hasAmPm($client);
 	my $c = $client->modeParam('cursorPos');
 	# Don't scroll on the right arrow
 	return if ($ampm && $c == 3 || ! $ampm && $c == 2);
@@ -381,11 +381,11 @@ Takes as arguments, the $client structure and whether the knob is now scrolling 
 sub prepKnob {
 	my ($client, $newList) = @_;
 
-	my ($h, $m) = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0);
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($client->modeParam('valueRef'), 0, $client);
 	
 	my $c = $client->modeParam('cursorPos');
 
-	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
+	my $ampm = Slim::Utils::DateTime::hasAmPm($client);
 	
 	if ($c == 0) {
 		$client->modeParam('listLen', 24);
@@ -438,9 +438,9 @@ sub scrollTime {
 		$valueRef = $client->modeParam('valueRef');
 	}
 	
-	my ($h, $m) = Slim::Utils::DateTime::splitTime($valueRef, 0);
+	my ($h, $m) = Slim::Utils::DateTime::splitTime($valueRef, 0, $client);
 
-	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
+	my $ampm = Slim::Utils::DateTime::hasAmPm($client);
 
 	if ($c == 0) {
 		# Scrolling is done in 24h mode regardless of 12h preference as in 12h mode it goes from 12am through to 11pm
@@ -473,7 +473,7 @@ sub numberButton {
 	my $now = Time::HiRes::time();
 
 	my $valueRef = $client->modeParam('valueRef');
-	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
+	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef, $client);
 
 	my $ampm = defined $p;
 	if ($ampm) {
