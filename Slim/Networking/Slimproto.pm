@@ -1102,6 +1102,11 @@ sub _hello_handler {
 			$log->logBacktrace;
 			$log->logdie("FATAL: Couldn't load module: $display_class: [$@]");
 		}
+		
+		# Set default language from firmware language on SN
+		if ( main::SLIM_SERVICE ) {
+			preferences('server')->client($client)->set( language => $lang );
+		}
 
 		$client->display( $display_class->new($client) );
 
