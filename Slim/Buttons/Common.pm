@@ -2280,18 +2280,10 @@ sub dateTime {
 		$line = Slim::Plugin::DateTime::Plugin::dateTimeLines($client);
 	} else {
 		# Fall back to a more basic date/time display
-		if ( main::SLIM_SERVICE ) {
-			# client-specific date/time on SN
-			$line = {
-				'center' => [ $client->longDateF(), $client->timeF() ],
-			};
-		}
-		else {
-			$line = {
-				'center' => [ Slim::Utils::DateTime::longDateF(undef, preferences('plugin.datetime')->client($client)->get('dateformat')),
-						      Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->client($client)->get('timeformat')) ]
-			};
-		}
+		# client-specific date/time on SN
+		$line = {
+			'center' => [ $client->longDateF(), $client->timeF() ],
+		};
 	}
 	
 	return $line;

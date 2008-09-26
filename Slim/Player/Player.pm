@@ -728,7 +728,7 @@ sub nowPlayingModeLines {
 		$songtime = ' ' . $client->textSongTime($showTime < 0);
 	} elsif ($showClock) {
 		# show the current time in the format defined for datetime screensaver
-		$songtime = ' ' . Slim::Utils::DateTime::timeF(undef, preferences('plugin.datetime')->get('timeformat'));
+		$songtime = ' ' . $client->timeF();
 	}
 
 	if ($showTime || $showFullness || $showClock) {
