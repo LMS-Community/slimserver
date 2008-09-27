@@ -7489,7 +7489,20 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>playlisturl</td>
-		<td>URL of the alarm playlist. Default: the current playlist.</td>
+		<td>
+			URL of the alarm playlist. Default: the current playlist.
+			playlist url should be a valid Squeezecenter audio url.
+			The special value 0 means the current playlist.<br>
+			Example values:
+			<ul>
+				<li>randomplay:track</li>
+				<li>randomplay:contributor</li>
+				<li>randomplay:album</li>
+				<li>randomplay:year</li>
+			</ul>
+			See also
+			<a href="#favorites items">&quot;favorites items&quot;</a>.
+		</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
