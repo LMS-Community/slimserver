@@ -579,6 +579,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		&quot;<a href="#subscribe">subscribe</a>&quot; commands.
 	</li>
 	<li>
+		<strong><a href="#AL">Alarms</a></strong>: management of alarms.
+	</li>
+	<li>
 		<strong><a href="#PG">Plugins</a></strong>: commands and queries
 		proposed by various SqueezeCenter plugins. These are only available if
 		the plugin is enabled in the SqueezeCenter configuration. The query
@@ -1141,12 +1144,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</li>
 	<li>
 		<strong><code><a href="#players">players</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#alarm">alarm</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#alarms">alarms</a></code></strong>
 	</li>
 </ul>
 
@@ -2461,189 +2458,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483 
 		name:Movy model:slimp3 displaytype:noritake-katakana connected:1 doublesize:1 idleBrightness:1&lt;LF&gt;&quot;
 	</p>
-</blockquote>
-
-<br>
-<p id="alarm">
-	<strong>
-		<code>
-			&lt;playerid&gt;
-			alarm
-			&lt;add|update|delete|enableall|disableall|defaultvolume&gt;
-			&lt;taggedParameters&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;alarm&quot; command allows to manipulate player alarms.
-</p>
-<p>
-	Accepted tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<!--
-	<tr>
-		<td>cmd</td>
-		<td>One of &quot;add&quot; or &quot;delete&quot;. If you don't define
-		a command, you'll have to at least define an ID. In this case the given
-		alarm will be updated. </td>
-	</tr>
-	-->
-	<tr>
-		<td>id</td>
-		<td>The id of an existing alarm. This value is mandatory unless you &quot;add&quot;
-		a new alarm.</td>
-	</tr>
-	<tr>
-		<td>dow</td>
-		<td>Day Of Week. 0 is Sunday, 1 is Monday, etc. up to 6 being Saturday.
-		You can define a group of days by concatenating them with "," as separator.
-		Default: 0-6.</td>
-	</tr>
-	<tr>
-		<td>dowAdd</td>
-		<td>Add a single day of the week to the alarm list
-		This takes precendence over anything sent in the dow tag
-		</td>
-	</tr>
-	<tr>
-		<td>dowDel</td>
-		<td>Removes a single day (0-6) of the week from the alarm list
-		This takes precendence over anything sent in the dow tag
-		</td>
-	</tr>
-	<tr>
-		<td>enabled</td>
-		<td>1 if the alarm is enabled. Default: 0.</td>
-	</tr>
-	<tr>
-		<td>repeat</td>
-		<td>1 if the alarm repeats. Default: 1.</td>
-	</tr>
-	<tr>
-		<td>time</td>
-		<td>Time of the alarm, in seconds from midnight. Mandatory when add command is issued</td>
-	</tr>
-	<tr>
-		<td>volume</td>
-		<td>Mixer volume of the alarm. Default: use the default volume for alarms. Mandatory when defaultvolume command is issued</td>
-	</tr>
-	<tr>
-		<td>url</td>
-		<td>URL of the alarm playlist. Default: the current playlist.</td>
-	</tr>
-</table>
-<p>Returned tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>id</td>
-		<td>The id of the newly created or edited alarm.</td>
-	</tr>
-</table>
-<p>Examples:</p>
-<blockquote> 
-  <p><b>Defining a new alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
-	playlist:file://some/playlist.m3u time:9000&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
-	playlist:file://some/playlist.m3u time:9000 id:eaf39&lt;LF&gt;&quot;</p>
-  <p><b>Deleting an alarm</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;</p>
-  <p><b>Enabling a previously defined alarm for Mo-Fr</b>
-<br>Request: &quot;bd:a5:a9:9b:9d:df alarm update id:eaf39 dow:1,2,3,4,5 enabled:1&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm update id:eaf39 dow:1,2,3,4,5 enabled:1 count:1
-	&lt;LF&gt;&quot;</p>
-</blockquote>
-
-<br><p id="alarms"><strong>
-	<code>&lt;playerid&gt; alarms &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code>
-</strong></p>
-<p>The &quot;alarms&quot; query returns information about player alarms.</p>
-<p>Accepted tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>dow</td>
-		<td>If present, the query returns information about this Day Of Week 
-		only. Note this takes precedence over any &quot;filter&quot; parameter.
-		0 is every day, 1 is Monday, etc. up to 7 being Sunday.
-		</td>
-	</tr>
-	<tr>
-		<td>filter</td>
-		<td>One of &quot;all&quot; or &quot;enabled&quot; (the default).
-		To get all possible alarms, use &quot;all&quot;. To get only enabled alarms, use 
-		&quot;enabled&quot;</td>
-	</tr>
-	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
-	</tr>
-</table>
-<p>Returned tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>fade</td>
-		<td>1 if the alarms fade in.</td>
-	</tr>
-	<tr>
-		<td>count</td>
-		<td>Number of alarms returned, based on the filters above.</td>
-	</tr>
-	<tr>
-		<td><em>For each alarm:</em></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;<b>dow</b></td>
-		<td>Days Of Week of this alarm.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;enabled</td>
-		<td>1 if the alarm is enabled.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;repeat</td>
-		<td>1 if the alarm repeats.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;time</td>
-		<td>Time of the alarm, in seconds from midnight.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;volume</td>
-		<td>Mixer volume of the alarm.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;url</td>
-		<td>URL of the alarm playlist, or &quot;CURRENT_PLAYLIST&quot;</td>
-	</tr>
-</table>
-<p>Example:</p>
-<blockquote> 
-
-  <p>Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
-	time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000 
-	volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
-	&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <!--#########################################################################-->
@@ -7586,6 +7400,237 @@ in the saved playlists folder.</p>
         "alarm snooze_end" when a snooze ends (and the alarm resumes).  "id" gives the id of the alarm.
 </p>
 
+<!--#########################################################################-->
+<!-- ALARM COMMANDS                                                          -->
+<!--#########################################################################-->
+
+<hr>
+<h2 id="AL">
+	Alarm commands and queries
+</h2>
+
+<ul>
+	<li>
+		<strong><code><a href="#alarm">alarm</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#alarms">alarms</a></code></strong>
+	</li>
+</ul>
+
+
+<br><p id="alarm">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			alarm
+			&lt;add|update|delete|enableall|disableall|defaultvolume&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;alarm&quot; command allows to manipulate player alarms.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<!--
+	<tr>
+		<td>cmd</td>
+		<td>One of &quot;add&quot; or &quot;delete&quot;. If you don't define
+		a command, you'll have to at least define an ID. In this case the given
+		alarm will be updated. </td>
+	</tr>
+	-->
+	<tr>
+		<td>id</td>
+		<td>The id of an existing alarm. This value is mandatory unless you &quot;add&quot;
+		a new alarm.</td>
+	</tr>
+	<tr>
+		<td>dow</td>
+		<td>Day Of Week. 0 is Sunday, 1 is Monday, etc. up to 6 being Saturday.
+		You can define a group of days by concatenating them with "," as separator.
+		Default: 0-6.</td>
+	</tr>
+	<tr>
+		<td>dowAdd</td>
+		<td>Add a single day of the week to the alarm list
+		This takes precendence over anything sent in the dow tag
+		</td>
+	</tr>
+	<tr>
+		<td>dowDel</td>
+		<td>Removes a single day (0-6) of the week from the alarm list
+		This takes precendence over anything sent in the dow tag
+		</td>
+	</tr>
+	<tr>
+		<td>enabled</td>
+		<td>1 if the alarm is enabled. Default: 0.</td>
+	</tr>
+	<tr>
+		<td>repeat</td>
+		<td>1 if the alarm repeats. Default: 1.</td>
+	</tr>
+	<tr>
+		<td>time</td>
+		<td>Time of the alarm, in seconds from midnight. Mandatory when add command is issued</td>
+	</tr>
+	<tr>
+		<td>volume</td>
+		<td>Mixer volume of the alarm. Default: use the default volume for alarms. Mandatory when defaultvolume command is issued</td>
+	</tr>
+	<tr>
+		<td>playlisturl</td>
+		<td>URL of the alarm playlist. Default: the current playlist.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>id</td>
+		<td>The id of the newly created or edited alarm.</td>
+	</tr>
+</table>
+<p>Examples:</p>
+<blockquote> 
+  <p><b>Defining a new alarm</b>
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
+	playlist:file://some/playlist.m3u time:9000&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm add dow:1 enabled:1 
+	playlist:file://some/playlist.m3u time:9000 id:eaf39&lt;LF&gt;&quot;</p>
+  <p><b>Deleting an alarm</b>
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm delete id:eaf39&lt;LF&gt;&quot;</p>
+  <p><b>Enabling a previously defined alarm for Mo-Fr</b>
+<br>Request: &quot;bd:a5:a9:9b:9d:df alarm update id:eaf39 dow:1,2,3,4,5 enabled:1&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm update id:eaf39 dow:1,2,3,4,5 enabled:1 count:1
+	&lt;LF&gt;&quot;</p>
+</blockquote>
+
+
+<br><p id="alarms"><strong>
+	<code>&lt;playerid&gt; alarms &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code>
+</strong></p>
+<p>The &quot;alarms&quot; query returns information about player alarms.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>dow</td>
+		<td>If present, the query returns information about this Day Of Week 
+		only. Note this takes precedence over any &quot;filter&quot; parameter.
+		0 is every day, 1 is Monday, etc. up to 7 being Sunday.
+		</td>
+	</tr>
+	<tr>
+		<td>filter</td>
+		<td>One of &quot;all&quot; or &quot;enabled&quot; (the default).
+		To get all possible alarms, use &quot;all&quot;. To get only enabled alarms, use 
+		&quot;enabled&quot;</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>fade</td>
+		<td>1 if the alarms fade in.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of alarms returned, based on the filters above.</td>
+	</tr>
+	<tr>
+		<td><em>For each alarm:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>dow</b></td>
+		<td>Days Of Week of this alarm.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;enabled</td>
+		<td>1 if the alarm is enabled.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;repeat</td>
+		<td>1 if the alarm repeats.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;time</td>
+		<td>Time of the alarm, in seconds from midnight.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;volume</td>
+		<td>Mixer volume of the alarm.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;url</td>
+		<td>URL of the alarm playlist, or &quot;CURRENT_PLAYLIST&quot;</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+
+  <p>Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
+	time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000 
+	volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
+	&lt;LF&gt;&quot;</p>
+</blockquote>
+
+
+<br><p>Additionaly, the following player preferences control the operation of the alarm and
+can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
+
+<dl>
+	<dt>alarmfadeseconds (<em>note the case!</em>)</dt>
+	<dd>Whether alarms should fade in on this player.  Despite the name,
+	this preference is only a boolean and does not control the number of
+	seconds over which alarms fade in. Set to 0 to disable fading; 1 to
+	enable it.</dd>
+
+	<dt>alarmTimeoutSeconds</dt>
+	<dd>The number of seconds that an alarm will play for before being
+	automatically stopped.  Set to 0 to disable the automatic timeout.</dd>
+
+	<dt>alarmSnoozeSeconds</dt>
+	<dd>The number of seconds that a snooze will last for.</p>
+
+	<dt>alarmsEnabled</dt>
+	<dd>Whether any alarm can sound on this player. Set to 0 to prevent
+	any alarm from sounding; 1 to allow them to sound.</dd>
+
+	<dt>alarmDefaultVolume</dt>
+	<dd>The volume level (0-100) at which alarms will sound unless they
+	have their own volume specefically set (see &quot;alarm volume&quot;).</dd>
+</dl>
+
+<br><p>See also <a href="#alarmNotify">&quot;alarm&quot;</a> under
+<a href="#NC">Notifications</a>.</p>
 
 <!--#########################################################################-->
 <!-- PLUGIN COMMANDS                                                         -->
