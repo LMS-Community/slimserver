@@ -881,7 +881,7 @@ sub cursonginfoQuery {
 
 					$request->addResult("_$method", $track->$method->name || 0);
 
-				} else {
+				} elsif ( $method ) {
 
 					$request->addResult("_$method", $track->$method() || 0);
 				}

@@ -478,7 +478,7 @@ sub directHeaders {
 				
 					# Display progress bar
 					$client->streamingProgressBar( {
-						'url'      => $url,
+						'url'      => $redirects->{ $url } || $url,
 						'duration' => $secs,
 					} );
 				}
@@ -490,7 +490,7 @@ sub directHeaders {
 							$bitrate *= 1000;
 						}
 						$client->streamingProgressBar( {
-							'url'     => $url,
+							'url'     => $redirects->{ $url } || $url,
 							'bitrate' => $bitrate,
 							'length'  => $length,
 						} );

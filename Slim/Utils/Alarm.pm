@@ -492,12 +492,13 @@ sub sound {
 	# Check if this alarm is still current - we could be running really late due to hibernation or similar
 	my $soundAlarm = 1;
 	if (defined $alarmTime) {
-		# Alarms should only ever be late.  Sound them anyway if they are early
+		# Don't sound alarms that are very early or late.  Early alarms can happen if the server time
+		# changes, causing timers to be fired as soon as the time change is noticed by S::U::Timers.
+		# Early alarms will be rescheduled at the end of this sub.
 		my $delta = CORE::time - $alarmTime;
 	
-		# Give a 60 second tolerance
-		if ($delta > 60) {
-			$log->debug("Alarm is $delta seconds late - ignoring");
+		if ($delta < -10 || $delta > 60) {
+			$log->debug("Alarm is $delta seconds early/late - ignoring");
 			$soundAlarm = 0;
 		}
 	}
