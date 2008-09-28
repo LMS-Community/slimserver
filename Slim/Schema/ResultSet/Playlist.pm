@@ -97,7 +97,7 @@ sub getPlaylists {
 	
 			if ($prefs->get($importer)) {
 	
-				push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer eq 'musicip' ? 'musicmagic' : $importer)};
+				push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer)};
 			}
 		}
 	}
