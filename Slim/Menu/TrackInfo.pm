@@ -23,6 +23,8 @@ plugins to register additional menu items.
 
 use strict;
 
+use base qw(Slim::Menu::Base);
+
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
@@ -30,16 +32,9 @@ use Slim::Utils::Strings qw(cstring);
 
 my $log = logger('menu.trackinfo');
 
-my %infoProvider;
-my @infoOrdering;
 
-sub init {
-	my $class = shift;
-	
-	# Our information providers are pluggable, call the 
-	# registerInfoProvider function to extend the details
-	# provided in the track info menu.
-	$class->registerDefaultInfoProviders();
+sub title {
+	return 'SONG_INFO';
 }
 
 ##
@@ -49,11 +44,7 @@ sub init {
 sub registerDefaultInfoProviders {
 	my $class = shift;
 	
-	# The 'top', 'middle' and 'bottom' groups
-	# so that we can add items in absolute positions
-	$class->registerInfoProvider( top    => ( isa => '' ) );
-	$class->registerInfoProvider( middle => ( isa => '' ) );
-	$class->registerInfoProvider( bottom => ( isa => '' ) );
+	$class->SUPER::registerDefaultInfoProviders();
 
 	$class->registerInfoProvider( playtrack => (
 		menuMode  => 1,
@@ -193,77 +184,6 @@ sub registerDefaultInfoProviders {
 	
 }
 
-=head1 METHODS
-
-=head2 Slim::Menu::TrackInfo->registerInfoProvider( $name, %details )
-
-Register a new menu provider to be displayed in Track Info.
-
-  Slim::Menu::TrackInfo->registerInfoProvider( album => (
-      after => 'artist',
-      func  => \&infoAlbum,
-  ) );
-
-=over 4
-
-=item $name
-
-The name of the menu provider.  This must be unique within the server, so
-you should prefix it with your plugin's namespace.
-
-=item %details
-
-after: Place this menu after the given menu item.
-
-before: Place this menu before the given menu item.
-
-func: Callback to produce the menu.  Is passed $client, $url, $track, $remoteMeta.
-Note that $client may be undef if browsing track info without a client (i.e. from the web).
-
-The special values 'top', 'middle', and 'bottom' may be used if you don't
-want exact placement in the menu.
-
-=back
-
-=cut
-
-sub registerInfoProvider {
-	my ( $class, $name, %details ) = @_;
-
-	$details{name} = $name; # For diagnostic purposes
-	
-	if (
-		   !defined $details{after}
-		&& !defined $details{before}
-		&& !defined $details{isa}
-	) {
-		# If they didn't say anything about where it goes,
-		# place it in the middle.
-		$details{isa} = 'middle';
-	}
-	
-	$infoProvider{$name} = \%details;
-
-	# Clear the array to force it to be rebuilt
-	@infoOrdering = ();
-}
-
-=head2 Slim::Menu::TrackInfo->deregisterInfoProvider( $name )
-
-Removes the given menu from Track Info.  Core menus can be removed,
-but you should only do this if you know what you are doing.
-
-=cut
-
-sub deregisterInfoProvider {
-	my ( $class, $name ) = @_;
-	
-	delete $infoProvider{$name};
-
-	# Clear the array to force it to be rebuilt
-	@infoOrdering = ();
-}
-
 sub menu {
 	my ( $class, $client, $url, $track, $tags ) = @_;
 	$tags ||= {};
@@ -273,13 +193,7 @@ sub menu {
 	# registered information providers, but only then. After
 	# that, we will have our ordering and only need to step
 	# through it.
-	if ( !scalar @infoOrdering ) {
-		# We don't know what order the entries should be in,
-		# so work that out.
-		$class->generateInfoOrderingItem( 'top' );
-		$class->generateInfoOrderingItem( 'middle' );
-		$class->generateInfoOrderingItem( 'bottom' );
-	}
+	my $infoOrdering = $class->getInfoOrdering;
 	
 	# Get track object if necessary
 	if ( !blessed($track) ) {
@@ -341,7 +255,7 @@ sub menu {
 	# Now run the order, which generates all the items we need
 	my $items = [];
 	
-	for my $ref ( @infoOrdering ) {
+	for my $ref ( @{ $infoOrdering } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
@@ -352,7 +266,7 @@ sub menu {
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
-		} @infoOrdering;
+		} @{ $infoOrdering };
 		
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
@@ -371,69 +285,6 @@ sub menu {
 	};
 }
 
-##
-# Adds an item to the ordering list, following any
-# 'after', 'before' and 'isa' requirements that the
-# registered providers have requested.
-#
-# @param[in]  $name     The name of the item to add
-# @param[in]  $previous The item before this one, for 'before' processing
-sub generateInfoOrderingItem {
-	my ( $class, $name, $previous ) = @_;
-
-	# Check for the 'before' items which are 'after' the last item
-	if ( defined $previous ) {
-		for my $item (
-			sort { $a cmp $b }
-			grep {
-				   defined $infoProvider{$_}->{after}
-				&& $infoProvider{$_}->{after} eq $previous
-				&& defined $infoProvider{$_}->{before}
-				&& $infoProvider{$_}->{before} eq $name
-			} keys %infoProvider
-		) {
-			$class->generateInfoOrderingItem( $item, $previous );
-		}
-	}
-
-	# Now the before items which are just before this item
-	for my $item (
-		sort { $a cmp $b }
-		grep {
-			   !defined $infoProvider{$_}->{after}
-			&& defined $infoProvider{$_}->{before}
-			&& $infoProvider{$_}->{before} eq $name
-		} keys %infoProvider
-	) {
-		$class->generateInfoOrderingItem( $item, $previous );
-	}
-
-	# Add the item itself
-	push @infoOrdering, $infoProvider{$name};
-
-	# Now any items that are members of the group
-	for my $item (
-		sort { $a cmp $b }
-		grep {
-			   defined $infoProvider{$_}->{isa}
-			&& $infoProvider{$_}->{isa} eq $name
-		} keys %infoProvider
-	) {
-		$class->generateInfoOrderingItem( $item );
-	}
-
-	# Any 'after' items
-	for my $item (
-		sort { $a cmp $b }
-		grep {
-			   defined $infoProvider{$_}->{after}
-			&& $infoProvider{$_}->{after} eq $name
-			&& !defined $infoProvider{$_}->{before}
-		} keys %infoProvider
-	) {
-		$class->generateInfoOrderingItem( $item, $name );
-	}
-}
 
 sub infoContributors {
 	my ( $client, $url, $track, $remoteMeta ) = @_;

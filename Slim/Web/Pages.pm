@@ -29,6 +29,8 @@ use Slim::Web::Pages::EditPlaylist;
 use Slim::Web::Pages::Progress;
 use Slim::Utils::Progress;
 
+use Slim::Menu::SystemInfo;
+
 my $prefs = preferences('server');
 
 my $sqllog = logger('database.sql');
@@ -71,7 +73,24 @@ sub init {
 	Slim::Web::Pages::Playlist::init();
 	Slim::Web::Pages::History::init();
 	Slim::Web::Pages::Progress::init();
+
+	Slim::Menu::SystemInfo->init();
+	Slim::Web::HTTP::addPageFunction(qr/^systeminfo\.(?:htm|xml)/, sub {
+		my $client = shift;
+		my $params = shift;
+		
+		my $menu = Slim::Menu::SystemInfo->menu( $client );
+			
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			client => $client,
+			path   => 'systeminfo.html',
+			title  => 'SERVER_STATUS',
+			feed   => $menu,
+			args   => [ $client, $params, @_ ],
+		} );		
+	});
 }
+
 
 sub _lcPlural {
 	my ($class, $count, $singular, $plural) = @_;

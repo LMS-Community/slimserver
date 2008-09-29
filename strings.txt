@@ -14497,6 +14497,18 @@ INFORMATION_MENU_SERVER
 	SV	Server-information
 	ZH_CN	伺服器信息
 
+INFORMATION_MENU_SCAN
+	DA	Detaljer om musikscanning
+	DE	Details zum Musik-Scan
+	EN	Music Scan Details
+	ES	Detalles de examen de música
+	FI	Musiikkihaun tiedot
+	FR	Détails de l'analyse de la musique
+	IT	Dettagli analisi musica
+	NL	Details van muziekscan
+	NO	Detaljer om søk etter musikk
+	SV	Information om musiksökning
+
 INFORMATION_MENU_LIBRARY
 	CS	Statistiky archivu
 	DA	Statistik for musikbibliotek
