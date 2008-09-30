@@ -94,4 +94,20 @@
 	[% END %]
 [% END %]
 
+[% FOREACH item = info %]
+	[% UNLESS item.web.hide %]
+		[% WRAPPER setting title=item.name %]
+			[% IF item.type == 'redirect' && item.web.url %]
+				<a href="[% webroot %][% item.web.url %]?player=[% player | uri %]" [% IF item.web.target %]target="[% item.web.target %]"[% END %]>
+					[% (item.web.value || item.web.url) | html_line_break %]
+				</a>
+			[% ELSE %]
+				[% item.web.value | html_line_break %]
+			[% END %]
+		[% END %]
+	[% END %]
+[% END %]
+
+<p>&nbsp;</p>
+
 [% PROCESS settings/footer.html %]
