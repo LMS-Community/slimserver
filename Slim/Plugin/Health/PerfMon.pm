@@ -46,6 +46,11 @@ sub initPlugin {
 		parseCmdLine($::perfwarn);
 	}
 
+	Slim::Menu::SystemInfo->registerInfoProvider( health => (
+		after => 'bottom',
+		func  => \&systemInfoMenu,
+	) );
+
 	$class->next::method(@_);
 }
 
@@ -326,5 +331,26 @@ sub handleGraphs {
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/Health/graphs.html",$params);
 }
+
+sub systemInfoMenu {
+	my $client = shift || return;
+	
+	return {
+		type      => 'redirect',
+		name      => Slim::Plugin::Health::NetTest::displayName(),
+
+		player => {
+			mode => 'Slim::Plugin::Health::Plugin',
+			# XMLBrowser insist's in having a modeParams value
+			modeParams => {}
+		},
+
+		web  => {
+			hide => 1
+		},
+	};
+}
+
+
 
 1;

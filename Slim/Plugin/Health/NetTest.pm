@@ -34,6 +34,9 @@ sub initPlugin {
     Slim::Control::Request::addDispatch(['nettest', 'stop'], [1, 1, 0, \&cliStopTest]);
 
 	$class->next::method(@_);
+
+	# we don't want this plugin to show up in the Extras menu
+	Slim::Buttons::Home::delSubMenu($class->playerMenu, $class->displayName);
 }
 
 our %functions = (
