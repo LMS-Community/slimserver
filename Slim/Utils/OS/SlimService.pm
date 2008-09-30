@@ -48,6 +48,8 @@ sub dirsFor {
 	# we don't want these values to return a value
 	elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
 	
+	}
+	
 	else {
 		push @dirs, catdir( $Bin, $dir );
 	}
