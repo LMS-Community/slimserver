@@ -59,10 +59,10 @@ sub registerDefaultInfoProviders {
 			func  => \&infoSqueezeNetwork,
 		) );
 	
-#		$class->registerInfoProvider( player => (
-#			after => 'squeezenetwork',
-#			func  => \&infoPlayer,
-#		) );
+		$class->registerInfoProvider( player => (
+			after => 'squeezenetwork',
+			func  => \&infoPlayer,
+		) );
 	}
 	
 	else {		
