@@ -24,18 +24,20 @@
 
 [% PROCESS settings/header.html %]
 
+
 [% WRAPPER setting title="SERVER_STATUS" %]
 	<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
 [% END %]
 
+
 [% IF library %]
 	[% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
-		[% FOREACH item IN library %]
-			<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
+		[% FOREACH item IN library.items %]
+			<p>[% item.name %]</p>
 		[% END %]
 	[% END %]
 [% END %]
-		
+
 [% IF progress %]
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]
 		[% progress %]
@@ -53,53 +55,46 @@
 		<p>[% versionInfoString %]</p>
 	[% END %]
 
-	[% FOREACH item IN server %]
-		[% IF item.items.1 %]
-			<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
-		[% END %]
+	[% FOREACH item IN server.items %]
+		<p>[% item.name %]</p>
 	[% END %]
 [% END %]
-		
-[% IF clients %]
-	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" %]
-		[% FOREACH client = sorted %]
-		<div style="padding-bottom: 10px;">
-			[% FOREACH item IN clients.$client %]
-				[% IF item.items.1 %]
-				<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
+
+
+[% IF players %]
+	[% WRAPPER setting title = "INFORMATION_MENU_PLAYER"; END %]
+	[% FOREACH client = players.items %]
+		[% WRAPPER setting title = client.name %]
+			[% FOREACH item IN client.web.items; item.key %]
+				[% IF item.values.0 %]
+					<p>[% item.keys.0 | string %][% "COLON" | string %] [% item.values.0 %]</p>
 				[% END %]
 			[% END %]
-		</div>
-		[% END %]
-	[% END %]
-[% END %]
-	
-[% IF controllers %]
-	[% WRAPPER setting title="INFORMATION_MENU_CONTROLLER" %]
-		[% FOREACH controller = controllers %]
 		[% END %]
 	[% END %]
 [% END %]
 
-[% FOREACH item IN folders %]
-	[% IF item.items.1 %]
+
+[% WRAPPER setting title = "FOLDERS"; END %]
+[% FOREACH item IN folders.web.items %]
+	[% IF item.values.0 %]
 		[% WRAPPER settingSection %]
 			<div class="settingGroup">
-				<div class="prefHead">[% item.items.0 | string %]</div>
-				<div class="prefs">[% item.items.1 %]</div>
+				<div class="prefHead">[% item.keys.0 | string %]</div>
+				<div class="prefs">[% item.values.0 %]</div>
 			</div>
 		[% END %]
 	[% END %]
 [% END %]
 
-[% FOREACH item IN logs %]
-	[% IF item.items.1 %]
-		[% WRAPPER setting title="SETUP_DEBUG_${item.items.0}_LOG" desc="SETUP_DEBUG_${item.items.0}_LOG_DESC" %]
+[% FOREACH item IN logs.web.items %]
+	[% IF item.values.0 %]
+		[% WRAPPER setting title="SETUP_DEBUG_${item.keys.0}_LOG" desc="SETUP_DEBUG_${item.keys.0}_LOG_DESC" %]
 			<div class="prefDesc">
-				<a href="/[% item.items.0 | lower %].log" target="log">[% item.items.1 %]</a>
-				(<a href="/[% item.items.0 | lower %].log?lines=100" target="log">100</a>,
-				<a href="/[% item.items.0 | lower %].log?lines=500" target="log">500</a>,
-				<a href="/[% item.items.0 | lower %].log?lines=1000" target="log">1000</a>
+				<a href="/[% item.keys.0 | lower %].log" target="log">[% item.values.0 %]</a>
+				(<a href="/[% item.keys.0 | lower %].log?lines=100" target="log">100</a>,
+				<a href="/[% item.keys.0 | lower %].log?lines=500" target="log">500</a>,
+				<a href="/[% item.keys.0 | lower %].log?lines=1000" target="log">1000</a>
 				[% "LINES" | string %])
 			</div>
 		[% END %]

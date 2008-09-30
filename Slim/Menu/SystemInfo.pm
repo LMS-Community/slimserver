@@ -318,7 +318,7 @@ sub infoLogs {
 		items => [],
 		
 		web   => {
-			name  => 'FOLDERS',
+			name  => 'SETUP_DEBUG_SERVER_LOG',
 			items => $logs,
 		}
 	};
