@@ -13,6 +13,7 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Prefs;
+use Slim::Menu::SystemInfo;
 
 sub name {
 	return 'SERVER_STATUS';

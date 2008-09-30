@@ -26,7 +26,9 @@
 
 
 [% WRAPPER setting title="SERVER_STATUS" %]
-	<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
+	[% FOREACH item IN server.items %]
+		<p>[% item.name %]</p>
+	[% END %]
 [% END %]
 
 
@@ -50,19 +52,10 @@
 [% END %]
 
 
-[% WRAPPER setting title="INFORMATION_MENU_SERVER" %]
-	[% IF versionInfoString %]
-		<p>[% versionInfoString %]</p>
-	[% END %]
-
-	[% FOREACH item IN server.items %]
-		<p>[% item.name %]</p>
-	[% END %]
-[% END %]
-
-
 [% IF players %]
-	[% WRAPPER setting title = "INFORMATION_MENU_PLAYER"; END %]
+	[% WRAPPER setting title = "INFORMATION_MENU_PLAYER" %]
+		<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
+	[% END %]
 	[% FOREACH client = players.items %]
 		[% WRAPPER setting title = client.name %]
 			[% FOREACH item IN client.web.items; item.key %]
