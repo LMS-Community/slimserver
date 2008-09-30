@@ -5181,6 +5181,11 @@ FOLDER
 	SV	Mapp
 	ZH_CN	文件夹
 
+FOLDERS
+	DE	Ordner
+	EN	Folders
+	FR	Dossiers
+
 YES
 	DA	Ja
 	DE	Ja

@@ -33,7 +33,7 @@ use Slim::Utils::Strings qw(cstring);
 my $log = logger('menu.trackinfo');
 
 
-sub title {
+sub name {
 	return 'SONG_INFO';
 }
 
@@ -1226,56 +1226,5 @@ sub _mixerItemHandler {
 		return undef, undef;
 	}
 }
-
-=head1 CREATING MENUS
-
-Menus must be returned in the internal hashref format used for representing OPML.  Each
-provider may also return more than one menu item by returning an arrayref.
-
-=head2 EXAMPLES
-
-=over 4
-
-=item Text item, no actions
-
-  {
-      type => 'text',
-      name => 'Rating: *****',
-  }
-
-=item Item with submenu containing one text item
-
-  {
-      name => 'More Info',
-      items => [
-          {
-	          type => 'text',
-	          name => 'Bitrate: 128kbps',
-	      },
-	  ],
-  }
-
-=item Item using a callback to perform some action in a plugin
-
-  {
-      name        => 'Perform Some Action',
-      url         => \&myAction,
-      passthrough => [ $foo, $bar ], # optional
-  }
-
-  sub myAction {
-      my ( $client, $callback, $foo, $bar ) = @_;
-
-      my $menu = {
-          type => 'text',
-          name => 'Results: ...',
-      };
-	
-      return $callback->( $menu );
-  }
-
-=back
-
-=cut
 
 1;

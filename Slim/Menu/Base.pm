@@ -33,8 +33,8 @@ my %infoOrdering;
 sub init {
 	my $class = shift;
 	
-	$infoProvider{$class->title} = {};
-	$infoOrdering{$class->title} = [];
+	$infoProvider{$class->name} = {};
+	$infoOrdering{$class->name} = [];
 
 	# Our information providers are pluggable, call the 
 	# registerInfoProvider function to extend the details
@@ -102,10 +102,10 @@ sub registerInfoProvider {
 		$details{isa} = 'middle';
 	}
 	
-	$infoProvider{$class->title}->{$name} = \%details;
+	$infoProvider{$class->name}->{$name} = \%details;
 
 	# Clear the array to force it to be rebuilt
-	$infoOrdering{$class->title} = [];
+	$infoOrdering{$class->name} = [];
 }
 
 =head2 Slim::Menu::SystemInfo->deregisterInfoProvider( $name )
@@ -118,10 +118,10 @@ but you should only do this if you know what you are doing.
 sub deregisterInfoProvider {
 	my ( $class, $name ) = @_;
 	
-	delete $infoProvider{$class->title}->{$name};
+	delete $infoProvider{$class->name}->{$name};
 
 	# Clear the array to force it to be rebuilt
-	$infoOrdering{$class->title} = [];
+	$infoOrdering{$class->name} = [];
 }
 
 sub menu {
@@ -133,7 +133,7 @@ sub menu {
 	# Now run the order, which generates all the items we need
 	my $items = [];
 	
-	for my $ref ( @{ $infoOrdering{$class->title} } ) {
+	for my $ref ( @{ $infoOrdering{$class->name} } ) {
 		# Skip items with a defined parent, they are handled
 		# as children below
 		next if $ref->{parent};
@@ -144,7 +144,7 @@ sub menu {
 		# Look for children of this item
 		my @children = grep {
 			$_->{parent} && $_->{parent} eq $ref->{name}
-		} @{ $infoOrdering{$class->title} };
+		} @{ $infoOrdering{$class->name} };
 		
 		if ( @children ) {
 			my $subitems = $items->[-1]->{items} = [];
@@ -156,7 +156,7 @@ sub menu {
 	}
 	
 	return {
-		name  => $class->title,
+		name  => $class->name,
 		type  => 'opml',
 		items => $items,
 	};
@@ -197,7 +197,7 @@ sub addItem {
 };
 
 
-sub title {
+sub name {
 	return '';
 }
 
@@ -217,11 +217,11 @@ sub generateInfoOrderingItem {
 		for my $item (
 			sort { $a cmp $b }
 			grep {
-				   defined $infoProvider{$class->title}->{$_}->{after}
-				&& $infoProvider{$class->title}->{$_}->{after} eq $previous
-				&& defined $infoProvider{$class->title}->{$_}->{before}
-				&& $infoProvider{$class->title}->{$_}->{before} eq $name
-			} keys %{ $infoProvider{$class->title} }
+				   defined $infoProvider{$class->name}->{$_}->{after}
+				&& $infoProvider{$class->name}->{$_}->{after} eq $previous
+				&& defined $infoProvider{$class->name}->{$_}->{before}
+				&& $infoProvider{$class->name}->{$_}->{before} eq $name
+			} keys %{ $infoProvider{$class->name} }
 		) {
 			$class->generateInfoOrderingItem( $item, $previous );
 		}
@@ -231,25 +231,25 @@ sub generateInfoOrderingItem {
 	for my $item (
 		sort { $a cmp $b }
 		grep {
-			   !defined $infoProvider{$class->title}->{$_}->{after}
-			&& defined $infoProvider{$class->title}->{$_}->{before}
-			&& $infoProvider{$class->title}->{$_}->{before} eq $name
-		} keys %{ $infoProvider{$class->title} }
+			   !defined $infoProvider{$class->name}->{$_}->{after}
+			&& defined $infoProvider{$class->name}->{$_}->{before}
+			&& $infoProvider{$class->name}->{$_}->{before} eq $name
+		} keys %{ $infoProvider{$class->name} }
 	) {
 		$class->generateInfoOrderingItem( $item, $previous );
 	}
 
 	# Add the item itself
-	$infoOrdering{$class->title} ||= [];
-	push @{ $infoOrdering{$class->title} }, $infoProvider{$class->title}->{$name};
+	$infoOrdering{$class->name} ||= [];
+	push @{ $infoOrdering{$class->name} }, $infoProvider{$class->name}->{$name};
 
 	# Now any items that are members of the group
 	for my $item (
 		sort { $a cmp $b }
 		grep {
-			   defined $infoProvider{$class->title}->{$_}->{isa}
-			&& $infoProvider{$class->title}->{$_}->{isa} eq $name
-		} keys %{ $infoProvider{$class->title} }
+			   defined $infoProvider{$class->name}->{$_}->{isa}
+			&& $infoProvider{$class->name}->{$_}->{isa} eq $name
+		} keys %{ $infoProvider{$class->name} }
 	) {
 		$class->generateInfoOrderingItem( $item );
 	}
@@ -258,10 +258,10 @@ sub generateInfoOrderingItem {
 	for my $item (
 		sort { $a cmp $b }
 		grep {
-			   defined $infoProvider{$class->title}->{$_}->{after}
-			&& $infoProvider{$class->title}->{$_}->{after} eq $name
-			&& !defined $infoProvider{$class->title}->{$_}->{before}
-		} keys %{ $infoProvider{$class->title} }
+			   defined $infoProvider{$class->name}->{$_}->{after}
+			&& $infoProvider{$class->name}->{$_}->{after} eq $name
+			&& !defined $infoProvider{$class->name}->{$_}->{before}
+		} keys %{ $infoProvider{$class->name} }
 	) {
 		$class->generateInfoOrderingItem( $item, $name );
 	}
@@ -269,15 +269,15 @@ sub generateInfoOrderingItem {
 
 sub getInfoProvider {
 	my $class = shift;
-	return $infoProvider{$class->title};
+	return $infoProvider{$class->name};
 }
 
 sub getInfoOrdering {
 	my $class = shift;
 	
-	if ( !scalar @{ $infoOrdering{$class->title} || [] } ) {
+	if ( !scalar @{ $infoOrdering{$class->name} || [] } ) {
 		
-		$log->debug(sprintf("Creating order for %s menu", $class->title));
+		$log->debug(sprintf("Creating order for %s menu", $class->name));
 		
 		# We don't know what order the entries should be in,
 		# so work that out.
@@ -286,7 +286,58 @@ sub getInfoOrdering {
 		$class->generateInfoOrderingItem( 'bottom' );
 	}
 	
-	return $infoOrdering{$class->title};
+	return $infoOrdering{$class->name};
 }
+
+=head1 CREATING MENUS
+
+Menus must be returned in the internal hashref format used for representing OPML.  Each
+provider may also return more than one menu item by returning an arrayref.
+
+=head2 EXAMPLES
+
+=over 4
+
+=item Text item, no actions
+
+  {
+      type => 'text',
+      name => 'Rating: *****',
+  }
+
+=item Item with submenu containing one text item
+
+  {
+      name => 'More Info',
+      items => [
+          {
+	          type => 'text',
+	          name => 'Bitrate: 128kbps',
+	      },
+	  ],
+  }
+
+=item Item using a callback to perform some action in a plugin
+
+  {
+      name        => 'Perform Some Action',
+      url         => \&myAction,
+      passthrough => [ $foo, $bar ], # optional
+  }
+
+  sub myAction {
+      my ( $client, $callback, $foo, $bar ) = @_;
+
+      my $menu = {
+          type => 'text',
+          name => 'Results: ...',
+      };
+	
+      return $callback->( $menu );
+  }
+
+=back
+
+=cut
 
 1;
