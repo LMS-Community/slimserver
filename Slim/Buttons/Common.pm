@@ -47,9 +47,6 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Buttons::Block;
-use Slim::Buttons::SqueezeNetwork;
-use Slim::Buttons::XMLBrowser;
-use Slim::Buttons::Volume;
 use Slim::Utils::Prefs;
 
 if ( main::SLIM_SERVICE ) {
