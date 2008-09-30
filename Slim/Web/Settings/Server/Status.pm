@@ -36,6 +36,16 @@ sub handler {
 	$paramRef->{server}  = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_SERVER'));
 	$paramRef->{library} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_LIBRARY'));
 	$paramRef->{players} = _extractGroup($paramRef, cstring($client, 'INFORMATION_MENU_PLAYER'));
+
+	# we only have one player	
+	if ($client && !$paramRef->{players}) {
+		$paramRef->{players} = {
+			items => [
+				 _extractGroup($paramRef, $client->name) 
+			]
+		};
+	}
+
 	$paramRef->{folders} = _extractGroup($paramRef, cstring($client, 'FOLDERS'));
 	$paramRef->{logs}    = _extractGroup($paramRef, cstring($client, 'SETUP_DEBUG_SERVER_LOG'));
 
