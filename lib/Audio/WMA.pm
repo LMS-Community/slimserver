@@ -950,6 +950,8 @@ sub _RIFFwFormatTagLookup {
 		0x0006 => 'Microsoft A-Law',
 		0x0007 => 'Microsoft mu-Law',
 		0x0008 => 'Microsoft DTS',
+		0x000A => 'Windows Media Audio 9 Voice',
+		0x000B => 'Microsoft Windows Media RT Voice Audio',
 		0x0010 => 'OKI ADPCM',
 		0x0011 => 'Intel DVI/IMA ADPCM',
 		0x0012 => 'Videologic MediaSpace ADPCM',
