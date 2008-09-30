@@ -213,7 +213,7 @@ sub init {
 		# Server Settings - Security
 		'filterHosts'           => 0,
 		'allowedHosts'          => sub { join(',', Slim::Utils::Network::hostAddr()) },
-		'csrfProtectionLevel'   => 1,
+		'csrfProtectionLevel'   => 0,
 		'authorize'             => 0,
 		'username'              => '',
 		'password'              => '',
