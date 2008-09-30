@@ -103,6 +103,23 @@ sub timeF {
 	return Slim::Utils::Unicode::utf8decode_locale($time);
 }
 
+=head2 timeFormat( $time )
+
+Returns a string of the time in hh:mm:ss - not daytime, to be used as total playtime etc.
+
+=cut
+
+sub timeFormat {
+	my $time = shift || 0;
+
+	sprintf(
+	    "%d:%02d:%02d",
+	    ($time / 3600),
+	    ($time / 60) % 60,
+	    $time % 60,
+	);
+}
+
 =head2 fracSecToMinSec( $seconds )
 
 Turns seconds into min:sec

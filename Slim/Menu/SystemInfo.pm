@@ -21,15 +21,24 @@ info menu to all UIs and allows plugins to register additional menu items.
 =cut
 
 use strict;
+use Config;
 
 use base qw(Slim::Menu::Base);
 
+use Slim::Player::Client;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(cstring);
+use Slim::Utils::Network;
 
 my $log = logger('menu.systeminfo');
 my $prefs = preferences('server');
+
+# some SN values
+my $_ss_version = 'r0';
+my $_sn_version = 'r0';
+my $_versions_mtime = 0;
+my $_versions_last_checked = 0;
 
 sub name {
 	return 'INFORMATION';
@@ -44,30 +53,44 @@ sub registerDefaultInfoProviders {
 
 	$class->SUPER::registerDefaultInfoProviders();
 	
-	$class->registerInfoProvider( server => (
-		after => 'top',
-		func  => \&infoServer,
-	) );
-
-	$class->registerInfoProvider( library => (
-		after => 'server',
-		func  => \&infoLibrary,
-	) );
+	if ( main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( squeezenetwork => (
+			after => 'top',
+			func  => \&infoSqueezeNetwork,
+		) );
 	
-	$class->registerInfoProvider( players => (
-		after => 'library',
-		func  => \&infoPlayers,
-	) );
+#		$class->registerInfoProvider( player => (
+#			after => 'squeezenetwork',
+#			func  => \&infoPlayer,
+#		) );
+	}
 	
-	$class->registerInfoProvider( dirs => (
-		after => 'players',
-		func  => \&infoDirs,
-	) );
+	else {		
+		$class->registerInfoProvider( server => (
+			after => 'top',
+			func  => \&infoServer,
+		) );
 	
-	$class->registerInfoProvider( logs => (
-		after => 'dirs',
-		func  => \&infoLogs,
-	) );
+		$class->registerInfoProvider( library => (
+			after => 'server',
+			func  => \&infoLibrary,
+		) );
+		
+		$class->registerInfoProvider( players => (
+			after => 'library',
+			func  => \&infoPlayers,
+		) );
+		
+		$class->registerInfoProvider( dirs => (
+			after => 'players',
+			func  => \&infoDirs,
+		) );
+		
+		$class->registerInfoProvider( logs => (
+			after => 'dirs',
+			func  => \&infoLogs,
+		) );
+	}
 	
 }
 
@@ -82,13 +105,14 @@ sub infoPlayers {
 		items => []
 	};
 	
-	for my $player (Slim::Player::Client::clients()) {
+	for my $player (main::SLIM_SERVICE ? qw($client) : Slim::Player::Client::clients()) {
 		
 		my $info = [
 #			{ INFORMATION_PLAYER_NAME_ABBR       => $player->name },
 			{ INFORMATION_PLAYER_MODEL           => Slim::Buttons::Information::playerModel($player) },
 			{ INFORMATION_FIRMWARE_ABBR          => $player->revision },
-			{ INFORMATION_PLAYER_IP              => $player->ipport },
+			{ INFORMATION_PLAYER_IP              => $player->ip },
+			{ INFORMATION_PLAYER_PORT            => $player->port },
 			{ INFORMATION_PLAYER_MAC             => $player->macaddress },
 			{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $player->signalStrength },
 			{ INFORMATION_PLAYER_VOLTAGE         => $player->voltage },
@@ -166,7 +190,7 @@ sub infoLibrary {
 			{
 				type => 'text',
 				name => cstring($client, 'INFORMATION_TIME') . cstring($client, 'COLON') . ' '
-							. Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime),
+							. Slim::Utils::DateTime::timeFormat(Slim::Schema->totalTime),
 			},
 		],
 
@@ -180,44 +204,74 @@ sub infoLibrary {
 
 sub infoServer {
 	my $client = shift;
-	
+		
 	my $osDetails = Slim::Utils::OSDetect::details();
-	my @versions = Slim::Utils::Misc::settingsDiagString();
 
 	my $item = {
 		name => cstring($client, 'INFORMATION_MENU_SERVER'),
-		items => [],
-	};
-	
-	foreach (Slim::Utils::Misc::settingsDiagString()) {
-		push @{ $item->{items} }, {
-			type => 'text',
-			name => $_,
-		}
-	}
-	
-	push @{ $item->{items} }, {
-		type => 'text',
-		name => cstring($client, 'INFORMATION_ARCHITECTURE') . cstring($client, 'COLON') . ' '
-					. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
-	}, 
-	
-	{
-		type => 'text',
-		name => cstring($client, 'INFORMATION_HOSTNAME') . cstring($client, 'COLON') . ' '
-					. Slim::Utils::Network::hostName,
-	}, 
-	
-	{
-		type => 'text',
-		name => cstring($client, 'INFORMATION_SERVER_PORT') . cstring($client, 'COLON') . ' '
-					. $prefs->get('httpport'),
-	}, 
-	
-	{
-		type => 'text',
-		name => cstring($client, 'INFORMATION_CLIENTS') . cstring($client, 'COLON') . ' '
-					. Slim::Player::Client::clientCount,
+		items => [
+			{
+				type => 'text',
+				name => sprintf("%s%s %s - %s @ %s",
+							cstring($client, 'SERVER_VERSION'),
+							cstring($client, 'COLON'),
+							$::VERSION,
+							$::REVISION,
+							$::BUILDDATE),
+			},
+			
+			{
+				type => 'text',
+				name => cstring($client, 'INFORMATION_HOSTNAME') . cstring($client, 'COLON') . ' '
+							. Slim::Utils::Network::hostName(),
+			}, 
+			
+			{
+				type => 'text',
+				name => cstring($client, 'SERVER_IP_ADDRESS') . cstring($client, 'COLON') . ' '
+							. Slim::Utils::Network::serverAddr(),
+			}, 
+			
+			{
+				type => 'text',
+				name => cstring($client, 'INFORMATION_SERVER_HTTP') . cstring($client, 'COLON') . ' '
+							. $prefs->get('httpport'),
+			}, 
+		
+			{
+				type => 'text',
+				name => sprintf("%s%s %s - %s - %s ", 
+							cstring($client, 'INFORMATION_OPERATINGSYSTEM'),
+							cstring($client, 'COLON'),
+							$osDetails->{'osName'},
+							$prefs->get('language'),
+							Slim::Utils::Unicode::currentLocale()),
+			},
+			
+			{
+				type => 'text',
+				name => cstring($client, 'INFORMATION_ARCHITECTURE') . cstring($client, 'COLON') . ' '
+							. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
+			},
+			
+			{
+				type => 'text',
+				name => cstring($client, 'PERL_VERSION') . cstring($client, 'COLON') . ' '
+							. $Config{'version'} . ' - ' . $Config{'archname'},
+			},
+
+			{
+				type => 'text',
+				name => cstring($client, 'MYSQL_VERSION') . cstring($client, 'COLON') . ' '
+							. Slim::Utils::MySQLHelper->mysqlVersionLong( Slim::Schema->storage->dbh ),
+			},
+
+			{
+				type => 'text',
+				name => cstring($client, 'INFORMATION_CLIENTS') . cstring($client, 'COLON') . ' '
+							. Slim::Player::Client::clientCount,
+			},
+		]
 	};
 
 	return $item;
@@ -282,3 +336,83 @@ sub infoLogs {
 	
 	return $item;
 }
+
+sub infoSqueezeNetwork {
+	my $client = shift;
+	my $item;
+	
+	if ( main::SLIM_SERVICE ) {
+
+		my $time = time();
+
+		if ( ($time - $_versions_last_checked) > 60 ) {
+			$_versions_last_checked = $time;
+
+			my @stats = stat('/etc/sn/versions');
+			my $mtime = $stats[9] || -1;
+
+			if ( $mtime != $_versions_mtime ) {
+				$_versions_mtime = $mtime;
+
+				my $ok = open(my $vfile, '<', '/etc/sn/versions');
+				
+				if ($ok) {
+					
+					while(<$vfile>) {
+						chomp;
+						next unless /^(S[NS]):([^:]+)$/;
+						$_sn_version = $2 if $1 eq 'SN';
+
+						# SS version is only read once because this instance may
+						# be running an older version than the server has
+						if ( $_ss_version eq 'r0' ) {
+							$_ss_version = $2 if $1 eq 'SS';
+						}
+					}
+					
+					close($vfile);
+				}
+			}
+		}
+
+		my $config = SDI::Util::SNConfig::get_config();
+		my $dcname = $config->{dcname};
+
+		$item = {
+			name  => cstring($client, 'INFORMATION_MENU_SERVER'),
+			items => [
+				{
+					type => 'text',
+					name => sprintf('%s SS%s %s, SN%s %s',
+						cstring($client, 'VERSION'),
+						cstring($client, 'COLON'),
+						$_ss_version,
+						cstring($client, 'COLON'),
+						$_sn_version					
+					)
+				},
+				
+				{
+					type => 'text',
+					name => cstring($client, 'DATACENTER') . cstring($client, 'COLON') . ' '					
+								. $dcname eq 'sv'  ? 'Sunnyvale, CA'
+								: $dcname eq 'dc'  ? 'Ashburn, VA'
+								: $dcname eq 'de'  ? 'Frankfurt, Germany'
+								: $dcname eq 'okc' ? 'Oklahoma City (Test)'
+								: $dcname eq 'dfw' ? 'Dallas (Test)'
+								:                    'Unknown'					
+				},
+				
+				{
+					type => 'text',
+					name => cstring($client, 'SN_ACCOUNT') . cstring($client, 'COLON') . ' ' . $client->playerData->userid->email,	  
+				},
+			]
+		};
+		
+	}
+	
+	return $item;
+}
+
+1;

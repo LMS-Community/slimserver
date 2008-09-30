@@ -522,7 +522,6 @@ sub forgetClient {
 		# Clean up global variables used in various modules
 		Slim::Buttons::Common::forgetClient($client);
 		Slim::Buttons::Home::forgetClient($client);
-		Slim::Buttons::Information::forgetClient($client);
 		Slim::Buttons::Input::Choice::forgetClient($client);
 		Slim::Buttons::Playlist::forgetClient($client);
 		Slim::Buttons::Search::forgetClient($client);

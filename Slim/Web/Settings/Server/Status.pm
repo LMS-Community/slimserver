@@ -47,7 +47,7 @@ sub handler {
 			{INFORMATION_ALBUMS  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album'))},
 			{INFORMATION_ARTISTS => Slim::Utils::Misc::delimitThousands(Slim::Schema->rs('Contributor')->browse->count)},
 			{INFORMATION_GENRES  => Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre'))},
-			{INFORMATION_TIME    => Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime)},
+			{INFORMATION_TIME    => Slim::Utils::DateTime::timeFormat(Slim::Schema->totalTime)},
 		];
 	}
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning();

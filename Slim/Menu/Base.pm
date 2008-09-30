@@ -156,7 +156,7 @@ sub menu {
 	}
 	
 	return {
-		name  => $class->name,
+		name  => cstring($client, $class->name),
 		type  => 'opml',
 		items => $items,
 	};

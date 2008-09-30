@@ -14971,6 +14971,10 @@ INFORMATION_HOSTNAME
 	SV	Värdnamn
 	ZH_CN	主机名字
 
+INFORMATION_OPERATINGSYSTEM
+	DE	Betriebssystem
+	EN	Operating system
+
 INFORMATION_HOSTIP
 	DA	Værtens IP-adresse
 	DE	IP-Adresse des Host
