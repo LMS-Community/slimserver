@@ -471,8 +471,14 @@ sub parseWMAHeader {
 			next unless defined $stream->{streamNumber};
 
 			# Skip non-audio streams or audio codecs we can't play
-			# XXX: Need to find a list of all the codecs supported by the decoder
-			#next unless $stream->{audio} && $stream->{audio}->{codec} eq 'Windows Media Audio V7 / V8 / V9';
+			# The firmware supports 2 codecs:
+			# Windows Media Audio V7 / V8 / V9 (0x0161)
+			# Windows Media Audio 9 Voice (0x000A)
+			next unless $stream->{audio} && (
+				$stream->{audio}->{codec} eq 'Windows Media Audio V7 / V8 / V9'
+				||
+				$stream->{audio}->{codec} eq 'Windows Media Audio 9 Voice'
+			);
 		
 			my $streamBitrate = int( $stream->{bitrate} / 1000 );
 		
