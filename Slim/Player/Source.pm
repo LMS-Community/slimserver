@@ -83,7 +83,7 @@ sub songTime {
 	# All the remaining code is to deal with players which do not report songElapsedSeconds,
 	# specifically SliMP3s and SB1s; maybe also web clients?
 
-	my $byterate	  	= ($song->bitrate() || 0)/8 || ($duration ? ($song->{totalbytes} / $duration) : 0);
+	my $byterate	  	= ($song->streambitrate() || 0)/8 || ($duration ? ($song->{totalbytes} / $duration) : 0);
 	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
 	my $fullness	  	= $client->bufferFullness() || 0;
 		
@@ -550,43 +550,6 @@ sub _wakeupOnReadable {
 
 use constant FRAME_BYTE_OFFSET => 0;
 use constant FRAME_TIME_OFFSET => 1;
-
-sub streamBitrate {
-	my $controller = $_[0]->controller();
-	my $client = $controller->master();
-
-	# Only do this for sync play, although there is no real reason not to do it otherwise
-	# Need to change this if we allow clients to join in mid song.
-	if( !$client->isSynced(1) ) {
-		return 0;
-	}
-
-	my $song = $controller->streamingSong();
-
-	# already know the answer
-	my $rate = $song->{'bitrate'};
-	if ( defined $rate ) {
-		return $rate;
-	}
-
-	my $format = $client->streamformat();
-	
-	if ( $format eq 'mp3' ) {
-		my $frames = $controller->frameData();
-		if ( @{$frames} > 1 ) {
-			$rate = $frames->[-1][FRAME_BYTE_OFFSET] / $frames->[-1][FRAME_TIME_OFFSET] * 8;
-		}
-	}
-	elsif ( $format eq 'wav' ) {
-		# assume 44.1k, 16-bit, stereo
-		$rate = ($song->{'samplerate'} || 44100) * ($song->{'samplesize'} || 16) 
-				* ($song->{'channels'} || 2);
-		$song->{'bitrate'} = $rate; # save for later
-	}
-
-	return $rate;
-}
-
 
 sub resetFrameData {
 	my ($client) = @_;

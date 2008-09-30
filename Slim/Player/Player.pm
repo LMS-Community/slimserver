@@ -989,7 +989,7 @@ sub apparentStreamStartTime {
 		$timePlayed = Slim::Player::Source::findTimeForOffset($client, $bytesPlayed) or return;
 	}
 	elsif ( $format eq 'wav' ) {
-		$timePlayed = $bytesPlayed * 8 / (Slim::Player::Source::streamBitrate($client) or return);
+		$timePlayed = $bytesPlayed * 8 / ($client->streamingSong()->streambitrate() or return);
 	}
 	else {
 		return;
@@ -1071,13 +1071,7 @@ sub rebuffer {
 	
 	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
 	
-	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
-		# If bitrate-limiting is in effect, reduce threshold based on that bitrate
-		my $maxrate = Slim::Utils::Prefs::maxRate($client);
-		if ( $maxrate > 0 ) {
-			$bitrate = $maxrate;
-		}
-		
+	if ( my $bitrate = $song->streambitrate() ) {
 		$threshold = 5 * ( int($bitrate / 8) );
 	}
 	

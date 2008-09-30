@@ -373,15 +373,17 @@ sub open {
 				
 				$self->{'transcoded'} = 1;
 				
-				# Hack to set up stream bitrate for songTime for SliMP3/SB1
-				if ($format eq 'mp3') {
-					$self->{'bitrate'} = ($maxRate || 320) * 1000;
-				} elsif ($format eq 'wav' || $format eq 'aif') {
-					# Just assume standard rate
-					$self->{'bitrate'} = 44_100 * 16 * 2;
-				}
+				$self->{'streambitrate'} = guessBitrateFromFormat($format, $maxRate);
 			}
 
+			else {
+				# Something that does not appear to be a transcoded stream here, may actually
+				# be transcoded by the handler (eg, MMS)
+				if ($sock->can('getStreamBitrate')) {
+					$self->{'streambitrate'} = $sock->getStreamBitrate(Slim::Utils::Prefs::maxRate($client));
+				}
+			}
+			
 			$client->remoteStreamStartTime(Time::HiRes::time());
 			$client->pauseTime(0);
 
@@ -463,6 +465,23 @@ sub open {
 	$client->metaTitle(undef);
 	
 	return $streamControler;
+}
+
+# Static method
+sub guessBitrateFromFormat {
+	my ($format, $maxRate) = @_;
+	
+	# Hack to set up stream bitrate for songTime for SliMP3/SB1
+	# Also used when rebuffering, etc.
+	if ($format eq 'mp3') {
+		return ($maxRate || 320) * 1000;
+	} elsif ($format eq 'wav' || $format eq 'aif') {
+		# Just assume standard rate
+		return 44_100 * 16 * 2;
+	} elsif ($format eq 'flc') {
+		# Assume 50% compression at standard rate
+		return 44_100 * 16;
+	}
 }
 
 sub pluginData {

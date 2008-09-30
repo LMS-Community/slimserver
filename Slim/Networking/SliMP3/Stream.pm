@@ -155,7 +155,7 @@ sub pause {
 		if ($interval > MIN_DEVIATION_ADJUST) {
 			$interval -= 0.005;	# safety
 			# need to force drain of internal buffer
-			my $bitrate = Slim::Player::Source::streamBitrate($client) || 128000;
+			my $bitrate = $client->streamingSong()->streambitrate() || 128000;
 			$interval += 1000 * 8 / $bitrate;
 			$::d_stream && msg($client->id() ." actual interval: $interval \n");
 			$pauseUntil{$client} = Time::HiRes::time() + $interval;

@@ -16,6 +16,7 @@ use IO::Socket qw(:DEFAULT :crlf);
 
 use Slim::Formats::Playlists;
 use Slim::Player::Source;
+use Slim::Player::Song;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -75,6 +76,12 @@ sub new {
 	${*$self}{'contentType'} = $format;
 
 	return $self;
+}
+
+sub getStreamBitrate {
+	my ($self, $maxRate) = @_;
+	
+	return Slim::Player::Song::guessBitrateFromFormat(${*$self}{'contentType'}, $maxRate);
 }
 
 sub isRemote { 1 }
