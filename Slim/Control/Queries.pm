@@ -58,6 +58,98 @@ my $prefs = preferences('server');
 # Frequently used data can be cached in memory, such as the list of albums for Jive
 my $cache = {};
 
+
+sub alarmPlaylistsQuery {
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['alarm'], ['playlists']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client   = $request->client();
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $menuMode = $request->getParam('menu') || 0;
+	my $id       = $request->getParam('id');
+
+	my $playlists      = Slim::Utils::Alarm->getPlaylists($client);
+	my $alarm          = Slim::Utils::Alarm->getAlarm($client, $id) if $id;
+	my $currentSetting = $alarm ? $alarm->playlist() : '';
+
+	my @playlistChoices;
+	my $loopname = 'item_loop';
+	my $cnt = 0;
+	
+	my ($valid, $start, $end) = ( $menuMode ? (1, 0, scalar @$playlists) : $request->normalize(scalar($index), scalar($quantity), scalar @$playlists) );
+
+	for my $typeRef (@$playlists[$start..$end]) {
+		
+		my $type    = $typeRef->{type};
+		my @choices = ();
+		my $aref    = $typeRef->{items};
+		
+		for my $choice (@$aref) {
+
+			if ($menuMode) {
+				my $radio = ( 
+					( $currentSetting && $currentSetting eq $choice->{url} )
+					|| ( !defined $choice->{url} && !defined $currentSetting )
+				);
+
+				my $subitem = {
+					text    => $choice->{title},
+					radio   => $radio,
+					nextWindow => 'refreshOrigin',
+					actions => {
+						do => {
+							cmd    => [ 'alarm', 'update' ],
+							params => {
+								id          => $id,
+								playlisturl => $choice->{url} || 0, # send 0 for "current playlist"
+							},
+						},
+					},
+				};
+	
+				
+				if ($typeRef->{singleItem}) {
+					$subitem->{'nextWindow'} = 'refresh';
+				}
+				
+				push @choices, $subitem;
+			}
+			
+			else {
+				$request->addResultLoop($loopname, $cnt, 'category', $type);
+				$request->addResultLoop($loopname, $cnt, 'title', $choice->{title});
+				$request->addResultLoop($loopname, $cnt, 'url', $choice->{url});
+				$request->addResultLoop($loopname, $cnt, 'singleton', $typeRef->{singleItem} ? '1' : '0');
+				$cnt++;
+			}
+		}
+
+		if ( scalar(@choices) ) {
+
+			my $item = {
+				text      => $type,
+				offset    => 0,
+				count     => scalar(@choices),
+				item_loop => \@choices,
+			};
+			$request->setResultLoopHash($loopname, $cnt, $item);
+			
+			$cnt++;
+		}
+	}
+	
+	$request->addResult("offset", $start);
+	$request->addResult("count", scalar @$playlists);
+	$request->setStatusDone;
+}
+
 sub alarmsQuery {
 	my $request = shift;
 

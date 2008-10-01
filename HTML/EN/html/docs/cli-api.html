@@ -7532,6 +7532,74 @@ in the saved playlists folder.</p>
 	&lt;LF&gt;&quot;</p>
 </blockquote>
 
+<br><p id="alarm playlists">
+	<strong>
+		<code>
+			alarm playlists
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;alarm playlists&quot; returns all the playlists, sounds, favorites etc. available to alarms.
+</p>
+
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>Count</td>
+		<td>The number of items available</td>
+	</tr>
+	<tr>
+		<td><em>For each playlist:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>title</b></td>
+		<td>The item's name or title</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>category</b></td>
+		<td>The category under which the item is grouped (eg. Favorites, Natural Sounds etc.)</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>url</b></td>
+		<td>The item's URL, or the empty value as a placeholder for the current playlist.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>singleton</b></td>
+		<td>1 if the item is the only one in it's category, or 0 if there's more than one item.</td>
+	</tr>
+	
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+  		Request: &quot;alarm playlists 0 3&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;alarm playlists 0 100 category:The current playlist 
+		                                      title:Use Current Playlist 
+		                                      url:
+		                                      singleton:1 
+		                                      category:Favorites 
+		                                      title:Random%20Artists 
+		                                      url:randomplay://contributor 
+		                                      singleton:0 
+		                                      category:Favorites 
+		                                      title:Random%20Tracks 
+		                                      url:randomplay://track 
+		                                      singleton:0
+		                                      count:29
+		&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+
 
 <br><p id="alarms"><strong>
 	<code>&lt;playerid&gt; alarms &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code>
@@ -7605,14 +7673,18 @@ in the saved playlists folder.</p>
 		<td>URL of the alarm playlist, or &quot;CURRENT_PLAYLIST&quot;</td>
 	</tr>
 </table>
-<p>Example:</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-
-  <p>Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
-	time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000 
-	volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
-	&lt;LF&gt;&quot;</p>
+	<p>
+  		Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
+		time:3600 volume:50 url:randomplay://track dow:5 enabled:1 time:81000 
+		volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
+		&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 
