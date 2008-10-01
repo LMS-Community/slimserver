@@ -4008,9 +4008,9 @@ sub songinfoQuery {
                 						$request->addResultLoop($loopname, $chunkCount, 'window', $window);
 
 								my $actions = {
-						                # this is a dummy command...doesn't do anything but is required
+							                # this is a dummy command...doesn't do anything but is required
 									go =>   {
-                                               					 cmd    => ['playerinformation'],
+                                               					 cmd    => ['jivedummycommand'],
 							                         player => 0,
 									},
 								};

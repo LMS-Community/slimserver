@@ -40,6 +40,17 @@ my $_sn_version = 'r0';
 my $_versions_mtime = 0;
 my $_versions_last_checked = 0;
 
+sub init {
+	my $class = shift;
+	$class->SUPER::init();
+	
+	Slim::Control::Request::addDispatch(
+		[ 'systeminfo', 'items', '_index', '_quantity' ],
+		[ 0, 1, 1, \&cliQuery ]
+	);
+}
+
+
 sub name {
 	return 'INFORMATION';
 }
@@ -413,6 +424,15 @@ sub infoSqueezeNetwork {
 	}
 	
 	return $item;
+}
+
+sub cliQuery {
+	my $request = shift;
+	
+	my $client  = $request->client;
+	my $feed    = Slim::Menu::SystemInfo->menu( $client );
+
+	Slim::Buttons::XMLBrowser::cliQuery('systeminfo', $feed, $request );
 }
 
 1;
