@@ -988,6 +988,7 @@ sub userAgentString {
 
 =cut
 
+# XXXX - this sub is no longer used by SC core code, since system information is available in Slim::Menu::SystemInfo
 sub settingsDiagString {
 
 	my $osDetails = Slim::Utils::OSDetect::details();

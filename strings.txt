@@ -14800,6 +14800,10 @@ INFORMATION_ARCHITECTURE
 	NO	Plattformarkitektur
 	SV	Plattformsarkitektur
 
+INFORMATION_ARCHITECTURE_ABBR
+	DE	Plattform
+	EN	Platform
+
 INFORMATION_SERVER_IP
 	CS	IP adresa serveru
 	DA	Serverens IP-adresse
@@ -14815,6 +14819,9 @@ INFORMATION_SERVER_IP
 	NO	Serverens ip-adresse
 	SV	Serverns IP-adress
 	ZH_CN	服务器IP地址
+
+INFORMATION_SERVER_IP_ABBR
+	EN	IP
 
 INFORMATION_SERVER_PORT
 	CS	Číslo portu serveru
@@ -14846,6 +14853,10 @@ INFORMATION_SERVER_HTTP
 	NO	HTTP-serverens portnummer
 	SV	HTTP-serverns portnummer
 	ZH_CN	服务器HTTP端口号
+
+INFORMATION_SERVER_HTTP_ABBR
+	DE	HTTP-Port
+	EN	HTTP Port
 
 INFORMATION_ALBUMS
 	CS	Celkem alb
@@ -14974,6 +14985,9 @@ INFORMATION_HOSTNAME
 INFORMATION_OPERATINGSYSTEM
 	DE	Betriebssystem
 	EN	Operating system
+
+INFORMATION_OPERATINGSYSTEM_ABBR
+	EN	OS
 
 INFORMATION_HOSTIP
 	DA	Værtens IP-adresse

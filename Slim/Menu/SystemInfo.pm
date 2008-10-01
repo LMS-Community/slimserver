@@ -215,6 +215,9 @@ sub infoLibrary {
 
 sub infoServer {
 	my $client = shift;
+	my $tags   = shift;
+	
+	my $menu   = $tags->{menuMode};
 		
 	my $osDetails = Slim::Utils::OSDetect::details();
 
@@ -239,20 +242,20 @@ sub infoServer {
 			
 			{
 				type => 'text',
-				name => cstring($client, 'INFORMATION_SERVER_IP') . cstring($client, 'COLON') . ' '
+				name => cstring($client, 'INFORMATION_SERVER_IP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 							. Slim::Utils::Network::serverAddr(),
 			}, 
 			
 			{
 				type => 'text',
-				name => cstring($client, 'INFORMATION_SERVER_HTTP') . cstring($client, 'COLON') . ' '
+				name => cstring($client, 'INFORMATION_SERVER_HTTP' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 							. $prefs->get('httpport'),
 			}, 
 		
 			{
 				type => 'text',
 				name => sprintf("%s%s %s - %s - %s ", 
-							cstring($client, 'INFORMATION_OPERATINGSYSTEM'),
+							cstring($client, 'INFORMATION_OPERATINGSYSTEM' . ($menu ? '_ABBR' : '')),
 							cstring($client, 'COLON'),
 							$osDetails->{'osName'},
 							$prefs->get('language'),
@@ -261,7 +264,7 @@ sub infoServer {
 			
 			{
 				type => 'text',
-				name => cstring($client, 'INFORMATION_ARCHITECTURE') . cstring($client, 'COLON') . ' '
+				name => cstring($client, 'INFORMATION_ARCHITECTURE' . ($menu ? '_ABBR' : '')) . cstring($client, 'COLON') . ' '
 							. ($osDetails->{'osArch'} ? $osDetails->{'osArch'} : 'unknown'),
 			},
 			
