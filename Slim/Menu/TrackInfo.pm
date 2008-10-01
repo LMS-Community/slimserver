@@ -32,6 +32,20 @@ use Slim::Utils::Strings qw(cstring);
 
 my $log = logger('menu.trackinfo');
 
+sub init {
+	my $class = shift;
+	$class->SUPER::init();
+	
+	Slim::Control::Request::addDispatch(
+		[ 'trackinfo', 'items', '_index', '_quantity' ],
+		[ 1, 1, 1, \&cliQuery ]
+	);
+	
+	Slim::Control::Request::addDispatch(
+		[ 'trackinfo', 'playlist', '_method' ],
+		[ 1, 1, 1, \&cliQuery ]
+	);
+}
 
 sub name {
 	return 'SONG_INFO';
@@ -1225,6 +1239,52 @@ sub _mixerItemHandler {
 	} else {
 		return undef, undef;
 	}
+}
+
+sub cliQuery {
+	my $request = shift;
+	
+	my $client         = $request->client;
+	my $url            = $request->getParam('url');
+	my $trackId        = $request->getParam('track_id');
+	my $menuMode       = $request->getParam('menu') || 0;
+	my $menuContext    = $request->getParam('context') || 'normal';
+	my $playlist_index = defined( $request->getParam('playlist_index') ) ?  $request->getParam('playlist_index') : undef;
+	
+
+	my $tags = {
+		menuMode      => $menuMode,
+		menuContext   => $menuContext,
+		playlistIndex => $playlist_index,
+	};
+
+	unless ( $url || $trackId ) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	my $feed;
+	
+	# Protocol Handlers can define their own track info OPML menus
+	if ( $url ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('trackInfoURL') ) {
+			$feed = $handler->trackInfoURL( $client, $url );
+		}
+	}
+	
+	if ( !$feed ) {
+		# Default menu
+		if ( $url ) {
+			$feed = Slim::Menu::TrackInfo->menu( $client, $url, undef, $tags );
+		}
+		else {
+			my $track = Slim::Schema->find( Track => $trackId );
+			$feed     = Slim::Menu::TrackInfo->menu( $client, $track->url, $track, $tags );
+		}
+	}
+	
+	Slim::Buttons::XMLBrowser::cliQuery( 'trackinfo', $feed, $request );
 }
 
 1;
