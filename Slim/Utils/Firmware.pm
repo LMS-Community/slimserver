@@ -45,7 +45,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 # Models to download firmware for
-my @models = qw( squeezebox squeezebox2 transporter );
+my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
 # Firmware location
 my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
