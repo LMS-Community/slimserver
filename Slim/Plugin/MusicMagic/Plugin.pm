@@ -145,7 +145,7 @@ sub initPlugin {
 
 	} else {
 
-		my $content = $response->decoded_content;
+		my $content = $response->content;
 
 		if ( $log->is_info ) {
 			$log->info($content);
@@ -442,7 +442,7 @@ sub grabMoods {
 
 	if ($response->is_success) {
 
-		@moods = split(/\n/, $response->decoded_content);
+		@moods = split(/\n/, $response->content);
 
 		if ($log->is_debug && scalar @moods) {
 
@@ -752,18 +752,21 @@ sub getMix {
 		return undef;
 	}
 
-	# Not sure if this is correct yet.
-	if ($validMixTypes{$for} ne 'song' && $validMixTypes{$for} ne 'album') {
-
-		$id = Slim::Utils::Unicode::utf8encode_locale($id);
-	}
-
 	$log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
+
+	if ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') {
+		# need to decode the file path when a file is used as seed
+		$id = Slim::Utils::Unicode::utf8decode_locale($id);
+	}
+	else {
+		# need to encode the search value (eg. artist) when a database value is used as seed
+		$id = Slim::Utils::Unicode::utf8encode_locale($id);		
+	}
 
 	my $mixArgs = "$validMixTypes{$for}=$id";
 
 	# url encode the request, but not the argstring
-	$mixArgs = URI::Escape::uri_escape($mixArgs);
+	$mixArgs = $isWin ? URI::Escape::uri_escape($mixArgs) : Slim::Utils::Misc::escape($mixArgs);
 	
 	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 
@@ -793,7 +796,7 @@ sub getMix {
 		}
 	}
 
-	my @songs = split(/\n/, $response->decoded_content);
+	my @songs = split(/\n/, $response->content);
 	my $count = scalar @songs;
 
 	for (my $j = 0; $j < $count; $j++) {
