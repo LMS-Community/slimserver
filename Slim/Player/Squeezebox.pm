@@ -146,7 +146,7 @@ sub play {
 		}
 
 		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
-		elsif ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
+		elsif ( my $bitrate = $controller->song()->streambitrate() ) {
 			my $bufferSecs = $prefs->get('bufferSecs') || 3;
 			
 			if ( main::SLIM_SERVICE ) {

@@ -397,7 +397,7 @@ sub getSeekData {
 		&& ($scanData = $scanData->{$song->currentTrack()->url})
 		&& ($metadata = $scanData->{metadata}) )
 	{
-		my $bitrate = Slim::Music::Info::getBitrate( $song->currentTrack()->url ) || return;
+		my $bitrate = $song->bitrate() || return;
 		
 		$bitrate /= 1000;
 		

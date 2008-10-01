@@ -473,7 +473,7 @@ sub canSeek {
 	$client = $client->master();
 	
 	# Can only seek if bitrate and duration are known
-	my $bitrate = Slim::Music::Info::getBitrate( $song->currentTrack()->url );
+	my $bitrate = $song->bitrate();
 	my $seconds = $song->duration();
 	
 	if ( !$bitrate || !$seconds ) {
@@ -496,7 +496,7 @@ sub canSeekError {
 		return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', $ct );
 	} 
 	
-	if ( !Slim::Music::Info::getBitrate( $url ) ) {
+	if ( !$song->bitrate() ) {
 		$log->info("bitrate unknown for: " . $url);
 		return 'SEEK_ERROR_MP3_UNKNOWN_BITRATE';
 	}
