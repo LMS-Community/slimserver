@@ -758,6 +758,8 @@ sub addDispatch {
 	# FIXME - should we check the params for the replacement are the same?
 	my $prevFunc = defined $entry->[$query] ? $entry->[$query]->[4] : undef;
 
+	$log->is_info && $log->info("Adding dispatch: [", join(' ', @$arrayCmdRef) . "]");
+
 	$entry->[$query] = [ \@params, @$arrayDataRef ];
 
 	return $prevFunc;
@@ -2241,6 +2243,11 @@ sub executeLegacy {
 	);
 	
 	if (defined $request) {
+
+		if ($request->{'_status'} == 1) {
+		
+			$request->execute();
+		}
 
 		return $request->renderAsArray;
 	}

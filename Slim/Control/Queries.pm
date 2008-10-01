@@ -971,7 +971,9 @@ sub cursonginfoQuery {
 
 				} elsif ($method eq 'album' || $method eq 'artist' || $method eq 'genre') {
 
-					$request->addResult("_$method", $track->$method->name || 0);
+					my $obj = $track->$method;
+
+					$request->addResult("_$method", $obj ? ($obj->name || 0) : 0);
 
 				} elsif ( $method ) {
 
