@@ -218,13 +218,13 @@ sub infoServer {
 		
 	my $osDetails = Slim::Utils::OSDetect::details();
 
-	my $item = {
+	return {
 		name => cstring($client, 'INFORMATION_MENU_SERVER'),
 		items => [
 			{
 				type => 'text',
 				name => sprintf("%s%s %s - %s @ %s",
-							cstring($client, 'SERVER_VERSION'),
+							cstring($client, 'INFORMATION_VERSION'),
 							cstring($client, 'COLON'),
 							$::VERSION,
 							$::REVISION,
@@ -239,7 +239,7 @@ sub infoServer {
 			
 			{
 				type => 'text',
-				name => cstring($client, 'SERVER_IP_ADDRESS') . cstring($client, 'COLON') . ' '
+				name => cstring($client, 'INFORMATION_SERVER_IP') . cstring($client, 'COLON') . ' '
 							. Slim::Utils::Network::serverAddr(),
 			}, 
 			
@@ -284,8 +284,6 @@ sub infoServer {
 			},
 		]
 	};
-
-	return $item;
 }
 
 sub infoDirs {
@@ -430,7 +428,10 @@ sub cliQuery {
 	my $request = shift;
 	
 	my $client  = $request->client;
-	my $feed    = Slim::Menu::SystemInfo->menu( $client );
+	my $tags    = {
+		menuMode => $request->getParam('menu') || 0,
+	};
+	my $feed    = Slim::Menu::SystemInfo->menu( $client, $tags );
 
 	Slim::Buttons::XMLBrowser::cliQuery('systeminfo', $feed, $request );
 }
