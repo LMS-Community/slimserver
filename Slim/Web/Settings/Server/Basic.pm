@@ -107,9 +107,6 @@ sub handler {
 		}
 	}
 
-	my @versions = Slim::Utils::Misc::settingsDiagString();
-
-	$paramRef->{'versionInfo'} = join( "<br />\n", @versions ) . "\n";
 	$paramRef->{'newVersion'}  = $::newVersion;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
