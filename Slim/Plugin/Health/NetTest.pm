@@ -29,14 +29,20 @@ my $defaultSB2 = 2000;
 sub initPlugin {
 	my $class = shift;
 
-    Slim::Control::Request::addDispatch(['nettest', '_query'], [1, 1, 0, \&cliQuery]);
-    Slim::Control::Request::addDispatch(['nettest', 'start', '_rate'], [1, 1, 0, \&cliStartTest]);
-    Slim::Control::Request::addDispatch(['nettest', 'stop'], [1, 1, 0, \&cliStopTest]);
+	Slim::Control::Request::addDispatch(['nettest', '_query'], [1, 1, 0, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['nettest', 'start', '_rate'], [1, 1, 0, \&cliStartTest]);
+	Slim::Control::Request::addDispatch(['nettest', 'stop'], [1, 1, 0, \&cliStopTest]);
 
 	$class->next::method(@_);
 
 	# we don't want this plugin to show up in the Extras menu
 	Slim::Buttons::Home::delSubMenu($class->playerMenu, $class->displayName);
+
+
+	Slim::Menu::SystemInfo->registerInfoProvider( health => (
+		after => 'bottom',
+		func  => \&systemInfoMenu,
+	) );
 }
 
 our %functions = (
@@ -347,6 +353,26 @@ sub cliStopTest {
 	}
 
 	$request->setStatusDone();
+}
+
+
+sub systemInfoMenu {
+	my $client = shift || return;
+	
+	return {
+		type      => 'redirect',
+		name      => displayName(),
+
+		player => {
+			mode => 'Slim::Plugin::Health::Plugin',
+			# XMLBrowser insist's in having a modeParams value
+			modeParams => {}
+		},
+
+		web  => {
+			hide => 1
+		},
+	};
 }
 
 1;
