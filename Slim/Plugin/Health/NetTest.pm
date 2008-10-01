@@ -357,7 +357,9 @@ sub cliStopTest {
 
 
 sub systemInfoMenu {
-	my $client = shift || return;
+	my ($client, $tags) = @_;
+	
+	return if $tags->{menuMode} || !$client;
 	
 	return {
 		type      => 'redirect',
