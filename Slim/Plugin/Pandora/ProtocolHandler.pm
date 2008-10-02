@@ -433,7 +433,9 @@ sub setCurrentTitle {
 sub getCurrentTitle {
 	my ( $class, $client, $url ) = @_;
 	
-	return $client->currentSongForUrl($url)->{'currentTitle'};
+	my $song = $client->currentSongForUrl($url);
+	
+	return ref $song ? $song->{'currentTitle'} : undef;
 }
 
 # Metadata for a URL, used by CLI/JSON clients
