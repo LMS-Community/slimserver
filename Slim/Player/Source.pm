@@ -804,18 +804,9 @@ sub outputUnderrun {
 		$log->info($client->id, ": Output buffer underrun (decoder: $decoder / output: $output)" );
 	}
 	
-	# If playing Rhapsody, underrun means getEA may be failing, so log it
+	# SN may want to log rebuffer events
 	if ( main::SLIM_SERVICE ) {
-		my $url = Slim::Player::Playlist::url($client);
-		
-		if ( $url =~ /^rhapd:/ ) {
-			my $decoder = $client->bufferFullness();
-			my $output  = $client->outputBufferFullness();
-		
-			SDI::Service::EventLog->log( 
-				$client, 'rhapsody_error', 'UNDERRUN', "decoder: $decoder / output: $output",
-			);
-		}
+		$client->logStreamEvent( 'rebuffer' );
 	}
 	
 	# Pause immediately without a fade
