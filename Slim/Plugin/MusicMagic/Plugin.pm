@@ -345,6 +345,14 @@ sub _statusOK {
 			return 0;
 		}
 
+		if ($content !~ /idle/i) {
+
+			# only scan if MIP is idle, not while it's analyzing
+			$log->info("MusicIP is busy analyzing your music, skipping rescan");
+
+			return 0;
+		}
+
 		if ((time - $lastScanTime) > $scanInterval) {
 
 			Slim::Control::Request::executeRequest(undef, ['rescan']);
