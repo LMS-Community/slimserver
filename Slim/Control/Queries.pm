@@ -146,7 +146,7 @@ sub alarmPlaylistsQuery {
 	}
 	
 	$request->addResult("offset", $start);
-	$request->addResult("count", scalar @$playlists);
+	$request->addResult("count", $cnt);
 	$request->setStatusDone;
 }
 
