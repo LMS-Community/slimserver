@@ -364,7 +364,8 @@ sub tokenizeConvertCommand {
 		else {
 			# Bug 8118, only decode if filename can't be found
 			# Bug 8682, but always decode on OSX
-			if ( Slim::Utils::OSDetect::OS() eq 'mac' || !-e $filepath ) {
+			# Bug 9488, always for Ubuntu/Debian
+			if ( Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::OS() eq 'mac' || !-e $filepath ) {
 				$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
 			}
 		}

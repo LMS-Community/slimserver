@@ -578,6 +578,13 @@ sub _disco_handler {
 	my $reason = unpack('C', $$data_ref);
 
 	$log->info("Squeezebox got disconnection on the data channel: $reasons{$reason}");
+	
+	# SN may want to log connection errors
+	if ( main::SLIM_SERVICE ) {
+		if ( $reason > 0 ) {
+			$client->logStreamEvent( 'disconnect', { reason => $reasons{$reason} } );
+		}
+	}
 
 	if ($reason) {
 		# Report failure via protocol handler if available
