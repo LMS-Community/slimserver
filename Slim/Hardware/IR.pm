@@ -647,6 +647,13 @@ sub processIR {
 
 		return;
 	}
+	
+	# Add button is diabled for some SN accounts
+	if ( main::SLIM_SERVICE ) {
+		if ( $code eq 'add' ) {
+			return if $client->blocksAddButton;
+		}
+	}
 
 	my $timediff = $irTime - $client->lastirtime();
 
@@ -1088,8 +1095,9 @@ sub executeButton {
 		no strict 'refs';
 
 		if ( $log->is_info ) {
-			$log->info(sprintf("Executing button [%s] for irCode: [%s]",
+			$log->info(sprintf("Executing button [%s] for irCode: [%s] %s",
 				$button, defined $irCode ? $irCode : 'undef',
+				Slim::Utils::PerlRunTime::realNameForCodeRef($subref),
 			));
 		}
 

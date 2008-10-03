@@ -190,6 +190,10 @@ sub scanURL {
 			my ( $http, $error ) = @_;
 
 			logError("Can't connect to remote server to retrieve playlist: $error.");
+			
+			if ( main::SLIM_SERVICE ) {
+				$client->logStreamEvent( 'failed-scan', { error => $error } );
+			}
 
 			return $cb->( undef, $error, @{$pt} );
 		},
