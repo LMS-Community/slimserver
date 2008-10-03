@@ -152,6 +152,11 @@ sub init {
 			my $client = shift;
 		
 			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
+				
+				# Removal from playlist via add button is diabled for some SN accounts
+				if ( main::SLIM_SERVICE ) {
+					return if $client->blocksAddButton;
+				}
 
 				$client->showBriefly( {
 					'line' => [ "", $client->string('CLEARING_PLAYLIST') ]

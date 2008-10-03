@@ -221,6 +221,11 @@ sub init {
 
 		'add' => sub  {
 			my $client = shift;
+			
+			# Removal from playlist via add button is diabled for some SN accounts
+			if ( main::SLIM_SERVICE ) {
+				return if $client->blocksAddButton;
+			}
 
 			if (Slim::Player::Playlist::count($client) > 0) {
 
