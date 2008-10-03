@@ -246,6 +246,11 @@ sub init {
 		'zap' => sub {
 			my $client = shift;
 			my $zapped = catfile($prefs->get('playlistdir'), $client->string('ZAPPED_SONGS') . '.m3u');
+			
+			# Removal from playlist via add button is diabled for some SN accounts
+			if ( main::SLIM_SERVICE ) {
+				return if $client->blocksAddButton;
+			}
 
 			if (Slim::Player::Playlist::count($client) > 0) {
 
