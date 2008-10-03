@@ -807,6 +807,12 @@ sub outputUnderrun {
 	# SN may want to log rebuffer events
 	if ( main::SLIM_SERVICE ) {
 		$client->logStreamEvent( 'rebuffer' );
+		
+		# Also may want to perform an alternate action on output underrun, such as just
+		# restarting the stream to get an instant full buffer
+		if ( $client->handleOutputUnderrun ) {
+			return;
+		}
 	}
 	
 	# Pause immediately without a fade
