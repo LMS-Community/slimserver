@@ -34,7 +34,7 @@ ELSE %]
 			END;
 		END;
 		FOREACH link = additionalLinks.browse;
-			IF link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size;
+			IF link.key.search('\W') || (link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size);
 				additionalLinks.icons.${link.key} = additionalLinks.icons.${link.key} || 'html/images/plugin.png';
 				PROCESS menuItem;
 			ELSIF link.key == 'FAVORITES';
