@@ -1268,6 +1268,29 @@ sub playItem {
 }
 
 
+# some calls which have been moved to Slim::Control::XMLBrowser
+# keep them here for compatibility with 3rd party apps
+sub cliQuery {
+	$log->error('deprecated call - please use Slim::Control::XMLBrowser::cliQuery() instead');
+	Slim::Control::XMLBrowser::cliQuery(@_);
+}
+
+sub hasAudio {
+	$log->error('deprecated call - please use Slim::Control::XMLBrowser::hasAudio() instead');
+	Slim::Control::XMLBrowser::hasAudio(@_);
+}
+
+sub hasDescription {
+	$log->error('deprecated call - please use Slim::Control::XMLBrowser::hasDescription() instead');
+	Slim::Control::XMLBrowser::hasDescription(@_);
+}
+
+sub hasLink {
+	$log->error('deprecated call - please use Slim::Control::XMLBrowser::hasLink() instead');
+	Slim::Control::XMLBrowser::hasLink(@_);
+}
+
+
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>
