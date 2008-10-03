@@ -126,12 +126,16 @@ sub initPlugin {
 	my $class = shift;
 
 	return 1 if $initialized;
+
+	# read enabled status before checkDefaults to ensure a first time initialization
+	my $enabled = $prefs->get('musicip');
 	
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
 	Slim::Plugin::MusicMagic::Settings->new;
 
 	# don't test the connection if MIP integration is disabled
-	return unless $prefs->get('musicip'); 
+	# but continue if it had never been initialized
+	return unless $enabled || !defined $enabled;
 
 	my $response = _syncHTTPRequest("/api/version");
 
@@ -140,6 +144,8 @@ sub initPlugin {
 	if ($response->is_error) {
 
 		$initialized = 0;
+		
+		$prefs->set('musicip', 0) if !defined $enabled;
 
 		$log->error("Can't connect to port $MMSport - MusicIP disabled.");
 
@@ -150,6 +156,11 @@ sub initPlugin {
 		if ( $log->is_info ) {
 			$log->info($content);
 		}
+
+		# if this is the first time MIP is initialized, have it use
+		# - faster mixable status only scan (2) if a music folder is defined
+		# - slower full metadata import (1) if no music folder is defined
+		$prefs->set('musicip', preferences('server')->get('audiodir') ? 2 : 1)  if !defined $enabled;
 
 		# this query should return an API error if Power Search is not available
 		$response = _syncHTTPRequest("/api/mix?filter=?length>120&length=1");

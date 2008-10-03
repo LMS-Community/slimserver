@@ -632,7 +632,7 @@ MUSICIP_CREATEMIX
 	SV	Skapa MusicIP Mix
 
 MUSICIP_READSONGDATA
-	EN	Import all song data from MusicIP
+	EN	Import all song data from MusicIP (slower)
 
 MUSICIP_MIXABLE_CHECK
-	EN	Only read mixable status from MusicIP
+	EN	Only read mixable status from MusicIP (faster)
