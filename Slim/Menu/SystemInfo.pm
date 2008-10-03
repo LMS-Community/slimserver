@@ -70,9 +70,9 @@ sub registerDefaultInfoProviders {
 			func  => \&infoSqueezeNetwork,
 		) );
 	
-		$class->registerInfoProvider( player => (
+		$class->registerInfoProvider( currentplayer => (
 			after => 'squeezenetwork',
-			func  => \&infoPlayer,
+			func  => \&infoCurrentPlayer,
 		) );
 	}
 	
@@ -87,8 +87,13 @@ sub registerDefaultInfoProviders {
 			func  => \&infoLibrary,
 		) );
 		
-		$class->registerInfoProvider( players => (
+		$class->registerInfoProvider( currentplayer => (
 			after => 'library',
+			func  => \&infoCurrentPlayer,
+		) );
+		
+		$class->registerInfoProvider( players => (
+			after => 'currentplayer',
 			func  => \&infoPlayers,
 		) );
 		
@@ -116,51 +121,71 @@ sub infoPlayers {
 		items => []
 	};
 	
-	for my $player (main::SLIM_SERVICE ? qw($client) : Slim::Player::Client::clients()) {
+	for my $player (Slim::Player::Client::clients()) {
 		
-		my $info = [
-#			{ INFORMATION_PLAYER_NAME_ABBR       => $player->name },
-			{ INFORMATION_PLAYER_MODEL           => Slim::Buttons::Information::playerModel($player) },
-			{ INFORMATION_FIRMWARE_ABBR          => $player->revision },
-			{ INFORMATION_PLAYER_IP              => $player->ip },
-			{ INFORMATION_PLAYER_PORT            => $player->port },
-			{ INFORMATION_PLAYER_MAC             => $player->macaddress },
-			{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $player->signalStrength },
-			{ INFORMATION_PLAYER_VOLTAGE         => $player->voltage },
-		];
-
-		my @details;
-		foreach (@$info) {
-			my ($key, $value) = each %{$_};
-			
-			next unless $value;
-			
-			if (Slim::Utils::Strings::stringExists($key . '_ABBR')) {
-				$key = $key . '_ABBR'
-			}
-			
-			push @details, {
-				type => 'text',
-				name => cstring($client, $key) . cstring($client, 'COLON') . ' ' . $value,
-			};
-		}
-			
+		my ($raw, $details) = _getPlayerInfo($player);
+					
 		push @{ $item->{items} }, {
 			name  => $player->name,
-			items => \@details,
+			items => $details,
 			web   => {
 				name  => $player->name,
-				items => $info,
+				items => $raw,
 			} 
 		}
 	}
 	
-	# don't create hierarchical menu if there's only one player
-	if (scalar @{ $item->{items} } <= 1) {
-		$item = $item->{items}->[0];
-	}
+	return $item;
+}
+
+sub infoCurrentPlayer {
+	my $client = shift || return;
+	
+	my ($raw, $details) = _getPlayerInfo($client);
+	
+	my $item = {
+		name  => cstring($client, 'INFORMATION_SPECIFIC_PLAYER', $client->name),
+		items => $details,
+		web   => {
+			name  => $client->name,
+			items => $raw,
+		} 
+	};
 	
 	return $item;
+}
+
+sub _getPlayerInfo {
+	my $client = shift;
+	
+	my $info = [
+#		{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },
+		{ INFORMATION_PLAYER_MODEL           => Slim::Buttons::Information::playerModel($client) },
+		{ INFORMATION_FIRMWARE_ABBR          => $client->revision },
+		{ INFORMATION_PLAYER_IP              => $client->ip },
+		{ INFORMATION_PLAYER_PORT            => $client->port },
+		{ INFORMATION_PLAYER_MAC             => $client->macaddress },
+		{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $client->signalStrength },
+		{ INFORMATION_PLAYER_VOLTAGE         => $client->voltage },
+	];
+
+	my @details;
+	foreach (@$info) {
+		my ($key, $value) = each %{$_};
+			
+		next unless $value;
+			
+		if (Slim::Utils::Strings::stringExists($key . '_ABBR')) {
+			$key = $key . '_ABBR'
+		}
+			
+		push @details, {
+			type => 'text',
+			name => cstring($client, $key) . cstring($client, 'COLON') . ' ' . $value,
+		};
+	}
+	
+	return ($info, \@details);
 }
 
 sub infoLibrary {
