@@ -212,14 +212,14 @@ sub cliQuery {
 			items => $outline,
 		};
 		
-		Slim::Buttons::XMLBrowser::cliQuery('podcast', $opml, $request);
+		Slim::Control::XMLBrowser::cliQuery('podcast', $opml, $request);
 		return;
 	}
 	
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
 	my $opml = $cache->get( 'podcasts_opml' );
-	Slim::Buttons::XMLBrowser::cliQuery('podcast', $opml, $request);
+	Slim::Control::XMLBrowser::cliQuery('podcast', $opml, $request);
 }
 
 # Update the hashref of podcast feeds for use with the web UI

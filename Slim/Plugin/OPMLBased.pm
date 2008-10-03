@@ -8,6 +8,7 @@ use strict;
 use base 'Slim::Plugin::Base';
 
 use Slim::Utils::Prefs;
+use Slim::Control::XMLBrowser;
 
 my $prefs = preferences('server');
 
@@ -71,7 +72,7 @@ sub initCLI {
 	
 	my $cliQuery = sub {
 	 	my $request = shift;
-		Slim::Buttons::XMLBrowser::cliQuery( $args{tag}, $class->feed( $request->client ), $request );
+		Slim::Control::XMLBrowser::cliQuery( $args{tag}, $class->feed( $request->client ), $request );
 	};
 	
 	# CLI support

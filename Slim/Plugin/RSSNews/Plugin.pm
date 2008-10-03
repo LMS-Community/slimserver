@@ -148,7 +148,7 @@ sub cliQuery {
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
 	my $opml = $cache->get( 'rss_opml' );
-	Slim::Buttons::XMLBrowser::cliQuery('rss', $opml, $request, $refresh_sec);
+	Slim::Control::XMLBrowser::cliQuery('rss', $opml, $request, $refresh_sec);
 }
 
 # Update the hashref of RSS feeds for use with the web UI

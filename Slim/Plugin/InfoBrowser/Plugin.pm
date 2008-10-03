@@ -131,11 +131,11 @@ sub cliQuery {
 		use Slim::Networking::SqueezeNetwork;
 		my $url = Slim::Networking::SqueezeNetwork->url( '/public/opml/' . $client->playerData->userid->emailHash . '/rss.opml' );
 		
-		Slim::Buttons::XMLBrowser::cliQuery('infobrowser', $url, $request);
+		Slim::Control::XMLBrowser::cliQuery('infobrowser', $url, $request);
 		return;
 	}
 
-	Slim::Buttons::XMLBrowser::cliQuery('infobrowser', $menuUrl, $request);
+	Slim::Control::XMLBrowser::cliQuery('infobrowser', $menuUrl, $request);
 }
 
 sub searchDirs {

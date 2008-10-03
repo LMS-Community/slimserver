@@ -799,7 +799,7 @@ sub cliBrowse {
 		$feed = Storable::dclone($feed);
 	}
 
-	Slim::Buttons::XMLBrowser::cliQuery('favorites', $feed, $request);
+	Slim::Control::XMLBrowser::cliQuery('favorites', $feed, $request);
 }
 
 sub cliAdd {

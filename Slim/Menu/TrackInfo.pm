@@ -1284,7 +1284,7 @@ sub cliQuery {
 		}
 	}
 	
-	Slim::Buttons::XMLBrowser::cliQuery( 'trackinfo', $feed, $request );
+	Slim::Control::XMLBrowser::cliQuery( 'trackinfo', $feed, $request );
 }
 
 1;

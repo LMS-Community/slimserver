@@ -436,7 +436,7 @@ sub cliQuery {
 	};
 	my $feed    = Slim::Menu::SystemInfo->menu( $client, $tags );
 
-	Slim::Buttons::XMLBrowser::cliQuery('systeminfo', $feed, $request );
+	Slim::Control::XMLBrowser::cliQuery('systeminfo', $feed, $request );
 }
 
 1;
