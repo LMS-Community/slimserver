@@ -649,7 +649,10 @@ sub getInitialAudioBlock {
 	seek($localFh, 0, 0);
 	close $localFh;
 	
-	# XXX check that we have an Xing frame
+	# check that we have an Xing frame
+	if ($frame->content !~ /Xing/) {
+		return ''; # The empty string will be cached
+	}
 	
 	return $frame->asbin;
 }
