@@ -1619,17 +1619,14 @@ sub playerOutputUnderrun {
 		$log->info($client->id, ": decoder: $decoder / output: $output" );
 	}
 
-	# If playing Rhapsody, underrun means getEA may be failing, so log it
-	if ( $ENV{SLIM_SERVICE} ) {
-		my $url = Slim::Player::Playlist::url($client);
+	# SN may want to log rebuffer events
+	if ( main::SLIM_SERVICE ) {
+		$client->logStreamEvent( 'rebuffer' );
 		
-		if ( $url =~ /^rhapd:/ ) {
-			my $decoder = $client->bufferFullness();
-			my $output  = $client->outputBufferFullness();
-		
-			SDI::Service::EventLog::logEvent( 
-				$client->id, 'rhapsody_error', 'UNDERRUN', "decoder: $decoder / output: $output",
-			);
+		# Also may want to perform an alternate action on output underrun, such as just
+		# restarting the stream to get an instant full buffer
+		if ( $client->handleOutputUnderrun ) {
+			return;
 		}
 	}
 
