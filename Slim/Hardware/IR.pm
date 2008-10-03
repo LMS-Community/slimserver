@@ -1088,8 +1088,9 @@ sub executeButton {
 		no strict 'refs';
 
 		if ( $log->is_info ) {
-			$log->info(sprintf("Executing button [%s] for irCode: [%s]",
+			$log->info(sprintf("Executing button [%s] for irCode: [%s] %s",
 				$button, defined $irCode ? $irCode : 'undef',
+				Slim::Utils::PerlRunTime::realNameForCodeRef($subref),
 			));
 		}
 
