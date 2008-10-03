@@ -133,9 +133,11 @@ sub open {
 	}
 
 	# Bug 6836 - support CUE files for Ogg
+	# Also used for Xing frame in MP3 when seeking
+	# and WAV header
 	${*$sock}{'initialAudioBlockRemaining'} = 0;
 
-	if ( $seekoffset && $format eq 'ogg' ) {
+	if ( $seekoffset ) {
 		my $streamClass = _streamClassForFormat($format);
 
 		if (!defined($song->{'initialAudioBlock'}) && 
@@ -143,8 +145,10 @@ sub open {
 		{
 			# We stash the initial audio block in the song because we may well want it
 			# multiple times.
-			$song->{'initialAudioBlock'} = $streamClass->getInitialAudioBlock($sock);
-
+			$song->{'initialAudioBlock'} = $streamClass->getInitialAudioBlock($sock, $track, $seekdata->{'timeOffset'});
+		}
+		
+		if ($song->{'initialAudioBlock'}) {
 			my $length = length($song->{'initialAudioBlock'});
 			$log->debug("Got initial audio block of size $length");
 			if ($seekoffset <= $length) {

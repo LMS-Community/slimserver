@@ -637,14 +637,19 @@ sub canSeek {1}
 # Read the initial audio frame, this supports seeking while preserving
 # the Xing header needed for gapless playback
 sub getInitialAudioBlock {
-	my ( $class, $fh ) = @_;
+	my ( $class, $fh, $track, $timeOffset ) = @_;
+	
+	# Only bother if not playing from the start
+	unless ($timeOffset) {return undef;}
 	
 	open my $localFh, '<&=', $fh;
-	seek $localFh, 0, 0;
+	seek $localFh, ($track->audio_offset() || 0), 0;
 	
 	my $frame = MPEG::Audio::Frame->read( $localFh );
-	
+	seek($localFh, 0, 0);
 	close $localFh;
+	
+	# XXX check that we have an Xing frame
 	
 	return $frame->asbin;
 }
