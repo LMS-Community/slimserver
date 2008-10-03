@@ -647,6 +647,13 @@ sub processIR {
 
 		return;
 	}
+	
+	# Add button is diabled for some SN accounts
+	if ( main::SLIM_SERVICE ) {
+		if ( $code eq 'add' ) {
+			return if $client->blocksAddButton;
+		}
+	}
 
 	my $timediff = $irTime - $client->lastirtime();
 
