@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<extension>
+	<name>PLUGIN_SUB_HEAD_OUT</name>
+	<module>Slim::Plugin::SubHeadOut::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_SUB_HEAD_OUT_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/SubHeadOut/html/images/icon.png</icon>
+	<type>2</type>
+
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+</extension>
