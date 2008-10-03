@@ -404,9 +404,9 @@ sub underMax {
 	# fall back to saying we're under the maximum.
 	return 1 if $maxRate == 0 || (!Slim::Utils::Misc::findbin('lame'));
 
-	# If the input type is mp3, we determine whether the 
+	# If the input type is mp3 or wma (bug 9641), we determine whether the 
 	# input bitrate is under the maximum.
-	if (defined($type) && $type eq 'mp3') {
+	if (defined($type) && ($type eq 'mp3' || $type eq 'wma')) {
 
 		my $track = Slim::Schema->rs('Track')->objectForUrl($fullpath);
 		my $rate  = 0;
