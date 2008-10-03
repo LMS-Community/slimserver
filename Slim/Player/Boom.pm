@@ -208,10 +208,6 @@ sub hasDigitalOut {
 	return 0;
 }
 
-sub hasHeadSubOut() {
-	return 1; 
-}
-
 sub hasPowerControl {
 	return 0;
 }

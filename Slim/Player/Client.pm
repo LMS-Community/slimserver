@@ -645,7 +645,6 @@ sub voltage {
 	return undef;
 }
 
-sub hasHeadSubOut() { return 0; }
 sub hasDigitalOut() { return 0; }
 sub hasVolumeControl() { return 0; }
 sub hasEffectsLoop() { return 0; }

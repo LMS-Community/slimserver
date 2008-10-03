@@ -596,11 +596,6 @@ sub createList {
 			next;
 		}
 		
-		# Leakage of the Sub/Head Out plugin..
-		if ($sub eq 'PLUGIN_SUB_HEAD_OUT' && !$client->hasHeadSubOut) {
-			next;
-		}
-
 		if ( main::SLIM_SERVICE ) {
 			# Hide disabled menus
 			if ( exists $disabledMenus{$sub} ) {
@@ -799,11 +794,6 @@ sub unusedMenuOptions {
 		delete $menuChoices{'PLUGIN_LINE_IN'};
 	}
 
-	# Leakage from Sub/Head Out Plugin
-	if (defined $menuChoices{'PLUGIN_SUB_HEAD_OUT'} && !$client->hasHeadSubOut) {
-		delete $menuChoices{'PLUGIN_SUB_HEAD_OUT'};
-	}
-
 	for my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
@@ -863,11 +853,6 @@ sub updateMenu {
 	for my $menuItem (@{ $prefs->client($client)->get('menuItem') }) {
 		# more leakage of the LineIn plugin..
 		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
-			next;
-		}
-
-		# more leakage of the Sub/Head Out plugin..
-		if ($menuItem eq 'PLUGIN_SUB_HEAD_OUT' && !($client->hasHeadSubOut && $client->lineOutConnected)) {
 			next;
 		}
 
