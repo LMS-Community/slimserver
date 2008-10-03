@@ -167,6 +167,12 @@ sub dirsFor {
 	return wantarray() ? @dirs : $dirs[0];
 }
 
+# Bug 8682, always decode on OSX
+sub decodeExternalHelperPath {
+	return Slim::Utils::Unicode::utf8decode_locale($_[1]);
+}
+
+
 sub ignoredItems {
 	return (
 		# Items we should ignore on a mac volume

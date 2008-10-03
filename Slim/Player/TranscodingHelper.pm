@@ -358,17 +358,7 @@ sub tokenizeConvertCommand {
 	}
 
 	if (Slim::Music::Info::isFile($filepath)) {
-		if (Slim::Utils::OSDetect::isWindows()) {
-			$filepath = Win32::GetShortPathName($filepath);
-		}
-		else {
-			# Bug 8118, only decode if filename can't be found
-			# Bug 8682, but always decode on OSX
-			# Bug 9488, always for Ubuntu/Debian
-			if ( Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::OS() eq 'mac' || !-e $filepath ) {
-				$filepath = Slim::Utils::Unicode::utf8decode_locale($filepath);
-			}
-		}
+		$filepath = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($filepath);
 	}
 	
 	# Hack to avoid passing 0 bitrate to lame

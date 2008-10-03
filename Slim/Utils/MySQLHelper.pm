@@ -237,10 +237,8 @@ sub startServer {
 	my $process  = undef;
 
 	# Bug: 3461
-	if ($isWin) {
-		$mysqld   = Win32::GetShortPathName($mysqld);
-		$confFile = Win32::GetShortPathName($confFile);
-	}
+	$mysqld   = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($mysqld);
+	$confFile = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($confFile);
 
 	my @commands = ($mysqld, sprintf('--defaults-file=%s', $confFile));
 

@@ -131,6 +131,10 @@ sub dirsFor {
 	return wantarray() ? @dirs : $dirs[0];
 }
 
+sub decodeExternalHelperPath {
+	return Win32::GetShortPathName($_[1]);
+}
+
 sub scanner {
 	return -x "$Bin/scanner.exe" ? "$Bin/scanner.exe" : $_[0]->SUPER::scanner();
 }

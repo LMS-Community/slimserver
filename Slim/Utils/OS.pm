@@ -71,6 +71,24 @@ sub dirsFor {
 	return wantarray() ? @dirs : $dirs[0];
 }
 
+=head2 decodeExternalHelperPath( $filename )
+
+When calling calling external helper apps (transcoding, MySQL etc.)
+we might need to encode the path to correctly handle non-latin characters.
+
+=cut
+
+sub decodeExternalHelperPath {
+	my $path = $_[1];
+	
+	# Bug 8118, only decode if filename can't be found
+	if ( !-e $path ) {
+		$path = Slim::Utils::Unicode::utf8decode_locale($path);
+	}
+	
+	return $path;
+}
+
 sub scanner {
 	return "$Bin/scanner.pl";
 }

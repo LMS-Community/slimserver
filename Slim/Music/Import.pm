@@ -97,12 +97,10 @@ sub launchScan {
 
 	Slim::Utils::Prefs->writeAll;
 
-	my $path = Slim::Utils::Prefs->dir;
+	my $path = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath(
+		Slim::Utils::Prefs->dir
+	);
 	
-	if (Slim::Utils::OSDetect::isWindows()) {
-		$path = Win32::GetShortPathName($path);
-	}
-
 	$args->{ "prefsdir=$path" } = 1;
 
 	if ( my $logconfig = Slim::Utils::Log->defaultConfigFile ) {

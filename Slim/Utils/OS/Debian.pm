@@ -96,6 +96,11 @@ sub dirsFor {
 	return wantarray() ? @dirs : $dirs[0];
 }
 
+# Bug 9488, always decode on Ubuntu/Debian
+sub decodeExternalHelperPath {
+	return Slim::Utils::Unicode::utf8decode_locale($_[1]);
+}
+
 sub scanner {
 	return '/usr/sbin/squeezecenter-scanner';
 }
