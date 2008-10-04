@@ -88,7 +88,7 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
 
-    Slim::Control::Request::addDispatch(['can'], 
+    Slim::Control::Request::addDispatch(['can', '_p1', '_p2', '_p3', '_p4', '_p5', '?'], 
         [0, 1, 0, \&canQuery]);
     Slim::Control::Request::addDispatch(['listen',    '_newvalue'],  
         [0, 0, 0, \&listenCommand]);
@@ -751,23 +751,21 @@ sub canQuery {
 	}
 
 	my @array = ();
-	my $i = 1;
 	
-	# get all parameters in the array
-	while (defined(my $elem = $request->getParam("_p$i"))) {
-	
-		if ($elem eq '?') {
-			# the ? has not been deleted by the parsing since it does not
-			# appear in the parsing array above. It does not appear because
-			# we do not know how many parameters the request name to test has!
-			# delete the ? so that we don't echo it back
+	# get all parameters in the array - we stored up to 5 params
+	for (my $i = 1; $i <= 5; $i++) {
+
+		my $elem = $request->getParam("_p$i");
+
+		if (!defined $elem || $elem eq '?') {
+
+			# remove empty and ? entries so we don't echo these back
 			$request->deleteParam("_p$i");
-			last;
-			
+
 		} else {
+
 			# add the term to our array
 			push @array, $elem;
-			$i++;
 		}
 	}
 	
