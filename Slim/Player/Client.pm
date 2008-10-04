@@ -109,7 +109,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								alarmData knobData
 								modeStack modeParameterStack playlist chunks
 								shufflelist syncSelections searchTerm
-								updatePending
+								updatePending httpState
 							));
 	__PACKAGE__->mk_accessor('hash', qw(
 								curSelection lastID3Selection

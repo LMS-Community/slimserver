@@ -360,6 +360,9 @@ sub init {
 	$log->info("Async DNS init...");
 	Slim::Networking::Async::DNS->init;
 	
+	$log->info("Async HTTP init...");
+	Slim::Networking::SimpleAsyncHTTP->init;
+	
 	$log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
