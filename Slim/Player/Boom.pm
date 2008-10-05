@@ -95,27 +95,6 @@ if ( main::SLIM_SERVICE ) {
 	) ];
 }
 
-INIT {
-	# Add a handler for line-in/out status changes
-	Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
-	
-	# Create a new event for sending LIOS updates
-	Slim::Control::Request::addDispatch(
-		['lios', '_state'],
-		[1, 0, 0, undef],
-	);
-
-	Slim::Control::Request::addDispatch(
-		['lios', 'linein', '_state'],
-		[1, 0, 0, undef],
-	);
-
-	Slim::Control::Request::addDispatch(
-		['lios', 'lineout', '_state'],
-		[1, 0, 0, undef],
-	);
-}
-
 sub new {
 	my $class = shift;
 
@@ -123,7 +102,6 @@ sub new {
 
 	return $client;
 }
-
 
 sub welcomeScreen {
 	my $client = shift;
@@ -173,8 +151,28 @@ sub getLineInVolumeParameters
 	};
 	return $params;
 }
+
 sub init {
 	my $client = shift;
+
+	# Add a handler for line-in/out status changes
+	Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
+	
+	# Create a new event for sending LIOS updates
+	Slim::Control::Request::addDispatch(
+		['lios', '_state'],
+		[1, 0, 0, undef],
+	);
+
+	Slim::Control::Request::addDispatch(
+		['lios', 'linein', '_state'],
+		[1, 0, 0, undef],
+	);
+
+	Slim::Control::Request::addDispatch(
+		['lios', 'lineout', '_state'],
+		[1, 0, 0, undef],
+	);
 
 	Slim::Control::Request::addDispatch(['boomdac', '_command'], [1, 0, 0, \&Slim::Player::Boom::boomI2C]);
 	Slim::Control::Request::addDispatch(['boombright', 
