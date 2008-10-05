@@ -219,7 +219,7 @@ sub infoLibrary {
 
 			{
 				type => 'text',
-				name => cstring($client, 'INFORMATION_ARTISTS') . cstring($client, 'COLON') . ' '
+				name => cstring($client, 'INFORMATION_GENRES') . cstring($client, 'COLON') . ' '
 							. Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Genre')),
 			},
 
