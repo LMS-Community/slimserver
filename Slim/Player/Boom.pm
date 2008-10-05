@@ -35,6 +35,8 @@ use Slim::Utils::DateTime;
 
 my $prefs = preferences('server');
 
+my $handlersAdded = 0;
+
 my $LED_ALL = 0xFFFF;
 my $LED_POWER = 0x0200;
 
@@ -155,32 +157,40 @@ sub getLineInVolumeParameters
 sub init {
 	my $client = shift;
 
-	# Add a handler for line-in/out status changes
-	Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
+	if (!$handlersAdded) {
+
+		# Add a handler for line-in/out status changes
+		Slim::Networking::Slimproto::addHandler( LIOS => \&lineInOutStatus );
 	
-	# Create a new event for sending LIOS updates
-	Slim::Control::Request::addDispatch(
-		['lios', '_state'],
-		[1, 0, 0, undef],
-	);
+		# Create a new event for sending LIOS updates
+		Slim::Control::Request::addDispatch(
+			['lios', '_state'],
+			[1, 0, 0, undef],
+		   );
+		
+		Slim::Control::Request::addDispatch(
+			['lios', 'linein', '_state'],
+			[1, 0, 0, undef],
+		   );
+		
+		Slim::Control::Request::addDispatch(
+			['lios', 'lineout', '_state'],
+			[1, 0, 0, undef],
+		   );
+		
+		Slim::Control::Request::addDispatch(
+			['boomdac', '_command'],
+			[1, 0, 0, \&Slim::Player::Boom::boomI2C]
+		   );
 
-	Slim::Control::Request::addDispatch(
-		['lios', 'linein', '_state'],
-		[1, 0, 0, undef],
-	);
+		Slim::Control::Request::addDispatch(
+			['boombright', '_bkk', '_gcp1', '_gcp2', '_bk2', '_filament_v', '_filament_p', '_annode_v', '_anode_p' ],
+			[1, 0, 0, \&Slim::Player::Boom::boomBright]
+		   );
+		
+		$handlersAdded = 1;
 
-	Slim::Control::Request::addDispatch(
-		['lios', 'lineout', '_state'],
-		[1, 0, 0, undef],
-	);
-
-	Slim::Control::Request::addDispatch(['boomdac', '_command'], [1, 0, 0, \&Slim::Player::Boom::boomI2C]);
-	Slim::Control::Request::addDispatch(['boombright', 
-					     '_bkk', '_gcp1', '_gcp2', '_bk2',
-					     '_filament_v', '_filament_p',
-					     '_annode_v',   '_anode_p',
-					    ],
-					    [1, 0, 0, \&Slim::Player::Boom::boomBright]);
+	}
 
 	$client->SUPER::init();
 }
