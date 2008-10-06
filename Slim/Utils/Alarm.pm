@@ -804,8 +804,12 @@ sub stop {
 	# Restore analogOutMode to previous setting
 	if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
 		&& $client->lineOutConnected()) {
-		$log->debug('Restoring previous line out mode');
-		$client->setAnalogOutMode();
+		# Restore in a second in order to avoid a blip that can occur if setAnalogOutMode
+		# is called during a power off volume fade.  Bug 9093.
+		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
+			$log->debug('Restoring previous line out mode');
+			$client->setAnalogOutMode();
+		});
 	}
 
 	my $class = ref $self;
