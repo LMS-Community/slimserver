@@ -96,7 +96,7 @@ sub parseList {
 
 		if ( $type =~ /(?:asx|pls)/ ) {
 			# Re-parse using known content-type
-			$fh->seek(0);
+			$fh->seek(0, 0);
 
 			return $class->parseList( $url, $fh, $base, $type );
 		}
