@@ -1627,11 +1627,10 @@ sub sliceResultLoop {
 
 sub string {
 	my $self   = shift;
-	my $string = shift;
 
 	my $client = $self->client();
 
-	return cstring($client, $string);
+	return cstring($client, @_);
 }
 
 
