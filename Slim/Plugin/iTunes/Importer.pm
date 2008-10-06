@@ -425,6 +425,8 @@ sub handleTrack {
 
 	} else {
 
+		delete $tracks{$id};
+
 		if ( $log->is_warn ) {
 			$log->warn("Unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL'));
 		}
@@ -434,6 +436,8 @@ sub handleTrack {
 sub handlePlaylist {
 	my $class      = shift;
 	my $cacheEntry = shift;
+
+	return unless scalar @{$cacheEntry->{'LIST'}};
 
 	my $name = Slim::Utils::Misc::unescape($cacheEntry->{'TITLE'});
 	my $url  = join('', 'itunesplaylist:', Slim::Utils::Misc::escape($name));
