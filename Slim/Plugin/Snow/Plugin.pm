@@ -581,7 +581,7 @@ our @flakeMap2 = (
 
 );
 
-our %letters = (
+our %letters_normal = (
 	A => [3, [2], [], [0,4], [0,2,4], [], [0,4] ],
 	B => [3, [0,2], [4], [0,2], [0], [4], [0,2] ],
 	C => [3, [2,4], [1], [], [1], [], [2,4] ],
@@ -609,6 +609,38 @@ our %letters = (
 	X => [3, [0,4], [], [1,3], [2,4], [], [0,5] ],
 	Y => [3, [0,4], [], [1,3], [2], [], [2] ],
 	Z => [3, [0,2,4], [], [3], [2], [], [0,2,4] ],
+	' ' => [0, [], [], [], [], [], [] ],
+	'!' => [1, [0], [], [0], [], [], [0] ],
+);
+
+our %letters_narrow = (
+	A => [2, [1], [], [0,2], [0,1,2], [], [0,2] ],
+	B => [2, [0,1], [0,2], [0,2], [0], [2], [0,1] ],
+	C => [2, [1,2], [0], [], [0], [], [1,2] ],
+	D => [2, [0,1], [2], [0], [0,2], [], [0,1] ],
+	E => [2, [0,1,2], [], [0,1], [0], [], [0,1,2] ],
+	F => [2, [0,1,2], [], [0], [0,1], [], [0] ],
+	G => [2, [1,2], [1], [], [1,2], [], [1,2] ],
+	H => [2, [0,2], [], [0,1,2], [0,2], [], [0,2] ],
+	I => [1, [0], [], [0], [0], [], [0] ],
+	J => [2, [0,1,2], [], [1], [1], [0], [1,2] ],
+	K => [2, [0,2], [], [0,1], [0,2], [], [0,2] ],
+	L => [2, [0], [], [0], [0], [], [0,2,4] ],
+	M => [3, [0,3], [1,2], [0,1,3], [0,3], [], [0,3] ],
+	N => [3, [0,3], [], [1,3], [0,2], [], [0,3] ],
+	O => [2, [1], [], [0,2], [0,2], [], [1] ],
+	P => [2, [0,1], [], [0,2], [0,1], [], [0] ],
+	Q => [2, [1], [], [0,2], [0,2], [], [1,2] ],
+	R => [2, [0,1], [], [0,2], [0,1], [], [0,2] ],
+	S => [2, [1,2], [0], [1], [2], [2], [0,1] ],
+	T => [2, [0,1,2], [], [1], [1], [], [1] ],
+	U => [2, [0,2], [], [0,2], [0,2], [], [0,1] ],
+	#V => [4, [0,6], [], [1,5], [2,4], [], [3] ],
+	V => [2, [0,2], [], [0,2], [0,2], [], [1] ],
+	W => [3, [0,3], [], [0,3], [0,1,3], [], [1,2] ],
+	X => [2, [0,2], [0,2], [1], [0,2], [], [0,2] ],
+	Y => [2, [0,2], [], [1], [1], [], [1] ],
+	Z => [2, [0,1,2], [], [2], [1], [], [0,1,2] ],
 	' ' => [0, [], [], [], [], [], [] ],
 	'!' => [1, [0], [], [0], [], [], [0] ],
 );
@@ -780,20 +812,26 @@ sub renderCharFlakes {
 my $holdTime = 70;
 
 sub paintWord {
+	my $client = shift;
 	my $word = shift;
 	my $state = shift;
 	my $offsets = shift;
 	my $torender = shift;
 	my $lines = shift;
+	
 	my @text;
 	my $letter;
 	my $row;
 	my $col;
 	
-	my $totallen = -1;
-	map {$totallen += @{$letters{$_}}[0] + 1} (split //, $word);
+	my $narrow = ($client->displayWidth <= 160);
 	
-	my $startcol = 2 * int((40 - $totallen) / 2);
+	my $letters = $narrow ? \%letters_narrow : \%letters_normal; 
+	
+	my $totallen = -1;
+	map {$totallen += @{$letters->{$_}}[0] + ($narrow ? 0 : 1)} (split //, $word);
+	
+	my $startcol = 2 * int((($narrow ? 20 : 40) - $totallen) / 2);
 	
 	# Wipe out any falling snow under the letters
 	foreach $row (0..1) {
@@ -812,10 +850,10 @@ sub paintWord {
 
 	foreach $letter (split //, $word) {
 		
-		my $charwidth = @{$letters{$letter}}[0];
+		my $charwidth = @{$letters->{$letter}}[0];
 		foreach $row (0..5) {
 		
-		foreach $col (@{$letters{$letter}[$row+1]}) {
+		foreach $col (@{$letters->{$letter}[$row+1]}) {
 				my $outrow = 3 * $row - 15 + $state - $offsets->[int($col/2)];
 		
 				if(!$exiting) {
@@ -830,7 +868,7 @@ sub paintWord {
 				}
 			}
 		}
-		$startcol += $charwidth * 2 + 2;
+		$startcol += $charwidth * 2 + ($narrow ? 0 : 2);
 	}
 
 	return $paintedSomething;
@@ -908,7 +946,7 @@ sub letItSnow {
 				$offsets{$client}->[$col] = int(rand(24));
 			}
 		} else {
-			my $paintedSomething = paintWord($word{$client}, $wordState{$client}, $offsets{$client}, $torender, $lines);
+			my $paintedSomething = paintWord($client, $word{$client}, $wordState{$client}, $offsets{$client}, $torender, $lines);
 			$wordState{$client} ++;#if($animate);
 			
 			if($wordState{$client} > $holdTime && !$paintedSomething) {
