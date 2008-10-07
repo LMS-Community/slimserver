@@ -24,6 +24,7 @@ end run
 on getDownloadedArtwork(macPath)
 	set output to ""
 	set albumList to {}
+	set linefeed to "\n"
 	
 	tell application "iTunes"
 		set totalCount to count of every track in library playlist 1
@@ -65,6 +66,8 @@ end getDownloadedArtwork
 
 on exportArtwork(thePic, trackId, theFormat, macPath)
 	set ext to ".png"
+	set linefeed to "\n"
+
 	if theFormat contains "JPEG" then set ext to ".jpg"
 	set exportFile to macPath & trackId & ext
 	set output to " -> " & exportFile & linefeed
