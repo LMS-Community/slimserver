@@ -12,7 +12,7 @@
 on run argv
 	set linefeed to "\n"
 	
-	set usage to "Usage: itartwork.osa [--all | --single] PATH [ Track ID ]"
+	set usage to "Usage: itartwork.osa [--all | --single] PATH [ [SEARCH STRING] [TRACK ID] ]"
 	
 	if count of argv < 2 then return usage
 	
