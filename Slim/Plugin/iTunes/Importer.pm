@@ -206,6 +206,7 @@ sub handleTrack {
 
 	my %cacheEntry = ();
 
+	my $pid      = $curTrack->{'Persistent ID'};
 	my $id       = $curTrack->{'Track ID'};
 	my $location = $curTrack->{'Location'};
 	my $filetype = $curTrack->{'File Type'};
@@ -360,6 +361,7 @@ sub handleTrack {
 			$curTrack->{$key} = Slim::Utils::Misc::unescape($curTrack->{$key});
 		}
 
+		$cacheEntry{'EXTID'}    = $pid;
 		$cacheEntry{'CT'}       = $type;
 		$cacheEntry{'TITLE'}    = $curTrack->{'Name'};
 		$cacheEntry{'ARTIST'}   = $curTrack->{'Artist'};

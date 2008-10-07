@@ -21,7 +21,7 @@ our @allColumns = (qw(
 	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm musicmagic_mixable
-	musicbrainz_id lossless lyrics replay_gain replay_peak
+	musicbrainz_id lossless lyrics replay_gain replay_peak extid
 ));
 
 {
