@@ -10,18 +10,36 @@
 -- To improve performance, only one image is exported for each album.
 
 on run argv
-	set exportDir to item 1 of argv
-
+	set linefeed to "\n"
+	
+	set usage to "Usage: itartwork.osa [--all | --single] PATH [ Track ID ]"
+	
+	if count of argv < 2 then return usage
+	
+	set mode to item 1 of argv
+	set exportDir to item 2 of argv
+	
 	-- Add trailing slash if needed
 	if exportDir does not end with "/" then
 		set exportDir to exportDir & "/"
 	end if
 	
 	set macPath to POSIX file exportDir as text
-	return getDownloadedArtwork(macPath)
+	
+	if mode equal "--all" then
+		return exportDownloadedArtwork(macPath)
+	else if mode equal "--single" then
+		if count of argv < 4 then return usage
+		
+		set searchString to item 3 of argv
+		set pid to item 4 of argv
+		return exportSingleArtwork(macPath, searchString, pid)
+	else
+		return usage
+	end if
 end run
 
-on getDownloadedArtwork(macPath)
+on exportDownloadedArtwork(macPath)
 	set output to ""
 	set albumList to {}
 	set linefeed to "\n"
@@ -33,8 +51,6 @@ on getDownloadedArtwork(macPath)
 			-- Avoid tracks of an album we already processed (matches on album name + artist name)
 			set theAlbum to album of track trackCount of library playlist 1 as string
 			set theAlbum to theAlbum & " - " & artist of track trackCount of library playlist 1 as string
-			
-			log trackCount & ": " & theAlbum
 			
 			if albumList does not contain theAlbum then
 				try
@@ -62,7 +78,43 @@ on getDownloadedArtwork(macPath)
 		end repeat
 	end tell
 	return output
-end getDownloadedArtwork
+end exportDownloadedArtwork
+
+on exportSingleArtwork(macPath, searchString, pid)
+	set output to ""
+	set linefeed to "\n"
+	
+	tell application "iTunes"
+		-- You can't directly search for a persistent ID, so do a name search first to narrow it down
+		set searchResults to (search library playlist 1 for searchString)
+		set totalCount to count of searchResults
+		set searchCount to 1
+		repeat while searchCount <= totalCount
+			set theTrack to item searchCount of searchResults
+			if persistent ID of theTrack equal pid then
+				try
+					set theAlbum to album of theTrack as string
+					set theAlbum to theAlbum & " - " & artist of theTrack as string
+					set theArtwork to artwork 1 of theTrack
+					set theFormat to the (format of theArtwork) as text
+					log "Exporting single artwork for ID " & pid & ": " & theAlbum
+					set output to output & "Exporting downloaded artwork for ID " & pid & ": " & theAlbum
+					
+					set thePic to the (raw data of theArtwork)
+					set exportOutput to my exportArtwork(thePic, pid, theFormat, macPath)
+					set output to output & exportOutput
+					return output
+				on error errorMessage
+					log "Error getting artwork: " & errorMessage
+					set output to output & "Error getting artwork: " & errorMessage & linefeed
+					return output
+				end try
+			end if
+			set searchCount to searchCount + 1
+		end repeat
+	end tell
+	return "No results found"
+end exportSingleArtwork
 
 on exportArtwork(thePic, trackId, theFormat, macPath)
 	set ext to ".png"
