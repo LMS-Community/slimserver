@@ -1,0 +1,82 @@
+#!/usr/bin/osascript
+
+-- Export downloaded iTunes artwork to a given folder
+-- ./itartwork.osa /path/to/folder
+
+-- Notes:
+-- AppleScript doesn't have any way of printing to stdout, so there is no output from this program
+-- until it completes, and then all output is printed at once.
+--
+-- To improve performance, only one image is exported for each album.
+
+on run argv
+	set exportDir to item 1 of argv
+
+	-- Add trailing slash if needed
+	if exportDir does not end with "/" then
+		set exportDir to exportDir & "/"
+	end if
+	
+	set macPath to POSIX file exportDir as text
+	return getDownloadedArtwork(macPath)
+end run
+
+on getDownloadedArtwork(macPath)
+	set output to ""
+	set albumList to {}
+	
+	tell application "iTunes"
+		set totalCount to count of every track in library playlist 1
+		set trackCount to 1
+		repeat while trackCount <= totalCount
+			-- Avoid tracks of an album we already processed (matches on album name + artist name)
+			set theAlbum to album of track trackCount of library playlist 1 as string
+			set theAlbum to theAlbum & " - " & artist of track trackCount of library playlist 1 as string
+			
+			log trackCount & ": " & theAlbum
+			
+			if albumList does not contain theAlbum then
+				try
+					set theArtwork to artwork 1 of track trackCount of library playlist 1
+					if downloaded of theArtwork is true then
+						set trackId to the (persistent ID of track trackCount)
+						set theFormat to the (format of theArtwork) as text
+						log "Exporting downloaded artwork for ID " & trackId & ": " & theAlbum
+						set output to output & "Exporting downloaded artwork for ID " & trackId & ": " & theAlbum
+						set thePic to the (raw data of theArtwork)
+						set exportOutput to my exportArtwork(thePic, trackId, theFormat, macPath)
+						set output to output & exportOutput
+						
+						-- This needs to be inside the check for downloaded, because
+						-- albums may only store downloaded artwork with some tracks on
+						-- an album
+						copy theAlbum to the end of albumList
+					end if
+				on error errorMessage
+					log "Error getting artwork for track " & trackCount & ": " & errorMessage
+					set output to output & "Error getting artwork for track " & trackCount & ": " & errorMessage & linefeed
+				end try
+			end if
+			set trackCount to trackCount + 1
+		end repeat
+	end tell
+	return output
+end getDownloadedArtwork
+
+on exportArtwork(thePic, trackId, theFormat, macPath)
+	set ext to ".png"
+	if theFormat contains "JPEG" then set ext to ".jpg"
+	set exportFile to macPath & trackId & ext
+	set output to " -> " & exportFile & linefeed
+
+	try
+		set fp to open for access file exportFile with write permission
+		write thePic to fp
+		close access fp
+	on error errorMessage
+		log "Error: Unable to write " & exportFile & ": " & errorMessage
+		set output to output & "  Error: Unable to write " & exportFile & ": " & errorMessage & linefeed
+	end try
+	return output
+end exportArtwork
+
