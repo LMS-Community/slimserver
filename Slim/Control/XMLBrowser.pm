@@ -1042,21 +1042,21 @@ sub _addingToPlaylist {
 	my $client = shift;
 	my $action = shift || 'add';
 
-	my $string = $action eq 'add' 
-			?  $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', ' ') 
-			:  $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', ' ') ;
+	my $string = $action eq 'add'
+		? $client->string('ADDING_TO_PLAYLIST')
+		: $client->string('INSERT_TO_PLAYLIST');
 
-	$client->showBriefly(
-			{ 
-				line => [ $string ], 
-			},
-			{ 
-				jive => {
-					'type'    => 'popupplay',
-					'text'    => [ $string ],
-				},
-			},
-	);
+	my $jivestring = $action eq 'add' 
+		? $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', ' ') 
+		: $client->string('JIVE_POPUP_ADDING_TO_PLAY_NEXT', ' ');
+
+	$client->showBriefly( { 
+		line => [ $string ],
+		jive => {
+			type => 'popupplay',
+			text => [ $jivestring ],
+		},
+	} );
 }
 
 sub _cliQuery_error {
