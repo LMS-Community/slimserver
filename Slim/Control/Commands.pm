@@ -1376,12 +1376,18 @@ sub playlistXitemCommand {
 		if ( $cmd eq 'add' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) && !Slim::Music::Info::isLineIn($path) ) {
 
 			my $insert = Slim::Music::Info::title($path) || $path;
-			my $msg = $client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', $insert);
-			my @line = split("\n", $msg);
-			$client->showBriefly({
-					'line' => [ @line ],
-					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
-				});
+			$client->showBriefly( {
+				line => [
+					$client->string('ADDING_TO_PLAYLIST'),
+					$insert,
+				],
+				jive => {
+					type => 'popupplay',
+					text => [ 
+						$client->string('JIVE_POPUP_ADDING_TO_PLAYLIST', $insert)
+					],
+				},
+			} );
 		}
 
 		Slim::Utils::Scanner->scanPathOrURL({
