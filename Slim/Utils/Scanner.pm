@@ -87,7 +87,7 @@ sub scanPathOrURL {
 
 		# Bug 9097, don't try to scan non-remote protocol handlers like randomplay://
 		if ( my $handler = Slim::Player::ProtocolHandlers->handlerForURL($pathOrUrl) ) {
-			unless ( $handler ne 'file' ) {
+			if ( $handler && $handler->can('isRemote') && !$handler->isRemote ) {
 				return $cb->( [ $pathOrUrl ] );
 			}
 		}
