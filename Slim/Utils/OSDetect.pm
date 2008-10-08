@@ -33,7 +33,7 @@ use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
-my ($os, $isWindows);
+my ($os, $isWindows, $isMac);
 
 =head1 METHODS
 
@@ -131,6 +131,7 @@ sub init {
 	
 	$os->initDetails();
 	$isWindows = $os->name eq 'win';
+	$isMac     = $os->name eq 'mac';
 }
 
 sub getOS {
@@ -173,6 +174,10 @@ sub isRHorSUSE {
 
 sub isWindows {
 	return $isWindows;
+}
+
+sub isMac {
+	return $isMac;
 }
 
 1;
