@@ -815,12 +815,26 @@ SqueezeJS.UI.Buttons.Rew = Ext.extend(SqueezeJS.UI.Button, {
 		this.cls = this.cls || 'btn-previous'; 
 		this.tooltip = this.tooltip || SqueezeJS.string('previous');
 		this.text = this.text || SqueezeJS.string('previous');
+		this.skipCmd = ['button', 'jump_rew'];
+
 		SqueezeJS.UI.Buttons.Rew.superclass.initComponent.call(this);
+		
+		SqueezeJS.Controller.on({
+			'playerselected': {
+				fn: function(playerobj) {
+					if (playerobj.isplayer)
+						this.skipCmd = ['button', 'jump_rew'];
+					else
+						this.skipCmd = ['playlist', 'index', '-1'];
+				},
+				scope: this
+			}
+		});
 	},
 
 	handler: function(){
 		if (this.power)
-			SqueezeJS.Controller.playerControl(['button', 'jump_rew']);
+			SqueezeJS.Controller.playerControl(this.skipCmd);
 	},
 
 	onPlayerStateChange: function(result){
@@ -838,12 +852,27 @@ SqueezeJS.UI.Buttons.Fwd = Ext.extend(SqueezeJS.UI.Button, {
 		this.cls = this.cls || 'btn-next';
 		this.tooltip = this.tooltip || SqueezeJS.string('next');
 		this.text = this.text || SqueezeJS.string('next');
+		this.skipCmd = ['button', 'jump_fwd'];
+		
 		SqueezeJS.UI.Buttons.Fwd.superclass.initComponent.call(this);
+		
+		SqueezeJS.Controller.on({
+			'playerselected': {
+				fn: function(playerobj) {
+					// http clients don't know IR commands
+					if (playerobj.isplayer)
+						this.skipCmd = ['button', 'jump_fwd'];
+					else
+						this.skipCmd = ['playlist', 'index', '+1'];
+				},
+				scope: this
+			}
+		});
 	},
 
 	handler: function(){
 		if (this.power)
-			SqueezeJS.Controller.playerControl(['button', 'jump_fwd']);
+			SqueezeJS.Controller.playerControl(this.skipCmd);
 	}
 });
 
