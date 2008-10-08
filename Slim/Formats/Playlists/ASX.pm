@@ -92,7 +92,6 @@ sub read {
 				my $title = $entry->{TITLE};
 				my $refs  = $entry->{REF} || [];
 			
-				REF:
 				for my $ref ( @{$refs} ) {
 					if ( my $href = $ref->{HREF} ) {
 						next if $href !~ /^(http|mms)/i;
@@ -101,8 +100,10 @@ sub read {
 							href  => $href,
 						};
 						
-						# Only one link in a REF station should be played
-						last REF;
+						# XXX: Including multiple ref entries per entry is not exactly
+						# correct.  Additional refs here should only be played if the
+						# first one fails, but this is difficult to implement in our
+						# current architecture.
 					}
 				}
 			}
