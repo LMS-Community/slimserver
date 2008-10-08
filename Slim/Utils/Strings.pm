@@ -376,9 +376,9 @@ sub storeString {
 		return;
 	}
 
-	if (defined $strings->{$currentLang}->{$name} && defined $curString->{$currentLang} && 
+	if ($log->is_info && defined $strings->{$currentLang}->{$name} && defined $curString->{$currentLang} && 
 			$strings->{$currentLang}->{$name} ne $curString->{$currentLang}) {
-		$log->warn("redefined string: $name in $file");
+		$log->info("redefined string: $name in $file");
 	}
 
 	if (defined $curString->{$currentLang}) {
