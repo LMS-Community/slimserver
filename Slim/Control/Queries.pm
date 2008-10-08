@@ -1734,19 +1734,6 @@ sub musicfolderQuery {
 
 	if ($valid) {
 
-		my @playlist = ();
-		my %urls;
-
-		for my $eachitem (@$items[$start..$end]) {
-				
-			my $url = Slim::Utils::Misc::fixPath($eachitem, $topPath) || next;
-			$urls{$eachitem} = $url;
-
-			if ( $playalbum && Slim::Music::Info::isSong($url)) {
-				push @playlist, $url;
-			}
-		}
-		
 		my $loopname =  $menuMode ? 'item_loop' : 'folder_loop';
 		my $chunkCount = 0;
 		$request->addResult( 'offset', $index ) if $menuMode;
@@ -1758,7 +1745,7 @@ sub musicfolderQuery {
 
 		for my $filename (@$items[$start..$end]) {
 
-			my $url = $urls{$filename} || next;
+			my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || next;
 
 			# Amazingly, this just works. :)
 			# Do the cheap compare for osName first - so non-windows users
@@ -1840,15 +1827,14 @@ sub musicfolderQuery {
 							},
 						},
 					};
+					
 					if ( $playalbum ) {
-						# send the track list as a comma separated single string
-						my $playlist = join(',', @playlist);
 						$actions->{'play'} = {
 							player => 0,
 							cmd    => ['jiveplaytrackalbum'],
 							params => {
-								list_index => $listIndex,
-								playlist   => $playlist,
+								list_index => $index + $listIndex,
+								folder     => $topPath,
 							},
 						};
 					}
