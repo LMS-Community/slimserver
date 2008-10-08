@@ -73,10 +73,26 @@ sub initPlugin {
 	}
 
 	Slim::Music::Import->addImporter($class, {
+		'type'         => 'file',
 		'reset'        => \&resetState,
 		'playlistOnly' => 1,
 		'use'          => $prefs->get('itunes'),
 	});
+	
+	if ( Slim::Utils::OSDetect::isWindows() ) {
+		require Slim::Plugin::iTunes::Importer::Artwork::Win32;
+		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::Win32', {
+			'type' => 'artwork',
+			'use'  => $prefs->get('itunes'),
+		} );
+	}
+	elsif ( Slim::Utils::OSDetect::isMac() ) {
+		require Slim::Plugin::iTunes::Importer::Artwork::OSX;
+		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::OSX', {
+			'type' => 'artwork',
+			'use'  => $prefs->get('itunes'),
+		} );
+	}
 
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 

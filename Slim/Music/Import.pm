@@ -336,6 +336,11 @@ sub runScan {
 		if ($importer eq $folderScanClass) {
 			next;
 		}
+		
+		# Skip non-file scanners here (i.e. artwork)
+		if ( $Importers{$importer}->{'type'} && $Importers{$importer}->{'type'} ne 'file' ) {
+			next;
+		} 
 
 		# These importers all implement 'playlist only' scanning.
 		# See bug: 1892
@@ -380,7 +385,17 @@ sub runScanPostProcessing {
 	$importsRunning{'findArtwork'} = Time::HiRes::time();
 
 	Slim::Music::Artwork->findArtwork;
-
+	
+	# Run any artwork importers
+	for my $importer (keys %Importers) {		
+		# Skip non-artwork scanners
+		if ( !$Importers{$importer}->{'type'} || $Importers{$importer}->{'type'} ne 'artwork' ) {
+			next;
+		}
+		
+		$class->runArtworkImporter($importer);
+	}
+	
 	# Remove and dangling references.
 	if ($class->cleanupDatabase) {
 
@@ -481,6 +496,31 @@ sub runImporter {
 		$log->info("Starting $importer scan");
 
 		$importer->startScan;
+
+		return 1;
+	}
+
+	return 0;
+}
+
+=head2 runArtworkImporter( $importer )
+
+Calls the importer's startArtworkScan() method, and adds a start time to the list of
+running importers.
+
+=cut
+
+sub runArtworkImporter {
+	my ($class, $importer) = @_;
+
+	if ($Importers{$importer}->{'use'}) {
+
+		$importsRunning{$importer} = Time::HiRes::time();
+
+		# rescan each enabled Import, or scan the newly enabled Import
+		$log->info("Starting $importer artwork scan");
+		
+		$importer->startArtworkScan;
 
 		return 1;
 	}
