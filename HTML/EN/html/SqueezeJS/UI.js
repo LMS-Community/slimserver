@@ -1284,6 +1284,7 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 			collapsible: false,
 			width: 400,
 			height: 150 + this.playerList.getCount() * 13,
+			autoScroll: true,
 			resizeHandles: 'se',
 			html: playerSelection
 		});
