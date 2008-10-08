@@ -2565,21 +2565,63 @@ sub jivePlayTrackAlbumCommand {
 	my $request    = shift;
 	my $client     = $request->client || return;
 	my $albumID    = $request->getParam('album_id');
-	my $playlist   = $request->getParam('playlist')|| undef;
+	my $folder     = $request->getParam('folder')|| undef;
 	my $listIndex  = $request->getParam('list_index');
 	
 	$client->execute( ["playlist", "clear"] );
 
 	# Database album browse is the simple case
 	if ( $albumID ) {
+
 		$client->execute( ["playlist", "addtracks", { 'album.id' => $albumID } ] );
 		$client->execute( ["playlist", "jump", $listIndex] );
 
-	# hard case is Browse Music Folder-- send a comma separated string as the urllist. 
-	# Commands.pm will split this into an array and look up the tracks
-	} elsif ( $playlist ) {
-		$client->execute(['playlist', 'addtracks', 'urllist', $playlist]);
+	}
+
+	# hard case is Browse Music Folder - re-create the playlist, starting playback with the current item
+	elsif ( $folder && defined $listIndex ) {
+
+		my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+		Slim::Player::Playlist::shuffle($client, 0);
+
+		my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( {
+			url => $folder,
+		} );
+
+		$log->info("Playing all in folder, starting with $listIndex");
+
+		my @playlist = ();
+
+		# iterate through list in reverse order, so that dropped items don't affect the index as we subtract.
+		for my $i (reverse (0..scalar @{$items}-1)) {
+
+			if (!ref $items->[$i]) {
+				$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $folder);
+			}
+
+			if (!Slim::Music::Info::isSong($items->[$i])) {
+
+				$log->info("Dropping $items->[$i] from play all in folder at index $i");
+
+				if ($i < $listIndex) {
+					$listIndex--;
+				}
+
+				next;
+			}
+
+			unshift (@playlist, $items->[$i]);
+		}
+
+		$log->info("Load folder playlist, now starting at index: $listIndex");
+
+		$client->execute(['playlist', 'clear']);
+		$client->execute(['playlist', 'addtracks', 'listref', \@playlist]);
 		$client->execute(['playlist', 'jump', $listIndex]);
+
+		if ($wasShuffled) {
+			$client->execute(['playlist', 'shuffle', 1]);
+		}
 	}
 
 	$request->setStatusDone();
