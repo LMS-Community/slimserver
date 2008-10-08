@@ -80,7 +80,7 @@ sub alarmCommand {
 	my $client      = $request->client();
 	my $cmd         = $request->getParam('_cmd');
 
-	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume playlisturl cmd );
+	my @tags = qw( id dow dowAdd dowDel enabled repeat time volume playlisturl url cmd );
 
 	# legacy support for "bare" alarm cli command (i.e., sending all tagged params)
 	my $params;
@@ -200,12 +200,23 @@ sub alarmCommand {
 		else {
 		
 			$alarm->time($params->{time}) if defined $params->{time};
-			$alarm->playlist($params->{playlisturl}) if defined $params->{playlisturl};
+			# the playlisturl param is supported for backwards compatability
+			# but url is preferred
+			my $url = undef;
+			if (defined $params->{url}) {
+			  $url = $params->{url};
+			} elsif (defined $params->{playlisturl}) {
+			  $url = $params->{playlisturl};
+			}
 
-			# special case for sending 0 for playlisturl 
-			# (needed for proper jive support for selecting "Current Playlist")
-			if ($params->{playlisturl} eq '0') {
+			if (defined $url) {
+			  if ($url eq '0') {
+				# special case for sending 0 for url/playlisturl
+				# (needed for proper jive support for selecting "Current Playlist")
 				$alarm->playlist(undef);
+			  } else {
+				$alarm->playlist($url);
+			  }
 			}
 
 			$alarm->volume($params->{volume}) if defined $params->{volume};
