@@ -154,6 +154,13 @@ on exportDownloadedArtwork(macPath, skipUnchecked, iterIndex)
 						set output to output & "  Error: Unable to write " & albumListCache & ": " & errorMessage & linefeed
 					end try
 					
+					-- Cleanup cache file when done
+					if trackCount equal totalCount then
+						try
+							do shell script "rm " & POSIX path of albumListCache
+						end try
+					end if
+					
 					set counter to (trackCount & "/" & totalCount) as string
 					return counter & " " & output
 				end if
