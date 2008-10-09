@@ -521,6 +521,23 @@ sub getCurrentTitle {
 	return standardTitle( $client, $url );
 }
 
+# Return the amount of seconds the current stream is behind real-time
+sub getStreamDelay {
+	my ( $client, $url ) = @_;
+	
+	my $bitrate = Slim::Music::Info::getBitrate($url) || 128000;
+	my $delay   = 0;
+	
+	if ( $bitrate > 0 ) {
+		my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
+		my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+	
+		$delay = $decodeBuffer + $outputBuffer;
+	}
+	
+	return $delay;
+}
+
 # Sets a new metadata title but delays the set
 # according to the amount of audio data in the
 # player's buffer.
@@ -536,15 +553,7 @@ sub setDelayedTitle {
 		# Some mp3 stations can have 10-15 seconds in the buffer.
 		# This will delay metadata updates according to how much is in
 		# the buffer, so title updates are more in sync with the music
-		my $bitrate = Slim::Music::Info::getBitrate($url) || 128000;
-		my $delay   = 0;
-		
-		if ( $bitrate > 0 ) {
-			my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
-			my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
-		
-			$delay = $decodeBuffer + $outputBuffer;
-		}
+		my $delay = getStreamDelay( $client, $url );
 		
 		# No delay on the initial metadata
 		if ( !$metaTitle ) {

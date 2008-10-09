@@ -154,7 +154,27 @@ sub parseMetadata {
 		}
 		
 		# Delay the title set
-		return Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
+		Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
+	}
+	
+	# Check for an image URL in the metadata.  Currently, only Radio Paradise supports this
+	if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
+		my $metaUrl = $1;
+		if ( $metaUrl =~ /\.(?:jpe?g|gif|png)$/i ) {
+			# Set this in the artwork cache after a delay
+			my $delay = Slim::Music::Info::getStreamDelay( $client, $url );
+			
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time() + $delay,
+				sub {
+					my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+					$cache->set( "remote_image_$url", $metaUrl, 3600 );
+					
+					$directlog->debug("Updating stream artwork to $metaUrl");
+				},
+			);
+		}
 	}
 
 	return undef;
