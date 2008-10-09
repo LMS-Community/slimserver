@@ -58,6 +58,7 @@ my @WMA_FILE_PROPERTIES_OBJECT_GUID              = (0x8c, 0xab, 0xdc, 0xa1, 0xa9
 my @WMA_CONTENT_DESCRIPTION_OBJECT_GUID          = (0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C);
 my @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID = (0xd2, 0xd0, 0xa4, 0x40, 0xe3, 0x07, 0x11, 0xd2, 0x97, 0xf0, 0x00, 0xa0, 0xc9, 0x5e, 0xa8, 0x50);
 my @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID    = (0x7b, 0xf8, 0x75, 0xce, 0x46, 0x8d, 0x11, 0xd1, 0x8d, 0x82, 0x00, 0x60, 0x97, 0xc9, 0xa2, 0xb2);
+my @WMA_ASF_COMMAND_MEDIA_OBJECT_GUID            = (0x59, 0xda, 0xcf, 0xc0, 0x59, 0xe6, 0x11, 0xd0, 0xa3, 0xac, 0x00, 0xa0, 0xc9, 0x03, 0x48, 0xf6);
 
 sub initPrefs {
 	my $client = shift;
@@ -505,6 +506,7 @@ sub directHeaders {
 				push @guids, @WMA_CONTENT_DESCRIPTION_OBJECT_GUID;
 				push @guids, @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID;
 				push @guids, @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID;
+				push @guids, @WMA_ASF_COMMAND_MEDIA_OBJECT_GUID;
 
 			    $guids_length = scalar @guids;
 
@@ -687,7 +689,7 @@ sub directMetadata {
 	my $type = Slim::Music::Info::contentType($url);
 	
 	if ( $type eq 'wma' ) {
-		Slim::Player::Protocols::MMS::parseMetadata( $client, $controller->song(), $metadata );
+		$controller->song()->currentTrackHandler()->parseMetadata( $client, $controller->song(), $metadata );
 	}
 	else {
 		Slim::Player::Protocols::HTTP::parseMetadata( $client, Slim::Player::Playlist::url($client), $metadata );

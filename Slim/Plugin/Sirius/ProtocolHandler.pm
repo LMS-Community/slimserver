@@ -127,8 +127,8 @@ sub gotChannelInfo {
 	$song->{'bitrate'}   = $bitrate;
 	$song->{'coverArt'}  = $info->{logo};
 	
-	# Connect to the metadata sub-stream for this station
-	connectMetadataStream( $song, $streamURL );
+	# Include the metadata sub-stream for this station
+	$song->{'wmaMetadataStream'} = 2;
 	
 	# Start a timer to check status at the defined interval
 	$log->debug( 'Polling status in ' . $info->{status}->{PollingInterval} . ' seconds' );
@@ -323,60 +323,23 @@ sub stopStreaming {
 	$client->execute( [ 'stop' ] );
 }
 
-sub connectMetadataStream {
-	my ( $song, $streamUrl ) = @_;
+sub parseMetadata {
+	my ( $class, $client, $song, $metadata ) = @_;
 	
-	$log->debug( 'Connecting to Sirius metadata stream...' );
+	# If we have ASF_Command_Media, process it here, otherwise let parent handle it
+	my $guid;
+	map { $guid .= $_ } unpack( 'H*', substr $metadata, 0, 16 );
 	
-	$streamUrl =~ s/^mms/http/;
-	
-	# Construct the request for stream #2
-	my $request = HTTP::Request->new( GET => $streamUrl );
-	my $h = $request->headers;
-	$h->header( Accept => '*/*' );
-	$h->header( 'User-Agent' => 'NSPlayer/8.0.0.3802' );
-	$h->header( Pragma => [
-		'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}',
-		'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0',
-		'LinkBW=2147483647, AccelBW=1048576, AccelDuration=18000',
-		'Speed=5.000',
-		'xPlayStrm=1',
-		'stream-switch-count=1',
-		'stream-switch-entry=ffff:2:0 ',
-	] );
-	$h->header( Connection => 'close' );
-	
-	# Start streaming it
-	my $http = Slim::Networking::Async::HTTP->new();
-	$http->send_request( {
-		request     => $request,
-		Timeout     => 60,
-		onStream    => sub {handleMetadataStream($song, @_);},
-		onError     => sub {
-			my ( $http, $error ) = @_;
-
-			$log->error("Error on metadata stream: $error.");
-		},
-		passthrough => [ $streamUrl ],
-	} );
-}
-
-sub handleMetadataStream {
-	my ( $song, $http, $data_ref, $mmsURL ) = @_;
-	
-	my $url = $song->currentTrack()->url;
-		
-	# Make sure we're still playing Sirius
-	if ( !$song->isActive() ) {
-		$log->debug( "Player stopped or changed streams, url: $url), disconnecting from metadata stream for $mmsURL" );
-		return 0;
+	if ( $guid ne '59dacfc059e611d0a3ac00a0c90348f6' ) { # ASF_Command_Media
+		return $class->SUPER::parseMetadata( $client, $song, $metadata );
 	}
-	
+		
 	# Format of the metadata stream is:
 	# TITLE <title>|ARTIST <artist>\0
 	
 	# WMA text is in UTF-16, if we can't decode it, just wait for more data
-	my $metadata = eval { Encode::decode('UTF-16LE', $$data_ref ) } || return 1;
+	# Cut off first 24 bytes (16 bytes GUID and 8 bytes object_size)
+	$metadata = eval { Encode::decode('UTF-16LE', substr( $metadata, 24 ) ) } || return;
 	
 	#$log->debug( "ASF_Command_Media: $metadata" );
 	
@@ -395,11 +358,10 @@ sub handleMetadataStream {
 			$title = "$artist - $title";
 		}
 		
-		Slim::Music::Info::setDelayedTitle( $song->master(), $url, $title );
+		Slim::Music::Info::setDelayedTitle( $song->master(),  $song->currentTrack()->url, $title );
 	}
 	
-	# Signal we want more data
-	return 1;
+	return;
 }
 
 # Metadata for a URL, used by CLI/JSON clients

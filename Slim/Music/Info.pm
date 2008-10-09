@@ -560,7 +560,7 @@ sub setDelayedTitle {
 			$delay = 0;
 		}
 		
-		$log->info("Delaying metadata title set by $delay secs");
+		$log->info("Delaying metadata title set by $delay secs ($newTitle)");
 		
 		$client->metaTitle( $newTitle );
 		

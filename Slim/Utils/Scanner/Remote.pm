@@ -470,6 +470,15 @@ sub parseWMAHeader {
 		
 		for my $stream ( @{ $wma->stream } ) {
 			next unless defined $stream->{streamNumber};
+			
+			my $streamBitrate = int( $stream->{bitrate} / 1000 );
+			
+			# If stream is ASF_Command_Media, it may contain metadata, so let's get it
+			if ( $stream->{stream_type_guid} eq '59DACFC0-59E6-11D0-A3AC-00A0C90348F6' ) {
+				$log->debug( "Possible ASF_Command_Media metadata stream: \#$stream->{streamNumber}, $streamBitrate kbps" );
+				$args->{song}->{wmaMetadataStream} = $stream->{streamNumber};
+				next;
+			}
 
 			# Skip non-audio streams or audio codecs we can't play
 			# The firmware supports 2 codecs:
@@ -480,8 +489,6 @@ sub parseWMAHeader {
 				||
 				$stream->{audio}->{codec} eq 'Windows Media Audio 9 Voice'
 			);
-		
-			my $streamBitrate = int( $stream->{bitrate} / 1000 );
 		
 			$log->debug( "Available stream: \#$stream->{streamNumber}, $streamBitrate kbps" );
 

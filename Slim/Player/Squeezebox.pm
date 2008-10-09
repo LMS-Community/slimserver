@@ -759,8 +759,13 @@ sub stream_s {
 		if ( $format =~ /(?:wma|asx)/ ) {
 			# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
 			# so the firmware knows which stream to play
-			if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
+			if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0 (?:ffff:(\d+):0 )?/ ) {
 				$pcmsamplerate = chr($streamNum);
+				
+				# If the request string contains a second stream, use it for metadata (Sirius)
+				if ( my $metaStream = $2 ) {
+					$pcmchannels = chr($metaStream);
+				}
 			}
 		}
 	

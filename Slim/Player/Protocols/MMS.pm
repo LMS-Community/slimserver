@@ -188,6 +188,14 @@ sub requestString {
 	
 	my $context    = $newtime ? 4 : 2;
 	my $streamtime = $newtime ? $newtime * 1000 : 0;
+	
+	# Does the song include a metadata stream (Sirius)?
+	my $streamCount    = 1;
+	my $metadataStream = '';
+	if ( $song->{wmaMetadataStream} ) {
+		$streamCount    = 2;
+		$metadataStream = 'ffff:' . $song->{wmaMetadataStream} . ':0 ';
+	}
 
 	push @headers, (
 		"Pragma: no-cache,rate=1.0000000,stream-offset=0:0,max-duration=0",
@@ -196,8 +204,8 @@ sub requestString {
 		"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=18000",
 		"Pragma: Speed=5.000",
 		"Pragma: xPlayStrm=1",
-		"Pragma: stream-switch-count=1",
-		"Pragma: stream-switch-entry=ffff:" . $streamNum . ":0 ",
+		"Pragma: stream-switch-count=$streamCount",
+		"Pragma: stream-switch-entry=ffff:" . $streamNum . ":0 " . $metadataStream,
 	);
 	
 	# Fix progress bar if seeking
@@ -252,7 +260,9 @@ sub parseDirectHeaders {
 }
 
 sub parseMetadata {
-	my ( $client, $song, $metadata ) = @_;
+	my ( $class, $client, $song, $metadata ) = @_;
+	
+	# XXX: figure out some way to parse ASF_Command_Media metadata
 	
 	my $wma       = Audio::WMA->parseObject( $metadata );
 	my $streamNum = $song->{'scanData'}->{$song->{'streamUrl'}}->{'streamNum'} || 1;
