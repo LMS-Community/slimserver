@@ -4,6 +4,20 @@ Ext.BLANK_IMAGE_URL = '/html/images/spacer.gif';
 Ext.isIE8 = Ext.isIE && navigator.userAgent.toLowerCase().indexOf("msie 8") > -1;
 Ext.isIE7 = Ext.isIE7 || Ext.isIE8;
 
+// XXX - remove this override once an update to ExtJS 2.2 is released
+// fixes the disappearing time input controls in IE
+// http://extjs.com/forum/showthread.php?t=43231
+Ext.form.TriggerField.override({
+	afterRender : function(){
+		Ext.form.TriggerField.superclass.afterRender.call(this);
+		var y;
+		if(Ext.isIE && !this.hideTrigger && this.el.getY() != (y = this.trigger.getY())){
+			this.el.position();
+			this.el.setY(y);
+		}
+	}
+});
+
 var SqueezeJS = {
 	Strings : new Array(),
 	string : function(s){ return this.Strings[s]; },
