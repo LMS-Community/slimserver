@@ -983,6 +983,14 @@ sub analogOutMenu {
 				name   => '{ANALOGOUTMODE_SUBOUT}',
 				value  => 1,
 			},
+			{
+				name   => '{ANALOGOUTMODE_ALWAYS_ON}',
+				value  => 2,
+			},
+			{
+				name   => '{ANALOGOUTMODE_ALWAYS_OFF}',
+				value  => 3,
+			},
 		],
 		'onPlay'       => \&setPref,
 		'onAdd'        => \&setPref,
@@ -993,7 +1001,7 @@ sub analogOutMenu {
 		'initialValue'    => sub { $prefs->client(shift)->get('analogOutMode') },
 		'condition'   => sub {
 			my $client = shift;
-			return $client->isa('Slim::Player::Boom');
+			return $client->hasHeadSubOut();
 		},
 	};
 }

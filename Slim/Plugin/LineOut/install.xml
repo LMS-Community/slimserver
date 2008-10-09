@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<extension>
+	<name>PLUGIN_LINE_OUT</name>
+	<module>Slim::Plugin::LineOut::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_LINE_OUT_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+
+	<defaultState>disabled</defaultState>
+        
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/LineOut/html/images/icon.png</icon>
+	<type>2</type>
+
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.3</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+
+</extension>

@@ -16884,7 +16884,7 @@ SETUP_ANALOGOUTMODE
 SETUP_ANALOGOUTMODE_DESC
 	DA	Vælg hvad der skal ske når noget sluttes til udgangsstikket til hovedtelefoner/subwoofer på Boom. Når der tilsluttes hovedtelefoner, bliver de indbyggede højtalere slået fra.
 	DE	Wählen Sie die Funktion des Kopfhörer/Sub Out-Anschlusses von Boom. 'Kopfhörer' deaktiviert die internen Lautsprecher.
-	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers.
+	EN	Choose the function of Boom headphone/sub out port.  Headphone option will shut off the internal speakers. "Always On" will keep the internal speakers enabled, even while headphones are plugged in. 
 	ES	Elija la función del puerto de salida de auriculares o subwoofer de Boom. La opción de auriculares desactivará los altavoces internos.
 	FI	Valitse Boomin lähtöportin toiminto (kuulokkeet/subwoofer).  Jos valitset kuulokkeet, sisäiset kaiuttimet mykistyvät.
 	FR	Sélectionnez la fonction du port de sortie du casque/sub Boom. L'option casque va désactiver les haut-parleurs internes.
@@ -16916,6 +16916,12 @@ ANALOGOUTMODE_HEADPHONE
 	NL	Koptelefoon
 	NO	Hodetelefoner
 	SV	Hörlurar
+
+ANALOGOUTMODE_ALWAYS_ON
+	EN	Always On
+
+ANALOGOUTMODE_ALWAYS_OFF
+	EN	Always Off
 
 SETUP_POLARITYINVERSION
 	DA	Inverter polaritet

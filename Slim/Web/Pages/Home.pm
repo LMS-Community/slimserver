@@ -133,11 +133,15 @@ sub home {
 		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
 	}
 
-	# More leakage from the LineIn 'plugin'
+	# More leakage from the LineIn/Out 'plugins'
 	#
-	# If our current player has line in, show the menu.
+	# If our current player has line, show the menu.
 	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineIn::Plugin')) {
 		Slim::Plugin::LineIn::Plugin->webPages($client);
+	}
+
+	if ($client && Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LineOut::Plugin')) {
+		Slim::Plugin::LineOut::Plugin->webPages($client);
 	}
 
 	if (my $favs = Slim::Utils::Favorites->new($client)) {

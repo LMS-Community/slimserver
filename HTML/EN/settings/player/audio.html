@@ -26,6 +26,8 @@
 					[% FOREACH option = {
 						'1' => 'ANALOGOUTMODE_SUBOUT',
 						'0' => 'ANALOGOUTMODE_HEADPHONE'
+						'2' => 'ANALOGOUTMODE_ALWAYS_ON'
+						'3' => 'ANALOGOUTMODE_ALWAYS_OFF'
 					} %]
 						<option [% IF prefs.pref_analogOutMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 					[%- END -%]

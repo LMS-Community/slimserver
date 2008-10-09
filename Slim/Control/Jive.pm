@@ -1023,9 +1023,9 @@ sub lineOutQuery {
 	my $request        = shift;
 	my $client         = $request->client();
 	my $currentSetting = $prefs->client($client)->get('analogOutMode');
-	my @strings = qw/ ANALOGOUTMODE_HEADPHONE ANALOGOUTMODE_SUBOUT /;
+	my @strings = qw/ ANALOGOUTMODE_HEADPHONE ANALOGOUTMODE_SUBOUT ANALOGOUTMODE_ALWAYS_ON ANALOGOUTMODE_ALWAYS_OFF /;
 	my @menu = ();
-	for my $i (0..1) {
+	for my $i (0..3) {
 		my $lineOutSetting = {
 			text    => $client->string($strings[$i]),
 			radio   => ($i == $currentSetting) + 0,
@@ -1318,8 +1318,7 @@ sub playerSettingsMenu {
 	}
 
 	# lineOut, if available
-	my $lineOutCapable = $prefs->client($client)->get('analogOutMode');
-	if ( defined $lineOutCapable ) {
+	if ( $client->hasHeadSubOut() ) {
 		push @menu, {
 			text           => $client->string("SETUP_ANALOGOUTMODE"),
 			id             => 'settingsLineOut',

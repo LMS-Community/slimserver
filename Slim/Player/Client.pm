@@ -646,6 +646,7 @@ sub voltage {
 }
 
 sub hasDigitalOut() { return 0; }
+sub hasHeadSubOut() { return 0; }
 sub hasVolumeControl() { return 0; }
 sub hasEffectsLoop() { return 0; }
 sub hasPreAmp() { return 0; }
