@@ -753,6 +753,11 @@ sub stopSnooze {
 			$log->debug('Fading volume');
 			$client->fade_volume( $FADE_SECONDS );
 		}
+
+		# Set a callback to check we're playing.  As internet radio
+		# streams have to restart at the end of a snooze they could
+		# potentially fail.
+		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 20, \&_checkPlaying);
 	}
 
 	$client->showBriefly({
