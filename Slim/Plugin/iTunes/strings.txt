@@ -408,3 +408,5 @@ ITUNES_PLAYLISTS_PROGRESS
 	NO	Importere iTunes-spilleliste
 	SV	Import av iTunes-spellistor
 
+ITUNES_ARTWORK_PROGRESS
+	EN	iTunes Artwork Import

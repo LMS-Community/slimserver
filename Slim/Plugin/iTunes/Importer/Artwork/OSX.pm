@@ -47,7 +47,7 @@ sub exportDownloadedArtwork {
 			if ( !$progress ) {
 				$progress = Slim::Utils::Progress->new( { 
 					type  => 'importer', 
-					name  => 'ITUNES_EXPORTING_DOWNLOADED_ARTWORK', 
+					name  => 'itunes_artwork', 
 					total => $total,
 					bar   => 1,
 				} );
@@ -71,6 +71,9 @@ sub exportDownloadedArtwork {
 
 sub finishArtworkExport {
 	my ( $class, $dest ) = @_;
+	
+	# XXX: Not sure we want to close iTunes here, what if the user is using it?
+	return;
 	
 	# Tell iTunes to quit if we had to start it
 	my $osa    = Slim::Utils::Misc::findbin('osascript');
