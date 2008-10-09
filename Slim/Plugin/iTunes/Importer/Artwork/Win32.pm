@@ -5,4 +5,6 @@ use base 'Slim::Plugin::iTunes::Importer::Artwork';
 
 sub exportDownloadedArtwork { }
 
+sub finishArtworkExport { }
+
 1;
