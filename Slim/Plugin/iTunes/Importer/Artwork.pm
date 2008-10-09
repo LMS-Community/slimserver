@@ -75,6 +75,8 @@ sub startArtworkScan {
 	# XXX: go through all remaining items without artwork, check iTunes for
 	# artwork, as it may have been manually added by the user
 	
+	$class->finishArtworkExport($cachedir);
+	
 	Slim::Music::Import->endImporter($class);
 }
 

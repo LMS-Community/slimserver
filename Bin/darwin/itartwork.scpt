@@ -14,7 +14,7 @@ on run argv
 	
 	-- What I would give for getopt in AppleScript...
 	
-	set usage to "Usage: itartwork.scpt PATH [--all | --iter INDEX | --single SEARCH_STRING TRACK_ID ] [ --skip-unchecked ]"
+	set usage to "Usage: itartwork.scpt PATH [--all | --iter INDEX | --single SEARCH_STRING TRACK_ID | --shutdown ] [ --skip-unchecked ]"
 	
 	if count of argv < 2 then return usage
 	
@@ -29,6 +29,20 @@ on run argv
 	set macPath to POSIX file exportDir as text
 	
 	set skipUnchecked to false
+	
+	-- If iTunes is not already running, cache the fact in a file
+	-- This will be used later if someone calls --shutdown
+	set shutdowniTunesCache to macPath & "shutdowniTunes.cache"
+	if mode does not equal "--shutdown" then
+		try
+			tell application "Finder" to set procList to name of processes
+			if procList does not contain "iTunes" then
+				set fp to open for access shutdowniTunesCache with write permission
+				write 1 to fp as integer
+				close access fp
+			end if
+		end try
+	end if
 	
 	if mode equal "--all" then
 		if count of argv is 3 then
@@ -59,6 +73,20 @@ on run argv
 		-- No need for --skip-unchecked in single mode
 		
 		return exportSingleArtwork(macPath, searchString, pid)
+	else if mode equal "--shutdown" then
+		-- Shutdown iTunes if the cache file is present
+		try
+			set sic to open for access shutdowniTunesCache
+			set shutdowniTunes to read sic as integer
+			close access sic
+			if shutdowniTunes equal 1 then
+				tell application "iTunes" to quit
+			end if
+			do shell script "rm " & POSIX path of shutdowniTunesCache
+			return "iTunes closed automatically"
+		on error errorMessage
+			return "iTunes not closed automatically: " & errorMessage
+ 		end try
 	else
 		return usage
 	end if
@@ -83,7 +111,7 @@ on exportDownloadedArtwork(macPath, skipUnchecked, iterIndex)
 				set alc to open for access albumListCache
 				set albumList to read alc as list
 				close access alc
-			end try				
+			end try
 		end if
 		
 		repeat while trackCount <= totalCount
@@ -168,7 +196,7 @@ on exportDownloadedArtwork(macPath, skipUnchecked, iterIndex)
 			
 			set trackCount to trackCount + 1
 		end repeat
-	end tell
+	end tell	
 	return output
 end exportDownloadedArtwork
 

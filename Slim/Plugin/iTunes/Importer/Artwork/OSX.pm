@@ -30,7 +30,6 @@ sub exportDownloadedArtwork {
 		
 		open my $proc, "$osa $script $dest --iter $index $skipUnchecked |" or do {
 			logError("Unable to run artwork script: $!");
-			
 			return;
 		};
 		
@@ -68,6 +67,24 @@ sub exportDownloadedArtwork {
 			return;
 		}
 	}
+}
+
+sub finishArtworkExport {
+	my ( $class, $dest ) = @_;
+	
+	# Tell iTunes to quit if we had to start it
+	my $osa    = Slim::Utils::Misc::findbin('osascript');
+	my $script = Slim::Utils::Misc::findbin('itartwork.scpt');
+	
+	open my $proc, "$osa $script $dest --shutdown | " or do {
+		logError("Unable to run artwork shutdown script: $!");
+		return;
+	};
+	
+	my $status = <$proc>;
+	chomp $status;
+	
+	$log->is_debug && $log->debug($status);
 }
 
 1;
