@@ -9,7 +9,6 @@ use base 'Slim::Plugin::OPMLBased';
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::RhapsodyDirect::ProtocolHandler;
-use Slim::Plugin::RhapsodyDirect::RPDS ();
 
 use URI::Escape qw(uri_escape_utf8);
 
@@ -34,7 +33,7 @@ sub initPlugin {
 	);
 	
 	Slim::Networking::Slimproto::addHandler( 
-		RPDS => \&Slim::Plugin::RhapsodyDirect::RPDS::rpds_handler
+		RPDS => \&rpds_handler
 	);
 	
 	# Track Info item
@@ -284,4 +283,64 @@ sub trackInfoMenu {
 	}
 }
 
+sub rpds_handler {
+	my ( $client, $data_ref ) = @_;
+	
+	if ( $log->is_warn ) {
+		$log->warn( $client->id . " Got RPDS packet: " . Data::Dump::dump($data_ref) );
+	}
+	
+	my $got_cmd = unpack 'C', $$data_ref;
+	
+	# Check for specific decoding error codes
+	if ( $got_cmd >= 100 && $got_cmd < 200 ) {
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
+			logError( $client, "decoding failure: code $got_cmd" );
+		}
+		$log->error("Rhapsody decoding failure: code $got_cmd");
+		return;
+	}
+	
+	# Check for errors sent by the player
+	if ( $got_cmd == 255 ) {
+		# SOAP Fault
+		my (undef, $faultCode, $faultString ) = unpack 'cn/a*n/a*', $$data_ref;
+		
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS fault: $faultCode - $faultString");
+		}
+		
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
+			logError( $client, 'RPDS_FAULT', $faultString );
+		}
+		
+		# If a user's session becomes invalid, the firmware will keep retrying getEA
+		# and report a fault of 'Playback Session id $foo is not a valid session id'
+		# and so we need to stop the player and report the error
+		if ( $faultString =~ /not a valid session id/ ) {
+			my $error = $client->string('PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION');
+			
+			handleError( $error, $client );
+		}
+	}
+	elsif ( $got_cmd == 253 ) {
+		# SSL connection error
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS -3, SSL connection error");
+		}
+		
+		if ( main::SLIM_SERVICE && SN_DEBUG ) {
+			logError( $client, 'RPDS_SSL_ERROR' );
+		}
+	}
+	elsif ( $got_cmd == 252 ) {
+		# Another SSL connection is still in progress, this should not happen anymore
+		# since the player only makes one kind of SSL request
+		
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS -4, SSL connection already in use");
+		}
+	}
+}
+	
 1;
