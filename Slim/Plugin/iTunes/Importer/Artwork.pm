@@ -9,10 +9,8 @@ use File::Path qw(mkpath);
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Log;
-use Slim::Utils::Prefs;
 
-my $log    = logger('plugin.itunes');
-my $sprefs = preferences('server');
+my $log = logger('plugin.itunes');
 
 sub startArtworkScan {
 	my $class = shift;
@@ -63,26 +61,7 @@ sub startArtworkScan {
 					$album->update;
 				}
 				
-				if ( $sprefs->get('precacheArtwork') ) {
-					# Pre-cache this artwork resized to our commonly-used sizes/formats
-					# 1. user's thumb size or 100x100_p (large web artwork)
-					# 2. 50x50_p (small web artwork)
-					# 3. 56x56_o.jpg (Jive artwork - OAR JPG)
-
-					my @dims = (50);
-					push @dims, $sprefs->get('thumbSize') || 100;
-
-					for my $dim ( @dims ) {
-						$isDebug && $log->debug( "Pre-caching artwork for trackid " . $track->id . " at size ${dim}x${dim}_p" );
-						eval {
-							Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_${dim}x${dim}_p" );
-						};
-					}
-					eval {
-						$isDebug && $log->debug( "Pre-caching artwork for trackid " . $track->id . " at size 56x56_o.jpg" );
-						Slim::Web::Graphics::processCoverArtRequest( undef, 'music/' . $track->id . "/cover_56x56_o.jpg" );
-					};
-				}
+				Slim::Music::Artwork::precacheArtwork( $track->id );
 			}
 			else {
 				$isDebug && $log->debug( "Track $pid (" . $track->title . ") already has artwork" );
