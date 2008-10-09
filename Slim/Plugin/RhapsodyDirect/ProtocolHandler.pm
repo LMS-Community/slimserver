@@ -33,30 +33,7 @@ sub isRemote { 1 }
 
 sub getFormatForURL { 'mp3' }
 
-sub canSeek {
-	my ( $class, $client ) = @_;
-	
-	# XXX: temporary, will be SN-only after firmware is released
-	my $canSeek = 0;
-	
-	my $deviceid = $client->deviceid;
-	my $rev      = $client->revision;
-	
-	if ( $deviceid == 4 && $rev >= 113 ) {
-		$canSeek = 1;
-	}
-	elsif ( $deviceid == 5 && $rev >= 63 ) {
-		$canSeek = 1;
-	}
-	elsif ( $deviceid == 7 && $rev >= 48 ) {
-		$canSeek = 1;
-	}
-	elsif ( $deviceid == 10 && $rev >= 33 ) {
-		$canSeek = 1;
-	}
-	
-	return $canSeek;
-}
+sub canSeek { 1 }
 
 # Source for AudioScrobbler
 sub audioScrobblerSource {
@@ -907,9 +884,8 @@ sub getSeekData {
 	my ( $class, $client, $song, $newtime ) = @_;
 	
 	# Determine byte offset and song length in bytes
-	my $meta    = $class->getMetadataFor( $client, $song->{track}->url );
+	my $meta = $class->getMetadataFor( $client, $song->{track}->url );
 	
-	my $bitrate =  192;
 	my $duration = $meta->{duration} || return;
 	
 	# Calculate the RAD and EA offsets for this time offset
@@ -976,7 +952,7 @@ sub reinit {
 				$client->streamingProgressBar( {
 					url     => $currentURL,
 					length  => $length,
-					bitrate => 128000,
+					bitrate => 192000,
 				} );
 				
 				# If it's a radio station, reset the title
