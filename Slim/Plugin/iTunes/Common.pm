@@ -29,6 +29,7 @@ package Slim::Plugin::iTunes::Common;
 use strict;
 use base qw(Class::Data::Inheritable);
 
+use Digest::SHA1;
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
 
@@ -249,23 +250,40 @@ sub findMusicLibraryFile {
 	return undef;
 }
 
-sub isMusicLibraryFileChanged {
-	my $class     = shift;
+sub getLibraryChecksum {
+	my ( $class, $file ) = @_;
+	
+	$file ||= $class->findMusicLibraryFile();
+	
+	open my $fh, '<', $file;
+	binmode $fh;
+	
+	my $sha1 = Digest::SHA1->new;
+	$sha1->addfile($fh);
+	my $checksum = $sha1->hexdigest;
+	
+	close $fh;
+	
+	return $checksum;
+}
 
-	my $file      = $class->findMusicLibraryFile() || return;
-	my $fileMTime = (stat $file)[9];
+sub isMusicLibraryFileChanged {
+	my $class = shift;
+
+	my $file = $class->findMusicLibraryFile() || return;
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
 	# just starting, iTunesLastLibraryChange is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	my $lastScanTime     = Slim::Music::Import->lastScanTime;
-	my $lastiTunesChange = Slim::Music::Import->lastScanTime('iTunesLastLibraryChange');
+	my $lastScanTime       = Slim::Music::Import->lastScanTime;
+	my $lastiTunesChange   = Slim::Music::Import->lastScanTime('iTunesLastLibraryChange');
+	my $lastiTunesChecksum = Slim::Music::Import->lastScanTime('iTunesLastLibraryChecksum');
 
 	# Set this so others can use it without going through the DB in a tight loop.
 	$class->lastITunesMusicLibraryDate($lastiTunesChange);
 
-	if ($fileMTime > $lastiTunesChange) {
+	if ($class->getLibraryChecksum($file) ne $lastiTunesChecksum) {
 
 		my $scanInterval = $prefs->get('scan_interval');
 

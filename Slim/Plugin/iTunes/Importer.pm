@@ -109,6 +109,7 @@ sub resetState {
 	$lastITunesMusicLibraryDate = -1;
 
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', -1);
+	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChecksum', '');
 }
 
 sub getTotalTrackCount {
@@ -210,8 +211,9 @@ sub doneScanning {
 	if ( $log->is_info ) {
 		$log->info(sprintf("Scan completed in %d seconds.", (time() - $iTunesScanStartTime)));
 	}
-
-	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', $currentITunesMusicLibraryDate);
+	
+	Slim::Music::Import->setLastScanTime( 'iTunesLastLibraryChange', $currentITunesMusicLibraryDate );
+	Slim::Music::Import->setLastScanTime( 'iTunesLastLibraryChecksum', $class->getLibraryChecksum() );
 
 	Slim::Music::Import->endImporter($class);
 }
