@@ -8,6 +8,9 @@
 -- until it completes, and then all output is printed at once.
 --
 -- To improve performance, only one image is exported for each album.
+--
+-- TODO: check iTunes version?
+-- Dialog box telling user we are going to open iTunes?  Hard, requires localization
 
 on run argv
 	set linefeed to "\n"
@@ -217,12 +220,10 @@ on exportSingleArtwork(macPath, searchString, pid)
 					set theAlbum to theAlbum & " - " & artist of theTrack as string
 					set theArtwork to artwork 1 of theTrack
 					set theFormat to the (format of theArtwork) as text
-					log "Exporting single artwork for ID " & pid & ": " & theAlbum
-					set output to output & "Exporting downloaded artwork for ID " & pid & ": " & theAlbum
-					
+										
 					set thePic to the (raw data of theArtwork)
 					set exportOutput to my exportArtwork(thePic, pid, theFormat, macPath)
-					set output to output & exportOutput
+					set output to "OK " & exportOutput
 					return output
 				on error errorMessage
 					log "Error getting artwork: " & errorMessage
@@ -242,15 +243,15 @@ on exportArtwork(thePic, trackId, theFormat, macPath)
 
 	if theFormat contains "JPEG" then set ext to ".jpg"
 	set exportFile to macPath & trackId & ext
-	set output to " -> " & exportFile & linefeed
 
 	try
 		set fp to open for access file exportFile with write permission
 		write thePic to fp
 		close access fp
+		set output to trackId & ext & linefeed
 	on error errorMessage
 		log "Error: Unable to write " & exportFile & ": " & errorMessage
-		set output to output & "  Error: Unable to write " & exportFile & ": " & errorMessage & linefeed
+		set output to "Unable to write " & POSIX path of exportFile & ": " & errorMessage & linefeed
 	end try
 	return output
 end exportArtwork

@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::iTunes::Common);
 use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
+use File::Path qw(rmtree);
 use XML::Parser;
 
 INIT: {
@@ -110,6 +111,12 @@ sub resetState {
 
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', -1);
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChecksum', '');
+	
+	# Delete the iTunes artwork cache
+	my $cachedir = catdir( Slim::Utils::OSDetect::dirsFor('cache'), 'iTunesArtwork' );
+	if ( -d $cachedir ) {
+		rmtree $cachedir;
+	}
 }
 
 sub getTotalTrackCount {

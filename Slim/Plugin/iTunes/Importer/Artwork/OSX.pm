@@ -12,7 +12,7 @@ my $log   = logger('plugin.itunes');
 my $prefs = preferences('plugin.itunes');
 
 sub exportDownloadedArtwork {
-	my ( $class, $dest ) = @_;
+	my ( $class, $cachedir ) = @_;
 	
 	my $isDebug = $log->is_debug;
 	
@@ -28,7 +28,7 @@ sub exportDownloadedArtwork {
 	while ( !$done ) {
 		$index++;
 		
-		open my $proc, "$osa $script $dest --iter $index $skipUnchecked |" or do {
+		open my $proc, "$osa $script $cachedir --iter $index $skipUnchecked |" or do {
 			logError("Unable to run artwork script: $!");
 			return;
 		};
@@ -47,7 +47,7 @@ sub exportDownloadedArtwork {
 			if ( !$progress ) {
 				$progress = Slim::Utils::Progress->new( { 
 					type  => 'importer', 
-					name  => 'itunes_artwork', 
+					name  => 'itunes_artwork_phase_1', 
 					total => $total,
 					bar   => 1,
 				} );
@@ -69,8 +69,45 @@ sub exportDownloadedArtwork {
 	}
 }
 
+sub exportSingleArtwork {
+	my ( $class, $cachedir, $track ) = @_;
+	
+	my $osa    = Slim::Utils::Misc::findbin('osascript');
+	my $script = Slim::Utils::Misc::findbin('itartwork.scpt');
+	
+	my $search = $track->title;
+	my $pid    = $track->extid;
+	
+	if ( $search =~ /"/ ) {
+		$search =~ s/"/\\"/g;
+	}
+	
+	open my $proc, "$osa $script $cachedir --single \"$search\" $pid |" or do {
+		logError("Unable to run artwork script: $!");
+		return;
+	};
+	
+	my $status = <$proc>;
+	chomp $status;
+	
+	close $proc;
+	
+	if ( $status =~ /^OK (.+)/ ) {
+		my $file = $1;
+		
+		$log->is_debug && $log->debug( $status );
+		
+		return $file;
+	}
+	else {
+		logError("Error from artwork script: $status");
+	}
+	
+	return;
+}
+
 sub finishArtworkExport {
-	my ( $class, $dest ) = @_;
+	my ( $class, $cachedir ) = @_;
 	
 	# XXX: Not sure we want to close iTunes here, what if the user is using it?
 	return;
@@ -79,7 +116,7 @@ sub finishArtworkExport {
 	my $osa    = Slim::Utils::Misc::findbin('osascript');
 	my $script = Slim::Utils::Misc::findbin('itartwork.scpt');
 	
-	open my $proc, "$osa $script $dest --shutdown | " or do {
+	open my $proc, "$osa $script $cachedir --shutdown | " or do {
 		logError("Unable to run artwork shutdown script: $!");
 		return;
 	};
