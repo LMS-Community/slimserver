@@ -319,6 +319,11 @@ sub flush {
 	return 1;
 }
 
+sub play {
+	my $client = shift;
+	$client->streamBytes(0);
+	$client->SUPER::play(@_);
+}
 
 sub stop {
 	my $client = shift;
