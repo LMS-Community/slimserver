@@ -1028,6 +1028,8 @@ sub _checkPlaying {
 	return if ! $self->active || $self->snoozeActive;
 
 	my $client = $self->client;
+	
+	$log->is_debug && $log->debug( 'Current playmode: ' . Slim::Player::Source::playmode($client) );
 
 	if (! (Slim::Player::Source::playmode($client) =~ /play/)) {
 		$log->debug('Alarm active but client not playing');
@@ -1040,13 +1042,22 @@ sub _playFallback {
 	my $self = shift;
 
 	my $client = $self->client;
+	
+	my $url;
+	
+	if ( main::SLIM_SERVICE ) {
+		$url = "loop://www.squeezenetwork.com/static/sounds/alarm/slim-backup-alarm.mp3";
+	}
+	else {	
+		my $server = Slim::Utils::Network::serverAddr();
+		my $port   = $prefs->get('httpport');
+	
+		$url = "loop://$server:$port/html/slim-backup-alarm.mp3";
+	}
 
-	$log->debug('Starting fallback sounds');
-	# Would be nice to have some alarm tones to fall back to (Bug 8499).  For now, just
-	# grab 10 random tracks and play them
-	$log->debug('Playing 10 random tracks');
-	my @tracks = Slim::Schema->rs('track')->search({audio => 1}, {rows => 10, order_by => \'RAND()'})->all;
-	my $request = $client->execute(['playlist', 'loadtracks', 'listRef', \@tracks ]);
+	$log->debug("Starting fallback alarm: $url");
+
+	my $request = $client->execute([ 'playlist', 'play', $url, $client->string('BACKUP_ALARM') ]);
 	$request->source('ALARM');
 
 	if ( $prefs->client($client)->get('alarmfadeseconds') ) {
