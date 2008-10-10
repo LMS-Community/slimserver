@@ -19,6 +19,13 @@ sub startArtworkScan {
 		return;
 	}
 	
+	$class->initArtworkExport;
+	
+	# Make sure iTunes version is new enough for this
+	if ( !$class->supportsArtworkExport ) {
+		return;
+	}
+	
 	my $isDebug = $log->is_debug;
 	
 	# Export all downloaded artwork to cache directory
@@ -36,7 +43,7 @@ sub startArtworkScan {
 	
 		# Match all artwork that was exported with the correct track
 		my $iter = File::Next::files( {
-			file_filter   => sub { /\.(?:jpg|png)$/i },
+			file_filter   => sub { /\.(?:jpg|png|bmp)$/i },
 			error_handler => sub { errorMsg("$_\n") },
 		}, $cachedir );
 	
@@ -74,13 +81,14 @@ sub startArtworkScan {
 	# check iTunes for downloaded or manually added artwork
 	
 	# Find all albums that came from iTunes and do not have artwork
+	# Since iTunes stores artwork at the track level, we need to check every
+	# track for artwork
 	my $rs = Slim::Schema->rs('Track')->search( {
 		'me.extid'      => { '!=' => undef },
 		'album.artwork' => { '=' => undef },
 	},
 	{
-		join     => 'album',
-		group_by => 'album',
+		join => 'album',
 	} );
 	
 	my $progress;
@@ -94,12 +102,15 @@ sub startArtworkScan {
 		} );
 		
 		while ( my $track = $rs->next ) {
+			# If this album got artwork from another track on this album, skip
+			next if $track->album->artwork;
+			
 			if ( my $file = $class->exportSingleArtwork( $cachedir, $track ) ) {
 				$isDebug && $log->debug( "Updating artwork for " . $track->album->title );
 				
 				$track->cover( catfile( $cachedir, $file ) );
 				$track->update;
-			
+				
 				my $album = $track->album;
 				$album->artwork( $track->id );
 				$album->update;

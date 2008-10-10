@@ -11,6 +11,10 @@ use Slim::Utils::Prefs;
 my $log   = logger('plugin.itunes');
 my $prefs = preferences('plugin.itunes');
 
+sub initArtworkExport { }
+
+sub supportsArtworkExport { 1 }
+
 sub exportDownloadedArtwork {
 	my ( $class, $cachedir ) = @_;
 	

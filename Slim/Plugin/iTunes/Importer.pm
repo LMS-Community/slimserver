@@ -449,6 +449,13 @@ sub handleTrack {
 
 			return 1;
 		};
+		
+		# If a music folder is defined, the above updateOrCreate won't update attributes
+		# We need to make sure the persistent ID is set
+		if ( !$track->extid ) {
+			$track->extid( $pid );
+			$track->update;
+		}
 
 	} else {
 
