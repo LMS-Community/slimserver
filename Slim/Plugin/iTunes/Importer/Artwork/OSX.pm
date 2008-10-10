@@ -53,7 +53,7 @@ sub exportDownloadedArtwork {
 				} );
 			}
 			
-			$progress->update( $status, $index );
+			$progress->update( undef, $index );
 			
 			if ( $index >= $total ) {
 				$done = 1;
