@@ -158,9 +158,7 @@ sub alarmCommand {
 		$client->showBriefly({
 			'jive' => { 
 				'type'    => 'popupplay',
-				# FIXME: this string will get translated post-7.2 release
-				# 'text'    => [ $client->string('ALARM_ALL_ALARMS_ENABLED') ],
-				'text'    => [ $client->string('ENABLED') ],
+				'text'    => [ $client->string('ALARM_ALL_ALARMS_ENABLED') ],
 			}
 		});
 
@@ -170,9 +168,7 @@ sub alarmCommand {
 		$client->showBriefly({
 			'jive' => { 
 				'type'    => 'popupplay',
-				# FIXME: this string will get translated post-7.2 release
-				# 'text'    => [ $client->string('ALARM_ALL_ALARMS_DISABLED') ],
-				'text'    => [ $client->string('DISABLED') ],
+				'text'    => [ $client->string('ALARM_ALL_ALARMS_DISABLED') ],
 			}
 		});
 	}
