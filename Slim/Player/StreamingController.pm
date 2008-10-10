@@ -193,7 +193,7 @@ Started =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Playing,		\&_Playing,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PLAYING
+	[	\&_Playing,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PLAYING
 	[	\&_Invalid,		\&_Playing,		\&_Playing,		\&_PlayAndStream],	# PAUSED
 ],
 StreamingFailed =>
