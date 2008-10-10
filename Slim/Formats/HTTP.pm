@@ -104,6 +104,13 @@ sub requestString {
 	# According to the spec, http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
 	# The port is optional if it's 80, so follow that rule.
 	my $host = $port == 80 ? $server : "$server:$port";
+	
+	# Special case, for the fallback-alarm, disable Icy Metadata, or our own
+	# server will try and send it
+	my $want_icy = 1;
+	if ( $path =~ m{/slim-backup-alarm.mp3$} ) {
+		$want_icy = 0;
+	}
 
 	# make the request
 	my $request = join($CRLF, (
@@ -111,7 +118,7 @@ sub requestString {
 		"Accept: */*",
 		"Cache-Control: no-cache",
 		"User-Agent: " . Slim::Utils::Misc::userAgentString(),
-		"Icy-MetaData: 1",
+		"Icy-MetaData: $want_icy",
 		"Connection: close",
 		"Host: $host",
 	));

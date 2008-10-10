@@ -11,6 +11,7 @@
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
 	<icon>plugins/Sounds/html/images/icon.png</icon>
 	<type>2</type>
+	<enforce>1</enforce>
 	<targetApplication>
 		<id>SqueezeCenter</id>
 		<minVersion>7.0</minVersion>
