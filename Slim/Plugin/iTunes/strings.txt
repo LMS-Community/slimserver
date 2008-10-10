@@ -409,7 +409,7 @@ ITUNES_PLAYLISTS_PROGRESS
 	SV	Import av iTunes-spellistor
 
 ITUNES_ARTWORK_PHASE_1_PROGRESS
-	EN	iTunes Artwork Import (Full)
+	EN	iTunes Downloaded Artwork Import
 
 ITUNES_ARTWORK_PHASE_2_PROGRESS
-	EN	iTunes Artwork Import (Fast)
+	EN	iTunes User-Added Artwork Import
