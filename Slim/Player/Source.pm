@@ -1773,6 +1773,9 @@ sub errorOpening {
 		$line1 = $error;
 	}
 	
+	# Make sure playmode is set to stop
+	playmode( $client, 'stop' );
+	
 	# Show an error message
 	$client->showBriefly( {
 		line => [ $line1, $line2 ],
