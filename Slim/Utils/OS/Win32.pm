@@ -101,21 +101,30 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
-		my $path = '';
-		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-			{ 
-				Access => Win32::TieRegistry::KEY_READ(), 
-				Delimiter =>'/' 
-			}
-		);
-
-		if (defined $swKey) {
-			if (!($path = $swKey->{'My Music'})) {
-				if ($path = $swKey->{'Personal'}) {
-					$path = $path . '/My Music';
+		my $path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC);
+		
+		# fall back if no path or invalid path is returned
+		if (!$path || $path eq Win32::GetFolderPath(0)) {
+	
+			my $swKey = $Win32::TieRegistry::Registry->Open(
+				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
+				{ 
+					Access => Win32::TieRegistry::KEY_READ(), 
+					Delimiter =>'/' 
+				}
+			);
+	
+			if (defined $swKey) {
+				if (!($path = $swKey->{'My Music'})) {
+					if ($path = $swKey->{'Personal'}) {
+						$path = $path . '/My Music';
+					}
 				}
 			}
+		}
+
+		if ($path && $dir eq 'playlists') {
+			$path .= '/Playlists';
 		}
 
 		push @dirs, $path;
