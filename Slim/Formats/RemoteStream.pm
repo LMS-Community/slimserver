@@ -201,6 +201,7 @@ sub request {
 			'infoUrl' => $self->infoUrl,
 			'post'    => $post,
 			'create'  => $args->{'create'},
+			'client'  => $args->{'client'},
 		});
 	}
 
