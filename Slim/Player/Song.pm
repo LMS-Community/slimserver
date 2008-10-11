@@ -71,7 +71,11 @@ sub new {
 #	}
 
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
-
+	if (!$handler) {
+		logError("Could not find handler for $url!");
+		return undef;
+	}
+		
 	my $self = {
 		index           => $index,
 		status          => STATUS_READY,
