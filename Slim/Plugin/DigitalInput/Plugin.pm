@@ -11,6 +11,7 @@ use base qw(Slim::Plugin::Base);
 use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 
 my $digital_input = 0;
@@ -18,6 +19,8 @@ my $digital_input = 0;
 my @digital_inputs = ();
 
 my $source_name = 'source';
+
+my $prefs = preferences("server");
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.digitalinput',
@@ -265,6 +268,10 @@ sub updateDigitalInput {
 	});
 
 	if (blessed($obj)) {
+		if ($prefs->client($client)->get('syncgroupid')) {
+			$client->controller()->unsync($client);	
+		}
+
 		$client->execute([ 'playlist', 'clear' ] );
 		$client->execute([ 'playlist', 'playtracks', 'listRef', [ $obj ] ]);
 	}
