@@ -552,6 +552,9 @@ sub directHeaders {
 				
 				# If we redirected (Live365), update the original URL with the metadata from the real URL
 				if ( my $oldURL = delete $redirects->{ $url } ) {
+
+					$controller->song->{'bitrate'} = $bitrate if $bitrate;
+
 					Slim::Music::Info::setContentType( $oldURL, $contentType ) if $contentType;
 					Slim::Music::Info::setBitrate( $oldURL, $bitrate ) if $bitrate;
 					
