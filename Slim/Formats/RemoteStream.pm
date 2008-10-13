@@ -136,6 +136,7 @@ sub request {
 	${*$self}{'client'}  = $args->{'client'};
 	${*$self}{'create'}  = $args->{'create'};
 	${*$self}{'bitrate'} = $args->{'bitrate'};
+	${*$self}{'infoUrl'} = $args->{'infoUrl'};
 	
 	$log->info("Request: $request");
 

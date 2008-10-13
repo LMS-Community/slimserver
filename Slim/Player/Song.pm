@@ -347,6 +347,11 @@ sub open {
 			$log->info("URL command $command type $type format $format");
 			$log->info("URL stream format : $contentType");
 
+			# If the protocol handler has the bitrate set use this
+			if ($sock->can('bitrate') && $sock->bitrate) {
+				$self->{'bitrate'} = $sock->bitrate;
+			}
+
 			if ($command ne '-') {
 
 				# Need to transcode
