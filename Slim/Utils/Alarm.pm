@@ -1270,6 +1270,7 @@ sub scheduleNext {
 		if (defined $nextAlarm->{_timerRef}) {
 			$log->debug('Previous scheduled alarm wasn\'t triggered.  Clearing nextAlarm and killing timer');
 			Slim::Utils::Timers::killSpecific($nextAlarm->{_timerRef});
+			$nextAlarm->{_timerRef} = undef;
 			$alarmsScheduled--;
 			$class->_startStopTimeCheck;
 		}
