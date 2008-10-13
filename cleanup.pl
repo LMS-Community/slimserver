@@ -14,6 +14,7 @@
 require 5.008_001;
 use strict;
 use File::Path;
+use File::Spec::Functions;
 use Getopt::Long;
 use Socket;
 
@@ -33,42 +34,83 @@ sub main {
 		exit;
 	}
 
-	my ($all, $cache, $prefs, $logs, $playlists);
+	my ($all, $cache, $filecache, $mysql, $prefs, $logs);
 	
 	GetOptions(
-		'all'   => \$all,
-		'cache' => \$cache,
-		'prefs' => \$prefs,
-		'logs'  => \$logs
+		'all'       => \$all,
+		'cache'     => \$cache,
+		'filecache' => \$filecache,
+		'prefs'     => \$prefs,
+		'logs'      => \$logs,
+		'mysql'     => \$mysql,
 	);
 
-	my %folders;
+	my @folders;
 	
-	$folders{cache} = 'cache' if ($all || $cache);
-#	$folders{playlists} = 'playlists' if ($all || $playlists);
+	my $cacheFolder = $os->dirsFor('cache');
+
+	push @folders, _target('cache', 'cache') if ($all || $cache);
 	
+	if ($filecache) {
+		push @folders, {
+			label   => 'file cache (artwork, templates etc.)',
+			folders => [
+				catdir($cacheFolder, 'Artwork'),
+				catdir($cacheFolder, 'iTunesArtwork'),
+				catdir($cacheFolder, 'FileCache'),
+				catdir($cacheFolder, 'fonts.bin'),
+				catdir($cacheFolder, 'strings.bin'),
+				catdir($cacheFolder, 'cookies.dat'),
+				catdir($cacheFolder, 'plugin-data.yaml'),
+			],
+		};
+	}
+		
+	if ($mysql) {
+		push @folders, {
+			label   => 'MySQL data',
+			folders => [
+				catdir($cacheFolder, 'MySQL'),
+				catdir($cacheFolder, 'my.cnf'),
+				catdir($cacheFolder, 'squeezecenter-mysql.pid'),
+				catdir($cacheFolder, 'squeezecenter-mysql.sock'),
+				catdir($cacheFolder, 'mysql-error-log.txt'),
+			],
+		};
+	}
+		
 	if ($all || $prefs) {
-		$folders{prefs} = 'preferences';
-		$folders{oldprefs} = 'old preferences (SlimServer <= 6.5)';
+		push @folders, _target('prefs', 'preferences');
+		push @folders, _target('oldprefs', 'old preferences (SlimServer <= 6.5)');
 	}
 	
-	unless (scalar keys %folders) {
+	push @folders, _target('log', 'logs') if ($all || $logs);
+	
+	unless (scalar @folders) {
 		usage();
 		exit;
 	}
+
+	my $fallbackFolder = $os->dirsFor('');
 		
-	for my $folder (keys %folders) {
-		print "\nDeleting $folders{$folder} files and folders...\n";
+	for my $item (@folders) {
+		print "\nDeleting $item->{label}...\n";
 		
-		foreach ($os->dirsFor($folder)) {
-			print "-> $_\n";
-			rmtree $_;
+		foreach ( @{$item->{folders}} ) {
+			print "-> $_\n" if (-e $_);
+
+			if (-d $_) {
+				rmtree $_;
+			}
+			
+			elsif (-f $_) {
+				unlink $_;
+			}
 		}
 	}
 	
 	print "\nDone. Please restart SqueezeCenter.\n\n";
 }
-
 
 sub usage {
 	print <<EOF;
@@ -76,12 +118,29 @@ Usage: $0 [--all] [--prefs] [--cache]
 
 Command line options:
 
-	--cache        Clean cache folder, including music database
+	--mysql        Delete MySQL data (music database)
+	--filecache    Delete file cache for artwork, templates etc.
 	--prefs        Delete preference files
-	--all          Wipe'em all
+	--logs         Delete log files
+
+	--cache   (!)  Clean cache folder, including music database, artwork cache
+	               and favorites files (if no playlist folder is defined)
+
+	--all     (!!) Wipe'em all
 	
 EOF
 
+}
+
+sub _target {
+	my ($value, $label) = @_;
+	
+	my $f = $os->dirsFor($value);
+	
+	return {
+		label   => $label,
+		folders => [ $f ],
+	};
 }
 
 sub checkForSC {
