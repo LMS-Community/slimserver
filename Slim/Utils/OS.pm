@@ -9,6 +9,7 @@ use Config;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
+use POSIX qw(LC_CTYPE LC_TIME);
 
 sub new {
 	my $class = shift;
@@ -121,6 +122,52 @@ sub ignoredItems {
 		'lost+found' => 1,
 		'@eaDir'     => 1,
 	);
+}
+
+=head2 localeDetails()
+
+Get details about the locale, system language etc.
+
+=cut
+
+sub localeDetails {
+	my $locale  = 'en_US';
+	my $lc_time  = POSIX::setlocale(LC_TIME)  || 'C';
+	my $lc_ctype = POSIX::setlocale(LC_CTYPE) || 'C';
+
+	# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
+	# Otherwise, normalize the codeset part of the locale.
+	if ($lc_ctype eq 'C' || $lc_ctype eq 'POSIX') {
+		$lc_ctype = 'iso-8859-1';
+	} else {
+		$lc_ctype = lc((split(/\./, $lc_ctype))[1]);
+	}
+
+	# Locale can end up with nothing, if it's invalid, such as "en_US"
+	if (!defined $lc_ctype || $lc_ctype =~ /^\s*$/) {
+		$lc_ctype = 'iso-8859-1';
+	}
+
+	# Sometimes underscores can be aliases - Solaris
+	$lc_ctype =~ s/_/-/g;
+
+	# ISO encodings with 4 or more digits use a hyphen after "ISO"
+	$lc_ctype =~ s/^iso(\d{4})/iso-$1/;
+
+	# Special case ISO 2022 and 8859 to be nice
+	$lc_ctype =~ s/^iso-(2022|8859)([^-])/iso-$1-$2/;
+
+	$lc_ctype =~ s/utf-8/utf8/gi;
+
+	# CJK Locales
+	$lc_ctype =~ s/eucjp/euc-jp/i;
+	$lc_ctype =~ s/ujis/euc-jp/i;
+	$lc_ctype =~ s/sjis/shiftjis/i;
+	$lc_ctype =~ s/euckr/euc-kr/i;
+	$lc_ctype =~ s/big5/big5-eten/i;
+	$lc_ctype =~ s/gb2312/euc-cn/i;
+	
+	return ($locale, $lc_ctype, $lc_time);
 }
 
 =head2 get( 'key' [, 'key2', 'key...'] )

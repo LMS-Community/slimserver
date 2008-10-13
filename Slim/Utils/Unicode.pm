@@ -66,7 +66,7 @@ our (
 	$sysLang = 'en';
 	$locale  = 'en_US';
 
-        if ($^O =~ /Win32/) {
+	if ($^O =~ /Win32/) {
 
 		require Win32::OLE::NLS;
 		require Win32::Locale;
@@ -83,74 +83,10 @@ our (
 		$sysLang  = $locale;
 		$sysLang =~ s/_\w+$//;
 
-	} elsif ($^O =~ /darwin/) {
-
-		# I believe this is correct from reading:
-		# http://developer.apple.com/documentation/MacOSX/Conceptual/SystemOverview/FileSystem/chapter_8_section_6.html
-		$lc_ctype = 'utf8';
-
-		# Now figure out what the locale is - something like en_US
-		if (open(LOCALE, "/usr/bin/defaults read 'Apple Global Domain' AppleLocale |")) {
-
-			chomp($locale = <LOCALE>);
-			close(LOCALE);
-		}
-
-		# On OSX - LC_TIME doesn't get updated even if you change the
-		# language / formatting. Set it here, so we don't need to do a
-		# system call for every clock second update.
-		$lc_time = POSIX::setlocale(LC_TIME, $locale);
-
-		# Will return something like:
-		# (en, ja, fr, de, es, it, nl, sv, nb, da, fi, pt, "zh-Hant", "zh-Hans", ko)
-		# We want to use the first value. See:
-		# http://gemma.apple.com/documentation/MacOSX/Conceptual/BPInternational/Articles/ChoosingLocalizations.html
-		if (open(LANG, "/usr/bin/defaults read 'Apple Global Domain' AppleLanguages |")) {
-
-			chomp(my $languages = <LANG>);
-
-			$languages =~ s/[\(\)]//g;
-			$sysLang = (split /, /, $languages)[0];
-
-			close(LANG);
-		}
-
 	} else {
 
-		$lc_time  = POSIX::setlocale(LC_TIME)  || 'C';
-		$lc_ctype = POSIX::setlocale(LC_CTYPE) || 'C';
+		($locale, $lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
 
-		# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
-		# Otherwise, normalize the codeset part of the locale.
-		if ($lc_ctype eq 'C' || $lc_ctype eq 'POSIX') {
-			$lc_ctype = 'iso-8859-1';
-		} else {
-			$lc_ctype = lc((split(/\./, $lc_ctype))[1]);
-		}
-
-		# Locale can end up with nothing, if it's invalid, such as "en_US"
-		if (!defined $lc_ctype || $lc_ctype =~ /^\s*$/) {
-			$lc_ctype = 'iso-8859-1';
-		}
-
-		# Sometimes underscores can be aliases - Solaris
-		$lc_ctype =~ s/_/-/g;
-
-		# ISO encodings with 4 or more digits use a hyphen after "ISO"
-		$lc_ctype =~ s/^iso(\d{4})/iso-$1/;
-
-		# Special case ISO 2022 and 8859 to be nice
-		$lc_ctype =~ s/^iso-(2022|8859)([^-])/iso-$1-$2/;
-
-		$lc_ctype =~ s/utf-8/utf8/gi;
-
-		# CJK Locales
-		$lc_ctype =~ s/eucjp/euc-jp/i;
-		$lc_ctype =~ s/ujis/euc-jp/i;
-		$lc_ctype =~ s/sjis/shiftjis/i;
-		$lc_ctype =~ s/euckr/euc-kr/i;
-		$lc_ctype =~ s/big5/big5-eten/i;
-		$lc_ctype =~ s/gb2312/euc-cn/i;
 	}
 
 	# Setup Encode::Guess

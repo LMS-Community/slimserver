@@ -7,6 +7,7 @@ use Config;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
+use POSIX qw(LC_CTYPE LC_TIME);
 
 my $canFollowAlias;
 
@@ -172,6 +173,41 @@ sub decodeExternalHelperPath {
 	return Slim::Utils::Unicode::utf8decode_locale($_[1]);
 }
 
+sub localeDetails {
+	# I believe this is correct from reading:
+	# http://developer.apple.com/documentation/MacOSX/Conceptual/SystemOverview/FileSystem/chapter_8_section_6.html
+	my $lc_ctype = 'utf8';
+
+	# Now figure out what the locale is - something like en_US
+	my $locale = 'en_US';
+	if (open(LOCALE, "/usr/bin/defaults read 'Apple Global Domain' AppleLocale |")) {
+
+		chomp($locale = <LOCALE>);
+		close(LOCALE);
+	}
+
+	# On OSX - LC_TIME doesn't get updated even if you change the
+	# language / formatting. Set it here, so we don't need to do a
+	# system call for every clock second update.
+	my $lc_time = POSIX::setlocale(LC_TIME, $locale);
+
+	# Will return something like:
+	# (en, ja, fr, de, es, it, nl, sv, nb, da, fi, pt, "zh-Hant", "zh-Hans", ko)
+	# We want to use the first value. See:
+	# http://gemma.apple.com/documentation/MacOSX/Conceptual/BPInternational/Articles/ChoosingLocalizations.html
+	my $sysLang = 'en';
+	if (open(LANG, "/usr/bin/defaults read 'Apple Global Domain' AppleLanguages |")) {
+
+		chomp(my $languages = <LANG>);
+
+		$languages =~ s/[\(\)]//g;
+		$sysLang = (split /, /, $languages)[0];
+
+		close(LANG);
+	}
+	
+	return ($locale, $lc_ctype, $lc_time);
+}
 
 sub ignoredItems {
 	return (
