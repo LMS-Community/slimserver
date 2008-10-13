@@ -113,15 +113,15 @@ sub registerDefaultInfoProviders {
 sub infoPlayers {
 	my $client = shift;
 	
-	my $players = Slim::Player::Client::clients();
-	return {} if !$players;
+	my @players = Slim::Player::Client::clients();
+	return {} if ! scalar @players;
 	
 	my $item = {
 		name  => cstring($client, 'INFORMATION_MENU_PLAYER'),
 		items => []
 	};
 	
-	for my $player (Slim::Player::Client::clients()) {
+	for my $player (sort { $a->name cmp $b->name } @players) {
 		
 		my ($raw, $details) = _getPlayerInfo($player);
 					
