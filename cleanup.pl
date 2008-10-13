@@ -97,6 +97,8 @@ sub main {
 		print "\nDeleting $item->{label}...\n";
 		
 		foreach ( @{$item->{folders}} ) {
+			next unless $_;
+			
 			print "-> $_\n" if (-e $_);
 
 			if (-d $_) {
