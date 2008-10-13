@@ -190,23 +190,31 @@ sub localeDetails {
 	# language / formatting. Set it here, so we don't need to do a
 	# system call for every clock second update.
 	my $lc_time = POSIX::setlocale(LC_TIME, $locale);
+	
+	return ($lc_ctype, $lc_time);
+}
+
+sub getSystemLanguage {
+	my $class = shift;
 
 	# Will return something like:
 	# (en, ja, fr, de, es, it, nl, sv, nb, da, fi, pt, "zh-Hant", "zh-Hans", ko)
 	# We want to use the first value. See:
 	# http://gemma.apple.com/documentation/MacOSX/Conceptual/BPInternational/Articles/ChoosingLocalizations.html
-	my $sysLang = 'en';
+	my $language = 'en';
 	if (open(LANG, "/usr/bin/defaults read 'Apple Global Domain' AppleLanguages |")) {
 
-		chomp(my $languages = <LANG>);
-
-		$languages =~ s/[\(\)]//g;
-		$sysLang = (split /, /, $languages)[0];
+		for (<LANG>) {
+			if (/\b(\w\w)\b/) {
+				$language = $1;
+				last;
+			}
+		}
 
 		close(LANG);
 	}
 	
-	return ($lc_ctype, $lc_time);
+	return $class->_parseLanguage($language);
 }
 
 sub ignoredItems {

@@ -164,9 +164,8 @@ sub localeDetails {
 }
 
 sub getSystemLanguage {
-	my $language = Win32::Locale::get_language();
-	$language =~ s/-\w+$//;
-	return uc($language) || 'EN';
+	my $class = shift;
+	$class->_parseLanguage(Win32::Locale::get_language()); 
 }
 
 sub dontSetUserAndGroup { 1 }

@@ -166,7 +166,7 @@ sub init {
 		'rank-PLUGIN_SOUNDS_MODULE_NAME'          => 25,
 		'rank-GAMES'                              => 20,
 		# Server Settings - Basic
-		'language'              => 'EN',
+		'language'              => \&defaultLanguage,
 		'audiodir'              => \&defaultAudioDir,
 		'playlistdir'           => \&defaultPlaylistDir,
 		# Server Settings - Behaviour
@@ -733,6 +733,10 @@ sub makeSecuritySecret {
 	$prefs->set('securitySecret', $secret);
 
 	return $secret;
+}
+
+sub defaultLanguage {
+	return Slim::Utils::OSDetect->getOS->getSystemLanguage;
 }
 
 sub defaultAudioDir {

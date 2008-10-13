@@ -176,7 +176,19 @@ Return the system's language or 'EN' as default value
 
 =cut
 
-sub getSystemLanguage { 'EN' }
+sub getSystemLanguage {
+	my $class = shift;
+	$class->_parseLanguage(POSIX::setlocale(LC_CTYPE)); 
+}
+
+sub _parseLanguage {
+	my ($class, $language) = @_;
+	
+	$language = uc($language);
+	$language =~ s/_\w+$//;
+	
+	return $language || 'EN';
+}
 
 =head2 get( 'key' [, 'key2', 'key...'] )
 
