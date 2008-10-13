@@ -163,6 +163,12 @@ sub localeDetails {
 	return ($lc_ctype, $lc_time);
 }
 
+sub getSystemLanguage {
+	my $language = Win32::Locale::get_language();
+	$language =~ s/-\w+$//;
+	return uc($language) || 'EN';
+}
+
 sub dontSetUserAndGroup { 1 }
 
 sub getProxy {

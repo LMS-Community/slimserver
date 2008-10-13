@@ -170,12 +170,19 @@ sub localeDetails {
 	return ($locale, $lc_ctype, $lc_time);
 }
 
+=head2 getSystemLanguage()
+
+Return the system's language or 'EN' as default value
+
+=cut
+
+sub getSystemLanguage { 'EN' }
+
 =head2 get( 'key' [, 'key2', 'key...'] )
 
 Get a list of values from the osDetails list
 
 =cut
-
 
 sub get {
 	my $class = shift;
