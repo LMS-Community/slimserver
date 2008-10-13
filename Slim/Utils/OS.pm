@@ -131,7 +131,6 @@ Get details about the locale, system language etc.
 =cut
 
 sub localeDetails {
-	my $locale  = 'en_US';
 	my $lc_time  = POSIX::setlocale(LC_TIME)  || 'C';
 	my $lc_ctype = POSIX::setlocale(LC_CTYPE) || 'C';
 
@@ -167,7 +166,7 @@ sub localeDetails {
 	$lc_ctype =~ s/big5/big5-eten/i;
 	$lc_ctype =~ s/gb2312/euc-cn/i;
 	
-	return ($locale, $lc_ctype, $lc_time);
+	return ($lc_ctype, $lc_time);
 }
 
 =head2 getSystemLanguage()
