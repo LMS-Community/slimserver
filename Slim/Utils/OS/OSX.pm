@@ -206,7 +206,7 @@ sub localeDetails {
 		close(LANG);
 	}
 	
-	return ($locale, $lc_ctype, $lc_time);
+	return ($lc_ctype, $lc_time);
 }
 
 sub ignoredItems {

@@ -43,7 +43,7 @@ use Slim::Utils::Log;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
-	$sysLang, $locale, $lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET,
+	$lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET,
 	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE
 );
 
@@ -62,32 +62,7 @@ our (
 		\xff\xfe\x00\x00
 	)/x;
 
-	# Set some defaults:
-	$sysLang = 'en';
-	$locale  = 'en_US';
-
-	if ($^O =~ /Win32/) {
-
-		require Win32::OLE::NLS;
-		require Win32::Locale;
-
-		my $langid = Win32::OLE::NLS::GetSystemDefaultLCID();
-		my $lcid   = Win32::OLE::NLS::MAKELCID($langid);
-		my $linfo  = Win32::OLE::NLS::GetLocaleInfo($lcid, Win32::OLE::NLS::LOCALE_IDEFAULTANSICODEPAGE());
-
-		$lc_ctype = "cp$linfo";
-
-		$locale   = Win32::Locale::get_locale($langid);
-		$lc_time  = POSIX::setlocale(LC_TIME, $locale);
-
-		$sysLang  = $locale;
-		$sysLang =~ s/_\w+$//;
-
-	} else {
-
-		($locale, $lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
-
-	}
+	($lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
 
 	# Setup Encode::Guess
 	$Encode::Guess::NoUTFAutoGuess = 1;
