@@ -304,13 +304,16 @@ sub _getTrackByClient {
 		my $deviceid = $client->deviceid;
 		my $rev      = $client->revision;
 		
-		if ( $deviceid == 4 && $rev < 97 ) {
+		if ( $deviceid == 4 && $rev < 116 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 5 && $rev < 45 ) {
+		elsif ( $deviceid == 5 && $rev < 66 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 7 && $rev < 32 ) {
+		elsif ( $deviceid == 7 && $rev < 51 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 10 && $rev < 36 ) {
 			$old = 1;
 		}
 		
