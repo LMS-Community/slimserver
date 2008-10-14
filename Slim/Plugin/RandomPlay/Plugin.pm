@@ -144,13 +144,13 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
-	[1, 0, 0, \&cliRequest]);
-	Slim::Control::Request::addDispatch(['randomplaygenrelist'],
-	[1, 1, 0, \&chooseGenresMenu]);
+        [1, 0, 0, \&cliRequest]);
+	Slim::Control::Request::addDispatch(['randomplaygenrelist', '_index', '_quantity'],
+        [1, 1, 0, \&chooseGenresMenu]);
 	Slim::Control::Request::addDispatch(['randomplaychoosegenre', '_genre', '_value'],
-	[1, 0, 0, \&chooseGenre]);
+        [1, 0, 0, \&chooseGenre]);
 	Slim::Control::Request::addDispatch(['randomplaygenreselectall', '_value'],
-	[1, 0, 0, \&genreSelectAllOrNone]);
+        [1, 0, 0, \&genreSelectAllOrNone]);
 	
 	Slim::Player::ProtocolHandlers->registerHandler(
 		randomplay => 'Slim::Plugin::RandomPlay::ProtocolHandler'
@@ -263,8 +263,8 @@ sub genreSelectAllOrNone {
 	my $request = shift;
 	my $client  = $request->client();
 	my $enable  = $request->getParam('');
-	my $value     = $request->getParam('_value');
-	my $genres    = getGenres($client);
+	my $value   = $request->getParam('_value');
+	my $genres  = getGenres($client);
 
 	my @excluded = ();
 	for my $genre (keys %$genres) {
@@ -307,6 +307,7 @@ sub chooseGenresMenu {
 	my $filteredGenres = getFilteredGenres($client);
 
 	my @menu = ();
+
 	# first a "choose all" item
 	push @menu, {
 		text => $client->string('PLUGIN_RANDOM_SELECT_ALL'),
@@ -318,6 +319,7 @@ sub chooseGenresMenu {
 			},
 		},
 	};
+	
 	# then a "choose none" item
 	push @menu, {
 		text => $client->string('PLUGIN_RANDOM_SELECT_NONE'),
@@ -348,15 +350,8 @@ sub chooseGenresMenu {
                         },
 		};
 	}
-	my $numitems = scalar(@menu);
-	$request->addResult("count", $numitems);
-	$request->addResult("offset", 0);
-	my $cnt = 0;
-	for my $eachGenreMenu (@menu[0..$#menu]) {
-		$request->setResultLoopHash('item_loop', $cnt, $eachGenreMenu);
-		$cnt++;
-	}
-	$request->setStatusDone();
+	
+	Slim::Control::Jive::sliceAndShip($request, $client, \@menu);
 }
 
 # Find tracks matching parameters and add them to the playlist
