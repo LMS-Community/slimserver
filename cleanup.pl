@@ -60,6 +60,7 @@ sub main {
 				catdir($cacheFolder, 'FileCache'),
 				catdir($cacheFolder, 'fonts.bin'),
 				catdir($cacheFolder, 'strings.bin'),
+				catdir($cacheFolder, 'templates'),
 				catdir($cacheFolder, 'cookies.dat'),
 				catdir($cacheFolder, 'plugin-data.yaml'),
 			],
