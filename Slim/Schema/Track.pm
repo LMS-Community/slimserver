@@ -36,7 +36,9 @@ our @allColumns = (qw(
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::Schema::Album');
 
-	$class->might_have('persistent'      => 'Slim::Schema::TrackPersistent' => 'track');
+	if ( !main::SLIM_SERVICE ) {
+		$class->might_have('persistent'      => 'Slim::Schema::TrackPersistent' => 'track');
+	}
 	
 	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
 	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
