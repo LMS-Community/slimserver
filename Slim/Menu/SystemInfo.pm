@@ -112,6 +112,7 @@ sub registerDefaultInfoProviders {
 
 sub infoPlayers {
 	my $client = shift;
+	my $tags   = shift;
 	
 	my @players = Slim::Player::Client::clients();
 	return {} if ! scalar @players;
@@ -123,7 +124,7 @@ sub infoPlayers {
 	
 	for my $player (sort { $a->name cmp $b->name } @players) {
 		
-		my ($raw, $details) = _getPlayerInfo($player);
+		my ($raw, $details) = _getPlayerInfo($player, $tags);
 					
 		push @{ $item->{items} }, {
 			name  => $player->name,
@@ -140,15 +141,15 @@ sub infoPlayers {
 
 sub infoCurrentPlayer {
 	my $client = shift || return;
+	my $tags   = shift;
 	
-	my ($raw, $details) = _getPlayerInfo($client);
+	my ($raw, $details) = _getPlayerInfo($client, $tags);
 	
 	my $item = {
 		name  => cstring($client, 'INFORMATION_SPECIFIC_PLAYER', $client->name),
 		items => $details,
 		web   => {
-			name  => $client->name,
-			items => $raw,
+			hide => 1,
 		} 
 	};
 	
@@ -157,6 +158,7 @@ sub infoCurrentPlayer {
 
 sub _getPlayerInfo {
 	my $client = shift;
+	my $tags   = shift;
 	
 	my $info = [
 #		{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },
@@ -173,7 +175,7 @@ sub _getPlayerInfo {
 	foreach (@$info) {
 		my ($key, $value) = each %{$_};
 			
-		next unless $value;
+		next unless defined $value;
 			
 		if (Slim::Utils::Strings::stringExists($key . '_ABBR')) {
 			$key = $key . '_ABBR'
@@ -183,6 +185,13 @@ sub _getPlayerInfo {
 			type => 'text',
 			name => cstring($client, $key) . cstring($client, 'COLON') . ' ' . $value,
 		};
+	}
+
+	if (Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Health::Plugin')) {
+		
+		if (my $netinfo = Slim::Plugin::Health::NetTest::systemInfoMenu($client, $tags)) {
+			push @details, $netinfo;
+		}
 	}
 	
 	return ($info, \@details);
