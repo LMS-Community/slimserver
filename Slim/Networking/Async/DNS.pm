@@ -129,17 +129,18 @@ sub check_background {
 		my $domain = ('a'..'m')[ int(rand(13)) ] . '.root-servers.net';
 		
 		$class->resolve( {
-			servers => [ $ns ],
-			host    => $domain,
-			timeout => 5,
-			cb      => sub {
+			servers     => [ $ns ],
+			host        => $domain,
+			timeout     => 5,
+			no_fallback => 1, # do not fallback to OpenDNS for this query
+			cb          => sub {
 				my $addr = shift;
 				
 				$log->debug( "Test lookup of $domain using $ns OK: adding server to list of valid nameservers" );
 				push @{$LocalDNS}, $ns;
 			},
-			ecb     => sub {
-				$log->debug( "Lookup of $domain using $ns failed" );
+			ecb         => sub {
+				$log->debug( "Lookup of $domain using $ns failed, will not use this local server" );
 			},
 		} );
 	}
@@ -251,7 +252,7 @@ sub _dns_timeout {
 	delete $Sockets->{$key};
 	
 	# retry with OpenDNS if we weren't already using them
-	if ( !$args->{opendns} ) {
+	if ( !$args->{opendns} && !$args->{no_fallback} ) {
 		$log->debug( 'Retrying lookup using OpenDNS' );
 		$Local_Fail = time() + $Local_Fail_Retry;
 		$args->{opendns} = 1;
@@ -259,7 +260,7 @@ sub _dns_timeout {
 	}
 	else {
 		# OpenDNS also timed out, return an error
-		$log->debug( 'OpenDNS timed out, giving up' );
+		$log->debug( 'All server(s) timed out, giving up' );
 	
 		if ( my $ecb = $args->{ecb} ) {
 			my $pt = $args->{pt} || [];
@@ -376,7 +377,7 @@ sub _dns_error {
 	Slim::Utils::Timers::killTimers( $key, \&_dns_timeout );
 	
 	# Fallback to OpenDNS first
-	if ( !$args->{opendns} ) {
+	if ( !$args->{opendns} && !$args->{no_fallback} ) {
 		$log->debug( 'Retrying lookup using OpenDNS' );
 		
 		$Local_Fail = time() + $Local_Fail_Retry;
@@ -386,7 +387,7 @@ sub _dns_error {
 	}
 	else {
 		# OpenDNS failed, return an error
-		$log->debug( 'OpenDNS failed to resolve, giving up' );
+		$log->debug( 'All server(s) failed to resolve, giving up' );
 		
 		if ( my $ecb = $args->{ecb} ) {
 			my $pt = $args->{pt} || [];
