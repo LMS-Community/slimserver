@@ -2,17 +2,10 @@ Wizard = {
 	fileselectors : new Array(),
 
 	init : function(wizardDone){
+		
 		var mainpanel = new Array();
-
-		var windowSize = new Array(top.window.outerWidth, top.window.outerHeight);
-	
-		// some MSIE versions won't return a value
-		if (windowSize[0] == undefined || windowSize[1] == undefined) {
-			windowSize[0] = Ext.lib.Dom.getViewWidth() + 30;
-			windowSize[1] = Ext.lib.Dom.getViewHeight() + 130;  // viewport + guessed toolbar size etc...
-		}
-
 		var panels = Ext.DomQuery.select('.wz_page');
+
 		for(var i = 0; i < panels.length; i++) {
 			mainpanel.push({
 				id: panels[i].id,
@@ -36,7 +29,6 @@ Wizard = {
 
 			// our own handlers
 			activeItemPos: 0,
-			windowSize: windowSize,
 			wizardDone: wizardDone,
 
 			next: function(){
@@ -62,9 +54,6 @@ Wizard = {
 					}
 					
 					document.forms.wizardForm.submit();
-
-					if (this.windowSize[0] && this.windowSize[1]);
-						window.resizeTo(this.windowSize[0], this.windowSize[1]);
 				}
 
 				else if (this.wizardDone)
