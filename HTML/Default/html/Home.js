@@ -22,9 +22,6 @@ var Home = {
 					this.expandItem(panel);
 			}
 		}
-
-		Ext.EventManager.onWindowResize(this.onResize, this);
-		this.onResize();
 	},
 
 	onSelectorClicked : function(ev, target){
@@ -67,8 +64,6 @@ var Home = {
 			}
 
 		}
-
-		this.onResize();
 	},
 
 	collapseItem : function(panel){
@@ -87,8 +82,6 @@ var Home = {
 				subPanel.removeClass('homeMenuSection_expanded');
 			}
 		}
-
-		this.onResize();
 	},
 
 	tuneInUrl : function(mode) {
@@ -106,14 +99,5 @@ var Home = {
 			params: [ 'setlinein', 'linein' ],
 			showBriefly: msg
 		});
-	},
-
-	onResize : function() {
-		var size, el;
-		if (size = Ext.get('content'))
-			size.getViewSize();
-			
-		if (el = Ext.select('div.homeMenuSection'))
-			el.setWidth(size[0]);
 	}
 };
