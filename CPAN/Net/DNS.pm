@@ -1,6 +1,7 @@
+
 package Net::DNS;
 #
-# $Id: DNS.pm 8938 2006-08-12 01:31:50Z andy $
+# $Id: DNS.pm 710 2008-02-08 15:22:21Z olaf $
 #
 use strict;
 
@@ -14,6 +15,7 @@ BEGIN {
 use vars qw(
     $HAVE_XS
     $VERSION
+    $SVNVERSION
     $DNSSEC
     $DN_EXPAND_ESCAPES
     @ISA
@@ -41,7 +43,9 @@ BEGIN {
     @ISA     = qw(Exporter DynaLoader);
 
     
-    $VERSION = '0.58';
+    $VERSION = '0.63';
+    $SVNVERSION = (qw$LastChangedRevision: 710 $)[1];
+
     $HAVE_XS = eval { 
 	local $SIG{'__DIE__'} = 'DEFAULT';
 	__PACKAGE__->bootstrap(); 1 
@@ -128,11 +132,14 @@ use Carp;
     'OPT'       => 41,      # RFC 2671
     'DS'        => 43,      # RFC 4034   # in Net::DNS::SEC
     'SSHFP'     => 44,      # draft-ietf-secsh-dns (No RFC # yet at time of coding)
-#    'IPSECKEY'  => 45,      # RFC 4025
+    'IPSECKEY'  => 45,      # RFC 4025
     'RRSIG'     => 46,      # RFC 4034 in Net::DNS::SEC
     'NSEC'      => 47,      # RFC 4034 in Net::DNS::SEC
     'DNSKEY'    => 48,      # RFC 4034 in Net::DNS::SEC
-    'SPF'       => 99,      # rfc-schlitt-spf-classic-o2 (No RFC # yet at time of coding)
+    'NSEC3'     => 50,   # draft-ietf-dnsext-nsec3-10 (assignment made at time of code release) 
+    'NSEC3PARAM' => 51,  # draft-ietf-dnsext-nsec3-10 (assignment made at time of code release)
+
+    'SPF'       => 99,      # RFC 4408
     'UINFO'     => 100,     # non-standard
     'UID'       => 101,     # non-standard
     'GID'       => 102,     # non-standard

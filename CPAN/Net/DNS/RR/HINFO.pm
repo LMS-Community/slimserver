@@ -1,15 +1,16 @@
 package Net::DNS::RR::HINFO;
 #
-# $Id: HINFO.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id: HINFO.pm 639 2007-05-25 12:00:15Z olaf $
 #
 use strict;
 BEGIN { 
     eval { require bytes; }
 } 
 use vars qw(@ISA $VERSION);
+use Net::DNS::RR::TXT;
 
-@ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+@ISA     = qw(Net::DNS::RR Net::DNS::RR::TXT);
+$VERSION = (qw$LastChangedRevision: 639 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -35,22 +36,31 @@ sub new {
 }
 
 sub new_from_string {
-	my ($class, $self, $string) = @_;
-
-	if ($string && $string =~ /^["'](.*?)["']\s+["'](.*?)["']$/) {
-		$self->{"cpu"} = $1;
-		$self->{"os"}  = $2;
+	my ( $class, $self, $rdata_string ) = @_ ;
+	
+	bless $self, $class;
+        
+	$self->_build_char_str_list($rdata_string);
+	my @elements= $self->char_str_list();
+	if (@elements==2){
+		
+		
+		$self->{"cpu"} = $elements[0];
+		$self->{"os"}  = $elements[1];
+	}else{
+		return;
 	}
-
+	
+	
 	return bless $self, $class;
 }
 
 sub rdatastr {
 	my $self = shift;
-
+	
 	return $self->{"cpu"}
-	       ? qq("$self->{cpu}" "$self->{os}")
-	       : '';
+	  ? qq("$self->{cpu}" "$self->{os}")
+	    : '';
 }
 
 sub rr_rdata {
@@ -100,8 +110,8 @@ Returns the operating system type for this RR.
 =head1 COPYRIGHT
 
 Copyright (c) 1997-2002 Michael Fuhr. 
-
-Portions Copyright (c) 2002-2004 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt
+Portions Copyright (c) 2007 NLnet Labs
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

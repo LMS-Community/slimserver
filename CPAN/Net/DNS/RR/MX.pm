@@ -1,6 +1,6 @@
 package Net::DNS::RR::MX;
 #
-# $Id: MX.pm 564 2006-02-20 09:34:26Z olaf $
+# $Id: MX.pm 632 2007-03-12 13:24:21Z olaf $
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 564 $)[1];
+$VERSION = (qw$LastChangedRevision: 632 $)[1];
 
 
 # Highest preference sorted first.
@@ -80,7 +80,7 @@ sub _canonicalRdata {
     
     if (exists $self->{"preference"}) {
 	$rdata .= pack("n", $self->{"preference"});
-	$rdata .= $self->_name2wire($self->{"exchange"})
+	$rdata .= $self->_name2wire(lc($self->{"exchange"}))
 	}
     
     return $rdata;

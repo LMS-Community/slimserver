@@ -1,6 +1,6 @@
 package Net::DNS::RR::SSHFP;
 #
-# $Id: SSHFP.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id: SSHFP.pm 626 2007-02-02 07:31:32Z olaf $
 #
 use strict;
 BEGIN { 
@@ -18,7 +18,7 @@ BEGIN {
 	
 }
 
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 626 $)[1];
 
 @ISA = qw(Net::DNS::RR);
 
@@ -49,9 +49,11 @@ sub new {
 		$self->{'algorithm'} = unpack('C', substr($$data, $offsettoalg, 1));
 		$self->{'fptype'}    = unpack('C', substr($$data, $offsettofptype, 1));
 	
-		die "This fingerprint type $self->{'fptype'} has not yet been implemented\n." . 
-			"Contact developer of Net::DNS::RR::SSHFP.\n" 
-				unless defined $fingerprinttypebyval{$self->{'fptype'}};
+		unless (defined $fingerprinttypebyval{$self->{'fptype'}}){
+		  warn "This fingerprint type $self->{'fptype'} has not yet been implemented, creation of SSHFP failed\n." ;
+		  return undef;
+		}
+
 							   
 		# All this is SHA-1 dependend
 		$self->{'fpbin'} = substr($$data,$offsettofp, $fplength); # SHA1 digest 20 bytes long

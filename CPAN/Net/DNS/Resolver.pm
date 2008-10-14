@@ -1,12 +1,12 @@
 package Net::DNS::Resolver;
 #
-# $Id: Resolver.pm 513 2005-11-09 23:49:38Z olaf $
+# $Id: Resolver.pm 614 2006-09-25 08:12:29Z olaf $
 #
 
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = (qw$LastChangedRevision: 513 $)[1];
+$VERSION = (qw$LastChangedRevision: 614 $)[1];
 
 BEGIN {
 	if ($^O eq 'MSWin32') {
@@ -295,8 +295,8 @@ search list.  If the class is omitted, it defaults to IN.
 B<IMPORTANT>:
 
 This method currently returns the C<IO::Socket::INET> object that will
-be used for reading, or C<undef> on error.  DO NOT DEPEND ON C<axfr_next()>
-returning a socket object.  THIS WILL CHANGE in future releases.
+be used for reading, or C<undef> on error.  DO NOT DEPEND ON C<axfr_start()>
+returning a socket object.  THIS MIGHT CHANGE in future releases.
 
 Use C<axfr_next> to read the zone records one at a time.
 

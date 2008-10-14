@@ -1,6 +1,6 @@
 package Net::DNS::RR::SPF;
 #
-# $Id: SPF.pm 8938 2006-08-12 01:31:50Z andy $
+# $Id: SPF.pm 684 2007-10-10 12:32:22Z olaf $
 #
 use strict;
 BEGIN { 
@@ -11,9 +11,9 @@ use Net::DNS::RR::TXT;
 
 
 @ISA     = qw(Net::DNS::RR::TXT);
-$VERSION = (qw$LastChangedRevision: 580 $)[1];
+$VERSION = (qw$LastChangedRevision: 684 $)[1];
 
-
+1;
 
 =head1 NAME
 
@@ -41,7 +41,7 @@ it and/or modify it under the same terms as Perl itself.
 
 L<perl(1)>, L<Net::DNS>, L<Net::DNS::Resolver>, L<Net::DNS::Packet>,
 L<Net::DNS::Header>, L<Net::DNS::Question>, L<Net::DNS::RR>,
-RFC 1035 Section 3.3.14, draft-schlitt-ospf-classic-02.txt
+RFC 1035 Section 3.3.14, RFC 4408
 
 
 =cut

@@ -1,6 +1,6 @@
 package Net::DNS::RR::RT;
 #
-# $Id: RT.pm 551 2005-12-22 11:10:37Z olaf $
+# $Id: RT.pm 632 2007-03-12 13:24:21Z olaf $
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 551 $)[1];
+$VERSION = (qw$LastChangedRevision: 632 $)[1];
 
 # Highest preference sorted first.
 __PACKAGE__->set_rrsort_func("preference",
@@ -78,7 +78,7 @@ sub _canonicalRdata {
 
 	if (exists $self->{"preference"}) {
 		$rdata .= pack("n", $self->{"preference"});
-		$rdata .= $self->_name2wire($self->{"intermediate"});
+		$rdata .= $self->_name2wire(lc($self->{"intermediate"}));
 	}
 
 	return $rdata;

@@ -1,6 +1,6 @@
 package Net::DNS::RR;
 #
-# $Id: RR.pm 8938 2006-08-12 01:31:50Z andy $
+# $Id: RR.pm 705 2008-02-06 21:59:18Z olaf $
 #
 use strict;
 
@@ -8,13 +8,15 @@ BEGIN {
     eval { require bytes; }
 } 
 
+
 use vars qw($VERSION $AUTOLOAD     %rrsortfunct );
 use Carp;
 use Net::DNS;
 use Net::DNS::RR::Unknown;
 
 
-$VERSION = (qw$LastChangedRevision: 593 $)[1];
+
+$VERSION = (qw$LastChangedRevision: 705 $)[1];
 
 =head1 NAME
 
@@ -80,6 +82,7 @@ BEGIN {
 		OPT
 		SSHFP
 		SPF
+		IPSECKEY
 	);
 
 	#  Only load DNSSEC if available
@@ -88,6 +91,7 @@ BEGIN {
 	    local $SIG{'__DIE__'} = 'DEFAULT';
 	    require Net::DNS::RR::SIG; 
 	};
+
 	unless ($@) {
 		$RR{'SIG'} = 1;
 		eval { 	    
@@ -163,11 +167,38 @@ BEGIN {
 		} else {
 		  # Die only if we are dealing with a version for which DLV is 
 		  # available 
-		  die $@ if (
-			     defined ($Net::DNS::SEC::SVNVERSION) && 
-			     ( $Net::DNS::SEC::SVNVERSION > 591 )
-			    );
+		  die $@ if defined ($Net::DNS::SEC::HAS_DLV) ;
+
 		}
+
+	 	eval { 
+		  local $SIG{'__DIE__'} = 'DEFAULT';
+		  require Net::DNS::RR::NSEC3; 
+		};
+
+		unless ($@) {
+		  $RR{'NSEC3'} =1;
+		} else {
+		  # Die only if we are dealing with a version for which NSEC3 is		  # available 
+		  die $@ if defined ($Net::DNS::SEC::HAS_NSEC3);
+		}
+		
+		
+	 	eval { 
+		  local $SIG{'__DIE__'} = 'DEFAULT';
+		  require Net::DNS::RR::NSEC3PARAM; 
+		};
+
+		unless ($@) {
+		  $RR{'NSEC3PARAM'} =1;
+		} else {
+		  # Die only if we are dealing with a version for which NSEC3 is 
+		  # available 
+
+		  die $@ if defined($Net::DNS::SEC::SVNVERSION) &&  $Net::DNS::SEC::SVNVERSION > 619;   # In the code since. (for users of the SVN trunk)
+		}
+
+
 
     }
 }
@@ -250,13 +281,8 @@ is recommended.
 
 
 sub new {
-	if (@_ == 8 && ref $_[6]) {
-		return new_from_data(@_);
-	}
-	
-	if (@_ == 2 || @_ == 3) {
-		return new_from_string(@_);
-	}
+	return new_from_string(@_) if @_ == 2;
+	return new_from_string(@_) if @_ == 3;
 	
 	return new_from_hash(@_);
 }
@@ -266,22 +292,19 @@ sub new_from_data {
 	my $class = shift;
 	my ($name, $rrtype, $rrclass, $ttl, $rdlength, $data, $offset) = @_;
 
-	my $self = {
-		'name'		=> $name,
-		'type'		=> $rrtype,
-		'class'		=> $rrclass,
-		'ttl'		=> $ttl,
-		'rdlength'	=> $rdlength,
-		'rdata'		=> substr($$data, $offset, $rdlength),
-
-	};
-
+	my $self = {	name		=> $name,
+			type		=> $rrtype,
+			class		=> $rrclass,
+			ttl		=> $ttl,
+			rdlength	=> $rdlength,
+			rdata		=> substr($$data, $offset, $rdlength)
+			};
 
 	if ($RR{$rrtype}) {
 		my $subclass = $class->_get_subclass($rrtype);
 		return $subclass->new($self, $data, $offset);
 	} else {
-	    return Net::DNS::RR::Unknown->new($self, $data, $offset);
+		return Net::DNS::RR::Unknown->new($self, $data, $offset);
 	}
 
 }
@@ -309,8 +332,6 @@ sub new_from_string {
 
 	$rdata =~ s/\s+$//o if $rdata;
 	$name  =~ s/\.$//o  if $name;
-
-	
 
 
 
@@ -370,10 +391,8 @@ sub new_from_string {
 		'rdata'    => '',
 	};
 
-
 	if ($RR{$rrtype} && $rdata !~ m/^\s*\\#/o ) {
 		my $subclass = $class->_get_subclass($rrtype);
-		
 		return $subclass->new_from_string($self, $rdata);
 	} elsif ($RR{$rrtype}) {   # A RR type known to Net::DNS starting with \#
 		$rdata =~ m/\\\#\s+(\d+)\s+(.*)$/o;
@@ -429,19 +448,15 @@ sub new_from_string {
 
 sub new_from_hash {
 	my $class    = shift;
-	my %tempself = @_;
+	my %keyval   = @_;
 	my $self     = {};
-	
-	my ($key, $val);
 
-	while (($key, $val) = each %tempself) {
-		$self->{lc($key)} = $val;
+	while ( my ($key, $val) = each %keyval ) {
+		( $self->{lc $key} = $val ) =~ s/\.+$// if defined $val;
 	}
 
-	Carp::croak('RR name not specified')
-		unless exists $self->{'name'};
-	Carp::croak('RR type not specified')
-		unless exists $self->{'type'};
+	croak('RR name not specified') unless defined $self->{name};
+	croak('RR type not specified') unless defined $self->{type};
 
 	$self->{'ttl'}   ||= 0;
 	$self->{'class'} ||= 'IN';
@@ -471,6 +486,52 @@ sub new_from_hash {
 	}
 }
 
+
+=head2 parse
+
+    ($rrobj, $offset) = Net::DNS::RR->parse(\$data, $offset);
+
+Parses a DNS resource record at the specified location within a DNS packet.
+The first argument is a reference to the packet data.
+The second argument is the offset within the packet where the resource record begins.
+
+Returns a Net::DNS::RR object and the offset of the next location in the packet.
+
+Parsing is aborted if the object could not be created (e.g., corrupt or insufficient data).
+
+=cut
+
+use constant PACKED_LENGTH => length pack 'n2 N n', (0)x4;
+
+sub parse {
+	my ($objclass, $data, $offset) = @_;
+
+	my ($name, $index) = Net::DNS::Packet::dn_expand($data, $offset);
+	die 'Exception: corrupt or incomplete data' unless $index;
+
+	my $rdindex = $index + PACKED_LENGTH;
+	die 'Exception: incomplete data' if length $$data < $rdindex;
+	my ($type, $class, $ttl, $rdlength) = unpack("\@$index n2 N n", $$data);
+
+	my $next = $rdindex + $rdlength;
+	die 'Exception: incomplete data' if length $$data < $next;
+
+	$type = Net::DNS::typesbyval($type) || $type;
+
+	# Special case for OPT RR where CLASS should be
+	# interpreted as 16 bit unsigned (RFC2671, 4.3)
+	if ($type ne 'OPT') {
+		$class = Net::DNS::classesbyval($class) || $class;
+	}
+	# else just retain numerical value
+
+	my $self = $objclass->new_from_data($name, $type, $class, $ttl, $rdlength, $data, $rdindex);
+	die 'Exception: corrupt or incomplete RR subtype data' unless defined $self;
+
+	return wantarray ? ($self, $next) : $self;
+}
+
+
 #
 # Some people have reported that Net::DNS dies because AUTOLOAD picks up
 # calls to DESTROY.
@@ -487,10 +548,7 @@ B<string> method to get the RR's string representation.
 =cut
 #' someone said that emacs gets screwy here.  Who am I to claim otherwise...
 
-sub print {
-	my $self = shift;
-	print $self->string, "\n";
-}
+sub print {	print &string, "\n"; }
 
 =head2 string
 
@@ -503,14 +561,9 @@ B<rdatastr> method to get the RR-specific data.
 
 sub string {
 	my $self = shift;
-
-	return join("\t",
-		"$self->{'name'}.",
-	 	 $self->{'ttl'},
-		 $self->{'class'},
-		 $self->{'type'},
-		 (defined $self->rdatastr and length $self->rdatastr) ? $self->rdatastr : '; no data',
-   );
+	my $data = $self->rdatastr || '; no data';
+  
+	join "\t", "$self->{name}.", $self->{ttl}, $self->{class}, $self->{type}, $data;
 }
 
 =head2 rdatastr
@@ -620,15 +673,16 @@ sub data {
 
 	# Don't compress TSIG or TKEY names and don't mess with EDNS0 packets
 	if (uc($self->{'type'}) eq 'TSIG' || uc($self->{'type'}) eq 'TKEY') {
-		my $tmp_packet = Net::DNS::Packet->new('');
+		my $tmp_packet = Net::DNS::Packet->new();
 		$data = $tmp_packet->dn_comp($self->{'name'}, 0);
+		return undef unless defined $data;
 	} elsif (uc($self->{'type'}) eq 'OPT') {
-		my $tmp_packet = Net::DNS::Packet->new('');
+		my $tmp_packet = Net::DNS::Packet->new();
 		$data = $tmp_packet->dn_comp('', 0);
 	} else {
 		$data  = $packet->dn_comp($self->{'name'}, $offset);
+		return undef unless defined $data;	
 	}
-
 
 	my $qtype     = uc($self->{'type'});
 	my $qtype_val = ($qtype =~ m/^\d+$/o) ? $qtype : Net::DNS::typesbyname($qtype);
@@ -756,7 +810,7 @@ sub AUTOLOAD {
 ***
 ***  $rr_string
 ***
-***  This object doesn not have a method "$name".  THIS IS A BUG
+***  This object does not have a method "$name".  THIS IS A BUG
 ***  IN THE CALLING SOFTWARE, which has incorrectly assumed that
 ***  the object would be of a particular type.  The calling
 ***  software should check the type of each RR object before
@@ -948,7 +1002,9 @@ Copyright (c) 1997-2002 Michael Fuhr.
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
-Portions Copyright (c) 2005 Olaf Kolkman 
+Portions Copyright (c) 2005-2007 Olaf Kolkman 
+
+Portions Copyright (c) 2007 Dick Franks 
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

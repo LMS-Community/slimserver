@@ -1,6 +1,6 @@
 package Net::DNS::RR::SRV;
 #
-# $Id: SRV.pm 8938 2006-08-12 01:31:50Z andy $
+# $Id: SRV.pm 583 2006-05-03 12:24:18Z olaf $
 #
 use strict;
 BEGIN { 

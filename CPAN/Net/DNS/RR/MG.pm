@@ -1,6 +1,6 @@
 package Net::DNS::RR::MG;
 #
-# $Id: MG.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id: MG.pm 632 2007-03-12 13:24:21Z olaf $
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 632 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -54,7 +54,7 @@ sub _canonicalRdata {
     my $self=shift;
     my $rdata = "";
     if (exists $self->{"mgmname"}) {
-		$rdata .= $self->_name2wire($self->{"mgmname"});
+		$rdata .= $self->_name2wire(lc($self->{"mgmname"}));
 	}
 	return $rdata;
 }

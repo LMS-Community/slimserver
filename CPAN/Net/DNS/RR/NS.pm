@@ -1,7 +1,8 @@
+#
+# $Id: NS.pm 707 2008-02-06 22:27:28Z olaf $
+#
 package Net::DNS::RR::NS;
-#
-# $Id: NS.pm 554 2006-01-19 12:51:30Z olaf $
-#
+
 use strict;
 BEGIN { 
     eval { require bytes; }
@@ -9,7 +10,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 554 $)[1];
+$VERSION = (qw$LastChangedRevision: 707 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -55,7 +56,7 @@ sub _canonicalRdata {
     # rdata contains a compressed domainname... we should not have that.
 	my ($self) = @_;
 	my $rdata;
-	$rdata=$self->_name2wire($self->{"nsdname"});
+	$rdata= $self->_name2wire(lc($self->{"nsdname"}));
 	return $rdata;
 }
 

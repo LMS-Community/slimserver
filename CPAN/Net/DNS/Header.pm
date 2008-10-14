@@ -1,6 +1,6 @@
 package Net::DNS::Header;
 #
-# $Id: Header.pm 546 2005-12-16 15:23:03Z olaf $
+# $Id: Header.pm 704 2008-02-06 21:30:59Z olaf $
 #
 
 use strict;
@@ -12,11 +12,12 @@ BEGIN {
 
 use vars qw($VERSION $AUTOLOAD);
 
+use Carp;
 use Net::DNS;
 
 use constant MAX_ID => 65535;
 
-$VERSION = (qw$LastChangedRevision: 546 $)[1];
+$VERSION = (qw$LastChangedRevision: 704 $)[1];
 
 =head1 NAME
 
@@ -36,83 +37,88 @@ packet.
 =head2 new
 
     $header = Net::DNS::Header->new;
-    $header = Net::DNS::Header->new(\$data);
 
-Without an argument, C<new> creates a header object appropriate
-for making a DNS query.
-
-If C<new> is passed a reference to a scalar containing DNS packet
-data, it creates a header object from that data.
-
-Returns B<undef> if unable to create a header object (e.g., if
-the data is incomplete).
+C<new> creates a header object appropriate for making a DNS query.
 
 =cut
 
-
-
 {
-	my $id = int rand(MAX_ID);
-	
 	sub nextid {
-		return $id++ % (MAX_ID + 1);
+		int rand(MAX_ID);
 	}
 }
 
 sub new {
 	my $class = shift;
-	my %self;
 
-	if (@_) {
-		my $data = shift;
+	my $self = {	id	=> nextid(),
+			qr	=> 0,
+			opcode	=> $Net::DNS::opcodesbyval{0},
+			aa	=> 0,
+			tc	=> 0,
+			rd	=> 1,
+			ra	=> 0,
+			ad	=> 0,
+			cd	=> 0,
+			rcode	=> $Net::DNS::rcodesbyval{0},
+			qdcount	=> 0,
+			ancount	=> 0,
+			nscount	=> 0,
+			arcount	=> 0,
+			};
 
-		if (length($$data) < Net::DNS::HFIXEDSZ() ) {
-			return undef;
-		}
+	bless $self, $class;
+}
 
-		my @a = unpack("n C2 n4", $$data);
-		%self = (
-			"id"		=> $a[0],
-			"qr"		=> ($a[1] >> 7) & 0x1,
-			"opcode"	=> ($a[1] >> 3) & 0xf,
-			"aa"		=> ($a[1] >> 2) & 0x1,
-			"tc"		=> ($a[1] >> 1) & 0x1,
-			"rd"		=> $a[1] & 0x1,
-			"ra"		=> ($a[2] >> 7) & 0x1,
-			"ad"		=> ($a[2] >> 5) & 0x1,
-			"cd"		=> ($a[2] >> 4) & 0x1,
-			"rcode"		=> $a[2] & 0xf,
-			"qdcount"	=> $a[3],
-			"ancount"	=> $a[4],
-			"nscount"	=> $a[5],
-			"arcount"	=> $a[6],
-		);
-	}
-	else { 
-		%self = (
-			"id"		=> nextid(),
-			"qr"		=> 0,
-			"opcode"	=> 0,
-			"aa"		=> 0,
-			"tc"		=> 0,
-			"rd"		=> 1,
-			"ra"		=> 0,
-			"ad"		=> 0,
-			"cd"		=> 0,  
-			"rcode"		=> 0,
-			"qdcount"	=> 1,
-			"ancount"	=> 0,
-			"nscount"	=> 0,
-			"arcount"	=> 0,
-		);
-	}
 
-	$self{"opcode"} = $Net::DNS::opcodesbyval{$self{"opcode"}}
-		if exists $Net::DNS::opcodesbyval{$self{"opcode"}};
-	$self{"rcode"} = $Net::DNS::rcodesbyval{$self{"rcode"}}
-		if exists $Net::DNS::rcodesbyval{$self{"rcode"}};
+=head2 parse
 
-	return bless \%self, $class;
+    ($header, $offset) = Net::DNS::Header->parse(\$data);
+
+Parses the header record at the start of a DNS packet.
+The argument is a reference to the packet data.
+
+Returns a Net::DNS::Header object and the offset of the next location
+in the packet.
+
+Parsing is aborted if the header object cannot be created (e.g.,
+corrupt or insufficient data).
+
+=cut
+
+use constant PACKED_LENGTH => length pack 'n C2 n4', (0)x7;
+
+sub parse {
+	my ($class, $data) = @_;
+
+	die 'Exception: incomplete data' if length($$data) < PACKED_LENGTH;
+
+	my ($id, $b2, $b3, $qd, $an, $ns, $ar) = unpack('n C2 n4', $$data);
+
+	my $opval  = ($b2 >> 3) & 0xf;
+	my $opcode = $Net::DNS::opcodesbyval{$opval} || $opval;
+	my $rval  = $b3 & 0xf;
+	my $rcode = $Net::DNS::rcodesbyval{$rval} || $rval;
+
+	my $self = {	id	=> $id,
+			qr	=> ($b2 >> 7) & 0x1,
+			opcode	=> $opcode,
+			aa	=> ($b2 >> 2) & 0x1,
+			tc	=> ($b2 >> 1) & 0x1,
+			rd	=> $b2 & 0x1,
+			ra	=> ($b3 >> 7) & 0x1,
+			ad	=> ($b3 >> 5) & 0x1,
+			cd	=> ($b3 >> 4) & 0x1,
+			rcode	=> $rcode,
+			qdcount	=> $qd,
+			ancount	=> $an,
+			nscount	=> $ns,
+			arcount	=> $ar
+			};
+
+	bless $self, $class;
+
+	return wantarray ? ($self, PACKED_LENGTH) : $self;
 }
 
 #
@@ -125,11 +131,11 @@ sub DESTROY {}
 
     $header->print;
 
-Dumps the header data to the standard output.
+Prints the header record on the standard output.
 
 =cut
 
-sub print {	print $_[0]->string; }
+sub print {	print &string, "\n"; }
 
 =head2 string
 
@@ -292,34 +298,25 @@ In dynamic update packets, this field is known as C<adcount>.
 
 =cut
 
-sub AUTOLOAD {
-	my ($self) = @_;
-
-	my $name = $AUTOLOAD;
-	$name =~ s/.*://o;
-
-	Carp::croak "$name: no such method" unless exists $self->{$name};
-	
-	no strict q/refs/;
-	
-	*{$AUTOLOAD} = sub {
-		my ($self, $new_val) = @_;
-		
-		if (defined $new_val) {
-			$self->{"$name"} = $new_val;
-		}
-		
-		return $self->{"$name"};
-	};
-	
-	goto &{$AUTOLOAD};	
-}
-
 sub zocount { &qdcount; }
 sub prcount { &ancount; }
 sub upcount { &nscount; }
 sub adcount { &arcount; }
 
+
+sub AUTOLOAD {
+	my $self = shift;
+
+	my $name = $AUTOLOAD;
+	$name =~ s/.*://o;
+
+	croak "$AUTOLOAD: no such method" unless exists $self->{$name};
+
+	return $self->{$name} unless @_;
+
+	my $value = shift;
+	$self->{$name} = $value;
+}
 
 
 =head2 data
@@ -334,27 +331,22 @@ DNS query packet.
 sub data {
 	my $self = shift;
 
-	my $opcode = $Net::DNS::opcodesbyname{$self->{"opcode"}};
-	my $rcode  = $Net::DNS::rcodesbyname{$self->{"rcode"}};
+	my $opcode = $Net::DNS::opcodesbyname{ $self->{opcode} };
+	my $rcode  = $Net::DNS::rcodesbyname{ $self->{rcode} };
 
-	my $byte2 = ($self->{"qr"} << 7)
-	          | ($opcode << 3)
-	          | ($self->{"aa"} << 2)
-	          | ($self->{"tc"} << 1)
-	          | $self->{"rd"};
+	my $byte2 =	($self->{qr} ? 0x80 : 0)
+			| ($opcode << 3)
+			| ($self->{aa} ? 0x04 : 0)
+			| ($self->{tc} ? 0x02 : 0)
+			| ($self->{rd} ? 0x01 : 0);
 
-	my $byte3 = ($self->{"ra"} << 7)
-	          | ($self->{"ad"} << 5)
-	          | ($self->{"cd"} << 4)
-	          | $rcode;
+	my $byte3 =	($self->{ra} ? 0x80 : 0)
+			| ($self->{ad} ? 0x20 : 0)
+			| ($self->{cd} ? 0x10 : 0)
+			| ($rcode || 0);
 
-	return pack("n C2 n4", $self->{"id"},
-			       $byte2,
-			       $byte3,
-			       $self->{"qdcount"},
-			       $self->{"ancount"},
-			       $self->{"nscount"},
-			       $self->{"arcount"});
+	pack('n C2 n4', $self->{id}, $byte2, $byte3,
+			map{$self->{$_} || 0} qw(qdcount ancount nscount arcount) );
 }
 
 =head1 COPYRIGHT
@@ -362,6 +354,8 @@ sub data {
 Copyright (c) 1997-2002 Michael Fuhr. 
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
+
+Portions Copyright (c) 2007 Dick Franks.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

@@ -1,6 +1,6 @@
 package Net::DNS::Resolver::Base;
 #
-# $Id: Base.pm 8938 2006-08-12 01:31:50Z andy $
+# $Id: Base.pm 704 2008-02-06 21:30:59Z olaf $
 #
 
 use strict;
@@ -21,11 +21,10 @@ use Socket;
 use IO::Socket;
 use IO::Select;
 
-use Net::IP qw(ip_is_ipv4 ip_is_ipv6 ip_normalize); 
 use Net::DNS;
 use Net::DNS::Packet;
 
-$VERSION = (qw$LastChangedRevision: 581 $)[1];
+$VERSION = (qw$LastChangedRevision: 704 $)[1];
 
 
 #
@@ -98,7 +97,6 @@ BEGIN {
 		errorstring	   => 'unknown error or no error',
 		tsig_rr        => undef,
 		answerfrom     => '',
-		answersize     => 0,
 		querytime      => undef,
 		tcp_timeout    => 120,
 		udp_timeout    => undef,
@@ -320,15 +318,13 @@ sub nameservers {
     if (@_) {
 	my @a;
 	foreach my $ns (@_) {
-	    if ($ns =~ /^(\d+(:?\.\d+){0,3})$/) {
-		if ( ip_is_ipv4($ns) ) {
-		    push @a, ($1 eq '0') ? '0.0.0.0' : $1;
-		}
-		
-	    }
-	    elsif ( ip_is_ipv6($ns) ) {
+	    next unless defined($ns);
+	    if ( _ip_is_ipv4($ns) ) {
+		push @a, ($ns eq '0') ? '0.0.0.0' : $ns;
+
+	    } elsif ( _ip_is_ipv6($ns) ) {
 		push @a, ($ns eq '0') ? '::0' : $ns;
-		
+
 	    } else  {
 		my $defres = Net::DNS::Resolver->new;
 		my @names;
@@ -353,11 +349,12 @@ sub nameservers {
 	    }
 	}
 	
+
 	$self->{'nameservers'} = [ @a ];
     }
     my @returnval;
     foreach my $ns (@{$self->{'nameservers'}}){
-	next if ip_is_ipv6($ns) && (! $has_inet6 || $self->force_v4() );
+	next if _ip_is_ipv6($ns) && (! $has_inet6 || $self->force_v4() );
 	push @returnval, $ns;
     }
     
@@ -411,111 +408,53 @@ sub _reset_errorstring {
 
 sub search {
 	my $self = shift;
-	my ($name, $type, $class) = @_;
-	my $ans;
+	my $name = shift || '.';
 
-	$type  ||= 'A';
-	$class ||= 'IN';
+	my $defdomain = $self->{domain} if $self->{defnames};
+	my @searchlist = @{$self->{searchlist}} if $self->{dnsrch};
 
-	# If the name looks like an IP address then do an appropriate
-	# PTR query.
-	if ($name =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/) {
-		$name = "$4.$3.$2.$1.in-addr.arpa.";
-		$type = 'PTR';
-	}
-	
-	# pass IPv6 addresses right to query()
-	if (index($name, ':') > 0 and index($name, '.') < 0) {
-		return $self->query($name);
+	# resolve name by trying as absolute name, then applying searchlist
+	my @list = (undef, @searchlist);
+	for ($name) {
+		# resolve name with no dots or colons by applying searchlist (or domain)
+		@list = @searchlist ? @searchlist : ($defdomain) unless  m/[:.]/;
+		# resolve name with trailing dot as absolute name
+		@list = (undef) if m/\.$/;
 	}
 
-	# If the name contains at least one dot then try it as is first.
-	if (index($name, '.') >= 0) {
-		print ";; search($name, $type, $class)\n" if $self->{'debug'};
-		$ans = $self->query($name, $type, $class);
-		return $ans if $ans and $ans->header->ancount;
-	}
+	foreach my $suffix ( @list ) {
+	        my $fqname = join '.', $name, ($suffix || ());
 
-	# If the name doesn't end in a dot then apply the search list.
-	if (($name !~ /\.$/) && $self->{'dnsrch'}) {
-		foreach my $domain (@{$self->{'searchlist'}}) {
-			my $newname = "$name.$domain";
-			print ";; search($newname, $type, $class)\n"
-				if $self->{'debug'};
-			$ans = $self->query($newname, $type, $class);
-			return $ans if $ans and $ans->header->ancount;
-		}
-	}
+		print ';; search(', join(', ', $fqname, @_), ")\n" if $self->{debug};
 
-	# Finally, if the name has no dots then try it as is.
-	if (index($name, '.') < 0) {
-		print ";; search($name, $type, $class)\n" if $self->{'debug'};
-		$ans = $self->query("$name.", $type, $class);
-		return $ans if $ans and $ans->header->ancount;
-	}
+		my $packet = $self->send($fqname, @_) || return undef;
 
-	# No answer was found.
+		next unless ($packet->header->rcode eq "NOERROR"); # something 
+								 #useful happened
+		return $packet if $packet->header->ancount;	# answer found
+		next unless $packet->header->qdcount;           # question empty?
+
+		last if ($packet->question)[0]->qtype eq 'PTR';	# abort search if IP
+	}
 	return undef;
 }
 
 
 sub query {
-	my ($self, $name, $type, $class) = @_;
+	my $self = shift;
+	my $name = shift || '.';
 
-	$type  ||= 'A';
-	$class ||= 'IN';
+	# resolve name containing no dots or colons by appending domain
+	my @suffix = ($self->{domain} || ()) if $name !~ m/[:.]/ and $self->{defnames};
 
-	# If the name doesn't contain any dots then append the default domain.
-	if ((index($name, '.') < 0) && (index($name, ':') < 0) && $self->{'defnames'}) {
-		$name .= ".$self->{domain}";
-	}
+	my $fqname = join '.', $name, @suffix;
 
-	# If the name looks like an IP address then do an appropriate
-	# PTR query.
-	if ($name =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/) {
-		$name = "$4.$3.$2.$1.in-addr.arpa";
-		$type = 'PTR';
-	}
+	print ';; query(', join(', ', $fqname, @_), ")\n" if $self->{debug};
 
-	# IPv4 address in IPv6 format (very lax regex)
-	if ($name =~ /^[0:]*:ffff:(\d+)\.(\d+)\.(\d+)\.(\d+)$/i) {
-		$name = "$4.$3.$2.$1.in-addr.arpa";
-		$type = 'PTR';
-	}
-	
-	# if the name looks like an IPv6 0-compressed IP address then expand
-	# PTR query. (eg 2001:5c0:0:1::2)
-	if ($name =~ /::/) {
-		# avoid stupid "Use of implicit split to @_ is deprecated" warning
-		while (scalar(my @parts = split (/:/, $name)) < 8) {
-			$name =~ s/::/:0::/;
-		}
-		$name =~ s/::/:0:/;
-	}	
-	
-	# if the name looks like an IPv6 address then do appropriate
-	# PTR query. (eg 2001:5c0:0:1:0:0:0:2)
-	if ($name =~ /:/) {
-		my (@stuff) = split (/:/, $name);
-		if (@stuff == 8) {
-			$name = 'ip6.arpa.';
-			$type = 'PTR';
-			foreach my $segment (@stuff) {
-				$segment = sprintf ("%04s", $segment);
-				$segment =~ m/(.)(.)(.)(.)/;
-				$name = "$4.$3.$2.$1.$name";
-			}
-		} else {
-			# no idea what this is
-		}
-	}
+	my $packet = $self->send($fqname, @_) || return undef;
 
-	print ";; query($name, $type, $class)\n" if $self->{'debug'};
-	my $packet = Net::DNS::Packet->new($name, $type, $class);
-
-	my $ans = $self->send($packet);
-
-	return $ans && $ans->header->ancount   ? $ans : undef;
+	return $packet if $packet->header->ancount;	# answer found
+	return undef;
 }
 
 
@@ -533,6 +472,7 @@ sub send {
 	    
 	} else {
 	    $ans = $self->send_udp($packet, $packet_data);
+
 	    if ($ans && $ans->header->tc && !$self->{'igntc'}) {
 			print ";;\n;; packet truncated: retrying using TCP\n" if $self->{'debug'};
 			$ans = $self->send_tcp($packet, $packet_data);
@@ -627,7 +567,6 @@ sub send_tcp {
 		      $buf = read_tcp($sock, $len, $self->{'debug'});
 		      
 		      $self->answerfrom($sock->peerhost);
-		      $self->answersize(length $buf);
 		      
 		      print ';; received ', length($buf), " bytes\n"
 			  if $self->{'debug'};
@@ -642,7 +581,6 @@ sub send_tcp {
 			if (defined $ans) {
 				$self->errorstring($ans->header->rcode);
 				$ans->answerfrom($self->answerfrom);
-				$ans->answersize($self->answersize);
 
 				if ($ans->header->rcode ne "NOERROR" &&
 				    $ans->header->rcode ne "NXDOMAIN"){
@@ -813,7 +751,7 @@ sub send_udp {
 	      push @ns,[$ns_address,$dst_sockaddr,$sockfamily];
 	      
 	  }else{
-	      next NSADDRESS unless( ip_is_ipv4($ns_address));
+	      next NSADDRESS unless( _ip_is_ipv4($ns_address));
 	      my $dst_sockaddr = sockaddr_in($dstport, inet_aton($ns_address));
 	      push @ns, [$ns_address,$dst_sockaddr,AF_INET];
 	  }
@@ -899,7 +837,6 @@ sub send_udp {
 			      if ($ready->recv($buf, $self->_packetsz)) {
 				  
 				  $self->answerfrom($ready->peerhost);
-				  $self->answersize(length $buf);
 				  
 				  print ';; answer from ',
 				  $ready->peerhost, ':',
@@ -914,7 +851,6 @@ sub send_udp {
 				      next SELECTOR unless  ( ($ans->header->id == $packet->header->id) || $self->{'ignqrid'} );
 				      $self->errorstring($ans->header->rcode);
 				      $ans->answerfrom($self->answerfrom);
-				      $ans->answersize($self->answersize);
 				      if ($ans->header->rcode ne "NOERROR" &&
 					  $ans->header->rcode ne "NXDOMAIN"){
 					  # Remove this one from the stack
@@ -929,7 +865,6 @@ sub send_udp {
 				  } elsif (defined $err) {
 				      $self->errorstring($err);
 				  }
-				  
 				  return $ans;
 			      } else {
 				  $self->errorstring($!);
@@ -1022,7 +957,7 @@ sub bgsend {
 	}else{
 	    $sockfamily=AF_INET;
 	    
-	    if (! ip_is_ipv4($ns_address)){
+	    if (! _ip_is_ipv4($ns_address)){
 		$self->errorstring("bgsend(ipv4 only):$ns_address does not seem to be a valid IPv4 address");
 		return;
 	    }
@@ -1091,6 +1026,7 @@ sub bgread {
 		
 		if (defined $ans) {
 			$self->errorstring($ans->header->rcode);
+			$ans->answerfrom($sock->peerhost);
 		} elsif (defined $err) {
 			$self->errorstring($err);
 		}
@@ -1116,20 +1052,7 @@ sub make_query_packet {
 	if (ref($_[0]) and $_[0]->isa('Net::DNS::Packet')) {
 		$packet = shift;
 	} else {
-		my ($name, $type, $class) = @_;
-
-		$name  ||= '';
-		$type  ||= 'A';
-		$class ||= 'IN';
-
-		# If the name looks like an IP address then do an appropriate
-		# PTR query.
-		if ($name =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/o) {
-			$name = "$4.$3.$2.$1.in-addr.arpa.";
-			$type = 'PTR';
-		}
-
-		$packet = Net::DNS::Packet->new($name, $type, $class);
+		$packet = Net::DNS::Packet->new(@_);
 	}
 
 	if ($packet->header->opcode eq 'QUERY') {
@@ -1147,9 +1070,10 @@ sub make_query_packet {
 						Class        => $self->{'udppacketsize'},  # Decimal UDPpayload
 						ednsflags    => 0x8000, # first bit set see RFC 3225 
 				   );
-				 
-	    $packet->push('additional', $optrr);
-	    
+
+	
+	    $packet->push('additional', $optrr) unless defined  $packet->{'optadded'} ;
+	    $packet->{'optadded'}=1;
 	} elsif ($self->{'udppacketsize'} > Net::DNS::PACKETSZ()) {
 	    print ";; Adding EDNS extention with UDP packetsize  $self->{'udppacketsize'}.\n" if $self->{'debug'};
 	    # RFC 3225
@@ -1160,7 +1084,8 @@ sub make_query_packet {
 						TTL          => 0x0000 # RCODE 32bit Hex
 				    );
 				    
-	    $packet->push('additional', $optrr);
+	    $packet->push('additional', $optrr) unless defined  $packet->{'optadded'} ;
+	    $packet->{'optadded'}=1;
 	}
 	
 
@@ -1482,7 +1407,7 @@ sub _create_tcp_socket {
 	#my $old_wflag = $^W;
 	#$^W = 0;
 	
-	if ($has_inet6 && ! $self->force_v4() && ip_is_ipv6($ns) ){
+	if ($has_inet6 && ! $self->force_v4() && _ip_is_ipv6($ns) ){
 		# XXX IO::Socket::INET6 fails in a cryptic way upon send()
 		# on AIX5L if "0" is passed in as LocalAddr
 		# $srcaddr="0" if $srcaddr eq "0.0.0.0";  # Otherwise the INET6 socket will just fail
@@ -1513,7 +1438,7 @@ sub _create_tcp_socket {
 	# Try v4.
 	
 	unless($sock){
-		if (ip_is_ipv6($ns)){
+		if (_ip_is_ipv6($ns)){
 			$self->errorstring(
 					   'connection failed (trying IPv6 nameserver without having IPv6)');
 			print 
@@ -1546,6 +1471,46 @@ sub _create_tcp_socket {
 	return $sock;
 }
 
+
+# Lightweight versions of subroutines from Net::IP module, recoded to fix rt#28198
+
+sub _ip_is_ipv4 {
+	my @field = split /\./, shift;
+
+	return 0 if @field > 4;				# too many fields
+	return 0 if @field == 0;			# no fields at all
+
+	foreach ( @field ) {
+		return 0 unless /./;			# reject if empty
+		return 0 if /[^0-9]/;			# reject non-digit
+		return 0 if $_ > 255;			# reject bad value
+	}
+
+
+	return 1;
+}
+
+
+sub _ip_is_ipv6 {
+
+	for ( shift ) {
+		my @field = split /:/;			# split into fields
+		return 0 if (@field < 3) or (@field > 8);
+
+		return 0 if /::.*::/;			# reject multiple ::
+
+		if ( /\./ ) {				# IPv6:IPv4
+			return 0 unless _ip_is_ipv4(pop @field);
+		}
+
+		foreach ( @field ) {
+			next unless /./;		# skip ::
+			return 0 if /[^0-9a-f]/i;	# reject non-hexdigit
+			return 0 if length $_ > 4;	# reject bad value
+		}
+	}
+	return 1;
+}
 
 
 
@@ -1599,8 +1564,8 @@ for all your resolving needs.
 Copyright (c) 1997-2002 Michael Fuhr. 
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
-
 Portions Copyright (c) 2005 Olaf Kolkman  <olaf@net-dns.org>
+Portions Copyright (c) 2006 Dick Franks.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

@@ -1,6 +1,6 @@
 package Net::DNS::RR::MINFO;
 #
-# $Id: MINFO.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id: MINFO.pm 632 2007-03-12 13:24:21Z olaf $
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 632 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -63,8 +63,8 @@ sub _canonicalRdata {
 	my $rdata = "";
 
 	if (exists $self->{"rmailbx"}) {
-		$rdata .= $self->_name2wire($self->{"rmailbx"});
-		$rdata .=  $self->_name2wire($self->{"emailbx"});
+		$rdata .= $self->_name2wire(lc($self->{"rmailbx"}));
+		$rdata .=  $self->_name2wire(lc($self->{"emailbx"}));
 	}
 
 	return $rdata;

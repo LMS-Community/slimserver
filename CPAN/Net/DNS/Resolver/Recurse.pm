@@ -1,6 +1,6 @@
 package Net::DNS::Resolver::Recurse;
 #
-# $Id: Recurse.pm 8938 2006-08-12 01:31:50Z andy $
+# $Id: Recurse.pm 591 2006-05-22 21:32:38Z olaf $
 #
 use strict;
 use Net::DNS::Resolver;
@@ -407,7 +407,7 @@ Portions Copyright (c) 2005, Olaf M Kolkman.
 This module is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
 
-$Id: Recurse.pm 8938 2006-08-12 01:31:50Z andy $
+$Id: Recurse.pm 591 2006-05-22 21:32:38Z olaf $
 
 =cut
 
