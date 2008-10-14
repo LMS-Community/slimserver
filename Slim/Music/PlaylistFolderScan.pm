@@ -90,6 +90,7 @@ sub startScan {
 		'recursive' => $recurse,
 		'types'     => 'list',
 		'scanName'  => 'playlist',
+		'progress'  => 1,
 	});
 
 	$class->doneScanning;

@@ -207,7 +207,10 @@ sub main {
 
 		for my $url (@ARGV) {
 
-			eval { Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url }) };
+			eval { Slim::Utils::Scanner->scanPathOrURL({ 
+				'url'      => $url,
+				'progress' => 1, 
+			}) };
 		}
 
 	} else {

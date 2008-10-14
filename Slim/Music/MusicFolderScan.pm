@@ -81,6 +81,7 @@ sub startScan {
 		'recursive' => $recurse,
 		'types'     => 'audio',
 		'scanName'  => 'directory',
+		'progress'  => 1,
 	});
 
 	$log->info("Finished background scan of music folder.");
