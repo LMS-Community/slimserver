@@ -264,6 +264,15 @@ sub parseMetadata {
 	
 	# XXX: figure out some way to parse ASF_Command_Media metadata
 	
+	if ( $log->is_debug ) {		
+		my $guid;
+		map { $guid .= $_ } unpack( 'H*', substr $metadata, 0, 16 );
+	
+		if ( $guid eq '59dacfc059e611d0a3ac00a0c90348f6' ) {
+			$log->debug( "ASF_Command_Media: $metadata" );
+		}
+	}
+	
 	my $wma       = Audio::WMA->parseObject( $metadata );
 	my $streamNum = $song->{'scanData'}->{$song->{'streamUrl'}}->{'streamNum'} || 1;
 
