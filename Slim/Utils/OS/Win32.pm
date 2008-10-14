@@ -7,7 +7,6 @@ use FindBin qw($Bin);
 use Scalar::Util qw(blessed);
 use Win32;
 use Win32::OLE::NLS;
-use Win32::Locale;
 use POSIX qw(LC_CTYPE LC_TIME);
 
 use base qw(Slim::Utils::OS);
@@ -152,6 +151,8 @@ sub scanner {
 }
 
 sub localeDetails {
+	require Win32::Locale;
+
 	my $langid = Win32::OLE::NLS::GetSystemDefaultLCID();
 	my $lcid   = Win32::OLE::NLS::MAKELCID($langid);
 	my $linfo  = Win32::OLE::NLS::GetLocaleInfo($lcid, Win32::OLE::NLS::LOCALE_IDEFAULTANSICODEPAGE());
