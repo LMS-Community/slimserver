@@ -3,6 +3,7 @@ package Slim::Web::Pages::Progress;
 use strict;
 
 use Slim::Schema;
+use Slim::Utils::Strings qw(string);
 
 sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^progress\.(?:htm|xml)/,\&progress);
@@ -27,6 +28,8 @@ sub progress {
 
 	my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start,id' } )->all;
 
+	my $finished;
+
 	for my $p (@progress) {
 
 		my $bar;
@@ -38,9 +41,7 @@ sub progress {
 
 		my $runtime = ($p->finish || time()) - $p->start;
 
-		my $hrs  = int($runtime / 3600);
-		my $mins = int(($runtime - $hrs * 3600)/60);
-		my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
+		my ($hrs, $mins, $sec) = _splitTime($runtime);
 
 		my $item = {
 			'obj'  => $p,
@@ -51,6 +52,8 @@ sub progress {
 		$total_time += $runtime;
 
 		push @{$params->{'progress_items'}}, $item;
+		
+		$finished = $p->finish;
 	}
 
 	$params->{'desc'} = 1;
@@ -60,17 +63,18 @@ sub progress {
 
 		if (@progress) {
 
-			$params->{'message'}    = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
-
+			$params->{'message'} = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
+			
 			my $hrs  = int($total_time / 3600);
 			my $mins = int(($total_time - $hrs * 3600)/60);
 			my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
 			
 			$params->{'total_time'} = sprintf("%02d:%02d:%02d", $hrs, $mins, $sec);
+			$params->{'total_time'} .= '&nbsp;(' . Slim::Utils::DateTime::longDateF($finished) . ' / ' . Slim::Utils::DateTime::timeF($finished) . ')' if $finished;
 
 		} else {
 
-			$params->{'message'}    = Slim::Utils::Strings::string('PROGRESS_IMPORTER_NO_INFO');
+			$params->{'message'} = string('PROGRESS_IMPORTER_NO_INFO');
 			$params->{'desc'} = 0;
 		}
 	}
@@ -78,6 +82,16 @@ sub progress {
 	$params->{'scanning'} = Slim::Music::Import->stillScanning();
 
 	return Slim::Web::HTTP::filltemplatefile("progress.html", $params);
+}
+
+sub _splitTime {
+	my $timestamp = shift;
+	
+	my $hrs  = int($timestamp / 3600);
+	my $mins = int(($timestamp - $hrs * 3600)/60);
+	my $sec  = $timestamp - 3600 * $hrs - 60 * $mins;
+
+	return ($hrs, $mins, $sec);
 }
 
 # progress bar which may be used by other pages - e.g. home page scan progress
