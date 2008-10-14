@@ -41,7 +41,9 @@ sub progress {
 
 		my $runtime = ($p->finish || time()) - $p->start;
 
-		my ($hrs, $mins, $sec) = _splitTime($runtime);
+		my $hrs  = int($runtime / 3600);
+		my $mins = int(($runtime - $hrs * 3600)/60);
+		my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
 
 		my $item = {
 			'obj'  => $p,
@@ -82,16 +84,6 @@ sub progress {
 	$params->{'scanning'} = Slim::Music::Import->stillScanning();
 
 	return Slim::Web::HTTP::filltemplatefile("progress.html", $params);
-}
-
-sub _splitTime {
-	my $timestamp = shift;
-	
-	my $hrs  = int($timestamp / 3600);
-	my $mins = int(($timestamp - $hrs * 3600)/60);
-	my $sec  = $timestamp - 3600 * $hrs - 60 * $mins;
-
-	return ($hrs, $mins, $sec);
 }
 
 # progress bar which may be used by other pages - e.g. home page scan progress
