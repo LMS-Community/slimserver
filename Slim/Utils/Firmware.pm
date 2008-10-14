@@ -49,7 +49,6 @@ my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
 # Firmware location
 my $dir      = Slim::Utils::OSDetect::dirsFor('Firmware');
-my $cachedir = Slim::Utils::OSDetect::dirsFor('cache');
 
 # Download location
 sub BASE {
@@ -83,6 +82,8 @@ sub init {
 	
 	# Special handling is needed for Jive firmware
 	init_jive();
+	
+	my $cachedir = $prefs->get('cachedir');
 	
 	for my $model ( @models ) {
 

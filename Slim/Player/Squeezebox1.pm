@@ -324,7 +324,7 @@ sub upgradeFirmware {
 	$to_version = $client->revision unless $to_version;
 
 	my $file  = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
-	my $file2 = catdir( Slim::Utils::OSDetect::dirsFor('cache'), "squeezebox_$to_version.bin" );
+	my $file2 = catdir( $prefs->get('cachedir'), "squeezebox_$to_version.bin" );
 	my $log   = logger('player.firmware');
 
 	if (!-f $file && !-f $file2) {
