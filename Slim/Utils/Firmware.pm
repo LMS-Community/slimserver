@@ -48,7 +48,8 @@ use Slim::Utils::Timers;
 my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
 # Firmware location
-my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
+my $dir      = Slim::Utils::OSDetect::dirsFor('Firmware');
+my $cachedir = Slim::Utils::OSDetect::dirsFor('cache');
 
 # Download location
 sub BASE {
@@ -101,18 +102,19 @@ sub init {
 			
 			if ( $version ) {
 
-				my $file = "${model}_${version}.bin";
-				my $path = catdir( $dir, $file );
+				my $file  = "${model}_${version}.bin";
+				my $path  = catdir( $dir, $file );
+				my $path2 = catdir( $cachedir, $file );
 
-				if ($files->{$path}) {
+				if ($files->{$path} || $files->{$path2}) {
 					next;
 				}
-				
-				if ( !-r $path ) {
+
+				if ( !-r $path && !-r $path2 ) {
 
 					$log->info("Need to download $file\n");
 
-					$files->{$path} = 1;
+					$files->{$path2} = 1;
 				}
 			}
 		}

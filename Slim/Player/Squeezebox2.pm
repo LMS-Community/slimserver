@@ -262,9 +262,10 @@ sub upgradeFirmware {
 		$log->warn("upgrading to same rev: $to_version");
 	}
 
-	my $file = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $client->model . "_$to_version.bin" );
+	my $file  = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $client->model . "_$to_version.bin" );
+	my $file2 = catdir( Slim::Utils::OSDetect::dirsFor('cache'), $client->model . "_$to_version.bin" );
 
-	if (!-f $file) {
+	if (!-f $file && !-f $file2) {
 
 		logWarning("File does not exist: $file");
 
@@ -284,6 +285,10 @@ sub upgradeFirmware {
 		} );
 
 		return(0);
+	}
+	
+	if (-f $file2 && !-f $file) {
+		$file = $file2;
 	}
 	
 	$client->stop();

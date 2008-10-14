@@ -323,14 +323,19 @@ sub upgradeFirmware {
 	# if no upgrade path is given, then "upgrade" the client to itself.
 	$to_version = $client->revision unless $to_version;
 
-	my $file = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
-	my $log  = logger('player.firmware');
+	my $file  = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
+	my $file2 = catdir( Slim::Utils::OSDetect::dirsFor('cache'), "squeezebox_$to_version.bin" );
+	my $log   = logger('player.firmware');
 
-	if (!-f $file) {
+	if (!-f $file && !-f $file2) {
 
 		logWarning("File does not exist: $file");
 
 		return 0;
+	}
+	
+	if (-f $file2 && !-f $file) {
+		$file = $file2;
 	}
 	
 	$client->isUpgrading(1);
