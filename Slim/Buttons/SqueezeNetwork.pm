@@ -55,9 +55,12 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+	
+	# bug 8941 - unsync before stopping
+	Slim::Control::Request::executeRequest($client, ['unsync']) if $client->isSynced();
 
 	# Stop the player before disconnecting
-	Slim::Control::Request::executeRequest($client, ['stop']);
+	Slim::Control::Request::executeRequest($client, ['stop']) unless $client->isStopped();
 
 	$client->lines(\&lines);
 
