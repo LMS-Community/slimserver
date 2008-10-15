@@ -18,6 +18,13 @@ use File::Spec::Functions;
 use Getopt::Long;
 use Socket;
 
+my $useWx = eval {
+	require Wx;
+	require Wx::Event;
+
+	return $^O !~ /darwin/ || $^X =~ /wxPerl/i;
+};
+
 use constant SLIM_SERVICE => 0;
 
 use Slim::bootstrap;
@@ -44,14 +51,72 @@ sub main {
 		'logs'      => \$logs,
 		'mysql'     => \$mysql,
 	);
-
-	my @folders;
 	
+	my $folders = getFolderList(
+		'all'       => $all,
+		'cache'     => $cache,
+		'filecache' => $filecache,
+		'prefs'     => $prefs,
+		'logs'      => $logs,
+		'mysql'     => $mysql,
+	);
+	
+	unless (scalar @$folders) {
+
+		# show simple GUI if possible
+		if ($useWx) {
+			require Slim::Utils::CleanupGUI;
+			my $app = Slim::Utils::CleanupGUI->new({
+				running => checkForSC(),
+				title   => 'SqueezeCenter Cleanup',
+				cancel  => 'Cancel',
+				cleanup => 'Run Cleanup',
+				options => options(),
+				cb      => \&usage,
+			});
+			$app->MainLoop;
+		}
+
+		else {		
+			usage();
+			exit;
+		}
+	}
+
+	cleanup($folders);
+	
+	print "\nDone. Please restart SqueezeCenter.\n\n";
+}
+
+sub usage {
+	print <<EOF;
+Usage: $0 [--all] [--prefs] [--cache]
+
+Command line options:
+
+	--mysql        Delete MySQL data (music information database)
+	--filecache    Delete file cache for artwork, templates etc.
+	--prefs        Delete preference files
+	--logs         Delete log files
+
+	--cache   (!)  Clean cache folder, including music database, artwork cache
+	               and favorites files (if no playlist folder is defined)
+
+	--all     (!!) Wipe'em all
+	
+EOF
+
+}
+
+sub getFolderList {
+	my %args = @_;
+	
+	my @folders;
 	my $cacheFolder = $os->dirsFor('cache');
 
-	push @folders, _target('cache', 'cache') if ($all || $cache);
+	push @folders, _target('cache', 'cache') if ($args{all} || $args{cache});
 	
-	if ($filecache) {
+	if ($args{filecache}) {
 		push @folders, {
 			label   => 'file cache (artwork, templates etc.)',
 			folders => [
@@ -67,7 +132,7 @@ sub main {
 		};
 	}
 		
-	if ($mysql) {
+	if ($args{mysql}) {
 		push @folders, {
 			label   => 'MySQL data',
 			folders => [
@@ -80,59 +145,14 @@ sub main {
 		};
 	}
 		
-	if ($all || $prefs) {
+	if ($args{all} || $args{prefs}) {
 		push @folders, _target('prefs', 'preferences');
 		push @folders, _target('oldprefs', 'old preferences (SlimServer <= 6.5)');
 	}
 	
-	push @folders, _target('log', 'logs') if ($all || $logs);
-	
-	unless (scalar @folders) {
-		usage();
-		exit;
-	}
+	push @folders, _target('log', 'logs') if ($args{all} || $args{logs});
 
-	my $fallbackFolder = $os->dirsFor('');
-		
-	for my $item (@folders) {
-		print "\nDeleting $item->{label}...\n";
-		
-		foreach ( @{$item->{folders}} ) {
-			next unless $_;
-			
-			print "-> $_\n" if (-e $_);
-
-			if (-d $_) {
-				rmtree $_;
-			}
-			
-			elsif (-f $_) {
-				unlink $_;
-			}
-		}
-	}
-	
-	print "\nDone. Please restart SqueezeCenter.\n\n";
-}
-
-sub usage {
-	print <<EOF;
-Usage: $0 [--all] [--prefs] [--cache]
-
-Command line options:
-
-	--mysql        Delete MySQL data (music database)
-	--filecache    Delete file cache for artwork, templates etc.
-	--prefs        Delete preference files
-	--logs         Delete log files
-
-	--cache   (!)  Clean cache folder, including music database, artwork cache
-	               and favorites files (if no playlist folder is defined)
-
-	--all     (!!) Wipe'em all
-	
-EOF
-
+	return \@folders;
 }
 
 sub _target {
@@ -144,6 +164,54 @@ sub _target {
 		label   => $label,
 		folders => [ $f ],
 	};
+}
+
+sub options {
+	
+	my $options = [
+		{
+			name     => 'prefs',
+			title    => 'Preference files',
+			position => [30, 20],
+		},
+	
+		{
+			name     => 'filecache',
+			title    => 'File cache (artwork, templates etc.)',
+			position => [30, 40],
+		},
+	
+		{
+	
+			name     => 'mysql',
+			title    => 'MySQL data (music information database)',
+			position => [30, 60],
+		},
+	
+		{
+	
+			name     => 'logs',
+			title    => 'Log files',
+			position => [30, 80],
+		},
+	
+		{
+	
+			name     => 'cache',
+			margin   => 20,
+			title    => "(!) Clean cache folder, including music database, artwork cache \nand favorites files (if no playlist folder is defined)",
+			position => [30, 120],
+		},
+	
+		{
+	
+			name     => 'all',
+			title    => '(!!) Wipe\'em all - don\'t do this unless told!',
+			position => [30, 160],
+		},
+	];
+
+	return $options;
 }
 
 sub checkForSC {
@@ -165,5 +233,30 @@ sub checkForSC {
 }
 
 main();
+
+
+sub cleanup {
+	my $folders = shift;
+
+	my $fallbackFolder = $os->dirsFor('');
+		
+	for my $item (@$folders) {
+		print "\nDeleting $item->{label}...\n";
+		
+		foreach ( @{$item->{folders}} ) {
+			next unless $_;
+			
+			print "-> $_\n" if (-e $_);
+
+			if (-d $_) {
+				rmtree $_;
+			}
+			
+			elsif (-f $_) {
+				unlink $_;
+			}
+		}
+	}
+}
 
 __END__
