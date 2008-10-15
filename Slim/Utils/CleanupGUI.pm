@@ -73,6 +73,8 @@ sub OnClick {
 	}
 
 	if ($selected) {
+		Wx::BusyCursor->new();
+		
 		my $folders = $args->{folderCB}($params);
 		$args->{cleanCB}($folders);
 		
