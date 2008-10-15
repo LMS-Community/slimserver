@@ -18837,6 +18837,9 @@ BACKUP_ALARM
 CLEANUP_TITLE
 	EN	SqueezeCenter Cleanup
 
+CLEANUP_DESC
+	EN	Please select the files and folders you'd like to reset:
+
 CLEANUP_DO
 	EN	Run Cleanup
 

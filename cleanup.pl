@@ -72,6 +72,7 @@ sub main {
 			my $app = Slim::Utils::CleanupGUI->new({
 				running  => checkForSC(),
 				title    => string('CLEANUP_TITLE'),
+				desc     => string('CLEANUP_DESC'),
 				cancel   => string('CANCEL'),
 				cleanup  => string('CLEANUP_DO'),
 				options  => options(),

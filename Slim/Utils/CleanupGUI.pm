@@ -28,6 +28,9 @@ sub new {
 	);
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	my $label = Wx::StaticText->new($panel, -1, $args->{desc});
+	$mainSizer->Add($label, 0, wxTOP | wxLEFT, 15);
+
 	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
 	my $options = $args->{options};
 
@@ -36,7 +39,7 @@ sub new {
 		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP, $_->{margin} || 5 );
 	}
 
-	$mainSizer->Add($cbSizer, 0, wxALL, 15);
+	$mainSizer->Add($cbSizer, 0, wxTOP | wxLEFT, 15);
 
 
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
