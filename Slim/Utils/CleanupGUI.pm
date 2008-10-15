@@ -22,6 +22,11 @@ sub new {
 		$args->{title},
 	);
 
+	# shortcut if SC is running - only display warning
+	if ($args->{running}) {
+		return $self;
+	}
+
 	my $panel = Wx::Panel->new( 
 		$self, 
 		-1, 
@@ -70,6 +75,7 @@ sub OnClick {
 
 	my $params = {};
 	my $selected = 0;
+	
 	foreach (@{ $args->{options} }) {
 		$params->{$_->{name}} = $checkboxes{$_->{name}}->GetValue();
 		$selected ||= $checkboxes{$_->{name}}->GetValue();
@@ -92,6 +98,7 @@ sub OnClick {
 package Slim::Utils::CleanupGUI;
 
 use base 'Wx::App';
+use Wx qw(:everything);
 
 my $args;
 
@@ -104,7 +111,15 @@ sub new {
 
 sub OnInit {
 	my $frame = SFrame->new($args);
-	$frame->Show( 1 );
+	
+	if ($args->{running}) {
+		my $msg = Wx::MessageDialog->new($frame, $args->{running}, $args->{title}, wxOK | wxICON_INFORMATION);
+		$msg->ShowModal();
+		$frame->Destroy();
+	}
+	else {		
+		$frame->Show( 1 );
+	}	
 }
 
 1;

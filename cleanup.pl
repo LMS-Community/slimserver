@@ -22,6 +22,8 @@ my $useWx = eval {
 	require Wx;
 	require Wx::Event;
 
+	# don't use Wx, if script is run using perl on OSX
+	# it needs to be run using wxperl
 	return $^O !~ /darwin/ || $^X =~ /wxPerl/i;
 };
 
@@ -39,7 +41,9 @@ sub main {
 	
 	loadStrings();
 
-	if (checkForSC()) {
+	my $isRunning = checkForSC();
+
+	if ($isRunning && !$useWx) {
 		print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_STOP_SC'));
 		exit;
 	}
@@ -68,9 +72,11 @@ sub main {
 
 		# show simple GUI if possible
 		if ($useWx) {
+			
 			require Slim::Utils::CleanupGUI;
+			
 			my $app = Slim::Utils::CleanupGUI->new({
-				running  => checkForSC(),
+				running  => $isRunning ? string('CLEANUP_PLEASE_STOP_SC') : undef,
 				title    => string('CLEANUP_TITLE'),
 				desc     => string('CLEANUP_DESC'),
 				cancel   => string('CANCEL'),
@@ -81,7 +87,9 @@ sub main {
 				msgCap   => string('CLEANUP_SUCCESS'),
 				msg      => string('CLEANUP_PLEASE_RESTART_SC'),
 			});
-			$app->MainLoop;
+			
+			$app->MainLoop unless $isRunning;
+			exit;
 		}
 
 		else {		
@@ -92,7 +100,7 @@ sub main {
 
 	cleanup($folders);
 	
-	print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_RESTART_SC')) unless $useWx;
+	print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_RESTART_SC'));
 }
 
 sub usage {
