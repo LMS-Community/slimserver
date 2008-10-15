@@ -165,7 +165,7 @@ sub _getPlayerInfo {
 		{ INFORMATION_PLAYER_MODEL           => Slim::Buttons::Information::playerModel($client) },
 		{ INFORMATION_FIRMWARE_ABBR          => $client->revision },
 		{ INFORMATION_PLAYER_IP              => $client->ip },
-		{ INFORMATION_PLAYER_PORT            => $client->port },
+#		{ INFORMATION_PLAYER_PORT            => $client->port },
 		{ INFORMATION_PLAYER_MAC             => $client->macaddress },
 		{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $client->signalStrength },
 		{ INFORMATION_PLAYER_VOLTAGE         => $client->voltage },
