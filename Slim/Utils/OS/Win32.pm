@@ -166,6 +166,9 @@ sub localeDetails {
 
 sub getSystemLanguage {
 	my $class = shift;
+
+	require Win32::Locale;
+
 	$class->_parseLanguage(Win32::Locale::get_language()); 
 }
 
