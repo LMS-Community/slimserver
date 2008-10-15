@@ -69,7 +69,7 @@ sub lines {
 
 sub buddies {
 	my $client = shift;
-	my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
+	my $selectedClient = shift || $client->syncSelections->[ $client->syncSelection ];
 
 	my @buddies = ();
 	my $list = '';
@@ -149,10 +149,31 @@ sub syncExitHandler {
 		my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
 	
 		my @oldlines = $client->curLines();
-	
+		
 		if ($client->isSyncedWith($selectedClient)) {
 			$client->execute( [ 'sync', '-' ] );
 		} else {
+			
+			# bug 9722: Tell user if their sync operation has also resulted in an unsync
+			if ($client->isSynced) {
+				my $lines;
+				if ($client->linesPerScreen() == 1) {
+					$lines = [ $client->string( 'UNSYNCING_FROM' ) . ' ' . buddies($client, $client)
+								. ' ' . $client->string( 'AND' ) . ' '
+								. $client->string( 'SYNCING_WITH' ) . ' ' . buddies($client)];
+				} else {
+					$lines = [ $client->string( 'UNSYNCING_FROM' ) . ' ' . buddies($client, $client),
+								$client->string( 'SYNCING_WITH' ) . ' ' . buddies($client)];
+				}
+				
+				# Do this on a timer so that the mode animation can complete first
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + .1,
+					sub {
+						$client->showBriefly( {'line' => $lines}, 
+							{'block' => 1, 'scroll' => 1, 'duration' => 2} );
+					});
+			}
+			
 			$selectedClient->execute( [ 'sync', $client->id ] );
 		}
 

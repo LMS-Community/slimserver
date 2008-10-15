@@ -14063,6 +14063,12 @@ UNSYNC_WITH
 	SV	Avbryt synkroniseringen med:
 	ZH_CN	请按右方向键来撤销同步：
 
+SYNCING_WITH
+	EN	Syncing with:
+
+UNSYNCING_FROM
+	EN	Unsyncing from:
+
 CREATE_MIX
 	DA	Opret miks
 	DE	Mix erstellen
