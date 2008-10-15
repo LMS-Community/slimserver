@@ -1236,7 +1236,7 @@ sub _buffering {
 
 		$client->showBriefly( {
 			line => [ $line1, $line2 ], 
-			jive => { 'type' => 'song', text => [ $jive1, $args->{'title'} ], 'icon-id' => $args->{'cover'} }, 
+			jive => { type => 'song', text => [ $jive1, $args->{'title'} ], 'icon-id' => $args->{'cover'}, duration => 500 }, 
 			cli  => undef
 		}, 1 ) unless $client->display->sbName();
 		
