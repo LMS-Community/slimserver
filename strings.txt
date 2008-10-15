@@ -18868,7 +18868,7 @@ CLEANUP_LOGS
 	EN	Delete log files
 
 CLEANUP_CACHE
-	EN	Clean cache folder, including music database, artwork cache and favorites files (if no playlist folder is defined)
+	EN	Clean cache folder, including music database, artwork cache etc.
 	
 CLEANUP_ALL
 	EN	Wipe'em all - don't do this unless you know what you're doing!
