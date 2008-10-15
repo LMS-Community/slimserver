@@ -1451,7 +1451,7 @@ sub playerSettingsMenu {
 	if ( $client->isPlayer() && !$client->display->isa('Slim::Display::NoDisplay') ) {
 		push @menu, 
 		{
-			stringToken    => 'DISPLAY_SETTINGS',
+			stringToken    => 'JIVE_PLAYER_DISPLAY_SETTINGS',
 			weight         => 52,
 			id             => 'playerDisplaySettings',
 			isANode        => 1,
