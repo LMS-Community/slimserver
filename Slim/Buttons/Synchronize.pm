@@ -33,7 +33,7 @@ sub loadList {
 	
 	@{$client->syncSelections} = Slim::Player::Sync::canSyncWith($client);
 	
-	# add ourselves (for unsyncing) if we're the master fo a sync-group.
+	# add ourselves (for unsyncing) if we're the master of a sync-group.
 	if (Slim::Player::Sync::isMaster($client)) { push @{$client->syncSelections}, $client };
 
 	if (!defined($client->syncSelection()) || $client->syncSelection >= @{$client->syncSelections}) {
@@ -57,7 +57,7 @@ sub lines {
 			# get the currently selected client
 			my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
 			
-			if ($client->isSyncedWith($selectedClient) || $selectedClient eq $client) {
+			if ($client->isSyncedWith($selectedClient)) {
 				$line1 = $client->string('UNSYNC_WITH');
 			} else {
 				$line1 = $client->string('SYNC_WITH');
@@ -69,26 +69,26 @@ sub lines {
 
 sub buddies {
 	my $client = shift;
-	my $selectedClient = shift || $client->syncSelections->[ $client->syncSelection ];
+	my $selectedClient = $client->syncSelections->[ $client->syncSelection ];
 
 	my @buddies = ();
 	my $list = '';
 	
-	if ($selectedClient ne $client) {
-		push @buddies, $selectedClient;
-	}
+	push @buddies, $selectedClient unless $selectedClient == $client;
+	
+	push @buddies, $selectedClient->syncedWith($client);
 	
 	while (scalar(@buddies) > 2) {
-		my $buddy = pop @buddies;
+		my $buddy = shift @buddies;
 		$list .= $buddy->name() . ", ";
 	}
 	
 	if (scalar(@buddies) > 1) {
-		my $buddy = pop @buddies;
+		my $buddy = shift @buddies;
 		$list .= $buddy->name() . " " . $client->string('AND') . " ";		
 	}
 
-	my $buddy = pop @buddies;
+	my $buddy = shift @buddies;
 	$list .= $buddy->name();
 	
 	return $list;
@@ -126,7 +126,7 @@ sub setMode {
 		'headerArgs'     => 'C',
 		'listRef'        => \@{$client->syncSelections},
 		'externRef'      => sub {
-								return buddies($_[0], undef);
+								return buddies($_[0]);
 							},
 		'externRefArgs'  => 'CV',
 		'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
@@ -150,7 +150,7 @@ sub syncExitHandler {
 	
 		my @oldlines = $client->curLines();
 	
-		if ($client->isSyncedWith($selectedClient) || ($client eq $selectedClient)) {
+		if ($client->isSyncedWith($selectedClient)) {
 			$client->execute( [ 'sync', '-' ] );
 		} else {
 			$selectedClient->execute( [ 'sync', $client->id ] );
