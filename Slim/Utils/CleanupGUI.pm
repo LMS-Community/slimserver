@@ -6,6 +6,7 @@ use base 'Wx::Frame';
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON);
 
+my %checkboxes;
 
 sub new {
 	my $ref = shift;
@@ -17,7 +18,7 @@ sub new {
 		$args->{title},
 		[50, 50],
 		[500, 280],
-		Wx::wxMINIMIZE_BOX | Wx::wxCAPTION | Wx::wxCLOSE_BOX,
+		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX,
 		$args->{title},
 	);
 
@@ -26,23 +27,24 @@ sub new {
 		-1, 
 	);
 
-	my $mainSizer = Wx::BoxSizer->new(Wx::wxVERTICAL);
-	my $cbSizer = Wx::BoxSizer->new(Wx::wxVERTICAL);
-	my %checkboxes;
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
 	my $options = $args->{options};
 
 	foreach (@$options) {
 		$checkboxes{$_->{name}} = Wx::CheckBox->new( $panel, -1, $_->{title}, $_->{position}, [-1, -1]);
-		$cbSizer->Add( $checkboxes{$_->{name}}, 0, Wx::wxTOP, $_->{margin} || 5 );
+		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP, $_->{margin} || 5 );
 	}
 
-	$mainSizer->Add($cbSizer, 0, Wx::wxALL, 15);
+	$mainSizer->Add($cbSizer, 0, wxALL, 15);
 
 
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
 	my $btnCleanup = Wx::Button->new( $panel, -1, $args->{cleanup} );
-	EVT_BUTTON( $self, $btnCleanup, \&OnClick );
+	EVT_BUTTON( $self, $btnCleanup, sub {
+		OnClick(@_, $args);
+	} );
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
 	my $btnCancel = Wx::Button->new( $panel, -1, $args->{cancel} );
@@ -53,7 +55,7 @@ sub new {
 
 	$btnsizer->Realize();
 
-	$mainSizer->Add($btnsizer, 0, Wx::wxALIGN_BOTTOM | Wx::wxALL | Wx::wxALIGN_RIGHT, 20);
+	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 20);
 	
 	$panel->SetSizer($mainSizer);
 
@@ -61,9 +63,24 @@ sub new {
 }
 
 sub OnClick {
-	my( $self, $event ) = @_;
+	my( $self, $event, $args ) = @_;
 
-	$self->SetTitle( 'Clicked' );
+	my $params = {};
+	my $selected = 0;
+	foreach (@{ $args->{options} }) {
+		$params->{$_->{name}} = $checkboxes{$_->{name}}->GetValue();
+		$selected ||= $checkboxes{$_->{name}}->GetValue();
+	}
+
+	if ($selected) {
+		my $folders = $args->{folderCB}($params);
+		$args->{cleanCB}($folders);
+		
+		my $msg = Wx::MessageDialog->new($self, $args->{msg}, $args->{msgCap}, wxOK | wxICON_INFORMATION);
+		$msg->ShowModal();
+	}
+
+	$self->Destroy();
 }
 
 

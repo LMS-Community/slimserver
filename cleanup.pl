@@ -52,14 +52,14 @@ sub main {
 		'mysql'     => \$mysql,
 	);
 	
-	my $folders = getFolderList(
+	my $folders = getFolderList({
 		'all'       => $all,
 		'cache'     => $cache,
 		'filecache' => $filecache,
 		'prefs'     => $prefs,
 		'logs'      => $logs,
 		'mysql'     => $mysql,
-	);
+	});
 	
 	unless (scalar @$folders) {
 
@@ -67,12 +67,15 @@ sub main {
 		if ($useWx) {
 			require Slim::Utils::CleanupGUI;
 			my $app = Slim::Utils::CleanupGUI->new({
-				running => checkForSC(),
-				title   => 'SqueezeCenter Cleanup',
-				cancel  => 'Cancel',
-				cleanup => 'Run Cleanup',
-				options => options(),
-				cb      => \&usage,
+				running  => checkForSC(),
+				title    => 'SqueezeCenter Cleanup',
+				cancel   => 'Cancel',
+				cleanup  => 'Run Cleanup',
+				options  => options(),
+				folderCB => \&getFolderList,
+				cleanCB  => \&cleanup,
+				msgCap   => "Cleanup successfully run",
+				msg      => 'Please restart SqueezeCenter for the changes to take effect.'
 			});
 			$app->MainLoop;
 		}
@@ -85,7 +88,7 @@ sub main {
 
 	cleanup($folders);
 	
-	print "\nDone. Please restart SqueezeCenter.\n\n";
+	print "\nDone. Please restart SqueezeCenter.\n\n" unless $useWx;
 }
 
 sub usage {
@@ -109,14 +112,14 @@ EOF
 }
 
 sub getFolderList {
-	my %args = @_;
+	my $args = shift;
 	
 	my @folders;
 	my $cacheFolder = $os->dirsFor('cache');
 
-	push @folders, _target('cache', 'cache') if ($args{all} || $args{cache});
+	push @folders, _target('cache', 'cache') if ($args->{all} || $args->{cache});
 	
-	if ($args{filecache}) {
+	if ($args->{filecache}) {
 		push @folders, {
 			label   => 'file cache (artwork, templates etc.)',
 			folders => [
@@ -132,7 +135,7 @@ sub getFolderList {
 		};
 	}
 		
-	if ($args{mysql}) {
+	if ($args->{mysql}) {
 		push @folders, {
 			label   => 'MySQL data',
 			folders => [
@@ -145,12 +148,12 @@ sub getFolderList {
 		};
 	}
 		
-	if ($args{all} || $args{prefs}) {
+	if ($args->{all} || $args->{prefs}) {
 		push @folders, _target('prefs', 'preferences');
 		push @folders, _target('oldprefs', 'old preferences (SlimServer <= 6.5)');
 	}
 	
-	push @folders, _target('log', 'logs') if ($args{all} || $args{logs});
+	push @folders, _target('log', 'logs') if ($args->{all} || $args->{logs});
 
 	return \@folders;
 }
@@ -241,12 +244,12 @@ sub cleanup {
 	my $fallbackFolder = $os->dirsFor('');
 		
 	for my $item (@$folders) {
-		print "\nDeleting $item->{label}...\n";
+		print "\nDeleting $item->{label}...\n" unless $useWx;
 		
 		foreach ( @{$item->{folders}} ) {
 			next unless $_;
 			
-			print "-> $_\n" if (-e $_);
+			print "-> $_\n" if (-e $_ && !$useWx);
 
 			if (-d $_) {
 				rmtree $_;
