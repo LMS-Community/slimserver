@@ -18833,3 +18833,45 @@ CLOCK
 
 BACKUP_ALARM
 	EN	Backup Alarm
+
+CLEANUP_TITLE
+	EN	SqueezeCenter Cleanup
+
+CLEANUP_DO
+	EN	Run Cleanup
+
+CLEANUP_SUCCESS
+	EN	Cleanup finished successfully
+	
+CLEANUP_PLEASE_RESTART_SC
+	EN	Please restart SqueezeCenter for the changes to take effect.
+
+CLEANUP_PLEASE_STOP_SC
+	EN	Please Stop SqueezeCenter before running the cleanup.
+	
+CLEANUP_USAGE
+	EN	Usage
+	
+CLEANUP_COMMAND_LINE
+	EN	Command line options:
+
+CLEANUP_MYSQL
+	EN	Delete MySQL data (music information database)
+	
+CLEANUP_FILECACHE
+	EN	Delete file cache for artwork, templates etc.
+	
+CLEANUP_PREFS
+	EN	Delete preference files
+	
+CLEANUP_LOGS
+	EN	Delete log files
+
+CLEANUP_CACHE
+	EN	Clean cache folder, including music database, artwork cache and favorites files (if no playlist folder is defined)
+	
+CLEANUP_ALL
+	EN	Wipe'em all - don't do this unless you know what you're doing!
+	
+CLEANUP_DELETING
+	EN	Deleting

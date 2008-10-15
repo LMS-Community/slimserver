@@ -30,14 +30,17 @@ use constant SLIM_SERVICE => 0;
 use Slim::bootstrap;
 use Slim::Utils::OSDetect;
 
-my $os;
+my ($os, $language, %strings);
 
 sub main {
 	Slim::Utils::OSDetect::init();
 	$os = Slim::Utils::OSDetect->getOS();
+	$language = $os->getSystemLanguage();
+	
+	loadStrings();
 
 	if (checkForSC()) {
-		print "\nPlease Stop SqueezeCenter before running the cleanup.\n\n";
+		print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_STOP_SC'));
 		exit;
 	}
 
@@ -68,14 +71,14 @@ sub main {
 			require Slim::Utils::CleanupGUI;
 			my $app = Slim::Utils::CleanupGUI->new({
 				running  => checkForSC(),
-				title    => 'SqueezeCenter Cleanup',
-				cancel   => 'Cancel',
-				cleanup  => 'Run Cleanup',
+				title    => string('CLEANUP_TITLE'),
+				cancel   => string('CANCEL'),
+				cleanup  => string('CLEANUP_DO'),
 				options  => options(),
 				folderCB => \&getFolderList,
 				cleanCB  => \&cleanup,
-				msgCap   => "Cleanup successfully run",
-				msg      => 'Please restart SqueezeCenter for the changes to take effect.'
+				msgCap   => string('CLEANUP_SUCCESS'),
+				msg      => string('CLEANUP_PLEASE_RESTART_SC'),
 			});
 			$app->MainLoop;
 		}
@@ -88,27 +91,35 @@ sub main {
 
 	cleanup($folders);
 	
-	print "\nDone. Please restart SqueezeCenter.\n\n" unless $useWx;
+	print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_RESTART_SC')) unless $useWx;
 }
 
 sub usage {
-	print <<EOF;
-Usage: $0 [--all] [--prefs] [--cache]
+	my $usage = <<EOF;
+%s: $0 [--all] [--prefs] [--cache]
 
-Command line options:
+%s
 
-	--mysql        Delete MySQL data (music information database)
-	--filecache    Delete file cache for artwork, templates etc.
-	--prefs        Delete preference files
-	--logs         Delete log files
+	--mysql        %s
+	--filecache    %s
+	--prefs        %s
+	--logs         %s
 
-	--cache   (!)  Clean cache folder, including music database, artwork cache
-	               and favorites files (if no playlist folder is defined)
+	--cache   (!)  %s
 
-	--all     (!!) Wipe'em all
+	--all     (!!) %s
 	
 EOF
-
+	print sprintf($usage, 
+		string('CLEANUP_USAGE'), 
+		string('CLEANUP_COMMAND_LINE'),
+		string('CLEANUP_MYSQL'),
+		string('CLEANUP_FILECACHE'),
+		string('CLEANUP_PREFS'),
+		string('CLEANUP_LOGS'),
+		string('CLEANUP_CACHE'),
+		string('CLEANUP_ALL'),
+	);
 }
 
 sub getFolderList {
@@ -174,27 +185,27 @@ sub options {
 	my $options = [
 		{
 			name     => 'prefs',
-			title    => 'Preference files',
+			title    => string('CLEANUP_PREFS'),
 			position => [30, 20],
 		},
 	
 		{
 			name     => 'filecache',
-			title    => 'File cache (artwork, templates etc.)',
+			title    => string('CLEANUP_FILECACHE'),
 			position => [30, 40],
 		},
 	
 		{
 	
 			name     => 'mysql',
-			title    => 'MySQL data (music information database)',
+			title    => string('CLEANUP_MYSQL'),
 			position => [30, 60],
 		},
 	
 		{
 	
 			name     => 'logs',
-			title    => 'Log files',
+			title    => string('CLEANUP_LOGS'),
 			position => [30, 80],
 		},
 	
@@ -202,14 +213,14 @@ sub options {
 	
 			name     => 'cache',
 			margin   => 20,
-			title    => "(!) Clean cache folder, including music database, artwork cache \nand favorites files (if no playlist folder is defined)",
+			title    => '(!) ' . string('CLEANUP_CACHE'),
 			position => [30, 120],
 		},
 	
 		{
 	
 			name     => 'all',
-			title    => '(!!) Wipe\'em all - don\'t do this unless told!',
+			title    => '(!!) ' . string('CLEANUP_ALL'),
 			position => [30, 160],
 		},
 	];
@@ -235,16 +246,13 @@ sub checkForSC {
 	return 0;
 }
 
-main();
-
-
 sub cleanup {
 	my $folders = shift;
 
 	my $fallbackFolder = $os->dirsFor('');
 		
 	for my $item (@$folders) {
-		print "\nDeleting $item->{label}...\n" unless $useWx;
+		print sprintf("\n%s %s...\n", string('CLEANUP_DELETING'), $item->{label}) unless $useWx;
 		
 		foreach ( @{$item->{folders}} ) {
 			next unless $_;
@@ -261,5 +269,50 @@ sub cleanup {
 		}
 	}
 }
+
+# return localised version of string token
+sub string {
+	my $name = shift;
+	$strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
+}
+
+sub loadStrings {
+	my $string     = '';
+	my $language   = '';
+	my $stringname = '';
+
+	my $file = 'strings.txt';
+
+	open(STRINGS, "<:utf8", $file) || do {
+		die "Couldn't open $file - FATAL!";
+	};
+
+	LINE: while (my $line = <STRINGS>) {
+
+		chomp($line);
+		
+		next if $line =~ /^#/;
+		next if $line !~ /\S/;
+
+		if ($line =~ /^(\S+)$/) {
+
+			$stringname = $1;
+			$string = '';
+			next LINE;
+
+		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
+
+			$language = uc($1);
+			$string   = $2;
+
+			$strings{$stringname}->{$language} = $string;
+		}
+	}
+
+	close STRINGS;
+}
+
+
+main();
 
 __END__
