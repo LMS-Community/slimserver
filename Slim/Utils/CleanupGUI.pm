@@ -18,7 +18,7 @@ sub new {
 		$args->{title},
 		[50, 50],
 		[500, 280],
-		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX,
+		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU,
 		$args->{title},
 	);
 
