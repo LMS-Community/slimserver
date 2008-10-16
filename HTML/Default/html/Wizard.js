@@ -1,7 +1,7 @@
 Wizard = {
 	fileselectors : new Array(),
 
-	init : function(wizardDone){
+	init : function(args) {
 		
 		var mainpanel = new Array();
 		var panels = Ext.DomQuery.select('.wz_page');
@@ -29,7 +29,10 @@ Wizard = {
 
 			// our own handlers
 			activeItemPos: 0,
-			wizardDone: wizardDone,
+			wizardDone: args.wizardDone,
+			useAudioDir: args.useAudioDir,
+			useMusicIP: args.useMusicIP,
+			useiTunes: args.useiTunes,
 
 			next: function(){
 				if (this.items.items[this.activeItemPos].finish && !this.wizardDone) {
@@ -66,6 +69,7 @@ Wizard = {
 				else
 					this.jump(1)
 			},
+			
 			previous: function(){ this.jump(-1) },
 
 			jump: function(offset) {
@@ -166,9 +170,10 @@ Wizard = {
 					},
 
 					skip: function(){
-						var el = Ext.get('useAudiodir');
-						return !(el && el.dom.checked);
-					}
+						return !this.useAudioDir;
+					},
+					
+					useAudioDir: args.useAudioDir
 				},
 
 				playlistdir_p: {
@@ -177,50 +182,36 @@ Wizard = {
 					},
 
 					skip: function(){
-						var el = Ext.get('useAudiodir');
-						return !(el && el.dom.checked);
-					}
-				},
-
-				itunes_p: {
-					validator: function(){
-						this._validatePref('itunes', 'xml_file');
+						return !this.useAudioDir;
 					},
-
-					skip: function(){
-						var el = Ext.get('itunes');
-						return !(el && el.dom.checked);
-					}
-				},
-
-				musicip_p: {
-					skip: function(){
-						var el = Ext.get('musicip');
-						return !(el && el.dom.checked);
-					}
+					
+					useAudioDir: args.useAudioDir
 				},
 
 				summary_p: {
 					skip: function(){
 						// just update the summary, ...
 						Ext.get('summary').update(
-							(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicip').dom.checked) 
+							(!(Ext.get('audiodir').dom.value || this.useiTunes || this.useMusicIP) 
 								? '<li>' + SqueezeJS.string('summary_none') + '</li>' 
-								: '') 
-							+ (Ext.get('useAudiodir').dom.checked 
+								: '') +
+							(Ext.get('audiodir').dom.value 
 								? '<li>' + SqueezeJS.string('summary_audiodir') + ' ' + Ext.get('audiodir').dom.value + '</li>'
 								         + ('<li>' + SqueezeJS.string('summary_playlistdir') + ' ' + Ext.get('playlistdir').dom.value + '</li>')
 								: '')  +
-							(Ext.get('itunes').dom.checked 
+							(this.useiTunes 
 								? '<li>' + SqueezeJS.string('summary_itunes') + '</li>' 
 								: '') +
-							(Ext.get('musicip').dom.checked 
+							(this.useMusicIP 
 								? '<li>' + SqueezeJS.string('summary_musicip') + '</li>' 
 								: '')
 						);
 						// ...but never skip
 						return false;
-					}
+					},
+					useAudioDir: args.useAudioDir,
+					useMusicIP: args.useMusicIP,
+					useiTunes: args.useiTunes
 				}
 			},
 
@@ -349,13 +340,6 @@ Wizard = {
 				renderTo: 'playlistdirselector',
 				filter: 'foldersonly',
 				input: 'playlistdir'
-			});
-
-		if (Ext.get('itunespathselector'))
-			this.fileselectors['itunes'] = new SqueezeJS.UI.FileSelector({
-				renderTo: 'itunespathselector',
-				input: 'xml_file',
-				filter: 'filetype:xml'
 			});
 
 		this.wizard.jump(0);

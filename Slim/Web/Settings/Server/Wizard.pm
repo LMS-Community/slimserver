@@ -16,18 +16,13 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 use Slim::Networking::SqueezeNetwork;
 
-my $serverPrefs = preferences('server');
-
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'wizard',
 	'defaultLevel' => 'ERROR',
 });
 
-my %prefs = (
-	'server' => [ 'sn_email', 'sn_password_sha', 'audiodir', 'playlistdir'],
-	'plugin.itunes' => ['itunes', 'xml_file'],
-	'plugin.musicip' => ['musicip', 'port']
-);
+my $serverPrefs = preferences('server');
+my @prefs = ('audiodir', 'playlistdir');
 
 sub page {
 	return 'settings/server/wizard.html';
@@ -89,63 +84,47 @@ sub handler {
 	# set right-to-left orientation for Hebrew users
 	$paramRef->{rtl} = 1 if ($paramRef->{prefs}->{language} eq 'HE');
 
-	# bug 8986: sort namespaces to have "plugins < server", as setting audiodir
-	# before iTunes/MusicIP would result in a wrong scan type
-	foreach my $namespace (sort keys %prefs) {
-		foreach my $pref (@{$prefs{$namespace}}) {
+	foreach my $pref (@prefs) {
 
-			if ($paramRef->{saveSettings}) {
+		if ($paramRef->{saveSettings}) {
 				
-				# Skip SN prefs, they were set earlier
-				next if $pref =~ /^sn_/;
-				
-				# reset audiodir if it had been disabled
-				if ($pref =~ /^(?:audiodir|playlistdir)$/ && !$paramRef->{useAudiodir}) {
-					$paramRef->{$pref} = '';
-				}
-
-				if ($pref =~ /^(?:itunes|musicip)/ && !$paramRef->{$pref}) {
-					$paramRef->{$pref} = '0';
-				}
-
-				preferences($namespace)->set($pref, $paramRef->{$pref});
+			# if a scan is running and one of the music sources has changed, abort scan
+			if ($pref =~ /^(?:audiodir|playlistdir)$/ 
+				&& $paramRef->{$pref} ne $serverPrefs->get($pref) 
+				&& Slim::Music::Import->stillScanning) 
+			{
+				$log->debug('Aborting running scan, as user re-configured music source in the wizard');
+				Slim::Music::Import->abortScan();
 			}
 
-			if ($log->is_debug) {
-	 			$log->debug("$namespace.$pref: " . preferences($namespace)->get($pref));
-			}
-			$paramRef->{prefs}->{$pref} = preferences($namespace)->get($pref);
-
-			# Cleanup the checkbox
-			if ($pref =~ /itunes|musicip/) {
-				$paramRef->{prefs}->{$pref} = defined $paramRef->{prefs}->{$pref} ? $paramRef->{prefs}->{$pref} : 0;
-			}
+			$serverPrefs->set($pref, $paramRef->{$pref});
 		}
+
+		if ($log->is_debug) {
+ 			$log->debug("$pref: " . $serverPrefs->get($pref));
+		}
+		$paramRef->{prefs}->{$pref} = $serverPrefs->get($pref);
 	}
+
+	$paramRef->{useiTunes} = preferences('plugin.itunes')->get('itunes');
+	$paramRef->{useMusicIP} = preferences('plugin.musicip')->get('musicip');
+	$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
 
 	# if the wizard has been run for the first time, redirect to the main we page
 	if ($paramRef->{firstTimeRunCompleted}) {
 
 		$response->code(RC_MOVED_TEMPORARILY);
 		$response->header('Location' => '/');
-
-		main::checkDataSource();
 	}
 
 	else {
-		$paramRef->{showiTunes} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') && !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
-		$paramRef->{showMusicIP} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') && !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
-		$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
-
-		# presets for first execution:
-		# - use iTunes if available
-		# - use local path if no iTunes available
+		
+		# use local path if neither iTunes nor MusicIP is available
 		if (!$serverPrefs->get('wizardDone')) {
-			$paramRef->{prefs}->{iTunes} = $paramRef->{prefs}->{iTunes} && Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
-			$paramRef->{useAudiodir} = $paramRef->{prefs}->{audiodir} || !$paramRef->{prefs}->{iTunes};
+			$paramRef->{useAudiodir} = !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
 		}
 		else {
-			$paramRef->{useAudiodir} = $paramRef->{prefs}->{audiodir};			
+			$paramRef->{useAudiodir} = 1;			
 		}
 	}
 	
@@ -166,12 +145,12 @@ sub handler {
 			);
 		}
 		
-		# Disable iTunes and MusicIP if they aren't being used
-		if ( !$paramRef->{itunes} ) {
+		# Disable iTunes and MusicIP plugins if they aren't being used
+		if ( !$paramRef->{useiTunes} ) {
 			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::iTunes::Plugin');
 		}
 		
-		if ( !$paramRef->{musicip} ) {
+		if ( !$paramRef->{useMusicIP} ) {
 			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::MusicMagic::Plugin');
 		}
 	}

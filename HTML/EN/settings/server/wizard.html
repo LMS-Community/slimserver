@@ -182,7 +182,14 @@
 				[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
 				[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicip' %]
 
-				try { Wizard.init([% wizardDone ? "true" : "false" %]); }
+				try {
+					Wizard.init({
+						wizardDone: [% wizardDone ? 'true' : 'false' %], 
+						useAudioDir: [% useAudiodir ? 'true' : 'false' %],
+						useiTunes: [% useiTunes ? 'true' : 'false' %],
+						useMusicIP: [% useMusicIP ? 'true' : 'false' %]
+					}); 
+				}
 				catch(e) {
 					document.getElementById('loading').style.display = 'none';
 					document.getElementById('noJS').style.display = 'block';
@@ -305,28 +312,6 @@
 				</div>
 			</div>
 
-			<div id="source_p" class="wz_page">
-				<div id="source_h" class="pagetitle">[% "SETUP_WIZARD_SOURCE" | string %]</div>
-
-				<div class="wz_desc">
-					<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
-					<div><table id="wz_musicsource">
-						<tr>
-							<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF useAudiodir %]checked="1" [% END %]>&nbsp;</td>
-							<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="1" [% END %] value="1"></td>
-							<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
-						</tr>
-						<tr>
-							<td><input type="checkbox" name="musicip" id="musicip" [% IF prefs.musicip %]checked="1" [% END %] value="1"></td>
-							<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
-						</tr>
-					</table></div>
-				</div>
-			</div>
-
 			<div id="audiodir_p" class="wz_page">
 				<div id="audiodir_h" class="pagetitle">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
 
@@ -356,38 +341,6 @@
 					</div>
 				</div>
 			</div>
-
-			[% IF showiTunes %]
-				<div id="itunes_p" class="wz_page">
-					<div id="itunes_h" class="pagetitle">[% "SETUP_WIZARD_ITUNES" | string %]</div>
-
-					<div class="wz_desc">
-						<div class="wz_desc_right">
-							[% "SETUP_WIZARD_ITUNES_DESC" | string %]
-							[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
-						</div>
-						<div id="itunespathselector" class="folderselector"></div>
-						<div>
-							<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" class="wz_path">
-						</div>
-					</div>
-				</div>
-			[% END %]
-
-			[% IF showMusicIP %]
-				<div id="musicip_p" class="wz_page">
-					<div id="musicip_h" class="pagetitle">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
-
-					<div class="wz_desc">
-						<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
-						<br/>
-						<div><input type="text" name="port" id="port" value="[% prefs.port %]" size="20"></div>
-						<br/>
-						<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
-						<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
-					</div>
-				</div>
-			[% END %]
 
 			<div id="summary_p" class="wz_page wz_finish">
 				<div id="summary_h" class="pagetitle">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
