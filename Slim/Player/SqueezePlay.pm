@@ -35,6 +35,8 @@ sub new {
 sub model     { 'squeezeplay' }
 sub modelName { 'SqueezePlay' }
 
+sub hasIR() { return 0; }
+
 # Need to use weighted play-point
 sub needsWeightedPlayPoint { 1 }
 

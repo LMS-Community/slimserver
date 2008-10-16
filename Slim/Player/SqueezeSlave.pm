@@ -72,7 +72,10 @@ sub minPitch { 100 };
 sub model {
 	return 'squeezeslave';
 }
+
 sub modelName { 'Squeezeslave' }
+
+sub hasIR { return 0; }
 
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {

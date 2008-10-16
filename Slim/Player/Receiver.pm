@@ -44,6 +44,8 @@ sub model {
 	return 'receiver';
 }
 
+sub hasIR() { return 0; }
+
 sub reconnect {
 	my $client = shift;
 

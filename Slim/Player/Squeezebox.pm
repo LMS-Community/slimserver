@@ -219,6 +219,10 @@ sub signalStrength {
 	return Slim::Networking::Slimproto::signalStrength(@_);
 }
 
+sub hasIR() { 
+	return 1;
+}
+
 sub hasDigitalOut {
 	return 1;
 }

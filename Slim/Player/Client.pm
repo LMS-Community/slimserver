@@ -659,7 +659,8 @@ sub hasPolarityInversion() { return 0; }
 sub hasFrontPanel() { return 0; }
 sub hasServ { return 0; }
 sub hasRTCAlarm { return 0; }
-sub hasLineIn() { return 0; }
+sub hasLineIn { return 0; }
+sub hasIR { return 0; }
 
 sub maxBrightness() { return undef; }
 
