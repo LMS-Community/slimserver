@@ -736,7 +736,9 @@ sub makeSecuritySecret {
 }
 
 sub defaultLanguage {
-	return Slim::Utils::OSDetect->getOS->getSystemLanguage;
+	my $lang = Slim::Utils::OSDetect->getOS->getSystemLanguage;
+	Slim::Utils::DateTime::setDefaultFormats();
+	return $lang;
 }
 
 sub defaultAudioDir {
