@@ -117,7 +117,7 @@ sub handler {
 	}
 
 	$paramRef->{'version'}        = $client->revision;
-	$paramRef->{'ipaddress'}      = $client->ipport;
+	$paramRef->{'ipaddress'}      = $client->ip;
 	$paramRef->{'macaddress'}     = $client->macaddress;
 	$paramRef->{'signalstrength'} = $client->signalStrength;
 	$paramRef->{'voltage'}        = $client->voltage;
