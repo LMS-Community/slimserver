@@ -43,9 +43,11 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::HTTP::ClientConn;
 use Slim::Web::Pages;
+use Slim::Web::Settings;
 use Slim::Web::Graphics;
 use Slim::Web::JSONRPC;
 use Slim::Web::Cometd;
+use Slim::Web::Template::Context;
 use Slim::Utils::Prefs;
 
 BEGIN {

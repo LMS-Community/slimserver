@@ -40,6 +40,8 @@ use Exporter::Lite;
 use File::Path;
 use File::Spec;
 use Log::Log4perl;
+use Log::Log4perl::Appender::Screen;
+use Log::Log4perl::Appender::File;
 use Path::Class;
 use Scalar::Util qw(blessed);
 
