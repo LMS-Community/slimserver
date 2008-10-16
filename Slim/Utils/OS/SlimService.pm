@@ -11,7 +11,8 @@ sub dirsFor {
 
 	$dir ||= '';
 	
-	my @dirs = ();
+	my @dirs   = ();
+	my $prefix = $^O eq 'linux' ? '/home/svcprod/ss' : $Bin;
 	
 	if ($dir eq "Plugins") {
 		push @dirs, catdir($Bin, 'Slim', 'Plugin');
@@ -25,20 +26,21 @@ sub dirsFor {
 	elsif ( $dir eq 'log' ) {
 		if ( $::logdir ) {
 			push @dirs, $::logdir;
-		} elsif ( $^O eq 'linux' ) {
+		}
+		elsif ( $^O eq 'linux' ) {
 			push @dirs, '/home/svcprod/ss/logs';
 		}
 		else {
-			push @dirs, catdir( $Bin, $dir );
+			push @dirs, catdir( $prefix, $dir );
 		}
 	}
 	
 	elsif ( $dir eq 'cache' ) {
-		push @dirs, $::cachedir || '/home/svcprod/ss/cache';
+		push @dirs, catdir( $prefix, 'cache' );
 	}
 	
 	elsif ( $dir eq 'prefs' ) {
-		push @dirs, $::prefsdir || '/home/svcprod/ss/prefs';
+		push @dirs, catdir( $prefix, 'prefs' );
 	}
 	
 	elsif ( $dir =~ /^(?:music|playlists)$/ ) {
@@ -51,11 +53,12 @@ sub dirsFor {
 	}
 	
 	else {
-		push @dirs, catdir( $Bin, $dir );
+		push @dirs, catdir( $prefix, $dir );
 	}
 
 	return wantarray() ? @dirs : $dirs[0];
 }
 
+sub getSystemLanguage { 'EN' }
 
 1;
