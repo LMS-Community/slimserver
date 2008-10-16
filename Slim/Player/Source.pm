@@ -173,6 +173,12 @@ sub playmode {
 	if ( $log->is_info ) {
 		$log->info($client->id() . ": Current playmode: $return\n");
 	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# Persist playmode value to the SN database
+		$client->playerData->playmode($return);
+		$client->playerData->update;
+	}
 		
 	return $return;
 }
