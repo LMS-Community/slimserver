@@ -32,7 +32,7 @@ sub validFor {
 	my $class = shift;
 	my $client = shift;
 	
-	return $client->isPlayer && !$client->isa('Slim::Player::Receiver');
+	return $client->isPlayer && !$client->isa('Slim::Player::Receiver') && !$client->isa('Slim::Player::SqueezePlay');
 }
 
 sub prefs {
