@@ -262,18 +262,6 @@
 		</div>
 
 		<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
-			[% IF showProxy %]
-				<div id="proxy_p" class="wz_page">
-					<div id="proxy_h" class="pagetitle">[% "SETUP_WIZARD_PROXY" | string %]</div>
-					<div class="wz_desc">
-						<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
-						<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %]
-							<input type="text" name="webproxy" value="[% prefs.webproxy %]">
-						</div>
-					</div>
-				</div>
-			[% END %]
-
 			<div id="sqn_p" class="wz_page wz_canskip">
 				<div id="sqn_p" class="pagetitle">[% "SETUP_WIZARD_SQN" | string %]</div>
 

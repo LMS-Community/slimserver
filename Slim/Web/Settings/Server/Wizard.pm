@@ -16,7 +16,6 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 use Slim::Networking::SqueezeNetwork;
 
-my $showProxy = 1;
 my $serverPrefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -25,41 +24,10 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my %prefs = (
-	'server' => ['webproxy', 'sn_email', 'sn_password_sha', 'audiodir', 'playlistdir'],
+	'server' => [ 'sn_email', 'sn_password_sha', 'audiodir', 'playlistdir'],
 	'plugin.itunes' => ['itunes', 'xml_file'],
 	'plugin.musicip' => ['musicip', 'port']
 );
-
-sub new {
-	my $class = shift;
-
-	# try to connect to SqueezeNetwork to test for the need of proxy settings
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		sub {
-			my $http = shift;
-			# TODO: check for a proxy server's answer
-			$showProxy = 0;
-		},
-		sub {
-			my $http = shift;
-			$log->error("Couldn't connect to SqueezeNetwork - do we need a proxy?\n" . $http->error);
-		},
-		{
-			timeout => 30
-		}
-	);
-	
-	# Any async HTTP in init must be on a timer
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time(),
-		sub {
-			$http->get( Slim::Networking::SqueezeNetwork->url( '/api/v1/time' ) );
-		},
-	);
-
-	return $class->SUPER::new($class);
-}
 
 sub page {
 	return 'settings/server/wizard.html';
@@ -165,7 +133,6 @@ sub handler {
 	}
 
 	else {
-		$paramRef->{showProxy} = $showProxy;
 		$paramRef->{showiTunes} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') && !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
 		$paramRef->{showMusicIP} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') && !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
 		$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
