@@ -37,15 +37,36 @@ sub initSetup {
 		use Slim::Web::Settings::Server::TextFormatting;
 		use Slim::Web::Settings::Server::UserInterface;
 		use Slim::Web::Settings::Server::Wizard;
+
+		Slim::Web::Settings::Player::Alarm->new;
+		Slim::Web::Settings::Player::Audio->new;
+		Slim::Web::Settings::Player::Basic->new;
+		Slim::Web::Settings::Player::Display->new;
+		Slim::Web::Settings::Player::Menu->new;
+		Slim::Web::Settings::Player::Remote->new;
+		Slim::Web::Settings::Player::Synchronization->new;
+		
+		Slim::Web::Settings::Server::Basic->new;
+		Slim::Web::Settings::Server::Behavior->new;
+		Slim::Web::Settings::Server::Debugging->new;
+		Slim::Web::Settings::Server::FileSelector->new;
+		Slim::Web::Settings::Server::FileTypes->new;
+		Slim::Web::Settings::Server::Index->new;
+		Slim::Web::Settings::Server::Network->new;
+		Slim::Web::Settings::Server::Performance->new;
+		Slim::Web::Settings::Server::Plugins->new;
+		Slim::Web::Settings::Server::Security->new;
+		Slim::Web::Settings::Server::Software->new;
+		Slim::Web::Settings::Server::SqueezeNetwork->new;
+		Slim::Web::Settings::Server::Status->new;
+		Slim::Web::Settings::Server::TextFormatting->new;
+		Slim::Web::Settings::Server::UserInterface->new;
+		Slim::Web::Settings::Server::Wizard->new;
 	";
 
-	if (!$@) {
+	if ($@) {
 
-		$class->new;
-
-	} else {
-
-		logError ("can't load $class - $@");
+		logError ("can't load settings classes - $@");
 	}
 }
 
