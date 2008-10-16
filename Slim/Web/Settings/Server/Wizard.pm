@@ -120,12 +120,7 @@ sub handler {
 	else {
 		
 		# use local path if neither iTunes nor MusicIP is available
-		if (!$serverPrefs->get('wizardDone')) {
-			$paramRef->{useAudiodir} = !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
-		}
-		else {
-			$paramRef->{useAudiodir} = 1;			
-		}
+		$paramRef->{useAudiodir} = !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
 	}
 	
 	if ( $paramRef->{saveSettings} ) {

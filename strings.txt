@@ -8535,66 +8535,6 @@ SETUP_NO_JAVASCRIPT
 	NO	Du må bruke en oppdatert versjon av nettleseren (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere) samt ha JavaScript aktivert i nettleseren for å komme inn på SqueezeCenter. Du kan eventuelt bruke et enklere grensesnitt, som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (laget for små skjermer).
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till SqueezeCenter. Alternativ kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimerat för små skärmar).
 
-SETUP_WIZARD_LANG_DESC
-	DA	Hvis du ønsker at ændre sprog, skal du gøre det her:
-	DE	Hier können Sie eine andere Sprache wählen:
-	EN	If you want to change the language, select it here:
-	ES	Si quiera cambiar el idioma, seleccione aquí el deseado:
-	FI	Jos haluat vaihtaa kieltä, valitse se tässä:
-	FR	Sélectionnez la langue ici si vous souhaitez la changer.
-	IT	Per cambiare lingua, selezionare un'opzione:
-	NL	Als je de taal wilt wijzigen, selecteer je deze hier:
-	NO	Hvis du vil endre språk, kan du velge det du vil ha her:
-	SV	Om du vill ändra språkinställningen väljer du språk här:
-
-SETUP_WIZARD_WELCOME
-	DA	Velkommen til guiden Konfiguration af SqueezeCenter&reg;
-	DE	Willkommen beim Assistenten zum Einrichten von SqueezeCenter&reg;
-	EN	Welcome to the SqueezeCenter&reg; Setup Assistant
-	ES	El Asistente de configuración de SqueezeCenter&reg; le da la bienvenida
-	FI	Tervetuloa SqueezeCenterin&reg; ohjattuun asennukseen
-	FR	Bienvenue dans l'assistant de configuration du SqueezeCenter&reg;
-	IT	Assistente configurazione SqueezeCenter&reg;
-	NL	Welkom bij de assistent voor SqueezeCenter&reg;-setup
-	NO	Velkommen til konfigurasjonsveiviseren for SqueezeCenter&reg;
-	SV	Välkommen till konfigurationsassistenten för SqueezeCenter&reg;!
-
-SETUP_WIZARD_WELCOME_DESC
-	DA	Tak fordi du valgte et trådløst musiksystem fra Logitech&reg;.<br><br>Denne guide vil hjælpe dig med at konfigurere din nye afspiller. Vi begynder med at etablere forbindelse til SqueezeNetwork&reg;, og derefter vil vi hjælpe dig med at finde dine musikfiler.<br/><br/>Hvis du ikke har oprettet en konto på SqueezeNetwork, bedes du afslutte denne guide og gå til <a href="http://%s" target="_blank">SqueezeNetwork</a> og oprette en.
-	DE	Vielen Dank, dass Sie sich für ein kabelloses Musiksystem von Logitech&reg; entschieden haben.<br><br>Der Assistent zum Einrichten von SqueezeCenter führt Sie durch die zum Einrichten des Players erforderlichen Schritte. Zuerst erstellen Sie eine Verbindung zu SqueezeNetwork&reg; und greifen dann auf Ihre lokale Musiksammlung zu.<br/><br/>Wenn Sie noch kein Konto für SqueezeNetwork haben, beenden Sie diesen Assistenten und richten Sie eines auf <a href="http://%s" target="_blank">SqueezeNetwork</a> ein.
-	EN	Thank you for purchasing a Logitech&reg; wireless music system.<br><br>This SqueezeCenter Setup Assistant will guide you through the steps of setting up your new player. We'll start by connecting you to SqueezeNetwork&reg;, then we'll help you find and access your local music.<br/><br/>If you haven't set up an account on SqueezeNetwork, please exit this Setup Assistant and go to <a href="http://%s" target="_blank">SqueezeNetwork</a> to create your account.
-	ES	Gracias por adquirir un sistema de música inalámbrico Logitech&reg;.<br><br>Este Asistente de configuración de SqueezeCenter le guiará en el proceso de configuración de su nuevo reproductor. Empezaremos por conectarle a SqueezeNetwork&reg; y, a continuación, le ayudaremos a encontrar y acceder a su música local.<br/><br/>Si no ha creado una cuenta en SqueezeNetwork, cierre este asistente y acceda a <a href="http://%s" target="_blank">SqueezeNetwork</a> para crear su cuenta.
-	FI	Kiitos Logitechin&reg; langattoman musiikkijärjestelmän hankinnasta.<br><br>SqueezeCenterin asennusapuohjelma opastaa sinua uuden soittimesi käyttöönotossa. Aloitamme muodostamalla yhteyden SqueezeNetwork&reg;-verkkoon. Sen jälkeen autamme sinua löytämään paikalliset musiikkitiedostosi ja aloittamaan niiden kuuntelun.<br/><br/>Jos et ole vielä avannut SqueezeNetwork-tiliä, poistu asennusapuohjelmasta ja avaa tili osoitteessa <a href="http://%s" target="_blank">SqueezeNetwork</a>.
-	FR	Vous venez d'acheter un système musical sans fil Logitech&reg; et nous vous en félicitons.<br><br>Cet assistant va vous guider dans la procédure de configuration de votre nouvelle platine. Vous allez d'abord pouvoir vous connecter à SqueezeNetwork&reg;, puis rechercher et accéder à votre musique locale.<br/><br/>Si vous n'avez pas configuré de compte SqueezeNetwork, quittez l'assistant et rendez-vous sur <a href="http://%s" target="_blank">SqueezeNetwork</a> pour créer un compte.
-	IT	Grazie per avere acquistato il sistema musicale senza fili Logitech&reg;.<br><br>L'Assistente configurazione SqueezeCenter assiste l'utente nella configurazione del nuovo lettore. Dopo avere descritto come connettersi a SqueezeNetwork&reg;, verrà illustrato come accedere alla raccolta musicale locale.<br/><br/>Se non è stato ancora configurato un account in SqueezeNetwork, uscire da questa procedura e visitare il sito Web <a href="http://%s" target="_blank">SqueezeNetwork</a> per creare un account personale.
-	NL	Hartelijk dank voor je aankoop van een draadloos Logitech&reg;-muzieksysteem.<br><br>Deze assistent voor SqueezeCenter-setup leidt je door de stappen om je nieuwe systeem in te stellen. We verbinden je eerst met SqueezeNetwork&reg;, en helpen je dan je lokale muziek te vinden en op te roepen.<br/><br/>Als je nog geen account op SqueezeNetwork hebt, sluit je deze set-upassistent af en ga je naar <a href="http://%s" target="_blank">SqueezeNetwork</a> om je account te maken.
-	NO	Takk for at du kjøpte et trådløst musikkanlegg fra Logitech&reg;.<br><br>Denne konfigurasjonsveiviseren for SqueezeCenter veileder deg gjennom konfigurasjonen av spilleren. Først kopler vi til SqueezeNetwork&reg;, og deretter finner og henter vi musikken du har lagret lokalt.<br/><br/>Hvis du ikke har en konto på SqueezeNetwork, må du avbryte denne veiviseren og gå til <a href="http://%s" target="_blank">SqueezeNetwork</a> for å opprette en konto.
-	SV	Tack för att du valde ett trådlöst musiksystem från Logitech&reg;.<br><br>Den här konfigurationsassistenten för SqueezeCenter hjälper dig att konfigurera din nya spelare. Först ansluter du till SqueezeNetwork&reg;, sedan hjälper vi dig hitta och få tillgång till din lokala musik.<br/><br/>Om du inte har något SqueezeNetwork-konto än, avslutar du konfigurationsassistenten och går till <a href="http://%s" target="_blank">SqueezeNetwork</a> och skapar ett konto.
-
-SETUP_WIZARD_PROXY
-	DA	Proxyindstillinger
-	DE	Proxy-Einstellungen
-	EN	Proxy Settings
-	ES	Configuración de proxy
-	FI	Välityspalvelinasetukset
-	FR	Réglages du proxy
-	IT	Impostazioni proxy
-	NL	Proxy-instellingen
-	NO	Proxy-innstillinger
-	SV	Proxyinställningar
-
-SETUP_WIZARD_PROXY_DESC
-	DA	SqueezeCenter kunne ikke etablere forbindelse til internettet. <br/>Hvis netværket er beskyttet af en webproxy, kan du angive den IP-adresse og det portnummer som SqueezeCenter skal bruge når den etablerer forbindelse til servere uden for det lokale netværk. Du skal angive adressen i formatet xxx.xxx.xxx.xxx:yyyy hvor xxx.xxx.xxx.xxx er proxyserverens IP-adresse og yyyy er portnummeret. Hvis du ikke bruger en webproxy, skal du lade feltet være tomt.
-	DE	SqueezeCenter konnte keine Internetverbindung herstellen. <br/>Ist Ihr Netzwerk durch einen Web-Proxy geschützt, können Sie die IP-Adresse und den Anschluss für den Proxy angeben, den SlimServer verwenden soll, um auf Server außerhalb des lokalen Netzwerks zuzugreifen. Verwenden Sie das Format xx.xx.xx.xx:yyyy, wobei xx.xx.xx.xx die IP-Adresse des Proxy und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
-	EN	SqueezeCenter wasn't able to connect to the web. <br/>If your network is protected by a web proxy, then you can specify the IP address and port for the proxy to use when SqueezeCenter connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
-	ES	SqueezeCenter no se ha podido conectar a la Web. <br/>Si su red está protegida por un proxy Web, puede especificar el puerto y la dirección IP que debe usar el proxy cuando SqueezeCenter se conecta a servidores que se encuentran fuera de la red local. Use el formato xx.xx.xx.xx:yyyy donde xx.xx.xx.xx es la dirección IP del proxy y donde yyyy es el número del puerto. Deje este campo en blanco si no usa un proxy Web HTTP.
-	FI	SqueezeCenter ei voinut luoda yhteyttä internetiin. <br/>Jos WWW-välityspalvelin suojaa verkkosi, voit määrittää IP-osoitteen ja portin, joita välityspalvelin käyttää, kun SqueezeCenter muodostaa yhteyden paikallisverkon ulkopuolella oleviin palvelimiin.  Käytä muotoa xx.xx.xx.xx:yyyy, jossa xx.xx.xx.xx on välityspalvelimen IP-osoite ja yyyy portin numero.  Jätä tämä kenttä tyhjäksi, jos et käytä HTTP-välityspalvelinta.
-	FR	Le SqueezeCenter n'a pas pu se connecter à Internet. <br/>Si le réseau est protégé par un proxy, vous pouvez spécifier l'adresse IP et le port que ce proxy doit utiliser lorsque le SqueezeCenter se connecte à des serveurs ne se trouvant pas sur le réseau. Utilisez le format xx.xx.xx.xx:yyyy où xx.xx.xx.xx représente l'adresse IP et yyyy le numéro de port. Ne renseignez pas ce champ si vous n'utilisez pas de proxy Web.
-	IT	Impossibile connettersi al Web. <br/>Se la rete è protetta da un proxy Web, specificare l'indirizzo IP e la porta da utilizzare per il proxy quando SqueezeCenter si connette a server esterni alla rete locale. Utilizzare il formato xx.xx.xx.xx:yyyy dove xx.xx.xx.xx è l'indirizzo IP del proxy e yyyy è il numero di porta. Lasciare il campo vuoto se non si utilizza un proxy Web HTTP.
-	NL	SqueezeCenter kan geen verbinding met het web maken. <br/>Als je netwerk door een webproxy wordt beveiligd, kun je het IP-adres en de poort voor de proxy opgeven die gebruikt moeten worden wanneer SqueezeCenter een verbinding maakt met servers buiten je lokale netwerk. Gebruik de notatie xx.xx.xx.xx:yyyy waarbij xx.xx.xx.xx het IP-adres van de proxy en yyyy het poortnummer is. Laat dit veld leeg als je geen HTTP-webproxy gebruikt.
-	NO	SqueezeCenter kunne ikke kople til Internett. <br/>Hvis nettverket ditt er beskyttet av en webproxy, kan du angi ip-adresse og port for en proxy som skal brukes når SqueezeCenter kopler til servere utenfor ditt lokale nettverk. Bruk formatet xx.xx.xx.xx:yyyy, der xx.xx.xx.xx er ip-adressen til proxyen, og yyyy er portnummeret. La dette feltet stå tomt hvis du ikke bruker en http-webproxy.
-	SV	SqueezeCenter kunde inte anslutas till webben. <br/>Om ditt nätverk skyddas av en webbproxy kan du ange vilken IP-adress och port proxyn ska använda när SqueezeCenter ansluter till servrar utanför det lokala nätverket.  Använd formatet xx.xx.xx.xx:yyyy, där xx.xx.xx.xx är proxyns IP-adress och yyyy portnumret.  Lämna fältet tomt om du inte använder någon HTTP-proxy.
-
 SETUP_WIZARD_SQN
 	DA	SqueezeNetwork-konto
 	DE	SqueezeNetwork-Konto
@@ -8618,78 +8558,6 @@ SETUP_WIZARD_SQN_DESC
 	NL	SqueezeNetwork geeft je toegang tot muziekservices en internetradiostations, zodat je je nieuwe draadloze muzieksysteem optimaal kunt benutten.<br/><br/>Als je al een SqueezeNetwork-account hebt, voer je hieronder je gegevens in en klik je op de knop Volgende. Heb je nog geen SqueezeNetwork-account, dan klik je op 'Ik heb een account nodig'.
 	NO	Med SqueezeNetwork kan du få mest mulig ut av det nye trådløse musikkanlegget ditt, gjennom tilgang til musikktjenester og Internett-radio.<br/><br/>Hvis du allerede har en SqueezeNetwork-konto, angir du informasjonen nedenfor og klikker Neste for å fortsette. Hvis du ikke har en SqueezeNetwork-konto, klikker du på «Jeg må åpne en konto».
 	SV	Med SqueezeNetwork får du ut mer av ditt nya trådlösa nätverksmusiksystem genom tillgång till webbradiostationer och musiktjänster.<br/><br/> Om du redan har ett SqueezeNetwork-konto anger du kontoinformationen nedan och klickar sedan på Nästa. Om du inte har något konto klickar du på Jag behöver ett konto.
-
-SETUP_WIZARD_SQN_VERIFY
-	DA	Tilføj
-	DE	Hinzufügen
-	EN	Add
-	ES	Agregar
-	FI	Lisää
-	FR	Ajouter
-	IT	Aggiungi
-	NL	Toevoegen
-	NO	Legg til
-	SV	Lägg till
-
-SETUP_WIZARD_SOURCE
-	DA	Musikkilde
-	DE	Musikquelle
-	EN	Music Source
-	ES	Origen de música
-	FI	Musiikkilähde
-	FR	Source musicale
-	IT	Sorgente musicale
-	NL	Muziekbron
-	NO	Musikkilde
-	SV	Musikkälla
-
-SETUP_WIZARD_SOURCE_DESC
-	DA	Du kan integrere musikfiler på en lokal computer i SqueezeCenter på flere måder. Vælg en mulighed på listen:
-	DE	Es gibt mehrere Möglichkeiten, die lokalen Musikdateien in SqueezeCenter zu importieren. Wählen Sie eine aus der folgenden Liste:
-	EN	You have several ways to integrate your local music files with SqueezeCenter. Please select from the following list:
-	ES	Hay varias formas de integrar archivos de música locales con SqueezeCenter. Seleccione uno de los métodos en la lista siguiente:
-	FI	On useita tapoja integroida paikalliset musiikkitiedostot SqueezeCenteriin. Valitse seuraavasta luettelosta:
-	FR	Vous pouvez intégrer vos fichiers musicaux locaux au SqueezeCenter de diverses manières. Sélectionnez une option dans la liste suivante.
-	IT	Esistono svariati modi di integrare i file musicali locali in SqueezeCenter. Selezionare quello desiderato dall'elenco seguente:
-	NL	Je kunt je lokale muziekbestanden op verschillende manieren met SqueezeCenter integreren. Selecteer een optie in de volgende lijst:
-	NO	Det er flere måter å integrere lokalt lagrede musikkfiler med SqueezeCenter på. Velg fra listen:
-	SV	Det finns flera sätt att integrera SqueezeCenter med musikfilerna du har sparade på datorn. Välj ett av alternativen i listan:
-
-SETUP_WIZARD_SOURCE_AUDIODIR
-	DA	<b>Brug lokale musikfiler.</b> SqueezeCenter kan spille musikfiler på din computer eller på en anden computer på netværket.
-	DE	<b>Lokale Musik verwenden.</b> SqueezeCenter kann auf Musikdateien auf dem lokalen oder einem anderen Computer im Netzwerk zugreifen.
-	EN	<b>Use local music.</b> SqueezeCenter can access music files on your local computer or another computer in your network.
-	ES	<b>Usar música local.</b> SqueezeCenter puede acceder a archivos de música en su ordenador o en otro de la misma red.
-	FI	<b>Käytä paikallista musiikkia.</b> SqueezeCenterin kanssa voidaan käyttää musiikkitiedostoja, jotka ovat paikallisessa tietokoneessa tai jossakin muussa verkkoon kuuluvassa tietokoneessa.
-	FR	<b>Utiliser la musique locale.</b> Le SqueezeCenter peut accéder à des fichiers musicaux se trouvant sur votre ordinateur ou sur un ordinateur en réseau.
-	IT	<b>Utilizza la musica locale.</b> SqueezeCenter consente di accedere ai file musicali memorizzati nel computer locale o in un altro computer della rete.
-	NL	<b>Lokale muziek gebruiken.</b> SqueezeCenter kan muziekbestanden op je lokale computer of een andere computer in je netwerk oproepen.
-	NO	<b>Bruk lokal musikk.</b> SqueezeCenter kan hente musikkfiler fra den lokale datamaskinen, eller fra en annen datamaskin på nettverket.
-	SV	<b>Använd lokal musik.</b> SqueezeCenter kan spela upp musikfilerna på den lokala datorn eller på en annan dator i nätverket.
-
-SETUP_WIZARD_SOURCE_ITUNES
-	DA	<b>Brug iTunes&reg;.</b> SqueezeCenter kan benytte iTunes-biblioteket og -afspilningslisterne. Hvis du ændrer noget i iTunes, bliver det afspejlet i SqueezeCenter.
-	DE	<b>iTunes&reg; verwenden</b>. SqueezeCenter kann auf die Musiksammlung und Wiedergabelisten von iTunes zugreifen. In iTunes vorgenommene Änderungen werden in SqueezeCenter übernommen.
-	EN	<b>Use iTunes&reg;.</b> SqueezeCenter can access your iTunes library and playlists. Changes made in iTunes will be reflected in SqueezeCenter.
-	ES	<b>Usar iTunes&reg;.</b> SqueezeCenter puede acceder a sus listas de reproducción y a la biblioteca de iTunes. Los cambios realizados en iTunes se reflejarán en SqueezeCenter.
-	FI	<b>Käytä iTunesiä&reg;.</b> SqueezeCenter voi käyttää iTunesin kirjastoa ja soittoluetteloita. Muutokset, jotka tehdään iTunesissä, heijastuvat SqueezeCenteriin.
-	FR	<b>Utiliser iTunes&reg;.</b> Le SqueezeCenter peut accéder à la librairie et aux listes de lecture iTunes. Les modifications effectuées dans iTunes seront répercutées au SqueezeCenter.
-	IT	<b>Usa iTunes&reg;.</b> SqueezeCenter consente di accedere alla libreria e agli elenchi di riproduzione di iTunes. Le modifiche eseguite in iTunes vengono estese a SqueezeCenter.
-	NL	<b>iTunes gebruiken&reg;.</b> SqueezeCenter kan je iTunes-collectie en -playlists oproepen. Wijzigingen in iTunes worden in SqueezeCenter weerspiegeld.
-	NO	<b>Bruk iTunes&reg;.</b> SqueezeCenter kan gå inn i iTunes-biblioteket og -spillelistene. Hvis du gjør endringer i iTunes, reflekteres dette i SqueezeCenter.
-	SV	<b>Använd iTunes&reg;.</b> SqueezeCenter kan öppna biblioteket och spellistorna från iTunes. Ändringar du gör i iTunes återspeglas även i SqueezeCenter.
-
-SETUP_WIZARD_SOURCE_MUSICIP
-	DA	<b>Brug MusicIP&trade;.</b> SqueezeCenter kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Der er flere oplysninger på <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>.
-	DE	<b>MusicIP verwenden&trade;</b>. SqueezeCenter kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Weitere Informationen finden Sie auf <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>.
-	EN	<b>Use MusicIP&trade;.</b> SqueezeCenter can use MusicIP as your source for title and genre information. For more information visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
-	ES	<b>Usar MusicIP&trade;.</b> SqueezeCenter puede usar MusicIP como origen para la información de título y de género. Para más información, visite <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
-	FI	<b>Käytä MusicIP:tä&trade;.</b> SqueezeCenter voi käyttää MusicIP:tä nimi- ja genretietojen lähteenä. Lisätietoa on osoitteessa <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
-	FR	<b>Utiliser MusicIP&trade;.</b> Le SqueezeCenter peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Pour en savoir plus, rendez-vous sur <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
-	IT	<b>Usa MusicIP&trade;.</b> SqueezeCenter consente di utilizzare MusicIP come fonte dei titoli e delle informazioni sul genere musicale. Per ulteriori informazioni visitare il sito Web all'indirizzo <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
-	NL	<b>MusicIP gebruiken&trade;.</b> SqueezeCenter kan MusicIP als je bron voor titel- en genre-informatie gebruiken. Ga naar <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a> voor meer informatie.
-	NO	<b>Bruk MusicIP&trade;.</b> SqueezeCenter kan bruke MusicIP som kilde for informasjon om titler og sjangere. Hvis du vil vite mer, kan du gå til <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>.
-	SV	<b>Använd MusicIP&trade;.</b> SqueezeCenter kan använda MusicIP som källa till titel- och genreinformation. Mer information finns på <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
 
 SETUP_WIZARD_AUDIODIR
 	DA	Lokal musikmappe
@@ -8763,78 +8631,6 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 	NO	Angi banen til mappen med spillelister.
 	SV	Ange sökväg till mappen med dina spellistor.
 
-SETUP_WIZARD_ITUNES
-	DA	Integration med iTunes
-	DE	iTunes-Integration
-	EN	iTunes Integration
-	ES	Integración de iTunes
-	FI	iTunes-integraatio
-	FR	Intégration iTunes
-	IT	Integrazione di iTunes
-	NL	iTunes-integratie
-	NO	iTunes-integrering
-	SV	iTunes-integration
-
-SETUP_WIZARD_ITUNES_DESC
-	DA	SqueezeCenter kunne ikke finde iTunes-biblioteket. Angiv hvor iTunes XML er placeret.
-	DE	SqueezeCenter konnte Ihre iTunes-Bibliothek nicht automatisch finden. Wählen Sie Ihre iTunes-XML-Datei aus.
-	EN	SqueezeCenter wasn't able to find your iTunes library automatically. Please select your iTunes XML file.
-	ES	SqueezeCenter no ha podido encontrar su biblioteca de iTunes automáticamente. Seleccione su archivo XML de iTunes.
-	FI	SqueezeCenter ei löytänyt iTunes-kirjastoa automaattisesti. Valitse iTunes-XML-tiedosto.
-	FR	Le SqueezeCenter n'a pas pu trouver la bibliothèque iTunes automatiquement. Sélectionnez votre fichier XML iTunes.
-	IT	Impossibile trovare la libreria iTunes. Selezionare il file XML di iTunes.
-	NL	SqueezeCenter kan je iTunes-collectie niet automatisch vinden. Selecteer het XML-bestand van je iTunes.
-	NO	SqueezeCenter kunne ikke finne iTunes-biblioteket automatisk. Velg xml-filen for iTunes.
-	SV	Det gick inte att hitta iTunes biblioteket. Markera XML-filen för iTunes.
-
-SETUP_WIZARD_MUSICIP
-	DA	MusicIP-integration
-	DE	MusicIP-Integration
-	EN	MusicIP Integration
-	ES	Integración de MusicIP
-	FI	MusicIP-integraatio
-	FR	Intégration MusicIP
-	IT	Integrazione di MusicIP
-	NL	MusicIP-integratie
-	NO	MusicIP-integrering
-	SV	MusicIP-integration
-
-SETUP_WIZARD_MUSICIP_DESC
-	DA	SqueezeCenter kunne ikke etablere forbindelse til MusicIP Mixer. Hvis du ikke benytter standardporten (som er 10002) til MusicIP Mixer, skal du angive portnummeret i dette felt.
-	DE	SqueezeCenter konnte keine Verbindung zum MusicIP Mixer herstellen. Wenn Sie nicht den Standardanschluss (10002) für MusicIP Mixer verwenden, geben Sie die Anschlussnummer in dieses Feld ein.
-	EN	SqueezeCenter wasn't able to connect to your MusicIP Mixer. If you're using a non-standard port (default: 10002) for your MusicIP Mixer, please enter the port number in this field.
-	ES	SqueezeCenter no se ha podido conectar a MusicIP Mixer. Si utiliza un puerto no estándar (predeterminado: 10002) para MusicIP Mixer, introduzca el número de puerto en este campo.
-	FI	SqueezeCenter ei voinut luoda yhteyttä MusicIP Mixeriin. Jos käytät standardista poikkeavaa porttia (oletus: 10002) MusicIP Mixerin kanssa, kirjoita portin numero tähän kenttään.
-	FR	Le SqueezeCenter n'a pas pu se connecter à MusicIP Mixer. Si vous utilisez un port non standard (10002 par défaut) pour MusicIP Mixer, spécifiez-le dans ce champ.
-	IT	Impossibile connettersi alla raccolta MusicIP. Se non si utilizza una porta standard (predefinita: 10002) per la raccolta MusicIP, inserire il numero di porta in questo campo.
-	NL	SqueezeCenter kan geen verbinding met je MusicIP Mixer maken. Als je een niet-standaard poort (standaard: 10002) voor je MusicIP Mixer gebruikt, voer je in dit veld het poortnummer in.
-	NO	SqueezeCenter kunne ikke kople til MusicIP Mixer. Hvis du bruker en port som ikke er standard (standard: 10002) for MusicIP Mixer, må du angi portnummeret i dette feltet.
-	SV	SqueezeCenter kunde inte anslutas till MusicIP Mixer. Om du använder en annan port än standardporten (10002) för MusicIP Mixer anger du portnumret i det här fältet.
-
-SETUP_WIZARD_MUSICIP_DESC2
-	DA	MusicIP Mixer skal startes før SqueezeCenter. Hvis du har problemer med at etablere forbindelse til MusicIP, skal du lukke SqueezeCenter, genstarte MusicIP og derefter SqueezeCenter.
-	DE	Sie müssen MusicIP vor SqueezeCenter starten. Sollte es Probleme bei der Verbindung zu MusicIP geben, beenden Sie SqueezeCenter, starten Sie MusicIP neu und starten Sie anschließend SqueezeCenter.
-	EN	MusicIP Mixer must be started before SqueezeCenter. If you have trouble connecting to MusicIP, exit SqueezeCenter, restart MusicIP, and restart SqueezeCenter.
-	ES	MusicIP Mixer debe iniciarse antes que SqueezeCenter. Si tiene problemas para establecer conexión con MusicIP, cierre SqueezeCenter, reinicie MusicIP y, a continuación, reinicie SqueezeCenter.
-	FI	MusicIP Mixer pitää käynnistää ennen SqueezeCenteriä. Jos sinulla on vaikeuksia yhteyden muodostamisessa MusicIP:hen, sulje SqueezeCenter, käynnistä MusicIP uudelleen ja käynnistä sitten SqueezeCenter uudelleen.
-	FR	MusicIP Mixer doit être démarré avant le SqueezeCenter. Si vous rencontrez des problèmes de connexion à MusicIP, quittez le SqueezeCenter, redémarrez MusicIP, puis redémarrez le SqueezeCenter.
-	IT	La raccolta MusicIP deve essere avviata prima di SqueezeCenter. In caso di problemi di connessione a MusicIP, chiudere SqueezeCenter, riavviare MusicIP, quindi riavviare SqueezeCenter.
-	NL	MusicIP Mixer moet vóór SqueezeCenter worden gestart. Als je geen verbinding met MusicIP kunt maken, sluit je SqueezeCenter af, en start je MusicIP en SqueezeCenter opnieuw.
-	NO	MusicIP Mixer må startes før SqueezeCenter. Hvis du har problemer med å kople til MusicIP, kan du prøve å avslutte SqueezeCenter, starte MusicIP på nytt og så starte SqueezeCenter på nytt.
-	SV	MusicIP Mixer måste startas före SqueezeCenter. Om du har problem med att ansluta till MusicIP, avslutar du SqueezeCenter, startar om MusicIP och startar SqueezeCenter igen.
-
-SETUP_WIZARD_MUSICIP_DESC3
-	DA	Der er flere oplysninger om konfiguration af MusicIP Mixer og SqueezeCenter på <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	DE	Weitere Informationen zum Konfigurieren von MusicIP Mixer und SqueezeCenter finden Sie unter <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	EN	For more information about the MusicIP Mixer configuration and SqueezeCenter please visit <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	ES	Para más información sobre la configuración de MusicIP Mixer y SqueezeCenter, visite <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	FI	Lisätietoa MusicIP Mixer -kokoonpanosta ja SqueezeCenteristä on osoitteessa <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	FR	Pour en savoir plus sur la configuration de MusicIP Mixer et du SqueezeCenter, rendez-vous sur <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	IT	Per ulteriori informazioni sulla configurazione della raccolta MusicIP e su SqueezeCenter visitare il sito Web all'indirizzo <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	NL	Ga naar <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a> voor meer informatie over de MusicIP Mixer-configuratie en SqueezeCenter.
-	NO	Hvis du vil vite mer om konfigurasjon av MusicIP Mixer og om SqueezeCenter, kan du gå til <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-	SV	Mer information om MusicIP Mixer-konfigureringen och SqueezeCenter finns på <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
-
 SETUP_WIZARD_SUMMARY
 	DA	Oversigt
 	DE	Zusammenfassung
@@ -8882,18 +8678,6 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	NL	Muziekbron
 	NO	Musikkilde
 	SV	Musikkälla
-
-SETUP_WIZARD_SUMMARY_RESCAN
-	DA	<br/><br/>
-	DE	<br/><br/>
-	EN	<br/><br/>
-	ES	<br/><br/>
-	FI	<br/><br/>
-	FR	<br/><br/>
-	IT	<br/><br/>
-	NL	<br/><br/>
-	NO	<br/><br/>
-	SV	<br/><br/>
 
 SETUP_WIZARD_DONE
 	DA	Konfigurationen af SqueezeCenter er gennemført.

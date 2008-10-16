@@ -55,8 +55,7 @@
 
 			#language {
 				position: absolute;
-				top: 30px;
-				right: 50px;
+				right: 80px;
 			}
 
 			#loading-mask {
@@ -202,7 +201,25 @@
 			<div id="header_left"></div>
 			<div id="header_content">
 				<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></span>
-				<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
+				<span>
+					<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
+						<select name="language" id="language">
+		
+							[% FOREACH option = languageoptions %]
+								[% IF !option.value.search('\*') %]
+									<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
+								[% END %]
+							[%- END -%]
+		
+							[% IF !preferredLanguage %]
+								<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+							[% END %]
+		
+						</select>
+						<input name="saveLanguage" type="hidden" value="1">
+					</form>
+					<a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a>
+				</span>
 			</div>
 		</div>
 
@@ -241,32 +258,6 @@
 
 		<!-- the wizard's tabs: make them all use the same class, which is iterated by the JS -->
 		[% UNLESS wizardDone %]
-
-		<div id="welcome" class="wz_page">
-			<div id="welcome_h" class="pagetitle">[% "SETUP_WIZARD_WELCOME" | string %]</div>
-
-			<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox-family.jpg"></div>
-			<div class="wz_desc">
-				<div>[% "SETUP_WIZARD_WELCOME_DESC" | string(sn_server, sn_server) %]</div>
-	
-				<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
-					<select name="language" id="language">
-	
-						[% FOREACH option = languageoptions %]
-							[% IF !option.value.search('\*') %]
-								<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
-							[% END %]
-						[%- END -%]
-	
-						[% IF !preferredLanguage %]
-							<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
-						[% END %]
-	
-					</select>
-					<input name="saveLanguage" type="hidden" value="1">
-				</form>
-			</div>
-		</div>
 
 		<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
 			<div id="sqn_p" class="wz_page wz_canskip">
@@ -357,9 +348,6 @@
 	
 					<div>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% "COLON" | string %]</div>
 					<ul class="wz_summary_list" id="summary"></ul>
-					<br/>
-	
-					<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
 				</div>
 			</div>
 
