@@ -2958,6 +2958,11 @@ sub serverstatusQuery {
 			$request->addResult('progresstotal', $p->total);
 		}
 	}
+
+	elsif (my @p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer' }, { 'order_by' => 'start,id' })->all) {
+
+		$request->addResult('lastscan', $p[-1]->finish);
+	}
 	
 	# add version
 	$request->addResult('version', $::VERSION);
