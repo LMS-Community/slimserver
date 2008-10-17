@@ -17,6 +17,7 @@ use File::Path;
 use File::Spec::Functions;
 use Getopt::Long;
 use Socket;
+use utf8;
 
 my $useWx = eval {
 	require Wx;
