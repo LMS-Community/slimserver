@@ -184,6 +184,7 @@ sub _parseLanguage {
 	my ($class, $language) = @_;
 	
 	$language = uc($language);
+	$language =~ s/\.UTF.*$//;
 	$language =~ s/(?:_|-|\.)\w+$//;
 	
 	return $language || 'EN';
