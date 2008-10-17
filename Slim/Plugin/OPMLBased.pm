@@ -9,6 +9,7 @@ use base 'Slim::Plugin::Base';
 
 use Slim::Utils::Prefs;
 use Slim::Control::XMLBrowser;
+use Slim::Web::XMLBrowser;
 
 my $prefs = preferences('server');
 

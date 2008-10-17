@@ -9,6 +9,11 @@ use Win32;
 use Win32::OLE::NLS;
 use POSIX qw(LC_CTYPE LC_TIME);
 
+if (0) {
+	require Win32::API;
+	require Win32::Process;
+}
+
 use base qw(Slim::Utils::OS);
 
 my $driveList  = {};

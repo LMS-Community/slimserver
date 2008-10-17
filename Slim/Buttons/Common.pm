@@ -45,6 +45,7 @@ use Slim::Buttons::Volume;
 use Slim::Buttons::XMLBrowser;
 use Slim::Player::Client;
 use Slim::Utils::DateTime;
+use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Buttons::Block;

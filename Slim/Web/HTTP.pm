@@ -29,6 +29,29 @@ use Tie::RegexpHash;
 use URI::Escape;
 use YAML::Syck qw(LoadFile);
 
+# Tell PerlSvc to bundle these modules
+if (0) {
+    require Template::Plugin::Autoformat;
+    require Template::Plugin::CGI;
+    require Template::Plugin::Datafile;
+    require Template::Plugin::Date;
+    require Template::Plugin::Debug;
+    require Template::Plugin::Directory;
+    require Template::Plugin::DBI;
+    require Template::Plugin::Dumper;
+    require Template::Plugin::File;
+    require Template::Plugin::Format;
+    require Template::Plugin::HTML;
+    require Template::Plugin::Image;
+    require Template::Plugin::Iterator;
+    require Template::Plugin::Pod;
+    require Template::Plugin::Table;
+    require Template::Plugin::URL;
+    require Template::Plugin::View;
+    require Template::Plugin::Wrap;
+    require Template::Plugin::XML::Style;
+}
+
 use Slim::Formats::Playlists::M3U;
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;

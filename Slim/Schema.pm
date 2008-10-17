@@ -67,6 +67,10 @@ if (0) {
 	require Slim::Schema::Progress;
 
 	require Slim::Schema::ResultSet::Base;
+	
+	require Slim::Schema::DBI;
+	require Slim::Schema::Debug;
+	require Slim::Schema::Storage;
 }
 
 use Slim::Utils::OSDetect;
