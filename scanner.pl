@@ -22,6 +22,12 @@ use constant SLIM_SERVICE => 0;
 
 # Tell PerlApp to bundle these modules
 if (0) {
+	require version;
+	require 'auto/Compress/Zlib/autosplit.ix';
+	require I18N::LangTags;
+	require Net::UPnP;
+	require Tie::LLHash;
+
 	require Encode::CN;
 	require Encode::JP;
 	require Encode::KR;
