@@ -36,7 +36,7 @@ sub init {
 			return 0;
 		}
 	};
-logError("$canUseGD - ");
+
 	# create cache for artwork which is not purged periodically due to potential size of cache
 	$cache = Slim::Utils::Cache->new('Artwork', 1, 1);
 }
