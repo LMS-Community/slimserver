@@ -24,6 +24,18 @@ use base qw(Slim::Utils::Accessor);
 
 use Scalar::Util qw(weaken);
 
+# Tell PerlSvc to bundle these modules
+if (0) {
+	require Slim::Display::Boom;
+	require Slim::Display::EmulatedSqueezebox2;
+	require Slim::Display::Graphics;
+	require Slim::Display::NoDisplay;
+	require Slim::Display::Squeezebox2;
+	require Slim::Display::SqueezeboxG;
+	require Slim::Display::Text;
+	require Slim::Display::Transporter;
+}
+
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;

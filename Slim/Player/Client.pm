@@ -19,6 +19,23 @@ use base qw(Slim::Utils::Accessor);
 use Scalar::Util qw(blessed);
 use Storable qw(nfreeze);
 
+# Tell PerlSvc to bundle these modules
+if (0) {
+	require Slim::Player::Boom;
+	require Slim::Player::Player;
+	require Slim::Player::Receiver;
+	require Slim::Player::SLIMP3;
+	require Slim::Player::Softsqueeze;
+	require Slim::Player::Squeezebox;
+	require Slim::Player::Squeezebox1;
+	require Slim::Player::Squeezebox2;
+	require Slim::Player::SqueezePlay;
+	require Slim::Player::SqueezeSlave;
+	require Slim::Player::Transporter;
+
+	require Slim::Display::Display;
+}
+
 use Slim::Control::Request;
 use Slim::Player::Sync;
 use Slim::Utils::Log;

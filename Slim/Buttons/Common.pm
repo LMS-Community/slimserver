@@ -39,6 +39,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Buttons::Alarm;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::Volume;
 use Slim::Buttons::XMLBrowser;

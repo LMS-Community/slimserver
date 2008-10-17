@@ -45,6 +45,7 @@ use FindBin qw($Bin);
 use Proc::Background;
 use Scalar::Util qw(blessed);
 
+use Slim::Music::Artwork;
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;

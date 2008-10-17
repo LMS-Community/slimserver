@@ -16,6 +16,7 @@ use Slim::Schema;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Player::SongStreamController;
+use Slim::Player::Pipeline;
 
 use Scalar::Util qw(blessed);
 

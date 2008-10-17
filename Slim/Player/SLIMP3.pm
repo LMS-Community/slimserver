@@ -16,6 +16,13 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+# Tell PerlSvc to bundle these modules
+if (0) {
+	require Slim::Hardware::mas3507d;
+	require Slim::Networking::SliMP3::Stream;
+	require Slim::Display::Text;
+}
+
 use base qw(Slim::Player::Player);
 
 my $prefs = preferences('server');

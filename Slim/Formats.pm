@@ -10,6 +10,33 @@ package Slim::Formats;
 use strict;
 use base qw(Class::Data::Inheritable);
 
+# Tell PerlSvc to bundle these modules
+if (0) {
+	require Slim::Formats::AIFF;
+	require Slim::Formats::APE;
+	require Slim::Formats::FLAC;
+	require Slim::Formats::HTTP;
+	require Slim::Formats::MMS;
+	require Slim::Formats::Movie;
+	require Slim::Formats::MP3;
+	require Slim::Formats::Musepack;
+	require Slim::Formats::Ogg;
+	require Slim::Formats::Playlists;
+	require Slim::Formats::Playlists::ASX;
+	require Slim::Formats::Playlists::Base;
+	require Slim::Formats::Playlists::CUE;
+	require Slim::Formats::Playlists::M3U;
+	require Slim::Formats::Playlists::PLS;
+	require Slim::Formats::Playlists::WPL;
+	require Slim::Formats::Playlists::XML;
+	require Slim::Formats::Playlists::XSPF;
+	require Slim::Formats::RemoteStream;
+	require Slim::Formats::Wav;
+	require Slim::Formats::WavPack;
+	require Slim::Formats::WMA;
+	require Slim::Formats::XML;
+}
+	
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
