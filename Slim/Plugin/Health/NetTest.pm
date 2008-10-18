@@ -19,7 +19,7 @@ use Class::C3;
 
 use strict;
 
-my $FRAME_LEN = 1000; # length of test frame
+my $FRAME_LEN = 1400; # length of test frame
 
 our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000 );
 
@@ -38,7 +38,6 @@ sub initPlugin {
 	# we don't want this plugin to show up in the Extras menu
 	Slim::Buttons::Home::delSubMenu($class->playerMenu, $class->displayName);
 
-
 	Slim::Menu::SystemInfo->registerInfoProvider( health => (
 		after => 'bottom',
 		func  => \&systemInfoMenu,
@@ -56,8 +55,8 @@ our %functions = (
 		my $button = shift;
 		return if ($button ne 'down');
 
-		my $params = $client->modeParam('Health.NetTest') || return;;
-		setTest($client, $params->{'test'} + 1, undef, $params);
+		my $params = $client->modeParam('testparams') || return;;
+		setTest($params, $params->{'test'} + 1, undef);
 	},
 
 	'up' => sub  {
@@ -65,8 +64,8 @@ our %functions = (
 		my $button = shift;
 		return if ($button ne 'up');
 
-		my $params = $client->modeParam('Health.NetTest') || return;
-		setTest($client, $params->{'test'} - 1, undef, $params);
+		my $params = $client->modeParam('testparams') || return;
+		setTest($params, $params->{'test'} - 1, undef);
 	},
 
 	'knob' => sub {
@@ -74,8 +73,8 @@ our %functions = (
 
 		my $test = $client->knobPos;
 
-		my $params = $client->modeParam('Health.NetTest') || return;
-		setTest($client, $test, undef, $params);
+		my $params = $client->modeParam('testparams') || return;
+		setTest($params, $test, undef);
 	},
 
 );
@@ -90,15 +89,53 @@ sub displayName {
 	return Slim::Utils::Strings::string('PLUGIN_HEALTH_NETTEST');
 }
 
+
+# We support pushing into this mode in two ways:
+#
+# 1) with no params set - this performs a test to the local client
+#    - param 'testmode' is set to 'self'
+#
+# 2) with param 'target' set to another client - this performs a test to the defined client with this display here
+#    - param 'testmode' is set to 'control' for this client
+#    - we will push the target into this mode too and set its 'testmode' to 'target'
+#    in this mode both clients can adjust the rate and exit from the test mode
+
 sub setMode {
 	my $class  = shift;
 	my $client = shift;
-	my $display= $client->display;
 
-	if (!$client->isa("Slim::Player::Squeezebox")) {
+	my $mode   = $client->modeParam('testmode');
+	my $target = $client;
+
+	if (!$mode) {
+
+		if ($client->modeParam('target') && $target ne $client->modeParam('target')) {
+
+			$mode   = 'control';
+			$target = $client->modeParam('target');
+
+		} else {
+
+			$mode   = 'self';
+			$target = $client;
+		}
+
+		$client->modeParam('testmode', $mode);
+	}
+
+	# show warning and exit if we can't test to this player
+	if (!$target->isa("Slim::Player::Squeezebox")) {
 		$client->lines(\&errorLines);
+		$client->modeParam('testmode', undef);
 		return;
 	}
+
+	# clear screen2 and stop other things displaying on it
+	$client->modeParam('screen2', 'nettest');
+	$client->update( { 'screen2' => {} } );
+	$client->display->inhibitSaver(1);
+
+	$client->lines(\&lines);
 
 	if ($client->isa('Slim::Player::Transporter')) {
 		$client->modeParam('listLen', scalar(@testRates));
@@ -106,49 +143,80 @@ sub setMode {
 		$client->updateKnob(1);
 	}
 
-	$client->execute(["stop"]); # ensure this player is not streaming
+	if ($mode eq 'self' || $mode eq 'control') {
 
-	my $params = { 
-		'test'   => 0,
-		'rate'   => $testRates[0],
-		'int'    => ($FRAME_LEN + 4 + 4) * 8 / $testRates[0] / 1000,
-		'frame'  => 'A' x $FRAME_LEN,
-		'Qlen0'  => 0,
-		'Qlen1'  => 0, 
-		'log'    => Slim::Utils::PerfMon->new('Network Throughput', [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]),
-		'refresh'=> Time::HiRes::time(),
-	};
+		# store the params for a new test
+		$client->modeParam('testparams', {
+			'control'=> $client,
+			'target' => $target,
+			'test'   => 0,
+			'rate'   => $testRates[0],
+			'int'    => ($FRAME_LEN + 4 + 4) * 8 / $testRates[0] / 1000,
+			'frame'  => 'A' x $FRAME_LEN,
+			'Qlen0'  => 0,
+			'Qlen1'  => 0, 
+			'log'    => Slim::Utils::PerfMon->new('Network Throughput', [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]),
+			'refresh'=> Time::HiRes::time(),
+		} );
 
-	$client->modeParam('Health.NetTest', $params);
+	}
 
-	# clear screen2 and stop other things displaying on it
-	$client->modeParam('screen2', 'nettest');
-	$client->update( { 'screen2' => {} } );
+	if ($mode eq 'self' || $mode eq 'target') {
 
-	$client->lines(\&lines);
+		# we are the player under test - set it up
+		my $params = $client->modeParam('testparams');
 
-	# start test
-	test($client, $params);
+		$client->execute(["stop"]);
 
-	# start display updates after push animation complete
-	Slim::Utils::Timers::setHighTimer($client, Time::HiRes::time() + 0.8, \&update, $params);
+		test($client, $params);
+
+		# start display updates after push animation complete (we update the calculation on the control)
+		Slim::Utils::Timers::setHighTimer($client, Time::HiRes::time() + 0.8, \&update, $params);
+
+	} else {
+
+		# force the player under test into test mode with the params shared with this mode so we can control it
+
+		$target->power(1) if !$client->power();
+
+		Slim::Buttons::Common::pushModeLeft($target, 'Slim::Plugin::Health::Plugin', { 
+			'testmode'       => 'target', 
+			'testparams'     => $client->modeParam('testparams'),
+			'updateInterval' => 1, # use periodic updates on target
+		});
+	}
 }
 
 sub exitMode {
 	my $class = shift;
 	my $client = shift;
 
-	Slim::Utils::Timers::killHighTimers($client, \&test);
-	Slim::Utils::Timers::killHighTimers($client, \&update);
+	my $testmode = $client->modeParam('testmode');
+	my $params   = $client->modeParam('testparams');
+	my $mode = Slim::Buttons::Common::mode($client);
 
-	$client->modeParam('Health.NetTest', undef);
+	if ($testmode eq 'control' && !$params->{'poped'}) {
+		$params->{'poped'} = 1;
+		Slim::Buttons::Common::popModeRight($params->{'target'});
+	}
+
+	if ($testmode eq 'target' && !$params->{'poped'}) {
+		$params->{'poped'} = 1;
+		Slim::Buttons::Common::popModeRight($params->{'control'});
+	}
+
+	$client->modeParam('testmode', undef);
+
+	$client->display->inhibitSaver(0);
+
+	Slim::Utils::Timers::killHighTimers($params->{'target'}, \&test);
+	Slim::Utils::Timers::killHighTimers($params->{'control'}, \&update);
 }
 
 sub setTest {
-	my $client = shift;
+	my $params = shift;
 	my $test = shift;
 	my $rate = shift;
-	my $params = shift;
 
 	if (defined($test)) {
 
@@ -177,10 +245,10 @@ sub setTest {
 	$params->{'log'}->clear();
 
 	# restart test at new rate
-	Slim::Utils::Timers::killHighTimers($client, \&test);
-	Slim::Utils::Timers::killHighTimers($client, \&update);
-	test($client, $params);
-	update($client, $params);
+	Slim::Utils::Timers::killHighTimers($params->{'target'}, \&test);
+	Slim::Utils::Timers::killHighTimers($params->{'control'}, \&update);
+	test($params->{'target'}, $params);
+	update($params->{'control'}, $params);
 
 	return 1;
 }
@@ -191,7 +259,6 @@ sub test {
 	my $params = shift;
 
 	if (Slim::Buttons::Common::mode($client) ne 'Slim::Plugin::Health::Plugin') {
-		exitMode(undef, $client);
 		return;
 	}
 
@@ -209,15 +276,13 @@ sub test {
 		$params->{'Qlen0'}++;
 	}
 
-	if ($params->{'int'}) {
-		$params->{'refresh'} += $params->{'int'};
-		# skip if running late [reduces actual rate sent, but avoids recording throughput drop when timers are late]
-		my $timenow = Time::HiRes::time();
-		if ($params->{'refresh'} < $timenow && ($params->{'refresh'} + $params->{'int'} * 3) < $timenow) {
-			$params->{'refresh'} = $timenow;
-		}
-	} else {
-		$params->{'refresh'} += 0.5;
+	my $timenow = Time::HiRes::time();
+
+	$params->{'refresh'} += $params->{'int'};
+
+	# skip if running late [reduces actual rate sent, but avoids recording throughput drop when timers are late]
+	if ($params->{'refresh'} < $timenow && ($params->{'refresh'} + $params->{'int'} * 5) < $timenow) {
+		$params->{'refresh'} = $timenow;
 	}
 
 	Slim::Utils::Timers::setHighTimer($client, $params->{'refresh'}, \&test, $params);
@@ -242,7 +307,7 @@ sub update {
 
 sub lines {
 	my $client = shift;
-	my $params = $client->modeParam('Health.NetTest') || return {};
+	my $params = $client->modeParam('testparams') || return {};
 
 	my $test = $params->{'test'};
 	my $rate = $params->{'rate'};
@@ -250,10 +315,15 @@ sub lines {
 	my $avg  = $params->{'log'}->avg;
 	my $text = sprintf("%i kbps : %3i%% Avg: %3i%%", $rate, $inst, $avg);
 
+	my $target = $params->{'target'};
+
 	my ($line, $overlay);
 
 	if ($client->displayWidth > 160) {
-		$line    = [ $client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE') ];
+		$line    = [ $client eq $target
+					 ? $client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE')
+					 : $client->string('PLUGIN_HEALTH_NETTEST_TESTING_TO') . ' ' . $target->name 
+					];
 		$overlay = [ $client->symbols($client->progressBar(100, $inst/100)), $text ];
 	} else {
 		$line    = [ $text, $client->symbols($client->progressBar($client->displayWidth, $inst/100)) ];
@@ -302,7 +372,7 @@ sub cliQuery {
 
 		$request->addResult('state', 'running');
 
-		my $params = $client->modeParam('Health.NetTest');
+		my $params = $client->modeParam('testparams');
 		my $log = $params->{'log'};
 
 		$request->addResult('rate', $params->{'rate'});
@@ -331,9 +401,9 @@ sub cliStartTest {
 		Slim::Buttons::Common::pushMode($client, 'Slim::Plugin::Health::Plugin');
 	}
 
-	my $params = $client->modeParam('Health.NetTest');
+	my $params = $client->modeParam('testparams');
 
-	if ( setTest($client, undef, $rate, $params) ) {
+	if ( setTest($params, undef, $rate) ) {
 
 		$request->setStatusDone();
 
@@ -367,8 +437,8 @@ sub systemInfoMenu {
 
 		player => {
 			mode => 'Slim::Plugin::Health::Plugin',
-			# XMLBrowser insist's in having a modeParams value
-			modeParams => {}
+			# specify the player to test to
+			modeParams => { target => $client }
 		},
 
 		web  => {
