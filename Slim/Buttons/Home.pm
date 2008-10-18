@@ -323,8 +323,8 @@ sub setMode {
 	}
 	
 	if ( main::SLIM_SERVICE ) {
-		# if player not yet linked to an account, force client to register PIN
-		if ( $client->playerData->userid == 1 ) {
+		# if player not yet linked to an account, or unauthorized, force client to register PIN
+		if ( $client->playerData->userid == 1 || !$client->playerData->authorized ) {
 			Slim::Buttons::Common::pushMode( $client, 'setup.finish', undef );
 			return;
 		}
