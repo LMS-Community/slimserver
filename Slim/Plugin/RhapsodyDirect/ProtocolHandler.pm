@@ -140,6 +140,32 @@ sub getNextTrack {
 	$song->pluginData( radioTrack    => undef );
 	$song->pluginData( abandonSong   => 0 );
 	
+	if ( main::SLIM_SERVICE ) {
+		# Fail if firmware doesn't support mp3
+		my $old;
+		
+		my $deviceid = $client->deviceid;
+		my $rev      = $client->revision;
+		
+		if ( $deviceid == 4 && $rev < 116 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 5 && $rev < 66 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 7 && $rev < 51 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 10 && $rev < 36 ) {
+			$old = 1;
+		}
+		
+		if ( $old ) {
+			$errorCb->('PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED');
+			return;
+		}
+	}
+	
 	# XXX: can't work right now, we don't have account info anymore
 	#if (_tooManySynced($client)) {
 	#	$errorCb->('PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED');
@@ -266,169 +292,34 @@ sub _gotNextRadioTrackError {
 	_handleClientError( $http->error, $client, $http->params->{params} );
 }
 
-# 2. For each player in sync-group: get accounrt, session, track-info as necessary
+# 2. For each player in sync-group: get account, session, track-info as necessary
 sub _getTrack {
 	my $params  = shift;
 	
-	my $song    = $params->{'song'};
+	my $song    = $params->{song};
 	my @players = $song->master()->syncGroupActiveMembers();
 	
-	$song->pluginData(playersNotReady => scalar @players);
-	
-	my $playingSong = $song->master()->playingSong();
-	my $needNewSession = 1;
-	
-	# We can skip getting a new session if we were just playing another Rhapsody track
-	if (   $playingSong 
-		&& $playingSong->currentTrackHandler eq __PACKAGE__
-	) {
-		$needNewSession = 0;
-	}
-	
-	for my $client (@players) {
-		_getTrackByClient($client, $params, $needNewSession);
-	}
+	# Get a playback session
+	_getPlaybackSession( $song->master(), undef, $params );
 }
 
-# 2.1 Get account if necessary 
-# 2.2 Get playback-session if necessary (if playingSong != Rhapsody)
-sub _getTrackByClient {
-	my $client     = shift;
-	my $params     = shift;
-	my $getSession = shift;
-	
-	if ( main::SLIM_SERVICE ) {
-		# Fail if firmware doesn't support mp3
-		my $old;
-		
-		my $deviceid = $client->deviceid;
-		my $rev      = $client->revision;
-		
-		if ( $deviceid == 4 && $rev < 116 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 5 && $rev < 66 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 7 && $rev < 51 ) {
-			$old = 1;
-		}
-		elsif ( $deviceid == 10 && $rev < 36 ) {
-			$old = 1;
-		}
-		
-		if ( $old ) {
-			handleError( $client->string('PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED'), $client );
-			return;
-		}
-	}
-	
-	if ( $getSession ) {
-		
-		if ( !$params->{_sentip} ) {
-			# Lookup the correct address for secure-direct and inform the players
-			# The firmware has a hardcoded address but it may change
-			my $dns = Slim::Networking::Async->new;
-			$dns->open( {
-				Host    => 'secure-direct.rhapsody.com',
-				onDNS   => sub {
-					my $ip = shift;
-
-					if ( $log->is_debug ) {
-						$log->debug( $client->id . " Sending IP for secure-direct.rhapsody.com: $ip" );
-					}
-
-					$ip = Net::IP->new($ip);
-					
-					my $data = pack( 'cNn', 0, $ip->intip, 443 );
-					$client->sendFrame( rpds => \$data );
-
-					$params->{_sentip} = 1;
-
-					_getTrackByClient( $client, $params, $getSession );
-				},
-				onError => sub {
-					_handleClientError( $client->string('PLUGIN_RHAPSODY_DIRECT_DNS_ERROR'), $client, $params );
-				},
-			} );
-
-			return;
-		}
-		
-		$log->debug("Ending any previous playback session");
-		
-		my $endcb = sub {
-			if ( $log->is_debug ) {
-				my $http = shift;
-				if ( $http->error ) {
-					$log->debug( 'endPlaybackSession failed: ' . $http->error );
-				}
-				else {
-					$log->debug('endPlaybackSession ok');
-				}
-			}
-			
-			_getPlaybackSession( $client, undef, $params );
-		};
-		
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			$endcb,
-			$endcb,
-			{
-				client => $client,
-			},
-		);
-		
-		$http->get(
-			Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/playback/endPlaybackSession')
-		);
-		
-		return;
-	}
-
-	_getTrackInfo($client, undef, $params);
-}
-
-# 2.1a Get account if necessary
-sub gotAccount {
-	my $http  = shift;
-	my $params = $http->params;
-	my $client = $params->{client};
-	
-	my $account = eval { from_json( $http->content ) };
-	
-	if ( ref $account eq 'HASH' ) {
-		$client->pluginData( account => $account );
-		
-		if ( $log->is_debug ) {
-			$log->debug( "Got Rhapsody account info from SN" );
-		}
-		
-		$params->{cb}->();
-	}
-	else {
-		$params->{ecb}->($@);
-	}
-}
-
-# 2.1b Get account if necessary
-sub gotAccountError {
-	my $http   = shift;
-	my $params = $http->params;
-	
-	$params->{ecb}->( $http->error );
-}
-
-# 2.2 Get playback-session if necessary (if playingSong != Rhapsody)
+# 2.2 Get playback-session if necessary
+# When synced, only the master gets the playback session, all players share 1 session
 sub _getPlaybackSession {
 	my ( $client, undef, $params ) = @_;
 	
-	# Always get a new playback session
+	my $song = $params->{song};
+	
+	# Do we already have a session?
+	if ( $song->pluginData('playbackSessionId') ) {
+		_getTrackInfo( $client, undef, $params );
+		return;
+	}
+	
 	if ( $log->is_debug ) {
 		$log->debug( $client->id, ' Requesting new playback session...');
 	}
 	
-	# When synced, all players will make this request to get a new playback session
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		sub {
 			my $http = shift;
@@ -443,8 +334,10 @@ sub _getPlaybackSession {
 			}
 			else {
 				if ( $log->is_debug ) {
-					$log->debug( 'New playback session obtained: ' . $status->{playbackSessionId} );
+					$log->debug( $client->id . ' New playback session obtained: ' . $status->{playbackSessionId} );
 				}
+				
+				$song->pluginData( playbackSessionId => $status->{playbackSessionId} );
 				
 				_getTrackInfo( $client, undef, $params );
 			}
@@ -453,7 +346,7 @@ sub _getPlaybackSession {
 			my $http = shift;
 			
 			if ( $log->is_debug ) {
-				$log->debug( 'Error obtaining playback session: ' . $http->error );
+				$log->debug( $client->id . ' Error obtaining playback session: ' . $http->error );
 			}
 			
 			_handleClientError( $http->error, $client, $params );
@@ -532,27 +425,36 @@ sub _gotTrackInfo {
 	# Save the media URL for use in strm
 	$song->pluginData( mediaUrl => $info->{mediaUrl} );
 	
-	if ( $log->is_debug ) {
-		$log->debug( $client->id . ' Sending playback information for ' . $info->{trackMetadata}->{trackId} );
+	# Send info necessary for playback to each player
+	for my $c ( $client->syncGroupActiveMembers() ) {
+		# If IP has changed, send this info
+		if ( my $ip = $Slim::Plugin::RhapsodyDirect::Plugin::SECURE_IP ) {
+			$log->debug( $c->id . " Sending updated secure-direct IP: $ip" );
+			
+			$ip = Net::IP->new($ip);
+			my $data = pack( 'cNn', 0, $ip->intip, 443 );
+			$client->sendFrame( rpds => \$data );
+		}
+		
+		if ( $log->is_debug ) {
+			$log->debug( 
+				$c->id . ' Sending playback information: ' . $info->{trackMetadata}->{trackId}
+				. ' / ' . $info->{account}->{logon} 
+				. ' / ' . $info->{account}->{cobrandId}
+				. ' / ' . $song->pluginData('playbackSessionId')
+			);
+		}
+	
+		my $data = pack(
+			'cC/a*C/a*C/a*C/a*',
+			8,
+			$info->{trackMetadata}->{trackId},
+			$info->{account}->{logon},
+			$info->{account}->{cobrandId},
+			$song->pluginData('playbackSessionId'),
+		);
+		$c->sendFrame( rpds => \$data );
 	}
-	
-	# Send info necessary for playback to player
-	my $data = pack(
-		'cC/a*C/a*C/a*C/a*',
-		8,
-		$info->{trackMetadata}->{trackId},
-		$info->{account}->{logon},
-		$info->{account}->{cobrandId},
-		$info->{account}->{playbackSessionId},
-	);
-	$client->sendFrame( rpds => \$data );
-	
-	my $playersNotReady = $song->pluginData('playersNotReady') - 1;
-    $song->pluginData('playersNotReady' => $playersNotReady);
-    
-    return if $playersNotReady > 0;
-	
-	# When synced, the below code is run for only the last player to reach here
 	
 	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
 	# When done, callback will continue on to playback
@@ -813,6 +715,7 @@ sub getIcon {
 	return Slim::Plugin::RhapsodyDirect::Plugin->_pluginDataFor('icon');
 }
 
+# XXX: this is called more than just when we stop
 sub onStop {
 	my ($class, $song) = @_;
 	
@@ -820,8 +723,9 @@ sub onStop {
 	
 	_doLog(Slim::Player::Source::songTime($song->master()), $song);
 	
-	# XXX: should call endPlaybackSession on stop, but this is called more than just when
-	# we really stop
+	# Clear playback session
+	# XXX: This should only be called when player is really stopping
+	$song->pluginData( playbackSessionId => 0 );
 }
 
 sub onPlayout {

@@ -20,6 +20,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
 });
 
+our $SECURE_IP;
+
 sub initPlugin {
 	my $class = shift;
 	
@@ -113,6 +115,25 @@ sub initPlugin {
 			},
 		);
 	}
+	
+	# Lookup secure-direct.rhapsody.com.  In case it ever changes from the hardcoded
+	# value in the firmware (207.188.0.25), we need to inform the player.
+	my $dns = Slim::Networking::Async->new;
+	$dns->open( {
+		Host    => 'secure-direct.rhapsody.com',
+		onDNS   => sub {
+			my $ip = shift;
+			
+			$log->debug( "secure-direct.rhapsody.com is $ip" );
+			
+			if ( $ip ne '207.188.0.25' ) {
+				$SECURE_IP = $ip;
+			}
+		},
+		onError => sub {
+			$log->error('Unable to resolve address for secure-direct.rhapsody.com');
+		},
+	} );
 	
 	# CLI-only command to create a Rhapsody playlist given a set of trackIds
 	Slim::Control::Request::addDispatch(
@@ -319,6 +340,11 @@ sub rpds_handler {
 		# and so we need to stop the player and report the error
 		if ( $faultString =~ /not a valid session id/ ) {
 			my $error = $client->string('PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION');
+			
+			Slim::Player::Source::playmode( $client, 'stop' );
+			
+			# Clear playback session
+			$client->controller()->streamingSong()->pluginData( playbackSessionId => 0 );
 			
 			handleError( $error, $client );
 		}
