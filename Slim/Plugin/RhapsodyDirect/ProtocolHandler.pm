@@ -5,7 +5,7 @@ package Slim::Plugin::RhapsodyDirect::ProtocolHandler;
 # Rhapsody Direct handler for rhapd:// URLs.
 
 use strict;
-use warnings;
+use base qw(Slim::Player::Protocols::HTTP);
 
 use HTML::Entities qw(encode_entities);
 use JSON::XS::VersionOneAndTwo;
@@ -35,6 +35,39 @@ sub getFormatForURL { 'mp3' }
 
 sub canSeek { 1 }
 
+# To support remote streaming (synced players), we need to subclass Protocols::HTTP
+sub new {
+	my $class  = shift;
+	my $args   = shift;
+
+	my $client = $args->{client};
+	
+	my $song      = $args->{song};
+	my $streamUrl = $song->pluginData('mediaUrl') || return;
+	
+	$log->debug( 'Remote streaming Rhapsody track: ' . $streamUrl );
+
+	my $sock = $class->SUPER::new( {
+		url     => $streamUrl,
+		song    => $args->{song},
+		client  => $client,
+		bitrate => 192_000,
+	} ) || return;
+	
+	${*$sock}{contentType} = 'audio/mpeg';
+
+	return $sock;
+}
+
+# Avoid scanning
+sub scanUrl {
+	my ($class, $url, $args) = @_;
+	$args->{cb}->($args->{song}->currentTrack());
+}
+
+# Set pcmsamplesize to 3 in slimproto strm to indicate Rhapsody mode
+sub pcmsamplesize { 3 }
+
 # Source for AudioScrobbler
 sub audioScrobblerSource {
 	my ( $class, $client, $url ) = @_;
@@ -46,6 +79,12 @@ sub audioScrobblerSource {
 
 	# P = Chosen by the user
 	return 'P';
+}
+
+# parseHeaders is used for proxied streaming
+sub parseHeaders {
+	my $self = shift;
+	__PACKAGE__->parseDirectHeaders( $self->client, $self->url, @_ );
 }
 
 sub parseDirectHeaders {
@@ -654,9 +693,9 @@ sub _playlistCallback {
 sub canDirectStreamSong {
 	my ( $class, $client, $song ) = @_;
 	
-	my $mediaUrl = $song->pluginData('mediaUrl');
-
-	return $mediaUrl || 0;
+	# We need to check with the base class (HTTP) to see if we
+	# are synced or if the user has set mp3StreamingMethod
+	return $class->SUPER::canDirectStream($client, $song->pluginData('mediaUrl'), $class->getFormatForURL());
 }
 
 # URL used for CLI trackinfo queries

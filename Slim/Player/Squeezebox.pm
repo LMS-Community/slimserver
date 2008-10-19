@@ -692,12 +692,11 @@ sub stream_s {
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
 		$outputThreshold = 0;
-
-		# Change pcmsamplesize to indicate Rhapsody Direct
-		if ( $url && $url =~ /\.rad$/ ) {
-			# Rhapsody Direct
-			$pcmsamplesize = 3;
-		}	
+		
+		# Handler may override pcmsamplesize (Rhapsody)
+		if ( $handler && $handler->can('pcmsamplesize') ) {
+			$pcmsamplesize = $handler->pcmsamplesize( $client, $params );
+		}
 
 		# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
 		# other audio types, resulting in static. 
