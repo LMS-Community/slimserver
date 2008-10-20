@@ -694,8 +694,9 @@ sub stream_s {
 		$outputThreshold = 0;
 		
 		# Handler may override pcmsamplesize (Rhapsody)
-		if ( $handler && $handler->can('pcmsamplesize') ) {
-			$pcmsamplesize = $handler->pcmsamplesize( $client, $params );
+		my $songHandler = $controller->song()->{handler};
+		if ( $songHandler && $songHandler->can('pcmsamplesize') ) {
+			$pcmsamplesize = $songHandler->pcmsamplesize( $client, $params );
 		}
 
 		# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
