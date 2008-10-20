@@ -33,7 +33,16 @@ sub isRemote { 1 }
 
 sub getFormatForURL { 'mp3' }
 
-sub canSeek { 1 }
+sub canSeek {
+	my ( $class, $client, $song ) = @_;
+	
+	# No seeking on radio tracks
+	if ( $song->{track}->url =~ /\.rdr$/ ) {
+		return 0;
+	}
+	
+	return 1;
+}
 
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
 sub new {
@@ -83,8 +92,11 @@ sub audioScrobblerSource {
 
 # parseHeaders is used for proxied streaming
 sub parseHeaders {
-	my $self = shift;
-	__PACKAGE__->parseDirectHeaders( $self->client, $self->url, @_ );
+	my ( $self, @headers ) = @_;
+	
+	__PACKAGE__->parseDirectHeaders( $self->client, $self->url, @headers );
+	
+	return $self->SUPER::parseHeaders( $self, @headers );
 }
 
 sub parseDirectHeaders {
