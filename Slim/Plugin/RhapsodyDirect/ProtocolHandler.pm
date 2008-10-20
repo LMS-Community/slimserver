@@ -217,12 +217,6 @@ sub getNextTrack {
 		}
 	}
 	
-	# XXX: can't work right now, we don't have account info anymore
-	#if (_tooManySynced($client)) {
-	#	$errorCb->('PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED');
-	#	return;
-	#}
-	
 	my $params = {
 		song      => $song,
 		url       => $url,
@@ -685,8 +679,6 @@ sub _playlistCallback {
 
 		$log->debug( "Stopped Rhapsody, unsubscribing from playlistCallback" );
 		Slim::Control::Request::unsubscribe( \&_playlistCallback, $client );
-		
-		# XXX maybe end session
 		
 		return;
 	}

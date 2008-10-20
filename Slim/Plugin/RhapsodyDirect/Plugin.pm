@@ -318,7 +318,7 @@ sub rpds_handler {
 		if ( main::SLIM_SERVICE && SN_DEBUG ) {
 			logError( $client, "decoding failure: code $got_cmd" );
 		}
-		$log->error("Rhapsody decoding failure: code $got_cmd");
+		$log->error( $client->id . " Rhapsody decoding failure: code $got_cmd" );
 		return;
 	}
 	
@@ -349,22 +349,10 @@ sub rpds_handler {
 			handleError( $error, $client );
 		}
 	}
-	elsif ( $got_cmd == 253 ) {
-		# SSL connection error
+	elsif ( $got_cmd == 251 ) {
+		# Error making an EA request
 		if ( $log->is_warn ) {
-			$log->warn( $client->id . " Received RPDS -3, SSL connection error");
-		}
-		
-		if ( main::SLIM_SERVICE && SN_DEBUG ) {
-			logError( $client, 'RPDS_SSL_ERROR' );
-		}
-	}
-	elsif ( $got_cmd == 252 ) {
-		# Another SSL connection is still in progress, this should not happen anymore
-		# since the player only makes one kind of SSL request
-		
-		if ( $log->is_warn ) {
-			$log->warn( $client->id . " Received RPDS -4, SSL connection already in use");
+			$log->warn( $client->id . " Received RPDS 251: failed to get EA block, player will retry");
 		}
 	}
 }
