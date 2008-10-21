@@ -549,6 +549,7 @@ sub sound {
 
 		# Set up volume
 		my $currentVolume = $client->volume;
+		$self->{_originalVolume} = $currentVolume;
 		$log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
 
 		if ($currentVolume != $self->volume) {
@@ -816,6 +817,20 @@ sub stop {
 			$client->setAnalogOutMode();
 		});
 	}
+
+	# Restore original volume if the music is stopped at the end of the alarm and
+	# the volume hasn't been changed from the alarm volume level.  Do this after a pause
+	# to allow any volume fades to complete.
+	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + 1, sub {
+		# Get volume level directly via the pref as we don't care about temporary
+		# volume levels (vol is reported as 0 after a mute)
+		my $vol = $prefs->client($client)->get('volume');
+		if (! $client->isPlaying && $vol == $self->volume) {
+			$log->debug('Restoring pre-alarm volume level');
+			$client->volume($self->{_originalVolume});
+		}
+	});
+	
 
 	my $class = ref $self;
 	$class->popAlarmScreensaver($client);
