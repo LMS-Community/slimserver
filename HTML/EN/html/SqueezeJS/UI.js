@@ -599,14 +599,13 @@ SqueezeJS.UI.Highlight.prototype = {
 			if (el.dom.target) {
 				try {
 					if (parent.frames[el.dom.target]) {
-						console.debug('parent');
 						parent.frames[el.dom.target].location.href = el.dom.href;
-						
 					}
+
 					else if (frames[el.dom.target]) {
-						console.debug('child');
 						parent.frames[el.dom.target].location.href = el.dom.href;
 					}
+
 					// can't always open a new window as eg. settings will cause a CSRF warning
 					// just enforce clicking the exact link instead of the highlighter in these cases
 //					else
