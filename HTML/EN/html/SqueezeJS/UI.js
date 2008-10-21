@@ -1,3 +1,12 @@
+// initialize some strings
+Ext.onReady(function(){
+	SqueezeJS.loadStrings([
+		'POWER', 'PLAY', 'PAUSE', 'NEXT', 'PREVIOUS', 'CONNECTING_FOR', 'BROWSE', 'REPEAT', 'SHUFFLE',
+		'BY', 'FROM', 'ON', 'OFF', 'YES', 'NO', 'COLON', 'SQUEEZECENTER', 'SQUEEZENETWORK', 'VOLUME',
+		'CLOSE', 'CANCEL', 'CHOOSE_PLAYER', 'SYNCHRONIZE'
+	]);
+});
+
 // some common components for the player control
 SqueezeJS.UI = {
 	// add some custom events we'll be using to our base class

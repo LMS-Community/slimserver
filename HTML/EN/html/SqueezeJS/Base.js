@@ -7,7 +7,7 @@ Ext.isIE7 = Ext.isIE7 || Ext.isIE8;
 var SqueezeJS = {
 	Strings : new Array(),
 	string : function(s){ return this.Strings[s]; },
-
+	
 	contributorRoles : new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist'),
 	coverFileSuffix : Ext.isIE && !Ext.isIE7 ? 'gif' : 'png',
 
@@ -467,6 +467,37 @@ function _init() {
 
 SqueezeJS.getPlayer = SqueezeJS.Controller.getPlayer;
 
+Ext.apply(SqueezeJS, {
+	loadStrings : function(strings) {
+		var newStrings = '';
+		for (var x = 0; x < strings.length; x++) {
+			if (!this.Strings[strings[x].toLowerCase()] > '') {
+				newStrings += strings[x] + ',';
+			}
+		}
+		
+		if (newStrings > '') {
+			newStrings = newStrings.replace(/,$/, '');
+			this.Controller.request({
+				params: [ '', [ 'getstring', newStrings ] ],
+				scope: this,
+				
+				success: function(response) {
+					if (response && response.responseText) {
+						response = Ext.util.JSON.decode(response.responseText);
+						for (x in response.result) {
+							this.Strings[x.toLowerCase()] = response.result[x]; 
+						}
+					}
+				}
+			})
+		}
+	},
+
+	loadString : function(string) {
+		this.loadStrings([string]);
+	}
+});
 
 SqueezeJS.SonginfoParser = {
 	tpl : {
