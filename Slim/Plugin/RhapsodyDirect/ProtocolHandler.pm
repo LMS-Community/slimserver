@@ -96,7 +96,7 @@ sub parseHeaders {
 	
 	__PACKAGE__->parseDirectHeaders( $self->client, $self->url, @headers );
 	
-	return $self->SUPER::parseHeaders( $self, @headers );
+	return $self->SUPER::parseHeaders( @headers );
 }
 
 sub parseDirectHeaders {
