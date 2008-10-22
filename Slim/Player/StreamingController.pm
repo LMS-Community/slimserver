@@ -954,6 +954,7 @@ sub _Stream {				# play -> Buffering, Streaming
 		$log->warn(sprintf('%s: only %d of %d players started streaming',
 			$self->{'masterId'}, $startedPlayers, scalar @{$self->{'players'}}));
 		_Stop($self); 	# what else can we do?
+		$self->{'consecutiveErrors'}++;
 		_NextIfMore($self);
 		return;
 	}

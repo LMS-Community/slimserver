@@ -327,7 +327,7 @@ sub flush {
 sub play {
 	my $client = shift;
 	$client->streamBytes(0);
-	$client->SUPER::play(@_);
+	return $client->SUPER::play(@_);
 }
 
 sub stop {

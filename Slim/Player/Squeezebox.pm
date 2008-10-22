@@ -535,7 +535,7 @@ sub stream_s {
 
 	my $format = $params->{'format'};
 
-	return unless ($client->opened());
+	return 0 unless ($client->opened());
 		
 	my $controller = $params->{'controller'};
 	my $url        = $controller->streamUrl();
@@ -801,7 +801,7 @@ sub stream_s {
 	# If we're sending an 's' command but got no request string, don't send it
 	# This is used when syncing Rhapsody radio stations so slaves don't request the radio playlist
 	if ( !$request_string ) {
-		return;
+		return 0;
 	}
 
 	if ( $log->is_info ) {
