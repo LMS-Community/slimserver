@@ -1566,7 +1566,7 @@ SqueezeJS.UI.PlaytimeRemaining = Ext.extend(SqueezeJS.UI.Playtime, {
 	}
 });
 
-SqueezeJS.UI.PlaytimeDuration = Ext.extend(SqueezeJS.UI.Playtime, {
+SqueezeJS.UI.Duration = Ext.extend(SqueezeJS.UI.Playtime, {
 	onPlaytimeUpdate : function(playtime){
 		if (this.el && playtime)
 			this.el.update(SqueezeJS.Utils.formatTime(playtime.duration));
