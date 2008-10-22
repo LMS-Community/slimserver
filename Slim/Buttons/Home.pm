@@ -614,7 +614,7 @@ sub createList {
 			}
 			
 			# Hide plugins if necessary (private, beta, etc)
-			if ( !$client->playerData->userid->canSeePlugin($sub) ) {
+			if ( !$client->canSeePlugin($sub) ) {
 				next;
 			}
 			

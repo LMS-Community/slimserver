@@ -179,7 +179,7 @@ sub cliRadiosQuery {
 			$disabled  = [ keys %{ $client->playerData->userid->allowedServices->{disabled} } ];
 			
 			# Hide plugins if necessary (private, beta, etc)
-			if ( !$client->playerData->userid->canSeePlugin($tag) ) {
+			if ( !$client->canSeePlugin($tag) ) {
 				$data = {};
 			}
 		}
