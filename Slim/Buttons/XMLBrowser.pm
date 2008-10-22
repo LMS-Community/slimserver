@@ -847,7 +847,7 @@ sub overlaySymbol {
 	elsif ( Slim::Control::XMLBrowser::hasAudio($item) ) {
 		$overlay = $client->symbols('notesymbol');
 	}
-	elsif ( $item->{type} ne 'text' ) {
+	elsif ( !$item->{type} || $item->{type} ne 'text' ) {
 		$overlay = $client->symbols('rightarrow');
 	}
 
