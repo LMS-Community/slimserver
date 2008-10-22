@@ -1466,6 +1466,19 @@ SqueezeJS.UI.Title = Ext.extend(SqueezeJS.UI.Component, {
 	}
 });
 
+// title without disc/track numbers
+SqueezeJS.UI.RawTitle = Ext.extend(SqueezeJS.UI.Component, {
+	onPlayerStateChange : function(result){
+		this.el.update(SqueezeJS.SonginfoParser.title(result, this.noLink, false, true));
+	}
+});
+
+SqueezeJS.UI.TrackNo = Ext.extend(SqueezeJS.UI.Component, {
+	onPlayerStateChange : function(result){
+		this.el.update(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + '. ' : '');
+	}
+});
+
 SqueezeJS.UI.CompoundTitle = Ext.extend(SqueezeJS.UI.Component, {
 	onPlayerStateChange : function(result){
 		var title = SqueezeJS.SonginfoParser.title(result, this.noLink, true);
@@ -1484,6 +1497,18 @@ SqueezeJS.UI.Album = Ext.extend(SqueezeJS.UI.Component, {
 		var year = SqueezeJS.SonginfoParser.year(result, this.noLink);
 		this.el.update(SqueezeJS.SonginfoParser.album(result, this.noLink)
 			+ (year ? '&nbsp;(' + year + ')' : ''));
+	}
+});
+
+SqueezeJS.UI.AlbumTitle = Ext.extend(SqueezeJS.UI.Component, {
+	onPlayerStateChange : function(result){
+		this.el.update(SqueezeJS.SonginfoParser.album(result, this.noLink));
+	}
+});
+
+SqueezeJS.UI.AlbumYear = Ext.extend(SqueezeJS.UI.Component, {
+	onPlayerStateChange : function(result){
+		this.el.update(SqueezeJS.SonginfoParser.year(result, this.noLink));
 	}
 });
 
@@ -1538,6 +1563,13 @@ SqueezeJS.UI.PlaytimeRemaining = Ext.extend(SqueezeJS.UI.Playtime, {
 	onPlaytimeUpdate : function(playtime){
 		if (this.el && playtime)
 			this.el.update(SqueezeJS.Utils.formatTime(playtime.remaining));
+	}
+});
+
+SqueezeJS.UI.PlaytimeDuration = Ext.extend(SqueezeJS.UI.Playtime, {
+	onPlaytimeUpdate : function(playtime){
+		if (this.el && playtime)
+			this.el.update(SqueezeJS.Utils.formatTime(playtime.duration));
 	}
 });
 

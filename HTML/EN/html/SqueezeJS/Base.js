@@ -517,7 +517,7 @@ SqueezeJS.SonginfoParser = {
 		}
 	},
 
-	title : function(result, noLink, noRemoteTitle){
+	title : function(result, noLink, noRemoteTitle, noTrackNo){
 		var title;
 		var link;
 		var id;
@@ -529,6 +529,9 @@ SqueezeJS.SonginfoParser = {
 			else if (result.playlist_loop[0].remote_title && !noRemoteTitle)
 				title = result.playlist_loop[0].remote_title;
 	
+			else if (noTrackNo)
+				title = result.playlist_loop[0].title;
+
 			else
 				title = (result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
 						+ (result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
