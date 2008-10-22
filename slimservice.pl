@@ -72,7 +72,7 @@ BEGIN {
 
 	unshift @INC, @SlimINC;
 
-	use Slim::Utils::OSDetect;
+	require Slim::Utils::OSDetect;
 	Slim::Utils::OSDetect::init();
 
 	# Pull in DeploymentDefaults
