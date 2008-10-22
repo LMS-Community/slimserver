@@ -119,8 +119,8 @@ sub handler {
 
 	else {
 		
-		# use local path if neither iTunes nor MusicIP is available
-		$paramRef->{useAudiodir} = !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
+		# use local path if neither iTunes nor MusicIP is available, or on anything but Windows/OSX
+		$paramRef->{useAudiodir} = Slim::Utils::OSDetect::OS() !~ /^(?:mac|win)$/ || !($paramRef->{useiTunes} || $paramRef->{useMusicIP});
 	}
 	
 	if ( $paramRef->{saveSettings} ) {
