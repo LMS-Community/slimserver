@@ -329,6 +329,9 @@ sub check_valid_versions {
 	my $modules;
 	my $failed = {};
 	
+	# don't check validity on Windows binary - it's all built in
+	return $failed if $0 =~ /scanner\.exe/i;
+	
 	my ($dir) = Slim::Utils::OSDetect::dirsFor('types');
 	
 	open my $fh, '<', catfile( $dir, 'modules.conf' ) or die 'modules.conf not found';
