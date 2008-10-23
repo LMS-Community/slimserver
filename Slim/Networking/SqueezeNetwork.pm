@@ -11,11 +11,11 @@ use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape);
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 	# init() is never called on SN so these aren't used
- 	require Slim::Networking::SqueezeNetwork::Players;
- 	require Slim::Networking::SqueezeNetwork::PrefSync;
- 	require Slim::Networking::SqueezeNetwork::Stats;
+	require Slim::Networking::SqueezeNetwork::Players;
+	require Slim::Networking::SqueezeNetwork::PrefSync;
+	require Slim::Networking::SqueezeNetwork::Stats;
 }
 
 use Slim::Utils::IPDetect;

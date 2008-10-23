@@ -5,8 +5,11 @@ package Slim::Plugin::Base;
 # Base class for plugins. Implement some basics.
 
 use strict;
-use Slim::Buttons::Home;
 use Slim::Utils::Log;
+
+if ( !main::SCANNER ) {
+	require Slim::Buttons::Home;
+}
 
 use constant PLUGINMENU => 'PLUGINS';
 
@@ -22,7 +25,7 @@ sub initPlugin {
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
 	# ambiguous function name if there ever was) in a closure so that it
 	# can be called as class method.
-	if ($class->can('setMode')) {
+	if ($class->can('setMode') && !main::SCANNER) {
 
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
@@ -54,8 +57,8 @@ sub initPlugin {
 		}
 	}
 
-	if ( !main::SLIM_SERVICE ) {
-		if ($class->can('webPages')) {
+	if ( !main::SLIM_SERVICE  && !main::SCANNER ) {
+		if ($class->can('webPages') && !$::noweb) {
 
 			$class->webPages;
 		}
@@ -65,7 +68,7 @@ sub initPlugin {
 		}
 	}
 
-	if ($class->can('defaultMap')) {
+	if ($class->can('defaultMap') && !main::SCANNER) {
 
 		Slim::Hardware::IR::addModeDefaultMapping($mode, $class->defaultMap);
 	}

@@ -30,8 +30,8 @@ use Slim::Utils::Strings;
 use Slim::Utils::Timers;
 use Slim::Player::StreamingController;
 
-if ( !main::SLIM_SERVICE ) {
- 	require Slim::Web::HTTP;
+if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	require Slim::Web::HTTP;
 }
 
 my $prefs = preferences('server');
@@ -527,7 +527,7 @@ sub forgetClient {
 		Slim::Buttons::Search::forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		
-		if ( !main::SLIM_SERVICE ) {
+		if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 			Slim::Web::HTTP::forgetClient($client);
 		}
 		

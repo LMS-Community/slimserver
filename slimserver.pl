@@ -16,6 +16,7 @@ use strict;
 use warnings;
 
 use constant SLIM_SERVICE => 0;
+use constant SCANNER => 0;
 
 # This package section is used for the windows service version of the application, 
 # as built with ActiveState's PerlSvc

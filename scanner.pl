@@ -19,6 +19,7 @@ use FindBin qw($Bin);
 use lib $Bin;
 
 use constant SLIM_SERVICE => 0;
+use constant SCANNER => 1;
 
 # Tell PerlApp to bundle these modules
 if (0) {

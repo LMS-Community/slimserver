@@ -27,6 +27,7 @@ use FindBin qw($Bin);
 
 # Enable SlimService mode
 use constant SLIM_SERVICE => 1;
+use constant SCANNER => 0;
 
 my $sn_config;
 our $SN_PATH; # path to squeezenetwork directory
