@@ -1453,7 +1453,9 @@ sub wipeCaches {
 	$self->lastTrack({});
 	
 	# Wipe cached data used for Jive, i.e. albums query data
-	Slim::Control::Queries::wipeCaches();
+	if (!main::SCANNER) {	
+		Slim::Control::Queries::wipeCaches();
+	}
 
 	logger('scan.import')->info("Wiped all in-memory caches.");
 }
