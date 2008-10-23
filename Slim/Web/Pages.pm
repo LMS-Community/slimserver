@@ -92,17 +92,6 @@ sub init {
 			logError ("can't load $class - $@");
 		}
 	}
-
-
-#	Slim::Web::Pages::Home->init();
-#	Slim::Web::Pages::BrowseDB::init();
-#	Slim::Web::Pages::BrowseTree::init();
-#	Slim::Web::Pages::Search::init();
-#	Slim::Web::Pages::Status::init();
-#	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();
-#	Slim::Web::Pages::Playlist::init();
-#	Slim::Web::Pages::History::init();
-#	Slim::Web::Pages::Progress::init();
 }
 
 
