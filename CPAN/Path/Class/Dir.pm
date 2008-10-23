@@ -36,8 +36,8 @@ sub as_foreign {
   
   # Clone internal structure
   $foreign->{volume} = $self->{volume};
-  my ($s, $fs) = ($self->_spec, $foreign->_spec);
-  $foreign->{dirs} = [ map {$_ eq $s->updir ? $fs->updir : $_} @{$self->{dirs}}];
+  my ($u, $fu) = ($self->_spec->updir, $foreign->_spec->updir);
+  $foreign->{dirs} = [ map {$_ eq $u ? $fu : $_} @{$self->{dirs}}];
   return $foreign;
 }
 
@@ -100,6 +100,14 @@ sub parent {
     pop @{$parent->{dirs}};
     return $parent;
   }
+}
+
+sub relative {
+  # File::Spec->abs2rel before version 3.13 returned the empty string
+  # when the two paths were equal - work around it here.
+  my $self = shift;
+  my $rel = $self->_spec->abs2rel($self->stringify, @_);
+  return $self->new( length $rel ? $rel : $self->_spec->curdir );
 }
 
 sub open  { IO::Dir->new(@_) }
@@ -187,7 +195,7 @@ sub subsumes {
   my ($self, $other) = @_;
   die "No second entity given to subsumes()" unless $other;
   
-  $other = ref($self)->new($other) unless UNIVERSAL::isa($other, __PACKAGE__);
+  $other = $self->new($other) unless UNIVERSAL::isa($other, __PACKAGE__);
   $other = $other->dir unless $other->is_dir;
   
   if ($self->is_absolute) {
@@ -202,13 +210,23 @@ sub subsumes {
   if ($self->volume) {
     return 0 unless $other->volume eq $self->volume;
   }
+
+  # The root dir subsumes everything (but ignore the volume because
+  # we've already checked that)
+  return 1 if "@{$self->{dirs}}" eq "@{$self->new('')->{dirs}}";
   
   my $i = 0;
   while ($i <= $#{ $self->{dirs} }) {
+    return 0 unless exists $other->{dirs}[$i];
     return 0 if $self->{dirs}[$i] ne $other->{dirs}[$i];
     $i++;
   }
   return 1;
+}
+
+sub contains {
+  my ($self, $other) = @_;
+  return !!(-d $self and (-e $other or -l $other) and $self->subsumes($other));
 }
 
 1;
@@ -243,7 +261,7 @@ Path::Class::Dir - Objects representing directories
   my $rel = $abs->relative; # Transform to relative path
   my $rel = $abs->relative('/foo'); # Relative to /foo
   
-  print $dir->as_foreign('MacOS'); # :foo:bar:
+  print $dir->as_foreign('Mac');   # :foo:bar:
   print $dir->as_foreign('Win32'); #  foo\bar
 
   # Iterate with IO::Dir methods:
@@ -443,6 +461,12 @@ assume it's a directory.
   dir('foo/bar' )->subsumes(dir('bar/baz'))      # False
   dir('/foo/bar')->subsumes(dir('foo/bar'))      # False
 
+
+=item $boolean = $dir->contains($other)
+
+Returns true if this directory actually contains C<$other> on the
+filesystem.  C<$other> doesn't have to be a direct child of C<$dir>,
+it just has to be subsumed.
 
 =item $foreign = $dir->as_foreign($type)
 
