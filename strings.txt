@@ -3821,7 +3821,7 @@ SETUP_IDLEBRIGHTNESS
 SETUP_POWERONBRIGHTNESS_ABBR
 	DA	Mens den er tændt
 	DE	Wenn aktiv
-	EN	While On
+	EN	While Active
 	ES	Mientras está encendido
 	FI	Laitteen ollessa päällä
 	FR	En état activé
@@ -3845,7 +3845,7 @@ SETUP_POWEROFFBRIGHTNESS_ABBR
 SETUP_IDLEBRIGHTNESS_ABBR
 	DA	Lysstyrke når afspilleren ikke bruges
 	DE	Helligkeit im Standbymodus
-	EN	Idle Brightness
+	EN	Idle
 	ES	Brillo en inactividad
 	FI	Kirkkaus käyttämättömänä
 	FR	Luminosité (inactif)
