@@ -13,7 +13,7 @@ skip-grant-tables
 basedir               = [% basedir %]
 datadir               = [% datadir %]
 language              = [% language %]
-port                  = [% port || 9092 %]
+port                  = [% port %]
 socket                = [% socket %]
 pid-file              = [% pidFile %]
 log-error             = [% errorLog %]

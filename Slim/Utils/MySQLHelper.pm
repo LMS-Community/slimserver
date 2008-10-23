@@ -27,7 +27,6 @@ use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use File::Which qw(which);
 use Proc::Background;
-use Template;
 use Time::HiRes qw(sleep);
 
 {
@@ -155,6 +154,7 @@ sub createConfig {
 		'pidFile'  => $class->pidFile,
 		'errorLog' => catdir($cacheDir, 'mysql-error-log.txt'),
 		'bindAddress' => $prefs->get('bindAddress'),
+		'port'     => 9092,
 	);
 
 	# If there's no data dir setup - that also means we need to create the system tables.
@@ -181,8 +181,16 @@ sub createConfig {
 
 	$log->info("createConfig() Creating config from file: [$ttConf] -> [$output].");
 
-	my $template = Template->new({ 'ABSOLUTE' => 1 }) or die Template->error(), "\n";
-           $template->process($ttConf, \%config, $output) || die $template->error;
+	open(TEMPLATE, "< $ttConf") or die "Couldn't open $ttConf for reading: $!\n";
+	open(OUTPUT, "> $output") or die "Couldn't open $output for writing: $!\n";
+	
+	while (defined (my $line = <TEMPLATE>)) {
+		$line =~ s/\[%\s*(\w+)\s*%\]/$config{$1}/;
+		print OUTPUT $line;
+	}
+	
+	close OUTPUT;
+	close TEMPLATE;
 
 	# Bug: 3847 possibly - set permissions on the config file.
 	# Breaks all kinds of other things.
