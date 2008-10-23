@@ -19,7 +19,6 @@ use base qw(Slim::Utils::Accessor);
 use Scalar::Util qw(blessed);
 use Storable qw(nfreeze);
 
-use Slim::Control::Request;
 use Slim::Player::Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -31,6 +30,7 @@ use Slim::Utils::Timers;
 use Slim::Player::StreamingController;
 
 if ( !main::SLIM_SERVICE && !main::SCANNER ) {
+	require Slim::Control::Request;
 	require Slim::Web::HTTP;
 }
 
@@ -279,7 +279,9 @@ sub new {
 
 	$client->controller(Slim::Player::StreamingController->new($client));
 
-	Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
+	if (!main::SCANNER) {	
+		Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
+	}
 
 	return $client;
 }

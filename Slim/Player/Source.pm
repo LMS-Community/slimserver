@@ -19,7 +19,6 @@ use MPEG::Audio::Frame;
 use Time::HiRes;
 
 use Slim::Formats;
-use Slim::Control::Request;
 use Slim::Formats::Playlists;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Errno;

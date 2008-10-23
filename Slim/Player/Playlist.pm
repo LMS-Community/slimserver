@@ -16,7 +16,10 @@ use Slim::Player::Sync;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
-use Slim::Control::Jive;
+
+if (!main::SCANNER) {
+	require Slim::Control::Jive;
+}
 
 my $prefs = preferences('server');
 
