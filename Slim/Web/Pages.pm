@@ -17,16 +17,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
-
-#use Slim::Web::Pages::Search;
-#use Slim::Web::Pages::BrowseDB;
-#use Slim::Web::Pages::BrowseTree;
-#use Slim::Web::Pages::Home;
-#use Slim::Web::Pages::Status;
-#use Slim::Web::Pages::Playlist;
-#use Slim::Web::Pages::History;
-#use Slim::Web::Pages::EditPlaylist;
-#use Slim::Web::Pages::Progress;
 use Slim::Utils::Progress;
 
 my $prefs = preferences('server');
