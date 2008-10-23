@@ -15,7 +15,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
-use Slim::Web::XMLBrowser;
 use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');

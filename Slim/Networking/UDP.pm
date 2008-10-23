@@ -21,11 +21,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 
-# Tell PerlSvc to bundle these modules
-if (0) {
-	require Slim::Networking::SliMP3::Protocol;
-}
-
 # IANA-assigned port for the Slim protocol, used by all Slim Devices hardware.
 use constant SERVERPORT => 3483;
 

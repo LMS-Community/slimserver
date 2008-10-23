@@ -16,9 +16,6 @@ use URI;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Player::Playlist;
-use Slim::Buttons::Information;
-use Slim::Buttons::Synchronize;
-use Slim::Player::Sync;
 use Slim::Player::Client;
 #use Data::Dump;
 

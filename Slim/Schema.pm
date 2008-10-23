@@ -47,32 +47,6 @@ if ( !main::SLIM_SERVICE ) {
  	require Slim::Utils::MySQLHelper;
 }
 
-# Tell PerlSvc to bundle these modules
-if (0) {
-	require Slim::Schema::Age;
-	require Slim::Schema::Album;
-	require Slim::Schema::Comment;
-	require Slim::Schema::Contributor;
-	require Slim::Schema::ContributorAlbum;
-	require Slim::Schema::ContributorTrack;
-	require Slim::Schema::Genre;
-	require Slim::Schema::GenreTrack;
-	require Slim::Schema::MetaInformation;
-	require Slim::Schema::Playlist;
-	require Slim::Schema::PlaylistTrack;
-	require Slim::Schema::Rescan;
-	require Slim::Schema::Track;
-	require Slim::Schema::TrackPersistent;
-	require Slim::Schema::Year;
-	require Slim::Schema::Progress;
-
-	require Slim::Schema::ResultSet::Base;
-	
-	require Slim::Schema::DBI;
-	require Slim::Schema::Debug;
-	require Slim::Schema::Storage;
-}
-
 use Slim::Utils::OSDetect;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Strings qw(string);

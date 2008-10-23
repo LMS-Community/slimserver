@@ -30,13 +30,7 @@ our %Config = (
 sub Startup {
 	# Tell PerlSvc to bundle these modules
 	if (0) {
-		require version;
 		require 'auto/Compress/Zlib/autosplit.ix';
-		
-		require Encode::CN;
-		require Encode::JP;
-		require Encode::KR;
-		require Encode::TW;
 	}
 
 	# added to workaround a problem with 5.8 and perlsvc.
@@ -250,6 +244,7 @@ our (
 	$nosetup,
 	$noserver,
 	$noupnp,
+	$noweb,     # used in scanner to prevent loading of Slim::Web::Pages etc.
 	$stdio,
 	$stop,
 	$perfmon,

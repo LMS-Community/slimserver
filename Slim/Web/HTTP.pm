@@ -24,33 +24,9 @@ use MIME::QuotedPrint;
 use Scalar::Util qw(blessed);
 use Socket qw(:DEFAULT :crlf);
 use Storable qw(thaw);
-use Template;
 use Tie::RegexpHash;
 use URI::Escape;
 use YAML::Syck qw(LoadFile);
-
-# Tell PerlSvc to bundle these modules
-if (0) {
-    require Template::Plugin::Autoformat;
-    require Template::Plugin::CGI;
-    require Template::Plugin::Datafile;
-    require Template::Plugin::Date;
-    require Template::Plugin::Debug;
-    require Template::Plugin::Directory;
-    require Template::Plugin::DBI;
-    require Template::Plugin::Dumper;
-    require Template::Plugin::File;
-    require Template::Plugin::Format;
-    require Template::Plugin::HTML;
-    require Template::Plugin::Image;
-    require Template::Plugin::Iterator;
-    require Template::Plugin::Pod;
-    require Template::Plugin::Table;
-    require Template::Plugin::URL;
-    require Template::Plugin::View;
-    require Template::Plugin::Wrap;
-    require Template::Plugin::XML::Style;
-}
 
 use Slim::Formats::Playlists::M3U;
 use Slim::Networking::mDNS;
@@ -66,16 +42,26 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::HTTP::ClientConn;
 use Slim::Web::Pages;
-use Slim::Web::Settings;
 use Slim::Web::Graphics;
 use Slim::Web::JSONRPC;
 use Slim::Web::Cometd;
-use Slim::Web::Template::Context;
 use Slim::Utils::Prefs;
 
 BEGIN {
-	# Use our custom Template::Context subclass
-	$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
+	if (!$::noweb) {
+		# have perlapp ignore this
+		eval 'use '. 'Template';
+
+		if (!$@) {
+
+			# Use our custom Template::Context subclass
+			$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
+
+		} else {
+
+			logError ("can't load module Template - $@");
+		}
+	}
 	
 	# Use Cookie::XS if available
 	my $hasCookieXS;
@@ -158,25 +144,29 @@ sub init {
 	push @templateDirs, Slim::Utils::OSDetect::dirsFor('HTML');
 
 	# Try and use the faster XS module if it's available.
-	Slim::bootstrap::tryModuleLoad('Template::Stash::XS');
-
-	if ($@) {
-
-		# Pure perl is the default, so we don't need to do anything.
-		$log->warn("Couldn't find Template::Stash::XS - falling back to pure perl version.");
-
-	} else {
-
-		$log->info("Found Template::Stash::XS!");
-
-		$Template::Config::STASH = 'Template::Stash::XS';
+	if (!$::noweb) {
+		Slim::bootstrap::tryModuleLoad('Template::Stash::XS');
+	
+		if ($@) {
+	
+			# Pure perl is the default, so we don't need to do anything.
+			$log->warn("Couldn't find Template::Stash::XS - falling back to pure perl version.");
+	
+		} else {
+	
+			$log->info("Found Template::Stash::XS!");
+	
+			$Template::Config::STASH = 'Template::Stash::XS';
+		}
 	}
 	
 	# Preload skins so they aren't loaded on the first request
 	%skins = skins();
 
 	# Initialize all the web page handlers.
-	Slim::Web::Pages::init();
+	if (!$::noweb) {	
+		Slim::Web::Pages::init();
+	}
 
 	# Initialize graphics resizing
 	Slim::Web::Graphics::init();
@@ -2311,6 +2301,8 @@ sub nonBreaking {
 
 sub newSkinTemplate {
 	my $skin = shift;
+
+	return if $::noweb;
 
 	my $baseSkin = baseSkin();
 

@@ -18,15 +18,15 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
-use Slim::Web::Pages::Search;
-use Slim::Web::Pages::BrowseDB;
-use Slim::Web::Pages::BrowseTree;
-use Slim::Web::Pages::Home;
-use Slim::Web::Pages::Status;
-use Slim::Web::Pages::Playlist;
-use Slim::Web::Pages::History;
-use Slim::Web::Pages::EditPlaylist;
-use Slim::Web::Pages::Progress;
+#use Slim::Web::Pages::Search;
+#use Slim::Web::Pages::BrowseDB;
+#use Slim::Web::Pages::BrowseTree;
+#use Slim::Web::Pages::Home;
+#use Slim::Web::Pages::Status;
+#use Slim::Web::Pages::Playlist;
+#use Slim::Web::Pages::History;
+#use Slim::Web::Pages::EditPlaylist;
+#use Slim::Web::Pages::Progress;
 use Slim::Utils::Progress;
 
 my $prefs = preferences('server');
@@ -42,6 +42,10 @@ our %hierarchy = (
 );
 
 sub init {
+	
+	# don't initialize pages when called from scanner or 
+	# SC is run with the (future ;-)) --noweb parameter
+	return if $::noweb;
 
 	Slim::Web::HTTP::addPageFunction(qr/^firmware\.(?:html|xml)/,\&firmware);
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
@@ -49,7 +53,7 @@ sub init {
 
 	# pull in the memory usage module if requested.
 	if (logger('server.memory')->is_info) {
-
+		
 		Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage');
 
 		if ($@) {
@@ -62,15 +66,43 @@ sub init {
 		}
 	}
 
-	Slim::Web::Pages::Home->init();
-	Slim::Web::Pages::BrowseDB::init();
-	Slim::Web::Pages::BrowseTree::init();
-	Slim::Web::Pages::Search::init();
-	Slim::Web::Pages::Status::init();
-	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();
-	Slim::Web::Pages::Playlist::init();
-	Slim::Web::Pages::History::init();
-	Slim::Web::Pages::Progress::init();
+	my @classes = map { 
+		join('::', qw(Slim Web Pages ), $_) 
+	} qw(
+		Home
+		BrowseDB
+		BrowseTree
+		Search
+		Status
+		EditPlaylist
+		Playlist
+		History
+		Progress
+	);
+
+	for my $class (@classes) {
+		eval "use $class";
+
+		if (!$@) {
+
+			$class->init();
+
+		} else {
+
+			logError ("can't load $class - $@");
+		}
+	}
+
+
+#	Slim::Web::Pages::Home->init();
+#	Slim::Web::Pages::BrowseDB::init();
+#	Slim::Web::Pages::BrowseTree::init();
+#	Slim::Web::Pages::Search::init();
+#	Slim::Web::Pages::Status::init();
+#	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();
+#	Slim::Web::Pages::Playlist::init();
+#	Slim::Web::Pages::History::init();
+#	Slim::Web::Pages::Progress::init();
 }
 
 

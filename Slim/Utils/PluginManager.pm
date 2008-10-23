@@ -42,11 +42,6 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
 use Slim::Utils::Versions;
 
-if (0) {
-	require Slim::Plugin::Base;
-	require Slim::Plugin::OPMLBased;
-}
-
 # XXXX - These constants will probably change. This is just a rough start.
 use constant STATE_ENABLED  => 1;
 use constant STATE_DISABLED => 0;

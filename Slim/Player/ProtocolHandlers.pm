@@ -15,13 +15,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Music::Info;
 
-# Tell PerlSvc to bundle these modules
-if (0) {
-	require Slim::Player::Protocols::File;
-	require Slim::Player::Protocols::HTTP;
-	require Slim::Player::Protocols::MMS;
-}
-
 # the protocolHandlers hash contains the modules that handle specific URLs,
 # indexed by the URL protocol.  built-in protocols are exist in the hash, but
 # have a zero value

@@ -11,18 +11,6 @@ use Slim::Schema::PageBar;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
-# Tell PerlSvc to bundle these modules
-if (0) {
-	require Slim::Schema::ResultSet::Age;
-	require Slim::Schema::ResultSet::Album;
-	require Slim::Schema::ResultSet::Contributor;
-	require Slim::Schema::ResultSet::Genre;
-	require Slim::Schema::ResultSet::Playlist;
-	require Slim::Schema::ResultSet::PlaylistTrack;
-	require Slim::Schema::ResultSet::Track;
-	require Slim::Schema::ResultSet::Year;
-}
-
 my $log = logger('database.sql');
 
 sub suppressAll        { 0 }
