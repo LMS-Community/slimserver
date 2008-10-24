@@ -106,6 +106,12 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveunmixable'],
 		[1, 1, 1, \&jiveUnmixableMessage]);
 
+	Slim::Control::Request::addDispatch(['jivepartymodesettings'],
+		[1, 0, 1, \&partyModeSettingsMenu]);
+
+	Slim::Control::Request::addDispatch(['jivesetpartymode'],
+		[1, 0, 1, \&jiveSetPartyMode]);
+
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'],
 		[1, 0, 1, \&albumSortSettingsMenu]);
 
@@ -122,7 +128,7 @@ sub init {
 		[1, 0, 1, \&jivePlayTrackAlbumCommand]);
 
 	Slim::Control::Request::addDispatch(['date'],
-		[0, 1, 0, \&dateQuery]);
+		[0, 1, 1, \&dateQuery]);
 
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
 		[0, 1, 1, \&firmwareUpgradeQuery]);
@@ -300,6 +306,8 @@ sub mainMenu {
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
 		@{albumSortSettingsItem($client, 1)},
+		# hide this item until feature complete
+		#@{partyModeSettingsItem($client, 1)},
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},
 	);
@@ -392,6 +400,19 @@ sub mainMenu {
 	_notifyJive(\@menu, $client);
 }
 
+sub jiveSetPartyMode {
+
+	my $request   = shift;
+	my $client    = $request->client;
+	my $partymode = $request->getParam('enabled');
+
+	$prefs->client($client)->set('partymode', $partymode);
+	$log->error("PARTY MODE HAS BEEN SET TO " . $partymode);
+
+	$request->setStatusDone();
+
+}
+
 sub jiveSetAlbumSort {
 	my $request = shift;
 	my $client  = $request->client;
@@ -401,6 +422,41 @@ sub jiveSetAlbumSort {
 	myMusicMenu(0, $client);
 	$request->setStatusDone();
 }
+
+sub partyModeSettingsMenu {
+	$log->info("Begin function");
+
+	my $request      = shift;
+	my $client       = $request->client;
+	my $partymode    = $prefs->client($client)->get('partymode');
+
+	$log->error("Partymode currently set to " . $partymode);
+	$request->addResult('count', 1);
+	$request->addResult('offset', 0);
+
+	$request->addResultLoop('item_loop', 0, 'text', $client->string('ENABLE_PARTY_MODE') );
+	$request->addResultLoop('item_loop', 0, 'checkbox', $partymode);
+
+	my $actions = {
+		on => {
+			player => 0,
+			cmd    => ['jivesetpartymode'],
+			params => {
+				enabled => 1,
+			},
+		},
+		off => {
+			player => 0,
+			cmd    => ['jivesetpartymode'],
+			params => {
+				enabled => 0,
+			},
+		},
+	};
+	$request->addResultLoop('item_loop', 0, 'actions', $actions);
+
+}
+
 
 sub albumSortSettingsMenu {
 	$log->info("Begin function");
@@ -434,6 +490,38 @@ sub albumSortSettingsMenu {
 	
 }
 
+sub partyModeSettingsItem {
+	$log->info("Begin function");
+	my $client = shift;
+	my $batch = shift;
+
+	my @menu = ();
+	push @menu,
+	{
+		text           => $client->string('PARTY_MODE'),
+		id             => 'settingsPartyMode',
+		node           => 'advancedSettings',
+		weight         => 100,
+			actions        => {
+			go => {
+				player => 0,
+				cmd    => ['jivepartymodesettings'],
+			},
+		},
+		window        => {
+				titleStyle => 'settings',
+				# if I add help the checkbox item in this menu quits working! BAH!
+				#help       => { text => $client->string('JIVE_PARTY_MODE_HELP'), },
+		},
+	};
+
+	if ($batch) {
+		return \@menu;
+	} else {
+		_notifyJive(\@menu, $client);
+	}
+
+}
 sub albumSortSettingsItem {
 	$log->info("Begin function");
 	my $client = shift;
@@ -1907,6 +1995,11 @@ sub dateQuery {
 
 	# Return time in http://www.w3.org/TR/NOTE-datetime format
 	$request->addResult( 'date', strftime("%Y-%m-%dT%H:%M:%S", localtime) . $tzoff );
+
+	# manage the subscription
+	if (defined(my $timeout = $request->getParam('subscribe'))) {
+		$request->registerAutoExecute($timeout, \&dateQuery);
+	}
 
 	$request->setStatusDone();
 }

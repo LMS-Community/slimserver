@@ -1828,6 +1828,7 @@ sub musicfolderQuery {
 						},
 					};
 					
+					#if ( $playalbum && !$prefs->client($request->client)->get('partymode') ) {
 					if ( $playalbum ) {
 						$actions->{'play'} = {
 							player => 0,

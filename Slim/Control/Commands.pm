@@ -1635,11 +1635,17 @@ sub playlistcontrolCommand {
 		return;
 	}
 
+	# partymode replaces 'playlistcontrol load' with 'playlistcontrol insert'
+	if ( $prefs->client($client)->get('partymode') && $cmd eq 'load' ) {
+		$cmd    = 'insert';
+	}
+
 	my $load   = ($cmd eq 'load');
 	my $insert = ($cmd eq 'insert');
 	my $add    = ($cmd eq 'add');
 	my $delete = ($cmd eq 'delete');
 	
+
 	# shortcut to playlist $cmd url if given a folder_id...
 	# the acrobatics it does are too risky to replicate
 	if (defined(my $folderId = $request->getParam('folder_id'))) {

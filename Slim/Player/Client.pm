@@ -52,7 +52,15 @@ our $defaultPrefs = {
 	'shuffle'          => 0,
 	'titleFormat'      => [5, 1, 3, 6, 0],
 	'titleFormatCurr'  => 1,
+	'partymode'        => 0,
 };
+
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Control::Jive->buildCaches();
+}, 'partymode' );
+
 
 $prefs->setChange( sub {
 	my $value  = $_[1];
