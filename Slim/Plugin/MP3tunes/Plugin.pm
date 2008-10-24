@@ -7,6 +7,7 @@ package Slim::Plugin::MP3tunes::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use Slim::Formats::RemoteMetadata;
 use Slim::Networking::SqueezeNetwork;
 
 sub initPlugin {
@@ -22,6 +23,11 @@ sub initPlugin {
 		tag            => 'mp3tunes',
 		menu           => 'music_services',
 		weight         => 40,
+	);
+	
+	Slim::Formats::RemoteMetadata->registerProvider(
+		match => qr{mp3tunes\.com|squeezenetwork\.com/mp3tunes},
+		func   => \&metaProvider,
 	);
 	
 	if ( main::SLIM_SERVICE ) {
@@ -92,6 +98,42 @@ sub getLockerInfo {
 	}
 	
 	return;
+}
+
+sub metaProvider {
+	my ( $client, $url ) = @_;
+	
+	my $icon = __PACKAGE__->_pluginDataFor('icon');
+	my $meta = __PACKAGE__->getLockerInfo( $client, $url );
+	
+	if ( $meta ) {
+		# Metadata for currently playing song
+		return {
+			artist   => $meta->{artist},
+			album    => $meta->{album},
+			tracknum => $meta->{tracknum},
+			title    => $meta->{title},
+			cover    => $meta->{cover} || $icon,
+			icon     => $icon,
+			type     => 'MP3tunes',
+		};
+	}
+	else {
+		# Metadata for items in the playlist that have not yet been played
+	
+		# We can still get cover art for items not yet played
+		my $cover;
+		if ( $url =~ /hasArt=1/ ) {
+			my ($id)  = $url =~ m/([0-9a-f]+\?sid=[0-9a-f]+)/;
+			$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
+		}
+	
+		return {
+			cover    => $cover || $icon,
+			icon     => $icon,
+			type     => 'MP3tunes',
+		};
+	}
 }
 
 1;

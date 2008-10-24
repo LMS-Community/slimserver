@@ -15,6 +15,7 @@ use File::Spec::Functions qw(:ALL);
 use IO::Socket qw(:DEFAULT :crlf);
 
 use Slim::Formats::Playlists;
+use Slim::Formats::RemoteMetadata;
 use Slim::Player::Source;
 use Slim::Player::Song;
 use Slim::Player::TranscodingHelper;
@@ -262,15 +263,24 @@ sub parseDirectHeaders {
 sub parseMetadata {
 	my ( $class, $client, $song, $metadata ) = @_;
 	
-	# XXX: figure out some way to parse ASF_Command_Media metadata
+	my $guid;
+	map { $guid .= $_ } unpack( 'H*', substr $metadata, 0, 16 );
 	
-	if ( $log->is_debug ) {		
-		my $guid;
-		map { $guid .= $_ } unpack( 'H*', substr $metadata, 0, 16 );
-	
-		if ( $guid eq '59dacfc059e611d0a3ac00a0c90348f6' ) {
-			$log->debug( "ASF_Command_Media: $metadata" );
+	if ( $guid eq '59dacfc059e611d0a3ac00a0c90348f6' ) {
+		$log->is_debug && $log->debug( "ASF_Command_Media: $metadata" );
+		
+		# See if there is a parser for this stream
+		my $parser = Slim::Formats::RemoteMetadata->getParserFor( $song->{streamUrl} );
+		if ( $parser ) {
+			eval { $parser->( $client, $song->{streamUrl}, $metadata ) };
+			if ( $@ ) {
+				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
+				$log->error( "Metadata parser $name failed: $@" );
+			}
 		}
+		
+		# If there is no parser, we ignore ASF_Command_Media
+		return;
 	}
 	
 	my $wma       = Audio::WMA->parseObject( $metadata );
@@ -429,6 +439,12 @@ sub getSeekData {
 	}
 	
 	return undef;
+}
+
+sub getMetadataFor {
+	my $class = shift;
+	
+	Slim::Player::Protocols::HTTP->getMetadataFor( @_ );
 }
 
 # reinit is used on SN to maintain seamless playback when bumped to another instance

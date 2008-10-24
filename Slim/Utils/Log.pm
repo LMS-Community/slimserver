@@ -806,6 +806,7 @@ sub logLevels {
 		'formats.audio'              => 'ERROR',
 		'formats.xml'                => 'ERROR',
 		'formats.playlists'          => 'ERROR',
+		'formats.metadata'           => 'ERROR',
 
 		'database.info'              => 'ERROR',
 		'database.mysql'             => 'ERROR',

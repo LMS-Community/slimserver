@@ -168,6 +168,7 @@ use Slim::Networking::SimpleAsyncHTTP;
 #use Slim::Utils::Firmware;
 #use Slim::Utils::UPnPMediaServer;
 use Slim::Control::Jive;
+use Slim::Formats::RemoteMetadata;
 
 our @AUTHORS = (
 	'Sean Adams',
@@ -351,6 +352,9 @@ sub init {
 	
 	$log->info("SqueezeCenter Jive init...");
 	Slim::Control::Jive->init();
+	
+	$log->info("Remote Metadata init...");
+	Slim::Formats::RemoteMetadata->init();
 
 	if ( SLIM_SERVICE ) {
 		# start SlimService specific stuff

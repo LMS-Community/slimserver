@@ -14,6 +14,7 @@ use File::Spec::Functions qw(:ALL);
 use IO::String;
 use Scalar::Util qw(blessed);
 
+use Slim::Formats::RemoteMetadata;
 use Slim::Music::Info;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Errno;
@@ -135,6 +136,17 @@ sub parseMetadata {
 	$url = Slim::Player::Playlist::url(
 		$client, Slim::Player::Source::streamingSongIndex($client)
 	);
+	
+	# See if there is a parser for this stream
+	my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
+	if ( $parser ) {
+		eval { $parser->( $client, $url, $metadata ) };
+		if ( $@ ) {
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
+			logger('formats.metadata')->error( "Metadata parser $name failed: $@" );
+		}
+		return;
+	}
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
@@ -264,6 +276,11 @@ sub parseDirectHeaders {
 	
 	my $isDebug = $directlog->is_debug;
 	
+	# May get a track object
+	if ( blessed($url) ) {
+		$url = $url->url;
+	}
+	
 	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
 	
 	foreach my $header (@headers) {
@@ -382,6 +399,19 @@ sub getMetadataFor {
 		}
 	}
 	
+	# Check for an alternate metadata provider for this URL
+	my $provider = Slim::Formats::RemoteMetadata->getProviderFor($url);
+	if ( $provider ) {
+		my $metadata = eval { $provider->( $client, $url ) };
+		if ( $@ ) {
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($provider);
+			$log->error( "Metadata provider $name failed: $@" );
+		}
+		else {
+			return $metadata;
+		}
+	}
+	
 	# Remote streams may include ID3 tags with embedded artwork
 	# Example: http://downloads.bbc.co.uk/podcasts/radio4/excessbag/excessbag_20080426-1217.mp3
 	my $track = Slim::Schema->rs('Track')->objectForUrl( {
@@ -394,40 +424,7 @@ sub getMetadataFor {
 		$cover = '/music/' . $track->id . '/cover.jpg';
 	}
 	
-	if ( $url =~ /mp3tunes\.com/ || $url =~ m|squeezenetwork\.com.+/mp3tunes| ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MP3tunes::Plugin') ) {
-			my $icon = Slim::Plugin::MP3tunes::Plugin->_pluginDataFor('icon');
-			my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
-			if ( $meta ) {
-				# Metadata for currently playing song
-				return {
-					artist   => $meta->{artist},
-					album    => $meta->{album},
-					tracknum => $meta->{tracknum},
-					title    => $meta->{title},
-					cover    => $cover || $meta->{cover} || $icon,
-					icon     => $icon,
-					type     => 'MP3tunes',
-				};
-			}
-			else {
-				# Metadata for items in the playlist that have not yet been played
-			
-				# We can still get cover art for items not yet played
-				if ( !$cover && $url =~ /hasArt=1/ ) {
-					my ($id)  = $url =~ m/([0-9a-f]+\?sid=[0-9a-f]+)/;
-					$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
-				}
-			
-				return {
-					cover    => $cover || $icon,
-					icon     => $icon,
-					type     => 'MP3tunes',
-				};
-			}
-		}
-	}
-	elsif ( $url =~ /archive\.org/ || $url =~ m|squeezenetwork\.com.+/lma/| ) {
+	if ( $url =~ /archive\.org/ || $url =~ m|squeezenetwork\.com.+/lma/| ) {
 		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::LMA::Plugin') ) {
 			my $icon = Slim::Plugin::LMA::Plugin->_pluginDataFor('icon');
 			return {

@@ -181,6 +181,7 @@ use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
 use Slim::Control::Jive;
+use Slim::Formats::RemoteMetadata;
 
 our @AUTHORS = (
 	'Sean Adams',
@@ -430,6 +431,9 @@ sub init {
 
 	$log->info("SqueezeCenter Jive init...");
 	Slim::Control::Jive->init();
+	
+	$log->info("Remote Metadata init...");
+	Slim::Formats::RemoteMetadata->init();
 
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
