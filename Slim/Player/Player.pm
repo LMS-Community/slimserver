@@ -97,20 +97,6 @@ $prefs->setChange( sub {
 
 $prefs->setChange( sub { $_[2]->pitch($_[1]); }, 'pitch');
 
-if ( main::SLIM_SERVICE ) {
-	# Note: Menu items are also listed in S::P::Transporter
-	$defaultPrefs->{menuItem} = [ qw(
-		NOW_PLAYING
-		MY_MUSIC
-		RADIO
-		MUSIC_SERVICES
-		FAVORITES
-		PLUGINS
-		SETTINGS
-		SQUEEZECENTER_CONNECT
-	) ];
-}
-
 sub new {
 	my ($class, $id, $paddr, $rev, $s, $deviceid, $uuid) = @_;
 

@@ -62,20 +62,6 @@ our $defaultPrefs = {
 	)],
 };
 
-if ( main::SLIM_SERVICE ) {
-	$defaultPrefs->{menuItem} = [ qw(
-		NOW_PLAYING
-		MY_MUSIC
-		RADIO
-		MUSIC_SERVICES
-		FAVORITES
-		PLUGIN_DIGITAL_INPUT
-		PLUGINS
-		SETTINGS
-		SQUEEZECENTER_CONNECT
-	) ];
-}
-
 sub initPrefs {
 	my $client = shift;
 

@@ -77,22 +77,6 @@ $prefs->setChange(sub {
 	
 }, 'lineInAlwaysOn');
 
-
-if ( main::SLIM_SERVICE ) {
-	$defaultPrefs->{menuItem} = [ qw(
-		NOW_PLAYING
-		MY_MUSIC
-		RADIO
-		MUSIC_SERVICES
-		FAVORITES
-		PLUGIN_LINE_IN
-		PLUGINS
-		ALARM
-		SETTINGS
-		SQUEEZECENTER_CONNECT
-	) ];
-}
-
 sub new {
 	my $class = shift;
 
