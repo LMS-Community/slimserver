@@ -1606,6 +1606,74 @@ sub playerSettingsMenu {
 	}
 }
 
+sub minAutoBrightness {
+	my $current_setting = shift;
+	my $string          = shift;
+
+	my @brightness_settings;
+
+	my $slider = {
+		slider      => 1,
+		min         => 1,
+		max         => 5,
+		initial     => $current_setting + 0,
+		#help    => NO_HELP_STRING_YET,
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'playerpref', 'minAutoBrightness' ],
+				params => {
+					valtag => 'value',
+				},
+			},
+		},
+	};
+
+	push @brightness_settings, $slider;
+
+	my $return = { 
+		text      => $string,
+		count     => scalar(@brightness_settings),
+		offset    => 0,
+		item_loop => \@brightness_settings,
+	};
+	return $return;
+}
+
+sub sensAutoBrightness {
+	my $current_setting = shift;
+	my $string          = shift;
+
+	my @brightness_settings;
+
+	my $slider = {
+		slider      => 1,
+		min         => 1,
+		max         => 20,
+		initial     => $current_setting + 0,
+		#help    => NO_HELP_STRING_YET,
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'playerpref', 'sensAutoBrightness' ],
+				params => {
+					valtag => 'value',
+				},
+			},
+		},
+	};
+
+	push @brightness_settings, $slider;
+
+	my $return = { 
+		text      => $string,
+		count     => scalar(@brightness_settings),
+		offset    => 0,
+		item_loop => \@brightness_settings,
+	};
+	return $return;
+}
+
 sub playerBrightnessMenu {
 
 	my $request    = shift;
@@ -1657,6 +1725,15 @@ sub playerBrightnessMenu {
 		};
 		push @menu, $item;
 	}
+
+	if( $client->isa( 'Slim::Player::Boom')) {
+		my $mab = minAutoBrightness( $prefs->client( $client)->get( 'minAutoBrightness'), $client->string( 'SETUP_MINAUTOBRIGHTNESS'));
+		push @menu, $mab;
+
+		my $sab = sensAutoBrightness( $prefs->client( $client)->get( 'sensAutoBrightness'), $client->string( 'SETUP_SENSAUTOBRIGHTNESS'));
+		push @menu, $sab;
+	}
+
 	sliceAndShip($request, $client, \@menu);
 
 	$request->setStatusDone();

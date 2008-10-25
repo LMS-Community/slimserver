@@ -59,6 +59,11 @@ sub prefs {
 		push @prefs, qw(doublesize offDisplaySize largeTextFont);
 	}
 
+	if ($client->isa('Slim::Player::Boom')) {
+		push @prefs, 'minAutoBrightness';
+		push @prefs, 'sensAutoBrightness';
+	}
+
 	return ($prefs->client($client), @prefs);
 }
 

@@ -3854,6 +3854,24 @@ SETUP_IDLEBRIGHTNESS_ABBR
 	NO	Lysstyrke i hvilemodus
 	SV	Ljusstyrka i viloläge
 
+SETUP_MINAUTOBRIGHTNESS
+	EN	Minimal Brightness (Automatic)
+
+SETUP_MINAUTOBRIGHTNESS_ABBR
+	EN	Min. Brightness (Auto)
+
+SETUP_MINAUTOBRIGHTNESS_DESC
+	EN	Adjust the minimal brightness level for automatic brightness settings.
+
+SETUP_SENSAUTOBRIGHTNESS
+	EN	Brightness Sensitivity (Automatic)
+
+SETUP_SENSAUTOBRIGHTNESS_ABBR
+	EN	Sens. Brightness (Auto)
+
+SETUP_SENSAUTOBRIGHTNESS_DESC
+	EN	Adjust the sensitivity for automatic brightness settings.
+
 SETUP_ALARM
 	CS	Budík
 	DA	Vækkeur

@@ -443,7 +443,7 @@ sub init {
 						# Brightness submenus
 						'SETUP_GROUP_BRIGHTNESS'        => {
 							'useMode'         => 'INPUT.List',
-							'listRef'         => ['SETUP_POWERONBRIGHTNESS', 'SETUP_POWEROFFBRIGHTNESS', 'SETUP_IDLEBRIGHTNESS'],
+							'listRef'         => ['SETUP_POWERONBRIGHTNESS', 'SETUP_POWEROFFBRIGHTNESS', 'SETUP_IDLEBRIGHTNESS', 'SETUP_MINAUTOBRIGHTNESS', 'SETUP_SENSAUTOBRIGHTNESS'],
 							'stringExternRef' => 1,
 							'header'          => 'SETUP_GROUP_BRIGHTNESS',
 							'stringHeader'    => 1,
@@ -453,6 +453,25 @@ sub init {
 							},
 							'overlayRefArgs'  => 'CV',
 							'condition'    => sub { 1 },
+							'init'            => sub {
+								my $client = shift;
+								my @opts;
+								
+								my @settingsChoices = @{$menuParams{'SETTINGS'}{'submenus'}{'DISPLAY_SETTINGS'}{'submenus'}{'SETUP_GROUP_BRIGHTNESS'}{'listRef'}};
+								my $menu = $menuParams{'SETTINGS'}{'submenus'}{'DISPLAY_SETTINGS'}{'submenus'}{'SETUP_GROUP_BRIGHTNESS'}{'submenus'};
+								
+								for my $setting ( @settingsChoices) {
+								
+									if ($menu->{$setting}->{'condition'} && &{$menu->{$setting}->{'condition'}}($client)) {
+							
+										push @opts, $setting;
+									}
+								}
+					
+								#@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
+					
+								$client->modeParam('listRef', \@opts);
+							},
 							'submenus'        => {
 			
 								'SETUP_POWERONBRIGHTNESS' => {
@@ -465,6 +484,7 @@ sub init {
 									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('powerOnBrightness') },
 									'init'          => \&brightnessInit,
+									'condition'    => sub { 1 },
 								},
 								
 								'SETUP_POWEROFFBRIGHTNESS' => {
@@ -477,6 +497,7 @@ sub init {
 									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('powerOffBrightness') },
 									'init'          => \&brightnessInit,
+									'condition'    => sub { 1 },
 								},
 						
 								'SETUP_IDLEBRIGHTNESS' => {
@@ -489,6 +510,51 @@ sub init {
 									'headerAddCount'=> 1,
 									'initialValue'  => sub { $prefs->client(shift)->get('idleBrightness') },
 									'init'          => \&brightnessInit,
+									'condition'    => sub { 1 },
+								},
+								'SETUP_MINAUTOBRIGHTNESS'    => {
+									'useMode'      => 'INPUT.Bar',
+									'header'       => 'SETUP_MINAUTOBRIGHTNESS',
+									'stringHeader' => 1,
+									'headerValue'  => 'unscaled',
+									'min'          => 1,
+									'max'          => 5,
+									'increment'    => 1,
+									'onChange'     => sub {
+										my ($client, $value) = @_;
+										
+										$value = $prefs->client($client)->get('minAutoBrightness') + $value;
+										$prefs->client($client)->set('minAutoBrightness', $value);
+									},
+									
+									'pref'         => "minAutoBrightness",
+									'initialValue' => sub { $prefs->client(shift)->get('minAutoBrightness') },
+									'condition'    => sub {
+										my $client = shift;
+										return $client->isa('Slim::Player::Boom');
+									},
+								},
+								'SETUP_SENSAUTOBRIGHTNESS'    => {
+									'useMode'      => 'INPUT.Bar',
+									'header'       => 'SETUP_SENSAUTOBRIGHTNESS',
+									'stringHeader' => 1,
+									'headerValue'  => 'unscaled',
+									'min'          => 1,
+									'max'          => 20,
+									'increment'    => 1,
+									'onChange'     => sub {
+										my ($client, $value) = @_;
+										
+										$value = $prefs->client($client)->get('sensAutoBrightness') + $value;
+										$prefs->client($client)->set('sensAutoBrightness', $value);
+									},
+									
+									'pref'         => "sensAutoBrightness",
+									'initialValue' => sub { $prefs->client(shift)->get('sensAutoBrightness') },
+									'condition'    => sub {
+										my $client = shift;
+										return $client->isa('Slim::Player::Boom');
+									},
 								},
 							},
 						},

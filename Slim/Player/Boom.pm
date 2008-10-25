@@ -59,6 +59,8 @@ our $defaultPrefs = {
 	'titleFormatCurr'      => 4,
 	'lineInAlwaysOn'       => 0, 
 	'lineInLevel'          => 50, 
+	'minAutoBrightness'    => 2,	# Minimal brightness (automatic brightness mode)
+	'sensAutoBrightness'    => 10,	# Sensitivity (automatic brightness mode)
 };
 
 $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 100 }, 'lineInLevel');
@@ -76,6 +78,24 @@ $prefs->setChange(sub {
 	}
 	
 }, 'lineInAlwaysOn');
+
+$prefs->setChange(sub {
+	my ($name, $enabled, $client) = @_;
+
+	my $b = $client->display->brightness();
+	# Setting the brightness again loads the brightnessMap with
+	#  the correct minimal automatic brightness (offset)
+	$client->display->brightness( $b);
+}, 'minAutoBrightness');
+
+$prefs->setChange(sub {
+	my ($name, $enabled, $client) = @_;
+
+	my $b = $client->display->brightness();
+	# Setting the brightness again loads the brightnessMap with
+	#  the correct automatic brightness sensitivity (divisor)
+	$client->display->brightness( $b);
+}, 'sensAutoBrightness');
 
 sub new {
 	my $class = shift;

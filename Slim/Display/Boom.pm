@@ -180,7 +180,18 @@ sub string {
 }
 
 sub brightnessMap {
-	return (0, 1, 2, 3, 4, 5, 0x0A02);	# Formula: vfd brightness = lightsensor value / upper byte + lower byte
+	my $display = shift;
+
+	my $sens = $prefs->client($display->client)->get( "sensAutoBrightness");	# 1 - 20
+	if( $sens < 1) { $sens = 1; }
+	if( $sens > 20) { $sens = 20; }
+	my $divisor = 21 - $sens;
+
+	my $offset = $prefs->client($display->client)->get( "minAutoBrightness");	# 1 - 7
+	if( $offset < 1) { $offset = 1; }
+	if( $offset > 7) { $offset = 7; }
+
+	return (0, 1, 2, 3, 4, 5, ( $divisor * 256) + $offset);	# Formula: vfd brightness = lightsensor value / upper byte + lower byte
 }
 
 =head1 SEE ALSO
