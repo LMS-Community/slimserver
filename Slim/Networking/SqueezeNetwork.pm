@@ -297,11 +297,6 @@ sub getHeaders {
 	
 	my @headers;
 	
-	# Indicate our language preference
-	if ( !main::SLIM_SERVICE ) {
-		push @headers, 'Accept-Language', lc( $prefs->get('language') ) || 'en';
-	}
-	
 	# Add player ID data
 	if ( $client ) {
 		push @headers, 'X-Player-MAC', $client->master()->id;

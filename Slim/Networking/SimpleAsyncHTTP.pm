@@ -164,20 +164,18 @@ sub _createHTTPRequest {
 		);
 	}
 	
-	# Add Accept-Language header if we have a client
-	if ( my $client = $self->{params}->{params}->{client} ) {
-		my $lang;
-		if ( main::SLIM_SERVICE ) {
+	# Add Accept-Language header
+	my $lang = $prefs->get('language') || 'en';
+	
+	if ( main::SLIM_SERVICE ) {
+		if ( my $client = $self->{params}->{params}->{client} ) {
 			$lang = $prefs->client($client)->get('language');
 		}
-		else {
-			$lang = $prefs->get('language');
-		}
-		
-		unshift @_, (
-			'Accept-Language' => lc( $lang || 'en' ),
-		);
 	}
+		
+	unshift @_, (
+		'Accept-Language' => lc($lang),
+	);
 	
 	if ( @_ ) {
 		$request->header( @_ );
