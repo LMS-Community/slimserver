@@ -1,0 +1,14 @@
+PLUGIN_EXTENSIONS
+	EN	Extension Downloader
+
+PLUGIN_EXTENSIONS_DESC
+	EN	This plugin enables the server to automatically download lists of extensions for the Squeezebox Controller and SqueezePlay.  This enables you to install extra functionality such as community provided applets, wallpapers or sound effects for use on your controller or SqueezePlay.  These will appear on the Setup menus of your controller under Setup - Advanced - Applet Installer, Setup - Screen - Wallpapers, Setup - Advanced - Sound Effects.
+
+PLUGIN_EXTENSIONS_REPOS
+	EN	Additional Repositories
+
+PLUGIN_EXTENSIONS_REPOS_DESC
+	EN	The server will default to only fetching information from a repository of known 3rd party extensions maintained at slimdevices.com.  You may define additional repositories for the server to search for extensions.   Add the urls for additional repositories into the list below.<br /><br /><b>Warning:</b> As the server will automatically download software from the responsitories you define, please verify that you trust the owner of the repository.
+
+
+

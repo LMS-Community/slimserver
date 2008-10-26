@@ -1,0 +1,26 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_EXTENSIONS" desc="" %]
+
+		<div class="prefDesc">[% "PLUGIN_EXTENSIONS_DESC" | string %]</div>
+
+		<div class="prefHead">[% "PLUGIN_EXTENSIONS_REPOS" | string %]</div>
+		<div class="prefDesc">[% "PLUGIN_EXTENSIONS_REPOS_DESC" | string %]</div>
+
+		<table border="0" cellspacing="7" cellpadding="7">
+
+		[% FOREACH entry = repos %]
+
+			<tr>
+
+			<td><input type="text" class="stdedit" name="repos" id="repos" value="[% entry %]" size="60" /></td>
+
+			</tr>
+
+		[% END %]
+
+		</table>
+
+	[% END %]
+
+[% PROCESS settings/footer.html %]

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<extensions>
+
+  <applets>
+
+	<applet name="Tetris" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
+	  <title>
+		<EN>Tetris</EN>
+	  </title>
+	  <desc></desc>
+	  <url>http://wiki.slimdevices.com/uploads/0/09/Tetris.zip</url>
+	  <md5></md5>
+	</applet>
+
+  </applets>
+
+  <wallpapers>
+
+	<wallpaper name="Sunrise"  url="http://forums.slimdevices.com/attachment.php?attachmentid=4854&amp;stc=1&amp;d=1208333907" />
+	<wallpaper name="Elephant" url="http://forums.slimdevices.com/attachment.php?attachmentid=4856&amp;stc=1&amp;d=1208333989" />
+	<wallpaper name="Sky"      url="http://forums.slimdevices.com/attachment.php?attachmentid=4853&amp;stc=1&amp;d=1208333875" />
+
+  </wallpapers>
+
+  <sounds>
+	
+  </sounds>
+
+</extensions>
