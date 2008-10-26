@@ -134,18 +134,14 @@ sub init {
 		[0, 1, 1, \&firmwareUpgradeQuery]);
 
 	Slim::Control::Request::addDispatch(['jiveapplets'],
-		[0, 1, 0, \&downloadQuery]);
+		[0, 1, 1, \&extensionsQuery]);
 
 	Slim::Control::Request::addDispatch(['jivewallpapers'],
-		[0, 1, 0, \&downloadQuery]);
+		[0, 1, 1, \&extensionsQuery]);
 
 	Slim::Control::Request::addDispatch(['jivesounds'],
-		[0, 1, 0, \&downloadQuery]);
+		[0, 1, 1, \&extensionsQuery]);
 	
-	if ( !main::SLIM_SERVICE ) {
-		Slim::Web::HTTP::addRawDownload('^jive(applet|wallpaper|sound)/', \&downloadFile, 'binary');
-	}
-
 	# setup the menustatus dispatch and subscription
 	Slim::Control::Request::addDispatch( ['menustatus', '_data', '_action'],
 		[0, 0, 0, sub { warn "menustatus query\n" }]);
@@ -2791,247 +2787,97 @@ sub jiveRecentSearchQuery {
 	$request->setStatusDone();
 }
 
-# The following allow download of applets, wallpaper and sounds from SC to jive
-# Files may be packaged in a plugin or can be added individually via the api below.
-#
-# In the case of downloads packaged as a plugin, each downloadable file should be 
-# available in the 'jive' folder of a plugin and the plugin install.xml file should refer
-# to it in the following format:
-#
-# <jive>
-#    <applet>
-#       <version>0.1</version>
-#       <name>Applet1</name>
-#       <file>Applet1.zip</file>
-#    </applet>
-#    <wallpaper>
-#       <name>Wallpaper1</name>
-#       <file>Wallpaper1.png</file>
-#    </wallpaper>			
-#    <wallpaper>
-#       <name>Wallpaper2</name>
-#       <file>Wallpaper2.png</file>
-#    </wallpaper>	
-#    <sound>
-#       <name>Sound1</name>
-#       <file>Sound1.wav</file>
-#    </sound>	
-# </jive>
-#
-# Alternatively individual wallpaper and sound files may be registered by the 
-# registerDownload and deleteDownload api calls.
+sub jiveDummyCommand {
+	return;
+}
 
-# file types allowed for downloading to jive
-my %filetypes = (
-	applet    => qr/\.zip$/,
-	wallpaper => qr/\.(bmp|jpg|jpeg|png|BMP|JPG|JPEG|PNG)$|^http:\/\//,
-	sound     => qr/\.wav$/,
-);
 
-# addditional downloads
-my %extras = (
-	wallpaper => {},
-	sound     => {},
-	applet    => {},
-);
+# The following allow download of extensions (applets, wallpaper and sounds) from SC to jive
 
-=head2 registerDownload()
+# hash of providers for extension information
+my %extensionProviders = ();
 
-Register a local file or url for downloading to jive as a wallpaper, sound file or applet
-$type : either 'wallpaper', 'sound' or 'applet'
-$name : description to show on jive
-$path : fullpath for file on server or http:// url
-$key  : (optional) unique key for this type to avoid using file's basename
-$vers : version (applets only)
+sub registerExtensionProvider {
+	my $name     = shift;
+	my $provider = shift;
 
-=cut
+	$log->info("adding extension provider $name $provider");
 
-sub registerDownload {
-	my $type = shift;
+	$extensionProviders{ $name } = $provider;
+}
+
+sub removeExtensionProvider {
 	my $name = shift;
-	my $path = shift;
-	my $key  = shift;
-	my $vers = shift;
 
-	my $file = $key || ($path ? basename($path) : '');
+	$log->info("deleting extension provider $name");
 
-	if ($type =~ /wallpaper|sound|applet/ && $path =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
-
-		$log->info("registering download for $type $name $file $path");
-
-		$extras{$type}->{$file} = {
-			'name'    => $name,
-			'path'    => $path,
-			'file'    => $file,
-		};
-
-		if ($type eq 'applet') {
-			$extras{$type}->{$file}->{'version'} = $vers;
-		}
-
-	} else {
-		$log->warn("unable to register download for $name $type $file");
-	}
+	delete $extensionProviders{ $name };
 }
 
-=head2 deleteDownload()
-
-Remove previously registered download entry.
-$type : either 'wallpaper', 'sound' or 'applet'
-$path : fullpath for file on server or http:// url
-$key  : (optional) unique key for this type to avoid using file's basename
-
-=cut
-
-sub deleteDownload {
-	my $type = shift;
-	my $path = shift;
-	my $key  = shift;
-
-	my $file = $key || basename($path);
-
-	if ($type =~ /wallpaper|sound|applet/ && $extras{$type}->{$file}) {
-
-		$log->info("removing download for $type $file");
-		delete $extras{$type}->{$file};
-
-	} else {
-		$log->warn("unable remove download for $type $file");
-	}
-}
-
-# downloadable file info from the plugin instal.xml and any registered additions
-sub _downloadInfo {
-	my $type = shift;
-
-	my $plugins = Slim::Utils::PluginManager::allPlugins();
-	my $ret = {};
-
-	for my $key (keys %$plugins) {
-
-		if ($plugins->{$key}->{'jive'} && $plugins->{$key}->{'jive'}->{$type}) {
-
-			my $info = $plugins->{$key}->{'jive'}->{$type};
-			my $dir  = $plugins->{$key}->{'basedir'};
-
-			if ($info->{'name'}) {
-
-				my $file = $info->{'file'};
-
-				if ( $file =~ $filetypes{$type} && -r catdir($dir, 'jive', $file) ) {
-
-					if ($ret->{$file}) {
-						$log->warn("duplicate filename for download: $file");
-					}
-
-					$ret->{$file} = {
-						'name'    => $info->{'name'},
-						'path'    => catdir($dir, 'jive', $file),
-						'file'    => $file,
-						'version' => $info->{'version'},
-					};
-
-				} else {
-					$log->warn("unable to make $key:$file available for download");
-				}
-
-			} elsif (ref $info eq 'HASH') {
-
-				for my $name (keys %$info) {
-
-					my $file = $info->{$name}->{'file'};
-
-					if ( $file =~ $filetypes{$type} && -r catdir($dir, 'jive', $file) ) {
-
-						if ($ret->{$file}) {
-							$log->warn("duplicate filename for download: $file [$key]");
-						}
-
-						$ret->{$file} = {
-							'name'    => $name,
-							'path'    => catdir($dir, 'jive', $file),
-							'file'    => $file,
-							'version' => $info->{$name}->{'version'},
-						};
-
-					} else {
-						$log->warn("unable to make $key:$file available for download");
-					}
-				}
-			}
-		}
-	}
-
-	# add extra downloads as registered via api
-	for my $key (keys %{$extras{$type}}) {
-		$ret->{$key} = $extras{$type}->{$key};
-	}
-
-	return $ret;
-}
-
-# return all files available for download based on query type
-sub downloadQuery {
+# return all extensions available for a specific type, version and target
+# uses extension providers to provide a list of extensions available for the query criteria
+# these are async so they can fetch and parse data to build a list of extensions
+sub extensionsQuery {
 	my $request = shift;
  
-	my $client = $request->client;
 	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
+	my $version= $request->getParam('version');
+	my $target = $request->getParam('target');
 
 	if (!defined $type) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
+	my @providers = keys %extensionProviders;
+	my $language  = $Slim::Utils::Strings::currentLang;
 
-	my $cnt = 0;
-	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . "/jive$type/";
+	if (scalar @providers) {
 
-	for my $val ( sort { $a->{'name'} cmp $b->{'name'} } values %{_downloadInfo($type)} ) {
+		$request->privateData( { remaining => scalar @providers, results => [] } );
 
-		my $url = $val->{'path'} =~ /^http:\/\// ? $val->{'path'} : $urlBase . $val->{'file'};
+		$request->setStatusProcessing;
 
-		my $entry = {
-			$type     => $val->{'name'},
-			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
-			'url'     => $url,
-			'file'    => $val->{'file'},
-		};
+		for my $provider (@providers) {
 
-		if ($val->{'path'} !~ /^http:\/\//) {
-			$entry->{'relurl'} = URI->new($url)->path;
+			$extensionProviders{$provider}->( {
+				'name'   => $provider, 
+				'type'   => $type, 
+				'target' => $target,
+				'version'=> $version, 
+				'lang'   => $language,
+				'cb'     => \&_extensionsQueryCB,
+				'pt'     => [ $request ]
+			});
 		}
-
-		if ($type eq 'applet') {
-			$entry->{'version'} = $val->{'version'};
-		}
-
-		$request->setResultLoopHash('item_loop', $cnt++, $entry);
-	}	
-
-	$request->addResult("count", $cnt);
-
-	$request->setStatusDone();
-}
-
-sub jiveDummyCommand {
-	return;
-}
-
-# convert path to location for download
-sub downloadFile {
-	my $path = shift;
-
-	my ($type, $file) = $path =~ /^jive(applet|wallpaper|sound)\/(.*)/;
-
-	my $info = _downloadInfo($type);
-
-	if ($info->{$file}) {
-
-		return $info->{$file}->{'path'};
 
 	} else {
 
-		$log->warn("unable to find file: $file for type: $type");
+		$request->addResult("count", 0);
+
+		$request->setStatusDone();
+	}
+}
+
+sub _extensionsQueryCB {
+	my $request= shift;
+	my $res    = shift;
+	my $data   = $request->privateData;
+
+	splice @{$data->{'results'}}, 0, 0, @$res;
+
+	if ( ! --$data->{'remaining'} ) {
+
+		my $cnt = 0;
+
+		for my $entry ( sort { $a->{'title'} cmp $b->{'title'} } @{$data->{'results'}} ) {
+
+			$request->setResultLoopHash('item_loop', $cnt++, $entry);
+		}
+
+		$request->addResult("count", $cnt);
+
+		$request->setStatusDone();
 	}
 }
 
