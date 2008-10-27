@@ -21,7 +21,14 @@ $prefs->migrate(1, sub {
 $prefs->migrateClient(2, sub {
 	my ($clientprefs, $client) = @_;
 	$clientprefs->set('timeformat', $prefs->get('timeformat') || '');
-	$clientprefs->set('dateformat', $prefs->get('dateformat') || $client->isa('Slim::Player::Boom') ? $client->string('SETUP_LONGDATEFORMAT_DEFAULT_N') : '');
+	$clientprefs->set('dateformat', $prefs->get('dateformat') || ($client->isa('Slim::Player::Boom') ? $client->string('SETUP_LONGDATEFORMAT_DEFAULT_N') : ''));
+	1;
+});
+
+$prefs->migrateClient(3, sub {
+	my ($clientprefs, $client) = @_;
+	$clientprefs->set('timeFormat', $clientprefs->get('timeformat') || '');
+	$clientprefs->set('dateFormat', $clientprefs->get('dateformat'));
 	1;
 });
 
@@ -30,7 +37,7 @@ $prefs->setChange( sub {
 	if ($client->isa("Slim::Player::Boom")) {
 		$client->setRTCTime();
 	}		
-}, 'timeformat');
+}, 'timeFormat');
 
 
 my $timeFormats = Slim::Utils::DateTime::timeFormats();
@@ -50,7 +57,7 @@ sub page {
 
 sub prefs {
 	my ($class, $client) = @_;
-	return ($prefs->client($client), qw(timeformat dateformat) );
+	return ($prefs->client($client), qw(timeFormat dateFormat) );
 }
 
 sub needsClient {

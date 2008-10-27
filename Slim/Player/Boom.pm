@@ -440,7 +440,7 @@ sub setRTCTime {
 	my $client = shift;
 	my $data;
 
-	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeformat') || $prefs->get('timeFormat');
+	my $dateTimeFormat = preferences('plugin.datetime')->client($client)->get('timeFormat') || $prefs->get('timeFormat');
 	
 	if ( main::SLIM_SERVICE ) {
 		$dateTimeFormat = $prefs->client($client)->get('timeFormat');
