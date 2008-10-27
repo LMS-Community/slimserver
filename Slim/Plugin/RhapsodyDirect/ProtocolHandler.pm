@@ -75,7 +75,17 @@ sub scanUrl {
 }
 
 # Set pcmsamplesize to 3 in slimproto strm to indicate Rhapsody mode
-sub pcmsamplesize { 3 }
+sub pcmsamplesize { 
+	my ( $class, $client, $params ) = @_;
+
+	# If player is playing a 30-second preview, it's plain MP3
+	if ( $params->{url} =~ /\.mp3$/ ) {
+		return 0;
+	}
+	
+	# Otherwise it's RAD
+	return 3;
+}
 
 # Source for AudioScrobbler
 sub audioScrobblerSource {
