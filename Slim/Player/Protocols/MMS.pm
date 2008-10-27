@@ -85,8 +85,6 @@ sub getStreamBitrate {
 	return Slim::Player::Song::guessBitrateFromFormat(${*$self}{'contentType'}, $maxRate);
 }
 
-sub isRemote { 1 }
-
 sub contentType {
 	my $self = shift;
 
