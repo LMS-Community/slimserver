@@ -348,7 +348,7 @@ sub processCoverArtRequest {
 				
 				
 				# If no extension was given optimize for the common case: square JPEG cover art
-				if ( $autoType && $actualContentType eq 'image/jpeg' && $origImage->width == $origImage->height ) {
+				if ( $autoType && $actualContentType eq 'image/jpeg' && ($origImage->width == $origImage->height || $resizeMode eq "original") ) {
 					$log->info( "  No file type requested, returning jpeg for square image" );
 					$requestedContentType = 'image/jpeg';
 					$transparentRequest   = 0;
