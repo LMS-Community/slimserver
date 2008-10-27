@@ -140,27 +140,12 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 	[% END; END %] 
 
 	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" desc="" %]
-
-		[% IF version %]
-			<p>[% "PLAYER_VERSION" | string %][% "COLON" | string %] [% version %]</p>
-		[% END %] 
-
-		[% IF ipaddress %]
-			<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>
+		[% FOREACH item IN playerinfo; item.key %]
+			[% IF item.values.0 %]
+				<p>[% item.keys.0 | string %][% "COLON" | string %] [% item.values.0 %]</p>
+			[% END %]
 		[% END %]
-	
-		[% IF macaddress %]
-			<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>
-		[% END %] 
-
-		[% IF signalstrength %]
-			<p>[% "INFORMATION_PLAYER_SIGNAL_STRENGTH" | string %][% "COLON" | string %] [% signalstrength %]%</p>
-		[% END %] 
-	
-		[% IF voltage %]
-			<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>
-		[% END %] 
-	[% END %]	
+	[% END %]
 
 [% ELSE %]
 	<div class="noPlayerPanel">

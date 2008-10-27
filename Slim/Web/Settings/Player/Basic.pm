@@ -12,7 +12,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Strings qw(string);
+use Slim::Utils::Strings qw(string cstring);
 
 my $prefs = preferences('server');
 
@@ -116,11 +116,8 @@ sub handler {
 		$paramRef->{'saveropts'}             = Slim::Buttons::Common::validSavers($client);
 	}
 
-	$paramRef->{'version'}        = $client->revision;
-	$paramRef->{'ipaddress'}      = $client->ip;
-	$paramRef->{'macaddress'}     = $client->macaddress;
-	$paramRef->{'signalstrength'} = $client->signalStrength;
-	$paramRef->{'voltage'}        = $client->voltage;
+	$paramRef->{'playerinfo'} = Slim::Menu::SystemInfo::infoCurrentPlayer( $client );
+	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};	
 
 	my $page = $class->SUPER::handler($client, $paramRef);
 
