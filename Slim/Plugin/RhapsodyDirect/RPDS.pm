@@ -260,7 +260,13 @@ sub rpds_handler {
 			return;
 		}
 		
-		my $cb = $rpds->{onError} || sub {};
+		# Any other fault stops the player
+		my $handleError = sub {
+			Slim::Player::Source::playmode( $client, 'stop' );
+			handleError( $faultString, $client );
+		};
+		
+		my $cb = $rpds->{onError} || $handleError;			
 		my $pt = $rpds->{passthrough} || [];
 		my $string = sprintf( $client->string('PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT'), $faultString );
 		$cb->( $string, $client, @{$pt} );
