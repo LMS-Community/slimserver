@@ -19,7 +19,7 @@ sub dirsFor {
 	}
 
 	# slimservice on squeezenetwork
-	if ( $dir =~ /^(?:strings|revision|convert|types|Firmware)$/ ) {
+	if ( $dir =~ /^(?:strings|revision|convert|types)$/ ) {
 		push @dirs, $Bin;
 	}
 	
@@ -35,12 +35,8 @@ sub dirsFor {
 		}
 	}
 	
-	elsif ( $dir eq 'cache' ) {
-		push @dirs, catdir( $prefix, 'cache' );
-	}
-	
-	elsif ( $dir eq 'prefs' ) {
-		push @dirs, catdir( $prefix, 'prefs' );
+	elsif ( $dir =~ /^(cache|prefs)$/ ) {
+		push @dirs, catdir( $prefix, $1 );
 	}
 	
 	elsif ( $dir =~ /^(?:music|playlists)$/ ) {
@@ -53,7 +49,7 @@ sub dirsFor {
 	}
 	
 	else {
-		push @dirs, catdir( $prefix, $dir );
+		push @dirs, catdir( $Bin, $dir );
 	}
 
 	return wantarray() ? @dirs : $dirs[0];
