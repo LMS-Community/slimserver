@@ -1277,14 +1277,14 @@ sub playPoint {
 sub timeF {
 	return Slim::Utils::DateTime::timeF(
 		undef, 
-		preferences('plugin.datetime')->client($_[0])->get('timeformat')
+		preferences('plugin.datetime')->client($_[0])->get('timeFormat')
 	);
 }
 
 sub longDateF {
 	return Slim::Utils::DateTime::longDateF(
 		undef, 
-		preferences('plugin.datetime')->client($_[0])->get('dateformat')
+		preferences('plugin.datetime')->client($_[0])->get('dateFormat')
 	);
 }
 

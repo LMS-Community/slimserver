@@ -132,7 +132,7 @@ sub screensaverDateTimelines {
 # BUG 3964: comment out until Dean has a final word on the UI for this.	
 # 	if ($client->display->hasScreen2) {
 # 		if ($client->display->linesPerScreen == 1) {
-# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateformat'))];
+# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateFormat'))];
 # 		} else {
 # 			$display->{'screen2'} = {};
 # 		}
@@ -167,7 +167,7 @@ sub dateTimeLines {
 			# Include the next alarm time in the overlay if there's room
 			if (!$narrow && !defined $currentAlarm) {
 				# Remove seconds from alarm time
-				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->timeformat, 1);
+				my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->get('timeFormat'), 1);
 				$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
 				$overlay .=  " $timeStr";
 			}
@@ -213,7 +213,7 @@ sub showTimeOrAlarm {
 		my $line = $client->symbols('bell');
 
 		# Remove seconds from alarm time
-		my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->timeformat, 1);
+		my $timeStr = Slim::Utils::DateTime::timeF($nextAlarm->time % 86400, $prefs->client($client)->get('timeFormat'), 1);
 		$timeStr =~ s/(\d?\d\D\d\d)\D\d\d/$1/;
 		$line .=  " $timeStr";
 

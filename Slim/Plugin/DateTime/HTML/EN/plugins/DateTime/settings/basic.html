@@ -1,13 +1,13 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_TIMEFORMAT" desc="SETUP_GROUP_DATETIME_DESC" %]
-		<select name="pref_timeformat">
+		<select name="pref_timeFormat">
 
-			<option value="" [% IF NOT prefs.pref_timeformat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
+			<option value="" [% IF NOT prefs.pref_timeFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
 	
 			[% FOREACH format = timeFormats %]
 	
-				<option value="[% format.key %]" [% IF prefs.pref_timeformat == format.key %]selected[% END %]>[% format.value %]</option>
+				<option value="[% format.key %]" [% IF prefs.pref_timeFormat == format.key %]selected[% END %]>[% format.value %]</option>
 	
 			[% END %]
 
@@ -15,13 +15,13 @@
 	[% END %]
 
 	[% WRAPPER setting title="DATE" desc="" %]
-		<select name="pref_dateformat">
+		<select name="pref_dateFormat">
 
-			<option value="" [% IF NOT prefs.pref_dateformat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTDATE" | string %]</option>
+			<option value="" [% IF NOT prefs.pref_dateFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTDATE" | string %]</option>
 	
 			[% FOREACH format = dateFormats %]
 	
-				<option value="[% format.key %]" [% IF prefs.pref_dateformat == format.key %]selected[% END %]>[% format.value %]</option>
+				<option value="[% format.key %]" [% IF prefs.pref_dateFormat == format.key %]selected[% END %]>[% format.value %]</option>
 	
 			[% END %]
 
