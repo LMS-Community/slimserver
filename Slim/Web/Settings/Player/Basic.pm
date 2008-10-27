@@ -117,7 +117,14 @@ sub handler {
 	}
 
 	$paramRef->{'playerinfo'} = Slim::Menu::SystemInfo::infoCurrentPlayer( $client );
-	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};	
+	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};
+	
+	my $model = Slim::Buttons::Information::playerModel($client);
+	
+	# default icon for software emulators and media players
+	$model = 'softsqueeze' if $model =~ /(?:http|squeezeplay)/i;
+
+	$paramRef->{'playericon'} = $model;	
 
 	my $page = $class->SUPER::handler($client, $paramRef);
 

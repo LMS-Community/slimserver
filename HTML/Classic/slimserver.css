@@ -342,6 +342,10 @@ div#homeMenu {
 	margin-bottom: 10px;
 }
 
+.settingSection img.playericon {
+	vertical-align: middle;
+}
+
 #innerSettingsBlock {
 	overflow: auto;
 	width: 100%;

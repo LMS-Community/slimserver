@@ -53,6 +53,10 @@ div#homeMenu {
 	padding-bottom: 5px;
 }
 
+.settingSection img.playericon {
+	vertical-align: middle;
+}
+
 #innerSettingsBlock {
 	overflow: auto;
 	width: 100%;
