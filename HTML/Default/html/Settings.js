@@ -357,7 +357,7 @@ Settings.Page = function(){
 						text: playerList[x].name,
 						value: playerList[x].id,
 						checked: playerList[x].current,
-						cls: 'playerList',
+						cls: playerList[x].model,
 						group: 'playerList',
 						handler: function(ev) {
 							this._confirmPageChange(
