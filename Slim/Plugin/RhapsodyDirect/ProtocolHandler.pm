@@ -661,6 +661,8 @@ sub _gotBulkMetadataError {
 	my $client = $http->params('client');
 	my $error  = $http->error;
 	
+	$client->pluginData( fetchingMeta => 0 );
+	
 	$log->warn("Error getting track metadata from SN: $error");
 }
 
