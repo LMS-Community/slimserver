@@ -19,7 +19,7 @@ sub dirsFor {
 	}
 
 	# slimservice on squeezenetwork
-	if ( $dir =~ /^(?:strings|revision|convert|types)$/ ) {
+	if ( $dir =~ /^(?:strings|revision|convert|types|Firmware)$/ ) {
 		push @dirs, $Bin;
 	}
 	
