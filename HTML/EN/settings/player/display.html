@@ -32,13 +32,13 @@
 
 			[% IF prefs.exists('pref_minAutoBrightness') %]
 				[% WRAPPER settingGroup title="SETUP_MINAUTOBRIGHTNESS" desc="SETUP_MINAUTOBRIGHTNESS_DESC" %]
-					<input type="text" class="stdedit sliderInput_1_5" name="pref_minAutoBrightness" id="minAutoBrightness" value="[% prefs.minAutoBrightness %]" size="5">
+					<input type="text" class="stdedit sliderInput_1_5" name="pref_minAutoBrightness" id="minAutoBrightness" value="[% prefs.pref_minAutoBrightness %]" size="5">
 				[% END %]
 			[% END %]
 
 			[% IF prefs.exists('pref_sensAutoBrightness') %]
 				[% WRAPPER settingGroup title="SETUP_SENSAUTOBRIGHTNESS" desc="SETUP_SENSAUTOBRIGHTNESS_DESC" %]
-					<input type="text" class="stdedit sliderInput_1_20" name="pref_sensAutoBrightness" id="sensAutoBrightness" value="[% prefs.sensAutoBrightness %]" size="5">
+					<input type="text" class="stdedit sliderInput_1_20" name="pref_sensAutoBrightness" id="sensAutoBrightness" value="[% prefs.pref_sensAutoBrightness %]" size="5">
 				[% END %]
 			[% END %]
 
