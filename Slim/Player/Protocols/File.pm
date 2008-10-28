@@ -311,6 +311,12 @@ sub canSeek {
 	return ($formatClass && $formatClass->can('canSeek')) ? $formatClass->canSeek($url) : 0;	
 }
 
+sub canSeekError {
+	my ($class, $client, $song) = @_;
+	
+	return ('SEEK_ERROR_TYPE_NOT_SUPPORTED', Slim::Music::Info::contentType($song->currentTrack()->url));
+}
+
 1;
 
 __END__
