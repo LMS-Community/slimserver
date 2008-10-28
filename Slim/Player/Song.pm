@@ -298,143 +298,160 @@ sub open {
 	
 	$self->{'seekdata'} = $seekdata if $seekdata;
 	
+	# get transcoding command & stream-mode
+	# IF command == '-' AND canDirectStream THEN
+	#	direct stream
+	# ELSE
+	#	ASSERT stream-mode == 'I'  OR command != '-' 
+	#
+	#	IF stream-mode == 'I' OR handler-does-transcoding THEN
+	#		open stream
+	#	ENDIF
+	#	IF command != '-' AND ! handler-does-transcoding THEN
+	#		add transcoding pipeline
+	#	ENDIF
+	# ENDIF
+	
+	my $sock;
+	my $format = Slim::Music::Info::contentType($track);
+
+	my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
+		$self,
+		$format,
+		['I', $handler->isRemote ? 'R' : 'F'], [], []);
+	
+	if (! $transcoder) {
+		logError("Couldn't create command line for $format playback for [$url]");
+		return (undef, 'PROBLEM_CONVERT_FILE', $url);
+	} elsif ($log->is_info) {
+		$log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
+	}
+
 	# TODO work this out for each player in the sync-group
-	if (my $directUrl = $client->canDirectStream($url, $self)) {
+	my $directUrl;
+	if ($transcoder->{'command'} eq '-' && ($directUrl = $client->canDirectStream($url, $self))) {
 		$log->info( "URL supports direct streaming [$url->$directUrl]" );
 		$self->{'directstream'} = 1;
 		$self->{'streamUrl'} = $directUrl;
 	}
 	
-	my $sock;
-	my $format = Slim::Music::Info::contentType($track);
+	else {
+		my $handlerWillTranscode = $transcoder->{'command'} ne '-'
+			&& $handler->can('canHandleTranscode') && $handler->canHandleTranscode($self);
 
-	if (!$self->{'directstream'}) {
-
-		$log->info("URL is (no direct streaming) [$url]");
-
-		$sock = Slim::Player::ProtocolHandlers->openStream($self, $client);
-	
-		if (!$sock) {
-			logWarning("stream failed to open [$url].");
-			$self->{'status'} = STATUS_FAILED;
-			return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
-		}
-				
-		my $contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;
-
-		# if it's an audio stream, try to stream,
-		# either directly, or via transcoding.
-		if (Slim::Music::Info::isSong($track, $contentType)) {
-
-			$log->info("URL is a song (audio): $url, type=$contentType");
-
-			if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
-				logError("Can't set remote stream nonblocking for url: [$url]");
-				return (undef, 'PROBLEM_OPENING', $url);
+		if ($transcoder->{'streamMode'} eq 'I' || $handlerWillTranscode) {
+			$log->info("Opening stream (no direct streaming) using $handler [$url]");
+		
+			$sock = $handler->new({
+				url        => $url, # it is just easier if we always include the URL here
+				client     => $client,
+				song       => $self,
+				transcoder => $transcoder,
+			});
+		
+			if (!$sock) {
+				logWarning("stream failed to open [$url].");
+				$self->{'status'} = STATUS_FAILED;
+				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
 			}
+					
+			my $contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;
+		
+			# if it's an audio stream, try to stream,
+			# either directly, or via transcoding.
+			if (Slim::Music::Info::isSong($track, $contentType)) {
+	
+				$log->info("URL is a song (audio): $url, type=$contentType");
+	
+				if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
+					logError("Can't set remote stream nonblocking for url: [$url]");
+					return (undef, 'PROBLEM_OPENING', $url);
+				}
+				
+				if ($handlerWillTranscode) {
+					$self->{'transcoded'} = 1;
+					$self->{'streambitrate'} = $sock->getStreamBitrate($transcoder->{'rateLimit'});
+				}
+				
+				# If the protocol handler has the bitrate set use this
+				if ($sock->can('bitrate') && $sock->bitrate) {
+					$self->{'bitrate'} = $sock->bitrate;
+				}
+			}	
+			# if it's one of our playlists, parse it...
+			elsif (Slim::Music::Info::isList($track, $contentType)) {
+	
+				# handle the case that we've actually
+				# got a playlist in the list, rather
+				# than a stream.
+	
+				# parse out the list
+				my @items = Slim::Formats::Playlists->parseList($url, $sock);
+	
+				# hack to preserve the title of a song redirected through a playlist
+				if (scalar(@items) == 1 && $items[0] && defined($track->title)) {
+					Slim::Music::Info::setTitle($items[0], $track->title);
+				}
+	
+				# close the socket
+				$sock->close();
+				$sock = undef;
+	
+				Slim::Player::Source::explodeSong($client, \@items);
+	
+				my $new = $self->new ($self->{'owner'}, $self->{'index'});
+				%$self = %$new;
+				
+				# try to open the first item in the list, if there is one.
+				$self->getNextSong (
+					sub {return $self->open();}, # success
+					sub {return(undef, @_);}    # fail
+				);
+				
+			} else {
+				logWarning("Don't know how to handle content for [$url] type: $contentType");
+	
+				$sock->close();
+				$sock = undef;
 
-			# XXX: getConvertCommand is already called above during canDirectStream
-			# We shouldn't run it twice...
-			my ($command, $type);
-			($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand(
-				$client, $track, $contentType,
+				$self->{'status'} = STATUS_FAILED;
+				return (undef, $self->isRemote() ? 'PROBLEM_CONNECTING' : 'PROBLEM_OPENING', $url);
+			}		
+		}	
+
+		if ($transcoder->{'command'} ne '-' && ! $handlerWillTranscode) {
+			# Need to transcode
+				
+			my $quality = $prefs->client($client)->get('lameQuality');
+				
+			my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
+				$transcoder, $sock ? '-' : $track->path, $url, 1, $quality
 			);
 
-			if (!defined $command) {
-				logError("Couldn't create command line for $type playback for [$url]");
+			if (!defined($command)) {
+				logError("Couldn't create command line for $format playback for [$url]");
 				return (undef, 'PROBLEM_CONVERT_FILE', $url);
 			}
 
-			$log->info("URL command $command type $type format $format");
-			$log->info("URL stream format : $contentType");
+			$log->info("Tokenized command $command");
 
-			# If the protocol handler has the bitrate set use this
-			if ($sock->can('bitrate') && $sock->bitrate) {
-				$self->{'bitrate'} = $sock->bitrate;
+			my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+
+			if (!defined($pipeline)) {
+				$sock->close();
+				logError("While creating conversion pipeline for: [$url]");
+				return (undef, 'PROBLEM_CONVERT_STREAM', $url);
 			}
-
-			if ($command ne '-') {
-
-				# Need to transcode
-				
-				my $maxRate = Slim::Utils::Prefs::maxRate($client);
-				my $quality = $prefs->client($client)->get('lameQuality');
-				
-				$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
-					$command, $type, '-', $url, 0 , $maxRate, 1, $quality
-				);
-
-				if (!defined($command)) {
-					logError("Couldn't create command line for $type playback for [$url]");
-					return (undef, 'PROBLEM_CONVERT_FILE', $url);
-				}
-
-				$log->info("Tokenized command $command");
-
-				my $pipeline = Slim::Player::Pipeline->new($sock, $command);
-
-				if (!defined($pipeline)) {
-					$sock->close();
-					logError("While creating conversion pipeline for: [$url]");
-					return (undef, 'PROBLEM_CONVERT_STREAM', $url);
-				}
 	
-				$sock = $pipeline;
+			$sock = $pipeline;
 				
-				$self->{'transcoded'} = 1;
+			$self->{'transcoded'} = 1;
 				
-				$self->{'streambitrate'} = guessBitrateFromFormat($format, $maxRate);
-			}
-
-			else {
-				# Something that does not appear to be a transcoded stream here, may actually
-				# be transcoded by the handler (eg, MMS)
-				if ($sock->can('getStreamBitrate')) {
-					$self->{'streambitrate'} = $sock->getStreamBitrate(Slim::Utils::Prefs::maxRate($client));
-				}
-			}
-			
-			$client->remoteStreamStartTime(Time::HiRes::time());
-			$client->pauseTime(0);
-
+			$self->{'streambitrate'} = guessBitrateFromFormat($transcoder->{'streamformat'}, $transcoder->{'rateLimit'});
 		}
-		
-		# if it's one of our playlists, parse it...
-		elsif (Slim::Music::Info::isList($track, $contentType)) {
-
-			# handle the case that we've actually
-			# got a playlist in the list, rather
-			# than a stream.
-
-			# parse out the list
-			my @items = Slim::Formats::Playlists->parseList($url, $sock);
-
-			# hack to preserve the title of a song redirected through a playlist
-			if (scalar(@items) == 1 && $items[0] && defined($track->title)) {
-				Slim::Music::Info::setTitle($items[0], $track->title);
-			}
-
-			# close the socket
-			$sock->close();
-			$sock = undef;
-
-			Slim::Player::Source::explodeSong($client, \@items);
-
-			my $new = $self->new ($self->{'owner'}, $self->{'index'});
-			%$self = %$new;
 			
-			# try to open the first item in the list, if there is one.
-			$self->getNextSong (
-				sub {return $self->open();}, # success
-				sub {return(undef, @_);}    # fail
-			);
-			
-		} else {
-			logWarning("Don't know how to handle content for [$url] type: $contentType");
-
-			$sock->close();
-			$sock = undef;
-		}
+		$client->remoteStreamStartTime(Time::HiRes::time());
+		$client->pauseTime(0);
 	}
 
 	my $streamControler;
@@ -459,8 +476,8 @@ sub open {
 			}
 		}
 		
-		$self->{'streamFormat'} = $format;
-		$client->streamformat($format); # XXX legacy
+		$self->{'streamFormat'} = $transcoder->{'streamformat'};
+		$client->streamformat($self->{'streamFormat'}); # XXX legacy
 
 		$streamControler = Slim::Player::SongStreamController->new($self, $sock);
 

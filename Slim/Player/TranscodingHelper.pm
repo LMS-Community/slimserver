@@ -28,6 +28,7 @@ use Slim::Utils::Unicode;
 }
 
 our %commandTable = ();
+our %capabilities = ();
 our %binaries = ();
 
 sub Conversions {
@@ -90,9 +91,18 @@ sub loadConversionTables {
 				my $outputtype = $2;
 				my $clienttype = $3;
 				my $clientid   = lc($4);
+				my $profile = "$inputtype-$outputtype-$clienttype-$clientid";
 
-				my $command = <CONVERT>;
+				$line = <CONVERT>;
+				if ($line =~ /^\s+#\s+(\S.*)/) {
+					_getCapabilities($profile, $1);
+					$line = <CONVERT>;
+				} else {
+					$capabilities{$profile} = {I => 'noArgs', F => 'noArgs'};	# default capabilities
+				}
 
+				my $command = $line;
+				
 				$command =~ s/^\s*//o;
 				$command =~ s/\s*$//o;
 
@@ -105,12 +115,73 @@ sub loadConversionTables {
 
 				next unless defined $command && $command !~ /^\s*$/;
 
-				$commandTable{"$inputtype-$outputtype-$clienttype-$clientid"} = $command;
+				$commandTable{$profile} = $command;
 			}
 		}
 
 		close CONVERT;
 	}
+}
+
+# Capabilities
+# I - can transcode from stdin
+# F - can transcode from a named file
+# R - can transcode from a remote URL (URL types unspecified)
+# 
+# O - can seek to a byte offset in the source stream
+# T - can seek to a start time offset
+# U - can seek to start time offset and finish at end time offset
+#
+# D - can downsample 
+# B - can limit bitrate
+#
+# Substitution strings for variable capabilities
+# %o - stream start byte offset
+# 
+# %S - stream samples start offset
+# %s - stream seconds start offset
+# %t - stream time (m:ss) start offset
+# %U - stream samples end offset
+# %u - stream seconds end offset
+# %v - stream time (m:ss) end offset
+# %w - stream seconds duration
+
+#
+# %b - limit bitrate: b/s
+# %B - limit bitrate: kb/s
+# %d - samplerate: samples/s
+
+sub _getCapabilities {
+	my ($profile, $capabilities) = @_;
+	
+	$capabilities{$profile} = {};
+	unless ($capabilities =~ /^([A-Z](\:\{\w+=[^}]+\})?)+$/) {
+		$log->error("Capabilities for $profile: syntax error in $capabilities");
+		return;
+	}
+	
+	while ($capabilities) {
+		my $can = substr($capabilities, 0, 1, '');
+		my $args;
+	
+		if ($capabilities =~ /^:\{(\w+=[^}]+)\}/) {
+			$capabilities = $';
+			$args = $1;
+		} else {
+			if ($can =~ /OTUDB/) {
+				$log->error("Capabilities for $profile: missing arguments for '$can'");
+			}
+			$args = 'noArgs';
+		}
+	
+		$capabilities{$profile}->{$can} = $args;
+	}
+}
+
+sub isEnabled {
+	my $profile = shift;
+	
+	return (defined $commandTable{$profile}) && enabledFormat($profile);
 }
 
 sub enabledFormat {
@@ -189,30 +260,54 @@ sub checkBin {
 	return $command;
 }
 
-sub getConvertCommand {
-	my $client = shift;
-	my $track  = shift || return;
-	my $type   = shift || Slim::Music::Info::contentType($track);
+sub getConvertCommand2 {
+	my ($song, $type, $streamModes, $need, $want) = @_;
+	
+	my $track  = $song->currentTrack();
+	$type ||= Slim::Music::Info::contentType($track);
 
+	my $client = $song->master();
 	my $player;
 	my $clientid;
-	my $command  = undef;
-	my $format   = undef;
+	my $transcoder  = undef;
+	my $backupTranscoder  = undef;
 	my $url      = blessed($track) && $track->can('url') ? $track->url : $track;
 
 	my @supportedformats = ();
 	my %formatcounter    = ();
-	my $underMax;
-
+	
+	# Check if we need to ratelimit
+	my $rateLimit = rateLimit($client, $url, $type);
+	RATELIMIT: if ($rateLimit) {
+		foreach (@$want) {
+			last RATELIMIT if /B/;
+		}
+		push @$want, 'B';
+	}
+	
+	# special case for FLAC cuesheets for SB2. For now, we
+	# let flac do the seeking to the correct point and transcode
+	# to a complete stream that we can send to SB2.
+	# Yucky, but a stopgap until we get FLAC seeking code into
+	# a Perl invokable form.
+	if (($type eq "flc") && ($url =~ /#([^-]+)-([^-]+)$/)) {
+		my ($foundU, $foundT);
+		foreach (@$need) {
+			$foundT = 1 if /T/;
+			$foundU = 1 if /U/;
+		}
+		push @$need, 'T' if ! $foundT;
+		push @$need, 'U' if ! $foundU;
+	}
+	
 	if (defined($client)) {
 
 		my @playergroup = $client->syncGroupActiveMembers();
 
 		$player   = $client->model();
 		$clientid = $client->id();	
-		$underMax = underMax($client, $url, $type);
 
-		$log->debug("undermax = $underMax, type = $type, $player = $clientid");
+		$log->debug("rateLimit = $rateLimit, type = $type, $player = $clientid");
 	
 		# make sure we only test formats that are supported.
 		foreach my $everyclient (@playergroup) {
@@ -231,7 +326,7 @@ sub getConvertCommand {
 
 	} else {
 
-		$underMax = 1;
+		$rateLimit = 0;
 		@supportedformats = qw(aif wav mp3);
 	}
 	
@@ -240,15 +335,13 @@ sub getConvertCommand {
 	# 
 	# Bug: 2095
 	if ($type eq 'mov' && blessed($track) && $track->lossless) {
-
 		$log->debug("Track is alac - updating type!");
-
 		$type = 'alc';
 	}
 
+	# Build the full list of possible profiles
+	my @profiles = ();
 	foreach my $checkFormat (@supportedformats) {
-
-		my @profiles = ();
 
 		if ($client) {
 			push @profiles, (
@@ -264,85 +357,144 @@ sub getConvertCommand {
 		}
 
 		push @profiles, "$type-$checkFormat-*-*";
-
-		foreach my $profile (@profiles) {
-
-			$command = checkBin($profile);
-
-			last if $command;
-		}
-
-		$format = $checkFormat;
-
-		if (defined $command && $command eq "-") {
-
-			# special case for mp3 to mp3 when input is higher than
-			# specified max bitrate.
-			if (!$underMax && $type eq "mp3") {
-				$command = $commandTable{"mp3-mp3-transcode-*"};
-			}			
-
-			# special case for FLAC cuesheets for SB2. For now, we
-			# let flac do the seeking to the correct point and transcode
-			# to a complete stream that we can send to SB2.
-			# Yucky, but a stopgap until we get FLAC seeking code into
-			# a Perl invokable form.
-			elsif (($type eq "flc") && ($url =~ /#([^-]+)-([^-]+)$/)) {
-				$command = $commandTable{"flc-flc-transcode-*"};
-			}
-
-			$underMax = 1;
-
-			# We can't handle WMA Lossless in firmware. So move to the next format type.
-			if ($type eq 'wma' && $checkFormat eq 'wma' && blessed($track) && $track->lossless) {
-
-				next;
-			}
-		}
-
-		# only finish if the rate isn't over the limit
-		if ($command && (!defined($client) || underMax($client, $url, $format, $checkFormat))) {
-			last;
+		
+		if ($type eq $checkFormat && enabledFormat("$type-$checkFormat-*-*")) {
+			push @profiles, "$type-$checkFormat-transcode-*";
 		}
 	}
+	
+	# Test each profile in turn
+	PROFILE: foreach my $profile (@profiles) {
+		my $command = checkBin($profile);
+		next PROFILE if !$command;
 
-	if (!defined $command) {
+		my $streamMode = undef;
+		my $caps = $capabilities{$profile};
+		
+		# Find a profile supporting available stream modes
+		foreach (@$streamModes) {
+			if ($caps->{$_}) {
+				$streamMode = $_;
+				last;
+			}
+		}
+		next PROFILE if ! $streamMode;
+		
+		# Check for mandatory capabilities
+		foreach (@$need) {
+			next PROFILE if ! $caps->{$_};
+		}
 
-		$log->error("Error: Didn't find any command matches for type: $type format: $format");
+		# We can't handle WMA Lossless in firmware.
+		if ($command eq "-"
+			&& $type eq 'wma' && blessed($track) && $track->lossless) {
+				next PROFILE;
+		}
 
-		$format = $type;
+		$transcoder = {
+			command => $command,
+			profile => $profile,
+			usedCapabilities => [@$need, @$want],
+			streamMode => $streamMode,
+			streamformat => ((split (/-/, $profile))[1]),
+			rateLimit => $rateLimit,
+		};
+		
+		# Check for optional profiles
+		my $wanted = 0;
+		my @got = ();
+		foreach (@$want) {
+			if (! $caps->{$_}) {
+				$wanted++;
+			} else {
+				push @got, $_;
+			}
+		}
+		
+		if ($wanted) {
+			# Save this - maybe we get a better offer later
+			if (!$backupTranscoder || $backupTranscoder->{'wanted'} > $wanted) {
+				$backupTranscoder = $transcoder;
+				$transcoder = undef;
+				$backupTranscoder->{'wanted'} = $wanted;
+				$backupTranscoder->{'usedCapabilities'} = [@$need, @got];
+			}
+			next PROFILE;
+		}
+		
+		last;
+	}
+
+	if (!$transcoder && $backupTranscoder) {
+		# Use the backup option
+		$transcoder = $backupTranscoder;
+	}
+
+	if (! $transcoder) {
+		$log->error("Error: Didn't find any command matches for type: $type");
 	} else {
-
-		$log->info("Matched Format: $format Type: $type Command: $command");
+		$log->is_info && $log->info("Matched: $type->", $transcoder->{'streamformat'}, " via: ", $transcoder->{'command'});
 	}
 
-	return ($command, $type, $format);
+	return $transcoder;
 }
 
-sub tokenizeConvertCommand {
-	my ($command, $type, $filepath, $fullpath, $sampleRate, $maxRate, $noPipe, $quality) = @_;
-
-	# Check to see if we need to flip the endianess on output
-	my $swap = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
-
-	# Special case for FLAC cuesheets. We pass the start and end
-	# of the track within the FLAC file.
-	if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
-
-		my ($start, $end) = ($1, $2);
-
-		$command =~ s/\$START\$/Slim::Utils::DateTime::fracSecToMinSec($start)/eg;
-		$command =~ s/\$END\$/Slim::Utils::DateTime::fracSecToMinSec($end)/eg;
-
-	} else {
-
-		$command =~ s/\$START\$/0/g;
-		$command =~ s/\$END\$/-0/g;
-	}
-
+sub tokenizeConvertCommand2 {
+	my ($transcoder, $filepath, $fullpath, $noPipe, $quality) = @_;
+	
+	my $command = $transcoder->{'command'};
+	
 	# This must come above the FILE substitutions, otherwise it will break
 	# files with [] in their names.
 	$command =~ s/\[([^\]]+)\]/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+
+	my ($start, $end);
+	# Special case for FLAC cuesheets. We pass the start and end
+	# of the track within the FLAC file.
+	if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
+		 ($start, $end) = ($1, $2);
+	}
+	
+	if ($transcoder->{'start'}) {
+		$start += $transcoder->{'start'};
+	}
+		
+	my %subs;
+	my %vars;
+	
+	# Start with some legacy ones
+	
+	my $profile = $transcoder->{'profile'};
+	my $capabilities = $capabilities{$profile};
+	
+	# Find what substitutions we need to make
+	foreach my $cap ($transcoder->{'streamFormat'}, @{$transcoder->{'usedCapabilities'}}) {
+		my ($arg, $value) = $capabilities->{$cap} =~ /(\w+)=(.+)/;
+		next unless defined $value;
+		$subs{$arg} = $value;
+		
+		# and find what variables they contain
+		foreach ($value =~ m/%(.)/g) {
+			$vars{$_} = 1;
+		}
+	}
+	
+	foreach my $v (keys %vars) {
+		my $value;
+		
+		if ($v eq 's') {$value = "$start";}
+		elsif ($v eq 'u') {$value = "$end";}
+		elsif ($v eq 't') {$value = Slim::Utils::DateTime::fracSecToMinSec($start);}
+		elsif ($v eq 'v') {$value = Slim::Utils::DateTime::fracSecToMinSec($end);}
+		elsif ($v eq 'w') {$value = $start - $end;}
+
+		elsif ($v eq 'b') {$value = ($transcoder->{'rateLimit'} || 320) * 1000;}
+		elsif ($v eq 'B') {$value = ($transcoder->{'rateLimit'} || 320);}
+		
+		foreach (values %subs) {
+			s/%$v/$value/ge;
+		}
+	}
 
 	# escape $ and * in file names and URLs.
 	# Except on Windows where $ and ` shouldn't be escaped and "
@@ -352,29 +504,27 @@ sub tokenizeConvertCommand {
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
 	
-	# Bug 3396, mov123 commands for URLs must pass the URL to mov123, instead of using stdin
-	if ( $command =~ /mov123/ && $fullpath =~ /^http/ ) {
-		$filepath = $fullpath;
-	}
-
 	if (Slim::Music::Info::isFile($filepath)) {
 		$filepath = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($filepath);
 	}
 	
-	# Hack to avoid passing 0 bitrate to lame
-	if ($command =~ /lame/ && $maxRate == 0) {
-		$maxRate = 320;
+	
+	# Check to see if we need to flip the endianess on output
+	$subs{'-x'} = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
+	
+	$subs{'FILE'} = '"' . $filepath . '"';
+	$subs{'URL'} = '"' . $fullpath . '"';
+	$subs{'QUALITY'} = $quality;
+	
+	foreach (keys %subs) {
+		$command =~ s/\$$_\$/$subs{$_}/;
 	}
 
-	$command =~ s/\$FILE\$/"$filepath"/g;
-	$command =~ s/\$URL\$/"$fullpath"/g;
-	$command =~ s/\$RATE\$/$sampleRate/g;
-	$command =~ s/\$QUALITY\$/$quality/g;
-	$command =~ s/\$BITRATE\$/$maxRate/g;
-	$command =~ s/\$-x\$/$swap/g;
-
-	$command =~ s/\$([^\$\\]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
-
+	# XXX What was this for?
+	# $command =~ s/\$([^\$\\]+)\$/'"' . Slim::Utils::Misc::findbin($1) . '"'/eg;
+	
+	$command =~ s/\s+\$\w+\$//g;
+	
 	if (!defined($noPipe)) {
 		$command .= (Slim::Utils::OSDetect::isWindows()) ? '' : ' &';
 		$command .= ' |';
@@ -383,6 +533,42 @@ sub tokenizeConvertCommand {
 	$log->debug("Using command for conversion: $command");
 
 	return $command;
+}
+
+
+
+sub rateLimit {
+	my $client     = shift;
+	my $fullpath   = shift;
+	my $type       = shift || Slim::Music::Info::contentType($fullpath);
+
+	my $maxRate = 0;
+	
+	foreach ($client->syncGroupActiveMembers()) {
+		my $rate = Slim::Utils::Prefs::maxRate($_);
+		if ($rate && ($maxRate && $maxRate > $rate || !$maxRate)) {
+			$maxRate = $rate;
+		}
+	}
+	
+	return 0 unless $maxRate;
+	
+	# If the input type is mp3 or wma (bug 9641), we determine whether the 
+	# input bitrate is under the maximum.
+	# We presume that we won't choose an output format that violates the rate limit.
+	if (defined($type) && ($type eq 'mp3' || $type eq 'wma')) {
+
+		my $track = Slim::Schema->rs('Track')->objectForUrl($fullpath);
+		my $rate  = 0;
+
+		if (blessed($track) && $track->can('bitrate')) {
+			$rate = ($track->bitrate || 0)/1000;
+		}
+
+		return 0 if ($maxRate >= $rate);
+	}
+	
+	return $maxRate;
 }
 
 sub underMax {

@@ -67,6 +67,8 @@ sub scanURL {
 	
 	$args->{depth} ||= 0;
 	
+	$log->debug( "Scanning remote stream $url" );
+	
 	if ( !$url ) {
 		return $cb->( undef, 'SCANNER_REMOTE_NO_URL_PROVIDED', @{$pt} );
 	}
@@ -156,14 +158,9 @@ sub scanURL {
 	# Bug 4522, if user has disabled native WMA decoding to get MMS support, don't scan MMS URLs
 	if ( $url =~ /^mms/i ) {
 		
-		my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand(
-			$client,
-			$url,
-			'wma',
-		);
-		
-		if ( defined $command && $command ne '-' ) {
-			$log->debug('Not scanning MMS URL because transcoding is enabled.');
+		# XXX This test will not be good enough when we get WMA proxied streaming
+		if ( ! Slim::Player::TranscodingHelper::isEnabled('wma-wma-*-*') ) {
+			$log->debug('Not scanning MMS URL because direct streaming disabled.');
 
 			$track->content_type( 'wma' );
 

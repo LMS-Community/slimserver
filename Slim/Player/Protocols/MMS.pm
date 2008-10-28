@@ -46,37 +46,39 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 
-	my $url    = $args->{'url'};
-	my $client = $args->{'client'};
+	my $url        = $args->{'url'};
+	my $client     = $args->{'client'};
+	my $transcoder = $args->{'transcoder'};
 
-	# Set the content type to 'wma' to get the convert command
-	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, DEFAULT_TYPE);
+	my $command    = $transcoder->{'command'};
 
+	# Sanity check
 	unless (defined($command) && $command ne '-') {
-
-		logger('player.streaming.remote')->error("Error: Couldn't find conversion command for wma!");
-
+		logger('player.streaming.remote')->error("Error: Couldn't find conversion command");
 		# XXX - errorOpening should not be in Source!
 		Slim::Player::Source::errorOpening($client, $client->string('WMA_NO_CONVERT_CMD'));
-
 		return undef;
 	}
 
-	my $maxRate = 0;
-	my $quality = 1;
-
-	if (defined($client)) {
-		$maxRate = Slim::Utils::Prefs::maxRate($client);
-		$quality = $prefs->client($client)->get('lameQuality');
-	}
-
-	$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);
+	my $quality = $prefs->client($client)->get('lameQuality');
+		
+	$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
+		$transcoder, $url, $url, 1, $quality
+	);
+	
+	$log->info("Tokenized command $command");
 
 	my $self = $class->SUPER::new(undef, $command);
 
-	${*$self}{'contentType'} = $format;
+	${*$self}{'contentType'} = $transcoder->{'streamformat'};
 
 	return $self;
+}
+
+sub canHandleTranscode {
+	my ($self, $song) = @_;
+	
+	return 1;
 }
 
 sub getStreamBitrate {
@@ -118,16 +120,7 @@ sub canDirectStream {
 		$url =~ s/#slim:.+$//;
 	}
 
-	# Bug 3181 & Others. Check the available types - if the user has
-	# disabled built-in WMA, return false. This is required for streams
-	# that are MMS only, or for WMA codecs we don't support in firmware.
-	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, $inType || DEFAULT_TYPE);
-
-	if (defined $command && $command eq '-') {
-		return $url;
-	}
-
-	return 0;
+	return $url;
 }
 
 # Most WM streaming stations also stream via HTTP. The requestString class

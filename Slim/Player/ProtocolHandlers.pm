@@ -69,33 +69,6 @@ sub registerHandler {
 	$protocolHandlers{$protocol} = $classToRegister;
 }
 
-sub openStream {
-	my $class    = shift;
-	my $song     = shift;
-	my $client   = shift;
-	
-	my $url        = $song->currentTrack()->url;
-	my $protoClass = $song->currentTrackHandler();
-	my $log        = logger('player.source');
-
-	$log->info("Trying to open protocol stream for $url");
-
-	if ($protoClass) {
-
-		$log->info("Found handler for $url - using $protoClass");
-
-		return $protoClass->new({
-			url      => $url, # it is just easier if we always include the URL here
-			client   => $client,
-			song     => $song,
-		});
-	}
-
-	$log->warn("Couldn't find protocol handler for $url");
-
-	return undef;
-}
-
 sub registerIconHandler {
         my ($class, $regex, $ref) = @_;
 

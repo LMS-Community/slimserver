@@ -223,14 +223,7 @@ sub canDirectStream {
 		$url =~ s/#slim:.+$//;
 	}
 
-	# Check the available types - direct stream MP3, but not Ogg.
-	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, $inType);
-
-	if (defined $command && $command eq '-' || $format eq 'mp3') {
-		return $url;
-	}
-
-	return 0;
+	return $url;
 }
 
 sub sysread {
