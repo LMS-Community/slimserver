@@ -18,7 +18,7 @@ if ( main::SLIM_SERVICE ) {
 	require DateTime;
 }
 
-my $prefs = preferences('plugin.datetime');
+my $prefs = preferences(main::SLIM_SERVICE ? 'server' : 'plugin.datetime');
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_DATETIME';
