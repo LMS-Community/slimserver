@@ -8,7 +8,7 @@ PLUGIN_EXTENSIONS_REPOS
 	EN	Additional Repositories
 
 PLUGIN_EXTENSIONS_REPOS_DESC
-	EN	The server will default to only fetching information from a repository of known 3rd party extensions maintained at slimdevices.com.  You may define additional repositories for the server to search for extensions.   Add the urls for additional repositories into the list below.<br /><br /><b>Warning:</b> As the server will automatically download software from the responsitories you define, please verify that you trust the owner of the repository.
+	EN	The server will default to only fetching information from a repository of known 3rd party extensions maintained at slimdevices.com.  You may define additional repositories for the server to search for extensions.   Add the urls for additional repositories into the list below.<br /><br /><b>Warning:</b> As the server will automatically download software from the repositories you define, please verify that you trust the owner of the repository.
 
 
 
