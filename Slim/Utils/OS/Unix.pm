@@ -98,5 +98,7 @@ sub dirsFor {
 	return wantarray() ? @dirs : $dirs[0];
 }
 
+# leave log rotation to the system
+sub logRotate {}
 
 1;

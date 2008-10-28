@@ -7,9 +7,12 @@ package Slim::Utils::OS;
 use strict;
 use Config;
 use File::Path;
+use File::Copy;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use POSIX qw(LC_CTYPE LC_TIME);
+
+use constant MAX_LOGSIZE => 1024 * 1024 * 100;
 
 sub new {
 	my $class = shift;
@@ -71,6 +74,39 @@ sub dirsFor {
 
 	return wantarray() ? @dirs : $dirs[0];
 }
+
+=head2 logRotate( $dir )
+
+Simple log rotation for systems which don't do this automatically (OSX/Windows).
+
+=cut
+
+sub logRotate {
+	my $class   = shift;
+	my $dir     = shift || Slim::Utils::OSDetect::dirsFor('log');
+
+	opendir(DIR, $dir) or return;
+
+	while ( defined (my $file = readdir(DIR)) ) {
+
+		next if $file !~ /\.log$/i;
+		
+		$file = catdir($dir, $file);
+
+		# max. log size 10MB
+		if (-s $file > MAX_LOGSIZE) {
+
+			# keep one old copy		
+			my $oldfile = "$file.0";
+			unlink $oldfile if -e $oldfile;
+			
+			move($file, $oldfile);
+		}
+	}
+	
+	closedir(DIR);
+}
+
 
 =head2 decodeExternalHelperPath( $filename )
 

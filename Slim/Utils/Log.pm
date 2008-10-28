@@ -91,6 +91,12 @@ sub init {
 		$logDir = $args->{'logdir'};
 	}
 
+	# call poor man's log rotation
+	if (!main::SCANNER && !main::SLIM_SERVICE) {
+		
+		Slim::Utils::OSDetect::getOS->logRotate($logDir);
+	}
+
 	# If the user has specified a log config, or there is a log config written
 	# out (ie: the user has changed settings in the web UI) - look for that.
 	my $logconf = $args->{'logconf'} || $class->defaultConfigFile;
