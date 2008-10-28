@@ -119,7 +119,11 @@ sub open {
 	
 	if (defined $seekdata) {
 		
-		if (!$seekdata->{sourceStreamOffset} && !$seekdata->{playingStreamOffset} && $seekdata->{'timeOffset'}) {
+		if (   ! $seekdata->{sourceStreamOffset}
+			&& ! $seekdata->{playingStreamOffset}
+			&& $seekdata->{'timeOffset'}
+			&& canSeek($class, $client, $song) )
+		{
 			$seekdata->{sourceStreamOffset} = _timeToOffset($sock, $format, $song, $seekdata->{'timeOffset'});
 		}
 		
