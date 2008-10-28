@@ -1195,6 +1195,10 @@ sub generateHTTPResponse {
 				$response->header("icy-metaint" => METADATAINTERVAL);
 				$response->header("icy-name"    => string('WELCOME_TO_SQUEEZECENTER'));
 			}
+			
+			$log->is_info && $log->info("Disabling keep-alive for stream.mp3");
+			delete $keepAlives{$httpClient};
+			Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
 			my $headers = _stringifyHeaders($response) . $CRLF;
 
