@@ -26,7 +26,6 @@ use Slim::Formats::Playlists;
 use Slim::Player::Player;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
-use Slim::Player::Protocols::MMS;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
