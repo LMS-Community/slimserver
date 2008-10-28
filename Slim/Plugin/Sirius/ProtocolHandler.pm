@@ -41,15 +41,13 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 
-	my $client = $args->{client};
 	my $url    = $args->{'song'}->{'streamUrl'};
 	
 	return unless $url;
+	
+	$args->{'url'} = $url;
 
-	return $class->SUPER::new( {
-		client => $client,
-		url    => $url,
-	} );
+	return $class->SUPER::new($args);
 }
 
 sub getNextTrack {
