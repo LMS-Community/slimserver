@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project path="" name="Ext - JS Lib" author="Ext JS, LLC" version="2.2" copyright="Ext JS Library $version&#xD;&#xA;Copyright(c) 2006-2008, $author.&#xD;&#xA;licensing@extjs.com&#xD;&#xA;&#xD;&#xA;http://extjs.com/license" output="D:\workspace\7.3\server\HTML\Default\html\ext" source="False" source-dir="$output\source" minify="False" min-dir="$output\build" doc="False" doc-dir="$output\docs" min-dair="$output\build">
+<project path="" name="Ext - JS Lib" author="Ext JS, LLC" version="2.2" copyright="Ext JS Library $version&#xD;&#xA;Copyright(c) 2006-2008, $author.&#xD;&#xA;licensing@extjs.com&#xD;&#xA;&#xD;&#xA;http://extjs.com/license" output="D:\workspace\trunk\server\HTML\Default\html\ext" source="False" source-dir="$output\source" minify="True" min-dir="$output\build" doc="False" doc-dir="$output\docs" min-dair="$output\build">
   <directory name="" />
   <target name="Everything" file="$output\ext-browse.js" debug="True" shorthand="False" shorthand-list="YAHOO.util.Dom.setStyle&#xD;&#xA;YAHOO.util.Dom.getStyle&#xD;&#xA;YAHOO.util.Dom.getRegion&#xD;&#xA;YAHOO.util.Dom.getViewportHeight&#xD;&#xA;YAHOO.util.Dom.getViewportWidth&#xD;&#xA;YAHOO.util.Dom.get&#xD;&#xA;YAHOO.util.Dom.getXY&#xD;&#xA;YAHOO.util.Dom.setXY&#xD;&#xA;YAHOO.util.CustomEvent&#xD;&#xA;YAHOO.util.Event.addListener&#xD;&#xA;YAHOO.util.Event.getEvent&#xD;&#xA;YAHOO.util.Event.getTarget&#xD;&#xA;YAHOO.util.Event.preventDefault&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Event.stopPropagation&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Anim&#xD;&#xA;YAHOO.util.Motion&#xD;&#xA;YAHOO.util.Connect.asyncRequest&#xD;&#xA;YAHOO.util.Connect.setForm&#xD;&#xA;YAHOO.util.Dom&#xD;&#xA;YAHOO.util.Event">
     <include name="core\Ext.js" />
@@ -435,6 +435,7 @@
     <include name="data\Connection.js" />
     <include name="core\UpdateManager.js" />
     <include name="util\DelayedTask.js" />
+    <include name="util\TaskMgr.js" />
     <include name="util\MixedCollection.js" />
     <include name="util\JSON.js" />
     <include name="util\XTemplate.js" />
