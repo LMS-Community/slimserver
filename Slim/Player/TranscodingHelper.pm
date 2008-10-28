@@ -535,8 +535,6 @@ sub tokenizeConvertCommand2 {
 	return $command;
 }
 
-
-
 sub rateLimit {
 	my $client     = shift;
 	my $fullpath   = shift;
@@ -569,48 +567,6 @@ sub rateLimit {
 	}
 	
 	return $maxRate;
-}
-
-sub underMax {
-	my $client     = shift;
-	my $fullpath   = shift;
-	my $type       = shift || Slim::Music::Info::contentType($fullpath);
-	my $outputType = shift;
-
-	my $maxRate  = Slim::Utils::Prefs::maxRate($client);
-
-	# Bug 4707 - Sanity check:
-	# If maxRate is 0 and the output format is mp3, force 320 limit instead of no limit
-	if ($maxRate == 0 && defined $outputType && $outputType eq 'mp3') {
-		$maxRate = 320;
-	}
-
-	# If we're not rate limited, we're under the maximum.
-	# If we don't have lame, we can't transcode, so we
-	# fall back to saying we're under the maximum.
-	return 1 if $maxRate == 0 || (!Slim::Utils::Misc::findbin('lame'));
-
-	# If the input type is mp3 or wma (bug 9641), we determine whether the 
-	# input bitrate is under the maximum.
-	if (defined($type) && ($type eq 'mp3' || $type eq 'wma')) {
-
-		my $track = Slim::Schema->rs('Track')->objectForUrl($fullpath);
-		my $rate  = 0;
-
-		if (blessed($track) && $track->can('bitrate')) {
-
-			$rate = ($track->bitrate || 0)/1000;
-		}
-
-		return ($maxRate >= $rate);
-	}
-	
-	# For now, we assume the output is raw 44.1Khz, 16 bit, stereo PCM
-	# in all other cases. In that case, we're over any set maximum. 
-	# In the future, we may want to do finer grained testing here - the 
-	# PCM may have different parameters  and we may be able to stream other
-	# formats.
-	return 0;
 }
 
 1;

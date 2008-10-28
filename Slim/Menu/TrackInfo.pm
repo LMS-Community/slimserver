@@ -1025,24 +1025,25 @@ sub infoBitrate {
 		
 		# A bitrate of -1 is set by Scanner::scanBitrate or Formats::*::scanBitrate when the
 		# bitrate of a remote stream can't be determined
-		if ( $bitrate ne '-1' ) {
-			my $undermax = Slim::Player::TranscodingHelper::underMax($client, $track->url);
-			my $rate     = $bitrate;
-			my $convert  = '';
-
-			if ( !$undermax ) {
-
-				$rate = Slim::Utils::Prefs::maxRate($client) . cstring($client, 'KBPS') . " ABR";
-			}
-
-			# XXX: used to be shown only if modeParam 'current' was set
-			if ( defined $undermax && !$undermax ) { 
-				$convert = sprintf( '(%s %s)', cstring($client, 'CONVERTED_TO'), $rate );
+		if ( $bitrate && $bitrate ne '-1' ) {
+			
+			my ($song, $sourcebitrate, $streambitrate);
+			my $convert = '';
+			
+			if (($song = $client->currentSongForUrl($track->url))
+				&& ($sourcebitrate = $song->bitrate())
+				&& ($streambitrate = $song->streambitrate())
+				&& $sourcebitrate != $streambitrate)
+			{
+					$convert = sprintf( ' (%s %s%s ABR)', 
+						cstring($client, 'CONVERTED_TO'), 
+						$streambitrate / 1000,
+						cstring($client, 'KBPS')); 
 			}
 			
 			$item = {
 				type => 'text',
-				name => sprintf( "%s: %s %s",
+				name => sprintf( "%s: %s%s",
 					cstring($client, 'BITRATE'), $bitrate, $convert,
 				),
 			};
