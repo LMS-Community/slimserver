@@ -33,6 +33,9 @@ sub isRemote { 1 }
 
 sub getFormatForURL { 'mp3' }
 
+# default buffer 3 seconds of 192k audio
+sub bufferThreshold { 24 * ( $prefs->get('bufferSecs') || 3 ) }
+
 sub canSeek {
 	my ( $class, $client, $song ) = @_;
 	
@@ -60,7 +63,7 @@ sub new {
 		url     => $streamUrl,
 		song    => $args->{song},
 		client  => $client,
-		bitrate => 192_000,
+		bitrate => $streamUrl =~ /\.mp3$/ ? 128_000 : 192_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
@@ -138,9 +141,11 @@ sub parseDirectHeaders {
 	
 	# Save length for reinit and seeking
 	$client->pluginData( length => $length );
+	
+	my $bitrate = $client->streamingSong()->pluginData('mediaUrl') =~ /\.mp3$/ ? 128_000 : 192_000;
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
-	return (undef, 192000, 0, '', 'mp3', $length, undef);
+	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
 }
 
 # Don't allow looping

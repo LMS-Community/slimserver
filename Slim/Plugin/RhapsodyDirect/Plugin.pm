@@ -344,7 +344,7 @@ sub rpds_handler {
 			$error = $client->string('PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION');
 			
 			# Clear playback session
-			$client->controller()->streamingSong()->pluginData( playbackSessionId => 0 );
+			$client->streamingSong()->pluginData( playbackSessionId => 0 );
 		}
 		
 		Slim::Player::Source::playmode( $client, 'stop' );
