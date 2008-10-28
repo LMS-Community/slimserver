@@ -432,6 +432,7 @@
     <include name="core\Element.js" />
     <include name="core\Fx.js" />
     <include name="core\CompositeElement.js" />
+    <include name="data\Connection.js" />
     <include name="core\UpdateManager.js" />
     <include name="util\DelayedTask.js" />
     <include name="util\MixedCollection.js" />
