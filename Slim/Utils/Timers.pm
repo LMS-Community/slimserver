@@ -69,12 +69,14 @@ BEGIN {
 
 	# alias PQA's ITEM methods
 	if ( hasXS() ) {
-		*ITEM_ID      = \&POE::XS::Queue::Array::ITEM_ID;
-		*ITEM_PAYLOAD = \&POE::XS::Queue::Array::ITEM_PAYLOAD;
+		*ITEM_PRIORITY = \&POE::XS::Queue::Array::ITEM_PRIORITY;
+		*ITEM_ID       = \&POE::XS::Queue::Array::ITEM_ID;
+		*ITEM_PAYLOAD  = \&POE::XS::Queue::Array::ITEM_PAYLOAD;
 	}
 	else {
-		*ITEM_ID      = \&POE::Queue::Array::ITEM_ID;
-		*ITEM_PAYLOAD = \&POE::Queue::Array::ITEM_PAYLOAD;
+		*ITEM_PRIORITY = \&POE::Queue::Array::ITEM_PRIORITY;
+		*ITEM_ID       = \&POE::Queue::Array::ITEM_ID;
+		*ITEM_PAYLOAD  = \&POE::Queue::Array::ITEM_PAYLOAD;
 	}
 }
 
@@ -123,7 +125,7 @@ sub checkTimers {
 
 	while ( defined $nextHigh && $nextHigh <= $now ) {
 
-		my (undef, undef, $high_timer) = $high->dequeue_next();
+		my ($when, undef, $high_timer) = $high->dequeue_next();
 		
 		$fired++;
 		
@@ -135,7 +137,7 @@ sub checkTimers {
 
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($high_subptr);
 
-			$log->info("[high] firing $name " . ($now - $high_timer->{'when'}) . " late.");
+			$log->info("[high] firing $name " . ($now - $when) . " late.");
 		}
 
 		if ( $high_subptr ) {	
@@ -188,7 +190,7 @@ sub checkTimers {
 	
 	if ( defined $nextNormal && $nextNormal <= $now ) {
 		
-		my (undef, undef, $timer) = $normal->dequeue_next();
+		my ($when, undef, $timer) = $normal->dequeue_next();
 
 		my $subptr = $timer->{'subptr'};
 		my $objRef = $timer->{'objRef'};
@@ -197,10 +199,10 @@ sub checkTimers {
 		if ($log->is_info && $subptr) {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
 
-			$log->info("[norm] firing $name " . ($now - $timer->{'when'}) . " late.");
+			$log->info("[norm] firing $name " . ($now - $when) . " late.");
 		}
 
-		$::perfmon && $timerLate->log($now - $timer->{'when'});
+		$::perfmon && $timerLate->log($now - $when);
 
 		if ( $subptr ) {
 
@@ -239,7 +241,7 @@ changed by.
 sub adjustAllTimers {
 	my $delta = shift;
 
-	$log->warn("adjustAllTimers: time travel!");
+	$log->warn("adjustAllTimers: time travel ($delta)");
 
 	for my $item ( $high->peek_items( sub { 1 } ) ) {
 		$high->adjust_priority( $item->[ITEM_ID], sub { 1 }, $delta );
@@ -294,7 +296,7 @@ sub listTimers {
 		
 		my $timer = $item->[ITEM_PAYLOAD];
 		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
-		my $diff  = $timer->{'when'} - $now;
+		my $diff  = $item->[ITEM_PRIORITY] - $now;
 		
 		my $obj = $timer->{'objRef'};
 		if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
@@ -310,7 +312,7 @@ sub listTimers {
 		
 		my $timer = $item->[ITEM_PAYLOAD];
 		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
-		my $diff  = $timer->{'when'} - $now;
+		my $diff  = $item->[ITEM_PRIORITY] - $now;
 		my $obj   = $timer->{'objRef'} || '';
 
 		if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
@@ -347,7 +349,6 @@ sub setHighTimer {
 
 	my $newtimer = {
 		'objRef' => $objRef,
-		'when'   => $when,
 		'subptr' => $subptr,
 		'args'   => \@args,
 	};
@@ -404,7 +405,6 @@ sub setTimer {
 
 	my $newtimer = {
 		'objRef' => $objRef,
-		'when'   => $when,
 		'subptr' => $subptr,
 		'args'   => \@args,
 	};
