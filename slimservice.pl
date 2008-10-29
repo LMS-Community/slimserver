@@ -402,12 +402,17 @@ sub idle {
 	my $now = Time::HiRes::time();
 
 	# check for time travel (i.e. If time skips backwards for DST or clock drift adjustments)
-	if ($now < $lastlooptime) {
+	if ( $now < $lastlooptime || ( $now - $lastlooptime > 300 ) ) {
 
 		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime);
-
-		logger('server.timers')->debug("Finished adjustAllTimers: " . Time::HiRes::time());
-	} 
+		
+		# For all clients that support RTC, we need to adjust their clocks
+		for my $client ( Slim::Player::Client::clients() ) {
+			if ( $client->hasRTCAlarm ) {
+				$client->setRTCTime;
+			}
+		}
+	}
 
 	$lastlooptime = $now;
 
