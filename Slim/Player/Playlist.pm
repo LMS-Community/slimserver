@@ -51,6 +51,7 @@ sub shuffleType {
 }
 
 sub song {
+
 	my $client = shift;
 	my $index = shift;
 
@@ -135,8 +136,6 @@ sub shuffle {
 
 	if (defined($shuffle)) {
 		$prefs->client($client)->set('shuffle', $shuffle);
-		# tell jive we've changed that setting
-		Slim::Control::Jive::shuffleSettings($client);
 	}
 	
 	# If Random Play mode is active, return 0
@@ -157,11 +156,40 @@ sub repeat {
 
 	if (defined($repeat)) {
 		$prefs->client($client)->set('repeat', $repeat);
-		# tell jive we've changed that setting
-		Slim::Control::Jive::repeatSettings($client);
 	}
 	
 	return $prefs->client($client)->get('repeat');
+}
+
+sub playlistModeEnabled {
+	my $client = shift;
+	my $mode   = shift;
+
+	$client    = $client->master();
+
+	my $currentSetting = $prefs->client($client)->get('playlistmode_enabled');
+	if ( defined($mode) && $mode != $currentSetting ) {
+		$prefs->client($client)->set('playlistmode_enabled', $mode);
+	}
+
+	return $prefs->client($client)->get('playlistmode_enabled');
+
+}
+
+sub playlistMode {
+	my $client  = shift;
+	my $mode    = shift;
+	my $enabled = playlistModeEnabled($client);
+
+	$client     = $client->master();
+
+	my $currentSetting = $prefs->client($client)->get('playlistmode');
+	if ( defined($mode) && $mode != $currentSetting ) {
+		$prefs->client($client)->set('playlistmode', $mode);
+	}
+
+	return $prefs->client($client)->get('playlistmode');
+
 }
 
 sub copyPlaylist {

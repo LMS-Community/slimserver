@@ -18686,3 +18686,33 @@ CLEANUP_ALL
 	
 CLEANUP_DELETING
 	EN	Deleting
+
+PLAYLIST_MODE
+	EN	Playlist Mode
+
+JIVE_PLAYLIST_MODE_HELP
+	EN	With playlist mode enabled, the controller's play button will add the current item to the next position in the current playlist. When disabled, the play button will clear the current playlist and immediately begin playback of the item.
+
+PLAYLIST_MODE_ON
+	EN	Playlist Mode On
+
+PLAYLIST_MODE_OFF
+	EN	Playlist Mode Off
+
+PLAYLIST_MODE_ENABLED
+	EN	Playlist Mode Enabled
+
+PLAYLIST_MODE_DISABLED
+	EN	Playlist Mode Disabled
+
+PARTY_MODE
+	EN	Party Mode
+
+PARTY_MODE_ON
+	EN	Party Mode On
+
+PARTY_MODE_OFF
+	EN	Party Mode Off
+
+
+

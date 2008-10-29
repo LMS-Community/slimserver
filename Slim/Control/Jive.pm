@@ -106,11 +106,8 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveunmixable'],
 		[1, 1, 1, \&jiveUnmixableMessage]);
 
-	Slim::Control::Request::addDispatch(['jivepartymodesettings'],
-		[1, 0, 1, \&partyModeSettingsMenu]);
-
-	Slim::Control::Request::addDispatch(['jivesetpartymode'],
-		[1, 0, 1, \&jiveSetPartyMode]);
+	Slim::Control::Request::addDispatch(['jivesetplaylistmode'],
+		[1, 0, 1, \&jiveSetPlaylistMode]);
 
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'],
 		[1, 0, 1, \&albumSortSettingsMenu]);
@@ -302,8 +299,6 @@ sub mainMenu {
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
 		@{albumSortSettingsItem($client, 1)},
-		# hide this item until feature complete
-		#@{partyModeSettingsItem($client, 1)},
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},
 	);
@@ -396,15 +391,21 @@ sub mainMenu {
 	_notifyJive(\@menu, $client);
 }
 
-sub jiveSetPartyMode {
+sub jiveSetPlaylistMode {
 
 	my $request   = shift;
 	my $client    = $request->client;
-	my $partymode = $request->getParam('enabled');
+	my $mode      = $request->getParam('mode');
+	my $enabled   = $request->getParam('enabled');
 
-	$prefs->client($client)->set('partymode', $partymode);
-	$log->error("PARTY MODE HAS BEEN SET TO " . $partymode);
-
+	if ( defined($enabled) ) {
+		Slim::Player::Playlist::playlistModeEnabled($client, $enabled);
+	}
+		
+	if ( defined($mode) ) {
+		Slim::Player::Playlist::playlistMode($client, $mode);
+	}
+		
 	$request->setStatusDone();
 
 }
@@ -419,39 +420,69 @@ sub jiveSetAlbumSort {
 	$request->setStatusDone();
 }
 
-sub partyModeSettingsMenu {
+sub playlistModeSettings {
 	$log->info("Begin function");
 
-	my $request      = shift;
-	my $client       = $request->client;
-	my $partymode    = $prefs->client($client)->get('partymode');
+	my $client       = shift;
+	my $batch        = shift;
+	my $playlistmode_enabled = Slim::Player::Playlist::playlistModeEnabled($client);
+	my $playlistmode = Slim::Player::Playlist::playlistMode($client);
 
-	$log->error("Partymode currently set to " . $partymode);
-	$request->addResult('count', 1);
-	$request->addResult('offset', 0);
+	my @menu = ();
 
-	$request->addResultLoop('item_loop', 0, 'text', $client->string('ENABLE_PARTY_MODE') );
-	$request->addResultLoop('item_loop', 0, 'checkbox', $partymode);
+	my @modeStrings = ('DISABLED', 'OFF', 'ON');
+	my @translatedModeStrings = map { ucfirst($client->string($_)) } @modeStrings;
 
-	my $actions = {
-		on => {
-			player => 0,
-			cmd    => ['jivesetpartymode'],
-			params => {
-				enabled => 1,
-			},
-		},
-		off => {
-			player => 0,
-			cmd    => ['jivesetpartymode'],
-			params => {
-				enabled => 0,
+	my $selected = $playlistmode_enabled ? $playlistmode + 1 : 0;
+
+	my $choice = {
+		text          => $client->string('PLAYLIST_MODE'),
+		choiceStrings => [ @translatedModeStrings ] ,
+		# selected is 1 for disabled, 2 for off, 3 for on
+		selectedIndex => $selected + 1,
+		id            => 'settingsPlaylistMode',
+		node          => 'advancedSettings',
+		weight        => 100,
+		actions       => {
+			do => { 
+				choices => [ 
+					{
+						player => 0,
+						cmd    => [ 'jivesetplaylistmode' ],
+						params => {
+							enabled => 0,
+							mode    => 0,
+						},
+					},
+					{
+						player => 0,
+						cmd    => [ 'jivesetplaylistmode' ],
+						params => {
+							enabled => 1,
+							mode    => 0,
+						},
+					},
+					{
+						player => 0,
+						cmd    => [ 'jivesetplaylistmode' ],
+						params => {
+							enabled => 1,
+							mode    => 1,
+						},
+					},
+				], 
 			},
 		},
 	};
-	$request->addResultLoop('item_loop', 0, 'actions', $actions);
+
+	if ($batch) {
+		return $choice;
+	} else {
+		_notifyJive( [ $choice ], $client);
+	}
 
 }
+
 
 
 sub albumSortSettingsMenu {
@@ -486,38 +517,6 @@ sub albumSortSettingsMenu {
 	
 }
 
-sub partyModeSettingsItem {
-	$log->info("Begin function");
-	my $client = shift;
-	my $batch = shift;
-
-	my @menu = ();
-	push @menu,
-	{
-		text           => $client->string('PARTY_MODE'),
-		id             => 'settingsPartyMode',
-		node           => 'advancedSettings',
-		weight         => 100,
-			actions        => {
-			go => {
-				player => 0,
-				cmd    => ['jivepartymodesettings'],
-			},
-		},
-		window        => {
-				titleStyle => 'settings',
-				# if I add help the checkbox item in this menu quits working! BAH!
-				#help       => { text => $client->string('JIVE_PARTY_MODE_HELP'), },
-		},
-	};
-
-	if ($batch) {
-		return \@menu;
-	} else {
-		_notifyJive(\@menu, $client);
-	}
-
-}
 sub albumSortSettingsItem {
 	$log->info("Begin function");
 	my $client = shift;
@@ -1323,6 +1322,9 @@ sub playerSettingsMenu {
 
 	# always add shuffle
 	push @menu, shuffleSettings($client, 1);
+
+	# always add playlist mode
+	push @menu, playlistModeSettings($client, 1);
 
 	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
@@ -2511,9 +2513,16 @@ sub jivePlayTrackAlbumCommand {
 	my $request    = shift;
 	my $client     = $request->client || return;
 	my $albumID    = $request->getParam('album_id');
+	my $trackID    = $request->getParam('track_id');
 	my $folder     = $request->getParam('folder')|| undef;
 	my $listIndex  = $request->getParam('list_index');
+ 	my $mode       = Slim::Player::Playlist::playlistMode($client);
 	
+	if ( $mode > 0 && $trackID ) {
+		# send the track with cmd of 'load' so playlistcontrol doesn't turn off playlistmode
+		$client->execute( ['playlistcontrol', 'cmd:load', "track_id:$trackID" ] );
+		return;
+	}
 	$client->execute( ["playlist", "clear"] );
 
 	# Database album browse is the simple case

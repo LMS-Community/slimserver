@@ -37,30 +37,48 @@ if ( !main::SLIM_SERVICE && !main::SCANNER ) {
 my $prefs = preferences('server');
 
 our $defaultPrefs = {
-	'maxBitrate'       => undef, # will be set by the client device OR default to server pref when accessed.
+	'maxBitrate'           => undef, # will be set by the client device OR default to server pref when accessed.
 	# Alarm prefs
-	'alarms'           => {},	
-	'alarmsEnabled'    => 1,
-	'alarmDefaultVolume' => 50, # if this is changed, also change the hardcoded value in the prefs migration code in Prefs.pm
-	'alarmSnoozeSeconds' => 540, # 9 minutes
-	'alarmfadeseconds' => 1, # whether to fade in the volume for alarms.  Boolean only, despite the name! 
-	'alarmTimeoutSeconds' => 3600, # time after which to automatically end an alarm.  false to never end
+	'alarms'               => {},	
+	'alarmsEnabled'        => 1,
+	'alarmDefaultVolume'   => 50, # if this is changed, also change the hardcoded value in the prefs migration code in Prefs.pm
+	'alarmSnoozeSeconds'   => 540, # 9 minutes
+	'alarmfadeseconds'     => 1, # whether to fade in the volume for alarms.  Boolean only, despite the name! 
+	'alarmTimeoutSeconds'  => 3600, # time after which to automatically end an alarm.  false to never end
 
-	'lameQuality'      => 9,
-	'playername'       => \&_makeDefaultName,
-	'repeat'           => 2,
-	'shuffle'          => 0,
-	'titleFormat'      => [5, 1, 3, 6, 0],
-	'titleFormatCurr'  => 1,
-	'partymode'        => 0,
+	'lameQuality'          => 9,
+	'playername'           => \&_makeDefaultName,
+	'repeat'               => 2,
+	'shuffle'              => 0,
+	'titleFormat'          => [5, 1, 3, 6, 0],
+	'titleFormatCurr'      => 1,
+	'playlistmode'         => 0,
+	'playlistmode_enabled' => 1,
 };
 
 $prefs->setChange( sub {
 	my $value  = $_[1];
 	my $client = $_[2] || return;
-	Slim::Control::Jive->buildCaches();
-}, 'partymode' );
+	Slim::Control::Request::executeRequest( $client, [ 'status', '-', 10, 'menu:menu' ] );
+}, 'playlistmode' );
 
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Control::Request::executeRequest( $client, [ 'status', '-', 10, 'menu:menu' ] );
+}, 'playlistmode_enabled' );
+
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Control::Jive::repeatSettings($client);
+}, 'repeat' );
+
+$prefs->setChange( sub {
+	my $value  = $_[1];
+	my $client = $_[2] || return;
+	Slim::Control::Jive::shuffleSettings($client);
+}, 'shuffle' );
 
 $prefs->setChange( sub {
 	my $value  = $_[1];

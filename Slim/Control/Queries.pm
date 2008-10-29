@@ -3264,6 +3264,7 @@ sub statusQuery {
 	my $repeat    = Slim::Player::Playlist::repeat($client);
 	my $shuffle   = Slim::Player::Playlist::shuffle($client);
 	my $songCount = Slim::Player::Playlist::count($client);
+	my $mode      = Slim::Player::Playlist::playlistMode($client);
 	my $idx = 0;
 
 
@@ -3370,6 +3371,8 @@ sub statusQuery {
 		$request->addResult("playlist repeat", $repeat);
 		$shuffle += 0;
 		$request->addResult("playlist shuffle", $shuffle); 
+		$mode += 0;
+		$request->addResult("playlist mode", $mode);
 	
 		if (defined (my $playlistObj = $client->currentPlaylist())) {
 			$request->addResult("playlist_id", $playlistObj->id());
@@ -4369,7 +4372,7 @@ sub titlesQuery {
 		
 		# Bug 5981
 		# special play handler for "play all tracks in album
-		if ($playalbum && $albumID ) {
+		if ($playalbum && $albumID) {
 			$base->{'actions'}{'play'} = {
 				player => 0,
 				cmd    => ['jiveplaytrackalbum'],
