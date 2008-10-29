@@ -396,16 +396,11 @@ sub jiveSetPlaylistMode {
 	my $request   = shift;
 	my $client    = $request->client;
 	my $mode      = $request->getParam('mode');
-	my $enabled   = $request->getParam('enabled');
 
-	if ( defined($enabled) ) {
-		Slim::Player::Playlist::playlistModeEnabled($client, $enabled);
-	}
-		
 	if ( defined($mode) ) {
 		Slim::Player::Playlist::playlistMode($client, $mode);
 	}
-		
+
 	$request->setStatusDone();
 
 }
@@ -425,21 +420,22 @@ sub playlistModeSettings {
 
 	my $client       = shift;
 	my $batch        = shift;
-	my $playlistmode_enabled = Slim::Player::Playlist::playlistModeEnabled($client);
 	my $playlistmode = Slim::Player::Playlist::playlistMode($client);
 
 	my @menu = ();
 
 	my @modeStrings = ('DISABLED', 'OFF', 'ON');
 	my @translatedModeStrings = map { ucfirst($client->string($_)) } @modeStrings;
-
-	my $selected = $playlistmode_enabled ? $playlistmode + 1 : 0;
+	my %modes = (
+		disabled => 1,
+		off      => 2,
+		on       => 3,
+	);
 
 	my $choice = {
 		text          => $client->string('PLAYLIST_MODE'),
 		choiceStrings => [ @translatedModeStrings ] ,
-		# selected is 1 for disabled, 2 for off, 3 for on
-		selectedIndex => $selected + 1,
+		selectedIndex => $modes{$playlistmode},
 		id            => 'settingsPlaylistMode',
 		node          => 'advancedSettings',
 		weight        => 100,
@@ -450,24 +446,21 @@ sub playlistModeSettings {
 						player => 0,
 						cmd    => [ 'jivesetplaylistmode' ],
 						params => {
-							enabled => 0,
-							mode    => 0,
+							mode    => 'disabled',
 						},
 					},
 					{
 						player => 0,
 						cmd    => [ 'jivesetplaylistmode' ],
 						params => {
-							enabled => 1,
-							mode    => 0,
+							mode    => 'off',
 						},
 					},
 					{
 						player => 0,
 						cmd    => [ 'jivesetplaylistmode' ],
 						params => {
-							enabled => 1,
-							mode    => 1,
+							mode    => 'on',
 						},
 					},
 				], 

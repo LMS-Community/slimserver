@@ -3371,7 +3371,7 @@ sub statusQuery {
 		$request->addResult("playlist repeat", $repeat);
 		$shuffle += 0;
 		$request->addResult("playlist shuffle", $shuffle); 
-		$mode += 0;
+
 		$request->addResult("playlist mode", $mode);
 	
 		if (defined (my $playlistObj = $client->currentPlaylist())) {

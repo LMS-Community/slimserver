@@ -736,9 +736,12 @@ sub playlistClearCommand {
 
 	# get the parameters
 	my $client = $request->client();
+	my $mode   = Slim::Player::Playlist::playlistMode($client);
 
 	Slim::Player::Playlist::clear($client);
-	Slim::Player::Playlist::playlistMode($client, 0);
+	if ( $mode eq 'on' ) {
+		Slim::Player::Playlist::playlistMode($client, 'off');
+	}
 	Slim::Player::Source::playmode($client, "stop");
 
 	my $playlistObj = Slim::Music::Info::playlistForClient($client);
@@ -1089,8 +1092,11 @@ sub playlistSaveCommand {
 	Slim::Schema->forceCommit;
 
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
-	# exit playlist mode
-	Slim::Player::Playlist::playlistMode($client, 0);
+	# exit playlist mode if currently in playlist mode
+	my $mode = Slim::Player::Playlist::playlistMode($client);
+	if ( $mode eq 'on' ) {
+		Slim::Player::Playlist::playlistMode($client, 'off');
+	}
 
   	$client->showBriefly({
 		'jive' => {
@@ -1617,7 +1623,7 @@ sub playlistZapCommand {
 sub playlistcontrolCommand {
 	my $request = shift;
 	
-	$log->error("Begin Function");
+	$log->info("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlistcontrol']])) {
@@ -1630,7 +1636,6 @@ sub playlistcontrolCommand {
 	my $cmd                 = $request->getParam('cmd');
 	my $trackID             = $request->getParam('track_id');
 	my $playlistMode        = Slim::Player::Playlist::playlistMode($client);
-	my $playlistModeEnabled = Slim::Player::Playlist::playlistModeEnabled($client);
 	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
@@ -1641,9 +1646,9 @@ sub playlistcontrolCommand {
 		return;
 	}
 
-	# 'playlistcontrol insert' when playlistmode is 1 turns off playlist mode
-	if ( $playlistModeEnabled && $playlistMode == 1 && $cmd eq 'insert' ) {
-		Slim::Player::Playlist::playlistMode($client, 0);
+	# when playlistmode is on, 'playlistcontrol insert' turns off playlist mode
+	if ( $playlistMode eq 'on' && $cmd eq 'insert' ) {
+		Slim::Player::Playlist::playlistMode($client, 'off');
                 $client->showBriefly({ 
                         'jive' => { 
                                 'type'    => 'popupplay',
@@ -1653,13 +1658,14 @@ sub playlistcontrolCommand {
 		return;
 	}
 	
-	# when in a non-zero playlistmode, replace 'playlistcontrol load' with 'playlistcontrol insert'
-	if ( $playlistModeEnabled  && $playlistMode > 0 && $cmd eq 'load' ) {
+	# when playlistmode is on, replace 'playlistcontrol load' with 'playlistcontrol insert'
+	if ( $playlistMode eq 'on' && $cmd eq 'load' ) {
 		$cmd    = 'insert';
 	}
-	# when 'playlistcontrol add' is called and playlistmode is 0, set it to 1
-	if ( $playlistModeEnabled && $cmd eq 'add' ) {
-		Slim::Player::Playlist::playlistMode($client, 1);
+
+	# when playlist mode is off, 'playlistcontrol add' turns on playlistmode
+	if ( $playlistMode eq 'off' && $cmd eq 'add' ) {
+		Slim::Player::Playlist::playlistMode($client, 'on');
                 $client->showBriefly({ 
                         'jive' => { 
                                 'type'    => 'popupplay',

@@ -161,30 +161,15 @@ sub repeat {
 	return $prefs->client($client)->get('repeat');
 }
 
-sub playlistModeEnabled {
-	my $client = shift;
-	my $mode   = shift;
-
-	$client    = $client->master();
-
-	my $currentSetting = $prefs->client($client)->get('playlistmode_enabled');
-	if ( defined($mode) && $mode != $currentSetting ) {
-		$prefs->client($client)->set('playlistmode_enabled', $mode);
-	}
-
-	return $prefs->client($client)->get('playlistmode_enabled');
-
-}
-
 sub playlistMode {
 	my $client  = shift;
 	my $mode    = shift;
-	my $enabled = playlistModeEnabled($client);
 
 	$client     = $client->master();
 
 	my $currentSetting = $prefs->client($client)->get('playlistmode');
-	if ( defined($mode) && $mode != $currentSetting ) {
+
+	if ( defined($mode) && $mode ne $currentSetting ) {
 		$prefs->client($client)->set('playlistmode', $mode);
 	}
 

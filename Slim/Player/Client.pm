@@ -52,8 +52,7 @@ our $defaultPrefs = {
 	'shuffle'              => 0,
 	'titleFormat'          => [5, 1, 3, 6, 0],
 	'titleFormatCurr'      => 1,
-	'playlistmode'         => 0,
-	'playlistmode_enabled' => 1,
+	'playlistmode'         => 'off',
 };
 
 $prefs->setChange( sub {
@@ -61,12 +60,6 @@ $prefs->setChange( sub {
 	my $client = $_[2] || return;
 	Slim::Control::Request::executeRequest( $client, [ 'status', '-', 10, 'menu:menu' ] );
 }, 'playlistmode' );
-
-$prefs->setChange( sub {
-	my $value  = $_[1];
-	my $client = $_[2] || return;
-	Slim::Control::Request::executeRequest( $client, [ 'status', '-', 10, 'menu:menu' ] );
-}, 'playlistmode_enabled' );
 
 $prefs->setChange( sub {
 	my $value  = $_[1];
