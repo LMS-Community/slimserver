@@ -168,6 +168,7 @@ sub cliRadiosQuery {
 				cmd  => $tag,
 				name => $request->string( $class->getDisplayName() ),
 				type => 'xmlbrowser',
+				icon => $icon,
 			};
 		}
 		
