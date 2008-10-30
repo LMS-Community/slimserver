@@ -330,7 +330,8 @@ sub infoDirs {
 	my $folders = [
 		{ INFORMATION_CACHEDIR   => $prefs->get('cachedir') },
 		{ INFORMATION_PREFSDIR   => Slim::Utils::Prefs::dir() },
-		{ INFORMATION_PLUGINDIRS => join(", ",Slim::Utils::OSDetect::dirsFor('Plugins')) },
+		# don't display SC's own plugin folder - the user shouldn't care about it
+		{ INFORMATION_PLUGINDIRS => join(", ", grep {$_ !~ m|Slim/Plugin|} Slim::Utils::OSDetect::dirsFor('Plugins')) },
 	];
 	
 	my $item = {
