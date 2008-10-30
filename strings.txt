@@ -2226,6 +2226,20 @@ WELCOME_TO_SQUEEZEPLAY
 	NL	Welkom bij SqueezePlay
 	NO	Velkommen til SqueezePlay
 	SV	Välkommen till SqueezePlay!
+	
+
+LOGIN
+	DA	Log på
+	DE	Anmelden
+	EN	Sign In
+	ES	Iniciar sesión
+	FI	Kirjaudu sisään
+	FR	Se connecter
+	IT	Accedi
+	NL	Aanmelden
+	NO	Logg på
+	SV	Logga in
+
 
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
@@ -8436,7 +8450,7 @@ SETUP_SN_FORGOT_PASSWORD
 SETUP_SN_NEED_ACCOUNT
 	DA	Jeg har brug for en konto
 	DE	Ich brauche ein Konto
-	EN	I need an account
+	EN	I need to create a SqueezeNetwork account
 	ES	Necesito una cuenta
 	FI	Haluan avata tilin
 	FR	Je souhaite créer un compte
@@ -8506,16 +8520,7 @@ SETUP_SN_REPORT_STATS
 	SV	Statistik
 
 SETUP_SN_REPORT_STATS_DESC
-	DA	For at forbedre SqueezeNetwork indsamles statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne bruges samlet og er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">beskyttelse af personlige oplysninger</a>.
-	DE	Wir sammeln statistische Informationen über den Einsatz von Internetradio und -Musikdiensten. Diese Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">Datenschutzbestimmungen</a>.
-	EN	To help improve SqueezeNetwork, we collect statistics on Internet radio and music service listening.  This information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>.
-	ES	Con el fin de mejorar SqueezeNetwork, recopilamos estadísticas sobre el uso de radio y música por Internet. Dicha información se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">política de privacidad</a>.
-	FI	Pidämme tilastoja internet-radion ja musiikkipalvelujen kuuntelusta, jotta voisimme parantaa SqueezeNetwork-verkkoa.  Tiedot kerätään kootusti ja ne on suojattu <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">tietosuojakäytäntömme</a> mukaisesti.
-	FR	Pour améliorer SqueezeNetwork, nous collectons des informations sur les radios Internet et services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">politique de confidentialité</a>.
-	IT	Al fine di migliorare SqueezeNetwork, elaboriamo statistiche sulle radio Internet e sui servizi di musica più ascoltati. Questi dati vengono raccolti collettivamente e il loro trattamento è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">informativa sulla privacy</a>.
-	NL	Teneinde SqueezeNetwork te verbeteren, verzamelen we statistieken over het luisteren naar internetradio en muziekservices. Deze informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacybeleid</a>.
-	NO	Vi samler inn statistisk informasjon om bruk av Internett-radio og musikktjenester, for å hjelpe til med å forbedre SqueezeNetwork. Informasjonen innhentes samlet, og beskyttes av <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">personvernerklæringen</a> vår.
-	SV	Vi vill göra SqueezeNetwork ännu bättre. Därför samlar vi in statistik över hur webbradio och musiktjänster används.  Informationen samlas in på aggregerad nivå och skyddas av vår <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">sekretesspolicy</a>.
+	EN	Help improve SqueezeNetwork by reporting statistics on internet radio and music service listening. (This information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
 
 SETUP_SN_REPORT_STATS_ENABLE
 	DA	Ja, hjælp med at forbedre SqueezeNetwork ved at indsende statistikker.
@@ -8564,18 +8569,6 @@ SETUP_WIZARD_SQN
 	NL	SqueezeNetwork-account
 	NO	SqueezeNetwork-konto
 	SV	SqueezeNetwork-konto
-
-SETUP_WIZARD_SQN_DESC
-	DA	SqueezeNetwork giver dig mulighed for at få mere ud af dit nye trådløse musiksystem ved at give dig adgang til musiktjenester og internetbaserede radiostationer.<br/><br/>Hvis du allerede har en SqueezeNetwork-konto, skal du angive kontooplysningerne nedenfor og klikke på Næste. Hvis du ikke har en SqueezeNetwork-konto, skal du klikke på Jeg har brug for en konto.
-	DE	Mit SqueezeNetwork können Sie Ihr neues kabelloses Musiksystem optimal nutzen und auf Musikdienste und Internetradiosender zugreifen.<br/><br/>Wenn Sie bereits ein SqueezeNetwork-Konto haben, geben Sie Ihre Daten unten ein und klicken Sie auf "Weiter". Wenn Sie kein SqueezeNetwork-Konto haben, klicken Sie auf “Ich brauche ein Konto”.
-	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Next" button. If you don't have a SqueezeNetwork account, please click "I need an account".
-	ES	SqueezeNetwork le permite obtener el máximo de su nuevo sistema de música inalámbrico, mediante el acceso a servicios de música y emisoras de radio por Internet.<br/><br/>Si ya tiene una cuenta SqueezeNetwork, introduzca la información pertinente a continuación y haga clic en el botón "Siguiente". Si no tiene una cuenta SqueezeNetwork, haga clic en “Necesito una cuenta”.
-	FI	SqueezeNetwork-verkon avulla saat mahdollisimman paljon irti uudesta langattomasta musiikkijärjestelmästäsi, sillä verkon avulla voit käyttää internetissä olevia musiikkipalveluja ja radiokanavia.<br/><br/>Jos sinulla on jo SqueezeNetwork-tili, kirjoita tietosi alle ja valitse Seuraava. Jos sinulla ei ole vielä SqueezeNetwork-tiliä, valitse Haluan avata tilin.
-	FR	SqueezeNetwork vous permet de tirer pleinement parti de votre système musical sans fil en vous donnant accès à des services musicaux et des stations de radio sur Internet.<br/><br/>Si vous possédez déjà un compte SqueezeNetwork, spécifiez vos informations ci-dessous et cliquez sur le bouton Suivant. Sinon, cliquez sur Je souhaite créer un compte.
-	IT	SqueezeNetwork consente di sfruttare al massimo i nuovi sistemi musicali senza fili fornendo accesso a servizi di musica e alle stazioni radio di Internet.<br/><br/>Se si dispone già di un account SqueezeNetwork, inserire i propri dati in basso e fare clic sul pulsante "Avanti". Se non si dispone di un account SqueezeNetwork, fare clic su Nuovo account.
-	NL	SqueezeNetwork geeft je toegang tot muziekservices en internetradiostations, zodat je je nieuwe draadloze muzieksysteem optimaal kunt benutten.<br/><br/>Als je al een SqueezeNetwork-account hebt, voer je hieronder je gegevens in en klik je op de knop Volgende. Heb je nog geen SqueezeNetwork-account, dan klik je op 'Ik heb een account nodig'.
-	NO	Med SqueezeNetwork kan du få mest mulig ut av det nye trådløse musikkanlegget ditt, gjennom tilgang til musikktjenester og Internett-radio.<br/><br/>Hvis du allerede har en SqueezeNetwork-konto, angir du informasjonen nedenfor og klikker Neste for å fortsette. Hvis du ikke har en SqueezeNetwork-konto, klikker du på «Jeg må åpne en konto».
-	SV	Med SqueezeNetwork får du ut mer av ditt nya trådlösa nätverksmusiksystem genom tillgång till webbradiostationer och musiktjänster.<br/><br/> Om du redan har ett SqueezeNetwork-konto anger du kontoinformationen nedan och klickar sedan på Nästa. Om du inte har något konto klickar du på Jag behöver ett konto.
 
 SETUP_WIZARD_AUDIODIR
 	DA	Lokal musikmappe
@@ -8662,16 +8655,7 @@ SETUP_WIZARD_SUMMARY
 	SV	Sammanfattning
 
 SETUP_WIZARD_SUMMARY_DESC
-	DA	Nu er SqueezeCenter konfigureret.
-	DE	Das Einrichten von SqueezeCenter ist abgeschlossen.
-	EN	You've finished setting up SqueezeCenter.
-	ES	Ha completado la configuración de SqueezeCenter.
-	FI	SqueezeCenterin käyttöönotto on suoritettu.
-	FR	La configuration du SqueezeCenter est terminée.
-	IT	La configurazione di SqueezeCenter è completata.
-	NL	Je bent klaar met het instellen van SqueezeCenter.
-	NO	SqueezeCenter er nå konfigurert.
-	SV	Konfigurationen av SqueezeCenter är klar.
+	EN	SqueezeCenter is now using the following settings:
 
 SETUP_WIZARD_SUMMARY_SQN
 	DA	SqueezeNetwork-konto:
@@ -18714,5 +18698,32 @@ PARTY_MODE_ON
 PARTY_MODE_OFF
 	EN	Party Mode Off
 
+SIGNUP_LISTEN
+	EN	Listen to some music!
 
+HOWTO_HOME
+	EN	Facing your Squeezebox, press HOME on the remote.
 
+HOWTO_DOWN_BOOM
+	EN	Press DOWN on the remote (or spin the scroll knob to the right) to scroll to Internet Radio, and press RIGHT to select.
+
+HOWTO_STAFF_PICKS
+	EN	Scroll to STAFF PICKS and press RIGHT.
+
+HOWTO_INTERNET_RADIO
+	EN	Scroll to Best of Internet Radio and press RIGHT.
+
+HOWTO_SHOWCASE
+	EN	Scroll to Slim Showcase: Miles Davis and press PLAY.
+
+HOWTO_VOLUME
+	EN	Adjust the volume.
+
+HOWTO_PAUSE
+	EN	To pause the track, tap PAUSE. To stop the track, press and hold the PAUSE button.
+
+WHATS_NEXT
+	EN	I'm all set up - what's next?
+
+CONTINUE_TO_SQUEEZECENTER
+	EN	Continue to SqueezeCenter to manage settings for playing your personal music collection.

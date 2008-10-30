@@ -96,6 +96,12 @@ sub handler {
 				$log->debug('Aborting running scan, as user re-configured music source in the wizard');
 				Slim::Music::Import->abortScan();
 			}
+			
+			# revert logic: while the pref is "disable", the UI is opt-in
+			# if this value is set we actually want to not disable it...
+			elsif ($pref eq 'sn_disable_stats') {
+				$paramRef->{$pref} = $paramRef->{$pref} ? 0 : 1;
+			}
 
 			$serverPrefs->set($pref, $paramRef->{$pref});
 		}
@@ -148,6 +154,11 @@ sub handler {
 		if ( !$paramRef->{useMusicIP} ) {
 			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::MusicMagic::Plugin');
 		}
+	}
+	
+	$paramRef->{model} = $client->model;
+	if ($paramRef->{model} !~ /(?:receiver|boom|transporter)/) {
+		$paramRef->{model} = 'squeezebox';
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
