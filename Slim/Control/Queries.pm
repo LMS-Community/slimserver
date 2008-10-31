@@ -3334,91 +3334,91 @@ sub statusQuery {
 	
 	my $playlist_cur_index;
 	
-		$request->addResult('mode', Slim::Player::Source::playmode($client));
+	$request->addResult('mode', Slim::Player::Source::playmode($client));
 
-		if (my $song = $client->playingSong()) {
+	if (my $song = $client->playingSong()) {
 
-			if ($song->isRemote()) {
-				$request->addResult('remote', 1);
-				$request->addResult('current_title', 
-					Slim::Music::Info::getCurrentTitle($client, $song->currentTrack()->url));
-			}
-			
-			$request->addResult('time', 
-				Slim::Player::Source::songTime($client));
-
-			# This is just here for backward compatibility with older SBC firmware
-			$request->addResult('rate', 1);
-			
-			if (my $dur = $song->duration()) {
-				$dur += 0;
-				$request->addResult('duration', $dur);
-			}
-			
-			my $canSeek = Slim::Music::Info::canSeek($client, $song);
-			if ($canSeek) {
-				$request->addResult('can_seek', 1);
-			}
+		if ($song->isRemote()) {
+			$request->addResult('remote', 1);
+			$request->addResult('current_title', 
+				Slim::Music::Info::getCurrentTitle($client, $song->currentTrack()->url));
 		}
+			
+		$request->addResult('time', 
+			Slim::Player::Source::songTime($client));
+
+		# This is just here for backward compatibility with older SBC firmware
+		$request->addResult('rate', 1);
+			
+		if (my $dur = $song->duration()) {
+			$dur += 0;
+			$request->addResult('duration', $dur);
+		}
+			
+		my $canSeek = Slim::Music::Info::canSeek($client, $song);
+		if ($canSeek) {
+			$request->addResult('can_seek', 1);
+		}
+	}
 		
-		if ($client->currentSleepTime()) {
+	if ($client->currentSleepTime()) {
 
-			my $sleep = $client->sleepTime() - Time::HiRes::time();
-			$request->addResult('sleep', $client->currentSleepTime() * 60);
-			$request->addResult('will_sleep_in', ($sleep < 0 ? 0 : $sleep));
-		}
+		my $sleep = $client->sleepTime() - Time::HiRes::time();
+		$request->addResult('sleep', $client->currentSleepTime() * 60);
+		$request->addResult('will_sleep_in', ($sleep < 0 ? 0 : $sleep));
+	}
 		
-		if ($client->isSynced()) {
+	if ($client->isSynced()) {
 
-			my $master = $client->master();
+		my $master = $client->master();
 
-			$request->addResult('sync_master', $master->id());
+		$request->addResult('sync_master', $master->id());
 
-			my @slaves = Slim::Player::Sync::slaves($master);
-			my @sync_slaves = map { $_->id } @slaves;
+		my @slaves = Slim::Player::Sync::slaves($master);
+		my @sync_slaves = map { $_->id } @slaves;
 
-			$request->addResult('sync_slaves', join(",", @sync_slaves));
-		}
+		$request->addResult('sync_slaves', join(",", @sync_slaves));
+	}
 	
-		if ($client->hasVolumeControl()) {
-			# undefined for remote streams
-			my $vol = $prefs->client($client)->get('volume');
-			$vol += 0;
-			$request->addResult("mixer volume", $vol);
-		}
+	if ($client->hasVolumeControl()) {
+		# undefined for remote streams
+		my $vol = $prefs->client($client)->get('volume');
+		$vol += 0;
+		$request->addResult("mixer volume", $vol);
+	}
 		
-		if ($client->model() =~ /(?:squeezebox|slimp3)/) {
-			$request->addResult("mixer treble", $client->treble());
-			$request->addResult("mixer bass", $client->bass());
-		}
+	if ($client->model() =~ /(?:squeezebox|slimp3)/) {
+		$request->addResult("mixer treble", $client->treble());
+		$request->addResult("mixer bass", $client->bass());
+	}
 
-		if ($client->model() eq 'squeezebox') {
-			$request->addResult("mixer pitch", $client->pitch());
-		}
+	if ($client->model() eq 'squeezebox') {
+		$request->addResult("mixer pitch", $client->pitch());
+	}
 
-		$repeat += 0;
-		$request->addResult("playlist repeat", $repeat);
-		$shuffle += 0;
-		$request->addResult("playlist shuffle", $shuffle); 
+	$repeat += 0;
+	$request->addResult("playlist repeat", $repeat);
+	$shuffle += 0;
+	$request->addResult("playlist shuffle", $shuffle); 
 
-		$request->addResult("playlist mode", $playlistMode);
+	$request->addResult("playlist mode", $playlistMode);
 	
-		if (defined (my $playlistObj = $client->currentPlaylist())) {
-			$request->addResult("playlist_id", $playlistObj->id());
-			$request->addResult("playlist_name", $playlistObj->title());
-			$request->addResult("playlist_modified", $client->currentPlaylistModified());
-		}
+	if (defined (my $playlistObj = $client->currentPlaylist())) {
+		$request->addResult("playlist_id", $playlistObj->id());
+		$request->addResult("playlist_name", $playlistObj->title());
+		$request->addResult("playlist_modified", $client->currentPlaylistModified());
+	}
 
-		if ($songCount > 0) {
-			$playlist_cur_index = Slim::Player::Source::playingSongIndex($client);
-			$request->addResult(
-				"playlist_cur_index", 
-				$playlist_cur_index
-			);
-			$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
-		}
+	if ($songCount > 0) {
+		$playlist_cur_index = Slim::Player::Source::playingSongIndex($client);
+		$request->addResult(
+			"playlist_cur_index", 
+			$playlist_cur_index
+		);
+		$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
+	}
 
-		$request->addResult("playlist_tracks", $songCount);
+	$request->addResult("playlist_tracks", $songCount);
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
