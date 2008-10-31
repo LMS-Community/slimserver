@@ -8,18 +8,40 @@
 		<div class="prefDesc">[% "PLUGIN_EXTENSIONS_REPOS_DESC" | string %]</div>
 
 		<table border="0" cellspacing="7" cellpadding="7">
-
 		[% FOREACH entry = repos %]
-
 			<tr>
-
 			<td><input type="text" class="stdedit" name="repos" id="repos" value="[% entry %]" size="60" /></td>
-
 			</tr>
-
 		[% END %]
-
 		</table>
+
+		[% IF upgrade.size %]
+		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_UPGRADE" | string %]</div>
+		<div class="prefDesc">
+		[% FOREACH plugin = upgrade %]
+			<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %] [% "TO" | string %] v[% plugin.version %])</input><p/>
+		[% END %]
+		</div>
+		[%- END -%]
+
+		[% IF remove.size %]
+		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_REMOVE" | string %]</div>
+		<div class="prefDesc">
+		[% FOREACH plugin = remove %]
+			<input name="remove" value="[% plugin.name %]:[% plugin.current %]:[% plugin.title %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %])</input><p/>
+		[% END %]
+		</div>
+		[%- END -%]
+
+		[% IF install.size %]
+		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_INSTALL" | string %]</div>
+		<div class="prefDesc">
+		[% FOREACH plugin = install %]
+			<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox"> [% plugin.title %] (v[% plugin.version %])</input><p/>
+			[% IF plugin.desc %]<iframe width="100%" height="60px" frameborder="0" marginwidth="25px" scrolling="auto" src="[% plugin.desc %]"></iframe>[% END %]
+		[% END %]
+		</div>
+		[%- END -%]
 
 	[% END %]
 

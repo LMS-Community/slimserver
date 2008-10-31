@@ -1,27 +1,29 @@
 package Slim::Plugin::Extensions::Plugin;
 
-# Plugin to allow extensions for Jive (and in future server Plugins) to be maintained via one or more
-# repository xml files which define available applets/wallpapers/sounds/(plugins) which can then be
-# selected by the user for installation.
+# Plugin to allow server Plugins and extensions for Jive to be maintained via one or more repository xml files
+# which define available plugins/applets/wallpapers/sounds which can then be selected by the user for installation.
 #
 # This is implemented in a plugin for the moment so it can be verified and to allow it to be disabled.
 # Once proven it may move to the core server.
 #
 # Operation:
-# The plugin maintains a list of urls for XML repository files.  When jive makes a request for available
-# extensions these are fetched and parsed to add to create the list of available extensions (in additon to any
-# created by other plugins.  The main repository file will be served by slimdevices.com and will contain
-# details verified 3rd party extensions.  Most users will only have this defined.  For power users and extension
-# authors, there is also the ability to define additional XML repository urls.  These will not be verified
-# so users defining additional repositories must trust them.
+# The plugin maintains a list of urls for XML repository files.  This is used by Slim::Contoller::Jive and
+# Slim::Plugins::Extensions::Settings to maintain a list of available extensions. When jive or the plugin downloader
+# makes a request for available extensions these are fetched and parsed to create the list of available extensions.
+# The list is filtered by the criteria passed to it so that only extensions which are relavent to the platform are returned.
+# The main repository file will be served by slimdevices.com and will contain details verified 3rd party extensions.
+# Most users will only have this defined.  For power users and extension authors, there is also the ability to define
+# additional XML repository urls.  These will not be verified so users defining additional repositories must trust them.
 #
 # Security discussion:
-# This plugin provides the ability to link to executable code (Lua and binaries) which will be automatically
-# downloaded and installed on jive controllers/desktop versions of squeezeplay via the applet installer without
+# This plugin provides the ability to link to executable code (perl plugins, lua applets and binaries) which will be
+# automatically downloaded and installed on the server or jive controllers/desktop versions of squeezeplay without
 # users verifying the source or contents of the code themselves.  The security model is based on trusting
 # the integrity of the hosted repository files.  For this reason it is expected that normal users will only use
 # the repository file hosted on slimdevices.com which will only contain links to trusted extensions.  Users adding
-# additional respository locations should trust the integrity of the respository owner.
+# additional respository locations should trust the integrity of the respository owner.  For plugins, each downloaded file
+# is verified by a sha1 digest which is stored in the repo file to ensure that the downloaded file matches the original
+# created by the author and referred to in the repo file.  This enforces the trust model of relying on the repo file.
 #
 # Repository XML format:
 #
@@ -49,30 +51,35 @@ package Slim::Plugin::Extensions::Plugin;
 #   </plugins>
 # </extensions>
 #
-# Applet entries are of the form:
+# Applet and Plugin entries are of the form:
 # 
 # <applet name="AppletName" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
-#   <title>
-#     <EN>Apples English Title</EN>
-#     <DE>Applets German Title</DE>
-#   </title>
-#   <desc>url for description file</desc>
+#   <title lang="EN">Applet English Title</title>
+#   <title lang="DE">Applet German Title</title>
+#   <desc lang="EN">url for EN description</desc>
+#   <desc lang="DE">url for GE description</desc>
 #   <url>url for zip file</url>
-#   <md5>digest of zip</md5>
 # </applet>
 #
-# AppletName - the name of the applet on jive and must match the file naming structure of the applet.
-# version    - the version of the applet (used to decide if a newer version should be installed)
-# target     - string defining the target, squeezeplay currently uses 'jive'
+# <plugin name="PluginName" version="1.0" target="windows" minTarget="7.3" maxTarget="7.3">
+#   <title lang="EN">Applet English Title</title>
+#   <title lang="DE">Applet German Title</title>
+#   <desc lang="EN">url for EN description</desc>
+#   <desc lang="DE">url for GE description</desc>
+#   <url>url for zip file</url>
+#   <sha>digest of zip</sha>
+# </plugin>
+#
+# name       - the name of the applet/plugin - must match the file naming of the lua/perl packages
+# version    - the version of the applet/plugin (used to decide if a newer version should be installed)
+# target     - string defining the target, squeezeplay currently uses 'jive', for plugins if set this specfies the
+#              the target archiecture and may include multiple strings separated by '|' from "windows|mac|unix"
 # minTarget  - min version of the target software
 # maxTarget  - max version of the target software
 # title      - contains localisations for the title of the applet (optional - uses name if not defined)
-# desc       - url for a text file which contains a description of the applet (see below) (optional)
-# url        - url for the applet itself, this sould be a zipfile of name AppletName.zip
-# md5        - (unimplemented on jive) digest of the zip file which is verifed before the zip is extracted (optional)
-#
-# an additional element: <action>remove</action> may be included if it is desired to automatically remove an installed
-# applet matching the version defined (to be used if it causes instability or is found to cause undesireable effects...)
+# desc       - url for a localised description of the applet or plugin - for plugins this is html, applets txt (optional)
+# url        - url for the applet/plugin itself, this sould be a zip file
+# sha        - (unimplemented on jive) sha1 digest of the zip file which is verifed before the zip is extracted
 #
 # Wallpaper and sound entries can include all of the above elements, but the minimal definition is:
 # 
@@ -80,7 +87,10 @@ package Slim::Plugin::Extensions::Plugin;
 #
 # <sound     name="SoundName"     url="url for sound file"     />
 #
-# Plugin entries - Todo (expected to be based on applet entries)
+# TODO:
+# an additional element: <action>remove</action> may be included if it is desired to automatically remove an installed
+# applet/plugin matching the version defined (to be used if it causes instability or is found to cause undesireable effects...)
+#
 
 use strict;
 
@@ -94,6 +104,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+use Slim::Plugin::Extensions::PluginDownloader;
 use Slim::Plugin::Extensions::Settings;
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -106,29 +117,81 @@ my $prefs = preferences('plugin.extensions');
 
 my $masterRepo = undef; # Repo hosted at slimdevices.com
 
+my %repos = ();
+
 sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin;
 
-	Slim::Plugin::Extensions::Settings->new;
-
-	# register ourselves as an extension provider for each defined repo
 	for my $repo ( $masterRepo, @{$prefs->get('repos')} ) {
-		Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions) if $repo;
+		if ($repo) {
+			$repos{$repo} = 1;
+			Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
+		}
 	}
+
+	Slim::Plugin::Extensions::PluginDownloader->init;
+
+	Slim::Plugin::Extensions::Settings->new;
 }
 
 sub addRepo {
-	my $repo = shift;
+	my $class = shift;
+	my $repo  = shift;
+
 	$log->info("adding repository $repo");
+
+	$repos{$repo} = 1;
 	Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
 }
 
 sub removeRepo {
-	my $repo = shift;
+	my $class = shift;
+	my $repo  = shift;
+
 	$log->info("removing repository $repo");
+
+	delete $repos{$repo};
 	Slim::Control::Jive::removeExtensionProvider($repo, \&getExtensions);
+}
+
+sub getPlugins {
+	my $class = shift;
+	my $cb    = shift;
+	my $pt    = shift || [];
+
+	my $data = { remaining => scalar keys %repos, results => [] };
+
+	for my $repo (keys %repos) {
+		getExtensions({
+			'name'   => $repo, 
+			'type'   => 'plugin', 
+			'target' => Slim::Utils::OSDetect::OS(),
+			'version'=> $::VERSION, 
+			'lang'   => $Slim::Utils::Strings::currentLang,
+			'cb'     => \&_getPluginsCB,
+			'pt'     => [ $data, $cb, $pt ]
+		});
+	}
+
+	if (!keys %repos) {
+		$cb->( @$pt, [] );
+	}
+}
+
+sub _getPluginsCB {
+	my $data  = shift;
+	my $cb    = shift;
+	my $pt    = shift;
+	my $res   = shift;
+
+	splice @{$data->{'results'}}, 0, 0, @$res;
+
+	if ( ! --$data->{'remaining'} ) {
+
+		$cb->( @$pt, $data->{'results'} );
+	}
 }
 
 sub getExtensions {
@@ -158,9 +221,12 @@ sub _parseResponse {
 
 	my $xml  = {};
 
-	eval { $xml = XMLin($http->content, KeyAttr    => [], SuppressEmpty => 1,
+	eval { $xml = XMLin($http->content,
+						SuppressEmpty => 1,
+						KeyAttr    => { title => 'lang', desc => 'lang' },
+						ContentKey => '-content',
 						GroupTags  => { applets => 'applet', sounds => 'sound', wallpapers => 'wallpaper', plugins => 'plugin' },
-						ForceArray => [ 'applet', 'wallpaper', 'sound' ],
+						ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc' ],
 					   ) };
 
 	if ($@) {
@@ -186,17 +252,19 @@ sub _parseXML {
 	my $version = $args->{'version'};
 	my $lang    = $args->{'lang'};
 
+	my $targetRE = $target ? qr/$target/ : undef;
+
 	my $debug = $log->is_debug;
 
 	$debug && $log->debug("searching $args->{name} for type: $type target: $target version: $version");
 
 	my @res = ();
 
-	if ($xml->{ $type . 's' }) {
+	if ($xml->{ $type . 's' } && ref $xml->{ $type . 's' } eq 'ARRAY') {
 
 		for my $entry (@{ $xml->{ $type . 's' } }) {
 
-			if ($target && $entry->{'target'} && $target ne $entry->{'target'}) {
+			if ($target && $entry->{'target'} && $entry->{'target'} !~ $targetRE) {
 				$debug && $log->debug("entry $entry->{name} does not match, wrong target [$target != $entry->{'target'}]");
 				next;
 			}
@@ -208,34 +276,39 @@ sub _parseXML {
 				}
 			}
 
-			my $title;
-
-			if ($entry->{'title'}) {
-				$title = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' } || $entry->{'title'};
-			} else {
-				$title = $entry->{'name'};
-			}
-
 			my $new = {
-				'name'  => $entry->{'name'},
-				'title' => $title,
-				'url'   => $entry->{'url'},
+				'name' => $entry->{'name'},
+				'url'  => $entry->{'url'},
 			};
 
+			if ($entry->{'title'}) {
+				$new->{'title'} = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' } || $entry->{'title'};
+			} else {
+				$new->{'title'} = $entry->{'name'};
+			}
+
+			if ($entry->{'desc'}) {
+				$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ $lang };
+			}
+
 			$new->{'version'} = $entry->{'version'} if $entry->{'version'};
-			$new->{'desc'}    = $entry->{'desc'}    if $entry->{'desc'};
-			$new->{'md5'}     = $entry->{'md5'}     if $entry->{'md5'};
+			$new->{'sha'}     = $entry->{'sha'}     if $entry->{'sha'};
 			$new->{'action'}  = $entry->{'action'}  if $entry->{'action'};
 
 			push @res, $new;
 
-			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{vers} desc: $new->{desc} url: $new->{url}");
+			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} desc: $new->{desc} url: $new->{url}");
 		}
+
+	} else {
+
+		$debug && $log->debug("no $type entry in $args->{name}");
 	}
 
 	$debug && $log->debug("found " . scalar(@res) . " extensions");
 
 	$args->{'cb'}->( @{$args->{'pt'}}, \@res );
 }
+
 
 1;

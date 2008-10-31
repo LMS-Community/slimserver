@@ -2,7 +2,7 @@ PLUGIN_EXTENSIONS
 	EN	Extension Downloader
 
 PLUGIN_EXTENSIONS_DESC
-	EN	This plugin enables the server to automatically download lists of extensions for the Squeezebox Controller and SqueezePlay.  This enables you to install extra functionality such as community provided applets, wallpapers or sound effects for use on your controller or SqueezePlay.  These will appear on the Setup menus of your controller under Setup - Advanced - Applet Installer, Setup - Screen - Wallpapers, Setup - Advanced - Sound Effects.
+	EN	SqueezeCenter may automatically download lists of extensions for the SqueezeCenter and the Squeezebox Controller/SqueezePlay.  This enables you to install extra functionality such as community provided plugins, applets, wallpapers or sound effects.  SqueezeCenter plugins will appear on the list below.  Squeezebox Controller/SqueezePlay extensions will appear on the Setup menus under Setup - Advanced - Applet Installer, Setup - Screen - Wallpapers, Setup - Advanced - Sound Effects.
 
 PLUGIN_EXTENSIONS_REPOS
 	EN	Additional Repositories
@@ -10,5 +10,41 @@ PLUGIN_EXTENSIONS_REPOS
 PLUGIN_EXTENSIONS_REPOS_DESC
 	EN	The server will default to only fetching information from a repository of known 3rd party extensions maintained at slimdevices.com.  You may define additional repositories for the server to search for extensions.   Add the urls for additional repositories into the list below.<br /><br /><b>Warning:</b> As the server will automatically download software from the repositories you define, please verify that you trust the owner of the repository.
 
+PLUGIN_EXTENSIONS_PLUGINS
+	EN	SqueezeCenter Plugins
+	
+PLUGIN_EXTENSIONS_PLUGINS_DESC
+	EN	You may install or remove SqueezeCenter Plugins from the list below.  The server must be restarted once plugins are installed or removed.
 
+PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
+	EN	Upgrade Plugin To A New Version
 
+PLUGIN_EXTENSIONS_PLUGINS_REMOVE
+	EN	Remove Currently Installed Plugin
+
+PLUGIN_EXTENSIONS_PLUGINS_INSTALL
+	EN	Install New Plugins
+
+PLUGIN_EXTENSIONS_RESTART_MSG
+	EN	<b><i>Please Restart SqueezeCenter</i></b>
+
+PLUGIN_EXTENSIONS_REMOVED
+	EN	Removed
+
+PLUGIN_EXTENSIONS_DOWNLOADING
+	EN	Downloading
+
+PLUGIN_EXTENSIONS_BAD_DIGEST
+	EN	Failed to install (file checksum does not match)
+
+PLUGIN_EXTENSIONS_BAD_ZIP
+	EN	Failed to install (corrupt zip file)
+
+PLUGIN_EXTENSIONS_EXTRACTED
+	EN	Installed
+
+PLUGIN_EXTENSIONS_BAD_EXTRACTION
+	EN	Failed to install (zip file could not be extracted)
+
+PLUGIN_EXTENSIONS_BAD_DOWNLOAD
+	EN	Failed to install (could not download file)
