@@ -144,6 +144,8 @@ sub parseDirectHeaders {
 	
 	my $bitrate = $client->streamingSong()->{'streamUrl'} =~ /\.mp3$/ ? 128_000 : 192_000;
 
+	$client->streamingSong->{'bitrate'} = $bitrate;
+
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
 }
