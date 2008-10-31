@@ -106,6 +106,11 @@ sub registerDefaultInfoProviders {
 			after => 'dirs',
 			func  => \&infoLogs,
 		) );
+		
+		$class->registerInfoProvider( plugins => (
+			after => 'logs',
+			func  => \&infoPlugins,
+		) );
 	}
 	
 }
@@ -349,6 +354,39 @@ sub infoDirs {
 		push @{ $item->{items} }, {
 			type => 'text',
 			name => cstring($client, $key) . cstring($client, 'COLON') . ' ' . $value,
+		}
+	}
+	
+	return $item;
+}
+
+sub infoPlugins {
+	my $client = shift || return;
+	my $tags   = shift;
+	
+	my $item = {
+		name  => cstring($client, 'INFORMATION_MENU_MODULE'),
+		items => [],
+		
+		web   => {
+			hide => 1,
+		} 
+	};
+
+	my $plugins = Slim::Utils::PluginManager->allPlugins;
+	my $pluginState = preferences('plugin.state')->all();
+
+	for my $plugin (sort { 
+			uc( cstring($client, $plugins->{$a}->{name}) )
+			cmp uc( cstring($client, $plugins->{$b}->{name}) ) 
+		} keys %{$plugins}) {
+
+		my $name   = $plugins->{$plugin}->{'name'};
+		my $version = $plugins->{$plugin}->{'version'};
+
+		push @{ $item->{items} }, {
+			type => 'text',
+			name => cstring($client, $name) . ' - v' . $version,
 		}
 	}
 	
