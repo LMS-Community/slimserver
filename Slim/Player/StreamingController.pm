@@ -936,6 +936,10 @@ sub _Stream {				# play -> Buffering, Streaming
 		
 		$log->info($player->id . ": stream");
 		
+		if ($song->currentTrackHandler()->can('onStream')) {
+			$song->currentTrackHandler()->onStream($player, $song);
+		}
+		
 		$startedPlayers += $player->play( { 
 			'paused'      => $paused, 
 			'format'      => $song->streamformat(), 

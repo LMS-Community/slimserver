@@ -55,7 +55,7 @@ sub new {
 	my $client = $args->{client};
 	
 	my $song      = $args->{song};
-	my $streamUrl = $song->pluginData('mediaUrl') || return;
+	my $streamUrl = $song->{'streamUrl'} || return;
 	
 	$log->debug( 'Remote streaming Rhapsody track: ' . $streamUrl );
 
@@ -142,7 +142,7 @@ sub parseDirectHeaders {
 	# Save length for reinit and seeking
 	$client->pluginData( length => $length );
 	
-	my $bitrate = $client->streamingSong()->pluginData('mediaUrl') =~ /\.mp3$/ ? 128_000 : 192_000;
+	my $bitrate = $client->streamingSong()->{'streamUrl'} =~ /\.mp3$/ ? 128_000 : 192_000;
 
 	# ($title, $bitrate, $metaint, $redir, $contentType, $length, $body)
 	return (undef, $bitrate, 0, '', 'mp3', $length, undef);
@@ -483,38 +483,10 @@ sub _gotTrackInfo {
     return if $song->pluginData('abandonSong');
 	
 	# Save the media URL for use in strm
-	$song->pluginData( mediaUrl => $info->{mediaUrl} );
-	
-	# Send info necessary for playback to each player
-	for my $c ( $client->syncGroupActiveMembers() ) {
-		# If IP has changed, send this info
-		if ( my $ip = $Slim::Plugin::RhapsodyDirect::Plugin::SECURE_IP ) {
-			$log->debug( $c->id . " Sending updated secure-direct IP: $ip" );
-			
-			$ip = Net::IP->new($ip);
-			my $data = pack( 'cNn', 0, $ip->intip, 443 );
-			$client->sendFrame( rpds => \$data );
-		}
-		
-		if ( $log->is_debug ) {
-			$log->debug( 
-				$c->id . ' Sending playback information: ' . $info->{trackMetadata}->{trackId}
-				. ' / ' . $info->{account}->{logon} 
-				. ' / ' . $info->{account}->{cobrandId}
-				. ' / ' . $song->pluginData('playbackSessionId')
-			);
-		}
-	
-		my $data = pack(
-			'cC/a*C/a*C/a*C/a*',
-			8,
-			$info->{trackMetadata}->{trackId},
-			$info->{account}->{logon},
-			$info->{account}->{cobrandId},
-			$song->pluginData('playbackSessionId'),
-		);
-		$c->sendFrame( rpds => \$data );
-	}
+	$song->{'streamUrl'} = $info->{mediaUrl};
+
+	# Save all the info so we can use it for sending the playback session info
+	$song->pluginData( info => $info );
 	
 	# Async resolve the hostname so gethostbyname in Player::Squeezebox::stream doesn't block
 	# When done, callback will continue on to playback
@@ -553,6 +525,48 @@ sub _gotTrackError {
 	_handleClientError( $error, $client, $params );
 }
 
+sub onStream {
+	my ($self, $client, $song) = @_;
+	
+	# If IP has changed, send this info
+	if ( my $ip = $Slim::Plugin::RhapsodyDirect::Plugin::SECURE_IP ) {
+		$log->debug( $client->id . " Sending updated secure-direct IP: $ip" );
+		
+		$ip = Net::IP->new($ip);
+		my $data = pack( 'cNn', 0, $ip->intip, 443 );
+		$client->sendFrame( rpds => \$data );
+	}
+	
+	my $info = $song->pluginData('info');
+	
+	if ( $log->is_debug ) {
+		$log->debug( 
+			$client->id . ' Sending playback information: ' . $info->{trackMetadata}->{trackId}
+			. ' / ' . $info->{account}->{logon} 
+			. ' / ' . $info->{account}->{cobrandId}
+			. ' / ' . $song->pluginData('playbackSessionId')
+		);
+	}
+
+	my $data = pack(
+		'cC/a*C/a*C/a*C/a*',
+		8,
+		$info->{trackMetadata}->{trackId},
+		$info->{account}->{logon},
+		$info->{account}->{cobrandId},
+		$song->pluginData('playbackSessionId'),
+	);
+	$client->sendFrame( rpds => \$data );
+
+	if (my $seekdata = $song->{'seekdata'}) {
+		# Send special seek information
+		my $data = pack( 'cNN', 7, $seekdata->{'eaoffset'}, $seekdata->{'ealength'} );
+		$log->is_debug && $log->debug( $client->id . " Sending seek data:", $seekdata->{'eaoffset'}, '/', $seekdata->{'ealength'} );
+		
+		$client->sendFrame( rpds => \$data );
+	}
+}
+	
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
@@ -716,7 +730,7 @@ sub canDirectStreamSong {
 	
 	# We need to check with the base class (HTTP) to see if we
 	# are synced or if the user has set mp3StreamingMethod
-	return $class->SUPER::canDirectStream($client, $song->pluginData('mediaUrl'), $class->getFormatForURL());
+	return $class->SUPER::canDirectStream($client, $song->{'streamUrl'}, $class->getFormatForURL());
 }
 
 # URL used for CLI trackinfo queries
@@ -785,7 +799,7 @@ sub onStop {
 	
 	# Clear playback session
 	# XXX: This should only be called when player is really stopping
-	$song->pluginData( playbackSessionId => 0 );
+	# $song->pluginData( playbackSessionId => 0 );
 }
 
 sub onPlayout {
@@ -863,17 +877,11 @@ sub getSeekData {
 	my $radoffset = ( int($nb * $percent) * 3072 ) + 36;
 	my $eaoffset  = ( int($nb * $percent) * 24 ) + 36;
 	
-	# Send special seek information
-	my $data = pack( 'cNN', 7, $eaoffset, $ealength );
-	for my $c ( $client->syncGroupActiveMembers() ) {
-		$log->is_debug && $log->debug( $c->id . " Sending seek data: $eaoffset / $ealength" );
-		
-		$c->sendFrame( rpds => \$data );
-	}
-		
 	return {
 		sourceStreamOffset => $radoffset,
 		timeOffset         => $newtime,
+		eaoffset           => $eaoffset,
+		ealength           => $ealength,
 	};
 }
 
