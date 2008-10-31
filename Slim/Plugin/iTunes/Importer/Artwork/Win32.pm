@@ -20,6 +20,8 @@ sub initArtworkExport {
 }
 
 sub supportsArtworkExport {
+	return 0 unless $itunes;
+
 	my $version = $itunes->Version;
 	
 	if ( $version ge '7.7' ) {
