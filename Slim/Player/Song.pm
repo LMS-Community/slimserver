@@ -610,7 +610,10 @@ sub canDoSeek {
 	
 	return $self->{'canSeek'} if (defined $self->{'canSeek'});
 	
-	my $needEndSeek = (Slim::Utils::Misc::anchorFromURL($self->currentTrack->url()) =~ /[\d.:]+-[\d.:]+/);
+	my $needEndSeek;
+	if (my $anchor = Slim::Utils::Misc::anchorFromURL($self->currentTrack->url())) {
+		$needEndSeek = ($anchor =~ /[\d.:]+-[\d.:]+/);
+	}
 	
 	my $handler = $self->currentTrackHandler();
 	
