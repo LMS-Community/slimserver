@@ -125,6 +125,8 @@ sub clonePlaylistSong {
 	$new{'duration'}      = undef;
 	$new{'bitrate'}       = undef;
 	$new{'transcoded'}    = undef;
+	$new{'canSeek'}       = undef;
+	$new{'canSeekError'}  = undef;
 	delete $new{'streambitrate'};
 		
 	my $self = \%new;
@@ -314,17 +316,33 @@ sub open {
 	
 	my $sock;
 	my $format = Slim::Music::Info::contentType($track);
-
+	
+	$log->info("seek=", ($self->{'seekdata'} ? 'true' : 'false'), ' time=', ($self->{'seekdata'} ? $self->{'seekdata'}->{'timeOffset'} : 0),
+		 ' canSeek=', $self->canSeek());
+		 
+	my $wantTranscoderSeek = $self->{'seekdata'} && $self->{'seekdata'}->{'timeOffset'} && $self->canSeek() == 2;
+	my @wantOptions;
+	push (@wantOptions, 'T') if ($wantTranscoderSeek);
+	
+	my @streamFormats;
+	push (@streamFormats, 'I') if (! $wantTranscoderSeek);
+	
+	push @streamFormats, ($handler->isRemote ? 'R' : 'F');
+	
 	my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
 		$self,
 		$format,
-		['I', $handler->isRemote ? 'R' : 'F'], [], []);
+		\@streamFormats, [], \@wantOptions);
 	
 	if (! $transcoder) {
 		logError("Couldn't create command line for $format playback for [$url]");
 		return (undef, 'PROBLEM_CONVERT_FILE', $url);
 	} elsif ($log->is_info) {
 		$log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
+	}
+	
+	if ($wantTranscoderSeek && (grep(/T/, @{$transcoder->{'usedCapabilities'}}))) {
+		$transcoder->{'start'} = $self->{'startOffset'} = $self->{'seekdata'}->{'timeOffset'};
 	}
 
 	# TODO work this out for each player in the sync-group
@@ -577,6 +595,79 @@ sub getSeekDataByPosition {
 sub streambitrate {
 	my $self = shift;
 	return (exists $self->{'streambitrate'} ? $self->{'streambitrate'} : $self->bitrate());
+}
+
+sub canSeek {
+	my $self = shift;
+	
+	my $canSeek = $self->canDoSeek();
+	
+	return ($canSeek ? $canSeek : ($canSeek, @{$self->{'canSeekError'}}));
+}
+
+sub canDoSeek {
+	my $self = shift;
+	
+	return $self->{'canSeek'} if (defined $self->{'canSeek'});
+	
+	my $needEndSeek = (Slim::Utils::Misc::anchorFromURL($self->currentTrack->url()) =~ /[\d.:]+-[\d.:]+/);
+	
+	my $handler = $self->currentTrackHandler();
+	
+	if (!$needEndSeek && $handler->can('canSeek')) {
+		if ($handler->canSeek( $self->master(), $self )) {
+			return $self->{'canSeek'} = 1 if $handler->isRemote();
+			
+			# If dealing with local file and transcoding then best let transcoder seek if it can
+			
+			# First see how we would stream without seeking question
+			my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
+				$self,
+				Slim::Music::Info::contentType($self->currentTrack),
+				['I', 'F'], [], []);
+			
+			# Is this pass-through?
+			if ($transcoder && $transcoder->{'command'} eq '-') {
+				return $self->{'canSeek'} = 1; # nice simple case
+			}
+			
+			# no, then could we get a seeking transcoder?
+			if (Slim::Player::TranscodingHelper::getConvertCommand2(
+				$self,
+				Slim::Music::Info::contentType($self->currentTrack),
+				['I', 'F'], ['T'], []))
+			{
+				return $self->{'canSeek'} = 2;
+			}
+			
+			# no, then did the transcoder accept stdin?
+			if ($transcoder->{'streamMode'} eq 'I') {
+				return $self->{'canSeek'} = 1;
+			} else {
+				$self->{'canSeekError'} = [ 'SEEK_ERROR_TRANSCODED' ];
+				return $self->{'canSeek'} = 0;
+			}
+			
+		} else {
+			$self->{'canSeekError'} = [$handler->can('canSeekError') 
+					? $handler->canSeekError( $self->master(), $self  )
+					: ('SEEK_ERROR_REMOTE')];
+		}
+	} 
+	
+	if (Slim::Player::TranscodingHelper::getConvertCommand2(
+			$self,
+			Slim::Music::Info::contentType($self->currentTrack),
+			[$handler->isRemote ? 'R' : 'F'], ['T'], []))
+	{
+		return $self->{'canSeek'} = 2;
+	}
+	
+	if (!$self->{'canSeekError'}) {
+		$self->{'canSeekError'} = [ 'SEEK_ERROR_REMOTE' ];
+	}
+	
+	return $self->{'canSeek'} = 0;
 }
 
 

@@ -1034,28 +1034,8 @@ sub isRemoteURL {
 # Only valid for the current playing song
 sub canSeek {
 	my ($client, $playingSong) = @_;
-	my @errorString;
-	my $canSeek = 0;
 	
-	# Check with protocol handler to determine if the stream is seekable
-	my $handler = $playingSong->currentTrackHandler();
-	if ( $handler->can('canSeek') ) {
-		$log->debug( "Checking with protocol handler $handler for canSeek" );
-		if ( !$handler->canSeek( $client, $playingSong ) ) {
-			if (wantarray) {
-				@errorString = $handler->can('canSeekError') 
-					? $handler->canSeekError( $client, $playingSong )
-					: ('SEEK_ERROR_REMOTE');
-			}
-		} else {
-			$canSeek = 1;
-		}
-	}
-	else {
-		@errorString = ('SEEK_ERROR_REMOTE');
-	}
-
-	return (wantarray ? ($canSeek, @errorString) : $canSeek);
+	return $playingSong->canSeek();
 }
 
 sub isPlaylistURL {
