@@ -100,12 +100,8 @@ need information for.
 sub dirsFor {
 	my ($class, $dir) = @_;
 
-	my @dirs = ();
+	my @dirs = $class->SUPER::dirsFor($dir);
 	
-	if ($dir eq "Plugins") {
-		push @dirs, catdir($Bin, 'Slim', 'Plugin');
-	}
-
 	# These are all at the top level.
 	if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 

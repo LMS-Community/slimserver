@@ -30,10 +30,6 @@ sub dirsFor {
 
 	my @dirs = ();
 	
-	if ($dir eq "Plugins") {
-		push @dirs, catdir($Bin, 'Slim', 'Plugin');
-	}
-
 	if ($dir eq 'oldprefs') {
 
 		push @dirs, $class->SUPER::dirsFor($dir);
@@ -44,6 +40,7 @@ sub dirsFor {
 
 	} elsif ($dir eq 'Plugins') {
 			
+		push @dirs, $class->SUPER::dirsFor($dir);
 		push @dirs, "/usr/share/squeezecenter/Plugins";
 		push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
 		
