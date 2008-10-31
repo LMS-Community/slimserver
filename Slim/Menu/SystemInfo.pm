@@ -168,7 +168,7 @@ sub _getPlayerInfo {
 		{ INFORMATION_PLAYER_IP              => $client->ip },
 #		{ INFORMATION_PLAYER_PORT            => $client->port },
 		{ INFORMATION_PLAYER_MAC             => $client->macaddress },
-		{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $client->signalStrength . '%' },
+		{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $client->signalStrength ? $client->signalStrength . '%' : undef },
 		{ INFORMATION_PLAYER_VOLTAGE         => $client->voltage },
 	];
 
