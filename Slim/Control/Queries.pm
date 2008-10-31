@@ -241,6 +241,7 @@ sub albumsQuery {
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
+	my $party         = $request->getParam('party');
 	
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow', 'artistalbum', 'yearalbum', 'yearartistalbum' ])) {
 		$request->setStatusBadParams();
@@ -249,7 +250,8 @@ sub albumsQuery {
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $partyMode = _partyModeCheck($request);
+	my $insertAll = $menuMode && defined $insert && !$partyMode;
 
 	if (!defined $tags) {
 		$tags = 'l';
@@ -342,7 +344,7 @@ sub albumsQuery {
 	# Flatten request for lookup in cache, only for Jive menu queries
 	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . $tags . (defined $insert ? $insert : '');
 	if ( $menuMode ) {
-		if ( my $cached = $cache->{albums}->{$cacheKey} ) {
+		if ( my $cached = $cache->{albums}->[$party]->{$cacheKey} ) {
 			my $copy = from_json( $cached );
 			
 			# Don't slice past the end of the array
@@ -436,6 +438,9 @@ sub albumsQuery {
 		};
 		
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		if ($party) {
+			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
+		}
 
 		# adapt actions to SS preference
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
@@ -520,6 +525,9 @@ sub albumsQuery {
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				if ($party || $partyMode) {
+					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+				}
 
 				# artwork if we have it
 				if ($eachitem->title ne $noAlbumName &&
@@ -581,7 +589,7 @@ sub albumsQuery {
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
 	if ( $to_cache && $menuMode ) {
-		$cache->{albums}->{$cacheKey} = to_json( $request->getResults() );
+		$cache->{albums}->[$party]->{$cacheKey} = to_json( $request->getResults() );
 	} elsif ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
 		my $jiveSearchCache = {
 			text        => $request->string('ALBUMS') . ": " . $search,
@@ -626,13 +634,15 @@ sub artistsQuery {
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
 	my $to_cache = $request->getParam('cache');
+	my $party    = $request->getParam('party') || 0;
 	my %favorites;
 	$favorites{'url'} = $request->getParam('favorites_url');
 	$favorites{'title'} = $request->getParam('favorites_title');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $partyMode = _partyModeCheck($request);
+	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	my $allAlbums = defined $genreID;
 	
 	# get them all by default
@@ -704,7 +714,7 @@ sub artistsQuery {
 		# Flatten request for lookup in cache, only for Jive menu queries
 		$cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
 		if ( $menuMode ) {
-			if ( my $cached = $cache->{artists}->{$cacheKey} ) {
+			if ( my $cached = $cache->{artists}->[$party]->{$cacheKey} ) {
 
 				my $copy = from_json( $cached );
 
@@ -803,7 +813,9 @@ sub artistsQuery {
 			},
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
-
+		if ($partyMode || $party) {
+			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
+		}
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
@@ -863,6 +875,9 @@ sub artistsQuery {
 				};
 				_mixerItemParams(request => $request, obj => $obj, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				if ($party || $partyMode) {
+					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
@@ -900,7 +915,7 @@ sub artistsQuery {
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
 	if ( $to_cache && $menuMode ) {
-		$cache->{artists}->{$cacheKey} = to_json( $request->getResults() );
+		$cache->{artists}->[$party]->{$cacheKey} = to_json( $request->getResults() );
 	} elsif ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
 		my $jiveSearchCache = {
 			text        => $request->string('ARTISTS') . ": " . $search,
@@ -1280,10 +1295,12 @@ sub genresQuery {
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
+	my $party         = $request->getParam('party') || 0;
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $partyMode = _partyModeCheck($request);
+	my $insertAll = $menuMode && defined $insert && !$partyMode;
 		
 	# get them all by default
 	my $where = {};
@@ -1334,7 +1351,7 @@ sub genresQuery {
 	# Flatten request for lookup in cache, only for Jive menu queries
 	my $cacheKey = complex_to_query($where) . complex_to_query($attr) . $menu . (defined $insert ? $insert : '');
 	if ( $menuMode ) {
-		if ( my $cached = $cache->{genres}->{$cacheKey} ) {
+		if ( my $cached = $cache->{genres}->[$party]->{$cacheKey} ) {
 			my $copy = from_json( $cached );
 
 			# Don't slice past the end of the array
@@ -1408,6 +1425,9 @@ sub genresQuery {
 			window => { titleStyle => 'genres', },
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		if ($party || $partyMode) {
+			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
+		}
 		$request->addResult('base', $base);
 
 	}
@@ -1450,6 +1470,9 @@ sub genresQuery {
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+				if ($party || $partyMode) {
+					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
@@ -1468,7 +1491,7 @@ sub genresQuery {
 	# Cache data as JSON to speed up the cloning of it later, this is faster
 	# than using Storable
 	if ( $to_cache && $menuMode ) {
-		$cache->{genres}->{$cacheKey} = to_json( $request->getResults() );
+		$cache->{genres}->[$party]->{$cacheKey} = to_json( $request->getResults() );
 	}
 
 	$request->setStatusDone();
@@ -1625,10 +1648,12 @@ sub musicfolderQuery {
 	my $url      = $request->getParam('url');
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
+	my $party    = $request->getParam('party') || 0;
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $partyMode = _partyModeCheck($request);
+	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	
 	# url overrides any folderId
 	my $params = ();
@@ -1644,13 +1669,13 @@ sub musicfolderQuery {
 	my ($topLevelObj, $items, $count);
 
 	# if this is a follow up query ($index > 0), try to read from the cache
-	if ($index > 0 && $cache->{bmf}
-		&& $cache->{bmf}->{id} eq ($params->{url} || $params->{id}) 
-		&& $cache->{bmf}->{ttl} > time()) {
+	if ($index > 0 && $cache->{bmf}->[$party]
+		&& $cache->{bmf}->[$party]->{id} eq ($params->{url} || $params->{id}) 
+		&& $cache->{bmf}->[$party]->{ttl} > time()) {
 			
-		$items       = $cache->{bmf}->{items};
-		$topLevelObj = $cache->{bmf}->{topLevelObj};
-		$count       = $cache->{bmf}->{count};
+		$items       = $cache->{bmf}->[$party]->{items};
+		$topLevelObj = $cache->{bmf}->[$party]->{topLevelObj};
+		$count       = $cache->{bmf}->[$party]->{count};
 	}
 	else {
 		
@@ -1720,6 +1745,9 @@ sub musicfolderQuery {
 				titleStyle => 'musicfolder',
 			},
 		};
+		if ($party || $partyMode) {
+			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
+		}
 		$request->addResult('base', $base);
 
 	}
@@ -1791,6 +1819,9 @@ sub musicfolderQuery {
 
 					$params->{'folder_id'} = $id;
 
+					if ($partyMode || $party) {
+						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+					}
 				# song
 				} elsif (Slim::Music::Info::isSong($item)) {
 					
@@ -1828,8 +1859,7 @@ sub musicfolderQuery {
 						},
 					};
 					
-					#if ( $playalbum && !$prefs->client($request->client)->get('partymode') ) {
-					if ( $playalbum ) {
+					if ( $playalbum && ! $partyMode ) {
 						$actions->{'play'} = {
 							player => 0,
 							cmd    => ['jiveplaytrackalbum'],
@@ -1882,6 +1912,9 @@ sub musicfolderQuery {
 						},
 					};
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
+					if ($partyMode || $party) {
+						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+					}
 
 				# not sure
 				} else {
@@ -1920,6 +1953,9 @@ sub musicfolderQuery {
 							'itemsParams' => 'params',
 						},
 					};
+					if ($partyMode || $party) {
+						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+					}
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 				}
 
@@ -1954,7 +1990,7 @@ sub musicfolderQuery {
 
 	# cache results in case the same folder is queried again shortly 
 	# should speed up Jive BMF, as only the first chunk needs to run the full loop above
-	$cache->{bmf} = {
+	$cache->{bmf}->[$party] = {
 		id          => ($params->{url} || $params->{id}),
 		ttl         => (time() + 15),
 		items       => $items,
@@ -3258,13 +3294,13 @@ sub statusQuery {
 	my $TS   = ($client->model() eq 'transporter');
 	my $RSC  = ($client->model() eq 'http');
 	
-	my $connected = $client->connected() || 0;
-	my $power     = $client->power();
-	my $ip        = $client->ipport();
-	my $repeat    = Slim::Player::Playlist::repeat($client);
-	my $shuffle   = Slim::Player::Playlist::shuffle($client);
-	my $songCount = Slim::Player::Playlist::count($client);
-	my $mode      = Slim::Player::Playlist::playlistMode($client);
+	my $connected    = $client->connected() || 0;
+	my $power        = $client->power();
+	my $ip           = $client->ipport();
+	my $repeat       = Slim::Player::Playlist::repeat($client);
+	my $shuffle      = Slim::Player::Playlist::shuffle($client);
+	my $songCount    = Slim::Player::Playlist::count($client);
+	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 	my $idx = 0;
 
 
@@ -3372,7 +3408,7 @@ sub statusQuery {
 		$shuffle += 0;
 		$request->addResult("playlist shuffle", $shuffle); 
 
-		$request->addResult("playlist mode", $mode);
+		$request->addResult("playlist mode", $playlistMode);
 	
 		if (defined (my $playlistObj = $client->currentPlaylist())) {
 			$request->addResult("playlist_id", $playlistObj->id());
@@ -3668,7 +3704,6 @@ sub songinfoQuery {
 				$base->{'actions'}{'go'} = $go_action;
 				$base->{'window'}{'titleStyle'} = 'album';
 				$base->{'window'}{'icon-id'} = $trackId;
-				$log->error($base->{'actions'}{'go'});
 			} else {
 				# tags for songinfo page, ordered like SC7 Web UI
 				# j tag is '1' if artwork exists; it's put in front so it can act as a flag for "J"
@@ -4241,8 +4276,9 @@ sub titlesQuery {
 	my $insert        = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
-	my $menuMode = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $menuMode  = defined $menu;
+	my $partyMode = _partyModeCheck($request);
+	my $insertAll = $menuMode && defined $insert && !$partyMode;
 
 	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
 		$request->setStatusBadParams();
@@ -4388,7 +4424,7 @@ sub titlesQuery {
 	}
 
 	$count += 0;
-	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
+	my $totalCount = _fixCount( $insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -4403,7 +4439,7 @@ sub titlesQuery {
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
 		# first PLAY ALL item
-		if ($insertAll) {
+		if ( $insertAll ) {
 			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => ( $menuStyle eq 'album' ) );
 		}
 
@@ -4565,10 +4601,12 @@ sub yearsQuery {
 	my $quantity      = $request->getParam('_quantity');	
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
+	my $party         = $request->getParam('party');
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
-	my $insertAll = $menuMode && defined $insert;
+	my $partyMode = _partyModeCheck($request);
+	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	
 	# get them all by default
 	my $where = {};
@@ -4637,6 +4675,9 @@ sub yearsQuery {
 		if ($actioncmd eq 'albums') {
 			$base->{'actions'}{'go'}{'params'}{'sort'} = 'artistalbum';
 		}
+		if ($party || $partyMode) {
+			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
+		}
 		$request->addResult('base', $base);
 	}
 
@@ -4678,6 +4719,9 @@ sub yearsQuery {
 				};
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				if ($party || $partyMode) {
+					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
+				}
 			}
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'year', $id);
@@ -5942,6 +5986,17 @@ sub _mixerItemHandler {
 		return undef;
 	}
 }
+
+sub _partyModeCheck {
+	my $request   = shift;
+	my $partyMode = 0;
+	if ($request->client) {
+		my $client = $request->client();
+		$partyMode = Slim::Player::Playlist::isPartyModeOn($client);
+	}
+	return $partyMode;
+}
+
 
 =head1 SEE ALSO
 

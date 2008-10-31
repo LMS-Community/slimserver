@@ -158,26 +158,30 @@ sub init {
 }
 
 sub buildCaches {
-	$log->info("Begin function");
+	$log->debug("Begin function");
+
 	my $sort    = $prefs->get('jivealbumsort') || 'artistalbum';
-	# Pre-cache albums query
-	if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
-		$log->debug( "Pre-caching $numAlbums album items." );
-		Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "sort:$sort", 'menu:track', 'cache:1' ] );
-	}
-	
-	# Artists
-	if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-		# Add one since we may have a VA item
-		$numArtists++;
-		$log->debug( "Pre-caching $numArtists artist items." );
-		Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, 'menu:album', 'cache:1' ] );
-	}
-	
-	# Genres
-	if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
-		$log->debug( "Pre-caching $numGenres genre items." );
-		Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, 'menu:artist', 'cache:1' ] );
+
+	for my $partymode ( 0..1 ) {
+		# Pre-cache albums query
+		if ( my $numAlbums = Slim::Schema->rs('Album')->count ) {
+			$log->debug( "Pre-caching $numAlbums album items for partymode:$partymode" );
+			Slim::Control::Request::executeRequest( undef, [ 'albums', 0, $numAlbums, "sort:$sort", 'menu:track', 'cache:1', "party:$partymode" ] );
+		}
+		
+		# Artists
+		if ( my $numArtists = Slim::Schema->rs('Contributor')->browse->search( {}, { distinct => 'me.id' } )->count ) {
+			# Add one since we may have a VA item
+			$numArtists++;
+			$log->debug( "Pre-caching $numArtists artist items for partymode:$partymode." );
+			Slim::Control::Request::executeRequest( undef, [ 'artists', 0, $numArtists, 'menu:album', 'cache:1', "party:$partymode" ] );
+		}
+		
+		# Genres
+		if ( my $numGenres = Slim::Schema->rs('Genre')->browse->search( {}, { distinct => 'me.id' } )->count ) {
+			$log->debug( "Pre-caching $numGenres genre items for partymode:$partymode." );
+			Slim::Control::Request::executeRequest( undef, [ 'genres', 0, $numGenres, 'menu:artist', 'cache:1', "party:$partymode" ] );
+		}
 	}
 }
 
@@ -424,12 +428,13 @@ sub playlistModeSettings {
 
 	my @menu = ();
 
-	my @modeStrings = ('DISABLED', 'OFF', 'ON');
+	my @modeStrings = ('DISABLED', 'OFF', 'ON', 'PARTY');
 	my @translatedModeStrings = map { ucfirst($client->string($_)) } @modeStrings;
 	my %modes = (
 		disabled => 1,
 		off      => 2,
 		on       => 3,
+		party    => 4,
 	);
 
 	my $choice = {
@@ -461,6 +466,13 @@ sub playlistModeSettings {
 						cmd    => [ 'jivesetplaylistmode' ],
 						params => {
 							mode    => 'on',
+						},
+					},
+					{
+						player => 0,
+						cmd    => [ 'jivesetplaylistmode' ],
+						params => {
+							mode    => 'party',
 						},
 					},
 				], 
@@ -2208,8 +2220,9 @@ sub replayGainHash {
 sub myMusicMenu {
 	$log->info("Begin function");
 	my $batch = shift;
-	my $client = shift || undef;
+	my $client = shift;
 	my $sort   = $prefs->get('jivealbumsort') || 'artistalbum';
+	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
 	my @myMusicMenu = (
 			{
 				text           => $client->string('BROWSE_BY_ARTIST'),
@@ -2221,7 +2234,8 @@ sub myMusicMenu {
 					go => {
 						cmd    => ['artists'],
 						params => {
-							menu => 'album',
+							menu  => 'album',
+							party => $party,
 						},
 					},
 				},
@@ -2241,6 +2255,7 @@ sub myMusicMenu {
 						params => {
 							menu     => 'track',
 							sort     => $sort,
+							party    => $party,
 						},
 					},
 				},
@@ -2260,7 +2275,8 @@ sub myMusicMenu {
 					go => {
 						cmd    => ['genres'],
 						params => {
-							menu => 'artist',
+							menu  => 'artist',
+							party => $party,
 						},
 					},
 				},
@@ -2278,7 +2294,8 @@ sub myMusicMenu {
 					go => {
 						cmd    => ['years'],
 						params => {
-							menu => 'album',
+							menu  => 'album',
+							party => $party,
 						},
 					},
 				},
@@ -2295,8 +2312,9 @@ sub myMusicMenu {
 					go => {
 						cmd    => ['albums'],
 						params => {
-							menu => 'track',
-							sort => 'new',
+							menu  => 'track',
+							sort  => 'new',
+							party => $party,
 						},
 					},
 				},
@@ -2314,7 +2332,8 @@ sub myMusicMenu {
 					go => {
 						cmd    => ['playlists'],
 						params => {
-							menu => 'track',
+							menu  => 'track',
+							party => $party,
 						},
 					},
 				},
@@ -2351,6 +2370,7 @@ sub searchMenu {
 	$log->info("Begin function");
 	my $batch = shift;
 	my $client = shift || undef;
+	my $party = ( $client && Slim::Player::Playlist::playlistMode($client) eq 'party' );
 	my @searchMenu = (
 		{
 		text           => $client->string('ARTISTS'),
@@ -2374,6 +2394,7 @@ sub searchMenu {
 					menu     => 'album',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
+					party    => $party,
 					_searchType => 'artists',
 				},
                         },
@@ -2406,6 +2427,7 @@ sub searchMenu {
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'albums',
+					party    => $party,
 				},
 			},
 		},
@@ -2470,6 +2492,7 @@ sub searchMenu {
 					menu     => 'track',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
+					party    => $party,
 				},
                         },
 		},

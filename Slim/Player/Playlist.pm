@@ -161,6 +161,16 @@ sub repeat {
 	return $prefs->client($client)->get('repeat');
 }
 
+sub isPartyModeOn {
+	my $client = shift || return 0;
+	my $currentSetting = $prefs->client($client)->get('playlistmode');
+	if ($currentSetting eq 'party') {
+		return 1;
+	} else {
+		return 0;
+	}
+
+}
 sub playlistMode {
 	my $client  = shift;
 	my $mode    = shift;

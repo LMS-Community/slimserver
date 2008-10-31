@@ -59,6 +59,7 @@ $prefs->setChange( sub {
 	my $value  = $_[1];
 	my $client = $_[2] || return;
 	Slim::Control::Request::executeRequest( $client, [ 'status', '-', 10, 'menu:menu' ] );
+	Slim::Control::Jive::myMusicMenu(0, $client);
 }, 'playlistmode' );
 
 $prefs->setChange( sub {

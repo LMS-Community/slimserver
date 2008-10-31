@@ -1634,7 +1634,15 @@ sub playlistcontrolCommand {
 	# get the parameters
 	my $client              = $request->client();
 	my $cmd                 = $request->getParam('cmd');
+
 	my $trackID             = $request->getParam('track_id');
+	my $albumID             = $request->getParam('album_id');
+	my $artistID            = $request->getParam('artist_id');
+	my $genreID             = $request->getParam('genre_id');
+	my $yearID              = $request->getParam('year_id');
+
+	my $goCmd               = $request->getParam('goCmd');
+	my $goMenu              = $request->getParam('goMenu');
 	my $playlistMode        = Slim::Player::Playlist::playlistMode($client);
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -1658,8 +1666,8 @@ sub playlistcontrolCommand {
 		return;
 	}
 	
-	# when playlistmode is on, replace 'playlistcontrol load' with 'playlistcontrol insert'
-	if ( $playlistMode eq 'on' && $cmd eq 'load' ) {
+	# when playlistmode is on/party, replace 'playlistcontrol load' with 'playlistcontrol insert'
+	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load' ) {
 		$cmd    = 'insert';
 	}
 
