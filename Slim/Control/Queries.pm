@@ -3286,13 +3286,6 @@ sub statusQuery {
 		$request->setStatusDone();
 		return;
 	}
-		
-	my $SP3  = ($client->model() eq 'slimp3');
-	my $SQ   = ($client->model() eq 'softsqueeze');
-	my $SB   = ($client->model() eq 'squeezebox');
-	my $SB2  = ($client->model() eq 'squeezebox2');
-	my $TS   = ($client->model() eq 'transporter');
-	my $RSC  = ($client->model() eq 'http');
 	
 	my $connected    = $client->connected() || 0;
 	my $power        = $client->power();
@@ -3330,12 +3323,12 @@ sub statusQuery {
 		$request->addResult('showBriefly', $client->display->renderCache->{showBriefly}->{line});
 	}
 
-	if (!$RSC) {
+	if ($client->isPlayer()) {
 		$power += 0;
 		$request->addResult("power", $power);
 	}
 	
-	if ($SB || $SB2 || $TS) {
+	if ($client->isa('Slim::Player::Squeezebox')) {
 		$request->addResult("signalstrength", ($client->signalStrength() || 0));
 	}
 	
@@ -3387,19 +3380,19 @@ sub statusQuery {
 			$request->addResult('sync_slaves', join(",", @sync_slaves));
 		}
 	
-		if (!$RSC) {
+		if ($client->hasVolumeControl()) {
 			# undefined for remote streams
 			my $vol = $prefs->client($client)->get('volume');
 			$vol += 0;
 			$request->addResult("mixer volume", $vol);
 		}
 		
-		if ($SB || $SP3) {
+		if ($client->model() =~ /(?:squeezebox|slimp3)/) {
 			$request->addResult("mixer treble", $client->treble());
 			$request->addResult("mixer bass", $client->bass());
 		}
 
-		if ($SB) {
+		if ($client->model() eq 'squeezebox') {
 			$request->addResult("mixer pitch", $client->pitch());
 		}
 
