@@ -8570,6 +8570,9 @@ SETUP_WIZARD_SQN
 	NO	SqueezeNetwork-konto
 	SV	SqueezeNetwork-konto
 
+SETUP_WIZARD_SQN_PLEASE
+	EN	Please sign in with your SqueezeNetwork email and password to continue.
+
 SETUP_WIZARD_AUDIODIR
 	DA	Lokal musikmappe
 	DE	Lokaler Musikordner
