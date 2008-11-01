@@ -54,18 +54,18 @@ package Slim::Plugin::Extensions::Plugin;
 # Applet and Plugin entries are of the form:
 # 
 # <applet name="AppletName" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
-#   <title lang="EN">Applet English Title</title>
-#   <title lang="DE">Applet German Title</title>
-#   <desc lang="EN">url for EN description</desc>
-#   <desc lang="DE">url for GE description</desc>
+#   <title lang="EN">English Title</title>
+#   <title lang="DE">German Title</title>
+#   <desc lang="EN">EN description</desc>
+#   <desc lang="DE">DE description</desc>
 #   <url>url for zip file</url>
 # </applet>
 #
 # <plugin name="PluginName" version="1.0" target="windows" minTarget="7.3" maxTarget="7.3">
-#   <title lang="EN">Applet English Title</title>
-#   <title lang="DE">Applet German Title</title>
-#   <desc lang="EN">url for EN description</desc>
-#   <desc lang="DE">url for GE description</desc>
+#   <title lang="EN">English Title</title>
+#   <title lang="DE">German Title</title>
+#   <desc lang="EN">EN description</desc>
+#   <desc lang="DE">DE description</desc>
 #   <url>url for zip file</url>
 #   <sha>digest of zip</sha>
 # </plugin>
@@ -77,9 +77,10 @@ package Slim::Plugin::Extensions::Plugin;
 # minTarget  - min version of the target software
 # maxTarget  - max version of the target software
 # title      - contains localisations for the title of the applet (optional - uses name if not defined)
-# desc       - url for a localised description of the applet or plugin - for plugins this is html, applets txt (optional)
+# desc       - localised description of the applet or plugin (optional)
+# link       - (plugin only) url for web page describing the plugin in more detail 
 # url        - url for the applet/plugin itself, this sould be a zip file
-# sha        - (unimplemented on jive) sha1 digest of the zip file which is verifed before the zip is extracted
+# sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
 #
 # Wallpaper and sound entries can include all of the above elements, but the minimal definition is:
 # 
@@ -282,22 +283,23 @@ sub _parseXML {
 			};
 
 			if ($entry->{'title'}) {
-				$new->{'title'} = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' } || $entry->{'title'};
+				$new->{'title'} = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' };
 			} else {
 				$new->{'title'} = $entry->{'name'};
 			}
 
 			if ($entry->{'desc'}) {
-				$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ $lang };
+				$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
 			}
 
 			$new->{'version'} = $entry->{'version'} if $entry->{'version'};
+			$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
 			$new->{'sha'}     = $entry->{'sha'}     if $entry->{'sha'};
 			$new->{'action'}  = $entry->{'action'}  if $entry->{'action'};
 
 			push @res, $new;
 
-			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} desc: $new->{desc} url: $new->{url}");
+			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} desc: $new->{desc} url: $new->{url} link: $new->{link}");
 		}
 
 	} else {

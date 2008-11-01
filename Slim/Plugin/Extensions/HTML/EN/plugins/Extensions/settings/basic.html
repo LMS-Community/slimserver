@@ -14,12 +14,18 @@
 			</tr>
 		[% END %]
 		</table>
+		<p/>
 
 		[% IF upgrade.size %]
 		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_UPGRADE" | string %]</div>
 		<div class="prefDesc">
 		[% FOREACH plugin = upgrade %]
+			[% title = BLOCK %]
 			<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %] [% "TO" | string %] v[% plugin.version %])</input><p/>
+			[% END %]
+			[% WRAPPER setting desc = plugin.desc %]&nbsp;
+				[% IF plugin.link %]<a href="[% plugin.link %]">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
+			[% END %]
 		[% END %]
 		</div>
 		[%- END -%]
@@ -28,7 +34,10 @@
 		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_REMOVE" | string %]</div>
 		<div class="prefDesc">
 		[% FOREACH plugin = remove %]
+			[% title = BLOCK %]
 			<input name="remove" value="[% plugin.name %]:[% plugin.current %]:[% plugin.title %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %])</input><p/>
+			[% END %]
+			[% WRAPPER setting desc = plugin.desc %]&nbsp;[% END %]
 		[% END %]
 		</div>
 		[%- END -%]
@@ -37,9 +46,14 @@
 		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_INSTALL" | string %]</div>
 		<div class="prefDesc">
 		[% FOREACH plugin = install %]
-			<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox"> [% plugin.title %] (v[% plugin.version %])</input><p/>
-			[% IF plugin.desc %]<iframe width="100%" height="60px" frameborder="0" marginwidth="25px" scrolling="auto" src="[% plugin.desc %]"></iframe>[% END %]
+			[% title = BLOCK %]
+				<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox" /> [% plugin.title %] (v[% plugin.version %])</input>
+			[% END %]
+			[% WRAPPER setting desc = plugin.desc %]&nbsp;
+				[% IF plugin.link %]<a href="[% plugin.link %]">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
+			[% END %]
 		[% END %]
+
 		</div>
 		[%- END -%]
 

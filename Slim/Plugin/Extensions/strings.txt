@@ -23,7 +23,7 @@ PLUGIN_EXTENSIONS_PLUGINS_REMOVE
 	EN	Remove Currently Installed Plugin
 
 PLUGIN_EXTENSIONS_PLUGINS_INSTALL
-	EN	Install New Plugins
+	EN	Install New Plugin
 
 PLUGIN_EXTENSIONS_RESTART_MSG
 	EN	<b><i>Please Restart SqueezeCenter</i></b>
@@ -48,3 +48,6 @@ PLUGIN_EXTENSIONS_BAD_EXTRACTION
 
 PLUGIN_EXTENSIONS_BAD_DOWNLOAD
 	EN	Failed to install (could not download file)
+
+PLUGIN_EXTENSIONS_MOREINFO
+	EN	More Information
