@@ -5,12 +5,8 @@
   <applets>
 
 	<applet name="Tetris" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
-	  <title>
-		<EN>Tetris</EN>
-	  </title>
-	  <desc></desc>
+	  <title lang="EN">Tetris</title>
 	  <url>http://wiki.slimdevices.com/uploads/0/09/Tetris.zip</url>
-	  <md5></md5>
 	</applet>
 
   </applets>
@@ -24,7 +20,61 @@
   </wallpapers>
 
   <sounds>
-	
   </sounds>
+
+  <plugins>
+
+	<plugin name="Alien" version="2.3b1-7.3" target="mac|unix" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Alien BBC</title>
+	  <desc  lang="EN">Plugin to play BBC radio - mac/unix version</desc>
+	  <url>http://wiki.slimdevices.com/uploads/3/33/AlienUnix.zip</url>
+	  <sha>c75fa68cfaf925bc12e840b4f8969c86422df934</sha>
+	  <link>http://www.x2systems.com/alienbbc</link>
+	</plugin>
+
+	<plugin name="Alien" version="2.3b1-7.3" target="windows" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Alien BBC</title>
+	  <desc  lang="EN">Plugin to play BBC radio - windows version</desc>
+	  <url>http://wiki.slimdevices.com/uploads/c/c3/AlienWindows.zip</url>
+	  <sha>4cba91b4cfcfd2e3f4f90e1d1386e14544bf4aa0</sha>
+	  <link>http://www.x2systems.com/alienbbc</link>
+	</plugin>
+
+	<plugin name="PluginTest" version="1.0" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Plugin Test</title>
+	  <desc  lang="EN">Plugin to test 7.3 plugin downloader - version 1.0</desc>
+	  <url>http://wiki.slimdevices.com/uploads/f/f2/PluginTest1.zip</url>
+	  <sha>9fb2a4c1232ba8a7d7377597b8be4c41324ab323</sha>
+	</plugin>
+
+	<plugin name="PluginTest" version="2.0" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Plugin Test</title>
+	  <desc  lang="EN">Plugin to test 7.3 plugin downloader - version 2.0</desc>
+	  <url>http://wiki.slimdevices.com/uploads/a/ac/PluginTest2.zip</url>
+	  <sha>4f17a3d406a5374de092c50ba9fb5420c8d24c79</sha>
+	</plugin>
+
+	<plugin name="Plugin1" version="1.0" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Plugin Test 1</title>
+	  <desc  lang="EN">Plugin Test 1 Description - NB does not exist so will not install</desc>
+	  <url></url>
+	  <sha></sha>
+	</plugin>
+
+	<plugin name="Plugin2" version="1.0" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Plugin Test 2</title>
+	  <desc  lang="EN">Plugin Test 2 Description - NB does not exist so will not install</desc>
+	  <url></url>
+	  <sha></sha>
+	</plugin>
+
+	<plugin name="Plugin3" version="1.0" minTarget="7.3" maxTarget="7.3">
+	  <title lang="EN">Plugin Test 3</title>
+	  <desc  lang="EN">Plugin Test 3 Description - NB does not exist so will not install</desc>
+	  <url></url>
+	  <sha></sha>
+	</plugin>
+
+  </plugins>
 
 </extensions>
