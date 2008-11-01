@@ -44,6 +44,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 use Slim::Utils::PerlRunTime;
 
+use constant MAX_TIMERS => 500;
+
 # Set to enable a list of all timers every 5 seconds
 our $d_watch_timers = 0;
 
@@ -413,19 +415,27 @@ sub setTimer {
 	
 	my $numtimers = $normal->get_item_count();
 
-	if ($numtimers > 500) {
+	if ($numtimers > MAX_TIMERS) {
+		
+		$log->error( "FATAL: Insane number of timers: [$numtimers]" );
+		
+		my $now = Time::HiRes::time();
 		
 		for my $item ( $normal->peek_items( sub { 1 } ) ) {
 			
-			my $t = $item->[ITEM_PAYLOAD];
-		
-			if ( ref($t->{'subptr'}) eq 'CODE' ) {
+			my $timer = $item->[ITEM_PAYLOAD];
+			my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
+			my $diff  = $item->[ITEM_PRIORITY] - $now;
+			my $obj   = $timer->{'objRef'} || '';
 
-				logError(Slim::Utils::PerlRunTime::deparseCoderef($t->{'subptr'}));
+			if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
+				$obj = $obj->macaddress();
 			}
+
+			logError( sprintf("%s %.6s %s", $obj, $diff, $name) );
 		}
 
-		logger('')->logdie("FATAL: Insane number of timers: [$numtimers]");
+		main::stopServer();
 	}
 
 	return $newtimer;
