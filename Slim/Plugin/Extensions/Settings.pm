@@ -5,13 +5,14 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Digest::MD5;
 
 my $prefs = preferences('plugin.extensions');
 my $log   = logger('plugin.extensions');
 
 $prefs->init({ 'repos' => [] });
 
-my $rand = int(rand(1000_000));
+my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret') )->hexdigest;
 
 sub name {
 	return Slim::Web::HTTP::protectName('PLUGIN_EXTENSIONS');
@@ -30,8 +31,6 @@ sub handler {
 		$log->error("attempt to set params with band random number - ignoring");
 
 		delete $params->{'saveSettings'};
-
-		$rand = int(rand(1000_000));
 	}
 
 	if ($params->{'saveSettings'}) {
