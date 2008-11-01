@@ -11,6 +11,8 @@ my $log   = logger('plugin.extensions');
 
 $prefs->init({ 'repos' => [] });
 
+my $rand = int(rand(1000_000));
+
 sub name {
 	return Slim::Web::HTTP::protectName('PLUGIN_EXTENSIONS');
 }
@@ -21,6 +23,16 @@ sub page {
 
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
+
+	# Simplistic anti CSRF protection in case the main server protection is off
+	if ($params->{'saveSettings'} && (!$params->{'rand'} || $params->{'rand'} ne $rand)) {
+
+		$log->error("attempt to set params with band random number - ignoring");
+
+		delete $params->{'saveSettings'};
+
+		$rand = int(rand(1000_000));
+	}
 
 	if ($params->{'saveSettings'}) {
 
@@ -200,6 +212,7 @@ sub _addInfo {
 	$params->{'upgrade'} = \@upgrade;
 	$params->{'install'} = \@install;
 	$params->{'remove'}  = \@remove;
+	$params->{'rand'}    = $rand;
 	$params->{'warning'} = '';
 
 	if (keys %$status) {
