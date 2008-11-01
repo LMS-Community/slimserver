@@ -340,16 +340,22 @@ sub rpds_handler {
 		# If a user's session becomes invalid, the firmware will keep retrying getEA
 		# and report a fault of 'Playback Session id $foo is not a valid session id'
 		# and so we need to stop the player and report the error
-		if ( $faultString =~ /not a valid session id/ ) {
-			$error = $client->string('PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION');
+		
+		# The player will send multiple getEA failure codes before we can send a stop command
+		# so ignore if we get one of these when our sessionId is empty
+		
+		if ( $client->streamingSong()->pluginData('playbackSessionId') ) {
+			if ( $faultCode =~ /InvalidPlaybackSessionException/ ) {
+				$error = $client->string('PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION');
 			
-			# Clear playback session
-			$client->streamingSong()->pluginData( playbackSessionId => 0 );
+				# Clear playback session
+				$client->streamingSong()->pluginData( playbackSessionId => 0 );
+			}
+		
+			Slim::Player::Source::playmode( $client, 'stop' );
+		
+			handleError( $error, $client );
 		}
-		
-		Slim::Player::Source::playmode( $client, 'stop' );
-		
-		handleError( $error, $client );
 	}
 	elsif ( $got_cmd == 251 ) {
 		# Error making an EA request

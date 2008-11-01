@@ -193,7 +193,7 @@ PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	DA	Ugyldig afspilningssession.
 	DE	Ungültige Wiedergabesitzung.
-	EN	Invalid playback session.
+	EN	Invalid playback session. A max of three streams are allowed at one time.
 	ES	Sesión de reproducción no válida.
 	FI	Toistoistunto ei kelpaa.
 	FR	Session de lecture non valide.

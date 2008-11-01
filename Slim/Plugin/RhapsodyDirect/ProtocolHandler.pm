@@ -215,16 +215,16 @@ sub getNextTrack {
 		my $deviceid = $client->deviceid;
 		my $rev      = $client->revision;
 		
-		if ( $deviceid == 4 && $rev < 116 ) {
+		if ( $deviceid == 4 && $rev < 117 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 5 && $rev < 66 ) {
+		elsif ( $deviceid == 5 && $rev < 67 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 7 && $rev < 51 ) {
+		elsif ( $deviceid == 7 && $rev < 52 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 10 && $rev < 36 ) {
+		elsif ( $deviceid == 10 && $rev < 37 ) {
 			$old = 1;
 		}
 		
@@ -251,10 +251,7 @@ sub getNextTrack {
 	}
 	
 	# 2. For each player in sync-group:
-	
-	# 2.1 Get account if necessary 
-	# 2.2 Get playback-session if necessary (if playingSong != Rhapsody)
-	# 2.3 Get mediaURL
+	# 2.1 Get mediaURL
 
 }
 
@@ -354,76 +351,18 @@ sub _gotNextRadioTrackError {
 	_handleClientError( $http->error, $client, $http->params->{params} );
 }
 
-# 2. For each player in sync-group: get account, session, track-info as necessary
+# 2. For each player in sync-group: get track-info
 sub _getTrack {
 	my $params  = shift;
 	
 	my $song    = $params->{song};
 	my @players = $song->master()->syncGroupActiveMembers();
 	
-	# Get a playback session
-	_getPlaybackSession( $song->master(), undef, $params );
+	# Fetch the track info
+	_getTrackInfo( $song->master(), undef, $params );
 }
 
-# 2.2 Get playback-session if necessary
-# When synced, only the master gets the playback session, all players share 1 session
-sub _getPlaybackSession {
-	my ( $client, undef, $params ) = @_;
-	
-	my $song = $params->{song};
-	
-	# Do we already have a session?
-	if ( $song->pluginData('playbackSessionId') ) {
-		_getTrackInfo( $client, undef, $params );
-		return;
-	}
-	
-	if ( $log->is_debug ) {
-		$log->debug( $client->id, ' Requesting new playback session...');
-	}
-	
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		sub {
-			my $http = shift;
-			my $status = eval { from_json( $http->content ) };
-			if ( $@ || $status->{error} ) {
-				if ( $log->is_debug ) {
-					$log->debug( 'Error obtaining playback session: ' . ( $@ || $status->{error} ) );
-					$log->debug( $http->content );
-				}
-				
-				_handleClientError( $@ || $status->{error}, $client, $params );
-			}
-			else {
-				if ( $log->is_debug ) {
-					$log->debug( $client->id . ' New playback session obtained: ' . $status->{playbackSessionId} );
-				}
-				
-				$song->pluginData( playbackSessionId => $status->{playbackSessionId} );
-				
-				_getTrackInfo( $client, undef, $params );
-			}
-		},
-		sub {
-			my $http = shift;
-			
-			if ( $log->is_debug ) {
-				$log->debug( $client->id . ' Error obtaining playback session: ' . $http->error );
-			}
-			
-			_handleClientError( $http->error, $client, $params );
-		},
-		{
-			client => $client,
-		},
-	);
-	
-	$http->get(
-		Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/playback/startPlaybackSession')
-	);
-}
-
-# 2.3 Get mediaURL
+# 2.1 Get mediaURL
 sub _getTrackInfo {
     my ( $client, undef, $params ) = @_;
 
@@ -449,6 +388,8 @@ sub _getTrackInfo {
 				if ( $log->is_debug ) {
 					$log->debug( 'getTrackInfo ok: ' . Data::Dump::dump($info) );
 				}
+				
+				$song->pluginData( playbackSessionId => $info->{account}->{playbackSessionId} );
 				
 				_gotTrackInfo( $client, $info, $params );
 			}
@@ -476,7 +417,7 @@ sub _getTrackInfo {
 	);
 }
 
-# 2.3a Get mediaURL 
+# 2.1a Get mediaURL 
 sub _gotTrackInfo {
 	my ( $client, $info, $params ) = @_;
 	
@@ -510,7 +451,7 @@ sub _gotTrackInfo {
 	);
 }
 
-# 2.3b Get mediaURL 
+# 2.1b Get mediaURL 
 sub _gotTrackError {
 	my ( $error, $client, $params ) = @_;
 	
@@ -798,10 +739,6 @@ sub onStop {
 	$log->is_debug && $log->debug("onStop, logging playback");
 	
 	_doLog(Slim::Player::Source::songTime($song->master()), $song);
-	
-	# Clear playback session
-	# XXX: This should only be called when player is really stopping
-	# $song->pluginData( playbackSessionId => 0 );
 }
 
 sub onPlayout {
