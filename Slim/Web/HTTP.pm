@@ -2040,7 +2040,7 @@ sub sendStreamingResponse {
 	}
 	
 	if (!$streamingFile && $client && $client->isa("Slim::Player::Squeezebox") && 
-		!$client->controller()->isStreaming()) {
+		$client->isStopped()) {
 
 		closeStreamingSocket($httpClient);
 
