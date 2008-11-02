@@ -154,7 +154,7 @@ sub _downloadDone {
 				# ignore additional directory information in zip
 				for my $search ("Plugins/$name/", "$name/") {
 
-					if ( $zip->membersMatching($search) ) {
+					if ( $zip->membersMatching("^$search") ) {
 
 						$source = $search;
 						last;
