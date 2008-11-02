@@ -156,9 +156,11 @@ sub handler {
 		}
 	}
 	
-	$paramRef->{model} = $client->model;
-	if ($paramRef->{model} !~ /(?:receiver|boom|transporter)/) {
-		$paramRef->{model} = 'squeezebox';
+	if ($client) {
+		$paramRef->{model} = $client->model;
+		if ($paramRef->{model} !~ /(?:receiver|boom|transporter)/) {
+			$paramRef->{model} = 'squeezebox';
+		}
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
