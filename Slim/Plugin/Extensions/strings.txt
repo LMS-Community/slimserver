@@ -25,6 +25,9 @@ PLUGIN_EXTENSIONS_PLUGINS_REMOVE
 PLUGIN_EXTENSIONS_PLUGINS_INSTALL
 	EN	Install New Plugin
 
+PLUGIN_EXTENSIONS_PLUGIN_MANUAL
+	EN	already installed manually (%s) - please remove first
+
 PLUGIN_EXTENSIONS_RESTART_MSG
 	EN	<b><i>Please Restart SqueezeCenter</i></b>
 
@@ -51,3 +54,4 @@ PLUGIN_EXTENSIONS_BAD_DOWNLOAD
 
 PLUGIN_EXTENSIONS_MOREINFO
 	EN	More Information
+

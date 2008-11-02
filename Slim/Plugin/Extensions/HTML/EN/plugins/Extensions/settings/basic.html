@@ -54,6 +54,12 @@
 			[% END %]
 		[% END %]
 
+		[% FOREACH plugin = manual.values %]
+			<div class="prefDesc">
+				<b>[% plugin.title %]</b>  - [% plugin.message %]
+			</div>
+		[% END %]
+
 		</div>
 		[%- END -%]
 

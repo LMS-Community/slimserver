@@ -150,14 +150,15 @@ sub _addInfo {
 		if ($module =~ /Plugins::(.*)::/) {
 
 			my $name = $1;
+			my $basedir = Slim::Utils::PluginManager->dataForPlugin($module)->{'basedir'};
 
-			if (Slim::Utils::PluginManager->dataForPlugin($module)->{'basedir'} =~ /InstalledPlugins/) {
+			if ($basedir =~ /InstalledPlugins/) {
 
 				$installed{$name} = $module;
 
 			} else {
 
-				$manual{$name} = 1;
+				$manual{$name} = $basedir;
 			}
 		}
 	}
@@ -165,6 +166,7 @@ sub _addInfo {
 	my @upgrade;
 	my @install;
 	my @remove;
+	my $installedManually;
 
 	for my $plugin (sort { $a->{'title'} cmp $b->{'title'} } @$plugins) {
 
@@ -176,7 +178,12 @@ sub _addInfo {
 		}
 
 		if ($manual{ $plugin->{'name'} }) {
-			$log->info("ignoring plugin $plugin->{name} as it is already installed manually");
+
+			$installedManually->{ $plugin->{'name'} } = { 
+				title   => $plugin->{'title'}, 
+				message => sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL'), $manual{ $plugin->{'name'} }),
+			};
+
 			next;
 		}
 		
@@ -211,6 +218,7 @@ sub _addInfo {
 	$params->{'upgrade'} = \@upgrade;
 	$params->{'install'} = \@install;
 	$params->{'remove'}  = \@remove;
+	$params->{'manual'}  = $installedManually;
 	$params->{'rand'}    = $rand;
 	$params->{'warning'} = '';
 
