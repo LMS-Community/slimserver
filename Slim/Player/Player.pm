@@ -219,7 +219,7 @@ sub power {
 		my $justUnsync = 0;
 		
 		for my $other ($client->syncedWith()) {
-			if (!$prefs->client($other)->get('syncPower')) {
+			if ($other->power() && !$prefs->client($other)->get('syncPower')) {
 				$justUnsync = 1;
 				last;				
 			}
