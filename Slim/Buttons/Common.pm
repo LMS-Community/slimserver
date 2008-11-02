@@ -1214,7 +1214,6 @@ our %functions = (
 		} else {
 
 			$log->info("Switching to home menu.");
-			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
 			Slim::Buttons::Common::setMode($client, 'home');
 			$client->pushRight();
 		}
