@@ -143,16 +143,27 @@ sub _downloadDone {
 
 			} else {
 				
-				my $dest = catdir($extractTo, 'Plugins', $name);
+				my $dest   = catdir($extractTo, 'Plugins', $name);
+				my $source = undef;
 
 				if (-r $dest) {
 
 					rmtree $dest;
 				}
 
-				if ( ($zipstatus = $zip->extractTree(undef, "$dest/")) == AZ_OK ) {
+				# ignore additional directory information in zip
+				for my $search ("Plugins/$name/", "$name/") {
+
+					if ( $zip->membersMatching($search) ) {
+
+						$source = $search;
+						last;
+					}
+				}
+
+				if ( ($zipstatus = $zip->extractTree($source, "$dest/")) == AZ_OK ) {
 					
-					$log->info("extracted $name to $dest");
+					$log->info("extracted $name " . ($source ? "($source) " : '') . "to $dest");
 
 					$status->{$name}->{'status'} = 'extracted';
 
