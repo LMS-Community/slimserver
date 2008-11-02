@@ -50,7 +50,7 @@
 				<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox" /> [% plugin.title %] (v[% plugin.version %])</input>
 			[% END %]
 			[% WRAPPER setting desc = plugin.desc %]&nbsp;
-				[% IF plugin.link %]<a href="[% plugin.link %]">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
+				[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
 			[% END %]
 		[% END %]
 
