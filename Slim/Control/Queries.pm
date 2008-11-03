@@ -2136,7 +2136,7 @@ sub playersQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
-					'model', $eachclient->model());
+					'model', $eachclient->model(1));
 				$request->addResultLoop('players_loop', $cnt, 
 					'isplayer', $eachclient->isPlayer());
 				$request->addResultLoop('players_loop', $cnt, 
@@ -3060,7 +3060,7 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
-					'model', $eachclient->model());
+					'model', $eachclient->model(1));
 				$request->addResultLoop('players_loop', $cnt, 
 					'power', $eachclient->power());
 				$request->addResultLoop('players_loop', $cnt, 
@@ -3387,7 +3387,7 @@ sub statusQuery {
 		$request->addResult("mixer volume", $vol);
 	}
 		
-	if ($client->model() =~ /(?:squeezebox|slimp3)/) {
+	if ($client->model() =~ /^(?:squeezebox|slimp3)$/) {
 		$request->addResult("mixer treble", $client->treble());
 		$request->addResult("mixer bass", $client->bass());
 	}

@@ -157,10 +157,7 @@ sub handler {
 	}
 	
 	if ($client) {
-		$paramRef->{model} = $client->model;
-		if ($paramRef->{model} !~ /(?:receiver|boom|transporter)/) {
-			$paramRef->{model} = 'squeezebox';
-		}
+		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client);
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);

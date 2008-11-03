@@ -119,13 +119,8 @@ sub handler {
 	$paramRef->{'playerinfo'} = Slim::Menu::SystemInfo::infoCurrentPlayer( $client );
 	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};
 	
-	my $model = $client->model;
+	$paramRef->{'playericon'} = $class->getPlayerIcon($client);
 	
-	# default icon for software emulators and media players
-	$model = 'softsqueeze' if $model =~ /(?:http|squeezeplay)/i;
-
-	$paramRef->{'playericon'} = $model;	
-
 	my $page = $class->SUPER::handler($client, $paramRef);
 
 	if ($client && $client->display->isa('Slim::Display::Transporter')) {
@@ -213,6 +208,18 @@ sub getVisualModes {
 	}
 
 	return $display;
+}
+
+sub getPlayerIcon {
+	my ($class, $client) = @_;
+
+	my $model = $client->model(1);
+	
+	# default icon for software emulators and media players
+	$model = 'squeezebox' if $model eq 'squeezebox2';
+	$model = 'softsqueeze' if $model =~ /(?:http|squeezeslave)/i;
+	
+	return $model;
 }
 
 1;

@@ -84,6 +84,18 @@ sub maxPitch { 100 };
 sub minPitch { 100 };
 
 sub model {
+	my $client       = shift;
+	my $wantRealName = shift;
+
+	# sometimes we want the player's _exact_ type (SB2 vs. SB3)
+	if ($wantRealName && $client->model =~ /squeezebox/ && $client->macaddress =~ /^00:04:20((:\w\w){3})/) {
+		my $id = $1;
+		$id =~ s/://g;
+		if ($id gt "060000") {
+			return 'squeezebox3';
+		}
+	}
+
 	return 'squeezebox2';
 }
 

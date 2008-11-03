@@ -95,38 +95,6 @@ sub setMode {
 	$client->modeParam( 'handledTransition', 1 );
 }
 
-sub playerModel {
-	my $client = shift;
-	
-	# special case for squeezebox v3 (can't use in $client->model due to some images
-	# expecting "squeezebox" for v1-3)
-	if ($client->model =~ /squeezebox/ && $client->macaddress =~ /^00:04:20((:\w\w){3})/) {
-		my $id = $1;
-		$id =~ s/://g;
-		if ($id gt "060000") {
-			return "Squeezebox v3";
-		}
-	}
-
-	return $client->model;
-}
-
-# don't know yet how to do this in the new Slim::Menu::SystemInfo world order
-#sub updateClientStatus {
-#	my $client = shift;
-#
-#	if (Slim::Buttons::Common::mode($client) eq 'INPUT.List' &&
-#	    Slim::Buttons::Common::param($client, 'parentMode') eq 'information' &&
-#	    (${Slim::Buttons::Common::param($client, 'valueRef')} eq 'PLAYER_SIGNAL_STRENGTH' ||
-#	     ${Slim::Buttons::Common::param($client, 'valueRef')} eq 'PLAYER_VOLTAGE')) {
-#		$client->requestStatus();
-#	
-#		$client->update();
-#	}
-#
-#	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateClientStatus);
-#}
-
 1;
 
 __END__

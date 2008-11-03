@@ -168,7 +168,7 @@ sub _getPlayerInfo {
 	
 	my $info = [
 #		{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },
-		{ INFORMATION_PLAYER_MODEL           => Slim::Buttons::Information::playerModel($client) },
+		{ INFORMATION_PLAYER_MODEL           => $client->model(1) },
 		{ INFORMATION_FIRMWARE_ABBR          => $client->revision },
 		{ INFORMATION_PLAYER_IP              => $client->ip },
 #		{ INFORMATION_PLAYER_PORT            => $client->port },
