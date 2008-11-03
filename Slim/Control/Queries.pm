@@ -3053,8 +3053,8 @@ sub serverstatusQuery {
 			for my $eachclient (@players[$start..$end]) {
 				$request->addResultLoop('players_loop', $cnt, 
 					'playerid', $eachclient->id());
-                                $request->addResultLoop('players_loop', $cnt,
-                                        'uuid', $eachclient->uuid());
+				$request->addResultLoop('players_loop', $cnt,
+					'uuid', $eachclient->uuid());
 				$request->addResultLoop('players_loop', $cnt, 
 					'ip', $eachclient->ipport());
 				$request->addResultLoop('players_loop', $cnt, 
@@ -4211,6 +4211,44 @@ sub syncQuery {
 	} else {
 	
 		$request->addResult('_sync', '-');
+	}
+	
+	$request->setStatusDone();
+}
+
+
+sub syncGroupsQuery {
+	my $request = shift;
+
+	# check this is the correct query
+	if ($request->isNotQuery([['syncgroups']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	
+	my $cnt      = 0;
+	my @players  = Slim::Player::Client::clients();
+	my $loopname = 'syncgroups_loop'; 
+
+	if (scalar(@players) > 0) {
+
+		for my $eachclient (@players) {
+			
+			# create a group if $eachclient is a master
+			if ($eachclient->isSynced() && Slim::Player::Sync::isMaster($eachclient)) {
+				$request->addResultLoop($loopname, $cnt, 'sync_master', $eachclient->id);
+				$request->addResultLoop($loopname, $cnt, 'sync_master_name', $eachclient->name);
+
+				my @sync_buddies = map { $_->id() } $eachclient->syncedWith();
+				my @sync_names   = map { $_->name() } $eachclient->syncedWith();
+		
+				$request->addResultLoop($loopname, $cnt, 'sync_slaves', join(",", @sync_buddies));				
+				$request->addResultLoop($loopname, $cnt, 'sync_slaves_names', join(",", @sync_names));				
+				
+				$cnt++;
+			}
+		}
 	}
 	
 	$request->setStatusDone();

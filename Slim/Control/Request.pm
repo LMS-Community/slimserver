@@ -610,6 +610,7 @@ sub init {
 	addDispatch(['stopserver'],                                                                        [0, 0, 0, \&main::stopServer]);
 	addDispatch(['sync',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
 	addDispatch(['sync',           '_indexid-'],                                                       [1, 0, 0, \&Slim::Control::Commands::syncCommand]);
+	addDispatch(['syncgroups',     '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::syncGroupsQuery]);
 	addDispatch(['time',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
 	addDispatch(['time',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
 	addDispatch(['title',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);

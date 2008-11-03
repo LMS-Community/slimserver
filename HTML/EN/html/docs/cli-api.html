@@ -46,6 +46,7 @@
 <h4 id="7">Changes starting from SqueezeCenter 7.3</h4>
 <ul>
 	<li>Added 'icon' tag to radios and music_services response.</li>
+	<li>Added <a href="#syncgroups">&quot;syncgroups&quot;</a> query to get a list of sync groups and their members.</li>
 </ul>
 
 <hr>
@@ -1092,6 +1093,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#sync">sync</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#syncgroups">syncgroups</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#power">power</a></code></strong>
 	</li>
 	<li>
@@ -1553,6 +1557,29 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="syncgroups">
+	<strong>
+		<code>
+			syncgroups ? 
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;syncgroups&quot; query returns a list of sync groups, listing their
+	master and a comma separated list of slaves, both by ID and real name.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;syncgroups ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;syncgroups syncmaster:4:20:00:12:23:21 sync_master_name:BedBoom! sync_slaves:04:20:00:12:23:45,04:20:00:12:34:56 sync_slaves_names:Living%20Room,Kitchen&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
