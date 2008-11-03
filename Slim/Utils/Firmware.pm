@@ -266,6 +266,34 @@ sub init_jive_done {
 	$JIVE_FW  = $jive_file;
 }
 
+=head2 init_jive_error()
+
+Called if Jive firmware download failed.  Checks if another firmware exists in cache.
+
+=cut
+
+sub init_jive_error {	
+	# Check if we have a usable Jive firmware
+	my $version_file = catdir( $prefs->get('cachedir'), 'jive.version' );
+	
+	if ( -e $version_file ) {
+		my $version = read_file($version_file);
+
+		my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
+
+		my $jive_file = catdir( $prefs->get('cachedir'), "jive_${ver}_r${rev}.bin" );
+
+		if ( -e $jive_file ) {
+			$log->info("Jive firmware download had an error, using existing firmware: $jive_file");
+			$JIVE_VER = $ver;
+			$JIVE_REV = $rev;
+			$JIVE_FW  = $jive_file;
+		}
+	}
+	
+	# Note: Server will keep trying to download a new one
+}
+
 =head2 jive_url()
 
 Returns a URL for downloading the current Jive firmware.  Returns
@@ -515,6 +543,12 @@ sub downloadAsyncError {
 	$CHECK_TIME *= 2;
 	if ( $CHECK_TIME > MAX_RETRY_TIME ) {
 		$CHECK_TIME = MAX_RETRY_TIME;
+	}
+	
+	# Bug 9230, if we failed to download a Jive firmware but have a valid one in Cache already,
+	# we should still offer it for download
+	if ( $file =~ /jive/ ) {
+		init_jive_error();
 	}
 }
 
