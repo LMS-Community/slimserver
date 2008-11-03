@@ -49,6 +49,7 @@ sub handler {
 				Slim::Plugin::Extensions::Plugin->addRepo($repo);
 			}
 		}
+		
 		for my $repo (keys %current) {
 			if (!$new{$repo}) {
 				$changed = 1;
@@ -236,7 +237,7 @@ sub _addInfo {
 		}
 
 		if ($restart) {
-			$params->{'warning'} .= Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_RESTART_MSG');
+			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") . '</span>';
 		}
 	}
 	
