@@ -447,7 +447,7 @@
 						</div>
 				
 						<div class="box-inner">
-							<img id="playerpic" src="/html/images/Players/[% model %].jpg">
+							[% IF playericon %]<img id="playerpic" src="/html/images/Players/[% playericon %]_150x150_ffffff.png">[% END %]
 							<ul class="howto">
 								<li>[% "HOWTO_HOME" | string %]</li>
 								<li>[% "HOWTO_DOWN_BOOM" | string %]</li>
