@@ -1300,7 +1300,8 @@ sub jiveSettings {
 	return [ {
 		stringToken    => getDisplayName(),
 		id             => 'audioscrobbler',
-		node           => 'home',
+		node           => 'advancedSettings',
+		weight         => 100,
 		actions => {
 			go => {
 				player => 0,
