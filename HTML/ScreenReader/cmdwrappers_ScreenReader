@@ -5,7 +5,7 @@
 [% IF content.search("href=") %]
 <a [% content %]>[% cmdtitle | string %]</a>
 [%- ELSE -%]
-<a href="#" [% content %]>[% cmdtitle | string %]</a>
+<a href="#" type="button" [% content %]>[% cmdtitle | string %]</a>
 [%- END %]
 </td>
 [%- END %]
