@@ -115,7 +115,7 @@ Play =>
 	[	\&_BadState,	\&_StopGetNext,	\&_StopGetNext,	\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_StopGetNext,	\&_StopGetNext,	\&_BadState],		# WAITING_TO_SYNC
 	[	\&_StopGetNext,	\&_StopGetNext,	\&_StopGetNext,	\&_StopGetNext],	# PLAYING
-	[	\&_Resume,		\&_Resume,		\&_Resume,		\&_Resume],			# PAUSED
+	[	\&_StopGetNext,	\&_StopGetNext,	\&_StopGetNext,	\&_StopGetNext],	# PAUSED
 ],
 ContinuePlay =>
 [	[	\&_Stop,		\&_BadState,	\&_BadState,	\&_StopGetNext],	# STOPPED	
