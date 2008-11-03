@@ -1047,8 +1047,8 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 					text: SqueezeJS.string('synchronize') + '...',
 					// query the currently synced players and show the dialog
 					handler: function(){
-						SqueezeJS.Controller.playerRequest({
-							params: ['sync', '?'],
+						SqueezeJS.Controller.request({
+							params: ['', ['syncgroups', '?']],
 							success: this.showSyncDialog,
 							failure: this.showSyncDialog,
 							scope: this
@@ -1290,8 +1290,8 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		var responseText = Ext.util.JSON.decode(response.responseText);
 
 		var syncedPlayers = new Array();
-		if (responseText.result && responseText.result._sync) {
-			syncedPlayers = responseText.result._sync;
+		if (responseText.result && responseText.result.syncgroups_loop) {
+			syncedPlayers = responseText.result.syncgroups_loop;
 		}
 
 		// make sure any previous syncgroup form is deleted; seems not to happen in on dlg.destroy() in some browsers
@@ -1304,23 +1304,73 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		var tpl = new Ext.Template('<input type="radio" id="{id}" value="{id}" {checked} {disabled} name="synctarget">&nbsp;<label for="{id}">{name}</label><br>');
 		tpl.compile();
 
+		// create checkboxes for other players and preselect if synced
+		this.playerList.eachKey(function(id, data){
+			if (id && data.name) {
+				
+				var isMaster, isSlave, currentIsSlave, slaves;
+				
+				// is current player a sync master?
+				for (var i = 0; i < syncedPlayers.length; i++) {
+					var master = syncedPlayers[i].sync_master;
+					if (master && master == id) {
+						isMaster = true;
+						slaves = syncedPlayers[i].sync_slaves_names;
+						currentIsSlave = syncedPlayers[i].sync_slaves.indexOf(playerid) > -1;
+						break;
+					}
+				}
+				
+				// is current player a sync group member?
+				if (!isMaster)
+					for (var i = 0; i < syncedPlayers.length; i++) {
+						var slaves = syncedPlayers[i].sync_slaves;
+						if (slaves && slaves.indexOf(id) > -1) {
+							isSlave = true;
+							break;
+						}
+					}
+
+
+				var item = {};
+				var isCurrentPlayer = id == playerid;
+				
+				if (isSlave) {
+					// don't show
+				}
+				else if (isMaster) {
+					// show master & slaves
+					item = {
+						name: data.name + ',' + slaves,
+						id: id,
+						checked: id == playerid || currentIsSlave ? 'checked="checked"' : ''
+					}
+				}
+				else if (id != player) {
+					// unsynced player
+					item = {
+						name: data.name,
+						id: id,
+						checked: ''
+					}
+				}
+
+				if (item.name) {
+					item.name = item.name.replace(/,/g, ",&nbsp;");
+					item.disabled = data.isplayer ? '' : 'disabled';
+					
+					playerSelection += tpl.apply(item);
+				}
+			}
+
+		});
+
 		// "Don't sync" item
 		playerSelection += tpl.apply({
 			name: SqueezeJS.string('setup_no_synchronization'),
 			id: '-',
 			checked: syncedPlayers.length == 0 || syncedPlayers[0] == '-' ? 'checked="checked"' : '',
 			disabled: ''
-		});
-
-		// create checkboxes for other players and preselect if synced
-		this.playerList.eachKey(function(id, data){
-			if (id && data.name && id != playerid)
-				playerSelection += tpl.apply({
-					name: data.name,
-					id: id,
-					checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked="checked"' : '',
-					disabled: data.isplayer ? '' : 'disabled'
-				});
 		});
 
 		playerSelection += '</form>';
@@ -1345,7 +1395,7 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 					if (targets[i].value == '-')
 						SqueezeJS.Controller.playerRequest({ params: [ 'sync', '-' ]});
 					else
-						SqueezeJS.Controller.request({ params: [ targets[i].value, [ 'sync', SqueezeJS.getPlayer() ] ] });
+						SqueezeJS.Controller.request({ params: [ targets[i].value, [ 'sync', playerid ] ] });
 					break;
 				}
 			}
