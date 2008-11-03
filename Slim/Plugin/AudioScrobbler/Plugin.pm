@@ -91,6 +91,12 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['audioscrobbler', 'banTrack', '_url', '_skip'],
 		[0, 1, 1, \&banTrack]);
 	
+	Slim::Control::Request::addDispatch([ 'audioscrobbler', 'settings' ],
+		[1, 1, 0, \&jiveSettingsMenu]);
+
+	Slim::Control::Request::addDispatch([ 'audioscrobbler', 'account' ],
+		[1, 0, 1, \&jiveSettingsCommand]);
+
 	# Pref change hooks
 	$prefs->setChange( sub {
 		my $value  = $_[1];
@@ -1287,4 +1293,87 @@ sub infoLoveTrackSubmit {
 	} );
 }
 		
+sub jiveSettings {
+
+	my $client = shift;
+
+	return [ {
+		stringToken    => getDisplayName(),
+		id             => 'audioscrobbler',
+		node           => 'home',
+		actions => {
+			go => {
+				player => 0,
+				cmd    => [ 'audioscrobbler', 'settings' ],
+			},
+		},
+	} ];
+}
+
+sub jiveSettingsCommand {
+	my $request = shift;
+	my $client  = $request->client();
+	my $account = $request->getParam('user');
+
+	$log->debug('Setting account to: ' . $account);
+	changeAccount( $client, $account );
+
+	$request->setStatusDone();
+
+}
+	
+sub jiveSettingsMenu {
+
+	my $request  = shift;
+	my $client   = $request->client();
+	my $accounts = $prefs->get('accounts') || [];
+	my $enabled  = $prefs->get('enable_scrobbling');
+	my $selected = $prefs->client($client)->get('account');
+
+	my @menu     = ();
+
+	for my $account (@$accounts) {
+                my $item = {
+			text    => $account->{username},
+			radio   => ($selected == $account->{username} && $enabled) + 0,
+                        actions => {
+                                do => {
+                                        player => 0,
+                                        cmd    => [ 'audioscrobbler' , 'account' ],
+					params => {
+						user => $account->{username},
+					},
+                                },
+                        },
+                };
+		push @menu, $item;
+	}
+
+	# disable for this player
+	my $disableItem = {
+		text    => $client->string('PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED'),
+		radio   => !$enabled + 0,
+		actions => {
+			do => {
+				player => 0,
+				cmd    => [ 'audioscrobbler' , 'account' ],
+				params => {
+					user => '0',
+				},
+			},
+		},
+	};
+	push @menu, $disableItem;
+
+	my $numitems = scalar(@menu);
+	$request->addResult("count", $numitems);
+	$request->addResult("offset", 0);
+	my $cnt = 0;
+	for my $eachItem (@menu[0..$#menu]) {
+		$request->setResultLoopHash('item_loop', $cnt, $eachItem);
+		$cnt++;
+	}
+	$request->setStatusDone();
+}
+
 1;

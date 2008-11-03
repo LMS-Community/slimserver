@@ -300,6 +300,14 @@ sub mainMenu {
 				[];
 			}
 		},
+		@{
+			# The Audioscrobbler plugin could be disabled
+			if( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::AudioScrobbler::Plugin')) {
+				Slim::Plugin::AudioScrobbler::Plugin::jiveSettings($client);
+			} else {
+				[];
+			}
+		},
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
 		@{albumSortSettingsItem($client, 1)},
