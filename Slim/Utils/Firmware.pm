@@ -44,6 +44,9 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+use constant INITIAL_RETRY_TIME => 600;
+use constant MAX_RETRY_TIME     => 86400;
+
 # Models to download firmware for
 my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
@@ -58,7 +61,7 @@ sub BASE {
 }
 
 # Check interval when firmware can't be downloaded
-my $CHECK_TIME = 600;
+my $CHECK_TIME = INITIAL_RETRY_TIME;
 
 # Current Jive firmware file and version/revision
 my $JIVE_FW;
@@ -139,7 +142,7 @@ sub init {
 	}
 	
 	if ( !$ok ) {
-		logError("Some firmware failed to download, will try again in 10 minutes.  Please check your Internet connection.");
+		logError("Some firmware failed to download, will try again in " . int( $CHECK_TIME / 60 ) . " minutes.  Please check your Internet connection.");
 	}
 }
 
@@ -156,8 +159,6 @@ and custom.jive.bin in the cachedir.  If these exist then these are used in pref
 
 sub init_jive {
 
-	my $url = BASE() . '/' . $::VERSION . '/jive.version';
-		
 	my $version_file   = catdir( $prefs->get('cachedir'), 'jive.version' );
 
 	my $custom_version = catdir( $prefs->get('cachedir'), 'custom.jive.version' );
@@ -428,6 +429,8 @@ sub downloadAsyncDone {
 	my $pt   = $http->params('pt');
 	my $url  = $http->url;
 	
+	$CHECK_TIME = INITIAL_RETRY_TIME;
+	
 	# make sure we got the file
 	if ( !-e "$file.tmp" ) {
 		return downloadAsyncError( $http, 'File was not saved properly' );
@@ -498,14 +501,21 @@ sub downloadAsyncError {
 	my $file = $http->params('file');
 	
 	# Clean up
-	unlink "$file.tmp" if -e "$file.tmp";
+	unlink "$file.tmp" if -e "$file.tmp"; 
 	
-	logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in 10 minutes.",
+	logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in %d minutes.",
 		$http->url,
 		$error,
+		int( $CHECK_TIME / 60 ),
 	));
 	
-	Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME + int(rand(60)), \&downloadAsync );
+	Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync );
+	
+	# Increase retry time in case of multiple failures, but don't exceed MAX_RETRY_TIME
+	$CHECK_TIME *= 2;
+	if ( $CHECK_TIME > MAX_RETRY_TIME ) {
+		$CHECK_TIME = MAX_RETRY_TIME;
+	}
 }
 
 =head2 fatal($msg)
