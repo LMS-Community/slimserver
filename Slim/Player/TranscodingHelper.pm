@@ -431,7 +431,7 @@ sub getConvertCommand2 {
 	}
 
 	if (! $transcoder) {
-		$log->error("Error: Didn't find any command matches for type: $type");
+		$log->info("Error: Didn't find any command matches for type: $type");
 	} else {
 		$log->is_info && $log->info("Matched: $type->", $transcoder->{'streamformat'}, " via: ", $transcoder->{'command'});
 	}
