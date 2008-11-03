@@ -1299,9 +1299,18 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		if (playerSelection)
 			playerSelection.remove();
 
-		playerSelection = '<form name="syncgroup" id="syncgroup">';
-		var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked} {disabled}>&nbsp;<label for="{id}">{name}</label><br>');
+		playerSelection = '<p style="margin-right:25px">' + SqueezeJS.string('setup_synchronize_desc') + '</p>';
+		playerSelection += '<form name="syncgroup" id="syncgroup">';
+		var tpl = new Ext.Template('<input type="radio" id="{id}" value="{id}" {checked} {disabled} name="synctarget">&nbsp;<label for="{id}">{name}</label><br>');
 		tpl.compile();
+
+		// "Don't sync" item
+		playerSelection += tpl.apply({
+			name: SqueezeJS.string('setup_no_synchronization'),
+			id: '-',
+			checked: syncedPlayers.length == 0 || syncedPlayers[0] == '-' ? 'checked="checked"' : '',
+			disabled: ''
+		});
 
 		// create checkboxes for other players and preselect if synced
 		this.playerList.eachKey(function(id, data){
@@ -1309,10 +1318,11 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 				playerSelection += tpl.apply({
 					name: data.name,
 					id: id,
-					checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked' : '',
+					checked: parseInt(syncedPlayers.indexOf(id)) >= 0 ? 'checked="checked"' : '',
 					disabled: data.isplayer ? '' : 'disabled'
 				});
 		});
+
 		playerSelection += '</form>';
 
 		var dlg = new Ext.Window({
@@ -1320,23 +1330,24 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 			modal: true,
 			collapsible: false,
 			width: 400,
-			height: 150 + this.playerList.getCount() * 13,
+			height: 250 + this.playerList.getCount() * 13,
 			autoScroll: true,
 			resizeHandles: 'se',
 			html: playerSelection
 		});
 
-		dlg.addButton(SqueezeJS.string('synchronize'), function(){ 
-			var players = Ext.query('input', Ext.get('syncgroup').dom);
+		dlg.addButton(SqueezeJS.string('synchronize'), function() {
+			var targets = document.forms.syncgroup.synctarget;
+			
+			for (var i = 0; i < targets.length; i++) {
 
-			for(var i = 0; i < players.length; i++) {
-				// sync if not synced yet
-				if (players[i].checked && syncedPlayers.indexOf(parseInt(players[i].id)) < 0)
-					SqueezeJS.Controller.playerRequest({ params: [ 'sync', players[i].id ]});
-
-				// unsync if no longer checked
-				else if (syncedPlayers.indexOf(parseInt(players[i].id)) >= 0 & !players[i].checked)
-					SqueezeJS.Controller.request({ params: [ players[i].id, [ 'sync', '-' ] ] });
+				if (targets[i].checked) {
+					if (targets[i].value == '-')
+						SqueezeJS.Controller.playerRequest({ params: [ 'sync', '-' ]});
+					else
+						SqueezeJS.Controller.request({ params: [ targets[i].value, [ 'sync', SqueezeJS.getPlayer() ] ] });
+					break;
+				}
 			}
 
 			dlg.destroy();

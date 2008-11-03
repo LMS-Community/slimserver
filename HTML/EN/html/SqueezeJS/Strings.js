@@ -36,6 +36,8 @@ SqueezeJS.Strings['volume'] += '[% "COLON" | string %]';
 [% PROCESS jsString id='CANCEL' jsId='' %]
 [% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
 [% PROCESS jsString id='SYNCHRONIZE' jsId='' %]
+[% PROCESS jsString id='SETUP_SYNCHRONIZE_DESC' jsId='' %]
+[% PROCESS jsString id='SETUP_NO_SYNCHRONIZATION' jsId='' %]
 [% PROCESS jsString id='NO_PLAYER_FOUND' jsId='no_player' %]
 [% PROCESS jsString id='NO_PLAYER_DETAILS' jsId='' %]
 [% PROCESS jsString id='SQUEEZENETWORK' %]
