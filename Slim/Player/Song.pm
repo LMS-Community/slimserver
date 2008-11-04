@@ -296,6 +296,9 @@ sub open {
 	# Reset seekOffset - handlers will set this if necessary
 	$self->{'startOffset'} = 0;
 	
+	# Restart direct-stream
+	$self->{'directstream'} = 0;
+	
 	$log->info($url);
 	
 	$self->{'seekdata'} = $seekdata if $seekdata;
@@ -443,11 +446,11 @@ sub open {
 			my $quality = $prefs->client($client)->get('lameQuality');
 				
 			my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
-				$transcoder, $sock ? '-' : $track->path, $url, 1, $quality
+				$transcoder, $sock ? '-' : $track->path, $self->{'streamUrl'}, 1, $quality
 			);
 
 			if (!defined($command)) {
-				logError("Couldn't create command line for $format playback for [$url]");
+				logError("Couldn't create command line for $format playback for [$self->{'streamUrl'}]");
 				return (undef, 'PROBLEM_CONVERT_FILE', $url);
 			}
 
@@ -457,7 +460,7 @@ sub open {
 
 			if (!defined($pipeline)) {
 				$sock->close();
-				logError("While creating conversion pipeline for: [$url]");
+				logError("While creating conversion pipeline for: ", $self->{'streamUrl'});
 				return (undef, 'PROBLEM_CONVERT_STREAM', $url);
 			}
 	
