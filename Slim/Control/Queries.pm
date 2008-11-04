@@ -2510,6 +2510,7 @@ sub playlistsQuery {
 				titleStyle => 'playlist',
 			},
 		};
+		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$request->addResult('base', $base);
 	}
 
@@ -2548,6 +2549,7 @@ sub playlistsQuery {
 						'textkey' => substr($eachitem->namesort, 0, 1),
 					};
 
+					_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 					$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 				} else {
 					$request->addResultLoop($loopname, $chunkCount, "id", $id);
@@ -4709,6 +4711,7 @@ sub yearsQuery {
 		if ($party || $partyMode) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
+		$base->{'actions'}{'play-hold'} = _mixerBase();
 		$request->addResult('base', $base);
 	}
 
@@ -4750,6 +4753,7 @@ sub yearsQuery {
 				};
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
+				_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				if ($party || $partyMode) {
 					$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
 				}
