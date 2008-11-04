@@ -4250,14 +4250,11 @@ sub syncGroupsQuery {
 			
 			# create a group if $eachclient is a master
 			if ($eachclient->isSynced() && Slim::Player::Sync::isMaster($eachclient)) {
-				$request->addResultLoop($loopname, $cnt, 'sync_master', $eachclient->id);
-				$request->addResultLoop($loopname, $cnt, 'sync_master_name', $eachclient->name);
-
 				my @sync_buddies = map { $_->id() } $eachclient->syncedWith();
 				my @sync_names   = map { $_->name() } $eachclient->syncedWith();
 		
-				$request->addResultLoop($loopname, $cnt, 'sync_slaves', join(",", @sync_buddies));				
-				$request->addResultLoop($loopname, $cnt, 'sync_slaves_names', join(",", @sync_names));				
+				$request->addResultLoop($loopname, $cnt, 'sync_members', join(",", $eachclient->id, @sync_buddies));				
+				$request->addResultLoop($loopname, $cnt, 'sync_member_names', join(",", $eachclient->name, @sync_names));				
 				
 				$cnt++;
 			}

@@ -1304,63 +1304,39 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 		var tpl = new Ext.Template('<input type="radio" id="{id}" value="{id}" {checked} {disabled} name="synctarget">&nbsp;<label for="{id}">{name}</label><br>');
 		tpl.compile();
 
+		var syncedPlayersList = '';
+		
+		// add sync groups first in the menu
+		for (var i = 0; i < syncedPlayers.length; i++) {
+			
+			var sync_group = syncedPlayers[i].sync_members;
+
+			if (sync_group) {
+				var members = sync_group.split(',');
+				syncedPlayersList += sync_group;
+
+				playerSelection += tpl.apply({
+					name: syncedPlayers[i].sync_member_names.replace(/,/g, ",&nbsp;") || sync_group,
+					id: members[0],
+					checked: sync_group.indexOf(playerid) > -1 ? 'checked="checked"' : '',
+					disabled: ''
+				});
+			}
+		}
+
+		
 		// create checkboxes for other players and preselect if synced
 		this.playerList.eachKey(function(id, data){
-			if (id && data.name) {
-				
-				var isMaster, isSlave, currentIsSlave, slaves;
-				
-				// is current player a sync master?
-				for (var i = 0; i < syncedPlayers.length; i++) {
-					var master = syncedPlayers[i].sync_master;
-					if (master && master == id) {
-						isMaster = true;
-						slaves = syncedPlayers[i].sync_slaves_names;
-						currentIsSlave = syncedPlayers[i].sync_slaves.indexOf(playerid) > -1;
-						break;
-					}
-				}
-				
-				// is current player a sync group member?
-				if (!isMaster)
-					for (var i = 0; i < syncedPlayers.length; i++) {
-						var slaves = syncedPlayers[i].sync_slaves;
-						if (slaves && slaves.indexOf(id) > -1) {
-							isSlave = true;
-							break;
-						}
-					}
 
-
-				var item = {};
-				var isCurrentPlayer = id == playerid;
+			if (id && data.name && id != playerid && syncedPlayersList.indexOf(id) == -1) {
 				
-				if (isSlave) {
-					// don't show
-				}
-				else if (isMaster) {
-					// show master & slaves
-					item = {
-						name: data.name + ',' + slaves,
-						id: id,
-						checked: id == playerid || currentIsSlave ? 'checked="checked"' : ''
-					}
-				}
-				else if (id != player) {
-					// unsynced player
-					item = {
-						name: data.name,
-						id: id,
-						checked: ''
-					}
-				}
-
-				if (item.name) {
-					item.name = item.name.replace(/,/g, ",&nbsp;");
-					item.disabled = data.isplayer ? '' : 'disabled';
-					
-					playerSelection += tpl.apply(item);
-				}
+				// unsynced player
+				playerSelection += tpl.apply({
+					name: data.name,
+					id: id,
+					checked: '',
+					disabled: data.isplayer ? '' : 'disabled'
+				});
 			}
 
 		});
