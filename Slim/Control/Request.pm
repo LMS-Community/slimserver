@@ -2279,7 +2279,7 @@ sub renderAsArray {
 		# no output
 		next if ($key =~ /^__/);
 
-		$val = Slim::Utils::Unicode::from_locale($val, $encoding) if $encoding;
+		$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
 
 		if ($key =~ /^_/) {
 			push @returnArray, $val;
@@ -2302,7 +2302,10 @@ sub renderAsArray {
 
 				while (my ($key2, $val2) = each %{$hash}) {
 
-					$val2 = Slim::Utils::Unicode::from_locale($val2, $encoding) if $encoding;
+					if ($encoding) {
+
+						$val2 = Slim::Utils::Unicode::encode($encoding, $val2);
+					}
 
 					if ($key2 =~ /^__/) {
 						# no output
@@ -2320,9 +2323,9 @@ sub renderAsArray {
 		if (ref $val eq 'ARRAY') {
 			$val = join (',', @{$val})
 		}
-
-		if ($encoding && ref $val eq 'SCALAR') {
-			$val = Slim::Utils::Unicode::from_locale($val, $encoding);
+		
+		if (ref $val eq 'SCALAR') {		
+			$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
 		}
 		
 		if ($key =~ /^_/) {

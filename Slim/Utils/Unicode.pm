@@ -908,26 +908,6 @@ sub encode {
 	return Encode::encode($encoding, $string);
 }
 
-
-=head2 from_locale( $string, $to_encoding )
-
-=cut
-
-sub from_locale {
-	my $string = shift;
-	my $to_encoding = shift;
-	
-	return $string unless $] > 5.007;
-	
-	my $from_encoding = encodingFromString($string);
-	return $string if $from_encoding eq $to_encoding;
-	
-	Encode::from_to($string, $from_encoding, $to_encoding);
-	
-	return $string;
-}
-
-
 =head1 SEE ALSO
 
 L<Encode>, L<Text::Unidecode>, L<File::BOM>
