@@ -111,7 +111,7 @@ sub _downloadDone {
 
 		my $sha1 = Digest::SHA1->new;
 		
-		open my $fh, $file;
+		open my $fh, '<', $file;
 		
 		$sha1->addfile($fh);
 		
