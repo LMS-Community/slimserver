@@ -680,8 +680,11 @@ sub cli_request_write {
 
 	$client_socket = $request->connectionID() unless defined $client_socket;
 
-	my $encoding   = $request->getParam('charset') || 'utf8';
-	my @elements   = $request->renderAsArray($encoding);
+	my $encoding = $request->getParam('charset') || 'utf8';
+	# bug 9559 - don't re-encode the response if we're using the requested locale
+	$encoding    = '' if $encoding eq Slim::Utils::Unicode::currentLocale();
+	
+	my @elements = $request->renderAsArray($encoding);
 
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 
