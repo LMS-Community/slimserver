@@ -136,6 +136,9 @@ sub loadConversionTables {
 # B - can limit bitrate
 #
 # Substitution strings for variable capabilities
+# %f - file path (local files)
+# %F - full URL (remote streams)
+#
 # %o - stream start byte offset
 # 
 # %S - stream samples start offset
@@ -468,7 +471,7 @@ sub tokenizeConvertCommand2 {
 	my $capabilities = $capabilities{$profile};
 	
 	# Find what substitutions we need to make
-	foreach my $cap ($transcoder->{'streamFormat'}, @{$transcoder->{'usedCapabilities'}}) {
+	foreach my $cap ($transcoder->{'streamMode'}, @{$transcoder->{'usedCapabilities'}}) {
 		my ($arg, $value) = $capabilities->{$cap} =~ /(\w+)=(.+)/;
 		next unless defined $value;
 		$subs{$arg} = $value;
@@ -477,6 +480,18 @@ sub tokenizeConvertCommand2 {
 		foreach ($value =~ m/%(.)/g) {
 			$vars{$_} = 1;
 		}
+	}
+	
+	# escape $ and * in file names and URLs.
+	# Except on Windows where $ and ` shouldn't be escaped and "
+	# isn't allowed in filenames.
+	if (!Slim::Utils::OSDetect::isWindows()) {
+		$filepath =~ s/([\$\"\`])/\\$1/g;
+		$fullpath =~ s/([\$\"\`])/\\$1/g;
+	}
+
+	if (Slim::Music::Info::isFile($filepath)) {
+		$filepath = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($filepath);
 	}
 	
 	foreach my $v (keys %vars) {
@@ -491,23 +506,14 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'b') {$value = ($transcoder->{'rateLimit'} || 320) * 1000;}
 		elsif ($v eq 'B') {$value = ($transcoder->{'rateLimit'} || 320);}
 		
+		elsif ($v eq 'f') {$value = '"' . $filepath . '"';}
+		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
+		
 		foreach (values %subs) {
 			s/%$v/$value/ge;
 		}
 	}
 
-	# escape $ and * in file names and URLs.
-	# Except on Windows where $ and ` shouldn't be escaped and "
-	# isn't allowed in filenames.
-	if (!Slim::Utils::OSDetect::isWindows()) {
-		$filepath =~ s/([\$\"\`])/\\$1/g;
-		$fullpath =~ s/([\$\"\`])/\\$1/g;
-	}
-	
-	if (Slim::Music::Info::isFile($filepath)) {
-		$filepath = Slim::Utils::OSDetect::getOS->decodeExternalHelperPath($filepath);
-	}
-	
 	
 	# Check to see if we need to flip the endianess on output
 	$subs{'-x'} = (unpack('n', pack('s', 1)) == 1) ? "" : "-x";
