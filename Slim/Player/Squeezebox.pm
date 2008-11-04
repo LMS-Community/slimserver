@@ -637,43 +637,29 @@ sub stream_s {
 	} elsif ( $format =~ /(?:wma|asx)/ ) {
 
 		$formatbyte = 'w';
+		
+		my ($chunked, $audioStream, $metadataStream) = (0, 1, undef);
+		
+		if ($handler->can('getMMSStreamingParameters')) {
+			($chunked, $audioStream, $metadataStream) = 
+				$handler->getMMSStreamingParameters($controller->song(),  $url);
+		}
 
 		# Commandeer the unused pcmsamplesize field
 		# to indicate whether the data coming in is
 		# going to have the mms/http chunking headers.
-		if ($isDirect) {
-			$pcmsamplesize = 1;
-				
-			# Bugs 5631, 7762
-			# Check WMA metadata to see if this remote stream is being served from a
-			# Windows Media server or a normal HTTP server.  WM servers will use MMS chunking
-			# and need a pcmsamplesize value of 1, whereas HTTP servers need pcmsamplesize of 0.
-			my ($scanData, $meta);
-			if ( ($scanData = $controller->song()->{'scanData'}) 
-				&& ($scanData = $scanData->{$url})
-				&& ($meta = $scanData->{'metadata'}) )
-			{
-				if ( $meta->info('flags')->{'broadcast'} == 0 ) {
-					if ( $scanData->{'headers'}->content_type ne 'application/vnd.ms.wms-hdr.asfv1' ) {
-						# The server didn't return the expected ASF header content-type,
-						# so we assume it's not a Windows Media server
-						$pcmsamplesize = 0;
-					}
-				}
-			}
-
-		} else {
-
-			$pcmsamplesize = 0;
-		}
-			
-		logger('player.streaming.direct')->debug( "WMA PCM sample size set to $pcmsamplesize" );
-
-		$pcmsamplerate   = chr(1);
+		$pcmsamplesize = $chunked;
+		
+		# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
+		# so the firmware knows which stream to play
+		$pcmsamplerate   = chr($audioStream);
+		
+		# And the pcmchannels fields hold the metadata stream number, if any
+		$pcmchannels     = defined($metadataStream) ? chr($metadataStream) : '?';
+		
 		$pcmendian       = '?';
-		$pcmchannels     = '?';
 		$outputThreshold = 10;
-
+		
 	} elsif ($format eq 'ogg') {
 
 		$formatbyte      = 'o';
@@ -760,19 +746,6 @@ sub stream_s {
 			$log->info("request string: $request_string");
 		}
 				
-		if ( $format =~ /(?:wma|asx)/ ) {
-			# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
-			# so the firmware knows which stream to play
-			if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0 (?:ffff:(\d+):0 )?/ ) {
-				$pcmsamplerate = chr($streamNum);
-				
-				# If the request string contains a second stream, use it for metadata (Sirius)
-				if ( my $metaStream = $2 ) {
-					$pcmchannels = chr($metaStream);
-				}
-			}
-		}
-	
 	} else {
 
 		$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0\n", $client->id);
@@ -795,6 +768,12 @@ sub stream_s {
 		if (length($request_string) % 2) {
 			$request_string .= "\n";
 		}
+		
+		if ($handler->can('handlesStreamHeaders')) {
+			# Handler wants to be called once the stream is open
+			$autostart += 2;
+		}
+		
 	}
 
 

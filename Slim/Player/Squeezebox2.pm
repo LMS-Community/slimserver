@@ -52,13 +52,6 @@ our $defaultPrefs = {
 # Keep track of direct stream redirects
 our $redirects = {};
 
-# WMA GUIDs we want to have the player send back to us
-my @WMA_FILE_PROPERTIES_OBJECT_GUID              = (0x8c, 0xab, 0xdc, 0xa1, 0xa9, 0x47, 0x11, 0xcf, 0x8e, 0xe4, 0x00, 0xc0, 0x0c, 0x20, 0x53, 0x65);
-my @WMA_CONTENT_DESCRIPTION_OBJECT_GUID          = (0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C);
-my @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID = (0xd2, 0xd0, 0xa4, 0x40, 0xe3, 0x07, 0x11, 0xd2, 0x97, 0xf0, 0x00, 0xa0, 0xc9, 0x5e, 0xa8, 0x50);
-my @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID    = (0x7b, 0xf8, 0x75, 0xce, 0x46, 0x8d, 0x11, 0xd1, 0x8d, 0x82, 0x00, 0x60, 0x97, 0xc9, 0xa2, 0xb2);
-my @WMA_ASF_COMMAND_MEDIA_OBJECT_GUID            = (0x59, 0xda, 0xcf, 0xc0, 0x59, 0xe6, 0x11, 0xd0, 0xa3, 0xac, 0x00, 0xa0, 0xc9, 0x03, 0x48, 0xf6);
-
 sub initPrefs {
 	my $client = shift;
 
@@ -395,11 +388,15 @@ sub directHeaders {
 	$directlog->is_info && $directlog->info("Processing headers for direct streaming:\n$headers");
 
 	my $controller = $client->controller()->songStreamController();
+	my $handler    = $controller ? $controller->protocolHandler() : undef;
+	
+	if ($handler && $handler->can('handlesStreamHeaders')) {
+		$handler->handlesStreamHeaders($client);
+	}
 
 	unless ($controller && $controller->isDirect()) {return;}
 
 	my $url = $controller->streamUrl();
-	my $handler = $controller->protocolHandler();
 	my $songHandler = $controller->songProtocolHandler();
 	
 	# We involve the protocol handler in the header parsing process.
@@ -449,7 +446,6 @@ sub directHeaders {
 			my $redir = '';
 			my $metaint = 0;
 			my @guids = ();
-			my $guids_length = 0;
 			my $length;
 			my $title;
 			my $contentType = "audio/mpeg";  # assume it's audio.  Some servers don't send a content type.
@@ -523,18 +519,7 @@ sub directHeaders {
 			$directlog->is_info && $directlog->info("Got a stream type: $contentType bitrate: $bitrate title: $title");
 
 			if ($contentType eq 'wma') {
-				push @guids, @WMA_FILE_PROPERTIES_OBJECT_GUID;
-				push @guids, @WMA_CONTENT_DESCRIPTION_OBJECT_GUID;
-				push @guids, @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID;
-				push @guids, @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID;
-				push @guids, @WMA_ASF_COMMAND_MEDIA_OBJECT_GUID;
-
-			    $guids_length = scalar @guids;
-
-			    # sending a length of -1 will return all wma header objects
-			    # for debugging
-			    ##@guids = ();
-			    ##$guids_length = -1;
+				@guids = Slim::Player::Protocols::MMS::metadataGuids($client);
 			}
 
 			if ($redir) {
@@ -592,7 +577,7 @@ sub directHeaders {
 				}
 
 				$client->streamformat($contentType);
-				$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, $guids_length, @guids)));
+				$client->sendContCommand($metaint, $loop, @guids);
 
 			} else {
 
@@ -606,6 +591,12 @@ sub directHeaders {
 			Slim::Player::Playlist::refreshTrack( $client, $url );
 		}
 	}
+}
+
+sub sendContCommand {
+	my ($client, $metaint, $loop, @guids) = @_;
+	
+	$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, scalar @guids, @guids)));
 }
 
 sub directBodyFrame {
@@ -706,7 +697,8 @@ sub directMetadata {
 
 	my $controller = $client->controller()->songStreamController();
 
-	unless ($controller && $controller->isDirect()) {return;}
+	# Will also get called for proxy streaming
+	# unless ($controller && $controller->isDirect()) {return;}
 
 	my $url = $controller->streamUrl();
 	
