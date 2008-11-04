@@ -1511,7 +1511,18 @@ sub getStringQuery {
 	my $tokenlist = $request->getParam('_tokens');
 
 	foreach my $token (split /,/, $tokenlist) {
-		$request->addResult($token, $request->string($token));
+		
+		# check whether string exists or not, to prevent stack dumps if
+		# client queries inexistent string
+		if (Slim::Utils::Strings::stringExists($token)) {
+			
+			$request->addResult($token, $request->string($token));
+		}
+		
+		else {
+			
+			$request->addResult($token, '');
+		}
 	}
 	
 	$request->setStatusDone();
