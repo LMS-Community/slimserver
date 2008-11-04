@@ -857,12 +857,12 @@ sub alarmUpdateMenu {
 	push @menu, $playlistChoice;
 
 	my $repeat = $alarm->repeat();
-	my $repeatOnOff = {
+	my $repeatOn = {
 		window   => { titleStyle => 'settings' },
 		text     => $client->string("ALARM_ALARM_REPEAT"),
-		checkbox => ($repeat == 1) + 0,
+		radio    => ($repeat == 1) + 0,
 		actions  => {
-			on  => {
+			do  => {
 				player => 0,
 				cmd    => [ 'alarm', 'update' ],
 				params => {
@@ -870,7 +870,17 @@ sub alarmUpdateMenu {
 					repeat => 1,
 				},
 			},
-			off => {
+		},		
+		nextWindow => 'refresh',
+	};
+	push @menu, $repeatOn;
+
+	my $repeatOff = {
+		window   => { titleStyle => 'settings' },
+		text     => $client->string("ALARM_ALARM_ONETIME"),
+		radio    => ($repeat == 0) + 0,
+		actions  => {
+			do => {
 				player => 0,
 				cmd    => [ 'alarm', 'update' ],
 				params => {
@@ -878,11 +888,10 @@ sub alarmUpdateMenu {
 					repeat => 0,
 				},
 			},
-		},		
+		},
 		nextWindow => 'refresh',
 	};
-	push @menu, $repeatOnOff;
-
+	push @menu, $repeatOff;
 
 	my @delete_menu= (
 		{

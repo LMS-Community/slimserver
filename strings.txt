@@ -1553,6 +1553,9 @@ ALARM_ALARM_REPEAT
 	NO	Gjenta vekking
 	SV	Upprepa alarm
 
+ALARM_ALARM_ONETIME
+	EN	One Time Alarm
+
 ALARM_ALARM_REPEAT_DESC
 	DA	Indstillingen bruges til at angive om dette vækkeur skal ringe mere end én gang. Hvis du vælger Nej, bliver det automatisk slået fra når det har ringet. derefter vil vækkeuret ikke ringe igen før du slår det til igen.
 	DE	Hier können Sie bestimmen, ob dieser Wecker mehrmals ausgelöst werden soll. Wenn Sie 'Nein' wählen, wird der Wecker automatisch deaktiviert, nachdem er ausgelöst wurde. Dieser Wecker wird dann erst wieder ausgelöst, wenn Sie ihn aktivieren.
@@ -18724,3 +18727,4 @@ WHATS_NEXT
 
 CONTINUE_TO_SQUEEZECENTER
 	EN	Continue to SqueezeCenter to manage settings for playing your personal music collection.
+
