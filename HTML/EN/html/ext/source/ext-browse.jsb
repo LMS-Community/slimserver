@@ -451,14 +451,11 @@
     <include name="widgets\Shadow.js" />
     <include name="widgets\BoxComponent.js" />
     <include name="widgets\Container.js" />
-    <include name="widgets\layout\ContainerLayout.js" />
-    <include name="widgets\layout\ColumnLayout.js" />
-    <include name="widgets\Viewport.js" />
     <include name="widgets\Panel.js" />
     <include name="widgets\Button.js" />
-    <include name="widgets\tips\Tip.js" />
-    <include name="widgets\tips\ToolTip.js" />
-    <include name="widgets\tips\QuickTip.js" />
-    <include name="widgets\tips\QuickTips.js" />
+    <include name="widgets\WindowManager.js" />
+    <include name="widgets\Window.js" />
+    <include name="widgets\MessageBox.js" />
+    <include name="widgets\ProgressBar.js" />
   </target>
 </project>
