@@ -1200,6 +1200,15 @@ SLEEPING_IN
 	SV	Viloläge aktiveras om
 	ZH_CN	关机倒数进行中
 
+SLEEP_AT_END_OF_SONG
+	EN	Sleep at end of song
+
+SLEEPING_AT_END_OF_SONG
+	EN	Sleeping at end of song
+
+NOTHING_CURRENTLY_PLAYING
+	EN	Nothing currently playing
+
 END_OF_SONG
 	DA	slut på nummeret
 	DE	Titelende

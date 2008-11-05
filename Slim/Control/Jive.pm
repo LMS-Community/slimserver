@@ -94,6 +94,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivedummycommand', '_index', '_quantity'],
 		[1, 1, 1, \&jiveDummyCommand]);
 
+	Slim::Control::Request::addDispatch(['jiveendoftracksleep', '_index', '_quantity' ],
+		[1, 1, 1, \&endOfTrackSleepCommand]);
+
 	Slim::Control::Request::addDispatch(['jivefavorites', '_cmd' ],
 		[1, 0, 1, \&jiveFavoritesCommand]);
 
@@ -1066,6 +1069,41 @@ sub syncSettingsQuery {
 
 }
 
+sub endOfTrackSleepCommand {
+
+	my $request = shift;
+	my $client  = $request->client();
+
+	if ($client->isPlaying()) {
+
+		# calculate the time remaining in seconds 
+		my $dur = $client->controller()->playingSongDuration();
+		my $remaining = $dur - Slim::Player::Source::songTime($client);
+		$client->execute( ['sleep', $remaining ] );
+		# an intentional showBriefly stomp of SLEEPING_IN_X_MINUTES with SLEEPING_AT_END_OF_SONG
+		$request->client->showBriefly(
+			{ 
+			'jive' =>
+				{
+					'type'    => 'popupplay',
+					'text'    => [ $request->string('SLEEPING_AT_END_OF_SONG') ],
+				},
+			}
+		);
+	} else {
+		$request->client->showBriefly(
+			{ 
+			'jive' =>
+				{
+					'type'    => 'popupplay',
+					'text'    => [ $request->string('NOTHING_CURRENTLY_PLAYING') ],
+				},
+			}
+		);
+	}
+}
+
+
 sub sleepSettingsQuery {
 
 	$log->info("Begin function");
@@ -1073,6 +1111,12 @@ sub sleepSettingsQuery {
 	my $client  = $request->client();
 	my $val     = $client->currentSleepTime();
 	my @menu;
+
+	# Bug: 2151 some extra stuff to add the option to sleep after the current song.
+	# first make sure we're playing, and its a valid song.
+	my $remaining = 0;
+
+	
 
 	if ($val > 0) {
 		my $now = Time::HiRes::time();
@@ -1082,6 +1126,21 @@ sub sleepSettingsQuery {
 		push @menu, { text => $sleepString, style => 'itemNoAction' };
 		push @menu, sleepInXHash($client, $val, 0);
 	}
+
+	if ($client->isPlaying()) {
+
+		push @menu, {
+			text    => $client->string('SLEEP_AT_END_OF_SONG'),
+			actions => {
+				go => {
+					player => 0,
+					cmd => [ 'jiveendoftracksleep' ],
+				},
+			},
+			nextWindow => 'refresh',
+		};
+	}
+
 	push @menu, sleepInXHash($client, $val, 15);
 	push @menu, sleepInXHash($client, $val, 30);
 	push @menu, sleepInXHash($client, $val, 45);
