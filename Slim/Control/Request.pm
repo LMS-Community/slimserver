@@ -2220,7 +2220,10 @@ sub fixEncoding {
 
 		if (!ref($val)) {
 
-			${$self->{'_params'}}{$key} = Slim::Utils::Unicode::decode($encoding, $val);
+			# wrap decode in eval, as an incorrect encoding type could hang CLI
+			eval { ${$self->{'_params'}}{$key} = Slim::Utils::Unicode::decode($encoding, $val) };
+			
+			$@ && $log->is_warn && $log->warn($@);
 		}
 	}
 }
@@ -2279,7 +2282,7 @@ sub renderAsArray {
 		# no output
 		next if ($key =~ /^__/);
 
-		$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
+		$val = Slim::Utils::Unicode::from_to($val, Slim::Utils::Unicode::encodingFromString($val), $encoding) if $encoding;
 
 		if ($key =~ /^_/) {
 			push @returnArray, $val;
@@ -2302,10 +2305,7 @@ sub renderAsArray {
 
 				while (my ($key2, $val2) = each %{$hash}) {
 
-					if ($encoding) {
-
-						$val2 = Slim::Utils::Unicode::encode($encoding, $val2);
-					}
+					$val2 = Slim::Utils::Unicode::from_to($val2, Slim::Utils::Unicode::encodingFromString($val2), $encoding) if $encoding;
 
 					if ($key2 =~ /^__/) {
 						# no output
@@ -2324,8 +2324,8 @@ sub renderAsArray {
 			$val = join (',', @{$val})
 		}
 		
-		if (ref $val eq 'SCALAR') {		
-			$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
+		if ($encoding && ref $val eq 'SCALAR') {
+			$val = Slim::Utils::Unicode::from_to($val, Slim::Utils::Unicode::encodingFromString($val), $encoding);
 		}
 		
 		if ($key =~ /^_/) {

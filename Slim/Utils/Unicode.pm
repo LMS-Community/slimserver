@@ -908,6 +908,33 @@ sub encode {
 	return Encode::encode($encoding, $string);
 }
 
+
+=head2 from_to( $string, $from_encoding, $to_encoding )
+
+=cut
+
+sub from_to {
+	my $string = shift;
+	my $from_encoding = shift;
+	my $to_encoding = shift;
+	
+	return $string unless $] > 5.007;
+	
+	return $string if $from_encoding eq $to_encoding;
+	
+	# wrap transformation in eval as utf8 -> iso8859-1 could break on wide characters
+	eval {
+		$string = decode($from_encoding, $string);
+		$string = encode($to_encoding, $string);
+	};
+	
+	if ($@) {
+		Slim::Utils::Log->logger('server')->warn("Could not convert from $from_encoding to $to_encoding: $string ($@)");
+	}
+	
+	return $string;
+}
+
 =head1 SEE ALSO
 
 L<Encode>, L<Text::Unidecode>, L<File::BOM>
