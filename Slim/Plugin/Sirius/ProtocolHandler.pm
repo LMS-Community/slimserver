@@ -148,6 +148,10 @@ sub gotChannelInfo {
 		$activityInterval,
 	);
 	
+	# Cache cover URL for this channel
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'sirius_cover_' . $url, $info->{logo}, '30 days' );
+	
 	$params->{'callback'}->();
 }
 
@@ -386,8 +390,14 @@ sub getMetadataFor {
 	my $logo;
 	
 	if ($song && $song->currentTrack()->url eq $url || $song->{'streamUrl'} eq $url) {
-		my $bitrate = $song->{'bitrate'} / 1000;
-		my $logo    = $song->{'coverArt'};
+		$bitrate = $song->{'bitrate'} / 1000;
+		$logo    = $song->{'coverArt'};
+	}
+	
+	if ( !$logo ) {
+		# Check cache for logo
+		my $cache = Slim::Utils::Cache->new;
+		$logo = $cache->get( 'sirius_cover_' . $url );
 	}
 	
 	$bitrate ||= 128;
