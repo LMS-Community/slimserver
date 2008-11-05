@@ -232,7 +232,7 @@ sub volume {
 	my $newvolume = shift;
 
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
-	my $preamp = 255 - int(2 * $prefs->client($client)->get('preampVolumeControl'));
+	my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
 
 	if (defined($newvolume)) {
 		# Old style volume:
