@@ -685,8 +685,6 @@ sub cli_request_write {
 
 	my $encoding = $request->getParam('charset') || 'utf8';
 	
-	$encoding =~ s/unicode/utf8/;
-	
 	# bug 9559 - don't re-encode the response if we're using the requested locale
 	$encoding    = '' if $encoding eq Slim::Utils::Unicode::currentLocale();
 	
