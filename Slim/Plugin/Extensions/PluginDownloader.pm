@@ -112,6 +112,8 @@ sub _downloadDone {
 		my $sha1 = Digest::SHA1->new;
 		
 		open my $fh, '<', $file;
+
+		binmode $fh;
 		
 		$sha1->addfile($fh);
 		
