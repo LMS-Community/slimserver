@@ -199,6 +199,7 @@ div#hidden {
 
 div#footer {
 	position: absolute;
+	width: 100%;
 	bottom: 0px;
 	clear: both;
 	z-index: 10;
@@ -249,9 +250,10 @@ div#miniControls {
 
 div#topbar {
 	position: absolute;
+	width: 100%;
 	top: 0;
 	left: 0;
-	height: 20;
+	height: 25;
 	overflow: visible;
 	z-index: 10;
 }
@@ -267,6 +269,7 @@ div#playerSelect {
 
 div#menu {
 	position: absolute;
+	width: 100%;
 	top: 25;
 	left: 0;
 	overflow: visible;
@@ -338,7 +341,8 @@ div#playlistbox {
 
 
 div#controls {
-       position: absolute;
+       position: relative;
+	width: auto;
        top:241;
 	left: 0;
 }
@@ -429,7 +433,7 @@ div#gallerySelect {
 div#crumblist {
         position: absolute;
         left: 0;
-        top: 80;
+        top: 87;
         z-index: 11;
 }
 
