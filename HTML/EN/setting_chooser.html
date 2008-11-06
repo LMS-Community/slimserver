@@ -17,13 +17,30 @@
 
 [%- ELSE -%]
 
-[%- BLOCK addSetupLinks -%]
-	[%- IF setuplinks -%]
-		[%- FOREACH stringkey = stringkeys.sort %]
+[%- 
+BLOCK addSetupLinks;
+	IF setuplinks;
+		sortedlinks = [];
+		sortedplugins = [];
+		FOREACH token = stringkeys.sort;
+			IF setuplinks.$token.search('plugin');
+				sortedplugins.push(token);
+			ELSE;
+				sortedlinks.push(token);
+			END;
+		END %]
+		<optgroup label="[% "SETTINGS" | string %]">
+		[% FOREACH stringkey IN sortedlinks %]
 			<option [% IF page == stringkey %]selected[% END %] value="[% stringkey %]" label="[% stringkeys.$stringkey %]">[% stringkeys.$stringkey %]</option>
-		[%- END -%]
-	[%- END -%]
-[%- END %]
+		[%- END %]
+		</optgroup>
+		<optgroup label="[% "SETUP_GROUP_PLUGINS" | string %]">
+		[% FOREACH stringkey IN sortedplugins %]
+			<option [% IF page == stringkey %]selected[% END %] value="[% stringkey %]" label="[% stringkeys.$stringkey %]">[% stringkeys.$stringkey %]</option>
+		[%- END %]
+		</optgroup>
+	[% END;
+END %]
 
 <form id="setup_chooser" name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
 <input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
