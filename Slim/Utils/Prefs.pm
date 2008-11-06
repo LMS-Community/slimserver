@@ -241,7 +241,7 @@ sub init {
 									'TITLE (ARTIST)',
 									'ARTIST - TITLE'
 								   ],
-		'titleFormatWeb'        => 1,
+		'titleFormatWeb'        => 0,
 		# Server Settings - UserInterface
 		'skin'                  => 'Default',
 		'itemsPerPage'          => 50,

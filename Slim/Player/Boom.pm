@@ -56,7 +56,6 @@ our $defaultPrefs = {
 		SETTINGS
 		SQUEEZENETWORK_CONNECT
 	)],
-	'titleFormatCurr'      => 4,
 	'lineInAlwaysOn'       => 0, 
 	'lineInLevel'          => 50, 
 	'minAutoBrightness'    => 2,	# Minimal brightness (automatic brightness mode)

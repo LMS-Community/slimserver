@@ -51,7 +51,7 @@ our $defaultPrefs = {
 	'repeat'               => 2,
 	'shuffle'              => 0,
 	'titleFormat'          => [5, 1, 3, 6, 0],
-	'titleFormatCurr'      => 1,
+	'titleFormatCurr'      => 4,
 	'playlistmode'         => 'off',
 };
 
