@@ -63,6 +63,8 @@ our $defaultPrefs = {
 };
 
 $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 100 }, 'lineInLevel');
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 7 }, 'minAutoBrightness');
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 20 }, 'sensAutoBrightness');
 $prefs->setChange(\&setLineInLevel, 'lineInLevel');
 $prefs->setChange( sub { $_[2]->stereoxl($_[1]); }, 'stereoxl');
 
