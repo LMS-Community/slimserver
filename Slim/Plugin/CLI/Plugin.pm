@@ -543,8 +543,6 @@ sub cli_process {
 	if (!defined $arrayRef) {
 		return;
 	}
-
-	map { $_ = Slim::Utils::Unicode::utf8decode($_) } @$arrayRef;
 	
 	# create a request
 	my $request = Slim::Control::Request->new($clientid, $arrayRef, 1);
