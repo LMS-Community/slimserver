@@ -552,6 +552,20 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1                }, 'alarmSnoozeSeconds');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0                }, 'alarmTimeoutSeconds');
 
+	$prefs->setValidate({
+		validator => sub {
+						if ($_[1] =~ /.+\.([^.]+)$/) {
+							my $suffix = $1;
+	
+							return grep(/^$suffix$/, qw(jpg gif png jpeg));
+					
+						} else {
+							return 1;
+						}
+					}
+		}, 'coverArt',
+	);
+
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort, 'httpport' );
 	

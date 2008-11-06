@@ -43,6 +43,8 @@ our $defaultPrefs = {
 	'powerOnBrightness'    => 4,
 };
 
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 20 }, qw(scrollPixels scrollPixelsDouble));
+
 sub initPrefs {
 	my $display = shift;
 

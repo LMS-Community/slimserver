@@ -70,6 +70,9 @@ our $defaultPrefs = {
 	'alwaysShowCount'      => 1,
 };
 
+$prefs->setValidate('num', qw(scrollRate scrollRateDouble scrollPause scrollPauseDouble));
+
+
 {
 	__PACKAGE__->mk_accessor('rw', 'client'); # Note: Always keep client as the first accessor
 	__PACKAGE__->mk_accessor('rw',   qw(updateMode screen2updateOK animateState renderCache currBrightness
