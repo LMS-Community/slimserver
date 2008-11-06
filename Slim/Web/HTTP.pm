@@ -127,7 +127,7 @@ our @closeHandlers = ();
 
 # raw files we serve directly outside the html directory
 our %rawFiles = ();
-my $rawFilesRegexp = qr//;
+my $rawFilesRegexp;
 
 
 our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
@@ -699,7 +699,7 @@ sub processHTTP {
 
 			$path =~ s|^/+||;
 
-			if ($path =~ m{^(?:html|music|plugins|settings|firmware)/}i || $path =~ $rawFilesRegexp ) {
+			if ($path =~ m{^(?:html|music|plugins|settings|firmware)/}i || isRawDownload($path) ) {
 				# not a skin
 
 			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && isaSkin($1)) {
@@ -1041,7 +1041,7 @@ sub generateHTTPResponse {
 	# lots of people need this
 	my $contentType = $params->{'Content-Type'} = $Slim::Music::Info::types{$type};
 
-	if ( $path =~ $rawFilesRegexp ) {
+	if ( isRawDownload($path) ) {
 		$contentType = 'application/octet-stream';
 	}
 	
@@ -1313,7 +1313,7 @@ sub generateHTTPResponse {
 
 			}
 
-		} elsif ( $path =~ $rawFilesRegexp ) {
+		} elsif ( isRawDownload($path) ) {
 			# path is for download of known file outside http directory
 			my ($file, $ct);
 
@@ -2875,7 +2875,7 @@ sub addRawDownload {
 	};
 
 	my $str = join('|', keys %rawFiles);
-	$rawFilesRegexp = qr/$str/;
+	$rawFilesRegexp = $str ? qr/$str/ : undef;
 }
 
 
@@ -2885,7 +2885,13 @@ sub removeRawDownload {
    
 	delete $rawFiles{$regexp};
 	my $str = join('|', keys %rawFiles);
-	$rawFilesRegexp = qr/$str/;
+	$rawFilesRegexp = $str ? qr/$str/ : undef;
+}
+
+sub isRawDownload {
+	my $path = shift;
+	
+	return $path && $rawFilesRegexp && $path =~ $rawFilesRegexp
 }
 
 
