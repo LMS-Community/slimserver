@@ -67,6 +67,7 @@ my $log   = logger('server.plugins');
 my %SKIP = ();
 if ( main::SLIM_SERVICE ) {
 	%SKIP = (
+		'Slim::Plugin::Extensions::Plugin'     => 1,
 		'Slim::Plugin::Health::Plugin'         => 1,
 		'Slim::Plugin::JiveExtras::Plugin'     => 1,
 		'Slim::Plugin::MusicMagic::Plugin'     => 1,
