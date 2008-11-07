@@ -2627,7 +2627,7 @@ sub _mergeAndCreateContributors {
 			'sortBy'   => $attributes->{$tag.'SORT'},
 		});
 
-		$log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
+		$log->is_debug && $log->debug(sprintf("-- Track has contributor '$contributor' of role '$tag'"));
 	}
 
 	return \%contributors;
