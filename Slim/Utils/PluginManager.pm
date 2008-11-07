@@ -87,14 +87,6 @@ if ( main::SLIM_SERVICE ) {
 	push @pluginDirs, catdir( $main::SN_PATH, 'lib', 'Slim', 'Plugin' );
 }
 
-# addition to allow use of plugins downloaded by experimental plugin downloader
-# plugin functionality expected to be folded into pluginmanager later
-if ( !main::SLIM_SERVICE && (my $cache = preferences('server')->get('cachedir')) ) {
-	my $installedPlugins = catdir( $cache, 'InstalledPlugins' );
-	push @pluginDirs, catdir( $installedPlugins, 'Plugins' );
-	unshift @INC, $installedPlugins;
-}
-
 sub init {
 	my $class = shift;
 
@@ -274,7 +266,7 @@ sub _parseInstallManifest {
 
 	$installManifest->{'basedir'} = dirname($file);
 
-	if (!defined $pluginName && $installManifest->{'jive'}) {
+	if (!defined $pluginName) {
 		
 		$installManifest->{'error'} = 'INSTALLERROR_NO_PLUGIN';
 

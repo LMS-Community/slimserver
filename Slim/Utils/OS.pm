@@ -51,6 +51,12 @@ sub initSearchPath {
 	my @paths = ( catdir($class->dirsFor('Bin'), $class->{osDetails}->{'binArch'}), catdir($class->dirsFor('Bin'), $^O), $class->dirsFor('Bin') );
 	
 	Slim::Utils::Misc::addFindBinPaths(@paths);
+
+	# add path to Extension installer loaded plugins to @INC, NB this can only be done here as it requires Prefs to be loaded
+	# and the cachedir pref to be set before we can do it.  Prefs requires OSDetect so we can't do it at init time of OSDetect.
+	if (!main::SLIM_SERVICE && (my $cache = Slim::Utils::Prefs::preferences('server')->get('cachedir')) ) {
+		unshift @INC, catdir($cache, 'InstalledPlugins');
+	}
 }
 
 =head2 dirsFor( $dir )
@@ -69,7 +75,13 @@ sub dirsFor {
 	my @dirs    = ();
 	
 	if ($dir eq "Plugins") {
+
 		push @dirs, catdir($Bin, 'Slim', 'Plugin');
+
+		if (!main::SLIM_SERVICE) {
+			# add on path to plugins installed by Extension installer, NB this can only be called after Prefs is loaded
+			push @dirs, catdir(Slim::Utils::Prefs::preferences('server')->get('cachedir'), 'InstalledPlugins', 'Plugins');
+		}
 	}
 
 	return wantarray() ? @dirs : $dirs[0];
