@@ -13838,6 +13838,12 @@ SYNC_WITH
 	SV	Synkronisera med:
 	ZH_CN	请按右方向键来同步：
 
+SYNC_X_TO
+	EN	Sync %s to:
+
+DO_NOT_SYNC
+	EN	No Sync
+
 UNSYNC_WITH
 	CS	Stiskněte 'DOPRAVA' pro zrušení synchronizace
 	DA	Afslut synkronisering med:
@@ -13860,6 +13866,12 @@ SYNCING_WITH
 
 UNSYNCING_FROM
 	EN	Unsyncing from:
+
+SYNCING_WITH_X
+	EN	Syncing with: %s
+
+UNSYNCING_FROM_X
+	EN	Unsyncing from: %s
 
 CREATE_MIX
 	DA	Opret miks

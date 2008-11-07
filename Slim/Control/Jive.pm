@@ -118,6 +118,9 @@ sub init {
 	Slim::Control::Request::addDispatch(['jivesetalbumsort'],
 		[1, 0, 1, \&jiveSetAlbumSort]);
 
+	Slim::Control::Request::addDispatch(['jivesync' ],
+		[1, 0, 1, \&jiveSyncCommand]);
+
 	Slim::Control::Request::addDispatch(['jiveplaylists', '_cmd' ],
 		[1, 0, 1, \&jivePlaylistsCommand]);
 
@@ -2031,7 +2034,6 @@ sub howManyPlayersToSyncWith {
 
 sub getPlayersToSyncWith() {
 	my $client = shift;
-	my @playerSyncList = Slim::Player::Client::clients();
 	my @return = ();
 	
 	# Restrict based on players with same userid on SN
@@ -2040,44 +2042,155 @@ sub getPlayersToSyncWith() {
 		$userid = $client->playerData->userid;
 	}
 	
-	for my $player (@playerSyncList) {
-		# skip ourself
-		next if ($client eq $player);
-		# we only sync slimproto devices
-		next if (!$player->isPlayer());
-		my $val = $client->isSyncedWith($player); 
-		
-		# On SN, only sync with players on the current account
-		if ( main::SLIM_SERVICE ) {
-			next if $userid == 1;
-			next if $userid != $player->playerData->userid;
-			
-			# Skip players with old firmware
-			if (
-				( $player->model eq 'squeezebox2' && $player->revision < 82 )
-				||
-				( $player->model eq 'transporter' && $player->revision < 32 )
-			) {
-				next;
+	# first add a descriptive line for this player
+	push @return, {
+		text  => $client->string('SYNC_X_TO', $client->name()),
+		style => 'itemNoAction',
+	};
+
+	# come up with a list of players and/or sync groups to sync with
+	# callback command also has to remove player from whatever it was previously synced to, if anything
+	my $cnt      = 0;
+	my @players  = Slim::Player::Client::clients();
+
+	# construct the list
+	my $syncList;
+	my $currentlySyncedWith = 0;
+	
+	# the logic is a little tricky here...first make a pass at any sync groups that include $client
+	if ($client->isSynced()) {
+		my $snCheckOk = _syncSNCheck($userid, $client);
+		if ($snCheckOk) {
+			$syncList->[$cnt]->{'id'}           = $client->id();
+			$syncList->[$cnt]->{'name'}         = $client->syncedWithNames(0);
+			$currentlySyncedWith                = $client->syncedWithNames(0);
+			$syncList->[$cnt]->{'isSyncedWith'} = 1;
+			$cnt++;
+		}
+	}
+
+	# then grab groups or players that are not currently synced with $client
+        if (scalar(@players) > 0) {
+		for my $eachclient (@players) {
+			next if !$eachclient->isPlayer();
+			next if $eachclient->isSyncedWith($client);
+			my $snCheckOk = _syncSNCheck($userid, $eachclient);
+			next unless $snCheckOk;
+
+			if ($eachclient->isSynced() && Slim::Player::Sync::isMaster($eachclient)) {
+				$syncList->[$cnt]->{'id'}           = $eachclient->id();
+				$syncList->[$cnt]->{'name'}         = $eachclient->syncedWithNames(1);
+				$syncList->[$cnt]->{'isSyncedWith'} = 0;
+				$cnt++;
+
+			# then players which are not synced
+			} elsif (! $eachclient->isSynced && $eachclient != $client ) {
+				$syncList->[$cnt]->{'id'}           = $eachclient->id();
+				$syncList->[$cnt]->{'name'}         = $eachclient->name();
+				$syncList->[$cnt]->{'isSyncedWith'} = 0;
+				$cnt++;
+
 			}
 		}
-		
+	}
+
+	for my $syncOption (sort { $a->{name} cmp $b->{name} } @$syncList) {
 		push @return, { 
-			text => $player->name(), 
-			checkbox => ($val == 1) + 0,
+			text  => $syncOption->{name},
+			radio => ($syncOption->{isSyncedWith} == 1) + 0,
 			actions  => {
-				on  => {
+				do  => {
 					player => 0,
-					cmd    => ['sync', $player->id()],
-				},
-				off => {
-					player => $player->id(),
-					cmd    => ['sync', '-'],
+					cmd    => [ 'jivesync' ],
+					params => {
+						syncWith              => $syncOption->{id},
+						syncWithString        => $syncOption->{name},
+						unsyncWith            => $currentlySyncedWith,
+					},
 				},
 			},		
-		};
+			nextWindow => 'refresh',
+		};	
 	}
+	
+	if ( $client->isSynced() ) {
+		push @return, { 
+			text  => $client->string('DO_NOT_SYNC'),
+			radio => 0,
+			actions  => {
+				do  => {
+					player => 0,
+					cmd    => ['jivesync' ],
+					params => {
+						syncWith              => 0,
+						syncWithString        => 0,
+						unsyncWith            => $currentlySyncedWith,
+					},
+				},
+			},		
+			nextWindow => 'refresh',
+		};	
+	}
+
 	return \@return;
+}
+
+sub _syncSNCheck {
+	my ($userid, $player) = @_;
+	# On SN, only sync with players on the current account
+	if ( main::SLIM_SERVICE ) {
+		return undef if $userid == 1;
+		return undef if $userid != $player->playerData->userid;
+		
+		# Skip players with old firmware
+		if (
+			( $player->model eq 'squeezebox2' && $player->revision < 82 )
+			||
+			( $player->model eq 'transporter' && $player->revision < 32 )
+		) {
+			return undef;
+		}
+	}
+	return 1;
+}
+	
+sub jiveSyncCommand {
+	my $request = shift;
+	my $client  = $request->client();
+
+	my $syncWith         = $request->getParam('syncWith');
+	my $syncWithString   = $request->getParam('syncWithString');
+	my $unsyncWith       = $request->getParam('unsyncWith') || undef;
+
+	# first unsync if necessary
+	my @messages = ();
+	if ($unsyncWith) {
+		$client->execute( [ 'sync', '-' ] );
+		push @messages, $request->string('UNSYNCING_FROM_X', $unsyncWith);
+	}
+	# then sync if requested
+	if ($syncWith) {
+		my $otherClient = Slim::Player::Client::getClient($syncWith);
+		if ($otherClient->isSynced()) {
+			$otherClient->execute( [ 'sync', $client->id ] );
+		} else {
+			$client->execute( [ 'sync', $syncWith ] );
+		}
+			
+		push @messages, $request->string('SYNCING_WITH_X', $syncWithString);
+	}
+	my $message = join("\n", @messages);
+
+	$client->showBriefly(
+		{ 'jive' =>
+			{
+				'type'    => 'popupplay',
+				'text'    => [ $message ],
+			},
+		}
+	);
+
+	$request->setStatusDone();
 }
 
 sub dateQuery {

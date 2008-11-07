@@ -1352,8 +1352,17 @@ sub syncedWith {
 }
 
 sub syncedWithNames {
-	return undef unless isSynced($_[0]);
-	return join(' & ', map { $_->name || $_->id } syncedWith($_[0]));
+	my $client        = shift || return undef;
+	my $includeClient = shift || 0;
+
+	return undef unless isSynced($client);
+
+	my @syncList = syncedWith($client);
+	# syncedWith will not return $client in the list, so add it if $includeClient
+	push @syncList, $client if $includeClient;
+
+	return join(' & ', map { $_->name || $_->id } @syncList);
+
 }
 	
 # return formatted date/time strings - overwritten in SN to respect timezone
