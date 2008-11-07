@@ -6,6 +6,7 @@
 	<version>0.1</version>
 	<description>PLUGIN_EXTENSIONS_DESC</description>
 	<defaultState>enabled</defaultState>
+	<optionsURL>plugins/Extensions/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
 		<id>SqueezeCenter</id>
