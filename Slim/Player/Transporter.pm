@@ -375,6 +375,10 @@ sub voltage {
 	return Slim::Networking::Slimproto::voltage(@_);
 }
 
+sub maxSupportedSamplerate {
+	return 96000;
+}
+
 sub volumeString {
 	my ($client, $volume) = @_;
 

@@ -631,9 +631,14 @@ sub canDoSeek {
 				$self,
 				Slim::Music::Info::contentType($self->currentTrack),
 				['I', 'F'], [], []);
+				
+			if (! $transcoder) {
+				$self->{'canSeekError'} = [ 'SEEK_ERROR_TRANSCODED' ];
+				return $self->{'canSeek'} = 0;
+			}
 			
 			# Is this pass-through?
-			if ($transcoder && $transcoder->{'command'} eq '-') {
+			if ($transcoder->{'command'} eq '-') {
 				return $self->{'canSeek'} = 1; # nice simple case
 			}
 			

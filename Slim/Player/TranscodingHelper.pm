@@ -153,6 +153,7 @@ sub loadConversionTables {
 # %b - limit bitrate: b/s
 # %B - limit bitrate: kb/s
 # %d - samplerate: samples/s
+# %D - samplerate: ksamples/s
 
 sub _getCapabilities {
 	my ($profile, $capabilities) = @_;
@@ -288,6 +289,15 @@ sub getConvertCommand2 {
 		push @$want, 'B';
 	}
 	
+	# Check if we need to downsample
+	my $samplerateLimit = samplerateLimit($song);
+	SAMPLELIMIT: if ($samplerateLimit) {
+		foreach (@$need) {
+			last SAMPLELIMIT if /D/;
+		}
+		push @$need, 'D';
+	}
+		
 	# special case for FLAC cuesheets for SB2. For now, we
 	# let flac do the seeking to the correct point and transcode
 	# to a complete stream that we can send to SB2.
@@ -401,6 +411,7 @@ sub getConvertCommand2 {
 			streamMode => $streamMode,
 			streamformat => ((split (/-/, $profile))[1]),
 			rateLimit => $rateLimit,
+			samplerateLimit => $samplerateLimit,
 		};
 		
 		# Check for optional profiles
@@ -506,6 +517,9 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'b') {$value = ($transcoder->{'rateLimit'} || 320) * 1000;}
 		elsif ($v eq 'B') {$value = ($transcoder->{'rateLimit'} || 320);}
 		
+		elsif ($v eq 'd') {$value = ($transcoder->{'samplerateLimit'} || 44100);}
+		elsif ($v eq 'D') {$value = ($transcoder->{'samplerateLimit'} || 44100) / 1000;}
+		
 		elsif ($v eq 'f') {$value = '"' . $filepath . '"';}
 		elsif ($v eq 'F') {$value = '"' . $fullpath . '"';}
 		
@@ -573,6 +587,30 @@ sub rateLimit {
 	}
 	
 	return $maxRate;
+}
+
+sub samplerateLimit {
+	my $song     = shift;
+	
+	return undef if ! $song->currentTrack()->samplerate;
+
+	my $maxRate = 0;
+	
+	foreach ($song->{'owner'}->activePlayers()) {
+		my $rate = $_->maxSupportedSamplerate();
+		if ($rate && ($maxRate && $maxRate > $rate || !$maxRate)) {
+			$maxRate = $rate;
+		}
+	}
+	
+	if ($maxRate && $maxRate < $song->currentTrack()->samplerate) {
+		if (($maxRate % 12000) == 0 && ($song->currentTrack()->samplerate % 11025) == 0) {
+			$maxRate = int($maxRate * 11025 / 12000);
+		}
+		return $maxRate;
+	}
+	
+	return undef;
 }
 
 1;

@@ -1375,4 +1375,8 @@ sub shortDateF {
 	return Slim::Utils::DateTime::shortDateF();
 }
 
+sub maxSupportedSamplerate {
+	return 48000;
+}
+
 1;
