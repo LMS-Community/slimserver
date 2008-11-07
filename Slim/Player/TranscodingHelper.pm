@@ -362,11 +362,6 @@ sub getConvertCommand2 {
 				"$type-$checkFormat-*-$clientid",
 				"$type-$checkFormat-$player-*"
 			);
-			
-			# Bug 4022, support Transporter and Receiver for WMA by also checking SB2 profiles
-			if ( $player =~ /^(?:transporter|receiver|boom)$/ ) {
-				push @profiles, "$type-$checkFormat-squeezebox2-*";
-			}
 		}
 
 		push @profiles, "$type-$checkFormat-*-*";
