@@ -5,7 +5,7 @@ package Slim::Plugin::Webcasters::Plugin::DIFM;
 use strict;
 use base qw(Slim::Plugin::OPMLBased Slim::Plugin::Webcasters::Plugin);
 
-sub feed { 'http://www.slimdevices.com/picks/split/DI.fm%20-%20Digitally%20Imported.opml' }
+sub feed { Slim::Networking::SqueezeNetwork->url('/public/radio/difm') }
 
 sub initPlugin {
 	my $class = shift;

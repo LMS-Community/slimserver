@@ -7,6 +7,8 @@ package Slim::Plugin::Picks::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
+use Slim::Networking::SqueezeNetwork;
+
 sub initPlugin {
 	my $class = shift;
 
@@ -16,7 +18,7 @@ sub initPlugin {
 	);
 
 	$class->SUPER::initPlugin(
-		feed   => 'http://www.slimdevices.com/picks/split/picks.opml',
+		feed   => Slim::Networking::SqueezeNetwork->url('/public/radio/picks'),
 		tag    => 'picks',
 		menu   => 'radios',
 		weight => 10,

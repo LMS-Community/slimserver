@@ -5,7 +5,7 @@ package Slim::Plugin::Webcasters::Plugin::AbsoluteRadio;
 use strict;
 use base qw(Slim::Plugin::OPMLBased Slim::Plugin::Webcasters::Plugin);
 
-sub feed { 'http://www.slimdevices.com/picks/split/Absolute%20Radio%20UK.opml' }
+sub feed { Slim::Networking::SqueezeNetwork->url('/public/radio/absolute') }
 
 sub initPlugin {
 	my $class = shift;

@@ -5,7 +5,7 @@ package Slim::Plugin::Webcasters::Plugin::BBC;
 use strict;
 use base qw(Slim::Plugin::OPMLBased Slim::Plugin::Webcasters::Plugin);
 
-sub feed { 'http://www.slimdevices.com/picks/split/BBC.opml' }
+sub feed { Slim::Networking::SqueezeNetwork->url('/public/radio/bbc') }
 
 sub initPlugin {
 	my $class = shift;

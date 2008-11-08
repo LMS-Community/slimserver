@@ -5,7 +5,7 @@ package Slim::Plugin::Webcasters::Plugin::SomaFM;
 use strict;
 use base qw(Slim::Plugin::OPMLBased Slim::Plugin::Webcasters::Plugin);
 
-sub feed { 'http://www.slimdevices.com/picks/split/SomaFM.opml' }
+sub feed { Slim::Networking::SqueezeNetwork->url('/public/radio/somafm') }
 
 sub initPlugin {
 	my $class = shift;

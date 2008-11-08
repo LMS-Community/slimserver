@@ -5,7 +5,7 @@ package Slim::Plugin::Webcasters::Plugin::AccuRadio;
 use strict;
 use base qw(Slim::Plugin::OPMLBased Slim::Plugin::Webcasters::Plugin);
 
-sub feed { 'http://www1.accuradio.com/shoutcast/accuradio.opml' }
+sub feed { Slim::Networking::SqueezeNetwork->url('/public/radio/accuradio') }
 
 sub initPlugin {
 	my $class = shift;

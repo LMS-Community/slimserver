@@ -5,7 +5,7 @@ package Slim::Plugin::Webcasters::Plugin::SkyFM;
 use strict;
 use base qw(Slim::Plugin::OPMLBased Slim::Plugin::Webcasters::Plugin);
 
-sub feed { 'http://www.slimdevices.com/picks/split/SKY.fm.opml' }
+sub feed { Slim::Networking::SqueezeNetwork->url('/public/radio/skyfm') }
 
 sub initPlugin {
 	my $class = shift;
