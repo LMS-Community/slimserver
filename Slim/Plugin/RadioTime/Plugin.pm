@@ -83,8 +83,6 @@ sub feed {
 		$url .= 'formats=mp3,wma,real';
 	}
 	
-	warn "RT URL: $url\n";
-	
 	return $url;
 }
 
