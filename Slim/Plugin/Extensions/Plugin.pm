@@ -299,7 +299,7 @@ sub _parseXML {
 
 			push @res, $new;
 
-			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} desc: $new->{desc} url: $new->{url} link: $new->{link}");
+			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} url: $new->{url}");
 		}
 
 	} else {

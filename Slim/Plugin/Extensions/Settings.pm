@@ -176,6 +176,7 @@ sub _addInfo {
 	my @upgrade;
 	my @install;
 	my @remove;
+	my %removeInfo;
 	my $installedManually;
 
 	for my $plugin (sort { $a->{'title'} cmp $b->{'title'} } @$plugins) {
@@ -206,6 +207,8 @@ sub _addInfo {
 				push @upgrade, $plugin;
 			}
 
+			$removeInfo{ $plugin->{'name'} } = $plugin;
+
 		} else {
 
 			push @install, $plugin;
@@ -214,11 +217,18 @@ sub _addInfo {
 
 	for my $plugin (keys %installed) {
 		
-		my $data = Slim::Utils::PluginManager->dataForPlugin($installed{$plugin});
-
 		if (!$status->{ $plugin }) {
 
-			push @remove, { name => $plugin, title => Slim::Utils::Strings::getString($data->{'name'}), current => $data->{'version'} };
+			my $instData = Slim::Utils::PluginManager->dataForPlugin($installed{$plugin});
+			my $repoData = $removeInfo{ $plugin } || {};
+
+			push @remove, { 
+				name    => $plugin,
+				current => $instData->{'version'},
+				title   => Slim::Utils::Strings::getString($instData->{'name'}) || $repoData->{'title'}, 
+				desc    => Slim::Utils::Strings::getString($instData->{'description'}) || $repoData->{'desc'}, 
+				link    => $instData->{'homepageURL'} || $repoData->{'link'},
+			};
 		}
 	}
 
