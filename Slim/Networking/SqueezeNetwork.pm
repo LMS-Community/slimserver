@@ -131,12 +131,12 @@ sub _init_done {
 			for my $plugin ( @{ $json->{disabled_plugins} } ) {
 				my $pclass = "Slim::Plugin::${plugin}::Plugin";
 				if ( $pclass->can('setMode') ) {
-					Slim::Buttons::Home::delSubMenu( $pclass->playerMenu, $pclass->displayName );
+					Slim::Buttons::Home::delSubMenu( $pclass->playerMenu, $pclass->getDisplayName );
 					$log->debug( "Removing $plugin from player UI, service not allowed in country" );
 				}
 				
 				if ( $pclass->can('webPages') ) {
-					Slim::Web::Pages->delPageLinks( $pclass->menu, $pclass->displayName );
+					Slim::Web::Pages->delPageLinks( $pclass->menu, $pclass->getDisplayName );
 					$log->debug( "Removing $plugin from web UI, service not allowed in country" );
 				}
 			}
