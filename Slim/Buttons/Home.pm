@@ -602,13 +602,16 @@ sub createList {
 		if ($sub eq 'PLUGIN_LINE_IN' && !$client->hasLineIn) {
 			next;
 		}
-
- 		
+		
 		# Leakage of the LineOut plugin..
 		if ($sub eq 'PLUGIN_LINE_OUT' && !$client->hasHeadSubOut) {
 			next;
 		}
-	
+		
+		if ( my $condition = $params->{submenus}->{$sub}->{condition} ) {
+			next unless $condition->( $client );
+		}
+		
 		if ( main::SLIM_SERVICE ) {
 			# Hide disabled menus
 			if ( exists $disabledMenus{$sub} ) {

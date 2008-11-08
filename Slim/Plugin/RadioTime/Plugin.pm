@@ -28,6 +28,7 @@ use Slim::Plugin::RadioTime::Plugin::Music;
 use Slim::Plugin::RadioTime::Plugin::Talk;
 use Slim::Plugin::RadioTime::Plugin::ByRegion;
 use Slim::Plugin::RadioTime::Plugin::Search;
+use Slim::Plugin::RadioTime::Plugin::Presets;
 
 my $prefs = preferences('plugin.radiotime');
 
@@ -51,6 +52,7 @@ sub initPlugin {
 	Slim::Plugin::RadioTime::Plugin::Talk->initPlugin();
 	Slim::Plugin::RadioTime::Plugin::ByRegion->initPlugin();
 	Slim::Plugin::RadioTime::Plugin::Search->initPlugin();
+	Slim::Plugin::RadioTime::Plugin::Presets->initPlugin();
 }
 
 sub getDisplayName { 'PLUGIN_RADIOTIME_MODULE_NAME' }

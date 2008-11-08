@@ -25,6 +25,8 @@ my $sqllog = logger('database.sql');
 
 our %additionalLinks = ();
 
+our %pageConditions = ();
+
 our %hierarchy = (
 	'artist' => 'album,track',
 	'album'  => 'track',
@@ -134,6 +136,12 @@ sub delPageLinks {
 	my ( $class, $category, $title ) = @_;
 	
 	delete $additionalLinks{$category}->{$title};
+}
+
+sub addPageCondition {
+	my ( $class, $title, $condition ) = @_;
+	
+	$pageConditions{$title} = $condition;
 }
 
 sub addLibraryStats {

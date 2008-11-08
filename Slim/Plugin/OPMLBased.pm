@@ -254,6 +254,13 @@ sub cliRadiosQuery {
 			}
 		}
 		
+		# Filter out items which don't match condition
+		if ( $class->can('condition') && $request->client ) {
+			if ( !$class->condition( $request->client ) ) {
+				$data = {};
+			}
+		}
+		
 		# let our super duper function do all the hard work
 		Slim::Control::Queries::dynamicAutoQuery( $request, $cli_menu, $cli_next{ $class }->{ $cli_menu }, $data );
 	};
@@ -266,6 +273,10 @@ sub webPages {
 	my $url   = 'plugins/' . $class->tag() . '/index.html';
 	
 	Slim::Web::Pages->addPageLinks( $class->menu(), { $title => $url });
+	
+	if ( $class->can('condition') ) {
+		Slim::Web::Pages->addPageCondition( $title, sub { $class->condition(shift); } );
+	}
 
 	Slim::Web::HTTP::addPageFunction( $url, sub {
 		my $client = $_[0];

@@ -152,8 +152,12 @@ sub home {
 	# XXX: non-Default templates will need to be updated to use this sort order
 	$params->{additionalLinkOrder} = {};
 	
+	$params->{additionalLinks} = {};
+	
 	# Get sort order for plugins
 	my $pluginWeights = Slim::Plugin::Base->getWeights();
+	
+	my $conditions = \%Slim::Web::Pages::pageConditions;
 	
 	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
 		my @sorted = sort {
@@ -171,13 +175,24 @@ sub home {
 				lc( Slim::Buttons::Home::cmpString($client, $a) ) cmp
 				lc( Slim::Buttons::Home::cmpString($client, $b) )
 			)
-		} 
+		}
 		keys %{ $Slim::Web::Pages::additionalLinks{ $menu } };
 
 		$params->{additionalLinkOrder}->{ $menu } = \@sorted;
+		
+		$params->{additionalLinks}->{ $menu } = {
+			map {
+				$_ => $Slim::Web::Pages::additionalLinks{ $menu }->{ $_ },
+			}
+			# Filter out items that don't match condition
+			grep {
+				!$conditions->{$_}
+				||
+				$conditions->{$_}->( $client )
+			}
+			keys %{ $Slim::Web::Pages::additionalLinks{ $menu } }
+		};
 	}
-	
-	$params->{additionalLinks} = \%Slim::Web::Pages::additionalLinks;
 
 	$class->addPlayerList($client, $params);
 	
