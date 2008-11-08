@@ -62,6 +62,17 @@ ELSE %]
 			IF additionalLinks.radios.exists(item);
 				link.value = additionalLinks.radios.$item;
 				link.key = item;
+				control = '';
+				IF link.key == 'PLUGIN_RADIOTIME_SEARCH';
+					control = BLOCK %]
+						<form method="GET" action="[% link.value %]">
+							<input type="hidden" name="player" value="[% playerid %]" />
+							<input type="hidden" name="submit" class="stdclick" value="[% "SEARCH" | string %]" />
+							<input type="text" name="q" class="x-form-focus searchInput" size="30" />
+							<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]" />
+						</form>
+					[% END;
+				END;
 				PROCESS menuItem;
 			END;
 		END;

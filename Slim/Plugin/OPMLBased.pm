@@ -20,9 +20,11 @@ sub initPlugin {
 	
 	{
 		no strict 'refs';
-		*{$class.'::'.'feed'} = sub { $args{feed} } if $args{feed};
-		*{$class.'::'.'tag'}  = sub { $args{tag} };
-		*{$class.'::'.'menu'} = sub { $args{menu} };
+		*{$class.'::'.'feed'}   = sub { $args{feed} } if $args{feed};
+		*{$class.'::'.'tag'}    = sub { $args{tag} };
+		*{$class.'::'.'menu'}   = sub { $args{menu} };
+		*{$class.'::'.'weight'} = sub { $args{weight} || 1000 };
+		*{$class.'::'.'type'}   = sub { $args{type} || 'link' };
 	}
 
 	if (!$class->_pluginDataFor('icon')) {
@@ -104,21 +106,39 @@ sub setMode {
 		return;
 	}
 
-	# use INPUT.Choice to display the list of feeds
 	my $name = $class->getDisplayName();
 	
-	my %params = (
-		header   => $name,
-		modeName => $name,
-		url      => $class->feed( $client ),
-		title    => $client->string( $name ),
-		timeout  => 35,
-	);
+	my $type = $class->type;
+	
+	if ( $type eq 'link' ) {
+		my %params = (
+			header   => $name,
+			modeName => $name,
+			url      => $class->feed( $client ),
+			title    => $client->string( $name ),
+			timeout  => 35,
+		);
 
-	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-
-	# we'll handle the push in a callback
-	$client->modeParam( handledTransition => 1 );
+		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+		
+		# we'll handle the push in a callback
+		$client->modeParam( handledTransition => 1 );
+	}
+	elsif ( $type eq 'search' ) {
+		my %params = (
+			header          => $client->string($name),
+			cursorPos       => 0,
+			charsRef        => 'UPPER',
+			numberLetterRef => 'UPPER',
+			callback        => \&Slim::Buttons::XMLBrowser::handleSearch,
+			item            => {
+				url     => $class->feed( $client ),
+				timeout => 35,
+			},
+		);
+		
+		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Text', \%params );
+	}
 }
 
 sub cliRadiosQuery {
@@ -126,7 +146,7 @@ sub cliRadiosQuery {
 	my $tag  = $args->{tag};
 
 	my $icon   = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
-	my $weight = $args->{weight} || 100;
+	my $weight = $args->{weight} || 1000;
 
 	return sub {
 		my $request = shift;
@@ -138,22 +158,53 @@ sub cliRadiosQuery {
 		my $data;
 		# what we want the query to report about ourself
 		if (defined $menu) {
-			$data = {
-				text         => $request->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
-				weight       => $weight,
-				'icon-id'    => $icon,
-				actions      => {
+			my $type = $class->type;
+			
+			if ( $type eq 'link' ) {
+				$data = {
+					text         => $request->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
+					weight       => $weight,
+					'icon-id'    => $icon,
+					actions      => {
+							go => {
+								cmd => [ $tag, 'items' ],
+								params => {
+									menu => $tag,
+								},
+							},
+					},
+					window        => {
+						titleStyle => 'album',
+					},
+				};
+			}
+			elsif ( $type eq 'search' ) {
+				$data = {
+					text         => $request->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
+					weight       => $weight,
+					'icon-id'    => $icon,
+					actions      => {
 						go => {
-							cmd => [ $tag, 'items' ],
+							cmd    => [ $tag, 'items' ],
 							params => {
-								menu => $tag,
+								menu    => $tag,
+								search  => '__TAGGEDINPUT__',
 							},
 						},
-				},
-				window        => {
-					titleStyle => 'album',
-				},
-			};
+					},
+					input        => {
+						len  => 3,
+						help => {
+							text => $request->string('JIVE_SEARCHFOR_HELP')
+						},
+						softbutton1 => $request->string('INSERT'),
+						softbutton2 => $request->string('DELETE'),
+					},
+					window        => {
+						titleStyle => 'album',
+					},
+				};
+			}
 			
 			if ( main::SLIM_SERVICE ) {
 				# Bug 7110, icons are full URLs so we must use icon not icon-id
@@ -164,11 +215,20 @@ sub cliRadiosQuery {
 			}
 		}
 		else {
+			my $type = $class->type;
+			if ( $type eq 'link' ) {
+				$type = 'xmlbrowser';
+			}
+			elsif ( $type eq 'search' ) {
+				$type = 'xmlbrowser_search';
+			}
+			
 			$data = {
-				cmd  => $tag,
-				name => $request->string( $class->getDisplayName() ),
-				type => 'xmlbrowser',
-				icon => $icon,
+				cmd    => $tag,
+				name   => $request->string( $class->getDisplayName() ),
+				type   => $type,
+				icon   => $icon,
+				weight => $weight,
 			};
 		}
 		
@@ -213,6 +273,7 @@ sub webPages {
 		Slim::Web::XMLBrowser->handleWebIndex( {
 			client  => $client,
 			feed    => $class->feed( $client ),
+			type    => $class->type( $client ),
 			title   => $title,
 			timeout => 35,
 			args    => \@_

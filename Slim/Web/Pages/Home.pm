@@ -152,8 +152,16 @@ sub home {
 	# XXX: non-Default templates will need to be updated to use this sort order
 	$params->{additionalLinkOrder} = {};
 	
+	# Get sort order for plugins
+	my $pluginWeights = Slim::Plugin::Base->getWeights();
+	
 	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
 		my @sorted = sort {
+			(
+				( $pluginWeights->{$a} || 0 ) <=>
+				( $pluginWeights->{$b} || 0 )
+			)
+			||
 			( 
 				( $prefs->get("rank-$b") || 0 ) <=> 
 				( $prefs->get("rank-$a") || 0 )

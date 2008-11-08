@@ -29,7 +29,7 @@ sub initPlugin {
 		feed   => Slim::Networking::SqueezeNetwork->url('/api/shoutcast/v1/opml'),
 		tag    => 'shoutcast',
 		menu   => 'radios',
-		weight => 50,
+		weight => 110,
 	);
 }
 

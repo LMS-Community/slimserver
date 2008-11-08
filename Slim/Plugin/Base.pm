@@ -13,13 +13,19 @@ if ( !main::SCANNER ) {
 
 use constant PLUGINMENU => 'PLUGINS';
 
+my $WEIGHTS = {};
+
 sub initPlugin {
 	my $class = shift;
 	my $args  = shift;
 
-	my $name  = $class->displayName;
+	my $name  = $class->getDisplayName;
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
+	
+	if ( $class->can('weight') ) {
+		$WEIGHTS->{ $name } = $class->weight;
+	}
 
 	# This is a bit of a hack, but since Slim::Buttons::Common is such a
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
@@ -74,7 +80,7 @@ sub initPlugin {
 	}
 }
 
-sub displayName {
+sub getDisplayName {
 	my $class = shift;
 
 	return $class->_pluginDataFor('name') || $class;
@@ -121,6 +127,8 @@ sub getFunctions {
 
 	return {};
 }
+
+sub getWeights { $WEIGHTS }
 
 1;
 

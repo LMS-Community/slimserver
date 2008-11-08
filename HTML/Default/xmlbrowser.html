@@ -69,21 +69,6 @@ END %]
 	[% PROCESS xmlbrowser_details.html %]
 [% END %]
 
-[% IF search;
-	WRAPPER contentitem controls = xmlSearchControls;
-		"SEARCH" | string %]
-		<span class="browsedbControls">
-			<form id="searchForm" name="searchForm" method="GET">
-				<input type="hidden" value="[% player %]" name="player" />
-				<input type="hidden" value="[% sess %]" name="sess" />
-				<input type="hidden" name="submit" class="stdclick" value="[% "SEARCH" | string %]"/>
-				<input type="text" class="x-form-focus searchInput" name="query" value="[% query %]"/>
-				<input type="image" src="[% webroot %]html/images/b_search.gif" width="17px" height="17px" alt="[% "SEARCH" | string %]">
-			</form>
-		</span>					
-	[% END;
-END %]
-
 [%- IF items.size -%]
 	 [%- # Maintain correct index values 	
 	 	UNLESS path == 'trackinfo.html'; 

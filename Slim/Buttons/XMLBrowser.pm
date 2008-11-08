@@ -54,7 +54,6 @@ sub setMode {
 
 	my $title  = $client->modeParam('title');
 	my $url    = $client->modeParam('url');
-	my $search = $client->modeParam('search');
 	my $parser = $client->modeParam('parser');
 	my $opml   = $client->modeParam('opml');
 	
@@ -108,7 +107,6 @@ sub setMode {
 		my $params = {
 			'client'    => $client,
 			'url'       => $url,
-			'search'    => $search,
 			'expires'   => $expires,
 			'onSuccess' => $onSuccess,
 			'onFailure' => $onFailure,
@@ -418,15 +416,6 @@ sub gotOPML {
 
 	my $title = $opml->{'name'} || $opml->{'title'};
 	
-	# Add search option only if we are at the top level
-	if ( $params->{'search'} && $title eq $params->{'feedTitle'} ) {
-		push @{ $opml->{'items'} }, {
-			name   => $client->string('SEARCH_STREAMS'),
-			search => $params->{'search'},
-			items  => [],
-		};
-	}
-
 	# Remember previous timeout value
 	my $timeout = $params->{'timeout'};
 
@@ -631,18 +620,9 @@ sub gotOPML {
 			elsif ( $item->{'type'} && $item->{'type'} eq 'text' ) {
 				$client->bumpRight();
 			}
-			elsif ( $item->{'search'} || $item->{'type'} eq 'search' ) {
+			elsif ( $item->{'type'} eq 'search' ) {
 				
-				my $title;
-				
-				if ( $item->{'search'} ) {
-					# Old-style search interface
-					$title = $params->{'feedTitle'} . ' - ' . $client->string('SEARCH_STREAMS');
-				}
-				else {
-					# New-style URL search interface
-					$title = $item->{'name'};
-				}
+				my $title = $item->{'name'};
 				
 				my %params = (
 					'header'          => $title,
@@ -778,7 +758,6 @@ sub handleSearch {
 	elsif ( $exitType eq 'NEXTCHAR' ) {
 		
 		my $item         = $client->modeParam('item');
-		my $oldSearchURL = $item->{'search'};
 		my $searchURL    = $item->{'url'};
 		my $searchString = ${ $client->modeParam('valueRef') };
 		
@@ -792,41 +771,20 @@ sub handleSearch {
 		return $client->bumpRight if $searchString eq '';
 		
 		$log->info("Search query [$searchString]");
+			
+		# Replace {QUERY} with search query
+		$searchURL =~ s/{QUERY}/$searchString/g;
 		
-		if ( $oldSearchURL ) {
+		my %params = (
+			'header'   => 'SEARCHING',
+			'modeName' => "XMLBrowser:$searchURL:$searchString",
+			'url'      => $searchURL,
+			'title'    => $searchString,
+			'timeout'  => $item->{'timeout'},
+			'parser'   => $item->{'parser'},
+		);
 		
-			# Old OpenSearch method
-			$client->block( 
-				$client->string('SEARCHING'),
-				$searchString
-			);
-			
-			Slim::Formats::XML->openSearch(
-				\&gotFeed,
-				\&gotError,
-				{
-					'search' => $searchURL,
-					'query'  => $searchString,
-					'client' => $client,
-				},
-			);
-		}
-		else {
-			
-			# New URL method, replace {QUERY} with search query
-			$searchURL =~ s/{QUERY}/$searchString/g;
-			
-			my %params = (
-				'header'   => 'SEARCHING',
-				'modeName' => "XMLBrowser:$searchURL:$searchString",
-				'url'      => $searchURL,
-				'title'    => $searchString,
-				'timeout'  => $item->{'timeout'},
-				'parser'   => $item->{'parser'},
-			);
-			
-			Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-		}
+		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	}
 	else {
 		

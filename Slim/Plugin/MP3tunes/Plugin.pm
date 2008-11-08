@@ -22,7 +22,7 @@ sub initPlugin {
 		feed           => Slim::Networking::SqueezeNetwork->url('/api/mp3tunes/v1/opml'),
 		tag            => 'mp3tunes',
 		menu           => 'music_services',
-		weight         => 40,
+		weight         => 50,
 	);
 	
 	Slim::Formats::RemoteMetadata->registerProvider(

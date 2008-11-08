@@ -96,6 +96,18 @@ sub cliQuery {
 		} );
 		return;
 	}
+	
+	if ( $feed =~ /{QUERY}/ ) {
+		# Support top-level search
+		my $query = $request->getParam('search');
+		
+		if ( !$query ) {
+			my $itemId = $request->getParam('item_id');
+			($query) = $itemId =~ m/^_([^.]+)/;
+		}
+		
+		$feed =~ s/{QUERY}/$query/g;
+	}
 
 	$log->debug("Asynchronously fetching feed $feed - will be back!");
 	
@@ -166,11 +178,20 @@ sub _cliQuery_done {
 #	print Data::Dumper::Dumper($subFeed);
 	
 	my @crumbIndex = ();
+	
+	# Add top-level search to index
+	if ( $search && !scalar @index ) {
+		push @crumbIndex, '_' . $search;
+	}
+	
 	if ( my $levels = scalar @index ) {
 
 		# descend to the selected item
 		my $depth = 0;
 		for my $i ( @index ) {
+			# Ignore top-level search queries
+			next if $i =~ /^_/;
+			
 			$log->debug("Considering item $i");
 
 			$depth++;
@@ -209,7 +230,7 @@ sub _cliQuery_done {
 			# current cached feed
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
-				if ( $i =~ /\d+_(.+)/ ) {
+				if ( $i =~ /(?:\d+)?_(.+)/ ) {
 					$search = $1;
 				}
 				

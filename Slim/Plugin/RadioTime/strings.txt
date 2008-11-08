@@ -92,3 +92,20 @@ SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
 	NO	Gå til <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> og registrer deg <b>gratis</b>. Legg til stasjoner og programmer under Min radio, så kan du lytte til dem på Squeezebox eller Transporter.
 	SV	Besök <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om du vill registrera dig <b>gratis </b>.  Lägg till stationer till My Radio och spela upp dem på Squeezebox- eller Transporter-spelaren.
 
+PLUGIN_RADIOTIME_LOCAL
+	EN	Local
+
+PLUGIN_RADIOTIME_MUSIC
+	EN	Music
+
+PLUGIN_RADIOTIME_TALK
+	EN	Talk
+
+PLUGIN_RADIOTIME_BY_REGION
+	EN	By Region
+
+PLUGIN_RADIOTIME_SEARCH
+	EN	Search
+
+PLUGIN_RADIOTIME_PRESETS
+	EN	RadioTime Presets

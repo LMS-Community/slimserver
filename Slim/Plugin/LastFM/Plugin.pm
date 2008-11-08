@@ -49,9 +49,9 @@ sub initPlugin {
 		[0, 1, 1, \&skipTrack]);
 	
 	$class->SUPER::initPlugin(
-		feed => undef, # handled in feed() below
-		tag  => 'lfm',
-		menu => 'music_services',
+		tag    => 'lfm',
+		menu   => 'music_services',
+		weight => 40,
 	);
 	
 	if ( main::SLIM_SERVICE ) {

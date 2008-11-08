@@ -30,9 +30,9 @@ sub handleWebIndex {
 
 	my $client    = $args->{'client'};
 	my $feed      = $args->{'feed'};
+	my $type      = $args->{'type'} || 'link';
 	my $path      = $args->{'path'} || 'index.html';
 	my $title     = $args->{'title'};
-	my $search    = $args->{'search'};
 	my $expires   = $args->{'expires'};
 	my $timeout   = $args->{'timeout'};
 	my $asyncArgs = $args->{'args'};
@@ -46,7 +46,6 @@ sub handleWebIndex {
 			'url'     => $feed->{'url'},
 			'path'    => $path,
 			'title'   => $title,
-			'search'  => $search,
 			'expires' => $expires,
 			'args'    => $asyncArgs,
 			'pageicon'=> $pageicon
@@ -58,9 +57,9 @@ sub handleWebIndex {
 	my $params = {
 		'client'  => $client,
 		'url'     => $feed,
+		'type'    => $type,
 		'path'    => $path,
 		'title'   => $title,
-		'search'  => $search,
 		'expires' => $expires,
 		'timeout' => $timeout,
 		'args'    => $asyncArgs,
@@ -95,25 +94,17 @@ sub handleWebIndex {
 		
 		return $feed->( $client, $callback, @{$pt} );
 	}
-
-	# Handle search queries
-	if ( my $query = $asyncArgs->[1]->{'query'} ) {
-
-		$log->info("Search query [$query]");
-
-		Slim::Formats::XML->openSearch(
-			\&handleFeed,
-			\&handleError,
-			{
-				'search' => $search,
-				'query'  => $query,
-				'title'  => $title,
-				'args'   => $asyncArgs,
-				'pageicon' => $pageicon
-			},
-		);
-
-		return;
+	
+	# Handle type = search at the top level, i.e. Radio Search
+	if ( $type eq 'search' ) {
+		my $query = $asyncArgs->[1]->{q};
+		
+		if ( !$query ) {
+			my $index = $asyncArgs->[1]->{index};
+			($query) = $index =~ m/^_([^.]+)/;
+		}
+		
+		$params->{url} =~ s/{QUERY}/$query/g;
 	}
 
 	# fetch the remote content
@@ -140,6 +131,11 @@ sub handleFeed {
 		'name'  => $feed->{'title'} || string($params->{'title'}),
 		'index' => undef,
 	} );
+	
+	# Persist search query from top level item
+	if ( $params->{type} eq 'search' ) {
+		$crumb[0]->{index} = '_' . $stash->{q};
+	};
 		
 	# select the proper list of items
 	my @index = ();
@@ -169,6 +165,9 @@ sub handleFeed {
 		
 		my $subFeed = $feed;
 		for my $i ( @index ) {
+			# Ignore top-level search queries
+			next if $i =~ /^_/;
+			
 			$depth++;
 			
 			$subFeed = $subFeed->{'items'}->[$i];
@@ -212,7 +211,7 @@ sub handleFeed {
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
 				
 				my $searchQuery;
-				if ( $i =~ /\d+_(.+)/ ) {
+				if ( $i =~ /(?:\d+)?_(.+)/ ) {
 					$searchQuery = $1;
 				}
 				
@@ -316,11 +315,10 @@ sub handleFeed {
 		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || string($params->{'title'});
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
-
-		# insert a search box on the top-level page if we support searching
-		# for this feed
-		if ( $params->{'search'} ) {
-			$stash->{'search'} = 1;
+		
+		# Persist search term from top-level item (i.e. Search Radio)
+		if ( $stash->{q} ) {
+			$stash->{index} = '_' . $stash->{q} . '.';
 		}
 
 		if (defined $favsItem) {

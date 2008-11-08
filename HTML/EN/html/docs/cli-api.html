@@ -7901,7 +7901,9 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		</td>
 		<td>
 			Type of the API of the radio plugin, one of &quot;xmlbrowser&quot;
-			or &quot;live365&quot;.
+			or &quot;xmlbrowser_search&quot;.  An xmlbrowser_search type must include
+			a search query with the request, for example:
+			&quot;&lt;playerid&gt; search_radio items 0 100 search:KQED&quot;
 		</td>
 	</tr>
 	<tr>
@@ -7911,6 +7913,14 @@ can be set/queried using the <a href="#playerpref">playerpref command</a>.</p>
 		<td>
 			Relative URL path to an icon for this radio or music service, for example
 			&quot;plugins/Picks/html/images/icon.png&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;weight
+		</td>
+		<td>
+			Numeric weight value to assist in sorting the results.  Items should be ordered lowest to highest.
 		</td>
 	</tr>
 </table>

@@ -579,12 +579,19 @@ sub createList {
 			$disabledMenus{$item} = 1;
 		}
 	}
+	
+	# Get sort order for plugins
+	my $pluginWeights = Slim::Plugin::Base->getWeights();
 
 	SUB:
-	for my $sub (sort {($weighted && ($prefs->get("rank-$b") || 0) <=> 
-		($prefs->get("rank-$a") || 0)) || 
-		(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
-		keys %{$params->{'submenus'}}) {
+	for my $sub (
+		sort {
+			($weighted && ($pluginWeights->{$a} || 0) <=> ($pluginWeights->{$b} || 0))
+			||
+			($weighted && ($prefs->get("rank-$b") || 0) <=> ($prefs->get("rank-$a") || 0))
+			|| 
+			(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))
+		} keys %{$params->{'submenus'}}) {
 
 		# Leakage of the DigitalInput plugin..
 		if ($sub eq 'PLUGIN_DIGITAL_INPUT' && !$client->hasDigitalIn) {

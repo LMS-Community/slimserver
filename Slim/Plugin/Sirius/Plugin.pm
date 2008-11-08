@@ -22,9 +22,10 @@ sub initPlugin {
 	);
 	
 	$class->SUPER::initPlugin(
-		feed => Slim::Networking::SqueezeNetwork->url('/api/sirius/v1/opml'),
-		tag  => 'sirius',
-		menu => 'radios',
+		feed   => Slim::Networking::SqueezeNetwork->url('/api/sirius/v1/opml'),
+		tag    => 'sirius',
+		menu   => 'radios',
+		weight => 80,
 	);
 }
 

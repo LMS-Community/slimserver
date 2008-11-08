@@ -148,23 +148,11 @@ sub init {
 		'rank-BROWSE_MUSIC_FOLDER' => 10,
 		'rank-SAVED_PLAYLISTS'     => 5,
 		'rank-SEARCH'              => 3,
-		# Internet Radio menu ordering
-		'rank-PLUGIN_PICKS_MODULE_NAME'            => 25,
-		'rank-PLUGIN_RADIOIO_MODULE_NAME'          => 20,
-		'rank-PLUGIN_RADIOTIME_MODULE_NAME'        => 15,
-		'rank-PLUGIN_LIVE365_MODULE_NAME'          => 10,
-		'rank-PLUGIN_SHOUTCASTBROWSER_MODULE_NAME' => 5,
-		# Music Services menu ordering
-		'rank-PLUGIN_PANDORA_MODULE_NAME'         => 25,
-		'rank-PLUGIN_RHAPSODY_DIRECT_MODULE_NAME' => 20,
-		'rank-PLUGIN_SLACKER_MODULE_NAME'         => 15,
-		'rank-PLUGIN_MP3TUNES_MODULE_NAME'        => 10,
-		'rank-PLUGIN_LMA_MODULE_NAME'             => 5,
 		# Extras menu ordering
-		'rank-PLUGIN_PODCAST'                     => 35,
-		'rank-PLUGIN_RSSNEWS'                     => 30,
-		'rank-PLUGIN_SOUNDS_MODULE_NAME'          => 25,
-		'rank-GAMES'                              => 20,
+		'rank-PLUGIN_PODCAST'            => 35,
+		'rank-PLUGIN_RSSNEWS'            => 30,
+		'rank-PLUGIN_SOUNDS_MODULE_NAME' => 25,
+		'rank-GAMES'                     => 20,
 		# Server Settings - Basic
 		'language'              => \&defaultLanguage,
 		'audiodir'              => \&defaultAudioDir,

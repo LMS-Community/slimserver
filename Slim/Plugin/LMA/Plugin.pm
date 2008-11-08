@@ -22,7 +22,7 @@ sub initPlugin {
 		tag       => 'lma',
 		menu      => 'music_services',
 		style     => 'albumcurrent',
-		weight    => 50,
+		weight    => 60,
 	);
 }
 
