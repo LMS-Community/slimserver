@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>18B5A4D4-E270-4E04-9B73-7A8ACB4541ED</id>
+	<name>PLUGIN_WEBCASTERS_MODULE_NAME</name>
+	<module>Slim::Plugin::Webcasters::Plugin</module>
+	<playerMenu>RADIO</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_WEBCASTERS_MODULE_NAME_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Webcasters/html/images/icon.png</icon>
+	<type>2</type><!-- type=extension -->
+	<targetApplication>
+		<id>SqueezeCenter</id>
+		<minVersion>7.3</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
