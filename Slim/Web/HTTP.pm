@@ -559,24 +559,25 @@ sub processHTTP {
 			$request->push_header("X-Slim-CSRF",$csrfAuth);
 		}
 		
-		
-		# Read cookie(s)
-		if ( my $cookie = $request->header('Cookie') ) {
-			if ( hasCookieXS() ) {
-				# Parsing cookies this way is about 8x faster than using CGI::Cookie directly
-				my $cookies = Cookie::XS->parse($cookie);
-				$params->{'cookies'} = {
-					map {
-						$_ => bless {
-							name  => $_,
-							path  => '/',
-							value => $cookies->{ $_ },
-						}, 'CGI::Cookie';
-					} keys %{ $cookies }
-				};
-			}
-			else {
-				$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
+		# Read cookie(s) for html files only
+		if ($path && $path =~ m/html$/i) {
+			if ( my $cookie = $request->header('Cookie') ) {
+				if ( hasCookieXS() ) {
+					# Parsing cookies this way is about 8x faster than using CGI::Cookie directly
+					my $cookies = Cookie::XS->parse($cookie);
+					$params->{'cookies'} = {
+						map {
+							$_ => bless {
+								name  => $_,
+								path  => '/',
+								value => $cookies->{ $_ },
+							}, 'CGI::Cookie';
+						} keys %{ $cookies }
+					};
+				}
+				else {
+					$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
+				}
 			}
 		}
 		
@@ -586,7 +587,6 @@ sub processHTTP {
 		if ($request->header('Icy-MetaData')) {
 			$sendMetaData{$httpClient} = 1;
 		}
-
 
 		# parse out URI		
 		my $query = ($request->method() eq "POST") ? $request->content() : $uri->query();
