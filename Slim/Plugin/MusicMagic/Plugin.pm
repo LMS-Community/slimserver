@@ -863,7 +863,7 @@ sub musicmagic_mix {
 
 	my $itemnumber = 0;
 	$params->{'browse_items'} = [];
-	$params->{'levelName'} = "track";
+	$params->{'levelName'} = "playlisttrack";
 
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_pwdlist.html", $params)};
 
@@ -871,7 +871,7 @@ sub musicmagic_mix {
 
 		push @{$params->{'browse_items'}}, {
 
-			'text'         => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
+			'text'         => Slim::Utils::Strings::string('ALL_SONGS'),
 			'attributes'   => "&listRef=musicmagic_mix",
 			'odd'          => ($itemnumber + 1) % 2,
 			'webroot'      => $params->{'webroot'},
