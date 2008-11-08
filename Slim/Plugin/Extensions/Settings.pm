@@ -148,10 +148,19 @@ sub _addInfo {
 
 	for my $module (keys %{Slim::Utils::PluginManager->allPlugins}) {
 
+		my $basedir = Slim::Utils::PluginManager->dataForPlugin($module)->{'basedir'};
+		my $name;
+
 		if ($module =~ /Plugins::(.*)::/) {
 
-			my $name = $1;
-			my $basedir = Slim::Utils::PluginManager->dataForPlugin($module)->{'basedir'};
+			$name = $1;
+
+		} elsif ($module =~ /.*[\/|\\](.*)[\/|\\]install.xml/) {
+
+			$name = $1;
+		}
+
+		if ($name) {
 
 			if ($basedir =~ /InstalledPlugins/) {
 
@@ -209,7 +218,7 @@ sub _addInfo {
 
 		if (!$status->{ $plugin }) {
 
-			push @remove, { name => $plugin, title => Slim::Utils::Strings::string($data->{'name'}), current => $data->{'version'} };
+			push @remove, { name => $plugin, title => Slim::Utils::Strings::getString($data->{'name'}), current => $data->{'version'} };
 		}
 	}
 
