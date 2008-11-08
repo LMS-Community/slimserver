@@ -354,7 +354,7 @@ sub _createHTTPRequest {
 		unshift @args, 'Cookie', $cookie;
 	}
 	
-	if ( !$cookie && $url !~ m{api/v1/login} ) {
+	if ( !$cookie && $url !~ m{api/v1/login|public} ) {
 		$log->info("Logging in to SqueezeNetwork to obtain session ID");
 	
 		# Login and get a session ID
