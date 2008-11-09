@@ -299,7 +299,10 @@ sub gotRSS {
 			},
 
 			'onAdd'      => sub {
-				my $client = shift;
+				my $client   = shift;
+				my $functarg = $_[2];
+				
+				my $action = $functarg eq 'single' ? 'add' : 'insert';
 				
 				Slim::Music::Info::setTitle( 
 					$client->modeParam('url'),
@@ -308,7 +311,7 @@ sub gotRSS {
 
 				# addthis feed as a playlist
 				$client->execute(
-					[ 'playlist', 'add',
+					[ 'playlist', $action,
 					$client->modeParam('url'),
 					$client->modeParam('feed')->{'title'},
 				] );
@@ -357,9 +360,13 @@ sub gotRSS {
 		},
 
 		'onAdd' => sub {
-			my $client = shift;
-			my $item   = shift;
-			playItem($client, $item, 'add');
+			my $client   = shift;
+			my $item     = shift;
+			my $functarg = shift;
+			
+			my $action = $functarg eq 'single' ? 'add' : 'insert';
+			
+			playItem($client, $item, $action);
 		},
 
 		'overlayRef' => \&overlaySymbol,
@@ -734,10 +741,13 @@ sub gotOPML {
 			}
 		},
 		'onAdd'      => sub {
-			my $client = shift;
-			my $item   = shift;
-
-			playItem($client, $item,'add');
+			my $client   = shift;
+			my $item     = shift;
+			my $functarg = shift;
+			
+			my $action = $functarg eq 'single' ? 'add' : 'insert';
+			
+			playItem($client, $item, $action);
 		},
 		
 		'overlayRef' => \&overlaySymbol,
@@ -908,9 +918,13 @@ sub displayItemDescription {
 			},
 
 			'onAdd'   => sub {
-				my $client = shift;
-				my $item   = $client->modeParam('item');
-				playItem($client, $item, 'add');
+				my $client   = shift;
+				my $item     = $client->modeParam('item');
+				my $functarg = $_[2];
+				
+				my $action = $functarg eq 'single' ? 'add' : 'insert';
+				
+				playItem($client, $item, $action);
 			},
 		);
 
@@ -1040,10 +1054,12 @@ sub playItem {
 		my $duration;
 		
 		if ($action eq 'add') {
-
 			$string = $client->string('ADDING_TO_PLAYLIST');
-
-		} else {
+		}
+		elsif ( $action eq 'insert' ) {
+			$string = $client->string('INSERT_TO_PLAYLIST');
+		}
+		else {
 
 			if (Slim::Player::Playlist::shuffle($client)) {
 
@@ -1108,8 +1124,10 @@ sub playItem {
 				$count++;
 			}
 			
+			my $cmd = $action eq 'add' ? 'addtracks' : 'inserttracks';
+			
 			$client->execute([ 'playlist', 'clear' ]);
-			$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+			$client->execute([ 'playlist', $cmd, 'listref', \@urls ]);
 			$client->execute([ 'playlist', 'jump', $index ]);
 		}
 		else {
