@@ -549,11 +549,53 @@ sub currentSongLines {
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
 			}
-		} 
-
+		}
+		
 		my $song = Slim::Player::Playlist::song($client);
-		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song->url);
+		
+		my $currentTitle;
+		my $imgKey;
+		my $artwork;
 
+		if ( $song->isRemoteURL ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
+
+			if ( $handler && $handler->can('getMetadataFor') ) {
+
+				my $meta = $handler->getMetadataFor( $client, $song->url );
+
+				if ( $meta->{cover} ) {
+					$imgKey = 'icon';
+					$artwork = $meta->{cover};
+				}
+				elsif ( $meta->{icon} ) {
+					$imgKey = 'icon-id';
+					$artwork = $meta->{icon};
+				}
+				
+				# Format remote metadata according to title format
+				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url, 0, $meta );
+			}
+			
+			# If that didn't return anything, use default title
+			if ( !$currentTitle ) {
+				$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url );
+			}
+
+			if ( !$artwork ) {
+				$imgKey  = 'icon-id';
+				$artwork = '/html/images/radio.png';
+			}
+		}
+		else {
+			$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url );
+			
+			if ( $song->album ) {
+				$imgKey = 'icon-id';
+				$artwork = ( $song->album->artwork || 0 ) + 0;
+			}
+		}
+		
 		$lines[1] = $currentTitle;
 
 		$overlay[1] = $client->symbols('notesymbol');
@@ -587,42 +629,6 @@ sub currentSongLines {
 			'type' => 'song',
 			'text' => [ $status, $song->title ],
 		};
-
-		my $imgKey;
-		my $artwork;
-
-		#if ( $song->isRemoteURL ) {
-		if ( $retrieveMetadata && $song->isRemoteURL ) {
-
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
-
-			if ( $handler && $handler->can('getMetadataFor') ) {
-
-				my $meta = $handler->getMetadataFor( $client, $song->url );
-
-				if ($meta->{cover}) {
-
-					$imgKey = 'icon';
-					$artwork = $meta->{cover};
-
-				} elsif ($meta->{icon}) {
-
-					$imgKey = 'icon-id';
-					$artwork = $meta->{icon};
-				}
-			} 
-
-			if (!$artwork) {
-				$imgKey = 'icon-id';
-				$artwork = '/html/images/radio.png';
-			}
-
-		} elsif ( $song->album ) {
-
-			$imgKey = 'icon-id';
-			$artwork = ($song->album->artwork || 0) + 0;
-
-		}
 		
 		if ( $imgKey ) {
 			$jive->{$imgKey} = $artwork;

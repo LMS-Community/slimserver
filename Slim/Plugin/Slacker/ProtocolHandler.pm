@@ -17,6 +17,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	description  => 'PLUGIN_SLACKER_MODULE_NAME',
 } );
 
+# XXX: Port to new streaming
+
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
 # XXX: needs testing in SqueezeCenter
 sub new {
@@ -165,28 +167,27 @@ sub gotNextTrack {
 		}
 		
 		if ( $client->isPlaying() ) {
-			setCurrentTitle( $client, $url, $title );
-		
-			$client->update();
-
 			Slim::Player::Source::playmode( $client, 'stop' );
 		}
-		else {
-			my $line1 = $client->string('PLUGIN_SLACKER_ERROR');
-			my $line2 = $title;
-			
-			$client->showBriefly( {
-				line1 => $line1,
-				line2 => $line2,
-				jive  => {
-					type => 'popupplay',
-					text => [ $line1, $line2 ],
-				},
+		
+		$client->pluginData( prevTrack => {
+			title => $title,
+		} );
+
+		my $line1 = $client->string('PLUGIN_SLACKER_ERROR');
+		my $line2 = $title;
+		
+		$client->showBriefly( {
+			line1 => $line1,
+			line2 => $line2,
+			jive  => {
+				type => 'popupplay',
+				text => [ $line1, $line2 ],
 			},
-			{
-				scroll => 1,
-			} );
-		}
+		},
+		{
+			scroll => 1,
+		} );
 	
 		return;
 	}
@@ -438,15 +439,6 @@ sub playlistCallback {
 		}
 	}
 	elsif ( $p1 eq 'newsong' ) {
-		# A new song has started playing.  We use this to change titles
-		if ( my $track = $client->pluginData('currentTrack') ) {		
-			my $title = $track->{title}  . ' ' . $client->string('BY')   . ' '
-					  . $track->{artist} . ' ' . $client->string('FROM') . ' '
-					  . $track->{album};
-		
-			setCurrentTitle( $client, $url, $title );
-		}
-		
 		# Remove the previous track metadata
 		$client->pluginData( prevTrack => 0 );
 		
@@ -518,10 +510,6 @@ sub stopCallback {
 
 			$http->get( $stopURL );
 		}
-		
-		# Reset title to station title
-		my $title = Slim::Music::Info::title($url);
-		setCurrentTitle( $client, $url, $title );
 		
 		# Clear track data
 		$client->pluginData( prevTrack    => 0 );
@@ -605,13 +593,6 @@ sub reinit {
 		
 		# Re-add playlist item
 		$client->execute( [ 'playlist', 'add', $url ] );
-	
-		# Reset track title
-		my $title = $track->{title}  . ' ' . $client->string('BY')   . ' '
-				  . $track->{artist} . ' ' . $client->string('FROM') . ' '
-				  . $track->{album};
-				
-		setCurrentTitle( $client, $url, $title );
 		
 		# Restart elapsed second timer
 		Slim::Utils::Timers::killTimers( $client, \&trackElapsed );
@@ -649,24 +630,6 @@ sub reinit {
 	}
 	
 	return 1;
-}
-
-sub setCurrentTitle {
-	my ( $client, $url, $title ) = @_;
-	
-	# We can't use the normal getCurrentTitle method because it would cause multiple
-	# players playing the same station to get the same titles
-	$client->pluginData( currentTitle => $title );
-	
-	# Call the normal setCurrentTitle method anyway, so it triggers callbacks to
-	# update the display
-	Slim::Music::Info::setCurrentTitle( $url, $title );
-}
-
-sub getCurrentTitle {
-	my ( $class, $client, $url ) = @_;
-	
-	return $client->pluginData('currentTitle');
 }
 
 # Metadata for a URL, used by CLI/JSON clients

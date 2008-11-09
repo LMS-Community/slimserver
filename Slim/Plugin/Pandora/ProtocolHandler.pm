@@ -113,7 +113,11 @@ sub getNextTrack {
 	
 		if ( time() - $lastActivity >= $MAX_IDLE_TIME ) {
 			$log->debug('Idle time reached, stopping playback');
-			setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_IDLE_STOPPING') );
+			
+			$client->playingSong()->{pluginData} = {
+				songName => $client->string('PLUGIN_PANDORA_IDLE_STOPPING'),
+			};
+			
 			$errorCb->('PLUGIN_PANDORA_IDLE_STOPPING');
 			return;
 		}
@@ -154,7 +158,10 @@ sub gotNextTrack {
 			$log->warn( 'Pandora error getting next track: ' . ( $@ || $track->{error} ) );
 		}
 		
-		setCurrentTitle( $client, $url, $track->{error} || $client->string('PLUGIN_PANDORA_NO_TRACKS') );
+		$client->playingSong()->{pluginData} = {
+			songName => $track->{error} || $client->string('PLUGIN_PANDORA_NO_TRACKS'),
+		};
+		
 		$http->params->{'errorCallback'}->('PLUGIN_PANDORA_NO_TRACKS', $track->{error});
 		return;
 	}
@@ -162,13 +169,6 @@ sub gotNextTrack {
 	if ( $log->is_debug ) {
 		$log->debug( 'Got Pandora track: ' . Data::Dump::dump($track) );
 	}
-	
-	# Watch for playlist commands for this client only
-	Slim::Control::Request::subscribe( 
-		\&playlistCallback, 
-		[['playlist'], ['newsong']],
-		$client,
-	);
 	
 	# Save metadata for this track
 	$song->{'pluginData'} = $track;
@@ -331,40 +331,6 @@ sub canDirectStreamSong {
 	return $class->SUPER::canDirectStream($client, $song->{'streamUrl'}, $class->getFormatForURL());
 }
 
-sub playlistCallback {
-	my $request = shift;
-	my $client  = $request->client();
-	my $cmd     = $request->getRequest(0);
-	my $p1      = $request->getRequest(1);
-	
-	return unless defined $client;
-	
-	my $song = $client->playingSong() || return;
-	my $url  = $song->currentTrack()->url;
-	
-	if ( !$url || $url !~ /^pandora/ ) {
-		# User stopped playing Pandora
-		$log->debug( "Stopped Pandora, unsubscribing from playlistCallback" );
-		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
-		
-		return;
-	}
-	
-	$log->debug("Got playlist event: $p1");
-	
-	if ( $p1 eq 'newsong' ) {
-		# A new song has started playing.  We use this to change titles
-		my $track = $song->{'pluginData'};
-		
-		my $title 
-			= $track->{songName} . ' ' . $client->string('BY') . ' '
-			. $track->{artistName} . ' ' . $client->string('FROM') . ' '
-			. $track->{albumName};
-		
-		setCurrentTitle( $client, $url, $title );		
-	}
-}
-
 # Override replaygain to always use the supplied gain value
 sub trackGain {
 	my ( $class, $client, $url ) = @_;
@@ -418,26 +384,6 @@ sub trackInfoURL {
 	return $trackInfoURL;
 }
 
-sub setCurrentTitle {
-	my ( $client, $url, $title ) = @_;
-	
-	# We can't use the normal getCurrentTitle method because it would cause multiple
-	# players playing the same station to get the same titles
-	$client->currentSongForUrl($url)->{'currentTitle'} = $title;
-	
-	# Call the normal setCurrentTitle method anyway, so it triggers callbacks to
-	# update the display
-	Slim::Music::Info::setCurrentTitle( $url, $title );
-}
-
-sub getCurrentTitle {
-	my ( $class, $client, $url ) = @_;
-	
-	my $song = $client->currentSongForUrl($url);
-	
-	return ref $song ? $song->{'currentTitle'} : undef;
-}
-
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
@@ -445,11 +391,9 @@ sub getMetadataFor {
 	my $song = $forceCurrent ? $client->streamingSong() : $client->playingSong();
 	return unless $song;
 	
-	my $track = $song->{'pluginData'} || return;
-	
 	my $icon = $class->getIcon();
 	
-	if ( $track ) {
+	if ( my $track = $song->{pluginData} ) {
 		return {
 			artist      => $track->{artistName},
 			album       => $track->{albumName},
@@ -468,14 +412,14 @@ sub getMetadataFor {
 				# replace repeat with Thumbs Up
 				repeat  => {
 					icon    => 'html/images/btn_thumbs_up.gif',
-					tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_LIKE'),
+					tooltip => $client->string('PLUGIN_PANDORA_I_LIKE'),
 					command => [ 'pandora', 'rate', 1 ],
 				},
 
 				# replace shuffle with Thumbs Down
 				shuffle => {
 					icon    => 'html/images/btn_thumbs_down.gif',
-					tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_DONT_LIKE'),
+					tooltip => $client->string('PLUGIN_PANDORA_I_DONT_LIKE'),
 					command => [ 'pandora', 'rate', 0 ],
 				},
 			}
@@ -511,13 +455,6 @@ sub reinit {
 		
 		# Re-add playlist item
 		$client->execute( [ 'playlist', 'add', $url ] );
-	
-		# Reset track title
-		my $title = $track->{songName}   . ' ' . $client->string('BY')   . ' '
-				  . $track->{artistName} . ' ' . $client->string('FROM') . ' '
-				  . $track->{albumName};
-				
-		setCurrentTitle( $client, $url, $title );
 		
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );

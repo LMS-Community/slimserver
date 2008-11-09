@@ -140,12 +140,12 @@ sub parseMetadata {
 	# See if there is a parser for this stream
 	my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
 	if ( $parser ) {
-		eval { $parser->( $client, $url, $metadata ) };
+		my $handled = eval { $parser->( $client, $url, $metadata ) };
 		if ( $@ ) {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
 			logger('formats.metadata')->error( "Metadata parser $name failed: $@" );
 		}
-		return;
+		return if $handled;
 	}
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
@@ -364,6 +364,19 @@ sub audioScrobblerSource {
 
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
+	
+	# Check for an alternate metadata provider for this URL
+	my $provider = Slim::Formats::RemoteMetadata->getProviderFor($url);
+	if ( $provider ) {
+		my $metadata = eval { $provider->( $client, $url ) };
+		if ( $@ ) {
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($provider);
+			$log->error( "Metadata provider $name failed: $@" );
+		}
+		else {
+			return $metadata;
+		}
+	}
 
 	my ($artist, $title);
 	# Radio tracks, return artist and title if the metadata looks like Artist - Title
@@ -389,19 +402,6 @@ sub getMetadataFor {
 	if ( Slim::Music::Info::isPlaylist($url) ) {
 		if (my $cur = $client->currentTrackForUrl($url)) {
 			$url = $cur->url;
-		}
-	}
-	
-	# Check for an alternate metadata provider for this URL
-	my $provider = Slim::Formats::RemoteMetadata->getProviderFor($url);
-	if ( $provider ) {
-		my $metadata = eval { $provider->( $client, $url ) };
-		if ( $@ ) {
-			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($provider);
-			$log->error( "Metadata provider $name failed: $@" );
-		}
-		else {
-			return $metadata;
 		}
 	}
 	

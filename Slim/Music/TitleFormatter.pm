@@ -44,6 +44,10 @@ sub init {
 
 		$parsedFormats{uc $attr} = sub {
 
+			if ( ref $_[0] eq 'HASH' ) {
+				return $_[0]->{ lc($attr) } || '';
+			}
+			
 			my $output = $_[0]->get_column($attr);
 			return (defined $output ? $output : '');
 		};
@@ -51,6 +55,10 @@ sub init {
 
 	# Override album
 	$parsedFormats{'ALBUM'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{album} || '';
+		}
 
 		my $output = '';
 		my $album = $_[0]->album();
@@ -63,6 +71,10 @@ sub init {
 
 	# add album related
 	$parsedFormats{'ALBUMSORT'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{albumsort} || '';
+		}
 
 		my $output = '';
 		my $album  = $_[0]->album();
@@ -75,6 +87,10 @@ sub init {
 	};
 
 	$parsedFormats{'DISCC'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{discc} || '';
+		}
 
 		my $output = '';
 		my $album = $_[0]->album();
@@ -87,6 +103,10 @@ sub init {
 	};
 
 	$parsedFormats{'DISC'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{disc} || '';
+		}
 
 		my $disc = $_[0]->disc;
 
@@ -110,6 +130,10 @@ sub init {
 
 	# add artist related
 	$parsedFormats{'ARTIST'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{artist} || '';
+		}
 
 		my @output  = ();
 		my @artists = $_[0]->artists;
@@ -127,6 +151,10 @@ sub init {
 	};
 
 	$parsedFormats{'ARTISTSORT'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{artistsort} || '';
+		}
 
 		my @output  = ();
 		my @artists = $_[0]->artists;
@@ -147,6 +175,10 @@ sub init {
 	for my $attr (qw(composer conductor band)) {
 
 		$parsedFormats{uc($attr)} = sub {
+			
+			if ( ref $_[0] eq 'HASH' ) {
+				return $_[0]->{$attr} || '';
+			}
 
 			my $output = '';
 			my ($item) = $_[0]->$attr();
@@ -161,6 +193,10 @@ sub init {
 
 	# add genre
 	$parsedFormats{'GENRE'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{genre} || '';
+		}
 
 		my $output = '';
 		my ($item) = $_[0]->genre();
@@ -175,6 +211,10 @@ sub init {
 
 	# add comment and duration
 	for my $attr (qw(comment duration)) {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{$attr} || '';
+		}
 
 		$parsedFormats{uc($attr)} = sub {
 			my $output = $_[0]->$attr();
@@ -184,6 +224,10 @@ sub init {
 	
 	# add file info
 	$parsedFormats{'VOLUME'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{volume} || '';
+		}
 
 		my $output = '';
 		my $url = $_[0]->get('url');
@@ -201,6 +245,10 @@ sub init {
 	};
 
 	$parsedFormats{'PATH'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{path} || '';
+		}
 
 		my $output = '';
 		my $url = $_[0]->get('url');
@@ -218,6 +266,10 @@ sub init {
 	};
 
 	$parsedFormats{'FILE'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{file} || '';
+		}
 
 		my $output = '';
 		my $url = $_[0]->get('url');
@@ -236,6 +288,11 @@ sub init {
 	};
 
 	$parsedFormats{'EXT'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{ext} || '';
+		}
+		
 		my $output = '';
 		my $url = $_[0]->get('url');
 
@@ -280,6 +337,10 @@ sub init {
 
 	# Add lightweight FILE.EXT format
 	$parsedFormats{'FILE.EXT'} = sub {
+		
+		if ( ref $_[0] eq 'HASH' ) {
+			return $_[0]->{'file.ext'} || '';
+		}
 
 		my $output = '';
 		my $url = $_[0]->get('url');
@@ -506,26 +567,10 @@ sub infoFormat {
 	my $fileOrObj = shift; # item whose information will be formatted
 	my $str       = shift; # format string to use
 	my $safestr   = shift; # format string to use in the event that after filling the first string, there is nothing left
+	my $meta      = shift; # optional metadata hash to use instead of object data
 	my $output    = '';
 	my $format;
-
-	# Optimize calls out to objectForUrl
-	my $blessed   = blessed($fileOrObj);
-	my $track     = $fileOrObj;
-
-	if (!$blessed || !($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist')) {
-
-		$track = Slim::Schema->rs('Track')->objectForUrl({
-			'url'    => $fileOrObj,
-			'create' => 1,
-		});
-	}
-
-	if (!blessed($track) || !$track->can('id')) {
-
-		return '';
-	}
-
+	
 	# use a safe format string if none specified
 	# Bug: 1146 - Users can input strings in any locale - we need to convert that to
 	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
@@ -543,13 +588,36 @@ sub infoFormat {
 
 	# Get the formatting function from the hash, or parse it
 	$format = $parsedFormats{$str} || _parseFormat($str);
+	
+	# Short-circuit if we have metadata
+	if ( $meta ) {
+		$output = $format->($meta) if ref($format) eq 'CODE';
+	}
+	else {
+		# Optimize calls out to objectForUrl
+		my $blessed   = blessed($fileOrObj);
+		my $track     = $fileOrObj;
 
-	$output = $format->($track) if ref($format) eq 'CODE';
+		if (!$blessed || !($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist')) {
+
+			$track = Slim::Schema->rs('Track')->objectForUrl({
+				'url'    => $fileOrObj,
+				'create' => 1,
+			});
+		}
+
+		if (!blessed($track) || !$track->can('id')) {
+
+			return '';
+		}
+
+		$output = $format->($track) if ref($format) eq 'CODE';
+	}
 
 	if ($output eq "" && defined($safestr)) {
 
 		# if there isn't any output, use the safe string, if supplied
-		return infoFormat($track,$safestr);
+		return infoFormat($fileOrObj, $safestr, undef, $meta);
 
 	} else {
 

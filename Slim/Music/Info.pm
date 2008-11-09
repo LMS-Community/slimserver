@@ -497,6 +497,7 @@ sub getCurrentTitle {
 	my $client = shift;
 	my $url    = shift || return undef;
 	my $web    = shift || 0;
+	my $meta   = shift;
 	
 	if ( blessed($client) ) {
 		# Let plugins control the current title if they want
@@ -508,17 +509,17 @@ sub getCurrentTitle {
 	    }
 	}
 	
-	if ( $currentTitles{$url} ) {
+	if ( !$meta && $currentTitles{$url} ) {
 		return $currentTitles{$url};
 	}
 	
 	# If the request came from the web, we don't want to format the title
 	# using the client formatting pref
 	if ( $web ) {
-		return standardTitle( undef, $url ); 
+		return standardTitle( undef, $url, $meta ); 
 	}
 
-	return standardTitle( $client, $url );
+	return standardTitle( $client, $url, $meta );
 }
 
 # Return the amount of seconds the current stream is behind real-time
@@ -643,6 +644,13 @@ sub plainTitle {
 sub standardTitle {
 	my $client    = shift;
 	my $pathOrObj = shift; # item whose information will be formatted
+	my $meta      = shift; # optional remote metadata to format
+	
+	# Short-circuit if we have metadata
+	if ( $meta ) {
+		my $format = standardTitleFormat($client) || 'TITLE';
+		return displayText($client, undef, $format, $meta);
+	}
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
 	# XXX - exception should go here. comming soon.
@@ -667,7 +675,7 @@ sub standardTitle {
 
 	} else {
 
-		$format = standardTitleFormat($client);
+		$format = standardTitleFormat($client) || 'TITLE';
 
 	}
 
@@ -706,6 +714,12 @@ sub displayText {
 	my $client = shift;
 	my $obj    = shift;
 	my $format = shift || 'TITLE';
+	my $meta   = shift;
+	
+	# Short-circuit if we have a metadata hash
+	if ( $meta ) {
+		return Slim::Music::TitleFormatter::infoFormat(undef, $format, undef, $meta);
+	}
 
 	if (!blessed($obj) || !$obj->can('url')) {
 		return '';
@@ -720,14 +734,14 @@ sub displayText {
 			return $cache->{$format};
 
 		} elsif (Slim::Music::TitleFormatter::cacheFormat($format)) {
-			return $cache->{$format} = Slim::Music::TitleFormatter::infoFormat($obj, $format);
+			return $cache->{$format} = Slim::Music::TitleFormatter::infoFormat($obj, $format, undef, $meta);
 
 		} else {
-			return Slim::Music::TitleFormatter::infoFormat($obj, $format);
+			return Slim::Music::TitleFormatter::infoFormat($obj, $format, undef, $meta);
 		}
 	}
 
-	my $text = Slim::Music::TitleFormatter::infoFormat($obj, $format);
+	my $text = Slim::Music::TitleFormatter::infoFormat($obj, $format, undef, $meta);
 
 	# Clear the cache first.
 	$cache = {};

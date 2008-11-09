@@ -466,8 +466,27 @@ sub lines {
 
 		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client) );
 		
+		my $title;
+		
+		# Get remote metadata for other tracks in the playlist if available
+		if ( $song->isRemoteURL ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
+
+			if ( $handler && $handler->can('getMetadataFor') ) {
+				my $meta = $handler->getMetadataFor( $client, $song->url );
+				
+				if ( $meta->{title} ) {
+					$title = Slim::Music::Info::getCurrentTitle( $client, $song->url, 0, $meta );
+				}
+			}
+		}
+		
+		if ( !$title ) {
+			$title = Slim::Music::Info::standardTitle($client, $song);
+		}
+		
 		$parts = {
-			'line'    => [ $line1, Slim::Music::Info::standardTitle($client, $song) ],
+			'line'    => [ $line1, $title ],
 			'overlay' => [ $overlay1, $client->symbols('notesymbol') ],
 		};
 

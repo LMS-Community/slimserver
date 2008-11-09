@@ -102,6 +102,9 @@ Register a new metadata parser.  This parser will be called anytime
 new metadata is available for a stream.  Depending on the type of stream,
 this may be Icy metadata strings, or binary WMA metadata.
 
+Your function should return 1 if you handled the data, or return 0
+if you want the standard metadata functions to handle the data.
+
   Slim::Formats::RemoteMetadata->registerParser(
       match => qr/soma\.fm/,
       func  => \&parser,

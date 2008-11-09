@@ -158,13 +158,6 @@ sub _gotNextTrack {
 		$log->debug( 'Got Last.fm track: ' . Data::Dump::dump($track) );
 	}
 	
-	# Watch for playlist commands
-	Slim::Control::Request::subscribe( 
-		\&playlistCallback, 
-		[['playlist'], ['newsong']],
-		$client,
-	);
-	
 	# Save metadata for this track
 	$params->{'song'}->{'pluginData'} = $track;
 	
@@ -273,42 +266,6 @@ sub canDirectStreamSong {
 	return $class->SUPER::canDirectStream( $client, $track->{location}, $class->getFormatForURL());
 }
 
-sub playlistCallback {
-	my $request = shift;
-	my $client  = $request->client();
-	my $cmd     = $request->getRequest(0);
-	my $p1      = $request->getRequest(1);
-	
-	return unless defined $client;
-	
-	my $song = $client->playingSong() || return;
-	my $url  = $song->currentTrack()->url;
-			
-	if ($url !~ /^lfm/) {
-		$log->debug( "Stopped Last.fm, unsubscribing from playlistCallback" );
-		Slim::Control::Request::unsubscribe( \&playlistCallback, $client );
-		
-		return;
-	}
-	
-	if ( $p1 eq 'newsong' ) {
-		
-		# A new song has started playing.  We use this to change titles
-		my $track = $client->playingSong()->{'pluginData'};
-		
-		my $title 
-			= $track->{title} . ' ' . $client->string('BY') . ' '
-			. $track->{creator};
-		
-		# Some Last.fm tracks don't have albums
-		if ( $track->{album} ) {
-			$title .= ' ' . $client->string('FROM') . ' ' . $track->{album};
-		}
-		
-		setCurrentTitle( $client, $url, $title );
-	}
-}
-
 # Track Info menu
 sub trackInfo {
 	my ( $class, $client, $track ) = @_;
@@ -354,24 +311,6 @@ sub trackInfoURL {
 	return $trackInfoURL;
 }
 
-sub setCurrentTitle {
-	my ( $client, $url, $title ) = @_;
-	
-	# We can't use the normal getCurrentTitle method because it would cause multiple
-	# players playing the same station to get the same titles
-	$client->currentSongForUrl($url)->{'currentTitle'} = $title;
-	
-	# Call the normal setCurrentTitle method anyway, so it triggers callbacks to
-	# update the display
-	Slim::Music::Info::setCurrentTitle( $url, $title );
-}
-
-sub getCurrentTitle {
-	my ( $class, $client, $url ) = @_;
-	
-	return $client->currentSongForUrl($url)->{'currentTitle'};
-}
-
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
@@ -379,39 +318,47 @@ sub getMetadataFor {
 	my $song = $forceCurrent ? $client->streamingSong() : $client->playingSong();
 	return unless $song;
 	
-	my $track = $song->{'pluginData'} || return;
-	
 	my $icon = $class->getIcon();
 	
-	return {
-		artist      => $track->{creator},
-		album       => $track->{album},
-		title       => $track->{title},
-		cover       => $track->{image} || $icon,
-		icon        => $icon,
-		duration    => $track->{secs},
-		bitrate     => '128k CBR',
-		type        => 'MP3 (' . $client->string('PLUGIN_LFM_MODULE_NAME') . ')',
-		info_link   => 'plugins/lastfm/trackinfo.html',
-		buttons     => {
-			# disable REW/Previous button
-			rew => 0,
+	if ( my $track = $song->{pluginData} ) {
+		return {
+			artist      => $track->{creator},
+			album       => $track->{album},
+			title       => $track->{title},
+			cover       => $track->{image} || $icon,
+			icon        => $icon,
+			duration    => $track->{secs},
+			bitrate     => '128k CBR',
+			type        => 'MP3 (' . $client->string('PLUGIN_LFM_MODULE_NAME') . ')',
+			info_link   => 'plugins/lastfm/trackinfo.html',
+			buttons     => {
+				# disable REW/Previous button
+				rew => 0,
 
-			# replace repeat with Love
-			repeat  => {
-				icon    => 'html/images/btn_lastfm_love.gif',
-				tooltip => $client->string('PLUGIN_LFM_LOVE'),
-				command => [ 'lfm', 'rate', 'L' ],
-			},
+				# replace repeat with Love
+				repeat  => {
+					icon    => 'html/images/btn_lastfm_love.gif',
+					tooltip => $client->string('PLUGIN_LFM_LOVE'),
+					command => [ 'lfm', 'rate', 'L' ],
+				},
 
-			# replace shuffle with Ban
-			shuffle => {
-				icon    => 'html/images/btn_lastfm_ban.gif',
-				tooltip => $client->string('PLUGIN_LFM_BAN'),
-				command => [ 'lfm', 'rate', 'B' ],
-			},
-		}
-	};
+				# replace shuffle with Ban
+				shuffle => {
+					icon    => 'html/images/btn_lastfm_ban.gif',
+					tooltip => $client->string('PLUGIN_LFM_BAN'),
+					command => [ 'lfm', 'rate', 'B' ],
+				},
+			}
+		};
+	}
+	else {
+		return {
+			icon    => $icon,
+			cover   => $icon,
+			bitrate => '128k CBR',
+			type    => 'MP3 (' . $client->string('PLUGIN_LFM_MODULE_NAME') . ')',
+		};
+	}
 }
 
 sub getIcon {
@@ -434,13 +381,6 @@ sub reinit {
 		
 		# Re-add playlist item
 		$client->execute( [ 'playlist', 'add', $url ] );
-	
-		# Reset track title
-		my $title = $track->{title}   . ' ' . $client->string('BY')   . ' '
-				  . $track->{creator} . ' ' . $client->string('FROM') . ' '
-				  . $track->{album};
-				
-		setCurrentTitle( $client, $url, $title );
 		
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );

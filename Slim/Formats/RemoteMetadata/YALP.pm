@@ -56,6 +56,8 @@ sub parser {
 	};
 	
 	$log->is_debug && $log->debug( "YALP metadata: " . Data::Dump::dump($meta) );
+	
+	return 1;
 }
 
 sub provider {

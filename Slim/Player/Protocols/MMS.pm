@@ -340,11 +340,12 @@ sub parseMetadata {
 		# See if there is a parser for this stream
 		my $parser = Slim::Formats::RemoteMetadata->getParserFor( $song->{streamUrl} );
 		if ( $parser ) {
-			eval { $parser->( $client, $song->{streamUrl}, $metadata ) };
+			my $handled = eval { $parser->( $client, $song->{streamUrl}, $metadata ) };
 			if ( $@ ) {
 				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
 				$log->error( "Metadata parser $name failed: $@" );
 			}
+			return if $handled;
 		}
 		
 		# If there is no parser, we ignore ASF_Command_Media

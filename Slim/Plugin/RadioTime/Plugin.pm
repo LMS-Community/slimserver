@@ -15,7 +15,7 @@ package Slim::Plugin::RadioTime::Plugin;
 use strict;
 use base qw(Slim::Plugin::OPMLBased);
 
-use URI::Escape qw(uri_escape);
+use URI::Escape qw(uri_escape_utf8);
 
 if ( !main::SLIM_SERVICE ) {
  	require Slim::Plugin::RadioTime::Settings;
@@ -23,6 +23,7 @@ if ( !main::SLIM_SERVICE ) {
 
 use Slim::Utils::Prefs;
 
+use Slim::Plugin::RadioTime::Metadata;
 use Slim::Plugin::RadioTime::Plugin::Local;
 use Slim::Plugin::RadioTime::Plugin::Music;
 use Slim::Plugin::RadioTime::Plugin::Talk;
@@ -45,6 +46,9 @@ sub initPlugin {
 	if ( !main::SLIM_SERVICE ) {
 		Slim::Plugin::RadioTime::Settings->new;
 	}
+	
+	# Initialize metadata handler
+	Slim::Plugin::RadioTime::Metadata->init();
 	
 	# Load other sub-plugins
 	Slim::Plugin::RadioTime::Plugin::Local->initPlugin();
@@ -75,7 +79,7 @@ sub feed {
 	
 	if ( $username ) {
 		$url .= ( $url =~ /\?/ ) ? '&' : '?';
-		$url .= 'username=' . uri_escape($username);
+		$url .= 'username=' . uri_escape_utf8($username);
 	}
 	
 	# RadioTime's listing defaults to giving us mp3 and wma streams.
