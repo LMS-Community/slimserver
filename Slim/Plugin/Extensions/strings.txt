@@ -29,7 +29,10 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL
 	EN	already installed manually (%s) - please remove first
 
 PLUGIN_EXTENSIONS_RESTART_MSG
-	EN	<b><i>Please Restart SqueezeCenter</i></b>
+	EN	Please Restart SqueezeCenter
+
+PLUGIN_EXTENSIONS_REPO_ERROR
+	EN	Bad repository
 
 PLUGIN_EXTENSIONS_REMOVED
 	EN	Removed

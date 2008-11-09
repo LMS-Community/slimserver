@@ -66,7 +66,7 @@ sub handler {
 }
 
 sub _gotPluginInfo {
-	my ($class, $client, $params, $callback, $args, $plugins) = @_;
+	my ($class, $client, $params, $callback, $args, $plugins, $errors) = @_;
 
 	if ($params->{'saveSettings'}) {
 
@@ -113,33 +113,33 @@ sub _gotPluginInfo {
 				version => $plugin->{'version'},
 				digest  => $plugin->{'sha'},
 				cb      => \&_downloadDone,
-				pt      => [ $class, $client, $params, $callback, $args, $plugins, $downloads ]
+				pt      => [ $class, $client, $params, $callback, $args, $plugins, $errors, $downloads ]
 			} );
 		}
 
 		return if @install; # wait for download(s) to complete page build
 	}
 
-	my $body = $class->_addInfo($client, $params, $plugins);
+	my $body = $class->_addInfo($client, $params, $plugins, $errors);
 
 	$callback->( $client, $params, $body, @$args );
 }
 
 sub _downloadDone {
-	my ($class, $client, $params, $callback, $args, $plugins, $downloads) = @_;
+	my ($class, $client, $params, $callback, $args, $plugins, $errors, $downloads) = @_;
 
 	# wait for all downloads to complete before returning the page
 	if (--$downloads->{'remaining'}) {
 		return;
 	}
 
-	my $body = $class->_addInfo($client, $params, $plugins);
+	my $body = $class->_addInfo($client, $params, $plugins, $errors);
 
 	$callback->( $client, $params, $body, @$args );
 }
 
 sub _addInfo {
-	my ($class, $client, $params, $plugins) = @_;
+	my ($class, $client, $params, $plugins, $errors) = @_;
 
 	my $status = Slim::Plugin::Extensions::PluginDownloader->status;
 
@@ -242,9 +242,12 @@ sub _addInfo {
 	$params->{'rand'}    = $rand;
 	$params->{'warning'} = '';
 
+	for my $error (keys %$errors) {
+		$params->{'warning'} .= Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_REPO_ERROR") . " $error - $errors->{$error}<p/>";
+	}
+
 	if (keys %$status) {
 
-		my $warn = '';
 		my $restart;
 
 		for my $plugin (sort { $a->{'title'} cmp $b->{'title'} } (values %$status)) {

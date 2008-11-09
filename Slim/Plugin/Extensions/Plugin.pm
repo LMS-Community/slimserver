@@ -162,7 +162,7 @@ sub getPlugins {
 	my $cb    = shift;
 	my $pt    = shift || [];
 
-	my $data = { remaining => scalar keys %repos, results => [] };
+	my $data = { remaining => scalar keys %repos, results => [], errors => {} };
 
 	for my $repo (keys %repos) {
 		getExtensions({
@@ -172,12 +172,13 @@ sub getPlugins {
 			'version'=> $::VERSION, 
 			'lang'   => $Slim::Utils::Strings::currentLang,
 			'cb'     => \&_getPluginsCB,
-			'pt'     => [ $data, $cb, $pt ]
+			'pt'     => [ $data, $cb, $pt ],
+			'onError'=> sub { $data->{'errors'}->{ $_[0] } = $_[1] },
 		});
 	}
 
 	if (!keys %repos) {
-		$cb->( @$pt, [] );
+		$cb->( @$pt, [], {} );
 	}
 }
 
@@ -191,7 +192,7 @@ sub _getPluginsCB {
 
 	if ( ! --$data->{'remaining'} ) {
 
-		$cb->( @$pt, $data->{'results'} );
+		$cb->( @$pt, $data->{'results'}, $data->{'errors'} );
 	}
 }
 
@@ -211,7 +212,7 @@ sub getExtensions {
 		$log->debug("fetching extensions xml $args->{name}");
 
 		Slim::Networking::SimpleAsyncHTTP->new(
-			\&_parseResponse, \&_parseResponse, { 'args' => $args, 'cache' => 1 }
+			\&_parseResponse, \&_noResponse, { 'args' => $args, 'cache' => 1 }
 		   )->get( $args->{'name'} );
 	}
 }
@@ -242,6 +243,20 @@ sub _parseResponse {
 	}
 
 	_parseXML($args, $xml);
+}
+
+sub _noResponse {
+	my $http = shift;
+	my $error= shift;
+	my $args = $http->params('args');
+
+	$log->warn("error fetching $args->{name} - $error");
+
+	if ($args->{'onError'}) {
+		$args->{'onError'}->( $args->{'name'}, $error );
+	}
+
+	$args->{'cb'}->( @{$args->{'pt'}}, [] );
 }
 
 sub _parseXML {
