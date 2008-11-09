@@ -112,7 +112,6 @@ sub init {
 		},
 
 		'externRefArgs' => 'CV',
-		'stringExternRef' => 1,
 		'header' => undef,
 		'headerAddCount' => 1,
 		'callback' => \&homeExitHandler,
