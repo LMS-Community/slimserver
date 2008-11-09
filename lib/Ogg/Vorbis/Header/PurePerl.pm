@@ -7,36 +7,32 @@ use warnings;
 # First four bytes of stream are always OggS
 use constant OGGHEADERFLAG => 'OggS';
 
-# Heavily modified by dsully - Logitech/Slim Devices.
-our $VERSION = '0.1';
+our $VERSION = '1.0';
 
 sub new {
 	my $class = shift;
-	my $file = shift;
+	my $file  = shift;
 
-	my %data;
-	
+	my %data  = ();
+
 	if (ref $file) {
 		binmode $file;
-		
+
 		%data = (
 			'filesize'   => -s $file,
 			'fileHandle' => $file,
 		);
-		
-	}
-	
-	else {
-		
-		# open up the file
+
+	} else {
+
 		open FILE, $file or do {
 			warn "$class: File $file does not exist or cannot be read: $!";
 			return undef;
 		};
-	
+
 		# make sure dos-type systems can handle it...
 		binmode FILE;
-	
+
 		%data = (
 			'filename'   => $file,
 			'filesize'   => -s $file,
@@ -94,7 +90,6 @@ sub path {
 }
 
 # "private" methods
-
 sub _init {
 	my $data = shift;
 
@@ -111,24 +106,21 @@ sub _skipID3Header {
 	
 	my $byteCount = 3;
 	
-	if ( $buffer eq 'ID3' ) {
+	if ($buffer eq 'ID3') {
 
-		while ( read $fh, $buffer, 4096 ) {
+		while (read $fh, $buffer, 4096) {
 
 			my $found;
-			if ( ( $found = index( $buffer, OGGHEADERFLAG ) ) >= 0 ) {
+			if (($found = index($buffer, OGGHEADERFLAG)) >= 0) {
 				$byteCount += $found;
-
 				seek $fh, $byteCount, 0;
-				
 				last;
-			}
-			else {
+			} else {
 				$byteCount += 4096;
 			}
 		}
-	}
-	else {
+
+	} else {
 		seek $fh, 0, 0;
 	}
 
@@ -213,7 +205,7 @@ sub _loadInfo {
 	my $data = shift;
 
 	my $start = $data->{'startInfoHeader'};
-	my $fh = $data->{'fileHandle'};
+	my $fh    = $data->{'fileHandle'};
 
 	my $byteCount = $start + 23;
 	my %info = ();
@@ -259,32 +251,31 @@ sub _loadInfo {
 
 sub _loadComments {
 	my $data = shift;
-	
+
 	my $fh    = $data->{'fileHandle'};
 	my $start = $data->{'startHeader'};
-	
-	$data->{COMMENT_KEYS} = [];
-	
-	# Comment parsing code based on Image::ExifTool::Vorbis
 
+	$data->{COMMENT_KEYS} = [];
+
+	# Comment parsing code based on Image::ExifTool::Vorbis
 	my $MAX_PACKETS = 2;
 	my $done;
 	my ($page, $packets, $streams) = (0,0,0,0);
 	my ($buff, $flag, $stream, %val);
 
 	seek $fh, $start, 0;
-	
+
 	while (1) {	
-		if ( !$done && read( $fh, $buff, 28 ) == 28 ) {
+		if (!$done && read( $fh, $buff, 28 ) == 28) {
 			# validate magic number
 			unless ( $buff =~ /^OggS/ ) {
 				warn "No comment header?";
 				last;
 			}
 
-			$flag   = Get8u(\$buff, 5);		# page flag
+			$flag   = Get8u(\$buff, 5);	# page flag
 			$stream = Get32u(\$buff, 14);	# stream serial number
-			++$streams if $flag & 0x02;		# count start-of-stream pages
+			++$streams if $flag & 0x02;	# count start-of-stream pages
 			++$packets unless $flag & 0x01; # keep track of packet count
 		}
 		else {
@@ -302,16 +293,23 @@ sub _loadComments {
 			delete $val{$stream};
 			# only read the first $MAX_PACKETS packets from each stream
 			if ($packets > $MAX_PACKETS * $streams) {
-				last unless %val;	# all done (success!)
-				next;				# process remaining stream(s)
+				# all done (success!)
+				last unless %val;
+				# process remaining stream(s)
+				next;
 			}
 		}
+
 		# stop processing Ogg Vorbis if we have scanned enough packets
 		last if $packets > $MAX_PACKETS * $streams and not %val;
 		
 		# continue processing the current page
-		my $pageNum = Get32u(\$buff, 18);   # page sequence number
-		my $nseg    = Get8u(\$buff, 26);    # number of segments
+		# page sequence number
+		my $pageNum = Get32u(\$buff, 18);
+
+		# number of segments
+		my $nseg    = Get8u(\$buff, 26);
+
 		# calculate total data length
 		my $dataLen = Get8u(\$buff, 27);
 		
@@ -332,20 +330,23 @@ sub _loadComments {
 		}
 		
 		# read page data
-        read( $fh, $buff, $dataLen ) == $dataLen or last;
+		read($fh, $buff, $dataLen) == $dataLen or last;
 
 		if (defined $val{$stream}) {
-			$val{$stream} .= $buff;		# add this continuation page
-		} elsif (not $flag & 0x01) {	# ignore remaining pages of a continued packet
+			# add this continuation page
+			$val{$stream} .= $buff;
+		} elsif (not $flag & 0x01) {
+			# ignore remaining pages of a continued packet
 			# ignore the first page of any packet we aren't parsing
 			if ($buff =~ /^(.)vorbis/s and ord($1) == 3) {
-				$val{$stream} = $buff;  # save this page, it has comments
+				# save this page, it has comments
+				$val{$stream} = $buff;
 			}
 		}
 		
 		if (defined $val{$stream} and $flag & 0x04) {
 			# process Ogg Vorbis packet now if end-of-stream bit is set
-			_processComments( $data, \$val{$stream} );
+			_processComments($data, \$val{$stream});
 			delete $val{$stream};
 		}
 	}
@@ -577,18 +578,17 @@ Unimplemented.
 
 Returns the path/filename of the file the object represents.
 
-=head1 NOTE
-
-This is ALPHA SOFTWARE.  It may very well be very broken.  Do not use it in
-a production environment.  You have been warned.
-
 =head1 AUTHOR
 
 Andrew Molloy E<lt>amolloy@kaizolabs.comE<gt>
 
-=head1 COPYRIGHT
+Dan Sully E<lt>daniel | at | cpan.orgE<gt>
 
+=head1 COPYRIGHT
+ 
 Copyright (c) 2003, Andrew Molloy.  All Rights Reserved.
+ 
+Copyright (c) 2005-2008, Dan Sully.  All Rights Reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
