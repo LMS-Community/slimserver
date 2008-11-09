@@ -942,8 +942,8 @@ sub infoContentType {
 	
 	if ( my $ct = Slim::Schema->contentType($track) ) {
 		if ( $track->remote && Slim::Music::Info::isPlaylist( $track, $ct ) )  {
-			if ( my $entry = $client->master()->remotePlaylistCurrentEntry ) {
-				$ct = $entry->content_type;
+			if ( my $url = $client->master()->currentTrackForUrl( $track->url ) ) {
+				$ct = Slim::Schema->contentType($url);
 			}
 		}
 		
