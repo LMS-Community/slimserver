@@ -37,7 +37,7 @@ use vars qw(
 
 # $Id$
 ($REVISION) = ' $Revision$ ' =~ /\$Revision:\s+([^\s]+)/;
-$VERSION = '1.23';
+$VERSION = '1.24';
 
 # JRF: Whether we're debugging the ID3v2.4 support
 $debug_24 = 0;
@@ -899,12 +899,18 @@ sub _parse_v2tag {
 					# convert to ASCII per best-effort
 					my $pat;
 					if ($data =~ s/^\xFF\xFE//) {
+						# strip additional BOMs as seen in COM(M?) and TXX(X?)
+						$data = join ("",map { ( /^(..)$/ && ! /(\xFF\xFE)/ )? $_: "" } (split /(..)/, $data));
 						$pat = 'v';
 					} elsif ($data =~ s/^\xFE\xFF//) {
+						# strip additional BOMs as seen in COM(M?) and TXX(X?)
+						$data = join ("",map { ( /^(..)$/ && ! /(\xFF\xFE)/ )? $_: "" } (split /(..)/, $data));
 						$pat = 'n';
 					}
 
 					if ($pat) {
+						# strip additional 0s
+						$data = join ("",map { ( /^(..)$/ && ! /(\x00\x00)/ )? $_: "" } (split /(..)/, $data));
 						$data = pack 'C*', map {
 							(chr =~ /[[:ascii:]]/ && chr =~ /[[:print:]]/)
 								? $_
@@ -1646,8 +1652,7 @@ sub get_mp3info {
 	
 	$h->{offset} = $off;
 
-	my $vbr = _get_vbr($fh, $h, \$off);
-	
+	my $vbr  = _get_vbr($fh, $h, \$off);
 	my $lame = _get_lame($fh, $h, \$off);
 	
 	seek $fh, 0, SEEK_END;
@@ -1679,26 +1684,30 @@ sub _get_info {
 		return {};
 	}
 
-	$i->{VERSION}	= $h->{IDR} == 2 ? 2 : $h->{IDR} == 3 ? 1 :
-				$h->{IDR} == 0 ? 2.5 : 0;
+	$i->{VERSION}	= $h->{IDR} == 2 ? 2 : $h->{IDR} == 3 ? 1 : $h->{IDR} == 0 ? 2.5 : 0;
 	$i->{LAYER}	= 4 - $h->{layer};
-	$i->{VBR}	= defined $vbr ? 1 : 0;
+
+	if (ref($vbr) eq 'HASH' and $vbr->{is_vbr} == 1) {
+		$i->{VBR} = 1;
+	} else {
+		$i->{VBR} = 0;
+	}
 
 	$i->{COPYRIGHT}	= $h->{copyright} ? 1 : 0;
 	$i->{PADDING}	= $h->{padding_bit} ? 1 : 0;
 	$i->{STEREO}	= $h->{mode} == 3 ? 0 : 1;
 	$i->{MODE}	= $h->{mode};
 
-	$i->{SIZE}	= $vbr && $vbr->{bytes} ? $vbr->{bytes} : $h->{size};
+	$i->{SIZE}	= $i->{VBR} == 1 && $vbr->{bytes} ? $vbr->{bytes} : $h->{size};
 	$i->{OFFSET}	= $h->{offset};
 
 	my $mfs		= $h->{fs} / ($h->{ID} ? 144000 : 72000);
-	$i->{FRAMES}	= int($vbr && $vbr->{frames}
+	$i->{FRAMES}	= int($i->{VBR} == 1 && $vbr->{frames}
 				? $vbr->{frames}
 				: $i->{SIZE} / ($h->{bitrate} / $mfs)
 			  );
 
-	if ($vbr) {
+	if ($i->{VBR} == 1) {
 		$i->{VBR_SCALE}	= $vbr->{scale} if $vbr->{scale};
 		$h->{bitrate}	= $i->{SIZE} / $i->{FRAMES} * $mfs;
 		if (not $h->{bitrate}) {
@@ -1795,8 +1804,9 @@ sub _vbr_seek {
 }
 
 sub _get_vbr {
-	my($fh, $h, $roff) = @_;
-	my($off, $bytes, @bytes, %vbr);
+	my ($fh, $h, $roff) = @_;
+	my ($off, $bytes, @bytes);
+	my %vbr = (is_vbr => 0);
 
 	$off = $$roff;
 
@@ -1811,6 +1821,8 @@ sub _get_vbr {
 	_vbr_seek($fh, \$off, \$bytes);
 
 	if ($bytes =~ /(?:Xing|Info)/) {
+		# Info is CBR
+		$vbr{is_vbr} = 1 if $bytes =~ /Xing/;
 
 		_vbr_seek($fh, \$off, \$bytes);
 		$vbr{flags} = _unpack_head($bytes);
@@ -1827,8 +1839,8 @@ sub _get_vbr {
 	
 		if ($vbr{flags} & 4) {
 			_vbr_seek($fh, \$off, \$bytes, 100);
-	# Not used right now ...
-	#		$vbr{toc} = _unpack_head($bytes);
+			# Not used right now ...
+			#$vbr{toc} = _unpack_head($bytes);
 		}
 	
 		if ($vbr{flags} & 8) { # (quality ind., 0=best 100=worst)
@@ -1839,8 +1851,8 @@ sub _get_vbr {
 		}
 
 		$$roff = $off;
-		return \%vbr;
 	} elsif ($bytes =~ /(?:VBRI)/) {
+		$vbr{is_vbr} = 1;
 		
 		# Fraunhofer encoder uses VBRI format
 		# start with quality factor at position 8
@@ -1857,10 +1869,9 @@ sub _get_vbr {
 		$vbr{frames} = _unpack_head($bytes);
 
 		$$roff = $off;
-		return \%vbr;
-	} else {
-		return;
 	}
+
+	return \%vbr;
 }
 
 # Read LAME info tag
@@ -2819,6 +2830,7 @@ Tony Bowden,
 Tom Brown,
 Sergio Camarena,
 Chris Dawson,
+Kevin Deane-Freeman,
 Anthony DiSante,
 Luke Drumm,
 Kyle Farrell,
@@ -2826,6 +2838,7 @@ Jeffrey Friedl,
 brian d foy,
 Ben Gertzfield,
 Brian Goodwin,
+Andy Grundman,
 Todd Hanneken,
 Todd Harris,
 Woodrow Hill,
@@ -2868,7 +2881,7 @@ Justin Fletcher.
 
 =head1 CURRENT AUTHOR 
 
-Dan Sully E<lt>dan | at | slimdevices.comE<gt> & Logitech.
+Dan Sully E<lt>daniel | at | cpan.orgE<gt> & Logitech.
 
 =head1 AUTHOR EMERITUS
 
@@ -2876,7 +2889,7 @@ Chris Nandor E<lt>pudge@pobox.comE<gt>, http://pudge.net/
 
 =head1 COPYRIGHT AND LICENSE 
 
-Copyright (c) 2006 Dan Sully & Logitech. All rights reserved. 
+Copyright (c) 2006-2008 Dan Sully & Logitech. All rights reserved. 
 
 Copyright (c) 1998-2005 Chris Nandor. All rights reserved. 
 
