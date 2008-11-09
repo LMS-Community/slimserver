@@ -759,6 +759,11 @@ our %functions = (
 					$type = 'audio';
 				}
 				
+				# There may be an alternate URL for playlist
+				if ( $type eq 'playlist' && $obj->{playlist} ) {
+					$url = $obj->{playlist};
+				}
+				
 				$parser = $obj->{'parser'};
 			}
 

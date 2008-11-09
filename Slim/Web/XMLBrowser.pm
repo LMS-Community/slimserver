@@ -566,9 +566,16 @@ sub handleFeed {
 				if ( $item->{'play'} ) {
 					$type = 'audio';
 				}
+				
+				my $url = $item->{play} || $item->{url};
+				
+				# There may be an alternate URL for playlist
+				if ( $type eq 'playlist' && $item->{playlist} ) {
+					$url = $item->{playlist};
+				}
 
 				$favs->add(
-					$item->{'play'} || $item->{'url'},
+					$url,
 					$item->{'name'}, 
 					$type, 
 					$item->{'parser'}, 
