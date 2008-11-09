@@ -5368,7 +5368,10 @@ sub _songData {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 		
 		if ( $handler && $handler->can('getMetadataFor') ) {
-			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
+			# Don't modify source data
+			$remoteMeta = Storable::dclone(
+				$handler->getMetadataFor( $request->client, $url )
+			);
 			
 			$remoteMeta->{a} = $remoteMeta->{artist};
 			$remoteMeta->{A} = $remoteMeta->{artist};
