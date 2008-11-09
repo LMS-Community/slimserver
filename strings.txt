@@ -17126,6 +17126,9 @@ DEBUG_FORMATS_XML
 	NO	XML-analyseinformasjon (utvalg, SHOUTcast, osv.)
 	SV	XML-tolkningsinformation (Picks, SHOUTcast, o.s.v.)
 
+DEBUG_FORMATS_METADATA
+	EN	Remote stream metadata information
+
 DEBUG_DATABASE_MYSQL
 	DA	Information om MySQL-initialisering og -processer
 	DE	MySQL Initialisierung & Prozess Information
