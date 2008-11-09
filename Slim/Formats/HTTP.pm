@@ -155,7 +155,17 @@ sub requestString {
 		$request_object->uri($url);
 		Slim::Networking::Async::HTTP::cookie_jar->add_cookie_header( $request_object );
 		$request_object->uri($path);
-		$request = $request_object->as_string( $CRLF );
+			
+		# Bug 9709, strip long cookies from the request
+		$request_object->headers->scan( sub {
+			if ( $_[0] eq 'Cookie' ) {
+				if ( length($_[1]) > 512 ) {
+					$request_object->headers->remove_header('Cookie');
+				}
+			}
+		} );
+		
+		$request = $request_object->as_string( $CRLF );				
 	}
 
 	return $request;
