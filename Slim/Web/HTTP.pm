@@ -67,6 +67,9 @@ BEGIN {
 	my $hasCookieXS;
 
 	sub hasCookieXS {
+		# Bug 9830, disable Cookie::XS for now as it has a bug
+		return 0;
+		
 		return $hasCookieXS if defined $hasCookieXS;
 
 		$hasCookieXS = 0;
