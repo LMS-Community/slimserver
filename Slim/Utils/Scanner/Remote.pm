@@ -41,6 +41,7 @@ use IO::String;
 use Scalar::Util qw(blessed);
 
 use Slim::Formats;
+use Slim::Formats::MMS;
 use Slim::Formats::Playlists;
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::Log;
