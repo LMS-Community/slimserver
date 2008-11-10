@@ -11,7 +11,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-$VERSION = '1.0';
+$VERSION = '1.2';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -36,12 +36,13 @@ sub new {
 	if (ref $file) {
 		binmode $file;
 		$self->{'fileHandle'} = $file;
-		
-		if ( $size ) {
+
+		if ($size) {
 			$self->{'size'} = $size;
 		}
-	}
-	else {
+
+	} else {
+
 		open(FILE, $file) or do {
 			warn "[$file] does not exist or cannot be read: $!";
 			return undef;
@@ -215,7 +216,7 @@ sub _parseWMAHeader {
 
 	# some sanity checks
 	return -1 if ($self->{'size'} && $objectSize > $self->{'size'});
-	
+
 	# Must begin with ASF_Header_Object GUID
 	return -1 unless _byteStringToGUID($objectId) eq $guidMapping{ASF_Header_Object};
 
@@ -240,7 +241,7 @@ sub _parseWMAHeader {
 			print "nextObjectOffset: [" . $nextObjectOffset . "]\n";
 			print "\n";
 		}
-		
+
 		# FIX: don't error out on unknown objects (they are properly
 		# skipped below), report a debug message if we get an
 		# inconsistent object size. some sanity checks
@@ -273,14 +274,14 @@ sub _parseWMAHeader {
 
 				$self->_parseASFContentEncryptionObject();
 			}
-	
+
 			elsif ($nextObjectGUIDName eq 'ASF_Extended_Content_Description_Object') {
 	
 				$self->_parseASFExtendedContentDescriptionObject();
 			}
 
 			if ($nextObjectGUIDName eq 'ASF_Stream_Properties_Object') {
-				
+
 				$self->_parseASFStreamPropertiesObject(0);
 				next;
 			}
@@ -1195,17 +1196,55 @@ Audio::WMA - Perl extension for reading WMA/ASF Metadata
 
 This module implements access to metadata contained in WMA files.
 
+=head1 METHODS
+
+=over 4
+
+=item * new( $file )
+
+Create a new Audio::WMA instance from the data in $file
+
+=item * info( )
+
+Get the audio data information in the form of a hash ref.
+
+=item * tags( )
+
+Get the metadata / tag information in the form of a hash ref.
+
+=item * stream( )
+
+Get the current ASF stream.
+
+=item * parseObject( $asf )
+
+Parse a standalone ASF object.
+
+=item * setDebug( 0 | 1 )
+
+Toggle debugging.
+
+=item * setConvertTagsToUTF8( 0 | 1 )
+
+Toggle Encoding metadata tags as UTF-8
+
+Toggle debugging.
+
+=back
+
 =head1 SEE ALSO
 
 Audio::FLAC::Header, L<http://getid3.sf.net/>
 
+http://github.com/dsully/perl-audio/tree/master/Audio-WMA
+
 =head1 AUTHOR
 
-Dan Sully, E<lt>daniel@cpan.orgE<gt>
+Dan Sully, E<lt>daniel | at | cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2007 by Dan Sully & Logitech.
+Copyright 2003-2008 by Dan Sully & Logitech.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
