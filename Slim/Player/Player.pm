@@ -230,24 +230,18 @@ sub power {
 			$controller->playerInactive($client);
 			$prefs->client($client)->set('playingAtPowerOff', 0);
  		} else {	
-			my $playing = $controller->isPlaying() || $controller->isPaused();
+			my $playing = $controller->isPlaying(1);
 			$prefs->client($client)->set('playingAtPowerOff', $playing);
-	
-			if ($playing) {
-	
-				if ($controller->playingSong()->isRemote()) {
-					# always stop if currently playing remote stream
-					$client->execute(["stop"]);
-				
-				} elsif ($resumeOff eq 'Pause') {
-					# Pause client mid track
-					$client->execute(["pause", 1]);
-	  		
-				} else {
-					# Stop client
-					$client->execute(["stop"]);
-				}
-
+			
+			# bug 8776, only pause if really playing a local file, otherwise always stop
+			if ($playing && ($resumeOff eq 'Pause') && !$controller->playingSong()->isRemote()) {
+				# Pause client mid track
+				$client->execute(["pause", 1]);
+			} elsif ($controller->isPaused() && ($resumeOff eq 'Pause') && !$controller->playingSong()->isRemote()) {
+				# already paused, do nothing
+			} else {
+				# bug 8776, force stop here in case in some intermediate state (TRACKWAIT, BUFFERING, ...)
+				$client->execute(["stop"]);
 			}
 	 	}
 
@@ -1009,7 +1003,7 @@ use constant MAX_STARTTIME_VARIATION	=> 0.015;	# latest apparent-stream-start-ti
 													# must be this close to the average
 sub publishPlayPoint {
 	my ( $client, $statusTime, $apparentStreamStartTime, $cutoffTime ) = @_;
-
+	
 	my $playPoints = $client->playPoints();
 	$client->playPoints($playPoints = []) if (!defined($playPoints));
 	
