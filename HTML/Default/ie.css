@@ -26,6 +26,14 @@
 	position: relative;
 }
 
+.thumbArtwork span.browsedbControls {
+	bottom: 25px;
+	right: 5px;
+	left: auto;
+	text-align: right;
+	background-color: #c4c4c4;
+}
+
 #inlineList div.mouseOver div,
 #browsedbList div.mouseOver div {
 	position: static;

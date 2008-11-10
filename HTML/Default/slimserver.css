@@ -579,11 +579,12 @@ div.pagetitleWithIcon {
 .thumbArtwork span.browsedbControls {
 	position: absolute;
 	top: auto;
-	bottom: 5px;
-	right: 5px;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	opacity: .85;
+	background-color: black;
 	padding: 2px;
-	text-align: right;
-	background-color: #c4c4c4;
 }
 
 #playerControlPanel {
