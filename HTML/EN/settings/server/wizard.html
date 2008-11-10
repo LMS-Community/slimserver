@@ -360,16 +360,16 @@
 								<p>[% "SETUP_WIZARD_SQN_PLEASE" | string %]<br/>&nbsp;</p>
 								<table>
 									<tr>
-										<td align="right">[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]&nbsp;</td>
+										<td align="right" style="white-space:nowrap">[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]&nbsp;</td>
 										<td>
-											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40">
+											<input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="30">
 											<p id="sn_result" style="color:red">&nbsp;</p>
 										</td>
 									</tr>
 									<tr>
 										<td align="right">[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
 										<td>
-											<input type="password" name="sn_password_sha" id="sn_password_sha" value="[% prefs.sn_password_sha %]" size="40">
+											<input type="password" name="sn_password_sha" id="sn_password_sha" value="[% prefs.sn_password_sha %]" size="30">
 											<p><a href="http://[% sn_server %]/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></p>
 											<p id="">&nbsp;</p>
 										</td>
