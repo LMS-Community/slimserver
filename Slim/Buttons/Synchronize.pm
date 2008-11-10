@@ -158,12 +158,12 @@ sub syncExitHandler {
 			if ($client->isSynced) {
 				my $lines;
 				if ($client->linesPerScreen() == 1) {
-					$lines = [ $client->string( 'UNSYNCING_FROM' ) . ' ' . buddies($client, $client)
+					$lines = [ $client->string( 'UNSYNCING_FROM', buddies($client, $client))
 								. ' ' . $client->string( 'AND' ) . ' '
-								. $client->string( 'SYNCING_WITH' ) . ' ' . buddies($client)];
+								. $client->string( 'SYNCING_WITH', buddies($client))];
 				} else {
-					$lines = [ $client->string( 'UNSYNCING_FROM' ) . ' ' . buddies($client, $client),
-								$client->string( 'SYNCING_WITH' ) . ' ' . buddies($client)];
+					$lines = [ $client->string( 'UNSYNCING_FROM', buddies($client, $client)),
+								$client->string( 'SYNCING_WITH', buddies($client))];
 				}
 				
 				# Do this on a timer so that the mode animation can complete first

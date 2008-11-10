@@ -13862,15 +13862,9 @@ UNSYNC_WITH
 	ZH_CN	请按右方向键来撤销同步：
 
 SYNCING_WITH
-	EN	Syncing with:
-
-UNSYNCING_FROM
-	EN	Unsyncing from:
-
-SYNCING_WITH_X
 	EN	Syncing with: %s
 
-UNSYNCING_FROM_X
+UNSYNCING_FROM
 	EN	Unsyncing from: %s
 
 CREATE_MIX

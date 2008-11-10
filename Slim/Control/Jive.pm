@@ -2166,7 +2166,7 @@ sub jiveSyncCommand {
 	my @messages = ();
 	if ($unsyncWith) {
 		$client->execute( [ 'sync', '-' ] );
-		push @messages, $request->string('UNSYNCING_FROM_X', $unsyncWith);
+		push @messages, $request->string('UNSYNCING_FROM', $unsyncWith);
 	}
 	# then sync if requested
 	if ($syncWith) {
@@ -2177,7 +2177,7 @@ sub jiveSyncCommand {
 			$client->execute( [ 'sync', $syncWith ] );
 		}
 			
-		push @messages, $request->string('SYNCING_WITH_X', $syncWithString);
+		push @messages, $request->string('SYNCING_WITH', $syncWithString);
 	}
 	my $message = join("\n", @messages);
 
