@@ -167,6 +167,18 @@ sub screensaverLines {
 		};
 	}
 
+	if ($client->modeParam('showText')) {
+
+		my $prefix = $client->display->isa('Slim::Display::Boom') ? '' : $client->string('NOW_PLAYING') . ': ';
+
+		return {
+			'screen1' => {
+				'fonts' => { 'graphic-320x32' => 'high',  'graphic-160x32' => 'high' },
+				'line' => [ '', $prefix . Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)) ]
+			}
+		};
+	}
+
 	return { 'screen1' => {} };
 }
 
@@ -250,14 +262,9 @@ sub _pushon {
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
-	my $prefix = $client->display->isa('Slim::Display::Boom') ? '' : $client->string('NOW_PLAYING') . ': ';
-
-	my $screen = {
-		'fonts' => { 'graphic-320x32' => 'high',  'graphic-160x32' => 'high' },
-		'line' => [ '', $prefix . Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)) ]
-	};
-	
-	$client->pushLeft(undef, $screen);
+	$client->modeParam('showText', 1);
+		
+	$client->pushLeft;
 
 	# do it again at the next period
 	Slim::Utils::Timers::setTimer(
@@ -273,12 +280,10 @@ sub _pushoff {
 	
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
+	
+	$client->modeParam('showText', 0);
 
-	my $screen = {
-		'line' => ['','']
-	};
-
-	$client->pushRight(undef,$screen);
+	$client->pushRight;
 
 	# do it again at the next period
 	Slim::Utils::Timers::setTimer(
