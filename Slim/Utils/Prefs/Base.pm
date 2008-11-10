@@ -256,7 +256,7 @@ sub set {
 
 		$root->save;
 		
-		my $client = Slim::Player::Client::getClient($clientid);
+		my $client = $clientid ? Slim::Player::Client::getClient($clientid) : undef;
 		
 		if ( !defined $old || !defined $new || $old ne $new || ref $new ) {
 			
