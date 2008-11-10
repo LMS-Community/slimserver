@@ -217,7 +217,7 @@ sub addWMAHeaders {
 	my $h = $request->headers;
 	$h->header( 'User-Agent' => 'NSPlayer/8.0.0.3802' );
 	$h->header( Pragma => [
-		'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}',
+		'xClientGUID={' . Slim::Formats::MMS::randomGUID(). '}',
 		'no-cache',
 	] );
 	$h->header( Connection => 'close' );
