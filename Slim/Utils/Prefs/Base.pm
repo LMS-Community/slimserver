@@ -295,10 +295,12 @@ sub set {
 			}
 		}
 
-		Slim::Control::Request::notifyFromArray(
-			$clientid ? $client : undef,
-			['prefset', $namespace, $pref, $new]
-		);
+		if (!main::SCANNER) {
+			Slim::Control::Request::notifyFromArray(
+				$clientid ? $client : undef,
+				['prefset', $namespace, $pref, $new]
+			);
+		}
 
 		return wantarray ? ($new, 1) : $new;
 
