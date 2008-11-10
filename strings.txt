@@ -18720,16 +18720,34 @@ SIGNUP_LISTEN
 	EN	Listen to some music!
 
 HOWTO_HOME
+	EN	Facing your Squeezebox, press the LEFT arrow on the remote until you see the Now Playing option.
+
+HOWTO_HOME_BOOM
 	EN	Facing your Squeezebox, press HOME on the remote.
+
+HOWTO_HOME_CONTROLLER
+	EN	Press HOME on the remote.
+
+HOWTO_DOWN
+	EN	Press DOWN on the remote to scroll to Internet Radio, and press RIGHT to select.
 
 HOWTO_DOWN_BOOM
 	EN	Press DOWN on the remote (or spin the scroll knob to the right) to scroll to Internet Radio, and press RIGHT to select.
 
+HOWTO_DOWN_CONTROLLER
+	EN	Spin the wheel to the right to scroll to Internet Radio, and press the center button to select.
+
 HOWTO_STAFF_PICKS
 	EN	Scroll to STAFF PICKS and press RIGHT.
 
+HOWTO_STAFF_PICKS_CONTROLLER
+	EN	Scroll to STAFF PICKS and press the center button.
+
 HOWTO_INTERNET_RADIO
-	EN	Scroll to Best of Internet Radio and press RIGHT.
+	EN	Scroll to "Best of Internet Radio" and press RIGHT.
+
+HOWTO_INTERNET_RADIO_CONTROLLER
+	EN	Scroll to "Best of Internet Radio" and the center button.
 
 HOWTO_SHOWCASE
 	EN	Scroll to Slim Showcase: Miles Davis and press PLAY.

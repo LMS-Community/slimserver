@@ -449,10 +449,26 @@
 						<div class="box-inner">
 							[% IF playericon %]<img id="playerpic" src="/html/images/Players/[% playericon %]_150x150_ffffff.png">[% END %]
 							<ul class="howto">
-								<li>[% "HOWTO_HOME" | string %]</li>
-								<li>[% "HOWTO_DOWN_BOOM" | string %]</li>
-								<li>[% "HOWTO_STAFF_PICKS" | string %]</li>
-								<li>[% "HOWTO_INTERNET_RADIO" | string %]</li>
+								<li>[% 
+									(playertype == 'boom'
+									? "HOWTO_HOME_BOOM"
+									: (playertype == 'receiver'
+										? "HOWTO_HOME_CONTROLLER"
+										: "HOWTO_HOME")) | string %]</li>
+								<li>[% 
+									(playertype == 'boom'
+									? "HOWTO_DOWN_BOOM"
+									: (playertype == 'receiver'
+										? "HOWTO_DOWN_CONTROLLER"
+										: "HOWTO_DOWN")) | string %]</li>
+								<li>[% 
+									(playertype == 'receiver'
+									? "HOWTO_STAFF_PICKS_CONTROLLER"
+									: "HOWTO_STAFF_PICKS") | string %]</li>
+								<li>[% 
+									(playertype == 'receiver'
+									? "HOWTO_INTERNET_RADIO_CONTROLLER"
+									: "HOWTO_INTERNET_RADIO") | string %]</li>
 								<li>[% "HOWTO_SHOWCASE" | string %]</li>
 								<li>[% "HOWTO_VOLUME" | string %]</li>
 								<li>[% "HOWTO_PAUSE" | string %]</li>

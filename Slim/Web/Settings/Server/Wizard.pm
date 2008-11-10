@@ -158,6 +158,7 @@ sub handler {
 	
 	if ($client) {
 		$paramRef->{playericon} = Slim::Web::Settings::Player::Basic->getPlayerIcon($client);
+		$paramRef->{playertype} = $client->model();
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
