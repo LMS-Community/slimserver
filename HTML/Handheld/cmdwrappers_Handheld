@@ -7,6 +7,7 @@
 
 [%# Default to no targets for links %]
 [% notarget = 1 %]
+[% browserTarget = "" %]
 
 [% statusroot = 'status.html' %]
 [%-

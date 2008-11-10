@@ -16,7 +16,7 @@
 [% controlGraphics  = 0 %]
 
 [%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
-[% browserTarget  = "" %]
+[% browserTarget  = "browser" %]
 
 [%# set this to set whether or not the skin is capable of using javascript. %]
 [% useAJAX = 1 %]
