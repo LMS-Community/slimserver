@@ -112,7 +112,7 @@ sub init {
 
 	# Some combinations of Perl / OSes don't define this Macro. Yet it is
 	# near constant on all machines. Define if we don't have it.
-	eval { Socket::IPPROTO_TCP() };
+	eval { my $foo = Socket::IPPROTO_TCP() };
 
 	if ($@) {
 		*Socket::IPPROTO_TCP = sub { return 6 };
