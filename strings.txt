@@ -18732,7 +18732,7 @@ HOWTO_DOWN
 	EN	Press DOWN on the remote to scroll to Internet Radio, and press RIGHT to select.
 
 HOWTO_DOWN_BOOM
-	EN	Press DOWN on the remote (or spin the scroll knob to the right) to scroll to Internet Radio, and press RIGHT to select.
+	EN	Press DOWN on the remote (or spin the knob to the right) to scroll to Internet Radio, and press RIGHT to select.
 
 HOWTO_DOWN_CONTROLLER
 	EN	Spin the wheel to the right to scroll to Internet Radio, and press the center button to select.
