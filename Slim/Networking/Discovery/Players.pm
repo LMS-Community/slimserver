@@ -98,7 +98,7 @@ sub fetch_players {
 		params => [ '', ['players', 0, 999] ]
 	});
 
-	$http->get( $url . 'jsonrpc.js', $postdata);
+	$http->post( $url . 'jsonrpc.js', $postdata);
 }
 
 sub _players_done {
