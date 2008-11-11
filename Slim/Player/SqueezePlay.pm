@@ -37,6 +37,13 @@ sub modelName { 'SqueezePlay' }
 
 sub hasIR() { return 0; }
 
+# in order of preference ...
+sub formats {
+	my $client = shift;
+	
+	return qw(ogg flc aif wav mp3);
+}
+
 # Need to use weighted play-point
 sub needsWeightedPlayPoint { 1 }
 
