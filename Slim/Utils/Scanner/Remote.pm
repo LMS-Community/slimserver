@@ -122,6 +122,7 @@ sub scanURL {
 			
 			$url =~ s/#slim:.+$//;
 			
+			# XXX: may create duplicate track entries
 			$track->url( $url );
 			$track->update;
 
@@ -338,12 +339,22 @@ sub readRemoteHeaders {
 		if ( $update ) {
 			$log->debug( "Updating redirected URL $url" );
 			
-			# Update the URL of the original track object
-			$track->url( $url );
-			$track->update;
-
-			$log->debug( "Updating content-type for redirected URL $url to $type" );
-			Slim::Music::Info::setContentType( $url, $type );
+			# Get/create a new entry for the redirected track
+			my $redirTrack = Slim::Schema->rs('Track')->updateOrCreate( {
+				url => $url,
+			} );
+			
+			# Copy values from original track
+			$redirTrack->title( $track->title );
+			$redirTrack->content_type( $track->content_type );
+			$redirTrack->bitrate( $track->bitrate );
+			
+			$redirTrack->update;
+			
+			# Delete original track
+			$track->delete;
+			
+			$track = $redirTrack;
 		}
 	}
 
@@ -366,6 +377,7 @@ sub readRemoteHeaders {
 		else {
 			# If URL was mms but content-type is not wma, change URL
 			if ( $track->url =~ /^mms/i ) {
+				# XXX: may create duplicate track entries
 				my $httpURL = $track->url;
 				$httpURL =~ s/^mms/http/i;
 				$track->url( $httpURL );
