@@ -256,7 +256,7 @@ sub albumsQuery {
 	if (!defined $tags) {
 		$tags = 'l';
 	}
-	
+
 	# get them all by default
 	my $where = {};
 	my $attr = {};
@@ -338,7 +338,7 @@ sub albumsQuery {
 	if ( $menuMode ) {
 		push @{ $attr->{'join'} }, 'contributor';
 		
-		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable ) ];
+		$attr->{'cols'} = [ qw(id artwork title contributor.name contributor.namesort titlesort musicmagic_mixable disc discc ) ];
 	}
 	
 	# Flatten request for lookup in cache, only for Jive menu queries
@@ -488,8 +488,8 @@ sub albumsQuery {
 			if ($menuMode) {
 				
 				# we want the text to be album\nartist
-				$artist = $eachitem->contributor->name;
-				my $text   = $eachitem->title;
+				$artist  = $eachitem->contributor->name;
+				my $text = $eachitem->title;
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
 				}
