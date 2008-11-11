@@ -309,6 +309,9 @@ sub getHeaders {
 			push @headers, 'X-Player-DeviceInfo', $client->deviceid . ':' . $client->revision;
 		}
 		
+		# Request JSON instead of XML, it is much faster to parse
+		push @headers, 'Accept', 'text/x-json, text/xml';
+		
 		if ( main::SLIM_SERVICE ) {
 			# Indicate player is on SN and provide real client IP
 			push @headers, 'X-Player-SN', 1;

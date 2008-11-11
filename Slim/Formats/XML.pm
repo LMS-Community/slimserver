@@ -13,6 +13,7 @@ package Slim::Formats::XML;
 use strict;
 use File::Slurp;
 use HTML::Entities;
+use JSON::XS qw(from_json);
 use Scalar::Util qw(weaken);
 use URI::Escape qw(uri_escape);
 use XML::Simple;
@@ -166,10 +167,12 @@ sub gotViaHTTP {
 	my $http = shift;
 	my $params = $http->params();
 	my $feed;
+	
+	my $ct = $http->headers()->content_type;
 
 	if ( $log->is_debug ) {
 		$log->debug("Got ", $http->url);
-		$log->debug("Content type is ", $http->headers()->content_type);
+		$log->debug("Content type is $ct");
 	}
 
 	# Try and turn the content we fetched into a parsed data structure.
@@ -204,7 +207,7 @@ sub gotViaHTTP {
 
 	} else {
 
-		$feed = eval { parseXMLIntoFeed($http->contentRef) };
+		$feed = eval { parseXMLIntoFeed( $http->contentRef, $ct ) };
 	}
 
 	if ($@) {
@@ -280,9 +283,17 @@ sub gotErrorViaHTTP {
 
 sub parseXMLIntoFeed {
 	my $content = shift || return undef;
+	my $type    = shift || 'text/xml';
 
-	my $xml = xmlToHash($content);
-
+	my $xml;
+	
+	if ( $type =~ /json/ ) {
+		$xml = from_json($$content);
+	}
+	else {
+		$xml = xmlToHash($content);
+	}
+	
 	# convert XML into data structure
 	if ($xml && $xml->{'body'}) {
 
@@ -531,12 +542,6 @@ sub _parseOPMLOutline {
 			'items' => _parseOPMLOutline($itemXML->{'outline'}),
 			%attrs,
 		};
-		
-		# Cache images for remote URLs to support RadioTime logos
-		if ( $attrs{image} ) {
-			my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
-			$cache->set( "remote_image_$url", $attrs{image}, 86400 * 7 );
-		}
 	}
 
 	return \@items;
