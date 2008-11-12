@@ -323,7 +323,7 @@ sub _http_read {
 		}
 		
 		# Handle redirects
-		if ( $code =~ /^30\d/ ) {
+		if ( $code =~ /^30[123]$/ ) {
 
 			my $location = $self->response->header('Location');
 			
@@ -403,7 +403,7 @@ sub _http_read_body {
 	}
 	
 	# Are we saving directly to a file?
-	if ( $self->saveAs && !$self->fh ) {
+	if ( $result && $self->saveAs && !$self->fh ) {
 		open my $fh, '>', $self->saveAs;
 		binmode $fh;
 
@@ -418,7 +418,7 @@ sub _http_read_body {
 		$self->fh( $fh );
 	}
 	
-	if ( $self->saveAs ) {
+	if ( $result && $self->saveAs ) {
 		# Write directly to a file
 		$self->fh->write( $buf, length $buf );
 	}
