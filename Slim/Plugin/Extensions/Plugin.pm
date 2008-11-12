@@ -100,6 +100,7 @@ use base qw(Slim::Plugin::Base);
 use XML::Simple;
 
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Networking::SqueezeNetwork;
 use Slim::Control::Jive;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -116,7 +117,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.extensions');
 
-my $masterRepo = undef; # Repo hosted at slimdevices.com
+my $masterRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml');
 
 my %repos = ();
 
