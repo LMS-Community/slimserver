@@ -96,6 +96,10 @@ sub reconnect {
 	# Update the knob in reconnect - as that's the last function that is
 	# called when a new or pre-existing client connects to the server.
 	$client->updateKnob(1);
+
+	if ( !Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+		$client->setDigitalInput(0);
+	}
 }
 
 sub play {
