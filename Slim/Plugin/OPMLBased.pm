@@ -9,7 +9,10 @@ use base 'Slim::Plugin::Base';
 
 use Slim::Utils::Prefs;
 use Slim::Control::XMLBrowser;
-use Slim::Web::XMLBrowser;
+
+if ( !main::SLIM_SERVICE ) {
+ 	require Slim::Web::XMLBrowser;
+}
 
 my $prefs = preferences('server');
 
@@ -27,9 +30,11 @@ sub initPlugin {
 		*{$class.'::'.'type'}   = sub { $args{type} || 'link' };
 	}
 
-	if (!$class->_pluginDataFor('icon')) {
+	if ( !main::SLIM_SERVICE ) {
+		if (!$class->_pluginDataFor('icon')) {
 
-		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
+			Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
+		}
 	}
 	
 	$class->initCLI( %args );

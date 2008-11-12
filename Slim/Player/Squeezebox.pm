@@ -121,7 +121,9 @@ sub connected {
 }
 
 sub closeStream {
-	Slim::Web::HTTP::forgetClient(shift);
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Web::HTTP::forgetClient(shift);
+	}
 }
 
 sub ticspersec {
