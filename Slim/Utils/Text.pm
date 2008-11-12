@@ -1,3 +1,6 @@
+# !!! IMPORTANT NOTICE: this file must be iso-8859-1 encoded for matchCase() to work.
+# Please see Dan's comment in http://svn.slimdevices.com/7.3/trunk/server/Slim/Utils/Text.pm#rev1869
+
 package Slim::Utils::Text;
 
 # $Id$
@@ -73,10 +76,10 @@ sub matchCase {
 	}
 
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
-	$s =~ tr{abcdefghijklmnopqrstuvwxyzï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½}
+	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅßŞÇ¢ĞÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜ×İàáâãäåşçèéêëìíîïñòóôõöøùúûüÿığ¡°}
 		{ABCDEFGHIJKLMNOPQRSTUVWXYZAAAAAABBCCDEEEEIIIINOOOOOOUUUUXYAAAAAABCEEEEIIIINOOOOOOUUUUYYD!D};
 
-	# Turn ï¿½ & ï¿½ into AE
+	# Turn Æ & æ into AE
 	$s =~ s/\xC6/AE/go;
 	$s =~ s/\xC3\x86/AE/go;
 
@@ -84,7 +87,7 @@ sub matchCase {
 	$s =~ s/\xE6/AE/go;
 	$s =~ s/\xC3\xA6/AE/go;
 
-	# And ï¿½ into MU
+	# And µ into MU
 	$s =~ s/\xB5/MU/go;
 	$s =~ s/\xC2\xB5/MU/go;
 

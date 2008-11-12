@@ -2890,6 +2890,10 @@ sub searchQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $query    = $request->getParam('term');
 
+	# transliterate umlauts and accented characters
+	# http://bugs.slimdevices.com/show_bug.cgi?id=8585
+	$query = Slim::Utils::Text::matchCase($query);
+
 	if (!defined $query || $query eq '') {
 		$request->setStatusBadParams();
 		return;
