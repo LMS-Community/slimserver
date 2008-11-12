@@ -175,11 +175,8 @@ Main = {
 		else
 			playerobj = SqueezeJS.getPlayer();
 
-		if (playerid == playerobj)
-			return;
-			
 		// set the browser frame to use the selected player
-		if (frames.browser && frames.browser.location && frames.browser.location.protocol.match(/^http/)) {
+		if (playerid != playerobj && frames.browser && frames.browser.location && frames.browser.location.protocol.match(/^http/)) {
 			frames.browser.location = SqueezeJS.Utils.replacePlayerIDinUrl(frames.browser.location, playerobj);
 		}
 
