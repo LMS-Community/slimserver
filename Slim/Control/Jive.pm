@@ -2171,11 +2171,7 @@ sub jiveSyncCommand {
 	# then sync if requested
 	if ($syncWith) {
 		my $otherClient = Slim::Player::Client::getClient($syncWith);
-		if ($otherClient->isSynced()) {
-			$otherClient->execute( [ 'sync', $client->id ] );
-		} else {
-			$client->execute( [ 'sync', $syncWith ] );
-		}
+		$otherClient->execute( [ 'sync', $client->id ] );
 			
 		push @messages, $request->string('SYNCING_WITH', $syncWithString);
 	}
