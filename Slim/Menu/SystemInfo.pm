@@ -376,19 +376,27 @@ sub infoPlugins {
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
 	my $pluginState = preferences('plugin.state')->all();
 
-	for my $plugin (sort { 
-			uc( cstring($client, $plugins->{$a}->{name}) )
-			cmp uc( cstring($client, $plugins->{$b}->{name}) ) 
-		} keys %{$plugins}) {
+	my @list;
 
-		my $name   = $plugins->{$plugin}->{'name'};
-		my $version = $plugins->{$plugin}->{'version'};
+	for my $plugin (keys %$plugins) {
 
-		push @{ $item->{items} }, {
-			type => 'text',
-			name => cstring($client, $name) . ' - v' . $version,
+		# only show plugins with perl modules
+
+		if ($plugins->{$plugin}->{'module'}) {
+
+			my $name   = $plugins->{$plugin}->{'name'};
+			my $version = $plugins->{$plugin}->{'version'};
+
+			push @list, {
+				type => 'text',
+				name => cstring($client, $name) . ' - v' . $version,
+			}
 		}
 	}
+
+	@list = sort { $a->{'name'} cmp $b->{'name'} } @list;
+
+	$item->{'items'} = \@list;
 	
 	return $item;
 }
