@@ -438,7 +438,7 @@ sub albumsQuery {
 		};
 		
 		$base->{'actions'}{'play-hold'} = _mixerBase();
-		if ($party) {
+		if ( $party || $partyMode ) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
 
@@ -4453,7 +4453,8 @@ sub titlesQuery {
 		
 		# Bug 5981
 		# special play handler for "play all tracks in album
-		if ($playalbum && $albumID) {
+		# ignore this setting when in party mode
+		if ( $playalbum && $albumID && ! $partyMode ) {
 			$base->{'actions'}{'play'} = {
 				player => 0,
 				cmd    => ['jiveplaytrackalbum'],
@@ -6042,9 +6043,9 @@ sub _partyModeCheck {
 	my $partyMode = 0;
 	if ($request->client) {
 		my $client = $request->client();
-		$partyMode = Slim::Player::Playlist::isPartyModeOn($client);
+		$partyMode = Slim::Player::Playlist::playlistMode($client);
 	}
-	return $partyMode;
+	return ($partyMode eq 'party');
 }
 
 

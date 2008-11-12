@@ -30,6 +30,7 @@ our %shuffleTypes = (
 	2 => 'album',
 );
 
+
 #
 # accessors for playlist information
 #
@@ -161,16 +162,6 @@ sub repeat {
 	return $prefs->client($client)->get('repeat');
 }
 
-sub isPartyModeOn {
-	my $client = shift || return 0;
-	my $currentSetting = $prefs->client($client)->get('playlistmode');
-	if ($currentSetting eq 'party') {
-		return 1;
-	} else {
-		return 0;
-	}
-
-}
 sub playlistMode {
 	my $client  = shift;
 	my $mode    = shift;
@@ -181,6 +172,21 @@ sub playlistMode {
 
 	if ( defined($mode) && $mode ne $currentSetting ) {
 		$prefs->client($client)->set('playlistmode', $mode);
+
+		my %modeStrings = (
+			disabled => 'PLAYLIST_MODE_DISABLED',
+			on       => 'PLAYLIST_MODE_ON',
+			off      => 'PLAYLIST_MODE_OFF',
+			party    => 'PARTY_MODE_ON',
+		);
+		$client->showBriefly({
+			duration => 3,
+			line     => [ "\n", $client->string($modeStrings{$mode}) ],
+			jive     => {
+				'type'    => 'popupplay',
+				'text'    => [ $client->string($modeStrings{$mode}) ],
+			}
+		});
 	}
 
 	return $prefs->client($client)->get('playlistmode');

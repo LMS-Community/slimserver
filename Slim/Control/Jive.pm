@@ -109,9 +109,6 @@ sub init {
 	Slim::Control::Request::addDispatch(['jiveunmixable'],
 		[1, 1, 1, \&jiveUnmixableMessage]);
 
-	Slim::Control::Request::addDispatch(['jivesetplaylistmode'],
-		[1, 0, 1, \&jiveSetPlaylistMode]);
-
 	Slim::Control::Request::addDispatch(['jivealbumsortsettings'],
 		[1, 0, 1, \&albumSortSettingsMenu]);
 
@@ -409,20 +406,6 @@ sub mainMenu {
 	_notifyJive(\@menu, $client);
 }
 
-sub jiveSetPlaylistMode {
-
-	my $request   = shift;
-	my $client    = $request->client;
-	my $mode      = $request->getParam('mode');
-
-	if ( defined($mode) ) {
-		Slim::Player::Playlist::playlistMode($client, $mode);
-	}
-
-	$request->setStatusDone();
-
-}
-
 sub jiveSetAlbumSort {
 	my $request = shift;
 	my $client  = $request->client;
@@ -463,31 +446,19 @@ sub playlistModeSettings {
 				choices => [ 
 					{
 						player => 0,
-						cmd    => [ 'jivesetplaylistmode' ],
-						params => {
-							mode    => 'disabled',
-						},
+						cmd    => [ 'playlistmode', 'set', 'disabled' ],
 					},
 					{
 						player => 0,
-						cmd    => [ 'jivesetplaylistmode' ],
-						params => {
-							mode    => 'off',
-						},
+						cmd    => [ 'playlistmode', 'set', 'off' ],
 					},
 					{
 						player => 0,
-						cmd    => [ 'jivesetplaylistmode' ],
-						params => {
-							mode    => 'on',
-						},
+						cmd    => [ 'playlistmode', 'set', 'on' ],
 					},
 					{
 						player => 0,
-						cmd    => [ 'jivesetplaylistmode' ],
-						params => {
-							mode    => 'party',
-						},
+						cmd    => [ 'playlistmode', 'set', 'party' ],
 					},
 				], 
 			},
@@ -2719,7 +2690,7 @@ sub jivePlayTrackAlbumCommand {
 	my $listIndex  = $request->getParam('list_index');
  	my $mode       = Slim::Player::Playlist::playlistMode($client);
 	
-	if ( $mode > 0 && $trackID ) {
+	if ( ( $mode eq 'on' || $mode eq 'party' ) && $trackID ) {
 		# send the track with cmd of 'load' so playlistcontrol doesn't turn off playlistmode
 		$client->execute( ['playlistcontrol', 'cmd:load', "track_id:$trackID" ] );
 		return;

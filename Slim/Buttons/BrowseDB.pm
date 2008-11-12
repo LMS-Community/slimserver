@@ -114,6 +114,16 @@ sub init {
 			my $listIndex   = $client->modeParam('listIndex');
 			my $currentItem = $items->[$listIndex] || return;
 
+			my $hierarchy    = $client->modeParam('hierarchy');
+			my $level        = $client->modeParam('level');
+			my $descend      = $client->modeParam('descend');
+			my $findCriteria = $client->modeParam('findCriteria');
+			my $search       = $client->modeParam('search');
+
+			my @levels       = split(',', $hierarchy);
+			my $all          = !blessed($currentItem);
+			my $levelName    = $levels[$level];
+
 			if ($client->modeParam('header') eq 'CREATE_MIX') {
 
 				# Bug 3459: short circuit for mixers
@@ -122,6 +132,13 @@ sub init {
 			}
 
 			my ($command, $line1, $line2, $string);
+			my $playlistMode = Slim::Player::Playlist::playlistMode($client); 
+
+			# play button for non-tracks should drill into the item, not play it, when in party mode
+			if ($levelName ne 'track' && $playlistMode eq 'party') {
+				browsedbExitCallback($client, 'RIGHT');
+				return;
+			}
 
 			# Based on the button pressed, we determine what to display
 			# and which command to send to modify the playlist
@@ -130,8 +147,16 @@ sub init {
 				$string = 'ADDING_TO_PLAYLIST';
 				$command = "addtracks";	
 
-			} elsif ($addorinsert == 2) {
+				if ( $playlistMode eq 'off') {
+					Slim::Player::Playlist::playlistMode($client, 'on');
+				}
 
+			} elsif ($addorinsert == 2) {
+				# add-hold when in playlist mode shuts off playlist mode and consumes key event
+				if ( $playlistMode eq 'on' ) {
+					Slim::Player::Playlist::playlistMode($client, 'off');
+					return;
+				}
 				$string  = 'INSERT_TO_PLAYLIST';
 				$command = "inserttracks";
 
@@ -139,7 +164,9 @@ sub init {
 
 				$command = "loadtracks";
 
-				if (Slim::Player::Playlist::shuffle($client)) {
+				if ( ( $playlistMode eq 'on' || $playlistMode eq 'party' ) && $level ne 'track') {
+					$string = 'INSERT_TO_PLAYLIST';
+				} elsif (Slim::Player::Playlist::shuffle($client)) {
 					$string = 'PLAYING_RANDOMLY_FROM';
 				} else {
 					$string = 'NOW_PLAYING_FROM';
@@ -160,16 +187,6 @@ sub init {
 				'line'    => [ $line1, $line2 ],
 				'overlay' => [ undef, $client->symbols('notesymbol') ],
 			});
-
-			my $hierarchy    = $client->modeParam('hierarchy');
-			my $level        = $client->modeParam('level');
-			my $descend      = $client->modeParam('descend');
-			my $findCriteria = $client->modeParam('findCriteria');
-			my $search       = $client->modeParam('search');
-
-			my @levels       = split(',', $hierarchy);
-			my $all          = !blessed($currentItem);
-			my $levelName    = $levels[$level];
 
 			# Include the current item
 			if ($levelName ne 'track' && !$all) {
@@ -224,13 +241,13 @@ sub init {
 			
 				# if player pref for playtrack album is not set, get the old server pref.
 				if (!defined $playalbum) { $playalbum = $prefs->get('playtrackalbum'); }
-			
+
 				# In some cases just deal with the song individually
-				if ($addorinsert || !$container || !$playalbum) {
+				if ($addorinsert || !$container || !$playalbum || $playlistMode eq 'party' || $playlistMode eq 'on' ) {
 
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;
-					$command = 'inserttracks' if $addorinsert == 2;
+					$command = 'inserttracks' if $addorinsert == 2 || $playlistMode eq 'party' || $playlistMode eq 'on';
 
 					$client->execute(["playlist", $command, 'listref', [ $currentItem ]]); 
 				}
@@ -309,7 +326,7 @@ sub init {
 
 =head2 mixerExitHandler( $client, $exittype)
 
-Special List exist handler for triggering a mixer.  Mixers are specialised plugins that will generate playlist information based
+Special List exit handler for triggering a mixer.  Mixers are specialised plugins that will generate playlist information based
 on a given seed.  The $client param is required, as well as the $exittype string.  Plugins that wish to use the mixer AIP must register an 
 Importer with a mixer function.
 

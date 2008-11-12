@@ -712,7 +712,7 @@ sub init {
 					'command'      => 'playlist',
 					'subcommand'   => 'repeat',
 				},
-		
+
 				'SHUFFLE'          => {
 					'useMode'      => 'INPUT.Choice',
 					'listRef'      => [
@@ -740,7 +740,39 @@ sub init {
 					'command'      => 'playlist',
 					'subcommand'   => 'shuffle',
 				},
-				
+	
+				'PLAYLIST_MODE'          => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{PLAYLIST_MODE_DISABLED}',
+							value  => 'disabled',
+						},
+						{
+							name   => '{PLAYLIST_MODE_OFF}',
+							value  => 'off',
+						},
+						{
+							name   => '{PLAYLIST_MODE_ON}',
+							value  => 'on',
+						},
+						{
+							name   => '{PARTY_MODE_ON}',
+							value  => 'party',
+						},
+					],
+					'onPlay'        => \&executeCommand,
+					'onAdd'         => \&executeCommand,
+					'onRight'       => \&executeCommand,
+					'header'        => '{PLAYLIST_MODE}',
+					'headerAddCount'=> 1,
+					'condition'     => sub { 1 },
+					'pref'          => sub{ return Slim::Player::Playlist::playlistMode(shift)},
+					'initialValue'  => sub{ return Slim::Player::Playlist::playlistMode(shift)},
+					'command'       => 'playlistmode',
+					'subcommand'    => 'set',
+				},
+		
 				'SYNCHRONIZE' => {
 					'useMode'   => 'synchronize',
 					'condition' => sub {

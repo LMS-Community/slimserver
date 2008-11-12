@@ -24,6 +24,7 @@ use Slim::Buttons::SqueezeNetwork;
 use Slim::Hardware::IR;
 use Slim::Player::Client;
 use Slim::Player::Source;
+use Slim::Player::Playlist;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -252,6 +253,11 @@ sub power {
 	 	
 		# turn off audio outputs
 		$client->audio_outputs_enable(0);
+
+		# shut playlist mode off
+		if (Slim::Player::Playlist::playlistMode($client) eq 'on') {
+			Slim::Player::Playlist::playlistMode($client, 'off');
+		}
 
 		# move display to off mode
 		$client->killAnimation();
