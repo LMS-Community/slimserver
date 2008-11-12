@@ -24,7 +24,7 @@ sub playerMenu { 'RADIO' }
 
 # Only display this plugin if username is entered
 sub condition {
-	my $client = shift;
+	my ( $class, $client ) = @_;
 	
 	my $url = __PACKAGE__->feed($client);
 	
