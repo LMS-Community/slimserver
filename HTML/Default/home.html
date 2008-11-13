@@ -63,7 +63,7 @@ ELSE %]
 				link.value = additionalLinks.radios.$item;
 				link.key = item;
 				control = '';
-				IF link.key == 'PLUGIN_RADIOTIME_SEARCH';
+				IF link.value.match('search');
 					control = BLOCK %]
 						<form method="GET" action="[% link.value %]">
 							<input type="hidden" name="player" value="[% playerid %]" />
