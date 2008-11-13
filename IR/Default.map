@@ -416,6 +416,14 @@ add.*						= dead
 add						= letter_space
 
 [INPUT.List]
+arrow_up					= up
+arrow_up.repeat				= up_repeat
+arrow_down					= down
+arrow_down.repeat			= down_repeat
+knob_left					= up
+knob_left.repeat			= up_repeat
+knob_right              	= down
+knob_right.repeat       	= down_repeat
 arrow_left					= exit_left
 arrow_right					= exit_right
 knob_push					= exit_right
