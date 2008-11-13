@@ -5,7 +5,7 @@
         <name>PLUGIN_RADIOTIME_MODULE_NAME</name>
         <module>Slim::Plugin::RadioTime::Plugin</module>
         <playerMenu>RADIO</playerMenu>
-        <version>1.0</version>
+        <version>2.0</version>
         <description>PLUGIN_RADIOTIME_MODULE_NAME_DESC</description>
         <creator>Slim Devices/Logitech</creator>
         <email>support@slimdevices.com</email>
@@ -14,7 +14,6 @@
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
 	<icon>plugins/RadioTime/html/images/icon.png</icon>
-	<optionsURL>plugins/RadioTime/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 
         <targetApplication>

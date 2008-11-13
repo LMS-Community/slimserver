@@ -23,6 +23,9 @@ sub initPlugin {
 	my $menu  = $class->playerMenu;
 	my $mode  = $class->modeName;
 	
+	# If a plugin does not define a playerMenu, ignore it
+	return unless $menu;
+	
 	if ( $class->can('weight') ) {
 		$WEIGHTS->{ $name } = $class->weight;
 	}

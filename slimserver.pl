@@ -395,10 +395,8 @@ sub init {
 	$log->info("Cache init...");
 	Slim::Utils::Cache->init();
 	
-	if ( $prefs->get('sn_email') && $prefs->get('sn_sync') ) {
-		$log->info("SqueezeNetwork Sync Init...");
-		Slim::Networking::SqueezeNetwork->init();
-	}
+	$log->info("SqueezeNetwork Init...");
+	Slim::Networking::SqueezeNetwork->init();
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		$log->info("UPnP init...");

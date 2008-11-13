@@ -606,7 +606,8 @@ sub handleError {
 	
 	my $template = 'xmlbrowser.html';
 	
-	my $title = string($params->{'title'});
+	my $title = ( uc($params->{title}) eq $params->{title} ) ? string($params->{title}) : $params->{title};
+	
 	$stash->{'pagetitle'} = $title;
 	$stash->{'pageicon'}  = $params->{pageicon};
 	$stash->{'msg'} = sprintf(string('WEB_XML_ERROR'), $title, $error);

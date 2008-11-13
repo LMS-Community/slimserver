@@ -78,6 +78,14 @@ sub processCoverArtRequest {
 		$actualPathToImage = $path;
 		$actualPathToImage =~ s/$imgName/$imgBasename$suffix/;
 	}
+	
+	# If path begins with "plugins/cache" it is a special path
+	# meaning we need to lookup the actual path in our cache directory
+	if ( $actualPathToImage =~ m{^plugins/cache} ) {
+		my $cachedir = $prefs->get('cachedir');
+		$cachedir =~ s{/$}{};
+		$actualPathToImage =~ s{^plugins/cache}{$cachedir};
+	}
 
 	# typical cover art request would come across as something like cover_300x300_c_000000.jpg
 	# delimiter on "fields" is an underscore '_'

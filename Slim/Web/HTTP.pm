@@ -2517,7 +2517,10 @@ sub _getFileContent {
 
 	my ($content, $template, $mtime, $inode, $size);
 
-	$path = fixHttpPath($skin, $path) || return;
+	if ( $path !~ m{^/} ) {
+		# Fixup relative paths according to skin
+		$path = fixHttpPath($skin, $path) || return;
+	}
 
 	$log->is_info && $log->info("Reading http file for ($path)");
 	

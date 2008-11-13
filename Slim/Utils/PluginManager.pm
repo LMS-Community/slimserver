@@ -87,6 +87,17 @@ if ( main::SLIM_SERVICE ) {
 	push @pluginDirs, catdir( $main::SN_PATH, 'lib', 'Slim', 'Plugin' );
 }
 
+# Skip obsolete plugins, they should be deleted by installers
+# but may still be left over in some cases
+for (
+	'Slim::Plugin::Picks::Plugin',
+	'Slim::Plugin::RadioIO::Plugin',
+	'Slim::Plugin::ShoutcastBrowser::Plugin',
+	'Slim::Plugin::Webcasters::Plugin',
+) {
+	$SKIP{$_} = 1;
+}
+
 sub init {
 	my $class = shift;
 
@@ -393,7 +404,7 @@ sub enablePlugins {
 	for my $name (sort keys %$plugins) {
 		
 		if ( exists $SKIP{$name} ) {
-			$log->debug("Skipping plugin: $name - disabled for SN");
+			$log->debug("Skipping plugin: $name");
 			next;
 		}
 

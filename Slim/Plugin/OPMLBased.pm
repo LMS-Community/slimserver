@@ -50,10 +50,12 @@ sub initPlugin {
 sub initJive {
 	my ( $class, %args ) = @_;
 
-	my $icon   = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
+	my $icon = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
 	my $name = $class->getDisplayName();
-        my @jiveMenu = ({
-		stringToken    => $name,
+	
+	my @jiveMenu = ( {
+		stringToken    => (uc($name) eq $name) ? $name : undef, # Only use string() if it is uppercase
+		text           => $name,
 		id             => 'opml' . $args{tag},
 		node           => $args{menu},
 		displayWhenOff => 0,
@@ -70,7 +72,7 @@ sub initJive {
 				},
 			},
 		},
-	});
+	} );
 
 	Slim::Control::Jive::registerPluginMenu(\@jiveMenu);
 }
@@ -115,12 +117,14 @@ sub setMode {
 	
 	my $type = $class->type;
 	
+	my $title = (uc($name) eq $name) ? $client->string( $name ) : $name;
+	
 	if ( $type eq 'link' ) {
 		my %params = (
 			header   => $name,
 			modeName => $name,
 			url      => $class->feed( $client ),
-			title    => $client->string( $name ),
+			title    => $title,
 			timeout  => 35,
 		);
 
@@ -131,7 +135,7 @@ sub setMode {
 	}
 	elsif ( $type eq 'search' ) {
 		my %params = (
-			header          => $client->string($name),
+			header          => $title,
 			cursorPos       => 0,
 			charsRef        => 'UPPER',
 			numberLetterRef => 'UPPER',
@@ -160,6 +164,9 @@ sub cliRadiosQuery {
 
 		$request->addParam('sort','weight');
 
+		my $name  = $args->{display_name} || $class->getDisplayName();
+		my $title = (uc($name) eq $name) ? $request->string( $name ) : $name;
+
 		my $data;
 		# what we want the query to report about ourself
 		if (defined $menu) {
@@ -167,7 +174,7 @@ sub cliRadiosQuery {
 			
 			if ( $type eq 'link' ) {
 				$data = {
-					text         => $request->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
+					text         => $title,
 					weight       => $weight,
 					'icon-id'    => $icon,
 					actions      => {
@@ -185,7 +192,7 @@ sub cliRadiosQuery {
 			}
 			elsif ( $type eq 'search' ) {
 				$data = {
-					text         => $request->string( $args->{display_name} || $class->getDisplayName() ),  # nice name
+					text         => $title,
 					weight       => $weight,
 					'icon-id'    => $icon,
 					actions      => {
@@ -230,7 +237,7 @@ sub cliRadiosQuery {
 			
 			$data = {
 				cmd    => $tag,
-				name   => $request->string( $class->getDisplayName() ),
+				name   => $title,
 				type   => $type,
 				icon   => $icon,
 				weight => $weight,
@@ -277,7 +284,7 @@ sub webPages {
 	my $title = $class->getDisplayName();
 	my $url   = 'plugins/' . $class->tag() . '/index.html';
 	
-	Slim::Web::Pages->addPageLinks( $class->menu(), { $title => $url });
+	Slim::Web::Pages->addPageLinks( $class->menu(), { $title => $url } );
 	
 	if ( $class->can('condition') ) {
 		Slim::Web::Pages->addPageCondition( $title, sub { $class->condition(shift); } );

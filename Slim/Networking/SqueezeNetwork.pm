@@ -99,6 +99,15 @@ sub init {
 					ecb => \&_init_error,
 				);
 			}
+			else {
+				# Initialize radio menu for non-SN user
+				my $http = $class->new(
+					\&_gotRadio,
+					\&_gotRadioError,
+				);
+				
+				$http->get( $class->url('/api/v1/radio') );
+			}
 		},
 	);
 }
@@ -147,6 +156,13 @@ sub _init_done {
 		$prefs->set( sn_active_services => $json->{active_services} );
 	}
 	
+	# Init the Internet Radio menu
+	if ( $json->{radio_menu} ) {
+		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') ) {
+			Slim::Plugin::InternetRadio::Plugin->buildMenus( $json->{radio_menu} );
+		}
+	}
+	
 	# Init pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->init();
 	
@@ -180,6 +196,28 @@ sub _init_error {
 			__PACKAGE__->init();
 		}
 	);
+}
+
+sub _gotRadio {
+	my $http = shift;
+	
+	my $json = eval { from_json( $http->content ) };
+	
+	if ( $@ ) {
+		$http->error( $@ );
+		return _gotRadioError($http);
+	}
+	
+	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') ) {
+		Slim::Plugin::InternetRadio::Plugin->buildMenus( $json->{radio_menu} );
+	}
+}
+
+sub _gotRadioError {
+	my $http  = shift;
+	my $error = $http->error;
+	
+	$log->error( "Unable to retrieve radio directory from SN: $error" );
 }
 
 # Stop all communication with SN, if the user removed their login info for example
@@ -357,7 +395,7 @@ sub _createHTTPRequest {
 		unshift @args, 'Cookie', $cookie;
 	}
 	
-	if ( !$cookie && $url !~ m{api/v1/login|public} ) {
+	if ( !$cookie && $url !~ m{api/v1/(login|radio)|public} ) {
 		$log->info("Logging in to SqueezeNetwork to obtain session ID");
 	
 		# Login and get a session ID

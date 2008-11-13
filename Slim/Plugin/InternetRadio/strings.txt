@@ -1,0 +1,2 @@
+PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC
+	EN	Internet Radio Directories

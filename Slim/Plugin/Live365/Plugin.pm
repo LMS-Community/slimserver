@@ -28,17 +28,12 @@ sub initPlugin {
 		qr/squeezenetwork\.com.*\/live365\//, 
 		sub { return $class->_pluginDataFor('icon'); }
 	);
-
-	$class->SUPER::initPlugin(
-		feed   => Slim::Networking::SqueezeNetwork->url('/api/live365/v1/opml'),
-		tag    => 'live365',
-		menu   => 'radios',
-		weight => 140,
-	);
 }
 
 sub getDisplayName {
 	return 'PLUGIN_LIVE365_MODULE_NAME';
 }
+
+sub playerMenu { undef }
 
 1;

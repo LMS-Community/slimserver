@@ -1,17 +1,16 @@
 <?xml version="1.0"?>
 
 <extension>
-	<id>18B5A4D4-E270-4E04-9B73-7A8ACB4541ED</id>
-	<name>PLUGIN_WEBCASTERS_MODULE_NAME</name>
-	<module>Slim::Plugin::Webcasters::Plugin</module>
-	<playerMenu>RADIO</playerMenu>
+	<id>BE2325E0-009E-49DB-B032-B6C13799BC4F</id>
+	<name>RADIO</name>
+	<module>Slim::Plugin::InternetRadio::Plugin</module>
 	<version>1.0</version>
-	<description>PLUGIN_WEBCASTERS_MODULE_NAME_DESC</description>
+	<description>PLUGIN_INTERNET_RADIO_MODULE_NAME_DESC</description>
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
+	<enforce>1</enforce>
 	<homepageURL>http://www.slimdevices.com/</homepageURL>
-	<icon>plugins/Webcasters/html/images/icon.png</icon>
 	<type>2</type><!-- type=extension -->
 	<targetApplication>
 		<id>SqueezeCenter</id>

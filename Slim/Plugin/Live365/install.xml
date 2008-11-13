@@ -3,8 +3,7 @@
 	<id>1108FB7A-9EE2-4750-89DB-1454E7E9C4D2</id>
 	<name>PLUGIN_LIVE365_MODULE_NAME</name>
 	<module>Slim::Plugin::Live365::Plugin</module>
-	<playerMenu>RADIO</playerMenu>
-	<version>2.0</version>
+	<version>2.1</version>
 	<description>PLUGIN_LIVE365_MODULE_NAME_DESC</description>
 	<creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
