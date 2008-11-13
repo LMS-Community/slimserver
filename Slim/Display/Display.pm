@@ -685,6 +685,7 @@ sub scrollUpdate {
 					# transition to permanent scroll pause state
 					$scroll->{offset} = $scroll->{scrollstart};
 					$scroll->{paused} = 1;
+					$scroll->{inhibitsaver} = 0;
 					if ($scroll->{scrollonceend}) {
 						# schedule endAnimaton to kill off scrolling and display new screen
 						$display->animateState(6) unless ($display->animateState() == 5);
