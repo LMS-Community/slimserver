@@ -26,6 +26,33 @@ sub initPlugin {
 	
 	# Do nothing on init for this plugin
 	if ( $class eq __PACKAGE__ ) {
+		
+		if ( main::SLIM_SERVICE ) {
+			# On SN, create the Internet Radio menu as an OPML link
+			Slim::Buttons::Home::addMenuOption(
+				RADIO => {
+					useMode => sub {
+						my $client = shift;
+						
+						my $name = $client->string('RADIO');
+						
+						my %params = (
+							header   => $name,
+							modeName => $name,
+							url      => Slim::Networking::SqueezeNetwork->url('/api/v1/radio/opml'),
+							title    => $name,
+							timeout  => 35,
+						);
+
+						Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+
+						# we'll handle the push in a callback
+						$client->modeParam( handledTransition => 1 );
+					},
+				},
+			);
+		}
+		
 		return;
 	}
 	
