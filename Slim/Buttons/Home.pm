@@ -108,7 +108,7 @@ sub init {
 				}
 			}
 
-			return $client->string($string);
+			return ( uc($string) eq $string ) ? $client->string($string) : $string;
 		},
 
 		'externRefArgs' => 'CV',

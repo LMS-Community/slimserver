@@ -136,6 +136,10 @@ ELSE %]
 		<div class="selectorMarker [% expandable %]" onmouseover="Highlighter.highlight(this [% IF expandable %], Home.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 				<div class="homeMenuItem" id="[% link.key %]">
+					[% string   = link.key;
+					   stringUC = link.key | upper;
+					   IF string == stringUC; string = link.key | getstring; END;
+					%]
 					[% IF expandable %]
 						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
@@ -151,11 +155,11 @@ ELSE %]
 						END
 					%]
 						<span class="browseCover">
-							<img src="[% link.icon %]" width="25" border="0" alt="[% link.key | getstring %]">
+							<img src="[% link.icon %]" width="25" border="0" alt="[% string %]">
 						</span>
 						<div class="smallBrowseItemDetail">
 					[% END %]
-					[% IF dontGetString; link.key; ELSE; link.key | getstring; END %]
+					[% IF dontGetString; link.key; ELSE; string; END %]
 					[% IF link.icon && !noIcon %]
 						</div>
 					[% END %]
