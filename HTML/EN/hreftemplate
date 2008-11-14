@@ -41,7 +41,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [%- END %]
 
 [%# img tag for album thumbnail in the now playing status context %]
-[% BLOCK statusImg -%][% IF NOT height; height = 100; END %][% IF NOT width; width = height; END %]
+[% BLOCK statusImg -%][% IF NOT height; height = thumbSize || 100; END %][% IF NOT width; width = height; END %]
 	[% "<span style=\"width:";height;"px; height:";height;"px;\"><img src=\"/music/$coverThumb/cover_";width;"x"; height;"_f_000000.jpg\""; IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END;
 		"id=\"coverartpath\"
 		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
@@ -178,7 +178,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%]
 	[%- artistlist = '' %]
-	[%- IF NOT height %][% height = 100 %][% END %]
+	[%- IF NOT height %][%# height = thumbSize || 100 %][% END %]
 	[%- IF NOT resizeParam %]
 		[%- resizeParam = 'p' %]
 	[%- END -%]
@@ -194,9 +194,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		[% ELSE %]
 		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% ELSIF browserType == 'IE' %].gif[% END %]"
 		[% END %]
-	[%- IF NOT serverResizesArt %]
-		height="[% height %]" width="[% height %]"
-	[%- END %]
+	height="[% height %]" width="[% height %]"
 	alt=	"[% item.text | html %]
 		[%- artistlist | html %]
 		[%- IF item.year %]
@@ -215,18 +213,13 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [% BLOCK dummyItemImg -%]
 	[%- FILTER collapse %][%# collapse all whitespace and newlines into single space %]
 	[% artistlist = '' %]
-	[%- IF NOT height %][% height = 100 %][% END %]
+	[%- IF NOT height %][% height = thumbSize || 100 %][% END %]
 	[% IF item.artist %]
 		[% itemobj=item.itemobj %]
 		[% artistlist = PROCESS artistsAsText.html %]
 	[% END %]
 	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p[% IF browserType == 'IE' %].gif[% END %]" 
-		height="
-		[% IF height %]
-			[% height %]
-		[% ELSE %]
-			100
-		[% END %]"
+		height="[% height %]"
 		alt="[% item.text | html %] [% artistlist | html %]
 			[% IF item.year %]
 				([% item.year %])

@@ -2451,6 +2451,7 @@ sub _generateContentFromFile {
 
 	my $skin = $params->{'skinOverride'} || $prefs->get('skin');
 
+	$params->{'thumbSize'} = $prefs->get('thumbSize') unless defined $params->{'thumbSize'};
 	$params->{'systemSkin'} = $skin;
 	$params->{'systemLanguage'} = $prefs->get('language');
 
