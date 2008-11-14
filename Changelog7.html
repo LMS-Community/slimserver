@@ -36,6 +36,7 @@
 	
 	<li>Web UI:</li>
 	<ul>
+		<li>Improved, simplified first run wizard</li>
 		<li>New ScreenReader skin - based on Handheld, with some optimizations for screen readers as used by blind users.</li>
 		<li>Faster page loading (reduced JS file size).</li>
 		<li>Remember width of "Now Playing" panel</li>
@@ -45,6 +46,8 @@
 	<li>Platform support:</li>
 	<ul>
 		<li>New Slim::Utils::OS classes allow for simplified SqueezeCenter customizing and platform support. See the <a href="http://wiki.slimdevices.com/index.php/Customizing_SqueezeCenter_using_Slim::Utils::OS::Custom">wiki article about Slim::Utils::OS::Custom</a> for details.</li>
+		<li>Improved detection of initial server settings like music source, iTunes integration etc.</li>
+		<li>Significantly reduce memory consumption of the scanner</li>
 		<li>More memory and performance optimizations for low power platforms.</li>
 		<li>Enable unattended installation on Windows</li>
 	</ul>
@@ -68,6 +71,11 @@
 	<ul>
 		<li>Re-organized Internet Radio menu to make it easier to find radio stations.</li>
 		<li>Now-Playing metadata support for RadioTime stations.</li>
+	</ul>
+	
+	<li>Boom</li>
+	<ul>
+		<li>Speakers can be used even if headphones are plugged in</li>
 	</ul>
 	<br />
 	
@@ -98,17 +106,26 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=8952">#8952</a> - Update notification needs to be localized</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9002">#9002</a> - MusicIP fails to import existing playlists</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9039">#9039</a> - No track seeking when playing flac .cue files</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9154">#9154</a> - When displaying 'large' artwork, certain info tags should be cut short...</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9230">#9230</a> - SBC fails firmware upgrade if SC has a bad internet connection</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9272">#9272</a> - MusicIP import doesn't remove stale playlists</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9368">#9368</a> - Unable to enter AM in alarm when switching Time Format</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9382">#9382</a> - 'Add Next' does not work from XMLBrowser menus</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9404">#9404</a> - Boom: Added minimum and sensitivity settings (web, player ui, jive) for automatic brightness</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9405">#9405</a> - Restore original volume when alarm ends</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9429">#9429</a> - Rescan music library shows wrong type during scan</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9484">#9484</a> - Connection loss between controller and Squeezecenter while accessing large directories/albums (Music Folder Browsing)</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9501">#9501</a> - Unattended installs difficult with present windows installer</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9541">#9541</a> - DRM-ed ITunes files in playlists should not appear in Player UI</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9555">#9555</a> - Some Rhapsody items don't work when saved as favorites</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9587">#9587</a> - Standard web interface freezes when a TwonkyMedia is on network</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9598">#9598</a> - Add the ability to retrieve possible alarm playlist urls via CLI</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9601">#9601</a> - Don't fallback to OpenDNS if non-primary local NS tests fail</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9605">#9605</a> - MIP-Mixes won't contain tracks with non-ascii characters in it's file/directoryname</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9608">#9608</a> - SC max synced players (List Box) - not displaying all players with many players connected</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9666">#9666</a> - Time box missing from Alarm panel, once alarm is set</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9681">#9681</a> - Spectrum analyzer screensaver behaves differently since SC7.2/FW112</li> 
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9703">#9703</a> - Add date & time of last scan to Music Scan Details</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9709">#9709</a> - Stack Overflow podcast doesn't play (using direct streaming)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9722">#9722</a> - Sync when already synced should show "unsyncing" show-briefly</li> 
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=9863">#9863</a> - Add a "favorites exists url/id" command to CLI</li>
