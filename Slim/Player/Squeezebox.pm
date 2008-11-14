@@ -802,8 +802,8 @@ sub stream_s {
 	# Reduce buffer threshold if a file is really small
 	# Probably not necessary with fixes for bug 8861 and/or bug 9125 in place
 	if ( $track && $track->filesize && $track->filesize < ( $bufferThreshold * 1024 ) ) {
-		$bufferThreshold = int( $track->filesize / 1024 ) - 1;
-		$log->info( "Reducing buffer threshold to $bufferThreshold due to small file" );
+		$bufferThreshold = (int( $track->filesize / 1024 ) || 2) - 1;
+		$log->info( "Reducing buffer threshold to $bufferThreshold due to small file: " );
 	}
 		
 	# If looping, reduce the threshold, some of our sounds are really short
@@ -827,7 +827,7 @@ sub stream_s {
 		$log->info('Using smart transition mode');
 		$transitionType = 0;
 	}
-
+	
 	my $frame = pack 'aaaaaaaCCCaCCCNnN', (
 		's',	# command
 		$autostart,
