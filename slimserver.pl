@@ -452,7 +452,11 @@ sub init {
 		);
 	}
 
-	checkVersion();
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 30,
+		\&checkVersion,
+	);
 
 	$log->info("SqueezeCenter HTTP enable...");
 	Slim::Web::HTTP::init2();
@@ -942,7 +946,7 @@ sub checkVersion {
 	my $url  = "http://"
 		. Slim::Networking::SqueezeNetwork->get_server("update")
 		. "/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError);
+	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
 
 	# will call checkVersionCB when complete
 	$http->get($url);

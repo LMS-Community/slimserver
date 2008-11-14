@@ -34,7 +34,7 @@ my $prefs = preferences('server');
 my $_Servers = {
 	sn      => 'www.squeezenetwork.com',
 	content => 'content.squeezenetwork.com',
-	update  => 'update.slimdevices.com',
+	update  => 'update.squeezenetwork.com',
 	test    => 'www.test.squeezenetwork.com',
 };
 
@@ -395,7 +395,7 @@ sub _createHTTPRequest {
 		unshift @args, 'Cookie', $cookie;
 	}
 	
-	if ( !$cookie && $url !~ m{api/v1/(login|radio)|public} ) {
+	if ( !$cookie && $url !~ m{api/v1/(login|radio)|public|update} ) {
 		$log->info("Logging in to SqueezeNetwork to obtain session ID");
 	
 		# Login and get a session ID
