@@ -386,11 +386,20 @@ sub getConvertCommand2 {
 				last;
 			}
 		}
-		next PROFILE if ! $streamMode;
+		if (! $streamMode) {
+			$log->is_debug
+				&& $log->debug("Rejecting $command because no available stream mode supported: ",
+							(join(',', @$streamModes)));
+			next PROFILE;
+		}
 		
 		# Check for mandatory capabilities
 		foreach (@$need) {
-			next PROFILE if ! $caps->{$_};
+			if (! $caps->{$_}) {
+				$log->is_debug
+					&& $log->debug("Rejecting $command because required capability $_ not supported: ");
+				next PROFILE;
+			}
 		}
 
 		# We can't handle WMA Lossless in firmware.
