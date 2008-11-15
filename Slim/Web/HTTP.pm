@@ -562,8 +562,8 @@ sub processHTTP {
 			$request->push_header("X-Slim-CSRF",$csrfAuth);
 		}
 		
-		# Read cookie(s) for html files only
-		if ($path && $path =~ m/html$/i) {
+		# Dont' process cookies for graphics
+		if ($path && $path !~ m/(gif|png)$/i) {
 			if ( my $cookie = $request->header('Cookie') ) {
 				if ( hasCookieXS() ) {
 					# Parsing cookies this way is about 8x faster than using CGI::Cookie directly
