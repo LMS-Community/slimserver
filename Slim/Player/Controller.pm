@@ -19,7 +19,7 @@ BEGIN {
 		push @ISA, qw(SDI::Service::Player::SqueezeNetworkClient);
 	}
 	else {
-		require Slim::Player::Squeezebox2;
+		require Slim::Player::SqueezePlay;
 		push @ISA, qw(Slim::Player::SqueezePlay);
 	}
 }
