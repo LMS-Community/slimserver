@@ -2287,7 +2287,11 @@ sub _periodicUpdate {
 	my $display = $client->display;
 
 	if ($update && !$display->updateMode) {
-		$display->update( $client->curLines({ periodic => 1 }) );
+
+		if (my $screen = $client->curLines({ periodic => 1 })) {
+
+			$display->update( $screen );
+		}
 	}
 
 	if ($update2 && (!$display->updateMode || $display->screen2updateOK) && (my $linefunc = $client->lines2periodic()) ) {

@@ -448,7 +448,7 @@ sub lines {
 
 	} elsif ($args->{'periodic'} && $client->animateState) {
 
-		return {};
+		return undef;
 
 	} else {
 
