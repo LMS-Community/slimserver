@@ -208,7 +208,11 @@ sub infoLibrary {
 	
 	return Slim::Music::Import->stillScanning 
 	? {
-		name => cstring($client, 'RESCANNING_SHORT')		
+		name => cstring($client, 'RESCANNING_SHORT'),
+
+		web  => {
+			hide => 1,
+		},
 	} 
 	: {
 		name => cstring($client, 'INFORMATION_MENU_LIBRARY'),
