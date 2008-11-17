@@ -180,6 +180,11 @@ sub scanURL {
 		addWMAHeaders( $request );
 	}
 	
+	if ( main::SLIM_SERVICE && $url =~ /radiotime/ ) {
+		# Add real client IP for Radiotime so they can do proper geo-location
+		$request->header( 'X-Forwarded-For' => $client->ip );
+	}
+	
 	my $http = Slim::Networking::Async::HTTP->new;
 	$http->send_request( {
 		request     => $request,
