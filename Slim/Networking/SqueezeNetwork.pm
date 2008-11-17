@@ -144,7 +144,7 @@ sub _init_done {
 					$log->debug( "Removing $plugin from player UI, service not allowed in country" );
 				}
 				
-				if ( $pclass->can('webPages') ) {
+				if ( $pclass->can('webPages') && $pclass->can('menu') ) {
 					Slim::Web::Pages->delPageLinks( $pclass->menu, $pclass->getDisplayName );
 					$log->debug( "Removing $plugin from web UI, service not allowed in country" );
 				}
