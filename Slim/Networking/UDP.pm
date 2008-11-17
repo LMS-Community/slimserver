@@ -49,7 +49,7 @@ sub init {
 
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 
-	Slim::Networking::Discovery::Server::init();
+	Slim::Networking::Discovery::Server::init() if Slim::Utils::OSDetect::details->{osName} !~ /Windows 2000/i;
 	Slim::Networking::Discovery::Players::init();
 
 	# say hello to the old slimp3 clients that we might remember...

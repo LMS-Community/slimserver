@@ -56,6 +56,9 @@ Poll the SqueezeCenter/SlimServers in our network
 =cut
 
 sub fetch_servers {
+    # bug 9227 - disable server detection on Windows 2000
+    return if Slim::Utils::OSDetect::details->{osName} =~ /Windows 2000/i;
+
 	my $udpsock = Slim::Networking::UDP::socket();
 
 	Slim::Utils::Timers::killTimers(undef, \&fetch_servers);
