@@ -45,9 +45,7 @@ initialise the server discovery polling
 =cut
 
 sub init {
-	my $udpsock = Slim::Networking::UDP::socket();
-
-	fetch_servers($udpsock);
+	fetch_servers();
 }
 
 
