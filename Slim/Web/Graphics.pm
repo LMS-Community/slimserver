@@ -81,7 +81,7 @@ sub processCoverArtRequest {
 	
 	# If path begins with "plugins/cache" it is a special path
 	# meaning we need to lookup the actual path in our cache directory
-	if ( $actualPathToImage =~ m{^plugins/cache} ) {
+	if ( $actualPathToImage && $actualPathToImage =~ m{^plugins/cache} ) {
 		my $cachedir = $prefs->get('cachedir');
 		$cachedir =~ s{/$}{};
 		$actualPathToImage =~ s{^plugins/cache}{$cachedir};
