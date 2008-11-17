@@ -983,6 +983,9 @@ sub _hello_handler {
 	if (!defined($deviceids[$deviceid])) {
 
 		$log->info("unknown device id $deviceid in HELO frame! Closing connection.");
+
+		my $frame = pack('n', 4) . 'dsco';
+		Slim::Networking::Select::writeNoBlock( $s, \$frame);
 		slimproto_close($s);
 		return;
 
@@ -1056,6 +1059,8 @@ sub _hello_handler {
 
 		$log->info("Unknown device type for $deviceid in HELO frame! Closing connection");
 
+		my $frame = pack('n', 4) . 'dsco';
+		Slim::Networking::Select::writeNoBlock( $s, \$frame);
 		slimproto_close($s);
 		return;
 	}
