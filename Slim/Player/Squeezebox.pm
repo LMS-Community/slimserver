@@ -135,7 +135,7 @@ sub play {
 	my $params = shift;
 	
 	my $controller = $params->{'controller'};
-	my $handler = $controller->protocolHandler();
+	my $handler = $controller->songProtocolHandler();
 
 	# Calculate the correct buffer threshold for remote URLs
 	if ( $handler->isRemote() ) {
