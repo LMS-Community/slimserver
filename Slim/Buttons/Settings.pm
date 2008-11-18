@@ -33,7 +33,7 @@ if ( !main::SLIM_SERVICE ) {
 
 my $prefs = preferences('server');
 
-our @defaultSettingsChoices = qw(SHUFFLE REPEAT ALARM SYNCHRONIZE AUDIO_SETTINGS DISPLAY_SETTINGS);
+our @defaultSettingsChoices = qw(SHUFFLE REPEAT ALARM SYNCHRONIZE PLAYLIST_MODE AUDIO_SETTINGS DISPLAY_SETTINGS);
 
 if ( main::SLIM_SERVICE ) {
 	push @defaultSettingsChoices, qw(
