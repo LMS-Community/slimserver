@@ -551,6 +551,8 @@ sub stream_s {
 			($params->{'paused'} ? ' paused' : ''), ($format || 'undef'), ($params->{'url'} || 'undef')
 		));
 	}
+	
+	$client->streamStartTimestamp(undef);
 
 	# autostart off when pausing, otherwise 75%
 	my $autostart = $params->{'paused'} ? 0 : 1;

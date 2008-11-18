@@ -100,7 +100,14 @@ sub formats {
 }
 
 sub statHandler {
-	my ($client, $code) = @_;
+	my ($client, $code, $jiffies) = @_;
+	
+	if ($code eq 'STMc') {
+		$client->streamStartTimestamp($jiffies);
+	} else {
+		return if ! defined($client->streamStartTimestamp());
+	}
+	
 	
 	if ($code eq 'STMd') {
 		$client->readyToStream(1);
