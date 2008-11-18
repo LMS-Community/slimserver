@@ -526,7 +526,7 @@ sub getCurrentTitle {
 sub getStreamDelay {
 	my ( $client, $url ) = @_;
 	
-	my $bitrate = Slim::Music::Info::getBitrate($url) || 128000;
+	my $bitrate = $client->streamingSong()->streambitrate() || 128000;
 	my $delay   = 0;
 	
 	if ( $bitrate > 0 ) {
