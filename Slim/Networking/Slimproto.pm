@@ -1125,7 +1125,7 @@ sub _hello_handler {
 		}
 		
 		# Set default language from firmware language on SN
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && !preferences('server')->client($client)->get('language')) {
 			preferences('server')->client($client)->set( language => $lang );
 		}
 
