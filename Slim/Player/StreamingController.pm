@@ -1745,6 +1745,10 @@ sub _setPlayingState {
 	$self->{'playingState'} = $newState;
 
 	$log->info("new playing state $PlayingStateName[$newState]");
+	
+	if ( main::SLIM_SERVICE ) {
+		$self->_persistState();
+	}
 
 	if ($newState != BUFFERING && $newState != WAITING_TO_SYNC) {$self->{'rebuffering'} = 0;}
 }
@@ -1760,7 +1764,25 @@ sub _setStreamingState {
 		$self->{'nextTrackCallbackId'}++;
 		$self->{'nextTrack'} = undef;
 	}
+	
+	if ( main::SLIM_SERVICE ) {
+		$self->_persistState();
+	}
 }
 
+sub _persistState {
+	my $self = shift;
+	
+	# Persist playing/streaming state to the SN database
+	# This assists in seamless resume of a player if it gets moved
+	# to another instance.
+	my $state = $PlayingStateName[ $self->{playingState} ] 
+		. '-' . $StreamingStateName[ $self->{streamingState} ];
+	
+	for my $client ( $self->allPlayers ) {
+		$client->playerData->playmode($state);
+		$client->playerData->update;
+	}
+}
 
 1;
