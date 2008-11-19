@@ -187,7 +187,10 @@ sub add_headers {
 	$headers->init_header( Accept          => '*/*' );
 	$headers->init_header( 'Cache-Control' => 'no-cache' );
 	$headers->init_header( Connection      => 'close' );
-	$headers->init_header( 'Icy-Metadata'  => 1 );
+	
+	if ( $headers->header('User-Agent') !~ /^NSPlayer/ ) {
+		$headers->init_header( 'Icy-Metadata' => 1 );
+	}
 
 	# Add cookies
 	if ( !main::SLIM_SERVICE ) {

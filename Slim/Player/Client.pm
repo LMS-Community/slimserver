@@ -538,7 +538,7 @@ sub forgetClient {
 	my $client = shift;
 	
 	if ($client) {
-		$client->controller()->unsync($client);
+		$client->controller()->unsync($client, 'keepSyncGroupId');
 		
 		$client->display->forgetDisplay();
 		
