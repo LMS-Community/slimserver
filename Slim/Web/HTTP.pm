@@ -102,6 +102,7 @@ use constant KEEPALIVETIMEOUT => 75;
 my $openedport = undef;
 my $http_server_socket;
 my $connected = 0;
+my $absolutePathRegex = Slim::Utils::OSDetect::isWindows() ? qr{^(?:/|[a-z]:)}i :  qr{^/};
 
 our %outbuf = (); # a hash for each writeable socket containing a queue of output segments
                  #   each segment is a hash of a ref to data, an offset and a length
@@ -2518,7 +2519,7 @@ sub _getFileContent {
 
 	my ($content, $template, $mtime, $inode, $size);
 
-	if ( $path !~ m{^/} ) {
+	if ( $path !~ $absolutePathRegex  ) {
 		# Fixup relative paths according to skin
 		$path = fixHttpPath($skin, $path) || return;
 	}
