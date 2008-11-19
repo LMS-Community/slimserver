@@ -121,7 +121,7 @@ sub _getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting next track from SqueezeNetwork");
+	$log->is_debug && $log->debug( $client->id . " Getting next track from SqueezeNetwork");
 	
 	$http->get( $trackURL );
 }
