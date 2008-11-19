@@ -1352,7 +1352,7 @@ sub sync {
 }
 
 sub unsync {
-	my ($self, $player) = @_;
+	my ($self, $player, $keepSyncGroupId) = @_;
 	
 	assert ($player->controller() == $self);
 	
@@ -1405,7 +1405,7 @@ sub unsync {
 	$player->controller(Slim::Player::StreamingController->new($player));
 	Slim::Player::Playlist::copyPlaylist($player, $self->master());
 	
-	$prefs->client($player)->remove('syncgroupid');
+	$prefs->client($player)->remove('syncgroupid') unless $keepSyncGroupId;
 	
 	foreach ($player, @{$self->{'allPlayers'}}) {
 		Slim::Control::Request::notifyFromArray($_, ['playlist', 'sync']);
