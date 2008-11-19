@@ -482,7 +482,7 @@ sub infoSqueezeNetwork {
 				{
 					type => 'text',
 					name => sprintf('%s SS%s %s, SN%s %s',
-						cstring($client, 'VERSION'),
+						cstring($client, 'SERVER_VERSION'),
 						cstring($client, 'COLON'),
 						$_ss_version,
 						cstring($client, 'COLON'),
@@ -492,18 +492,18 @@ sub infoSqueezeNetwork {
 				
 				{
 					type => 'text',
-					name => cstring($client, 'DATACENTER') . cstring($client, 'COLON') . ' '					
-								. $dcname eq 'sv'  ? 'Sunnyvale, CA'
+					name => cstring($client, 'INFORMATION_DATACENTER') . cstring($client, 'COLON') . ' '					
+								. ($dcname eq 'sv'  ? 'Sunnyvale, CA'
 								: $dcname eq 'dc'  ? 'Ashburn, VA'
 								: $dcname eq 'de'  ? 'Frankfurt, Germany'
 								: $dcname eq 'okc' ? 'Oklahoma City (Test)'
 								: $dcname eq 'dfw' ? 'Dallas (Test)'
-								:                    'Unknown'					
+								:                    'Unknown')					
 				},
 				
 				{
 					type => 'text',
-					name => cstring($client, 'SN_ACCOUNT') . cstring($client, 'COLON') . ' ' . $client->playerData->userid->email,	  
+					name => cstring($client, 'INFORMATION_SN_ACCOUNT') . cstring($client, 'COLON') . ' ' . $client->playerData->userid->email,	  
 				},
 			]
 		};
