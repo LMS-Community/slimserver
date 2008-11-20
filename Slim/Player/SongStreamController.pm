@@ -43,7 +43,7 @@ sub DESTROY {
 	
 	$_liveCount--;
 	if ($log->is_debug)	{
-		$log->debug("live=$_liveCount");
+		$log->debug("DESTROY($self) live=$_liveCount");
 	}
 }
 

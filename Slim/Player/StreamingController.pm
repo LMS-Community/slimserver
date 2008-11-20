@@ -27,7 +27,9 @@ use constant IDLE      => 0;
 use constant STREAMING => 1;
 use constant STREAMOUT => 2;
 use constant TRACKWAIT => 3;	# Waiting for next track info to be ready and all players ready-to-stream
+my $i = 0;
 my @StreamingStateName = ('IDLE', 'STREAMING', 'STREAMOUT', 'TRACKWAIT');
+my %StreamingStateNameMap = map { $_ => $i++ } @StreamingStateName;
 
 # Playing state (audio)
 use constant STOPPED         => 0;
@@ -35,7 +37,9 @@ use constant BUFFERING       => 1;
 use constant WAITING_TO_SYNC => 2;
 use constant PLAYING         => 3;
 use constant PAUSED          => 4;
+$i = 0;
 my @PlayingStateName = ('STOPPED', 'BUFFERING', 'WAITING_TO_SYNC', 'PLAYING', 'PAUSED');
+my %PlayingStateNameMap = map { $_ => $i++ } @PlayingStateName;
 
 use constant FADEVOLUME       => 0.3125;
 
@@ -1222,6 +1226,10 @@ sub songStreamController {
 	return $_[0]->{'songStreamController'};
 }
 
+sub setSongStreamController {
+	$_[0]->{'songStreamController'} = $_[1];
+}
+
 sub playingSong {
 	return $_[0]->{'songqueue'}->[-1] if scalar $_[0]->{'songqueue'};
 }
@@ -1693,6 +1701,14 @@ sub playerStatusHeartbeat {
 	_eventAction($self, 'StatusHeartbeat');
 }
 
+sub setState {
+	my ($self, $state) = @_;
+	
+	my ($playing, $streaming) = split /-/, $state;
+	
+	_setPlayingState( $self, $PlayingStateNameMap{ $playing } );
+	_setStreamingState( $self, $StreamingStateNameMap{ $streaming } );
+}
 
 ####################################################################
 # Support Functions
