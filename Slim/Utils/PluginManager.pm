@@ -407,6 +407,11 @@ sub enablePlugins {
 			$log->debug("Skipping plugin: $name");
 			next;
 		}
+		
+		if ( main::SLIM_SERVICE && $name =~ /^Plugins/ ) {
+			# Skip 3rd party plugins on SN
+			next;
+		}
 
 		my $manifest = $plugins->{$name};
 
