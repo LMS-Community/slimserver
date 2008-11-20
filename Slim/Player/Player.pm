@@ -74,6 +74,8 @@ our $defaultPrefs = {
 
 $prefs->setChange( sub { $_[2]->volume($_[1]); }, 'volume');
 
+$prefs->setChange( sub { $_[2]->volume( $_[2]->volume ); }, 'digitalVolumeControl');
+
 $prefs->setChange( sub { 
 	my $client = $_[2];
 	$client->showBriefly({

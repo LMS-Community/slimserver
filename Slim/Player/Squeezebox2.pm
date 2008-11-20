@@ -246,8 +246,13 @@ sub volume {
 			my $db = $client->getVolume($volume, $client->getVolumeParameters());
 			$newGain = $client->dBToFixed($db);
 		}
+		
+		my $dvc = $prefs->client($client)->get('digitalVolumeControl');
+		if ( !defined $dvc ) {
+			$dvc = $Slim::Player::Player::defaultPrefs->{digitalVolumeControl};
+		}
 
-		my $data = pack('NNCCNN', $oldGain, $oldGain, $prefs->client($client)->get('digitalVolumeControl'), $preamp, $newGain, $newGain);
+		my $data = pack('NNCCNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain);
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;
