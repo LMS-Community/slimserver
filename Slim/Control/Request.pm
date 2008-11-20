@@ -996,6 +996,7 @@ sub new {
 	while ($search->{ $requestLineRef->[$i] }) {
 		push @request, $requestLineRef->[$i];
 		$search = $search->{ $requestLineRef->[$i++] };
+		last unless defined $requestLineRef->[$i];
 	}
 	
 	if ($search->{'::'}) { # '::' is the special key indicating a leaf, i.e. verbs match
