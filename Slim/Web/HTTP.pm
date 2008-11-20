@@ -2292,9 +2292,14 @@ sub tryStreamingLater {
 	my $client     = shift;
 	my $httpClient = shift;
 
-	Slim::Utils::Timers::killTimers($client, \&tryStreamingLater);
-	
 	if ( $httpClient->connected() ) {
+		
+		# Bug 10085 - This might be a callback for an old connection  
+		# which we decided to close after establishing the timer, so
+		# only kill the timer if we were called for an active connection;
+		# otherwise we might kill the timer related to the next connection too.
+		Slim::Utils::Timers::killTimers($client, \&tryStreamingLater);
+		
 		Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 	}
 }

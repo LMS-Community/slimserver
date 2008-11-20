@@ -114,9 +114,9 @@ sub getNextTrack {
 		if ( time() - $lastActivity >= $MAX_IDLE_TIME ) {
 			$log->debug('Idle time reached, stopping playback');
 			
-			$client->playingSong()->{pluginData} = {
+			$client->playingSong()->pluginData( {
 				songName => $client->string('PLUGIN_PANDORA_IDLE_STOPPING'),
-			};
+			} );
 			
 			$errorCb->('PLUGIN_PANDORA_IDLE_STOPPING');
 			return;
@@ -158,9 +158,9 @@ sub gotNextTrack {
 			$log->warn( 'Pandora error getting next track: ' . ( $@ || $track->{error} ) );
 		}
 		
-		$client->playingSong()->{pluginData} = {
+		$client->playingSong()->pluginData( {
 			songName => $track->{error} || $client->string('PLUGIN_PANDORA_NO_TRACKS'),
-		};
+		} );
 		
 		$http->params->{'errorCallback'}->('PLUGIN_PANDORA_NO_TRACKS', $track->{error});
 		return;
@@ -171,8 +171,8 @@ sub gotNextTrack {
 	}
 	
 	# Save metadata for this track
-	$song->{'pluginData'} = $track;
-	$song->{'streamUrl'}  = $track->{'audioUrl'};
+	$song->pluginData( $track );
+	$song->{'streamUrl'} = $track->{'audioUrl'};
 	$client->pluginData('trackToken' => $track->{'trackToken'});
 	
 	# Bug 8781, Seek if instructed by SN
@@ -256,7 +256,7 @@ sub handleDirectError {
 
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/v1/opml/playback/audioError?stationId=' . $stationId 
-		. '&trackId=' . $song->{'pluginData'}->{trackToken}
+		. '&trackId=' . $song->pluginData('trackToken')
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -283,7 +283,7 @@ sub handleDirectError {
 sub canSkip {
 	my $client = shift;
 	
-	if ( my $track = $client->playingSong->{'pluginData'} ) {
+	if ( my $track = $client->playingSong->pluginData() ) {
 		return $track->{canSkip};
 	}
 	
@@ -298,7 +298,7 @@ sub canDoAction {
 		# Is skip allowed?
 		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
 		
-		my $track = $client->playingSong->{'pluginData'};
+		my $track = $client->playingSong->pluginData();
 		return 0 if $track->{ad};
 		
 		my $line1 = $client->string('PLUGIN_PANDORA_ERROR');
@@ -335,7 +335,7 @@ sub canDirectStreamSong {
 sub trackGain {
 	my ( $class, $client, $url ) = @_;
 	
-	my $gain = $client->streamingSong()->{'pluginData'}->{trackGain} || 0;
+	my $gain = $client->streamingSong()->pluginData('trackGain') || 0;
 	
 	$log->info("Using replaygain value of $gain for Pandora track");
 	
@@ -373,7 +373,7 @@ sub trackInfoURL {
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
 	# Get the current track
-	my $currentTrack = $client->currentSongForUrl($url)->{'pluginData'};
+	my $currentTrack = $client->currentSongForUrl($url)->pluginData();
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
@@ -393,7 +393,7 @@ sub getMetadataFor {
 	
 	my $icon = $class->getIcon();
 	
-	if ( my $track = $song->{pluginData} ) {
+	if ( my $track = $song->pluginData() ) {
 		return {
 			artist      => $track->{artistName},
 			album       => $track->{albumName},
@@ -444,17 +444,14 @@ sub getIcon {
 # SN only
 # Re-init Pandora when a player reconnects
 sub reinit {
-	my ( $class, $client, $playlist ) = @_;
+	my ( $class, $client, $song ) = @_;
+
+	my $url = $song->currentTrack->url();
 	
-	my $url = $playlist->[0];
-	
-	if ( my $track = $client->pluginData('currentTrack') ) {
+	$log->debug("Re-init Pandora - $url");
+
+	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song
-		
-		$log->debug("Re-init Pandora");
-		
-		# Re-add playlist item
-		$client->execute( [ 'playlist', 'add', $url ] );
 		
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );

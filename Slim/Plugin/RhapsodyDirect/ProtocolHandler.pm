@@ -825,35 +825,13 @@ sub getSeekData {
 }
 
 # SN only, re-init upon reconnection
-# XXX: new-streaming fixes
 sub reinit {
-	my ( $class, $client, $playlist, $currentSong ) = @_;
-	
-	$log->debug('Re-init Rhapsody');
-	
-	SDI::Service::EventLog->log(
-		$client, 'rhapsody_reconnect'
-	);
-	
-	# If in radio mode, re-add only the single item
-	if ( scalar @{$playlist} == 1 && $playlist->[0] =~ /\.rdr$/ ) {
-		$client->execute([ 'playlist', 'add', $playlist->[0] ]);
-	}
-	else {	
-		# Re-add all playlist items
-		$client->execute([ 'playlist', 'addtracks', 'listref', $playlist ]);
-	}
-	
-	# Make sure we are subscribed to stop/playlist commands
-	# Watch for stop commands for logging purposes
-	Slim::Control::Request::subscribe( 
-		\&stopCallback, 
-		[['stop', 'playlist']],
-		$client,
-	);
+	my ( $class, $client, $song ) = @_;
 	
 	# Reset song duration/progress bar
-	my $currentURL = $playlist->[ $currentSong ];
+	my $currentURL = $song->{streamUrl};
+	
+	$log->debug("Re-init Rhapsody - $currentURL");
 	
 	if ( my $length = $client->pluginData('length') ) {			
 		# On a timer because $client->currentsongqueue does not exist yet
@@ -869,15 +847,6 @@ sub reinit {
 					bitrate => 192000,
 				} );
 				
-				# If it's a radio station, reset the title
-				if ( my ($stationId) = $currentURL =~ m{rhapd://(.+)\.rdr} ) {
-					my $title = $client->pluginData('radioTitle');
-
-					$log->debug("Resetting title for radio station to $title");
-
-					Slim::Music::Info::setCurrentTitle( $currentURL, $title );
-				}
-				
 				# Back to Now Playing
 				# This is within the timer because otherwise it will run before
 				# addtracks adds all the tracks, and not jump to the correct playing item
@@ -885,6 +854,8 @@ sub reinit {
 			},
 		);
 	}
+	
+	return 1;
 }
 
 1;

@@ -582,17 +582,14 @@ sub trackInfoURL {
 
 # Re-init Slacker when a player reconnects
 sub reinit {
-	my ( $class, $client, $playlist ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	my $url = $playlist->[0];
+	my $url = $song->currentTrack->url();
+	
+	$log->debug("Re-init Slacker - $url");
 	
 	if ( my $track = $client->pluginData('currentTrack') ) {
 		# We have previous data about the currently-playing song
-		
-		$log->debug("Re-init Slacker");
-		
-		# Re-add playlist item
-		$client->execute( [ 'playlist', 'add', $url ] );
 		
 		# Restart elapsed second timer
 		Slim::Utils::Timers::killTimers( $client, \&trackElapsed );

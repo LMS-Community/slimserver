@@ -123,7 +123,7 @@ sub gotChannelInfo {
 	# Save metadata for this track
 	$song->{'streamUrl'} = $streamURL;
 	$song->{'bitrate'}   = $bitrate;
-	$song->{'coverArt'}  = $info->{logo};
+	$song->pluginData( coverArt => $info->{logo} );
 	
 	# Include the metadata sub-stream for this station
 	$song->{'wmaMetadataStream'} = 2;
@@ -147,6 +147,10 @@ sub gotChannelInfo {
 		\&checkActivity,
 		$activityInterval,
 	);
+	
+	# Save polling and activity interval values
+	$song->pluginData( status           => $info->{status} );
+	$song->pluginData( activityInterval => $activityInterval );
 	
 	# Cache cover URL for this channel
 	my $cache = Slim::Utils::Cache->new;
@@ -390,8 +394,8 @@ sub getMetadataFor {
 	my $logo;
 	
 	if ($song && $song->currentTrack()->url eq $url || $song->{'streamUrl'} eq $url) {
-		$bitrate = $song->{'bitrate'} / 1000;
-		$logo    = $song->{'coverArt'};
+		$bitrate = $song->bitrate / 1000;
+		$logo    = $song->pluginData('coverArt');
 	}
 	
 	if ( !$logo ) {
@@ -418,23 +422,51 @@ sub getIcon {
 
 # SN only
 sub reinit {
-	my ( $class, $client, $playlist ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	my $url = $playlist->[0];
+	my $url = $song->currentTrack->url();
 	
-	# XXX: To properly re-init Sirius we need to:
-	# * Reconnect to WMA metadata stream, this may not
-	#   work due to the timeout on the Akamai URLs
+	# To properly re-init Sirius we need to:
 	# * Restart pollStatus timer
 	# * Restart checkActivity timer
 	
-	$log->debug( "Reinit Sirius for $url" );
+	$log->is_debug && $log->debug( "Reinit Sirius for $url" );
 	
 	# Ignore the check for playing status
 	$client->ignoreCheckPlayingStatus(1);
 	
-	# For now, just restart the stream
-	$client->execute( [ 'playlist', 'play', $url ] );
-}    
+	if ( my $status = $song->pluginData('status') ) {
+		# Start a timer to check status at the defined interval
+		$log->debug( 'Polling status in ' . $status->{PollingInterval} . ' seconds' );
+		Slim::Utils::Timers::killTimers( $song, \&pollStatus );
+		Slim::Utils::Timers::setTimer( 
+			$song,
+			Time::HiRes::time() + $status->{PollingInterval},
+			\&pollStatus,
+			$status,
+		);
+
+		# Start a timer to make sure the user remains active
+		if ( my $activityInterval = $song->pluginData('activityInterval') ) {
+			$log->debug( "Checking activity in $activityInterval seconds" );
+			Slim::Utils::Timers::killTimers( $song, \&checkActivity );
+			Slim::Utils::Timers::setTimer(
+				$song,
+				Time::HiRes::time() + $activityInterval,
+				\&checkActivity,
+				$activityInterval,
+			);
+		}
+		
+		# Back to Now Playing
+		Slim::Buttons::Common::pushMode( $client, 'playlist' );
+	}
+	else {
+		# Restart the stream
+		$client->execute( [ 'playlist', 'play', $url ] );
+	}
+	
+	return 1;
+}
 
 1;

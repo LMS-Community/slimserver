@@ -370,17 +370,12 @@ sub getIcon {
 # SN only
 # Re-init Last.fm when a player reconnects
 sub reinit {
-	my ( $class, $client, $playlist ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	my $url = $playlist->[0];
-	
-	if ( my $track = $client->streamingSong()->{'pluginData'} ) {
+	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song
 		
 		$log->debug("Re-init Last.fm");
-		
-		# Re-add playlist item
-		$client->execute( [ 'playlist', 'add', $url ] );
 		
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );
@@ -395,7 +390,7 @@ sub reinit {
 					my $client = shift;
 					
 					$client->streamingProgressBar( {
-						url      => $url,
+						url      => $song->currentTrack->url(),
 						duration => $track->{secs},
 					} );
 				},
@@ -406,7 +401,7 @@ sub reinit {
 		# No data, just restart the current station
 		$log->debug("No data about playing track, restarting station");
 
-		$client->execute( [ 'playlist', 'play', $url ] );
+		$client->execute( [ 'playlist', 'play', $song->currentTrack->url() ] );
 	}
 	
 	return 1;

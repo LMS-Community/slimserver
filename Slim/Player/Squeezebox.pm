@@ -64,6 +64,31 @@ sub reconnect {
 	
 	# check if there is a sync group to restore
 	Slim::Player::Sync::restoreSync($client);
+	
+	if ( main::SLIM_SERVICE ) {
+		# SN supports reconnecting from another instance
+		# without stopping the audio.  If the database contains
+		# stale data, this is caught by a timer that checks the buffer
+		# level after a STAT call to make sure the player is really
+		# playing/paused.
+		my $state = $client->playerData->playmode;
+		if ( $state =~ /^(?:PLAYING|PAUSED)/ ) {
+			$sourcelog->is_info && $sourcelog->info( $client->id . " current state is $state, resuming" );
+			
+			$reconnect = 1;
+			
+			my $controller = $client->controller();
+			
+			$controller->setState($state);
+			
+			$controller->playerActive($client);
+			
+			# SqueezeNetworkClient handles the following in it's reconnect():
+			# Restoring the playlist
+			# Calling reinit in protocol handler if necessary
+			# Restoring SongStreamController
+		}
+	}
 
 	# The reconnect bit for Squeezebox means that we're
 	# reconnecting after the control connection went down, but we
