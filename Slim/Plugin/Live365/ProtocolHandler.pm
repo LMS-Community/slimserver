@@ -278,14 +278,11 @@ sub getIcon {
 
 # SN only
 sub reinit {
-	my ( $class, $client, $playlist, $newsong ) = @_;
+	my ( $class, $client, $song ) = @_;
 	
-	my $url = $playlist->[0];
+	my $url = $song->currentTrack->url();
 	
-	$log->debug("Re-init Live365");
-	
-	# Re-add playlist item
-	$client->execute( [ 'playlist', 'add', $url ] );
+	$log->debug("Re-init Live365 - $url");
 	
 	# Back to Now Playing
 	Slim::Buttons::Common::pushMode( $client, 'playlist' );
@@ -297,13 +294,11 @@ sub reinit {
 	);
 	
 	# Restart metadata timer
-	Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
-		
+	Slim::Utils::Timers::killTimers( $song, \&getPlaylist );
 	Slim::Utils::Timers::setTimer(
-		$client,
+		$song,
 		Time::HiRes::time(),
 		\&getPlaylist,
-		$url,
 	);
 	
 	return 1;

@@ -854,6 +854,8 @@ sub reinit {
 			},
 		);
 	}
+	
+	return 1;
 }
 
 1;

@@ -446,10 +446,12 @@ sub getIcon {
 sub reinit {
 	my ( $class, $client, $song ) = @_;
 
+	my $url = $song->currentTrack->url();
+	
+	$log->debug("Re-init Pandora - $url");
+
 	if ( my $track = $song->pluginData() ) {
 		# We have previous data about the currently-playing song
-		
-		$log->debug("Re-init Pandora");
 		
 		# Back to Now Playing
 		Slim::Buttons::Common::pushMode( $client, 'playlist' );
@@ -464,7 +466,7 @@ sub reinit {
 					my $client = shift;
 					
 					$client->streamingProgressBar( {
-						url      => $song->{streamUrl},
+						url      => $url,
 						duration => $track->{secs},
 					} );
 				},
@@ -475,7 +477,7 @@ sub reinit {
 		# No data, just restart the current station
 		$log->debug("No data about playing track, restarting station");
 
-		$client->execute( [ 'playlist', 'play', $song->{streamUrl} ] );
+		$client->execute( [ 'playlist', 'play', $url ] );
 	}
 	
 	return 1;
