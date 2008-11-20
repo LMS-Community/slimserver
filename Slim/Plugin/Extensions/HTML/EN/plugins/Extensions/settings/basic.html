@@ -1,72 +1,72 @@
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="PLUGIN_EXTENSIONS" desc="" %]
+		<div>[% "PLUGIN_EXTENSIONS_DESC" | string %]</div>
+	[% END %]
 
-		<div class="prefDesc">[% "PLUGIN_EXTENSIONS_DESC" | string %]</div>
-
-		<div class="prefHead">[% "PLUGIN_EXTENSIONS_REPOS" | string %]</div>
-		<div class="prefDesc">[% "PLUGIN_EXTENSIONS_REPOS_DESC" | string %]</div>
+	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc="PLUGIN_EXTENSIONS_REPOS_DESC" %]
+		<div>[% "PLUGIN_EXTENSIONS_REPOS_WARNING" | string %]</div>
 
 		<table border="0" cellspacing="7" cellpadding="7">
 		[% FOREACH entry = repos %]
-			<tr>
-			<td><input type="text" class="stdedit" name="repos" id="repos" value="[% entry %]" size="60" /></td>
-			</tr>
+			<tr><td>
+				<input type="text" class="stdedit" name="repos" id="repos" value="[% entry %]" size="60" />
+			</td></tr>
 		[% END %]
 		</table>
-		<p/>
+	[% END %]
 
-		[% IF upgrade.size %]
-		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_UPGRADE" | string %]</div>
-		<div class="prefDesc">
-		[% FOREACH plugin = upgrade %]
-			[% title = BLOCK %]
-			<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %] [% "TO" | string %] v[% plugin.version %])</input><p/>
+	[% IF upgrade.size %]
+		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_UPGRADE" desc="" %]
+			<div>
+			[% FOREACH plugin = upgrade %]
+				[% title = BLOCK %]
+				<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %] [% "TO" | string %] v[% plugin.version %])</input><p/>
+				[% END %]
+				[% WRAPPER setting desc = plugin.desc %]&nbsp;
+					[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
+				[% END %]
 			[% END %]
-			[% WRAPPER setting desc = plugin.desc %]&nbsp;
-				[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
-			[% END %]
-		[% END %]
-		</div>
+			</div>
 		[%- END -%]
+	[%- END -%]
 
-		[% IF remove.size %]
-		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_REMOVE" | string %]</div>
-		<div class="prefDesc">
-		[% FOREACH plugin = remove %]
-			[% title = BLOCK %]
-			<input name="remove" value="[% plugin.name %]:[% plugin.current %]:[% plugin.title %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %])</input><p/>
+	[% IF remove.size %]
+		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_REMOVE" desc="" %]
+			<div>
+			[% FOREACH plugin = remove %]
+				[% title = BLOCK %]
+				<input name="remove" value="[% plugin.name %]:[% plugin.current %]:[% plugin.title %]" type="checkbox"> [% plugin.title %] (v[% plugin.current %])</input><p/>
+				[% END %]
+				[% WRAPPER setting desc = plugin.desc %]&nbsp;
+					[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
+				[% END %]
 			[% END %]
-			[% WRAPPER setting desc = plugin.desc %]&nbsp;
-				[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
-			[% END %]
-		[% END %]
-		</div>
-		[%- END -%]
-
-		[% IF install.size %]
-		<div class="prefHead">[% "PLUGIN_EXTENSIONS_PLUGINS_INSTALL" | string %]</div>
-		<div class="prefDesc">
-		[% FOREACH plugin = install %]
-			[% title = BLOCK %]
-				<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox" /> [% plugin.title %] (v[% plugin.version %])</input>
-			[% END %]
-			[% WRAPPER setting desc = plugin.desc %]&nbsp;
-				[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
-			[% END %]
-		[% END %]
-
-		[% FOREACH plugin = manual.values %]
-			<div class="prefDesc">
-				<b>[% plugin.title %]</b>  - [% plugin.message %]
 			</div>
 		[% END %]
+	[%- END -%]
 
-		</div>
+	[% IF install.size %]
+		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_INSTALL" desc="" %]
+			<div>
+			[% FOREACH plugin = install %]
+				[% title = BLOCK %]
+					<input name="install" value="[% plugin.name %]:[% plugin.version %]" type="checkbox" /> [% plugin.title %] (v[% plugin.version %])</input>
+				[% END %]
+				[% WRAPPER setting desc = plugin.desc %]&nbsp;
+					[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "PLUGIN_EXTENSIONS_MOREINFO" | string %]</a>[%- END -%]
+				[% END %]
+			[% END %]
+	
+			[% FOREACH plugin = manual.values %]
+				<div class="prefDesc">
+					<b>[% plugin.title %]</b>  - [% plugin.message %]
+				</div>
+			[% END %]
+			</div>
 		[%- END -%]
+	[%- END -%]
 
-		<input name="rand" type="hidden" value="[% rand %]" />
-
-	[% END %]
+	<input name="rand" type="hidden" value="[% rand %]" />
 
 [% PROCESS settings/footer.html %]
