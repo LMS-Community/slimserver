@@ -298,13 +298,13 @@ sub _parseXML {
 				'url'  => $entry->{'url'},
 			};
 
-			if ($entry->{'title'}) {
+			if ($entry->{'title'} && ref $entry->{'title'} eq 'HASH') {
 				$new->{'title'} = $entry->{'title'}->{ $lang } || $entry->{'title'}->{ 'EN' };
 			} else {
 				$new->{'title'} = $entry->{'name'};
 			}
 
-			if ($entry->{'desc'}) {
+			if ($entry->{'desc'} && ref $entry->{'desc'} eq 'HASH') {
 				$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
 			}
 
