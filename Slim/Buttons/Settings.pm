@@ -966,7 +966,6 @@ sub init {
 		};
 		
 		# Delete menu items we don't want on SN
-		delete $menuParams{'SETTINGS'}->{'submenus'}->{'DISPLAY_SETTINGS'}->{'submenus'}->{'TITLEFORMAT'};
 		delete $menuParams{'SETTINGS'}->{'submenus'}->{'AUDIO_SETTINGS'}->{'submenus'}->{'REPLAYGAIN'};
 	}
 
