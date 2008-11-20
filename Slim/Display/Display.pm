@@ -60,6 +60,8 @@ my $prefs = preferences('server');
 
 my $log = logger('player.display');
 
+my $initialized;
+
 our $defaultPrefs = {
 	'idleBrightness'       => 1,
 	'scrollMode'           => 0,
@@ -120,6 +122,8 @@ sub init {
 	$display->initPrefs();
 
 	$display->displayStrings(Slim::Utils::Strings::clientStrings($display->client));
+	
+	$initialized = 1;
 }
 
 sub initPrefs {
@@ -216,6 +220,8 @@ sub showBriefly {
 	my $display = shift;
 	my $parts   = shift;
 	my $args    = shift;
+	
+	return unless $initialized;
 
 	my $client = $display->client;
 
