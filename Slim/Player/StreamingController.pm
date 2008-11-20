@@ -1779,7 +1779,7 @@ sub _persistState {
 	my $state = $PlayingStateName[ $self->{playingState} ] 
 		. '-' . $StreamingStateName[ $self->{streamingState} ];
 	
-	for my $client ( $self->allPlayers ) {
+	for my $client ( $self->activePlayers ) {
 		$client->playerData->playmode($state);
 		$client->playerData->update;
 	}
