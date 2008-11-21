@@ -55,7 +55,7 @@ sub parser {
 				$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
 				
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
-				$client->pluginData( hasIcy => 1 );
+				$client->pluginData( hasIcy => $url );
 				$client->pluginData( metadata => undef );
 			}
 			
@@ -70,7 +70,14 @@ sub parser {
 sub provider {
 	my ( $client, $url ) = @_;
 	
-	return {} if $client->pluginData('hasIcy');
+	my $hasIcy = $client->pluginData('hasIcy');
+	
+	if ( $hasIcy && $hasIcy ne $url ) {
+		$client->pluginData( hasIcy => undef );
+		$hasIcy = undef;
+	}
+	
+	return {} if $hasIcy;
 	
 	if ( !$client->isPlaying && !$client->isPaused ) {
 		return defaultMeta( $client, $url );
