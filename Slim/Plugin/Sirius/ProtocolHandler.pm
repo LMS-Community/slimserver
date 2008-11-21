@@ -53,6 +53,32 @@ sub new {
 sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
 	
+	if ( main::SLIM_SERVICE ) {
+		# Fail if firmware doesn't support metadata
+		my $old;
+		
+		my $deviceid = $client->deviceid;
+		my $rev      = $client->revision;
+		
+		if ( $deviceid == 4 && $rev < 119 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 5 && $rev < 69 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 7 && $rev < 54 ) {
+			$old = 1;
+		}
+		elsif ( $deviceid == 10 && $rev < 39 ) {
+			$old = 1;
+		}
+		
+		if ( $old ) {
+			$errorCb->('PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED');
+			return;
+		}
+	}
+	
 	my ($channelId) = $song->currentTrack()->url =~ m{^sirius://(.+)};
 	
 	# Talk to SN and get the channel info for this station
