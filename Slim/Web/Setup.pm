@@ -12,6 +12,8 @@ use Slim::Utils::Log;
 
 sub initSetup {
 
+	return if $::noweb;
+
 	my @classes = ('Slim::Web::Settings');
 	
 	push @classes, map { 

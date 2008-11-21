@@ -11,7 +11,7 @@ use IO::Socket;
 use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
  	require Slim::Plugin::CLI::Settings;
 }
 
@@ -76,7 +76,7 @@ sub initPlugin {
 
 	$log->info("Initializing");
 
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::CLI::Settings->new;
 	}
 

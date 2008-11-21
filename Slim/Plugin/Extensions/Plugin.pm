@@ -107,7 +107,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 use Slim::Plugin::Extensions::PluginDownloader;
-use Slim::Plugin::Extensions::Settings;
+if ( !main::SLIM_SERVICE && !$::noweb ) {
+	require Slim::Plugin::Extensions::Settings;
+}
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.extensions',
@@ -135,7 +137,9 @@ sub initPlugin {
 
 	Slim::Plugin::Extensions::PluginDownloader->init;
 
-	Slim::Plugin::Extensions::Settings->new;
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
+		Slim::Plugin::Extensions::Settings->new;
+	}
 }
 
 sub addRepo {

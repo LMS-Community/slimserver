@@ -32,7 +32,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
  	require Slim::Plugin::RSSNews::Settings;
 }
 
@@ -52,7 +52,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::RSSNews::Settings->new;
 	}
 

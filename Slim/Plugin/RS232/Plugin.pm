@@ -20,7 +20,10 @@ use strict;
 use IO::Socket;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Plugin::RS232::Settings;
+
+if ( !main::SLIM_SERVICE && !$::noweb ) {
+	require Slim::Plugin::RS232::Settings;
+}
 
 my %gSocket;		# There will be a connection per client
 my %gClient;		# Reverse hash for easier reference
@@ -50,7 +53,9 @@ sub initPlugin {
 	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
 
 	# Initialize settings classes
-	Slim::Plugin::RS232::Settings->new;
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
+		Slim::Plugin::RS232::Settings->new;
+	}
 
 	# Initial turn on or off CLI over RS232
 	cliOverRS232Change();

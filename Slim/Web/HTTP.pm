@@ -49,7 +49,6 @@ use Slim::Utils::Prefs;
 
 BEGIN {
 	if (!$::noweb) {
-		# have perlapp ignore this
 		eval 'use '. 'Template';
 
 		if (!$@) {

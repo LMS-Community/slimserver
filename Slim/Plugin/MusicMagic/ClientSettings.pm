@@ -8,6 +8,7 @@ package Slim::Plugin::MusicMagic::ClientSettings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Plugin::MusicMagic::Common;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -72,13 +73,13 @@ sub handler {
 
 	if ( !$params->{'saveSettings'} ) {
 
-		Slim::Plugin::MusicMagic::Settings::grabFilters($class, $client, $params, $callback, @args);
+		Slim::Plugin::MusicMagic::Common::grabFilters($class, $client, $params, $callback, @args);
 		
 		return undef;
 	}
 
 
-	$params->{'filters'} = Slim::Plugin::MusicMagic::Settings->getFilterList();
+	$params->{'filters'} = Slim::Plugin::MusicMagic::Common->getFilterList();
 
 	return $class->SUPER::handler($client, $params);
 }

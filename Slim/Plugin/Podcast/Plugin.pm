@@ -29,7 +29,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.podcast');
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
  	require Slim::Plugin::Podcast::Settings;
 }
 
@@ -40,7 +40,7 @@ sub initPlugin {
 
 	$log->info("Initializing.");
 
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::Podcast::Settings->new;
 	}
 

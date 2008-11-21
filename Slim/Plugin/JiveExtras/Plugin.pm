@@ -9,7 +9,10 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use Slim::Utils::Prefs;
-use Slim::Plugin::JiveExtras::Settings;
+
+if (!$::noweb) {
+	require Slim::Plugin::JiveExtras::Settings;
+}
 
 my $prefs = preferences('plugin.jiveextras');
 
@@ -20,7 +23,9 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin;
 
-	Slim::Plugin::JiveExtras::Settings->new;
+	if (!$::noweb) {
+		Slim::Plugin::JiveExtras::Settings->new;
+	}
 
 	Slim::Control::Jive::registerExtensionProvider('jiveextras', \&getExtensions);
 

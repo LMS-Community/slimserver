@@ -10,7 +10,7 @@ use base qw(Slim::Plugin::Base);
 use Slim::Utils::DateTime;
 use Slim::Utils::Prefs;
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
  	require Slim::Plugin::DateTime::Settings;
 }
 
@@ -29,7 +29,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::DateTime::Settings->new;
 	}
 

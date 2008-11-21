@@ -31,7 +31,7 @@ use base qw(Slim::Plugin::Base);
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Source;
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
 	require Slim::Plugin::AudioScrobbler::Settings;
 	require Slim::Plugin::AudioScrobbler::PlayerSettings;
 }
@@ -67,7 +67,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin();
 
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::AudioScrobbler::Settings->new;
 		Slim::Plugin::AudioScrobbler::PlayerSettings->new;
 	}

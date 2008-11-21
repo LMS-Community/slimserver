@@ -16,7 +16,9 @@ use Time::HiRes;
 
 use base qw(Slim::Plugin::Base);
 
-use Slim::Plugin::Rescan::Settings;
+if ( !main::SLIM_SERVICE && !$::noweb ) {
+	require Slim::Plugin::Rescan::Settings;
+}
 
 use Scalar::Util qw(blessed);
 
@@ -64,7 +66,10 @@ sub initPlugin {
 	Slim::Buttons::Common::addMode('scanProgress', undef, \&setProgressMode, \&exitProgressMode);
 
 	$class->SUPER::initPlugin();
-	Slim::Plugin::Rescan::Settings->new;
+	
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
+		Slim::Plugin::Rescan::Settings->new;
+	}
 
 	setTimer();
 }

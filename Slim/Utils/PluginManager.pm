@@ -506,16 +506,6 @@ sub enablePlugins {
 			next;
 		}
 
-		# Add any available HTML to TT's INCLUDE_PATH
-		my $htmlDir = catdir($baseDir, 'HTML');
-
-		if (-d $htmlDir) {
-
-			$log->debug("Adding HTML directory: [$htmlDir]");
-
-			Slim::Web::HTTP::addTemplateDirectory($htmlDir);
-		}
-
 		# Add any Bin dirs to findbin search path
 		my $binDir = catdir($baseDir, 'Bin');
 
@@ -524,6 +514,20 @@ sub enablePlugins {
 			$log->debug("Adding Bin directory: [$binDir]");
 
 			Slim::Utils::Misc::addFindBinPaths( catdir($binDir, Slim::Utils::OSDetect::details()->{'binArch'}), $binDir );
+		}
+
+		if ( $::noweb ) {
+			next;
+		}
+		
+		# Add any available HTML to TT's INCLUDE_PATH
+		my $htmlDir = catdir($baseDir, 'HTML');
+
+		if (-d $htmlDir) {
+
+			$log->debug("Adding HTML directory: [$htmlDir]");
+
+			Slim::Web::HTTP::addTemplateDirectory($htmlDir);
 		}
 	}
 

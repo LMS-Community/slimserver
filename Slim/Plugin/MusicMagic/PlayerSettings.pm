@@ -7,6 +7,7 @@ package Slim::Plugin::MusicMagic::PlayerSettings;
 
 use strict;
 
+use Slim::Plugin::MusicMagic::Common;
 use Slim::Utils::Prefs;
 
 # button functions for browse directory
@@ -252,7 +253,7 @@ sub settingsExitHandler {
 			}
 
 			if ($nextmenu eq 'MMMsettings/mix_filter') {
-				my $filters = Slim::Plugin::MusicMagic::Settings->getFilterList();
+				my $filters = Slim::Plugin::MusicMagic::Common->getFilterList();
 				
 				$nextParams{'listRef'} = [keys %{$filters}];
 				$nextParams{'externRef'} = $filters;

@@ -20,7 +20,9 @@ use strict;
 use IO::Socket;
 use Scalar::Util qw(blessed);
 
-use Slim::Plugin::xPL::Settings;
+if ( !main::SLIM_SERVICE && !$::noweb ) {
+	require Slim::Plugin::xPL::Settings;
+}
 
 use Slim::Music::Info;
 use Slim::Utils::Log;
@@ -50,7 +52,9 @@ my $prefs = preferences('plugin.xpl');
 # plugin: initialize xPL support
 sub initPlugin {
 
-	Slim::Plugin::xPL::Settings->new;
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
+		Slim::Plugin::xPL::Settings->new;
+	}
 
 	$localip = Slim::Utils::Network::hostAddr();
 

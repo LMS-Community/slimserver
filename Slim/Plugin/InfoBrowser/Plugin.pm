@@ -58,10 +58,11 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-if ( !main::SLIM_SERVICE ) {
+if ( !main::SLIM_SERVICE && !$::noweb ) {
  	require Slim::Plugin::InfoBrowser::Settings;
 }
 
+my $prefs = preferences('plugin.infobrowser');
 my $prefsServer = preferences('server');
 
 my $menuUrl;    # menu fileurl location
@@ -70,7 +71,7 @@ my @searchDirs; # search directories for menu opml files
 sub initPlugin {
 	my $class = shift;
 
-	if ( !main::SLIM_SERVICE ) {
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
 		Slim::Plugin::InfoBrowser::Settings->new($class);
 	}
 
@@ -80,7 +81,7 @@ sub initPlugin {
 		$menuUrl    = $class->_menuUrl;
 		@searchDirs = $class->_searchDirs;
 		
-		Slim::Plugin::InfoBrowser::Settings->importNewMenuFiles;
+		$class->importNewMenuFiles;
 	}
 	
 
@@ -137,6 +138,74 @@ sub cliQuery {
 	Slim::Control::XMLBrowser::cliQuery('infobrowser', $menuUrl, $request);
 }
 
+
+sub importNewMenuFiles {
+	my $class = shift;
+	my $clear = shift;
+
+	my $imported = $prefs->get('imported');
+
+	if (!defined $imported || $clear) {
+		$imported = {};
+		$clear = 'clear';
+	}
+
+	$log->info($clear ? "clearing old menu" : "searching for new menu files to import");
+
+	my @files = ();
+	my $iter  = File::Next::files(
+		{ 
+			'file_filter' => sub { /\.opml$/ }, 
+			'descend_filter' => sub { $_ ne 'HTML' } 
+		}, 
+		$class->searchDirs
+	);
+
+	while (my $file = $iter->()) {
+		if ( !$imported->{ $file } ) {
+			push @files, $file;
+			$imported->{ $file } = 1;
+		}
+	}
+
+	if (@files) {
+		$class->_import($clear, \@files);
+		$prefs->set('imported', $imported);
+	}
+}
+
+sub _import {
+	my $class = shift;
+	my $clear = shift;
+	my $files = shift;
+	
+	my $menuOpml = Slim::Plugin::Favorites::Opml->new({ 'url' => $class->menuUrl });
+
+	if ($clear) {
+		splice @{$menuOpml->toplevel}, 0;
+	}
+
+	for my $file (sort @$files) {
+
+		$log->info("importing $file");
+	
+		my $import = Slim::Plugin::Favorites::Opml->new({ 'url' => $file });
+
+		if ($import->title =~ /Default/) {
+			# put these at the top of the list
+			for my $entry (reverse @{$import->toplevel}) {
+				unshift @{ $menuOpml->toplevel }, $entry;
+			}
+		} else {
+			for my $entry (@{$import->toplevel}) {
+				push @{ $menuOpml->toplevel }, $entry;
+			}
+		}
+	}
+
+	$menuOpml->save;
+}
+
 sub searchDirs {
 	return @searchDirs;
 }
@@ -175,7 +244,7 @@ sub _menuUrl {
 		$newopml->title(Slim::Utils::Strings::string('PLUGIN_INFOBROWSER'));
 		$newopml->save($file);
 
-		Slim::Plugin::InfoBrowser::Settings->importNewMenuFiles('clear');
+		$class->importNewMenuFiles('clear');
 	}
 
 	return $menuUrl;

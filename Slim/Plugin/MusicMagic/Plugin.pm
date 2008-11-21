@@ -19,8 +19,10 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(cstring);
 use Slim::Utils::Prefs;
 
-use Slim::Plugin::MusicMagic::Settings;
-use Slim::Plugin::MusicMagic::ClientSettings;
+if (!$::noweb) {
+	require Slim::Plugin::MusicMagic::Settings;
+	require Slim::Plugin::MusicMagic::ClientSettings;
+}
 
 use Slim::Plugin::MusicMagic::Common;
 use Slim::Plugin::MusicMagic::PlayerSettings;
@@ -131,7 +133,10 @@ sub initPlugin {
 	my $enabled = $prefs->get('musicip');
 	
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
-	Slim::Plugin::MusicMagic::Settings->new;
+
+	if (!$::noweb) {	
+		Slim::Plugin::MusicMagic::Settings->new;
+	}
 
 	# don't test the connection if MIP integration is disabled
 	# but continue if it had never been initialized
@@ -197,9 +202,11 @@ sub initPlugin {
 		Slim::Player::ProtocolHandlers->registerHandler('musicipplaylist', 0);
 
 		# initialize the filter list
-		Slim::Plugin::MusicMagic::Settings->grabFilters();
+		Slim::Plugin::MusicMagic::Common->grabFilters();
 		
-		Slim::Plugin::MusicMagic::ClientSettings->new;
+		if (!$::noweb) {	
+			Slim::Plugin::MusicMagic::ClientSettings->new;
+		}
 
 		Slim::Control::Request::addDispatch(['musicip', 'mix'],
 			[1, 1, 1, \&cliMix]);
@@ -803,7 +810,7 @@ sub getMix {
 			$argString =~ s/filter=/xfilter=/;
 			$response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
 
-			Slim::Plugin::MusicMagic::Settings->grabFilters();
+			Slim::Plugin::MusicMagic::Common->grabFilters();
 		}
 
 		if ($response->is_error) {
