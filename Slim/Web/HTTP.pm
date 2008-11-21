@@ -116,6 +116,7 @@ our %skinTemplates  = ();
 our %skins          = ();
 
 our @templateDirs = ();
+my  $nowebSkins;
 
 # this holds pointers to functions handling a given path
 our %pageFunctions = ();
@@ -146,8 +147,11 @@ sub init {
 
 	push @templateDirs, Slim::Utils::OSDetect::dirsFor('HTML');
 
+	if ($::noweb) {
+		$nowebSkins = nowebSkins();
+	}
 	# Try and use the faster XS module if it's available.
-	if (!$::noweb) {
+	else {
 		Slim::bootstrap::tryModuleLoad('Template::Stash::XS');
 	
 		if ($@) {
@@ -352,6 +356,22 @@ sub skins {
 	}
 
 	return %skinlist;
+}
+
+sub nowebSkins {
+	
+	unless ($nowebSkins) {
+		$nowebSkins = [];
+		
+		foreach my $rootdir (HTMLTemplateDirs()) {
+			foreach my $dir (baseSkin(), 'Default') {
+				next if !-d catdir($rootdir, $dir);
+				push @$nowebSkins, catdir($rootdir, $dir);
+			}		
+		}
+	}
+	
+	return $nowebSkins;	
 }
 
 # Handle an HTTP request
@@ -2575,10 +2595,17 @@ sub fixHttpPath {
 	my $skin = shift;
 	my $path = shift;
 
-	my $template = $skinTemplates{$skin} || return undef;
-	my $skindirs = $template->context()->{'CONFIG'}->{'INCLUDE_PATH'};
+	my $template = $skinTemplates{$skin};
+	my $skindirs = [];
+	
+	if ($template) {
+		$skindirs = $template->context()->{'CONFIG'}->{'INCLUDE_PATH'};
+	}
+	else {
+		$skindirs = nowebSkins();
+	}
 
-	my $lang     = lc($prefs->get('language'));
+	my $lang = lc($prefs->get('language'));
 
 	for my $dir (@{$skindirs}) {
 
@@ -2860,6 +2887,9 @@ sub addTemplateDirectory {
 	my $dir = shift;
 
 	$log->is_info && $log->info("Adding template directory $dir");
+	
+	# reset nowebSkins list
+	$nowebSkins = undef;
 
 	push @templateDirs, $dir if (not grep({$_ eq $dir} @templateDirs));
 }

@@ -59,6 +59,8 @@ sub initPlugin {
 	[1, 0, 1, \&lineInLevelCommand]);
 	Slim::Control::Request::addDispatch(['setlinein', '_which'],
 	[1, 0, 0, \&setLineIn]);
+
+	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 }
 
 # Called every time Jive main menu is updated after a player switch with $notify set to 0
@@ -349,7 +351,6 @@ sub webPages {
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_IN' => undef });
 	}
-	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 
 	Slim::Web::HTTP::addPageFunction($url, \&handleSetting);
 }

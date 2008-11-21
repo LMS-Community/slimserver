@@ -245,10 +245,12 @@ sub initPlugin {
 			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', $params);
 			Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', 'MUSICMAGIC_MOODS', $params);
 
-			Slim::Web::Pages->addPageLinks("browse", {
-				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
-			});
-
+			if (!$::noweb) {
+				Slim::Web::Pages->addPageLinks("browse", {
+					'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
+				});
+			}
+	
 			Slim::Web::Pages->addPageLinks("icons", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
 			});
@@ -260,8 +262,10 @@ sub initPlugin {
 	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions, \&setMixMode);
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
 
-	Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
-	Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
+	if (!$::noweb) {
+		Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
+		Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
+	}
 
 	return $initialized;
 }

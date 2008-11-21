@@ -72,6 +72,8 @@ sub initPlugin {
 	[1, 1, 0, \&digitalInputMenu]);
 	Slim::Control::Request::addDispatch(['setdigitalinput', '_which'],
 	[1, 0, 0, \&setDigitalInput]);
+
+	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 }
 
 # Called every time Jive main menu is updated after a player switch
@@ -322,7 +324,6 @@ sub webPages {
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DIGITAL_INPUT' => undef });
 	}
-	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 
 	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
 	Slim::Web::HTTP::addPageFunction("$urlBase/set.html", \&handleSetting);

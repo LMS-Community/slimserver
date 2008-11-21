@@ -22,6 +22,14 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
+sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
+	
+	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
+}
+
 sub getDisplayName {
 	return 'PLUGIN_LINE_OUT'
 }
@@ -54,8 +62,6 @@ sub webPages {
 	} else {
 		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_LINE_OUT' => undef });
 	}
-
-	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
 }
 
 1;

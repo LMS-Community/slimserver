@@ -1160,10 +1160,6 @@ sub webPages {
 	my $urlBase = 'plugins/RandomPlay';
 
 	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOMPLAY' => $htmlTemplate });
-	if ($class->_pluginDataFor('icon')) {
-
-		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
-	}
 
 	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
 	Slim::Web::HTTP::addPageFunction("$urlBase/mix.html", \&handleWebMix);
