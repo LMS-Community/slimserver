@@ -50,7 +50,6 @@ our (
 {
 	# We implement a decode() & encode(), so don't import those.
 	require Encode;
-	require Encode::Guess;
 
 	$FB_QUIET = Encode::FB_QUIET();
 
@@ -63,16 +62,6 @@ our (
 	)/x;
 
 	($lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
-
-	# Setup Encode::Guess
-	$Encode::Guess::NoUTFAutoGuess = 1;
-
-	# Setup suspects for Encode::Guess based on the locale - we might also
-	# want to use our own Language pref?
-	if ($lc_ctype ne 'utf8') {
-
-		Encode::Guess->add_suspects($lc_ctype);
-	}
 
 	# Create a regex for looks_like_utf8()
 	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (127..255);
@@ -375,7 +364,7 @@ sub utf8decode_guess {
 
 	} else {
 
-		$encoding = Encode::Guess::guess_encoding($string);
+		$encoding = Encode::Detect::Detector::detect($string);
 	}
 
 	if (ref $encoding) {
@@ -409,7 +398,7 @@ Return the newly decoded string.
 sub utf8decode_locale {
 	my $string = shift;
 
-	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
+	if ($string && !Encode::is_utf8($string)) {
 
 		$string = Encode::decode($lc_ctype, $string, $FB_QUIET);
 	}
@@ -439,18 +428,18 @@ sub utf8encode {
 	# Don't try to encode a string which isn't utf8
 	# 
 	# If the incoming string already is utf8, turn off the utf8 flag.
-	if ($string && $] > 5.007 && ($encoding ne 'utf8' || !Encode::is_utf8($string))) {
+	if ($string && ($encoding ne 'utf8' || !Encode::is_utf8($string))) {
 
 		$string = Encode::encode($encoding, $string, $FB_QUIET);
 
-	} elsif ($string && $] > 5.007) {
+	} elsif ($string) {
 
 		Encode::_utf8_off($string);
 	}
 
 	# Check for doubly encoded strings - and revert back to our original
 	# string if that's the case.
-	if ($string && $] > 5.007 && encodingFromString($string) eq 'utf8') {
+	if ($string && encodingFromString($string) ne $encoding) {
 
 		$string = $orig;
 	}
@@ -482,7 +471,7 @@ Returns the new string.
 sub utf8off {
 	my $string = shift;
 
-	if ($string && $] > 5.007) {
+	if ($string) {
 		Encode::_utf8_off($string);
 	}
 
@@ -500,7 +489,7 @@ Returns the new string.
 sub utf8on {
 	my $string = shift;
 
-	if ($string && $] > 5.007 && looks_like_utf8($string)) {
+	if ($string && looks_like_utf8($string)) {
 		Encode::_utf8_on($string);
 	}
 
@@ -608,14 +597,7 @@ Returns a UTF-8 encoded string from a ISO-8859-1 string.
 sub latin1toUTF8 {
 	my $data = shift;
 
-	if ($] > 5.007) {
-
-		$data = eval { Encode::encode('utf8', $data, $FB_QUIET) } || $data;
-
-	} else {
-
-		$data =~ s/([\x80-\xFF])/chr(0xC0|ord($1)>>6).chr(0x80|ord($1)&0x3F)/eg;
-	}
+	$data = eval { Encode::encode('utf8', $data, $FB_QUIET) } || $data;
 
 	return $data;
 }
@@ -629,15 +611,7 @@ Returns a ISO-8859-1 string from a UTF-8 encoded string.
 sub utf8toLatin1 {
 	my $data = shift;
 
-	if ($] > 5.007) {
-
-		$data = eval { Encode::encode('iso-8859-1', $data, $FB_QUIET) } || $data;
-
-	} else {
-
-		$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
-		$data =~ s/[\xE2][\x80][\x99]/'/g;
-	}
+	$data = eval { Encode::encode('iso-8859-1', $data, $FB_QUIET) } || $data;
 
 	return $data;
 }
@@ -754,7 +728,7 @@ sub encodingFromFileHandle {
 	my $enc = '';
 
 	# Explitly check for IO::String - as it does have a seek() method!
-	if ($] > 5.007 && ref($fh) && ref($fh) ne 'IO::String' && $fh->can('seek')) {
+	if (ref($fh) && ref($fh) ne 'IO::String' && $fh->can('seek')) {
 		$enc = File::BOM::get_encoding_from_filehandle($fh);
 	}
 
@@ -822,10 +796,6 @@ Recompose a decomposed UTF-8 string.
 sub recomposeUnicode {
 	my $string = shift;
 
-	if ($] <= 5.007) {
-		return $string;
-	}
-
 	# Make sure we're on.
 	$string = Encode::decode('utf8', $string);
 
@@ -844,10 +814,6 @@ Decompose a UTF-8 string.
 
 sub decomposeUnicode {
 	my $string = shift;
-
-	if ($] <= 5.007) {
-		return $string;
-	}
 
 	# Make sure we're on.
 	$string = Encode::decode('utf8', $string);
@@ -868,12 +834,9 @@ Removes UTF-8, UTF-16 & UTF-32 Byte Order Marks and returns the string.
 sub stripBOM {
 	my $string = shift;
 
-	if ($] > 5.007) {
+	use bytes;
 
-		use bytes;
-
-		$string =~ s/$bomRE//;
-	}
+	$string =~ s/$bomRE//;
 
 	return $string;
 }
@@ -888,8 +851,6 @@ sub decode {
 	my $encoding = shift;
 	my $string = shift;
 	
-	return $string unless $] > 5.007;
-	
 	return Encode::decode($encoding, $string);
 }
 
@@ -903,8 +864,6 @@ sub encode {
 	my $encoding = shift;
 	my $string = shift;
 	
-	return $string unless $] > 5.007;
-	
 	return Encode::encode($encoding, $string);
 }
 
@@ -917,8 +876,6 @@ sub from_to {
 	my $string = shift;
 	my $from_encoding = shift;
 	my $to_encoding = shift;
-	
-	return $string unless $] > 5.007;
 	
 	return $string if $from_encoding eq $to_encoding;
 	
