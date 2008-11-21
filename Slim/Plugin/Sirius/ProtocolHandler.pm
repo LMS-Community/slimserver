@@ -55,6 +55,7 @@ sub getNextTrack {
 	
 	if ( main::SLIM_SERVICE ) {
 		# Fail if firmware doesn't support metadata
+		my $client = $song->master();
 		my $old;
 		
 		my $deviceid = $client->deviceid;
