@@ -50,7 +50,6 @@ our (
 {
 	# We implement a decode() & encode(), so don't import those.
 	require Encode;
-	require Encode::Guess;
 
 	$FB_QUIET = Encode::FB_QUIET();
 
@@ -63,16 +62,6 @@ our (
 	)/x;
 
 	($lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
-
-	# Setup Encode::Guess
-	$Encode::Guess::NoUTFAutoGuess = 1;
-
-	# Setup suspects for Encode::Guess based on the locale - we might also
-	# want to use our own Language pref?
-	if ($lc_ctype ne 'utf8') {
-
-		Encode::Guess->add_suspects($lc_ctype);
-	}
 
 	# Create a regex for looks_like_utf8()
 	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (127..255);
@@ -375,7 +364,7 @@ sub utf8decode_guess {
 
 	} else {
 
-		$encoding = Encode::Guess::guess_encoding($string);
+		$encoding = Encode::Detect::Detector::detect($string);
 	}
 
 	if (ref $encoding) {
@@ -450,7 +439,7 @@ sub utf8encode {
 
 	# Check for doubly encoded strings - and revert back to our original
 	# string if that's the case.
-	if ($string && $] > 5.007 && encodingFromString($string) eq 'utf8') {
+	if ($string && $] > 5.007 && encodingFromString($string) ne $encoding) {
 
 		$string = $orig;
 	}
