@@ -51,6 +51,21 @@ sub initPlugin {
 					},
 				},
 			);
+			
+			# Add a CLI command for this for Jive on SN
+			my $cliQuery = sub {
+			 	my $request = shift;
+				Slim::Control::XMLBrowser::cliQuery(
+					'internetradio',
+					Slim::Networking::SqueezeNetwork->url('/api/v1/radio/opml'),
+					$request,
+				);
+			};
+			
+			Slim::Control::Request::addDispatch(
+				[ 'internetradio', 'items', '_index', '_quantity' ],
+			    [ 1, 1, 1, $cliQuery ]
+			);
 		}
 		
 		return;

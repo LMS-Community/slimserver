@@ -349,9 +349,9 @@ sub mainMenu {
 				weight         => 20,
 				actions        => {
 					go => {
-						cmd => ['radios'],
+						cmd => ['internetradio', 'items'],
 						params => {
-							menu => 'radio',
+							menu => 'internetradio',
 						},
 					},
 				},
