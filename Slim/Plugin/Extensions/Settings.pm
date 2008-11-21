@@ -228,6 +228,8 @@ sub _addInfo {
 				title   => Slim::Utils::Strings::getString($instData->{'name'}) || $repoData->{'title'}, 
 				desc    => Slim::Utils::Strings::getString($instData->{'description'}) || $repoData->{'desc'}, 
 				link    => $instData->{'homepageURL'} || $repoData->{'link'},
+				creator => $instData->{'creator'} || $repoData->{'creator'},
+				email   => $instData->{'email'} || $repoData->{'email'},
 			};
 		}
 	}
