@@ -410,7 +410,7 @@ sub init {
 	$log->info("Source conversion init..");
 	Slim::Player::Source::init();
 
-	if (!$nosetup) {
+	if (!$nosetup && !$noweb) {
 
 		$log->info("SqueezeCenter Web Settings init...");
 		Slim::Web::Setup::initSetup();
@@ -668,6 +668,7 @@ sub initOptions {
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,
 		'noupnp'        => \$noupnp,
+		'noweb'         => \$noweb,
 		'perfmon'       => \$perfmon,
 		'perfwarn=s'    => \$perfwarn,  # content parsed by Health plugin if loaded
 		'checkstrings'  => \$checkstrings,
