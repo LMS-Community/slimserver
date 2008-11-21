@@ -58,6 +58,8 @@ package Slim::Plugin::Extensions::Plugin;
 #   <title lang="DE">German Title</title>
 #   <desc lang="EN">EN description</desc>
 #   <desc lang="DE">DE description</desc>
+#   <creator>Name of Author</creator>
+#   <email>email of Author</email>
 #   <url>url for zip file</url>
 # </applet>
 #
@@ -66,6 +68,8 @@ package Slim::Plugin::Extensions::Plugin;
 #   <title lang="DE">German Title</title>
 #   <desc lang="EN">EN description</desc>
 #   <desc lang="DE">DE description</desc>
+#   <creator>Name of Author</creator>
+#   <email>email of Author</email>
 #   <url>url for zip file</url>
 #   <sha>digest of zip</sha>
 # </plugin>
@@ -79,6 +83,8 @@ package Slim::Plugin::Extensions::Plugin;
 # title      - contains localisations for the title of the applet (optional - uses name if not defined)
 # desc       - localised description of the applet or plugin (optional)
 # link       - (plugin only) url for web page describing the plugin in more detail 
+# creator    - identify of author(s)
+# email      - email address of authors
 # url        - url for the applet/plugin itself, this sould be a zip file
 # sha        - (plugin only) sha1 digest of the zip file which is verifed before the zip is extracted
 #
@@ -315,6 +321,8 @@ sub _parseXML {
 			$new->{'version'} = $entry->{'version'} if $entry->{'version'};
 			$new->{'link'}    = $entry->{'link'}    if $entry->{'link'};
 			$new->{'sha'}     = $entry->{'sha'}     if $entry->{'sha'};
+			$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
+			$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
 			$new->{'action'}  = $entry->{'action'}  if $entry->{'action'};
 
 			push @res, $new;

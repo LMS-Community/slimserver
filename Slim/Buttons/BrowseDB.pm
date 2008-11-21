@@ -243,13 +243,17 @@ sub init {
 				if (!defined $playalbum) { $playalbum = $prefs->get('playtrackalbum'); }
 
 				# In some cases just deal with the song individually
-				if ($addorinsert || !$container || !$playalbum || $playlistMode eq 'party' || $playlistMode eq 'on' ) {
+				if ($addorinsert || !$container || !$playalbum ) {
 
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;
-					$command = 'inserttracks' if $addorinsert == 2 || $playlistMode eq 'party' || $playlistMode eq 'on';
+					$command = 'inserttracks' if $addorinsert == 2;
 
 					$client->execute(["playlist", $command, 'listref', [ $currentItem ]]); 
+				}
+				# play button was hit in party mode
+				elsif ( $playlistMode eq 'party' || $playlistMode eq 'on' ) {
+					$client->execute(["playlist", 'inserttracks', 'listref', [ $currentItem ]]); 
 				}
 				# Otherwise deal with it in the context of the 
 				# containing album or playlist.

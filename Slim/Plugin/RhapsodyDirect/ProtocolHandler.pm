@@ -215,16 +215,16 @@ sub getNextTrack {
 		my $deviceid = $client->deviceid;
 		my $rev      = $client->revision;
 		
-		if ( $deviceid == 4 && $rev < 117 ) {
+		if ( $deviceid == 4 && $rev < 119 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 5 && $rev < 67 ) {
+		elsif ( $deviceid == 5 && $rev < 69 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 7 && $rev < 52 ) {
+		elsif ( $deviceid == 7 && $rev < 54 ) {
 			$old = 1;
 		}
-		elsif ( $deviceid == 10 && $rev < 37 ) {
+		elsif ( $deviceid == 10 && $rev < 39 ) {
 			$old = 1;
 		}
 		
