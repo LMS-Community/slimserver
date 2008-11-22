@@ -439,7 +439,7 @@ sub utf8encode {
 
 	# Check for doubly encoded strings - and revert back to our original
 	# string if that's the case.
-	if ($string && encodingFromString($string) ne $encoding) {
+	if ($string && $] > 5.007 && encodingFromString($string) eq 'utf8') {
 
 		$string = $orig;
 	}
