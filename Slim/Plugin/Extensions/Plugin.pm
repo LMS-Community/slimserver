@@ -58,6 +58,8 @@ package Slim::Plugin::Extensions::Plugin;
 #   <title lang="DE">German Title</title>
 #   <desc lang="EN">EN description</desc>
 #   <desc lang="DE">DE description</desc>
+#   <changes lang="EN">EN Changelog</changes>
+#   <changes lang="DE">DE Changelog</changes>
 #   <creator>Name of Author</creator>
 #   <email>email of Author</email>
 #   <url>url for zip file</url>
@@ -68,6 +70,8 @@ package Slim::Plugin::Extensions::Plugin;
 #   <title lang="DE">German Title</title>
 #   <desc lang="EN">EN description</desc>
 #   <desc lang="DE">DE description</desc>
+#   <changes lang="EN">EN Changelog</changes>
+#   <changes lang="DE">DE Changelog</changes>
 #   <creator>Name of Author</creator>
 #   <email>email of Author</email>
 #   <url>url for zip file</url>
@@ -82,6 +86,7 @@ package Slim::Plugin::Extensions::Plugin;
 # maxTarget  - max version of the target software
 # title      - contains localisations for the title of the applet (optional - uses name if not defined)
 # desc       - localised description of the applet or plugin (optional)
+# changes    - localised change log of the applet or plugin (optional)
 # link       - (plugin only) url for web page describing the plugin in more detail 
 # creator    - identify of author(s)
 # email      - email address of authors
@@ -312,6 +317,10 @@ sub _parseXML {
 
 			if ($entry->{'desc'} && ref $entry->{'desc'} eq 'HASH') {
 				$new->{'desc'} = $entry->{'desc'}->{ $lang } || $entry->{'desc'}->{ 'EN' };
+			}
+
+			if ($entry->{'changes'} && ref $entry->{'changes'} eq 'HASH') {
+				$new->{'changes'} = $entry->{'changes'}->{ $lang } || $entry->{'changes'}->{ 'EN' };
 			}
 
 			$new->{'version'} = $entry->{'version'} if $entry->{'version'};
