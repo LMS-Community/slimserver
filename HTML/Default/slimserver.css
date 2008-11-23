@@ -1618,3 +1618,27 @@ body.x-body-masked .x-window-plain .x-window-mc,
 .x-slider-horz .x-slider-thumb {
 	background-image: url(html/images/slim-ext/slider-thumb.png);
 }
+
+/* grids and tables */
+td.x-grid3-hd-over, td.sort-desc,
+td.sort-asc, td.x-grid3-hd-menu-open {
+	border-left: 1px solid #dddddd;
+	border-right:1px solid #dddddd;
+}
+
+td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner,
+td.sort-asc .x-grid3-hd-inner, td.x-grid3-hd-menu-open .x-grid3-hd-inner {
+	background: #dddddd url(html/images/slim-ext/grid3-hrow-over.gif) repeat-x left bottom;
+}
+
+.sort-asc .x-grid3-sort-icon{
+	background-image: url(html/images/slim-ext/sort_asc.gif);
+}
+
+.sort-desc .x-grid3-sort-icon{
+	background-image: url(html/images/slim-ext/sort_desc.gif);
+}
+
+.x-grid3-cell-inner  {
+	white-space:normal!important;
+}

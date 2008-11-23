@@ -55,11 +55,11 @@ package Slim::Plugin::Extensions::Plugin;
 # 
 # <applet name="AppletName" version="1.0" target="jive" minTarget="7.3" maxTarget="7.3">
 #   <title lang="EN">English Title</title>
-#   <title lang="DE">German Title</title>
-#   <desc lang="EN">EN description</desc>
-#   <desc lang="DE">DE description</desc>
-#   <changes lang="EN">EN Changelog</changes>
-#   <changes lang="DE">DE Changelog</changes>
+#   <title lang="DE">Deutscher Titel</title>
+#   <desc lang="EN">Description</desc>
+#   <desc lang="DE">Deutschsprachige Beschreibung</desc>
+#   <changes lang="EN">Changelog</changes>
+#   <changes lang="DE">Änderungen</changes>
 #   <creator>Name of Author</creator>
 #   <email>email of Author</email>
 #   <url>url for zip file</url>
@@ -67,11 +67,11 @@ package Slim::Plugin::Extensions::Plugin;
 #
 # <plugin name="PluginName" version="1.0" target="windows" minTarget="7.3" maxTarget="7.3">
 #   <title lang="EN">English Title</title>
-#   <title lang="DE">German Title</title>
-#   <desc lang="EN">EN description</desc>
-#   <desc lang="DE">DE description</desc>
-#   <changes lang="EN">EN Changelog</changes>
-#   <changes lang="DE">DE Changelog</changes>
+#   <title lang="DE">Deutscher Titel</title>
+#   <desc lang="EN">Description</desc>
+#   <desc lang="DE">Deutschsprachige Beschreibung</desc>
+#   <changes lang="EN">Changelog</changes>
+#   <changes lang="DE">Änderungen</changes>
 #   <creator>Name of Author</creator>
 #   <email>email of Author</email>
 #   <url>url for zip file</url>
@@ -241,10 +241,10 @@ sub _parseResponse {
 
 	eval { $xml = XMLin($http->content,
 						SuppressEmpty => 1,
-						KeyAttr    => { title => 'lang', desc => 'lang' },
+						KeyAttr    => { title => 'lang', desc => 'lang', changes => 'lang' },
 						ContentKey => '-content',
 						GroupTags  => { applets => 'applet', sounds => 'sound', wallpapers => 'wallpaper', plugins => 'plugin' },
-						ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc' ],
+						ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc', 'changes' ],
 					   ) };
 
 	if ($@) {
