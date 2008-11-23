@@ -35,7 +35,7 @@
 	<tr>
 		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% IF plugin.action == 'remove' %][% plugin.current %]:[% plugin.title %][% ELSE %][% plugin.version %][% END %]" type="checkbox" />&nbsp;</td>
 		<td>[% plugin.title %]&nbsp;</td>
-		<td>[% plugin.version || plugin.current %]&nbsp;</td>
+		<td>[% plugin.delta || plugin.version || plugin.current %]&nbsp;</td>
 		<td>[% (plugin.changes|| plugin.message || plugin.desc || plugin.title) | html_line_break %]&nbsp;</td>
 		<td>[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email %]</a>[%- END -%]&nbsp;</td>
 		<td>[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]&nbsp;</td>
@@ -62,7 +62,7 @@
 
 		[% WRAPPER pluginGroup %]
 			[% FOREACH plugin = upgrade %]
-				[% plugin.version = BLOCK %][% plugin.current %] [% "TO" | string %] [% plugin.version %][% END %]
+				[% plugin.delta = BLOCK %][% plugin.current %] [% "TO" | string %] [% plugin.version %][% END %]
 				[% PROCESS pluginDetails %]
 			[% END %]
 		[%- END -%]
