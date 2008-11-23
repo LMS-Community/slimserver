@@ -1638,3 +1638,7 @@ td.sort-asc .x-grid3-hd-inner, td.x-grid3-hd-menu-open .x-grid3-hd-inner {
 .sort-desc .x-grid3-sort-icon{
 	background-image: url(html/images/slim-ext/sort_desc.gif);
 }
+
+.x-grid3-cell-inner  {
+    white-space:normal!important;
+}
