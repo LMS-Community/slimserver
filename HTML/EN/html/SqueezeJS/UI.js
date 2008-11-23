@@ -2133,7 +2133,7 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 
 
 // only load the following if Ext.grid is available
-if (Ext.grid) {
+if (Ext.grid && Ext.grid.GridView && Ext.grid.GridPanel) {
 	// XXXX fix an issue with grids in Safari/Chrome/Webkit Ext 2.2
 	Ext.override(Ext.grid.GridView, {
 		layout : function(){
@@ -2244,3 +2244,4 @@ if (Ext.grid) {
 	};
 	Ext.extend(SqueezeJS.UI.SortableTable, Ext.grid.GridPanel);
 }
+
