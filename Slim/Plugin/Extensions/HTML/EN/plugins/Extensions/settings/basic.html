@@ -36,7 +36,7 @@
 		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% plugin.version %]" type="checkbox" />&nbsp;</td>
 		<td>[% plugin.title %]&nbsp;</td>
 		<td>[% plugin.version || plugin.current %]&nbsp;</td>
-		<td class="wrappable">[% (plugin.desc || plugin.message || plugin.title) %]&nbsp;</td>
+		<td>[% (plugin.changes|| plugin.message || plugin.desc || plugin.title) %]&nbsp;</td>
 		<td>[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email %]</a>[%- END -%]&nbsp;</td>
 		<td>[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]&nbsp;</td>
 	</tr>

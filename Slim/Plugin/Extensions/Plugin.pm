@@ -237,10 +237,10 @@ sub _parseResponse {
 
 	eval { $xml = XMLin($http->content,
 						SuppressEmpty => 1,
-						KeyAttr    => { title => 'lang', desc => 'lang' },
+						KeyAttr    => { title => 'lang', desc => 'lang', changes => 'lang' },
 						ContentKey => '-content',
 						GroupTags  => { applets => 'applet', sounds => 'sound', wallpapers => 'wallpaper', plugins => 'plugin' },
-						ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc' ],
+						ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc', 'changes' ],
 					   ) };
 
 	if ($@) {
