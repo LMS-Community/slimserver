@@ -33,7 +33,7 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	<tr>
-		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% plugin.version %]" type="checkbox" />&nbsp;</td>
+		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% IF plugin.action == 'remove' %][% plugin.current %]:[% plugin.title %][% ELSE %][% plugin.version %][% END %]" type="checkbox" />&nbsp;</td>
 		<td>[% plugin.title %]&nbsp;</td>
 		<td>[% plugin.version || plugin.current %]&nbsp;</td>
 		<td>[% (plugin.changes|| plugin.message || plugin.desc || plugin.title) | html_line_break %]&nbsp;</td>
