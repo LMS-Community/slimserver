@@ -1,13 +1,29 @@
+[% IF useExtJS; extJsScripts = BLOCK %]
+<script TYPE="text/javascript">
+	Ext.onReady(function() {
+		if (Ext.isIE6)
+			return;
+			
+		var sortableTables = Ext.query('table.sortable');
+		
+		for (var i = 0; i < sortableTables.length; i++) {	
+		    // make the table sortable by header
+		    var grid = new SqueezeJS.UI.SortableTable(sortableTables[i]);
+		    grid.render();
+		}
+	});
+</script>
+[% END; END %]
 [% BLOCK pluginGroup %]
 	<div class="settingSection" style="margin-top:0;margin-bottom:20px">
-		<table class="sortableTable" width="100%">
+		<table class="sortable" width="100%">
 			<thead><tr>
-				<th width="35px">&nbsp;</th>
-				<th>[% "NAME" | string %]</th>
-				<th>[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
-				<th>[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
-				<th>[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>
-				<th width="80px">&nbsp;</th>
+				<th width="5%">&nbsp;</th>
+				<th width="15%">[% "NAME" | string %]</th>
+				<th width="10%">[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
+				<th width="45%">[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
+				<th width="15%">[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>
+				<th width="10%">&nbsp;</th>
 			</tr></thead>
 			<tbody>
 			[% content %]
@@ -20,15 +36,14 @@
 		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% plugin.version %]" type="checkbox" />&nbsp;</td>
 		<td>[% plugin.title %]&nbsp;</td>
 		<td>[% plugin.version || plugin.current %]&nbsp;</td>
-		<td>[% plugin.desc || plugin.message || plugin.title %]&nbsp;</td>
+		<td class="wrappable">[% (plugin.desc || plugin.message || plugin.title) %]&nbsp;</td>
 		<td>[% IF plugin.email %]<a href="mailto:[% plugin.email %]">[%- END -%][% plugin.creator || plugin.email %][% IF plugin.email %]</a>[%- END -%]&nbsp;</td>
 		<td>[% IF plugin.link %]<a href="[% plugin.link %]" target="plugin_desc">[% "MOREINFO" | string %]</a>[%- END -%]&nbsp;</td>
 	</tr>
 [% END %]
 [% PROCESS settings/header.html %]
 
-	[% WRAPPER setting title="PLUGIN_EXTENSIONS" desc="" %]
-		<div>[% "PLUGIN_EXTENSIONS_DESC" | string %]</div>
+	[% WRAPPER setting title="PLUGIN_EXTENSIONS" desc="PLUGIN_EXTENSIONS_DESC" %]
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc="PLUGIN_EXTENSIONS_REPOS_DESC" %]
