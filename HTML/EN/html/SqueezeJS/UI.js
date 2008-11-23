@@ -2130,3 +2130,75 @@ SqueezeJS.UI.ScannerInfoExtended = function(){
 		}
 	};
 }();
+
+
+// create sortable table from HTML table, basically a copy of the TableGrid sample
+// http://extjs.com/deploy/dev/examples/grid/from-markup.html
+SqueezeJS.UI.SortableTable = function(table, config) {
+	config = config || {};
+
+	// a few defaults
+	Ext.applyIf(config, {
+		stripeRows: true,
+		enableColumnHide: false,
+		enableHdMenu: false,
+		disableSelection: true,
+		border: false
+	});
+
+	Ext.apply(this, config);
+	var cf = config.fields || [], ch = config.columns || [];
+	table = Ext.get(table);
+	
+	var ct = table.insertSibling();
+	
+	var fields = [], cols = [];
+	var headers = table.query("thead th");
+	for (var i = 0, h; h = headers[i]; i++) {
+		var text = h.innerHTML;
+		var name = 'tcol-'+i;
+	
+		fields.push(Ext.applyIf(cf[i] || {}, {
+			name: name,
+			mapping: 'td:nth('+(i+1)+')/@innerHTML'
+		}));
+	
+		cols.push(Ext.applyIf(ch[i] || {}, {
+			'header': text,
+			'dataIndex': name,
+			'width': h.offsetWidth,
+			'tooltip': h.title,
+			'sortable': true
+		}));
+	}
+	
+	var ds  = new Ext.data.Store({
+		reader: new Ext.data.XmlReader({
+			record:'tbody tr'
+		}, fields)
+	});
+	
+	ds.loadData(table.dom);
+	
+	var cm = new Ext.grid.ColumnModel(cols);
+	
+	if (config.width || config.height) {
+		ct.setSize(config.width || 'auto', config.height || 'auto');
+	} else {
+		ct.setWidth(table.getWidth());
+	}
+	
+	if (config.remove !== false) {
+		table.remove();
+	}
+	
+	Ext.applyIf(this, {
+		'ds': ds,
+		'cm': cm,
+		autoHeight: true,
+		autoWidth: true
+	});
+	
+	SqueezeJS.UI.SortableTable.superclass.constructor.call(this, ct, {});
+};
+Ext.extend(SqueezeJS.UI.SortableTable, Ext.grid.GridPanel);
