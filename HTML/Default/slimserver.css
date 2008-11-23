@@ -1640,5 +1640,5 @@ td.sort-asc .x-grid3-hd-inner, td.x-grid3-hd-menu-open .x-grid3-hd-inner {
 }
 
 .x-grid3-cell-inner  {
-    white-space:normal!important;
+	white-space:normal!important;
 }
