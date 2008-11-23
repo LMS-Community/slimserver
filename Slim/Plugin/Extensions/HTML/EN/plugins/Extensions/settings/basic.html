@@ -89,6 +89,7 @@
 
 		[% WRAPPER pluginGroup %]
 			[% FOREACH plugin = install %]
+				[% plugin.changes = '' %]
 				[% PROCESS pluginDetails %]
 			[% END %]
 
