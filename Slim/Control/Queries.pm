@@ -3239,6 +3239,7 @@ sub statusQuery_filter {
 	my $self = shift;
 	my $request = shift;
 	
+	$log->error('In the playerstatus filter');
 	# retrieve the clientid, abort if not about us
 	my $clientid = $request->clientid();
 	return 0 if !defined $clientid;
@@ -3247,6 +3248,8 @@ sub statusQuery_filter {
 	# commands we ignore
 	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'prefset', 'playerpref']]);
 	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
+
+	$log->error('Still in the playerstatus filter');
 
 	# special case: the client is gone!
 	if ($request->isCommand([['client'], ['forget']])) {
@@ -3292,6 +3295,7 @@ sub statusQuery {
 	# get the initial parameters
 	my $client = $request->client();
 	my $menu = $request->getParam('menu');
+	$log->error("PLAYERSTATUS RESPONSE BEING GENERATED for " . $client->name() );
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;

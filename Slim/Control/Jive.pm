@@ -163,7 +163,7 @@ sub init {
 sub buildCaches {
 	$log->debug("Begin function");
 
-	my $sort    = $prefs->get('jivealbumsort') || 'artistalbum';
+	my $sort    = $prefs->get('jivealbumsort') || 'album';
 
 	for my $partymode ( 0..1 ) {
 		# Pre-cache albums query
@@ -2377,7 +2377,7 @@ sub myMusicMenu {
 	$log->info("Begin function");
 	my $batch = shift;
 	my $client = shift;
-	my $sort   = $prefs->get('jivealbumsort') || 'artistalbum';
+	my $sort   = $prefs->get('jivealbumsort') || 'album';
 	my $party  = (Slim::Player::Playlist::playlistMode($client) eq 'party');
 	my @myMusicMenu = (
 			{
