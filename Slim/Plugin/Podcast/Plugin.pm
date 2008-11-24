@@ -131,8 +131,9 @@ sub setMode {
 			my $client = shift;
 			my $item = shift;
 			my %params = (
-				url => $item->{'value'},
-				title => $item->{'name'},
+				url     => $item->{'value'},
+				title   => $item->{'name'},
+				timeout => 35,
 			);
 			Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 		},
