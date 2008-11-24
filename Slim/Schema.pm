@@ -117,11 +117,11 @@ sub init {
 	$class->storage_type('Slim::Schema::Storage');
 
 	$class->connection($source, $username, $password, { 
-		RaiseError => 1,
-		AutoCommit => 1,
-		PrintError => 0,
-		Taint      => 1,
-
+		RaiseError    => 1,
+		AutoCommit    => 1,
+		PrintError    => 0,
+		Taint         => 1,
+		on_connect_do => [ 'SET NAMES UTF8' ],
 	}) or do {
 
 		logBacktrace("Couldn't connect to database! Fatal error: [$!] Exiting!");
@@ -134,14 +134,6 @@ sub init {
 		logBacktrace("Couldn't connect to database! Fatal error: [$!] Exiting!");
 		exit;
 	};
-
-	# Tell the DB that we're handing it UTF-8
-	# MySQL < 4.1 doesn't support this - which really shouldn't matter to
-	# us. But some users *ahem*kdf*ahem* are stuck running 4.0.x
-	if ( main::SLIM_SERVICE || Slim::Utils::MySQLHelper->mysqlVersion($dbh) > 4.0 ) {
-
-		eval { $dbh->do('SET NAMES UTF8;') };
-	}
 
 	# Bug: 4076
 	# If a user was using MySQL with 6.3.x (unsupported), their
