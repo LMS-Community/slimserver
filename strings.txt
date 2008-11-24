@@ -8424,7 +8424,16 @@ SETUP_SN_PASSWORD_DESC
 	SV	Ange lösenordet för ditt SqueezeNetwork-konto.
 
 SETUP_SN_INVALID_LOGIN
-	EN	Invalid email address.
+	DA	Ugyldigt brugernavn eller adgangskode til SqueezeNetwork.
+	DE	SqueezeNetwork-Benutzername oder -Kennwort ungültig.
+	EN	Invalid SqueezeNetwork username or password.
+	ES	Contraseña o nombre de usuario SqueezeNetwork no válidos.
+	FI	Virheellinen SqueezeNetworkin käyttäjätunnus tai salasana.
+	FR	Nom d'utilisateur ou mot de passe SqueezeNetwork non valide.
+	IT	Nome utente o password di SqueezeNetwork non validi.
+	NL	Gebruikersnaam of wachtwoord van SqueezeNetwork ongeldig.
+	NO	Ugyldig brukernavn eller passord for SqueezeNetwork.
+	SV	Ogiltigt användarnamn eller lösenord SqueezeNetwork
 
 SETUP_SN_VALID_LOGIN
 	DA	Der er etableret forbindelse til SqueezeNetwork.

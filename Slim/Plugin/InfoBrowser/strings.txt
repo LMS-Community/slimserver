@@ -85,7 +85,7 @@ SETUP_PLUGIN_INFOBROWSER_RESET_DESC
 	SV	Återställ huvudmenyn för Infoläsaren till alla standardflöden samt alla tilläggsflöden du har lagt till.
 
 SETUP_PLUGIN_INFOBROWSER_ADDONS
-	DA	Der kan vises informationer fra andre kilder ved at installere udvidelsesmoduler til informationsaflæseren. Der er flere oplysninger op informationsaflæseren på: <a href="http://wiki.slimdevices.com/index.php?InformationBrowser" target="wiki">http://wiki.slimdevices.com/index.php?Information_Browser</a>.
+	DA	Der kan vises informationer fra andre kilder ved at installere udvidelsesmoduler til informationsaflæseren. Der er flere oplysninger op informationsaflæseren på: <a href="http://wiki.slimdevices.com/index.php/InformationBrowser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	DE	Sie können weitere Informationsquellen anzeigen, indem Sie Add-ons für den Info-Browser installieren (siehe <a href="http://wiki.slimdevices.com/index.php/Information_Browser">http://wiki.slimdevices.com/index.php/Information_Browser</a>).
 	EN	Other information sources may be displayed by adding Information Browser addons.  More details of Information Browser addons can be found at: <a href="http://wiki.slimdevices.com/index.php/Information_Browser" target="wiki">http://wiki.slimdevices.com/index.php/Information_Browser</a>.
 	ES	Es posible mostrar otros orígenes de información mediante complementos de Navegador de información. Encontrará más detalles sobre complementos de Navegador de información en: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.

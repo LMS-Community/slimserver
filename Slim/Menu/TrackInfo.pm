@@ -839,6 +839,9 @@ sub infoComment {
 	
 	if ( $comment ) {
 
+		$comment =~ s/\r\n/\n/g;
+		$comment =~ s/\r/\n/g;
+		$comment =~ s/\n\n+/\n\n/g;
 
 		$item = {
 			name  => cstring($client, 'COMMENT'),
@@ -867,6 +870,7 @@ sub infoLyrics {
 	
 	if ( my $lyrics = $track->lyrics ) {
 
+		$lyrics =~ s/\r\n/\n/g;
 		$lyrics =~ s/\r/\n/g;
 		$lyrics =~ s/\n\n+/\n\n/g;
 
