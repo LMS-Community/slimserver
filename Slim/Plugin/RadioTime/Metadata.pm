@@ -73,7 +73,7 @@ sub provider {
 	my $hasIcy = $client->pluginData('hasIcy');
 	
 	if ( $hasIcy && $hasIcy ne $url ) {
-		$client->pluginData( hasIcy => undef );
+		$client->pluginData( hasIcy => 0 );
 		$hasIcy = undef;
 	}
 	
