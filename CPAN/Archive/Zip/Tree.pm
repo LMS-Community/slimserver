@@ -1,3 +1,11 @@
+package Archive::Zip::Tree;
+
+use strict;
+use vars qw{$VERSION};
+BEGIN {
+	$VERSION = '1.26';
+}
+
 use Archive::Zip;
 
 warn(
@@ -38,3 +46,4 @@ as Perl itself.
 L<Archive::Zip>
 
 =cut
+

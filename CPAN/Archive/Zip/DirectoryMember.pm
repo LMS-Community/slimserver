@@ -6,7 +6,7 @@ use File::Path;
 use vars qw( $VERSION @ISA );
 
 BEGIN {
-    $VERSION = '1.18';
+    $VERSION = '1.26';
     @ISA     = qw( Archive::Zip::Member );
 }
 
@@ -36,13 +36,11 @@ sub _newNamed {
             }
             $self->setLastModFileDateTimeFromUnix($mod_t);
 
-        }
-        else {    # hmm.. trying to add a non-directory?
+        } else {    # hmm.. trying to add a non-directory?
             _error( $fileName, ' exists but is not a directory' );
             return undef;
         }
-    }
-    else {
+    } else {
         $self->unixFileAttributes( $self->DEFAULT_DIRECTORY_PERMISSIONS );
         $self->setLastModFileDateTimeFromUnix( time() );
     }
