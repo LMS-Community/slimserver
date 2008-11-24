@@ -13,7 +13,7 @@ use Cwd;
 use vars qw( $VERSION @ISA );
 
 BEGIN {
-    $VERSION = '1.18';
+    $VERSION = '1.26';
     @ISA     = qw( Archive::Zip );
 }
 
@@ -362,7 +362,7 @@ sub _writeEOCDOffset {
 sub _writeEndOfCentralDirectory {
     my ( $self, $fh ) = @_;
 
-    $fh->print(END_OF_CENTRAL_DIRECTORY_SIGNATURE_STRING)
+    $self->_print($fh, END_OF_CENTRAL_DIRECTORY_SIGNATURE_STRING)
       or return _ioError('writing EOCD Signature');
     my $zipfileCommentLength = length( $self->zipfileComment() );
 
@@ -376,10 +376,10 @@ sub _writeEndOfCentralDirectory {
         $self->_writeCentralDirectoryOffset(),
         $zipfileCommentLength
     );
-    $fh->print($header)
+    $self->_print($fh, $header)
       or return _ioError('writing EOCD header');
     if ($zipfileCommentLength) {
-        $fh->print( $self->zipfileComment() )
+        $self->_print($fh,  $self->zipfileComment() )
           or return _ioError('writing zipfile comment');
     }
     return AZ_OK;

@@ -185,6 +185,8 @@ sub scanURL {
 		$request->header( 'X-Forwarded-For' => $client->ip );
 	}
 	
+	my $timeout = preferences('server')->get('remotestreamtimeout') || 10;
+	
 	my $http = Slim::Networking::Async::HTTP->new;
 	$http->send_request( {
 		request     => $request,
@@ -202,6 +204,7 @@ sub scanURL {
 			return $cb->( undef, $error, @{$pt} );
 		},
 		passthrough => [ $track, $args ],
+		Timeout     => $timeout,
 	} );
 }
 

@@ -4,7 +4,7 @@ use strict;
 use vars qw( $VERSION @ISA );
 
 BEGIN {
-    $VERSION = '1.18';
+    $VERSION = '1.26';
     @ISA     = qw ( Archive::Zip::FileMember );
 }
 
@@ -39,8 +39,11 @@ sub _newFromZipFile {
 
 sub isDirectory {
     my $self = shift;
-    return ( substr( $self->fileName(), -1, 1 ) eq '/'
-          and $self->uncompressedSize() == 0 );
+    return (
+        substr( $self->fileName, -1, 1 ) eq '/'
+        and
+        $self->uncompressedSize == 0
+    );
 }
 
 # Seek to the beginning of the local header, just past the signature.

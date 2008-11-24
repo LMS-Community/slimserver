@@ -826,7 +826,7 @@ sub stop {
 		# volume levels (vol is reported as 0 after a mute)
 		my $vol = $prefs->client($client)->get('volume');
 		if (! $client->isPlaying && $vol == $self->volume) {
-			$log->debug('Restoring pre-alarm volume level');
+			$log->debug('Restoring pre-alarm volume level: ' . $self->{_originalVolume});
 			$client->volume($self->{_originalVolume});
 		}
 	});
