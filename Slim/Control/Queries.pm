@@ -4809,7 +4809,7 @@ sub _addJivePlaylistControls {
 
 	my ($request, $loop, $count) = @_;
 	
-	my $client = $request->client;
+	my $client = $request->client || return;
 	
 	# clear playlist
 	my $text = $client->string('CLEAR_PLAYLIST');
