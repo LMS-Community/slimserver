@@ -1085,7 +1085,7 @@ sub _playFallback {
 sub _timeout {
 	my $self = shift;
 
-	my $client = $self->client;
+	my $client = $self->client || return;
 
 	$log->debug('Alarm ' . $self->id . ' ending automatically due to timeout');
 

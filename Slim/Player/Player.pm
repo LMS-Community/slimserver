@@ -629,7 +629,7 @@ sub currentSongLines {
 		
 		$jive = {
 			'type' => 'song',
-			'text' => [ $status, $song->title ],
+			'text' => [ $status, $song ? $song->title : undef ],
 		};
 		
 		if ( $imgKey ) {
