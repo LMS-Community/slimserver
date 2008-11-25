@@ -18756,7 +18756,7 @@ HOWTO_INTERNET_RADIO
 	EN	Scroll to "Best of Internet Radio" and press RIGHT.
 
 HOWTO_INTERNET_RADIO_CONTROLLER
-	EN	Scroll to "Best of Internet Radio" and the center button.
+	EN	Scroll to "Best of Internet Radio" and press the center button.
 
 HOWTO_SHOWCASE
 	EN	Scroll to Slim Showcase: Miles Davis and press PLAY.
