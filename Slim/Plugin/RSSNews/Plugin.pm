@@ -304,6 +304,7 @@ sub gotNextFeed {
 sub gotError {
 	my ( $error, $params ) = @_;
 	my $client = $params->{'client'};
+	my $url    = $params->{'url'};
 	
 	# Bug 3860, If the user left screensaver mode while we were fetching the feed, cancel out
 	if ( !exists $savers->{$client} ) {
@@ -311,7 +312,7 @@ sub gotError {
 	}
 	
 	# Bug 1664, skip broken feeds in screensaver mode
-	logError("While loading feed: $error, skipping!");
+	$log->error("While loading feed $url: $error, skipping!");
 	
 	my $errors = $savers->{$client}->{feed_error} || 0;
 	$errors++;
@@ -325,9 +326,9 @@ sub gotError {
 		@feeds = @{ $prefs->get('feeds') };
 	}
 	
-	if ( $errors == scalar @feeds ) {
+	if ( $errors >= scalar @feeds ) {
 
-		logError("All feeds failed, giving up!!");
+		$log->error("All feeds failed, giving up!!");
 		
 		$client->update( {
 			'line' => [
@@ -452,7 +453,7 @@ sub tickerLines {
 		# because the server could crash rendering on pre-SqueezeboxG displays.
 		my $screensaver_chars_per_item = 1024;
 
-		my $screensaver_items_per_feed = $prefs->get('items_per_feed');
+		my $screensaver_items_per_feed = $prefs->get('items_per_feed') || 3;
 		
 		my $line2 = sprintf(
 			$screensaver_item_format,
