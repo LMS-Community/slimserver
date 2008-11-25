@@ -4936,7 +4936,7 @@ sub _addJivePlaylistControls {
 
 	my ($request, $loop, $count) = @_;
 	
-	my $client = $request->client;
+	my $client = $request->client || return;
 	
 	# clear playlist
 	my $text = $client->string('CLEAR_PLAYLIST');
@@ -5020,7 +5020,7 @@ sub _addJiveSong {
 	my $loop      = shift; # loop
 	my $count     = shift; # loop index
 	my $current   = shift;
-	my $track     = shift;
+	my $track     = shift || return;
 	
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};

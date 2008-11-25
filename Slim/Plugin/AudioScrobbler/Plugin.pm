@@ -681,7 +681,7 @@ sub _submitNowPlayingError {
 sub checkScrobble {
 	my ( $client, $track, $checktime, $rating ) = @_;
 	
-	return unless $client;
+	return unless $client && $track;
 	
 	# Make sure player is either playing or paused
 	if ( $client->isStopped() ) {

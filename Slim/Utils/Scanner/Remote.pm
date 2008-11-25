@@ -660,6 +660,8 @@ sub parsePlaylist {
 	my $total   = scalar @results;
 	
 	for my $entry ( @results ) {
+		next unless blessed($entry);
+		
 		__PACKAGE__->scanURL( $entry->url, {
 			client => $client,
 			song   => $args->{'song'},
