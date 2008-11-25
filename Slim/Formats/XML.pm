@@ -680,7 +680,7 @@ sub xmlToHash {
 			};
 			
 			if ($@) {
-				logError("Pass $pass failed to parse: $@");
+				$log->warn("Pass $pass failed to parse: $@");
 			}
 			else {
 				last;
@@ -693,12 +693,12 @@ sub xmlToHash {
 
 	if ($@) {
 
-		logError("Failed to parse feed because: [$@]");
+		$log->warn("Failed to parse feed because: [$@]");
 
 		if (defined $content && ref($content) eq 'SCALAR') {
 
-			if (length $$content < 50000) {
-				logError("Here's the bad feed:\n[$$content]\n");
+			if ($log->is_debug && length $$content < 50000) {
+				$log->debug("Here's the bad feed:\n[$$content]\n");
 			}
 
 			undef $content;
