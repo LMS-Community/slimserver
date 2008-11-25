@@ -4893,7 +4893,7 @@ sub _addJiveSong {
 	my $loop      = shift; # loop
 	my $count     = shift; # loop index
 	my $current   = shift;
-	my $track     = shift;
+	my $track     = shift || return;
 	
 	# If we have a remote track, check if a plugin can provide metadata
 	my $remoteMeta = {};
