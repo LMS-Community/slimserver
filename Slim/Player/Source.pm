@@ -1460,7 +1460,9 @@ sub dropStreamingConnection {
 
 		$log->info("No pending chunks - we're dropping the streaming connection");
 
-		Slim::Web::HTTP::forgetClient($client);
+		if ( !main::SLIM_SERVICE ) {
+			Slim::Web::HTTP::forgetClient($client);
+		}
 
 	} else {
 
