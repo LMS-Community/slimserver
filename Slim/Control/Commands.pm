@@ -1408,6 +1408,13 @@ sub playlistXitemCommand {
 					'jive' => { 'type' => 'popupplay', text => [ $msg ] },
 				});
 		}
+		# if music isn't playing, hitting the play button should start playing music
+		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'insert' ) {
+			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
+				Slim::Player::Source::playmode($client, 'play');
+			}
+		}
+
 	} else {
 		
 		# Display some feedback for the player on remote URLs
@@ -1560,6 +1567,11 @@ sub playlistXtracksCommand {
 
 	if ($insert) {
 		_insert_done($client, $playListSize, $size);
+		if ( ($playlistMode eq 'on' || $playlistMode eq 'party') ) {
+			if ( Slim::Player::Source::playmode($client) ne 'play' ) {
+				Slim::Player::Source::playmode($client, 'play');
+			}
+		}
 	}
 
 	if ($delete) {
@@ -1904,6 +1916,13 @@ sub playlistcontrolCommand {
 		Slim::Control::Request::executeRequest(
 			$client, ['playlist', $cmd, 'listRef', \@tracks]
 		);
+	}
+
+	# if music isn't playing, hitting the play button should start playing music
+	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $insert ) {
+		if ( Slim::Player::Source::playmode($client) ne 'play' ) {
+			Slim::Player::Source::playmode($client, 'play');
+		}
 	}
 
 	$request->addResult('count', scalar(@tracks));
