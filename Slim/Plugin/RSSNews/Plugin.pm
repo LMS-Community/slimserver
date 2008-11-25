@@ -317,7 +317,15 @@ sub gotError {
 	$errors++;
 	$savers->{$client}->{feed_error} = $errors;
 	
-	if ( $errors == scalar @{ $prefs->get('feeds') } ) {
+	my @feeds = ();
+	if ( main::SLIM_SERVICE ) {
+		@feeds = feedsForClient($client);
+	}
+	else {
+		@feeds = @{ $prefs->get('feeds') };
+	}
+	
+	if ( $errors == scalar @feeds ) {
 
 		logError("All feeds failed, giving up!!");
 		
