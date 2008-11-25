@@ -528,7 +528,7 @@ sub currentSongLines {
 		} 
 
 		my $song = Slim::Player::Playlist::song($client);
-		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song->url);
+		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song ? $song->url : undef);
 
 		$lines[1] = $currentTitle;
 
@@ -561,14 +561,14 @@ sub currentSongLines {
 		
 		$jive = {
 			'type' => 'song',
-			'text' => [ $status, $song->title ],
+			'text' => [ $status, $song ? $song->title : undef ],
 		};
 
 		my $imgKey;
 		my $artwork;
 
 		#if ( $song->isRemoteURL ) {
-		if ( $retrieveMetadata && $song->isRemoteURL ) {
+		if ( $retrieveMetadata && $song && $song->isRemoteURL ) {
 
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song->url);
 
@@ -593,7 +593,7 @@ sub currentSongLines {
 				$artwork = '/html/images/radio.png';
 			}
 
-		} elsif ( $song->album ) {
+		} elsif ( $song && $song->album ) {
 
 			$imgKey = 'icon-id';
 			$artwork = ($song->album->artwork || 0) + 0;
