@@ -664,6 +664,8 @@ sub canDoSeek {
 			$self->{'canSeekError'} = [$handler->can('canSeekError') 
 					? $handler->canSeekError( $self->master(), $self  )
 					: ('SEEK_ERROR_REMOTE')];
+			
+			return $self->{'canSeek'} = 0;
 		}
 	} 
 	
