@@ -795,7 +795,7 @@ sub init {
 					'overlayRef'     => sub {
 						my ($client, $item) = @_;
 						return [undef, 
-							Slim::Networking::Discovery::Server::is_self($item->{value})
+							( !main::SLIM_SERVICE && Slim::Networking::Discovery::Server::is_self($item->{value}) )
 							? Slim::Buttons::Common::checkBoxOverlay($client, 1)
 							: $client->symbols('rightarrow')
 						];
