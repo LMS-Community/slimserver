@@ -66,6 +66,11 @@ sub initPlugin {
 				[ 'internetradio', 'items', '_index', '_quantity' ],
 			    [ 1, 1, 1, $cliQuery ]
 			);
+			
+			Slim::Control::Request::addDispatch(
+				[ 'internetradio', 'playlist', '_method' ],
+				[ 1, 1, 1, $cliQuery ]
+			);
 		}
 		
 		return;
