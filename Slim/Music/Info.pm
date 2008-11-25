@@ -289,7 +289,7 @@ sub title {
 		'readTags' => isRemoteURL($url) ? 0 : 1,
 	});
 
-	return $track->title;
+	return blessed($track) ? $track->title : undef;
 }
 
 sub setTitle {
