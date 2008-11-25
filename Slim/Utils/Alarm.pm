@@ -548,7 +548,7 @@ sub sound {
 		}
 
 		# Set up volume
-		my $currentVolume = $client->volume;
+		my $currentVolume = $prefs->client($client)->get('volume');
 		$self->{_originalVolume} = $currentVolume;
 		$log->debug("Current vol: $currentVolume Alarm vol: " . $self->volume);
 

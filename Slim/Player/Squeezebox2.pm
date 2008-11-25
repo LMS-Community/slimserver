@@ -238,8 +238,7 @@ sub volume {
 	my $client = shift;
 	my $newvolume = shift;
 
-	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
-	my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
+	my $volume = $client->SUPER::volume($newvolume, @_);
 
 	if (defined($newvolume)) {
 		# Old style volume:
@@ -258,6 +257,8 @@ sub volume {
 		if ( !defined $dvc ) {
 			$dvc = $Slim::Player::Player::defaultPrefs->{digitalVolumeControl};
 		}
+		
+		my $preamp = 255 - int( 2 * ( $prefs->client($client)->get('preampVolumeControl') || 0 ) );
 
 		my $data = pack('NNCCNN', $oldGain, $oldGain, $dvc, $preamp, $newGain, $newGain);
 		$client->sendFrame('audg', \$data);
