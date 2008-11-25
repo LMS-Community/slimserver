@@ -806,8 +806,11 @@ sub overlaySymbol {
 	my ($client, $item) = @_;
 
 	my $overlay;
-
-	if ( $item->{type} && $item->{type} eq 'radio' ) {
+	
+	if ( ref $item ne 'HASH' ) {
+		$overlay = $client->symbols('rightarrow');
+	}
+	elsif ( $item->{type} && $item->{type} eq 'radio' ) {
 		# Display check box overlay for type=radio
 		my $default = $item->{default};
 		$overlay = Slim::Buttons::Common::radioButtonOverlay( $client, $default eq $item->{name} );
