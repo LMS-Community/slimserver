@@ -82,7 +82,7 @@
 
 	[%- END -%]
 
-	[% IF install.size %]
+	[% IF install.size || manual.values.size %]
 
 		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_INSTALL" desc="" %]
 		[%- END -%]
