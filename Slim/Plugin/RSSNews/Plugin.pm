@@ -317,7 +317,7 @@ sub gotError {
 	$errors++;
 	$savers->{$client}->{feed_error} = $errors;
 	
-	if ( $errors == scalar @{ $prefs->get('feeds') || [] } ) {
+	if ( $errors == scalar @{ $prefs->get('feeds') } ) {
 
 		logError("All feeds failed, giving up!!");
 		
