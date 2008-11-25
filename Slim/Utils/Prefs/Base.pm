@@ -260,7 +260,7 @@ sub set {
 		
 		if ( !defined $old || !defined $new || $old ne $new || ref $new ) {
 			
-			if ( main::SLIM_SERVICE && $clientid ) {
+			if ( main::SLIM_SERVICE && blessed($client) ) {
 				# Skip param lets routines like initPersistedPrefs avoid writing right back to the db
 				my $skip = shift || 0;
 

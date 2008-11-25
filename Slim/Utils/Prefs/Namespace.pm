@@ -206,6 +206,7 @@ $prefs->client($client)->get('pref1');
 
 sub client {
 	# opimised due to frequency of being called
+	return unless $_[1];
 	return $_[0]->{'clients'}->{ $_[1]->id } ||= Slim::Utils::Prefs::Client->new($_[0], $_[1]);
 }
 
