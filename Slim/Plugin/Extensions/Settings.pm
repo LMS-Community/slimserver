@@ -190,10 +190,8 @@ sub _addInfo {
 
 		if ($manual{ $plugin->{'name'} }) {
 
-			$installedManually->{ $plugin->{'name'} } = { 
-				title   => $plugin->{'title'}, 
-				message => sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL'), $manual{ $plugin->{'name'} }),
-			};
+			$installedManually->{ $plugin->{'name'} } = $plugin;
+			$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL'), $manual{ $plugin->{'name'} }),
 
 			next;
 		}

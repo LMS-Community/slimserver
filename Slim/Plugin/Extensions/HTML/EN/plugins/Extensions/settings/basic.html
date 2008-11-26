@@ -46,7 +46,8 @@
 [% END %]
 [% PROCESS settings/header.html %]
 
-	[% WRAPPER setting title="PLUGIN_EXTENSIONS" desc="PLUGIN_EXTENSIONS_DESC" %]
+	[% WRAPPER setting title="PLUGIN_EXTENSIONS" desc=(repos.size > 1 ? "PLUGIN_EXTENSIONS_DESC" : "") %]
+		<div>[% IF repos.size <= 1; "PLUGIN_EXTENSIONS_DESC" | string; END %]</div>
 	[% END %]
 
 	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc="PLUGIN_EXTENSIONS_REPOS_DESC" %]
