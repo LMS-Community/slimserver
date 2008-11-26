@@ -348,6 +348,27 @@ sub parseMetadata {
 			return if $handled;
 		}
 		
+		substr $metadata, 0, 24, '';
+		
+		# See if the metadata matches a common format
+		# UTF-16LE URI-escaped query string terminated by a null
+		# This format is used by at least RadioIO's WMA streams and some other providers
+		$metadata = eval { Encode::decode( 'UTF-16LE', $metadata ) };
+		if ( $@ ) {
+			$log->is_debug && $log->debug( "Decoding of WMA metadata failed: $@" );
+			return;
+		}
+		
+		if ( $metadata =~ /(artist=[^\0]+)/ ) {
+			require URI::QueryParam;
+			my $uri  = URI->new( '?' . $1 );
+			my $meta = $uri->query_form_hash;
+			
+			$song->pluginData( wmaMeta => $meta );
+			
+			$log->is_debug && $log->debug('Parsed WMA metadata from query string');
+		}
+		
 		# If there is no parser, we ignore ASF_Command_Media
 		return;
 	}

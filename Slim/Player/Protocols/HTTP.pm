@@ -377,7 +377,29 @@ sub getMetadataFor {
 			return $metadata;
 		}
 	}
-
+	
+	# Check for parsed WMA metadata, this is here because WMA may
+	# use HTTP protocol handler
+	my $song = $client->playingSong();
+	if ( $song->{scanData} ) { # indicates it's WMA
+		if ( my $meta = $song->pluginData('wmaMeta') ) {
+			my $data = {};
+			if ( $meta->{artist} ) {
+				$data->{artist} = $meta->{artist};
+			}
+			if ( $meta->{album} ) {
+				$data->{album} = $meta->{album};
+			}
+			if ( $meta->{title} ) {
+				$data->{title} = $meta->{title};
+			}
+		
+			if ( scalar keys %{$data} ) {
+				return $data;
+			}
+		}
+	}
+	
 	my ($artist, $title);
 	# Radio tracks, return artist and title if the metadata looks like Artist - Title
 	if ( my $currentTitle = Slim::Music::Info::getCurrentTitle( $client, $url ) ) {
