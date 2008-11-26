@@ -164,7 +164,7 @@ sub _downloadDone {
 					}
 				}
 
-				if ( ($zipstatus = $zip->extractTree($source, "$dest/")) == Archive::Zip::AZ_OK ) {
+				if ( ($zipstatus = $zip->extractTree($source, "$dest/")) == Archive::Zip::AZ_OK() ) {
 					
 					$log->info("extracted $name " . ($source ? "($source) " : '') . "to $dest");
 
