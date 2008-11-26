@@ -10,7 +10,6 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use File::Path;
-use Archive::Zip qw(:ERROR_CODES);
 use Digest::SHA1;
 
 use Slim::Networking::SimpleAsyncHTTP;
@@ -131,6 +130,8 @@ sub _downloadDone {
 
 			$log->info("digest matches - extracting $name");
 
+			require Archive::Zip;
+
 			my $zip = Archive::Zip->new();
 
 			# While we do this in a plugin, we extract the zip at download time.
@@ -163,7 +164,7 @@ sub _downloadDone {
 					}
 				}
 
-				if ( ($zipstatus = $zip->extractTree($source, "$dest/")) == AZ_OK ) {
+				if ( ($zipstatus = $zip->extractTree($source, "$dest/")) == Archive::Zip::AZ_OK() ) {
 					
 					$log->info("extracted $name " . ($source ? "($source) " : '') . "to $dest");
 
