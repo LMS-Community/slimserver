@@ -461,7 +461,7 @@ sub curDisplay {
 
 sub curLines {
 	my $display = shift;
-	my $client = $display->client;
+	my $client = $display->client || return;
 	my $linefunc = $client->lines;
 	my $parts;
 
