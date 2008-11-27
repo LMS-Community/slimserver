@@ -151,7 +151,15 @@ sub scanURL {
 		$log->debug( "Remote stream $url known to be audio" ); 	 
 
 		# Set this track's content type from protocol handler getFormatForURL method 	 
-		$track->content_type( Slim::Music::Info::typeFromPath($url) ); 	 
+		my $type = Slim::Music::Info::typeFromPath($url);
+		if ( $type eq 'unk' ) {
+			$type = 'mp3';
+		}
+		
+		$log->debug( "Content-type of $url - $type" );
+		
+		$track->content_type( $type );
+		$track->update;
 
 		# Success, done scanning 	 
 		return $cb->( $track, undef, @{$pt} );
