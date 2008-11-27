@@ -149,7 +149,6 @@ Wizard = {
 									}
 			
 									else {
-										resultEl.update(SqueezeJS.string('sn_success'));
 										this.jump(1)
 									}
 								}
@@ -158,7 +157,6 @@ Wizard = {
 			
 						else {
 							email_summary.update(SqueezeJS.string('summary_none'));
-							resultEl.update(SqueezeJS.string('sn_success'));
 							this.jump(1)
 						}
 					}
