@@ -53,9 +53,9 @@
 	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc="PLUGIN_EXTENSIONS_REPOS_DESC" %]
 		<div>[% "PLUGIN_EXTENSIONS_REPOS_WARNING" | string %]</div>
 
-		<div><br/>
+		<div>
 		[% FOREACH entry = repos %]
-			<input type="text" class="stdedit" name="repos" id="repos" value="[% entry %]" size="60" />
+			<br/><input type="text" class="stdedit" name="repos" id="repos" value="[% entry %]" size="60" />
 		[% END %]
 		</div>
 	[% END %]
