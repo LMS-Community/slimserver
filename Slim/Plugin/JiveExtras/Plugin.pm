@@ -31,7 +31,7 @@ sub getExtensions {
 	my $args = shift;
 
 	my @res = ();
-	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $serverprefs->get('httpport') . "/jive$args->{type}/";
+	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $serverprefs->get('httpport') . "/jive$args->{type}";
 
 	for my $opt (@{ $prefs->get($args->{'type'}) || [] }) {
 
