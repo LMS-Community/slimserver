@@ -451,9 +451,12 @@ sub getMetadataFor {
 		}
 	}
 	elsif ( $playlistURL =~ /radioio/i ) {
-		if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::RadioIO::Plugin') ) {
+		if ( main::SLIM_SERVICE || Slim::Plugin::InternetRadio::Plugin::RadioIO->can('_pluginDataFor') ) {
 			# RadioIO
-			my $icon = Slim::Plugin::RadioIO::Plugin->_pluginDataFor('icon');
+			my $icon = main::SLIM_SERVICE
+				? 'http://www.squeezenetwork.com/static/images/icons/radioio.png'
+				: Slim::Plugin::InternetRadio::Plugin::RadioIO->_pluginDataFor('icon');
+				
 			return {
 				artist   => $artist,
 				title    => $title,
