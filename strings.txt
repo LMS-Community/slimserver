@@ -599,7 +599,7 @@ NOW_PLAYING
 	FI	Nyt soi
 	FR	Lecture
 	HE	מושמע כעת
-	IT	Riproduzione in corso
+	IT	Riproduzione
 	JA	再生中
 	NL	Speelt nu
 	NO	Spilles nå
