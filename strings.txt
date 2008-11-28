@@ -19014,7 +19014,7 @@ CLEANUP_DESC
 
 CLEANUP_DO
 	DA	Foretag oprydning
-	DE	Bereinigung wird durchgeführt
+	DE	Bereinigung durchführen
 	EN	Run Cleanup
 	ES	Ejecutar limpieza
 	FI	Suorita puhdistus
