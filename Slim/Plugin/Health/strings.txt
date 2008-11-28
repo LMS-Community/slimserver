@@ -80,7 +80,16 @@ PLUGIN_HEALTH_NETTEST_SELECT_RATE
 	SV	Välj hastighet genom att trycka på Upp / Ner.
 
 PLUGIN_HEALTH_NETTEST_TESTING_TO
+	DA	Tester
+	DE	Test für
 	EN	Testing To
+	ES	Probando a
+	FI	Testataan
+	FR	Test de
+	IT	Esecuzione verifica su
+	NL	Testen van
+	NO	Tester mot
+	SV	Testar med
 
 PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
 	DA	Ikke understøttet af denne afspiller

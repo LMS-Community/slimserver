@@ -409,7 +409,26 @@ ITUNES_PLAYLISTS_PROGRESS
 	SV	Import av iTunes-spellistor
 
 ITUNES_ARTWORK_PHASE_1_PROGRESS
+	DA	Import af coverbilleder hentet med iTunes
+	DE	Heruntergeladene iTunes-Plattenhüllen importieren
 	EN	iTunes Downloaded Artwork Import
+	ES	Importación de carátulas descargadas de iTunes
+	FI	iTunesin lataaman kansitaiteen tuominen
+	FR	Importations de pochettes iTunes téléchargées
+	IT	Importazione copertine di iTunes scaricate
+	NL	Import van door iTunes gedownloade hoesafbeeldingen
+	NO	Importering av omslag lastet ned fra iTunes
+	SV	Import av albumomslag som laddats ner från iTunes
 
 ITUNES_ARTWORK_PHASE_2_PROGRESS
+	DA	Import af brugerdefinerede coverbilleder fra iTunes
+	DE	Vom Benutzer hinzugefügte iTunes-Plattenhüllen importieren
 	EN	iTunes User-Added Artwork Import
+	ES	Importación de carátulas agregadas por el usuario de iTunes
+	FI	iTunesin käyttäjän lisäämän kansitaiteen tuominen
+	FR	Importations de pochettes iTunes ajoutées par l'utilisateur
+	IT	Importazione copertine di iTunes aggiunte dall'utente
+	NL	Import van door iTunes-gebruiker toegevoegde hoesafbeeldingen
+	NO	Importering av omslag lagt til av bruker fra iTunes
+	SV	Import av omslag som lagts till av användaren från iTunes
+
