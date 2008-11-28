@@ -202,10 +202,10 @@ Started =>
 ],
 StreamingFailed =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
-	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# BUFFERING
-	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_StopNextIfMore, \&_StopNextIfMore, \&_Invalid],	# PLAYING
-	[	\&_Invalid,		\&_StopNextIfMore, \&_StopNextIfMore, \&_Invalid],	# PAUSED
+	[	\&_BadState,	\&_NextOrStop,	\&_NextOrStop,	\&_BadState],		# BUFFERING
+	[	\&_BadState,	\&_NextIfMore,	\&_NextIfMore,	\&_BadState],		# WAITING_TO_SYNC
+	[	\&_Invalid,		\&_NextIfMore,	\&_NextIfMore,	\&_Invalid],		# PLAYING
+	[	\&_Invalid,		\&_NextIfMore,	\&_NextIfMore,	\&_Invalid],		# PAUSED
 ],
 EndOfStream =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
@@ -809,12 +809,10 @@ sub _NextIfMore {			# -> Idle; IF [moreTracks] THEN getNextTrack -> TrackWait EN
 	_getNextTrack($self, $params, 1);
 }
 
-sub _StopNextIfMore {		# -> Stopped, Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
+sub _NextOrStop {			# -> Stopped, Idle; IF [moreTracks] THEN getNextTrack -> TrackWait ENDIF
 	my ($self, $event, $params) = @_;
-	
-	# bug 10165: need to force stop in case the failure that got use here did not stop all active players
-	_Stop(@_);
-
+	_setPlayingState($self, STOPPED);
+	_setStreamingState($self, IDLE);
 	_getNextTrack($self, $params, 1);
 }
 
