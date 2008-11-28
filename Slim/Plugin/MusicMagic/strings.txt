@@ -55,7 +55,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	ZH_CN	这个选项决定了导入MusicIP播放表所使用的格式。
 
 SETUP_MIX_TYPE
-	DA	Mix-type
+	DA	Mikstype
 	DE	Mix: Typ
 	EN	Mix Type
 	ES	Tipo de mezcla
@@ -83,7 +83,7 @@ SETUP_MIX_TYPE_DESC
 	ZH_CN	您的MusicIP混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
 
 SETUP_MIX_SIZE
-	DA	Mix: størrelse
+	DA	Miks: størrelse
 	DE	Mix: Größe
 	EN	Mix Size
 	ES	Tamaño de mezcla
@@ -112,14 +112,14 @@ SETUP_MIX_SIZE_DESC
 	ZH_CN	请选择MusicIP混音量
 
 SETUP_MIX_FILTER
-	DA	Mix-filter
+	DA	Miksfilter
 	DE	Mixfilter
 	EN	Mix Filter
-	ES	Filtro de mezcla 
+	ES	Filtro de mezcla
 	FI	Miksin suodatin
-	FR	Filtre de mix 
+	FR	Filtre de mix
 	HE	מסנן מיקסים של 
-	IT	Filtro per raccolte 
+	IT	Filtro raccolta
 	NL	Mixfilter
 	NO	Miksefilter
 	SV	Mix: Filter
@@ -140,14 +140,14 @@ SETUP_MIX_FILTER_DESC
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在SqueezeCenter内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE
-	DA	Mix: Genre
+	DA	Miks: Genre
 	DE	Mix: Musikstil
 	EN	Mix Genre
 	ES	Género de mezcla
-	FI	miksin genre
+	FI	Miksin genre
 	FR	Genre de mix
 	HE	סגנון מיקס של 
-	IT	Genere della raccolta
+	IT	Genere raccolta
 	NL	Mixgenre
 	NO	Sjangermiks
 	SV	Mix: Genre
@@ -199,14 +199,14 @@ SETUP_REJECT_SIZE
 	DA	Afvisningsstørrelse
 	DE	Ablehnungsgröße
 	EN	Reject Size
-	ES	Tamaño de rechazo 
-	FI	N hylkäyskoko
-	FR	Taille de rejet 
+	ES	Rechazar tamaño
+	FI	Hylkäyskoko
+	FR	Taille de rejet
 	HE	גודל הפסילות ב-.
-	IT	N. elementi da scartare 
+	IT	N. di elementi da scartare
 	NL	Afkeurgrootte
 	NO	Avvisningsstørrelse
-	SV	Avvisningstyp 
+	SV	Avvisningsstorlek
 	ZH_CN	拒绝量
 
 SETUP_REJECT_SIZE_DESC
@@ -227,14 +227,14 @@ SETUP_MMSHOST
 	DA	HTTP-vært
 	DE	HTTP-Host
 	EN	HTTP Host
-	ES	Host HTTP de 
+	ES	Host HTTP
 	FI	HTTP-isäntä
-	FR	Hôte HTTP 
+	FR	Hôte HTTP
 	HE	מארח HTTP של 
-	IT	Host HTTP 
+	IT	Host HTTP
 	NL	HTTP-host
-	NO	http-vert
-	SV	HTTP-värd för 
+	NO	Http-vert
+	SV	HTTP-värd
 	ZH_CN	HTTP主机
 
 SETUP_MMSHOST_DESC
@@ -252,14 +252,14 @@ SETUP_MMSHOST_DESC
 	ZH_CN	请选择主机名或远程或本地的MusicIP服务器的IP地址
 
 SETUP_MIX_STYLE
-	DA	Mix: Stil
-	DE	Mix - Stil
+	DA	Miks: Stil
+	DE	Mix: Stil
 	EN	Mix Style
-	ES	Estilo de mezcla 
+	ES	Estilo de mezcla
 	FI	Miksin tyyli
-	FR	Style du mix 
+	FR	Style du mix
 	HE	סגנון מיקס של 
-	IT	Stile della raccolta 
+	IT	Stile della raccolta
 	NL	Mixstijl
 	NO	Stilmiks
 	SV	Mix: Stil
@@ -280,15 +280,15 @@ SETUP_MIX_STYLE_DESC
 	ZH_CN	有多接近艺人的风格 （0=不理睬（缺省），200=严格）
 
 SETUP_MIX_VARIETY
-	DA	Mix: Variation
+	DA	Miksx: Variation
 	DE	Mix: Vielseitigkeit
 	EN	Mix Variety
-	ES	Variedad de mezcla 
-	FI	miksivalikoima
-	FR	Variété du mix 
+	ES	Variedad de mezcla
+	FI	Miksivalikoima
+	FR	Variété du mix
 	HE	מגוון במיקס של 
-	IT	Varietà della raccolta 
-	NL	Variatie van mixen
+	IT	Varietà della raccolta
+	NL	Mixvariatie
 	NO	Blandingsmiks
 	SV	Mix: Urval
 	ZH_CN	混音品种变化
@@ -318,19 +318,19 @@ MUSICMAGIC_MIXING
 	IT	Raccolta MusicIP
 	NL	MusicIP-mixing
 	NO	MusicIP-miksing
-	SV	MusicIP-mixning
+	SV	MusicIP-mix
 	ZH_CN	MusicIP混音
 
 SETUP_MMMPLAYERSETTINGS
 	DA	Afspillerindstillinger for hvert miks
-	DE	Mix - Player-Einstellungen
+	DE	Mix-Player-Einstellungen
 	EN	Player settings for each mix
 	ES	Configuración de reproductor para cada mezcla
 	FI	Soittimen asetukset kutakin miksiä varten
 	FR	Réglages de la platine pour chaque mix
 	HE	הגדרות נגן  עבור כל מיקס
-	IT	Impostazioni del lettore per ciascuna raccolta
-	NL	Instellingen van -muzieksysteem voor elke mix
+	IT	Impostazioni del lettore per ogni raccolta
+	NL	Muzieksysteeminstellingen voor elke mix
 	NO	Spillerinnstillinger for hver miks
 	SV	Spelarinställningar för varje mix
 	ZH_CN	播放机上各个混音的设置
@@ -452,7 +452,16 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
+	DA	SqueezeCenter kan bruge MusicIP som kilde til at hente oplysninger om titel og genre. Du kan også fremstille lynmiks baseret på en genre, en kunstner eller et nummer. Det tager længere tid at læse oplysninger om titel og genre end kun at læse oplysninger om miksets status, navnlig når der kun søges efter nye eller ændrede numre.
+	DE	SqueezeCenter kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Sie können es auch dazu nutzen, um nur Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene zu erstellen. Es dauert viel länger, die Titel- und Stilrichtungsangaben zu lesen als nur den mischbaren Status, vor allem wenn Sie nur nach neuen und geänderten Titeln suchen.
 	EN	SqueezeCenter can use your MusicIP program as source for title and genre information. Or you can use it to only generate instant mixes on genre, artist and song level. Reading title and genre information is much slower than reading the mixable status only, especially when scanning for new and changed songs only.
+	ES	SqueezeCenter puede usar el programa MusicIP como origen para la información de título y de género. O se puede usar sólo para generar mezclas instantáneas por género, artista y canción. Leer la información de título y género es mucho más lento que leer sólo el estado mezclable, especialmente cuando se examina sólo en busca de canciones nuevas y cambiadas.
+	FI	SqueezeCenter voi käyttää MusicIP-ohjelmaa nimi- ja genretietojen lähteenä. Voit myös käyttää sitä ainoastaan välittömien miksien luomiseen genre-, artisti- ja kappaletasolla. Nimi- ja genretietojen lukeminen on paljon hitaampaa kuin ainoastaan miksattavien tietojen lukeminen, erityisesti kun etsitään vain uusia ja muutettuja kappaleita.
+	FR	Le SqueezeCenter peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer uniquement des mix instantanés par genre, par artiste ou par morceau. La lecture des informations de titre et de genre est plus lente que la lecture de l'état mixable uniquement, en particulier lors de la recherche des nouveaux morceaux ou des morceaux modifiés.
+	IT	In SqueezeCenter il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. In alternativa è possibile utilizzarlo solo per generare raccolte rapide in base al genere, all'artista e ai brani. La lettura di informazioni relative a titolo e genere risulta molto più lenta della lettura limitata allo stato della raccolta, in particolare durante la ricerca di brani nuovi e modificati.
+	NL	SqueezeCenter kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Je kunt het ook gebruiken om alleen instantmixen te maken op genre, artiest en liedje. Het lezen van titel- en genre-informatie is veel langzamer dan het lezen van alleen de mixbaarheidsstatus, vooral wanneer er alleen op nieuwe en gewijzigde liedjes wordt gescand.
+	NO	SqueezeCenter kan bruke MusicIP-programmet som kilde for tittel- og sjangerinformasjon, eller du kan bruke det til å lage mikser på et øyeblikk ut fra sjanger, artist og sang. Det går mye saktere å lese tittel- og sjangerinformasjon enn miksstatusen, særlig når du kun søker etter nye og endrede sanger.
+	SV	SqueezeCenter kan använda MusicIP som källa till titel- och genreinformation. Dessutom kan du snabbt skapa mixer på genre-, artist- eller låtnivå. Det tar mycket längre tid att läsa in titel- och genreinformation än mixstatus, i synnerhet när programmet endast söker efter nya och ändrade låtar.
 
 MMMMIXTYPE_TRACKS
 	CS	Číslo skladby
@@ -632,7 +641,26 @@ MUSICIP_CREATEMIX
 	SV	Skapa MusicIP Mix
 
 MUSICIP_READSONGDATA
+	DA	Importer alle data om et nummer fra MusicIP (langsomt)
+	DE	Alle Titeldaten von MusicIP importieren (langsamer)
 	EN	Import all song data from MusicIP (slower)
+	ES	Importar todos los datos de canciones de MusicIP (más lento)
+	FI	Tuo kaikki musiikkitiedot MusicIP:stä (hitaampi)
+	FR	Importer toutes les données des morceaux de MusicIP (plus lent)
+	IT	Importa tutti i dati dei brani da MusicIP (più lento)
+	NL	Alle nummergegevens uit MusicIP importeren (langzamer)
+	NO	Importer all sangdata fra MusicIP (saktere)
+	SV	Importera all låtinformation från MusicIP (långsammare)
 
 MUSICIP_MIXABLE_CHECK
+	DA	Læs kun miksstatus fra MusicIP (hurtigere)
+	DE	Nur mischbaren Status von MusicIP lesen (schneller)
 	EN	Only read mixable status from MusicIP (faster)
+	ES	Sólo leer estado mezclable de MusicIP (más rápido)
+	FI	Lue vain miksattava tila MusicIP:stä (nopeampi)
+	FR	Lire uniquement l'état mixable de MusicIP (plus rapide)
+	IT	Leggi solo lo stato della raccolta da MusicIP (più rapido)
+	NL	Alleen mixbaarheidsstatus van MusicIP lezen (sneller)
+	NO	Les kun miksstatus fra MusicIP (raskere)
+	SV	Läs endast in mixstatus från MusicIP (snabbare)
+

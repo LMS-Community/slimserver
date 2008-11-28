@@ -251,16 +251,52 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	SV	Obs! Om du vill konfigurera Last.fm-kontot klickar du på fliken Avancerat och väljer sedan Last.fm Audioscrobbler.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO
+	DA	Indsend oplysninger om hvilke numre jeg hører på internetradio.
+	DE	Internetradio scrobbeln.
 	EN	Scrobble Internet Radio.
+	ES	Scrobble en radio por Internet.
+	FI	Lähetä nettiradion tiedot.
+	FR	Envoyer la radio Internet.
+	IT	Registra i brani della radio su Internet.
+	NL	Scrobbel internetradio.
+	NO	Scrobble Internett-radio.
+	SV	Skrobbla webbradio.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_DESC
+	DA	Hvis du indsender oplysninger om hvilke numre du hører på internetradio, vil din profil på Last.fm muligvis komme til at indeholde uønskede data. Du kan deaktivere funktionen til at indsende oplysninger om hvilke numre du hører, for alle numre du hører på radioen ved at ændre denne indstilling. Du kan dog stadig markere de numre du er vild med.
+	DE	Das Scrobbeln der Internetradiotitel kann dazu führen, dass in Ihr Last.fm-Profil unerwünschte Daten aufgenommen werden. Das Scrobbeln aller Internetradiotitel kann deaktiviert werden, indem diese Option geändert wird. Ihre liebsten Radiotitel bleiben Ihnen natürlich dennoch erhalten.
 	EN	Scrobbling Internet Radio tracks may cause your Last.fm profile to include unwanted data.  You can disable scrobbling of all radio tracks by changing this option.  Radio tracks may still be loved, however.
+	ES	Si hace scrobble en pistas de radio por Internet, puede que su perfil de Last.fm incluya datos no deseados. Puede desactivar la función de scrobble para todas las pistas de radio si cambia esta opción. A pesar de ello, podrá seguir teniendo pistas como favoritas.
+	FI	Nettiradion raitojen tietojen lähettäminen saattaa aiheuttaa sen, että Last.fm-profiilisi sisällyttää ei-toivottuja tietoja.  Voit poistaa kaikkien radioraitojen tietojen lähettämisen käytöstä muuttamalla tämän asetuksen.  Radioraidat voidaan silti yhä nimetä rakkaiksi.
+	FR	l'envoi des morceaux des radios Interner risque d'inclure des données non sollicitées dans votre profil Last.fm.  Vous pouvez désactiver l'envoi de tous les morceaux des radios Internet en modifiant cette option.  Vous pouvez tout de même continuer à faire des morceaux des coups de cœur.
+	IT	La registrazione dei brani della radio su Internet potrebbe causare l'inclusione di dati indesiderati nel profilo Last.fm. È possibile disattivare la registrazione di tutti i brani della radio modificando le impostazioni dell'opzione. È comunque possibile aggiungere tali brani ai preferiti.
+	NL	Wanneer je internetradionummers scrobbelt, bevat je Last.fm-profiel misschien ongewenste gegevens. Je kunt het scrobbelen van alle radionummers uitschakelen door deze optie te wijzigen. U kunt echter nog steeds genieten van uw favoriete radionummers.
+	NO	Hvis du scrobbler spor fra Internett-radio, kan det føre til at uønsket data legges til Last.fm-profilen din. Du kan deaktivere scrobbling av alle radiospor ved å endre dette alternativet. Radiospor kan fremdeles favoriseres.
+	SV	Om du väljer att skrobbla webbradiospåren kan det hända att oönskade data hamnar i din Last.fm-profil. Avaktivera skrobbling genom att ändra det här alternativet. Radiospår kan fortfarande väljas som favoriter.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_YES
+	DA	Ja, indsend oplysninger om hvilke numre jeg hører på internetradio.
+	DE	Ja, Internetradiotitel scrobbeln.
 	EN	Yes, scrobble Internet Radio tracks.
+	ES	Sí, hacer scrobble en pistas de radio por Internet.
+	FI	Kyllä, lähetä nettiradioraitojen tiedot.
+	FR	Envoyer les morceaux des radios Internet.
+	IT	Sì, registra i brani della radio su Internet.
+	NL	Ja, internetradionummers scrobbelen.
+	NO	Ja, scrobble spor fra Internett-radio.
+	SV	Ja, skrobbla webbradiospåren.
 
 SETUP_PLUGIN_AUDIOSCROBBLER_INCLUDE_RADIO_NO
+	DA	Nej, indsend ikke oplysninger om hvilke numre jeg hører på internetradio.
+	DE	Nein, Internetradiotitel nicht scrobbeln.
 	EN	No, do not scrobble Internet Radio tracks.
+	ES	No, no hacer scrobble en pistas de radio por Internet.
+	FI	Älä lähetä nettiradion raitojen tietoja.
+	FR	Ne pas envoyer les morceaux des radios Internet.
+	IT	No, non registrare i brani della radio su Internet.
+	NL	Nee, internetradionummers niet scrobbelen.
+	NO	Nei, ikke scrobble spor fra Internett-radio.
+	SV	Nej, skrobbla inte webbradiospår.
 
 PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
 	DA	Indsend ikke

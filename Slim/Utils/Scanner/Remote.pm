@@ -136,13 +136,13 @@ sub scanURL {
 			}
 			
 			if ( $params->{aid} ) {
-				my $scanData = $client->scanData || {};
-				$scanData->{ $url } = {
+				my $song = $args->{song};
+				$song->{scanData} ||= {}; 
+				$song->{scanData}->{$url} = {
 					streamNum => $params->{aid},
 					metadata  => undef,
 					headers   => undef,
 				};
-				$client->scanData( $scanData );
 			}
 		}
 	}

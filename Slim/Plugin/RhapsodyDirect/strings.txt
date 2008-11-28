@@ -191,16 +191,16 @@ PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
 	SV	Det gick inte att hämta kontodetaljer från SqueezeNetwork.
 
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
-	DA	Ugyldig afspilningssession.
-	DE	Ungültige Wiedergabesitzung.
+	DA	Ugyldig afspilningssession. Der kan højst vælges tre streams ad gangen.
+	DE	Ungültige Wiedergabesitzung. Gleichzeitig dürfen maximal nur drei Streams genutzt werden.
 	EN	Invalid playback session. A max of three streams are allowed at one time.
-	ES	Sesión de reproducción no válida.
-	FI	Toistoistunto ei kelpaa.
-	FR	Session de lecture non valide.
-	IT	Sessione di riproduzione non valida.
-	NL	Ongeldige afspeelsessie.
-	NO	Ugyldig avspillingsøkt.
-	SV	Ogiltig uppspelningssession.
+	ES	Sesión de reproducción no válida. Se permite un máximo de tres secuencias simultáneas.
+	FI	Toistoistunto ei kelpaa. Yhdellä kertaa sallitaan korkeintaan kolme virtaa.
+	FR	Session de lecture non valide. Seuls trois flux peuvent être lus en même temps.
+	IT	Sessione di riproduzione non valida. È consentito un massimo di tre stream per volta.
+	NL	Ongeldige afspeelsessie. Er zijn maximaal drie streams tegelijk toegestaan.
+	NO	Ugyldig avspillingsøkt. Maksimalt tre strømmer er tillatt om gangen.
+	SV	Felaktig uppspelningssession. Endast tre strömmar kan spelas upp samtidigt.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
 	DA	Rhapsody kan ikke spille når der er så mange synkroniserede afspillere. Du skal ophæve synkroniseringen med en eller flere afspillere.
@@ -249,3 +249,4 @@ PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
 	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
 	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
+
