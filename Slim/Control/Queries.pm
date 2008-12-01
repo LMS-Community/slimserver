@@ -101,7 +101,7 @@ sub alarmPlaylistsQuery {
 
 				my $subitem = {
 					text    => $choice->{title},
-					radio   => $radio,
+					radio   => $radio + 0,
 					nextWindow => 'refreshOrigin',
 					actions => {
 						do => {

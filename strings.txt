@@ -19171,7 +19171,7 @@ CLEANUP_DELETING
 PLAYLIST_MODE
 	DA	Brug afspilningslister
 	DE	Wiedergabelisten-Modus
-	EN	Playlist Mode
+	EN	Playlist Mode (Beta)
 	ES	Modo de lista de reproducción
 	FI	Soittoluettelotila
 	FR	Mode liste de lecture
