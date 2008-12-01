@@ -28,7 +28,9 @@ my $prefs = preferences('server');
 
 my $log = logger('player.streaming.direct');
 
-use constant DEFAULT_TYPE => 'wma';
+use constant DEFAULT_TYPE        => 'wma';
+use constant META_STATUS_PARTIAL => 1;
+use constant META_STATUS_FINAL   => 2;
 
 # Use the same random GUID for all connections
 our $guid;
@@ -189,7 +191,7 @@ sub requestString {
 		"Pragma: no-cache,rate=1.0000000,stream-offset=0:0,max-duration=0",
 		"Pragma: stream-time=$streamtime",
 		"Pragma: request-context=$context",
-		"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=18000",
+		"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=21000",
 		"Pragma: Speed=5.000",
 		"Pragma: xPlayStrm=1",
 		"Pragma: stream-switch-count=$streamCount",
@@ -335,38 +337,94 @@ sub parseMetadata {
 	map { $guid .= $_ } unpack( 'H*', substr $metadata, 0, 16 );
 	
 	if ( $guid eq '59dacfc059e611d0a3ac00a0c90348f6' ) {
-		$log->is_debug && $log->debug( "ASF_Command_Media: $metadata" );
+		# Strip first 16 bytes of metadata (GUID)
+		substr $metadata, 0, 16, '';
 		
-		# See if there is a parser for this stream
-		my $parser = Slim::Formats::RemoteMetadata->getParserFor( $song->{streamUrl} );
-		if ( $parser ) {
-			my $handled = eval { $parser->( $client, $song->{streamUrl}, $metadata ) };
-			if ( $@ ) {
-				my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
-				$log->error( "Metadata parser $name failed: $@" );
-			}
-			return if $handled;
-		}
+		# Next 8 bytes is the length field.  First byte is used to
+		# indicate if this is a partial or final packet
+		my $status = unpack 'C', substr( $metadata, 0, 8, '' );
 		
-		substr $metadata, 0, 24, '';
+		$song->{wmaMetaData} ||= '';
 		
-		# See if the metadata matches a common format
-		# UTF-16LE URI-escaped query string terminated by a null
-		# This format is used by at least RadioIO's WMA streams and some other providers
-		$metadata = eval { Encode::decode( 'UTF-16LE', $metadata ) };
-		if ( $@ ) {
-			$log->is_debug && $log->debug( "Decoding of WMA metadata failed: $@" );
+		# Buffer partial packets
+		if ( $status == META_STATUS_PARTIAL ) {
+			$song->{wmaMetaData} .= $metadata;
+			$log->is_debug && $log->debug( "ASF_Command_Media: Buffered partial packet, len " . length($metadata) );
 			return;
 		}
+		elsif ( $status == META_STATUS_FINAL ) {		
+			# Prepend previous chunks, if any
+			$metadata = delete( $song->{wmaMetaData} ) . $metadata;
 		
-		if ( $metadata =~ /(artist=[^\0]+)/ ) {
-			require URI::QueryParam;
-			my $uri  = URI->new( '?' . $1 );
-			my $meta = $uri->query_form_hash;
+			# Strip first byte if it is a length byte
+			my $len = unpack 'C', $metadata;
+			if ( $len == length($metadata) - 1 ) {
+				substr $metadata, 0, 1, '';
+			}
 			
-			$song->pluginData( wmaMeta => $meta );
+			# WMA Metadata is UTF-16LE
+			$metadata = eval { Encode::decode( 'UTF-16LE', $metadata ) };
+			if ( $@ ) {
+				$log->is_debug && $log->debug( "Decoding of WMA metadata failed: $@" );
+				return;
+			}
+		
+			$log->is_debug && $log->debug( "ASF_Command_Media: $metadata" );
+		
+			# See if there is a parser for this stream
+			my $parser = Slim::Formats::RemoteMetadata->getParserFor( $song->{streamUrl} );
+			if ( $parser ) {
+				my $handled = eval { $parser->( $client, $song->{streamUrl}, $metadata ) };
+				if ( $@ ) {
+					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
+					$log->error( "Metadata parser $name failed: $@" );
+				}
+				return if $handled;
+			}
+		
+			# See if the metadata matches a common format used by the SAM broadcaster
+			# http://www.spacialaudio.com
+			# URI-escaped query string terminated by a null
+			# This format is used by RadioIO's WMA streams and some other providers
+		
+			if ( !$song->pluginData('wmaHasData') && $metadata =~ /CAPTION\0([^\0]+)/i ) {
+				# use CAPTION formatted metadata unless we also have query-string metadata
+				my $cb = sub {
+					$song->pluginData( wmaMeta => {
+						title => $1,
+					} );
+				};
+				
+				# Delay metadata according to buffer size if we already have metadata
+				if ( $song->pluginData('wmaMeta') ) {
+					Slim::Music::Info::setDelayedCallback( $client, $cb );
+				}
+				else {
+					$cb->();
+				}
 			
-			$log->is_debug && $log->debug('Parsed WMA metadata from query string');
+				$log->is_debug && $log->debug('Parsed WMA metadata from CAPTION string');
+			}
+			elsif ( $metadata =~ /(artist=[^\0]+)/ ) {
+				require URI::QueryParam;
+				my $uri  = URI->new( '?' . $1 );
+				my $meta = $uri->query_form_hash;
+				
+				$log->is_debug && $log->debug('Parsed WMA metadata from query string');
+			
+				my $cb = sub {
+					$song->pluginData( wmaMeta => $meta );
+					$song->pluginData( wmaHasData => 1 );
+				};
+				
+				# Delay metadata according to buffer size if we already have metadata
+				if ( $song->pluginData('wmaHasData') ) {
+					Slim::Music::Info::setDelayedCallback( $client, $cb );
+				}
+				else {
+					$cb->();
+				}
+			}
 		}
 		
 		# If there is no parser, we ignore ASF_Command_Media

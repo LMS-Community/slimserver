@@ -701,7 +701,7 @@ sub directMetadata {
 	my $client = shift;
 	my $metadata = shift;
 
-	my $controller = $client->controller()->songStreamController();
+	my $controller = $client->controller()->songStreamController() || return;
 
 	# Will also get called for proxy streaming
 	# unless ($controller && $controller->isDirect()) {return;}
