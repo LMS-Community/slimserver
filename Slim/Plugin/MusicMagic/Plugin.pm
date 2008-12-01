@@ -988,7 +988,7 @@ sub cliMix {
 		my $base = {
 			actions => {
 				go => {
-					cmd => ['songinfo'],
+					cmd => ['trackinfo', 'items'],
 					params => {
 						menu => 'nowhere',
 					},
