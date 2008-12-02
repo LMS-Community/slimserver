@@ -51,7 +51,7 @@ use constant MAX_RETRY_TIME     => 86400;
 my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
 # Firmware location
-my $dir      = Slim::Utils::OSDetect::dirsFor('Firmware');
+my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
 
 # Download location
 sub BASE {
@@ -63,10 +63,8 @@ sub BASE {
 # Check interval when firmware can't be downloaded
 my $CHECK_TIME = INITIAL_RETRY_TIME;
 
-# Current Jive firmware file and version/revision
-my $JIVE_FW;
-my $JIVE_VER;
-my $JIVE_REV;
+# Available firmware files and versions/revisions
+my $firmwares = {};
 
 my $log = logger('player.firmware');
 
@@ -82,9 +80,6 @@ download().
 sub init {
 	# the files we need to download
 	my $files = {};
-	
-	# Special handling is needed for Jive firmware
-	init_jive();
 	
 	my $cachedir = $prefs->get('cachedir');
 	
@@ -146,32 +141,33 @@ sub init {
 	}
 }
 
-=head2 init_jive()
+=head2 init_firmware_download()
 
-Looks for a jive.version file and downloads firmware if missing.  If jive.version
+Looks for a $model.version file and downloads firmware if missing.  If $model.version
 is missing, downloads that too.	 If we are not a released build, also checks for
-updated jive.version file.
+updated $model.version file.
 
-To allow for locally built jive images, first looks for the files: custom.jive.version
-and custom.jive.bin in the cachedir.  If these exist then these are used in preference.
+To allow for locally built firmware images, first looks for the files: custom.$model.version
+and custom.$model.bin in the cachedir.  If these exist then these are used in preference.
 
 =cut
 
-sub init_jive {
+sub init_firmware_download {
+	my $model = shift;
 
-	my $version_file   = catdir( $prefs->get('cachedir'), 'jive.version' );
+	my $version_file   = catdir( $prefs->get('cachedir'), "$model.version" );
 
-	my $custom_version = catdir( $prefs->get('cachedir'), 'custom.jive.version' );
-	my $custom_image   = catdir( $prefs->get('cachedir'), 'custom.jive.bin' );
+	my $custom_version = catdir( $prefs->get('cachedir'), "custom.$model.version" );
+	my $custom_image   = catdir( $prefs->get('cachedir'), "custom.$model.bin" );
 	
 	if ( -r $custom_version && -r $custom_image ) {
-		$log->info("Using custom jive firmware $custom_version $custom_image");
+		$log->info("Using custom $model firmware $custom_version $custom_image");
 
 		$version_file = $custom_version;
-		$JIVE_FW = $custom_image;
+		$firmwares->{$model}->{file} = $custom_image;
 
 		my $version = read_file($version_file);
-		($JIVE_VER, $JIVE_REV) = $version =~ m/^([^ ]+)\sr(\d+)/;
+		($firmwares->{$model}->{version}, $firmwares->{$model}->{revision}) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
 		Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $custom_image, 'binary');
 		
@@ -181,7 +177,7 @@ sub init_jive {
 	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
 	return unless $prefs->get('checkVersion');
 	
-	$log->info('Downloading jive.version file...');
+	$log->is_info && $log->info("Downloading $model.version file...");
 	
 	# Any async downloads in init must be started on a timer so they don't
 	# time out from other slow init things
@@ -189,12 +185,12 @@ sub init_jive {
 		undef,
 		time(),
 		sub {
-			downloadAsync( $version_file, \&init_jive_version_done, $version_file );
+			downloadAsync( $version_file, \&init_version_done, $version_file, $model );
 		},
 	);
 }
 
-=head2 init_jive_version_done($version_file)
+=head2 init_version_done($version_file, $model)
 
 Callback after the jive.version file has been downloaded.  Checks if we need
 to download a new bin file, and schedules another check for the version file
@@ -202,8 +198,9 @@ in 1 day.
 
 =cut
 
-sub init_jive_version_done {
+sub init_version_done {
 	my $version_file = shift;
+	my $model        = shift || 'jive';
 			
 	my $version = read_file($version_file);
 	
@@ -212,137 +209,153 @@ sub init_jive_version_done {
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
 	my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-	my $jive_file = catdir( $prefs->get('cachedir'), "jive_${ver}_r${rev}.bin" );
+	my $fw_file = catdir( $prefs->get('cachedir'), "${model}_${ver}_r${rev}.bin" );
 
-	if ( !-e $jive_file ) {		
-		$log->info("Downloading Jive firmware to: $jive_file");
+	if ( !-e $fw_file ) {		
+		$log->info("Downloading $model firmware to: $fw_file");
 	
-		downloadAsync( $jive_file, \&init_jive_done, $jive_file );
+		downloadAsync( $fw_file, \&init_fw_done, $fw_file, $model );
 	}
 	else {
-		$log->info("Jive firmware is up to date: $jive_file");
-		$JIVE_VER = $ver;
-		$JIVE_REV = $rev;
-		$JIVE_FW  = $jive_file;
+		$log->info("$model firmware is up to date: $fw_file");
+		$firmwares->{$model} = {
+			version  => $ver,
+			revision => $rev,
+			file     => $fw_file,
+		}
 	}
 
-	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $jive_file, 'binary');
+	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $fw_file, 'binary');
 	
-	# Check again for an updated jive.version in 12 hours
-	$log->debug('Scheduling next jive.version check in 12 hours');
+	# Check again for an updated $model.version in 12 hours
+	$log->debug('Scheduling next $model.version check in 12 hours');
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 43200,
-		\&init_jive,
+		sub {
+			init_fw_download($model);
+		},
 	);
 }
 
-=head2 init_jive_done($jive_file)
+=head2 init_fw_done($fw_file, $model)
 
-Callback after Jive firmware has been downloaded.  Receives the filename
-of the newly downloaded firmware.  Removes old Jive firmware file if one exists.
+Callback after firmware has been downloaded.  Receives the filename
+of the newly downloaded firmware and the $modelname. 
+Removes old firmware file if one exists.
 
 =cut
 
-sub init_jive_done {
-	my $jive_file = shift;
+sub init_fw_done {
+	my $fw_file = shift;
+	my $model   = shift;
 	
 	opendir my ($dirh), $prefs->get('cachedir');
 	
-	my @files = grep { /^jive.*\.bin(\.tmp)?$/ } readdir $dirh;
+	my @files = grep { /^$model.*\.bin(\.tmp)?$/ } readdir $dirh;
 	
 	closedir $dirh;
 	
 	for my $file ( @files ) {
-		next if $file eq basename($jive_file);
-		$log->info("Removing old Jive firmware file: $file");
-		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
+		next if $file eq basename($fw_file);
+		$log->info("Removing old $model firmware file: $file");
+		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old $model firmware file: $file: $!");
 	}
 	
-	my ($ver, $rev) = $jive_file =~ m/jive_([^_]+)_r([^\.]+).bin/;
+	my ($ver, $rev) = $fw_file =~ m/${model}_([^_]+)_r([^\.]+).bin/;
 	
-	$JIVE_VER = $ver;
-	$JIVE_REV = $rev;
-	$JIVE_FW  = $jive_file;
+	$firmwares->{$model} = {
+		version  => $ver,
+		revision => $rev,
+		file     => $fw_file,
+	}
 }
 
-=head2 init_jive_error()
+=head2 init_fw_error($model)
 
-Called if Jive firmware download failed.  Checks if another firmware exists in cache.
+Called if firmware download failed.  Checks if another firmware exists in cache.
 
 =cut
 
-sub init_jive_error {	
+sub init_fw_error {	
+	my $model = shift || 'jive';
+	
 	# Check if we have a usable Jive firmware
-	my $version_file = catdir( $prefs->get('cachedir'), 'jive.version' );
+	my $version_file = catdir( $prefs->get('cachedir'), "$model.version" );
 	
 	if ( -e $version_file ) {
 		my $version = read_file($version_file);
 
 		my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-		my $jive_file = catdir( $prefs->get('cachedir'), "jive_${ver}_r${rev}.bin" );
+		my $fw_file = catdir( $prefs->get('cachedir'), "${model}_${ver}_r${rev}.bin" );
 
-		if ( -e $jive_file ) {
-			$log->info("Jive firmware download had an error, using existing firmware: $jive_file");
-			$JIVE_VER = $ver;
-			$JIVE_REV = $rev;
-			$JIVE_FW  = $jive_file;
+		if ( -e $fw_file ) {
+			$log->info("$model firmware download had an error, using existing firmware: $fw_file");
+			$firmwares->{$model} = {
+				version  => $ver,
+				revision => $rev,
+				file     => $fw_file,
+			}
 		}
 	}
 	
 	# Note: Server will keep trying to download a new one
 }
 
-=head2 jive_url()
+=head2 url()
 
-Returns a URL for downloading the current Jive firmware.  Returns
+Returns an URL for downloading the current player firmware.  Returns
 undef if firmware has not been downloaded.
 
 =cut
 
-sub jive_url {
+sub url {
 	my $class = shift;
+	my $model = shift || 'jive';
 
-	return unless $JIVE_FW;
+	unless ($firmwares->{$model} && $firmwares->{$model}->{file}) {
+		init_firmware_download($model);
+		return;
+	}
 	
 	return 'http://'
 		. Slim::Utils::Network::serverAddr() . ':'
 		. preferences('server')->get('httpport')
-		. '/firmware/' . basename($JIVE_FW);
+		. '/firmware/' . basename($firmwares->{$model}->{file});
 }
 
-=head2 jive_needs_upgrade( $current_version )
+=head2 need_upgrade( $current_version, $model )
 
-Returns 1 if Jive needs an upgrade.  Returns undef if not, or
+Returns 1 if $model player needs an upgrade.  Returns undef if not, or
 if there is no firmware downloaded.
 
 =cut
 
-sub jive_needs_upgrade {
-	my ( $class, $current ) = @_;
+sub need_upgrade {
+	my ( $class, $current, $model ) = @_;
 	
-	return unless $JIVE_FW && $JIVE_VER;
+	return unless $firmwares->{$model} && $firmwares->{$model}->{file} && $firmwares->{$model}->{version};
 	
 	my ($cur_version, $cur_rev) = $current =~ m/^([^ ]+)\sr(\d+)/;
 	
 	if ( !$cur_version || !$cur_rev ) {
-		logError("Jive sent invalid current version: $current");
+		logError("$model sent invalid current version: $current");
 		return;
 	}
 	
 	# Force upgrade if the version doesn't match, or if the rev is older
 	# Allows newer firmware to work without forcing a downgrade
 	if ( 
-		( $JIVE_VER ne $cur_version )
+		( $firmwares->{$model}->{version} ne $cur_version )
 		||
-		( $JIVE_REV > $cur_rev )
+		( $firmwares->{$model}->{revision} > $cur_rev )
 	) {
-		$log->debug("Jive needs upgrade! (has: $current, needs: $JIVE_VER $JIVE_REV)");
+		$log->debug("$model needs upgrade! (has: $current, needs: $firmwares->{$model}->{version} $firmwares->{$model}->{revision})");
 		return 1;
 	}
 	
-	$log->debug("Jive doesn't need an upgrade (has: $current, server has: $JIVE_VER $JIVE_REV)");
+	$log->debug("$model doesn't need an upgrade (has: $current, server has: $firmwares->{$model}->{version} $firmwares->{$model}->{revision})");
 	
 	return;
 }
@@ -421,7 +434,7 @@ This timer tries to download any missing firmware in the background every 10 min
 =cut
 
 sub downloadAsync {
-	my $file     = shift;
+	my $file = shift;
 	my ( $cb, @pt ) = @_;
 	
 	# URL to download
@@ -527,6 +540,8 @@ file and resets the check timer.
 sub downloadAsyncError {
 	my ( $http, $error ) = @_;
 	my $file = $http->params('file');
+	my $cb   = $http->params('cb');
+	my $pt   = $http->params('pt');
 	
 	# Clean up
 	unlink "$file.tmp" if -e "$file.tmp"; 
@@ -537,7 +552,13 @@ sub downloadAsyncError {
 		int( $CHECK_TIME / 60 ),
 	));
 	
-	Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync );
+	Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync,
+		{
+			file => $file,
+			cb   => $cb,
+			pt   => $pt,
+		},
+	 );
 	
 	# Increase retry time in case of multiple failures, but don't exceed MAX_RETRY_TIME
 	$CHECK_TIME *= 2;
@@ -547,8 +568,9 @@ sub downloadAsyncError {
 	
 	# Bug 9230, if we failed to download a Jive firmware but have a valid one in Cache already,
 	# we should still offer it for download
-	if ( $file =~ /jive/ ) {
-		init_jive_error();
+	my $model = scalar @$pt > 1 ? $pt->[1] : 'jive';
+	if ( $file =~ /$model/ ) {
+		init_fw_error($model);
 	}
 }
 

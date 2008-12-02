@@ -2249,9 +2249,10 @@ sub firmwareUpgradeQuery {
 	}
 
 	my $firmwareVersion = $request->getParam('firmwareVersion');
+	my $model           = $request->getParam('machine');
 	
 	# always send the upgrade url this is also used if the user opts to upgrade
-	if ( my $url = Slim::Utils::Firmware->jive_url() ) {
+	if ( my $url = Slim::Utils::Firmware->url($model) ) {
 		# Bug 6828, Send relative firmware URLs for Jive versions which support it
 		my ($cur_rev) = $firmwareVersion =~ m/\sr(\d+)/;
 		if ( $cur_rev >= 1659 ) {
@@ -2262,7 +2263,7 @@ sub firmwareUpgradeQuery {
 		}
 	}
 	
-	if ( Slim::Utils::Firmware->jive_needs_upgrade( $firmwareVersion ) ) {
+	if ( Slim::Utils::Firmware->need_upgrade( $firmwareVersion, $model ) ) {
 		# if this is true a firmware upgrade is forced
 		$request->addResult( firmwareUpgrade => 1 );
 	}
