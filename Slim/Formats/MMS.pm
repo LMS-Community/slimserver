@@ -148,7 +148,7 @@ sub requestString {
 
 		push @headers, (
 			"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
-			"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=18000",
+			"Pragma: LinkBW=2147483647, AccelBW=1048576, AccelDuration=21000",
 			"Pragma: Speed=5.000",
 			"Pragma: xPlayStrm=1",
 			"Pragma: stream-switch-count=1",

@@ -524,7 +524,7 @@ sub getCurrentTitle {
 
 # Return the amount of seconds the current stream is behind real-time
 sub getStreamDelay {
-	my ( $client, $url ) = @_;
+	my $client = shift;
 	
 	my $bitrate = $client->streamingSong()->streambitrate() || 128000;
 	my $delay   = 0;
@@ -554,7 +554,7 @@ sub setDelayedTitle {
 		# Some mp3 stations can have 10-15 seconds in the buffer.
 		# This will delay metadata updates according to how much is in
 		# the buffer, so title updates are more in sync with the music
-		my $delay = getStreamDelay( $client, $url );
+		my $delay = getStreamDelay($client);
 		
 		# No delay on the initial metadata
 		if ( !$metaTitle ) {
@@ -590,6 +590,21 @@ sub setDelayedTitle {
 	}
 	
 	return $metaTitle;
+}
+
+sub setDelayedCallback {
+	my ( $client, $cb ) = @_;
+	
+	my $delay = getStreamDelay($client);
+	
+	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
+	$log->is_info && $log->info("Delaying callback by $delay secs");
+	
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + $delay,
+		$cb,
+	);
 }
 
 # If no metadata is available,

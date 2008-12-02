@@ -174,7 +174,7 @@ sub parseMetadata {
 		my $metaUrl = $1;
 		if ( $metaUrl =~ /\.(?:jpe?g|gif|png)$/i ) {
 			# Set this in the artwork cache after a delay
-			my $delay = Slim::Music::Info::getStreamDelay( $client, $url );
+			my $delay = Slim::Music::Info::getStreamDelay($client);
 			
 			Slim::Utils::Timers::setTimer(
 				$client,
@@ -380,8 +380,7 @@ sub getMetadataFor {
 	
 	# Check for parsed WMA metadata, this is here because WMA may
 	# use HTTP protocol handler
-	my $song = $client->playingSong();
-	if ( $song->{scanData} ) { # indicates it's WMA
+	if ( my $song = $client->playingSong() ) {
 		if ( my $meta = $song->pluginData('wmaMeta') ) {
 			my $data = {};
 			if ( $meta->{artist} ) {
@@ -393,7 +392,10 @@ sub getMetadataFor {
 			if ( $meta->{title} ) {
 				$data->{title} = $meta->{title};
 			}
-		
+			if ( $meta->{cover} ) {
+				$data->{cover} = $meta->{cover};
+			}
+	
 			if ( scalar keys %{$data} ) {
 				return $data;
 			}

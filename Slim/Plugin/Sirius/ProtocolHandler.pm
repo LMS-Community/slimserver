@@ -366,13 +366,15 @@ sub parseMetadata {
 	if ( $guid ne '59dacfc059e611d0a3ac00a0c90348f6' ) { # ASF_Command_Media
 		return $class->SUPER::parseMetadata( $client, $song, $metadata );
 	}
+	
+	substr $metadata, 0, 24, '';
 		
 	# Format of the metadata stream is:
 	# TITLE <title>|ARTIST <artist>\0
 	
 	# WMA text is in UTF-16, if we can't decode it, just wait for more data
 	# Cut off first 24 bytes (16 bytes GUID and 8 bytes object_size)
-	$metadata = eval { Encode::decode('UTF-16LE', substr( $metadata, 24 ) ) } || return;
+	$metadata = eval { Encode::decode( 'UTF-16LE', $metadata ) } || return;
 	
 	#$log->debug( "ASF_Command_Media: $metadata" );
 	
