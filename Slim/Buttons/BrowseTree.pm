@@ -404,7 +404,7 @@ sub setMode {
 	# top level, we show MUSIC FOLDER
 	if (scalar @levels == 1) {
 
-		push @headers, $client->string('MUSIC');
+		push @headers, $client->string('BROWSE_MUSIC_FOLDER');
 
 	} else {
 
