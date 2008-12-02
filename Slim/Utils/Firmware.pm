@@ -314,10 +314,14 @@ sub url {
 	my $class = shift;
 	my $model = shift || 'jive';
 
-	unless ($firmwares->{$model} && $firmwares->{$model}->{file}) {
+	unless ($firmwares->{$model}) {
+		# don't trigger download more than once
+		$firmwares->{$model} = {};
 		init_firmware_download($model);
 		return;
 	}
+	
+	return unless $firmwares->{$model}->{file};
 	
 	return 'http://'
 		. Slim::Utils::Network::serverAddr() . ':'
