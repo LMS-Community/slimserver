@@ -371,20 +371,17 @@ LIBRARY_CONTAINS
 
 MUSIC
 	CS	Hudební archiv
-	DA	Musikmappe
-	DE	Musikordner
-	EN	Music Folder
-	ES	Carpeta de música
-	FI	Musiikkikansio
-	FR	Dossier de musique
-	HE	תיקיית מוסיקה
-	IT	Cartella Musica
-	JA	ミュージック フォルダ
-	NL	Muziekmap
-	NO	Musikkmappe
+	DA	Musik
+	DE	Musik
+	EN	Music
+	ES	Música
+	FI	Musiik
+	FR	Musique
+	IT	Musica
+	NL	Muziek
+	NO	Musikk
 	PT	Música
-	SV	Musikmapp
-	ZH_CN	音乐文件夹
+	SV	Musik
 
 SETTINGS
 	CS	Nastavení

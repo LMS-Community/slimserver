@@ -64,7 +64,7 @@ sub browsetree {
 
 			push @{$params->{'pwd_list'}}, {
 				'hreftype'     => 'browseTree',
-				'title'        => $i == 0 ? string('MUSIC') :
+				'title'        => $i == 0 ? string('BROWSE_MUSIC_FOLDER') :
 						($obj->title ? $obj->title : Slim::Music::Info::fileName($obj->url)),
 				'hierarchy'    => join('/', @levels[0..$i]),
 			};
