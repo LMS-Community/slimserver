@@ -52,21 +52,35 @@ sub add {
 		$url = $url->url;
 	}
 	
-	my $max = SDI::Service::Model::Favorite->max( $self->{userid} );
-	
-	my $fav = SDI::Service::Model::Favorite->find_or_create( {
+	# See if this favorite already exists
+	my ($fav) = SDI::Service::Model::Favorite->search(
 		userid => $self->{userid},
 		url    => $url,
-		title  => $title,
-		num    => $max + 1,
-	} );
+	);
 	
-	$log->debug( "Added favorite $title ($url) at index " . ( $max + 1 ) );
+	if ( !$fav ) {	
+		my $max = SDI::Service::Model::Favorite->max( $self->{userid} );
+	
+		$fav = SDI::Service::Model::Favorite->find_or_create( {
+			userid => $self->{userid},
+			url    => $url,
+			title  => $title,
+			num    => $max + 1,
+		} );
+		
+		$log->debug( "Added favorite $title ($url) at index " . ( $max + 1 ) );
+	}
+	else {
+		$fav->title( $title );
+		$fav->update;
+		
+		$log->debug("Favorite $url already exists");
+	}
 	
 	# NOMEMCACHE
 	# Slim::Utils::Cache->new->set( 'favorites_last_mod_' . $self->{userid}, time(), 86400 * 30 );
 	
-	return $fav->num;
+	return $fav->num - 1;
 }
 
 sub hasUrl {
@@ -89,7 +103,7 @@ sub findUrl {
 
 	if ( $fav ) {
 		$log->is_debug && $log->debug( "User has favorite $url at index " . $fav->num );
-		return $fav->num;
+		return $fav->num - 1;
 	}
 
 	return;
@@ -119,7 +133,7 @@ sub deleteIndex {
 	
 	my ($fav) = SDI::Service::Model::Favorite->search(
 		userid => $self->{userid},
-		num    => $index,
+		num    => $index + 1,
 	);
 	
 	if ( $fav ) {
@@ -173,14 +187,31 @@ sub hasHotkey {
 sub setHotkey {
 	my ( $self, $index, $key ) = @_;
 	
+	if ( defined $key ) {
+		# Bug 10129, if this hotkey is assigned to another favorite, clear it
+		my @others = SDI::Service::Model::Favorite->search(
+			userid => $self->{userid},
+			hotkey => $key,
+		);
+	
+		for my $other ( @others ) {
+			$other->hotkey( undef );
+			$other->update;
+		
+			$log->is_debug && $log->debug( "Removed old hotkey $key on " . $other->url );
+		}
+	}
+	
 	my ($fav) = SDI::Service::Model::Favorite->search(
 		userid => $self->{userid},
-		num    => $index,
+		num    => $index + 1,
 	);
 	
 	if ( $fav ) {
 		$fav->hotkey( $key );
 		$fav->update;
+		
+		$log->is_debug && $log->debug("Set hotkey for index $index to $key");
 	}
 	
 	return 1;

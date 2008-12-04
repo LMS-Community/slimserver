@@ -629,6 +629,8 @@ sub init {
 		
 								my $modes = $client->display->modes;
 								my @opts  = ();
+								
+								my $x     = 0;
 		
 								for my $mode (@{ $prefs->client($client)->get('playingDisplayModes') }) {
 		
@@ -640,8 +642,9 @@ sub init {
 		
 									push @opts, {
 										'name'  => join(' ', @desc),
-										'value' => $mode,
+										'value' => $x,
 									};
+									$x++;
 								}
 		
 								$client->modeParam('listRef', \@opts);

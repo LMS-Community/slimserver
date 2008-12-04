@@ -7,13 +7,41 @@ use base qw(Slim::Utils::OS::Debian);
 
 sub dontSetUserAndGroup { 1 }
 
+sub initDetails {
+	my $class = shift;
+
+	$class->{osDetails} = $class->SUPER::initDetails();
+
+	$class->{osDetails}->{isReadyNAS} = 1;
+
+	return $class->{osDetails};
+}
+
+
 sub initPrefs {
 	my ($class, $prefs) = @_;
+	
+	$prefs->{dbsource} = 'dbi:mysql:database=slimserver';
+	
+	# if this is a sparc based ReadyNAS, do some performance tweaks
+	if ($class->{osDetails}->{osArch} =~ /sparc/) {	
+		$prefs->{scannerPriority}   = 20;
+		$prefs->{resampleArtwork}   = 0;
+		$prefs->{disableStatistics} = 1;
+	}
+}
 
-	$prefs->{dbsource}          = 'dbi:mysql:database=slimserver';
-	$prefs->{scannerPriority}   = 20;
-	$prefs->{resampleArtwork}   = 0;
-	$prefs->{disableStatistics} = 1;
+
+sub initMySQL {
+	my ($class, $dbclass) = @_;
+	
+	$dbclass->confFile( '/etc/mysql/my.cnf' );
+	
+	if (!$dbclass->dbh) {
+		$dbclass->startServer;
+	}
+
+	return 1;
 }
 
 

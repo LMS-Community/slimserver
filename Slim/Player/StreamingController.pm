@@ -822,7 +822,7 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 	my $newtime = $params->{'newtime'};
 	my $restartIfNoSeek = $params->{'restartIfNoSeek'};
 
-	my $song = playingSong($self);
+	my $song = playingSong($self) || return;
 	my $handler = $song->currentTrackHandler();
 
 	if ($newtime !~ /^[\+\-]/ && $newtime == 0) {

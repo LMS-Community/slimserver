@@ -89,6 +89,10 @@ sub init {
 					$class->socketFile($socket);
 				}
 			}
+			
+			elsif (Slim::Utils::OSDetect::getOS->get('isReadyNAS')) {
+				Slim::Utils::OSDetect::getOS->initMySQL($class);
+			}
 		}
 
 		return 1;
