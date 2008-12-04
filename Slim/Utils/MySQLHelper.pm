@@ -25,7 +25,6 @@ use DBI::Const::GetInfoType;
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(:ALL);
-use File::Which qw(which);
 use Proc::Background;
 use Time::HiRes qw(sleep);
 
@@ -70,30 +69,9 @@ sub init {
 
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
-	if ($prefs->get('dbsource') !~ /port=9092/) {
+	if ($prefs->get('dbsource') !~ /port=9092/ && Slim::Utils::OSDetect::getOS->initMySQL($class)) {
 
-		$log->info("Not starting MySQL - looks to be user configured.");
-
-		unless ($isWin) {
-
-			my $mysql_config = which('mysql_config');
-
-			# The user might have a socket file in a non-standard
-			# location. See bug 3443
-			if ($mysql_config && -x $mysql_config) {
-
-				my $socket = `$mysql_config --socket`;
-				chomp($socket);
-
-				if ($socket && -S $socket) {
-					$class->socketFile($socket);
-				}
-			}
-			
-			elsif (Slim::Utils::OSDetect::getOS->get('isReadyNAS')) {
-				Slim::Utils::OSDetect::getOS->initMySQL($class);
-			}
-		}
+		$log->info("Not starting MySQL - looks to be user/system configured.");
 
 		return 1;
 	}

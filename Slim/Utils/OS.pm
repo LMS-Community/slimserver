@@ -59,6 +59,40 @@ sub initSearchPath {
 	}
 }
 
+=head2 initMySQL( )
+
+Provide a hook to do system specific MySQL initialization. This allows to eg. use a locally installed
+MySQL server instead of the instance installed with SC
+
+=cut
+
+sub initMySQL {
+	my ($class, $dbclass) = @_;
+	
+	require File::Which;
+	
+	# try to figure out whether we have a locally running MySQL
+	# which we can connect to using a socket file
+	my $mysql_config = File::Which::which('mysql_config');
+
+	# The user might have a socket file in a non-standard
+	# location. See bug 3443
+	if ($mysql_config && -x $mysql_config) {
+
+		my $socket = `$mysql_config --socket`;
+		chomp($socket);
+
+		if ($socket && -S $socket) {
+			$dbclass->socketFile($socket);
+			
+			return 1;
+		}
+		
+	}
+	
+	return 0;
+}
+
 =head2 dirsFor( $dir )
 
 Return OS Specific directories.
