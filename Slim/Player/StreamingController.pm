@@ -510,7 +510,7 @@ sub _CheckSync {
 sub _Stop {					# stop -> Stopped, Idle
 	my ($self, $event, $params) = @_;
 	
-	if ($self->isPlaying(1) || $self->isPaused()) {
+	if ( $self->playingSong() && ( $self->isPlaying(1) || $self->isPaused() ) ) {
 		my $song = $self->playingSong();
 		my $handler = $song->currentTrackHandler();
 		if ($handler->can('onStop')) {
