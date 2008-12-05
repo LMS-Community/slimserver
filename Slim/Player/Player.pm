@@ -1059,7 +1059,7 @@ sub rebuffer {
 	my ($client) = @_;
 	my $threshold = 80 * 1024; # 5 seconds of 128k
 
-	my $song = $client->playingSong();
+	my $song = $client->playingSong() || return;
 	my $url = $song->currentTrack()->url;
 	my $title = Slim::Music::Info::title($url);
 	my $handler = $song->currentTrackHandler();

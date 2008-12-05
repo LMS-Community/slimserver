@@ -1626,10 +1626,11 @@ sub playerReadyToStream {
 	$log->info($client->id);
 
 	if ($self->_isMaster($client)) {
-		my $song = $self->streamingSong();
-		my $handler = $song->currentTrackHandler();
-		if ($handler->can('onPlayout')) {
-			$handler->onPlayout($song);
+		if ( my $song = $self->streamingSong() ) {
+			my $handler = $song->currentTrackHandler();
+			if ($handler->can('onPlayout')) {
+				$handler->onPlayout($song);
+			}
 		}
 	}
 
