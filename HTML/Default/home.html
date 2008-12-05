@@ -60,7 +60,7 @@ ELSE %]
 	radioItems = BLOCK;
 		FOREACH item = additionalLinkOrder.radios;
 			IF additionalLinks.radios.exists(item);
-				link.value = additionalLinks.radios.$item;
+				link.value = additionalLinks.radios.item(item);
 				link.key = item;
 				control = '';
 				IF link.value.match('search');
@@ -146,8 +146,8 @@ ELSE %]
 						<a href="[% link.value %]player=[% player %]" class="browseItemLink" [% IF link.target; 'target="' _ link.target _ '"'; END %]>
 					[% END %]
 
-					[% IF (additionalLinks.icons.${link.key} || link.icon) && !noIcon;
-						link.icon = additionalLinks.icons.${link.key} || link.icon;
+					[% IF (additionalLinks.icons.item(link.key) || link.icon) && !noIcon;
+						link.icon = additionalLinks.icons.item(link.key) || link.icon;
 
 						# have local artwork resized
 						UNLESS link.icon.match('^http:');

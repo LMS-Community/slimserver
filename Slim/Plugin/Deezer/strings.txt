@@ -1,0 +1,47 @@
+PLUGIN_DEEZER_MODULE_NAME
+	EN	Deezer
+
+PLUGIN_DEEZER_ON_DEEZER
+	EN	On Deezer
+
+PLUGIN_DEEZER_STREAM_FAILED
+	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
+	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
+	EN	Audio stream failed, skipping to next track.
+	ES	Error de secuencia de audio; salto a pista siguiente.
+	FI	Äänivirtaan ei voitu moudostaa yhteyttä, siirrytään seuraavaan raitaan.
+	FR	Echec du flux audio, lecture du morceau suivant.
+	IT	Errore di stream audio. Passaggio al brano seguente.
+	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
+	NO	Lyddatastrøm mislyktes, hopper til neste spor.
+	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
+
+PLUGIN_DEEZER_NO_TRACK
+	EN	Unable to retrieve track for radio.
+
+PLUGIN_DEEZER_ERROR
+	DA	Deezer-fejl
+	DE	Deezer-Fehler
+	EN	Deezer Error
+	ES	Error de Deezer
+	FR	Erreur Deezer
+	HE	שגיאה ב-Deezer
+	IT	Errore di Deezer
+	NL	Deezer-foutmelding
+	NO	Deezer-feil
+	SV	Deezer-fel
+
+PLUGIN_DEEZER_NO_NEXT_TRACK
+	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
+	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
+	EN	Unable to retrieve next track, press PLAY to try again.
+	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FI	Seuraavaa raitaa ei voi hakea, yritä uudelleen painamalla toistonäppäintä.
+	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
+	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
+	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
+
+PLUGIN_DEEZER_SKIPS_EXCEEDED
+	EN	Skip limit exceeded, you may skip again later.
