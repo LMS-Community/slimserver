@@ -362,18 +362,20 @@ sub _Playing {
 
 	Slim::Player::Playlist::refreshPlaylist($self->master());
 	
-	foreach my $player (@{$self->{'players'}})	{
-		Slim::Control::Request::notifyFromArray($player,
-			[
-				'playlist', 
-				'newsong', 
-				Slim::Music::Info::standardTitle(
-					$self->master(), 
-					$last_song->currentTrack()
-				),
-				$last_song->{'index'}
-			]
-		);
+	if ( $last_song ) {
+		foreach my $player (@{$self->{'players'}})	{
+			Slim::Control::Request::notifyFromArray($player,
+				[
+					'playlist', 
+					'newsong', 
+					Slim::Music::Info::standardTitle(
+						$self->master(), 
+						$last_song->currentTrack()
+					),
+					$last_song->{'index'}
+				]
+			);
+		}
 	}
 	
 	if ( $log->is_info ) {
