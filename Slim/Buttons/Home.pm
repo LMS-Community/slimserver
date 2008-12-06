@@ -870,7 +870,12 @@ sub updateMenu {
 		}
 	}
 	
-	for my $menuItem (@{ $prefs->client($client)->get('menuItem') }) {
+	my $menuItem = $prefs->client($client)->get('menuItem');
+	if ( !ref $menuItem ) {
+		$menuItem = [ $menuItem ];
+	}
+	
+	for my $menuItem ( @{$menuItem} ) {
 		# more leakage of the LineIn plugin..
 		if ($menuItem eq 'PLUGIN_LINE_IN' && !($client->hasLineIn && $client->lineInConnected)) {
 			next;
