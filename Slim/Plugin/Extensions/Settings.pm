@@ -269,7 +269,7 @@ sub _addInfo {
 		}
 
 		if ($restart) {
-			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("SETUP_GROUP_PLUGINS_NEEDS_RESTART") . '</span>';
+			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") . '</span>';
 		}
 	}
 	

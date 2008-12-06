@@ -136,16 +136,16 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG
-	DA	Du skal genstarte SqueezeCenter
-	DE	SqueezeCenter neu starten
-	EN	Please Restart SqueezeCenter
-	ES	Reinicie SqueezeCenter
-	FI	Käynnistä SqueezeCenter uudelleen
-	FR	Veuillez redémarrer le SqueezeCenter
-	IT	Riavviare SqueezeCenter
-	NL	SqueezeCenter opnieuw starten
-	NO	Start SqueezeCenter på nytt
-	SV	Starta om SqueezeCenter
+	DA	Du skal genstarte SqueezeCenter for at ændringerne kan træde i kraft.
+	DE	SqueezeCenter muss neu gestartet werden, damit die Änderungen in Kraft treten.
+	EN	Please restart SqueezeCenter for the changes to take effect.
+	ES	Reinicie SqueezeCenter para que los cambios entren en vigor.
+	FI	Käynnistä SqueezeCenter uudelleen, jotta muutokset tulevat voimaan.
+	FR	Redémarrez le SqueezeCenter pour appliquer les modifications.
+	IT	Per applicare le modifiche, è necessario riavviare SqueezeCenter.
+	NL	Start SqueezeCenter opnieuw om de wijzigingen door te voeren.
+	NO	Du må starte SqueezeCenter på nytt for at endringene skal tre i kraft.
+	SV	Starta om SqueezeCenter om du vill att ändringarna ska träda i kraft.
 
 PLUGIN_EXTENSIONS_REPO_ERROR
 	DA	Ugyldigt lagersted
