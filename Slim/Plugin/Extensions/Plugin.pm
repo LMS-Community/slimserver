@@ -207,10 +207,15 @@ sub _getPluginsCB {
 
 	if ($info->{'name'}) {
 
-		my $name = ($info->{'name'} eq $logitechRepo) ? 'logitech' : $info->{'name'}; # 'logitech' = special case safe repo
+		# set type, nb this is chosen so we can sort on it logitech < master < other
+		my $type;
+		$type =   'logitech' if $info->{'name'} eq $logitechRepo;
+		$type =   'master'   if $info->{'name'} eq $masterRepo;
+		$type ||= 'other';
 
-		$data->{'results'}->{ $name } = {
+		$data->{'results'}->{ $info->{'name'} } = {
 			'title' => $info->{'title'},
+			'type'  => $type,
 			'items' => $res,
 		};
 	}

@@ -223,6 +223,8 @@ sub _addInfo {
 				unless ($install->{ $repoName }) {
 					$install->{ $repoName } = {
 						title => $plugins->{ $repoName }->{'title'},
+						name  => $repoName,
+						type  => $plugins->{ $repoName }->{'type'},
 						items => [],
 					};
 				}
@@ -231,6 +233,9 @@ sub _addInfo {
 			}
 		}
 	}
+
+	# sort plugins in the type order: logitech, master, others (sorted by title) 
+	my @install = sort { $a->{type} eq $b->{type} ? $a->{title} cmp $b->{title} : $a->{type} cmp $b->{type} } values(%$install);
 
 	for my $plugin (keys %installed) {
 		
@@ -255,7 +260,7 @@ sub _addInfo {
 
 	$params->{'repos'}   = \@repos;
 	$params->{'upgrade'} = \@upgrade;
-	$params->{'install'} = $install;
+	$params->{'install'} = \@install;
 	$params->{'remove'}  = \@remove;
 	$params->{'manual'}  = $installedManually;
 	$params->{'rand'}    = $rand;

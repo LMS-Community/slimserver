@@ -94,31 +94,15 @@
 
 	[%- END -%]
 
-	[% IF install.logitech.items.size %]
-
-		[% WRAPPER setting title=install.logitech.title desc="" %]
-		[%- END -%]
-
-		[% WRAPPER pluginGroup %]
-			[% FOREACH plugin = install.logitech.items %]
-				[% plugin.changes = '' %]
-				[% PROCESS pluginDetails %]
-			[% END %]
-		[%- END -%]
-
-	[%- END -%]
-
-	[% IF install.keys.size > 0 %]
+	[% IF install.size > 0 %]
 		
-		[% FOREACH repo = install.keys %]
+		[% FOREACH repo = install %]
 
-			[% NEXT IF repo == 'logitech' %]
-
-			[% WRAPPER setting title=install.item(repo).title desc="" %]
+			[% WRAPPER setting title=repo.title desc="" %]
 			[%- END -%]
 	
 			[% WRAPPER pluginGroup %]
-				[% FOREACH plugin = install.item(repo).items %]
+				[% FOREACH plugin = repo.items %]
 					[% plugin.changes = '' %]
 					[% PROCESS pluginDetails %]
 				[% END %]
