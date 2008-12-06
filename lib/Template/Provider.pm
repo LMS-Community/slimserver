@@ -41,6 +41,7 @@ use Template::Constants;
 use Template::Document;
 use File::Basename;
 use File::Spec;
+use Digest::MD5 qw(md5_hex);
 
 use constant PREV   => 0;
 use constant NAME   => 1;
@@ -580,6 +581,9 @@ sub _compiled_filename {
     $path = $file;
     $path =~ /^(.+)$/s or die "invalid filename: $path";
     $path =~ s[:][]g if $^O eq 'MSWin32';
+
+	# bug 10211: we're outgrowing Windows' max. path length
+	$path = md5_hex($path);
 
     $compiled = "$path$compext";
     $compiled = File::Spec->catfile($compdir, $compiled) if length $compdir;

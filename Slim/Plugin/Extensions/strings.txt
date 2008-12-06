@@ -119,6 +119,11 @@ PLUGIN_EXTENSIONS_PLUGINS_INSTALL
 	SV	Installera nytt plugin-program
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL
+	DE	Manuell installierte Erweiterungen
+	EN	Manually installed extensions
+	FR	Extensions installées manuellement
+
+PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	DA	er allerede installeret manuelt (%s) - modulet skal fjernes først
 	DE	Bereits manuell installiert (%s) - vorher entfernen
 	EN	already installed manually (%s) - please remove first
