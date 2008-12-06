@@ -299,15 +299,7 @@ sub gototime {
 }
 
 sub streamingSongIndex {
-	my $client = shift;
-	
-	# XXX: debugging weird crash seen on SN
-	if ( main::SLIM_SERVICE && !ref $client ) {
-		SDI::Service::Control->mailError( "streamingSongIndex - no client", "$client", 1 );
-		return;
-	}
-	
-	$client = $client->master();
+	my $client = shift->master();
 	my $index = shift;
 	my $clear = shift;
 	my $song = shift;

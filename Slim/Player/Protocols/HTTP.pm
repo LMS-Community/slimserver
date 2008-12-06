@@ -114,7 +114,7 @@ sub readMetaData {
 
 		$log->info("Metadata: $metadata");
 
-		${*$self}{'title'} = parseMetadata($client, $self->url, $metadata);
+		${*$self}{'title'} = __PACKAGE__->parseMetadata($client, $self->url, $metadata);
 
 		# new song, so reset counters
 		$client->songBytes(0);
@@ -129,9 +129,7 @@ sub getFormatForURL {
 }
 
 sub parseMetadata {
-	my $client   = shift;
-	my $url      = shift;
-	my $metadata = shift;
+	my ( $class, $client, $url, $metadata ) = @_;
 
 	$url = Slim::Player::Playlist::url(
 		$client, Slim::Player::Source::streamingSongIndex($client)

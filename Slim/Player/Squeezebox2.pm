@@ -714,7 +714,7 @@ sub directMetadata {
 		$controller->song()->currentTrackHandler()->parseMetadata( $client, $controller->song(), $metadata );
 	}
 	else {
-		Slim::Player::Protocols::HTTP::parseMetadata( $client, Slim::Player::Playlist::url($client), $metadata );
+		Slim::Player::Protocols::HTTP->parseMetadata( $client, Slim::Player::Playlist::url($client), $metadata );
 	}
 	
 	# new song, so reset counters
