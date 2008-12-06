@@ -174,7 +174,7 @@ sub _addInfo {
 	}
 
 	my @upgrade;
-	my @install;
+	my $install = {};
 	my @remove;
 	my %removeInfo;
 	my $installedManually;
@@ -191,7 +191,7 @@ sub _addInfo {
 		if ($manual{ $plugin->{'name'} }) {
 
 			$installedManually->{ $plugin->{'name'} } = $plugin;
-			$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL'), $manual{ $plugin->{'name'} }),
+			$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL'), $manual{ $plugin->{'name'} }),
 
 			next;
 		}
@@ -208,8 +208,18 @@ sub _addInfo {
 			$removeInfo{ $plugin->{'name'} } = $plugin;
 
 		} else {
+			
+			# use 'logitech' key for our own trusted repository
+			my $repo = $plugin->{safe} ? 'logitech' : $plugin->{repo};
+			
+			unless ($install->{$repo}) {
+				$install->{$repo} = {
+					title => $plugin->{repotitle},
+					items => [],
+				};
+			}
 
-			push @install, $plugin;
+			push @{ $install->{$repo}->{items} }, $plugin;
 		}
 	}
 
@@ -236,7 +246,7 @@ sub _addInfo {
 
 	$params->{'repos'}   = \@repos;
 	$params->{'upgrade'} = \@upgrade;
-	$params->{'install'} = \@install;
+	$params->{'install'} = $install;
 	$params->{'remove'}  = \@remove;
 	$params->{'manual'}  = $installedManually;
 	$params->{'rand'}    = $rand;

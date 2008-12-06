@@ -49,6 +49,9 @@ package Slim::Plugin::Extensions::Plugin;
 #     <plugin ... />
 #     <plugin ... />
 #   </plugins>
+#   <details>
+#     <title lang="EN">The Repository's Title</title>
+#   </details>
 # </extensions>
 #
 # Applet and Plugin entries are of the form:
@@ -128,7 +131,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.extensions');
 
-my $masterRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml');
+my $masterRepo   = Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml');
+my $logitechRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/logitech.xml');
 
 my %repos = ();
 
@@ -137,7 +141,7 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin;
 
-	for my $repo ( $masterRepo, @{$prefs->get('repos')} ) {
+	for my $repo ( $logitechRepo, $masterRepo, @{$prefs->get('repos')} ) {
 		if ($repo) {
 			$repos{$repo} = 1;
 			Slim::Control::Jive::registerExtensionProvider($repo, \&getExtensions);
@@ -225,7 +229,7 @@ sub getExtensions {
 
 		Slim::Networking::SimpleAsyncHTTP->new(
 			\&_parseResponse, \&_noResponse, { 'args' => $args, 'cache' => 1 }
-		   )->get( $args->{'name'} );
+		)->get( $args->{'name'} );
 	}
 }
 
@@ -235,13 +239,25 @@ sub _parseResponse {
 
 	my $xml  = {};
 
-	eval { $xml = XMLin($http->content,
-						SuppressEmpty => 1,
-						KeyAttr    => { title => 'lang', desc => 'lang', changes => 'lang' },
-						ContentKey => '-content',
-						GroupTags  => { applets => 'applet', sounds => 'sound', wallpapers => 'wallpaper', plugins => 'plugin' },
-						ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc', 'changes' ],
-					   ) };
+	eval { 
+		$xml = XMLin($http->content,
+			SuppressEmpty => 1,
+			KeyAttr     => { 
+				title   => 'lang', 
+				desc    => 'lang', 
+				changes => 'lang'
+			},
+			ContentKey  => '-content',
+			GroupTags   => {
+				details => 'details',
+				applets => 'applet', 
+				sounds  => 'sound', 
+				wallpapers => 'wallpaper', 
+				plugins => 'plugin'
+			},
+			ForceArray => [ 'applet', 'wallpaper', 'sound', 'plugin', 'title', 'desc', 'changes' ],
+		 )
+	};
 
 	if ($@) {
 
@@ -286,7 +302,23 @@ sub _parseXML {
 
 	$debug && $log->debug("searching $args->{name} for type: $type target: $target version: $version");
 
-	my @res = ();
+	my $repoTitle;
+	
+	if ( $xml->{details} && $xml->{details}->{title} 
+		&& ($xml->{details}->{title}->{$lang} || $xml->{details}->{EN}) ) {
+			
+		$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{EN};
+		
+	}
+	
+	else {
+		
+		# fall back to repo's URL if no title is provided
+		$repoTitle = $args->{name};
+	}
+
+	my $safeRepo = $args->{name} eq $logitechRepo;
+	my @res      = ();
 
 	if ($xml->{ $type . 's' } && ref $xml->{ $type . 's' } eq 'ARRAY') {
 
@@ -329,10 +361,13 @@ sub _parseXML {
 			$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
 			$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
 			$new->{'action'}  = $entry->{'action'}  if $entry->{'action'};
+			$new->{'repo'}    = $args->{name};
+			$new->{'safe'}    = $safeRepo;
+			$new->{'repotitle'} = $repoTitle;
 
 			push @res, $new;
 
-			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} url: $new->{url}");
+			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} url: $new->{url} safe: $new->{safe}");
 		}
 
 	} else {

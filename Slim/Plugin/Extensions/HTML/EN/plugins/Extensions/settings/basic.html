@@ -86,17 +86,46 @@
 
 	[%- END -%]
 
-	[% IF install.size || manual.values.size %]
+	[% IF install.logitech.items.size %]
 
-		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_INSTALL" desc="" %]
+		[% WRAPPER setting title=install.logitech.title desc="" %]
 		[%- END -%]
 
 		[% WRAPPER pluginGroup %]
-			[% FOREACH plugin = install %]
+			[% FOREACH plugin = install.logitech.items %]
 				[% plugin.changes = '' %]
 				[% PROCESS pluginDetails %]
 			[% END %]
+		[%- END -%]
 
+	[%- END -%]
+
+	[% IF install.keys.size > 1 %]
+		
+		[% FOREACH repo = install.keys %]
+
+			[% NEXT IF repo == 'logitech' %]
+
+			[% WRAPPER setting title=install.item(repo).title desc="" %]
+			[%- END -%]
+	
+			[% WRAPPER pluginGroup %]
+				[% FOREACH plugin = install.item(repo).items %]
+					[% plugin.changes = '' %]
+					[% PROCESS pluginDetails %]
+				[% END %]
+			[%- END -%]
+		
+		[% END %]
+
+	[%- END -%]
+
+	[% IF manual.values.size %]
+
+		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGIN_MANUAL" desc="" %]
+		[%- END -%]
+
+		[% WRAPPER pluginGroup %]
 			[% FOREACH plugin = manual.values %]
 				[% plugin.action = 'disabled' %]
 				[% PROCESS pluginDetails %]
