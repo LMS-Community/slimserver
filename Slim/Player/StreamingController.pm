@@ -1158,7 +1158,7 @@ sub _AutoStart {			# [streaming-track-not-playing] start -> Streamout
 	
 	_setStreamingState($self, STREAMOUT);
 	
-	if ($self->streamingSong->{status} != Slim::Player::Song::STATUS_PLAYING) {
+	if ($self->streamingSong && $self->streamingSong->{status} != Slim::Player::Song::STATUS_PLAYING) {
 		$log->info('autostart possibly short track');
 		foreach my $player (@{$self->{'players'}})	{
 			$player->resume();
