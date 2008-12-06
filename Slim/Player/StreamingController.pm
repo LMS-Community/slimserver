@@ -204,8 +204,8 @@ StreamingFailed =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# BUFFERING
 	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_SyncStopNextIf, \&_SyncStopNextIf, \&_Invalid],	# PLAYING
-	[	\&_Invalid,		\&_SyncStopNextIf, \&_SyncStopNextIf, \&_Invalid],	# PAUSED
+	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],	# PLAYING
+	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],	# PAUSED
 ],
 EndOfStream =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
