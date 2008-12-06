@@ -18,12 +18,12 @@
 	<div class="settingSection" style="margin-top:0;margin-bottom:20px">
 		<table class="sortable" width="100%">
 			<thead><tr>
-				<th width="5%">&nbsp;</th>
-				<th width="15%">[% "NAME" | string %]</th>
-				<th width="10%">[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
-				<th width="45%">[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
-				<th width="15%">[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>
-				<th width="10%">&nbsp;</th>
+				<th width="5%">[% checkAll %]&nbsp;</th>
+				<th width="15%" class="sortable">[% "NAME" | string %]</th>
+				<th width="10%" class="sortable">[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
+				<th width="45%" class="sortable">[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
+				<th width="15%" class="sortable">[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>
+				<th width="10%" class="sortable">&nbsp;</th>
 			</tr></thead>
 			<tbody>
 			[% content %]
@@ -77,7 +77,15 @@
 		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_REMOVE" desc="" %]
 		[%- END -%]
 
-		[% WRAPPER pluginGroup %]
+		<script TYPE="text/javascript">
+			function toggleCheck(onOrOff) {
+				var field = document.forms.settingsForm.remove;
+				for (i = 0; i < field.length; i++)
+					field[i].checked = onOrOff ;
+			}
+		</script>
+
+		[% WRAPPER pluginGroup checkAll="<input type=\"checkbox\" onclick=\"toggleCheck(this.checked)\"/>" %]
 			[% FOREACH plugin = remove %]
 				[% plugin.action = 'remove' %]
 				[% PROCESS pluginDetails %]
