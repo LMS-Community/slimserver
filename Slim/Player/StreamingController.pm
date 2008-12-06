@@ -11,7 +11,7 @@ use bytes;
 use strict;
 use warnings;
 
-use Scalar::Util qw(weaken);
+use Scalar::Util qw(blessed weaken);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
