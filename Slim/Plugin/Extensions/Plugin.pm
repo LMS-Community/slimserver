@@ -312,9 +312,9 @@ sub _parseXML {
 	my $repoTitle;
 	
 	if ( $xml->{details} && $xml->{details}->{title} 
-		&& ($xml->{details}->{title}->{$lang} || $xml->{details}->{EN}) ) {
+		&& ($xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN}) ) {
 			
-		$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{EN};
+		$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{title}->{EN};
 		
 	} else {
 		
