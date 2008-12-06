@@ -121,7 +121,7 @@ sub handleFeed {
 	my ( $feed, $params ) = @_;
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
 
-	$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
+	$stash->{'pagetitle'} = $feed->{'title'} || Slim::Utils::Strings::getString($params->{'title'});
 	$stash->{'pageicon'}  = $params->{pageicon};
 
 	my $template = 'xmlbrowser.html';
