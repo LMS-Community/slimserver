@@ -96,9 +96,18 @@ sub _gotPluginInfo {
 
 				my ($name, $version) = $install =~ /(.*):(.*)/;
 
-				my @match = grep { $name eq $_->{'name'} && $version eq $_->{'version'} } @$plugins;
+				FIND: for my $repo (keys %$plugins) {
 
-				push @install, $match[0];
+					for my $plugin (@{ $plugins->{ $repo }->{'items'} }) {
+						
+						if ($plugin->{'name'} eq $name && $plugin->{'version'} eq $version) {
+
+							push @install, $plugin;
+
+							last FIND;
+						}
+					}
+				}
 			}
 		}
 
@@ -179,47 +188,47 @@ sub _addInfo {
 	my %removeInfo;
 	my $installedManually;
 
-	for my $plugin (sort { $a->{'title'} cmp $b->{'title'} } @$plugins) {
+	for my $repoName (keys %$plugins) {
 
-		my $module = $installed{ $plugin->{'name'} };
+		for my $plugin (@{ $plugins->{ $repoName }->{'items'} }) {
 
-		if ($status->{ $plugin->{'name'} }) {
-			# plugin has already been installed/removed so remove from lists until restart
-			next;
-		}
+			my $module = $installed{ $plugin->{'name'} };
 
-		if ($manual{ $plugin->{'name'} }) {
-
-			$installedManually->{ $plugin->{'name'} } = $plugin;
-			$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL'), $manual{ $plugin->{'name'} }),
-
-			next;
-		}
-		
-		if ($module) {
-
-			$plugin->{'current'} = Slim::Utils::PluginManager->dataForPlugin($module)->{'version'};
-
-			if ($plugin->{'current'} ne $plugin->{'version'}) {
-
-				push @upgrade, $plugin;
+			if ($status->{ $plugin->{'name'} }) {
+				# plugin has already been installed/removed so remove from lists until restart
+				next;
 			}
 
-			$removeInfo{ $plugin->{'name'} } = $plugin;
+			if ($manual{ $plugin->{'name'} }) {
 
-		} else {
-			
-			# use 'logitech' key for our own trusted repository
-			my $repo = $plugin->{safe} ? 'logitech' : $plugin->{repo};
-			
-			unless ($install->{$repo}) {
-				$install->{$repo} = {
-					title => $plugin->{repotitle},
-					items => [],
-				};
+				$installedManually->{ $plugin->{'name'} } = $plugin;
+				$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL'), $manual{ $plugin->{'name'} }),
+					
+					next;
 			}
-
-			push @{ $install->{$repo}->{items} }, $plugin;
+			
+			if ($module) {
+				
+				$plugin->{'current'} = Slim::Utils::PluginManager->dataForPlugin($module)->{'version'};
+				
+				if ($plugin->{'current'} ne $plugin->{'version'}) {
+					
+					push @upgrade, $plugin;
+				}
+				
+				$removeInfo{ $plugin->{'name'} } = $plugin;
+				
+			} else {
+				
+				unless ($install->{ $repoName }) {
+					$install->{ $repoName } = {
+						title => $plugins->{ $repoName }->{'title'},
+						items => [],
+					};
+				}
+				
+				push @{ $install->{$repoName}->{items} }, $plugin;
+			}
 		}
 	}
 
@@ -272,7 +281,7 @@ sub _addInfo {
 			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") . '</span>';
 		}
 	}
-	
+
 	return $class->SUPER::handler($client, $params);
 }
 

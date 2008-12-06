@@ -178,7 +178,7 @@ sub getPlugins {
 	my $cb    = shift;
 	my $pt    = shift || [];
 
-	my $data = { remaining => scalar keys %repos, results => [], errors => {} };
+	my $data = { remaining => scalar keys %repos, results => {}, errors => {} };
 
 	for my $repo (keys %repos) {
 		getExtensions({
@@ -194,7 +194,7 @@ sub getPlugins {
 	}
 
 	if (!keys %repos) {
-		$cb->( @$pt, [], {} );
+		$cb->( @$pt, {}, {} );
 	}
 }
 
@@ -203,8 +203,17 @@ sub _getPluginsCB {
 	my $cb    = shift;
 	my $pt    = shift;
 	my $res   = shift;
+	my $info  = shift;
 
-	splice @{$data->{'results'}}, 0, 0, @$res;
+	if ($info->{'name'}) {
+
+		my $name = ($info->{'name'} eq $logitechRepo) ? 'logitech' : $info->{'name'}; # 'logitech' = special case safe repo
+
+		$data->{'results'}->{ $name } = {
+			'title' => $info->{'title'},
+			'items' => $res,
+		};
+	}
 
 	if ( ! --$data->{'remaining'} ) {
 
@@ -300,8 +309,6 @@ sub _parseXML {
 
 	my $debug = $log->is_debug;
 
-	$debug && $log->debug("searching $args->{name} for type: $type target: $target version: $version");
-
 	my $repoTitle;
 	
 	if ( $xml->{details} && $xml->{details}->{title} 
@@ -309,16 +316,20 @@ sub _parseXML {
 			
 		$repoTitle = $xml->{details}->{title}->{$lang} || $xml->{details}->{EN};
 		
-	}
-	
-	else {
+	} else {
 		
 		# fall back to repo's URL if no title is provided
 		$repoTitle = $args->{name};
 	}
 
-	my $safeRepo = $args->{name} eq $logitechRepo;
-	my @res      = ();
+	my $info = {
+		'name' => $args->{'name'},
+		'title'=> $repoTitle,
+	};
+
+	$debug && $log->debug("searching $info->{name} title: $info->{title} for type: $type target: $target version: $version");
+
+	my @res = ();
 
 	if ($xml->{ $type . 's' } && ref $xml->{ $type . 's' } eq 'ARRAY') {
 
@@ -361,13 +372,10 @@ sub _parseXML {
 			$new->{'creator'} = $entry->{'creator'} if $entry->{'creator'};
 			$new->{'email'}   = $entry->{'email'}   if $entry->{'email'};
 			$new->{'action'}  = $entry->{'action'}  if $entry->{'action'};
-			$new->{'repo'}    = $args->{name};
-			$new->{'safe'}    = $safeRepo;
-			$new->{'repotitle'} = $repoTitle;
 
 			push @res, $new;
 
-			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} url: $new->{url} safe: $new->{safe}");
+			$debug && $log->debug("entry $entry->{name} title: $new->{title} vers: $new->{version} url: $new->{url}");
 		}
 
 	} else {
@@ -377,7 +385,7 @@ sub _parseXML {
 
 	$debug && $log->debug("found " . scalar(@res) . " extensions");
 
-	$args->{'cb'}->( @{$args->{'pt'}}, \@res );
+	$args->{'cb'}->( @{$args->{'pt'}}, \@res, $info );
 }
 
 
