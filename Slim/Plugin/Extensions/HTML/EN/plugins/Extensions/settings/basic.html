@@ -1,6 +1,41 @@
 [% IF useExtJS; extJsScripts = BLOCK %]
 <script TYPE="text/javascript">
 	Ext.onReady(function() {
+		[% PROCESS jsString id='PLUGIN_EXTENSIONS_WARNING_POPUP' %]
+		[% PROCESS jsString id='PLUGIN_EXTENSIONS_WARNING_POPUP2' %]
+
+		Settings.Page.submit = function(ajax, cb) {
+			var items = Ext.query('input.unsafePlugin');
+			var msg   = '';
+		
+			for (var i = 0; i < items.length; i++) {
+				if (items[i].checked)
+					msg += '<li>' + items[i].value + '</li>';
+			}
+
+			// display warning if user wants to install "unsafe" plugins from 3rd party repositories
+			if (msg > '') {
+				Ext.Msg.show({
+					title: SqueezeJS.string('settings'),
+					msg: SqueezeJS.string('plugin_extensions_warning_popup') 
+							+ '<ul>' + msg + '</ul>' 
+							+ SqueezeJS.string('plugin_extensions_warning_popup2'),
+					width: 450,
+					closable: false,
+					buttons: Ext.Msg.OKCANCEL,
+					fn: function(btn) {
+						if (btn == 'ok') {
+							document.forms.settingsForm.submit();
+						}
+					}
+				});
+			}
+			
+			else {
+				document.forms.settingsForm.submit();
+			}
+		};
+		
 		if (Ext.isIE6)
 			return;
 			
@@ -33,7 +68,13 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	<tr>
-		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% IF plugin.action == 'remove' %][% plugin.current %]:[% plugin.title %][% ELSE %][% plugin.version %][% END %]" type="checkbox" />&nbsp;</td>
+		<td><input name="[% plugin.action || "install" %]" 
+			[% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] 
+			value="[% plugin.name %]:[% IF plugin.action == 'remove' %][% plugin.current %]:[% plugin.title %][% ELSE %][% plugin.version %][% END %]"
+			[% IF type AND type != 'logitech' %]class="unsafePlugin"[% END %] 
+			type="checkbox" />
+			&nbsp;
+		</td>
 		<td>[% plugin.title %]&nbsp;</td>
 		<td>[% plugin.delta || plugin.version || plugin.current %]&nbsp;</td>
 		<td>[% (plugin.changes|| plugin.message || plugin.desc || plugin.title) | html_line_break %]&nbsp;</td>
@@ -97,14 +138,13 @@
 	[% IF install.size > 0 %]
 		
 		[% FOREACH repo = install %]
-
 			[% WRAPPER setting title=repo.title desc="" %]
 			[%- END -%]
 	
 			[% WRAPPER pluginGroup %]
 				[% FOREACH plugin = repo.items %]
 					[% plugin.changes = '' %]
-					[% PROCESS pluginDetails %]
+					[% PROCESS pluginDetails type = repo.type %]
 				[% END %]
 			[%- END -%]
 		
@@ -113,6 +153,7 @@
 	[%- END -%]
 
 	[% IF manual.values.size %]
+		[% type = undef %]
 
 		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGIN_MANUAL" desc="" %]
 		[%- END -%]
