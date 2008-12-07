@@ -128,7 +128,7 @@ sub handleFeed {
 	
 	# breadcrumb
 	my @crumb = ( {
-		'name'  => $feed->{'title'} || string($params->{'title'}),
+		'name'  => $feed->{'title'} || Slim::Utils::Strings::getString($params->{'title'}),
 		'index' => undef,
 	} );
 	
@@ -312,7 +312,7 @@ sub handleFeed {
 		$stash->{'image'}     = $subFeed->{'image'};
 	}
 	else {
-		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || string($params->{'title'});
+		$stash->{'pagetitle'} = $feed->{'title'} || $feed->{'name'} || Slim::Utils::Strings::getString($params->{'title'});
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
 		
@@ -606,7 +606,7 @@ sub handleError {
 	
 	my $template = 'xmlbrowser.html';
 	
-	my $title = ( uc($params->{title}) eq $params->{title} ) ? string($params->{title}) : $params->{title};
+	my $title = ( uc($params->{title}) eq $params->{title} ) ? Slim::Utils::Strings::getString($params->{title}) : $params->{title};
 	
 	$stash->{'pagetitle'} = $title;
 	$stash->{'pageicon'}  = $params->{pageicon};
