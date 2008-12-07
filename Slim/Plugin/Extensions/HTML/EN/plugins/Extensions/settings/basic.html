@@ -121,8 +121,15 @@
 		<script TYPE="text/javascript">
 			function toggleCheck(onOrOff) {
 				var field = document.forms.settingsForm.remove;
-				for (i = 0; i < field.length; i++)
-					field[i].checked = onOrOff ;
+				
+				if (field && field.length == null) {
+					if (field.checked != null)
+						field.checked = onOrOff;
+				}
+				else {
+					for (i = 0; i < field.length; i++)
+						field[i].checked = onOrOff;
+				}
 			}
 		</script>
 
