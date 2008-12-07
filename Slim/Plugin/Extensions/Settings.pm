@@ -76,7 +76,7 @@ sub _gotPluginInfo {
 
 			for my $remove ( ref $remove ? @$remove : ( $remove ) ) {
 
-				my ($name, $version, $title) = $remove =~ /(.*):(.*):(.*)/;
+				my ($name, $version, $title) = $remove =~ /(.*?):(.*?):(.*)/;
 
 				Slim::Plugin::Extensions::PluginDownloader->remove( { 
 					name    => $name,
