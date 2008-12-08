@@ -810,6 +810,12 @@ sub getSeekData {
 	
 	my $duration = $meta->{duration} || return;
 	
+	# Don't seek past the end
+	if ( $newtime >= $duration ) {
+		$log->error('Attempt to seek past end of Rhapsody track, ignoring');
+		return;
+	}
+	
 	# Calculate the RAD and EA offsets for this time offset
 	my $percent   = $newtime / $duration;
 	my $radlength = $client->pluginData('length') - 36;
