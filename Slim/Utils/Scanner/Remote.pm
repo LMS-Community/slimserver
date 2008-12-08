@@ -68,7 +68,7 @@ sub scanURL {
 	
 	$args->{depth} ||= 0;
 	
-	$log->debug( "Scanning remote stream $url" );
+	$log->is_debug && $log->debug( "Scanning remote stream $url" );
 	
 	if ( !$url ) {
 		return $cb->( undef, 'SCANNER_REMOTE_NO_URL_PROVIDED', @{$pt} );
@@ -97,7 +97,7 @@ sub scanURL {
 	# This is used to allow plugins to add scanning routines for exteral stream types
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	if ($handler && $handler->can('scanStream') ) {
-		$log->debug( "Scanning remote stream $url using protocol hander $handler" );
+		$log->is_debug && $log->debug( "Scanning remote stream $url using protocol hander $handler" );
 		
 		# Allow protocol hander to scan the stream and then call the callback
 		$handler->scanStream($url, $track, $args);
@@ -148,7 +148,7 @@ sub scanURL {
 	}
 	
 	if ( $isAudio ) { 	 
-		$log->debug( "Remote stream $url known to be audio" ); 	 
+		$log->is_debug && $log->debug( "Remote stream $url known to be audio" ); 	 
 
 		# Set this track's content type from protocol handler getFormatForURL method 	 
 		my $type = Slim::Music::Info::typeFromPath($url);
@@ -156,7 +156,7 @@ sub scanURL {
 			$type = 'mp3';
 		}
 		
-		$log->debug( "Content-type of $url - $type" );
+		$log->is_debug && $log->debug( "Content-type of $url - $type" );
 		
 		$track->content_type( $type );
 		$track->update;
@@ -170,7 +170,7 @@ sub scanURL {
 		
 		# XXX This test will not be good enough when we get WMA proxied streaming
 		if ( ! Slim::Player::TranscodingHelper::isEnabled('wma-wma-*-*') ) {
-			$log->debug('Not scanning MMS URL because direct streaming disabled.');
+			$log->is_debug && $log->debug('Not scanning MMS URL because direct streaming disabled.');
 
 			$track->content_type( 'wma' );
 
@@ -181,7 +181,7 @@ sub scanURL {
 	# Connect to the remote URL and figure out what it is
 	my $request = HTTP::Request->new( GET => $url );
 	
-	$log->debug("Scanning remote URL $url");
+	$log->is_debug && $log->debug("Scanning remote URL $url");
 	
 	# Use WMP headers for MMS protocol URLs or ASF/ASX/WMA URLs
 	if ( $url =~ /(?:^mms|\.asf|\.asx|\.wma)/i ) {
@@ -251,7 +251,7 @@ redirects to an mms:// protocol URL we need to rewrite the link and set proper h
 sub handleRedirect {
 	my ( $request, $track, $args ) = @_;
 	
-	$log->debug( 'Server redirected to ' . $request->uri );
+	$log->is_debug && $log->debug( 'Server redirected to ' . $request->uri );
 	
 	if ( $request->uri =~ /^mms/ ) {
 
@@ -331,7 +331,7 @@ sub readRemoteHeaders {
 	}
 	
 	# Set content-type for original URL and redirected URL
-	$log->debug( 'Updating content-type for ' . $track->url . " to $type" );
+	$log->is_debug && $log->debug( 'Updating content-type for ' . $track->url . " to $type" );
 	$track = Slim::Music::Info::setContentType( $track->url, $type );
 	
 	if ( $track->url ne $url ) {
@@ -348,7 +348,7 @@ sub readRemoteHeaders {
 		}
 		
 		if ( $update ) {
-			$log->debug( "Updating redirected URL $url" );
+			$log->is_debug && $log->debug( "Updating redirected URL $url" );
 			
 			# Get/create a new entry for the redirected track
 			my $redirTrack = Slim::Schema->rs('Track')->updateOrCreate( {
@@ -371,12 +371,12 @@ sub readRemoteHeaders {
 
 	# Is this an audio stream or a playlist?
 	if ( Slim::Music::Info::isSong( $track, $type ) ) {
-		$log->info('This URL is an audio stream [$type]: ' . $track->url);
+		$log->is_info && $log->info("This URL is an audio stream [$type]: " . $track->url);
 		
 		if ( $type eq 'wma' ) {
 			# WMA streams require extra processing, we must parse the Describe header info
 			
-			$log->debug('Reading WMA header');
+			$log->is_debug && $log->debug('Reading WMA header');
 			
 			# Read the rest of the header and pass it on to parseWMAHeader
 			$http->read_body( {
@@ -397,7 +397,7 @@ sub readRemoteHeaders {
 			
 			# Look for bitrate information in header indicating it's an Icy stream
 			if ( my $bitrate = ( $http->response->header('icy-br') || $http->response->header('x-audiocast-bitrate') ) * 1000 ) {
-				$log->debug("Found bitrate in header: $bitrate");
+				$log->is_debug && $log->debug("Found bitrate in header: $bitrate");
 				
 				$track = Slim::Music::Info::setBitrate( $track->url, $bitrate );
 				
@@ -414,7 +414,7 @@ sub readRemoteHeaders {
 			else {
 				# We may be able to determine the bitrate or other tag information
 				# about this remote stream/file by reading a bit of audio data
-				$log->debug('Reading 128K of audio data to detect bitrate and/or tags');
+				$log->is_debug && $log->debug('Reading 128K of audio data to detect bitrate and/or tags');
 				
 				$http->read_body( {
 					readLimit   => 128 * 1024,
@@ -425,7 +425,7 @@ sub readRemoteHeaders {
 		}
 	}
 	else {
-		$log->debug('This URL is a playlist: ' . $track->url);
+		$log->is_debug && $log->debug('This URL is a playlist: ' . $track->url);
 		
 		# Read the rest of the playlist
 		$http->read_body( {
@@ -454,7 +454,7 @@ sub parseWMAHeader {
 		my $header    = $http->response->content;
 		my $chunkType = unpack 'v', substr( $header, 0, 2 );
 		if ( $chunkType != 0x4824 ) {
-			$log->debug("WMA header does not start with 0x4824");
+			$log->is_debug && $log->debug("WMA header does not start with 0x4824");
 			
 			# Delete bad item
 			$track->delete;
@@ -468,7 +468,7 @@ sub parseWMAHeader {
 		$wma = Audio::WMA->new( $io, length($body) );
 	
 		if ( !$wma ) {
-			$log->debug('Unable to parse WMA header');
+			$log->is_debug && $log->debug('Unable to parse WMA header');
 			
 			# Delete bad item
 			$track->delete;
@@ -501,7 +501,7 @@ sub parseWMAHeader {
 			
 			# If stream is ASF_Command_Media, it may contain metadata, so let's get it
 			if ( $stream->{stream_type_guid} eq '59DACFC0-59E6-11D0-A3AC-00A0C90348F6' ) {
-				$log->debug( "Possible ASF_Command_Media metadata stream: \#$stream->{streamNumber}, $streamBitrate kbps" );
+				$log->is_debug && $log->debug( "Possible ASF_Command_Media metadata stream: \#$stream->{streamNumber}, $streamBitrate kbps" );
 				$args->{song}->{wmaMetadataStream} = $stream->{streamNumber};
 				next;
 			}
@@ -516,7 +516,7 @@ sub parseWMAHeader {
 				$stream->{audio}->{codec} eq 'Windows Media Audio 9 Voice'
 			);
 		
-			$log->debug( "Available stream: \#$stream->{streamNumber}, $streamBitrate kbps" );
+			$log->is_debug && $log->debug( "Available stream: \#$stream->{streamNumber}, $streamBitrate kbps" );
 
 			if ( $stream->{bitrate} > $bitrate && $max >= $streamBitrate ) {
 				$streamNum = $stream->{streamNumber};
@@ -528,7 +528,7 @@ sub parseWMAHeader {
 		
 		# If we saw no valid streams, such as a stream with only MP3 codec, give up
 		if ( !$valid ) {
-			$log->debug('WMA contains no valid audio streams');
+			$log->is_debug && $log->debug('WMA contains no valid audio streams');
 			
 			# Delete bad item
 			$track->delete;
@@ -596,7 +596,7 @@ sub parseAudioData {
 		}
 	}
 	else {
-		$log->debug("Unable to parse audio data for $type file");
+		$log->is_debug && $log->debug("Unable to parse audio data for $type file");
 	}
 	
 	# Update filesize with Content-Length
@@ -640,7 +640,7 @@ sub parsePlaylist {
 	}
 	
 	if ( !scalar @results ) {
-		$log->debug( "Unable to parse playlist for content-type $type $@" );
+		$log->is_debug && $log->debug( "Unable to parse playlist for content-type $type $@" );
 		
 		# delete bad playlist
 		$playlist->delete;
@@ -677,10 +677,27 @@ sub parsePlaylist {
 			cb     => sub {
 				my ( $result, $error ) = @_;
 				
+				# Bug 10208: If resulting track is not the same as entry (due to redirect),
+				# we need to adjust the playlist
+				if ( blessed($result) && $result->id != $entry->id ) {
+					$log->is_debug && $log->debug('Scanned track changed, updating playlist');
+					
+					my $i = 0;
+					for my $e ( @results ) {
+						if ( $e->id == $entry->id ) {
+							splice @results, $i, 1, $result;
+							last;
+						}
+						$i++;
+					}
+					
+					$playlist->setTracks( \@results );
+				}
+				
 				$scanned++;
 				
 				if ( $scanned == $total ) {
-					$log->debug( 'Playlist scan of ' . $playlist->url . ' finished' );
+					$log->is_debug && $log->debug( 'Playlist scan of ' . $playlist->url . ' finished' );
 					
 					# As long as the playlist contains at least one audio track, it's good
 					if ( my $entry = $playlist->getNextEntry ) {
@@ -696,12 +713,12 @@ sub parsePlaylist {
 							$playlist = Slim::Music::Info::setTitle( $playlist->url, $entry->title || $playlist->url );
 						}
 						
-						$log->debug('Found at least one audio URL in playlist');
+						$log->is_debug && $log->debug('Found at least one audio URL in playlist');
 						
 						$cb->( $playlist, undef, @{$pt} );
 					}
 					else {
-						$log->debug( 'No audio tracks found in playlist' );
+						$log->is_debug && $log->debug( 'No audio tracks found in playlist' );
 						
 						# Delete bad playlist
 						$playlist->delete;
