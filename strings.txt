@@ -3446,8 +3446,8 @@ SETUP_GROUP_PLUGINS_DESC
 
 SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	DA	Programmet skal genstartes før ændringerne træder i kraft
-	DE	Änderung tritt nach Neustart in Kraft
-	EN	Change requires restart to take effect
+	DE	Änderung tritt nach Neustart in Kraft.
+	EN	Change requires restart to take effect.
 	ES	Para que el cambio entre en vigor, debe reiniciar
 	FI	Muutoksen voimaantulo edellyttää uudelleenkäynnistystä
 	FR	La modification requiert un redémarrage pour être appliquée.

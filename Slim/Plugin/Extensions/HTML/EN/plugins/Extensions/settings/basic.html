@@ -1,6 +1,41 @@
 [% IF useExtJS; extJsScripts = BLOCK %]
 <script TYPE="text/javascript">
 	Ext.onReady(function() {
+		[% PROCESS jsString id='PLUGIN_EXTENSIONS_WARNING_POPUP' %]
+		[% PROCESS jsString id='PLUGIN_EXTENSIONS_WARNING_POPUP2' %]
+
+		Settings.Page.submit = function(ajax, cb) {
+			var items = Ext.query('input.unsafePlugin');
+			var msg   = '';
+		
+			for (var i = 0; i < items.length; i++) {
+				if (items[i].checked)
+					msg += '<li>' + items[i].value + '</li>';
+			}
+
+			// display warning if user wants to install "unsafe" plugins from 3rd party repositories
+			if (msg > '') {
+				Ext.Msg.show({
+					title: SqueezeJS.string('settings'),
+					msg: SqueezeJS.string('plugin_extensions_warning_popup') 
+							+ '<ul>' + msg + '</ul>' 
+							+ SqueezeJS.string('plugin_extensions_warning_popup2'),
+					width: 450,
+					closable: false,
+					buttons: Ext.Msg.OKCANCEL,
+					fn: function(btn) {
+						if (btn == 'ok') {
+							document.forms.settingsForm.submit();
+						}
+					}
+				});
+			}
+			
+			else {
+				document.forms.settingsForm.submit();
+			}
+		};
+		
 		if (Ext.isIE6)
 			return;
 			
@@ -18,12 +53,12 @@
 	<div class="settingSection" style="margin-top:0;margin-bottom:20px">
 		<table class="sortable" width="100%">
 			<thead><tr>
-				<th width="5%">&nbsp;</th>
-				<th width="15%">[% "NAME" | string %]</th>
-				<th width="10%">[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
-				<th width="45%">[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
-				<th width="15%">[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>
-				<th width="10%">&nbsp;</th>
+				<th width="5%">[% checkAll %]&nbsp;</th>
+				<th width="15%" class="sortable">[% "NAME" | string %]</th>
+				<th width="10%" class="sortable">[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
+				<th width="45%" class="sortable">[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
+				<th width="15%" class="sortable">[% "PLUGIN_EXTENSIONS_AUTHOR" | string %]</th>
+				<th width="10%" class="sortable">&nbsp;</th>
 			</tr></thead>
 			<tbody>
 			[% content %]
@@ -33,7 +68,13 @@
 [% END %]
 [% BLOCK pluginDetails %]
 	<tr>
-		<td><input name="[% plugin.action || "install" %]" [% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] value="[% plugin.name %]:[% IF plugin.action == 'remove' %][% plugin.current %]:[% plugin.title %][% ELSE %][% plugin.version %][% END %]" type="checkbox" />&nbsp;</td>
+		<td><input name="[% plugin.action || "install" %]" 
+			[% plugin.action == 'disabled' ? "disabled=disabled checked=checked" : "" %] 
+			value="[% plugin.name %]:[% IF plugin.action == 'remove' %][% plugin.current %]:[% plugin.title %][% ELSE %][% plugin.version %][% END %]"
+			[% IF type AND type != 'logitech' %]class="unsafePlugin"[% END %] 
+			type="checkbox" />
+			&nbsp;
+		</td>
 		<td>[% plugin.title %]&nbsp;</td>
 		<td>[% plugin.delta || plugin.version || plugin.current %]&nbsp;</td>
 		<td>[% (plugin.changes|| plugin.message || plugin.desc || plugin.title) | html_line_break %]&nbsp;</td>
@@ -77,7 +118,22 @@
 		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGINS_REMOVE" desc="" %]
 		[%- END -%]
 
-		[% WRAPPER pluginGroup %]
+		<script TYPE="text/javascript">
+			function toggleCheck(onOrOff) {
+				var field = document.forms.settingsForm.remove;
+				
+				if (field && field.length == null) {
+					if (field.checked != null)
+						field.checked = onOrOff;
+				}
+				else {
+					for (i = 0; i < field.length; i++)
+						field[i].checked = onOrOff;
+				}
+			}
+		</script>
+
+		[% WRAPPER pluginGroup checkAll="<input type=\"checkbox\" onclick=\"toggleCheck(this.checked)\"/>" %]
 			[% FOREACH plugin = remove %]
 				[% plugin.action = 'remove' %]
 				[% PROCESS pluginDetails %]
@@ -86,33 +142,16 @@
 
 	[%- END -%]
 
-	[% IF install.logitech.items.size %]
-
-		[% WRAPPER setting title=install.logitech.title desc="" %]
-		[%- END -%]
-
-		[% WRAPPER pluginGroup %]
-			[% FOREACH plugin = install.logitech.items %]
-				[% plugin.changes = '' %]
-				[% PROCESS pluginDetails %]
-			[% END %]
-		[%- END -%]
-
-	[%- END -%]
-
-	[% IF install.keys.size > 1 %]
+	[% IF install.size > 0 %]
 		
-		[% FOREACH repo = install.keys %]
-
-			[% NEXT IF repo == 'logitech' %]
-
-			[% WRAPPER setting title=install.item(repo).title desc="" %]
+		[% FOREACH repo = install %]
+			[% WRAPPER setting title=repo.title desc="" %]
 			[%- END -%]
 	
 			[% WRAPPER pluginGroup %]
-				[% FOREACH plugin = install.item(repo).items %]
+				[% FOREACH plugin = repo.items %]
 					[% plugin.changes = '' %]
-					[% PROCESS pluginDetails %]
+					[% PROCESS pluginDetails type = repo.type %]
 				[% END %]
 			[%- END -%]
 		
@@ -121,6 +160,7 @@
 	[%- END -%]
 
 	[% IF manual.values.size %]
+		[% type = undef %]
 
 		[% WRAPPER setting title="PLUGIN_EXTENSIONS_PLUGIN_MANUAL" desc="" %]
 		[%- END -%]

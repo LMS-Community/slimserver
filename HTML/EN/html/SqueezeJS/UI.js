@@ -2209,7 +2209,7 @@ if (Ext.grid && Ext.grid.GridView && Ext.grid.GridPanel) {
 				'dataIndex': name,
 				'width': h.offsetWidth,
 				'tooltip': h.title,
-				'sortable': true
+				'sortable': Ext.get(h).hasClass('sortable')
 			}));
 		}
 		

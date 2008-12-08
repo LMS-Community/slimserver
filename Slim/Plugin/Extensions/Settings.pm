@@ -76,7 +76,7 @@ sub _gotPluginInfo {
 
 			for my $remove ( ref $remove ? @$remove : ( $remove ) ) {
 
-				my ($name, $version, $title) = $remove =~ /(.*):(.*):(.*)/;
+				my ($name, $version, $title) = $remove =~ /(.*?):(.*?):(.*)/;
 
 				Slim::Plugin::Extensions::PluginDownloader->remove( { 
 					name    => $name,
@@ -96,9 +96,18 @@ sub _gotPluginInfo {
 
 				my ($name, $version) = $install =~ /(.*):(.*)/;
 
-				my @match = grep { $name eq $_->{'name'} && $version eq $_->{'version'} } @$plugins;
+				FIND: for my $repo (keys %$plugins) {
 
-				push @install, $match[0];
+					for my $plugin (@{ $plugins->{ $repo }->{'items'} }) {
+						
+						if ($plugin->{'name'} eq $name && $plugin->{'version'} eq $version) {
+
+							push @install, $plugin;
+
+							last FIND;
+						}
+					}
+				}
 			}
 		}
 
@@ -179,49 +188,54 @@ sub _addInfo {
 	my %removeInfo;
 	my $installedManually;
 
-	for my $plugin (sort { $a->{'title'} cmp $b->{'title'} } @$plugins) {
+	for my $repoName (keys %$plugins) {
 
-		my $module = $installed{ $plugin->{'name'} };
+		for my $plugin (@{ $plugins->{ $repoName }->{'items'} }) {
 
-		if ($status->{ $plugin->{'name'} }) {
-			# plugin has already been installed/removed so remove from lists until restart
-			next;
-		}
+			my $module = $installed{ $plugin->{'name'} };
 
-		if ($manual{ $plugin->{'name'} }) {
-
-			$installedManually->{ $plugin->{'name'} } = $plugin;
-			$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL'), $manual{ $plugin->{'name'} }),
-
-			next;
-		}
-		
-		if ($module) {
-
-			$plugin->{'current'} = Slim::Utils::PluginManager->dataForPlugin($module)->{'version'};
-
-			if ($plugin->{'current'} ne $plugin->{'version'}) {
-
-				push @upgrade, $plugin;
+			if ($status->{ $plugin->{'name'} }) {
+				# plugin has already been installed/removed so remove from lists until restart
+				next;
 			}
 
-			$removeInfo{ $plugin->{'name'} } = $plugin;
+			if ($manual{ $plugin->{'name'} }) {
 
-		} else {
-			
-			# use 'logitech' key for our own trusted repository
-			my $repo = $plugin->{safe} ? 'logitech' : $plugin->{repo};
-			
-			unless ($install->{$repo}) {
-				$install->{$repo} = {
-					title => $plugin->{repotitle},
-					items => [],
-				};
+				$installedManually->{ $plugin->{'name'} } = $plugin;
+				$installedManually->{ $plugin->{'name'} }->{message} = sprintf(Slim::Utils::Strings::string('PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL'), $manual{ $plugin->{'name'} }),
+					
+					next;
 			}
-
-			push @{ $install->{$repo}->{items} }, $plugin;
+			
+			if ($module) {
+				
+				$plugin->{'current'} = Slim::Utils::PluginManager->dataForPlugin($module)->{'version'};
+				
+				if ($plugin->{'current'} ne $plugin->{'version'}) {
+					
+					push @upgrade, $plugin;
+				}
+				
+				$removeInfo{ $plugin->{'name'} } = $plugin;
+				
+			} else {
+				
+				unless ($install->{ $repoName }) {
+					$install->{ $repoName } = {
+						title => $plugins->{ $repoName }->{'title'},
+						name  => $repoName,
+						type  => $plugins->{ $repoName }->{'type'},
+						items => [],
+					};
+				}
+				
+				push @{ $install->{$repoName}->{items} }, $plugin;
+			}
 		}
 	}
+
+	# sort plugins in the type order: logitech, master, others (sorted by title) 
+	my @install = sort { $a->{type} eq $b->{type} ? $a->{title} cmp $b->{title} : $a->{type} cmp $b->{type} } values(%$install);
 
 	for my $plugin (keys %installed) {
 		
@@ -246,7 +260,7 @@ sub _addInfo {
 
 	$params->{'repos'}   = \@repos;
 	$params->{'upgrade'} = \@upgrade;
-	$params->{'install'} = $install;
+	$params->{'install'} = \@install;
 	$params->{'remove'}  = \@remove;
 	$params->{'manual'}  = $installedManually;
 	$params->{'rand'}    = $rand;
@@ -269,10 +283,10 @@ sub _addInfo {
 		}
 
 		if ($restart) {
-			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("SETUP_GROUP_PLUGINS_NEEDS_RESTART") . '</span>';
+			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") . '</span>';
 		}
 	}
-	
+
 	return $class->SUPER::handler($client, $params);
 }
 

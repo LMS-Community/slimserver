@@ -11,7 +11,7 @@ use bytes;
 use strict;
 use warnings;
 
-use Scalar::Util qw(weaken);
+use Scalar::Util qw(blessed weaken);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -204,8 +204,8 @@ StreamingFailed =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# BUFFERING
 	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_SyncStopNextIf, \&_SyncStopNextIf, \&_Invalid],	# PLAYING
-	[	\&_Invalid,		\&_SyncStopNextIf, \&_SyncStopNextIf, \&_Invalid],	# PAUSED
+	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],	# PLAYING
+	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],	# PAUSED
 ],
 EndOfStream =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
@@ -362,18 +362,20 @@ sub _Playing {
 
 	Slim::Player::Playlist::refreshPlaylist($self->master());
 	
-	foreach my $player (@{$self->{'players'}})	{
-		Slim::Control::Request::notifyFromArray($player,
-			[
-				'playlist', 
-				'newsong', 
-				Slim::Music::Info::standardTitle(
-					$self->master(), 
-					$last_song->currentTrack()
-				),
-				$last_song->{'index'}
-			]
-		);
+	if ( $last_song ) {
+		foreach my $player (@{$self->{'players'}})	{
+			Slim::Control::Request::notifyFromArray($player,
+				[
+					'playlist', 
+					'newsong', 
+					Slim::Music::Info::standardTitle(
+						$self->master(), 
+						$last_song->currentTrack()
+					),
+					$last_song->{'index'}
+				]
+			);
+		}
 	}
 	
 	if ( $log->is_info ) {
@@ -1158,7 +1160,7 @@ sub _AutoStart {			# [streaming-track-not-playing] start -> Streamout
 	
 	_setStreamingState($self, STREAMOUT);
 	
-	if ($self->streamingSong->{status} != Slim::Player::Song::STATUS_PLAYING) {
+	if ($self->streamingSong && $self->streamingSong->{status} != Slim::Player::Song::STATUS_PLAYING) {
 		$log->info('autostart possibly short track');
 		foreach my $player (@{$self->{'players'}})	{
 			$player->resume();

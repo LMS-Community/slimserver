@@ -29,12 +29,8 @@ sub initPlugin {
 		weight => 30,
 	);
 	
-	# Track Info item
-	Slim::Menu::TrackInfo->registerInfoProvider( deezer => (
-		after => 'middle',
-		func  => \&trackInfoMenu,
-	) );
-	
+	# Note: Deezer does not wish to be included in context menus
+	# that is why a track info menu item is not created here
 	
 	if ( !main::SLIM_SERVICE ) {
 		# Add a function to view trackinfo in the web
@@ -60,32 +56,6 @@ sub initPlugin {
 
 sub getDisplayName {
 	return 'PLUGIN_DEEZER_MODULE_NAME';
-}
-
-sub trackInfoMenu {
-	my ( $client, $url, $track, $remoteMeta ) = @_;
-	
-	return unless $client;
-	
-	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
-	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );
-	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
-	
-	my $snURL = '/api/deezer/v1/opml/context';
-
-	# Search by artist/album/track
-	$snURL .= '?artist=' . uri_escape_utf8($artist)
-	  . '&album='    . uri_escape_utf8($album)
-	  . '&track='    . uri_escape_utf8($title);
-	
-	if ( $artist || $album || $title ) {
-		return {
-			type      => 'link',
-			name      => $client->string('PLUGIN_DEEZER_ON_DEEZER'),
-			url       => Slim::Networking::SqueezeNetwork->url($snURL),
-			favorites => 0,
-		};
-	}
 }
 
 1;
