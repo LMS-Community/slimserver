@@ -47,6 +47,8 @@ sub canSeek {
 	return 1;
 }
 
+sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'Rhapsody Radio' ); }
+
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
 sub new {
 	my $class  = shift;

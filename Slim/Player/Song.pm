@@ -606,7 +606,9 @@ sub canSeek {
 	
 	my $canSeek = $self->canDoSeek();
 	
-	return ($canSeek ? $canSeek : ($canSeek, @{$self->{'canSeekError'}}));
+	return $canSeek if $canSeek;
+	
+	return wantarray ? ( $canSeek, @{$self->{'canSeekError'}} ) : $canSeek;
 }
 
 sub canDoSeek {
