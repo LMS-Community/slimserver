@@ -401,6 +401,27 @@ sub mainMenu {
 			@{Slim::Plugin::LineIn::Plugin::lineInItem($client)},
 			@{playerSettingsMenu($client, 1)},
 		);
+		
+		# Add Music Stores menu if in an Amazon country
+		if ( $client->playerData->userid->isAllowedService('Amazon') ) {
+			splice @menu, 3, 0, ( {
+				text           => $client->string('MUSIC_STORES'),
+				id             => 'music_stores',
+				node           => 'home',
+				weight         => 35,
+				actions => {
+					go => {
+						cmd => ['music_stores'],
+						params => {
+							menu => 'music_stores',
+						},
+					},
+				},
+				window        => {
+					titleStyle => 'internetradio',
+				},
+			} );
+		}
 	}
 
 	_notifyJive(\@menu, $client);
