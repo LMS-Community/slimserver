@@ -1230,6 +1230,8 @@ sub handleWebSettings {
  	$prefs->set('oldtracks', $params->{'numOldTracks'});
 	$prefs->set('continuous', $params->{'continuousMode'} ? 1 : 0);
 
+	$mixInfo{$client->master()->id}->{'idList'} = undef;
+
 	# Pass on to check if the user requested a new mix as well
 	handleWebMix($client, $params);
 }
