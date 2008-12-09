@@ -892,6 +892,11 @@ sub updateMenu {
 
 			next;
 		}
+		
+		# Skip home menu items that contain no submenus
+		if ( !scalar keys %{ $home{$menuItem} } ) {
+			next;
+		}
 
 		if (defined $plugin) {
 
