@@ -313,6 +313,7 @@ sub mainMenu {
 		},
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
+		@{musicStoresMenu($client)},
 		@{albumSortSettingsItem($client, 1)},
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},
@@ -1312,7 +1313,7 @@ sub internetRadioMenu {
 
 	my @menu = ();
 	
-	if ($validQuery) {
+	if ($validQuery && $test_request->getResult('count')) {
 		push @menu,
 		{
 			text           => $client->string('RADIO'),
@@ -1349,7 +1350,7 @@ sub musicServicesMenu {
 
 	my @menu = ();
 	
-	if ($validQuery) {
+	if ($validQuery && $test_request->getResult('count')) {
 		push @menu, 
 		{
 			text           => $client->string('MUSIC_SERVICES'),
@@ -1373,6 +1374,42 @@ sub musicServicesMenu {
 
 	return \@menu;
 
+}
+
+# returns a single item for the homeMenu if music_stores is a valid command
+sub musicStoresMenu {
+	$log->info("Begin function");
+	my $client = shift;
+	my @command = ('music_stores', 0, 200, 'menu:music_stores');
+
+	my $test_request = Slim::Control::Request::executeRequest($client, \@command);
+	my $validQuery = $test_request->isValidQuery();
+
+	my @menu = ();
+	
+	if ($validQuery && $test_request->getResult('count')) {
+		push @menu, 
+		{
+			text           => $client->string('MUSIC_STORES'),
+			id             => 'music_stores',
+			node           => 'home',
+			weight         => 35,
+			actions => {
+				go => {
+					cmd => ['music_stores'],
+					params => {
+						menu => 'music_stores',
+					},
+				},
+			},
+			window        => {
+					menuStyle => 'album',
+					titleStyle => 'internetradio',
+			},
+		};
+	}
+
+	return \@menu;
 }
 
 sub playerSettingsMenu {
