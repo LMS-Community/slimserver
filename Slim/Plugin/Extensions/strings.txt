@@ -256,3 +256,4 @@ PLUGIN_EXTENSIONS_WARNING_POPUP
 PLUGIN_EXTENSIONS_WARNING_POPUP2
 	DE	Installieren Sie nur Erweiterungen von Autoren, denen Sie vertrauen. Bösartige Software kann ihre Installation stören, oder ihre Privatsphäre verletzen.
 	EN	Only install extensions from authors whom you trust. Malicious software can damage your computer or violate your privacy.
+	FR	Installez seulement les extensions d'auteurs en qui vous avez confiance. Un logiciel malveillant peux endommager votre ordinateur ou accéder a vos données personnelles.
