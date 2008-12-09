@@ -150,6 +150,8 @@ sub _init_done {
 				}
 			}
 		}
+		
+		$prefs->set( sn_disabled_plugins => $json->{disabled_plugins} || [] );
 	}
 	
 	if ( $json->{active_services} ) {
@@ -481,8 +483,8 @@ sub hasAccount {
 	if ( main::SLIM_SERVICE ) {
 		my $type_pref = {
 			pandora  => 'pandora_username',
-			rhapsody => 'plugin_rhapsody_direct_username',
-			lastfm   => 'plugin_audioscrobbler_accounts',
+			rhapsody => 'plugin_rhapsody_direct_accounts',
+			lfm      => 'plugin_audioscrobbler_accounts',
 			slacker  => 'plugin_slacker_username',
 		};
 		
@@ -493,6 +495,22 @@ sub hasAccount {
 		
 		return $services->{$type};
 	}
+}
+
+sub isServiceEnabled {
+	my ( $class, $client, $service ) = @_;
+	
+	if ( main::SLIM_SERVICE ) {
+		return $client->playerData->userid->isAllowedService($service);
+	}
+	
+	my $disabled = $prefs->get('sn_disabled_plugins') || [];
+	
+	if ( grep { lc($_) eq lc($service) } @{$disabled} ) {
+		return 0;
+	}
+	
+	return 1;
 }
 
 1;

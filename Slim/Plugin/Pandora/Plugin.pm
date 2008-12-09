@@ -199,12 +199,11 @@ sub skipTrack {
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
-	# can't browse without a player connected
 	return unless $client;
 	
-	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' ) ) {
-		return;
-	}
+	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Pandora' );
+	
+	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' );
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
 	my $title  = $track->remote ? $remoteMeta->{title}  : $track->title;
