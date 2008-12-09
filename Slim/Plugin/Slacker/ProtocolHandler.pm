@@ -55,6 +55,8 @@ sub shouldLoop () { 0 }
 
 sub canSeek { 0 }
 
+sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'Slacker' ); }
+
 # Source for AudioScrobbler ( E = Personalised recommendation except Last.fm)
 sub audioScrobblerSource () { 'E' }
 

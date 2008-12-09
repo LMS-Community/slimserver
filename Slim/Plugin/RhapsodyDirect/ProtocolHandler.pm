@@ -47,6 +47,8 @@ sub canSeek {
 	return 1;
 }
 
+sub canSeekError { return ( 'SEEK_ERROR_TYPE_NOT_SUPPORTED', 'Rhapsody Radio' ); }
+
 # To support remote streaming (synced players), we need to subclass Protocols::HTTP
 sub new {
 	my $class  = shift;
@@ -807,6 +809,12 @@ sub getSeekData {
 	my $meta = $class->getMetadataFor( $client, $song->{track}->url );
 	
 	my $duration = $meta->{duration} || return;
+	
+	# Don't seek past the end
+	if ( $newtime >= $duration ) {
+		$log->error('Attempt to seek past end of Rhapsody track, ignoring');
+		return;
+	}
 	
 	# Calculate the RAD and EA offsets for this time offset
 	my $percent   = $newtime / $duration;
