@@ -410,8 +410,33 @@ sub parseMetadata {
 				my $uri  = URI->new( '?' . $1 );
 				my $meta = $uri->query_form_hash;
 				
-				$log->is_debug && $log->debug('Parsed WMA metadata from query string');
+				$log->is_debug && $log->debug('Parsed WMA metadata from artist-style query string');
 			
+				my $cb = sub {
+					$song->pluginData( wmaMeta => $meta );
+					$song->pluginData( wmaHasData => 1 );
+				};
+				
+				# Delay metadata according to buffer size if we already have metadata
+				if ( $song->pluginData('wmaHasData') ) {
+					Slim::Music::Info::setDelayedCallback( $client, $cb );
+				}
+				else {
+					$cb->();
+				}
+			}
+			
+			# type=SONG format used by KFOG
+			elsif ( $metadata =~ /(type=SONG[^\0]+)/ ) {
+				require URI::QueryParam;
+				my $uri  = URI->new( '?' . $1 );
+				my $meta = $uri->query_form_hash;
+				
+				$log->is_debug && $log->debug('Parsed WMA metadata from type=SONG query string');
+				
+				$meta->{artist} = delete $meta->{currentArtist};
+				$meta->{title}  = delete $meta->{currentSong};
+				
 				my $cb = sub {
 					$song->pluginData( wmaMeta => $meta );
 					$song->pluginData( wmaHasData => 1 );
