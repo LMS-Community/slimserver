@@ -55,13 +55,28 @@ sub parser {
 				$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
 				
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
-				$client->pluginData( hasIcy => $url );
 				$client->pluginData( metadata => undef );
 			}
 			
 			# Let the default metadata handler process the Icy metadata
+			$client->pluginData( hasIcy => $url );
 			return;
 		}
+	}
+	
+	# If a station is providing WMA metadata, disable metadata
+	# provided by RadioTime
+	elsif ( $metadata =~ /(?:CAPTION|artist|type=SONG)/ ) {
+		if ( $client->pluginData('metadata' ) ) {
+			$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has WMA metadata');
+			
+			Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
+			$client->pluginData( metadata => undef );
+		}
+		
+		# Let the default metadata handler process the WMA metadata
+		$client->pluginData( hasIcy => $url );
+		return;
 	}
 	
 	return 1;

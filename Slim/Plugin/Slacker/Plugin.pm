@@ -230,9 +230,9 @@ sub trackInfoMenu {
 
 	return unless $client;
 	
-	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'slacker' ) ) {
-		return;
-	}
+	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Slacker' );
+	
+	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'slacker' );
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
 	

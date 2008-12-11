@@ -274,12 +274,11 @@ sub gotCreatePlaylistError {
 sub trackInfoMenu {
 	my ( $client, $url, $track, $remoteMeta ) = @_;
 	
-	# can't access rhapsody without a player
 	return unless $client;
 	
-	if ( !Slim::Networking::SqueezeNetwork->hasAccount( $client, 'rhapsody' ) ) {
-		return;
-	}
+	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'RhapsodyDirect' );
+	
+	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'rhapsody' );
 	
 	my $artist = $track->remote ? $remoteMeta->{artist} : ( $track->artist ? $track->artist->name : undef );
 	my $album  = $track->remote ? $remoteMeta->{album}  : ( $track->album ? $track->album->name : undef );

@@ -485,6 +485,25 @@ sub init {
 			}
 			1;
 		} );
+		
+		# Add Music Stores menu item after Music Services
+		$prefs->migrateClient( 8, sub {
+			my ( $cprefs, $client ) = @_;
+			my $menuItem = $cprefs->get('menuItem');
+			
+			my $i = 0;
+			for my $item ( @{$menuItem} ) {
+				$i++;
+				if ( $item eq 'MUSIC_SERVICES' ) {
+					splice @{$menuItem}, $i, 0, 'MUSIC_STORES';
+					last;
+				}
+			}
+			
+			$cprefs->set( menuItem => $menuItem );
+			
+			1;
+		} );
 	}
 
 	# initialise any new prefs

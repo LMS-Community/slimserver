@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<extension>
+	<id>587A25E9-49AB-4497-BE47-2962E5742DC4</id>
+	<name>PLUGIN_AMAZON_MODULE_NAME</name>
+	<module>Slim::Plugin::Amazon::Plugin</module>
+	<playerMenu>MUSIC_STORES</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_AMAZON_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Amazon/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.3</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

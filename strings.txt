@@ -507,6 +507,9 @@ MY_MUSIC
 	NO	Musikkbibliotek
 	SV	Musikbibliotek
 
+MUSIC_STORES
+	EN	Music Stores
+
 GAMES
 	CS	Hry
 	DA	Spil

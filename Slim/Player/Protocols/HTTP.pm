@@ -138,6 +138,10 @@ sub parseMetadata {
 	# See if there is a parser for this stream
 	my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
 	if ( $parser ) {
+		if ( $log->is_debug ) {
+			$log->debug( 'Trying metadata parser ' . Slim::Utils::PerlRunTime::realNameForCodeRef($parser) );
+		}
+		
 		my $handled = eval { $parser->( $client, $url, $metadata ) };
 		if ( $@ ) {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
@@ -371,7 +375,7 @@ sub getMetadataFor {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($provider);
 			$log->error( "Metadata provider $name failed: $@" );
 		}
-		else {
+		elsif ( scalar keys %{$metadata} ) {
 			return $metadata;
 		}
 	}

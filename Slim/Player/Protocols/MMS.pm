@@ -372,9 +372,14 @@ sub parseMetadata {
 			$log->is_debug && $log->debug( "ASF_Command_Media: $metadata" );
 		
 			# See if there is a parser for this stream
-			my $parser = Slim::Formats::RemoteMetadata->getParserFor( $song->{streamUrl} );
+			my $url = Slim::Player::Playlist::url($client);
+			my $parser = Slim::Formats::RemoteMetadata->getParserFor( $url );
 			if ( $parser ) {
-				my $handled = eval { $parser->( $client, $song->{streamUrl}, $metadata ) };
+				if ( $log->is_debug ) {
+					$log->debug( 'Trying metadata parser ' . Slim::Utils::PerlRunTime::realNameForCodeRef($parser) );
+				}
+				
+				my $handled = eval { $parser->( $client, $url, $metadata ) };
 				if ( $@ ) {
 					my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($parser);
 					$log->error( "Metadata parser $name failed: $@" );
@@ -410,8 +415,33 @@ sub parseMetadata {
 				my $uri  = URI->new( '?' . $1 );
 				my $meta = $uri->query_form_hash;
 				
-				$log->is_debug && $log->debug('Parsed WMA metadata from query string');
+				$log->is_debug && $log->debug('Parsed WMA metadata from artist-style query string');
 			
+				my $cb = sub {
+					$song->pluginData( wmaMeta => $meta );
+					$song->pluginData( wmaHasData => 1 );
+				};
+				
+				# Delay metadata according to buffer size if we already have metadata
+				if ( $song->pluginData('wmaHasData') ) {
+					Slim::Music::Info::setDelayedCallback( $client, $cb );
+				}
+				else {
+					$cb->();
+				}
+			}
+			
+			# type=SONG format used by KFOG
+			elsif ( $metadata =~ /(type=SONG[^\0]+)/ ) {
+				require URI::QueryParam;
+				my $uri  = URI->new( '?' . $1 );
+				my $meta = $uri->query_form_hash;
+				
+				$log->is_debug && $log->debug('Parsed WMA metadata from type=SONG query string');
+				
+				$meta->{artist} = delete $meta->{currentArtist};
+				$meta->{title}  = delete $meta->{currentSong};
+				
 				my $cb = sub {
 					$song->pluginData( wmaMeta => $meta );
 					$song->pluginData( wmaHasData => 1 );
