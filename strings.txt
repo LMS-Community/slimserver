@@ -2284,6 +2284,18 @@ WELCOME_TO_SQUEEZEPLAY
 	NO	Velkommen til SqueezePlay
 	SV	Välkommen till SqueezePlay
 
+WELCOME_TO_CONTROLLER
+	DA	Velkommen til Controller
+	DE	Willkommen bei Controller!
+	EN	Welcome to Controller
+	ES	Bienvenido a Controller
+	FI	Tervetuloa Controllerhin
+	FR	Bienvenue dans Controller
+	IT	Benvenuti in Controller
+	NL	Welkom bij Controller
+	NO	Velkommen til Controller
+	SV	Välkommen till Controller
+
 LOGIN
 	DA	Log på
 	DE	Anmelden
