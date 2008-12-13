@@ -27,7 +27,6 @@ my $dlext  = $Config{'dlext'};
 # The list of all the packages needed.
 my %packages = (
 	'Class::XSAccessor::Array' => 'Class-XSAccessor-Array-0.05.tar.gz',
-	'Class::C3::XS'            => 'Class-C3-XS-0.08.tar.gz',
 	'Compress::Zlib'           => 'Compress-Zlib-1.41.tar.gz',
 	'DBI'                      => 'DBI-1.604.tar.gz',
 	'DBD::mysql'               => 'DBD-mysql-3.0002.tar.gz',
