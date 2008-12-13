@@ -620,7 +620,6 @@ sub _cliQuery_done {
 						bitrate => $subFeed->{'bitrate'},
 					} );
 				
-					$client->execute([ 'playlist', 'clear' ]) if ($method =~ /play|load/i);
 					$client->execute([ 'playlist', $method, $url ]);
 				}
 			}
