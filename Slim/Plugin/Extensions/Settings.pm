@@ -160,7 +160,11 @@ sub _addInfo {
 		my $basedir = Slim::Utils::PluginManager->dataForPlugin($module)->{'basedir'};
 		my $name;
 
-		if ($module =~ /Plugins::(.*)::/) {
+		if ($module =~ /^Plugins::(.*)::/) {
+
+			$name = $1;
+
+		} elsif ($module =~ /^Slim::Plugin::(.*)::/) {
 
 			$name = $1;
 
