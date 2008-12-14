@@ -393,7 +393,8 @@ sub parseMetadata {
 			$title = "$artist - $title";
 		}
 		
-		Slim::Music::Info::setDelayedTitle( $song->master(),  $song->currentTrack()->url, $title );
+		# Delay the title by the length of the output buffer only
+		Slim::Music::Info::setDelayedTitle( $song->master(),  $song->currentTrack()->url, $title, 'output-only' );
 	}
 	
 	return;
