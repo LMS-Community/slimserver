@@ -757,9 +757,7 @@ sub getMix {
 
 	if ($filter) {
 
-logError($filter);
 		$filter = Slim::Utils::Unicode::utf8decode_locale($filter);
-logError($filter);
 
 		$log->debug("Filter $filter in use.");
 
@@ -780,10 +778,6 @@ logError($filter);
 	if ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') {
 		# need to decode the file path when a file is used as seed
 		$id = Slim::Utils::Unicode::utf8decode_locale($id);
-	}
-	else {
-		# need to encode the search value (eg. artist) when a database value is used as seed
-#		$id = Slim::Utils::Unicode::utf8encode_locale($id);		
 	}
 
 	my $mixArgs = "$validMixTypes{$for}=$id";
