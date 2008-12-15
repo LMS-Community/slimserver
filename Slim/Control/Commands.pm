@@ -2164,7 +2164,7 @@ sub playlistsNewCommand {
 
 	# create the playlist URL
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile($prefs->get('playlistdir'), $title . '.m3u')
+		catfile($prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($title) . '.m3u')
 	);
 
 	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
@@ -2234,7 +2234,7 @@ sub playlistsRenameCommand {
 	# now perform the operation
 	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile($prefs->get('playlistdir'), $newName . '.m3u')
+		catfile($prefs->get('playlistdir'), Slim::Utils::Unicode::utf8encode_locale($newName) . '.m3u')
 	);
 
 	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
@@ -2265,14 +2265,13 @@ sub playlistsRenameCommand {
 		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCaseArticles($newName));
 		$playlistObj->update;
 
-#			Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 		Slim::Formats::Playlists::M3U->write( 
 			[ $playlistObj->tracks ],
 			undef,
 			$playlistObj->path,
 			1,
 			$index,
-			);
+		);
 	}
 
 	$request->setStatusDone();

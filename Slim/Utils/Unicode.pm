@@ -425,23 +425,14 @@ sub utf8encode {
 
 	my $orig = $string;
 
-	# Don't try to encode a string which isn't utf8
-	# 
-	# If the incoming string already is utf8, turn off the utf8 flag.
-	if ($string && ($encoding ne 'utf8' || !Encode::is_utf8($string))) {
+	if ($string && $encoding ne 'utf8') {
 
+		$string = utf8on($string);
 		$string = Encode::encode($encoding, $string, $FB_QUIET);
 
 	} elsif ($string) {
 
 		Encode::_utf8_off($string);
-	}
-
-	# Check for doubly encoded strings - and revert back to our original
-	# string if that's the case.
-	if ($string && $] > 5.007 && encodingFromString($string) eq 'utf8') {
-
-		$string = $orig;
 	}
 
 	return $string;
