@@ -984,18 +984,42 @@ sub infoReplayGain {
 	my $album = $track->album;
 	
 	if ( my $replaygain = $track->replay_gain ) {
-		push @{$items}, {
-			type => 'text',
-			name => cstring($client, 'REPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $replaygain ) . ' dB',
-		};
+		my $noclip = Slim::Player::ReplayGain::preventClipping( $replaygain, $track->replay_peak );
+		if ( $noclip < $replaygain ) {
+			# Gain was reduced to avoid clipping
+			push @{$items}, {
+				type => 'text',
+				name => cstring($client, 'REPLAYGAIN') . cstring($client, 'COLON') . ' ' 
+					. sprintf( "%2.2f", $replaygain ) . ' dB (' 
+					. cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) . ')',
+			};
+		}
+		else {
+			push @{$items}, {
+				type => 'text',
+				name => cstring($client, 'REPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $replaygain ) . ' dB',
+			};
+		}
 	}
 	
 	if ( blessed($album) && $album->can('replay_gain') ) {
 		if ( my $albumreplaygain = $album->replay_gain ) {
-			push @{$items}, {
-				type => 'text',
-				name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
-			};
+			my $noclip = Slim::Player::ReplayGain::preventClipping( $albumreplaygain, $album->replay_peak );
+			if ( $noclip < $albumreplaygain ) {
+				# Gain was reduced to avoid clipping
+				push @{$items}, {
+					type => 'text',
+					name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' 
+						. sprintf( "%2.2f", $albumreplaygain ) . ' dB (' 
+						. cstring( $client, 'REDUCED_TO_PREVENT_CLIPPING', sprintf( "%2.2f dB", $noclip ) ) . ')',
+				};
+			}
+			else {
+				push @{$items}, {
+					type => 'text',
+					name => cstring($client, 'ALBUMREPLAYGAIN') . cstring($client, 'COLON') . ' ' . sprintf( "%2.2f", $albumreplaygain ) . ' dB',
+				};
+			}
 		}
 	}
 	

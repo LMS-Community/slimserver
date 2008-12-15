@@ -19492,3 +19492,5 @@ CONTINUE_TO_SQUEEZECENTER
 	NO	Gå til SqueezeCenter for å håndtere innstillingene for avspilling av musikksamlingen din.
 	SV	Gå vidare till SqueezeCenter för att hantera inställningarna för hur din musiksamling spelas upp.
 
+REDUCED_TO_PREVENT_CLIPPING
+	EN	%s to prevent clipping
