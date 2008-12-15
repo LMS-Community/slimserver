@@ -47,7 +47,7 @@
 			[% IF link.key == "SQUEEZENETWORK_SWITCH" %][% cookie = 0 %][% END %]
 					case "[% link.key %]":
 						url = "[% link.value %]"
-						[% IF cookie %]homestring = "[% link.key | string %]"
+						[% IF cookie %]homestring = "[% link.key | getstring %]"
 						cookie = [% cookie %][% END %]
 					break
 			[%- END -%]
