@@ -15,9 +15,10 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
 use Slim::Utils::Prefs;
+use Slim::Utils::Unicode;
 
 my $os  = Slim::Utils::OSDetect::OS();
-*escape   = Slim::Utils::OSDetect::isWindows() ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
+*escape = Slim::Utils::OSDetect::isWindows() ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
 
 my $log = logger('plugin.musicip');
 
@@ -161,7 +162,7 @@ sub _gotFilters {
 
 	if ($http) {
 
-		@filters = split(/\n/, $http->content);
+		@filters = split(/\n/, decode($http->content));
 
 		if ($log->is_debug && scalar @filters) {
 
