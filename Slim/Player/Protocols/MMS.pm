@@ -402,7 +402,7 @@ sub parseMetadata {
 				
 				# Delay metadata according to buffer size if we already have metadata
 				if ( $song->pluginData('wmaMeta') ) {
-					Slim::Music::Info::setDelayedCallback( $client, $cb );
+					Slim::Music::Info::setDelayedCallback( $client, $cb, 'output-only' );
 				}
 				else {
 					$cb->();
@@ -424,7 +424,7 @@ sub parseMetadata {
 				
 				# Delay metadata according to buffer size if we already have metadata
 				if ( $song->pluginData('wmaHasData') ) {
-					Slim::Music::Info::setDelayedCallback( $client, $cb );
+					Slim::Music::Info::setDelayedCallback( $client, $cb, 'output-only' );
 				}
 				else {
 					$cb->();
@@ -449,7 +449,7 @@ sub parseMetadata {
 				
 				# Delay metadata according to buffer size if we already have metadata
 				if ( $song->pluginData('wmaHasData') ) {
-					Slim::Music::Info::setDelayedCallback( $client, $cb );
+					Slim::Music::Info::setDelayedCallback( $client, $cb, 'output-only' );
 				}
 				else {
 					$cb->();

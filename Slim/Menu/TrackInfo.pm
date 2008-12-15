@@ -946,7 +946,7 @@ sub infoContentType {
 	my $item;
 	
 	if ( my $ct = Slim::Schema->contentType($track) ) {
-		if ( $track->remote && Slim::Music::Info::isPlaylist( $track, $ct ) )  {
+		if ( blessed($client) && $track->remote && Slim::Music::Info::isPlaylist( $track, $ct ) )  {
 			if ( my $url = $client->master()->currentTrackForUrl( $track->url ) ) {
 				$ct = Slim::Schema->contentType($url);
 			}
@@ -1035,7 +1035,7 @@ sub infoBitrate {
 			my ($song, $sourcebitrate, $streambitrate);
 			my $convert = '';
 			
-			if (($song = $client->currentSongForUrl($track->url))
+			if (blessed($client) && ($song = $client->currentSongForUrl($track->url))
 				&& ($sourcebitrate = $song->bitrate())
 				&& ($streambitrate = $song->streambitrate())
 				&& $sourcebitrate != $streambitrate)

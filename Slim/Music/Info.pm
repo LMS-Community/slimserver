@@ -524,7 +524,7 @@ sub getCurrentTitle {
 
 # Return the amount of seconds the current stream is behind real-time
 sub getStreamDelay {
-	my $client = shift;
+	my ( $client, $outputDelayOnly ) = @_;
 	
 	my $bitrate = $client->streamingSong()->streambitrate() || 128000;
 	my $delay   = 0;
@@ -533,7 +533,12 @@ sub getStreamDelay {
 		my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
 		my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
 	
-		$delay = $decodeBuffer + $outputBuffer;
+		if ( $outputDelayOnly ) {
+			$delay = $outputBuffer;
+		}
+		else {
+			$delay = $decodeBuffer + $outputBuffer;
+		}
 	}
 	
 	return $delay;
@@ -543,7 +548,7 @@ sub getStreamDelay {
 # according to the amount of audio data in the
 # player's buffer.
 sub setDelayedTitle {
-	my ( $client, $url, $newTitle ) = @_;
+	my ( $client, $url, $newTitle, $outputDelayOnly ) = @_;
 	
 	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
 	
@@ -554,7 +559,7 @@ sub setDelayedTitle {
 		# Some mp3 stations can have 10-15 seconds in the buffer.
 		# This will delay metadata updates according to how much is in
 		# the buffer, so title updates are more in sync with the music
-		my $delay = getStreamDelay($client);
+		my $delay = getStreamDelay($client, $outputDelayOnly);
 		
 		# No delay on the initial metadata
 		if ( !$metaTitle ) {
@@ -593,9 +598,9 @@ sub setDelayedTitle {
 }
 
 sub setDelayedCallback {
-	my ( $client, $cb ) = @_;
+	my ( $client, $cb, $outputDelayOnly ) = @_;
 	
-	my $delay = getStreamDelay($client);
+	my $delay = getStreamDelay($client, $outputDelayOnly);
 	
 	my $log = logger('player.streaming.direct') || logger('player.streaming.remote');
 	$log->is_info && $log->info("Delaying callback by $delay secs");
