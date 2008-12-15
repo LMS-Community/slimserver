@@ -45,7 +45,7 @@ sub fetchGainMode {
 
 	# Mode 1 is use track gain
 	if ($rgmode == 1) {
-		return $track->replay_gain();
+		return preventClipping( $track->replay_gain(), $track->replay_peak() );
 	}
 
 	my $album = $track->album();
@@ -57,16 +57,16 @@ sub fetchGainMode {
 
 	# Mode 2 is use album gain
 	if ($rgmode == 2) {
-		return $album->replay_gain();
+		return preventClipping( $album->replay_gain(), $album->replay_peak() );
 	}
 
 	# Mode 3 is determine dynamically whether to use album or track
 	if (defined $album->replay_gain() && ($class->trackAlbumMatch($client, -1) || $class->trackAlbumMatch($client, 1))) {
 
-		return $album->replay_gain();
+		return preventClipping( $album->replay_gain(), $album->replay_peak() );
 	}
 
-	return $track->replay_gain();
+	return preventClipping( $track->replay_gain(), $track->replay_peak() );
 }
 
 # Based on code from James Sutula's Dynamic Transition Updater plugin,
@@ -170,6 +170,21 @@ sub trackAlbumMatch {
 	}
 
 	return 0;
+}
+
+# Bug 5119
+# Reduce the gain value if necessary to avoid clipping
+sub preventClipping {
+	my ( $gain, $peak ) = @_;
+	
+	if ( $peak ) {
+		my $noclip = -20 * ( log($peak) / log(10) );
+		if ( $noclip < $gain ) {
+			return $noclip;
+		}
+	}
+	
+	return $gain;
 }
 
 1;
