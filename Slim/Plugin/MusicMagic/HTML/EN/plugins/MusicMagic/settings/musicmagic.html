@@ -71,7 +71,7 @@
 	
 			[% FOREACH option = filters.keys %]
 	
-				<option [% IF prefs.pref_mix_filter == option %]selected [% END %]value="[% option %]">[% filters.$option %]</option>
+				<option [% IF prefs.pref_mix_filter == option %]selected [% END %]value="[% option %]">[% filters.item(option) %]</option>
 	
 			[%- END -%]
 			

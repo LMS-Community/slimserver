@@ -664,3 +664,7 @@ MUSICIP_MIXABLE_CHECK
 	NO	Les kun miksstatus fra MusicIP (raskere)
 	SV	Läs endast in mixstatus från MusicIP (snabbare)
 
+MUSICIP_DUPLICATES
+	DE	Dubletten (MusicIP)
+	EN	Duplicates (MusicIP)
+	FR	Doublets (MusicIP)

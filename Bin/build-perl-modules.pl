@@ -66,7 +66,7 @@ my %packageOptions = (
 
 	'DBD-mysql-3.0002' => {
 
-		'env' => [qw(DBI-1.50/blib/lib: DBI-1.50/blib/arch)],
+		'env' => [qw(DBI-1.604/blib/lib: DBI-1.604/blib/arch)],
 	},
 );
 

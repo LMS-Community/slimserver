@@ -894,7 +894,7 @@ sub updateMenu {
 		}
 		
 		# Skip home menu items that contain no submenus
-		if ( !scalar keys %{ $home{$menuItem} } ) {
+		if ( ref $home{$menuItem} eq 'HASH' && !scalar keys %{ $home{$menuItem} } ) {
 			next;
 		}
 
