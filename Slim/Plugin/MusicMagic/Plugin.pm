@@ -461,7 +461,7 @@ sub grabMoods {
 
 	if ($response->is_success) {
 
-		@moods = split(/\n/, $response->content);
+		@moods = split(/\n/, Slim::Utils::Unicode::utf8encode_locale($response->content));
 
 		if ($log->is_debug && scalar @moods) {
 
@@ -757,9 +757,13 @@ sub getMix {
 
 	if ($filter) {
 
+logError($filter);
+		$filter = Slim::Utils::Unicode::utf8decode_locale($filter);
+logError($filter);
+
 		$log->debug("Filter $filter in use.");
 
-		$args{'filter'} = Slim::Utils::Misc::escape($filter);
+		$args{'filter'} = Slim::Plugin::MusicMagic::Common::escape($filter);
 	}
 
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
@@ -779,13 +783,13 @@ sub getMix {
 	}
 	else {
 		# need to encode the search value (eg. artist) when a database value is used as seed
-		$id = Slim::Utils::Unicode::utf8encode_locale($id);		
+#		$id = Slim::Utils::Unicode::utf8encode_locale($id);		
 	}
 
 	my $mixArgs = "$validMixTypes{$for}=$id";
 
 	# url encode the request, but not the argstring
-	$mixArgs = $isWin ? URI::Escape::uri_escape($mixArgs) : Slim::Utils::Misc::escape($mixArgs);
+	$mixArgs = Slim::Plugin::MusicMagic::Common::escape($mixArgs);
 	
 	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 

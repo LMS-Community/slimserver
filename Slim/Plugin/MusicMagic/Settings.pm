@@ -172,7 +172,7 @@ sub _gotFilters {
 
 	if ($http) {
 
-		@filters = split(/\n/, $http->content);
+		@filters = split(/\n/, Slim::Plugin::MusicMagic::Common::decode($http->content));
 
 		if ($log->is_debug && scalar @filters) {
 

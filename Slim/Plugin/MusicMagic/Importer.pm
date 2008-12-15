@@ -294,7 +294,7 @@ sub exportSongs {
 			# Convert $track->url to a path and call MusicIP
 			my $path = Slim::Utils::Misc::pathFromFileURL($trackurl);
 
-			my $pathEnc = Slim::Utils::Misc::escape($path);
+			my $pathEnc = Slim::Plugin::MusicMagic::Common::escape($path);
 
 			# Set musicmagic_mixable on $track object and call $track->update to actually store it.
 			my $result = get("http://$MMSHost:$MMSport/api/status?song=$pathEnc");
@@ -319,8 +319,7 @@ sub exportSongs {
 	}
 }
 
-sub setMixable
-{
+sub setMixable {
 	my $class    = shift;
 	my $content  = shift || return;
 	my $progress = shift;
@@ -429,9 +428,7 @@ sub processSong {
 			next;
 		}
 
-		my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
-
-		$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
+		$songInfo{$key} = Slim::Plugin::MusicMagic::Common::decode($songInfo{$key});
 	}
 
 	# Assign these after they may have been verified as UTF-8
@@ -508,14 +505,16 @@ sub exportPlaylists {
 
 	for (my $i = 0; $i <= scalar @playlists; $i++) {
 
+		my $listname = Slim::Plugin::MusicMagic::Common::decode($playlists[$i]);
+
 		my $playlist = get("http://$MMSHost:$MMSport/api/getPlaylist?index=$i") || next;
 		my @songs    = split(/\n/, $playlist);
 
 		if ( $log->is_info ) {
-			$log->info(sprintf("Got playlist %s with %d items", $playlists[$i], scalar @songs));
+			$log->info(sprintf("Got playlist %s with %d items", $listname, scalar @songs));
 		}
 		
-		$class->_updatePlaylist($playlists[$i], \@songs);
+		$class->_updatePlaylist($listname, \@songs);
 	}
 }
 
@@ -532,7 +531,7 @@ sub exportDuplicates {
 
 	my @songs = split(/\n/, get("http://$MMSHost:$MMSport/api/duplicates"));
 
-	$class->_updatePlaylist('Duplicates', \@songs);
+	$class->_updatePlaylist(string('MUSICIP_DUPLICATES'), \@songs);
 
 	if ( $log->is_info ) {
 		$log->info(sprintf("Finished export (%d records)", scalar @songs));
@@ -547,7 +546,7 @@ sub _updatePlaylist {
 	}
 
 	my %attributes = ();
-	my $url        = 'musicipplaylist:' . Slim::Utils::Misc::escape($name);
+	my $url        = 'musicipplaylist:' . Slim::Plugin::MusicMagic::Common::escape($name);
 
 	# add this list of duplicates to our playlist library
 	$attributes{'TITLE'} = join('', 
@@ -561,10 +560,7 @@ sub _updatePlaylist {
 	for my $song (@$songs) {
 
 		if ($isWin) {
-
-			$song = Slim::Utils::Unicode::utf8decode_guess(
-				$song, Slim::Utils::Unicode::encodingFromString($song),
-			);
+			$song = Slim::Plugin::MusicMagic::Common::decode($song);
 		}
 
 		$song = Slim::Utils::Misc::fileURLFromPath(

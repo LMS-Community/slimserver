@@ -8,6 +8,7 @@ package Slim::Plugin::MusicMagic::Common;
 # version 2.
 
 use strict;
+use URI::Escape;
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -16,6 +17,8 @@ use Slim::Utils::Strings;
 use Slim::Utils::Prefs;
 
 my $os  = Slim::Utils::OSDetect::OS();
+*escape   = Slim::Utils::OSDetect::isWindows() ? \&URI::Escape::uri_escape : \&URI::Escape::uri_escape_utf8;
+
 my $log = logger('plugin.musicip');
 
 my $prefs = preferences('plugin.musicip');
@@ -117,6 +120,13 @@ sub checkDefaults {
 	if (!defined $prefs->get('host')) {
 		$prefs->set('host','localhost');
 	}
+}
+
+sub decode {
+	my $data = shift;
+	
+	my $enc = Slim::Utils::Unicode::encodingFromString($data);
+	return Slim::Utils::Unicode::utf8decode_guess($data, $enc);
 }
 
 1;
