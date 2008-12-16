@@ -2796,8 +2796,18 @@ sub readDirectoryQuery {
 			for my $item (@fsitems[$start..$end]) {
 				$path = ($folder ? catdir($folder, $item) : $item);
 
+				my $name = $item;
+
+				# display full name if we got a Windows 8.3 file name
+				if (Slim::Utils::OSDetect::isWindows() && $name =~ /~\d/) {
+					my @parts = File::Spec::Functions::splitdir( Win32::GetLongPathName($path) );
+					$log->info("Expand short name returned by readdir() to full name: $name -> $parts[-1]");
+					$name = $parts[-1];
+				}
+
 				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode($path));
-				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode($item));
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', Slim::Utils::Unicode::utf8decode($name));
+				
 				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', $fsitems{$item}->{d});
 
 				$idx++;
