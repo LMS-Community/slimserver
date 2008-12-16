@@ -122,9 +122,9 @@ sub prefs {
 sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
-	if ( !$params->{'saveSettings'} ) {
+	if ( !$params->{'saveSettings'} && !$params->{'filters'} ) {
 
-		Slim::Plugin::MusicMagic::Common->grabFilters($client, $params, $callback, @args);
+		Slim::Plugin::MusicMagic::Common::grabFilters($class, $client, $params, $callback, @args);
 		
 		return undef;
 	}

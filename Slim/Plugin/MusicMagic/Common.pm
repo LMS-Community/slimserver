@@ -224,8 +224,8 @@ sub _fetchingFiltersDone {
 
 	$params->{'filters'} = \%filterHash;
 
-	if ($callback && $class) {		
-		my $body = $class->SUPER::handler($client, $params);
+	if ($callback && $class) {
+		my $body = $class->handler($client, $params);
 		$callback->( $client, $params, $body, @args );	
 	}
 }
