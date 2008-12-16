@@ -113,18 +113,14 @@ sub handler {
 sub saveSettings {
 	my ( $class, $client, $params ) = @_;
 	
-	if (   $params->{pref_sn_email}
-		&& $params->{pref_sn_password_sha}
-		&& defined $params->{pref_sn_sync} 
-		&& $params->{pref_sn_sync} ne $prefs->get('sn_sync')
-	) {
+	if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
 		# Shut down all SN activity
 		Slim::Networking::SqueezeNetwork->shutdown();
 		
+		$prefs->set('sn_sync', $params->{pref_sn_sync});
+		
 		# Start it up again if the user enabled it
-		if ( $params->{pref_sn_sync} ) {
-			Slim::Networking::SqueezeNetwork->init();
-		}
+		Slim::Networking::SqueezeNetwork->init();
 	}
 
 	return $class->SUPER::handler($client, $params);
