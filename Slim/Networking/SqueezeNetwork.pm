@@ -166,7 +166,7 @@ sub _init_done {
 	}
 	
 	# Init pref syncing
-	Slim::Networking::SqueezeNetwork::PrefSync->init();
+	Slim::Networking::SqueezeNetwork::PrefSync->init() if $prefs->get('sn_sync');
 	
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
