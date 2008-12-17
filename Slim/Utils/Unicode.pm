@@ -50,7 +50,8 @@ our (
 {
 	# We implement a decode() & encode(), so don't import those.
 	require Encode;
-
+	require Encode::Guess;
+	
 	$FB_QUIET = Encode::FB_QUIET();
 
 	$bomRE = qr/^(?:
@@ -63,6 +64,16 @@ our (
 
 	($lc_ctype, $lc_time) = Slim::Utils::OSDetect->getOS->localeDetails();
 
+	# Setup Encode::Guess	 
+	$Encode::Guess::NoUTFAutoGuess = 1;	 
+	 	 
+	# Setup suspects for Encode::Guess based on the locale - we might also	 
+	# want to use our own Language pref?	 
+	if ($lc_ctype ne 'utf8') {	 
+
+		Encode::Guess->add_suspects($lc_ctype);	 
+	}
+	         
 	# Create a regex for looks_like_utf8()
 	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (127..255);
 
@@ -355,21 +366,16 @@ sub utf8decode_guess {
 		return $string;
 	}
 
-	my $charset  = encodingFromString($string);
-	my $encoding = undef;
+	my $charset = encodingFromString($string);
 
-	if ($charset && $charset ne 'raw') {
+	if ( $charset && $charset ne 'raw') {
+		my $encoding;
 
-		$encoding = Encode::find_encoding($charset);
+		if (($encoding = Encode::find_encoding($charset)) && ref $encoding) {
 
-	} else {
+			return $encoding->decode($string, $FB_QUIET);
+		}
 
-		$encoding = Encode::Detect::Detector::detect($string);
-	}
-
-	if (ref $encoding) {
-
-		return $encoding->decode($string, $FB_QUIET);
 	}
 
 	for my $encoding (@preferedEncodings) {
@@ -652,6 +658,14 @@ sub encodingFromString {
 	# Check Encode::Detect::Detector before ISO-8859-1, as it can find
 	# overlapping charsets.
 	my $charset = Encode::Detect::Detector::detect($_[0]);
+
+	# Encode::Detect::Detector is mislead to to return Big5 with some characters
+	# In these cases Encode::Guess does a better job... (bug 9553)
+	if (lc($charset) eq 'big5') {
+
+		$charset = Encode::Guess::guess_encoding($_[0])->name;
+
+	}
 
 	$charset =~ s/utf-8/utf8/i;
 
