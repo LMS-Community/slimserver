@@ -330,7 +330,7 @@ sub writablePath {
 				}
 			}
 			
-			$writablePath = catdir($writablePath, 'SqueezeCenter');
+			$writablePath = catdir($writablePath, 'SqueezeCenter') unless $writablePath eq $Bin;
 			
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(
