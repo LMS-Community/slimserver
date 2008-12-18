@@ -2800,9 +2800,7 @@ sub readDirectoryQuery {
 
 				# display full name if we got a Windows 8.3 file name
 				if (Slim::Utils::OSDetect::isWindows() && $name =~ /~\d/) {
-					my @parts = File::Spec::Functions::splitdir( Win32::GetLongPathName($path) );
-					$log->info("Expand short name returned by readdir() to full name: $name -> $parts[-1]");
-					$name = $parts[-1];
+					$name = File::Basename::basename( Win32::GetLongPathName($path) );
 				}
 
 				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode($path));
