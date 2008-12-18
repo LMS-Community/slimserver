@@ -213,7 +213,7 @@ sub sysread {
 		}
 		if ($n > $remaining) {$n = $remaining;}
 
-		$n = sysread($self, $_[1], $n, $_[3]);
+		$n = sysread($self, $_[1], $n, $_[3] || 0);
 		${*$self}{'position'} += $n unless (!defined($n) || $n <= 0);
 		return $n;
 	}

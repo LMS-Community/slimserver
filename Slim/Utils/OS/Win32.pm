@@ -286,25 +286,65 @@ sub writablePath {
 	unless ($writablePath) {
 		require Win32::TieRegistry;
 
-		# use the "Common Application Data" folder to store SqueezeCenter configuration etc.
-		# c:\documents and settings\all users\application data - on Windows 2000/XP
-		# c:\ProgramData - on Vista
+		# the installer is writing the data folder to the registry - give this the first try
 		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
+			'LMachine/Software/Logitech/SqueezeCenter/', 
 			{ 
 				Access => Win32::TieRegistry::KEY_READ(), 
 				Delimiter =>'/' 
 			}
 		);
 	
-		if (defined $swKey && $swKey->{'Common AppData'}) {
-			$writablePath = catdir($swKey->{'Common AppData'}, 'SqueezeCenter');
+		if (defined $swKey && $swKey->{'DataPath'}) {
+			$writablePath = $swKey->{'DataPath'};
 		}
-		elsif ($ENV{'ProgramData'}) {
-			$writablePath = catdir($ENV{'ProgramData'}, 'SqueezeCenter');
-		}
+
 		else {
-			$writablePath = $Bin;
+			# second attempt: use the Windows API (recommended by MS)
+			# use the "Common Application Data" folder to store SqueezeCenter configuration etc.
+			$writablePath = Win32::GetFolderPath(Win32::CSIDL_COMMON_APPDATA);
+			
+			# fall back if no path or invalid path is returned
+			if (!$writablePath || $writablePath eq Win32::GetFolderPath(0)) {
+
+				# third attempt: read the registry's compatibility value
+				# NOTE: this key has proved to be wrong on some Vista systems
+				# only here for backwards compatibility
+				$swKey = $Win32::TieRegistry::Registry->Open(
+					'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
+					{ 
+						Access => Win32::TieRegistry::KEY_READ(), 
+						Delimiter =>'/' 
+					}
+				);
+			
+				if (defined $swKey && $swKey->{'Common AppData'}) {
+					$writablePath = $swKey->{'Common AppData'};
+				}
+				
+				elsif ($ENV{'ProgramData'}) {
+					$writablePath = $ENV{'ProgramData'};
+				}
+
+				# this point hopefully is never reached, as on most systems the program folder isn't writable...
+				else {
+					$writablePath = $Bin;
+				}
+			}
+			
+			$writablePath = catdir($writablePath, 'SqueezeCenter') unless $writablePath eq $Bin;
+			
+			# store the key in the registry for future reference
+			$swKey = $Win32::TieRegistry::Registry->Open(
+				'LMachine/Software/Logitech/SqueezeCenter/', 
+				{ 
+					Delimiter =>'/' 
+				}
+			);
+			
+			if (defined $swKey && !$swKey->{'DataPath'}) {
+				$swKey->{'DataPath'} = $writablePath;
+			}
 		}
 
 		if (! -d $writablePath) {

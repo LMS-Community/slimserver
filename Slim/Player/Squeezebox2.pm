@@ -447,9 +447,9 @@ sub directHeaders {
 
 			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
-			if ($handler && $handler->can("handleDirectError")) {
+			if ($songHandler && $songHandler->can("handleDirectError")) {
 
-				$handler->handleDirectError($client, $url, $response, $status_line);
+				$songHandler->handleDirectError($client, $url, $response, $status_line);
 			}
 			else {
 				$client->failedDirectStream($status_line);
