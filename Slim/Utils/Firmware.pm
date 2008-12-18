@@ -228,7 +228,7 @@ sub init_version_done {
 	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $fw_file, 'binary');
 	
 	# Check again for an updated $model.version in 12 hours
-	$log->debug('Scheduling next $model.version check in 12 hours');
+	$log->debug("Scheduling next $model.version check in 12 hours");
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 43200,
