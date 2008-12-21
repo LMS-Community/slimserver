@@ -1451,13 +1451,14 @@ sub playerActive {
 	}
 	
 	# It is possible for us to be paused with all the "active" players actually (logically) powered off.
-	# In this case it could be that another player in the sync group, which is not part of the paused-active
+	# bug 10406: In fact, the last active player in a group to be powered off may anyway be left active and off.
+	# In this case it could be that another player in the sync group, which is not part of the off-active
 	# set, is made active. So we first need to test for this situation
-	if (isPaused($self) && !master($self)->power()) {
-		# This means that the existing 'active' players were paused-on-powerOff
+	if (!master($self)->power()) {
+		# This means that the existing 'active' players were paused-on-powerOff, or the last player left active.
 		# We need to stop them and make them inactive - otherwise they will auto-magically power-on.
-		_Stop($self);
-		$self->{'players'} = [];
+		_Stop($self) if !$self->isStopped();
+		$self->{'players'} = [];       
 	}
 	
 	push @{$self->{'players'}}, $player;
