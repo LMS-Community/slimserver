@@ -279,8 +279,6 @@ sub handleDirectError {
 	}
 	
 	$client->controller()->playerStreamingFailed($client, 'PLUGIN_PANDORA_STREAM_FAILED');
-	
-	$client->execute([ 'playlist', 'play', $song->currentTrack()->url ]);
 }
 
 # Check if player is allowed to skip, using canSkip value from SN

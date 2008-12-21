@@ -1668,6 +1668,12 @@ sub playerStreamingFailed {
 	$log->info($client->id);
 	
 	streamingSong($self)->{'status'} = Slim::Player::Song::STATUS_FAILED;
+	
+	# bug 10407: remove failed Song from song-queue unless only Song in queue.
+	my $queue = $self->{'songqueue'};
+	if (scalar(@$queue) > 1) {
+		shift @$queue;
+	}
 
 	_errorOpening($self, streamingSong($self)->currentTrack()->url, @error);
 
