@@ -186,7 +186,7 @@ sub _addInfo {
 		}
 	}
 
-	my @upgrade;
+	my $upgrade = {};
 	my $install = {};
 	my @remove;
 	my %removeInfo;
@@ -217,7 +217,7 @@ sub _addInfo {
 				
 				if ($plugin->{'current'} ne $plugin->{'version'}) {
 					
-					push @upgrade, $plugin;
+					$upgrade->{ "$plugin->{name}-$plugin->{version}" } = $plugin;
 				}
 				
 				$removeInfo{ $plugin->{'name'} } = $plugin;
@@ -237,6 +237,8 @@ sub _addInfo {
 			}
 		}
 	}
+
+	my @upgrade = sort { $a->{title} cmp $b->{title} } values (%$upgrade);
 
 	# sort plugins in the type order: logitech, master, others (sorted by title) 
 	my @install = sort { $a->{type} eq $b->{type} ? $a->{title} cmp $b->{title} : $a->{type} cmp $b->{type} } values(%$install);
