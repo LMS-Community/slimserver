@@ -80,6 +80,11 @@ sub parseCmdLine {
 				$thresh = $1;
 				$bt = 1;
 			}
+			if ($name eq 'template') {
+				# TT is no longer loaded until the first web page is requested
+				# we must load this now to allow warnings to be set from the command line
+				require Slim::Web::Template::Context;
+			}				
 			if ($thresh =~ /^\d+$|^\d+\.\d+$/) {
 				foreach my $mon (@perfmonLogs) {
 					if ($mon->{'type'} eq 'server' && $mon->{'name'} eq $name) {
