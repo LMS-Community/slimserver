@@ -186,7 +186,7 @@ sub _addInfo {
 		}
 	}
 
-	my @upgrade;
+	my $upgrade = {};
 	my $install = {};
 	my @remove;
 	my %removeInfo;
@@ -212,12 +212,14 @@ sub _addInfo {
 			}
 			
 			if ($module) {
+
+				my $existingData = Slim::Utils::PluginManager->dataForPlugin($module);
 				
-				$plugin->{'current'} = Slim::Utils::PluginManager->dataForPlugin($module)->{'version'};
-				
-				if ($plugin->{'current'} ne $plugin->{'version'}) {
+				$plugin->{'current'} = $existingData->{'version'};
+
+				if ($plugin->{'current'} ne $plugin->{'version'} || $existingData->{'error'} eq 'INSTALLERROR_INVALID_VERSION') {
 					
-					push @upgrade, $plugin;
+					$upgrade->{ "$plugin->{name}-$plugin->{version}" } = $plugin;
 				}
 				
 				$removeInfo{ $plugin->{'name'} } = $plugin;
@@ -237,6 +239,8 @@ sub _addInfo {
 			}
 		}
 	}
+
+	my @upgrade = sort { $a->{title} cmp $b->{title} } values (%$upgrade);
 
 	# sort plugins in the type order: logitech, master, others (sorted by title) 
 	my @install = sort { $a->{type} eq $b->{type} ? $a->{title} cmp $b->{title} : $a->{type} cmp $b->{type} } values(%$install);

@@ -393,7 +393,7 @@ sub canDirectStream {
 
 	return undef;
 }
-	
+
 sub directHeaders {
 	my $client = shift;
 	my $headers = shift;
@@ -448,7 +448,10 @@ sub directHeaders {
 			$directlog->warn("Invalid response code ($response) from remote stream $url");
 
 			if ($songHandler && $songHandler->can("handleDirectError")) {
-
+				
+				# bug 10407 - make sure ready to stream again
+				$client->readyToStream(1);
+				
 				$songHandler->handleDirectError($client, $url, $response, $status_line);
 			}
 			else {
@@ -731,6 +734,9 @@ sub directMetadata {
 sub failedDirectStream {
 	my $client = shift;
 	my $error  = shift;
+	
+	# bug 10407 - make sure ready to stream again
+	$client->readyToStream(1);
 
 	my $controller = $client->controller()->songStreamController();;
 

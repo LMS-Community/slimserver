@@ -106,17 +106,17 @@ PLUGIN_EXTENSIONS_PLUGINS_REMOVE
 	NO	Fjern installert plugin-modul
 	SV	Ta bort installerat plugin-program
 
-PLUGIN_EXTENSIONS_PLUGINS_INSTALL
-	DA	Installer nyt udvidelsesmodul
-	DE	Neues Plugin installieren
-	EN	Install New Plugin
-	ES	Instalar complemento nuevo
-	FI	Asenna uusi laajennus
-	FR	Installer nouveau plugin
-	IT	Installa nuovo plugin
-	NL	Nieuwe plug-in installeren
-	NO	Installer ny plugin-modul
-	SV	Installera nytt plugin-program
+PLUGIN_EXTENSIONS_INSTALL
+	DA	 
+	DE	 
+	EN	Install
+	ES	 
+	FI	 
+	FR	 
+	IT	 
+	NL	 
+	NO	 
+	SV	 
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL
 	DE	Manuell installierte Erweiterungen

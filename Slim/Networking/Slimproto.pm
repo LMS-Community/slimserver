@@ -592,6 +592,10 @@ sub _disco_handler {
 		if ($controller && $controller->isDirect() ) {
 			my $handler = $controller->protocolHandler();
 			if ($handler->can("handleDirectError") ) {
+				
+				# bug 10407 - make sure ready to stream again
+				$client->readyToStream(1);
+				
 				$handler->handleDirectError( $client, $controller->streamUrl(), $reason, $reasons{$reason} );
 				return;
 			}
