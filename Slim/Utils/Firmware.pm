@@ -169,7 +169,7 @@ sub init_firmware_download {
 		my $version = read_file($version_file);
 		($firmwares->{$model}->{version}, $firmwares->{$model}->{revision}) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-		Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $custom_image, 'binary');
+		Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $custom_image, 'binary');
 		
 		return;
 	}
@@ -222,10 +222,10 @@ sub init_version_done {
 			version  => $ver,
 			revision => $rev,
 			file     => $fw_file,
-		}
+		};
+		
+		Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 	}
-
-	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $fw_file, 'binary');
 	
 	# Check again for an updated $model.version in 12 hours
 	$log->debug("Scheduling next $model.version check in 12 hours");
@@ -268,7 +268,9 @@ sub init_fw_done {
 		version  => $ver,
 		revision => $rev,
 		file     => $fw_file,
-	}
+	};
+	
+	Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 }
 
 =head2 init_fw_error($model)
@@ -296,7 +298,9 @@ sub init_fw_error {
 				version  => $ver,
 				revision => $rev,
 				file     => $fw_file,
-			}
+			};
+			
+			Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 		}
 	}
 	
