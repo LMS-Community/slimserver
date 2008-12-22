@@ -53,7 +53,7 @@
 	<div class="settingSection" style="margin-top:0;margin-bottom:20px">
 		<table class="sortable" width="100%">
 			<thead><tr>
-				<th width="5%">[% checkAll %]&nbsp;</th>
+				<th width="5%">[% checkHeading | getstring %]&nbsp;</th>
 				<th width="15%" class="sortable">[% "NAME" | string %]</th>
 				<th width="10%" class="sortable">[% "INFORMATION_VERSION" | string %][% "COLON" | string %]</th>
 				<th width="45%" class="sortable">[% "DESCRIPTION" | string %][% "COLON" | string %]</th>
@@ -133,7 +133,7 @@
 			}
 		</script>
 
-		[% WRAPPER pluginGroup checkAll="<input type=\"checkbox\" onclick=\"toggleCheck(this.checked)\"/>" %]
+		[% WRAPPER pluginGroup checkHeading="<input type=\"checkbox\" onclick=\"toggleCheck(this.checked)\"/>" %]
 			[% FOREACH plugin = remove %]
 				[% plugin.action = 'remove' %]
 				[% PROCESS pluginDetails %]
@@ -148,7 +148,7 @@
 			[% WRAPPER setting title=repo.title desc="" %]
 			[%- END -%]
 	
-			[% WRAPPER pluginGroup %]
+			[% WRAPPER pluginGroup checkHeading="PLUGIN_EXTENSIONS_INSTALL" %]
 				[% FOREACH plugin = repo.items %]
 					[% plugin.changes = '' %]
 					[% PROCESS pluginDetails type = repo.type %]
