@@ -36,7 +36,7 @@ sub initPlugin {
 	$class->next::method(@_);
 
 	# we don't want this plugin to show up in the Extras menu
-	Slim::Buttons::Home::delSubMenu($class->playerMenu, $class->displayName);
+	Slim::Buttons::Home::delSubMenu($class->playerMenu, $class->getDisplayName);
 
 	Slim::Menu::SystemInfo->registerInfoProvider( health => (
 		after => 'bottom',
