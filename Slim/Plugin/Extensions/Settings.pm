@@ -212,10 +212,12 @@ sub _addInfo {
 			}
 			
 			if ($module) {
+
+				my $existingData = Slim::Utils::PluginManager->dataForPlugin($module);
 				
-				$plugin->{'current'} = Slim::Utils::PluginManager->dataForPlugin($module)->{'version'};
-				
-				if ($plugin->{'current'} ne $plugin->{'version'}) {
+				$plugin->{'current'} = $existingData->{'version'};
+
+				if ($plugin->{'current'} ne $plugin->{'version'} || $existingData->{'error'} eq 'INSTALLERROR_INVALID_VERSION') {
 					
 					$upgrade->{ "$plugin->{name}-$plugin->{version}" } = $plugin;
 				}
