@@ -28,6 +28,7 @@ use warnings;
 
 use base qw(DBIx::Class::Schema);
 
+use Data::Dump;
 use DBIx::Migration;
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
