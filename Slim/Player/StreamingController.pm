@@ -947,6 +947,9 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $startedPlayers = 0;
 	my $reportsTrackStart = 0;
 	
+	# bug 10438
+	Slim::Player::Source::resetFrameData($self->master());
+	
 	foreach my $player (@{$self->{'players'}}) {
 		if ($setVolume) {
 			my $vol = abs($prefs->client($player)->get("volume") || 0);
