@@ -562,30 +562,24 @@ sub scanBitrate {
 	# This will allow full files streamed from places like LMA or UPnP servers
 	# to have accurate bitrate/length information
 	my $frame = MPEG::Audio::Frame->read( $fh );
-	if ( $frame && $frame->content =~ /(Xing.*)/ ) {
-		my $xing = IO::String->new( $1 );
+	if ( $frame && $frame->content =~ /Xing(.{12})/s ) {
+		my $header = $1;		
+		my $xing = IO::String->new( $header );
 		my $vbr  = {};
-		my $off  = 4;
 		
 		# Xing parsing code from MP3::Info
 		my $unpack_head = sub { unpack('l', pack('L', unpack('N', $_[0]))) };
 
-		seek $xing, $off, 0;
 		read $xing, my $flags, 4;
-		$off += 4;
 		$vbr->{flags} = $unpack_head->($flags);
 		
 		if ( $vbr->{flags} & 1 ) {
-			seek $xing, $off, 0;
 			read $xing, my $bytes, 4;
-			$off += 4;
 			$vbr->{frames} = $unpack_head->($bytes);
 		}
 
 		if ( $vbr->{flags} & 2 ) {
-			seek $xing, $off, 0;
 			read $xing, my $bytes, 4;
-			$off += 4;
 			$vbr->{bytes} = $unpack_head->($bytes);
 		}
 		
