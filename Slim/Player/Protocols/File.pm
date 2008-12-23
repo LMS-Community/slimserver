@@ -192,9 +192,10 @@ sub sysread {
 		
 		$log->debug("getting initial audio block of size $length");
 		
-		if ($length > $n) {
-			$chunkLength = $n;
-			$chunkref = substr(${*$self}{'initialAudioBlockRef'}, -$length, $chunkLength);
+		if ($length > $n || $length < length(${${*$self}{'initialAudioBlockRef'}})) {
+			$chunkLength = $length > $n ? $n : $length;
+			my $chunk = substr(${${*$self}{'initialAudioBlockRef'}}, -$length, $chunkLength);
+			$chunkref = \$chunk;
 			${*$self}{'initialAudioBlockRemaining'} = ($length - $chunkLength);
 		} else {
 			${*$self}{'initialAudioBlockRemaining'} = 0;
