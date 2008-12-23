@@ -107,12 +107,14 @@ sub nextChunk {
 		# EndOfStream
 		$client->controller()->playerEndOfStream($client);
 		
+		# Bug 10400 - need to tell the controller to get next track ready
+		# We may not actually be prepared to stream the next track yet 
+		# but this will be checked when the controller calls isReadyToStream()
+		$client->controller()->playerReadyToStream($client);
+		
 		if ($client->isSynced(1)) {
 			return $chunk;	# playout
 		} else {
-			# We may not actually be prepared to stream the next track yet 
-			# but this will be checked when the controller calls isReadyToStream()
-			$client->controller()->playerReadyToStream($client);
 			return undef;
 		}
 	}
