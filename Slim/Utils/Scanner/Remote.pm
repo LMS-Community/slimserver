@@ -553,6 +553,13 @@ sub parseWMAHeader {
 		}
 	}
 	
+	# Set duration if available and this is not a broadcast stream
+	if ( my $secs = $wma->info('playtime_seconds') ) {
+		if ( $secs > 0 && !( $wma->info('flags') && $wma->info('flags')->{'broadcast'} == 1 ) ) {
+			$track= Slim::Music::Info::setDuration( $track->url, $secs );
+		}
+	}
+	
 	# Save this metadata for the MMS protocol handler to use
 	if ( my $song = $args->{'song'} ) {
 		$song->{'scanData'} ||= {}; 
@@ -582,16 +589,24 @@ sub parseAudioData {
 	my $io = IO::String->new( $http->response->content_ref );
 	
 	my $formatClass = Slim::Formats->classForFormat($type);
+	
+	my $cl = $http->response->content_length;
 
 	if ( $formatClass && Slim::Formats->loadTagFormatForType($type) && $formatClass->can('scanBitrate') ) {
 		($bitrate, $vbr) = $formatClass->scanBitrate( $io, $track->url );
 		
 		if ( $bitrate > 0 && !$track->bitrate ) {
 			$track = Slim::Music::Info::setBitrate( $track->url, $bitrate, $vbr );
+			if ($cl) {
+				$track = Slim::Music::Info::setDuration( $track->url, ( $cl * 8 ) / $bitrate );
+			}	
 			
 			# Copy bitrate to redirected URL
 			if ( $track->url ne $url ) {
-				Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
+				Slim::Music::Info::setBitrate( $url, $bitrate );
+				if ($cl) {
+					Slim::Music::Info::setDuration( $url, ( $cl * 8 ) / $bitrate );
+				}	
 			}
 		}
 	}
@@ -600,7 +615,7 @@ sub parseAudioData {
 	}
 	
 	# Update filesize with Content-Length
-	if ( my $cl = $http->response->content_length ) {
+	if ( $cl ) {
 		$track->filesize( $cl );
 		$track->update;
 		
