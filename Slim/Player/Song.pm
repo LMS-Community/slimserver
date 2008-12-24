@@ -446,7 +446,7 @@ sub open {
 			my $quality = $prefs->client($client)->get('lameQuality');
 				
 			my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
-				$transcoder, $sock ? '-' : $track->path, $self->{'streamUrl'}, 1, $quality
+				$transcoder, $sock ? '-' : $track->path, $self->{'streamUrl'}, $sock, $quality
 			);
 
 			if (!defined($command)) {
@@ -456,11 +456,29 @@ sub open {
 
 			$log->info("Tokenized command $command");
 
-			my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+			my $pipeline;
+			
+			# Bug 10451: only use Pipeline when really necessary 
+			# and indicate if local or remote source
+			if ($sock) { 
+				$pipeline = Slim::Player::Pipeline->new($sock, $command, !$handler->isRemote);
+			} else {
+				# Bug: 4318
+				# On windows ensure a child window is not opened if $command includes transcode processes
+				if (Slim::Utils::OSDetect::OS() eq 'win') {
+					Win32::SetChildShowWindow(0);
+					$pipeline =  new FileHandle $command;
+					Win32::SetChildShowWindow();
+				} else {
+					$pipeline =  new FileHandle $command;
+				}
+				
+				
+			}
 
 			if (!defined($pipeline)) {
-				$sock->close();
-				logError("While creating conversion pipeline for: ", $self->{'streamUrl'});
+				logError("$!: While creating conversion pipeline for: ", $self->{'streamUrl'});
+				$sock->close() if $sock;
 				return (undef, 'PROBLEM_CONVERT_STREAM', $url);
 			}
 	
