@@ -273,7 +273,7 @@ sub parseHeaders {
 	
 	# Bitrate may have been set in Scanner by reading the mp3 stream
 	if ( !$self->bitrate ) {
-		${*$self}{'bitrate'} = Slim::Music::Info::getCurrentBitrate( $self->url );
+		${*$self}{'bitrate'} = Slim::Music::Info::getBitrate( $self->url );
 	}
 	
 	return unless $client;
