@@ -37,7 +37,7 @@ PLUGIN_EXTENSIONS_REPOS
 PLUGIN_EXTENSIONS_REPOS_DESC
 	DA	Som standard bliver der kun hentet oplysninger fra et lagersted med kendte udvidelsesmoduler fra tredjeparter som vedligeholdes på slimdevices.com. Du kan definere flere lagersteder hvor der skal søges efter udvidelsesmoduler. Du skal indsætte adressen på disse lagersteder på listen nedenfor.
 	DE	Sie können weitere Repositories von Drittanbietern verwenden, indem Sie deren URL unten angeben.
-	EN	You may add additional third-party extension repositories by entering the URL for the repository below.
+	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
 	ES	El servidor pasará a obtener información sólo de un repositorio de extensiones de otros fabricantes mantenido en slimdevices.com. Puede definir repositorios adicionales para que el servidor busque extensiones. Agregue las direcciones URL para repositorios adicionales en la lista mostrada a continuación.
 	FI	Palvelin noutaa oletuksena tiedot vain sellaisista säilöistä, joissa on tunnettuja kolmansien osapuolien laajennuksia ja joita ylläpidetään osoitteessa slimdevices.com.  Voit määrittää muita tietosäilöjä, joista palvelin etsii laajennuksia.   Lisää muiden tietosäilöjen url-osoitteet alla olevaan luetteloon.
 	FR	Vous pouvez ajouter des dépôts additionnels tiers en entrant l'URL de ces dépôts ci-dessous.
