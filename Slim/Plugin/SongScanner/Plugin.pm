@@ -120,15 +120,12 @@ sub _timerHandler {
 		Slim::Player::Source::gototime($client, $client->pluginData('offset'));
 		$client->suppressStatus(undef);
 		$client->pluginData(lastUpdateTime => 0);
-		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	}
 
 	# Pop the mode if nothing has happend for EXITMODE_TIME
-	if (my $exitTime = $client->pluginData('exitModeTime')) {
-		if (Time::HiRes::time() > $exitTime) {
-			Slim::Buttons::Common::popModeRight($client);
-			return;
-		}
+	if (Time::HiRes::time() > $client->pluginData('exitModeTime')) {
+		Slim::Buttons::Common::popModeRight($client);
+		return;
 	}
 
 	$client->update;
@@ -180,7 +177,7 @@ sub _jump {
 	my $interval = shift;
 	
 	my $offset = $client->pluginData('offset');
-	
+
 	if ($interval > 0 && $offset + (2 * $interval) < $client->modeParam('max')) {
 		$client->pluginData(offset => $offset + $interval);
 	} elsif ($interval < 0) {
@@ -218,23 +215,28 @@ my %functions = (
 		} else {
 			Slim::Player::Source::playmode($client, 'pause');
 		}
+		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 		$client->update;
 	},
 	'jump_fwd' => sub {
 		my $client = shift;
 		_jump($client, $JUMP_INTERVAL);
+		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	},
 	'jump_rew' => sub {
 		my $client = shift;
 		_jump($client, -$JUMP_INTERVAL);
+		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	},
 	'song_scanner_fwd' => sub {
 		my $client = shift;
 		Slim::Buttons::Input::Bar::changePos($client, 1, 'up') if $client->pluginData('activeFfwRew') > 1;
+		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	},
 	'song_scanner_rew' => sub {
 		my $client = shift;
-		Slim::Buttons::Input::Bar::changePos($client, -1, 'down') if $client->pluginData('activeFfwRew') > 1; 
+		Slim::Buttons::Input::Bar::changePos($client, -1, 'down') if $client->pluginData('activeFfwRew') > 1;
+		$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	},
 );
 
@@ -322,7 +324,7 @@ sub setScanMode {
 	$params{'increment'} = $increment;
 
 	$client->pluginData(offset => Slim::Player::Source::songTime($client));
-	$client->pluginData(exitModeTime => 0);
+	$client->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.Bar',\%params);
 	
