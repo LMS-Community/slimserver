@@ -267,7 +267,6 @@ sub _parseResponse {
 			},
 			ContentKey  => '-content',
 			GroupTags   => {
-				details => 'details',
 				applets => 'applet', 
 				sounds  => 'sound', 
 				wallpapers => 'wallpaper', 
