@@ -91,7 +91,8 @@
 		<div>[% IF repos.size <= 1; "PLUGIN_EXTENSIONS_DESC" | string; END %]</div>
 	[% END %]
 
-	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc="PLUGIN_EXTENSIONS_REPOS_DESC" %]
+	[% WRAPPER setting title="PLUGIN_EXTENSIONS_REPOS" desc=(repos.size > 1 ? "PLUGIN_EXTENSIONS_REPOS_DESC" : "") %]
+		<div>[% IF repos.size <= 1; "PLUGIN_EXTENSIONS_REPOS_DESC" | string; END %]</div>						 
 		<div>[% "PLUGIN_EXTENSIONS_REPOS_WARNING" | string %]</div>
 
 		<div>
