@@ -609,7 +609,7 @@ sub sliderBar {
 	if ($value > 100) { $value = 100; }
 	if ($width == 0)  { return ""; }
 
-	my $spaces = int($width) - 4;
+	my $spaces = $midpoint ? $width - 2 : $width - 1; # allocate space for progressEnd and mid point
 	my $dots   = int($value/100 * $spaces);
 	my $divider= int($midpoint/100 * $spaces);
 	if (defined $cursor) {
