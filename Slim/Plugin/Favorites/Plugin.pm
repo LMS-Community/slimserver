@@ -852,6 +852,7 @@ sub cliAdd {
 	my $title  = $request->getParam('title');
 	my $icon   = $request->getParam('icon');
 	my $index  = $request->getParam('item_id');
+	my $hotkey = $request->getParam('hotkey');
 	
 	if ( main::SLIM_SERVICE ) {
 		# XXX: the below SC code should be refactored to use Slim::Utils::Favorites
@@ -862,7 +863,11 @@ sub cliAdd {
 
 			$log->info("adding entry $title - $url");
 			
-			$favs->add( $url, $title );
+			my $index = $favs->add( $url, $title );
+
+			if (defined $hotkey) {
+				$favs->setHotkey($index, $hotkey);
+			}
 			
 			$request->addResult( 'count', 1 );
 			
@@ -937,6 +942,10 @@ sub cliAdd {
 		}
 
 		$favs->save;
+
+		if (defined $hotkey && (my $index = $favs->findUrl($url))) {
+			$favs->setHotkey($index, $hotkey);
+		}
 
 		# show feedback if this action came from jive cometd session
 		if ($request->source && $request->source =~ /\/slim\/request/) {
