@@ -170,7 +170,7 @@ sub render {
 
 		if ($screen1 && !exists($parts->{screen1}) && 
 			(exists($parts->{line}) || exists($parts->{center}) || exists($parts->{overlay}) || 
-			 exists($parts->{ticker}) || exists($parts->{bits}))){ 
+			 exists($parts->{ticker}) || exists($parts->{bits}) || !scalar keys(%$parts))){ 
 			$screen = $parts;           # screen 1 components allowed at top level of display hash
 		} else {
 			$screen = $parts->{$s};     # other screens must be within {screenX} component of hash
