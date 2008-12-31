@@ -54,7 +54,7 @@ $client->symbols():</p>
 <p>6.5 added support for 2 screens for use with Transporter players.
 The second display is described within the 'screen2' hash component.
 Screen 1 may be described at the root of the hash, or within a
-'screen1' component:<p>
+'screen1' component:</p>
 
 <pre>my $hash = {
    'line'    => [ 'Screen 1 Line 1',
@@ -78,6 +78,8 @@ Screen 1 may be described at the root of the hash, or within a
    }
 }</pre>
 
+<p>As screen1 may appear at the root of the hash, the empty hash represents
+a blank screen1.</p>
 
 
 <h5>Player Specifics</h5>
