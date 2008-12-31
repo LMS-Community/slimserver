@@ -108,7 +108,8 @@ sub read {
 				}
 			}
 		}
-		
+
+		my %seenhref = ();
 		for my $entry ( @entries ) {
 		
 			my $title = $entry->{title};
@@ -127,6 +128,8 @@ sub read {
 			# 'ref' tags should refer to audio content, so we need to force
 			# the use of the MMS protocol handler by making sure the URI starts with mms
 			$href =~ s/^http/mms/;
+			next if defined ($seenhref{$href}) ;
+			$seenhref{$href} = 1;
 
 			$log->info("Found an entry: $href, title $title");
 
