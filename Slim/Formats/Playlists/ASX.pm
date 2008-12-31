@@ -155,7 +155,7 @@ sub read {
 	}
 
 	# Next is version 2.0 ASX
-	elsif ($content =~ /[Reference]/) {
+	elsif ($content =~ /\[Reference\]/i) {
 
 		$log->info("Parsing ASX 2.0: $file url: [$url]");
 
