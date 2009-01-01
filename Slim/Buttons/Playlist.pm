@@ -238,23 +238,6 @@ sub init {
 			}
 		},
 		
-		'zap' => sub {
-			my $client = shift;
-			my $zapped = catfile($prefs->get('playlistdir'), $client->string('ZAPPED_SONGS') . '.m3u');
-
-			if (Slim::Player::Playlist::count($client) > 0) {
-
-				$client->showBriefly( {
-					'line' => [ $client->string('ZAPPING_FROM_PLAYLIST'), Slim::Music::Info::standardTitle($client,
-						Slim::Player::Playlist::song($client, browseplaylistindex($client))) ]
-				}, {
-					'firstline' => 1
-				}); 
-
-				$client->execute(["playlist", "zap", browseplaylistindex($client)]);
-			}
-		},
-
 		'play' => sub  {
 			my $client = shift;
 

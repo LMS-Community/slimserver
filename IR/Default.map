@@ -59,7 +59,7 @@ power_front.repeat		= dead
 power_off				= power_off
 power_on				= power_on
 add.single				= add
-add.hold				= zap
+add.hold				= dead
 sleep.single			= sleep
 sleep.hold				= sleep
 snooze.single			= snooze
@@ -154,6 +154,9 @@ menu_synchronize		= menu_synchronize
 
 [home]
 arrow_left.hold			= dead
+
+[playlist]
+add.hold				= zap
 
 [off]
 # When the player is powered off, most buttons are dead
@@ -328,7 +331,7 @@ arrow_up				= done_passbackplaylist
 play.single             = done
 play.hold               = done
 add.single              = done
-add.hold                = done
+add.hold                = zap
 pause					= done_passback
 stop					= done_passback
 knob					= done

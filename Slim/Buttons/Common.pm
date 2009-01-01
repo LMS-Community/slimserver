@@ -1223,6 +1223,25 @@ our %functions = (
 			$client->pushRight();
 		}
 	},
+
+	'zap' => sub {
+		my $client = shift;
+		
+		if (Slim::Player::Playlist::count($client) > 0) {
+
+			# we zap the displayed song in playlist mode and playing song in all others
+			my $index = mode($client) eq 'playlist' ? Slim::Buttons::Playlist::browseplaylistindex($client) : 
+				Slim::Player::Source::playingSongIndex($client);
+			
+			$client->showBriefly( {
+				'line' => [ $client->string('ZAPPING_FROM_PLAYLIST'), 
+							Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, $index)) ]
+			   }, {'firstline' => 1, block => 1 }
+			); 
+			
+			$client->execute(["playlist", "zap", $index]);
+		}
+	},
 );
 
 sub getFunction {
