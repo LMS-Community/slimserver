@@ -169,7 +169,7 @@ sub init_firmware_download {
 		my $version = read_file($version_file);
 		($firmwares->{$model}->{version}, $firmwares->{$model}->{revision}) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-		Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $custom_image, 'binary');
+		Slim::Web::HTTP::addRawDownload("^firmware/custom.$model.bin", $custom_image, 'binary');
 		
 		return;
 	}
