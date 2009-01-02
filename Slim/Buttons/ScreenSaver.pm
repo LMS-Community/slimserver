@@ -125,23 +125,20 @@ sub screenSaver {
 		}
 	}
 
-	if ($display->inhibitSaver) {
+	my $alarmSaverActive = Slim::Utils::Alarm->getCurrentAlarm($client) && $mode eq Slim::Utils::Alarm->alarmScreensaver;
 
-		# don't change if display state inhibits at present
+	if (!$alarmSaverActive && $mode =~ /^screensaver|^SCREENSAVER|^IDLESAVER/ && $mode ne $savermode &&
+			Slim::Buttons::Common::validMode($savermode)) {
 
-	} elsif ($mode eq 'block') {
+		# the screensaver has changed - pop the old one
+		Slim::Buttons::Common::popMode($client);
+	} 
 
-		# blocked mode handles its own updating of the screen.
+	if ($alarmSaverActive || $display->inhibitSaver || $mode eq 'block' || $saver eq 'nosaver' && $client->power()) {
 
-	} elsif ($saver eq 'nosaver' && $client->power()) {
+		# do nothing - stay in current mode
 
-		# don't change modes when none (just dim) is the screensaver.
-	
-	} elsif (Slim::Utils::Alarm->getCurrentAlarm($client) && $mode eq Slim::Utils::Alarm->alarmScreensaver) {
-
-		# don't change modes if the alarmclock has activated the datetime screensaver
-
-	} elsif ($timeout && 
+	} elsif ($client->power() && $timeout && 
 			
 			# no ir for at least the screensaver timeout
 			$irtime < $now - $timeout && 
@@ -151,10 +148,7 @@ sub screenSaver {
 				# in case the saver is 'now playing' and we're browsing another song
 				($mode eq 'playlist' && !Slim::Buttons::Playlist::showingNowPlaying($client)) ||
 				# just in case it falls into default, we dont want recursive pushModes
-				($mode ne 'screensaver' && !Slim::Buttons::Common::validMode($savermode)) ) &&
-			
-			# not blocked and power is on
-			$mode ne 'block' && $client->power()) {
+				($mode ne 'screensaver' && !Slim::Buttons::Common::validMode($savermode)) ) ) {
 		
 		# we only go into screensaver mode if we've timed out 
 		# and we're not off or blocked
@@ -219,8 +213,6 @@ sub screenSaver {
 			$display->update();
 		}
 
-	} else {
-		# do nothing - periodic updates handled per client where required
 	}
 
 	# Call ourselves again after 1 second
