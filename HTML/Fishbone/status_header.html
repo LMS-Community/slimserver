@@ -1,6 +1,6 @@
 [%- IF ajaxRequest -%]
 	<pre>
-	[% PROCESS ajaxRequest.txt page = 'status' %][% PROCESS FBajaxRequest.txt page='status' %][% IF NOT light %][% PROCESS ajaxRequest.txt page = 'playlist' %][% END %]y
+	[% PROCESS ajaxRequest.txt page = 'status' %][% PROCESS FBajaxRequest.txt page='status' %][% IF NOT light %][% PROCESS ajaxRequest.txt page = 'playlist' %][% END %]
 	</pre>
 [%- ELSE -%]
 [%- FILTER null %]
