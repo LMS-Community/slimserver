@@ -576,13 +576,12 @@ sub measureText {
 	my $display = shift;
 	my $text = shift;
 	my $line = shift;
-	my $overlay = shift;
+	my $spaces = shift; # number or additional inter-character spaces to add [overlay needs at least 1]
 	
 	my $fonts = $display->fonts();
 
-	# add the padding space to the string for the overlay so we include this in the length
-	if ($overlay) {
-		$text = "\x00" . $text;
+	if ($spaces) {
+		$text = chr(0) x $spaces . $text;
 	}
 
 	my $len = Slim::Display::Lib::Fonts::measureText($fonts->{"line"}[$line-1], $display->symbols($text));
