@@ -115,6 +115,9 @@ sub dirsFor {
 		if (!main::SLIM_SERVICE) {
 			# add on path to plugins installed by Extension installer, NB this can only be called after Prefs is loaded
 			push @dirs, catdir(Slim::Utils::Prefs::preferences('server')->get('cachedir'), 'InstalledPlugins', 'Plugins');
+		} else {
+			# load SN-only plugins
+			push @dirs, catdir( $main::SN_PATH, 'lib', 'Slim', 'Plugin' );
 		}
 	}
 

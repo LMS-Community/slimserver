@@ -51,7 +51,7 @@ use Slim::Utils::Timers;
 
 my $prefs = preferences('server');
 
-my $cookieJar = HTTP::Cookies->new(	file => catdir($prefs->get('cachedir'), 'cookies.dat'), autosave => 1 );
+my $cookieJar;
 
 my $log = logger('network.asynchttp');
 
@@ -64,6 +64,10 @@ __PACKAGE__->mk_classaccessor( bufsize => 16 * 1024 );
 
 # Max redirects to follow
 __PACKAGE__->mk_classaccessor( maxRedirect => 7 );
+
+sub init {
+	$cookieJar = HTTP::Cookies->new( file => catdir($prefs->get('cachedir'), 'cookies.dat'), autosave => 1 );
+}
 
 sub new_socket {
 	my $self = shift;
