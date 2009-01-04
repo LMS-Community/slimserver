@@ -358,6 +358,7 @@ sub init {
 	Slim::Networking::Async::DNS->init;
 	
 	$log->info("Async HTTP init...");
+	Slim::Networking::Async::HTTP->init;
 	Slim::Networking::SimpleAsyncHTTP->init;
 	
 	$log->info("Firmware init...");

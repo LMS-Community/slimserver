@@ -55,7 +55,6 @@ use constant OP_NEEDS_DISABLE   => "needs-disable";
 
 use constant CACHE_VERSION => 2;
 
-my @pluginDirs     = Slim::Utils::OSDetect::dirsFor('Plugins');
 my @pluginRootDirs = ();
 my $plugins        = {};
 my $cacheInfo      = {};
@@ -82,9 +81,6 @@ if ( main::SLIM_SERVICE ) {
 		'Slim::Plugin::iTunes::Plugin'         => 1,
 		'Slim::Plugin::xPL::Plugin'            => 1,
 	);
-	
-	# Load SN-only plugins
-	push @pluginDirs, catdir( $main::SN_PATH, 'lib', 'Slim', 'Plugin' );
 }
 
 # Skip obsolete plugins, they should be deleted by installers
@@ -226,7 +222,7 @@ sub findInstallManifests {
 			return 0;
 		},
 
-	}, @pluginDirs);
+	}, Slim::Utils::OSDetect::dirsFor('Plugins'));
 
 	while ( my $file = $iter->() ) {
 
@@ -760,7 +756,7 @@ sub pluginRootDirs {
 		return @pluginRootDirs;
 	}
 
-	for my $path (@pluginDirs) {
+	for my $path (Slim::Utils::OSDetect::dirsFor('Plugins')) {
 
 		opendir(DIR, $path) || next;
 
