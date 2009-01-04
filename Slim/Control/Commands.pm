@@ -920,13 +920,6 @@ sub playlistJumpCommand {
 			my $handler = $client->playingSong()->currentTrackHandler();
 			my $url     = $client->playingSong()->currentTrack()->url();
 			
-			# Bug 10488, if protocol handler is a repeating stream (Pandora, etc), treat 0/-1 as +1
-			if ( $handler && $handler->can('isRepeatingStream') && $handler->isRepeatingStream( $client->playingSong() ) ) {
-				if ( ($songcount == 1 && $index eq '-1') || $index eq '+0' ) {
-					$index = '+1';
-				}
-			}
-
 			if ( ($songcount == 1 && $index eq '-1') || $index eq '+0' ) {
 				# User is trying to restart the current track
 				$client->controller()->jumpToTime(0, 1);
