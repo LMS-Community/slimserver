@@ -164,9 +164,11 @@ sub isRepeatingStream {
 sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
 	
-	# Don't allow pause on radio
-	if ( $action eq 'pause' && $url =~ /\.rdr$/ ) {
-		return 0;
+	# Don't allow pause or rew on radio
+	if ( $url =~ /\.rdr$/ ) {
+		if ( $action eq 'pause' || $action eq 'rew' ) {
+			return 0;
+		}
 	}
 	
 	return 1;
