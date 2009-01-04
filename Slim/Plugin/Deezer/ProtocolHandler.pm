@@ -136,9 +136,11 @@ sub canSkip {
 sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
 	
-	# Don't allow pause on radio
-	if ( $action eq 'pause' && $url =~ /\.dzr$/ ) {
-		return 0;
+	# Don't allow pause or rew on radio
+	if ( $url =~ /\.dzr$/ ) {
+		if ( $action eq 'pause' || $action eq 'rew' ) {
+			return 0;
+		}
 	}
 	
 	if ( $action eq 'stop' && !canSkip($client) ) {

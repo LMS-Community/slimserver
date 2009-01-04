@@ -225,6 +225,11 @@ sub canSkip {
 sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
 	
+	# Bug 10488
+	if ( $action eq 'rew' ) {
+		return 0;
+	}
+
 	if ( $action eq 'stop' && !canSkip($client) ) {
 		# Is skip allowed?
 		$log->debug("Last.fm: Skip limit exceeded, disallowing skip");

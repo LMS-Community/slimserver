@@ -378,6 +378,10 @@ sub canDoAction {
 		return 0;
 	}
 	
+	if ( $action eq 'rew' ) {
+		return 0;
+	}
+	
 	return 1;
 }
 
