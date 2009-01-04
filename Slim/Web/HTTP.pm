@@ -2058,8 +2058,8 @@ sub sendStreamingResponse {
 		((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 
 		$silence = 1;
-	} 
-
+	}
+	
 	# if we don't have anything in our queue, then get something
 	if (!defined($segment)) {
 
@@ -2119,6 +2119,12 @@ sub sendStreamingResponse {
 				}
 
 			} else {
+				# bug 10534
+				if (!$client) {
+					closeStreamingSocket($httpClient);
+					$log->info("Abandoning orphened streaming connection");
+					return 0;
+				} 
 
 				$chunkRef = $client->nextChunk(MAXCHUNKSIZE, sub {tryStreamingLater(shift, $httpClient);});
 			}
