@@ -913,6 +913,14 @@ sub playlistJumpCommand {
 		$client->execute([ 'power', 1, 1 ]);
 	}
 
+	my $showStatus = sub {
+		if ($client->isPlayer()) {
+			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
+			$client->showBriefly($parts, { duration => 2 }) if $parts;
+			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
+		}
+	};
+
 	# Is this a relative jump, etc.
 	if ( defined $index && $index =~ /[+-]/ ) {
 		
@@ -923,11 +931,13 @@ sub playlistJumpCommand {
 			if ( ($songcount == 1 && $index eq '-1') || $index eq '+0' ) {
 				# User is trying to restart the current track
 				$client->controller()->jumpToTime(0, 1);
+				$showStatus->();
 				$request->setStatusDone();
 				return;	
 			} elsif ($index eq '+1') {
 				# User is trying to skip to the next track
-				$client->controller()->skip();		
+				$client->controller()->skip();
+				$showStatus->();
 				$request->setStatusDone();
 				return;	
 			}
@@ -970,14 +980,7 @@ sub playlistJumpCommand {
 	# Does the above change the playlist?
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
-	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
-
-# should be done by StreamingController
-#	# update the display unless suppressed
-#	if ($client->isPlayer()) {
-#		my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
-#		$client->showBriefly($parts) if $parts;
-#	}
+	$showStatus->();
 		
 	$request->setStatusDone();
 }

@@ -913,6 +913,16 @@ sub _Stream {				# play -> Buffering, Streaming
 	$log->info($self->{masterId} . ": preparing to stream song index " .  $song->{'index'});
 	
 	my $queue = $self->{'songqueue'};
+
+	# bug 10510 - remove old songs from queue before adding new one
+	# (Note: did not just test for STATUS_PLAYING so as not to hardwire max-queue-length == 2 too often)
+	while (scalar @$queue && 
+		   ($queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FAILED || 
+			$queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FINISHED)
+		  ) {
+
+		pop @$queue;
+	}
 	
 	unshift @$queue, $song unless scalar @$queue && $queue->[0] == $song;
 	if ($log->is_info) {	
@@ -1624,6 +1634,9 @@ sub playerTrackStarted {
 	if (scalar @{$self->songqueue()} == 1 && scalar $self->activePlayers() > 1) {return;}
 
 	_eventAction($self, 'Started');
+
+	# sync the button mode periodic update to the track time
+	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 }
 
 sub playerReadyToStream {
