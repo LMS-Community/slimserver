@@ -198,11 +198,11 @@ sub showTimeOrAlarm {
 	my $showAlarm = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400);
 
 	# Show time if it isn't already being displayed or it is but there's no next alarm
-	if (($currentMode !~ '\.datetime$' || $client->display->currBrightness() == 0)
+	if (($currentMode !~ '\.datetime$' || $client->display->currBrightness() < 4)
 		&& ($currentSbName ne $sbName || ! $showAlarm)) {
 
 		$client->showBriefly( dateTimeLines($client), {
-			'brightness' => 'powerOn',
+			'brightness' => 4,
 			'duration' => 3,
 			'name' => $sbName,
 		});
@@ -225,7 +225,7 @@ sub showTimeOrAlarm {
 					$line,
 				]
 			},
-			{ 'duration' => 3, 'brightness' => 'powerOn'},
+			{ 'duration' => 3, 'brightness' => 4 },
 		);
 	}
 }
