@@ -123,13 +123,13 @@ sub searchExitHandler {
 
 	if ($exitType eq 'LEFT') {
 		my $oldlines = $client->curLines();
-
+		
 		Slim::Buttons::Home::jump($client, 'SEARCH');
 		while (Slim::Buttons::Common::popMode($client, 1)) {};
 		Slim::Buttons::Common::pushMode($client, 'home');
-
+		
 		$client->pushRight($oldlines, $client->curLines());
-
+		
 	} elsif ($exitType eq 'RIGHT') {
 
 		my $current = $client->modeParam('valueRef');

@@ -84,6 +84,7 @@ sub connected {
 sub model {
 	return 'slimp3';
 }
+
 sub modelName { 'SLIMP3' }
 
 sub type {
@@ -97,6 +98,8 @@ sub ticspersec {
 sub decoder {
 	return 'mas3507d';
 }
+
+sub hasIR { 1 }
 
 sub nextChunk {
 	my $client = $_[0];
