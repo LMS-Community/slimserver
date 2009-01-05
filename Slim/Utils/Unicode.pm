@@ -663,8 +663,9 @@ sub encodingFromString {
 	# In these cases Encode::Guess does a better job... (bug 9553)
 	if (lc($charset) eq 'big5') {
 
-		$charset = Encode::Guess::guess_encoding($_[0])->name;
-
+		eval {
+			$charset = Encode::Guess::guess_encoding($_[0])->name;
+		};
 	}
 
 	$charset =~ s/utf-8/utf8/i;

@@ -9610,7 +9610,7 @@ VOLUME
 	DE	Lautstärke
 	EN	Volume
 	ES	Volumen
-	FI	Tilavuus
+	FI	Äänenvoimakkuus
 	FR	Volume
 	HE	עוצמת קול
 	IT	Volume

@@ -66,7 +66,7 @@ sub processCoverArtRequest {
 	
 	my $actualPathToImage;
 	my $requestedContentType = "image/" . $suffix;
-	$requestedContentType =~ s/jpg/jpeg/;
+	$requestedContentType =~ s/jpg/jpeg/i;
 	$requestedContentType =~ s/\.//;
 	$actualContentType = $requestedContentType;
 
@@ -94,7 +94,7 @@ sub processCoverArtRequest {
 			(?:_([sSfFpco]))?        # resizeMode, given by a single character
 			(?:_([\da-fA-F]+))?      # background color, optional
 			(?:\.(jpg|png|gif|gd))?$ # optional file suffixes allowed are jpg png gif gd [libgd uncompressed]
-			/x;	
+			/ix;	
 
 	my $image               = $1;
 	my $requestedWidth      = $2; # it's ok if it didn't match and we get undef
@@ -366,7 +366,7 @@ sub processCoverArtRequest {
 				my $returnedWidth;
 				my $returnedHeight;
 				my ($returnedType) = $requestedContentType =~ /\/(\w+)/;
-				$returnedType =~ s/jpg/jpeg/;
+				$returnedType =~ s/jpg/jpeg/i;
 
 				# if an X is supplied for the width (height) then the returned image's width (height)
 				# is chosen to maintain the aspect ratio of the original.  This only makes sense with 
@@ -604,7 +604,7 @@ sub processCoverArtRequest {
 			# Cache the path to a non-cover icon image
 			my $skin = $params->{'skinOverride'} || $prefs->get('skin');
 			
-			$imageFilePath = Slim::Web::HTTP::fixHttpPath($skin, $actualPathToImage);
+			$imageFilePath = Slim::Web::HTTP::fixHttpPath($skin, $actualPathToImage) || $actualPathToImage;
 		}
 		
 		my $cached = {
