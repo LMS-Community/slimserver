@@ -108,11 +108,11 @@ PLUGIN_EXTENSIONS_PLUGINS_REMOVE
 
 PLUGIN_EXTENSIONS_INSTALL
 	DA	 
-	DE	 
+	DE	Installieren
 	EN	Install
 	ES	 
 	FI	 
-	FR	 
+	FR	Installer
 	IT	 
 	NL	 
 	NO	 
