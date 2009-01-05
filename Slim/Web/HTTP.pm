@@ -56,6 +56,7 @@ BEGIN {
 
 			# Use our custom Template::Context subclass
 			$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
+			$Template::Provider::MAX_DIRS = 128;
 
 		} else {
 
