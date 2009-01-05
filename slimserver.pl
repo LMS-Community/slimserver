@@ -962,7 +962,7 @@ sub checkVersionCB {
 
 	# store result in global variable, to be displayed by browser
 	if ($http->{code} =~ /^2\d\d/) {
-		$::newVersion = $http->content();
+		$::newVersion = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($::newVersion);
 	}
 	else {
