@@ -51,15 +51,15 @@ sub parser {
 	# provided by RadioTime
 	if ( $metadata =~ /StreamTitle=\'([^']+)\'/ ) {
 		if ( $1 ) {
-			if ( $client->pluginData('metadata' ) ) {
+			if ( $client->master->pluginData('metadata' ) ) {
 				$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has Icy metadata');
 				
 				Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
-				$client->pluginData( metadata => undef );
+				$client->master->pluginData( metadata => undef );
 			}
 			
 			# Let the default metadata handler process the Icy metadata
-			$client->pluginData( hasIcy => $url );
+			$client->master->pluginData( hasIcy => $url );
 			return;
 		}
 	}
@@ -67,15 +67,15 @@ sub parser {
 	# If a station is providing WMA metadata, disable metadata
 	# provided by RadioTime
 	elsif ( $metadata =~ /(?:CAPTION|artist|type=SONG)/ ) {
-		if ( $client->pluginData('metadata' ) ) {
+		if ( $client->master->pluginData('metadata' ) ) {
 			$log->is_debug && $log->debug('Disabling RadioTime metadata, stream has WMA metadata');
 			
 			Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
-			$client->pluginData( metadata => undef );
+			$client->master->pluginData( metadata => undef );
 		}
 		
 		# Let the default metadata handler process the WMA metadata
-		$client->pluginData( hasIcy => $url );
+		$client->master->pluginData( hasIcy => $url );
 		return;
 	}
 	
@@ -85,10 +85,10 @@ sub parser {
 sub provider {
 	my ( $client, $url ) = @_;
 	
-	my $hasIcy = $client->pluginData('hasIcy');
+	my $hasIcy = $client->master->pluginData('hasIcy');
 	
 	if ( $hasIcy && $hasIcy ne $url ) {
-		$client->pluginData( hasIcy => 0 );
+		$client->master->pluginData( hasIcy => 0 );
 		$hasIcy = undef;
 	}
 	
@@ -98,7 +98,7 @@ sub provider {
 		return defaultMeta( $client, $url );
 	}
 	
-	if ( my $meta = $client->pluginData('metadata') ) {
+	if ( my $meta = $client->master->pluginData('metadata') ) {
 		if ( $meta->{_url} eq $url ) {
 			if ( !$meta->{title} ) {
 				$meta->{title} = Slim::Music::Info::getCurrentTitle($url);
@@ -108,7 +108,7 @@ sub provider {
 		}
 	}
 	
-	if ( !$client->pluginData('fetchingMeta') ) {
+	if ( !$client->master->pluginData('fetchingMeta') ) {
 		# Fetch metadata in the background
 		Slim::Utils::Timers::killTimers( $client, \&fetchMetadata );
 		fetchMetadata( $client, $url );
@@ -157,7 +157,7 @@ sub fetchMetadata {
 		},
 	);
 	
-	$client->pluginData( fetchingMeta => 1 );
+	$client->master->pluginData( fetchingMeta => 1 );
 	
 	my %headers;
 	if ( main::SLIM_SERVICE ) {
@@ -181,7 +181,7 @@ sub _gotMetadata {
 		return;
 	}
 	
-	$client->pluginData( fetchingMeta => 0 );
+	$client->master->pluginData( fetchingMeta => 0 );
 	
 	if ( $log->is_debug ) {
 		$log->debug( "Raw RadioTime metadata: " . Data::Dump::dump($feed) );
@@ -218,7 +218,7 @@ sub _gotMetadata {
 		$log->debug( "Saved RadioTime metadata: " . Data::Dump::dump($meta) );
 	}
 	
-	$client->pluginData( metadata => $meta );
+	$client->master->pluginData( metadata => $meta );
 	
 	$log->is_debug && $log->debug( "Will check metadata again in $ttl seconds" );
 	
@@ -238,14 +238,14 @@ sub _gotMetadataError {
 	
 	$log->is_debug && $log->debug( "Error fetching RadioTime metadata: $error" );
 	
-	$client->pluginData( fetchingMeta => 0 );
+	$client->master->pluginData( fetchingMeta => 0 );
 	
 	# To avoid flooding the RT servers in the case of errors, we just ignore further
 	# metadata for this station if we get an error
 	my $meta = defaultMeta( $client, $url );
 	$meta->{_url} = $url;
 	
-	$client->pluginData( metadata => $meta );
+	$client->master->pluginData( metadata => $meta );
 }
 
 1;
