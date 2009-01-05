@@ -69,10 +69,11 @@ sub init {
 
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
-	if ($prefs->get('dbsource') !~ /port=9092/ && Slim::Utils::OSDetect::getOS->initMySQL($class)) {
+	if ($prefs->get('dbsource') !~ /port=9092/) {
 
 		$log->info("Not starting MySQL - looks to be user/system configured.");
-
+		Slim::Utils::OSDetect::getOS->initMySQL($class);
+		
 		return 1;
 	}
 

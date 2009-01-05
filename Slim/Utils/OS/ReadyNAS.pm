@@ -40,8 +40,6 @@ sub initMySQL {
 	if (!$dbclass->dbh) {
 		$dbclass->startServer;
 	}
-
-	return 1;
 }
 
 

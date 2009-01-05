@@ -60,7 +60,7 @@ sub initSearchPath {
 	Slim::Utils::Misc::addFindBinPaths('C:\Perl\bin');
 }
 
-sub initMySQL {0}
+sub initMySQL {}
 
 sub dirsFor {
 	my ($class, $dir) = @_;

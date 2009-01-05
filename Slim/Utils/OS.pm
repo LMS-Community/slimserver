@@ -84,13 +84,9 @@ sub initMySQL {
 
 		if ($socket && -S $socket) {
 			$dbclass->socketFile($socket);
-			
-			return 1;
 		}
 		
 	}
-	
-	return 0;
 }
 
 =head2 dirsFor( $dir )
