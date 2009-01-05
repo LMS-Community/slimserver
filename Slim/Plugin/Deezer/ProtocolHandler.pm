@@ -101,7 +101,7 @@ sub parseDirectHeaders {
 	}
 	
 	# Save length for reinit
-	$client->pluginData( length => $length );
+	$client->master->pluginData( length => $length );
 	
 	my $bitrate = 128_000;
 
@@ -541,7 +541,7 @@ sub reinit {
 	
 	$log->debug("Re-init Deezer - $currentURL");
 	
-	if ( my $length = $client->pluginData('length') ) {			
+	if ( my $length = $client->master->pluginData('length') ) {			
 		# On a timer because $client->currentsongqueue does not exist yet
 		Slim::Utils::Timers::setTimer(
 			$client,

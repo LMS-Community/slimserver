@@ -77,7 +77,7 @@ sub setLockerInfo {
 			$cover    = "http://content.mp3tunes.com/storage/albumartget/$id";
 		}
 		
-		$client->pluginData( currentTrack => {
+		$client->master->pluginData( currentTrack => {
 			url      => $url,
 			artist   => $artist,
 			album    => $album,
@@ -91,7 +91,7 @@ sub setLockerInfo {
 sub getLockerInfo {
 	my ( $class, $client, $url ) = @_;
 	
-	my $meta = $client->pluginData('currentTrack');
+	my $meta = $client->master->pluginData('currentTrack');
 	
 	if ( $meta->{url} eq $url ) {
 		return $meta;

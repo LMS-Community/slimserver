@@ -256,9 +256,9 @@ sub clearSession {
 	my $client = shift;
 	
 	# Reset our state
-	$client->pluginData( session_id      => 0 );
-	$client->pluginData( now_playing_url => 0 );
-	$client->pluginData( submit_url      => 0 );
+	$client->master->pluginData( session_id      => 0 );
+	$client->master->pluginData( now_playing_url => 0 );
+	$client->master->pluginData( submit_url      => 0 );
 }
 
 sub handshake {
@@ -328,10 +328,10 @@ sub _handshakeOK {
 		$log->debug( "Handshake OK, session id: $session_id, np URL: $now_playing_url, submit URL: $submit_url" );
 		
 		if ( $client ) {
-			$client->pluginData( session_id      => $session_id );
-			$client->pluginData( now_playing_url => $now_playing_url );
-			$client->pluginData( submit_url      => $submit_url );
-			$client->pluginData( handshake_delay => 0 );
+			$client->master->pluginData( session_id      => $session_id );
+			$client->master->pluginData( now_playing_url => $now_playing_url );
+			$client->master->pluginData( submit_url      => $submit_url );
+			$client->master->pluginData( handshake_delay => 0 );
 		
 			# If there are any tracks pending in the queue, send them now
 			my $queue = getQueue($client);
@@ -391,7 +391,7 @@ sub _handshakeError {
 	
 	my $delay;
 	
-	if ( $delay = $client->pluginData('handshake_delay') ) {
+	if ( $delay = $client->master->pluginData('handshake_delay') ) {
 		$delay *= 2;
 		if ( $delay > 120 ) {
 			$delay = 120;
@@ -401,7 +401,7 @@ sub _handshakeError {
 		$delay = 1;
 	}
 	
-	$client->pluginData( handshake_delay => $delay );
+	$client->master->pluginData( handshake_delay => $delay );
 	
 	$log->warn("  retrying in $delay minute(s)");
 	
@@ -550,7 +550,7 @@ sub submitNowPlaying {
 	# Abort if the user disabled scrobbling for this player
 	return if !$prefs->client($client)->get('account');
 	
-	if ( !$client->pluginData('now_playing_url') ) {
+	if ( !$client->master->pluginData('now_playing_url') ) {
 		# Get a new session
 		handshake( {
 			client => $client,
@@ -590,7 +590,7 @@ sub submitNowPlaying {
 		}
 	}
 	
-	my $post = 's=' . $client->pluginData('session_id')
+	my $post = 's=' . $client->master->pluginData('session_id')
 		. '&a=' . uri_escape_utf8( $artist )
 		. '&t=' . uri_escape_utf8( $title )
 		. '&b=' . uri_escape_utf8( $album )
@@ -612,7 +612,7 @@ sub submitNowPlaying {
 	);
 	
 	$http->post(
-		$client->pluginData('now_playing_url'),
+		$client->master->pluginData('now_playing_url'),
 		'Content-Type' => 'application/x-www-form-urlencoded',
 		$post,
 	);
@@ -840,7 +840,7 @@ sub submitScrobble {
 		return $cb->();
 	}
 
-	if ( !$client->pluginData('submit_url') ) {
+	if ( !$client->master->pluginData('submit_url') ) {
 		# Get a new session
 		handshake( {
 			client => $client,
@@ -865,7 +865,7 @@ sub submitScrobble {
 	my $current_item;
 	my @tmpQueue;
 	
-	my $post = 's=' . $client->pluginData('session_id');
+	my $post = 's=' . $client->master->pluginData('session_id');
 	
 	my $index = 0;
 	while ( my $item = shift @{$queue} ) {
@@ -925,7 +925,7 @@ sub submitScrobble {
 		);
 	
 		$http->post(
-			$client->pluginData('submit_url'),
+			$client->master->pluginData('submit_url'),
 			'Content-Type' => 'application/x-www-form-urlencoded',
 			$post,
 		);

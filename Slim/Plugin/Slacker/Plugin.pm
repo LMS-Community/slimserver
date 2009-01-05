@@ -100,7 +100,7 @@ sub rateTrack {
 	my ($stationId) = $url =~ m{^slacker://([^.]+)\.mp3};
 	
 	# Get the current track
-	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	my $currentTrack = $client->master->pluginData('prevTrack') || $client->master->pluginData('currentTrack');
 	return unless $currentTrack;
 	
 	my $trackId = $currentTrack->{tid};
@@ -150,11 +150,11 @@ sub _rateTrackOK {
 	
 	# For a change in rating, adjust our cached track data
 	if ( $rating =~ /[FU]/ ) {
-		$currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+		$currentTrack = $client->master->pluginData('prevTrack') || $client->master->pluginData('currentTrack');
 		$currentTrack->{trate} = ( $rating eq 'F' ) ? 100 : 0;
 		
 		# Use prevTrack so we don't clobber any current track data
-		$client->pluginData( prevTrack => $currentTrack );
+		$client->master->pluginData( prevTrack => $currentTrack );
 		
 		# Web UI should auto-refresh the metadata after this,
 		# so it will get the new icon

@@ -1239,8 +1239,6 @@ sub currentPlaylistChangeTime {
 sub pluginData {
 	my ( $client, $key, $value ) = @_;
 	
-	$client = $client->master();
-	
 	my $namespace;
 	
 	# if called from a plugin, we automatically use the plugin's namespace for keys

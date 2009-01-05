@@ -77,12 +77,12 @@ sub getNextTrack {
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
 	# If the user was playing a different Pandora station, report a stationChange event
-	my $prevStation = $client->pluginData('station');
+	my $prevStation = $client->master->pluginData('station');
 	
 	if ( $prevStation && $prevStation ne $stationId ) {
 		my $snURL = Slim::Networking::SqueezeNetwork->url(
 			  '/api/pandora/v1/playback/stationChange?stationId=' . $prevStation 
-			. '&trackId=' . $client->pluginData('trackToken')
+			. '&trackId=' . $client->master->pluginData('trackToken')
 		);
 		my $http = Slim::Networking::SqueezeNetwork->new(
 			sub {},
@@ -97,7 +97,7 @@ sub getNextTrack {
 		$http->get( $snURL );
 	}
 
-	$client->pluginData(station => $stationId);
+	$client->master->pluginData(station => $stationId);
 
 	# If playing and idle time has been exceeded, stop playback
 	if ( $client->isPlaying() ) {
@@ -175,7 +175,7 @@ sub gotNextTrack {
 	# Save metadata for this track
 	$song->pluginData( $track );
 	$song->{'streamUrl'} = $track->{'audioUrl'};
-	$client->pluginData('trackToken' => $track->{'trackToken'});
+	$client->master->pluginData('trackToken' => $track->{'trackToken'});
 	
 	# Bug 8781, Seek if instructed by SN
 	# This happens when the skip limit is reached and the station has been stopped and restarted.

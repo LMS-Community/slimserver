@@ -196,13 +196,19 @@ sub showTimeOrAlarm {
 
 	my $nextAlarm = Slim::Utils::Alarm->getNextAlarm($client);
 	my $showAlarm = defined $nextAlarm && ($nextAlarm->nextDue - time < 86400);
+	
+	# Display message with power on brightness or 4, whichever is higher
+	my $powerOnBrightness = preferences('server')->client($client)->get('powerOnBrightness');
+	if ( $powerOnBrightness < 4 ) {
+		$powerOnBrightness = 4;
+	}
 
 	# Show time if it isn't already being displayed or it is but there's no next alarm
-	if (($currentMode !~ '\.datetime$' || $client->display->currBrightness() == 0)
+	if (($currentMode !~ '\.datetime$' || $client->display->currBrightness() < 4)
 		&& ($currentSbName ne $sbName || ! $showAlarm)) {
 
 		$client->showBriefly( dateTimeLines($client), {
-			'brightness' => 'powerOn',
+			'brightness' => $powerOnBrightness,
 			'duration' => 3,
 			'name' => $sbName,
 		});
@@ -225,7 +231,7 @@ sub showTimeOrAlarm {
 					$line,
 				]
 			},
-			{ 'duration' => 3, 'brightness' => 'powerOn'},
+			{ 'duration' => 3, 'brightness' => $powerOnBrightness },
 		);
 	}
 }

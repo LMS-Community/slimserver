@@ -142,7 +142,7 @@ sub parseDirectHeaders {
 	}
 	
 	# Save length for reinit and seeking
-	$client->pluginData( length => $length );
+	$client->master->pluginData( length => $length );
 	
 	my $bitrate = $client->streamingSong()->{'streamUrl'} =~ /\.mp3$/ ? 128_000 : 192_000;
 
@@ -540,7 +540,7 @@ sub getMetadataFor {
 	my ($trackId) = $url =~ m{rhapd://(.+)\.mp3};
 	my $meta      = $cache->get( 'rhapsody_meta_' . $trackId );
 	
-	if ( !$meta && !$client->pluginData('fetchingMeta') ) {
+	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
 		# Go fetch metadata for all tracks on the playlist without metadata
 		my @need;
 		
@@ -558,7 +558,7 @@ sub getMetadataFor {
 			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
-		$client->pluginData( fetchingMeta => 1 );
+		$client->master->pluginData( fetchingMeta => 1 );
 		
 		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
 			"/api/rhapsody/v1/playback/getBulkMetadata"
@@ -594,7 +594,7 @@ sub _gotBulkMetadata {
 	my $http   = shift;
 	my $client = $http->params->{client};
 	
-	$client->pluginData( fetchingMeta => 0 );
+	$client->master->pluginData( fetchingMeta => 0 );
 	
 	my $info = eval { from_json( $http->content ) };
 	
@@ -637,7 +637,7 @@ sub _gotBulkMetadataError {
 	my $client = $http->params('client');
 	my $error  = $http->error;
 	
-	$client->pluginData( fetchingMeta => 0 );
+	$client->master->pluginData( fetchingMeta => 0 );
 	
 	$log->warn("Error getting track metadata from SN: $error");
 }
@@ -820,7 +820,7 @@ sub getSeekData {
 	
 	# Calculate the RAD and EA offsets for this time offset
 	my $percent   = $newtime / $duration;
-	my $radlength = $client->pluginData('length') - 36;
+	my $radlength = $client->master->pluginData('length') - 36;
 	my $nb        = 1 + int($radlength / 3072);
 	my $ealength  = 36 + (24 * $nb);
 	my $radoffset = ( int($nb * $percent) * 3072 ) + 36;
@@ -843,7 +843,7 @@ sub reinit {
 	
 	$log->debug("Re-init Rhapsody - $currentURL");
 	
-	if ( my $length = $client->pluginData('length') ) {			
+	if ( my $length = $client->master->pluginData('length') ) {			
 		# On a timer because $client->currentsongqueue does not exist yet
 		Slim::Utils::Timers::setTimer(
 			$client,
