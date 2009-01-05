@@ -90,6 +90,7 @@ my %modeParams = (
 	,'onChange' => sub { 
 			my $client = shift;
 			$client->master->pluginData(lastUpdateTime => Time::HiRes::time());
+			$client->master->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 		}
 	,'onChangeArgs' => 'C'
 	,'callback' => \&_scannerExitHandler
@@ -231,12 +232,10 @@ my %functions = (
 	'song_scanner_fwd' => sub {
 		my $client = shift;
 		Slim::Buttons::Input::Bar::changePos($client, 1, 'up') if $client->master->pluginData('activeFfwRew') > 1;
-		$client->master->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	},
 	'song_scanner_rew' => sub {
 		my $client = shift;
 		Slim::Buttons::Input::Bar::changePos($client, -1, 'down') if $client->master->pluginData('activeFfwRew') > 1;
-		$client->master->pluginData(exitModeTime => Time::HiRes::time() + $EXITMODE_INTERVAL);
 	},
 );
 
