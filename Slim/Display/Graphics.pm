@@ -574,14 +574,14 @@ sub maxTextSize {
 
 sub measureText {
 	my $display = shift;
-	my $text = shift;
+	my $text = shift || '';
 	my $line = shift;
 	my $spaces = shift; # number or additional inter-character spaces to add [overlay needs at least 1]
 	
 	my $fonts = $display->fonts();
 
 	if ($spaces) {
-		$text = chr(0) x $spaces . $text;
+		$text .= chr(0) x $spaces;
 	}
 
 	my $len = Slim::Display::Lib::Fonts::measureText($fonts->{"line"}[$line-1], $display->symbols($text));
