@@ -2646,7 +2646,7 @@ sub prefQuery {
 
 	# split pref name from namespace: name.space.pref:
 	my $namespace = 'server';
-	if ($prefName =~ /^(.*):(\w+)$/) {
+	if ($prefName =~ /^(.*?):(.+)$/) {
 		$namespace = $1;
 		$prefName = $2;
 	}
@@ -2682,7 +2682,7 @@ sub prefValidateQuery {
 
 	# split pref name from namespace: name.space.pref:
 	my $namespace = 'server';
-	if ($prefName =~ /^(.*):(\w+)$/) {
+	if ($prefName =~ /^(.*?):(.+)$/) {
 		$namespace = $1;
 		$prefName = $2;
 	}
