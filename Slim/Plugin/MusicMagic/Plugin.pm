@@ -775,7 +775,8 @@ sub getMix {
 
 	$log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
 
-	if ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') {
+	if (!$isWin && ($validMixTypes{$for} eq 'song' || $validMixTypes{$for} eq 'album') ) {
+
 		# need to decode the file path when a file is used as seed
 		$id = Slim::Utils::Unicode::utf8decode_locale($id);
 	}
