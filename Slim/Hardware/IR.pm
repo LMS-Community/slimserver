@@ -1085,7 +1085,7 @@ sub executeButton {
 
 		if (!defined $subref || ref($subref) ne 'CODE') {
 
-			$log->error("Error: Subroutine for irCode: [$irCode] mode: [$mode] does not exist!");
+			$log->is_warn && $log->warn("Warning: Subroutine for irCode: [$irCode] mode: [$mode] does not exist!");
 
 			return;
 		}
