@@ -65,6 +65,26 @@ sub bufferThreshold { 20 }
 
 sub isRemote { 1 }
 
+# If either the previous or current track is an ad, disable transitions
+sub transitionType {
+	my ( $class, $client, $song, $transitionType ) = @_;
+	
+	# Ignore if transitionType is already 0
+	return if $transitionType == 0;
+	
+	my $current = $client->master->pluginData('currentTrack');
+	my $prev    = $client->master->pluginData('prevTrack');
+	
+	return unless $current && $prev;
+	
+	if ( $current->{ad} || $prev->{ad} ) {
+		$log->is_debug && $log->debug('Disabling transition because of audio ad');
+		return 0;
+	}
+
+	return;
+}
+
 sub handleError {
     my ( $error, $client ) = @_;
 
