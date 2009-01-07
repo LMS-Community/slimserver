@@ -166,7 +166,6 @@ sub alarmsQuery {
 	my $filter	 = $request->getParam('filter');
 	my $alarmDOW = $request->getParam('dow');
 	
-	
 	# being nice: we'll still be accepting 'defined' though this doesn't make sense any longer
 	if ($request->paramNotOneOfIfDefined($filter, ['all', 'defined', 'enabled'])) {
 		$request->setStatusBadParams();
@@ -483,6 +482,16 @@ sub albumsQuery {
 
 		my $artist;
 		for my $eachitem ($rs->slice($start, $end)) {
+			
+			my $sortValue = '';
+
+			#FIXME: see if multiple char textkey is doable for year/genre sort
+			if ($sort && ($sort eq 'artflow' || $sort eq 'artistalbum') ) {
+				$sortValue = $eachitem->contributor->namesort;
+			} elsif ($sort && $sort ne 'new') {
+				$sortValue = $eachitem->titlesort;
+			}
+			my $textKey = substr($sortValue, 0, 1);
 
 			# Jive result formatting
 			if ($menuMode) {
@@ -511,17 +520,11 @@ sub albumsQuery {
 					'album_id'        => $id,
 					'favorites_url'   => $url,
 					'favorites_title' => $favorites_title,
+					'textkey'         => $textKey,
 				};
 				
 				if (defined $contributorID) {
 					$params->{artist_id} = $contributorID;
-				}
-
-				#FIXME: see if multiple char textkey is doable for year/genre sort
-				if ($sort && ($sort eq 'artflow' || $sort eq 'artistalbum') ) {
-					$params->{textkey} = substr($eachitem->contributor->namesort, 0, 1);
-				} elsif ($sort && $sort ne 'new') {
-					$params->{textkey} = substr($eachitem->titlesort, 0, 1);
 				}
 
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
@@ -554,6 +557,10 @@ sub albumsQuery {
 					if ( blessed( $artists[0] ) ) {
 						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $artists[0]->name());
 					}
+				}
+				if ($tags =~ /s/) {
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
+					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'sortvalue', $sortValue);
 				}
 			}
 			
@@ -635,6 +642,8 @@ sub artistsQuery {
 	my $insert   = $request->getParam('menu_all');
 	my $to_cache = $request->getParam('cache');
 	my $party    = $request->getParam('party') || 0;
+	my $tags     = $request->getParam('tags') || '';
+	
 	my %favorites;
 	$favorites{'url'} = $request->getParam('favorites_url');
 	$favorites{'title'} = $request->getParam('favorites_title');
@@ -860,6 +869,9 @@ sub artistsQuery {
 			next if !$obj;
 			my $id = $obj->id();
 			$id += 0;
+			
+			my $sortValue = $obj->namesort;
+			my $textKey   = substr($sortValue, 0, 1);
 
 			if ($menuMode){
 				$request->addResultLoop($loopname, $chunkCount, 'text', $obj->name);
@@ -871,7 +883,7 @@ sub artistsQuery {
 					'favorites_url'   => $url,
 					'favorites_title' => $obj->name,
 					'artist_id' => $id, 
-					'textkey' => substr($obj->namesort, 0, 1),
+					'textkey' => $textKey,
 				};
 				_mixerItemParams(request => $request, obj => $obj, loopname => $loopname, chunkCount => $chunkCount, params => $params);
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
@@ -882,6 +894,10 @@ sub artistsQuery {
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 				$request->addResultLoop($loopname, $chunkCount, 'artist', $obj->name);
+				if ($tags =~ /s/) {
+					$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+					$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
+				}
 			}
 
 			$chunkCount++;
@@ -1296,6 +1312,7 @@ sub genresQuery {
 	my $insert        = $request->getParam('menu_all');
 	my $to_cache      = $request->getParam('cache');
 	my $party         = $request->getParam('party') || 0;
+	my $tags          = $request->getParam('tags') || '';
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
@@ -1455,6 +1472,9 @@ sub genresQuery {
 			my $id = $eachitem->id();
 			$id += 0;
 			
+			my $sortValue = $eachitem->namesort;
+			my $textKey   = substr($sortValue, 0, 1);
+				
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
 				
@@ -1463,7 +1483,7 @@ sub genresQuery {
 				my $params = {
 					'genre_id'        => $id,
 					'genre_string'    => $eachitem->name,
-					'textkey'         => substr($eachitem->namesort, 0, 1),
+					'textkey'         => $textKey,
 					'favorites_url'   => $url,
 					'favorites_title' => $eachitem->name,
 				};
@@ -1477,6 +1497,10 @@ sub genresQuery {
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 				$request->addResultLoop($loopname, $chunkCount, 'genre', $eachitem->name);
+				if ($tags =~ /s/) {
+					$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+					$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
+				}
 			}
 			$chunkCount++;
 		}
@@ -1660,6 +1684,7 @@ sub musicfolderQuery {
 	my $menu     = $request->getParam('menu');
 	my $insert   = $request->getParam('menu_all');
 	my $party    = $request->getParam('party') || 0;
+	my $tags     = $request->getParam('tags') || '';
 	
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
@@ -1814,12 +1839,15 @@ sub musicfolderQuery {
 			$id += 0;
 			
 			$filename = Slim::Utils::Unicode::utf8decode_locale($filename);
+
+			my $sortValue = Slim::Utils::Text::ignorePunct($filename);
+			my $textKey   = uc(substr($sortValue, 0, 1));
 			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
 
 				my $params = {
-					'textkey' => uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1)),
+					'textkey' => $textKey,
 				};
 				
 				# each item is different, but most items are folders
@@ -1987,6 +2015,11 @@ sub musicfolderQuery {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'folder');
 				} else {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
+				}
+
+				if ($tags =~ /s/) {
+					$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+					$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
 				}
 			}
 			$chunkCount++;
@@ -2551,13 +2584,16 @@ sub playlistsQuery {
 
 				my $id = $eachitem->id();
 				$id += 0;
+				
+				my $sortValue = $eachitem->namesort;
+				my $textKey   = substr($sortValue, 0, 1);
 
 				if ($menuMode) {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->title);
 
 					my $params = {
 						'playlist_id' =>  $id, 
-						'textkey' => substr($eachitem->namesort, 0, 1),
+						'textkey' => $textKey,
 					};
 
 					_mixerItemParams(request => $request, obj => $eachitem, loopname => $loopname, chunkCount => $chunkCount, params => $params);
@@ -2566,6 +2602,11 @@ sub playlistsQuery {
 					$request->addResultLoop($loopname, $chunkCount, "id", $id);
 					$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
 					$request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url) if ($tags =~ /u/);
+
+					if ($tags =~ /s/) {
+						$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
+						$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
+					}
 				}
 				$chunkCount++;
 			}
