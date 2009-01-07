@@ -26,6 +26,7 @@ our %Config = (
 	DisplayName => 'SqueezeCenter',
 	Description => "SqueezeCenter Music Server",
 	ServiceName => "squeezesvc",
+	StartNow    => 0,
 );
 
 sub Startup {
