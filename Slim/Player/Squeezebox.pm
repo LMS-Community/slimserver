@@ -565,12 +565,13 @@ sub stream_s {
 
 	return 0 unless ($client->opened());
 		
-	my $controller = $params->{'controller'};
-	my $url        = $controller->streamUrl();
-	my $track      = $controller->track();
-	my $handler    = $controller->protocolHandler();
-	my $isDirect   = $controller->isDirect();
-	my $master     = $client->master();
+	my $controller  = $params->{'controller'};
+	my $url         = $controller->streamUrl();
+	my $track       = $controller->track();
+	my $handler     = $controller->protocolHandler();
+	my $songHandler = $controller->songProtocolHandler();
+	my $isDirect    = $controller->isDirect();
+	my $master      = $client->master();
 
 	if ( $log->is_info) {
 		$log->info(sprintf("stream_s called:%s format: %s url: %s",
@@ -710,7 +711,6 @@ sub stream_s {
 		$outputThreshold = 0;
 		
 		# Handler may override pcmsamplesize (Rhapsody)
-		my $songHandler = $controller->song()->{handler};
 		if ( $songHandler && $songHandler->can('pcmsamplesize') ) {
 			$pcmsamplesize = $songHandler->pcmsamplesize( $client, $params );
 		}
@@ -854,6 +854,15 @@ sub stream_s {
 	) {
 		$log->info('Using smart transition mode');
 		$transitionType = 0;
+	}
+	
+	# Bug 10567, allow plugins to override transition setting
+	if ( $songHandler && $songHandler->can('transitionType') ) {
+		my $override = $songHandler->transitionType( $master, $controller->song(), $transitionType );
+		if ( defined $override ) {
+			$log->is_info && $log->info("$songHandler changed transition type to $override");
+			$transitionType = $override;
+		}
 	}
 	
 	my $frame = pack 'aaaaaaaCCCaCCCNnN', (

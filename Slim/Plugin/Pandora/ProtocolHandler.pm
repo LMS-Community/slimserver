@@ -67,6 +67,26 @@ sub isRepeatingStream { 1 }
 # Source for AudioScrobbler (E = Personalised recommendation except Last.fm)
 sub audioScrobblerSource () { 'E' }
 
+# If either the previous or current track is an ad, disable transitions
+sub transitionType {
+	my ( $class, $client, $song, $transitionType ) = @_;
+	
+	# Ignore if transitionType is already 0
+	return if $transitionType == 0;
+	
+	my $playingSong = $client->playingSong();
+	
+	# Ignore if we don't have 2 songs to compare
+	return unless $song && $playingSong && $song ne $playingSong;
+	
+	if ( $song->pluginData->{ad} || $playingSong->pluginData->{ad} ) {
+		$log->is_debug && $log->debug('Disabling transition because of audio ad');
+		return 0;
+	}
+
+	return;
+}
+
 sub getNextTrack {
 	my ($class, $song, $successCb, $errorCb) = @_;
 	
