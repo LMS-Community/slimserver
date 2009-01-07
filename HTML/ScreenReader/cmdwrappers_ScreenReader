@@ -5,7 +5,7 @@
 [% IF content.search("href=") %]
 <a [% content %]>[% cmdtitle | string %]</a>
 [%- ELSE -%]
-<a href="#" type="button" [% content %]>[% cmdtitle | string %]</a>
+<input type="button" [% content %] value="[% cmdtitle | string %]">
 [%- END %]
 </td>
 [%- END %]
@@ -26,7 +26,7 @@
 		PROCESS cmdRemoteURLQuery;
 	ELSE;
 		PROCESS cmdLocalQuery;
-	END; %]&amp;player=[% playerURI %]&amp;ajaxRequest=1&amp;force=1');alert('asdfad');return false;"
+	END; %]&amp;player=[% playerURI %]&amp;ajaxRequest=1&amp;force=1');"
 [%- END %]
 
 

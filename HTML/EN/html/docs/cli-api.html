@@ -2936,6 +2936,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified 
+			by a letter (see below). The default value is empty.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			charset
 		</td>
 		<td>
@@ -2949,7 +2958,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100">
+		<td width="100" colspan="2">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2957,7 +2966,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			rescan
 		</td>
 		<td>
@@ -2967,7 +2976,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			count
 		</td>
 		<td>
@@ -2977,13 +2986,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<em>For each genre:</em>
 		</td>
-		<td>
-		</td>
+		<td></td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;<b>id</b>
 		</td>
@@ -2992,11 +3001,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;genre
 		</td>
 		<td>
 			Genre name.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			s
+		</td>
+		<td>
+			&nbsp;&nbsp;sortvalue, textkey
+		</td>
+		<td>
+			The genre's "sortvalue" is the value used in the DB to sort items.
+			"textkey" usually is the first letter of the sortkey.
 		</td>
 	</tr>
 </table>
@@ -3082,6 +3104,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified 
+			by a letter (see below). The default value is empty.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			charset
 		</td>
 		<td>
@@ -3095,7 +3126,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100">
+		<td width="100" colspan="2">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -3103,7 +3134,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			rescan
 		</td>
 		<td>
@@ -3113,7 +3144,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			count
 		</td>
 		<td>
@@ -3123,13 +3154,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<em>For each artist:</em>
 		</td>
 		<td>
 		</td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;<b>id</b>
 		</td>
@@ -3138,11 +3170,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;artist
 		</td>
 		<td>
 			Artist name.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			s
+		</td>
+		<td>
+			&nbsp;&nbsp;sortvalue, textkey
+		</td>
+		<td>
+			The album's "sortvalue" is the value used in the DB to sort items.
+			"textkey" usually is the first letter of the sortkey.
 		</td>
 	</tr>
 </table>
@@ -3430,6 +3475,18 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			The album artist (depends on server configuration).
 		</td>
 	</tr>
+	<tr>
+		<td>
+			s
+		</td>
+		<td>
+			&nbsp;&nbsp;sortvalue, textkey
+		</td>
+		<td>
+			The album's "sortvalue" is the value used in the DB to sort items.
+			"textkey" usually is the first letter of the sortkey.
+		</td>
+	</tr>
 </table>
 <p>
 	Examples:
@@ -3609,6 +3666,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified 
+			by a letter (see below). The default value is empty.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			charset
 		</td>
 		<td>
@@ -3622,7 +3688,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100">
+		<td width="100" colspan="2">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -3630,7 +3696,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			rescan
 		</td>
 		<td>
@@ -3640,7 +3706,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			count
 		</td>
 		<td>
@@ -3648,13 +3714,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<em>For each item in the folder:</em>
 		</td>
-		<td>
-		</td>
+		<td></td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;<b>id</b>
 		</td>
@@ -3663,6 +3729,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;filename
 		</td>
@@ -3671,11 +3738,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 	</tr>
 	<tr>
+		<td></td>
 		<td>
 			&nbsp;&nbsp;type
 		</td>
 		<td>
 			One of &quot;track&quot;, &quot;folder&quot;, &quot;playlist&quot;, or &quot;unknown&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			s
+		</td>
+		<td>
+			&nbsp;&nbsp;sortvalue, textkey
+		</td>
+		<td>
+			The item's "sortvalue" is the value used in the DB to sort items.
+			"textkey" usually is the first letter of the sortkey.
 		</td>
 	</tr>
 </table>
@@ -3822,6 +3902,18 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Playlist file url
+		</td>
+	</tr>
+	<tr>
+		<td>
+			s
+		</td>
+		<td>
+			&nbsp;&nbsp;sortvalue, textkey
+		</td>
+		<td>
+			The playlist's "sortvalue" is the value used in the DB to sort items.
+			"textkey" usually is the first letter of the sortkey.
 		</td>
 	</tr>
 </table>
