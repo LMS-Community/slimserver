@@ -254,8 +254,11 @@ Settings.Page = function(){
 			SqueezeJS.UI.FilesystemBrowser.init();
 			SqueezeJS.UI.ScrollPanel.init();
 
-			this.onResize(0, Ext.lib.Dom.getViewHeight());
-			Ext.EventManager.onWindowResize(this.onResize);
+			// bug 9754 - don't resize drop-down, IE6/7 don't know max-height anyway
+			if (! (Ext.isIE6 || Ext.isIE7)) {
+				this.onResize(0, Ext.lib.Dom.getViewHeight());
+				Ext.EventManager.onWindowResize(this.onResize);
+			}
 
 			var items = Ext.query('input');
 			for (var i = 0; i < items.length; i++) {

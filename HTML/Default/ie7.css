@@ -41,10 +41,9 @@
 
 .x-menu-list {
 	overflow: hidden;
-	min-width: 160px;
+	min-width: 180px;
 }
 
 .settings .x-menu-list {
 	overflow: auto;
 }
-
