@@ -160,8 +160,8 @@ sub _rateTrackOK {
 		# so it will get the new icon
 	}
 	
-	# Parse the text out of the OPML
-	my ($text) = $http->content =~ m/text="([^"]+)/;	
+	# Parse the text out of the JSON
+	my ($text) = $http->content =~ m/"text":"([^"]+)/;	
 	$request->addResult( text => Slim::Utils::Unicode::utf8on($text) );
 	
 	$request->setStatusDone();

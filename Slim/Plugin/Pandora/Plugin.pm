@@ -159,8 +159,8 @@ sub _rateTrackOK {
 		$log->debug('Rating was negative but no more skips allowed');
 	}
 	
-	# Parse the text out of the OPML
-	my ($text) = $http->content =~ m/text="([^"]+)/;	
+	# Parse the text out of the JSON
+	my ($text) = $http->content =~ m/"text":"([^"]+)/;	
 	$request->addResult( text => Slim::Utils::Unicode::utf8on($text) );
 	
 	$request->setStatusDone();

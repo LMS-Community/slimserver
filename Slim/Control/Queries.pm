@@ -3621,7 +3621,6 @@ sub statusQuery {
 	$request->setStatusDone();
 }
 
-# XXX: deprecated
 sub songinfoQuery {
 	my $request = shift;
 

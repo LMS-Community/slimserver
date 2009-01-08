@@ -316,7 +316,7 @@ Settings.Page = function(){
 									html: desc,
 									title: title,
 									dismissDelay: 0,
-									hideDelay: 500,
+									hideDelay: 3000,
 									maxWidth: 300
 								})
 						});
