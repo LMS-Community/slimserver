@@ -185,7 +185,7 @@ sub _rateTrackOK {
 		$client->execute( [ 'audioscrobbler', 'loveTrack', $url ] );
 	}
 	
-	# Parse the text out of the OPML
+	# Parse the text out of the JSON
 	my ($text) = $http->content =~ m/"text":"([^"]+)/;	
 	$request->addResult( text => Slim::Utils::Unicode::utf8on($text) );
 	
