@@ -639,6 +639,11 @@ sub plainTitle {
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
 			$file = Slim::Utils::Unicode::utf8decode_locale($file);
+
+			# display full name if we got a Windows 8.3 file name
+			if (Slim::Utils::OSDetect::isWindows() && $file =~ /~\d/) {
+				$file = File::Basename::basename( Win32::GetLongPathName($file) );
+			}
 		}
 
 		if ($file) {
