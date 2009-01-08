@@ -55,7 +55,7 @@ sub init {
 		'wma' => 'Slim::Formats::WMA',
 		'mov' => 'Slim::Formats::Movie',
 		'alc' => 'Slim::Formats::Movie',
-		'shn' => 'Slim::Formats::Shorten',
+		'aac' => 'Slim::Formats::Movie',
 		'mpc' => 'Slim::Formats::Musepack',
 		'ape' => 'Slim::Formats::APE',
 		'wvp' => 'Slim::Formats::WavPack',

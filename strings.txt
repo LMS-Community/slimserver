@@ -10518,6 +10518,9 @@ ALC
 	SV	Apple Lossless
 
 MOV
+	EN	Quicktime Movie
+
+AAC
 	EN	AAC
 
 M3U
