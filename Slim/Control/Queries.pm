@@ -483,15 +483,14 @@ sub albumsQuery {
 		my $artist;
 		for my $eachitem ($rs->slice($start, $end)) {
 			
-			my $sortValue = '';
+			my $textKey = '';
 
 			#FIXME: see if multiple char textkey is doable for year/genre sort
 			if ($sort && ($sort eq 'artflow' || $sort eq 'artistalbum') ) {
-				$sortValue = $eachitem->contributor->namesort;
+				$textKey = substr($eachitem->contributor->namesort, 0, 1);
 			} elsif ($sort && $sort ne 'new') {
-				$sortValue = $eachitem->titlesort;
+				$textKey = substr($eachitem->titlesort, 0, 1);
 			}
-			my $textKey = substr($sortValue, 0, 1);
 
 			# Jive result formatting
 			if ($menuMode) {
@@ -558,10 +557,7 @@ sub albumsQuery {
 						$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'artist', $artists[0]->name());
 					}
 				}
-				if ($tags =~ /s/) {
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
-					$request->addResultLoopIfValueDefined($loopname, $chunkCount, 'sortvalue', $sortValue);
-				}
+				$tags =~ /s/ && $request->addResultLoopIfValueDefined($loopname, $chunkCount, 'textkey', $textKey);
 			}
 			
 			$chunkCount++;
@@ -870,8 +866,7 @@ sub artistsQuery {
 			my $id = $obj->id();
 			$id += 0;
 			
-			my $sortValue = $obj->namesort;
-			my $textKey   = substr($sortValue, 0, 1);
+			my $textKey = substr($obj->namesort, 0, 1);
 
 			if ($menuMode){
 				$request->addResultLoop($loopname, $chunkCount, 'text', $obj->name);
@@ -894,10 +889,7 @@ sub artistsQuery {
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 				$request->addResultLoop($loopname, $chunkCount, 'artist', $obj->name);
-				if ($tags =~ /s/) {
-					$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-					$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
-				}
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 
 			$chunkCount++;
@@ -1472,8 +1464,7 @@ sub genresQuery {
 			my $id = $eachitem->id();
 			$id += 0;
 			
-			my $sortValue = $eachitem->namesort;
-			my $textKey   = substr($sortValue, 0, 1);
+			my $textKey = substr($eachitem->namesort, 0, 1);
 				
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->name);
@@ -1497,10 +1488,7 @@ sub genresQuery {
 			else {
 				$request->addResultLoop($loopname, $chunkCount, 'id', $id);
 				$request->addResultLoop($loopname, $chunkCount, 'genre', $eachitem->name);
-				if ($tags =~ /s/) {
-					$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-					$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
-				}
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 			$chunkCount++;
 		}
@@ -1840,8 +1828,7 @@ sub musicfolderQuery {
 			
 			$filename = Slim::Utils::Unicode::utf8decode_locale($filename);
 
-			my $sortValue = Slim::Utils::Text::ignorePunct($filename);
-			my $textKey   = uc(substr($sortValue, 0, 1));
+			my $textKey = uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1));
 			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $chunkCount, 'text', $filename);
@@ -2017,10 +2004,7 @@ sub musicfolderQuery {
 					$request->addResultLoop($loopname, $chunkCount, 'type', 'unknown');
 				}
 
-				if ($tags =~ /s/) {
-					$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-					$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
-				}
+				$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 			}
 			$chunkCount++;
 		}
@@ -2585,8 +2569,7 @@ sub playlistsQuery {
 				my $id = $eachitem->id();
 				$id += 0;
 				
-				my $sortValue = $eachitem->namesort;
-				my $textKey   = substr($sortValue, 0, 1);
+				my $textKey = substr($eachitem->namesort, 0, 1);
 
 				if ($menuMode) {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $eachitem->title);
@@ -2601,12 +2584,8 @@ sub playlistsQuery {
 				} else {
 					$request->addResultLoop($loopname, $chunkCount, "id", $id);
 					$request->addResultLoop($loopname, $chunkCount, "playlist", $eachitem->title);
-					$request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url) if ($tags =~ /u/);
-
-					if ($tags =~ /s/) {
-						$request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
-						$request->addResultLoop($loopname, $chunkCount, 'sortvalue', $sortValue);
-					}
+					$tags =~ /u/ && $request->addResultLoop($loopname, $chunkCount, "url", $eachitem->url);
+					$tags =~ /s/ && $request->addResultLoop($loopname, $chunkCount, 'textkey', $textKey);
 				}
 				$chunkCount++;
 			}
