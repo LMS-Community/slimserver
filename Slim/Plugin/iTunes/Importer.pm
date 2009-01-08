@@ -278,7 +278,8 @@ sub handleTrack {
 				# bug 7966: try the short (8.3) file name for unreadable unicode file names
 				$file2 = Slim::Utils::Unicode::utf8decode( Slim::Utils::Unicode::recomposeUnicode($file2) );
 				
-				if ( ($file2 = Win32::GetShortPathName($file2)) && -e $file2 ) {
+				if ( ($file2 = Win32::GetANSIPathName($file2)) && -e $file2 ) {
+					$log->debug("Falling back to DOS style 8.3 filename: $file2");
 					$file = $file2;
 				}
 			}
