@@ -445,7 +445,8 @@ sub findAndAdd {
 
 		if (!$rs->count) {
 			# we've gone through all songs - start looping
-			delete $find->{lastPlayed}; 
+			delete $find->{'persistent.lastPlayed'}; 
+	
 			$rs = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
 		}
 
