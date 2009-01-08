@@ -81,6 +81,7 @@ sub initPlugin {
 	});
 	
 	if ( Slim::Utils::OSDetect::isWindows() ) {
+		require Win32;
 		require Slim::Plugin::iTunes::Importer::Artwork::Win32;
 		Slim::Music::Import->addImporter( 'Slim::Plugin::iTunes::Importer::Artwork::Win32', {
 			'type' => 'artwork',
@@ -264,10 +265,23 @@ sub handleTrack {
 
 		if ($] > 5.007 && $file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
 
+			my $file2 = $file;
+
 			eval { Encode::from_to($file, 'utf8', Slim::Utils::Unicode::currentLocale()) };
 
 			if ($@) {
 				logError("[$@]");
+			}
+
+			if (Slim::Utils::OSDetect::isWindows() && !-e $file) {
+
+				# bug 7966: try the short (8.3) file name for unreadable unicode file names
+				$file2 = Slim::Utils::Unicode::utf8decode( Slim::Utils::Unicode::recomposeUnicode($file2) );
+				
+				if ( ($file2 = Win32::GetANSIPathName($file2)) && -e $file2 ) {
+					$log->debug("Falling back to DOS style 8.3 filename: $file2");
+					$file = $file2;
+				}
 			}
 		}
 
