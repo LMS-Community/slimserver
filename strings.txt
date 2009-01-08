@@ -10518,20 +10518,7 @@ ALC
 	SV	Apple Lossless
 
 MOV
-	DA	AAC- eller Movie-fil
-	DE	AAC- oder MOV-Datei
-	EN	AAC or Movie File
-	ES	Archivo AAC o MOV
-	FI	AAC- tai .mov-tiedosto
-	FR	Apple AAC ou film
-	HE	קובץ AAC‏,  או סרט
-	IT	File AAC o filmato
-	JA	アップルAAC、ロスレスまたはムービーファイル
-	NL	AAC- of .mov-file
-	NO	AAC- eller.mov-fil
-	PT	AAC of Ficheiro Movie
-	SV	AAC- eller Movie-fil
-	ZH_CN	AAC，无损或电影文件
+	EN	AAC
 
 M3U
 	DA	M3U-afspilningsliste
