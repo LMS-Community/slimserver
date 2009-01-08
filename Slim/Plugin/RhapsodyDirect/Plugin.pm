@@ -72,7 +72,7 @@ sub initPlugin {
 		
 		# Setup additional CLI methods for this menu
 		$class->initCLI(
-			feed         => Slim::Networking::SqueezeNetwork->url('/api/mp3tunes/v1/opml/library/getLastDateLibraryUpdated'),
+			feed         => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml/library/getLastDateLibraryUpdated'),
 			tag          => 'rhapsody_library',
 			menu         => 'my_music',
 			display_name => 'PLUGIN_RHAPSODY_DIRECT_MY_RHAPSODY_LIBRARY',
