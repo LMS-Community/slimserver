@@ -53,8 +53,9 @@ sub shuffleType {
 
 sub song {
 
-	my $client = shift;
-	my $index = shift;
+	my $client  = shift;
+	my $index   = shift;
+	my $refresh = shift || 0;
 
 	if (count($client) == 0) {
 		return;
@@ -75,13 +76,17 @@ sub song {
 		$objOrUrl = ${playList($client)}[$index];
 	}
 
-	if ($objOrUrl && !blessed($objOrUrl)) {
+	if ( $objOrUrl && ($refresh || !blessed($objOrUrl)) ) {
 
-		 $objOrUrl = Slim::Schema->rs('Track')->objectForUrl({
+		$objOrUrl = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $objOrUrl,
 			'create'   => 1,
 			'readTags' => 1,
 		});
+		
+		if ($refresh) {
+			$objOrUrl = refreshTrack($client, $objOrUrl->url);
+		}
 	}
 
 	return $objOrUrl;
@@ -105,6 +110,8 @@ sub refreshTrack {
 		}
 		$i++;
 	}
+	
+	return $track;
 }
 
 sub url {

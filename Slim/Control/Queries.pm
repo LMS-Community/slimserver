@@ -3516,11 +3516,15 @@ sub statusQuery {
 			$modecurrent = 1;
 		}
 		
+		# bug 9132: rating might have changed
+		# we need to be sure we have the latest data from the DB if ratings are requested
+		my $refreshTrack = $tags =~ /R/;
+		
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
 			$request->addResult('offset', $playlist_cur_index) if $menuMode;
-			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index);
+			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
 			if ($menuMode) {
 				_addJiveSong($request, $loop, 0, 1, $track);
@@ -3549,7 +3553,7 @@ sub statusQuery {
 				
 				for ($idx = $start; $idx <= $end; $idx++) {
 					
-					my $track = Slim::Player::Playlist::song($client, $idx);
+					my $track = Slim::Player::Playlist::song($client, $idx, $refreshTrack);
 					my $current = ($idx == $playlist_cur_index);
 
 					if ($menuMode) {
@@ -3594,7 +3598,7 @@ sub statusQuery {
 							for ($idx = $start; $idx <= $end; $idx++){
 
 								_addSong($request, $loop, $count, 
-									Slim::Player::Playlist::song($client, $idx), $tags,
+									Slim::Player::Playlist::song($client, $idx, $refreshTrack), $tags,
 									'playlist index', $idx
 								);
 
