@@ -190,6 +190,8 @@ sub play {
 		$client->buffering($params->{bufferThreshold} * 1024);
 	}
 
+	$client->bufferReady(0);
+	
 	my $ret = $client->stream_s($params);
 
 	# make sure volume is set, without changing temp setting
@@ -796,6 +798,10 @@ sub stream_s {
 		if (length($request_string) % 2) {
 			$request_string .= "\n";
 		}
+		
+		# Possible fix for another problem when using a transcoder:
+		# if ($controller->streamHandler()->isa($handler) && $handler->can('handlesStreamHeaders')) {
+		#
 		
 		if ($handler->can('handlesStreamHeaders')) {
 			# Handler wants to be called once the stream is open
