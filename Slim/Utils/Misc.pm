@@ -297,8 +297,9 @@ sub pathFromFileURL {
 
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
-
-		$file = fixPathCase($uri->file);
+		# Bug 10199 - need to ensure that the perl-internal UTF8 flag is set if necessary
+		# (this should really be done by URI::file)
+		$file = fixPathCase(Slim::Utils::Unicode::utf8on($uri->file));
 	}
 
 	if (Slim::Utils::Log->isInitialized) {
