@@ -80,7 +80,6 @@ my %modeParams = (
 			}
 
 			# Display song position e.g. 1:32
-		    return _formatTime( int($val) ) . ' / ' . _formatTime( 30484 );
 		    return _formatTime( int($val) ) . ' / ' . _formatTime( Slim::Player::Source::playingSongDuration($client) );
 		    	
 		}
