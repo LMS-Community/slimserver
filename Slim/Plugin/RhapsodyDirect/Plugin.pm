@@ -318,6 +318,10 @@ sub rpds_handler {
 			logError( $client, "decoding failure: code $got_cmd" );
 		}
 		$log->error( $client->id . " Rhapsody decoding failure: code $got_cmd" );
+		
+		# bug 10612 - tell StreamingController so that play can restart
+		$client->controller()->playerStreamingFailed($client, 'PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED');
+		
 		return;
 	}
 	

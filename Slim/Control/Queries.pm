@@ -1826,7 +1826,7 @@ sub musicfolderQuery {
 			my $id = $item->id();
 			$id += 0;
 			
-			$filename = Slim::Utils::Unicode::utf8decode_locale($filename);
+			$filename = Slim::Music::Info::fileName($url);
 
 			my $textKey = uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1));
 			
@@ -2820,7 +2820,7 @@ sub readDirectoryQuery {
 
 				# display full name if we got a Windows 8.3 file name
 				if (Slim::Utils::OSDetect::isWindows() && $name =~ /~\d/) {
-					$name = File::Basename::basename( Win32::GetLongPathName($path) );
+					$name = Slim::Music::Info::fileName($path);
 				}
 
 				$request->addResultLoop('fsitems_loop', $cnt, 'path', Slim::Utils::Unicode::utf8decode($path));
