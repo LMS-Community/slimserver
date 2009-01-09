@@ -374,6 +374,10 @@ sub _read_file {
     my $debug = $tools -> is_debug();
 
     $details{'total_length'} = $length;
+    
+    # Bug 10386, some tagging programs do not correctly adjust the chunk length
+    # when adding ID3 chunks, so always read to the end of the file looking for chunks.
+    $length = $self->{'real_size'};
 
     unless ( $type eq 'RIFF' && $subtype eq 'WAVE' ) {
 	return $self -> _error( "doesn't seem to be a wav file" );
