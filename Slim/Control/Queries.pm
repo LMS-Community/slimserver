@@ -1826,7 +1826,7 @@ sub musicfolderQuery {
 			my $id = $item->id();
 			$id += 0;
 			
-			$filename = Slim::Utils::Unicode::utf8decode_locale($filename);
+			$filename = Slim::Music::Info::fileName($url);
 
 			my $textKey = uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1));
 			
