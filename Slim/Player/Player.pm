@@ -985,7 +985,7 @@ sub apparentStreamStartTime {
 	if ( $format eq 'mp3' ) {
 		$timePlayed = Slim::Player::Source::findTimeForOffset($client, $bytesPlayed) or return;
 	}
-	elsif ( $format eq 'wav' ) {
+	elsif ( $format =~ /wav|aif|pcm/ ) {
 		$timePlayed = $bytesPlayed * 8 / ($client->streamingSong()->streambitrate() or return);
 	}
 	else {

@@ -84,22 +84,28 @@ sub getTag {
 	return $tags;
 }
 
-# bug 10012; disable so that WAV/PCM confusion does not cause bad audio
-#sub getInitialAudioBlock {
-#	my ($class, $fh, $track) = @_;
-#	my $length = $track->audio_offset() || return undef;
-#	
-#	open(my $localFh, '<&=', $fh);
-#	
-#	seek($localFh, 0, 0);
-#	logger('player.source')->debug("Reading initial audio block: length $length");
-#	read ($localFh, my $buffer, $length);
-#	seek($localFh, 0, 0);
-#	close($localFh);
-#	
-#	return $buffer;
-#}
-#
-#sub canSeek {1}
+sub getInitialAudioBlock {
+	my ($class, $fh, $track) = @_;
+	
+	# bug 10026: do not provide header when streaming as PCM
+	print(${*$fh}{'streamFormat'}, "\n");
+	if (${*$fh}{'streamFormat'} eq 'pcm') {
+		return '';
+	}
+	
+	my $length = $track->audio_offset() || return undef;
+	
+	open(my $localFh, '<&=', $fh);
+	
+	seek($localFh, 0, 0);
+	logger('player.source')->debug("Reading initial audio block: length $length");
+	read ($localFh, my $buffer, $length);
+	seek($localFh, 0, 0);
+	close($localFh);
+	
+	return $buffer;
+}
+
+sub canSeek {1}
 
 1;

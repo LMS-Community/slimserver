@@ -258,7 +258,7 @@ sub decoder {
 sub formats {
 	my $client = shift;
 	
-	return qw(aif wav mp3);
+	return qw(aif pcm mp3);
 }
 
 # periodic screen refresh

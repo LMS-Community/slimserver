@@ -141,6 +141,8 @@ sub open {
 	# and WAV header
 	${*$sock}{'initialAudioBlockRemaining'} = 0;
 
+	${*$sock}{'streamFormat'} = $args->{'transcoder'}->{'streamformat'};
+
 	if ( $seekoffset ) {
 		my $streamClass = _streamClassForFormat($format);
 

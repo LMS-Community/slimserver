@@ -43,10 +43,10 @@ sub formats {
 	my $client = shift;
 
 	if ($client->revision() == 2) {
-		return qw(ogg flc aif wav mp3);
+		return qw(ogg flc aif pcm mp3);
 	}
 	else {
-		return qw(flc aif wav mp3);
+		return qw(flc aif pcm mp3);
 	}
 }
 

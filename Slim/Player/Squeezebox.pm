@@ -615,7 +615,7 @@ sub stream_s {
 
 	$format ||= 'mp3';
 
-	if ($format eq 'wav') {
+	if ($format eq 'pcm') {
 
 		$formatbyte      = 'p';
 		$pcmsamplesize   = 1;

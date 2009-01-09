@@ -543,7 +543,7 @@ sub guessBitrateFromFormat {
 	# Also used when rebuffering, etc.
 	if ($format eq 'mp3') {
 		return ($maxRate || 320) * 1000;
-	} elsif ($format eq 'wav' || $format eq 'aif') {
+	} elsif ($format =~ /wav|aif|pcm/) {
 		# Just assume standard rate
 		return 44_100 * 16 * 2;
 	} elsif ($format eq 'flc') {
