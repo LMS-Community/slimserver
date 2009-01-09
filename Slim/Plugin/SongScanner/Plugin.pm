@@ -80,9 +80,9 @@ my %modeParams = (
 			}
 
 			# Display song position e.g. 1:32
-			my $pos = int($val);
-			my $dur = int(Slim::Player::Source::playingSongDuration($client));
-		    return sprintf("%01d:%02d / %01d:%02d", $pos / 60, $pos % 60, $dur / 60, $dur % 60);
+		    return _formatTime( int($val) ) . ' / ' . _formatTime( 30484 );
+		    return _formatTime( int($val) ) . ' / ' . _formatTime( Slim::Player::Source::playingSongDuration($client) );
+		    	
 		}
 	,'overlayRefArgs' => 'CV'
 	,'max' => undef
@@ -99,6 +99,21 @@ my %modeParams = (
 	# Override defaults to allow acceleration
 	,'knobFlags' => Slim::Player::Client::KNOB_NOWRAP()
 );
+
+sub _formatTime {
+	my $seconds = shift;
+	
+	my $hrs  = int($seconds / 3600);
+	my $mins = int(($seconds % 3600) / 60);
+	my $secs = $seconds % 60;
+	
+	if ($hrs) {
+	    return sprintf("%d:%02d:%02d", $hrs, $mins, $secs);
+	} 
+	else {
+	    return sprintf("%02d:%02d", $mins, $secs);
+	}
+}
 
 sub _timerHandler {
 	my $client = shift;
