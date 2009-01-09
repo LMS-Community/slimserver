@@ -20,6 +20,7 @@ L<Slim::Music::Info>
 use strict;
 
 use File::Path;
+use File::Basename;
 use File::Spec::Functions qw(:ALL);
 use Path::Class;
 use Scalar::Util qw(blessed);
@@ -636,20 +637,8 @@ sub plainTitle {
 
 	} else {
 
-		if (isFileURL($file)) {
-			$file = Slim::Utils::Misc::pathFromFileURL($file);
-			$file = Slim::Utils::Unicode::utf8decode_locale($file);
+		$title = fileName($file);
 
-			# display full name if we got a Windows 8.3 file name
-			if (Slim::Utils::OSDetect::isWindows() && $file =~ /~\d/) {
-				$file = File::Basename::basename( Win32::GetLongPathName($file) );
-			}
-		}
-
-		if ($file) {
-			$title = (splitdir($file))[-1];
-		}
-		
 		# directories don't get the suffixes
 		if ($title && !($type && $type eq 'dir')) {
 			$title =~ s/\.[^. ]+$//;
@@ -885,17 +874,26 @@ sub fileName {
 
 		$j = Slim::Utils::Misc::pathFromFileURL($j);
 
-		if (defined $j && (splitdir($j))[-1]) {
-			$j = (splitdir($j))[-1];
-		}
-
-	} elsif (isRemoteURL($j)) {
+	} 
+	
+	if (isRemoteURL($j)) {
 
 		$j = Slim::Utils::Misc::unescape($j);
 
 	} else {
 
-		$j = (splitdir($j))[-1];
+		# display full name if we got a Windows 8.3 file name
+		if (Slim::Utils::OSDetect::isWindows() && $j =~ /~\d/) {
+			
+			if (my $n = Win32::GetLongPathName($j)) {
+				$n = File::Basename::basename($n);
+				$log->info("Expand short name returned by readdir() to full name: $j -> $n");
+			
+				$j = $n;
+			}		
+		}
+
+		$j = (splitdir($j))[-1] || $j;
 	}
 
 	return Slim::Utils::Unicode::utf8decode_locale($j);
