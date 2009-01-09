@@ -10702,6 +10702,19 @@ FLC
 	NO	FLAC
 	SV	FLAC
 
+PCM
+	DA	PCM
+	DE	PCM
+	EN	PCM
+	ES	PCM
+	FI	PCM
+	FR	PCM
+	HE	PCM
+	IT	PCM
+	NL	PCM
+	NO	PCM
+	SV	PCM
+
 FEC
 	DA	FLAC med indlejret CUEsheet
 	DE	FLAC mit eingebettetem CUE-Sheet
