@@ -1172,6 +1172,9 @@ sub _hello_handler {
 	
 	$latencyList{$client} = [];
 	
+	# Bug 10634 - reset the jiffiesEpoch so that any drift during a long disconnection is reset immediately
+	$client->jiffiesEpoch(undef);
+	
 	# add the player to the list of clients we're watching for signs of life
 	$heartbeat{ $client->id } = Time::HiRes::time();
 	
