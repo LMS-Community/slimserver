@@ -123,10 +123,10 @@ sub initPlugin {
 	# supported file formats differ on platforms
 	# http://www.musicip.com/mixer/mixerfaq.jsp#1
 	if ($isWin) {
-		@supportedFormats = ('m4a', 'mp3', 'wma', 'ogg', 'flc', 'wav');
+		@supportedFormats = ('alc', 'm4a', 'mp3', 'wma', 'ogg', 'flc', 'wav');
 	}
 	elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
-		@supportedFormats = ('m4a', 'mp3', 'ogg', 'flc', 'wav');		
+		@supportedFormats = ('alc', 'm4a', 'mp3', 'ogg', 'flc', 'wav');		
 	}
 	else {
 		@supportedFormats = ('mp3', 'ogg', 'flc', 'wav');
