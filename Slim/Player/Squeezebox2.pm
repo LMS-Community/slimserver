@@ -360,12 +360,23 @@ sub stop {
 	$client->songElapsedSeconds(0);
 	$client->outputBufferFullness(0);
 
-	# update pending pref changes in the firmware
-	foreach my $pref ( keys %{ $client->pendingPrefChanges() } ) {
-		my $status = $client->pendingPrefChanges()->{$pref};
-		if ( $status & SETD_PENDING ) {
-			$client->setPlayerSetting( $pref, $prefs->client($client)->get($pref) );
-		}
+	if ( scalar keys %{ $client->pendingPrefChanges() } ) {
+		# $client->setPlayerSetting checks $client->isStopped, but
+		# when called now this value is still 0, so we need to change the pref
+		# using an instant timer.
+		Slim::Utils::Timers::setTimer(
+			undef,
+			Time::HiRes::time(),
+			sub {
+				# update pending pref changes in the firmware
+				foreach my $pref ( keys %{ $client->pendingPrefChanges() } ) {
+					my $status = $client->pendingPrefChanges()->{$pref};
+					if ( $status & SETD_PENDING ) {
+						$client->setPlayerSetting( $pref, $prefs->client($client)->get($pref) );
+					}
+				}
+			},
+		);
 	}
 }
 
