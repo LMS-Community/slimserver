@@ -883,7 +883,7 @@ sub fileName {
 	} else {
 
 		# display full name if we got a Windows 8.3 file name
-		if (Slim::Utils::OSDetect::isWindows() && $j =~ /~\d/) {
+		if (Slim::Utils::OSDetect::isWindows() && $j =~ /~/) {
 			
 			if (my $n = Win32::GetLongPathName($j)) {
 				$n = File::Basename::basename($n);

@@ -31,6 +31,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 
+use constant SETD_PENDING => 1; # setd needs to be sent to player
+use constant SETD_WAITING => 2; # waiting for response from player
+
 my $prefs = preferences('server');
 
 my $prefslog  = logger('prefs');
@@ -358,10 +361,11 @@ sub stop {
 	$client->outputBufferFullness(0);
 
 	# update pending pref changes in the firmware
-	foreach my $pref (keys %{$client->pendingPrefChanges()}) {
-
-	    $client->setPlayerSetting($pref, $prefs->client($client)->get($pref));
-
+	foreach my $pref ( keys %{ $client->pendingPrefChanges() } ) {
+		my $status = $client->pendingPrefChanges()->{$pref};
+		if ( $status & SETD_PENDING ) {
+			$client->setPlayerSetting( $pref, $prefs->client($client)->get($pref) );
+		}
 	}
 }
 
@@ -881,20 +885,26 @@ sub setPlayerSetting {
 	$isInfo && $prefslog->info("Setting pref: [$pref] to [$value]");
 
 	my $currpref = $pref_settings->{$pref};
+	
+	my $status = $client->pendingPrefChanges()->{$pref};
 
-	if ($client->isStopped()) {
+	# Only send a setd packet to the player if it is stopped and we are not
+	# still waiting for a response to a previous setd packet for this pref
+	if ( $client->isStopped() && !($status & SETD_WAITING) ) {
 
 		my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
 		$client->sendFrame('setd', \$data);
-		
-		delete $client->pendingPrefChanges()->{$pref};
+	
+		# We are now waiting for a response to this setd call
+		$client->pendingPrefChanges()->{$pref} = SETD_WAITING;
 	}
 	else {
 
 		# we can't update the pref's while playing, cache this change for later
 		$isInfo && $prefslog->info("Pending change for $pref");
 
-		$client->pendingPrefChanges()->{$pref} = 1;
+		# Mark this pref as pending, will be sent to the player later
+		$client->pendingPrefChanges()->{$pref} |= SETD_PENDING;
 	}
 }
 
@@ -912,6 +922,9 @@ sub playerSettingsFrame {
 		if ($currpref->{'firmwareid'} != $id) {
 			next;
 		}
+		
+		# We've received a response, so remove waiting status from this pref
+		$client->pendingPrefChanges()->{$pref} &= ~SETD_WAITING;
 
 		my $value = (unpack('C'.$currpref->{pack}, $$data_ref))[1];
 
