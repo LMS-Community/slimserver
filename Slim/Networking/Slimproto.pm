@@ -925,7 +925,7 @@ sub _hello_handler {
 	# Newer player fw reports a uuid. With uuid, length is 36; without uuid, length is 20
 	my $data_ref_length = length( $$data_ref);
 
-	if( $data_ref_length == 36) {
+	if( $data_ref_length >= 36) {
 		(	$deviceid, $revision, 
 			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5], $uuid,
 			$wlan_channellist, $bytes_received_H, $bytes_received_L, $lang
