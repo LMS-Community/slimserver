@@ -414,15 +414,26 @@ sub enablePlugins {
 		# Skip plugins with no perl module.
 		next unless $manifest->{'module'};
 
+		# Disable plugins which can't be run on our platform
+		if ($manifest->{'error'} eq 'INSTALLERROR_INCOMPATIBLE_PLATFORM') {
+	
+			unless (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED) {
+				
+				$log->error(sprintf("Couldn't load $name. Error: %s\n", $class->getErrorString($name)));
+				$prefs->set($name, STATE_DISABLED);
+			}
+	
+			next;
+		}
+
 		# Skip plugins that can't be loaded.
-		if ($manifest->{'error'} ne 'INSTALLERROR_SUCCESS') {
+		elsif ($manifest->{'error'} ne 'INSTALLERROR_SUCCESS') {
 			$log->error(sprintf("Couldn't load $name. Error: %s\n", $class->getErrorString($name)));
 
 			next;
 		}
 
 		delete $manifest->{opType};
-
 
 		if (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED && $manifest->{'enforce'}) {
 	
