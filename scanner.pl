@@ -33,6 +33,22 @@ BEGIN {
 	Slim::bootstrap->loadModules([qw(version Time::HiRes DBD::mysql DBI HTML::Parser XML::Parser::Expat YAML::Syck)], []);
 };
 
+# Force XML::Simple to use XML::Parser for speed. This is done
+# here so other packages don't have to worry about it. If we
+# don't have XML::Parser installed, we fall back to PurePerl.
+# 
+# Only use XML::Simple 2.15 an above, which has support for pass-by-ref
+use XML::Simple qw(2.15);
+
+eval {
+	local($^W) = 0;      # Suppress warning from Expat.pm re File::Spec::load()
+	require XML::Parser; 
+};
+
+if (!$@) {
+	$XML::Simple::PREFERRED_PARSER = 'XML::Parser';
+}
+
 use Getopt::Long;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
