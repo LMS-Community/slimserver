@@ -166,7 +166,7 @@ sub _io_callback {
 				my $msg = shift;
 				if ( main::SLIM_SERVICE ) {
 					my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
-					SDI::Service::Control::mailError( "IO callback crash: $func", $msg );
+					SDI::Service::Control->mailError( "IO callback crash: $func", $msg );
 				}
 			};
 			
