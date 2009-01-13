@@ -130,6 +130,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $prefs = preferences('plugin.extensions');
+$prefs->init({ 'repos' => [] });
 
 my $masterRepo   = Slim::Networking::SqueezeNetwork->url('/public/plugins/repository.xml');
 my $logitechRepo = Slim::Networking::SqueezeNetwork->url('/public/plugins/logitech.xml');

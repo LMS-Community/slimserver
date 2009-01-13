@@ -10,8 +10,6 @@ use Digest::MD5;
 my $prefs = preferences('plugin.extensions');
 my $log   = logger('plugin.extensions');
 
-$prefs->init({ 'repos' => [] });
-
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret') )->hexdigest;
 
 sub name {
