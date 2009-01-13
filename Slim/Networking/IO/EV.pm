@@ -160,15 +160,22 @@ sub _io_callback {
 		# the socket may have passthrough arguments set
 		my $passthrough = ${*$sock}{passthrough} || [];
 		
-		eval { $callback->( $sock, @{$passthrough} ) };
+		eval {
+			# This die handler lets us get a correct backtrace if callback crashes
+			local $SIG{__DIE__} = sub {
+				my $msg = shift;
+				if ( main::SLIM_SERVICE ) {
+					my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
+					SDI::Service::Control::mailError( "IO callback crash: $func", $msg );
+				}
+			};
+			
+			$callback->( $sock, @{$passthrough} );
+		};
 		
 		if ( $@ ) {
 			my $func = Slim::Utils::PerlRunTime::realNameForCodeRef($callback);
 			logError("Select task failed calling $func: $@");
-			
-			if ( main::SLIM_SERVICE ) {
-				SDI::Service::Control->mailError( "IO callback crash: $func", $@ );
-			}
 		}
 		
 		# Conditionally readUDP if there are SLIMP3's connected.
