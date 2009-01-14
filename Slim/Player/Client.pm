@@ -109,7 +109,7 @@ use constant KNOB_NOACCELERATION => 0x02;
 								startirhold irtimediff irrepeattime irenable _epochirtime lastActivityTime
 								knobPos knobTime knobSync
 								controller
-								bufferReady readyToStream
+								bufferReady readyToStream streamStartTimestamp
 								streamformat streamingsocket remoteStreamStartTime
 								trackStartTime outputBufferFullness bytesReceived songBytes pauseTime
 								bytesReceivedOffset streamBytes songElapsedSeconds bufferSize bufferStarted
@@ -206,6 +206,7 @@ sub new {
 		controller              => undef,
 		bufferReady             => 0,
 		readyToStream           => 1, 
+		streamStartTimestamp	=> undef,
 
 		# streaming state
 		streamformat            => undef,

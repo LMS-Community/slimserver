@@ -821,7 +821,7 @@ sub _stat_handler {
 		}
 	}
 	
-	$client->statHandler($status{$client}->{'event_code'});
+	$client->statHandler($status{$client}->{'event_code'}, $status{$client}->{'jiffies'});
 
 	if ( main::SLIM_SERVICE ) {
 		# Bug 8995, Update signal strength on SN
