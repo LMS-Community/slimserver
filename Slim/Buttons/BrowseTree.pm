@@ -314,10 +314,10 @@ sub browseTreeItemName {
 		# Dynamically pull the object from the DB. This prevents us from
 		# having to do so at initial load time of possibly hundreds of items.
 		my $url = Slim::Utils::Misc::fixPath($item, $client->modeParam('topLevelPath')) || return;
+		my $name;
 
 		if (Slim::Utils::OSDetect::isWindows() && Slim::Music::Info::isWinShortcut($url)) {
-
-			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
+			($name, $url) = Slim::Utils::OS::Win32->getShortcut($url);
 		}
 
 		my $items = $client->modeParam('listRef');
@@ -328,12 +328,19 @@ sub browseTreeItemName {
 			'readTags' => 1,
 			'commit'   => 1,
 
-		}) || return $url;
+		}) || return ($name || $url);
 
 		${$client->modeParam('valueRef')} = $item = $items->[$index] = $track;
+		
+		# bug 8202 - keep track of the shortcut's name
+		$client->modeParam('winShortcuts')->{$item->url} = $name if $name;
 	}
 
-	return Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item->url) );
+	return Slim::Utils::Unicode::utf8on( 
+		Slim::Music::Info::fileName(
+			$client->modeParam('winShortcuts')->{$item->url} || $item->url 
+		)
+	);
 }
 
 =head2 browseTreeExitCallback( $client, $item)
@@ -439,6 +446,7 @@ sub setMode {
 		# for on-the-fly object creation.
 		'externRef'      => \&browseTreeItemName,
 		'externRefArgs'  => 'CVI',
+		'winShortcuts'   => {},
 
 		'overlayRef'     => \&browseTreeOverlay,
 

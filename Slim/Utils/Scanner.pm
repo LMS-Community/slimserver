@@ -141,15 +141,11 @@ sub findFilesMatching {
 
 		# Only check for Windows Shortcuts on Windows.
 		# Are they named anything other than .lnk? I don't think so.
-		if ($file =~ /\.lnk$/i) {
-
-			unless ($isWin) {
-				next;
-			}
+		if ($isWin && $file =~ /\.lnk$/i) {
 
 			my $url = Slim::Utils::Misc::fileURLFromPath($file);
 
-			$url  = Slim::Utils::Misc::fileURLFromWinShortcut($url) || next;
+			$url  = Slim::Utils::OS::Win32->fileURLFromShortcut($url) || next;
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 
 			my $audiodir = preferences('server')->get('audiodir');

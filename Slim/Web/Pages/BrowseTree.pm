@@ -104,12 +104,12 @@ sub browsetree {
 	for my $relPath (@$items[$start..$end]) {
 
 		my $url  = Slim::Utils::Misc::fixPath($relPath, $topPath) || next;
+		my $name;
 
-		# Amazingly, this just works. :)
 		# Do the cheap compare for osName first - so non-windows users
 		# won't take the penalty for the lookup.
 		if ($isWin && Slim::Music::Info::isWinShortcut($url)) {
-			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
+			($name, $url) = Slim::Utils::OS::Win32->getShortcut($url);
 		}
 
 		my $item = Slim::Schema->rs('Track')->objectForUrl({
@@ -119,7 +119,6 @@ sub browsetree {
 		});
 
 		if (!blessed($item) || !$item->can('content_type')) {
-
 			next;
 		}
 
@@ -133,7 +132,7 @@ sub browsetree {
 		# Turn the utf8 flag on for proper display - since this is
 		# coming directly from the filesystem.
 		my %form = (
-			'text'      => Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item->url) ),
+			'text'      => Slim::Utils::Unicode::utf8on( $name || Slim::Music::Info::fileName($url) ),
 			'hierarchy' => join('/', @levels, $item->id),
 			'descend'   => $descend,
 			'odd'       => ($itemnumber + 1) % 2,

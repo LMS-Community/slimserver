@@ -1774,6 +1774,7 @@ sub musicfolderQuery {
 		}
 		$request->addResult('base', $base);
 
+		$request->addResult('window', { text => $topLevelObj->title } ) if $topLevelObj->title;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1798,13 +1799,14 @@ sub musicfolderQuery {
 		for my $filename (@$items[$start..$end]) {
 
 			my $url = Slim::Utils::Misc::fixPath($filename, $topPath) || next;
+			my $realName;
 
 			# Amazingly, this just works. :)
 			# Do the cheap compare for osName first - so non-windows users
 			# won't take the penalty for the lookup.
 			if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
 
-				$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
+				($realName, $url) = Slim::Utils::OS::Win32->getShortcut($url);
 			}
 			
 			elsif ($osName eq 'mac' && Slim::Utils::Misc::isMacAlias($url)) {
@@ -1826,7 +1828,7 @@ sub musicfolderQuery {
 			my $id = $item->id();
 			$id += 0;
 			
-			$filename = Slim::Music::Info::fileName($url);
+			$filename = $realName || Slim::Music::Info::fileName($url);
 
 			my $textKey = uc(substr(Slim::Utils::Text::ignorePunct($filename), 0, 1));
 			

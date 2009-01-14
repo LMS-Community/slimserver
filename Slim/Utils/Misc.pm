@@ -182,33 +182,6 @@ sub getPriority {
 	return Slim::Utils::OSDetect::getOS()->getPriority(shift)
 }
 
-=head2 pathFromWinShortcut( $path )
-
-Return the filepath for a given Windows Shortcut
-
-=cut
-
-sub pathFromWinShortcut {
-
-	unless (Slim::Utils::OSDetect::isWindows()) {
-
-		logWarning("Windows shortcuts not supported on non-windows platforms!");
-		return shift;
-	}
-	
-	return Slim::Utils::OS::Win32->pathFromWinShortcut(shift);
-}
-
-=head2 fileURLFromWinShortcut( $shortcut)
-
-	Special case to convert a windows shortcut to a normalised file:// url.
-
-=cut
-
-sub fileURLFromWinShortcut {
-	return fixPath(pathFromWinShortcut(shift));
-}
-
 =head2 pathFromMacAlias( $path )
 
 Return the filepath for a given Mac Alias

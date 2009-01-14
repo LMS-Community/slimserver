@@ -359,13 +359,13 @@ sub writablePath {
 	return $path;
 }
 
-=head2 pathFromWinShortcut( $path )
+=head2 pathFromShortcut( $path )
 
 Return the filepath for a given Windows Shortcut
 
 =cut
 
-sub pathFromWinShortcut {
+sub pathFromShortcut {
 	my $class    = shift;
 	my $fullpath = Slim::Utils::Misc::pathFromFileURL(shift);
 
@@ -388,7 +388,7 @@ sub pathFromWinShortcut {
 
 			#collapse shortcuts to shortcuts into a single hop
 			if (Slim::Music::Info::isWinShortcut($path)) {
-				$path = $class->pathFromWinShortcut($path);
+				$path = $class->pathFromShortcut($path);
 			}
 
 		} else {
@@ -402,6 +402,32 @@ sub pathFromWinShortcut {
 	}
 
 	return $path;
+}
+
+=head2 fileURLFromShortcut( $shortcut )
+
+	Special case to convert a windows shortcut to a normalised file:// url.
+
+=cut
+
+sub fileURLFromShortcut {
+	my ($class, $path) = @_;
+	return Slim::Utils::Misc::fixPath( $class->pathFromShortcut($path) );
+}
+
+=head2 getShortcut( $shortcut )
+
+	Return a shortcut's name and the target URL
+
+=cut
+
+sub getShortcut {
+	my ($class, $path) = @_;
+	
+	my $name = Slim::Music::Info::fileName($path);
+	$name =~ s/\.lnk$//i;
+	
+	return ( $name, $class->fileURLFromShortcut($path) );
 }
 
 
