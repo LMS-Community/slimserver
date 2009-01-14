@@ -68,6 +68,10 @@ use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
+our $VERSION     = '7.4';
+our $REVISION    = undef;
+our $BUILDDATE   = undef;
+
 sub main {
 
 	our ($rescan, $playlists, $wipe, $itunes, $musicip, $force, $cleanup, $prefsFile, $progress, $priority);
@@ -128,6 +132,10 @@ sub main {
 	STDOUT->autoflush(1);
 
 	my $log = logger('server');
+	
+	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
+
+	$log->error("Starting SqueezeCenter scanner (v$VERSION, r$REVISION, $BUILDDATE)");
 
 	# Bring up strings, database, etc.
 	initializeFrameworks($log);
