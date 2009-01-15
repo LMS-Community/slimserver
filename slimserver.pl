@@ -263,16 +263,11 @@ sub init {
 	# initialize the process and daemonize, etc...
 	srand();
 
-	# The revision file may not exist for svn copies.
-	my $tempBuildInfo = eval { File::Slurp::read_file(
-		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
-	) } || "TRUNK\nUNKNOWN";
+	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
-	# Once we've read the file, split it up so we have the Revision and Build Date
-	my @tempBuildArray = split (/\n/, $tempBuildInfo);
-	$REVISION = $tempBuildArray[0];
-	$BUILDDATE = $tempBuildArray[1];
+	my $log = logger('server');
 
+	$log->error("Starting SqueezeCenter (v$VERSION, r$REVISION, $BUILDDATE)");
 
 	if ($diag) { 
 		eval "use diagnostics";
@@ -288,8 +283,6 @@ sub init {
 
 	# Redirect STDERR to the log file.
 	tie *STDERR, 'Slim::Utils::Log::Trapper';
-
-	my $log = logger('server');
 
 	$log->info("SqueezeCenter OS Specific init...");
 

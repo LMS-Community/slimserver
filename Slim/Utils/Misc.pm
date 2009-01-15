@@ -37,6 +37,7 @@ use Config;
 use Cwd ();
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
+use File::Slurp;
 use FindBin qw($Bin);
 use Log::Log4perl;
 use Net::IP;
@@ -949,6 +950,22 @@ sub isWinDrive {
 	return $path =~ /^[a-z]{1}:[\\]?$/i;
 }
 
+=head2 parseRevision( )
+
+Read revision number and build time
+
+=cut
+
+sub parseRevision {
+
+	# The revision file may not exist for svn copies.
+	my $tempBuildInfo = eval { File::Slurp::read_file(
+		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
+	) } || "TRUNK\nUNKNOWN";
+
+	# Once we've read the file, split it up so we have the Revision and Build Date
+	return split (/\n/, $tempBuildInfo);
+}
 
 =head2 userAgentString( )
 
