@@ -944,6 +944,11 @@ sub _hello_handler {
 	if (defined($bytes_received_H)) {
 		$bytes_received = $bytes_received_H * 2**32 + $bytes_received_L; 
 	}
+	
+	my $capabilities;
+	if ($data_ref_length > 36) {
+		$capabilities = substr($$data_ref, 36);
+	}
 
 	my $mac = join(':', @mac);
 	my $id  = $mac;
@@ -960,12 +965,10 @@ sub _hello_handler {
 			"reconnect: $reconnect",
 			"wlan_channellist: $wlan_channellist",
 			"lang: $lang",
+			(defined($bytes_received) ? " bytes_received: $bytes_received" : ''),
+			($capabilities ? " capabilities: $capabilities" : ''),
 		));
 
-		if (defined($bytes_received)) {
-
-			$log->info("Squeezebox also says: bytes_received: $bytes_received");
-		}
 	}
 
 	if ( $faclog->is_debug ) {
@@ -1049,12 +1052,7 @@ sub _hello_handler {
 		$client_class = 'Slim::Player::SqueezeSlave';
 		$display_class = 'Slim::Display::NoDisplay';
 
-	} elsif ($deviceids[$deviceid] eq 'controller') {
-
-		$client_class  = 'Slim::Player::Controller';
-		$display_class = 'Slim::Display::NoDisplay';
-
-	} elsif ($deviceids[$deviceid] eq 'squeezeplay') {
+	} elsif ($deviceids[$deviceid] eq 'squeezeplay' || $deviceids[$deviceid] eq 'controller') {
 
 		$client_class  = 'Slim::Player::SqueezePlay';
 		$display_class = 'Slim::Display::NoDisplay';
@@ -1136,7 +1134,7 @@ sub _hello_handler {
 		$client->display( $display_class->new($client) );
 
 		$client->macaddress($mac);
-		$client->init;
+		$client->init($deviceids[$deviceid], $capabilities);
 		$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
 
 	} else {
