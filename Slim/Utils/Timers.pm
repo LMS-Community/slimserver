@@ -44,7 +44,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 use Slim::Utils::PerlRunTime;
 
-use constant MAX_TIMERS => 500;
+use constant MAX_TIMERS => 2000;
 
 # Set to enable a list of all timers every 5 seconds
 our $d_watch_timers = 0;
