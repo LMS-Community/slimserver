@@ -1,11 +1,3 @@
-/*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
- * licensing@extjs.com
- * 
- * http://extjs.com/license
- */
-
 /**
  * @class Ext.EventManager
  * Registers event handlers that want to receive a normalized EventObject instead of the standard browser event and provides
@@ -56,6 +48,7 @@ Ext.EventManager = function(){
 
     var removeListener = function(el, ename, fn, scope){
         el = Ext.getDom(el);
+
         var id = Ext.id(el), es = elHash[id], wrap;
         if(es){
             var ls = es[ename], l;
@@ -97,63 +90,7 @@ Ext.EventManager = function(){
         }
     }
 
-     var fireDocReady = function(){
-        if(!docReadyState){
-            docReadyState = Ext.isReady = true;
-            if(Ext.isGecko || Ext.isOpera) {
-                document.removeEventListener("DOMContentLoaded", fireDocReady, false);
-            }
-        }
-        if(docReadyProcId){
-            clearInterval(docReadyProcId);
-            docReadyProcId = null;
-        }
-        if(docReadyEvent){
-            docReadyEvent.fire();
-            docReadyEvent.clearListeners();
-       }
-    };
 
-    var initDocReady = function(){
-        docReadyEvent = new Ext.util.Event();
-
-        if(Ext.isReady){
-            return;
-        }
-
-        // no matter what, make sure it fires on load
-        E.on(window, 'load', fireDocReady);
-
-        if(Ext.isGecko || Ext.isOpera) {
-            document.addEventListener('DOMContentLoaded', fireDocReady, false);
-        }
-        else if(Ext.isIE){
-            docReadyProcId = setInterval(function(){
-                try{
-                    // throws errors until DOM is ready
-                    Ext.isReady || (document.documentElement.doScroll('left'));
-                }catch(e){
-                    return;
-                }
-                fireDocReady();  // no errors, fire
-            }, 5);
-
-			document.onreadystatechange = function(){
-				if(document.readyState == 'complete'){
-					document.onreadystatechange = null;
-					fireDocReady();
-				}
-            };
-        }
-        else if(Ext.isSafari){
-            docReadyProcId = setInterval(function(){
-                var rs = document.readyState;
-                if(rs == 'complete') {
-                    fireDocReady();
-                 }
-            }, 10);
-        }
-    };
 
     var createBuffered = function(h, o){
         var task = new Ext.util.DelayedTask(h);
@@ -306,6 +243,33 @@ Ext.EventManager = function(){
             return removeAll(element);
         },
 
+         /**
+          * Permit firing the docReadyEvent on demand
+          * This allows for the Ext framework to be loaded dynamically after a
+          * page/frame has been loaded, and then can safely call Ext.EventManager.fireDocReady()
+          * to invoke any pending onReady blocks.
+          */
+        fireDocReady : function(){
+
+          docReadyState = true;
+          if(dcl) {
+               document.removeEventListener("DOMContentLoaded", fireDocReady, false);
+               dcl  = false;
+          }
+
+          if(docReadyProcId){
+               clearInterval(docReadyProcId);
+               docReadyProcId = null;
+          }
+
+
+          if(docReadyEvent && !Ext.isReady){
+              Ext.isReady = true;
+              docReadyEvent.fire();
+              docReadyEvent.clearListeners();
+          }
+        },
+
         /**
          * Fires when the document is ready (before onload and before images are loaded). Can be
          * accessed shorthanded as Ext.onReady().
@@ -314,15 +278,30 @@ Ext.EventManager = function(){
          * @param {boolean} options (optional) An object containing standard {@link #addListener} options
          */
          onDocumentReady : function(fn, scope, options){
-			if(!docReadyEvent){
+            if(!docReadyEvent){
                 initDocReady();
-			}
-			if(docReadyState || Ext.isReady){ // if it already fired
-				options || (options = {});
-				fn.defer(options.delay||0, scope);
-			}else{
-				docReadyEvent.addListener(fn, scope, options);
-			}
+            }
+
+            options || (options = {});
+
+            if(docReadyState || Ext.isReady){
+                //onReady has already fired, so just execute this block when presented
+                //permitting multiple onReady blocks
+
+                if(options.delay){
+                    fn.defer(options.delay, scope);
+                } else {
+                    fn.call(scope);
+                }
+            }else{
+                options.delay || (options.delay = Ext.isGecko3 ? 1 : null); //FF3 fix
+                docReadyEvent.addListener(fn, scope, options);
+            }
+        },
+
+        // private
+        doResizeEvent: function(){
+            resizeEvent.fire(D.getViewWidth(), D.getViewHeight());
         },
 
         /**
@@ -334,9 +313,7 @@ Ext.EventManager = function(){
         onWindowResize : function(fn, scope, options){
             if(!resizeEvent){
                 resizeEvent = new Ext.util.Event();
-                resizeTask = new Ext.util.DelayedTask(function(){
-                    resizeEvent.fire(D.getViewWidth(), D.getViewHeight());
-                });
+                resizeTask = new Ext.util.DelayedTask(this.doResizeEvent);
                 E.on(window, "resize", this.fireWindowResize, this);
             }
             resizeEvent.addListener(fn, scope, options);
@@ -393,15 +370,117 @@ Ext.EventManager = function(){
                 resizeEvent.fire(D.getViewWidth(), D.getViewHeight());
             }
         },
-        /**
-         * Url used for onDocumentReady with using SSL (defaults to Ext.SSL_SECURE_URL)
-         */
-        ieDeferSrc : false,
+
         /**
          * The frequency, in milliseconds, to check for text resize events (defaults to 50)
          */
         textResizeInterval : 50
     };
+
+    var fireDocReady = pub.fireDocReady;
+
+    var dcl = false;  //DOMContentLoaded listener-set indicator
+
+    var initDocReady = function(){
+        docReadyEvent = new Ext.util.Event();
+
+        if(Ext.isReady){ return;}
+
+        E.on(window, 'load', fireDocReady);
+
+        if(Ext.isGecko) {
+            dcl  = true;
+            document.addEventListener('DOMContentLoaded', fireDocReady, false);
+        }
+        else if(Ext.isIE ){
+
+            /* notes:
+              This:
+               var node = document.createElement('p')  or document.documentElement
+               node.doScroll('left');
+
+              'doScroll' will NOT work in a IFRAME/FRAMESET.
+              The method succeeds but, a DOM query done immediately after -- FAILS.
+
+              */
+
+              if(window == top){  //non-frames only
+                var doScrollChk = function(){
+
+                   try{
+                        document.documentElement.doScroll('left');
+
+                   }catch(e){
+
+                       setTimeout(doScrollChk ,5);
+                       return;
+                   }
+                   fireDocReady();
+                };
+                doScrollChk();
+            }
+            //Use readystatechange as primary detection mechanism for a FRAME/IFRAME
+
+            document.attachEvent('onreadystatechange', function(){
+
+                if(document.readyState == 'complete'){
+
+                     fireDocReady();
+                     document.detachEvent('onreadystatechange', arguments.callee);
+                }
+            });
+
+
+        }
+        else if(Ext.isOpera ) {
+            /* Notes:
+               Special treatment MAY be needed here because CSS rules are NOT QUITE
+               available after DOMContentLoaded is raised.
+            */
+             var styles;
+             dcl = false;
+             document.addEventListener( 'DOMContentLoaded', function () {
+
+                    if(!Ext.isReady){
+                        styles || (styles = Ext.query('style, link[rel=stylesheet]'));
+                        if(styles.length != document.styleSheets.length){
+                            setTimeout( arguments.callee, 5 );
+                            return;
+                        }
+                        fireDocReady();
+                     }
+                     document.removeEventListener("DOMContentLoaded", arguments.callee, false);
+
+                }, false);
+
+        }
+        else if(Ext.isSafari){  //Webkits (Konqueror, Safari, Chrome)
+
+          //Some Webkit versions support this now
+          if(document.addEventListener){
+              dcl = true;
+              document.addEventListener('DOMContentLoaded', fireDocReady, false);
+          }
+
+          /* Notes:
+            Webkit has two different readystates for a 'loaded' state:
+              'loaded' for non-frames
+              'complete' for frames
+
+            In a frame, onload fires just before readystate changes to 'complete'
+          */
+            var stateRe = /complete|loaded/i;
+
+            (function(){
+                if( stateRe.test(document.readyState) ) {
+                     fireDocReady();
+                     return;
+                 }
+                 setTimeout(arguments.callee,5);
+            })();
+        }
+     };
+
      /**
      * Appends an event handler to an element.  Shorthand for {@link #addListener}.
      * @param {String/HTMLElement} el The html element or id to assign the event handler to
@@ -447,10 +526,11 @@ Ext.onReady = Ext.EventManager.onDocumentReady;
         var bd = document.body || document.getElementsByTagName('body')[0];
         if(!bd){ return false; }
         var cls = [' ',
-                Ext.isIE ? "ext-ie " + (Ext.isIE6 ? 'ext-ie6' : 'ext-ie7')
+                Ext.isIE ? "ext-ie " + (Ext.isIE6 ? 'ext-ie6' : (Ext.isIE7 ? 'ext-ie7' : 'ext-ie8'))
                 : Ext.isGecko ? "ext-gecko " + (Ext.isGecko2 ? 'ext-gecko2' : 'ext-gecko3')
                 : Ext.isOpera ? "ext-opera"
-                : Ext.isSafari ? "ext-safari" : ""];
+                : Ext.isSafari ? "ext-safari"
+                : Ext.isChrome ? "ext-chrome" : ""];
 
         if(Ext.isMac){
             cls.push("ext-mac");

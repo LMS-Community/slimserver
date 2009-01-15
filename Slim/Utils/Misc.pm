@@ -924,7 +924,6 @@ sub isWinDrive {
 	return $path =~ /^[a-z]{1}:[\\]?$/i;
 }
 
-
 =head2 parseRevision( )
 
 Read revision number and build time
@@ -941,7 +940,6 @@ sub parseRevision {
 	# Once we've read the file, split it up so we have the Revision and Build Date
 	return split (/\n/, $tempBuildInfo);
 }
-
 
 =head2 userAgentString( )
 

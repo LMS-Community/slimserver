@@ -330,7 +330,14 @@ sub _Buffering {_setPlayingState($_[0], BUFFERING);}
 
 sub _Playing {
 	my ($self) = @_;
-	_setPlayingState($self, PLAYING);
+	
+	# bug 10681 - don't actually change the state if we are rebuffering
+	# as there can be a race condition between output buffer underrun and
+	# track-start events especially, but not exclusively when synced.
+	# We still advance the track information.
+	if (!$self->{'rebuffering'}) {
+		_setPlayingState($self, PLAYING);
+	}
 	
 	$self->{'consecutiveErrors'} = 0;
 	
