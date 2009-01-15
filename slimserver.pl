@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -212,7 +212,7 @@ our @AUTHORS = (
 
 my $prefs        = preferences('server');
 
-our $VERSION     = '7.3.2';
+our $VERSION     = '7.3.3';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 our $audiodir    = undef;
