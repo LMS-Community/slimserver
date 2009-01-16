@@ -1373,7 +1373,7 @@ sub setRTCAlarm {
 	if (defined $nextAlarm) {
 		my $nextDue = $nextAlarm->nextDue;
 
-		my $secsToAlarm = $now - $nextDue;
+		my $secsToAlarm = $nextDue - $now;
 		if ($secsToAlarm && $secsToAlarm < 86400) {
 			# Alarm due in next 24 hours
 
