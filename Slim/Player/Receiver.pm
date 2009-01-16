@@ -61,11 +61,11 @@ sub reconnect {
 
 }
 
-sub stop {
+sub onStop {
 	my $client = shift;
 
-	Slim::Hardware::TriLED::setTriLED( $client, $DARK_WHITE_COLOR, 1);
-	return $client->SUPER::stop(@_);
+	Slim::Hardware::TriLED::setTriLED( $client, $DARK_WHITE_COLOR, 1)
+		if preferences('server')->client( $client)->get('power');
 }
 
 sub pause {

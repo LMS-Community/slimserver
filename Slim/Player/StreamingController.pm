@@ -404,6 +404,10 @@ sub _notifyStopped {
 		# XXX: Bug 7781, Some plugins (Alarm) don't like extra stop events
 		# I'm sure commenting this out will break something else -andy
 		# Slim::Control::Request::notifyFromArray( $player, ['stop'] );
+		
+		if ($player->can('onStop')) {
+			$player->onStop();
+		}
 	}
 }
 
