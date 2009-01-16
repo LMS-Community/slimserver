@@ -212,7 +212,7 @@ sub initPlugin {
 			[1, 1, 1, \&cliMix]);
 
 		Slim::Control::Request::addDispatch(['musicip', 'moods'],
-			[1, 1, 0, \&cliMoods]);
+			[1, 1, 1, \&cliMoods]);
 
 		Slim::Control::Request::addDispatch(['musicip', 'play'],
 			[1, 0, 0, \&cliPlayMix]);
@@ -254,6 +254,23 @@ sub initPlugin {
 			Slim::Web::Pages->addPageLinks("icons", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/html/images/icon.png"
 			});
+			
+			Slim::Control::Jive::registerPluginMenu([{
+				stringToken    => 'MUSICMAGIC_MOODS',
+				weight         => 95,
+				id             => 'moods',
+				node           => 'myMusic',
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ 'musicip', 'moods' ],
+						params => {
+							menu     => 1,
+						},
+					},
+				},
+				window         => { titleStyle => 'moods' },
+			}]);
 		}
 	}
 
@@ -948,8 +965,29 @@ sub cliMoods {
 	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
 	my $chunkCount = 0;
 
+	if ($menuMode) {
+		$request->addResult('offset', 0);
+
+		$request->addResult('window', {
+			'titleStyle' => 'playlist',
+			'text'       => $request->string('MUSICMAGIC_MIX'),
+		});
+	}
+
 	for my $item (@$moods) {
-		if ($menuMode) {}
+		if ($menuMode) {
+			$request->addResultLoop($loopname, $chunkCount, 'actions', {
+				go => {
+					player => 0,
+					cmd    => [ 'musicip', 'mix' ],
+					params => {
+						menu     => 1,
+						mood => $item,
+					},
+				},
+			});
+			$request->addResultLoop($loopname, $chunkCount, 'text', $item);
+		}
 		else {
 			$request->addResultLoop($loopname, $chunkCount, 'name', $item);
 		}
@@ -1030,7 +1068,8 @@ sub cliMix {
 				},
 			},
 		};
-                $request->addResult('base', $base);
+		$request->addResult('base', $base);
+		
 		$request->addResult('offset', 0);
 		#$request->addResult('text', $request->string('MUSICMAGIX_MIX'));
 		my $thisWindow = {

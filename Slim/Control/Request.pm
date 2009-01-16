@@ -2036,7 +2036,9 @@ sub notify {
 	# process listeners if we match the super regexp (i.e. there is an interested listener)
 	if ($self->{'_requeststr'} && $self->{'_requeststr'} =~ $listenerSuperRE) {
 		
-		for my $listener (values %listeners) {
+		my @l = values %listeners;
+		for my $listener ( @l ) {
+			next unless defined $listener;
 
 			# skip unless we match the listener filter
 			next unless $self->{'_requeststr'} =~ $listener->[0];
