@@ -397,13 +397,17 @@ sub _Stopped {
 }
 
 sub _notifyStopped {
-	my $self   = $_[0];
+	my ($self, $suppressNotifications) = @_;
 	my $master = master($self);
 
 	foreach my $player ( @{ $self->{'players'} } ) {
 		# XXX: Bug 7781, Some plugins (Alarm) don't like extra stop events
 		# I'm sure commenting this out will break something else -andy
-		# Slim::Control::Request::notifyFromArray( $player, ['stop'] );
+		# Slim::Control::Request::notifyFromArray( $player, ['stop'] ) unless $suppressNotifications;
+		
+		if ($player->can('onStop')) {
+			$player->onStop();
+		}
 	}
 }
 
@@ -517,9 +521,12 @@ sub _CheckSync {
 }
 
 sub _Stop {					# stop -> Stopped, Idle
-	my ($self, $event, $params) = @_;
+	my ($self, $event, $params, $suppressNotifications) = @_;
 	
-	if ( $self->playingSong() && ( $self->isPlaying(1) || $self->isPaused() ) ) {
+	# bug 10458 - try to avoding unnecessary notifications
+	$suppressNotifications = 1 unless ( $self->isPlaying() || $self->isPaused() );
+	
+	if ( !$suppressNotifications && $self->playingSong() && ( $self->isPlaying(1) || $self->isPaused() ) ) {
 		my $song = $self->playingSong();
 		my $handler = $song->currentTrackHandler();
 		if ($handler->can('onStop')) {
@@ -547,7 +554,7 @@ sub _Stop {					# stop -> Stopped, Idle
 	
 	_setPlayingState($self, STOPPED);
 	_setStreamingState($self, IDLE);
-	_notifyStopped($self);
+	_notifyStopped($self, $suppressNotifications);
 }
 
 sub _stopClient {
@@ -856,7 +863,7 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 			return;
 		}
 		
-		_Stop(@_);
+		_Stop($self, $event, $params, 'suppressNotification');
 		$song->resetSeekdata();
 		_Stream($self, $event, {song => $song});
 		return;
@@ -884,7 +891,7 @@ sub _JumpToTime {			# IF [canSeek] THEN stop, stream -> Buffering, Streaming END
 	
 	return unless $seekdata || $restartIfNoSeek;
 
-	_Stop(@_);
+	_Stop($self, $event, $params, 'suppressNotification');
 	
 	_Stream($self, $event, {song => $song, seekdata => $seekdata});
 }
