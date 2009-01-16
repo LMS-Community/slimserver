@@ -3,9 +3,9 @@
 # from        to
 # from1..from2 to
 
-1..122 122
+1..123 123
 
 # future versions may be downgraded to this one
-* 122
+* 123
 
 
