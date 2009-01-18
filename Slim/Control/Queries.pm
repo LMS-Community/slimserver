@@ -3107,7 +3107,7 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
-					'model', $eachclient->model(1));
+					'model', $eachclient->model());
 				$request->addResultLoop('players_loop', $cnt, 
 					'power', $eachclient->power());
 				$request->addResultLoop('players_loop', $cnt, 
