@@ -152,6 +152,15 @@ sub mk_accessor {
 				return $_[0]->[$n]->{ $_[1] } = $_[2] if @_ == 3;
 			};
 
+		} elsif ($type eq 'rw_bt') {
+			
+			$accessor = sub {
+				return $_[0]->[$n]                    if @_ == 1;
+				if (@_ == 2) {
+					logBacktrace("$class ->$field set to $_[1]");
+					return $_[0]->[$n] = $_[1];
+				}
+			};
 		}
 
 		if ($accessor) {
