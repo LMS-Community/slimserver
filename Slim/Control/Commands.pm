@@ -915,7 +915,7 @@ sub playlistJumpCommand {
 
 	my $showStatus = sub {
 		if ($client->isPlayer()) {
-			my $parts = $client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client), 1);
+			my $parts = $client->currentSongLines({ suppressDisplay => Slim::Buttons::Common::suppressStatus($client) });
 			$client->showBriefly($parts, { duration => 2 }) if $parts;
 			Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 		}

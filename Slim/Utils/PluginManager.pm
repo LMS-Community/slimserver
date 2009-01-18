@@ -364,6 +364,11 @@ sub checkPluginVersions {
 
 	while (my ($name, $manifest) = each %{$plugins}) {
 
+		if ($manifest->{'error'} eq 'INSTALLERROR_NO_PLUGIN') {
+			# skip plugins with no module - these do not need to have a target version
+			next;
+		}
+
 		if (!$class->checkPluginVersion($manifest)) {
 
 			$plugins->{$name}->{'error'} = 'INSTALLERROR_INVALID_VERSION';
