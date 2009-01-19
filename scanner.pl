@@ -52,7 +52,7 @@ use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
-our $VERSION     = '7.3';
+our $VERSION     = '7.3.3';
 our $REVISION    = undef;
 our $BUILDDATE   = undef;
 
