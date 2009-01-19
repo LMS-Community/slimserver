@@ -31,7 +31,7 @@ BEGIN {
 {
 	
 	__PACKAGE__->mk_accessor('rw', qw(
-		model modelName
+		_model modelName
 		myFormats
 		maxSupportedSamplerate
 		accuratePlayPoints
@@ -44,7 +44,7 @@ sub new {
 	my $client = $class->SUPER::new(@_);
 	
 	$client->init_accessor(
-		model                   => 'squeezeplay',
+		_model                  => 'squeezeplay',
 		modelName               => 'SqueezePlay',
 		myFormats               => [qw(ogg flc aif pcm mp3)],	# in order of preference
 		maxSupportedSamplerate  => 48000,
@@ -57,15 +57,19 @@ sub new {
 # model=squeezeplay,modelName=SqueezePlay,ogg,flc,pcm,mp3,tone,MaxSampleRate=96000
 
 my %CapabilitiesMap = (
-	Model                   => 'model',
+	Model                   => '_model',
 	ModelName               => 'modelName',
 	MaxSampleRate           => 'maxSupportedSamplerate',
 	AccuratePlayPoints      => 'accuratePlayPoints',
 
 	# deprecated
-	model                   => 'model',
+	model                   => '_model',
 	modelName               => 'modelName',
 );
+
+sub model {
+	return shift->_model;
+}
 
 sub init {
 	my $client = shift;
