@@ -32,7 +32,7 @@ $prefs->migrate(1, sub {
 	1;
 });
 
-$prefs->setValidate('num', 'scan_interval');
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0 }, 'scan_interval');
 $prefs->setValidate('file', 'xml_file');
 $prefs->setValidate('dir', 'music_path');
 
@@ -55,13 +55,21 @@ $prefs->setChange(
 
 $prefs->setChange(
 	sub {
-			Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::iTunes::Plugin::checker);
-		
-			my $interval = $prefs->get('scan_interval') || 3600;
-		
+		Slim::Utils::Timers::killTimers(undef, \&Slim::Plugin::iTunes::Plugin::checker);
+
+		my $interval = int( $prefs->get('scan_interval') );
+
+		if ($interval) {
+			
 			$log->info("re-setting checker for $interval seconds from now.");
-		
+	
 			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + $interval, \&Slim::Plugin::iTunes::Plugin::checker);
+		}
+		
+		else {
+			
+			$log->info("disabling checker - interval set to '$interval'");
+		}
 	},
 'scan_interval');
 
