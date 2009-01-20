@@ -50,6 +50,9 @@ my %tagMapping = (
 	'MUSICBRAINZ_ARTISTID'      => 'MUSICBRAINZ_ARTIST_ID',
 	'MUSICBRAINZ_TRACKID'       => 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
+
+	# for dBpoweramp CD Ripper
+	'TOTALDISCS'                => 'DISCC',
 );
 
 =head2 getTag( $filename )
