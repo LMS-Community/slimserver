@@ -6,6 +6,14 @@
 				[%# Display plugin cover or icon %]
 				[% IF image || plugin_meta.cover %]
 				<a href="[% image || plugin_meta.cover %]" target="cover">
+					[%-
+						IF image;
+							parts = image.match('(/music/.*/cover)\.jpg');
+							IF parts.0;
+								image = parts.0 _ '_150x150_o';
+							END;
+						END;
+					-%]
 					<img src="[% image || plugin_meta.cover %]" alt="coverArt" onLoad="resize(this)">
 				</a>
 				[% ELSIF plugin_meta.icon %]
@@ -13,7 +21,7 @@
 				[% END %]
 			[% ELSE %]
 				<a href="/music/[% itemobj.id %]/cover.jpg" [% UNLESS notarget %]target="cover"[% END %]>
-					<img src="/music/[% itemobj.id || 0 %]/cover.jpg" alt="coverArt" onLoad="resize(this)">
+					<img src="/music/[% itemobj.id || 0 %]/cover_150x150_o" alt="coverArt">
 				</a>
 			[% END %]
 		</span>
