@@ -54,7 +54,7 @@ my $log = logger('database.info');
 sub url {
 	my $self = shift;
 
-	return sprintf('db:album.titlesearch=%s', Slim::Utils::Misc::escape($self->titlesearch));
+	return sprintf('db:album.titlesearch=%s', URI::Escape::uri_escape($self->titlesearch));
 }
 
 sub name { 
