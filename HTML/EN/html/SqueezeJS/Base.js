@@ -168,7 +168,7 @@ function _init() {
 					// force 0 for current time when stopped
 					if (this.playerStatus.mode == 'stop')
 						this.playerStatus.playtime = 0;
-
+						
 					this.fireEvent('playtimeupdate', {
 						current: this.playerStatus.playtime,
 						duration: this.playerStatus.duration,
@@ -273,11 +273,13 @@ function _init() {
 		},
 	
 		playerRequest : function(config){
-			config.params = [
-				this.player,
-				config.params
-			];
-			this.request(config);
+			if (this.getPlayer()) {			
+				config.params = [
+					this.player,
+					config.params
+				];
+				this.request(config);
+			}
 		},
 	
 		// custom playerRequest which requires a controller update
@@ -420,6 +422,7 @@ function _init() {
 				this._firePlayerSelected(playerobj);				
 			}
 			else {
+				this._initPlayerStatus();
 				this.request({
 					params: [ '', [ "serverstatus", 0, 999 ] ],
 	
@@ -441,8 +444,10 @@ function _init() {
 					this.fireEvent('playerselected', playerobj);
 				}
 			}
-			else
+			else {
+				this._initPlayerStatus();
 				this.player = null;
+			}
 		},
 
 		_parseCurrentPlayerInfo : function(response, activeplayer) {
