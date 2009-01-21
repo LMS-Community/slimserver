@@ -641,6 +641,7 @@ sub init {
 	addDispatch(['alarm',          'end',            '_id'],                                           [1, 0, 0, undef]);
 	addDispatch(['alarm',          'snooze',         '_id'],                                           [1, 0, 0, undef]);
 	addDispatch(['alarm',          'snooze_end',     '_id'],                                           [1, 0, 0, undef]);
+	addDispatch(['fwdownloaded',   '_machine'],                                                        [0, 0, 0, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);

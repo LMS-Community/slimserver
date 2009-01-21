@@ -2298,6 +2298,18 @@ sub dateQuery {
 	$request->setStatusDone();
 }
 
+sub firmwareUpgradeQuery_filter {
+	my $self = shift;
+	my $request = shift;
+
+	# update the query if new firmware downloaded for this machine type
+	if ($request->isCommand([['fwdownloaded']]) && $request->getParam('machine') eq $self->getParam('_machine')) {
+		return 1;
+	}
+
+	return 0;
+}
+
 sub firmwareUpgradeQuery {
 	my $request = shift;
 
@@ -2331,7 +2343,7 @@ sub firmwareUpgradeQuery {
 
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
-		$request->registerAutoExecute($timeout, \&firmwareUpgradeQuery);
+		$request->registerAutoExecute($timeout, \&firmwareUpgradeQuery_filter);
 	}
 
 	$request->setStatusDone();

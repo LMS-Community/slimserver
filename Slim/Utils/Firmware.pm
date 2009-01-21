@@ -223,6 +223,8 @@ sub init_version_done {
 			revision => $rev,
 			file     => $fw_file,
 		};
+
+		Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
 		
 		Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 	}
@@ -271,6 +273,9 @@ sub init_fw_done {
 	};
 	
 	Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
+
+	# send a notification that this firmware is downloaded
+	Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
 }
 
 =head2 init_fw_error($model)
@@ -301,6 +306,9 @@ sub init_fw_error {
 			};
 			
 			Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
+
+			# send a notification that this firmware is downloaded
+			Slim::Control::Request->new(undef, ['fwdownloaded', $model])->notify('firmwareupgrade');
 		}
 	}
 	
