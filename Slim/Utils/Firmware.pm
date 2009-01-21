@@ -233,7 +233,7 @@ sub init_version_done {
 		undef,
 		time() + 43200,
 		sub {
-			init_fw_download($model);
+			init_firmware_download($model);
 		},
 	);
 }
