@@ -3114,7 +3114,7 @@ sub _playlistXtracksCommand_parseDbItem {
 			if ($term =~ /^(\w+)\.(\w+)=(.*)$/) {
 
 				my $key   = URI::Escape::uri_unescape($2);
-				my $value = URI::Escape::uri_unescape($3);
+				my $value = Slim::Utils::Unicode::utf8decode( URI::Escape::uri_unescape($3) );
 
 				$class = ucfirst($1);
 				$obj   = Slim::Schema->single( $class, { $key => $value } );

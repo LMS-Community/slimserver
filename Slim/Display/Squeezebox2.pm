@@ -116,6 +116,10 @@ my @modes = (
 	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 	  bar => 1, secs => 0,  width => 320, fullness => 1,
 	  params => [$VISUALIZER_NONE], },
+	# mode 13
+	{ desc => ['CLOCK'],
+	  bar => 0, secs => 0, width => 320, clock => 1,
+	  params => [$VISUALIZER_NONE] },
 );
 
 our $defaultPrefs = {

@@ -69,6 +69,9 @@ my @modes = (
 	# mode 6
 	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
 	  bar => 1, secs => 0,  width => 320, fullness => 1 },
+	# mode 7
+	{ desc => ['CLOCK'],
+	  bar => 0, secs => 0, width => 320, clock => 1 },
 );
 
 my $nmodes = $#modes;
