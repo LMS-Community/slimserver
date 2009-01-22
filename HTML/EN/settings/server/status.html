@@ -44,7 +44,7 @@
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]
 		[% progress %]
 		[% IF scanning %]
-			<div><br/>
+			<div id="abortscanlink"><br/>
 				<a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&amp;player=[% player | uri %]&amp;abortScan=1">[% "ABORT_SCAN" | string %]</a>[% "COLON" | string %] [% scanning | string %]
 			</div>
 		[% END %]
