@@ -180,6 +180,8 @@ sub parseMetadata {
 			my $length = unpack 'n', substr( $comments, 0, 2, '' );
 			my $value  = substr $comments, 0, $length, '';
 			
+			$directlog->is_debug && $directlog->debug("Ogg comment: $value");
+			
 			# Look for artist/title/album
 			if ( $value =~ /ARTIST=(.+)/i ) {
 				$meta->{artist} = $1;
@@ -190,10 +192,6 @@ sub parseMetadata {
 			elsif ( $value =~ /TITLE=(.+)/i ) {
 				$meta->{title} = $1;
 			}
-		}
-		
-		if ( $directlog->is_debug ) {
-			$directlog->debug( 'Ogg metadata: ' . Data::Dump::dump($meta) );
 		}
 		
 		# Re-use wmaMeta field
