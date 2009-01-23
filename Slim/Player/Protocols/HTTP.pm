@@ -171,6 +171,49 @@ sub parseMetadata {
 		Slim::Music::Info::setDelayedTitle( $client, $url, $newTitle );
 	}
 	
+	# Check for Ogg metadata, which is formatted as a series of
+	# 2-byte length/string pairs.
+	elsif ( $metadata =~ /^Ogg(.+)/ ) {
+		my $comments = $1;
+		my $meta = {};
+		while ( $comments ) {
+			my $length = unpack 'n', substr( $comments, 0, 2, '' );
+			my $value  = substr $comments, 0, $length, '';
+			
+			# Look for artist/title/album
+			if ( $value =~ /ARTIST=(.+)/i ) {
+				$meta->{artist} = $1;
+			}
+			elsif ( $value =~ /ALBUM=(.+)/i ) {
+				$meta->{album} = $1;
+			}
+			elsif ( $value =~ /TITLE=(.+)/i ) {
+				$meta->{title} = $1;
+			}
+		}
+		
+		if ( $directlog->is_debug ) {
+			$directlog->debug( 'Ogg metadata: ' . Data::Dump::dump($meta) );
+		}
+		
+		# Re-use wmaMeta field
+		my $song = $client->controller()->songStreamController()->song();
+		
+		my $cb = sub {
+			$song->pluginData( wmaMeta => $meta );
+		};
+		
+		# Delay metadata according to buffer size if we already have metadata
+		if ( $song->pluginData('wmaMeta') ) {
+			Slim::Music::Info::setDelayedCallback( $client, $cb, 'output-only' );
+		}
+		else {
+			$cb->();
+		}
+		
+		return;
+	}
+	
 	# Check for an image URL in the metadata.  Currently, only Radio Paradise supports this
 	if ( $metadata =~ /StreamUrl=\'([^']+)\'/ ) {
 		my $metaUrl = $1;
