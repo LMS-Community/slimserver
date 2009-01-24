@@ -19497,3 +19497,26 @@ CONTINUE_TO_SQUEEZECENTER
 
 REDUCED_TO_PREVENT_CLIPPING
 	EN	%s to prevent clipping
+
+# 1xx errors are Ogg
+DECODE_ERROR_100
+	EN	Too many channels
+
+DECODE_ERROR_101
+	EN	Out of memory
+
+DECODE_ERROR_102
+	EN	Invalid sample rate
+
+DECODE_ERROR_103
+	EN	Not a Vorbis file
+
+DECODE_ERROR_104
+	EN	Bad Vorbis header
+	
+# 2xx errors are WMA
+DECODE_ERROR_200
+	EN	WMA superframes not supported
+
+DECODE_ERROR_201
+	EN	WMA Lossless not supported

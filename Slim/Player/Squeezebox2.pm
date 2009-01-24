@@ -103,7 +103,7 @@ sub formats {
 }
 
 sub statHandler {
-	my ($client, $code, $jiffies) = @_;
+	my ($client, $code, $jiffies, $error_code) = @_;
 	
 	if ($code eq 'STMc') {
 		$client->streamStartTimestamp($jiffies);
@@ -117,8 +117,9 @@ sub statHandler {
 		$client->controller()->playerReadyToStream($client);
 	} elsif ($code eq 'STMn') {
 		$client->readyToStream(1);
-		logError($client->id(). ": Decoder does not support file format");
-		$client->controller()->playerStreamingFailed($client, 'PROBLEM_OPENING');
+		logError($client->id(). ": Decoder does not support file format, code $error_code");
+		my $string = $error_code ? 'DECODE_ERROR_' . $error_code : 'PROBLEM_OPENING';
+		$client->controller()->playerStreamingFailed($client, $string);
 	} elsif ($code eq 'STMl') {
 		$client->bufferReady(1);
 		$client->controller()->playerBufferReady($client);
