@@ -650,6 +650,7 @@ sub _stat_handler {
 	#        u16_t voltage;
 	#        u32_t elapsed_milliseconds;
 	#        u32_t server_timestamp;
+	#        u16_t error_code;
 	#
 	
 	# event types:
@@ -689,9 +690,14 @@ sub _stat_handler {
 		$status{$client}->{'voltage'},
 		$status{$client}->{'elapsed_milliseconds'},
 		$status{$client}->{'server_timestamp'},
-
-	) = unpack ('a4CCCNNNNnNNNNnNN', $$data_ref);
+		$status{$client}->{'error_code'},
+	) = unpack ('a4CCCNNNNnNNNNnNNn', $$data_ref);
 	
+	if ( length($$data_ref) != 57 ) {
+		# Older firmware that doesn't report error_code
+		$status{$client}->{'error_code'} = 0;
+	}
+		
 	# Track latency if we have a server timestamp
 	if ( $status{$client}->{'server_timestamp'} ) {
 		my $latency = (int($now * 1000 % 0xffffffff) - $status{$client}->{'server_timestamp'}) / 2;
@@ -821,7 +827,7 @@ sub _stat_handler {
 		}
 	}
 	
-	$client->statHandler($status{$client}->{'event_code'}, $status{$client}->{'jiffies'});
+	$client->statHandler($status{$client}->{'event_code'}, $status{$client}->{'jiffies'}, $status{$client}->{'error_code'});
 
 	if ( main::SLIM_SERVICE ) {
 		# Bug 8995, Update signal strength on SN
