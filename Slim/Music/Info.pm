@@ -900,11 +900,22 @@ sub fileName {
 }
 
 sub sortFilename {
+	
+	use locale;
+	
 	# build the sort index
 	# File sorting should look like ls -l, Windows Explorer, or Finder -
 	# really, we shouldn't be doing any of this, but we'll ignore
 	# punctuation, and fold the case. DON'T strip articles.
-	my @nocase = map { Slim::Utils::Text::ignorePunct(Slim::Utils::Text::matchCase(fileName($_))) } @_;
+	my @nocase = map {
+		Slim::Utils::Text::ignorePunct(
+			uc(
+				Slim::Utils::Unicode::utf8encode_locale( 
+					fileName($_)
+				)
+			)
+		)
+	} @_;
 
 	# return the input array sliced by the sorted array
 	return @_[sort {$nocase[$a] cmp $nocase[$b]} 0..$#_];
