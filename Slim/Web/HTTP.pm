@@ -1254,6 +1254,11 @@ sub generateHTTPResponse {
 			my $obj = Slim::Schema->find('Track', $1);
 
 			if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
+				
+				# Bug 10730
+				$log->is_info && $log->info("Disabling keep-alive for file download");
+				delete $keepAlives{$httpClient};
+				Slim::Utils::Timers::killTimers( $httpClient, \&closeHTTPSocket );
 
 				$log->is_info && $log->info("Opening $obj to stream...");
 			
