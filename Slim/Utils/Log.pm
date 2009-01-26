@@ -130,6 +130,10 @@ sub init {
 
 		$config{'log4perl.rootLogger'} = join(', ', @levels);
 	}
+	
+	# Make sure recreate option is set if user has an existing log.conf
+	$config{'log4perl.appender.server.recreate'}              = 1;
+	$config{'log4perl.appender.server.recreate_check_signal'} = 'USR1';
 
 	# Set so we can access later.
 	%runningConfig = %config;
@@ -903,9 +907,11 @@ sub _defaultAppenders {
 		},
 
 		'server' => {
-			'appender' => 'Log::Log4perl::Appender::File',
-			'mode'     => 'sub { Slim::Utils::Log::serverLogMode() }',
-			'filename' => 'sub { Slim::Utils::Log::serverLogFile() }',
+			'appender'              => 'Log::Log4perl::Appender::File',
+			'mode'                  => 'sub { Slim::Utils::Log::serverLogMode() }',
+			'filename'              => 'sub { Slim::Utils::Log::serverLogFile() }',
+			'recreate'              => 1,
+			'recreate_check_signal' => 'USR1',
 		},
 
 		'scanner' => {
