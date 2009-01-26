@@ -26,7 +26,7 @@ sub initPlugin {
 		feed   => Slim::Networking::SqueezeNetwork->url( '/api/deezer/v1/opml' ),
 		tag    => 'deezer',
 		menu   => 'music_services',
-		weight => 30,
+		weight => 35,
 	);
 	
 	# Note: Deezer does not wish to be included in context menus
