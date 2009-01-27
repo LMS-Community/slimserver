@@ -1488,6 +1488,9 @@ sub playerActive {
 		$self->{'players'} = [];       
 	}
 	
+	# bug 10828: don't unpause
+	_Stop($self) if (isPaused($self));
+	
 	push @{$self->{'players'}}, $player;
 	
 	# Choose new master
