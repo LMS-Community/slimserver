@@ -36,8 +36,10 @@ ID3 tags, etc.
 use strict;
 
 use Audio::WMA;
+use File::Temp;
 use HTTP::Request;
 use IO::String;
+use MP3::Info;
 use Scalar::Util qw(blessed);
 
 use Slim::Formats;
@@ -51,6 +53,20 @@ use Slim::Utils::Prefs;
 my $log = logger('scan.scanner');
 
 use constant MAX_DEPTH => 7;
+
+my %ogg_quality = (
+	0  => 64000,
+	1  => 80000,
+	2  => 96000,
+	3  => 112000,
+	4  => 128000,
+	5  => 160000,
+	6  => 192000,
+	7  => 224000,
+	8  => 256000,
+	9  => 320000,
+	10 => 500000,
+);
 
 =head2 scanURL( $url, $args );
 
@@ -195,25 +211,34 @@ sub scanURL {
 	
 	my $timeout = preferences('server')->get('remotestreamtimeout') || 10;
 	
-	my $http = Slim::Networking::Async::HTTP->new;
-	$http->send_request( {
-		request     => $request,
-		onRedirect  => \&handleRedirect,
-		onHeaders   => \&readRemoteHeaders,
-		onError     => sub {
-			my ( $http, $error ) = @_;
+	my $send = sub {
+		my $http = Slim::Networking::Async::HTTP->new;
+		$http->send_request( {
+			request     => $request,
+			onRedirect  => \&handleRedirect,
+			onHeaders   => \&readRemoteHeaders,
+			onError     => sub {
+				my ( $http, $error ) = @_;
 
-			logError("Can't connect to remote server to retrieve playlist: $error.");
+				logError("Can't connect to remote server to retrieve playlist: $error.");
 			
-			if ( main::SLIM_SERVICE ) {
-				$client->logStreamEvent( 'failed-scan', { error => $error } );
-			}
+				if ( main::SLIM_SERVICE ) {
+					$client->logStreamEvent( 'failed-scan', { error => $error } );
+				}
 
-			return $cb->( undef, $error, @{$pt} );
-		},
-		passthrough => [ $track, $args ],
-		Timeout     => $timeout,
-	} );
+				return $cb->( undef, $error, @{$pt} );
+			},
+			passthrough => [ $track, $args ],
+			Timeout     => $timeout,
+		} );
+	};
+	
+	if ( $args->{delay} ) {
+		Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + $args->{delay}, $send );
+	}
+	else {
+		$send->();
+	}
 }
 
 =head2 addWMAHeaders( $request )
@@ -395,14 +420,41 @@ sub readRemoteHeaders {
 				$track->update;
 			}
 			
+			my $bitrate;
+			my $vbr = 0;
+			
+			# Look for Icecast info header and determine bitrate from this
+			if ( my $audioinfo = $http->response->header('ice-audio-info') ) {
+				($bitrate) = $audioinfo =~ /ice-(?:bitrate|quality)=([^;]+)/i;
+				if ( $bitrate =~ /(\d+)/ ) {
+					if ( $bitrate <= 10 ) {
+						# Ogg quality, may be fractional
+						my $quality = sprintf "%d", $1;
+						$bitrate = $ogg_quality{$quality};
+						$vbr = 1;
+					
+						$log->is_debug && $log->debug("Found bitrate from Ogg quality header: $bitrate");
+					}
+					else {					
+						$log->is_debug && $log->debug("Found bitrate from ice-audio-info header: $bitrate");
+					}
+				}
+			}
+			
 			# Look for bitrate information in header indicating it's an Icy stream
-			if ( my $bitrate = ( $http->response->header('icy-br') || $http->response->header('x-audiocast-bitrate') ) * 1000 ) {
-				$log->is_debug && $log->debug("Found bitrate in header: $bitrate");
-				
-				$track = Slim::Music::Info::setBitrate( $track->url, $bitrate );
+			elsif ( $bitrate = ( $http->response->header('icy-br') || $http->response->header('x-audiocast-bitrate') ) * 1000 ) {
+				$log->is_debug && $log->debug("Found bitrate in Icy header: $bitrate");
+			}
+			
+			if ( $bitrate ) {
+				if ( $bitrate < 1000 ) {
+					$bitrate *= 1000;
+				}
+							
+				$track = Slim::Music::Info::setBitrate( $track->url, $bitrate, $vbr );
 				
 				if ( $track->url ne $url ) {
-					Slim::Music::Info::setBitrate( $url, $bitrate );
+					Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 				}
 			
 				# We don't need to read any more data from this stream
@@ -412,13 +464,18 @@ sub readRemoteHeaders {
 				$cb->( $track, undef, @{$pt} );
 			}
 			else {
+				# We still need to read more info about this stream, but we can begin playing it now
+				$cb->( $track, undef, @{$pt} );
+				
+				# Continue scanning in the background
+				
 				# We may be able to determine the bitrate or other tag information
 				# about this remote stream/file by reading a bit of audio data
-				$log->is_debug && $log->debug('Reading 128K of audio data to detect bitrate and/or tags');
-				
+				$log->is_debug && $log->debug('Reading audio data in the background to detect bitrate and/or tags');
+
+				# read as much as is necessary to read all ID3v2 tags and determine bitrate
 				$http->read_body( {
-					readLimit   => 128 * 1024,
-					onBody      => \&parseAudioData,
+					onStream    => \&streamAudioData,
 					passthrough => [ $track, $args, $url ],
 				} );
 			}
@@ -571,31 +628,71 @@ sub parseWMAHeader {
 	}
 	
 	# All done
-	
 	$cb->( $track, undef, @{$pt} );
 }
 
-sub parseAudioData {
-	my ( $http, $track, $args, $url ) = @_;
+sub streamAudioData {
+	my ( $http, $dataref, $track, $args, $url ) = @_;
 	
-	$http->disconnect;
+	my $first;
 	
-	# Parse this chunk of audio data for bitrate and tags
+	# Buffer data to a temp file, 128K of data by default
+	my $fh = $track->{_scanbuf};
+	if ( !$fh ) {
+		$fh = File::Temp->new();
+		$track->{_scanbuf} = $fh;
+		$track->{_scanlen} = 128 * 1024;
+		$first = 1;
+		$log->is_debug && $log->debug( $track->url . ' Buffering audio stream data to temp file ' . $fh->filename );
+	}
+	
+	my $len = length($$dataref);
+	$fh->write( $$dataref, $len );
+	
+	if ( $first ) {
+		if ( $$dataref =~ /^ID3/ ) {
+			# Look for ID3v2 data, determine how much data to read
+			my $v2h = eval { MP3::Info::_get_v2head($fh) };
+			if ( $@ ) {
+				$log->error( "Unable to read ID3v2 data from remote file: $@" );
+			}
+			else {
+				if ( $v2h->{tag_size} ) {
+					# Read the full ID3v2 tag + some audio frames for bitrate
+					$track->{_scanlen} = $v2h->{tag_size} + (16 * 1024);
+					
+					$log->is_debug && $log->debug( 'ID3v2 tag detected, will read ' . $track->{_scanlen} . ' bytes' );
+				}
+			}
+		}
+		
+		# XXX: other tag types may need more than 128K too
+
+		# Reset fh back to the end
+		$fh->seek( 0, 2 );
+	}
+	
+	$track->{_scanlen} -= $len;
+	
+	if ( $track->{_scanlen} > 0 ) {
+		# Read more data
+		#$log->is_debug && $log->debug( $track->url . ' Bytes left: ' . $track->{_scanlen} );
+		
+		return 1;
+	}
+	
+	# Parse tags and bitrate
 	my $bitrate = -1;
 	my $vbr;
 	
-	my $type = $track->content_type;
-	
-	my $io = IO::String->new( $http->response->content_ref );
-	
+	my $cl          = $http->response->content_length;
+	my $type        = $track->content_type;
 	my $formatClass = Slim::Formats->classForFormat($type);
 	
-	my $cl = $http->response->content_length;
-
 	if ( $formatClass && Slim::Formats->loadTagFormatForType($type) && $formatClass->can('scanBitrate') ) {
-		($bitrate, $vbr) = $formatClass->scanBitrate( $io, $track->url );
+		($bitrate, $vbr) = $formatClass->scanBitrate( $fh, $track->url );
 		
-		if ( $bitrate > 0 && !$track->bitrate ) {
+		if ( $bitrate > 0 ) {
 			$track = Slim::Music::Info::setBitrate( $track->url, $bitrate, $vbr );
 			if ($cl) {
 				$track = Slim::Music::Info::setDuration( $track->url, ( $cl * 8 ) / $bitrate );
@@ -628,12 +725,15 @@ sub parseAudioData {
 			$redir->update;
 		}
 	}
-
-	# All done	
-	my $cb = $args->{cb} || sub {};
-	my $pt = $args->{pt} || [];
 	
-	$cb->( $track, undef, @{$pt} );
+	# Delete temp file and other data
+	$fh->close;
+	unlink $fh->filename if -e $fh->filename;
+	delete $track->{_scanbuf};
+	delete $track->{_scanlen};
+	
+	# Disconnect
+	return 0;
 }
 
 sub parsePlaylist {
@@ -677,18 +777,22 @@ sub parsePlaylist {
 	}
 	
 	# Scan all URLs in the playlist concurrently
-	# It is better to take a bit longer to scan than to leave
-	# unknown URLs in the database
+	my $delay   = 0;
+	my $ready   = 0;
 	my $scanned = 0;
 	my $total   = scalar @results;
 	
 	for my $entry ( @results ) {
-		next unless blessed($entry);
+		if ( !blessed($entry) ) {
+			$total--;
+			next;
+		}
 		
 		__PACKAGE__->scanURL( $entry->url, {
 			client => $client,
-			song   => $args->{'song'},
+			song   => $args->{song},
 			depth  => $args->{depth} + 1,
+			delay  => $delay,
 			cb     => sub {
 				my ( $result, $error ) = @_;
 				
@@ -706,33 +810,47 @@ sub parsePlaylist {
 						$i++;
 					}
 					
+					# Get the $playlist object again, as it may have changed
+					$playlist = Slim::Schema->rs('Playlist')->objectForUrl( {
+						url => $playlist->url,
+					} );
+					
 					$playlist->setTracks( \@results );
 				}
 				
 				$scanned++;
 				
-				if ( $scanned == $total ) {
-					$log->is_debug && $log->debug( 'Playlist scan of ' . $playlist->url . ' finished' );
-					
-					# As long as the playlist contains at least one audio track, it's good
+				$log->is_debug && $log->debug("Scanned $scanned/$total items in playlist");
+				
+				if ( !$ready ) {
+					# As soon as we find an audio URL, start playing it and continue scanning the rest
+					# of the playlist in the background
 					if ( my $entry = $playlist->getNextEntry ) {
-						
+					
 						if ( $entry->bitrate ) {
 							# Copy bitrate to playlist
 							Slim::Music::Info::setBitrate( $playlist->url, $entry->bitrate, $entry->vbr_scale );
 						}
-						
+					
 						# Copy title if the playlist is untitled or a URL
 						# If entry doesn't have a title either, use the playlist URL
 						if ( !$playlist->title || $playlist->title =~ /^(?:http|mms)/i ) {
 							$playlist = Slim::Music::Info::setTitle( $playlist->url, $entry->title || $playlist->url );
 						}
-						
+					
 						$log->is_debug && $log->debug('Found at least one audio URL in playlist');
 						
+						$ready = 1;
+					
 						$cb->( $playlist, undef, @{$pt} );
 					}
-					else {
+				}
+				
+				if ( $scanned == $total ) {
+					$log->is_debug && $log->debug( 'Playlist scan of ' . $playlist->url . ' finished' );
+					
+					# If we scanned everything and are still not ready, fail
+					if ( !$ready ) {
 						$log->is_debug && $log->debug( 'No audio tracks found in playlist' );
 						
 						# Delete bad playlist
@@ -743,6 +861,9 @@ sub parsePlaylist {
 				}
 			},
 		} );
+		
+		# Stagger playlist scanning by a small amount so we prefer the first item
+		$delay += 0.2;
 	}
 }
 
