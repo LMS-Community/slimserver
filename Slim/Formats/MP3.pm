@@ -558,11 +558,11 @@ sub scanBitrate {
 		}
 	}
 
-	# Check if first frame has a Xing VBR header
+	# Check if first audio frame has a Xing VBR header
 	# This will allow full files streamed from places like LMA or UPnP servers
 	# to have accurate bitrate/length information
 	my $frame = MPEG::Audio::Frame->read( $fh );
-	if ( $frame && $frame->content =~ /Xing(.{12})/s ) {
+	if ( $frame && $frame->content =~ /(?:Xing|Info)(.{12})/s ) {
 		my $header = $1;		
 		my $xing = IO::String->new( $header );
 		my $vbr  = {};
