@@ -12,6 +12,7 @@ skip-grant-tables
 
 basedir               = [% basedir %]
 datadir               = [% datadir %]
+tmpdir                = [% tmpdir %]
 language              = [% language %]
 port                  = [% port %]
 socket                = [% socket %]
