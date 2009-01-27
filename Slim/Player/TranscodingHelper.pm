@@ -541,7 +541,7 @@ sub tokenizeConvertCommand2 {
 	$subs{'QUALITY'} = $quality;
 	
 	foreach (keys %subs) {
-		$command =~ s/\$$_\$/$subs{$_}/;
+		$command =~ s/\$$_\$/$subs{$_}/g;
 	}
 
 	# XXX What was this for?
