@@ -133,7 +133,6 @@ sub createConfig {
 		'basedir'  => $class->mysqlDir,
 		'language' => Slim::Utils::OSDetect::dirsFor('mysql-language') || $class->mysqlDir,
 		'datadir'  => catdir($cacheDir, 'MySQL'),
-		'tmpdir'   => $cacheDir,
 		'socket'   => $class->socketFile,
 		'pidFile'  => $class->pidFile,
 		'errorLog' => catdir($cacheDir, 'mysql-error-log.txt'),
