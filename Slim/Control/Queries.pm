@@ -1110,7 +1110,7 @@ sub displaystatusQuery_filter {
 
 	# retrieve the clientid, abort if not about us
 	my $clientid = $request->clientid();
-	return 0 if !defined $clientid;
+	return 0 if !defined $clientid || !defined $self->clientid();
 	return 0 if $clientid ne $self->clientid();
 
 	my $subs  = $self->getParam('subscribe');
@@ -3269,7 +3269,7 @@ sub statusQuery_filter {
 	
 	# retrieve the clientid, abort if not about us
 	my $clientid = $request->clientid();
-	return 0 if !defined $clientid;
+	return 0 if !defined $clientid || !defined $self->clientid();
 	return 0 if $clientid ne $self->clientid();
 	
 	# commands we ignore
