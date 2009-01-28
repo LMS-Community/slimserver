@@ -405,8 +405,11 @@ sub jump {
 
 sub newTitle {
 	my $url = shift;
+	
+	my @clients = Slim::Player::Client::clients();
 
-	for my $client (Slim::Player::Client::clients()) {
+	for my $client ( @clients ) {
+		next unless $client && $client->controller();
 		if ( (Slim::Player::Playlist::url($client) || '') eq $url ) {
 			jump($client);
 			$client->currentPlaylistChangeTime( Time::HiRes::time() );
