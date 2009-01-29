@@ -568,9 +568,11 @@ sub canSeek {
 		&& ($headers = $scanData->{headers}) )
 	{
 		if ( $headers->content_type eq 'application/vnd.ms.wms-hdr.asfv1' ) {
-			# Stream is from a Windows Media server and we can seek if seekable flag is true
-			if ( $scanData->{metadata}->info('flags')->{seekable} ) {
-				return 1;
+			if ( $scanData->{metadata} && $scanData->{metadata}->info('flags') ) {
+				# Stream is from a Windows Media server and we can seek if seekable flag is true
+				if ( $scanData->{metadata}->info('flags')->{seekable} ) {
+					return 1;
+				}
 			}
 		}
 	}
