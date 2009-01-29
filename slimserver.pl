@@ -178,6 +178,7 @@ use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
 use Slim::Utils::MySQLHelper;
+use Slim::Utils::Update;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
@@ -450,7 +451,7 @@ sub init {
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 30,
-		\&checkVersion,
+		\&Slim::Utils::Update::checkVersion,
 	);
 
 	$log->info("SqueezeCenter HTTP enable...");
@@ -906,71 +907,6 @@ sub checkDataSource {
 
 		Slim::Control::Request::executeRequest(undef, ['wipecache']);
 	}
-}
-
-sub checkVersion {
-
-	if (!$prefs->get('checkVersion')) {
-
-		$newVersion = undef;
-		return;
-	}
-
-	my $lastTime = $prefs->get('checkVersionLastTime');
-	my $log      = logger('server.timers');
-
-	if ($lastTime) {
-
-		my $delta = Time::HiRes::time() - $lastTime;
-
-		if (($delta > 0) && ($delta < $prefs->get('checkVersionInterval'))) {
-
-			if ( $log->is_info ) {
-				$log->info(sprintf("Checking version in %s seconds",
-					($lastTime + $prefs->get('checkVersionInterval') + 2 - Time::HiRes::time())
-				));
-			}
-
-			Slim::Utils::Timers::setTimer(0, $lastTime + $prefs->get('checkVersionInterval') + 2, \&checkVersion);
-
-			return;
-		}
-	}
-
-	$log->info("Checking version now.");
-
-	my $url  = "http://"
-		. Slim::Networking::SqueezeNetwork->get_server("update")
-		. "/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
-	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
-
-	# will call checkVersionCB when complete
-	$http->get($url);
-
-	$prefs->set('checkVersionLastTime', Time::HiRes::time());
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $prefs->get('checkVersionInterval'), \&checkVersion);
-}
-
-# called when check version request is complete
-sub checkVersionCB {
-	my $http = shift;
-
-	# store result in global variable, to be displayed by browser
-	if ($http->{code} =~ /^2\d\d/) {
-		$::newVersion = Slim::Utils::Unicode::utf8decode( $http->content() );
-		chomp($::newVersion);
-	}
-	else {
-		$::newVersion = 0;
-		logWarning(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}));
-	}
-}
-
-# called only if check version request fails
-sub checkVersionError {
-	my $http = shift;
-
-	logError(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error);
 }
 
 sub forceStopServer {

@@ -322,4 +322,16 @@ sub getPriority {
 
 	return $priority;
 }
+
+
+=head2 initUpdate( )
+
+Initialize download of a potential updated SqueezeCenter version. 
+Not needed on Linux distributions which do manage the update through their repositories.
+
+=cut
+
+sub initUpdate {}
+sub canAutoUpdate { 0 };
+
 1;

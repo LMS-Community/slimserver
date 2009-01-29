@@ -306,4 +306,15 @@ sub isMacAlias {
 }
 
 
+sub initUpdate {
+	require Slim::Utils::Update;
+	
+	Slim::Utils::Update::getUpdate({
+		os   => 'osx',
+	});
+}
+
+sub canAutoUpdate { 1 };
+
+
 1;

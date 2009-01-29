@@ -572,5 +572,15 @@ sub _priorityFromPriorityClass {
 }
 
 
+sub initUpdate {
+	require Slim::Utils::Update;
+	
+	Slim::Utils::Update::getUpdate({
+		os   => 'win',
+		path => undef,
+	});
+}
+
+sub canAutoUpdate { 1 };
 
 1;

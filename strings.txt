@@ -6489,7 +6489,7 @@ SETUP_CHECKVERSION_DESC
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SV	SqueezeCenter kan automatiskt kopplas upp mot www.slimdevices.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
 	ZH_CN	服务器能够每天自动地连接到www.slimdevices.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在SqueezeCenter的网界面。
-
+	
 SETUP_CHECKVERSION_1
 	CS	Automaticky zjišťovat dostupné aktualizace
 	DA	Søg automatisk efter softwareopdateringer
@@ -6523,6 +6523,18 @@ SETUP_CHECKVERSION_0
 	PT	Não Verificar
 	SV	Sök inte automatiskt efter programuppdateringar
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
+
+SETUP_AUTO_DOWNLOAD
+	EN	Automatic Download
+	
+SETUP_AUTO_DOWNLOAD_DESC
+	EN	Automatically download SqueezeCenter updates when they're available. You'll then be prompted to install the update as soon as the download has finished.
+
+SETUP_AUTO_DOWNLOAD_0
+	EN	Do not automatically download updates
+
+SETUP_AUTO_DOWNLOAD_1
+	EN	Automatically download updates when they're available.
 
 SETUP_SCREENSAVER
 	CS	Spořič (hraje se)

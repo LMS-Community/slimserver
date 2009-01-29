@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
+use Slim::Utils::OSDetect;
 
 sub name {
 	return Slim::Web::HTTP::protectName('SETUP_CHECKVERSION');
@@ -21,9 +22,20 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'),
-			qw(checkVersion)
-		   );
+	my @prefs = qw(checkVersion);
+	
+	if (Slim::Utils::OSDetect->getOS()->canAutoUpdate()) {
+		push @prefs, 'autoDownloadUpdate';
+	}
+	return (preferences('server'), qw(checkVersion));
+}
+
+sub handler {
+	my ($class, $client, $paramRef) = @_;
+	
+	$paramRef->{canAutoUpdate} = Slim::Utils::OSDetect->getOS()->canAutoUpdate();
+
+	return $class->SUPER::handler($client, $paramRef);
 }
 
 1;
