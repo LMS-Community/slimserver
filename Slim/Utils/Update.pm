@@ -15,7 +15,6 @@ use Slim::Utils::Unicode;
 my $prefs = preferences('server');
 
 sub checkVersion {
-
 	if (!$prefs->get('checkVersion')) {
 
 		$::newVersion = undef;
@@ -64,6 +63,7 @@ sub checkVersionCB {
 
 	# store result in global variable, to be displayed by browser
 	if ($http->{code} =~ /^2\d\d/) {
+
 		$::newVersion = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($::newVersion);
 
@@ -71,7 +71,7 @@ sub checkVersionCB {
 		$prefs->set('updateInstaller');
 
 		# trigger download of the installer if available
-		if ($::newVersion && $prefs->{autoDownloadUpdate}) {
+		if ($::newVersion && $prefs->get('autoDownloadUpdate')) {
 			Slim::Utils::OSDetect->getOS()->initUpdate();
 		}
 	}
@@ -116,14 +116,14 @@ sub gotUrlCB {
 	my $url = $http->content();
 
 	if ( $http->{code} =~ /^2\d\d/ && Slim::Music::Info::isURL($url) ) {
-		
+
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
 		$file = catdir($path, $file);
 
 		# don't re-download if file exists already
 		if ( -e $file ) {
-			$prefs->set('updateInstaller', $file);
+			$prefs->set( 'updateInstaller', $file);
 			return;
 		}
 
