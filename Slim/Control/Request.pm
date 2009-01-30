@@ -112,8 +112,8 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
 =head2 PLAYLISTS
 
- Y    pause           <0|1|>
- Y    play
+ Y    pause           <0|1|>                      <fadeInSecs> (only for resume)
+ Y    play            <fadeInSecs>
  Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
  Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
  Y    playlist        addtracks                   <searchterms>    
@@ -122,15 +122,15 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
  Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
  Y    playlist        deletetracks                <searchterms>   
- Y    playlist        index|jump                  <index|?>
+ Y    playlist        index|jump                  <index|?>                   <fadeInSecs>     <0|1> (noplay)
  Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
  Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
  Y    playlist        inserttracks                <searchterms>    
  Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
  Y    playlist        loadtracks                  <searchterms>    
  Y    playlist        move                        <fromindex>                 <toindex>
- Y    playlist        play|load|resume            <item> (item can be a song, playlist or directory)
- Y    playlist        playtracks                  <searchterms>    
+ Y    playlist        play|load|resume            <item> (item can be a song, playlist or directory) <title> (override) <fadeInSecs>
+ Y    playlist        playtracks                  <searchterms>
  Y    playlist        repeat                      <0|1|2|?|>
  Y    playlist        shuffle                     <0|1|2|?|>
  Y    playlist        save                        <name>
@@ -521,8 +521,8 @@ sub init {
 	addDispatch(['name',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::nameCommand]);
 	addDispatch(['name',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::nameQuery]);
 	addDispatch(['path',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['pause',          '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['play'],                                                                              [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+	addDispatch(['pause',          '_newvalue',      '_fadein'],                                       [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+	addDispatch(['play',           '_fadein'],                                                         [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
 	addDispatch(['player',         'address',        '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'count',          '?'],                                             [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
 	addDispatch(['player',         'displaytype',    '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
@@ -551,13 +551,13 @@ sub init {
 	addDispatch(['playlist',       'duration',       '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'genre',          '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'index',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
-	addDispatch(['playlist',       'index',          '_index',     '_noplay',     '_seekdata'],        [1, 0, 0, \&Slim::Control::Commands::playlistJumpCommand]);
+	addDispatch(['playlist',       'index',          '_index',     '_fadein', '_noplay', '_seekdata'], [1, 0, 0, \&Slim::Control::Commands::playlistJumpCommand]);
 	addDispatch(['playlist',       'insert',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'insertlist',     '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'insertalbum',    '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'inserttracks',   '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlist',       'jump',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
-	addDispatch(['playlist',       'jump',           '_index',     '_noplay',     '_seekdata'],        [1, 0, 0, \&Slim::Control::Commands::playlistJumpCommand]);
+	addDispatch(['playlist',       'jump',           '_index',     '_fadein', '_noplay', '_seekdata'], [1, 0, 0, \&Slim::Control::Commands::playlistJumpCommand]);
 	addDispatch(['playlist',       'load',           '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'loadalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'loadtracks',     '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
@@ -565,10 +565,10 @@ sub init {
 	addDispatch(['playlist',       'move',           '_fromindex', '_toindex'],                        [1, 0, 0, \&Slim::Control::Commands::playlistMoveCommand]);
 	addDispatch(['playlist',       'name',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'path',           '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
-	addDispatch(['playlist',       'play',           '_item',      '_title'],                          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
+	addDispatch(['playlist',       'play',           '_item',      '_title',      '_fadein'],          [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
 	addDispatch(['playlist',       'playalbum',      '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
 	addDispatch(['playlist',       'playlistsinfo'],                                                   [1, 1, 1, \&Slim::Control::Queries::playlistPlaylistsinfoQuery]);
-	addDispatch(['playlist',       'playtracks',     '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+	addDispatch(['playlist',       'playtracks',     '_what',      '_listref',    '_fadein'],          [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
 	addDispatch(['playlist',       'remote',         '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'repeat',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
 	addDispatch(['playlist',       'repeat',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playlistRepeatCommand]);

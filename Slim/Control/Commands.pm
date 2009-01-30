@@ -658,6 +658,7 @@ sub playcontrolCommand {
 	my $cmd    = $request->getRequest(0);
 	my $param  = $request->getRequest(1);
 	my $newvalue = $request->getParam('_newvalue');
+	my $fadeIn = $request->getParam('_fadein');
 	
 	# which state are we in?
 	my $curmode = Slim::Player::Source::playmode($client);
@@ -706,11 +707,11 @@ sub playcontrolCommand {
 			# Bug 6813, 'play' from CLI needs to work the same as IR play button, by going
 			# through playlist jump - this will include a showBriefly to give feedback
 			my $index = Slim::Player::Source::playingSongIndex($client);
-			$client->execute([ 'playlist', 'jump', $index ]);
+			$client->execute([ 'playlist', 'jump', $index, $fadeIn ]);
 		}
 		else {
 			# set new playmode
-			Slim::Player::Source::playmode($client, $wantmode);
+			Slim::Player::Source::playmode($client, $wantmode, undef, undef, $fadeIn);
 			
 			# give user feedback of new mode and current song
 			if ($client->isPlayer()) {
@@ -901,6 +902,7 @@ sub playlistJumpCommand {
 	# get the parameters
 	my $client = $request->client();
 	my $index  = $request->getParam('_index');
+	my $fadeIn = $request->getParam('_fadein');
 	my $noplay = $request->getParam('_noplay');
 	my $seekdata = $request->getParam('_seekdata');
 	
@@ -974,7 +976,7 @@ sub playlistJumpCommand {
 		Slim::Player::Source::streamingSongIndex($client, $newIndex, 1);
 	} else {
 		$log->info("playing $index");
-		$client->controller()->play($newIndex, $seekdata);
+		$client->controller()->play($newIndex, $seekdata, $fadeIn);
 	}	
 
 	# Does the above change the playlist?
@@ -1226,6 +1228,7 @@ sub playlistXitemCommand {
 	my $cmd      = $request->getRequest(1); #p1
 	my $item     = $request->getParam('_item'); #p2
 	my $title    = $request->getParam('_title') || ''; #p3
+	my $fadeIn   = $cmd eq 'play' ? $request->getParam('_fadein') : undef;
 
 	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 	if ( ($playlistMode eq 'on' || $playlistMode eq 'party') && $cmd eq 'load') {
@@ -1237,7 +1240,7 @@ sub playlistXitemCommand {
 		return;
 	}
 
-	$log->info("cmd: $cmd, item: $item, title: $title");
+	$log->info("cmd: $cmd, item: $item, title: $title, fadeIn: ", ($fadeIn ? $fadeIn : 'undef'));
 
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
@@ -1293,7 +1296,7 @@ sub playlistXitemCommand {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
 
-			$client->execute([ 'playlist', $cmd . 'tracks' , 'listRef', \@tracks ]);
+			$client->execute([ 'playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn ]);
 			$request->setStatusDone();
 			return;
 		}
@@ -1466,6 +1469,7 @@ sub playlistXitemCommand {
 					$path,
 					$error,
 					$noShuffle,
+					$fadeIn,
 				);
 
 				playlistXitemCommand_done( $client, $request, $path );
@@ -1516,6 +1520,7 @@ sub playlistXtracksCommand {
 	my $cmd      = $request->getRequest(1); #p1
 	my $what     = $request->getParam('_what'); #p2
 	my $listref  = $request->getParam('_listref');#p3
+	my $fadeIn   = $request->getParam('_fadein');#p4
 
 	my $playlistMode = Slim::Player::Playlist::playlistMode($client);
 
@@ -1601,7 +1606,7 @@ sub playlistXtracksCommand {
 			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
 		}
 		
-		$client->execute( [ 'playlist', 'jump', $jumpToIndex ] );
+		$client->execute( [ 'playlist', 'jump', $jumpToIndex, $fadeIn ] );
 		
 		$client->currentPlaylistModified(0);
 	}
@@ -2747,7 +2752,7 @@ sub _mixer_mute {
 }
 
 sub _playlistXitem_load_done {
-	my ($client, $index, $request, $count, $url, $error, $noShuffle) = @_;
+	my ($client, $index, $request, $count, $url, $error, $noShuffle, $fadeIn) = @_;
 	
 	# dont' keep current song on loading a playlist
 	if ( !$noShuffle ) {
@@ -2757,7 +2762,7 @@ sub _playlistXitem_load_done {
 	}
 
 	if (defined($index)) {
-		$client->execute( [ 'playlist', 'jump', $index ] );
+		$client->execute( [ 'playlist', 'jump', $index, $fadeIn ] );
 	}
 
 	# XXX: this should not be calling a request callback directly!

@@ -140,7 +140,7 @@ sub _returnPlayMode {
 
 # playmode - start playing, pause or stop
 sub playmode {
-	my ($client, $newmode, $seekdata, $reconnect) = @_;
+	my ($client, $newmode, $seekdata, $reconnect, $fadeIn) = @_;
 	my $controller = $client->controller();
 
 	assert($controller);
@@ -152,12 +152,12 @@ sub playmode {
 		$controller->stop();
 	} elsif ($newmode eq 'play') {
 		if (!$client->power()) {$client->power(1);}
-		$controller->play(undef, $seekdata, $reconnect);
+		$controller->play(undef, $seekdata, $reconnect, $fadeIn);
 	} elsif ($newmode eq 'pause') {
 		$controller->pause();
 	} elsif ($newmode eq 'resume') {
 		if (!$client->power()) {$client->power(1);}
-		$controller->resume();
+		$controller->resume($fadeIn);
 	} else {
 		$log->error($client->id . " unknown playmode: $newmode");
 		bt();

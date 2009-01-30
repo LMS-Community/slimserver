@@ -905,8 +905,8 @@ sub _Stream {				# play -> Buffering, Streaming
 	my $seekdata;
 	my $reconnect;
 	if ($params) {
-		$seekdata = $params->{'seekdata'};
-		$song = $params->{'song'};
+		$seekdata  = $params->{'seekdata'};
+		$song      = $params->{'song'};
 		$reconnect = $params->{'reconnect'};
 	}
 	
@@ -965,6 +965,9 @@ sub _Stream {				# play -> Buffering, Streaming
 
 	my $paused = (scalar @{$self->{'players'}} > 1) && 
 		($self->{'playingState'} == STOPPED || $self->{'playingState'} == BUFFERING);
+
+	my $fadeIn = $self->{'fadeIn'} || 0;
+	$paused ||= ($fadeIn > 0);
 	
 	my $setVolume = $self->{'playingState'} == STOPPED;
 	
@@ -978,6 +981,11 @@ sub _Stream {				# play -> Buffering, Streaming
 		if ($setVolume) {
 			my $vol = abs($prefs->client($player)->get("volume") || 0);
 			$player->volume($vol);
+		}
+		
+		my $myFadeIn = $fadeIn;
+		if ($fadeIn > $player->maxTransitionInterval()) {
+			$myFadeIn = 0;
 		}
 		
 		$log->info($player->id . ": stream");
@@ -994,6 +1002,7 @@ sub _Stream {				# play -> Buffering, Streaming
 			'reconnect'   => $reconnect,
 			'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($self->master(), $song),
 			'seekdata'    => $seekdata,
+			'fadeIn'      => $myFadeIn,
 			# we never set the 'loop' parameter
 		} );
 		
@@ -1071,6 +1080,15 @@ sub _Start {		# start -> Playing
 	my ($self, $event, $params) = @_;
 	
 	if (!$self->{'rebuffering'}) {
+		
+		if ($self->{'fadeIn'}) {
+			for (@{ $self->{'players'} }) {
+				if ($self->{'fadeIn'} > $_->maxTransitionDuration()) {
+					$_->fade_volume($self->{'fadeIn'});
+				}
+			}
+		}
+		$self->{'fadeIn'} = undef;
 
 		if ( scalar @{ $self->{'players'} } > 1 ) {
 			_syncStart($self);
@@ -1204,8 +1222,9 @@ sub _Resume {				# resume -> Playing
 		# set volume to 0 to make sure fade works properly
 		$player->volume(0,1);
 		$player->resume();
-		$player->fade_volume(FADEVOLUME);
+		$player->fade_volume($self->{'fadeIn'} ? $self->{'fadeIn'} : FADEVOLUME);
 	}
+	$self->{'fadeIn'} = undef;
 }
 
 
@@ -1576,6 +1595,7 @@ sub stop       {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Stop');}
 sub play       {
 	$log->info($_[0]->{'masterId'});
 	$_[0]->{'consecutiveErrors'} = 0;
+	$_[0]->{'fadeIn'} = $_[3] if ($_[3] && $_[3] > 0);
 	_eventAction($_[0], 'Play', {index => $_[1], seekdata => $_[2]});
 }
 
@@ -1607,7 +1627,12 @@ sub pause      {
 }
 
 
-sub resume     {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Resume');}
+sub resume     {
+	$_[0]->{'fadeIn'} = $_[1] if ($_[1] && $_[1] > 0);
+	$log->info($_[0]->{'masterId'}, 'fadein=', ($_[1] ? $_[1] : 'undef'));
+	_eventAction($_[0], 'Resume');
+}
+
 sub flush      {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'Flush');}
 sub jumpToTime {$log->info($_[0]->{'masterId'}); _eventAction($_[0], 'JumpToTime', {newtime => $_[1], restartIfNoSeek => $_[2]});}
 

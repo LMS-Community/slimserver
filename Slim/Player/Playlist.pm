@@ -280,7 +280,7 @@ sub removeTrack {
 			$tracknum = $songcount - 1;
 		}
 		
-		$client->execute([ 'playlist', 'jump', $tracknum, $oldMode ne "play" ]);
+		$client->execute([ 'playlist', 'jump', $tracknum, undef, $oldMode ne "play" ]);
 	}
 
 	# browseplaylistindex could return a non-sensical number if we are not in playlist mode
