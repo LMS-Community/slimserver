@@ -560,7 +560,7 @@ sub sound {
 		# Play alarm playlist, falling back to the current playlist if undef
 		if (defined $self->playlist) {
 			$log->debug('Alarm playlist url: ' . $self->playlist);
-			$request = $client->execute(['playlist', 'play', $self->playlist]);
+			$request = $client->execute(['playlist', 'play', $self->playlist, undef, _fadeInSeconds($client)]);
 			$request->source('ALARM');
 
 		} else {
@@ -568,20 +568,13 @@ sub sound {
 			# Check that the current playlist isn't empty
 			my $playlistLen = Slim::Player::Playlist::count($client);
 			if ($playlistLen) {
-				$request = $client->execute(['play']);
+				$request = $client->execute(['play', _fadeInSeconds($client)]);
 				$request->source('ALARM');
 			} else {
 				$log->debug('Current playlist is empty');
 
 				$self->_playFallback();
 			}
-		}
-
-		# Fade volume change if requested (do this after playing as playing
-		# seems to sometimes cancel the fade)
-		if ( $prefs->client($client)->get('alarmfadeseconds') ) {
-			$log->debug('Fading volume');
-			$client->fade_volume( $FADE_SECONDS );
 		}
 
 		# Set a callback to check we managed to play something
@@ -746,14 +739,8 @@ sub stopSnooze {
 	
 	if ($unPause) {
 		$log->debug('unpausing music');
-		my $request = $client->execute(['pause', 0]);
+		my $request = $client->execute(['pause', 0, _fadeInSeconds($client)]);
 		$request->source('ALARM');
-
-		# Fade volume if requested 
-		if ( $prefs->client($client)->get('alarmfadeseconds') ) {
-			$log->debug('Fading volume');
-			$client->fade_volume( $FADE_SECONDS );
-		}
 
 		# Set a callback to check we're playing.  As internet radio
 		# streams have to restart at the end of a snooze they could
@@ -1072,13 +1059,18 @@ sub _playFallback {
 
 	$log->debug("Starting fallback alarm: $url");
 
-	my $request = $client->execute([ 'playlist', 'play', $url, $client->string('BACKUP_ALARM') ]);
+	my $request = $client->execute([ 'playlist', 'play', $url, $client->string('BACKUP_ALARM'), _fadeInSeconds($client) ]);
 	$request->source('ALARM');
+}
 
+sub _fadeInSeconds {
+	my $client = shift;
+	
 	if ( $prefs->client($client)->get('alarmfadeseconds') ) {
 		$log->debug('Fading volume');
-		$client->fade_volume( $FADE_SECONDS );
+		return $FADE_SECONDS;
 	}
+	return undef;
 }
 
 # Handle the alarm timeout timer firing

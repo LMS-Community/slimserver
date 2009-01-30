@@ -847,28 +847,41 @@ sub stream_s {
 
 	$log->debug("flags: $flags");
 
-	my $transitionType = $prefs->client($master)->get('transitionType') || 0;
+	my $transitionType;
+	my $transitionDuration;
 	
-	# If we need to determine dynamically
-	if (
-		$prefs->client($master)->get('transitionSmart') 
-		&&
-		( Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
-		  ||
-		  Slim::Player::ReplayGain->trackAlbumMatch( $master, 1 )
-		)
-	) {
-		$log->info('Using smart transition mode');
-		$transitionType = 0;
+	if ($params->{'fadeIn'}) {
+		$transitionType = 2;
+		$transitionDuration = $params->{'fadeIn'};
+	} else {
+		$transitionType = $prefs->client($master)->get('transitionType') || 0;
+		$transitionDuration = $prefs->client($master)->get('transitionDuration') || 0;
+		
+		# If we need to determine dynamically
+		if (
+			$prefs->client($master)->get('transitionSmart') 
+			&&
+			( Slim::Player::ReplayGain->trackAlbumMatch( $master, -1 ) 
+			  ||
+			  Slim::Player::ReplayGain->trackAlbumMatch( $master, 1 )
+			)
+		) {
+			$log->info('Using smart transition mode');
+			$transitionType = 0;
+		}
+		
+		# Bug 10567, allow plugins to override transition setting
+		if ( $songHandler && $songHandler->can('transitionType') ) {
+			my $override = $songHandler->transitionType( $master, $controller->song(), $transitionType );
+			if ( defined $override ) {
+				$log->is_info && $log->info("$songHandler changed transition type to $override");
+				$transitionType = $override;
+			}
+		}
 	}
 	
-	# Bug 10567, allow plugins to override transition setting
-	if ( $songHandler && $songHandler->can('transitionType') ) {
-		my $override = $songHandler->transitionType( $master, $controller->song(), $transitionType );
-		if ( defined $override ) {
-			$log->is_info && $log->info("$songHandler changed transition type to $override");
-			$transitionType = $override;
-		}
+	if ($transitionDuration > $client->maxTransitionDuration()) {
+		$transitionDuration = $client->maxTransitionDuration();
 	}
 	
 	my $frame = pack 'aaaaaaaCCCaCCCNnN', (
@@ -881,7 +894,7 @@ sub stream_s {
 		$pcmendian,
 		$bufferThreshold,
 		0,		# s/pdif auto
-		$prefs->client($master)->get('transitionDuration') || 0,
+		$transitionDuration,
 		$transitionType,
 		$flags,		# flags	     
 		$outputThreshold,

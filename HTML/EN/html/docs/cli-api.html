@@ -5483,11 +5483,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			play
+			&lt;fadeInSecs&gt;
 		</code>
 	</strong>
 </p>
 <p>
 	The &quot;play&quot; command allows to start playing the current playlist.
+	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period.
+	
 </p>
 <p>
 	Example:
@@ -5530,6 +5533,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&lt;playerid&gt;
 			pause
 			&lt;0|1|&gt;
+			&lt;fadeInSecs&gt;
 		</code>
 	</strong>
 </p>
@@ -5540,6 +5544,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	You may use &quot;pause 1&quot; to force the player to pause, 
 	&quot;pause 0&quot; to force the player to unpause and &quot;pause&quot; to
 	toggle the pause state.
+	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period when unpausing.
 </p>
 <blockquote> 
 	<p>
@@ -5700,6 +5705,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			play 
 			&lt;item&gt;
 			&lt;title&gt;
+			&lt;fadeInSecs&gt;
 		</code>
 	</strong>
 </p>
@@ -5708,6 +5714,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	or directory contents into the current playlist and plays starting at the 
 	first item. Any songs previously in the playlist are discarded.  An optional title
 	value may be passed to set a title.  This can be useful for remote URLs.
+	The &quot;fadeInSecs&quot; parameter may be passed to specify fade-in period.
 </p>
 <p>
 	Examples:
@@ -6076,11 +6083,13 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<br><p id="playlist index"><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index|?&gt;</code></strong></p>
+<br><p id="playlist index"><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index|?&gt; &lt;fadeInSecs&gt;</code></strong></p>
 <p>The &quot;playlist index&quot; command sets or queries the song that is currently 
   playing by index. When setting, a zero-based value may be used to indicate which 
   song to play. An explicitly positive or negative number may be used to jump 
-  to a song relative to the currently playing song. The value of the current song 
+  to a song relative to the currently playing song.
+  If an index parameter is set then &quot;fadeInSecs&quot; may be passed to specify fade-in period.
+  The value of the current song 
   index may be obtained by passing in &quot;?&quot; as a parameter.</p>
 <p>Examples:</p>
 <blockquote> 
