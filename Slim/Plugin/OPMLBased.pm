@@ -49,6 +49,13 @@ sub initPlugin {
 # top-level menu through the CustomizeHomeMenu applet
 sub initJive {
 	my ( $class, %args ) = @_;
+	
+	# Exclude disabled plugins
+	if ( my $disabled = $prefs->get('sn_disabled_plugins') ) {
+		for my $plugin ( @{$disabled} ) {
+			return if $class =~ /^Slim::Plugin::${plugin}::/;
+		}
+	}
 
 	my $icon = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
 	my $name = $class->getDisplayName();

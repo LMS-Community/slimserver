@@ -762,6 +762,10 @@ sub menuOptions {
 
 	$menuChoices{""} = "";
 	
+	# Exclude SN-disabled plugins
+	my $sn_disabled = $prefs->get('sn_disabled_plugins');
+	
+	MENU:
 	for my $menuOption (sort keys %home) {
 
 		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !$prefs->get('audiodir')) {
@@ -770,6 +774,12 @@ sub menuOptions {
 
 		if ($menuOption eq 'SAVED_PLAYLISTS' && !$prefs->get('playlistdir')) {
 			next;
+		}
+		
+		if ( $sn_disabled ) {
+			for my $plugin ( @{$sn_disabled} ) {
+				next MENU if $menuOption =~ /$plugin/i;
+			}
 		}
 
 		$menuChoices{$menuOption} = $menuOption;
