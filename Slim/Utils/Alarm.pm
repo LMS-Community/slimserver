@@ -1063,16 +1063,6 @@ sub _playFallback {
 	$request->source('ALARM');
 }
 
-sub _fadeInSeconds {
-	my $client = shift;
-	
-	if ( $prefs->client($client)->get('alarmfadeseconds') ) {
-		$log->debug('Fading volume');
-		return $FADE_SECONDS;
-	}
-	return undef;
-}
-
 # Handle the alarm timeout timer firing
 sub _timeout {
 	my $self = shift;
@@ -1795,6 +1785,17 @@ sub _timeStr {
 		return "$hour:$min:$sec $mday/" . ($mon + 1) . '/' . ($year + 1900);
 	}
 
+}
+
+# Return the number of seconds over which alarms should fade in for a given client,
+# or undef if client doesn't want a fade
+sub _fadeInSeconds {
+	my $client = shift;
+	
+	if ( $prefs->client($client)->get('alarmfadeseconds') ) {
+		return $FADE_SECONDS;
+	}
+	return undef;
 }
 
 # Callback handlers.  (These have to be package methods as can only take $request as their argument)
