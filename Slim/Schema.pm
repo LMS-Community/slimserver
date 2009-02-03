@@ -1998,7 +1998,14 @@ sub _preCheckAttributes {
 
 		while (my ($tag, $value) = each %{$attributes}) {
 
-			$log->debug(".. $tag : $value") if defined $value;
+			# Artwork dump is unreadable in logs, so replace with a text tag.  Mor thorough artwork
+			# debugging is available using artwork setting and this avoids pointless log bloat.
+			if ($tag eq 'ARTWORK') {
+				$log->debug(".. $tag : [Binary Image Data]") if defined $value;
+			} else {
+				$log->debug(".. $tag : $value") if defined $value;
+			}
+			
 		}
 
 		$log->debug("* Deferred Attributes *");
