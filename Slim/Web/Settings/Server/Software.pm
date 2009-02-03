@@ -27,7 +27,8 @@ sub prefs {
 	if (Slim::Utils::OSDetect->getOS()->canAutoUpdate()) {
 		push @prefs, 'autoDownloadUpdate';
 	}
-	return (preferences('server'), qw(checkVersion));
+	
+	return (preferences('server'), @prefs);
 }
 
 sub handler {
