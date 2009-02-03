@@ -5,8 +5,12 @@ use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use Scalar::Util qw(blessed);
+use Sys::Hostname qw(hostname);
 use Win32;
+use Win32::OLE;
 use Win32::OLE::NLS;
+use Win32::NetResource;
+use Win32::TieRegistry;
 use POSIX qw(LC_CTYPE LC_TIME);
 
 use base qw(Slim::Utils::OS);
@@ -14,7 +18,6 @@ use base qw(Slim::Utils::OS);
 my $driveList  = {};
 my $driveState = {};
 my $writablePath;
-my $isWHS; 		# Windows Home Server is different
 
 sub name {
 	return 'win';
@@ -25,13 +28,9 @@ sub initDetails {
 	
 	$class->{osDetails} = {
 		'os'     => 'Windows',
-
 		'osName' => (Win32::GetOSName())[0],
-
 		'osArch' => Win32::GetChipName(),
-
 		'uid'    => Win32::LoginName(),
-
 		'fsType' => (Win32::FsType())[0],
 	};
 
@@ -44,21 +43,8 @@ sub initDetails {
 	if ($class->{osDetails}->{'osName'} =~ /Vista/i && (Win32::GetOSVersion())[8] > 1) {
 		$class->{osDetails}->{'osName'} = 'Windows 2008 Server';
 	}
-	
-	$class->{osDetails}->{isVista} = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
-
-	return $class->{osDetails};
-}
-
-sub isWHS {
-	return $isWHS if defined $isWHS;
-	
-	$isWHS = 0;
-	
-	my ($string, $major, $minor, $build, $id) = Win32::GetOSVersion();
-	
-	# WHS is 2003 server based
-	if ($major == 5 && $minor == 2) {
+	# Windows 2003 && "Windows Home Server" registry key -> WHS
+	elsif ($class->{osDetails}->{'osName'} =~ /Server 2003/i) {
 		
 		my $swKey = $Win32::TieRegistry::Registry->Open(
 			'LMachine/Software/Microsoft/Windows Home Server/', 
@@ -68,8 +54,15 @@ sub isWHS {
 			}
 		);
 
-		$isWHS = (defined $swKey);
+		if (defined $swKey) {
+			$class->{osDetails}->{'osName'} = 'Windows Home Server';
+			$class->{osDetails}->{'isWHS'} = 1;
+		}
 	}
+	
+	$class->{osDetails}->{isVista} = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
+
+	return $class->{osDetails};
 }
 
 sub initSearchPath {
@@ -128,7 +121,39 @@ sub dirsFor {
 
 	} elsif ($dir =~ /^(?:music|playlists)$/) {
 
-		my $path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC);
+		my $path;
+
+		# Windows Home Server offers a Music share which is more likely to be used 
+		# than the administrator's My Music folder
+		if ($class->{osDetails}->{isWHS}) {
+			my $objWMI = Win32::OLE->GetObject('winmgmts://./root/cimv2');
+			
+			if ( $objWMI && (my $shares = $objWMI->InstancesOf('Win32_Share')) ) {
+				
+				my $path2;
+				foreach my $objShare (in $shares) {
+
+					if ($objShare->Name =~ /^music$/i) {
+						$path = '\\\\' . hostname() . '\\' . $objShare->Name;
+						last;
+					}
+					elsif ($objShare->Path =~ /shares.*?music/i) {
+						$path = $objShare->Path;
+						last;
+					}
+					elsif ($objShare->path =~ /music/i) {
+						$path2 = $objShare->Path;
+					}
+				}
+				
+				# we didn't find x:\shares\music, but some other share with music in the path
+				if ($path2 && !$path) {
+					$path = $path2;
+				}
+			}			
+		}
+
+		$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
 		
 		# fall back if no path or invalid path is returned
 		if (!$path || $path eq Win32::GetFolderPath(0)) {
@@ -202,8 +227,6 @@ sub dontSetUserAndGroup { 1 }
 sub getProxy {
 	my $class = shift;
 	my $proxy = '';
-
-	require Win32::TieRegistry;
 
 	# on Windows read Internet Explorer's proxy setting
 	my $ieSettings = $Win32::TieRegistry::Registry->Open(
@@ -307,7 +330,6 @@ sub writablePath {
 	my $path;
 
 	unless ($writablePath) {
-		require Win32::TieRegistry;
 
 		# the installer is writing the data folder to the registry - give this the first try
 		my $swKey = $Win32::TieRegistry::Registry->Open(
@@ -573,11 +595,25 @@ sub _priorityFromPriorityClass {
 
 
 sub initUpdate {
+	my $class = shift;
+	
 	require Slim::Utils::Update;
 	
+	my $downloaddir;
+	
+	if ($class->{osDetails}->{isWHS}) {
+
+		my $share;
+		Win32::NetResource::NetShareGetInfo('software', $share);
+		
+		if ($share && $share->{path}) {
+			$downloaddir = $share->{path};
+		}
+	}
+	
 	Slim::Utils::Update::getUpdate({
-		os   => 'win',
-		path => undef,
+		os   => $class->{osDetails}->{isWHS} ? 'whs' : 'win',
+		path => $downloaddir,
 	});
 }
 
