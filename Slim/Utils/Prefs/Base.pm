@@ -286,14 +286,12 @@ sub set {
 				}
 			}
 
-			if ( my $obj = $class->_obj ) {
-				for my $func ( @{$change} ) {
-					if ( $log->is_debug ) {
-						$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
-					}
-				
-					$func->($pref, $new, $obj);
+			for my $func ( @{$change} ) {
+				if ( $log->is_debug ) {
+					$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
 				}
+				
+				$func->($pref, $new, $class->obj);
 			}
 		}
 
