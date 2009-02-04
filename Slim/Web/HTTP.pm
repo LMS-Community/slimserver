@@ -238,7 +238,14 @@ sub openport {
 	Slim::Networking::mDNS->addService('_slimhttp._tcp', $openedport);
 	
 	if ($openedport != $listenerport) {
+
 		$log->error("Previously configured port $listenerport was busy - we're now using port $openedport instead");
+
+		# we might want to push this message in the user's face
+		if (Slim::Utils::OSDetect::isWindows()) {
+			$log->error("Please make sure your firewall does allow access to port $openedport!");
+		}
+
 		$prefs->set('httpport', $openedport) ;
 	}
 }
