@@ -286,7 +286,7 @@ sub set {
 				}
 			}
 
-			if ( my $obj = $class->_obj ) {
+			if ( (my $obj = $class->_obj) || !main::SLIM_SERVICE ) {
 				for my $func ( @{$change} ) {
 					if ( $log->is_debug ) {
 						$log->debug('executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func) );
