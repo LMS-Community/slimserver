@@ -586,7 +586,23 @@ sub _disco_handler {
 		}
 	}
 
-	if ($reason) {
+	if ($reason
+	
+		# bug 10475
+		# Sometimes the player sends a DSCO with a non-zero reason code
+		# when it would seem that a normal disconnect at the end of the track
+		# is what has really happened. Quite why has not yet been determined.
+		# It would seem, from reports that this problem happens with both ip3k
+		# players and SqueezePlay, so it is probably something triggered by SC.
+		# It does not seem to be confined to a single operating-system platform.
+		#
+		# We ignore this non-zero code if our Controller is already in STREAMOUT
+		# state (which will only be the case for local tracks)
+		
+		&& !$client->controller->isStreamout()
+		
+		)
+	{
 		# Report failure via protocol handler if available
 		my $controller = $client->controller()->songStreamController();
 		if ($controller && $controller->isDirect() ) {
@@ -603,6 +619,11 @@ sub _disco_handler {
 		
 		$client->failedDirectStream( $reasons{$reason} );
 	} else {
+		
+		if ($reason) {
+			$log->warn('Unexpected data stream disconnect type: ', $reasons{$reason});
+		}
+		
 		$client->statHandler('EoS');
 	}
 }

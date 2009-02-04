@@ -486,8 +486,6 @@ sub downloadAsyncDone {
 	my $pt   = $http->params('pt');
 	my $url  = $http->url;
 	
-	$CHECK_TIME = INITIAL_RETRY_TIME;
-	
 	# make sure we got the file
 	if ( !-e "$file.tmp" ) {
 		return downloadAsyncError( $http, 'File was not saved properly' );
@@ -536,6 +534,9 @@ sub downloadAsyncSHADone {
 		rename "$file.tmp", $file or return downloadAsyncError( $http, "Unable to rename temporary $file file" );
 		
 		$log->info("Successfully downloaded and verified $file.");
+	
+		# reset back off time
+		$CHECK_TIME = INITIAL_RETRY_TIME;
 		
 		if ( $cb && ref $cb eq 'CODE' ) {
 			$cb->( @{$pt} );
