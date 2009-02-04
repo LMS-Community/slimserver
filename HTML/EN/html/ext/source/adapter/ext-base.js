@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -957,7 +957,7 @@
                 httpStatus = 13030;
             }
 
-            if (httpStatus >= 200 && httpStatus < 300) {
+            if ((httpStatus >= 200 && httpStatus < 300) || (Ext.isIE && httpStatus == 1223)) {
                 responseObject = this.createResponseObject(o, callback.argument);
                 if (callback.success) {
                     if (!callback.scope) {

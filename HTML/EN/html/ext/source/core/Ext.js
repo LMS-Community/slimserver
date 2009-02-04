@@ -1,13 +1,13 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
  */
 
 
-Ext = {version: '2.2'};
+Ext = {version: '2.2.1'};
 
 // for old browsers
 window["undefined"] = window["undefined"];
@@ -45,12 +45,14 @@ Ext.apply = function(o, c, defaults){
 
     var isStrict = document.compatMode == "CSS1Compat",
         isOpera = ua.indexOf("opera") > -1,
-        isSafari = (/webkit|khtml/).test(ua),
+        isChrome = ua.indexOf("chrome") > -1,
+        isSafari = !isChrome && (/webkit|khtml/).test(ua),
         isSafari3 = isSafari && ua.indexOf('webkit/5') != -1,
         isIE = !isOpera && ua.indexOf("msie") > -1,
         isIE7 = !isOpera && ua.indexOf("msie 7") > -1,
-        isGecko = !isSafari && ua.indexOf("gecko") > -1,
-        isGecko3 = !isSafari && ua.indexOf("rv:1.9") > -1,
+        isIE8 = !isOpera && ua.indexOf("msie 8") > -1,
+        isGecko = !isSafari && !isChrome && ua.indexOf("gecko") > -1,
+        isGecko3 = isGecko && ua.indexOf("rv:1.9") > -1,
         isBorderBox = isIE && !isStrict,
         isWindows = (ua.indexOf("windows") != -1 || ua.indexOf("win32") != -1),
         isMac = (ua.indexOf("macintosh") != -1 || ua.indexOf("mac os x") != -1),
@@ -280,6 +282,9 @@ Ext.override(MyClass, {
                 for(var method in overrides){
                     p[method] = overrides[method];
                 }
+                if(Ext.isIE && overrides.toString != origclass.toString){
+                    p.toString = overrides.toString;
+                }
             }
         },
 
@@ -325,6 +330,9 @@ Company.data.CustomStore = function(config) { ... }
                     buf.push(k, "=&");
                 }else if(type != "function" && type != "object"){
                     buf.push(k, "=", encodeURIComponent(ov), "&");
+                }else if(Ext.isDate(ov)){
+                    var s = Ext.encode(ov).replace(/"/g, '');
+                    buf.push(k, "=", s, "&");
                 }else if(Ext.isArray(ov)){
                     if (ov.length) {
 	                    for(var i = 0, len = ov.length; i < len; i++) {
@@ -340,7 +348,8 @@ Company.data.CustomStore = function(config) { ... }
         },
 
         /**
-         * Takes an encoded URL and and converts it to an object. e.g. Ext.urlDecode("foo=1&bar=2"); would return {foo: 1, bar: 2} or Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", true); would return {foo: 1, bar: [2, 3, 4]}.
+         * Takes an encoded URL and and converts it to an object. e.g. Ext.urlDecode("foo=1&bar=2"); would return {foo: "1", bar: "2"}
+         * or Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", false); would return {foo: "1", bar: ["2", "3", "4"]}.
          * @param {String} string
          * @param {Boolean} overwrite (optional) Items of the same name will overwrite previous values instead of creating an an array (Defaults to false).
          * @return {Object} A literal with members
@@ -469,7 +478,7 @@ Company.data.CustomStore = function(config) { ... }
          * @return {Number} Value, if numeric, else defaultValue
          */
         num : function(v, defaultValue){
-            if(typeof v != 'number'){
+            if(typeof v != 'number' || isNaN(v)){
                 return defaultValue;
             }
             return v;
@@ -526,6 +535,7 @@ Company.data.CustomStore = function(config) { ... }
          * <li><b>string</b>: If the object passed is a string</li>
          * <li><b>number</b>: If the object passed is a number</li>
          * <li><b>boolean</b>: If the object passed is a boolean value</li>
+         * <li><b>date</b>: If the object passed is a Date object</li>
          * <li><b>function</b>: If the object passed is a function reference</li>
          * <li><b>object</b>: If the object passed is an object</li>
          * <li><b>array</b>: If the object passed is an array</li>
@@ -555,6 +565,7 @@ Company.data.CustomStore = function(config) { ... }
                 switch(o.constructor) {
                     case Array: return 'array';
                     case RegExp: return 'regexp';
+                    case Date: return 'date';
                 }
                 if(typeof o.length == 'number' && typeof o.item == 'function') {
                     return 'nodelist';
@@ -564,15 +575,23 @@ Company.data.CustomStore = function(config) { ... }
         },
 
         /**
-         * Returns true if the passed value is null, undefined or an empty string (optional).
+         * Returns true if the passed value is null, undefined or an empty string.
          * @param {Mixed} value The value to test
-         * @param {Boolean} allowBlank (optional) Pass true if an empty string is not considered empty
+         * @param {Boolean} allowBlank (optional) true to allow empty strings (defaults to false)
          * @return {Boolean}
          */
         isEmpty : function(v, allowBlank){
             return v === null || v === undefined || (!allowBlank ? v === '' : false);
         },
 
+        /**
+         * Utility method for validating that a value is non-empty (i.e. i) not null, ii) not undefined, and iii) not an empty string), 
+         * returning the specified default value if it is.
+         * @param {Mixed} value The value to test
+         * @param {Mixed} defaultValue The value to return if the original value is empty
+         * @param {Boolean} allowBlank (optional) true to allow empty strings (defaults to false)
+         * @return {Mixed} value, if non-empty, else defaultValue
+         */
         value : function(v, defaultValue, allowBlank){
             return Ext.isEmpty(v, allowBlank) ? defaultValue : v;
         },
@@ -601,6 +620,11 @@ Company.data.CustomStore = function(config) { ... }
          */
         isOpera : isOpera,
         /**
+         * True if the detected browser is Chrome.
+         * @type Boolean
+         */
+        isChrome : isChrome,
+        /**
          * True if the detected browser is Safari.
          * @type Boolean
          */
@@ -624,12 +648,17 @@ Company.data.CustomStore = function(config) { ... }
          * True if the detected browser is Internet Explorer 6.x.
          * @type Boolean
          */
-        isIE6 : isIE && !isIE7,
+        isIE6 : isIE && !isIE7 && !isIE8,
         /**
          * True if the detected browser is Internet Explorer 7.x.
          * @type Boolean
          */
         isIE7 : isIE7,
+        /**
+         * True if the detected browser is Internet Explorer 8.x.
+         * @type Boolean
+         */
+        isIE8 : isIE8,
         /**
          * True if the detected browser uses the Gecko layout engine (e.g. Mozilla, Firefox).
          * @type Boolean

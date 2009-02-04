@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -17,24 +17,40 @@
  * data formatting, and the ability to apply a CSS class to all cells in a column through its
  * {@link #id} config option.<br>
  * <br>Usage:<br>
- <pre><code>
+<pre><code>
  var colModel = new Ext.grid.ColumnModel([
-	{header: "Ticker", width: 60, sortable: true},
-	{header: "Company Name", width: 150, sortable: true},
-	{header: "Market Cap.", width: 100, sortable: true},
-	{header: "$ Sales", width: 100, sortable: true, renderer: money},
-	{header: "Employees", width: 100, sortable: true, resizable: false}
+    { header: "Ticker", width: 60, sortable: true},
+    { header: "Company Name", width: 150, sortable: true},
+    { header: "Market Cap.", width: 100, sortable: true},
+    { header: "$ Sales", width: 100, sortable: true, renderer: money},
+    { header: "Employees", width: 100, sortable: true, resizable: false}
  ]);
  </code></pre>
  * <p>
- * The config options <b>defined by</b< this class are options which may appear in each
- * individual column definition.
+ * The config options <b>defined by</b> this class are options which may appear in each
+ * individual column definition. In order to use configuration options from the superclass,
+ * specify the column configuration Array in the <tt><b>columns<b><tt> config property. eg:<pre><code>
+ var colModel = new Ext.grid.ColumnModel({
+    listeners: {
+        widthchange: function(cm, colIndex, width) {
+            saveConfig(colIndex, width);
+        }
+    },
+    columns: [
+        { header: "Ticker", width: 60, sortable: true},
+        { header: "Company Name", width: 150, sortable: true},
+        { header: "Market Cap.", width: 100, sortable: true},
+        { header: "$ Sales", width: 100, sortable: true, renderer: money},
+        { header: "Employees", width: 100, sortable: true, resizable: false}
+     ]
+});
+ </code></pre>
  * @constructor
  * @param {Object} config An Array of column config objects. See this class's
  * config objects for details.
 */
 Ext.grid.ColumnModel = function(config){
-	/**
+    /**
      * The width of columns which have no width specified (defaults to 100)
      * @type Number
      */
@@ -58,30 +74,30 @@ Ext.grid.ColumnModel = function(config){
     }
     this.addEvents(
         /**
-	     * @event widthchange
-	     * Fires when the width of a column changes.
-	     * @param {ColumnModel} this
-	     * @param {Number} columnIndex The column index
-	     * @param {Number} newWidth The new width
-	     */
-	    "widthchange",
+         * @event widthchange
+         * Fires when the width of a column changes.
+         * @param {ColumnModel} this
+         * @param {Number} columnIndex The column index
+         * @param {Number} newWidth The new width
+         */
+        "widthchange",
         /**
-	     * @event headerchange
-	     * Fires when the text of a header changes.
-	     * @param {ColumnModel} this
-	     * @param {Number} columnIndex The column index
-	     * @param {String} newText The new header text
-	     */
-	    "headerchange",
+         * @event headerchange
+         * Fires when the text of a header changes.
+         * @param {ColumnModel} this
+         * @param {Number} columnIndex The column index
+         * @param {String} newText The new header text
+         */
+        "headerchange",
         /**
-	     * @event hiddenchange
-	     * Fires when a column is hidden or "unhidden".
-	     * @param {ColumnModel} this
-	     * @param {Number} columnIndex The column index
-	     * @param {Boolean} hidden true if hidden, false otherwise
-	     */
-	    "hiddenchange",
-	    /**
+         * @event hiddenchange
+         * Fires when a column is hidden or "unhidden".
+         * @param {ColumnModel} this
+         * @param {Number} columnIndex The column index
+         * @param {Boolean} hidden true if hidden, false otherwise
+         */
+        "hiddenchange",
+        /**
          * @event columnmoved
          * Fires when a column is moved.
          * @param {ColumnModel} this
@@ -121,7 +137,8 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
      * specified, the column's index is used as an index into the Record's data Array.
      */
     /**
-     * @cfg {Number} width (optional) The initial width in pixels of the column.
+     * @cfg {Number} width (optional) The initial width in pixels of the column. This is ignored if the
+     * Grid's {@link Ext.grid.GridView view} is configured with {@link Ext.grid.GridView#forceFit forceFit} true.
      */
     /**
      * @cfg {Boolean} sortable (optional) True if sorting is to be allowed on this column.
@@ -176,8 +193,11 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
     },
 
     /**
-     * Reconfigures this column model
-     * @param {Array} config Array of Column configs
+     * <p>Reconfigures this column model according to the passed Array of column definition objects. For a description of
+     * the individual properties of a column definition object, see the <a href="#Ext.grid.ColumnModel-configs">Config Options</a>.</p>
+     * <p>Causes the {@link #configchange} event to be fired. A {@link Ext.grid.GridPanel GridPanel} using
+     * this ColumnModel will listen for this event and refresh its UI automatically.</p>
+     * @param {Array} config Array of Column definition objects.
      */
     setConfig : function(config, initial){
         if(!initial){ // cleanup
@@ -284,6 +304,7 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
 
     /**
      * Returns the number of columns.
+     * @param {Boolean} visibleOnly Optional. Pass as true to only include visible columns.
      * @return {Number}
      */
     getColumnCount : function(visibleOnly){
@@ -492,7 +513,8 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
      * Returns the editor defined for the cell/column.
      * @param {Number} colIndex The column index
      * @param {Number} rowIndex The row index
-     * @return {Object}
+     * @return {Ext.Editor} The {@link Ext.Editor Editor} that was created to wrap 
+     * the {@link Ext.form.Field Field} used to edit the cell.
      */
     getCellEditor : function(colIndex, rowIndex){
         return this.config[colIndex].editor;
@@ -558,10 +580,10 @@ Ext.extend(Ext.grid.ColumnModel, Ext.util.Observable, {
 
 // private
 Ext.grid.ColumnModel.defaultRenderer = function(value){
-	if(typeof value == "string" && value.length < 1){
-	    return "&#160;";
-	}
-	return value;
+    if(typeof value == "string" && value.length < 1){
+        return "&#160;";
+    }
+    return value;
 };
 
 // Alias for backwards compatibility

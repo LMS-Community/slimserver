@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -75,7 +75,7 @@ Ext.form.Action.prototype = {
  */
 /**
  * @cfg {Number} timeout The number of milliseconds to wait for a server response before
- * failing with the {@link #failureType} as {@link #CONNECT_FAILURE}.
+ * failing with the {@link #failureType} as {@link #Action.CONNECT_FAILURE}.
  */
 /**
  * @cfg {Function} success The function to call when a valid success return packet is recieved.
@@ -115,8 +115,9 @@ Ext.form.Action.prototype = {
  */
     type : 'default',
 /**
- * The type of failure detected. See {@link #Ext.form.Action.CLIENT_INVALID CLIENT_INVALID}, {@link #Ext.form.Action.SERVER_INVALID SERVER_INVALID},
- * {@link #Ext.form.Action.CONNECT_FAILURE CONNECT_FAILURE}, {@link #Ext.form.Action.LOAD_FAILURE LOAD_FAILURE}
+ * The type of failure detected. See {@link link Ext.form.Action#Action.CLIENT_INVALID CLIENT_INVALID},
+ * {@link link Ext.form.Action#Action.SERVER_INVALID SERVER_INVALID},
+ * {@link #link Ext.form.ActionAction.CONNECT_FAILURE CONNECT_FAILURE}, {@link Ext.form.Action#Action.LOAD_FAILURE LOAD_FAILURE}
  * @property failureType
  * @type {String}
  *//**

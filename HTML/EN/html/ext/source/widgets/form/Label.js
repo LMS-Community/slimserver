@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -22,7 +22,7 @@ Ext.form.Label = Ext.extend(Ext.BoxComponent, {
      * tags within the label's innerHTML, use the {@link #html} config instead.
      */
     /**
-     * @cfg {String} forId The id of the input element to which this label will be bound via the standard 'htmlFor'
+     * @cfg {String} forId The id of the input element to which this label will be bound via the standard HTML 'for'
      * attribute. If not specified, the attribute will not be added to the label.
      */
     /**
@@ -37,7 +37,7 @@ Ext.form.Label = Ext.extend(Ext.BoxComponent, {
             this.el.id = this.getId();
             this.el.innerHTML = this.text ? Ext.util.Format.htmlEncode(this.text) : (this.html || '');
             if(this.forId){
-                this.el.setAttribute('htmlFor', this.forId);
+                this.el.setAttribute('for', this.forId);
             }
         }
         Ext.form.Label.superclass.onRender.call(this, ct, position);

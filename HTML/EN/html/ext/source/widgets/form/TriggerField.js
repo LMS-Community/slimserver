@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -101,7 +101,7 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
     afterRender : function(){
         Ext.form.TriggerField.superclass.afterRender.call(this);
         var y;
-        if(Ext.isIE && this.el.getY() != (y = this.trigger.getY())){
+        if(Ext.isIE && !this.hideTrigger && this.el.getY() != (y = this.trigger.getY())){
             this.el.position();
             this.el.setY(y);
         }
@@ -162,11 +162,13 @@ Ext.form.TriggerField = Ext.extend(Ext.form.TextField,  {
     triggerBlur : function(){
         this.mimicing = false;
         Ext.get(Ext.isIE ? document.body : document).un("mousedown", this.mimicBlur, this);
-        if(this.monitorTab){
+        if(this.monitorTab && this.el){
             this.el.un("keydown", this.checkTab, this);
         }
         this.beforeBlur();
-        this.wrap.removeClass('x-trigger-wrap-focus');
+        if(this.wrap){
+            this.wrap.removeClass('x-trigger-wrap-focus');
+        }
         Ext.form.TriggerField.superclass.onBlur.call(this);
     },
 

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -15,6 +15,10 @@
  * @param {Object} config Configuration options
  */
 Ext.form.CheckboxGroup = Ext.extend(Ext.form.Field, {
+    /**
+     * @cfg {Array} items An Array of {@link Ext.form.Checkbox Checkbox}es or Checkbox config objects
+     * to arrange in the group.
+     */
     /**
      * @cfg {String/Number/Array} columns Specifies the number of columns to use when displaying grouped
      * checkbox/radio controls using automatic layout.  This config can take several types of values:

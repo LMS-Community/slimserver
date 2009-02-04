@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -266,9 +266,18 @@ um.update({
     },
 
     /**
-     * Performs an async form post, updating this element with the response. If the form has the attribute
-     * enctype="multipart/form-data", it assumes it's a file upload.
-     * Uses this.sslBlankUrl for SSL file uploads to prevent IE security warning.
+     * <p>Performs an async form post, updating this element with the response. If the form has the attribute
+     * enctype="<a href="http://www.faqs.org/rfcs/rfc2388.html">multipart/form-data</a>", it assumes it's a file upload.
+     * Uses this.sslBlankUrl for SSL file uploads to prevent IE security warning.</p>
+     * <p>File uploads are not performed using normal "Ajax" techniques, that is they are <b>not</b>
+     * performed using XMLHttpRequests. Instead the form is submitted in the standard manner with the
+     * DOM <tt>&lt;form></tt> element temporarily modified to have its
+     * <a href="http://www.w3.org/TR/REC-html40/present/frames.html#adef-target">target</a> set to refer
+     * to a dynamically generated, hidden <tt>&lt;iframe></tt> which is inserted into the document
+     * but removed after the return data has been gathered.</p>
+     * <p>Be aware that file upload packets, sent with the content type <a href="http://www.faqs.org/rfcs/rfc2388.html">multipart/form-data</a>
+     * and some server technologies (notably JEE) may require some custom processing in order to
+     * retrieve parameter names and parameter values from the packet content.</p>
      * @param {String/HTMLElement} form The form Id or form element
      * @param {String} url (optional) The url to pass the form to. If omitted the action attribute on the form will be used.
      * @param {Boolean} reset (optional) Whether to try to reset the form after the update

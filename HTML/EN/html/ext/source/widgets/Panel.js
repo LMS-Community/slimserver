@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -37,6 +37,44 @@ Ext.Panel = Ext.extend(Ext.Container, {
      * @property body
      */
     /**
+     * @cfg {Object} bodyCfg
+     * <p>A {@link Ext.DomHelper DomHelper} configuration object specifying the element structure
+     * of this Panel's {@link #body} Element.</p>
+     * <p>This may be used to force the body Element to use a different form of markup than
+     * is created automatically. An example of this might be to create a child Panel containing
+     * custom content, such as a header, or forcing centering of all Panel
+     * content by having the body be a &lt;center&gt; element:</p><code><pre>
+new Ext.Panel({
+    title: 'New Message',
+    collapsible: true,
+    renderTo: Ext.getBody(),
+    width: 400,
+    bodyCfg: {
+        tag: 'center',
+        cls: 'x-panel-body'
+    },
+    items: [{
+        border: false,
+        header: false,
+        bodyCfg: {tag: 'h2', html: 'Message'}
+    }, {
+        xtype: 'textarea',
+        style: {
+            width: '95%',
+            marginBottom: '10px'
+        }
+    },
+        new Ext.Button({
+            text: 'Send',
+            minWidth: '100',
+            style: {
+                marginBottom: '10px'
+            }
+        })
+    ]
+});</pre></code>
+     */
+    /**
      * The Panel's footer {@link Ext.Element Element}. Read-only.
      * <p>This Element is used to house the Panel's {@link #buttons}.</p>
      * @type Ext.Element
@@ -61,13 +99,13 @@ Ext.Panel = Ext.extend(Ext.Container, {
      */
     /**
      * @cfg {Object/Array} tbar
-     * The top toolbar of the panel. This can be a {@link Ext.Toolbar} object, a toolbar config, or an array of
+     * The top toolbar of the panel. This can be either an {@link Ext.Toolbar} object or an array of
      * buttons/button configs to be added to the toolbar.  Note that this is not available as a property after render.
      * To access the top toolbar after render, use {@link #getTopToolbar}.
      */
     /**
      * @cfg {Object/Array} bbar
-     * The bottom toolbar of the panel. This can be a {@link Ext.Toolbar} object, a toolbar config, or an array of
+     * The bottom toolbar of the panel. This can be either an {@link Ext.Toolbar} object or an array of
      * buttons/button configs to be added to the toolbar.  Note that this is not available as a property after render.
      * To access the bottom toolbar after render, use {@link #getBottomToolbar}.
      */
@@ -230,11 +268,17 @@ tools:[{
     /**
      * @cfg {String/Object} html
      * An HTML fragment, or a {@link Ext.DomHelper DomHelper} specification to use
-     * as the panel's body content (defaults to '').
+     * as the panel's body content (defaults to ''). The HTML content is added by the Panel's
+     * afterRender method, and so the document will not contain this HTML at the time the render
+     * event is fired. This content is inserted into the body <i>before</i> any configured
+     * {@link #contentEl} is appended.
      */
     /**
      * @cfg {String} contentEl
-     * The id of an existing HTML node to use as the panel's body content (defaults to '').
+     * The id of an existing HTML node to use as the panel's body content (defaults to ''). The
+     * specified Element is appended to the Panel's body Element by the Panel's afterRender method
+     * <i>after any configured {@link #html HTML} has been inserted</i>, and so the document will
+     * not contain this HTML at the time the render event is fired.
      */
     /**
      * @cfg {Object/Array} keys
@@ -312,6 +356,14 @@ new Ext.Panel({
     }
 });
 </code></pre>
+     */
+    /**
+     * @cfg {Boolean} autoHeight
+     * True to use height:'auto', false to use fixed height (defaults to false). <b>Note</b>: Setting autoHeight:true 
+     * means that the browser will manage the panel's height based on its contents, and that Ext will not manage it at 
+     * all. If the panel is within a layout that manages dimensions (fit, border, etc.) then setting autoHeight:true
+     * can cause issues with scrolling and will not generally work as expected since the panel will take on the height
+     * of its contents rather than the height required by the Ext layout.
      */
     
 
@@ -420,6 +472,14 @@ new Ext.Panel({
              * @param {String} The new title.
              */
             'titlechange',
+            /**
+             * @event iconchange
+             * Fires after the Panel icon class has been set or changed.
+             * @param {Ext.Panel} p the Panel which has had its icon class changed.
+             * @param {String} The new icon class.
+             * @param {String} The old icon class.
+             */
+            'iconchange',
             /**
              * @event collapse
              * Fires after the Panel has been collapsed.
@@ -547,6 +607,12 @@ new Ext.Panel({
                 el.className = this[name+'Cls'];
                 this[name] = Ext.get(pnode.appendChild(el));
             }
+            if(this[name+'CssClass']){
+                this[name].addClass(this[name+'CssClass']);
+            }
+            if(this[name+'Style']){
+                this[name].applyStyles(this[name+'Style']);
+            }
         }
     },
 
@@ -646,10 +712,6 @@ new Ext.Panel({
            this.body.addClass(this.bodyCls + '-noborder');
         }
 
-        if(this.bodyStyle){
-           this.body.applyStyles(this.bodyStyle);
-        }
-
         this.bwrap.enableDisplayMode('block');
 
         if(this.header){
@@ -747,6 +809,7 @@ new Ext.Panel({
                  }
             }
         }
+        this.fireEvent('iconchange', this, cls, old);
     },
 
     // private
@@ -823,27 +886,30 @@ new Ext.Panel({
             Ext.Panel.prototype.toolTemplate = tt;
         }
         for(var i = 0, a = arguments, len = a.length; i < len; i++) {
-            var tc = a[i], overCls = 'x-tool-'+tc.id+'-over';
-            var t = this.toolTemplate.insertFirst((tc.align !== 'left') ? this[this.toolTarget] : this[this.toolTarget].child('span'), tc, true);
-            this.tools[tc.id] = t;
-            t.enableDisplayMode('block');
-            t.on('click', this.createToolHandler(t, tc, overCls, this));
-            if(tc.on){
-                t.on(tc.on);
+            var tc = a[i];
+            if(!this.tools[tc.id]){
+	            var overCls = 'x-tool-'+tc.id+'-over';
+	            var t = this.toolTemplate.insertFirst((tc.align !== 'left') ? this[this.toolTarget] : this[this.toolTarget].child('span'), tc, true);
+	            this.tools[tc.id] = t;
+	            t.enableDisplayMode('block');
+	            t.on('click', this.createToolHandler(t, tc, overCls, this));
+	            if(tc.on){
+	                t.on(tc.on);
+	            }
+	            if(tc.hidden){
+	                t.hide();
+	            }
+	            if(tc.qtip){
+	                if(typeof tc.qtip == 'object'){
+	                    Ext.QuickTips.register(Ext.apply({
+	                          target: t.id
+	                    }, tc.qtip));
+	                } else {
+	                    t.dom.qtip = tc.qtip;
+	                }
+	            }
+	            t.addClassOnOver(overCls);
             }
-            if(tc.hidden){
-                t.hide();
-            }
-            if(tc.qtip){
-                if(typeof tc.qtip == 'object'){
-                    Ext.QuickTips.register(Ext.apply({
-                          target: t.id
-                    }, tc.qtip));
-                } else {
-                    t.dom.qtip = tc.qtip;
-                }
-            }
-            t.addClassOnOver(overCls);
         }
     },
 
@@ -1204,7 +1270,10 @@ new Ext.Panel({
     },
 
     /**
-     * Sets the title text for the panel and optionally the icon class.
+     * <p>Sets the title text for the panel and optionally the icon class.</p>
+     * <p>In order to be able to set the title, a header element must have been created
+     * for the Panel. This is triggered either by configuring the Panel with a non-blank title,
+     * or configuring it with <tt><b>{@link #header}: true</b></tt>.</p>
      * @param {String} title The title text to set
      * @param {String} iconCls (optional) iconCls A user-defined CSS class that provides the icon image for this panel
      */
@@ -1257,12 +1326,19 @@ panel.load({
 
     // private
     beforeDestroy : function(){
+        if(this.header){
+            this.header.removeAllListeners();
+            if(this.headerAsText){
+                Ext.Element.uncache(this.header.child('span'));
+            }
+        }
         Ext.Element.uncache(
             this.header,
             this.tbar,
             this.bbar,
             this.footer,
-            this.body
+            this.body,
+            this.bwrap
         );
         if(this.tools){
             for(var k in this.tools){
@@ -1320,6 +1396,15 @@ panel.load({
         this.body.load(
             typeof this.autoLoad == 'object' ?
                 this.autoLoad : {url: this.autoLoad});
+    },
+    
+    /**
+     * Retrieve a tool by id.
+     * @param {String} id
+     * @return {Object} tool
+     */
+    getTool: function(id) {
+        return this.tools[id];
     }
 
 /**

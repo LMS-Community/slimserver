@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -108,7 +108,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     /**
      * @property dragZone
      * @type Ext.grid.GridDragZone
-     * <p><b>This will only be present if the owning GridPanel was configured with {@link Ext.grid.GridPanel#enableDragDrop enableDragDrop}<b> <tt>true</tt></b>.</p>
+     * <p><b>This will only be present if the owning GridPanel was configured with {@link Ext.grid.GridPanel#enableDragDrop enableDragDrop} <tt>true</tt>.</b></p>
      * <p><b>This will only be present after the owning GridPanel has been rendered</b>.</p>
      * <p>A customized implementation of a {@link Ext.dd.DragZone DragZone} which provides default implementations of the
      * template methods of DragZone to enable dragging of the selected rows of a GridPanel. See {@link Ext.grid.GridDragZone} for details.</p>
@@ -128,6 +128,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     autoFill: false,
     /**
      * @cfg {Boolean} forceFit True to auto expand/contract the size of the columns to fit the grid width and prevent horizontal scrolling.
+     * This option overrides any (@link Ext.grid.ColumnModel#width width} settings in the ColumnModel.
      */
     forceFit: false,
     /**
@@ -202,7 +203,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
 
         if(!ts.hcell){
             ts.hcell = new Ext.Template(
-                    '<td class="x-grid3-hd x-grid3-cell x-grid3-td-{id}" style="{style}"><div {tooltip} {attr} class="x-grid3-hd-inner x-grid3-hd-{id}" unselectable="on" style="{istyle}">', this.grid.enableHdMenu ? '<a class="x-grid3-hd-btn" href="#"></a>' : '',
+                    '<td class="x-grid3-hd x-grid3-cell x-grid3-td-{id} {css}" style="{style}"><div {tooltip} {attr} class="x-grid3-hd-inner x-grid3-hd-{id}" unselectable="on" style="{istyle}">', this.grid.enableHdMenu ? '<a class="x-grid3-hd-btn" href="#"></a>' : '',
                     '{value}<img class="x-grid3-sort-icon" src="', Ext.BLANK_IMAGE_URL, '" />',
                     "</div></td>"
                     );
@@ -251,7 +252,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     },
 
     // private
-    getEditorParent : function(ed){
+    getEditorParent : function(){
         return this.scroller.dom;
     },
 
@@ -276,6 +277,12 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         if(this.forceFit){
             this.scroller.setStyle('overflow-x', 'hidden');
         }
+        /**
+         * The GridView's body Element which encapsulates all rows in the Grid. {@link Ext.Element Element}. Read-only.
+         * <p>This Element is only available after the GridPanel has been rendered.</p>
+         * @type Ext.Element
+         * @property mainBody
+         */
         this.mainBody = new E(this.scroller.dom.firstChild);
 
         this.focusEl = new E(this.scroller.dom.childNodes[1]);
@@ -331,7 +338,11 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         return this.findCellIndex(el, this.hdCls);
     },
 
-    // private
+/**
+ * Return the HtmlElement representing the grid row which contains the passed element.
+ * @param {Element} el The target element
+ * @return The row element, or null if the target element is not within a row of this GridView.
+ */
     findRow : function(el){
         if(!el){
             return false;
@@ -339,7 +350,11 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         return this.fly(el).findParent(this.rowSelector, this.rowSelectorDepth);
     },
 
-    // private
+/**
+ * Return the index of the grid row which contains the passed element.
+ * @param {Element} el The target element
+ * @return The row index, or <b>false</b> if the target element is not within a row of this GridView.
+ */
     findRowIndex : function(el){
         var r = this.findRow(el);
         return r ? r.rowIndex : false;
@@ -396,7 +411,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     // private
     removeRow : function(row){
         Ext.removeNode(this.getRow(row));
-        this.focusRow(row);
+        this.syncFocusEl(row);
     },
     
     // private
@@ -405,7 +420,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         for(var rowIndex = firstRow; rowIndex <= lastRow; rowIndex++){
             Ext.removeNode(bd.childNodes[firstRow]);
         }
-        this.focusRow(firstRow);
+        this.syncFocusEl(firstRow);
     },
 
     // scrolling stuff
@@ -468,13 +483,16 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
             hd.style.width = ws[i];
         }
 
-        var ns = this.getRows();
+        var ns = this.getRows(), row, trow;
         for(var i = 0, len = ns.length; i < len; i++){
-            ns[i].style.width = tw;
-            ns[i].firstChild.style.width = tw;
-            var row = ns[i].firstChild.rows[0];
-            for(var j = 0; j < clen; j++){
-                row.childNodes[j].style.width = ws[j];
+            row = ns[i];
+            row.style.width = tw;
+            if(row.firstChild){
+                row.firstChild.style.width = tw;
+                trow = row.firstChild.rows[0];
+                for (var j = 0; j < clen; j++) {
+                   trow.childNodes[j].style.width = ws[j];
+                }
             }
         }
 
@@ -490,11 +508,14 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         var hd = this.getHeaderCell(col);
         hd.style.width = w;
 
-        var ns = this.getRows();
+        var ns = this.getRows(), row;
         for(var i = 0, len = ns.length; i < len; i++){
-            ns[i].style.width = tw;
-            ns[i].firstChild.style.width = tw;
-            ns[i].firstChild.rows[0].childNodes[col].style.width = w;
+            row = ns[i];
+            row.style.width = tw;
+            if(row.firstChild){
+                row.firstChild.style.width = tw;
+                row.firstChild.rows[0].childNodes[col].style.width = w;
+            }
         }
 
         this.onColumnWidthUpdated(col, w, tw);
@@ -511,11 +532,14 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         var hd = this.getHeaderCell(col);
         hd.style.display = display;
 
-        var ns = this.getRows();
+        var ns = this.getRows(), row;
         for(var i = 0, len = ns.length; i < len; i++){
-            ns[i].style.width = tw;
-            ns[i].firstChild.style.width = tw;
-            ns[i].firstChild.rows[0].childNodes[col].style.display = display;
+            row = ns[i];
+            row.style.width = tw;
+            if(row.firstChild){
+                row.firstChild.style.width = tw;
+                row.firstChild.rows[0].childNodes[col].style.display = display;
+            }
         }
 
         this.onColumnHiddenUpdated(col, hidden, tw);
@@ -573,6 +597,8 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         startRow = startRow || 0;
         var rows = this.getRows();
         var cls = ' x-grid3-row-alt ';
+        rows[0].className += ' x-grid3-row-first';
+        rows[rows.length - 1].className += ' x-grid3-row-last';
         for(var i = startRow, len = rows.length; i < len; i++){
             var row = rows[i];
             row.rowIndex = i;
@@ -626,7 +652,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
 
         this.scroller.on('scroll', this.syncScroll,  this);
         if(g.enableColumnResize !== false){
-            this.splitone = new Ext.grid.GridView.SplitDragZone(g, this.mainHd.dom);
+            this.splitZone = new Ext.grid.GridView.SplitDragZone(g, this.mainHd.dom);
         }
 
         if(g.enableColumnMove){
@@ -655,6 +681,10 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
             //g.on("headercontextmenu", this.handleHdCtx, this);
         }
 
+        if(g.trackMouseOver){
+            this.mainBody.on("mouseover", this.onRowOver, this);
+            this.mainBody.on("mouseout", this.onRowOut, this);
+        }
         if(g.enableDragDrop || g.enableDrag){
             this.dragZone = new Ext.grid.GridDragZone(g, {
                 ddGroup : g.ddGroup || 'GridDD'
@@ -681,6 +711,9 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
 
         if(g.autoHeight){
             this.scroller.dom.style.overflow = 'visible';
+            if(Ext.isSafari){
+                this.scroller.dom.style.position = 'static';
+            }
         }else{
             this.el.setSize(csize.width, csize.height);
 
@@ -711,15 +744,18 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     },
 
     onColumnWidthUpdated : function(col, w, tw){
-        // template method
+        //template method
+        this.focusEl.setWidth(tw);
     },
 
     onAllColumnWidthsUpdated : function(ws, tw){
-        // template method
+        //template method
+        this.focusEl.setWidth(tw);
     },
 
     onColumnHiddenUpdated : function(col, hidden, tw){
         // template method
+        this.focusEl.setWidth(tw);
     },
 
     updateColumnText : function(col, text){
@@ -751,12 +787,14 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         var ct = ts.hcell;
 
         var cb = [], sb = [], p = {};
-
-        for(var i = 0, len = cm.getColumnCount(); i < len; i++){
+        var len = cm.getColumnCount();
+        var last = len - 1;
+        for(var i = 0; i < len; i++){
             p.id = cm.getColumnId(i);
             p.value = cm.getColumnHeader(i) || "";
             p.style = this.getColumnStyle(i, true);
             p.tooltip = this.getColumnTooltip(i);
+            p.css = i == 0 ? 'x-grid3-cell-first ' : (i == last ? 'x-grid3-cell-last ' : '');
             if(cm.config[i].align == 'right'){
                 p.istyle = 'padding-right:16px';
             } else {
@@ -804,10 +842,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
      * @param {Number} col The column index
      */
     focusCell : function(row, col, hscroll){
-        row = Math.min(row, Math.max(0, this.getRows().length-1));
-        var xy = this.ensureVisible(row, col, hscroll);
-        this.focusEl.setXY(xy||this.scroller.getXY());
-        
+		this.syncFocusEl(this.ensureVisible(row, col, hscroll));
         if(Ext.isGecko){
             this.focusEl.focus();
         }else{
@@ -815,16 +850,15 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         }
     },
 
-    // private
-    ensureVisible : function(row, col, hscroll){
-        if(typeof row != "number"){
+	resolveCell : function(row, col, hscroll){
+		if(typeof row != "number"){
             row = row.rowIndex;
         }
         if(!this.ds){
-            return;
+            return null;
         }
         if(row < 0 || row >= this.ds.getCount()){
-            return;
+            return null;
         }
         col = (col !== undefined ? col : 0);
 
@@ -835,11 +869,36 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
             }
             cellEl = this.getCell(row, col);
         }
-        if(!rowEl){
-            return;
-        }
 
-        var c = this.scroller.dom;
+		return {row: rowEl, cell: cellEl};
+	},
+
+	getResolvedXY : function(resolved){
+		if(!resolved){
+			return null;
+		}
+		var s = this.scroller.dom, c = resolved.cell, r = resolved.row;
+		return c ? Ext.fly(c).getXY() : [this.el.getX(), Ext.fly(r).getY()];
+	},
+
+	syncFocusEl : function(row, col, hscroll){
+		var xy = row;
+		if(!Ext.isArray(xy)){
+			row = Math.min(row, Math.max(0, this.getRows().length-1));
+        	xy = this.getResolvedXY(this.resolveCell(row, col, hscroll));
+		}
+        this.focusEl.setXY(xy||this.scroller.getXY());
+    },
+
+	ensureVisible : function(row, col, hscroll){
+        var resolved = this.resolveCell(row, col, hscroll);
+		if(!resolved || !resolved.row){
+			return;
+		}
+
+		var rowEl = resolved.row, cellEl = resolved.cell;
+
+		var c = this.scroller.dom;
 
         var ctop = 0;
         var p = rowEl, stop = this.el.dom;
@@ -855,7 +914,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
         var stop = parseInt(c.scrollTop, 10);
         var sbot = stop + ch;
 
-        if(ctop < stop){
+		if(ctop < stop){
           c.scrollTop = ctop;
         }else if(cbot > sbot){
             c.scrollTop = cbot-ch;
@@ -873,7 +932,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
                 c.scrollLeft = cright-c.clientWidth;
             }
         }
-        return cellEl ? Ext.fly(cellEl).getXY() : [c.scrollLeft+this.el.getX(), Ext.fly(rowEl).getY()];
+        return this.getResolvedXY(resolved);
     },
 
     // private
@@ -896,7 +955,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
                 this.processRows(firstRow);
             }
         }
-        this.focusRow(firstRow);
+        this.syncFocusEl(firstRow);
     },
 
     // private
@@ -1124,15 +1183,13 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     // private
     destroy : function(){
         if(this.colMenu){
-            this.colMenu.removeAll();
             Ext.menu.MenuMgr.unregister(this.colMenu);
-            this.colMenu.getEl().remove();
+            this.colMenu.destroy();
             delete this.colMenu;
         }
         if(this.hmenu){
-            this.hmenu.removeAll();
             Ext.menu.MenuMgr.unregister(this.hmenu);
-            this.hmenu.getEl().remove();
+            this.hmenu.destroy();
             delete this.hmenu;
         }
         if(this.grid.enableColumnMove){
@@ -1155,15 +1212,21 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
                 delete Ext.dd.DDM.ids['gridHeader' + this.grid.getGridEl().id];
             }
         }
-
-        Ext.destroy(this.resizeMarker, this.resizeProxy);
-
+        
         if(this.dragZone){
             this.dragZone.unreg();
         }
+        
+        Ext.fly(this.innerHd).removeAllListeners();
+        Ext.removeNode(this.innerHd);
+        
+        Ext.destroy(this.resizeMarker, this.resizeProxy, this.focusEl, this.mainBody, 
+                    this.scroller, this.mainHd, this.mainWrap, this.dragZone, 
+                    this.splitZone, this.columnDrag, this.columnDrop);
 
         this.initData(null, null);
         Ext.EventManager.removeResizeListener(this.onWindowResize, this);
+        this.purgeListeners();
     },
 
     // private
@@ -1173,9 +1236,16 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
 
     // private
     render : function(){
-
         if(this.autoFill){
-            this.fitColumns(true, true);
+            var ct = this.grid.ownerCt;
+            if (ct && ct.getLayout()){
+                ct.on('afterlayout', function(){ 
+                    this.fitColumns(true, true);
+                    this.updateHeaders(); 
+                }, this, {single: true}); 
+            }else{ 
+                this.fitColumns(true, true); 
+            }
         }else if(this.forceFit){
             this.fitColumns(true, false);
         }else if(this.grid.autoExpandColumn){
@@ -1230,11 +1300,13 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     onDataChange : function(){
         this.refresh();
         this.updateHeaderSortState();
+        this.syncFocusEl(0);
     },
 
     // private
     onClear : function(){
         this.refresh();
+        this.syncFocusEl(0);
     },
 
     // private
@@ -1300,11 +1372,6 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     // private
     initUI : function(grid){
         grid.on("headerclick", this.onHeaderClick, this);
-
-        if(grid.trackMouseOver){
-            grid.on("mouseover", this.onRowOver, this);
-          grid.on("mouseout", this.onRowOut, this);
-      }
     },
 
     // private
@@ -1332,7 +1399,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
     // private
     onRowOut : function(e, t){
         var row;
-        if((row = this.findRowIndex(t)) !== false && row !== this.findRowIndex(e.getRelatedTarget())){
+        if((row = this.findRowIndex(t)) !== false && !e.within(this.getRow(row), true)){
             this.removeRowClass(row, "x-grid3-row-over");
         }
     },
@@ -1379,6 +1446,7 @@ Ext.extend(Ext.grid.GridView, Ext.util.Observable, {
             this.updateAllColumnWidths();
         }else{
             this.updateColumnWidth(i, w);
+            this.syncHeaderScroll();
         }
 
         this.grid.fireEvent("columnresize", i, w);

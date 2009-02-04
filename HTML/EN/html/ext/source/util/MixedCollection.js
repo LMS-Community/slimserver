@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -300,7 +300,7 @@ mc.add(otherEl);
 /**
  * Returns index within the collection of the passed Object.
  * @param {Object} o The item to find the index of.
- * @return {Number} index of the item.
+ * @return {Number} index of the item. Returns -1 if not found.
  */
     indexOf : function(o){
         return this.items.indexOf(o);
@@ -429,7 +429,8 @@ mc.add(otherEl);
      */
     keySort : function(dir, fn){
         this._sort("key", dir, fn || function(a, b){
-            return String(a).toUpperCase()-String(b).toUpperCase();
+            var v1 = String(a).toUpperCase(), v2 = String(b).toUpperCase();
+            return v1 > v2 ? 1 : (v1 < v2 ? -1 : 0);
         });
     },
 
@@ -554,7 +555,7 @@ mc.add(otherEl);
     },
 
     /**
-     * Creates a duplicate of this collection
+     * Creates a shallow copy of this collection
      * @return {MixedCollection}
      */
     clone : function(){

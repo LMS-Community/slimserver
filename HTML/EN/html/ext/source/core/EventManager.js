@@ -1,3 +1,11 @@
+/*
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
+ * licensing@extjs.com
+ * 
+ * http://extjs.com/license
+ */
+
 /**
  * @class Ext.EventManager
  * Registers event handlers that want to receive a normalized EventObject instead of the standard browser event and provides
@@ -91,6 +99,53 @@ Ext.EventManager = function(){
     }
 
 
+    var fireDocReady = function(){
+        if(!docReadyState){
+            docReadyState = true;
+            Ext.isReady = true;
+            if(docReadyProcId){
+                clearInterval(docReadyProcId);
+            }
+            if(Ext.isGecko || Ext.isOpera) {
+                document.removeEventListener("DOMContentLoaded", fireDocReady, false);
+            }
+            if(Ext.isIE){
+                var defer = document.getElementById("ie-deferred-loader");
+                if(defer){
+                    defer.onreadystatechange = null;
+                    defer.parentNode.removeChild(defer);
+                }
+            }
+            if(docReadyEvent){
+                docReadyEvent.fire();
+                docReadyEvent.clearListeners();
+            }
+        }
+    };
+
+    var initDocReady = function(){
+        docReadyEvent = new Ext.util.Event();
+        if(Ext.isGecko || Ext.isOpera) {
+            document.addEventListener("DOMContentLoaded", fireDocReady, false);
+        }else if(Ext.isIE){
+            document.write("<s"+'cript id="ie-deferred-loader" defer="defer" src="/'+'/:"></s'+"cript>");
+            var defer = document.getElementById("ie-deferred-loader");
+            defer.onreadystatechange = function(){
+                if(this.readyState == "complete"){
+                    fireDocReady();
+                }
+            };
+        }else if(Ext.isSafari){
+            docReadyProcId = setInterval(function(){
+                var rs = document.readyState;
+                if(rs == "complete") {
+                    fireDocReady();
+                 }
+            }, 10);
+        }
+        // no matter what, make sure it fires on load
+        E.on(window, "load", fireDocReady);
+    };
 
     var createBuffered = function(h, o){
         var task = new Ext.util.DelayedTask(h);
@@ -243,33 +298,6 @@ Ext.EventManager = function(){
             return removeAll(element);
         },
 
-         /**
-          * Permit firing the docReadyEvent on demand
-          * This allows for the Ext framework to be loaded dynamically after a
-          * page/frame has been loaded, and then can safely call Ext.EventManager.fireDocReady()
-          * to invoke any pending onReady blocks.
-          */
-        fireDocReady : function(){
-
-          docReadyState = true;
-          if(dcl) {
-               document.removeEventListener("DOMContentLoaded", fireDocReady, false);
-               dcl  = false;
-          }
-
-          if(docReadyProcId){
-               clearInterval(docReadyProcId);
-               docReadyProcId = null;
-          }
-
-
-          if(docReadyEvent && !Ext.isReady){
-              Ext.isReady = true;
-              docReadyEvent.fire();
-              docReadyEvent.clearListeners();
-          }
-        },
-
         /**
          * Fires when the document is ready (before onload and before images are loaded). Can be
          * accessed shorthanded as Ext.onReady().
@@ -277,28 +305,23 @@ Ext.EventManager = function(){
          * @param {Object} scope (optional) An object that becomes the scope of the handler
          * @param {boolean} options (optional) An object containing standard {@link #addListener} options
          */
-         onDocumentReady : function(fn, scope, options){
+        onDocumentReady : function(fn, scope, options){
+            if(docReadyState){ // if it already fired
+                docReadyEvent.addListener(fn, scope, options);
+                docReadyEvent.fire();
+                docReadyEvent.clearListeners();
+                return;
+            }
             if(!docReadyEvent){
                 initDocReady();
             }
-
-            options || (options = {});
-
-            if(docReadyState || Ext.isReady){
-                //onReady has already fired, so just execute this block when presented
-                //permitting multiple onReady blocks
-
-                if(options.delay){
-                    fn.defer(options.delay, scope);
-                } else {
-                    fn.call(scope);
-                }
-            }else{
-                options.delay || (options.delay = Ext.isGecko3 ? 1 : null); //FF3 fix
-                docReadyEvent.addListener(fn, scope, options);
+            options = options || {};
+            if(!options.delay){
+                options.delay = 1;
             }
+            docReadyEvent.addListener(fn, scope, options);
         },
-
+        
         // private
         doResizeEvent: function(){
             resizeEvent.fire(D.getViewWidth(), D.getViewHeight());
@@ -370,117 +393,15 @@ Ext.EventManager = function(){
                 resizeEvent.fire(D.getViewWidth(), D.getViewHeight());
             }
         },
-
+        /**
+         * Url used for onDocumentReady with using SSL (defaults to Ext.SSL_SECURE_URL)
+         */
+        ieDeferSrc : false,
         /**
          * The frequency, in milliseconds, to check for text resize events (defaults to 50)
          */
         textResizeInterval : 50
     };
-
-    var fireDocReady = pub.fireDocReady;
-
-    var dcl = false;  //DOMContentLoaded listener-set indicator
-
-    var initDocReady = function(){
-        docReadyEvent = new Ext.util.Event();
-
-        if(Ext.isReady){ return;}
-
-        E.on(window, 'load', fireDocReady);
-
-        if(Ext.isGecko) {
-            dcl  = true;
-            document.addEventListener('DOMContentLoaded', fireDocReady, false);
-        }
-        else if(Ext.isIE ){
-
-            /* notes:
-              This:
-               var node = document.createElement('p')  or document.documentElement
-               node.doScroll('left');
-
-              'doScroll' will NOT work in a IFRAME/FRAMESET.
-              The method succeeds but, a DOM query done immediately after -- FAILS.
-
-              */
-
-              if(window == top){  //non-frames only
-                var doScrollChk = function(){
-
-                   try{
-                        document.documentElement.doScroll('left');
-
-                   }catch(e){
-
-                       setTimeout(doScrollChk ,5);
-                       return;
-                   }
-                   fireDocReady();
-                };
-                doScrollChk();
-            }
-            //Use readystatechange as primary detection mechanism for a FRAME/IFRAME
-
-            document.attachEvent('onreadystatechange', function(){
-
-                if(document.readyState == 'complete'){
-
-                     fireDocReady();
-                     document.detachEvent('onreadystatechange', arguments.callee);
-                }
-            });
-
-
-        }
-        else if(Ext.isOpera ) {
-            /* Notes:
-               Special treatment MAY be needed here because CSS rules are NOT QUITE
-               available after DOMContentLoaded is raised.
-            */
-             var styles;
-             dcl = false;
-             document.addEventListener( 'DOMContentLoaded', function () {
-
-                    if(!Ext.isReady){
-                        styles || (styles = Ext.query('style, link[rel=stylesheet]'));
-                        if(styles.length != document.styleSheets.length){
-                            setTimeout( arguments.callee, 5 );
-                            return;
-                        }
-                        fireDocReady();
-                     }
-                     document.removeEventListener("DOMContentLoaded", arguments.callee, false);
-
-                }, false);
-
-        }
-        else if(Ext.isSafari){  //Webkits (Konqueror, Safari, Chrome)
-
-          //Some Webkit versions support this now
-          if(document.addEventListener){
-              dcl = true;
-              document.addEventListener('DOMContentLoaded', fireDocReady, false);
-          }
-
-          /* Notes:
-            Webkit has two different readystates for a 'loaded' state:
-              'loaded' for non-frames
-              'complete' for frames
-
-            In a frame, onload fires just before readystate changes to 'complete'
-          */
-            var stateRe = /complete|loaded/i;
-
-            (function(){
-                if( stateRe.test(document.readyState) ) {
-                     fireDocReady();
-                     return;
-                 }
-                 setTimeout(arguments.callee,5);
-            })();
-        }
-     };
-
      /**
      * Appends an event handler to an element.  Shorthand for {@link #addListener}.
      * @param {String/HTMLElement} el The html element or id to assign the event handler to
@@ -509,10 +430,9 @@ Ext.EventManager = function(){
 }();
 /**
   * Fires when the document is ready (before onload and before images are loaded).  Shorthand of {@link Ext.EventManager#onDocumentReady}.
-  * @param {Function} fn        The method the event invokes
-  * @param {Object}   scope    An  object that becomes the scope of the handler
-  * @param {boolean}  override If true, the obj passed in becomes
-  *                             the execution scope of the listener
+  * @param {Function} fn The method the event invokes
+  * @param {Object} scope An object that becomes the scope of the handler
+  * @param {boolean} options (optional) An object containing standard {@link #addListener} options
   * @member Ext
   * @method onReady
  */
@@ -979,7 +899,7 @@ Ext.EventObject = function(){
         },
 
         /**
-         * Returns true if the target of this event is a child of el.  If the target is el, it returns false.
+         * Returns true if the target of this event is a child of el.  Unless the allowEl parameter is set, it will return false if if the target is el.
          * Example usage:<pre><code>
 // Handle click on any child of an element
 Ext.getBody().on('click', function(e){
@@ -997,11 +917,12 @@ Ext.getBody().on('click', function(e,t){
 </code></pre>
          * @param {Mixed} el The id, DOM element or Ext.Element to check
          * @param {Boolean} related (optional) true to test if the related target is within el instead of the target
+         * @param {Boolean} allowEl {optional} true to also check if the passed element is the target or related target
          * @return {Boolean}
          */
-        within : function(el, related){
+        within : function(el, related, allowEl){
             var t = this[related ? "getRelatedTarget" : "getTarget"]();
-            return t && Ext.fly(el).contains(t);
+            return t && ((allowEl ? (t === Ext.getDom(el)) : false) || Ext.fly(el).contains(t));
         },
 
         getPoint : function(){

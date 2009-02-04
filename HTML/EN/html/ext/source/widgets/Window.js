@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -12,7 +12,7 @@
  * A specialized panel intended for use as an application window.  Windows are floated and draggable by default, and
  * also provide specific behavior like the ability to maximize and restore (with an event for minimizing, since the
  * minimize behavior is application-specific).  Windows can also be linked to a {@link Ext.WindowGroup} or managed
- * by the {@link Ext.WindowManager} to provide grouping, activation, to front/back and other application-specific behavior.
+ * by the {@link Ext.WindowMgr} to provide grouping, activation, to front/back and other application-specific behavior.
  * @constructor
  * @param {Object} config The config object
  */
@@ -55,6 +55,17 @@ Ext.Window = Ext.extend(Ext.Panel, {
     * To prevent the Window closing when the escape key is pressed, specify this as
     * Ext.emptyFn (See {@link Ext#emptyFn}).
     */
+    /**
+     * @cfg {Boolean} collapsed
+     * True to render the window collapsed, false to render it expanded (defaults to false). Note that if 
+     * {@link #expandOnShow} is true (the default) it will override the <tt>collapsed</tt> config and the window 
+     * will always be expanded when shown.
+     */
+    /**
+     * @cfg {Boolean} maximized
+     * True to initially display the window in a maximized state. (Defaults to false).
+     */
+    
     /**
     * @cfg {String} baseCls
     * The base CSS class to apply to this panel's element (defaults to 'x-window').
@@ -132,7 +143,7 @@ Ext.Window = Ext.extend(Ext.Panel, {
     /**
      * @cfg {Boolean} expandOnShow
      * True to always expand the window when it is displayed, false to keep it in its current state (which may be
-     * collapsed) when displayed (defaults to true).
+     * {@link #collapsed}) when displayed (defaults to true).
      */
     expandOnShow: true,
     /**
@@ -244,6 +255,7 @@ Ext.Window = Ext.extend(Ext.Panel, {
             this.mask = this.container.createChild({cls:"ext-el-mask"}, this.el.dom);
             this.mask.enableDisplayMode("block");
             this.mask.hide();
+            this.mask.on('click', this.focus, this);
         }
     },
 
@@ -303,7 +315,13 @@ Ext.Window = Ext.extend(Ext.Panel, {
 
     // private
     beforeDestroy : function(){
+        this.hide();
+        if(this.doAnchor){
+            Ext.EventManager.removeResizeListener(this.doAnchor, this);
+            Ext.EventManager.un(window, 'scroll', this.doAnchor, this);
+        }
         Ext.destroy(
+            this.focusEl,
             this.resizer,
             this.dd,
             this.proxy,
@@ -777,28 +795,34 @@ Ext.Window = Ext.extend(Ext.Panel, {
      * is a number, it is used as the buffer delay (defaults to 50ms).
      * @return {Ext.Window} this
      */
-    anchorTo : function(el, alignment, offsets, monitorScroll, _pname){
-        var action = function(){
-            this.alignTo(el, alignment, offsets);
-        };
-        Ext.EventManager.onWindowResize(action, this);
-        var tm = typeof monitorScroll;
-        if(tm != 'undefined'){
-            Ext.EventManager.on(window, 'scroll', action, this,
-                {buffer: tm == 'number' ? monitorScroll : 50});
-        }
-        action.call(this);
-        this[_pname] = action;
-        return this;
+    anchorTo : function(el, alignment, offsets, monitorScroll){
+      if(this.doAnchor){
+          Ext.EventManager.removeResizeListener(this.doAnchor, this);
+          Ext.EventManager.un(window, 'scroll', this.doAnchor, this);
+      }
+      this.doAnchor = function(){
+          this.alignTo(el, alignment, offsets);
+      };
+      Ext.EventManager.onWindowResize(this.doAnchor, this);
+      
+      var tm = typeof monitorScroll;
+      if(tm != 'undefined'){
+          Ext.EventManager.on(window, 'scroll', this.doAnchor, this,
+              {buffer: tm == 'number' ? monitorScroll : 50});
+      }
+      this.doAnchor();
+      return this;
     },
 
     /**
      * Brings this window to the front of any other visible windows
      * @return {Ext.Window} this
      */
-    toFront : function(){
+    toFront : function(e){
         if(this.manager.bringToFront(this)){
-            this.focus();
+            if(!e || !e.getTarget().focus){
+                this.focus();
+            }
         }
         return this;
     },

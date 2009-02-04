@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -9,7 +9,9 @@
 /**
  * @class Ext.data.GroupingStore
  * @extends Ext.data.Store
- * A specialized store implementation that provides for grouping records by one of the available fields.
+ * A specialized store implementation that provides for grouping records by one of the available fields. This
+ * is usually used in conjunction with an {@link Ext.grid.GroupingView} to proved the data model for
+ * a grouped GridPanel.
  * @constructor
  * Creates a new GroupingStore.
  * @param {Object} config A config object containing the objects needed for the Store to access data,

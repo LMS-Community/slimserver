@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -17,6 +17,9 @@
 Ext.form.Field = Ext.extend(Ext.BoxComponent,  {
     /**
      * @cfg {String} fieldLabel The label text to display next to this field (defaults to '')
+     * <p><b>A Field's label is not by default rendered as part of the Field's structure.
+     * The label is rendered by the {@link Ext.layout.FormLayout form layout} layout manager
+     * of the {@link Ext.form.Container Container} to which the Field is added.</b></p>
      */
     /**
      * @cfg {String} labelStyle A CSS style specification to apply directly to this field's label (defaults to the
@@ -34,9 +37,9 @@ Ext.form.Field = Ext.extend(Ext.BoxComponent,  {
      * @cfg {String} clearCls The CSS class used to provide field clearing (defaults to 'x-form-clear-left')
      */
     /**
-     * @cfg {String} itemCls An additional CSS class to apply to the wrapper's form item element of this field (defaults 
-     * to the container's itemCls value if set, or '').  Since it is applied to the item wrapper, it allows you to write 
-     * standard CSS rules that can apply to the field, the label (if specified) or any other element within the markup for 
+     * @cfg {String} itemCls An additional CSS class to apply to the wrapper's form item element of this field (defaults
+     * to the container's itemCls value if set, or '').  Since it is applied to the item wrapper, it allows you to write
+     * standard CSS rules that can apply to the field, the label (if specified) or any other element within the markup for
      * the field. NOTE: this will not have any effect on fields that are not part of a form. Example use:
      * <pre><code>
 // Apply a style to the field's label:
@@ -59,9 +62,9 @@ new Ext.FormPanel({
 </code></pre>
      */
     /**
-     * @cfg {String} inputType The type attribute for input fields -- e.g. radio, text, password, file (defaults 
-     * to "text"). The types "file" and "password" must be used to render those field types currently -- there are 
-     * no separate Ext components for those. Note that if you use <tt>inputType:'file'</tt>, {@link #emptyText} 
+     * @cfg {String} inputType The type attribute for input fields -- e.g. radio, text, password, file (defaults
+     * to "text"). The types "file" and "password" must be used to render those field types currently -- there are
+     * no separate Ext components for those. Note that if you use <tt>inputType:'file'</tt>, {@link #emptyText}
      * is not supported and should be avoided.
      */
     /**
@@ -77,7 +80,7 @@ new Ext.FormPanel({
     /**
      * @cfg {String} cls A custom CSS class to apply to the field's underlying element (defaults to "").
      */
-    
+
     /**
      * @cfg {String} invalidClass The CSS class to use when marking a field invalid (defaults to "x-form-invalid")
      */
@@ -140,12 +143,14 @@ side          Add an error icon to the right of the field with a popup on hover
     readOnly : false,
     /**
      * @cfg {Boolean} disabled True to disable the field (defaults to false).
+     * <p>Be aware that conformant with the <a href="http://www.w3.org/TR/html401/interact/forms.html#h-17.12.1">HTML specification</a>,
+     * disabled Fields will not be {@link Ext.form.BasicForm#submit submitted}.</p>
      */
     disabled : false,
-    
+
     // private
     isFormField : true,
-    
+
     // private
     hasFocus : false,
 
@@ -282,18 +287,15 @@ side          Add an error icon to the right of the field with a popup on hover
     initEvents : function(){
         this.el.on(Ext.isIE || Ext.isSafari3 ? "keydown" : "keypress", this.fireKey,  this);
         this.el.on("focus", this.onFocus,  this);
-        
+
         // fix weird FF/Win editor issue when changing OS window focus
         var o = this.inEditor && Ext.isWindows && Ext.isGecko ? {buffer:10} : null;
         this.el.on("blur", this.onBlur,  this, o);
-
-        // reference to original value for reset
-        this.originalValue = this.getValue();
     },
 
     // private
     onFocus : function(){
-        if(!Ext.isOpera && this.focusClass){ // don't touch in Opera
+        if(this.focusClass){
             this.el.addClass(this.focusClass);
         }
         if(!this.hasFocus){
@@ -309,7 +311,7 @@ side          Add an error icon to the right of the field with a popup on hover
     // private
     onBlur : function(){
         this.beforeBlur();
-        if(!Ext.isOpera && this.focusClass){ // don't touch in Opera
+        if(this.focusClass){
             this.el.removeClass(this.focusClass);
         }
         this.hasFocus = false;
@@ -363,7 +365,7 @@ side          Add an error icon to the right of the field with a popup on hover
     },
 
     /**
-     * Mark this field as invalid, using {@link #msgTarget} to determine how to display the error and 
+     * Mark this field as invalid, using {@link #msgTarget} to determine how to display the error and
      * applying {@link #invalidClass} to the field's element.
      * @param {String} msg (optional) The validation message (defaults to {@link #invalidText})
      */
@@ -421,7 +423,7 @@ side          Add an error icon to the right of the field with a popup on hover
         }
         this.fireEvent('invalid', this, msg);
     },
-    
+
     // private
     getErrorCt : function(){
         return this.el.findParent('.x-form-element', 5, true) || // use form element wrap if available

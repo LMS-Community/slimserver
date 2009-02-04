@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -86,6 +86,8 @@ Ext.util.TaskRunner = function(interval){
     };
 
     /**
+     * @member Ext.util.TaskRunner
+     * @method start
      * Starts a new task.
      * @param {Object} task A config object that supports the following properties:<ul>
      * <li><code>run</code> : Function<div class="sub-desc">The function to execute each time the task is run. The
@@ -114,6 +116,8 @@ Ext.util.TaskRunner = function(interval){
     };
 
     /**
+     * @member Ext.util.TaskRunner
+     * @method stop
      * Stops an existing running task.
      * @param {Object} task The task to stop
      * @return {Object} The task
@@ -124,6 +128,8 @@ Ext.util.TaskRunner = function(interval){
     };
 
     /**
+     * @member Ext.util.TaskRunner
+     * @method stopAll
      * Stops all tasks that are currently running.
      */
     this.stopAll = function(){

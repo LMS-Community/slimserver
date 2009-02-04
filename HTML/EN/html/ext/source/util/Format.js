@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -184,6 +184,7 @@ Ext.util.Format = function(){
             return !v ? v : String(v).replace(this.stripTagsRE, "");
         },
 
+        // private
         stripScriptsRe : /(?:<script.*?>)((\n|\r|.)*?)(?:<\/script>)/ig,
 
         /**
@@ -220,6 +221,11 @@ Ext.util.Format = function(){
             }
         }(),
 
+		/**
+		 * Converts newline characters to the HTML tag &lt;br/>
+		 * @param {String} The string value to format.
+         * @return {String} The string with embedded &lt;br/> tags in place of newlines.
+		 */
         nl2br : function(v){
             return v === undefined || v === null ? '' : v.replace(/\n/g, '<br/>');
         }

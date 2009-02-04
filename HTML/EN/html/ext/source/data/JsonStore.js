@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -36,7 +36,9 @@ var store = new Ext.data.JsonStore({
  * @cfg {Object} data  A data object readable by this object's JsonReader. Either this
  * option, or the {@link #url} option must be specified.
  * @cfg {Array} fields  Either an Array of field definition objects as passed to
- * {@link Ext.data.Record#create}, or a {@link Ext.data.Record Record} constructor created using {@link Ext.data.Record#create}.
+ * {@link Ext.data.Record#create}, or a {@link Ext.data.Record Record} constructor created using {@link Ext.data.Record#create}.<br>
+ * <p>This config is used to create the <tt>recordType</tt> parameter to the {@link Ext.data.JsonReader#JsonReader JsonReader}
+ * constructor that is implicitly called, and creates the {@link Ext.data.Record Record definition} used by the Store.
  * @constructor
  * @param {Object} config
  */

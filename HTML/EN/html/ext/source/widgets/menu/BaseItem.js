@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -92,6 +92,9 @@ Ext.extend(Ext.menu.BaseItem, Ext.Component, {
     // private
     onRender : function(container, position){
         this.el = Ext.get(this.el);
+        if(this.id){
+            this.el.id = this.id;
+        }
         container.dom.appendChild(this.el.dom);
     },
 

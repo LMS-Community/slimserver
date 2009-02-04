@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -53,6 +53,8 @@ Ext.layout.Accordion = Ext.extend(Ext.layout.FitLayout, {
     /**
      * @cfg {Boolean} autoWidth
      * True to set each contained item's width to 'auto', false to use the item's current width (defaults to true).
+     * Note that some components, in particular the {@link Ext.grid.GridPanel grid}, will not function properly within
+     * layouts if they have auto width, so in such cases this config should be set to false.
      */
     autoWidth : true,
     /**

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -67,14 +67,19 @@ var p = new Ext.Panel({
 Ext.layout.ColumnLayout = Ext.extend(Ext.layout.ContainerLayout, {
     // private
     monitorResize:true,
-    // private
+    
+    /**
+     * @cfg {String} extraCls
+     * An optional extra CSS class that will be added to the container (defaults to 'x-column').  This can be useful for
+     * adding customized styles to the container or any of its children using standard CSS rules.
+     */
     extraCls: 'x-column',
 
     scrollOffset : 0,
 
     // private
     isValidParent : function(c, target){
-        return c.getEl().dom.parentNode == this.innerCt.dom;
+        return (c.getPositionEl ? c.getPositionEl() : c.getEl()).dom.parentNode == this.innerCt.dom;
     },
 
     // private

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -17,7 +17,8 @@
  * for customizing the BorderLayout are at the {@link Ext.layout.BorderLayout.Region} and
  * {@link Ext.layout.BorderLayout.SplitRegion} levels.</p>
  * <p><b>The regions of a BorderLayout are fixed at render time and thereafter, no regions may be removed or
- * added.</b></p>
+ * added. The BorderLayout must have a center region, which will always fill the remaining space not used by
+ * the other regions in the layout.</b></p>
  * <p>Example usage:</p>
  * <pre><code>
 var border = new Ext.Panel({
@@ -94,7 +95,7 @@ Ext.layout.BorderLayout = Ext.extend(Ext.layout.ContainerLayout, {
         var centerW = w, centerH = h, centerY = 0, centerX = 0;
 
         var n = this.north, s = this.south, west = this.west, e = this.east, c = this.center;
-        if(!c){
+        if(!c && Ext.layout.BorderLayout.WARN !== false){
             throw 'No center region defined in BorderLayout ' + ct.id;
         }
 
@@ -140,15 +141,16 @@ Ext.layout.BorderLayout = Ext.extend(Ext.layout.ContainerLayout, {
             e.applyLayout(b);
         }
 
-        var m = c.getMargins();
-        var centerBox = {
-            x: centerX + m.left,
-            y: centerY + m.top,
-            width: centerW - (m.left+m.right),
-            height: centerH - (m.top+m.bottom)
-        };
-        c.applyLayout(centerBox);
-
+        if(c){
+            var m = c.getMargins();
+            var centerBox = {
+                x: centerX + m.left,
+                y: centerY + m.top,
+                width: centerW - (m.left+m.right),
+                height: centerH - (m.top+m.bottom)
+            };
+            c.applyLayout(centerBox);
+        }
         if(collapsed){
             for(var i = 0, len = collapsed.length; i < len; i++){
                 collapsed[i].collapse(false);
@@ -160,12 +162,17 @@ Ext.layout.BorderLayout = Ext.extend(Ext.layout.ContainerLayout, {
         }
     },
 
+    // inherit docs
     destroy: function() {
         var r = ['north', 'south', 'east', 'west'];
         for (var i = 0; i < r.length; i++) {
             var region = this[r[i]];
-            if (region && region.split) {
-                region.split.destroy(true);
+            if(region){
+                if(region.destroy){
+	                region.destroy();
+	            }else if (region.split){
+	                region.split.destroy(true);
+	            }
             }
         }
         Ext.layout.BorderLayout.superclass.destroy.call(this);
@@ -242,13 +249,43 @@ Ext.layout.BorderLayout.Region.prototype = {
      */
     /**
      * @cfg {Object} margins
-     * An object containing margins to apply to the region in the format {left: (left margin), top: (top margin),
-     * right: (right margin), bottom: (bottom margin)}
+     * An object containing margins to apply to the region when in the expanded state in the format:<pre><code>
+{
+    top: (top margin),
+    right: (right margin),
+    bottom: (bottom margin)
+    left: (left margin),
+}</code></pre>
+     * <p>May also be a string containing space-separated, numeric margin values. The order of the sides associated
+     * with each value matches the way CSS processes margin values:</p>
+     * <p><ul>
+     * <li>If there is only one value, it applies to all sides.</li>
+     * <li>If there are two values, the top and bottom borders are set to the first value and the right
+     * and left are set to the second.</li>
+     * <li>If there are three values, the top is set to the first value, the left and right are set to the second, and the bottom
+     * is set to the third.</li>
+     * <li>If there are four values, they apply to the top, right, bottom, and left, respectively.</li>
+     * </ul></p>
      */
     /**
      * @cfg {Object} cmargins
-     * An object containing margins to apply to the region's collapsed element in the format {left: (left margin),
-     * top: (top margin), right: (right margin), bottom: (bottom margin)}
+     * An object containing margins to apply to the region when in the collapsed state in the format:<pre><code>
+{
+    top: (top margin),
+    right: (right margin),
+    bottom: (bottom margin)
+    left: (left margin),
+}</code></pre>
+     * <p>May also be a string containing space-separated, numeric margin values. The order of the sides associated
+     * with each value matches the way CSS processes margin values.</p>
+     * <p><ul>
+     * <li>If there is only one value, it applies to all sides.</li>
+     * <li>If there are two values, the top and bottom borders are set to the first value and the right
+     * and left are set to the second.</li>
+     * <li>If there are three values, the top is set to the first value, the left and right are set to the second, and the bottom
+     * is set to the third.</li>
+     * <li>If there are four values, they apply to the top, right, bottom, and left, respectively.</li>
+     * </ul></p>
      */
     /**
      * @cfg {Boolean} collapsible
@@ -301,12 +338,12 @@ Ext.layout.BorderLayout.Region.prototype = {
     /**
      * This region's panel.  Read-only.
      * @type Ext.Panel
-     * @propery panel
+     * @property panel
      */
     /**
      * This region's layout.  Read-only.
      * @type Layout
-     * @propery layout
+     * @property layout
      */
     /**
      * This region's layout position (north, south, east, west or center).  Read-only.
@@ -615,6 +652,7 @@ Ext.layout.BorderLayout.Region.prototype = {
         this.restoreLT = [this.el.dom.style.left, this.el.dom.style.top];
         this.el.alignTo(this.collapsedEl, this.getCollapseAnchor());
         this.el.setStyle("z-index", 102);
+        this.panel.el.replaceClass('x-panel-collapsed', 'x-panel-floating');
         if(this.animFloat !== false){
             this.beforeSlide();
             this.el.slideIn(this.getSlideAnchor(), {
@@ -638,6 +676,7 @@ Ext.layout.BorderLayout.Region.prototype = {
         this.isSlid = false;
         this.clearMonitor();
         this.el.setStyle("z-index", "");
+        this.panel.el.replaceClass('x-panel-floating', 'x-panel-collapsed');
         this.el.dom.style.left = this.restoreLT[0];
         this.el.dom.style.top = this.restoreLT[1];
 
@@ -969,6 +1008,15 @@ Ext.extend(Ext.layout.BorderLayout.SplitRegion, Ext.layout.BorderLayout.Region, 
      */
     getSplitBar : function(){
         return this.split;
+    },
+    
+    // inherit docs
+    destroy : function() {
+        Ext.destroy(
+            this.miniSplitEl, 
+            this.split, 
+            this.splitEl
+        );
     }
 });
 

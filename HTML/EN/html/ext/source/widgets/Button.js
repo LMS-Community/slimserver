@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -21,8 +21,7 @@
  * @cfg {Boolean} hidden True to start hidden (defaults to false)
  * @cfg {Boolean} disabled True to start disabled (defaults to false)
  * @cfg {Boolean} pressed True to start pressed (only if enableToggle = true)
- * @cfg {String} toggleGroup The group this toggle button is a member of (only 1 per group can be pressed, only
- * applies if enableToggle = true)
+ * @cfg {String} toggleGroup The group this toggle button is a member of (only 1 per group can be pressed)
  * @cfg {Boolean/Object} repeat True to repeat fire the click event while the mouse is down. This can also be
   an {@link Ext.util.ClickRepeater} config object (defaults to false).
  * @constructor
@@ -114,11 +113,19 @@ Ext.Button = Ext.extend(Ext.Component, {
      */
     tooltipType : 'qtip',
 
-    buttonSelector : "button:first",
+    /**
+     * @cfg {String} buttonSelector
+     * <p>(Optional) A {@link Ext.DomQuery DomQuery} selector which is used to extract the active, clickable element from the
+     * DOM structure created.</p>
+     * <p>When a custom {@link #template} is used, you  must ensure that this selector results in the selection of
+     * a focussable element.</p>
+     * <p>Defaults to <b><tt>"button:first-child"</tt></b>.</p>
+     */
+    buttonSelector : "button:first-child",
 
     /**
-     * @cfg {Ext.Template} template (Optional)
-     * An {@link Ext.Template} with which to create the Button's main element. This Template must
+     * @cfg {Ext.Template} template
+     * (Optional) An {@link Ext.Template} with which to create the Button's main element. This Template must
      * contain numeric substitution parameter 0 if it is to display the text property. Changing the template could
      * require code modifications if required elements (e.g. a button) aren't present.
      */
@@ -235,6 +242,9 @@ Ext.Button = Ext.extend(Ext.Component, {
         this.el = btn;
         btn.addClass("x-btn");
 
+        if(this.id){
+            this.el.dom.id = this.el.id = this.id;
+        }
         if(this.icon){
             btnEl.setStyle('background-image', 'url(' +this.icon +')');
         }
@@ -273,10 +283,6 @@ Ext.Button = Ext.extend(Ext.Component, {
             this.menu.on("hide", this.onMenuHide, this);
         }
 
-        if(this.id){
-            this.el.dom.id = this.el.id = this.id;
-        }
-
         if(this.repeat){
             var repeater = new Ext.util.ClickRepeater(btn,
                 typeof this.repeat == "object" ? this.repeat : {}
@@ -312,10 +318,13 @@ Ext.Button = Ext.extend(Ext.Component, {
     // private
     beforeDestroy: function(){
     	if(this.rendered){
-	        var btn = this.el.child(this.buttonSelector);
-	        if(btn){
-	            btn.removeAllListeners();
-	        }
+            var btnEl = this.el.child(this.buttonSelector);
+            if(btnEl){
+                if(this.tooltip){
+                    Ext.QuickTips.unregister(btnEl);
+                }
+                btnEl.removeAllListeners();
+            }
 	    }
         if(this.menu){
             Ext.destroy(this.menu);

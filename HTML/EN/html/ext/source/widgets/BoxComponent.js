@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -9,10 +9,28 @@
 /**
  * @class Ext.BoxComponent
  * @extends Ext.Component
- * Base class for any visual {@link Ext.Component} that uses a box container.  BoxComponent provides automatic box
+ * <p>Base class for any visual {@link Ext.Component} that uses a box container.  BoxComponent provides automatic box
  * model adjustments for sizing and positioning and will work correctly withnin the Component rendering model.  All
  * container classes should subclass BoxComponent so that they will work consistently when nested within other Ext
- * layout containers.
+ * layout containers.</p>
+ * <p>A BoxComponent may be created as a custom Component which encapsulates any HTML element, either a pre-existing
+ * element, or one that is created to your specifications at render time. Usually, to participate in layouts,
+ * a Component will need to be a <b>Box</b>Component in order to have its width and height managed.</p>
+ * <p>To use a pre-existing element as a BoxComponent, configure it so that you preset the <b>el</b> property to the
+ * element to reference:<pre><code>
+var pageHeader = new Ext.BoxComponent({
+    el: 'my-header-div'
+});</code></pre>
+ * This may then be {@link Ext.Container#add added} to a {@link Ext.Container Container} as a child item.</p>
+ * <p>To create a BoxComponent based around a HTML element to be created at render time, use the
+ * {@link Ext.Component#autoEl autoEl} config option which takes the form of a
+ * {@link Ext.DomHelper DomHelper} specification:<pre><code>
+var myImage = new Ext.BoxComponent({
+    autoEl: {
+        tag: 'img',
+        src: '/images/my-image.jpg'
+    }
+});</code></pre></p>
  * @constructor
  * @param {Ext.Element/String/Object} config The configuration options.
  */
@@ -43,11 +61,15 @@ Ext.BoxComponent = Ext.extend(Ext.Component, {
      */
     /**
      * @cfg {Boolean} autoHeight
-     * True to use height:'auto', false to use fixed height. Note: although many components inherit this config option, not all will function as expected with a height of 'auto'. (defaults to false).
+     * True to use height:'auto', false to use fixed height (defaults to false). <b>Note</b>: Although many components 
+     * inherit this config option, not all will function as expected with a height of 'auto'. Setting autoHeight:true 
+     * means that the browser will manage height based on the element's contents, and that Ext will not manage it at all.
      */
     /**
      * @cfg {Boolean} autoWidth
-     * True to use width:'auto', false to use fixed width. Note: although many components inherit this config option, not all will function as expected with a width of 'auto'. (defaults to false).
+     * True to use width:'auto', false to use fixed width (defaults to false). <b>Note</b>: Although many components 
+     * inherit this config option, not all will function as expected with a width of 'auto'. Setting autoWidth:true 
+     * means that the browser will manage width based on the element's contents, and that Ext will not manage it at all.
      */
 
     /* // private internal config

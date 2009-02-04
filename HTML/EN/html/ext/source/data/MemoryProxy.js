@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -36,7 +36,7 @@ Ext.extend(Ext.data.MemoryProxy, Ext.data.DataProxy, {
      * a block of Ext.data.Records using the passed Ext.data.DataReader implementation, and
      * process that block using the passed callback.
      * @param {Object} params This parameter is not used by the MemoryProxy class.
-     * @param {Ext.data.DataReader) reader The Reader object which converts the data
+     * @param {Ext.data.DataReader} reader The Reader object which converts the data
      * object into a block of Ext.data.Records.
      * @param {Function} callback The function into which to pass the block of Ext.data.records.
      * The function must be passed <ul>

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -87,8 +87,8 @@ Ext.History = (function () {
     }
 
     function startUp() {
-        currentToken = hiddenField.value;
-
+        currentToken = hiddenField.value ? hiddenField.value : getHash();
+        
         if (Ext.isIE) {
             checkIFrame();
         } else {

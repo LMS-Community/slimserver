@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -43,14 +43,14 @@ Ext.Ajax.request({
         myTabPanel.setActiveTab(newComponent);
     },
     failure: function() {
-    	Ext.Msg.alert("Grid create failed", "Server communication failure");
+        Ext.Msg.alert("Grid create failed", "Server communication failure");
     }
 });
 </code></pre>
  * <p>The server script would need to return an executable Javascript statement which, when processed
  * using <tt>eval()</tt> will return either a config object with an {@link Ext.Component#xtype xtype},
  * or an instantiated Component. For example:</p><pre><code>
-{function() {
+(function() {
     function formatDate(value){
         return value ? value.dateFormat('M d, Y') : '';
     };
@@ -60,7 +60,7 @@ Ext.Ajax.request({
         baseParams: {
             startDate: '01/01/2008',
             endDate: '01/31/2008'
-        }
+        },
         reader: new Ext.data.JsonReader({
             record: 'transaction',
             id: 'id',
@@ -142,6 +142,11 @@ Ext.TabPanel = Ext.extend(Ext.Panel,  {
      * @cfg {Boolean} layoutOnTabChange Set to true to do a layout of tab items as tabs are changed.
      */
     /**
+     * @cfg {String} tabCls <b>This config option is used on <u>child Components</u> of ths TabPanel.</b> A CSS
+     * class name applied to the tab strip item representing the child Component, allowing special
+     * styling to be applied.
+     */
+    /**
      * @cfg {Boolean} monitorResize True to automatically monitor window resize events and rerender the layout on
      * browser resize (defaults to true).
      */
@@ -150,6 +155,10 @@ Ext.TabPanel = Ext.extend(Ext.Panel,  {
      * @cfg {Boolean} deferredRender Internally, the TabPanel uses a {@link Ext.layout.CardLayout} to manage its tabs.
      * This property will be passed on to the layout as its {@link Ext.layout.CardLayout#deferredRender} config value,
      * determining whether or not each tab is rendered only when first accessed (defaults to true).
+     * <p>Be aware that leaving deferredRender as <b><tt>true</tt></b> means that, if the TabPanel is within
+     * a {@link Ext.form.FormPanel form}, then until a tab is activated, any Fields within that tab will not
+     * be rendered, and will therefore not be submitted and will not be available to either
+     * {@link Ext.form.BasicForm#getValues getValues} or {@link Ext.form.BasicForm#setValues setValues}.</p>
      */
     deferredRender : true,
     /**
@@ -297,7 +306,7 @@ var tabs = new Ext.TabPanel({
             'tabchange',
             /**
              * @event contextmenu
-             * Fires when the original browser contextmenu event originated from a tab element.
+             * Relays the contextmenu event from a tab selector element in the tab strip.
              * @param {TabPanel} this
              * @param {Panel} tab The target tab
              * @param {EventObject} e
@@ -347,7 +356,7 @@ var tabs = new Ext.TabPanel({
         var beforeEl = (this.tabPosition=='bottom' ? this.stripWrap : null);
         this.stripSpacer = st.createChild({cls:'x-tab-strip-spacer'}, beforeEl);
         this.strip = new Ext.Element(this.stripWrap.dom.firstChild);
-        
+
         this.edge = this.strip.createChild({tag:'li', cls:'x-tab-edge'});
         this.strip.createChild({cls:'x-clear'});
 
@@ -470,7 +479,7 @@ var tabs = new Ext.TabPanel({
         if(item.tabCls){
             cls += ' ' + item.tabCls;
         }
-        
+
         var p = {
             id: this.id + this.idDelimiter + item.getItemId(),
             text: item.title,
@@ -486,9 +495,12 @@ var tabs = new Ext.TabPanel({
         if(item.tabTip){
             Ext.fly(el).child('span.x-tab-strip-text', true).qtip = item.tabTip;
         }
+        item.tabEl = el;
+
         item.on('disable', this.onItemDisabled, this);
         item.on('enable', this.onItemEnabled, this);
         item.on('titlechange', this.onItemTitleChanged, this);
+        item.on('iconchange', this.onItemIconChanged, this);
         item.on('beforeshow', this.onBeforeShowItem, this);
     },
 
@@ -516,18 +528,21 @@ var tabs = new Ext.TabPanel({
 
     // private
     onRemove : function(tp, item){
-        Ext.removeNode(this.getTabEl(item));
+        Ext.destroy(Ext.get(this.getTabEl(item)));
         this.stack.remove(item);
         item.un('disable', this.onItemDisabled, this);
         item.un('enable', this.onItemEnabled, this);
         item.un('titlechange', this.onItemTitleChanged, this);
+        item.un('iconchange', this.onItemIconChanged, this);
         item.un('beforeshow', this.onBeforeShowItem, this);
         if(item == this.activeTab){
             var next = this.stack.next();
             if(next){
                 this.setActiveTab(next);
-            }else{
+            }else if(this.items.getCount() > 0){
                 this.setActiveTab(0);
+            }else{
+                this.activeTab = null;
             }
         }
         this.delegateUpdates();
@@ -565,12 +580,20 @@ var tabs = new Ext.TabPanel({
             Ext.fly(el).child('span.x-tab-strip-text', true).innerHTML = item.title;
         }
     },
+    
+    //private
+    onItemIconChanged: function(item, iconCls, oldCls){
+        var el = this.getTabEl(item);
+        if(el){
+            Ext.fly(el).child('span.x-tab-strip-text').replaceClass(oldCls, iconCls);
+        }
+    },
 
     /**
      * Gets the DOM element for tab strip item which activates the
      * child panel with the specified ID. Access this to change the visual treatment of the
      * item, for example by changing the CSS class name.
-     * @param {Panel} tab The tab
+     * @param {Panel/Number} tab The tab component, or the tab's index
      * @return {HTMLElement} The DOM node
      */
     getTabEl : function(item){
@@ -732,9 +755,10 @@ var tabs = new Ext.TabPanel({
 
     // private
     autoScrollTabs : function(){
+        this.pos = this.tabPosition=='bottom' ? this.footer : this.header;
         var count = this.items.length;
-        var ow = this.header.dom.offsetWidth;
-        var tw = this.header.dom.clientWidth;
+        var ow = this.pos.dom.offsetWidth;
+        var tw = this.pos.dom.clientWidth;
 
         var wrap = this.stripWrap;
         var wd = wrap.dom;
@@ -750,18 +774,18 @@ var tabs = new Ext.TabPanel({
             wrap.setWidth(tw);
             if(this.scrolling){
                 this.scrolling = false;
-                this.header.removeClass('x-tab-scrolling');
+                this.pos.removeClass('x-tab-scrolling');
                 this.scrollLeft.hide();
                 this.scrollRight.hide();
-                if(Ext.isAir){
+                if(Ext.isAir || Ext.isSafari){
                     wd.style.marginLeft = '';
                     wd.style.marginRight = '';
                 }
             }
         }else{
             if(!this.scrolling){
-                this.header.addClass('x-tab-scrolling');
-                if(Ext.isAir){
+                this.pos.addClass('x-tab-scrolling');
+                if(Ext.isAir || Ext.isSafari){
                     wd.style.marginLeft = '18px';
                     wd.style.marginRight = '18px';
                 }
@@ -788,10 +812,11 @@ var tabs = new Ext.TabPanel({
 
     // private
     createScrollers : function(){
+        this.pos.addClass('x-tab-scrolling-' + this.tabPosition);
         var h = this.stripWrap.dom.offsetHeight;
 
         // left
-        var sl = this.header.insertFirst({
+        var sl = this.pos.insertFirst({
             cls:'x-tab-scroller-left'
         });
         sl.setHeight(h);
@@ -804,7 +829,7 @@ var tabs = new Ext.TabPanel({
         this.scrollLeft = sl;
 
         // right
-        var sr = this.header.insertFirst({
+        var sr = this.pos.insertFirst({
             cls:'x-tab-scroller-right'
         });
         sr.setHeight(h);
@@ -907,6 +932,22 @@ var tabs = new Ext.TabPanel({
         var pos = this.getScrollPos();
         this.scrollLeft[pos == 0 ? 'addClass' : 'removeClass']('x-tab-scroller-left-disabled');
         this.scrollRight[pos >= (this.getScrollWidth()-this.getScrollArea()) ? 'addClass' : 'removeClass']('x-tab-scroller-right-disabled');
+    },
+
+    // private
+    beforeDestroy : function() {
+        if(this.items){
+            this.items.each(function(item){
+                if(item && item.tabEl){
+                    Ext.get(item.tabEl).removeAllListeners();
+                    item.tabEl = null;
+                }
+            }, this);
+        }
+        if(this.strip){
+            this.strip.removeAllListeners();
+        }
+        Ext.TabPanel.superclass.beforeDestroy.apply(this);
     }
 
     /**
