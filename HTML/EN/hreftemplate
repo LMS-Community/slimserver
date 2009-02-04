@@ -194,7 +194,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 		[% ELSE %]
 		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %][% IF fileSuffix %].[% fileSuffix %][% ELSIF browserType == 'IE' %].gif[% END %]"
 		[% END %]
-	height="[% height %]" width="[% height %]"
+	[%- IF NOT serverResizesArt %]height="[% height %]" width="[% height %]"[% END %]
 	alt=	"[% item.text | html %]
 		[%- artistlist | html %]
 		[%- IF item.year %]
