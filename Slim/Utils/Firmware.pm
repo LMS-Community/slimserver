@@ -137,6 +137,7 @@ sub init {
 			# set a timer that will check again later on, and download this firmware in 
 			# the background.  Any player that needs an upgrade will then be prompted by
 			# Slim::Player::Squeezebox::checkFirmwareUpgrade
+			Slim::Utils::Timers::killTimers( $file, \&downloadAsync );
 			Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME + int(rand(60)), \&downloadAsync );
 		}
 	}
@@ -230,6 +231,7 @@ sub init_jive_version_done {
 	
 	# Check again for an updated jive.version in 12 hours
 	$log->debug('Scheduling next jive.version check in 12 hours');
+	Slim::Utils::Timers::killTimers( undef, \&init_jive );
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 43200,
@@ -532,18 +534,29 @@ sub downloadAsyncError {
 	# Clean up
 	unlink "$file.tmp" if -e "$file.tmp"; 
 	
-	logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in %d minutes.",
-		$http->url,
-		$error,
-		int( $CHECK_TIME / 60 ),
-	));
+	# If error was "Unable to open $file for writing", downloading will never succeed so just give up
+	# Same for "Unable to write" if we run out of disk space, for example
+	if ( $error =~ /Unable to (?:open|write)/ ) {
+		logWarning(sprintf("Firmware: Fatal error downloading %s (%s), giving up",
+			$http->url,
+			$error,
+		));
+	}
+	else {
+		logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in %d minutes.",
+			$http->url,
+			$error,
+			int( $CHECK_TIME / 60 ),
+		));
 	
-	Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync );
+		Slim::Utils::Timers::killTimers( $file, \&downloadAsync );
+		Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME, \&downloadAsync );
 	
-	# Increase retry time in case of multiple failures, but don't exceed MAX_RETRY_TIME
-	$CHECK_TIME *= 2;
-	if ( $CHECK_TIME > MAX_RETRY_TIME ) {
-		$CHECK_TIME = MAX_RETRY_TIME;
+		# Increase retry time in case of multiple failures, but don't exceed MAX_RETRY_TIME
+		$CHECK_TIME *= 2;
+		if ( $CHECK_TIME > MAX_RETRY_TIME ) {
+			$CHECK_TIME = MAX_RETRY_TIME;
+		}
 	}
 	
 	# Bug 9230, if we failed to download a Jive firmware but have a valid one in Cache already,
