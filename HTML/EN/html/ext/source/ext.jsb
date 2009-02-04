@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<project path="" name="Ext - JS Lib" author="Ext JS, LLC" version="2.2" copyright="Ext JS Library $version&#xD;&#xA;Copyright(c) 2006-2008, $author.&#xD;&#xA;licensing@extjs.com&#xD;&#xA;&#xD;&#xA;http://extjs.com/license" output="C:\apps\www\deploy\ext-2.2\" source="True" source-dir="$output\source" minify="True" min-dir="$output\build" doc="False" doc-dir="$output\docs" min-dair="$output\build">
+<project path="" name="Ext - JS Lib" author="Ext JS, LLC" version="2.2.1" copyright="Ext JS Library $version&#xD;&#xA;Copyright(c) 2006-2009, $author.&#xD;&#xA;licensing@extjs.com&#xD;&#xA;&#xD;&#xA;http://extjs.com/license" output="E:\apps\www\deploy\ext-2.2.1\" source="True" source-dir="$output\source" minify="True" min-dir="$output\build" doc="False" doc-dir="$output\docs" min-dair="$output\build">
   <directory name="" />
   <target name="Core" file="$output\ext-core.js" debug="True" shorthand="False" shorthand-list="YAHOO.util.Dom.setStyle&#xD;&#xA;YAHOO.util.Dom.getStyle&#xD;&#xA;YAHOO.util.Dom.getRegion&#xD;&#xA;YAHOO.util.Dom.getViewportHeight&#xD;&#xA;YAHOO.util.Dom.getViewportWidth&#xD;&#xA;YAHOO.util.Dom.get&#xD;&#xA;YAHOO.util.Dom.getXY&#xD;&#xA;YAHOO.util.Dom.setXY&#xD;&#xA;YAHOO.util.CustomEvent&#xD;&#xA;YAHOO.util.Event.addListener&#xD;&#xA;YAHOO.util.Event.getEvent&#xD;&#xA;YAHOO.util.Event.getTarget&#xD;&#xA;YAHOO.util.Event.preventDefault&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Event.stopPropagation&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Anim&#xD;&#xA;YAHOO.util.Motion&#xD;&#xA;YAHOO.util.Connect.asyncRequest&#xD;&#xA;YAHOO.util.Connect.setForm&#xD;&#xA;YAHOO.util.Dom&#xD;&#xA;YAHOO.util.Event">
     <include name="core\DomHelper.js" />
@@ -493,7 +493,6 @@
   </target>
   <file name="widgets\form\Editor.js" path="widgets\form" />
   <file name="experimental\ext-base.js" path="experimental" />
-  <file name="ext.jsb" path="" />
   <file name="widgets\ViewPanel.js" path="widgets" />
   <file name="util\MasterTemplate.js" path="util" />
   <file name="widgets\form\Layout.js" path="widgets\form" />
@@ -528,24 +527,8 @@
   <file name="legacy\MasterTemplate.js" path="legacy" />
   <file name="legacy\View.js" path="legacy" />
   <file name="widgets\grid\Column.js" path="widgets\grid" />
-  <target name="extjs.com" file="c:\apps\www\v3\assets\js\extjs.js" debug="True" shorthand="False" shorthand-list="YAHOO.util.Dom.setStyle&#xD;&#xA;YAHOO.util.Dom.getStyle&#xD;&#xA;YAHOO.util.Dom.getRegion&#xD;&#xA;YAHOO.util.Dom.getViewportHeight&#xD;&#xA;YAHOO.util.Dom.getViewportWidth&#xD;&#xA;YAHOO.util.Dom.get&#xD;&#xA;YAHOO.util.Dom.getXY&#xD;&#xA;YAHOO.util.Dom.setXY&#xD;&#xA;YAHOO.util.CustomEvent&#xD;&#xA;YAHOO.util.Event.addListener&#xD;&#xA;YAHOO.util.Event.getEvent&#xD;&#xA;YAHOO.util.Event.getTarget&#xD;&#xA;YAHOO.util.Event.preventDefault&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Event.stopPropagation&#xD;&#xA;YAHOO.util.Event.stopEvent&#xD;&#xA;YAHOO.util.Anim&#xD;&#xA;YAHOO.util.Motion&#xD;&#xA;YAHOO.util.Connect.asyncRequest&#xD;&#xA;YAHOO.util.Connect.setForm&#xD;&#xA;YAHOO.util.Dom&#xD;&#xA;YAHOO.util.Event">
-    <include name="core\Ext.js" />
-    <include name="adapter\ext-base.js" />
-    <include name="core\DomHelper.js" />
-    <include name="core\Template.js" />
-    <include name="core\DomQuery.js" />
-    <include name="util\Observable.js" />
-    <include name="core\EventManager.js" />
-    <include name="core\Element.js" />
-    <include name="core\Fx.js" />
-    <include name="core\CompositeElement.js" />
-    <include name="data\Connection.js" />
-    <include name="core\UpdateManager.js" />
-    <include name="util\DelayedTask.js" />
-    <include name="util\XTemplate.js" />
-    <include name="widgets\Layer.js" />
-    <include name="widgets\Shadow.js" />
-  </target>
+  <file name="locale\ext-lang-en_UK.js" path="locale" />
+  <file name="ext.jsb" path="" />
   <file name="adapter\ext-base.js" path="adapter" />
   <file name="adapter\jquery-bridge.js" path="adapter" />
   <file name="adapter\prototype-bridge.js" path="adapter" />
@@ -594,9 +577,10 @@
   <file name="locale\ext-lang-de.js" path="locale" />
   <file name="locale\ext-lang-el_GR.js" path="locale" />
   <file name="locale\ext-lang-en.js" path="locale" />
-  <file name="locale\ext-lang-en_UK.js" path="locale" />
+  <file name="locale\ext-lang-en_GB.js" path="locale" />
   <file name="locale\ext-lang-es.js" path="locale" />
   <file name="locale\ext-lang-fa.js" path="locale" />
+  <file name="locale\ext-lang-fi.js" path="locale" />
   <file name="locale\ext-lang-fr.js" path="locale" />
   <file name="locale\ext-lang-fr_CA.js" path="locale" />
   <file name="locale\ext-lang-gr.js" path="locale" />

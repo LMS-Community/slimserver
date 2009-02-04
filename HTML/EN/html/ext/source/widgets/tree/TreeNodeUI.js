@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -280,7 +280,7 @@ Ext.tree.TreeNodeUI.prototype = {
         if(!this.node.preventHScroll){
             try{this.anchor.focus();
             }catch(e){}
-        }else if(!Ext.isIE){
+        }else{
             try{
                 var noscroll = this.node.getOwnerTree().getTreeEl().dom;
                 var l = noscroll.scrollLeft;
@@ -592,7 +592,15 @@ Ext.tree.TreeNodeUI.prototype = {
         delete this.checkbox;
         delete this.anchor;
         delete this.textNode;
-        Ext.removeNode(this.ctNode);
+        
+        if (this.holder){
+             delete this.wrap;
+             Ext.removeNode(this.holder);
+             delete this.holder;
+        }else{
+            Ext.removeNode(this.wrap);
+            delete this.wrap;
+        }
     }
 };
 

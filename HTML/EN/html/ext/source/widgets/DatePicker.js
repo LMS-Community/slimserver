@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -278,14 +278,14 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
         this.el = Ext.get(el);
         this.eventEl = Ext.get(el.firstChild);
 
-        new Ext.util.ClickRepeater(this.el.child("td.x-date-left a"), {
+        this.leftClickRpt = new Ext.util.ClickRepeater(this.el.child("td.x-date-left a"), {
             handler: this.showPrevMonth,
             scope: this,
             preventDefault:true,
             stopDefault:true
         });
 
-        new Ext.util.ClickRepeater(this.el.child("td.x-date-right a"), {
+        this.rightClickRpt = new Ext.util.ClickRepeater(this.el.child("td.x-date-right a"), {
             handler: this.showNextMonth,
             scope: this,
             preventDefault:true,
@@ -671,7 +671,7 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
             setCellClass(this, cells[i]);
         }
         for(; i < days; i++){
-            intDay = i - startingPos + 1;
+            var intDay = i - startingPos + 1;
             textEls[i].innerHTML = (intDay);
             d.setDate(d.getDate()+1);
             cells[i].className = "x-date-active";
@@ -707,7 +707,14 @@ Ext.DatePicker = Ext.extend(Ext.Component, {
     // private
     beforeDestroy : function() {
         if(this.rendered){
-            Ext.destroy(this.mbtn, this.todayBtn);
+            Ext.destroy(
+                this.leftClickRpt,
+                this.rightClickRpt,
+                this.monthPicker,
+                this.eventEl,
+                this.mbtn,
+                this.todayBtn
+            );
         }
     }
 

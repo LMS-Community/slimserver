@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -89,8 +89,8 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
 
         this.rowNav = new Ext.KeyNav(this.grid.getGridEl(), {
             "up" : function(e){
-                if(!e.shiftKey){
-                    this.selectPrevious(e.shiftKey);
+                if(!e.shiftKey || this.singleSelect){
+                    this.selectPrevious(false);
                 }else if(this.last !== false && this.lastActive !== false){
                     var last = this.last;
                     this.selectRange(this.last,  this.lastActive-1);
@@ -103,8 +103,8 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
                 }
             },
             "down" : function(e){
-                if(!e.shiftKey){
-                    this.selectNext(e.shiftKey);
+                if(!e.shiftKey || this.singleSelect){
+                    this.selectNext(false);
                 }else if(this.last !== false && this.lastActive !== false){
                     var last = this.last;
                     this.selectRange(this.last,  this.lastActive+1);
@@ -275,7 +275,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
      * Clears all selections.
      */
     clearSelections : function(fast){
-        if(this.locked) return;
+        if(this.isLocked()) return;
         if(fast !== true){
             var ds = this.grid.store;
             var s = this.selections;
@@ -294,7 +294,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
      * Selects all rows.
      */
     selectAll : function(){
-        if(this.locked) return;
+        if(this.isLocked()) return;
         this.selections.clear();
         for(var i = 0, len = this.grid.store.getCount(); i < len; i++){
             this.selectRow(i, true);
@@ -334,7 +334,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
             return;
         };
         var view = this.grid.getView();
-        if(e.shiftKey && this.last !== false){
+        if(e.shiftKey && !this.singleSelect && this.last !== false){
             var last = this.last;
             this.selectRange(last, rowIndex, e.ctrlKey);
             this.last = last; // reset the last
@@ -371,7 +371,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
      * @param {Boolean} keepExisting (optional) True to retain existing selections
      */
     selectRange : function(startRow, endRow, keepExisting){
-        if(this.locked) return;
+        if(this.isLocked()) return;
         if(!keepExisting){
             this.clearSelections();
         }
@@ -392,7 +392,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
      * @param {Number} endRow The index of the last row in the range
      */
     deselectRange : function(startRow, endRow, preventViewNotify){
-        if(this.locked) return;
+        if(this.isLocked()) return;
         for(var i = startRow; i <= endRow; i++){
             this.deselectRow(i, preventViewNotify);
         }
@@ -404,7 +404,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
      * @param {Boolean} keepExisting (optional) True to keep existing selections
      */
     selectRow : function(index, keepExisting, preventViewNotify){
-        if(this.locked || (index < 0 || index >= this.grid.store.getCount()) || this.isSelected(index)) return;
+        if(this.isLocked() || (index < 0 || index >= this.grid.store.getCount()) || this.isSelected(index)) return;
         var r = this.grid.store.getAt(index);
         if(r && this.fireEvent("beforerowselect", this, index, keepExisting, r) !== false){
             if(!keepExisting || this.singleSelect){
@@ -425,7 +425,7 @@ Ext.extend(Ext.grid.RowSelectionModel, Ext.grid.AbstractSelectionModel,  {
      * @param {Number} row The index of the row to deselect
      */
     deselectRow : function(index, preventViewNotify){
-        if(this.locked) return;
+        if(this.isLocked()) return;
         if(this.last == index){
             this.last = false;
         }

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -24,7 +24,7 @@
  */
 Ext.util.Observable = function(){
     /**
-     * @cfg {Object} listeners A config object containing one or more event handlers to be added to this
+     * @cfg {Object} listeners (optional) A config object containing one or more event handlers to be added to this
      * object during initialization.  This should be a valid listeners config object as specified in the
      * {@link #addListener} example for attaching multiple handlers at once.
      */

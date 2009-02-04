@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -9,15 +9,30 @@
 /**
  * @class Ext.grid.EditorGridPanel
  * @extends Ext.grid.GridPanel
- * Class for creating and editable grid.
- 
+ * <p>This class extends the GridPanel to provide cell editing on selected columns.</p>
+ * The editable columns are specified by providing an {@link Ext.grid.ColumnModel#editor editor}
+ * in the column configuration.</p>
+ * <p>Editability of columns may be controlled programatically by inserting an implementation
+ * of {@link Ext.grid.ColumnModel#isCellEditable isCellEditable} into your ColumnModel.</p>
+ * <p>Editing is performed on the value of the <i>field</i> specified by the column's
+ * {@link Ext.grid.ColumnModel#dataIndex dataIndex} in the backing {@link Ext.data.Store Store}
+ * (so if you are using a {@link Ext.grid.ColumnModel#setRenderer renderer} in order to display
+ * transformed data, this must be accounted for).</p>
+ * <p>If a value-to-description mapping is used to render a column, then a {Ext.form.Field#ComboBox ComboBox}
+ * which uses the same {@link Ext.form.Field#valueField value}-to-{@link Ext.form.Field#displayFieldField description}
+ * mapping would be an appropriate editor.</p>
+ * If there is a more complex mismatch between the visible data in the grid, and the editable data in
+ * the {@link Edt.data.Store Store}, then code to transform the data both before and after editing can be
+ * injected using the {@link #beforeedit} and {@link #afteredit} events.
  * @constructor
  * @param {Object} config The config object
  */
 Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
     /**
      * @cfg {Number} clicksToEdit
-     * The number of clicks on a cell required to display the cell's editor (defaults to 2)
+     * <p>The number of clicks on a cell required to display the cell's editor (defaults to 2).</p>
+     * <p>Setting this option to 'auto' means that mousedown <i>on the selected cell</i> starts
+     * editing that cell.</p>
      */
     clicksToEdit: 2,
 
@@ -37,7 +52,7 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
 	 */
     // private
     trackMouseOver: false, // causes very odd FF errors
-    
+
     // private
     initComponent : function(){
         Ext.grid.EditorGridPanel.superclass.initComponent.call(this);
@@ -45,7 +60,9 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
         if(!this.selModel){
             /**
              * @cfg {Object} selModel Any subclass of AbstractSelectionModel that will provide the selection model for
-             * the grid (defaults to {@link Ext.grid.CellSelectionModel} if not specified).
+             * the grid (defaults to {@link Ext.grid.CellSelectionModel} if not specified). Note that the SelectionModel
+             * must be compatible with the model of selecting cells individually, and should support a method named
+             * <tt>getSelectedCell</tt> (for these reasons, {@link Ext.grid.RowSelectionModel} is not compatible).
              */
             this.selModel = new Ext.grid.CellSelectionModel();
         }
@@ -70,7 +87,7 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
             "beforeedit",
             /**
              * @event afteredit
-             * Fires after a cell is edited. <br />
+             * Fires after a cell is edited. The edit event object has the following properties <br />
              * <ul style="padding:5px;padding-left:16px;">
              * <li>grid - This grid</li>
              * <li>record - The record being edited</li>
@@ -106,8 +123,9 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
     // private
     initEvents : function(){
         Ext.grid.EditorGridPanel.superclass.initEvents.call(this);
-        
+
         this.on("bodyscroll", this.stopEditing, this, [true]);
+        this.on("columnresize", this.stopEditing, this, [true]);
 
         if(this.clicksToEdit == 1){
             this.on("cellclick", this.onCellDblClick, this);
@@ -117,7 +135,6 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
             }
             this.on("celldblclick", this.onCellDblClick, this);
         }
-        this.getGridEl().addClass("xedit-grid");
     },
 
     // private
@@ -207,25 +224,29 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
                     ed.record = r;
                     ed.on("complete", this.onEditComplete, this, {single: true});
                     ed.on("specialkey", this.selModel.onEditorKey, this.selModel);
+                    /**
+                     * The currently active editor or null
+                      * @type Ext.Editor
+                     */
                     this.activeEditor = ed;
                     var v = this.preEditValue(r, field);
-                    ed.startEdit(this.view.getCell(row, col).firstChild, v);
+                    ed.startEdit(this.view.getCell(row, col).firstChild, v === undefined ? '' : v);
                 }).defer(50, this);
             }
         }
     },
-    
+
     // private
 	preEditValue : function(r, field){
         var value = r.data[field];
 		return this.autoEncode && typeof value == 'string' ? Ext.util.Format.htmlDecode(value) : value;
 	},
-	
+
     // private
 	postEditValue : function(value, originalValue, r, field){
 		return this.autoEncode && typeof value == 'string' ? Ext.util.Format.htmlEncode(value) : value;
 	},
-	    
+
     /**
      * Stops any active editing
      * @param {Boolean} cancel (optional) True to cancel any changes
@@ -236,7 +257,7 @@ Ext.grid.EditorGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }
         this.activeEditor = null;
     },
-    
+
     // private
     onDestroy: function() {
         if(this.rendered){

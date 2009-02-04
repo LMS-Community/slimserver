@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -15,6 +15,9 @@
  * @param {Object} config Configuration options
  */
 Ext.form.NumberField = Ext.extend(Ext.form.TextField,  {
+    /**
+     * @cfg {RegExp} stripCharsRe @hide
+     */
     /**
      * @cfg {String} fieldClass The default CSS class for the field (defaults to "x-form-field x-form-num-field")
      */
@@ -137,7 +140,7 @@ Ext.form.NumberField = Ext.extend(Ext.form.TextField,  {
 
     beforeBlur : function(){
         var v = this.parseValue(this.getRawValue());
-        if(v){
+        if(v || v === 0){
             this.setValue(this.fixPrecision(v));
         }
     }

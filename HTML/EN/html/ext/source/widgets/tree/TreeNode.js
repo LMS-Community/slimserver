@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -393,10 +393,11 @@ Ext.extend(Ext.tree.TreeNode, Ext.data.Node, {
     /**
      * Ensures all parent nodes are expanded, and if necessary, scrolls
      * the node into view.
+     * @param {Function} callback (optional) A function to call when the node has been made visible.
      */
     ensureVisible : function(callback){
         var tree = this.getOwnerTree();
-        tree.expandPath(this.parentNode.getPath(), false, function(){
+        tree.expandPath(this.parentNode ? this.parentNode.getPath() : this.getPath(), false, function(){
             var node = tree.getNodeById(this.id);  // Somehow if we don't do this, we lose changes that happened to node in the meantime
             tree.getTreeEl().scrollChildIntoView(node.ui.anchor);
             Ext.callback(callback);

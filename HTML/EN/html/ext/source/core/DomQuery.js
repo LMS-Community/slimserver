@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -461,7 +461,8 @@ Ext.DomQuery = function(){
          * Selects a group of elements.
          * @param {String} selector The selector/xpath query (can be a comma separated list of selectors)
          * @param {Node} root (optional) The start of the query (defaults to document).
-         * @return {Array}
+         * @return {Array} An Array of DOM elements which match the selector. If there are
+         * no matches, and empty Array is returned.
          */
         select : function(path, root, type){
             if(!root || root == document){
@@ -495,7 +496,7 @@ Ext.DomQuery = function(){
          * Selects a single element.
          * @param {String} selector The selector/xpath query
          * @param {Node} root (optional) The start of the query (defaults to document).
-         * @return {Element}
+         * @return {Element} The DOM element which matched the selector.
          */
         selectNode : function(path, root){
             return Ext.DomQuery.select(path, root)[0];
@@ -552,7 +553,8 @@ Ext.DomQuery = function(){
          * @param {String} selector The simple selector to test
          * @param {Boolean} nonMatches If true, it returns the elements that DON'T match
          * the selector instead of the ones that match
-         * @return {Array}
+         * @return {Array} An Array of DOM elements which match the selector. If there are
+         * no matches, and empty Array is returned.
          */
         filter : function(els, ss, nonMatches){
             ss = ss.replace(trimRe, "");

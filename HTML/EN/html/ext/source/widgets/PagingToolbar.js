@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -9,7 +9,9 @@
 /**
  * @class Ext.PagingToolbar
  * @extends Ext.Toolbar
- * A specialized toolbar that is bound to a {@link Ext.data.Store} and provides automatic paging controls.
+ * <p>A specialized toolbar that is bound to a {@link Ext.data.Store} and provides automatic paging control. This
+ * Component {@link Ext.data.Store#load load}s blocks of data into the Store passing parameters who's names are
+ * specified by the store's {@link Ext.data.Store#paramNames paramNames} property.</p>
  * @constructor
  * Create a new PagingToolbar
  * @param {Object} config The config object
@@ -46,7 +48,7 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
     beforePageText : "Page",
     /**
      * Customizable piece of the default paging text (defaults to "of {0}"). Note that this string is
-     * formatted using {0} as a token that is replaced by the number of total pages. This token should be 
+     * formatted using {0} as a token that is replaced by the number of total pages. This token should be
      * preserved when overriding this string if showing the total page count is desired.
      * @type String
      */
@@ -82,8 +84,37 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
      */
     paramNames : {start: 'start', limit: 'limit'},
 
+    // private
     initComponent : function(){
-        this.addEvents('change', 'beforechange');
+        this.addEvents(
+            /**
+             * @event change
+             * Fires after the active page has been changed.
+             * @param {Ext.PagingToolbar} this
+             * @param {Object} changeEvent An object that has these properties:<ul>
+             * <li><code>total</code> : Number <div class="sub-desc">The total number of records in the dataset as
+             * returned by the server</div></li>
+             * <li><code>activePage</code> : Number <div class="sub-desc">The current page number</div></li>
+             * <li><code>pages</code> : Number <div class="sub-desc">The total number of pages (calculated from
+             * the total number of records in the dataset as returned by the server and the current {@link #pageSize})</div></li>
+             * </ul>
+             */
+            'change',
+            /**
+             * @event beforechange
+             * Fires just before the active page is changed.
+             * Return false to prevent the active page from being changed.
+             * @param {Ext.PagingToolbar} this
+             * @param {Object} beforeChangeEvent An object that has these properties:<ul>
+             * <li><code>start</code> : Number <div class="sub-desc">The starting row number for the next page of records to
+             * be retrieved from the server</div></li>
+             * <li><code>limit</code> : Number <div class="sub-desc">The number of records to be retrieved from the server</div></li>
+             * </ul>
+             * (note: the names of the <b>start</b> and <b>limit</b> properties are determined
+             * by the store's {@link Ext.data.Store#paramNames paramNames} property.)
+             */
+            'beforechange'
+        );
         Ext.PagingToolbar.superclass.initComponent.call(this);
         this.cursor = 0;
         this.bind(this.store);
@@ -115,6 +146,7 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
         }).el);
         this.field.on("keydown", this.onPagingKeydown, this);
         this.field.on("focus", function(){this.dom.select();});
+        this.field.on("blur", this.onPagingBlur, this);
         this.afterTextEl = this.addText(String.format(this.afterPageText, 1));
         this.field.setHeight(18);
         this.addSeparator();
@@ -197,6 +229,7 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
         this.loading.enable();
     },
 
+    // private
     readPage : function(d){
         var v = this.field.dom.value, pageNum;
         if (!v || isNaN(pageNum = parseInt(v, 10))) {
@@ -204,6 +237,11 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
             return false;
         }
         return pageNum;
+    },
+
+    //private
+    onPagingBlur: function(e){
+        this.field.dom.value = this.getPageData().activePage;
     },
 
     // private
@@ -242,6 +280,7 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
         }
     },
 
+    // private
     doLoad : function(start){
         var o = {}, pn = this.paramNames;
         o[pn.start] = start;
@@ -253,10 +292,10 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
 
     /**
      * Change the active page
-     * @param {Integer} page The page to display 
+     * @param {Integer} page The page to display
      */
     changePage: function(page){
-        this.doLoad(((page-1) * this.pageSize).constrain(0, this.store.getTotalCount()));  
+        this.doLoad(((page-1) * this.pageSize).constrain(0, this.store.getTotalCount()));
     },
 
     // private
@@ -306,6 +345,14 @@ Ext.PagingToolbar = Ext.extend(Ext.Toolbar, {
         store.on("load", this.onLoad, this);
         store.on("loadexception", this.onLoadError, this);
         this.store = store;
+    },
+
+    // private
+    onDestroy : function(){
+        if(this.store){
+            this.unbind(this.store);
+        }
+        Ext.PagingToolbar.superclass.onDestroy.call(this);
     }
 });
 Ext.reg('paging', Ext.PagingToolbar);

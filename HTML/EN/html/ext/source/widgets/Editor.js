@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -357,7 +357,7 @@ Ext.extend(Ext.Editor, Ext.Component, {
     },
 
     beforeDestroy : function(){
-        this.field.destroy();
+        Ext.destroy(this.field);
         this.field = null;
     }
 });

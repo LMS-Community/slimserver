@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -606,22 +606,26 @@ new Ext.Panel({
      * @param {Boolean} removeEl (optional) true to remove the element from the DOM
      */
     destroy : function(removeEl){
-        this.proxy.remove();
-        if(this.overlay){
-            this.overlay.removeAllListeners();
-            this.overlay.remove();
+        if(this.dd){
+            this.dd.destroy();
         }
+        if(this.overlay){
+            Ext.destroy(this.overlay);
+            this.overlay = null;
+        }
+        Ext.destroy(this.proxy);
+        this.proxy = null;
+        
         var ps = Ext.Resizable.positions;
         for(var k in ps){
             if(typeof ps[k] != "function" && this[ps[k]]){
-                var h = this[ps[k]];
-                h.el.removeAllListeners();
-                h.el.remove();
+                this[ps[k]].destroy();
             }
         }
         if(removeEl){
             this.el.update("");
-            this.el.remove();
+            Ext.destroy(this.el);
+            this.el = null;
         }
     },
 
@@ -668,6 +672,7 @@ Ext.Resizable.Handle = function(rz, pos, disableTrackOver, transparent){
 
 // private
 Ext.Resizable.Handle.prototype = {
+    // private
     afterResize : function(rz){
         // do nothing    
     },
@@ -682,7 +687,12 @@ Ext.Resizable.Handle.prototype = {
     // private
     onMouseOut : function(e){
         this.rz.handleOut(this, e);
-    }  
+    },
+    // private
+    destroy : function(){
+        Ext.destroy(this.el);
+        this.el = null;
+    }
 };
 
 

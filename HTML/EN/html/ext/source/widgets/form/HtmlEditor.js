@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -454,14 +454,14 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             if(typeof w == 'number'){
                 var aw = w - this.wrap.getFrameWidth('lr');
                 this.el.setWidth(this.adjustWidth('textarea', aw));
-                this.iframe.style.width = aw + 'px';
+                this.iframe.style.width = Math.max(aw, 0) + 'px';
             }
             if(typeof h == 'number'){
                 var ah = h - this.wrap.getFrameWidth('tb') - this.tb.el.getHeight();
                 this.el.setHeight(this.adjustWidth('textarea', ah));
-                this.iframe.style.height = ah + 'px';
+                this.iframe.style.height = Math.max(ah, 0) + 'px';
                 if(this.doc){
-                    this.getEditorBody().style.height = (ah - (this.iframePad*2)) + 'px';
+                    this.getEditorBody().style.height = Math.max((ah - (this.iframePad*2)), 0) + 'px';
                 }
             }
         }
@@ -560,7 +560,7 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
      * Protected method that will not generally be called directly. If you need/want
      * custom HTML cleanup, this is the method you should override.
      * @param {String} html The HTML to be cleaned
-     * return {String} The cleaned HTML
+     * @return {String} The cleaned HTML
      */
     cleanHtml : function(html){
         html = String(html);
@@ -597,6 +597,13 @@ Ext.form.HtmlEditor = Ext.extend(Ext.form.Field, {
             }
         }
     },
+    
+    //docs inherit from Field
+    getValue : function() {
+        this.syncValue();
+        return Ext.form.HtmlEditor.superclass.getValue.call(this);
+    },
+
 
     /**
      * Protected method that will not generally be called directly. Pushes the value of the textarea

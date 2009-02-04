@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -19,7 +19,6 @@ var t = new Ext.Template(
 );
 t.append('some-element', {id: 'myid', cls: 'myclass', name: 'foo', value: 'bar'});
 </code></pre>
-* For more information see this blog post with examples: <a href="http://www.jackslocum.com/blog/2006/10/06/domhelper-create-elements-using-dom-html-fragments-or-templates/">DomHelper - Create Elements using DOM, HTML fragments and Templates</a>.
 * @constructor
 * @param {String/Array} html The HTML fragment or an array of fragments to join("") or multiple arguments to join("")
 */

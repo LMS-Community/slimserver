@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -12,8 +12,8 @@
  * An extended {@link Ext.Element} object that supports a shadow and shim, constrain to viewport and
  * automatic maintaining of shadow/shim positions.
  * @cfg {Boolean} shim False to disable the iframe shim in browsers which need one (defaults to true)
- * @cfg {String/Boolean} shadow True to create a shadow element with default class "x-layer-shadow", or
- * you can pass a string with a CSS class name. False turns off the shadow.
+ * @cfg {String/Boolean} shadow True to automatically create an {@link Ext.Shadow}, or a string indicating the 
+ * shadow's display {@link Ext.Shadow#mode}. False to disable the shadow. (defaults to false)
  * @cfg {Object} dh DomHelper object config to create element with (defaults to {tag: "div", cls: "x-layer"}).
  * @cfg {Boolean} constrain False to disable constrain to viewport (defaults to true)
  * @cfg {String} cls CSS class to add to the element
@@ -23,7 +23,7 @@
  * @param {Object} config An object with config options.
  * @param {String/HTMLElement} existingEl (optional) Uses an existing DOM element. If the element is not found it creates it.
  */
-(function(){ 
+(function(){
 Ext.Layer = function(config, existingEl){
     config = config || {};
     var dh = Ext.DomHelper;
@@ -161,7 +161,7 @@ Ext.extend(Ext.Layer, Ext.Element, {
                 sh.setSize(w, h);
                 sh.setLeftTop(l, t);
             }
-            
+
         }
     },
 
@@ -207,7 +207,7 @@ Ext.extend(Ext.Layer, Ext.Element, {
             var s = Ext.getDoc().getScroll();
 
             var xy = this.getXY();
-            var x = xy[0], y = xy[1];   
+            var x = xy[0], y = xy[1];
             var w = this.dom.offsetWidth+this.shadowOffset, h = this.dom.offsetHeight+this.shadowOffset;
             // only move it if it needs it
             var moved = false;
@@ -233,7 +233,7 @@ Ext.extend(Ext.Layer, Ext.Element, {
                 if(this.avoidY){
                     var ay = this.avoidY;
                     if(y <= ay && (y+h) >= ay){
-                        y = ay-h-5;   
+                        y = ay-h-5;
                     }
                 }
                 xy = [x, y];
@@ -245,7 +245,7 @@ Ext.extend(Ext.Layer, Ext.Element, {
     },
 
     isVisible : function(){
-        return this.visible;    
+        return this.visible;
     },
 
     // private
@@ -430,7 +430,7 @@ Ext.extend(Ext.Layer, Ext.Element, {
         }
         return this;
     },
-    
+
     /**
      * Sets the z-index of this layer and adjusts any shadow and shim z-indexes. The layer z-index is automatically
      * incremented by two more than the value passed in so that it always shows above any shadow or shim (the shadow

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -95,6 +95,7 @@ cp.colors = ["000000", "993300", "333300"];
             '<tpl for="."><a href="#" class="color-{.}" hidefocus="on"><em><span style="background:#{.}" unselectable="on">&#160;</span></em></a></tpl>'
         );
         var el = document.createElement("div");
+        el.id = this.getId();
         el.className = this.itemCls;
         t.overwrite(el, this.colors);
         container.dom.insertBefore(el, position);

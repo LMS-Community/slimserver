@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -265,7 +265,7 @@ El.prototype = {
 
     /**
      * Scrolls this element into view within the passed container.
-     * @param {Mixed} container (optional) The container element to scroll (defaults to document.body).  Should be a 
+     * @param {Mixed} container (optional) The container element to scroll (defaults to document.body).  Should be a
      * string (id), dom node, or Ext.Element.
      * @param {Boolean} hscroll (optional) False to disable horizontal scroll (defaults to true)
      * @return {Ext.Element} this
@@ -2110,7 +2110,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
      */
     mask : function(msg, msgCls){
         if(this.getStyle("position") == "static"){
-            this.setStyle("position", "relative");
+            this.addClass("x-masked-relative");
         }
         if(this._maskMsg){
             this._maskMsg.remove();
@@ -2132,7 +2132,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
             mm.center(this);
         }
         if(Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && this.getStyle('height') == 'auto'){ // ie will not expand full height automatically
-            this._mask.setSize(this.dom.clientWidth, this.getHeight());
+            this._mask.setSize(this.getWidth(), this.getHeight());
         }
         return this._mask;
     },
@@ -2149,7 +2149,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
             this._mask.remove();
             delete this._mask;
         }
-        this.removeClass("x-masked");
+        this.removeClass(["x-masked", "x-masked-relative"]);
     },
 
     /**
@@ -2260,8 +2260,8 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
     },
 
     /**
-     * Stops the specified event from bubbling and optionally prevents the default action
-     * @param {String} eventName
+     * Stops the specified event(s) from bubbling and optionally prevents the default action
+     * @param {String/Array} eventName an event / array of events to stop from bubbling
      * @param {Boolean} preventDefault (optional) true to prevent the default action too
      * @return {Ext.Element} this
      */
@@ -2495,7 +2495,7 @@ el.alignTo("other-el", "c-bl", [-6, 0]);
             this.dom.parentNode.insertBefore(el, this.dom);
         }
         El.uncache(this.id);
-        this.dom.parentNode.removeChild(this.dom);
+        Ext.removeNode(this.dom);
         this.dom = el;
         this.id = Ext.id(el);
         El.cache[this.id] = this;
@@ -2823,6 +2823,8 @@ ep.getUpdateManager = ep.getUpdater;
  * Removes an event handler from this element (shorthand for {@link #removeListener}).
  * @param {String} eventName the type of event to remove
  * @param {Function} fn the method the event invokes
+ * @param {Object} scope (optional) The scope (The <tt>this</tt> reference) of the handler function. Defaults
+ * to this Element.
  * @return {Ext.Element} this
  * @member Ext.Element
  * @method un

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -24,7 +24,17 @@
         {header: "Last Updated", width: 135, sortable: true, renderer: Ext.util.Format.dateRenderer('m/d/Y'), dataIndex: 'lastChange'}
     ],
     viewConfig: {
-        forceFit: true
+        forceFit: true,
+
+//      Return CSS class to apply to rows depending upon data values
+        getRowClass: function(record, index) {
+            var c = record.get('change');
+            if (c < 0) {
+                return 'price-fall';
+            } else if (c > 0) {
+                return 'price-rise';
+            }
+        }
     },
     sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
     width:600,
@@ -59,8 +69,8 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
      * @cfg {Object} sm Shorthand for {@link #selModel}.
      */
     /**
-     * @cfg {Object} selModel Any subclass of AbstractSelectionModel that will provide the selection model for
-     * the grid (defaults to {@link Ext.grid.RowSelectionModel} if not specified).
+     * @cfg {Object} selModel Any subclass of {@link Ext.grid.AbstractSelectionModel} that will provide
+     * the selection model for the grid (defaults to {@link Ext.grid.RowSelectionModel} if not specified).
      */
     /**
      * @cfg {Array} columns An array of columns to auto create a ColumnModel
@@ -78,8 +88,9 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
      * @cfg {Boolean} enableColumnResize False to turn off column resizing for the whole grid (defaults to true).
      */
     /**
-     * @cfg {Object} viewConfig A config object that will be applied to the grid's UI view.  Any of
-     * the config options available for {@link Ext.grid.GridView} can be specified here.
+     * @cfg {Object} viewConfig A config object that will be used to create the grid's UI view.  Any of
+     * the config options available for {@link Ext.grid.GridView} can be specified here. This option
+     * is ignored if {@link #view} is xpecified.
      */
     /**
      * @cfg {Boolean} hideHeaders True to hide the grid's header (defaults to false).
@@ -124,6 +135,10 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
     enableHdMenu : true,
     /**
      * @cfg {Boolean} stripeRows True to stripe the rows. Default is false.
+     * <p>This causes the CSS class <tt><b>x-grid3-row-alt</b></tt> to be added to alternate rows of
+     * the grid. A default CSS rule is provided which sets a background colour, but you can override this
+     * with a rule which either overrides the <b>background-color</b> style using the "!important"
+     * modifier, or which uses a CSS selector of higher specificity.
      */
     stripeRows : false,
     /**
@@ -157,7 +172,13 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
     rendered : false,
     // private
     viewReady: false,
-    // private
+    /**
+     * @cfg {Array} stateEvents
+     * An array of events that, when fired, should trigger this component to save its state (defaults to ["columnmove", "columnresize", "sortchange"]).
+     * These can be any types of events supported by this component, including browser or custom events (e.g.,
+     * ['click', 'customerchange']).
+     * <p>See {@link #stateful} for an explanation of saving and restoring Component state.</p>
+     */
     stateEvents: ["columnmove", "columnresize", "sortchange"],
 
     // private
@@ -165,7 +186,6 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
         Ext.grid.GridPanel.superclass.initComponent.call(this);
 
         // override any provided value since it isn't valid
-        // and is causing too many bug reports ;)
         this.autoScroll = false;
         this.autoWidth = false;
 
@@ -480,8 +500,13 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
     },
 
     /**
-     * Reconfigures the grid to use a different Store and Column Model.
-     * The View will be bound to the new objects and refreshed.
+     * <p>Reconfigures the grid to use a different Store and Column Model.
+     * The View will be bound to the new objects and refreshed.</p>
+     * <p>Be aware that upon reconfiguring a GridPanel, certain existing settings <i>may</i> become
+     * invalidated. For example the configured {@link #autoExpandColumn} may no longer exist in the
+     * new ColumnModel. Also, an existing {@link Ext.PagingToolbar PagingToolbar} will still be bound
+     * to the old Store, and will need rebinding. Any {@link #plugins} might also need reconfiguring
+     * with the new data.</p>
      * @param {Ext.data.Store} store The new {@link Ext.data.Store} object
      * @param {Ext.grid.ColumnModel} colModel The new {@link Ext.grid.ColumnModel} object
      */
@@ -625,11 +650,13 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
     },
 
     // private for compatibility, overridden by editor grid
-    stopEditing : function(){},
+    stopEditing : Ext.emptyFn,
 
     /**
      * Returns the grid's SelectionModel.
-     * @return {SelectionModel} The selection model
+     * @return {Ext.grid.AbstractSelectionModel SelectionModel} The selection model configured by the
+     * @link (#selModel} configuration option. This will be a subclass of {Ext.grid.AbstractSelectionModel}
+     * which provides either cell or row selectability.
      */
     getSelectionModel : function(){
         if(!this.selModel){
@@ -641,7 +668,7 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Returns the grid's data store.
-     * @return {DataSource} The store
+     * @return {Ext.data.Store} The store
      */
     getStore : function(){
         return this.store;
@@ -649,7 +676,7 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Returns the grid's ColumnModel.
-     * @return {ColumnModel} The column model
+     * @return {Ext.grid.ColumnModel} The column model
      */
     getColumnModel : function(){
         return this.colModel;
@@ -657,7 +684,7 @@ Ext.grid.GridPanel = Ext.extend(Ext.Panel, {
 
     /**
      * Returns the grid's GridView object.
-     * @return {GridView} The grid view
+     * @return {Ext.grid.GridView} The grid view
      */
     getView : function(){
         if(!this.view){

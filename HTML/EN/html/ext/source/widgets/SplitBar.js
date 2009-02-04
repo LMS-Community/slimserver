@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -110,7 +110,7 @@ Ext.SplitBar = function(dragElement, resizingElement, orientation, placement, ex
     this.addEvents(
         /**
          * @event resize
-         * Fires when the splitter is moved (alias for {@link #event-moved})
+         * Fires when the splitter is moved (alias for {@link #moved})
          * @param {Ext.SplitBar} this
          * @param {Number} newSize the new width or height
          */
@@ -144,8 +144,8 @@ Ext.extend(Ext.SplitBar, Ext.util.Observable, {
         this.overlay.show();
         Ext.get(this.proxy).setDisplayed("block");
         var size = this.adapter.getElementSize(this);
-        this.activeMinSize = this.getMinimumSize();;
-        this.activeMaxSize = this.getMaximumSize();;
+        this.activeMinSize = this.getMinimumSize();
+        this.activeMaxSize = this.getMaximumSize();
         var c1 = size - this.activeMinSize;
         var c2 = Math.max(this.activeMaxSize - size, 0);
         if(this.orientation == Ext.SplitBar.HORIZONTAL){
@@ -175,7 +175,7 @@ Ext.extend(Ext.SplitBar, Ext.util.Observable, {
         Ext.get(this.proxy).setDisplayed(false);
         var endPoint = Ext.lib.Event.getXY(e);
         if(this.overlay){
-            this.overlay.remove();
+            Ext.destroy(this.overlay);
             delete this.overlay;
         }
         var newSize;
@@ -271,7 +271,7 @@ Ext.extend(Ext.SplitBar, Ext.util.Observable, {
             this.shim.remove();
         }
         this.dd.unreg();
-        Ext.removeNode(this.proxy);
+        Ext.destroy(Ext.get(this.proxy));
         if(removeEl){
             this.el.remove();
         }

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -31,4 +31,9 @@ Ext.menu.ColorMenu = function(config){
      */
     this.relayEvents(ci, ["select"]);
 };
-Ext.extend(Ext.menu.ColorMenu, Ext.menu.Menu);
+Ext.extend(Ext.menu.ColorMenu, Ext.menu.Menu, {
+    //private
+    beforeDestroy: function(){
+        this.palette.destroy();
+    }
+});

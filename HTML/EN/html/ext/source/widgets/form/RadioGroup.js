@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -11,7 +11,7 @@
  * @extends Ext.form.CheckboxGroup
  * A grouping container for {@link Ext.form.Radio} controls.
  * @constructor
- * Creates a new CheckboxGroup
+ * Creates a new RadioGroup
  * @param {Object} config Configuration options
  */
 Ext.form.RadioGroup = Ext.extend(Ext.form.CheckboxGroup, {

@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -324,6 +324,37 @@ Ext.Slider = Ext.extend(Ext.BoxComponent, {
             this.fireEvent('changecomplete', this, this.value);
         }
     },
+    
+    //private
+    onDisable: function(){
+        Ext.Slider.superclass.onDisable.call(this);
+        this.thumb.addClass(this.disabledClass);
+        if(Ext.isIE){
+            //IE breaks when using overflow visible and opacity other than 1.
+            //Create a place holder for the thumb and display it.
+            var xy = this.thumb.getXY();
+            this.thumb.hide();
+            this.innerEl.addClass(this.disabledClass).dom.disabled = true;
+            if (!this.thumbHolder){
+                this.thumbHolder = this.endEl.createChild({cls: 'x-slider-thumb ' + this.disabledClass});    
+            }
+            this.thumbHolder.show().setXY(xy);
+        }
+    },
+    
+    //private
+    onEnable: function(){
+        Ext.Slider.superclass.onEnable.call(this);
+        this.thumb.removeClass(this.disabledClass);
+        if(Ext.isIE){
+            this.innerEl.removeClass(this.disabledClass).dom.disabled = false;
+            if (this.thumbHolder){
+                this.thumbHolder.hide();
+            }
+            this.thumb.show();
+            this.syncThumb();
+        }
+    },
 
     // private
     onResize : function(w, h){
@@ -377,14 +408,14 @@ Ext.Slider.Vertical = {
     onDrag: function(e){
         var pos = this.innerEl.translatePoints(this.tracker.getXY());
         var bottom = this.innerEl.getHeight()-pos.top;
-        this.setValue(Math.round(bottom/this.getRatio()), false);
+        this.setValue(this.minValue + Math.round(bottom/this.getRatio()), false);
         this.fireEvent('drag', this, e);
     },
 
     onClickChange : function(local){
         if(local.left > this.clickRange[0] && local.left < this.clickRange[1]){
             var bottom = this.innerEl.getHeight()-local.top;
-            this.setValue(Math.round(bottom/this.getRatio()), undefined, true);
+            this.setValue(this.minValue + Math.round(bottom/this.getRatio()), undefined, true);
         }
     }
 };

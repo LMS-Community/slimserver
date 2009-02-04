@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -108,13 +108,24 @@ Ext.form.DateField = Ext.extend(Ext.form.TriggerField,  {
 
     initComponent : function(){
         Ext.form.DateField.superclass.initComponent.call(this);
+        
+        this.addEvents(
+            /**
+             * @event select
+             * Fires when a date is selected via the date picker.
+             * @param {Ext.form.DateField} this
+             * @param {Date} date The date that was selected
+             */
+            'select'
+        );
+        
         if(typeof this.minValue == "string"){
             this.minValue = this.parseDate(this.minValue);
         }
         if(typeof this.maxValue == "string"){
             this.maxValue = this.parseDate(this.maxValue);
         }
-        this.ddMatch = null;
+        this.disabledDatesRE = null;
         this.initDisabledDays();
     },
 
@@ -212,7 +223,7 @@ Ext.form.DateField = Ext.extend(Ext.form.TriggerField,  {
             }
         }
         var fvalue = this.formatDate(value);
-        if(this.ddMatch && this.ddMatch.test(fvalue)){
+        if(this.disabledDatesRE && this.disabledDatesRE.test(fvalue)){
             this.markInvalid(String.format(this.disabledDatesText, fvalue));
             return false;
         }
@@ -295,6 +306,7 @@ dateField.setValue('2006-05-04');
     menuListeners : {
         select: function(m, d){
             this.setValue(d);
+            this.fireEvent('select', this, d);
         },
         show : function(){ // retain focus styling
             this.onFocus();
@@ -324,7 +336,7 @@ dateField.setValue('2006-05-04');
         Ext.apply(this.menu.picker,  {
             minDate : this.minValue,
             maxDate : this.maxValue,
-            disabledDatesRE : this.ddMatch,
+            disabledDatesRE : this.disabledDatesRE,
             disabledDatesText : this.disabledDatesText,
             disabledDays : this.disabledDays,
             disabledDaysText : this.disabledDaysText,

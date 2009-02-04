@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -9,10 +9,28 @@
 /**
  * @class Ext.form.BasicForm
  * @extends Ext.util.Observable
- * Supplies the functionality to do "actions" on forms and initialize Ext.form.Field types on existing markup.
- * <br><br>
- * By default, Ext Forms are submitted through Ajax, using {@link Ext.form.Action}.
- * To enable normal browser submission of an Ext Form, use the {@link #standardSubmit} config option.
+ * <p>Encapsulates the DOM &lt;form> element at the heart of the {@link Ext.form.FormPanel FormPanel} class, and provides
+ * input field management, validation, submission, and form loading services.</p>
+ * <p>By default, Ext Forms are submitted through Ajax, using an instance of {@link Ext.form.Action.Submit}.
+ * To enable normal browser submission of an Ext Form, use the {@link #standardSubmit} config option.</p>
+ * <p><h3>File Uploads</h3>{@link #fileUpload File uploads} are not performed using Ajax submission, that
+ * is they are <b>not</b> performed using XMLHttpRequests. Instead the form is submitted in the standard
+ * manner with the DOM <tt>&lt;form></tt> element temporarily modified to have its
+ * <a href="http://www.w3.org/TR/REC-html40/present/frames.html#adef-target">target</a> set to refer
+ * to a dynamically generated, hidden <tt>&lt;iframe></tt> which is inserted into the document
+ * but removed after the return data has been gathered.</p>
+ * <p>The server response is parsed by the browser to create the document for the IFRAME. If the
+ * server is using JSON to send the return object, then the
+ * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header
+ * must be set to "text/html" in order to tell the browser to insert the text unchanged into the document body.</p>
+ * <p>Characters which are significant to an HTML parser must be sent as HTML entities, so encode
+ * "&lt;" as "&amp;lt;", "&amp;" as "&amp;amp;" etc.</p>
+ * <p>The response text is retrieved from the document, and a fake XMLHttpRequest object
+ * is created containing a <tt>responseText</tt> property in order to conform to the
+ * requirements of event handlers and callbacks.</p>
+ * <p>Be aware that file upload packets are sent with the content type <a href="http://www.faqs.org/rfcs/rfc2388.html">multipart/form</a>
+ * and some server technologies (notably JEE) may require some custom processing in order to
+ * retrieve parameter names and parameter values from the packet content.</p>
  * @constructor
  * @param {Mixed} el The form element or its id
  * @param {Object} config Configuration options
@@ -68,8 +86,16 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
      */
     /**
      * @cfg {DataReader} errorReader
-     * An Ext.data.DataReader (e.g. {@link Ext.data.XmlReader}) to be used to read data when reading validation errors on "submit" actions.
-     * This is completely optional as there is built-in support for processing JSON.
+     * <p>An Ext.data.DataReader (e.g. {@link Ext.data.XmlReader}) to be used to read field error messages returned from "submit" actions.
+     * This is completely optional as there is built-in support for processing JSON.</p>
+     * <p>The Records which provide messages for the invalid Fields must use the Field name (or id) as the Record ID,
+     * and must contain a field called "msg" which contains the error message.</p>
+     * <p>The errorReader does not have to be a full-blown implementation of a DataReader. It simply needs to implement a 
+     * <tt>read(xhr)</tt> function which returns an Array of Records in an object with the following structure:<pre><code>
+{
+    records: recordArray
+}
+</code></pre>
      */
     /**
      * @cfg {String} url
@@ -88,6 +114,8 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
      * server is using JSON to send the return object, then the
      * <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17">Content-Type</a> header
      * must be set to "text/html" in order to tell the browser to insert the text unchanged into the document body.</p>
+     * <p>Characters which are significant to an HTML parser must be sent as HTML entities, so encode
+     * "&lt;" as "&amp;lt;", "&amp;" as "&amp;amp;" etc.</p>
      * <p>The response text is retrieved from the document, and a fake XMLHttpRequest object
      * is created containing a <tt>responseText</tt> property in order to conform to the
      * requirements of event handlers and callbacks.</p>
@@ -115,7 +143,10 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
 
     /**
      * @cfg {Boolean} standardSubmit If set to true, standard HTML form submits are used instead of XHR (Ajax) style
-     * form submissions. (defaults to false)
+     * form submissions. (defaults to false)<br>
+     * <p><b>Note:</b> When using standardSubmit, any the options to {@link #submit} are
+     * ignored because Ext's Ajax infrastracture is bypassed. To pass extra parameters, you will need to create
+     * hidden fields within the form.</p>
      */
     /**
      * By default wait messages are displayed with Ext.MessageBox.wait. You can target a specific
@@ -148,16 +179,16 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
     },
 
     // private
-	destroy: function() {
+    destroy: function() {
         this.items.each(function(f){
             Ext.destroy(f);
         });
         if(this.el){
-			this.el.removeAllListeners();
-			this.el.remove();
+            this.el.removeAllListeners();
+            this.el.remove();
         }
-		this.purgeListeners();
-	},
+        this.purgeListeners();
+    },
 
     /**
      * Returns true if client-side validation on the form is successful.
@@ -207,19 +238,16 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
      * <li><b>headers</b> : Object<p style="margin-left:1em">Request headers to set for the action
      * (defaults to the form's default headers)</p></li>
      * <li><b>success</b> : Function<p style="margin-left:1em">The callback that will
-     * be invoked after a successful response.  Note that this is HTTP success
-     * (the transaction was sent and received correctly), but the resulting response data
-     * can still contain data errors. The function is passed the following parameters:<ul>
+     * be invoked after a successful response.  The function is passed the following parameters:<ul>
      * <li><code>form</code> : Ext.form.BasicForm<div class="sub-desc">The form that requested the action</div></li>
-     * <li><code>action</code> : Ext.form.Action<div class="sub-desc">The Action class. The {@link Ext.form.Action#result result}
+     * <li><code>action</code> : Ext.form.Action<div class="sub-desc">The {@link Ext.form.Action Action} object which performed the operation. The {@link Ext.form.Action#result result}
      * property of this object may be examined to perform custom postprocessing.</div></li>
      * </ul></p></li>
      * <li><b>failure</b> : Function<p style="margin-left:1em">The callback that will
-     * be invoked after a failed transaction attempt.  Note that this is HTTP failure,
-     * which means a non-successful HTTP code was returned from the server. The function
+     * be invoked after a failed transaction attempt.  The function
      * is passed the following parameters:<ul>
      * <li><code>form</code> : Ext.form.BasicForm<div class="sub-desc">The form that requested the action</div></li>
-     * <li><code>action</code> : Ext.form.Action<div class="sub-desc">The Action class. If an Ajax
+     * <li><code>action</code> : Ext.form.Action<div class="sub-desc">The {@link Ext.form.Action Action} object which performed the operation. If an Ajax
      * error ocurred, the failure type will be in {@link Ext.form.Action#failureType failureType}. The {@link Ext.form.Action#result result}
      * property of this object may be examined to perform custom postprocessing.</div></li>
      * </ul></p></li>
@@ -244,7 +272,44 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
 
     /**
      * Shortcut to do a submit action.
-     * @param {Object} options The options to pass to the action (see {@link #doAction} for details)
+     * @param {Object} options The options to pass to the action (see {@link #doAction} for details).<br>
+     * <p><b>Note:</b> this is ignored when using the {@link #standardSubmit} option.</p>
+     * <p>The following code:</p><pre><code>
+myFormPanel.getForm().submit({
+    clientValidation: true,
+    url: 'updateConsignment.php',
+    params: {
+        newStatus: 'delivered'
+    },
+    success: function(form, action) {
+       Ext.Msg.alert("Success", action.result.msg);
+    },
+    failure: function(form, action) {
+        switch (action.failureType) {
+            case Ext.form.Action.CLIENT_INVALID:
+                Ext.Msg.alert("Failure", "Form fields may not be submitted with invalid values");
+                break;
+            case Ext.form.Action.CONNECT_FAILURE:
+                Ext.Msg.alert("Failure", "Ajax communication failed");
+                break;
+            case Ext.form.Action.SERVER_INVALID:
+               Ext.Msg.alert("Failure", action.result.msg);
+       }
+    }
+});
+</code></pre>
+     * would process the following server response for a successful submission:<pre><code>
+{
+    success: true,
+    msg: 'Consignment updated'
+}
+</code></pre>
+     * and the following server response for a failed submission:<pre><code>
+{
+    success: false,
+    msg: 'You do not have permission to perform this operation'
+}
+</code></pre>
      * @return {BasicForm} this
      */
     submit : function(options){
@@ -423,8 +488,12 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
     },
 
     /**
-     * Returns the fields in this form as an object with key/value pairs as they would be submitted using a standard form submit.
-     * If multiple fields exist with the same name they are returned as an array.
+     * <p>Returns the fields in this form as an object with key/value pairs as they would be submitted using a standard form submit.
+     * If multiple fields exist with the same name they are returned as an array.</p>
+     *
+     * <p><b>Note:</b> The values are collected from all enabled HTML input elements within the form, <u>not</u> from
+     * the Ext Field objects. This means that all returned values are Strings (or Arrays of Strings) and that the the
+     * value can potentionally be the emptyText of a field.</p>
      * @param {Boolean} asString (optional) false to return the values as an object (defaults to returning as a string)
      * @return {String/Object}
      */
@@ -459,7 +528,13 @@ Ext.extend(Ext.form.BasicForm, Ext.util.Observable, {
     },
 
     /**
-     * Add Ext.form components to this form.
+     * Add Ext.form Components to this form's Collection. This does not result in rendering of
+     * the passed Component, it just enables the form to validate Fields, and distribute values to
+     * Fields.
+     * <p><b>You will not usually call this function. In order to be rendered, a Field must be added
+     * to a {@link Ext.Container Container}, usually an {@link Ext.form.FormPanel FormPanel}.
+     * The FormPanel to which the field is added takes care of adding the Field to the BasicForm's
+     * collection.</b></p>
      * @param {Field} field1
      * @param {Field} field2 (optional)
      * @param {Field} etc (optional)

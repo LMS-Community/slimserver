@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -444,16 +444,19 @@ Ext.grid.GroupingView = Ext.extend(Ext.grid.GridView, {
 
     // private
     onColumnWidthUpdated : function(col, w, tw){
+        Ext.grid.GroupingView.superclass.onColumnWidthUpdated.call(this, col, w, tw);
         this.updateGroupWidths();
     },
 
     // private
     onAllColumnWidthsUpdated : function(ws, tw){
+        Ext.grid.GroupingView.superclass.onAllColumnWidthsUpdated.call(this, ws, tw);
         this.updateGroupWidths();
     },
 
     // private
     onColumnHiddenUpdated : function(col, hidden, tw){
+        Ext.grid.GroupingView.superclass.onColumnHiddenUpdated.call(this, col, hidden, tw);
         this.updateGroupWidths();
     },
 

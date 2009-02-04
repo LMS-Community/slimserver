@@ -1,6 +1,6 @@
 /*
- * Ext JS Library 2.2
- * Copyright(c) 2006-2008, Ext JS, LLC.
+ * Ext JS Library 2.2.1
+ * Copyright(c) 2006-2009, Ext JS, LLC.
  * licensing@extjs.com
  * 
  * http://extjs.com/license
@@ -19,6 +19,9 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
     /**
      * @cfg {String} vtypeText A custom error message to display in place of the default message provided
      * for the {@link #vtype} currently set for this field (defaults to '').  Only applies if vtype is set, else ignored.
+     */
+    /**
+     * @cfg {RegExp} stripCharsRe A JavaScript RegExp object used to strip unwanted content from the value before validation (defaults to null).
      */
     /**
      * @cfg {Boolean} grow True if this field should automatically grow and shrink to its content
@@ -78,8 +81,9 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
     blankText : "This field is required",
     /**
      * @cfg {Function} validator A custom validation function to be called during field validation (defaults to null).
-     * If available, this function will be called only after the basic validators all return true, and will be passed the
-     * current field value and expected to return boolean true if the value is valid or a string error message if invalid.
+     * If specified, this function will be called only after the built-in validations ({@link #allowBlank}, {@link #minLength},
+     * {@link #maxLength}) and any configured {@link #vtype} all return true. This function will be passed the current field
+     * value and expected to return boolean true if the value is valid or a string error message if invalid.
      */
     validator : null,
     /**
@@ -94,7 +98,8 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
      */
     regexText : "",
     /**
-     * @cfg {String} emptyText The default text to display in an empty field (defaults to null).
+     * @cfg {String} emptyText The default text to place into an empty field (defaults to null). Note that this
+     * value will be submitted to the server if this field is enabled and configured with a {@link #name}.
      */
     emptyText : null,
     /**
@@ -199,6 +204,22 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
             this.validationTask.delay(this.validationDelay);
         }
     },
+    
+    //private
+    onDisable: function(){
+        Ext.form.TextField.superclass.onDisable.call(this);
+        if(Ext.isIE){
+            this.el.dom.unselectable = 'on';
+        }
+    },
+    
+    //private
+    onEnable: function(){
+        Ext.form.TextField.superclass.onEnable.call(this);
+        if(Ext.isIE){
+            this.el.dom.unselectable = '';
+        }
+    },
 
     // private
     onKeyUpBuffered : function(e){
@@ -232,7 +253,7 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
     },
 
     applyEmptyText : function(){
-        if(this.rendered && this.emptyText && this.getRawValue().length < 1){
+        if(this.rendered && this.emptyText && this.getRawValue().length < 1 && !this.hasFocus){
             this.setRawValue(this.emptyText);
             this.el.addClass(this.emptyClass);
         }
@@ -335,6 +356,7 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
      */
     selectText : function(start, end){
         var v = this.getRawValue();
+        var doFocus = false;
         if(v.length > 0){
             start = start === undefined ? 0 : start;
             end = end === undefined ? v.length : end;
@@ -347,6 +369,12 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
                 range.moveEnd("character", end-v.length);
                 range.select();
             }
+            doFocus = Ext.isGecko || Ext.isOpera;
+        }else{
+            doFocus = true;
+        }
+        if(doFocus){
+            this.focus();
         }
     },
 
@@ -366,6 +394,7 @@ Ext.form.TextField = Ext.extend(Ext.form.Field,  {
         var d = document.createElement('div');
         d.appendChild(document.createTextNode(v));
         v = d.innerHTML;
+        Ext.removeNode(d);
         d = null;
         v += "&#160;";
         var w = Math.min(this.growMax, Math.max(this.metrics.getWidth(v) + /* add extra padding */ 10, this.growMin));
