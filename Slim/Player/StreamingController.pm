@@ -1255,6 +1255,10 @@ sub isStreaming {
 	return $_[0]->{'streamingState'} == STREAMING;
 }
 
+sub isStreamout {
+	return $_[0]->{'streamingState'} == STREAMOUT;
+}
+
 sub isPaused {
 	return $_[0]->{'playingState'} == PAUSED;
 }
