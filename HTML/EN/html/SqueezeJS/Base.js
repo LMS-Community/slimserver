@@ -29,6 +29,9 @@ function _init() {
 			return;
 		}
 	
+		if (p == p.parent)
+			break;
+
 		p = p.parent;
 	}
 
@@ -62,6 +65,7 @@ function _init() {
 
 			this.addObserver({
 				name : 'playerstatus',
+				timeout : 5000,
 				fn : function(self){
 	
 					if (this.player && this.player != -1) {
@@ -71,7 +75,7 @@ function _init() {
 				
 							// set timer
 							callback: function(){
-								self.timer.delay(5000);
+								self.timer.delay(self.timeout);
 							},
 				
 							success: function(response){
@@ -91,7 +95,7 @@ function _init() {
 										// check whether we need to update our song info & playlist
 										if (this._needUpdate(response.result)){
 											this.getStatus();
-											self.timer.delay(5000);
+											self.timer.delay(self.timeout);
 										}
 
 										// display information if the player needs a firmware upgrade
@@ -118,7 +122,7 @@ function _init() {
 					}
 	
 					else {
-						self.timer.delay(5000);
+						self.timer.delay(self.timeout);
 					}
 			
 				}
@@ -126,6 +130,7 @@ function _init() {
 	
 			this.addObserver({
 				name : 'serverstatus',
+				timeout : 10000,
 				fn : function(self){
 	
 					this.request({
@@ -133,7 +138,7 @@ function _init() {
 			
 						// set timer
 						callback: function(){
-							self.timer.delay(this.player && !this.playerStatus.rescan ? 30000 : 10000);
+							self.timer.delay(this.player && !this.playerStatus.rescan ? 30000 : self.timeout);
 						},
 			
 						success: function(response){
@@ -158,6 +163,7 @@ function _init() {
 	
 			this.addObserver({
 				name : 'playtimeticker',
+				timeout : 950,
 				fn : function(self){
 					if (this.playerStatus.duration > 0 
 						&& this.playerStatus.playtime >= this.playerStatus.duration-1
@@ -178,7 +184,7 @@ function _init() {
 					if (this.playerStatus.mode == 'play' && this.playerStatus.rate == 1)
 						this.playerStatus.playtime++;
 	
-					self.timer.delay(950);
+					self.timer.delay(self.timeout);
 				}
 			});
 
@@ -232,6 +238,14 @@ function _init() {
 			config.timer = new Ext.util.DelayedTask(config.fn, this, [ config ]);
 			config.timer.delay(0);
 			this.observers.add(config.name, config);
+		},
+		
+		updateObserver : function(name, config) {
+			var o = this.observers.get(name);
+			
+			if (o) {
+				Ext.apply(o, config);
+			}
 		},
 	
 		updateAll : function(){

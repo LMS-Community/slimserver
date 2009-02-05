@@ -542,7 +542,8 @@ sub setRTCAlarm {
 # Otherwise the mode is temporarily changed to the given value without altering the preference.
 sub setAnalogOutMode {
 	my $client = shift;
-	# 0 = headphone (i.e. internal speakers off), 1 = sub 
+	# 0 = headphone (internal speakers off), 1 = sub out,
+	# 2 = always on (internal speakers on), 3 = always off
 	my $mode = shift;
 
 	if (! defined $mode) {
