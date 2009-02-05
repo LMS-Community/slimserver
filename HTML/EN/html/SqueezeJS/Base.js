@@ -29,6 +29,9 @@ function _init() {
 			return;
 		}
 	
+		if (p == p.parent)
+			break;
+
 		p = p.parent;
 	}
 
