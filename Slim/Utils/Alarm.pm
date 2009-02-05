@@ -543,8 +543,8 @@ sub sound {
 		if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
 			&& $client->lineOutConnected())
 		{
-			$log->debug('Temporarily forcing line out to subwoofer');
-			$client->setAnalogOutMode(1);
+			$log->debug('Temporarily forcing main speakers on');
+			$client->setAnalogOutMode(2);
 		}
 
 		# Set up volume
