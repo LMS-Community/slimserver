@@ -196,27 +196,55 @@ sub init2 {
 sub openport {
 	my ($listenerport, $listeneraddr) = @_;
 
-	# start our listener
-	$http_server_socket = HTTP::Daemon->new(
-		LocalPort => $listenerport,
-		LocalAddr => $listeneraddr,
-		Listen    => SOMAXCONN,
-		ReuseAddr => 1,
-		Reuse => 1,
-		Timeout   => 0.001,
+	my %tested;
 
-	) or $log->logdie("Can't setup the listening port $listenerport for the HTTP server: $!");
+	# start our listener
+	foreach my $port ($listenerport, 9000..9010, 9100, 8000, 10000) {
+		
+		next if $tested{$port};
+		
+		$openedport    = $port;
+		$tested{$port} = 1;
+		
+		$http_server_socket = HTTP::Daemon->new(
+			LocalPort => $port,
+			LocalAddr => $listeneraddr,
+			Listen    => SOMAXCONN,
+			ReuseAddr => 1,
+			Reuse => 1,
+			Timeout   => 0.001,
+	
+		) and last;
+		
+		$log->error("Can't setup the listening port $port for the HTTP server: $!");
+	}
+
+	# if none of our ports could be opened, we'll have to give up
+	if (!$http_server_socket) {
+		
+		$log->logdie("Running out of good ideas for the listening port for the HTTP server - giving up.");
+	}
 	
 	defined(Slim::Utils::Network::blocking($http_server_socket,0)) || $log->logdie("Cannot set port nonblocking");
 
-	$openedport = $listenerport;
-
 	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
 
-	$log->info("Server $0 accepting http connections on port $listenerport");
+	$log->info("Server $0 accepting http connections on port $openedport");
 
-	Slim::Networking::mDNS->addService('_http._tcp', $listenerport);
-	Slim::Networking::mDNS->addService('_slimhttp._tcp', $listenerport);
+	Slim::Networking::mDNS->addService('_http._tcp', $openedport);
+	Slim::Networking::mDNS->addService('_slimhttp._tcp', $openedport);
+	
+	if ($openedport != $listenerport) {
+
+		$log->error("Previously configured port $listenerport was busy - we're now using port $openedport instead");
+
+		# we might want to push this message in the user's face
+		if (Slim::Utils::OSDetect::isWindows()) {
+			$log->error("Please make sure your firewall does allow access to port $openedport!");
+		}
+
+		$prefs->set('httpport', $openedport) ;
+	}
 }
 
 sub adjustHTTPPort {
