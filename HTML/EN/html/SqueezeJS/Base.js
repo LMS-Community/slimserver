@@ -132,7 +132,7 @@ function _init() {
 				fn : function(self){
 	
 					this.request({
-						params: [ this.player, [ "serverstatus", 0, 999 ] ],
+						params: [ '', [ "serverstatus", 0, 999 ] ],
 			
 						// set timer
 						callback: function(){
@@ -426,7 +426,7 @@ function _init() {
 			else {
 				this._initPlayerStatus();
 				this.request({
-					params: [ this.player, [ "serverstatus", 0, 999 ] ],
+					params: [ '', [ "serverstatus", 0, 999 ] ],
 	
 					success: function(response){
 						this._firePlayerSelected(this._parseCurrentPlayerInfo(response, playerobj));
