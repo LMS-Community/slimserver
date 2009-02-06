@@ -320,6 +320,8 @@ sub power {
 sub welcomeScreen {
 	my $client = shift;
 
+	return if $client->display->isa('Slim::Display::NoDisplay');
+
 	# SLIM_SERVICE
 	my $line1 = ( main::SLIM_SERVICE ) 
 		? $client->string('WELCOME_TO_APPLICATION')
