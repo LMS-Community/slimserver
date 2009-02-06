@@ -35,6 +35,7 @@ BEGIN {
 		myFormats
 		maxSupportedSamplerate
 		accuratePlayPoints
+		firmware
 	));
 }
 
@@ -49,6 +50,7 @@ sub new {
 		myFormats               => [qw(ogg flc aif pcm mp3)],	# in order of preference
 		maxSupportedSamplerate  => 48000,
 		accuratePlayPoints      => 0,
+		firmware                => 0,
 	);
 
 	return $client;
@@ -61,6 +63,7 @@ my %CapabilitiesMap = (
 	ModelName               => 'modelName',
 	MaxSampleRate           => 'maxSupportedSamplerate',
 	AccuratePlayPoints      => 'accuratePlayPoints',
+	Firmware                => 'firmware',
 
 	# deprecated
 	model                   => '_model',
@@ -69,6 +72,10 @@ my %CapabilitiesMap = (
 
 sub model {
 	return shift->_model;
+}
+
+sub revision {
+	return shift->firmware;
 }
 
 sub init {
