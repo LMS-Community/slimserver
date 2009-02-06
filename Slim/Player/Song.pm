@@ -332,14 +332,14 @@ sub open {
 	
 	push @streamFormats, ($handler->isRemote ? 'R' : 'F');
 	
-	my $transcoder = Slim::Player::TranscodingHelper::getConvertCommand2(
+	my ($transcoder, $error) = Slim::Player::TranscodingHelper::getConvertCommand2(
 		$self,
 		$format,
 		\@streamFormats, [], \@wantOptions);
 	
 	if (! $transcoder) {
 		logError("Couldn't create command line for $format playback for [$url]");
-		return (undef, 'PROBLEM_CONVERT_FILE', $url);
+		return (undef, ($error || 'PROBLEM_CONVERT_FILE'), $url);
 	} elsif ($log->is_info) {
 		$log->info("Transcoder: streamMode=", $transcoder->{'streamMode'}, ", streamformat=", $transcoder->{'streamformat'});
 	}
