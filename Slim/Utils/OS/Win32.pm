@@ -608,6 +608,10 @@ sub initUpdate {
 		
 		if ($share && $share->{path}) {
 			$downloaddir = $share->{path};
+
+			if (-e catdir($downloaddir, "Add-Ins")) {
+				$downloaddir = catdir($downloaddir, "Add-Ins");
+			}
 		}
 	}
 	
