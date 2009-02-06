@@ -1092,6 +1092,9 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 
 			for (var x=0; x < response.players_loop.length; x++) {
 				var playerInfo = response.players_loop[x];
+				
+				if (!playerInfo.connected)
+					continue;
 
 				// mark the current player as selected
 				if (playerInfo.playerid == SqueezeJS.Controller.getPlayer()) {
