@@ -106,7 +106,7 @@ function _init() {
 
 									this.showBriefly(response.result);
 
-									if (this.playerStatus.rescan != response.result.rescan) {
+									if ( response.result && (this.playerStatus.rescan != response.result.rescan) ) {
 										this.playerStatus.rescan = response.result.rescan;
 										this.fireEvent('scannerupdate', response.result);
 										
