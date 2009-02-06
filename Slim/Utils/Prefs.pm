@@ -161,7 +161,8 @@ sub init {
 		'displaytexttimeout'    => 1,
 		'checkVersion'          => 1,
 		'checkVersionInterval'	=> 60*60*24,
-		'autoDownloadUpdate'    => 1,
+		# enable auto download of SC updates on Windows only (for now)
+		'autoDownloadUpdate'    => Slim::Utils::OSDetect::isWindows(),
 		'noGenreFilter'         => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
