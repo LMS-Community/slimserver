@@ -274,6 +274,7 @@ sub getConvertCommand2 {
 	my $player;
 	my $clientid;
 	my $transcoder  = undef;
+	my $error;
 	my $backupTranscoder  = undef;
 	my $url      = blessed($track) && $track->can('url') ? $track->url : $track;
 
@@ -398,6 +399,9 @@ sub getConvertCommand2 {
 			if (! $caps->{$_}) {
 				$log->is_debug
 					&& $log->debug("Rejecting $command because required capability $_ not supported: ");
+				if ($_ eq 'D') {
+					$error ||= 'UNSUPPORTED_SAMPLE_RATE';
+				}
 				next PROFILE;
 			}
 		}
@@ -454,7 +458,7 @@ sub getConvertCommand2 {
 		$log->is_info && $log->info("Matched: $type->", $transcoder->{'streamformat'}, " via: ", $transcoder->{'command'});
 	}
 
-	return $transcoder;
+	return wantarray ? ($transcoder, $error) : $transcoder;
 }
 
 sub tokenizeConvertCommand2 {

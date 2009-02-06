@@ -1040,24 +1040,26 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 			this._addSNPlayerlistMenu(response);
 			this._addOtherPlayerlistMenu(response);
 
-			// add the sync option menu item
-			this.menu.add(
-				'-',
-				new Ext.menu.Item({
-					text: SqueezeJS.string('synchronize') + '...',
-					// query the currently synced players and show the dialog
-					handler: function(){
-						SqueezeJS.Controller.request({
-							params: ['', ['syncgroups', '?']],
-							success: this.showSyncDialog,
-							failure: this.showSyncDialog,
-							scope: this
-						});	
-					},
-					scope: this,
-					disabled: (this.playerList.getCount() < 2) 
-				})
-			);
+			if (!this.noSync) {
+				// add the sync option menu item
+				this.menu.add(
+					'-',
+					new Ext.menu.Item({
+						text: SqueezeJS.string('synchronize') + '...',
+						// query the currently synced players and show the dialog
+						handler: function(){
+							SqueezeJS.Controller.request({
+								params: ['', ['syncgroups', '?']],
+								success: this.showSyncDialog,
+								failure: this.showSyncDialog,
+								scope: this
+							});	
+						},
+						scope: this,
+						disabled: (this.playerList.getCount() < 2) 
+					})
+				);
+			}
 		}
 
 		else {
@@ -1092,6 +1094,9 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 
 			for (var x=0; x < response.players_loop.length; x++) {
 				var playerInfo = response.players_loop[x];
+				
+				if (!playerInfo.connected)
+					continue;
 
 				// mark the current player as selected
 				if (playerInfo.playerid == SqueezeJS.Controller.getPlayer()) {

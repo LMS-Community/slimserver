@@ -2644,6 +2644,9 @@ PROBLEM_UNKNOWN_TYPE
 	NO	Feil: Ikke gjenkjent filtype for:
 	SV	Fel: Okänd filtyp för:
 
+UNSUPPORTED_SAMPLE_RATE
+	EN	Unsupported sample-rate
+
 PLAYLIST_NO_ITEMS_FOUND
 	DA	Fejl: Ingen elementer i spillelisten
 	DE	Fehler: Wiedergabeliste ist leer
