@@ -13,6 +13,7 @@ use Slim::Utils::Timers;
 use Slim::Utils::Unicode;
 
 my $prefs = preferences('server');
+my $log   = logger('server.update');
 
 sub checkVersion {
 	if (!$prefs->get('checkVersion')) {
@@ -23,7 +24,6 @@ sub checkVersion {
 	}
 
 	my $lastTime = $prefs->get('checkVersionLastTime');
-	my $log      = logger('server.timers');
 
 	if ($lastTime) {
 
@@ -66,6 +66,8 @@ sub checkVersionCB {
 
 		$::newVersion = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($::newVersion);
+		
+		$log->debug($::newVersion || 'No new SqueezeCenter version available');
 
 		# reset the update flag
 		$prefs->set('updateInstaller');
@@ -77,7 +79,7 @@ sub checkVersionCB {
 	}
 	else {
 		$::newVersion = 0;
-		logWarning(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}));
+		$log->warn(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}));
 	}
 }
 
@@ -85,7 +87,7 @@ sub checkVersionCB {
 sub checkVersionError {
 	my $http = shift;
 
-	logError(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error);
+	$log->error(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error);
 }
 
 
@@ -95,9 +97,11 @@ sub getUpdate {
 	my $params = shift;
 	
 	my $url  = "http://"
-		. Slim::Networking::SqueezeNetwork->get_server("update")
+		. Slim::Networking::SqueezeNetwork->get_server("sn")
 		. "/update/?geturl=1&os=" . $params->{os};
 		
+	$log->debug("Getting url for latest SqueezeCenter download from $url");
+
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&gotUrlCB,
 		\&checkVersionError,
@@ -116,6 +120,8 @@ sub gotUrlCB {
 	my $url = $http->content();
 
 	if ( $http->{code} =~ /^2\d\d/ && Slim::Music::Info::isURL($url) ) {
+		
+		$log->debug("URL to download update from: $url");
 
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
@@ -141,12 +147,17 @@ sub gotUrlCB {
 		
 		$download->get( $url );
 	}
+	else {
+		$log->error("Didn't receive valid update URL: " . substr($url, 0, 50) . (length($url) > 50 ? '...' : ''));
+	}
 }
 
 sub downloadAsyncDone {
 	my $http = shift;
 	my $file = $http->params('file');
 	my $url  = $http->url;
+	
+	$log->debug("Successfully downloaded update installer file. Saving as $file");
 	
 	# make sure we got the file
 	return if !-e "$file.tmp";
