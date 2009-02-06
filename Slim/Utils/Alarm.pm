@@ -538,12 +538,13 @@ sub sound {
 
 		$class->pushAlarmScreensaver($client);
 
-		# Set analogOutMode to subwoofer to force output through main speakers even if headphones are plugged in
-		# This needs doing a lot more thoroughly.  Bug 8146 
+		# If player has headphones connected, play alarm sound through main
+		# speakers as well
 		if ($client->can('setAnalogOutMode') && $client->can('lineOutConnected')
-			&& $client->lineOutConnected())
+			&& $client->lineOutConnected()
+			&& $prefs->client($client)->get('analogOutMode') == 0)
 		{
-			$log->debug('Temporarily forcing main speakers on');
+			$log->debug('Setting analog out mode to always on');
 			$client->setAnalogOutMode(2);
 		}
 
