@@ -78,6 +78,8 @@ sub revision {
 	return shift->firmware;
 }
 
+sub needsUpgrade {}
+
 sub init {
 	my $client = shift;
 	my ($model, $capabilities) = @_;
