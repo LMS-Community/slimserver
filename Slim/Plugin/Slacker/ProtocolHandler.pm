@@ -17,6 +17,9 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	description  => 'PLUGIN_SLACKER_MODULE_NAME',
 } );
 
+my $fav_on   = main::SLIM_SERVICE ? '/static/sc/images/Slacker/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav_on.gif'; 
+my $fav_off  = main::SLIM_SERVICE ? '/static/sc/images/Slacker/btn_slacker_fav.gif' : 'html/images/btn_slacker_fav.gif'; 
+
 # XXX: Port to new streaming
 
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
@@ -674,7 +677,7 @@ sub getMetadataFor {
 
 	if ( $track ) {
 		# Fav icon changes if the user has already rated it up
-		my $fav_icon = $track->{trate} ? 'html/images/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav.gif';
+		my $fav_icon = $track->{trate} ? $fav_on : $fav_off;
 		my $fav_tip  = $track->{trate} ? 'PLUGIN_SLACKER_UNMARK_FAVORITE' : 'PLUGIN_SLACKER_FAVORITE_TRACK';
 		my $fav_cmd  = $track->{trate} ? 'U' : 'F';
 	
@@ -703,7 +706,7 @@ sub getMetadataFor {
 
 				# replace shuffle with Ban Track
 				shuffle => {
-					icon    => 'html/images/btn_slacker_ban.gif',
+					icon    => main::SLIM_SERVICE ? '/static/sc/images/Slacker/btn_slacker_ban.gif' : 'html/images/btn_slacker_ban.gif',
 					tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
 					command => [ 'slacker', 'rate', 'B' ],
 				},

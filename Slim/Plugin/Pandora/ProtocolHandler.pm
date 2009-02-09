@@ -434,14 +434,14 @@ sub getMetadataFor {
 
 				# replace repeat with Thumbs Up
 				repeat  => {
-					icon    => 'html/images/btn_thumbs_up.gif',
+					icon    => main::SLIM_SERVICE ? '/static/sc/images/Pandora/btn_thumbs_up.gif' : 'html/images/btn_thumbs_up.gif',
 					tooltip => $client->string('PLUGIN_PANDORA_I_LIKE'),
 					command => [ 'pandora', 'rate', 1 ],
 				},
 
 				# replace shuffle with Thumbs Down
 				shuffle => {
-					icon    => 'html/images/btn_thumbs_down.gif',
+					icon    => main::SLIM_SERVICE ? '/static/sc/images/Pandora/btn_thumbs_down.gif' : 'html/images/btn_thumbs_down.gif',
 					tooltip => $client->string('PLUGIN_PANDORA_I_DONT_LIKE'),
 					command => [ 'pandora', 'rate', 0 ],
 				},
