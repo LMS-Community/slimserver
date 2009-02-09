@@ -17,8 +17,8 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	description  => 'PLUGIN_SLACKER_MODULE_NAME',
 } );
 
-my $fav_on   = main::SLIM_SERVICE ? '/static/sc/images/Slacker/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav_on.gif'; 
-my $fav_off  = main::SLIM_SERVICE ? '/static/sc/images/Slacker/btn_slacker_fav.gif' : 'html/images/btn_slacker_fav.gif'; 
+my $fav_on   = main::SLIM_SERVICE ? 'static/sc/images/Slacker/btn_slacker_fav_on.gif' : 'html/images/btn_slacker_fav_on.gif'; 
+my $fav_off  = main::SLIM_SERVICE ? 'static/sc/images/Slacker/btn_slacker_fav.gif' : 'html/images/btn_slacker_fav.gif'; 
 
 # XXX: Port to new streaming
 
@@ -706,7 +706,7 @@ sub getMetadataFor {
 
 				# replace shuffle with Ban Track
 				shuffle => {
-					icon    => main::SLIM_SERVICE ? '/static/sc/images/Slacker/btn_slacker_ban.gif' : 'html/images/btn_slacker_ban.gif',
+					icon    => main::SLIM_SERVICE ? 'static/sc/images/Slacker/btn_slacker_ban.gif' : 'html/images/btn_slacker_ban.gif',
 					tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
 					command => [ 'slacker', 'rate', 'B' ],
 				},

@@ -342,14 +342,14 @@ sub getMetadataFor {
 
 				# replace repeat with Love
 				repeat  => {
-					icon    => main::SLIM_SERVICE ? '/static/sc/images/LastFM/btn_lastfm_love.gif' : 'html/images/btn_lastfm_love.gif',
+					icon    => main::SLIM_SERVICE ? 'static/sc/images/LastFM/btn_lastfm_love.gif' : 'html/images/btn_lastfm_love.gif',
 					tooltip => $client->string('PLUGIN_LFM_LOVE'),
 					command => [ 'lfm', 'rate', 'L' ],
 				},
 
 				# replace shuffle with Ban
 				shuffle => {
-					icon    => main::SLIM_SERVICE ? '/static/sc/images/LastFM/btn_lastfm_ban.gif' : 'html/images/btn_lastfm_ban.gif',
+					icon    => main::SLIM_SERVICE ? 'static/sc/images/LastFM/btn_lastfm_ban.gif' : 'html/images/btn_lastfm_ban.gif',
 					tooltip => $client->string('PLUGIN_LFM_BAN'),
 					command => [ 'lfm', 'rate', 'B' ],
 				},
