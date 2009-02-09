@@ -223,10 +223,6 @@ sub gotNextTrackError {
 	my $http   = shift;
 	
 	$http->params->{'errorCallback'}->('PLUGIN_PANDORA_ERROR', $http->error);
-
-	if ( main::SLIM_SERVICE ) {
-	    logError( $http->params->{'client'}, $http->error );
-	}
 }
 
 sub getSeekData {
