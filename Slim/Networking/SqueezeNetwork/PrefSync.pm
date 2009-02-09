@@ -120,7 +120,7 @@ sub _init_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
-	$log->error( "Unable to get list of prefs to sync with SqueezeNetwork, sync is disabled: $error" );
+	$log->warn( "Unable to get list of prefs to sync with SqueezeNetwork, sync is disabled: $error" );
 	
 	$prefs->remove('sn_session');
 	
@@ -356,7 +356,7 @@ sub _syncDown_error {
 	
 		my $retry = $cprefs->get('snSyncInterval') * ( $count + 1 );
 	
-		$log->error( "Sync Down failed: $error, will retry in $retry" );
+		$log->warn( "Sync Down failed: $error, will retry in $retry" );
 	
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -365,7 +365,7 @@ sub _syncDown_error {
 		);
 	}
 	else {
-		$log->error( "Global Sync Down failed: $error" );
+		$log->warn( "Global Sync Down failed: $error" );
 	}
 }
 
@@ -482,7 +482,7 @@ sub syncUp {
 	
 	my $json = eval { to_json($sync) };
 	if ( $@ ) {
-		$log->error( "Unable to sync up: $@" );
+		$log->warn( "Unable to sync up: $@" );
 		return;
 	}
 	
@@ -534,7 +534,7 @@ sub syncUpGlobal {
 	
 	my $json = eval { to_json($sync) };
 	if ( $@ ) {
-		$log->error( "Unable to sync up: $@" );
+		$log->warn( "Unable to sync up: $@" );
 		return;
 	}
 	
@@ -573,7 +573,7 @@ sub _syncUp_error {
 		$prefs->set( snLastSyncUp => -1 );
 	}
 	
-	$log->error( "Sync Up failed: $error" );
+	$log->warn( "Sync Up failed: $error" );
 }
 
 1;
