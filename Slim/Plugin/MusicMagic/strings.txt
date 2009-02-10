@@ -665,6 +665,14 @@ MUSICIP_MIXABLE_CHECK
 	SV	Läs endast in mixstatus från MusicIP (snabbare)
 
 MUSICIP_DUPLICATES
+	DA	Dubletter (MusicIP)
 	DE	Dubletten (MusicIP)
 	EN	Duplicates (MusicIP)
+	ES	Duplicados (MusicIP)
+	FI	Kopiot (MusicIP)
 	FR	Doublets (MusicIP)
+	IT	Duplicati (MusicIP)
+	NL	Duplicaten (MusicIP)
+	NO	Duplikater (MusicIP)
+	SV	Dubbletter (MusicIP)
+

@@ -200,7 +200,8 @@ sub openport {
 	my ($listenerport, $listeneraddr) = @_;
 
 	my %tested;
-
+	my $testSocket;
+	
 	# start our listener
 	foreach my $port ($listenerport, 9000..9010, 9100, 8000, 10000) {
 		
@@ -208,20 +209,29 @@ sub openport {
 		
 		$openedport    = $port;
 		$tested{$port} = 1;
+
+		if ( $testSocket = IO::Socket::INET->new(Proto     => "tcp",
+				PeerAddr  => 'localhost',
+				PeerPort  => $port) )
+		{
+			$testSocket->close;
+		}
 		
-		$http_server_socket = HTTP::Daemon->new(
-			LocalPort => $port,
-			LocalAddr => $listeneraddr,
-			Listen    => SOMAXCONN,
-			ReuseAddr => 1,
-			Reuse => 1,
-			Timeout   => 0.001,
-	
-		) and last;
+		else {
+
+			$http_server_socket = HTTP::Daemon->new(
+				LocalPort => $port,
+				LocalAddr => $listeneraddr,
+				Listen    => SOMAXCONN,
+				ReuseAddr => 1,
+				Reuse => 1,
+				Timeout   => 0.001,
+			) and last;
+		}
 		
 		$log->error("Can't setup the listening port $port for the HTTP server: $!");
 	}
-
+	
 	# if none of our ports could be opened, we'll have to give up
 	if (!$http_server_socket) {
 		

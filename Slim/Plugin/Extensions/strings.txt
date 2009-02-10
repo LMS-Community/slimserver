@@ -11,16 +11,16 @@ PLUGIN_EXTENSIONS
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
-	DA	SqueezeCenter kan automatisk hente en liste med udvidelser til SqueezeCenter og Squeezebox Controller/SqueezePlay. Det vil give dig mulighed for at installere flere funktioner i form af udvidelsesmoduler, underprogrammer, tapeter og lydeffekter udviklet af brugergruppens medlemmer. Udvidelsesmodulerne til SqueezeCenter vises på listen nedenfor. Udvidelsesmoduler til Squeezebox Controller/SqueezePlay vises i konfigurationsmenuerne under hhv. Konfiguration - Avanceret - Installation af programmer, Konfiguration - Display - Tapeter,  Konfiguration - Avanceret - Lydeffekter.
+	DA	Du kan hente en række udvidelser til dit Squeezebox-system. Hvis du har brug for hjælp i forbindelse med udvidelsesmodulerne fra tredjepart, kan du kontakte den som har lavet modulet, eller melde dig til vores <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
 	DE	Der Extension Downloader kann diverse Erweiterungen für ihr Squeezebox System herunterladen und installieren. Unterstützung für Erweiterungen von Drittanbietern erhalten Sie bei den Autoren (siehe Liste) oder in den <a href="http://forums.slimdevices.com/forumdisplay.php">Squeezebox Foren</a>.
-	EN	The Extension Downloader can download and install a variety of add-ons to your Squeezebox system.  For support for third-party extensions, contact the author listed below or join in at the <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>. 
-	ES	SqueezeCenter puede descargar automáticamente listas de extensiones para SqueezeCenter y Squeezebox Controller/SqueezePlay. Esto permite instalar funciones adicionales como complementos proporcionados por la comunidad, subprogramas, papeles tapiz o efectos de sonido. Los complementos de SqueezeCenter aparecerán en la lista mostrada a continuación. Las extensiones para Squeezebox Controller/SqueezePlay aparecerán en los menús de configuración en Configuración Avanzada - Instalador de subprogramas, Configuración - Pantalla - Papeles tapiz, Configuración Avanzada - Efectos de sonido.
-	FI	SqueezeCenter saattaa ladata automaattisesti laajennusluetteloita SqueezeCenterille ja Squeezebox-kaukosäätimelle/SqueezePlaylle.  Tämän ansiosta voit asentaa lisätoimintoja, kuten yhteisön tarjoamia laajennuksia, sovelmia, taustakuvia ja äänitehosteita.  SqueezeCenterin laajennukset näkyvät alla olevassa luettelossa.  Squeezebox-kaukosäätimen/SqueezePlayn laajennukset näkyvät asetusvalikoissa kohdissa Asetukset - Lisäasetukset - Sovelman asennusohjelma, Asetukset - Näyttö - Taustakuvat, Asetukset - Lisäasetukset - Äänitehosteet.
-	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox. Pour obtenir du support veuillez contacter l'auteur de l'extension tiers affiché ci-dessous ou rejoignez les <a href="http://forums.slimdevices.com/forumdisplay.php">forums</a>
-	IT	SqueezeCenter potrebbe scaricare automaticamente elenchi di estensioni per SqueezeCenter e Squeezebox Controller/SqueezePlay. Ciò consente di installare funzionalità aggiuntive quali plugin, applet, sfondi o effetti sonori resi disponibili dalla community. I plugin di SqueezeCenter verranno visualizzati nell'elenco sottostante. Le estensioni di Squeezebox Controller/SqueezePlay verranno visualizzate nei menu di configurazione disponibili in Avanzate - Progr. di install. applet, Visualizza - Sfondi, Avanzate - Effetti sonori.
-	NL	SqueezeCenter kan automatisch lijsten met extensies voor de SqueezeCenter en de Squeezebox Controller/SqueezePlay downloaden. Zo kun je extra functionaliteit installeren, zoals door community's geleverde plug-ins, applets, achtergronden of geluidseffecten. SqueezeCenter-plugins verschijnen in de onderstaande lijst. Squeezebox Controller-/SqueezePlay-extensies verschijnen in de set-upmenu's onder Set-up - Geavanceerd - Appletinstallatieprogr., Set-up - Scherm - Achtergronden, Set-up - Geavanceerd - Geluidseffecten.
-	NO	SqueezeCenter kan laste ned lister med utvidelser automatisk fra SqueezeCenter og Squeezebox Controller/SqueezePlay. Slik kan du installere tilleggsfunksjoner, som f.eks. plugin-moduler, tilleggsprogrammer, bakgrunner og lydeffekter. Plugin-moduler for SqueezeCenter vises i listen nedenfor. Utvidelser for Squeezebox Controller/SqueezePlay vises i konfigureringsmenyene under Konfigurering - Avansert - Installering av tilleggsprogrammer, Konfigurering - Skjerm - Bakgrunner, Konfigurering - Avansert - Lydeffekter.
-	SV	SqueezeCenter kan då och då ladda ner listor över tillägg för SqueezeCenter och Squeezebox Controller/SqueezePlay. På så vis kan du installera fler funktioner såsom plugin-program utvecklade av användare, appletar, bakgrunder och ljudeffekter. Plugin-program till SqueezeCenter visas i listan nedan. SqueezeBox Controller-/SqueezePlay-tillägg visas på inställningsmenyn under Inställningar - Avancerat - Installationsprogram för appletprogram, Inställningar - Skärm - Bakgrunder, Inställningar - Avancerat - Ljudeffekter.
+	EN	The Extension Downloader can download and install a variety of add-ons to your Squeezebox system.  For support for third-party extensions, contact the author listed below or join in at the <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>.
+	ES	El Descargador de extensiones puede descargar e instalar diversos complementos para el sistema Squeezebox. Para obtener asistencia para extensiones de otros fabricantes, póngase en contacto con el autor citado a continuación o inscríbase en los foros <a href="http://forums.slimdevices.com/forumdisplay.php?f=4"></a>.
+	FI	SqueezeCenter saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.  Kolmansien osapuolien laajennusten tukea varten ota yhteyttä alla mainittuun tekijään tai liity <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">foorumeihin</a>.
+	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox. Pour obtenir du support veuillez contacter l'auteur de l'extension tiers affiché ci-dessous ou rejoignez les <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
+	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi. Per assistenza in merito alle estensioni di terzi, rivolgersi all'autore elencato di seguito o partecipare ai <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
+	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren. Voor ondersteuning van uitbreidingen van derden, kunt je contact opnemen met de auteur of je aansluiten bij de <ahref="http://forums.slimdevice:
+	NO	Med Nedlasting av utvidelser kan du  laste ned en rekke tilleggsprogrammer for Squeezebox-systemet.  Hvis du trenger hjelp med tredjepartsutvidelser, må du ta kontakt med forfatteren som oppgis nedenfor, eller bli med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumene</a>.
+	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox. Om du vill ha support för tredjepartsprogram bör du kontakta upphovsmannen (se nedan) eller gå med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumen</a>.
 
 PLUGIN_EXTENSIONS_REPOS
 	DA	Andre lagersteder
@@ -35,16 +35,16 @@ PLUGIN_EXTENSIONS_REPOS
 	SV	Ytterligare databaser
 
 PLUGIN_EXTENSIONS_REPOS_DESC
-	DA	Som standard bliver der kun hentet oplysninger fra et lagersted med kendte udvidelsesmoduler fra tredjeparter som vedligeholdes på slimdevices.com. Du kan definere flere lagersteder hvor der skal søges efter udvidelsesmoduler. Du skal indsætte adressen på disse lagersteder på listen nedenfor.
+	DA	Nedenfor kan du tilføje adresser på tredjeparters lagersteder med udvidelsesmoduler. Der er en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">her</a>.
 	DE	Sie können weitere Repositories von Drittanbietern verwenden, indem Sie deren URL unten angeben. Eine Liste von weiteren Verzeichnissen kann <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">im Wiki</a> gefunden werden.
 	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
-	ES	El servidor pasará a obtener información sólo de un repositorio de extensiones de otros fabricantes mantenido en slimdevices.com. Puede definir repositorios adicionales para que el servidor busque extensiones. Agregue las direcciones URL para repositorios adicionales en la lista mostrada a continuación.
-	FI	Palvelin noutaa oletuksena tiedot vain sellaisista säilöistä, joissa on tunnettuja kolmansien osapuolien laajennuksia ja joita ylläpidetään osoitteessa slimdevices.com.  Voit määrittää muita tietosäilöjä, joista palvelin etsii laajennuksia.   Lisää muiden tietosäilöjen url-osoitteet alla olevaan luetteloon.
+	ES	Puede agregar repositorios de extensiones de otros fabricantes adicionales si introduce la URL para el siguiente repositorio. Encontrará una lista de direcciones URL de repositorios <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">aquí</a>.
+	FI	Voit lisätä kolmansien osapuolien lisälaajennustietosäilöjä antamalla alla olevan tietosäilön URL-osoitteen.  Luettelo tietosäilöjen URL-osoitteista on <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">täällä</a>.
 	FR	Vous pouvez ajouter des dépôts additionnels tiers en entrant l'URL de ces dépôts ci-dessous. Vous trouverez une liste de dépôts additionnels dans le <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">Wiki</a>.
-	IT	Per impostazione predefinita, il server recupererà informazioni solo da un archivio di estensioni di terze parti note disponibile nel sito slimdevices.com. È possibile definire archivi aggiuntivi in cui attivare la ricerca di estensioni. Aggiungere gli URL degli archivi aggiuntivi all'elenco sottostante.
-	NL	De server haalt standaard alleen informatie op uit een opslagruimte met bekende extensies van derden die op slimdevices.com worden onderhouden. Je kunt extra opslagruimten opgeven waarop de server naar extensies kan zoeken. Voeg de URL's voor extra opslagruimten toe aan de onderstaande lijst.
-	NO	Serveren vil som standard bare hente informasjon fra et lager med kjente tredjepartsutvidelser som brukes på slimdevices.com. Du kan definere tilleggslagre som serveren skal søke etter utvidelser i. Legg til adressene til tilleggslagrene i listen nedenfor.
-	SV	Som standard laddar servern endast ner information från en databas över kända tillägg från tredje part som finns på slimdevices.com. Du kan lägga till ytterligare databaser till servern för sökning efter tillägg. Lägg till webbadresserna till ytterligare databaser i listan nedan.
+	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendone l'URL di seguito. Un elenco di URL di archivi è disponibile <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">qui</a>.
+	NL	Je kunt de opslagplaatsen voor de uitbreidingen van derden toevoegen door de URL van de onderstaande opslagplaats in te voeren. Je kunt hier een lijst met opslagplaatsen vinden <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
+	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">her</a>.
+	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">lista</a> med adresser till databaser.
 
 PLUGIN_EXTENSIONS_REPOS_WARNING
 	DA	<b>Advarsel:</b> Da der automatisk bliver hentet software fra de lagersteder du definerer, skal du angive at du har tillid til ejeren af det pågældende lager.
@@ -107,21 +107,28 @@ PLUGIN_EXTENSIONS_PLUGINS_REMOVE
 	SV	Ta bort installerat plugin-program
 
 PLUGIN_EXTENSIONS_INSTALL
-	DA	 
+	DA	Installer
 	DE	Installieren
 	EN	Install
-	ES	 
-	FI	 
+	ES	Instalación
+	FI	Asenna
 	FR	Installer
-	IT	 
-	NL	 
-	NO	 
-	SV	 
+	IT	Installa
+	NL	Installeren
+	NO	Installer
+	SV	Installera
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL
+	DA	Manuelt installerede udvidelsesmoduler
 	DE	Manuell installierte Erweiterungen
 	EN	Manually installed extensions
+	ES	Extensiones instaladas manualmente
+	FI	Manuaalisesti asennetut laajennukset
 	FR	Extensions installées manuellement
+	IT	Estensioni installate manualmente
+	NL	Handmatig geïnstalleerde uitbreidingen
+	NO	Utvidelser som er manuelt installert
+	SV	Tillägg som har installerats manuellt
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	DA	er allerede installeret manuelt (%s) - modulet skal fjernes først
@@ -130,9 +137,9 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	ES	ya se instaló manualmente (%s) - quítelo primero
 	FI	on jo asennettu manuaalisesti (%s) - poista ensin
 	FR	déjà installé manuellement (%s). Veuillez d'abord le supprimer.
-	IT	già installato manualmente (%s). Rimuoverlo.
+	IT	già installato manualmente (%s). Rimuoverlo
 	NL	al handmatig geïnstalleerd (%s) - eerst verwijderen
-	NO	allerede installert manuelt (%s) ‒ fjern først
+	NO	allerede installert manuelt (%s) - fjern først
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG
@@ -244,16 +251,38 @@ PLUGIN_EXTENSIONS_BAD_DOWNLOAD
 	SV	Installationen misslyckades (filen kunde inte laddas ner)
 
 PLUGIN_EXTENSIONS_AUTHOR
+	DA	Lavet af
 	DE	Autor
 	EN	Author
+	ES	Autor
+	FI	Tekijä
 	FR	Auteur
+	IT	Autore
+	NL	Auteur
+	NO	Forfatter
+	SV	Upphovsman
 
 PLUGIN_EXTENSIONS_WARNING_POPUP
+	DA	Du er i færd med at installere:
 	DE	Sie wollen die folgenden Erweiterungen installieren:
 	EN	You are about to install:
+	ES	Está a punto de instalar:
+	FI	Aiot asentaa tämän:
 	FR	Vous êtes en train d'installer:
-	
+	IT	Sta per essere installato:
+	NL	Je wilt het volgende installeren:
+	NO	Du er i ferd med å installere
+	SV	Du är på väg att installera:
+
 PLUGIN_EXTENSIONS_WARNING_POPUP2
+	DA	Du bør kun installere udvidelsesmoduler fra forfattere du har tillid til, så du ikke kommer til at installere noget som er skadeligt og kan ødelægge computeren eller afsløre oplysninger om dig.
 	DE	Installieren Sie nur Erweiterungen von Autoren, denen Sie vertrauen. Bösartige Software kann ihre Installation stören, oder ihre Privatsphäre verletzen.
 	EN	Only install extensions from authors whom you trust. Malicious software can damage your computer or violate your privacy.
+	ES	Instale extensiones únicamente de autores de confianza. El software malintencionado puede dañar el equipo o invadir su privacidad.
+	FI	Asenna laajennuksia vain tekijöiltä, joihin luotat. Haittaohjelmistot saattavat vaurioittaa tietokonettasi tai loukata tietosuojaasi.
 	FR	Installez seulement les extensions d'auteurs en qui vous avez confiance. Un logiciel malveillant peux endommager votre ordinateur ou accéder a vos données personnelles.
+	IT	Installare solo le estensioni create dagli autori fidati. Il software dannoso può danneggiare il computer o violare la privacy degli utenti.
+	NL	Installeer alleen uitbreidingen van auteurs die je vertrouwt. Kwaadaardige software kan je computer beschadigen en je privacy schenden.
+	NO	Du bør kun installere utvidelser fra forfattere du har tillit til. Skadelig programvare kan skade datamaskinen og sette personvernet i fare.
+	SV	Installera endast tillägg som utvecklats av personer eller organisationer som du litar på. Skadliga program kan förstöra datorn och leda till att dina personuppgifter sprids.
+
