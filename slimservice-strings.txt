@@ -163,17 +163,17 @@ SQUEEZENETWORK_WELCOME
 	SV	Spelaren är nu registrerad! Tryck höger för att komma igång.
 
 SETUP_GROUP_MENUITEMS
-	DA	Tilpas hovedmenuen
-	DE	Hauptmenü
-	EN	Home Menu
+	DA	Tilpasning af hovedmenuen
+	DE	Anpassen des Hauptmenüs
+	EN	Home Menu Customization
 	ES	Menú Inicio
-	FI	Kotivalikko
-	FR	Personnalisation du Menu principal
+	FI	Kotivalikon mukauttaminen
+	FR	Personnalisation du menu principal
 	HE	התאמה אישית של התפריט הראשי
-	IT	Menu iniziale
-	NL	Hoofdmenu
-	NO	Hovedmeny
-	SV	Menyn Hem
+	IT	Personalizzazione menu iniziale
+	NL	Hoofdmenu aanpassen
+	NO	Tilpassing av hovedmeny
+	SV	Anpassning av startmenyn
 
 SETUP_PLAYER_CODE
 	DA	Afspillerens pinkode
