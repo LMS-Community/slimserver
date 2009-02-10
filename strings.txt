@@ -244,7 +244,7 @@ ABOUT_SLIMDEVICES
 	FI	Tietoja Slim Device -laitteista / Logitechistä
 	FR	A propos de Slim Devices
 	HE	אודות Slim Devices/Logitech
-	IT	Informazioni sui dispositivi Slim
+	IT	Informazioni su Slim Devices/Logitech
 	JA	スリムデバイス社について
 	NL	Over Slim Devices
 	NO	Om Slim Devices/Logitech
@@ -508,7 +508,16 @@ MY_MUSIC
 	SV	Musikbibliotek
 
 MUSIC_STORES
+	DA	Onlinemusikbutikker
+	DE	Musik Shops
 	EN	Music Stores
+	ES	Tiendas de música
+	FI	Musiikkikaupat
+	FR	Magasins de musique
+	IT	Negozi di musica online
+	NL	Music Stores
+	NO	Musikkbutikker
+	SV	Musikaffärer
 
 GAMES
 	CS	Hry
@@ -599,7 +608,7 @@ NOW_PLAYING
 	FI	Nyt soi
 	FR	Lecture
 	HE	מושמע כעת
-	IT	Riproduzione
+	IT	Riproduzione in corso
 	JA	再生中
 	NL	Speelt nu
 	NO	Spilles nå
@@ -922,7 +931,7 @@ PLAYING_RANDOMLY_FROM_DBL
 	FI	Soita sekoitettuna
 	FR	Lecture aléatoire
 	HE	השמעה בסדר אקראי
-	IT	Riproduci casualmente
+	IT	Riproduci in ordine casuale
 	NL	Willekeurig afspelen
 	NO	Tilfeldig rekkefølge
 	SV	Spela blandat
@@ -937,7 +946,7 @@ CLEARING_PLAYLIST
 	FI	Tyhjennetään soittoluetteloa...
 	FR	Vidage de la liste de lecture...
 	HE	מנקה את רשימת ההשמעה...
-	IT	Cancellazione elenco di riproduzione...
+	IT	Svuotamento elenco di riproduzione...
 	JA	プレイ リストを消去しています...
 	NL	Playlist wordt gewist...
 	NO	Tømmer spillelisten...
@@ -1036,7 +1045,7 @@ REPEAT_OFF
 	FI	Toisto ei käytössä
 	FR	Répétition désactivée
 	HE	ללא השמעה חוזרת
-	IT	Ripetizione disattivata
+	IT	Ripetizione disattiva
 	JA	リピート オフ
 	NL	Herhalen uit
 	NO	Repetisjon av
@@ -1349,7 +1358,7 @@ COLLAPSE
 	ES	Contraer
 	FI	Kutista
 	FR	Réduire
-	IT	Comprimi
+	IT	Riduci
 	NL	Samenvouwen
 	NO	Skjul
 	SV	Komprimera
@@ -1767,7 +1776,7 @@ ALARM_NOW_PLAYING
 	FI	Herätyskellon toistama musiikki
 	FR	Le réveil est en marche
 	HE	שעון מעורר - מושמע כעת
-	IT	Riproduzione in corso (sveglia):
+	IT	Sveglia in funzione
 	JA	アラーム再生中
 	NL	Weksignaal speelt nu
 	NO	Vekkerklokken spiller nå
@@ -1830,7 +1839,7 @@ SETUP_ALARM_TIMEOUT
 	ES	Tiempo de espera para alarma (en minutos)
 	FI	Herätyksen aikakatkaisu (minuutteina)
 	FR	Durée du réveil (en minutes)
-	IT	Timeout sveglia (in minuti)
+	IT	Durata sveglia (in minuti)
 	NL	Time-out van weksignaal (in minuten)
 	NO	Tidsavbrudd for vekkerklokke (minutter)
 	SV	Tidsgräns för alarm (i minuter)
@@ -1867,7 +1876,7 @@ ALARM_WEEKDAYS
 	FI	Herätykset arkipäivisin
 	FR	Réveils semaine
 	HE	התראות לימי השבוע
-	IT	Sveglia settimanale
+	IT	Sveglie settimanali
 	NL	Wektijden weekdagen
 	NO	Alarmer på ukedager
 	SV	Alarm för veckodagar
@@ -2317,7 +2326,7 @@ FREE_YOUR_MUSIC
 	FI	Vapauta musiikki
 	FR	Libérez votre musique
 	HE	Free Your Music
-	IT	Libera la tua musica !
+	IT	Libera la tua musica!
 	JA	音楽を自由に！
 	NL	Geef muziek de vrijheid
 	NO	Sett musikken fri
@@ -2407,7 +2416,7 @@ FIRMWARE_MISSING
 	FI	Virhe: Laitteisto-ohjelmisto puuttuu
 	FR	Erreur: micrologiciel manquant
 	HE	שגיאה: קושחה חסרה
-	IT	Error: Errore: firmware mancante
+	IT	Errore: firmware mancante
 	NL	Fout: Ontbrekende firmware
 	NO	Feil: Mangler fastvare
 	SV	Fel: Inbyggd maskinvara saknas.
@@ -2491,7 +2500,7 @@ BUFFERING
 	FI	Puskurointi
 	FR	Mise en tampon
 	HE	אגירה
-	IT	Buffer
+	IT	Buffering
 	NL	Opslaan in buffer
 	NO	Fyller bufferen
 	SV	Buffrar
@@ -2505,7 +2514,7 @@ REBUFFERING
 	FI	Uudelleenpuskuroidaan...
 	FR	Remise en tampon...
 	HE	מבצע אגירה מחדש...
-	IT	Reinizializzazione buffer in corso...
+	IT	Rebuffering...
 	NL	Bezig met opnieuw bufferen...
 	NO	Fyller bufferen på nytt...
 	SV	Buffrar om ...
@@ -3060,7 +3069,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	FI	Näillä asetuksilla säädetään TCP/IP-verkkoyhteyden parametrejä SqueezeCenterissä.
 	FR	Ces réglages permettent d'ajuster les paramètres du réseau TCP pour le serveur.
 	HE	הגדרות אלה מכוונות את הפרמטרים של רשת TCP/IP בשרת.
-	IT	Queste impostazioni consentono di regolare i parametri di rete TCP/IP nel server.
+	IT	Queste impostazioni regolano i parametri di rete TCP/IP in SqueezeCenter.
 	JA	これらのセッティングはサーバーのTCP/IPパラメータを調節します
 	NL	Hiermee kun je de parameters van het TCP/IP-netwerk in SqueezeCenter aanpassen.
 	NO	Disse innstillingene justerer parametrene for TCP/IP-nettverket i SqueezeCenter.
@@ -3077,7 +3086,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	FI	Nämä ovat valittavissa olevat muodot sekä internet-liittymässä että soittimissa. Voit poistaa muodon tyhjentämällä tekstiruudun. Voit lisätä uuden muodon sijoittamalla sen tyhjään ruutuun. Käytettävissä olevat tietoelementit: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (raidan numero), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (kokonaiskesto sekunteinta), DURATION (minuutteina ja sekunteina), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (aseman nimi), PATH, FILE, EXT (tiedostotunniste), LONGDATE (nykyinen pvm, pitkä), SHORTDATE (nykyinen pvm, lyhyt), CURRTIME (nykyinen aika). Elementit voidaan erottaa millä tahansa (tai ei millään). Erottimia käytetään vain, jos tietoelementtejä on.<br>Nykyinen valinta on muoto, jota käytetään WWW-sivuilla.
 	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacez la zone de saisie. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Ces éléments peuvent être entrecoupés de séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<br> La sélection en cours est le format qui sera utilisé dans les documents Web.
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
-	IT	Questi sono i formati selezionabili sia qui che nelle impostazioni del lettore. Per rimuovere un formato, cancellare il testo presente nella casella e inserirlo uno nuovo. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano indicato con un numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), VBR_SCALE (vbr/cbr), BITRATE (velocità in bit), TAGSIZE (dimensioni dell'etichetta), VOLUME (titolo del volume), PATH (percorso), FILE, EXT (estensione del file), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, breve), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzarne nessuno. I separatori sono utilizzati solo se sono presenti elementi.<br> Il formato correntemente selezionato è quello che verrà utilizzato nelle pagine Web.
+	IT	Questi sono i formati selezionabili sia per l'interfaccia web che per i lettori. Per rimuovere un formato, cancellare il testo presente nella casella. Per aggiungere un formato, scriverne il testo nella casella vuota. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano indicato con un numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), VBR_SCALE (vbr/cbr), BITRATE (bitrate), TAGSIZE (dimensioni dell'etichetta), VOLUME (titolo del volume), PATH (percorso), FILE, EXT (estensione del file), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, breve), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzarne nessuno. I separatori sono utilizzati solo se sono presenti elementi.<br> Il formato correntemente selezionato è quello che verrà utilizzato nelle pagine Web.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、VBR_SCALE（vbr/cbr）、BITRATE（ビットレート)、TAGSIZE（タグサイズ）、VOLUME（ボリューム名）、PATH（パス）、FILE（ファイル)、EXT（拡張子）、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
 	NL	Dit zijn de indelingen die in de webinterface en op muzieksystemen kunnen worden geselecteerd. Als je een indeling wilt verwijderen, wis je het tekstvak. Wil je een nieuwe indeling invoeren, dan plaats je deze in het lege tekstvak. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als geheel getal), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumenaam), PATH, FILE, EXT (bestandsextensie), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). Elementen kunnen door alles (of niets) worden gescheiden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br>De huidige selectie is de indeling die op de webpagina's wordt gebruikt.
 	NO	Dette er formatene som er tilgjengelige både i nettgrensesnittet og i spillere. Hvis du vil fjerne et format, fjerner du teksten i tekstboksen. Hvis du vil legge til et nytt format, legger du det inn i den tomme tekstboksen. Tilgjengelige dataelementer: CT (innholdstype), TITLE (sangtittel), GENRE (sjanger), TRACKNUM (spornummer, heltall), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND (band/gruppe), ALBUM, COMMENT (kommentar), YEAR (år), SECS (varighet i sekunder), DURATION (varighet i minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE (bithastighet), TAGSIZE (størrelse på etikett), VOLUME (dataområde), PATH (bane), FILE (filnavn), EXT (filetternavn), LONGDATE (gjeldende dato, langt format), SHORTDATE (gjeldende dato, kort format), CURRTIME (gjeldende klokkeslett). Du kan skille elementer med hva som helst (eller ingenting). Skilletegnene brukes bare hvis dataelementene finnes.<br>Gjeldende utvalg er formatet som blir brukt på nettsidene.
@@ -3413,7 +3422,7 @@ SETUP_GROUP_IRSETS
 	FI	Kaukosäätimet
 	FR	Modèles de télécommande
 	HE	התקני שלט-רחוק
-	IT	Controlli telecomando
+	IT	Telecomandi
 	JA	リモートコントロール
 	NL	Afstandsbedieningen
 	NO	Fjernkontroller
@@ -3463,15 +3472,15 @@ SETUP_GROUP_PLUGINS_DESC
 	SV	Det finns ett antal plugin-program för SqueezeCenter som du kan använda från fjärrkontrollen eller i webbgränssnittet. Nedan kan aktivera och avaktivera enskilda plugin-program.<br/><br/>Obs! Ändringarna träder inte i kraft förrän du startar om programmet.
 
 SETUP_GROUP_PLUGINS_NEEDS_RESTART
-	DA	Programmet skal genstartes før ændringerne træder i kraft
+	DA	Programmet skal genstartes før ændringerne træder i kraft.
 	DE	Änderung tritt nach Neustart in Kraft.
 	EN	Change requires restart to take effect.
-	ES	Para que el cambio entre en vigor, debe reiniciar
-	FI	Muutoksen voimaantulo edellyttää uudelleenkäynnistystä
+	ES	Para que el cambio entre en vigor, debe reiniciar.
+	FI	Muutoksen voimaantulo edellyttää uudelleenkäynnistystä.
 	FR	La modification requiert un redémarrage pour être appliquée.
-	IT	Per applicare la modifica è necessario riavviare
-	NL	Je moet opnieuw opstarten om de wijziging te implementeren
-	NO	Du må starte på nytt før denne endringen trer i kraft
+	IT	Per applicare la modifica è necessario riavviare.
+	NL	De wijziging wordt pas van kracht na opnieuw starten.
+	NO	Du må starte på nytt før denne endringen trer i kraft.
 	SV	Du måste starta om för att ändringen ska börja gälla.
 
 INSTALLERROR_INVALID_VERSION
@@ -3645,7 +3654,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	FI	Äänitiedostojen tunnisteet poistettu käytöstä
 	FR	Types de fichier ignorés
 	HE	סיומות מושבתות של קובצי שמע
-	IT	Disattiva estensioni file audio
+	IT	Estensioni file audio ignorate
 	NL	Uitgeschakelde audiobestandsextensies.
 	NO	Deaktiverte lydfilendelser
 	SV	Avaktiverade filtillägg för ljudfiler
@@ -3673,7 +3682,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	FI	Soittoluetteloiden tiedostotunnisteet poistettu käytöstä
 	FR	Types de liste de lecture ignorés
 	HE	סיומות קבצים מושבתות של רשימות השמעה
-	IT	Estensioni file di elenchi di riproduzione da ignorare
+	IT	Estensioni file di elenchi di riproduzione ignorate
 	NL	Uitgeschakelde playlistbestandsextensies
 	NO	Deaktiverte filendelser for spillelister
 	SV	Avaktiverade filtillägg för spellistor
@@ -3958,7 +3967,7 @@ SETUP_MINAUTOBRIGHTNESS
 	SV	Minimal ljusstyrka (automatiskt)
 
 SETUP_MINAUTOBRIGHTNESS_ABBR
-	DA	Mindste lysstyrke (auto)
+	DA	Mindste lysstyrke (automatisk)
 	DE	Min. Helligkeit (Autom.)
 	EN	Min. Brightness (Auto)
 	ES	Brillo mínimo (automático)
@@ -4060,7 +4069,7 @@ SETUP_ALARMPLAYLIST
 	FI	Herätyskellon soittoluettelo
 	FR	Liste de lecture pour le réveil
 	HE	רשימת השמעה עבור התראה
-	IT	Elenco di riproduzione per a sveglia
+	IT	Elenco di riproduzione per la sveglia
 	JA	アラーム用のプレイリスト
 	NL	Playlist voor wekker
 	NO	Velg spilleliste for alarm
@@ -4104,7 +4113,7 @@ SETUP_PLAYINGDISPLAYMODE_OK
 	FI	Soitetun kappaleen edistyminen näkyy nyt näytössä näin:
 	FR	L'écran affichera le déroulement de la lecture du morceau avec:
 	HE	בתצוגה תוצג ההתקדמות של השיר הנוכחי שמושמע בתור:
-	IT	Avanzamento del brano in corso di riproduzione visualizzato sul display:
+	IT	Il display mostrerà l'avanzamento del brano in riproduzione con:
 	JA	ディスプレイは曲の進行を以下のように表示します:
 	NL	Het scherm geeft nu de voortgang van het huidige liedje weer als:
 	NO	Skjermen viser nå framdrift for sangen som spilles i dette formatet:
@@ -4405,7 +4414,7 @@ SETUP_BUFFERSECS
 	FI	Radiokanavan puskuri (sekunteinta)
 	FR	Taille du tampon radio
 	HE	שניות לאגירה של תחנות רדיו
-	IT	Secondi buffer stazioni radio
+	IT	Secondi buffer radio
 	NL	Buffer voor radiostations in seconden
 	NO	Bufferlengde for Internett-radio i sekunder
 	SV	Storlek på buffert för internetradio i sekunder
@@ -4432,7 +4441,7 @@ SETUP_MAXWMARATE
 	FI	WMA-virran enimmäisbittinopeus
 	FR	Limite de débit du flux WMA
 	HE	קצב סיביות מרבי להזרמת WMA
-	IT	Velocità in bit massima per stream WMA
+	IT	Bitrate massimo per stream WMA
 	NL	Maximumbitsnelheid van WMA-stream
 	NO	Maksimal bithastighet for wma-strømmer
 	SV	Maximal bithastighet för WMA-ström
@@ -4446,7 +4455,7 @@ SETUP_MAXWMARATE_DESC
 	FI	Joissakin WMA-virroissa on käytettävissä useita bittinopeuksia virtauttamiseen.  SqueezeCenter valitsee oletuksena virran, jonka bittinopeus on suurin. Jos sinulla on hidas internet-yhteys, voit määrittää tässä kohdassa pienemmän nopeuden. Näin rajoitat enimmäisnopeutta, jonka SqueezeCenter voi valita erinopeuksisista virroista.
 	FR	Certains flux WMA sont disponibles en plusieurs débits binaires. Par défaut, le SqueezeCenter choisira le débit le plus élevé disponible. Si votre connexion Internet ne le prend pas en charge, vous pouvez spécifier ici le débit maximal à utiliser.
 	HE	זרימות WMA מסוימות כוללות מספר קצבי סיביות זמינים להפעלת זרימות. כברירת מחדל, SqueezeCenter יבחר את הזרימה בקצב הסיביות הגבוה ביותר הזמין, אך אם חיבור האינטרנט שלך איטי יותר, באפשרותך לקבוע כאן ערך נמוך יותר להגבלת הקצב המרבי שניתן לבחור מבין זרימות מרובות-קצבים אלה.
-	IT	Per eseguire lo streaming di alcuni stream WMA sono disponibili diverse velocità in bit. Per impostazione predefinita in SqueezeCenter viene utilizzato lo stream con la velocità in bit più elevata, ma se si dispone di una connessione a Internet lenta, è possibile impostare qui un valore più basso per limitare la velocità massima selezionabile per questi stream con velocità molteplici.
+	IT	Per eseguire lo streaming di alcuni stream WMA sono disponibili diversi bitrate. Per impostazione predefinita in SqueezeCenter viene utilizzato lo stream con il bitrate più elevato, ma se si dispone di una connessione a Internet lenta, è possibile impostare qui un valore più basso per limitare la velocità massima selezionabile per questi stream con velocità molteplici.
 	NL	Sommige WMA-streams hebben meerdere bitsnelheden voor streaming. SqueezeCenter selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 	NO	Enkelte WMA-strømmer kan strømmes med ulike bithastigheter. SqueezeCenter velger som standard den høyeste bithastigheten som er tilgjengelig, men hvis du har en treg Internett-forbindelse, kan du angi en lavere verdi her, som forteller SqueezeCenter makshastigheten den kan velge.
 	SV	Vissa WMA-strömmar har flera olika bithastigheter.  Som standard väljer SqueezeCenter den högsta tillgängliga bithastigheten. Om du har en långsammare internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
@@ -4739,7 +4748,7 @@ SETUP_MAXBITRATE
 	FI	Bittinopeuden rajoitus
 	FR	Limite transcodage
 	HE	הגבלת קצב הסיביות
-	IT	Limitazione della velocità in bit
+	IT	Limitazione del bitrate
 	JA	ビットレート制限
 	NL	Bitsnelheid limiteren
 	NO	Begrensning av bithastighet
@@ -4754,7 +4763,7 @@ SETUP_MAXBITRATE_DESC
 	FI	SqueezeCenter voi muuntaa musiikkitiedostot automaattisesti WAV/AIFF- tai MP3-tiedostoiksi. Tämä alentaa soittimeen virtautetun datan bittinopeutta.  Tämä on hyödyllistä, jos yhdistät soittimesi SqueezeCenteriin internetin välityksellä tai jos langattoman verkon kanssa on ajoittaisia ongelmia.  Voit valita enimmäisbittinopeuden, jolla SqueezeCenter virtauttaa soittimeen.  Alla olevaa bittinopeutta hitaammalla bittinopeudella koodattuja MP3-tiedostoja ei muunneta.  Jos valitset Ei rajoitusta, SqueezeCenter virtauttaa MP3-tiedostot muuntamattomina ja muut tiedostotyypit pakkamaattomina PCM-tiedostoina.
 	FR	Le SqueezeCenter peut convertir automatiquement et à la volée vos fichiers de musique en WAV/AIFF ou MP3 afin de limiter le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SqueezeCenter par Internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximal envoyé par le SqueezeCenter à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés. Si vous choisissez Pas de limite, le SqueezeCenter enverra les fichiers MP3 sans transcodage et les autres types de fichiers au format PCM audio non compressé.
 	HE	SqueezeCenter יכול להמיר קובצי מוסיקה לתבנית WAV/AIFF או MP3 באופן אוטומטי במהלך השמעת שירים כדי להוריד את קצב הסיביות של הנתונים המוזרמים לנגן. הגדרה זו שימושית אם אתה מחבר את הנגן ל-SqueezeCenter דרך האינטרנט או נתקל בבעיות של קיטועים בשימוש ברשת אלחוטית. באפשרותך לבחור את קצב הסיביות המרבי שבו SqueezeCenter יפעיל זרימות לנגן. שירים בתבנית MP3 שקודדו בקצב נתונים נמוך מזה המצוין להלן, לא יומרו. אם תבחר את האפשרות 'ללא הגבלה', SqueezeCenter יפעיל זרימות של קובצי MP3 מבלי להמירם ויפעיל את יתר סוגי הקבצים כשמע PCM לא דחוס.
-	IT	In SqueezeCenter è possibile eseguire rapidamente la conversione automatica dei file musicali WAV/AIFF o MP3 in modo da ridurre la velocità in bit dei dati inviati al lettore. Questa operazione può essere utile se si collega il lettore a SqueezeCenter tramite Internet o se si verificano interruzioni saltuarie con una rete senza fili. È possibile impostare la massima velocità in bit con cui inviare lo stream audio al lettore. I brani MP3 codificati a una velocità in bit inferiore a quella indicata non vengono convertiti. Se si sceglie Nessun limite, SqueezeCenter trasferisce i file MP3 senza convertirli e gli altri tipi di file come audio PCM non compresso.
+	IT	In SqueezeCenter è possibile eseguire rapidamente la conversione automatica dei file musicali WAV/AIFF o MP3 in modo da ridurre il bitrate dei dati inviati al lettore. Questa operazione può essere utile se si collega il lettore a SqueezeCenter tramite Internet o se si verificano interruzioni saltuarie con una rete senza fili. È possibile impostare il bitrate massimo con cui inviare lo stream audio al lettore. I brani MP3 codificati a un bitrate inferiore a quello indicato non vengono convertiti. Se si sceglie Nessun limite, SqueezeCenter trasferisce i file MP3 senza convertirli e gli altri tipi di file come audio PCM non compresso.
 	JA	SqueezeCenterは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
 	NL	SqueezeCenter kan je muziekbestanden direct automatisch naar WAV/AIFF of MP3 converteren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als je systeem via het internet met SqueezeCenter verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid SqueezeCenter maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan hieronder aangegeven, worden niet geconverteerd. Als je 'Geen limiet' kiest, stroomt SqueezeCenter MP3-bestanden zonder conversie en andere bestandstypen als niet-gecomprimeerde PCM-audio.
 	NO	SqueezeCenter kan automatisk konvertere musikkfilene til wav/aiff eller mp3 under avspilling for å begrense bithastigheten på datastrømmen til spilleren. Dette kan være nyttig hvis du kopler spilleren til SqueezeCenter over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for SqueezeCenters strømming til spilleren. Mp3-filer som er kodet med lavere bithastighet enn dette, blir ikke konvertert. Hvis du velger Ubegrenset, strømmer SqueezeCenter mp3-filer uten konvertering, og andre filtyper som ukomprimert pcm-lyd.
@@ -4769,7 +4778,7 @@ SETUP_MP3BITRATE_DESC
 	FI	SqueezeCenter voi muuntaa musiikkitiedostot automaattisesti MP3-tiedostoiksi. Tämä mahdollistaa muiden kuin MP3-tiedostomuodon käytön soittimessa.  SqueezeCenter voi myös uudelleenpakata MP3-tiedostot soittimeen virtautetun datan bittinopeuden laskemiseksi.  Tämä on hyödyllistä, jos yhdistät soittimesi SqueezeCenteriin internetin välityksellä tai jos langattoman verkon kanssa on ajoittaisia ongelmia.  Voit valita enimmäisbittinopeuden, jolla SqueezeCenter virtauttaa soittimeen.  Alla olevaa bittinopeutta hitaammalla bittinopeudella koodattuja MP3-tiedostoja ei muunneta.
 	FR	Le SqueezeCenter peut encoder automatiquement et à la volée vos fichiers de musique non-MP3 au format MP3. Il peut également ré-encoder vos fichiers MP3 existants afin de réduire le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SqueezeCenter par Internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximal envoyé par le SqueezeCenter à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés.
 	HE	SqueezeCenter יכול להמיר את קובצי המוסיקה שלך באופן אוטומטי ל-MP3 במהלך השמעה של תבניות שאינן MP3. SqueezeCenter גם יכול לדחוס את קובצי ה-MP3 כדי לצמצם את קצב הסיביות של הנתונים המוזרמים לנגן. הגדרה זו שימושית אם אתה מחבר את הנגן ל-SqueezeCenter דרך האינטרנט או נתקל בבעיות של קיטועים בשימוש ברשת אלחוטית. באפשרותך לבחור את קצב הסיביות המרבי שבו SqueezeCenter יפעיל זרימות לנגן. שירים בתבנית MP3 שקודדו בקצב נתונים נמוך מזה המצוין להלן, לא יומרו.
-	IT	SqueezeCenter consente di convertire automaticamente i file musicali in MP3 in modo rapido per riprodurre formati diversi da MP3. Consente inoltre di ricomprimere i file MP3 per ridurre la velocità in bit dei dati inviati al lettore. Questa funzione risulta utile se si connette il lettore a SqueezeCenter tramite Internet o se si verificano occasionali interruzioni con una rete senza fili. È possibile scegliere la massima velocità in bit con cui inviare lo stream audio al lettore tramite SqueezeCenter. I brani MP3 codificati a una velocità in bit inferiore a quella indicata di seguito non vengono convertiti.
+	IT	SqueezeCenter consente di convertire automaticamente i file musicali in MP3 in modo rapido per riprodurre formati diversi da MP3. Consente inoltre di ricomprimere i file MP3 per ridurre il bitrate dei dati inviati al lettore. Questa funzione risulta utile se si connette il lettore a SqueezeCenter tramite Internet o se si verificano occasionali interruzioni con una rete senza fili. È possibile scegliere il bitrate massimo con cui inviare lo stream audio al lettore tramite SqueezeCenter. I brani MP3 codificati a un bitrate inferiore a quello indicato non vengono convertiti.
 	JA	SqueezeCenterは、自動的にあなたの音楽ファイルをMP3に変換します。MP3からさらに下のビットレートへの変換もできます。
 	NL	SqueezeCenter kan je muziekbestanden direct automatisch naar MP3 converteren om andere formaten dan MP3 af te spelen. SqueezeCenter kan je MP3-bestanden ook opnieuw comprimeren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als het systeem via het internet met SqueezeCenter verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid SqueezeCenter maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan hieronder aangegeven, worden niet geconverteerd.
 	NO	SqueezeCenter kan automatisk konvertere musikkfiler til mp3 under avspilling, slik at du kan spille av andre formater enn mp3. SqueezeCenter kan også komprimere mp3-filene dine for å senke bithastigheten for data som strømmes til spilleren. Dette kan være nyttig hvis du kopler spilleren til SqueezeCenter over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for SqueezeCenters strømming til spilleren. Mp3-filer som er kodet med lavere bithastighet enn dette, blir ikke konvertert.
@@ -4832,7 +4841,7 @@ LAME0
 	FI	Paras laatu, erittäin hidas
 	FR	Qualité optimale, lent
 	HE	איכות מיטבית, איטי ביותר
-	IT	Alta qualità, molto lento
+	IT	Altissima qualità, molto lento
 	NL	Hoogste kwaliteit, zeer langzaam
 	NO	Høyeste kvalitet, svært langsomt
 	SV	Högsta kvalitet, mycket långsamt
@@ -4919,7 +4928,7 @@ SETUP_REPLAYGAINMODE
 	FI	Äänenvoimakkuuden säätö/toiston äänenvoimakkuus
 	FR	Ajustement du volume (Replay Gain)
 	HE	כוונון עוצמת הקול/הגברה להשמעה חוזרת
-	IT	Regolazione del Volume / Replay gain
+	IT	Regolazione del volume / Replay gain
 	NL	Volumeaanpassing/Replay Gain
 	NO	Volumjustering (Replay Gain)
 	SV	Volymjustering (Replay Gain)
@@ -5042,7 +5051,7 @@ SETUP_MP3STREAMINGMETHOD
 	FI	MP3-virtautustapa
 	FR	Méthode de diffusion d'un fichier MP3
 	HE	שיטת הזרמה של תבנית MP3
-	IT	Metodi dello stream MP3
+	IT	Metodo di streaming MP3
 	NL	MP3 streaming methode
 	NO	Mp3-strømmingsmetode
 	SV	Mp3-strömningsmetod
@@ -5055,7 +5064,7 @@ SETUP_MP3STREAMINGMETHOD_DESC
 	FI	Kun toistetaan MP3 internet -virtaa, virtautus voidaan suorittaa kahdella tavalla.  Jos valitaan suora virtautus, soitin muodostaa suoran yhteyden äänen virtautuspalvelimeen. Tämä vähentää SqueezeCenterin kuormitusta lievästi. Virran toistoa voidaan myös jatkaa, jos SqueezeCenterin yhteys katkeaa.  Jos valitaan virtautus välityspalvelimen kautta, SqueezeCenter huolehtii yhteydestä ja välittää äänen soittimeen.  Oletus on suora virtautus, mutta jos MP3-virtojen kanssa esiintyy ongelmia, kokeile vaihtaa välityspalvelimen kautta virtautukseen.  Huomaa, että jos vähintään kaksi palvelinta on synkronoitu MP3-virtaan, käytetään aina välityspalvelimen kautta virtautusta, koska se vähentää kaistanleveyden käyttöä.
 	FR	Il existe deux manières de diffuser un flux MP3 sur Internet. La diffusion directe permet à la platine de se connecter directement au serveur de diffusion audio, réduisant ainsi la charge sur le SqueezeCenter et permettant de poursuivre la lecture du flux en cas de perte de la connexion. La diffusion par proxy permet au SqueezeCenter de gérer la connexion et de transmettre le flux audio vers la platine. La diffusion directe est l'option sélectionnée par défaut. Si vous rencontrez des problèmes lors de la lecture des flux MP3, sélectionnez l'option de diffusion par proxy. Notez que si plusieurs platines sont synchronisées pour utiliser un flux MP3, c'est la diffusion proxy qui est utilisée afin de réduire l'utilisation de bande passante.
 	HE	בעת הפעלה של זרימת אינטרנט בתבנית MP3, ניתן להפעיל את הזרימה באחת משתי דרכים. זרימה ישירה גורמת לנגן ליצור חיבור ישיר לשרת הזרימה של השמע, לצמצום קל של העומס על SqueezeCenter וכדי לאפשר לזרימה להימשך במקרה של אובדן החיבור של SqueezeCenter. זרימה ב-Proxy גורמת ל-SqueezeCenter לטפל בחיבור, להעברת השמע לנגן. זרימה ישירה היא ברירת המחדל, אך אם אתה נתקל בבעיות עם זרימות של MP3, נסה לשנות את ההגדרה לזרימה ב-Proxy. שים לב שאם לפחות שני נגנים מסונכרנים לזרימה מסוג MP3, תמיד נעשה שימוש בזרימה ב-Proxy לצמצום השימוש ברוחב הפס.
-	IT	Quando si riproduce uno stream Internet MP3 si possono utilizzare due metodi. Con il metodo dello stream diretto il riproduttore si collega direttamente al server di stream audio. Ciò consente di ridurre leggermente il carico di SqueezeCenter e di proseguire la riproduzione dello stream anche nel caso in cui la connessione con SqueezeCenter venga persa. Con il metodo dello stream tramite proxy la gestione della connessione viene effettuata da SqueezeCenter, il quale passa l'audio al riproduttore. Lo stream diretto è il metodo predefinito. Se tuttavia si riscontrassero problemi con gli stream MP3, provare a utilizzare il metodo dello stream tramite proxy. Si noti che se due o più lettori sono sincronizzati su uno stream MP3, viene sempre utilizzato il metodo dello stream tramite proxy per ridurre l'utilizzo della banda.
+	IT	Quando si riproduce uno stream Internet MP3 si possono utilizzare due metodi. Con il metodo dello streaming diretto il riproduttore si collega direttamente al server di streaming audio. Ciò consente di ridurre leggermente il carico di SqueezeCenter e di proseguire la riproduzione dello stream anche nel caso in cui la connessione con SqueezeCenter venga persa. Con il metodo dello streaming tramite proxy la gestione della connessione viene effettuata da SqueezeCenter, il quale passa l'audio al riproduttore. Lo streaming diretto è il metodo predefinito. Se tuttavia si riscontrassero problemi con gli stream MP3, provare a utilizzare il metodo dello streaming tramite proxy. Si noti che se due o più lettori sono sincronizzati su uno stream MP3, viene sempre utilizzato il metodo dello streaming tramite proxy per ridurre l'utilizzo della banda.
 	NL	Het afspelen van een MP3 Internet stream kan op twee manieren.<BR> Directe streaming: Het muzieksysteem maakt een directe connectie naar de audio streaming server op het Internet. Dit geeft minder belasting op je SqueezeCenter en de MP3 stream speelt door als de connectie tussen het systeem en de SqueezeCenter verloren gaat. <BR> Proxy streaming: De SqueezeCenter zorgt voor de connectie en geeft de audio stream door aan het systeem. <BR> Directe streaming is de standaard. Probeer proxy streaming als je problemen hebt met directe streaming. <BR> Let op: Als je twee of meer systemen synchroniseert wordt altijd automatisch proxy streaming ingesteld om de gebruikte bandbreedte te minimaliseren.
 	NO	Avspilling av mp3-strømmer fra Internett kan gjøres på to måter: Hvis du bruker direktestrøm oppretter spilleren en direkte forbindelse til serveren som sender lydstrømmen. Det gir litt mindre belastning på SqueezeCenter-maskinen, og strømmen kan spilles av selv om forbindelsen til denne blir brutt. Det er også mulig å sende datastrømmen gjennom SqueezeCenter, som da opptrer som en proxy. Dette kalles proxystrømming. Direktestrømming er standard, men hvis du får problemer med mp3-strømmer, kan du prøve å endre innstillingen til proxystrømming i stedet. Merk: hvis to eller flere spillere er synkronisert med en mp3-strøm, brukes proxystrømming alltid, for å redusere båndbreddebruken.
 	SV	När du spelar upp en mp3-ström från internet kan det ske på två olika sätt.  Direktströmning innebär att spelaren ansluts direkt till servern som strömmen kommer ifrån, vilket minskar belastningen på SqueezeCenter något och gör det möjligt att fortsätta spela även om anslutningen till SqueezeCenter skulle brytas.  Proxyströmmning innebär att SqueezeCenter ansluts till servern och sedan vidarebefordrar ljudet till spelaren.  Direktströmning är standard. Om du har problem med mp3-strömmar kan du prova att ändra inställningen till Proxyströmning.  Observera att proxyströmning alltid används när flera spelare synkroniseras för att spela upp samma mp3-ström, eftersom detta sparar bandbredd.
@@ -5068,7 +5077,7 @@ MP3_STREAMING_DIRECT
 	FI	Suora virtautus
 	FR	Diffusion directe
 	HE	זרימה ישירה
-	IT	Stream diretto
+	IT	Streaming diretto
 	NL	Directe streaming
 	NO	Direktestrømmer
 	SV	Direktströmning
@@ -5081,7 +5090,7 @@ MP3_STREAMING_PROXIED
 	FI	Virtautus välityspalvelimen kautta
 	FR	Diffusion par proxy
 	HE	זרימה ב-Proxy
-	IT	Stream tramite proxy
+	IT	Streaming tramite proxy
 	NL	Streaming via proxy
 	NO	Strømming via proxy
 	SV	Proxyströmning
@@ -5480,7 +5489,7 @@ SETUP_GUESSFILEFORMATS
 	FI	Arvaa tunnisteiden muodot
 	FR	Repères ID3 manquants
 	HE	ניחוש תבניות תגים
-	IT	Rilevamento del formato dei tag
+	IT	Rileva tag dal nome del file
 	JA	タグ フォーマットを推測する
 	NL	Tagformaten raden
 	NO	Gjett etikettformat
@@ -5559,7 +5568,7 @@ SETUP_IRSETLIST_OK
 	FI	Kaukosäätimet:
 	FR	Télécommandes:
 	HE	התקני שלט-רחוק:
-	IT	Controlli telecomando:
+	IT	Telecomandi:
 	JA	リモートコントロール:
 	NL	Afstandsbedieningen:
 	NO	Fjernkontroller:
@@ -5719,13 +5728,13 @@ SETUP_AUDIODIR
 SETUP_AUDIODIR_DESC
 	CS	Zde můžete určit složku obsahující hudební soubory, kterou bude SqueezeCenter kontrolovat a obsah přidávat do hudebního archivu. Vložte cestu k této složce. Můžete také hodnotu nechat prázdnou, pakliže chcete importovat hudebni archiv prostřednictvím iTunes nebo MusicIP.
 	DA	Du kan angive en mappe som rummer musikfiler som SqueezeCenter vil gennemsøge og føje til musikbiblioteket. Angiv stien til mappen nedenfor. Feltet kan være tomt hvis du importerer oplysninger om musikbiblioteket fra iTunes eller MusicIP.
-	DE	Geben Sie unten den Ordner ein, der die Musikdateien enthält, die von SqueezeCenter durchsucht und der Musiksammlung hinzugefügt werden sollen. Sie können dieses Feld leer lassen, wenn Sie die Musiksammlung über iTunes oder MusicIP importieren.
+	DE	Geben Sie den Ordner ein, der die Musikdateien enthält, die von SqueezeCenter durchsucht und der Musiksammlung hinzugefügt werden sollen. Sie können dieses Feld leer lassen, wenn Sie die Musiksammlung über iTunes oder MusicIP importieren.
 	EN	You can specify a folder containing music files that SqueezeCenter will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MusicIP.
 	ES	Se puede especificar una carpeta que contenga archivos de música para que SqueezeCenter la examine y agregue a la biblioteca de música. Introduzca la ruta a ala carpeta a continuación. Se puede dejar este campo en blanco si va a importar la información de la biblioteca de música desde iTunes o MusicIP.
 	FI	Voit määrittää kansion, jonka SqueezeCenter tarkistaa ja josta se etsii musiikkitiedostoja musiikkikirjastoon lisättäväksi.  Kirjoita kansion polku alle.  Voit jättää kentän tyhjäksi, jos tuot musiikkikirjastotietoja iTunes- tai MusicIP-sovelluksista.
 	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le SqueezeCenter l'analyse et ajoute son contenu à votre collection musicale. Spécifiez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous importez les informations de votre collection musicale à partir d'iTunes ou de MusicIP.
 	HE	באפשרותך לציין תיקייה שמכילה קובצי מוסיקה שעל SqueezeCenter לסרוק ולהוסיף לספריית המוסיקה שלך. הזן את הנתיב לתיקייה בשדה שלהלן. באפשרותך להשאיר שדה זה ריק אם אתה מייבא את מידע ספריית המוסיקה מ-iTunes או מ-MusicIP.
-	IT	È possibile indicare una cartella contenente file musicali da sottoporre ad analisi e aggiungere alla libreria musicale di SqueezeCenter può analizzare. Inserire di seguito il percorso della cartella. Lasciare il campo vuoto se si importa la libreria musicale da iTunes o MusicIP.
+	IT	È possibile indicare una cartella contenente file musicali che SqueezeCenter analizzerà e aggiungerà alla libreria musicale. Inserire di seguito il percorso della cartella. Si può lasciare il campo vuoto se si importa la libreria musicale da iTunes o MusicIP.
 	JA	SqueezeCenterが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
 	NL	Je kunt een map met muziekbestanden opgeven zodat SqueezeCenter de map scant en aan je muziekcollectie toevoegt. Voer hieronder het pad naar de map in. Je kunt dit veld leeg laten als je je muziekcollectiegegevens uit iTunes of MusicIP importeert.
 	NO	Du kan angi en mappe med musikkfiler som SqueezeCenter skal søke gjennom og legge til i musikkbiblioteket. Angi banen til mappen nedenfor. Du kan la dette feltet stå tomt hvis du importerer informasjon om musikkbibliotek fra iTunes eller MusicIP.
@@ -5839,7 +5848,7 @@ SETUP_OK_USING
 	FI	SqueezeCenter käyttää seuraavaa polkua musiikkitiedostoihin:
 	FR	SqueezeCenter utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
 	HE	השרת ישתמש בנתיב הבא לקובצי המוסיקה שלך:
-	IT	Percorso dei file musicali nel SqueezeCenter:
+	IT	SqueezeCenter userà questo percorso per salvare gli elenchi di riproduzione:
 	JA	サーバーは音楽ファイルを検索するのに以下のパスを使います:
 	NL	SqueezeCenter gebruikt het volgende pad naar je muziekbestanden:
 	NO	SqueezeCenter bruker følgende bane til musikkfilene dine:
@@ -5979,7 +5988,7 @@ RESCANNING
 	FI	SqueezeCenter tarkistaa musiikkikirjastoasi uudelleen.
 	FR	SqueezeCenter analyse maintenant la collection musicale.
 	HE	השרת מבצע סריקה חוזרת של ספריית המוסיקה שלך.
-	IT	Nuova analisi della libreria musicale in corso nel SqueezeCenter.
+	IT	SqueezeCenter sta analizzando nuovamente la libreria musicale.
 	JA	サーバーは音楽ライブラリーを再スキャンしています。
 	NL	SqueezeCenter is nu je muziekcollectie opnieuw aan het scannen.
 	NO	SqueezeCenter søker gjennom musikkbiblioteket.
@@ -6430,7 +6439,7 @@ SETUP_RATINGIMPLEMENTATION
 	ES	Almacenamiento de clasificación
 	FI	Luokituksen tallennus
 	FR	Classement du stockage
-	IT	Memorizzazione classificazione
+	IT	Memorizzazione voto
 	NL	Beoordelingsopslag
 	NO	Rangeringslagring
 	SV	Lagring av betygsättning
@@ -6442,7 +6451,7 @@ SETUP_RATINGIMPLEMENTATION_DESC
 	ES	Almacenamiento de clasificación que debe utilizarse al almacenar o ver clasificaciones
 	FI	Luokituksen tallennus, jota käytetään luokituksia tallennettaessa tai tarkasteltaessa
 	FR	Stockage du classement à utiliser lors du stockage ou de l'affichage des classements
-	IT	Memorizzazione classificazione da utilizzare durante la memorizzazione o la visualizzazione delle classificazioni
+	IT	Archivio da utilizzare per la memorizzazione o la visualizzazione dei voti
 	NL	Te gebruiken beoordelingsopslag wanneer beoordelingen worden opgeslagen of bekeken
 	NO	Rangeringslagring til bruk ved lagring eller visning av rangeringer
 	SV	Lagring av betyg som ska användas när betygsättning visas eller lagras
@@ -6485,7 +6494,7 @@ SETUP_CHECKVERSION_DESC
 	FI	SqueezeCenter voi muodostaa automaattisesti yhteyden sivustoon www.slimdevices.com joka päivä ja tarkistaa, onko ohjelmistosta tarjolla päivitettyä versiota.  Jos päivitetty versio on tarjolla, SqueezeCenterin internet-liittymään tulee ilmoitus siitä.
 	FR	Le serveur peut se connecter tous les jours automatiquement à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
 	HE	השרת יכול להתחבר באופן אוטומטי לכתובת www.slimdevices.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של SqueezeCenter.
-	IT	può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di SqueezeCenter."
+	IT	SqueezeCenter può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di SqueezeCenter."
 	JA	サーバーソフトウェアは、毎日www.slimdevices.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
 	NL	SqueezeCenter kan elke dag automatisch verbinding maken met 'www.slimdevices.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de SqueezeCenter-webinterface.
 	NO	SqueezeCenter kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Hvis det finnes en ny versjon, får du beskjed i nettgrensesnittet.
@@ -6599,7 +6608,7 @@ SETUP_IDLESAVER
 	ZH_CN	屏幕保护程序（停止播放时）
 
 SETUP_IDLESAVER_ABBR
-	DA	På pause
+	DA	Når den er stoppet
 	DE	Bei Pause
 	EN	When Stopped
 	ES	Al detener
@@ -6634,7 +6643,7 @@ SETUP_SCREENSAVERTIMEOUT
 	FI	Näytönsäästäjän viive sekunteina
 	FR	Délai de l'écran de veille:
 	HE	משך העיכוב של שומר המסך, בשניות
-	IT	Timeout screen saver:
+	IT	Secondi di ritardo screen saver
 	JA	スクリーンセーバー開示時間（秒）
 	NL	Time-out van schermbeveiliger:
 	NO	Tidsavbrudd for skjermsparer (sek)
@@ -6738,7 +6747,7 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
 	ES	Algunas máscaras ofrecen la opción de mostrar botones adicionales para los elementos que se pueden reproducir, como por ejemplo "Reproducir a continuación" o "Quitar de la lista de reproducción".<br/><br/>Tenga en cuenta que esta preferencia sólo se guarda en su navegador (deberá elegirla en todos los navegadotes que vaya a utilizar).
 	FI	Jotkin olemukset voivat näyttää valinnaisesti lisäpainikkeita soitettaville kohteille, esimerkiksi Soita seuraava tai Poista soittoluettelosta.<br/><br/>Huomautus: asetus tallennetaan ainoastaan selaimeen - se täytyy määrittää erikseen kaikissa selaimissa, joita haluat käyttää.
 	FR	Certains habillages peuvent facultativement afficher des boutons supplémentaires pour les éléments lisibles tels que Lire à la suite ou Enlever de la liste de lecture.<br/><br/>Notez que cette préférence est stockée uniquement dans votre navigateur. Vous devrez la définir sur tous les navigateurs sur lesquels vous voulez l'utiliser.
-	IT	In alcune interfacce è possibile visualizzare pulsanti di riproduzione aggiuntivi, quali Brano successivo o Rimuovi dall'elenco di riproduzione.<br/><br/>Nota: poiché questa impostazione viene salvata nel browser, è necessario specificarla individualmente in ogni browser che si intende utilizzare.
+	IT	In alcune skin è possibile visualizzare pulsanti di riproduzione aggiuntivi, quali Brano successivo o Rimuovi dall'elenco di riproduzione.<br/><br/>Nota: poiché questa impostazione viene salvata nel browser, è necessario specificarla individualmente in ogni browser che si intende utilizzare.
 	NL	Sommige skins kunnen desgewenst extra knoppen voor afspeelbare items weergeven, zoals 'Volgende afspelen' of 'Uit playlist verwijderen'.<br/><br/>N.B. Deze voorkeursinstelling wordt alleen in je browser opgeslagen. Als je de instelling op andere browsers wilt gebruiken, moet je deze apart instellen.
 	NO	Noen maler kan vise tilleggsknapper for spillbare elementer, for eksempel Spill av neste eller Fjern fra spillelisten.<br/><br/>Merk: Denne innstillingen lagres kun i leseren, så du må konfigurere denne innstillingen i alle lesere du vil bruke den på.
 	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.<br/><br/>Observera att det här alternativet endast sparas i webbläsaren. Du måste alltså ställa in varje webbläsare som du vill använda separat.
@@ -7001,7 +7010,7 @@ SETUP_RESHUFFLEONREPEAT
 	FI	Sekoita uudelleentoistettaessa
 	FR	Répétition aléatoire
 	HE	סדר אקראי חדש בהשמעה חוזרת
-	IT	Riproduzione casuale se in ripetizione
+	IT	Ripetizione con ordine casuale
 	JA	リピートする時には、再度ランダムをかける
 	NL	Volgorde veranderen bij herhaling
 	NO	Omrokker på nytt ved repetisjon
@@ -7018,7 +7027,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	FI	Jos haluat, SqueezeCenter voi sekoittaa sekoitetut soittoluettelot uudelleen aina, kun soittoluettelo on kuunneltu loppuun.
 	FR	Le serveur peut mélanger de nouveau la liste de lecture à chaque répétition.
 	HE	השרת יכול לסדר מחדש בסדר אקראי רשימות השמעה שכבר מסודרות בסדר אקראי לאחר כל מעבר מלא על הרשימה, אם אתה מעוניין בכך.
-	IT	Se lo si desidera, può riprodurre di nuovo in ordine casuale gli elenchi di riproduzione.
+	IT	Se lo si desidera, SqueezeCenter può riprodurre di nuovo in ordine casuale gli elenchi di riproduzione.
 	JA	サーバーソフトウェアは、リピート時に、再度ランダムをかけるよう選択することができます。
 	NL	SqueezeCenter kan de volgorde van liedjes in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
 	NO	SqueezeCenter kan omrokkere spillelister på nytt etter hver gjennomspilling av en liste.
@@ -7177,7 +7186,7 @@ SETUP_SPLITLIST_DESC
 	FI	SqueezeCenter voi purkaa useita artisteja, levyn nimiä ja genrejä musiikkitiedostojen sisällä olevista tunnisteista.  Jos SqueezeCenter löytää tunnisteista alla olevia sanoja tai merkkejä, se luo erillisen luettelon kullekin kohteelle.  Jos esimerkiksi laitat puolipisteen alla olevaan luetteloon, kappale jonka artistitunniste on "J. S. Bach;Michael Tilson Thomas" tulee näkyviin artistikohtaan sekä J. S. Bachin että Michael Tilson Thomasin kohdalla.  Jos tätä asetusta muutetaan, musiikkikirjasto tarkistetaan uudelleen.
 	FR	Le SqueezeCenter peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si le SqueezeCenter détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque element. Par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	SqueezeCenter יכול לחלץ מבצעים, שמות אלבומים וסגנונות מרובים מהתגים הכלולים בקובצי המוסיקה שלך. אם SqueezeCenter מאתר בתגים מילים או תווים מהרשימה שלהלן, הוא ייצור רשימות נפרדות עבור כל פריט. לדוגמה, אם אתה מציב נקודה-פסיק ברשימה שלהלן, שיר עם תג מבצע של "J. S. Bach;Michael Tilson Thomas" יופיע באזור המבצעים הן עבור "J. S. Bach" והן עבור "Michael Tilson Thomas". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
-	IT	SqueezeCenter può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se SqueezeCenter trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli; Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
+	IT	SqueezeCenter può estrarre più artisti, titoli di album o generi dai tag inseriti all'interno dei file musicali. Se SqueezeCenter trova nei tag qualsiasi parola o carattere indicato sotto, crea un elenco separato per ognuno di essi. Per esempio, inserendo un punto e virgola nella lista sottostante, un brano che ha come tag dell'artista Gino Paoli;Ornella Vanoni, apparirà nell'elenco artisti sia come Gino Paoli che come Ornella Vanoni. Cambiando questa impostazione viene eseguita un'analisi della libreria musicale.
 	NL	SqueezeCenter kan meerdere artiesten, albumtitels en genres uit de tags in je muziekbestanden extraheren. Als SqueezeCenter een van de onderstaande woorden of tekens in de tags vindt, wordt voor elk item een aparte ingang in een lijst gemaakt. Als je bijvoorbeeld een puntkomma in de onderstaande lijst zet, verschijnt een liedje met de tag 'J. S. Bach;Michael Tilson Thomas' zowel bij 'J. S. Bach' als 'Michael Tilson Thomas'. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	SqueezeCenter kan hente flere artister, albumtitler og sjangere fra etikettene i musikkfilene dine. Hvis SqueezeCenter finner noen av ordene eller tegnene nedenfor i etikettene, oppretter den separate lister for hvert element. Hvis du for eksempel skriver et semikolon i listen nedenfor, kommer en sang med artistetiketten «J. S. Bach;Michael Tilson Thomas» opp under både «J. S. Bach» og «Michael Tilson Thomas». Hvis du endrer denne innstillingen, blir musikkbiblioteket gjennomsøkt på nytt.
 	SV	SqueezeCenter stöder taggar med flera artistnamn, albumtitlar eller genrer för samma låt.  Om SqueezeCenter hittar ett eller flera av orden eller tecknen i taggarna, skapas självständiga poster för varje objekt.  Om du t.ex. använder semikolon i listan nedan visas en låt som getts taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J.S. Bach och Michael Tilson Thomas.  Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
@@ -7225,7 +7234,7 @@ SETUP_BROWSEAGELIMIT
 	FI	Uuden musiikin raja
 	FR	Nombre de nouveautés
 	HE	הגבלה של פריטי מוסיקה חדשים
-	IT	Nuovo limite della musica
+	IT	Limite per nuova musica
 	NL	Limiet voor nieuwe muziek
 	NO	Grense for ny musikk
 	SV	Gräns för ny musik
@@ -7239,7 +7248,7 @@ SETUP_BROWSEAGELIMIT_DESC
 	FI	Valitse, kuinka monta äskettäistä levyä näytetään, kun etsitään uusia kappaleita. Oletusarvo on 100.
 	FR	Spécifiez le nombre d'éléments à afficher dans la rubrique Nouveautés. Le nombre par défaut est 100.
 	HE	בחר את מספר הרצועות להצגה בעת עיון לאיתור מוסיקה חדשה. ברירת המחדל היא 100
-	IT	Scegliere il numero di brani da visualizzare quando si cerca musica nuova. L'impostazione predefinita è 100.
+	IT	Scegliere il numero di album da visualizzare quando si cerca musica nuova. L'impostazione predefinita è 100.
 	NL	Kies het aantal tracks dat weergegeven moet worden wanneer je naar nieuwe muziek zoekt. De standaardwaarde is 100.
 	NO	Velg antall nye album som skal vises når du søker etter ny musikk. Standardverdien er 100 album.
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
@@ -7417,7 +7426,7 @@ SETUP_SHORTDATEFORMAT_DESC
 	FI	Tällä asetuksella määritetään lyhyissä päivämäärissä käytetty formaatti. Alla esitetyissä tapauksissa noudatetaan seuraavia käytäntöjä:<br>YYYY on nelinumeroinen vuosi<br>YY on kaksinumeroinen vuosi<br>MM on kuukausi<br>DD on päivä<br>Lopussa sulkeissa oleva on kommentti, jota ei näy näytössä.
 	FR	Cette option permet de déterminer le format utilisé pour les dates courtes. Les conventions suivantes peuvent être utilisées:<br>YYYY: année à quatre chiffres<br>YY: année à deux chiffres<br>MM: mois de l'année<br>DD: jour du mois<br>Tout texte entre parenthèses à la fin du format est un commentaire et ne sera pas affiché.
 	HE	אפשרות זו קובעת את התבנית המשמשת להצגת תאריכים קצרים. נעשה שימוש במוסכמות הבאות באפשרויות המוצגות להלן:<br>YYYY מייצג את השנה בארבע ספרות<br>YY מייצג את השנה בשתי ספרות<br>MM מייצג את החודש בשנה<br>DD מייצג את היום בחודש כל מה שמופיע לאחר הסוגריים הוא הערה והטקסט לא מוצג.
-	IT	Questa opzione determina il formato usato per le date brevi. Le seguenti convenzioni sono usate nelle combinazioni indicate sotto:<br>AAAA indica l'anno composto da quattro cifre<br>AA indica l'anno composto da due cifre<br>MM indica il mese dell'anno<br>GG indica il giorno del mese<br>Tutto ciò che appare alla fine in parentesi è solo un commento e non viene visualizzato.
+	IT	Questa opzione determina il formato usato per le date brevi. Le seguenti convenzioni sono usate nelle combinazioni indicate sotto:<br>YYYY indica l'anno composto da quattro cifre<br>YY indica l'anno composto da due cifre<br>MM indica il mese dell'anno<br>DD indica il giorno del mese<br>Tutto ciò che appare alla fine in parentesi è solo un commento e non viene visualizzato.
 	JA	このオプションは短い日付のフォーマットを選択します（プレーヤーがオフの状態のとき等）。<br>YYYYは4桁の年を表します<br>YYは2桁の年を表します<br>MMは月を表します<br>DDは何日かを表します<br>括弧の後ろはコメントですので、実際には表示されません。
 	NL	Met deze optie wordt de korte datumnotatie ingesteld. In de onderstaande opties worden de volgende conventies gebruikt:<br>YYYY is het jaar in vier cijfers<br>YY is het jaar in twee cijfers<br>MM is de maand van het jaar<br>DD is de dag van de maand<br>Alles aan het einde tussen haakjes is commentaar en wordt niet weergegeven.
 	NO	Dette alternativet avgjør kortformatet for datoer. Følgende format benyttes i alternativene nedenfor:<br>YYYY er firesifret årstall<br>YY er tosifret årstall<br>MM er måneden<br>DD er dagen<br>Ting som står i parentes på slutten er bare kommentarer og vises ikke.
@@ -7749,7 +7758,7 @@ SETUP_IPFILTER_DESC
 	FI	Tällä valinnalla voit estää lähteen IP-osoitteen lähettämät saapuvat CLI- ja HTTP-pyynnöt.
 	FR	Ce réglage permet de bloquer l'accès Web ou par ligne de commande selon l'adresse IP d'origine.
 	HE	אפשרות זו מאפשרת לך להפעיל חסימה של בקשות CLI ו-HTTP נכנסות לפי כתובת ה-IP של המקור.
-	IT	Questa opzione consente di attivare il blocco per le richieste CLI e HTTP in entrata in base all'indirizzo IP di origine.
+	IT	Questa opzione consente di bloccare le richieste CLI e HTTP in ingresso in base all'indirizzo IP di origine.
 	JA	このオプションは、外からのCLIまたはHTTP要請をIPアドレスによってブロックすることができるようにします。
 	NL	Met behulp van deze optie kunnen inkomende CLI- en HTTP-aanvragen op IP-bronadres geblokkeerd worden.
 	NO	Dette valget gir deg muligheten til å blokkere for inngående CLI- og HTTP-forbindelser basert på ip-adresse.
@@ -7886,7 +7895,7 @@ SETUP_REJECTED
 	FI	hylätty
 	FR	rejeté
 	HE	נדחה
-	IT	scartato
+	IT	respinto
 	JA	拒否されました
 	NL	afgewezen
 	NO	avvist
@@ -7995,7 +8004,7 @@ SETUP_NO_AUTHORIZE
 	FI	Ei salasanasuojausta
 	FR	Pas de protection par mot de passe
 	HE	ללא הגנה באמצעות סיסמה
-	IT	Nessuna protezione tramite password
+	IT	Nessuna protezione con password
 	JA	パスワード保護はありません
 	NL	Geen wachtwoordbeveiliging
 	NO	Ikke bruk passord
@@ -8479,7 +8488,7 @@ SETUP_GROUPDISCS_0
 	FI	Käsittele usean levyn sarjoja useina levyinä
 	FR	Disques multiples en tant qu'albums multiples
 	HE	טיפול בערכות של מספר תקליטורים כאלבומים מרובים
-	IT	Considera i cofanetti come album multipli
+	IT	Considera i cofanetti come album distinti
 	JA	複数枚セットのアルバムを複数のアルバムとみなす
 	NL	Sets met meerdere schijven als meerdere albums behandelen
 	NO	Behandle sett med flere plater som flere album
@@ -8520,7 +8529,7 @@ SETUP_SN_EMAIL_DESC
 	ES	Introduzca la dirección de correo electrónico utilizada para iniciar una sesión en su cuenta SqueezeNetwork.
 	FI	Anna sähköpostiosoite, jota käytät SqueezeNetwork-tiliin kirjautumiseen.
 	FR	Spécifiez l'adresse électronique que vous utilisez pour vous connecter au compte SqueezeNetwork.
-	IT	Inserire l'indirizzo di porta elettronica utilizzato per accedere all'account SqueezeNetwork.
+	IT	Inserire l'indirizzo di posta elettronica utilizzato per accedere all'account SqueezeNetwork.
 	NL	Voer het e-mailadres in dat je gebruikt om je bij je SqueezeNetwork-account aan te melden.
 	NO	Angi e-postadressen du bruker når du logger på SqueezeNetwork.
 	SV	Ange e-postadressen du använde när du loggade in på SqueezeNetwork-kontot.
@@ -8700,7 +8709,7 @@ SETUP_NO_JAVASCRIPT
 	ES	Para acceder a SqueezeCenter, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o posterior) con la opción JavaScript habilitada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (optimizada para pantallas pequeñas).
 	FI	SqueezeCenterin käyttö edellyttää, että käytät uutta selainta (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 ja uudemmat) ja että JavaScript on käytössä selaimessa. Vaihtoehtoisesti voit käyttää yksinkertaisempaa olemusta, esimerkiksi <a href="/Classic/?skipWizard=1">Classic</a> tai <a href="/Handheld/?skipWizard=1">Handheld</a> (optimoitu pienille näytöille).
 	FR	Pour accéder au SqueezeCenter, utilisez un navigateur récent (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 ou version ultérieure) et activez le JavaScript pour ce navigateur. Vous pouvez également utiliser une apparence d'interface plus légère, telle que <a href="/Classic/?skipWizard=1">Classic</a> ou <a href="/Handheld/?skipWizard=1">Handheld</a> (optimisée pour les écrans de petite taille).
-	IT	Per accedere a SqueezeCenter, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare un'interfaccia quale <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (ottimizzata per schermi piccoli).
+	IT	Per accedere a SqueezeCenter, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare una skin quale <a href="/Classic/?skipWizard=1">Classic</a> o <a href="/Handheld/?skipWizard=1">Handheld</a> (ottimizzata per schermi piccoli).
 	NL	Je moet een recente browser gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 of later) en JavaScript in je browser inschakelen om SqueezeCenter te kunnen oproepen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1">Classic</a> of <a href="/Handheld/?skipWizard=1">Handheld</a> (geoptimaliseerd voor kleine schermen).
 	NO	Du må bruke en oppdatert versjon av nettleseren (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller nyere) samt ha JavaScript aktivert i nettleseren for å komme inn på SqueezeCenter. Du kan eventuelt bruke et enklere grensesnitt, som <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (laget for små skjermer).
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till SqueezeCenter. Alternativ kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimerat för små skärmar).
@@ -8772,7 +8781,7 @@ SETUP_WIZARD_SHARE_OTHERS
 	ES	<br/><br/>Si desea acceder a música almacenada en otro ordenador o en un volumen de red compartido, asegúrese de que éste está montado y disponible para su sistema de archivos. Cuando el volumen esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta del volumen al que quiere acceder, puede introducirla aquí.
 	FI	<br/><br/>Jos haluat käyttää musiikkitiedostoja, jotka on tallennettu toiseen tietokoneeseen tai jaettuun verkkoasemaan, varmista että jaettu asema on kiinnitetty ja tiedostojärjestelmän käytettävissä. Kun asema on käytettävissä, se ilmestyy näkyviin vasemmalla olevaan valintaikkunaan. Jos tiedät käyttämäsi aseman polun, kirjoita se alle.
 	FR	<br/><br/>Si vous souhaitez accéder à des morceaux stockés sur un autre ordinateur ou sur un volume partagé en réseau, vérifiez que le volume est monté et qu'il est disponible dans votre système de fichiers. Si le volume est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au volume, vous pouvez le spécifier ci-dessous.
-	IT	<br/><br/>Se si desidera accedere ai brani musicali memorizzati in un altro computer o in un volume di rete condiviso, assicurarsi che il volume condiviso sia installato e disponibile nel file system. Se il volume è disponibile, viene visualizzato nella parte sinistra della finestra di selezione. Inserire di seguito il percorso del volume a cui si desidera accedere, se disponibile.
+	IT	<br/><br/>Se si desidera accedere ai brani musicali memorizzati in un altro computer o in un volume di rete condiviso, assicurarsi che il volume condiviso sia installato e disponibile nel file system. Se il volume è disponibile, viene visualizzato nella parte sinistra della finestra di selezione. Se si conosce il percorso del volume a cui si desidera accedere, è possibile inserirlo qui sotto.
 	NL	<br/><br/>Wil je muziek oproepen die op een andere computer of een gedeeld netwerkvolume is opgeslagen, zorg er dan voor dat het gedeelde volume geactiveerd en beschikbaar is voor je bestandssysteem. Zodra het volume beschikbaar is, verschijnt het in het selectievenster aan de linkerkant. Als je het pad weet van het volume dat je wilt oproepen, kun je dit hieronder invoeren.
 	NO	<br/><br/>Hvis du vil ha tilgang til musikk som er lagret på en annen datamaskin, eller på et delt dataområde på nettverket, må du sørge for at det delte dataområdet er montert og tilgjengelig på filsystemet. Så snart dataområdet er tilgjengelig, vises det i valgvinduet til venstre. Hvis du vet banen til dataområdet du vil ha tilgang til, kan du angi den nedenfor.
 	SV	<br/><br/>Om du vill ha tillgång till musik du sparat på en annan dator eller på en delad nätverksvolym kontrollerar du att den delade volymen har monterats och är tillgänglig på ditt filsystem. När volymen är tillgänglig visas den bland alternativen i fönstret till vänster. Om du vet sökvägen till volymen du vill ha tillgång till kan du ange den nedan.
@@ -8892,7 +8901,7 @@ SETUP_WIZARD_PREVIOUS
 	ES	Anterior
 	FI	Edellinen
 	FR	Précédent
-	IT	Precedente
+	IT	Indietro
 	NL	Vorige
 	NO	Forrige
 	SV	Föregående
@@ -8904,7 +8913,7 @@ SETUP_WIZARD_SKIP
 	ES	Omitir
 	FI	Ohita
 	FR	Suivant
-	IT	Prossimo brano
+	IT	Salta
 	NL	Overslaan
 	NO	Hopp over
 	SV	Hoppa över
@@ -9045,7 +9054,7 @@ SKIP
 	FI	Ohita
 	FR	Suivant
 	HE	דילוג
-	IT	Prossimo brano
+	IT	Salta
 	JA	スキップ
 	NL	Overslaan
 	NO	Hopp over
@@ -9214,7 +9223,7 @@ REPEAT
 	FI	Toista
 	FR	Répéter
 	HE	השמעה חוזרת
-	IT	Ripeti
+	IT	Ripetizione
 	JA	リピート
 	NL	Herhalen
 	NO	Gjenta
@@ -9481,7 +9490,7 @@ SHUFFLE_ON
 	FI	Sekoita soittoluettelo
 	FR	Mélanger la liste de lecture
 	HE	סידור אקראי של רשימת ההשמעה
-	IT	Attiva la riproduzione casuale dei brani
+	IT	Riproduzione casuale attiva
 	JA	ランダム プレイリスト
 	NL	Willekeurig afspelen aan
 	NO	Tilfeldig rekkefølge
@@ -9498,7 +9507,7 @@ SHUFFLE_OFF
 	FI	Älä sekoita soittoluetteloa
 	FR	Ne pas mélanger la liste de lecture
 	HE	ללא סידור אקראי של רשימת ההשמעה
-	IT	Disattiva la riproduzione casuale dei brani
+	IT	Riproduzione casuale attiva
 	JA	プレイリストをランダムにしない
 	NL	Willekeurig afspelen uit
 	NO	Tilfeldig rekkefølge av
@@ -9575,7 +9584,7 @@ CLEAR_PLAYLIST
 	FI	Tyhjennä soittoluettelo
 	FR	Vider la liste de lecture
 	HE	ניקוי רשימת השמעה
-	IT	Cancella elenco di riproduzione
+	IT	Svuota elenco di riproduzione
 	JA	プレイリストをクリア
 	NL	Playlist wissen
 	NO	Tøm spillelisten
@@ -9888,7 +9897,7 @@ FULL
 
 LIGHT
 	DA	Let
-	DE	Klein
+	DE	Light
 	EN	Light
 	ES	Fina
 	FI	Kevyt
@@ -9995,7 +10004,7 @@ CLEAR
 	FI	Tyhjennä
 	FR	Effacer
 	HE	נקה
-	IT	Cancella
+	IT	Svuota
 	JA	クリア
 	NL	Wissen
 	NO	Tøm
@@ -10060,7 +10069,7 @@ SAVED_PLAYLISTS
 	FI	Soittoluettelot
 	FR	Listes de lecture
 	HE	רשימות השמעה
-	IT	Sfoglia elenchi di riproduzione
+	IT	Elenchi di riproduzione
 	JA	保存されたプレイリスト
 	NL	Playlists
 	NO	Spillelister
@@ -10378,7 +10387,7 @@ BAND
 	FI	Yhtye/orkesteri
 	FR	Groupe/Orchestre
 	HE	להקה/תזמורת
-	IT	Complesso/Orchestra
+	IT	Gruppo/Orchestra
 	JA	バンド/オーケストラ
 	NL	Band/orkest
 	NO	Band/orkester
@@ -10600,7 +10609,7 @@ SHN
 	FI	Lyhennä
 	FR	Raccourcir
 	HE	מקוצר
-	IT	Accorcia
+	IT	Shorten
 	NL	Verkorten
 	NO	Shorten
 	SV	Shorten
@@ -10932,7 +10941,7 @@ SAMPLESIZE
 	FI	Näytekoko
 	FR	Taille d'échantillonnage
 	HE	גודל דגימה
-	IT	Dimensione esempio
+	IT	Campionamento
 	NL	Samplegrootte
 	NO	Samplingsstørrelse
 	SV	Exempelstorlek
@@ -10960,7 +10969,7 @@ SAMPLERATE
 	FI	Näytteenottotaajuus
 	FR	Taux d'échantillonnage
 	HE	קצב דגימה
-	IT	Velocità esempio
+	IT	Frequenza di campionamento
 	NL	Samplefrequentie
 	NO	Samplingsfrekvens
 	SV	Samplingsfrekvens
@@ -10974,7 +10983,7 @@ BITRATE
 	FI	Bittinopeus
 	FR	Débit binaire
 	HE	קצב סיביות
-	IT	Velocità in bit
+	IT	Bitrate
 	JA	ビットレート
 	NL	Bitsnelheid
 	NO	Bithastighet
@@ -11019,7 +11028,7 @@ DRM
 	FI	Tiedosto on DRM:n lukitsema
 	FR	Ce fichier est protégé par des droits numériques (DRM)
 	HE	קובץ זה נעול באמצעות ניהול זכויות דיגיטליות
-	IT	Questo file e' protetto da DRM (Digital Rights Management)
+	IT	Questo file è protetto da DRM (Digital Rights Management)
 	JA	このファイルはDigital Rights Managementによりロックされています
 	NL	Dit bestand is geblokkeerd door Digital Rights Management
 	NO	Denne filen er stengt med digital rettighetsadministrasjon
@@ -11085,7 +11094,7 @@ RATING
 	FI	Luokitus
 	FR	Classement
 	HE	דירוג
-	IT	Classificazione
+	IT	Voto
 	NL	Waardering
 	NO	Rangering
 	SV	Betyg
@@ -11459,7 +11468,7 @@ SELECT_ITEM
 	FI	Valitse kohde:
 	FR	Sélectionner un élément:
 	HE	בחירת פריט:
-	IT	Seleziona voce:
+	IT	Seleziona elemento:
 	NL	Item selecteren:
 	NO	Velg element:
 	SV	Markera objekt:
@@ -11893,7 +11902,7 @@ PREVIOUS
 	FI	Edellinen
 	FR	Précédent
 	HE	הקודם
-	IT	Precedente
+	IT	Indietro
 	JA	前
 	NL	Vorige
 	NO	Forrige
@@ -12228,7 +12237,7 @@ REMOTE_SETTINGS
 	FI	Kaukosäädin
 	FR	Télécommande
 	HE	שלט-רחוק
-	IT	Remoto
+	IT	Telecomando
 	JA	リモコン
 	NL	Afstandsbediening
 	NO	Fjernkontroll
@@ -12993,7 +13002,7 @@ FORGET_PLAYER_DESC
 	FI	Jos et enää käytä soitinta tai jos soitin esiintyy kahdesti soitinluettelossa, voit määrätä SqueezeCenterin unohtamaan soittimen.
 	FR	Si vous n'utilisez plus cette platine ou si elle apparaît plus d'une fois dans la liste des platines, vous pouvez choisir de la retirer de la liste.
 	HE	אם אינך משתמש עוד בנגן זה, או אם הנגן מופיע פעמיים ברשימת הנגנים, באפשרותך לגרום לשרת להתעלם מהנגן.
-	IT	Se non si utilizza più questo lettore o se il lettore ricorre due volte nell'elenco dei lettori in uso, scegliere di ignorarlo nel server."
+	IT	Se non si utilizza più questo lettore o se il lettore compare due volte nell'elenco dei lettori, si può fare in modo che SqueezeCenter lo ignori.
 	JA	このプレーヤーをもう使用していない場合、あるいは、このプレーヤーが2つリストに載っている場合、このプレーヤーを消去することができます。
 	NL	Als je dit muzieksysteem niet langer gebruikt of dit systeem twee keer voorkomt in de lijst met muzieksystemen, kun je SqueezeCenter dit systeem laten 'vergeten'.
 	NO	Hvis du ikke bruker denne spilleren, eller hvis den vises to ganger i listen over spillere, kan du få SqueezeCenter til å glemme den.
@@ -13078,7 +13087,7 @@ CURRENT_WEB_SKIN
 	FI	Nykyinen WWW-olemus:
 	FR	Interface web en cours:
 	HE	מעטפת אינטרנט נוכחית:
-	IT	Interfaccia web in uso:
+	IT	Skin web in uso:
 	JA	現在のウェブ外観
 	NL	Huidig webuiterlijk:
 	NO	Aktivt grensesnittskall:
@@ -13533,7 +13542,7 @@ TO_GO_TO_SERVER_SETTINGS
 	FI	siirtyäksesi SqueezeCenterin asetuksiin ja tee tämä nyt.
 	FR	pour accéder aux réglages du SqueezeCenter maintenant.
 	HE	למעבר מיידי להגדרות השרת.
-	IT	per accedere alle impostazioni del SqueezeCenter ed eseguire questa operazione adesso.
+	IT	per accedere alle impostazioni di SqueezeCenter ed eseguire questa operazione adesso.
 	JA	サーバーセッティングに行くためには
 	NL	om naar de serverinstellingen te gaan en dit nu te doen.
 	NO	for å gå til SqueezeCenter-innstillingene og gjøre dette nå.
@@ -14125,7 +14134,7 @@ SYNCING_WITH
 
 UNSYNCING_FROM
 	DA	Ophæver synkroniseringen fra: %s
-	DE	Synchronisierung aufheben ab: %s
+	DE	Synchronisierung aufheben von: %s
 	EN	Unsyncing from: %s
 	ES	Desincronizando de: %s
 	FI	Puretaan synkronointi kohteen %s kanssa
@@ -14401,7 +14410,7 @@ USING_REMOTE
 	FI	Kaukosäätimen käyttö
 	FR	Utilisation de la télécommande
 	HE	שימוש בשלט-רחוק
-	IT	Utilizzo del telecomando Slim Devices
+	IT	Utilizzo del telecomando
 	JA	リモートを使う
 	NL	De Slim Devices-afstandsbediening gebruiken
 	NO	Bruke fjernkontrollen
@@ -15795,7 +15804,7 @@ TRACKARTIST
 	FI	Raidan artisti
 	FR	Artiste de la piste
 	HE	מבצע הרצועה
-	IT	Trova artista
+	IT	Artista brano
 	NL	Artiest van track
 	NO	Sporartist
 	SV	Spårets artist
@@ -15877,7 +15886,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	ES	El formato de etiquetas MP3 no proporciona una manera estándar de definir un artista de álbum. Algunas herramientas de etiquetado MP3 utilizan el campo TPE2 para artista de álbum (iTunes, Winamp, reproductor de Windows Media) mientras que otras pueden utilizarlo con el significado de "banda u orquesta". Seleccione el significado que desea que utilice SqueezeCenter. Si cambia esta configuración se volverá a examinar la biblioteca de música.
 	FI	MP3-tagin muoto ei tarjoa standardinmukaista tapaa levyartistin määrittämiseen.  Jotkin MP3-tunnistetyökalut käyttävät TPE2-kenttää levyartistille (iTunes, Winamp, Windows Media Player), joissakin toisissa työkaluissa kenttää taas saatetaan käyttää tarkoittamaan yhtyettä tai orkesteria. Valitse merkitys, jota haluat SqueezeCenterin käyttävän.  Asetuksen muuttaminen käynnistää musiikkikirjaston uudelleentarkistuksen.
 	FR	Le format d'étiquette MP3 ne fournit pas de moyen standard pour définir un artiste d'album. Certains outils d'étiquetage MP3 utilisent le champ TPE2 pour Artiste d'album (iTunes, Winamp, Windows Media Player) tandis que d'autres peuvent l'utiliser pour la signification voulue de "Groupe/Orchestre". Sélectionnez la signification que SqueezeCenter doit utiliser. La modification de ce paramètre lancera une nouvelle analyse de votre collection musicale.
-	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il complesso o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
+	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de bedoelde betekenis van 'Band/orkest'. Selecteer de betekenis die SqueezeCenter moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan SqueezeCenter skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
 	SV	Det finns inget standardsätt att definiera albumartister med mp3-taggar. I vissa mp3-taggningsverktyg används TPE2-fältet för att ange albumartist (t.ex. iTunes, Winamp, Windows Media Player), medan det i andra verktyg används för att ange band/orkester. Välj vilket alternativ du vill att SqueezeCenter använder. Om du ändrar den här inställningen startas en ny sökning av musikbiblioteket.
@@ -15901,7 +15910,7 @@ SETUP_USETPE2ASALBUMARTIST_0
 	ES	Tratar etiqueta TPE2 MP3 como banda
 	FI	Käsittele TPE2 MP3 -tagia yhtyeenä
 	FR	Traiter l'étiquette TPE2 MP3 en tant que Groupe
-	IT	Considera il tag MP3 TPE2 come Gruppo
+	IT	Considera il tag MP3 TPE2 come Gruppo/Orchestra
 	NL	TPE2 MP3-tag als Band behandelen
 	NO	Behandle TPE2 mp3-etikett som gruppe
 	SV	Behandla mp3-taggen TPE2 som band
@@ -16011,7 +16020,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 	FI	Pysäytä toisto, kun virta katkaistaan / jatka soittoluettelon toistoa, kun virta kytketään
 	FR	Stopper à l'arrêt / Redémarrer la liste de lecture à l'allumage
 	HE	עצירה בעת כיבוי / הפעלה מחדש של רשימת ההשמעה בעת הפעלה
-	IT	Interrompi allo spegnimento / Ricomincia elenco di riproduzione all'accensione
+	IT	Interrompi allo spegnimento / Riavvia elenco di riproduzione all'accensione
 	NL	Stoppen bij uitzetten/playlist opnieuw starten bij aanzetten
 	NO	Stans avspilling når av / Start spilleliste på nytt ved oppstart
 	SV	Stoppa när strömmen slås av/Starta spellistan från början när strömmen slås på
@@ -17659,7 +17668,7 @@ DEBUG_PLAYER_STREAMING
 	ES	Registro de envío de secuencias de todos los reproductores
 	FI	Kaikkien soitinten virtojen kirjaus
 	FR	Journalisation de la diffusion de toutes les platines
-	IT	Registrazione di tutto lo stream del lettore
+	IT	Registrazione di tutto lo streaming del lettore
 	NL	Registratie van streaming voor alle muzieksystemen
 	NO	Loggføring av all strømming til spillere
 	SV	Loggning av strömning för alla spelare
@@ -17671,7 +17680,7 @@ DEBUG_PLAYER_STREAMING_DIRECT
 	ES	Registro de envío de secuencias directo de reproductor
 	FI	Soittimen suoran virtautuksen kirjaus
 	FR	Journalisation de la diffusion directe de la platine
-	IT	Registrazione dello stream diretto del lettore
+	IT	Registrazione dello streaming diretto del lettore
 	NL	Registratie van directe streaming voor muzieksysteem
 	NO	Loggføring av direktestrømming til spiller
 	SV	Loggning av direktströmning till spelare
@@ -17683,7 +17692,7 @@ DEBUG_PLAYER_STREAMING_REMOTE
 	ES	Registro de envío de secuencias de mando a distancia de reproductor
 	FI	Soittimen etävirtautuksen kirjaus
 	FR	Journalisation de la diffusion à distance de la platine
-	IT	Registrazione dello stream remoto del lettore
+	IT	Registrazione dello streaming remoto del lettore
 	NL	Registratie van streaming op afstand voor muzieksysteem
 	NO	Loggføring av ekstern strømming til spiller
 	SV	Loggning av extern strömning till spelare
@@ -17707,7 +17716,7 @@ DEBUG_PLAYER_SOURCE
 	ES	Registro de conversión y origen de audio de reproductor
 	FI	Soittimen lähdeäänen ja muunnoksen kirjaus
 	FR	Journalisation de la source audio et de la conversion source de la platine
-	IT	Registrazione conversione e audio sorgente del lettore
+	IT	Registrazione conversione e sorgente audio del lettore
 	NL	Registratie van bronaudio en -conversie van muzieksysteem
 	NO	Loggføring av lyd fra spillerkilde og konvertering
 	SV	Loggning av ljudkälla och konvertering för spelare
@@ -18024,7 +18033,7 @@ MERGEVA_PROGRESS
 	ES	Fusionar varios artistas
 	FI	Yhdistä useita artisteja
 	FR	Fusionner les artistes divers
-	IT	Artisti vari
+	IT	Raggruppamento Artisti vari
 	NL	Diverse artiesten samenvoegen
 	NO	Slå sammen diverse artister
 	SV	Slå ihop Blandade artister
@@ -18709,7 +18718,7 @@ SEEK_ERROR_MP3_UNKNOWN_BITRATE
 	ES	Imposible desplazarse con velocidad de bits desconocida
 	FI	Ei voi etsiä, kun bittinopeutta ei tunneta
 	FR	Impossible de rechercher avec un débit binaire inconnu
-	IT	Impossibile eseguire ricerca con velocità in bit sconosciuta
+	IT	Impossibile eseguire ricerca con bitrate sconosciuto
 	NL	Kan niet zoeken met onbekende bitsnelheid
 	NO	Kan ikke søke med ukjent bithastighet
 	SV	Det går inte att söka med okänd bithastighet
@@ -18853,7 +18862,7 @@ UNMIXABLE
 	ES	%s no disponible para este elemento
 	FI	%s ei ole käytettävissä tälle kohteelle
 	FR	%s n'est pas disponible pour cet élément
-	IT	%s non disponibile per questa voce
+	IT	%s non disponibile per questo elemento
 	NL	%s niet beschikbaar voor dit item
 	NO	%s er ikke tilgjengelig for dette elementet
 	SV	%s är inte tillgängligt för det här objektet
@@ -19168,7 +19177,7 @@ CLEANUP_ALL
 	FR	Tout supprimer. Sélectionnez cette option si vous êtes sûr de vouloir tout supprimer.
 	IT	Elimina tutto (in caso di dubbi, non eseguire l'operazione)
 	NL	Wis alles - doe dit alleen als je weet wat je doet!
-	NO	Slett alt ‒ Ikke gjør dette med mindre du vet hva du driver med!
+	NO	Slett alt - Ikke gjør dette med mindre du vet hva du driver med!
 	SV	Utplåna allt – Gör inte detta om du inte är helt säker på vad du gör!
 
 CLEANUP_DELETING
@@ -19184,16 +19193,16 @@ CLEANUP_DELETING
 	SV	Raderar
 
 PLAYLIST_MODE
-	DA	Brug afspilningslister
-	DE	Wiedergabelisten-Modus
+	DA	Brug afspilningslister (beta)
+	DE	Wiedergabelisten-Modus (Beta)
 	EN	Playlist Mode (Beta)
-	ES	Modo de lista de reproducción
-	FI	Soittoluettelotila
-	FR	Mode liste de lecture
-	IT	Modalità Elenco di riproduzione
-	NL	Playlistmodus
-	NO	Spillelistemodus
-	SV	Spellistläge
+	ES	Modo de lista de reproducción (beta)
+	FI	Soittoluettelotila (beeta)
+	FR	Mode liste de lecture (Bêta)
+	IT	Modalità Elenco di riproduzione (Beta)
+	NL	Playlistmodus (bèta)
+	NO	Spillelistemodus (betaversjon)
+	SV	Spellistläge (beta)
 
 JIVE_PLAYLIST_MODE_HELP
 	DA	Når du har valgt at bruge afspilningslister, indsættes det valgte nummer i den næste position på den nuværende liste når du trykker på controllerens afspilningsknap. Hvis funktionen er slået fra, ryddes den nuværende afspilningsliste, og det valgte nummer bliver afspillet straks.
@@ -19214,7 +19223,7 @@ PLAYLIST_MODE_ON
 	ES	Modo de lista de reproducción activado
 	FI	Soittoluettelotila käytössä
 	FR	Mode liste de lecture activé
-	IT	Modalità Elenco di riproduzione attivata
+	IT	Modalità Elenco di riproduzione attiva
 	NL	Playlistmodus aan
 	NO	Spillelistemodus på
 	SV	Spellista på
@@ -19226,7 +19235,7 @@ PLAYLIST_MODE_OFF
 	ES	Modo de lista de reproducción desactivado
 	FI	Soittoluettelotila ei käytössä
 	FR	Mode liste de lecture désactivé
-	IT	Modalità Elenco di riproduzione disattivata
+	IT	Modalità Elenco di riproduzione disattiva
 	NL	Playlistmodus uit
 	NO	Spillelistemodus av
 	SV	Spellista av
@@ -19480,7 +19489,7 @@ WHATS_NEXT
 	FR	Passer à la suite.
 	IT	La configurazione è completa. Quali sono i passaggi successivi?
 	NL	Ik heb alles ingesteld - wat nu?
-	NO	Jeg er klar ‒ hva skjer nå?
+	NO	Jeg er klar - hva skjer nå?
 	SV	Jag är klar. Vad gör jag nu?
 
 CONTINUE_TO_SQUEEZECENTER
@@ -19496,27 +19505,100 @@ CONTINUE_TO_SQUEEZECENTER
 	SV	Gå vidare till SqueezeCenter för att hantera inställningarna för hur din musiksamling spelas upp.
 
 REDUCED_TO_PREVENT_CLIPPING
+	DA	%s for at forhindre signalafskæring
+	DE	%s gegen Clipping
 	EN	%s to prevent clipping
+	ES	%s para evitar clipping
+	FI	%s leikkauksen estämiseksi
+	FR	%s pour empêcher l'ecrêtage
+	IT	%s per impedire il clipping
+	NL	%s om knipbewerkingen te voorkomen
+	NO	%s for å forhindre klipping
+	SV	%s för att förhindra distorsion
 
 # 1xx errors are Ogg
 DECODE_ERROR_100
+	DA	For mange kanaler
+	DE	Zu viele Kanäle
 	EN	Too many channels
+	ES	Demasiados canales
+	FI	Liian monta kanavaa
+	FR	Trop de canaux
+	IT	Troppi canali
+	NL	Te veel kanalen
+	NO	For mange kanaler
+	SV	Det finns för många kanaler
 
 DECODE_ERROR_101
+	DA	Der er ikke mere hukommelse
+	DE	Nicht genügend Arbeitsspeicher
 	EN	Out of memory
+	ES	No hay memoria suficiente
+	FI	Liian vähän muistia
+	FR	Mémoire épuisée
+	IT	memoria insufficiente
+	NL	Onvoldoende geheugen
+	NO	Ikke nok minne
+	SV	Det finns inte tillräckligt med minne
 
 DECODE_ERROR_102
+	DA	Ugyldig samplefrekvens
+	DE	Ungültige Samplerate
 	EN	Invalid sample rate
+	ES	Frecuencia de muestreo no válida
+	FI	Virheellinen näytteenottotaajuus
+	FR	Taux d'échantillonnage non valide
+	IT	Frequenza di campionamento non valida
+	NL	Ongeldige samplefrequentie
+	NO	Ugyldig samplingsfrekvens
+	SV	Felaktig samplingsfrekvens
 
 DECODE_ERROR_103
+	DA	Ikke en Vorbis-fil
+	DE	Keine Vorbis-Datei
 	EN	Not a Vorbis file
+	ES	No es un archivo Vorbis
+	FI	Ei Vorbis-tiedosto
+	FR	Pas un fichier Vorbis
+	IT	Non è un file Vorbis
+	NL	Geen Vorbis-bestand
+	NO	Ikke en Vorbis-fil
+	SV	Det är inte en Vorbis-fil
 
 DECODE_ERROR_104
+	DA	Ugyldig Vorbis-header
+	DE	Ungültiger Vorbis-Header
 	EN	Bad Vorbis header
-	
+	ES	Encabezado Vorbis incorrecto
+	FI	Bad Vorbis -otsikko
+	FR	En-tête Vorbis incorrect
+	IT	Intestazione Vorbis non valida
+	NL	Slechte Vorbis-header
+	NO	Ugyldig Vorbis-topptekst
+	SV	Felaktigt Vorbis-huvud
+
 # 2xx errors are WMA
 DECODE_ERROR_200
+	DA	WMA-superframes understøttes ikke
+	DE	Keine Unterstützung für WMA-Superframes
 	EN	WMA superframes not supported
+	ES	No se admiten supercuadros WMA
+	FI	WMA-superframe-kehyksiä ei tueta
+	FR	Superframes WMA non prises en charge
+	IT	Superframe WMA non supportati
+	NL	WMA-superframes worden niet ondersteund
+	NO	WMA superframes støttes ikke
+	SV	WMA-superramar stöds inte
 
 DECODE_ERROR_201
+	DA	WMA Lossless understøttes ikke
+	DE	Keine Unterstützung für WMA Lossless
 	EN	WMA Lossless not supported
+	ES	No se admite WMA Lossless
+	FI	Ei häviöttömän WMA:n tukea
+	FR	Format WMA Lossless non pris en charge
+	IT	WMA Lossless non supportato
+	NL	WMA Lossless wordt niet ondersteund
+	NO	WMA Lossless støttes ikke
+	SV	Förlustfri WMA stöds inte
+

@@ -419,7 +419,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	FI	Miksiin voidaan lisätä kappaleita ja siitä voidaan poistaa kappaleita koska tahansa. Jos haluat lopettaa satunnaisen miksin soittamisen, tyhjennä soittoluettelo tai napsauta
 	FR	Vous pouvez ajouter ou supprimer des morceaux du mix à tout moment. Pour arrêter un mix aléatoire, videz votre liste de lecture ou cliquez ici pour
 	HE	באפשרותך להוסיף שירים למיקס או להסירם בכל עת. כדי לעצור מיקס אקראי, נקה את רשימת ההשמעה או לחץ כדי
-	IT	È possibile aggiungere o rimuovere brani dalla raccolta in qualsiasi momento. Per interrompere una raccolta casuale, cancellare l'elenco di riproduzione o fare clic per
+	IT	È possibile aggiungere o rimuovere brani dalla raccolta in qualsiasi momento. Per interrompere una raccolta casuale, svuotare l'elenco di riproduzione o fare clic per
 	NL	Je kunt op elk moment liedjes toevoegen aan of verwijderen uit je mix. Als je een willekeurige mix wilt stoppen, wis je de playlist of klik je op
 	NO	Du kan når som helst legge til og fjerne sanger i miksen. Hvis du vil stanse en miks, kan du enten tømme spillelisten, eller klikke for å
 	SV	Du kan alltid lägga till eller ta bort låtar från en mix. Om du vill stoppa en slumpmässig mix rensar du spellistan, eller klickar om du vill

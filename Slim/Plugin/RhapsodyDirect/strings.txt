@@ -119,7 +119,7 @@ PLUGIN_RHAPSODY_DIRECT_US_ONLY
 	SV	Rhapsody är för närvarande endast tillgängligt i USA.
 
 PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
-	DA	Forbindelsen til streamen blev afbrudt. Springer til næste nummer.
+	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
 	ES	Error de secuencia de audio; salto a pista siguiente.
