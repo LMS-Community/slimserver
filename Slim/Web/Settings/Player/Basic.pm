@@ -118,7 +118,8 @@ sub handler {
 
 	$paramRef->{'playerinfo'} = Slim::Menu::SystemInfo::infoCurrentPlayer( $client );
 	$paramRef->{'playerinfo'} = $paramRef->{'playerinfo'}->{web}->{items};
-	
+	$paramRef->{'macaddress'} = $client->macaddress;
+		
 	$paramRef->{'playericon'} = $class->getPlayerIcon($client);
 	
 	my $page = $class->SUPER::handler($client, $paramRef);
