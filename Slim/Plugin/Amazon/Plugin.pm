@@ -55,7 +55,7 @@ sub trackInfoMenu {
 			  . '&upc='      . $remoteMeta->{upc};
 	}
 	
-	if ( $artist || $album || $title ) {
+	if ( $artist && ( $album || $title ) ) {
 		return {
 			type      => 'link',
 			name      => $client->string('PLUGIN_AMAZON_ON_AMAZON'),
