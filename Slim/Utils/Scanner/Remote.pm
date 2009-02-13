@@ -461,7 +461,24 @@ sub readRemoteHeaders {
 				$http->disconnect;
 				
 				# All done
-				$cb->( $track, undef, @{$pt} );
+				
+				# Bug 11001, if the URL uses basic authentication, it may be an Icecast
+				# server that allows only 1 connection per user.  Delay this callback for a second
+				# to avoid the chance of getting a 401 error when trying to stream.
+				if ( $track->url =~ m{http://[^:]+:[^@]+@} ) {
+					$log->is_debug && $log->debug( 'Auth stream detected, waiting 1 second before streaming' );
+					
+					Slim::Utils::Timers::setTimer(
+						undef,
+						Time::HiRes::time() + 1,
+						sub {
+							$cb->( $track, undef, @{$pt} );
+						},
+					);
+				}
+				else {
+					$cb->( $track, undef, @{$pt} );
+				}
 			}
 			else {
 				# We still need to read more info about this stream, but we can begin playing it now
