@@ -39,6 +39,7 @@ my ($os, $language, %strings);
 sub main {
 	Slim::Utils::OSDetect::init();
 	$os = Slim::Utils::OSDetect->getOS();
+	
 	$language = $os->getSystemLanguage();
 	
 	loadStrings();
@@ -292,10 +293,24 @@ sub loadStrings {
 	my $language   = '';
 	my $stringname = '';
 
-	foreach my $line (PerlApp::get_bound_file('strings.txt')) {
+	my $file = 'strings.txt';
+	
+	if (Slim::Utils::OSDetect::isWindows()) {
+		use Win32::TieRegistry('Delimiter' => '/');
+		my $path = $Registry->{"LMachine/Software/Logitech/SqueezeCenter/Path"};
+
+		if (defined $path) {
+			$file = catdir($path, 'server', $file);
+		}
+	}
+
+	open(STRINGS, "<:utf8", $file) || do {
+		die "Couldn't open $file - FATAL!";
+	};
+
+	LINE: while (my $line = <STRINGS>) {
 
 		chomp($line);
-		utf8::decode($line);
 		
 		next if $line =~ /^#/;
 		next if $line !~ /\S/;
@@ -304,7 +319,7 @@ sub loadStrings {
 
 			$stringname = $1;
 			$string = '';
-			next;
+			next LINE;
 
 		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
 
@@ -314,6 +329,8 @@ sub loadStrings {
 			$strings{$stringname}->{$language} = $string;
 		}
 	}
+
+	close STRINGS;
 }
 
 
