@@ -29,6 +29,7 @@ my $useWx = eval {
 };
 
 use constant SLIM_SERVICE => 0;
+use constant SCANNER => 0;
 
 use Slim::bootstrap;
 use Slim::Utils::OSDetect;
@@ -293,11 +294,11 @@ sub loadStrings {
 
 	my $file = 'strings.txt';
 
-	open(STRINGS, "<:utf8", $file) || do {
-		die "Couldn't open $file - FATAL!";
-	};
+#	open(STRINGS, "<:utf8", $file) || do {
+#		die "Couldn't open $file - FATAL!";
+#	};
 
-	LINE: while (my $line = <STRINGS>) {
+	LINE: while (my $line = PerlApp::get_bound_file('strings.txt')) {
 
 		chomp($line);
 		
@@ -319,7 +320,7 @@ sub loadStrings {
 		}
 	}
 
-	close STRINGS;
+#	close STRINGS;
 }
 
 
