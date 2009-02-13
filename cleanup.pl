@@ -292,15 +292,10 @@ sub loadStrings {
 	my $language   = '';
 	my $stringname = '';
 
-	my $file = 'strings.txt';
-
-#	open(STRINGS, "<:utf8", $file) || do {
-#		die "Couldn't open $file - FATAL!";
-#	};
-
-	LINE: while (my $line = PerlApp::get_bound_file('strings.txt')) {
+	foreach my $line (PerlApp::get_bound_file('strings.txt')) {
 
 		chomp($line);
+		utf8::decode($line);
 		
 		next if $line =~ /^#/;
 		next if $line !~ /\S/;
@@ -309,7 +304,7 @@ sub loadStrings {
 
 			$stringname = $1;
 			$string = '';
-			next LINE;
+			next;
 
 		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
 
@@ -319,8 +314,6 @@ sub loadStrings {
 			$strings{$stringname}->{$language} = $string;
 		}
 	}
-
-#	close STRINGS;
 }
 
 
