@@ -19173,11 +19173,11 @@ CLEANUP_LOGS
 
 CLEANUP_CACHE
 	DA	Ryd op i cachemappen, herunder musikdatabasen, cachelagrede coverbilleder osv.
-	DE	Zwischenspeicher-Ordner mit Musikdatenbank, Plattenhüllen-Zwischenspeicher usw. bereinigen.
+	DE	Zwischenspeicher-Ordner mit Musikdatenbank, Plattenhüllen usw. bereinigen.
 	EN	Clean cache folder, including music database, artwork cache etc.
 	ES	Limpiar carpeta de caché, incluidos base de datos de música, caché de carátulas, etc.
 	FI	Tyhjennä välimuistikansio, mukaan luettuna musiikkitietokanta, kansitaiteen välimuisti jne.
-	FR	Nettoyer le dossier cache, y compris la base de données musicale, le cache des pochettes, etc.
+	FR	Nettoyer le dossier cache, y compris la base de données musicale, les pochettes, etc.
 	IT	Pulisci cartella della cache, inclusi database musicale, cache delle copertine e così via.
 	NL	Schoon de cachemap op, inclusief de muziekdatabase, hoesafbeeldingencache, enz.
 	NO	Tøm hurtigbuffermappen, inkludert musikkdatabasen, hurtigbufrede omslag osv.

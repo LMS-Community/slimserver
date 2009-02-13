@@ -302,7 +302,8 @@ sub loadStrings {
 		my $path = $Win32::TieRegistry::Registry->{"LMachine/Software/Logitech/SqueezeCenter/Path"};
 
 		if (defined $path) {
-			$file = catdir($path, 'server', $file);
+			$path = catdir($path, 'server', $file);
+			$file = $path if -f $path;
 		}
 	}
 

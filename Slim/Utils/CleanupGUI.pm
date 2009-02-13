@@ -5,6 +5,7 @@ use strict;
 use base 'Wx::Frame';
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON);
+use Slim::Utils::OSDetect;
 
 my %checkboxes;
 
@@ -17,7 +18,7 @@ sub new {
 		-1,
 		$args->{title},
 		[50, 50],
-		[500, 280],
+		[500, Slim::Utils::OSDetect::isWindows() ? 255 : 280],
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU,
 		$args->{title},
 	);
