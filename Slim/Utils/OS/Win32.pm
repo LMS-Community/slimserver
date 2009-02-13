@@ -596,6 +596,8 @@ sub _priorityFromPriorityClass {
 
 sub initUpdate {
 	my $class = shift;
+
+	return if main::SLIM_SERVICE || main::SCANNER;
 	
 	require Slim::Utils::Update;
 	
