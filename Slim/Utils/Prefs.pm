@@ -596,7 +596,7 @@ sub init {
 		$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) }, 'language' );
 	}
 	
-	$prefs->setChange( \&main::checkVersion, 'checkVersion' );
+	$prefs->setChange( \&Slim::Utils::Update::checkVersion, 'checkVersion' );
 
 	$prefs->setChange( 
 		sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) },
