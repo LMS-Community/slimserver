@@ -296,8 +296,10 @@ sub loadStrings {
 	my $file = 'strings.txt';
 	
 	if (Slim::Utils::OSDetect::isWindows()) {
-		use Win32::TieRegistry('Delimiter' => '/');
-		my $path = $Registry->{"LMachine/Software/Logitech/SqueezeCenter/Path"};
+		require Win32::TieRegistry;
+		$Win32::TieRegistry::Registry->Delimiter('/');
+
+		my $path = $Win32::TieRegistry::Registry->{"LMachine/Software/Logitech/SqueezeCenter/Path"};
 
 		if (defined $path) {
 			$file = catdir($path, 'server', $file);
