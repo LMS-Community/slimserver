@@ -8,6 +8,7 @@ package Slim::Web::Settings::Server::Security;
 # version 2.
 
 use strict;
+use Digest::SHA1 qw(sha1_base64);
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
@@ -46,13 +47,9 @@ sub handler {
 		else {
 
 			my $currentPassword = preferences('server')->get('password');
-			my $salt = substr($currentPassword, 0, 2);
 		
-			if (defined($val) && $val ne '' && ($currentPassword eq '' || crypt($val, $salt) ne $currentPassword)) {
-				srand (time());
-				my $randletter = "(int (rand (26)) + (int (rand (1) + .5) % 2 ? 65 : 97))";
-				my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
-				$prefs->set('password', crypt($val, $salt));
+			if (defined($val) && $val ne '' && ($currentPassword eq '' || sha1_base64($val) ne $currentPassword)) {
+				$prefs->set('password', sha1_base64($val));
 			}
 			
 		}

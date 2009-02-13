@@ -11,6 +11,7 @@ use strict;
 
 use CGI::Cookie;
 use Digest::MD5;
+use Digest::SHA1 qw(sha1_base64);
 use FileHandle;
 use File::Basename qw(basename);
 use File::Spec::Functions qw(:ALL);
@@ -2882,8 +2883,14 @@ sub checkAuthorization {
 
 		} else {
 
-			my $salt = substr($pwd, 0, 2);
-			$ok = 1 if crypt($password, $salt) eq $pwd;
+			$ok = (sha1_base64( $password ) eq $pwd);
+
+			# bug 11003 - try crypt if sha1 fails, keep backwards compatibility
+			# this should be removed some releases after 7.4
+			if (!$ok) {
+				my $salt = substr($pwd, 0, 2);
+				$ok = (crypt($password, $salt) eq $pwd);
+			}
 		}
 
 	} else {
