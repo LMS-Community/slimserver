@@ -643,6 +643,9 @@ Returns scan type string token if the server is still scanning your library. Fal
 
 sub stillScanning {
 	my $class    = shift;
+	
+	return 0 if main::SLIM_SERVICE;
+	
 	my $imports  = scalar keys %importsRunning;
 
 	# NB: Some plugins call this, but haven't updated to use class based calling.

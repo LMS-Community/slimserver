@@ -16,6 +16,9 @@ sub dirsFor {
 	
 	if ($dir eq "Plugins") {
 		push @dirs, catdir($Bin, 'Slim', 'Plugin');
+		
+		# load SN-only plugins
+		push @dirs, catdir( $main::SN_PATH, 'lib', 'Slim', 'Plugin' );
 	}
 
 	# slimservice on squeezenetwork

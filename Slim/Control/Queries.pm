@@ -5100,7 +5100,7 @@ sub _addJiveSong {
 	$text .= ( defined $album ) ? "\n$album" : '';
 	
 	my $artist;
-	if ( defined( my $artistObj = $track->artist() ) ) {
+	if ( !main::SLIM_SERVICE && defined( my $artistObj = $track->artist() ) ) {
 		$artist = $artistObj->name();
 	}
 	elsif ( $remoteMeta->{artist} ) {
@@ -5566,7 +5566,7 @@ sub _songData {
 				next;
 			}
 			
-			if (defined(my $submethod = $tagMap{$tag}->[3])) {
+			if ( defined(my $submethod = $tagMap{$tag}->[3]) && !main::SLIM_SERVICE ) {
 				
 				my $postfix = ($tag eq 'S')?"_ids":"";
 			

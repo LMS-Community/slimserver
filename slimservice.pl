@@ -90,6 +90,7 @@ BEGIN {
 	require SDI::Service::Comet;
 	require SDI::Service::Control;
 	require SDI::Service::Heartbeat;
+	require SDI::Service::JSONRPC;
 	require SDI::Service::EventLog;
 	require SDI::Service::UPnP;
 };
@@ -364,6 +365,9 @@ sub init {
 		
 		# start Comet handler
 		SDI::Service::Comet->init();
+		
+		# start JSONRPC handler
+		SDI::Service::JSONRPC->init();
 		
 		# start event logging
 		SDI::Service::EventLog->init();

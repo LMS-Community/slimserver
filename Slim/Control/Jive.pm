@@ -154,10 +154,10 @@ sub init {
 	if ( !main::SLIM_SERVICE ) {
 		# Load memory caches to help with menu performance
 		buildCaches();
+		
+		# Re-build the caches after a rescan
+		Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
 	}
-	
-	# Re-build the caches after a rescan
-	Slim::Control::Request::subscribe( \&buildCaches, [['rescan', 'done']] );
 }
 
 sub buildCaches {

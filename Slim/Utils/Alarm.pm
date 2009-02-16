@@ -509,6 +509,20 @@ sub sound {
 		$self->{_enabled} = 0;
 		$self->save(0);
 	}
+	
+	if ( main::SLIM_SERVICE ) {
+		# Some players on SN have alarms that simply execute a playlist play command, they don't
+		# need the alarm screensaver, fallback alarm, etc.
+		if ( $client->hasSpecialAlarm ) {
+			$client->execute( [ 'playlist', 'play', $self->playlist ] );
+			
+			# Make sure this alarm is not scheduled again right away
+			$client->alarmData->{lastAlarmTime} = $self->{_nextDue};
+			
+			# don't sound the alarm via the code below
+			$soundAlarm = 0;
+		}
+	}
 
 	if ($soundAlarm) {
 		# Sound an Alarm (HWV 63)
@@ -1215,6 +1229,13 @@ sub loadAlarms {
 	my $prefAlarms = $prefs->client($client)->alarms;
 
 	$client->alarmData->{alarms} = {};
+
+	if ( main::SLIM_SERVICE ) {
+		# Ignore alarms on disabled players
+		if ( $client->playerData->disabled ) {
+			$prefAlarms = {};
+		}
+	}
 
 	foreach my $prefAlarm (keys %$prefAlarms) {
 		$prefAlarm = $prefAlarms->{$prefAlarm};

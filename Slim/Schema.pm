@@ -122,7 +122,7 @@ sub init {
 		AutoCommit    => 1,
 		PrintError    => 0,
 		Taint         => 1,
-		on_connect_do => [ 'SET NAMES UTF8' ],
+		on_connect_do => main::SLIM_SERVICE ? [] : [ 'SET NAMES UTF8' ],
 	}) or do {
 
 		logBacktrace("Couldn't connect to database! Fatal error: [$!] Exiting!");
@@ -170,24 +170,33 @@ sub init {
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
-	$class->load_classes(qw/
-		Age
-		Album
-		Comment
-		Contributor
-		ContributorAlbum
-		ContributorTrack
-		Genre
-		GenreTrack
-		MetaInformation
-		Playlist
-		PlaylistTrack
-		Rescan
-		Track
-		TrackPersistent
-		Year
-		Progress
-	/);
+	if ( main::SLIM_SERVICE ) {
+		$class->load_classes(qw/
+			Playlist
+			PlaylistTrack
+			Track
+		/);
+	}
+	else {
+		$class->load_classes(qw/
+			Age
+			Album
+			Comment
+			Contributor
+			ContributorAlbum
+			ContributorTrack
+			Genre
+			GenreTrack
+			MetaInformation
+			Playlist
+			PlaylistTrack
+			Rescan
+			Track
+			TrackPersistent
+			Year
+			Progress
+		/);
+	}
 
 	# Build all our class accessors and populate them.
 	for my $accessor (qw(lastTrackURL lastTrack trackAttrs trackPersistentAttrs driver schemaUpdated)) {
@@ -201,7 +210,11 @@ sub init {
 	}
 
 	$trackAttrs = Slim::Schema::Track->attributes;
-	$trackPersistentAttrs = Slim::Schema::TrackPersistent->attributes;
+	
+	if ( !main::SLIM_SERVICE ) {
+		$trackPersistentAttrs = Slim::Schema::TrackPersistent->attributes;
+	}
+	
 	$class->driver($driver);
 
 	# Use our debug and stats class to get logging and perfmon for db queries
@@ -212,6 +225,20 @@ sub init {
 	$class->_buildValidHierarchies;
 
 	$class->schemaUpdated($update);
+	
+	if ( main::SLIM_SERVICE ) {
+		# Create new empty database every time we startup
+		require File::Slurp;
+		require FindBin;
+		
+		my $text = File::Slurp::read_file( "$FindBin::Bin/SQL/slimservice/slimservice-sqlite.sql" );
+		
+		$text =~ s/\s*--.*$//g;
+		for my $sql ( split /;/, $text ) {
+			next unless $sql =~ /\w/;
+			$dbh->do($sql);
+		}
+	}
 
 	$initialized = 1;
 }
@@ -254,6 +281,13 @@ sub disconnect {
 	my $class = shift;
 
 	eval { $class->storage->dbh->disconnect };
+	
+	if ( main::SLIM_SERVICE ) {
+		# Delete the database file on shutdown
+		my $config = SDI::Util::SNConfig::get_config();
+		my $db = ( $config->{database}->{sqlite_path} || '.' ) . "/slimservice.$$.db";
+		unlink $db;
+	}
 
 	$initialized = 0;
 }
@@ -288,9 +322,13 @@ sub sourceInformation {
 	
 	if ( main::SLIM_SERVICE ) {
 		my $config = SDI::Util::SNConfig::get_config();
-		$source   = $config->{database}->{dsn};
-		$username = $config->{database}->{username};
-		$password = $config->{database}->{password};
+		my $db = ( $config->{database}->{sqlite_path} || '.' ) . "/slimservice.$$.db";
+		
+		unlink $db if -e $db;
+		
+		$source = "dbi:SQLite:dbname=$db";
+		$username = '';
+		$password = '';
 	}
 	
 	my ($driver) = ($source =~ /^dbi:(\w+):/);
@@ -933,7 +971,7 @@ sub newTrack {
 		$log->info(sprintf("Created track '%s' (id: [%d])", $track->title, $track->id));
 	}
 
-	if ( $track->audio ) {
+	if ( !main::SLIM_SERVICE && $track->audio ) {
 		# Pull the track persistent object for the DB
 		my $trackPersistent = $track->_retrievePersistent();
 
@@ -1969,19 +2007,21 @@ sub _preCheckAttributes {
 		$attributes->{'LYRICS'} = join("\n", @{$attributes->{'LYRICS'}});
 	}
 
-	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
-	#
-	# Push these back until we have a Track object.
-	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
-		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
-		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
-		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID MUSICBRAINZ_ALBUM_ID 
-		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
-	)) {
+	if ( !main::SLIM_SERVICE ) {
+		# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
+		#
+		# Push these back until we have a Track object.
+		for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
+			COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
+			COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
+			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID MUSICBRAINZ_ALBUM_ID 
+			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+		)) {
 
-		next unless defined $attributes->{$tag};
+			next unless defined $attributes->{$tag};
 
-		$deferredAttributes->{$tag} = delete $attributes->{$tag};
+			$deferredAttributes->{$tag} = delete $attributes->{$tag};
+		}
 	}
 
 	# We also need these in _postCheckAttributes, but they should be set during create()
