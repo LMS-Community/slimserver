@@ -1209,18 +1209,42 @@ our %functions = (
 	'home' => sub {
 		my ($client, $funct, $functarg) = @_;
 
+		my $display    = $client->display;
+		my $oldscreen2 = $client->modeParam('screen2active');
+		my $oldlines   = $client->curLines;
+
 		if ($client->modeParam('HOME-MENU')) {
 
 			$log->info("Switching to playlist view.");
+
 			Slim::Buttons::Common::setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
-			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+
+			pushMode($client, 'playlist');
+
+			unless ($display->hasScreen2) {
+
+				$display->pushLeft($oldlines, $display->curLines({ trans => 'pushModeLeft' }));
+
+			} else {
+
+				$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2, $display->curLines({ trans => 'pushModeLeft' })));
+			}
 
 		} else {
 
 			$log->info("Switching to home menu.");
+
 			Slim::Buttons::Common::setMode($client, 'home');
-			$client->pushRight();
+
+			unless ($display->hasScreen2) {
+
+				$display->pushRight($oldlines, $display->curLines({ trans => 'pushModeRight'}));
+
+			} else {
+
+				$display->pushRight($oldlines, pushpopScreen2($client, $oldscreen2, $display->curLines({ trans => 'pushModeRight' })));
+			}
 		}
 	},
 
