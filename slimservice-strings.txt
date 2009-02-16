@@ -1398,3 +1398,6 @@ INFORMATION_SN_ACCOUNT
 	NO	Konto
 	SV	Konto
 
+DISABLED_PLAYER
+	EN	This player is disabled. Please contact %s
+

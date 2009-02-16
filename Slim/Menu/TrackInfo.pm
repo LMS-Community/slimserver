@@ -78,43 +78,47 @@ sub registerDefaultInfoProviders {
 		func      => \&showArtwork,
 	) );
 
-	$class->registerInfoProvider( contributors => (
-		after => 'top',
-		func  => \&infoContributors,
-	) );
+	if ( !main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( contributors => (
+			after => 'top',
+			func  => \&infoContributors,
+		) );
 
-	$class->registerInfoProvider( album => (
-		after => 'contributors',
-		func  => \&infoAlbum,
-	) );
+		$class->registerInfoProvider( album => (
+			after => 'contributors',
+			func  => \&infoAlbum,
+		) );
 
-	$class->registerInfoProvider( genres => (
-		after => 'album',
-		func  => \&infoGenres,
-	) );
+		$class->registerInfoProvider( genres => (
+			after => 'album',
+			func  => \&infoGenres,
+		) );
+	}
 
 	$class->registerInfoProvider( remotetitle => (
-		after => 'album',
+		after => main::SLIM_SERVICE ? 'top' : 'album',
 		func  => \&infoRemoteTitle,
 	) );
 	
-	$class->registerInfoProvider( year => (
-		after => 'genres',
-		func  => \&infoYear,
-	) );
-	
-	$class->registerInfoProvider( comment => (
-		after => 'year',
-		func  => \&infoComment,
-	) );
-	
-	$class->registerInfoProvider( lyrics => (
-		after => 'comment',
-		func  => \&infoLyrics,
-	) );
+	if ( !main::SLIM_SERVICE ) {
+		$class->registerInfoProvider( year => (
+			after => 'genres',
+			func  => \&infoYear,
+		) );
+
+		$class->registerInfoProvider( comment => (
+			after => 'year',
+			func  => \&infoComment,
+		) );
+
+		$class->registerInfoProvider( lyrics => (
+			after => 'comment',
+			func  => \&infoLyrics,
+		) );
+	}
 	
 	$class->registerInfoProvider( moreinfo => (
-		after => 'comment',
+		after => main::SLIM_SERVICE ? 'remotetitle' : 'comment',
 		func  => \&infoMoreInfo,
 	) );
 	
