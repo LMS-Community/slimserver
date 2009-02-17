@@ -6,10 +6,10 @@
 	<playerMenu>MUSIC_SERVICES</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_NAPSTER_MODULE_NAME</description>
-	<creator>Slim Devices/Logitech</creator>
+	<creator>Logitech</creator>
 	<email>support@slimdevices.com</email>
 	<defaultState>enabled</defaultState>
-	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<homepageURL>http://www.slimdevices.com/napster.php</homepageURL>
 	<icon>plugins/Napster/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>
