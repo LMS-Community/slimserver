@@ -153,7 +153,6 @@ use Slim::Buttons::Input::Bar;
 use Slim::Buttons::Settings;
 use Slim::Player::Client;
 use Slim::Control::Request;
-#use Slim::Display::Lib::Fonts;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
