@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<extension>
+	<id>1B354CB1-0CFF-46BF-840A-715A036C6264</id>
+	<name>PLUGIN_NAPSTER_MODULE_NAME</name>
+	<module>Slim::Plugin::Napster::Plugin</module>
+	<playerMenu>MUSIC_SERVICES</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_NAPSTER_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Napster/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.3</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

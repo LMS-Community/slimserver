@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<extension>
+	<id>B2B0E08B-FB71-4366-8939-B0FE7318CBED</id>
+	<name>PLUGIN_MEDIAFLY_MODULE_NAME</name>
+	<module>Slim::Plugin::Mediafly::Plugin</module>
+	<playerMenu>MUSIC_SERVICES</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_MEDIAFLY_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Mediafly/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.3</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
