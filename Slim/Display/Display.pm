@@ -562,9 +562,16 @@ sub scrollInit {
 		if (!$ticker) {
 			$scroll->{scrollbitsref} = $screen->{scrollbitsref};
 		} else {
-			my $tickerbits = (chr(0) x $screen->{overlaystart}[$screen->{scrollline}]) . ${$screen->{scrollbitsref}};
+			my $padbits = chr(0) x $screen->{overlaystart}[$screen->{scrollline}];
+			my $tickerbits;
+			if ($scroll->{dir} == 1) {
+				$tickerbits = $padbits . ${$screen->{scrollbitsref}};
+				$scroll->{scrollend} += $screen->{overlaystart}[$screen->{scrollline}];
+			} else {
+				$tickerbits = ${$screen->{scrollbitsref}} . $padbits;
+				$scroll->{scrollend} -= $screen->{overlaystart}[$screen->{scrollline}];
+			}
 			$scroll->{scrollbitsref} = \$tickerbits;
-			$scroll->{scrollend} += $screen->{overlaystart}[$screen->{scrollline}];
 		}
 
 	} elsif (defined($screen->{lineref})) {
@@ -645,11 +652,11 @@ sub scrollTickerTimeLeft {
 		return (0, 0);
 	} 
 
-	my $todisplay = $scroll->{scrollend} - $scroll->{offset};
-	my $completeTime = $todisplay / ($scroll->{shift} / $scroll->{refreshInt});
+	my $todisplay = $scroll->{dir} == 1 ? $scroll->{scrollend} - $scroll->{offset} : $scroll->{offset} + $scroll->{overlaystart};
+	my $completeTime = $todisplay / (abs($scroll->{shift}) / $scroll->{refreshInt});
 
-	my $notdisplayed = $todisplay - $scroll->{overlaystart};
-	my $queueTime = ($notdisplayed > 0) ? $notdisplayed / ($scroll->{shift} / $scroll->{refreshInt}) : 0;
+	my $notdisplayed = $scroll->{dir} == 1 ? $todisplay - $scroll->{overlaystart} : $scroll->{offset};
+	my $queueTime = ($notdisplayed > 0) ? $notdisplayed / (abs($scroll->{shift}) / $scroll->{refreshInt}) : 0;
 
 	return ($completeTime, $queueTime);
 }

@@ -333,30 +333,42 @@ sub render {
 			# ticker component - convert directly to new scrolling state
 			if (exists($screen->{ticker})) {
 				my $tickerbits = '';
+				my $reverse;
 				$sc->{scrollline} = -1; # dummy line if no ticker text
 				$sc->{newscroll} = 1 if ($sc->{scroll} < 2); # switching scroll mode
-				foreach my $l (0..$maxLine) {
+				for (my $l = $maxLine; $l >= 0; $l--) { # prefer lower lines
 					if (exists($screen->{ticker}[$l]) && defined($screen->{ticker}[$l])) {
-						$tickerbits |= Slim::Display::Lib::Fonts::string($sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{ticker}[$l]);
-						$sc->{scrollline} = $l; # overlays calculated from last scrolling ticker line
+						($reverse, $tickerbits) = 
+							Slim::Display::Lib::Fonts::string($sfonts->{line}[$l]||$dfonts->{line}[$l], $screen->{ticker}[$l]);
+						$sc->{scrollline} = $l;
+						last;
 					}
 				}
 				my $len = length($tickerbits);
 				if ($len > 0 || $sc->{scroll} < 2) {
-					$tickerbits .= chr(0) x ($scroll_pad_ticker * $display->bytesPerColumn());
-					$sc->{scrollend} = $len;
+					my $pad = chr(0) x ($scroll_pad_ticker * $display->bytesPerColumn());
+					if (!$reverse) {
+						$tickerbits .= $pad;
+						$sc->{scrollstart} = 0;
+						$sc->{scrollend}   = $len;
+						$sc->{scrolldir}   = 1;
+					} else {
+						$tickerbits = $pad . $tickerbits;
+						$sc->{scrollstart} = $len + $scroll_pad_ticker * $display->bytesPerColumn();
+						$sc->{scrollend}   = 0;
+						$sc->{scrolldir}   = -1;
+					}
 					$sc->{scroll} = 2;
 				} else {
-					$sc->{scrollend} = 0;
-					$sc->{scroll} = 3;
+					$sc->{scrollstart} = 0;
+					$sc->{scrollend}   = 0;
+					$sc->{scroll}      = 3;
 				}
 				$sc->{scrollbitsref} = \$tickerbits;
-				$sc->{scrolldir} = 1; # only support l->r scrolling for ticker
-				$sc->{scrollstart} = 0;
 				$changed = 1;
 
 			} elsif ($sc->{scroll} >= 2) {
-				$sc->{scroll} = 0;
+				$sc->{scroll}     = 0;
 				$sc->{scrollline} = undef;
 			}
 			
@@ -504,9 +516,19 @@ sub scrollUpdateDisplay {
 	if ( Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) != 0 ) {
 		return;
 	}
-	
-	my $data = $scroll->{scrollHeader} . 
-		(${$scroll->{bitsref}} | substr(${$scroll->{scrollbitsref}}, $scroll->{offset}, $scroll->{overlaystart}));
+
+	my $data;
+
+	if ($scroll->{dir} == 1 || $scroll->{offset} >= 0) {
+		$data = $scroll->{scrollHeader} . 
+			(${$scroll->{bitsref}} | substr(${$scroll->{scrollbitsref}}, $scroll->{offset}, $scroll->{overlaystart}));
+	} else {
+		$data = $scroll->{scrollHeader} . 
+			(${$scroll->{bitsref}} |
+			 (substr(${$scroll->{bitsref}}, 0, abs($scroll->{offset})) . 
+			  substr(${$scroll->{scrollbitsref}}, 0, $scroll->{overlaystart} + $scroll->{offset})
+			 ));
+	}		
 	
 	$client->sendFrame( $display->graphicCommand, \$data );
 }
@@ -516,23 +538,49 @@ sub scrollUpdateTicker {
 	my $screen = shift;
 	my $screenNo = shift;
 
-	my $scroll = $display->scrollData($screenNo);
-
-	my $scrollbits = substr(${$scroll->{scrollbitsref}}, $scroll->{offset});
-	my $len = $scroll->{scrollend} - $scroll->{offset};
+	my $scroll   = $display->scrollData($screenNo);
 	my $padBytes = $scroll_pad_ticker * $display->bytesPerColumn;
+	my $pad      = 0;	
+	my $scrollbits;
+	my $len;
 
-	my $pad = 0;
-	if ($screen->{overlaystart}[$screen->{scrollline}] > ($len + $padBytes)) {
-		$pad = $screen->{overlaystart}[$screen->{scrollline}] - $len - $padBytes;
-		$scrollbits .= chr(0) x $pad;
+	if ($scroll->{dir} != $screen->{scrolldir}) {
+
+		# restart ticker going in the opposite direction
+		$display->scrollStop($screenNo);
+		$display->scrollInit($screen, $screenNo, 0);
+		return;
 	}
+
+	if ($scroll->{dir} == 1) {
+
+		$scrollbits = substr(${$scroll->{scrollbitsref}}, $scroll->{offset});
+
+		$len = $scroll->{scrollend} - $scroll->{offset};
+
+		if ($screen->{overlaystart}[$screen->{scrollline}] > ($len + $padBytes)) {
+			$pad = $screen->{overlaystart}[$screen->{scrollline}] - $len - $padBytes;
+		}
 	
-	$scrollbits .= ${$screen->{scrollbitsref}};
+		$scrollbits .= (chr(0) x $pad) . ${$screen->{scrollbitsref}};
+		
+		$scroll->{scrollend} = $len + $padBytes + $pad + $screen->{scrollend};
+		$scroll->{offset} = 0;
+		
+	} else {
+
+		$scrollbits = substr(${$scroll->{scrollbitsref}}, 0, $scroll->{offset} + $screen->{overlaystart}[$screen->{scrollline}]);
+
+		if ($screen->{overlaystart}[$screen->{scrollline}] > length($scrollbits)) {
+			$pad = $screen->{overlaystart}[$screen->{scrollline}] - length($scrollbits);
+		}
+
+		$scrollbits = ${$screen->{scrollbitsref}} . (chr(0) x $pad) . $scrollbits;
+		
+		$scroll->{offset} = $scroll->{offset} + length(${$screen->{scrollbitsref}}) + $pad;
+	}
 
 	$scroll->{scrollbitsref} = \$scrollbits;
-	$scroll->{scrollend} = $len + $padBytes + $pad + $screen->{scrollend};
-	$scroll->{offset} = 0;
 }
 
 sub textSize {
