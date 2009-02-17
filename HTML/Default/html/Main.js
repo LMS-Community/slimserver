@@ -67,6 +67,7 @@ Main = {
 			split: true,
 			minSize: 400,
 			width: '50%',
+			stateId: 'SqueezeCenter-panelWidth',
 			stateful: !Ext.isIE
 		};
 

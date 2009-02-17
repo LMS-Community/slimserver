@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<extension>
+	<id>5A1A7A01-F86E-4363-BA68-946C012DEE16</id>
+	<name>PLUGIN_CLASSICAL_MODULE_NAME</name>
+	<module>Slim::Plugin::Classical::Plugin</module>
+	<playerMenu>MUSIC_SERVICES</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_CLASSICAL_MODULE_NAME_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/Classical/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.3</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>

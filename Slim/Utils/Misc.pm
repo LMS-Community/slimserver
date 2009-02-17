@@ -1300,6 +1300,17 @@ sub createUUID {
 	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 
+=head2 round ( )
+
+Round a number to an integer
+
+=cut
+
+sub round {
+	my $number = shift;
+	return int($number + .5 * ($number <=> 0));
+}
+
 =head1 SEE ALSO
 
 L<Slim::Music::Info>
