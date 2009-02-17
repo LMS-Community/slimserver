@@ -14,7 +14,7 @@ use Slim::Utils::Prefs;
 my $log   = logger('plugin.rssnews');
 my $prefs = preferences('plugin.rssnews');
 
-use constant FEED_VERSION => 2; # bump this number when changing the defaults below
+use constant FEED_VERSION => 3; # bump this number when changing the defaults below
 
 # Default feed list
 my @default_feeds = (
@@ -29,10 +29,6 @@ my @default_feeds = (
 	{
 		name  => 'New York Times Home Page',
 		value => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
-	},
-	{
-		name  => 'RollingStone.com Music News',
-		value => 'http://www.rollingstone.com/rssxml/music_news.xml',
 	},
 	{
 		name  => 'Slashdot',
