@@ -485,6 +485,12 @@ sub processCoverArtRequest {
 						}
 					}
 					
+					# GD doesn't round correctly
+					$destHeight =     Slim::Utils::Misc::round($destHeight);
+					$destWidth =      Slim::Utils::Misc::round($destWidth);
+					$returnedHeight = Slim::Utils::Misc::round($returnedHeight);
+					$returnedWidth =  Slim::Utils::Misc::round($returnedWidth);
+					
 					my $newImage;
 					
 					if ( $resizeMode eq 'original' ) {
