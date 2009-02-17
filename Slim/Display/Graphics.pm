@@ -45,6 +45,10 @@ our $defaultPrefs = {
 
 $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 20 }, qw(scrollPixels scrollPixelsDouble));
 
+BEGIN {
+	Slim::Display::Lib::Fonts::init();
+}
+
 sub initPrefs {
 	my $display = shift;
 
