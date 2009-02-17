@@ -297,7 +297,8 @@ sub gotNextFeed {
 	}
 	
 	$savers->{$client}->{current_feed} = $feed;
-	
+	$savers->{$client}->{current_url}  = $params->{'url'};
+
 	tickerUpdateContinue( $client );
 }
 
@@ -386,7 +387,7 @@ sub blankLines {
 
 	my $parts = {
 		'line'   => [ $savers->{$client}->{line1} || '' ],
-		'ticker' => [],
+		'ticker' => [ undef, '' ],
 	};
 
 	# check after the update calling this function is complete to see if ticker is empty
@@ -410,6 +411,7 @@ sub tickerLines {
 
 	# the current RSS feed
 	my $feed = $savers->{$client}->{current_feed};
+	my $url  = $savers->{$client}->{current_url};
 
 	assert( ref $feed eq 'HASH', "current rss feed not set\n");
 
@@ -419,48 +421,58 @@ sub tickerLines {
 	if ( !defined $current_items ) {
 
 		$current_items = {
-			$feed => {
+			$url => {
 				'next_item'  => 0,
 				'first_item' => 0,
 			},
 		};
 
 	}
-	elsif ( !defined $current_items->{$feed} ) {
+	elsif ( !defined $current_items->{$url} ) {
 
-		$current_items->{$feed} = {
+		$current_items->{$url} = {
 			'next_item'  => 0,
 			'first_item' => 0
 		};
 	}
-	
+
 	# add item to ticker or display error and wait for tickerUpdate to retrieve news
 	if ( defined $feed ) {
 	
-		my $line1 = Slim::Formats::XML::unescapeAndTrim( $feed->{'title'} );
-		my $i     = $current_items->{$feed}->{'next_item'};
-		
-		my $title       = $feed->{'items'}->[$i]->{'title'};
-		my $description = $feed->{'items'}->[$i]->{'description'} || '';
+		my $i = $current_items->{$url}->{'next_item'};
 
-		# How to display items shown by screen saver.
-		# %1\$s is item 'number'	XXX: number not used?
-		# %2\$s is item title
-		# %3\%s is item description
-		my $screensaver_item_format = "%2\$s -- %3\$s";
+		# handle case of feed index no longer being valid (feed refetched with less items)
+		if (!defined $feed->{'items'}->[$i]) {
+			$i = 0;
+			$current_items->{$url}->{'first_item'} = 0;
+		}
+
+		my $line1 = Slim::Formats::XML::unescapeAndTrim( $feed->{'title'} );
+		my $line2;
 		
+		my $title       = Slim::Formats::XML::unescapeAndTrim( $feed->{'items'}->[$i]->{'title'} );
+		my $description = Slim::Formats::XML::unescapeAndTrim( $feed->{'items'}->[$i]->{'description'} );
+
+		if ($title && $description) {
+
+			$line2 = "$title -- $description";
+
+		} elsif ($title) {
+
+			$line2 = $title;
+
+		} elsif ($description) {
+
+			$line2 = $description;
+
+		} else {
+
+			$line2 = '';
+		}
+
 		# we need to limit the number of characters we add to the ticker, 
 		# because the server could crash rendering on pre-SqueezeboxG displays.
 		my $screensaver_chars_per_item = 1024;
-
-		my $screensaver_items_per_feed = $prefs->get('items_per_feed') || 3;
-		
-		my $line2 = sprintf(
-			$screensaver_item_format,
-			$i + 1,
-			Slim::Formats::XML::unescapeAndTrim($title),
-			Slim::Formats::XML::unescapeAndTrim($description)
-		);
 
 		if ( length $line2 > $screensaver_chars_per_item ) {
 
@@ -469,27 +481,29 @@ sub tickerLines {
 			$log->debug("Screensaver character limit exceeded - truncating.");
 		}
 
-		$current_items->{$feed}->{'next_item'} = $i + 1;
+		$current_items->{$url}->{'next_item'} = $i + 1;
 
-		if ( !exists( $feed->{'items'}->[ $current_items->{$feed}->{'next_item'} ] ) ) {
+		my $screensaver_items_per_feed = $prefs->get('items_per_feed') || 3;
 
-			$current_items->{$feed}->{'next_item'}  = 0;
-			$current_items->{$feed}->{'first_item'} -= ($i + 1);
+		if ( !exists( $feed->{'items'}->[ $current_items->{$url}->{'next_item'} ] ) ) {
+
+			$current_items->{$url}->{'next_item'}  = 0;
+			$current_items->{$url}->{'first_item'} -= ($i + 1);
 
 			if ( $screensaver_items_per_feed >= ($i + 1) ) {
 
 				$new_feed_next = 1;
 
-				$current_items->{$feed}->{'first_item'} = 0;
+				$current_items->{$url}->{'first_item'} = 0;
 			}
 		}
 
-		if ( ($current_items->{$feed}->{'next_item'} - 
-		      $current_items->{$feed}->{'first_item'}) >= $screensaver_items_per_feed ) {
+		if ( ($current_items->{$url}->{'next_item'} - 
+		      $current_items->{$url}->{'first_item'}) >= $screensaver_items_per_feed ) {
 
 			# displayed $screensaver_items_per_feed of this feed, move on to next saving position
 			$new_feed_next = 1;
-			$current_items->{$feed}->{'first_item'} = $current_items->{$feed}->{'next_item'};
+			$current_items->{$url}->{'first_item'} = $current_items->{$url}->{'next_item'};
 		}
 
 		my $format = preferences('server')->get('timeFormat');
