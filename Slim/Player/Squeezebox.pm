@@ -774,8 +774,10 @@ sub stream_s {
 
 		} else {
 
-			$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
-			$log->info("request string: $request_string");
+			if ( $log->is_info ) {
+				$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart format: $formatbyte.");
+				$log->info("request string: $request_string");
+			}
 		}
 				
 	} else {
