@@ -1133,10 +1133,16 @@ sub _buffering {
 	if ( (!$buffering && !$syncWait)
 		|| !$client->power) # Bug 6549, if the user powers off, stop rebuffering
 	{
+		$client->display->updateMode(0);
 		$client->update();
 		$client->bufferStarted(0); # marker that we are no longer rebuffering
 		return;
 	}
+
+	# get the current display - we will update this
+	my $parts = $client->curLines;
+	$parts = $parts->{'screen1'} || $parts || {};
+	my $status;
 	
 	# Bug 6712, give up after 30s
 	if ( $buffering == 2 && (time() > $client->bufferStarted() + 30) ) {
@@ -1145,22 +1151,17 @@ sub _buffering {
 		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
 
 		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
-			my ( $line1, $line2 );
 		
 			my $failedString = $client->string('REBUFFERING_FAILED');
-			$line1 = $client->string('NOW_PLAYING') . ': ' . $failedString; 
+			$parts->{'line'}[0] = $client->string('NOW_PLAYING') . ': ' . $failedString; 
 			if ( $client->linesPerScreen() == 1 ) { 	 
-				$line2 = $failedString; 	 
-			} 	 
-			else { 	 
-				$line2  = $args->{'title'};
+				$parts->{'line'}[1] = $failedString; 	 
 			}
 
-			$client->showBriefly( {
-				line => [ $line1, $line2 ],
-				jive => { 'type' => 'popupplay', text => [ $failedString ], 'icon-id' => $args->{'cover'} },
-				cli  => undef,
-			}, 2 ) unless $client->display->sbName();
+			$parts->{'jive'} = { 'type' => 'popupplay', text => [ $failedString ], 'icon-id' => $args->{'cover'} };
+			$parts->{'cli'}  = undef;
+
+			$client->showBriefly( $parts, { duration => 2 } );
 		}
 		
 		$client->bufferStarted(0);
@@ -1168,7 +1169,6 @@ sub _buffering {
 		return;
 	}
 	
-
 	my $fullness = $client->bufferFullness();
 	
 	$log->info("Buffering... $fullness / $threshold");
@@ -1185,20 +1185,18 @@ sub _buffering {
 		$controller->playerBufferReady($client);
 		$client->bufferStarted(0); # marker that we are no longer rebuffering
 	}
-	
-	my ( $line1, $jive1, $line2 );
-	
+
 	if ( $percent == 0 && $buffering == 1) {
-		my $string = $client->string('CONNECTING_FOR');
-		$line1 = $client->string('NOW_PLAYING') . " ($string)";
-		$jive1 = $string;
-		if ( $client->linesPerScreen() == 1 ) {
-			$line2 = $jive1;
+		my $status = $client->string('CONNECTING_FOR');
+  		if ( $client->linesPerScreen() == 1 ) {
+			$parts->{'line'}[1] = $status;
+		} else {
+			$parts->{'line'}[0] = $client->string('NOW_PLAYING') . " ($status)";
+			$parts->{'overlay'}[0] = undef;
 		}
 	}
 	else {
-		my $status;
-		
+
 		# When synced, a player may have to wait longer than the buffering time
 		if ( $syncWait && $percent >= 100 ) {
 			$status = $client->string('WAITING_TO_SYNC');
@@ -1212,19 +1210,13 @@ sub _buffering {
 			my $string = $buffering < 2 ? 'BUFFERING' : 'REBUFFERING';
 			$status = $client->string($string) . ' ' . $percent . '%';
 		}
-		
-		$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
-		$jive1 = $status;
-		
-		# Display only buffering text in large text mode
-		if ( $client->linesPerScreen() == 1 ) {
-			$line2 = $status;
+
+  		if ( $client->linesPerScreen() == 1 ) {
+			$parts->{'line'}[1] = $status;
+		} else {
+			$parts->{'line'}[0] = $client->string('NOW_PLAYING') . ' (' . $status . ')';
+			$parts->{'overlay'}[0] = undef;
 		}
-	}
-	
-	# Find the track title
-	if ( $client->linesPerScreen() > 1 ) {
-			$line2  = $args->{'title'};
 	}
 	
 	# Only show buffering status if no user activity on player or we're on the Now Playing screen
@@ -1233,12 +1225,11 @@ sub _buffering {
 	
 	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
 
-		$client->showBriefly( {
-			line => [ $line1, $line2 ], 
-			jive => { type => 'song', text => [ $jive1, $args->{'title'} ], 'icon-id' => $args->{'cover'}, duration => 500 }, 
-			cli  => undef
-		}, 1 ) unless $client->display->sbName();
-		
+		$parts->{'jive'} = { type => 'song', text => [ $status, $args->{'title'} ], 'icon-id' => $args->{'cover'}, duration => 500 };
+		$parts->{'cli'}  = undef;
+
+		$client->display->updateMode(0);
+		$client->showBriefly($parts, { duration => 1, block => 1 });
 	}
 	
 	# Call again unless we've reached the threshold
@@ -1254,7 +1245,9 @@ sub _buffering {
 	}
 	else {
 		# All done buffering, refresh the screen
+		$client->display->updateMode(0);
 		$client->update;
+		$client->bufferStarted(0);
 	}
 }
 
