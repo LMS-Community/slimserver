@@ -692,7 +692,7 @@ sub _playersMessage {
 	my $master = $self->master();
 
 	my $line1 = (uc($message) eq $message) ? $master->string($message) : $message;
-	my $line2 =  $url ? Slim::Music::Info::standardTitle($master, $url)
+	my $line2 =  $url ? Slim::Music::Info::getCurrentTitle($master, $url)
 					  : '';
 	
 	$log->info("$line1: $line2");
