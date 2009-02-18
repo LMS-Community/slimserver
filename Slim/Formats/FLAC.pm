@@ -59,6 +59,7 @@ my %tagMapping = (
 	'REPLAY GAIN'               => 'REPLAYGAIN_TRACK_GAIN',
 	'PEAK LEVEL'                => 'REPLAYGAIN_TRACK_PEAK',
 	'DISC #'                    => 'DISC',
+	'ALBUM ARTIST'              => 'ALBUMARTIST',
 
 	# for dBpoweramp CD Ripper
 	'TOTALDISCS'                => 'DISCC',

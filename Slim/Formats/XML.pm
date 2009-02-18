@@ -213,7 +213,7 @@ sub gotViaHTTP {
 	if ($@) {
 		# call ecb
 		my $ecb = $params->{'ecb'};
-		$ecb->( $@, $params->{'params'} );
+		$ecb->( string('XML_GET_FAILED'), $params->{'params'} );
 		return;
 	}
 
