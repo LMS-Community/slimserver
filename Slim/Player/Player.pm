@@ -684,18 +684,18 @@ sub nowPlayingModeLines {
 	if ( main::SLIM_SERVICE ) {
 		# Allow buffer fullness display to work on SN where we don't have a playingDisplayModes pref
 		if ( $client->isa('Slim::Player::Transporter') ) {
-			if ( $prefs->client($client)->get('playingDisplayMode') == 6 ) {
-				$modes = [0..6];
+			if ( $prefs->client($client)->get('playingDisplayMode') >= 6 ) {
+				$modes = [0..7];
 			}
 		}
 		elsif ( $client->isa('Slim::Player::Boom') ) {
-			if ( $prefs->client($client)->get('playingDisplayMode') == 10 ) {
-				$modes = [0..10];
+			if ( $prefs->client($client)->get('playingDisplayMode') >= 10 ) {
+				$modes = [0..11];
 			}
 		}
 		else {
-			if ( $prefs->client($client)->get('playingDisplayMode') == 12 ) {
-				$modes = [0..12];
+			if ( $prefs->client($client)->get('playingDisplayMode') >= 12 ) {
+				$modes = [0..13];
 			}
 		}
 	}
