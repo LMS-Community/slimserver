@@ -213,13 +213,26 @@ sub handleFeed {
 			push @crumbIndex, $i;
 			my $crumbText = join '.', @crumbIndex;
 			
+			my $crumbName = $subFeed->{'name'} || $subFeed->{'title'};
+			
 			# Add search query to crumb list
+			my $searchQuery;
+			
 			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && $stash->{'q'} ) {
 				$crumbText .= '_' . $stash->{'q'};
+				$searchQuery = $stash->{'q'};
+			}
+			elsif ( $i =~ /(?:\d+)?_(.+)/ ) {
+				$searchQuery = $1;
+			}
+			
+			# Add search query to crumbName
+			if ( $searchQuery ) {
+				$crumbName .= ' (' . $searchQuery . ')';
 			}
 			
 			push @crumb, {
-				'name'  => $subFeed->{'name'} || $subFeed->{'title'},
+				'name'  => $crumbName,
 				'index' => $crumbText,
 			};
 
@@ -247,11 +260,6 @@ sub handleFeed {
 			# current cached feed
 			$subFeed->{'type'} ||= '';
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'} ) {
-				
-				my $searchQuery;
-				if ( $i =~ /(?:\d+)?_(.+)/ ) {
-					$searchQuery = $1;
-				}
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{'type'} eq 'search' && ( $stash->{'q'} || $searchQuery ) ) {
@@ -683,8 +691,11 @@ sub handleSubFeed {
 	my $parent = $params->{'parent'};
 	my $subFeed = $parent;
 	for my $i ( @{ $params->{'currentIndex'} } ) {
-		# Skip sid, can be longer than 8 with a search query
-		next if length($i) >= 8;
+		# Skip sid and sid + top-level search query
+		next if length($i) >= 8 && $i =~ /^[a-f0-9]{8}/;
+		
+		# If an index contains a search query, strip it out
+		$i =~ s/[^\d]//g;
 		
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
@@ -703,11 +714,6 @@ sub handleSubFeed {
 	} else {
 		# otherwise insert items as subfeed
 		$subFeed->{'items'} = $feed->{'items'};
-		
-		# Update the title value in case it's different from the previous menu
-		if ( $feed->{'title'} ) {
-			$subFeed->{'name'} = $feed->{'title'};
-		}
 	}
 
 	# set flag to avoid fetching this url again
