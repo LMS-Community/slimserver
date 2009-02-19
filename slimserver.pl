@@ -924,6 +924,11 @@ sub stopServer {
 }
 
 sub cleanup {
+	
+	if (Slim::Music::Import->stillScanning()) {
+		logger('')->info("Cancel running scanner.");
+		Slim::Music::Import->abortScan();
+	}
 
 	logger('')->info("SqueezeCenter cleaning up.");
 	
