@@ -1064,10 +1064,10 @@ sub rebuffer {
 
 	my $song = $client->playingSong() || return;
 	my $url = $song->currentTrack()->url;
-	my $title = Slim::Music::Info::title($url);
+
 	my $handler = $song->currentTrackHandler();
 	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
-	
+	my $title = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta);	
 	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
 	
 	if ( my $bitrate = $song->streambitrate() ) {
@@ -1101,10 +1101,10 @@ sub buffering {
 	
 	my $song = $client->streamingSong();
 	my $url = $song->currentTrack()->url;
-	my $title = Slim::Music::Info::title($url);
+
 	my $handler = $song->currentTrackHandler();
 	my $remoteMeta = $handler->can('getMetadataFor') ? $handler->getMetadataFor($client, $url) : {};
-	
+	my $title = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta);
 	my $cover = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
 	
 	# Set a timer for feedback during buffering
@@ -1139,10 +1139,7 @@ sub _buffering {
 		return;
 	}
 
-	# get the current display - we will update this
-	my $parts = $client->curLines;
-	$parts = $parts->{'screen1'} || $parts || {};
-	my $status;
+	my ($line1, $line2, $status);
 	
 	# Bug 6712, give up after 30s
 	if ( $buffering == 2 && (time() > $client->bufferStarted() + 30) ) {
@@ -1153,15 +1150,18 @@ sub _buffering {
 		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
 		
 			my $failedString = $client->string('REBUFFERING_FAILED');
-			$parts->{'line'}[0] = $client->string('NOW_PLAYING') . ': ' . $failedString; 
+			$line1 = $client->string('NOW_PLAYING') . ': ' . $failedString; 
 			if ( $client->linesPerScreen() == 1 ) { 	 
-				$parts->{'line'}[1] = $failedString; 	 
+				$line2 = $failedString; 	 
+			} else {
+				$line2 = $args->{'title'};
 			}
 
-			$parts->{'jive'} = { 'type' => 'popupplay', text => [ $failedString ], 'icon-id' => $args->{'cover'} };
-			$parts->{'cli'}  = undef;
-
-			$client->showBriefly( $parts, { duration => 2 } );
+			$client->showBriefly( {
+				line => [ $line1, $line2 ],
+				jive => { type => 'popupplay', text => [ $failedString ], 'icon-id' => $args->{'cover'} },
+				cli  => undef,
+			}, { duration => 2 } );
 		}
 		
 		$client->bufferStarted(0);
@@ -1189,10 +1189,10 @@ sub _buffering {
 	if ( $percent == 0 && $buffering == 1) {
 		my $status = $client->string('CONNECTING_FOR');
   		if ( $client->linesPerScreen() == 1 ) {
-			$parts->{'line'}[1] = $status;
+			$line2 = $status;
 		} else {
-			$parts->{'line'}[0] = $client->string('NOW_PLAYING') . " ($status)";
-			$parts->{'overlay'}[0] = undef;
+			$line1 = $client->string('NOW_PLAYING') . " ($status)";
+			$line2 = $args->{'title'};
 		}
 	}
 	else {
@@ -1212,10 +1212,10 @@ sub _buffering {
 		}
 
   		if ( $client->linesPerScreen() == 1 ) {
-			$parts->{'line'}[1] = $status;
+			$line2 = $status;
 		} else {
-			$parts->{'line'}[0] = $client->string('NOW_PLAYING') . ' (' . $status . ')';
-			$parts->{'overlay'}[0] = undef;
+			$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
+			$line2 = $args->{'title'};
 		}
 	}
 	
@@ -1225,11 +1225,12 @@ sub _buffering {
 	
 	if ( ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
 
-		$parts->{'jive'} = { type => 'song', text => [ $status, $args->{'title'} ], 'icon-id' => $args->{'cover'}, duration => 500 };
-		$parts->{'cli'}  = undef;
-
 		$client->display->updateMode(0);
-		$client->showBriefly($parts, { duration => 1, block => 1 });
+		$client->showBriefly({
+			line => [ $line1, $line2 ],
+			jive => { type => 'song', text => [ $status, $args->{'title'} ], 'icon-id' => $args->{'cover'}, duration => 500 },
+			cli  => undef,
+		}, { duration => 1, block => 1 });
 	}
 	
 	# Call again unless we've reached the threshold

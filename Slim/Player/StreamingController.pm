@@ -635,8 +635,8 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 			: {};
 		my $icon = $remoteMeta->{cover} || $remoteMeta->{icon} || '/music/' . $song->currentTrack()->id . '/cover.jpg';
 		
-		_playersMessage($self, $song->currentTrack->url, 
-			$song->isPlaylist() ? 'GETTING_TRACK_DETAILS' : 'GETTING_STREAM_INFO', $icon, 0, 30);
+		_playersMessage($self, $song->currentTrack->url,
+			$remoteMeta, $song->isPlaylist() ? 'GETTING_TRACK_DETAILS' : 'GETTING_STREAM_INFO', $icon, 0, 30);
 	}
 	
 }
@@ -679,12 +679,12 @@ sub _errorOpening {
 	
 	$error ||= 'PROBLEM_OPENING';
 	$url   ||= $songUrl;
-	
-	_playersMessage($self, $url, $error, undef, 1, 5);
+
+	_playersMessage($self, $url, {}, $error, undef, 1, 5);
 }
 
 sub _playersMessage {
-	my ($self, $url, $message, $icon, $block, $duration) = @_;
+	my ($self, $url, $remoteMeta, $message, $icon, $block, $duration) = @_;
 	
 	$block    = 0  unless defined $block;
 	$duration = 10 unless defined $duration;
@@ -692,12 +692,12 @@ sub _playersMessage {
 	my $master = $self->master();
 
 	my $line1 = (uc($message) eq $message) ? $master->string($message) : $message;
-	my $line2 =  $url ? Slim::Music::Info::getCurrentTitle($master, $url)
-					  : '';
 	
-	$log->info("$line1: $line2");
+	$log->info("$line1: $url");
 
 	foreach my $client (@{$self->{'players'}}) {
+
+		my $line2 = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta);
 	
 		# Show an error message
 		$client->showBriefly( {
