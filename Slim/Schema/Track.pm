@@ -119,6 +119,8 @@ sub albumid {
 
 sub artist {
 	my $self = shift;
+	
+	return if main::SLIM_SERVICE;
 
 	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
 	return $self->contributorsOfType('ARTIST')->single ||
