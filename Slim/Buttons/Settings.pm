@@ -629,10 +629,19 @@ sub init {
 		
 								my $modes = $client->display->modes;
 								my @opts  = ();
+								my $clock;
+
+								if (main::SLIM_SERVICE) {
+
+									# we want the clock on SN too
+									($clock) = grep { 
+										$modes->[$_]{desc}->[0] eq 'CLOCK';
+									} 0..$#{$modes};
+								}
 								
 								my $x     = 0;
 		
-								for my $mode (@{ $prefs->client($client)->get('playingDisplayModes') }) {
+								for my $mode (@{ $prefs->client($client)->get('playingDisplayModes') }, $clock) {
 		
 									my @desc;
 		
