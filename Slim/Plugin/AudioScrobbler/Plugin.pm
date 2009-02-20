@@ -1236,10 +1236,13 @@ sub canScrobble {
 sub getQueue {
 	my $client = shift;
 	
-	my $queue = $prefs->client($client)->get('queue') || [];
+	my $queue;
 	
-	if ( main::SLIM_SERVICE && !ref $queue ) {
-		$queue = from_json( $queue );
+	if ( main::SLIM_SERVICE ) {
+		$queue = SDI::Service::Model::ScrobbleQueue->get( $client->playerData->id );
+	}
+	else {
+		$queue = $prefs->client($client)->get('queue') || [];
 	}
 	
 	return $queue;
@@ -1249,10 +1252,11 @@ sub setQueue {
 	my ( $client, $queue ) = @_;
 	
 	if ( main::SLIM_SERVICE ) {
-		$queue = to_json( $queue );
+		SDI::Service::Model::ScrobbleQueue->set( $client->playerData->id, $queue );
 	}
-	
-	$prefs->client($client)->set( queue => $queue );
+	else {
+		$prefs->client($client)->set( queue => $queue );
+	}
 }
 
 sub infoLoveTrack {
