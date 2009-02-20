@@ -133,15 +133,15 @@ sub dirsFor {
 				my $path2;
 				foreach my $objShare (in $shares) {
 
-					if ($objShare->Name =~ /^music$/i) {
+					# let's be a bit more open for localized versions: musica, Musik, musique...
+					if ($objShare->Name =~ /^musi(?:c|k|que|ca)$/i) {
 						$path = '\\\\' . hostname() . '\\' . $objShare->Name;
 						last;
 					}
-					elsif ($objShare->Path =~ /shares.*?music/i) {
+					elsif ($objShare->Path =~ /shares.*?musi[ckq]/i) {
 						$path = $objShare->Path;
 						last;
 					}
-					# let's be a bit more open for localized versions: musica, Musik, musique...
 					elsif ($objShare->path =~ /musi[ckq]/i) {
 						$path2 = $objShare->Path;
 					}
@@ -608,6 +608,11 @@ sub initUpdate {
 
 		my $share;
 		Win32::NetResource::NetShareGetInfo('software', $share);
+
+		# this is ugly... FR uses a localized share name
+		if (!$share || !$share->{path}) {
+			Win32::NetResource::NetShareGetInfo('logiciel', $share);
+		}
 		
 		if ($share && $share->{path}) {
 			$downloaddir = $share->{path};
