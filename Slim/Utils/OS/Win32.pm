@@ -141,7 +141,8 @@ sub dirsFor {
 						$path = $objShare->Path;
 						last;
 					}
-					elsif ($objShare->path =~ /music/i) {
+					# let's be a bit more open for localized versions: musica, Musik, musique...
+					elsif ($objShare->path =~ /musi[ckq]/i) {
 						$path2 = $objShare->Path;
 					}
 				}
