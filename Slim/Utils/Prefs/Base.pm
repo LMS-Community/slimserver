@@ -105,7 +105,7 @@ sub getFromDB {
 	my $client = Slim::Player::Client::getClient( $class->{clientid} ) || return;
 	
 	# First search the player pref table
-	my @prefs = SDI::Service::Model::Pref->search( {
+	my @prefs = SDI::Service::Model::PlayerPref->search( {
 		player => $client->playerData,
 		name   => $key,
 	} );
@@ -275,13 +275,13 @@ sub set {
 					}
 					
 					if ( ref $new eq 'ARRAY' ) {
-						SDI::Service::Model::Pref->quick_update_array( $client->playerData, $nspref, $new );
+						SDI::Service::Model::PlayerPref->quick_update_array( $client->playerData, $nspref, $new );
 					}
 					elsif ( ref $new eq 'HASH' ) {
-						SDI::Service::Model::Pref->quick_update( $client->playerData, $nspref, 'json:' . to_json( $new ) );
+						SDI::Service::Model::PlayerPref->quick_update( $client->playerData, $nspref, 'json:' . to_json( $new ) );
 					}
 					else {
-						SDI::Service::Model::Pref->quick_update( $client->playerData, $nspref, $new );
+						SDI::Service::Model::PlayerPref->quick_update( $client->playerData, $nspref, $new );
 					}
 				}
 			}
@@ -404,7 +404,7 @@ sub remove {
 		if ( main::SLIM_SERVICE && $class->{clientid} ) {
 			# Remove the pref from the database
 			my $client = Slim::Player::Client::getClient( $class->{clientid} );
-			SDI::Service::Model::Pref->sql_clear_array->execute(
+			SDI::Service::Model::PlayerPref->sql_clear_array->execute(
 				$client->playerData->id,
 				$pref,
 			);
