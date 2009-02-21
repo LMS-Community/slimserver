@@ -3,9 +3,9 @@
 # from        to
 # from1..from2 to
 
-1..124 124
+1..125 125
 
 # future versions may be downgraded to this one
-* 124
+* 125
 
 
