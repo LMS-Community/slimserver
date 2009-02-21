@@ -639,18 +639,21 @@ sub _cliQuery_done {
 					elsif ( $item->{'play'} ) {
 						$url = $item->{'play'};
 					}
+
+					if ($url) {
+
+						# Set metadata about this URL
+						Slim::Music::Info::setRemoteMetadata( $url, {
+							title   => $item->{'name'} || $item->{'title'},
+							ct      => $item->{'mime'},
+							secs    => $item->{'duration'},
+							bitrate => $item->{'bitrate'},
+						} );
+						
+						main::idleStreams();
 					
-					# Set metadata about this URL
-					Slim::Music::Info::setRemoteMetadata( $url, {
-						title   => $item->{'name'} || $item->{'title'},
-						ct      => $item->{'mime'},
-						secs    => $item->{'duration'},
-						bitrate => $item->{'bitrate'},
-					} );
-					
-					main::idleStreams();
-					
-					push @urls, $url;
+						push @urls, $url;
+					}
 				}
 				
 				if ( @urls ) {
