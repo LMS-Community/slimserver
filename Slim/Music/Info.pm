@@ -527,6 +527,8 @@ sub getCurrentTitle {
 sub getStreamDelay {
 	my ( $client, $outputDelayOnly ) = @_;
 	
+	return 0 unless $client->streamingSong();
+	
 	my $bitrate = $client->streamingSong()->streambitrate() || 128000;
 	my $delay   = 0;
 	
