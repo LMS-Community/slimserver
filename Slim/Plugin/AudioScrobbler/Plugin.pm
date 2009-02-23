@@ -113,14 +113,7 @@ sub shutdownPlugin {
 sub condition {
 	my ( $class, $client ) = @_;
 	
-	my $accounts;
-	
-	if ( main::SLIM_SERVICE ) {
-		$accounts = $prefs->client($client)->get('accounts');
-	}
-	else {
-		$accounts = $prefs->get('accounts');
-	}
+	my $accounts = getAccounts($client);
 	
 	if ( ref $accounts eq 'ARRAY' && scalar @{$accounts} ) {
 		return 1;
@@ -142,15 +135,7 @@ sub setMode {
 	
 	my $listRef = [ 0 ];
 	
-	my $accounts = $prefs->get('accounts') || [];
-	
-	if ( main::SLIM_SERVICE ) {
-		$accounts = $prefs->client($client)->get('accounts') || [];
-	
-		if ( !ref $accounts ) {
-			$accounts = from_json( $accounts );
-		}
-	}
+	my $accounts = getAccounts($client);
 	
 	for my $account ( @{$accounts} ) {
 		push @{$listRef}, $account->{username};
@@ -271,15 +256,7 @@ sub handshake {
 		if ( !$params->{username} ) {
 			$params->{username} = $prefs->client($client)->get('account');
 			
-			my $accounts = $prefs->get('accounts') || [];
-			
-			if ( main::SLIM_SERVICE ) {
-				$accounts = $prefs->client($client)->get('accounts') || [];
-			
-				if ( !ref $accounts ) {
-					$accounts = from_json( $accounts );
-				}
-			}
+			my $accounts = getAccounts($client);
 			
 			for my $account ( @{$accounts} ) {
 				if ( $account->{username} eq $params->{username} ) {
@@ -425,6 +402,8 @@ sub newsongCallback {
 	# Check if this player has an account selected
 	return if !$prefs->client($client)->get('account');
 	
+	my $accounts = getAccounts($client);
+	
 	my $enable_scrobbling;
 	
 	if ( main::SLIM_SERVICE ) {
@@ -434,7 +413,7 @@ sub newsongCallback {
 		$enable_scrobbling  = $prefs->get('enable_scrobbling');
 	}
 	
-	return unless $enable_scrobbling;
+	return unless $enable_scrobbling && scalar @{$accounts};
 
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
@@ -1094,7 +1073,7 @@ sub submitLoveTrack {
 	my ( $client, $item ) = @_;
 	
 	my $username = $prefs->client($client)->get('account');
-	my $accounts = $prefs->get('accounts') || [];
+	my $accounts = getAccounts($client);
 	my $password;
 	
 	for my $account ( @{$accounts} ) {
@@ -1233,6 +1212,25 @@ sub canScrobble {
 	return;
 }
 
+sub getAccounts {
+	my $client = shift;
+	
+	my $accounts;
+	
+	if ( main::SLIM_SERVICE ) {
+		$accounts = $prefs->client($client)->get('accounts') || [];
+	
+		if ( !ref $accounts ) {
+			$accounts = from_json( $accounts );
+		}
+	}
+	else {	
+		$accounts = $prefs->get('accounts') || [];
+	}
+	
+	return $accounts;
+}
+
 sub getQueue {
 	my $client = shift;
 	
@@ -1331,7 +1329,7 @@ sub jiveSettingsMenu {
 
 	my $request  = shift;
 	my $client   = $request->client();
-	my $accounts = $prefs->get('accounts') || [];
+	my $accounts = getAccounts($client);
 	my $enabled  = $prefs->get('enable_scrobbling');
 	my $selected = $prefs->client($client)->get('account');
 
