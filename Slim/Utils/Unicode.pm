@@ -661,7 +661,7 @@ sub encodingFromString {
 
 	# Encode::Detect::Detector is mislead to to return Big5 with some characters
 	# In these cases Encode::Guess does a better job... (bug 9553)
-	if (lc($charset) eq 'big5') {
+	if ($charset =~ /^(?:big5|euc-jp|euc-kr|euc-cn|euc-tw)$/i) {
 
 		eval {
 			$charset = Encode::Guess::guess_encoding($_[0])->name;
