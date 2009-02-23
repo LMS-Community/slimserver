@@ -651,7 +651,7 @@ sub init {
 		
 									push @opts, {
 										'name'  => join(' ', @desc),
-										'value' => $x,
+										'value' => (defined $clock && $mode == $clock) ? $clock : $x,
 									};
 									$x++;
 								}
