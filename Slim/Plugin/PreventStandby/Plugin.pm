@@ -16,96 +16,207 @@ package Slim::Plugin::PreventStandby::Plugin;
 #-> Changelog
 #
 # 1.0 - 2006-04-05 - Initial Release
+#
+# 2.0 - 2009-01-03 - Proposed changes by Gordon Harris to address bug 8520:
+#
+#                    http://bugs.slimdevices.com/show_bug.cgi?id=8520
+#
+#                    Added "idletime" feature -- waits at least $idletime number
+#                    of idle player intervals before allowing standby.  Also, is
+#                    "resume aware" -- resets the idle counter on system resume
+#                    from standby or hibernation.
+#
+#       2009-01-12 - Cleaned up some content in strings.txt, added optional check
+#                    power feature to mimic Nigel Burch's proposed patch behavior.
 
 use strict;
 use Win32::API;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
-# how many seconds between checks for playing clients
-my $interval = 60;
+if ( !main::SLIM_SERVICE && !$::noweb ) {
+	require Slim::Plugin::PreventStandby::Settings;
+}
 
-# keep the timer so we can kill it if we want
-my $timer = undef;
 
-# Logger object
+# How many seconds between checks for busy clients..
+# Reduce this value when testing, unless you are very patient.
+use constant INTERVAL => 60;
+
+# time() we last checked for client activity
+my $lastchecktime = time;
+
+# Number of intervals that the cliets have been idle.
+my $hasbeenidle = 0;
+
+
+my $prefs = preferences('plugin.preventstandby');
+
+$prefs->migrate(1, sub {
+	$prefs->set('idletime', Slim::Utils::Prefs::OldPrefs->get('idletime') || 20);
+	$prefs->set('checkpower', Slim::Utils::Prefs::OldPrefs->get('checkpower') || 0);
+	1;
+});
+
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 0, 'high' => 240 }, 'idletime');
+$prefs->setChange(\&idletime_change, 'idletime');
+$prefs->setChange(\&checkpower_change, 'checkpower');
+
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.preventstandby',
 	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 
-# reference to the windows function of same name
-my $SetThreadExecutionState = undef;
-
-sub getFunctions {
-	return '';
-}
 
 sub getDisplayName {
 	return 'PLUGIN_PREVENTSTANDBY';
 }
 
+
+sub initPlugin {
+	
+	if ( !main::SLIM_SERVICE && !$::noweb ) {
+		Slim::Plugin::PreventStandby::Settings->new;
+	}
+
+	if (my $idletime = $prefs->get('idletime')) {
+		$log->debug("System standby now allowed after $idletime minutes of player idle time.")
+	}
+	else {
+		$log->debug("System standby now prohibited.")
+	}
+
+	checkClientActivity();
+}
+
+
 sub checkClientActivity {
+	my $currenttime = time();
 
-	$timer = undef;
-
-	for my $client (Slim::Player::Client::clients()) {
-
-		if ($client->isPlaying()) {
-
-			$log->info("Setting thread execution state");
-
-			if (defined $SetThreadExecutionState) {
-				$SetThreadExecutionState->Call(1);
+	# Reset the idle countdown counter if 1). scanning, 2). firmware updating or playing, or
+	# 3). time-shift (i.e. DST system time change) or we've resumed from standby or hibernation..
+	my $idletime = $prefs->get('idletime');
+	
+	if ($idletime) {
+		
+		if ( Slim::Music::Import->stillScanning() || _hasResumed($currenttime) || _playersBusy() ) {
+			
+			$hasbeenidle = 0;
+			$log->is_debug && $log->debug("Resetting idle counter.    " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
+		}
+		
+		else {
+			
+			$hasbeenidle++;
+			
+			if ($hasbeenidle < $idletime) {
+				$log->is_debug && $log->debug("Incrementing idle counter. " . ($idletime - $hasbeenidle) . " minutes left in allowed idle period.");
 			}
+		}
+	}
 
-			startTimer();
+	my $SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
 
+	# If idletime is set to zero in settings, ALWAYS prevent standby..
+	# Otherwise, only prevent standby if we're still in the idle time-out period..
+	if ( (!$idletime) || $hasbeenidle < $idletime) {
+		
+		if (defined $SetThreadExecutionState) {
+			
+			$log->is_info && $log->info("Preventing System Standby...");
+			$SetThreadExecutionState->Call(1);
+		}
+	}
+	
+	else {
+		$log->is_info && $log->info("Players have been idle for $hasbeenidle minutes. Allowing System Standby...");
+	}
+
+	$lastchecktime = $currenttime;
+	
+	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
+	Slim::Utils::Timers::setTimer(
+		undef, 
+		time + INTERVAL, 
+		\&checkClientActivity
+	) if $SetThreadExecutionState;
+
+	return 1;
+}
+
+sub _playersBusy {
+	
+	my $checkpower = $prefs->get('checkpower');
+	
+	for my $client (Slim::Player::Client::clients()) {
+		
+		if ($checkpower && $client->power()) {
+			$log->is_debug && $log->debug("Player " . $client->name() . " is powered " . ($client->power() ? "on" : "off") . "...");
+			return 1;
+		}
+		
+		if ( $client->isUpgrading() || $client->isPlaying() ) {
+			$log->is_debug && $log->debug("Player " . $client->name() . " is busy...");
 			return 1;
 		}
 	}
-
-	startTimer();
-
 	return 0;
 }
 
-sub startTimer {
+sub _hasResumed {
+	my $currenttime = shift;
 
-	if (!defined $timer && defined $SetThreadExecutionState) {
-
-		$log->info("Starting timer.");
-
-		$timer = Slim::Utils::Timers::setTimer(undef, time + $interval, \&checkClientActivity);
-
-		if (!defined $timer) {
-			$log->error("Starting timer failed!");
-		}
+	# We've resumed if the current time is more than two minutes later than the last check time, or
+	# if the current time is earlier than the last check time (system time change)
+	
+	if ( $currenttime > ($lastchecktime + (INTERVAL * 2)) || $currenttime < $lastchecktime ) {
+		
+		$log->debug("System has resumed...");
+		return 1;
 	}
-
-	return defined($timer);
+	
+	return 0;
 }
 
-sub stopTimer {
 
-	if (defined($timer)) {
+sub idletime_change {
+	my ($pref, $value) = @_;
+	
+	$value ||= 0;
 
-		Slim::Utils::Timers::killSpecific($timer);
-		$timer = undef;
+	$log->debug("Pref $pref changed to $value. Resetting idle counter.");
+
+	# Reset our counter on prefs change..
+	$hasbeenidle = 0;
+
+	if ($value) {
+		$log->debug("System standby now allowed after $value minutes of player idle time.")
+	} else {
+		$log->debug("System standby now prohibited.")
 	}
 }
 
-sub initPlugin {
+sub checkpower_change {
+	my ($pref, $value) = @_;
+	
+	$value ||= 0;
 
-	$SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
+	$log->debug("Pref $pref changed to $value. Resetting idle counter.");
 
-	return startTimer();
+	# Reset our counter on prefs change..
+	$hasbeenidle = 0;
+
+	if ($value) {
+		$log->debug("System standby now prohibited when players are powered on.")
+	}
 }
 
 sub shutdownPlugin {
-	stopTimer();
+	Slim::Utils::Timers::killTimers( undef, \&checkClientActivity );
 }
 
 1;
