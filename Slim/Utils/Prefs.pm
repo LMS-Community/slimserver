@@ -652,7 +652,9 @@ sub init {
 
 	$prefs->setChange( sub {
 		my $client = $_[2] || return;
-		$client->display->renderCache()->{'defaultfont'} = undef;
+		if ( $client->display ) {
+			$client->display->renderCache()->{'defaultfont'} = undef;
+		}
 	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
 
 	$prefs->setChange( sub {
