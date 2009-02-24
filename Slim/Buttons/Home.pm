@@ -865,9 +865,7 @@ sub updateMenu {
 			$hasSpecialMenu = 1;
 		}
 		
-		my $disabledPref  
-			 = $prefs->client($client)->get('disabledMenus')
-			|| $prefs->client($client)->set( 'disabledMenus', [] );
+		my $disabledPref = $prefs->client($client)->get('disabledMenus') || [];
 	
 		if ( !ref $disabledPref ) {
 			$disabledPref = [ $disabledPref ];
