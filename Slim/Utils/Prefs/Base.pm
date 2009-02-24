@@ -370,7 +370,12 @@ sub bulkSet {
 	}
 	
 	for my $func ( @handlers ) {
-		$func->();
+		eval { $func->(); };
+		if ( $@ && $log->is_debug ) {
+			my $handler = Slim::Utils::PerlRunTime::realNameForCodeRef($func);
+			$log->debug( "Error running bulkSet change handler $handler: $@" );
+			Slim::Utils::Misc::bt();
+		}
 	}
 }
 
