@@ -293,20 +293,10 @@ sub loadStrings {
 	my $language   = '';
 	my $stringname = '';
 
-	my $file = 'strings.txt';
+	# server string file
+	my $path = $os->dirsFor('strings');
+	my $file = catdir($path, 'strings.txt');
 	
-	if (Slim::Utils::OSDetect::isWindows()) {
-		require Win32::TieRegistry;
-		$Win32::TieRegistry::Registry->Delimiter('/');
-
-		my $path = $Win32::TieRegistry::Registry->{"LMachine/Software/Logitech/SqueezeCenter/Path"};
-
-		if (defined $path) {
-			$path = catdir($path, 'server', $file);
-			$file = $path if -f $path;
-		}
-	}
-
 	open(STRINGS, "<:utf8", $file) || do {
 		die "Couldn't open $file - FATAL!";
 	};
