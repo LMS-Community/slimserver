@@ -297,6 +297,12 @@ sub new {
 	);
 	
 	$clientHash{$id} = $client;
+	
+	# On SN, we need to fully load all the player's prefs from the database
+	# before going further
+	if ( main::SLIM_SERVICE ) {
+		$client->loadPrefs();
+	}
 
 	$client->controller(Slim::Player::StreamingController->new($client));
 

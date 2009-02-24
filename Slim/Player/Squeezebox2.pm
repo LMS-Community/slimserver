@@ -903,7 +903,7 @@ sub setPlayerSetting {
 
 	# Only send a setd packet to the player if it is stopped and we are not
 	# still waiting for a response to a previous setd packet for this pref
-	if ( $client->isStopped() && !($status & SETD_WAITING) ) {
+	if ( $client->controller() && $client->isStopped() && !($status & SETD_WAITING) ) {
 
 		my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
 		$client->sendFrame('setd', \$data);

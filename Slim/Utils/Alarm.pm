@@ -1358,9 +1358,9 @@ sub setRTCAlarm {
 	my $class = shift;
 	my $client = shift;
 
-	$log->debug('Asked to set rtc alarm for ' . $client->name);
+	return if !$client->hasRTCAlarm;
 
-	return if ! $client->hasRTCAlarm;
+	$log->is_debug && $log->debug( 'Asked to set rtc alarm for ' . $client->name );
 
 	# Clear any existing timer to call this sub
 	my $timerRef = $client->alarmData->{_rtcTimerRef};

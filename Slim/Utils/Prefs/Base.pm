@@ -111,17 +111,6 @@ sub getFromDB {
 	} );
 	
 	my $count = scalar @prefs;
-
-	if ( !$count ) {
-		# If not found in player prefs, search user prefs
-		@prefs = SDI::Service::Model::UserPref->search( {
-			user => $client->playerData->userid,
-			name => $key
-		} );
-		
-		$count = scalar @prefs;
-	}
-	
 	my $value;
 	
 	if ( $count == 1 ) {
@@ -321,6 +310,70 @@ sub set {
 	}
 }
 
+# SLIM_SERVICE only, the bulkSet method
+# sets all prefs passed in first, then runs all onchange handlers
+# This avoids extra db queries when a change handler uses a pref not yet loaded
+
+sub bulkSet {
+	my ( $class, $prefs ) = @_;
+	
+	my $root = $class->_root;
+	
+	my @handlers;
+	
+	my $set = sub {
+		my ( $pref, $new ) = @_;
+		
+		my $valid = $class->validate($pref, $new);
+		
+		if ( $valid ) {
+			my $old = $class->{prefs}->{ $pref };
+			
+			# If old pref was an array but new is not, force it to stay an array
+			if ( ref $old eq 'ARRAY' && !ref $new ) {
+				$new = [ $new ];
+			}
+			
+			$class->{prefs}->{ $pref } = $new;
+			
+			# Return a change handler callback if necessary
+			if ( !defined $old || !defined $new || $old ne $new || ref $new ) {
+				if ( my $obj = $class->_obj ) {
+					my $change = $root->{onchange}->{ $pref };
+					for my $func ( @{$change} ) {
+						return sub {
+							$log->is_debug && $log->debug(
+								'executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func)
+							);
+							
+							$func->( $pref, $new, $obj );
+						};
+					}
+				}
+			}
+		}
+		
+		return;
+	};
+
+	for my $key ( keys %{$prefs} ) {
+		my $cb;
+		if ( scalar @{ $prefs->{$key} } == 1 ) {
+			# scalar pref
+			$cb = $set->( $key, $prefs->{$key}->[0] );
+		}
+		else {
+			# array pref
+			$cb = $set->( $key, $prefs->{$key} );
+		}
+		push @handlers, $cb if $cb;
+	}
+	
+	for my $func ( @handlers ) {
+		$func->();
+	}
+}
+
 sub _obj {}
 
 =head2 init( Hash )
@@ -443,20 +496,6 @@ sub clear {
 	
 	for my $pref ( keys %{ $class->{prefs} } ) {
 		delete $class->{prefs}->{$pref};
-	}
-}
-
-=head2 loadHash ( $prefs )
-
-Load all prefs at once from a hashref. SLIM_SERVICE only.
-
-=cut
-
-sub loadHash {
-	my ( $class, $hash ) = @_;
-	
-	while ( my ($pref, $value) = each %{$hash} ) {
-		$class->{prefs}->{ $pref } = $value;
 	}
 }
 
