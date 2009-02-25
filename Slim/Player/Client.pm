@@ -173,7 +173,7 @@ sub new {
 		uuid                    => $uuid,
 
 		# upgrade management
-		revision                => undef,
+		revision                => $rev,
 		_needsUpgrade           => undef,
 		isUpgrading             => 0,
 
