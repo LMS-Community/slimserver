@@ -273,6 +273,8 @@ sub init_fw_done {
 		revision => $rev,
 		file     => $fw_file,
 	};
+
+	$log->debug("downloaded $ver $rev for $model - $fw_file");
 	
 	Slim::Web::HTTP::addRawDownload("^firmware/${model}.*\.bin", $fw_file, 'binary');
 
@@ -353,7 +355,10 @@ if there is no firmware downloaded.
 sub need_upgrade {
 	my ( $class, $current, $model ) = @_;
 	
-	return unless $firmwares->{$model} && $firmwares->{$model}->{file} && $firmwares->{$model}->{version};
+	unless ($firmwares->{$model} && $firmwares->{$model}->{file} && $firmwares->{$model}->{version}) {
+		$log->debug("no firmware for $model - can't upgrade");
+		return;
+	}
 	
 	my ($cur_version, $cur_rev) = $current =~ m/^([^ ]+)\sr(\d+)/;
 	
