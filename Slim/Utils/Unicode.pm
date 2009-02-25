@@ -664,8 +664,22 @@ sub encodingFromString {
 	if ($charset =~ /^(?:big5|euc-jp|euc-kr|euc-cn|euc-tw)$/i) {
 
 		eval {
-			$charset = Encode::Guess::guess_encoding($_[0])->name;
+			$charset = Encode::Guess::guess_encoding($_[0]);
+			$charset = $charset->name;
 		};
+
+		# Bug 10671: sometimes Encode::Guess returns ambiguous results like "ascii or utf8"
+		if ($@) {
+			logError($@);
+
+			if ($charset =~ /utf8/i) {
+				$charset = 'utf8';
+				logError("Falling back to: $charset");
+			}
+			else {
+				$charset = '';
+			}
+		}
 	}
 
 	$charset =~ s/utf-8/utf8/i;
