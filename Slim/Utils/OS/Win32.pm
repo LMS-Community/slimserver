@@ -147,11 +147,15 @@ sub dirsFor {
 					}
 				}
 				
+				undef $shares;
+				
 				# we didn't find x:\shares\music, but some other share with music in the path
 				if ($path2 && !$path) {
 					$path = $path2;
 				}
-			}			
+			}
+			
+			undef $objWMI;
 		}
 
 		$path = Win32::GetFolderPath(Win32::CSIDL_MYMUSIC) unless $path;
