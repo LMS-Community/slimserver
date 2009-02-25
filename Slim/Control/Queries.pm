@@ -4722,7 +4722,6 @@ sub _jiveAddToFavorites {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'favorites' });
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/favorites.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
