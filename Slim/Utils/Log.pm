@@ -132,7 +132,7 @@ sub init {
 	}
 	
 	# Make sure recreate option is set if user has an existing log.conf
-	if ( !Slim::Utils::OSDetect::isWindows() ) {
+	if ( !Slim::Utils::OSDetect::isWindows() && !$ENV{NYTPROF} ) {
 		$config{'log4perl.appender.server.recreate'}              = 1;
 		$config{'log4perl.appender.server.recreate_check_signal'} = 'USR1';
 	}
@@ -928,7 +928,7 @@ sub _defaultAppenders {
 		},
 	);
 
-	if ( !Slim::Utils::OSDetect::isWindows() ) {
+	if ( !Slim::Utils::OSDetect::isWindows() && !$ENV{NYTPROF} ) {
 		$defaultAppenders{server}->{recreate}              = 1;
 		$defaultAppenders{server}->{recreate_check_signal} = 'USR1';
 	}
