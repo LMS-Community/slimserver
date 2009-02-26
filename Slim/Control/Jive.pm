@@ -2319,7 +2319,7 @@ sub firmwareUpgradeQuery {
 	}
 
 	my $firmwareVersion = $request->getParam('firmwareVersion');
-	my $model           = $request->getParam('machine');
+	my $model           = $request->getParam('machine') || 'jive';
 	
 	# always send the upgrade url this is also used if the user opts to upgrade
 	if ( my $url = Slim::Utils::Firmware->url($model) ) {
