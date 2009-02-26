@@ -122,7 +122,13 @@ sub init {
 		AutoCommit    => 1,
 		PrintError    => 0,
 		Taint         => 1,
-		on_connect_do => main::SLIM_SERVICE ? [] : [ 'SET NAMES UTF8' ],
+		on_connect_do => main::SLIM_SERVICE
+			? [
+				'PRAGMA synchronous = OFF',
+				'PRAGMA journal_mode = MEMORY',
+				'PRAGMA temp_store = MEMORY',
+			]
+			: [ 'SET NAMES UTF8' ],
 	}) or do {
 
 		logBacktrace("Couldn't connect to database! Fatal error: [$!] Exiting!");
