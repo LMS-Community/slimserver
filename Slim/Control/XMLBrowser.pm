@@ -26,12 +26,14 @@ use URI::Escape qw(uri_unescape);
 
 use Slim::Control::Request;
 use Slim::Formats::XML;
+use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 #use Slim::Utils::Timers;
 
-# XXXX - not the best category, but better than d_plugins, which is what it was.
-my $log = logger('control.queries');
+use constant CACHE_TIME => 3600; # how long to cache browse sessions
+
+my $log = logger('formats.xml');
 
 sub cliQuery {
 	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
@@ -89,6 +91,7 @@ sub cliQuery {
 		$log->debug("Feed is already XML data!");
 		_cliQuery_done( $feed, {
 			'request'    => $request,
+			'client'     => $request->client,
 			'url'        => $feed->{'url'},
 			'query'      => $query,
 			'expires'    => $expires,
@@ -97,16 +100,47 @@ sub cliQuery {
 		return;
 	}
 	
+	my $itemId = $request->getParam('item_id');
+	
 	if ( $feed =~ /{QUERY}/ ) {
 		# Support top-level search
 		my $query = $request->getParam('search');
 		
 		if ( !$query ) {
-			my $itemId = $request->getParam('item_id');
 			($query) = $itemId =~ m/^_([^.]+)/;
 		}
 		
 		$feed =~ s/{QUERY}/$query/g;
+	}
+	
+	# Lookup this browse session in cache if user is browsing below top-level
+	# This avoids repated lookups to drill down the menu
+	if ( $itemId && $itemId =~ /^([a-f0-9]{8})/ ) {
+		my $sid = $1;
+		
+		# Do not use cache if this is a search query
+		if ( $request->getParam('search') ) {
+			# Generate a new sid
+			my $newsid = Slim::Utils::Misc::createUUID();
+			
+			$itemId =~ s/^$sid/$newsid/;
+			$request->addParam( item_id => $itemId );
+		}
+		
+		my $cache = Slim::Utils::Cache->new;
+		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
+			$log->is_debug && $log->debug( "Using cached session $sid" );
+				
+			_cliQuery_done( $cached, {
+				'request' => $request,
+				'client'  => $request->client,
+				'url'     => $feed,
+				'query'   => $query,
+				'expires' => $expires,
+				'timeout' => 35,
+			} );
+			return;
+		}
 	}
 
 	$log->debug("Asynchronously fetching feed $feed - will be back!");
@@ -139,6 +173,8 @@ sub _cliQuery_done {
 #	my $forceTitle = $params->{'forceTitle'};
 	my $window;
 	my $textArea;
+	
+	my $cache = Slim::Utils::Cache->new;
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
 	
@@ -162,14 +198,27 @@ sub _cliQuery_done {
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
 	
+	# Session ID for this browse session
+ 	my $sid;
+	
 	# select the proper list of items
 	my @index = ();
 
-	if (defined($item_id)) {
-		
-		$log->debug("Splitting $item_id");
-
+	if ( defined $item_id && length($item_id) ) {
 		@index = split /\./, $item_id;
+		
+		if ( length( $index[0] ) >= 8 ) {
+			# Session ID is first element in index
+			$sid = shift @index;
+		}
+	}
+	else {
+		# Create a new session ID, unless the list has coderefs
+		my $refs = scalar grep { ref $_->{url} } @{ $feed->{items} };
+		
+		if ( !$refs ) {
+			$sid = Slim::Utils::Misc::createUUID();
+		}
 	}
 	
 	my $subFeed = $feed;
@@ -177,11 +226,23 @@ sub _cliQuery_done {
 #	use Data::Dumper;
 #	print Data::Dumper::Dumper($subFeed);
 	
-	my @crumbIndex = ();
+	my @crumbIndex = $sid ? ( $sid ) : ();
 	
 	# Add top-level search to index
 	if ( $search && !scalar @index ) {
-		push @crumbIndex, '_' . $search;
+		if ( $sid ) {
+			@crumbIndex = ( $sid . '_' . $search );
+		}
+		else {
+			@crumbIndex = ( '_' . $search );
+		}
+	}
+	
+	if ( $sid ) {
+		# Cache the feed structure for this session
+		$log->is_debug && $log->debug( "Caching session $sid" );
+		
+		$cache->set( "xmlbrowser_$sid", $feed, CACHE_TIME );
 	}
 	
 	if ( my $levels = scalar @index ) {
@@ -189,9 +250,6 @@ sub _cliQuery_done {
 		# descend to the selected item
 		my $depth = 0;
 		for my $i ( @index ) {
-			# Ignore top-level search queries
-			next if $i =~ /^_/;
-			
 			$log->debug("Considering item $i");
 
 			$depth++;
@@ -583,11 +641,11 @@ sub _cliQuery_done {
 
 	if ($isPlaylistCmd) {
 
-		$log->info("Play an item.");
-
 		# get our parameters
 		my $client = $request->client();
 		my $method = $request->getParam('_method');
+
+		$log->info("Play an item ($method).");
 
 		if ($client && $method =~ /^(add|addall|play|playall|insert|load)$/i) {
 			# single item
@@ -1026,6 +1084,12 @@ sub _cliQuerySubFeed_done {
 	my $subFeed = $parent;
 	
 	for my $i ( @{ $params->{'currentIndex'} } ) {
+		# Skip sid and sid + top-level search query
+		next if length($i) >= 8 && $i =~ /^[a-f0-9]{8}/;
+		
+		# If an index contains a search query, strip it out
+		$i =~ s/[^\d]//g;
+		
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
