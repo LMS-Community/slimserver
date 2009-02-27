@@ -115,12 +115,21 @@ sub handleWebIndex {
 	if ( $index && $index =~ /^([a-f0-9]{8})/ ) {
 		my $sid = $1;
 		
-		my $cache = Slim::Utils::Cache->new;
-		if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
-			$log->is_debug && $log->debug( "Using cached session $sid" );
+		# Do not use cache if this is a search query
+		if ( $asyncArgs->[1]->{q} ) {
+			# Generate a new sid
+			my $newsid = Slim::Utils::Misc::createUUID();
+			
+			$params->{args}->[1]->{index} =~ s/^$sid/$newsid/;
+		}
+		else {
+			my $cache = Slim::Utils::Cache->new;
+			if ( my $cached = $cache->get("xmlbrowser_$sid") ) {
+				$log->is_debug && $log->debug( "Using cached session $sid" );
 				
-			handleFeed( $cached, $params );
-			return;
+				handleFeed( $cached, $params );
+				return;
+			}
 		}
 	}
 
