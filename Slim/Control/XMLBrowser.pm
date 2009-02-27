@@ -957,11 +957,13 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
 							$hasImage = 1;
+							$request->addResultLoop($loopname, $cnt, 'window', { 'windowStyle' => 'icon_list' });
 						}
 
 						if ( $item->{icon} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon' . ($item->{icon} =~ /^http:/ ? '' : '-id'), $item->{icon} );
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
+							$request->addResultLoop($loopname, $cnt, 'window', { 'windowStyle' => 'icon_list' });
 							$hasImage = 1;
 						}
 
@@ -1051,6 +1053,7 @@ sub _cliQuery_done {
 
 			# Change window menuStyle to album if any images are in the list
 			if ( $hasImage ) {
+				$window->{'windowStyle'} = 'icon_list';
 				$window->{'menuStyle'} = 'album';
 			}
 
