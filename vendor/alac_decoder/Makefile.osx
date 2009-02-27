@@ -1,0 +1,21 @@
+CC=gcc
+RM=rm -f
+CFLAGS=-ggdb -O3 -W -Wall -arch i386 -arch ppc
+
+C_SOURCES=alac.c \
+          demux.c \
+          main.c \
+          stream.c \
+          wavwriter.c
+
+OBJECTS=$(C_SOURCES:.c=.o)
+
+alac: $(OBJECTS)
+	$(CC) -arch i386 -arch ppc -o alac $(OBJECTS)
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+clean:
+	rm -f $(OBJECTS) *.*~ alac
+
