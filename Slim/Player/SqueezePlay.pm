@@ -36,7 +36,7 @@ BEGIN {
 		maxSupportedSamplerate
 		accuratePlayPoints
 		firmware
-		canRhapsody
+		canDecodeRhapsody
 	));
 }
 
