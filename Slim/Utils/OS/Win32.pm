@@ -174,14 +174,14 @@ sub dirsFor {
 			if (defined $swKey) {
 				if (!($path = $swKey->{'My Music'})) {
 					if ($path = $swKey->{'Personal'}) {
-						$path = $path . '/My Music';
+						$path = catdir($path, 'My Music');
 					}
 				}
 			}
 		}
 
 		if ($path && $dir eq 'playlists') {
-			$path .= '/Playlists';
+			$path = catdir($path, 'Playlists');
 		}
 
 		push @dirs, $path;
