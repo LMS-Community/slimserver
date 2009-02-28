@@ -90,7 +90,7 @@ purge servers from the list when they haven't been discovered in two poll cycles
 sub _purge_server_list {
 	foreach my $server (keys %{$server_list}) {
 		
-		if ($server_list->{$server}->{timestamp} < time() + (2 x POLL_INTERVAL)) {
+		if ($server_list->{$server}->{timestamp} < time() - (2 * POLL_INTERVAL)) {
 			
 			delete $server_list->{$server};
 		}
