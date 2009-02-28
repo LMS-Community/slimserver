@@ -238,6 +238,14 @@ sub getNextTrack {
 		}
 	}
 	
+	foreach ($client->syncGroupActiveMembers()) {
+		if (!$_->canDecodeRhapsody()) {
+			$errorCb->('PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED',
+				sprintf('%s(%s)', $_->name(), $_->model()));
+			return;
+		}
+	}
+	
 	my $params = {
 		song      => $song,
 		url       => $url,

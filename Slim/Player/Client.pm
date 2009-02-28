@@ -1396,4 +1396,6 @@ sub maxSupportedSamplerate {
 	return 48000;
 }
 
+sub canDecodeRhapsody { 0 };
+
 1;

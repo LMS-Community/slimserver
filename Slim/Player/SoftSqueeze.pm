@@ -94,6 +94,8 @@ sub hasLineIn() {
 	return 0;
 }
 
+sub canDecodeRhapsody { 0 };
+
 sub canDirectStream {
 	my $client = shift;
 	my $url = shift;

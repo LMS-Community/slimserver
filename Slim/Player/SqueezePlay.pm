@@ -36,6 +36,7 @@ BEGIN {
 		maxSupportedSamplerate
 		accuratePlayPoints
 		firmware
+		canRhapsody
 	));
 }
 
@@ -51,6 +52,7 @@ sub new {
 		maxSupportedSamplerate  => 48000,
 		accuratePlayPoints      => 0,
 		firmware                => 0,
+		canDecodeRhapsody       => 0,
 	);
 
 	return $client;
@@ -64,6 +66,7 @@ my %CapabilitiesMap = (
 	MaxSampleRate           => 'maxSupportedSamplerate',
 	AccuratePlayPoints      => 'accuratePlayPoints',
 	Firmware                => 'firmware',
+	Rhap                    => 'canDecodeRhapsody',
 
 	# deprecated
 	model                   => '_model',
@@ -93,10 +96,12 @@ sub init {
 			if ($cap =~ /^[a-z][a-z0-9]{1,3}$/) {
 				push(@formats, $cap);
 			} else {
-				my $value = 1;
+				my $value;
 				my $vcap;
 				if (($vcap, $value) = split(/=/, $cap)) {
 					$cap = $vcap;
+				} else {
+					$value = 1;
 				}
 				
 				if (defined($CapabilitiesMap{$cap})) {

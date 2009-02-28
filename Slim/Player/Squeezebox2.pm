@@ -79,6 +79,7 @@ sub minTreble { 50 };
 sub maxPitch { 100 };
 sub minPitch { 100 };
 sub maxTransitionInterval { 10 };
+sub canDecodeRhapsody { 1 };
 
 sub model {
 	my $client       = shift;
