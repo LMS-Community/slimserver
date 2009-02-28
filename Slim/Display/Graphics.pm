@@ -110,7 +110,7 @@ sub render {
 	my $client = $display->client;
 
 	if (ref $parts ne 'HASH') {
-		logError("bad lines function - non hash based display formats are depreciated");
+		logError("bad lines function - non hash based display formats are deprecated");
 	} elsif (!exists($parts->{screen1}) &&
 		(exists($parts->{line1}) || exists($parts->{line2}) || exists($parts->{center1}) || exists($parts->{center2})) ) {
 		# Backwards compatibility with 6.2 display hash
