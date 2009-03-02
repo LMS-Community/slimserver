@@ -17,9 +17,9 @@ sub new {
 		undef,
 		-1,
 		$args->{title},
-		[50, 50],
-		[500, Slim::Utils::OSDetect::isWindows() ? 255 : 280],
-		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU,
+		[-1, -1],
+		[570, 550],
+		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		$args->{title},
 	);
 
@@ -33,9 +33,61 @@ sub new {
 		-1, 
 	);
 
+	my $notebook = Wx::Notebook->new(
+		$panel,
+		-1,
+		[-1, -1],
+		[-1, -1],
+	);
+	
+#	$notebook->AddPage(_settingsPage($notebook, $args), "Settings", 1);
+	$notebook->AddPage(_maintenancePage($notebook, $args, $self), "Maintenance", 1);
+#	$notebook->AddPage(_statusPage($notebook, $args), "Information", 1);
+	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
+	$mainSizer->Add($notebook, 1, wxRIGHT | wxBOTTOM | wxLEFT | wxGROW, 10);
+	
+	my $btnsizer = Wx::StdDialogButtonSizer->new();
+
+	my $btnOk = Wx::Button->new( $panel, wxID_OK, $args->{ok} );
+	EVT_BUTTON( $self, $btnOk, sub {
+		# Save settings & whatever
+		$_[0]->Destroy;
+	} );
+	$btnsizer->SetAffirmativeButton($btnOk);
+	
+	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, $args->{cancel} );
+	EVT_BUTTON( $self, $btnCancel, sub {
+		$_[0]->Destroy;
+	} );
+	$btnsizer->SetCancelButton($btnCancel);
+
+	$btnsizer->Realize();
+
+	$mainSizer->Add($btnsizer, 0, wxALL | wxALIGN_RIGHT, 5);
+
+	$panel->SetSizer($mainSizer);	
+
+	return $self;
+}
+
+sub _settingsPage {
+	my ($parent, $args) = @_;
+	
+	my $panel = Wx::Panel->new($parent, -1);
+	
+	return $panel;
+}
+
+sub _maintenancePage {
+	my ($parent, $args, $self) = @_;
+	
+	my $panel = Wx::Panel->new($parent, -1);
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
 	my $label = Wx::StaticText->new($panel, -1, $args->{desc});
-	$mainSizer->Add($label, 0, wxTOP | wxLEFT, 15);
+	$mainSizer->Add($label, 0, wxALL, 5);
 
 	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
 	my $options = $args->{options};
@@ -45,33 +97,39 @@ sub new {
 		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP, $_->{margin} || 5 );
 	}
 
-	$mainSizer->Add($cbSizer, 0, wxTOP | wxLEFT, 15);
-
+	$mainSizer->Add($cbSizer, 1, wxALL, 5);
 
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
 	my $btnCleanup = Wx::Button->new( $panel, -1, $args->{cleanup} );
 	EVT_BUTTON( $self, $btnCleanup, sub {
-		OnClick(@_, $args);
+		OnCleanupClick(@_, $args);
 	} );
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
-	my $btnCancel = Wx::Button->new( $panel, -1, $args->{cancel} );
-	EVT_BUTTON( $self, $btnCancel, sub {
-		$self->Destroy();
-	} );
-	$btnsizer->SetCancelButton($btnCancel);
-
 	$btnsizer->Realize();
 
-	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 20);
+	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 5);
 	
 	$panel->SetSizer($mainSizer);
 
-	return $self;
+	return $panel;
 }
 
-sub OnClick {
+sub _statusPage {
+	my ($parent, $args) = @_;
+	
+	my $panel = Wx::Panel->new($parent, -1);
+
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
+	my $label = Wx::StaticText->new($panel, -1, "Number of SBs, player information\nversion, computer name, IP address, http port\nLibrary info");
+	$mainSizer->Add($label, 0, wxALL, 5);
+	
+	return $panel;
+}
+
+sub OnCleanupClick {
 	my( $self, $event, $args ) = @_;
 
 	my $params = {};
@@ -91,8 +149,6 @@ sub OnClick {
 		my $msg = Wx::MessageDialog->new($self, $args->{msg}, $args->{msgCap}, wxOK | wxICON_INFORMATION);
 		$msg->ShowModal();
 	}
-
-	$self->Destroy();
 }
 
 

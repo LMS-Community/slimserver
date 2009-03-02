@@ -82,6 +82,7 @@ sub main {
 				running  => $isRunning ? string('CLEANUP_PLEASE_STOP_SC') : undef,
 				title    => string('CLEANUP_TITLE'),
 				desc     => string('CLEANUP_DESC'),
+				ok       => string('OK'),
 				cancel   => string('CANCEL'),
 				cleanup  => string('CLEANUP_DO'),
 				options  => options(),
