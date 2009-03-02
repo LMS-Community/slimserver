@@ -147,11 +147,18 @@ sub dirsFor {
 			
 	} elsif ($dir eq 'music') {
 
-		push @dirs, catdir($ENV{'HOME'}, '/Music');
+		my $musicDir = catdir($ENV{'HOME'}, 'Music');
+
+		# bug 1361 expand music folder if it's an alias, or SC won't start
+		if ($class->isMacAlias($musicDir)) {
+			$musicDir = $class->pathFromMacAlias($musicDir);
+		}
+
+		push @dirs, $musicDir;
 
 	} elsif ($dir eq 'playlists') {
-
-		push @dirs, catdir($ENV{'HOME'}, '/Music/Playlists');
+		
+		push @dirs, catdir($class->dirsFor('music'), 'Playlists');
 
 	# we don't want these values to return a value
 	} elsif ($dir =~ /^(?:libpath|mysql-language)$/) {
