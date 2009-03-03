@@ -4,7 +4,6 @@ package SFrame;
 use strict;
 use base 'Wx::Frame';
 
-use File::Spec::Functions;
 use LWP::Simple;
 use LWP::UserAgent;
 use JSON::XS qw(to_json from_json);
@@ -13,6 +12,7 @@ use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 use Wx::Html;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Light;
 
 my %checkboxes;
 
@@ -23,11 +23,11 @@ sub new {
 	my $self = $ref->SUPER::new(
 		undef,
 		-1,
-		$args->{title},
+		string('CLEANUP_TITLE'),
 		[-1, -1],
 		[570, 550],
 		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
-		$args->{title},
+		string('CLEANUP_TITLE'),
 	);
 
 	my $panel = Wx::Panel->new( 
@@ -42,10 +42,10 @@ sub new {
 		[-1, -1],
 	);
 	
-	$notebook->AddPage(_settingsPage($notebook, $args), "Settings", 1);
-	$notebook->AddPage(_maintenancePage($notebook, $args, $self), "Maintenance", 1);
+	$notebook->AddPage(settingsPage($notebook, $args), "Settings", 1);
+	$notebook->AddPage(maintenancePage($notebook, $args, $self), "Maintenance", 1);
+	$notebook->AddPage(statusPage($notebook, $args), "Information");
 	
-	$notebook->AddPage(_statusPage($notebook, $args), "Information");
 	EVT_NOTEBOOK_PAGE_CHANGED( $self, $notebook, sub {
 		my( $self, $event ) = @_;
 
@@ -68,14 +68,14 @@ sub new {
 	
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
-	my $btnOk = Wx::Button->new( $panel, wxID_OK, $args->{ok} );
+	my $btnOk = Wx::Button->new( $panel, wxID_OK, string('OK') );
 	EVT_BUTTON( $self, $btnOk, sub {
 		# Save settings & whatever
 		$_[0]->Destroy;
 	} );
 	$btnsizer->SetAffirmativeButton($btnOk);
 	
-	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, $args->{cancel} );
+	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
 	EVT_BUTTON( $self, $btnCancel, sub {
 		$_[0]->Destroy;
 	} );
@@ -90,7 +90,7 @@ sub new {
 	return $self;
 }
 
-sub _settingsPage {
+sub settingsPage {
 	my ($parent, $args) = @_;
 	
 	my $panel = Wx::Panel->new($parent, -1);
@@ -103,13 +103,13 @@ sub _settingsPage {
 	return $panel;
 }
 
-sub _maintenancePage {
+sub maintenancePage {
 	my ($parent, $args, $self) = @_;
 	
 	my $panel = Wx::Panel->new($parent, -1);
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	
-	my $label = Wx::StaticText->new($panel, -1, $args->{desc});
+	my $label = Wx::StaticText->new($panel, -1, string('CLEANUP_DESC'));
 	$mainSizer->Add($label, 0, wxALL, 5);
 
 	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
@@ -124,9 +124,27 @@ sub _maintenancePage {
 
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
-	my $btnCleanup = Wx::Button->new( $panel, -1, $args->{cleanup} );
+	my $btnCleanup = Wx::Button->new( $panel, -1, string('CLEANUP_DO') );
 	EVT_BUTTON( $self, $btnCleanup, sub {
-		OnCleanupClick(@_, $args);
+		my( $self, $event ) = @_;
+	
+		my $params = {};
+		my $selected = 0;
+		
+		foreach (@{ $args->{options} }) {
+			$params->{$_->{name}} = $checkboxes{$_->{name}}->GetValue();
+			$selected ||= $checkboxes{$_->{name}}->GetValue();
+		}
+	
+		if ($selected) {
+			Wx::BusyCursor->new();
+			
+			my $folders = $args->{folderCB}($params);
+			$args->{cleanCB}($folders);
+			
+			my $msg = Wx::MessageDialog->new($self, $args->{msg}, $args->{msgCap}, wxOK | wxICON_INFORMATION);
+			$msg->ShowModal();
+		}
 	} );
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
@@ -140,7 +158,7 @@ sub _maintenancePage {
 }
 
 # basically display Settings/Information - either new, blank skin, or CLI query result
-sub _statusPage {
+sub statusPage {
 	my ($parent, $args) = @_;
 	
 	my $panel = Wx::Panel->new($parent, -1);
@@ -162,79 +180,28 @@ sub _statusPage {
 	return $panel;
 }
 
-sub OnCleanupClick {
-	my( $self, $event, $args ) = @_;
-
-	my $params = {};
-	my $selected = 0;
-	
-	foreach (@{ $args->{options} }) {
-		$params->{$_->{name}} = $checkboxes{$_->{name}}->GetValue();
-		$selected ||= $checkboxes{$_->{name}}->GetValue();
-	}
-
-	if ($selected) {
-		Wx::BusyCursor->new();
-		
-		my $folders = $args->{folderCB}($params);
-		$args->{cleanCB}($folders);
-		
-		my $msg = Wx::MessageDialog->new($self, $args->{msg}, $args->{msgCap}, wxOK | wxICON_INFORMATION);
-		$msg->ShowModal();
-	}
-}
-
-sub _serverRequest {
-	my $postdata = shift;
-
-#	my $ua = LWP::UserAgent->new();
-	my $req = HTTP::Request->new( 
-		'POST',
-		'http://192.168.0.70:9000/jsonrpc.js',
-	);
-	$req->header('Content-Type' => 'text/plain');
-
-	$req->content($postdata);	
-
-	my $response = LWP::UserAgent->new()->request($req);
-	
-	my $content = $response->decoded_content;
-	
-	return from_json($content) if $content;
-}
+#sub _serverRequest {
+#	my $postdata = shift;
+#
+#	my $req = HTTP::Request->new( 
+#		'POST',
+#		'http://192.168.0.70:9000/jsonrpc.js',
+#	);
+#	$req->header('Content-Type' => 'text/plain');
+#
+#	$req->content($postdata);	
+#
+#	my $response = LWP::UserAgent->new()->request($req);
+#	
+#	my $content = $response->decoded_content;
+#	
+#	return from_json($content) if $content;
+#}
 
 sub getBaseUrl {
-	return 'http://localhost:' . getPref('httpport');
+	return 'http://127.0.0.1:' . getPref('httpport');
 }
 
-# Read pref from the server preference file - lighter weight than loading YAML
-sub getPref {
-	my $pref = shift;
-
-	my $os = Slim::Utils::OSDetect->getOS();
-	my $prefFile = catdir( $os->dirsFor('prefs'), 'server.prefs' );
-
-	my $ret;
-
-	if (-r $prefFile) {
-
-		if (open(PREF, $prefFile)) {
-
-			while (<PREF>) {
-			
-				# read YAML (server) and old style prefs (installer)
-				if (/^$pref(:| \=)? (.+)$/) {
-					$ret = $2;
-					last;
-				}
-			}
-
-			close(PREF);
-		}
-	}
-
-	return $ret;
-}
 
 
 package Slim::Utils::CleanupGUI;
@@ -247,7 +214,7 @@ my $args;
 sub new {
 	my $self = shift;
 	$args = shift;
-
+	
 	$self->SUPER::new();
 }
 

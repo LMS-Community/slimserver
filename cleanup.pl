@@ -19,6 +19,13 @@ use Getopt::Long;
 use Socket;
 use utf8;
 
+use constant SLIM_SERVICE => 0;
+use constant SCANNER => 0;
+
+use Slim::bootstrap;
+use Slim::Utils::OSDetect;
+use Slim::Utils::Light;
+
 my $useWx = eval {
 	require Wx;
 	require Wx::Event;
@@ -28,25 +35,13 @@ my $useWx = eval {
 	return $^O !~ /darwin/ || $^X =~ /wxPerl/i;
 };
 
-use constant SLIM_SERVICE => 0;
-use constant SCANNER => 0;
-
-use Slim::bootstrap;
-use Slim::Utils::OSDetect;
-
-my ($os, $language, %strings);
+my ($os);
 
 sub main {
 	Slim::Utils::OSDetect::init();
 	$os = Slim::Utils::OSDetect->getOS();
 	
-	$language = $os->getSystemLanguage();
-	
-	loadStrings();
-
-	my $isRunning = checkForSC();
-
-	if ($isRunning && !$useWx) {
+	if (checkForSC() && !$useWx) {
 		print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_STOP_SC'));
 		exit;
 	}
@@ -79,16 +74,10 @@ sub main {
 			require Slim::Utils::CleanupGUI;
 			
 			my $app = Slim::Utils::CleanupGUI->new({
-				title    => string('CLEANUP_TITLE'),
-				desc     => string('CLEANUP_DESC'),
-				ok       => string('OK'),
-				cancel   => string('CANCEL'),
-				cleanup  => string('CLEANUP_DO'),
-				options  => options(),
 				folderCB => \&getFolderList,
 				cleanCB  => \&cleanup,
-				msgCap   => string('CLEANUP_SUCCESS'),
-				msg      => string('CLEANUP_PLEASE_RESTART_SC'),
+				checkCB  => \&checkForSC,
+				options  => options(),
 			});
 			
 			$app->MainLoop;
@@ -281,51 +270,6 @@ sub cleanup {
 		}
 	}
 }
-
-# return localised version of string token
-sub string {
-	my $name = shift;
-	$strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
-}
-
-sub loadStrings {
-	my $string     = '';
-	my $language   = '';
-	my $stringname = '';
-
-	# server string file
-	my $path = $os->dirsFor('strings');
-	my $file = catdir($path, 'strings.txt');
-	
-	open(STRINGS, "<:utf8", $file) || do {
-		die "Couldn't open $file - FATAL!";
-	};
-
-	LINE: while (my $line = <STRINGS>) {
-
-		chomp($line);
-		
-		next if $line =~ /^#/;
-		next if $line !~ /\S/;
-
-		if ($line =~ /^(\S+)$/) {
-
-			$stringname = $1;
-			$string = '';
-			next LINE;
-
-		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
-
-			$language = uc($1);
-			$string   = $2;
-
-			$strings{$stringname}->{$language} = $string;
-		}
-	}
-
-	close STRINGS;
-}
-
 
 main();
 
