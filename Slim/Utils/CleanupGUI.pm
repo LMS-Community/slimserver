@@ -7,6 +7,7 @@ use base 'Wx::Frame';
 use LWP::Simple;
 use LWP::UserAgent;
 use JSON::XS qw(to_json from_json);
+use File::Spec::Functions;
 
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
@@ -15,6 +16,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Light;
 
 my %checkboxes;
+my $os = Slim::Utils::OSDetect::getOS();
 
 sub new {
 	my $ref = shift;
@@ -43,7 +45,7 @@ sub new {
 	);
 	
 	$notebook->AddPage(settingsPage($notebook, $args), "Settings", 1);
-	$notebook->AddPage(maintenancePage($notebook, $args, $self), "Maintenance", 1);
+	$notebook->AddPage(maintenancePage($notebook, $args, $self), "Maintenance");
 	$notebook->AddPage(statusPage($notebook, $args), "Information");
 	
 	EVT_NOTEBOOK_PAGE_CHANGED( $self, $notebook, sub {
@@ -99,6 +101,23 @@ sub settingsPage {
 	
 	my $label = Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?");
 	$mainSizer->Add($label, 0, wxALL, 10);
+
+	my $btnStartStop = Wx::Button->new($panel, -1, $args->{checkCB}() ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+	EVT_BUTTON( $panel, $btnStartStop, sub {
+		if ($args->{checkCB}()) {
+			serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
+		}
+	});
+	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
+	
+	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir'), string('SETUP_AUDIODIR'));
+#	EVT_BUTTON($panel, $btnAudioDir, sub {
+#		my $picker = Wx::DirPickerCtrl->new($panel, -1, 'guugs');
+#		$picker->Show(1);
+#	});
+	$mainSizer->Add($btnAudioDir, 0, wxALL, 10);
+
+	$panel->SetSizer($mainSizer);	
 	
 	return $panel;
 }
@@ -127,6 +146,12 @@ sub maintenancePage {
 	my $btnCleanup = Wx::Button->new( $panel, -1, string('CLEANUP_DO') );
 	EVT_BUTTON( $self, $btnCleanup, sub {
 		my( $self, $event ) = @_;
+		
+		if ($args->{checkCB}()) {
+			my $msg = Wx::MessageDialog->new($self, string('CLEANUP_PLEASE_STOP_SC'), string('CLEANUP_TITLE'), wxOK | wxICON_INFORMATION);
+			$msg->ShowModal();
+			return;
+		}
 	
 		my $params = {};
 		my $selected = 0;
@@ -142,7 +167,7 @@ sub maintenancePage {
 			my $folders = $args->{folderCB}($params);
 			$args->{cleanCB}($folders);
 			
-			my $msg = Wx::MessageDialog->new($self, $args->{msg}, $args->{msgCap}, wxOK | wxICON_INFORMATION);
+			my $msg = Wx::MessageDialog->new($self, string('CLEANUP_PLEASE_RESTART_SC'), string('CLEANUP_TITLE'), wxOK | wxICON_INFORMATION);
 			$msg->ShowModal();
 		}
 	} );
@@ -180,23 +205,30 @@ sub statusPage {
 	return $panel;
 }
 
-#sub _serverRequest {
-#	my $postdata = shift;
-#
-#	my $req = HTTP::Request->new( 
-#		'POST',
-#		'http://192.168.0.70:9000/jsonrpc.js',
-#	);
-#	$req->header('Content-Type' => 'text/plain');
-#
-#	$req->content($postdata);	
-#
-#	my $response = LWP::UserAgent->new()->request($req);
-#	
-#	my $content = $response->decoded_content;
-#	
-#	return from_json($content) if $content;
-#}
+sub serverRequest {
+	my $postdata = shift;
+
+	my $req = HTTP::Request->new( 
+		'POST',
+		'http://127.0.0.1:9000/jsonrpc.js',
+	);
+	$req->header('Content-Type' => 'text/plain');
+
+	$req->content($postdata);	
+
+	my $response = LWP::UserAgent->new()->request($req);
+	
+	my $content;
+	$content = $response->decoded_content if ($response);
+
+	if ($content) {
+		eval {
+			$content = from_json($content); 
+		}
+	}
+	
+	return $content;
+}
 
 sub getBaseUrl {
 	return 'http://127.0.0.1:' . getPref('httpport');

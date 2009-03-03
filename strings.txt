@@ -19210,6 +19210,30 @@ CLEANUP_DELETING
 	NO	Sletter
 	SV	Raderar
 
+START_SQUEEZECENTER
+	DA	Start SqueezeCenter
+	DE	SqueezeCenter starten
+	EN	Start SqueezeCenter
+	ES	Iniciar SqueezeCenter
+	FI	Käynnistä SqueezeCenter
+	FR	Démarrer le SqueezeCenter
+	IT	Avvia SqueezeCenter
+	NL	SqueezeCenter starten
+	NO	Start SqueezeCenter
+	SV	Starta SqueezeCenter
+
+STOP_SQUEEZECENTER
+	DA	Stop SqueezeCenter
+	DE	SqueezeCenter anhalten
+	EN	Stop SqueezeCenter
+	ES	Detener SqueezeCenter
+	FI	Pysäytä SqueezeCenter
+	FR	Arrêter le SqueezeCenter
+	IT	Arresta SqueezeCenter
+	NL	SqueezeCenter stoppen
+	NO	Stopp SqueezeCenter
+	SV	Avsluta SqueezeCenter
+
 PLAYLIST_MODE
 	DA	Brug afspilningslister (beta)
 	DE	Wiedergabelisten-Modus (Beta)
