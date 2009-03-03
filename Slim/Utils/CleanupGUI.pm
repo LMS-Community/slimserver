@@ -10,7 +10,7 @@ use LWP::UserAgent;
 use JSON::XS qw(to_json from_json);
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGING);
+use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 use Wx::Html;
 use Slim::Utils::OSDetect;
 
@@ -51,14 +51,16 @@ sub new {
 	$notebook->AddPage(_maintenancePage($notebook, $args, $self), "Maintenance", 1);
 	
 	$notebook->AddPage(_statusPage($notebook, $args), "Information");
-	EVT_NOTEBOOK_PAGE_CHANGING( $self, $notebook, sub {
+	EVT_NOTEBOOK_PAGE_CHANGED( $self, $notebook, sub {
 		my( $self, $event ) = @_;
 
+		# Wx on Windows will return the old selection - always update
 		if ($event->GetSelection == 2) {
 
 			if (my $page = $notebook->GetPage($event->GetSelection)) {
 
-				if (my $htmlPage = $page->GetChildren()) {
+				my $htmlPage = $page->GetChildren();
+				if ( $htmlPage && $htmlPage->isa('Wx::HtmlWindow') ) {
 					$htmlPage->SetPage(get(getBaseUrl() . '/EN/settings/server/status.html?simple=1') || "No status information available");
 				}
 			}
