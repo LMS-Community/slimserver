@@ -1,11 +1,4 @@
-[% IF simple %]
-[% BLOCK settingGroup %]
-	<div class="settingGroup">
-		[% IF title %]<p><b>[% title | getstring %]</b></p>[% END %]
-		<div class="prefs">[% content %]&nbsp;</div>
-	</div>
-[% END -%]
-[% ELSE %]
+[% UNLESS simple %]
 [% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script TYPE="text/javascript">
