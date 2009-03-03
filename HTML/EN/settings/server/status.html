@@ -1,3 +1,11 @@
+[% IF simple %]
+[% BLOCK settingGroup %]
+	<div class="settingGroup">
+		[% IF title %]<p><b>[% title | getstring %]</b></p>[% END %]
+		<div class="prefs">[% content %]&nbsp;</div>
+	</div>
+[% END -%]
+[% ELSE %]
 [% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script TYPE="text/javascript">
@@ -23,11 +31,12 @@
 [% END %]
 
 [% PROCESS settings/header.html %]
+[% END %]
 
 
 [% WRAPPER setting title="SERVER_STATUS" %]
 	[% FOREACH item IN server.items %]
-		<p>[% item.name %]</p>
+		<div>[% item.name %]</div>
 	[% END %]
 [% END %]
 
@@ -35,12 +44,12 @@
 [% IF library %]
 	[% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
 		[% FOREACH item IN library.items %]
-			<p>[% item.name %]</p>
+			<div>[% item.name %]</div>
 		[% END %]
 	[% END %]
 [% END %]
 
-[% IF progress %]
+[% IF progress AND NOT simple %]
 	[% WRAPPER setting title="SCANNER_PROGRESS" %]
 		[% progress %]
 		[% IF scanning %]
@@ -60,7 +69,7 @@
 		[% WRAPPER setting title = client.name %]
 			[% FOREACH item IN client.web.items; item.key %]
 				[% IF item.values.0 %]
-					<p>[% item.keys.0 | string %][% "COLON" | string %] [% item.values.0 %]</p>
+					<div>[% item.keys.0 | string %][% "COLON" | string %] [% item.values.0 %]</div>
 				[% END %]
 			[% END %]
 		[% END %]
@@ -68,12 +77,12 @@
 [% END %]
 
 
-[% WRAPPER setting title = "FOLDERS"; END %]
+[% UNLESS simple; WRAPPER setting title = "FOLDERS"; END; END %]
 [% FOREACH item IN folders.web.items %]
 	[% IF item.values.0 %]
 		[% WRAPPER settingSection %]
 			<div class="settingGroup">
-				<div class="prefHead">[% item.keys.0 | string %]</div>
+				<div class="prefHead">[% IF simple %]<b>[% END %][% item.keys.0 | string %][% IF simple %]</b>[% END %]</div>
 				<div class="prefs">[% item.values.0 %]</div>
 			</div>
 		[% END %]
@@ -84,11 +93,11 @@
 	[% IF item.values.0 %]
 		[% WRAPPER setting title="SETUP_DEBUG_${item.keys.0}_LOG" desc="SETUP_DEBUG_${item.keys.0}_LOG_DESC" %]
 			<div class="prefDesc">
-				<a href="/[% item.keys.0 | lower %].log" target="log">[% item.values.0 %]</a>
+				[% UNLESS simple %]<a href="/[% item.keys.0 | lower %].log" target="log">[% END %][% item.values.0 %][% UNLESS simple %]</a>
 				(<a href="/[% item.keys.0 | lower %].log?lines=100" target="log">100</a>,
 				<a href="/[% item.keys.0 | lower %].log?lines=500" target="log">500</a>,
 				<a href="/[% item.keys.0 | lower %].log?lines=1000" target="log">1000</a>
-				[% "LINES" | string %])
+				[% "LINES" | string %])[% END %]
 			</div>
 		[% END %]
 	[% END %]
@@ -108,6 +117,6 @@
 	[% END %]
 [% END %]
 
-<p>&nbsp;</p>
+<div>&nbsp;</div>
 
 [% PROCESS settings/footer.html %]
