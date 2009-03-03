@@ -26,8 +26,13 @@ use Slim::bootstrap;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Light;
 
+BEGIN {
+	if ($^O =~ /win/i) {
+		eval { require Wx::Perl::Packager; }
+	}
+}
+
 my $useWx = eval {
-	require Wx::Perl::Packager;
 	require Wx;
 	require Wx::Event;
 
