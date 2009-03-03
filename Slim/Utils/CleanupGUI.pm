@@ -30,11 +30,6 @@ sub new {
 		$args->{title},
 	);
 
-	# shortcut if SC is running - only display warning
-	if ($args->{running}) {
-		return $self;
-	}
-
 	my $panel = Wx::Panel->new( 
 		$self, 
 		-1, 
@@ -258,15 +253,7 @@ sub new {
 
 sub OnInit {
 	my $frame = SFrame->new($args);
-	
-	if ($args->{running}) {
-		my $msg = Wx::MessageDialog->new($frame, $args->{running}, $args->{title}, wxOK | wxICON_INFORMATION);
-		$msg->ShowModal();
-		$frame->Destroy();
-	}
-	else {		
-		$frame->Show( 1 );
-	}	
+	$frame->Show( 1 );
 }
 
 1;
