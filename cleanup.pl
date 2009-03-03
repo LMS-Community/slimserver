@@ -79,7 +79,6 @@ sub main {
 			require Slim::Utils::CleanupGUI;
 			
 			my $app = Slim::Utils::CleanupGUI->new({
-				running  => $isRunning ? string('CLEANUP_PLEASE_STOP_SC') : undef,
 				title    => string('CLEANUP_TITLE'),
 				desc     => string('CLEANUP_DESC'),
 				ok       => string('OK'),
@@ -92,7 +91,7 @@ sub main {
 				msg      => string('CLEANUP_PLEASE_RESTART_SC'),
 			});
 			
-			$app->MainLoop unless $isRunning;
+			$app->MainLoop;
 			exit;
 		}
 
