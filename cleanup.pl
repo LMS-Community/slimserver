@@ -27,6 +27,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Light;
 
 my $useWx = eval {
+	require Wx::Perl::Packager;
 	require Wx;
 	require Wx::Event;
 
