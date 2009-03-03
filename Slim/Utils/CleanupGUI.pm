@@ -3,8 +3,15 @@ package SFrame;
 
 use strict;
 use base 'Wx::Frame';
+
+use File::Spec::Functions;
+use LWP::Simple;
+use LWP::UserAgent;
+use JSON::XS qw(to_json from_json);
+
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON);
+use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGING);
+use Wx::Html;
 use Slim::Utils::OSDetect;
 
 my %checkboxes;
@@ -40,13 +47,27 @@ sub new {
 		[-1, -1],
 	);
 	
-#	$notebook->AddPage(_settingsPage($notebook, $args), "Settings", 1);
+	$notebook->AddPage(_settingsPage($notebook, $args), "Settings", 1);
 	$notebook->AddPage(_maintenancePage($notebook, $args, $self), "Maintenance", 1);
-#	$notebook->AddPage(_statusPage($notebook, $args), "Information", 1);
+	
+	$notebook->AddPage(_statusPage($notebook, $args), "Information");
+	EVT_NOTEBOOK_PAGE_CHANGING( $self, $notebook, sub {
+		my( $self, $event ) = @_;
+
+		if ($event->GetSelection == 2) {
+
+			if (my $page = $notebook->GetPage($event->GetSelection)) {
+
+				if (my $htmlPage = $page->GetChildren()) {
+					$htmlPage->SetPage(get(getBaseUrl() . '/EN/settings/server/status.html?simple=1') || "No status information available");
+				}
+			}
+		}
+	});
 	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	
-	$mainSizer->Add($notebook, 1, wxRIGHT | wxBOTTOM | wxLEFT | wxGROW, 10);
+	$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
@@ -76,6 +97,11 @@ sub _settingsPage {
 	my ($parent, $args) = @_;
 	
 	my $panel = Wx::Panel->new($parent, -1);
+
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
+	my $label = Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?");
+	$mainSizer->Add($label, 0, wxALL, 10);
 	
 	return $panel;
 }
@@ -94,7 +120,7 @@ sub _maintenancePage {
 
 	foreach (@$options) {
 		$checkboxes{$_->{name}} = Wx::CheckBox->new( $panel, -1, $_->{title}, $_->{position}, [-1, -1]);
-		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP, $_->{margin} || 5 );
+		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP | wxGROW, $_->{margin} || 5 );
 	}
 
 	$mainSizer->Add($cbSizer, 1, wxALL, 5);
@@ -109,22 +135,32 @@ sub _maintenancePage {
 	
 	$btnsizer->Realize();
 
-	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 5);
+	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 10);
 	
 	$panel->SetSizer($mainSizer);
 
 	return $panel;
 }
 
+# basically display Settings/Information - either new, blank skin, or CLI query result
 sub _statusPage {
 	my ($parent, $args) = @_;
 	
 	my $panel = Wx::Panel->new($parent, -1);
-
-	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	$panel->SetAutoLayout(1);
 	
-	my $label = Wx::StaticText->new($panel, -1, "Number of SBs, player information\nversion, computer name, IP address, http port\nLibrary info");
-	$mainSizer->Add($label, 0, wxALL, 5);
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+
+	my $info = Wx::HtmlWindow->new(
+		$panel, 
+		-1,
+		[-1, -1],
+		[-1, -1],
+		wxSUNKEN_BORDER
+	);
+	
+	$mainSizer->Add($info, 1, wxALL | wxGROW, 10);
+	$panel->SetSizer($mainSizer);
 	
 	return $panel;
 }
@@ -149,6 +185,58 @@ sub OnCleanupClick {
 		my $msg = Wx::MessageDialog->new($self, $args->{msg}, $args->{msgCap}, wxOK | wxICON_INFORMATION);
 		$msg->ShowModal();
 	}
+}
+
+sub _serverRequest {
+	my $postdata = shift;
+
+#	my $ua = LWP::UserAgent->new();
+	my $req = HTTP::Request->new( 
+		'POST',
+		'http://192.168.0.70:9000/jsonrpc.js',
+	);
+	$req->header('Content-Type' => 'text/plain');
+
+	$req->content($postdata);	
+
+	my $response = LWP::UserAgent->new()->request($req);
+	
+	my $content = $response->decoded_content;
+	
+	return from_json($content) if $content;
+}
+
+sub getBaseUrl {
+	return 'http://localhost:' . getPref('httpport');
+}
+
+# Read pref from the server preference file - lighter weight than loading YAML
+sub getPref {
+	my $pref = shift;
+
+	my $os = Slim::Utils::OSDetect->getOS();
+	my $prefFile = catdir( $os->dirsFor('prefs'), 'server.prefs' );
+
+	my $ret;
+
+	if (-r $prefFile) {
+
+		if (open(PREF, $prefFile)) {
+
+			while (<PREF>) {
+			
+				# read YAML (server) and old style prefs (installer)
+				if (/^$pref(:| \=)? (.+)$/) {
+					$ret = $2;
+					last;
+				}
+			}
+
+			close(PREF);
+		}
+	}
+
+	return $ret;
 }
 
 
