@@ -110,12 +110,35 @@ sub settingsPage {
 	});
 	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
 	
-	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir'), string('SETUP_AUDIODIR'));
-#	EVT_BUTTON($panel, $btnAudioDir, sub {
-#		my $picker = Wx::DirPickerCtrl->new($panel, -1, 'guugs');
-#		$picker->Show(1);
-#	});
+	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir') || '', string('SETUP_AUDIODIR'), [-1, -1], [-1, -1], wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
 	$mainSizer->Add($btnAudioDir, 0, wxALL, 10);
+
+	my $btnPlaylistDir = Wx::DirPickerCtrl->new($panel, -1, getPref('playlistdir') || '', string('SETUP_PLAYLISTDIR'), [-1, -1], [-1, -1], wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	$mainSizer->Add($btnPlaylistDir, 0, wxALL, 10);
+	
+	my $log = catdir($os->dirsFor('log'), 'server.log');
+	my $serverlogLink = Wx::HyperlinkCtrl->new(
+		$panel, 
+		-1, 
+		$log, 
+		$os->name eq 'mac' ? getBaseUrl() . '/server.log?lines=500' : 'file://' . $log, 
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_ALIGN_LEFT
+	);
+	$mainSizer->Add($serverlogLink, 0, wxALL, 10);
+
+	$log = catdir($os->dirsFor('log'), 'scanner.log');
+	my $scannerlogLink = Wx::HyperlinkCtrl->new(
+		$panel, 
+		-1, 
+		$log, 
+		$os->name eq 'mac' ? getBaseUrl() . '/scanner.log?lines=500' : 'file://' . $log, 
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_ALIGN_LEFT
+	);
+	$mainSizer->Add($scannerlogLink, 0, wxALL, 10);
 
 	$panel->SetSizer($mainSizer);	
 	
