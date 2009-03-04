@@ -35,6 +35,7 @@ BEGIN {
 my $useWx = eval {
 	require Wx;
 	require Wx::Event;
+	require Slim::Utils::CleanupGUI;
 
 	# don't use Wx, if script is run using perl on OSX
 	# it needs to be run using wxperl
@@ -76,8 +77,6 @@ sub main {
 
 		# show simple GUI if possible
 		if ($useWx) {
-			
-			require Slim::Utils::CleanupGUI;
 			
 			my $app = Slim::Utils::CleanupGUI->new({
 				folderCB => \&getFolderList,

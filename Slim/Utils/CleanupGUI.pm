@@ -28,7 +28,7 @@ sub new {
 		string('CLEANUP_TITLE'),
 		[-1, -1],
 		[570, 550],
-		wxMINIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
+		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CLEANUP_TITLE'),
 	);
 
