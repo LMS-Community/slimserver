@@ -155,8 +155,7 @@ sub package_size {
 		CV_walk('slow', $name, 'op_size');
 
 		for (keys %{ $filelex{$package} }) {
-
-			$total_opsize += $opsize;
+			$total_opsize += $filelex{$package}->{$_};
 			$retval{"my ${_} = ...;"} = {
 				'size' => $filelex{$package}->{$_},
 			};
