@@ -25,6 +25,10 @@ sub name {
 
 sub initDetails {
 	my $class = shift;
+
+	# better version detection than relying on Win32::GetOSName()
+	# http://msdn.microsoft.com/en-us/library/ms724429(VS.85).aspx
+	my ($string, $major, $minor, $build, $id, $spmajor, $spminor, $suitemask, $producttype) = Win32::GetOSVersion();
 	
 	$class->{osDetails} = {
 		'os'     => 'Windows',
@@ -40,24 +44,16 @@ sub initDetails {
 	$class->{osDetails}->{'osName'} =~ s/2003/Server 2003/;
 	
 	# TODO: remove this code as soon as Win32::GetOSName supports Windows 2008 Server
-	if ($class->{osDetails}->{'osName'} =~ /Vista/i && (Win32::GetOSVersion())[8] > 1) {
+	if ($major == 6 && $minor == 0 && $producttype > 1) {
 		$class->{osDetails}->{'osName'} = 'Windows 2008 Server';
 	}
-	# Windows 2003 && "Windows Home Server" registry key -> WHS
-	elsif ($class->{osDetails}->{'osName'} =~ /Server 2003/i) {
-		
-		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Microsoft/Windows Home Server/', 
-			{ 
-				Access => Win32::TieRegistry::KEY_READ(), 
-				Delimiter =>'/' 
-			}
-		);
 
-		if (defined $swKey) {
-			$class->{osDetails}->{'osName'} = 'Windows Home Server';
-			$class->{osDetails}->{'isWHS'} = 1;
-		}
+	# Windows 2003 && suitemask 0x00008000 -> WHS
+	# http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx
+	elsif ($major == 5 && $minor == 2
+			&& $suitemask && $suitemask >= 0x00008000 && $suitemask < 0x00009000) {
+		$class->{osDetails}->{'osName'} = 'Windows Home Server';
+		$class->{osDetails}->{'isWHS'} = 1;
 	}
 	
 	$class->{osDetails}->{isVista} = 1 if $class->{osDetails}->{'osName'} =~ /Vista/;
