@@ -69,7 +69,7 @@ sub init {
 	eval {
 		require Slim::Utils::OS::Custom;
 		$os = Slim::Utils::OS::Custom->new();
-		print STDOUT "Found custom OS support file for " . $os->name . "\n";
+		#print STDOUT "Found custom OS support file for " . $os->name . "\n";
 	};
 
 
