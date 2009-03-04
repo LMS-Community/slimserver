@@ -40,11 +40,22 @@ sub loadStrings {
 	my $stringname = '';
 
 	# server string file
-	my $path = $os->dirsFor('strings');
-	my $file = catdir($path, 'strings.txt');
+	my $file;
+
+	# let's see whether this is a PerlApp compiled executable
+	if (defined $PerlApp::VERSION) {
+		$file = PerlApp::extract_bound_file('strings.txt');
+	}
+	
+	# try to find the strings.txt file from our installation
+	unless ($file && -f $file) {
+		my $path = $os->dirsFor('strings');
+		$file = catdir($path, 'strings.txt');
+	}
 	
 	open(STRINGS, "<:utf8", $file) || do {
-		die "Couldn't open $file - FATAL!";
+		warn "Couldn't open file [$file]!";
+		return;
 	};
 
 	foreach my $line (<STRINGS>) {
