@@ -16,7 +16,10 @@ package CGI::Cookie;
 $CGI::Cookie::VERSION='1.27';
 
 use CGI::Util qw(rearrange unescape escape);
-use CGI;
+
+# Don't laod CGI, we don't use bake() and this wastes lots of memory -andy
+#use CGI;
+
 use overload '""' => \&as_string,
     'cmp' => \&compare,
     'fallback'=>1;
