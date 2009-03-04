@@ -55,20 +55,11 @@ sub isWHS {
 	
 	$isWHS = 0;
 	
-	my ($string, $major, $minor, $build, $id) = Win32::GetOSVersion();
+	my ($string, $major, $minor, $build, $id, $spmajor, $spminor, $suitemask, $producttype) = Win32::GetOSVersion();
 	
-	# WHS is 2003 server based
-	if ($major == 5 && $minor == 2) {
-		
-		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Microsoft/Windows Home Server/', 
-			{ 
-				Access => Win32::TieRegistry::KEY_READ(), 
-				Delimiter =>'/' 
-			}
-		);
-
-		$isWHS = (defined $swKey);
+	# WHS is 2003 server based but with suitemask 0x00008000
+	if ($major == 5 && $minor == 2 && $suitemask && $suitemask >= 0x00008000 && $suitemask < 0x00009000) {
+		$isWHS = 1;
 	}
 }
 
