@@ -42,9 +42,12 @@ sub loadStrings {
 	# server string file
 	my $file;
 
-	# let's see whether this is a PerlApp compiled executable
+	# let's see whether this is a PerlApp/Tray compiled executable
 	if (defined $PerlApp::VERSION) {
 		$file = PerlApp::extract_bound_file('strings.txt');
+	}
+	elsif (defined $PerlTray::VERSION) {
+		$file = PerlTray::extract_bound_file('strings.txt');
 	}
 	
 	# try to find the strings.txt file from our installation
