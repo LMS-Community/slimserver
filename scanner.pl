@@ -161,7 +161,7 @@ sub main {
 
 	#checkDataSource();
 
-	$log->info("SqueezeCenter done init...\n");
+	$log->info("SqueezeCenter Scanner done init...\n");
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
