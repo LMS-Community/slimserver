@@ -132,6 +132,7 @@ sub settingsPage {
 
 		my $path = $btnAudioDir->GetPath;
 		if ($running && $path ne getPref('audiodir')) {
+			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
 			setPref("audiodir", $path);
 		}
 	});
@@ -146,6 +147,7 @@ sub settingsPage {
 
 		my $path = $btnPlaylistDir->GetPath;
 		if ($running && $path ne getPref('playlistdir')) {
+			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
 			setPref("playlistdir", $path);
 		}
 	});
