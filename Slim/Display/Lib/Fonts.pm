@@ -34,10 +34,10 @@ use strict;
 
 use File::Slurp;
 use File::Basename;
-use File::Spec::Functions qw(catdir);
+use File::Spec::Functions qw(catdir catfile);
 use List::Util qw(max);
 use Path::Class;
-use Storable;
+use Storable qw(nstore retrieve);
 use Tie::Cache::LRU;
 
 use Slim::Utils::Log;
@@ -587,6 +587,21 @@ sub loadFonts {
 	my $fontCache = fontCacheFile();
 
 	my $fontCacheVersion = 2; # version number of fontcache matching this code
+	
+	# If the font cache doesn't exist, load our pre-generated version
+	# to avoid the overhead of generating it
+	my $fontCacheExists = -r $fontCache;
+	
+	if ( !$fontCacheExists ) {
+		for my $fontFileDir ( graphicsDirs() ) {
+			my $defaultCache = catfile( $fontFileDir, 'corefonts.bin' );
+			if ( -r $defaultCache ) {
+				$log->is_info && $log->info( "Loading fonts from pre-generated fonts.bin" );
+				$fontCache = $defaultCache;
+				last;
+			}
+		}
+	}
 
 	# use stored fontCache if newer than all font files and correct version
 	if (!$forceParse && -r $fontCache) { 
@@ -687,7 +702,7 @@ sub loadFonts {
 	$fonts->{'version'} = $fontCacheVersion;
 	$fonts->{'mtimesum'} = $mtimesum;
 
-	store($fonts, $fontCache);
+	nstore($fonts, $fontCache);
 }
 
 # parse the array of pixels ino a font table
