@@ -1,5 +1,4 @@
-
-package SFrame;
+package Slim::Utils::CleanupGUI::MainFrame;
 
 use strict;
 use base 'Wx::Frame';
@@ -17,10 +16,13 @@ use Slim::Utils::Light;
 
 my %checkboxes;
 my $os = Slim::Utils::OSDetect::getOS();
+my $pollTimer;
 
 sub new {
 	my $ref = shift;
 	my $args = shift;
+
+	$pollTimer = Slim::Utils::CleanupGUI::Timer->new($args);
 
 	my $self = $ref->SUPER::new(
 		undef,
@@ -88,6 +90,9 @@ sub new {
 	$mainSizer->Add($btnsizer, 0, wxALL | wxALIGN_RIGHT, 5);
 
 	$panel->SetSizer($mainSizer);	
+	
+	$pollTimer->Start(5000, wxTIMER_CONTINUOUS);
+	$pollTimer->Notify();
 
 	return $self;
 }
@@ -102,20 +107,31 @@ sub settingsPage {
 	my $label = Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?");
 	$mainSizer->Add($label, 0, wxALL, 10);
 
-	my $btnStartStop = Wx::Button->new($panel, -1, $args->{checkCB}() ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+	# Start/Stop button
+	my $btnStartStop = Wx::Button->new($panel, -1, string('STOP_SQUEEZECENTER'));
 	EVT_BUTTON( $panel, $btnStartStop, sub {
 		if ($args->{checkCB}()) {
 			serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
 		}
 	});
+	
+	$pollTimer->addListener($btnStartStop, sub {
+		$btnStartStop->SetLabel($_[0] ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+	});
+	
 	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
 	
+	# folder selectors
 	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir') || '', string('SETUP_AUDIODIR'), [-1, -1], [-1, -1], wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	$pollTimer->addListener($btnAudioDir);
 	$mainSizer->Add($btnAudioDir, 0, wxALL, 10);
 
 	my $btnPlaylistDir = Wx::DirPickerCtrl->new($panel, -1, getPref('playlistdir') || '', string('SETUP_PLAYLISTDIR'), [-1, -1], [-1, -1], wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	$pollTimer->addListener($btnPlaylistDir);
 	$mainSizer->Add($btnPlaylistDir, 0, wxALL, 10);
 	
+	# links to log files
+	# on OSX we can't "start" the log files, but need to use some trickery to get an URL
 	my $log = catdir($os->dirsFor('log'), 'server.log');
 	my $serverlogLink = Wx::HyperlinkCtrl->new(
 		$panel, 
@@ -126,6 +142,7 @@ sub settingsPage {
 		[-1, -1], 
 		wxHL_ALIGN_LEFT
 	);
+	$pollTimer->addListener($serverlogLink) if $os->name eq 'mac';
 	$mainSizer->Add($serverlogLink, 0, wxALL, 10);
 
 	$log = catdir($os->dirsFor('log'), 'scanner.log');
@@ -138,6 +155,7 @@ sub settingsPage {
 		[-1, -1], 
 		wxHL_ALIGN_LEFT
 	);
+	$pollTimer->addListener($scannerlogLink) if $os->name eq 'mac';
 	$mainSizer->Add($scannerlogLink, 0, wxALL, 10);
 
 	$panel->SetSizer($mainSizer);	
@@ -194,6 +212,7 @@ sub maintenancePage {
 			$msg->ShowModal();
 		}
 	} );
+	$pollTimer->addListener($btnCleanup);
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
 	$btnsizer->Realize();
@@ -257,12 +276,50 @@ sub getBaseUrl {
 	return 'http://127.0.0.1:' . getPref('httpport');
 }
 
+1;
 
 
+# Our own timer object, checking for SC availability
+package Slim::Utils::CleanupGUI::Timer;
+
+use base 'Wx::Timer';
+
+my %listeners;
+my $pollCB;
+
+sub new {
+	my ($self, $args) = @_;
+	
+	$pollCB = $args->{checkCB};
+	
+	$self->SUPER::new();
+}
+
+sub addListener {
+	my ($self, $item, $callback) = @_;
+	
+	# if no callback is given, then enable the element if SC is running, or disable otherwise
+	$listeners{$item} = $callback || sub { $item->Enable(shift) };
+}
+
+sub Notify {
+	my $running = &$pollCB();
+	
+	foreach my $listener (keys %listeners) {
+
+		if (my $callback = $listeners{$listener}) {
+			&$callback($running);
+		}
+	}
+}
+
+1;
+
+
+# The CleanupGUI main class
 package Slim::Utils::CleanupGUI;
 
 use base 'Wx::App';
-use Wx qw(:everything);
 
 my $args;
 
@@ -274,7 +331,7 @@ sub new {
 }
 
 sub OnInit {
-	my $frame = SFrame->new($args);
+	my $frame = Slim::Utils::CleanupGUI::MainFrame->new($args);
 	$frame->Show( 1 );
 }
 
