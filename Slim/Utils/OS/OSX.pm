@@ -18,7 +18,11 @@ sub name {
 sub initDetails {
 	my $class = shift;
 
-	$canFollowAlias = !Slim::bootstrap::tryModuleLoad('Mac::Files', 'Mac::Resources', 'nowarn');
+	eval {
+		require Mac::Files;
+		require Mac::Resources;
+		$canFollowAlias = 1;
+	};
 	
 	# Once for OS Version, then again for CPU Type.
 	open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
