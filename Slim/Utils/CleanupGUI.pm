@@ -167,7 +167,6 @@ sub maintenancePage {
 	my ($parent, $args, $self) = @_;
 	
 	my $panel = Wx::Panel->new($parent, -1);
-	$pollTimer->addListener($panel);
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	
 	my $label = Wx::StaticText->new($panel, -1, string('CLEANUP_DESC'));
@@ -182,6 +181,10 @@ sub maintenancePage {
 	}
 
 	$mainSizer->Add($cbSizer, 1, wxALL, 5);
+
+	my $hint = Wx::StaticText->new($panel, -1, string('CLEANUP_PLEASE_STOP_SC'));
+	$pollTimer->addListener($hint);
+	$mainSizer->Add($hint, 0, wxALL, 5);
 
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
@@ -213,6 +216,9 @@ sub maintenancePage {
 			$msg->ShowModal();
 		}
 	} );
+	$pollTimer->addListener($btnCleanup, sub {
+		$btnCleanup->Enable(!shift);
+	});
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
 	$btnsizer->Realize();
