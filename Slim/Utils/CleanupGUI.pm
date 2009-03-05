@@ -17,12 +17,11 @@ use Slim::Utils::Light;
 my %checkboxes;
 my $os = Slim::Utils::OSDetect::getOS();
 my $pollTimer;
+my $btnOk;
 
 sub new {
 	my $ref = shift;
 	my $args = shift;
-
-	$pollTimer = Slim::Utils::CleanupGUI::Timer->new($args);
 
 	my $self = $ref->SUPER::new(
 		undef,
@@ -45,7 +44,16 @@ sub new {
 		[-1, -1],
 		[-1, -1],
 	);
-	
+
+	$pollTimer = Slim::Utils::CleanupGUI::Timer->new($args);
+
+	$btnOk = Slim::Utils::CleanupGUI::OkButton->new( $panel, wxID_OK, string('OK') );
+	$btnOk->SetDefault();
+	EVT_BUTTON( $self, $btnOk, sub {
+		$btnOk->do($args->{checkCB}());
+		$_[0]->Destroy;
+	} );
+
 	$notebook->AddPage(settingsPage($notebook, $args), string('SETTINGS'), 1);
 	$notebook->AddPage(maintenancePage($notebook, $args, $self), string('CLEANUP_MAINTENANCE'));
 	$notebook->AddPage(statusPage($notebook, $args), string('INFORMATION'));
@@ -71,12 +79,6 @@ sub new {
 	$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
-
-	my $btnOk = Wx::Button->new( $panel, wxID_OK, string('OK') );
-	EVT_BUTTON( $self, $btnOk, sub {
-		# Save settings & whatever
-		$_[0]->Destroy;
-	} );
 	$btnsizer->SetAffirmativeButton($btnOk);
 	
 	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
@@ -122,13 +124,32 @@ sub settingsPage {
 	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
 	
 	# folder selectors
-	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir') || '', string('SETUP_AUDIODIR'), [-1, -1], [-1, -1], wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir') || '', string('SETUP_AUDIODIR'), wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
 	$pollTimer->addListener($btnAudioDir);
-	$mainSizer->Add($btnAudioDir, 0, wxALL, 10);
 
-	my $btnPlaylistDir = Wx::DirPickerCtrl->new($panel, -1, getPref('playlistdir') || '', string('SETUP_PLAYLISTDIR'), [-1, -1], [-1, -1], wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	$btnOk->addActionHandler($btnAudioDir, sub {
+		my $running = shift;
+
+		my $path = $btnAudioDir->GetPath;
+		if ($running && $path ne getPref('audiodir')) {
+			setPref("audiodir", $path);
+		}
+	});
+
+	$mainSizer->Add($btnAudioDir, 0, wxEXPAND | wxALL, 10);
+
+	my $btnPlaylistDir = Wx::DirPickerCtrl->new($panel, -1, getPref('playlistdir') || '', string('SETUP_PLAYLISTDIR'), wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
 	$pollTimer->addListener($btnPlaylistDir);
-	$mainSizer->Add($btnPlaylistDir, 0, wxALL, 10);
+
+	$btnOk->addActionHandler($btnPlaylistDir, sub {
+		my $running = shift;
+
+		my $path = $btnPlaylistDir->GetPath;
+		if ($running && $path ne getPref('playlistdir')) {
+			setPref("playlistdir", $path);
+		}
+	});
+	$mainSizer->Add($btnPlaylistDir, 0, wxEXPAND | wxALL, 10);
 	
 	# links to log files
 	# on OSX we can't "start" the log files, but need to use some trickery to get an URL
@@ -253,6 +274,11 @@ sub statusPage {
 	return $panel;
 }
 
+sub setPref {
+	my ($pref, $value) = @_;
+	serverRequest('{"id":1,"method":"slim.request","params":["",["pref", "' . $pref . '", "' . $value . '"]]}');
+}
+
 sub serverRequest {
 	my $postdata = shift;
 
@@ -315,6 +341,32 @@ sub Notify {
 
 		if (my $callback = $listeners{$listener}) {
 			&$callback($running);
+		}
+	}
+}
+
+1;
+
+
+# Ok button will apply our changes
+package Slim::Utils::CleanupGUI::OkButton;
+
+use base 'Wx::Button';
+
+my %actionHandlers;
+
+sub addActionHandler {
+	my ($self, $item, $callback) = @_;
+	$actionHandlers{$item} = $callback if $callback;
+}
+
+sub do {
+	my ($self, $running) = @_;
+	
+	foreach my $actionHandler (keys %actionHandlers) {
+		
+		if (my $action = $actionHandlers{$actionHandler}) {
+			&$action($running);
 		}
 	}
 }
