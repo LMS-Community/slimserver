@@ -140,7 +140,7 @@ sub settingsPage {
 		$os->name eq 'mac' ? getBaseUrl() . '/server.log?lines=500' : 'file://' . $log, 
 		[-1, -1], 
 		[-1, -1], 
-		wxHL_ALIGN_LEFT
+		wxHL_DEFAULT_STYLE,
 	);
 	$pollTimer->addListener($serverlogLink) if $os->name eq 'mac';
 	$mainSizer->Add($serverlogLink, 0, wxALL, 10);
@@ -153,7 +153,7 @@ sub settingsPage {
 		$os->name eq 'mac' ? getBaseUrl() . '/scanner.log?lines=500' : 'file://' . $log, 
 		[-1, -1], 
 		[-1, -1], 
-		wxHL_ALIGN_LEFT
+		wxHL_DEFAULT_STYLE,
 	);
 	$pollTimer->addListener($scannerlogLink) if $os->name eq 'mac';
 	$mainSizer->Add($scannerlogLink, 0, wxALL, 10);
