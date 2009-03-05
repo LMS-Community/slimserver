@@ -44,9 +44,9 @@ sub new {
 		[-1, -1],
 	);
 	
-	$notebook->AddPage(settingsPage($notebook, $args), "Settings", 1);
-	$notebook->AddPage(maintenancePage($notebook, $args, $self), "Maintenance");
-	$notebook->AddPage(statusPage($notebook, $args), "Information");
+	$notebook->AddPage(settingsPage($notebook, $args), string('SETTINGS'), 1);
+	$notebook->AddPage(maintenancePage($notebook, $args, $self), string('CLEANUP_MAINTENANCE'));
+	$notebook->AddPage(statusPage($notebook, $args), string('INFORMATION'));
 	
 	EVT_NOTEBOOK_PAGE_CHANGED( $self, $notebook, sub {
 		my( $self, $event ) = @_;
@@ -58,7 +58,7 @@ sub new {
 
 				my $htmlPage = $page->GetChildren();
 				if ( $htmlPage && $htmlPage->isa('Wx::HtmlWindow') ) {
-					$htmlPage->SetPage(get(getBaseUrl() . '/EN/settings/server/status.html?simple=1') || "No status information available");
+					$htmlPage->SetPage(get(getBaseUrl() . '/EN/settings/server/status.html?simple=1') || string('CLEANUP_NO_STATUS'));
 				}
 			}
 		}

@@ -19042,6 +19042,10 @@ CLEANUP_TITLE
 	NO	Opprydding av SqueezeCenter
 	SV	Rensning i SqueezeCenter
 
+CLEANUP_MAINTENANCE
+	DE	Unterhalt
+	EN	Maintenance
+	
 CLEANUP_DESC
 	DA	Vælg de filer og mapper der skal nulstilles:
 	DE	Markieren Sie die Dateien und Ordner, die zurückgesetzt werden sollen:
@@ -19209,6 +19213,9 @@ CLEANUP_DELETING
 	NL	wordt verwijderd
 	NO	Sletter
 	SV	Raderar
+	
+CLEANUP_NO_STATUS
+	EN	No status information available. Please note that SqueezeCenter has to be up and running in order to display its status information.
 
 START_SQUEEZECENTER
 	DA	Start SqueezeCenter
