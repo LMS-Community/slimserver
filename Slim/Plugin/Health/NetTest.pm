@@ -19,7 +19,8 @@ use Class::C3;
 
 use strict;
 
-my $FRAME_LEN = 1400; # length of test frame
+my $FRAME_LEN_SB1 =  560; # test frame len - SB1 can't support longer frames
+my $FRAME_LEN_SB2 = 1400; # test frame len for SB2 and later
 
 our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000 );
 
@@ -145,14 +146,17 @@ sub setMode {
 
 	if ($mode eq 'self' || $mode eq 'control') {
 
+		my $testFrameLen = $client->isa('Slim::Player::Squeezebox1') ? $FRAME_LEN_SB1 : $FRAME_LEN_SB2;
+
 		# store the params for a new test
 		$client->modeParam('testparams', {
 			'control'=> $client,
 			'target' => $target,
 			'test'   => 0,
 			'rate'   => $testRates[0],
-			'int'    => ($FRAME_LEN + 4 + 4) * 8 / $testRates[0] / 1000,
-			'frame'  => 'A' x $FRAME_LEN,
+			'int'    => ($testFrameLen + 4 + 4) * 8 / $testRates[0] / 1000,
+			'frame'  => 'A' x $testFrameLen,
+			'framelen'=> $testFrameLen,
 			'Qlen0'  => 0,
 			'Qlen1'  => 0, 
 			'log'    => Slim::Utils::PerfMon->new('Network Throughput', [10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100]),
@@ -238,8 +242,8 @@ sub setTest {
 	
 	$params->{'test'} = $test;
 	$params->{'rate'} = $rate;
-	$params->{'frame'} = 'A' x $FRAME_LEN;
-	$params->{'int'}  = ($FRAME_LEN + 4 + 4) * 8 / $params->{'rate'} / 1000;
+	$params->{'frame'} = 'A' x $params->{'framelen'};
+	$params->{'int'}  = ($params->{'framelen'} + 4 + 4) * 8 / $params->{'rate'} / 1000;
 	$params->{'Qlen0'} = 0;
 	$params->{'Qlen1'} = 0;
 	$params->{'log'}->clear();
@@ -281,7 +285,7 @@ sub test {
 	$params->{'refresh'} += $params->{'int'};
 
 	# skip if running late [reduces actual rate sent, but avoids recording throughput drop when timers are late]
-	if ($params->{'refresh'} < $timenow && ($params->{'refresh'} + $params->{'int'} * 5) < $timenow) {
+	if ($params->{'refresh'} < $timenow && ($params->{'refresh'} + $params->{'int'} * 10) < $timenow) {
 		$params->{'refresh'} = $timenow;
 	}
 
