@@ -155,7 +155,7 @@ sub settingsPage {
 	
 	# links to log files
 	# on OSX we can't "start" the log files, but need to use some trickery to get an URL
-	my $log = catdir($os->dirsFor('log'), 'server.log');
+	my $log = catfile($os->dirsFor('log'), 'server.log');
 	my $serverlogLink = Wx::HyperlinkCtrl->new(
 		$panel, 
 		-1, 
@@ -168,7 +168,7 @@ sub settingsPage {
 	$pollTimer->addListener($serverlogLink) if $os->name eq 'mac';
 	$mainSizer->Add($serverlogLink, 0, wxALL, 10);
 
-	$log = catdir($os->dirsFor('log'), 'scanner.log');
+	$log = catfile($os->dirsFor('log'), 'scanner.log');
 	my $scannerlogLink = Wx::HyperlinkCtrl->new(
 		$panel, 
 		-1, 
