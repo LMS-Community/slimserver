@@ -1303,6 +1303,11 @@ sub nextChunk {
 
 sub closeStream { }
 
+sub isBufferReady {
+	my $client = shift;
+	return $client->bufferReady();
+}
+
 
 ##############################################################
 # Methods to delegate to our StreamingController.
