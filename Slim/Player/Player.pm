@@ -1046,11 +1046,6 @@ sub publishPlayPoint {
 	}
 }
 
-sub isBufferReady {
-	my $client = shift;
-	return $client->bufferReady();
-}
-
 sub isReadyToStream {
 	my ($client, $song) = @_;
 	return $client->readyToStream();
