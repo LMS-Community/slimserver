@@ -215,7 +215,7 @@ sub _addInfo {
 				
 				$plugin->{'current'} = $existingData->{'version'};
 
-				if ($plugin->{'current'} ne $plugin->{'version'} || $existingData->{'error'} eq 'INSTALLERROR_INVALID_VERSION') {
+				if (Slim::Utils::Versions->compareVersions($plugin->{'version'}, $plugin->{'current'}) > 0 || $existingData->{'error'} eq 'INSTALLERROR_INVALID_VERSION') {
 					
 					$upgrade->{ "$plugin->{name}-$plugin->{version}" } = $plugin;
 				}
