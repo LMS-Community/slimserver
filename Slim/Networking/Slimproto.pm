@@ -46,7 +46,8 @@ if ( main::SLIM_SERVICE ) {
 	$deviceids[2] = undef;
 }
 
-my $forget_disconnected_time = 60; # disconnected clients will be forgotten unless they reconnect before this
+# Bug 10443: Increase this from 60s to 300s to allow recovery during the full extent of buffered data
+my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
 
 my $check_all_clients_time = 5; # how often to look for disconnected clients
 my $check_time;                 # time scheduled for next check_all_clients
