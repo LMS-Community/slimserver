@@ -183,10 +183,9 @@ sub checkForHTTP {
 
 	# Use low-level socket code. IO::Socket returns a 'Invalid Descriptor'
 	# erorr. It also sucks more memory than it should.
-	my $raddr = '127.0.0.1';
 	my $rport = $httpPort;
 
-	my $iaddr = inet_aton($raddr);
+	my $iaddr = inet_aton('127.0.0.1');
 	my $paddr = sockaddr_in($rport, $iaddr);
 
 	socket(SSERVER, PF_INET, SOCK_STREAM, getprotobyname('tcp'));
@@ -199,7 +198,6 @@ sub checkForHTTP {
 
 	return 0;
 }
-
 
 sub installDir {
 	return $installDir;
