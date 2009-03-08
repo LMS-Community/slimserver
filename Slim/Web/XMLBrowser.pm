@@ -202,7 +202,11 @@ sub handleFeed {
 		# Cache the feed structure for this session
 		$log->is_debug && $log->debug( "Caching session $sid" );
 		
-		$cache->set( "xmlbrowser_$sid", $feed, CACHE_TIME );
+		eval { $cache->set( "xmlbrowser_$sid", $feed, CACHE_TIME ) };
+		
+		if ( $@ && $log->is_warn ) {
+			$log->warn("Session not cached: $@");
+		}
 	}
 
 	if ( my $levels = scalar @index ) {
