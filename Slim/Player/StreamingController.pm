@@ -617,6 +617,18 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 	
 	_setStreamingState($self, TRACKWAIT);
 	
+	# Bug 10841: Put the song on the queue now even if it might get removed again later
+	# so that player displays can be correct while scanning a remote track
+	my $queue = $self->{'songqueue'};
+	unshift @$queue, $song unless scalar @$queue && $queue->[0] == $song;
+	while (scalar @$queue && 
+		   ($queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FAILED || 
+			$queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FINISHED)
+		  )
+	{
+		pop @$queue;
+	}
+	
 	$song->getNextSong (
 		sub {	# success
 			_nextTrackReady($self, $id, $song);
@@ -932,7 +944,8 @@ sub _Stream {				# play -> Buffering, Streaming
 	# (Note: did not just test for STATUS_PLAYING so as not to hardwire max-queue-length == 2 too often)
 	while (scalar @$queue && 
 		   ($queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FAILED || 
-			$queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FINISHED)
+			$queue->[-1]->{'status'} == Slim::Player::Song::STATUS_FINISHED || 
+			$queue->[-1]->{'status'} == Slim::Player::Song::STATUS_READY)
 		  ) {
 
 		pop @$queue;
@@ -1061,7 +1074,11 @@ sub _StreamIfReady {		# IF [allReadyToStream] THEN play -> Streaming ENDIF
 	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
 	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
-	if (scalar @{$self->{'songqueue'}} > 1) {
+	
+	# Bug 10841: Bug check that the first song is not the one we want to play
+	
+	my $queue = $self->{'songqueue'};
+	if (scalar @{$queue} > 1 && $queue->[0]->{'status'} != Slim::Player::Song::STATUS_READY) {
 		return;
 	}
 	
