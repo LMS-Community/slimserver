@@ -183,10 +183,13 @@ sub init {
 				$line2 = $client->modeParam('itemTitle') || browsedbItemName($client, $currentItem);
 			}
 
-			$client->showBriefly({
-				'line'    => [ $line1, $line2 ],
-				'overlay' => [ undef, $client->symbols('notesymbol') ],
-			});
+			if ($addorinsert == 1 || $addorinsert == 2) {
+
+				$client->showBriefly({
+					'line'    => [ $line1, $line2 ],
+					'overlay' => [ undef, $client->symbols('notesymbol') ],
+				});
+			}
 
 			# Include the current item
 			if ($levelName ne 'track' && !$all) {
@@ -270,6 +273,10 @@ sub init {
 						$client->execute(["playlist", "shuffle", 1]);
 					}
 				}
+			}
+			
+			if ($addorinsert == 0) {
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 			}
 		},
 

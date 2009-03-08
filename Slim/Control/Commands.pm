@@ -1343,11 +1343,6 @@ sub playlistXitemCommand {
 
 		$client->currentPlaylistModified(0);
 
-		# on players with VFD push into the Now Playing mode
-		if ($client->isPlayer && !$client->display->isa('Slim::Display::NoDisplay')) {
-			Slim::Buttons::Common::pushMode($client, 'screensaver');
-		}
-
 	} elsif ($cmd =~ /^(add|append)$/) {
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
@@ -1614,11 +1609,6 @@ sub playlistXtracksCommand {
 		$client->execute( [ 'playlist', 'jump', $jumpToIndex, $fadeIn ] );
 		
 		$client->currentPlaylistModified(0);
-
-		# on players with VFD push into the Now Playing mode
-		if ($client->isPlayer && !$client->display->isa('Slim::Display::NoDisplay')) {
-			Slim::Buttons::Common::pushMode($client, 'screensaver');
-		}
 	}
 
 	if ($add || $insert || $delete) {

@@ -158,22 +158,7 @@ sub init {
 		'left' => sub  {
 			my $client = shift;
 
-			my $oldlines = $client->curLines();
-
-			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
-
-			while (Slim::Buttons::Common::popMode($client, 1)) {};
-
-			Slim::Buttons::Common::pushMode($client, 'home');
-
-			if ($client->display->showExtendedText()) {
-
-				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist', $client->curLines({ trans => 'pushModeRight' })));
-
-			} else {
-
-				$client->pushRight($oldlines, $client->curLines({ trans => 'pushModeRight' }));
-			}
+			Slim::Buttons::Common::popModeRight($client);
 		},
 
 		'right' => sub  {
