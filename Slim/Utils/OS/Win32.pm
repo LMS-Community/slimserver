@@ -2,7 +2,7 @@ package Slim::Utils::OS::Win32;
 
 use strict;
 use File::Path;
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
 use Scalar::Util qw(blessed);
 use Sys::Hostname qw(hostname);
@@ -10,7 +10,7 @@ use Win32;
 use Win32::OLE;
 use Win32::OLE::NLS;
 use Win32::NetResource;
-use Win32::TieRegistry;
+use Win32::TieRegistry ('Delimiter' => '/');
 use POSIX qw(LC_CTYPE LC_TIME);
 
 use base qw(Slim::Utils::OS);
@@ -110,6 +110,10 @@ sub dirsFor {
 				push @dirs, catdir($Bin, 'slimserver.pref');
 			}
 		}
+
+	} elsif ($dir eq 'base') {
+
+		push @dirs, $class->installPath();
 
 	} elsif ($dir eq 'prefs') {
 
@@ -317,12 +321,48 @@ sub isDriveReady {
 	return $driveState->{$drive}->{state};
 }
 
+=head2 installPath()
+
+Returns the base installation directory of SqueezeCenter.
+
+=cut
+
+sub installPath {
+
+	# Try and find it in the registry.
+	# This is a system-wide registry key.
+	my $swKey = $Win32::TieRegistry::Registry->Open(
+		'LMachine/Software/Logitech/SqueezeCenter/', 
+		{ 
+			Access => Win32::TieRegistry::KEY_READ(), 
+			Delimiter =>'/' 
+		}
+	);
+
+	if (defined $swKey && $swKey->{'Path'}) {
+		return $swKey->{'Path'} if -d $swKey->{'Path'};
+	}
+
+	# Otherwise look in the standard location.
+	# search in legacy SlimServer folder, too
+	my $installDir;
+	PF: foreach my $programFolder ($ENV{ProgramFiles}, 'C:/Program Files') {
+		foreach my $ourFolder ('SqueezeCenter', 'SlimServer') {
+
+			$installDir = File::Spec->catdir($programFolder, $ourFolder);
+			last PF if (-d $installDir);
+
+		}
+	}
+
+	return $installDir;
+}
+
+
 =head2 writablePath()
 
 Returns a path which is expected to be writable by all users on Windows without virtualisation on Vista.
 This should mean that the server always sees consistent versions of files under this path.
-
-TODO: this needs to be rewritten to use the proper API calls instead of poking around the registry and environment!
 
 =cut
 

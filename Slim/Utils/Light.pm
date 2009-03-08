@@ -12,7 +12,7 @@ package Slim::Utils::Light;
 # These functions are called by helper applications like SqueezeTray
 # or the control panel.
 
-use Exporter;
+use Exporter::Lite;
 @ISA = qw(Exporter);
 use File::Spec::Functions;
 
@@ -27,11 +27,14 @@ BEGIN {
 	$language = $os->getSystemLanguage();
 }
 
+my $serverPrefFile = catfile($os->dirsFor('prefs'), 'server.prefs');
 
 # return localised version of string token
 sub string {
 	my $name = shift;
-	$strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
+	my $lang = shift || $language;
+
+	$strings{ $name }->{ $lang } || $strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
 }
 
 sub loadStrings {
@@ -90,8 +93,14 @@ sub loadStrings {
 # don't call this too often, it's in no way optimized for speed
 sub getPref {
 	my $pref = shift;
+	my $prefFile = shift;
 
-	my $prefFile = catdir( $os->dirsFor('prefs'), 'server.prefs' );
+	if ($prefFile) {
+		$prefFile = catdir($os->dirsFor('prefs'), 'plugin', $prefFile);
+	}
+	else {
+		$prefFile = $serverPrefFile;
+	}
 
 	my $ret;
 
