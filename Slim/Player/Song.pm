@@ -595,9 +595,9 @@ sub master              {return $_[0]->{'owner'}->master();}
 sub currentTrack        {return $_[0]->{'currentTrack'}        || $_[0]->{'track'};}
 sub currentTrackHandler {return $_[0]->{'currentTrackHandler'} || $_[0]->{'handler'};}
 sub isRemote            {return $_[0]->currentTrackHandler()->isRemote();}  
-sub duration            {return $_[0]->{'duration'} || $_[0]->currentTrack()->durationSeconds();}
-sub bitrate             {return $_[0]->{'bitrate'} || $_[0]->currentTrack()->bitrate();}
-sub streamformat        {return $_[0]->{'streamFormat'} || Slim::Music::Info::contentType($_[0]->currentTrack());}
+sub duration            {return $_[0]->{'duration'} || Slim::Music::Info::getDuration($_[0]->currentTrack()->url);}
+sub bitrate             {return $_[0]->{'bitrate'} || Slim::Music::Info::getBitrate($_[0]->currentTrack()->url);}
+sub streamformat        {return $_[0]->{'streamFormat'} || Slim::Music::Info::contentType($_[0]->currentTrack()->url);}
 sub isPlaylist          {return $_[0]->{'playlist'};}
 
 sub getSeekDataByPosition {
@@ -617,6 +617,15 @@ sub getSeekDataByPosition {
 sub streambitrate {
 	my $self = shift;
 	return (exists $self->{'streambitrate'} ? $self->{'streambitrate'} : $self->bitrate());
+}
+
+sub setStatus {
+	my ($self, $status) = @_;
+	$self->{'status'} = $status;
+	
+	# Bug 11156 - we reset the seekability evaluation here in case we now now more after
+	# parsing the actual stream headers or the background sanner has had time to finish.
+	$self->{'canSeek'} = undef;
 }
 
 sub canSeek {

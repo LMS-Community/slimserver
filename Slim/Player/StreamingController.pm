@@ -357,7 +357,7 @@ sub _Playing {
 	
 	if (defined($last_song)) {
 		$log->info("Song " . $last_song->{'index'} . " has now started playing");
-		$last_song->{'status'} = Slim::Player::Song::STATUS_PLAYING;
+		$last_song->setStatus(Slim::Player::Song::STATUS_PLAYING);
 	}
 	
 	# Update a few timestamps
@@ -541,7 +541,7 @@ sub _Stop {					# stop -> Stopped, Idle
 	my $queue = $self->{'songqueue'};
 	while (scalar @$queue > 1) {shift @$queue;}
 	
-	$queue->[0]->{'status'} = Slim::Player::Song::STATUS_FINISHED if scalar @$queue;
+	$queue->[0]->setStatus(Slim::Player::Song::STATUS_FINISHED) if scalar @$queue;
 	
 	if ($log->is_info && scalar @$queue) {
 		$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
@@ -792,7 +792,7 @@ sub _Continue {
 		$log->is_info && $log->info("Restarting stream at offset $bytesReceived");
 		_Stream($self, $event, {song => $song, seekdata => $seekdata, reconnect => 1});
 		if ($song == playingSong($self)) {
-			$song->{'status'} = Slim::Player::Song::STATUS_PLAYING;
+			$song->setStatus(Slim::Player::Song::STATUS_PLAYING);
 		}
 	} else {
 		$log->is_info && $log->info("Restarting playback at time offset: ". $self->playingSongElapsed());
@@ -1677,7 +1677,7 @@ sub playerStopped {
 	} else {
 		my $song = playingSong($self);
 		if ($song && $song->{'status'} == Slim::Player::Song::STATUS_PLAYING) {
-			$song->{'status'} = Slim::Player::Song::STATUS_FINISHED;
+			$song->setStatus(Slim::Player::Song::STATUS_FINISHED);
 		}
 	}
 	
@@ -1750,7 +1750,7 @@ sub playerStreamingFailed {
 	my $song = streamingSong($self);
 	
 	if ( $song ) {
-		$song->{'status'} = Slim::Player::Song::STATUS_FAILED;
+		$song->setStatus(Slim::Player::Song::STATUS_FAILED);
 	}
 	
 	# bug 10407: remove failed Song from song-queue unless only Song in queue.
