@@ -239,11 +239,8 @@ sub options {
 }
 
 sub checkForSC {
-	my $raddr = '127.0.0.1';
-	my $rport = 3483;
-
-	my $iaddr = inet_aton($raddr);
-	my $paddr = sockaddr_in($rport, $iaddr);
+	my $iaddr = inet_aton('127.0.0.1');
+	my $paddr = sockaddr_in(3483, $iaddr);
 
 	socket(SSERVER, PF_INET, SOCK_STREAM, getprotobyname('tcp'));
 

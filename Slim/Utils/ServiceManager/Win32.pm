@@ -1,40 +1,19 @@
-package Slim::Utils::OS::Win32::ServiceMgr;
+package Slim::Utils::ServiceManager::Win32;
 
-use Exporter::Lite;
-@ISA = qw(Exporter);
-
-our @EXPORT = qw( getStartupType getServiceState
-	SC_STARTUP_TYPE_LOGIN SC_STARTUP_TYPE_NONE SC_STARTUP_TYPE_SERVICE
-	SC_STATE_STOPPED SC_STATE_RUNNING SC_STATE_STARTING SC_STATE_STOPPING
-);
+use base qw(Slim::Utils::ServiceManager);
 
 use File::Spec::Functions qw(catdir);
-use Socket;
 use Win32::Process qw(DETACHED_PROCESS CREATE_NO_WINDOW NORMAL_PRIORITY_CLASS);
 use Win32::Process::List;
 use Win32::Service;
 use Win32::TieRegistry ('Delimiter' => '/');
 
-use Slim::Utils::OSDetect;
-use Slim::Utils::Light;
-
 use constant SC_USER_REGISTRY_KEY => 'CUser/Software/Logitech/SqueezeCenter';
 use constant SC_SERVICE_NAME => 'squeezesvc';
 
-use constant SC_STARTUP_TYPE_NONE    => 0;
-use constant SC_STARTUP_TYPE_LOGIN   => 1;
-use constant SC_STARTUP_TYPE_SERVICE => 2;
-
-use constant SC_STATE_STOPPED  => 0;
-use constant SC_STATE_RUNNING  => 1;
-use constant SC_STATE_STARTING => -1;
-use constant SC_STATE_STOPPING => -2;
-
-Slim::Utils::OSDetect::init();
+use Slim::Utils::ServiceManager;
 
 my $atLogin = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
-my $installDir = Slim::Utils::OSDetect::dirsFor('base');
-my $appExe  = Win32::GetShortPathName( catdir( $installDir, 'server', 'squeezecenter.exe' ) );
 
 my $processState;
 my $starting  = 0;
@@ -63,24 +42,20 @@ sub setStartAtLogin {
 	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = $atLogin = ($type || 0);
 }
 
-sub startupTypeIsService {
-	return (getStartupType() == SC_STARTUP_TYPE_SERVICE);
-}
-
-sub startupTypeIsLogin {
-	return (getStartupType() == SC_STARTUP_TYPE_LOGIN);
-}
-
 sub initStartupType {
+	my $class = shift;
+
 	# preset $atLogin if it isn't defined yet
-	setStartupType(SC_STARTUP_TYPE_LOGIN) if ($atLogin != SC_STARTUP_TYPE_NONE && $atLogin != SC_STARTUP_TYPE_LOGIN);
+	$class->setStartupType(SC_STARTUP_TYPE_LOGIN) if ($atLogin != SC_STARTUP_TYPE_NONE && $atLogin != SC_STARTUP_TYPE_LOGIN);
 }
 
 
 sub start {
 	my ($class) = @_;
 	
-	return if startupTypeIsService();
+	return if $class->startupTypeIsService();
+	
+	my $appExe = Win32::GetShortPathName( catdir( $class->installDir, 'server', 'squeezecenter.exe' ) );
 	
 	$checkHTTP = 1;
 
@@ -98,7 +73,9 @@ sub start {
 
 
 sub checkServiceState {
-	if (startupTypeIsService()) {
+	my $class = shift;
+	
+	if ($class->startupTypeIsService()) {
 
 		my %status = ();
 
@@ -140,7 +117,7 @@ sub checkServiceState {
 
 	if ($processState == SC_STATE_RUNNING) {
 
-		if ($checkHTTP && !checkForHTTP()) {
+		if ($checkHTTP && !$class->checkForHTTP()) {
 
 			$processState = SC_STATE_STARTING;
 		}
@@ -158,10 +135,6 @@ sub getServiceState {
 	return $processState;
 }
 
-sub isRunning {
-	return getServiceState() == SC_STATE_RUNNING;
-}
-
 sub getProcessID {
 
 	my $p = Win32::Process::List->new;
@@ -176,31 +149,6 @@ sub getProcessID {
 
 	return $pid if defined $pid;
 	return -1;
-}
-
-sub checkForHTTP {
-	my $httpPort = getPref('httpport') || 9000;
-
-	# Use low-level socket code. IO::Socket returns a 'Invalid Descriptor'
-	# erorr. It also sucks more memory than it should.
-	my $rport = $httpPort;
-
-	my $iaddr = inet_aton('127.0.0.1');
-	my $paddr = sockaddr_in($rport, $iaddr);
-
-	socket(SSERVER, PF_INET, SOCK_STREAM, getprotobyname('tcp'));
-
-	if (connect(SSERVER, $paddr)) {
-
-		close(SSERVER);
-		return "http://$raddr:$httpPort";
-	}
-
-	return 0;
-}
-
-sub installDir {
-	return $installDir;
 }
 
 1;

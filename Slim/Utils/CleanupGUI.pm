@@ -13,11 +13,14 @@ use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 use Wx::Html;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
 
 my %checkboxes;
 my $os = Slim::Utils::OSDetect::getOS();
 my $pollTimer;
 my $btnOk;
+
+my $svcMgr = Slim::Utils::ServiceManager->new();
 
 sub new {
 	my $ref = shift;
@@ -112,9 +115,8 @@ sub settingsPage {
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($panel, -1, string('STOP_SQUEEZECENTER'));
 	EVT_BUTTON( $panel, $btnStartStop, sub {
-		if ($args->{checkCB}()) {
-			serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
-		}
+		my ($self, $event) = @_;
+		btnStartStopHandler($self, $event, $args->{checkCB}());
 	});
 	
 	$pollTimer->addListener($btnStartStop, sub {
@@ -276,6 +278,19 @@ sub statusPage {
 	return $panel;
 }
 
+sub btnStartStopHandler {
+	my ($self, $event, $running) = @_;
+	
+	if ($running) {
+		serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
+	}
+	
+	# starting SC is heavily platform dependant
+	else {
+		$svcMgr->start();
+	}
+}
+
 sub setPref {
 	my ($pref, $value) = @_;
 	serverRequest('{"id":1,"method":"slim.request","params":["",["pref", "' . $pref . '", "' . $value . '"]]}');
@@ -283,10 +298,11 @@ sub setPref {
 
 sub serverRequest {
 	my $postdata = shift;
+	my $httpPort = getPref('httpport') || 9000;
 
 	my $req = HTTP::Request->new( 
 		'POST',
-		'http://127.0.0.1:9000/jsonrpc.js',
+		"http://127.0.0.1:$httpPort/jsonrpc.js",
 	);
 	$req->header('Content-Type' => 'text/plain');
 
