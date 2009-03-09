@@ -36,10 +36,12 @@ sub getStartupType {
 	return SC_STARTUP_TYPE_NONE;
 }
 
-sub setStartAtLogin {
+sub setStartupType {
 	my ($class, $type) = @_;
 
-	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = $atLogin = ($type || 0);
+	# TODO: add code to enable service mode
+
+	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = $atLogin = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 }
 
 sub initStartupType {
@@ -53,7 +55,7 @@ sub initStartupType {
 sub start {
 	my ($class) = @_;
 	
-	return if $class->startupTypeIsService();
+	return if $class->getStartupType() == SC_STARTUP_TYPE_SERVICE;
 	
 	my $appExe = Win32::GetShortPathName( catdir( $class->installDir, 'server', 'squeezecenter.exe' ) );
 	
@@ -75,7 +77,7 @@ sub start {
 sub checkServiceState {
 	my $class = shift;
 	
-	if ($class->startupTypeIsService()) {
+	if ($class->$class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
 
 		my %status = ();
 
