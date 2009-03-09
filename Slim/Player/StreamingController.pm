@@ -709,7 +709,7 @@ sub _playersMessage {
 
 	foreach my $client (@{$self->{'players'}}) {
 
-		my $line2 = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta);
+		my $line2 = Slim::Music::Info::getCurrentTitle($client, $url, 0, $remoteMeta) || $url;
 	
 		# Show an error message
 		$client->showBriefly( {

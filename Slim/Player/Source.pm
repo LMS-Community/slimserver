@@ -501,13 +501,11 @@ bail:
 
 		if ($client->streamBytes() == 0 && $client->reportsTrackStart()) {
 
-			# If we haven't streamed any bytes, then we can't rely on 
-			# the player to tell us when the next track has started,
-			# so we manually mark the track as played.
+			# If we haven't streamed any bytes, then it is most likely an error
 
-			$log->info("Didn't stream any bytes for this song, so just mark it as played");
-
-			_markStreamingTrackAsPlayed($client);
+			$log->info("Didn't stream any bytes for this song; mark it as failed");
+			$client->controller()->playerStreamingFailed($client);
+			return;
 		}
 		
 		# Mark the end of stream
