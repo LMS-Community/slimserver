@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -w -ICPAN
 
 # SqueezeCenter Copyright 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -85,7 +85,6 @@ sub main {
 			my $app = Slim::Utils::CleanupGUI->new({
 				folderCB => \&getFolderList,
 				cleanCB  => \&cleanup,
-				checkCB  => \&checkForSC,
 				options  => options(),
 			});
 			

@@ -48,12 +48,12 @@ sub new {
 		[-1, -1],
 	);
 
-	$pollTimer = Slim::Utils::CleanupGUI::Timer->new($args);
+	$pollTimer = Slim::Utils::CleanupGUI::Timer->new();
 
 	$btnOk = Slim::Utils::CleanupGUI::OkButton->new( $panel, wxID_OK, string('OK') );
 	$btnOk->SetDefault();
 	EVT_BUTTON( $self, $btnOk, sub {
-		$btnOk->do($args->{checkCB}());
+		$btnOk->do($svcMgr->checkServiceState());
 		$_[0]->Destroy;
 	} );
 
@@ -116,11 +116,12 @@ sub settingsPage {
 	my $btnStartStop = Wx::Button->new($panel, -1, string('STOP_SQUEEZECENTER'));
 	EVT_BUTTON( $panel, $btnStartStop, sub {
 		my ($self, $event) = @_;
-		btnStartStopHandler($self, $event, $args->{checkCB}());
+		btnStartStopHandler($self, $event, $svcMgr->checkServiceState());
 	});
 	
 	$pollTimer->addListener($btnStartStop, sub {
-		$btnStartStop->SetLabel($_[0] ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+		$btnStartStop->Enable($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN)
 	});
 	
 	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
@@ -130,7 +131,7 @@ sub settingsPage {
 	$pollTimer->addListener($btnAudioDir);
 
 	$btnOk->addActionHandler($btnAudioDir, sub {
-		my $running = shift;
+		my $running = (shift == SC_STATE_RUNNING);
 
 		my $path = $btnAudioDir->GetPath;
 		if ($running && $path ne getPref('audiodir')) {
@@ -145,7 +146,7 @@ sub settingsPage {
 	$pollTimer->addListener($btnPlaylistDir);
 
 	$btnOk->addActionHandler($btnPlaylistDir, sub {
-		my $running = shift;
+		my $running = (shift == SC_STATE_RUNNING);
 
 		my $path = $btnPlaylistDir->GetPath;
 		if ($running && $path ne getPref('playlistdir')) {
@@ -217,7 +218,7 @@ sub maintenancePage {
 	EVT_BUTTON( $self, $btnCleanup, sub {
 		my( $self, $event ) = @_;
 		
-		if ($args->{checkCB}()) {
+		if ($svcMgr->checkServiceState()) {
 			my $msg = Wx::MessageDialog->new($self, string('CLEANUP_PLEASE_STOP_SC'), string('CLEANUP_TITLE'), wxOK | wxICON_INFORMATION);
 			$msg->ShowModal();
 			return;
@@ -242,7 +243,7 @@ sub maintenancePage {
 		}
 	} );
 	$pollTimer->addListener($btnCleanup, sub {
-		$btnCleanup->Enable(!shift);
+		$btnCleanup->Enable($_[0] != SC_STATE_RUNNING && $_[0] != SC_STATE_STARTING);
 	});
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
@@ -279,9 +280,9 @@ sub statusPage {
 }
 
 sub btnStartStopHandler {
-	my ($self, $event, $running) = @_;
+	my ($self, $event, $status) = @_;
 	
-	if ($running) {
+	if ($status == SC_STATE_RUNNING) {
 		serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
 	}
 	
@@ -333,32 +334,24 @@ sub getBaseUrl {
 package Slim::Utils::CleanupGUI::Timer;
 
 use base 'Wx::Timer';
+use Slim::Utils::ServiceManager;
 
 my %listeners;
-my $pollCB;
-
-sub new {
-	my ($self, $args) = @_;
-	
-	$pollCB = $args->{checkCB};
-	
-	$self->SUPER::new();
-}
 
 sub addListener {
 	my ($self, $item, $callback) = @_;
 	
 	# if no callback is given, then enable the element if SC is running, or disable otherwise
-	$listeners{$item} = $callback || sub { $item->Enable(shift) };
+	$listeners{$item} = $callback || sub { $item->Enable($_[0] == SC_STATE_RUNNING) };
 }
 
 sub Notify {
-	my $running = &$pollCB();
-	
+	my $status = $svcMgr->checkServiceState();
+
 	foreach my $listener (keys %listeners) {
 
 		if (my $callback = $listeners{$listener}) {
-			&$callback($running);
+			&$callback($status);
 		}
 	}
 }
@@ -379,12 +372,12 @@ sub addActionHandler {
 }
 
 sub do {
-	my ($self, $running) = @_;
+	my ($self, $status) = @_;
 	
 	foreach my $actionHandler (keys %actionHandlers) {
 		
 		if (my $action = $actionHandlers{$actionHandler}) {
-			&$action($running);
+			&$action($status);
 		}
 	}
 }

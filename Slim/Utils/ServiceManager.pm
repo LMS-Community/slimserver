@@ -5,7 +5,7 @@ use Exporter::Lite;
 
 our @EXPORT = qw(
 	SC_STARTUP_TYPE_LOGIN SC_STARTUP_TYPE_NONE SC_STARTUP_TYPE_SERVICE
-	SC_STATE_STOPPED SC_STATE_RUNNING SC_STATE_STARTING SC_STATE_STOPPING
+	SC_STATE_STOPPED SC_STATE_RUNNING SC_STATE_STARTING SC_STATE_STOPPING SC_STATE_UNKNOWN
 );
 
 use File::Spec::Functions qw(catdir);
@@ -41,15 +41,22 @@ sub new {
 
 	}
 
-	return $svcMgr;
+	elsif ($os->name eq 'mac') {
+
+		require Slim::Utils::ServiceManager::OSX;
+		$svcMgr = Slim::Utils::ServiceManager::OSX->init();
+
+	}
+	
+	return $svcMgr || $class->init();
 }
 
 sub init {
 	my $class = shift;
 
 	my $self = {
-		starting  => 0,
 		checkHTTP => 0,
+		status    => SC_STATE_UNKNOWN,
 	};
 	
 	return bless $self, $class;
@@ -60,29 +67,16 @@ sub getStartupType {
 	return SC_STARTUP_TYPE_NONE;
 }
 
-sub setStartAtLogin {}
-
-sub startupTypeIsService {
-	return (getStartupType() == SC_STARTUP_TYPE_SERVICE);
-}
-
-sub startupTypeIsLogin {
-	return (getStartupType() == SC_STARTUP_TYPE_LOGIN);
-}
-
+sub setStartupType {}
 sub initStartupType {}
 sub start {}
-sub checkServiceState {}
-
-sub getServiceState {
+sub checkServiceState {
 	return SC_STATE_UNKNOWN;
 }
 
-sub isRunning {
-	return getServiceState() == SC_STATE_RUNNING;
+sub getServiceState {
+	return defined $_[0]->{status} ? $_[0]->{status} : SC_STATE_UNKNOWN;
 }
-
-sub getProcessID {}
 
 sub checkForHTTP {
 	my $httpPort = getPref('httpport') || 9000;
@@ -99,7 +93,7 @@ sub checkForHTTP {
 	if (connect(SSERVER, $paddr)) {
 
 		close(SSERVER);
-		return "http://$raddr:$httpPort";
+		return "http://127.0.0.1:$httpPort";
 	}
 
 	return 0;

@@ -10,10 +10,13 @@ package Slim::Utils::Light;
 # This module provides some functions compatible with functions
 # from the core SqueezeCenter code, without their overhead.
 # These functions are called by helper applications like SqueezeTray
-# or the control panel.
+# or the control panel. 
 
 use Exporter::Lite;
 @ISA = qw(Exporter);
+
+use Config;
+use FindBin qw($Bin);
 use File::Spec::Functions;
 
 use Slim::Utils::OSDetect;
@@ -25,6 +28,37 @@ BEGIN {
 	Slim::Utils::OSDetect::init();
 	$os = Slim::Utils::OSDetect->getOS();
 	$language = $os->getSystemLanguage();
+
+	my @SlimINC = ();
+
+	# NB: The user may be on a platform who's perl reports a
+	# different x86 version than we've supplied - but it may work
+	# anyways.
+	my $arch = $Config::Config{'archname'};
+	   $arch =~ s/^i[3456]86-/i386-/;
+	   $arch =~ s/gnu-//;
+
+	my $perlmajorversion = $Config{'version'};
+	   $perlmajorversion =~ s/\.\d+$//;
+
+	my $libPath = $Bin;
+
+	@SlimINC = (
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch, 'auto'),
+		catdir($libPath,'CPAN','arch',$Config{'version'}, $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$Config{'version'}, $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',$perlmajorversion, $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($libPath,'lib'), 
+		catdir($libPath,'CPAN'), 
+		$libPath,
+	);
+
+	# This works like 'use lib'
+	# prepend our directories to @INC so we look there first.
+	unshift @INC, @SlimINC;
 }
 
 my $serverPrefFile = catfile($os->dirsFor('prefs'), 'server.prefs');

@@ -15,10 +15,6 @@ use Slim::Utils::ServiceManager;
 
 my $atLogin = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
 
-my $processState;
-my $starting  = 0;
-my $checkHTTP = 0;
-
 # Determine how the user wants to start SqueezeCenter
 sub getStartupType {
 	my %services;
@@ -59,7 +55,7 @@ sub start {
 	
 	my $appExe = Win32::GetShortPathName( catdir( $class->installDir, 'server', 'squeezecenter.exe' ) );
 	
-	$checkHTTP = 1;
+	$class->{checkHTTP} = 1;
 
 	# start as background job
 	my $processObj;
@@ -85,56 +81,52 @@ sub checkServiceState {
 
 		if ($status{'CurrentState'} == 0x04) {
 
-			$processState = SC_STATE_RUNNING;
+			$class->{status} = SC_STATE_RUNNING;
 		}
 
 		elsif ($status{'CurrentState'} == 0x02) {
 
-			$processState = SC_STATE_STARTING;
+			$class->{status} = SC_STATE_STARTING;
 		}
 
 		elsif ($status{'CurrentState'} == 0x01) {
 
-			$processState = SC_STATE_STOPPED;
+			$class->{status} = SC_STATE_STOPPED;
 		}
 
 #		elsif ($status{'CurrentState'} == 0x0???) {
 #
-#			$processState = SC_STATE_STOPPING;
+#			$class->{status} = SC_STATE_STOPPING;
 #		}
 
 	} else {
 
 		if (getProcessID() != -1) {
 
-			$processState = SC_STATE_RUNNING;
+			$class->{status} = SC_STATE_RUNNING;
 		}
 		
 		else {
 			
-			$processState = SC_STATE_STOPPED;
+			$class->{status} = SC_STATE_STOPPED;
 		}
 		
 	}
 
-	if ($processState == SC_STATE_RUNNING) {
+	if ($class->{status} == SC_STATE_RUNNING) {
 
-		if ($checkHTTP && !$class->checkForHTTP()) {
+		if ($class->{checkHTTP} && !$class->checkForHTTP()) {
 
-			$processState = SC_STATE_STARTING;
+			$class->{status} = SC_STATE_STARTING;
 		}
 
 		else {
 
-			$checkHTTP = 0;
+			$class->{checkHTTP} = 0;
 		}
 	}
 	
-	return $processState;
-}
-
-sub getServiceState {
-	return $processState;
+	return $class->{status};
 }
 
 sub getProcessID {
