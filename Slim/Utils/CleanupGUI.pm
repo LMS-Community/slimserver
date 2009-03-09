@@ -38,9 +38,7 @@ sub new {
 
 	# set the application icon
 	if (Slim::Utils::OSDetect::isWindows()) {
-print "gugus\n";
 		if (my $icon = Wx::Icon->new('../platforms/win32/res/SqueezeCenter.ico', wxBITMAP_TYPE_ICO)) {
-print "gugus2\n";
 			
 			$self->SetIcon($icon);
 		}
@@ -92,13 +90,22 @@ print "gugus2\n";
 	$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
-	$btnsizer->SetAffirmativeButton($btnOk);
+	$btnsizer->AddButton($btnOk);
+
+	# Windows users like to have an Apply button which doesn't close the dialog
+	if (Slim::Utils::OSDetect::isWindows()) {
+		my $btnApply = Wx::Button->new( $panel, wxID_APPLY, string('APPLY') );
+		EVT_BUTTON( $self, $btnApply, sub {
+			$btnOk->do($svcMgr->checkServiceState());
+		} );
+		$btnsizer->AddButton($btnApply);
+	}
 	
 	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
 	EVT_BUTTON( $self, $btnCancel, sub {
 		$_[0]->Destroy;
 	} );
-	$btnsizer->SetCancelButton($btnCancel);
+	$btnsizer->AddButton($btnCancel);
 
 	$btnsizer->Realize();
 
@@ -134,10 +141,6 @@ sub settingsPage {
 			if ($newStartupType != $svcMgr->getStartupType()) {
 				$svcMgr->setStartupType($newStartupType);
 			}
-		});
-		
-		$pollTimer->addListener($lbStartupMode, sub {
-			$lbStartupMode->Enable($_[0] != SC_STATE_RUNNING);
 		});
 		
 		$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
