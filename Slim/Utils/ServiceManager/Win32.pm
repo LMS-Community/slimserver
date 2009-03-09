@@ -13,19 +13,17 @@ use constant SC_SERVICE_NAME => 'squeezesvc';
 
 use Slim::Utils::ServiceManager;
 
-my $atLogin = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
-
 # Determine how the user wants to start SqueezeCenter
 sub getStartupType {
 	my %services;
 
 	Win32::Service::GetServices('', \%services);
 
-	if (grep {$services{$_} =~ /SC_SERVICE_NAME/} keys %services) {
+	if (grep {$services{$_} =~ /squeezesvc/} keys %services) {
 		return SC_STARTUP_TYPE_SERVICE;
 	}
 
-	if ($atLogin) {
+	if ($Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'}) {
 		return SC_STARTUP_TYPE_LOGIN;
 	}
 
@@ -37,13 +35,14 @@ sub setStartupType {
 
 	# TODO: add code to enable service mode
 
-	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = $atLogin = ($type == SC_STARTUP_TYPE_LOGIN || 0);
+	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 }
 
 sub initStartupType {
 	my $class = shift;
 
-	# preset $atLogin if it isn't defined yet
+	# preset atLogin if it isn't defined yet
+	my $atLogin = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
 	$class->setStartupType(SC_STARTUP_TYPE_LOGIN) if ($atLogin != SC_STARTUP_TYPE_NONE && $atLogin != SC_STARTUP_TYPE_LOGIN);
 }
 
