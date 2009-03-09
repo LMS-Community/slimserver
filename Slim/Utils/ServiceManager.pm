@@ -67,6 +67,7 @@ sub getStartupType {
 	return SC_STARTUP_TYPE_NONE;
 }
 
+sub canSetStartupType { 0 }
 sub setStartupType {}
 sub initStartupType {}
 sub start {}

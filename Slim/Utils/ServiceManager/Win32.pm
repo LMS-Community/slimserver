@@ -30,6 +30,8 @@ sub getStartupType {
 	return SC_STARTUP_TYPE_NONE;
 }
 
+sub canSetStartupType { 1 }
+
 sub setStartupType {
 	my ($class, $type) = @_;
 

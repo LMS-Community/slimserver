@@ -122,6 +122,27 @@ sub settingsPage {
 	my $label = Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?");
 	$mainSizer->Add($label, 0, wxALL, 10);
 
+	# startup mode
+	if ($svcMgr->canSetStartupType()) {
+		
+		my $lbStartupMode = Wx::Choice->new($panel, -1, [-1, -1], [-1, -1], [ string('RUN_NEVER'), string('RUN_AT_LOGIN'), string('RUN_AT_BOOT') ]);
+		$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
+	
+		$btnOk->addActionHandler($lbStartupMode, sub {
+			my $newStartupType = $lbStartupMode->GetSelection();
+	
+			if ($newStartupType != $svcMgr->getStartupType()) {
+				$svcMgr->setStartupType($newStartupType);
+			}
+		});
+		
+		$pollTimer->addListener($lbStartupMode, sub {
+			$lbStartupMode->Enable($_[0] != SC_STATE_RUNNING);
+		});
+		
+		$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
+	}	
+
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($panel, -1, string('STOP_SQUEEZECENTER'));
 	EVT_BUTTON( $panel, $btnStartStop, sub {

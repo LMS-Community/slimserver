@@ -19280,6 +19280,33 @@ CLEANUP_DELETING
 CLEANUP_NO_STATUS
 	EN	No status information available. Please note that SqueezeCenter has to be up and running in order to display its status information.
 
+RUN_AT_BOOT
+	DA	Kør automatisk ved systemstart
+	DE	Automatisch bei Systemstart ausführen
+	EN	Automatically run at system start
+	ES	Ejecutar automáticamente al iniciar el sistema
+	FI	Suorita automaattisesti järjestelmän käynnistyessä
+	FR	Démarrer automatiquement au démarrage du système
+	IT	Esegui automaticamente all'avvio del sistema
+	NL	Automatisch uitvoeren bij systeemstart
+	NO	Kjør automatisk når systemet starter
+	SV	Kör automatiskt vid systemstart
+
+RUN_AT_LOGIN
+	DA	Kør automatisk ved logon
+	DE	Automatisch bei Anmeldung ausführen
+	EN	Automatically run at login
+	ES	Ejecutar automáticamente al iniciar sesión
+	FI	Suorita automaattisesti kirjautuessa
+	FR	Démarrer automatiquement lors de la connexion
+	IT	Esegui automaticamente all'accesso al sistema
+	NL	Automatisch uitvoeren bij aanmelden
+	NO	Kjør automatisk ved pålogging
+	SV	Kör automatiskt vid inloggning
+
+RUN_NEVER
+	EN	Don't start automatically
+
 START_SQUEEZECENTER
 	DA	Start SqueezeCenter
 	DE	SqueezeCenter starten
