@@ -73,7 +73,7 @@ sub start {
 sub checkServiceState {
 	my $class = shift;
 	
-	if ($class->$class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
+	if ($class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
 
 		my %status = ();
 
