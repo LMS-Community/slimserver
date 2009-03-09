@@ -19,16 +19,10 @@ use Config;
 use FindBin qw($Bin);
 use File::Spec::Functions;
 
-use Slim::Utils::OSDetect;
-
 our @EXPORT = qw(string getPref);
 my ($os, $language, %strings);
 
 BEGIN {
-	Slim::Utils::OSDetect::init();
-	$os = Slim::Utils::OSDetect->getOS();
-	$language = $os->getSystemLanguage();
-
 	my @SlimINC = ();
 
 	# NB: The user may be on a platform who's perl reports a
@@ -59,6 +53,12 @@ BEGIN {
 	# This works like 'use lib'
 	# prepend our directories to @INC so we look there first.
 	unshift @INC, @SlimINC;
+
+	use Slim::Utils::OSDetect;
+
+	Slim::Utils::OSDetect::init();
+	$os = Slim::Utils::OSDetect->getOS();
+	$language = $os->getSystemLanguage();
 }
 
 my $serverPrefFile = catfile($os->dirsFor('prefs'), 'server.prefs');
