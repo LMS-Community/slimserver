@@ -36,6 +36,16 @@ sub new {
 		string('CLEANUP_TITLE'),
 	);
 
+	# set the application icon
+	if (Slim::Utils::OSDetect::isWindows()) {
+print "gugus\n";
+		if (my $icon = Wx::Icon->new('../platforms/win32/res/SqueezeCenter.ico', wxBITMAP_TYPE_ICO)) {
+print "gugus2\n";
+			
+			$self->SetIcon($icon);
+		}
+	}
+
 	my $panel = Wx::Panel->new( 
 		$self, 
 		-1, 
