@@ -18,7 +18,7 @@ PLUGIN_EXTENSIONS_DESC
 	FI	SqueezeCenter saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.  Kolmansien osapuolien laajennusten tukea varten ota yhteyttä alla mainittuun tekijään tai liity <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">foorumeihin</a>.
 	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox. Pour obtenir du support veuillez contacter l'auteur de l'extension tiers affiché ci-dessous ou rejoignez les <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
 	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi. Per assistenza in merito alle estensioni di terzi, rivolgersi all'autore elencato di seguito o partecipare ai <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
-	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren. Voor ondersteuning van uitbreidingen van derden, kunt je contact opnemen met de auteur of je aansluiten bij de <ahref="http://forums.slimdevice:
+	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren. Voor ondersteuning bij uitbreidingen van derden kun je contact opnemen met de auteur of je aansluiten bij de <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
 	NO	Med Nedlasting av utvidelser kan du  laste ned en rekke tilleggsprogrammer for Squeezebox-systemet.  Hvis du trenger hjelp med tredjepartsutvidelser, må du ta kontakt med forfatteren som oppgis nedenfor, eller bli med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumene</a>.
 	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox. Om du vill ha support för tredjepartsprogram bör du kontakta upphovsmannen (se nedan) eller gå med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumen</a>.
 
@@ -139,7 +139,7 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	FR	déjà installé manuellement (%s). Veuillez d'abord le supprimer.
 	IT	già installato manualmente (%s). Rimuoverlo
 	NL	al handmatig geïnstalleerd (%s) - eerst verwijderen
-	NO	allerede installert manuelt (%s) - fjern først
+	NO	allerede installert manuelt (%s) ‒ fjern først
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG

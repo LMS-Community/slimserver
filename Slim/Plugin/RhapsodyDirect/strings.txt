@@ -95,7 +95,16 @@ PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
 	SV	Det gick inte att upprätta någon kommunikation mellan spelaren och Rhapsody.
 
 PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
-	EN	Player does not support Rhapsody
+	DA	Du skal vælge en Squeezebox 2, 3 eller Transporter til brug med Rhapsody.
+	DE	Für Rhapsody ist Squeezebox 2, 3 oder Transporter erforderlich.
+	EN	Please select a Squeezebox 2, 3, or Transporter to use Rhapsody.
+	ES	Seleccione Squeezebox 2, 3 o Transporter para usar Rhapsody.
+	FI	Valitse Squeezebox 2 tai 3 tai Transporter käyttämään Rhapsodya.
+	FR	Sélectionnez une Squeezebox2, 3 ou Transporter pour utiliser Rhapsody.
+	IT	Per usare Rhapsody, selezionare uno Squeezebox 2 o 3 o un Transporter.
+	NL	Selecteer een Squeezebox 2, 3, of Transporter om Rhapsody te gebruiken.
+	NO	Velg en Squeezebox 2, 3 eller Transporter for å bruke Rhapsody.
+	SV	Välj en Squeezebox 2 / 3 eller Transporter där Rhapsody ska användas.
 
 PLUGIN_RHAPSODY_DIRECT_US_ONLY
 	DA	Beklager, men Rhapsody kan foreløbig kun benyttes i USA.
@@ -240,3 +249,4 @@ PLUGIN_RHAPSODY_DIRECT_FIRMWARE_UPGRADE_REQUIRED
 	NL	Als je Rhapsody wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
 	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Rhapsody.
 	SV	Om du vill använda Rhapsody uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
+

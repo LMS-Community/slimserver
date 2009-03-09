@@ -30,7 +30,7 @@ PLUGIN_MEDIAFLY_NO_INFO
 	FI	Virran tietoja ei voi noutaa.
 	FR	Impossible de récupérer les informations sur le flux.
 	IT	Impossibile recuperare le informazioni sullo stream.
-	NL	Kan stroominfo niet ophalen
+	NL	Kan stroominfo niet ophalen.
 	NO	Kan ikke hente avspillingsinformasjon.
 	SV	Det gick inte att hämta ströminformationen.
 

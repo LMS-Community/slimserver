@@ -2654,7 +2654,16 @@ PROBLEM_UNKNOWN_TYPE
 	SV	Fel: Okänd filtyp för:
 
 UNSUPPORTED_SAMPLE_RATE
+	DA	Samplefrekvens understøttes ikke
+	DE	Nicht unterstützte Sample-Rate
 	EN	Unsupported sample-rate
+	ES	Frecuencia de muestreo no compatible
+	FI	Näytteenottotaajuutta ei tueta
+	FR	Taux d'échantillonnage non pris en charge
+	IT	Frequenza di campionamento non supportata
+	NL	Niet-ondersteunde samplefrequentie
+	NO	Denne samplingsfrekvensen støttes ikke
+	SV	Samplingsfrekvensen stöds ej
 
 PLAYLIST_NO_ITEMS_FOUND
 	DA	Fejl: Ingen elementer i spillelisten
@@ -6501,7 +6510,7 @@ SETUP_CHECKVERSION_DESC
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SV	SqueezeCenter kan automatiskt kopplas upp mot www.slimdevices.com varje dag för att kontrollera om en uppdaterad version av programvaran finns tillgänglig. Om det finns uppdateringar visas ett meddelande i webbgränssnittet.
 	ZH_CN	服务器能够每天自动地连接到www.slimdevices.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在SqueezeCenter的网界面。
-	
+
 SETUP_CHECKVERSION_1
 	CS	Automaticky zjišťovat dostupné aktualizace
 	DA	Søg automatisk efter softwareopdateringer
@@ -6537,16 +6546,52 @@ SETUP_CHECKVERSION_0
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
 SETUP_AUTO_DOWNLOAD
+	DA	Hent automatisk
+	DE	Automatischer Download
 	EN	Automatic Download
-	
+	ES	Descarga automática
+	FI	Automaattinen lataaminen
+	FR	Téléchargement automatique
+	IT	Download automatico
+	NL	Automatische download
+	NO	Automatisk nedlasting
+	SV	Automatisk nedladdning
+
 SETUP_AUTO_DOWNLOAD_DESC
+	DA	Hent automatisk opdateringer til SqueezeCenter når de udkommer. Når opdateringerne er overført til computeren, bliver du bedt om at installere dem
+	DE	Verfügbare Updates für SqueezeCenter werden automatisch heruntergeladen. Nach dem Herunterladen werden Sie zur Installation des Updates aufgefordert.
 	EN	Automatically download SqueezeCenter updates when they're available. You'll then be prompted to install the update as soon as the download has finished.
+	ES	Descargar actualizaciones de SqueezeCenter automáticamente cuando estén disponibles. Se le indicará que instale la actualización en cuanto haya acabado la descarga.
+	FI	Lataa SqueezeCenterin päivitykset automaattisesti, kun ne ovat saatavilla. Ohjelma kehottaa asentamaan päivityksen heti, kun se on ladattu.
+	FR	Télécharger automatiquement les mises à jour SqueezeCenter disponibles. Vous serez ensuite invité à installer la mises à jour à la fin du téléchargement.
+	IT	Scarica automaticamente gli aggiornamenti a SqueezeCenter quando sono disponibili. Al termine del download verrà chiesto di installare l'aggiornamento.
+	NL	SqueezeCenter-updates automatisch downloaden wanneer deze beschikbaar zijn. Je wordt dan gevraagd de updates te installeren zodra het downloaden voltooid is.
+	NO	Last ned SqueezeCenter-oppdateringer automatisk når de blir tilgjengelige. Du blir bedt om å installere oppdateringen når nedlastingen er fullført.
+	SV	Ladda ner SqueezeCenter-uppdateringar automatiskt när de är tillgängliga. Du ombeds installera uppdateringen när nedladdningen har slutförts.
 
 SETUP_AUTO_DOWNLOAD_0
+	DA	Hent ikke opdateringer automatisk
+	DE	Updates nicht automatisch herunterladen
 	EN	Do not automatically download updates
+	ES	No descargar actualizaciones automáticamente
+	FI	Älä lataa päivityksiä automaattisesti
+	FR	Ne pas télécharger automatiquement les mises à jour
+	IT	Non scaricare automaticamente gli aggiornamenti
+	NL	Updates niet automatisch downloaden
+	NO	Ikke last ned oppdateringer automatisk.
+	SV	Ladda inte ner uppdateringar automatiskt
 
 SETUP_AUTO_DOWNLOAD_1
+	DA	Hent automatisk opdateringer når de udkommer.
+	DE	Verfügbare Updates automatisch herunterladen.
 	EN	Automatically download updates when they're available.
+	ES	Descargar actualizaciones automáticamente cuando estén disponibles.
+	FI	Lataa päivitykset automaattisesti, kun ne ovat saatavilla.
+	FR	Télécharger automatiquement les mises à jour disponibles.
+	IT	Scarica automaticamente gli aggiornamenti quando sono disponibili.
+	NL	Updates automatisch downloaden wanneer deze beschikbaar zijn.
+	NO	Last ned oppdateringer automatisk når de blir tilgjengelige.
+	SV	Ladda ner uppdateringar automatiskt när de är tillgängliga.
 
 SETUP_SCREENSAVER
 	CS	Spořič (hraje se)
@@ -10542,10 +10587,28 @@ ALC
 	SV	Apple Lossless
 
 MOV
-	EN	Quicktime Movie
+	DA	QuickTime-film
+	DE	QuickTime-Datei
+	EN	QuickTime Movie
+	ES	Película QuickTime
+	FI	AAC- tai .mov-tiedosto
+	FR	Vidéo QuickTime
+	IT	Filmato QuickTime
+	NL	QuickTime-film
+	NO	QuickTime Movie
+	SV	QuickTime-film
 
 AAC
+	DA	AAC
+	DE	AAC
 	EN	AAC
+	ES	AAC
+	FI	AAC
+	FR	AAC
+	IT	AAC
+	NL	AAC
+	NO	AAC
+	SV	AAC
 
 MP4
 	EN	MP4
@@ -13008,7 +13071,7 @@ FORGET_PLAYER
 	NL	Muzieksysteem vergeten
 	NO	Glem spiller
 	PT	Esquecer cliente
-	SV	Glöm spelare
+	SV	Ta bort spelare
 	ZH_CN	遗忘此播放机
 
 FORGET_PLAYER_DESC
@@ -13042,7 +13105,7 @@ FORGET_PLAYER_LINK
 	NL	Dit muzieksysteem vergeten
 	NO	Glem denne spilleren
 	PT	Esquecer este cliente
-	SV	Glöm bort den här spelaren
+	SV	Ta bort den här spelaren
 	ZH_CN	遗忘此播放机
 
 MP3DIR_IS_NOW
@@ -16336,9 +16399,9 @@ SETUP_FXLOOPSOURCE
 SETUP_FXLOOPSOURCE_DESC
 	DA	Du kan tilslutte en ekstern digital signalomformer, fx en equalizer, via S/PDIF-stikket og lade den behandle signalet inden det når den indbyggede DAC i Transporter. Hvis denne mulighed er valgt, skal den eksterne enhed være tilsluttet og tændt for at Transporters analoge udgange fungerer.
 	DE	Sie können einen externen digitalen Prozessor (z.B. einen EQ) über S/PDIF anschließen, um das Signal zu verarbeiten, bevor es denn internen DAC des Transporter erreicht. Ist diese Option aktiviert, muss der externe Prozessor angeschlossen und aktiv sein, damit die analogen Ausgänge des Transporter funktionieren.
-	EN	An external digital processor, such as an EQ,  may be connected via s/pdif to process the signal before it reaches Transporter's internal DAC. If this option is enabled, then the external processor must be connected and operating in order for Transporter's analog outputs to function.
-	ES	Se puede conectar un procesador digital externo (p. ej. un ecualizador) a través de s/pdif para procesar la señal antes de que llegue al conversor DAC interno de Transporter. Si esta opción se encuentra habilitada, el procesador externo tendrá que estar conectado y en activo para que funcionen las salidas analógicas de Transporter.
-	FI	Ulkoinen digitaaliprosessori, esimerkiksi taajuuskorjain, saattaa käsitellä signaalin s/pdif:n välityksellä, ennen kuin signaali saavuttaa Transporterin sisäisen DAC:n. Jos tämä toiminto on käytössä, ulkoisen prosessorin pitää olla liitettynä ja toiminnassa, jotta Transporterin analogiset lähdöt toimisivat.
+	EN	An external digital processor, such as an EQ,  may be connected via s/pdif to process the signal before it reaches Trasporter's internal DAC. If this option is enabled, then the external processor must be connected and operating in order for Transporter's analog outputs to function.
+	ES	Se puede conectar un procesador digital externo (p. ej. un ecualizador) a través de s/pdif para procesar la señal antes de que llegue al conversor DAC interno de Trasporter. Si esta opción se encuentra habilitada, el procesador externo tendrá que estar conectado y en activo para que funcionen las salidas analógicas de Transporter.
+	FI	Ulkoinen digitaaliprosessori, esimerkiksi taajuuskorjain, saattaa käsitellä signaalin s/pdif:n välityksellä, ennen kuin signaali saavuttaa Trasporterin sisäisen DAC:n. Jos tämä toiminto on käytössä, ulkoisen prosessorin pitää olla liitettynä ja toiminnassa, jotta Transporterin analogiset lähdöt toimisivat.
 	FR	Un processeur numérique externe, tel qu'un correcteur, peut être connecté par le biais de S/PDIF pour traiter le signal avant qu'il n'atteigne le convertisseur numérique-analogique interne de Transporter. Si cette option est activée, le processeur externe doit être connecté et opérationnel afin de permettre le fonctionnement des sorties analogiques de Transporter.
 	IT	È possibile collegare un processore digitale esterno, quale un equalizzatore, tramite S/PDIF per elaborare il segnale prima che raggiunga il convertitore digitale-analogico interno del Transporter. Se questa opzione è attiva, il processore esterno deve essere collegato e operativo affinché gli output analogici del Transporter funzionino.
 	NL	Via s/pdif kan een externe digitale processor, zoals een equalizer, worden aangesloten om het signaal te verwerken voordat het de interne DAC van Transporter bereikt. Als deze optie ingeschakeld is, moet de externe processor aangesloten en ingeschakeld zijn, zodat de analoge uitvoeren van Transporter functioneren.
@@ -19213,7 +19276,7 @@ CLEANUP_DELETING
 	NL	wordt verwijderd
 	NO	Sletter
 	SV	Raderar
-	
+
 CLEANUP_NO_STATUS
 	EN	No status information available. Please note that SqueezeCenter has to be up and running in order to display its status information.
 
@@ -19249,7 +19312,7 @@ PLAYLIST_MODE
 	FI	Soittoluettelotila (beeta)
 	FR	Mode liste de lecture (Bêta)
 	IT	Modalità Elenco di riproduzione (Beta)
-	NL	Playlistmodus (bèta)
+	NL	Afspeellijstmodus (bèta)
 	NO	Spillelistemodus (betaversjon)
 	SV	Spellistläge (beta)
 

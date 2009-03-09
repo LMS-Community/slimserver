@@ -18,7 +18,7 @@ PLUGIN_CLASSICAL_MODULE_NAME_DESC
 	FI	Classical.com tarjoaa maailman laajimman ja kattavimman valikoiman klassista musiikkia, jazzia ja bluesia sekä maailmanmusiikkia.
 	FR	Classical.com propose un service musical spécialisé complet pour la musique classique, le jazz, le blues et la World music.
 	IT	Classical.com offre il servizio di musica classica, jazz, blues e world music più completo e fornito del mondo.
-	NL	Classical.com biedt de grootste, uitgebreidste specialistische muziekservice ter wereld voor klassieke muziek, jazz & blues en folkloremuziek.
+	NL	Classical.com biedt de grootste en uitgebreidste specialistische muziekservice ter wereld voor klassieke muziek, jazz & blues en folkloremuziek.
 	NO	Classical.com er verdens største og mest omfattende spesialistmusikktjeneste for klassisk, jazz, blues og verdensmusikk.
 	SV	Classical.com är en tjänst som ger tillgång till världens största utbud av nischad musik: klassiskt, jazz & blues och världsmusik.
 
