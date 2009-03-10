@@ -1213,11 +1213,6 @@ sub shouldCacheURL {
 	
 	return 0 if $host !~ /\./;
 	
-	if ( main::SLIM_SERVICE ) {
-		# Don't cache RadioTime Local menu
-		return 0 if $url =~ /radiotime.*local/;
-	}
-	
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
 	
