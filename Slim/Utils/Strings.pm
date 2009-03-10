@@ -251,53 +251,19 @@ sub loadFile {
 	my $file = shift;
 	my $args = shift;
 
-	my $text;
-
 	# Force the UTF-8 layer opening of the strings file.
-	#
-	# Be backwards compatible with perl 5.6.x
-	#
-	# Setting $/ to undef and slurping is much faster than join('', <STRINGS>)
-	# it also avoids creating an extra in memory copy of the string.
-	if ($] > 5.007) {
-
-		local $/ = undef;
-
-		open(STRINGS, '<:utf8', $file) || do {
-			logError("Couldn't open $file - FATAL!");
-			die;
-		};
-
-		$text = <STRINGS>;
-		close STRINGS;
-
-	} else {
-
-		# This is lexically scoped.
-		use utf8;
-		local $/ = undef;
-
-		open(STRINGS, $file) || do {
-			logError("Couldn't open $file - FATAL!");
-			die;
-		};
-
-		$text = <STRINGS>;
-
-		if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859-1/) {
-			$strings = Slim::Utils::Unicode::utf8toLatin1($text);
-		}
-
-		close STRINGS;
-	}
-
-	parseStrings(\$text, $file, $args);
+	open(my $fh, '<:utf8', $file) || do {
+		logError("Couldn't open $file - FATAL!");
+		die;
+	};
+	
+	parseStrings($fh, $file, $args);
+	
+	close $fh;
 }
 
 sub parseStrings {
-	my $text = shift;
-	my $file = shift;
-	my $args = shift;
+	my ( $fh, $file, $args ) = @_;
 
 	my $string = '';
 	my $language = '';
@@ -312,7 +278,7 @@ sub parseStrings {
 	# and mac format (\r) files
 	# It also obviates the need to strip trailing \n or \r
 	# from the end of lines
-	LINE: for my $line (split('[\n\r]', $$text)) {
+	LINE: for my $line ( <$fh> ) {
 
 		$ln++;
 
