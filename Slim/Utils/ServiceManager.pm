@@ -69,7 +69,9 @@ sub getStartupType {
 
 sub canSetStartupType { 0 }
 sub setStartupType {}
+sub getStartupOptions {}
 sub initStartupType {}
+sub canStart {}
 sub start {}
 sub checkServiceState {
 	return SC_STATE_UNKNOWN;

@@ -19280,6 +19280,9 @@ CLEANUP_DELETING
 CLEANUP_NO_STATUS
 	EN	No status information available. Please note that SqueezeCenter has to be up and running in order to display its status information.
 
+CLEANUP_NEED_ADMINISTRATOR
+	EN	Please note: in order to have all options available, you need to run this control panel as a user who is member of the administrator group. You eg. can not configure SC to run in the background when the system is started, unless you're an administrator.
+
 RUN_AT_BOOT
 	DA	Kør automatisk ved systemstart
 	DE	Automatisch bei Systemstart ausführen

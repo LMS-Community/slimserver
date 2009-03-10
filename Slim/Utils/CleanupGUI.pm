@@ -38,7 +38,13 @@ sub new {
 
 	# set the application icon
 	if (Slim::Utils::OSDetect::isWindows()) {
-		if (my $icon = Wx::Icon->new('../platforms/win32/res/SqueezeCenter.ico', wxBITMAP_TYPE_ICO)) {
+		my $file = '../platforms/win32/res/SqueezeCenter.ico';
+		
+		if (!-f $file && defined $PerlApp::VERSION) {
+			$file = PerlApp::extract_bound_file('SqueezeCenter.ico');
+		}
+
+		if ( -f $file && (my $icon = Wx::Icon->new($file, wxBITMAP_TYPE_ICO)) ) {
 			
 			$self->SetIcon($icon);
 		}
@@ -124,27 +130,31 @@ sub settingsPage {
 	
 	my $panel = Wx::Panel->new($parent, -1);
 
-	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
-	
-	my $label = Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?");
-	$mainSizer->Add($label, 0, wxALL, 10);
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);	
+	$mainSizer->Add(
+		Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?"),
+		0, wxALL, 10
+	);
 
 	# startup mode
-	if ($svcMgr->canSetStartupType()) {
-		
-		my $lbStartupMode = Wx::Choice->new($panel, -1, [-1, -1], [-1, -1], [ string('RUN_NEVER'), string('RUN_AT_LOGIN'), string('RUN_AT_BOOT') ]);
-		$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
+	my ($noAdminWarning, @startupOptions) = $svcMgr->getNonAdminOptions();
+
+	if ($noAdminWarning) {
+		$mainSizer->Add(Wx::StaticText->new($panel, -1, string($noAdminWarning)), 0, wxALL, 10);
+	}
+
+	@startupOptions = map { string($_) } @startupOptions;	
+	my $lbStartupMode = Wx::Choice->new($panel, -1, [-1, -1], [-1, -1], \@startupOptions);
+	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
+	$lbStartupMode->Enable($svcMgr->canSetStartupType());
 	
-		$btnOk->addActionHandler($lbStartupMode, sub {
-			my $newStartupType = $lbStartupMode->GetSelection();
-	
-			if ($newStartupType != $svcMgr->getStartupType()) {
-				$svcMgr->setStartupType($newStartupType);
-			}
-		});
+	$btnOk->addActionHandler($lbStartupMode, sub {
+
+		$svcMgr->setStartupType($lbStartupMode->GetSelection());
+
+	});
 		
-		$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
-	}	
+	$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
 
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($panel, -1, string('STOP_SQUEEZECENTER'));
@@ -152,10 +162,10 @@ sub settingsPage {
 		my ($self, $event) = @_;
 		btnStartStopHandler($self, $event, $svcMgr->checkServiceState());
 	});
-	
+
 	$pollTimer->addListener($btnStartStop, sub {
 		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
-		$btnStartStop->Enable($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN)
+		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 	});
 	
 	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
