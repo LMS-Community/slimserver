@@ -54,14 +54,14 @@ sub canSetStartupType {
 	}
 }
 
-sub getNonAdminOptions {
-	if ($os->get('isVista') || Win32::IsAdminUser()) {
-		return ('', 'RUN_NEVER', 'RUN_AT_LOGIN', 'RUN_AT_BOOT');
-	}
+sub getStartupOptions {
+	my $class = shift;
 	
-	else {	
+	if (!$os->get('isVista') && !Win32::IsAdminUser()) {
 		return ('CLEANUP_NEED_ADMINISTRATOR', 'RUN_NEVER', 'RUN_AT_LOGIN');
 	}	
+
+	return $class->SUPER::getStartupOptions();
 }
 
 sub setStartupType {

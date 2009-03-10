@@ -69,9 +69,11 @@ sub getStartupType {
 
 sub canSetStartupType { 0 }
 sub setStartupType {}
-sub getStartupOptions {}
 sub initStartupType {}
 sub canStart {}
+sub getStartupOptions {
+	return ('', 'RUN_NEVER', 'RUN_AT_LOGIN', 'RUN_AT_BOOT');	
+}
 sub start {}
 sub checkServiceState {
 	return SC_STATE_UNKNOWN;

@@ -7,6 +7,7 @@ use File::Spec::Functions qw(catdir);
 use Slim::Utils::ServiceManager;
 
 # re-use the startup-script we already have in place for the PreferencePane
+sub canStart { 1 }
 sub start {
 	foreach my $path (
 		catdir($Bin, '..', 'platforms', 'osx', 'Preference Pane'),
@@ -27,6 +28,10 @@ sub start {
 	
 }
 
+sub getStartupOptions {
+	return ("I'm sorry, we're not quite there yet", 'Whatever is defined in the PrefPane');
+}
+
 # simple check so far - only check http availability (no starting/stopping states)
 sub checkServiceState {
 	my ($class) = @_;
@@ -35,5 +40,9 @@ sub checkServiceState {
 
 	return $class->{status};
 }
+
+# use AppleScript to run some script as admin
+# ugly but effective
+# 	system('osascript -e \'do shell script "/run/something" with administrator privileges\'');
 
 1;

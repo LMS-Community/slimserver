@@ -137,7 +137,7 @@ sub settingsPage {
 	);
 
 	# startup mode
-	my ($noAdminWarning, @startupOptions) = $svcMgr->getNonAdminOptions();
+	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
 
 	if ($noAdminWarning) {
 		$mainSizer->Add(Wx::StaticText->new($panel, -1, string($noAdminWarning)), 0, wxALL, 10);
