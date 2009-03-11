@@ -61,6 +61,7 @@ sub new {
 		# starting SC is heavily platform dependant
 		else {
 			$svcMgr->start();
+			$parent->checkServiceStatus();
 		}
 	});
 
