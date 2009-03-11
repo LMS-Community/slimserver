@@ -1,8 +1,9 @@
-# TODO: during installation we need to have Vista elevate the service helper:
-# [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers]
-# "C:\\Program Files\\SqueezeCenter\\server\\svchelper.exe"="RUNASADMIN"
-
 package Slim::Utils::ServiceManager::Win32;
+
+# SqueezeCenter Copyright 2001-2009 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use base qw(Slim::Utils::ServiceManager);
 

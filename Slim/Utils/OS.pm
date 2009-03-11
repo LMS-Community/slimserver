@@ -2,6 +2,11 @@ package Slim::Utils::OS;
 
 # $Id: Base.pm 21790 2008-07-15 20:18:07Z andy $
 
+# SqueezeCenter Copyright 2001-2009 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
+
 # Base class for OS specific code
 
 use strict;

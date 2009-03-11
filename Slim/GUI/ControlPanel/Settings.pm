@@ -1,5 +1,9 @@
-# settings page with start options etc.
 package Slim::GUI::ControlPanel::Settings;
+
+# SqueezeCenter Copyright 2001-2009 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
 
 use base 'Wx::Panel';
 
