@@ -88,7 +88,18 @@ sub initStartupType {
 
 	# preset atLogin if it isn't defined yet
 	my $atLogin = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
-	$class->setStartupType(SC_STARTUP_TYPE_LOGIN) if ($atLogin != SC_STARTUP_TYPE_NONE && $atLogin != SC_STARTUP_TYPE_LOGIN);
+	
+	if ($atLogin !~ /[01]/) {
+		
+		# make sure our Key does exist before we can write to it
+		if (! (my $regKey = $Registry->{SC_USER_REGISTRY_KEY . ''})) {
+			$Registry->{'CUser/Software/Logitech/'} = {
+				'SqueezeCenter/' => {}
+			};
+		}
+
+		$class->setStartupType(SC_STARTUP_TYPE_LOGIN);
+	}
 }
 
 sub canStart {
