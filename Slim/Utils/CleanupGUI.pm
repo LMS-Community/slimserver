@@ -3,17 +3,16 @@ package Slim::Utils::CleanupGUI::MainFrame;
 use strict;
 use base 'Wx::Frame';
 
-use LWP::Simple;
-use LWP::UserAgent;
-use JSON::XS qw(to_json from_json);
 use File::Spec::Functions;
 
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
-use Wx::Html;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
+
+use constant PAGE_STATUS => 3;
+use constant PAGE_SCAN   => 1;
 
 my %checkboxes;
 my $os = Slim::Utils::OSDetect::getOS();
@@ -65,31 +64,16 @@ sub new {
 	$pollTimer = Slim::Utils::CleanupGUI::Timer->new();
 
 	$btnOk = Slim::Utils::CleanupGUI::OkButton->new( $panel, wxID_OK, string('OK') );
-	$btnOk->SetDefault();
 	EVT_BUTTON( $self, $btnOk, sub {
 		$btnOk->do($svcMgr->checkServiceState());
 		$_[0]->Destroy;
 	} );
 
-	$notebook->AddPage(settingsPage($notebook, $args), string('SETTINGS'), 1);
+
+	$notebook->AddPage(Slim::Utils::CleanupGUI::SettingsPage->new($notebook, -1), string('SETTINGS'), 1);
+	$notebook->AddPage(Slim::Utils::CleanupGUI::ScanPage->new($notebook, -1), string('CLEANUP_MUSIC_LIBRARY'));
 	$notebook->AddPage(maintenancePage($notebook, $args, $self), string('CLEANUP_MAINTENANCE'));
-	$notebook->AddPage(statusPage($notebook, $args), string('INFORMATION'));
-	
-	EVT_NOTEBOOK_PAGE_CHANGED( $self, $notebook, sub {
-		my( $self, $event ) = @_;
-
-		# Wx on Windows will return the old selection - always update
-		if ($event->GetSelection == 2) {
-
-			if (my $page = $notebook->GetPage($event->GetSelection)) {
-
-				my $htmlPage = $page->GetChildren();
-				if ( $htmlPage && $htmlPage->isa('Wx::HtmlWindow') ) {
-					$htmlPage->SetPage(get(getBaseUrl() . '/EN/settings/server/status.html?simple=1') || string('CLEANUP_NO_STATUS'));
-				}
-			}
-		}
-	});
+	$notebook->AddPage(Slim::Utils::CleanupGUI::StatusPage->new($notebook, -1), string('INFORMATION'));
 	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	
@@ -125,113 +109,6 @@ sub new {
 	return $self;
 }
 
-sub settingsPage {
-	my ($parent, $args) = @_;
-	
-	my $panel = Wx::Panel->new($parent, -1);
-
-	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);	
-	$mainSizer->Add(
-		Wx::StaticText->new($panel, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?"),
-		0, wxALL, 10
-	);
-
-	# startup mode
-	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
-
-	if ($noAdminWarning) {
-		$mainSizer->Add(Wx::StaticText->new($panel, -1, string($noAdminWarning)), 0, wxALL, 10);
-	}
-
-	@startupOptions = map { string($_) } @startupOptions;	
-	my $lbStartupMode = Wx::Choice->new($panel, -1, [-1, -1], [-1, -1], \@startupOptions);
-	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
-	$lbStartupMode->Enable($svcMgr->canSetStartupType());
-	
-	$btnOk->addActionHandler($lbStartupMode, sub {
-
-		$svcMgr->setStartupType($lbStartupMode->GetSelection());
-
-	});
-		
-	$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
-
-	# Start/Stop button
-	my $btnStartStop = Wx::Button->new($panel, -1, string('STOP_SQUEEZECENTER'));
-	EVT_BUTTON( $panel, $btnStartStop, sub {
-		my ($self, $event) = @_;
-		btnStartStopHandler($self, $event, $svcMgr->checkServiceState());
-	});
-
-	$pollTimer->addListener($btnStartStop, sub {
-		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
-		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
-	});
-	
-	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
-	
-	# folder selectors
-	my $btnAudioDir = Wx::DirPickerCtrl->new($panel, -1, getPref('audiodir') || '', string('SETUP_AUDIODIR'), wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
-	$pollTimer->addListener($btnAudioDir);
-
-	$btnOk->addActionHandler($btnAudioDir, sub {
-		my $running = (shift == SC_STATE_RUNNING);
-
-		my $path = $btnAudioDir->GetPath;
-		if ($running && $path ne getPref('audiodir')) {
-			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
-			setPref("audiodir", $path);
-		}
-	});
-
-	$mainSizer->Add($btnAudioDir, 0, wxEXPAND | wxALL, 10);
-
-	my $btnPlaylistDir = Wx::DirPickerCtrl->new($panel, -1, getPref('playlistdir') || '', string('SETUP_PLAYLISTDIR'), wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
-	$pollTimer->addListener($btnPlaylistDir);
-
-	$btnOk->addActionHandler($btnPlaylistDir, sub {
-		my $running = (shift == SC_STATE_RUNNING);
-
-		my $path = $btnPlaylistDir->GetPath;
-		if ($running && $path ne getPref('playlistdir')) {
-			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
-			setPref("playlistdir", $path);
-		}
-	});
-	$mainSizer->Add($btnPlaylistDir, 0, wxEXPAND | wxALL, 10);
-	
-	# links to log files
-	# on OSX we can't "start" the log files, but need to use some trickery to get an URL
-	my $log = catfile($os->dirsFor('log'), 'server.log');
-	my $serverlogLink = Wx::HyperlinkCtrl->new(
-		$panel, 
-		-1, 
-		$log, 
-		$os->name eq 'mac' ? getBaseUrl() . '/server.log?lines=500' : 'file://' . $log, 
-		[-1, -1], 
-		[-1, -1], 
-		wxHL_DEFAULT_STYLE,
-	);
-	$pollTimer->addListener($serverlogLink) if $os->name eq 'mac';
-	$mainSizer->Add($serverlogLink, 0, wxALL, 10);
-
-	$log = catfile($os->dirsFor('log'), 'scanner.log');
-	my $scannerlogLink = Wx::HyperlinkCtrl->new(
-		$panel, 
-		-1, 
-		$log, 
-		$os->name eq 'mac' ? getBaseUrl() . '/scanner.log?lines=500' : 'file://' . $log, 
-		[-1, -1], 
-		[-1, -1], 
-		wxHL_DEFAULT_STYLE,
-	);
-	$pollTimer->addListener($scannerlogLink) if $os->name eq 'mac';
-	$mainSizer->Add($scannerlogLink, 0, wxALL, 10);
-
-	$panel->SetSizer($mainSizer);	
-	
-	return $panel;
-}
 
 sub maintenancePage {
 	my ($parent, $args, $self) = @_;
@@ -300,75 +177,106 @@ sub maintenancePage {
 	return $panel;
 }
 
-# basically display Settings/Information - either new, blank skin, or CLI query result
-sub statusPage {
-	my ($parent, $args) = @_;
-	
-	my $panel = Wx::Panel->new($parent, -1);
-	$panel->SetAutoLayout(1);
-	
-	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+1;
 
-	my $info = Wx::HtmlWindow->new(
-		$panel, 
-		-1,
-		[-1, -1],
-		[-1, -1],
-		wxSUNKEN_BORDER
+
+# settings page with start options etc.
+package Slim::Utils::CleanupGUI::SettingsPage;
+
+use base 'Wx::Panel';
+
+use Wx qw(:everything);
+use Wx::Event qw(EVT_BUTTON);
+use File::Spec::Functions qw(catfile);
+
+use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
+
+sub new {
+	my $self = shift;
+
+	$self = $self->SUPER::new(@_);
+
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);	
+	$mainSizer->Add(
+		Wx::StaticText->new($self, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?"),
+		0, wxALL, 10
 	);
-	
-	$mainSizer->Add($info, 1, wxALL | wxGROW, 10);
-	$panel->SetSizer($mainSizer);
-	
-	return $panel;
-}
 
-sub btnStartStopHandler {
-	my ($self, $event, $status) = @_;
-	
-	if ($status == SC_STATE_RUNNING) {
-		serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
+	# startup mode
+	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
+
+	if ($noAdminWarning) {
+		my $string = string($noAdminWarning);
+		$string    =~ s/\\n/\n/g;
+		
+		$mainSizer->Add(Wx::StaticText->new($self, -1, $string), 0, wxALL, 10);
 	}
+
+	@startupOptions = map { string($_) } @startupOptions;	
+	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
+	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
+	$lbStartupMode->Enable($svcMgr->canSetStartupType());
 	
-	# starting SC is heavily platform dependant
-	else {
-		$svcMgr->start();
-	}
-}
+	$btnOk->addActionHandler($lbStartupMode, sub {
 
-sub setPref {
-	my ($pref, $value) = @_;
-	serverRequest('{"id":1,"method":"slim.request","params":["",["pref", "' . $pref . '", "' . $value . '"]]}');
-}
+		$svcMgr->setStartupType($lbStartupMode->GetSelection());
 
-sub serverRequest {
-	my $postdata = shift;
-	my $httpPort = getPref('httpport') || 9000;
+	});
+		
+	$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
 
-	my $req = HTTP::Request->new( 
-		'POST',
-		"http://127.0.0.1:$httpPort/jsonrpc.js",
-	);
-	$req->header('Content-Type' => 'text/plain');
-
-	$req->content($postdata);	
-
-	my $response = LWP::UserAgent->new()->request($req);
-	
-	my $content;
-	$content = $response->decoded_content if ($response);
-
-	if ($content) {
-		eval {
-			$content = from_json($content); 
+	# Start/Stop button
+	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
+	EVT_BUTTON( $self, $btnStartStop, sub {
+		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+			Slim::Utils::CleanupGUI->serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
 		}
-	}
-	
-	return $content;
-}
+		
+		# starting SC is heavily platform dependant
+		else {
+			$svcMgr->start();
+		}
+	});
 
-sub getBaseUrl {
-	return 'http://127.0.0.1:' . getPref('httpport');
+	$pollTimer->addListener($btnStartStop, sub {
+		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
+	});
+	
+	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
+	
+	# links to log files
+	# on OSX we can't "start" the log files, but need to use some trickery to get an URL
+	my $log = catfile($os->dirsFor('log'), 'server.log');
+	my $serverlogLink = Wx::HyperlinkCtrl->new(
+		$self, 
+		-1, 
+		$log, 
+		$os->name eq 'mac' ? Slim::Utils::CleanupGUI::getBaseUrl() . '/server.log?lines=500' : 'file://' . $log, 
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_DEFAULT_STYLE,
+	);
+	$pollTimer->addListener($serverlogLink) if $os->name eq 'mac';
+	$mainSizer->Add($serverlogLink, 0, wxALL, 10);
+
+	$log = catfile($os->dirsFor('log'), 'scanner.log');
+	my $scannerlogLink = Wx::HyperlinkCtrl->new(
+		$self, 
+		-1, 
+		$log, 
+		$os->name eq 'mac' ? Slim::Utils::CleanupGUI::getBaseUrl() . '/scanner.log?lines=500' : 'file://' . $log, 
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_DEFAULT_STYLE,
+	);
+	$pollTimer->addListener($scannerlogLink) if $os->name eq 'mac';
+	$mainSizer->Add($scannerlogLink, 0, wxALL, 10);
+
+	$self->SetSizer($mainSizer);	
+	
+	return $self;
 }
 
 1;
@@ -408,22 +316,138 @@ package Slim::Utils::CleanupGUI::OkButton;
 
 use base 'Wx::Button';
 
-my %actionHandlers;
+sub new {
+	my $self = shift;
+		
+	$self = $self->SUPER::new(@_);
+	$self->{actionHandlers} = {};
+	$self->SetDefault();
+	
+	return $self;
+}
 
 sub addActionHandler {
 	my ($self, $item, $callback) = @_;
-	$actionHandlers{$item} = $callback if $callback;
+	$self->{actionHandlers}->{$item} = $callback;
 }
 
 sub do {
 	my ($self, $status) = @_;
 	
-	foreach my $actionHandler (keys %actionHandlers) {
+	foreach my $actionHandler (keys %{ $self->{actionHandlers} }) {
 		
-		if (my $action = $actionHandlers{$actionHandler}) {
+		if (my $action = $self->{actionHandlers}->{$actionHandler}) {
 			&$action($status);
 		}
 	}
+}
+
+1;
+
+
+package Slim::Utils::CleanupGUI::ScanPage;
+
+use base 'Wx::Panel';
+
+use Wx qw(:everything);
+use Wx::Event qw(EVT_CHILD_FOCUS EVT_SET_FOCUS);
+use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
+
+sub new {
+	my $self = shift;
+	
+	$self = $self->SUPER::new(@_);
+
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);	
+	
+	# folder selectors
+	my $btnAudioDir = Wx::DirPickerCtrl->new($self, -1, getPref('audiodir') || '', string('SETUP_AUDIODIR'), wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	$pollTimer->addListener($btnAudioDir);
+
+	$btnOk->addActionHandler($btnAudioDir, sub {
+		my $running = (shift == SC_STATE_RUNNING);
+
+		my $path = $btnAudioDir->GetPath;
+		if ($running && $path ne getPref('audiodir')) {
+			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
+			Slim::Utils::CleanupGUI->setPref("audiodir", $path);
+		}
+	});
+
+	$mainSizer->Add($btnAudioDir, 0, wxEXPAND | wxALL, 10);
+
+	my $btnPlaylistDir = Wx::DirPickerCtrl->new($self, -1, getPref('playlistdir') || '', string('SETUP_PLAYLISTDIR'), wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST);
+	$pollTimer->addListener($btnPlaylistDir);
+
+	$btnOk->addActionHandler($btnPlaylistDir, sub {
+		my $running = (shift == SC_STATE_RUNNING);
+
+		my $path = $btnPlaylistDir->GetPath;
+		if ($running && $path ne getPref('playlistdir')) {
+			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
+			Slim::Utils::CleanupGUI->setPref("playlistdir", $path);
+		}
+	});
+	$mainSizer->Add($btnPlaylistDir, 0, wxEXPAND | wxALL, 10);
+
+	$self->SetSizer($mainSizer);
+	
+	return $self;
+}
+
+1;
+
+
+# basically display Settings/Information from the web UI
+package Slim::Utils::CleanupGUI::StatusPage;
+
+use base 'Wx::Panel';
+
+use Wx qw(:everything);
+use Wx::Event qw(EVT_CHILD_FOCUS);
+use Wx::Html;
+use LWP::Simple;
+
+use Slim::Utils::Light;
+
+sub new {
+	my $self = shift;
+	
+	$self = $self->SUPER::new(@_);
+	
+	$self->{loaded} = 0;
+
+	EVT_CHILD_FOCUS($self, sub {
+		my ($self, $event) = @_;
+
+		my $child = $event->GetWindow();
+		if ( $child && $child->isa('Wx::HtmlWindow') && !$self->{loaded} ) {
+			$child->SetPage(get(Slim::Utils::CleanupGUI::getBaseUrl() . '/EN/settings/server/status.html?simple=1') || string('CLEANUP_NO_STATUS'));
+			$self->{loaded} = 1;
+		}
+		else {
+			$self->{loaded} = 0;
+		}
+
+		$event->Skip();
+	});
+
+	$self->SetAutoLayout(1);
+	
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+
+	$mainSizer->Add(Wx::HtmlWindow->new(
+		$self, 
+		-1,
+		[-1, -1],
+		[-1, -1],
+		wxSUNKEN_BORDER
+	), 1, wxALL | wxGROW, 10);
+	
+	$self->SetSizer($mainSizer);
+
+	return $self;
 }
 
 1;
@@ -433,19 +457,62 @@ sub do {
 package Slim::Utils::CleanupGUI;
 
 use base 'Wx::App';
+use LWP::UserAgent;
+use JSON::XS qw(to_json from_json);
 
+use Slim::Utils::Light;
 my $args;
 
 sub new {
 	my $self = shift;
-	$args = shift;
-	
-	$self->SUPER::new();
+	$args    = shift;
+
+	$self = $self->SUPER::new();
+
+	return $self;
 }
 
 sub OnInit {
+	my $self = shift;
 	my $frame = Slim::Utils::CleanupGUI::MainFrame->new($args);
 	$frame->Show( 1 );
 }
+
+sub getBaseUrl {
+	return 'http://127.0.0.1:' . getPref('httpport');
+}
+
+sub setPref {
+	my ($self, $pref, $value) = @_;
+	$self->serverRequest('{"id":1,"method":"slim.request","params":["",["pref", "' . $pref . '", "' . $value . '"]]}');
+}
+
+sub serverRequest {
+	my $self     = shift;
+	my $postdata = shift;
+	my $httpPort = getPref('httpport') || 9000;
+
+	my $req = HTTP::Request->new( 
+		'POST',
+		"http://127.0.0.1:$httpPort/jsonrpc.js",
+	);
+	$req->header('Content-Type' => 'text/plain');
+
+	$req->content($postdata);	
+
+	my $response = LWP::UserAgent->new()->request($req);
+	
+	my $content;
+	$content = $response->decoded_content if ($response);
+
+	if ($content) {
+		eval {
+			$content = from_json($content); 
+		}
+	}
+	
+	return $content;
+}
+
 
 1;

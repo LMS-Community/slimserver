@@ -19105,6 +19105,18 @@ CLEANUP_TITLE
 	NO	Opprydding av SqueezeCenter
 	SV	Rensning i SqueezeCenter
 
+CLEANUP_MUSIC_LIBRARY
+	DA	Musikbibliotek
+	DE	Musikbibliothek
+	EN	Music Library
+	ES	Biblioteca de música
+	FI	Musiikkikirjasto
+	FR	Collection musicale
+	IT	Libreria musicale
+	NL	Muziekcollectie
+	NO	Musikkbibliotek
+	SV	Musikbibliotek
+
 CLEANUP_MAINTENANCE
 	DE	Unterhalt
 	EN	Maintenance
@@ -19281,7 +19293,7 @@ CLEANUP_NO_STATUS
 	EN	No status information available. Please note that SqueezeCenter has to be up and running in order to display its status information.
 
 CLEANUP_NEED_ADMINISTRATOR
-	EN	Please note: in order to have all options available, you need to run this control panel as a user who is member of the administrator group. You eg. can not configure SC to run in the background when the system is started, unless you're an administrator.
+	EN	Some of the options are disabled, because you're not administrator. Please run \nthis tool as an administrator to be able to use them.
 
 RUN_AT_BOOT
 	DA	Kør automatisk ved systemstart
