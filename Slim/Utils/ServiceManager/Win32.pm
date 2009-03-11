@@ -166,12 +166,19 @@ sub checkServiceState {
 		elsif ($status{'CurrentState'} == 0x01) {
 
 			$class->{status} = SC_STATE_STOPPED;
+
+			# it could happen SC has been started as an app, even though
+			# it's configured to be running as a service
+			if (getProcessID() != -1) {
+	
+				$class->{status} = SC_STATE_RUNNING;
+			}
 		}
 
-#		elsif ($status{'CurrentState'} == 0x0???) {
-#
-#			$class->{status} = SC_STATE_STOPPING;
-#		}
+		elsif ($status{'CurrentState'} == 0x03) {
+
+			$class->{status} = SC_STATE_STOPPING;
+		}
 
 	} else {
 
