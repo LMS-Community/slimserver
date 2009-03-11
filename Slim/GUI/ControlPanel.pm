@@ -110,6 +110,10 @@ sub addStatusListener {
 	$pollTimer->addListener(@_);
 }
 
+sub checkServiceStatus {
+	$pollTimer->Notify();
+}
+
 sub _fixIcon {
 	my $self = shift;
 
