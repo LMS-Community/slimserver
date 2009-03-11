@@ -21,6 +21,15 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
 
 my $os = Slim::Utils::OSDetect::getOS();
+my $svcHelper;
+
+sub init {
+	my $class = shift;
+	$class = $class->SUPER::init();
+	$svcHelper = catdir( Win32::GetShortPathName( $class->installDir ), 'server', 'squeezesvc.exe' );
+	
+	return $class;
+}
 
 # Determine how the user wants to start SqueezeCenter
 sub getStartupType {
@@ -71,8 +80,6 @@ sub setStartupType {
 	my $oldType = getStartupType();
 	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 
-	my $svcHelper = qq("$Bin/svchelper.exe");
-	
 	# enable service mode
 	if ($type == SC_STARTUP_TYPE_SERVICE && $oldType != SC_STARTUP_TYPE_SERVICE) {
 		system($svcHelper, "--install");
@@ -110,22 +117,30 @@ sub canStart {
 sub start {
 	my ($class) = @_;
 	
-	return if $class->getStartupType() == SC_STARTUP_TYPE_SERVICE;
-	
-	my $appExe = Win32::GetShortPathName( catdir( $class->installDir, 'server', 'squeezecenter.exe' ) );
-	
-	$class->{checkHTTP} = 1;
+	if ($class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
 
-	# start as background job
-	my $processObj;
-	Win32::Process::Create(
-		$processObj,
-		$appExe,
-		'',
-		0,
-		DETACHED_PROCESS | CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
-		'.'
-	);
+		`$svcHelper --start`;
+
+	}
+
+	else {
+
+		my $appExe = Win32::GetShortPathName( catdir( $class->installDir, 'server', 'squeezecenter.exe' ) );
+		
+		# start as background job
+		my $processObj;
+		Win32::Process::Create(
+			$processObj,
+			$appExe,
+			'',
+			0,
+			DETACHED_PROCESS | CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
+			'.'
+		);
+
+	}
+
+	$class->{checkHTTP} = 1;
 }
 
 
