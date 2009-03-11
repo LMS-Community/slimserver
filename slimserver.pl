@@ -925,17 +925,18 @@ sub stopServer {
 
 sub cleanup {
 	
-	if (Slim::Music::Import->stillScanning()) {
-		logger('')->info("Cancel running scanner.");
-		Slim::Music::Import->abortScan();
-	}
-
 	logger('')->info("SqueezeCenter cleaning up.");
 	
 	$::stop = 1;
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'} && Slim::Schema->storage) {
+
+		if (Slim::Music::Import->stillScanning()) {
+			logger('')->info("Cancel running scanner.");
+			Slim::Music::Import->abortScan();
+		}
+
 		Slim::Schema->forceCommit;
 		Slim::Schema->disconnect;
 	}
