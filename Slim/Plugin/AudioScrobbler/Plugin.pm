@@ -407,10 +407,11 @@ sub newsongCallback {
 	my $enable_scrobbling;
 	
 	if ( main::SLIM_SERVICE ) {
-		$enable_scrobbling  = $prefs->client($client)->get('enable_scrobbling');
+		# Get enable_scrobbling from the user_prefs table
+		$enable_scrobbling = $prefs->client($client)->get( 'enable_scrobbling', undef, 'UserPref' );
 	}
 	else {
-		$enable_scrobbling  = $prefs->get('enable_scrobbling');
+		$enable_scrobbling = $prefs->get('enable_scrobbling');
 	}
 	
 	return unless $enable_scrobbling && scalar @{$accounts};
@@ -1218,7 +1219,7 @@ sub getAccounts {
 	my $accounts;
 	
 	if ( main::SLIM_SERVICE ) {
-		$accounts = $prefs->client($client)->get('accounts') || [];
+		$accounts = $prefs->client($client)->get( 'accounts', undef, 'UserPref' ) || [];
 	
 		if ( !ref $accounts ) {
 			$accounts = from_json( $accounts );
