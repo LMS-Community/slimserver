@@ -53,7 +53,7 @@ sub new {
 	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
 	EVT_BUTTON( $self, $btnStartStop, sub {
 		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
-			Slim::GUI::ControlPanel->serverRequest('{"id":1,"method":"slim.request","params":["",["stopserver"]]}');
+			Slim::GUI::ControlPanel->serverRequest('stopserver');
 		}
 		
 		# starting SC is heavily platform dependant

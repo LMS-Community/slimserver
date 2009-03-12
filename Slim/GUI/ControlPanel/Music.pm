@@ -8,17 +8,75 @@ package Slim::GUI::ControlPanel::Music;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);
+use Wx::Event qw(EVT_BUTTON);
+
+use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
 
 sub new {
 	my ($self, $nb, $parent) = @_;
 
 	$self = $self->SUPER::new($nb);
 
-	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);	
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
+	my $settingsBox = Wx::StaticBox->new($self, -1, string('MUSICSOURCE'));
+	my $settingsSizer = Wx::StaticBoxSizer->new( $settingsBox, wxVERTICAL );
 	
 	# folder selectors
-	$mainSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'), 0, wxEXPAND | wxALL, 10);
-	$mainSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'), 0, wxEXPAND | wxALL, 10);
+	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'), 0, wxEXPAND | wxALL, 5);
+	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'), 0, wxEXPAND | wxALL, 5);
+
+	# get the "Use iTunes" string through CLI
+	# if it's empty, then the plugin is disabled
+	my $useItunesStr = Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES');
+
+	if ($useItunesStr->{USE_ITUNES}) {
+
+		my $useItunes = Wx::CheckBox->new($self, -1, $useItunesStr->{USE_ITUNES});
+		$settingsSizer->Add($useItunes, 0, wxEXPAND | wxALL, 5);
+		$parent->addStatusListener($useItunes);
+
+		$parent->addApplyHandler($self, sub {
+
+			if (shift == SC_STATE_RUNNING) {
+				Slim::GUI::ControlPanel->setPref('plugin.itunes:itunes', $useItunes->IsChecked() ? 1 : 0);
+			}
+
+		});
+	}
+
+	$mainSizer->Add($settingsSizer, 0, wxALL | wxGROW, 10);
+	
+	my $rescanSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+	
+	my $rescanMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [
+		string('SETUP_STANDARDRESCAN'),
+		string('SETUP_PLAYLISTRESCAN'),
+		string('SETUP_WIPEDB'),
+	]);
+	$rescanSizer->Add($rescanMode);
+	$parent->addStatusListener($rescanMode);
+	
+	my $btnRescan = Wx::Button->new($self, -1, string('SETUP_RESCAN_BUTTON'));
+	$rescanSizer->Add($btnRescan, 0, wxLEFT, 5);
+	$parent->addStatusListener($btnRescan);
+	
+	EVT_BUTTON($self, $btnRescan, sub {
+		if ($rescanMode->GetSelection == 0) {
+			Slim::GUI::ControlPanel->serverRequest('rescan');
+		}
+
+		elsif ($rescanMode->GetSelection == 1) {
+			Slim::GUI::ControlPanel->serverRequest('rescan', 'playlists');
+		}
+
+		elsif ($rescanMode->GetSelection == 2) {
+			Slim::GUI::ControlPanel->serverRequest('wipecache');
+		}
+	});
+	
+	$mainSizer->Add($rescanSizer, 0, wxALL | wxGROW, 10);
 
 	$self->SetSizer($mainSizer);
 	

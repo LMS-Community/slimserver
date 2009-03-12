@@ -38,7 +38,7 @@ sub new {
 		-1,
 		string('CLEANUP_TITLE'),
 		[-1, -1],
-		[570, 550],
+		[650, 550],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CLEANUP_TITLE'),
 	);
@@ -69,16 +69,12 @@ sub new {
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 	$btnsizer->AddButton($btnOk);
 
-	# Windows users like to have an Apply button which doesn't close the dialog
-	if (Slim::Utils::OSDetect::isWindows()) {
+	my $btnApply = Wx::Button->new( $panel, wxID_APPLY, string('APPLY') );
+	EVT_BUTTON( $self, $btnApply, sub {
+		$btnOk->do($svcMgr->checkServiceState());
+	} );
 
-		my $btnApply = Wx::Button->new( $panel, wxID_APPLY, string('APPLY') );
-		EVT_BUTTON( $self, $btnApply, sub {
-			$btnOk->do($svcMgr->checkServiceState());
-		} );
-
-		$btnsizer->AddButton($btnApply);
-	}
+	$btnsizer->AddButton($btnApply);
 	
 	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
 
@@ -91,6 +87,7 @@ sub new {
 	$btnsizer->Realize();
 
 	$mainSizer->Add($btnsizer, 0, wxALL | wxALIGN_RIGHT, 5);
+	$mainSizer->Add(Wx::StatusBar->new($panel));
 
 	$panel->SetSizer($mainSizer);	
 	
@@ -229,12 +226,17 @@ sub getBaseUrl {
 
 sub setPref {
 	my ($self, $pref, $value) = @_;
-	$self->serverRequest('{"id":1,"method":"slim.request","params":["",["pref", "' . $pref . '", "' . $value . '"]]}');
+	$self->serverRequest('pref', $pref, $value);
 }
 
 sub serverRequest {
 	my $self     = shift;
-	my $postdata = shift;
+	my $postdata;
+
+	eval { $postdata = '{"id":1,"method":"slim.request","params":["",' . to_json(\@_) . ']}' };
+
+	return if $@ || !$postdata;
+
 	my $httpPort = getPref('httpport') || 9000;
 
 	my $req = HTTP::Request->new( 
@@ -252,10 +254,11 @@ sub serverRequest {
 
 	if ($content) {
 		eval {
-			$content = from_json($content); 
+			$content = from_json($content);
+			$content = $content->{result};
 		}
 	}
-	
+
 	return $content;
 }
 
