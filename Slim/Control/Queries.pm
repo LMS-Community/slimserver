@@ -2891,12 +2891,18 @@ sub rescanprogressQuery {
 		my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
 		$request->addResult('totaltime', sprintf("%02d:%02d:%02d", $hrs, $mins, $sec));
 
+		my @steps;
+
 		# now indicate % completion for all importers
 		for my $p (@progress) {
 
 			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
 			$request->addResult($p->name(), int($percComplete));
+			
+			push @steps, $p->name();
 		}
+		
+		$request->addResult('steps', join(',', @steps)) if @steps;
 	
 	# if we're not scanning, just say so...
 	} else {
