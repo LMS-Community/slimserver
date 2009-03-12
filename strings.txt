@@ -19105,6 +19105,17 @@ CLEANUP_TITLE
 	NO	Opprydding av SqueezeCenter
 	SV	Rensning i SqueezeCenter
 
+CLEANUP_STARTUP_OPTIONS
+	DA	Startindstillinger
+	DE	Startoptionen
+	EN	Startup options
+	ES	Opciones de inicio
+	FR	Options de démarrage
+	IT	Opzioni di avvio
+	NL	Opstartopties
+	NO	Oppstartsalternativer
+	SV	Startalternativ
+
 CLEANUP_MUSIC_LIBRARY
 	DA	Musikbibliotek
 	DE	Musikbibliothek

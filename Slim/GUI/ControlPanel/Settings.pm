@@ -24,11 +24,6 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-	$mainSizer->Add(
-		Wx::StaticText->new($self, -1, "Start/Stop SC\nStartup behaviour\nmusic/playlist folder location\nuse iTunes\nrescan, automatic, timed?"),
-		0, wxALL, 10
-	);
-
 	# startup mode
 	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
 
@@ -38,6 +33,9 @@ sub new {
 		
 		$mainSizer->Add(Wx::StaticText->new($self, -1, $string), 0, wxALL, 10);
 	}
+
+	my $startupBox = Wx::StaticBox->new($self, -1, string('CLEANUP_STARTUP_OPTIONS'));
+	my $startupSizer = Wx::StaticBoxSizer->new( $startupBox, wxVERTICAL );
 
 	@startupOptions = map { string($_) } @startupOptions;	
 	
@@ -49,7 +47,7 @@ sub new {
 		$svcMgr->setStartupType($lbStartupMode->GetSelection());
 	});
 		
-	$mainSizer->Add($lbStartupMode, 0, wxALL, 10);
+	$startupSizer->Add($lbStartupMode, 0, wxALL, 10);
 
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
@@ -70,11 +68,18 @@ sub new {
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 	});
 	
-	$mainSizer->Add($btnStartStop, 0, wxALL, 10);
-	
-	$mainSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log'), 0, wxALL, 10);
-	$mainSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log'), 0, wxALL, 10);
+	$startupSizer->Add($btnStartStop, 0, wxALL, 10);
 
+	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
+	
+	my $logBox = Wx::StaticBox->new($self, -1, string('DEBUGGING_SETTINGS'));
+	my $logSizer = Wx::StaticBoxSizer->new($logBox, wxVERTICAL);	
+	
+	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log'), 0, wxALL, 10);
+	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log'), 0, wxALL, 10);
+	
+	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
+	
 	$self->SetSizer($mainSizer);	
 	
 	return $self;
