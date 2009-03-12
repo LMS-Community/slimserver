@@ -33,17 +33,18 @@ sub new {
 	my $ref = shift;
 	my $args = shift;
 
+	Slim::Utils::OSDetect::init();
+
 	my $self = $ref->SUPER::new(
 		undef,
 		-1,
 		string('CLEANUP_TITLE'),
 		[-1, -1],
-		[650, 550],
+		[Slim::Utils::OSDetect::isWindows() ? 550 : 650, 550],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CLEANUP_TITLE'),
 	);
 
-	Slim::Utils::OSDetect::init();
 	$self->_fixIcon();
 
 	my $panel    = Wx::Panel->new($self);
@@ -56,7 +57,6 @@ sub new {
 		$btnOk->do($svcMgr->checkServiceState());
 		$_[0]->Destroy;
 	} );
-
 
 	$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('SETTINGS'), 1);
 	$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CLEANUP_MUSIC_LIBRARY'));
@@ -87,7 +87,7 @@ sub new {
 	$btnsizer->Realize();
 
 	$mainSizer->Add($btnsizer, 0, wxALL | wxALIGN_RIGHT, 5);
-	$mainSizer->Add(Wx::StatusBar->new($panel));
+	$mainSizer->Add(Wx::StatusBar->new($panel), 0, wxALL | wxGROW);
 
 	$panel->SetSizer($mainSizer);	
 	

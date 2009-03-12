@@ -55,6 +55,7 @@ sub new {
 		string('SETUP_PLAYLISTRESCAN'),
 		string('SETUP_WIPEDB'),
 	]);
+	$rescanMode->SetSelection(0);
 	$rescanSizer->Add($rescanMode);
 	$parent->addStatusListener($rescanMode);
 	
