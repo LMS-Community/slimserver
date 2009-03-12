@@ -13,6 +13,8 @@ use Wx::Event qw(EVT_BUTTON);
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
+my $progressPoll;
+
 sub new {
 	my ($self, $nb, $parent) = @_;
 
@@ -49,7 +51,10 @@ sub new {
 
 	$mainSizer->Add($settingsSizer, 0, wxALL | wxGROW, 10);
 	
-	my $rescanSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+	my $rescanBox = Wx::StaticBox->new($self, -1, string('INFORMATION_MENU_SCAN'));
+	my $rescanSizer = Wx::StaticBoxSizer->new($rescanBox, wxVERTICAL);
+
+	my $rescanBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 	
 	my $rescanMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [
 		string('SETUP_STANDARDRESCAN'),
@@ -57,11 +62,11 @@ sub new {
 		string('SETUP_WIPEDB'),
 	]);
 	$rescanMode->SetSelection(0);
-	$rescanSizer->Add($rescanMode);
+	$rescanBtnSizer->Add($rescanMode);
 	$parent->addStatusListener($rescanMode);
 	
 	my $btnRescan = Wx::Button->new($self, -1, string('SETUP_RESCAN_BUTTON'));
-	$rescanSizer->Add($btnRescan, 0, wxLEFT, 5);
+	$rescanBtnSizer->Add($btnRescan, 0, wxLEFT, 5);
 	$parent->addStatusListener($btnRescan);
 	
 	EVT_BUTTON($self, $btnRescan, sub {
@@ -76,7 +81,17 @@ sub new {
 		elsif ($rescanMode->GetSelection == 2) {
 			Slim::GUI::ControlPanel->serverRequest('wipecache');
 		}
+		
+		$progressPoll->Start(1000, wxTIMER_CONTINUOUS) if $progressPoll;
 	});
+	
+	$rescanSizer->Add($rescanBtnSizer, 0, wxALL | wxGROW, 10);
+
+	my $progressPanel = Wx::Panel->new($self);
+	$progressPoll = Slim::GUI::ControlPanel::ScanPoll->new($progressPanel);
+	$parent->addStatusListener($progressPanel);
+	
+	$rescanSizer->Add($progressPanel, 1, wxALL | wxGROW, 10);
 	
 	$mainSizer->Add($rescanSizer, 0, wxALL | wxGROW, 10);
 
@@ -125,3 +140,77 @@ sub new {
 }
 
 1;
+
+
+package Slim::GUI::ControlPanel::ScanPoll;
+
+use base 'Wx::Timer';
+
+use Wx qw(:everything);
+
+use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
+
+my $svcMgr = Slim::Utils::ServiceManager->new();
+my $isScanning;
+
+my ($parent, $progressBar, $progressLabel);
+
+sub new {
+	my $self = shift;
+	$parent  = shift;
+	
+	$self = $self->SUPER::new();
+	$self->Start(250);
+	
+	my $sizer = Wx::BoxSizer->new(wxVERTICAL);
+	
+	$progressLabel = Wx::StaticText->new($parent, -1, '');
+	$sizer->Add($progressLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
+
+	$progressBar = Wx::Gauge->new($parent, -1, 100);
+	$sizer->Add($progressBar, 0, wxEXPAND | wxBOTTOM, 5);
+	
+	$parent->SetSizer($sizer);
+		
+	return $self;
+}
+
+sub Notify {
+	my $self = shift;
+	
+	if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+		
+		my $progress = Slim::GUI::ControlPanel->serverRequest('rescanprogress');
+
+		if ($progress && $progress->{steps} && $progress->{rescan}) {
+			$isScanning = 1;
+			
+			my @steps = split(/,/, $progress->{steps});
+
+			if (@steps && $progress->{$steps[-1]}) {
+				
+				my $step = $steps[-1];
+				$progressBar->SetValue($progress->{$step});
+				$progressLabel->SetLabel( @steps . '. ' . string(uc($step) . '_PROGRESS') );
+				
+			}
+
+			$self->Start(2000, wxTIMER_CONTINUOUS);
+			
+			return;
+		}
+	}
+	
+	if ($isScanning) {
+		$progressBar->SetValue(100);
+		$progressLabel->SetLabel(string('PROGRESS_IMPORTER_COMPLETE_DESC'));
+		$self->Start(10000, wxTIMER_CONTINUOUS);
+	}
+	
+	# don't poll that often when no scan is running
+	$isScanning = 0;
+}
+
+1;
+

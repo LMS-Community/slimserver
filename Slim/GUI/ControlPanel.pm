@@ -40,7 +40,7 @@ sub new {
 		-1,
 		string('CLEANUP_TITLE'),
 		[-1, -1],
-		[Slim::Utils::OSDetect::isWindows() ? 550 : 650, 550],
+		[Slim::Utils::OSDetect::isWindows() ? 550 : 700, 550],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CLEANUP_TITLE'),
 	);
