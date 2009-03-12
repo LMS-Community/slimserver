@@ -12,6 +12,7 @@ CHOOSE_A_TIMEZONE
 	SV	Välj tidszon
 
 SERVER_VERSION
+	CS	Verze SqueezeNetwork
 	DA	SqueezeNetwork-version
 	DE	SqueezeNetwork Version
 	EN	SqueezeNetwork Version
@@ -23,7 +24,9 @@ SERVER_VERSION
 	JP	スリムサーバー・バージョン
 	NL	SqueezeNetwork-versie
 	NO	SqueezeNetwork-versjon
+	PL	Wersja programu SqueezeNetwork
 	PT	Versão do SqueezeNetwork
+	RU	Версия SqueezeNetwork
 	SV	SqueezeNetwork-version
 
 SQUEEZENETWORK_HOME
@@ -76,6 +79,7 @@ APPLICATION
 	SV	SqueezeNetwork
 
 ABOUT
+	CS	SqueezeNetwork V.%s, napsal:
 	DA	SqueezeNetwork version %s, skrevet af:
 	DE	SqueezeNetwork V.%s, entwickelt von:
 	DK	SqueezeNetwork V.%s, skrevet af:
@@ -88,7 +92,9 @@ ABOUT
 	JP	SqueezeNetwork V.%s, 製作:
 	NL	SqueezeNetwork V.%s, geschreven door:
 	NO	SqueezeNetwork versjon %s, skrevet av:
+	PL	SqueezeNetwork wer. %s, autor:
 	PT	SqueezeNetwork v.%s, escrito por
+	RU	SqueezeNetwork V.%s, авторы:
 	SV	SqueezeNetwork v.%s, skriven av:
 
 OTHER_SERVICES
@@ -163,6 +169,7 @@ SQUEEZENETWORK_WELCOME
 	SV	Spelaren är nu registrerad! Tryck höger för att komma igång.
 
 SETUP_GROUP_MENUITEMS
+	CS	Úprava nabídky Domů
 	DA	Tilpasning af hovedmenuen
 	DE	Anpassen des Hauptmenüs
 	EN	Home Menu Customization
@@ -173,6 +180,8 @@ SETUP_GROUP_MENUITEMS
 	IT	Personalizzazione menu iniziale
 	NL	Hoofdmenu aanpassen
 	NO	Tilpassing av hovedmeny
+	PL	Dostosowywanie menu strony głównej
+	RU	Настройка главного меню
 	SV	Anpassning av startmenyn
 
 SETUP_PLAYER_CODE
@@ -1215,6 +1224,7 @@ TZ_PACIFIC_TONGATAPU
 	SV	Nukualofa
 
 FAVORITES
+	CS	Oblíbené položky
 	DA	Favoritter
 	DE	Favoriten
 	EN	Favorites
@@ -1225,6 +1235,8 @@ FAVORITES
 	IT	Preferiti
 	NL	Favorieten
 	NO	Favoritter
+	PL	Ulubione
+	RU	Выбранное
 	SV	Favoriter
 
 SQUEEZENETWORK_SIGNUP
@@ -1304,6 +1316,7 @@ INVALID_MAC
 	SV	Problem: Spelarens MAC-adress behöver återställas. Kontakta supportavdelningen (support@slimdevices.com).
 
 PLAYLIST_NO_ITEMS_FOUND
+	CS	Chyba: V seznamu skladeb nebyly nalezeny žádné položky
 	DA	Fejl: Der er ikke noget på afspilningslisten
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
@@ -1314,9 +1327,12 @@ PLAYLIST_NO_ITEMS_FOUND
 	IT	Errore: nessun elemento trovato nell'elenco di riproduzione
 	NL	Fout: Geen items in playlist gevonden
 	NO	Feil: Spillelisten er tom
+	PL	Błąd: nie znaleziono elementów na liście odtwarzania
+	RU	Ошибка: не найдены элементы плей-листа
 	SV	Fel: Spellistan är tom.
 
 PLAYLIST_PROBLEM_CONNECTING
+	CS	Chyba: Nelze se připojit a načíst seznam skladeb
 	DA	Fejl: Der kan ikke etableres forbindelse, så afspilningslisten kan ikke hentes
 	DE	Fehler: Herstellen einer Verbindung zum Laden der Wiedergabeliste nicht möglich
 	EN	Error: Can't connect to retrieve playlist
@@ -1327,6 +1343,8 @@ PLAYLIST_PROBLEM_CONNECTING
 	IT	Errore: impossibile eseguire la connessione per recuperare l'elenco di riproduzione
 	NL	Fout: Kan geen verbinding maken om playlist op te halen
 	NO	Feil: Kan ikke kople til for å hente spilleliste
+	PL	Błąd: nie można nawiązać połączenia w celu pobrania listy odtwarzania
+	RU	Ошибка: сбой подключения для получения плей-листа
 	SV	Fel: Det går inte att ansluta för att hämta spellistan.
 
 PLAYLIST_NOT_A_PLAYLIST
@@ -1368,10 +1386,13 @@ SYNC_FIRMWARE_UPGRADE
 	SV	Om du vill aktivera stödet för synkronisering håller du ljusstyrkeknappen nedtryckt för att uppdatera alla spelare du vill synkronisera.
 
 INFORMATION_MENU_SERVER
+	CS	SqueezeNetwork
 	DA	Oplysninger om SqueezeNetwork
 	EN	SqueezeNetwork Information
 	FI	SqueezeNetworkin tiedot
 	NO	SqueezeNetwork-informasjon
+	PL	SqueezeNetwork
+	RU	SqueezeNetwork
 	SV	SqueezeNetwork-information
 
 INFORMATION_DATACENTER

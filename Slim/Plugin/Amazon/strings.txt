@@ -1,4 +1,5 @@
 PLUGIN_AMAZON_MODULE_NAME
+	CS	Amazon CD obchod
 	DA	Amazons cd-butik
 	DE	Amazon-CD-Store
 	EN	Amazon CD Store
@@ -8,9 +9,12 @@ PLUGIN_AMAZON_MODULE_NAME
 	IT	Amazon CD Store
 	NL	Amazon-cd-winkel
 	NO	Amazons cd-butikk
+	PL	Amazon &mdash; sklep z płytami CD
+	RU	Магазин CD Amazon
 	SV	Amazon CD Store
 
 PLUGIN_AMAZON_ON_AMAZON
+	CS	Na Amazon
 	DA	På Amazon
 	DE	Bei Amazon
 	EN	On Amazon
@@ -20,5 +24,7 @@ PLUGIN_AMAZON_ON_AMAZON
 	IT	Su Amazon
 	NL	Op Amazon
 	NO	På Amazon
+	PL	Na stronie Amazon
+	RU	На Amazon
 	SV	På Amazon
 

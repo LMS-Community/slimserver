@@ -1,10 +1,16 @@
 # String file for PreventStandby plugin
 
 PLUGIN_PREVENTSTANDBY
+	CS	Windows: Zabránit přechodu systému do pohotovostního režimu během přehrávání
 	EN	Windows: Prevent System Standby
+	PL	Windows: zapobiegaj przejściu do trybu gotowości podczas odtwarzania
+	RU	Windows: не переходить в ждущий режим во время воспроизведения
 
 PLUGIN_PREVENTSTANDBY_DESC
+	CS	Zabránit zařízením s Windows v přechodu do pohotovostního režimu.
 	EN	This plugin monitors your SqueezeBox players and prevents the system from going into power saving standby mode while music is playing, SqueezeCenter is scanning, players are updating, etc. It will also prevent the system from prematurely going into standby two minutes after wake-on-lan.
+	PL	Zapobiegaj przejściu komputerów z systemem Windows do trybu gotowości.
+	RU	Не допускать перехода компьютеров Windows в режим ожидания.
 
 PLUGIN_PREVENTSTANDBY_IDLETIME
 	EN	Allow standby after how many idle minutes?

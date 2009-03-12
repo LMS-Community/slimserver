@@ -1,4 +1,5 @@
 PLUGIN_NAPSTER_MODULE_NAME
+	CS	Napster
 	DA	Napster
 	DE	Napster
 	EN	Napster
@@ -8,9 +9,12 @@ PLUGIN_NAPSTER_MODULE_NAME
 	IT	Napster
 	NL	Napster
 	NO	Napster
+	PL	Napster
+	RU	Napster
 	SV	Napster
 
 PLUGIN_NAPSTER_MY_NAPSTER_LIBRARY
+	CS	Knihovna Napster
 	DA	Napster-bibliotek
 	DE	Napster-Bibliothek
 	EN	Napster Library
@@ -20,9 +24,12 @@ PLUGIN_NAPSTER_MY_NAPSTER_LIBRARY
 	IT	Libreria Napster
 	NL	Napster-collectie
 	NO	Napster-bibliotek
+	PL	Biblioteka usługi Napster
+	RU	Медиатека Napster
 	SV	Napster-bibliotek
 
 PLUGIN_NAPSTER_ERROR
+	CS	Chyba Napster
 	DA	Napster-fejl
 	DE	Napster-Fehler
 	EN	Napster Error
@@ -32,9 +39,12 @@ PLUGIN_NAPSTER_ERROR
 	IT	Errore di Napster
 	NL	Napster-fout
 	NO	Feil med Napster
+	PL	Błąd usługi Napster
+	RU	Ошибка Napster
 	SV	Napster-fel
 
 PLUGIN_NAPSTER_NO_INFO
+	CS	Není možné načíst informace o proudu.
 	DA	Der kunne ikke hentes oplysninger om streamen.
 	DE	Stream-Info kann nicht abgerufen werden.
 	EN	Unable to retrieve stream info.
@@ -44,9 +54,12 @@ PLUGIN_NAPSTER_NO_INFO
 	IT	Impossibile recuperare le informazioni sullo stream.
 	NL	Kan stroominfo niet ophalen.
 	NO	Kan ikke hente avspillingsinformasjon.
+	PL	Nie można pobrać informacji o strumieniu.
+	RU	Невозможно извлечь информацию о потоке.
 	SV	Det gick inte att hämta ströminformationen.
 
 PLUGIN_NAPSTER_GETTING_STREAM_INFO
+	CS	Získávání informací o proudu...
 	DA	Henter oplysninger om stream...
 	DE	Streaminfos werden geladen ...
 	EN	Getting stream info...
@@ -57,9 +70,12 @@ PLUGIN_NAPSTER_GETTING_STREAM_INFO
 	IT	Recupero info su stream...
 	NL	Stroominfo wordt opgehaald...
 	NO	Henter informasjon om strøm...
+	PL	Pobieranie informacji o strumieniu...
+	RU	Получение информации о потоке...
 	SV	Hämtar signalinformation...
 
 PLUGIN_NAPSTER_STREAM_FAILED
+	CS	Selhání zvukového proudu, přechod na další stopu.
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
@@ -69,9 +85,12 @@ PLUGIN_NAPSTER_STREAM_FAILED
 	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm mislyktes, hopper til neste spor.
+	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.
+	RU	Сбой аудиопотока. Переход на следующую дорожку.
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
 
 PLUGIN_NAPSTER_ON_NAPSTER
+	CS	Na Napster
 	DA	På Napster
 	DE	Auf Napster
 	EN	On Napster
@@ -81,9 +100,12 @@ PLUGIN_NAPSTER_ON_NAPSTER
 	IT	Su Napster
 	NL	Op Napster
 	NO	På Napster
+	PL	W usłudze Napster
+	RU	На Napster
 	SV	På Napster
 
 PLUGIN_NAPSTER_NO_TRACK
+	CS	Není možné načíst stopu pro kanál.
 	DA	Nummeret kunne ikke hentes fra kanalen.
 	DE	Titel für Sender konnte nicht geladen werden.
 	EN	Unable to retrieve track for channel.
@@ -93,9 +115,12 @@ PLUGIN_NAPSTER_NO_TRACK
 	IT	Impossibile recuperare brano per canale.
 	NL	Kan nummer voor kanaal niet ophalen.
 	NO	Kan ikke hente spor for kanalen.
+	PL	Nie można pobrać utworu dla kanału.
+	RU	Невозможно извлечь дорожку для канала.
 	SV	Det går inte att hämta spåret till kanalen.
 
 PLUGIN_NAPSTER_NO_NEXT_TRACK
+	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
@@ -105,5 +130,7 @@ PLUGIN_NAPSTER_NO_NEXT_TRACK
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
+	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
+	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 

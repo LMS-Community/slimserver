@@ -3,6 +3,7 @@
 # $Id: strings.txt 11049 2006-12-28 09:47:38Z mherger $
 
 PLUGIN_SCREENSAVER_SNOW
+	CS	Spořič obrazovky s motivem sněhu
 	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
 	ES	Protector de pantalla de nieve
@@ -12,9 +13,12 @@ PLUGIN_SCREENSAVER_SNOW
 	IT	Screen saver con neve
 	NL	Sneeuw-schermbeveiliger
 	NO	Skjermsparer med snø
+	PL	Wygaszacz ekranu Śnieg
+	RU	Экранная заставка "Снег"
 	SV	Snöskärmsläckare
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
+	CS	Nastavení spořiče obrazovky s motivem sněhu
 	DA	Vis indstillinger for pauseskærm
 	DE	Schnee-Einstellungen
 	EN	Snow Screensaver settings
@@ -25,9 +29,12 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	IT	Impostazioni screen saver con neve
 	NL	Instellingen van sneeuw-schermbeveiliger
 	NO	Innstillinger for skjermsparer med snø
+	PL	Ustawienia wygaszacza ekranu Śnieg
+	RU	Настройки экранной заставки "Снег"
 	SV	Inställningar för snöskärmsläckare
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
+	CS	Množství sněhu
 	DA	Sneens kvalitet
 	DE	Schneemenge
 	EN	Quantity of snow
@@ -38,9 +45,12 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	IT	Quantità di neve
 	NL	Hoeveelheid sneeuw
 	NO	Snømengde
+	PL	Ilość śniegu
+	RU	Количество снега
 	SV	Snömängd
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
+	CS	Spořič obrazovky s motivem sněhu: Množství sněhu
 	DA	Pauseskærm: sneens kvalitet
 	DE	Schneemenge
 	EN	Snow Screensaver: Quantity of snow
@@ -51,9 +61,12 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	IT	Screen saver con neve: quantità di neve
 	NL	Sneeuw-schermbeveiliger: hoeveelheid sneeuw
 	NO	Skjermsparer med snø: Snømengde
+	PL	Wygaszacz ekranu Śnieg: ilość śniegu
+	RU	Экранная заставка "Снег": количество снега
 	SV	Snöskärmsläckare: snömängd
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
+	CS	Lehké sněžení
 	DA	Let byge
 	DE	Ein paar Flocken
 	EN	Light flurries
@@ -64,9 +77,12 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	IT	Leggero turbinio
 	NL	Lichte sneeuwbui
 	NO	Lette fnugg
+	PL	Lekkie podmuchy
+	RU	Легкий порыв ветра
 	SV	Snöbyar
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
+	CS	Vánoční
 	DA	Juleagtigt
 	DE	Weiße Weihnachten
 	EN	Christmassy
@@ -77,9 +93,12 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	IT	Natalizia
 	NL	Kerstmisachtig
 	NO	Julete
+	PL	Boże Narodzenie
+	RU	Рождественский
 	SV	Julstämning
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
+	CS	Blizzard
 	DA	Snestorm
 	DE	Schneesturm
 	EN	Blizzard
@@ -90,9 +109,12 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	IT	Bufera
 	NL	Sneeuwstorm
 	NO	Snøstorm
+	PL	Zamieć
+	RU	Снежная буря
 	SV	Snöstorm
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
+	CS	Bílá tma
 	DA	Hvidt
 	DE	Dichtes Schneetreiben
 	EN	Whiteout
@@ -103,9 +125,12 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	IT	Tutto coperto
 	NL	Zware sneeuwstorm
 	NO	Blank
+	PL	Olśnienie
+	RU	Снежная пелена
 	SV	Igensnöat
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
+	CS	Styl sněhu při zapnutí
 	DA	Sneens udseende når afspilleren er tændt
 	DE	Schnee bei Aktivierung
 	EN	Style of snow when on
@@ -116,9 +141,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	IT	Tipo di neve quando attivo
 	NL	Sneeuwstijl wanneer aan
 	NO	Snøtype når påslått
+	PL	Rodzaj śniegu po włączeniu
+	RU	Стиль снега, когда включено
 	SV	Snötyp i påslaget läge
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
+	CS	Styl sněhu při vypnutí
 	DA	Sneens udseende når afspilleren er slukket
 	DE	Schnee bei Deaktivierung
 	EN	Style of snow when off
@@ -129,9 +157,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	IT	Tipo di neve quando disattivo
 	NL	Sneeuwstijl wanneer uit
 	NO	Snøtype når avslått
+	PL	Rodzaj śniegu po wyłączeniu
+	RU	Стиль снега, когда выключено
 	SV	Snötyp i avstängt läge
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
+	CS	Spořič obrazovky s motivem sněhu: Styl sněhu
 	DA	Pauseskærm: Sneens stil
 	DE	Schneeart
 	EN	Snow Screensaver: Style of snow
@@ -142,9 +173,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	IT	Screen saver con neve: Tipo di neve
 	NL	Sneeuw-schermbeveiliger: sneeuwstijl
 	NO	Skjermsparer med snø: Snøtype
+	PL	Wygaszacz ekranu Śnieg: rodzaj śniegu
+	RU	Экранная заставка "Снег": стиль снега
 	SV	Snöskärmsläckare: Snötyp
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
+	CS	Nyní přehrávám, sníh padá v pozadí
 	DA	Nu spiller: sne falder bagved
 	DE	Aktuelle Wiedergabe mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
@@ -155,9 +189,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	IT	Riproduzione in corso. Nevicata sullo sfondo.
 	NL	Speelt nu, sneeuw valt achter
 	NO	Spilles nå, med snø i bakgrunnen
+	PL	Teraz odtwarzane, śnieg w tle
+	RU	Воспроизводится, позади падает снег
 	SV	Snö i bakgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
+	CS	Nyní přehrávám, sníh padá v popředí
 	DA	Nu spiller: sne falder foran
 	DE	Aktuelle Wiedergabe mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
@@ -168,9 +205,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	IT	Riproduzione in corso. Nevicata in primo piano.
 	NL	Speelt nu, sneeuw valt voor
 	NO	Spilles nå, med snø i forgrunnen
+	PL	Teraz odtwarzane, śnieg na pierwszym planie
+	RU	Воспроизводится, на переднем плане падает снег
 	SV	Snö i förgrunden när Nu spelas visas
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
+	CS	Datum/čas
 	DA	Dato/klokkeslæt
 	DE	Datum/Zeit
 	EN	Date/Time
@@ -181,9 +221,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	IT	Data/ora
 	NL	Datum/tijd
 	NO	Dato/tid
+	PL	Data/Godzina
+	RU	Дата/время
 	SV	Datum/Tid
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
+	CS	Pouze sníh
 	DA	Kun sne
 	DE	Nur Schnee
 	EN	Just snow
@@ -194,9 +237,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	IT	Solo neve
 	NL	Alleen sneeuw
 	NO	Bare snø
+	PL	Tylko śnieg
+	RU	Просто снег
 	SV	Vanlig snö
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
+	CS	Automatické
 	DA	Automatisk
 	DE	Automatisch
 	EN	Automatic
@@ -207,9 +253,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	IT	Automatico
 	NL	Automatisch
 	NO	Automatisk
+	PL	Automatycznie
+	RU	Автоматический
 	SV	Automatiskt
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
+	CS	Přání k ročním obdobím
 	DA	Glædelig jul
 	DE	Frohe Feiertage!
 	EN	Season's Greetings
@@ -220,9 +269,12 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	IT	Buone feste
 	NL	Prettige feestdagen
 	NO	God jul!
+	PL	Pozdrowienia
+	RU	Сезонные поздравления
 	SV	Julhälsning
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
+	CS	5
 	DA	5
 	DE	5
 	EN	5
@@ -233,9 +285,12 @@ PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	IT	5
 	NL	5
 	NO	5
+	PL	5
+	RU	5
 	SV	5
 
 PLUGIN_SCREENSAVER_SNOW_WORD_0
+	CS	VESELÉ
 	DA	GLÆDELIG
 	DE	FROHE
 	EN	MERRY
@@ -246,9 +301,12 @@ PLUGIN_SCREENSAVER_SNOW_WORD_0
 	IT	BUON
 	NL	Vrolijk
 	NO	GOD
+	PL	WESOŁYCH
+	RU	ВЕСЕЛОГО
 	SV	GOD
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
+	CS	VÁNOCE
 	DA	JUL
 	DE	WEIHNACHTEN
 	EN	CHRISTMAS
@@ -259,9 +317,12 @@ PLUGIN_SCREENSAVER_SNOW_WORD_1
 	IT	NATALE
 	NL	Kerstmis
 	NO	JUL
+	PL	ŚWIĄT
+	RU	РОЖДЕСТВА
 	SV	JUL
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
+	CS	ANO A VELMI
 	DA	OG ET RIGTIG
 	DE	UND EIN GUTES
 	EN	AND A VERY
@@ -272,9 +333,12 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	IT	E FELICE
 	NL	en een heel
 	NO	OG ET
+	PL	I BARDZO
+	RU	И ОЧЕНЬ
 	SV	OCH ETT
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
+	CS	HAPPY
 	DA	GODT
 	DE	GLÜCKLICHES
 	EN	HAPPY
@@ -285,9 +349,12 @@ PLUGIN_SCREENSAVER_SNOW_WORD_3
 	IT	ANNO
 	NL	gelukkig
 	NO	GODT
+	PL	SZCZĘŚLIWEGO
+	RU	СЧАСТЛИВОГО
 	SV	GOTT
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
+	CS	NOVÝ ROK!
 	DA	NYTÅR!
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
@@ -298,5 +365,7 @@ PLUGIN_SCREENSAVER_SNOW_WORD_4
 	IT	NUOVO!
 	NL	nieuwjaar!
 	NO	NYTTÅR!
+	PL	NOWEGO ROKU!
+	RU	НОВОГО ГОДА!
 	SV	NYTT ÅR!
 

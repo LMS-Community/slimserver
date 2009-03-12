@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_HEALTH
+	CS	Stav serveru a sítě
 	DA	Server- og netværkstilstand
 	DE	Zustand von Server und Netzwerk
 	EN	Server & Network Health
@@ -13,9 +14,12 @@ PLUGIN_HEALTH
 	IT	Stato del server e della rete
 	NL	Server- en netwerkstatus
 	NO	Server- og nettverksstatus
+	PL	Kondycja serwera i sieci
+	RU	Состояние сервера и сети
 	SV	Server- och nätverksfunktionalitet
 
 PLUGIN_HEALTH_DESC
+	CS	Sledovat stav serveru & sítě
 	DA	Overvågning af server- og netværkstilstand
 	DE	Server- und Netzwerk-Zustand testen und überwachen
 	EN	Monitor Server & Network Health
@@ -25,9 +29,12 @@ PLUGIN_HEALTH_DESC
 	IT	Controlla stato del server e della rete
 	NL	Server- en netwerkstatus controleren
 	NO	Overvåk server- og nettverksstatus
+	PL	Monitoruj kondycję serwera i sieci
+	RU	Мониторинг состояния сервера и сети
 	SV	Övervaka server- och nätverksfunktionalitet
 
 PLUGIN_HEALTH_PERF_ENABLE
+	CS	Povolit sledování výkonu
 	DA	Aktiver overvågning af ydelse
 	DE	Leistungsüberwachung aktivieren
 	EN	Enable Performance Monitoring
@@ -38,9 +45,12 @@ PLUGIN_HEALTH_PERF_ENABLE
 	IT	Attiva controllo prestazioni
 	NL	Prestatiecontrole inschakelen
 	NO	Aktiver ytelsesovervåking
+	PL	Włącz monitorowanie wydajności
+	RU	Включить мониторинг производительности
 	SV	Aktivera prestandaövervakning
 
 PLUGIN_HEALTH_PERF_DISABLE
+	CS	Zakázat sledování výkonu
 	DA	Deaktiver overvågning af ydelse
 	DE	Leistungsüberwachung deaktivieren
 	EN	Disable Performance Monitoring
@@ -51,9 +61,12 @@ PLUGIN_HEALTH_PERF_DISABLE
 	IT	Disattiva controllo prestazioni
 	NL	Prestatiecontrole uitschakelen
 	NO	Deaktiver ytelsesovervåking
+	PL	Wyłącz monitorowanie wydajności
+	RU	Отключить мониторинг производительности
 	SV	Avaktivera prestandaövervakning
 
 PLUGIN_HEALTH_NETTEST
+	CS	Test sítě
 	DA	Test af netværk
 	DE	Netzwerktest
 	EN	Network Test
@@ -64,9 +77,12 @@ PLUGIN_HEALTH_NETTEST
 	IT	Verifica rete
 	NL	Netwerktest
 	NO	Nettverkstest
+	PL	Test sieci
+	RU	Сетевой тест
 	SV	Nätverkstest
 
 PLUGIN_HEALTH_NETTEST_SELECT_RATE
+	CS	Ke zvolení rychlosti stiskněte Nahoru/Dolů
 	DA	Tryk på Op/Ned for at vælge hastighed
 	DE	Drücken Sie zum Ändern der Rate OBEN/UNTEN
 	EN	Press Up/Down to select rate
@@ -77,9 +93,12 @@ PLUGIN_HEALTH_NETTEST_SELECT_RATE
 	IT	Per selezionare la velocità, premere il pulsante Su/Giù
 	NL	Druk op omhoog/omlaag om de snelheid te selecteren
 	NO	Trykk på opp/ned-knappene for å velge hastighet
+	PL	Naciśnij przycisk w górę/w dół, aby wybrać szybkość
+	RU	Для выбора скорости используйте кнопки ВВЕРХ/ВНИЗ
 	SV	Välj hastighet genom att trycka på Upp / Ner.
 
 PLUGIN_HEALTH_NETTEST_TESTING_TO
+	CS	Testovat
 	DA	Tester
 	DE	Test für
 	EN	Testing To
@@ -89,9 +108,12 @@ PLUGIN_HEALTH_NETTEST_TESTING_TO
 	IT	Esecuzione verifica su
 	NL	Testen van
 	NO	Tester mot
+	PL	Testowanie do
+	RU	Тестирование
 	SV	Testar med
 
 PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
+	CS	Tento přehrávač nepodporuje
 	DA	Ikke understøttet af denne afspiller
 	DE	Auf diesem Player nicht unterstützt
 	EN	Not Supported on this Player
@@ -102,9 +124,12 @@ PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
 	IT	Non supportato in questo lettore
 	NL	Niet ondersteund op dit muzieksysteem
 	NO	Ikke støttet på denne spilleren
+	PL	Nieobsługiwane w tym odtwarzaczu
+	RU	Не поддерживается в этом плеере
 	SV	Stöds inte på den här spelaren
 
 PLUGIN_HEALTH_NETTEST_DESC1
+	CS	Můžete otestovat výkon sítě mezi vaším serverem a přehrávačem. To vám umožní potvrdit nejvyšší rychlost datového přenosu, kterou vaše síť podporuje, a identifikovat problémy se sítí. Ke spuštění testu zvolte jednu z níže uvedených hodnot rychlosti datového přenosu.<p><b>Výstraha</b> Spuštění testu sítě zastaví všechny ostatní činnosti tohoto přehrávače včetně přehrávání datových proudů.
 	DA	Du kan teste netværkshastigheden mellem serveren og denne afspiller. På den måde kan du fastslå hvad der er den højeste datahastighed som netværket understøtter, og identificere netværksproblemer. Du starter testen ved at vælge en af nedenstående datahastigheder.<p><b>Advarsel:</b> Når du udfører en netværkstest, stoppes al anden aktivitet på afspilleren, herunder streaming.
 	DE	Sie können die Netzwerkleistung zwischen Server und Player testen. Sie können so die höchste vom Netzwerk unterstützte Datenrate bestimmen und Netzwerkprobleme identifizieren. Wählen Sie eine der folgenden Datenraten, um den Test zu starten.<p><b>Warnung:</b> Wenn Sie einen Netzwerktest ausführen, werden alle anderen Aktivitäten auf diesem Player (auch Musikübertragung) angehalten.
 	EN	You may test the network performance between your server and this player.  This will enable you to confirm the highest data rate that your network will support and identify network problems.  To start a test select one of the data rates below.<p><b>Warning</b> Running a network test will stop all other activity for this player including streaming.
@@ -115,9 +140,12 @@ PLUGIN_HEALTH_NETTEST_DESC1
 	IT	È possibile verificare le prestazioni di rete tra il server e il lettore. Ciò consente di stabilire la velocità di trasferimento dei dati massima supportata dalla rete e identificare eventuali problemi. Per iniziare la verifica, selezionare una velocità di trasferimento dei dati di seguito.<p><b>Avviso:</b> l'esecuzione di una verifica della rete causa l'interruzione di tutte le altre attività in corso nel lettore, incluso lo streaming.
 	NL	Je kunt de netwerkprestaties tussen je server en dit muzieksysteem testen. Zo kun je zien wat de hoogste gegevenssnelheid is, die je netwerk ondersteunt, en netwerkproblemen identificeren. Kies een van de onderstaande gegevenssnelheden om een test te starten.<p><b>Waarschuwing:</b> wanneer je een netwerktest uitvoert, worden alle activiteiten voor dit systeem gestopt, ook het streamen.
 	NO	Du kan teste nettverksforbindelsen mellom serveren din og denne spilleren. På denne måten kan du finne ut hva den høyeste datahastigheten som nettverket støtter er, og oppdage nettverksproblemer. Velg en av datahastighetene nedenfor for å starte en test.<p><b>Advarsel</b> Hvis du kjører en nettverkstest, stanses all annen aktivitet for denne spilleren, inkludert strømming.
+	PL	Możliwe jest przetestowanie wydajności sieci między serwerem a tym odtwarzaczem. Umożliwi to określenie najwyższej szybkości przesyłania danych obsługiwanych przez sieć oraz identyfikację problemów z siecią. Aby rozpocząć test, wybierz jedną z szybkości poniżej.<p><b>Ostrzeżenie</b> Uruchomienie testu sieci spowoduje zatrzymanie wszystkich innych działań wykonywanych przez ten odtwarzacz.
+	RU	Можно протестировать производительность сети между сервером и плеером. Это позволяет определить максимальную скорость передачи данных, которая поддерживается сетью, а также идентифицировать проблемы в сети. Чтобы начать тестирование, выберите ниже одно из значений скорости.<p><b>Предупреждение.</b> Тестирование сети приведет к остановке всех операций плеера, включая потоковую передачу данных.
 	SV	Du kan testa hur väl nätverket mellan din server och spelaren fungerar.  På så sätt kan fastställa hur höga bithastigheter ditt nätverk klarar och identifiera nätverksproblem.  Välj en bithastighet nedan när du vill genomföra ett test.<p><b>Varning!</b> När du kör ett nätverkstest avbryts alla andra aktiviteter för spelaren, inklusive strömning.
 
 PLUGIN_HEALTH_NETTEST_DESC2
+	CS	V současnosti provádíte síťový test u tohoto přehrávače. To znemožňuje zobrazení dalších statistik přehrávače. Můžete změnit rychlost testování zvolením nové rychlosti výše. K zastavení testu a návrat k dalším informacím o výkonu přehrávače zvolte výše Zastavit Test.<p>Níže uvedený graf zachycuje procento testovací rychlosti úspěšně zaslané do přehrávače. Graf je aktualizován jednou za sekundu a výkon měřem za minulou sekundu. Výsledek za minulou sekundu a dlouhodobý průměr této rychlosti jsou zobrazeny na displeji přehrávače v průběhu testu. Nechte test běžet po určitou dobu při stálé rychlosti. Graf zaznamená, jak často výkon sítě při této rychlosti poklesne pod hodnotu 100%.
 	DA	Du er i gang med at gennemføre en netværkstest på denne afspiller. Derfor kan der ikke rapporteres andre statistikker. Du kan ændre hastigheden der testes, ved at vælge en anden ovenfor. Hvis du vil afbryde testen og vende tilbage til de andre oplysninger om afspillerens ydelse, skal du vælge Stop test.<p>Grafen viser hvor stor en procentdel af testdataene der nåede frem til afspilleren. Grafen opdateres hvert sekund, så den viste ydelse er for det forrige sekund. Resultatet af det sidste sekund og gennemsnitsværdien for en længere periode, vises også på displayet mens testen kører. Du bør lade testen køre i et stykke tid med samme hastighed. Grafen viser hvor ofte der mistes data pga. netværksforbindelsen ved denne hastighed.
 	DE	Es wird gerade ein Netzwerktest auf diesem Player ausgeführt. Alle anderen Statistiken werden deaktiviert. Sie können die Testrate ändern, indem Sie oben einen neuen Wert wählen. Klicken Sie oben auf 'Test anhalten', um den Test anzuhalten und die anderen Playerinformationen anzuzeigen.<p>Das folgende Diagramm zeichnet den Prozentsatz der Testrate auf, die erfolgreich an den Player gesendet wurde. Er wird einmal pro Sekunde mit dem in der vorherigen Sekunde gemessenen Wert aktualisiert. Das Ergebnis der letzten Sekunde und der Durchschnittswert bei dieser Rate werden auf dem Player angezeigt, solange der Test läuft. Lassen Sie den Test eine Zeit lang bei einer festen Rate laufen. Das Diagramm zeichnet auf, wie oft die Netzwerkleistung bei dieser Rate unter 100% sinkt.
 	EN	You are currently running a network test on this player.  This disables reporting other player statistics.  You may change the test rate by selecting a new rate above.  To stop the test and return to other player performance information select Stop Test above.<p>The graph below records the percentage of the test rate which is successfully sent to the player.  It is updated once per second with the performance measured over the last second.  The result for the last second and long term average at this rate are also shown on the player display while a test is running.  Leave the test running for a period of time at a fixed rate.  The graph will record how frequently the network performance drops below 100% at this rate.
@@ -128,9 +156,12 @@ PLUGIN_HEALTH_NETTEST_DESC2
 	IT	È attualmente in corso una verifica della rete nel lettore. Questa operazione causa la disattivazione dei report relativi ad altre statistiche. Per cambiare la velocità di verifica, selezionare un nuovo valore tra quelli indicati in precedenza. Per interrompere la verifica e ripristinare le altre informazioni relative alle prestazioni del lettore, fare clic su Interrompi verifica in alto.<p>Nel grafico sottostante è indicata la percentuale di dati di cui non è riuscito l'invio al lettore nel corso della verifica. Questo valore viene aggiornato ogni secondo insieme al valore relativo alle prestazioni calcolato rispetto all'ultimo secondo. Durante la verifica, nel display del lettore vengono inoltre visualizzati il risultato dell'ultimo secondo e la media su una durata maggiore alla velocità selezionata. Eseguire la verifica per un determinato periodo di tempo a una velocità costante. Nel grafico viene indicata la frequenza con cui le prestazioni della rete scendono al di sotto del 100% a questa velocità.
 	NL	Er wordt momenteel een netwerktest op dit muzieksysteem uitgevoerd. Hierdoor wordt de rapportage van andere systeemstatistieken uitgeschakeld. Je kunt de testsnelheid wijzigen door hierboven een nieuwe snelheid te kiezen. Selecteer 'Test stoppen' hierboven om dit te doen en naar andere informatie over systeemprestaties terug te keren.<p>De grafiek hieronder toont welk percentage van de testsnelheid succesvol naar het systeem is verzonden. Het wordt elke seconde bijgewerkt met het resultaat dat over de laatste seconde is gemeten. Het resultaat van de laatste seconde en het langetermijngemiddelde bij deze snelheid worden ook op het systeemdisplay weergegeven, terwijl de test wordt uitgevoerd. Laat de test over een langere periode met een vaste snelheid lopen. In de grafiek wordt vastgelegd hoe vaak de netwerkprestaties bij deze snelheid onder de 100% zakken.
 	NO	En nettverkstest kjører på denne spilleren. Dette gjør at rapportering av annen spillerstatistikk er deaktivert. Du kan endre hastigheten som testes ved å velge en annen hastighet ovenfor. Hvis du vil stanse testen og gå tilbake til annen informasjon om spillerytelsen, velger du Stans test ovenfor.<p>Grafen nedenfor registrerer prosentandelen av testhastigheten som ble sendt til spilleren. Den oppdateres én gang i sekundet, med den ytelsen som er målt over det siste sekundet. Resultatet for siste sekund samt gjennomsnittet over tid for samme hastighet, vises også på spillerens skjerm mens en test kjører. La testen kjøre en stund ved en fast hastighet. Grafen registrerer hvor ofte nettverksytelsen faller under 100 % ved denne hastigheten.
+	PL	Odtwarzacz aktualnie wykonuje test sieci. Powoduje to wyłączenie przesyłania przez odtwarzacz innych statystyk. Szybkość testu można zmienić, wybierając nową wartość powyżej. Aby zatrzymać test i powrócić do innych informacji dotyczących wydajności odtwarzacza, wybierz powyżej opcję Zatrzymaj test.<p>Wykres powyżej zawiera wartość procentową danych pomyślnie przesłanych do odtwarzacza z określoną szybkością. Jest ona aktualizowana co sekundę przy wydajności mierzonej w ciągu ostatniej sekundy. Podczas wykonywania testu na wyświetlaczu odtwarzacza widoczny jest wynik z ostatniej sekundy i średnia długookresowa przy tej szybkości. Należy umożliwić wykonanie testu przez pewien czas ze stałą szybkością. Na wykresie zostaną zapisane informacje o częstotliwości spadku wydajności sieci poniżej 100% przy tej szybkości.
+	RU	Сейчас выполняется тестирование сети на этом плеере. Предоставление другой статистики для плеера временно отключено. Выше можно выбрать другую тестовую скорость. Чтобы остановить тестирование и вернуть отображение другой информации о производительности плеера, выберите "Остановить тестирование" выше.<p>На расположенном ниже графике указан процент тестовой скорости для данного плеера. График обновляется ежесекундно по результатам измерения производительности за последнюю секунду. Также в процессе тестирования на экране плеера отображаются данные за последнюю секунду и долгосрочное среднее значение скорости передачи. Тестирование необходимо производить на протяжении некоторого времени при неизменной скорости передачи. Затем на графике можно будет увидеть, как часто производительность сети на этой скорости опускается ниже 100%.
 	SV	Du genomför för närvarande ett nätverkstest på den här spelaren.  Detta avaktiverar rapportering av annan spelarstatistik.  Du kan byta testhastighet genom att välja en ny hastighet ovan.  Om du vill avbryta testet och återgå till övrig prestandainformation väljer du Avsluta test ovan.<p>Grafen nedan visar procentandelen av den testade bithastigheten som överförs till spelaren.  Den uppdateras varje sekund med den prestanda som uppmätts föregående sekund.  Resultatet för senaste sekund samt ett medelvärde för en längre period visas också på spelarens display när ett test körs.  Låt testet köras en stund på samma bithastighet.  Grafen visas hur ofta nätverksprestandan faller under 100% vid den aktuella bithastigheten.
 
 PLUGIN_HEALTH_NETTEST_DESC3
+	CS	Nejvyšší testovaná rychlost, která dosahuje 100%, indikuje maximální rychlost přehrávání datových proudů. Pokud je nižší než přenosová rychlost vašich souborů, měli byste zvážit konfigurování omezení přenosové rychlosti pro tento přehrávač. <p> Squeezebox 2/3 připojený k drátové síti by měl být schopen dosahovat alespoň 3000 kb/s při 100% (Squeezebox1 1500 kbps).  Přehrávač připojený k bezdrátové síti může také dosahovat této rychlosti v závislosti na vaší bezdrátové síti. Rychlosti výrazně nižší než tyto hodnoty svědčí o nízké kapacitě sítě. Bezdrátové sítě mohou příležitostně vykazovat nižší procento kvůli rušení. Ke zjištění výkonu vaší sítě použijte výše uvedený graf. Pokud rychlost klesá často, měli byste zkontrolovat svou síť.
 	DA	Den højeste testhastighed som når 100%, er den højeste som du kan streame ved. Hvis værdien er lavere end dine musikfilers bithastighed, bør du overveje at indstille en maksimal bithastighed for denne afspiller.<p>En Squeezebox2/3 der er tilsluttet vha. et kabel, bør opnå mindst 3000 kb/sek. ved 100% (Squeezebox1 1500 kb/sek.). En afspiller der er tilsluttet et trådløst netværk, kan også nå op på denne hastighed afhængigt af netværket. Hvis hastigheden er betydeligt langsommere, er det tegn på en dårlig netværksforbindelse. Trådløse netværk vil ind i mellem have en lavere procentsats pga. interferens. Du kan bruge grafen ovenfor til at se hvor god netværksforbindelsen er. Hvis hastigheden tit falder, bør du undersøge netværket.
 	DE	Die höchste Testrate, die 100% erreicht, ist die maximal mögliche Rate für Datenströme. Liegt dieser Wert unter der Bitrate der Musikdateien, sollten Sie in Betracht ziehen, die Bitrate für diesen Player einzuschränken.<p>Eine an einem verkabelten Netzwerk angeschlossene Squeezebox2/3 sollte mindestens 3.000 kb/s bei 100% erreichen (Squeezebox1 1.500 kb/s). Ein an einem drahtlosen Netzwerk angeschlossener Player kann je nach Netzwerkleistung diesen Wert ebenfalls erreichen. Raten, die deutlich unter diesem Wert liegen, deuten auf schlechte Netzwerkleistung hin. Aufgrund von Störungen verzeichnen drahtlose Netzwerke gelegentlich geringere Prozentwerte. Anhand des obigen Diagramms können Sie sehen, wie gut das Netzwerk funktioniert. Wenn die Rate oft abfällt, das Netzwerk prüfen.
 	EN	The highest test rate which achieves 100% indicates the maximum rate you can stream at.  If this is below the bitrate of your files you should consider configuring bitrate limiting for this player.<p>A Squeezebox2/3 attached to a wired network should be able to achieve at least 3000 kbps at 100% (Squeezebox1 1500 kbps).  A player attached to a wireless network may also reach up to this rate depending on your wireless network.  Rates significantly below this indicate poor network performance.  Wireless networks may record occasional lower percentages due to interference.  Use the graph above to understand how your network performs.  If the rate drops frequently you should investigate your network.
@@ -141,9 +172,12 @@ PLUGIN_HEALTH_NETTEST_DESC3
 	IT	La velocità di verifica più elevata che raggiunge una percentuale del 100% è la velocità massima supportata per lo stream audio. Se questo valore è inferiore al bitrate dei file, prendere in considerazione la possibilità di limitare il bitrate per questo lettore.<p>Un dispositivo Squeezebox2/3 collegato a una rete con cavo in genere può raggiungere una velocità massima di 3000 kbps (Squeezebox1 1500 kbps). Anche un lettore collegato a una rete senza fili può raggiungere questa velocità a seconda delle capacità della rete. Valori significativamente inferiori a questo indicano prestazioni di rete scarse. Nelle reti senza fili possono riscontrarsi di tanto in tanto percentuali inferiori a causa di interferenze. Per valutare le prestazioni della rete, utilizzare il grafico precedente come riferimento. Se la velocità cala di frequente, è opportuno controllare la rete.
 	NL	De hoogste testsnelheid waarmee 100% behaald wordt, is de maximumsnelheid waarmee je kunt streamen. Als dit onder de bitsnelheid van je bestanden ligt, is het raadzaam de bitsnelheid voor dit muzieksysteem te beperken.<p>Een Squeezebox2/3 die via een bedraad netwerk verbonden is, moet op zijn minst 3000 kbps bij 100% halen (Squeezebox 1 1500 kbps). Een systeem dat aan een draadloos netwerk gekoppeld is, kan deze snelheid ook halen, afhankelijk van je draadloze netwerk Snelheden die hier aanzienlijk onder liggen, wijzen op slechte netwerkprestaties. Draadloze netwerken kunnen af en toe lagere percentages geven vanwege storing. Gebruik de bovenstaande grafiek om je netwerkprestaties te beoordelen. Is de snelheid regelmatig laag, controleer dan je netwerk.
 	NO	Den høyeste testhastigheten som oppnår 100 %, viser makshastigheten for strømming. Hvis denne hastigheten er lavere enn bithastigheten til filene, bør du konfigurere bithastighetsbegrensning for denne spilleren.<p>En Squeezebox2 / 3 som er knyttet til et kablet nettverk, bør være i stand til å oppnå 100 % ved minst 3000 kbps (Squeezebox1: 1500 kbps). En spiller som er koplet til et trådløst nettverk kan også oppnå denne hastigheten, avhengig av det trådløse nettverket. Hastigheter som ligger langt under denne verdien kan være et tegn på dårlig nettverksytelse. Trådløse nettverk kan iblant vise lavere prosentverdier på grunn av signalforstyrrelser. Du kan bruke grafen ovenfor til bedre å forstå ytelsen til nettverket. Hvis hastigheten ofte synker, bør du kontrollere nettverket.
+	PL	Najwyższa szybkość testu, która osiąga 100% oznacza maksymalną szybkość, z jaką można przesyłać strumieniowo. Jeżeli jest ona niższa od szybkości transmisji bitów plików, należy rozważyć ograniczenie szybkości transmisji bitów dla tego odtwarzacza.<p>Urządzenie Squeezebox2/3 podłączone do sieci przewodowej powinno osiągnąć co najmniej 3000 kb/s przy wydajności 100% (urządzenie Squeezebox1 &mdash; 1500 kb/s). Odtwarzacz podłączony do sieci bezprzewodowej może także osiągnąć tę szybkość w zależności od typu sieci. Szybkości znacznie niższe od podanych oznaczają niską wydajność sieci. W przypadku sieci bezprzewodowych wartości procentowe mogą czasami być niższe z powodu zakłóceń. Informacje o wydajności sieci zawiera powyższy wykres. Jeżeli szybkość często się zmniejsza, należy sprawdzić konfigurację sieci.
+	RU	Самая высокая тестовая скорость, достигшая 100%, обозначает максимальную скорость потоковой передачи. Если она ниже битрейта ваших файлов, возможно, следует настроить ограничение битрейта для этого плеера.<p>Скорость подключенного к проводной сети Squeezebox2/3 должна на 100% достигать хотя бы 3000 кбит/с (Squeezebox1 — 1500 кбит/с). При подключении к беспроводной сети плеер также может достигать указанной скорости, но это зависит от свойств сети. Если скорость значительно меньше указанных значений, производительность сети низкая. В беспроводной сети малая скорость в некоторых случаях объясняется помехами. Приведенный выше график помогает отслеживать производительность сети. Если скорость передачи часто падает, необходимо обследовать сеть.
 	SV	Den högsta testhastigheten där 100% uppnås är den högsta hastigheten du kan använda för att strömma innehåll.  Om värdet är lägre än filernas bithastighet bör du överväga att konfigurera inställningen Gräns för bithastighet för spelaren.<p>En A Squeezebox 2 / 3 som anslutits till ett trådbundet nätverk bör fungera till 100% vid åtminstone 3000 kbit/s. Squeezebox 1 bör klara 1500 kbit/s.  Spelare som anslutits till trådlösa nätverk kan också nå upp till de här hastigheterna beroende på nätverket.  Hastigheter som ligger väsentligt lägre än de här tyder på att nätverket fungerar dåligt.  På trådlösa nätverk kan procentsatsen ibland falla tillfälligt på grund av störningar.  Grafen ovan illustrerar hur ditt nätverk fungerar.  Om hastigheten ofta faller bör du undersöka nätverket.
 
 PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED
+	CS	Síťové testy nejsou u tohoto přehrávače podporovány.
 	DA	Denne afspiller understøtter ikke netværkstest.
 	DE	Netzwerktests werden auf diesem Player nicht unterstützt.
 	EN	Network tests are not supported on this player.
@@ -154,9 +188,12 @@ PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED
 	IT	In questo lettore non sono supportate le verifiche della rete.
 	NL	Netwerktesten worden niet ondersteund op dit muzieksysteem.
 	NO	Denne spilleren støtter ikke nettverkstesting.
+	PL	Testy sieci nie są obsługiwane przez ten odtwarzacz.
+	RU	Тестирование сети на этом плеере не поддерживается.
 	SV	Nätverkstester stöds inte på den här spelaren.
 
 PLUGIN_HEALTH_NETTEST_CURRENTRATE
+	CS	Současná rychlost testování
 	DA	Nuværende testhastighed
 	DE	Aktuelle Testrate
 	EN	Current Test Rate
@@ -167,9 +204,12 @@ PLUGIN_HEALTH_NETTEST_CURRENTRATE
 	IT	Velocità di verifica corrente
 	NL	Huidige testsnelheid
 	NO	Gjeldende testhastighet
+	PL	Aktualna szybkość testu
+	RU	Текущая тестовая скорость
 	SV	Aktuell testhastighet
 
 PLUGIN_HEALTH_NETTEST_TESTRATE
+	CS	Testovací rychlost
 	DA	Testhastighed
 	DE	Testrate
 	EN	Test Rate
@@ -180,9 +220,12 @@ PLUGIN_HEALTH_NETTEST_TESTRATE
 	IT	Velocità di verifica
 	NL	Testsnelheid
 	NO	Testhastighet
+	PL	Szybkość testu
+	RU	Тестовая скорость
 	SV	Testhastighet
 
 PLUGIN_HEALTH_NETTEST_STOPTEST
+	CS	Zastavit test
 	DA	Stop test
 	DE	Test anhalten
 	EN	Stop Test
@@ -193,9 +236,12 @@ PLUGIN_HEALTH_NETTEST_STOPTEST
 	IT	Interrompi verifica
 	NL	Test stoppen
 	NO	Stans test
+	PL	Zatrzymaj test
+	RU	Остановить тест
 	SV	Avsluta test
 
 PLUGIN_HEALTH_PERF_SUMMARY
+	CS	Shrnutí výkonu
 	DA	Oversigt over ydelsen
 	DE	Leistungsüberblick
 	EN	Performance Summary
@@ -206,9 +252,12 @@ PLUGIN_HEALTH_PERF_SUMMARY
 	IT	Riepilogo prestazioni
 	NL	Prestatiesamenvatting
 	NO	Oppsummering av ytelse
+	PL	Podsumowanie wydajności
+	RU	Сводка о производительности
 	SV	Prestandaöversikt
 
 PLUGIN_HEALTH_PERF_SUMMARY_DESC
+	CS	Seřaďte laskavě do fronty několik stop k přehrání na tomto přehrávači a začněte je přehrávat. Potom stiskněte níže uvedený link Obnovit k vyprázdnění statistik a aktualizaci displeje.
 	DA	Vælg en række numre du vil høre på denne afspiller, og begynd at spille dem. Klik derefter på Nulstil nedenfor, så statistikken fjernes og dette billede opdateres.
 	DE	Fügen Sie mehrere Titel in die Wiedergabeliste für diesen Player ein und starten Sie die Wiedergabe. Klicken Sie dann unten auf den Link 'Zurücksetzen', um die Statistiken zu löschen und die Anzeige zu aktualisieren.
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset link below to clear the statistics and update this display.
@@ -219,9 +268,12 @@ PLUGIN_HEALTH_PERF_SUMMARY_DESC
 	IT	Creare una coda di brani da riprodurre con questo lettore e avviare la riproduzione. Quindi fare clic sul collegamento Reimposta per cancellare le statistiche e aggiornare la visualizzazione.
 	NL	Selecteer verschillende tracks voor dit muzieksysteem en start het afspelen. Klik vervolgens op de koppeling Opnieuw instellen hieronder om de statistieken te wissen en dit display bij te werken.
 	NO	Sett flere spor i kø for avspilling på denne spilleren, og start avspillingen. Deretter klikker du på tilbakestillingslenken nedenfor for å tømme statistiske verdier og oppdatere denne visningen.
+	PL	Utwórz w tym odtwarzaczu kolejkę kilku utworów i rozpocznij odtwarzanie. Następnie kliknij łącze Resetuj poniżej, aby usunąć statystyki i zaktualizować informacje na wyświetlaczu.
+	RU	Создайте список из нескольких дорожек для этого плеера и запустите их воспроизведение. Затем щелкните ссылку "Сброс" (ниже), чтобы очистить статистику и обновить экран.
 	SV	Ställ ett antal spår i kö för uppspelning på den här spelaren och starta uppspelningen.  Tryck sedan på länken Återställ nedan, så rensas statistiken och informationen som visas här uppdateras.
 
 PLUGIN_HEALTH_PERF_RESET
+	CS	Obnovit
 	DA	Nulstil
 	DE	Zurücksetzen
 	EN	Reset
@@ -232,9 +284,12 @@ PLUGIN_HEALTH_PERF_RESET
 	IT	Reimposta
 	NL	Opnieuw instellen
 	NO	Tilbakestill
+	PL	Resetuj
+	RU	Сброс
 	SV	Återställ
 
 PLUGIN_HEALTH_SUMMARY
+	CS	Shrnutí
 	DA	Oversigt
 	DE	Zusammenfassung
 	EN	Summary
@@ -245,9 +300,12 @@ PLUGIN_HEALTH_SUMMARY
 	IT	Riepilogo
 	NL	Samenvatting
 	NO	Sammendrag
+	PL	Podsumowanie
+	RU	Сводка
 	SV	Översikt
 
 PLUGIN_HEALTH_WARNINGS
+	CS	Výstrahy
 	DA	Advarsler
 	DE	Warnungen
 	EN	Warnings
@@ -258,9 +316,12 @@ PLUGIN_HEALTH_WARNINGS
 	IT	Avvisi
 	NL	Waarschuwingen
 	NO	Advarsler
+	PL	Ostrzeżenia
+	RU	Предупреждения
 	SV	Varningsmeddelanden
 
 PLUGIN_HEALTH_PERF_STATISTICS
+	CS	Statistika výkonu
 	DA	Statistik for ydelse
 	DE	Leistungsstatistik
 	EN	Performance Statistics
@@ -271,9 +332,12 @@ PLUGIN_HEALTH_PERF_STATISTICS
 	IT	Statistiche prestazioni
 	NL	Prestatiestatistieken
 	NO	Ytelsesstatistikk
+	PL	Statystyka wydajności
+	RU	Статистика производительности
 	SV	Prestandastatistik
 
 PLUGIN_HEALTH_PLAYER
+	CS	Statistiky přehrávače
 	DA	Statistik for afspiller
 	DE	Player-Statistik
 	EN	Player Statistics
@@ -284,9 +348,12 @@ PLUGIN_HEALTH_PLAYER
 	IT	Statistiche lettore
 	NL	Statistieken van muzieksysteem
 	NO	Spillerstatistikk
+	PL	Statystyka odtwarzacza
+	RU	Статистика плеера
 	SV	Spelarstatistik
 
 PLUGIN_HEALTH_SERVER
+	CS	Statistika serveru
 	DA	Serverstatistik
 	DE	Serverstatistik
 	EN	Server Statistics
@@ -297,9 +364,12 @@ PLUGIN_HEALTH_SERVER
 	IT	Statistiche server
 	NL	Serverstatistieken
 	NO	Serverstatistikk
+	PL	Statystyka serwera
+	RU	Статистика сервера
 	SV	Serverstatistik
 
 PLUGIN_HEALTH_OK
+	CS	OK
 	DA	OK
 	DE	OK
 	EN	OK
@@ -310,9 +380,12 @@ PLUGIN_HEALTH_OK
 	IT	OK
 	NL	OK
 	NO	OK
+	PL	OK
+	RU	ОК
 	SV	OK
 
 PLUGIN_HEALTH_CONGEST
+	CS	Přetížení
 	DA	Overbelastet
 	DE	Überlastet
 	EN	Congested
@@ -323,9 +396,12 @@ PLUGIN_HEALTH_CONGEST
 	IT	Congestionato
 	NL	Congestie
 	NO	Overbelastet
+	PL	Przeciążone
+	RU	Перегруженный
 	SV	Överbelastat
 
 PLUGIN_HEALTH_FAIL
+	CS	Selhalo
 	DA	Fejl
 	DE	Fehler
 	EN	Fail
@@ -336,9 +412,12 @@ PLUGIN_HEALTH_FAIL
 	IT	Errore
 	NL	Mislukt
 	NO	Mislyktes
+	PL	Błąd
+	RU	Сбой
 	SV	Fel
 
 PLUGIN_HEALTH_INACTIVE
+	CS	Neaktivní
 	DA	Inaktiv
 	DE	Nicht aktiv
 	EN	Inactive
@@ -349,9 +428,12 @@ PLUGIN_HEALTH_INACTIVE
 	IT	Inattivo
 	NL	Inactief
 	NO	Inaktiv
+	PL	Nieaktywne
+	RU	Неактивный
 	SV	Avaktiverat
 
 PLUGIN_HEALTH_CONTROLCONGEST_DESC
+	CS	Ovládací spojení s tímto přehrávačem je zahlceno. Je to obvykle způsobeno slabou konektivitou sítě (nebo byl přehrávač nedávno odpojen od sítě).
 	DA	Kontrolforbindelsen til denne afspiller er overbelastet. Det er normalt tegn på en dårlig netværksforbindelse eller at afspilleren ikke længere er tilsluttet netværket.
 	DE	Die Steuerverbindung mit diesem Player ist überlastet. Dies liegt i.d.R. an einer schwachen Netzwerkverbindung oder daran, dass der Player vom Netzwerk getrennt wurde.
 	EN	The control connection to this player has experienced congestion.  This usually is an indication of poor network connectivity (or the player being recently being disconnected from the network).
@@ -362,9 +444,12 @@ PLUGIN_HEALTH_CONTROLCONGEST_DESC
 	IT	È stato rilevato un problema di congestione nel lettore. Questo problema indica in genere una connettività di rete insufficiente o la recente disconnessione del lettore dalla rete.
 	NL	De controleverbinding naar dit muzieksysteem is overbelast. Dit duidt meestal op een slechte netwerkverbinding (of een systeem dat recent een keer van het netwerk is losgekoppeld).
 	NO	Det er overbelastning i kontrolltilkoplingen til denne spilleren. Dette skyldes vanligvis en dårlig nettverksforbindelse, eller at spilleren nylig ble koplet fra nettverket.
+	PL	Połączenie kontrolne z tym odtwarzaczem jest przeciążone. Zwykle oznacza to niską jakość połączenia z siecią (lub odtwarzacz został niedawno odłączony od sieci).
+	RU	Управляющее подключение к этому плееру перегружено. Обычно это свидетельствует о плохом подключении к сети (либо плеер недавно был отключен от сети).
 	SV	Kontrollansslutningen för den här spelaren har registrerat att nätverket är överbelastat.  Detta indikerar vanligtvis att anslutningen till nätverket är instabil (eller att spelaren nyligen har kopplats från nätverket).
 
 PLUGIN_HEALTH_CONTROLFAIL_DESC
+	CS	V současnosti není žádné aktivní ovládací spojení s tímto přehrávačem. Zkontrolujte laskavě, jestli je přehrávač zapnut. Pokud přehrávač není schopen vytvořit spojení, zkontrolujte, jestli firewall vaší sítě anebo serveru neblokuje spojení s TCP & UDP portem 3483.
 	DA	Der er ikke en aktiv kontrolforbindelse til denne afspiller i øjeblikket. Kontroller at afspilleren er tændt. Hvis afspilleren ikke kan etablere forbindelse, skal du kontrollere at netværket og/eller serverens firewall ikke blokerer forbindelser til TCP- og UDP-port nummer 3483.
 	DE	Es ist derzeit keine Steuerverbindung mit diesem Player aktiv. Prüfen Sie, ob der Player eingeschaltet ist. Kann der Player keine Verbindung herstellen, überprüfen Sie das Netzwerk bzw. vergewissern Sie sich, dass die Server-Firewall Verbindungen zu TCP- u. UDP-Anschluss 3483 nicht blockiert.
 	EN	There is no currently active control connection to this player.  Please check the player is powered on.  If the player is unable to establish a connection, please check your network and and/or server firewall do not block connections to TCP & UDP port 3483.
@@ -375,9 +460,12 @@ PLUGIN_HEALTH_CONTROLFAIL_DESC
 	IT	Nessuna connessione di controllo attualmente attiva nel lettore. Controllare che il lettore sia acceso. Se non è possibile stabilire una connessione con il lettore, controllare che il firewall di rete e/o del server non blocchi la connessione con la porta TCP e UDP 3483.
 	NL	Er is momenteel geen actieve controleverbinding met dit muzieksysteem. Controleer of het systeem aanstaat. Als het systeem geen verbinding kan maken, controleer dan of je netwerk en/of serverfirewall geen verbindingen naar TCP & UDP-poort 3483 blokkeren.
 	NO	Det finnes ingen aktiv kontrolltilkopling til denne spilleren. Kontroller at spilleren er på. Hvis spilleren ikke klarer å opprette en forbindelse, kontroller at brannmuren til nettverket og/eller serveren ikke blokkerer tilkoplinger til TCP- og UDP-port nr. 3483.
+	PL	Aktualnie nie ma aktywnego połączenia kontrolnego z tym odtwarzaczem. Sprawdź, czy odtwarzacz jest włączony. Jeżeli odtwarzacz nie może nawiązać połączenia, należy sprawdzić, czy sieć lub zapora serwera nie blokują połączeń z portem TCP i UDP 3483.
+	RU	Сейчас нет активного управляющего подключения к этому плееру. Убедитесь, что плеер включен. Если плеер не может установить подключение, проверьте, не блокирует ли сетевой или серверный брандмауэр ТСР и UDP-порт 3483.
 	SV	Det finns för närvarande ingen aktiv kontrollanslutning till den här spelaren.  Kontrollera att spelaren är påslagen.  Om det inte går att ansluta spelaren kontrollerar du att inte nätverkets och / eller serverns brandvägg hindrar anslutningar till TCP & UDP-port 3483.
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
+	CS	V současnosti není žádné aktivní spojení pro převod do tohoto přehrávače. K přenosu souboru do vašeho přehrávače je třeba spojení. Squeezebox2/3 může uzavřít přenosové spojení ke konci stopy poté, co byla stopa převedena do vyrovnávací paměti přehrávače. Není důvod k obavám.<p>Pokud se objevují problémy při přehrávání souborů a nikdy není vidět aktivní přenosové spojení, může to svědčit o problémech se sítí. Zkontrolujte laskavě, jestli firewall vaší sítě anebo serveru nebrání blokovému připojení na portu TCP 9000.
 	DA	Der er i øjeblikket ikke en aktiv forbindelse der kan streame til denne afspiller. Der skal være en forbindelse for at der kan streames til afspilleren. Squeezebox2/3 lukker muligvis streamingforbindelsen hen mod slutningen af et nummer når nummeret er overført til afspillerens bufferlager. Det betyder ikke noget.<p>Hvis du har problemer med at afspille filer og aldrig ser en aktiv forbindelse til streaming, kan det være tegn på problemer med netværket. Kontroller at netværket og/eller serverens firewall ikke blokerer forbindelser til TCP-port nummer 9000.
 	DE	Es ist derzeit keine Datenstromverbindung mit diesem Player aktiv. Zum Einrichten eines Datenstroms zum Player ist eine Verbindung erforderlich. Squeezebox2/3 beendet eventuell die Verbindung ggen Ende eines Titels, sobald dieser vollständig an den Puffer übertragen wurde. Dies ist ganz normal.<p>Sollten bei der Wiedergabe von Dateien Probleme auftreten und ist nie eine aktive Datenstromverbindung vorhanden, kann ein Netzwerkproblem vorliegen. Prüfen Sie, ob Verbindungen zum TCP-Anschluss 9000 durch Netzwerk bzw. Server-Firewall blockiert werden.
 	EN	There is currently no active connection for streaming to this player.  A connection is required to stream a file to your player.  Squeezebox2/3 may close the streaming connection towards the end of a track once it is transferred to the buffer within the player.  This is not cause for concern.<p>If you experiencing problems playing files and never see an active streaming connection, then this may indicate a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
@@ -388,9 +476,12 @@ PLUGIN_HEALTH_STREAMINACTIVE_DESC
 	IT	Nessuna connessione attualmente attiva per la trasmissione dello stream audio al lettore. Per trasmettere file al lettore, è necessaria una connessione. In Squeezebox2/3 la connessione dello stream può essere interrotta verso la fine del brano una volta che il brano è stato trasferito nel buffer del lettore. Ciò non costituisce un problema.<p>Se si verificano problemi durante la riproduzione dei file e non si riscontra mai una connessione dello stream attiva, è possibile che sussista un problema di rete. Verificare che il firewall della rete e/o del server non blocchi la connessione sulla porta TCP 9000.
 	NL	Er is op dit moment geen actieve verbinding voor streamen naar dit muzieksysteem. Als je een bestand naar je systeem wilt streamen, is een verbinding vereist. De Squeezebox2/3 kan de verbinding sluiten aan het einde van een track, zodra deze naar de buffer in het systeem is overgedragen. Dit is normaal gedrag.<p>Als je problemen ondervindt met het afspelen van bestanden en nooit een actieve streaming-verbinding ziet, kan dit wijzen op een netwerkprobleem. Controleer of verbindingen met TCP-poort 9000 niet door je netwerk- en/of serverfirewall geblokkeerd worden.
 	NO	Det finnes ingen aktiv strømmingstilkopling til denne spilleren. Det må finnes en tilkopling for å strømme filer til spilleren. Squeezebox2/3 kan lukke tilkoplingen som datastrømmen overføres fra mot slutten av et spor, når hele resten av sporet er overført til bufferen. Dette er ikke et problem.<p>Hvis du får problemer når du spiller av filer, og aldri ser en aktiv tilkopling for datastrømmer, kan dette skyldes et nettverksproblem. Kontroller at brannmuren til nettverket og/eller serveren ikke blokkerer tilkoplinger til TCP-port nr. 9000.
+	PL	Aktualnie nie ma aktywnego połączenia przesyłania strumieniowego do tego odtwarzacza. Połączenie jest wymagane w celu strumieniowego przesłania pliku do odtwarzacza. Urządzenie Squeezebox2/3 może zamknąć połączenie przesyłania strumieniowego pod koniec utworu po jego przesłaniu do odtwarzacza. Nie oznacza to wystąpienia problemu.<p>Jeżeli występują problemy z odtwarzaniem plików i nie widać aktywnego połączenia przesyłania strumieniowego może to oznaczać problem z siecią. Sprawdź, czy sieć i/lub zapora serwera nie blokują połączeń z portem TCP 9000.
+	RU	Сейчас к этому плееру нет активных подключений для потоковой передачи. Потоковая передача файла на плеер требует подключения. Squeezebox2/3 может закрыть потоковое подключение в конце дорожки после того, как завершится ее передача в буфер плеера. Это не должно вас беспокоить.<p>Если вы испытываете трудности с воспроизведением файлов и никогда не видите активного потокового подключения, возможно, возникла проблема в сети. Убедитесь, что сетевой или серверный брандмауэр не блокирует подключение к ТСР-порту 9000.
 	SV	Det finns för närvarande ingen aktiv anslutning som kan strömma till den här spelaren.  Det krävs en anslutning för att strömma en fil till spelaren  Med Squeezebox 2 / 3 kan strömningsanslutningen brytas mot slutet av ett spår när det har överförts till spelarens interna buffertminne.  Det här är inget allvarligt fel.<p>Om du har problem med att spela upp filer och aldrig ser någon aktiv strömningsanslutning, kan det tyda på ett nätverksproblem.  Kontrollera att inte nätverket och / eller serverns brandvägg hindrar anslutningar till TCP-port 9000.
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT
+	CS	Dobrá, ale přechodné kolísání
 	DA	God, men sporadiske signaludfald
 	DE	Gut, mit gelegentlichen Abfällen
 	EN	Good, but Intermittent Drops
@@ -401,9 +492,12 @@ PLUGIN_HEALTH_SIGNAL_INTERMIT
 	IT	Buona, con cali occasionali
 	NL	Goed, maar af en toe haperingen
 	NO	Bra, men med enkelte fall i signalstyrke
+	PL	Dobra, ale sporadycznie występują przerwy
+	RU	Хорошо, но периодически наблюдается ухудшение
 	SV	God, men med tillfälliga signalbortfall
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC
+	CS	Síla signálu přijímaná tímto přehrávačem je obvykle dobrá, ale příležitostně klesá. To může být způsobeno ostatními bezdrátovými sítěmi, bezdrátovými telefony nebo mikrovlnnými přístroji v blízkosti. Pokud slyšíte občasné výpadky zvuku na tomto přehrávači, měli byste zjistit, co způsobuje pokles síly signálu.
 	DA	Signalstyrken til denne afspiller er normalt god, men signalet forsvinder ind i mellem. Dette kan skyldes interferens fra andre trådløse netværk, trådløse telefoner eller mikrobølgeovne i nærheden. Hvis du oplever at lyden ind i mellem forsvinder, bør du undersøge hvorfor signalstyrken falder.
 	DE	Die vom Player empfangene Signalstärke ist normalerweise gut, fällt aber gelegentlich ab. Dies kann von anderen drahtlosen Netzwerken, schnurlosen Telefonen oder Mikrowellengeräten in der Nähe verursacht werden. Wird die Wiedergabe auf diesem Player gelegentlich unterbrochen, sollten Sie untersuchen, was die Abfälle in der Signalstärke verursacht.
 	EN	The signal strength received by this player is normally good, but occasionally drops.  This may be caused by other wireless networks, cordless phones or microwaves nearby.  If you hear occasional audio dropouts on this player, you should investigate what is causing drops in signal strength.
@@ -414,9 +508,12 @@ PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC
 	IT	La potenza del segnale trasmesso al ricevitore è in genere buona ma di tanto in tanto cala. Ciò può essere causato dalla vicinanza di altre reti senza fili, telefoni cordless o forni a microonde. Se si riscontra occasionalmente una riduzione dell'audio del lettore, è opportuno individuare la causa del calo di potenza del segnale.
 	NL	De signaalsterkte die het muzieksysteem ontvangt, is meestal goed met af en toe haperingen. Dit kan veroorzaakt worden door andere draadloze netwerken, draadloze telefoons of magnetrons in de nabije omgeving. Hoor je af en toe haperingen in de audio op dit systeem, kijk dan wat de oorzaak kan zijn van de afname in signaalsterkte.
 	NO	Denne spilleren mottar vanligvis et ganske sterkt signal, men iblant synker signalstyrken markant. Dette kan skyldes andre trådløse nettverk, trådløse telefoner eller mikrobølgeovner som brukes i nærheten. Hvis du hører avbrudd i lyden fra denne spilleren, bør du undersøke hva som forårsaker svekkelsen i signalet.
+	PL	Siła sygnału odbieranego przez ten odtwarzacz jest zazwyczaj odpowiednia, ale czasem się zmniejsza. Może to być spowodowane przez inne sieci bezprzewodowe, telefony bezprzewodowe lub kuchenki mikrofalowe znajdujące się w pobliżu. W przypadku występowania przerw w odtwarzaniu dźwięku należy określić przyczynę zmniejszania się siły sygnału.
+	RU	Обычно этот плеер принимает сигнал достаточной мощности, но иногда он пропадает. Это может быть вызвано работой другой беспроводной сети, радиотелефона или рядом расположенной микроволновой печи. При выпадении аудио на плеере попробуйте определить причину ухудшения мощности сигнала.
 	SV	Signalen som mottas av den här spelaren är normalt stark, med vissa tillfälliga svackor.  Det kan orsakas av andra trådlösa nätverk, sladdlösa telefoner eller mikrovågsugnar i närheten.  Om du hör avbrott i uppspelningen bör du kontrollera vad som orsakar nedgångarna i signalstyrka.
 
 PLUGIN_HEALTH_SIGNAL_POOR
+	CS	Nízká
 	DA	Dårlig
 	DE	Schwach
 	EN	Poor
@@ -427,9 +524,12 @@ PLUGIN_HEALTH_SIGNAL_POOR
 	IT	Insufficiente
 	NL	Slecht
 	NO	Dårlig
+	PL	Słabe
+	RU	Слабый
 	SV	Dålig
 
 PLUGIN_HEALTH_SIGNAL_POOR_DESC
+	CS	Intenzita signálu přijímaná tímto přehrávačem je nízká po značná období, zkontrolujte laskavě vaši bezdrátovou síť.
 	DA	Styrken af signalet som modtages af denne afspiller, er generelt dårligt. Tjek om der er problemer med dit trådløse netværk.
 	DE	Die von diesem Player empfangene Signalstärke ist für längere Zeit schwach. Überprüfen Sie das drahtlose Netzwerk.
 	EN	The signal strength received by this player is poor for significant periods, please check your wireless network.
@@ -440,9 +540,12 @@ PLUGIN_HEALTH_SIGNAL_POOR_DESC
 	IT	La potenza del segnale trasmesso al lettore è insufficiente per lunghi periodi. Controllare la rete senza fili.
 	NL	De signaalsterkte die dit muzieksysteem ontvangt, is over langere periodes slecht. Controleer je draadloze netwerk.
 	NO	Denne spilleren har svært dårlig signalstyrke i lengre perioder. Du bør kontrollere det trådløse nettverket.
+	PL	Siła sygnału odbieranego przez ten odtwarzacz jest niska przez dłuższy czas; sprawdź konfigurację sieci bezprzewodowej.
+	RU	Мощность сигнала, принимаемого этим плеером, долго остается низкой. Проверьте беспроводную сеть.
 	SV	Signalen som mottas av den här spelaren är svag under långa perioder. Kontrollera det trådlösa nätverket.
 
 PLUGIN_HEALTH_SIGNAL_BAD
+	CS	Špatně
 	DA	Dårlig
 	DE	Schlecht
 	EN	Bad
@@ -453,9 +556,12 @@ PLUGIN_HEALTH_SIGNAL_BAD
 	IT	Insufficiente
 	NL	Slecht
 	NO	Dårlig
+	PL	Złe
+	RU	Плохой
 	SV	Dålig
 
 PLUGIN_HEALTH_SIGNAL_BAD_DESC
+	CS	Intenzita signálu přijímaného tímto přehrávačem je špatná po významně delší období, zkontrolujte laskavě svou bezdrátovou síť.
 	DA	Styrken af signalet som modtages af denne afspiller, er generelt dårligt. Tjek om der er problemer med dit trådløse netværk.
 	DE	Die von diesem Player empfangene Signalstärke ist für längere Zeit schlecht. Überprüfen Sie das drahtlose Netzwerk.
 	EN	The signal strength received by this player is bad for significant periods, please check your wireless network.
@@ -466,9 +572,12 @@ PLUGIN_HEALTH_SIGNAL_BAD_DESC
 	IT	La potenza del segnale trasmesso al lettore è insufficiente per lunghi periodi. Controllare la rete senza fili.
 	NL	De signaalsterkte die dit muzieksysteem ontvangt, is over langere periodes slecht. Controleer je draadloze netwerk.
 	NO	Denne spilleren har dårlig signalstyrke i lengre perioder. Du bør kontrollere det trådløse nettverket.
+	PL	Siła sygnału odbieranego przez ten odtwarzacz jest niska przez dłuższy czas; sprawdź konfigurację sieci bezprzewodowej.
+	RU	Мощность сигнала, принимаемого этим плеером, долго остается низкой. Проверьте беспроводную сеть.
 	SV	Signalen som mottas av den här spelaren är svag under långa perioder. Kontrollera det trådlösa nätverket.
 
 PLUGIN_HEALTH_CONTROL
+	CS	Řídící spojení
 	DA	Kontrolforbindelse
 	DE	Steuerverbindung
 	EN	Control Connection
@@ -479,9 +588,12 @@ PLUGIN_HEALTH_CONTROL
 	IT	Connessione di controllo
 	NL	Controleverbinding
 	NO	Kontrolltilkopling
+	PL	Połączenie kontrolne
+	RU	Управляющее подключение
 	SV	Kontrollanslutning
 
 PLUGIN_HEALTH_STREAM
+	CS	Spojení pro přehrávání datových proudů
 	DA	Streamingforbindelse
 	DE	Datenstromverbindung
 	EN	Streaming Connection
@@ -492,9 +604,12 @@ PLUGIN_HEALTH_STREAM
 	IT	Connessione streaming
 	NL	Streaming-verbinding
 	NO	Strømmingstilkopling
+	PL	Połączenie przesyłania strumieniowego
+	RU	Потоковое подключение
 	SV	Strömningsanslutning
 
 PLUGIN_HEALTH_SIGNAL
+	CS	Intenzita signálu
 	DA	Signalstyrke
 	DE	Signalstärke
 	EN	Signal Strength
@@ -505,9 +620,12 @@ PLUGIN_HEALTH_SIGNAL
 	IT	Potenza segnale
 	NL	Signaalsterkte
 	NO	Signalstyrke
+	PL	Siła sygnału
+	RU	Мощность сигнала
 	SV	Signalstyrka
 
 PLUGIN_HEALTH_BUFFER_LOW
+	CS	Nízká
 	DA	Lav
 	DE	Niedrig
 	EN	Low
@@ -518,9 +636,12 @@ PLUGIN_HEALTH_BUFFER_LOW
 	IT	Bassa
 	NL	Laag
 	NO	Lav
+	PL	Niskie
+	RU	Низкий
 	SV	Låg
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC1
+	CS	Přehrávací vyrovnávací paměť u tohoto přehrávače někdy klesá pod ideální hodnotu. Může to vést k výpadkům zvuku, obzvláště pokud převod probíhá v podobě WAV/AIFF. Pokud uslyšíte výpadky zvuku, zkontrolujte sílu signálu vaší sítě a dobu odezvy serveru.
 	DA	Afspilningsbufferen på denne afspiller er nogle gange mindre end den burde være. Det kan resultere i lydudfald, navnlig hvis du streamer i WAV/AIFF-format. Hvis lydsignalet forsvinder ind i mellem, skal du tjekke at netværkssignalet er kraftigt nok og at serverens svartid ikke er meget langsom.
 	DE	Der Wiedergabepuffer für diesen Player fällt gelegentlich unter den Idealwert. Das kann zu Unterbrechungen bei der Wiedergabe führen, vor allem, wenn WAV/AIFF-Datenströme wiedergegeben werden. Sollte es zu Unterbrechungen kommen, prüfen Sie die Signalstärke des Netzwerks und die Reaktionszeit des Servers.
 	EN	The playback buffer for this player is occasionally falling lower than ideal.  This may result in audio dropouts especially if you are streaming as WAV/AIFF.  If you are hearing these, please check your network signal strength and server response times.
@@ -531,9 +652,12 @@ PLUGIN_HEALTH_BUFFER_LOW_DESC1
 	IT	Il buffer di riproduzione di questo lettore occasionalmente scende al di sotto dei valori previsti. Ciò può causare una riduzione dell'audio in particolar modo con i formati di stream WAV/AIFF. Se si utilizzano tali formati, controllare la potenza del segnale di rete e i tempi di risposta del server.
 	NL	De afspeelbuffer voor dit muzieksysteem is af en toe niet optimaal gevuld. Dit kan resulteren in audiohaperingen, vooral als je WAV/AIFF streamt. Als dit gebeurt, controleer dan de sterkte van je netwerksignaal en de serverreactietijden.
 	NO	Avspillingsbufferen for denne spilleren ligger iblant noe lavere enn ønskelig. Dette kan føre til at lyden faller ut iblant, særlig hvis du strømmer i WAV/AIFF-format. Hvis du hører "hull" i lyden, kan du prøve å kontrollere signalstyrken til nettverket og serverresponstider.
+	PL	Bufor odtwarzania tego odtwarzacza jest czasami mniejszy od optymalnego. Może to spowodować przerwy w odtwarzaniu dźwięku zwłaszcza przy strumieniowym przesyłaniu plików WAV/AIFF. Jeśli tak jest, należy sprawdzić siłę sygnału sieciowego i czas odpowiedzi serwera.
+	RU	Заполнение буфера воспроизведения этого плеера периодически опускается ниже оптимального уровня. Это может привести к выпадению аудио, особенно если потоковая передача производится в форматах WAV/AIFF. В таком случае необходимо проверить мощность сетевого сигнала и время отклика сервера.
 	SV	Uppspelningsbuffert för spelaren är något lägre än den borde vara.  Det kan leda till avbrott i uppspelningen, särkskilt vid strömning av ljud i WAV/AIFF-format.  Om du hör avbrott i uppspelningen kontrollerar du styrkan på nätverkssignalen och svarstiden för servern.
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC2
+	CS	Vyrovnávací paměť pro přehrávání u tohoto přehrávače někdy klesá pod ideální úroveň. Jde o Squeezebox2/3 a úplnost vyrovnávací paměti má klesat na konci každé stopy. Můžete vidět výstrahu, pokud přehráváte velké mnnožství krátkých stop. Pokud slyšíte výpadky zvuku, zkontrolujte sílu signálu sítě.
 	DA	Afspilningsbufferen på denne afspiller er nogle gange mindre end den burde være. Din afspiller er en Squeezebox2/3, og derfor bør bufferen blive tømt når et nummer er slut. Denne advarsel bliver muligvis vist hvis du spiller mange korte numre. Hvis lydsignalet forsvinder ind i mellem, skal du tjekke at netværkssignalet er kraftigt nok.
 	DE	Der Wiedergabepuffer für diesen Player fällt gelegentlich unter den Idealwert. Da es sich um eine Squeezebox2/3 handelt, fällt der Pufferwert am Ende des Titels ab. Diese Warnung wird evtl. angezeigt, wenn viele kurze Titel nacheinander wiedergegegen werden. Sollte es zu Unterbrechungen kommen, prüfen Sie die Signalstärke des Netzwerks.
 	EN	The playback buffer for this player is occasionally falling lower than ideal.  This is a Squeezebox2/3 and so the buffer fullness is expected to drop at the end of each track.  You may see this warning if you are playing lots of short tracks.  If you are hearing audio dropouts, please check your network signal strength.
@@ -544,9 +668,12 @@ PLUGIN_HEALTH_BUFFER_LOW_DESC2
 	IT	Il buffer di riproduzione di questo lettore occasionalmente scende al di sotto dei valori previsti. Trattandosi di un lettore Squeezebox2/3, è prevista una riduzione del livello di riempimento del buffer al termine di ogni brano. Questo avviso può venire visualizzato se vengono riprodotti diversi brani di breve durata. Se si riscontra una caduta dell'audio, controllare la potenza del segnale di rete.
 	NL	De afspeelbuffer voor dit muzieksysteem is af en toe niet optimaal gevuld. Dit is een Squeezebox2/3 en hierop mag het bufferniveau aan het einde van elke track dalen. Als je veel korte tracks afspeelt, kan deze waarschuwing verschijnen. Controleer bij audiohaperingen de sterkte van je netwerksignaal.
 	NO	Avspillingsbufferen for denne spilleren ligger iblant noe lavere enn ønskelig. Dette er en Squeezebox2/3, så bufferinnholdet skal synke mot slutten av hvert spor. Det kan hende du får opp denne advarselen hvis du spiller mange korte spor. Hvis du opplever at lyden faller ut, bør du kontrollere signalstyrken til nettverket.
+	PL	Bufor odtwarzania tego odtwarzacza jest czasami mniejszy od optymalnego. To jest urządzenie Squeezebox2/3, więc zapełnienie buforu zmniejsza się pod koniec każdego utworu. Ostrzeżenie to może zostać wyświetlone w przypadku odtwarzania dużej liczby krótkich utworów. Jeżeli dźwięk jest przerywany, należy sprawdzić siłę sygnału sieci.
+	RU	Заполнение буфера воспроизведения для этого плеера временами ниже оптимального. Уровень заполнения буфера Squeezebox2/3 должен уменьшаться в конце каждой дорожки. Это предупреждение может появляться при воспроизведении большого количества коротких дорожек. В случае выпадения аудио проверьте мощность сетевого сигнала.
 	SV	Uppspelningsbuffert för spelaren är något lägre än den borde vara  Eftersom det här är en Squeezebox2 / 3 kan man vänta sig att fyllnadsgraden sjunker i slutet av varje spår.  Du kan få det här varningsmeddelandet om du spelar upp många korta låtar.  Om du hör avbrott i uppspelningen kontrollerar du nätverkssignalens styrka.
 
 PLUGIN_HEALTH_BUFFER
+	CS	Plná vyrovnávací paměť
 	DA	Buffernivau
 	DE	Puffer-Füllstatus
 	EN	Buffer Fullness
@@ -557,9 +684,12 @@ PLUGIN_HEALTH_BUFFER
 	IT	Riempimento del buffer
 	NL	Bufferniveau
 	NO	Bufferinnhold
+	PL	Zapełnienie bufora
+	RU	Уровень заполнения буфера
 	SV	Fyllnadsgrad för buffert
 
 PLUGIN_HEALTH_SLIMP3_DESC
+	CS	Toto je přehrávač SLIMP3. Úplná měření výkonu nejsou pro tento přehrávač dostupná.
 	DA	Dette er en SLIMP3-afspiller. Det er ikke muligt at måle alle aspekter af dens ydelse.
 	DE	Leistungsmessungen für diesen Player nicht verfügbar, da es sich um einen SLIMP3 handelt.
 	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.
@@ -570,9 +700,12 @@ PLUGIN_HEALTH_SLIMP3_DESC
 	IT	Questo è un lettore SLIMP3. Per questo lettore non è disponibile la misurazione della gamma completa delle prestazioni.
 	NL	Dit is een SLIMP3-muzieksysteem. Voor dit systeem zijn geen volledige prestatiemetingen beschikbaar.
 	NO	Dette er en SLIMP3-spiller. Det er ikke mulig å vise fullstendige ytelsesmål for denne spilleren.
+	PL	To jest odtwarzacz SLIMP3. Nie są dla niego dostępne pełne pomiary wydajności.
+	RU	Это плеер SLIMP3. Для него поддерживаются не все показатели производительности.
 	SV	Det här är en SLIMP3-spelare.  Fullständiga mätningar kan ännu inte göras för den här spelaren.
 
 PLUGIN_HEALTH_NO_PLAYER_DESC
+	CS	SqueezeCenter nemůže najít přehrávač. Pokud vlastníte přehrávač, může to být způsobeno tím, že vaše síť blokuje spojení mezi serverem a přehrávačem. Zkontrolujte laskavě, jestli firewall vaší sítě anebo serveru neblokuje spojení na TCP & UDP port 3483.
 	DA	SqueezeCenter kan ikke finde en afspiller. Hvis du har en afspiller, kan det skyldes at forbindelsen mellem serveren og afspilleren bliver blokeret på netværket. Kontroller at netværket og/eller serverens firewall ikke blokerer forbindelser til TCP-port nummer 3483.
 	DE	SqueezeCenter kann keinen Player finden. Ist ein Player vorhanden, kann dies daran liegen, dass die Netzwerkverbindung zwischen Player und Server blockiert wird. Prüfen Sie, ob Verbindungen zum TCP- und UDP-Anschluss 3483 durch Netzwerk bzw. Server-Firewall blockiert werden.
 	EN	SqueezeCenter cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.
@@ -583,9 +716,12 @@ PLUGIN_HEALTH_NO_PLAYER_DESC
 	IT	Impossibile trovare un lettore. Se si possiede un lettore, è possibile che la rete blocchi la connessione tra il lettore e il server. Verificare che il firewall della rete e/o del server non blocchi la connessione sulla porta TCP & UDP 3483.
 	NL	SqueezeCenter kan geen muzieksysteem vinden. Als je een systeem hebt, is het mogelijk dat je netwerk de verbinding tussen het systeem en de server blokkeert. Controleer of je netwerk en/of serverfirewall verbinding met TCP & UDP-poort 3483 blokkeert.
 	NO	SqueezeCenter finner ikke en spiller. Hvis du har en spiller, kan problemet være at nettverket blokkerer forbindelsen mellom spilleren og serveren. Kontroller at brannmuren til nettverket og/eller serveren ikke blokkerer tilkoplinger til TCP- og UDP-port nr. 3483.
+	PL	Program SqueezeCenter nie może znaleźć odtwarzacza. Jeżeli korzystasz z odtwarzacza, może to być spowodowane blokowaniem przez sieć połączenia między odtwarzaczem a serwerem. Sprawdź, czy sieć i/lub zapora serwera nie blokują połączenia z portem TCP i UDP 3483.
+	RU	SqueezeCenter не может найти плеер. Возможно, сеть блокирует подключение между плеером (если он есть) и сервером. Убедитесь, что сетевой или серверный брандмауэр не блокирует подключение к TCP- и UDP-порту 3483.
 	SV	SqueezeCenter hittar ingen spelare.  Om du har en spelare kan det här bero på att ditt nätverk blockerar anslutningen mellan spelaren och servern.  Kontrollera att inte nätverkets och / eller serverns brandvägg hindrar anslutningar till TCP & UDP-port 3483.
 
 PLUGIN_HEALTH_RESPONSE
+	CS	Doba odezvy serveru
 	DA	Svartider for server
 	DE	Serverreaktionszeit
 	EN	Server Response Time
@@ -596,9 +732,12 @@ PLUGIN_HEALTH_RESPONSE
 	IT	Tempo di risposta del server
 	NL	Serverreactietijd
 	NO	Serverens responstid
+	PL	Czas odpowiedzi serwera
+	RU	Время отклика сервера
 	SV	Svarstid för server
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT
+	CS	Příležitostná nízká odezva
 	DA	Sporadisk lange svartider
 	DE	Gelegentlich langsame Reaktion
 	EN	Occasional Poor Response
@@ -609,9 +748,12 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT
 	IT	Risposta ridotta occasionalmente
 	NL	Af en toe slechte reactietijd
 	NO	Unntaksvis dårlig respons
+	PL	Sporadycznie długi czas odpowiedzi
+	RU	Периодически плохой отклик
 	SV	Tidvis lång svarstid
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
+	CS	Doba odezvy vašeho serveru je někdy delší, než je požadováno. To může způsobovat výpadky zvuku, obzvláště u přehrávačů Slimp3 a Squeezebox1. Může to být způsobeno zatížením vašeho serveru na pozadí nebo úloha Squeeze Center trvá déle než obvykle.
 	DA	Serverens svartid er ind i mellem for lang. Det kan resultere i lydudfald, navnlig på Slimp3- og Squeezebox1-afspillere. Det kan skyldes at der afvikles andre opgaver som belaster serveren, eller at SqueezeCenter er langsommere til at udføre en opgave end normalt.
 	DE	Die Serverreaktionszeit ist gelegentlich länger als gewünscht. Dies kann zu Unterbrechungen bei der Wiedergabe führen, besonders bei den Playern Slimp3 und Squeezebox1. Der Grund kann eine Hintergrundbelastung des Servers oder ein SqueezeCenter-Task, der länger als sonst braucht, sein.
 	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a SqueezeCenter task taking longer than normal.
@@ -622,9 +764,12 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
 	IT	I tempi di risposta del server di tanto in tanto sono più lunghi del previsto. Ciò può causare una riduzione dell'audio in particolar modo con lettori Slimp3 e Squeezebox1. La causa può risiedere in carichi in background del server o in attività di SqueezeCenter che richiedono più tempo del normale.
 	NL	De serverreactietijd is soms langer dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-muzieksystemen). Dit kan veroorzaakt worden door andere programma's die op je server draaien, of een SqueezeCenter-taak die langer duurt dan normaal.
 	NO	Responstiden til serveren er iblant lengre enn ønskelig. Dette kan føre til at lyden faller ut iblant, særlig på Slimp3- og Squeezebox1-spillere. Dette kan skyldes bakgrunnsbelastning på serveren eller at en SqueezeCenter-oppgave tar lengre tid enn vanlig.
+	PL	Czas odpowiedzi serwera jest czasami dłuższy od wymaganego. Może to spowodować przerwy w odtwarzaniu dźwięku, szczególnie w przypadku odtwarzaczy Slimp3 i Squeezebox1. Przyczyną może być obciążenie serwera w tle lub dłuższy od standardowego czas wykonania zadania przez program SqueezeCenter.
+	RU	Иногда время отклика сервера больше, чем нужно. Это может привести к выпадению аудио, особенно на плеерах Slimp3 и Squeezebox1. Возможно, это происходит из-за фоновой нагрузки на сервер или более длительного выполнения задачи SqueezeCenter.
 	SV	Svarstiden för servern är ibland längre än önskvärt.  Detta kan orsaka avbrott i uppspelningen, särskilt på Slimp3- och Squeezebox 1-spelare.  Problemet kan orsakas av bakgrundsbelastning på servern eller av att en uppgift i SqueezeCenter tar längre tid än normalt.
 
 PLUGIN_HEALTH_RESPONSE_POOR
+	CS	Nízká odezva
 	DA	Lang svartid
 	DE	Langsame Reaktion
 	EN	Poor Response
@@ -635,9 +780,12 @@ PLUGIN_HEALTH_RESPONSE_POOR
 	IT	Risposta insufficiente
 	NL	Slechte reactietijd
 	NO	Dårlig respons
+	PL	Długi czas odpowiedzi
+	RU	Плохой отклик
 	SV	Lång svarstid
 
 PLUGIN_HEALTH_RESPONSE_POOR_DESC
+	CS	Doba odezvy vašeho serveru pravidelně klesá pod úroveň normálního výkonu. To může vést k výpadkům zvuku, obzvláště u přehrávačů Slimp3 a Squeezebox1. Zkontrolujte laskavě výkon vašeho serveru. Pokud je v pořádku, zkontrolujte, jestli SqueezeCenter neprovádí intenzívní úlohy (např. prohledávání hudební knihovny) nebo jestli to není způsobeno Pluginem.
 	DA	Serverens svartid falder regelmæssigt under det normale niveau. Det kan resultere i lydudfald, navnlig på Slimp3- og Squeezebox1-afspillere. Kontroller at serveren fungerer som den skal. Hvis den er i orden, skal du tjekke at SqueezeCenter ikke kører intensive opgaver (fx gennemsøger musikbiblioteket) og at problemet ikke skyldes et udvidelsesmodul.
 	DE	Die Reaktionszeit des Servers fällt regelmäßig unter den Normalwert. Dies kann zu Unterbrechungen bei der Wiedergabe führen, besonders bei den Playern Slimp3 und Squeezebox1. Prüfen Sie die Leistung des Servers. Ist diese in Ordnung, prüfen Sie, ob SqueezeCenter intensive Funktionen (z.B. Durchsuchen der Musikbibliothek) ausführt oder ein Plugin Schuld ist.
 	EN	Your server response time is regularly falling below normal performance levels.  This may lead to audio dropouts, especially on Slimp3 and Squeezebox1 players.  Please check the performance of your server.  If this is OK, then check SqueezeCenter is not running intensive tasks (e.g. scanning music library) or a Plugin is not causing this.
@@ -648,9 +796,12 @@ PLUGIN_HEALTH_RESPONSE_POOR_DESC
 	IT	I tempi di risposta del server scendono regolarmente al di sotto del livello di prestazioni previsto. Ciò può causare cadute dell'audio in particolar modo con lettori Slimp3 e Squeezebox1. Controllare le prestazioni del server. Se il server funziona normalmente, controllare che in SqueezeCenter non siano in esecuzione attività che fanno un uso esteso di risorse, come la ricerca nella libreria musicale, o che il problema non sia causato da un plugin.
 	NL	De serverreactietijd is regelmatig lager dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-muzieksystemen). Controleer de prestaties van je server. Zijn deze goed, controleer dan of SqueezeCenter misschien intensieve taken uitvoert (zoals het scannen van de muziekcollectie). Controleer ook of alle plug-ins naar behoren functioneren.
 	NO	Responstiden til serveren faller ofte under vanlig ytelsesnivå. Dette kan føre til at lyden faller ut iblant, særlig på Slimp3- og Squeezebox1-spillere. Du bør kontrollere ytelsen til serveren. Hvis ytelsen er ok, kan du prøve å kontrollere at SqueezeCenter ikke kjører oppgaver som tar opp mye av kapasiteten (f.eks. søk i musikkbiblioteket), og eventuelt at det ikke er en plugin-modul som forårsaker problemet.
+	PL	Czas odpowiedzi serwera jest regularnie niższy od standardowych poziomów wydajności. Może to powodować przerwy w odtwarzaniu dźwięku przez odtwarzacze Slimp3 i Squeezebox1. Sprawdź wydajność serwera. Jeżeli jest prawidłowa, upewnij się, że program SqueezeCenter nie wykonuje zadań powodujących duże obciążenie (np. przeszukiwanie biblioteki muzyki) albo że nie jest to spowodowane przez dodatek.
+	RU	Время отклика сервера регулярно опускается ниже нормального уровня. Это может привести к выпадению аудио, особенно на плеерах Slimp3 и Squeezebox1. Проверьте производительность сервера. Если она в порядке, убедитесь, что SqueezeCenter не выполняет ресурсоемких задач (например, сканирование медиатеки) и проблема не возникает из-за плагина.
 	SV	Svarstiden för servern är ofta längre än vid normal funktionsnivå.  Detta kan orsaka avbrott i uppspelningen, särskilt på Slimp3- och Squeezebox 1-spelare.  Kontrollera servern.  Om servern fungerar väl kontrollerar du att inga krävande uppgifter, t.ex. sökning av musikbibliotek, håller på att genomföras av SqueezeCenter och att det inte är ett plugin-program som orsakar problemet.
 
 PLUGIN_HEALTH_NORMAL
+	CS	Tento přehrávač funguje normálně.
 	DA	Denne afspiller fungerer normalt.
 	DE	Dieser Player funktioniert normal.
 	EN	This player is performing normally.
@@ -661,9 +812,12 @@ PLUGIN_HEALTH_NORMAL
 	IT	Le prestazioni del lettore sono normali.
 	NL	Dit muzieksysteem functioneert normaal.
 	NO	Denne spilleren yter normalt.
+	PL	Wydajność tego odtwarzacza jest prawidłowa.
+	RU	Плеер работает нормально.
 	SV	Spelaren fungerar normalt.
 
 PLUGIN_HEALTH_REFRESH
+	CS	Obnovit
 	DA	Opdater
 	DE	Aktualisieren
 	EN	Refresh
@@ -674,9 +828,12 @@ PLUGIN_HEALTH_REFRESH
 	IT	Aggiorna
 	NL	Vernieuwen
 	NO	Oppdater
+	PL	Odśwież
+	RU	Обновить
 	SV	Uppdatera
 
 PLUGIN_HEALTH_CLEAR
+	CS	Vymazat
 	DA	Ryd
 	DE	Leeren
 	EN	Clear
@@ -687,9 +844,12 @@ PLUGIN_HEALTH_CLEAR
 	IT	Svuota
 	NL	Wissen
 	NO	Tøm
+	PL	Wyczyść
+	RU	Очистить
 	SV	Rensa
 
 PLUGIN_HEALTH_CLEAR_ALL
+	CS	Vymazat vše
 	DA	Ryd alle
 	DE	Alle leeren
 	EN	Clear All
@@ -700,9 +860,12 @@ PLUGIN_HEALTH_CLEAR_ALL
 	IT	Svuota tutto
 	NL	Alles wissen
 	NO	Fjern alle
+	PL	Wyczyść wszystko
+	RU	Очистить все
 	SV	Rensa alla
 
 PLUGIN_HEALTH_SET
+	CS	Nastavit
 	DA	Indstil
 	DE	Festlegen
 	EN	Set
@@ -713,9 +876,12 @@ PLUGIN_HEALTH_SET
 	IT	Imposta
 	NL	Instellen
 	NO	Angi
+	PL	Ustaw
+	RU	Задать
 	SV	Ställ in
 
 PLUGIN_HEALTH_SET_ALL
+	CS	Nastavit vše
 	DA	Indstil alle
 	DE	Alle festlegen
 	EN	Set All
@@ -726,9 +892,12 @@ PLUGIN_HEALTH_SET_ALL
 	IT	Imposta tutto
 	NL	Alles instellen
 	NO	Angi alle
+	PL	Ustaw wszystkie
+	RU	Задать все
 	SV	Ställ in alla
 
 PLUGIN_HEALTH_WARNING_THRESHOLDS
+	CS	Limity pro výstrahy
 	DA	Grænse for advarsel
 	DE	Warngrenzwerte
 	EN	Warning Thresholds
@@ -739,9 +908,12 @@ PLUGIN_HEALTH_WARNING_THRESHOLDS
 	IT	Soglie avvisi
 	NL	Waarschuwingsniveaus
 	NO	Varselsterskler
+	PL	Progi ostrzegawcze
+	RU	Пороги предупреждения
 	SV	Varningströsklar
 
 PLUGIN_HEALTH_LOW
+	CS	Nízká
 	DA	Lav
 	DE	Niedrig
 	EN	Low
@@ -752,9 +924,12 @@ PLUGIN_HEALTH_LOW
 	IT	Bassa
 	NL	Laag
 	NO	Lav
+	PL	Niskie
+	RU	Низкий
 	SV	Dålig
 
 PLUGIN_HEALTH_HIGH
+	CS	Vysoká
 	DA	Høj
 	DE	Hoch
 	EN	High
@@ -765,9 +940,12 @@ PLUGIN_HEALTH_HIGH
 	IT	Alta
 	NL	Hoog
 	NO	Høy
+	PL	Wysokie
+	RU	Высокий
 	SV	God
 
 PLUGIN_HEALTH_BT
+	CS	Zpětné sledování
 	DA	Spor tilbage
 	DE	Zurückverfolgen
 	EN	Backtrace
@@ -778,9 +956,12 @@ PLUGIN_HEALTH_BT
 	IT	Back trace
 	NL	Terugtraceren
 	NO	Tilbakespore
+	PL	Śledzenie
+	RU	Обратное отслеживание
 	SV	Spåra bakåt
 
 PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
+	CS	Server v současnosti shromažďuje výkonovou statistiku pro tento přehrávač.
 	DA	Serveren indsamler ydelsesstatistikker for denne afspiller.
 	DE	Der Server sammelt Leistungsstatistiken für diesen Player.
 	EN	The server is currently collecting performance statistics for this player.
@@ -791,9 +972,12 @@ PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
 	IT	È in corso la raccolta delle statistiche relative alle prestazioni di questo lettore.
 	NL	De server haalt op dit moment prestatiegegevens voor dit muzieksysteem op.
 	NO	Serveren henter for øyeblikket ytelsesstatistikk for denne spilleren.
+	PL	Serwer aktualnie zbiera dane statystyczne dotyczące wydajności tego odtwarzacza.
+	RU	В данный момент сервер собирает статистику о производительности для этого плеера.
 	SV	Prestandastatistik för den här spelaren samlas in.
 
 PLUGIN_HEALTH_GRAPHS_DESC_SERVER
+	CS	Server v současnosti shromažďuje výkonové statistiky pro různé interní funkce serveru. Tyto grafy jsou určeny k usnadnění diagnostiky výkonu serveru a jeho pluginů.
 	DA	Serveren indsamler statistikker for forskellige serverfunktioner. Graferne kan bruges til at identificere problemer med serveren og udvidelsesmodulerne.
 	DE	Der Server sammelt Leistungsstatistiken für verschiedene interne Serverfunktionen. Diese Diagramme sollen bei der Diagnose von Leistungsproblemen mit dem Server und dessen Plugins helfen.
 	EN	The server is currently collecting performance statistics for various internal server functions.  These graphs are intended to be used to help diagnose performance issues with the server and its plugins.
@@ -804,9 +988,12 @@ PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 	IT	È in corso la raccolta delle statistiche relative alle prestazioni di diverse funzioni interne del server. Questi grafici verranno utilizzati per la diagnosi di eventuali problemi di prestazione del server e dei relativi plugin.
 	NL	De server haalt op dit moment prestatiegegevens voor verschillende interne serverfuncties op. Je kunt deze grafieken gebruiken om prestatieproblemen met de server en plug-ins te analyseren.
 	NO	Serveren henter for øyeblikket ytelsesstatistikk for ulike interne serverfunksjoner. Disse grafene kan brukes til å hjelpe med diagnostisering av ytelsesproblemer for serveren og plugin-modulene til serveren.
+	PL	Serwer aktualnie zbiera statystyki dotyczące wydajności różnych wewnętrznych funkcji serwera. Wykresy te ułatwiają diagnozowanie problemów z wydajnością serwera i jego dodatków.
+	RU	В данный момент сервер собирает статистические данные о производительности своих внутренних функций. Эти графики используются при диагностике проблем с производительностью сервера и подключаемых к нему модулей.
 	SV	Prestandastatistik för diverse interna serverfunktioner samlas in.  De här graferna kan hjälpa dig att hitta orsaken till eventuella problem med servern och plugin-programmen.
 
 PLUGIN_HEALTH_WARNING_DESC
+	CS	Můžete nastavit mez výstrahy pro každé měření. Události, při kterých je mez překročena, jsou zaznamenány do souboru protokolu. Protokol je uložen na:
 	DA	Du kan definere en grænseværdi der udløser en advarsel, for hvert mål. Hændelser som ligger over denne grænseværdi, bliver registreret i en logfil. Logfilen gemmes her:
 	DE	Sie können für jede Messung Warngrenzwerte festlegen. Im Serverprotokoll wird aufgezeichnet, wenn dieser Grenzwert überschritten wird. Die letzten Protokolleinträge können <a href="/log.txt" target="log"><u>hier angezeigt werden</u></a>.
 	EN	You may set warning thresholds for each measurement.  Events which exceed this threshold will be logged to a log file.  The log is stored at:
@@ -817,9 +1004,12 @@ PLUGIN_HEALTH_WARNING_DESC
 	IT	È possibile impostare soglie di avviso per ogni misurazione. Il superamento della soglia viene registrato nel registro del server. Le voci più recenti del registro possono essere visualizzate <a href="/log.txt" target="log"><u>qui</u></a>.
 	NL	Je kunt waarschuwingsniveaus instellen voor elke meting. Vervolgens wordt in het serverlogboek vastgelegd wanneer een waarschuwingsniveau is overschreden. Hier kun je de recentste logboekvermeldingen <a href="/log.txt" target="log"><u>bekijken</u></a>.
 	NO	Du kan angi terskler for varsling for hver måling. Hendelser som overskrider terskelen loggføres i en loggfil. Loggfilen lagres her:
+	PL	Dla każdego pomiaru można ustawić progi ostrzegawcze. Zdarzenia, które przekroczą wartość progową zostaną zarejestrowane w pliku dziennika. Dziennik jest przechowywany w następującej lokalizacji:
+	RU	Для каждого показателя можно задать порог предупреждения. События, которые превышают порог, будут регистрироваться в журнале. Файл журнала хранится по адресу:
 	SV	Du kan ange varningströsklar för alla mätvariabler.  Händelser som överskrider tröskelvärdet loggas i en loggfil.  Loggfilen sparas här:
 
 PLUGIN_HEALTH_SIGNAL_DESC
+	CS	Tento graf znázorňuje intenzitu bezdrátového signálu přijímaného vaším přehrávačem.  Vyšší intenzita signálu je lepší.  Přehrávač při přehrávání podává informace o intenzitě signálu.
 	DA	Grafen viser styrken af det trådløse signal som modtages af afspilleren. Jo højere signalstyrken er, jo bedre. Afspilleren rapporterer signalstyrken under afspilning.
 	DE	Dieses Diagramm zeigt die Stärke des vom Player empfangenen drahtlosen Signals. Je höher der Wert desto besser. Der Player meldet die Signalstärke während der Wiedergabe.
 	EN	This graph shows the strength of the wireless signal received by your player.  Higher signal strength is better.  The player reports signal strength while it is playing.
@@ -830,9 +1020,12 @@ PLUGIN_HEALTH_SIGNAL_DESC
 	IT	In questo grafico è indicata la potenza del segnale wireless trasmesso al lettore. Valori di potenza del segnale elevati producono risultati ottimali. Durante la riproduzione, viene visualizzata nel lettore la potenza del segnale.
 	NL	Deze grafiek toont de sterkte van het draadloze signaal dat door je muzieksysteem ontvangen wordt. Een hogere signaalsterkte is beter. Het systeem rapporteert de signaalsterkte tijdens het afspelen.
 	NO	Denne grafen viser hvor sterkt det trådløse signalet er for spilleren. Høyere signalstyrke er bedre. Spilleren rapporterer signalstyrke mens den spiller av.
+	PL	Na wykresie widoczna jest siła sygnału sieci bezprzewodowej odbieranego przez odtwarzacz. Większa siła sygnału jest lepsza. Odtwarzacz wyświetla informację o sile sygnału podczas odtwarzania.
+	RU	Этот график демонстрирует мощность беспроводного сигнала, который принимается плеером. Чем выше мощность, тем лучше. Плеер отображает мощность сигнала в процессе воспроизведения.
 	SV	Den här grafen visar hur stark den trådlösa nätverkssignalen som tas emot av spelaren är.  Ju starkare signal desto bättre..  Spelaren rapporterar signalstyrka under uppspelning.
 
 PLUGIN_HEALTH_BUFFER_DESC
+	CS	Tento graf znázorňuje naplnění vyrovnávací paměti přehrávače. Vyšší naplnění vyrovnávací paměti je lepší. Pamatujte na to, že vyrovnávací paměť se plní pouze, když přehrávač přehrává stopy.<p>Squeezebox1 používá malou vyrovnávací paměť a očekává se, že během přehrávání bude naplněná. pokud tato hodnota klesne na 0, bude to mít za následek výpadky zvuku. To je pravděpodobně způsobeno problémy se sítí.<p>Squeezebox2/3 používá velkou vyrovnávací paměť.  Ta se vyprazdňuje na 0 na konci každé stopy a poté se znovu plní pro novou stopu. Znepokojovat byste se měli pouze v případě, že naplnění vyrovnávací paměti není vysoké po většinu času přehrávání stopy.<p>Přehrávání proudů ze vzdálených zdrojů může vést k nízkému naplnění vyrovnávací paměti, protože přehrávač musí čekat na data ze vzdáleného serveru. To není důvod k obavám.
 	DA	Denne graf viser hvor fuld afspillerens buffer er. Jo mere fuld bufferen er, jo bedre. Husk at bufferen kun fyldes mens der afspilles.<p>Squeezebox1 har en lille buffer, og den er normalt fuld mens der afspilles et nummer. Hvis værdien falder til 0, vil lyden forsvinde. Det skyldes sandsynligvis problemer med netværket.<p>Squeezebox2/3 har en større buffer. Den tømmes ved slutningen af hvert nummer og bliver fyldt når et nyt nummer starter. Der er kun grund til bekymring hvis bufferen ikke er tilstrækkelig fuld under det meste af afspilningen.<p>Streams fra eksterne kilder kan give en lav buffer fordi afspilleren venter på data fra den eksterne server. Det er også normalt.
 	DE	Dieses Diagramm zeigt, wie voll der Puffer ist. Je voller der Puffer desto besser. Beachten Sie, dass der Puffer nur gefüllt wird, wenn Titel wiedergegeben werden.<p>Squeezebox1 nutzt einen kleinen Puffer, der während der Wiedgabe immer gefüllt sein sollte. Sollter der Wert auf 0 sinken, kommt es zu Störungen bei der Wiedergabe. Dies liegt wahrscheinlich an einem Netzwerkproblem.<p>Squeezebox2/3 nutzt einen großen Puffer. Am Ende eines Titels wird dieser geleert und beim Beginn des nächsten wieder gefüllt. Sie sollten sich nur Sorgen machen, wenn der Puffer während der Wiedergabe eines Titels nicht weit genug gefüllt wird.<p>Bei der Wiedergabe von Remote-Datenströmen kann es sein, dass der Puffer nicht weit gefüllt wird, da der Player auf die Daten vom Remote-Server warten muss. Dies ist ganz normal.
 	EN	This graph shows the fill of the player's buffer.  Higher buffer fullness is better.  Note the buffer is only filled while the player is playing tracks.<p>Squeezebox1 uses a small buffer and it is expected to stay full while playing.  If this value drops to 0 it will result in audio dropouts.  This is likely to be due to network problems.<p>Squeezebox2/3 uses a large buffer.  This drains to 0 at the end of each track and then refills for the next track.  You should only be concerned if the buffer fill is not high for the majority of the time a track is playing.<p>Playing remote streams can lead to low buffer fill as the player needs to wait for data from the remote server.  This is not a cause for concern.
@@ -843,9 +1036,12 @@ PLUGIN_HEALTH_BUFFER_DESC
 	IT	In questo grafico è indicato il livello di riempimento del buffer del lettore. Un grado di riempimento del buffer maggiore produce risultati migliori. Notare che il buffer si riempie solo quando è in corso la riproduzione dei brani.<p>In Squeezebox1 viene utilizzato un buffer di dimensioni ridotte che in genere è pieno per tutto il tempo della riproduzione. Se il valore scende a 0, si verifica una caduta dell'audio. Nella maggior parte dei casi ciò può essere causato da problemi di rete.<p>In Squeezebox2/3 viene utilizzato un buffer maggiore che si riduce a 0 al termine di ciascun brano e si riempie per il brano successivo. È il caso di preoccuparsi solo se il buffer non è sufficientemente pieno durante gran parte della riproduzione di un brano.<p>La riproduzione di stream audio in remoto può determinare un riempimento del buffer ridotto poiché è necessario attendere l'arrivo dei dati dal server remoto. Ciò non è da ritenersi un problema.
 	NL	Deze grafiek toont het bufferniveau. Een hoger niveau is beter. De buffer wordt alleen gevuld tijdens het afspelen van muziek.<p>De Squeezebox1 maakt gebruik van een kleine buffer die normaal gesproken vol blijft tijdens het afspelen. Als deze waarde tot 0 zakt, leidt dit tot audiohaperingen. Dit wordt waarschijnlijk veroorzaakt door netwerkproblemen.<p>De Squeezebox2/3 maakt gebruik van een grote buffer. Deze zakt naar 0 aan het einde van een track en wordt vervolgens weer gevuld voor de volgende track. Je hoeft alleen actie te ondernemen als het bufferniveau tijdens het afspelen van een track de meeste tijd niet hoog is.<p>Het afspelen van streams op afstand kan tot een laag bufferniveau leiden omdat het muzieksysteem op gegevens van de externe server moet wachten. Dit is geen reden tot bezorgdheid.
 	NO	Denne grafen viser hvor full spillerbufferen er. Jo fullere den er, jo bedre. Merk: bufferen fylles bare når spilleren spiller av spor.<p>Squeezebox1 har en mindre buffer, og den skal være full under avspilling. Hvis denne verdien faller under 0, kommer det til å føre til avbrudd i avspillingen. Dette skyldes sannsynligvis nettverksproblemer.<p>Squeezebox2/3 har en stor buffer. Denne tømmes til 0 på slutten av hvert spor, og fylles på nytt for neste spor. Det er bare grunn til bekymring hvis bufferen ikke er ganske full under det meste av avspillingen av et spor.<p>Når du spiller av eksterne datastrømmer kan dette gi lavt buffernivå, fordi spilleren må vente på data fra den eksterne serveren. Dette er ikke et tegn på at noe er galt.
+	PL	Na wykresie widoczne jest zapełnienie bufora odtwarzacza. Większe zapełnienie bufora jest lepsze. Bufor zapełniany jest tylko podczas odtwarzania utworów.<p>Urządzenie Squeezebox1 korzysta z małego bufora i podczas odtwarzania powinien on być zapełniony. Jeżeli ta wartość spadnie do 0 odtwarzanie dźwięku zostanie przerwane. Prawdopodobnie jest to spowodowane problemami z siecią.<p>Urządzenie Squeezebox2/3 korzysta z dużego bufora. Jego zapełnienie osiąga wartość 0 pod koniec każdego utworu, a przy następnym jest on zapełniany ponownie. Problem stanowi tylko taka sytuacja, w której zapełnienie bufora nie jest wysokie przez większość czasu odtwarzania utworu.<p>Odtwarzanie strumieni zdalnych może spowodować niskie zapełnienie bufora, ponieważ odtwarzacz czeka na dane z serwera zdalnego. Nie oznacza to wystąpienia problemu.
+	RU	Этот график демонстрирует уровень заполнения буфера плеера. Чем выше уровень, тем лучше. Помните, что буфер заполняется только во время воспроизведения дорожек.<p>Небольшой буфер Squeezebox1 должен оставаться заполненным, пока идет воспроизведение. Если это значение опускается до 0, происходит выпадение аудио. Как правило, это происходит из-за проблем в сети.<p>У Squeezebox2/3 буфер большой. Он опустошается до 0 в конце каждой дорожки, а затем снова заполняется данными следующей дорожки. Вам нужно беспокоиться, только если во время воспроизведения буфер мало заполняется.<p>При воспроизведении удаленных потоков уровень заполнения буфера может быть низким, однако беспокоиться об этом не стоит, поскольку плееру приходится ждать поступления данных с удаленного сервера.
 	SV	Den här grafen visar fyllnadsgraden för spelarens buffert.  Ju högre fyllnadsgrad desto bättre.  Observera att bufferten endast fylls när spår spelas upp på spelaren.<p>Squeezebox 1 har en liten buffert som bör vara full under uppspelning.  Om det värdet sjunker till 0 uppstår avbrott i uppspelningen.  Orsaken är oftast problem med nätverket.<p>Squeezebox 2 / 3 har en större buffert, som töms nästan helt mot slutet av varje spår och sedan fylls igen när nästa spår ska spelas upp.  Det är bara om bufferten inte är fylld under merparten av uppspelningstiden för ett spår som du behöver oroa dig.<p>När du spelar upp fjärrströmmar kan buffertfyllnadsgraden vara låg eftersom spelaren måste invänta data från fjärrservern.  Det är inget problem.
 
 PLUGIN_HEALTH_CONTROL_DESC
+	CS	Tento graf znázorňuje počet zpráv ve frontě k zaslání do přehrávače prostřednictvím řídícího spojení. Měření se provádí, kdykoli je do přehrávače zaslána nová zpráva. Hodnoty přesahující 1-2 indikují potenciální přetížení sítě nebo odpojení přehrávače.
 	DA	Denne graf viser antallet af meddelelser der er i kø og venter på at blive sendt til afspilleren over kontrolforbindelsen. Der foretages en måling hver gang der sendes en ny meddelelse til afspilleren. Værdier over 1-2 er tegn på at netværket kan være overbelastet eller at forbindelsen til afspilleren er afbrudt.
 	DE	Dieses Diagramm zeigt die Anzahl der Meldungen in der Warteschlange, die an den Player über die Steuerverbindung gesendet werden sollen. Jedesmal, wenn eine Meldung an den Player gesendet wird, wird eine neue Messung vorgenommen. Werte über 1-2 deuten auf mögliche Netzwerküberlastun hin oder darauf, dass der Player getrennt wurde.
 	EN	This graph shows the number of messages queued up to send to the player over the control connection.  A measurement is taken every time a new message is sent to the player.  Values above 1-2 indicate potential network congestion or that the player has become disconnected.
@@ -856,9 +1052,12 @@ PLUGIN_HEALTH_CONTROL_DESC
 	IT	In questo grafico è indicato il numero di messaggi in coda da inviare al lettore tramite la connessione di controllo. Tutte le volte che un messaggio viene inviato al lettore viene misurato un valore. I valori al di sopra di 1-2 indicano una potenziale congestione della rete o la disconnessione del lettore.
 	NL	Deze grafiek toont het aantal berichten die in de wachtrij staan om via de controleverbinding naar het muzieksysteem verzonden te worden. Telkens wanneer er een nieuw bericht naar het systeem wordt verzonden, wordt er een meting uitgevoerd. Waarden boven 1-2 wijzen op mogelijke netwerkcongestie of geven aan dat het systeem losgekoppeld is.
 	NO	Denne grafen viser hvor mange meldinger som står i kø for å bli sendt til spilleren via kontrolltilkoplingen. Dette måles hver gang en ny melding sendes til spilleren. Verdier høyere enn 1–2 kan tyde på at nettverket har svært høy trafikk, eller at spilleren er blitt koplet fra.
+	PL	Na tym wykresie przedstawiane są różne komunikaty ustawiane w kolejce i wysyłane do odtwarzacza przez połączenie kontrolne. Pomiar wykonywany jest przy każdym wysłaniu nowego komunikatu do odtwarzacza. Wartości powyżej 1-2 oznaczają potencjalne obciążenie sieci lub odłączenie odtwarzacza.
+	RU	Этот график демонстрирует количество сообщений, стоящих в очереди на отправку плееру по управляющему подключению. Показатель измеряется при отправке плееру каждого нового сообщения. Значения больше 1–2 указывают, что перегружена сеть или разорвано подключение к плееру.
 	SV	Den här grafen visar antalet meddelanden i kö som ska sändas till spelaren via kontrollanslutningen.  En mätning görs varje gång ett meddelande skickas till spelaren.  Värden över 1–2 kan tyda på att nätverket är överbelastat eller att spelarens anslutning avbrutits.
 
 PLUGIN_HEALTH_RESPONSE_DESC
+	CS	Doba odezvy serveru - doba mezi po sobě jdoucími výzvami k výběru.
 	DA	Svartiden for serveren (tiden mellem på hinanden følgende kald)
 	DE	Die Reaktionszeit des Servers (die Zeit zwischen auswählbaren Aufrufen).
 	EN	The response time of the server - the time between successive calls to select.
@@ -869,9 +1068,12 @@ PLUGIN_HEALTH_RESPONSE_DESC
 	IT	Tempo di risposta del server, ovvero il tempo intercorso tra la selezione di chiamate successive.
 	NL	De serverreactietijd: de tijd tussen achtereenvolgende aanroepen voor selectie.
 	NO	Serverens responstid – hvor lang tid som går mellom etterfølgende select-kall.
+	PL	Czas odpowiedzi serwera &mdash; czas między wybraniem kolejnych wywołań.
+	RU	Время отклика сервера — время между последовательными вызовами для выбора.
 	SV	Serverns svarstid (tiden mellan på varandra efterföljande anrop).
 
 PLUGIN_HEALTH_SELECT
+	CS	Zvolte dobu trvání úlohy
 	DA	Vælg opgavens varighed
 	DE	Taskdauer wählen
 	EN	Select Task Duration
@@ -882,9 +1084,12 @@ PLUGIN_HEALTH_SELECT
 	IT	Durata attività selezionata
 	NL	Taakduur selecteren
 	NO	Oppgavevarighet for select-spørringer
+	PL	Wybierz czas trwania zadania
+	RU	Продолжительность задачи "Выбрать"
 	SV	Varaktighet för valuppgift
 
 PLUGIN_HEALTH_SELECT_DESC
+	CS	Doba průběhu každé úlohy spuštěné výběrem.
 	DA	Den tid det tager at afvikle hver opgave.
 	DE	Die von jedem durch Auswählen ausgeführten Task benötigte Zeit.
 	EN	The length of time taken by each task run by select.
@@ -895,9 +1100,12 @@ PLUGIN_HEALTH_SELECT_DESC
 	IT	Tempo richiesto per l'esecuzione di ciascuna attività selezionata.
 	NL	De tijd die elke geselecteerde taak in beslag neemt.
 	NO	Hvor lang tid hver oppgave som kjøres av select-spørringer tar.
+	PL	Czas wykonania każdego zadania według wyboru.
+	RU	Количество времени, потребовавшееся каждой задаче "Выбрать".
 	SV	Den tid det tar att utföra varje uppgift.
 
 PLUGIN_HEALTH_SCHEDULER
+	CS	Trvání úlohy plánovače
 	DA	Varighed af planlagte opgaver
 	DE	Dauer geplanter Tasks
 	EN	Scheduler Task Duration
@@ -908,9 +1116,12 @@ PLUGIN_HEALTH_SCHEDULER
 	IT	Durata attività pianificata
 	NL	Taakduur plannen
 	NO	Oppgavevarighet for planlegger
+	PL	Czas trwania zadania harmonogramu
+	RU	Продолжительность задачи "Планировщик"
 	SV	Varaktighet för schemaläggningsuppgift
 
 PLUGIN_HEALTH_SCHEDULER_DESC
+	CS	Doba potřebná k provedení každé naplánované úlohy.
 	DA	Den tid det tager at afvikle hver planlagt opgave.
 	DE	Die von jedem geplanten Task benötigte Zeit.
 	EN	The length of time taken by each scheduled task.
@@ -921,9 +1132,12 @@ PLUGIN_HEALTH_SCHEDULER_DESC
 	IT	Tempo richiesto per ciascuna attività pianificata.
 	NL	De tijd die elke geplande taak in beslag neemt.
 	NO	Hvor lang tid hver planlagte oppgave tar.
+	PL	Czas wykonania każdego zaplanowanego zadania.
+	RU	Количество времени, потребовавшееся каждой запланированной задаче.
 	SV	Den tid varje schemalagd uppgift tar.
 
 PLUGIN_HEALTH_TIMER
+	CS	Trvání úlohy časovače
 	DA	Varighed af timeropgave
 	DE	Dauer des Zeitgebertasks
 	EN	Timer Task Duration
@@ -934,9 +1148,12 @@ PLUGIN_HEALTH_TIMER
 	IT	Durata attività timer
 	NL	Duur van timertaak
 	NO	Oppgavevarighet for tidsinnstilling
+	PL	Czas trwania zadania timera
+	RU	Продолжительность задачи "Таймер"
 	SV	Varaktighet för timeruppgift
 
 PLUGIN_HEALTH_TIMER_DESC
+	CS	Doba, kterou zabírá každá úloha časovače.
 	DA	Den tid det tager at afvikle hver timeropgave.
 	DE	Die von jedem Zeitgebertask benötigte Zeit.
 	EN	The length of time taken by each timer task.
@@ -947,9 +1164,12 @@ PLUGIN_HEALTH_TIMER_DESC
 	IT	Tempo richiesto da ciascuna attività del timer.
 	NL	De tijd die elke timertaak in beslag neemt.
 	NO	Hvor lang tid hver tidsinnstillingsoppgave tar.
+	PL	Czas wykonania każdego zadania timera.
+	RU	Количество времени, потребовавшееся каждой задаче "Таймер".
 	SV	Den tid varje timer-uppgift tar.
 
 PLUGIN_HEALTH_TIMERLATE
+	CS	Zpoždění časovače
 	DA	Timerforsinkelse
 	DE	Zeitgeberverzögerung
 	EN	Timer Lateness
@@ -960,9 +1180,12 @@ PLUGIN_HEALTH_TIMERLATE
 	IT	Ritardo timer
 	NL	Timerlaatheid
 	NO	Forsinkelse for tidsinnstilling
+	PL	Opóźnienie timera
+	RU	Задержка таймера
 	SV	Timerförsening
 
 PLUGIN_HEALTH_TIMERLATE_DESC
+	CS	Doba mezi naplánováním úkolu časovače a jeho provedením.
 	DA	Tidsrummet fra en timeropgave vælges til den afvikles.
 	DE	Die Verzögerung zwischen dem geplanten Zeitpunkt eines Zeitgebertasks und der Ausführungszeit.
 	EN	The time between when a timer task was scheduled and when it is run.
@@ -973,9 +1196,12 @@ PLUGIN_HEALTH_TIMERLATE_DESC
 	IT	L'intervallo di tempo che passa tra il momento in cui viene pianificata un'attività del timer e il momento in cui viene eseguita.
 	NL	De tijd die is versterken tussen het punt waarop een timertaak was gepland en het punt waarop deze werd uitgevoerd.
 	NO	Tiden det tar mellom det planlagte og det faktiske kjøringstidspunktet til en tidinnstillingssoppgave.
+	PL	Czas między zaplanowaniem a uruchomieniem zadania timera.
+	RU	Промежуток времени от планирования задачи "Таймер" до ее запуска.
 	SV	Tiden mellan det att en timer-uppgift schemalagts och det att den utförs.
 
 PLUGIN_HEALTH_REQUEST
+	CS	Provést / Oznámení o trvání úlohy
 	DA	Eksekverings-/påmindelsesopgavens varighed
 	DE	Ausführungs-/Benachrichtungsaufgabendauer
 	EN	Execute / Notification Task Duration
@@ -986,9 +1212,12 @@ PLUGIN_HEALTH_REQUEST
 	IT	Durata esecuzione / notifica
 	NL	Duur van uitvoerings-/notificatietaak
 	NO	Oppgavevarighet for utføring/varsling
+	PL	Czas trwania zadania wykonania/powiadomienia
+	RU	Продолжительность задачи "Исполнение/уведомление"
 	SV	Varaktighet för körnings- eller meddelandeuppgift
 
 PLUGIN_HEALTH_REQUEST_DESC
+	CS	Doba, kterou trvá každé provedení příkazu nebo informační zpětný dotaz.
 	DA	Tiden det tager at eksekvere hver kommando eller tilbagekald fra en besked.
 	DE	Die von Ausführbefehlen und Benachrichtungen benötigte Zeit.
 	EN	The length of time taken by each execute command or notification callback.
@@ -999,9 +1228,12 @@ PLUGIN_HEALTH_REQUEST_DESC
 	IT	Tempo richiesto per l'esecuzione di ciascun comando di esecuzione o richiamata di notifica.
 	NL	De duur van elke uitgevoerde opdracht of terugroepnotificatie.
 	NO	Hvor lang tid hver kommando eller hvert varslingstilbakekall tar.
+	PL	Czas trwania polecenia wykonania lub wywołania zwrotnego powiadomienia.
+	RU	Количество времени, потребовавшееся каждой команде исполнения или обратному вызову уведомления.
 	SV	Den tid det tar att köra varje kommando eller återkalla ett meddelande.
 
 PLUGIN_HEALTH_PAGEBUILD
+	CS	Zřízení webové stránky
 	DA	Opbygning af webside
 	DE	Webseitenaufbau
 	EN	Web Page Build
@@ -1012,9 +1244,12 @@ PLUGIN_HEALTH_PAGEBUILD
 	IT	Costruzione pagina Web
 	NL	Webpagina opbouwen
 	NO	Nettsidebuild
+	PL	Kompilacja strony internetowej
+	RU	Веб-страница создана
 	SV	Uppbyggnad av webbsida
 
 PLUGIN_HEALTH_PAGEBUILD_DESC
+	CS	Doba potřebná k vytvoření každé webové stránky.
 	DA	Tiden det tager at opbygge hver webside.
 	DE	Die zum Aufbau der Webseite benötigte Zeit.
 	EN	The length of time taken to build each web page.
@@ -1025,9 +1260,12 @@ PLUGIN_HEALTH_PAGEBUILD_DESC
 	IT	Tempo richiesto per generare ogni singola pagina Web.
 	NL	De benodigde tijd om een webpagina op te bouwen.
 	NO	Hvor lang tid det tar å bygge hver nettside.
+	PL	Czas utworzenia każdej strony internetowej.
+	RU	Время, потребовавшееся для создания каждой веб-страницы.
 	SV	Den tid det tar att bygga varje webbsida.
 
 PLUGIN_HEALTH_IRQUEUE
+	CS	Délka fronty IR
 	DA	Længde af IR-kø
 	DE	IR-Verzögerung
 	EN	IR Queue Length
@@ -1038,9 +1276,12 @@ PLUGIN_HEALTH_IRQUEUE
 	IT	Lunghezza coda IR
 	NL	Lengte IR-wachtrij
 	NO	IR-forsinkelse
+	PL	Długość kolejki podczerwieni
+	RU	Длина ИК-очереди
 	SV	Längd på IR-kö
 
 PLUGIN_HEALTH_IRQUEUE_DESC
+	CS	Zpoždění mezi příjmem stisku klávesy IR a provedením.
 	DA	Forsinkelsen fra signalet fra fjernbetjeningen er modtaget til det er behandlet.
 	DE	Die Verzögerung zwischen dem Empfang eines IR-Tastensignals und dessen Verarbeitung.
 	EN	The delay between an IR key press being received and being processed.
@@ -1051,9 +1292,12 @@ PLUGIN_HEALTH_IRQUEUE_DESC
 	IT	Ritardo tra il ricevimento del segnale IR dopo la pressione del tasto e la relativa elaborazione.
 	NL	De vertraging tussen de ontvangst en de verwerking van een druk op een IR-toets.
 	NO	Forsinkelsen fra en IR-kommando fra fjernkontrollen mottas, og til den blir prosessert.
+	PL	Opóźnienie między odebraniem a przetworzeniem naciśnięcia przycisku pilota.
+	RU	Задержка между приемом и обработкой нажатия клавиши IR.
 	SV	Fördröjningen mellan det att ett IR-kommando tas emot och det att det bearbetas.
 
 PLUGIN_HEALTH_DBACCESS
+	CS	Přístup do databáze
 	DA	Databaseadgang
 	DE	Datenbankzugriff
 	EN	Database Access
@@ -1064,9 +1308,12 @@ PLUGIN_HEALTH_DBACCESS
 	IT	Accesso al database
 	NL	Databasetoegang
 	NO	Databasetilgang
+	PL	Dostęp do bazy danych
+	RU	Доступ к базе данных
 	SV	Databasåtkomst
 
 PLUGIN_HEALTH_DBACCESS_DESC
+	CS	Doba, kterou trvá vyhledání informací z databáze.
 	DA	Den tid det tager at hente information fra databasen.
 	DE	Die Zeit, die zum Laden von Daten aus der Datenbank benötigt wird.
 	EN	The time taken for information to be retrieved from the database.
@@ -1077,9 +1324,12 @@ PLUGIN_HEALTH_DBACCESS_DESC
 	IT	Tempo richiesto per il recupero delle informazioni dal database.
 	NL	Hoe lang het duurt om informatie uit de database op te halen.
 	NO	Hvor lang tid det tar å hente informasjon fra databasen.
+	PL	Czas pobierania informacji z bazy danych.
+	RU	Количество времени, необходимое для извлечения информации из базы данных.
 	SV	Den tid det tar at hämta information från databasen.
 
 PLUGIN_HEALTH_TEMPLATE
+	CS	Vzor procesu
 	DA	Processkabelon
 	DE	Verarbeitungsvorlage
 	EN	Process Template
@@ -1090,9 +1340,12 @@ PLUGIN_HEALTH_TEMPLATE
 	IT	Modello processo
 	NL	Processjabloon
 	NO	Behandle mal
+	PL	Szablon procesu
+	RU	Шаблон процесса
 	SV	Processmall
 
 PLUGIN_HEALTH_TEMPLATE_DESC
+	CS	Doba ke zpracování každé šablony z Template Toolkit při tvoření webových stránek.
 	DA	Tiden det tager at behandle hver skabelon ved opbygning af websider.
 	DE	Die beim Aufbauen von Webseiten zum Verarbeiten von Vorlage-Toolkit-Vorlagen benötigte Zeit.
 	EN	The time to process each Template Toolkit template when building web pages.
@@ -1103,9 +1356,12 @@ PLUGIN_HEALTH_TEMPLATE_DESC
 	IT	Tempo richiesto per l'elaborazione di ciascun modello Template Toolkit durante la costruzione delle pagine Web.
 	NL	De tijd die nodig is om elk gereedschapssjabloon bij het opbouwen van webpagina's te verwerken.
 	NO	Tiden det tar å prosessere hver mal for verktøysettmaler ved bygging av nettsider.
+	PL	Czas przetworzenia każdego szablonu zestawu szablonów podczas tworzenia stron internetowych.
+	RU	Время обработки каждого шаблона Template Toolkit при создании веб-страниц.
 	SV	Den tid det tar att bearbeta varje mall när webbsidor skapas..
 
 PLUGIN_HEALTH_ASYNC
+	CS	Trvání úlohy Async HTTP
 	DA	Varighed af asynkrone HTTP-opgaver
 	DE	Asynchrone HTTP Task Dauer
 	EN	Async HTTP Task Duration
@@ -1115,9 +1371,12 @@ PLUGIN_HEALTH_ASYNC
 	IT	Durata attività HTTP asincrona
 	NL	Duur van async HTTP-taak
 	NO	Oppgavevarighet for usynkron http
+	PL	Czas trwania asynchronicznego zadania HTTP
+	RU	Продолжительность задачи "Асинхронный HTTP"
 	SV	Varaktighet för asynkron HTTP-uppgift
 
 PLUGIN_HEALTH_ASYNC_DESC
+	CS	Trvání každé funkce zpětného volání asynchronního http.
 	DA	Varigheden af hver asynkron http-tilbagekaldsfunktion.
 	DE	Die zur Ausführen von asynchronen HTTP Callback Funktionen benötigte Zeit.
 	EN	The length of time taken by each asynchronous http callback function.
@@ -1127,5 +1386,7 @@ PLUGIN_HEALTH_ASYNC_DESC
 	IT	Tempo richiesto per ciascuna funzione di richiamata http asincrona.
 	NL	De duur van elke asynchrone http-terugroepfunctie.
 	NO	Hvor lang tid hver tilbakekallingsfunksjon for usynkron http tar.
+	PL	Czas działania każdej asynchronicznej funkcji wywołania zwrotnego http.
+	RU	Интервал времени, занимаемый каждой функцией обратного вызова асинхронного НТТР.
 	SV	Den tid varje asynkront http-återanrop tar.
 

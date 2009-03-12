@@ -3,6 +3,7 @@
 # $Id: strings.txt 11145 2007-01-07 00:19:08Z kdf $
 
 ITUNES
+	CS	iTunes
 	DA	iTunes
 	DE	iTunes
 	EN	iTunes
@@ -12,10 +13,13 @@ ITUNES
 	IT	iTunes
 	NL	iTunes
 	NO	iTunes
+	PL	iTunes
+	RU	iTunes
 	SV	iTunes
 	ZH_CN	iTunes
 
 ITUNES_DESC
+	CS	Integrace iTunes
 	DA	Integration med iTunes
 	DE	iTunes Integration (Musik und Wiedergabelisten)
 	EN	iTunes integration
@@ -25,10 +29,12 @@ ITUNES_DESC
 	IT	Integrazione di iTunes
 	NL	iTunes-integratie
 	NO	iTunes-integrering
+	PL	Integracja z programem iTunes
+	RU	Интеграция с iTunes
 	SV	iTunes-integration
 
 SETUP_ITUNESPLAYLISTFORMAT
-	CS	Formát playlistu iTunes
+	CS	Formát seznamu skladeb iTunes
 	DA	Format for iTunes-afspilningslister
 	DE	iTunes-Wiedergabelistenformat
 	EN	iTunes Playlist Format
@@ -40,10 +46,13 @@ SETUP_ITUNESPLAYLISTFORMAT
 	JA	iTunesプレイリストフォーマット
 	NL	iTunes-playlistformaat
 	NO	iTunes spillelisteformat
+	PL	Format listy odtwarzania programu iTunes
+	RU	Формат плей-листа iTunes
 	SV	Format för iTunes-spellista
 	ZH_CN	iTunes播放表
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
+	CS	Tato volba určuje formát, který je použit při importu seznamů skladeb iTunes.
 	DA	Denne indstilling definerer formatet som anvendes ved import af iTunes' spillelister.
 	DE	Diese Option definiert das Format der aus iTunes importierten Wiedergabelisten.
 	EN	This option determines the format used when importing iTunes playlists.
@@ -55,10 +64,13 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
 	NL	Deze optie bepaalt welk formaat bij het importeren van iTunes-playlists gebruikt wordt.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved importering av iTunes-spillelister.
+	PL	Ta opcja określa format używany podczas importowania list odtwarzania programu iTunes.
+	RU	Этот параметр определяет формат для импорта плей-листов iTunes.
 	SV	Här anger du vilket format som används vid import av iTunes-spellistor.
 	ZH_CN	这个选项决定了导入iTunes播放表所使用的格式。
 
 ITUNES_PODCASTS
+	CS	iTunes Podcast
 	DA	iTunes-podcasts
 	DE	iTunes-Podcasts
 	EN	iTunes Podcasts
@@ -69,10 +81,13 @@ ITUNES_PODCASTS
 	IT	Podcast iTunes
 	NL	iTunes-podcasts
 	NO	iTunes-podkaster
+	PL	Podcasty w programie iTunes
+	RU	Подкасты iTunes
 	SV	iTunes-poddsändningar
 	ZH_CN	iTunes Podcasts
 
 SETUP_ITUNESPLAYLISTPREFIX
+	CS	Předpona seznamu skladeb iTunes změněna na:
 	DA	Præfiks for iTunes' spillelister ændret til:
 	DE	Das Präfix für iTunes-Wiedergabelisten wurde geändert in:
 	EN	iTunes playlist prefix changed to:
@@ -83,10 +98,13 @@ SETUP_ITUNESPLAYLISTPREFIX
 	IT	Prefisso degli elenchi di riproduzione di iTunes modificato in:
 	NL	iTunes-playlistvoorvoegsel gewijzigd in:
 	NO	Prefiks for iTunes-spillelister er endret til:
+	PL	Prefiks listy odtwarzania programu iTunes zmienił się na:
+	RU	Префикс плей-листов iTunes изменен на:
 	SV	Prefix för iTunes-spellistor ändrat till:
 	ZH_CN	iTunes播放表前缀被改为：
 
 SETUP_ITUNESPLAYLISTSUFFIX
+	CS	Přípona seznamu skladeb iTunes změněna na:
 	DA	Suffiks for iTunes' spillelister ændret til:
 	DE	Das Suffix für iTunes-Wiedergabelisten wurde geändert in:
 	EN	iTunes playlist suffix changed to:
@@ -97,11 +115,13 @@ SETUP_ITUNESPLAYLISTSUFFIX
 	IT	Suffisso degli elenchi di riproduzione di iTunes modificato in:
 	NL	iTunes-playlistachtervoegsel gewijzigd in:
 	NO	Filetternavn for iTunes-spillelister er endret til:
+	PL	Sufiks listy odtwarzania programu iTunes zmienił się na:
+	RU	Суффикс плей-листов iTunes изменен на:
 	SV	Suffix för iTunes-spellistor ändrat till:
 	ZH_CN	iTunes播放表词尾被改为：
 
 USING_ITUNES
-	CS	Server importuje iTunes informace.
+	CS	Server importuje informace o iTunes.
 	DA	Serveren vil importere oplysninger fra iTunes.
 	DE	Der Server importiert die Daten aus iTunes.
 	EN	The server will import iTunes information.
@@ -113,10 +133,13 @@ USING_ITUNES
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes-informatie importeren.
 	NO	Serveren vil importere iTunes-informasjon.
+	PL	Serwer zaimportuje informacje z programu iTunes.
+	RU	Сервер будет импортировать данные iTunes.
 	SV	Servern importerar iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 NOT_USING_ITUNES
+	CS	Server již nebude importovat informace o iTunes.
 	DA	Serveren vil ikke længere importere oplysninger fra iTunes.
 	DE	Der Server importiert keine Daten aus iTunes mehr.
 	EN	The server will no longer import iTunes information.
@@ -128,6 +151,8 @@ NOT_USING_ITUNES
 	JA	サーバーはiTunesの情報をインポートしません。
 	NL	De server zal iTunes-informatie niet langer importeren.
 	NO	Serveren vil ikke importere iTunes-informasjon.
+	PL	Serwer nie będzie importował informacji z programu iTunes.
+	RU	Сервер больше не будет импортировать данные iTunes.
 	SV	Servern importerar inte längre iTunes-information.
 	ZH_CN	服务器将不再导入iTunes信息。
 
@@ -144,7 +169,9 @@ USE_ITUNES
 	JA	iTunesを使用する
 	NL	iTunes gebruiken
 	NO	Bruk iTunes
+	PL	Użyj programu iTunes
 	PT	Usar iTunes
+	RU	Использовать iTunes
 	SV	Använd iTunes
 	ZH_CN	使用iTunes
 
@@ -161,10 +188,13 @@ DONT_USE_ITUNES
 	JA	iTunesを使用しない
 	NL	iTunes niet gebruiken
 	NO	Ikke bruk iTunes
+	PL	Nie używaj programu iTunes
+	RU	Не использовать iTunes
 	SV	Använd inte iTunes
 	ZH_CN	不使用iTunes
 
 SETUP_ITUNES
+	CS	iTunes
 	DA	iTunes
 	DE	iTunes
 	EN	iTunes
@@ -176,12 +206,14 @@ SETUP_ITUNES
 	JA	iTunes
 	NL	iTunes
 	NO	iTunes
+	PL	iTunes
 	PT	iTunes
+	RU	iTunes
 	SV	iTunes
 	ZH_CN	iTunes
 
 SETUP_ITUNES_OK
-	CS	Server bude importovat iTunes informace.
+	CS	Server importuje informace o iTunes.
 	DA	Serveren vil importere oplysninger fra iTunes.
 	DE	Der Server importiert die Daten aus iTunes.
 	EN	The server will import iTunes information.
@@ -193,10 +225,13 @@ SETUP_ITUNES_OK
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes-gegevens importeren.
 	NO	Serveren vil importere iTunes-informasjon.
+	PL	Serwer zaimportuje informacje z programu iTunes.
+	RU	Сервер будет импортировать данные iTunes.
 	SV	Servern importerar iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 SETUP_ITUNES_DESC
+	CS	SqueezeCenter může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně  iTunes.
 	DA	SqueezeCenter kan bruge musikbiblioteket og afspilningslisterne fra iTunes. Alt hvad der ændres i iTunes, bliver afspejlet på afspilleren. Du skal markere feltet nedenfor hvis du vil importere oplysninger om iTunes-musikbiblioteket.
 	DE	SqueezeCenter kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
 	EN	SqueezeCenter can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
@@ -208,10 +243,13 @@ SETUP_ITUNES_DESC
 	JA	SqueezeCenterはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	NL	SqueezeCenter kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je muzieksysteem  doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
 	NO	SqueezeCenter kan bruke musikkbiblioteket og spillelistene til iTunes. Hvis du endrer noe i iTunes, vises disse endringene på spilleren. Merk av i boksen nedenfor hvis du vil importere musikkbibliotekinformasjonen til iTunes.
+	PL	Program SqueezeCenter może korzystać z biblioteki muzyki i list odtwarzania programu iTunes. Wszelki zmiany wprowadzone w programie iTunes zostaną uwzględnione w odtwarzaczu. Aby zaimportować informacje z biblioteki muzyki programu iTunes, zaznacz pole wyboru poniżej.
+	RU	SqueezeCenter может использовать медиатеку и плей-листы iTunes. Все изменения, вносимые в iTunes, отражаются в плеере. Установите флажок (ниже), чтобы импортировать данные медиатеки iTunes.
 	SV	Musikbiblioteket och spellistorna från iTunes kan användas i SqueezeCenter. Ändringar du gör i iTunes återspeglas även på spelaren. Markera kryssrutan nedan om du vill att musikbiblioteksinformationen från iTunes ska importeras.
 	ZH_CN	SqueezeCenter可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 SETUP_ITUNESSCANINTERVAL
+	CS	Interval znovunačítání iTunes
 	DA	Interval for genindlæsning af iTunes
 	DE	iTunes-Aktualisierungsintervall
 	EN	iTunes Reload Interval
@@ -223,10 +261,13 @@ SETUP_ITUNESSCANINTERVAL
 	JA	iTunes更新時間
 	NL	iTunes-herlaadinterval
 	NO	Oppdateringsintervall for iTunes
+	PL	Interwał ponownego ładowania programu iTunes
+	RU	Интервал перезагрузки iTunes
 	SV	Uppdateringsintervall för iTunes
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
+	CS	Když se změní knihovna iTunes Music, SqueezeCenter automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude SqueezeCenter čekat před znovunačtením knihovny iTunes Music. Nulová hodnota zakáže opětovné načtení.
 	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i SqueezeCenter. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i SqueezeCenter. Hvis værdien er 0, genindlæses det ikke.
 	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert SqueezeCenter die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SqueezeCenter mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your iTunes Music Library changes SqueezeCenter will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SqueezeCenter will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
@@ -237,10 +278,13 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	IT	Se si modifica la libreria musicale di iTunes, SqueezeCenter importa automaticamente i nuovi dati. È possibile specificare per SqueezeCenter il periodo minimo di attesa (in secondi) precedente al ricaricamento della libreria musicale di iTunes. Se si imposta il valore zero, la funzionalità viene disattivata.
 	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door SqueezeCenter geïmporteerd. Je kunt opgeven (in seconden) hoe lang SqueezeCenter minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	NO	Når musikkbiblioteket til iTunes endres, importerer SqueezeCenter automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge SqueezeCenter skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
+	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program SqueezeCenter zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program SqueezeCenter ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
+	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в SqueezeCenter. Для SqueezeCenter можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
 	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till SqueezeCenter.  Du kan ange en minimitid (i sekunder) som SqueezeCenter ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的iTunes音乐库改变时，SqueezeCenter将自动地导入最新音乐库信息。您可以指定SqueezeCenter再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNESSCANINTERVAL_OK
+	CS	Minimální doba znovunačtení hudební knihovny iTunes:
 	DA	iTunes-musikbibliotek skal genindlæses mindst hver:
 	DE	Minimale Wartezeit für das Laden der iTunes-Musiksammlung
 	EN	Minimum iTunes Music Library reload time:
@@ -252,10 +296,13 @@ SETUP_ITUNESSCANINTERVAL_OK
 	JA	iTunes 音楽ライブラリー更新時間:
 	NL	Minimumtijd voor herladen van iTunes-muziekcollectie:
 	NO	Minimum oppdateringstid for musikkbiblioteket i iTunes:
+	PL	Minimalny czas ponownego ładowania biblioteki muzyki programu iTunes:
+	RU	Минимальный интервал перезагрузки медиатеки iTunes:
 	SV	Uppdateringsintervall för iTunes musikbibliotek:
 	ZH_CN	iTunes音乐库极少刷新时间
 
 SETUP_ITUNES_LIBRARY_XML_PATH
+	CS	Umístění hudební knihovny .xml  iTunes
 	DA	Placering af iTunes Musik Library.xml
 	DE	Speicherort von iTunes Music Library.xml
 	EN	iTunes Music Library.xml Location
@@ -267,10 +314,13 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	JA	iTunes音楽ライブラリー xmlファイルの場所
 	NL	Locatie van iTunes Music Library.xml
 	NO	Plassering for filen iTunes Music Library.xml
+	PL	Lokalizacja pliku Music Library.xml w programie iTunes
+	RU	Расположение файла XML медиатеки iTunes
 	SV	Plats för filen iTunes Music Library.xml
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
+	CS	Pokud běží iTunes na jiném počítači než SqueezeCenter, můžete zde specifikovat explicitní cestu k .xml souboru hudební knihovny iTunes. Ponechte prázdné, pokud iTunes běží na stejném počítači jako SqueezeCenter.
 	DA	Hvis iTunes kører på en anden computer end SqueezeCenter, kan du angive stien til filen iTunes Music Library.xml her. Du skal lade feltet være tomt hvis iTunes kører på samme computer som SqueezeCenter.
 	DE	Falls iTunes auf einem anderen Rechner als SqueezeCenter ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SqueezeCenter installiert ist.
 	EN	If you are running iTunes on a different computer than SqueezeCenter, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SqueezeCenter.
@@ -282,10 +332,13 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
 	NL	Als iTunes op een andere computer draait dan SqueezeCenter, kun je hier een expliciet pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SqueezeCenter draait.
 	NO	Hvis du kjører iTunes på en annen datamaskin enn SqueezeCenter, kan du angi banen til filen iTunes Music Library.xml her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som SqueezeCenter.
+	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program SqueezeCenter, w tym miejscu można określić ścieżkę do pliku Music Library.xml programu iTunes. Jeżeli program iTunes działa na tym samym komputerze co program SqueezeCenter, pozostaw to pole puste.
+	RU	Если iTunes и SqueezeCenter установлены на разных компьютерах, можно напрямую задать путь к файлу XML медиатеки iTunes. Если приложение iTunes установлено на том же компьютере, что и SqueezeCenter, оставьте поле пустым.
 	SV	Om du kör iTunes på en annan dator än den där du kör SqueezeCenter anger du sökvägen till xml-filen för iTunes-musikbiblioteket här. Lämna fältet tomt om iTunes körs på samma dator som SqueezeCenter.
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入iTunes Music Library.xml文件的路径及其文件名。
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
+	CS	Složka iTunes Music
 	DA	iTunes-musikmappe
 	DE	iTunes-Musikordner
 	EN	iTunes Music Folder
@@ -297,11 +350,13 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	JA	iTunes音楽フォルダー
 	NL	iTunes-muziekmap
 	NO	iTunes-musikkmappe
+	PL	Folder muzyki programu iTunes
+	RU	Папка "Музыка" в iTunes
 	SV	iTunes-musikmapp
 	ZH_CN	iTunes音乐文件夹
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
-	CS	Jestliže chete určit umístění vasí iTunes knihovny, zadejte cestu včetně jména složky, obsahující Vaši iTunes hudbu.
+	CS	Pokud běží iTunes na jiném počítači než SqueezeCenter, můžete zde specifikovat explicitní cestu ke složce iTunes Music. Ponechte prázdné, pokud iTunes běží na stejném počítači jako SqueezeCenter.
 	DA	Hvis iTunes kører på en anden computer end SqueezeCenter, kan du angive stien til iTunes-musikmappen der. Du skal lade feltet være tomt hvis iTunes kører på samme computer som SqueezeCenter.
 	DE	Falls iTunes auf einem anderen Rechner als SqueezeCenter ausgeführt wird, können Sie hier den vollständigen Pfad zur iTunes-Musiksammlung angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SqueezeCenter installiert ist.
 	EN	If you are running iTunes on a different computer than SqueezeCenter, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SqueezeCenter.
@@ -313,10 +368,13 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
 	NL	Als iTunes op een andere computer draait dan SqueezeCenter, kun je hier een expliciet pad naar de iTunes-muziekmap opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SqueezeCenter draait.
 	NO	Hvis du kjører iTunes på en annen datamaskin enn SqueezeCenter, kan du angi banen til musikkmappen for iTunes her. La dette feltet stå tomt hvis du kjører iTunes på samme datamaskin som SqueezeCenter.
+	PL	Jeżeli program iTunes jest uruchomiony na innym komputerze niż program SqueezeCenter, w tym miejscu można określić folder muzyki iTunes. Jeżeli program iTunes działa na tym samym komputerze co program SqueezeCenter, pozostaw to pole puste.
+	RU	Если iTunes и SqueezeCenter установлены на разных компьютерах, можно напрямую задать путь к папке "Музыка" в iTunes. Если приложение iTunes установлено на том же компьютере, что и SqueezeCenter, оставьте поле пустым.
 	SV	Om du kör iTunes på en annan dator än den där du kör SqueezeCenter anger du sökvägen till iTunes-musikmappen här. Lämna fältet tomt om iTunes körs på samma dator som SqueezeCenter.
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
+	CS	Nezaškrtnuté skladby v iTunes
 	DA	Numre der ikke er markeret i iTunes
 	DE	Deaktivierte Lieder in iTunes
 	EN	Unchecked Songs in iTunes
@@ -327,10 +385,13 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	IT	Brani non selezionati in iTunes
 	NL	Niet-geselecteerde liedjes in iTunes
 	NO	Umarkerte sanger i iTunes
+	PL	Niezaznaczone utwory w programie iTunes
+	RU	Неотмеченные песни в iTunes
 	SV	Omarkerade låtar i iTunes
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
+	CS	Standardně, pokud odstraníte zaškrtnutí vedle nějaké skladby v iTunes, tato skladba se neobjeví při prohlížení vaší hudby pomocí SqueezeCenter. Toto chování můžete změnit níže.
 	DA	Som standard vil numre som du fjerner markeringen fra i iTunes, ikke være synlige når du gennemser din musiksamling i SqueezeCenter. Du kan ændre det nedenfor.
 	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in SqueezeCenter angezeigt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SqueezeCenter. You can change that behavior below.
@@ -341,10 +402,13 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con SqueezeCenter. È possibile modificare questa impostazione di seguito.
 	NL	Wanneer je het vinkje weghaalt naast een liedje in iTunes, wordt dat liedje standaard niet weergegeven wanneer je met SqueezeCenter door je muziek bladert. Je kunt dit hieronder veranderen.
 	NO	Hvis du fjerner markeringen ved en sang i iTunes, vises den som standard ikke når du blar i musikk med SqueezeCenter. Du kan endre dette nedenfor.
+	PL	Domyślnie po usunięciu zaznaczenia pola wyboru obok utworu w programie iTunes utwór ten nie będzie wyświetlany podczas przeglądania muzyki w programie SqueezeCenter. Działanie tej funkcji można zmienić poniżej.
+	RU	По умолчанию, если снять флажок песни в iTunes, она не будет отображаться при просмотре в SqueezeCenter. Изменить эту настройку можно ниже.
 	SV	När du avmarkerar en låt i iTunes visas den som standard inte längre när du bläddrar bland dina låtar i SqueezeCenter.  Du kan ändra den här funktionen nedan.
 	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览SqueezeCenter的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
+	CS	Zahrnout všechny skladby
 	DA	Medtag alle numre
 	DE	Alle Lieder einschließen
 	EN	Include all songs
@@ -355,10 +419,13 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	IT	Includi tutti i brani
 	NL	Alle liedjes toevoegen
 	NO	Inkluder alle sanger
+	PL	Dodaj wszystkie utwory
+	RU	Включать все песни
 	SV	Ta med låtar
 	ZH_CN	包括所有歌曲在内
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
+	CS	Nezahrnovat nezaškrtnuté skladby
 	DA	Medtag ikke umarkerede numre
 	DE	Deaktivierte Lieder nicht einschließen
 	EN	Don't include unchecked songs
@@ -369,10 +436,13 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	IT	Non includere i brani non selezionati
 	NL	Niet-geselecteerde liedjes niet toevoegen
 	NO	Ikke inkluder sanger som ikke er markert
+	PL	Nie dodawaj niezaznaczonych utworów
+	RU	Не включать неотмеченные песни
 	SV	Ta inte med omarkerade låtar.
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
 DEBUG_PLUGIN_ITUNES
+	CS	Informace o synchronizaci iTunes
 	DA	Oplysninger om synkronisering med iTunes
 	DE	iTunes Synchronisation
 	EN	iTunes Synchronization Information
@@ -382,9 +452,12 @@ DEBUG_PLUGIN_ITUNES
 	IT	Informazioni sulla sincronizzazione con iTunes
 	NL	Gegevens voor iTunes-synchronisatie
 	NO	Synkroniseringsinformasjon for iTunes
+	PL	Informacje o synchronizacji z programem iTunes
+	RU	Сведения о синхронизации iTunes
 	SV	Synkroniseringsinformation för iTunes
 
 ITUNES_PROGRESS
+	CS	Import iTunes
 	DA	Import af iTunes
 	DE	iTunes Import
 	EN	iTunes Import
@@ -394,9 +467,12 @@ ITUNES_PROGRESS
 	IT	Importazione da iTunes
 	NL	iTunes importeren
 	NO	iTunes-importering
+	PL	Importowanie z programu iTunes
+	RU	Импорт iTunes
 	SV	iTunes-import
 
 ITUNES_PLAYLISTS_PROGRESS
+	CS	Import seznamu skladeb iTunes
 	DA	Import af iTunes-spilleliste
 	DE	iTunes Wiedergabelisten Import
 	EN	iTunes Playlist Import
@@ -406,9 +482,12 @@ ITUNES_PLAYLISTS_PROGRESS
 	IT	Importazione degli elenchi di riproduzione iTunes
 	NL	iTunes-playlist importeren
 	NO	Importere iTunes-spilleliste
+	PL	Importowanie listy odtwarzania z programu iTunes
+	RU	Импорт плей-листа iTunes
 	SV	Import av iTunes-spellistor
 
 ITUNES_ARTWORK_PHASE_1_PROGRESS
+	CS	Import obalů alb stažených do iTunes
 	DA	Import af coverbilleder hentet med iTunes
 	DE	Heruntergeladene iTunes-Plattenhüllen importieren
 	EN	iTunes Downloaded Artwork Import
@@ -418,9 +497,12 @@ ITUNES_ARTWORK_PHASE_1_PROGRESS
 	IT	Importazione copertine di iTunes scaricate
 	NL	Import van door iTunes gedownloade hoesafbeeldingen
 	NO	Importering av omslag lastet ned fra iTunes
+	PL	Importowanie okładek pobranych do programu iTunes
+	RU	Импорт обложек, загруженных в iTunes
 	SV	Import av albumomslag som laddats ner från iTunes
 
 ITUNES_ARTWORK_PHASE_2_PROGRESS
+	CS	Import obalů alb děl přidaných uživatelem do iTunes
 	DA	Import af brugerdefinerede coverbilleder fra iTunes
 	DE	Vom Benutzer hinzugefügte iTunes-Plattenhüllen importieren
 	EN	iTunes User-Added Artwork Import
@@ -430,5 +512,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	IT	Importazione copertine di iTunes aggiunte dall'utente
 	NL	Import van door iTunes-gebruiker toegevoegde hoesafbeeldingen
 	NO	Importering av omslag lagt til av bruker fra iTunes
+	PL	Użytkownik programu iTunes &mdash; importowanie dodanych okładek
+	RU	Импорт обложек, добавленных пользователем iTunes
 	SV	Import av omslag som lagts till av användaren från iTunes
 

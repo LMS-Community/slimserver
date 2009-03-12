@@ -1,4 +1,5 @@
 PLUGIN_SIRIUS_MODULE_NAME
+	CS	Internetové rádio SIRIUS
 	DA	Sirius Internetradio
 	DE	SIRIUS Internet Radio
 	EN	SIRIUS Internet Radio
@@ -9,9 +10,12 @@ PLUGIN_SIRIUS_MODULE_NAME
 	IT	Radio Internet SIRIUS
 	NL	SIRIUS-internetradio
 	NO	SIRIUS Internett-radio
+	PL	Internetowa stacja radiowa SIRIUS
+	RU	Радиостанция Интернета SIRIUS
 	SV	Sirius-webbradio
 
 PLUGIN_SIRIUS_ERROR
+	CS	Chyba SIRIUS
 	DA	Sirius-fejl
 	DE	SIRIUS-Fehler
 	EN	SIRIUS Error
@@ -22,9 +26,12 @@ PLUGIN_SIRIUS_ERROR
 	IT	Errore di SIRIUS
 	NL	SIRIUS-fout
 	NO	SIRIUS-feil
+	PL	Błąd usługi SIRIUS
+	RU	Ошибка SIRIUS
 	SV	Sirius-fel
 
 PLUGIN_SIRIUS_NO_INFO
+	CS	Není možné načíst info kanálu.
 	DA	Der kunne ikke hentes oplysninger om kanalen.
 	DE	Senderinfos konnten nicht geladen werden.
 	EN	Unable to retrieve channel info.
@@ -34,9 +41,12 @@ PLUGIN_SIRIUS_NO_INFO
 	IT	Impossibile recuperare le informazioni sul canale.
 	NL	Kan kanaalinfo niet ophalen.
 	NO	Får ikke til å hente informasjon om kanalen.
+	PL	Nie można pobrać informacji o kanale.
+	RU	Невозможно извлечь информацию о канале.
 	SV	Det går inte att hämta någon kanalinformation.
 
 PLUGIN_SIRIUS_GETTING_STREAM_INFO
+	CS	Získávám informace o proudu...
 	DA	Henter oplysninger om stream...
 	DE	Streaminfos werden geladen ...
 	EN	Getting stream info...
@@ -47,9 +57,12 @@ PLUGIN_SIRIUS_GETTING_STREAM_INFO
 	IT	Recupero info su stream...
 	NL	Stroominfo wordt opgehaald...
 	NO	Henter informasjon om strøm...
+	PL	Pobieranie informacji o strumieniu...
+	RU	Получение информации о потоке...
 	SV	Hämtar ströminformation ...
 
 PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED
+	CS	Proud zastaven, nejste dále oprávněni k poslechu.
 	DA	Streamen er stoppet. Du har ikke længere ret til at høre den.
 	DE	Stream angehalten, Berechtigung zum Hören erloschen.
 	EN	Stream stopped, you are no longer authorized to listen.
@@ -60,9 +73,12 @@ PLUGIN_SIRIUS_STOPPING_UNAUTHORIZED
 	IT	Stream interrotto. Non si è più autorizzati all'ascolto.
 	NL	Stroom gestopt; je hebt geen rechten meer om te luisteren.
 	NO	Strømmen stanset, du har ikke lenger tillatelse til å lytte.
+	PL	Strumień zatrzymany, nie masz już upoważnienia do słuchania.
+	RU	Поток остановлен. У вас больше нет прав слушать музыку.
 	SV	Strömmen har stoppats eftersom du inte längre har behörighet att lyssna.
 
 PLUGIN_SIRIUS_STOPPING_INACTIVE
+	CS	Překročena doba nečinnosti SIRIUS, stiskněte PLAY k pokračování poslechu.
 	DA	Grænsen for inaktivitet på Sirius er overskredet. Tryk på Afspil for at fortsætte med at lytte.
 	DE	Erlaubte SIRIUS-Pause überschritten, drücken Sie zum Weiterhören PLAY.
 	EN	SIRIUS idle time exceeded, press PLAY to continue listening.
@@ -73,9 +89,12 @@ PLUGIN_SIRIUS_STOPPING_INACTIVE
 	IT	Tempo di inattività di SIRIUS superato. Premere PLAY per proseguire l'ascolto.
 	NL	Niet-actieve tijd van SIRIUS overschreden. Druk op PLAY om door te gaan.
 	NO	SIRIUS' terskel for inaktivitet er nådd, trykk PLAY for å fortsette å lytte.
+	PL	Czas bezczynności usługi SIRIUS; naciśnij przycisk PLAY, aby kontynuować odtwarzanie.
+	RU	Превышен интервал неактивности на SIRIUS. Нажмите PLAY, чтобы продолжить прослушивание.
 	SV	Sirius har varit inaktivt för länge. Tryck på Play om du vill fortsätta lyssna.
 
 PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED
+	CS	K použití Sirius stiskněte a podržte tlačítko JAS k aktualizaci vašeho firmware.
 	DA	Hvis du vil bruge Sirius, skal du holde BRIGHTNESS nede for at opdatere firmwaren.
 	DE	Wenn Sie Sirius nutzen möchten, halten Sie BRIGHTNESS gedrückt, um die Firmware zu aktualisieren.
 	EN	To use Sirius, press and hold BRIGHTNESS to update your firmware.
@@ -85,5 +104,7 @@ PLUGIN_SIRIUS_FIRMWARE_UPGRADE_REQUIRED
 	IT	Per usare SIRIUS, tenere premuto BRIGHTNESS per aggiornare il firmware.
 	NL	Als je Sirius wilt gebruiken, houd je BRIGHTNESS ingedrukt om je firmware te updaten.
 	NO	Trykk og hold nede BRIGHTNESS-knappen for å oppdatere fastvaren, slik at du kan bruke Sirius.
+	PL	Aby korzystać z usługi Sirius, naciśnij i przytrzymaj przycisk BRIGHTNESS w celu zaktualizowania oprogramowania układowego.
+	RU	Чтобы использовать Sirius, нажмите и удерживайте BRIGHTNESS для обновления микропрограммного обеспечения.
 	SV	Om du vill använda Sirius uppdaterar du den inbyggda programvaran genom att hålla ljusstyrkeknappen nedtryckt.
 

@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 SLIMTRIS
+	CS	SlimTris
 	DA	SlimTris
 	DE	SlimTris
 	EN	SlimTris
@@ -13,9 +14,12 @@ SLIMTRIS
 	IT	SlimTris
 	NL	SlimTris
 	NO	SlimTris
+	PL	SlimTris
+	RU	SlimTris
 	SV	SlimTris
 
 SLIMTRIS_DESC
+	CS	Tetris pro váš Squeezebox nebo Transporter!
 	DA	Tetris til din Squeezebox eller Transporter
 	DE	Tetris für ihre Squeezebox oder den Transporter!
 	EN	Tetris for your Squeezebox or Transporter!
@@ -25,5 +29,7 @@ SLIMTRIS_DESC
 	IT	Tetris per Squeezebox o Transporter
 	NL	Tetris voor je Squeezebox of Transporter!
 	NO	Tetris for Squeezebox eller Transporter.
+	PL	Tetris dla urządzenia Squeezebox lub Transporter!
+	RU	Тетрис для Squeezebox или Transporter!
 	SV	Tetris för Squeezebox eller Transporter!
 

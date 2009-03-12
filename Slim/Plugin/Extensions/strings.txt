@@ -1,4 +1,5 @@
 PLUGIN_EXTENSIONS
+	CS	Extension Downloader (Stahovač doplňků)
 	DA	Hent udvidelsesmoduler
 	DE	Extension Downloader
 	EN	Extension Downloader
@@ -8,9 +9,12 @@ PLUGIN_EXTENSIONS
 	IT	Utilità di download delle estensioni
 	NL	Extensiedownloader
 	NO	Nedlasting av utvidelser
+	PL	Moduł pobierania rozszerzeń
+	RU	Загрузчик расширений
 	SV	Nedladdningsprogram för tillägg
 
 PLUGIN_EXTENSIONS_DESC
+	CS	Extension Downloader (stahovač doplňků) může stáhnout a nainstalovat různé doplňky k vašemu systému Squeezebox system. Kvůli podpoře doplňků třetích stran kontaktujte autora uvedeného níže nebo se připojte na adresu <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>.
 	DA	Du kan hente en række udvidelser til dit Squeezebox-system. Hvis du har brug for hjælp i forbindelse med udvidelsesmodulerne fra tredjepart, kan du kontakte den som har lavet modulet, eller melde dig til vores <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
 	DE	Der Extension Downloader kann diverse Erweiterungen für ihr Squeezebox System herunterladen und installieren. Unterstützung für Erweiterungen von Drittanbietern erhalten Sie bei den Autoren (siehe Liste) oder in den <a href="http://forums.slimdevices.com/forumdisplay.php">Squeezebox Foren</a>.
 	EN	The Extension Downloader can download and install a variety of add-ons to your Squeezebox system.  For support for third-party extensions, contact the author listed below or join in at the <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>.
@@ -20,9 +24,12 @@ PLUGIN_EXTENSIONS_DESC
 	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi. Per assistenza in merito alle estensioni di terzi, rivolgersi all'autore elencato di seguito o partecipare ai <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
 	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren. Voor ondersteuning bij uitbreidingen van derden kun je contact opnemen met de auteur of je aansluiten bij de <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
 	NO	Med Nedlasting av utvidelser kan du  laste ned en rekke tilleggsprogrammer for Squeezebox-systemet.  Hvis du trenger hjelp med tredjepartsutvidelser, må du ta kontakt med forfatteren som oppgis nedenfor, eller bli med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumene</a>.
+	PL	Moduł pobierania dodatków może pobrać i zainstalować różne rozszerzenia w systemie Squeezebox.  Aby uzyskać pomoc techniczną dotyczącą rozszerzeń innych firm, należy skontaktować się z autorami wymienionymi poniżej lub zapisać się na <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
+	RU	Загрузчик расширений может загружать и устанавливать различные надстройки для системы Squeezebox. Сведения о поддержке сторонних расширений можно получить у автора, который указан ниже, или на <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">форумах</a>.
 	SV	Med hjälp av nedladdningsprogrammet kan du ladda ned olika tillägg till Squeezebox. Om du vill ha support för tredjepartsprogram bör du kontakta upphovsmannen (se nedan) eller gå med i <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forumen</a>.
 
 PLUGIN_EXTENSIONS_REPOS
+	CS	Doplňkové archívy
 	DA	Andre lagersteder
 	DE	Zusätzliche Repositories
 	EN	Additional Repositories
@@ -32,9 +39,12 @@ PLUGIN_EXTENSIONS_REPOS
 	IT	Archivi aggiuntivi
 	NL	Extra opslagruimten
 	NO	Ekstra lagre
+	PL	Dodatkowe repozytoria
+	RU	Дополнительные репозитории
 	SV	Ytterligare databaser
 
 PLUGIN_EXTENSIONS_REPOS_DESC
+	CS	Můžete přidat dodatečné doplňkové archívy třetích stran zadáním URL pro archív níže. Seznam URL archívů je uveden na <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
 	DA	Nedenfor kan du tilføje adresser på tredjeparters lagersteder med udvidelsesmoduler. Der er en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">her</a>.
 	DE	Sie können weitere Repositories von Drittanbietern verwenden, indem Sie deren URL unten angeben. Eine Liste von weiteren Verzeichnissen kann <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">im Wiki</a> gefunden werden.
 	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
@@ -44,9 +54,12 @@ PLUGIN_EXTENSIONS_REPOS_DESC
 	IT	È possibile aggiungere altri archivi di estensioni di terzi immettendone l'URL di seguito. Un elenco di URL di archivi è disponibile <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">qui</a>.
 	NL	Je kunt de opslagplaatsen voor de uitbreidingen van derden toevoegen door de URL van de onderstaande opslagplaats in te voeren. Je kunt hier een lijst met opslagplaatsen vinden <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
 	NO	Du kan legge til lagre for tredjepartsutvidelser ved å oppgi webadressen til lageret nedenfor. Du finner en liste med lageradresser <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">her</a>.
+	PL	Kolejne rozszerzenia innych firm można dodać, wprowadzając poniżej adres URL repozytorium. Lista adresów URL repozytoriów znajduje się <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">tutaj</a>.
+	RU	Чтобы добавить дополнительный сторонний репозиторий расширений, введите ниже его URL. Список URLов репозиториев см. <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">здесь</a>.
 	SV	Ange adressen nedan om du vill lägga till databaser för tredjepartstillägg. Här finns en <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">lista</a> med adresser till databaser.
 
 PLUGIN_EXTENSIONS_REPOS_WARNING
+	CS	<b>Výstraha:</b> Protože server automaticky stáhne software z vámi definovaných archívů, laskavě ověřte důvěryhodnost vlastníka  archívu.
 	DA	<b>Advarsel:</b> Da der automatisk bliver hentet software fra de lagersteder du definerer, skal du angive at du har tillid til ejeren af det pågældende lager.
 	DE	<b>Warnung:</b> Vergewissern Sie sich, dass Sie dem Repository-Anbieter vertrauen, da der Server die Software automatisch von den von Ihnen definierten Repositories herunterlädt.
 	EN	<b>Warning:</b> As the server will automatically download software from the repositories you define, please verify that you trust the owner of the repository.
@@ -56,9 +69,12 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	IT	<b>Attenzione:</b> verranno scaricati automaticamente prodotti software dagli archivi definiti, pertanto è consigliabile specificare archivi attendibili.
 	NL	<b>Waarschuwing:</b> Aangezien de server automatisch software downloadt van de opslagruimten die je opgeeft, moet je verifiëren dat je de eigenaar van die opslagruimte vertrouwt.
 	NO	<b>Advarsel: </b>Siden serveren automatisk laster ned programvare fra lagrene du angir, må du være sikker på at du stoler på eieren av lageret.
+	PL	<b>Ostrzeżenie:</b> Ponieważ serwer automatycznie pobiera oprogramowanie z wybranych repozytoriów, należy upewnić się, że są to zaufane źródła.
+	RU	<b>Предупреждение.</b> Вы должны полностью доверять владельцу репозитория, поскольку сервер будет загружать из него ПО автоматически.
 	SV	<b>Obs!</b> Eftersom servern laddar ned program automatiskt från den servern du anger är det viktigt att du litar på databasens ägare.
 
 PLUGIN_EXTENSIONS_PLUGINS
+	CS	Pluginy SqueezeCenter
 	DA	Udvidelsesmoduler til SqueezeCenter
 	DE	SqueezeCenter-Plugins
 	EN	SqueezeCenter Plugins
@@ -68,9 +84,12 @@ PLUGIN_EXTENSIONS_PLUGINS
 	IT	Plugin di SqueezeCenter
 	NL	SqueezeCenter-plugins
 	NO	Plugin-moduler for SqueezeCenter
+	PL	Dodatki programu SqueezeCenter
+	RU	Плагины SqueezeCenter
 	SV	Plugin-program till SqueezeCenter
 
 PLUGIN_EXTENSIONS_PLUGINS_DESC
+	CS	Můžete nainstalovat SqueezeCenter Pluginy z níže uvedeného seznamu nebo je odstranit. Po instalaci nebo odstranění pluginů musí být server restartován.
 	DA	Du kan installere og fjerne udvidelsesmoduler til SqueezeCenter fra listen nedenfor. Serveren skal genstartes når udvidelsesmodulerne er fjernet eller installeret.
 	DE	SqueezeCenter-Plugins in der nachstehenden Liste können installiert oder entfernt werden. Wenn Plugins installiert oder entfernt wurden, muss der Server neu gestartet werden.
 	EN	You may install or remove SqueezeCenter Plugins from the list below.  The server must be restarted once plugins are installed or removed.
@@ -80,9 +99,12 @@ PLUGIN_EXTENSIONS_PLUGINS_DESC
 	IT	È possibile installare o rimuovere i plugin di SqueezeCenter dall'elenco sottostante. Dopo l'installazione o la rimozione di plugin, è necessario riavviare il server.
 	NL	Je kunt SqueezeCenter-plugins in de onderstaande lijst installeren of verwijderen. De server moet opnieuw worden gestart nadat er plug-ins zijn geïnstalleerd of verwijderd.
 	NO	Du kan installere og fjerne plugin-moduler for SqueezeCenter i listen nedenfor. Serveren må startes på nytt når plugin-modulene har blitt installert eller fjernet.
+	PL	Dodatki programu SqueezeCenter można zainstalować lub usunąć na liście poniżej. Po zainstalowaniu lub usunięciu dodatku należy ponownie uruchomić serwer.
+	RU	Плагины SqueezeCenter из приведенного списка можно устанавливать и удалять. После этого сервер необходимо перезапустить.
 	SV	Använd listan nedan för att installera eller ta bort plugin-program till SqueezeCenter. Du måste starta om servern när du har installerat eller tagit bort plugin-programmen.
 
 PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
+	CS	Upgradovat Plugin na novou verzi
 	DA	Opgrader udvidelsesmodul til en ny version
 	DE	Auf neue Plugin-Version aktualisieren
 	EN	Upgrade Plugin To A New Version
@@ -92,9 +114,12 @@ PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
 	IT	Aggiorna plugin a una nuova versione
 	NL	Plug-in naar een nieuwe versie upgraden
 	NO	Oppgrader en plugin-modul til en ny versjon
+	PL	Uaktualnij dodatek do nowej wersji
+	RU	Обновить версию плагина
 	SV	Uppgradera plugin-programmet till en ny version.
 
 PLUGIN_EXTENSIONS_PLUGINS_REMOVE
+	CS	Odstraňte v aktuálně nainstalovaný Plugin
 	DA	Fjern det installerede udvidelsesmodul
 	DE	Derzeit installiertes Plugin entfernen
 	EN	Remove Currently Installed Plugin
@@ -104,9 +129,12 @@ PLUGIN_EXTENSIONS_PLUGINS_REMOVE
 	IT	Rimuovi il plugin correntemente installato
 	NL	Huidig geïnstalleerde plug-in verwijderen
 	NO	Fjern installert plugin-modul
+	PL	Usuń aktualnie zainstalowany dodatek
+	RU	Удалить установленный плагин
 	SV	Ta bort installerat plugin-program
 
 PLUGIN_EXTENSIONS_INSTALL
+	CS	Instalovat
 	DA	Installer
 	DE	Installieren
 	EN	Install
@@ -116,9 +144,12 @@ PLUGIN_EXTENSIONS_INSTALL
 	IT	Installa
 	NL	Installeren
 	NO	Installer
+	PL	Zainstaluj
+	RU	Установить
 	SV	Installera
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL
+	CS	Manuálně nainstalované doplňky
 	DA	Manuelt installerede udvidelsesmoduler
 	DE	Manuell installierte Erweiterungen
 	EN	Manually installed extensions
@@ -128,9 +159,12 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL
 	IT	Estensioni installate manualmente
 	NL	Handmatig geïnstalleerde uitbreidingen
 	NO	Utvidelser som er manuelt installert
+	PL	Rozszerzenia zainstalowane ręcznie
+	RU	Установленные вручную расширения
 	SV	Tillägg som har installerats manuellt
 
 PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
+	CS	již nainstalováno manuálně (%s) - nejdříve odstraňte
 	DA	er allerede installeret manuelt (%s) - modulet skal fjernes først
 	DE	Bereits manuell installiert (%s) - vorher entfernen
 	EN	already installed manually (%s) - please remove first
@@ -140,9 +174,12 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	IT	già installato manualmente (%s). Rimuoverlo
 	NL	al handmatig geïnstalleerd (%s) - eerst verwijderen
 	NO	allerede installert manuelt (%s) ‒ fjern først
+	PL	już zainstalowano ręcznie (%s) - najpierw usuń
+	RU	уже установлено вручную (%s) — вначале необходимо удалить
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG
+	CS	Restartujte prosím SqueezeCenter k uskutečnění  změn.
 	DA	Du skal genstarte SqueezeCenter for at ændringerne kan træde i kraft.
 	DE	SqueezeCenter muss neu gestartet werden, damit die Änderungen in Kraft treten.
 	EN	Please restart SqueezeCenter for the changes to take effect.
@@ -152,9 +189,12 @@ PLUGIN_EXTENSIONS_RESTART_MSG
 	IT	Per applicare le modifiche, è necessario riavviare SqueezeCenter.
 	NL	Start SqueezeCenter opnieuw om de wijzigingen door te voeren.
 	NO	Du må starte SqueezeCenter på nytt for at endringene skal tre i kraft.
+	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program SqueezeCenter.
+	RU	Перезапустите SqueezeCenter, чтобы изменения вступили в силу.
 	SV	Starta om SqueezeCenter om du vill att ändringarna ska träda i kraft.
 
 PLUGIN_EXTENSIONS_REPO_ERROR
+	CS	Špatný archív
 	DA	Ugyldigt lagersted
 	DE	Falsches Repository
 	EN	Bad repository
@@ -164,9 +204,12 @@ PLUGIN_EXTENSIONS_REPO_ERROR
 	IT	Archivio non valido
 	NL	Ongeldige opslagruimte
 	NO	Korrupt lager
+	PL	Złe repozytorium
+	RU	Неисправный репозиторий
 	SV	Felaktig databas
 
 PLUGIN_EXTENSIONS_REMOVED
+	CS	Odstraněno
 	DA	Fjernet
 	DE	Entfernt
 	EN	Removed
@@ -176,9 +219,12 @@ PLUGIN_EXTENSIONS_REMOVED
 	IT	Rimosso
 	NL	Verwijderd
 	NO	Fjernet
+	PL	Usunięto
+	RU	Удалено
 	SV	Borttaget
 
 PLUGIN_EXTENSIONS_DOWNLOADING
+	CS	Stahování
 	DA	Henter
 	DE	Daten werden heruntergeladen
 	EN	Downloading
@@ -188,9 +234,12 @@ PLUGIN_EXTENSIONS_DOWNLOADING
 	IT	Download in corso…
 	NL	Downloaden
 	NO	Laster ned
+	PL	Pobieranie
+	RU	Загрузка
 	SV	Hämtar
 
 PLUGIN_EXTENSIONS_BAD_DIGEST
+	CS	Chyba při stahování (kontrolní součet souboru neodpovídá)
 	DA	Installationen mislykkedes (filens kontrolsum er forkert)
 	DE	Installation fehlgeschlagen (Datei-Prüfsumme stimmt nicht überein)
 	EN	Failed to install (file checksum does not match)
@@ -200,9 +249,12 @@ PLUGIN_EXTENSIONS_BAD_DIGEST
 	IT	Installazione non eseguita (mancata corrispondenza del checksum del file)
 	NL	Kan niet worden geïnstalleerd (controlesom van bestand komt niet overeen)
 	NO	Innstallering mislyktes (kontrollsummen for filen stemmer ikke overens)
+	PL	Instalacja nie powiodła się (suma kontrolna pliku nie jest zgodna)
+	RU	Установка не выполнена (контрольные суммы файлов не совпадают)
 	SV	Installationen misslyckades (filens kontrollsumma är felaktig)
 
 PLUGIN_EXTENSIONS_BAD_ZIP
+	CS	Chyba při instalaci (narušený zip soubor)
 	DA	Installationen mislykkedes (zip-filen er beskadiget)
 	DE	Installation fehlgeschlagen (Zip-Datei beschädigt)
 	EN	Failed to install (corrupt zip file)
@@ -212,9 +264,12 @@ PLUGIN_EXTENSIONS_BAD_ZIP
 	IT	Installazione non eseguita (file zip danneggiato)
 	NL	Kan niet worden geïnstalleerd (beschadigd zip-bestand)
 	NO	Installering mislyktes (korrupt zip-fil)
+	PL	Instalacja nie powiodła się (uszkodzony plik zip)
+	RU	Установка не выполнена (поврежденный файл ZIP)
 	SV	Det gick inte att installera (zip-filen är skadad)
 
 PLUGIN_EXTENSIONS_EXTRACTED
+	CS	Instalován
 	DA	Installeret
 	DE	Installiert
 	EN	Installed
@@ -224,9 +279,12 @@ PLUGIN_EXTENSIONS_EXTRACTED
 	IT	Installato
 	NL	Geïnstalleerd
 	NO	Installert
+	PL	Zainstalowane
+	RU	Установлено
 	SV	Installerad
 
 PLUGIN_EXTENSIONS_BAD_EXTRACTION
+	CS	Chyba při instalaci (není možné extrahovat zip soubor)
 	DA	Installationen mislykkedes (zip-filen kunne ikke pakkes ud)
 	DE	Installation fehlgeschlagen (Zip-Datei konnte nicht extrahiert werden)
 	EN	Failed to install (zip file could not be extracted)
@@ -236,9 +294,12 @@ PLUGIN_EXTENSIONS_BAD_EXTRACTION
 	IT	Installazione non eseguita (impossibile estrarre il file zip)
 	NL	Kan niet worden geïnstalleerd (zip-bestand kan niet worden geëxtraheerd)
 	NO	Installering mislyktes (zip-filen kunne ikke pakkes ut)
+	PL	Instalacja nie powiodła się (nie można wyodrębnić pliku zip)
+	RU	Установка не выполнена (не удалось распаковать файл ZIP)
 	SV	Det gick inte att installera (zip-filen kunde inte packas upp)
 
 PLUGIN_EXTENSIONS_BAD_DOWNLOAD
+	CS	Instalace selhala (nebylo možné stáhnout soubor)
 	DA	Installationen mislykkedes (filen blev ikke hentet)
 	DE	Installation fehlgeschlagen (Datei konnte nicht heruntergeladen werden)
 	EN	Failed to install (could not download file)
@@ -248,9 +309,12 @@ PLUGIN_EXTENSIONS_BAD_DOWNLOAD
 	IT	Installazione non eseguita (impossibile scaricare il file)
 	NL	Kan niet worden geïnstalleerd (kan bestand niet downloaden)
 	NO	Installering mislyktes (kunne ikke laste ned fil)
+	PL	Instalacja nie powiodła się (nie można pobrać pliku)
+	RU	Установка не выполнена (не удалось загрузить файл)
 	SV	Installationen misslyckades (filen kunde inte laddas ner)
 
 PLUGIN_EXTENSIONS_AUTHOR
+	CS	Autor
 	DA	Lavet af
 	DE	Autor
 	EN	Author
@@ -260,9 +324,12 @@ PLUGIN_EXTENSIONS_AUTHOR
 	IT	Autore
 	NL	Auteur
 	NO	Forfatter
+	PL	Autor
+	RU	Автор
 	SV	Upphovsman
 
 PLUGIN_EXTENSIONS_WARNING_POPUP
+	CS	Chystáte se nainstalovat:
 	DA	Du er i færd med at installere:
 	DE	Sie wollen die folgenden Erweiterungen installieren:
 	EN	You are about to install:
@@ -272,9 +339,12 @@ PLUGIN_EXTENSIONS_WARNING_POPUP
 	IT	Sta per essere installato:
 	NL	Je wilt het volgende installeren:
 	NO	Du er i ferd med å installere
+	PL	Zostaną zainstalowane następujące elementy:
+	RU	Вы собираетесь установить:
 	SV	Du är på väg att installera:
 
 PLUGIN_EXTENSIONS_WARNING_POPUP2
+	CS	Instalujte pouze doplňky vytvořené důvěryhodnými autory. Škodlivý software může poškodit váš počítač nebo vést k narušení vašeho soukromí.
 	DA	Du bør kun installere udvidelsesmoduler fra forfattere du har tillid til, så du ikke kommer til at installere noget som er skadeligt og kan ødelægge computeren eller afsløre oplysninger om dig.
 	DE	Installieren Sie nur Erweiterungen von Autoren, denen Sie vertrauen. Bösartige Software kann ihre Installation stören, oder ihre Privatsphäre verletzen.
 	EN	Only install extensions from authors whom you trust. Malicious software can damage your computer or violate your privacy.
@@ -284,5 +354,7 @@ PLUGIN_EXTENSIONS_WARNING_POPUP2
 	IT	Installare solo le estensioni create dagli autori fidati. Il software dannoso può danneggiare il computer o violare la privacy degli utenti.
 	NL	Installeer alleen uitbreidingen van auteurs die je vertrouwt. Kwaadaardige software kan je computer beschadigen en je privacy schenden.
 	NO	Du bør kun installere utvidelser fra forfattere du har tillit til. Skadelig programvare kan skade datamaskinen og sette personvernet i fare.
+	PL	Instaluj tylko rozszerzenia od zaufanych autorów. Złośliwe oprogramowanie może spowodować uszkodzenie komputera lub naruszenie prywatności.
+	RU	Устанавливайте расширения только проверенных авторов. Вредоносное ПО может повредить компьютер или нарушить конфиденциальность данных.
 	SV	Installera endast tillägg som utvecklats av personer eller organisationer som du litar på. Skadliga program kan förstöra datorn och leda till att dina personuppgifter sprids.
 

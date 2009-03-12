@@ -3,7 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RESCAN_MUSIC_LIBRARY
-	CS	Aktualizovat informace z hudebního archivu
+	CS	Prohledat hudební knihovnu
 	DA	Gennemsøg musikbibliotek igen
 	DE	Musiksammlung erneut durchsuchen
 	EN	Rescan Music Library
@@ -14,9 +14,12 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	IT	Ripeti analisi della libreria musicale
 	NL	Muziekcollectie opnieuw scannen
 	NO	Søk gjennom musikkbiblioteket
+	PL	Przeszukaj ponownie bibliotekę muzyki
+	RU	Повторно проверить медиатеку
 	SV	Sök igenom musikbiblioteket igen
 
 PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
+	CS	Automatické prohledávání knihovny
 	DA	Automatisk gennemsøgning af musikbiblioteket
 	DE	Automatisches Durchsuchen der Musiksammlung
 	EN	Automatic Library Scanning
@@ -26,10 +29,12 @@ PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 	IT	Analisi automatica della libreria in corso...
 	NL	Automatisch collectie scannen
 	NO	Automatisk bibliotekssøk
+	PL	Automatyczne ponowne przeszukiwanie biblioteki
+	RU	Автоматическая проверка медиатеки
 	SV	Automatisk bibliotekssökning
 
 PLUGIN_RESCAN_RESCANNING
-	CS	Server právě aktualizuje informace z hudebního archivu
+	CS	Server nyní prohledává...
 	DA	Serveren gennemsøger...
 	DE	Server durchsucht Ordner ...
 	EN	Server now rescanning...
@@ -40,10 +45,12 @@ PLUGIN_RESCAN_RESCANNING
 	IT	Ripetizione analisi in corso...
 	NL	Server is nu bezig met opnieuw scannen...
 	NO	Serveren søker på nytt...
+	PL	Serwer przeszukuje ponownie...
+	RU	Сервер производит повторное сканирование...
 	SV	Servern genomför en ny sökning ...
 
 PLUGIN_RESCAN_PRESS_PLAY
-	CS	Stiskněte PLAY a aktualizujte informace z  hudebního archivu.
+	CS	Stiskněte PLAY k zahájení prohledávání nyní.
 	DA	Tryk på Afspil for at gennemsøge nu.
 	DE	Drücken Sie PLAY, um das Einlesen zu starten
 	EN	Press PLAY to rescan now.
@@ -54,10 +61,12 @@ PLUGIN_RESCAN_PRESS_PLAY
 	IT	Premere PLAY per ripetere l'analisi ora.
 	NL	Druk op PLAY om nu opnieuw te scannen.
 	NO	Trykk på PLAY for å søke på nytt nå.
+	PL	Naciśnij przycisk PLAY, aby przeszukać ponownie teraz.
+	RU	Нажмите PLAY, чтобы начать повторное сканирование.
 	SV	Tryck på Play om du vill genomföra en ny sökning nu.
 
 PLUGIN_RESCAN_TIMER_NAME
-	CS	Časovač aktualizace
+	CS	Časovač prohledávání
 	DA	Timer for gennemsøgning
 	DE	Automatisches Durchsuchen
 	EN	Rescan Timer
@@ -68,10 +77,12 @@ PLUGIN_RESCAN_TIMER_NAME
 	IT	Timer analisi
 	NL	Timer voor opnieuw scannen
 	NO	Søkekontroll
+	PL	Timer ponownego przeszukiwania
+	RU	Таймер повторного сканирования
 	SV	Sökningstimer
 
 PLUGIN_RESCAN_TIMER_SET
-	CS	Nastavte čas pravidelné aktualizace
+	CS	Nastavit čas prohledávání
 	DA	Foretag gennemsøgning kl.
 	DE	Startzeit für erneutes Durchsuchen festlegen
 	EN	Set Rescan Time
@@ -82,9 +93,12 @@ PLUGIN_RESCAN_TIMER_SET
 	IT	Imposta ora analisi
 	NL	Tijd voor opnieuw scannen instellen
 	NO	Angi tidspunkt for søk
+	PL	Ustaw godzinę ponownego przeszukiwania
+	RU	Настроить время повторного сканирования
 	SV	Ange tid för ny sökning
 
 PLUGIN_RESCAN_TIMER_SAVED
+	CS	Ukládám čas...
 	DA	Gemmer klokkeslæt...
 	DE	Zeit wird gespeichert...
 	EN	Saving Time...
@@ -94,10 +108,12 @@ PLUGIN_RESCAN_TIMER_SAVED
 	IT	Salvataggio ora...
 	NL	Tijd wordt opgeslagen...
 	NO	Lagrer tidspunkt...
+	PL	Zapisywanie godziny...
+	RU	Сохранение времени...
 	SV	Sparar tid ...
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
-	CS	Vypínám automatickou aktualizaci...
+	CS	Vypínání časovače prohledávání...
 	DA	Slår timer for genindlæsning fra...
 	DE	Automatisches Durchsuchen wird deaktiviert ...
 	EN	Turning rescan timer off...
@@ -108,10 +124,12 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	IT	Disattivazione timer analisi...
 	NL	Timer voor opnieuw scannen wordt uitgezet...
 	NO	Slår av søkekontroll...
+	PL	Wyłączanie timera ponownego przeszukiwania...
+	RU	Выключение таймера повторного сканирования...
 	SV	Avaktiverar sökningstimern ...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
-	CS	Zapínám automatickou aktualizaci...
+	CS	Zapínám časovač prohledávání...
 	DA	Slår timer for gennemsøgning til...
 	DE	Automatisches Durchsuchen wird aktiviert ...
 	EN	Turning rescan timer on...
@@ -122,10 +140,12 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	IT	Attivazione timer analisi...
 	NL	Timer voor opnieuw scannen wordt aangezet...
 	NO	Slår på søkekontroll...
+	PL	Włączanie timera ponownego przeszukiwania...
+	RU	Включение таймера повторного сканирования...
 	SV	Aktiverar sökningstimern ...
 
 PLUGIN_RESCAN_TIMER_ON
-	CS	Časovač aktualizace zapnut
+	CS	Časovač prohledávání ZAPNUT
 	DA	Timer for gennemsøgning TIL
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
@@ -136,10 +156,12 @@ PLUGIN_RESCAN_TIMER_ON
 	IT	Timer analisi ATTIVATO
 	NL	Timer voor opnieuw scannen AAN
 	NO	Søkekontroll er på
+	PL	Timer ponownego przeszukiwania WŁĄCZONY
+	RU	Таймер повторного сканирования включен
 	SV	Sökningstimern är aktiverad.
 
 PLUGIN_RESCAN_TIMER_DESC
-	CS	Můžete zvolit automatickou denní aktualizaci informací z hudebního archivu. Nastavte čas, kdy se má aktualizace provést a volbou ON tuto funkci aktivujte.
+	CS	Můžete vybrat povolení plánovaného prohledání vaší hudební knihovny každých 24 hodin. K použití této vlastnosti nastavte čas a přepněte časovač prohledávání na ZAPNUTO.
 	DA	Du kan vælge at musikbiblioteket skal gennemsøges en gang i døgnet. Du indstiller klokkeslættet og indstiller Timer for gennemsøgning til TIL
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Legen Sie den Zeitpunkt fest und aktivieren Sie 'Automatisches Durchsuchen'.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
@@ -150,10 +172,12 @@ PLUGIN_RESCAN_TIMER_DESC
 	IT	È possibile impostare la pianificazione dell'analisi della libreria musicale ogni 24 ore. Per utilizzare questa funzione, è sufficiente impostare l'ora di esecuzione e attivare il timer dell'analisi.
 	NL	Je kunt je muziekcollectie elke 24 uur opnieuw laten scannen. Stel de tijd in en zet de 'Timer voor opnieuw scannen' op AAN om deze functie te gebruiken.
 	NO	Du kan velge at musikkbiblioteket skal gjennomsøkes en gang i døgnet. Angi tidspunkt og slå Søkekontroll på for å bruke funksjonen.
+	PL	Możliwe jest zezwolenie na zaplanowane ponowne przeszukiwanie biblioteki muzyki co 24 godziny. Aby korzystać z tej funkcji, ustaw godzinę i Timer ponownego przeszukiwania na WŁĄCZONY.
+	RU	Вы можете запланировать проверку своей медиатеки каждые 24 часа. Для этого укажите время и включите таймер повторного сканирования.
 	SV	Du kan välja att aktivera en schemalagd sökning av ditt musikbibliotek en gång per dygn.  Ange ett klockslag och aktivera sökningstimern om du vill använda den här funktionen.
 
 PLUGIN_RESCAN_TIMER_OFF
-	CS	Časovač aktualizace vypnut
+	CS	Časovač prohledávání VYPNUT
 	DA	Timer for gennemsøgning FRA
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
@@ -164,9 +188,12 @@ PLUGIN_RESCAN_TIMER_OFF
 	IT	Timer analisi DISATTIVATO
 	NL	Timer voor opnieuw scannen UIT
 	NO	Søkekontroll er av
+	PL	Timer ponownego przeszukiwania WYŁĄCZONY
+	RU	Таймер повторного сканирования выключен
 	SV	Sökningstimern är avaktiverad.
 
 PLUGIN_RESCAN_TIMER_TYPE
+	CS	Typ prohledávání
 	DA	Gennemsøgningstype
 	DE	Durchsuchmodus
 	EN	Rescan Type
@@ -177,9 +204,12 @@ PLUGIN_RESCAN_TIMER_TYPE
 	IT	Tipo di analisi
 	NL	Type voor opnieuw scannen
 	NO	Søketype
+	PL	Typ ponownego przeszukiwania
+	RU	Тип повторного сканирования
 	SV	Typ av ny sökning
 
 PLUGIN_RESCAN_PLEASE_WAIT
+	CS	Čekejte, prosím
 	DA	Vent lidt
 	DE	Bitte warten
 	EN	Please Wait
@@ -189,5 +219,7 @@ PLUGIN_RESCAN_PLEASE_WAIT
 	IT	Attendere
 	NL	Even wachten
 	NO	Vent litt
+	PL	Czekaj
+	RU	Подождите
 	SV	Ett ögonblick ...
 

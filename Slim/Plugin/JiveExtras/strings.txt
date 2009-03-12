@@ -1,4 +1,5 @@
 PLUGIN_JIVEEXTRAS
+	CS	Upravit ovladač
 	DA	Tilpasning af Controller
 	DE	Controller anpassen
 	EN	Customize Controller
@@ -8,9 +9,12 @@ PLUGIN_JIVEEXTRAS
 	IT	Personalizza Controller
 	NL	Controller aanpassen
 	NO	Tilpass kontrollen
+	PL	Dostosuj kontroler
+	RU	Настроить Controller
 	SV	Anpassa Controller
 
 PLUGIN_JIVEEXTRAS_DESC
+	CS	Můžete upravit ovladač Squeezebox výběrem dodatečných tapet a zvukových efektů, které budou pro váš ovladač dostupné v menu nastavení.
 	DA	Du kan tilpasse Squeezebox Controller ved at vælge andre baggrundsbilleder og lydeffekter som kan vælges i menuen Indstillinger på din Controller.
 	DE	Sie können den Squeezebox Controller anpassen, indem Sie zusätzliche Hintergrundbilder und Soundeffekte, die in den Einstellungsmenüs des Controllers verfügbar werden, auswählen.
 	EN	You may customize your Squeezebox Controller by selecting additional wallpaper images and sound effects which will become available on the settings menus for your Controller.
@@ -20,9 +24,12 @@ PLUGIN_JIVEEXTRAS_DESC
 	IT	Per personalizzare Squeezebox Controller, selezionare immagini di sfondo ed effetti sonori aggiuntivi che saranno disponibili nei menu delle impostazioni del dispositivo di controllo.
 	NL	Je kunt je Squeezebox Controller aanpassen door extra achtergrondafbeeldingen en geluidseffecten te selecteren, die beschikbaar worden gesteld in de instellingenmenu's voor je controller.
 	NO	Du kan tilpasse Squeezebox Controller ved å velge flere bilder til bakgrunnen samt lydeffekter, som så blir tilgjengelige fra innstillingsmenyen for Controller.
+	PL	Urządzenie Squeezebox Controller można dostosować, wybierając dodatkowe obrazy tapet i efekty dźwiękowe, które będą dostępne w menu ustawień urządzeni Controller.
+	RU	Можно настроить Controller, выбрав дополнительные обои и звуковые эффекты, которые станут доступны в меню настроек.
 	SV	Du kan anpassa Squeezebox Controller genom att välja fler bakgrunder och ljudeffekter som blir tillgängliga på inställningsmenyn för Controller.
 
 PLUGIN_JIVEEXTRAS_WALLPAPERS
+	CS	Tapety
 	DA	Baggrunde
 	DE	Hintergrundbilder
 	EN	Wallpapers
@@ -32,9 +39,12 @@ PLUGIN_JIVEEXTRAS_WALLPAPERS
 	IT	Sfondi
 	NL	Achtergronden
 	NO	Bakgrunner
+	PL	Tapety
+	RU	Обои
 	SV	Bakgrunder
 
 PLUGIN_JIVEEXTRAS_WALLPAPERS_DESC
+	CS	Zvolte místní nebo vzdálené obrazové soubory k použití jako tapety ve vašem ovladači. Tyto obrazy budou dostupné jako volby tapet z menu Nastavení->Obrazovka->Tapeta vašeho ovladače. Soubory tapet by měly být soubory 240x320 pixel .jpeg, .jpg, .png nebo .bmp.
 	DA	Du kan vælge billedfiler der er gemt lokalt eller et andet sted, og bruge dem som baggrund eller tapet på din Controller. Billederne kan vælges under Indstillinger -> Display -> Baggrunde på din Controller. Filer til baggrunde skal måle 240 x 320 pixel og gemmes i jpeg-, jpg-, png- eller bmp-format.
 	DE	Wählen Sie lokale oder Remote-Bilddateien als Hintergrundbilder für den Controller. Diese Bilder sind dann als Optionen im Controller-Menü Einstellungen->Bildschirm->Hintergrundbild verfügbar. Hintergrundbilder sollten 240x320 Pixel groß sein und im Format JPEG, JPG, PNG oder BMP vorliegen.
 	EN	Select local or remote image files for using as the wallpaper on your controller.  These images will be available as options for the wallpaper from the Settings->Screen->Wallpaper menu from your controller.  Wallpaper files should be 240x320 pixel .jpeg, .jpg, .png or .bmp files.
@@ -44,9 +54,12 @@ PLUGIN_JIVEEXTRAS_WALLPAPERS_DESC
 	IT	Selezionare i file di immagini salvati nel computer locale o in computer remoti da utilizzare come sfondi nel dispositivo di controllo. Queste immagini saranno disponibili nel menu Impostazioni->Schermo->Sfondo del dispositivo di controllo. I file degli sfondi devono essere file .jpeg, .jpg, .png o .bmp da 240x320 pixel.
 	NL	Selecteer lokale of externe beeldbestanden om als achtergrond op je controller te gebruiken. Deze afbeeldingen zijn beschikbaar als opties voor de achtergrond via het menu Instellingen->Scherm->Achtergrond op je controller. Achtergrondbestanden moeten .jpeg-, .jpg-, .png- of .bmp-bestanden met 240 x 320 pixels zijn.
 	NO	Du kan velge lokale eller eksterne bildefiler som bakgrunn på kontrollen. Disse bildene kan hentes som bakgrunner på kontrollen via menyvalget Innstillinger -> Skjerm -> Bakgrunn. Bakgrunnsbildefilene bør være på 240 x 320 piksler, og være i ett av formatene .jpeg, .jpg, .png eller .bmp.
+	PL	Wybierz lokalne lub zdalne pliki obrazów do użycia jako tapety na kontrolerze. Te pliki obrazów będą dostępne jako tapety w menu Ustawienia->Ekran->Tapeta kontrolera. Pliki tapet powinny mieć rozdzielczość 240x320 pikseli i format jpeg, jpg, png lub bmp.
+	RU	Выберите локальные или удаленные файлы изображений в качестве обоев для контроллера. Эти изображения можно задать как обои через меню "Настройки"->"Экран"->"Обои". Размер файлов изображений должен быть 240 x 320 пикселей, а формат — JPEG, JPG, PNG или BMP.
 	SV	Välj lokala bildfiler eller bildfiler från en annan dator som du vill använda som bakgrunder på fjärrkontrollen.  Bilderna blir tillgängliga som bakgrundsalternativ under Inställningar > Avancerat > Bakgrund på fjärrkontrollen.  Bakgrundsfiler ska vara jpeg-, jpg-, png- eller bmp-filer på 240 X 320 bildpunkter.
 
 PLUGIN_JIVEEXTRAS_SOUNDS
+	CS	Zvuky
 	DA	Lyde
 	DE	Sounds
 	EN	Sounds
@@ -56,9 +69,12 @@ PLUGIN_JIVEEXTRAS_SOUNDS
 	IT	Suoni
 	NL	Geluiden
 	NO	Lyder
+	PL	Dźwięki
+	RU	Звуки
 	SV	Ljud
 
 PLUGIN_JIVEEXTRAS_SOUNDS_DESC
+	CS	Zvolte místní nebo vzdálené zvukové soubory k použití jako volitelné zvukové efekty pro činnosti jako výběr menu ve vašem ovladači Squeezeboxu.  Tyto volitelné zvuky budou dostupné z menu Nastavení->Pokročilé->Zvukové efekty vašeho ovladače. Zvukové efekty by měly být soubory .wav obsahující 1 kanálová (mono) 16 bitová 44.1KHz data.
 	DA	Du kan vælge lydfiler der er gemt lokalt eller et andet sted, og bruge dem som lydeffekter ved handlinger, fx når du vælger et menupunkt på Squeezebox Controller. Disse lydeffekter kan vælges under Indstillinger -> Avanceret -> Lydeffekter på din Controller. Lydeffektfiler skal gemmes i wav-format som 1-kanals mono og 16-bit ved 44,1 kHz.
 	DE	Wählen Sie lokale oder Remote-Sounddateien als optionale Soundeffekte für Vorgänge (z.B. Menüauswahl auf dem Squeezebox Controller). Diese optionalen Sounds sind im Controller-Menü Einstellungen->Erweitert->Soundeffekte verfügbar. Soundeffektdateien sollten im Format WAV mit 1 Kanal (mono), 16 Bit und 44,1 kHz vorliegen.
 	EN	Select local or remote sound files to use as optional sounds effects for actions such as menu selections on your Squeezebox controller.  These optional sounds will be available from the Settings->Advanced->Sound Effects menu from your controller.  Sound effect files should be .wav files containing 1 channel (mono) 16 bit 44.1KHz data.
@@ -68,9 +84,12 @@ PLUGIN_JIVEEXTRAS_SOUNDS_DESC
 	IT	Selezionare i file audio salvati nel computer locale o in computer remoti da associare come effetti sonori facoltativi ad azioni quali la selezione di voci di menu di Squeezebox Controller. Questi effetti sonori saranno disponibili nel menu Impostazioni->Avanzate->Effetti sonori del dispositivo di controllo. I file degli effetti sonori devono avere l'estensione .wav e contenere dati a 1 canale (mono) da 16 bit e 44,1KHz.
 	NL	Selecteer lokale of externe geluidsbestanden om als optionele geluidseffecten te gebruiken voor acties zoals menuselecties op je Squeezebox Controller. Deze optionele geluiden zijn beschikbaar in het menu Instellingen->Geavanceerd->Geluidseffecten op je controller. Geluidseffectbestanden moeten .wav-bestanden met 1-kanaals (mono) 16-bits 44.1KHz-gegevens zijn.
 	NO	Du kan velge lokale eller eksterne lydfiler som lydeffekter til handlinger, for eksempel til menyvalg på Squeezebox-kontrollen. Disse valgfrie lydene er tilgjengelige på kontrollen via menyvalget Innstillinger -> Avansert -> Lydeffekter. Lydeffektfiler bør være .wav-filer med dataspesifikasjonene 1-kanals (mono), 16-biters og 44,1 KHz.
+	PL	Wybierz lokalne lub zdalne pliki dźwiękowe do użycia jako opcjonalne efekty dźwiękowe dla akcji takich jak wybór pozycji menu za pomocą kontrolera urządzenia Squeezebox. Dźwięki opcjonalne będą dostępne W MENU Ustawienia->Zaawansowane->Efekty dźwiękowe kontrolera. Pliki dźwiękowe powinny mieć format wav i zawierać dane 1-kanałowe (mono) 16-bitowe 44,1 KHz.
+	RU	Выберите локальные или удаленные звуковые файлы в качестве звуковых эффектов для таких действий, как выбор в меню контроллера. Эти звуки будут доступны через меню "Настройки"->"Дополнительно"->"Звуковые эффекты". Файлы звуковых эффектов должны иметь формат WAV и содержать 1 канал (моно) 16-разрядных данных частотой 44,1 кГц.
 	SV	Välj lokala ljudfiler eller externa ljudfiler som du vill använda som ljudeffekter när olika åtgärder utförs på Squeezebox Controller vid t.ex. menyval.  Ljudeffekterna placeras på Inställningar > Avancerat > Ljudeffekter på fjärrkontrollen.  Ljudeffektfilerna måste vara wav-filer med enkanaligt (mono) 16 bitarsljud (44,1 KHz).
 
 PLUGIN_JIVEEXTRAS_CUSTOM
+	CS	Uživatelské nastavení #
 	DA	Brugerdefineret
 	DE	Benutzerdefiniert #
 	EN	Custom #
@@ -80,9 +99,12 @@ PLUGIN_JIVEEXTRAS_CUSTOM
 	IT	Voce pers. #
 	NL	Aangepast #
 	NO	Egendefinert nr.
+	PL	Niestandardowy nr
+	RU	Настраиваемый #
 	SV	Anpassat nr
 
 PLUGIN_JIVEEXTRAS_FILEORURL
+	CS	Vložte soubor nebo URL
 	DA	Angiv fil eller adresse
 	DE	Datei oder URL eingeben
 	EN	Enter File or URL
@@ -92,5 +114,7 @@ PLUGIN_JIVEEXTRAS_FILEORURL
 	IT	Immettere file o URL
 	NL	Bestand of URL invoeren
 	NO	Angi fil eller adresse
+	PL	Wprowadź nazwę pliku lub adres URL
+	RU	Введите файл или URL
 	SV	Ange filnamn eller webbadress
 

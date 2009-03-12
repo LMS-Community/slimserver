@@ -3,6 +3,7 @@
 # $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
 
 PLUGIN_SCREENSAVER_VISUALIZER
+	CS	Vizualizační spořič obrazovky
 	DA	Visualiseringspauseskærm
 	DE	Visualisierungs-Bildschirmschoner
 	EN	Visualizer Screensaver
@@ -13,9 +14,12 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	IT	Screen saver con visualizzatore
 	NL	Visualisatieschermbeveiliger
 	NO	Skjermsparer med effektvisning
+	PL	Wygaszacz ekranu Wizualizacja
+	RU	Экранная заставка "Визуализатор"
 	SV	Skärmsläckare med mätare
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
+	CS	Vyžaduje Squeezebox2
 	DA	Kræver Squeezebox2
 	DE	Squeezebox2 erforderlich
 	EN	Needs Squeezebox2
@@ -26,10 +30,12 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	IT	È richiesto Squeezebox2
 	NL	Vereist Squeezebox2
 	NO	Krever Squeezebox2
+	PL	Wymaga urządzenia Squeezebox2
+	RU	Требуется Squeezebox2
 	SV	Kräver Squeezebox 2
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
-	CS	Výchozí spořič
+	CS	Výchozí spořič obrazovky
 	DA	Standardpauseskærm
 	DE	Standard-Bildschirmschoner
 	EN	Default screensaver
@@ -40,5 +46,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	IT	Screen saver predefinito
 	NL	Standaardschermbeveiliger
 	NO	Standard skjermsparer
+	PL	Domyślny wygaszacz ekranu
+	RU	Экранная заставка по умолчанию
 	SV	Standardskärmsläckare
 

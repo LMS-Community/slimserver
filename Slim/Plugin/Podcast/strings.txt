@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PODCAST
+	CS	Podcasts
 	DA	Podcasts
 	DE	Podcasts
 	EN	Podcasts
@@ -13,9 +14,12 @@ PLUGIN_PODCAST
 	IT	Podcast
 	NL	Podcasts
 	NO	Podkaster
+	PL	Podcasty
+	RU	Подкасты
 	SV	Poddsändningar
 
 PLUGIN_PODCAST_DESC
+	CS	Přístup k Podcasts
 	DA	Adgang til podcasts
 	DE	Zugang zu Podcasts
 	EN	Access to Podcasts
@@ -25,9 +29,12 @@ PLUGIN_PODCAST_DESC
 	IT	Accesso ai podcast
 	NL	Toegang tot Podcasts
 	NO	Tilgang til podkaster
+	PL	Dostęp do podcastów
+	RU	Доступ к подкастам
 	SV	Tillgång till poddsändningar
 
 PODCAST_NOTHING_TO_PLAY
+	CS	Nic k přehrání
 	DA	Der er ikke noget at spille
 	DE	Kein Material vorhanden
 	EN	Nothing to play
@@ -38,9 +45,12 @@ PODCAST_NOTHING_TO_PLAY
 	IT	Niente da riprodurre
 	NL	Niets om af te spelen
 	NO	Ingenting å spille av
+	PL	Brak elementów do odtworzenia
+	RU	Нет песен для воспроизведения
 	SV	Det finns inget att spela.
 
 PODCAST_GROUP_DESC
+	CS	Plugin prohlížeče Podcast vám umožňuje prohlížet a poslouchat podcast.
 	DA	Udvidelsesmodulet til podcasts giver dig mulighed for at se og høre podcasts.
 	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
@@ -51,9 +61,12 @@ PODCAST_GROUP_DESC
 	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
 	NL	Met de Podcast-browserplugin kun je podcasts bekijken en beluisteren.
 	NO	Med plugin-modulen for podkastlesing kan du se og høre på podkaster.
+	PL	Dodatek Przeglądarka podcastów umożliwia wyświetlanie i słuchanie podcastów.
+	RU	Подключаемый модуль "Браузер подкастов" позволяет просматривать и прослушивать подкасты.
 	SV	Med plugin-programmet för poddsändningsläsaren kan du visa och lyssna på poddsändningar.
 
 PODCAST_RESET_BUTTON
+	CS	Resetovat
 	DA	Nulstil
 	DE	Zurücksetzen
 	EN	Reset
@@ -64,9 +77,12 @@ PODCAST_RESET_BUTTON
 	IT	Reimposta
 	NL	Opnieuw instellen
 	NO	Tilbakestill
+	PL	Resetuj
+	RU	Сброс
 	SV	Återställ
 
 PODCAST_RESETTING
+	CS	Obnovuji výchozí podcasty
 	DA	Standardpodcasts bliver valgt igen
 	DE	Standard-Podcasts werden wiederhergestellt
 	EN	Resetting to default podcasts
@@ -77,9 +93,12 @@ PODCAST_RESETTING
 	IT	Reimpostazione dei podcast predefiniti
 	NL	Standaard-podcasts worden opnieuw ingesteld
 	NO	Tilbakestiller til standardpodkaster
+	PL	Przywracanie podcastów domyślnych
+	RU	Восстановление подкастов по умолчанию
 	SV	Återställer till standardpoddsändningarna
 
 PODCAST_FEEDS_CHANGE
+	CS	Seznam Podcast změněn
 	DA	Podcastlisten er ændret.
 	DE	Die Podcast-Liste wurde geändert.
 	EN	Podcast list changed.
@@ -90,9 +109,12 @@ PODCAST_FEEDS_CHANGE
 	IT	Elenco Podcast modificato.
 	NL	Podcast-lijst gewijzigd.
 	NO	Podkast-liste endret.
+	PL	Lista podcastów została zmieniona.
+	RU	Список подкастов изменен.
 	SV	Poddsändningslistan har ändrats.
 
 SETUP_PLUGIN_PODCAST_FEEDS
+	CS	Podcasts
 	DA	Podcasts
 	DE	Podcasts
 	EN	Podcasts
@@ -103,9 +125,12 @@ SETUP_PLUGIN_PODCAST_FEEDS
 	IT	Podcast
 	NL	Podcasts
 	NO	Podkaster
+	PL	Podcasty
+	RU	Подкасты
 	SV	Poddsändningar
 
 SETUP_PLUGIN_PODCAST_RESET
+	CS	Obnovit výchozí Podcasts
 	DA	Gendan standardpodcasts
 	DE	Standard-Podcasts zurücksetzen
 	EN	Reset default Podcasts
@@ -116,9 +141,12 @@ SETUP_PLUGIN_PODCAST_RESET
 	IT	Reimposta podcast predefiniti
 	NL	Standaard-podcasts opnieuw instellen
 	NO	Tilbakestill standardpodkaster
+	PL	Przywróć podcasty domyślne
+	RU	Восстановить подкасты по умолчанию
 	SV	Återställ till standardpoddsändningarna
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
+	CS	Přidat nový zdroj:
 	DA	Tilføj et nyt feed:
 	DE	Neuen Feed hinzufügen:
 	EN	Add a new feed:
@@ -128,9 +156,12 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 	IT	Aggiungi nuovo feed:
 	NL	Nieuw kanaal toevoegen:
 	NO	Legg til en ny feed:
+	PL	Dodaj nowe źródło:
+	RU	Добавить новый веб-канал:
 	SV	Lägg till nytt flöde:
 
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
+	CS	Stávající kanály:
 	DA	Eksisterende feeds:
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
@@ -140,9 +171,12 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	IT	Feed esistenti:
 	NL	Bestaande kanalen:
 	NO	Eksisterende feeder:
+	PL	Istniejące źródła:
+	RU	Существующие веб-каналы:
 	SV	Befintliga flöden:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
+	CS	Neplatný zdroj - %s
 	DA	Ugyldigt feed: %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
@@ -152,5 +186,7 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	IT	Feed non valido. %s
 	NL	Ongeldig kanaal - %s
 	NO	Ugyldig feed: %s
+	PL	Nieprawidłowe źródło — %s
+	RU	Недействительный веб-канал — %s
 	SV	Ogiltigt RSS-flöde –%s
 

@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RADIOTIME_MODULE_NAME
+	CS	RadioTime
 	DA	RadioTime
 	DE	RadioTime
 	EN	RadioTime
@@ -13,9 +14,12 @@ PLUGIN_RADIOTIME_MODULE_NAME
 	IT	RadioTime
 	NL	RadioTime
 	NO	RadioTime
+	PL	RadioTime
+	RU	RadioTime
 	SV	RadioTime
 
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
+	CS	RadioTime - Místní Internetové rádio
 	DA	RadioTime: Lokal internetradio
 	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
 	EN	RadioTime - Local Internet Radio
@@ -25,9 +29,12 @@ PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	IT	RadioTime: radio Internet locale
 	NL	RadioTime - Lokale internetradio
 	NO	RadioTime: Lokal Internett-radio
+	PL	RadioTime - lokalne radio internetowe
+	RU	RadioTime — местная радиостанция Интернета
 	SV	RadioTime – Lokal webbradio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
+	CS	radiotime
 	DA	radiotime
 	DE	radiotime
 	EN	radiotime
@@ -38,9 +45,12 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	IT	radiotime
 	NL	radiotime
 	NO	radiotime
+	PL	radiotime
+	RU	radiotime
 	SV	radiotime
 
 PLUGIN_RADIOTIME_LOADING
+	CS	Nahrávám RadioTime...
 	DA	Indlæser RadioTime...
 	DE	RadioTime wird geladen ...
 	EN	Loading RadioTime...
@@ -51,5 +61,7 @@ PLUGIN_RADIOTIME_LOADING
 	IT	Caricamento RadioTime in corso...
 	NL	RadioTime wordt geladen...
 	NO	Laster RadioTime...
+	PL	Ładowanie usługi RadioTime...
+	RU	Загрузка RadioTime...
 	SV	Läser in RadioTime ...
 

@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_LMA_MODULE_NAME
+	CS	Hudební archív Live
 	DA	Live Music Archive
 	DE	Live Music Archive
 	EN	Live Music Archive
@@ -13,9 +14,12 @@ PLUGIN_LMA_MODULE_NAME
 	IT	Archivio musica dal vivo...
 	NL	Live Music Archive
 	NO	Live Music Archive
+	PL	Live Music Archive
+	RU	Архив живой музыки
 	SV	Live Music Archive
 
 PLUGIN_LMA_MODULE_NAME_DESC
+	CS	Přístup k hudebnímu archívu Live.
 	DA	Adgang til Live Music Archive.
 	DE	Zugriff auf das Live Music Archive
 	EN	Access to the Live Music Archive.
@@ -25,9 +29,12 @@ PLUGIN_LMA_MODULE_NAME_DESC
 	IT	Accesso all'archivio musica dal vivo.
 	NL	Toegang tot Live Music Archive.
 	NO	Tilgang til Live Music Archive.
+	PL	Uzyskaj dostęp do usługi Live Music Archive.
+	RU	Доступ к архиву живой музыки.
 	SV	Tillgång till Live Music Archive
 
 PLUGIN_LMA_LOADING
+	CS	Nahrávám hudební archív Live...
 	DA	Indlæser Live Music Archive...
 	DE	Live Music Archive wird geladen ...
 	EN	Loading Live Music Archive...
@@ -38,5 +45,7 @@ PLUGIN_LMA_LOADING
 	IT	Caricamento archivio musica dal vivo...
 	NL	Live Music Archive wordt geladen...
 	NO	Laster Live Music Archive...
+	PL	Ładowanie usługi Live Music Archive...
+	RU	Загрузка архива живой музыки...
 	SV	Läser in Live Music Archive ...
 

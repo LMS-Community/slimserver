@@ -1,4 +1,5 @@
 PLUGIN_CLASSICAL_MODULE_NAME
+	CS	Classical.com
 	DA	Classical.com
 	DE	Classical.com
 	EN	Classical.com
@@ -8,9 +9,12 @@ PLUGIN_CLASSICAL_MODULE_NAME
 	IT	Classical.com
 	NL	Classical.com
 	NO	Classical.com
+	PL	Classical.com
+	RU	Classical.com
 	SV	Classical.com
 
 PLUGIN_CLASSICAL_MODULE_NAME_DESC
+	CS	Classical.com poskytuje světově nejrozsáhlejší a nejúplnější hudební služby v oblasti Klasické hudby, Jazzu & Blues a World music.
 	DA	Classical.com tilbyder verdens største og mest omfattende specialtjeneste med klassisk, jazz, blues og world-musik.
 	DE	Classical.com ist der weltweit umfassendste spezialisierte Musikdienst für Klassik, Jazz, Blues und Weltmusik.
 	EN	Classical.com provides the world's largest and most comprehensive specialist music service for Classical, Jazz & Blues and World music.
@@ -20,6 +24,8 @@ PLUGIN_CLASSICAL_MODULE_NAME_DESC
 	IT	Classical.com offre il servizio di musica classica, jazz, blues e world music più completo e fornito del mondo.
 	NL	Classical.com biedt de grootste en uitgebreidste specialistische muziekservice ter wereld voor klassieke muziek, jazz & blues en folkloremuziek.
 	NO	Classical.com er verdens største og mest omfattende spesialistmusikktjeneste for klassisk, jazz, blues og verdensmusikk.
+	PL	Witryna Classical.com to największa i najbardziej rozbudowana specjalistyczna usługa muzyczna dotycząca muzyki klasycznej, jazzowej i bluesowej oraz etnicznej.
+	RU	Classical.com — самая большая музыкальная служба, где всесторонне представлены классика, джаз, блюз и этническая музыка.
 	SV	Classical.com är en tjänst som ger tillgång till världens största utbud av nischad musik: klassiskt, jazz & blues och världsmusik.
 
 PLUGIN_CLASSICAL_ERROR

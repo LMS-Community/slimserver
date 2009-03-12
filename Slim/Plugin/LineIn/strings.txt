@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_LINE_IN
+	CS	Vstupní linka
 	DA	Linjeindgang
 	DE	Line-In
 	EN	Line In
@@ -12,9 +13,12 @@ PLUGIN_LINE_IN
 	IT	Ingresso
 	NL	Lijningang
 	NO	Lydinngang
+	PL	Wejście liniowe
+	RU	Линейный вход
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_DESC
+	CS	Vstupní linka pro mikrofon
 	DA	Linjeindgang på Boom
 	DE	Line-In für Boom
 	EN	Line In for Boom
@@ -24,9 +28,12 @@ PLUGIN_LINE_IN_DESC
 	IT	Ingresso Boom
 	NL	Lijningang voor boom
 	NO	Lydinngang for Boom
+	PL	Wejście liniowe niskich tonów
+	RU	Линейный вход для Squeezebox Boom
 	SV	Ljudingång för Boom
 
 PLUGIN_LINE_IN_LINE_IN
+	CS	Vstupní linka
 	DA	Linjeindgang
 	DE	Line-In
 	EN	Line In
@@ -36,9 +43,12 @@ PLUGIN_LINE_IN_LINE_IN
 	IT	Ingresso
 	NL	Lijningang
 	NO	Lydinngang
+	PL	Wejście liniowe
+	RU	Линейный вход
 	SV	Ljudingång
 
 PLUGIN_LINE_IN_IN_USE
+	CS	Vstupní linka aktivní
 	DA	Linjeindgangen er valgt
 	DE	Line-In ist aktiv
 	EN	Line In is active
@@ -48,9 +58,12 @@ PLUGIN_LINE_IN_IN_USE
 	IT	Ingresso attivo
 	NL	Lijningang is actief
 	NO	Lydinngang aktiv
+	PL	Wejście liniowe jest aktywne
+	RU	Линейный вход активен
 	SV	Ljudingången är aktiv
 
 LINE_IN_LEVEL
+	CS	Hladina vstupní linky
 	DA	Niveau for linjeindgang
 	DE	Line-In-Pegel
 	EN	Line In Level
@@ -60,9 +73,12 @@ LINE_IN_LEVEL
 	IT	Livello ingresso
 	NL	Niveau van lijningang
 	NO	Lydinngangsnivå
+	PL	Poziom sygnału wejścia liniowego
+	RU	Уровень линейного входа
 	SV	Nivå för linjeingång
 
 LINE_IN_LEVEL_DESC
+	CS	S použitím tohoto nastavení můžete upravit zisk vstupní linky.
 	DA	Du kan bruge denne indstiling til at justere forstærkningen af linjeindgangens signal.
 	DE	Mit dieser Einstellung können Sie die Line-In-Verstärkung anpassen.
 	EN	Using this setting you can adjust the line in gain.
@@ -72,9 +88,12 @@ LINE_IN_LEVEL_DESC
 	IT	Questa impostazione consente di regolare il guadagno dell'ingresso.
 	NL	Met deze instelling kunt u de lijningangsaanpassing bijstellen.
 	NO	Du kan bruke denne innstillingen til å justere gain for lydinngang.
+	PL	To ustawienie umożliwia dostosowanie wzmocnienia wejścia liniowego.
+	RU	С помощью этой настройки можно задать коэффициент усиления для линейного входа.
 	SV	Med det här alternativet kan du justera hur linjeingångens signal förstärks.
 
 LINE_IN_ALWAYS_ON
+	CS	Vstupní linka vždy zapnuta
 	DA	Linjeindgang altid til
 	DE	Line-In immer aktiv
 	EN	Line In Always On
@@ -84,9 +103,12 @@ LINE_IN_ALWAYS_ON
 	IT	Ingresso sempre attivato
 	NL	Lijningang altijd ingeschakeld
 	NO	Lydinngang alltid på
+	PL	Wejście liniowe zawsze włączone
+	RU	Линейный вход всегда включен
 	SV	Linjeingång alltid på
 
 LINE_IN_ALWAYS_ON_DESC
+	CS	Tato volba trvale zapne vstup linky, aby se uživatelé, kteří se chtějí připojit k vstupní lince, mohli kdykoli připojit (např. pro Karaoke)
 	DA	Denne indstilling aktiverer linjeindgangen hele tiden sådan at man kan mikse linjeindgangens signal ind over lydsporet, fx ved Karaoke
 	DE	Diese Option aktiviert den Line-In-Eingang permanent, damit er jederzeit nutzbar ist (z.B. für Karaoke).
 	EN	This option turns on the line input all the time, to let users who want to mix in the line in all the time (eg. for Karaoke)
@@ -96,5 +118,7 @@ LINE_IN_ALWAYS_ON_DESC
 	IT	Questa opzione mantiene sempre attivato l'ingresso di linea per consentire in ogni momento il missaggio dell'audio proveniente da tale ingresso (ad esempio per il karaoke)
 	NL	Met deze optie wordt de lijningang ingeschakeld, voor gebruikers die de lijningang continu willen mixen (bijvoorbeeld voor karaoke)
 	NO	Hvis du velger dette alternativet, er lydinngangen på hele tiden, slik at brukere kan mikse i lydinngangen hele tiden (for eksempel for karaoke)
+	PL	Ta opcja powoduje, że wejście liniowe jest stale włączone, co umożliwia użytkownikom miksowanie dźwięków z linią (np. w przypadku Karaoke).
+	RU	Благодаря этому параметру линейный вход постоянно включен, позволяя пользователям непрерывно создавать миксы (например, для караоке)
 	SV	Med det här alternativet är linjeingången aktiverad hela tiden, så att du kan mixa linjeingångens signal över ljudspåret när som helst (t.ex. för karaoke)
 

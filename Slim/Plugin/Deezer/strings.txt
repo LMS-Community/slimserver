@@ -1,4 +1,5 @@
 PLUGIN_DEEZER_MODULE_NAME
+	CS	Deezer
 	DA	Deezer
 	DE	Deezer
 	EN	Deezer
@@ -8,9 +9,12 @@ PLUGIN_DEEZER_MODULE_NAME
 	IT	Deezer
 	NL	Deezer
 	NO	Deezer
+	PL	Deezer
+	RU	Deezer
 	SV	Deezer
 
 PLUGIN_DEEZER_ON_DEEZER
+	CS	Na Deezer
 	DA	På Deezer
 	DE	Auf Deezer
 	EN	On Deezer
@@ -20,9 +24,12 @@ PLUGIN_DEEZER_ON_DEEZER
 	IT	Su Deezer
 	NL	Op Deezer
 	NO	På Deezer
+	PL	W usłudze Deezer
+	RU	На Deezer
 	SV	På Deezer
 
 PLUGIN_DEEZER_STREAM_FAILED
+	CS	Selhání zvukového proudu, přechod na další stopu.
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
@@ -32,9 +39,12 @@ PLUGIN_DEEZER_STREAM_FAILED
 	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm mislyktes, hopper til neste spor.
+	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.
+	RU	Сбой аудиопотока. Переход на следующую дорожку.
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
 
 PLUGIN_DEEZER_NO_TRACK
+	CS	Není možné načíst stopu pro rádio.
 	DA	Nummeret kunne ikke hentes fra radioen.
 	DE	Titel für Radio kann nicht abgerufen werden.
 	EN	Unable to retrieve track for radio.
@@ -44,9 +54,12 @@ PLUGIN_DEEZER_NO_TRACK
 	IT	Impossibile recuperare brano per la radio.
 	NL	Kan radiotrack niet ophalen.
 	NO	Kan ikke hente spor for radioen.
+	PL	Nie można pobrać utworu dla stacji radiowej.
+	RU	Невозможно извлечь дорожку из радиопередачи.
 	SV	Det gick inte att hämta radiospåret.
 
 PLUGIN_DEEZER_ERROR
+	CS	Chyba Deezer
 	DA	Deezer-fejl
 	DE	Deezer-Fehler
 	EN	Deezer Error
@@ -57,9 +70,12 @@ PLUGIN_DEEZER_ERROR
 	IT	Errore Deezer
 	NL	Deezer-foutmelding
 	NO	Deezer-feil
+	PL	Błąd usługi Deezer
+	RU	Ошибка Deezer
 	SV	Deezer-fel
 
 PLUGIN_DEEZER_NO_NEXT_TRACK
+	CS	Není možné načíst další stopu, zkuste znovu stiskem PLAY.
 	DA	Det næste nummer kunne ikke hentes. Tryk på Afspil for at forsøge igen.
 	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
 	EN	Unable to retrieve next track, press PLAY to try again.
@@ -69,9 +85,12 @@ PLUGIN_DEEZER_NO_NEXT_TRACK
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
+	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
+	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_DEEZER_SKIPS_EXCEEDED
+	CS	Překročen limit přeskočení, znovu přeskočit můžete později.
 	DA	Det er ikke muligt at springe over flere numre lige nu, men du kan springe over flere numre igen senere.
 	DE	Limit für Überspringen erreicht; versuchen Sie es später wieder.
 	EN	Skip limit exceeded, you may skip again later.
@@ -81,5 +100,7 @@ PLUGIN_DEEZER_SKIPS_EXCEEDED
 	IT	Limite superato. Sarà possibile saltare brani solo più tardi.
 	NL	Limiet voor overslaan overschreden, je mag later weer overslaan.
 	NO	Du har nådd grensen for hvor mange ganger du kan hoppe over noe. Du må vente før du kan hoppe over på nytt.
+	PL	Limit pomijania przekroczony; można pominąć ponownie później.
+	RU	Лимит пропускания превышен. Вы снова сможете пропускать позже.
 	SV	Gränsen för att hoppa till nästa ljudspår har överstigits. Försök igen senare.
 

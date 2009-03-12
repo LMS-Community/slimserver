@@ -3,6 +3,7 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_DIGITAL_INPUT
+	CS	Digitální vstupy
 	DA	Digitale indgange
 	DE	Digitale Eingänge
 	EN	Digital Inputs
@@ -13,9 +14,12 @@ PLUGIN_DIGITAL_INPUT
 	IT	Ingressi digitali
 	NL	Digitale ingangen
 	NO	Digitale innganger
+	PL	Wejścia cyfrowe
+	RU	Цифровые входы
 	SV	Digital ingångar
 
 PLUGIN_DIGITAL_INPUT_DESC
+	CS	Digitální vstup pro Transporter
 	DA	Digitale indgange på Transporter
 	DE	Digitale Eingänge für den Transporter
 	EN	Digital Input for Transporter
@@ -25,9 +29,12 @@ PLUGIN_DIGITAL_INPUT_DESC
 	IT	Ingresso digitale per Transporter
 	NL	Digitale ingang voor Transporter
 	NO	Digital inngang for Transporter
+	PL	Wejście cyfrowe urządzenia Transporter
+	RU	Цифровой вход для Transporter
 	SV	Digital ingång för Transporter
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
+	CS	Balanced AES/EBU
 	DA	Afbalanceret AES/EBU
 	DE	Ausgeglichenes AES/EBU
 	EN	Balanced AES/EBU
@@ -38,9 +45,12 @@ PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	IT	AES/EBU bilanciato
 	NL	Gebalanceerde AES/EBU
 	NO	Balansert AES/EBU
+	PL	Zbalansowane AES/EBU
+	RU	Сбалансированный AES/EBU
 	SV	Balanserat AES/EBU
 
 PLUGIN_DIGITAL_INPUT_BNC_SPDIF
+	CS	BNC Coax S/PDIF
 	DA	BNC, Koaksial, S/PDIF
 	DE	BNC Koax S/PDIF
 	EN	BNC Coax S/PDIF
@@ -51,9 +61,12 @@ PLUGIN_DIGITAL_INPUT_BNC_SPDIF
 	IT	S/PDIF coassiale per BNC
 	NL	BNC coaxiale S/PDIF
 	NO	BNC koaks S/PDIF
+	PL	BNC koncentryczne S/PDIF
+	RU	Коаксиальный BNC S/PDIF
 	SV	BNC Koaxial S/PDIF
 
 PLUGIN_DIGITAL_INPUT_RCA_SPDIF
+	CS	RCA Coax S/PDIF
 	DA	RCA, Koaksial, S/PDIF
 	DE	Cinch Koax S/PDIF
 	EN	RCA Coax S/PDIF
@@ -64,9 +77,12 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	IT	S/PDIF RCA coassiale
 	NL	RCA coaxiale S/PDIF
 	NO	RCA koaks S/PDIF
+	PL	RCA koncentryczne S/PDIF
+	RU	Коаксиальный RCA S/PDIF
 	SV	RCA Koaxial S/PDIF
 
 PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
+	CS	Optický S/PDIF (TOSLINK)
 	DA	Optisk S/PDIF (TOSLINK)
 	DE	Optisch S/PDIF (TOSLINK)
 	EN	Optical S/PDIF (TOSLINK)
@@ -77,9 +93,12 @@ PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	IT	S/PDIF ottico (TOSLINK)
 	NL	Optische S/PDIF (TOSLINK)
 	NO	Optisk S/PDIF (TOSLINK)
+	PL	Optyczne S/PDIF (TOSLINK)
+	RU	Оптический S/PDIF (TOSLINK)
 	SV	Optisk S/PDIF (TOSLINK)
 
 PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
+	CS	Vyberte níže uvedenou možnost digitálního vstupu:
 	DA	Vælg digital indgang nedenfor:
 	DE	Wählen Sie einen digitalen Eingang:
 	EN	Choose a Digital Input option below:
@@ -90,5 +109,7 @@ PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	IT	Scegliere una delle seguenti opzioni di ingresso digitale:
 	NL	Kies hieronder een digitale-ingangsoptie:
 	NO	Velg et alternativ for digitalinngang nedenfor:
+	PL	Wybierz opcję wejścia cyfrowego poniżej:
+	RU	Выберите цифровой вход из списка:
 	SV	Välj digital ingång nedan:
 
