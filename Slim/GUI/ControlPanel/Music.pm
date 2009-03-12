@@ -168,7 +168,7 @@ sub new {
 	$progressLabel = Wx::StaticText->new($parent, -1, '');
 	$sizer->Add($progressLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
 
-	$progressBar = Wx::Gauge->new($parent, -1, 100);
+	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, Slim::Utils::OSDetect->isWindows() ? 20 : -1]);
 	$sizer->Add($progressBar, 0, wxEXPAND | wxBOTTOM, 5);
 	
 	$parent->SetSizer($sizer);
