@@ -54,6 +54,9 @@ sub get_SN {
 	if ( main::SLIM_SERVICE ) {
 		# Callers can force retrieval from the database
 		my $force = shift;
+		
+		# Can override the model
+		my $model = shift;
 	
 		if ( !defined $value || $force ) {
 		
@@ -67,7 +70,7 @@ sub get_SN {
 					$nskey = $ns . '_' . $key;
 				}
 				
-				$value = $class->getFromDB($nskey);
+				$value = $class->getFromDB( $nskey, $model );
 
 				$class->{prefs}->{ $key } = $value;
 			}
@@ -100,15 +103,24 @@ SLIM_SERVICE only. Pulls a pref from the database.
 =cut
 
 sub getFromDB {
-	my ( $class, $key ) = ( shift, shift );
+	my ( $class, $key, $model ) = @_;
 	
 	my $client = Slim::Player::Client::getClient( $class->{clientid} ) || return;
 	
-	# First search the player pref table
-	my @prefs = SDI::Service::Model::PlayerPref->search( {
-		player => $client->playerData,
-		name   => $key,
-	} );
+	my @prefs;
+	
+	if ( $model eq 'UserPref' ) {
+		@prefs = SDI::Service::Model::UserPref->search( {
+			user => $client->playerData->userid,
+			name => $key,
+		} );
+	}
+	else {
+		@prefs = SDI::Service::Model::PlayerPref->search( {
+			player => $client->playerData,
+			name   => $key,
+		} );
+	}
 	
 	my $count = scalar @prefs;
 	my $value;
