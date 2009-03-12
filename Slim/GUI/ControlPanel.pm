@@ -202,7 +202,8 @@ use base 'Wx::App';
 use LWP::UserAgent;
 use JSON::XS qw(to_json from_json);
 
-use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
+
 my $args;
 
 sub new {
@@ -220,8 +221,10 @@ sub OnInit {
 	$frame->Show( 1 );
 }
 
+# the following subs are static methods to deliver some commonly used services
 sub getBaseUrl {
-	return 'http://127.0.0.1:' . getPref('httpport');
+	my $self = shift;
+	return 'http://127.0.0.1:' . $self->getPref('httpport');
 }
 
 sub setPref {
@@ -229,15 +232,42 @@ sub setPref {
 	$self->serverRequest('pref', $pref, $value);
 }
 
+sub getPref {
+	my ($self, $pref, $file) = @_;
+	$file ||= '';
+
+	my $value;
+	
+	# if SC is running, use the CLI, otherwise read the prefs file from disk
+	if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+
+		if ($file) {
+			$file =~ s/\.prefs$//; 
+			$file = "plugin.$file:";
+		}
+	
+		$value = $self->serverRequest('pref', $file . $pref, '?');
+
+		$value = $value->{'_p2'};
+	}
+	
+	else {
+		$value = Slim::Utils::Light::getPref($pref, $file);
+	}
+	
+	return $value;
+}
+
+
 sub serverRequest {
-	my $self     = shift;
+	my $self = shift;
 	my $postdata;
 
 	eval { $postdata = '{"id":1,"method":"slim.request","params":["",' . to_json(\@_) . ']}' };
 
 	return if $@ || !$postdata;
 
-	my $httpPort = getPref('httpport') || 9000;
+	my $httpPort = Slim::Utils::Light::getPref('httpport') || 9000;
 
 	my $req = HTTP::Request->new( 
 		'POST',

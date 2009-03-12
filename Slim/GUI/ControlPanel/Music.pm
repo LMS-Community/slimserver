@@ -36,6 +36,7 @@ sub new {
 		my $useItunes = Wx::CheckBox->new($self, -1, $useItunesStr->{USE_ITUNES});
 		$settingsSizer->Add($useItunes, 0, wxEXPAND | wxALL, 5);
 		$parent->addStatusListener($useItunes);
+		$useItunes->SetValue(Slim::GUI::ControlPanel->getPref('itunes', 'itunes.prefs'));
 
 		$parent->addApplyHandler($self, sub {
 
@@ -103,7 +104,7 @@ sub new {
 	$self = $self->SUPER::new(
 		$page,
 		-1,
-		getPref($pref) || '',
+		Slim::GUI::ControlPanel->getPref($pref) || '',
 		string('SETUP_PLAYLISTDIR'),
 		wxDefaultPosition, wxDefaultSize, wxPB_USE_TEXTCTRL | wxDIRP_DIR_MUST_EXIST
 	);
@@ -112,7 +113,7 @@ sub new {
 		my $running = (shift == SC_STATE_RUNNING);
 
 		my $path = $self->GetPath;
-		if ($running && $path ne getPref($pref)) {
+		if ($running && $path ne Slim::GUI::ControlPanel->getPref($pref)) {
 			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
 			Slim::GUI::ControlPanel->setPref($pref, $path);
 		}

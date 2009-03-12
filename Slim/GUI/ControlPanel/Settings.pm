@@ -109,7 +109,7 @@ sub new {
 		$page,
 		-1, 
 		$log, 
-		$os->name eq 'mac' ? Slim::GUI::ControlPanel::getBaseUrl() . "/$file?lines=500" : 'file://' . $log, 
+		$os->name eq 'mac' ? Slim::GUI::ControlPanel->getBaseUrl() . "/$file?lines=500" : 'file://' . $log, 
 		[-1, -1], 
 		[-1, -1], 
 		wxHL_DEFAULT_STYLE,
