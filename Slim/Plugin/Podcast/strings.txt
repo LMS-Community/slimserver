@@ -113,22 +113,6 @@ PODCAST_FEEDS_CHANGE
 	RU	Список подкастов изменен.
 	SV	Poddsändningslistan har ändrats.
 
-SETUP_PLUGIN_PODCAST_FEEDS
-	CS	Podcasts
-	DA	Podcasts
-	DE	Podcasts
-	EN	Podcasts
-	ES	Podcasts
-	FI	Podcast-lähetykset
-	FR	Podcasts
-	HE	פריטי Podcast
-	IT	Podcast
-	NL	Podcasts
-	NO	Podkaster
-	PL	Podcasty
-	RU	Подкасты
-	SV	Poddsändningar
-
 SETUP_PLUGIN_PODCAST_RESET
 	CS	Obnovit výchozí Podcasts
 	DA	Gendan standardpodcasts

@@ -81,22 +81,6 @@ PLUGIN_RSSNEWS_ERROR
 	RU	Не удалось извлечь RSS-канал
 	SV	Det gick inte att hämta RSS-flödet
 
-PLUGIN_RSSNEWS_NO_DESCRIPTION
-	CS	Popis nedostupný
-	DA	Der er ingen beskrivelse
-	DE	Keine Beschreibung verfügbar
-	EN	Description not available
-	ES	Descripción no disponible
-	FI	Kuvausta ei ole saatavilla
-	FR	Description non disponible
-	HE	אין תיאור זמין
-	IT	Descrizione non disponibile
-	NL	Beschrijving niet beschikbaarg
-	NO	Ingen beskrivelse tilgjengelig
-	PL	Opis niedostępny
-	RU	Описание недоступно
-	SV	Beskrivning ej tillgänglig
-
 PLUGIN_RSSNEWS_NO_TITLE
 	CS	Titul není dostupný
 	DA	Titlen er ikke tilgængelig
@@ -305,22 +289,6 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	RU	Плагин "Новостной RSS-канал" позволяет просматривать и отображать элементы RSS-каналов. С помощью следующих настроек можно определить перечень RSS-каналов и управлять их отображением. После завершения настройки нажмите кнопку "Изменить".
 	SV	Med plugin-programmet RSS-nyhetsticker kan du söka efter och visa innehåll från RSS-flöden. Nedan kan du ange vilka RSS-flöden som ska användas och hur de ska visas.  Klicka på Ändra när du är klar.
 
-SETUP_PLUGIN_RSSNEWS_FEEDS
-	CS	Modifikovat RSS kanály
-	DA	Rediger RSS-feeds
-	DE	RSS-Feeds ändern
-	EN	Modify RSS feeds
-	ES	Modificar fuentes RSS
-	FI	Muokkaa RSS-syötteitä
-	FR	Modifier les flux RSS
-	HE	שינוי הזנות RSS
-	IT	Modifica i feed RSS
-	NL	RSS-kanalen wijzigen
-	NO	Endre rss-feeder
-	PL	Modyfikuj źródła RSS
-	RU	Изменить RSS-каналы
-	SV	Ändra RSS-flöden
-
 SETUP_PLUGIN_RSSNEWS_RESET
 	CS	Obnovit výchozí RSS kanály
 	DA	Gendan RSS-standardfeeds
@@ -337,22 +305,6 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	RU	Восстановить RSS-каналы по умолчанию
 	SV	Återställ till standard-RSS-flöden.
 
-SETUP_PLUGIN_RSSNEWS_RESET_DESC
-	CS	Klikněte na tlačítko Reset k návratu ke standardně nastaveným zdrojům RSS.
-	DA	Klik Nulstil for at gendanne RSS-standardfeeds.
-	DE	Klicken Sie auf 'Zurücksetzen', um die Standard-RSS-Feeds wiederherzustellen.
-	EN	Click the Reset button to revert to the default set of RSS Feeds.
-	ES	Haga clic en el botón Restablecer para volver al conjunto de fuentes RSS predeterminado.
-	FI	Palaa RSS-syötteiden oletusjoukkoon napsauttamalla Palauta-painiketta.
-	FR	Cliquez sur Réinitialiser pour rétablir la liste par défaut des flux RSS.
-	HE	לחץ על הלחצן 'איפוס' כדי לחזור אל ערכת ברירת המחדל של הזנות RSS.
-	IT	Premere il pulsante Reimposta per ritornare al set di feed RSS predefinito.
-	NL	Klik op de knop Opnieuw instellen om de standaardset RSS-kanalen te herstellen.
-	NO	Klikk på tilbakestillingsknappen for å tilbakestille til standardsettet av rss-feeder.
-	PL	Kliknij przycisk Resetuj, aby przywrócić domyślny zestaw źródeł RSS.
-	RU	Нажмите кнопку "Сброс", чтобы восстановить набор RSS-каналов по умолчанию.
-	SV	Klicka på knappen Återställ om du vill återgå till standarduppsättningen av RSS-flöden.
-
 PLUGIN_RSSNEWS_RESETTING
 	CS	Obnovení výchozích RSS kanálů
 	DA	Gendanner RSS-standardfeeds.
@@ -368,22 +320,6 @@ PLUGIN_RSSNEWS_RESETTING
 	PL	Resetowanie do domyślnych źródeł RSS.
 	RU	Восстановление RSS-каналов по умолчанию.
 	SV	Återställer till standard-RSS-flödena.
-
-SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
-	CS	Resetovat
-	DA	Nulstil
-	DE	Zurücksetzen
-	EN	Reset
-	ES	Restablecer
-	FI	Palauta
-	FR	Réinitialiser
-	HE	איפוס
-	IT	Reimposta
-	NL	Opnieuw instellen
-	NO	Tilbakestill
-	PL	Resetuj
-	RU	Сброс
-	SV	Återställ
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED
 	CS	Položky zobrazené na jednom kanále

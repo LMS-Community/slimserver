@@ -54,41 +54,6 @@ SETUP_GROUP_XPL_DESC
 	SV	De här inställningarna styr hur xPL-protokollet fungerar
 	ZH_CN	控制xPL协议的设置
 
-SETUP_XPLSUPPORT
-	CS	Podpora xPL
-	DA	Understøttelse af xPL
-	DE	xPL-Unterstützung
-	EN	xPL support
-	ES	Compatibilidad con xPL
-	FI	xPL-tuki
-	FR	Prise en charge du xPL
-	HE	תמיכה ב-xPL
-	IT	Supporto xPL
-	JA	xPL サポート
-	NL	xPL-ondersteuning
-	NO	xPL-støtte
-	PL	Obsługa protokołu xPL
-	RU	Поддержка xPL
-	SV	xPL-stöd
-	ZH_CN	xPL支持
-
-SETUP_XPLSUPPORT_CHOOSE
-	CS	Podpora xPL:
-	DA	Understøttelse af xPL:
-	DE	xPL-Unterstützung:
-	EN	xPL support:
-	ES	Compatibilidad con xPL:
-	FI	xPL-tuki:
-	FR	Prise en charge du xPL:
-	HE	תמיכה ב-xPL:
-	IT	Supporto xPL:
-	NL	xPL-ondersteuning:
-	NO	xPL-støtte:
-	PL	Obsługa protokołu xPL:
-	RU	Поддержка xPL:
-	SV	xPL-stöd:
-	ZH_CN	xPL支持：
-
 SETUP_XPLINTERVAL
 	CS	Interval tepu srdce
 	DA	Pause mellem hjerteslag

@@ -72,22 +72,3 @@ SETUP_CLIPORT_DESC
 	SV	Du kan ändra portnumret som används för att kontrollera spelaren via kommadoradsgränssnittet.
 	ZH_CN	您可以改变控制播放机的命令行界面所使用的端口号。
 
-SETUP_CLIPORT_OK
-	CS	Pro Command Line Interface (Povelové rozhraní) je nyní používán následující port:
-	DA	Denne port anvendes til kommandolinjegrænsefladen:
-	DE	Der folgende Anschluss wird für die Befehlszeilenschnittstelle verwendet:
-	EN	Now using the following port for the command line interface:
-	ES	Para la interfaz de la línea de comandos se usa el puerto:
-	FI	Komentorivikäyttöliittymä käyttää nyt seuraavaa porttia:
-	FR	L'interface de ligne de commande utilise maintenant le port:
-	HE	כרגע נעשה שימוש ביציאה הבאה עבור ממשק שורת הפקודה:
-	IT	Per l'interfaccia a riga di comando viene attualmente utilizzata la seguente porta:
-	JA	現在コマンドライン インターフェースには、以下のポートが使われています:
-	NL	De volgende poort wordt gebruikt voor de opdrachtregelinterface:
-	NO	Bruker følgende portnummer for kommandolinjegrensesnitt:
-	PL	Interfejs wiersza polecenia korzysta obecnie z następującego portu:
-	PT	A porta para acesso via linha de comando é
-	RU	Сейчас интерфейсом командной строки используется следующий порт:
-	SV	Använder nu följande portnummer för kommandoradsgränssnittet:
-	ZH_CN	当前正使用如下的命令行界面端口：
-

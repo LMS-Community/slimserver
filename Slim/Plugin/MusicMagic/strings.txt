@@ -83,23 +83,6 @@ SETUP_MIX_TYPE
 	SV	Mix: Typ
 	ZH_CN	混音类型
 
-SETUP_MIX_TYPE_DESC
-	CS	Velikost vašeho Music IP může být nastavena pomocí počtu tří typů: Stop, Minut, MegaBytů (standardně stopy)
-	DA	Størrelsen af et MusicIP Mix kan defineres på tre måder: Antal numre, minutter eller megabyte (standard er numre)
-	DE	Die Grösse des gewünschten MusicIP-Mixes kann über drei Typen definiert werden: Titel, Minuten, MegaByte (Standardwert: Titel)
-	EN	Your MusicIP Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
-	ES	El tamaño de la mezcla de MusicIP se puede establecer según el número de tres tipos: pistas, minutos, megabytes (valor predeterminado: pistas)
-	FI	MusicIP-miksin koko voidaan määrittää kolmella eri perusteella: raidat, minuutit, megatavut (oletus: raidat)
-	FR	La taille du mix MusicIP peut être définie en fonction de trois éléments: les pistes, les minutes et le nombre de Mo (par défaut: les pistes).
-	HE	ניתן לקבוע את גודל המיקס של MusicIP לפי שלושה סוגי מספרים: רצועות, דקות, מגה-בתים (רצועות ברירת מחדל)
-	IT	È possibile impostare le dimensioni della raccolta MusicIP in base al numero di brani (impostazione predefinita), minuti o megabyte
-	NL	Je kunt de MusicIP-mixgrootte volgens drie typen instellen: tracks, minuten, megabytes (standaardtracks)
-	NO	Miksestørrelsen for MusicIP kan angis etter tre måleverdier: antall spor, antall minutter og antall megabyte (standardspor)
-	PL	Rozmiar składanki w usłudze MusicIP można ustawić za pomocą wartości dla trzech typów: Utwory, Minuty i Megabajty (domyślnie utwory).
-	RU	Размер микса MusicIP можно задать в дорожках, минутах или мегабайтах (по умолчанию: дорожки)
-	SV	MusicIP Mix-storleken kan anges på tre olika sätt: spår, minuter och megabyte (standardspår).
-	ZH_CN	您的MusicIP混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
-
 SETUP_MIX_SIZE
 	CS	Velikost mixu
 	DA	Miks: størrelse
@@ -219,23 +202,6 @@ SETUP_REJECT_TYPE
 	SV	Avvisningstyp för MusicIP
 	ZH_CN	MusicIP拒绝种类
 
-SETUP_REJECT_TYPE_DESC
-	CS	Nastavte jednotky pro velikost odmítnutí. (Standard: stopy)
-	DA	Indstil enhed for afvisningsstørrelse. (Standard: numre)
-	DE	Definieren Sie den Typ für die Ablehnungsgrösse. (Standardwert: Titel)
-	EN	Set the units for reject size. (Default: tracks)
-	ES	Establecer las unidades para el tamaño del rechazo. (Valor predeterminado: pistas)
-	FI	Määritä hylkäyskoon yksiköt. (Oletus: raidat)
-	FR	Définissez les unités pour la taille de rejet. Par défaut: pistes.
-	HE	הגדר את היחידות עבור גודל הפסילות. (ברירת המחדל: רצועות)
-	IT	Consente di impostare il tipo di unità che si desidera scartare. I brani rappresentano l'impostazione predefinita.
-	NL	Stel de eenheden voor afkeurgrootte in (standaard: tracks).
-	NO	Angi enheter for avvisningsstørrelse. (Standard: spor)
-	PL	Ustaw jednostki rozmiaru odrzucania (domyślnie: utwory).
-	RU	Укажите единицы для размера отказа. (По умолчанию: дорожки)
-	SV	Ange enheterna för avvisningsstorlek. (Standard är spår)
-	ZH_CN	配置拒绝量单位（确省：音轨）
-
 SETUP_REJECT_SIZE
 	CS	Zamítnout velikost
 	DA	Afvisningsstørrelse
@@ -269,40 +235,6 @@ SETUP_REJECT_SIZE_DESC
 	RU	Укажите количество элементов, которые следует пропустить перед повторением типа. (По умолчанию: 12)
 	SV	Ange antalet objekt som ska hoppas över innan en typ upprepas. Standard är 12.
 	ZH_CN	配置重播一类别前跳过的数量（确省:12)
-
-SETUP_MMSHOST
-	CS	HTTP hostitel
-	DA	HTTP-vært
-	DE	HTTP-Host
-	EN	HTTP Host
-	ES	Host HTTP
-	FI	HTTP-isäntä
-	FR	Hôte HTTP
-	HE	מארח HTTP של 
-	IT	Host HTTP
-	NL	HTTP-host
-	NO	Http-vert
-	PL	Host HTTP
-	RU	Узел HTTP
-	SV	HTTP-värd
-	ZH_CN	HTTP主机
-
-SETUP_MMSHOST_DESC
-	CS	Zvolte hostitelské jméno nebo IP vzdáleného nebo místního MusicIP serveru
-	DA	Vælg værtsnavnet eller IP-adressen for den eksterne eller lokale MusicIP-server
-	DE	Wählen Sie den Hostnamen bzw. die IP-Adresse des MusicIP-Servers
-	EN	Choose the hostname or ip of the remote or local MusicIP server
-	ES	Elegir el nombre de host o dirección IP del servidor MusicIP, local o remoto
-	FI	Valitse MusicIP-etäpalvelimen tai paikallisen MusicIP-palvelimen isäntänimi tai IP-osoite
-	FR	Sélectionnez le nom d'hôte ou l'adresse IP du serveur MusicIP local ou distant.
-	HE	בחירת שם המארח או ה-IP של השלט-רחוק של שרת MusicIP המקומי
-	IT	Scegliere il nome host o l'indirizzo IP del server MusicIP remoto o locale
-	NL	De hostnaam of het IP-adres van de externe of lokale MusicIP-server kiezen
-	NO	Velg vertsnavn eller ip for den eksterne eller lokale MusicIP-serveren
-	PL	Wybierz nazwę hosta lub adres IP zdalnego lub lokalnego serwera usługi MusicIP
-	RU	Выберите имя узла либо IP-адрес удаленного или локального сервера MusicIP
-	SV	Välj värdnamnet eller IP-adressen för den lokala eller fjärrstyrda MusicIP-servern.
-	ZH_CN	请选择主机名或远程或本地的MusicIP服务器的IP地址
 
 SETUP_MIX_STYLE
 	CS	Styl mixu
@@ -456,40 +388,6 @@ MUSICMAGIC_MIXRIGHT
 	RU	(Перейти вправо к миксу)
 	SV	(Gå till höger för att mixa)
 	ZH_CN	（按右方向键开始混音）
-
-SETUP_MUSICMAGICPLAYLISTPREFIX
-	CS	Předpona seznamu skladeb MusicIP změněna na:
-	DA	Præfiks for MusicIP's afspilningslister ændret til:
-	DE	Das Präfix für MusicIP-Wiedergabelisten wurde geändert in:
-	EN	MusicIP playlist prefix changed to:
-	ES	Prefijo de listas de reproducción de MusicIP cambiado a:
-	FI	MusicIP-soittoluettelon etuliite muutettiin muotoon:
-	FR	Préfixe de liste de lecture MusicIP modifié:
-	HE	קידומת רשימות ההשמעה של MusicIP השתנתה ל:
-	IT	Prefisso degli elenchi di riproduzione di MusicIP modificato in:
-	NL	MusicIP-playlistvoorvoegsel gewijzigd in:
-	NO	Prefiks for MusicIP-spillelister er endret til:
-	PL	Prefiks listy odtwarzania w usłudze MusicIP zmienił się na:
-	RU	Префикс плей-листов MusicIP изменен на:
-	SV	Prefix för MusicIP-spellistor ändrat till:
-	ZH_CN	MusicIP播放表前缀被改为：
-
-SETUP_MUSICMAGICPLAYLISTSUFFIX
-	CS	Přípona seznamu skladeb MusicIP změněna na:
-	DA	Suffiks for MusicIP's afspilningslister er ændret til:
-	DE	Das Suffix für MusicIP-Wiedergabelisten wurde geändert in:
-	EN	MusicIP playlist suffix changed to:
-	ES	Sufijo de listas de reproducción de MusicIP cambiado a:
-	FI	MusicIP-soittoluettelon jälkiliite muutettiin muotoon:
-	FR	Suffixe de liste de lecture MusicIP modifié:
-	HE	סיומת רשימות ההשמעה של MusicIP השתנתה ל:
-	IT	Suffisso degli elenchi di riproduzione di MusicIP modificato in:
-	NL	MusicIP-playlistachtervoegsel gewijzigd in:
-	NO	Filetternavn for MusicIP-spillelister er endret til:
-	PL	Sufiks listy odtwarzania w usłudze MusicIP zmienił się na:
-	RU	Суффикс плей-листов MusicIP изменен на:
-	SV	Suffix för MusicIP-spellistor ändrat till:
-	ZH_CN	MusicIP播放表词尾被改为：
 
 USE_MUSICMAGIC
 	CS	Použít MusicIP

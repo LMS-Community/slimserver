@@ -88,21 +88,6 @@ PLUGIN_EXTENSIONS_PLUGINS
 	RU	Плагины SqueezeCenter
 	SV	Plugin-program till SqueezeCenter
 
-PLUGIN_EXTENSIONS_PLUGINS_DESC
-	CS	Můžete nainstalovat SqueezeCenter Pluginy z níže uvedeného seznamu nebo je odstranit. Po instalaci nebo odstranění pluginů musí být server restartován.
-	DA	Du kan installere og fjerne udvidelsesmoduler til SqueezeCenter fra listen nedenfor. Serveren skal genstartes når udvidelsesmodulerne er fjernet eller installeret.
-	DE	SqueezeCenter-Plugins in der nachstehenden Liste können installiert oder entfernt werden. Wenn Plugins installiert oder entfernt wurden, muss der Server neu gestartet werden.
-	EN	You may install or remove SqueezeCenter Plugins from the list below.  The server must be restarted once plugins are installed or removed.
-	ES	Puede instalar o quitar complementos de SqueezeCenter en la lista mostrada a continuación. Debe reiniciar el servidor una vez haya instalado o quitado complementos.
-	FI	Voit asentaa tai poistaa SqueezeCenterin laajennukset alla olevasta luettelosta.  Palvelin täytyy käynnistää uudelleen, kun laajennukset on ladattu tai poistettu.
-	FR	Vous pouvez installer ou désinstaller des plugins SqueezeCenter à partir de la liste ci-dessous.  Le serveur doit être redémarré après chaque installation ou désinstallation.
-	IT	È possibile installare o rimuovere i plugin di SqueezeCenter dall'elenco sottostante. Dopo l'installazione o la rimozione di plugin, è necessario riavviare il server.
-	NL	Je kunt SqueezeCenter-plugins in de onderstaande lijst installeren of verwijderen. De server moet opnieuw worden gestart nadat er plug-ins zijn geïnstalleerd of verwijderd.
-	NO	Du kan installere og fjerne plugin-moduler for SqueezeCenter i listen nedenfor. Serveren må startes på nytt når plugin-modulene har blitt installert eller fjernet.
-	PL	Dodatki programu SqueezeCenter można zainstalować lub usunąć na liście poniżej. Po zainstalowaniu lub usunięciu dodatku należy ponownie uruchomić serwer.
-	RU	Плагины SqueezeCenter из приведенного списка можно устанавливать и удалять. После этого сервер необходимо перезапустить.
-	SV	Använd listan nedan för att installera eller ta bort plugin-program till SqueezeCenter. Du måste starta om servern när du har installerat eller tagit bort plugin-programmen.
-
 PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
 	CS	Upgradovat Plugin na novou verzi
 	DA	Opgrader udvidelsesmodul til en ny version

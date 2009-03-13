@@ -3540,29 +3540,6 @@ SOURCE
 # Setup page strings
 # General strings for the setup pages
 
-SETUP_BAD_PAGE_SUGGEST
-	CS	Pokus o přidání stránky=SERVER_SETTINGS.
-	DA	Forsøg at tilføje: page=SERVER_SETTINGS
-	DE	Erweitern Sie die Adresse um page=SERVER_SETTINGS.
-	EN	Try adding page=SERVER_SETTINGS.
-	ES	Inténtelo agregando page=SERVER_SETTINGS.
-	FI	Yritä lisätä sivu=SERVER_SETTINGS.
-	FR	Essayez d'ajouter page=SERVER_SETTINGS.
-	HE	נסה להוסיף את הדף=SERVER_SETTINGS.
-	IT	Provare ad aggiungere page=SERVER_SETTINGS.
-	NL	Probeer page=SERVER_SETTINGS toe te voegen.
-	NO	Prøv å legge til page=SERVER_SETTINGS.
-	PL	Spróbuj dodać stronę=SERVER_SETTINGS.
-	RU	Попробуйте добавить страницу=SERVER_SETTINGS.
-	SV	Prova att lägga till: page=SERVER_SETTINGS.
-	ZH_CN	尝试配置page=SERVER_SETTINGS
-
-#
-# Setup Group strings
-# Use the following naming convention when adding strings here:
-# SETUP_GROUP_$groupname == Name of group, such as would be used in the header of the group on the web page
-# SETUP_GROUP_$groupname_DESC == Long description of group, used in web page, so length not important
-
 SETUP_GROUP_BRIGHTNESS
 	CS	Jas
 	DA	Lysstyrke
@@ -3693,21 +3670,6 @@ SETUP_GROUP_MENUITEMS_DESC
 	SV	Du kan anpassa vilka alternativ som visas på rotmenyn på spelarens display. Flytta ett menyalternativ uppåt och nedåt eller ta bort alternativet genom att klicka. Klicka på Lägg till om du vill lägga till ett borttaget alternativ på menyn igen.
 	ZH_CN	您可将播放机最高阶层的主页菜单加以用户化。单击以调整排序或除去该菜单项目。如要列入已被除去的菜单项目，请单击"Add"。
 
-SETUP_GROUP_PLUGINITEMS_INTRO
-	CS	Zásuvné moduly:
-	DA	Udvidelsesmoduler:
-	DE	Plugins:
-	EN	Plugins:
-	ES	Complementos:
-	FI	Laajennukset:
-	FR	Plugins:
-	IT	Plugin:
-	NL	Plug-ins:
-	NO	Plugin-moduler:
-	PL	Dodatki:
-	RU	Плагины:
-	SV	Plugin-program:
-
 SETUP_GROUP_NONMENUITEMS_INTRO
 	CS	Neaktivní položky nabídky:
 	DA	Inaktive menupunkter:
@@ -3725,24 +3687,6 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	RU	Неактивные элементы меню:
 	SV	Inaktiva menyalternativ:
 	ZH_CN	非活动菜单项目：
-
-SETUP_FONTLIST
-	CS	Seznam písem
-	DA	Liste med skrifttyper
-	DE	Schriftartenliste
-	EN	Font List
-	ES	Lista de fuentes
-	FI	Fonttiluettelo
-	FR	Liste des polices
-	HE	רשימת גופנים
-	IT	Elenco caratteri
-	JA	フォントリスト
-	NL	Lettertypelijst
-	NO	Liste over skrifttyper
-	PL	Lista czcionek
-	RU	Список шрифтов
-	SV	Teckensnittslista
-	ZH_CN	字体目录
 
 SETUP_ACTIVEFONT
 	CS	Písmo
@@ -3890,23 +3834,6 @@ SETUP_SCROLLPAUSE
 	SV	Rullningspaus
 	ZH_CN	暂停卷动
 
-SETUP_SCROLLPAUSEDOUBLE
-	CS	Pozastavit rolování velkého textu
-	DA	Stor skrift, rullepause
-	DE	Laufschriftverzögerung bei großer Schriftart
-	EN	Large Text Scroll Pause
-	ES	Pausa de desplazamiento para texto grande
-	FI	Suuren tekstin vieritystauko
-	FR	Pause du défilement de texte large
-	HE	השהיית גלילה של טקסט גדול
-	IT	Pausa scorrimento con testo grande
-	NL	Tekstlooppauze (grote tekst)
-	NO	Pause ved rulling med stor tekst
-	PL	Wstrzymywanie przewijania dużej ilości tekstu
-	RU	Пауза при прокрутке крупного текста
-	SV	Stor text, rullningspaus
-	ZH_CN	大字体暂停卷动
-
 SETUP_SCROLLPAUSE_DESC
 	CS	Můžete upravit dobu, po kterou přehrávač čeká, než začne zobrazovat horizontálně rolující text na displeji. Zadejte v sekundách dobu zpoždění začátku rolování nebo mezi rolováním. Při zadání nuly nebude žádné zpoždění a rolování začne okamžitě. Výchozí hodnota je 3,6 sekund.
 	DA	Du kan angive hvor lang tid der skal gå før teksten begynder at rulle hen over afspillerens display. Du skal angive tidsrummet i sekunder, enten før teksten begynder at rulle, eller mellem hver gang den ruller. Hvis du indtaster et nul, begynder teksten at rulle med det samme. 3,6 sekunder er standard.
@@ -3943,23 +3870,6 @@ SETUP_SCROLLRATE
 	SV	Rullningshastighet
 	ZH_CN	卷动速度
 
-SETUP_SCROLLRATEDOUBLE
-	CS	Rychlost rolování velkého textu
-	DA	Stor skrift, rullehastighed
-	DE	Laufschriftgeschwindigkeit bei großer Schriftart
-	EN	Large Text Scroll Rate
-	ES	Velocidad de desplazamiento para texto grande
-	FI	Suuren tekstin vieritysnopeus
-	FR	Vitesse de défilement de texte large
-	HE	קצב גלילה של טקסט גדול
-	IT	Velocità di scorrimento con testo grande
-	NL	Tekstloopsnelheid (grote tekst)
-	NO	Hastighet for rulling av stor tekst
-	PL	Szybkość przewijania dużego tekstu
-	RU	Скорость прокрутки крупного текста
-	SV	Texthastighet för stor text
-	ZH_CN	大字体卷动速度
-
 SETUP_SCROLLRATE_DESC
 	CS	Můžete nastavit rychlost, jakou se bude rolující text pohybovat přes obrazovku. Rychlost rolování udává dobu mezi obnovením zobrazení. U přehrávače s grafickým displejem lze toto upravit v kombinaci s hodnotou Scroll Pixels a nastavit rychlost a kvalitu rolování (text se bude pohybovat podle Scroll Pixels jednou za každou sekundu Scroll Rate). U přehrávače se znakovým displejem se udává doba před rolováním k následujícímu znaku. Zadejte v sekundách hodnotu doby mezi obnovením. Nižší čísla znamenají rychlejší rolování. Výchozí hodnota je 0,15 sekund pro jednořádkový, 0,1 sekundy pro velký text.
 	DA	Du kan justere hvor hurtigt teksten ruller hen over displayet. Rullehastigheden er bestemmende for hvor lang tid der går mellem at displayet opdateres. På afspillere med et grafisk display kan hastigheden kombineres med hvor mange pixel der rulles. De to indstillinger bestemmer tilsammen hastigheden og billedkvaliteten: Teksten vil rulle det angivne antal pixel hver gang der er gået det angivne antal sekunder. På en afspiller med et tegndisplay er indstillingen bestemmende for hvor lang tid der går før der rulles til det næste tegn. Du skal angive tidsrummet mellem hver opdatering i sekunder. Et lavt tal giver en hurtigere hastighed. 0,15 sekund er standard ved enkeltlinjer, 0,1 sekund for stor skrift.
@@ -3992,42 +3902,6 @@ DOUBLE-LINE
 	PL	Duży tekst
 	RU	Крупный текст
 	SV	Stor text
-
-SETUP_GROUP_ALARM
-	CS	Budík
-	DA	Vækkeur
-	DE	Wecker
-	EN	Alarm Clock
-	ES	Reloj despertador
-	FI	Herätyskello
-	FR	Réveil
-	HE	שעון מעורר
-	IT	Sveglia
-	JA	アラーム時計
-	NL	Wekker
-	NO	Vekkerklokke
-	PL	Budzik
-	PT	Alarme
-	RU	Будильник
-	SV	Alarmfunktion
-	ZH_CN	闹钟
-
-SETUP_GROUP_ALARM_DESC
-	CS	Tento přehrávač může mít až 8 budíků: jeden budík, který se spustí každý den a jednotlivé budíky pro každý den týdne. Můžete si rovněž zvolit, zda se budík po 20 sekundách zesílí.
-	DA	Du kan indstille 8 vækketidspunkter, et for hver af ugens dage, og du kan blive vækket på forskellige tidspunkter hver dag. Du kan også vælge om der skal skrues langsomt op for lyden af vækkeuret i en periode på 20 sekunder.
-	DE	Dieser Player kann bis zu acht Weckzeiten speichern: Ein Wecker, der jeden Tag zur gleichen Zeit aktiviert wird und einzelne Wecker für die einzelnen Wochentage. Außerdem können Sie angeben, dass die Weckerwiedergabe über 20 Sekunden hinweg eingeblendet wird.
-	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week. You may also choose to have the alarm fade in over 20 seconds.
-	ES	Este reproductor puede tener hasta 8 alarmas: Una alarma que suena todos los días y alarmas individuales para cada día de la semana. También se puede hacer que la alarma tenga un fundido de entrada de 20 segundos.
-	FI	Soittimessa voidaan käyttää jopa kahdeksaa eri herätystä: yksi herätys, joka tapahtuu kerran päivässä, ja erilliset herätykset jokaiselle viikonpäivälle. Halutessasi voit myös määrittää, että herätyksessä on 20 sekunnin alkuhäivytys.
-	FR	La platine peut gérer un maximum de 8 réveils indépendants: un réveil quotidien et un pour chaque jour de la semaine. Vous pouvez aussi spécifier un fondu de 20 secondes pour le réveil.
-	HE	ניתן להגדיר בנגן זה עד 8 התראות: התראה אחת המופעלת מדי יום והתראות נפרדות עבור כל יום בשבוע. כמו כן, באפשרותך להגדיר להתראה להתחזק לאחר כל 20 שניות.
-	IT	In questo lettore sono disponibili 8 sveglie: una attivabile ogni giorno alla stessa ora e sette per ogni giorno della settimana. È inoltre possibile impostare la sveglia graduale nell'arco di 20 secondi.
-	NL	Voor dit muzieksysteem kunnen 8 wektijden ingesteld worden: één weksignaal dat elke dag afgaat, en afzonderlijke weksignalen voor elke dag van de week. Je kunt het alarm ook over 20 seconden laten infaden.
-	NO	Denne spilleren kan ha opptil 8 alarmtider: én alarm som starter på samme tid hver dag, og egne alarmer for hver ukedag. Du kan også la vekkingen skru seg på gradvis i løpet av tjue sekunder.
-	PL	W tym odtwarzaczu można ustawić do 8 alarmów: jeden alarm uruchamiany codziennie i poszczególne na każdy dzień tygodnia. Głośność alarmu może być stopniowo zwiększana przez 20 sekund.
-	RU	В этом плеере может быть до 8 будильников: один будильник, звонящий ежедневно, и отдельные будильники на каждый день недели. Кроме того, можно настроить постепенное усиление звука будильника через 20 с.
-	SV	På den här spelaren kan du ställa in upp till 8 alarm, ett som är detsamma varje dag och ett separat alarm för varje veckodag. Du kan också låta alarmet tona in under 20 sekunder.
-	ZH_CN	此播放机设有8个闹钟设置：其中1个可每天启动，其他7个分为周一至周日使用。您可以选择让闹钟在20秒内淡入。
 
 SETUP_GROUP_IRSETS
 	CS	Ovládací prvky dálkového ovládání
@@ -4142,21 +4016,6 @@ INSTALLERROR_INCOMPATIBLE_PLATFORM
 	RU	Плагин несовместим с данной платформой.
 	SV	Plugin-programmet är inte kompatibelt med din plattform.
 
-SETUP_GROUP_PLUGINS_FAILURE
-	CS	Nepodařilo se zavést zásuvný modul.
-	DA	Udvidelsesmodulet blev ikke indlæst.
-	DE	Plugin konnte nicht geladen werden.
-	EN	Plugin failed to load.
-	ES	No se ha podido cargar el complemento.
-	FI	Laajennuksen lataus epäonnistui.
-	FR	Echec de chargement du plugin.
-	IT	Caricamento plugin non riuscito.
-	NL	Plug-in kan niet worden geladen.
-	NO	Plugin-modulen ble ikke lastet inn.
-	PL	Załadowanie dodatku nie powiodło się.
-	RU	Сбой загрузки плагина.
-	SV	Det gick inte att läsa in plugin-programmet.
-
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátu souborů
 	DA	Indstillinger for konvertering mellem filformater
@@ -4193,25 +4052,6 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 	SV	SqueezeCenter kan konvertera ljudfiler under uppspelning.  Du kan avaktivera specifika format nedan genom att avmarkera dem.  Här visas endast namnet på den binära filen. Om du vill se eller redigera hela kommandoraden måste du öppna convert.conf.  Spara ändringarna genom att klicka på Ändra.
 	ZH_CN	SqueezeCenter能对音像文件进行即时的格式转换以便在播放机上播放。如要撤销某些格式，请清除其复选框中的标记。此处只显示有关的可执行文件。如要查看或编辑完整的命令行，请查看convert.conf。请点击《更动》以保存您所作的设定。
 
-SETUP_FORMATSLIST_CHANGE
-	CS	Nastavení bylo změněno.
-	DA	Indstillingen er ændret.
-	DE	Einstellung wurde geändert.
-	EN	Setting was changed.
-	ES	La configuración ha cambiado.
-	FI	Asetusta muutettiin.
-	FR	Le réglage a été modifié.
-	HE	ההגדרה השתנתה.
-	IT	L'impostazione è cambiata.
-	JA	セッティングは変更されました。
-	NL	Instelling is veranderd.
-	NO	Innstillingen er endret.
-	PL	Ustawienie zostało zmienione.
-	PT	A opção mudou.
-	RU	Настройка была изменена.
-	SV	Inställningen har ändrats.
-	ZH_CN	更动设置完成。
-
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nebyl nalezen:
 	DA	Det krævede program blev ikke fundet:
@@ -4229,24 +4069,6 @@ SETUP_FORMATSLIST_MISSING_BINARY
 	RU	Требуемый двоичный файл не найден:
 	SV	En nödvändig binärfil kunde inte hittas:
 	ZH_CN	所需的可执行文件不存在：
-
-SETUP_FORMATSLIST
-	CS	Konverze formátu souborů
-	DA	Konvertering af filformater
-	DE	Dateikonvertierung
-	EN	File Format Conversions
-	ES	Conversiones de formatos de archivo
-	FI	Tiedostomuotojen muunnokset
-	FR	Conversion types de fichier
-	HE	המרות של תבניות קובץ
-	IT	Conversione formati file
-	JA	ファイルフォーマット変換
-	NL	Bestandsformaatconversies
-	NO	Filformat, konverteringer
-	PL	Konwersje formatów plików
-	RU	Преобразования форматов файлов
-	SV	Filformatskonverteringar
-	ZH_CN	文件格式转换
 
 FILE_FORMAT
 	CS	Formát souboru
@@ -4283,23 +4105,6 @@ STREAM_FORMAT
 	RU	Формат потока
 	SV	Strömformat
 	ZH_CN	频流格式
-
-SETUP_GROUP_FORMATS_EXTENSIONS
-	CS	Nastavení prohledávání přípon souborů
-	DA	Indstilling af filtypenavne ved scanning
-	DE	Suchen nach Dateierweiterungen einrichten
-	EN	File Extensions Scanning Setup
-	ES	Configuración de examen de extensiones de archivo
-	FI	Tiedostotunnisteiden tarkastusasetukset
-	FR	Exclusion des types de fichiers
-	HE	הגדרת הסריקה של סיומות קבצים
-	IT	Impostazione analisi estensioni file
-	NL	Scanset-up van bestandsextensies
-	NO	Innstillinger for filendelser ved gjennomsøking
-	PL	Konfiguracja przeszukiwania rozszerzeń plików
-	RU	Настройка сканирования расширений файлов
-	SV	Sökningsinställningar för filtillägg
-	ZH_CN	文件扩展名扫描配置
 
 SETUP_DISABLEDEXTENSIONSAUDIO
 	CS	Nepovolené přípony audio souborů
@@ -4472,25 +4277,6 @@ SETUP_PLAYERNAME
 	SV	Spelarnamn
 	ZH_CN	播放机名字
 
-SETUP_PLAYERNAME_OK
-	CS	Nový název pro tento přehrávač je:
-	DA	Afspillerens nye navn er:
-	DE	Der neue Name für diesen Player ist:
-	EN	The new name for this player is:
-	ES	El nombre nuevo para este reproductor es:
-	FI	Tämän soittimen uusi nimi on:
-	FR	Le nouveau nom de la platine est:
-	HE	השם החדש של נגן זה הוא:
-	IT	Nuovo nome del lettore:
-	JA	プレーヤーの新しい名前は:
-	NL	De nieuwe naam voor dit muzieksysteem is:
-	NO	Spillerens nye navn er:
-	PL	Nowa nazwa tego odtwarzacza to:
-	PT	O novo nome para este cliente é
-	RU	Новое название этого плеера следующее:
-	SV	Den här spelarens nya namn är:
-	ZH_CN	此播放机的新名字为：
-
 SETUP_PLAYERNAME_DESC
 	CS	Můžete přehrávači přiřadit název, který bude použit k identifikaci tohoto přehrávače na těchto webových stránkách.
 	DA	Du kan give denne afspiller et navn som vil blive brugt til at identificere den på disse websider.
@@ -4509,25 +4295,6 @@ SETUP_PLAYERNAME_DESC
 	RU	Плееру можно присвоить имя, по которому будет производиться его идентификация на этих веб-страницах.
 	SV	Du kan ange ett namn för spelaren. Namnet användas sedan för att identifiera spelaren på de här webbsidorna.
 	ZH_CN	为了方便在网页中的辨认，您可以为这个播放机取名。
-
-SETUP_PLAYERNAME_CHOOSE
-	CS	Název přehrávače:
-	DA	Afspillerens navn:
-	DE	Wählen Sie einen Namen für diesen Player:
-	EN	Player name:
-	ES	Nombre de reproductor:
-	FI	Soittimen nimi:
-	FR	Nom de la platine:
-	HE	שם הנגן:
-	IT	Nome lettore:
-	JA	プレーヤー名:
-	NL	Systeemnaam:
-	NO	Spillernavn:
-	PL	Nazwa odtwarzacza:
-	PT	Escolha um nome para este cliente
-	RU	Название плеера:
-	SV	Spelarens namn:
-	ZH_CN	播放机名字：
 
 SETUP_RESET_PLAYER
 	CS	Obnovit předvolby přehrávače
@@ -4754,63 +4521,6 @@ SETUP_SENSAUTOBRIGHTNESS_DESC
 	RU	Задать чувствительность автоматических настроек яркости.
 	SV	Ändra känsligheten för automatisk ljusstyrka.
 
-SETUP_ALARM
-	CS	Budík
-	DA	Vækkeur
-	DE	Wecker
-	EN	Alarm
-	ES	Alarma
-	FI	Herätys
-	FR	Réveil
-	HE	התראה
-	IT	Sveglia
-	JA	アラーム
-	NL	Wekker
-	NO	Alarm
-	PL	Alarm
-	PT	Alarme
-	RU	Будильник
-	SV	Alarm
-	ZH_CN	闹钟
-
-SETUP_ALARMVOLUME
-	CS	Hlasitost budíku (0-100)
-	DA	Indstil lydstyrken for vækkeuret (0-100)
-	DE	Wecker-Lautstärke (0-100)
-	EN	Alarm Volume (0-100)
-	ES	Volumen de alarma (0-100)
-	FI	Herätyksen äänenvoimakkuus (0-100)
-	FR	Réglage du volume de réveil (0-100)
-	HE	עוצמת הקול של ההתראה (0-100)
-	IT	Volume sveglia (0-100)
-	JA	アラームのボリュームをセットして下さい (0-100)
-	NL	Weksignaalvolume (0-100)
-	NO	Velg volum for vekkerklokke (0–100)
-	PL	Głośność alarmu (0-100)
-	PT	Mudar Volume do Alarme (0-100)
-	RU	Громкость будильника (0–100)
-	SV	Volym för alarm (0–100)
-	ZH_CN	设置闹钟音量(0-100)
-
-SETUP_ALARMPLAYLIST
-	CS	Seznam skladeb pro budík
-	DA	Afspilningsliste for vækkeur
-	DE	Wiedergabeliste für den Wecker
-	EN	Playlist for Alarm
-	ES	Lista de reproducción para alarma
-	FI	Herätyskellon soittoluettelo
-	FR	Liste de lecture pour le réveil
-	HE	רשימת השמעה עבור התראה
-	IT	Elenco di riproduzione per la sveglia
-	JA	アラーム用のプレイリスト
-	NL	Playlist voor wekker
-	NO	Velg spilleliste for alarm
-	PL	Lista odtwarzania dla alarmu
-	PT	Playlist para o Alarme
-	RU	Плей-лист для будильника
-	SV	Spellista för alarm
-	ZH_CN	闹钟专用的播放表
-
 SETUP_PLAYINGDISPLAYMODE
 	CS	Informace o "Právě hraje"
 	DA	Oplysninger under afspilning
@@ -4843,25 +4553,6 @@ SETUP_PLAYINGDISPLAYMODE_ABBR
 	PL	Informacje o teraz odtwarzanych
 	RU	Информация о воспроизводимой дорожке
 	SV	Nu spelas-information
-
-SETUP_PLAYINGDISPLAYMODE_OK
-	CS	Displej bude nyní ukazovat průběh právě přehrávané skladby jako:
-	DA	Afspilleren vil nu vise status for afspilningen således:
-	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
-	EN	The display will now show the progress of the currently playing song as:
-	ES	La pantalla mostrará el progreso de la canción actual como:
-	FI	Soitetun kappaleen edistyminen näkyy nyt näytössä näin:
-	FR	L'écran affichera le déroulement de la lecture du morceau avec:
-	HE	בתצוגה תוצג ההתקדמות של השיר הנוכחי שמושמע בתור:
-	IT	Il display mostrerà l'avanzamento del brano in riproduzione con:
-	JA	ディスプレイは曲の進行を以下のように表示します:
-	NL	Het scherm geeft nu de voortgang van het huidige liedje weer als:
-	NO	Skjermen viser nå framdrift for sangen som spilles i dette formatet:
-	PL	Postęp aktualnie odtwarzanego utworu:
-	PT	O ecrã irá mostrar o progresso da música actual como
-	RU	Теперь на экране ход воспроизведения текущей песни будет отображаться так:
-	SV	Displayen visar nu status för det aktuella spåret som:
-	ZH_CN	显示屏现在将显示当前播放歌曲的进度：
 
 SETUP_PLAYINGDISPLAYMODE_DESC
 	CS	Přehrávač může zobrazit informaci o průběhu přehrávání skladby. Můžete si zvolit, jaké informace se budou standardně zobrazovat a můžete povolit nebo zakázat režimy, které chcete mít k dispozici. Opakovaným tisknutím tlačítka Právě hraje na dálkovém ovládání můžete  těmito režimy procházet.
@@ -4938,25 +4629,6 @@ SETUP_NO_SYNCHRONIZATION
 	RU	Без синхронизации
 	SV	Ingen synkronisering
 	ZH_CN	不要同步
-
-SETUP_SYNCHRONIZE_OK
-	CS	Připojení k synchronizační skupině:
-	DA	Kobler til synkroniseringsgruppen:
-	DE	Hinzufügen zur Synchronisierungsgruppe:
-	EN	Joining synchronization group:
-	ES	Uniéndose al grupo de sincronización:
-	FI	Synkronointiryhmään liittyminen:
-	FR	Ajout au groupe de synchronisation:
-	HE	הצטרפות לקבוצת סינכרון:
-	IT	Collegamento al gruppo di sincronizzazione:
-	JA	シンクログループに入れる:
-	NL	Toevoegen aan synchronisatiegroep:
-	NO	Blir med i synkroniseringsgruppe:
-	PL	Przyłączanie do grupy synchronizacji:
-	PT	Juntar ao Grupo Sincronizado
-	RU	Присоединение к группе синхронизации:
-	SV	Ansluter till synkroniseringsgrupp:
-	ZH_CN	加入同步小组中：
 
 SETUP_SYNCVOLUME_ON
 	CS	Hlasitost synchronizovaného přehrávače
@@ -5296,21 +4968,6 @@ SETUP_SYNCSTARTDELAY_DESC
 	RU	При синхронизации нескольких плееров SqueezeCenter дает каждому из них команду начать воспроизведение дорожки в одно и то же время. Для этого необходимо убедиться, что каждый плеер получит команду запуска до всеобщего начала воспроизведения, поэтому данная команда отправляется ему заранее. После получения команды каждый плеер ожидает запуска. При сильной загрузке сети, что особенно характерно для сетей с множеством плееров и для беспроводных сетей, задержка по умолчанию, равная 100 мс, может быть недостаточной. При необходимости это значение можно изменить.
 	SV	När flera spelare synkroniserats ser SqueezeCenter till att alla spelare börjar spela upp låten samtidigt. Det måste finnas tid för startkommandot att gå fram till var och en av spelarna innan låten börjar spelas upp. Därför skickas kommandot i förväg, och spelarna väntar sedan till rätt startögonblick. Om trafiken på nätverket är mycket tät, något som kan hända framför allt när många spelare anslutits och med trådlösa nätverk, kanske inte standardfördröjningen på 100 millisekunder räcker till. Du kan ändra standardinställningen här vid behov.
 
-SETUP_SYNCSTARTDELAY_CHOOSE
-	CS	Zpoždění synchronizovaného start (milisekund):
-	DA	Startforsinkelse ved synkroniseret afspilning (millisekunder):
-	DE	Startverzögerung für synchronisierte Player (Millisekunden):
-	EN	Synchronized startup delay (milliseconds):
-	ES	Retraso de inicio sincronizado (milisegundos):
-	FI	Synkronoidun käynnistyksen viive (millisekunteina):
-	FR	Délai du démarrage synchronisé (millisecondes):
-	IT	Ritardo avvio sincronizzato (millisecondi):
-	NL	Vertraging bij gesynchroniseerd opstarten (milliseconden):
-	NO	Forsinkelse for synkronisert start (millisekunder):
-	PL	Opóźnienie zsynchronizowanego uruchomienia (milisekundy):
-	RU	Задержка синхронизованного запуска (мс)
-	SV	Fördröjning för synkroniserad start (millisekunder):
-
 SETUP_STARTDELAY
 	CS	Zpoždění spuštění přehrávače (ms)
 	DA	Forsinkelse ved start af afspiller (ms)
@@ -5340,21 +4997,6 @@ SETUP_STARTDELAY_DESC
 	PL	Rozpoczęcie odtwarzania (zanim usłyszysz dźwięk) po przetworzeniu przez odtwarzacz polecenia uruchomienia z programu SqueezeCenter może być zauważalnie opóźnione. Może to mieć miejsce w przypadku korzystania z wyjść cyfrowych (w zależności od podłączonych urządzeń) lub odtwarzaczy programowych na niektórych platformach. W takich przypadkach opóźnienie to można ustawić tutaj, aby program SqueezeCenter uruchomił odtwarzacz odpowiednio wcześniej w celu jednoczesnego uruchomienia wszystkich zsynchronizowanych odtwarzaczy. Uwaga: opcja ta stanowi dodatek dla ustawienia „Opóźnienie dźwięku odtwarzacza” (poniżej).
 	RU	После обработки команды запуска SqueezeCenter плеер может начать воспроизведение лишь через некоторое время (до того, как появится звук). Обычно это происходит при работе с цифровыми выходами (в зависимости от подключенного оборудования) или с программными плеерами на некоторых платформах. В этих случаях можно настроить длительность задержки таким образом, чтобы SqueezeCenter запускал данный плеер заблаговременно и звук со всех синхронизованных плееров появлялся в одно и то же время. Примечание: этот параметр дополняет любое из текущих значений "Задержка звука плеера" (см. ниже).
 	SV	Det kan ta en ganska lång stund från det att en spelare tar emot startkommandot från SqueezeCenter till det att du hör musiken börja spelas upp. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. För att undvika problemet kan du ange fördröjningen här. Då kan den här spelaren startas motsvarande antal sekunder i förväg, så att ljudet från alla de synkroniserade spelarna börjar spelas upp samtidigt. Obs! det här läggs till eventuell Ljudfördröjning för spelare (se nedan).
-
-SETUP_STARTDELAY_CHOOSE
-	CS	Zpoždění startu přehrávače (milisekundy):
-	DA	Startforsinkelse for afspillere (millisekunder):
-	DE	Startverzögerung des Players (Millisekunden):
-	EN	Player start delay (milliseconds):
-	ES	Retraso de inicio de reproductor (milisegundos):
-	FI	Soittimen käynnistymisviive (millisekunteina):
-	FR	Délai audio de la platine (millisecondes):
-	IT	Ritardo avvio lettore (millisecondi):
-	NL	Vertraging bij opstarten muzieksysteem (milliseconden):
-	NO	Forsinkelse for spillerstart (millisekunder):
-	PL	Opóźnienie uruchomienia odtwarzacza (milisekundy):
-	RU	Задержка запуска плеера (мс):
-	SV	Fördröjning för spelarstart (millisekunder):
 
 SETUP_MAINTAINSYNC
 	CS	Udržovat synchronizaci
@@ -5446,21 +5088,6 @@ SETUP_PLAYDELAY_DESC
 	RU	Существует значительная разница между отчетом плеера о воспроизведенной части дорожки SqueezeCenter и фактической продолжительностью прослушанного аудио. Это может происходить при использовании цифровых выходов (в зависимости от подключенного оборудования) или программных плееров на некоторых платформах. Для таких случаев здесь можно задать величину задержки, учитываемую SqueezeCenter при настройке синхронизации.
 	SV	Det kan vara en märkbar skillnad mellan hur mycket ett spår som spelaren rapporterar till SqueezeCenter att den har spelat upp och hur mycket av spåret som lyssnaren faktiskt hört. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. Här kan du ange fördröjningen så att den kan tas med i beräkningen när synkroniseringen justeras i SqueezeCenter.
 
-SETUP_PLAYDELAY_CHOOSE
-	CS	Zpoždění audia přehrávače (milisekund):
-	DA	Lydforsinkelse for afspillere (millisekunder):
-	DE	Audioverzögerung des Players (Millisekunden):
-	EN	Player audio delay (milliseconds):
-	ES	Retraso de audio de reproductor (milisegundos):
-	FI	Soittimen ääniviive (millisekunteina):
-	FR	Délai audio de la platine (millisecondes):
-	IT	Ritardo audio lettore (millisecondi):
-	NL	Audiovertraging muzieksysteem (milliseconden):
-	NO	Lydforsinkelse for spilleren (millisekunder):
-	PL	Opóźnienie dźwięku odtwarzacza (milisekundy):
-	RU	Задержка звука плеера (мс):
-	SV	Ljudfördröjning för spelare (millisekunder):
-
 SETUP_MINSYNCADJUST
 	CS	Nastavení minimální synchronizace (ms)
 	DA	Mindste justering ved synkronisering (ms)
@@ -5491,21 +5118,6 @@ SETUP_MINSYNCADJUST_DESC
 	RU	Когда SqueezeCenter обнаруживает незначительное отклонение в синхронизации двух плееров, проводится небольшая регулировка, обычно по отношению к отставшему плееру. Можно настроить минимальный размер регулировки данного плеера. Чем больше заданный интервал, тем реже выполняется регулировка, но тем больше размер возможного отклонения синхронизованных плееров.
 	SV	När två synkroniserade spelare börjar komma i otakt åtgärdas det av SqueezeCenter, oftast genom att spelaren som hamnat efter justeras. Du kan ändra den undre gränsen för vilka skillnader som justeras för den här spelaren. Ju högre tal du anger, desto mindre ofta görs justeringar, men då kommer också spelarna att tillåtas komma mer i otakt.
 
-SETUP_MINSYNCADJUST_CHOOSE
-	CS	Minimální úprava (milisekund):
-	DA	Mindste justering (millisekunder):
-	DE	Minimale Anpassung (Millisekunden)
-	EN	Minimum adjustment (milliseconds):
-	ES	Ajuste mínimo (milisegundos):
-	FI	Vähimmäissäätö (millisekunteina):
-	FR	Ajustement minimal (millisecondes)
-	IT	Regolazione minima (millisecondi):
-	NL	Minimale aanpassing (milliseconden):
-	NO	Minimumsjustering (millisekunder):
-	PL	Minimalna regulacja (milisekundy):
-	RU	Минимальная регулировка (мс):
-	SV	Minsta skillnad som justeras (millisekunder):
-
 SETUP_PACKETLATENCY
 	CS	Zpoždění síťových paketů (ms)
 	DA	Netværkspakkeforsinkelse (ms)
@@ -5535,21 +5147,6 @@ SETUP_PACKETLATENCY_DESC
 	PL	Program SqueezeCenter automatycznie mierzy opóźnienie sieci między nim a odtwarzaczem. Jest to ważne w celu zachowania synchronizacji. Czasami te pomiary mogą być bardzo niespójne, a przez to nieprzydatne. W takim przypadku można określić typową wartość w tym miejscu.
 	RU	SqueezeCenter автоматически измеряет задержку в сети между ним и плеером. Это важно для сохранения синхронизации. Иногда эти измерения могут слишком отличаться друг от друга, чтобы выявить какую-то закономерность: в этом случае можно ввести типичное значение в данное поле.
 	SV	SqueezeCenter mäter automatiskt nätverksfördröjningen mellan sig själv och spelaren. Det här är viktigt när du vill upprätthålla synkronisering. Ibland ger mätningarna så spridda resultat att de inte är användbara. I så fall anger du ett typvärde här.
-
-SETUP_PACKETLATENCY_CHOOSE
-	CS	Zpoždění sítě (milisekundy):
-	DA	Netværksforsinkelse (millisekunder):
-	DE	Netzwerk-Wartezeit (Millisekunden)
-	EN	Network latency (milliseconds):
-	ES	Latencia de red (milisegundos):
-	FI	Verkon viive (millisekunteina):
-	FR	Latence du réseau (millisecondes):
-	IT	Latenza di rete (millisecondi):
-	NL	Netwerkvertraging (milliseconden):
-	NO	Nettverksforsinkelse (millisekunder):
-	PL	Opóźnienie sieci (milisekundy):
-	RU	Задержка в сети (мс):
-	SV	Svarstid för nätverk (millisekunder):
 
 SETUP_NOUPNP
 	CS	Klient UPnP
@@ -6254,25 +5851,6 @@ SETUP_TRANSITIONSMART_OFF
 	RU	Откл. интеллект. перекрестное затухание
 	SV	Avaktivera smart korstoning
 
-SETUP_TITLEFORMATCURR
-	CS	Formát aktuálního názvu
-	DA	Nuværende titelformat
-	DE	Aktuelles Titelformat
-	EN	Current title format
-	ES	Formato de título actual
-	FI	Nykyisen kohteen muoto
-	FR	Format du titre en cours
-	HE	תבנית השם הנוכחית
-	IT	Formato titolo in uso
-	JA	現在のタイトルフォーマット
-	NL	Huidig titelformaat
-	NO	Valgt sangtittelformat
-	PL	Aktualny format tytułu
-	PT	Formato do Titulo Actual
-	RU	Текущий формат заголовка
-	SV	Aktuellt titelformat
-	ZH_CN	当前的标题格式
-
 SETUP_TITLEFORMAT
 	CS	Formát názvu
 	DA	Titelformat
@@ -6291,41 +5869,6 @@ SETUP_TITLEFORMAT
 	RU	Формат названия
 	SV	Titelformat
 	ZH_CN	标题格式
-
-SETUP_TITLEFORMAT_DESC
-	CS	Způsob zobrazení názvu skladby na svém přehrávači si můžete upravit výběrem formátu, který chcete zobrazit, z následujících nabídek. Tyto volby uvedené níže jsou k dispozici v nabídce  Nastavení -> Formát názvu skladby na přehrávači. Klepnutím na tlačítko ve sloupci "Aktuální" změníte aktuální formát. Potom stisknutím tlačítka "Změnit" uložte volbu.
-	DA	Du kan tilpasse hvordan numrenes titler vises på afspilleren ved at vælge det ønskede format nedenfor. Mulighederne der er vist nedenfor, kan vælges via Indstillinger -> Format af numrenes titler på afspilleren. Klik på en knap i kolonnen Nuværende for at ændre formatet. Til sidst skal du klikke på Skift for at gemme ændringerne.
-	DE	Sie können das Format, in dem Titel angezeigt werden, aus der Liste unten wählen. Diese Optionen sind außerdem auf dem Player unter 'Einstellungen -> Titelformat' verfügbar. Klicken Sie auf eine Schaltfläche in der Spalte 'Aktuell', um das aktuelle Format zu ändern. Klicken Sie anschließend auf 'Ändern', um die Änderungen zu speichern.
-	EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
-	ES	Se puede personalizar cómo se muestra el título de la canción en el reproductor. Para ello, elija el formato deseado en los menús siguientes. Las opciones disponibles a continuación aparecen en el reproductor en Configuración -> Formato de título de canción. Haga clic en un botón de la columna "Actual" para cambiar el formato actual. Cuando haya acabado, pulse el botón "Cambiar" para guardar los cambios.
-	FI	Voit mukauttaa kappaleen nimen näyttömuotoa soittimessa valitsemalla haluamasi muodon alla olevista valikoista. Voit tarkastella vaihtoehtoja soittimen kohdassa Asetukset -> Kappaleen nimen muoto.  Vaihda nykyinen muoto napsauttamalla painiketta Nykyinen-sarakkeessa. Kun olet valmis, tallenna valintasi napsauttamalla Muuta-painiketta.
-	FR	Vous pouvez spécifier le format d'affichage du titre sur votre platine en choisissant parmi les menus ci-dessous. Ces choix sont accessibles sur la platine dans Réglages -> Format du titre des morceaux. Cliquez sur un bouton dans la colonne En cours pour modifier le format en cours. Lorsque vous avez effectué votre choix, cliquez sur le bouton Modifier pour enregistrer les modifications.
-	HE	באפשרותך להתאים אישית את תצוגת שם השיר בנגן באמצעות בחירת התבנית הרצויה מהתפריטים שלהלן. האפשרויות הזמינות להלן יהיו זמינות ב'הגדרות' -> 'תבנית שם שיר' בנגן. לחץ על לחצן בעמודה 'הגדרה נוכחית' לשינוי התבנית הנוכחית. לסיום, לחץ על הלחצן "שנה" לשמירת הבחירות.
-	IT	È possibile personalizzare la visualizzazione dei titoli dei brani sullo schermo del lettore scegliendo il formato desiderato dal menu qui sotto. Le scelte riportate sotto sono disponibili in Impostazioni -> Formato titolo brano del lettore. Fare clic su un pulsante nella colonna In uso per cambiare il formato in uso. Al termine, fare clic sul pulsante Cambia per salvare le modifiche.
-	JA	ディスプレーに表示される曲のタイトルのフォーマットを指定することができます。セッティング->曲タイトル、で選択してください。選択の後「変更」をクリックして下さい。
-	NL	Je kunt bepalen hoe een titel op je muzieksysteem wordt weergegeven door in de menu's hieronder het gewenste formaat te kiezen. De onderstaande keuzes zijn beschikbaar via 'Instellingen - Titelformaat' op het systeem. Klik op een keuzerondje in de kolom Huidige om het huidige formaat te wijzigen. Klik op de knop Veranderen om de wijzigingen te bewaren.
-	NO	Du kan angi hvordan en sangtittel skal vises på spillerens skjerm ved å velge et format i menyene nedenfor. Valgene du ser nedenfor er tilgjengelige under Innstillinger -> Tittelformat på spilleren. Klikk på en knapp i kolonnen «Gjeldende» for å endre gjeldende format. Når du er ferdig, klikker du på Endre for å lagre valgene.
-	PL	Sposób wyświetlania tytułu utworu w odtwarzaczu można dostosować, wybierając format z menu poniżej. Opcje dostępne są w menu Ustawienia -> Format tytułu utworu w odtwarzaczu. Kliknij przycisk w kolumnie „Aktualne”, aby zmienić bieżący format. Po zakończeniu kliknij przycisk „Zmień”, aby zapisać zmiany.
-	RU	Можно настроить отображение названия песни в плеере, выбрав требуемый формат в меню ниже. Данные варианты доступны в меню плеера "Настройки" -> "Формат названия песни". Чтобы изменить текущий формат, нажмите кнопку в столбце "Текущий". Закончив, нажмите кнопку "Изменить", чтобы сохранить выбранные настройки.
-	SV	Du kan anpassa visningen av låttitlar på spelaren genom att välja format i menyerna nedan. Alternativen nedan finns tillängliga under Inställningar > Låttitelformat på spelaren.  Klicka på en knapp i kolumnen Aktuellt om du vill ändra det aktuella formatet. När du är klar klickar du på Ändra, så sparas dina val.
-	ZH_CN	您可以从以下的菜单选择您所要显示在播放机前的歌曲标题格式。您也可以通过播放机上的菜单《设置》->《播放机标题格式》作选择。请点击《当前的》专栏旁的按钮以改变当前的标题格式。选择妥当后,请点击《更动》以保存您的选择。
-
-SETUP_TITLEFORMAT_CHANGED
-	CS	U všechny klienty používající toto nastavení bude změněn formát
-	DA	Formatet bliver ændret for alle afspillere som anvender denne indstilling.
-	DE	Das Format wird für alle Geräte, die diese Einstellung verwenden, angepasst.
-	EN	Format will be changed for any clients using this setting
-	ES	El formato se cambiará en todos los clientes que usen esta opción
-	FI	Muoto muutetaan kaikille asiakkaille, jotka käyttävät asetusta.
-	FR	Le format sera modifié pour tous les clients avec ce réglage.
-	HE	התבנית תשתנה עבור לקוחות המשתמשים בהגדרה זו
-	IT	Il formato viene modificato per i client che utilizzano questa impostazione
-	NL	Formaat wordt gewijzigd voor elke client die deze instelling gebruikt
-	NO	Formatet kommer til å endres for alle klienter som bruker denne innstillingen.
-	PL	Format zostanie zmieniony dla wszystkich klientów używających tego ustawienia
-	RU	Формат будет изменен для всех клиентов, использующих эту настройку
-	SV	Formatet ändras för alla klienter som den här inställningen används för.
-	ZH_CN	所有利用此配置的Client格式将会转变
 
 FOLDER
 	CS	Složka
@@ -6515,23 +6058,6 @@ SETUP_GUESSFILEFORMATS
 	SV	Gissa taggformat
 	ZH_CN	猜测标签格式
 
-SETUP_GUESSFILEFORMATS_CHANGED
-	CS	Všechny soubory bez štítků (tagů) budou zpracovány tímto způsobem
-	DA	Alle filer uden mærker vil blive behandlet på denne måde
-	DE	Alle Dateien ohne Tags werden auf diese Art und Weise verarbeitet.
-	EN	All files without tags will be processed this way
-	ES	Todos los archivos sin etiquetas se procesarán de esta forma
-	FI	Kaikki tiedostot, joita ei ole merkitty, käsitellään näin.
-	FR	Tous les fichiers sans repères seront traités de cette manière.
-	HE	כל הקבצים שלא כוללים תגים יעובדו באופן זה
-	IT	Tutti i file privi di tag vengono elaborati in questo modo
-	NL	Alle bestanden zonder tags zullen op deze manier verwerkt worden
-	NO	Alle filer uten etiketter blir behandlet slik
-	PL	Wszystkie pliki bez znaczników będą przetwarzane w ten sposób
-	RU	Все файлы без тегов будут обработаны указанным образом
-	SV	Alla filer utan taggar hanteras på det här sättet
-	ZH_CN	所有无标签文件将会如此处理
-
 SETUP_GROUP_GUESSFILEFORMATS_DESC
 	CS	U souborů, které nemají srozumitelné tagy, můžete nechat SqueezeCenter odhadnout tagy podle cesty a názvu souboru. Pomocí stejné proměnné jako je formát názvu (Title Format) můžete vytvořit vzor odpovídající zvyklostem pojmenování vašich souborů tak, aby aplikace mohla provést odhad, jaké by tagy měly být. Priorita je dána v pořadí uvedeném níže. Bude použit první platný soulad se vzorem.
 	DA	Hvis filer ikke har meningsfulde mærker, kan SqueezeCenter gætte hvad mærkerne burde være, ud fra stien og filnavnene. Hvis du bruger de samme variable som i titelformatet, kan du oprette et mønster det svarer til konventionerne du bruger ved navngivning af filer, og på den måde kan programmet komme med kvalificerede gæt på hvad mærkerne burde være. Prioritetsrækkefølgen er som rækkefølgen nedenfor. Det første gyldige mønster der matcher filnavnene, bliver brugt.
@@ -6588,78 +6114,6 @@ SETUP_IRMAP_DESC
 	SV	Du kan välja mellan olika funktionsuppsättningar för knapparna. De här funktionsuppsättningarna bestämmer vilken funktion de olika knapparna på fjärrkontrollen ska ha. Standarduppsättningen är den som beskrivs i dokumentationen.
 	ZH_CN	您可以从中选择遥控键的功能组合。《标准》设置的描述可在手册中找到。
 
-SETUP_IRSETLIST_OK
-	CS	Ovládací prvky dálkového ovládání:
-	DA	Fjernbetjeninger:
-	DE	Fernbedienungen:
-	EN	Remote Controls:
-	ES	Controles de mando a distancia:
-	FI	Kaukosäätimet:
-	FR	Télécommandes:
-	HE	התקני שלט-רחוק:
-	IT	Telecomandi:
-	JA	リモートコントロール:
-	NL	Afstandsbedieningen:
-	NO	Fjernkontroller:
-	PL	Regulatory zdalnego sterowania:
-	PT	Controlos Remotos
-	RU	Пульты ДУ:
-	SV	Fjärrkontroller:
-	ZH_CN	遥控：
-
-SETUP_IRSETLIST_CHANGE
-	CS	Nastavení pro %s bylo uloženo.
-	DA	Indstillingen for %s er ændret.
-	DE	Einstellung für %s wurde gespeichert.
-	EN	Setting for %s was changed.
-	ES	Ha cambiado la configuración de %s.
-	FI	Kohteen %s asetusta muutettiin.
-	FR	Le réglage pour %s a été modifié.
-	HE	ההגדרה עבור %s השתנתה.
-	IT	L'impostazione di %s è stata modificata.
-	JA	%sのセッティングが変更されました。
-	NL	Instelling voor %s is aangepast.
-	NO	Innstillingen for %s ble endret.
-	PL	Ustawienie %s zostało zmienione.
-	PT	A opção para %s mudou.
-	RU	Настройка для %s изменилась.
-	SV	Inställningen för %s har ändrats.
-	ZH_CN	%s设置已更改。
-
-SETUP_PLUGINLIST_CHANGE
-	CS	Nastavení pro %s bylo uloženo.
-	DA	Indstillingen for %s er ændret.
-	DE	Einstellung für %s wurde geändert.
-	EN	Setting for %s was changed.
-	ES	Ha cambiado la configuración de %s.
-	FI	Kohteen %s asetusta muutettiin.
-	FR	Le réglage pour %s a été modifié.
-	HE	ההגדרה עבור %s השתנתה.
-	IT	L'impostazione di %s è stata modificata.
-	JA	%sのセッティングが変更されました。
-	NL	Instelling voor %s is aangepast.
-	NO	Innstillingen for %s ble endret.
-	PL	Ustawienie %s zostało zmienione.
-	PT	A opção para %s mudou.
-	RU	Настройка для %s изменилась.
-	SV	Inställningen för %s har ändrats.
-	ZH_CN	%s设置已更改。
-
-SETTINGS_CHANGED
-	CS	Byla změněna následující nastavení:
-	DA	Følgende indstillinger er ændret:
-	DE	Die folgenden Einstellungen wurden geändert:
-	EN	The following settings were changed:
-	ES	Estas opciones han cambiado:
-	FI	Seuraavia asetuksia muutettiin:
-	FR	Les réglages suivants ont été modifiés:
-	IT	Le seguenti impostazioni sono state modificate:
-	NL	De volgende instellingen zijn gewijzigd:
-	NO	Følgende innstillinger ble endret:
-	PL	Zmieniono następujące ustawienia:
-	RU	Были изменены следующие параметры:
-	SV	Följande inställningar ändrades:
-
 SETTINGS_CHANGED_CONFIRM
 	CS	Některá nastavení byla změněna. Chcete je uložit?
 	DA	Nogle indstillinger er ændret. Skal ændringerne gemmes?
@@ -6689,25 +6143,6 @@ SETUP_NO_PREFS
 	PL	Na tej stronie nie ma ustawień dla tego odtwarzacza
 	RU	На странице нет настроек для этого плеера
 	SV	Det finns inga inställningar den här spelaren på den här sidan
-
-SETUP_PASSWORD_CHANGED
-	CS	Heslo bylo změněno.
-	DA	Adgangskoden er blevet ændret.
-	DE	Das Kennwort wurde geändert.
-	EN	The password has been changed.
-	ES	Se ha cambiado la contraseña.
-	FI	Salasana on vaihdettu.
-	FR	Le mot de passe a été modifié.
-	HE	הסיסמה השתנתה.
-	IT	La password è stata modificata.
-	JA	パスワードが変更されました。
-	NL	Het wachtwoord is aangepast.
-	NO	Passordet har blitt endret.
-	PL	Hasło zostało zmienione.
-	PT	A palavra chave foi alterada.
-	RU	Пароль был изменен.
-	SV	Lösenordet har ändrats.
-	ZH_CN	密码已更改。
 
 # Server Settings
 
@@ -6745,25 +6180,6 @@ SETUP_LANGUAGE_DESC
 	RU	Выберите язык программы SqueezeCenter. На языки, помеченные звездочкой (*), программа была переведена сообществом пользователей SqueezeCenter. Если вы найдете ошибки или захотите сотрудничать с нами, напишите по адресу <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 	SV	Välj språk för SqueezeCenter.  Språkversioner markerade med en asterisk(*) har översatts av SqueezeCenter-användare.  Om du stöter på problem eller om du vill hjälpa till med översättningen skickar du ett e-postmeddelande till <a ref="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 
-SETUP_LANGUAGE_OK
-	CS	Váš jazyk je nyní:
-	DA	Sproget er nu:
-	DE	Aktuelle Sprache:
-	EN	Your language is now:
-	ES	El idioma es:
-	FI	Kieli on nyt:
-	FR	La langue sélectionnée est:
-	HE	השפה המוגדרת היא:
-	IT	Lingua correntemente impostata:
-	JA	現在の言語は:
-	NL	De taal is nu:
-	NO	Valgt språk:
-	PL	Język jest ustawiony na:
-	PT	O idioma escolhido é
-	RU	Ваш текущий язык:
-	SV	Valt språk är:
-	ZH_CN	您所设定的语言是：
-
 SETUP_AUDIODIR
 	CS	Složka Hudba
 	DA	Musikmappe
@@ -6799,25 +6215,6 @@ SETUP_AUDIODIR_DESC
 	RU	Можно задать папку, содержащую музыкальные файлы, которые SqueezeCenter будет сканировать и добавлять в медиатеку. Введите путь к папке ниже. Это поле можно не заполнять, если информация медиатеки импортируется из iTunes или MusicIP.
 	SV	Du kan ange en mapp med musikfiler som ska sökas och läggas till i ditt musikbibliotek.  Ange sökvägen till mappen nedan:  Om du importerar musikbibliotek från iTunes eller MusicIP kan du lämna fältet tomt.
 	ZH_CN	您可以指定SqueezeCenter所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MusicIP导入您音乐库信息，您可以让此资料栏空白。
-
-SETUP_AUDIODIR_OK
-	CS	SqueezeCenter bude používat pro vaše hudební soubory následující cestu:
-	DA	I SqueezeCenter anvendes denne sti til dine musikfiler:
-	DE	SqueezeCenter verwendet folgenden Pfad für Musikdateien:
-	EN	SqueezeCenter will use the following path to your music files:
-	ES	SqueezeCenter usará esta ruta a los archivos de música:
-	FI	SqueezeCenter käyttää seuraavaa polkua musiikkitiedostoihin:
-	FR	SqueezeCenter utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
-	HE	השרת ישתמש בנתיב הבא לקובצי המוסיקה שלך:
-	IT	SqueezeCenter utilizzerà il seguente percorso per i file musicali:
-	JA	サーバーは、以下のパスを検索します。
-	NL	SqueezeCenter gebruikt het volgende pad naar je muziekbestanden:
-	NO	SqueezeCenter bruker følgende bane til musikkfilene:
-	PL	Program SqueezeCenter będzie używał następującej ścieżki do plików muzycznych:
-	PT	SqueezeCenter irã usar a seguinte directoria para os ficheiros áudio
-	RU	Путь к музыкальным файлам в SqueezeCenter следующий:
-	SV	Använder nu följande sökväg till dina musikfiler:
-	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
 SETUP_PLAYLISTDIR
 	CS	Složka seznamu skladeb
@@ -6910,44 +6307,6 @@ SETUP_BAD_DIRECTORY
 	RU	"%s" не является допустимым каталогом. Попробуйте еще раз.
 	SV	Hoppsan! %s verkar vara en ogiltig mapp. Försök igen.
 	ZH_CN	"%s"似乎不是一个合法文件夹。请再次尝试。
-
-SETUP_OK_USING
-	CS	SqueezeCenter bude používat pro vaše hudební soubory následující cestu:
-	DA	I SqueezeCenter anvendes denne sti til dine musikfiler:
-	DE	SqueezeCenter verwendet folgenden Pfad für Musikdateien:
-	EN	SqueezeCenter will use the following path to your music files:
-	ES	SqueezeCenter usará esta ruta a los archivos de música:
-	FI	SqueezeCenter käyttää seuraavaa polkua musiikkitiedostoihin:
-	FR	SqueezeCenter utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
-	HE	השרת ישתמש בנתיב הבא לקובצי המוסיקה שלך:
-	IT	SqueezeCenter userà questo percorso per salvare gli elenchi di riproduzione:
-	JA	サーバーは音楽ファイルを検索するのに以下のパスを使います:
-	NL	SqueezeCenter gebruikt het volgende pad naar je muziekbestanden:
-	NO	SqueezeCenter bruker følgende bane til musikkfilene dine:
-	PL	Program SqueezeCenter będzie używał następującej ścieżki do plików muzycznych:
-	PT	SqueezeCenter irá usar a seguinte directoria para os ficheiros de áudio
-	RU	Путь к музыкальным файлам в SqueezeCenter следующий:
-	SV	SqueezeCenter använder följande sökväg till dina musikfiler:
-	ZH_CN	服务器将使用这路径访问您的音乐文件：
-
-SETUP_PLAYLISTDIR_OK
-	CS	SqueezeCenter bude nyní pro ukládání seznamů skladeb používat tento adresář:
-	DA	SqueezeCenter vil nu gemme afspilningslister i følgende mappe:
-	DE	SqueezeCenter speichert Wiedergabelisten in diesem Ordner:
-	EN	SqueezeCenter will now use this directory for saving playlists:
-	ES	SqueezeCenter usará este directorio para guardar listas de reproducción:
-	FI	SqueezeCenter tallentaa soittoluettelot nyt tähän hakemistoon:
-	FR	SqueezeCenter utilisera maintenant le dossier suivant pour conserver vos listes de lecture:
-	HE	השרת ישתמש בספרייה זו לשמירת רשימות השמעה:
-	IT	Directory del SqueezeCenter per il salvataggio degli elenchi di riproduzione:
-	JA	サーバーは今後このフォルダーのプレイリストを使います::
-	NL	SqueezeCenter gebruikt deze map nu om playlists in op te slaan:
-	NO	SqueezeCenter lagrer nå spillelister i følgende katalog:
-	PL	Program SqueezeCenter będzie zapisywał listy odtwarzania w tym katalogu:
-	PT	SqueezeCenter irã usar a seguinte directoria para os ficheiros de playlist
-	RU	SqueezeCenter будет сохранять плей-листы в следующий каталог:
-	SV	Spellistor sparas nu i följande mapp:
-	ZH_CN	服务器将使用这路径来保存您的播放表：
 
 SETUP_PLAYLISTDIR_DESC
 	CS	Můžete zadat cestu k adresáři, kde jsou vaše soubory seznamů skladeb uloženy na pevném disku. (Pokud nechcete ukládat seznamy skladeb, ponechte toto pole prázdné.)
@@ -7140,25 +6499,6 @@ SCAN_ABORTED
 
 # advanced server settings
 
-SETUP_MENUITEM
-	CS	Položka nabídky
-	DA	Menupunkt
-	DE	Menüeintrag
-	EN	Menu item
-	ES	Elemento de menú
-	FI	Valikkokohta
-	FR	Elément de menu
-	HE	פריט תפריט
-	IT	Voce di menu
-	JA	メニュー アイテム
-	NL	Menuoptie
-	NO	Menyvalg
-	PL	Pozycja menu
-	PT	Item de Menu
-	RU	Элемент меню
-	SV	Menyalternativ
-	ZH_CN	菜单项目
-
 SETUP_SKIN
 	CS	Webové rozhraní
 	DA	Webbaseret brugerflade
@@ -7226,23 +6566,7 @@ SETUP_PLUGINS
 	PL	Dodatki
 	RU	Плагины
 	SV	Plugin-program
-
-SETUP_PLUGINS_DESC
-	CS	SqueezeCenter obsahuje několik zásuvných modulů, včetně několika her, které můžete používat s pomocí dálkového ovládání. S pomocí nabídky níže přidávejte nebo odebírejte nabídku Doplňky své nabídky Domů.
-	DA	Der findes en række udvidelsesmoduler til SqueezeCenter, bl.a. nogle spil, som kan styres vha. fjernbetjeningen. Brug menuen nedenfor til at tilføje eller fjerne menuen Ekstra fra hovedmenuen.
-	DE	SqueezeCenter enthält eine Reihe von Plugins (u.a. Spiele), die Sie über die Fernbedienung steuern können. Unten können Sie das Extras-Menü in das Hauptmenü einfügen bzw. daraus entfernen.
-	EN	SqueezeCenter includes some plugins, including some games, you can use with your remote. Use the menu below to add or remove the Extras menu from your Home.
-	ES	SqueezeCenter incluye algunos complementos, incluidos algunos juegos, que se pueden usar con el mando a distancia. Use el menú siguiente para agregar o quitar el menú Extras de Inicio.
-	FI	SqueezeCenter sisältää laajennuksia, mukaan lukien joitakin pelejä, joita voi käyttää kaukosäätimellä. Alla olevassa valikossa voit lisätä Muut-valikon kotisivulle tai poistaa sen sieltä.
-	FR	Le SqueezeCenter inclut des plugins, parmi lesquels des jeux, disponibles à partir de la télécommande. La barre de menu ci-dessous permet d'ajouter ou de supprimer le menu Extras du menu d'accueil.
-	IT	In SqueezeCenter sono disponibili alcuni plugin, fra cui giochi, utilizzabili con il telecomando. Per aggiungere o rimuovere il menu Extra dalla home page, utilizzare il menu sottostante.
-	NL	SqueezeCenter bevat een aantal plug-ins, zoals games, die je met je afstandsbediening kunt gebruiken. Gebruik het onderstaande menu om het menu Extra's toe te voegen aan of te verwijderen uit het hoofdmenu.
-	NO	SqueezeCenter inkluderer noen plugin-moduler, inkludert enkelte spill, som du kan bruke med fjernkontrollen. Bruk menyen nedenfor hvis du vil legge til eller fjerne menyen Tillegg fra startsiden.
-	PL	Program SqueezeCenter zawiera dodatki, w tym gry, z których można korzystać za pomocą pilota. Menu poniżej umożliwia usunięcie pozycji Dodatki ze strony głównej.
-	PT	O SqueezeCenter inclui algumas funcionalidades plugins, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus Plugins do cliente.
-	RU	SqueezeCenter содержит несколько плагинов (в том числе игры), с которыми можно взаимодействовать с помощью пульта ДУ. В нижеприведенном меню можно добавить или удалить меню "Дополнения" из главного меню.
-	SV	Det finns ett antal plugin-program för SqueezeCenter, t.ex. vissa spel, som du kan använda med fjärrkontrollen. Med hjälp av menyn nedan kan du lägga till eller ta bort menyn Extrafunktioner från Hem-menyn.
-
+	
 SETUP_REFRESHRATE
 	CS	Doba obnovení prohlížeče
 	DA	Opdateringsinterval for browser
@@ -7278,24 +6602,6 @@ SETUP_REFRESHRATE_DESC
 	RU	Задайте время между перезагрузками браузера в секундах. При воспроизведении SqueezeCenter будет делать обновление в конце песни, если ее длительность меньше этого значения. (По умолчанию — 30, минимум — 2.)
 	SV	Ange (i sekunder) med vilka tidsintervall webbläsaren ska uppdatera sidan.  Standardvärdet är 30 sekunder, minimivärdet 2 sekunder. När en låt spelas upp görs uppdateringen mot slutet av låten om den är kortare än värdet som anges här.
 	ZH_CN	设置浏览器刷新的间隔时间。当播放歌曲时，如果设的值少于歌曲的长度服务器将在歌曲末端附近设置刷新。（缺省为30，极小值为2）
-
-SETUP_REFRESHRATE_OK
-	CS	Doba obnovení nastavena na
-	DA	Opdateringsinterval indstillet til:
-	DE	Aktualisierungszeit:
-	EN	Refresh time set to
-	ES	Tiempo de actualización establecido en
-	FI	Päivitysajaksi määritetty
-	FR	Délai d'attente d'actualisation réglé à
-	HE	שעת הרענון נקבעה ל-
-	IT	Intervallo di aggiornamento impostato su
-	JA	更新時間セット
-	NL	Vernieuwingstijd ingesteld op
-	NO	Oppdateringstid satt til
-	PL	Czas odświeżania ustawiony na
-	RU	Обновить заданное время
-	SV	Uppdateringstiden är nu
-	ZH_CN	刷新时间设为：
 
 SETUP_COVERART
 	CS	Obal alba
@@ -7335,80 +6641,6 @@ SETUP_COVERART_DESC
 	SV	Omslagsbilder för album, visas (om de finns tillgängliga) när du öppnar album- eller låtinformationen. Omslagsbilderna finns i ID3-taggarna för enskilda låtar eller i samma mapp som låtfilerna. Som standard används bilder med namnen cover.jpg, folder.jpg, album.jpg, och thumb.jpg. Du ange fler filnamn för albumomslagsbilder. Det går att ange olika filnamn för miniatyrer och bilder i full storlek. Om du börjar med prefixet % kan du fortsätta med vilken kombination som helst av samma element som är tillgängliga för Titelformat. %ARTIST – ALBUM genererar t.ex. sökningar efter artist – album.jpg med den artist- och albuminformation som hittats.
 	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
-SETUP_COVERART_OK
-	CS	Název obrazového souboru obalu alba nastaven na
-	DA	Filnavne for coverbilleder gemt som:
-	DE	Dateiname für Plattenhüllen:
-	EN	Artwork image file name set to
-	ES	El nombre de archivo de imagen de carátula es
-	FI	Kansitaiteen kuvatiedoston nimeksi asetettu
-	FR	Nom de fichier pour les images de pochette:
-	HE	שם הקובץ של תמונת העטיפה מוגדר ל-
-	IT	Nome file copertine impostato su
-	JA	アートワーク イメージファイル名設定:
-	NL	Beeldbestandsnaam van hoes ingesteld op
-	NO	Filnavn for albumomslag er satt til
-	PL	Nazwa pliku obrazu okładki ustawiona na
-	PT	Nome do ficheiro para a Capa do Álbum é
-	RU	Имя файла обложки
-	SV	Angivet filnamn för omslagsbilden är
-	ZH_CN	专辑封面图象文件名设为：
-
-SETUP_COVERTHUMB
-	CS	Náhled předlohy
-	DA	Små coverbilleder
-	DE	Plattenhüllen-Miniatur
-	EN	Artwork Thumbnail
-	ES	Miniatura de carátula
-	FI	Kansitaiteen pienoiskuva
-	FR	Vignettes de pochettes
-	HE	תמונה ממוזערת של עטיפה
-	IT	Miniatura copertina
-	JA	アートワーク サムネイル
-	NL	Miniatuur van hoes
-	NO	Miniatyrbilder av albumomslag
-	PL	Miniatura okładki
-	PT	Miniatura da Capa do Álbum
-	RU	Эскиз обложки
-	SV	Albumomslagsminiatyrer
-	ZH_CN	图象指图
-
-SETUP_COVERTHUMB_DESC
-	CS	Náhledy obalů alb bude SqueezeCenter hledat ve stejných výchozích obrazových souborech jako výše, a ve štítcích ( tagách) ID3. Pokud však chcete používat funkci proměnného názvu souboru nebo zadat vlastní název souboru, zadejte ho zde.
-	DA	Når du søger efter billeder af albumcovere, søges der efter de samme standardbilledfiler som er nævnt ovenfor, samt i ID3-mærker. Hvis du ønsker at bruge funktionen til variable filnavne, eller angive et selv, skal du skrive det her.
-	DE	SqueezeCenter sucht für Plattenhüllen-Miniaturen nach denselben Standardbilddateien wie oben sowie in den ID3-Tags. Wenn Sie jedoch die Option 'Variable Dateinamen' nutzen oder einen eigenen Dateinamen angeben möchten, geben Sie diesen hier ein.
-	EN	For artwork thumbnails, SqueezeCenter will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
-	ES	Para miniaturas de carátula, el servidor buscará los mismos archivos predeterminados que antes y en las etiquetas ID3. Sin embargo, si desea usar la característica de nombre de archivo variable o especificar un nombre propio, introdúzcalo aquí.
-	FI	Kansitaiteen pienoiskuvia etsiessään SqueezeCenter etsii samoja oletuskuvatiedostoja kuin yllä sekä ID3-tunnisteita.  Jos haluat käyttää tiedostonimien muuttujia tai määrittää oman tiedostonimen hakua varten, kirjoita se tähän.
-	FR	Pour afficher les vignettes de pochettes, le serveur recherche par défaut le même fichier image que pour les pochettes. Vous pouvez toutefois spécifier un autre fichier ici.
-	HE	עבור תמונות ממוזערות של עטיפות, השרת יבצע חיפוש באותם קובצי תמונות המוגדרים כברירת מחדל כמצוין לעיל ובתגי ID3. עם זאת, אם ברצונך להשתמש במאפיין של שמות קבצים הניתנים לשינוי, או לציין שם קובץ משלך, הזן את הפרטים בשדה זה.
-	IT	Per trovare le miniature delle copertine, SqueezeCenter cerca i file di immagini predefiniti indicati sopra e nei tag ID3. Se tuttavia si desidera utilizzare la funzione per il nome di file variabile o specificare un nome di file, inserirlo qui.
-	NL	Voor hoesminiaturen doorzoekt SqueezeCenter dezelfde standaardbeeldbestanden als hierboven, evenals ID3-tags. Als je de functie voor variabele bestandsnamen wilt gebruiken, of je eigen bestandsnaam wilt invoeren, kun je dat hier doen.
-	NO	SqueezeCenter søker i de samme bildefilene som ovenfor etter miniatyrbilder av albumomslag, samt i ID3-etiketter. Hvis du i stedet vil bruke funksjonen for variable filnavn, eller angi et filnavn selv, kan du gjøre det her.
-	PL	W przypadku miniatur okładek program SqueezeCenter wyszuka te same domyślne pliki obrazów jak powyżej oraz przeszuka znaczniki ID3. Aby użyć funkcji zmiennych nazw plików lub określić własną nazwę pliku, wprowadź ją tutaj.
-	RU	SqueezeCenter выполнит поиск аналогичных файлов изображений для эскизов обложек, а также поиск в тегах ID3. Но если необходимо использовать функцию переменного имени файла или задать собственное имя файла, введите его здесь.
-	SV	Vid sökningar efter miniatyrer av albumomslag söker SqueezeCenter efter samma standardbildfiler som ovan, samt i ID3-taggar.  Om du vill använda funktionen för variabla filnamn, eller ange ett eget filnamn, kan du ange det här.
-	ZH_CN	在浏览图像指图方面，服务器将根据上述的缺省封面图像文件和在ID3标签内搜查。但是，如果您决定使用变量文件名功能，或运用您指定的文件名，请在此输入。
-
-SETUP_COVERTHUMB_OK
-	CS	Název obrazového souboru obalu alba nastaven na
-	DA	Filnavne for miniaturecoverbilleder gemt som:
-	DE	Dateiname für Plattenhüllen-Miniaturen:
-	EN	Artwork thumbnail image file name set to
-	ES	El nombre de archivo de la imagen en miniatura de carátula es
-	FI	Kansitaiteen pienoiskuvan kuvatiedoston nimeksi asetettu
-	FR	Nom de fichier pour les vignettes des images de pochette:
-	HE	שם הקובץ של התמונה הממוזערת של העטיפה מוגדר ל-
-	IT	Nome file miniature copertine impostato su
-	JA	アートワーク サムネイル イメージファイル名設定
-	NL	Beeldbestandsnaam van hoesminiatuur ingesteld op
-	NO	Filnavn for miniatyrbilder av albumomslag er satt til
-	PL	Nazwa pliku obrazu miniatury okładki ustawiona na
-	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
-	RU	Заданное название изображения для эскиза обложки
-	SV	Filnamn för omslagsminiatyrer är
-	ZH_CN	图象指图文件名已设为：
-
 SETUP_THUMBSIZE
 	CS	Velikost náhledů
 	DA	Størrelse på miniaturer
@@ -7444,22 +6676,6 @@ SETUP_THUMBSIZE_DESC
 	RU	Выберите размер в пикселях (25–250) для изображения эскиза, используемый по умолчанию при просмотре обложек. Значение по умолчанию — 100.
 	SV	Välj storlek i bildpunkter (25–250) för standardminiatyrer när du bläddrar efter omslag. Standard är 100.
 	ZH_CN	以映像点（25-250）为单位，请选择浏览图象时缺省图象指图的大小。缺省值为100。
-
-SETUP_PLUGINS_OK
-	CS	Vaše nabídka Doplňky je nyní:
-	DA	Menuen Ekstra er nu:
-	DE	Das Extras-Menü ist:
-	EN	Your Extras menu is now:
-	ES	Menú Extras:
-	FI	Muut-valikko on nyt:
-	FR	Votre menu Extras:
-	IT	Il menu Extra è ora:
-	NL	Je menu Extra's is nu:
-	NO	Tilleggsmenyen er nå:
-	PL	Menu Dodatki jest:
-	PT	O menu de extras é
-	RU	Теперь меню "Дополнения" выглядит так:
-	SV	Menyn Extrafunktioner är nu:
 
 SETUP_HTTPPORT
 	CS	Číslo portu webového serveru
@@ -8024,44 +7240,6 @@ SETUP_ADDITIONAL_PLAYLIST_BUTTONS_DESC
 	RU	В некоторых обложках могут отображаться дополнительные кнопки для воспроизводимых элементов, например "Воспроизвести следующую" или "Удалить из плей-листа".<br/><br/>Обратите внимание: эта настройка сохраняется только в вашем браузере. Если планируется использовать ее в других браузерах, необходимо выбрать эту настройку и в них.
 	SV	Med vissa skal kan du välja att visa extra spellisteknappar, t.ex. som Spela härnäst eller Ta bort från spellista.<br/><br/>Observera att det här alternativet endast sparas i webbläsaren. Du måste alltså ställa in varje webbläsare som du vill använda separat.
 
-SETUP_THROTTLESCAN
-	CS	Rychlost prohledávání hudby
-	DA	Hastighed ved musiksøgning
-	DE	Musik-Durchsuchgeschwindigkeit
-	EN	Music scan speed
-	ES	Velocidad de examen de música:
-	FI	Musiikkihaun nopeus
-	FR	Vitesse d'analyse du dossier de musique:
-	HE	מהירות הסריקה של מוסיקה
-	IT	Velocità analisi musica
-	JA	曲スキャンスピード
-	NL	Snelheid van muziekscan
-	NO	Hastighet for søk etter musikk
-	PL	Szybkość przeszukiwania muzyki
-	PT	Velocidade de pesquisa da música
-	RU	Скорость сканирования музыки
-	SV	Hastighet på musiksökning
-	ZH_CN	音乐扫描速度
-
-SETUP_THROTTLESCAN_DESC
-	CS	SqueezeCenter při spuštění prohledá vaši složku Hudba a ze štítků (tagů) souborů načte interpreta, album a další informace. Na některých pomalejších systémech a na počítačích s Windows, které používají souborové systémy FAT a FAT32, to může nepřijatelně zpomalit váš počítač. Toto nastavení můžete změnit tak, aby prohledávání bylo pomalejší a spotřebovávalo méně zdrojů počítače.
-	DA	Når SqueezeCenter starter, gennemsøges musikmapperne, og oplysninger om kunstnere, album m.m. fra musikfilernes mærker bliver indlæst. På langsomme computere og pc'er med Windows og filsystemet FAT eller FAT32, vil det muligvis få computeren til at køre uacceptabelt langsomt. Du kan ændre indstillingen sådan at gennemsøgningen er langsommere og derfor bruger færre af computerens resurser.
-	DE	Wenn SqueezeCenter beginnt, im Musikordner in den ID-Tags der Musik-Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und Windows-PCs mit einem FAT- oder FAT32-Datensystem zu einer inakzeptablen Verlangsamung des Computers kommen. Sie können diese Einstellung ändern, damit mehr Ressourcen zur Verfügung stehen.
-	EN	When SqueezeCenter starts it scans your music folder to load the artist, album and other information from the tags in the files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
-	ES	Cuando el servidor se inicia, examina la carpeta de música para cargar la información de artista, álbum etc. desde las etiquetas en los archivos. En algunos sistemas lentos y equipos con Windows que usen sistemas de archivos FAT y FAT32, esto puede reducir el rendimiento del equipo a niveles inaceptables. Se puede cambiar esta opción para hacer más lento el examen y que no se usen tantos recursos del equipo.
-	FI	Käynnistyessään SqueezeCenter tarkistaa musiikkikansion, jotta se voi ladata artisti- tai levytiedot tai muita tietoja tiedostoissa olevista tunnuksista. Hitaammissa tietokoneissa ja sellaisissa Windows-tietokoneissa, joissa on käytössä FAT- tai FAT32-tiedostojärjestelmä, tämä saattaa hidastaa tietokoneen toimintaa. Voit muuttaa tätä asetusta, jotta tarkistus suoritetaan hitaammin ja tietokoneen resursseja rasitetaan vähemmän.
-	FR	Lorsqu'il démarre, le serveur analyse le dossier de musique pour mettre à jour sa base de données avec les informations sur les artistes ou les albums, à partir des repères ID3. Cette analyse peut utiliser une grande quantité de ressources système sur les ordinateurs plus lents, dotés de systèmes de fichiers FAT ou FAT32. Vous pouvez modifier ce réglage afin d'utiliser moins de ressources.
-	HE	עם הפעלת השרת, הוא סורק את תיקיית המוסיקה שלך כדי לטעון את מידע המבצעים, האלבומים ומידע נוסף מהתגים בקבצים. במערכות איטיות מסוימות ובמחשבי Windows המשתמשים במערכות הקבצים FAT ו-FAR32, הדבר עלול להאט את המחשב באופן משמעותי. באפשרותך לשנות הגדרה זו כדי להאט את הסריקה ולהשתמש בפחות משאבי מחשב.
-	IT	Quando viene avviato, SqueezeCenter analizza la cartella della musica per caricare l'artista, l'album e altre informazioni dai tag dei file. In alcuni sistemi più lenti e nei PC Windows che utilizzano file system FAT e FAT32 questa operazione potrebbe rallentare eccessivamente il computer. È possibile modificare questa impostazione per ridurre la velocità dell'analisi e utilizzare meno risorse del computer.
-	JA	サーバーソフトウェアがスタートする時に、あなたの音楽フォルダーからアーチスト、アルバム等の情報をスキャンします。この場合、古いPCですと極端にPCのパフォーマンスを損ないます。以下で、PCのリソースを使いすぎない設定にして下さい。
-	NL	Wanneer start, wordt je muziekmap gescand om de artiest, het album en andere informatie uit de tags in de bestanden te laden. Op langzamere systemen en Windows-pcs' met FAT- of FAT32-bestandssystemen kan de computer hierdoor onacceptabel langzaam worden. Je kunt deze instelling veranderen om het scannen te vertragen zodat er minder computercapaciteit gebruikt wordt.
-	NO	Når SqueezeCenter starter, søker den gjennom musikkmappen for å finne artistnavn, album osv. fra etikettene i filene. På noen tregere systemer og Windows-maskiner som bruker FAT- eller FAT32-filsystem, kan dette gjøre maskinen din veldig treg. Du kan endre denne innstillingen slik at søket går langsommere og bruker mindre av systemets ressurser.
-	PL	Po uruchomieniu program SqueezeCenter przeszukuje folder muzyki w celu załadowania informacji o wykonawcy, albumie i innych ze znaczników w plikach. W przypadku wolniejszych systemów i komputerów PC z systemem Windows wykorzystujących system plików FAT i FAT32 może to spowodować znaczne spowolnienie komputera. Ustawienie to można zmienić w celu spowolnienia skanowania i zwolnienia zasobów komputera.
-	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
-	RU	При запуске SqueezeCenter сканирует папку музыки, загружая из тегов файлов информацию об исполнителе, альбоме и др. На некоторых более медленных системах и компьютерах под управлением Windows с файловыми системами FAT и FAT32 это может серьезно замедлить работу компьютера. С помощью этой настройки можно замедлить сканирование, уменьшив потребление ресурсов компьютера.
-	SV	När SqueezeCenter startas söker programmet igenom din musikmapp och läser in information som artist och album från taggarna i filerna. På vissa långsammare datorer och Windows-datorer med FAT- eller FAT32-filsystem kan den här processen göra datorn alldeles för långsam. Du kan ändra inställningarna så att sökningen görs långsammare och kräver mindre datorresurser.
-	ZH_CN	当服务器开始扫描您的音乐文件夹并从文件标签中装载艺人、专辑、和其它信息从时，会对一些表现较慢的计算机或使用FAT或FAT32文件系统的微软视窗计算机造成较大的负荷而影响计算机的操作表现。您可以将扫描速度减慢并减少计算量。
-
 SETUP_SEARCHSUBSTRING
 	CS	Hledat ve slovech
 	DA	Søg i ord
@@ -8530,44 +7708,6 @@ SETUP_SPLITLIST_DESC
 	RU	SqueezeCenter может извлекать из тегов музыкальных файлов различные имена исполнителей, названия альбомов и жанры. Если в тегах обнаружатся какие-либо из нижеперечисленных слов или символов, для каждого элемента будут созданы отдельные записи. Например, если в списке ниже поставить точку с запятой, песня с тегом исполнителя "И. С. Бах; Майкл Тилсон Томас" появится в области исполнителей как под именем "И. С. Бах" и "Майкл Тилсон Томас". При изменении этой настройки будет запущено повторное сканирование медиатеки.
 	SV	SqueezeCenter stöder taggar med flera artistnamn, albumtitlar eller genrer för samma låt.  Om SqueezeCenter hittar ett eller flera av orden eller tecknen i taggarna, skapas självständiga poster för varje objekt.  Om du t.ex. använder semikolon i listan nedan visas en låt som getts taggen J. S. Bach;Michael Tilson Thomas i artistområdet för både J.S. Bach och Michael Tilson Thomas.  Om du ändrar den här inställningen söks musikbiblioteket igenom på nytt.
 
-SETUP_FILESORT
-	CS	Seřadit podle názvu souboru
-	DA	Sorter efter filnavn
-	DE	Nach Dateiname sortieren
-	EN	Sort By File Name
-	ES	Ordenar por nombre de archivo
-	FI	Järjestä tiedostonimen mukaan
-	FR	Trier par nom de fichier
-	HE	מיון לפי שם קובץ
-	IT	Ordina per nome file
-	JA	ファイル名でソートする
-	NL	Op bestandsnaam sorteren
-	NO	Sorter etter filnavn
-	PL	Sortuj według nazwy pliku
-	PT	Ordenar por Nome de Ficheiro
-	RU	Сортировать по имени файла
-	SV	Sortera efter filnamn
-	ZH_CN	由文件名排序
-
-SETUP_FILESORT_DESC
-	CS	Při procházení složky Hudba si můžete zvolit, zda budou skladby seřazeny podle názvu souboru nebo podle informací štítku ID3 (Interpret, album, číslo stopy).
-	DA	Når du gennemser din musiksamling, kan du vælge at numrenes titler skal sorteres efter filnavn eller efter oplysningerne i id3-mærket (kunstner, album, nummer).
-	DE	Wenn Sie den Musikordner durchsuchen, können Sie bestimmen, ob die Titel nach Dateinamen oder ID3-Tags (Interpret, Album, Titelnummer) sortiert werden sollen.
-	EN	When you are browsing the Music Folder, you can choose to have the songs sorted by file name or by ID3 tag information (Artist, Album, Track Number).
-	ES	Cuando se examina la carpeta de música, se puede elegir entre ordenar las canciones por nombre de archivo o por información de las etiquetas ID3 (artista, álbum, número de pista).
-	FI	Kun selaat musiikkikansiota, voit valita järjestetäänkö kappaleet tiedostonimen vai ID3-tunnustietojen (artisti, levy, kappaleen numero) mukaan.
-	FR	Lorsque vous analysez votre dossier de musique, vous pouvez choisir un tri par nom de fichier ou par repère ID3 (artiste, album, numéro de piste).
-	HE	בעת עיון בתיקיית המוסיקה שלך, באפשרותך לבחור למיין את השירים לפי שם הקובץ או מידע התגים מסוג ID3 (מבצע, אלבום, מספר רצועה)
-	IT	Quando si sfoglia la cartella Musica, è possibile scegliere di ordinare i brani per nome file o in base alle informazioni dei tag ID3 (Artista, Album, Numero brano).
-	JA	音楽フォルダーをブラウズしている時には、ファイル名で検索するか、ID3タグ情報（アーチスト、アルバム、トラック番号）で検索するか、選択することができます。
-	NL	Wanneer je de muziekmap doorloopt, kun je tracks laten sorteren op bestandsnaam of op ID3-taginformatie (artiest, album, nummer).
-	NO	Når du blar i musikkmappen, kan du velge å sortere sangene etter filnavn, eller etter informasjonen i ID3-etiketter (artist, album, spor).
-	PL	Podczas przeglądania folderu muzyki można posortować utwory według nazwy pliku lub informacji w znaczniku ID3 (wykonawca, album, numer utworu).
-	PT	Ao percorrer a pasta de músicas, pode escolher se deseja ordenar por nome de ficheiro ou pela informação das tags ID3 (artista, álbum, número de pista).
-	RU	При просмотре папки "Музыка" можно выполнить сортировку песен по имени файла или тегу ID3 (исполнитель, альбом, номер дорожки).
-	SV	När du bläddrar i musikmappen kan du välja om låtarna ska sorteras efter filnamn eller efter ID3-tagginformationen (artist, album, spårnummer).
-	ZH_CN	当您浏览音乐文件夹时，您可以选择以文件名或由ID3标签信息如艺人名、专辑、音轨数字等进行排序。
-
 SETUP_BROWSEAGELIMIT
 	CS	Omezení nové hudby
 	DA	Grænse for ny musik
@@ -8600,44 +7740,6 @@ SETUP_BROWSEAGELIMIT_DESC
 	PL	Wybierz liczbę najnowszych albumów podczas wyszukiwania nowej muzyki. Wartość domyślna wynosi 100.
 	RU	Выберите число последних альбомов, отображаемых при просмотре новой музыки. По умолчанию — 100
 	SV	Välj antalet nya album som ska visas när du söker efter ny musik. Standard är 100.
-
-SETUP_ANIMATIONLEVEL
-	CS	Animace
-	DA	Animation
-	DE	Animation
-	EN	Animation
-	ES	Animación
-	FI	Animaatio
-	FR	Animations
-	HE	הנפשה
-	IT	Animazione
-	JA	アニメーション
-	NL	Animatie
-	NO	Animasjon
-	PL	Animacja
-	PT	Animações
-	RU	Анимация
-	SV	Animering
-	ZH_CN	动画
-
-SETUP_ANIMATIONLEVEL_DESC
-	CS	Tato možnost určuje množství povolených animací. Mezi animace patří zobrazení krátkých zpráv, smazání obrazovky při navigaci a rolování dlouhých názvů skladeb.
-	DA	Denne indstilling bruges til at indstille hvor meget animation der må vises. Animation er bl.a. korte meddelelser, animationer i forbindelse med navigation samt lange titler der rulles.
-	DE	Diese Option bestimmt, wie viel Animation zu sehen ist. Mögliche Animationen sind kurze Mitteilungen, Überblendungen des Display-Inhalts sowie Laufschrift für lange Titel.
-	EN	This option determines the amount of animation allowed. Animations include showing brief messages, screen wipes during navigation, and scrolling long titles.
-	ES	Esta opción determina el nivel de animación permitido. Las animaciones incluyen la muestra de mensajes breves, pases de pantalla durante la navegación y desplazamiento de títulos largos.
-	FI	Tällä asetuksella määritetään animoinnin sallittu määrä. Animaatioihin kuuluvat lyhyiden viestien näyttäminen, näytön pyyhkiminen verkossa liikkumisen aikana ja pitkien nimien vierittäminen.
-	FR	Cette option permet de déterminer le degré d'animation de la platine, comme l'affichage de messages durant une courte période, les effets de fondu au cours de la navigation et le défilement des titres longs.
-	HE	אפשרות זו קובעת את כמות ההנפשה המותרת. הנפשות כוללות הצגת הודעות קצרות, מעבר על-גבי המסך במהלך ניווט וגלילה של כותרות ארוכות.
-	IT	Questa opzione consente di definire il livello di animazione desiderato. Le animazioni includono la visualizzazione di brevi messaggi, la dissolvenza fra una schermata e l'altra durante la navigazione e lo scorrimento dei titoli lunghi.
-	JA	このオプションは、許容できるアニメーションの量を決めます。アニメーションとは、短いメッセージの表示、ナビゲーション中のスクリーン消去、長いタイトルのスクロール、を含みます。
-	NL	Deze optie bepaalt de toegestane hoeveelheid animatie. Animaties zijn onder andere het tonen van korte berichten, het verschuiven van tekst tijdens navigatie en lopende lange titels.
-	NO	Dette alternativet angir hvor mye animasjon som tillates. Animasjoner inkluderer korte meldinger, skjermtømming under navigering og rulling av lange titler.
-	PL	Ta opcja określa ilość dozwolonej animacji. Animacje obejmują wyświetlanie krótkich komunikatów, przesuwanie zawartości podczas nawigacji i przewijanie długich tytułów.
-	PT	Esta opção determina a quantidade de animação permitida. As animações são compostas por breves mensagens, animação de ecrãs e deslizamento de títulos compridos.
-	RU	Данный параметр определяет объем допустимой анимации. К анимации относится отображение коротких сообщений, постепенная смена экранов во время навигации и прокрутка длинных названий.
-	SV	Här väljer du i vilken mån animeringar tillåts. Animeringar kan vara korta meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
-	ZH_CN	这个选项决定了所允许的动画量。动画包括简要消息显示、在漫游时的屏幕转换效果、和长标题的卷动。
 
 SETUP_DISABLESTATISTICS
 	CS	Statistika knihovny
@@ -8918,44 +8020,6 @@ SETUP_ITEMSPERPAGE_DESC
 	SV	Det här valet kontrollerar det maximala antalet poster per sida i webbgränssnittet.
 	ZH_CN	这个选项设定各个网页所显示的项目数量。
 
-SETUP_ITEMSPERPAGE_CHOOSE
-	CS	Počet položek na stránce:
-	DA	Elementer pr. side:
-	DE	Elemente pro Seite:
-	EN	Items per page:
-	ES	Elementos por página:
-	FI	Kohteita sivua kohti:
-	FR	Eléments par page:
-	HE	פריטים לדף:
-	IT	Voci per pagina:
-	JA	1ページのアイテム数:
-	NL	Items per pagina:
-	NO	Elementer per side:
-	PL	Elementów na stronie:
-	PT	Items por página
-	RU	Элементов на страницу:
-	SV	Poster per sida:
-	ZH_CN	每一页的项目数量：
-
-SETUP_ITEMSPERPAGE_OK
-	CS	Počet položek zobrazených na stránce je nyní:
-	DA	Antal elementer der vises pr. side, er nu:
-	DE	Anzahl Elemente pro Seite:
-	EN	Number of items to display per page is now:
-	ES	El número de elementos a mostrar por página es:
-	FI	Sivulla näytettävien kohteiden määrä on nyt:
-	FR	Le nombre d'éléments par page est maintenant de:
-	HE	מספר הפריטים להצגה בכל דף הוא:
-	IT	Numero attuale di voci visualizzate per pagina:
-	JA	現在の1ページのアイテム数:
-	NL	Het aantal weer te geven items per pagina is nu:
-	NO	Antallet elementer per side er nå:
-	PL	Liczba pozycji wyświetlanych na stronie:
-	PT	O número de items por página é
-	RU	Текущее число элементов на страницу:
-	SV	Antalet poster per sida är nu:
-	ZH_CN	当前每一页的项目数量为：
-
 SETUP_TCPREADMAXIMUM
 	CS	Maximální počet TCP zásuvek k načtení za jeden průběh
 	DA	Maksimale antal TCP-sokler der kan læses pr. gennemgang
@@ -9013,25 +8077,6 @@ SETUP_UDPCHUNKSIZE
 	SV	Maximal UDP-datastorlek
 	ZH_CN	最大UDP数据大小
 
-SETUP_UDPCHUNKSIZE_CHOOSE
-	CS	Maximální počet bytů audio dat k odeslání do přehrávače v paketu UDP (pouze SLIMP3):
-	DA	Maksimalt antal bytes lyddata der kan sendes til afspilleren i en UDP-pakke (kun SLIMP3):
-	DE	Maximale Anzahl Byte an Audiodaten, die in UDP-Paketen zum Player geschickt werden (nur SLIMP3):
-	EN	Maximum number of bytes of audio data to send to player in a UDP packet (SLIMP3 only):
-	ES	EL número máximo de bytes de datos de audio que se enviarán al reproductor en un paquete UDP (solo SLIMP3):
-	FI	Soittimeen lähetettävän äänitiedon enimmäistavumäärä UDP-paketissa (vain SLIMP3):
-	FR	Nombre maximal d'octets de données audio à envoyer à la platine par paquet UDP (SLIMP3 uniquement):
-	HE	מספר הבתים המרבי של נתוני שמע שניתן לשלוח לנגן במנת UDP‏ (SLIMP3 בלבד):
-	IT	Numero massimo di byte di dati audio da inviare in pacchetti UDP (solo per SLIMP3):
-	JA	UDPパケットでプレーヤーに送信するオーディオデータの最大バイト数（SLIMP3のみ）:
-	NL	Maximumaantal bytes aan audiodata dat in een UDP-pakket naar het muzieksysteem moet worden gestuurd (alleen SLIMP3):
-	NO	Maksimalt antall byte med lyddata som skal sendes til spilleren i en UDP-pakke (kun SLIMP3):
-	PL	Maksymalna liczba bajtów danych audio wysyłanych do odtwarzacza w pakiecie UDP (tylko SLIMP3):
-	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP (SLIMP):
-	RU	Макс. число байт аудиоданных, отправляемых плееру в пакете UDP (только SLIMP3):
-	SV	Maximalt antal bytes ljuddata som skickas till spelaren i ett UDP-paket (endast SLIMP3):
-	ZH_CN	发送到播放机的最大音像数据UDP字节（只适用于SLIMP3）：
-
 SETUP_WEBPROXY
 	CS	Webový Proxy server
 	DA	Webproxy
@@ -9068,24 +8113,6 @@ SETUP_WEBPROXY_DESC
 	SV	Du kan ange IP-adress och port för en HTTP-/webbproxy som ska användas när SqueezeCenter ansluter till servrar utanför ditt lokala nätverk.  Använd formatet xx.xx.xx.xx:yyyy, där xx.xx.xx.xx är proxyns IP-adress och yyyy portnumret.  Lämna fältet tomt om du inte använder någon HTTP-/webbproxy.
 	ZH_CN	您可以指定当SqueezeCenter连接到您本地网络以外的服务器时所使用的HTTP/网代理IP地址和端口。请使用：xx.xx.xx.xx为网代理IP地址的格式、xx.xx.xx.xx：yyyy，yyyy为端口号。如果您不使用HTTP/网代理请留空。
 
-SETUP_WEBPROXY_CHOOSE
-	CS	Webová adresa Proxy
-	DA	Webproxyadresse
-	DE	Web-Proxyadresse
-	EN	Web Proxy Address
-	ES	Dirección de proxy Web
-	FI	WWW-välityspalvelimen osoite
-	FR	Adresse du proxy Web
-	HE	כתובת שרת Proxy באינטרנט
-	IT	Indirizzo proxy Web
-	JA	ウェブ プロキシーアドレス
-	NL	Webproxyadres
-	NO	Webproxy-adresse
-	PL	Adres serwera proxy w sieci Web
-	RU	Адрес веб-прокси
-	SV	Webbproxyadress
-	ZH_CN	网代理IP地址
-
 SETUP_SHOWBUFFERFULLNESS
 	CS	Zobrazit kompletní vyrovnávací paměť
 	DA	Vis størrelse af buffer
@@ -9103,25 +8130,6 @@ SETUP_SHOWBUFFERFULLNESS
 	RU	Показать заполнение буфера
 	SV	Visa storlek för buffert
 	ZH_CN	显示缓冲存储器的丰满度
-
-SETUP_TITLEFORMATWEB
-	CS	Aktuální formát  názvu webu
-	DA	Nuværende format for webtitel
-	DE	Aktuelles Web-Titelformat
-	EN	Current web title format
-	ES	Formato de título de Web actual
-	FI	Nykyisen WWW-kohteen muoto
-	FR	Format en cours des titres Web
-	HE	תבנית השם הנוכחית באינטרנט
-	IT	Formato titolo Web in uso
-	JA	現在のウェブタイトルフォーマット
-	NL	Huidig webtitelformaat
-	NO	Gjeldende format for webnavn
-	PL	Format aktualnego tytułu internetowego
-	PT	Título da Web actual
-	RU	Текущий формат веб-заголовка
-	SV	Aktuellt titelformat för webbgränssnittet
-	ZH_CN	当前的网标题格式
 
 SETUP_CSRFPROTECTIONLEVEL
 	CS	Úroveň ochrany CSRF
@@ -9252,44 +8260,6 @@ SETUP_FILTERRULE_HEAD
 	SV	Tillåtna IP-adresser
 	ZH_CN	允许的IP地址
 
-SETUP_FILTERHOSTS
-	CS	Blokovat příchozí spojení
-	DA	Blokér indgående forbindelser
-	DE	Eingehende Verbindungen blockieren
-	EN	Block incoming connections
-	ES	Bloquear conexiones entrantes
-	FI	Estä saapuvat yhteydet
-	FR	Bloquer les connexions entrantes
-	HE	חסימת חיבורים נכנסים
-	IT	Blocca connessioni in entrata
-	JA	外からの接続をブロックする
-	NL	Inkomende verbindingen blokkeren
-	NO	Blokker innkommende forbindelser
-	PL	Blokuj połączenia przychodzące
-	PT	Bloquear ligações remotas
-	RU	Блокирование входящих подключений
-	SV	Blockera inkommande anslutningar
-	ZH_CN	阻拦向内连接
-
-SETUP_ALLOWEDHOSTS
-	CS	IP adresy, které mají povoleno provádět příchozí připojení
-	DA	Tilladte IP-adresser ved indgående forbindelser
-	DE	IP-Adressen, die eingehende Verbindungen herstellen dürfen
-	EN	IP addresses allowed to make incoming connections
-	ES	Las direcciones IP pueden realizar conexiones entrantes
-	FI	IP-osoitteet saavat muodostaa saapuvan yhteyden
-	FR	Adresses IP autorisées pour les connexions entrantes
-	HE	כתובות IP שמורשות לבצע חיבורים נכנסים
-	IT	Indirizzi IP a cui è consentito effettuare connessioni in ingresso
-	JA	外からの接続を許可するIPアドレス
-	NL	IP-adressen die inkomende verbindingen mogen maken
-	NO	Tillatte ip-adresser ved innkommende forbindelser
-	PL	Adresy IP, z których dozwolone jest nawiązywanie połączeń przychodzących
-	PT	Endereço IP externo com permissões de ligação
-	RU	IP-адреса, с которых разрешены входящие подключения
-	SV	Tillåtna IP-adresser för inkommande anslutningar
-	ZH_CN	允许向内连接的IP来源地址
-
 SETUP_FILTERRULE_DESC
 	CS	Pokud jste zapnuli blokování, můžete zadat adresy, kterým chcete povolit připojení ke SqueezeCenter.<br><br>Toto pole akceptuje seznam konkrétních IP adres, zástupné znaky typu *  a rozsahy IP adres v seznamu oddělovaném čárkami. Například:<BR><BR><B>10.1.2.2</B> povolí připojení pouze z adresy 10.1.2.2 <BR><BR><B>10.1.2.*</B> povolí vše s IP adresou, která bude mezi adresami 10.1.2.x.<BR><BR><B>10.1.2.2-50</B> povolí připojení IP adres v rozsahu 10.1.2.2 - 10.1.2.50.<BR><BR>Více položek lze kombinovat a oddělovat čárkami, například <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Speciální IP adresa 127.0.0.1 povolí webovému prohlížeči připojení ke SqueezeCenter běžícímu na stejném počítači.
 	DA	Hvis blokeringsfunktionen er slået til, kan du angive adresser hvorfra der må etableres forbindelse til SqueezeCenter.<br><br>Du kan angive bestemte IP-adresser, adresser med jokertegnet * samt IP-adresseområder i en kommaadskilt liste. Eksempel:<BR><BR><B>10.1.2.2</B> tillader udelukkende 10.1.2.2 at etablere forbindelse<BR><BR><B>10.1.2.*</B> tillader forbindelser fra alt med en adresse startende med 10.1.2. og sluttende med et vilkårligt tal<BR><BR><B>10.1.2.2-50</B> tillader forbindelser fra alle IP-adresser mellem 10.1.2.2 og 10.1.2.50<BR><BR>Endelig kan du angive flere adresser og adresseområder, og adskille dem vha. et komma: <B>10.1.2.2,172.16.1.*,192.168.1-254</B><BR><BR>Den særlige IP-adresse 127.0.0.1 gør det muligt for en webbrowser at etablere forbindelse til SqueezeCenter som kører på den samme computer.
@@ -9397,63 +8367,6 @@ SETUP_CHANGES_SAVED
 	PL	Zmiany zostały zapisane.
 	RU	Изменения сохранены.
 	SV	Ändringarna har sparats.
-
-SETUP_CURRENT
-	CS	Aktuální
-	DA	Nuværende
-	DE	Aktuell
-	EN	Current
-	ES	Actual
-	FI	Nykyinen
-	FR	En cours
-	HE	הגדרה נוכחית
-	IT	In uso
-	JA	現在
-	NL	Huidige
-	NO	Aktiv
-	PL	Bieżące
-	PT	Actual
-	RU	Текущий
-	SV	Aktuellt
-	ZH_CN	当前
-
-SETUP_FORMATS
-	CS	Formáty
-	DA	Formater
-	DE	Formate
-	EN	Formats
-	ES	Formatos
-	FI	Muodot
-	FR	Formats
-	HE	תבניות
-	IT	Formati
-	JA	フォーマット
-	NL	Formaten
-	NO	Formater
-	PL	Formaty
-	PT	Formatos
-	RU	Форматы
-	SV	Format
-	ZH_CN	格式
-
-SETUP_NUMBER
-	CS	Číslo
-	DA	Nummer
-	DE	Nummer
-	EN	Number
-	ES	Número
-	FI	Numero
-	FR	Numéro
-	HE	מספר
-	IT	Numero
-	JA	数字
-	NL	Nummer
-	NO	Nummer
-	PL	Numer
-	PT	Número
-	RU	Номер
-	SV	Nummer
-	ZH_CN	数字
 
 SETUP_NO_AUTHORIZE
 	CS	Není chráněno heslem
@@ -9580,158 +8493,6 @@ SETUP_PASSWORD_MISMATCH
 	RU	Введенные пароли не совпадают.
 	SV	Lösenorden stämmer inte överens.
 
-SETUP_DONT_CACHE
-	CS	Neodkládat
-	DA	Brug ikke cachelager
-	DE	Nicht zwischenspeichern
-	EN	Don't Cache
-	ES	No usar caché
-	FI	Älä tallenna välimuistiin
-	FR	Ne pas utiliser de cache
-	HE	ללא העברה למטמון
-	IT	Non memorizzare nella cache
-	JA	キャッシュに保存しない
-	NL	Niet in cache plaatsen
-	NO	Ikke bruk hurtigbuffer
-	PL	Nie buforuj
-	PT	Não usar a Cache
-	RU	Без кэширования
-	SV	Spara inte i cache-minne
-	ZH_CN	关闭高速缓冲存储器
-
-SETUP_CACHE
-	CS	Odkládací
-	DA	Cachelager
-	DE	Zwischenspeicher
-	EN	Cache
-	ES	Caché
-	FI	Välimuisti
-	FR	Cache
-	HE	מטמון
-	IT	Cache
-	JA	キャッシュに保存する
-	NL	Cache
-	NO	Hurtigbuffer
-	PL	Pamięć podręczna
-	PT	Usar a Cache
-	RU	С кэшированием
-	SV	Spara i cache-minne
-	ZH_CN	利用高速缓冲存储器
-
-SETUP_NO_ANIMATIONS
-	CS	Žádné animace
-	DA	Ingen animationer
-	DE	Keine Animationen
-	EN	No animations
-	ES	Sin animaciones
-	FI	Ei animaatioita
-	FR	Pas d'animation
-	HE	ללא הנפשות
-	IT	Nessuna animazione
-	JA	アニメーションなし
-	NL	Geen animaties
-	NO	Ingen animasjon
-	PL	Bez animacji
-	PT	Sem Animações
-	RU	Без анимации
-	SV	Inga animeringar
-	ZH_CN	撤销动画
-
-SETUP_BRIEF_MESSAGES
-	CS	Pouze krátké zprávy
-	DA	Kun korte beskeder
-	DE	Nur kurze Meldungen
-	EN	Brief messages only
-	ES	Sólo mensajes breves
-	FI	Vain lyhyet viestit
-	FR	Messages brefs seulement
-	HE	הודעות קצרות בלבד
-	IT	Solo messaggi brevi
-	JA	短いメッセージのみ
-	NL	Alleen korte berichten
-	NO	Kun korte beskjeder
-	PL	Tylko krótkie wiadomości
-	PT	Apenas Mensagens Breves
-	RU	Только краткие сообщения
-	SV	Endast korta meddelanden
-	ZH_CN	简短信息
-
-SETUP_SCREEN_WIPES
-	CS	Mazání obrazovky plus zpráv
-	DA	Skærmanimationer og beskeder
-	DE	Überblendungen und Mitteilungen
-	EN	Screen wipes plus messages
-	ES	Pases de pantalla más mensajes
-	FI	Näytön pyyhkiminen ja viestit
-	FR	Fondus et messages
-	HE	מעברים על-גבי המסך והודעות
-	IT	Dissolvenza schermo e messaggi
-	JA	スクリーンを消去してメッセージを表示
-	NL	Verschuiven en berichten
-	NO	Skjermtømming og meldinger
-	PL	Przesuwanie zawartości ekranu oraz komunikaty
-	PT	Animação de Ecrã e Mensagens
-	RU	Чистящие салфетки плюс сообщения
-	SV	Skärmåkningar och meddelanden
-	ZH_CN	屏幕抹及信息
-
-SETUP_FULL_ANIMATION
-	CS	Plná animace
-	DA	Fuld animation
-	DE	Volle Animation
-	EN	Full animation
-	ES	Animación completa
-	FI	Täysi animaatio
-	FR	Toutes les animations
-	HE	הנפשה מלאה
-	IT	Animazione completa
-	JA	アニメーション全て
-	NL	Volledige animatie
-	NO	Alle animasjoner
-	PL	Pełna animacja
-	PT	Animação Completa
-	RU	Полная анимация
-	SV	Alla animeringar
-	ZH_CN	完整动画
-
-SETUP_DONT_SAVE_TAG_INFO
-	CS	Neukládat informace tagu MP3
-	DA	Gem ikke oplysninger fra mp3-mærker
-	DE	MP3-Tag-Infos nicht speichern
-	EN	Don't Save MP3 Tag Info
-	ES	No guardar información de etiquetas MP3
-	FI	Älä tallenna MP3-tunnistetietoja
-	FR	Ne pas enregistrer l'information ID3
-	HE	ללא שמירת מידע תגים מסוג MP3
-	IT	Non salvare informazioni tag MP3
-	JA	MP3のタグ情報を保存しない
-	NL	MP3-taginfo niet opslaan
-	NO	Ikke lagre mp3-etikettinformasjon
-	PL	Nie zapisuj informacji ze znacznika pliku MP3
-	PT	Não Gravar Informação ID3
-	RU	Не сохранять информацию тега MP3
-	SV	Spara inte ID3-tagginformation
-	ZH_CN	不要保存MP3标签信息
-
-SETUP_SAVE_TAG_INFO
-	CS	Uložit informaci tagu MP3
-	DA	Gem oplysninger fra mp3-mærker
-	DE	MP3-Tag-Infos speichern
-	EN	Save MP3 Tag Info
-	ES	Guardar información de etiqueta MP3
-	FI	Tallenna MP3-tunnistetiedot
-	FR	Enregistrer les informations ID3
-	HE	שמירת מידע של תג MP3
-	IT	Salva informazioni tag MP3
-	JA	MP3のタグ情報を保存する
-	NL	MP3-taginfo bewaren
-	NO	Lagre mp3-etiketter
-	PL	Zapisz informacje w znaczniku pliku MP3
-	PT	Gravar Informação ID3
-	RU	Сохранить информацию тега MP3
-	SV	Spara ID3-taggsinformation
-	ZH_CN	保存MP3标签信息
-
 SETUP_MDNSNAME
 	CS	Název Bonjour
 	DA	Bonjour-navn
@@ -9750,25 +8511,6 @@ SETUP_MDNSNAME
 	RU	Название Bonjour
 	SV	Bonjour-namn
 	ZH_CN	Bonjour名
-
-SETUP_MDNSNAME_OK
-	CS	Název Bonjour pro tento server je:
-	DA	Bonjour-navnet for denne server er:
-	DE	Der Bonjour-Name dieses Servers ist:
-	EN	The Bonjour name for this server is:
-	ES	El nombre de Bonjour de este servidor es:
-	FI	Palvelimen Bonjour-nimi on:
-	FR	Le nom Bonjour de ce serveur est:
-	HE	שם Bonjour עבור שרת זה הוא:
-	IT	Nome in Bonjour assegnato al server:
-	JA	このサーバーのランデブー名は:
-	NL	De Bonjour-naam voor deze server is:
-	NO	Bonjour-navn for denne serveren:
-	PL	Nazwa Bonjour dla tego serwera to:
-	PT	O nome Bonjour para este servidor é
-	RU	Название Bonjour данного сервера:
-	SV	Bonjour-namnet för den här servern är:
-	ZH_CN	此服务器的Bonjour名：
 
 SETUP_MDNSNAME_DESC
 	CS	Můžete si vybrat název pro tento server, který se bude používat s Bonjour. Ponechte toto pole prázdné, chcete-li vypnout reklamy Bonjour ve SqueezeCenter. Aby se tyto změny projevily, bude nutno vypnout a znovu spustit  aplikaci.
@@ -9789,25 +8531,6 @@ SETUP_MDNSNAME_DESC
 	SV	Du kan ge den här servern ett namn för att användas med Bonjour.  Om du inte vill att Bonjour ska visa SqueezeCenter lämnar du fältet tomt.  Ändringarna träder inte i kraft förrän du startar om programmet.
 	ZH_CN	您可以为这个服务器取个让Bonjour使用的名字。藤空则表示关闭Bonjour广播SqueezeCenter的功能。更动后您必须重新启动服务器方为有效。
 
-SETUP_MDNSNAME_CHOOSE
-	CS	Název Bonjour:
-	DA	Bonjour-navn:
-	DE	Bonjour-Name:
-	EN	Bonjour name:
-	ES	Nombre para Bonjour:
-	FI	Bonjour-nimi:
-	FR	Nom Bonjour:
-	HE	שם Bonjour:
-	IT	Nome in Bonjour:
-	JA	ランデブー名:
-	NL	Bonjour-naam:
-	NO	Bonjour-navn:
-	PL	Nazwa Bonjour:
-	PT	Nome Rendezvour
-	RU	Название Bonjour:
-	SV	Bonjour-namn:
-	ZH_CN	Bonjour名：
-
 SETUP_REMOTESTREAMTIMEOUT
 	CS	Časový limit rádiové stanice
 	DA	Timeoutgrænse for internetradio
@@ -9826,24 +8549,6 @@ SETUP_REMOTESTREAMTIMEOUT
 	SV	Timeout för radiostation
 	ZH_CN	广播电台暂停时限
 
-SETUP_REMOTESTREAMTIMEOUT_OK
-	CS	Časový limit rádiové stanice:
-	DA	Timeoutgrænse for internetradio:
-	DE	Radiosender-Zeitlimit:
-	EN	Radio station timeout:
-	ES	Tiempo de espera para emisora de radio:
-	FI	Radiokanavan aikakatkaisu:
-	FR	Délai d'attente radio:
-	HE	פסק זמן לתחנות רדיו:
-	IT	Timeout stazione radio:
-	JA	インターネットラジオ局タイムアウト:
-	NL	Time-out van radiostation
-	NO	Tidsavbrudd for Internett-radio:
-	PL	Limit czasu stacji radiowej:
-	RU	Перерыв в работе радиостанции:
-	SV	Timeout för radiostation:
-	ZH_CN	广播电台暂停时限：
-
 SETUP_REMOTESTREAMTIMEOUT_DESC
 	CS	Můžete zadat dobu, po kterou se SqueezeCenter bude pokoušet připojit k internetovému rádiu nebo jinému zdroji. Níže zadejte dobu v sekundách.
 	DA	Du kan angive hvor lang tid SqueezeCenter skal forsøge at etablere forbindelse til internetradiostationer eller andre kilder før der gives op. Angiv tidsrummet i sekunder nedenfor.
@@ -9860,24 +8565,6 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	RU	Можно настроить длительность попыток подключения SqueezeCenter к радиостанции Интернета или другому источнику. Введите ниже время в секундах.
 	SV	Du kan ställa in hur länge SqueezeCenter ska försöka ansluta till en webbradiostation eller annan källa innan försöket ges upp. Ange tiden i sekunder nedan.
 	ZH_CN	您可以设置SqueezeCenter尝试连接到互联网电台或其它服务的时限。请在如下输入以秒为单位的时限。
-
-SETUP_REMOTESTREAMTIMEOUT_CHOOSE
-	CS	Doba čekání na rozhlasovou stanici (sekund):
-	DA	Timeoutgrænse for internetradio (sekunder):
-	DE	Radiosender-Zeitlimit (Sekunden):
-	EN	Radio Station Timeout (seconds):
-	ES	Tiempo de espera para emisora de radio (segundos):
-	FI	Radiokanavan aikakatkaisu (sekunteinta):
-	FR	Délai d'attente radio (secondes):
-	HE	פסק זמן לתחנות רדיו (שניות):
-	IT	Timeout stazione radio (secondi):
-	JA	インターネットラジオ局に接続を試みる時間を秒数で指定してください。
-	NL	Time-out van radiostation (seconden):
-	NO	Tidsavbrudd for Internett-radio i sekunder:
-	PL	Limit czasu stacji radiowej (sekundy):
-	RU	Перерыв в работе радиостанции (с):
-	SV	Timeout för radio (sekunder):
-	ZH_CN	广播电台暂停时限：
 
 MP3DIR
 	CS	Vaše složka Hudba
@@ -9916,59 +8603,6 @@ LANGUAGE
 	RU	Язык
 	SV	Språk
 	ZH_CN	语言
-
-SETUP_DATASOURCE_1
-	CS	Váš zdroj dat je nutno konfigurovat. Spusťte prosím svůj webový prohlížeč,
-	DA	Du skal konfigurere datakilden. Åbn browseren.
-	DE	Die Datenquelle muss konfiguriert werden. Öffnen Sie den Browser,
-	EN	Your data source needs to be configured. Please open your web browser,
-	ES	Es necesario configurar el origen de datos. Inicie el navegador Web,
-	FI	Tietolähde täytyy määrittää. Avaa selain.
-	FR	Votre source de données doit être configurée. Veuillez ouvrir votre navigateur,
-	HE	יש לקבוע את תצורת מקור הנתונים. פתח את דפדפן האינטרנט,
-	IT	È necessario configurare l'origine dei dati. Aprire il browser Web,
-	NL	De gegevensbron moet geconfigureerd worden. Open je webbrowser,
-	NO	Datakilden må konfigureres. Åpne nettleseren,
-	PL	Wymagane jest skonfigurowanie danych źródłowych. Otwórz przeglądarkę internetową,
-	RU	Необходимо проверить источник данных. Запустите веб-браузер,
-	SV	Datakällan måste konfigureras. Öppna webbläsaren,
-	ZH_CN	您必须配置数据源。请启动浏览器，
-
-SETUP_DATASOURCE_2
-	CS	přejděte na následující URL a klepněte na odkaz "Nastavení SqueezeCenter".
-	DA	åbn følgende adresse, og klik på linket Indstillinger for SqueezeCenter.
-	DE	rufen Sie folgende URL auf und klicken Sie auf 'SqueezeCenter Einstellungen'.
-	EN	go to the following URL, and click on the "SqueezeCenter Settings" link.
-	ES	acceda a la URL siguiente y haga clic en el vínculo "Configuración de SqueezeCenter".
-	FI	Siirry seuraavan URL-osoitteeseen ja napsauta SqueezeCenterin asetukset -linkkiä.
-	FR	accédez à l'URL suivante, puis cliquez sur Réglages du SqueezeCenter.
-	HE	עבור אל כתובת ה-URL שלהלן, ולחץ על הקישור "הגדרות שרת".
-	IT	accedere al seguente URL e fare clic sul collegamento Impostazioni SqueezeCenter.
-	NL	ga naar de volgende URL en klik op de koppeling Serverinstellingen.
-	NO	gå til følgende adresse, og klikk på «SqueezeCenter-innstillinger».
-	PL	przejdź pod następujący adres URL i kliknij łącze „Ustawienia programu SqueezeCenter”.
-	RU	перейдите на данный URL и щелкните ссылку "Настройки SqueezeCenter".
-	SV	gå till följande webbadress och klicka på länken för SqueezeCenter-inställningar.
-	ZH_CN	请到下列网址，单击"SqueezeCenter Settings"。
-
-SETUP_URL_WILL_BE
-	CS	URL pro přístup k SqueezeCenter je nyní:
-	DA	Adressen der giver adgang til SqueezeCenter, er:
-	DE	Die Zugriffs-URL zum SqueezeCenter lautet:
-	EN	The URL to access SqueezeCenter is now:
-	ES	La URL para acceder a SqueezeCenter es:
-	FI	SqueezeCenterin URL on nyt:
-	FR	L'URL pour accéder au SqueezeCenter est:
-	HE	כתובת ה-URL המוגדרת לגישה ל-SqueezeCenter:
-	IT	L'URL per accedere a SqueezeCenter è:
-	JA	現在のSqueezeCenterのURLは:
-	NL	De URL voor toegang tot de SqueezeCenter is:
-	NO	Url-adressen du bruker for å komme inn i SqueezeCenter er nå:
-	PL	Adres URL umożliwiający dostęp do programu SqueezeCenter to:
-	PT	O URL para aceder ao SqueezeCenter é
-	RU	Текущий URL для доступа к SqueezeCenter:
-	SV	Webbadressen för SqueezeCenter är nu:
-	ZH_CN	访问SqueezeCenter的URL是：
 
 SETUP_GROUPDISCS
 	CS	Disky skupiny
@@ -14948,44 +13582,6 @@ PLAYER_MAC_ADDRESS
 	SV	Spelarens Ethernet-MAC-adress är
 	ZH_CN	此播放机的以太网MAC地址是
 
-CHOOSE_NAME_DESCRIPTION
-	CS	Tomuto přehrávači můžete přidělit název, který se bude používat k jeho označení.
-	DA	Du kan give denne afspiller et navn som vil blive brugt til at identificere den.
-	DE	Sie können dem Player einen Namen geben.
-	EN	You can give this player a name that will be used to identify the player.
-	ES	Se puede asignar un nombre a este reproductor para identificarlo.
-	FI	Voit antaa soittimelle nimen, jonka avulla soitin on tunnistettavissa.
-	FR	Vous pouvez attribuer à cette platine un nom qui sera utilisé pour l'identifier.
-	HE	באפשרותך להעניק לנגן שם שישמש לזיהוי הנגן.
-	IT	Attribuire un nome al lettore per identificarlo.
-	JA	このプレーヤーに名前をつけることができます。
-	NL	Je kunt dit muzieksysteem een naam geven zodat het systeem geïdentificeerd kan worden.
-	NO	Du kan gi denne spilleren et navn som brukes for å identifisere den i nettgrensesnittet.
-	PL	Odtwarzaczowi można nadać nazwę, która będzie go identyfikować.
-	PT	Pode definir um nome para este cliente de forma a identificá-lo.
-	RU	Можно присвоить этому плееру название для его идентификации.
-	SV	Du kan ge spelaren ett namn som användas för att identifiera den.
-	ZH_CN	您可以为此播放机取个名字以供辨认用途。
-
-CHOOSE_A_NAME
-	CS	Název přehrávače:
-	DA	Afspillerens navn:
-	DE	Wählen Sie einen Namen für diesen Player:
-	EN	Player name:
-	ES	Nombre de reproductor:
-	FI	Soittimen nimi:
-	FR	Nom de la platine:
-	HE	שם הנגן:
-	IT	Nome lettore:
-	JA	プレーヤーの名前 :
-	NL	Systeemnaam:
-	NO	Spillernavn:
-	PL	Nazwa odtwarzacza:
-	PT	Escolha um nome para este cliente
-	RU	Название плеера:
-	SV	Spelarnamn:
-	ZH_CN	播放机名字：
-
 BRIGHTNESS_DIMMEST
 	CS	Nejvíce ztlumený
 	DA	Mørkest
@@ -17970,24 +16566,6 @@ COLON
 	SV	:
 	ZH_CN	：
 
-SETUP_GROUP_RADIO_DESC
-	CS	SqueezeCenter obsahuje podporu internetového rádia prostřednictvím několika poskytovatelů rádia. Můžete konfigurovat podporu některých těchto poskytovatelů, včetně zadání svého uživatelského jména a hesla na této stránce pro prémiový přístup. Změny uložte klepnutím na Změnit.
-	DA	SqueezeCenter understøtter internetradio gennem forskellige leverandører. Du kan konfigurere indstillingerne for nogle af disse på denne side, og bl.a. angive dit brugernavn og adgangskoden for at få adgang til særlige tjenester. Klik på Skift for at gemme indstillingerne.
-	DE	SqueezeCenter unterstützt die Wiedergabe von Internetradio über mehrere Radioanbieter. Sie können Einstellungen für einige dieser Anbieter (z.B. Benutzername und Kennwort) auf dieser Seite eingeben. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
-	EN	SqueezeCenter includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
-	ES	SqueezeCenter incluye compatibilidad con radio por Internet a través de diversos proveedores de radio. Se puede configurar la compatibilidad para alguno de esos proveedores, incluida la introducción del nombre de usuario y la contraseña para acceso de pago, en esta página. Para guardar los cambios, haga clic en Cambiar.
-	FI	SqueezeCenter tukee useiden palveluntarjoajien internet-radiokanavia. Tällä sivulla voit mukauttaa joitakin näistä palveluista. Voit esimerkiksi ottaa käyttöön käyttäjätunnuksen ja salasanan, jotta saat enemmän toimintoja käyttöösi. Tallenna muutokset valitsemalla Muuta.
-	FR	Le SqueezeCenter prend en charge différents diffuseurs de radios Internet. Cette page vous permet d'activer ou de désactiver cette prise en charge ou de spécifier votre nom d'utilisateur et votre mot de passe pour un accès privilégié. Cilquez sur Modifier pour enregistrer les modifications.
-	HE	SqueezeCenter כולל תמיכה עבור רדיו באינטרנט דרך מספר ספקי רדיו. בדף זה, באפשרותך לקבוע את תצורת התמיכה עבור חלק מספקים אלה, לרבות הזנה של שם המשתמש והסיסמה לצורך גישה מלאה. לשמירת השינויים, לחץ על 'שנה'.
-	IT	SqueezeCenter include il supporto di stazioni radio Internet di diversi provider. In questa pagina è possibile configurare il supporto dei provider desiderati, oltre che inserire nome utente e password per l'accesso privilegiato. Per salvare le modifiche, fare clic su Cambia.
-	JA	SqueezeCenter は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
-	NL	SqueezeCenter biedt ondersteuning voor internetradio via verschillende radioproviders. Voor bepaalde providers kun je de ondersteuning op deze pagina instellen, zoals het invoeren van je gebruikersnaam en wachtwoord. Klik op 'Veranderen' om je wijzigingen op te slaan.
-	NO	SqueezeCenter har støtte for Internett-radio via flere radiostasjoner. Du kan konfigurere støtte for noen av disse stasjonene, inkludert ved å legge inn brukernavn og passord for privilegert tilgang, på denne siden. Klikk på Endre for å lagre endringer.
-	PL	Program SqueezeCenter obsługuje internetowe stacje radiowe za pośrednictwem kilku dostawców. Na tej stronie można skonfigurować obsługę niektórych z nich, w tym wprowadzić nazwę użytkownika i hasło w celu uzyskania dostępu do usług specjalnych. Aby zapisać zmiany, kliknij przycisk Zmień.
-	RU	SqueezeCenter поддерживает радиостанции Интернета от нескольких поставщиков. На данной странице можно настроить поддержку некоторых поставщиков, в том числе ввести имя пользователя и пароль для расширенного доступа. Нажмите кнопку "Изменить", чтобы сохранить изменения.
-	SV	SqueezeCenter har stöd för webbradiotjänster från flera olika leverantörer. Här kan du konfigurera inställningarna för vissa av leverantörerna, t.ex. ange användarnamn och lösenord för premiumbehörighet. Spara ändringarna genom att klicka på Ändra.
-	ZH_CN	SqueezeCenter支持由数个互联网电台供应者提供的互联网电台服务。您可以对这些服务提供者进行配置，包括在这一页输入您优质户头的用户名和密码。输入后请单击《更动》。
-
 SETUP_SCROLLPIXELS
 	CS	Rolovat pixely
 	DA	Rul antal pixel
@@ -18436,23 +17014,6 @@ SETUP_VARIOUSARTISTS
 	PL	Kompilacje
 	RU	Сборки
 	SV	Samlingar
-	ZH_CN	合辑
-
-SETUP_VARIOUSARTISTAUTOIDENTIFICATION
-	CS	Alba ve sbírce
-	DA	Kompilationsalbum
-	DE	Kompilationsalben
-	EN	Compilation Albums
-	ES	Álbumes recopilatorios
-	FI	Kokoelmalevyt
-	FR	Albums de compilation
-	HE	אלבומי אוסף
-	IT	Album di compilation
-	NL	Verzamelalbums
-	NO	Samlealbum
-	PL	Albumy z kompilacjami
-	RU	Альбомы-сборки
-	SV	Samlingsalbum
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
@@ -19551,23 +18112,6 @@ SETUP_SCANNERPRIORITY_DESC
 	RU	Можно указать приоритет процесса сканирования.
 	SV	Här kan du ange prioritet för sökningsprocessen.
 	ZH_CN	您可以配置扫描流程的优先设置。
-
-SETUP_PRIORITY_DEFAULT
-	CS	Výchozí priorita
-	DA	Standardprioritet
-	DE	Standardpriorität
-	EN	Default Priority
-	ES	Prioridad predeterminada
-	FI	Oletusprioriteetti
-	FR	Priorité par défaut
-	HE	עדיפות ברירת המחדל
-	IT	Priorità predefinita
-	NL	Standaardprioriteit
-	NO	Standardprioritet
-	PL	Domyślny priorytet
-	RU	Приоритет по умолчанию
-	SV	Standardprioritet
-	ZH_CN	确省优先
 
 SETUP_PRIORITY_CURRENT
 	CS	Aktuální priorita serveru
@@ -22367,21 +20911,6 @@ PLAYER_BRIGHTNESS
 	PL	Jasność odtwarzacza
 	RU	Яркость плеера
 	SV	Ljusstyrka för spelare
-
-SETTING_PLAYER_BRIGHTNESS_TO
-	CS	Nastavení %s jas na %s
-	DA	Indstiller lysstyrken på %s til %s
-	DE	%s-Helligkeit wird auf %s eingestellt
-	EN	Setting %s brightness to %s
-	ES	Configurando brillo de %s a %s
-	FI	Asetetaan kohteen %s kirkkaudeksi %s
-	FR	Définir la luminosité de %s sur %s
-	IT	Impostazione luminosità %s su %s
-	NL	Helderheid van %s wordt op %s ingesteld
-	NO	Setter lysstyrken på %s til %s
-	PL	Ustawianie jasności %s na %s
-	RU	Установка яркости %s, равной %s
-	SV	Anger %s-ljusstyrkan %s
 
 MOREINFO
 	CS	Další informace

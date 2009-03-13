@@ -86,40 +86,6 @@ ITUNES_PODCASTS
 	SV	iTunes-poddsändningar
 	ZH_CN	iTunes Podcasts
 
-SETUP_ITUNESPLAYLISTPREFIX
-	CS	Předpona seznamu skladeb iTunes změněna na:
-	DA	Præfiks for iTunes' spillelister ændret til:
-	DE	Das Präfix für iTunes-Wiedergabelisten wurde geändert in:
-	EN	iTunes playlist prefix changed to:
-	ES	Prefijo de listas de reproducción de iTunes cambiado a:
-	FI	iTunes-soittoluettelon etuliite muutettiin muotoon:
-	FR	Préfixe de liste de lecture iTunes modifié:
-	HE	קידומת רשימות ההשמעה של iTunes השתנתה ל:
-	IT	Prefisso degli elenchi di riproduzione di iTunes modificato in:
-	NL	iTunes-playlistvoorvoegsel gewijzigd in:
-	NO	Prefiks for iTunes-spillelister er endret til:
-	PL	Prefiks listy odtwarzania programu iTunes zmienił się na:
-	RU	Префикс плей-листов iTunes изменен на:
-	SV	Prefix för iTunes-spellistor ändrat till:
-	ZH_CN	iTunes播放表前缀被改为：
-
-SETUP_ITUNESPLAYLISTSUFFIX
-	CS	Přípona seznamu skladeb iTunes změněna na:
-	DA	Suffiks for iTunes' spillelister ændret til:
-	DE	Das Suffix für iTunes-Wiedergabelisten wurde geändert in:
-	EN	iTunes playlist suffix changed to:
-	ES	Sufijo de listas de reproducción de iTunes cambiado a:
-	FI	iTunes-soittoluettelon jälkiliite muutettiin muotoon:
-	FR	Suffixe de liste de lecture iTunes modifié:
-	HE	סיומת רשימות ההשמעה של iTunes השתנתה ל:
-	IT	Suffisso degli elenchi di riproduzione di iTunes modificato in:
-	NL	iTunes-playlistachtervoegsel gewijzigd in:
-	NO	Filetternavn for iTunes-spillelister er endret til:
-	PL	Sufiks listy odtwarzania programu iTunes zmienił się na:
-	RU	Суффикс плей-листов iTunes изменен на:
-	SV	Suffix för iTunes-spellistor ändrat till:
-	ZH_CN	iTunes播放表词尾被改为：
-
 USING_ITUNES
 	CS	Server importuje informace o iTunes.
 	DA	Serveren vil importere oplysninger fra iTunes.
@@ -175,24 +141,6 @@ USE_ITUNES
 	SV	Använd iTunes
 	ZH_CN	使用iTunes
 
-DONT_USE_ITUNES
-	CS	Nepoužívat iTunes
-	DA	Anvend ikke iTunes
-	DE	iTunes nicht verwenden
-	EN	Do Not Use iTunes
-	ES	No usar iTunes
-	FI	Älä käytä iTunesiä
-	FR	Ne pas utiliser iTunes
-	HE	ללא שימוש ב-iTunes
-	IT	Non usare iTunes
-	JA	iTunesを使用しない
-	NL	iTunes niet gebruiken
-	NO	Ikke bruk iTunes
-	PL	Nie używaj programu iTunes
-	RU	Не использовать iTunes
-	SV	Använd inte iTunes
-	ZH_CN	不使用iTunes
-
 SETUP_ITUNES
 	CS	iTunes
 	DA	iTunes
@@ -211,24 +159,6 @@ SETUP_ITUNES
 	RU	iTunes
 	SV	iTunes
 	ZH_CN	iTunes
-
-SETUP_ITUNES_OK
-	CS	Server importuje informace o iTunes.
-	DA	Serveren vil importere oplysninger fra iTunes.
-	DE	Der Server importiert die Daten aus iTunes.
-	EN	The server will import iTunes information.
-	ES	El servidor importará información de iTunes.
-	FI	Palvelin tuo iTunes-tiedot.
-	FR	Le SqueezeCenter importera les données iTunes.
-	HE	השרת לא ייבא מידע iTunes.
-	IT	Il server importa i dati di iTunes.
-	JA	サーバーはiTunesの情報をインポートします。
-	NL	De server zal iTunes-gegevens importeren.
-	NO	Serveren vil importere iTunes-informasjon.
-	PL	Serwer zaimportuje informacje z programu iTunes.
-	RU	Сервер будет импортировать данные iTunes.
-	SV	Servern importerar iTunes-information.
-	ZH_CN	服务器将导入iTunes信息。
 
 SETUP_ITUNES_DESC
 	CS	SqueezeCenter může použít vaši hudební knihovnu a seznamy skladeb iTunes. Veškeré změny, které provede v iTunes se odrazí ve vašem přehrávači. Zaškrtněte níže uvedené políčko, jestli chcete importovat informace o vaší hudební knihovně  iTunes.
@@ -282,24 +212,6 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в SqueezeCenter. Для SqueezeCenter можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
 	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till SqueezeCenter.  Du kan ange en minimitid (i sekunder) som SqueezeCenter ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的iTunes音乐库改变时，SqueezeCenter将自动地导入最新音乐库信息。您可以指定SqueezeCenter再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
-
-SETUP_ITUNESSCANINTERVAL_OK
-	CS	Minimální doba znovunačtení hudební knihovny iTunes:
-	DA	iTunes-musikbibliotek skal genindlæses mindst hver:
-	DE	Minimale Wartezeit für das Laden der iTunes-Musiksammlung
-	EN	Minimum iTunes Music Library reload time:
-	ES	Tiempo mínimo para recarga de biblioteca de música de iTunes:
-	FI	iTunes-musiikkikirjaston minimilatausaika:
-	FR	Délai minimal d'actualisation de la collection d'iTunes:
-	HE	פרק זמן מינימלי לטעינה מחדש של ספריית המוסיקה של iTunes:
-	IT	Intervallo minimo di ricaricamento della libreria musicale di iTunes:
-	JA	iTunes 音楽ライブラリー更新時間:
-	NL	Minimumtijd voor herladen van iTunes-muziekcollectie:
-	NO	Minimum oppdateringstid for musikkbiblioteket i iTunes:
-	PL	Minimalny czas ponownego ładowania biblioteki muzyki programu iTunes:
-	RU	Минимальный интервал перезагрузки медиатеки iTunes:
-	SV	Uppdateringsintervall för iTunes musikbibliotek:
-	ZH_CN	iTunes音乐库极少刷新时间
 
 SETUP_ITUNES_LIBRARY_XML_PATH
 	CS	Umístění hudební knihovny .xml  iTunes

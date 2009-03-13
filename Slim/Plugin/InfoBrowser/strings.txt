@@ -45,36 +45,6 @@ SETUP_PLUGIN_INFOBROWSER_DESC
 	RU	Информационный браузер позволяет просматривать информацию из Интернета на экране плеера, сервера или пульта ДУ Squeezebox. Веб-интерфейс позволяет добавлять дополнительные источники ("Дополнения/Информационный браузер").
 	SV	Med infoläsaren kan du visa information från internetkällor på Squeezebox-fjärrkontrollen, servern eller spelarens display. Du kan lägga till fler informationskällor via menyn Extrafunktioner/Infoläsare i webbgränssnittet .
 
-SETUP_PLUGIN_INFOBROWSER_EDIT
-	CS	Editovat
-	DA	Rediger
-	DE	Bearbeiten
-	EN	Edit
-	ES	Editar
-	FI	Muokkaa
-	FR	Modifier
-	IT	Modifica
-	NL	Bewerken
-	NO	Rediger
-	PL	Edytuj
-	RU	Изменить
-	SV	Redigera
-
-SETUP_PLUGIN_INFOBROWSER_EDIT_DESC
-	CS	Editujte menu vrchní úrovně Info Prohlížeče. Můžete přidat vstupy RSS, přeskupovat a vymazávat položky.
-	DA	Rediger det øverste niveau i Informationslæserens menu. Du kan tilføje RSS-feeds, flytte rundt på og slette elementer.
-	DE	Bearbeitet das Menü auf oberster Ebene im Info-Browser . Sie können RSS-Feeds hinzufügen und Einträge verschieben bzw. löschen.
-	EN	Edit the top level Info Browser menu.  You may add RSS feeds, rearrange and delete items.
-	ES	Para editar el menú Navegador de información en el nivel superior. Puede añadir fuentes RSS y reorganizar y eliminar elementos.
-	FI	Muokkaa ylätason informaatioselainvalikkoa.  Voit lisätä RSS-syötteitä ja uudelleenjärjestää tai poistaa kohteita.
-	FR	Modifier le menu de niveau supérieur du Navigateur info. Vous pouvez ajouter des flux RSS et réorganiser ou supprimer les éléments.
-	IT	Modifica il menu principale del Browser informazioni. È possibile aggiungere feed RSS, modificare l'ordine degli elementi o eliminarli.
-	NL	Wijzig het menu Infobrowser op het hoogste niveau. Je kunt RSS-kanalen toevoegen, en items opnieuw schikken of verwijderen.
-	NO	Rediger øverste menynivå i informasjonsleseren. Du kan legge til rss-feeder, og bytte om på og slette elementer.
-	PL	Edytuj najwyższy poziom menu przeglądarki informacji. Możliwe jest dodawanie kanałów RSS, zmiana kolejności i usuwanie elementów.
-	RU	Измените главное меню информационного браузера. Можно добавлять RSS-каналы, а также упорядочивать и удалять элементы.
-	SV	Redigera Infoläsarens huvudmeny.  Du kan lägga till RSS-flöden ändra alternativens ordning eller ta bort dem.
-
 SETUP_PLUGIN_INFOBROWSER_RESET
 	CS	Resetovat
 	DA	Nulstil
