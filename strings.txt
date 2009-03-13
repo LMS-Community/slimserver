@@ -14282,6 +14282,9 @@ FOR
 	SV	för
 	ZH_CN	为
 
+WEB_CONTROL
+	EN	Web Control
+
 PLAYER_SETTINGS
 	CS	Nastavení přehrávače
 	DA	Indstillinger for afspiller

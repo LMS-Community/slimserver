@@ -80,6 +80,15 @@ sub new {
 	
 	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
 	
+	$mainSizer->AddStretchSpacer();
+	
+	my $webButtonsSizer = Wx::StdDialogButtonSizer->new();
+	
+	$webButtonsSizer->Add(Slim::GUI::Settings::WebButton->new($self, $parent, '/settings/index.html', 'ADVANCED_SETTINGS'), 0, wxRIGHT, 10);
+	$webButtonsSizer->Add(Slim::GUI::Settings::WebButton->new($self, $parent, '/', 'WEB_CONTROL'));
+	
+	$mainSizer->Add($webButtonsSizer, 0, wxALIGN_BOTTOM | wxALIGN_RIGHT | wxALL, 10);
+	
 	$self->SetSizer($mainSizer);	
 	
 	return $self;
@@ -116,6 +125,35 @@ sub new {
 	);
 	
 	$parent->addStatusListener($self) if $os->name eq 'mac';
+
+	return $self;
+}
+
+1;
+
+
+package Slim::GUI::Settings::WebButton;
+
+use base 'Wx::Button';
+
+use Wx qw(:everything);
+use Wx::Event qw(EVT_BUTTON);
+
+use Slim::GUI::ControlPanel;
+use Slim::Utils::Light;
+
+sub new {
+	my ($self, $page, $parent, $url, $label) = @_;
+	
+	$self = $self->SUPER::new($page, -1, string($label));
+	
+	$parent->addStatusListener($self);
+	
+	$url = Slim::GUI::ControlPanel->getBaseUrl() . $url;
+
+	EVT_BUTTON( $page, $self, sub {
+		Wx::LaunchDefaultBrowser($url);
+	});
 
 	return $self;
 }
