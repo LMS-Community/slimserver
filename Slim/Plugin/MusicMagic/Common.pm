@@ -26,62 +26,6 @@ my $prefs = preferences('plugin.musicip');
 
 my %filterHash = ();
 
-sub convertPath {
-	my $mmsPath = shift;
-	
-	if ($prefs->get('host') eq 'localhost') {
-		return $mmsPath;
-	}
-	
-	my $remoteRoot = $prefs->get('remote_root');
-	my $nativeRoot = preferences('server')->get('audiodir');
-	my $original   = $mmsPath;
-	my $winPath    = $mmsPath =~ m/\\/; # test if this is a windows path
-
-	if ($os eq 'unix') {
-
-		# we are unix
-		if ($winPath) {
-
-			# we are running musicip on windows but
-			# slim server is running on unix
-
-			# convert any windozes paths to unix style
-			$remoteRoot =~ tr/\\/\//;
-
-			$log->debug("$remoteRoot :: $nativeRoot");
-
-			# convert windozes paths to unix style
-			$mmsPath =~ tr/\\/\//;
-			# convert remote root to native root
-			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
-		}
-
-	} else {
-
-		# we are windows
-		if (!$winPath) {
-
-			# we recieved a unix path from music match
-			# convert any unix paths to windows style
-			# convert windows native to unix first
-			# cuz matching dont work unless we do
-			$nativeRoot =~ tr/\\/\//;
-
-			$log->debug("$remoteRoot :: $nativeRoot");
-
-			# convert unix root to windows root
-			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
-			# convert unix paths to windows
-			$mmsPath =~ tr/\//\\/;
-		}
-	}
-
-	$log->debug("$original is now $mmsPath");
-
-	return $mmsPath
-}
-
 sub checkDefaults {
 
 	if (!defined $prefs->get('musicip')) {
@@ -119,17 +63,12 @@ sub checkDefaults {
 	if (!defined $prefs->get('port')) {
 		$prefs->set('port',10002);
 	}
-
-	if (!defined $prefs->get('host')) {
-		$prefs->set('host','localhost');
-	}
 }
 
 sub grabFilters {
 	my ($class, $client, $params, $callback, @args) = @_;
 	
 	my $MMSport = $prefs->get('port');
-	my $MMSHost = $prefs->get('host');
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&_gotFilters,
@@ -148,7 +87,7 @@ sub grabFilters {
 		}
 	);
 
-	$http->get( "http://$MMSHost:$MMSport/api/filters" );
+	$http->get( "http://localhost:$MMSport/api/filters" );
 }
 
 sub getFilterList {

@@ -30,7 +30,6 @@ use Slim::Plugin::MusicMagic::PlayerSettings;
 use Slim::Utils::Favorites;
 
 my $initialized = 0;
-my $MMSHost;
 my $MMSport;
 my $canPowerSearch;
 
@@ -144,7 +143,7 @@ sub initPlugin {
 
 	my $response = _syncHTTPRequest("/api/version");
 
-	$log->info("Testing for API on $MMSHost:$MMSport");
+	$log->info("Testing for API on localhost:$MMSport");
 
 	if ($response->is_error) {
 
@@ -342,7 +341,7 @@ sub isMusicLibraryFileChanged {
 		},
 	);
 	
-	$http->get( "http://$MMSHost:$MMSport/api/cacheid?contents" );
+	$http->get( "http://localhost:$MMSport/api/cacheid?contents" );
 }
 
 sub _statusOK {
@@ -444,7 +443,7 @@ sub _cacheidOK {
 		},
 	);
 	
-	$http->get( "http://$MMSHost:$MMSport/api/getStatus" );
+	$http->get( "http://localhost:$MMSport/api/getStatus" );
 }
 
 sub _musicipError {
@@ -814,7 +813,7 @@ sub getMix {
 	# url encode the request, but not the argstring
 	$mixArgs = Slim::Plugin::MusicMagic::Common::escape($mixArgs);
 	
-	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
+	$log->debug("Request http://localhost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	my $response = _syncHTTPRequest("/api/mix?$mixArgs\&$argString");
 
@@ -855,14 +854,10 @@ sub getMix {
 			$songs[$j] = Slim::Utils::Unicode::utf8decode_guess($songs[$j], $enc);
 		}
 
-		my $newPath = Slim::Plugin::MusicMagic::Common::convertPath($songs[$j]);
-
-		$log->debug("Original $songs[$j] : New $newPath");
-
-		if ( -e $newPath || -e Slim::Utils::Unicode::utf8encode_locale($newPath) ) {
-			push @mix, Slim::Utils::Misc::fileURLFromPath($newPath);
+		if ( -e $songs[$j] || -e Slim::Utils::Unicode::utf8encode_locale($songs[$j]) ) {
+			push @mix, Slim::Utils::Misc::fileURLFromPath($songs[$j]);
 		} else {
-			$log->error('MIP attempted to mix in a song at ' . $newPath . ' that can\'t be found at that location');
+			$log->error('MIP attempted to mix in a song at ' . $songs[$j] . ' that can\'t be found at that location');
 		}
 	}
 
@@ -1326,13 +1321,12 @@ sub _syncHTTPRequest {
 	my $url = shift;
 	
 	$MMSport = $prefs->get('port') unless $MMSport;
-	$MMSHost = $prefs->get('host') unless $MMSHost;
 	
 	my $http = LWP::UserAgent->new;
 
 	$http->timeout(5);
 
-	return $http->get("http://$MMSHost:$MMSport$url");
+	return $http->get("http://localhost:$MMSport$url");
 }
 
 1;
