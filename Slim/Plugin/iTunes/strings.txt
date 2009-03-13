@@ -86,42 +86,6 @@ ITUNES_PODCASTS
 	SV	iTunes-poddsändningar
 	ZH_CN	iTunes Podcasts
 
-USING_ITUNES
-	CS	Server importuje informace o iTunes.
-	DA	Serveren vil importere oplysninger fra iTunes.
-	DE	Der Server importiert die Daten aus iTunes.
-	EN	The server will import iTunes information.
-	ES	El servidor importará información de iTunes.
-	FI	Palvelin tuo iTunes-tiedot.
-	FR	Le SqueezeCenter importera les données iTunes.
-	HE	השרת לא ייבא מידע iTunes.
-	IT	Il server importerà le informazioni iTunes.
-	JA	サーバーはiTunesの情報をインポートします。
-	NL	De server zal iTunes-informatie importeren.
-	NO	Serveren vil importere iTunes-informasjon.
-	PL	Serwer zaimportuje informacje z programu iTunes.
-	RU	Сервер будет импортировать данные iTunes.
-	SV	Servern importerar iTunes-information.
-	ZH_CN	服务器将导入iTunes信息。
-
-NOT_USING_ITUNES
-	CS	Server již nebude importovat informace o iTunes.
-	DA	Serveren vil ikke længere importere oplysninger fra iTunes.
-	DE	Der Server importiert keine Daten aus iTunes mehr.
-	EN	The server will no longer import iTunes information.
-	ES	El servidor dejará de importar información de iTunes.
-	FI	Palvelin ei enää tuo iTunes-tietoja.
-	FR	Le SqueezeCenter n'importera plus les données iTunes.
-	HE	השרת לא ייבא עוד מידע iTunes.
-	IT	Non verranno più importate nel server le informazioni iTunes.
-	JA	サーバーはiTunesの情報をインポートしません。
-	NL	De server zal iTunes-informatie niet langer importeren.
-	NO	Serveren vil ikke importere iTunes-informasjon.
-	PL	Serwer nie będzie importował informacji z programu iTunes.
-	RU	Сервер больше не будет импортировать данные iTunes.
-	SV	Servern importerar inte längre iTunes-information.
-	ZH_CN	服务器将不再导入iTunes信息。
-
 USE_ITUNES
 	CS	Použít iTunes
 	DA	Anvend iTunes

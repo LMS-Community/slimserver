@@ -1198,36 +1198,6 @@ REPEAT_OFF
 	SV	Repetition avaktiverat
 	ZH_CN	关闭重复模式
 
-CHOICE_ONE
-	CS	Skladba
-	DA	Nummer
-	DE	Lied
-	EN	Song
-	ES	Canción
-	FI	Kappale
-	FR	Morceau
-	IT	Brano
-	NL	Liedje
-	NO	Sang
-	PL	Utwór
-	RU	Песня
-	SV	Låt
-
-CHOICE_PLAYLIST
-	CS	Seznam skladeb
-	DA	Afspilningsliste
-	DE	Wiedergabeliste
-	EN	Playlist
-	ES	Lista de reproducción
-	FI	Soittoluettelo
-	FR	Liste de lecture
-	IT	Elenco di riproduzione
-	NL	Playlist
-	NO	Spilleliste
-	PL	Lista odtwarzania
-	RU	Плей-лист
-	SV	Spellista
-
 CHOICE_OFF
 	CS	Vypnuto
 	DA	Fra
@@ -1242,21 +1212,6 @@ CHOICE_OFF
 	PL	Wył.
 	RU	Выкл.
 	SV	Av
-
-CHOICE_ALBUM
-	CS	Album
-	DA	Album
-	DE	Album
-	EN	Album
-	ES	Álbum
-	FI	Levy
-	FR	Album
-	IT	Album
-	NL	Album
-	NO	Album
-	PL	Album
-	RU	Альбом
-	SV	Album
 
 REPEAT_ONE
 	CS	Opakovat aktuální skladbu
@@ -1946,25 +1901,6 @@ ALARM_FADE
 	SV	Tona in alarm
 	ZH_CN	闹钟缓慢切入
 
-ALARM_SET_ENTRY
-	CS	Nastavený čas budíku
-	DA	Indstil vækkeur
-	DE	Weckzeit einstellen
-	EN	Alarm Clock Set Time
-	ES	Establecer hora de alarma
-	FI	Herätyskellon ajan asettaminen
-	FR	Heure de réveil définie
-	HE	קביעת שעה לשעון המעורר
-	IT	Orario della sveglia
-	JA	アラーム時間
-	NL	Wektijd instellen
-	NO	Still alarmtid
-	PL	Ustawiona godzina budzika
-	PT	Hora do Alarme
-	RU	Настройка времени будильника
-	SV	Tidsinställning för alarmfunktion
-	ZH_CN	闹钟时间配置
-
 ALARM_SET_TIME
 	CS	Nastavte čas
 	DA	Indstil uret
@@ -2024,44 +1960,6 @@ ALARM_DELETING
 	PL	Usuwanie alarmu...
 	RU	Удаление будильника...
 	SV	Tar bort alarm ...
-
-ALARM_TURNING_ON
-	CS	Zapnutí budíku ...
-	DA	Vækkeuret slås til...
-	DE	Wecker wird aktiviert ...
-	EN	Turning alarm on...
-	ES	Activando alarma...
-	FI	Herätyskello kytketään päälle...
-	FR	Activation du réveil...
-	HE	מפעיל את ההתראה...
-	IT	Attivazione sveglia...
-	JA	アラームをオンにする...
-	NL	Wekker wordt aangezet...
-	NO	Slår på vekkerklokke...
-	PL	Włączanie alarmu...
-	PT	A ligar o alarme...
-	RU	Включение будильника...
-	SV	Aktiverar alarm ...
-	ZH_CN	正在启用闹钟功能...
-
-ALARM_TURNING_OFF
-	CS	Vypínání budíku...
-	DA	Vækkeuret slås fra...
-	DE	Ausschalten des Weckers...
-	EN	Turning alarm off...
-	ES	Desactivando alarma...
-	FI	Herätyskello kytketään pois päältä...
-	FR	Désactivation du réveil...
-	HE	מכבה את ההתראה...
-	IT	Disattivazione sveglia...
-	JA	アラームをオフにする...
-	NL	Wekker wordt uitgezet...
-	NO	Slår av vekkerklokke...
-	PL	Wyłączanie alarmu...
-	PT	A desligar o alarme...
-	RU	Выключение будильника...
-	SV	Avaktiverar alarm ...
-	ZH_CN	正在撤销闹钟功能...
 
 ALARM_NOW_PLAYING
 	CS	Právě hraje budík
@@ -2186,23 +2084,6 @@ ALARM_STOPPED
 	PL	Alarm zatrzymany
 	RU	Будильники остановлены
 	SV	Alarm stoppat
-
-ALARM_WEEKDAYS
-	CS	Budíky v pracovní dny
-	DA	Vækkeur på hverdage
-	DE	Wecker je Wochentag
-	EN	Weekday Alarms
-	ES	Alarmas en días laborables
-	FI	Herätykset arkipäivisin
-	FR	Réveils semaine
-	HE	התראות לימי השבוע
-	IT	Sveglie settimanali
-	NL	Wektijden weekdagen
-	NO	Alarmer på ukedager
-	PL	Alarmy w dzień powszedni
-	RU	Будильники дней недели
-	SV	Alarm för veckodagar
-	ZH_CN	周日闹钟
 
 ALARM_EVERY_DAY
 	CS	Každý den
@@ -8931,21 +8812,6 @@ SETUP_NO_JAVASCRIPT
 	RU	Для доступа к SqueezeCenter необходим современный обозреватель (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 или более поздние версии), в котором включен JavaScript. Либо можно использовать упрощенную обложку, например <a href="/Classic/?skipWizard=1">Classic</a> или <a href="/Handheld/?skipWizard=1">Handheld</a> (оптимизированный для маленьких экранов).
 	SV	Använd en aktuell webbläsare (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 eller senare) och kontrollera att JavaScript är aktiverat i webbläsaren för att få tillgång till SqueezeCenter. Alternativ kan du använda ett enklare skal, t.ex. <a href="/Classic/?skipWizard=1">Classic</a> eller <a href="/Handheld/?skipWizard=1">Handheld</a> (optimerat för små skärmar).
 
-SETUP_WIZARD_SQN
-	CS	Účet SqueezeNetwork
-	DA	SqueezeNetwork-konto
-	DE	SqueezeNetwork-Konto
-	EN	SqueezeNetwork Account
-	ES	Cuenta SqueezeNetwork
-	FI	SqueezeNetwork-tili
-	FR	Compte SqueezeNetwork
-	IT	Account SqueezeNetwork
-	NL	SqueezeNetwork-account
-	NO	SqueezeNetwork-konto
-	PL	Konto SqueezeNetwork
-	RU	Учетная запись SqueezeNetwork
-	SV	SqueezeNetwork-konto
-
 SETUP_WIZARD_SQN_PLEASE
 	CS	Přihlašte se svojí emailovou adresou SqueezeNetwork a heslem a pokračujte .
 	DA	Du skal logge på med din e-mail-adresse og adgangskode til SqueezeNetwork for at fortsætte.
@@ -9050,21 +8916,6 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 	PL	Wybierz ścieżkę do folderu listy odtwarzania.
 	RU	Выберите путь к папке плей-листов.
 	SV	Ange sökväg till mappen med dina spellistor.
-
-SETUP_WIZARD_SUMMARY
-	CS	Souhrn
-	DA	Oversigt
-	DE	Zusammenfassung
-	EN	Summary
-	ES	Resumen
-	FI	Yhteenveto
-	FR	Résumé
-	IT	Riepilogo
-	NL	Samenvatting
-	NO	Sammendrag
-	PL	Podsumowanie
-	RU	Сводка
-	SV	Sammanfattning
 
 SETUP_WIZARD_SUMMARY_DESC
 	CS	SqueezeCenter nyní používá následující nastavení:
@@ -12012,24 +11863,6 @@ ALL_ALBUMS
 	SV	Alla album
 	ZH_CN	所有乐谱帖
 
-ALL_SUBFOLDERS
-	CS	Všechny podsložky
-	DA	Alle undermapper
-	DE	Alle Unterordner
-	EN	All Subfolders
-	ES	Todas las subcarpetas
-	FI	Kaikki alikansiot
-	FR	Tous les sous-dossiers
-	HE	כל תיקיות המשנה
-	IT	Tutte le sottocartelle
-	JA	全てのサブフォルダー
-	NL	Alle submappen
-	NO	Alle undermapper
-	PL	Wszystkie podfoldery
-	RU	Все подпапки
-	SV	Alla undermappar
-	ZH_CN	所有次文件夹
-
 OF
 	CS	z
 	DA	af
@@ -13160,25 +12993,6 @@ SQUEEZECENTER_SETTINGS
 	RU	Настройки SqueezeCenter
 	SV	SqueezeCenter-inställningar
 	ZH_CN	SqueezeCenter设置
-
-ADDITIONAL_SERVER_SETTINGS
-	CS	Další nastavení SqueezeCenter
-	DA	Flere indstillinger for SqueezeCenter
-	DE	Weitere SqueezeCenter Einstellungen
-	EN	Additional SqueezeCenter Settings
-	ES	Configuración adicional de SqueezeCenter
-	FI	SqueezeCenterin lisäasetukset
-	FR	Réglages supplémentaires du SqueezeCenter
-	HE	הגדרות שרת נוספות
-	IT	Impostazioni aggiuntive SqueezeCenter
-	JA	その他サーバーセッティング
-	NL	Extra serverinstellingen
-	NO	Ekstra SqueezeCenter-innstillinger
-	PL	Dodatkowe ustawienia programu SqueezeCenter
-	PT	Configurações Avançadas do Servidor
-	RU	Дополнительные настройки SqueezeCenter
-	SV	Fler SqueezeCenter-inställningar
-	ZH_CN	附加服务器设置
 
 INTERFACE_SETTINGS
 	CS	Rozhraní
@@ -14500,25 +14314,6 @@ CLICK_HERE
 	RU	Щелкните здесь
 	SV	Klicka här
 	ZH_CN	请单击此处
-
-TO_GO_TO_SERVER_SETTINGS
-	CS	přejít na nastavení SqueezeCenter a provést to nyní.
-	DA	for at gå til Indstillinger for SqueezeCenter og gøre det nu.
-	DE	um dies in den SqueezeCenter Einstellungen festzulegen.
-	EN	to go to SqueezeCenter settings and do this now.
-	ES	para ir a la configuración del SqueezeCenter y hacerlo ahora.
-	FI	siirtyäksesi SqueezeCenterin asetuksiin ja tee tämä nyt.
-	FR	pour accéder aux réglages du SqueezeCenter maintenant.
-	HE	למעבר מיידי להגדרות השרת.
-	IT	per accedere alle impostazioni di SqueezeCenter ed eseguire questa operazione adesso.
-	JA	サーバーセッティングに行くためには
-	NL	om naar de serverinstellingen te gaan en dit nu te doen.
-	NO	for å gå til SqueezeCenter-innstillingene og gjøre dette nå.
-	PL	aby przejść do ustawień programu SqueezeCenter i zrobić to teraz.
-	PT	para ir às configurações do servidor e efectuar esta alteração.
-	RU	перейти к настройкам SqueezeCenter и выполнить это.
-	SV	om du vill gå till SqueezeCenter-inställningar och göra det här nu.
-	ZH_CN	到服务器设置
 
 MUTED
 	CS	Ztlumeno
@@ -16650,23 +16445,6 @@ ANY_TYPE
 	RU	Любой формат файла
 	SV	Alla filformat
 	ZH_CN	任何文件格式
-
-WMA_NO_CONVERT_CMD
-	CS	Chyba konverze WMA - prověřte typy souborů
-	DA	WMA-konverteringsfejl: Kontroller filtyper
-	DE	Fehler beim Konvertieren von WMA. Prüfen Sie den Dateityp.
-	EN	WMA convert error - check file types
-	ES	Error de conversión WMA: compruebe los tipos de archivo
-	FI	WMA-muunnon virhe - tarkista tiedostotyypit
-	FR	Erreur de conversion WMA. Vérifiez le type de fichier
-	HE	שגיאה בממיר WMA - בדוק את סוגי הקבצים
-	IT	Errore di conversione WMA. Controllare il tipo di file.
-	NL	WMA-converteerfout - controleer bestandstypen
-	NO	WMA-konverteringsfeil. Sjekk filtyper.
-	PL	Błąd konwertera WMA - sprawdź typy plików
-	RU	Ошибка преобразования WMA — проверьте типы файлов
-	SV	WMA-konverteringsfel. Kontrollera filtyperna.
-	ZH_CN	WMA转换错误-请检查文件格式
 
 MIDWORDS_UPPER
 	DA	0
