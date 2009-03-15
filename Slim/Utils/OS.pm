@@ -11,11 +11,8 @@ package Slim::Utils::OS;
 
 use strict;
 use Config;
-use File::Path;
-use File::Copy;
-use File::Spec::Functions qw(:ALL);
+use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
-use POSIX qw(LC_CTYPE LC_TIME);
 
 use constant MAX_LOGSIZE => 1024 * 1024 * 100;
 
@@ -130,6 +127,8 @@ sub logRotate {
 	my $class   = shift;
 	my $dir     = shift || Slim::Utils::OSDetect::dirsFor('log');
 
+	require File::Copy;
+
 	opendir(DIR, $dir) or return;
 
 	while ( defined (my $file = readdir(DIR)) ) {
@@ -212,8 +211,10 @@ Get details about the locale, system language etc.
 =cut
 
 sub localeDetails {
-	my $lc_time  = POSIX::setlocale(LC_TIME)  || 'C';
-	my $lc_ctype = POSIX::setlocale(LC_CTYPE) || 'C';
+	require POSIX;
+	
+	my $lc_time  = POSIX::setlocale($POSIX::LC_TIME)  || 'C';
+	my $lc_ctype = POSIX::setlocale($POSIX::LC_CTYPE) || 'C';
 
 	# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
 	# Otherwise, normalize the codeset part of the locale.
@@ -257,8 +258,10 @@ Return the system's language or 'EN' as default value
 =cut
 
 sub getSystemLanguage {
+	require POSIX;
+
 	my $class = shift;
-	$class->_parseLanguage(POSIX::setlocale(LC_CTYPE)); 
+	$class->_parseLanguage(POSIX::setlocale($POSIX::LC_CTYPE)); 
 }
 
 sub _parseLanguage {
@@ -331,7 +334,21 @@ Not needed on Linux distributions which do manage the update through their repos
 
 =cut
 
-sub initUpdate {}
+sub initUpdate {};
 sub canAutoUpdate { 0 };
+
+=head2 restartServer( )
+
+SqueezeCenter can initiate a restart on some systems. 
+This should call main::cleanup() or stopServer() to cleanly shut down before restarting
+
+=cut
+
+sub restartServer {
+	my $class = shift;
+	main::stopServer(1);
+}
+
+sub canRestartServer { 0 }
 
 1;

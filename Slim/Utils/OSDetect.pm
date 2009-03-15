@@ -17,20 +17,11 @@ L<Slim::Utils::OSDetect> handles Operating System Specific details.
 
 =head1 SYNOPSIS
 
-	for my $baseDir (Slim::Utils::OSDetect::dirsFor('types')) {
-
-		push @typesFiles, catdir($baseDir, 'types.conf');
-		push @typesFiles, catdir($baseDir, 'custom-types.conf');
-	}
-	
 	if (Slim::Utils::OSDetect::isWindows()) {
 
 =cut
 
 use strict;
-use Config;
-use File::Path;
-use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
 my ($os, $isWindows, $isMac);

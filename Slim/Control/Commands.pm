@@ -42,6 +42,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
 use Slim::Utils::Prefs;
+use Slim::Utils::OSDetect;
 
 my $log = logger('control.command');
 
@@ -2415,6 +2416,19 @@ sub rescanCommand {
 		Slim::Music::Import->launchScan(\%args);
 	}
 
+	$request->setStatusDone();
+}
+
+sub restartServer {
+	my $request = shift;
+
+	if ($request->isNotCommand([['restartserver']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	Slim::Utils::OSDetect::getOS->restartServer();
+	
 	$request->setStatusDone();
 }
 

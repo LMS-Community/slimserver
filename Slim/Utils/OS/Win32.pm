@@ -6,17 +6,13 @@ package Slim::Utils::OS::Win32;
 # version 2.
 
 use strict;
-use File::Path;
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
-use Scalar::Util qw(blessed);
 use Sys::Hostname qw(hostname);
 use Win32;
 use Win32::OLE;
 use Win32::OLE::NLS;
-use Win32::NetResource;
 use Win32::TieRegistry ('Delimiter' => '/');
-use POSIX qw(LC_CTYPE LC_TIME);
 
 use base qw(Slim::Utils::OS);
 
@@ -211,6 +207,7 @@ sub scanner {
 }
 
 sub localeDetails {
+	eval { use POSIX qw(LC_TIME); };
 	require Win32::Locale;
 
 	my $langid = Win32::OLE::NLS::GetSystemDefaultLCID();
@@ -533,7 +530,7 @@ sub setPriority {
 
 	return unless defined $priority && $priority =~ /^-?\d+$/;
 
-	Slim::bootstrap::tryModuleLoad('Win32::API', 'Win32::Process', 'nowarn');
+	Slim::bootstrap::tryModuleLoad('Scalar::Util', 'Win32::API', 'Win32::Process', 'nowarn');
 
 	# For win32, translate the priority to a priority class and use that
 	my ($priorityClass, $priorityClassName) = _priorityClassFromPriority($priority);
@@ -541,7 +538,7 @@ sub setPriority {
 	my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 	my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
 
-	if (blessed($setPriorityClass) && blessed($getCurrentProcess)) {
+	if (Scalar::Util::blessed($setPriorityClass) && Scalar::Util::blessed($getCurrentProcess)) {
 
 		my $processHandle = eval { $getCurrentProcess->Call(0) };
 
@@ -569,12 +566,12 @@ Get the current priority of the server.
 
 sub getPriority {
 
-	Slim::bootstrap::tryModuleLoad('Win32::API', 'Win32::Process', 'nowarn');
+	Slim::bootstrap::tryModuleLoad('Scalar::Util', 'Win32::API', 'Win32::Process', 'nowarn');
 
 	my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 	my $getPriorityClass  = Win32::API->new('kernel32', 'GetPriorityClass',  ['N'], 'N');
 
-	if (blessed($getPriorityClass) && blessed($getCurrentProcess)) {
+	if (Scalar::Util::blessed($getPriorityClass) && Scalar::Util::blessed($getCurrentProcess)) {
 
 		my $processHandle = eval { $getCurrentProcess->Call(0) };
 
@@ -645,6 +642,7 @@ sub initUpdate {
 
 	return if main::SLIM_SERVICE || main::SCANNER;
 	
+	require Win32::NetResource;
 	require Slim::Utils::Update;
 	
 	my $downloaddir;
@@ -675,5 +673,28 @@ sub initUpdate {
 }
 
 sub canAutoUpdate { 1 };
+
+sub restartServer {
+	my $class = shift;
+
+	if (!$class->canRestartServer()) {
+		Slim::Utils::Log->logError("I'm sorry, SqueezeCenter can't be restarted automatically when run as a service.");
+		return;
+	}
+	
+	my $restartFlag = catdir($class->dirsFor('cache'), 'restart.txt');
+	if (open(RESTART, ">$restartFlag")) {
+		close RESTART;
+		main::stopServer();
+	}
+	
+	else {
+		Slim::Utils::Log->logError("Can't write restart flag ($restartFlag) - don't shut down");
+	}
+};
+
+sub canRestartServer {
+	return $PerlSvc::VERSION && PerlSvc::RunningAsService() ? 0 : 1;
+}
 
 1;

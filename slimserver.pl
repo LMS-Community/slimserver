@@ -18,6 +18,8 @@ use warnings;
 use constant SLIM_SERVICE => 0;
 use constant SCANNER => 0;
 
+my @original_args = @ARGV;
+
 # This package section is used for the windows service version of the application, 
 # as built with ActiveState's PerlSvc
 package PerlSvc;
@@ -914,12 +916,18 @@ sub forceStopServer {
 # Clean up resources and exit.
 #
 sub stopServer {
+	my $restart = shift;
 
-	logger('')->info("SqueezeCenter shutting down.");
+	logger('')->info('SqueezeCenter ' . $restart ? 'restarting...' : 'shutting down.');
 	
 	$::stop = 1;
 	
 	cleanup();
+
+	if ($restart && !Slim::Utils::OSDetect::isWindows()) {
+		exec($0, @original_args);
+	}
+
 	exit();
 }
 

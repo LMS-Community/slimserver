@@ -17,7 +17,7 @@ use Exporter::Lite;
 
 use Config;
 use FindBin qw($Bin);
-use File::Spec::Functions;
+use File::Spec::Functions qw(catdir);
 
 our @EXPORT = qw(string getPref);
 my ($os, $language, %strings);
@@ -61,7 +61,7 @@ BEGIN {
 	$language = $os->getSystemLanguage();
 }
 
-my $serverPrefFile = catfile($os->dirsFor('prefs'), 'server.prefs');
+my $serverPrefFile = catdir($os->dirsFor('prefs'), 'server.prefs');
 
 # return localised version of string token
 sub string {
