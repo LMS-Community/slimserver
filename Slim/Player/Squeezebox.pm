@@ -19,6 +19,7 @@ use File::Spec::Functions qw(:ALL);
 use IO::Socket;
 use MIME::Base64;
 use Scalar::Util qw(blessed);
+use Socket qw(:crlf);
 
 use Slim::Hardware::IR;
 use Slim::Player::ProtocolHandlers;
@@ -782,7 +783,7 @@ sub stream_s {
 				
 	} else {
 
-		$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0\n", $client->id);
+		$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0" . $CRLF, $client->id);
 			
 		if ($prefs->get('authorize')) {
 
@@ -790,19 +791,15 @@ sub stream_s {
 				
 			my $password = encode_base64('squeezeboxXXX:' . $client->password);
 				
-			$request_string .= "Authorization: Basic $password\n";
+			$request_string .= "Authorization: Basic $password" . $CRLF;
 		}
 
 		$server_port = $prefs->get('httpport');
 
 		# server IP of 0 means use IP of control server
 		$server_ip = 0;
-		$request_string .= "\n";
+		$request_string .= $CRLF;
 
-		if (length($request_string) % 2) {
-			$request_string .= "\n";
-		}
-		
 		# Possible fix for another problem when using a transcoder:
 		# if ($controller->streamHandler()->isa($handler) && $handler->can('handlesStreamHeaders')) {
 		#
