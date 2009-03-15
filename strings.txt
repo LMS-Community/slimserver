@@ -20826,7 +20826,7 @@ BACKUP_ALARM
 	RU	Резервный будильник
 	SV	Reservalarm
 
-CLEANUP_TITLE
+CONTROLPANEL_TITLE
 	CS	Čištění SqueezeCenter
 	DA	Oprydning i SqueezeCenter
 	DE	SqueezeCenter-Bereinigung
@@ -20841,7 +20841,7 @@ CLEANUP_TITLE
 	RU	Очистка SqueezeCenter
 	SV	Rensning i SqueezeCenter
 
-CLEANUP_STARTUP_OPTIONS
+CONTROLPANEL_STARTUP_OPTIONS
 	DA	Startindstillinger
 	DE	Startoptionen
 	EN	Startup options
@@ -20852,7 +20852,7 @@ CLEANUP_STARTUP_OPTIONS
 	NO	Oppstartsalternativer
 	SV	Startalternativ
 
-CLEANUP_MUSIC_LIBRARY
+CONTROLPANEL_MUSIC_LIBRARY
 	DA	Musikbibliotek
 	DE	Musikbibliothek
 	EN	Music Library
@@ -20864,7 +20864,7 @@ CLEANUP_MUSIC_LIBRARY
 	NO	Musikkbibliotek
 	SV	Musikbibliotek
 
-CLEANUP_MAINTENANCE
+CONTROLPANEL_MAINTENANCE
 	DE	Unterhalt
 	EN	Maintenance
 	
@@ -21078,10 +21078,10 @@ CLEANUP_DELETING
 	RU	Удаление
 	SV	Raderar
 
-CLEANUP_NO_STATUS
+CONTROLPANEL_NO_STATUS
 	EN	No status information available. Please note that SqueezeCenter has to be up and running in order to display its status information.
 
-CLEANUP_NEED_ADMINISTRATOR
+CONTROLPANEL_NEED_ADMINISTRATOR
 	EN	Some of the options are disabled, because you're not administrator. Please run \nthis tool as an administrator to be able to use them.
 
 RUN_AT_BOOT

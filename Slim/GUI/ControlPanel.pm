@@ -38,11 +38,11 @@ sub new {
 	my $self = $ref->SUPER::new(
 		undef,
 		-1,
-		string('CLEANUP_TITLE'),
+		string('CONTROLPANEL_TITLE'),
 		[-1, -1],
 		[Slim::Utils::OSDetect::isWindows() ? 550 : 700, 550],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
-		string('CLEANUP_TITLE'),
+		string('CONTROLPANEL_TITLE'),
 	);
 
 	$self->_fixIcon();
@@ -59,8 +59,8 @@ sub new {
 	} );
 
 	$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('SETTINGS'), 1);
-	$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CLEANUP_MUSIC_LIBRARY'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::Maintenance->new($notebook, $self, $args), string('CLEANUP_MAINTENANCE'));
+	$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
+	$notebook->AddPage(Slim::GUI::ControlPanel::Maintenance->new($notebook, $self, $args), string('CONTROLPANEL_MAINTENANCE'));
 	$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
 	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);

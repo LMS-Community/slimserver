@@ -34,7 +34,7 @@ sub new {
 		$mainSizer->Add(Wx::StaticText->new($self, -1, $string), 0, wxALL, 10);
 	}
 
-	my $startupBox = Wx::StaticBox->new($self, -1, string('CLEANUP_STARTUP_OPTIONS'));
+	my $startupBox = Wx::StaticBox->new($self, -1, string('CONTROLPANEL_STARTUP_OPTIONS'));
 	my $startupSizer = Wx::StaticBoxSizer->new( $startupBox, wxVERTICAL );
 
 	@startupOptions = map { string($_) } @startupOptions;	

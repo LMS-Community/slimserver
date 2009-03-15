@@ -42,7 +42,7 @@ sub new {
 		my $child = $event->GetWindow();
 		if ( $child && $child->isa('Wx::HtmlWindow') && !$self->{loaded} ) {
 			$child->SetPage(
-				get(Slim::GUI::ControlPanel->getBaseUrl() . '/EN/settings/server/status.html?simple=1') || string('CLEANUP_NO_STATUS')
+				get(Slim::GUI::ControlPanel->getBaseUrl() . '/EN/settings/server/status.html?simple=1') || string('CONTROLPANEL_NO_STATUS')
 			);
 			$self->{loaded} = 1;
 		}
