@@ -18,6 +18,10 @@ use warnings;
 use constant SLIM_SERVICE => 0;
 use constant SCANNER => 0;
 
+use Config;
+my %check_inc;
+$ENV{PERL5LIB} = join $Config{path_sep}, grep { !$check_inc{$_}++ } @INC;
+       
 my @original_args = @ARGV;
 
 # This package section is used for the windows service version of the application, 
