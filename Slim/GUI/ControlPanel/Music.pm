@@ -26,8 +26,10 @@ sub new {
 	my $settingsSizer = Wx::StaticBoxSizer->new( $settingsBox, wxVERTICAL );
 	
 	# folder selectors
-	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'), 0, wxEXPAND | wxALL, 5);
-	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'), 0, wxEXPAND | wxALL, 5);
+	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT, 10);
+	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'), 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
+	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
+	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'), 0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 5);
 
 	# get the "Use iTunes" string through CLI
 	# if it's empty, then the plugin is disabled
@@ -36,7 +38,7 @@ sub new {
 	if ($useItunesStr->{USE_ITUNES}) {
 
 		my $useItunes = Wx::CheckBox->new($self, -1, $useItunesStr->{USE_ITUNES});
-		$settingsSizer->Add($useItunes, 0, wxEXPAND | wxALL, 5);
+		$settingsSizer->Add($useItunes, 0, wxEXPAND | wxALL, 10);
 		$parent->addStatusListener($useItunes);
 		$useItunes->SetValue(Slim::GUI::ControlPanel->getPref('itunes', 'itunes.prefs'));
 
