@@ -928,7 +928,7 @@ sub stopServer {
 		&& Slim::Utils::OSDetect->getOS()->canRestartServer() 
 		&& !Slim::Utils::OSDetect::isWindows())
 	{
-		exec($0, @original_args);
+		exec($^X, $0, @original_args);
 	}
 
 	exit();
