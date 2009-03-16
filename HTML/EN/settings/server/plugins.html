@@ -1,3 +1,28 @@
+[% extJsScripts = BLOCK %]
+	<script TYPE="text/javascript">
+		Ext.onReady(function(){
+			var reload;
+			if (reload = Ext.get('restartWarning')) {
+				Ext.MessageBox.show({
+					title: '[% "SETTINGS" | string %]',
+					msg: Ext.util.Format.stripTags(
+						reload.dom.innerHTML.replace(/<br\/?>/ig, ' ')
+					),
+					buttons: {
+						ok: '[% "RESTART_NOW" | string %]',
+						cancel: '[% "RESTART_LATER" | string %]'
+					},
+					fn: function(btn, text) {
+						if (btn == 'ok') {
+							location = location + '?restart=1';
+						}
+					}
+				});
+				reload.update('');
+			}
+		});
+	</script>
+[% END %]
 [% PROCESS settings/header.html %]
 
 	<div class="settingSection">

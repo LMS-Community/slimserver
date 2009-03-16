@@ -19849,6 +19849,18 @@ PLUGINS_CHANGED
 	RU	Изменения вступят в силу при следующем запуске приложения для следующих плагинов:
 	SV	Nästa gång programmet startas görs ändringar i följande plugin-program:
 
+PLUGINS_CHANGED_NEED_RESTART
+	EN	Changes will take place at the next application restart. <a href="?restart=1">Please click here to restart SqueezeCenter now.</a>
+	
+RESTART_NOW
+	EN	Restart now
+	
+RESTART_LATER
+	EN	Restart later
+	
+RESTARTING_PLEASE_WAIT
+	EN	 SqueezeCenter is being restarted. Please wait a minute before you continue...
+
 SETUP_VIEW_SCANNING
 	CS	Prohledávání - zobrazit průběh
 	DA	Vis status af gennemsøgning

@@ -13,6 +13,9 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
+use Slim::Utils::OSDetect;
+
+my $os = Slim::Utils::OSDetect->getOS();
 
 sub name {
 	return Slim::Web::HTTP::protectName('SETUP_PLUGINS');
@@ -29,7 +32,7 @@ sub handler {
 
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
 	my $pluginState = preferences('plugin.state')->all();
-
+	
 	for my $plugin (keys %{$plugins}) {
 
 		my $name     = $plugins->{$plugin}->{'name'};
@@ -59,9 +62,37 @@ sub handler {
 		
 		#Slim::Utils::PluginManager->runPendingOperations;
 		Slim::Utils::PluginManager->writePluginCache;
-		$paramRef->{'warning'} .= '<span id="popupWarning">'
-			. Slim::Utils::Strings::string('PLUGINS_CHANGED').'<br>'.join('<br>',@changed)
+
+		# show a link/button to restart SC if this is supported by this platform
+		if ($os->canRestartServer()) {
+					
+			$paramRef->{'warning'} = '<span id="restartWarning">'
+				. Slim::Utils::Strings::string('PLUGINS_CHANGED_NEED_RESTART')
+				. '</span>';
+	
+		}
+		
+		else {
+		
+			$paramRef->{'warning'} .= '<span id="popupWarning">'
+				. Slim::Utils::Strings::string('PLUGINS_CHANGED') . '<br>' . join('<br>',@changed)
+				. '</span>';
+			
+		}
+	}
+
+
+	if ($paramRef->{restart} && $os->canRestartServer()) {
+		
+		$paramRef->{'warning'} = '<span id="popupWarning">'
+			. Slim::Utils::Strings::string('RESTARTING_PLEASE_WAIT')
 			. '</span>';
+		
+		# delay the restart a few seconds to return the page to the client first
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, sub {
+			$os->restartServer();
+		});
+				
 	}
 
 	$paramRef->{plugins}     = $plugins;

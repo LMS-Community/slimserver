@@ -5,11 +5,14 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::OSDetect;
+
 use Digest::MD5;
 
 my $prefs = preferences('plugin.extensions');
 my $log   = logger('plugin.extensions');
 
+my $os   = Slim::Utils::OSDetect->getOS();
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret') )->hexdigest;
 
 sub name {
@@ -288,10 +291,33 @@ sub _addInfo {
 			$restart ||= ( $plugin->{'status'} =~ /extracted|removed|bad_extraction/ ? 1 : 0 );
 		}
 
-		if ($restart) {
+		# show a link/button to restart SC if this is supported by this platform
+		if ($restart && $os->canRestartServer()) {
+					
+			$params->{'warning'} = '<span id="restartWarning">'
+				. Slim::Utils::Strings::string('PLUGINS_CHANGED_NEED_RESTART')
+				. '</span>';
+	
+		}
+		
+		elsif ($restart) {
 			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") . '</span>';
 		}
 	}
+	
+	if ($params->{restart} && $os->canRestartServer()) {
+		
+		$params->{'warning'} = '<span id="popupWarning">'
+			. Slim::Utils::Strings::string('RESTARTING_PLEASE_WAIT')
+			. '</span>';
+		
+		# delay the restart a few seconds to return the page to the client first
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, sub {
+			$os->restartServer();
+		});
+				
+	}
+	
 
 	return $class->SUPER::handler($client, $params);
 }
