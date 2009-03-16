@@ -923,8 +923,11 @@ sub stopServer {
 	$::stop = 1;
 	
 	cleanup();
-
-	if ($restart && !Slim::Utils::OSDetect::isWindows()) {
+	
+	if ($restart 
+		&& Slim::Utils::OSDetect->getOS()->canRestartServer() 
+		&& !Slim::Utils::OSDetect::isWindows())
+	{
 		exec($0, @original_args);
 	}
 

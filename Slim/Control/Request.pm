@@ -597,7 +597,7 @@ sub init {
 	addDispatch(['rescan',         '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
 	addDispatch(['rescan',         '_playlists'],                                                      [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
 	addDispatch(['rescanprogress'],                                                                    [0, 1, 1, \&Slim::Control::Queries::rescanprogressQuery]);
-	addDispatch(['restartserver'],                                                                     [0, 0, 0, \&Slim::Control::Commands::restartServer]);
+	addDispatch(['restartserver'],                                                                     [0, 0, 0, \&Slim::Control::Commands::stopServer]);
 	addDispatch(['search',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::searchQuery]);
 	addDispatch(['serverstatus',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::serverstatusQuery]);
 	addDispatch(['show'],                                                                              [1, 0, 1, \&Slim::Control::Commands::showCommand]);
@@ -608,7 +608,7 @@ sub init {
 	addDispatch(['songs',          '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
 	addDispatch(['status',         '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::statusQuery]);
 	addDispatch(['stop'],                                                                              [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['stopserver'],                                                                        [0, 0, 0, \&main::stopServer]);
+	addDispatch(['stopserver'],                                                                        [0, 0, 0, \&Slim::Control::Commands::stopServer]);
 	addDispatch(['sync',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
 	addDispatch(['sync',           '_indexid-'],                                                       [1, 0, 0, \&Slim::Control::Commands::syncCommand]);
 	addDispatch(['syncgroups',     '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::syncGroupsQuery]);
@@ -669,7 +669,7 @@ sub init {
 	#
 	# protect some commands regardless of args passed to them
 	Slim::Web::HTTP::protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
-					playlistcontrol playlists stop stopserver wipecache prefset mode
+					playlistcontrol playlists stop stopserver restartserver wipecache prefset mode
 					power rescan sleep sync time gototime
 					mixer playerpref pref|]);
 	# protect changing setting for command + 1-arg ("?" query always allowed -- except "?" is "%3F" once escaped)

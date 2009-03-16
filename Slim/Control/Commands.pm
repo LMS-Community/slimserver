@@ -2419,19 +2419,6 @@ sub rescanCommand {
 	$request->setStatusDone();
 }
 
-sub restartServer {
-	my $request = shift;
-
-	if ($request->isNotCommand([['restartserver']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	Slim::Utils::OSDetect::getOS->restartServer();
-	
-	$request->setStatusDone();
-}
-
 sub showCommand {
 	my $request = shift;
 
@@ -2577,6 +2564,21 @@ sub sleepCommand {
 	}
 
 
+	$request->setStatusDone();
+}
+
+
+sub stopServer {
+	my $request = shift;
+
+	if ($request->isNotCommand([['stopserver']]) && $request->isNotCommand([['restartserver']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# pass true value if we want to restart the server
+	main::stopServer( $request->isCommand([['restartserver']]) );
+	
 	$request->setStatusDone();
 }
 
