@@ -346,9 +346,9 @@ This should call main::cleanup() or stopServer() to cleanly shut down before res
 
 sub restartServer {
 	my $class = shift;
-	main::stopServer(1);
+	main::stopServer(1) if $class->canRestartServer();
 }
 
-sub canRestartServer { 0 }
+sub canRestartServer { 1 }
 
 1;

@@ -332,7 +332,5 @@ sub initUpdate {
 
 sub canAutoUpdate { 1 }
 
-sub canRestartServer { 1 }
-
 
 1;
