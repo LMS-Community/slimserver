@@ -8,12 +8,13 @@ package Slim::GUI::ControlPanel::Settings;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON);
+use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
 use File::Spec::Functions qw(catfile);
 
 use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
+use Slim::Utils::OSDetect;
 
 sub new {
 	my ($self, $nb, $parent) = @_;
@@ -48,6 +49,41 @@ sub new {
 	});
 		
 	$startupSizer->Add($lbStartupMode, 0, wxALL, 10);
+	
+	if (Slim::Utils::OSDetect->isWindows()) {
+		
+		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
+		$credentialsSizer->AddGrowableCol(1, 1);
+		$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
+	
+		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')));
+		my $username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1]);
+		$credentialsSizer->Add($username);
+	
+		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')));
+		my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
+		$credentialsSizer->Add($password);
+	
+		$startupSizer->Add($credentialsSizer, 0, wxALL, 10);
+		
+		my $handler = sub {
+			$username->Enable($lbStartupMode->GetSelection() == 2);
+			$password->Enable($lbStartupMode->GetSelection() == 2);
+		};
+		
+		&$handler();
+		EVT_CHOICE($self, $lbStartupMode, $handler);
+
+		# overwrite action handler for startup mode
+		$parent->addApplyHandler($lbStartupMode, sub {
+			$svcMgr->setStartupType(
+				$lbStartupMode->GetSelection(),
+				$username->GetValue(),
+				$password->GetValue(),
+			);
+		});
+			
+	}
 
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
