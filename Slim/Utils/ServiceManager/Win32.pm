@@ -75,14 +75,14 @@ sub getStartupOptions {
 }
 
 sub setStartupType {
-	my ($class, $type) = @_;
+	my ($class, $type, $username, $password) = @_;
 	
 	my $oldType = getStartupType();
 	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 
 	# enable service mode
 	if ($type == SC_STARTUP_TYPE_SERVICE && $oldType != SC_STARTUP_TYPE_SERVICE) {
-		system($svcHelper, "--install");
+		system($svcHelper, '--install' . ($username ? " --username=$username" : '') . ($password ? " --password=$password" : ''));
 	}
 	elsif ($type != SC_STARTUP_TYPE_SERVICE && $oldType == SC_STARTUP_TYPE_SERVICE) {
 		system($svcHelper, "--remove");
