@@ -56,7 +56,7 @@ my $prefs = preferences('server');
 
 my $isWin  = Slim::Utils::OSDetect::isWindows();
 
-my $serviceName = 'SqueezeMySQL';
+use constant SERVICENAME => 'SqueezeMySQL';
 
 =head2 init()
 
@@ -200,7 +200,7 @@ sub startServer {
 
 		my %status = ();
 
-		Win32::Service::GetStatus('', $serviceName, \%status);
+		Win32::Service::GetStatus('', SERVICENAME, \%status);
 
 		if ($status{'CurrentState'} == 0x04) {
 
@@ -243,18 +243,37 @@ sub startServer {
 
 		my %status = ();
 
-		Win32::Service::GetStatus('', $serviceName, \%status);
+		Win32::Service::GetStatus('', SERVICENAME, \%status);
 
 		# Attempt to install the service, if it isn't.
 		# NB mysqld fails immediately if install is not allowed by user account so don't add this to @commands
 		if (scalar keys %status == 0) {
 
-			system( sprintf "%s --install %s %s", $commands[0], $serviceName, $commands[1] );
+			system( sprintf "%s --install %s %s", $commands[0], SERVICENAME, $commands[1] );
+		}
+		
+		# if MySQL service is still in the process of starting or stopping,
+		# wait a few seconds, or SC will fail miserably
+		my $maxWait = 30;
+		
+		while ($status{CurrentState} != 0x04 && $status{CurrentState} != 0x01 && $maxWait-- > 0) {
+			
+			sleep 1;
+			Win32::Service::GetStatus('', SERVICENAME, \%status);
+
+			if ($log->is_debug) {
+				if ($status{CurrentState} == 0x02) {
+					$log->debug('Wait while MySQL is starting...');
+				}
+				elsif ($status{CurrentState} == 0x03) {
+					$log->debug('Wait while MySQL is stopping...');
+				}
+			}
 		}
 
-		Win32::Service::StartService('', $serviceName);
+		Win32::Service::StartService('', SERVICENAME);
 
-		Win32::Service::GetStatus('', $serviceName, \%status);
+		Win32::Service::GetStatus('', SERVICENAME, \%status);
 
 		if (scalar keys %status == 0 || ($status{'CurrentState'} != 0x02 && $status{'CurrentState'} != 0x04)) {
 
@@ -311,13 +330,13 @@ sub stopServer {
 
 		my %status = ();
 		
-		Win32::Service::GetStatus('', $serviceName, \%status);
+		Win32::Service::GetStatus('', SERVICENAME, \%status);
 
 		if (scalar keys %status != 0 && ($status{'CurrentState'} == 0x02 || $status{'CurrentState'} == 0x04)) {
 
 			$log->info("Running service shutdown.");
 
-			if (Win32::Service::StopService('', $serviceName)) {
+			if (Win32::Service::StopService('', SERVICENAME)) {
 
 				return;
 			}
