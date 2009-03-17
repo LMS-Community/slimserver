@@ -2577,7 +2577,12 @@ sub stopServer {
 	}
 
 	# pass true value if we want to restart the server
-	main::stopServer( $request->isCommand([['restartserver']]) );
+	if ($request->isCommand([['restartserver']])) {
+		Slim::Utils::OSDetect->getOS()->restartServer();
+	}
+	else {
+		main::stopServer();
+	}
 	
 	$request->setStatusDone();
 }
