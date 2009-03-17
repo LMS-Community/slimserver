@@ -81,7 +81,7 @@ sub setStartupType {
 	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 
 	# enable service mode
-	if ($type == SC_STARTUP_TYPE_SERVICE && $oldType != SC_STARTUP_TYPE_SERVICE) {
+	if ($type == SC_STARTUP_TYPE_SERVICE && ($oldType != SC_STARTUP_TYPE_SERVICE || $username || $password)) {
 		system($svcHelper, '--install' . ($username ? " --username=$username" : '') . ($password ? " --password=$password" : ''));
 	}
 	elsif ($type != SC_STARTUP_TYPE_SERVICE && $oldType == SC_STARTUP_TYPE_SERVICE) {
