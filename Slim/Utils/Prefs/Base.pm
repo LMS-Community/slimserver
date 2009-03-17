@@ -109,7 +109,7 @@ sub getFromDB {
 	
 	my @prefs;
 	
-	if ( $model eq 'UserPref' ) {
+	if ( $model && $model eq 'UserPref' ) {
 		@prefs = SDI::Service::Model::UserPref->search( {
 			user => $client->playerData->userid,
 			name => $key,

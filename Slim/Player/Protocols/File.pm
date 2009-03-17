@@ -324,6 +324,28 @@ sub canSeekError {
 	return ('SEEK_ERROR_TYPE_NOT_SUPPORTED', Slim::Music::Info::contentType($song->currentTrack()->url));
 }
 
+sub getIcon {
+	my ( $class, $url ) = @_;
+
+	if (Slim::Music::Info::isSong($url)) {
+		
+		my $track = Slim::Schema->rs('Track')->objectForUrl({
+			'url' => $url,
+		});
+
+		if ($track && $track->coverArt) {
+			return 'music/' . $track->id . '/cover.png';
+		}
+
+	}
+	
+	elsif (Slim::Music::Info::isPlaylist($url)) {
+		return 'html/images/playlists.png';
+	}
+	
+	return 'html/images/cover.png';
+}
+
 1;
 
 __END__
