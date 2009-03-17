@@ -880,7 +880,10 @@ sub parsePlaylist {
 		} );
 		
 		# Stagger playlist scanning by a small amount so we prefer the first item
-		$delay += 0.2;
+		
+		# XXX: This can be a problem if a playlist file contains 'backup' streams or files
+		# we would not want to play these if any of the real streams in the playlist are valid.
+		$delay += 1;
 	}
 }
 
