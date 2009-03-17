@@ -677,6 +677,14 @@ sub canAutoUpdate { 1 };
 sub restartServer {
 	my $class = shift;
 
+	my $log = Slim::Utils::Log::logger('database.mysql');
+	
+
+	if (!$class->canRestartServer()) {
+		$log->error("On Windows SqueezeCenter can't be restarted when run from the perl source.");
+		return;
+	}
+	
 	if ($PerlSvc::VERSION && PerlSvc::RunningAsService()) {
 
 		my $svcHelper = Win32::GetShortPathName( catdir( $class->installPath, 'server', 'squeezesvc.exe' ) );
@@ -692,11 +700,11 @@ sub restartServer {
 			Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
 			".")
 		) {
-			Slim::Utils::Log->logError("Couldn't restart SqueezeCenter service (squeezesvc)");
+			$log->error("Couldn't restart SqueezeCenter service (squeezesvc)");
 		}
 	}
 	
-	else {
+	elsif ($PerlSvc::VERSION) {
 	
 		my $restartFlag = catdir($class->dirsFor('cache'), 'restart.txt');
 		if (open(RESTART, ">$restartFlag")) {
@@ -705,9 +713,13 @@ sub restartServer {
 		}
 		
 		else {
-			Slim::Utils::Log->logError("Can't write restart flag ($restartFlag) - don't shut down");
+			$log->error("Can't write restart flag ($restartFlag) - don't shut down");
 		}
 	}
 };
+
+sub canRestartServer {
+	return $PerlSvc::VERSION ? 1 : 0;
+}
 
 1;
