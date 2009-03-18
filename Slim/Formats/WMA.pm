@@ -25,6 +25,7 @@ my %tagMapping = (
 	'GAIN_ALBUM_PEAK'    => 'REPLAYGAIN_ALBUM_PEAK',
 	'PARTOFSET'          => 'DISC',
 	'ARTISTSORTORDER'    => 'ARTISTSORT',
+	'COMMENTS'           => 'COMMENT',
 );
 
 {
