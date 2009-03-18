@@ -16,6 +16,7 @@ use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
 
 my $os = Slim::Utils::OSDetect->getOS();
+my $needsRestart;
 
 sub name {
 	return Slim::Web::HTTP::protectName('SETUP_PLUGINS');
@@ -63,37 +64,13 @@ sub handler {
 		#Slim::Utils::PluginManager->runPendingOperations;
 		Slim::Utils::PluginManager->writePluginCache;
 
-		# show a link/button to restart SC if this is supported by this platform
-		if ($os->canRestartServer()) {
-					
-			$paramRef->{'warning'} = '<span id="restartWarning">'
-				. Slim::Utils::Strings::string('PLUGINS_CHANGED_NEED_RESTART')
-				. '</span>';
-	
-		}
+		$paramRef = $class->getRestartMessage($paramRef, Slim::Utils::Strings::string('PLUGINS_CHANGED') . '<br>' . join('<br>',@changed));
 		
-		else {
-		
-			$paramRef->{'warning'} .= '<span id="popupWarning">'
-				. Slim::Utils::Strings::string('PLUGINS_CHANGED') . '<br>' . join('<br>',@changed)
-				. '</span>';
-			
-		}
+		$needsRestart = 1;
 	}
 
 
-	if ($paramRef->{restart} && $os->canRestartServer()) {
-		
-		$paramRef->{'warning'} = '<span id="popupWarning">'
-			. Slim::Utils::Strings::string('RESTARTING_PLEASE_WAIT')
-			. '</span>';
-		
-		# delay the restart a few seconds to return the page to the client first
-		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, sub {
-			$os->restartServer();
-		});
-				
-	}
+	$paramRef = $class->restartServer($paramRef, $needsRestart);
 
 	$paramRef->{plugins}     = $plugins;
 	$paramRef->{pluginState} = preferences('plugin.state')->all();
@@ -113,6 +90,51 @@ sub handler {
 	$paramRef->{sortedPlugins} = \@sortedPlugins;
 
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+sub getRestartMessage {
+	my ($class, $paramRef, $noRestartMsg) = @_;
+	
+	# show a link/button to restart SC if this is supported by this platform
+	if ($os->canRestartServer()) {
+				
+		$paramRef->{'restartUrl'} = $paramRef->{webroot} . $paramRef->{path} . '?restart=1';
+		$paramRef->{'restartUrl'} .= '&rand=' . $paramRef->{'rand'} if $paramRef->{'rand'};
+
+		$paramRef->{'warning'} = '<span id="restartWarning">'
+			. Slim::Utils::Strings::string('PLUGINS_CHANGED_NEED_RESTART', $paramRef->{'restartUrl'})
+			. '</span>';
+
+	}
+	
+	else {
+	
+		$paramRef->{'warning'} .= '<span id="popupWarning">'
+			. $noRestartMsg
+			. '</span>';
+		
+	}
+	
+	return $paramRef;	
+}
+
+sub restartServer {
+	my ($class, $paramRef, $needsRestart) = @_;
+	
+	if ($needsRestart && $paramRef->{restart} && $os->canRestartServer()) {
+		
+		$paramRef->{'warning'} = '<span id="popupWarning">'
+			. Slim::Utils::Strings::string('RESTARTING_PLEASE_WAIT')
+			. '</span>';
+		
+		# delay the restart a few seconds to return the page to the client first
+		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, sub {
+			$os->restartServer();
+		});
+				
+	}
+	
+	return $paramRef;
 }
 
 1;

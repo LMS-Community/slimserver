@@ -19850,7 +19850,7 @@ PLUGINS_CHANGED
 	SV	Nästa gång programmet startas görs ändringar i följande plugin-program:
 
 PLUGINS_CHANGED_NEED_RESTART
-	EN	Changes will take place at the next application restart. <a href="?restart=1">Please click here to restart SqueezeCenter now.</a>
+	EN	Changes will take place at the next application restart. <a href="%s">Please click here to restart SqueezeCenter now.</a>
 	
 RESTART_NOW
 	EN	Restart now

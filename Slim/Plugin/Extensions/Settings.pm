@@ -15,6 +15,8 @@ my $log   = logger('plugin.extensions');
 my $os   = Slim::Utils::OSDetect->getOS();
 my $rand = Digest::MD5->new->add( 'ExtensionDownloader', preferences('server')->get('securitySecret') )->hexdigest;
 
+my $needsRestart;
+
 sub name {
 	return Slim::Web::HTTP::protectName('PLUGIN_EXTENSIONS');
 }
@@ -27,11 +29,12 @@ sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
 	# Simplistic anti CSRF protection in case the main server protection is off
-	if ($params->{'saveSettings'} && (!$params->{'rand'} || $params->{'rand'} ne $rand)) {
+	if (($params->{'saveSettings'} || $params->{'restart'}) && (!$params->{'rand'} || $params->{'rand'} ne $rand)) {
 
 		$log->error("attempt to set params with band random number - ignoring");
 
 		delete $params->{'saveSettings'};
+		delete $params->{'restart'};
 	}
 
 	if ($params->{'saveSettings'}) {
@@ -292,34 +295,17 @@ sub _addInfo {
 		}
 
 		# show a link/button to restart SC if this is supported by this platform
-		if ($restart && $os->canRestartServer()) {
-					
-			$params->{'warning'} = '<span id="restartWarning">'
-				. Slim::Utils::Strings::string('PLUGINS_CHANGED_NEED_RESTART')
-				. '</span>';
-	
+		if ($restart) {
+			$params = Slim::Web::Settings::Server::Plugins->getRestartMessage($params, Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG"));
+			$needsRestart = 1;
 		}
-		
-		elsif ($restart) {
-			$params->{'warning'} .= '<span id="popupWarning">' . Slim::Utils::Strings::string("PLUGIN_EXTENSIONS_RESTART_MSG") . '</span>';
-		}
+
 	}
-	
-	if ($params->{restart} && $os->canRestartServer()) {
-		
-		$params->{'warning'} = '<span id="popupWarning">'
-			. Slim::Utils::Strings::string('RESTARTING_PLEASE_WAIT')
-			. '</span>';
-		
-		# delay the restart a few seconds to return the page to the client first
-		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 2, sub {
-			$os->restartServer();
-		});
-				
-	}
-	
+
+	$params = Slim::Web::Settings::Server::Plugins->restartServer($params, $needsRestart);	
 
 	return $class->SUPER::handler($client, $params);
 }
+
 
 1;
