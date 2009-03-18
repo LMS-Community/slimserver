@@ -8,6 +8,7 @@ package Slim::GUI::ControlPanel::MainFrame;
 use strict;
 use base 'Wx::Frame';
 
+use Slim::Utils::Light;
 use File::Spec::Functions;
 
 use Wx qw(:everything);
@@ -18,7 +19,6 @@ use Slim::GUI::ControlPanel::Music;
 use Slim::GUI::ControlPanel::Settings;
 use Slim::GUI::ControlPanel::Status;
 use Slim::Utils::OSDetect;
-use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
 use constant PAGE_STATUS => 3;
