@@ -26,7 +26,7 @@ my $svcHelper;
 sub init {
 	my $class = shift;
 	$class = $class->SUPER::init();
-	$svcHelper = catdir( Win32::GetShortPathName( $class->installDir ), 'server', 'squeezesvc.exe' );
+	$svcHelper = catdir( Win32::GetShortPathName( $os->dirsFor('base') ), 'server', 'squeezesvc.exe' );
 	
 	return $class;
 }
@@ -125,7 +125,7 @@ sub start {
 
 	else {
 
-		my $appExe = Win32::GetShortPathName( catdir( $class->installDir, 'server', 'squeezecenter.exe' ) );
+		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'squeezecenter.exe' ) );
 		
 		# start as background job
 		my $processObj;

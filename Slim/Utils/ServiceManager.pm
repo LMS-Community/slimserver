@@ -31,8 +31,6 @@ use constant SC_STATE_UNKNOWN  => -99;
 
 Slim::Utils::OSDetect::init();
 
-my $installDir = Slim::Utils::OSDetect::dirsFor('base');
-
 sub new {
 	my $class = shift;
 
@@ -107,10 +105,6 @@ sub checkForHTTP {
 	}
 
 	return 0;
-}
-
-sub installDir {
-	return $installDir;
 }
 
 1;
