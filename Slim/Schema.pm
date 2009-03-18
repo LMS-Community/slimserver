@@ -2051,7 +2051,6 @@ sub _preCheckAttributes {
 			} else {
 				$log->debug(".. $tag : $value") if defined $value;
 			}
-			
 		}
 
 		$log->debug("* Deferred Attributes *");
@@ -2215,13 +2214,20 @@ sub _postCheckAttributes {
 	my $album    = $attributes->{'ALBUM'};
 	my $disc     = $attributes->{'DISC'};
 	my $discc    = $attributes->{'DISCC'};
+	# Bug 10583 - Also check for MusicBrainz Album Id
+	my $albumid  = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
 	
 	# Bug 4361, Some programs (iTunes) tag things as Disc 1/1, but
 	# we want to ignore that or the group discs logic below gets confused
-	if ( $discc && $discc == 1 ) {
-		$log->debug( '-- Ignoring useless DISCC tag value of 1' );
-		$disc = $discc = undef;
-	}
+	# Bug 10583 - Revert disc 1/1 change.
+	# "Minimal tags" don't help for the "Greatest Hits" problem,
+	# either main contributor (ALBUMARTIST) or MB Album Id should be used.
+	# In the contrary, "disc 1/1" helps aggregating compilation tracks in different directories.
+	# At least, visible presentation is now the same for compilations: disc 1/1 behaves like x/x.
+	#if ( $discc && $discc == 1 ) {
+	#	$log->debug( '-- Ignoring useless DISCC tag value of 1' );
+	#	$disc = $discc = undef;
+	#}
 
 	# we may have an album object already..
 	# But mark it undef first - bug 3685
@@ -2279,8 +2285,9 @@ sub _postCheckAttributes {
 		# if we have a disc, provided we're not in the iTunes situation (disc == discc == 1)
 		my $checkDisc = 0;
 
+		# Bug 10583 - Revert disc 1/1 change. Use MB Album Id in addition (unique id per disc, not per set!)
 		if (!$prefs->get('groupdiscs') && 
-			(($disc && $discc && $discc > 1) || ($disc && !$discc))) {
+			(($disc && $discc) || ($disc && !$discc) || $albumid)) {
 
 			$checkDisc = 1;
 		}
@@ -2330,7 +2337,14 @@ sub _postCheckAttributes {
 
 				$search->{'me.disc'} = $disc;
 
-			} elsif ($discc && $discc > 1) {
+				# Bug 10583 - Also check musicbrainz_id if defined.
+				# Can't be used in groupdiscs mode since id is unique per disc, not per set.
+				if (defined $albumid) {
+					$search->{'me.musicbrainz_id'} = $albumid;
+					$log->debug(sprintf("-- Checking for MusicBrainz Album Id: %s", $albumid));
+				}
+
+			} elsif ($discc) {
 
 				# If we're not checking discs - ie: we're in
 				# groupdiscs mode, check discc if it exists,
@@ -2389,8 +2403,14 @@ sub _postCheckAttributes {
 				'group_by' => 'me.id',
 			};
 
+			# Bug 10583 - If we had the MUSICBRAINZ_ALBUM_ID in the tracks table,
+			# we could join on it here ...
+			# TODO: Join on MUSICBRAINZ_ALBUM_ID if it ever makes it into the tracks table.
+
 			# Join on tracks with the same basename to determine a unique album.
-			if (!defined $disc && !defined $discc) {
+			# Bug 10583 - Only try to aggregate from basename
+			# if no MUSICBRAINZ_ALBUM_ID and no DISC and no DISCC available.
+			if (!defined $albumid && !defined $disc && !defined $discc) {
 
 				$search->{'tracks.url'} = { 'like' => "$basename%" };
 
