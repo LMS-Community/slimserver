@@ -788,11 +788,6 @@ sub parse_data
 	    return 0 if defined ($tags->{GNRE});
 	    $id='GNRE';
 	}
-	elsif ($id eq 'AART')
-	{
-	    return 0 if defined ($tags->{ART});
-	    $id = 'ART';
-	}
 	elsif ($id eq 'DAY')
 	{
 	    $data = substr ($data, 0, 4);
