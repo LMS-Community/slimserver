@@ -309,6 +309,11 @@ sub reconnect {
 	# sendBDACFrame($client, 'DACWOOFERBQ',  [2264,   3526,  5200,  5800, 10200, 15889, 27031,  45000,     0x8FFFFFFF]);
 	sendBDACFrame($client, 'DACWOOFERBQ',   [   658,   980, 1729, 2816, 5120, 8960, 0x8fffffff, 0x8fffffff, 0x8fffffff]);
 	sendBDACFrame($client, 'DACWOOFERBQSUB',[    0 ,     0,    0,    0,    0,    0,          0, 0x8fffffff, 0x8fffffff]);
+	
+	# re-initialise some prefs which aren't stored on the player
+	sendTone($client, $client->SUPER::bass(), $client->SUPER::treble());
+	stereoxl($client, $prefs->client($client)->get('stereoxl'));
+	setLineInLevel(undef, $prefs->client($client)->get('lineInLevel'), $client);
 }
 
 sub play {
