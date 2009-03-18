@@ -11,7 +11,7 @@ use base 'Wx::Frame';
 use File::Spec::Functions;
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON);
+use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 
 use Slim::GUI::ControlPanel::Maintenance;
 use Slim::GUI::ControlPanel::Music;
@@ -49,6 +49,15 @@ sub new {
 
 	my $panel    = Wx::Panel->new($self);
 	my $notebook = Wx::Notebook->new($panel);
+
+	EVT_NOTEBOOK_PAGE_CHANGED($self, $notebook, sub {
+		my ($self, $event) = @_;
+
+		my $child = $notebook->GetCurrentPage();
+		if ($child->can('_update')) {
+			$child->_update($event);
+		}
+	});
 
 	$pollTimer = Slim::GUI::ControlPanel::Timer->new();
 
