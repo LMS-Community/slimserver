@@ -20839,19 +20839,7 @@ BACKUP_ALARM
 	SV	Reservalarm
 
 CONTROLPANEL_TITLE
-	CS	Čištění SqueezeCenter
-	DA	Oprydning i SqueezeCenter
-	DE	SqueezeCenter-Bereinigung
-	EN	SqueezeCenter Cleanup
-	ES	Limpieza de SqueezeCenter
-	FI	SqueezeCenterin puhdistus
-	FR	Nettoyage SqueezeCenter
-	IT	Pulizia di SqueezeCenter
-	NL	SqueezeCenter opschonen
-	NO	Opprydding av SqueezeCenter
-	PL	Czyszczenie w programie SqueezeCenter
-	RU	Очистка SqueezeCenter
-	SV	Rensning i SqueezeCenter
+	EN	SqueezeCenter Control Panel
 
 CONTROLPANEL_STARTUP_OPTIONS
 	DA	Startindstillinger
