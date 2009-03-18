@@ -357,7 +357,7 @@ sub installPath {
 		}
 	}
 
-	return $installDir;
+	return $installDir if -d $installDir;
 }
 
 
