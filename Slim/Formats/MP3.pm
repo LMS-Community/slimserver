@@ -58,6 +58,9 @@ my %tagMapping = (
 	'MEDIA JUKEBOX: ALBUM GAIN'         => 'REPLAYGAIN_ALBUM_GAIN',
 	'MEDIA JUKEBOX: PEAK LEVEL'         => 'REPLAYGAIN_TRACK_PEAK',
 	'MEDIA JUKEBOX: ALBUM ARTIST'       => 'ALBUMARTIST',
+
+	# bug 10724 - foobar2000 users like to use "ALBUM ARTIST" (instead of "ALBUMARTIST")
+	'ALBUM ARTIST'                      => 'ALBUMARTIST',
 );
 
 # Constant Bitrates
