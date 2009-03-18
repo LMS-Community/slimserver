@@ -50,6 +50,7 @@ my %tagMapping = (
 	'MUSICBRAINZ_ARTISTID'      => 'MUSICBRAINZ_ARTIST_ID',
 	'MUSICBRAINZ_TRACKID'       => 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ_TRMID'         => 'MUSICBRAINZ_TRM_ID',
+	'DESCRIPTION'               => 'COMMENT',
 
 	# for dBpoweramp CD Ripper
 	'TOTALDISCS'                => 'DISCC',

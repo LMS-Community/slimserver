@@ -16,6 +16,7 @@ use Slim::Utils::Log;
 use Slim::Utils::SoundCheck;
 
 my %tagMapping = (
+	'AART'      => 'ALBUMARTIST',	# bug 10724 - support aART as Album Artist
 	'WRT'       => 'COMPOSER',
 	'CPIL'      => 'COMPILATION',
 	'COVR'      => 'PIC',
@@ -86,7 +87,9 @@ sub getTag {
 			
 			elsif ($meta->{'NAME'} eq 'MusicBrainz Album Artist') {
 				
-				$tags->{'ALBUMARTIST'} = $meta->{'DATA'};
+				# bug 10724 - support now obsolete MusicBrainz Album Artist
+				# usage of aART overrules this (MB Picard, iTunes, Tag&Rename use aART)
+				$tags->{'ALBUMARTIST'} = $meta->{'DATA'} if not defined $tags->{'ALBUMARTIST'};
 			}
 			
 			elsif ($meta->{'NAME'} eq 'MusicBrainz Sortname') {
