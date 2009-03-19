@@ -213,8 +213,8 @@ Get details about the locale, system language etc.
 sub localeDetails {
 	require POSIX;
 	
-	my $lc_time  = POSIX::setlocale(POSIX::LC_TIME)  || 'C';
-	my $lc_ctype = POSIX::setlocale(POSIX::LC_CTYPE) || 'C';
+	my $lc_time  = POSIX::setlocale(POSIX::LC_TIME())  || 'C';
+	my $lc_ctype = POSIX::setlocale(POSIX::LC_CTYPE()) || 'C';
 
 	# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
 	# Otherwise, normalize the codeset part of the locale.
@@ -261,7 +261,7 @@ sub getSystemLanguage {
 	require POSIX;
 
 	my $class = shift;
-	$class->_parseLanguage(POSIX::setlocale(POSIX::LC_CTYPE)); 
+	$class->_parseLanguage(POSIX::setlocale(POSIX::LC_CTYPE())); 
 }
 
 sub _parseLanguage {
