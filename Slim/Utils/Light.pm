@@ -37,6 +37,14 @@ BEGIN {
 
 	my $libPath = $Bin;
 
+	use Slim::Utils::OSDetect;
+	Slim::Utils::OSDetect::init();
+
+	if (my $libs = Slim::Utils::OSDetect::dirsFor('libpath')) {
+		# On Debian, RH and SUSE, our CPAN directory is located in the same dir as strings.txt
+		$libPath = $libs;
+	};
+
 	@SlimINC = (
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch),
 		catdir($libPath,'CPAN','arch',$perlmajorversion, $arch, 'auto'),
@@ -54,9 +62,6 @@ BEGIN {
 	# prepend our directories to @INC so we look there first.
 	unshift @INC, @SlimINC;
 
-	use Slim::Utils::OSDetect;
-
-	Slim::Utils::OSDetect::init();
 	$os = Slim::Utils::OSDetect->getOS();
 	$language = $os->getSystemLanguage();
 }
