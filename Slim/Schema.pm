@@ -252,7 +252,7 @@ sub init {
 
 		$log->warn("Migrating 'mov' tracks to new database format");
 
-		Slim::Schema->rs('Track')->search({ 'me.content_type' => 'mov', 'remote' => 1 })->delete_all;
+		Slim::Schema->rs('Track')->search({ 'me.content_type' => 'mov', 'me.remote' => 1 })->delete_all;
 
 		my $rs = Slim::Schema->rs('Track')->search({ 'me.content_type' => 'mov' });
 
