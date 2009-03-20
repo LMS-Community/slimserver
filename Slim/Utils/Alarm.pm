@@ -521,6 +521,9 @@ sub sound {
 			
 			# don't sound the alarm via the code below
 			$soundAlarm = 0;
+			
+			# Log it
+			$client->logStreamEvent( 'Alarm: ' . $self->playlist );
 		}
 	}
 
