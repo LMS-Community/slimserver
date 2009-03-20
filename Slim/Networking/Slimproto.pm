@@ -55,6 +55,9 @@ my $check_time;                 # time scheduled for next check_all_clients
 if ( main::SLIM_SERVICE ) {
 	# don't check as often on SN
 	$check_all_clients_time = 30;
+	
+	# And forget immediately upon disconnect
+	$forget_disconnected_time = 0;
 }
 
 my $slimproto_socket;
