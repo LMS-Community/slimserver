@@ -970,6 +970,7 @@ sub _Stream {				# play -> Buffering, Streaming
 	$paused ||= ($fadeIn > 0);
 	
 	my $setVolume = $self->{'playingState'} == STOPPED;
+	my $masterVol = abs($prefs->client($self->master())->get("volume") || 0);
 	
 	my $startedPlayers = 0;
 	my $reportsTrackStart = 0;
@@ -979,7 +980,10 @@ sub _Stream {				# play -> Buffering, Streaming
 	
 	foreach my $player (@{$self->{'players'}}) {
 		if ($setVolume) {
-			my $vol = abs($prefs->client($player)->get("volume") || 0);
+			# Bug 10310: Make sure volume is synced if necessary
+			my $vol = ($prefs->client($player)->get('syncVolume'))
+				? $masterVol
+				: abs($prefs->client($player)->get("volume") || 0);
 			$player->volume($vol);
 		}
 		
