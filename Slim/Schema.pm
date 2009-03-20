@@ -246,6 +246,32 @@ sub init {
 		}
 	}
 
+	# Migrate the old Mov content type to mp4 and aac - done here as at pref migration time, the database is not loaded
+	if ( !main::SLIM_SERVICE && !main::SCANNER &&
+		 !$prefs->get('migratedMovCT') && Slim::Schema->count('Track', { 'me.content_type' => 'mov' }) ) {
+
+		$log->warn("Migrating 'mov' tracks to new database format");
+
+		Slim::Schema->rs('Track')->search({ 'me.content_type' => 'mov', 'me.remote' => 1 })->delete_all;
+
+		my $rs = Slim::Schema->rs('Track')->search({ 'me.content_type' => 'mov' });
+
+		while (my $track = $rs->next) {
+
+			if ($track->url =~ /\.(mp4|m4a|m4b)$/) {
+				$track->content_type('mp4');
+				$track->update;
+			}
+
+			if ($track->url =~ /\.aac$/) {
+				$track->content_type('aac');
+				$track->update;
+			}
+		}
+
+		$prefs->set('migratedMovCT' => 1);
+	}
+
 	$initialized = 1;
 }
 
