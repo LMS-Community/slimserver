@@ -612,6 +612,9 @@ sub loadFonts {
 		$log->info("Retrieving font data from font cache: $fontCache");
 
 		eval { $fonts = retrieve($fontCache); };
+		
+		# we need to reset the file cache folder in case we've been using the pre-cached file
+		$fontCache = fontCacheFile();
 
 		if ($@) {
 			$log->warn("Tried loading fonts: $@");
