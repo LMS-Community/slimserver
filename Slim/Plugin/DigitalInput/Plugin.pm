@@ -73,7 +73,9 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['setdigitalinput', '_which'],
 	[1, 0, 0, \&setDigitalInput]);
 
-	Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
+	if ( !main::SLIM_SERVICE ) {
+		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName() => $class->_pluginDataFor('icon') });
+	}
 }
 
 # Called every time Jive main menu is updated after a player switch
