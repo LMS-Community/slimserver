@@ -39,6 +39,7 @@ my %packages = (
 	'Time::HiRes'              => 'Time-HiRes-1.86.tar.gz',
 	'XML::Parser::Expat'       => 'XML-Parser-2.34.tar.gz',
 	'YAML::Syck'               => 'YAML-Syck-0.64.tar.gz',
+	'GD'                       => 'GD-2.35.tar.gz',
 );
 
 # Don't need Class::C3::XS if you're running 5.10
