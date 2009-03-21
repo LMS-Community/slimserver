@@ -401,9 +401,11 @@ sub _notifyStopped {
 	my $master = master($self);
 
 	foreach my $player ( @{ $self->{'players'} } ) {
-		# XXX: Bug 7781, Some plugins (Alarm) don't like extra stop events
-		# I'm sure commenting this out will break something else -andy
-		# Slim::Control::Request::notifyFromArray( $player, ['stop'] ) unless $suppressNotifications;
+		# This was previously commented out, for bug 7781, 
+		# because some plugins (Alarm) don't like extra stop events.
+		# This broke important notifications for Jive.
+		# Other changes mean that that this can be reinstated.
+		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'stop'] ) unless $suppressNotifications;
 		
 		if ($player->can('onStop')) {
 			$player->onStop();
@@ -1215,7 +1217,10 @@ sub _Pause {				# pause -> Paused
 		} else {
 			$player->fade_volume(-(FADEVOLUME));
 		}
+		
+		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'pause', 1] );
 	}
+	
 }
 
 # Bug 8861
@@ -1244,6 +1249,7 @@ sub _Resume {				# resume -> Playing
 		$player->volume(0,1);
 		$player->resume();
 		$player->fade_volume($self->{'fadeIn'} ? $self->{'fadeIn'} : FADEVOLUME);
+		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'pause', 0] );
 	}
 	$self->{'fadeIn'} = undef;
 }
@@ -1468,7 +1474,7 @@ sub unsync {
 				} else {
 					# Otherwise just stop the one we are unsyncing
 					_stopClient($player);
-					Slim::Control::Request::notifyFromArray($player, ['stop']);	
+					Slim::Control::Request::notifyFromArray($player, ['playlist', 'stop']);	
 				}
 			} else {
 				# Force stop anyway in case it was paused, off
@@ -1566,7 +1572,7 @@ sub playerInactive {
 				} else {
 					# Otherwise just stop the one we are unsyncing
 					_stopClient($player);
-					Slim::Control::Request::notifyFromArray($player, ['stop']);	
+					Slim::Control::Request::notifyFromArray($player, ['playlist', 'stop']);	
 				}
 			}
 	

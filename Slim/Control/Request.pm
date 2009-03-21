@@ -188,6 +188,8 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    playlist        open                        <url>
  Y    playlist        sync
  Y    playlist        cant_open                   <url>                      <error>
+ Y    playlist        pause                       <0|1>
+ Y    playlist        stop
  N    rescan          done
  Y    unknownir       <ircode>                    <timestamp>
  N    prefset         <namespace>                 <prefname>                  <newvalue>
@@ -634,6 +636,8 @@ sub init {
 	addDispatch(['playlist',       'open',           '_path'],                                         [1, 0, 0, undef]);
 	addDispatch(['playlist',       'sync'],                                                            [1, 0, 0, undef]);
 	addDispatch(['playlist',       'cant_open',      '_url',         '_error'],                        [1, 0, 0, undef]);
+	addDispatch(['playlist',       'pause',          '_newvalue'],                                     [1, 0, 0, undef]);
+	addDispatch(['playlist',       'stop'],                                                            [1, 0, 0, undef]);
 	addDispatch(['rescan',         'done'],                                                            [0, 0, 0, undef]);
 	addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
 	addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);

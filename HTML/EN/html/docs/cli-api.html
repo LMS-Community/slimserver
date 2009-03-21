@@ -43,6 +43,12 @@
 </p>
 
 <hr>
+<h4 id="7">Changes starting from SqueezeCenter 7.4</h4>
+<ul>
+	<li>Added &quot;pause&quot; & &quot;stop&quot; subtypes to &quot;playlist&quot; notifications.</li>
+</ul>
+
+<hr>
 <h4 id="7">Changes starting from SqueezeCenter 7.3</h4>
 <ul>
 	<li>Added 'icon' tag to radios and music_services response.</li>
@@ -7503,10 +7509,32 @@ in the saved playlists folder.</p>
 </p>
 <p>
 	This signals the start of a new song, along with its &quot;current_title
-	&quot; and &quot;playlist index&quot;, as reported by the player hardware
-	(SB1/2/3/Transporter only; for SliMP3 players, this happens a couple of seconds before
-	music starts on the player). For radio stations, only the &quot;current_title
-	&quot; information is provided.
+	&quot; and &quot;playlist index&quot;.
+	For radio stations, only the &quot;current_title&quot; information is provided.
+</p>
+
+<br>
+<p id="playlist stop">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			stop
+		</code>
+	</strong>
+</p>
+<p id="playlist pause">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			pause
+			&lt;0|1&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	These signal a change in playing status.
 </p>
 
 <br>
