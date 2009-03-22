@@ -553,6 +553,7 @@ sub fontCacheFile {
 sub fontfiles {
 	my %fonts  = ();
 	my $mtimesum = 0;
+	my $defcache;
 
 	for my $fontFileDir (graphicsDirs()) {
 
@@ -573,48 +574,51 @@ sub fontfiles {
 				$mtimesum += (stat($file))[9]; 
 
 				$log->debug(" found: $file");
+
+			} elsif ($file =~ /corefonts.bin$/) {
+
+				$defcache = $file;
 			}
 		}
 	}
 
-	return ($mtimesum, %fonts);
+	if ($defcache) {
+
+		if ($mtimesum / scalar keys %fonts != (stat($defcache))[9]) {
+
+			$log->debug(" ignoring prebuild cache - different mtime from files");
+
+			$defcache = undef;
+			
+		} else {
+
+			$log->debug(" prebuild cache is valid");
+		}
+	}
+
+	return ($defcache, $mtimesum, %fonts);
 }
 
 sub loadFonts {
 	my $forceParse = shift;
 
-	my ($mtimesum, %fontfiles) = fontfiles();
+	my ($defcache, $mtimesum, %fontfiles) = fontfiles();
+
 	my $fontCache = fontCacheFile();
 
 	my $fontCacheVersion = 2; # version number of fontcache matching this code
 	
-	# If the font cache doesn't exist, load our pre-generated version
-	# to avoid the overhead of generating it
-	my $fontCacheExists = -r $fontCache;
-	
-	if ( !$fontCacheExists ) {
-		for my $fontFileDir ( graphicsDirs() ) {
-			my $defaultCache = catfile( $fontFileDir, 'corefonts.bin' );
-			if ( -r $defaultCache ) {
-				$log->is_info && $log->info( "Loading fonts from pre-generated fonts.bin" );
-				$fontCache = $defaultCache;
-				last;
-			}
-		}
-	}
-
 	# use stored fontCache if newer than all font files and correct version
-	if (!$forceParse && -r $fontCache) { 
+	if (!$forceParse && ($defcache || -r $fontCache)) { 
 
 		# check cache for consitency
 		my $cacheOK = 1;
 
-		$log->info("Retrieving font data from font cache: $fontCache");
+		my $cache = $defcache || $fontCache;
 
-		eval { $fonts = retrieve($fontCache); };
-		
-		# we need to reset the file cache folder in case we've been using the pre-cached file
-		$fontCache = fontCacheFile();
+		$log->info("Retrieving font data from font cache: $cache");
+
+		eval { $fonts = retrieve($cache); };
 
 		if ($@) {
 			$log->warn("Tried loading fonts: $@");
@@ -628,8 +632,8 @@ sub loadFonts {
 			$cacheOK     = 0;
 		}
 
-		# check for version of fontcache & mtime checksum
-		if (!$fonts->{version} || $fonts->{version} != $fontCacheVersion || $fonts->{mtimesum} != $mtimesum) {
+		# check for version of fontcache & mtime checksum, ignore mtimesum if defcache is valid
+		if (!$fonts->{version} || $fonts->{version} != $fontCacheVersion || !defined $defcache && ($fonts->{mtimesum} != $mtimesum) ) {
 
 			$cacheOK = 0;
 		}
