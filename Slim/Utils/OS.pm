@@ -144,7 +144,7 @@ sub logRotate {
 			my $oldfile = "$file.0";
 			unlink $oldfile if -e $oldfile;
 			
-			move($file, $oldfile);
+			File::Copy::move($file, $oldfile);
 		}
 	}
 	
