@@ -100,8 +100,19 @@ sub init {
 	my ($manifestFiles, $sum) = $class->findInstallManifests;
 
 	my $cacheInvalid;
+	
+	# see whether the failsafe flag is set in the configuration
+	# this can be used by external applications which can't modify startup parameters
+	if ($prefs->get('failsafe')) {
+		$main::failsafe ||= $prefs->get('failsafe');
+		$prefs->set('failsafe', 0); 
+	}
 
-	if (!scalar keys %{$prefs->all}) {
+	if ($main::failsafe) {
+	
+		$cacheInvalid = 'starting in failsafe mode - do not load plugins';
+	
+	} elsif (!scalar keys %{$prefs->all}) {
 
 		$cacheInvalid = 'plugins states are not defined';
 
@@ -153,7 +164,7 @@ sub init {
 		'mtimesum'=> $sum,
 	};
 
-	$class->writePluginCache;
+	$class->writePluginCache unless $main::failsafe;
 }
 
 sub pluginCacheFile {
@@ -248,9 +259,9 @@ sub readInstallManifests {
 			next;
 		}
 
-		if ($installManifest->{'error'} eq 'INSTALLERROR_SUCCESS') {
-
-		}
+#		if ($installManifest->{'error'} eq 'INSTALLERROR_SUCCESS') {
+#
+#		}
 
 		$plugins->{$pluginName} = $installManifest;
 	}
@@ -415,6 +426,9 @@ sub enablePlugins {
 		}
 
 		my $manifest = $plugins->{$name};
+
+		# in failsafe mode skip all plugins which aren't required
+		next if ($main::failsafe && !$manifest->{'enforce'});
 
 		# Skip plugins with no perl module.
 		next unless $manifest->{'module'};
@@ -668,6 +682,8 @@ sub enabledPlugins {
 	for my $plugin ($class->installedPlugins) {
 
 		if (defined $prefs->get($plugin) && $prefs->get($plugin) == STATE_ENABLED) {
+
+			next if $main::failsafe && !($plugins->{$plugin} && $plugins->{$plugin}->{'enforce'});
 
 			unless ($plugins->{$plugin}->{opType} && ($plugins->{$plugin}->{opType} eq OP_NEEDS_INSTALL
 				|| $plugins->{$plugin}->{opType} eq OP_NEEDS_ENABLE 

@@ -74,6 +74,7 @@ sub handler {
 
 	$paramRef->{plugins}     = $plugins;
 	$paramRef->{pluginState} = preferences('plugin.state')->all();
+	$paramRef->{failsafe}    = $main::failsafe;
 
 	# only show plugins with perl modules
 	my @keys = ();

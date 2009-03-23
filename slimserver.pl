@@ -258,6 +258,7 @@ our (
 	$stop,
 	$perfmon,
 	$perfwarn,
+	$failsafe,
 	$checkstrings,
 	$charset,
 	$d_startup, # Needed for Slim::bootstrap
@@ -621,6 +622,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
+    --failsafe       => Don't load plugins
     --checkstrings   => Enable reloading of changed string files for plugin development
     --charset        => Force a character set to be used, eg. utf8 on Linux devices
                         which don't have full utf8 locale installed
@@ -667,6 +669,7 @@ sub initOptions {
 		'noserver'      => \$noserver,
 		'noupnp'        => \$noupnp,
 		'noweb'         => \$noweb,
+		'failsafe'      => \$failsafe,
 		'perfmon'       => \$perfmon,
 		'perfwarn=s'    => \$perfwarn,  # content parsed by Health plugin if loaded
 		'checkstrings'  => \$checkstrings,

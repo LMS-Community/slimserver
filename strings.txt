@@ -3867,6 +3867,9 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	RU	Изменения вступят в силу после перезапуска.
 	SV	Du måste starta om för att ändringen ska börja gälla.
 
+SETUP_PLUGINS_SAFEMODE
+	EN	Please note: as you're running SqueezeCenter in safe mode, the plugins are not available. You can still enable/disable them in order to fix problems you have with your installation.
+
 INSTALLERROR_INVALID_VERSION
 	CS	Tento zásuvný modul není kompatibilní s touto verzí SqueezeCenter. Prosím aktualizujte.
 	DA	Udvidelsesmodulet er inkompatibelt med denne version af SqueezeCenter. Det skal opdateres.
