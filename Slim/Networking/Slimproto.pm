@@ -56,7 +56,7 @@ if ( main::SLIM_SERVICE ) {
 	$check_all_clients_time = 30;
 	
 	# And forget immediately upon disconnect
-	$forget_disconnected_time = 0;
+	$forget_disconnected_time = 5;
 }
 
 my $slimproto_socket;

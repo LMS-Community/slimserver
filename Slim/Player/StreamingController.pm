@@ -1891,8 +1891,8 @@ sub _persistState {
 		. '-' . $StreamingStateName[ $self->{streamingState} ];
 	
 	for my $client ( $self->activePlayers ) {
-		$client->playerData->playmode($state);
-		$client->playerData->update;
+		# Only update if serviceip matches
+		$client->playerData->updatePlaymode( $state, Slim::Utils::IPDetect::IP_port() );
 	}
 }
 
