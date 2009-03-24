@@ -43,6 +43,7 @@ Two types of alarm are implemented - daily alarms and calendar alarms.  Daily al
 
 #use Data::Dumper;
 use Time::HiRes;
+use URI::Escape qw(uri_unescape);
 
 use Slim::Player::Client;
 use Slim::Utils::DateTime;
@@ -118,6 +119,7 @@ sub new {
 		_enabled => 0,
 		_repeat => 1,
 		_playlist => undef,
+		_title => undef,
 		_volume => undef, # Use default volume
 		_active => 0,
 		_snoozeActive => 0,
@@ -362,6 +364,24 @@ sub playlist {
 	return $self->{_playlist};
 }
 
+=head3 title( $title )
+
+Sets/returns the title for the alarm playlist.  If no title is supplied, the playlist URL will be returned.
+
+=cut
+
+sub title {
+	my $self = shift;
+
+	if (@_) {
+		my $newValue = shift;
+		
+		$self->{_title} = $newValue;
+	}
+	
+	return $self->{_title} || $self->{_playlist};
+}
+
 =head3 nextDue( )
 
 Returns the epoch value for when this alarm is next due.
@@ -510,20 +530,44 @@ sub sound {
 		$self->save(0);
 	}
 	
+	# Support special URLs for executing CLI commands, i.e.
+	# cli://power__0 (turn off)
+	# 2 underscores are used to separate commands, to allow for commands including 1 underscore
+	# Must be URI-escaped, and clientid is implied at the start of the command
+	
+	if ( $soundAlarm && $self->playlist =~ m{^cli://(.+)} ) {
+		my @cmd = map { uri_unescape($_) } split /__/, $1;
+		
+		$log->is_debug && $log->debug( 'Executing Alarm CLI: ' . Data::Dump::dump(\@cmd) );
+		
+		$client->execute( \@cmd );
+		
+		# Make sure this alarm is not scheduled again right away
+		$client->alarmData->{lastAlarmTime} = $self->{_nextDue};
+		
+		# don't sound the alarm via the code below
+		$soundAlarm = 0;
+	}
+	
 	if ( main::SLIM_SERVICE ) {
 		# Some players on SN have alarms that simply execute a playlist play command, they don't
 		# need the alarm screensaver, fallback alarm, etc.
 		if ( $client->hasSpecialAlarm ) {
-			$client->execute( [ 'playlist', 'play', $self->playlist ] );
-			
-			# Make sure this alarm is not scheduled again right away
-			$client->alarmData->{lastAlarmTime} = $self->{_nextDue};
-			
-			# don't sound the alarm via the code below
-			$soundAlarm = 0;
-			
 			# Log it
-			$client->logStreamEvent( 'Alarm: ' . $self->playlist );
+			$client->logStreamEvent( 'Alarm: ' . $self->title );
+			
+			# Run it
+			if ( $soundAlarm ) {
+				$log->is_debug && $log->debug( 'Playing special alarm ' . $self->title . ' (' . $self->playlist . ')' );
+				
+				$client->execute( [ 'playlist', 'play', $self->playlist, $self->title ] );
+			
+				# Make sure this alarm is not scheduled again right away
+				$client->alarmData->{lastAlarmTime} = $self->{_nextDue};
+			
+				# don't sound the alarm via the code below
+				$soundAlarm = 0;
+			}
 		}
 	}
 
@@ -578,7 +622,7 @@ sub sound {
 		# Play alarm playlist, falling back to the current playlist if undef
 		if (defined $self->playlist) {
 			$log->debug('Alarm playlist url: ' . $self->playlist);
-			$request = $client->execute(['playlist', 'play', $self->playlist, undef, _fadeInSeconds($client)]);
+			$request = $client->execute(['playlist', 'play', $self->playlist, $self->title, _fadeInSeconds($client)]);
 			$request->source('ALARM');
 
 		} else {
@@ -1003,6 +1047,7 @@ sub _createSaveable {
 		_enabled => $self->{_enabled},
 		_repeat => $self->{_repeat},
 		_playlist => $self->{_playlist},
+		_title => $self->{_title},
 		_volume => $self->{_volume},
 		_comment => $self->{_comment},
 		_id => $self->{_id},
@@ -1247,6 +1292,7 @@ sub loadAlarms {
 		$alarm->{_enabled} = $prefAlarm->{_enabled};
 		$alarm->{_repeat} = $prefAlarm->{_repeat};
 		$alarm->{_playlist} = $prefAlarm->{_playlist};
+		$alarm->{_title} = $prefAlarm->{_title};
 		$alarm->{_volume} = $prefAlarm->{_volume};
 		$alarm->{_comment} = $prefAlarm->{_comment};
 		$alarm->{_id} = $prefAlarm->{_id};
