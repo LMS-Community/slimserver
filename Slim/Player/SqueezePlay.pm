@@ -98,7 +98,7 @@ sub init {
 			} else {
 				my $value;
 				my $vcap;
-				if (($vcap, $value) = split(/=/, $cap)) {
+				if ((($vcap, $value) = split(/=/, $cap)) && defined $value) {
 					$cap = $vcap;
 				} else {
 					$value = 1;
