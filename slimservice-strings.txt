@@ -1422,3 +1422,5 @@ INFORMATION_SN_ACCOUNT
 DISABLED_PLAYER
 	EN	This player is disabled. Please contact %s
 
+ERROR_RATE_LIMITED
+	EN	You are requesting information too fast. Please try again later.
