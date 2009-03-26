@@ -31,6 +31,13 @@ use Slim::Utils::Strings qw(string);
 # How long to cache parsed XML data
 our $XML_CACHE_TIME = 300;
 
+# trying to track down a bug
+my %tb;
+if ( main::SLIM_SERVICE ) {
+	require Algorithm::TokenBucket;
+	tie %tb, 'Tie::Cache::LRU', 100;
+}
+
 my $log   = logger('formats.xml');
 my $prefs = preferences('server');
 
@@ -105,6 +112,28 @@ sub getFeedAsync {
 	if ( main::SLIM_SERVICE && $url =~ /radiotime/ ) {
 		# Add real client IP for Radiotime so they can do proper geo-location
 		$headers{'X-Forwarded-For'} = $params->{client}->ip;
+		
+		# XXX try to track down a bug
+		my $b = $tb{ $params->{client}->ip };
+		if ( $b ) {
+			if ( !$b->conform(1) ) {
+				SDI::Service::Control->mailError( "XML rate exceeded: $url", $params->{client}->id, 1 );
+
+				# wipe bucket
+				delete $tb{ $params->{client}->ip };
+				
+				# Fail
+				$ecb->( string('ERROR_RATE_LIMITED'), $params );
+				return;
+			}
+			else {
+				$b->count(1);
+			}
+		}
+		else {
+			# 1 req every 2 seconds, burst 5
+			$tb{ $params->{client}->ip } = Algorithm::TokenBucket->new( 0.5, 5 );
+		}
 	}
 	
 	# If the URL is on SqueezeNetwork, add session headers or login first
