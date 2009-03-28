@@ -385,7 +385,7 @@ sub open {
 				$log->info("URL is a song (audio): $url, type=$contentType");
 	
 				if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
-					logError("Can't set remote stream nonblocking for url: [$url]");
+					logError("Can't set nonblocking for url: [$url]");
 					return (undef, 'PROBLEM_OPENING', $url);
 				}
 				
@@ -444,9 +444,12 @@ sub open {
 			# Need to transcode
 				
 			my $quality = $prefs->client($client)->get('lameQuality');
-				
+			
+			# use a pipeline on windows when remote as we need socketwrapper to ensure we get non blocking IO
+			my $usepipe = (defined $sock || ($handler->isRemote && Slim::Utils::OSDetect::OS() eq 'win')) ? 1 : undef;
+	
 			my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
-				$transcoder, $sock ? '-' : $track->path, $self->{'streamUrl'}, $sock, $quality
+				$transcoder, $sock ? '-' : $track->path, $self->{'streamUrl'}, $usepipe, $quality
 			);
 
 			if (!defined($command)) {
@@ -460,7 +463,7 @@ sub open {
 			
 			# Bug 10451: only use Pipeline when really necessary 
 			# and indicate if local or remote source
-			if ($sock) { 
+			if ($usepipe) { 
 				$pipeline = Slim::Player::Pipeline->new($sock, $command, !$handler->isRemote);
 			} else {
 				# Bug: 4318
@@ -472,8 +475,11 @@ sub open {
 				} else {
 					$pipeline =  new FileHandle $command;
 				}
-				
-				
+
+				if ($pipeline && $pipeline->opened() && !defined(Slim::Utils::Network::blocking($pipeline, 0))) {
+					logError("Can't set nonblocking for url: [$url]");
+					return (undef, 'PROBLEM_OPENING', $url);
+				}
 			}
 
 			if (!defined($pipeline)) {
@@ -483,7 +489,7 @@ sub open {
 			}
 	
 			$sock = $pipeline;
-				
+			
 			$self->{'transcoded'} = 1;
 				
 			$self->{'streambitrate'} = guessBitrateFromFormat($transcoder->{'streamformat'}, $transcoder->{'rateLimit'});
