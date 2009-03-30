@@ -708,7 +708,7 @@ sub handleSubFeed {
 		next if length($i) >= 8 && $i =~ /^[a-f0-9]{8}/;
 		
 		# If an index contains a search query, strip it out
-		$i =~ s/[^\d]//g;
+		$i =~ s/_.+$//g;
 		
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
