@@ -105,7 +105,7 @@ sub main {
 
 sub usage {
 	my $usage = <<EOF;
-%s: $0 [--all] [--prefs] [--cache]
+%s: $0 [--all] [--cache] [--mysql] [--filecache] [--prefs] [--logs]
 
 %s
 
