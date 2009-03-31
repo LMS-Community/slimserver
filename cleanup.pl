@@ -32,14 +32,13 @@ BEGIN {
 	}
 }
 
-my $useWx = eval {
+# don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
+my $useWx = ($^O !~ /darwin/ || $^X =~ /wxPerl/i) && eval {
 	require Wx;
 	require Wx::Event;
 	require Slim::GUI::ControlPanel;
 
-	# don't use Wx, if script is run using perl on OSX
-	# it needs to be run using wxperl
-	return $^O !~ /darwin/ || $^X =~ /wxPerl/i;
+	return 1;
 };
 
 if (DEBUG && $@) {
