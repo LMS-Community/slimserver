@@ -274,7 +274,7 @@ ABOUT_SLIMDEVICES
 	JA	スリムデバイス社について
 	NL	Over Slim Devices
 	NO	Om Slim Devices/Logitech
-	PL	Slim Devices/Logitech &mdash; informacje
+	PL	Slim Devices/Logitech - informacje
 	PT	Acerca de Slim Devices/Logitech
 	RU	О компании Slim Devices/Logitech
 	SV	Om Slim Devices/Logitech
@@ -298,7 +298,7 @@ SLIMP3_HOME
 	JA	SLIMP3 ホーム
 	NL	SLIMP3 Hoofdmenu
 	NO	SLIMP3 startside
-	PL	SLIMP3 &mdash; strona główna
+	PL	SLIMP3 - strona główna
 	PT	Início SLIMP3
 	RU	Главное меню SLIMP3
 	SV	SLIMP3 Hem
@@ -355,7 +355,7 @@ TRANSPORTER_HOME
 	JA	Transporter �ーム
 	NL	Transporter-hoofdmenu
 	NO	Transporter hovedmeny
-	PL	Transporter &mdash; strona główna
+	PL	Transporter - strona główna
 	PT	Início Transporter
 	RU	Главное меню Transporter
 	SV	Transporter Hem
@@ -373,7 +373,7 @@ SOFTSQUEEZE_HOME
 	JA	SoftSqueeze ホーム
 	NL	SoftSqueeze-hoofdmenu
 	NO	SoftSqueeze hovedmeny
-	PL	SoftSqueeze &mdash; strona główna
+	PL	SoftSqueeze - strona główna
 	PT	Início SoftSqueeze
 	RU	Главное меню SoftSqueeze
 	SV	SoftSqueeze huvudmeny
@@ -1974,7 +1974,7 @@ ALARM_NOW_PLAYING
 	JA	アラーム再生中
 	NL	Weksignaal speelt nu
 	NO	Vekkerklokken spiller nå
-	PL	Budzik &mdash; teraz odtwarzane
+	PL	Budzik - teraz odtwarzane
 	PT	A Tocar o Alarme
 	RU	Звонящий будильник
 	SV	Alarmfunktionen Nu spelas
@@ -2419,7 +2419,7 @@ WELCOME_TO_SLIMP3
 	JA	SLIMP3へようこそ
 	NL	Welkom bij SLIMP3
 	NO	Velkommen til SLIMP3
-	PL	SLIMP3 &mdash; zapraszamy
+	PL	SLIMP3 - zapraszamy
 	PT	Bem-vindo ao SLIMP3
 	RU	Добро пожаловать в SLIMP3!
 	SV	Välkommen till SLIMP3!
@@ -2438,7 +2438,7 @@ WELCOME_TO_SQUEEZECENTER
 	JA	SqueezeCenterへようこそ
 	NL	Welkom bij SqueezeCenter
 	NO	Velkommen til SqueezeCenter
-	PL	SqueezeCenter &mdash; Zapraszamy
+	PL	SqueezeCenter - Zapraszamy
 	PT	Bem-vindo ao SqueezeCenter
 	RU	Добро пожаловать в SqueezeCenter!
 	SV	Välkommen till SqueezeCenter!
@@ -2495,7 +2495,7 @@ WELCOME_TO_TRANSPORTER
 	JA	Transporterへようこそ
 	NL	Welkom bij Transporter
 	NO	Velkommen til Transporter
-	PL	Transporter &mdash; Zapraszamy
+	PL	Transporter - Zapraszamy
 	PT	Bem-vindo ao Transporter
 	RU	Добро пожаловать в Transporter!
 	SV	Välkommen till Transporter!
@@ -2514,7 +2514,7 @@ WELCOME_TO_SOFTSQUEEZE
 	JA	SoftSqueezeへようこそ
 	NL	Welkom bij SoftSqueeze
 	NO	Velkommen til SoftSqueeze
-	PL	SoftSqueeze &mdash; Zapraszamy
+	PL	SoftSqueeze - Zapraszamy
 	PT	Bem-vindo ao SoftSqueeze
 	RU	Добро пожаловать в SoftSqueeze!
 	SV	Välkommen till SoftSqueeze!
@@ -2546,7 +2546,7 @@ WELCOME_TO_SQUEEZESLAVE
 	IT	Benvenuti in SqueezeSlave
 	NL	Welkom bij SqueezeSlave
 	NO	Velkommen til SqueezeSlave
-	PL	SqueezeSlave &mdash; Zapraszamy
+	PL	SqueezeSlave - Zapraszamy
 	RU	Добро пожаловать в SqueezeSlave!
 	SV	Välkommen till SqueezeSlave!
 
@@ -2576,7 +2576,7 @@ WELCOME_TO_SQUEEZEPLAY
 	IT	Benvenuti in SqueezePlay
 	NL	Welkom bij SqueezePlay
 	NO	Velkommen til SqueezePlay
-	PL	SqueezePlay &mdash; Zapraszamy
+	PL	SqueezePlay - Zapraszamy
 	RU	Добро пожаловать в SqueezePlay
 	SV	Välkommen till SqueezePlay
 
@@ -2591,7 +2591,7 @@ WELCOME_TO_CONTROLLER
 	IT	Benvenuti in Controller
 	NL	Welkom bij Controller
 	NO	Velkommen til Controller
-	PL	Controller &mdash; Zapraszamy
+	PL	Controller - Zapraszamy
 	RU	Добро пожаловать в Controller
 	SV	Välkommen till Controller
 
@@ -15483,7 +15483,7 @@ INFORMATION_SPECIFIC_PLAYER
 	IT	Informazioni su %s
 	NL	%s-informatie
 	NO	Informasjon om %s
-	PL	%s &mdash; informacje
+	PL	%s - informacje
 	RU	Информация о %s
 	SV	Information om %s
 
@@ -19875,7 +19875,7 @@ SETUP_VIEW_SCANNING
 	IT	Analisi - Visualizza avanzamento
 	NL	Bezig met scannen - Voortgang bekijken
 	NO	Søker – Vis framdrift
-	PL	Przeszukiwanie &mdash; wyświetl postęp
+	PL	Przeszukiwanie - wyświetl postęp
 	RU	Сканирование — ход выполнения
 	SV	Sökning – Visa förlopp
 
@@ -21509,7 +21509,7 @@ WHATS_NEXT
 	IT	La configurazione è completa. Quali sono i passaggi successivi?
 	NL	Ik heb alles ingesteld - wat nu?
 	NO	Jeg er klar - hva skjer nå?
-	PL	Konfiguracja ukończona &mdash; co dalej?
+	PL	Konfiguracja ukończona - co dalej?
 	RU	Все настроено — что дальше?
 	SV	Jag är klar. Vad gör jag nu?
 

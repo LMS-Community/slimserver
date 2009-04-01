@@ -9,7 +9,7 @@ PLUGIN_AMAZON_MODULE_NAME
 	IT	Amazon CD Store
 	NL	Amazon-cd-winkel
 	NO	Amazons cd-butikk
-	PL	Amazon &mdash; sklep z płytami CD
+	PL	Amazon - sklep z płytami CD
 	RU	Магазин CD Amazon
 	SV	Amazon CD Store
 

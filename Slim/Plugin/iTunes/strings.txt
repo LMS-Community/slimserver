@@ -388,7 +388,7 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	IT	Importazione copertine di iTunes aggiunte dall'utente
 	NL	Import van door iTunes-gebruiker toegevoegde hoesafbeeldingen
 	NO	Importering av omslag lagt til av bruker fra iTunes
-	PL	Użytkownik programu iTunes &mdash; importowanie dodanych okładek
+	PL	Użytkownik programu iTunes - importowanie dodanych okładek
 	RU	Импорт обложек, добавленных пользователем iTunes
 	SV	Import av omslag som lagts till av användaren från iTunes
 
