@@ -3,6 +3,7 @@
 # $Id$
 
 FAVORITES
+	CS	Oblíbené položky
 	DA	Favoritter
 	DE	Favoriten
 	EN	Favorites
@@ -13,6 +14,8 @@ FAVORITES
 	IT	Preferiti
 	NL	Favorieten
 	NO	Favoritter
+	PL	Ulubione
+	RU	Выбранное
 	SV	Favoriter
 
 FAVORITES_NOT_DEFINED
