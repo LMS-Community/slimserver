@@ -60,8 +60,8 @@ sub new {
 	
 	my $rescanMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [
 		string('SETUP_STANDARDRESCAN'),
-		string('SETUP_PLAYLISTRESCAN'),
 		string('SETUP_WIPEDB'),
+		string('SETUP_PLAYLISTRESCAN'),
 	]);
 	$rescanMode->SetSelection(0);
 	$rescanBtnSizer->Add($rescanMode);
@@ -77,11 +77,11 @@ sub new {
 		}
 
 		elsif ($rescanMode->GetSelection == 1) {
-			Slim::GUI::ControlPanel->serverRequest('rescan', 'playlists');
+			Slim::GUI::ControlPanel->serverRequest('wipecache');
 		}
 
 		elsif ($rescanMode->GetSelection == 2) {
-			Slim::GUI::ControlPanel->serverRequest('wipecache');
+			Slim::GUI::ControlPanel->serverRequest('rescan', 'playlists');
 		}
 		
 		$progressPoll->Start(1000, wxTIMER_CONTINUOUS) if $progressPoll;
