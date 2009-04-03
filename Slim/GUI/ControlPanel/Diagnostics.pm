@@ -9,6 +9,8 @@ use base 'Wx::Panel';
 
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON);
+
+use Net::Ping;
 use Socket;
 use Symbol;
 
@@ -29,6 +31,7 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
+
 	my $scBoxSizer = Wx::StaticBoxSizer->new( 
 		Wx::StaticBox->new($self, -1, string('SQUEEZECENTER')),
 		wxVERTICAL
@@ -37,7 +40,7 @@ sub new {
 	$scSizer->AddGrowableCol(0, 2);
 	$scSizer->AddGrowableCol(1, 1);
 	$scSizer->SetFlexibleDirection(wxHORIZONTAL);
-	
+
 	$self->_addItem($scSizer, string('SQUEEZECENTER') . string('COLON'), sub {
 		$svcMgr->checkServiceState() == SC_STATE_RUNNING ? string('RUNNING') : string('STOPPED');
 	});
@@ -68,6 +71,12 @@ sub new {
 	$snSizer->SetFlexibleDirection(wxHORIZONTAL);
 
 	$self->_addItem($snSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getSNAddress);
+
+	# check port 80 on squeezenetwork, as echo isn't available
+	$self->_addItem($snSizer, string('CONTROLPANEL_PING'), sub {
+		checkPing(SN, 80);
+	});
+	
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483'), sub {
 		checkPort(getSNAddress(), '3483');
 	});
@@ -124,6 +133,8 @@ sub _update {
 				
 				$self->Layout();
 			};
+			
+			print "$@" if $@;
 		}
 	}
 	
@@ -184,7 +195,7 @@ sub getSNAddress {
 sub checkPort {
 	my ($raddr, $rport) = @_;
 	
-	return string('CONTROLPANEL_PORT_FAIL') unless $raddr && $rport;
+	return string('CONTROLPANEL_FAILED') unless $raddr && $rport;
 
 	my $iaddr = inet_aton($raddr);
 	my $paddr = sockaddr_in($rport, $iaddr);
@@ -194,10 +205,25 @@ sub checkPort {
 	if (connect(SSERVER, $paddr)) {
 
 		close(SSERVER);
-		return string('CONTROLPANEL_PORT_OK');
+		return string('CONTROLPANEL_OK');
 	}
 
-	return string('CONTROLPANEL_PORT_FAIL');
+	return string('CONTROLPANEL_FAILED');
+}
+
+sub checkPing {
+	my ($host, $port) = @_;
+	
+	return string('CONTROLPANEL_FAILED') unless $host;
+
+	$p = Net::Ping->new('tcp', 2);
+
+	$p->{port_num} = $port if $port;
+	
+	my $result = $p->ping($host) ? 'CONTROLPANEL_OK' : 'CONTROLPANEL_FAILED';
+	$p->close();
+
+	return string($result);
 }
 
 

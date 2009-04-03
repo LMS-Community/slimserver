@@ -20900,23 +20900,27 @@ CONTROLPANEL_PORTNO
 	PL	Port %s:
 	RU	Порт %s:
 	SV	Port %s:
-	
-CONTROLPANEL_PORT_FAIL
-	CS	Nemohu připojit
-	DA	Der kan ikke etableres forbindelse
-	DE	Verbindung kann nicht hergestellt werden
-	EN	Can't connect
-	ES	No se puede conectar
-	FI	Ei voi yhdistää
-	FR	Connexion impossible
-	IT	Impossibile connettersi
-	NL	Kan geen verbinding maken
-	NO	Kan ikke kople til
-	PL	Nie można nawiązać połączenia
-	RU	Подключение невозможно
-	SV	Det gick inte att ansluta
 
-CONTROLPANEL_PORT_OK
+CONTROLPANEL_PING
+	CS	Zvonění:
+	DA	Ping:
+	DE	Ping:
+	EN	Ping:
+	ES	Ping:
+	FI	Ping:
+	FR	Ping :
+	IT	Ping:
+	NL	Ping:
+	NO	Ping:
+	PL	Ping:
+	RU	Ping:
+	SV	Ping:
+
+CONTROLPANEL_FAILED
+	DE	Fehler
+	EN	Failed
+
+CONTROLPANEL_OK
 	CS	OK
 	DA	OK
 	DE	OK
