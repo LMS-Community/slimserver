@@ -8,11 +8,14 @@ package Slim::GUI::ControlPanel::Diagnostics;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON EVT_CHILD_FOCUS);
+use Wx::Event qw(EVT_BUTTON);
 use Socket;
 use Symbol;
 
 use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
+
+my $svcMgr = Slim::Utils::ServiceManager->new();
 
 use constant SN => 'www.squeezenetwork.com';
 
@@ -20,41 +23,75 @@ my @checks;
 my $cache;
 
 sub new {
-	my ($self, $nb, $parent, $args) = @_;
+	my ($self, $nb) = @_;
 
 	$self = $self->SUPER::new($nb);
-	$self->{args} = $args;
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-	my $checkSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
-	$checkSizer->AddGrowableCol(0, 1);
-	$checkSizer->SetFlexibleDirection(wxHORIZONTAL);
+	my $scBoxSizer = Wx::StaticBoxSizer->new( 
+		Wx::StaticBox->new($self, -1, string('SQUEEZECENTER')),
+		wxVERTICAL
+	);
+	my $scSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
+	$scSizer->AddGrowableCol(0, 2);
+	$scSizer->AddGrowableCol(1, 1);
+	$scSizer->SetFlexibleDirection(wxHORIZONTAL);
 	
-	$self->_addItem($checkSizer, 'SQUEEZECENTER');
-	$self->_addItem($checkSizer, 'INFORMATION_SERVER_IP', \&getHostIP);
-	$self->_addItem($checkSizer, '3483', sub {
+	$self->_addItem($scSizer, string('SQUEEZECENTER') . string('COLON'), sub {
+		$svcMgr->checkServiceState() == SC_STATE_RUNNING ? string('RUNNING') : string('STOPPED');
+	});
+	$self->_addItem($scSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getHostIP);
+	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '3483'), sub {
 		checkPort(getHostIP(), '3483');
 	});
-	$self->_addItem($checkSizer, '9000', sub {
+	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '9000'), sub {
 		checkPort(getHostIP(), '9000');
 	});
 
-	$self->_addItem($checkSizer, 'SQUEEZENETWORK', SN);
-	$self->_addItem($checkSizer, 'INFORMATION_SERVER_IP', \&getSNAddress);
-	$self->_addItem($checkSizer, '3483', sub {
-		checkPort(getSNAddress(), '3483');
-	});
-	$self->_addItem($checkSizer, '9000', sub {
-		checkPort(getSNAddress(), '9000');
-	});
-
-	EVT_CHILD_FOCUS($self, sub {
-		my ($self, $event) = @_;
-		$self->_update($event);
+	my $cliPort = Slim::GUI::ControlPanel->getPref('cliport', 'cli.prefs') || 9090;
+	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $cliPort), sub {
+		checkPort(getHostIP(), $cliPort);
 	});
 	
-	$mainSizer->Add($checkSizer, 1, wxALL | wxGROW, 5);
+	$scBoxSizer->Add($scSizer, 0, wxLEFT | wxRIGHT | wxGROW, 10);
+	$mainSizer->Add($scBoxSizer, 0, wxALL | wxGROW, 10);
+
+
+	my $snBoxSizer = Wx::StaticBoxSizer->new( 
+		Wx::StaticBox->new($self, -1, string('SQUEEZENETWORK')),
+		wxVERTICAL
+	);
+	my $snSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
+	$snSizer->AddGrowableCol(0, 2);
+	$snSizer->AddGrowableCol(1, 1);
+	$snSizer->SetFlexibleDirection(wxHORIZONTAL);
+
+	$self->_addItem($snSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getSNAddress);
+	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483'), sub {
+		checkPort(getSNAddress(), '3483');
+	});
+	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000'), sub {
+		checkPort(getSNAddress(), '9000');
+	});
+	
+	$snBoxSizer->Add($snSizer, 0, wxLEFT | wxRIGHT | wxGROW, 10);
+	$mainSizer->Add($snBoxSizer, 0, wxALL | wxGROW, 10);
+
+	$mainSizer->AddStretchSpacer();	
+	
+	my $btnsizer = Wx::StdDialogButtonSizer->new();
+
+	my $btnRefresh = Wx::Button->new( $self, -1, string('CONTROLPANEL_REFRESH') );
+	EVT_BUTTON( $self, $btnRefresh, sub {
+		$self->_update();
+	} );
+	$btnsizer->SetAffirmativeButton($btnRefresh);
+	
+	$btnsizer->Realize();
+
+	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 10);
+	
 	
 	$self->SetSizer($mainSizer);
 
@@ -62,9 +99,9 @@ sub new {
 }
 
 sub _addItem {
-	my ($self, $checkSizer, $label, $checkCB) = @_;
+	my ($self, $sizer, $label, $checkCB) = @_;
 	
-	$checkSizer->Add(Wx::StaticText->new($self, -1, string($label)));
+	$sizer->Add(Wx::StaticText->new($self, -1, string($label)));
 	
 	my $labelText = Wx::StaticText->new($self, -1, '', [-1, -1], [-1, -1], wxALIGN_RIGHT);
 	push @checks, {
@@ -72,7 +109,7 @@ sub _addItem {
 		cb    => ref $checkCB eq 'CODE' ? $checkCB : sub { $checkCB },
 	};
 	
-	$checkSizer->Add($labelText);
+	$sizer->Add($labelText);
 }
 
 sub _update {
@@ -83,10 +120,10 @@ sub _update {
 		if (defined $check->{cb} && $check->{cb} && $check->{label}) {
 			eval {
 				my $val = &{$check->{cb}};
-				$check->{label}->SetLabel($val) if $val;
+				$check->{label}->SetLabel($val) if defined $val;
+				
+				$self->Layout();
 			};
-			
-			print "$@\n" if $@; 
 		}
 	}
 	
@@ -147,7 +184,7 @@ sub getSNAddress {
 sub checkPort {
 	my ($raddr, $rport) = @_;
 	
-	return 0 unless $raddr && $rport;
+	return string('CONTROLPANEL_PORT_FAIL') unless $raddr && $rport;
 
 	my $iaddr = inet_aton($raddr);
 	my $paddr = sockaddr_in($rport, $iaddr);
@@ -157,10 +194,10 @@ sub checkPort {
 	if (connect(SSERVER, $paddr)) {
 
 		close(SSERVER);
-		return 1;
+		return string('CONTROLPANEL_PORT_OK');
 	}
 
-	return 0;
+	return string('CONTROLPANEL_PORT_FAIL');
 }
 
 

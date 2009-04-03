@@ -20886,6 +20886,51 @@ CONTROLPANEL_DIAGNOSTICS
 	RU	Диагностика системы
 	SV	Systemdiagnostik
 	
+CONTROLPANEL_PORTNO
+	CS	Port %s:
+	DA	Port %s:
+	DE	Anschluss %s:
+	EN	Port %s:
+	ES	Puerto %s:
+	FI	Portti %s:
+	FR	Port %s :
+	IT	Porta %s:
+	NL	Poort %s:
+	NO	Port %s:
+	PL	Port %s:
+	RU	Порт %s:
+	SV	Port %s:
+	
+CONTROLPANEL_PORT_FAIL
+	CS	Nemohu připojit
+	DA	Der kan ikke etableres forbindelse
+	DE	Verbindung kann nicht hergestellt werden
+	EN	Can't connect
+	ES	No se puede conectar
+	FI	Ei voi yhdistää
+	FR	Connexion impossible
+	IT	Impossibile connettersi
+	NL	Kan geen verbinding maken
+	NO	Kan ikke kople til
+	PL	Nie można nawiązać połączenia
+	RU	Подключение невозможно
+	SV	Det gick inte att ansluta
+
+CONTROLPANEL_PORT_OK
+	CS	OK
+	DA	OK
+	DE	OK
+	EN	OK
+	ES	Correcto
+	FI	OK
+	FR	OK
+	IT	OK
+	NL	OK
+	NO	OK
+	PL	OK
+	RU	ОК
+	SV	OK
+
 CLEANUP_DESC
 	CS	Vyberte prosím soubory a složky, které chcete vynulovat:
 	DA	Vælg de filer og mapper der skal nulstilles:
@@ -20900,6 +20945,22 @@ CLEANUP_DESC
 	PL	Wybierz pliki i foldery do przywrócenia:
 	RU	Выберите файлы и папки, описание которых необходимо сбросить:
 	SV	Välj de filer och mappar som du vill återställa:
+
+CONTROLPANEL_REFRESH
+	CS	Obnovit
+	DA	Opdater
+	DE	Aktualisieren
+	EN	Refresh
+	ES	Actualizar
+	FI	Päivitä
+	FR	Actualiser
+	HE	רענן
+	IT	Aggiorna
+	NL	Vernieuwen
+	NO	Oppdater
+	PL	Odśwież
+	RU	Обновить
+	SV	Uppdatera
 
 CLEANUP_DO
 	CS	Spustit čištění
