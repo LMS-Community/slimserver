@@ -14,8 +14,8 @@ Slim::Display::Text
 =head1 DESCRIPTION
 
 L<Slim::Display::Text>
- Display code for text (character) based displays: Slimp3, SB1
-  - 40 character x 2 lines
+ Display code for text (character) based displays: Slimp3, SB1, squeezeslave
+  - 40 (or client controlled) character x 2 lines
   - server side animation
 
 =cut
@@ -33,6 +33,8 @@ my $prefs = preferences('server');
 my $scroll_pad_scroll = 6; # chars of padding between scrolling text
 my $scroll_pad_ticker = 8; # chars of padding in ticker mode
 
+my $defaultWidth = 40;     # default character width of display (unless client tells us otherwise)
+
 our $defaultPrefs = {
 	'doublesize'          => 0,
 	'offDisplaySize'      => 0,
@@ -44,33 +46,6 @@ our $defaultPrefs = {
 	'playingDisplayModes' => [0..5]
 };
 
-# Display Modes
-
-my @modes = (
-	# mode 0
-	{ desc => ['BLANK'],
-	  bar => 0, secs => 0,  width => 40, },
-	# mode 1
-	{ desc => ['ELAPSED'],
-	  bar => 0, secs => 1,  width => 40, },
-	# mode 2
-	{ desc => ['REMAINING'],
-	  bar => 0, secs => -1, width => 40, },
-	# mode 3
-	{ desc => ['PROGRESS_BAR'],
-	  bar => 1, secs => 0,  width => 40, },
-	# mode 4
-	{ desc => ['ELAPSED', 'AND', 'PROGRESS_BAR'],
-	  bar => 1, secs => 1,  width => 40, },
-	# mode 5
-	{ desc => ['REMAINING', 'AND', 'PROGRESS_BAR'],
-	  bar => 1, secs => -1, width => 40, },
-	# mode 6
-	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
-	  bar => 1, secs => 0,  width => 40, fullness => 1, },
-);
-
-my $nmodes = $#modes;
 
 sub initPrefs {
 	my $display = shift;
@@ -101,7 +76,8 @@ sub linesPerScreen {
 }
 
 sub displayWidth {
-	return 40;
+	my $display = shift;
+	return $display->widthOverride || $defaultWidth;
 }
 
 sub vfdmodel {
@@ -109,7 +85,6 @@ sub vfdmodel {
 	my $client = $display->client;
 
 	if ($client->isa('Slim::Player::SLIMP3')) {
-
 		if ($client->revision >= 2.2) {
 			my $mac = $client->macaddress();
 			if ($mac eq '00:04:20:03:04:e0') {
@@ -124,7 +99,8 @@ sub vfdmodel {
 		} else {
 			return 'noritake-katakana';
 		}
-
+	} elsif ($client->isa('Slim::Player::SqueezeSlave')) {  
+		return 'squeezeslave';
 	} else {
 		# Squeezebox 1
 		return 'noritake-european';
@@ -198,11 +174,11 @@ sub render {
 	$sc->{newscroll} = 0;
 	$sc->{present} = 1;
 
-	# force initialisation of cache if size = 0 (used to init cache)
-	if ($sc->{ssize} != 40) {
-		$sc->{ssize} = 40;
+	# force (re)initialisation of cache if size changed
+	if ($sc->{ssize} != $display->displayWidth) {
 		$sc->{double} = 0;
 		$sc->{changed} = 1;
+		$sc->{ssize} = $display->displayWidth;
 	}
 
 	# check display hash for text size definitions
@@ -232,12 +208,13 @@ sub render {
 	if ($sc->{changed}) {
 		foreach my $l (0..1) {
 			$sc->{line}[$l] = undef; $sc->{linetext}[$l] = ''; $sc->{linefinish}[$l] = 0;
-			$sc->{overlay}[$l] = undef; $sc->{overlaytext}[$l] = ''; $sc->{overlaystart}[$l] = 40;
+			$sc->{overlay}[$l] = undef; $sc->{overlaytext}[$l] = ''; $sc->{overlaystart}[$l] = $display->displayWidth;
 			$sc->{center}[$l] = undef; $sc->{centertext}[$l] = '';
 		}
 		$sc->{scroll} = 0;
 		$sc->{scrollline} = undef;
 	}
+
 	if (!$scroll) { 
 		$sc->{scroll} = 0;
 		$sc->{scrollline} = undef;
@@ -298,17 +275,17 @@ sub render {
 			} else {
 				$sc->{overlaytext}[$l] = '';
 			}
-			if (lineLength($sc->{overlaytext}[$l]) > 40 ) {
-				$sc->{overlaytext}[$l] = subString($sc->{overlaytext}[$l], 0, 40);
-				$sc->{overlaystart}[$l] = 40;
+			if (lineLength($sc->{overlaytext}[$l]) > $display->displayWidth ) {
+				$sc->{overlaytext}[$l] = subString($sc->{overlaytext}[$l], 0, $display->displayWidth);
+				$sc->{overlaystart}[$l] = $display->displayWidth;
 			} else {
-				$sc->{overlaystart}[$l] = 40 - lineLength($sc->{overlaytext}[$l]);
+				$sc->{overlaystart}[$l] = $display->displayWidth - lineLength($sc->{overlaytext}[$l]);
 			}
 			$sc->{changed} = 1;
 		} elsif (!defined($screen->{overlay}[$l]) && defined($sc->{overlay}[$l])) {
 			$sc->{overlay}[$l] = undef;
 			$sc->{overlaytext}[$l] = '';
-			$sc->{overlaystart}[$l] = 40;
+			$sc->{overlaystart}[$l] = $display->displayWidth;
 			$sc->{changed} = 1;
 		}
 	}
@@ -320,22 +297,22 @@ sub render {
 			$sc->{center}[$l] = $screen->{center}[$l];
 			next if ($double && $l == 0);
 			if (!$double) {
-				my $len = lineLength($sc->{center}[$l]); 
-				if ($len < 39) {
-					$sc->{centertext}[$l] = ' ' x ((40 - $len)/2) . $screen->{center}[$l] . 
-						' ' x (40 - $len - int((40 - $len)/2));
+				my $len = lineLength($screen->{center}[$l]); 
+				if ($len < $display->displayWidth - 1) {
+					$sc->{centertext}[$l] = ' ' x (($display->displayWidth - $len)/2) . $screen->{center}[$l] . 
+						' ' x ($display->displayWidth - $len - int(($display->displayWidth - $len)/2));
 				} else {
-					$sc->{centertext}[$l] = subString($sc->{center}[$l] . ' ', 0 ,40);
+					$sc->{centertext}[$l] = subString($screen->{center}[$l] . ' ', 0, $display->displayWidth);
 				}
 			} else {
 				my ($center1, $center2) = Slim::Display::Lib::TextVFD::doubleSize($client,$screen->{center}[1]);
 				my $len = lineLength($center1);
-				if ($len < 39) {
-					$sc->{centertext}[0] = ' ' x ((40 - $len)/2) . $center1 . ' ' x (40 - $len - int((40 - $len)/2));
-					$sc->{centertext}[1] = ' ' x ((40 - $len)/2) . $center2 . ' ' x (40 - $len - int((40 - $len)/2));
+				if ($len < $display->displayWidth - 1) {
+					$sc->{centertext}[0] = ' ' x (($display->displayWidth - $len)/2) . $center1 . ' ' x ($display->displayWidth - $len - int(($display->displayWidth - $len)/2));
+					$sc->{centertext}[1] = ' ' x (($display->displayWidth - $len)/2) . $center2 . ' ' x ($display->displayWidth - $len - int(($display->displayWidth - $len)/2));
 				} else {
-					$sc->{centertext}[0] = subString($center1 . ' ', 0 ,40);
-					$sc->{centertext}[1] = subString($center2 . ' ', 0 ,40);
+					$sc->{centertext}[0] = subString($center1 . ' ', 0 ,$display->displayWidth);
+					$sc->{centertext}[1] = subString($center2 . ' ', 0 ,$display->displayWidth);
 				}
 			}
 			$sc->{changed} = 1;
@@ -426,11 +403,11 @@ sub render {
 			$sc->{scrollstart} = 0;
 			if ($scroll == 1) {
 				# normal wrapped text scrolling
-				$scrolltext .= ' ' x $scroll_pad_scroll . subString($scrolltext, 0, 40);
+				$scrolltext .= ' ' x $scroll_pad_scroll . subString($scrolltext, 0, $display->displayWidth);
 				$sc->{scrollend} = $sc->{linefinish}[$l] + $scroll_pad_scroll;
 			} else {
 				# don't wrap text - scroll to end only
-				$sc->{scrollend} = $sc->{linefinish}[$l] - 40;
+				$sc->{scrollend} = $sc->{linefinish}[$l] - $display->displayWidth;
 			}
 
 			if (!$double || $l == 0) {
@@ -472,7 +449,7 @@ sub pushLeft {
 	my $line2 = $$line2start . $$line2end;
 
 	$display->killAnimation();
-	$display->pushUpdate([\$line1, \$line2, 0, 5, 40,  0.02]);
+	$display->pushUpdate([\$line1, \$line2, 0, 4, $display->displayWidth,  0.02]);
 }
 
 sub pushRight {
@@ -489,7 +466,7 @@ sub pushRight {
 	my $line2 = $$line2end . $$line2start;
 
 	$display->killAnimation();
-	$display->pushUpdate([\$line1, \$line2, 40, -5, 0,  0.02]);
+	$display->pushUpdate([\$line1, \$line2, $display->displayWidth, -4, 0,  0.02]);
 }
 
 sub pushUp {
@@ -536,9 +513,12 @@ sub pushUpdate {
 	my ($line1, $line2, $offset, $delta, $end, $deltatime) = @$params;
 	
 	$offset += $delta;
+	# With custom widths, offset may not be a factor of the width, so fix up to avoid problems!
+	$offset=$end if ($delta > 0 && $offset > $end); 
+	$offset=$end if ($delta < 0 && $offset < $end);
 
-	my $screenline1 = subString($$line1, $offset, 40);
-	my $screenline2 = subString($$line2, $offset, 40);
+	my $screenline1 = subString($$line1, $offset, $display->displayWidth);
+	my $screenline2 = subString($$line2, $offset, $display->displayWidth);
 
 	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $screenline1, $screenline2);		
 
@@ -556,7 +536,7 @@ sub bumpDown {
 
 	my $render = $display->render($display->renderCache());
 	my $line1 = ${$render->{screen1}->{lineref}[1]};
-	my $line2 = ' ' x 40;
+	my $line2 = ' ' x $display->displayWidth;
 
 	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $line1, $line2);		
 
@@ -569,7 +549,7 @@ sub bumpUp {
 	my $display = shift;
 
 	my $render = $display->render($display->renderCache());
-	my $line1 = ' ' x 40;
+	my $line1 = ' ' x $display->displayWidth;
 	my $line2 = ${$render->{screen1}->{lineref}[0]};
 
 	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $line1, $line2);		
@@ -598,12 +578,37 @@ sub brightnessMap {
 }
 
 sub modes {
+	my $display = shift;
+	# Display Modes
+	
+	my @modes = (
+		# mode 0
+		{ desc => ['BLANK'],
+		  bar => 0, secs => 0,  width => $display->displayWidth, },
+		# mode 1
+		{ desc => ['ELAPSED'],
+		  bar => 0, secs => 1,  width => $display->displayWidth, },
+		# mode 2
+		{ desc => ['REMAINING'],
+		  bar => 0, secs => -1, width => $display->displayWidth, },
+		# mode 3
+		{ desc => ['PROGRESS_BAR'],
+		  bar => 1, secs => 0,  width => $display->displayWidth, },
+		# mode 4
+		{ desc => ['ELAPSED', 'AND', 'PROGRESS_BAR'],
+		  bar => 1, secs => 1,  width => $display->displayWidth, },
+		# mode 5
+		{ desc => ['REMAINING', 'AND', 'PROGRESS_BAR'],
+		  bar => 1, secs => -1, width => $display->displayWidth, },
+		# mode 6
+		{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
+		  bar => 1, secs => 0,  width => $display->displayWidth, fullness => 1, },
+	   );
+	
 	return \@modes;
 }
 
-sub nmodes {
-	return $nmodes;
-}
+sub nmodes { 6 }
 
 sub scrollUpdateDisplay {
 	# update scrolling for character display
@@ -637,11 +642,11 @@ sub scrollUpdateDisplay {
 	} else {
 		# both lines scrolling
 		if ($padlen) {
-			$line1 = subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, 40);
-			$line2 = subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, 40);
+			$line1 = subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, $display->displayWidth);
+			$line2 = subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, $display->displayWidth);
 		} else {
-			$line1 = subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, 40);
-			$line2 = subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, 40);
+			$line1 = subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, $display->displayWidth);
+			$line2 = subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, $display->displayWidth);
 		}
 	}
 

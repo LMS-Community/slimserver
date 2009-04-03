@@ -1081,7 +1081,7 @@ sub _hello_handler {
 	} elsif ($deviceids[$deviceid] eq 'squeezeslave') {
 
 		$client_class = 'Slim::Player::SqueezeSlave';
-		$display_class = 'Slim::Display::NoDisplay';
+		$display_class = 'Slim::Display::Text';
 
 	} elsif ($deviceids[$deviceid] eq 'squeezeplay' || $deviceids[$deviceid] eq 'controller') {
 
