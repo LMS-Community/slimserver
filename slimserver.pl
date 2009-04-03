@@ -796,16 +796,17 @@ sub daemonize {
 
 sub changeEffectiveUserAndGroup {
 
-	# Warn if running as root
+	# If we're not root and need to change user and group then die with a
+	# suitable message, else there's nothing more to do, so return.
 	if ($> != 0) {
 
 		if (defined($user) || defined($group)) {
 
 			my $uname = getpwuid($>);
 			print STDERR "Current user is $uname\n";
-                        print STDERR "Should not run this as root -- please quit an run as a non-privileged user.\n";
+			print STDERR "Must run as root to change effective user or group.\n";
 
-			return;
+			die "Aborting";
 
 		} else {
 
