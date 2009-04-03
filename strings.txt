@@ -20870,6 +20870,21 @@ CONTROLPANEL_MUSIC_LIBRARY
 CONTROLPANEL_MAINTENANCE
 	DE	Unterhalt
 	EN	Maintenance
+
+CONTROLPANEL_DIAGNOSTICS
+	CS	Diagnostika systému
+	DA	Systemdiagnosticering
+	DE	Systemdiagnose
+	EN	Diagnostics
+	ES	Diagnóstico del sistema
+	FI	Järjestelmädiagnostiikka
+	FR	Diagnostic système
+	IT	Diagnostica del sistema
+	NL	Diagnostische gegevens van het systeem
+	NO	Systemdiagnose
+	PL	Diagnostyka systemu
+	RU	Диагностика системы
+	SV	Systemdiagnostik
 	
 CLEANUP_DESC
 	CS	Vyberte prosím soubory a složky, které chcete vynulovat:

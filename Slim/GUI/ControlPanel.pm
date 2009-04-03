@@ -14,10 +14,11 @@ use File::Spec::Functions;
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 
-use Slim::GUI::ControlPanel::Maintenance;
-use Slim::GUI::ControlPanel::Music;
 use Slim::GUI::ControlPanel::Settings;
+use Slim::GUI::ControlPanel::Music;
 use Slim::GUI::ControlPanel::Status;
+use Slim::GUI::ControlPanel::Maintenance;
+use Slim::GUI::ControlPanel::Diagnostics;
 use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
 
@@ -69,8 +70,9 @@ sub new {
 
 	$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('SETTINGS'), 1);
 	$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::Maintenance->new($notebook, $self, $args), string('CONTROLPANEL_MAINTENANCE'));
 	$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
+	$notebook->AddPage(Slim::GUI::ControlPanel::Maintenance->new($notebook, $self, $args), string('CONTROLPANEL_MAINTENANCE'));
+	$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
 	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
