@@ -54,10 +54,10 @@ sub new {
 	EVT_NOTEBOOK_PAGE_CHANGED($self, $notebook, sub {
 		my ($self, $event) = @_;
 
-		my $child = $notebook->GetCurrentPage();
-		if ($child->can('_update')) {
+		eval {
+			my $child = $notebook->GetCurrentPage();
 			$child->_update($event);
-		}
+		};
 	});
 
 	$pollTimer = Slim::GUI::ControlPanel::Timer->new();
