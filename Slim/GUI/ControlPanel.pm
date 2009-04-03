@@ -55,9 +55,11 @@ sub new {
 		my ($self, $event) = @_;
 
 		eval {
-			my $child = $notebook->GetCurrentPage();
-			$child->_update($event);
-		};
+			my $child = $notebook->GetPage($notebook->GetSelection());
+			if ($child && $child->can('_update')) {
+				$child->_update($event);
+			};
+		}
 	});
 
 	$pollTimer = Slim::GUI::ControlPanel::Timer->new();
