@@ -72,8 +72,14 @@ my $serverPrefFile = catdir($os->dirsFor('prefs'), 'server.prefs');
 sub string {
 	my $name = shift;
 	my $lang = shift || $language;
-
-	$strings{ $name }->{ $lang } || $strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
+	
+	my $string = $strings{ $name }->{ $lang } || $strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
+	
+	if ( @_ ) {
+		$string = sprintf( $string, @_ );
+	}	
+	
+	return $string;
 }
 
 sub loadStrings {
