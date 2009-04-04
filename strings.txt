@@ -10535,6 +10535,9 @@ MOV
 AAC
 	EN	AAC
 
+MP4
+	EN	MP4
+
 M3U
 	DA	M3U-afspilningsliste
 	DE	M3U-Wiedergabeliste
