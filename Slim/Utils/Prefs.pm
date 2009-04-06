@@ -193,7 +193,6 @@ sub init {
 		'maxWMArate'            => 9999,
 		'tcpConnectMaximum'	    => 30,             # not on web page
 		'udpChunkSize'          => 1400,           # only used for Slimp3
-		'mDNSname'              => 'SqueezeCenter',
 		# Server Settings - Performance
 		'disableStatistics'     => 0,
 		'serverPriority'        => '',

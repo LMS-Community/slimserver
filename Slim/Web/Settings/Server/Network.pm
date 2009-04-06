@@ -27,11 +27,6 @@ sub page {
 sub prefs {
 	my @prefs = qw(webproxy httpport bufferSecs remotestreamtimeout maxWMArate noupnp);
 
-	# Bug 2724 - only show the mDNS settings if we have a binary for it.
-	if (Slim::Utils::Misc::findbin('mDNSResponderPosix')) {
-		push @prefs, 'mDNSname';
-	}
-
 	# only show following for SLIMP3
 	if ($Slim::Player::SLIMP3::SLIMP3Connected) {
 		push @prefs, 'udpChunkSize';

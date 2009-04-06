@@ -806,7 +806,6 @@ sub logLevels {
 		'network.asyncdns'           => 'ERROR',
 		'network.asynchttp'          => 'ERROR',
 		'network.http'               => 'ERROR',
-		'network.mdns'               => 'ERROR',
 		'network.protocol'           => 'ERROR',
 		'network.protocol.slimproto' => 'ERROR',
 		'network.protocol.slimp3'    => 'ERROR',

@@ -388,9 +388,6 @@ sub init {
 	$log->info("Slimproto Init...");
 	Slim::Networking::Slimproto::init();
 
-	$log->info("mDNS init...");
-	Slim::Networking::mDNS->init;
-
 	$log->info("Cache init...");
 	Slim::Utils::Cache->init();
 	
@@ -459,10 +456,6 @@ sub init {
 
 	$log->info("SqueezeCenter HTTP enable...");
 	Slim::Web::HTTP::init2();
-
-	# advertise once we are ready...
-	$log->info("mDNS startAdvertising...");
-	Slim::Networking::mDNS->startAdvertising;
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
@@ -963,8 +956,6 @@ sub cleanup {
 	Slim::Utils::PluginManager->shutdownPlugins();
 
 	Slim::Utils::Prefs::writeAll();
-
-	Slim::Networking::mDNS->stopAdvertising;
 
 	if ($prefs->get('persistPlaylists')) {
 		Slim::Control::Request::unsubscribe(

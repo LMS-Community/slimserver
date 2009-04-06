@@ -30,7 +30,6 @@ use URI::Escape;
 use YAML::Syck qw(LoadFile);
 
 use Slim::Formats::Playlists::M3U;
-use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::Player::HTTP;
 use Slim::Music::Info;
@@ -244,9 +243,6 @@ sub openport {
 	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
 
 	$log->info("Server $0 accepting http connections on port $openedport");
-
-	Slim::Networking::mDNS->addService('_http._tcp', $openedport);
-	Slim::Networking::mDNS->addService('_slimhttp._tcp', $openedport);
 	
 	if ($openedport != $listenerport) {
 
@@ -273,10 +269,6 @@ sub _adjustHTTPPortCallback {
 
 	# if we've already opened a socket, let's close it
 	if ($openedport) {
-
-		Slim::Networking::mDNS->removeService('_http._tcp');
-		Slim::Networking::mDNS->removeService('_slimhttp._tcp');
-		
 		$log->info("Closing http server socket");
 
 		Slim::Networking::Select::removeRead($http_server_socket);
@@ -288,11 +280,7 @@ sub _adjustHTTPPortCallback {
 
 	# open new port if specified
 	if ($prefs->get('httpport')) {
-
 		Slim::Web::HTTP::openport($prefs->get('httpport'), $::httpaddr);
-
-		# Need to restart mDNS after changing the HTTP port.
-		Slim::Networking::mDNS->startAdvertising;
 	}
 }
 

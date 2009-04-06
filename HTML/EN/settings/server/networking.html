@@ -44,13 +44,6 @@
 		</select>
 	[% END %]
 
-
-	[% IF prefs.exists('pref_mDNSname') %]
-		[% WRAPPER setting title="SETUP_MDNSNAME" desc="SETUP_MDNSNAME_DESC" %]
-			<input type=text class="stdedit" name="pref_mDNSname" id="mDNSname" value="[% prefs.pref_mDNSname %]" size="20">	
-		[% END %]
-	[% END %]
-
 	[% IF prefs.exists('pref_tcpReadMaximum') || prefs.exists('pref_tcpWriteMaximum') || prefs.exists('pref_udpChunkSize') %]
 		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="SETUP_GROUP_TCP_PARAMS" desc="SETUP_GROUP_TCP_PARAMS_DESC" %][% END %]	

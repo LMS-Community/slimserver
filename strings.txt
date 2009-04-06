@@ -8377,44 +8377,6 @@ SETUP_PASSWORD_MISMATCH
 	RU	Введенные пароли не совпадают.
 	SV	Lösenorden stämmer inte överens.
 
-SETUP_MDNSNAME
-	CS	Název Bonjour
-	DA	Bonjour-navn
-	DE	Bonjour-Name:
-	EN	Bonjour Name
-	ES	Nombre para Bonjour
-	FI	Bonjour-nimi
-	FR	Nom Bonjour
-	HE	שם Bonjour
-	IT	Nome in Bonjour
-	JA	ランデブー名
-	NL	Bonjour-naam
-	NO	Bonjour-navn
-	PL	Nazwa Bonjour
-	PT	Nome "Bonjour"
-	RU	Название Bonjour
-	SV	Bonjour-namn
-	ZH_CN	Bonjour名
-
-SETUP_MDNSNAME_DESC
-	CS	Můžete si vybrat název pro tento server, který se bude používat s Bonjour. Ponechte toto pole prázdné, chcete-li vypnout reklamy Bonjour ve SqueezeCenter. Aby se tyto změny projevily, bude nutno vypnout a znovu spustit  aplikaci.
-	DA	Du kan vælge et navn til denne server som skal bruges med Bonjour. Hvis du vil deaktivere understøttelsen af Bonjour på SqueezeCenter, skal feltet være tomt. Programmet skal genstartes før ændringerne bliver synlige.
-	DE	Wählen Sie für den Einsatz auf Bonjour einen Namen für den Server. Lassen Sie das Feld leer, um Bonjour-Werbung auf SqueezeCenter zu deaktivieren. Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
-	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SqueezeCenter.  You will need to restart the application to see the effect of these changes.
-	ES	Se puede elegir qué nombre usará este servidor con Bonjour. Deje el campo en blanco para deshabilitar anuncios de Bonjour en SqueezeCenter. Deberá reiniciar el servidor para que estos cambios entren en vigor.
-	FI	Voit valita palvelimelle nimen, jota käytetään Bonjourin kanssa.  Jätä kenttä tyhjäksi, jos haluat poistaa SqueezeCenterin Bonjour-mainonnan käytöstä.  Sovellus täytyy käynnistää uudelleen, jotta muutosten vaikutukset näkyvät.
-	FR	Vous pouvez choisir un nom de serveur reconnu par Bonjour. Ne renseignez pas ce champ pour désactiver la présentation Bonjour du SqueezeCenter. Vous devez redémarrer le serveur pour que les modifications prennent effet.
-	HE	באפשרותך לבחור שם עבור השרת שייעשה בו שימוש עם Bonjour. השאר שדה זה ריק כדי להשבית את הפרסום של Bonjour ב-SqueezeCenter. יהיה עליך להפעיל מחדש את השרת כדי לראות את השפעת השינויים.
-	IT	Per questo server è possibile scegliere un nome da utilizzare in Bonjour. Per disattivare il riconoscimento di SqueezeCenter in Bonjour, lasciare il campo vuoto. Per rendere effettive le modifiche, è necessario riavviare l'applicazione.
-	JA	ランデブーをお使いの時に、このサーバーに名前をつけることができます。このフィールドを空欄にしますと、ランデブー機能が無効になります。この変更にはサーバーの再起動が必要となります。
-	NL	Je kunt een naam voor deze server kiezen, die gebruikt moet worden met Bonjour. Laat dit veld leeg om Bonjour-reclame van SqueezeCenter uit te schakelen. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
-	NO	Du kan gi serveren et navn som kan brukes med Bonjour. Hvis du vil deaktivere Bonjour-reklame for SqueezeCenter, kan du la dette feltet stå tomt. Du må starte programmet på nytt før disse endringene trer i kraft.
-	PL	Możliwe jest wybranie nazwy tego serwera używanego przez protokół Bonjour. Pozostaw to pole puste, aby wyłączyć anonsowanie protokołu Bonjour w programie SqueezeCenter. Aby wprowadzić te zmiany, należy ponownie uruchomić aplikację.
-	PT	Pode escolher um nome Bonjour para este servidor
-	RU	Можно выбрать название для данного сервера, используемого с Bonjour. Чтобы отключить объявления Bonjour в SqueezeCenter, не заполняйте это поле. Чтобы увидеть результат изменений, перезагрузите приложение.
-	SV	Du kan ge den här servern ett namn för att användas med Bonjour.  Om du inte vill att Bonjour ska visa SqueezeCenter lämnar du fältet tomt.  Ändringarna träder inte i kraft förrän du startar om programmet.
-	ZH_CN	您可以为这个服务器取个让Bonjour使用的名字。藤空则表示关闭Bonjour广播SqueezeCenter的功能。更动后您必须重新启动服务器方为有效。
-
 SETUP_REMOTESTREAMTIMEOUT
 	CS	Časový limit rádiové stanice
 	DA	Timeoutgrænse for internetradio
@@ -18722,21 +18684,6 @@ DEBUG_SERVER_TIMERS
 	PL	Informacje timera wewnętrznego
 	RU	Сведения внутреннего таймера
 	SV	Information om intern timer
-
-DEBUG_NETWORK_MDNS
-	CS	Výběrové vysílání DNS / Bonjour
-	DA	Multicast DNS / Bonjour
-	DE	Multicast DNS/Bonjour
-	EN	Multicast DNS / Bonjour
-	ES	Multicast DNS / Bonjour
-	FI	Ryhmä-DNS / Bonjour
-	FR	Multicast DNS / Bonjour
-	IT	Multicast DNS / Bonjour
-	NL	Multicast DNS/Bonjour
-	NO	Multicast DNS / Bonjour
-	PL	Multiemisja DNS / Bonjour
-	RU	Многоадресная DNS / Bonjour
-	SV	Multicast DNS/Bonjour
 
 DEBUG_NETWORK_HTTP
 	CS	Vnitřní protokolování HTTP serveru
