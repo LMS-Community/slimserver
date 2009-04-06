@@ -670,13 +670,12 @@ sub encodingFromString {
 
 		# Bug 10671: sometimes Encode::Guess returns ambiguous results like "ascii or utf8"
 		if ($@) {
-			logError($@);
-
 			if ($charset =~ /utf8/i) {
 				$charset = 'utf8';
-				logError("Falling back to: $charset");
+				logWarning("$@\nFalling back to: $charset");
 			}
 			else {
+				logError($@);
 				$charset = '';
 			}
 		}
