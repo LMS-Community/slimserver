@@ -122,7 +122,7 @@ sub init {
 	if (!$config{'log4perl.rootLogger'} || $config{'log4perl.rootLogger'} !~ /$logtype/) {
 
 		# Add our default root logger
-		my @levels = ('WARN', $logtype);
+		my @levels = ('ERROR', $logtype);
 
 		if ($::daemon || !$::quiet) {
 			push @levels, 'screen';
