@@ -672,7 +672,7 @@ sub encodingFromString {
 		if ($@) {
 			if ($charset =~ /utf8/i) {
 				$charset = 'utf8';
-				logWarning("$@\nFalling back to: $charset");
+				logWarning("$@   -> Falling back to: $charset");
 			}
 			else {
 				logError($@);
