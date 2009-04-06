@@ -23,7 +23,7 @@ if (!main::SCANNER) {
 
 my $prefs = preferences('server');
 
-our %validSubCommands = map { $_ => 1 } qw(play append load_done loadalbum addalbum loadtracks addtracks clear delete move sync);
+our %validSubCommands = map { $_ => 1 } qw(play append load_done loadalbum addalbum loadtracks playtracks addtracks inserttracks deletetracks clear delete move sync);
 
 our %shuffleTypes = (
 	1 => 'track',
