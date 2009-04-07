@@ -737,7 +737,7 @@ sub artistsQuery {
 		
 		# use browse here
 		if ($search) {
-			$rs = Slim::Schema->rs('Contributor')->searchNames(Slim::Utils::Text::searchStringSplit($search));
+			$rs = Slim::Schema->rs('Contributor')->searchNames(Slim::Utils::Text::searchStringSplit($search), $attr);
 		}
 		else {
 			$rs = Slim::Schema->rs('Contributor')->browse( undef, $where )->search( {}, $attr );
