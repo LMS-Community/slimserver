@@ -23,10 +23,6 @@ Slim::Control::Commands
 Implements most SqueezeCenter commands and is designed to be exclusively called
 through Request.pm and the mechanisms it defines.
 
-The code for the "alarm" command is heavily commented and corresponds to a
-"model" synchronous command.  Check CLI handling code in the Shoutcast plugin
-for an asynchronous command.
-
 =cut
 
 use strict;
@@ -1832,7 +1828,7 @@ sub playlistcontrolCommand {
 				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id]
 			);
 
-			$request->addResult('count', scalar($playlist->tracks()));
+			$request->addResult( 'count', $playlist->tracks->count() );
 
 			$request->setStatusDone();
 			
