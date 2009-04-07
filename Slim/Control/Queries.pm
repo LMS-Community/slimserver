@@ -663,12 +663,6 @@ sub artistsQuery {
 	my $where_va = {'me.compilation' => 1};
 	my $attr_va = {};
 
- 	# Normalize any search parameters
- 	if (specified($search)) {
- 
- 		$where->{'me.namesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
- 	}
-
 	my $rs;
 	my $cacheKey;
 
@@ -742,7 +736,12 @@ sub artistsQuery {
 		}
 		
 		# use browse here
-		$rs = Slim::Schema->rs('Contributor')->browse( undef, $where )->search( {}, $attr );
+		if ($search) {
+			$rs = Slim::Schema->rs('Contributor')->searchNames(Slim::Utils::Text::searchStringSplit($search));
+		}
+		else {
+			$rs = Slim::Schema->rs('Contributor')->browse( undef, $where )->search( {}, $attr );
+		}
 	}
 	
 	my $count = $rs->count;
