@@ -491,7 +491,9 @@ sub idle {
 	# check for time travel (i.e. If time skips backwards for DST or clock drift adjustments)
 	if ( $now < $lastlooptime || ( $now - $lastlooptime > 300 ) ) {
 
-		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime);
+		# bug 10325 - only adjust timer when travelled back
+		# queue isn't influenced when travelling forward (eg. waking from suspend mode)
+		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime) if $now < $lastlooptime;
 		
 		# For all clients that support RTC, we need to adjust their clocks
 		for my $client ( Slim::Player::Client::clients() ) {
