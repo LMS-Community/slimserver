@@ -202,6 +202,10 @@ sub Notify {
 			
 			return;
 		}
+		
+		elsif ($progress && $progress->{lastscanfailed}) {
+			$progressLabel->SetLabel($progress->{lastscanfailed});
+		}
 	}
 	
 	if ($isScanning) {
