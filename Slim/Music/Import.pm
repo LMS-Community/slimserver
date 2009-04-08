@@ -186,6 +186,13 @@ sub abortScan {
 	if ($class->stillScanning) {
 
 		$class->scanningProcess->die();
+		
+		$class->checkScanningStatus();
+
+		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'name' => 'failure' })->first) {
+			$p->info('SCAN_ABORTED');
+			$p->update;
+		}
 	}
 }
 
@@ -207,6 +214,25 @@ sub checkScanningStatus {
 		Slim::Utils::Timers::setTimer(undef, (Time::HiRes::time() + 5), \&checkScanningStatus);
 
 	} else {
+
+		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
+		
+			$log->warn("scanner is not running, but no progress data available - scanner crashed");
+	
+			$p->finish( $p->finish || time() );
+			$p->active(0);
+			$p->update;
+
+			my $failure = Slim::Utils::Progress->new({
+				type => 'importer', 
+				name => 'failure',
+			});
+			
+			$failure->final;
+			
+			# we store the failed step's token to be used in UIs
+			$failure->update(uc($p->name || ''));
+		}
 
 		# Clear caches, like the vaObj, etc after scanning has been finished.
 		Slim::Schema->wipeCaches;

@@ -19529,6 +19529,12 @@ SCANNER_PROGRESS
 	RU	Сведения сканирования музыки
 	SV	Information om musiksökning
 
+FAILURE_PROGRESS
+	EN	Music scan terminated unexpectedly (%s)
+
+SCAN_ABORTED_PROGRESS
+	EN	Scan was manually aborted by the user
+
 DIRECTORY_PROGRESS
 	CS	Prohledávání adresáře
 	DA	Scanning af mapper

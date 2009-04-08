@@ -152,6 +152,10 @@ function _init() {
 									this.playerStatus.rescan = response.result.rescan;
 									this.fireEvent('scannerupdate', response.result);
 								}
+								
+								if (response.result.lastscanfailed) {
+									this.showBriefly(response.result.lastscanfailed);
+								}
 							}
 						},
 			

@@ -29,31 +29,39 @@ sub progress {
 	my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start,id' } )->all;
 
 	my $finished;
+	my $failure;
 
 	for my $p (@progress) {
 
-		my $bar;
-		my $barFinish = $p->finish ? $barLen : $p->total ? $p->done / $p->total * $barLen : -1;
+		unless ($p->name eq 'failure') {
 
-		for (my $i = 0; $i < $barLen; $i++) {
-			$bar .= ( $i <= $barFinish ) ? $bar1 : $bar0;
+			my $bar;
+			my $barFinish = $p->finish ? $barLen : $p->total ? $p->done / $p->total * $barLen : -1;
+	
+			for (my $i = 0; $i < $barLen; $i++) {
+				$bar .= ( $i <= $barFinish ) ? $bar1 : $bar0;
+			}
+	
+			my $runtime = ($p->finish || time()) - $p->start;
+	
+			my $hrs  = int($runtime / 3600);
+			my $mins = int(($runtime - $hrs * 3600)/60);
+			my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
+	
+			my $item = {
+				'obj'  => $p,
+				'bar'  => $bar,
+				'time' => sprintf("%02d:%02d:%02d", $hrs, $mins, $sec),
+			};
+	
+			$total_time += $runtime;
+	
+			push @{$params->{'progress_items'}}, $item;
+
 		}
-
-		my $runtime = ($p->finish || time()) - $p->start;
-
-		my $hrs  = int($runtime / 3600);
-		my $mins = int(($runtime - $hrs * 3600)/60);
-		my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
-
-		my $item = {
-			'obj'  => $p,
-			'bar'  => $bar,
-			'time' => sprintf("%02d:%02d:%02d", $hrs, $mins, $sec),
-		};
-
-		$total_time += $runtime;
-
-		push @{$params->{'progress_items'}}, $item;
+		else {
+			$failure = $p->info || 1;
+		}
 		
 		$finished = $p->finish;
 	}
@@ -65,7 +73,22 @@ sub progress {
 
 		if (@progress) {
 
-			$params->{'message'} = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
+			if ($failure) {
+				$params->{'message'} = '?';
+				
+				if ($failure eq 'SCAN_ABORTED') {
+					$params->{'message'} = string($failure); 
+				}
+				elsif ($failure ne '1') {
+					$params->{'message'} = string('FAILURE_PROGRESS', string($failure . '_PROGRESS')); 
+				}
+				
+				$params->{'failed'} = $failure;
+			}
+			else {
+				$params->{'message'} = string('PROGRESS_IMPORTER_COMPLETE_DESC');
+			}
+				
 			
 			my $hrs  = int($total_time / 3600);
 			my $mins = int(($total_time - $hrs * 3600)/60);

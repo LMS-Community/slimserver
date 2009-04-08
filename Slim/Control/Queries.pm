@@ -2906,6 +2906,11 @@ sub rescanprogressQuery {
 	# if we're not scanning, just say so...
 	} else {
 		$request->addResult('rescan', 0);
+
+		# inform if the scan has failed
+		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'name' => 'failure' })->first) {
+			_scanFailed($request, $p->info);
+		}
 	}
 
 	$request->setStatusDone();
@@ -3049,8 +3054,12 @@ sub serverstatusQuery {
 	}
 
 	elsif (my @p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer' }, { 'order_by' => 'start,id' })->all) {
-
+		
 		$request->addResult('lastscan', $p[-1]->finish);
+		
+		if ($p[-1]->name eq 'failure') {
+			_scanFailed($request, $p[-1]->info);
+		}
 	}
 	
 	# add version
@@ -5553,6 +5562,19 @@ sub _partyModeCheck {
 	return ($partyMode eq 'party');
 }
 
+
+sub _scanFailed {
+	my ($request, $info) = @_;
+	
+	if ($info && $info eq 'SCAN_ABORTED') {
+		$info = $request->string($info);
+	}
+	elsif ($info) {
+		$info = $request->string('FAILURE_PROGRESS', $request->string($info . '_PROGRESS') || '?');
+	}
+
+	$request->addResult('lastscanfailed', $info || '?');	
+}
 
 =head1 SEE ALSO
 
