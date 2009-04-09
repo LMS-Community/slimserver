@@ -1876,6 +1876,14 @@ sub _alarmEnd {
 	my $request = shift;
 
 	my $client = $request->client;
+	
+	# Ignore unexpected notifications
+	if ($request->isNotCommand([['pause', 'stop', 'power']])
+		&& $request->isNotCommand([['playlist'], ['jump']]))
+	{
+		$log->debug('Ignoring unwanted notification: ', $request->getRequestString);
+		return;
+	}
 
 	$log->debug(sub {'_alarmEnd called with request: ' . $request->getRequestString});
 
@@ -1894,12 +1902,6 @@ sub _alarmEnd {
 
 	# power always ends the alarm, whether snoozing or not
 	if ($currentAlarm->{_snoozeActive} && $request->getRequest(0) ne 'power') {
-		# When snoozing we should end on 'playlist jump' but can only filter on playlist
-		if ($request->getRequest(0) eq 'playlist' && $request->getRequest(1) ne 'jump') {
-			$log->debug('Ignoring playlist command that isn\'t jump');
-			return;
-		}
-
 		# Stop the snooze expiry timer and set a new alarm subscription for events that should end the alarm
 		$log->debug('Stopping snooze');
 		Slim::Utils::Timers::killTimers($currentAlarm, \&stopSnooze);
