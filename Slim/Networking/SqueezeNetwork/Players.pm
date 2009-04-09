@@ -163,7 +163,7 @@ sub get_players {
 }
 
 sub is_known_player {
-	my ($class, $client) = shift;
+	my ($class, $client) = @_;
 	
 	my $mac = ref($client) ? $client->macaddress() : $client;
 

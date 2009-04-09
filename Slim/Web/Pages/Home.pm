@@ -2,7 +2,7 @@ package Slim::Web::Pages::Home;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -207,8 +207,7 @@ sub switchServer {
 	if (lc($params->{'switchto'}) eq 'squeezenetwork' 
 		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK')) {
 
-		# Bug 7254, don't tell Ray to reconnect to SN
-		if ( $client->deviceid != 7 || Slim::Networking::SqueezeNetwork::Players->is_known_player($client) ) {
+		if ( _canSwitch($client) ) {
 			Slim::Utils::Timers::setTimer(
 				$client,
 				time() + 1,
@@ -239,8 +238,7 @@ sub switchServer {
 	else {
 		$params->{servers} = Slim::Networking::Discovery::Server::getServerList();
 
-		# Bug 7254, don't tell Ray to reconnect to SN
-		if ( $client->deviceid != 7 ) {
+		if ( _canSwitch($client) ) {
 			$params->{servers}->{'SQUEEZENETWORK'} = {
 				NAME => Slim::Utils::Strings::string('SQUEEZENETWORK')	
 			}; 
@@ -251,6 +249,13 @@ sub switchServer {
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile('switchserver.html', $params);
+}
+
+# Bug 7254, don't tell Ray to reconnect to SN unless it's known to be attached to the user's account
+sub _canSwitch {
+	my $client = shift;
+	
+	return ( ($client->deviceid != 7) || Slim::Networking::SqueezeNetwork::Players->is_known_player($client) );
 }
 
 1;
