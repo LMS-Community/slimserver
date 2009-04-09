@@ -2690,10 +2690,26 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			info
+		</td>
+		<td>
+			Additional information about the current scanning step, like eg. the currently scanned file name.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			steps
 		</td>
 		<td>
 			Scanning steps in the order they've been executed.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			lastscanfailed
+		</td>
+		<td>
+			Information about a possible failure in case a scan has not finished in an attended manner.
 		</td>
 	</tr>
 </table>
@@ -6510,6 +6526,14 @@ in the saved playlists folder.</p>
 		<td>
 			Returned with the total value of items found for current scan phase. Not returned if
 			no scan is in progress.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			lastscanfailed
+		</td>
+		<td>
+			Information about a possible failure in case a scan has not finished in an attended manner.
 		</td>
 	</tr>
 	<tr>

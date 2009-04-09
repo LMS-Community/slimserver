@@ -2878,30 +2878,33 @@ sub rescanprogressQuery {
 		my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start,id' } )->all;
 
 		# calculate total elapsed time
+		# and indicate % completion for all importers
 		my $total_time = 0;
-		for my $p (@progress) {
-			my $runtime = ($p->finish || time()) - $p->start;
-			$total_time += $runtime;
-		}
-
-		# report it
-		my $hrs  = int($total_time / 3600);
-		my $mins = int(($total_time - $hrs * 60)/60);
-		my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
-		$request->addResult('totaltime', sprintf("%02d:%02d:%02d", $hrs, $mins, $sec));
-
 		my @steps;
 
-		# now indicate % completion for all importers
 		for my $p (@progress) {
 
 			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
 			$request->addResult($p->name(), int($percComplete));
 			
 			push @steps, $p->name();
+
+			$total_time += ($p->finish || time()) - $p->start;
+			
+			if ($p->active && $p->info) {
+
+				$request->addResult('info', $p->info);
+
+			}
 		}
 		
 		$request->addResult('steps', join(',', @steps)) if @steps;
+
+		# report it
+		my $hrs  = int($total_time / 3600);
+		my $mins = int(($total_time - $hrs * 60)/60);
+		my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
+		$request->addResult('totaltime', sprintf("%02d:%02d:%02d", $hrs, $mins, $sec));
 	
 	# if we're not scanning, just say so...
 	} else {
