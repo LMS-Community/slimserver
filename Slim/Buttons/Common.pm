@@ -677,12 +677,6 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
-		
-		if ( main::SLIM_SERVICE ) {
-			# For SqueezeNetwork, disable search
-			$client->showBriefly("", "Coming Soon...");
-			return;
-		}
 
 		# Repeat presses of 'search' will step through search menu
 		if ($client->curSelection($client->curDepth) eq 'SEARCH' && mode($client) eq 'INPUT.List') {
@@ -1267,6 +1261,12 @@ our %functions = (
 		}
 	},
 );
+
+# Delete Browse/Search on SN
+if ( main::SLIM_SERVICE ) {
+	$functions{browse} = sub {};
+	$functions{search} = sub {};
+}
 
 sub getFunction {
 	my $client     = shift || return;
