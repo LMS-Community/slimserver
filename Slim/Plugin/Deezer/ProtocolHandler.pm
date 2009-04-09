@@ -7,6 +7,7 @@ use base qw(Slim::Player::Protocols::HTTP);
 
 use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
+use Scalar::Util qw(blessed);
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Log;
@@ -287,6 +288,26 @@ sub _gotNextRadioTrack {
 	$song->pluginData( radioTitle    => $title );
 	$song->pluginData( radioTrack    => $track );
 	
+	# We already have the metadata for this track, so can save calling getTrack
+	my $icon = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+	my $meta = {
+		artist    => $track->{artist_name},
+		album     => $track->{album_name},
+		title     => $track->{title},
+		cover     => $track->{cover} || $icon,
+		bitrate   => '128k CBR',
+		type      => 'MP3 (Deezer)',
+		info_link => 'plugins/deezer/trackinfo.html',
+		icon      => $icon,
+		buttons   => {
+			fwd => $track->{canSkip} ? 1 : 0,
+			rew => 0,
+		},
+	};
+	
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( 'deezer_meta_' . $track->{id}, $meta, 86400 );
+	
 	$params->{url} = $url;
 	
 	_gotTrack( $client, $track, $params );
@@ -440,11 +461,13 @@ sub trackInfoURL {
 	my $stationId;
 	
 	if ( $url =~ m{deezer://(.+)\.dzr} ) {
+		$stationId = $1;
 		my $song = $client->currentSongForUrl($url);
 		
 		# Radio mode, pull track ID from lastURL
-		$url = $song->pluginData('radioTrackURL');
-		$stationId = $1;
+		if ( $song ) {
+			$url = $song->pluginData('radioTrackURL');
+		}
 	}
 
 	my ($trackId) = $url =~ m{deezer://(.+)\.mp3};
@@ -483,47 +506,136 @@ sub trackInfo {
 	$client->modeParam( 'handledTransition', 1 );
 }
 
+# Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
-	my ( $class, $client, $url, $forceCurrent ) = @_;
-	
-	my $song = $forceCurrent ? $client->streamingSong() : $client->playingSong();
-	return unless $song;
+	my ( $class, $client, $url ) = @_;
 	
 	my $icon = $class->getIcon();
 	
-	if ( my $track = $song->pluginData('info') ) {
-		my $buttons = {};
+	if ( $url =~ /\.dzr$/ ) {
+		my $song = $client->currentSongForUrl($url);
+		if (!$song || !($url = $song->pluginData('radioTrackURL'))) {
+			return {
+				bitrate   => '128k CBR',
+				type      => 'MP3 (Deezer)',
+				icon      => $icon,
+				cover     => $icon,
+			};
+		}
+	}
+	
+	return {} unless $url;
+	
+	my $cache = Slim::Utils::Cache->new;
+	
+	# If metadata is not here, fetch it so the next poll will include the data
+	my ($trackId) = $url =~ m{deezer://(.+)\.mp3};
+	my $meta      = $cache->get( 'deezer_meta_' . $trackId );
+	
+	if ( !$meta && !$client->master->pluginData('fetchingMeta') ) {
+		# Go fetch metadata for all tracks on the playlist without metadata
+		my @need;
 		
-		if ( !$track->{canSkip} ) {
-			# XXX: not supported
-			$buttons->{fwd} = 0;
+		for my $track ( @{ $client->playlist } ) {
+			my $trackURL = blessed($track) ? $track->url : $track;
+			if ( $trackURL =~ m{deezer://(.+)\.mp3} ) {
+				my $id = $1;
+				if ( !$cache->get("deezer_meta_$id") ) {
+					push @need, $id;
+				}
+			}
 		}
 		
-		if ( $url =~ /\.dzr/ ) {
-			$buttons->{rew} = 0;
+		if ( $log->is_debug ) {
+			$log->debug( "Need to fetch metadata for: " . join( ', ', @need ) );
 		}
 		
-		return {
-			artist      => $track->{artist_name},
-			album       => $track->{album_name},
-			title       => $track->{title},
-			cover       => $track->{cover},
-			icon        => $icon,
-			#duration    => $track->{secs},
-			bitrate     => '128k CBR',
-			type        => 'MP3 (Deezer)',
-			info_link   => 'plugins/deezer/trackinfo.html',
-			buttons     => $buttons,
-		};
+		$client->master->pluginData( fetchingMeta => 1 );
+		
+		my $metaUrl = Slim::Networking::SqueezeNetwork->url(
+			"/api/deezer/v1/playback/getBulkMetadata"
+		);
+		
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&_gotBulkMetadata,
+			\&_gotBulkMetadataError,
+			{
+				client  => $client,
+				timeout => 60,
+			},
+		);
+
+		$http->post(
+			$metaUrl,
+			'Content-Type' => 'application/x-www-form-urlencoded',
+			'trackIds=' . join( ',', @need ),
+		);
 	}
-	else {
-		return {
-			icon    => $icon,
-			cover   => $icon,
-			bitrate => '128k CBR',
-			type    => 'MP3 (Deezer)',
-		};
+	
+	#$log->debug( "Returning metadata for: $url" . ($meta ? '' : ': default') );
+	
+	return $meta || {
+		bitrate   => '128k CBR',
+		type      => 'MP3 (Deezer)',
+		icon      => $icon,
+		cover     => $icon,
+	};
+}
+
+sub _gotBulkMetadata {
+	my $http   = shift;
+	my $client = $http->params->{client};
+	
+	$client->master->pluginData( fetchingMeta => 0 );
+	
+	my $info = eval { from_json( $http->content ) };
+	
+	if ( $@ || ref $info ne 'ARRAY' ) {
+		$log->error( "Error fetching track metadata: " . ( $@ || 'Invalid JSON response' ) );
+		return;
 	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( "Caching metadata for " . scalar( @{$info} ) . " tracks" );
+	}
+	
+	# Cache metadata
+	my $cache = Slim::Utils::Cache->new;
+	my $icon  = Slim::Plugin::Deezer::Plugin->_pluginDataFor('icon');
+
+	for my $track ( @{$info} ) {
+		next unless ref $track eq 'HASH';
+		
+		# cache the metadata we need for display
+		my $trackId = delete $track->{id};
+		
+		if ( !$track->{cover} ) {
+			$track->{cover} = $icon;
+		}
+		
+		my $meta = {
+			%{$track},
+			bitrate   => '128k CBR',
+			type      => 'MP3 (Deezer)',
+			info_link => 'plugins/deezer/trackinfo.html',
+			icon      => $icon,
+		};
+	
+		$cache->set( 'deezer_meta_' . $trackId, $meta, 86400 );
+	}
+	
+	# Update the playlist time so the web will refresh, etc
+	$client->currentPlaylistUpdateTime( Time::HiRes::time() );
+}
+
+sub _gotBulkMetadataError {
+	my $http   = shift;
+	my $client = $http->params('client');
+	my $error  = $http->error;
+	
+	$client->master->pluginData( fetchingMeta => 0 );
+	
+	$log->warn("Error getting track metadata from SN: $error");
 }
 
 sub getIcon {
