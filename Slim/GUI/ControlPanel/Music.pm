@@ -156,7 +156,7 @@ use Slim::Utils::ServiceManager;
 my $svcMgr = Slim::Utils::ServiceManager->new();
 my $isScanning;
 
-my ($parent, $progressBar, $progressLabel);
+my ($parent, $progressBar, $progressLabel, $progressInfo);
 
 sub new {
 	my $self = shift;
@@ -171,8 +171,11 @@ sub new {
 	$sizer->Add($progressLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
 
 	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, Slim::Utils::OSDetect->isWindows() ? 20 : -1]);
-	$sizer->Add($progressBar, 0, wxEXPAND | wxBOTTOM, 5);
+	$sizer->Add($progressBar, 0, wxEXPAND);
 	
+	$progressInfo = Wx::StaticText->new($parent, -1, '', [-1, -1], [-1, -1], wxST_ELLIPSIZE_MIDDLE);
+	$sizer->Add($progressInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
+
 	$parent->SetSizer($sizer);
 		
 	return $self;
@@ -180,6 +183,8 @@ sub new {
 
 sub Notify {
 	my $self = shift;
+	
+	$progressInfo->SetLabel('');
 	
 	if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
 		
@@ -195,6 +200,12 @@ sub Notify {
 				my $step = $steps[-1];
 				$progressBar->SetValue($progress->{$step});
 				$progressLabel->SetLabel( @steps . '. ' . string(uc($step) . '_PROGRESS') );
+				
+			}
+			
+			if (defined $progress->{info}) {
+				
+				$progressInfo->SetLabel($progress->{info});
 				
 			}
 
