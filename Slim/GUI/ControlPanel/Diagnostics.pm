@@ -124,6 +124,8 @@ sub _addItem {
 sub _update {
 	my ($self, $event) = @_;
 
+	$self->Update;
+	
 	foreach my $check (@checks) {
 
 		if (defined $check->{cb} && $check->{cb} && $check->{label}) {
