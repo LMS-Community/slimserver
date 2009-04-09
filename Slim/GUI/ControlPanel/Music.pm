@@ -172,8 +172,10 @@ sub new {
 
 	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, Slim::Utils::OSDetect->isWindows() ? 20 : -1]);
 	$sizer->Add($progressBar, 0, wxEXPAND);
-	
-	$progressInfo = Wx::StaticText->new($parent, -1, '', [-1, -1], [-1, -1], wxST_ELLIPSIZE_MIDDLE);
+
+# re-enable ellipsizing once we're running Wx 2.9.x
+#	$progressInfo = Wx::StaticText->new($parent, -1, '', [-1, -1], [-1, -1], wxST_ELLIPSIZE_MIDDLE);
+	$progressInfo = Wx::StaticText->new($parent, -1, '');
 	$sizer->Add($progressInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
 
 	$parent->SetSizer($sizer);
