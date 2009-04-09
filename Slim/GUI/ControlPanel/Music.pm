@@ -199,6 +199,7 @@ sub Notify {
 			}
 
 			$self->Start(2000, wxTIMER_CONTINUOUS);
+			$self->Layout();
 			
 			return;
 		}
@@ -213,9 +214,19 @@ sub Notify {
 		$progressLabel->SetLabel(string('PROGRESS_IMPORTER_COMPLETE_DESC'));
 		$self->Start(10000, wxTIMER_CONTINUOUS);
 	}
+
+	$self->Layout();
 	
 	# don't poll that often when no scan is running
 	$isScanning = 0;
+}
+
+sub Layout {
+	my $self = shift;
+	
+	my ($width) = $parent->GetSizeWH();
+	$progressLabel->Wrap($width);
+	$parent->Layout();
 }
 
 1;
