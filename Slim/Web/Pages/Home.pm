@@ -208,7 +208,7 @@ sub switchServer {
 		|| $params->{'switchto'} eq Slim::Utils::Strings::string('SQUEEZENETWORK')) {
 
 		# Bug 7254, don't tell Ray to reconnect to SN
-		if ( $client->deviceid != 7 ) {
+		if ( $client->deviceid != 7 || Slim::Networking::SqueezeNetwork::Players->is_known_player($client) ) {
 			Slim::Utils::Timers::setTimer(
 				$client,
 				time() + 1,

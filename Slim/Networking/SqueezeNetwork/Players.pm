@@ -22,7 +22,8 @@ my $log   = logger('network.squeezenetwork');
 my $prefs = preferences('server');
 
 # List of players we see on SN
-my $PLAYERS = [];
+my $CONNECTED_PLAYERS = [];
+my $INACTIVE_PLAYERS =  [];
 
 # Default polling time
 my $POLL_INTERVAL = 300;
@@ -60,7 +61,8 @@ sub init {
 sub shutdown {
 	my $class = shift;
 	
-	$PLAYERS = [];
+	$CONNECTED_PLAYERS = [];
+	$INACTIVE_PLAYERS  = [];
 	
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
 	
@@ -90,7 +92,7 @@ sub _players_done {
 	}
 	
 	if ( $log->is_debug ) {
-		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players} ) );
+		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players}, $res->{inactive_players} ) );
 		$log->debug( "Next player check in " . $res->{next_poll} . " seconds" );
 	}
 		
@@ -103,7 +105,8 @@ sub _players_done {
 	}
 	
 	# Update player list
-	$PLAYERS = $res->{players};
+	$CONNECTED_PLAYERS = $res->{players};
+	$INACTIVE_PLAYERS  = $res->{inactive_players};
 	
 	# Update list of active music services
 	if ( $res->{active_services} ) {
@@ -136,7 +139,8 @@ sub _players_error {
 	$prefs->remove('sn_session');
 	
 	# We don't want a stale list of players, so clear it out on error
-	$PLAYERS = [];
+	$CONNECTED_PLAYERS = [];
+	$INACTIVE_PLAYERS  = [];
 	
 	# Backoff if we keep getting errors
 	my $count = $prefs->get('snPlayersErrors') || 0;
@@ -155,7 +159,15 @@ sub _players_error {
 sub get_players {
 	my $class = shift;
 	
-	return wantarray ? @{$PLAYERS} : $PLAYERS;
+	return wantarray ? @{$CONNECTED_PLAYERS} : $CONNECTED_PLAYERS;
+}
+
+sub is_known_player {
+	my ($class, $client) = shift;
+	
+	my $mac = ref($client) ? $client->macaddress() : $client;
+
+	return scalar( grep { $mac eq $_->{mac} } @{$CONNECTED_PLAYERS}, @{$INACTIVE_PLAYERS} );	
 }
 
 sub disconnect_player {
