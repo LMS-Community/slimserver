@@ -702,6 +702,9 @@ sub _cliQuery_done {
 						$url = $item->{'play'};
 					}
 					
+					# Don't add non-audio items
+					next if !$url;
+					
 					# Set metadata about this URL
 					Slim::Music::Info::setRemoteMetadata( $url, {
 						title   => $item->{'name'} || $item->{'title'},
