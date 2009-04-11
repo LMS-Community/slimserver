@@ -702,20 +702,20 @@ sub _cliQuery_done {
 						$url = $item->{'play'};
 					}
 
-					if ($url) {
-
-						# Set metadata about this URL
-						Slim::Music::Info::setRemoteMetadata( $url, {
-							title   => $item->{'name'} || $item->{'title'},
-							ct      => $item->{'mime'},
-							secs    => $item->{'duration'},
-							bitrate => $item->{'bitrate'},
-						} );
-						
-						main::idleStreams();
+					# Don't add non-audio items
+					next if !$url;
 					
-						push @urls, $url;
-					}
+					# Set metadata about this URL
+					Slim::Music::Info::setRemoteMetadata( $url, {
+						title   => $item->{'name'} || $item->{'title'},
+						ct      => $item->{'mime'},
+						secs    => $item->{'duration'},
+						bitrate => $item->{'bitrate'},
+					} );
+					
+					main::idleStreams();
+					
+					push @urls, $url;
 				}
 				
 				if ( @urls ) {
