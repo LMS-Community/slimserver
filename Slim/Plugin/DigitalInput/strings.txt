@@ -29,7 +29,7 @@ PLUGIN_DIGITAL_INPUT_DESC
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	DA	Afbalanceret AES/EBU
-	DE	Ausgeglichenes AES/EBU
+	DE	AES/EBU symmetrisch
 	EN	Balanced AES/EBU
 	ES	AES/EBU equilibrado
 	FI	Tasapainotettu AES/EBU
