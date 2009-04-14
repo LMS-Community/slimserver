@@ -815,8 +815,14 @@ Recompose a decomposed UTF-8 string.
 sub recomposeUnicode {
 	my $string = shift;
 
-	# Make sure we're on.
-	$string = Encode::decode('utf8', $string);
+	eval {
+		# Make sure we're on.
+		$string = Encode::decode('utf8', $string);
+	};
+	
+	if ($@) {
+		Slim::Utils::Log->logger('server')->warn("There's a problem recompsing: $string ($@)");
+	}
 
 	$string =~ s/$recomposeRE/$recomposeTable->{$1}/go;
 
