@@ -3139,7 +3139,7 @@ ABOUT_SHORT
 	JA	...について
 	NL	Over
 	NO	Om
-	PL	Informacje
+	PL	O programie
 	PT	Sobre ...
 	RU	О программе
 	SV	Om
