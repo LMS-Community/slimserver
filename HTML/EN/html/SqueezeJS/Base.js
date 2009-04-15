@@ -545,13 +545,7 @@ SqueezeJS.SonginfoParser = {
 		var id;
 
 		if (result.playlist_tracks > 0) {
-			if (result.current_title) 
-				title = result.current_title;
-	
-			else if (result.playlist_loop[0].remote_title && !noRemoteTitle)
-				title = result.playlist_loop[0].remote_title;
-	
-			else if (noTrackNo)
+			if (noTrackNo)
 				title = result.playlist_loop[0].title;
 
 			else
@@ -583,8 +577,11 @@ SqueezeJS.SonginfoParser = {
 				album = result.playlist_loop[0].album;
 			}
 	
-			else if (result.playlist_loop[0].remote_title && result.playlist_loop[0].title)
-				album = result.playlist_loop[0].title;
+			else if (result.current_title) 
+				album = result.current_title;
+	
+			else if (result.playlist_loop[0].remote_title)
+				album = result.playlist_loop[0].remote_title;
 		}
 
 		return this.tpl[((noLink || id == null) ? 'raw' : 'linked')].album.apply({
