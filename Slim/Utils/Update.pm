@@ -13,7 +13,12 @@ use Slim::Utils::Timers;
 use Slim::Utils::Unicode;
 
 my $prefs = preferences('server');
-my $log   = logger('server.update');
+
+#my $log   = logger('server.update');
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'server.update',
+	'defaultLevel' => 'DEBUG',
+});
 
 sub checkVersion {
 	if (!$prefs->get('checkVersion')) {
@@ -47,7 +52,7 @@ sub checkVersion {
 
 	my $url  = "http://"
 		. Slim::Networking::SqueezeNetwork->get_server("update")
-		. "/update/?version=$::VERSION&lang=" . Slim::Utils::Strings::getLanguage();
+		. "/update/?version=$::VERSION&revision=$::REVISION&lang=" . Slim::Utils::Strings::getLanguage();
 	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
 
 	# will call checkVersionCB when complete
@@ -74,6 +79,7 @@ sub checkVersionCB {
 
 		# trigger download of the installer if available
 		if ($::newVersion && $prefs->get('autoDownloadUpdate')) {
+			$log->debug('Triggering automatic SqueezeCenter update download...');
 			Slim::Utils::OSDetect->getOS()->initUpdate();
 		}
 	}
@@ -98,7 +104,7 @@ sub getUpdate {
 	
 	my $url  = "http://"
 		. Slim::Networking::SqueezeNetwork->get_server("sn")
-		. "/update/?geturl=1&os=" . $params->{os};
+		. "/update/?geturl=1&revision=$::REVISION&os=" . $params->{os};
 		
 	$log->debug("Getting url for latest SqueezeCenter download from $url");
 
@@ -132,6 +138,9 @@ sub gotUrlCB {
 			$prefs->set( 'updateInstaller', $file);
 			return;
 		}
+		
+		my $tmpFile = "$file.tmp";
+		unlink $tmpFile if -e $tmpFile;
 
 		$prefs->set('updateInstaller');
 
@@ -140,7 +149,7 @@ sub gotUrlCB {
 			\&downloadAsyncDone,
 			\&checkVersionError,
 			{
-				saveAs => "$file.tmp",
+				saveAs => $tmpFile,
 				file   => $file,
 			},
 		);
@@ -155,14 +164,20 @@ sub gotUrlCB {
 sub downloadAsyncDone {
 	my $http = shift;
 	my $file = $http->params('file');
-	my $url  = $http->url;
-	
-	$log->debug("Successfully downloaded update installer file. Saving as $file");
+	my $tmpFile = $http->params('saveAs');
 	
 	# make sure we got the file
-	return if !-e "$file.tmp";
+	return if !-e $tmpFile;
 
-	rename "$file.tmp", $file && $prefs->set('updateInstaller', $file);
+	if (-s _ != $http->headers->content_length()) {
+		$log->debug( sprintf("SqueezeCenter installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		unlink $tmpFile;
+		return;
+	}
+
+	
+	$log->debug("Successfully downloaded update installer file. Saving as $file");
+	rename $tmpFile, $file && $prefs->set('updateInstaller', $file);
 }
 
 1;
