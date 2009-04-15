@@ -539,7 +539,7 @@ SqueezeJS.SonginfoParser = {
 		}
 	},
 
-	title : function(result, noLink, noRemoteTitle, noTrackNo){
+	title : function(result, noLink, noTrackNo){
 		var title;
 		var link;
 		var id;
@@ -565,7 +565,7 @@ SqueezeJS.SonginfoParser = {
 		});
 	},
 
-	album : function(result, noLink){
+	album : function(result, noLink, noRemoteTitle){
 		var album = '';
 		var id = null;
 
@@ -577,11 +577,11 @@ SqueezeJS.SonginfoParser = {
 				album = result.playlist_loop[0].album;
 			}
 	
+			else if (result.playlist_loop[0].remote_title && !noRemoteTitle)
+				album = result.playlist_loop[0].remote_title;
+	
 			else if (result.current_title) 
 				album = result.current_title;
-	
-			else if (result.playlist_loop[0].remote_title)
-				album = result.playlist_loop[0].remote_title;
 		}
 
 		return this.tpl[((noLink || id == null) ? 'raw' : 'linked')].album.apply({

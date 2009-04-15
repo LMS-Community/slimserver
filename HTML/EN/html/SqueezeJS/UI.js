@@ -1511,7 +1511,7 @@ SqueezeJS.UI.Title = Ext.extend(SqueezeJS.UI.Component, {
 // title without disc/track numbers
 SqueezeJS.UI.RawTitle = Ext.extend(SqueezeJS.UI.Component, {
 	onPlayerStateChange : function(result){
-		this.el.update(SqueezeJS.SonginfoParser.title(result, this.noLink, false, true));
+		this.el.update(SqueezeJS.SonginfoParser.title(result, this.noLink, true));
 	}
 });
 
@@ -1523,9 +1523,9 @@ SqueezeJS.UI.TrackNo = Ext.extend(SqueezeJS.UI.Component, {
 
 SqueezeJS.UI.CompoundTitle = Ext.extend(SqueezeJS.UI.Component, {
 	onPlayerStateChange : function(result){
-		var title = SqueezeJS.SonginfoParser.title(result, this.noLink, true);
+		var title = SqueezeJS.SonginfoParser.title(result, this.noLink);
 		var contributors = SqueezeJS.SonginfoParser.contributors(result, this.noLink);
-		var album = SqueezeJS.SonginfoParser.album(result, this.noLink);
+		var album = SqueezeJS.SonginfoParser.album(result, this.noLink, true);
 
 		this.el.update(title
 			+ (contributors ? '&nbsp;' + SqueezeJS.string('by') + '&nbsp;' + contributors : '')
@@ -1722,9 +1722,9 @@ SqueezeJS.UI.CoverartPopup = Ext.extend(Ext.ToolTip, {
 
 	onPlayerStateChange : function(result){
 		if (this.songInfo) {
-			var title = SqueezeJS.SonginfoParser.title(result, true, true);
+			var title = SqueezeJS.SonginfoParser.title(result, true);
 			var contributors = SqueezeJS.SonginfoParser.contributors(result, true);
-			var album = SqueezeJS.SonginfoParser.album(result, true);
+			var album = SqueezeJS.SonginfoParser.album(result, true, true);
 	
 			this.setTitle(title
 				+ (contributors ? '&nbsp;/ ' + contributors : '')
