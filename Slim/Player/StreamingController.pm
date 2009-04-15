@@ -204,8 +204,8 @@ StreamingFailed =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# BUFFERING
 	[	\&_BadState,	\&_StopNextIfMore, \&_StopNextIfMore, \&_BadState],	# WAITING_TO_SYNC
-	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],	# PLAYING
-	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],	# PAUSED
+	[	\&_Invalid,		\&_SyncStopNext, \&_SyncStopNext, \&_Invalid],		# PLAYING
+	[	\&_Invalid,		\&_Stop,		\&_Stop,		\&_Invalid],		# PAUSED
 ],
 EndOfStream =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
@@ -226,7 +226,7 @@ Stopped =>
 	[	\&_BadState,	\&_NoOp,		\&_NoOp,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
 	[	\&_Stopped,		\&_Buffering,	\&_Buffering,	\&_PlayIfReady],	# PLAYING
-	[	\&_Stopped,		\&_Buffering,	\&_Buffering,	\&_PlayIfReady],	# PAUSED
+	[	\&_Stopped,		\&_Buffering,	\&_Buffering,	\&_Stopped],		# PAUSED
 ],
 OutputUnderrun =>
 [	[	\&_NoOp,		\&_BadState,	\&_BadState,	\&_NoOp],			# STOPPED	
