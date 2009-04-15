@@ -640,7 +640,7 @@ sub _priorityFromPriorityClass {
 sub initUpdate {
 	my $class = shift;
 
-	return if main::SLIM_SERVICE || main::SCANNER;
+	return if main::SLIM_SERVICE || main::SCANNER || !$PerlSvc::VERSION;
 	
 	require Win32::NetResource;
 	require Slim::Utils::Update;
@@ -672,7 +672,7 @@ sub initUpdate {
 	});
 }
 
-sub canAutoUpdate { $PerlSvc::VERSION ? 1 : 0; }
+sub canAutoUpdate { 1 }
 
 sub restartServer {
 	my $class = shift;
