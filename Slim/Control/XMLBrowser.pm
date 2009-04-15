@@ -1000,7 +1000,7 @@ sub _cliQuery_done {
 							};									
 							
 							my $input = {
-								len  => 3,
+								len  => 1,
 								help => {
 									text => $request->string('JIVE_SEARCHFOR_HELP')
 								},
