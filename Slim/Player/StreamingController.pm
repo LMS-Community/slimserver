@@ -612,6 +612,7 @@ sub _getNextTrack {			# getNextTrack -> TrackWait
 		$song = Slim::Player::Song->new($self, $index, $seekdata);
 		
 		if (!$song) {
+			_setStreamingState($self, TRACKWAIT);
 			_nextTrackError($self, $id, $index);
 			return;
 		}
