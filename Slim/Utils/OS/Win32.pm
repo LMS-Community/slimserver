@@ -672,7 +672,7 @@ sub initUpdate {
 	});
 }
 
-sub canAutoUpdate { 1 };
+sub canAutoUpdate { $PerlSvc::VERSION ? 1 : 0; }
 
 sub restartServer {
 	my $class = shift;
@@ -718,8 +718,6 @@ sub restartServer {
 	}
 };
 
-sub canRestartServer {
-	return $PerlSvc::VERSION ? 1 : 0;
-}
+sub canRestartServer { return $PerlSvc::VERSION ? 1 : 0; }
 
 1;
