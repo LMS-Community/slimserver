@@ -4517,7 +4517,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'alKN',			# tags needed for our entities
+		'alKNJ',			# tags needed for our entities
 	);
 	
 	$request->addResultLoop($loop, $count, 'trackType', $track->remote ? 'radio' : 'local');
@@ -4540,14 +4540,10 @@ sub _addJiveSong {
 		$request->addResult('current_title');
 	}
 
-	my $iconId;
-	
 	# Bug 7443, check for a track cover before using the album cover
-	if ( $track->coverArtExists() ) {
-		$iconId = $track->id;
-	}
+	my $iconId = $songData->{artwork_track_id};
 	
-	if ( my $albumObj = $track->album() ) {
+	if ( !defined $iconId && (my $albumObj = $track->album()) ) {
 		$iconId ||= $albumObj->artwork();
 	}
 	
@@ -4912,7 +4908,7 @@ sub _songData {
                                                                             
 		  'l' => ['album',             'ALBUM',           'album',         'title'],        #->album.title
 		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
-		  'J' => ["artwork_track_id",  'COVERART',        'album',         'artwork'],      #->album.artwork
+		  'J' => ['artwork_track_id',  'COVERART',        'album',         'artwork'],      #->album.artwork
 		  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
 		  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
                                                                             
