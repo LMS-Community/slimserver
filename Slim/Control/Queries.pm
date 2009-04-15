@@ -4517,7 +4517,7 @@ sub _addJiveSong {
 	my $songData  = _songData(
 		$request,
 		$track,
-		'dalgjN',			# tags needed for our entities
+		'alKN',			# tags needed for our entities
 	);
 	
 	$request->addResultLoop($loop, $count, 'trackType', $track->remote ? 'radio' : 'local');
@@ -4525,9 +4525,20 @@ sub _addJiveSong {
 	my $text   = $songData->{title};
 	my $album  = $songData->{album};
 	my $artist = $songData->{artist};
+	
+	if ( $track->remote && $text && $album && $artist ) {
+		$request->addResult('current_title');
+	}
 
 	$text .= ( defined $album ) ? "\n$album" : '';
 	$text .= ( defined $artist ) ? "\n$artist" : '';
+
+	# Special case for Internet Radio streams, if the track is remote, has no duration,
+	# has title metadata, and has no album metadata, display the station title as line 1 of the text
+	if ( $songData->{remote_title} && !$album && $track->remote && !$track->secs ) {
+		$text = $text . "\n" . $songData->{remote_title};
+		$request->addResult('current_title');
+	}
 
 	my $iconId;
 	
@@ -4546,13 +4557,6 @@ sub _addJiveSong {
 	}
 	elsif ( defined($songData->{artwork_url}) ) {
 		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
-	}
-	
-	# Special case for Internet Radio streams, if the track is remote, has no duration,
-	# has title metadata, and has no album metadata, display the station title as line 1 of the text
-	if ( $track->remote && !$track->secs && $songData->{remote_title} && !$album ) {
-		$text = $text . "\n" . $songData->{remote_title};
-		$request->addResult( 'current_title' );
 	}
 
 	$request->addResultLoop($loop, $count, 'text', $text);
