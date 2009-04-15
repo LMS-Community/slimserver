@@ -979,29 +979,16 @@ sub cursonginfoQuery {
 
 		} else {
 
-			my $track = Slim::Schema->rs('Track')->objectForUrl($url);
-
-			if (!blessed($track) || !$track->can('secs')) {
-
-				logBacktrace("Couldn't fetch object for URL: [$url] - skipping track.");
-
-			} else {
-
-				if ($method eq 'duration') {
-
-					$request->addResult("_$method", $track->secs() || 0);
-
-				} elsif ($method eq 'album' || $method eq 'artist' || $method eq 'genre') {
-
-					my $obj = $track->$method;
-
-					$request->addResult("_$method", $obj ? ($obj->name || 0) : 0);
-
-				} elsif ( $method ) {
-
-					$request->addResult("_$method", $track->$method() || 0);
-				}
+			my $songData = _songData(
+				$request,
+				$url,
+				'dalg',			# tags needed for our entities
+			);
+			
+			if (defined $songData->{$method}) {
+				$request->addResult("_$method", $songData->{$method});
 			}
+
 		}
 	}
 
@@ -2272,27 +2259,14 @@ sub playlistXQuery {
 		
 	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
 
-		my $track = Slim::Schema->rs('Track')->objectForUrl({
-			'url'      => Slim::Player::Playlist::song($client, $index),
-			'create'   => 1,
-			'readTags' => 1,
-		});
-
-		if (blessed($track) && $track->can('secs')) {
-
-			# Just call the method on Track
-			if ($entity eq 'duration') {
-
-				$request->addResult("_$entity", $track->secs());
-			
-			} elsif ($entity eq 'album' || $entity eq 'artist' || $entity eq 'genre') {
-
-				$request->addResult("_$entity", $track->$entity->name || 0);
-
-			} else {
-
-				$request->addResult("_$entity", $track->$entity());
-			}
+		my $songData = _songData(
+			$request,
+			Slim::Player::Playlist::song($client, $index),
+			'dalg',			# tags needed for our entities
+		);
+		
+		if (defined $songData->{$entity}) {
+			$request->addResult("_$entity", $songData->{$entity});
 		}
 	}
 	
@@ -4860,7 +4834,6 @@ sub _songData {
 	my $request   = shift; # current request object
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
-	my $menuMode  = shift; # if true, we're in Menu mode
 
 
 	# figure out the track object
@@ -4899,90 +4872,60 @@ sub _songData {
 			$remoteMeta->{A} = $remoteMeta->{artist};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{K} = $remoteMeta->{cover};
-			$remoteMeta->{d} = $remoteMeta->{duration};
+			$remoteMeta->{d} = $remoteMeta->{duration} + 0;
 			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
 			$remoteMeta->{o} = $remoteMeta->{type};
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
 			$remoteMeta->{B} = $remoteMeta->{buttons};
 			$remoteMeta->{L} = $remoteMeta->{info_link};
-
-			# if we have a plugin-defined title, remove the current_title value
-			if ( $remoteMeta->{title} ) {
-				$request->addResult( 'current_title' => undef );
-			}
-			
-			# Bug 6943, let plugins override the duration value, radio-type plugins
-			# like Pandora need this because they change the duration when the next
-			# track begins streaming
-			if ( $remoteMeta->{duration} ) {
-				# Bug 7643, only do this if there is only one track on the playlist
-				if ( Slim::Player::Playlist::count( $request->client ) == 1 ) {
-					$request->addResult( duration => $remoteMeta->{duration} + 0 );
-				}
-			}
 		}
 	}
 	
 	# define an ordered hash for our results
 	tie (my %returnHash, "Tie::IxHash");
 
-	# in normal mode, we want to use a tag name as key
-	# in menu mode, we want to use a string token we can i8n as key
-	my $keyIndex = 0;
-
-	# add fields present no matter $tags
-	if ($menuMode) {
-		$returnHash{'TITLE'} = $remoteMeta->{title} || $track->title;
-		
-		# use token as key in menuMode
-		$keyIndex = 1;
-	}
-	else {
-		$returnHash{'id'}    = $track->id;
-		$returnHash{'title'} = $remoteMeta->{title} || $track->title;
-	}
+	$returnHash{'id'}    = $track->id;
+	$returnHash{'title'} = $remoteMeta->{title} || $track->title;
 
 	my %tagMap = (
 		# Tag    Tag name             Token            Track method         Track field
 		#------------------------------------------------------------------------------
-		# '.' => ['id',               '',              'id'],               #id
 		  'u' => ['url',              'LOCATION',      'url'],              #url
 		  'o' => ['type',             'TYPE',          'content_type'],     #content_type
-		# '.' => ['title',            'TITLE',         'title'],            #title
-		#                                                                   #titlesort 
-		#                                                                   #titlesearch 
+		                                                                    #titlesort 
+		                                                                    #titlesearch 
 		  'e' => ['album_id',         '',              'albumid'],          #album 
 		  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
 		  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
 		  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
-		#                                                                   #tag 
+		                                                                    #tag 
 		  'i' => ['disc',             'DISC',          'disc'],             #disc
-		  'j' => ['coverart',         'SHOW_ARTWORK',              'coverArtExists'],   #cover
+		  'j' => ['coverart',         'SHOW_ARTWORK',  'coverArtExists'],   #cover
 		  'x' => ['remote',           '',              'remote'],           #remote 
-		#                                                                   #audio 
-		#                                                                   #audio_size 
-		#                                                                   #audio_offset
+		                                                                    #audio 
+		                                                                    #audio_size 
+		                                                                    #audio_offset
 		  'y' => ['year',             'YEAR',          'year'],             #year
 		  'd' => ['duration',         'LENGTH',        'secs'],             #secs
-		#                                                                   #vbr_scale 
+		                                                                    #vbr_scale 
 		  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
 		  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
 		  'I' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
-		#                                                                   #channels 
-		#                                                                   #block_alignment
-		#                                                                   #endian 
+		                                                                    #channels 
+		                                                                    #block_alignment
+		                                                                    #endian 
 		  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
 		  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
 		# 'z' => ['drm',              '',              'drm'],              #drm
-		#                                                                   #musicmagic_mixable
-		#                                                                   #musicbrainz_id 
-		#                                                                   #playcount 
-		#                                                                   #lastplayed 
-		#                                                                   #lossless 
+		                                                                    #musicmagic_mixable
+		                                                                    #musicbrainz_id 
+		                                                                    #playcount 
+		                                                                    #lastplayed 
+		                                                                    #lossless 
 		  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics 
 		  'R' => ['rating',           'RATING',        'rating'],           #rating 
 		  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
-		#                                                                   #replay_peak
+		                                                                    #replay_peak
 
 
 		# Tag    Tag name              Token              Relationship     Method          Track relationship
@@ -4991,9 +4934,6 @@ sub _songData {
 		  's' => ['artist_id',         '',                'artist',        'id'],           #->contributors
 		  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
 		  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
-#		  'b' => ['band',              'B',               'band'],                          #->contributors
-#		  'c' => ['composer',          'C',               'composer'],                      #->contributors
-#		  'h' => ['conductor',         'D',               'conductor'],                     #->contributors
                                                                             
 		  'l' => ['album',             'ALBUM',           'album',         'title'],        #->album.title
 		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
@@ -5057,24 +4997,14 @@ sub _songData {
 				my $postfix = ($tag eq 'S')?"_ids":"";
 			
 				foreach my $type (Slim::Schema::Contributor::contributorRoles()) {
-				
-					if ($menuMode) {
-						my $key = uc($type);
-						my $idx = 0;
-						foreach my $contrib ($track->contributorsOfType($type)->all) {
-							$returnHash{$key . "::" . $idx++} = [$contrib->id(), $contrib->name()];
-						}
-					}
-					else {
 						
-						my $key = lc($type) . $postfix;
-						my $value = join(', ', map { $_ = $_->$submethod() } $track->contributorsOfType($type)->all);
-				
-						if (defined $value && $value ne '') {
+					my $key = lc($type) . $postfix;
+					my $value = join(', ', map { $_ = $_->$submethod() } $track->contributorsOfType($type)->all);
+			
+					if (defined $value && $value ne '') {
 
-							# add the tag to the result
-							$returnHash{$key} = $value;
-						}
+						# add the tag to the result
+						$returnHash{$key} = $value;
 					}
 				}
 			}
@@ -5086,7 +5016,7 @@ sub _songData {
 			if ($method ne '') {
 
 				my $value;
-				my $key = $tagMap{$tag}->[$keyIndex];
+				my $key = $tagMap{$tag}->[0];
 				
 				# Override with remote track metadata if available
 				if ( defined $remoteMeta->{$tag} ) {
@@ -5101,25 +5031,12 @@ sub _songData {
 						
 						# array returned/genre
 						if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
-							
-							if ($menuMode) {
-								my $idx = 0;
-								foreach my $genre ($related->all) {
-									$returnHash{$key . "::" . $idx++} = [$genre->id(), $genre->name()];
-								}
-							} 
-							else {
-								$value = join(', ', map { $_ = $_->$submethod() } $related->all);
-							}
+
+							$value = join(', ', map { $_ = $_->$submethod() } $related->all);
 						}
-						# special case album in menuMode
-						elsif ($menuMode && $key eq 'ALBUM') {
-							# send a dummy key::0 to trigger adding action in songinfo
-							# and return an [id, name] array
-							$key = $key . "::0";
-							$value = [ $track->albumid(), $related->$submethod() ];
-						}
+
 						else {
+
 							$value = $related->$submethod();
 						}
 					}
