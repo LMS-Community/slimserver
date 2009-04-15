@@ -4514,34 +4514,21 @@ sub _addJiveSong {
 	my $current   = shift;
 	my $track     = shift || return;
 	
-	# If we have a remote track, check if a plugin can provide metadata
-	my $remoteMeta = {};
-	if ( $track->remote ) {
-		my $url     = $track->url;
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-		$request->addResultLoop($loop, $count, 'trackType', 'radio');
-		if ( $handler && $handler->can('getMetadataFor') ) {
-			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
-			
-			# if we have a plugin-defined title, remove the current_title value
-			if ( $current && $remoteMeta->{title} ) {
-				$request->addResult( 'current_title' => undef );
-			}
-			
-			# Bug 6943, let plugins override the duration value, radio-type plugins
-			# like Pandora need this because they change the duration when the next
-			# track begins streaming
-			if ( $current && $remoteMeta->{duration} ) {
-				$request->addResult( duration => $remoteMeta->{duration} + 0 );
-			}
-		}
-	} else {
-		$request->addResultLoop($loop, $count, 'trackType', 'local');
-	}
+	my $songData  = _songData(
+		$request,
+		$track,
+		'dalgjN',			# tags needed for our entities
+	);
 	
-	my $text = $remoteMeta->{title} || $track->title;
-	my $album;
-	my $albumObj = $track->album();
+	$request->addResultLoop($loop, $count, 'trackType', $track->remote ? 'radio' : 'local');
+	
+	my $text   = $songData->{title};
+	my $album  = $songData->{album};
+	my $artist = $songData->{artist};
+
+	$text .= ( defined $album ) ? "\n$album" : '';
+	$text .= ( defined $artist ) ? "\n$artist" : '';
+
 	my $iconId;
 	
 	# Bug 7443, check for a track cover before using the album cover
@@ -4549,39 +4536,23 @@ sub _addJiveSong {
 		$iconId = $track->id;
 	}
 	
-	if ( defined $albumObj ) {
-		$album = $albumObj->title();
+	if ( my $albumObj = $track->album() ) {
 		$iconId ||= $albumObj->artwork();
 	}
-	elsif ( $remoteMeta->{album} ) {
-		$album = $remoteMeta->{album};
-	}
-	
-
-	$text .= ( defined $album ) ? "\n$album" : '';
-	
-	my $artist;
-	if ( !main::SLIM_SERVICE && defined( my $artistObj = $track->artist() ) ) {
-		$artist = $artistObj->name();
-	}
-	elsif ( $remoteMeta->{artist} ) {
-		$artist = $remoteMeta->{artist};
-	}
-	
-	$text .= ( defined $artist ) ? "\n$artist" : '';
 	
 	if ( defined $iconId ) {
 		$iconId += 0;
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 	}
-	elsif ( defined($remoteMeta->{cover}) ) {
-		$request->addResultLoop( $loop, $count, 'icon', $remoteMeta->{cover} );
+	elsif ( defined($songData->{artwork_url}) ) {
+		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
 	}
 	
 	# Special case for Internet Radio streams, if the track is remote, has no duration,
 	# has title metadata, and has no album metadata, display the station title as line 1 of the text
-	if ( $track->remote && !$track->secs && $remoteMeta->{title} && !$album ) {
-		$text = $track->title . "\n" . $text;
+	if ( $track->remote && !$track->secs && $songData->{remote_title} && !$album ) {
+		$text = $text . "\n" . $songData->{remote_title};
+		$request->addResult( 'current_title' );
 	}
 
 	$request->addResultLoop($loop, $count, 'text', $text);
@@ -4937,7 +4908,7 @@ sub _songData {
                                                                             
 		  'l' => ['album',             'ALBUM',           'album',         'title'],        #->album.title
 		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
-		  'J' => ["artwork_track_id",  'COVERART',                'album',         'artwork'],      #->album.artwork
+		  'J' => ["artwork_track_id",  'COVERART',        'album',         'artwork'],      #->album.artwork
 		  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
 		  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
                                                                             
