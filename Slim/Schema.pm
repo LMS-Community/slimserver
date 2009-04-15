@@ -2436,7 +2436,17 @@ sub _postCheckAttributes {
 			# Join on tracks with the same basename to determine a unique album.
 			# Bug 10583 - Only try to aggregate from basename
 			# if no MUSICBRAINZ_ALBUM_ID and no DISC and no DISCC available.
-			if (!defined $albumid && !defined $disc && !defined $discc) {
+			# Bug 11780 - Need to handle groupdiscs mode differently; would leave out
+			# basename check if MB Album Id given and thus merge different albums
+			# of the same name into one.
+			if (
+				# In checkDisc mode, try "same folder" only if none of MUSICBRAINZ_ALBUM_ID,
+				# DISC and DISCC are known.
+				($checkDisc && !defined $albumid && !defined $disc && !defined $discc) ||
+				# When not checking discs (i.e., "Group Discs" mode), try "same folder"
+				# as a last resort if both DISC and DISCC are unknown.
+				(!$checkDisc && !defined $disc && !defined $discc)
+				) {
 
 				$search->{'tracks.url'} = { 'like' => "$basename%" };
 
