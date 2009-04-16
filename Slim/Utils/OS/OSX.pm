@@ -332,5 +332,6 @@ sub initUpdate {
 
 sub canAutoUpdate { 1 }
 
+sub installerExtension { 'dmg' }; 
 
 1;

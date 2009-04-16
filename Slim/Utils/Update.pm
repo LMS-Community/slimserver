@@ -79,7 +79,8 @@ sub checkVersionCB {
 
 		# trigger download of the installer if available
 		if ($::newVersion && $prefs->get('autoDownloadUpdate')) {
-			$log->debug('Triggering automatic SqueezeCenter update download...');
+			$log->info('Triggering automatic SqueezeCenter update download...');
+			cleanup('tmp');
 			Slim::Utils::OSDetect->getOS()->initUpdate();
 		}
 	}
@@ -106,7 +107,7 @@ sub getUpdate {
 		. Slim::Networking::SqueezeNetwork->get_server("sn")
 		. "/update/?geturl=1&revision=$::REVISION&os=" . $params->{os};
 		
-	$log->debug("Getting url for latest SqueezeCenter download from $url");
+	$log->info("Getting url for latest SqueezeCenter download from $url");
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&gotUrlCB,
@@ -127,7 +128,7 @@ sub gotUrlCB {
 
 	if ( $http->{code} =~ /^2\d\d/ && Slim::Music::Info::isURL($url) ) {
 		
-		$log->debug("URL to download update from: $url");
+		$log->info("URL to download update from: $url");
 
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
@@ -170,14 +171,33 @@ sub downloadAsyncDone {
 	return if !-e $tmpFile;
 
 	if (-s _ != $http->headers->content_length()) {
-		$log->debug( sprintf("SqueezeCenter installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		$log->warn( sprintf("SqueezeCenter installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
 	}
 
-	
-	$log->debug("Successfully downloaded update installer file. Saving as $file");
+	cleanup();
+
+	$log->info("Successfully downloaded update installer file. Saving as $file");
 	rename $tmpFile, $file && $prefs->set('updateInstaller', $file);
+
+	cleanup('tmp');
+}
+
+sub cleanup {
+	my $additionalExt = shift;
+	
+	opendir my ($dirh), $prefs->get('cachedir');
+	
+	my $ext = Slim::Utils::OSDetect->getOS()->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
+	my @oldInstallers = grep { /^SqueezeCenter.*\.$ext$/i } readdir $dirh;
+	
+	closedir $dirh;
+	
+	for my $file ( @oldInstallers ) {
+		$log->info("Removing old installer file: $file");
+		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old installer file: $file: $!");
+	}
 }
 
 1;

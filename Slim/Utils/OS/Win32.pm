@@ -674,6 +674,9 @@ sub initUpdate {
 
 sub canAutoUpdate { 1 }
 
+# return file extension filter for installer
+sub installerExtension { '(?:exe|msi)' }; 
+
 sub restartServer {
 	my $class = shift;
 
