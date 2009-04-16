@@ -16,6 +16,10 @@ use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 use Slim::Utils::OSDetect;
 
+if (Slim::Utils::OSDetect->isWindows()) {
+	require Win32::Process;
+}
+
 sub new {
 	my ($self, $nb, $parent) = @_;
 
@@ -48,7 +52,7 @@ sub new {
 		$svcMgr->setStartupType($lbStartupMode->GetSelection());
 	});
 		
-	$startupSizer->Add($lbStartupMode, 0, wxALL, 10);
+	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
 	if (Slim::Utils::OSDetect->isWindows()) {
 		
@@ -111,10 +115,44 @@ sub new {
 	my $logBox = Wx::StaticBox->new($self, -1, string('DEBUGGING_SETTINGS'));
 	my $logSizer = Wx::StaticBoxSizer->new($logBox, wxVERTICAL);	
 	
-	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log'), 0, wxALL, 10);
+	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log'), 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log'), 0, wxALL, 10);
 	
 	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
+	
+	
+	if (Slim::Utils::OSDetect->isWindows()) {
+
+		# check for SC updates
+		my $updateBox = Wx::StaticBox->new($self, -1, string('SETUP_CHECKVERSION')); 
+		my $updateSizer = Wx::StaticBoxSizer->new($updateBox, wxVERTICAL);
+	
+		my $installer = Slim::GUI::ControlPanel->getPref('updateInstaller');
+	
+		if ($installer && -e $installer) {
+	
+			$updateSizer->Add(Wx::StaticText->new($self, -1, string('CONTROLPANEL_UPDATE_AVAILABLE')), 0, wxLEFT | wxRIGHT | wxTOP, 10);
+	
+			# update button
+			my $btnUpdate = Wx::Button->new($self, -1, string('CONTROLPANEL_INSTALL_UPDATE'));
+			EVT_BUTTON( $self, $btnUpdate, sub {
+
+				my $processObj;
+				Win32::Process::Create(
+					$processObj,
+					$installer,
+					'',
+					0,
+					Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
+					'.'
+				) && exit;				
+			});
+			
+			$updateSizer->Add($btnUpdate, 0, wxALL, 10);
+		}
+
+		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);	
+	}
 	
 	$mainSizer->AddStretchSpacer();
 	
