@@ -51,7 +51,8 @@ use constant MAX_RETRY_TIME     => 86400;
 my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
 # Firmware location
-my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
+my $dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
+my $updatesDir = Slim::Utils::OSDetect::dirsFor('updates');
 
 # Download location
 sub BASE {
@@ -81,8 +82,6 @@ sub init {
 	# the files we need to download
 	my $files = {};
 	
-	my $cachedir = $prefs->get('cachedir');
-	
 	for my $model ( @models ) {
 
 		# read each model's version file
@@ -103,7 +102,7 @@ sub init {
 
 				my $file  = "${model}_${version}.bin";
 				my $path  = catdir( $dir, $file );
-				my $path2 = catdir( $cachedir, $file );
+				my $path2 = catdir( $updatesDir, $file );
 
 				if ($files->{$path} || $files->{$path2}) {
 					next;
@@ -156,10 +155,10 @@ and custom.$model.bin in the cachedir.  If these exist then these are used in pr
 sub init_firmware_download {
 	my $model = shift;
 
-	my $version_file   = catdir( $prefs->get('cachedir'), "$model.version" );
+	my $version_file   = catdir( $updatesDir, "$model.version" );
 
-	my $custom_version = catdir( $prefs->get('cachedir'), "custom.$model.version" );
-	my $custom_image   = catdir( $prefs->get('cachedir'), "custom.$model.bin" );
+	my $custom_version = catdir( $updatesDir, "custom.$model.version" );
+	my $custom_image   = catdir( $updatesDir, "custom.$model.bin" );
 	
 	if ( -r $custom_version && -r $custom_image ) {
 		$log->info("Using custom $model firmware $custom_version $custom_image");
@@ -210,7 +209,7 @@ sub init_version_done {
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
 	my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-	my $fw_file = catdir( $prefs->get('cachedir'), "${model}_${ver}_r${rev}.bin" );
+	my $fw_file = catdir( $updatesDir, "${model}_${ver}_r${rev}.bin" );
 
 	if ( !-e $fw_file ) {		
 		$log->info("Downloading $model firmware to: $fw_file");
@@ -254,7 +253,7 @@ sub init_fw_done {
 	my $fw_file = shift;
 	my $model   = shift;
 	
-	opendir my ($dirh), $prefs->get('cachedir');
+	opendir my ($dirh), $updatesDir;
 	
 	my @files = grep { /^$model.*\.bin(\.tmp)?$/ } readdir $dirh;
 	
@@ -263,7 +262,7 @@ sub init_fw_done {
 	for my $file ( @files ) {
 		next if $file eq basename($fw_file);
 		$log->info("Removing old $model firmware file: $file");
-		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old $model firmware file: $file: $!");
+		unlink catdir( $updatesDir, $file ) or logError("Unable to remove old $model firmware file: $file: $!");
 	}
 	
 	my ($ver, $rev) = $fw_file =~ m/${model}_([^_]+)_r([^\.]+).bin/;
@@ -292,14 +291,14 @@ sub init_fw_error {
 	my $model = shift || 'jive';
 	
 	# Check if we have a usable Jive firmware
-	my $version_file = catdir( $prefs->get('cachedir'), "$model.version" );
+	my $version_file = catdir( $updatesDir, "$model.version" );
 	
 	if ( -e $version_file ) {
 		my $version = read_file($version_file);
 
 		my ($ver, $rev) = $version =~ m/^([^ ]+)\sr(\d+)/;
 
-		my $fw_file = catdir( $prefs->get('cachedir'), "${model}_${ver}_r${rev}.bin" );
+		my $fw_file = catdir( $updatesDir, "${model}_${ver}_r${rev}.bin" );
 
 		if ( -e $fw_file ) {
 			$log->info("$model firmware download had an error, using existing firmware: $fw_file");

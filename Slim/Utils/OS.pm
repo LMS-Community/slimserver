@@ -114,6 +114,13 @@ sub dirsFor {
 		push @dirs, catdir(Slim::Utils::Prefs::preferences('server')->get('cachedir'), 'InstalledPlugins', 'Plugins');
 	}
 
+	elsif ($dir eq 'updates') {
+
+		my $updateDir = catdir( $class->dirsFor('cache'), $dir );
+		mkdir $updateDir unless -d $updateDir;
+		push @dirs, $updateDir;
+	}
+	
 	return wantarray() ? @dirs : $dirs[0];
 }
 

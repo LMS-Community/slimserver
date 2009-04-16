@@ -80,7 +80,6 @@ sub checkVersionCB {
 		# trigger download of the installer if available
 		if ($::newVersion && $prefs->get('autoDownloadUpdate')) {
 			$log->info('Triggering automatic SqueezeCenter update download...');
-			cleanup('tmp');
 			Slim::Utils::OSDetect->getOS()->initUpdate();
 		}
 	}
@@ -108,12 +107,14 @@ sub getUpdate {
 		. "/update/?geturl=1&revision=$::REVISION&os=" . $params->{os};
 		
 	$log->info("Getting url for latest SqueezeCenter download from $url");
+	
+	my $downloadPath = $params->{path} || scalar ( Slim::Utils::OSDetect::dirsFor('updates') );
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&gotUrlCB,
 		\&checkVersionError,
 		{
-			path => $params->{path} || scalar ( Slim::Utils::OSDetect::dirsFor('cache') ),
+			path => $downloadPath,
 		}
 	);
 
@@ -123,6 +124,8 @@ sub getUpdate {
 sub gotUrlCB {
 	my $http = shift;
 	my $path = $http->params('path');
+	
+	cleanup($path, 'tmp');
 
 	my $url = $http->content();
 
@@ -134,6 +137,8 @@ sub gotUrlCB {
 		($a, $b, $file) = splitpath($file);
 		$file = catdir($path, $file);
 
+$log->error($file);
+
 		# don't re-download if file exists already
 		if ( -e $file ) {
 			$prefs->set( 'updateInstaller', $file);
@@ -141,7 +146,6 @@ sub gotUrlCB {
 		}
 		
 		my $tmpFile = "$file.tmp";
-		unlink $tmpFile if -e $tmpFile;
 
 		$prefs->set('updateInstaller');
 
@@ -152,6 +156,7 @@ sub gotUrlCB {
 			{
 				saveAs => $tmpFile,
 				file   => $file,
+				path   => $path,
 			},
 		);
 		
@@ -164,8 +169,10 @@ sub gotUrlCB {
 
 sub downloadAsyncDone {
 	my $http = shift;
-	my $file = $http->params('file');
+	
+	my $file    = $http->params('file');
 	my $tmpFile = $http->params('saveAs');
+	my $path    = $http->params('path');
 	
 	# make sure we got the file
 	return if !-e $tmpFile;
@@ -176,18 +183,18 @@ sub downloadAsyncDone {
 		return;
 	}
 
-	cleanup();
+	cleanup($path);
 
 	$log->info("Successfully downloaded update installer file. Saving as $file");
 	rename $tmpFile, $file && $prefs->set('updateInstaller', $file);
 
-	cleanup('tmp');
+	cleanup($path, 'tmp');
 }
 
 sub cleanup {
-	my $additionalExt = shift;
+	my ($path, $additionalExt) = @_;
 	
-	opendir my ($dirh), $prefs->get('cachedir');
+	opendir my ($dirh), $path;
 	
 	my $ext = Slim::Utils::OSDetect->getOS()->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 	my @oldInstallers = grep { /^SqueezeCenter.*\.$ext$/i } readdir $dirh;
@@ -196,7 +203,7 @@ sub cleanup {
 	
 	for my $file ( @oldInstallers ) {
 		$log->info("Removing old installer file: $file");
-		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old installer file: $file: $!");
+		unlink catdir($path, $file) or logError("Unable to remove old installer file: $file: $!");
 	}
 }
 

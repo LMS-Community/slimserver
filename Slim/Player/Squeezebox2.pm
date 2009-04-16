@@ -286,7 +286,7 @@ sub upgradeFirmware {
 	}
 
 	my $file  = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $client->model . "_$to_version.bin" );
-	my $file2 = catdir( $prefs->get('cachedir'), $client->model . "_$to_version.bin" );
+	my $file2 = catdir( Slim::Utils::OSDetect::dirsFor('updates'), $client->model . "_$to_version.bin" );
 
 	if (!-f $file && !-f $file2) {
 

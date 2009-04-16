@@ -640,7 +640,12 @@ sub _priorityFromPriorityClass {
 sub initUpdate {
 	my $class = shift;
 
-	return if main::SLIM_SERVICE || main::SCANNER || !$PerlSvc::VERSION;
+	return if main::SLIM_SERVICE || main::SCANNER;
+	
+	if (!$PerlSvc::VERSION) {
+		Slim::Utils::Log::logger('server.update')->error("Running SqueezeCenter from the source - don't download the update.");
+#		return;
+	}
 	
 	require Win32::NetResource;
 	require Slim::Utils::Update;

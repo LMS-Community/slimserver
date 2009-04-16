@@ -35,7 +35,7 @@ sub dirsFor {
 
 	my @dirs = ();
 	
-	if ($dir eq 'oldprefs') {
+	if ($dir =~ /^(?:oldprefs|updates)$/) {
 
 		push @dirs, $class->SUPER::dirsFor($dir);
 

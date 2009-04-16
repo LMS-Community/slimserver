@@ -338,7 +338,7 @@ sub needsUpgrade {
 
 	# skip upgrade if file doesn't exist
 	my $file = shift || catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $model . "_$to.bin" );
-	my $file2 = catdir( $prefs->get('cachedir'), $model . "_$to.bin" );
+	my $file2 = catdir( Slim::Utils::OSDetect::dirsFor('updates'), $model . "_$to.bin" );
 
 	unless ( (-r $file && -s $file) || (-r $file2 && -s $file2) ) {
 
