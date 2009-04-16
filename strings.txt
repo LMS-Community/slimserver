@@ -20821,7 +20821,7 @@ CONTROLPANEL_MUSIC_LIBRARY
 	SV	Musikbibliotek
 	
 CONTROLPANEL_UPDATE_AVAILABLE
-	EN	An updated SqueezeCenter version is available.
+	EN	An updated SqueezeCenter version is available and ready to be installed.
 
 CONTROLPANEL_INSTALL_UPDATE
 	EN	Click here to update
