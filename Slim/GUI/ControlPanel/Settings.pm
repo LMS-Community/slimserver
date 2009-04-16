@@ -10,13 +10,17 @@ use base 'Wx::Panel';
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
 use File::Spec::Functions qw(catfile);
+use LWP::Simple;
 
 use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 use Slim::Utils::OSDetect;
 
-if (Slim::Utils::OSDetect->isWindows()) {
+my $os = Slim::Utils::OSDetect::getOS();
+my $updateUrl;
+
+if ($os->name eq 'win') {
 	require Win32::Process;
 }
 
@@ -54,7 +58,7 @@ sub new {
 		
 	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
-	if (Slim::Utils::OSDetect->isWindows()) {
+	if ($os->name eq 'win') {
 		
 		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
 		$credentialsSizer->AddGrowableCol(1, 1);
@@ -121,21 +125,23 @@ sub new {
 	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
 	
 	
-	if (Slim::Utils::OSDetect->isWindows()) {
+	if ($os->name eq 'win') {
 
 		# check for SC updates
 		my $updateBox = Wx::StaticBox->new($self, -1, string('SETUP_CHECKVERSION')); 
 		my $updateSizer = Wx::StaticBoxSizer->new($updateBox, wxVERTICAL);
 	
-		my $installer = Slim::GUI::ControlPanel->getPref('updateInstaller');
+		my $ready = $self->_checkForUpdate();
+
+		my $updateLabel = Wx::StaticText->new($self, -1, string($ready ? 'CONTROLPANEL_UPDATE_AVAILABLE' : 'CONTROLPANEL_NO_UPDATE_AVAILABLE'));	
+		$updateSizer->Add($updateLabel, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
-		if ($installer && -e $installer) {
-	
-			$updateSizer->Add(Wx::StaticText->new($self, -1, string('CONTROLPANEL_UPDATE_AVAILABLE')), 0, wxLEFT | wxRIGHT | wxTOP, 10);
-	
-			# update button
-			my $btnUpdate = Wx::Button->new($self, -1, string('CONTROLPANEL_INSTALL_UPDATE'));
-			EVT_BUTTON( $self, $btnUpdate, sub {
+		# update button
+		my $btnUpdate = Wx::Button->new($self, -1, string($ready ? 'CONTROLPANEL_INSTALL_UPDATE' : 'CONTROLPANEL_CHECK_UPDATE'));
+
+		EVT_BUTTON( $self, $btnUpdate, sub {
+			
+			if (_checkForUpdate()) {
 
 				my $processObj;
 				Win32::Process::Create(
@@ -146,11 +152,39 @@ sub new {
 					Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
 					'.'
 				) && exit;				
-			});
-			
-			$updateSizer->Add($btnUpdate, 0, wxALL, 10);
-		}
+				
+			}
 
+			elsif ($updateUrl) {
+				Wx::LaunchDefaultBrowser($updateUrl);
+				exit;
+			}
+
+			else {
+
+				my $check = get("http://update.squeezenetwork.com/update/?version=1.$::VERSION&lang=" . $os->getSystemLanguage());
+				chomp($check) if $check;
+
+				if ($check) {
+					my @parts = split /\. /, $check;
+					
+					if (@parts > 1 && $parts[1] =~ /href="(.*?)"/) {
+						$updateUrl = $1;
+						
+						$updateLabel->SetLabel($parts[0]);
+						$btnUpdate->SetLabel(string('CONTROLPANEL_DOWNLOAD_UPDATE'));
+					}
+				}
+				
+				else {
+					$updateLabel->SetLabel(string('CONTROLPANEL_NO_UPDATE_AVAILABLE'));
+					$btnUpdate->SetLabel(string('CONTROLPANEL_CHECK_UPDATE'));
+				}
+			}
+		});
+			
+		$updateSizer->Add($btnUpdate, 0, wxALL, 10);
+		
 		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);	
 	}
 	
@@ -168,6 +202,11 @@ sub new {
 	return $self;
 }
 
+sub _checkForUpdate {
+	my $installer = Slim::GUI::ControlPanel->getPref('updateInstaller');
+	return $installer && -e $installer;
+}
+
 1;
 
 
@@ -179,9 +218,6 @@ use Wx qw(:everything);
 use File::Spec::Functions qw(catfile);
 
 use Slim::GUI::ControlPanel;
-use Slim::Utils::OSDetect;
-
-my $os = Slim::Utils::OSDetect::getOS();
 
 sub new {
 	my ($self, $page, $parent, $file) = @_;
