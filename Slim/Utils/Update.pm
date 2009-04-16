@@ -107,14 +107,12 @@ sub getUpdate {
 		. "/update/?geturl=1&revision=$::REVISION&os=" . $params->{os};
 		
 	$log->info("Getting url for latest SqueezeCenter download from $url");
-	
-	my $downloadPath = $params->{path} || scalar ( Slim::Utils::OSDetect::dirsFor('updates') );
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&gotUrlCB,
 		\&checkVersionError,
 		{
-			path => $downloadPath,
+			path => $params->{path} || scalar ( Slim::Utils::OSDetect::dirsFor('updates') ),
 		}
 	);
 
@@ -136,8 +134,6 @@ sub gotUrlCB {
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
 		$file = catdir($path, $file);
-
-$log->error($file);
 
 		# don't re-download if file exists already
 		if ( -e $file ) {
