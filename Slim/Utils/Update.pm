@@ -21,11 +21,20 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 sub checkVersion {
-	if (!$prefs->get('checkVersion')) {
 
+	# reset update download status in case our system is up to date
+	my $installer = $prefs->get('updateInstaller') || '';
+	
+	if ( ($installer != /\d{5,}/ && $installer =~ /$::VERSION/)			# no revision number, but same version
+		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/)	# same revision
+		|| !$prefs->get('checkVersion') ) {								# we don't want to check
+		
+		$log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.") if $prefs->get('checkVersion');
+		
 		$::newVersion = undef;
 		$prefs->set('updateInstaller');
-		return;
+		
+		return unless $prefs->get('checkVersion');
 	}
 
 	my $lastTime = $prefs->get('checkVersionLastTime');
@@ -137,6 +146,8 @@ sub gotUrlCB {
 
 		# don't re-download if file exists already
 		if ( -e $file ) {
+			$log->info("We already have the latest installer file: $file");
+			
 			$prefs->set( 'updateInstaller', $file);
 			return;
 		}
