@@ -20823,8 +20823,17 @@ CONTROLPANEL_MUSIC_LIBRARY
 CONTROLPANEL_UPDATE_AVAILABLE
 	EN	An updated SqueezeCenter version is available and ready to be installed.
 
+CONTROLPANEL_NO_UPDATE_AVAILABLE
+	EN	There's no updated SqueezeCenter version available.
+
+CONTROLPANEL_CHECK_UPDATE
+	EN	Check for update
+
+CONTROLPANEL_DOWNLOAD_UPDATE
+	EN	Download update
+
 CONTROLPANEL_INSTALL_UPDATE
-	EN	Click here to update
+	EN	Install update
 
 CONTROLPANEL_MAINTENANCE
 	DE	Unterhalt
