@@ -333,6 +333,9 @@ sub tryModuleLoad {
 sub check_valid_versions {
 	my $modules;
 	my $failed = {};
+
+	# Don't load all these modules in the scanner
+	return $failed if main::SCANNER;
 	
 	# don't check validity on Windows binary - it's all built in
 	return $failed if $0 =~ /scanner\.exe/i;
