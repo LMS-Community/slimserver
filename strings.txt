@@ -20819,6 +20819,12 @@ CONTROLPANEL_MUSIC_LIBRARY
 	NL	Muziekcollectie
 	NO	Musikkbibliotek
 	SV	Musikbibliotek
+	
+CONTROLPANEL_UPDATE_AVAILABLE
+	EN	An updated SqueezeCenter version is available.
+
+CONTROLPANEL_INSTALL_UPDATE
+	EN	Click here to update
 
 CONTROLPANEL_MAINTENANCE
 	DE	Unterhalt
