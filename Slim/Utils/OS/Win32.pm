@@ -644,7 +644,7 @@ sub initUpdate {
 	
 	if (!$PerlSvc::VERSION) {
 		Slim::Utils::Log::logger('server.update')->error("Running SqueezeCenter from the source - don't download the update.");
-#		return;
+		return;
 	}
 	
 	require Win32::NetResource;
