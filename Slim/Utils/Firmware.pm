@@ -46,6 +46,7 @@ use Slim::Utils::Timers;
 
 use constant INITIAL_RETRY_TIME => 600;
 use constant MAX_RETRY_TIME     => 86400;
+use constant VERSION_FILE_STALE => 1800;
 
 # Models to download firmware for
 my @models = qw( squeezebox squeezebox2 transporter boom receiver );
@@ -176,18 +177,27 @@ sub init_firmware_download {
 
 	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
 	return unless $prefs->get('checkVersion');
+
+	if (-r $version_file && time() - (stat($version_file))[9] < VERSION_FILE_STALE) {
+
+		$log->is_info && $log->info("Using exising $model.version file...");
+
+		init_version_done($version_file, $model);
+
+	} else {
+
+		$log->is_info && $log->info("Downloading $model.version file...");
 	
-	$log->is_info && $log->info("Downloading $model.version file...");
-	
-	# Any async downloads in init must be started on a timer so they don't
-	# time out from other slow init things
-	Slim::Utils::Timers::setTimer(
-		undef,
-		time(),
-		sub {
-			downloadAsync( $version_file, \&init_version_done, $version_file, $model );
-		},
-	);
+		# Any async downloads in init must be started on a timer so they don't
+		# time out from other slow init things
+		Slim::Utils::Timers::setTimer(
+			undef,
+			time(),
+			sub {
+				downloadAsync( $version_file, \&init_version_done, $version_file, $model );
+			},
+		);
+	}
 }
 
 =head2 init_version_done($version_file, $model)
@@ -231,7 +241,6 @@ sub init_version_done {
 	
 	# Check again for an updated $model.version in 12 hours
 	$log->debug("Scheduling next $model.version check in 12 hours");
-	Slim::Utils::Timers::killTimers( undef, \&init_jive );
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + 43200,
