@@ -1073,6 +1073,8 @@ sub playItem {
 				$string   = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
 				$duration = 10;
 			}
+
+			Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 		}
 
 		$client->showBriefly( {

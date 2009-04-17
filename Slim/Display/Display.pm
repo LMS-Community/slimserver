@@ -51,6 +51,7 @@ my $prefs = preferences('server');
 #   4 = server side bumpUp/Down                             x             x 
 #   5 = server side showBriefly                             x             x        x
 #   6 = clear scrolling (scrollonce and end scrolling mode) x             x        x
+#   7 = defered showBriefly (mid client side push/bump)                            x
 #
 # scrollState: (per screen)
 #   0 = no scrolling
@@ -78,7 +79,7 @@ $prefs->setValidate('num', qw(scrollRate scrollRateDouble scrollPause scrollPaus
 {
 	__PACKAGE__->mk_accessor('rw', 'client'); # Note: Always keep client as the first accessor
 	__PACKAGE__->mk_accessor('rw',   qw(updateMode screen2updateOK animateState renderCache currBrightness
-										lastVisMode sbCallbackData sbOldDisplay sbName displayStrings notifyLevel hideVisu));
+										lastVisMode sbCallbackData sbOldDisplay sbName sbDeferred displayStrings notifyLevel hideVisu));
 	__PACKAGE__->mk_accessor('arraydefault', 1, qw(scrollState scrollData widthOverride));
 }
 
@@ -224,6 +225,13 @@ sub showBriefly {
 	return unless $initialized;
 
 	my $client = $display->client;
+
+	# if called during client animation, then stash params for later when animation completes and return immediately
+	if ($display->animateState == 1 || $display->animateState == 7) {
+		$display->sbDeferred({ parts => $parts, args => $args});
+		$display->animateState(7);
+		return;
+	}
 
 	if ($log->is_info) {
 		my ($line, $subr) = (caller(1))[2,3];

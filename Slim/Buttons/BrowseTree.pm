@@ -170,6 +170,10 @@ sub init {
 					$client->execute(['playlist', 'shuffle', 1]);
 				}
 			}
+
+			if ($command eq 'play') {
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+			}
 		},
 		
 		'create_mix' => sub  {
