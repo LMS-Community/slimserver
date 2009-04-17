@@ -323,15 +323,15 @@ sub isMacAlias {
 
 
 sub initUpdate {
+	my ($class, $url) = @_;
 	require Slim::Utils::Update;
 	
-	Slim::Utils::Update::getUpdate({
-		os   => 'osx',
-	});
+	return {};
 }
 
 sub canAutoUpdate { 1 }
 
 sub installerExtension { 'dmg' }; 
+sub installerOS { 'osx' }
 
 1;

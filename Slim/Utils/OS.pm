@@ -343,7 +343,8 @@ Not needed on Linux distributions which do manage the update through their repos
 
 sub initUpdate {};
 sub canAutoUpdate { 0 };
-sub installerExtension { '' }; 
+sub installerExtension { '' };
+sub installerOS { '' };
 
 =head2 restartServer( )
 

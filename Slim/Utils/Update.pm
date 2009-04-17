@@ -20,6 +20,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'DEBUG',
 });
 
+my $os = Slim::Utils::OSDetect->getOS();
+
 sub checkVersion {
 
 	# reset update download status in case our system is up to date
@@ -61,7 +63,15 @@ sub checkVersion {
 
 	my $url  = "http://"
 		. Slim::Networking::SqueezeNetwork->get_server("update")
-		. "/update/?version=$::VERSION&revision=$::REVISION&lang=" . Slim::Utils::Strings::getLanguage();
+		. sprintf(
+			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s", 
+			$::VERSION, 
+			$::REVISION, 
+			Slim::Utils::Strings::getLanguage(),
+			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '',
+			$os->installerOS(),
+		);
+		
 	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
 
 	# will call checkVersionCB when complete
@@ -78,18 +88,23 @@ sub checkVersionCB {
 	# store result in global variable, to be displayed by browser
 	if ($http->{code} =~ /^2\d\d/) {
 
-		$::newVersion = Slim::Utils::Unicode::utf8decode( $http->content() );
-		chomp($::newVersion);
+		my $version = Slim::Utils::Unicode::utf8decode( $http->content() );
+		chomp($version);
 		
-		$log->debug($::newVersion || 'No new SqueezeCenter version available');
+		$log->debug($version || 'No new SqueezeCenter version available');
 
 		# reset the update flag
 		$prefs->set('updateInstaller');
 
 		# trigger download of the installer if available
-		if ($::newVersion && $prefs->get('autoDownloadUpdate')) {
+		if ($version && $prefs->get('autoDownloadUpdate')) {
+			
 			$log->info('Triggering automatic SqueezeCenter update download...');
-			Slim::Utils::OSDetect->getOS()->initUpdate();
+			getUpdate($version);
+		}
+		
+		elsif ($version) {
+			$::newVersion = $version;
 		}
 	}
 	else {
@@ -106,37 +121,19 @@ sub checkVersionError {
 }
 
 
-# get the latest URL and download the installer
-
+# download the installer
 sub getUpdate {
-	my $params = shift;
+	my $url = shift;
 	
-	my $url  = "http://"
-		. Slim::Networking::SqueezeNetwork->get_server("sn")
-		. "/update/?geturl=1&revision=$::REVISION&os=" . $params->{os};
-		
-	$log->info("Getting url for latest SqueezeCenter download from $url");
-
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		\&gotUrlCB,
-		\&checkVersionError,
-		{
-			path => $params->{path} || scalar ( Slim::Utils::OSDetect::dirsFor('updates') ),
-		}
-	);
-
-	$http->get($url);
-}
-
-sub gotUrlCB {
-	my $http = shift;
-	my $path = $http->params('path');
+	my $params = $os->initUpdate();
+	
+	return unless defined $params;
+	
+	my $path = $params->{path} || scalar ( $os->dirsFor('updates') );
 	
 	cleanup($path, 'tmp');
 
-	my $url = $http->content();
-
-	if ( $http->{code} =~ /^2\d\d/ && Slim::Music::Info::isURL($url) ) {
+	if ( $url && Slim::Music::Info::isURL($url) ) {
 		
 		$log->info("URL to download update from: $url");
 
@@ -203,7 +200,7 @@ sub cleanup {
 	
 	opendir my ($dirh), $path;
 	
-	my $ext = Slim::Utils::OSDetect->getOS()->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
+	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 	my @oldInstallers = grep { /^SqueezeCenter.*\.$ext$/i } readdir $dirh;
 	
 	closedir $dirh;

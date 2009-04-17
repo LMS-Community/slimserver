@@ -638,7 +638,7 @@ sub _priorityFromPriorityClass {
 
 
 sub initUpdate {
-	my $class = shift;
+	my ($class, $url) = @_;
 
 	return if main::SLIM_SERVICE || main::SCANNER;
 	
@@ -648,7 +648,6 @@ sub initUpdate {
 	}
 	
 	require Win32::NetResource;
-	require Slim::Utils::Update;
 	
 	my $downloaddir;
 	
@@ -671,16 +670,16 @@ sub initUpdate {
 		}
 	}
 	
-	Slim::Utils::Update::getUpdate({
-		os   => $class->{osDetails}->{isWHS} ? 'whs' : 'win',
+	return {
 		path => $downloaddir,
-	});
+	};
 }
 
 sub canAutoUpdate { 1 }
 
 # return file extension filter for installer
 sub installerExtension { '(?:exe|msi)' }; 
+sub installerOS { $class->{osDetails}->{isWHS} ? 'whs' : 'win' }
 
 sub restartServer {
 	my $class = shift;
