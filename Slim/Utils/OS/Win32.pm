@@ -679,7 +679,10 @@ sub canAutoUpdate { 1 }
 
 # return file extension filter for installer
 sub installerExtension { '(?:exe|msi)' }; 
-sub installerOS { $class->{osDetails}->{isWHS} ? 'whs' : 'win' }
+sub installerOS { 
+	my $class = shift;
+	return $class->{osDetails}->{isWHS} ? 'whs' : 'win';
+}
 
 sub restartServer {
 	my $class = shift;
