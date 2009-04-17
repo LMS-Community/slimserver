@@ -162,7 +162,12 @@ sub new {
 
 			else {
 
-				my $check = get("http://update.squeezenetwork.com/update/?version=1.$::VERSION&lang=" . $os->getSystemLanguage());
+				my $check = get( sprintf(
+					"http://update.squeezenetwork.com/update/?version=1.%s&lang=%s&os=%s",
+					$::VERSION,
+					$os->getSystemLanguage(),
+					$os->installerOS(),
+				));
 				chomp($check) if $check;
 
 				if ($check) {
