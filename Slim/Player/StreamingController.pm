@@ -933,7 +933,7 @@ sub _Stream {				# play -> Buffering, Streaming
 	
 	assert($song);
 	if (!$song) {
-		log->error("No song to stream: try next");
+		$log->error("No song to stream: try next");
 		# TODO - show error
 		_NextIfMore($self, $event);
 		return;
