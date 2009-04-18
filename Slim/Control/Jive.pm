@@ -2304,7 +2304,7 @@ sub firmwareUpgradeQuery_filter {
 
 	# update the query if new firmware downloaded for this machine type
 	if ($request->isCommand([['fwdownloaded']]) && 
-		($request->getParam('machine') || 'jive' eq $self->getParam('_machine') || 'jive') ) {
+		(($request->getParam('machine') || 'jive') eq ($self->getParam('_machine') || 'jive')) ) {
 		return 1;
 	}
 
