@@ -51,9 +51,9 @@ use constant VERSION_FILE_STALE => 1800;
 # Models to download firmware for
 my @models = qw( squeezebox squeezebox2 transporter boom receiver );
 
-# Firmware location
-my $dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
-my $updatesDir = Slim::Utils::OSDetect::dirsFor('updates');
+# Firmware location - initialize in init() one options have been parsed
+my $dir;
+my $updatesDir;
 
 # Download location
 sub BASE {
@@ -80,6 +80,11 @@ download().
 =cut
 
 sub init {
+	
+	# Must initialize these here, not in declaration so that options have been parsed.
+	$dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
+	$updatesDir = Slim::Utils::OSDetect::dirsFor('updates');
+	
 	# the files we need to download
 	my $files = {};
 	
