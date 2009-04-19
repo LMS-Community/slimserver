@@ -3,8 +3,8 @@
 	[% WRAPPER setting title="SETUP_CHECKVERSION" desc="SETUP_CHECKVERSION_DESC"%]
 		<select class="stdedit" name="pref_checkVersion" id="checkVersion">
 
-			<option [% IF NOT prefs.pref_checkVersion %]selected [% END %]value="0">[% 'SETUP_CHECKVERSION_0' | string %]</option>
 			<option [% IF prefs.pref_checkVersion %]selected [% END %]value="1">[% 'SETUP_CHECKVERSION_1' | string %]</option>
+			<option [% IF NOT prefs.pref_checkVersion %]selected [% END %]value="0">[% 'SETUP_CHECKVERSION_0' | string %]</option>
 		
 		</select>
 	[% END %]
@@ -14,8 +14,8 @@
 	[% WRAPPER setting title="SETUP_AUTO_DOWNLOAD" desc="SETUP_AUTO_DOWNLOAD_DESC"%]
 		<select class="stdedit" name="pref_autoDownloadUpdate" id="autoDownloadUpdate">
 
-			<option [% IF NOT prefs.pref_autoDownloadUpdate %]selected [% END %]value="0">[% 'SETUP_AUTO_DOWNLOAD_0' | string %]</option>
 			<option [% IF prefs.pref_autoDownloadUpdate %]selected [% END %]value="1">[% 'SETUP_AUTO_DOWNLOAD_1' | string %]</option>
+			<option [% IF NOT prefs.pref_autoDownloadUpdate %]selected [% END %]value="0">[% 'SETUP_AUTO_DOWNLOAD_0' | string %]</option>
 		
 		</select>
 	[% END %]

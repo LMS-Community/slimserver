@@ -6777,7 +6777,7 @@ SETUP_CHECKVERSION_1
 	CS	Automaticky kontrolovat aktualizace softwaru
 	DA	Søg automatisk efter softwareopdateringer
 	DE	Automatisch nach aktualisierter Software suchen
-	EN	Automatically Check For Software Updates
+	EN	Automatically check for software updates
 	ES	Buscar actualizaciones de software automáticamente
 	FI	Etsi ohjelmistopäivityksiä automaattisesti
 	FR	Vérifier automatiquement
@@ -6796,7 +6796,7 @@ SETUP_CHECKVERSION_0
 	CS	Nekontrolovat aktualizace softwaru
 	DA	Søg ikke automatisk for softwareopdateringer
 	DE	Nicht automatisch nach aktualisierter Software suchen
-	EN	Don't Check For Software Updates
+	EN	Don't check for software updates
 	ES	No buscar actualizaciones de software
 	FI	Älä etsi ohjelmistopäivityksiä
 	FR	Ne pas vérifier
@@ -6815,7 +6815,7 @@ SETUP_AUTO_DOWNLOAD
 	CS	Automatické  stahování
 	DA	Hent automatisk
 	DE	Automatischer Download
-	EN	Automatic Download
+	EN	Automatic download
 	ES	Descarga automática
 	FI	Automaattinen lataaminen
 	FR	Téléchargement automatique
