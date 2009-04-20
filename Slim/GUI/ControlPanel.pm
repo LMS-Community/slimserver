@@ -261,7 +261,9 @@ sub getPref {
 	
 		$value = $self->serverRequest('pref', $file . $pref, '?');
 
-		$value = $value->{'_p2'};
+		if (ref $value) {
+			$value = $value->{'_p2'};
+		}
 	}
 	
 	else {
