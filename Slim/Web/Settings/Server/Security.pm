@@ -40,6 +40,7 @@ sub handler {
 		if ($val ne $paramRef->{'pref_password_repeat'}) {
 
 			$paramRef->{'warning'} .= Slim::Utils::Strings::string('SETUP_PASSWORD_MISMATCH');
+			$paramRef->{'pref_authorize'} = 0;
 
 		}
 
