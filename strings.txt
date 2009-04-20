@@ -20994,6 +20994,9 @@ CLEANUP_PLEASE_STOP_SC
 	RU	Перед очисткой остановите работу SqueezeCenter.
 	SV	Stoppa SqueezeCenter innan du börjar med rensningen.
 
+CLEANUP_WANT_TO_STOP_SC
+	EN	SqueezeCenter has to be stopped before running the cleanup. Do you want to stop it now?
+
 CLEANUP_USAGE
 	CS	Použití
 	DA	Brug
