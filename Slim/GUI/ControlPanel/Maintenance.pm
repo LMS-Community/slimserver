@@ -73,6 +73,13 @@ sub doCleanup {
 		if ($msg->ShowModal() == wxID_YES) {
 			# stop SC before continuing
 			Slim::GUI::ControlPanel->serverRequest('stopserver');
+			
+			# wait while SC is being shut down
+			my $wait = 59;
+			while ($svcMgr->checkServiceState != SC_STATE_STOPPED && $wait > 0) {
+				sleep 5;
+				$wait -= 5;
+			}
 		}
 		else {
 			# don't do anything
