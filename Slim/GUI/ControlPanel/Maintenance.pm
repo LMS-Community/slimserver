@@ -28,6 +28,10 @@ sub new {
 	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
 
 	foreach (@{ $args->{options} }) {
+		
+		# support only wants these three options
+		next unless $_->{name} =~ /^(?:prefs|cache|all)$/;
+		
 		$checkboxes{$_->{name}} = Wx::CheckBox->new( $self, -1, $_->{title}, $_->{position});
 		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP | wxGROW, $_->{margin} || 5 );
 	}
