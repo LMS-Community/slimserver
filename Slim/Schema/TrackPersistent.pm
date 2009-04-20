@@ -5,6 +5,8 @@ package Slim::Schema::TrackPersistent;
 use strict;
 use base 'Slim::Schema::DBI';
 
+use File::Slurp qw(write_file);
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::DateTime;
@@ -44,6 +46,33 @@ sub addedTime {
 	my $time = $self->added;
 
 	return join( ', ', Slim::Utils::DateTime::longDateF($time), Slim::Utils::DateTime::timeF($time) );
+}
+
+sub export {
+	my ( $class, $file ) = @_;
+	
+	my $export = [];
+	
+	# Only export items that have data
+	my $find = [
+		rating     => { '!=' => undef },
+		playcount  => { '!=' => undef },
+		lastplayed => { '!=' => undef },
+	];
+	
+	my $rs = Slim::Schema->search( TrackPersistent => $find );
+	
+	while ( my $track = $rs->next ) {
+		push @{$export}, {
+			url        => $track->url,
+			mb         => $track->musicbrainz_id,
+			rating     => $track->rating,
+			playcount  => $track->playcount,
+			lastplayed => $track->lastplayed,
+		};
+	}
+	
+	write_file( $file, to_json($export) );
 }
 
 1;

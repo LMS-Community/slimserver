@@ -998,6 +998,13 @@ sub cleanup {
 		logger('')->info("Cancel running scanner.");
 		Slim::Music::Import->abortScan();
 	}
+	
+	# Bug 11827, export tracks_persistent data for future use
+	my ($dir) = Slim::Utils::OSDetect::dirsFor('prefs');
+	logger('')->info("Exporting persistent track data to $dir");
+	Slim::Schema::TrackPersistent->export(
+		catfile( $dir, 'tracks_persistent.json' )
+	);	
 
 	logger('')->info("SqueezeCenter cleaning up.");
 	
