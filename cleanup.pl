@@ -29,6 +29,7 @@ my $useWx = eval {
 };
 
 use constant SLIM_SERVICE => 0;
+use constant SCANNER => 0;
 
 use Slim::bootstrap;
 use Slim::Utils::OSDetect;
