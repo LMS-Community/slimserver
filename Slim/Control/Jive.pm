@@ -240,8 +240,8 @@ sub mainMenu {
 
 	$log->info("Begin function");
 	my $client = shift;
-
-	unless ($client->isa('Slim::Player::Client')) {
+	
+	unless ($client && $client->isa('Slim::Player::Client')) {
 		# if this isn't a player, no menus should get sent
 		return;
 	}
