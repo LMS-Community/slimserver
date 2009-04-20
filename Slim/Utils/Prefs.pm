@@ -162,7 +162,7 @@ sub init {
 		'checkVersion'          => 1,
 		'checkVersionInterval'	=> 60*60*24,
 		# enable auto download of SC updates on Windows only (for now)
-		'autoDownloadUpdate'    => Slim::Utils::OSDetect::isWindows(),
+		'autoDownloadUpdate'    => sub { Slim::Utils::OSDetect::getOS->canAutoUpdate() },
 		'noGenreFilter'         => 0,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
