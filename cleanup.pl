@@ -26,6 +26,8 @@ use constant DEBUG => 0;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Light;
 
+our $VERSION = '7.4';
+
 BEGIN {
 	if ($^O =~ /win/i) {
 		eval { require Wx::Perl::Packager; }
