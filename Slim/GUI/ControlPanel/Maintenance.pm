@@ -47,10 +47,6 @@ sub new {
 	my $btnCleanup = Wx::Button->new( $self, -1, string('CLEANUP_DO') );
 	EVT_BUTTON( $self, $btnCleanup, \&doCleanup );
 	
-	$parent->addStatusListener($btnCleanup, sub {
-		$btnCleanup->Enable($_[0] != SC_STATE_RUNNING && $_[0] != SC_STATE_STARTING);
-	});
-
 	$btnsizer->SetAffirmativeButton($btnCleanup);
 	
 	$btnsizer->Realize();
@@ -64,13 +60,33 @@ sub new {
 
 sub doCleanup {
 	my( $self, $event ) = @_;
+
+	# return if no option was selected
+	return unless grep { $checkboxes{$_}->GetValue() } keys %checkboxes;
 	
 	my $svcMgr = Slim::Utils::ServiceManager->new();
+	
+	if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+		
+		my $msg = Wx::MessageDialog->new($self, string('CLEANUP_WANT_TO_STOP_SC'), string('CLEANUP_DO'), wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION);
+		
+		if ($msg->ShowModal() == wxID_YES) {
+			# stop SC before continuing
+			Slim::GUI::ControlPanel->serverRequest('stopserver');
+		}
+		else {
+			# don't do anything
+			return;
+		}
+	}
 		
 	my $params = {};
 	my $selected = 0;
 		
 	foreach (@{ $self->{args}->{options} }) {
+		
+		next unless $checkboxes{$_->{name}};
+		
 		$params->{$_->{name}} = $checkboxes{$_->{name}}->GetValue();
 		$selected ||= $checkboxes{$_->{name}}->GetValue();
 	}
