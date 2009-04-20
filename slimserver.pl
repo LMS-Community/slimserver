@@ -921,7 +921,7 @@ sub forceStopServer {
 sub stopServer {
 	my $restart = shift;
 
-	logger('')->info('SqueezeCenter ' . $restart ? 'restarting...' : 'shutting down.');
+	logger('')->info( 'SqueezeCenter ' . ($restart ? 'restarting...' : 'shutting down.') );
 	
 	$::stop = 1;
 	
