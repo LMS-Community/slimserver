@@ -46,6 +46,7 @@ my $useWx = ($^O !~ /darwin/ || $^X =~ /wxPerl/i) && eval {
 if (DEBUG && $@) {
 	print "GUI can't be loaded: $@\n";
 }
+use constant SCANNER => 0;
 
 my ($os);
 
