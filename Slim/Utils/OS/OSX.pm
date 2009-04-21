@@ -323,10 +323,16 @@ sub isMacAlias {
 
 
 sub initUpdate {
-	my ($class, $url) = @_;
-	require Slim::Utils::Update;
-	
-	return {};
+	return {
+		cb => sub {
+			my $file = shift;
+
+			my $osa    = Slim::Utils::Misc::findbin('osascript');
+			my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
+			
+			`$osa $script` if ($osa && $script);
+		}
+	};
 }
 
 sub canAutoUpdate { 1 }

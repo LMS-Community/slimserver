@@ -341,7 +341,7 @@ Not needed on Linux distributions which do manage the update through their repos
 
 =cut
 
-sub initUpdate {};
+sub initUpdate { 0 };
 sub canAutoUpdate { 0 };
 sub installerExtension { '' };
 sub installerOS { '' };

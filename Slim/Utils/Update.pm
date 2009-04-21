@@ -127,7 +127,7 @@ sub getUpdate {
 	
 	my $params = $os->initUpdate();
 	
-	return unless defined $params;
+	return unless $params;
 	
 	my $path = $params->{path} || scalar ( $os->dirsFor('updates') );
 	
@@ -160,7 +160,7 @@ sub getUpdate {
 			{
 				saveAs => $tmpFile,
 				file   => $file,
-				path   => $path,
+				params => $params,
 			},
 		);
 		
@@ -176,7 +176,9 @@ sub downloadAsyncDone {
 	
 	my $file    = $http->params('file');
 	my $tmpFile = $http->params('saveAs');
-	my $path    = $http->params('path');
+	my $params  = $http->params('params');
+	
+	my $path    = $params->{'path'};
 	
 	# make sure we got the file
 	return if !-e $tmpFile;
@@ -191,6 +193,10 @@ sub downloadAsyncDone {
 
 	$log->info("Successfully downloaded update installer file. Saving as $file");
 	rename $tmpFile, $file && $prefs->set('updateInstaller', $file);
+	
+	if ($params && ref($params->{cb}) eq 'CODE') {
+		$params->{cb}->($file);
+	}
 
 	cleanup($path, 'tmp');
 }
