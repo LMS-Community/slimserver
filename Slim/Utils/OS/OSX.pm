@@ -323,16 +323,30 @@ sub isMacAlias {
 
 
 sub initUpdate {
-	return {
-		cb => sub {
-			my $file = shift;
+	# add a change handler to signal to the user whenever an update is ready
+	Slim::Utils::Prefs::preferences('server')->setChange( \&signalUpdateReady, 'updateInstaller' );
 
-			my $osa    = Slim::Utils::Misc::findbin('osascript');
-			my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
-			
-			`$osa $script` if ($osa && $script);
-		}
+	return {
+		cb => \&signalUpdateReady
 	};
+}
+
+sub signalUpdateReady {
+	my $updater = Slim::Utils::Prefs::preferences('server')->get('updateInstaller');
+	
+	return unless $updater && -e $updater;
+
+	Slim::Utils::Timers::killTimers(undef, \&_signalUpdateReady);
+
+	# don't run the signal immediately, as the prefs are written delayed
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 15, \&_signalUpdateReady);
+}
+
+sub _signalUpdateReady {
+	my $osa    = Slim::Utils::Misc::findbin('osascript');
+	my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
+			
+	system("$osa $script &") if ($osa && $script);
 }
 
 sub canAutoUpdate { 1 }
