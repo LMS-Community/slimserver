@@ -14,11 +14,7 @@ use Slim::Utils::Unicode;
 
 my $prefs = preferences('server');
 
-#my $log   = logger('server.update');
-my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'server.update',
-	'defaultLevel' => 'DEBUG',
-});
+my $log   = logger('server.update');
 
 my $os = Slim::Utils::OSDetect->getOS();
 
