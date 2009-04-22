@@ -7,6 +7,7 @@ package Slim::GUI::ControlPanel::Settings;
 
 use base 'Wx::Panel';
 
+use Encode;
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
 use File::Spec::Functions qw(catfile);
@@ -176,7 +177,7 @@ sub new {
 					if (@parts > 1 && $parts[1] =~ /href="(.*?)"/) {
 						$updateUrl = $1;
 						
-						$updateLabel->SetLabel($parts[0]);
+						$updateLabel->SetLabel( decode("utf8", $parts[0]) );
 						$btnUpdate->SetLabel(string('CONTROLPANEL_DOWNLOAD_UPDATE'));
 					}
 				}
