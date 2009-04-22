@@ -45,15 +45,17 @@ sub new {
 		$svcMgr->checkServiceState() == SC_STATE_RUNNING ? string('RUNNING') : string('STOPPED');
 	});
 	$self->_addItem($scSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getHostIP);
-	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '3483'), sub {
+	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
 		checkPort(getHostIP(), '3483');
 	});
-	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '9000'), sub {
-		checkPort(getHostIP(), '9000');
+	
+	my $httpPort = Slim::GUI::ControlPanel->getPref('httpport') || 9000;
+	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $httpPort, 'HTTP'), sub {
+		checkPort(getHostIP(), $httpPort);
 	});
 
 	my $cliPort = Slim::GUI::ControlPanel->getPref('cliport', 'cli.prefs') || 9090;
-	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $cliPort), sub {
+	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $cliPort, 'CLI'), sub {
 		checkPort(getHostIP(), $cliPort);
 	});
 	
@@ -77,10 +79,10 @@ sub new {
 		checkPing(SN, 80);
 	});
 	
-	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483'), sub {
+	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
 		checkPort(getSNAddress(), '3483');
 	});
-	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000'), sub {
+	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
 		checkPort(getSNAddress(), '9000');
 	});
 	

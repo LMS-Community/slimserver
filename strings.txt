@@ -20855,19 +20855,19 @@ CONTROLPANEL_DIAGNOSTICS
 	SV	Systemdiagnostik
 	
 CONTROLPANEL_PORTNO
-	CS	Port %s:
-	DA	Port %s:
-	DE	Anschluss %s:
-	EN	Port %s:
-	ES	Puerto %s:
-	FI	Portti %s:
-	FR	Port %s :
-	IT	Porta %s:
-	NL	Poort %s:
-	NO	Port %s:
-	PL	Port %s:
-	RU	Порт %s:
-	SV	Port %s:
+	CS	Port %s (%s):
+	DA	Port %s (%s):
+	DE	Anschluss %s (%s):
+	EN	Port %s (%s):
+	ES	Puerto %s (%s):
+	FI	Portti %s (%s):
+	FR	Port %s (%s) :
+	IT	Porta %s (%s):
+	NL	Poort %s (%s):
+	NO	Port %s (%s):
+	PL	Port %s (%s):
+	RU	Порт %s (%s):
+	SV	Port %s (%s):
 
 CONTROLPANEL_PING
 	CS	Zvonění:
