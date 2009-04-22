@@ -3180,7 +3180,7 @@ sub throwCSRFError {
 
 	my $protoHostPort = 'http://' . $request->header('Host');
 	my $authURI = makeAuthorizedURI($request->uri(),$queryWithArgs);
-	my $authURL = $protoHostPort . $authURI;
+	my $authURL = $protoHostPort . $params->{path};
 
 	# add a long SGML comment so Internet Explorer displays the page
 	my $msg = "<!--" . ( '.' x 500 ) . "-->\n<p>";
