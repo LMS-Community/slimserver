@@ -128,9 +128,9 @@ sub getUpdate {
 	
 	return unless $params;
 	
-	my $path = $params->{path} || scalar ( $os->dirsFor('updates') );
+	$params->{path} ||= scalar ( $os->dirsFor('updates') );
 	
-	cleanup($path, 'tmp');
+	cleanup($params->{path}, 'tmp');
 
 	if ( $url && Slim::Music::Info::isURL($url) ) {
 		
@@ -138,7 +138,7 @@ sub getUpdate {
 
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
-		$file = catdir($path, $file);
+		$file = catdir($params->{path}, $file);
 
 		# don't re-download if file exists already
 		if ( -e $file ) {
