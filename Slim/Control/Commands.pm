@@ -703,7 +703,10 @@ sub playcontrolCommand {
 			# Bug 6813, 'play' from CLI needs to work the same as IR play button, by going
 			# through playlist jump - this will include a showBriefly to give feedback
 			my $index = Slim::Player::Source::playingSongIndex($client);
-			$client->execute([ 'playlist', 'jump', $index, $fadeIn ]);
+			
+			my @verbs = ('playlist', 'jump', $index);
+			push (@verbs, $fadeIn) if defined $fadeIn;
+			$client->execute(\@verbs);
 		}
 		else {
 			# set new playmode
@@ -1291,8 +1294,10 @@ sub playlistXitemCommand {
 	if ($path =~ /^file:\/\/|^db:|^itunesplaylist:|^musicipplaylist:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
-
-			$client->execute([ 'playlist', $cmd . 'tracks' , 'listRef', \@tracks, $fadeIn ]);
+			
+            my @verbs = ('playlist', $cmd . 'tracks' , 'listRef', \@tracks);
+            push (@verbs, $fadeIn) if defined $fadeIn;
+			$client->execute(\@verbs);
 			$request->setStatusDone();
 			return;
 		}
@@ -1602,7 +1607,9 @@ sub playlistXtracksCommand {
 			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
 		}
 		
-		$client->execute( [ 'playlist', 'jump', $jumpToIndex, $fadeIn ] );
+		my @verbs = ('playlist', 'jump', $jumpToIndex);
+		push (@verbs, $fadeIn) if defined $fadeIn;
+		$client->execute(\@verbs);
 		
 		$client->currentPlaylistModified(0);
 	}
@@ -2758,7 +2765,9 @@ sub _playlistXitem_load_done {
 	}
 
 	if (defined($index)) {
-		$client->execute( [ 'playlist', 'jump', $index, $fadeIn ] );
+		my @verbs = ('playlist', 'jump', $index);
+		push (@verbs, $fadeIn) if defined $fadeIn;
+		$client->execute(\@verbs);
 	}
 
 	# XXX: this should not be calling a request callback directly!
