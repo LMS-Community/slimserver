@@ -208,7 +208,7 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	SV	Bläddring och redigering för opml-spellistor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
-	CS	Plugin Oblíbené vám také umožňuje procházet seznamy skladeb založené na opml, uložené na vašem serveru. K přidání tohoto režimu do složky "Extras" domovské stránky vašeho serveru zvolte níže uvedenou možnost.
+	CS	Plugin Oblíbené vám také umožňuje procházet seznamy skladeb založené na opml, uložené na vašem serveru. K přidání tohoto režimu do složky "Doplňky" domovské stránky vašeho serveru zvolte níže uvedenou možnost.
 	DA	Med udvidelsesmodulet Favoritter kan du gennemse og redigere opml-baserede afspilningslister som er gemt på din server. Marker denne mulighed hvis du vil føje den til menuen Ekstra i den webbaserede brugerflade.
 	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.

@@ -169,7 +169,7 @@ SQUEEZENETWORK_WELCOME
 	SV	Spelaren är nu registrerad! Tryck höger för att komma igång.
 
 SETUP_GROUP_MENUITEMS
-	CS	Úprava nabídky Domů
+	CS	Úprava nabídky Doma
 	DA	Tilpasning af hovedmenuen
 	DE	Anpassen des Hauptmenüs
 	EN	Home Menu Customization

@@ -3139,7 +3139,7 @@ ABOUT_SHORT
 	JA	...について
 	NL	Over
 	NO	Om
-	PL	O programie
+	PL	Informacje
 	PT	Sobre ...
 	RU	О программе
 	SV	Om
@@ -3533,7 +3533,7 @@ SETUP_GROUP_MENUITEMS
 	ZH_CN	主页菜单
 
 SETUP_GROUP_MENUITEMS_DESC
-	CS	Můžete si upravit volby, které se objeví ve vaší nejvyšší nabídce Domů na displeji přehrávače. Klepnutím na položky je můžete přesunout nahoru a dolů nebo odstranit. Klepnutím na "Přidat" přidáte odstraněnou položku zpět do nabídky.
+	CS	Můžete si upravit volby, které se objeví ve vaší nejvyšší nabídce Doma na displeji přehrávače. Klepnutím na položky je můžete přesunout nahoru a dolů nebo odstranit. Klepnutím na "Přidat" přidáte odstraněnou položku zpět do nabídky.
 	DA	Du kan selv vælge hvilke menupunkter der skal vises på øverste niveau i hovedmenuen på afspillerens display. Du kan flytte menupunkter op og ned eller fjerne dem ved at klikke på knapperne ud for dem. Klik på Tilføj hvis du vil tilføje et punkt som er fjernet fra menuen.
 	DE	Sie können die im Hauptmenü des Players verfügbaren Einträge bestimmen. Klicken Sie auf die entsprechenden Schaltflächen, um Einträge nach oben bzw. unten zu verschieben oder sie zu entfernen. Klicken Sie auf 'Hinzufügen', um einen entfernten Eintrag wieder aufzunehmen.
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
@@ -3853,7 +3853,7 @@ SETUP_GROUP_PLUGINS_DESC
 	SV	Det finns ett antal plugin-program för SqueezeCenter som du kan använda från fjärrkontrollen eller i webbgränssnittet. Nedan kan aktivera och avaktivera enskilda plugin-program.<br/><br/>Obs! Ändringarna träder inte i kraft förrän du startar om programmet.
 
 SETUP_GROUP_PLUGINS_NEEDS_RESTART
-	CS	Aby změna působila, je nutno restartovat.
+	CS	K uskutečnění změny je nutné restartovat.
 	DA	Programmet skal genstartes før ændringerne træder i kraft.
 	DE	Änderung tritt nach Neustart in Kraft.
 	EN	Change requires restart to take effect.
@@ -4757,7 +4757,7 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	ZH_CN	这项功能是针对Squeezebox模拟输出音量的控制。以分贝为单位输入减益比量。设置范围为0.0至63.0，间隔为0.5分贝。确省为0（最大音量）。
 
 SETUP_BUFFERSECS
-	CS	Sekund vyrovnávací paměti rozhlasové stanice
+	CS	Sekundy vyrovnávací paměti rozhlasové stanice
 	DA	Størrelse af buffer for internetradio i sekunder
 	DE	Puffergröße für Internetradio
 	EN	Radio Station Buffer Seconds
@@ -5642,7 +5642,7 @@ TRANSITION_FADE_IN
 	ZH_CN	音频淡入
 
 TRANSITION_FADE_OUT
-	CS	Do vytracena
+	CS	Do ztracena
 	DA	Fade ud
 	DE	Ausblenden
 	EN	Fade out
@@ -6450,7 +6450,7 @@ SETUP_PLUGINS
 	PL	Dodatki
 	RU	Плагины
 	SV	Plugin-program
-	
+
 SETUP_REFRESHRATE
 	CS	Doba obnovení prohlížeče
 	DA	Opdateringsinterval for browser
@@ -6649,7 +6649,7 @@ SETUP_SAVESHUFFLED_DESC
 	JA	ランダムにされたプレイリストを保存することも、元の順序で保存することも選択できます。
 	NL	Wanneer je een playlist wilt opslaan die geshuffeld is, kun je deze opslaan in de originele volgorde waarin de liedjes toegevoegd zijn, of in de geshuffelde volgorde.
 	NO	Når du velger å lagre en spilleliste som har blitt omrokkert, kan du angi om den skal lagres i original rekkefølge eller i den omrokkerte rekkefølgen.
-	PL	Jeżeli przed zapisaniem listy odtwarzania użyto funkcji odtwarzania losowego można zapisać listę z pierwotna kolejnością dodawania utworów lub z kolejnością losową.
+	PL	Jeżeli przed zapisaniem listy odtwarzania użyto funkcji odtwarzania losowego można zapisać listę z pierwotną kolejnością dodawania utworów lub z kolejnością losową.
 	RU	Если в плей-листе песни были перемешаны в случайном порядке, то его можно сохранить в исходном порядке добавления песен или в получившемся случайном.
 	SV	När du sparar en spellista som blandats kan du välja att spara den antingen i låtarnas ursprungliga ordning eller i blandad ordning.
 	ZH_CN	当您选择保存播放表时，并且它已随机抽样，您能选择根据歌曲在播放表生成时的原来次序或随机抽样后的次序来保存。
@@ -7527,7 +7527,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	ZH_CN	当您浏览专机时通过遥控器选择一首歌曲并按“播放”键时，您可以选择只播放指定的那一首歌曲或播放在同一张专辑内随其后的所有歌曲。
 
 SETUP_IGNOREDARTICLES
-	CS	Ignorované články při řazení
+	CS	Ignorované členy při řazení
 	DA	Ord der skal ignoreres ved sortering
 	DE	Artikel, die bei der Sortierung nicht berücksichtigt werden sollen
 	EN	Articles To Ignore When Sorting
@@ -7814,7 +7814,7 @@ SETUP_SHORTDATEFORMAT_DEFAULT
 	SV	%Y/%m/%d
 
 SETUP_TIMEFORMAT
-	CS	Time Format (Formát času)
+	CS	Formát času
 	DA	Klokkeslætformat
 	DE	Zeitformat
 	EN	Time Format
@@ -8378,7 +8378,7 @@ SETUP_PASSWORD_MISMATCH
 	SV	Lösenorden stämmer inte överens.
 
 SETUP_REMOTESTREAMTIMEOUT
-	CS	Časový limit rádiové stanice
+	CS	Časový limit rozhlasové stanice
 	DA	Timeoutgrænse for internetradio
 	DE	Radiosender-Zeitlimit
 	EN	Radio Station Timeout
@@ -8487,7 +8487,7 @@ SETUP_GROUPDISCS_DESC
 	ZH_CN	您可以指定由多个光碟组成的合集是否视为一个单一的乐谱帖（以一个名字）或保持为个别单独的专辑。例如“专辑标题（光碟1）”。更动此设置SqueezeCenter将开始重新扫描您的音乐库。
 
 SETUP_GROUPDISCS_0
-	CS	Považovat sady více disků za více alb
+	CS	Považovat vícediskové sady za více alb
 	DA	Opfat sæt med flere cd'er som flere album
 	DE	Mehrfach-Alben als mehrere Alben behandeln
 	EN	Treat multi-disc sets as multiple albums
@@ -8673,7 +8673,7 @@ SETUP_SN_SYNC_DESC
 	SV	Som standard synkroniseras många spelarinställningar mellan SqueezeCenter och SqueezeNetwork.  Du avaktiverar funktionen genom att välja Avaktiverat nedan.
 
 SETUP_SN_SYNC_ENABLE
-	CS	Povoleno, udržovat nastavení přehrávače v synchronizaci.
+	CS	Povolit, udržovat nastavení přehrávače v synchronizaci.
 	DA	Aktiveret; afspillernes indstillinger synkroniseres.
 	DE	Aktiv, Player-Einstellungen synchronisieren
 	EN	Enabled, keep player settings in sync.
@@ -8688,7 +8688,7 @@ SETUP_SN_SYNC_ENABLE
 	SV	Aktiverad, håll spelarinställningarna synkroniserade.
 
 SETUP_SN_SYNC_DISABLE
-	CS	Vypnuto, neudržovat nastavení přehrávače v synchronizaci.
+	CS	Zakázáno, neudržovat nastavení přehrávače v synchronizaci.
 	DA	Deaktiveret. Synkroniser ikke afspillerindstillinger.
 	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
 	EN	Disabled, do not keep player settings in sync.
@@ -8718,7 +8718,7 @@ SETUP_SN_REPORT_STATS
 	SV	Statistik
 
 SETUP_SN_REPORT_STATS_DESC
-	CS	Pomozte nám zlepšit SqueezeNetwork zasíláním statistiky o poslouchání internetového rádia a hudebních služeb. (Tyto informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">strategií zachování soukromí</a>).
+	CS	Pomozte nám zlepšit SqueezeNetwork zasíláním statistiky o poslouchání internetového rádia a hudebních služeb. (Tyto informace jsou sbírány jako celek a jsou chráněny v souladu s naší <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">politikou zachování soukromí</a>).
 	DA	Du kan hjælpe med at forbedre SqueezeNetwork ved at sende statistiske data vedrørende internetradio og brug af musiktjenester. Oplysningerne bruges samlet og er omfattet af vores politik vedrørende <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">beskyttelse af personlige oplysninger</a>.
 	DE	Helfen Sie mit,  SqueezeNetwork zu verbessern, und melden Sie statistische Informationen über den Einsatz von Internetradio und -Musikdiensten. (Diese Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">Datenschutzbestimmungen</a>).
 	EN	Help improve SqueezeNetwork by reporting statistics on internet radio and music service listening. (This information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>).
@@ -9819,7 +9819,7 @@ VOLUME
 	ZH_CN	音量
 
 VOLUME_SOFTER
-	CS	Tišší
+	CS	Ztlumit
 	DA	Lavere
 	DE	Leiser
 	EN	Softer
@@ -9838,7 +9838,7 @@ VOLUME_SOFTER
 	ZH_CN	弱
 
 VOLUME_LOUDER
-	CS	Hlasitěji
+	CS	Zesílit
 	DA	Højere
 	DE	Lauter
 	EN	Louder
@@ -10087,7 +10087,7 @@ OUTDOOR
 	SV	Utomhus
 
 HIGH
-	CS	Vysoký
+	CS	Vysoká
 	DA	Høj
 	DE	Hoch
 	EN	High
@@ -10104,7 +10104,7 @@ HIGH
 	ZH_CN	高
 
 FULL
-	CS	Plná
+	CS	Tučné
 	DA	Fuld
 	DE	Voll
 	EN	Full
@@ -10120,7 +10120,7 @@ FULL
 	SV	Full
 
 LIGHT
-	CS	Lehká
+	CS	Tenké
 	DA	Let
 	DE	Light
 	EN	Light
@@ -11954,7 +11954,7 @@ SELECT_ITEM
 	ZH_CN	选择项目：
 
 SONGS
-	CS	Písně
+	CS	Skladby
 	DA	Numre
 	DE	Titel
 	EN	Songs
@@ -12652,7 +12652,7 @@ HOME_SCAN_WARNING
 	IT	Ricerca nella libreria musicale in corso. Attendere. L'operazione potrebbe richiedere alcuni minuti.
 	NL	SqueezeCenter is je muziekcollectie aan het scannen. Een ogenblik geduld. Dit kan even duren.
 	NO	SqueezeCenter søker fremdeles i musikkbiblioteket ditt. Vær tålmodig, da dette kan ta en stund.
-	PL	Program SqueezeCenter nadal przeszukuje bibliotekę muzyczną. Prosimy o cierpliwość &mdash; może to chwilę potrwać.
+	PL	Program SqueezeCenter nadal przeszukuje bibliotekę muzyczną. Prosimy o cierpliwość - może to chwilę potrwać.
 	RU	SqueezeCenter выполняет сканирование медиатеки. Пожалуйста, подождите.
 	SV	Sökningen av ditt musikbibliotek pågår fortfarande. Det kan ta en liten stund. Tack för ditt tålamod.
 	ZH_CN	SqueezeCenter正在扫描您的音乐库，这也许需要一些时间，敬请耐心稍候。
@@ -13392,7 +13392,7 @@ BRIGHTNESS_AMBIENT
 	SV	Automatiskt
 
 LIGHT_N
-	CS	Světlý úzký
+	CS	Tenké úzké
 	DA	Let og smal
 	DE	Klein eng
 	EN	Light Narrow
@@ -13422,7 +13422,7 @@ STANDARD_N
 	SV	Standard, smal
 
 FULL_N
-	CS	Plné úzké
+	CS	Tučné úzké
 	DA	Fuld og smal
 	DE	Voll eng
 	EN	Full Narrow
@@ -13564,7 +13564,7 @@ BLANK
 	ZH_CN	空
 
 ELAPSED
-	CS	Uběhla doba
+	CS	Uplynulá doba
 	DA	Forløbet tid
 	DE	Vergangene Zeit
 	EN	Elapsed Time
@@ -16896,7 +16896,7 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USEBANDASALBUMARTIST_DESC
-	CS	Alba obsahující písně, které jsou označené štítkem skupiny, mohou být u tohoto alba uvedena buď pod jménem skupiny nebo s ostatními interprety. Štítek skupiny se nazývá také TPE2 a v některých programech se může zobrazovat jako "Interpret alba".
+	CS	Alba obsahující skladby, které jsou označené štítkem skupiny, mohou být u tohoto alba uvedena buď pod jménem skupiny nebo s ostatními interprety. Štítek skupiny se nazývá také TPE2 a v některých programech se může zobrazovat jako "Interpret alba".
 	DA	Album der indeholder numre som er mærket med navnet på et band, kan vises under dette bands navn eller sammen med de andre kunstnere som optræder på albummet. Bandmærket kaldes også TPE2 og vises som "album artist" i nogle programmer.
 	DE	Alben, die Lieder enthalten, die mit einem Band-Tag versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Der Band-Tag (auch TPE2 genannt) wird in bestimmten Anwendungen auch als 'Album Artist' (Albuminterpret) bezeichnet.
 	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
@@ -16956,7 +16956,7 @@ SETUP_USETPE2ASALBUMARTIST_DESC
 	IT	Il formato del tag MP3 non rappresenta il metodo standard per specificare l'artista di un album. Alcuni strumenti per l'assegnazione dei tag MP3 utilizzano il campo TPE2 per specificare l'artista dell'album (iTunes, Winamp, Windows Media Player), mentre altri lo utilizzano per indicare il gruppo o l'orchestra. Selezionare il significato che si desidera utilizzare in SqueezeCenter. La modifica di questa impostazione avvierà di nuovo l'analisi della libreria musicale.
 	NL	De mp3-tagindeling biedt geen standaardmanier om een albumartiest te definiëren. Sommige mp3-labeltools gebruiken het TPE2-veld voor Albumartiest (iTunes, Winamp, Windows Media Player) terwijl andere het gebruiken voor de bedoelde betekenis van 'Band/orkest'. Selecteer de betekenis die SqueezeCenter moet gebruiken. Wanneer je deze instelling wijzigt, wordt je muziekcollectie opnieuw gescand.
 	NO	Etikettformatet mp3 angir ikke en standardmåte å definere en albumartist på. Noen etikettverktøy for mp3 bruker TPE2-feltet til albumartist (iTunes, Winamp, Windows Media Player), mens andre bruker det for gruppe/orkester. Velg hvordan SqueezeCenter skal tolke dette. Når du endrer denne innstillingen, startes et nytt søk i musikkbiblioteket.
-	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczenie do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program SqueezeCenter. Zmiana tego ustawienia powoduje ponowne przeszukanie biblioteki muzyki.
+	PL	Format znacznika pliku MP3 nie umożliwia definiowania wykonawcy albumu w standardowy sposób. Niektóre narzędzia do oznaczania plików MP3 używają do określenia wykonawcy albumu pola TPE2 (iTunes, Winamp, Windows Media Player), natomiast inne mogą używać go zgodnie z przeznaczeniem do określenia zespołu/orkiestry. Wybierz znaczenie, które ma być używane przez program SqueezeCenter. Zmiana tego ustawienia powoduje ponowne przeszukanie biblioteki muzyki.
 	RU	Формат тега MP3 не предоставляет единого стандарта для задания исполнителя альбома. В некоторых средствах для редактирования тегов MP3 поле TPE2 используется для обозначения исполнителя альбома (iTunes, Winamp, проигрыватель Windows Media), тогда как в других оно может иметь подразумеваемое значение "Группа/Оркестр". Выберите необходимое значение для использования в SqueezeCenter. При изменении этой настройки начнется повторное сканирование медиатеки.
 	SV	Det finns inget standardsätt att definiera albumartister med mp3-taggar. I vissa mp3-taggningsverktyg används TPE2-fältet för att ange albumartist (t.ex. iTunes, Winamp, Windows Media Player), medan det i andra verktyg används för att ange band/orkester. Välj vilket alternativ du vill att SqueezeCenter använder. Om du ändrar den här inställningen startas en ny sökning av musikbiblioteket.
 
@@ -16976,7 +16976,7 @@ SETUP_USETPE2ASALBUMARTIST_1
 	SV	Behandla mp3-taggen TPE2 som albumartist
 
 SETUP_USETPE2ASALBUMARTIST_0
-	CS	Považujte štítek TPE2 MP3 za Skupinu
+	CS	Považovat štítek TPE2 MP3 za Skupinu
 	DA	Opfat TPE2 MP3-koder som Band
 	DE	TPE2 MP3-Tag als Band behandeln
 	EN	Treat TPE2 MP3 tag as Band
@@ -17636,7 +17636,7 @@ VISUALIZER_DIGITAL_VUMETER
 	ZH_CN	数码VU表
 
 SETUP_VISUALIZERMODE
-	CS	Obrazovka visualizace
+	CS	Obrazovka vizualizace
 	DA	Visualisering
 	DE	Visualisierung
 	EN	Visualizer Screen
@@ -17874,7 +17874,7 @@ SETUP_PRIORITY_CURRENT
 	ZH_CN	现有服务器优先设置
 
 SETUP_PRIORITY_HIGH
-	CS	Vysoký
+	CS	Vysoká
 	DA	Høj
 	DE	Hoch
 	EN	High
@@ -17891,7 +17891,7 @@ SETUP_PRIORITY_HIGH
 	ZH_CN	高
 
 SETUP_PRIORITY_ABOVE_NORMAL
-	CS	Nad normalním
+	CS	Nad normální
 	DA	Over normal
 	DE	Höher als normal
 	EN	Above Normal
@@ -17942,7 +17942,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	ZH_CN	中低
 
 SETUP_PRIORITY_LOW
-	CS	Nízký
+	CS	Nízká
 	DA	Lav
 	DE	Niedrig
 	EN	Low
