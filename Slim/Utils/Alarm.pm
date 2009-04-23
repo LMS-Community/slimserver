@@ -1116,8 +1116,15 @@ sub _playFallback {
 	else {	
 		my $server = Slim::Utils::Network::serverAddr();
 		my $port   = $prefs->get('httpport');
+		
+		my $auth = '';
+		if ( $prefs->get('authorize') ) {
+			my $password = Slim::Player::Squeezebox::generate_random_string(10);
+			$client->password($password);
+			$auth = "squeezeboxXXX:${password}@";
+		}
 	
-		$url = "loop://$server:$port/html/slim-backup-alarm.mp3";
+		$url = "loop://${auth}${server}:${port}/html/slim-backup-alarm.mp3";
 	}
 
 	$log->debug("Starting fallback alarm: $url");

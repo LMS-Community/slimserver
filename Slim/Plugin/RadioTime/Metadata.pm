@@ -128,7 +128,7 @@ sub fetchMetadata {
 		return;
 	}
 	
-	my ($stationId) = $url =~ m/stationId=(\d+)/;
+	my ($stationId) = $url =~ m/(?:station)?id=([^&]+)/i; # support old-style stationId= and new id= URLs
 	return unless $stationId;
 	
 	my $username;
@@ -139,7 +139,7 @@ sub fetchMetadata {
 		$username = $prefs->get('username');
 	}
 	
-	my $metaUrl = META_URL . '&stationId=' . $stationId;
+	my $metaUrl = META_URL . '&id=' . $stationId;
 	
 	if ( $username ) {
 		$metaUrl .= '&username=' . uri_escape_utf8($username);
@@ -212,6 +212,12 @@ sub _gotMetadata {
 		}
 		
 		$i++;
+	}
+	
+	# Also cache the image URL in case the stream has other metadata
+	if ( $meta->{cover} ) {
+		my $cache = Slim::Utils::Cache->new( 'Artwork', 1, 1 );
+		$cache->set( "remote_image_$url" => $meta->{cover}, 86400 );
 	}
 	
 	if ( $log->is_debug ) {
