@@ -161,6 +161,8 @@ and custom.$model.bin in the cachedir.  If these exist then these are used in pr
 sub init_firmware_download {
 	my $model = shift;
 
+	return if $model eq 'squeezeplay'; # there is no firmware for the desktop version of squeezeplay!
+
 	my $version_file   = catdir( $updatesDir, "$model.version" );
 
 	my $custom_version = catdir( $updatesDir, "custom.$model.version" );
