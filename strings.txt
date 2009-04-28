@@ -3637,7 +3637,7 @@ SETUP_IDLEFONT_DESC
 	NL	Je kunt de knop SIZE op de afstandsbediening, of de keuzerondjes hieronder gebruiken om tussen lettertypen voor de klokdisplay te schakelen wanneer het muzieksysteem stand-by staat. Via de onderstaande menu's kun je bepalen in welke volgorde ze verschijnen.
 	NO	Når spilleren er i hvilemodus, kan du bruke SIZE-knappen på fjernkontrollen eller knappene under for å velge mellom ulike skrifttyper for klokkeskjermen. I menyene nedenfor kan du også stille inn i hvilken rekkefølge skrifttypene vises.
 	PL	Gdy odtwarzacz działa w trybie gotowości, można użyć przycisku SIZE na pilocie lub przycisków opcji poniżej, aby zmienić czcionki wyświetlania zegara. Kolejność ich wyświetlania można wybrać z menu poniżej.
-	RU	Когда плеер находится в режиме ожидания, с помощью кнопки SIZE на пульте ДУ или кнопок управления радио ниже можно изменять размеры шрифта экрана часов. Следующие меню позволяют выбрать порядок их отображения.
+	RU	Когда плеер находится в режиме ожидания, с помощью кнопки SIZE на пульте ДУ или расположенных ниже переключателей можно изменять размеры шрифта экрана часов. Следующие меню позволяют выбрать порядок их отображения.
 	SV	När spelaren är i viloläge kan du använda knappen SIZE på fjärrkontrollen eller knapparna nedan för att byta teckensnitt på klockdisplayen. Du kan välja i vilken ordning de ska visas med hjälp av menyerna nedan.
 	ZH_CN	当播放机在备用状态时，您可使用遥控器的大小按钮或如下的无线电按钮设定播放机时间显示的字体大小。您可在如下的菜单设定它们出现的排序。
 
@@ -3765,7 +3765,7 @@ SETUP_SCROLLRATE_DESC
 	NL	Je kunt de snelheid instellen waarmee tekst over het scherm loopt. De snelheid geeft de tijd tussen displayupdates aan. Op een muzieksysteem met grafisch display kan dit gespecificeerd worden in combinatie met 'Tekstlooppixels' om de snelheid en kwaliteit van de tekstloop in te stellen (met 'Tekstlooppixels' wordt de tekst telkens na het aantal seconden in 'Tekstloopsnelheid' verplaatst). Op een systeem met een tekendisplay geeft dit aan hoe lang het duurt voordat het volgende teken verschijnt. Voer een waarde in, in seconden, voor de tijd tussen updates. Lagere waarden laten de tekst sneller lopen. 0,15 seconden is de standaardwaarde voor tekst met enkele regelhoogte. 0,1 seconden is de standaardwaarde voor grote tekst.
 	NO	Du kan justere hastigheten for rullende tekst på skjermen. Rullefrekvensen angir tiden mellom oppdateringer av displayet. På en spiller med grafisk display kan denne innstillingen benyttes sammen med Rullepiksler for å styre hastighet og kvalitet for rullingen. (Teksten vil rulle Rullepiksler for hvert Rullefrekvens-sekund.) På en spiller med tegndisplay vil dette angi tiden før rulling til neste tegn. Skriv inn en verdi i sekunder for tiden mellom oppdateringer. Lavere nummer vil gjøre rullingen raskere. 0,15 sekunder er standard for enkeltlinje-display, mens 0,1 sekunder er standard for stor skrift.
 	PL	Możliwe jest dostosowanie szybkości przewijania tekstu na ekranie. Szybkość przewijania określa czas między aktualizacjami zawartości wyświetlacza. W przypadku odtwarzacza z wyświetlaczem graficznym parametr ten można dostosować razem z opcją Przewijane piksele w celu ustawienia szybkości i jakości przewijania (tekst będzie przesuwany o wartość ustawienia Przewijane piksele co liczbę sekund określoną w opcji Szybkość przewijania). W przypadku odtwarzacza z wyświetlaczem znakowym parametr ten oznacza czas przed przewinięciem do następnego znaku. Wprowadź wartość czasu między aktualizacjami w sekundach. Mniejsze wartości powodują szybsze przewijanie. 0,15 to wartość domyślna dla pojedynczego wiersza, 0,1 sekundy dla długiego tekstu.
-	RU	Можно настроить скорость прокрутки теста на экране. Параметр "Скорость прокрутки" определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром "Число пикселей прокрутки", при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. 0,15 сек — значение по умолчанию для однострочного текста; 0,1 — для текста крупным шрифтом.
+	RU	Можно настроить скорость прокрутки теста на экране. Параметр "Скорость прокрутки" определяет промежуток времени между обновлениями экрана. На плеерах с графическим экраном он настраивается совместно с параметром "Число пикселей прокрутки", при этом задается скорость и качество прокрутки (текст будет перемещаться на число пикселей прокрутки через каждые несколько секунд скорости прокрутки). На плеерах с символьным экраном этот параметр определяет промежуток времени перед прокруткой до следующего символа. Чтобы задать промежуток времени между обновлениями, введите значение в секундах. Чем меньше число, тем выше скорость. 0,15 с — значение по умолчанию для однострочного текста; 0,1 с — для текста крупным шрифтом.
 	SV	Du kan justera hastigheten för textremsan som rullar över displayen.Texthastigheten bestämmer hur ofta displayinformationen uppdateras. På spelare med grafisk display kan hastigheten kombineras med hur många bildpunkter som rullas. De två inställningarna bestämmer tillsammans hastigheten och bildkvaliteten: Texten rullar det angivna antalet bildpunkter varje gång det angivna antalet sekunder förlöpt. På spelare med teckendisplay anger detta tiden innan nästa tecken visas. Ange ett värde i sekunder för tiden mellan uppdateringarna. Ju lägre tal, desto snabbare rullar texten. 0,15 sekunder är standard för enradsvisning, 0,1 för stor text.
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
@@ -4849,7 +4849,7 @@ SETUP_SYNCSTARTDELAY_DESC
 	NL	Wanneer meerdere muzieksystemen worden gesynchroniseerd, geeft SqueezeCenter elk systeem de opdracht het nummer op hetzelfde moment te starten. SqueezeCenter moet ervoor zorgen dat elk systeem genoeg tijd heeft om de startopdracht te ontvangen voordat alle systemen samen starten, en daarom wordt de startopdracht van tevoren verzonden en wacht elk systeem tot het juiste moment om te starten. Als het netwerkverkeer overbelast is, wat voornamelijk kan gebeuren bij netwerken met vele systemen of bij draadloze netwerken, is de standaardvertraging van 100 milliseconden misschien niet voldoende. Je kunt de standaardvertraging hier desgewenst wijzigen.
 	NO	Når flere spillere er synkronisert, sender SqueezeCenter beskjed til hver spiller om å begynne avspilling samtidig. Den må sikre at hver spiller får tid til å motta kommandoen før de alle starter samtidig, så den sender derfor startkommandoen på forhånd, og så venter spillerne til riktig øyeblikk før de starter. Hvis det er mye nettverkstrafikk, noe som kan skje hvis det er mange spillere på nettverket og ved bruk av trådløse nettverk, kan det hende at standardforsinkelsen på 100 ms er for kort. Hvis nødvendig kan du endre standardverdien her.
 	PL	W przypadku zsynchronizowania kilku odtwarzaczy program SqueezeCenter wysyła do każdego odtwarzacza polecenie rozpoczęcia odtwarzania utworu w tym samym czasie. Program musi sprawdzić, czy każdy odtwarzacz ma czas na odebranie polecenia rozpoczęcia przed rozpoczęciem jednoczesnego odtwarzania, więc wysyła wcześniej polecenie rozpoczęcia, a odtwarzacze rozpoczynają pracę w odpowiedniej chwili. W przypadku nadmiernego przeciążenia sieci, które występuje szczególnie wtedy, gdy w sieciach standardowych i bezprzewodowych używana jest duża liczba odtwarzaczy, domyślne opóźnienie o długości 100 ms może być niewystarczające. W razie potrzeby wartość domyślną można zmienić tutaj.
-	RU	При синхронизации нескольких плееров SqueezeCenter дает каждому из них команду начать воспроизведение дорожки в одно и то же время. Для этого необходимо убедиться, что каждый плеер получит команду запуска до всеобщего начала воспроизведения, поэтому данная команда отправляется ему заранее. После получения команды каждый плеер ожидает запуска. При сильной загрузке сети, что особенно характерно для сетей с множеством плееров и для беспроводных сетей, задержка по умолчанию, равная 100 мс, может быть недостаточной. При необходимости это значение можно изменить.
+	RU	При синхронизации нескольких плееров SqueezeCenter дает каждому из них команду начать воспроизведение дорожки в одно и то же время. Для этого необходимо убедиться, что каждый плеер получит команду запуска до всеобщего начала воспроизведения, поэтому данная команда отправляется ему заранее. После получения команды каждый плеер ожидает запуска. При сильной загрузке сети, что особенно характерно для сетей со множеством плееров и для беспроводных сетей, задержка по умолчанию, равная 100 мс, может быть недостаточной. При необходимости это значение можно изменить.
 	SV	När flera spelare synkroniserats ser SqueezeCenter till att alla spelare börjar spela upp låten samtidigt. Det måste finnas tid för startkommandot att gå fram till var och en av spelarna innan låten börjar spelas upp. Därför skickas kommandot i förväg, och spelarna väntar sedan till rätt startögonblick. Om trafiken på nätverket är mycket tät, något som kan hända framför allt när många spelare anslutits och med trådlösa nätverk, kanske inte standardfördröjningen på 100 millisekunder räcker till. Du kan ändra standardinställningen här vid behov.
 
 SETUP_STARTDELAY
@@ -4969,7 +4969,7 @@ SETUP_PLAYDELAY_DESC
 	NL	Er kan een merkbaar verschil zijn tussen hoeveel van een door het muzieksysteem gerapporteerd nummer naar SqueezeCenter is afgespeeld en hoeveel audio is gehoord. Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwaresystemen op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat SqueezeCenter er rekening mee kan houden bij het aanpassen van de synchronisatie.
 	NO	Det kan være markant forskjell på hvor mye av et spor som har blitt spilt av ifølge SqueezeCenter, og hvor mye lyd som faktisk har kommet ut. Dette kan skje når du bruker digitale utganger (avhengig av utstyret som er koplet til), eller med spillerprogrammer på enkelte plattformer. Hvis dette skjer, kan du legge inn denne forsinkelsen her, slik at SqueezeCenter tar den med i beregningen når den justerer synkroniseringen.
 	PL	Różnica między czasem odtworzenia utworu przesłanym przez odtwarzacz do programu SqueezeCenter, a odtworzonym dźwiękiem może być znaczna. Może to mieć miejsce w przypadku korzystania z wyjść cyfrowych (w zależności od podłączonych urządzeń) lub odtwarzaczy programowych na niektórych platformach. W takich przypadkach opóźnienie to można ustawić tutaj, aby program SqueezeCenter uwzględniał je podczas dostosowywania synchronizacji.
-	RU	Существует значительная разница между отчетом плеера о воспроизведенной части дорожки SqueezeCenter и фактической продолжительностью прослушанного аудио. Это может происходить при использовании цифровых выходов (в зависимости от подключенного оборудования) или программных плееров на некоторых платформах. Для таких случаев здесь можно задать величину задержки, учитываемую SqueezeCenter при настройке синхронизации.
+	RU	Существует значительная разница между отчетом плеера о воспроизведенной части дорожки SqueezeCenter и фактической продолжительностью прослушанного аудио. Это бывает при использовании цифровых выходов (в зависимости от подключенного оборудования) или программных плееров на некоторых платформах. Для таких случаев здесь можно задать величину задержки, учитываемую SqueezeCenter при настройке синхронизации.
 	SV	Det kan vara en märkbar skillnad mellan hur mycket ett spår som spelaren rapporterar till SqueezeCenter att den har spelat upp och hur mycket av spåret som lyssnaren faktiskt hört. Det här kan inträffa när digitala utgångar används (beroende på den anslutna utrustningen) eller med programvarubaserade spelare på vissa plattformar. Här kan du ange fördröjningen så att den kan tas med i beräkningen när synkroniseringen justeras i SqueezeCenter.
 
 SETUP_MINSYNCADJUST
@@ -8408,7 +8408,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	NL	Je kunt instellen hoe lang SqueezeCenter moet proberen een verbinding te maken met een internetradiostation of andere bron, voordat SqueezeCenter het opgeeft. Voer hieronder de tijd in seconden in:
 	NO	Du kan angi hvor lenge SqueezeCenter skal forsøke å få kontakt med Internett-radiostasjonen eller andre kilder, før den gir opp. Angi tiden i sekunder nedenfor.
 	PL	Można określić czas, przez jaki program SqueezeCenter będzie próbował nawiązać połączenie z internetową stacją radiową lub innym źródłem. Wprowadź czas w sekundach.
-	RU	Можно настроить длительность попыток подключения SqueezeCenter к радиостанции Интернета или другому источнику. Введите ниже время в секундах.
+	RU	Можно настроить продолжительность попыток подключения SqueezeCenter к радиостанции Интернета или другому источнику. Введите ниже время в секундах.
 	SV	Du kan ställa in hur länge SqueezeCenter ska försöka ansluta till en webbradiostation eller annan källa innan försöket ges upp. Ange tiden i sekunder nedan.
 	ZH_CN	您可以设置SqueezeCenter尝试连接到互联网电台或其它服务的时限。请在如下输入以秒为单位的时限。
 
@@ -8549,7 +8549,7 @@ SETUP_SN_EMAIL_DESC
 	NL	Voer het e-mailadres in dat je gebruikt om je bij je SqueezeNetwork-account aan te melden.
 	NO	Angi e-postadressen du bruker når du logger på SqueezeNetwork.
 	PL	Wprowadź adres e-mail używany w celu logowania do konta SqueezeNetwork.
-	RU	Введите адрес электронной почты, используемый для входа в учетную запись SqueezeNetwork.
+	RU	Введите адрес электронной почты, используемый для входа по учетной записи SqueezeNetwork.
 	SV	Ange e-postadressen du använde när du loggade in på SqueezeNetwork-kontot.
 
 SETUP_SN_PASSWORD
@@ -8699,7 +8699,7 @@ SETUP_SN_SYNC_DISABLE
 	NL	Uitgeschakeld; muzieksysteeminstellingen niet gesynchroniseerd houden.
 	NO	Av, ikke synkroniser spillerinnstillinger.
 	PL	Wyłączone, nie synchronizuj ustawień odtwarzacza
-	RU	Отключено, не сохранять синхронизацию настроек плеера.
+	RU	Отключено; не сохранять синхронизацию настроек плеера.
 	SV	Avaktiverad, spelarinställningarna synkroniseras inte.
 
 SETUP_SN_REPORT_STATS
@@ -10116,7 +10116,7 @@ FULL
 	NL	Vol
 	NO	Fullt
 	PL	Pełne
-	RU	Полная
+	RU	Полный
 	SV	Full
 
 LIGHT
@@ -14025,7 +14025,7 @@ NO_PLAYER_DETAILS
 	NO	<b>Hvis du har en Squeezebox eller en Transporter:</b><ul><li>Kontroller at spilleren er plugget inn, og at nettverksinnstillingene stemmer. Klikk på Oppdater så snart spilleren er koplet til.</ul><p><b>Hvis du ikke har en Squeezebox eller en Transporter:</b><ul><li>Du kan lytte til musikkbiblioteket ditt med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvareversjon av Squeezebox.<li>Du kan bruke mp3-spiller-programvare (som Winamp eller iTunes) til å lytte til musikkbiblioteket ditt med SqueezeCenter ved å gå til denne url-en: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PL	<b>Jeżeli korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Sprawdź, czy odtwarzacz jest podłączony do źródła zasilania, a ustawienia sieciowe są prawidłowe. Po podłączeniu odtwarzacza kliknij przycisk Odśwież.</ul><p><b>Jeżeli nie korzystasz z urządzenia Squeezebox lub Transporter:</b><ul><li>Możesz słuchać muzyki z biblioteki, używając programu <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, programowej wersji urządzenia Squeezebox.<li>W celu słuchania muzyki z biblioteki w programie SqueezeCenter możesz użyć oprogramowania odtwarzacza plików MP3 (na przykład Winamp lub iTunes), przechodząc pod następujący adres URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
-	RU	<b>Если вы приобрели Squeezebox или Transporter.</b><ul><li> Убедитесь, что плеер подключен и настройки сети правильные. После подключения плеера к сети нажмите кнопку "Обновить".</ul><p><b>Если вы не приобрели Squeezebox и Transporter.</b><ul><li> Можете слушать песни из своей медиатеки с помощью <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, программной версии Squeezebox.<li>А благодаря программе для MP3-плееров (Winamp или iTunes) вы сможете слушать музыку в SqueezeCenter, подключившись к этому URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
+	RU	<b>Если вы приобрели Squeezebox или Transporter.</b><ul><li> Убедитесь, что плеер подключен и настройки сети правильные. После подключения плеера к сети нажмите кнопку "Обновить".</ul><p><b>Если вы не приобрели Squeezebox и Transporter.</b><ul><li> Можете слушать песни из своей медиатеки с помощью <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a> — программной версии Squeezebox.<li>А благодаря программе для MP3-плееров (Winamp или iTunes) вы сможете слушать музыку в SqueezeCenter, подключившись к следующему URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	SV	<b>Om du har en Squeezebox- eller Transporter-spelare</b><ul><li>kontrollerar du att spelaren är ansluten och att nätverksinställningarna är korrekta. Klicka på uppdateringsknappen när spelaren är ansluten.</ul><p><b>Om du inte har någon Squeezebox- eller Transporter-spelare</b><ul><li>kan du lyssna på ditt musikbibliotek med <a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>, en programvaruversion av Squeezebox.<li>Du kan använda program för mp3-spelare som Winamp och iTunes för att lyssna på ditt musikbibliotek via SqueezeCenter genom att ansluta till den här webbadressen: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>.
 	ZH_CN	<b>如果您拥有Squeezebox播放机：</b><ul><li>请确保播放机已插电及其网络设置无误。当您的播放机连接好后请单击《刷新》。</ul><p><b>如果您未能拥有Squeezebox播放机：</b><ul><li>您可以利用软体式播放机<a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>从您的音乐库播放音乐。<li>您可以利用MP3播放软件如Winamp或iTunes来欣赏SqueezeCenter所流出的音乐。请连接到此URL：<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>。
 
@@ -16266,7 +16266,7 @@ LESSTHAN
 	NL	minder dan
 	NO	mindre enn
 	PL	mniej niż
-	RU	меньше, чем
+	RU	меньше чем
 	SV	mindre än
 	ZH_CN	小于
 
@@ -16356,7 +16356,7 @@ SETUP_SCROLLPIXELS_DESC
 	NL	Op een muzieksysteem met een grafisch display kun je het aantal pixels (punten) aanpassen waarmee de tekst in elk hierboven opgegeven interval loopt. Pas dit aan in combinatie met de tekstloopsnelheid om het tempo en de kwaliteit van de tekstloop in te stellen. Lage waarden met een lage tekstloopsnelheid tonen mooi, maar vereisen hogere serverprestaties en een goed netwerk. Laat bij twijfel de waarde op de standaard 7 pixels staan. (minimum 1, maximum 20).
 	NO	Hvis spilleren har en grafisk skjerm, kan du justere antall piksler (punkter) som spilleren ruller fram for hver tidsperiode som definert ovenfor. Juster denne verdien i forhold til Rullefrekvens for å justere hastighet og kvalitet. Husk at en lav verdi for Rullefrekvens ser bra ut, men krever en server med høyere ytelse og et nettverk som ikke er for trafikkert. Hvis du er usikker bør du bruke standardverdien på 7 piksler. (Minimumsverdi er 1, maksimum er 20.)
 	PL	W przypadku odtwarzacza z wyświetlaczem graficznym można dostosować liczbę pikseli (punktów), jaką odtwarzacz przewija w każdym okresie zdefiniowanym powyżej. Dostosuj tę opcję razem z opcją Szybkość przewijania w celu ustawienia szybkości przewijania i jakości. Należy pamiętać, że mniejsze wartości i niska szybkość przewijania poprawiają wygląd, ale wymagają serwera o większej wydajności i nieobciążonej sieci. W razie wątpliwości pozostaw wartość domyślną wynoszącą 7 pikseli (min. 1, maks. 20).
-	RU	На плеерах с графическим экраном можно выбрать число пикселей (точек), прокручиваемых плеером в течение каждого заданного выше интервала. Показатель настраивается вместе с параметром "Скорость прокрутки", при этом задается скорость прокрутки и качество. Обратите внимание, что небольшие значения этого параметра при низкой скорости прокрутки дают хороший результат, но требуют высокопроизводительного сервера и незагруженной сети. При сомнении оставьте значение по умолчанию, равное 7 пикселям. (Минимум — 1, максимум — 20.)
+	RU	На плеерах с графическим экраном можно выбрать число пикселей (точек), прокручиваемых плеером в течение каждого заданного выше интервала. Показатель настраивается вместе с параметром "Скорость прокрутки", при этом задается скорость прокрутки и качество. Обратите внимание, что небольшие значения этого параметра при низкой скорости прокрутки дают хороший результат, но требуют высокопроизводительного сервера и незагруженной сети. При сомнении оставьте значение по умолчанию равное 7 пикселям. (Минимум — 1, максимум — 20.)
 	SV	På spelare med grafisk display kan du ange hur många pixlar (bildpunkter) texten ska rulla i varje intervall (se ovan).  Justera det här värdet parallellt med värdet för rullningshastighet när du vill ställa in kvalitet och hastighet för rullande text.  Obs! Ett lågt värde kombinerat med låg rullhastighet gör att texten ser bra ut på displayen, men de kräver en server med höga prestanda och ett nätverk där trafiken inte är alltför tät.  Om du är osäker behåller du standardinställningen 7 bildpunkter.  (Du kan ange 1-20 bildpunkter.)
 	ZH_CN	在设有图形显示屏的播放机，你可以调节播放机在每一段间隔卷动映像点的数量。依据卷动率及您对显示速度和质量的要求加以调节。请注意，较小的值和较低的卷动率虽好，但必须配合高性能的服务器和非繁忙的网络方有效果。如有不详之处，请保留缺省值7个映像点。（最小为1，最大为20）。
 
@@ -16908,7 +16908,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	NL	Albums met liedjes die een bandtag hebben, kunnen onder die bandnaam of bij de andere artiesten voor dat album weergegeven worden. De bandtag is ook bekend als 'TPE2' en heet in andere software soms 'Albumartiest'.
 	NO	Album med sanger som har en etikett med et gruppenavn, kan føres opp under bandnavnet, eller sammen med de andre artistene på albumet. Gruppeetiketten kalles også TPE2, og kan vises som «albumartist» i noen programmer.
 	PL	Albumy zawierające utwory z nazwą zespołu mogą być wymienione pod nazwą tego zespołu lub innych wykonawców tego albumu. Etykieta zespołu nosi także nazwę TPE2 i w niektórych programach może być widoczna jako „wykonawca albumu”.
-	RU	Альбомы песен с тегами группы могут быть перечислены в списке с названием этой группы или с другими исполнителями данного альбома. Тег группы также называется TPE2 и в некоторых программах может отображаться как "Исполнитель альбома".
+	RU	Альбомы песен с тегами группы могут быть перечислены в списке с названием этой группы или другими исполнителями данного альбома. Тег группы также называется TPE2 и в некоторых программах может отображаться как "Исполнитель альбома".
 	SV	Album som innehåller låtar som taggats med ett bandnamn kan listas under bandnamnet eller tillsammans med de andra artisterna på albumet.  Bandtaggen kallas också TPE2, och visas i vissa program som Albumartist.
 
 SETUP_USEBANDASALBUMARTIST_1
@@ -17534,7 +17534,7 @@ SETUP_FXLOOPCLOCK_DESC
 	NL	Het verdient de voorkeur de uitvoer van de externe processor met zijn invoer te synchroniseren. Kies in dit geval synchrone klokmodus. Het inkomende signaal wordt dan opnieuw geklokt door de interne oscillator van Transporter voor minimale jitter. In asynchrone modus haalt Transporter de klok uit het inkomende signaal, zodat deze niet synchroon hoeft te zijn.
 	NO	Den eksterne prosessorens utsignaler skal helst være synkronisert med innsignalene. Du bør derfor velge synkron klokkemodus for dette, så blir innsignalet låst på nytt av Transporters interne oscillator, slik at avviket blir minimalt. I usynkron modus henter Transporter klokkedata fra innsignalet, slik at den ikke trenger å synkroniseres.
 	PL	Zazwyczaj wyjście procesora zewnętrznego zostanie zsynchronizowane z wejściem. Wybierz w tym przypadku tryb zegara synchronicznego, a sygnał przychodzący zostanie przeliczony przez oscylator wewnętrzny urządzenia Transporter w celu minimalizacji zakłóceń. W trybie asynchronicznym urządzenie Transporter przywróci zegar do stanu sprzed wysłania sygnału przychodzącego, więc jego synchronizacja nie będzie konieczna.
-	RU	Выход внешнего процессора преимущественно синхронизуется с входом. В этом случае рекомендуется выбрать синхронный режим синхронизации, при котором входящий сигнал будет синхронизован внутренним осциллятором Transporter с минимальным случайным искажением. В асинхронном режиме Transporter восстановит частоту из входящего сигнала, поэтому синхронизации не потребуется.
+	RU	Выход внешнего процессора преимущественно синхронизуется с входом. В этом случае рекомендуется выбрать синхронный режим, при котором входящий сигнал будет синхронизован внутренним осциллятором Transporter с минимальным случайным искажением. В асинхронном режиме Transporter восстановит частоту из входящего сигнала, поэтому синхронизации не потребуется.
 	SV	I bästa fall är den externa processorns utsignal synkroniserad med dess insignal. Välj i så fall synkront klockläge så klockas den inkommande signalen om av Transporters interna oscillator så att jittret minimeras. I asynkront läge hämtar Transporter klockfrekvensen från den inkommande signalen, så den behöver inte synkroniseras.
 
 FXLOOPCLOCK_SYNCHRONOUS
@@ -21456,7 +21456,7 @@ HOWTO_STAFF_PICKS
 	NL	Scrol naar AANRADERS en druk RECHTS.
 	NO	Gå til UTVALGTE STASJONER og gå til høyre.
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij przycisk w prawo.
-	RU	Прокрутите до подкатегории STAFF PICKS и нажмите кнопку RIGHT.
+	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите кнопку RIGHT.
 	SV	Bläddra till VÅRA FAVORITER och tryck på högerknappen.
 
 HOWTO_STAFF_PICKS_CONTROLLER
@@ -21471,7 +21471,7 @@ HOWTO_STAFF_PICKS_CONTROLLER
 	NL	Scrol naar AANRADERS en druk op de middelste knop.
 	NO	Gå til UTVALGTE STASJONER og trykk på midtknappen.
 	PL	Przewiń do pozycji WYBÓR PRACOWNIKÓW i naciśnij środkowy przycisk.
-	RU	Прокрутите до подкатегории ВЫБРАННЫЕ СТАНЦИИ и нажмите центральную кнопку.
+	RU	Прокрутите до подкатегории НАШ ВЫБОР и нажмите центральную кнопку.
 	SV	Bläddra till Våra favoriter och tryck på mittenknappen.
 
 HOWTO_INTERNET_RADIO
