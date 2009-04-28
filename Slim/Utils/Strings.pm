@@ -113,7 +113,8 @@ sub loadStrings {
 		eval { $strings = retrieve($stringCache); };
 
 		if ($@) {
-			$log->warn("Tried loading string: $@");
+			$log->warn("Tried loading strings file ($stringCache): $@");
+			$cacheOK = 0;
 		}
 
 		if (!$@ && defined $strings &&
@@ -127,12 +128,12 @@ sub loadStrings {
 		}
 
 		# check sum of mtimes matches that stored in stringcache
-		if ($strings->{'mtimesum'} && $strings->{'mtimesum'} != $sum) {
+		if ($cacheOK && $strings->{'mtimesum'} && $strings->{'mtimesum'} != $sum) {
 			$cacheOK = 0;
 		}
 
 		# check for same list of strings files as that stored in stringcache
-		if (scalar @{$strings->{'files'}} == scalar @$files) {
+		if ($cacheOK && scalar @{$strings->{'files'}} == scalar @$files) {
 			for my $i (0 .. scalar @$files - 1) {
 				if ($strings->{'files'}[$i] ne $files->[$i]) {
 					$cacheOK = 0;
