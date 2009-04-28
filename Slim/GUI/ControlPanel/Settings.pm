@@ -94,6 +94,9 @@ sub new {
 			
 	}
 
+
+	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
 	EVT_BUTTON( $self, $btnStartStop, sub {
@@ -112,9 +115,20 @@ sub new {
 		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 	});
-	
-	$startupSizer->Add($btnStartStop, 0, wxALL, 10);
+	$startBtnSizer->Add($btnStartStop, 0);
 
+	my $btnStartSafeMode = Wx::Button->new($self, -1, string('RUN_FAILSAFE'));
+	EVT_BUTTON( $self, $btnStartSafeMode, sub {
+		$svcMgr->start('--failsafe');
+		$parent->checkServiceStatus();
+	});
+
+	$parent->addStatusListener($btnStartSafeMode, sub {
+		$btnStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
+	});
+	$startBtnSizer->Add($btnStartSafeMode, 0, wxLEFT, 10);
+
+	$startupSizer->Add($startBtnSizer, 0, wxALL | wxGROW, 10);
 	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
 	
 	my $logBox = Wx::StaticBox->new($self, -1, string('DEBUGGING_SETTINGS'));

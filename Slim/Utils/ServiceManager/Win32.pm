@@ -115,24 +115,30 @@ sub canStart {
 }
 
 sub start {
-	my ($class) = @_;
+	my ($class, $params) = @_;
 	
-	if ($class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
+	if (!$params && $class->getStartupType() == SC_STARTUP_TYPE_SERVICE) {
 
 		`$svcHelper --start`;
-
 	}
 
 	else {
 
 		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'squeezecenter.exe' ) );
 		
+		if ($params) {
+			$params = "$appExe $params";
+		}
+		else {
+			$params = '';
+		}
+		
 		# start as background job
 		my $processObj;
 		Win32::Process::Create(
 			$processObj,
 			$appExe,
-			'',
+			$params,
 			0,
 			DETACHED_PROCESS | CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
 			'.'

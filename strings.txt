@@ -21162,6 +21162,9 @@ RUN_AT_LOGIN
 	NO	Kjør automatisk ved pålogging
 	SV	Kör automatiskt vid inloggning
 
+RUN_FAILSAFE
+	EN	Run without user extensions (safe mode)
+
 RUN_NEVER
 	EN	Don't start automatically
 
