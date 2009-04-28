@@ -14,6 +14,8 @@ use Slim::Utils::ServiceManager;
 # re-use the startup-script we already have in place for the PreferencePane
 sub canStart { 1 }
 sub start {
+	my ($class, $params) = @_;
+	
 	foreach my $path (
 		catdir($Bin, '..', 'platforms', 'osx', 'Preference Pane'),
 		catdir($Bin, '..', 'Resources'),
@@ -25,7 +27,7 @@ sub start {
 		if (-f $startScript) {
 
 			$startScript =~ s/ /\\ /g;
-			system($startScript);
+			system( $startScript . ($params ? " $params" : '') );
 
 			last;
 		}
