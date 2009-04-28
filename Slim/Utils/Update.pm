@@ -23,6 +23,9 @@ my $os = Slim::Utils::OSDetect->getOS();
 
 sub checkVersion {
 
+	# clean up old download location
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^SqueezeCenter.*\.(dmg|exe)(\.tmp)?$/i);			
+
 	# reset update download status in case our system is up to date
 	my $installer = $prefs->get('updateInstaller') || '';
 	
@@ -202,18 +205,10 @@ sub downloadAsyncDone {
 
 sub cleanup {
 	my ($path, $additionalExt) = @_;
-	
-	opendir my ($dirh), $path;
-	
+
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
-	my @oldInstallers = grep { /^SqueezeCenter.*\.$ext$/i } readdir $dirh;
-	
-	closedir $dirh;
-	
-	for my $file ( @oldInstallers ) {
-		$log->info("Removing old installer file: $file");
-		unlink catdir($path, $file) or logError("Unable to remove old installer file: $file: $!");
-	}
+
+	Slim::Utils::Misc::deleteFiles($path, qr/^SqueezeCenter.*\.$ext$/i);
 }
 
 1;

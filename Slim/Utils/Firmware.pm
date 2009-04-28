@@ -85,6 +85,10 @@ sub init {
 	$dir        = Slim::Utils::OSDetect::dirsFor('Firmware');
 	$updatesDir = Slim::Utils::OSDetect::dirsFor('updates');
 	
+	# clean up old download location
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^\w{4}_\d\.\d_.*\.bin(\.tmp)?$/i);
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^.*version$/i);
+
 	# the files we need to download
 	my $files = {};
 	
@@ -268,18 +272,8 @@ Removes old firmware file if one exists.
 sub init_fw_done {
 	my $fw_file = shift;
 	my $model   = shift;
-	
-	opendir my ($dirh), $updatesDir;
-	
-	my @files = grep { /^$model.*\.bin(\.tmp)?$/ } readdir $dirh;
-	
-	closedir $dirh;
-	
-	for my $file ( @files ) {
-		next if $file eq basename($fw_file);
-		$log->info("Removing old $model firmware file: $file");
-		unlink catdir( $updatesDir, $file ) or logError("Unable to remove old $model firmware file: $file: $!");
-	}
+		
+	Slim::Utils::Misc::deleteFiles($updatesDir, qr/^$model.*\.bin(\.tmp)?$/i, $fw_file);
 	
 	my ($ver, $rev) = $fw_file =~ m/${model}_([^_]+)_r([^\.]+).bin/;
 	

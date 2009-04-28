@@ -35,6 +35,7 @@ our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified validMacAddress)
 
 use Config;
 use Cwd ();
+use File::Basename;
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use File::Slurp;
@@ -906,6 +907,28 @@ sub findAndScanDirectoryTree {
 	my $count = scalar @$items;
 
 	return ($topLevelObj, $items, $count);
+}
+
+=head2 deleteFiles( $dir, $typeRegEx )
+
+Delete all files matching $typeRegEx in folder $dir
+
+=cut
+
+sub deleteFiles {
+	my ($dir, $typeRegEx, $excludeFile) = @_;
+	
+	opendir my ($dirh), $dir;
+	
+	my @files = grep { /$typeRegEx/ } readdir $dirh;
+	
+	closedir $dirh;
+	
+	for my $file ( @files ) {
+		next if $excludeFile && $file eq basename($excludeFile);
+		unlink catdir( $dir, $file ) or logError("Unable to remove file: $file: $!");
+	}
+	
 }
 
 
