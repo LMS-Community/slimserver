@@ -21,27 +21,29 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $os = Slim::Utils::OSDetect->getOS();
 
+my $versionFile = catdir( scalar($os->dirsFor('updates')), 'squeezecenter.version' );
+
 sub checkVersion {
 
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^SqueezeCenter.*\.(dmg|exe)(\.tmp)?$/i);			
 
 	# reset update download status in case our system is up to date
-	my $installer = $prefs->get('updateInstaller') || '';
+	my $installer = getUpdateInstaller() || '';
 	
-	if ( ($installer != /\d{5,}/ && $installer =~ /$::VERSION/)			# no revision number, but same version
-		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/)	# same revision
-		|| !$prefs->get('checkVersion') ) {								# we don't want to check
+	if ( isUpToDate($installer) || !$prefs->get('checkVersion') ) {
 		
 		$log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.") if $prefs->get('checkVersion');
 		
 		$::newVersion = undef;
-		$prefs->set('updateInstaller');
+		setUpdateInstaller();
 		
 		return unless $prefs->get('checkVersion');
 	}
 
 	my $lastTime = $prefs->get('checkVersionLastTime');
+	
+	$os->initUpdate() if $os->canAutoUpdate() && $prefs->get('autoDownloadUpdate');
 
 	if ($lastTime) {
 
@@ -96,7 +98,7 @@ sub checkVersionCB {
 		$log->debug($version || 'No new SqueezeCenter version available');
 
 		# reset the update flag
-		$prefs->set('updateInstaller');
+		setUpdateInstaller();
 
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
@@ -127,7 +129,7 @@ sub checkVersionError {
 sub getUpdate {
 	my $url = shift;
 	
-	my $params = $os->initUpdate();
+	my $params = $os->getUpdateParams();
 	
 	return unless $params;
 	
@@ -141,19 +143,28 @@ sub getUpdate {
 
 		my ($a, $b, $file) = Slim::Utils::Misc::crackURL($url);
 		($a, $b, $file) = splitpath($file);
+
+		# don't re-download if we're up to date
+		if (isUpToDate($file)) {
+			$log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.");
+			
+			setUpdateInstaller();
+			return;
+		}
+
 		$file = catdir($params->{path}, $file);
 
 		# don't re-download if file exists already
 		if ( -e $file ) {
 			$log->info("We already have the latest installer file: $file");
 			
-			$prefs->set( 'updateInstaller', $file);
+			setUpdateInstaller($file);
 			return;
 		}
 		
 		my $tmpFile = "$file.tmp";
 
-		$prefs->set('updateInstaller');
+		setUpdateInstaller();
 
 		# Save to a tmp file so we can check SHA
 		my $download = Slim::Networking::SimpleAsyncHTTP->new(
@@ -194,13 +205,71 @@ sub downloadAsyncDone {
 	cleanup($path);
 
 	$log->info("Successfully downloaded update installer file. Saving as $file");
-	rename $tmpFile, $file && $prefs->set('updateInstaller', $file);
+	rename $tmpFile, $file;
+	setUpdateInstaller($file) if -e $file;
 	
 	if ($params && ref($params->{cb}) eq 'CODE') {
 		$params->{cb}->($file);
 	}
 
 	cleanup($path, 'tmp');
+}
+
+sub setUpdateInstaller {
+	my $file = shift;
+	
+	if ($file && open(UPDATEFLAG, ">$versionFile")) {
+		
+		$log->debug("Setting update version file to: $file");
+		
+		print UPDATEFLAG $file;
+		close UPDATEFLAG;
+	}
+	
+	elsif ($file) {
+		
+		$log->warn("Unable to update version file: $versionFile");
+	}
+	
+	else {
+	
+		unlink $versionFile;
+	}
+}
+
+
+sub getUpdateInstaller {
+	
+	$log->debug("Reading update installer path from $versionFile");
+	
+	open(UPDATEFLAG, $versionFile) || return '';
+	
+	my $updateInstaller = '';
+	
+	while ( <UPDATEFLAG> ) {
+
+		chomp;
+		
+		if (/SqueezeCenter.*/) {
+			$updateInstaller = $_;
+			last;
+		}
+	}
+		
+	close UPDATEFLAG;
+	
+	$log->debug("Found update installer path: '$updateInstaller'");
+	
+	return $updateInstaller;
+}
+
+sub isUpToDate {
+	my $installer = shift;
+
+	return ( $::REVISION eq 'TRUNK'											# we'll consider TRUNK to always be up to date
+		|| ($installer !~ /\d{5,}/ && $installer =~ /$::VERSION/)			# no revision number, but same version
+		|| ($installer =~ /$::REVISION/ && $installer =~ /$::VERSION/) )	# same revision
+	
 }
 
 sub cleanup {

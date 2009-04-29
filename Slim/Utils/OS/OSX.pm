@@ -323,21 +323,24 @@ sub isMacAlias {
 
 
 sub initUpdate {
-	# add a change handler to signal to the user whenever an update is ready
-	Slim::Utils::Prefs::preferences('server')->setChange( \&signalUpdateReady, 'updateInstaller' );
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 30, \&signalUpdateReady);
+}
 
+sub getUpdateParams {
 	return {
 		cb => \&signalUpdateReady
 	};
 }
 
 sub signalUpdateReady {
-	my $updater = Slim::Utils::Prefs::preferences('server')->get('updateInstaller');
-	
+			
+	my $updater = Slim::Utils::Update::getUpdateInstaller();
+			
 	return unless $updater && -e $updater;
-
+		
+	Slim::Utils::Timers::killTimers(undef, \&signalUpdateReady);
 	Slim::Utils::Timers::killTimers(undef, \&_signalUpdateReady);
-
+		
 	# don't run the signal immediately, as the prefs are written delayed
 	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 15, \&_signalUpdateReady);
 }

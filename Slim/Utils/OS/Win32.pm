@@ -637,7 +637,7 @@ sub _priorityFromPriorityClass {
 }
 
 
-sub initUpdate {
+sub getUpdateParams {
 	my ($class, $url) = @_;
 
 	return if main::SLIM_SERVICE || main::SCANNER;
