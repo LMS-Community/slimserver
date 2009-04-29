@@ -20,6 +20,7 @@ use Slim::Utils::OSDetect;
 
 my $os = Slim::Utils::OSDetect::getOS();
 my $updateUrl;
+my $versionFile = catfile( scalar($os->dirsFor('updates')), 'squeezecenter.version' );
 
 if ($os->name eq 'win') {
 	require Win32::Process;
@@ -223,7 +224,23 @@ sub new {
 }
 
 sub _checkForUpdate {
-	my $installer = Slim::GUI::ControlPanel->getPref('updateInstaller');
+	
+	open(UPDATEFLAG, $versionFile) || return '';
+	
+	my $installer = '';
+	
+	while ( <UPDATEFLAG> ) {
+
+		chomp;
+		
+		if (/SqueezeCenter.*/) {
+			$installer = $_;
+			last;
+		}
+	}
+		
+	close UPDATEFLAG;
+	
 	return $installer && -e $installer;
 }
 
