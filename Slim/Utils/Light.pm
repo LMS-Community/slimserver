@@ -63,7 +63,6 @@ BEGIN {
 	unshift @INC, @SlimINC;
 
 	$os = Slim::Utils::OSDetect->getOS();
-	$language = $os->getSystemLanguage();
 }
 
 my $serverPrefFile = catdir($os->dirsFor('prefs'), 'server.prefs');
@@ -71,6 +70,9 @@ my $serverPrefFile = catdir($os->dirsFor('prefs'), 'server.prefs');
 # return localised version of string token
 sub string {
 	my $name = shift;
+	
+	$language ||= getPref('language') || $os->getSystemLanguage();
+		
 	my $lang = shift || $language;
 	
 	my $string = $strings{ $name }->{ $lang } || $strings{ $name }->{ $language } || $strings{ $name }->{'EN'} || $name;
