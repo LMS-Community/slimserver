@@ -116,7 +116,17 @@ sub dirsFor {
 
 	elsif ($dir eq 'updates') {
 
-		my $updateDir = catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir'), $dir );
+		my $updateDir;
+		eval {
+			$updateDir = catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir'), $dir );
+		};
+		
+		if ($@) {
+			eval {
+				$updateDir = catdir( Slim::Utils::Light::getPref('cachedir'), $dir );
+			};
+		}
+		
 		mkdir $updateDir unless -d $updateDir;
 		push @dirs, $updateDir;
 	}
