@@ -1,4 +1,19 @@
-[% UNLESS simple %]
+[% IF simple %]
+	<style>
+		body {
+			margin: 3px;
+		}
+		html, body, p, div {
+			font-family: sans-serif;
+		}
+		<!--[if IE]>
+		html, body, p, div {
+			font-family: "Microsoft Sans Serif", Verdana, Tahoma, Arial, sans-serif;
+			font-size: 8pt;
+		}
+		<![endif]-->		
+	</style>
+[% ELSE %]
 [% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script TYPE="text/javascript">
