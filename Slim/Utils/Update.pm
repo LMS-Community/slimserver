@@ -76,6 +76,8 @@ sub checkVersion {
 			$os->installerOS(),
 		);
 		
+	$log->debug("Using URL: $url");
+	
 	my $http = Slim::Networking::SqueezeNetwork->new(\&checkVersionCB, \&checkVersionError);
 
 	# will call checkVersionCB when complete
