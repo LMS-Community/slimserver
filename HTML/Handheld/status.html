@@ -1,6 +1,6 @@
 [% UNLESS ajaxRequest %]
 	[% IF refresh;
-		refreshurl = "url=status.html?start=$start&refresh=1";
+		refreshurl = "status.html?start=$start&refresh=1";
 	   END %]
 	[% pagetitle = "NOW_PLAYING" | string %]
 	[% PROCESS pageheader.html %]
