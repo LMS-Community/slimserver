@@ -179,7 +179,7 @@ sub new {
 			else {
 
 				my $check = get( sprintf(
-					"http://update.squeezenetwork.com/update/?version=1.%s&lang=%s&os=%s",
+					"http://update.squeezenetwork.com/update/?version=%s&lang=%s&os=%s",
 					$::VERSION,
 					$os->getSystemLanguage(),
 					$os->installerOS(),
