@@ -3778,6 +3778,8 @@ sub timeQuery {
 	$request->setStatusDone();
 }
 
+# this query is to provide a list of tracks for a given artist/album etc.
+
 sub titlesQuery {
 	my $request = shift;
 
@@ -3804,6 +3806,8 @@ sub titlesQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
 	my $menuStyle     = $request->getParam('menuStyle') || 'item';
+
+	my $useContextMenu = $request->getParam('useContextMenu');
 
 	my %favorites;
 	$favorites{'url'} = $request->getParam('favorites_url');
@@ -3903,45 +3907,47 @@ sub titlesQuery {
 		
 		# build the base element
 		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => [ 'trackinfo', 'items', ],
-					'params' => {
-						'menu' => $nextMenu,
-#						'menu_play' => '1',
-					},
-					'itemsParams' => 'params',
+			actions => {
+				go => {
+					cmd => [ 'trackinfo', 'items', ],
+						params => {
+							menu => $nextMenu,
+						},
+					itemsParams => 'params',
 				},
-				'play' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'load',
+				play => {
+					player => 0,
+					cmd => ['playlistcontrol'],
+					params => {
+						cmd => 'load',
 					},
-					'itemsParams' => 'params',
+					itemsParams => 'params',
+					nextWindow => 'nowPlaying',
 				},
-				'add' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'add',
+				add => {
+					player => 0,
+					cmd => ['playlistcontrol'],
+					params => {
+						cmd => 'add',
 					},
-					'itemsParams' => 'params',
+					itemsParams => 'params',
 				},
 				'add-hold' => {
-					'player' => 0,
-					'cmd' => ['playlistcontrol'],
-					'params' => {
-						'cmd' => 'insert',
+					player => 0,
+					cmd => ['playlistcontrol'],
+					params => {
+						cmd => 'insert',
 					},
-					'itemsParams' => 'params',
+					itemsParams => 'params',
 				},
 			},
-			'window' => {
-				'titleStyle' => 'album',
+			window => {
+				titleStyle => 'album',
 			}
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		# this is a temporary flag to ensure backwards compatibility between SC and Squeezeplay
+		$base->{'addAction'} = 'more';
 		
 		# Bug 5981
 		# special play handler for "play all tracks in album
@@ -3951,8 +3957,19 @@ sub titlesQuery {
 				player => 0,
 				cmd    => ['jiveplaytrackalbum'],
 				itemsParams => 'params',
+				nextWindow => 'nowPlaying',
 			};
 		}
+
+		if ( $useContextMenu ) {
+			# go is play
+			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
+			# + is more
+			$base->{'actions'}{'more'} = _contextMenuBase();
+			# add is more
+			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
+		}
+
 
 		$request->addResult('base', $base);
 	}
@@ -4048,6 +4065,7 @@ sub titlesQuery {
 
 				$request->addResultLoop($loopname, $chunkCount, 'window', $window);
 				 _mixerItemParams(request => $request, obj => $item, loopname => $loopname, chunkCount => $chunkCount, params => $params);
+			
 			}
 			
 			# regular formatting
@@ -4443,7 +4461,7 @@ sub _addJivePlaylistControls {
 					cmd    => [ 'jiveblankcommand' ],
 				},
 			},
-			nextWindow => 'playlist',
+			nextWindow => 'parent',
 		},
 		{
 			text    => $client->string('CLEAR_PLAYLIST'),
@@ -5395,6 +5413,21 @@ sub _mixerBase {
 	} else {
 		return undef;	
 	}
+}
+
+# currently this sends back a callback that is only for tracks
+# to be expanded to work with artist/album/etc. later
+sub _contextMenuBase {
+
+	return {
+		player => 0,
+		cmd => ['trackinfo', 'items'],
+			'params' => {
+				'menu' => 'nowhere',
+			},
+		itemsParams => 'params',
+	};
+
 }
 
 sub _mixerItemHandler {
