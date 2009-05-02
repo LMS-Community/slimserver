@@ -595,9 +595,9 @@ sub currentSongLines {
 		else {
 			$currentTitle = Slim::Music::Info::getCurrentTitle( $client, $song->url );
 			
-			if ( $song->album ) {
+			if ( my $album = $song->album ) {
 				$imgKey = 'icon-id';
-				$artwork = ( $song->album->artwork || 0 ) + 0;
+				$artwork = ( $album->artwork || 0 ) + 0;
 			}
 		}
 		

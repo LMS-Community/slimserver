@@ -2713,8 +2713,7 @@ sub buildStatusHeaders {
 
 			if (blessed($track) && $track->can('artist')) {
 
-				my $i = $track->artist();
-				$i = $i->name() if ($i);
+				my $i = $track->artistName();
 				$headers{"x-playerartist"} = $i if $i;
 		
 				$i = $track->album();

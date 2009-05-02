@@ -336,7 +336,7 @@ sub infoContributors {
 					},
 					selectionCriteria => {
 						'track.id'       => $track->id,
-						'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
+						'album.id'       => $track->albumid,
 						'contributor.id' => $id,
 					},
 				};
@@ -572,18 +572,19 @@ sub infoAlbum {
 	}
 	elsif ( my $album = $track->album ) {
 		my $id = $album->id;
+		my $artist = $track->artist;
 
 		my $db = {
 			hierarchy         => 'album,track',
 			level             => 1,
 			findCriteria      => { 
 				'album.id'       => $id,
-				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
 			},
 			selectionCriteria => {
 				'track.id'       => $track->id,
 				'album.id'       => $id,
-				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
 			},
 		};
 		
@@ -663,6 +664,7 @@ sub infoGenres {
 	
 	for my $genre ( $track->genres ) {
 		my $id = $genre->id;
+		my $artist = $track->artist;
 		
 		my $db = {
 			hierarchy         => 'genre,contributor,album,track',
@@ -672,8 +674,8 @@ sub infoGenres {
 			},
 			selectionCriteria => {
 				'track.id'       => $track->id,
-				'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
-				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+				'album.id'       => $track->albumid,
+				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
 			},
 		};
 		
@@ -741,6 +743,8 @@ sub infoYear {
 	my $item;
 	
 	if ( my $year = $track->year ) {
+		my $artist = $track->artist;
+		
 		my $db = {
 			hierarchy         => 'year,album,track',
 			level             => 1,
@@ -749,8 +753,8 @@ sub infoYear {
 			},
 			selectionCriteria => {
 				'track.id'       => $track->id,
-				'album.id'       => ( blessed $track->album ) ? $track->album->id : undef,
-				'contributor.id' => ( blessed $track->artist ) ? $track->artist->id : undef,
+				'album.id'       => $track->albumid,
+				'contributor.id' => ( blessed $artist ) ? $artist->id : undef,
 			},
 		};
 

@@ -117,6 +117,17 @@ sub albumid {
 	return $self->get_column('album');
 }
 
+# Partly, this is a placehold for a later, more-efficient caching implementation
+sub artistName {
+	my $self = shift;
+	
+	if (my $artist = $self->artist) {
+		return $artist->name;
+	}
+	
+	return undef;
+}
+
 sub artist {
 	my $self = shift;
 	

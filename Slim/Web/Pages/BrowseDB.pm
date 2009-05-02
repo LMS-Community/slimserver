@@ -468,13 +468,14 @@ sub browsedb {
 		if ($level == $maxLevel && $levelName eq 'track' && defined $firstItem 
 			&& (defined $params->{'album.id'} || defined $params->{'age.id'})
 		) {
-
+			my $album = $firstItem->album;
+			
 			if ($firstItem->can('coverArtExists') && $firstItem->coverArtExists) {
 
 				$params->{'coverArt'} = $firstItem->id;
-				if (!$firstItem->album->artwork) {
-					$firstItem->album->artwork($firstItem->id);
-					$firstItem->album->update;
+				if (!$album->artwork) {
+					$album->artwork($firstItem->id);
+					$album->update;
 				}
 			}
 
@@ -487,15 +488,15 @@ sub browsedb {
 	
 				if (defined $Imports->{$mixer}->{'mixerlink'}) {
 	
-					&{$Imports->{$mixer}->{'mixerlink'}}($firstItem->album, $params->{mixeritems}, 1);
+					&{$Imports->{$mixer}->{'mixerlink'}}($album, $params->{mixeritems}, 1);
 	
 				}
 			}
 			$params->{mixerlinks} = $params->{mixeritems}->{mixerlinks};
 
 			# additional information for the album favorite button on the track list view
-			$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($firstItem->album->url);
-			$params->{itemUrl}    = $firstItem->album->url;
+			$params->{isFavorite} = defined Slim::Utils::Favorites->new($client)->findUrl($album->url);
+			$params->{itemUrl}    = $album->url;
 		}
 
 	}

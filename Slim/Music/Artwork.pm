@@ -92,9 +92,9 @@ sub findArtwork {
 
 	while (my $track = $tracks->next) {
 
-		if ($track->coverArtExists) {
+		my $album = $track->album;
 
-			my $album = $track->album;
+		if ($track->coverArtExists) {
 
 			if ( !$progress ) {
 				$isDebug && $importlog->debug(sprintf("Album [%s] has artwork.", $album->name));
@@ -106,7 +106,7 @@ sub findArtwork {
 			precacheArtwork( $track->id );
 		}
 
-		$progress->update($track->album->name);
+		$progress->update($album->name);
 	}
 
 	$progress->final($count) if $count;
