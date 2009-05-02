@@ -347,8 +347,8 @@ sub getConvertCommand2 {
 	# Switch Apple Lossless files from a CT of 'aac' to 'alc' for
 	# conversion purposes, so we can use 'alac' if it's available.
 	# 
-	# Bug: 2095
-	if ($type eq 'aac' && blessed($track) && $track->lossless) {
+	# Bug: 2095, 10602
+	if (($type eq 'mov' || $type eq 'mp4' || $type eq 'aac') && blessed($track) && $track->lossless) {
 		$log->debug("Track is alac - updating type!");
 		$type = 'alc';
 	}
