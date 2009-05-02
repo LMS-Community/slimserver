@@ -240,7 +240,7 @@ StatusHeartbeat =>
 	[	\&_BadState,	\&_NoOp,		\&_NoOp,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_StartIfReady,\&_StartIfReady,\&_BadState],		# WAITING_TO_SYNC
 	[	\&_CheckSync,	\&_CheckSync,	\&_CheckSync,	\&_CheckSync],		# PLAYING
-	[	\&_NoOp,		\&_NoOp,		\&_NoOp,		\&_NoOp],			# PAUSED
+	[	\&_NoOp,		\&_CheckBuffer,	\&_CheckBuffer,	\&_NoOp],			# PAUSED
 ],
 );
 
@@ -414,6 +414,21 @@ sub _notifyStopped {
 }
 
 sub _Streamout {_setStreamingState($_[0], STREAMOUT);}
+
+sub _CheckBuffer {
+	my ($self, $event, $params) = @_;
+	
+	# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
+	my $songController = $self->songStreamController();
+	if (   $songController
+		&& !$songController->song()->duration()
+		&& $songController->protocolHandler()->isRemote()
+		&& $self->master()->usage() > 0.98)
+	{
+		$log->info("Stopping remote stream upon full buffer when paused");
+		_Stop(@_);
+	}
+}
 
 use constant CHECK_SYNC_INTERVAL        => 0.950;
 use constant MIN_DEVIATION_ADJUST       => 0.010;
