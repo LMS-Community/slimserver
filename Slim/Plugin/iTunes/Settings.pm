@@ -73,6 +73,12 @@ $prefs->setChange(
 	},
 'scan_interval');
 
+$prefs->setChange(
+	sub {
+		Slim::Control::Request::executeRequest(undef, ['rescan']);
+	},
+'ignore_playlists');
+
 sub name {
 	return Slim::Web::HTTP::protectName('ITUNES');
 }
@@ -82,7 +88,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(itunes scan_interval ignore_disabled xml_file music_path playlist_prefix playlist_suffix));
+	return ($prefs, qw(itunes scan_interval ignore_disabled xml_file music_path playlist_prefix playlist_suffix, ignore_playlists));
 }
 
 sub handler {

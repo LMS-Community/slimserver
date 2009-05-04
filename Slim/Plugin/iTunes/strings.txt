@@ -392,3 +392,34 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 	RU	Импорт обложек, добавленных пользователем iTunes
 	SV	Import av omslag som lagts till av användaren från iTunes
 
+# The following string refers to some special playlist names.
+# These terms have to correspond to the translation used in iTunes, or the filter will fail
+# "kMusicLibraryPrimaryPlaylistName" = "Library";
+# "9000.032" = "Videos";
+# "9000.035" = "Movies";
+# "9000.036" = "TV Shows";
+# "9000.037" = "Music";
+# "9000.038" = "Audiobooks";
+# "9000.039" = "Purchased";
+# "9000.043" = "Rented Movies";
+
+ITUNES_IGNORED_PLAYLISTS_DEFAULTS
+	DA	Bibliotek, Videor, Film, Tv-udsendelser, Musik, Indkøb, Lejede film
+	DE	Mediathek, Videos, Filme, Fernsehsendungen, Musik, Einkäufe, Ausgeliehene Filme
+	EN	Library, Videos, Movies, TV Shows, Music, Purchased, Rented Movies
+	ES	Biblioteca, Vídeos, Películas, Programas de televisión, Música, Comprado, Películas alquiladas
+	FI	Kirjasto, Videot, Elokuvat, TV-ohjelmat, Musiikki, Ostetut, Vuokraelokuvat
+	FR	Bibliothèque, Clips vidéo, Films, Émissions de télévision, Musique, Achats, Films en location
+	IT	Libreria, Video, Filmati, Spettacoli TV, Musica, Acquisti, Filmati noleggiati
+	NL	Bibliotheek, Video's, Films, Tv-programma's, Muziek, Aangeschaft, Huurfilms
+	NO	Bibliotek, Videoer, Filmer, TV-programmer, Musikk, Kjøpt, Leide filmer
+	PL	Biblioteka, Wideo, Filmy, Programy TV, Muzyka, Zakupione, Wypożyczone filmy
+	RU	Медиатека, Видео, Фильмы, Телешоу, Музыка, Покупки, Взятые напрокат фильмы
+	SV	Bibliotek, Videor, Filmer, TV-program, Musik, Köpt, Hyrfilmer
+	
+SETUP_ITUNES_IGNORED_PLAYLISTS
+	DE	Ignorierte Wiedergabelisten
+	EN	Ignored playlists
+	
+SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
+	EN	Define a comma separated list of iTunes playlists you don't want to be imported (eg. "Videos, Purchased").

@@ -23,6 +23,11 @@
 		</select>
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_ITUNES_IGNORED_PLAYLISTS" desc="SETUP_ITUNES_IGNORED_PLAYLISTS_DESC" %]
+		<textarea class="stdedit" name="pref_ignore_playlists" id="ignore_playlists" cols="45" rows="4">[% prefs.pref_ignore_playlists %]
+		</textarea>
+	[% END %]
+
 	[% WRAPPER setting title="SETUP_ITUNES_LIBRARY_XML_PATH" desc="SETUP_ITUNES_LIBRARY_XML_PATH_DESC" %]
 		<input type="text" class="stdedit selectFile selectFile_xml" name="pref_xml_file" id="xml_file" value="[% prefs.pref_xml_file %]" size="40">
 	[% END %]

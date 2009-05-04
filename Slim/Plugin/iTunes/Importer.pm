@@ -676,9 +676,11 @@ sub handleEndElement {
 
 		$inPlaylistArray = 0;
 
-		# Don't bother with 'Library' - it's not a real playlist
-		# iTunes 7.0 adds 'Music' as a playlist - we don't want that either.
-		if (defined $item{'TITLE'} && $item{'TITLE'} !~ /^(?:Library|Music)$/) {
+		# Don't bother with 'Library' et al. - they're no real playlists or list
+		# media we don't care about
+		my $ignoreList = join('|', split( /,\s*/, $prefs->get('ignore_playlists') ) );
+
+		if (defined $item{'TITLE'} && $item{'TITLE'} !~ /^(?:$ignoreList)$/i) {
 
 			if ( $log->is_debug ) {
 				$log->debug("Got a playlist array of " . scalar(@{$item{'LIST'}}) . " items.");

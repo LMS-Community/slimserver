@@ -405,6 +405,10 @@ sub checkDefaults {
 	if (!defined $prefs->get('itunes') && defined findMusicLibraryFile()) {
 		$prefs->set('itunes', 1);
 	}
+	
+	if (!defined $prefs->get('ignore_playlists')) {
+		$prefs->set('ignore_playlists', string('ITUNES_IGNORED_PLAYLISTS_DEFAULTS'))
+	}
 }
 
 1;
