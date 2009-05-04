@@ -48,7 +48,7 @@ our $defaultPrefs = {
 
 	'lameQuality'          => 9,
 	'playername'           => \&_makeDefaultName,
-	'repeat'               => 2,
+	'repeat'               => 0,
 	'shuffle'              => 0,
 	'titleFormat'          => [5, 1, 3, 6, 0],
 	'titleFormatCurr'      => 4,
