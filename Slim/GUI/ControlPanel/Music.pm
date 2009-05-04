@@ -13,7 +13,7 @@ use Wx::Event qw(EVT_BUTTON);
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
-my $progressPoll;
+my ($progressPoll, $btnRescan);
 
 sub new {
 	my ($self, $nb, $parent) = @_;
@@ -67,12 +67,16 @@ sub new {
 	$rescanBtnSizer->Add($rescanMode);
 	$parent->addStatusListener($rescanMode);
 	
-	my $btnRescan = Wx::Button->new($self, -1, string('SETUP_RESCAN_BUTTON'));
+	$btnRescan = Wx::Button->new($self, -1, string('SETUP_RESCAN_BUTTON'));
 	$rescanBtnSizer->Add($btnRescan, 0, wxLEFT, 5);
 	$parent->addStatusListener($btnRescan);
 	
 	EVT_BUTTON($self, $btnRescan, sub {
-		if ($rescanMode->GetSelection == 0) {
+		if ($btnRescan->GetLabel() eq string('ABORT_SCAN')) {
+			Slim::GUI::ControlPanel->serverRequest('abortscan');
+		}
+		
+		elsif ($rescanMode->GetSelection == 0) {
 			Slim::GUI::ControlPanel->serverRequest('rescan');
 		}
 
@@ -211,6 +215,7 @@ sub Notify {
 				
 			}
 
+			$btnRescan->SetLabel(string('ABORT_SCAN'));
 			$self->Start(2000, wxTIMER_CONTINUOUS);
 			$self->Layout();
 			
@@ -228,6 +233,7 @@ sub Notify {
 		$self->Start(10000, wxTIMER_CONTINUOUS);
 	}
 
+	$btnRescan->SetLabel(string('SETUP_RESCAN_BUTTON'));
 	$self->Layout();
 	
 	# don't poll that often when no scan is running
