@@ -88,7 +88,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(itunes scan_interval ignore_disabled xml_file music_path playlist_prefix playlist_suffix, ignore_playlists));
+	return ($prefs, qw(itunes scan_interval ignore_disabled xml_file music_path playlist_prefix playlist_suffix ignore_playlists));
 }
 
 sub handler {
