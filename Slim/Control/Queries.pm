@@ -3257,6 +3257,9 @@ sub sleepQuery {
 # the filter function decides, based on a notified request, if the status
 # query must be re-executed.
 sub statusQuery_filter {
+
+	$log->debug('statusQuery_filter()');
+
 	my $self = shift;
 	my $request = shift;
 	
@@ -3316,6 +3319,7 @@ sub statusQuery {
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $useContextMenu = $request->getParam('useContextMenu');
 
 	# accomodate the fact we can be called automatically when the client is gone
 	if (!defined($client)) {
@@ -3472,21 +3476,26 @@ sub statusQuery {
 		
 		$request->addResult("count", $menuCount);
 		
-		my $base = {
-			'actions' => {
-				'go' => {
-					'cmd' => ['trackinfo', 'items'],
-					'params' => {
-						'menu' => 'nowhere', 
-						'context' => 'playlist',
+		my $base;
+		if ( $useContextMenu ) {
+			$base->{'actions'}{'more'} = _contextMenuBase();
+		} else {
+			$base = {
+				actions => {
+					go => {
+						cmd => ['trackinfo', 'items'],
+						params => {
+							menu => 'nowhere', 
+							context => 'playlist',
+						},
+						itemsParams => 'params',
 					},
-					'itemsParams' => 'params',
 				},
-			},
-			'window' => {
-				'titleStyle' => 'album',
-			}
-		};
+				window => {
+					titleStyle => 'album',
+				}
+			};
+		}
 		$request->addResult('base', $base);
 	}
 	
