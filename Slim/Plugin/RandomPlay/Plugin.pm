@@ -332,7 +332,7 @@ sub chooseGenresMenu {
 		},
 	};
 	
-	for my $genre (sort keys %$genres) {
+	for my $genre (sort { _sortGenres($genres, $a, $b) } keys %$genres) {
 		my $val = $genres->{$genre}->{'enabled'};
 
 		push @menu, {
@@ -531,8 +531,8 @@ sub findAndAdd {
 sub getGenres {
 	my ($client) = @_;
 
-	my $rs = Slim::Schema->search('Genre');
-
+	my $rs = Slim::Schema->search('Genre', undef, { 'order_by' => 'me.namesort' });
+	
 	# Extract each genre name into a hash
 	my %clientGenres = ();
 	my @exclude      = @{$prefs->get('exclude_genres')};
@@ -553,12 +553,18 @@ sub getGenres {
 			'id'      => $id,
 			'name'    => $name,
 			'enabled' => $ena,
+			'namesort'=> $genre->namesort || $name,
 		};
 	}
 
 	$genres{$client} = \%clientGenres;
 
 	return $genres{$client};
+}
+
+sub _sortGenres {
+	my ($genres, $a, $b) = @_;
+	return $genres->{$a}->{namesort} cmp $genres->{$b}->{namesort};
 }
 
 # Returns an array of the non-excluded genres in the db
@@ -972,8 +978,7 @@ sub setMode {
 
 			if ($item eq 'genreFilter') {
 
-				my $genres    = getGenres($client);
-				my %genreList = map { $genres->{$_}->{'name'}, $genres->{$_} } keys %{$genres};
+				my $genres = getGenres($client);
 
 				# Insert Select All option at top of genre list
 				my @listRef = ({
@@ -984,11 +989,11 @@ sub setMode {
 				});
 
 				# Add the genres
-				foreach my $genre (sort keys %genreList) {
+				foreach my $genre (sort { _sortGenres($genres, $a, $b) } keys %$genres) {
 					
 					# HACK: add 'value' so that INPUT.Choice won't complain as much. nasty setup there.
-					$genreList{$genre}->{'value'} = $genreList{$genre}->{'id'};
-					push @listRef, $genreList{$genre};
+					$genres->{$genre}->{'value'} = $genres->{$genre}->{'id'};
+					push @listRef, $genres->{$genre};
 				}
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
@@ -1177,7 +1182,9 @@ sub handleWebList {
 
 	if ($client) {
 		# Pass on the current pref values and now playing info
-		$params->{'pluginRandomGenreList'}     = getGenres($client);
+		my $genres = getGenres($client);
+		$params->{'pluginRandomGenreList'}     = $genres;
+		$params->{'pluginRandomGenreListSort'} = [ sort { _sortGenres($genres, $a, $b) } keys %$genres ];
 		$params->{'pluginRandomNumTracks'}     = $prefs->get('newtracks');
 		$params->{'pluginRandomNumOldTracks'}  = $prefs->get('oldtracks');
 		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');

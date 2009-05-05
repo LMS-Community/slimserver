@@ -129,7 +129,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 		<p>[% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %]</p>
 	
 		[% odd = 1 %]
-		<table border="0" width="100%">[% USE table pluginRandomGenreList.keys.sort, cols=2, pad=0 %]
+		<table border="0" width="100%">[% USE table pluginRandomGenreListSort, cols=2, pad=0 %]
 			[%- FOREACH genrerow = table.rows %]
 				<tr class="[% odd ? "odd" : "even" %]">
 				[%- FOREACH genre = genrerow %]
