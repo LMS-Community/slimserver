@@ -311,8 +311,14 @@ sub updateLineIn {
 			$client->controller()->unsync($client);	
 		}
 
-		$client->execute([ 'playlist', 'inserttracks', 'listRef', [ $obj ] ]);
-		$client->execute([ 'playlist', 'index', '+1' ]);	
+		
+		# Remove it first if it is already there
+		$client->execute([ 'playlist', 'deleteitem', $line_in->{'url'} ] );
+		
+		# Bug 11809: get the index of the inserted track from the request result, rather than using skip
+		my $request = Slim::Control::Request->new($client->id, [ 'playlist', 'inserttracks', 'listRef', [ $obj ] ]);
+		$request->execute();
+		$client->execute([ 'playlist', 'index', $request->getResult('index') ]);	
 	}
 }
 

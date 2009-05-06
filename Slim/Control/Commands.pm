@@ -1582,6 +1582,7 @@ sub playlistXtracksCommand {
 				Slim::Player::Source::playmode($client, 'play');
 			}
 		}
+		$request->addResult(index => (Slim::Player::Source::streamingSongIndex($client)+1));
 	}
 
 	if ($delete) {
@@ -1590,6 +1591,7 @@ sub playlistXtracksCommand {
 
 	if ($load || $add) {
 		Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
+		$request->addResult(index => $playListSize);	# does not mean much if shuffled
 	}
 
 	if ($load) {
