@@ -10,8 +10,6 @@ package Slim::Web::Settings::Server::SqueezeNetwork;
 use strict;
 use base qw(Slim::Web::Settings);
 
-use Digest::SHA1 qw(sha1_base64);
-
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Misc;
@@ -30,7 +28,7 @@ sub page {
 sub prefs {
 	# NOTE: if you add a pref here, check that the wizard also submits it
 	# in HTML/EN/html/wizard.js
-	my @prefs = qw(sn_email sn_password_sha sn_sync sn_disable_stats);
+	my @prefs = qw(sn_disable_stats);
 
 	return ($prefs, @prefs);
 }
@@ -97,18 +95,10 @@ sub handler {
 			# Shut down SN if username/password were removed
 			Slim::Networking::SqueezeNetwork->shutdown();
 		}
-
-		else {
-			if ($params->{'AJAX'}) {
-				$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server); 
-				$params->{'validated'}->{'valid'} = 0;
-			}
-			else {
-				$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server) . '<br/>';						
-			}
-			delete $params->{'saveSettings'};
-		}
 	}
+	
+	$params->{prefs}->{pref_sn_email} = $prefs->get('sn_email');
+	$params->{prefs}->{pref_sn_sync}  = $prefs->get('sn_sync');
 
 	return $class->SUPER::handler($client, $params);
 }
