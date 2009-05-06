@@ -5,6 +5,7 @@ package Slim::GUI::ControlPanel::Diagnostics;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+use strict;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);
@@ -220,7 +221,7 @@ sub checkPing {
 	
 	return string('CONTROLPANEL_FAILED') unless $host;
 
-	$p = Net::Ping->new('tcp', 2);
+	my $p = Net::Ping->new('tcp', 2);
 
 	$p->{port_num} = $port if $port;
 	

@@ -5,6 +5,7 @@ package Slim::GUI::ControlPanel::Status;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+use strict;
 use base 'Wx::Panel';
 
 use Encode;

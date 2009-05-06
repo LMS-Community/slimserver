@@ -5,6 +5,7 @@ package Slim::GUI::ControlPanel::Maintenance;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+use strict;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);

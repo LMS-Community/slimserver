@@ -5,6 +5,7 @@ package Slim::GUI::ControlPanel::Settings;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+use strict;
 use base 'Wx::Panel';
 
 use Encode;
@@ -157,7 +158,7 @@ sub new {
 
 		EVT_BUTTON( $self, $btnUpdate, sub {
 			
-			if (_checkForUpdate()) {
+			if (my $installer = _checkForUpdate()) {
 
 				my $processObj;
 				Win32::Process::Create(
@@ -241,7 +242,7 @@ sub _checkForUpdate {
 		
 	close UPDATEFLAG;
 	
-	return $installer && -e $installer;
+	return $installer && -e $installer ? $installer : 0;
 }
 
 1;
