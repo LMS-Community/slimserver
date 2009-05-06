@@ -42,7 +42,7 @@ sub new {
 		-1,
 		string('CONTROLPANEL_TITLE'),
 		[-1, -1],
-		[Slim::Utils::OSDetect::isWindows() ? 550 : 700, 650],
+		[Slim::Utils::OSDetect::isWindows() ? 550 : 700, 600],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CONTROLPANEL_TITLE'),
 	);
@@ -306,7 +306,7 @@ sub serverRequest {
 		}
 	}
 
-	return $content;
+	return ref $content ? $content : { msg => $content };
 }
 
 

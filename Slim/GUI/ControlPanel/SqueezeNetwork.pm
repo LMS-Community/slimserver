@@ -28,19 +28,39 @@ sub new {
 	my $credentialsBox = Wx::StaticBox->new($self, -1, $credentialsTitle);
 	my $outerCredentialsSizer = Wx::StaticBoxSizer->new( $credentialsBox, wxVERTICAL );
 
-	my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
+	my $credentialsSizer = Wx::FlexGridSizer->new(2, 3, 5, 10);
 	$credentialsSizer->AddGrowableCol(1, 1);
 	$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
 
-	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')));
-	my $username = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_email'), [-1, -1], [150, -1]);
+	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')), 0, wxTOP, 3);
+	my $username = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_email') || '', [-1, -1], [150, -1]);
 	$credentialsSizer->Add($username);
 	$parent->addStatusListener($username);
 
-	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')));
+	$credentialsSizer->Add(Wx::HyperlinkCtrl->new(
+		$self, 
+		-1, 
+		string('SETUP_SN_NEED_ACCOUNT'), 
+		'http://www.squeezenetwork.com/',
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_DEFAULT_STYLE,
+	), 0, wxTOP, 3);
+
+	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP, 3);
 	my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
 	$credentialsSizer->Add($password);
 	$parent->addStatusListener($password);
+
+	$credentialsSizer->Add(Wx::HyperlinkCtrl->new(
+		$self, 
+		-1, 
+		string('SETUP_SN_FORGOT_PASSWORD'), 
+		'http://www.squeezenetwork.com/user/forgotPassword',
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_DEFAULT_STYLE,
+	), 0, wxTOP, 3);
 
 	$parent->addApplyHandler($username, sub {
 		
@@ -59,9 +79,8 @@ sub new {
 		}
 	});
 
-
 	$outerCredentialsSizer->Add($credentialsSizer, 0, wxALL, 10);
-
+	
 	$mainSizer->Add($outerCredentialsSizer, 0, wxALL | wxGROW, 10);
 
 	
@@ -71,7 +90,7 @@ sub new {
 	my $syncDesc = string('SETUP_SN_SYNC_DESC');
 	$syncDesc = Wx::StaticText->new($self, -1, $syncDesc);
 	my ($width) = $parent->GetSizeWH();
-	$width -= 70;
+	$width -= 80;
 	$syncDesc->Wrap($width);
 	$optionsSizer->Add($syncDesc, 0, wxEXPAND | wxLEFT | wxTOP, 10);
 	
