@@ -31,6 +31,7 @@ use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 use Net::IP;
+use Digest::SHA1 qw(sha1_base64);
 use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::Alarm;
@@ -2422,6 +2423,60 @@ sub rescanCommand {
 	}
 
 	$request->setStatusDone();
+}
+
+sub setSNCredentialsCommand {
+	my $request = shift;
+
+	if ($request->isNotQuery([['setsncredentials']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $username = $request->getParam('_username');
+	my $password = $request->getParam('_password');
+	my $sync     = $request->getParam('sync');
+	my $client   = $request->client;
+	
+	if (!$username || !$password) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	$request->setStatusProcessing();
+
+	$password = sha1_base64($password);
+	
+	# Verify username/password
+	Slim::Networking::SqueezeNetwork->login(
+		username => $username,
+		password => $password,
+		client   => $client,
+		cb       => sub {
+			$request->addResult('validated', 1);
+			$request->addResult('warning', $request->cstring('SETUP_SN_VALID_LOGIN'));
+
+			# Shut down all SN activity
+			Slim::Networking::SqueezeNetwork->shutdown();
+		
+			$prefs->set('sn_email', $username);
+			$prefs->set('sn_password_sha', $password);
+			
+			$prefs->set('sn_sync', $sync) if defined $sync;
+			
+			# Start it up again if the user enabled it
+			Slim::Networking::SqueezeNetwork->init();
+
+			$request->setStatusDone();
+		},
+		ecb      => sub {
+			$request->addResult('validated', 0);
+			$request->addResult('warning', $request->cstring('SETUP_SN_INVALID_LOGIN'));
+
+			$request->setStatusDone();
+		},
+	);
 }
 
 sub showCommand {

@@ -46,6 +46,7 @@
 <h4 id="7">Changes starting from SqueezeCenter 7.4</h4>
 <ul>
 	<li>Added &quot;pause&quot; & &quot;stop&quot; subtypes to &quot;playlist&quot; notifications.</li>
+	<li>Added &quot;setsncredentials&quot; command.</li>
 </ul>
 
 <hr>
@@ -641,6 +642,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#getstring">getstring</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#setsncredentials">setsncredentials</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#debug">debug</a></code></strong>
 	</li>
 	<li>
@@ -950,6 +954,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;getstring SETTINGS,SCREENSAVERS,HOME &lt;LF&gt;&quot;
 		<br>
 		Response: &quot;getstring SETTINGS:Einstellungen SCREENSAVERS:Bildschirmschoner HOME:Startseite &lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="setsncredentials">
+	<strong>
+		<code>
+			setsncredentials 
+			&lt;username&gt;
+			&lt;password&gt;
+			[&lt;sync:0|1&gt;]
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;setsncredentials&quot; command allows the caller to change
+	the credentials used to acces SqueezeNetwork resources.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;setsncredentials me@mysqueezebox.com p@s5w0rd &lt;LF&gt;&quot;
+		<br>
+		Response: &quot;setsncredentials me@mysqueezebox.com p@s5w0rd validated:1 warning:Connected successfully to SqueezeNetwork. &lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request:  &quot;setsncredentials me@mysqueezebox.com thisisnogood &lt;LF&gt;&quot;
+		<br>
+		Response: &quot;setsncredentials me@mysqueezebox.com thisisnogood validated:0 warning:Invalid SqueezeNetwork username or password. &lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

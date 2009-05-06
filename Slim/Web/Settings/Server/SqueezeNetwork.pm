@@ -53,48 +53,51 @@ sub handler {
 		}
 
 		if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
-			
-			if ( length( $params->{pref_sn_password_sha} ) != 27 ) {
-				$params->{pref_sn_password_sha} = sha1_base64( $params->{pref_sn_password_sha} );
-			}
 		
 			# Verify username/password
-			Slim::Networking::SqueezeNetwork->login(
-				username => $params->{pref_sn_email},
-				password => $params->{pref_sn_password_sha},
-				client   => $client,
-				cb       => sub {
-					my $body = $class->saveSettings( $client, $params );
+			my $request = Slim::Control::Request->new(
+				$client ? $client->id : undef,
+				[ 
+					'setsncredentials', 
+					$params->{pref_sn_email}, 
+					$params->{pref_sn_password_sha},
+					'sync:' . $params->{pref_sn_sync},
+				]
+			);
+			
+			$request->callbackParameters(
+				sub {
+					my $validated = $request->getResult('validated');
+					my $warning   = $request->getResult('warning');
+			
+					if ($params->{'AJAX'}) {
+						$params->{'warning'} = $warning;
+						$params->{'validated'}->{'valid'} = $validated;
+					}
+					
+					if (!$validated) {
+		
+						$params->{'warning'} .= $warning . '<br/>' unless $params->{'AJAX'};
+		
+						delete $params->{pref_sn_email};
+						delete $params->{pref_sn_password_sha};
+					}
 
-					if ($params->{'AJAX'}) {
-						$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_VALID_LOGIN');
-						$params->{'validated'}->{'valid'} = 1;
-					}
-					$callback->( $client, $params, $body, @args );
-				},
-				ecb      => sub {
-					if ($params->{'AJAX'}) {
-						$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server); 
-						$params->{'validated'}->{'valid'} = 0;
-					}
-					else {
-						$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server) . '<br/>';						
-					}
-					
-					delete $params->{pref_sn_email};
-					delete $params->{pref_sn_password_sha};
-					
-					my $body = $class->saveSettings( $client, $params );
+					my $body = $class->SUPER::handler($client, $params);
 					$callback->( $client, $params, $body, @args );
 				},
 			);
-		
+			
+			$request->execute();
+
 			return;
 		}
+
 		elsif ( !$params->{pref_sn_email} && !$params->{pref_sn_password_sha} ) {
 			# Shut down SN if username/password were removed
 			Slim::Networking::SqueezeNetwork->shutdown();
 		}
+
 		else {
 			if ($params->{'AJAX'}) {
 				$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN', $sn_server); 
@@ -105,22 +108,6 @@ sub handler {
 			}
 			delete $params->{'saveSettings'};
 		}
-	}
-
-	return $class->SUPER::handler($client, $params);
-}
-
-sub saveSettings {
-	my ( $class, $client, $params ) = @_;
-	
-	if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
-		# Shut down all SN activity
-		Slim::Networking::SqueezeNetwork->shutdown();
-		
-		$prefs->set('sn_sync', $params->{pref_sn_sync});
-		
-		# Start it up again if the user enabled it
-		Slim::Networking::SqueezeNetwork->init();
 	}
 
 	return $class->SUPER::handler($client, $params);
