@@ -39,24 +39,26 @@ sub handler {
 	# The hostname for SqueezeNetwork
 	my $sn_server = Slim::Networking::SqueezeNetwork->get_server("sn");
 	$params->{sn_server} = $sn_server;
+	
+	$params->{prefs}->{pref_sn_email} = $prefs->get('sn_email');
+	$params->{prefs}->{pref_sn_sync}  = $prefs->get('sn_sync');
 
 	if ( $params->{saveSettings} ) {
 		
 		if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
 		
 			# Verify username/password
-			my $request = Slim::Control::Request->new(
-				$client ? $client->id : undef,
+			Slim::Control::Request::executeRequest(
+				$client,
 				[ 
 					'setsncredentials', 
 					$params->{pref_sn_email}, 
 					$params->{pref_sn_password_sha},
 					'sync:' . $params->{pref_sn_sync},
-				]
-			);
-			
-			$request->callbackParameters(
+				],
 				sub {
+					my $request = shift;
+					
 					my $validated = $request->getResult('validated');
 					my $warning   = $request->getResult('warning');
 			
@@ -77,8 +79,6 @@ sub handler {
 					$callback->( $client, $params, $body, @args );
 				},
 			);
-			
-			$request->execute();
 
 			return;
 		}
@@ -88,9 +88,6 @@ sub handler {
 			Slim::Networking::SqueezeNetwork->shutdown();
 		}
 	}
-	
-	$params->{prefs}->{pref_sn_email} = $prefs->get('sn_email');
-	$params->{prefs}->{pref_sn_sync}  = $prefs->get('sn_sync');
 
 	return $class->SUPER::handler($client, $params);
 }
