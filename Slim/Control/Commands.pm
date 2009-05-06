@@ -2428,7 +2428,7 @@ sub rescanCommand {
 sub setSNCredentialsCommand {
 	my $request = shift;
 
-	if ($request->isNotQuery([['setsncredentials']])) {
+	if ($request->isNotCommand([['setsncredentials']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
