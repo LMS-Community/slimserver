@@ -42,14 +42,6 @@ sub handler {
 
 	if ( $params->{saveSettings} ) {
 		
-		if ( defined $params->{pref_sn_disable_stats} ) {
-			Slim::Utils::Timers::setTimer(
-				$params->{pref_sn_disable_stats},
-				time() + 30,
-				\&reportStatsDisabled,
-			);
-		}
-
 		if ( $params->{pref_sn_email} && $params->{pref_sn_password_sha} ) {
 		
 			# Verify username/password
@@ -101,17 +93,6 @@ sub handler {
 	$params->{prefs}->{pref_sn_sync}  = $prefs->get('sn_sync');
 
 	return $class->SUPER::handler($client, $params);
-}
-
-sub reportStatsDisabled {
-	my $isDisabled = shift;
-	
-	my $http = Slim::Networking::SqueezeNetwork->new(
-		sub {},
-		sub {},
-	);
-	
-	$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ) );
 }
 
 1;

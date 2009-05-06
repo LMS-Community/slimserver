@@ -242,6 +242,7 @@ sub init {
 		'jivealbumsort'		=> 'album',
 		# Server Settings - SqueezeNetwork
 		'sn_sync'               => 1,
+		'sn_disable_stats'		=> 0,
 		# Bug 5557, disable UPnP support by default
 		'noupnp'                => 1,
 	);
@@ -683,6 +684,20 @@ sub init {
 			$cookieJar->save();
 			logger('network.squeezenetwork')->debug( 'SN session has changed, removing cookies' );
 		}, 'sn_session' );
+		
+		$prefs->setChange( sub {
+			Slim::Utils::Timers::setTimer(
+				$_[1],
+				time() + 30,
+				sub {
+					my $isDisabled = shift;
+					my $http = Slim::Networking::SqueezeNetwork->new(sub {}, sub {});
+					
+					$http->get( $http->url( '/api/v1/stats/mark_disabled/' . $isDisabled ? 1 : 0 ) );					
+				},
+			);
+			
+		}, 'sn_disable_stats');
 	}
 	
 	# Rebuild Jive cache if VA setting is changed

@@ -138,14 +138,6 @@ sub handler {
 			Slim::Networking::SqueezeNetwork->init();
 		}
 
-		if ( defined $paramRef->{sn_disable_stats} ) {
-			Slim::Utils::Timers::setTimer(
-				$paramRef->{sn_disable_stats},
-				time() + 30,
-				\&Slim::Web::Settings::Server::SqueezeNetwork::reportStatsDisabled,
-			);
-		}
-		
 		# Disable iTunes and MusicIP plugins if they aren't being used
 		if ( !$paramRef->{useiTunes} ) {
 			Slim::Utils::PluginManager->disablePlugin('Slim::Plugin::iTunes::Plugin');
