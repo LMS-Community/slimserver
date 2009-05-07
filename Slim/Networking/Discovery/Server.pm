@@ -16,6 +16,7 @@ use Slim::Networking::Discovery::Players;
 use Slim::Utils::Log;
 use Slim::Utils::Network;
 use Slim::Utils::Timers;
+use Slim::Utils::Unicode;
 
 my $log = logger('network.protocol');
 
@@ -199,6 +200,8 @@ sub gotTLVResponse {
 	}
 
 	if ($server->{NAME}) {
+		
+		$server->{NAME} = Slim::Utils::Unicode::utf8decode($server->{NAME});
 		
 		$server_list->{$server->{NAME}}              = $server;
 		$server_list->{$server->{NAME}}->{timestamp} = time();

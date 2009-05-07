@@ -23,6 +23,12 @@
 	[% END %]
 
 	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_LIBRARY_NAME" desc="SETUP_LIBRARY_NAME_DESC" %]
+			<input type="text" class="stdedit" name="pref_libraryname" id="libraryname" value="[% prefs.pref_libraryname %]" size="40">
+		[% END %]
+	[% END %]
+
+	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_AUDIODIR" desc="SETUP_AUDIODIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="pref_audiodir" id="audiodir" value="[% prefs.pref_audiodir %]" size="40">
 		[% END %]

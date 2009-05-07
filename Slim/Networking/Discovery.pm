@@ -36,13 +36,17 @@ Return a 17 character hostname, suitable for display on a client device.
 =cut
 
 sub serverHostname {
-	my $hostname = Slim::Utils::Network::hostName();
+	my $hostname = $prefs->get('libraryname');
+	
+	if (!$hostname) {
+		$hostname = Slim::Utils::Network::hostName();
 
-	# may return several lines of hostnames, just take the first.	
-	$hostname =~ s/\n.*//;
-
-	# may return a dotted name, just take the first part
-	$hostname =~ s/\..*//;
+		# may return several lines of hostnames, just take the first.	
+		$hostname =~ s/\n.*//;
+	
+		# may return a dotted name, just take the first part
+		$hostname =~ s/\..*//;
+	}
 
 	# just take the first 16 characters, since that's all the space we have 
 	$hostname = substr $hostname, 0, 16;
@@ -112,7 +116,9 @@ sub gotDiscoveryRequest {
 
 my %TLVhandlers = (
 	# Requests
-	'NAME' => \&Slim::Utils::Network::hostName,        # send full host name - no truncation
+	'NAME' => sub { 
+		return $prefs->get('libraryname') || Slim::Utils::Network::hostName()
+	},											       # send full host name - no truncation
 	'IPAD' => sub { $::httpaddr },                     # send ipaddress as a string only if it is set
 	'JSON' => sub { $prefs->get('httpport') },         # send port as a string
 	# Info only

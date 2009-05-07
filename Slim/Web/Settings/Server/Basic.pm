@@ -22,7 +22,7 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'), qw(language audiodir playlistdir) );
+	return (preferences('server'), qw(language audiodir playlistdir libraryname) );
 }
 
 # FIXME - add importers back as these are in different namespaces... perhaps they should be in the server namespace...

@@ -6064,6 +6064,12 @@ SETUP_LANGUAGE_DESC
 	RU	Выберите язык программы SqueezeCenter. На языки, помеченные звездочкой (*), программа была переведена сообществом пользователей SqueezeCenter. Если вы найдете ошибки или захотите сотрудничать с нами, напишите по адресу <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 	SV	Välj språk för SqueezeCenter.  Språkversioner markerade med en asterisk(*) har översatts av SqueezeCenter-användare.  Om du stöter på problem eller om du vill hjälpa till med översättningen skickar du ett e-postmeddelande till <a ref="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 
+SETUP_LIBRARY_NAME
+	EN	Music library name
+
+SETUP_LIBRARY_NAME_DESC
+	EN	You can give your instance of SqueezeCenter a name. This will help you recognize your music library when browsing various music sources.
+
 SETUP_AUDIODIR
 	CS	Složka Hudba
 	DA	Musikmappe
