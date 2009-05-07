@@ -82,6 +82,12 @@ sub initDetails {
 	return $class->{osDetails};
 }
 
+sub initPrefs {
+	my ($class, $prefs) = @_;
+	
+	$prefs->{libraryname} = $ENV{'USER'} || $ENV{'LOGNAME'};
+}
+
 sub canFollowAlias { $canFollowAlias };
 
 sub initSearchPath {
