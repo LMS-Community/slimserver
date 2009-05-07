@@ -1020,7 +1020,7 @@ sub PRINT {
 
 	$Log::Log4perl::caller_depth++;
 
-	Slim::Utils::Log::logger('')->warn("Warning: ", @_);
+	Slim::Utils::Log::logger('')->error("Warning: ", @_);
 
 	$Log::Log4perl::caller_depth--;
 }
