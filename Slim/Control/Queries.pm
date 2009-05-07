@@ -1663,6 +1663,7 @@ sub musicfolderQuery {
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
 	my $partyMode = _partyModeCheck($request);
+	my $useContextMenu = $request->getParam('useContextMenu');
 	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	
 	# url overrides any folderId
@@ -1733,6 +1734,7 @@ sub musicfolderQuery {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
+					nextWindow => 'nowPlaying',
 				},
 				'add' => {
 					'player' => 0,
@@ -1854,6 +1856,7 @@ sub musicfolderQuery {
 								'cmd' => 'load',
 								'track_id' => $id,
 							},
+							nextWindow => 'nowPlaying',
 						},
 						'add' => {
 							'player' => 0,
@@ -1883,7 +1886,12 @@ sub musicfolderQuery {
 							},
 						};
 					}
-
+					if ($useContextMenu) {
+						$actions->{'more'} = $actions->{'go'};
+						$actions->{'go'} = $actions->{'play'};
+						$actions->{'addAction'} = 'more';
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+					}
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 
 					$listIndex++;
@@ -1907,6 +1915,7 @@ sub musicfolderQuery {
 								'cmd' => 'load',
 								'playlist_id' => $id,
 							},
+							nextWindow => 'nowPlaying',
 						},
 						'add' => {
 							'player' => 0,
@@ -1929,7 +1938,12 @@ sub musicfolderQuery {
 					if ($partyMode || $party) {
 						$request->addResultLoop($loopname, $chunkCount, 'playAction', 'go');
 					}
-
+					if ($useContextMenu) {
+						$actions->{'more'} = $actions->{'go'};
+						$actions->{'go'} = $actions->{'play'};
+						$actions->{'addAction'} = 'more';
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+					}
 				# not sure
 				} else {
 					
