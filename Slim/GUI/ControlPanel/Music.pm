@@ -26,6 +26,19 @@ sub new {
 	my $settingsBox = Wx::StaticBox->new($self, -1, string('MUSICSOURCE'));
 	my $settingsSizer = Wx::StaticBoxSizer->new( $settingsBox, wxVERTICAL );
 	
+	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME')), 0, wxLEFT, 10);
+	$settingsSizer->AddSpacer(5);
+	my $libraryname = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('libraryname') || '', [-1, -1], [300, -1]);
+	$settingsSizer->Add($libraryname, 0, wxLEFT | wxBOTTOM, 10);
+	
+	$parent->addStatusListener($libraryname);
+	$parent->addApplyHandler($libraryname, sub {
+		if (shift == SC_STATE_RUNNING) {
+			Slim::GUI::ControlPanel->setPref('libraryname', $libraryname->GetValue());
+		}
+	});
+	$settingsSizer->AddSpacer(5);
+	
 	# folder selectors
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT, 10);
 	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'), 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
@@ -43,12 +56,10 @@ sub new {
 		$parent->addStatusListener($useItunes);
 		$useItunes->SetValue(Slim::GUI::ControlPanel->getPref('itunes', 'itunes.prefs'));
 
-		$parent->addApplyHandler($self, sub {
-
+		$parent->addApplyHandler($useItunes, sub {
 			if (shift == SC_STATE_RUNNING) {
 				Slim::GUI::ControlPanel->setPref('plugin.itunes:itunes', $useItunes->IsChecked() ? 1 : 0);
 			}
-
 		});
 	}
 
