@@ -75,6 +75,24 @@ sub initSearchPath {
 
 sub initMySQL {}
 
+sub initPrefs {
+	my ($class, $prefs) = @_;
+
+	# try to find the user's real name instead of the username
+	$prefs->{libraryname} = sub {
+		my $username = $ENV{'USERNAME'} || $ENV{'USER'} || $ENV{'LOGNAME'};
+
+		my %userinfo;
+
+		if ($username) {
+			require Win32API::Net;
+			Win32API::Net::UserGetInfo($ENV{'LOGONSERVER'}, $username, 10, \%userinfo);
+		}
+		
+		return $userinfo{fullName} || $username;
+	};
+}
+
 sub dirsFor {
 	my ($class, $dir) = @_;
 	
