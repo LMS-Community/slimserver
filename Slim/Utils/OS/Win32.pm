@@ -80,6 +80,10 @@ sub initPrefs {
 
 	# try to find the user's real name instead of the username
 	$prefs->{libraryname} = sub {
+
+		# WHS is always running SC as the SYSTEM user - return immediately
+		return '' if $class->{osDetails}->{isWHS};
+
 		my $username = $ENV{'USERNAME'} || $ENV{'USER'} || $ENV{'LOGNAME'};
 
 		my %userinfo;
