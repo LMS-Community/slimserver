@@ -1769,8 +1769,6 @@ sub musicfolderQuery {
 		$request->addResult("rescan", 1);
 	}
 
-	my $totalCount = _fixCount($insertAll, \$index, \$quantity, $count);
-
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
@@ -1779,9 +1777,6 @@ sub musicfolderQuery {
 		my $chunkCount = 0;
 		$request->addResult( 'offset', $index ) if $menuMode;
 		
-		if ($insertAll) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname);
-		}
 		my $listIndex = 0;
 
 		for my $filename (@$items[$start..$end]) {
@@ -2012,10 +2007,10 @@ sub musicfolderQuery {
 		}
 	}
 
-	if ($totalCount == 0 && $menuMode) {
+	if ($count == 0 && $menuMode) {
 		_jiveNoResults($request);
 	} else {
-		$request->addResult('count', $totalCount);
+		$request->addResult('count', $count);
 	}
 
 	# cache results in case the same folder is queried again shortly 
@@ -4002,7 +3997,6 @@ sub titlesQuery {
 	}
 
 	$count += 0;
-	my $totalCount = _fixCount( $insertAll, \$index, \$quantity, $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
@@ -4015,12 +4009,6 @@ sub titlesQuery {
 	if ($valid) {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-
-		# first PLAY ALL item
-		if ( $insertAll ) {
-			$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => ( $menuStyle eq 'album' ) );
-		}
-
 
 		my $listIndex = 0;
 
@@ -4108,27 +4096,16 @@ sub titlesQuery {
 			}
 		}
 
-		if ($menuMode) {
-			# Add Favorites as the last item, if applicable
-			my $lastChunk;
-			if ( $end == $count - 1 && $chunkCount < $request->getParam('_quantity') ) {
-				$lastChunk = 1;
-			}
-			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
-		}
-	}
-	elsif ($totalCount > 1 && $menuMode) {
-		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
 
-	if ($totalCount == 0 && $menuMode) {
+	if ($count == 0 && $menuMode) {
 		# this is an empty resultset
 		_jiveNoResults($request);
 	} else {
-		$request->addResult('count', $totalCount);
+		$request->addResult('count', $count);
 	}
 
-	if ( $menuMode && $search && $totalCount > 0 && $start == 0 && !$request->getParam('cached_search') ) {
+	if ( $menuMode && $search && $count > 0 && $start == 0 && !$request->getParam('cached_search') ) {
 		my $jiveSearchCache = {
 			text        => $request->string('SONGS') . ": " . $search,
 			actions     => {
