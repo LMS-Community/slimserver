@@ -383,7 +383,6 @@ sub _cliQuery_done {
 
 					# decide what is the next step down
 					# generally, we go nowhere after this, so we get menu:nowhere...
-
 					# build the base element
 					my $base = {
 						'actions' => {
@@ -458,27 +457,16 @@ sub _cliQuery_done {
 					}
 										
 					if ($menuMode) {
-						my ($play_string, $add_string);
-						if ( $hash{duration} ) {
-							# Items with a duration are songs
-							$play_string = $request->string('JIVE_PLAY_THIS_SONG');
-							$add_string  = $request->string('JIVE_ADD_THIS_SONG');
-						}
-						else {
-							# Items without duration are streams
-							$play_string = $request->string('PLAY');
-							$add_string  = $request->string('ADD');
-						}
 						
 						# setup hash for different items between play and add
 						my %items = (
 							'play' => {
-								'string'  => $play_string,
+								'string'  => $request->string('PLAY'),
 								'style'   => 'itemplay',
 								'cmd'     => 'play',
 							},
 							'add' => {
-								'string'  => $add_string,
+								'string'  => $request->string('ADD'),
 								'style'   => 'itemadd',
 								'cmd'     => 'add',
 							},
@@ -843,10 +831,11 @@ sub _cliQuery_done {
 				# Bug 6874, add a "Play All" item if list contains more than 1 playable item with duration
 				if ( $menuMode && $insertAll ) {
 					my $actions = {
-						do => {
+						go => {
 							player => 0,
 							cmd    => [ $query, 'playlist', 'playall' ],
 							params => $params,
+							nextWindow => 'nowPlaying',
 						},
 						add => {
 							player => 0,
@@ -855,10 +844,10 @@ sub _cliQuery_done {
 							},
 						};
 						
-					$actions->{do}->{params}->{item_id}  = $item_id;
+					$actions->{go}->{params}->{item_id}  = $item_id;
 					$actions->{add}->{params}->{item_id} = $item_id;
 					
-					$actions->{play} = $actions->{do};
+					$actions->{play} = $actions->{go};
 						
 					my $text = $request->string('JIVE_PLAY_ALL');
 								
@@ -895,6 +884,7 @@ sub _cliQuery_done {
 
 					my $hasAudio = defined(hasAudio($item)) + 0;
 					$hash{isaudio} = $hasAudio;
+					my $touchToPlay = defined(touchToPlay($item)) + 0;
 					
 					# Bug 7684, set hasitems to 1 if any of the following are true:
 					# type is not text or audio
@@ -957,6 +947,11 @@ sub _cliQuery_done {
 							};
 						}
 
+						my %merged = %$params;
+						if ( scalar keys %{$itemParams} ) {
+							%merged = (%{$params}, %{$itemParams});
+						}
+
 						if ( $item->{image} ) {
 							$request->addResultLoop( $loopname, $cnt, 'icon', $item->{image} );
 							$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' });
@@ -1011,11 +1006,7 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'input', $input );
 						}
-						elsif ( !$isPlayable ) {
-							my %merged = %$params;
-							if ( scalar keys %{$itemParams} ) {
-								%merged = (%{$params}, %{$itemParams});
-							}
+						elsif ( !$isPlayable && !$touchToPlay ) {
 							my $actions = {
 								'go' => {
 									'cmd' => [ $query, 'items' ],
@@ -1033,6 +1024,33 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'go');
+						}
+						elsif ( $touchToPlay ) {
+							my $actions = {
+								more => {
+									cmd         => [ $query, 'items' ],
+									params      => \%merged,
+									itemsParams => 'params',
+								},
+								go => {
+									player      => 0,
+									cmd         => [$query, 'playlist', 'play'],
+									itemsParams => 'params',
+									params      => $itemParams,
+									nextWindow  => 'nowPlaying',
+								},
+								'add-hold' => {
+									player      => 0,
+									cmd         => [$query, 'playlist', 'insert'],
+									itemsParams => 'params',
+									params      => $itemParams,
+								}
+							};
+							$actions->{'add'} = $actions->{'more'};
+							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
+							$request->addResultLoop( $loopname, $cnt, 'playAction', 'go');
+							$request->addResultLoop( $loopname, $cnt, 'addAction', 'more');
+							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 						}
 						
 						if ( scalar keys %{$itemParams} && $isPlayable ) {
@@ -1201,6 +1219,22 @@ sub hasAudio {
 	}
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/ ) {
 		return $item->{'playlist'} || $item->{'url'} || scalar @{ $item->{outline} || [] };
+	}
+	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
+		return $item->{'enclosure'}->{'url'};
+	}
+	else {
+		return undef;
+	}
+}
+
+sub touchToPlay {
+	my $item = shift;
+	if ( $item->{'play'} ) {
+		return $item->{'play'};
+	}
+	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio)$/ ) {
+		return $item->{'url'} || scalar @{ $item->{outline} || [] };
 	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
 		return $item->{'enclosure'}->{'url'};

@@ -3529,7 +3529,7 @@ sub statusQuery {
 			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
 			if ($menuMode) {
-				_addJiveSong($request, $loop, 0, 1, $track);
+				_addJiveSong($request, $loop, 0, 1, $track, $useContextMenu);
 			}
 			else {
 				_addSong($request, $loop, 0, 
@@ -4027,6 +4027,9 @@ sub titlesQuery {
 				}
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			
+				if ($useContextMenu) {
+					$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+				}
 			
 				# open a window with icon etc...
 			
@@ -4540,6 +4543,7 @@ sub _addJiveSong {
 	my $count     = shift; # loop index
 	my $current   = shift;
 	my $track     = shift || return;
+	my $useContextMenu = shift;
 	
 	my $songData  = _songData(
 		$request,
@@ -4630,6 +4634,9 @@ sub _addJiveSong {
 		'playlist_index' => $count,
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
+	if ($useContextMenu) {
+		$request->addResultLoop($loop, $count, 'style', 'itemplay');
+	}
 }
 
 
