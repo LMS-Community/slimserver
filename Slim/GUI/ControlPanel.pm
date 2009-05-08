@@ -78,6 +78,11 @@ sub new {
 	$notebook->AddPage(Slim::GUI::ControlPanel::Maintenance->new($notebook, $self, $args), string('CONTROLPANEL_MAINTENANCE'));
 	$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
 	
+	# if we're running for the first time, show the SN page
+	if (!Slim::GUI::ControlPanel->getPref('wizardDone')) {
+		$notebook->SetSelection(2);
+	}
+	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	
