@@ -212,28 +212,49 @@ sub menuQuery {
 		return;
 	}
 
-	my $client        = $request->client() || 0;
+	my $client = $request->client() || 0;
+	my $dummy;
+	
+	if ( !$client ) {
+		# if this isn't a player, create a dummy client object
+		# so we can still return as much of the menu as possible
+		require Slim::Player::Dummy;
+		$client = Slim::Player::Dummy->new;
+		$dummy  = 1;
+	}
 
 	# send main menu notification
-	mainMenu($client);
+	my $menu = mainMenu($client);
+	
+	# Return results directly and destroy the cilent if it was a dummy
+	if ( $dummy ) {
+		$request->setRawResults( {
+			count     => scalar @{$menu},
+			offset    => 0,
+			item_loop => $menu,
+		} );
+		
+		$client->forgetClient;
+	}
+	else {
+		# a single dummy item to keep jive happy with _merge
+		my $upgradeText = 
+		"Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and SqueezeCenter, and this requires a newer version of firmware.";
+	        my $upgradeMessage = {
+			text      => 'READ ME',
+			weight    => 1,
+	                offset    => 0,
+	                count     => 1,
+	                window    => { titleStyle => 'settings' },
+	                textArea =>  $upgradeText,
+	        };
 
-	# a single dummy item to keep jive happy with _merge
-	my $upgradeText = 
-	"Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and SqueezeCenter, and this requires a newer version of firmware.";
-        my $upgradeMessage = {
-		text      => 'READ ME',
-		weight    => 1,
-                offset    => 0,
-                count     => 1,
-                window    => { titleStyle => 'settings' },
-                textArea =>  $upgradeText,
-        };
-
-        $request->addResult("count", 1);
-	$request->addResult("offset", 0);
-	$request->setResultLoopHash('item_loop', 0, $upgradeMessage);
+		$request->addResult("count", 1);
+		$request->addResult("offset", 0);
+		$request->setResultLoopHash('item_loop', 0, $upgradeMessage);
+	}
+	
 	$request->setStatusDone();
-
 }
 
 sub mainMenu {
@@ -426,6 +447,8 @@ sub mainMenu {
 	}
 
 	_notifyJive(\@menu, $client);
+	
+	return \@menu;
 }
 
 sub jiveSetAlbumSort {

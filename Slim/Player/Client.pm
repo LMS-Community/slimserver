@@ -353,7 +353,7 @@ Returns an array of all client objects.
 =cut
 
 sub clients {
-	return values %clientHash;
+	return grep { !$_->hidden } values %clientHash;
 }
 
 =head2 resetPrefs()
@@ -379,7 +379,7 @@ Returns the number of known clients.
 =cut
 
 sub clientCount {
-	return scalar(keys %clientHash);
+	return scalar( clients() );
 }
 
 =head2 clientIPs()
@@ -401,7 +401,7 @@ Returns a random client object.
 sub clientRandom {
 
 	# the "randomness" of this is limited to the hashing mysteries
-	return (values %clientHash)[0];
+	return ( clients() )[0];
 }
 
 =head1 CLIENT (INSTANCE) METHODS
@@ -1402,5 +1402,7 @@ sub maxSupportedSamplerate {
 }
 
 sub canDecodeRhapsody { 0 };
+
+sub hidden { 0 }
 
 1;
