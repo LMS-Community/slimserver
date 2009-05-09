@@ -1885,7 +1885,7 @@ sub musicfolderQuery {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
 						$actions->{'addAction'} = 'more';
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
 					}
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 
@@ -1937,7 +1937,7 @@ sub musicfolderQuery {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
 						$actions->{'addAction'} = 'more';
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
 					}
 				# not sure
 				} else {
@@ -3538,7 +3538,7 @@ sub statusQuery {
 			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
 			if ($menuMode) {
-				_addJiveSong($request, $loop, 0, 1, $track, $useContextMenu);
+				_addJiveSong($request, $loop, 0, 1, $track);
 			}
 			else {
 				_addSong($request, $loop, 0, 
@@ -4030,7 +4030,7 @@ sub titlesQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			
 				if ($useContextMenu) {
-					$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+					$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
 				}
 			
 				# open a window with icon etc...
@@ -4534,7 +4534,6 @@ sub _addJiveSong {
 	my $count     = shift; # loop index
 	my $current   = shift;
 	my $track     = shift || return;
-	my $useContextMenu = shift;
 	
 	my $songData  = _songData(
 		$request,
@@ -4552,15 +4551,23 @@ sub _addJiveSong {
 		$request->addResult('current_title');
 	}
 
-	$text .= ( defined $album ) ? "\n$album" : '';
-	$text .= ( defined $artist ) ? "\n$artist" : '';
+	my @secondLine;
+	if (defined $artist) {
+		push @secondLine, $artist;
+	}
+	if (defined $album) {
+		push @secondLine, $album;
+	}
 
 	# Special case for Internet Radio streams, if the track is remote, has no duration,
 	# has title metadata, and has no album metadata, display the station title as line 1 of the text
 	if ( $songData->{remote_title} && !$album && $track->remote && !$track->secs ) {
-		$text = $text . "\n" . $songData->{remote_title};
+		push @secondLine, $songData->{remote_title};
 		$request->addResult('current_title');
 	}
+
+	my $secondLine = join(' - ', @secondLine);
+	$text .= "\n" . $secondLine;
 
 	# Bug 7443, check for a track cover before using the album cover
 	my $iconId = $songData->{artwork_track_id};
@@ -4625,9 +4632,7 @@ sub _addJiveSong {
 		'playlist_index' => $count,
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
-	if ($useContextMenu) {
-		$request->addResultLoop($loop, $count, 'style', 'itemplay');
-	}
+	$request->addResultLoop($loop, $count, 'style', 'item_play');
 }
 
 
@@ -4814,7 +4819,7 @@ sub _jiveGenreAllAlbums {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => "$genreString" });
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
@@ -5084,7 +5089,7 @@ sub _playAll {
 		my %items = ( 	
 			'play' => {
 					'string'      => $request->string('JIVE_PLAY_ALL'),
-					'style'       => 'itemplay',
+					'style'       => 'item_play',
 					'playAction'  => 'playtracks',
 					'addAction'   => 'addtracks',
 					'playCmd'     => [ 'playlistcontrol' ],
@@ -5142,7 +5147,7 @@ sub _playAll {
 		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		}
 
