@@ -4544,6 +4544,7 @@ sub _addJiveSong {
 	$request->addResultLoop($loop, $count, 'trackType', $track->remote ? 'radio' : 'local');
 	
 	my $text   = $songData->{title};
+	my $title  = $text;
 	my $album  = $songData->{album};
 	my $artist = $songData->{artist};
 	
@@ -4563,6 +4564,7 @@ sub _addJiveSong {
 	# has title metadata, and has no album metadata, display the station title as line 1 of the text
 	if ( $songData->{remote_title} && !$album && $track->remote && !$track->secs ) {
 		push @secondLine, $songData->{remote_title};
+		$album = $songData->{remote_title};
 		$request->addResult('current_title');
 	}
 
@@ -4584,6 +4586,11 @@ sub _addJiveSong {
 		$request->addResultLoop( $loop, $count, 'icon', $songData->{artwork_url} );
 	}
 
+	# split to three discrete elements for NP screen
+	$request->addResultLoop($loop, $count, 'track', $title);
+	$request->addResultLoop($loop, $count, 'album', $album);
+	$request->addResultLoop($loop, $count, 'artist', $artist);
+	# deliver as one formatted multi-line string for NP playlist screen
 	$request->addResultLoop($loop, $count, 'text', $text);
 
 	# Add trackinfo menu action for remote URLs
