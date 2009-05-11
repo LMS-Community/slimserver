@@ -35,7 +35,6 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	
-	
 	if ($os->name eq 'win') {
 
 		# check for SC updates
@@ -48,7 +47,10 @@ sub new {
 		$updateSizer->Add($updateLabel, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
 		# update button
+		my $btnsizer = Wx::StdDialogButtonSizer->new();
 		my $btnUpdate = Wx::Button->new($self, -1, string($ready ? 'CONTROLPANEL_INSTALL_UPDATE' : 'CONTROLPANEL_CHECK_UPDATE'));
+		$btnsizer->SetAffirmativeButton($btnUpdate);
+		$btnsizer->Realize();
 
 		EVT_BUTTON( $self, $btnUpdate, sub {
 			
@@ -99,7 +101,7 @@ sub new {
 			}
 		});
 			
-		$updateSizer->Add($btnUpdate, 0, wxALL, 10);
+		$updateSizer->Add($btnsizer, 0, wxALL | wxGROW, 10);
 		
 		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);	
 	}

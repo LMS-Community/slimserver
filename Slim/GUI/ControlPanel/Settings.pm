@@ -10,7 +10,7 @@ use base 'Wx::Panel';
 
 use Encode;
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
+use Wx::Event qw(EVT_BUTTON);
 
 use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;

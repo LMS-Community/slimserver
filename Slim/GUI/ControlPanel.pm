@@ -41,7 +41,7 @@ sub new {
 		-1,
 		string('CONTROLPANEL_TITLE'),
 		[-1, -1],
-		Slim::Utils::OSDetect::isWindows() ? [550, 600] : [700, 700],
+		Slim::Utils::OSDetect::isWindows() ? [550, 610] : [700, 700],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CONTROLPANEL_TITLE'),
 	);

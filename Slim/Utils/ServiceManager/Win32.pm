@@ -142,7 +142,7 @@ sub start {
 			0,
 			DETACHED_PROCESS | CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
 			'.'
-		);
+		) if $appExe;
 
 	}
 

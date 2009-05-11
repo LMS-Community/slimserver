@@ -9,7 +9,7 @@ use strict;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON);
+use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
 
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
