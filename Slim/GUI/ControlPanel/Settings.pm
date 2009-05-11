@@ -123,13 +123,6 @@ sub new {
 	$self->SetSizer($mainSizer);	
 	
 	
-	# let's mark this instance configured
-	$parent->addApplyHandler(\'wizardDone', sub {
-		if (shift == SC_STATE_RUNNING) {
-			Slim::GUI::ControlPanel->setPref('wizardDone', 1);
-		}
-	});
-	
 	return $self;
 }
 

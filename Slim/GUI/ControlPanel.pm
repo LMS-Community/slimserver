@@ -78,10 +78,7 @@ sub new {
 	
 	# if we're running for the first time, show the SN page
 	if ( ($svcMgr->checkServiceState() == SC_STATE_RUNNING) && !Slim::GUI::ControlPanel->getPref('wizardDone')) {
-
-		$notebook->SetSelection(2);
 		Slim::GUI::ControlPanel->setPref('wizardDone', 1);
-
 	}
 	
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
