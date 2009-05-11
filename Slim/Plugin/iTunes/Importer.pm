@@ -114,7 +114,7 @@ sub resetState {
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChecksum', '');
 	
 	# Delete the iTunes artwork cache
-	my $cachedir = catdir( Slim::Utils::OSDetect::dirsFor('cache'), 'iTunesArtwork' );
+	my $cachedir = catdir( preferences('server')->get('cachedir'), 'iTunesArtwork' );
 	if ( -d $cachedir ) {
 		rmtree $cachedir;
 	}

@@ -9,6 +9,7 @@ use File::Path qw(mkpath);
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 my $log = logger('plugin.itunes');
 
@@ -30,7 +31,7 @@ sub startArtworkScan {
 	
 	# Export all downloaded artwork to cache directory
 	# This full export is only performed once per 'wipe'
-	my $cachedir = catdir( Slim::Utils::OSDetect::dirsFor('cache'), 'iTunesArtwork' );
+	my $cachedir = catdir( preferences('server')->get('cachedir'), 'iTunesArtwork' );
 	if ( !-d $cachedir ) {
 		mkpath($cachedir) or do {
 			logError("Unable to create iTunes artwork cache dir $cachedir");

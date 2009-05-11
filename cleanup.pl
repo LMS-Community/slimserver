@@ -136,7 +136,7 @@ sub getFolderList {
 	my $args = shift;
 	
 	my @folders;
-	my $cacheFolder = $os->dirsFor('cache');
+	my $cacheFolder = getPref('cachedir') || $os->dirsFor('cache');
 
 	push @folders, _target('cache', 'cache') if ($args->{all} || $args->{cache});
 	
