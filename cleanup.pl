@@ -21,7 +21,7 @@ use utf8;
 
 use constant SLIM_SERVICE => 0;
 use constant SCANNER => 0;
-use constant DEBUG => 0;
+use constant DEBUG => 1;
 
 use Slim::Utils::OSDetect;
 use Slim::Utils::Light;

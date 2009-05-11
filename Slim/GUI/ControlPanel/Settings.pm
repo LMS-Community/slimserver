@@ -11,214 +11,115 @@ use base 'Wx::Panel';
 use Encode;
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
-use File::Spec::Functions qw(catfile);
-use LWP::Simple;
 
 use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
-use Slim::Utils::OSDetect;
 
-my $os = Slim::Utils::OSDetect::getOS();
-my $updateUrl;
-my $versionFile = catfile( scalar($os->dirsFor('updates')), 'squeezecenter.version' );
-
-if ($os->name eq 'win') {
-	require Win32::Process;
-}
 
 sub new {
 	my ($self, $nb, $parent) = @_;
 
 	$self = $self->SUPER::new($nb);
 
-	my $svcMgr = Slim::Utils::ServiceManager->new();
-
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-	# startup mode
-	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
+	my $credentialsBox = Wx::StaticBox->new($self, -1, string('CONTROLPANEL_SN_CREDENTIALS'));
+	my $snSizer = Wx::StaticBoxSizer->new( $credentialsBox, wxVERTICAL );
 
-	if ($noAdminWarning) {
-		my $string = string($noAdminWarning);
-		$string    =~ s/\\n/\n/g;
+	my $credentialsSizer = Wx::FlexGridSizer->new(2, 3, 5, 10);
+	$credentialsSizer->AddGrowableCol(1, 1);
+	$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
+
+	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')), 0, wxTOP, 3);
+	my $username = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_email') || '', [-1, -1], [150, -1]);
+	$credentialsSizer->Add($username);
+	$parent->addStatusListener($username);
+
+	$credentialsSizer->Add(Wx::HyperlinkCtrl->new(
+		$self, 
+		-1, 
+		string('SETUP_SN_NEED_ACCOUNT'), 
+		'http://www.squeezenetwork.com/',
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_DEFAULT_STYLE,
+	), 0, wxTOP, 3);
+
+	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP, 3);
+	my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
+	$credentialsSizer->Add($password);
+	$parent->addStatusListener($password);
+
+	$credentialsSizer->Add(Wx::HyperlinkCtrl->new(
+		$self, 
+		-1, 
+		string('SETUP_SN_FORGOT_PASSWORD'), 
+		'http://www.squeezenetwork.com/user/forgotPassword',
+		[-1, -1], 
+		[-1, -1], 
+		wxHL_DEFAULT_STYLE,
+	), 0, wxTOP, 3);
+
+	$parent->addApplyHandler($username, sub {
 		
-		$mainSizer->Add(Wx::StaticText->new($self, -1, $string), 0, wxALL, 10);
-	}
-
-	my $startupBox = Wx::StaticBox->new($self, -1, string('CONTROLPANEL_STARTUP_OPTIONS'));
-	my $startupSizer = Wx::StaticBoxSizer->new( $startupBox, wxVERTICAL );
-
-	@startupOptions = map { string($_) } @startupOptions;	
-	
-	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
-	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
-	$lbStartupMode->Enable($svcMgr->canSetStartupType());
-	
-	$parent->addApplyHandler($lbStartupMode, sub {
-		$svcMgr->setStartupType($lbStartupMode->GetSelection());
-	});
+		return unless $username->GetValue() && $password->GetValue();
 		
-	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
-	
-	if ($os->name eq 'win') {
-		
-		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
-		$credentialsSizer->AddGrowableCol(1, 1);
-		$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
-	
-		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')));
-		my $username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1]);
-		$credentialsSizer->Add($username);
-	
-		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')));
-		my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
-		$credentialsSizer->Add($password);
-	
-		$startupSizer->Add($credentialsSizer, 0, wxALL, 10);
-		
-		my $handler = sub {
-			$username->Enable($lbStartupMode->GetSelection() == 2);
-			$password->Enable($lbStartupMode->GetSelection() == 2);
-		};
-		
-		&$handler();
-		EVT_CHOICE($self, $lbStartupMode, $handler);
+		my $validated = Slim::GUI::ControlPanel->serverRequest(
+			'setsncredentials',
+			$username->GetValue(),
+			$password->GetValue(),
+		);
 
-		# overwrite action handler for startup mode
-		$parent->addApplyHandler($lbStartupMode, sub {
-			$svcMgr->setStartupType(
-				$lbStartupMode->GetSelection(),
-				$username->GetValue(),
-				$password->GetValue(),
-			);
-		});
-			
-	}
-
-
-	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
-
-	# Start/Stop button
-	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
-	EVT_BUTTON( $self, $btnStartStop, sub {
-		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
-			Slim::GUI::ControlPanel->serverRequest('stopserver');
-		}
-		
-		# starting SC is heavily platform dependant
-		else {
-			$svcMgr->start();
-			$parent->checkServiceStatus();
+		# validation failed
+		if (!$validated || !$validated->{validated}) {
+			my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || 'Failed', string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
+			$msgbox->ShowModal();
 		}
 	});
 
-	$parent->addStatusListener($btnStartStop, sub {
-		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
-		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
+	$snSizer->Add($credentialsSizer, 0, wxALL, 10);
+
+	my $statsDesc = string('SETUP_SN_REPORT_STATS_DESC');
+	$statsDesc =~ s/<.*?>//g;
+	
+	my ($width) = $parent->GetSizeWH();
+	$width -= 80;
+	$statsDesc = Wx::StaticText->new($self, -1, $statsDesc);
+	$statsDesc->Wrap($width);
+	$snSizer->Add($statsDesc, 0, wxEXPAND | wxLEFT | wxTOP, 10);
+
+
+	my $lbStatsSN = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('SETUP_SN_REPORT_STATS_ENABLE'), string('SETUP_SN_REPORT_STATS_DISABLE') ]);
+	$lbStatsSN->SetSelection(Slim::GUI::ControlPanel->getPref('sn_disable_stats') ? 1 : 0);
+	
+	$parent->addStatusListener($lbStatsSN);
+	$parent->addApplyHandler($lbStatsSN, sub {
+		Slim::GUI::ControlPanel->setPref('sn_disable_stats', $lbStatsSN->GetSelection());
 	});
-	$startBtnSizer->Add($btnStartStop, 0);
-
-	my $btnStartSafeMode = Wx::Button->new($self, -1, string('RUN_FAILSAFE'));
-	EVT_BUTTON( $self, $btnStartSafeMode, sub {
-		$svcMgr->start('--failsafe');
-		$parent->checkServiceStatus();
-	});
-
-	$parent->addStatusListener($btnStartSafeMode, sub {
-		$btnStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
-	});
-	$startBtnSizer->Add($btnStartSafeMode, 0, wxLEFT, 10);
-
-	$startupSizer->Add($startBtnSizer, 0, wxALL | wxGROW, 10);
-	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
 	
-	my $logBox = Wx::StaticBox->new($self, -1, string('DEBUGGING_SETTINGS'));
-	my $logSizer = Wx::StaticBoxSizer->new($logBox, wxVERTICAL);	
-	
-	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log'), 0, wxLEFT | wxRIGHT | wxTOP, 10);
-	$logSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log'), 0, wxALL, 10);
-	
-	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
-	
-	
-	if ($os->name eq 'win') {
-
-		# check for SC updates
-		my $updateBox = Wx::StaticBox->new($self, -1, string('SETUP_CHECKVERSION')); 
-		my $updateSizer = Wx::StaticBoxSizer->new($updateBox, wxVERTICAL);
-	
-		my $ready = $self->_checkForUpdate();
-
-		my $updateLabel = Wx::StaticText->new($self, -1, string($ready ? 'CONTROLPANEL_UPDATE_AVAILABLE' : 'CONTROLPANEL_NO_UPDATE_AVAILABLE'));	
-		$updateSizer->Add($updateLabel, 0, wxLEFT | wxRIGHT | wxTOP, 10);
-	
-		# update button
-		my $btnUpdate = Wx::Button->new($self, -1, string($ready ? 'CONTROLPANEL_INSTALL_UPDATE' : 'CONTROLPANEL_CHECK_UPDATE'));
-
-		EVT_BUTTON( $self, $btnUpdate, sub {
-			
-			if (my $installer = _checkForUpdate()) {
-
-				my $processObj;
-				Win32::Process::Create(
-					$processObj,
-					$installer,
-					'',
-					0,
-					Win32::Process::DETACHED_PROCESS() | Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
-					'.'
-				) && exit;				
-				
-			}
-
-			elsif ($updateUrl) {
-				Wx::LaunchDefaultBrowser($updateUrl);
-				exit;
-			}
-
-			else {
-
-				my $check = get( sprintf(
-					"http://update.squeezenetwork.com/update/?version=%s&lang=%s&os=%s",
-					$::VERSION,
-					$os->getSystemLanguage(),
-					$os->installerOS(),
-				));
-				chomp($check) if $check;
-
-				if ($check) {
-					my @parts = split /\. /, $check;
-					
-					if (@parts > 1 && $parts[1] =~ /href="(.*?)"/) {
-						$updateUrl = $1;
-						
-						$updateLabel->SetLabel( decode("utf8", $parts[0]) );
-						$btnUpdate->SetLabel(string('CONTROLPANEL_DOWNLOAD_UPDATE'));
-					}
-				}
-				
-				else {
-					$updateLabel->SetLabel(string('CONTROLPANEL_NO_UPDATE_AVAILABLE'));
-					$btnUpdate->SetLabel(string('CONTROLPANEL_CHECK_UPDATE'));
-				}
-			}
-		});
-			
-		$updateSizer->Add($btnUpdate, 0, wxALL, 10);
+	$snSizer->Add($lbStatsSN, 0, wxALL, 10);
 		
-		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);	
-	}
+	$mainSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
+
+
+	my $musicLibraryBox = Wx::StaticBox->new($self, -1, string('SETUP_LIBRARY_NAME'));
+	my $musicLibrarySizer = Wx::StaticBoxSizer->new( $musicLibraryBox, wxVERTICAL );
 	
-	$mainSizer->AddStretchSpacer();
+	$musicLibrarySizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME_DESC')), 0, wxLEFT, 10);
+	$musicLibrarySizer->AddSpacer(10);
+	my $libraryname = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('libraryname') || '', [-1, -1], [300, -1]);
+	$musicLibrarySizer->Add($libraryname, 0, wxLEFT | wxBOTTOM | wxGROW, 10);
 	
-	my $webButtonsSizer = Wx::StdDialogButtonSizer->new();
-	
-	$webButtonsSizer->Add(Slim::GUI::Settings::WebButton->new($self, $parent, '/settings/index.html', 'ADVANCED_SETTINGS'), 0, wxRIGHT, 10);
-	$webButtonsSizer->Add(Slim::GUI::Settings::WebButton->new($self, $parent, '/', 'WEB_CONTROL'));
-	
-	$mainSizer->Add($webButtonsSizer, 0, wxALIGN_BOTTOM | wxALIGN_RIGHT | wxALL, 10);
-	
+	$parent->addStatusListener($libraryname);
+	$parent->addApplyHandler($libraryname, sub {
+		if (shift == SC_STATE_RUNNING) {
+			Slim::GUI::ControlPanel->setPref('libraryname', $libraryname->GetValue());
+		}
+	});
+
+	$mainSizer->Add($musicLibrarySizer, 0, wxALL | wxGROW, 10);		
+
 	$self->SetSizer($mainSizer);	
 	
 	
@@ -229,88 +130,6 @@ sub new {
 		}
 	});
 	
-	return $self;
-}
-
-sub _checkForUpdate {
-	
-	open(UPDATEFLAG, $versionFile) || return '';
-	
-	my $installer = '';
-	
-	while ( <UPDATEFLAG> ) {
-
-		chomp;
-		
-		if (/SqueezeCenter.*/) {
-			$installer = $_;
-			last;
-		}
-	}
-		
-	close UPDATEFLAG;
-	
-	return $installer && -e $installer ? $installer : 0;
-}
-
-1;
-
-
-package Slim::GUI::Settings::LogLink;
-
-use base 'Wx::HyperlinkCtrl';
-
-use Wx qw(:everything);
-use File::Spec::Functions qw(catfile);
-
-use Slim::GUI::ControlPanel;
-
-sub new {
-	my ($self, $page, $parent, $file) = @_;
-
-	my $log = catfile($os->dirsFor('log'), $file);
-		
-	$self = $self->SUPER::new(
-		$page,
-		-1, 
-		$log, 
-		$os->name eq 'mac' ? Slim::GUI::ControlPanel->getBaseUrl() . "/$file?lines=500" : 'file://' . $log, 
-		[-1, -1], 
-		[-1, -1], 
-		wxHL_DEFAULT_STYLE,
-	);
-	
-	$parent->addStatusListener($self) if $os->name eq 'mac';
-
-	return $self;
-}
-
-1;
-
-
-package Slim::GUI::Settings::WebButton;
-
-use base 'Wx::Button';
-
-use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON);
-
-use Slim::GUI::ControlPanel;
-use Slim::Utils::Light;
-
-sub new {
-	my ($self, $page, $parent, $url, $label) = @_;
-	
-	$self = $self->SUPER::new($page, -1, string($label));
-	
-	$parent->addStatusListener($self);
-	
-	$url = Slim::GUI::ControlPanel->getBaseUrl() . $url;
-
-	EVT_BUTTON( $page, $self, sub {
-		Wx::LaunchDefaultBrowser($url);
-	});
-
 	return $self;
 }
 

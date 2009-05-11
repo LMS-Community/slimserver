@@ -6068,7 +6068,7 @@ SETUP_LIBRARY_NAME
 	EN	Music library name
 
 SETUP_LIBRARY_NAME_DESC
-	EN	You can give your instance of SqueezeCenter a name. This will help you recognize your music library when browsing various music sources.
+	EN	This is how your music library will be named in your Squeezebox's "My Music" menu.
 
 SETUP_AUDIODIR
 	CS	Složka Hudba
@@ -12719,9 +12719,6 @@ FOR
 	RU	для
 	SV	för
 	ZH_CN	为
-
-WEB_CONTROL
-	EN	Web Control
 
 PLAYER_SETTINGS
 	CS	Nastavení přehrávače
@@ -20802,6 +20799,9 @@ BACKUP_ALARM
 
 CONTROLPANEL_TITLE
 	EN	SqueezeCenter Control Panel
+	
+CONTROLPANEL_SN_CREDENTIALS
+	EN	Enter your mysqueezebox.com account information
 
 CONTROLPANEL_STARTUP_OPTIONS
 	DA	Startindstillinger
@@ -20826,6 +20826,15 @@ CONTROLPANEL_MUSIC_LIBRARY
 	NO	Musikkbibliotek
 	SV	Musikbibliotek
 	
+CONTROLPANEL_WEB_UI
+	EN	Web Interface
+
+CONTROLPANEL_WEB_CONTROL_DESC
+	EN	Click to open the Web Control interface in your browser.
+
+CONTROLPANEL_ADVANCED_SETTINGS_DESC
+	EN	Click to open the Advanced Settings interface in your browser.
+
 CONTROLPANEL_UPDATE_AVAILABLE
 	EN	An updated SqueezeCenter version is available and ready to be installed.
 
@@ -20909,21 +20918,6 @@ CONTROLPANEL_OK
 	RU	ОК
 	SV	OK
 
-CLEANUP_DESC
-	CS	Vyberte prosím soubory a složky, které chcete vynulovat:
-	DA	Vælg de filer og mapper der skal nulstilles:
-	DE	Markieren Sie die Dateien und Ordner, die zurückgesetzt werden sollen:
-	EN	Please select the files and folders you'd like to reset:
-	ES	Seleccione los archivos y carpetas que desee restablecer:
-	FI	Valitse tiedostot ja kansiot, jotka haluat palauttaa:
-	FR	Sélectionnez les fichiers et les dossiers à réinitialiser:
-	IT	Selezionare i file e le cartelle che si desidera reimpostare:
-	NL	Selecteer de bestanden en mappen die je opnieuw wilt instellen:
-	NO	Velg filene og mappene du vil tilbakestille:
-	PL	Wybierz pliki i foldery do przywrócenia:
-	RU	Выберите файлы и папки, описание которых необходимо сбросить:
-	SV	Välj de filer och mappar som du vill återställa:
-
 CONTROLPANEL_REFRESH
 	CS	Obnovit
 	DA	Opdater
@@ -20940,6 +20934,9 @@ CONTROLPANEL_REFRESH
 	RU	Обновить
 	SV	Uppdatera
 
+CLEANUP
+	EN	Cleanup
+	
 CLEANUP_DO
 	CS	Spustit čištění
 	DA	Foretag oprydning

@@ -21,23 +21,111 @@ sub new {
 
 	$self = $self->SUPER::new($nb);
 
+	my $svcMgr = Slim::Utils::ServiceManager->new();
+	my $os     = Slim::Utils::OSDetect->getOS();
+
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+
+	# startup mode
+	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
+
+	if ($noAdminWarning) {
+		my $string = string($noAdminWarning);
+		$string    =~ s/\\n/\n/g;
+		
+		$mainSizer->Add(Wx::StaticText->new($self, -1, $string), 0, wxALL, 10);
+	}
+
+	my $startupBox = Wx::StaticBox->new($self, -1, string('CONTROLPANEL_STARTUP_OPTIONS'));
+	my $startupSizer = Wx::StaticBoxSizer->new( $startupBox, wxVERTICAL );
+
+	@startupOptions = map { string($_) } @startupOptions;	
+	
+	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
+	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
+	$lbStartupMode->Enable($svcMgr->canSetStartupType());
+	
+	$parent->addApplyHandler($lbStartupMode, sub {
+		$svcMgr->setStartupType($lbStartupMode->GetSelection());
+	});
+		
+	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
+	
+	if ($os->name eq 'win') {
+		
+		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
+		$credentialsSizer->AddGrowableCol(1, 1);
+		$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
+	
+		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')));
+		my $username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1]);
+		$credentialsSizer->Add($username);
+	
+		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')));
+		my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
+		$credentialsSizer->Add($password);
+	
+		$startupSizer->Add($credentialsSizer, 0, wxALL, 10);
+		
+		my $handler = sub {
+			$username->Enable($lbStartupMode->GetSelection() == 2);
+			$password->Enable($lbStartupMode->GetSelection() == 2);
+		};
+		
+		&$handler();
+		EVT_CHOICE($self, $lbStartupMode, $handler);
+
+		# overwrite action handler for startup mode
+		$parent->addApplyHandler($lbStartupMode, sub {
+			$svcMgr->setStartupType(
+				$lbStartupMode->GetSelection(),
+				$username->GetValue(),
+				$password->GetValue(),
+			);
+		});
+			
+	}
+
+
+	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+
+	# Start/Stop button
+	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
+	EVT_BUTTON( $self, $btnStartStop, sub {
+		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+			Slim::GUI::ControlPanel->serverRequest('stopserver');
+		}
+		
+		# starting SC is heavily platform dependant
+		else {
+			$svcMgr->start();
+			$parent->checkServiceStatus();
+		}
+	});
+
+	$parent->addStatusListener($btnStartStop, sub {
+		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
+	});
+	$startBtnSizer->Add($btnStartStop, 0);
+
+	my $btnStartSafeMode = Wx::Button->new($self, -1, string('RUN_FAILSAFE'));
+	EVT_BUTTON( $self, $btnStartSafeMode, sub {
+		$svcMgr->start('--failsafe');
+		$parent->checkServiceStatus();
+	});
+
+	$parent->addStatusListener($btnStartSafeMode, sub {
+		$btnStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
+	});
+	$startBtnSizer->Add($btnStartSafeMode, 0, wxLEFT, 10);
+
+	$startupSizer->Add($startBtnSizer, 0, wxALL | wxGROW, 10);
+	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
+
 	
 	my $settingsBox = Wx::StaticBox->new($self, -1, string('MUSICSOURCE'));
 	my $settingsSizer = Wx::StaticBoxSizer->new( $settingsBox, wxVERTICAL );
-	
-	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME')), 0, wxLEFT, 10);
-	$settingsSizer->AddSpacer(5);
-	my $libraryname = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('libraryname') || '', [-1, -1], [300, -1]);
-	$settingsSizer->Add($libraryname, 0, wxLEFT | wxBOTTOM, 10);
-	
-	$parent->addStatusListener($libraryname);
-	$parent->addApplyHandler($libraryname, sub {
-		if (shift == SC_STATE_RUNNING) {
-			Slim::GUI::ControlPanel->setPref('libraryname', $libraryname->GetValue());
-		}
-	});
-	$settingsSizer->AddSpacer(5);
 	
 	# folder selectors
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT, 10);

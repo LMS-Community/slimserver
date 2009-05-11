@@ -16,9 +16,8 @@ use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 
 use Slim::GUI::ControlPanel::Settings;
 use Slim::GUI::ControlPanel::Music;
-use Slim::GUI::ControlPanel::SqueezeNetwork;
+use Slim::GUI::ControlPanel::Advanced;
 use Slim::GUI::ControlPanel::Status;
-use Slim::GUI::ControlPanel::Maintenance;
 use Slim::GUI::ControlPanel::Diagnostics;
 use Slim::Utils::OSDetect;
 use Slim::Utils::ServiceManager;
@@ -42,7 +41,7 @@ sub new {
 		-1,
 		string('CONTROLPANEL_TITLE'),
 		[-1, -1],
-		[Slim::Utils::OSDetect::isWindows() ? 550 : 700, 600],
+		Slim::Utils::OSDetect::isWindows() ? [550, 600] : [700, 700],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		string('CONTROLPANEL_TITLE'),
 	);
@@ -71,11 +70,10 @@ sub new {
 		$_[0]->Destroy;
 	} );
 
-	$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('SETTINGS'), 1);
+	$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('BASIC_SERVER_SETTINGS'), 1);
 	$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::SqueezeNetwork->new($notebook, $self), string('SQUEEZENETWORK'));
+	$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
 	$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::Maintenance->new($notebook, $self, $args), string('CONTROLPANEL_MAINTENANCE'));
 	$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
 	
 	# if we're running for the first time, show the SN page
