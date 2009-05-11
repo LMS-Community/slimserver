@@ -1885,7 +1885,7 @@ sub musicfolderQuery {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
 						$actions->{'addAction'} = 'more';
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 					}
 					$request->addResultLoop($loopname, $chunkCount, 'actions', $actions);
 
@@ -1937,7 +1937,7 @@ sub musicfolderQuery {
 						$actions->{'more'} = $actions->{'go'};
 						$actions->{'go'} = $actions->{'play'};
 						$actions->{'addAction'} = 'more';
-						$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 					}
 				# not sure
 				} else {
@@ -4030,7 +4030,7 @@ sub titlesQuery {
 				$request->addResultLoop($loopname, $chunkCount, 'params', $params);
 			
 				if ($useContextMenu) {
-					$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
+					$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 				}
 			
 				# open a window with icon etc...
@@ -4639,7 +4639,7 @@ sub _addJiveSong {
 		'playlist_index' => $count,
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
-	$request->addResultLoop($loop, $count, 'style', 'item_play');
+	$request->addResultLoop($loop, $count, 'style', 'itemplay');
 }
 
 
@@ -4826,7 +4826,7 @@ sub _jiveGenreAllAlbums {
 		$request->addResultLoop($loopname, $chunkCount, 'window', { 'titleStyle' => 'genres', text => "$genreString" });
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		} else {
 			$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
@@ -5096,7 +5096,7 @@ sub _playAll {
 		my %items = ( 	
 			'play' => {
 					'string'      => $request->string('JIVE_PLAY_ALL'),
-					'style'       => 'item_play',
+					'style'       => 'itemplay',
 					'playAction'  => 'playtracks',
 					'addAction'   => 'addtracks',
 					'playCmd'     => [ 'playlistcontrol' ],
@@ -5154,7 +5154,7 @@ sub _playAll {
 		$request->addResultLoop($loopname, $chunkCount, 'style', $items{$mode}{'style'});
 
 		if ($includeArt) {
-			$request->addResultLoop($loopname, $chunkCount, 'style', 'item_play');
+			$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
 			$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		}
 
