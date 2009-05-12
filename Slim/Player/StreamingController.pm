@@ -1698,7 +1698,8 @@ sub playerReadyToStream {
 		if ( my $song = $self->streamingSong() ) {
 			my $handler = $song->currentTrackHandler();
 			if ($handler->can('onPlayout')) {
-				$handler->onPlayout($song);
+				my $ret = $handler->onPlayout($song, $self);
+				if ($ret && $ret eq 'return') { return; }
 			}
 		}
 	}
