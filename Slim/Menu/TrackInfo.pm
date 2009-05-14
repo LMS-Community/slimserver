@@ -436,118 +436,142 @@ sub showArtwork {
 
 sub playTrack {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
-	playAddTrack( $client, $url, $track, $remoteMeta, $tags, 'play');
+	my $items = [];
+	my $jive;
+	
+	my $play_string;
+	if ( $track->remote ) {
+		$play_string   = cstring($client, 'PLAY');
+	} else {
+		$play_string   = cstring($client, 'JIVE_PLAY_THIS_SONG');
+	}	
+
+	my $actions;
+	# "Play Song" in current playlist context is 'jump'
+	if ( $tags->{menuContext} eq 'playlist' ) {
+		$actions = {
+			go => {
+				player => 0,
+				cmd => [ 'playlist', 'jump', $tags->{playlistIndex} ],
+				nextWindow => 'parent',
+			},
+		};
+		# play, add and add-hold all have the same behavior for this item
+		$actions->{play} = $actions->{go};
+		$actions->{add} = $actions->{go};
+		$actions->{'add-hold'} = $actions->{go};
+
+	# typical "Play Song" item
+	} else {
+
+		$actions = {
+			go => {
+				player => 0,
+				cmd => [ 'playlistcontrol' ],
+				params => {
+					cmd => 'load',
+					track_id => $track->id,
+				},
+				nextWindow => 'nowPlaying',
+			},
+			add => {
+				player => 0,
+				cmd => [ 'playlistcontrol' ],
+				params => {
+					cmd => 'add',
+					track_id => $track->id,
+				},
+				nextWindow => 'parent',
+			},
+			'add-hold' => {
+				player => 0,
+				cmd => [ 'playlistcontrol' ],
+				params => {
+					cmd => 'insert',
+					track_id => $track->id,
+				},
+				nextWindow => 'parent',
+			},
+		};
+		# play is go
+		$actions->{play} = $actions->{go};
+	}
+
+	$jive->{actions} = $actions;
+	$jive->{style} = 'itemplay';
+
+	push @{$items}, {
+		type => 'text',
+		name => $play_string,
+		jive => $jive, 
+	};
+	
+	return $items;
 }
 	
 sub addTrack {
 	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
-	playAddTrack( $client, $url, $track, $remoteMeta, $tags, 'add');
-}
 
-sub playAddTrack {
-	my ( $client, $url, $track, $remoteMeta, $tags, $action ) = @_;
 	my $items = [];
 	my $jive;
 	
-	my ($play_string, $add_string, $delete_string, $jump_string);
+	my $string;
 	if ( $track->remote ) {
-		$play_string   = cstring($client, 'PLAY');
-		$add_string    = cstring($client, 'ADD');
-		$delete_string = cstring($client, 'REMOVE_FROM_PLAYLIST');
-		$jump_string   = cstring($client, 'PLAY');
+		$string   = cstring($client, 'ADD');
 	} else {
-		$play_string   = cstring($client, 'JIVE_PLAY_THIS_SONG');
-		$add_string    = cstring($client, 'JIVE_ADD_THIS_SONG');
-		$delete_string = cstring($client, 'REMOVE_FROM_PLAYLIST');
-		$jump_string   = cstring($client, 'JIVE_PLAY_THIS_SONG');
+		$string   = cstring($client, 'JIVE_ADD_THIS_SONG');
 	}	
 
-	# setup hash for different items between play and add
-	my $menuItems = {
-		play => {
-			string  => $play_string,
-			style   => 'itemplay',
-			command => [ 'playlistcontrol' ],
-			cmd     => 'load',
-		},
-		add => {
-			string  => $add_string,
-			style   => 'itemadd',
-			command => [ 'playlistcontrol' ],
-			cmd     => 'add',
-		},
-		'add-hold' => {
-			string  => $add_string,
-			style   => 'itemadd',
-			command => [ 'playlistcontrol' ],
-			cmd     => 'insert',
-		},
-		delete => {
-			string  => $delete_string,
-			style   => 'item',
-			command => [ 'playlist', 'delete', $tags->{playlistIndex} ],
-		},
-		jump => {
-			string  => $jump_string,
-			style   => 'itemplay',
-			command => [ 'playlist', 'jump', $tags->{playlistIndex} ],
-		},
-	};
-
+	my $actions;
+	# "Add Song" in current playlist context is 'delete'
 	if ( $tags->{menuContext} eq 'playlist' ) {
-		if ( $action eq 'play' ) {
-			$action = 'jump';
-		} elsif ( $action eq 'add' ) {
-			$action = 'delete';
-		}
+		$string  = cstring($client, 'REMOVE_FROM_PLAYLIST');
+		$actions = {
+			go => {
+				player     => 0,
+				cmd        => [ 'playlist', 'delete', $tags->{playlistIndex} ],
+				nextWindow => 'parent',
+			},
+		};
+		# play, add and add-hold all have the same behavior for this item
+		$actions->{play} = $actions->{go};
+		$actions->{add} = $actions->{go};
+		$actions->{'add-hold'} = $actions->{go};
+
+	# typical "Add Song" item
+	} else {
+
+		$actions = {
+			add => {
+				player => 0,
+				cmd => [ 'playlistcontrol' ],
+				params => {
+					cmd => 'add',
+					track_id => $track->id,
+				},
+				nextWindow => 'parent',
+			},
+			'add-hold' => {
+				player => 0,
+				cmd => [ 'playlistcontrol' ],
+				params => {
+					cmd => 'insert',
+					track_id => $track->id,
+				},
+				nextWindow => 'parent',
+			},
+		};
+		# play and go have same behavior as go here
+		$actions->{play} = $actions->{add};
+		$actions->{go} = $actions->{add};
 	}
 
-	my $actions = {
-		do => {
-			player => 0,
-			cmd => $menuItems->{$action}{command},
-		},
-		play => {
-			player => 0,
-			cmd => $menuItems->{$action}{command},
-		},
-		add => {
-			player => 0,
-			cmd    => $menuItems->{add}{command},
-		},
-	};
-	# tagged params are sent for play and add, not delete/jump
-	if ($action ne 'delete' && $action ne 'jump') {
-		$actions->{'add-hold'} = {
-			player => 0,
-			cmd => $menuItems->{'add-hold'}{command},
-		};
-		$actions->{'add'}{'params'} = {
-			cmd => $menuItems->{add}{cmd},
-			track_id => $track->id,
-		};
-		$actions->{'add-hold'}{'params'} = {
-			cmd => $menuItems->{'add-hold'}{cmd},
-			track_id => $track->id,
-		};
-		$actions->{'do'}{'params'} = {
-			cmd => $menuItems->{$action}{cmd},
-			track_id => $track->id,
-		};
-		$actions->{'play'}{'params'} = {
-			cmd => $menuItems->{$action}{cmd},
-			track_id => $track->id,
-		};
-	
-	} else {
-		$jive->{nextWindow} = 'playlist';
-	}
 	$jive->{actions} = $actions;
-	$jive->{style} = $menuItems->{$action}{style};
+	$jive->{style} = 'itemadd';
 
 	push @{$items}, {
 		type => 'text',
-		name => $menuItems->{$action}{string},
+		name => $string,
 		jive => $jive, 
 	};
 	

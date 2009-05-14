@@ -31,6 +31,14 @@ sub initPlugin {
 		after => 'middle',
 		func  => \&trackInfoMenu,
 	) );
+
+	# Artist Info item
+	# FIXME: this adds an onPandora item to artistinfo menus, 
+	# but on squeezeplay when pressed the item just locks and doesn't load a menu
+#	Slim::Menu::ArtistInfo->registerInfoProvider( pandora => (
+#		after => 'middle',
+#		func  => \&artistInfoMenu,
+#	) );
 	
 	# Commands init
 	Slim::Control::Request::addDispatch(['pandora', 'rate', '_rating'],
@@ -216,6 +224,31 @@ sub trackInfoMenu {
 	);
 	
 	if ( $artist && $title ) {
+		return {
+			type      => 'link',
+			name      => $client->string('PLUGIN_PANDORA_ON_PANDORA'),
+			url       => $snURL,
+			favorites => 0,
+		};
+	}
+}
+
+sub artistInfoMenu {
+	my ( $client, $url, $artist, $remoteMeta ) = @_;
+	
+	return unless $client;
+	
+	return unless Slim::Networking::SqueezeNetwork->isServiceEnabled( $client, 'Pandora' );
+	
+	return unless Slim::Networking::SqueezeNetwork->hasAccount( $client, 'pandora' );
+	
+	my $snURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/pandora/v1/opml/search?q='
+			. uri_escape_utf8($artist->namesearch)
+			. '&noauto=1'
+	);
+	
+	if ( $artist && $artist->name ) {
 		return {
 			type      => 'link',
 			name      => $client->string('PLUGIN_PANDORA_ON_PANDORA'),

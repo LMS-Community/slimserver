@@ -192,6 +192,7 @@ sub initPlugin {
 					cmd    => ['musicip', 'mix'],
 					params => {
 						menu => '1',
+						useContextMenu => '1',
 					},
 					itemsParams => 'params',
 			},
@@ -232,6 +233,19 @@ sub initPlugin {
 			above    => 'favorites',
 			func     => \&trackInfoHandler,
 		) );
+
+		# Album Info handler
+		Slim::Menu::AlbumInfo->registerInfoProvider( musicmagic => (
+			below    => 'addalbum',
+			func     => \&albumInfoHandler,
+		) );
+
+		# Artist Info handler
+		Slim::Menu::ArtistInfo->registerInfoProvider( musicmagic => (
+			below    => 'addartist',
+			func     => \&artistInfoHandler,
+		) );
+
 
 		if (scalar @{grabMoods()}) {
 
@@ -1023,6 +1037,7 @@ sub cliMix {
 	# menu/jive mgmt
 	my $menu     = $request->getParam('menu');
 	my $menuMode = defined $menu;
+	my $useContextMenu = $request->getParam('useContextMenu'),
 
 	my $loopname = $menuMode ? 'item_loop' : 'titles_loop';
 	my $chunkCount = 0;
@@ -1034,6 +1049,7 @@ sub cliMix {
 					cmd => ['trackinfo', 'items'],
 					params => {
 						menu => 'nowhere',
+						useContextMenu => '1',
 					},
 					itemsParams => 'params',
 				},
@@ -1043,6 +1059,7 @@ sub cliMix {
 						cmd  => 'load',
 						menu => 'nowhere',
 					},
+					nextWindow => 'nowPlaying',
 					itemsParams => 'params',
 				},
 				add =>  {
@@ -1063,19 +1080,25 @@ sub cliMix {
 				},
 			},
 		};
+
+		if ($useContextMenu) {
+			# "+ is more"
+			$base->{'actions'}{'more'} = $base->{'actions'}{'go'};
+			# "go is play"
+			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
+		}
 		$request->addResult('base', $base);
 		
 		$request->addResult('offset', 0);
 		#$request->addResult('text', $request->string('MUSICMAGIX_MIX'));
 		my $thisWindow = {
-				'titleStyle' => 'playlist',
-				'menuStyle'  => 'album',
+				'windowStyle' => 'text_list',
 				'text'       => $request->string('MUSICMAGIC_MIX'),
 		};
 		$request->addResult('window', $thisWindow);
 
 		# add an item for "play this mix"
-		$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'playlist');
+		$request->addResultLoop($loopname, $chunkCount, 'nextWindow', 'nowPlaying');
 		$request->addResultLoop($loopname, $chunkCount, 'text', $request->string('MUSICIP_PLAYTHISMIX'));
 		$request->addResultLoop($loopname, $chunkCount, 'icon-id', '/html/images/playall.png');
 		my $actions = {
@@ -1256,10 +1279,44 @@ sub _prepare_mix {
 }
 
 sub trackInfoHandler {
-	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
-	$tags ||= {};
+	my $return = _objectInfoHandler( @_, 'track' );
+	return $return;
+}
+
+sub albumInfoHandler {
+	my $return = _objectInfoHandler( @_, 'album' );
+	return $return;
+}
+
+sub artistInfoHandler {
+	my $return = _objectInfoHandler( @_, 'artist' );
+	return $return;
+}
+
+sub _objectInfoHandler {
 	
-	my $mixable = $track->musicmagic_mixable;
+	my ( $client, $url, $obj, $remoteMeta, $tags, $objectType ) = @_;
+	$tags ||= {};
+
+	my $mixable = $obj->musicmagic_mixable;
+
+	my $special;
+	if ($objectType eq 'album') {
+		$special->{'actionParam'} = 'album_id';
+		$special->{'modeParam'}   = 'album';
+		$special->{'urlKey'}      = 'album';
+
+	} elsif ($objectType eq 'artist') {
+		$special->{'actionParam'} = 'artist_id';
+		$special->{'modeParam'}   = 'artist';
+		$special->{'urlKey'}      = 'artist';
+
+	} else {
+		$special->{'actionParam'} = 'track_id';
+		$special->{'modeParam'}   = 'track';
+		$special->{'urlKey'}      = 'song';
+
+	}
 
 	my $jive = {};
 	if ( $tags->{menuMode} ) {
@@ -1271,7 +1328,8 @@ sub trackInfoHandler {
 					cmd    => [ 'musicip', 'mix' ],
 					params => {
 						menu     => 1,
-						track_id => $track->id,
+						useContextMenu => 1,
+						$special->{actionParam} => $obj->id,
 					},
 				},
 			};
@@ -1301,14 +1359,14 @@ sub trackInfoHandler {
 			player => {
 				mode => 'musicmagic_mix',
 				modeParams => {
-					track => $track,
+					$special->{modeParam} => $obj,
 				},
 			},
 
 			web  => {
 				group => 'mixers',
-				url   => 'plugins/MusicMagic/musicmagic_mix.html?song=' . $track->id,
-				item  => mixerlink($track),
+				url   => 'plugins/MusicMagic/musicmagic_mix.html?' . $special->{urlKey} . '=' . $obj->id,
+				item  => mixerlink($obj),
 			},
 		};
 	}

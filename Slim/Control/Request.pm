@@ -485,6 +485,7 @@ sub init {
 	addDispatch(['connect',        '_where'],                                                          [1, 0, 0, \&Slim::Control::Commands::clientConnectCommand]);
 	addDispatch(['connected',      '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
 	addDispatch(['contextmenu',    '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::contextMenuQuery]);
+	addDispatch(['mixermenu',      '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::mixerMenuQuery]);
 	addDispatch(['current_title',  '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['debug',          '_debugflag',     '?'],                                             [0, 1, 0, \&Slim::Control::Queries::debugQuery]);
 	addDispatch(['debug',          '_debugflag',     '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::debugCommand]);

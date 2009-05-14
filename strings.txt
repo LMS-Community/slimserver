@@ -12538,6 +12538,12 @@ MOSTPLAYED
 	SV	Mest spelade låtar
 	ZH_CN	最常播的歌曲
 
+ALBUM_INFO
+	EN	Album Info
+
+ARTIST_INFO
+	EN	Artist Info
+
 SONG_INFO
 	CS	Informace o skladbě
 	DA	Oplysninger

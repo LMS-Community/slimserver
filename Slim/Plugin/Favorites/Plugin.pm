@@ -87,6 +87,16 @@ sub initPlugin {
 		after => 'bottom',
 		func  => \&trackInfoHandler,
 	) );
+	# Album Info handler
+	Slim::Menu::AlbumInfo->registerInfoProvider( favorites => (
+		after => 'bottom',
+		func  => \&albumInfoHandler,
+	) );
+	# Artist Info handler
+	Slim::Menu::ArtistInfo->registerInfoProvider( favorites => (
+		after => 'bottom',
+		func  => \&artistInfoHandler,
+	) );
 }
 
 
@@ -1073,12 +1083,33 @@ sub cliMove {
 }
 
 sub trackInfoHandler {
-	my ( $client, $url, $track, $remoteMeta, $tags ) = @_;
+	my $return = _objectInfoHandler( @_, 'track');
+	return $return;
+}
+
+sub albumInfoHandler {
+	my $return = _objectInfoHandler( @_, 'album');
+	return $return;
+}
+
+sub artistInfoHandler {
+	my $return = _objectInfoHandler( @_, 'artist');
+	return $return;
+}
+
+sub _objectInfoHandler {
+	my ( $client, $url, $obj, $remoteMeta, $tags, $objectType ) = @_;
 	$tags ||= {};
 	
 	my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl($url);
 	
 	my $jive;
+	my $title;
+	if ($objectType eq 'artist') {
+		$title = $obj->name;
+	} else {
+		$title = $obj->title;
+	}
 	if ( !defined $index ) {
 
 		$log->debug( "Item is not a favorite [$url]" );
@@ -1089,8 +1120,8 @@ sub trackInfoHandler {
 					player => 0,
 					cmd    => [ 'jivefavorites', 'add' ],
 					params => {
-						title   => $track->title,
-                                                url     => $track->url,
+						title   => $title,
+                                                url     => $obj->url,
 					},
 				},
 			};
@@ -1104,8 +1135,8 @@ sub trackInfoHandler {
 			return {
 				type        => 'link',
 				name        => cstring($client, 'PLUGIN_FAVORITES_ADD'),
-				url         => \&trackInfoAddFavorite,
-				passthrough => [ $track ],
+				url         => \&objectInfoAddFavorite,
+				passthrough => [ $obj ],
 				favorites   => 0,
 			};
 		}
@@ -1120,8 +1151,8 @@ sub trackInfoHandler {
 					player => 0,
 					cmd    => [ 'jivefavorites', 'delete' ],
 					params => {
-						title   => $track->title,
-                                                url     => $track->url,
+						title   => $title,
+                                                url     => $obj->url,
 						item_id => $index,
 					},
 				},
@@ -1137,8 +1168,8 @@ sub trackInfoHandler {
 			return {
 				type        => 'link',
 				name        => cstring($client, 'PLUGIN_FAVORITES_REMOVE'),
-				url         => \&trackInfoRemoveFavorite,
-				passthrough => [ $track ],
+				url         => \&objectInfoRemoveFavorite,
+				passthrough => [ $obj ],
 				favorites   => 0,
 			};
 		}
@@ -1147,14 +1178,14 @@ sub trackInfoHandler {
 	return;
 }
 
-sub trackInfoAddFavorite {
-	my ( $client, $callback, $track ) = @_;
+sub objectInfoAddFavorite {
+	my ( $client, $callback, $obj ) = @_;
 	
 	my $favorites = Slim::Utils::Favorites->new($client);
 	
 	my ($favIndex, $hotKey) = $favorites->add(
-		$track,
-		$track->title || $track->url,
+		$obj,
+		$obj->title || $obj->url,
 		undef,
 		undef,
 		'hotkey',
@@ -1171,8 +1202,8 @@ sub trackInfoAddFavorite {
 	$callback->( $menu );
 }
 
-sub trackInfoRemoveFavorite {
-	my ( $client, $callback, $track ) = @_;
+sub objectInfoRemoveFavorite {
+	my ( $client, $callback, $obj ) = @_;
 	
 	my $menu = [
 		{
@@ -1197,7 +1228,7 @@ sub trackInfoRemoveFavorite {
 				my $callback = $_[1];
 				
 				my $favorites = Slim::Utils::Favorites->new($client);
-				my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl( $track->url );
+				my ($index, $hotkey) = Slim::Utils::Favorites->new($client)->findUrl( $obj->url );
 				
 				$favorites->deleteIndex($index);
 				

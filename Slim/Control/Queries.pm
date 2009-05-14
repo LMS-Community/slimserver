@@ -249,8 +249,9 @@ sub albumsQuery {
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $useContextMenu = $request->getParam('useContextMenu');
 	my $partyMode = _partyModeCheck($request);
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	my $insertAll = $menuMode && defined $insert && !$partyMode && !$useContextMenu;
 
 	if (!defined $tags) {
 		$tags = 'l';
@@ -446,7 +447,15 @@ sub albumsQuery {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
+		}	
+
+		if ( $useContextMenu ) {
+			# + is more
+			$base->{'actions'}{'more'} = _contextMenuBase('album');
+			# add is more
+			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
+
 		$request->addResult('base', $base);
 	}
 	
@@ -575,10 +584,12 @@ sub albumsQuery {
 				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1, allSongs => 1, artist => $artist );
 				$totalCount++ if $beforeCount != $chunkCount;
 			}
-			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
+			if (!$useContextMenu) {
+				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => $lastChunk, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);
+			}
 		}
 	}
-	elsif ($totalCount > 1 && $menuMode) {
+	elsif ($totalCount > 1 && $menuMode && !$useContextMenu) {
 		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, start => $start, chunkCount => $chunkCount, listCount => $totalCount, request => $request, loopname => $loopname, favorites => \%favorites, includeArt => 1);	
 	}
 
@@ -645,10 +656,11 @@ sub artistsQuery {
 	$favorites{'title'} = $request->getParam('favorites_title');
 	
 	# menu/jive mgmt
-	my $menuMode = defined $menu;
+	my $menuMode  = defined $menu;
 	my $partyMode = _partyModeCheck($request);
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	my $allAlbums = defined $genreID;
+	my $useContextMenu = $request->getParam('useContextMenu');
+	my $insertAll = $menuMode && defined $insert && !$partyMode && !$useContextMenu;
 	
 	# get them all by default
 	my $where = {};
@@ -825,6 +837,12 @@ sub artistsQuery {
 			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
 		}
+		if ( $useContextMenu ) {
+			# + is more
+			$base->{'actions'}->{'more'} = _contextMenuBase('artist');
+			# add is more
+			$base->{'actions'}->{'add'} = $base->{'actions'}{'more'};
+		}
 		$request->addResult('base', $base);
 	}
 
@@ -905,10 +923,12 @@ sub artistsQuery {
 				($chunkCount, $totalCount) = _jiveGenreAllAlbums(start => $start, end => $end, lastChunk => $lastChunk, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, genreID => $genreID, genreString => $genreString );
 			}
 
-			($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => ($lastChunk == 1), listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+			if (!$useContextMenu) {
+				($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => ($lastChunk == 1), listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
+			}
 		}
 	}
-	elsif ($totalCount > 1 && $menuMode) {
+	elsif ($totalCount > 1 && $menuMode && $useContextMenu) {
 		($chunkCount, $totalCount) = _jiveAddToFavorites(lastChunk => 1, listCount => $totalCount, chunkCount => $chunkCount, request => $request, loopname => $loopname, favorites => \%favorites);
 	}
 
@@ -1841,6 +1861,7 @@ sub musicfolderQuery {
 							'cmd' => ['trackinfo', 'items'],
 							'params' => {
 								'menu' => 'nowhere',
+								'useContextMenu' => 1,
 								'track_id' => $id,
 							},
 						},
@@ -2339,6 +2360,7 @@ sub playlistsTracksQuery {
 					'cmd' => ['trackinfo', 'items'],
 					'params' => {
 						'menu' => 'nowhere',
+						'useContextMenu' => 1,
 					},
 					'itemsParams' => 'params',
 				},
@@ -3487,7 +3509,12 @@ sub statusQuery {
 		
 		my $base;
 		if ( $useContextMenu ) {
-			$base->{'actions'}{'more'} = _contextMenuBase();
+			# context menu for 'more' action
+			$base->{'actions'}{'more'} = _contextMenuBase('track');
+			# this is the current playlist, so tell SC the context of this menu
+			$base->{'actions'}{'more'}{'params'}{'context'} = 'playlist';
+			# "+ is more"
+			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		} else {
 			$base = {
 				actions => {
@@ -3495,6 +3522,7 @@ sub statusQuery {
 						cmd => ['trackinfo', 'items'],
 						params => {
 							menu => 'nowhere', 
+							useContextMenu => 1,
 							context => 'playlist',
 						},
 						itemsParams => 'params',
@@ -3930,6 +3958,7 @@ sub titlesQuery {
 					cmd => [ 'trackinfo', 'items', ],
 						params => {
 							menu => $nextMenu,
+							useContextMenu => 1,
 						},
 					itemsParams => 'params',
 				},
@@ -3983,7 +4012,7 @@ sub titlesQuery {
 			# go is play
 			$base->{'actions'}{'go'} = $base->{'actions'}{'play'};
 			# + is more
-			$base->{'actions'}{'more'} = _contextMenuBase();
+			$base->{'actions'}{'more'} = _contextMenuBase('track');
 			# add is more
 			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
@@ -4607,6 +4636,7 @@ sub _addJiveSong {
 					cmd    => [ 'trackinfo', 'items' ],
 					params => {
 						menu => 'menu',
+						useContextMenu => 1,
 						url  => $track->url,
 					},
 				},
@@ -4619,6 +4649,7 @@ sub _addJiveSong {
 					params => {
 						menu => 'menu',
 						url  => $track->url,
+						useContextMenu => 1,
 						context => 'playlist',
 						playlist_index => $count,
 					},
@@ -5322,19 +5353,85 @@ sub _mixerItemParams {
 	}
 }
 
+# contextMenuQuery is a wrapper for producing context menus for various objects
 sub contextMenuQuery {
 
 	$log->error('Begin Function');
 	my $request = shift;
 
+	# check this is the correct query.
+	if ($request->isNotQuery([['contextmenu']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
+
+	my $client        = $request->client();
+	my $menu          = $request->getParam('menu');
+
+	# this subroutine is just a wrapper, so we prep the @requestParams array to pass on to another command
+	my $params = $request->getParamsCopy();
+	my @requestParams = ();
+	for my $key (keys %$params) {
+		next if $key eq '_index' || $key eq '_quantity';
+		push @requestParams, $key . ':' . $params->{$key};
+	}
+
+	# the first check is if this is for (what was) the original contextmenu command, which pushes a menu of "mixers"
+	# the common example of this is a user using MusicIP and CustomMix
+	my $proxiedRequest;
+	if ($menu eq '1' || !defined($menu)) {
+		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'mixermenu', $index, $quantity, @requestParams ] );
+
+	} elsif (defined($menu)) {
+		# trackinfo CM
+		if ( $menu eq 'track' ) {
+			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'trackinfo', 'items', $index, $quantity, @requestParams ] );
+		# albuminfo CM
+		} elsif ( $menu eq 'album' ) {
+			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'albuminfo', 'items', $index, $quantity, @requestParams ] );
+		# artistinfo CM
+		} elsif ( $menu eq 'artist' ) {
+			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'artistinfo', 'items', $index, $quantity, @requestParams ] );
+#		# yearinfo CM
+#		} elsif ( $menu eq 'year' ) {
+#			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'yearinfo', $index, $quantity, @requestParams ] );
+#		# genreinfo CM
+#		} elsif ( $menu eq 'genre' ) {
+#			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'genreinfo', $index, $quantity, @requestParams ] );
+#		# if we get here, we haven't built support for it yet
+		} else {
+			$request->setStatusBadParams();
+		}	
+	# if we get here, we punt
+	} else {
+		$request->setStatusBadParams();
+	}
+
+	# now we have the response in $proxiedRequest that needs to get its output sent via $request
+	$request->setRawResults( $proxiedRequest->getResults );
+
+}
+
+sub mixerMenuQuery {
+
+	$log->debug('Begin Function');
+	my $request = shift;
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['mixermenu']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
 
 	my $trackID       = $request->getParam('track_id');
 	my $genreID       = $request->getParam('genre_id');
 	my $artistID      = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 				
+	# look for the $obj_param first from an obj_param key, then from track_id, artist_id, album_id, genre_id
 	my $obj_param     = $request->getParam('obj_param') ? $request->getParam('obj_param') :
 				$trackID  ? 'track_id'  :
 				$artistID ? 'artist_id' :
@@ -5342,6 +5439,7 @@ sub contextMenuQuery {
 				$genreID  ? 'genre_id'  :
 				undef;
 
+	# an $obj_param is necessary for this query
 	if ( !defined($obj_param) ) {
 		$request->setStatusBadDispatch();
 		return;
@@ -5423,9 +5521,8 @@ sub _mixerBase {
 	} elsif (@$mixers) {
 		return {
 			player => 0,
-			cmd    => ['contextmenu'],
+			cmd    => ['mixermenu'],
 			params => {
-				menu => '1',
 			},
 			itemsParams => 'params',
 		};
@@ -5438,11 +5535,13 @@ sub _mixerBase {
 # to be expanded to work with artist/album/etc. later
 sub _contextMenuBase {
 
+	my $menu = shift;
+
 	return {
 		player => 0,
-		cmd => ['trackinfo', 'items'],
+		cmd => ['contextmenu', ],
 			'params' => {
-				'menu' => 'nowhere',
+				'menu' => $menu,
 			},
 		itemsParams => 'params',
 	};
@@ -5484,9 +5583,8 @@ sub _mixerItemHandler {
 		$request->addResultLoop($loopname, $chunkCount, 'playHoldAction', 'go');
 		return {
 			player => 0,
-			cmd    => ['contextmenu'],
+			cmd    => ['mixermenu'],
 			params => {
-				menu => '1',
 				$obj_param => $obj->id,
 			},
 		};
