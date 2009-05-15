@@ -2057,6 +2057,7 @@ sub howManyPlayersToSyncWith {
 	# Restrict based on players with same userid on SN
 	my $userid;
 	if ( main::SLIM_SERVICE ) {
+		return 0 if $client->isa('Slim::Player::Dummy');
 		$userid = $client->playerData->userid;
 	}
 	
