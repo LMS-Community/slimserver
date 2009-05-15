@@ -251,7 +251,8 @@ sub albumsQuery {
 	my $menuMode = defined $menu;
 	my $useContextMenu = $request->getParam('useContextMenu');
 	my $partyMode = _partyModeCheck($request);
-	my $insertAll = $menuMode && defined $insert && !$partyMode && !$useContextMenu;
+	my $allSongs = $menuMode && defined $insert && !$partyMode;
+	my $insertAll = $allSongs && !$useContextMenu;
 
 	if (!defined $tags) {
 		$tags = 'l';
@@ -579,7 +580,7 @@ sub albumsQuery {
 				$lastChunk = 1;
 			}
 			# add an "all songs" at the bottom (artist album lists only)
-			if ($insertAll && $lastChunk && defined($contributorID)) {
+			if ($allSongs && $lastChunk && defined($contributorID)) {
 				my $beforeCount = $chunkCount;
 				$chunkCount = _playAll(start => $start, end => $end, chunkCount => $chunkCount, request => $request, loopname => $loopname, includeArt => 1, allSongs => 1, artist => $artist );
 				$totalCount++ if $beforeCount != $chunkCount;
@@ -1315,7 +1316,8 @@ sub genresQuery {
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
 	my $partyMode = _partyModeCheck($request);
-	my $insertAll = $menuMode && defined $insert && !$partyMode;
+	my $useContextMenu = $request->getParam('useContextMenu');
+	my $insertAll = $menuMode && defined $insert && !$partyMode && $useContextMenu;
 		
 	# get them all by default
 	my $where = {};
@@ -1442,6 +1444,12 @@ sub genresQuery {
 		$base->{'actions'}{'play-hold'} = _mixerBase();
 		if ($party || $partyMode) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
+		}
+		if ($useContextMenu) {
+			# + is more
+			$base->{'actions'}{'more'} = _contextMenuBase('genre');
+			# add is more
+			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
 		}
 		$request->addResult('base', $base);
 
@@ -4194,6 +4202,7 @@ sub yearsQuery {
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
 	my $partyMode = _partyModeCheck($request);
+	my $useContextMenu = $request->getParam('useContextMenu');
 	my $insertAll = $menuMode && defined $insert && !$partyMode;
 	
 	# get them all by default
@@ -4267,6 +4276,12 @@ sub yearsQuery {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		if ($useContextMenu) {
+			# + is more
+			$base->{'actions'}{'more'} = _contextMenuBase('year');
+			# add is more
+			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
+		}
 		$request->addResult('base', $base);
 	}
 
@@ -5395,13 +5410,13 @@ sub contextMenuQuery {
 		# artistinfo CM
 		} elsif ( $menu eq 'artist' ) {
 			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'artistinfo', 'items', $index, $quantity, @requestParams ] );
-#		# yearinfo CM
-#		} elsif ( $menu eq 'year' ) {
-#			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'yearinfo', $index, $quantity, @requestParams ] );
-#		# genreinfo CM
-#		} elsif ( $menu eq 'genre' ) {
-#			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'genreinfo', $index, $quantity, @requestParams ] );
-#		# if we get here, we haven't built support for it yet
+		# yearinfo CM
+		} elsif ( $menu eq 'year' ) {
+			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'yearinfo', 'items', $index, $quantity, @requestParams ] );
+		# genreinfo CM
+		} elsif ( $menu eq 'genre' ) {
+			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'genreinfo', 'items', $index, $quantity, @requestParams ] );
+		# if we get here, we haven't built support for it yet
 		} else {
 			$request->setStatusBadParams();
 		}	

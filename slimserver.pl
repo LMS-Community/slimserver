@@ -164,6 +164,8 @@ use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
 use Slim::Menu::AlbumInfo;
 use Slim::Menu::ArtistInfo;
+use Slim::Menu::GenreInfo;
+use Slim::Menu::YearInfo;
 use Slim::Menu::SystemInfo;
 use Slim::Music::Info;
 use Slim::Music::Import;
@@ -418,6 +420,8 @@ sub init {
 	Slim::Menu::TrackInfo->init();
 	Slim::Menu::AlbumInfo->init();
 	Slim::Menu::ArtistInfo->init();
+	Slim::Menu::GenreInfo->init();
+	Slim::Menu::YearInfo->init();
 	Slim::Menu::SystemInfo->init();
 
 	$log->info('SqueezeCenter Alarms init...');

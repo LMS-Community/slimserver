@@ -12544,6 +12544,12 @@ ALBUM_INFO
 ARTIST_INFO
 	EN	Artist Info
 
+GENRE_INFO
+	EN	Genre Info
+
+YEAR_INFO
+	EN	Year Info
+
 SONG_INFO
 	CS	Informace o skladbě
 	DA	Oplysninger
