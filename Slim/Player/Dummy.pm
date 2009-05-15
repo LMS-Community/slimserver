@@ -59,6 +59,7 @@ sub vfd            { undef }
 sub canPowerOff    { 0 }
 
 # SLIM_SERVICE
-sub loadPrefs      { }
+sub loadPrefs        { }
+sub getControllerPIN { }
 
 1;

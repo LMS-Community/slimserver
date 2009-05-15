@@ -459,7 +459,9 @@ sub name {
 		$name = $prefs->client($client)->get('playername');
 		
 		if ( main::SLIM_SERVICE ) {
-			$name = $client->playerData->name;
+			unless ( $client->isa('Slim::Player::Dummy') ) {
+				$name = $client->playerData->name;
+			}
 		}
 	}
 
