@@ -269,6 +269,11 @@ sub set {
 			if ( main::SLIM_SERVICE && blessed($client) ) {
 				# Skip param lets routines like initPersistedPrefs avoid writing right back to the db
 				my $skip = shift || 0;
+				
+				# Don't set dummy client prefs
+				if ( $clientid =~ /_dummy_/ ) {
+					$skip = 1;
+				}
 
 				if ( !$skip ) {
 					# Save the pref to the db
