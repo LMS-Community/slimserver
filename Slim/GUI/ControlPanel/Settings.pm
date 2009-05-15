@@ -47,7 +47,7 @@ sub new {
 	), 0, wxTOP, 3);
 
 	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP, 3);
-	my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
+	my $password = Wx::TextCtrl->new($self, -1, 'SN_PASSWORD_PLACEHOLDER', [-1, -1], [150, -1], wxTE_PASSWORD);
 	$credentialsSizer->Add($password);
 	$parent->addStatusListener($password);
 
@@ -64,6 +64,8 @@ sub new {
 	$parent->addApplyHandler($username, sub {
 		
 		return unless $username->GetValue() && $password->GetValue();
+		
+		return if $password->GetValue() eq 'SN_PASSWORD_PLACEHOLDER';
 		
 		my $validated = Slim::GUI::ControlPanel->serverRequest(
 			'setsncredentials',
