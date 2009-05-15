@@ -47,7 +47,7 @@ sub new {
 	), 0, wxTOP, 3);
 
 	$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP, 3);
-	my $password = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_password') ? 'SN_PASSWORD_PLACEHOLDER' : '', [-1, -1], [150, -1], wxTE_PASSWORD);
+	my $password = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_password_sha') ? 'SN_PASSWORD_PLACEHOLDER' : '', [-1, -1], [150, -1], wxTE_PASSWORD);
 	$credentialsSizer->Add($password);
 	$parent->addStatusListener($password);
 
