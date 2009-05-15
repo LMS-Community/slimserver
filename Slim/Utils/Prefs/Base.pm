@@ -482,12 +482,14 @@ sub remove {
 		}
 		
 		if ( main::SLIM_SERVICE && $class->{clientid} ) {
-			# Remove the pref from the database
-			my $client = Slim::Player::Client::getClient( $class->{clientid} );
-			SDI::Service::Model::PlayerPref->sql_clear_array->execute(
-				$client->playerData->id,
-				$pref,
-			);
+			if ( $class->{clientid} !~ /_dummy_/ ) {
+				# Remove the pref from the database
+				my $client = Slim::Player::Client::getClient( $class->{clientid} );
+				SDI::Service::Model::PlayerPref->sql_clear_array->execute(
+					$client->playerData->id,
+					$pref,
+				);
+			}
 		}
 	}
 
