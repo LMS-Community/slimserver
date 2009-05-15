@@ -47,21 +47,26 @@ sub get_SC {
 }
 
 sub get_SN {
-	my ( $class, $key ) = ( shift, shift );
-	
-	my $value = $class->{prefs}->{ $key };
-	
 	if ( main::SLIM_SERVICE ) {
+		my ( $class, $key ) = ( shift, shift );
+	
+		my $value = $class->{prefs}->{ $key };
+		
 		# Callers can force retrieval from the database
 		my $force = shift;
-		
+	
 		# Can override the model
 		my $model = shift;
-	
+
 		if ( !defined $value || $force ) {
-		
+	
 			if ( $class->{clientid} ) {
 				
+				# Dummy clients don't have prefs in the database
+				if ( $class->{clientid} =~ /_dummy_/ ) {
+					return $class->get_SC($key);
+				}
+			
 				# Prepend namespace to key if it's not 'server'
 				my $nskey = $key;
 				if ( $class->namespace ne 'server' ) {
@@ -69,31 +74,31 @@ sub get_SN {
 					$ns =~ s/\./_/g;
 					$nskey = $ns . '_' . $key;
 				}
-				
+			
 				$value = $class->getFromDB( $nskey, $model );
 
 				$class->{prefs}->{ $key } = $value;
 			}
 		}
-		
+	
 		# Special handling for disabledirsets when there is only one disabled item
 		if ( $key eq 'disabledirsets' && !ref $value ) {
 			$value = [ $value ];
 		}
-		
+	
 		# More special handling for alarm prefs, ugh
 		elsif ( $key =~ /^alarm/ && !ref $value ) {
 			if ( $key !~ /alarmfadeseconds|alarmsEnabled/ ) {
 				$value = [ $value ];
 			}
 		}
-		
+	
 		if ( wantarray && ref $value eq 'ARRAY' ) {
 			return @{$value};
 		}
-	}
 	
-	return $value;
+		return $value;
+	}
 }
 
 =head2 getFromDB( $prefname )
