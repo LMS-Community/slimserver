@@ -58,4 +58,7 @@ sub decoder        { }
 sub vfd            { undef }
 sub canPowerOff    { 0 }
 
+# SLIM_SERVICE
+sub loadPrefs      { }
+
 1;

@@ -425,7 +425,9 @@ sub mainMenu {
 		);
 		
 		# Add Music Stores menu if in an Amazon country
-		if ( $client->playerData->userid->isAllowedService('Amazon') ) {
+		if (   $client->isa('SDI::Service::Player::SqueezeNetworkClient') 
+			&& $client->playerData->userid->isAllowedService('Amazon')
+		) {
 			splice @menu, 3, 0, ( {
 				text           => $client->string('MUSIC_STORES'),
 				id             => 'music_stores',
