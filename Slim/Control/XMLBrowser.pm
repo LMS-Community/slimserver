@@ -1236,6 +1236,9 @@ sub touchToPlay {
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio)$/ ) {
 		return $item->{'url'} || scalar @{ $item->{outline} || [] };
 	}
+	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:playlist)$/ && $item->{'parser'} ) {
+		return $item->{'url'};
+	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
 		return $item->{'enclosure'}->{'url'};
 	}
