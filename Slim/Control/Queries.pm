@@ -4084,32 +4084,40 @@ sub titlesQuery {
 					$album = $albumObj->title();
 					$iconId ||= $albumObj->artwork();
 				}
-				$text = $text . "\n" . (defined($album)?$album:"");
-			
-				my $artist;
-				if(defined(my $artistObj = $item->artist())) {
-					$artist = $artistObj->name();
-				}
-				$text = $text . "\n" . (defined($artist)?$artist:"");
-			
+				
+				my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
 				my $window = {
-					'text' => $text,
+					'text' => $oneLineTrackTitle,
 				};
-
 				if ($menuStyle eq 'album') {
-					$request->addResultLoop($loopname, $chunkCount, 'style', 'item');
+					if ($useContextMenu) {
+						# press to play
+						$request->addResultLoop($loopname, $chunkCount, 'style', 'itemplay');
+					}
+
+					# format second line as 'artist - album'
+					my @secondLine = ();
+					if (defined(my $artistObj = $item->artist())) {
+						push @secondLine, $artistObj->name();
+					}
+					if (defined($album)) {
+						push @secondLine, $album;
+					}
+					my $secondLine = join(' - ', @secondLine);
+					$text = $text . "\n" . $secondLine;
 					$request->addResultLoop($loopname, $chunkCount, 'text', $text);
+
 				} elsif ($menuStyle eq 'allSongs') {
 					$request->addResultLoop($loopname, $chunkCount, 'text', $item->title);
 				} else {
-					my $oneLineTrackTitle = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
 					$request->addResultLoop($loopname, $chunkCount, 'text', $oneLineTrackTitle);
 				}
 			
 				if (defined($iconId)) {
 					$iconId += 0;
 					$window->{'icon-id'} = $iconId;
-					if ($menuStyle eq 'album') {
+					# show icon if we're doing press-to-play behavior
+					if ($menuStyle eq 'album' && $useContextMenu) {
 						$request->addResultLoop($loopname, $chunkCount, 'icon-id', $iconId);
 					}
 				}

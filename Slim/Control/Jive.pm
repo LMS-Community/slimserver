@@ -2648,6 +2648,7 @@ sub searchMenu {
 				params => {
 					menu     => 'album',
 					menu_all => '1',
+					useContextMenu => '1',
 					search   => '__TAGGEDINPUT__',
 					party    => $party,
 					_searchType => 'artists',
@@ -2680,6 +2681,7 @@ sub searchMenu {
 				params => {
 					menu     => 'track',
 					menu_all => '1',
+					useContextMenu => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'albums',
 					party    => $party,
@@ -2713,6 +2715,7 @@ sub searchMenu {
 				params => {
 					menu     => 'track',
 					menuStyle => 'album',
+					useContextMenu => '1',
 					menu_all => '1',
 					search   => '__TAGGEDINPUT__',
 					_searchType => 'tracks',
