@@ -133,14 +133,14 @@ Pause =>
 	[	\&_BadState,	\&_NoOp,		\&_NoOp,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_NoOp,		\&_NoOp,		\&_BadState],		# WAITING_TO_SYNC
 	[	\&_Pause,		\&_Pause,		\&_Pause,		\&_Pause],			# PLAYING
-	[	\&_Resume,		\&_Resume,		\&_Resume,		\&_Resume],			# PAUSED
+	[	\&_JumpOrResume,\&_Resume,		\&_Resume,		\&_Resume],			# PAUSED
 ],
 Resume =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_Invalid,		\&_Invalid,		\&_BadState],		# WAITING_TO_SYNC
 	[	\&_Invalid,		\&_Invalid,		\&_Invalid,		\&_Invalid],		# PLAYING
-	[	\&_Resume,		\&_Resume,		\&_Resume,		\&_Resume],			# PAUSED
+	[	\&_JumpOrResume,\&_Resume,		\&_Resume,		\&_Resume],			# PAUSED
 ],
 Flush =>
 [	[	\&_Invalid,		\&_BadState,	\&_BadState,	\&_Invalid],		# STOPPED	
@@ -240,7 +240,7 @@ StatusHeartbeat =>
 	[	\&_BadState,	\&_NoOp,		\&_NoOp,		\&_BadState],		# BUFFERING
 	[	\&_BadState,	\&_StartIfReady,\&_StartIfReady,\&_BadState],		# WAITING_TO_SYNC
 	[	\&_CheckSync,	\&_CheckSync,	\&_CheckSync,	\&_CheckSync],		# PLAYING
-	[	\&_NoOp,		\&_CheckBuffer,	\&_CheckBuffer,	\&_NoOp],			# PAUSED
+	[	\&_NoOp,		\&_CheckPaused,	\&_CheckPaused,	\&_NoOp],			# PAUSED
 ],
 );
 
@@ -415,19 +415,49 @@ sub _notifyStopped {
 
 sub _Streamout {_setStreamingState($_[0], STREAMOUT);}
 
-sub _CheckBuffer {
+sub _CheckPaused {	# only called when PAUSED
 	my ($self, $event, $params) = @_;
-	
-	# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
-	my $songController = $self->songStreamController();
-	if (   $songController
-		&& !$songController->song()->duration()
-		&& $songController->protocolHandler()->isRemote()
+
+	my $song = $self->playingSong();
+	if (   $song
+		&& $song->currentTrackHandler()->isRemote()
 		&& $self->master()->usage() > 0.98)
 	{
+		# Bug 7620: stop remote radio streams if they have been paused long enough for the buffer to fill.
 		$log->info("Stopping remote stream upon full buffer when paused");
-		_Stop(@_);
+
+		if ($self->isPaused() && $song->canSeek() && defined $self->{'resumeTime'}) {
+
+			# Bug 10645: stop only the streaming if there is a chance to restart
+			
+			_pauseStreaming($self, $song);
+			
+		} else {
+			_Stop(@_);
+		}
 	}
+}
+
+sub _pauseStreaming {
+	my ($self, $playingSong) = @_;
+	
+	foreach my $player (@{$self->{'players'}})	{
+		_stopClient($player);
+	}
+	
+	if ($self->{'songStreamController'}) {
+		$self->{'songStreamController'}->close();
+		$self->{'songStreamController'} = undef;
+	}
+	
+	_setStreamingState($self, IDLE);
+	$playingSong->setStatus(Slim::Player::Song::STATUS_READY);
+	
+	# clear streamingSong if not same as playingSong
+	if ($playingSong != $self->{'songqueue'}->[0]) {
+		shift @{$self->{'songqueue'}};
+	}
+	
 }
 
 use constant CHECK_SYNC_INTERVAL        => 0.950;
@@ -1211,6 +1241,7 @@ sub _Pause {				# pause -> Paused
 	my ($self, $event, $params) = @_;
 
 	_setPlayingState($self, PAUSED);
+	$self->{'resumeTime'} = playingSongElapsed($self);
 	
 	# since we can't count on the accuracy of the fade
 	# timers, we fade-out them all, but the master calls
@@ -1256,6 +1287,20 @@ sub _AutoStart {			# [streaming-track-not-playing] start -> Streamout
 	}
 }
 
+sub _JumpOrResume {			# resume -> Streaming, Playing
+	my ($self, $event, $params) = @_;
+
+	if (defined $self->{'resumeTime'}) {
+		$self->{'fadeIn'} = FADEVOLUME;
+		_JumpToTime($self, $event, {newtime => $self->{'resumeTime'}, restartIfNoSeek => 1});
+
+		$self->{'resumeTime'} = undef;
+		$self->{'fadeIn'} = undef;
+	} else {
+		_Resume(@_);
+	}
+}
+
 sub _Resume {				# resume -> Playing
 	my ($self, $event, $params) = @_;
 
@@ -1267,6 +1312,8 @@ sub _Resume {				# resume -> Playing
 		$player->fade_volume($self->{'fadeIn'} ? $self->{'fadeIn'} : FADEVOLUME);
 		Slim::Control::Request::notifyFromArray( $player, ['playlist', 'pause', 0] );
 	}
+	
+	$self->{'resumeTime'} = undef;
 	$self->{'fadeIn'} = undef;
 }
 
@@ -1542,20 +1589,24 @@ sub playerActive {
 			return;
 		}
 	}
+
+	# make sure that the streaming is disconnected, so that any unpause will be by _JumpToTime
+	_pauseStreaming($self, $self->playingSong()) if ($self->isPaused());
 	
 	# It is possible for us to be paused with all the "active" players actually (logically) powered off.
 	# bug 10406: In fact, the last active player in a group to be powered off may anyway be left active and off.
 	# In this case it could be that another player in the sync group, which is not part of the off-active
 	# set, is made active. So we first need to test for this situation
 	if (!master($self)->power()) {
-		# This means that the existing 'active' players were paused-on-powerOff, or the last player left active.
+		# This means that the existing 'active' players were paused-on-powerOff (dealt with above),
+		# or the last player left active. This is probably an invalid state.
 		# We need to stop them and make them inactive - otherwise they will auto-magically power-on.
-		_Stop($self) if !$self->isStopped();
+		if !$self->isStopped() && !$self->isPaused() {
+			_Stop($self) ;
+		}
+		
 		$self->{'players'} = [];       
 	}
-	
-	# bug 10828: don't unpause
-	_Stop($self) if (isPaused($self));
 	
 	push @{$self->{'players'}}, $player;
 	
@@ -1567,9 +1618,9 @@ sub playerActive {
 		$log->info($self->{'masterId'} . " active players are: " . join(',', map { $_->id } @{$self->{'players'}}));
 	}
 	
-	if (!isStopped($self)) {
+	if (isPlaying($self)) {
 		$log->info($self->{'masterId'} . " restart play");
-		_JumpToTime($self, undef, {newtime => playingSongElapsed($self), restartIfNoSeek => 1});		# TODO - stay paused if paused
+		_JumpToTime($self, undef, {newtime => playingSongElapsed($self), restartIfNoSeek => 1});
 	}
 }
 
@@ -1676,7 +1727,7 @@ sub pause      {
 
 sub resume     {
 	$_[0]->{'fadeIn'} = $_[1] if ($_[1] && $_[1] > 0);
-	$log->info($_[0]->{'masterId'}, 'fadein=', ($_[1] ? $_[1] : 'undef'));
+	$log->info($_[0]->{'masterId'}, ' fadein=', ($_[1] ? $_[1] : 'undef'));
 	_eventAction($_[0], 'Resume');
 }
 
@@ -1862,8 +1913,8 @@ sub _newMaster {
 	
 	$log->info("new master: " . $self->{'masterId'});
 	
-	# copy the playlist to the new master
-	Slim::Player::Playlist::copyPlaylist($newMaster, $oldMaster);
+	# copy the playlist to the new master but do not reset the song queue
+	Slim::Player::Playlist::copyPlaylist($newMaster, $oldMaster, 1);
 			
 	$newMaster->streamformat($oldMaster->streamformat);
 	$oldMaster->streamformat(undef);	

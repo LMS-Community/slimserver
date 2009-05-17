@@ -203,11 +203,12 @@ sub playlistMode {
 sub copyPlaylist {
 	my $toClient   = shift;
 	my $fromClient = shift;
+	my $noQueueReset = shift;
 
 	@{$toClient->playlist}    = @{$fromClient->playlist};
 	@{$toClient->shufflelist} = @{$fromClient->shufflelist};
 
-	Slim::Player::Source::streamingSongIndex($toClient, Slim::Player::Source::streamingSongIndex($fromClient), 1);
+	Slim::Player::Source::streamingSongIndex($toClient, Slim::Player::Source::streamingSongIndex($fromClient), 1) unless $noQueueReset;
 
 	$prefs->client($toClient)->set('shuffle', $prefs->client($fromClient)->get('shuffle'));
 	$prefs->client($toClient)->set('repeat',  $prefs->client($fromClient)->get('repeat'));

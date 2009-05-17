@@ -238,10 +238,12 @@ sub power {
 			$prefs->client($client)->set('playingAtPowerOff', $playing);
 			
 			# bug 8776, only pause if really playing a local file, otherwise always stop
-			if ($playing && ($resumeOff eq 'Pause') && !$controller->playingSong()->isRemote()) {
+			# bug 10645, this is no longer necessary as the controller will stop the remote stream if necessary
+			
+			if ($playing && ($resumeOff eq 'Pause')) {
 				# Pause client mid track
 				$client->execute(["pause", 1]);
-			} elsif ($controller->isPaused() && ($resumeOff eq 'Pause') && !$controller->playingSong()->isRemote()) {
+			} elsif ($controller->isPaused() && ($resumeOff eq 'Pause')) {
 				# already paused, do nothing
 			} else {
 				# bug 8776, force stop here in case in some intermediate state (TRACKWAIT, BUFFERING, ...)
