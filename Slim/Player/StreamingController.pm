@@ -1601,7 +1601,7 @@ sub playerActive {
 		# This means that the existing 'active' players were paused-on-powerOff (dealt with above),
 		# or the last player left active. This is probably an invalid state.
 		# We need to stop them and make them inactive - otherwise they will auto-magically power-on.
-		if !$self->isStopped() && !$self->isPaused() {
+		if (!$self->isStopped() && !$self->isPaused()) {
 			_Stop($self) ;
 		}
 		
