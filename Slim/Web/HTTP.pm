@@ -1488,6 +1488,12 @@ sub generateHTTPResponse {
 		$response->etag(join('-', @etag));
 	}
 
+	# treat js.html differently - need the html ending to have it processed by TT,
+	# but browser should consider it javascript
+	if ( $path =~ /js(?:-browse)?\.html/i) {
+		$contentType = 'application/x-javascript';
+	}
+
 	$response->content_type($contentType);
 
 	#if (defined $params->{'refresh'}) {
