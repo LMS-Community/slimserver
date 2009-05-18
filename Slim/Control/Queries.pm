@@ -2495,6 +2495,7 @@ sub playlistsQuery {
 	# menu/jive mgmt
 	my $menuMode  = defined $menu;
 	my $insertAll = $menuMode && defined $insert;
+	my $useContextMenu = $request->getParam('useContextMenu');
 
 	# Normalize any search parameters
 	if (defined $search) {
@@ -2553,6 +2554,13 @@ sub playlistsQuery {
 			},
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+
+		if ($useContextMenu) {
+			# context menu for 'more' action
+			$base->{'actions'}{'more'} = _contextMenuBase('playlist');
+			# "+ is more"
+			$base->{'actions'}{'add'} = $base->{'actions'}{'more'};
+		}
 		$request->addResult('base', $base);
 	}
 
@@ -5409,25 +5417,10 @@ sub contextMenuQuery {
 		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'mixermenu', $index, $quantity, @requestParams ] );
 
 	} elsif (defined($menu)) {
-		# trackinfo CM
-		if ( $menu eq 'track' ) {
-			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'trackinfo', 'items', $index, $quantity, @requestParams ] );
-		# albuminfo CM
-		} elsif ( $menu eq 'album' ) {
-			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'albuminfo', 'items', $index, $quantity, @requestParams ] );
-		# artistinfo CM
-		} elsif ( $menu eq 'artist' ) {
-			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'artistinfo', 'items', $index, $quantity, @requestParams ] );
-		# yearinfo CM
-		} elsif ( $menu eq 'year' ) {
-			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'yearinfo', 'items', $index, $quantity, @requestParams ] );
-		# genreinfo CM
-		} elsif ( $menu eq 'genre' ) {
-			$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ 'genreinfo', 'items', $index, $quantity, @requestParams ] );
-		# if we get here, we haven't built support for it yet
-		} else {
-			$request->setStatusBadParams();
-		}	
+		# send the command to *info, where * is the param given to the menu command
+		my $command = $menu . 'info';
+		$proxiedRequest = Slim::Control::Request::executeRequest( $client, [ $command, 'items', $index, $quantity, @requestParams ] );
+		
 	# if we get here, we punt
 	} else {
 		$request->setStatusBadParams();
