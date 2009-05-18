@@ -689,7 +689,7 @@ sub firmware {
 sub update_firmware {
 	my ($client, $params) = @_;
 
-	$params->{'warning'} = Slim::Player::Squeezebox::upgradeFirmware($params->{'ipaddress'}, 10) 
+	$params->{'warning'} = Slim::Player::Squeezebox1::upgradeFirmware($params->{'ipaddress'}, 10) 
 		|| string('UPGRADE_COMPLETE_DETAILS');
 	
 	return Slim::Web::HTTP::filltemplatefile("update_firmware.html", $params);

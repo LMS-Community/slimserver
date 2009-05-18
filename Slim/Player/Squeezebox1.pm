@@ -16,6 +16,7 @@ package Slim::Player::Squeezebox1;
 use strict;
 use base qw(Slim::Player::Squeezebox);
 
+use File::Spec::Functions qw(catdir);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -320,6 +321,7 @@ sub upgradeFirmware {
 	} else {
 		# for the "upgrade by ip address" web form:
 		$to_version = 10;
+		$client = Slim::Player::Client::getClient($client);
 	}
 
 	# if no upgrade path is given, then "upgrade" the client to itself.
