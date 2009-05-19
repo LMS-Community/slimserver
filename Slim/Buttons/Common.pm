@@ -1072,24 +1072,27 @@ our %functions = (
 
 		$client->execute(["playlist", "shuffle" , $shuffle]);
 		
+		my $line;
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
-
-			$client->showBriefly( {
-				'line' => [ "", $client->string('SHUFFLE_ON_ALBUMS') ]
-			});
+			$line = $client->string('SHUFFLE_ON_ALBUMS');
 
 		} elsif (Slim::Player::Playlist::shuffle($client) == 1) {
-
-			$client->showBriefly( {
-				'line' => [ "", $client->string('SHUFFLE_ON_SONGS') ]
-			});
+			$line = $client->string('SHUFFLE_ON_SONGS');
 
 		} else {
+			$line = $client->string('SHUFFLE_OFF');
 
-			$client->showBriefly( {
-				'line' => [ "", $client->string('SHUFFLE_OFF') ]
-			});
 		}
+
+		$client->showBriefly( {
+			'line' => [ '', $line ],
+			jive => {
+				text => [ '', $line ],
+				type => 'popupplay',
+				special => 'shuffle' . Slim::Player::Playlist::shuffle($client),
+			}
+		});
+
 	},
 
 	'titleFormat' => sub  {
