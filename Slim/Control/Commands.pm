@@ -739,11 +739,10 @@ sub playlistClearCommand {
 	my $client = $request->client();
 	my $mode   = Slim::Player::Playlist::playlistMode($client);
 
-	Slim::Player::Playlist::clear($client);
+	Slim::Player::Playlist::stopAndClear($client);
 	if ( $mode eq 'on' ) {
 		Slim::Player::Playlist::playlistMode($client, 'off');
 	}
-	Slim::Player::Source::playmode($client, "stop");
 
 	my $playlistObj = Slim::Music::Info::playlistForClient($client);
 
@@ -753,7 +752,7 @@ sub playlistClearCommand {
 		$playlistObj->update;
 	}
 
-	# called by Slim::Player::Playlist::clear above
+	# called by Slim::Player::Playlist::stopAndClear above
 	# $client->currentPlaylist(undef);
 	
 	# called by currentPlaylistUpdateTime below
@@ -1335,8 +1334,7 @@ sub playlistXitemCommand {
 
 	if ($cmd =~ /^(play|load|resume)$/) {
 
-		Slim::Player::Source::playmode($client, 'stop');
-		Slim::Player::Playlist::clear($client);
+		Slim::Player::Playlist::stopAndClear($client);
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 
@@ -1545,10 +1543,9 @@ sub playlistXtracksCommand {
 	my $add    = ($cmd eq 'addtracks');
 	my $delete = ($cmd eq 'deletetracks');
 
-	# if loading, start by stopping it all...
+	# if loading, start by clearing it all...
 	if ($load) {
-		Slim::Player::Source::playmode($client, 'stop');
-		Slim::Player::Playlist::clear($client);
+		Slim::Player::Playlist::stopAndClear($client);
 	}
 
 	# parse the param
@@ -1776,10 +1773,9 @@ sub playlistcontrolCommand {
 		return;
 	}
 
-	# if loading, first stop everything
+	# if loading, first stop & clear everything
 	if ($load) {
-		Slim::Player::Source::playmode($client, "stop");
-		Slim::Player::Playlist::clear($client);
+		Slim::Player::Playlist::stopAndClear($client);
 	}
 
 	# find the songs
