@@ -857,25 +857,26 @@ our %functions = (
 		$client->execute(["playlist", "repeat", $repeat]);
 
 		# display the fact that we are (not) repeating
-
+		my $line;
 		if (Slim::Player::Playlist::repeat($client) == 0) {
-
-			$client->showBriefly( {
-				'line' => [ "", $client->string('REPEAT_OFF') ]
-			});
+			$line = $client->string('REPEAT_OFF');
 
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
-
-			$client->showBriefly( {
-				'line' =>  [ "", $client->string('REPEAT_ONE') ]
-			});
+			$line = $client->string('REPEAT_ONE');
 
 		} elsif (Slim::Player::Playlist::repeat($client) == 2) {
-
-			$client->showBriefly( {
-				'line' => [ "", $client->string('REPEAT_ALL') ]
-			});
+			$line = $client->string('REPEAT_ALL');
 		}
+
+		$client->showBriefly( {
+			'line' => [ "", $line ],
+			jive => {
+				text => [ "", $line ],
+				type => 'popupplay',
+				special => 'repeat' . Slim::Player::Playlist::repeat($client),
+			}
+		});
+		
 	},
 
 	# Volume always pushes into Slim::Buttons::Volume to allow Transporter and Boom knobs to be used
