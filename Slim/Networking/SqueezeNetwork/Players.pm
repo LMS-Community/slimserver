@@ -124,38 +124,38 @@ sub _players_done {
 	}
 	
 	# enabled/disable plugins (apps) according to the list returned by SN
-	if ( $res->{apps} ) {
-		my $changed = 0;
-		
-		foreach my $service ( keys %{$res->{apps}} ) {
-			
-			next unless $service;
-			
-			my $module = $res->{apps}->{$service}->{internal}
-				? "Slim::Plugin::${service}::Plugin"
-				: "Plugins::${service}::Plugin";
-			
-			my $enabled = $res->{apps}->{$service}->{enabled};
-			if ($enabled != Slim::Utils::PluginManager->isEnabled($module)) {
-				
-				if ($enabled) {
-					Slim::Utils::PluginManager->enablePlugin($module);
-				}
-				else {
-					Slim::Utils::PluginManager->disablePlugin($module);
-				}
-				
-				$log->debug("Status of $module has changed, now " . ($enabled ? 'enabled' : 'disabled'));
-				
-				$changed = 1;
-			}
-		}
-		
-		# need to do something if list has changed - user should be notified
-		if ($changed) {
-			$log->debug("List of enabled plugins has changed - you'll need to restart SqueezeCenter for the changes to take effect")
-		}
-	}
+#	if ( $res->{apps} ) {
+#		my $changed = 0;
+#		
+#		foreach my $service ( keys %{$res->{apps}} ) {
+#			
+#			next unless $service;
+#			
+#			my $module = $res->{apps}->{$service}->{internal}
+#				? "Slim::Plugin::${service}::Plugin"
+#				: "Plugins::${service}::Plugin";
+#			
+#			my $enabled = $res->{apps}->{$service}->{enabled};
+#			if ($enabled != Slim::Utils::PluginManager->isEnabled($module)) {
+#				
+#				if ($enabled) {
+#					Slim::Utils::PluginManager->enablePlugin($module);
+#				}
+#				else {
+#					Slim::Utils::PluginManager->disablePlugin($module);
+#				}
+#				
+#				$log->debug("Status of $module has changed, now " . ($enabled ? 'enabled' : 'disabled'));
+#				
+#				$changed = 1;
+#			}
+#		}
+#		
+#		# need to do something if list has changed - user should be notified
+#		if ($changed) {
+#			$log->debug("List of enabled plugins has changed - you'll need to restart SqueezeCenter for the changes to take effect")
+#		}
+#	}
 	
 	# Clear error count if any
 	if ( $prefs->get('snPlayersErrors') ) {
