@@ -26,7 +26,8 @@ my $CONNECTED_PLAYERS = [];
 my $INACTIVE_PLAYERS =  [];
 
 # Default polling time
-my $POLL_INTERVAL = 300;
+use constant MIN_POLL_INTERVAL => 60;
+my $POLL_INTERVAL = MIN_POLL_INTERVAL;
 
 sub init {
 	my $class = shift;
@@ -93,6 +94,8 @@ sub _players_done {
 	
 	if ( $log->is_debug ) {
 		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players}, $res->{inactive_players} ) );
+		$log->debug( "Got list of active services: " . Data::Dump::dump( $res->{active_services} ));
+		$log->debug( "Got list of apps: " . Data::Dump::dump( $res->{apps} ));
 		$log->debug( "Next player check in " . $res->{next_poll} . " seconds" );
 	}
 		
@@ -100,8 +103,8 @@ sub _players_done {
 	$POLL_INTERVAL = $res->{next_poll};
 	
 	# Make sure poll interval isn't too small
-	if ( $POLL_INTERVAL < 300 ) {
-		$POLL_INTERVAL = 300;
+	if ( $POLL_INTERVAL < MIN_POLL_INTERVAL ) {
+		$POLL_INTERVAL = MIN_POLL_INTERVAL;
 	}
 	
 	# Update player list
@@ -117,6 +120,40 @@ sub _players_done {
 		if ( $cur ne $new ) {
 			$log->debug( 'Updating active services from SN' );
 			$prefs->set( sn_active_services => $res->{active_services} );
+		}
+	}
+	
+	# enabled/disable plugins (apps) according to the list returned by SN
+	if ( $res->{apps} ) {
+		my $changed = 0;
+		
+		foreach my $service ( keys %{$res->{apps}} ) {
+			
+			next unless $service;
+			
+			my $module = $res->{apps}->{$service}->{internal}
+				? "Slim::Plugin::${service}::Plugin"
+				: "Plugins::${service}::Plugin";
+			
+			my $enabled = $res->{apps}->{$service}->{enabled};
+			if ($enabled != Slim::Utils::PluginManager->isEnabled($module)) {
+				
+				if ($enabled) {
+					Slim::Utils::PluginManager->enablePlugin($module);
+				}
+				else {
+					Slim::Utils::PluginManager->disablePlugin($module);
+				}
+				
+				$log->debug("Status of $module has changed, now " . ($enabled ? 'enabled' : 'disabled'));
+				
+				$changed = 1;
+			}
+		}
+		
+		# need to do something if list has changed - user should be notified
+		if ($changed) {
+			$log->debug("List of enabled plugins has changed - you'll need to restart SqueezeCenter for the changes to take effect")
 		}
 	}
 	
