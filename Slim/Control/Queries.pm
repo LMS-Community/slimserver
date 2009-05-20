@@ -4105,8 +4105,8 @@ sub titlesQuery {
 
 					# format second line as 'artist - album'
 					my @secondLine = ();
-					if (defined(my $artistObj = $item->artist())) {
-						push @secondLine, $artistObj->name();
+					if (defined(my $artistName = $item->artistName())) {
+						push @secondLine, $artistName;
 					}
 					if (defined($album)) {
 						push @secondLine, $album;
