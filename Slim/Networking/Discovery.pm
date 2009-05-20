@@ -121,6 +121,7 @@ my %TLVhandlers = (
 	},											       # send full host name - no truncation
 	'IPAD' => sub { $::httpaddr },                     # send ipaddress as a string only if it is set
 	'JSON' => sub { $prefs->get('httpport') },         # send port as a string
+	'VERS' => sub { $::VERSION },			   # send server version
 	# Info only
 	'JVID' => sub { $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
 );
