@@ -872,8 +872,8 @@ our %functions = (
 			'line' => [ "", $line ],
 			jive => {
 				text => [ "", $line ],
-				type => 'popupplay',
-				special => 'repeat' . Slim::Player::Playlist::repeat($client),
+				type => 'icon',
+				style => 'repeat' . Slim::Player::Playlist::repeat($client),
 			}
 		});
 		

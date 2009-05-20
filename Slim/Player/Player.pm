@@ -633,9 +633,9 @@ sub currentSongLines {
 		}
 		
 		$jive = {
-			'type' => 'song',
+			'type' => 'icon',
 			'text' => [ $status, $song ? $song->title : undef ],
-			'special' => $playmode,
+			'style' => $playmode,
 		};
 		
 		if ( $imgKey ) {
