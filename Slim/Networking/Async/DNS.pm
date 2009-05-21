@@ -7,8 +7,7 @@ package Slim::Networking::Async::DNS;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# This class handles async DNS lookups, falling back to OpenDNS if the
-# user's nameservers are all failing.  It will also cache lookups for
+# This class handles async DNS lookups.  It will also cache lookups for
 # TTL.
 
 use strict;
@@ -26,22 +25,11 @@ use Slim::Utils::Timers;
 # User's working local nameservers
 my $LocalDNS = [];
 
-# OpenDNS servers to use if we can't find a working local nameserver
-my $OpenDNS = [ '208.67.222.222', '208.67.220.220' ];
-
-# OpenDNS default nxdomain IPs
-my $OpenDNS_Default = {};
-
 # Outstanding sockets are kept here
 my $Sockets = {};
 
 # Cached lookups
 tie my %cache, 'Tie::Cache::LRU', 100;
-
-# If local servers start failing, we will remember
-# and use OpenDNS for a while
-my $Local_Fail       = 0;
-my $Local_Fail_Retry = 3600; # how long until we retry failing local servers
 
 my $log = logger('network.asyncdns');
 
@@ -100,23 +88,7 @@ sub init {
 	}
 
 	if ( !scalar @{$LocalDNS} ) {
-		logWarning("No DNS servers responded, falling back to OpenDNS.");
-	}
-	
-	# Grab the OpenDNS default nxdomain IPs, so we can exclude them from results
-	for my $ns ( @{$OpenDNS} ) {
-		$res->nameservers( $ns );
-	
-		my $packet = $res->send( 'www.invalid', 'A' );
-	
-		if ( blessed($packet) ) {
-			for my $answer ( $packet->answer ) {
-				if ( blessed($answer) && $answer->isa('Net::DNS::RR::A') ) {
-					$OpenDNS_Default->{ $answer->address } = 1;
-					$log->debug( "Found an OpenDNS default nxdomain IP: " . $answer->address );
-				}
-			}
-		}
+		logWarning("No DNS servers responded, you may have problems with network requests.");
 	}
 }
 
@@ -132,7 +104,6 @@ sub check_background {
 			servers     => [ $ns ],
 			host        => $domain,
 			timeout     => 5,
-			no_fallback => 1, # do not fallback to OpenDNS for this query
 			cb          => sub {
 				my $addr = shift;
 				
@@ -169,19 +140,7 @@ sub resolve {
 		}
 	}
 	
-	# if no local DNS, fallback to OpenDNS
-	if ( !$args->{opendns} && !scalar @{$LocalDNS} ) {
-		$log->debug( 'No working local DNS servers, falling back to OpenDNS' );
-		$args->{opendns} = 1;
-	}
-	
-	# if local servers failed recently, use OpenDNS
-	if ( !$args->{opendns} && $Local_Fail && $Local_Fail > time() ) {
-		$log->debug( 'Local DNS servers failed recently, preferring OpenDNS' );
-		$args->{opendns} = 1;
-	}
-	
-	my $servers = $args->{servers} || ( $args->{opendns} ? $OpenDNS : $LocalDNS );
+	my $servers = $args->{servers} || $LocalDNS;
 
 	if ( $log->is_debug ) {
 		$log->debug( 
@@ -251,21 +210,11 @@ sub _dns_timeout {
 	
 	delete $Sockets->{$key};
 	
-	# retry with OpenDNS if we weren't already using them
-	if ( !$args->{opendns} && !$args->{no_fallback} ) {
-		$log->debug( 'Retrying lookup using OpenDNS' );
-		$Local_Fail = time() + $Local_Fail_Retry;
-		$args->{opendns} = 1;
-		__PACKAGE__->resolve( $args );
-	}
-	else {
-		# OpenDNS also timed out, return an error
-		$log->debug( 'All server(s) timed out, giving up' );
-	
-		if ( my $ecb = $args->{ecb} ) {
-			my $pt = $args->{pt} || [];
-			$ecb->( @{$pt} );
-		}
+	$log->debug( 'All server(s) timed out, giving up' );
+
+	if ( my $ecb = $args->{ecb} ) {
+		my $pt = $args->{pt} || [];
+		$ecb->( @{$pt} );
 	}
 }
 
@@ -286,11 +235,6 @@ sub _dns_read {
 						
 				my $addr = $answer->address;
 				my $ttl  = $answer->ttl;
-				
-				if ( exists $OpenDNS_Default->{ $addr } ) {
-					$log->debug( $args->{host} . ' resolved to OpenDNS default nxdomain IP, ignoring' );
-					next;
-				}
 				
 				if ( $log->is_debug ) {
 					my ($host, $ts) = split /\|/, $key;
@@ -321,11 +265,6 @@ sub _dns_read {
 						addr    => $addr,
 						expires => time() + $ttl,
 					};
-				}
-				
-				# If this was looked up on a local server, unset Local_Fail
-				if ( !$args->{opendns} ) {
-					$Local_Fail = 0;
 				}
 				
 				if ( my $cb = $args->{cb} ) {
@@ -376,23 +315,11 @@ sub _dns_error {
 	# All requests failed, remove the timeout timer and handle the failure here
 	Slim::Utils::Timers::killTimers( $key, \&_dns_timeout );
 	
-	# Fallback to OpenDNS first
-	if ( !$args->{opendns} && !$args->{no_fallback} ) {
-		$log->debug( 'Retrying lookup using OpenDNS' );
-		
-		$Local_Fail = time() + $Local_Fail_Retry;
-		$args->{opendns} = 1;
-		
-		__PACKAGE__->resolve( $args );
-	}
-	else {
-		# OpenDNS failed, return an error
-		$log->debug( 'All server(s) failed to resolve, giving up' );
-		
-		if ( my $ecb = $args->{ecb} ) {
-			my $pt = $args->{pt} || [];
-			$ecb->( @{$pt} );
-		}
+	$log->debug( 'All server(s) failed to resolve, giving up' );
+	
+	if ( my $ecb = $args->{ecb} ) {
+		my $pt = $args->{pt} || [];
+		$ecb->( @{$pt} );
 	}
 }
 
