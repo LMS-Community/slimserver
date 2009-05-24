@@ -4647,9 +4647,24 @@ sub _addJiveSong {
 	}
 
 	# split to three discrete elements for NP screen
-	$request->addResultLoop($loop, $count, 'track', $title);
-	$request->addResultLoop($loop, $count, 'album', $album);
-	$request->addResultLoop($loop, $count, 'artist', $artist);
+Data::Dump::dump($title);
+Data::Dump::dump($artist);
+Data::Dump::dump($album);
+	if ( defined($title) ) {
+		$request->addResultLoop($loop, $count, 'track', $title);
+	} else {
+		$request->addResultLoop($loop, $count, 'track', '');
+	}
+	if ( defined($album) ) {
+		$request->addResultLoop($loop, $count, 'album', $album);
+	} else {
+		$request->addResultLoop($loop, $count, 'album', '');
+	}
+	if ( defined($artist) ) {
+		$request->addResultLoop($loop, $count, 'artist', $artist);
+	} else {
+		$request->addResultLoop($loop, $count, 'artist', '');
+	}
 	# deliver as one formatted multi-line string for NP playlist screen
 	$request->addResultLoop($loop, $count, 'text', $text);
 
