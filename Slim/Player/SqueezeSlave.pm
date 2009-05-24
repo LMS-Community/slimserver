@@ -102,6 +102,7 @@ my @volume_map = (
  );
 
 sub dBToFixed {
+	my $client = shift;
 	my $db = shift;
 
 	# Map a floating point dB value to a 16.16 fixed point value to
@@ -147,7 +148,7 @@ sub volume {
 			# With new style volume, let's try -49.5dB as the lowest
 			# value.
 			my $db = ($volume - 100)/2;	
-			$newGain = dBToFixed($db);
+			$newGain = $client->dBToFixed($db);
 		}
 
 		my $data = pack('NNCCNN', $oldGain, $oldGain, $prefs->client($client)->get('digitalVolumeControl'), $preamp, $newGain, $newGain);
@@ -201,6 +202,9 @@ sub hasPreAmp {
 	return 1;
 }
 sub hasDigitalOut {
+	return 0;
+}
+sub hasPowerControl {
 	return 0;
 }
 
