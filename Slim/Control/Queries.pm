@@ -3575,11 +3575,18 @@ sub statusQuery {
 		# we need to be sure we have the latest data from the DB if ratings are requested
 		my $refreshTrack = $tags =~ /R/;
 		
+		my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
+
+		if ($track->remote) {
+			$tags .= "B"; # include button remapping
+			my $metadata = _songData($request, $track, $tags);
+			$request->addResult('remoteMeta', $metadata);
+		}
+
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
 			$request->addResult('offset', $playlist_cur_index) if $menuMode;
-			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index, $refreshTrack);
 
 			if ($menuMode) {
 				_addJiveSong($request, $loop, 0, 1, $track);

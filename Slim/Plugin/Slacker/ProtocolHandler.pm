@@ -700,6 +700,7 @@ sub getMetadataFor {
 				# replace repeat with Mark as Fav
 				repeat  => {
 					icon    => $fav_icon,
+					jiveStyle => 'love',
 					tooltip => Slim::Utils::Strings::string($fav_tip),
 					command => [ 'slacker', 'rate', $fav_cmd ],
 				},
@@ -707,6 +708,7 @@ sub getMetadataFor {
 				# replace shuffle with Ban Track
 				shuffle => {
 					icon    => main::SLIM_SERVICE ? 'static/sc/images/Slacker/btn_slacker_ban.gif' : 'html/images/btn_slacker_ban.gif',
+					jiveStyle => 'hate',
 					tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
 					command => [ 'slacker', 'rate', 'B' ],
 				},
