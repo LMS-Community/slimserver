@@ -12,7 +12,9 @@ use Encode;
 use Wx qw(:everything);
 use Wx::Event qw(EVT_CHILD_FOCUS);
 use Wx::Html;
-use LWP::Simple;
+use LWP::Simple qw($ua get);
+
+$ua->timeout(10);
 
 use Slim::Utils::Light;
 
