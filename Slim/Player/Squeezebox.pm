@@ -711,7 +711,7 @@ sub stream_s {
 		$pcmsamplerate   = '?';
 		$pcmendian       = '?';
 		$pcmchannels     = '?';
-		$outputThreshold = 0;
+		$outputThreshold = 1;
 		
 		# Handler may override pcmsamplesize (Rhapsody)
 		if ( $songHandler && $songHandler->can('pcmsamplesize') ) {
