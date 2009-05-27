@@ -431,7 +431,8 @@ sub getMetadataFor {
 			buttons     => {
 				# disable REW/Previous button
 				rew => 0,
-
+				# disable FWD when you've reached skip limit
+				fwd => canSkip($client) ? 1 : 0,
 				# replace repeat with Thumbs Up
 				repeat  => {
 					icon    => main::SLIM_SERVICE ? 'static/sc/images/Pandora/btn_thumbs_up.gif' : 'html/images/btn_thumbs_up.gif',

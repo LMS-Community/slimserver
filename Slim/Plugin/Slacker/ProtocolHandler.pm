@@ -696,6 +696,8 @@ sub getMetadataFor {
 			buttons     => {
 				# disable REW/Previous button
 				rew => 0,
+				# disable FWD when you've reached skip limit
+				fwd => canSkip($client) ? 1 : 0,
 
 				# replace repeat with Mark as Fav
 				repeat  => {
