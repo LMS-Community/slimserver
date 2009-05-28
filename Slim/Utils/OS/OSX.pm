@@ -82,6 +82,13 @@ sub initDetails {
 	return $class->{osDetails};
 }
 
+sub initPrefs {
+	my ($class, $prefs) = @_;
+	
+	$prefs->{libraryname} = `scutil --get ComputerName` || '';
+	chomp($prefs->{libraryname});
+}
+
 sub canFollowAlias { $canFollowAlias };
 
 sub initSearchPath {
