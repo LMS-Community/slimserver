@@ -765,7 +765,7 @@ sub checkScrobble {
 		t    => uri_escape_utf8( $title ),
 		i    => int( $client->currentPlaylistChangeTime() ),
 		o    => $source,
-		r    => $rating, # L for thumbs-up for Pandora/Lastfm, B for Lastfm ban, S for Lastfm skip
+		r    => $rating || '', # L for thumbs-up for Pandora/Lastfm, B for Lastfm ban, S for Lastfm skip
 		l    => ( $duration ? int( $duration ) : '' ),
 		b    => uri_escape_utf8( $album ),
 		n    => $tracknum,
