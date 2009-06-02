@@ -14,6 +14,7 @@ use File::Spec::Functions;
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 
+use Slim::GUI::ControlPanel::InitialSettings;
 use Slim::GUI::ControlPanel::Settings;
 use Slim::GUI::ControlPanel::Music;
 use Slim::GUI::ControlPanel::Advanced;
@@ -235,7 +236,22 @@ sub new {
 
 sub OnInit {
 	my $self = shift;
-	my $frame = Slim::GUI::ControlPanel::MainFrame->new($args);
+	my $frame;
+	
+	my $svcMgr = Slim::Utils::ServiceManager->new();	
+		
+	# if we're running for the first time, show the SN page
+#	if (($svcMgr->checkServiceState() == SC_STATE_RUNNING) && !Slim::GUI::ControlPanel->getPref('wizardDone')) {
+	if (0 && !Slim::GUI::ControlPanel->getPref('wizardDone')) {
+#		Slim::GUI::ControlPanel->setPref('wizardDone', 1);
+
+		$frame = Slim::GUI::ControlPanel::InitialSettings->new();
+	}
+
+	else {
+		$frame = Slim::GUI::ControlPanel::MainFrame->new($args); 
+	}	
+	
 	$frame->Show( 1 );
 }
 
