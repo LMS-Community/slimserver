@@ -258,7 +258,7 @@ use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
 my $svcMgr = Slim::Utils::ServiceManager->new();
-my $isScanning;
+my $isScanning = 0;
 
 my ($parent, $progressBar, $progressLabel, $progressInfo);
 
@@ -330,12 +330,11 @@ sub Notify {
 	if ($isScanning) {
 		$progressBar->SetValue(100);
 		$progressLabel->SetLabel(string('PROGRESS_IMPORTER_COMPLETE_DESC'));
-		$self->Start(10000, wxTIMER_CONTINUOUS);
 	}
 
+	$self->Start(10000, wxTIMER_CONTINUOUS);
 	$btnRescan->SetLabel(string('SETUP_RESCAN_BUTTON'));
-	$self->Layout();
-	
+
 	# don't poll that often when no scan is running
 	$isScanning = 0;
 }
