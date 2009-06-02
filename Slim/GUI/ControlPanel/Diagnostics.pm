@@ -43,21 +43,21 @@ sub new {
 	$scSizer->SetFlexibleDirection(wxHORIZONTAL);
 
 	$self->_addItem($scSizer, string('SQUEEZECENTER') . string('COLON'), sub {
-		$svcMgr->checkServiceState() == SC_STATE_RUNNING ? string('RUNNING') : string('STOPPED');
+		$_[0] ? string('RUNNING') : string('STOPPED');
 	});
 	$self->_addItem($scSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getHostIP);
 	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
-		checkPort(getHostIP(), '3483');
+		checkPort(getHostIP(), '3483', $_[0]);
 	});
 	
 	my $httpPort = Slim::GUI::ControlPanel->getPref('httpport') || 9000;
 	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $httpPort, 'HTTP'), sub {
-		checkPort(getHostIP(), $httpPort);
+		checkPort(getHostIP(), $httpPort, $_[0]);
 	});
 
 	my $cliPort = Slim::GUI::ControlPanel->getPref('cliport', 'cli.prefs') || 9090;
 	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $cliPort, 'CLI'), sub {
-		checkPort(getHostIP(), $cliPort);
+		checkPort(getHostIP(), $cliPort, $_[0]);
 	});
 	
 	$scBoxSizer->Add($scSizer, 0, wxLEFT | wxRIGHT | wxGROW, 10);
@@ -77,14 +77,14 @@ sub new {
 
 	# check port 80 on squeezenetwork, as echo isn't available
 	$self->_addItem($snSizer, string('CONTROLPANEL_PING'), sub {
-		checkPing(SN, 80);
+		checkPing(SN, 80, 1);
 	});
 	
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
-		checkPort(getSNAddress(), '3483');
+		checkPort(getSNAddress(), '3483', 1);
 	});
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
-		checkPort(getSNAddress(), '9000');
+		checkPort(getSNAddress(), '9000', 1);
 	});
 	
 	$snBoxSizer->Add($snSizer, 0, wxLEFT | wxRIGHT | wxGROW, 10);
@@ -128,13 +128,15 @@ sub _update {
 	my ($self, $event) = @_;
 
 	$self->Update;
+
+	my $isRunning = $svcMgr->checkServiceState() == SC_STATE_RUNNING;
 	
 	foreach my $check (@checks) {
 
 		if (defined $check->{cb} && $check->{cb} && $check->{label}) {
 			eval {
-				my $val = &{$check->{cb}};
-				$check->{label}->SetLabel($val) if defined $val;
+				my $val = &{$check->{cb}}($isRunning);
+				$check->{label}->SetLabel($val || 'n/a');
 				
 				$self->Layout();
 			};
@@ -198,9 +200,9 @@ sub getSNAddress {
 }
 
 sub checkPort {
-	my ($raddr, $rport) = @_;
+	my ($raddr, $rport, $serviceState) = @_;
 	
-	return string('CONTROLPANEL_FAILED') unless $raddr && $rport;
+	return string('CONTROLPANEL_FAILED') unless $raddr && $rport && $serviceState;
 
 	my $iaddr = inet_aton($raddr);
 	my $paddr = sockaddr_in($rport, $iaddr);
@@ -217,9 +219,9 @@ sub checkPort {
 }
 
 sub checkPing {
-	my ($host, $port) = @_;
+	my ($host, $port, $serviceState) = @_;
 	
-	return string('CONTROLPANEL_FAILED') unless $host;
+	return string('CONTROLPANEL_FAILED') unless $host && $serviceState;
 
 	my $p = Net::Ping->new('tcp', 2);
 

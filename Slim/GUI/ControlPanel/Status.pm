@@ -17,6 +17,7 @@ use LWP::Simple qw($ua get);
 $ua->timeout(10);
 
 use Slim::Utils::Light;
+use Slim::Utils::ServiceManager;
 
 sub new {
 	my ($self, $nb) = @_;
@@ -55,11 +56,23 @@ sub _update {
 
 	if ( $child && $child->isa('Wx::HtmlWindow') && !$self->{loaded} ) {
 
-		my $status = get(Slim::GUI::ControlPanel->getBaseUrl() . '/EN/settings/server/status.html?simple=1');
-		$status = decode("utf8", $status) if $status;
+		my $svcMgr = Slim::Utils::ServiceManager->new();
+		
+		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
 
-		$child->SetPage($status || string('CONTROLPANEL_NO_STATUS'));
-		$self->{loaded} = 1;
+			my $status = get(Slim::GUI::ControlPanel->getBaseUrl() . '/EN/settings/server/status.html?simple=1');
+			$status = decode("utf8", $status) if $status;
+	
+			$child->SetPage($status || string('CONTROLPANEL_NO_STATUS'));
+			$self->{loaded} = 1;
+
+		}
+		else {
+	
+			$child->SetPage(string('CONTROLPANEL_NO_STATUS'));
+			$self->{loaded} = 1;
+
+		}
 	}
 	else {
 		$self->{loaded} = 0;
