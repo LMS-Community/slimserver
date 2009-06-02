@@ -198,6 +198,9 @@ sub setDigitalInput {
 		if ($INC{'Slim/Plugin/DigitalInput/Plugin.pm'}) {
 
 			$input = Slim::Plugin::DigitalInput::Plugin::valueForSourceName($input);
+
+			# make sure volume is set, without changing temp setting
+			$client->volume( abs($prefs->client($client)->get("volume")), defined($client->tempVolume()));
 		}
 	}
 

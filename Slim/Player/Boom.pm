@@ -408,6 +408,9 @@ sub setLineIn {
 		if ($INC{'Slim/Plugin/LineIn/Plugin.pm'}) {
 
 			$input = Slim::Plugin::LineIn::Plugin::valueForSourceName($input);
+
+			# make sure volume is set, without changing temp setting
+			$client->volume( abs($prefs->client($client)->get("volume")), defined($client->tempVolume()));
 		}
 	}
 
