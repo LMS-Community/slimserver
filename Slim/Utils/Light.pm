@@ -160,8 +160,8 @@ sub getPref {
 				# read YAML (server) and old style prefs (installer)
 				if (/^$pref(:| \=)? (.+)$/) {
 					$ret = $2;
-					$ret =~ s/^''$//;
-					chomp($ret);
+					$ret =~ s/^['"]//;
+					$ret =~ s/['"\w]*$//s;
 					last;
 				}
 			}
