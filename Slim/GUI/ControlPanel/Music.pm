@@ -325,6 +325,44 @@ sub Notify {
 		elsif ($progress && $progress->{lastscanfailed}) {
 			$progressLabel->SetLabel($progress->{lastscanfailed});
 		}
+
+		else {
+			
+			my $libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999);
+			
+			if ($libraryStats && $libraryStats->{loop_loop}) {
+				my $libraryName = string('INFORMATION_MENU_LIBRARY');
+				my $x = 0;
+				
+				foreach my $item (@{$libraryStats->{loop_loop}}) {
+
+					last if ($item->{name} && $item->{name} eq $libraryName);
+
+					$x++;
+
+				}
+				
+				if ($x < scalar @{$libraryStats->{loop_loop}}) {
+					$libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999, "item_id:$x");
+
+					if ($libraryStats && $libraryStats->{loop_loop}) {
+						my $newLabel = '';
+
+						foreach my $item (@{$libraryStats->{loop_loop}}) {
+							
+							if ($item->{name}) {
+								$newLabel .= $item->{name} . "\n";
+							}
+		
+						}
+						
+						if ($newLabel) {
+							$progressLabel->SetLabel($newLabel);
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	if ($isScanning) {
