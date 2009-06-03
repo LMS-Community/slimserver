@@ -20838,6 +20838,9 @@ CONTROLPANEL_MUSIC_LIBRARY
 	NO	Musikkbibliotek
 	SV	Musikbibliotek
 	
+CONTROLPANEL_AUTHENTICATION_REQUIRED
+	EN	Authentication is required to access SqueezeCenter
+	
 CONTROLPANEL_WEB_UI
 	EN	Web Interface
 
