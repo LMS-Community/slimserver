@@ -126,6 +126,14 @@ sub _addItem {
 
 sub _update {
 	my ($self, $event) = @_;
+	
+	foreach my $check (@checks) {
+
+		if ($check->{label}) {
+			$check->{label}->SetLabel('');
+			$self->Layout();
+		}
+	}
 
 	$self->Update;
 
