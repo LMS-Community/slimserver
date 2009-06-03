@@ -227,12 +227,15 @@ sub do {
 package Slim::GUI::ControlPanel;
 
 use base 'Wx::App';
+use Wx qw(:everything);
 use LWP::UserAgent;
 use JSON::XS qw(to_json from_json);
 
 use Slim::Utils::ServiceManager;
 
 my $args;
+
+my $credentials = {};
 
 sub new {
 	my $self = shift;
@@ -301,16 +304,46 @@ sub serverRequest {
 	return if $@ || !$postdata;
 
 	my $httpPort = Slim::Utils::Light::getPref('httpport') || 9000;
+	my $baseUrl  = "127.0.0.1:$httpPort";
 
 	my $req = HTTP::Request->new( 
 		'POST',
-		"http://127.0.0.1:$httpPort/jsonrpc.js",
+		"http://$baseUrl/jsonrpc.js",
 	);
 	$req->header('Content-Type' => 'text/plain');
 
-	$req->content($postdata);	
+	$req->content($postdata);
+	
+	my $ua = LWP::UserAgent->new();
+	
+	if ($credentials && $credentials->{username} && $credentials->{password}) {
+		$ua->credentials($baseUrl, "SqueezeCenter", $credentials->{username}, $credentials->{password});
+	}
 
-	my $response = LWP::UserAgent->new()->request($req);
+	my $response = $ua->request($req);
+
+	# check whether authentication is needed
+	while ($response->code == 401) {
+		my $loginDialog = Slim::GUI::ControlPanel::LoginDialog->new();
+		
+		if ($loginDialog->ShowModal() == wxID_OK) {
+		
+			$credentials = {
+				username => $loginDialog->username,
+				password => $loginDialog->password,
+			};
+		
+			$ua->credentials($baseUrl, "SqueezeCenter", $credentials->{username}, $credentials->{password});
+		
+			$response = $ua->request($req);
+		}
+		
+		else {
+			exit;
+		}
+		
+		$loginDialog->Destroy();
+	}
 	
 	my $content;
 	$content = $response->decoded_content if ($response);
@@ -325,5 +358,57 @@ sub serverRequest {
 	return ref $content ? $content : { msg => $content };
 }
 
+1;
+
+
+# Ok button will apply our changes
+package Slim::GUI::ControlPanel::LoginDialog;
+
+use base 'Wx::Dialog';
+use Wx qw(:everything);
+use Slim::Utils::Light;
+
+my ($username, $password);
+
+sub new {
+	my $self = shift;
+		
+	$self = $self->SUPER::new(undef, -1, string('LOGIN'), [-1, -1], [350, 220], wxDEFAULT_DIALOG_STYLE);
+
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
+	$mainSizer->Add(Wx::StaticText->new($self, -1, string('CONTROLPANEL_AUTHENTICATION_REQUIRED')), 0, wxALL, 10);
+
+	$mainSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')), 0, wxLEFT | wxRIGHT, 10);
+	$username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [330, -1]);
+	$mainSizer->Add($username, 0, wxALL, 10);
+	
+	$mainSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')), 0, wxLEFT | wxRIGHT, 10);
+	$password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [330, -1], wxTE_PASSWORD);
+	$mainSizer->Add($password, 0, wxALL, 10);
+	
+	$mainSizer->AddStretchSpacer();
+
+	my $btnsizer = Wx::StdDialogButtonSizer->new();
+	$btnsizer->AddButton(Wx::Button->new($self, wxID_OK, string('OK')));
+	$btnsizer->AddButton(Wx::Button->new($self, wxID_CANCEL, string('CANCEL')));
+	$btnsizer->Realize();
+	$mainSizer->Add($btnsizer, 0, wxALL | wxGROW, 10);
+
+	$self->SetSizer($mainSizer);
+
+	$self->Centre();
+		
+	return $self;
+}
+
+sub username {
+	return $username->GetValue();
+}
+
+
+sub password {
+	return $password->GetValue();
+}
 
 1;
