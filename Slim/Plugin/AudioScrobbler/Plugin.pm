@@ -517,7 +517,7 @@ sub newsongCallback {
 	Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
 	Slim::Utils::Timers::setTimer(
 		$client,
-		Time::HiRes::time() + $checktime,
+		Time::HiRes::time() + $checktime + 5,	# 5 seconds added to allow for startup and avoid unnecessary callback 
 		\&checkScrobble,
 		$track,
 		$checktime,
@@ -919,6 +919,11 @@ sub stillPlaying {
 	my $artist   = $track->artist ? $track->artist->name : '';
 	my $album    = $track->album  ? $track->album->name  : '';
 	my $title    = $track->title;
+	
+	# Bug 12240: if we have stopped (probably at the end of the playlist) then we are not still playing
+	if ($client->isStopped()) {
+		return 0;
+	}
 	
 	if ( $track->remote ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
