@@ -37,53 +37,62 @@ sub new {
 
 	Slim::Utils::OSDetect::init();
 
+	# if we're running for the first time, show the SN page
+	my $initialSetup = $svcMgr->checkServiceState() == SC_STATE_RUNNING && !Slim::GUI::ControlPanel->getPref('wizardDone');
+
 	my $self = $ref->SUPER::new(
 		undef,
 		-1,
-		string('CONTROLPANEL_TITLE'),
+		$initialSetup ? string('WELCOME_TO_SQUEEZECENTER') : string('CONTROLPANEL_TITLE'),
 		[-1, -1],
 		Slim::Utils::OSDetect::isWindows() ? [550, 610] : [700, 700],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
-		string('CONTROLPANEL_TITLE'),
+		'WELCOME_TO_SQUEEZECENTER'
 	);
 
 	$self->_fixIcon();
 
-	my $panel    = Wx::Panel->new($self);
-	my $notebook = Wx::Notebook->new($panel);
-
-	EVT_NOTEBOOK_PAGE_CHANGED($self, $notebook, sub {
-		my ($self, $event) = @_;
-
-		eval {
-			my $child = $notebook->GetPage($notebook->GetSelection());
-			if ($child && $child->can('_update')) {
-				$child->_update($event);
-			};
-		}
-	});
-
+	my $panel     = Wx::Panel->new($self);
+	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
+	
 	$pollTimer = Slim::GUI::ControlPanel::Timer->new();
-
+	
 	$btnOk = Slim::GUI::ControlPanel::OkButton->new( $panel, wxID_OK, string('OK') );
 	EVT_BUTTON( $self, $btnOk, sub {
 		$btnOk->do($svcMgr->checkServiceState());
 		$_[0]->Destroy;
 	} );
 
-	$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('BASIC_SERVER_SETTINGS'), 1);
-	$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
-	$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
-	
-	# if we're running for the first time, show the SN page
-	if ( ($svcMgr->checkServiceState() == SC_STATE_RUNNING) && !Slim::GUI::ControlPanel->getPref('wizardDone')) {
+	if ($initialSetup) {
+		
+		$mainSizer->Add(Slim::GUI::ControlPanel::InitialSettings->new($panel, $self), 1, wxALL | wxGROW, 10);
+		
 		Slim::GUI::ControlPanel->setPref('wizardDone', 1);
 	}
 	
-	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
-	$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
+	else {
+
+		my $notebook = Wx::Notebook->new($panel);
+	
+		EVT_NOTEBOOK_PAGE_CHANGED($self, $notebook, sub {
+			my ($self, $event) = @_;
+	
+			eval {
+				my $child = $notebook->GetPage($notebook->GetSelection());
+				if ($child && $child->can('_update')) {
+					$child->_update($event);
+				};
+			}
+		});
+	
+		$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('BASIC_SERVER_SETTINGS'), 1);
+		$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
+		$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
+		$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
+		$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
+	
+		$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
+	}
 	
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 	$btnsizer->AddButton($btnOk);
@@ -238,19 +247,7 @@ sub OnInit {
 	my $self = shift;
 	my $frame;
 	
-	my $svcMgr = Slim::Utils::ServiceManager->new();	
-		
-	# if we're running for the first time, show the SN page
-#	if (($svcMgr->checkServiceState() == SC_STATE_RUNNING) && !Slim::GUI::ControlPanel->getPref('wizardDone')) {
-	if (0 && !Slim::GUI::ControlPanel->getPref('wizardDone')) {
-#		Slim::GUI::ControlPanel->setPref('wizardDone', 1);
-
-		$frame = Slim::GUI::ControlPanel::InitialSettings->new();
-	}
-
-	else {
-		$frame = Slim::GUI::ControlPanel::MainFrame->new($args); 
-	}	
+	$frame = Slim::GUI::ControlPanel::MainFrame->new($args); 
 	
 	$frame->Show( 1 );
 }
