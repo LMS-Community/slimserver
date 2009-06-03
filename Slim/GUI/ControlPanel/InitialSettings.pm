@@ -6,7 +6,7 @@ package Slim::GUI::ControlPanel::InitialSettings;
 # version 2.
 
 use strict;
-use base 'Wx::Frame';
+use base 'Wx::Panel';
 
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
@@ -15,24 +15,14 @@ use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
 sub new {
-	my $ref = shift;
+	my ($self, $panel, $parent) = @_;
 
 	Slim::Utils::OSDetect::init();
 
-	my $self = $ref->SUPER::new(
-		undef,
-		-1,
-		string('WELCOME_TO_SQUEEZECENTER'),
-		[-1, -1],
-		Slim::Utils::OSDetect::isWindows() ? [550, 610] : [700, 700],
-		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
-		string('CONTROLPANEL_TITLE'),
-	);
-
-	Slim::GUI::ControlPanel::MainFrame::_fixIcon($self);
+	$self = $self->SUPER::new($panel);
+	
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
-	
 	
 	my $musicLibraryBox = Wx::StaticBox->new($self, -1, string('SETUP_LIBRARY_NAME'));
 	my $musicLibrarySizer = Wx::StaticBoxSizer->new($musicLibraryBox, wxVERTICAL);
@@ -51,12 +41,12 @@ sub new {
 	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')), 0, wxTOP, 3);
 	my $username = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_email') || '', [-1, -1], [350, -1]);
 	$snSizer->Add($username);
-#	$parent->addStatusListener($username);
+	$parent->addStatusListener($username);
 
 	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP, 3);
 	my $password = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_password_sha') ? 'SN_PASSWORD_PLACEHOLDER' : '', [-1, -1], [350, -1], wxTE_PASSWORD);
 	$snSizer->Add($password);
-#	$parent->addStatusListener($password);
+	$parent->addStatusListener($password);
 
 
 	$snSizer->Add(Wx::HyperlinkCtrl->new(
@@ -79,49 +69,48 @@ sub new {
 		wxHL_DEFAULT_STYLE,
 	), 0, wxTOP, 3);
 
-#	$parent->addApplyHandler($username, sub {
-#		
-#		return unless $username->GetValue() && $password->GetValue();
-#		
-#		return if $password->GetValue() eq 'SN_PASSWORD_PLACEHOLDER';
-#		
-#		my $validated = Slim::GUI::ControlPanel->serverRequest(
-#			'setsncredentials',
-#			$username->GetValue(),
-#			$password->GetValue(),
-#		);
-#
-#		# validation failed
-#		if (!$validated || !$validated->{validated}) {
-#			my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || 'Failed', string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
-#			$msgbox->ShowModal();
-#		}
-#	});
+	$parent->addApplyHandler($username, sub {
+		
+		return unless $username->GetValue() && $password->GetValue();
+		
+		return if $password->GetValue() eq 'SN_PASSWORD_PLACEHOLDER';
+		
+		my $validated = Slim::GUI::ControlPanel->serverRequest(
+			'setsncredentials',
+			$username->GetValue(),
+			$password->GetValue(),
+		);
+
+		# validation failed
+		if (!$validated || !$validated->{validated}) {
+			my $msgbox = Wx::MessageDialog->new($self, $validated->{warning} || 'Failed', string('SQUEEZENETWORK'), wxOK | wxICON_EXCLAMATION);
+			$msgbox->ShowModal();
+		}
+	});
 
 	my $statsDesc = string('SETUP_SN_REPORT_STATS_DESC');
 	$statsDesc =~ s/<.*?>//g;
 	
-#	my ($width) = $parent->GetSizeWH();
-#	$width -= 80;
+	my ($width) = $parent->GetSizeWH();
+	$width -= 80;
 	$statsDesc = Wx::StaticText->new($self, -1, $statsDesc);
-#	$statsDesc->Wrap($width);
+	$statsDesc->Wrap($width);
 	$snSizer->Add($statsDesc, 0, wxEXPAND | wxLEFT | wxTOP, 10);
 
 	my $lbStatsSN = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], [ string('SETUP_SN_REPORT_STATS_ENABLE'), string('SETUP_SN_REPORT_STATS_DISABLE') ]);
 	$lbStatsSN->SetSelection(Slim::GUI::ControlPanel->getPref('sn_disable_stats') ? 1 : 0);
 	
-#	$parent->addStatusListener($lbStatsSN);
-#	$parent->addApplyHandler($lbStatsSN, sub {
-#		Slim::GUI::ControlPanel->setPref('sn_disable_stats', $lbStatsSN->GetSelection());
-#	});
+	$parent->addStatusListener($lbStatsSN);
+	$parent->addApplyHandler($lbStatsSN, sub {
+		Slim::GUI::ControlPanel->setPref('sn_disable_stats', $lbStatsSN->GetSelection());
+	});
 	
 	$snSizer->Add($lbStatsSN, 0, wxALL, 10);
 		
 	$mainSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
 	
 
-	$self->SetSizer($mainSizer);	
-	
+	$self->SetSizer($mainSizer);
 	
 	return $self;
 }
