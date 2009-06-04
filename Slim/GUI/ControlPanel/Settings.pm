@@ -28,7 +28,6 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-	# startup mode
 	my ($noAdminWarning, @startupOptions) = $svcMgr->getStartupOptions();
 
 	if ($noAdminWarning) {
@@ -44,21 +43,27 @@ sub new {
 		wxVERTICAL
 	);
 
+	my $statusLabel = Wx::StaticText->new($self, -1, '');
+	$statusSizer->Add($statusLabel, 0, wxALL, 10);
+	
+	$parent->addStatusListener($statusLabel, sub {
+		my $state = shift;
+		
+		if ($state == SC_STATE_STOPPED) {
+			$statusLabel->SetLabel(string('CONTROLPANEL_STATUS_STOPPED'));
+		}
+		elsif ($state == SC_STATE_RUNNING) {
+			$statusLabel->SetLabel(string('CONTROLPANEL_STATUS_RUNNING'));
+		}
+		elsif ($state == SC_STATE_STARTING) {
+			$statusLabel->SetLabel(string('CONTROLPANEL_STATUS_STARTING'));
+		}
+	});
+
 	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
 	# Start/Stop button
 	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
-	EVT_BUTTON( $self, $btnStartStop, sub {
-		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
-			Slim::GUI::ControlPanel->serverRequest('stopserver');
-		}
-		
-		# starting SC is heavily platform dependant
-		else {
-			$svcMgr->start();
-			$parent->checkServiceStatus();
-		}
-	});
 
 	$parent->addStatusListener($btnStartStop, sub {
 		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
@@ -66,16 +71,23 @@ sub new {
 	});
 	$startBtnSizer->Add($btnStartStop, 0);
 
-	my $btnStartSafeMode = Wx::Button->new($self, -1, string('RUN_FAILSAFE'));
-	EVT_BUTTON( $self, $btnStartSafeMode, sub {
-		$svcMgr->start('--failsafe');
-		$parent->checkServiceStatus();
+	my $cbStartSafeMode = Wx::CheckBox->new($self, -1, string('RUN_FAILSAFE'));
+	$parent->addStatusListener($cbStartSafeMode, sub {
+		$cbStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
 	});
+	$startBtnSizer->Add($cbStartSafeMode, 0, wxLEFT, 10);
 
-	$parent->addStatusListener($btnStartSafeMode, sub {
-		$btnStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
+	EVT_BUTTON( $self, $btnStartStop, sub {
+		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+			Slim::GUI::ControlPanel->serverRequest('stopserver');
+		}
+		
+		# starting SC is heavily platform dependant
+		else {
+			$svcMgr->start($cbStartSafeMode->IsChecked() ? '--failsafe' : undef);
+			$parent->checkServiceStatus();
+		}
 	});
-	$startBtnSizer->Add($btnStartSafeMode, 0, wxLEFT, 10);
 
 	$statusSizer->Add($startBtnSizer, 0, wxALL | wxGROW, 10);
 	$mainSizer->Add($statusSizer, 0, wxALL | wxGROW, 10);

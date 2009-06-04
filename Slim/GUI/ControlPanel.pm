@@ -89,7 +89,7 @@ sub new {
 			}
 		});
 	
-		$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('BASIC_SERVER_SETTINGS'), 1);
+		$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('CONTROLPANEL_SERVERSTATUS'), 1);
 		$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Account->new($notebook, $self), string('CONTROLPANEL_ACCOUNT'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));

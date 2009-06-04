@@ -8715,7 +8715,7 @@ SETUP_SN_REPORT_STATS
 	CS	Statistika
 	DA	Statistik
 	DE	Statistik
-	EN	Statistics
+	EN	Report Statistics
 	ES	Estadísticas
 	FI	Tilastot
 	FR	Statistiques
@@ -20814,6 +20814,21 @@ BACKUP_ALARM
 
 CONTROLPANEL_TITLE
 	EN	SqueezeCenter Control Panel
+
+CONTROLPANEL_SERVERSTATUS
+	EN	Server Status
+	
+CONTROLPANEL_STATUS_RUNNING
+	EN	Status: The server is running
+	
+CONTROLPANEL_STATUS_STARTING
+	EN	Status: The server is starting
+	
+CONTROLPANEL_STATUS_STOPPED
+	EN	Status: The server is stopped
+
+CONTROLPANEL_ACCOUNT
+	EN	Account Settings
 	
 CONTROLPANEL_SN_CREDENTIALS
 	EN	Enter your mysqueezebox.com account information
@@ -20821,7 +20836,7 @@ CONTROLPANEL_SN_CREDENTIALS
 CONTROLPANEL_STARTUP_OPTIONS
 	DA	Startindstillinger
 	DE	Startoptionen
-	EN	Startup options
+	EN	Startup Options
 	ES	Opciones de inicio
 	FR	Options de démarrage
 	IT	Opzioni di avvio
@@ -21184,7 +21199,7 @@ RUN_AT_LOGIN
 	SV	Kör automatiskt vid inloggning
 
 RUN_FAILSAFE
-	EN	Run without user extensions (safe mode)
+	EN	Run with no user extensions ("Safe Mode")
 
 RUN_NEVER
 	EN	Don't start automatically
