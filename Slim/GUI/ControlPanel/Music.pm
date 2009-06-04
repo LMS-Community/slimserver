@@ -210,7 +210,7 @@ sub new {
 			Slim::GUI::ControlPanel->serverRequest('rescan', 'playlists');
 		}
 		
-		$progressPoll->Start(1000, wxTIMER_CONTINUOUS) if $progressPoll;
+		$progressPoll->Start(100, wxTIMER_CONTINUOUS, 10) if $progressPoll && $btnRescan->GetLabel() ne string('ABORT_SCAN');
 	});
 	
 	$rescanSizer->Add($rescanBtnSizer, 0, wxALL | wxGROW, 10);
@@ -282,7 +282,7 @@ use Slim::Utils::ServiceManager;
 my $svcMgr = Slim::Utils::ServiceManager->new();
 my $isScanning = 0;
 
-my ($parent, $progressBar, $progressLabel, $progressInfo);
+my ($parent, $progressBar, $progressTime, $progressLabel, $progressInfo);
 
 sub new {
 	my $self = shift;
@@ -295,9 +295,16 @@ sub new {
 	
 	$progressLabel = Wx::StaticText->new($parent, -1, '');
 	$sizer->Add($progressLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
+	
+	my $progressSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
 	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, Slim::Utils::OSDetect->isWindows() ? 20 : -1]);
-	$sizer->Add($progressBar, 0, wxEXPAND);
+	$progressSizer->Add($progressBar, 1, wxGROW);
+
+	$progressTime = Wx::StaticText->new($parent, -1, '00:00:00');
+	$progressSizer->Add($progressTime, 0, wxLEFT, 10);
+	
+	$sizer->Add($progressSizer, 0, wxEXPAND);
 
 # re-enable ellipsizing once we're running Wx 2.9.x
 #	$progressInfo = Wx::StaticText->new($parent, -1, '', [-1, -1], [-1, -1], wxST_ELLIPSIZE_MIDDLE);
@@ -309,6 +316,14 @@ sub new {
 	return $self;
 }
 
+sub Start {
+	my ($self, $milliseconds, $oneShot, $scanInit) = @_;
+	
+	$isScanning = $scanInit if $scanInit;
+	
+	$self->SUPER::Start($milliseconds, $oneShot);
+}
+
 sub Notify {
 	my $self = shift;
 	
@@ -318,16 +333,21 @@ sub Notify {
 		
 		my $progress = Slim::GUI::ControlPanel->serverRequest('rescanprogress');
 
-		if ($progress && $progress->{steps} && $progress->{rescan}) {
+		if ($progress && $progress->{rescan}) {
+
 			$isScanning = 1;
 			
-			my @steps = split(/,/, $progress->{steps});
+			$progressBar->Show();
+			$progressLabel->SetLabel('');
+						
+			my @steps = split(/,/, $progress->{steps} || 'directory');
 
-			if (@steps && $progress->{$steps[-1]}) {
+			if (@steps) {
 				
 				my $step = $steps[-1];
-				$progressBar->SetValue($progress->{$step});
+				$progressBar->SetValue($progress->{$step}) if $progress->{$steps[-1]};
 				$progressLabel->SetLabel( @steps . '. ' . string(uc($step) . '_PROGRESS') );
+				$progressTime->SetLabel($progress->{totaltime});
 				
 			}
 			
@@ -379,6 +399,8 @@ sub Notify {
 						}
 						
 						if ($newLabel) {
+							$progressBar->Hide();
+							$progressTime->SetLabel('');
 							$progressLabel->SetLabel($newLabel);
 						}
 					}
@@ -386,17 +408,18 @@ sub Notify {
 			}
 		}
 	}
+
+	# don't poll that often when no scan is running
+	$self->Start(10000, wxTIMER_CONTINUOUS);
 	
 	if ($isScanning) {
 		$progressBar->SetValue(100);
-		$progressLabel->SetLabel(string('PROGRESS_IMPORTER_COMPLETE_DESC'));
+		$self->Start(1000, wxTIMER_CONTINUOUS);
+		
+		$isScanning--;
 	}
 
-	$self->Start(10000, wxTIMER_CONTINUOUS);
-	$btnRescan->SetLabel(string('SETUP_RESCAN_BUTTON'));
-
-	# don't poll that often when no scan is running
-	$isScanning = 0;
+	$btnRescan->SetLabel(string($isScanning ? 'ABORT_SCAN' : 'SETUP_RESCAN_BUTTON'));
 }
 
 sub Layout {
