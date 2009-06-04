@@ -161,7 +161,7 @@ sub getPref {
 				if (/^$pref(:| \=)? (.+)$/) {
 					$ret = $2;
 					$ret =~ s/^['"]//;
-					$ret =~ s/['"\w]*$//s;
+					$ret =~ s/['"\s]*$//s;
 					last;
 				}
 			}
