@@ -76,12 +76,16 @@ sub getStartupOptions {
 
 sub setStartupType {
 	my ($class, $type, $username, $password) = @_;
+	$username = '' unless defined $username;
 	
 	my $oldType = getStartupType();
 	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 
+	my $serviceUser = $Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/squeezesvc/ObjectName'} || '';
+	$serviceUser = '' if $serviceUser =~ /^(?:LocalSystem)$/i;
+
 	# enable service mode
-	if ($type == SC_STARTUP_TYPE_SERVICE && ($oldType != SC_STARTUP_TYPE_SERVICE || $username || $password)) {
+	if ($type == SC_STARTUP_TYPE_SERVICE && ($oldType != SC_STARTUP_TYPE_SERVICE || $username ne $serviceUser)) {
 		system($svcHelper, '--install' . ($username ? " --username=$username" : '') . ($password ? " --password=$password" : ''));
 	}
 	elsif ($type != SC_STARTUP_TYPE_SERVICE && $oldType == SC_STARTUP_TYPE_SERVICE) {

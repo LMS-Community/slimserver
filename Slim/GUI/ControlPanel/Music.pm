@@ -48,6 +48,10 @@ sub new {
 	$parent->addApplyHandler($lbStartupMode, sub {
 		$svcMgr->setStartupType($lbStartupMode->GetSelection());
 	});
+
+	$parent->addStatusListener($lbStartupMode, sub {
+		$lbStartupMode->Enable($_[0] == SC_STATE_STOPPED);
+	});
 		
 	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
@@ -75,21 +79,31 @@ sub new {
 			$username->Enable($lbStartupMode->GetSelection() == 2);
 			$password->Enable($lbStartupMode->GetSelection() == 2);
 		};
+
+		$parent->addStatusListener('serviceLogon', sub {
+			my $svcState = shift;
+			
+			if ($svcState == SC_STATE_STOPPED) {
+				&$handler();
+			}
+			else {
+				$username->Enable(0);
+				$password->Enable(0);
+			}
+		});
 		
 		&$handler();
 		EVT_CHOICE($self, $lbStartupMode, $handler);
 
 		# overwrite action handler for startup mode
 		$parent->addApplyHandler($lbStartupMode, sub {
+		
+			$svcMgr->setStartupType(
+				$lbStartupMode->GetSelection(),
+				$username->GetValue(),
+				$password->GetValue(),
+			);
 			
-			if ($svcMgr->getStartupType() != $lbStartupMode->GetSelection()) {
-				$svcMgr->setStartupType(
-					$lbStartupMode->GetSelection(),
-					$username->GetValue(),
-					$password->GetValue(),
-				);
-			}
-
 		});
 			
 	}
