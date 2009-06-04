@@ -85,6 +85,9 @@ CREDITS
 	SV	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu
 	ZH_CN	Kok-Bin Lee
 
+COPYRIGHT
+	EN	© 2001-2009 Logitech Version 7.4.0
+
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
 	DA	Vælg sprog

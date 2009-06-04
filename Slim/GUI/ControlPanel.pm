@@ -94,6 +94,14 @@ sub new {
 		$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	}
 	
+	my $footerSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+	
+	if (Slim::Utils::OSDetect::isWindows()) {
+		Wx::Image::AddHandler(Wx::PNGHandler->new());
+		my $icon = Wx::StaticBitmap->new( $panel, -1, Wx::Bitmap->new('../platforms/win32/res/logitech-logo.png', wxBITMAP_TYPE_PNG) );
+		$footerSizer->Add($icon, 0, wxLEFT | wxBOTTOM, 5);
+	}
+	
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 	$btnsizer->AddButton($btnOk);
 
@@ -114,8 +122,13 @@ sub new {
 
 	$btnsizer->Realize();
 
-	$mainSizer->Add($btnsizer, 0, wxALL | wxALIGN_RIGHT, 5);
-	$mainSizer->Add(Wx::StatusBar->new($panel), 0, wxALL | wxGROW);
+	my $footerSizer2 = Wx::BoxSizer->new(wxVERTICAL); 
+	$footerSizer2->Add($btnsizer, 0, wxEXPAND);
+	$footerSizer2->AddSpacer(20);
+	$footerSizer2->Add(Wx::StaticText->new($panel, -1, string('COPYRIGHT')), 0, wxALIGN_RIGHT | wxRIGHT, 3);
+
+	$footerSizer->Add($footerSizer2, wxEXPAND);
+	$mainSizer->Add($footerSizer, 0, wxLEFT | wxRIGHT | wxGROW, 8);
 
 	$panel->SetSizer($mainSizer);	
 	
@@ -152,7 +165,6 @@ sub _fixIcon {
 	}
 
 	if ( -f $file && (my $icon = Wx::Icon->new($file, wxBITMAP_TYPE_ICO)) ) {
-		
 		$self->SetIcon($icon);
 	}
 }
