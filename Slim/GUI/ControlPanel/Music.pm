@@ -292,7 +292,7 @@ sub Notify {
 	
 	$progressInfo->SetLabel('');
 	
-	if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+	if ($svcMgr->isRunning()) {
 		
 		my $progress = Slim::GUI::ControlPanel->serverRequest('rescanprogress');
 

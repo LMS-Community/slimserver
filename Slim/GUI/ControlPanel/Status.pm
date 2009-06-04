@@ -58,7 +58,7 @@ sub _update {
 
 		my $svcMgr = Slim::Utils::ServiceManager->new();
 		
-		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+		if ($svcMgr->isRunning()) {
 
 			my $status = get(Slim::GUI::ControlPanel->getBaseUrl() . '/EN/settings/server/status.html?simple=1');
 			$status = decode("utf8", $status) if $status;

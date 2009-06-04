@@ -38,7 +38,7 @@ sub new {
 	Slim::Utils::OSDetect::init();
 
 	# if we're running for the first time, show the SN page
-	my $initialSetup = $svcMgr->checkServiceState() == SC_STATE_RUNNING && !Slim::GUI::ControlPanel->getPref('wizardDone');
+	my $initialSetup = $svcMgr->isRunning() && !Slim::GUI::ControlPanel->getPref('wizardDone');
 
 	my $self = $ref->SUPER::new(
 		undef,
@@ -277,6 +277,7 @@ sub getBaseUrl {
 
 sub setPref {
 	my ($self, $pref, $value) = @_;
+	
 	$self->serverRequest('pref', $pref, $value);
 }
 
@@ -287,7 +288,7 @@ sub getPref {
 	my $value;
 	
 	# if SC is running, use the CLI, otherwise read the prefs file from disk
-	if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
+	if ($svcMgr->isRunning()) {
 
 		if ($file) {
 			$file =~ s/\.prefs$//; 
@@ -312,6 +313,8 @@ sub getPref {
 sub serverRequest {
 	my $self = shift;
 	my $postdata;
+	
+	return unless $svcMgr->isRunning();
 
 	eval { $postdata = '{"id":1,"method":"slim.request","params":["",' . to_json(\@_) . ']}' };
 

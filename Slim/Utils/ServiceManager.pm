@@ -74,12 +74,31 @@ sub canSetStartupType { 0 }
 sub setStartupType {}
 sub initStartupType {}
 sub canStart {}
+
 sub getStartupOptions {
 	return ('', 'RUN_NEVER', 'RUN_AT_LOGIN', 'RUN_AT_BOOT');	
 }
+
 sub start {}
+
 sub checkServiceState {
 	return SC_STATE_UNKNOWN;
+}
+
+# we're called often - cache results for a second
+my %isRunning;
+sub isRunning {
+	
+	if (!defined $isRunning{state} || $isRunning{ttl} < time()) {
+
+		%isRunning = (
+			ttl => time() + 1,
+			state => $_[0]->checkServiceState() == SC_STATE_RUNNING
+		);
+
+	}
+	
+	return $isRunning{state};
 }
 
 sub getServiceState {
