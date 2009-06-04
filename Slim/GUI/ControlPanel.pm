@@ -332,6 +332,7 @@ sub serverRequest {
 	$req->content($postdata);
 	
 	my $ua = LWP::UserAgent->new();
+	$ua->timeout(5);
 	
 	if ($credentials && $credentials->{username} && $credentials->{password}) {
 		$ua->credentials($baseUrl, "SqueezeCenter", $credentials->{username}, $credentials->{password});

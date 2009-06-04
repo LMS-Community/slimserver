@@ -11,7 +11,9 @@ use base 'Wx::Panel';
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON);
 use File::Spec::Functions qw(catfile);
-use LWP::Simple;
+use LWP::Simple qw($ua get);
+
+$ua->timeout(10);
 
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
