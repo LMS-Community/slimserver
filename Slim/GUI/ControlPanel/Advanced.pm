@@ -109,65 +109,51 @@ sub new {
 	}
 	
 	
-	my $webBox = Wx::StaticBox->new($self, -1, string('CONTROLPANEL_WEB_UI')); 
-	my $webSizer = Wx::StaticBoxSizer->new($webBox, wxVERTICAL);
-
-	$webSizer->Add(Wx::HyperlinkCtrl->new(
-		$self, 
-		-1, 
-		string('CONTROLPANEL_WEB_CONTROL_DESC'), 
-		Slim::GUI::ControlPanel->getBaseUrl() . '/',
-		[-1, -1], 
-		[-1, -1], 
-		wxHL_DEFAULT_STYLE,
-	), 0, wxALL, 10);
-
-	$webSizer->Add(Wx::HyperlinkCtrl->new(
-		$self, 
-		-1, 
-		string('CONTROLPANEL_ADVANCED_SETTINGS_DESC'), 
-		Slim::GUI::ControlPanel->getBaseUrl() . '/settings/index.html',
-		[-1, -1], 
-		[-1, -1], 
-		wxHL_DEFAULT_STYLE,
-	), 0, wxLEFT | wxRIGHT | wxBOTTOM, 10);
+	my $webSizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_WEB_UI')),
+		wxVERTICAL
+	);
 	
+	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/', 'CONTROLPANEL_WEB_CONTROL_DESC', 250) , 0, wxALL, 10 );
+	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/settings/index.html', 'CONTROLPANEL_ADVANCED_SETTINGS_DESC', 250) , 0, wxALL, 10 );
+
 	$mainSizer->Add($webSizer, 0, wxALL | wxGROW, 10);
+
+
+	my $logSizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_LOGFILES')),
+		wxVERTICAL
+	);
+
+	my $logBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
+
+	$logBtnSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log', 'CONTROLPANEL_SHOW_SERVER_LOG'));
+	$logBtnSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log', 'CONTROLPANEL_SHOW_SCANNER_LOG'), 0, wxLEFT, 10);
+
+	$logSizer->Add($logBtnSizer);
+	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
 	
 
 	my $cleanupBox = Wx::StaticBox->new($self, -1, string('CLEANUP'));
 	my $cleanupSizer = Wx::StaticBoxSizer->new($cleanupBox, wxVERTICAL);
-
-	$cleanupSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log'), 0, wxLEFT | wxRIGHT | wxTOP, 10);
-	$cleanupSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log'), 0, wxALL, 10);
 
 	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
 
 	foreach (@{ $args->{options} }) {
 		
 		# support only wants these three options
-		next unless $_->{name} =~ /^(?:prefs|cache|all)$/;
+		next unless $_->{name} =~ /^(?:prefs|cache)$/;
 		
 		$checkboxes{$_->{name}} = Wx::CheckBox->new( $self, -1, $_->{title}, $_->{position});
-		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP | wxGROW, $_->{margin} || 5 );
+		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP, 5 );
 	}
 
 	$cleanupSizer->Add($cbSizer, 1, wxALL, 5);
 
-	my $hint = Wx::StaticText->new($self, -1, string('CLEANUP_PLEASE_STOP_SC'));
-	$parent->addStatusListener($hint);
-	$cleanupSizer->Add($hint, 0, wxALL, 5);
-
-	my $btnsizer = Wx::StdDialogButtonSizer->new();
-
 	my $btnCleanup = Wx::Button->new( $self, -1, string('CLEANUP_DO') );
 	EVT_BUTTON( $self, $btnCleanup, \&doCleanup );
 	
-	$btnsizer->SetAffirmativeButton($btnCleanup);
-	
-	$btnsizer->Realize();
-
-	$cleanupSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 10);
+	$cleanupSizer->Add($btnCleanup, 0, wxALL , 10);
 	$mainSizer->Add($cleanupSizer, 0, wxALL | wxGROW, 10);	
 	
 	$self->SetSizer($mainSizer);
@@ -248,60 +234,25 @@ sub _checkForUpdate {
 1;
 
 
-package Slim::GUI::Settings::WebButton;
+package Slim::GUI::Settings::LogLink;
 
 use base 'Wx::Button';
 
 use Wx qw(:everything);
 use Wx::Event qw(EVT_BUTTON);
+use File::Spec::Functions qw(catfile);
 
 use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 
 sub new {
-	my ($self, $page, $parent, $url, $label) = @_;
-	
-	$self = $self->SUPER::new($page, -1, string($label));
-	
-	$parent->addStatusListener($self);
-	
-	$url = Slim::GUI::ControlPanel->getBaseUrl() . $url;
+	my ($self, $page, $parent, $file, $label, $width) = @_;
+
+	$self = $self->SUPER::new($page, -1, string($label), [-1, -1], [$width || -1, -1]);
 
 	EVT_BUTTON( $page, $self, sub {
-		Wx::LaunchDefaultBrowser($url);
+		Wx::LaunchDefaultBrowser('file://' . $os->dirsFor('log') . "/$file");
 	});
-
-	return $self;
-}
-
-1;
-
-
-package Slim::GUI::Settings::LogLink;
-
-use base 'Wx::HyperlinkCtrl';
-
-use Wx qw(:everything);
-use File::Spec::Functions qw(catfile);
-
-use Slim::GUI::ControlPanel;
-
-sub new {
-	my ($self, $page, $parent, $file) = @_;
-
-	my $log = catfile($os->dirsFor('log'), $file);
-		
-	$self = $self->SUPER::new(
-		$page,
-		-1, 
-		$log, 
-		$os->name eq 'mac' ? Slim::GUI::ControlPanel->getBaseUrl() . "/$file?lines=500" : 'file://' . $log, 
-		[-1, -1], 
-		[-1, -1], 
-		wxHL_DEFAULT_STYLE,
-	);
-	
-	$parent->addStatusListener($self) if $os->name eq 'mac';
 
 	return $self;
 }

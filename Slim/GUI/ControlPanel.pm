@@ -432,3 +432,32 @@ sub password {
 }
 
 1;
+
+
+package Slim::GUI::WebButton;
+
+use base 'Wx::Button';
+
+use Wx qw(:everything);
+use Wx::Event qw(EVT_BUTTON);
+
+use Slim::GUI::ControlPanel;
+use Slim::Utils::Light;
+
+sub new {
+	my ($self, $page, $parent, $url, $label, $width) = @_;
+	
+	$self = $self->SUPER::new($page, -1, string($label), [-1, -1], [$width || -1, -1]);
+	
+	$parent->addStatusListener($self);
+	
+	$url = Slim::GUI::ControlPanel->getBaseUrl() . $url;
+
+	EVT_BUTTON( $page, $self, sub {
+		Wx::LaunchDefaultBrowser($url);
+	});
+
+	return $self;
+}
+
+1;

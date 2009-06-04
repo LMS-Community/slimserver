@@ -222,15 +222,14 @@ sub options {
 		{
 	
 			name     => 'cache',
-			margin   => 20,
-			title    => '(!) ' . string('CLEANUP_CACHE'),
+			title    => string('CLEANUP_CACHE'),
 			position => [30, 120],
 		},
 	
 		{
 	
 			name     => 'all',
-			title    => '(!!) ' . string('CLEANUP_ALL'),
+			title    => '(!) ' . string('CLEANUP_ALL'),
 			position => [30, 160],
 		},
 	];

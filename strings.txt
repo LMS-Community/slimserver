@@ -20860,13 +20860,22 @@ CONTROLPANEL_AUTHENTICATION_REQUIRED
 	EN	Authentication is required to access SqueezeCenter
 	
 CONTROLPANEL_WEB_UI
-	EN	Web Interface
+	EN	Web based Interface
 
 CONTROLPANEL_WEB_CONTROL_DESC
-	EN	Click to open the Web Control interface in your browser.
+	EN	Squeezebox Remote Control
 
 CONTROLPANEL_ADVANCED_SETTINGS_DESC
-	EN	Click to open the Advanced Settings interface in your browser.
+	EN	Advanced Settings
+	
+CONTROLPANEL_LOGFILES
+	EN	Log Files
+
+CONTROLPANEL_SHOW_SERVER_LOG
+	EN	Show server log
+
+CONTROLPANEL_SHOW_SCANNER_LOG
+	EN	Show scanner log
 
 CONTROLPANEL_UPDATE_AVAILABLE
 	EN	An updated SqueezeCenter version is available and ready to be installed.
