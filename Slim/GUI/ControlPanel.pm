@@ -17,6 +17,7 @@ use Wx::Event qw(EVT_BUTTON EVT_NOTEBOOK_PAGE_CHANGED);
 use Slim::GUI::ControlPanel::InitialSettings;
 use Slim::GUI::ControlPanel::Settings;
 use Slim::GUI::ControlPanel::Music;
+use Slim::GUI::ControlPanel::Account;
 use Slim::GUI::ControlPanel::Advanced;
 use Slim::GUI::ControlPanel::Status;
 use Slim::GUI::ControlPanel::Diagnostics;
@@ -90,6 +91,7 @@ sub new {
 	
 		$notebook->AddPage(Slim::GUI::ControlPanel::Settings->new($notebook, $self), string('BASIC_SERVER_SETTINGS'), 1);
 		$notebook->AddPage(Slim::GUI::ControlPanel::Music->new($notebook, $self), string('CONTROLPANEL_MUSIC_LIBRARY'));
+		$notebook->AddPage(Slim::GUI::ControlPanel::Account->new($notebook, $self), string('CONTROLPANEL_ACCOUNT'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
