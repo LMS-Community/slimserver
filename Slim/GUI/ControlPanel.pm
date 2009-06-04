@@ -50,7 +50,10 @@ sub new {
 		'WELCOME_TO_SQUEEZECENTER'
 	);
 
-	$self->_fixIcon();
+	my $file = $self->_fixIcon('SqueezeCenter.ico');
+	if ($file  && (my $icon = Wx::Icon->new($file, wxBITMAP_TYPE_ICO)) ) {
+		$self->SetIcon($icon);
+	}
 
 	my $panel     = Wx::Panel->new($self);
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
@@ -96,9 +99,9 @@ sub new {
 	
 	my $footerSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 	
-	if (Slim::Utils::OSDetect::isWindows()) {
+	if ($file = $self->_fixIcon('logitech-logo.png')) {
 		Wx::Image::AddHandler(Wx::PNGHandler->new());
-		my $icon = Wx::StaticBitmap->new( $panel, -1, Wx::Bitmap->new('../platforms/win32/res/logitech-logo.png', wxBITMAP_TYPE_PNG) );
+		my $icon = Wx::StaticBitmap->new( $panel, -1, Wx::Bitmap->new($file, wxBITMAP_TYPE_PNG) );
 		$footerSizer->Add($icon, 0, wxLEFT | wxBOTTOM, 5);
 	}
 	
@@ -154,19 +157,18 @@ sub checkServiceStatus {
 
 sub _fixIcon {
 	my $self = shift;
+	my $iconFile = shift;
 
 	return unless Slim::Utils::OSDetect::isWindows();
 
 	# set the application icon
-	my $file = '../platforms/win32/res/SqueezeCenter.ico';
-		
+	my $file = "../platforms/win32/res/$iconFile";
+
 	if (!-f $file && defined $PerlApp::VERSION) {
-		$file = PerlApp::extract_bound_file('SqueezeCenter.ico');
+		$file = PerlApp::extract_bound_file($iconFile);
 	}
 
-	if ( -f $file && (my $icon = Wx::Icon->new($file, wxBITMAP_TYPE_ICO)) ) {
-		$self->SetIcon($icon);
-	}
+	return $file if -f $file;
 }
 
 1;
