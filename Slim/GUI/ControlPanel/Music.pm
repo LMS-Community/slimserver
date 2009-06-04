@@ -52,13 +52,17 @@ sub new {
 	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
 	if ($os->name eq 'win') {
+		require Win32::TieRegistry;
+		$Win32::TieRegistry::Registry->Delimiter('/');
+		my $serviceUser = $Win32::TieRegistry::Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/squeezesvc/ObjectName'} || '';
+		$serviceUser = '' if $serviceUser =~ /^(?:LocalSystem)$/i;
 		
 		my $credentialsSizer = Wx::FlexGridSizer->new(2, 2, 5, 10);
 		$credentialsSizer->AddGrowableCol(1, 1);
 		$credentialsSizer->SetFlexibleDirection(wxHORIZONTAL);
 	
 		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')));
-		my $username = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1]);
+		my $username = Wx::TextCtrl->new($self, -1, $serviceUser, [-1, -1], [150, -1]);
 		$credentialsSizer->Add($username);
 	
 		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')));
@@ -77,11 +81,15 @@ sub new {
 
 		# overwrite action handler for startup mode
 		$parent->addApplyHandler($lbStartupMode, sub {
-			$svcMgr->setStartupType(
-				$lbStartupMode->GetSelection(),
-				$username->GetValue(),
-				$password->GetValue(),
-			);
+			
+			if ($svcMgr->getStartupType() != $lbStartupMode->GetSelection()) {
+				$svcMgr->setStartupType(
+					$lbStartupMode->GetSelection(),
+					$username->GetValue(),
+					$password->GetValue(),
+				);
+			}
+
 		});
 			
 	}
