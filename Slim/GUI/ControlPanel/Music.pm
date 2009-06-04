@@ -155,13 +155,13 @@ sub new {
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
 	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'), 0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 5);
 
-	# get the "Use iTunes" string through CLI
-	# if it's empty, then the plugin is disabled
+	my $iTunes = getPref('iTunes', 'state.prefs');
 	my $useItunesStr = Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES');
-
-	if ($useItunesStr->{USE_ITUNES}) {
+	
+	if ($useItunesStr && (!$iTunes || $iTunes !~ /disabled/i)) {
 
 		my $useItunes = Wx::CheckBox->new($self, -1, $useItunesStr->{USE_ITUNES});
+
 		$settingsSizer->Add($useItunes, 0, wxEXPAND | wxALL, 10);
 		$parent->addStatusListener($useItunes);
 		$useItunes->SetValue(Slim::GUI::ControlPanel->getPref('itunes', 'itunes.prefs'));
@@ -358,7 +358,7 @@ sub Notify {
 			}
 
 			$btnRescan->SetLabel(string('ABORT_SCAN'));
-			$self->Start(2000, wxTIMER_CONTINUOUS);
+			$self->Start(2100, wxTIMER_CONTINUOUS);
 			$self->Layout();
 			
 			return;
