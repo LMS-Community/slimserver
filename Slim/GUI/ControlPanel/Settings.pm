@@ -217,7 +217,7 @@ sub new {
 	$progressPoll = Slim::GUI::ControlPanel::ScanPoll->new($progressPanel);
 	$parent->addStatusListener($progressPanel);
 	
-	$rescanSizer->Add($progressPanel, 1, wxALL | wxGROW, 10);
+	$rescanSizer->Add($progressPanel, 1, wxLEFT | wxRIGHT | wxGROW, 10);
 	
 	$mainSizer->Add($rescanSizer, 0, wxALL | wxGROW, 10);
 
@@ -262,7 +262,8 @@ sub new {
 	$progressSizer->Add($progressBar, 1, wxGROW);
 
 	$progressTime = Wx::StaticText->new($parent, -1, '00:00:00');
-	$progressSizer->Add($progressTime, 0, wxLEFT, 10);
+	$progressSizer->AddSpacer(10);
+	$progressSizer->Add($progressTime, 0, wxTOP, 3);
 	
 	$sizer->Add($progressSizer, 0, wxEXPAND);
 
@@ -270,6 +271,8 @@ sub new {
 #	$progressInfo = Wx::StaticText->new($parent, -1, '', [-1, -1], [-1, -1], wxST_ELLIPSIZE_MIDDLE);
 	$progressInfo = Wx::StaticText->new($parent, -1, '');
 	$sizer->Add($progressInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 5);
+
+	$sizer->AddSpacer(15);
 
 	$parent->SetSizer($sizer);
 		
@@ -294,33 +297,7 @@ sub Notify {
 		my $progress = Slim::GUI::ControlPanel->serverRequest('rescanprogress');
 
 		if ($progress && $progress->{rescan}) {
-
-			$isScanning = 1;
-			
-			$progressBar->Show();
-			$progressLabel->SetLabel('');
-						
-			my @steps = split(/,/, $progress->{steps} || 'directory');
-
-			if (@steps) {
-				
-				my $step = $steps[-1];
-				$progressBar->SetValue($progress->{$step}) if $progress->{$steps[-1]};
-				$progressLabel->SetLabel( @steps . '. ' . string(uc($step) . '_PROGRESS') );
-				$progressTime->SetLabel($progress->{totaltime});
-				
-			}
-			
-			if (defined $progress->{info}) {
-				
-				$progressInfo->SetLabel($progress->{info});
-				
-			}
-
-			$btnRescan->SetLabel(string('ABORT_SCAN'));
-			$self->Start(2100, wxTIMER_CONTINUOUS);
-			$self->Layout();
-			
+			$self->showProgress($progress);
 			return;
 		}
 		
@@ -328,44 +305,12 @@ sub Notify {
 			$progressLabel->SetLabel($progress->{lastscanfailed});
 		}
 
-		else {
-			
-			my $libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999);
-			
-			if ($libraryStats && $libraryStats->{loop_loop}) {
-				my $libraryName = string('INFORMATION_MENU_LIBRARY');
-				my $x = 0;
-				
-				foreach my $item (@{$libraryStats->{loop_loop}}) {
-
-					last if ($item->{name} && $item->{name} eq $libraryName);
-
-					$x++;
-
-				}
-				
-				if ($x < scalar @{$libraryStats->{loop_loop}}) {
-					$libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999, "item_id:$x");
-
-					if ($libraryStats && $libraryStats->{loop_loop}) {
-						my $newLabel = '';
-
-						foreach my $item (@{$libraryStats->{loop_loop}}) {
-							
-							if ($item->{name}) {
-								$newLabel .= $item->{name} . "\n";
-							}
+		elsif (!$isScanning) {
+			$self->showStats();		
+		}
 		
-						}
-						
-						if ($newLabel) {
-							$progressBar->Hide();
-							$progressTime->SetLabel('');
-							$progressLabel->SetLabel($newLabel);
-						}
-					}
-				}
-			}
+		elsif ($isScanning) {
+			$progressLabel->SetLabel('');
 		}
 	}
 
@@ -380,6 +325,76 @@ sub Notify {
 	}
 
 	$btnRescan->SetLabel(string($isScanning ? 'ABORT_SCAN' : 'SETUP_RESCAN_BUTTON'));
+}
+
+sub showProgress {
+	my $self = shift;
+	my $progress = shift;
+
+	$isScanning = 1;
+			
+	$progressBar->Show();
+	$progressLabel->SetLabel('');
+						
+	my @steps = split(/,/, $progress->{steps} || 'directory');
+
+	if (@steps) {
+				
+		my $step = $steps[-1];
+		$progressBar->SetValue($progress->{$step}) if $progress->{$steps[-1]};
+		$progressLabel->SetLabel( @steps . '. ' . string(uc($step) . '_PROGRESS') );
+		$progressTime->SetLabel($progress->{totaltime});
+				
+	}
+			
+	if (defined $progress->{info}) {
+		$progressInfo->SetLabel($progress->{info});
+	}
+
+	$btnRescan->SetLabel(string('ABORT_SCAN'));
+	$self->Start(2100, wxTIMER_CONTINUOUS);
+	$self->Layout();
+}
+
+sub showStats {
+	my $self = shift;
+	
+	my $libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999);
+			
+	if ($libraryStats && $libraryStats->{loop_loop}) {
+		my $libraryName = string('INFORMATION_MENU_LIBRARY');
+		my $x = 0;
+				
+		foreach my $item (@{$libraryStats->{loop_loop}}) {
+
+			last if ($item->{name} && $item->{name} eq $libraryName);
+
+			$x++;
+
+		}
+				
+		if ($x < scalar @{$libraryStats->{loop_loop}}) {
+			$libraryStats = Slim::GUI::ControlPanel->serverRequest('systeminfo', 'items', 0, 999, "item_id:$x");
+
+			if ($libraryStats && $libraryStats->{loop_loop}) {
+				my $newLabel = '';
+
+				foreach my $item (@{$libraryStats->{loop_loop}}) {
+							
+					if ($item->{name}) {
+						$newLabel .= $item->{name} . "\n";
+					}
+	
+				}
+						
+				if ($newLabel) {
+					$progressBar->Hide();
+					$progressTime->SetLabel('');
+					$progressLabel->SetLabel($newLabel);
+				}
+			}
+		}
+	}
 }
 
 sub Layout {
