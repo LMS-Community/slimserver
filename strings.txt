@@ -20963,13 +20963,37 @@ CONTROLPANEL_OK
 CONTROLPANEL_ALERTS
 	EN	Alerts
 
+CONTROLPANEL_SN_FAILURE
+	DA	Det var ikke muligt at kommunikere med SqueezeNetwork.com
+	DE	Die Verbindung zu SqueezeNetwork.com konnte nicht hergestellt werden.
+	EN	We were not able to successfully communicate with SqueezeNetwork.com
+	ES	No ha sido posible comunicarse correctamente con SqueezeNetwork.com
+	FI	Kommunikointi osoitteen SqueezeNetwork.com kanssa ei onnistunut
+	FR	Communication avec SqueezeNetwork.com impossible.
+	IT	Impossibile comunicare con SqueezeNetwork.com
+	NL	We kunnen niet met SqueezeNetwork.com communiceren
+	NO	Vi kunne ikke kommunisere med SqueezeNetwork.com
+	SV	Det gick inte att kommunicera med SqueezeNetwork.com
+
+CONTROLPANEL_SN_FAILURE_DESC
+	DA	Det kan skyldes et midlertidigt problem på internettet eller en begrænsning fra din internetudbyders side. Hvis problemet fortsætter, skal du kontrollere at din firewall ikke blokerer udgående trafik.
+	DE	Es handelt sich eventuell um ein zeitweiliges Internetproblem oder eine Einschränkung Ihres Internetanbieters. Wenn das Problem bestehen bleibt, vergewissern Sie sich, dass die Firewall den abgehenden Datenverkehr nicht blockiert.
+	EN	This might be a temporary internet issue, or a limitation imposed by your ISP. If the problem persists, please make sure your firewall is not blocking outgoing traffic.
+	ES	Puede tratarse de un problema de Internet temporal o de una limitación impuesta por su ISP. Si el problema continúa, asegúrese de que el servidor de seguridad no esté bloqueando el tráfico de salida.
+	FI	Tämä saattaa olla tilapäinen internet-ongelma tai internet-palveluntarjoajasi määrittämä rajoitus. Jos ongelma jatkuu, tarkista, ettei palomuurisi estä lähtevää liikennettä.
+	FR	Il s'agit d'un problème Internet temporaire ou d'une limitation imposée par votre FAI. Si le problème persiste, vérifiez que votre pare-feu ne bloque pas le trafic sortant.
+	IT	Potrebbe trattarsi di un problema Internet temporaneo o di una limitazione imposta dal provider di servizi Internet. Se il problema persiste, verificare che il traffico in uscita non sia bloccato dal firewall.
+	NL	Dit is misschien een tijdelijk internetprobleem, of een beperking die door je ISP is opgelegd. Als het probleem zich blijft voordoen, zorg je ervoor dat je firewall geen uitgaand verkeer blokkeert.
+	NO	Dette kan skyldes et midlertidig problem med Internett, eller en begrensning fra Internett-leverandøren. Sjekk at brannmuren ikke blokkerer utgående trafikk hvis problemet vedvarer.
+	SV	Det kan röra sig om ett tillfälligt internetproblem eller om begränsningar som internetleverantören har infört. Om problemet kvarstår bör du kontrollera om brandväggen blockerar utgående trafik.
+
 CONTROLPANEL_PORTCONFLICT
 	EN	SqueezeCenter is not running, but some application is using the same port (%s).
 
 CONTROLPANEL_PORTBLOCKED
 	DA	SqueezeCenter kører men kan ikke kontaktes på port %s
-	DE	SqueezeCenter wird ausgeführt, kann aber an Port %s nicht erreicht werden. Ev. blockiert eines der folgenden Programme die Verbindung:
-	EN	SqueezeCenter is running but can't be contacted on port %s. The following applications might be blocking your connection:
+	DE	SqueezeCenter wird ausgeführt, kann aber an Port %s nicht erreicht werden.
+	EN	SqueezeCenter is running but can't be contacted on port %s.
 	ES	SqueezeCenter está en ejecución pero no se puede contactar con él en el puerto %s
 	FI	SqueezeCenter on käynnissä, mutta siihen ei saada yhteyttä portissa %s
 	FR	Le SqueezeCenter est en cours d'exécution mais ne peut être contacté sur le port %s.
@@ -20977,6 +21001,9 @@ CONTROLPANEL_PORTBLOCKED
 	NL	SqueezeCenter wordt uitgevoerd maar is niet toegankelijk via poort %s
 	NO	SqueezeCenter kjører, men kan ikke kontaktes på port %s
 	SV	SqueezeCenter körs men går inte att ansluta till port %s
+
+CONTROLPANEL_PORTBLOCKED_APPS
+	EN	The following applications might be blocking your connection:
 
 CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
 	DA	Hvis du har problemer med forbindelsen til og fra SqueezeCenter, skal du kontrollere at "Stateful Firewall (Always On)" er slået fra

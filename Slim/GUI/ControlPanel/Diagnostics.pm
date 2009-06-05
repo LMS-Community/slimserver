@@ -35,9 +35,7 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-	$alertBox = $isWin
-		? Wx::TextCtrl->new($self, -1, '', [-1, -1], [-1, 90], wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL)
-		: undef;
+	$alertBox = Wx::TextCtrl->new($self, -1, '', [-1, -1], [-1, 90], wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL);
 
 	my $scBoxSizer = Wx::StaticBoxSizer->new( 
 		Wx::StaticBox->new($self, -1, string('SQUEEZECENTER')),
@@ -62,11 +60,12 @@ sub new {
 		my ($state, $stateString) = checkPort(getHostIP(), $httpPort, 1);
 
 		# check failed - let's try to figure out why
-		if ($alertBox && $isRunning && !$state) {
+		if ($isRunning && !$state) {
+			$alertBox->AppendText(string('CONTROLPANEL_PORTBLOCKED', '', $httpPort));
 			
 			# server running, but not accessible -> firewall?
-			if (my $conflicts = $self->getConflictingApp('Firewall')) {
-				$alertBox->AppendText(string('CONTROLPANEL_PORTBLOCKED', '', $httpPort));
+			if ($isWin && (my $conflicts = $self->getConflictingApp('Firewall'))) {
+				$alertBox->AppendText(string('CONTROLPANEL_PORTBLOCKED_APPS'));
 				
 				foreach (keys %$conflicts) {
 					my $conflict = $conflicts->{$_};
@@ -79,11 +78,11 @@ sub new {
 			}
 		}
 		
-		elsif ($alertBox && !$isRunning && $state) {
+		elsif (!$isRunning && $state) {
+			$alertBox->AppendText(string('CONTROLPANEL_PORTCONFLICT', '', $httpPort));
 
 			# server not running, but port open -> other application using it?
-			if (my $conflicts = $self->getConflictingApp('PortConflict')) {
-				$alertBox->AppendText(string('CONTROLPANEL_PORTCONFLICT', '', $httpPort));
+			if ($isWin && (my $conflicts = $self->getConflictingApp('PortConflict'))) {
 				
 				foreach (keys %$conflicts) {
 					my $conflict = $conflicts->{$_};
@@ -122,31 +121,46 @@ sub new {
 	$self->_addItem($snSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getSNAddress);
 
 	# check port 80 on squeezenetwork, as echo isn't available
+	my ($snPing, $snPort);
 	$self->_addItem($snSizer, string('CONTROLPANEL_PING'), sub {
-		checkPing(SN, 80, 1);
+		my $state;
+		($snPing, $state) = checkPing(SN, 80, 1);
+		return $state;
 	});
 	
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '3483', 'slimproto'), sub {
-		checkPort(getSNAddress(), '3483', 1);
+		my $state;
+		($snPort, $state) = checkPort(getSNAddress(), '3483', 1);
+		return $state;
 	});
+	
 	$self->_addItem($snSizer, string('CONTROLPANEL_PORTNO', '', '9000', 'HTTP'), sub {
 		checkPort(getSNAddress(), '9000', 1);
 	});
+	
+	push @checks, {
+		cb => sub {
+			if (!$snPing || !$snPort) {
+				$alertBox->AppendText(string('CONTROLPANEL_SN_FAILURE'));
+				$alertBox->AppendText("\n");
+				$alertBox->AppendText(string('CONTROLPANEL_SN_FAILURE_DESC'));
+				$alertBox->AppendText("\n\n");
+			}
+		},
+	};
 	
 	$snBoxSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
 	$mainSizer->Add($snBoxSizer, 0, wxALL | wxGROW, 10);
 
 
-	if ($alertBox) {
-		my $alertBoxSizer = Wx::StaticBoxSizer->new( 
-			Wx::StaticBox->new($self, -1, string('CONTROLPANEL_ALERTS')),
-			wxVERTICAL
-		);
-	
-		$alertBoxSizer->Add($alertBox, 0, wxALL | wxGROW, 10);
-	
-		$mainSizer->Add($alertBoxSizer, 0, wxALL | wxEXPAND, 10);
-	}
+	my $alertBoxSizer = Wx::StaticBoxSizer->new( 
+		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_ALERTS')),
+		wxVERTICAL
+	);
+
+	$alertBoxSizer->Add($alertBox, 0, wxALL | wxGROW, 10);
+
+	$mainSizer->Add($alertBoxSizer, 0, wxALL | wxEXPAND, 10);
 
 
 	my $btnRefresh = Wx::Button->new( $self, -1, string('CONTROLPANEL_REFRESH') );
@@ -330,16 +344,17 @@ sub checkPort {
 sub checkPing {
 	my ($host, $port, $serviceState) = @_;
 	
-	return string('CONTROLPANEL_FAILED') unless $host && $serviceState;
+	return (wantarray ? (0, string('CONTROLPANEL_FAILED')) : string('CONTROLPANEL_FAILED')) unless $host && $serviceState;
 
 	my $p = Net::Ping->new('tcp', 2);
 
 	$p->{port_num} = $port if $port;
 	
-	my $result = $p->ping($host) ? 'CONTROLPANEL_OK' : 'CONTROLPANEL_FAILED';
+	my @result = ($p->ping($host) ? 1 : 0);
+	push @result, string($p->ping($host) ? 'CONTROLPANEL_OK' : 'CONTROLPANEL_FAILED');
 	$p->close();
 
-	return string($result);
+	return wantarray ? @result : $result[1];
 }
 
 
