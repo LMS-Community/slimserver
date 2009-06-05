@@ -20,7 +20,6 @@ use Slim::Utils::ServiceManager;
 use Slim::Utils::OSDetect;
 
 my $os = Slim::Utils::OSDetect::getOS();
-my $updateUrl;
 my $versionFile = catfile( scalar($os->dirsFor('updates')), 'squeezecenter.version' );
 
 if ($os->name eq 'win') {
@@ -69,42 +68,11 @@ sub new {
 				
 			}
 
-			elsif ($updateUrl) {
-				Wx::LaunchDefaultBrowser($updateUrl);
-				exit;
-			}
-
-			else {
-
-				my $check = get( sprintf(
-					"http://update.squeezenetwork.com/update/?version=%s&lang=%s&os=%s",
-					$::VERSION,
-					$os->getSystemLanguage(),
-					$os->installerOS(),
-				));
-				chomp($check) if $check;
-
-				if ($check) {
-					my @parts = split /\. /, $check;
-					
-					if (@parts > 1 && $parts[1] =~ /href="(.*?)"/) {
-						$updateUrl = $1;
-						
-						$updateLabel->SetLabel( decode("utf8", $parts[0]) );
-						$btnUpdate->SetLabel(string('CONTROLPANEL_DOWNLOAD_UPDATE'));
-					}
-				}
-				
-				else {
-					$updateLabel->SetLabel(string('CONTROLPANEL_NO_UPDATE_AVAILABLE'));
-					$btnUpdate->SetLabel(string('CONTROLPANEL_CHECK_UPDATE'));
-				}
-			}
 		});
 			
 		$updateSizer->Add($btnUpdate, 0, wxALL, 10);
 		
-		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);	
+		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);
 	}
 	
 	
@@ -126,8 +94,8 @@ sub new {
 
 	my $logBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
-	$logBtnSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log', 'CONTROLPANEL_SHOW_SERVER_LOG'));
-	$logBtnSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log', 'CONTROLPANEL_SHOW_SCANNER_LOG'), 0, wxLEFT, 10);
+	$logBtnSizer->Add(Slim::GUI::ControlPanel::LogLink->new($self, $parent, 'server.log', 'CONTROLPANEL_SHOW_SERVER_LOG'));
+	$logBtnSizer->Add(Slim::GUI::ControlPanel::LogLink->new($self, $parent, 'scanner.log', 'CONTROLPANEL_SHOW_SCANNER_LOG'), 0, wxLEFT, 10);
 
 	$logSizer->Add($logBtnSizer, 0, wxALL, 10);
 	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
@@ -235,7 +203,7 @@ sub _checkForUpdate {
 1;
 
 
-package Slim::GUI::Settings::LogLink;
+package Slim::GUI::ControlPanel::LogLink;
 
 use base 'Wx::Button';
 
