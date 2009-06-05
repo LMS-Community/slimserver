@@ -16,14 +16,17 @@ use Socket;
 use Symbol;
 
 use Slim::Utils::Light;
+use Slim::Utils::OS;
 use Slim::Utils::ServiceManager;
 
 my $svcMgr = Slim::Utils::ServiceManager->new();
+my $isWin = Slim::Utils::OSDetect->isWindows();
 
 use constant SN => 'www.squeezenetwork.com';
 
 my @checks;
 my $cache;
+my $alertBox;
 
 sub new {
 	my ($self, $nb) = @_;
@@ -32,6 +35,9 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
+	$alertBox = $isWin
+		? Wx::TextCtrl->new($self, -1, '', [-1, -1], [-1, 90], wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL)
+		: undef;
 
 	my $scBoxSizer = Wx::StaticBoxSizer->new( 
 		Wx::StaticBox->new($self, -1, string('SQUEEZECENTER')),
@@ -52,7 +58,47 @@ sub new {
 	
 	my $httpPort = Slim::GUI::ControlPanel->getPref('httpport') || 9000;
 	$self->_addItem($scSizer, string('CONTROLPANEL_PORTNO', '', $httpPort, 'HTTP'), sub {
-		checkPort(getHostIP(), $httpPort, $_[0]);
+		my $isRunning = shift;
+		my ($state, $stateString) = checkPort(getHostIP(), $httpPort, 1);
+
+		# check failed - let's try to figure out why
+		if ($alertBox && $isRunning && !$state) {
+			
+			# server running, but not accessible -> firewall?
+			if (my $conflicts = $self->getConflictingApp('Firewall')) {
+				$alertBox->AppendText(string('CONTROLPANEL_PORTBLOCKED', '', $httpPort));
+				
+				foreach (keys %$conflicts) {
+					my $conflict = $conflicts->{$_};
+
+					$alertBox->AppendText("\n* " . ($conflict->{ProgramName} || $conflict->{ProgramName}));
+					$alertBox->AppendText(string('COLON') . ' ' . string('CONTROLPANEL_CONFLICT_' . uc($conflict->{Help}))) if $conflict->{Help};
+				}
+				
+				$alertBox->AppendText("\n\n");
+			}
+		}
+		
+		elsif ($alertBox && !$isRunning && $state) {
+
+			# server not running, but port open -> other application using it?
+			if (my $conflicts = $self->getConflictingApp('PortConflict')) {
+				$alertBox->AppendText(string('CONTROLPANEL_PORTCONFLICT', '', $httpPort));
+				
+				foreach (keys %$conflicts) {
+					my $conflict = $conflicts->{$_};
+
+					if ($conflict->{Port} == $httpPort || $conflict->{ServiceName} eq 'Perl') {
+						$alertBox->AppendText("\n* " . ($conflict->{ProgramName} || $conflict->{ProgramName}));
+						$alertBox->AppendText(string('COLON') . ' ' . string('CONTROLPANEL_CONFLICT_' . uc($conflict->{Help}))) if $conflict->{Help};
+					}
+				}
+				
+				$alertBox->AppendText("\n\n");
+			}
+		}
+		
+		return $stateString;
 	});
 
 	my $cliPort = Slim::GUI::ControlPanel->getPref('cliport', 'cli.prefs') || 9090;
@@ -91,6 +137,18 @@ sub new {
 	$mainSizer->Add($snBoxSizer, 0, wxALL | wxGROW, 10);
 
 
+	if ($alertBox) {
+		my $alertBoxSizer = Wx::StaticBoxSizer->new( 
+			Wx::StaticBox->new($self, -1, string('CONTROLPANEL_ALERTS')),
+			wxVERTICAL
+		);
+	
+		$alertBoxSizer->Add($alertBox, 0, wxALL | wxGROW, 10);
+	
+		$mainSizer->Add($alertBoxSizer, 0, wxALL | wxEXPAND, 10);
+	}
+
+
 	my $btnRefresh = Wx::Button->new( $self, -1, string('CONTROLPANEL_REFRESH') );
 	EVT_BUTTON( $self, $btnRefresh, sub {
 		$self->_update();
@@ -120,6 +178,7 @@ sub _addItem {
 sub _update {
 	my ($self, $event) = @_;
 	
+	$alertBox->SetValue('');
 	foreach my $check (@checks) {
 
 		if ($check->{label}) {
@@ -134,10 +193,10 @@ sub _update {
 	
 	foreach my $check (@checks) {
 
-		if (defined $check->{cb} && $check->{cb} && $check->{label}) {
+		if (defined $check->{cb} && $check->{cb}) {
 			eval {
 				my $val = &{$check->{cb}}($isRunning);
-				$check->{label}->SetLabel($val || 'n/a');
+				$check->{label}->SetLabel($val || 'n/a') if $check->{label};
 				
 				$self->Layout();
 			};
@@ -146,7 +205,56 @@ sub _update {
 		}
 	}
 	
+	$alertBox->ShowPosition(0);
 	$self->Layout();
+}
+
+sub getConflictingApp {
+	my ($self, $type) = @_;
+	
+	return unless $isWin;
+	
+	require XML::Simple;
+	require Win32::Service;
+	require Win32::Process::List;
+	
+	my $file = "../platforms/win32/installer/ApplicationData.xml";
+
+	if (!-f $file && defined $PerlApp::VERSION) {
+		$file = PerlApp::extract_bound_file('ApplicationData.xml');
+	}
+
+	return if !-f $file;
+	
+	my $ref = XML::Simple::XMLin($file);
+	
+	return unless $ref->{'d:Culture'}->{'d:process'};
+	
+	# create list of apps of the wanted type
+	my (%apps, $conflicingApps);
+	map { $apps{$_->{ServiceName}} = $_ }
+	grep { $_->{type} eq $type }
+	@{ $ref->{'d:Culture'}->{'d:process'} };
+
+	foreach (keys %apps) {
+		my %status;
+		if (Win32::Service::GetStatus('.', $_, \%status)) {
+			$conflicingApps->{$_} = $apps{$_};
+		}
+	}
+	
+	my $p = Win32::Process::List->new;
+	if ($p->IsError != 1) {
+		my %processes = $p->GetProcesses();
+		
+		foreach my $process ( grep { !$conflicingApps->{$_} } keys %apps ) {
+			if (grep { $processes{$_} =~ /^$process\b/i } keys %processes) {
+				$conflicingApps->{$process} = $apps{$process};
+			}
+		}
+	}
+
+	return $conflicingApps;
 }
 
 sub getHostIP {
@@ -203,7 +311,7 @@ sub getSNAddress {
 sub checkPort {
 	my ($raddr, $rport, $serviceState) = @_;
 	
-	return string('CONTROLPANEL_FAILED') unless $raddr && $rport && $serviceState;
+	return (wantarray ? (0, string('CONTROLPANEL_FAILED')) : string('CONTROLPANEL_FAILED')) unless $raddr && $rport && $serviceState;
 
 	my $iaddr = inet_aton($raddr);
 	my $paddr = sockaddr_in($rport, $iaddr);
@@ -213,10 +321,10 @@ sub checkPort {
 	if (connect(SSERVER, $paddr)) {
 
 		close(SSERVER);
-		return string('CONTROLPANEL_OK');
+		return wantarray ? (1, string('CONTROLPANEL_OK')) : string('CONTROLPANEL_OK');
 	}
 
-	return string('CONTROLPANEL_FAILED');
+	return wantarray ? (0, string('CONTROLPANEL_FAILED')) : string('CONTROLPANEL_FAILED');
 }
 
 sub checkPing {

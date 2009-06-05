@@ -20960,6 +20960,48 @@ CONTROLPANEL_OK
 	RU	ОК
 	SV	OK
 
+CONTROLPANEL_ALERTS
+	EN	Alerts
+
+CONTROLPANEL_PORTCONFLICT
+	EN	SqueezeCenter is not running, but some application is using the same port (%s).
+
+CONTROLPANEL_PORTBLOCKED
+	DA	SqueezeCenter kører men kan ikke kontaktes på port %s
+	DE	SqueezeCenter wird ausgeführt, kann aber an Port %s nicht erreicht werden. Ev. blockiert eines der folgenden Programme die Verbindung:
+	EN	SqueezeCenter is running but can't be contacted on port %s. The following applications might be blocking your connection:
+	ES	SqueezeCenter está en ejecución pero no se puede contactar con él en el puerto %s
+	FI	SqueezeCenter on käynnissä, mutta siihen ei saada yhteyttä portissa %s
+	FR	Le SqueezeCenter est en cours d'exécution mais ne peut être contacté sur le port %s.
+	IT	SqueezeCenter è in esecuzione ma non può essere contattato sulla porta %s
+	NL	SqueezeCenter wordt uitgevoerd maar is niet toegankelijk via poort %s
+	NO	SqueezeCenter kjører, men kan ikke kontaktes på port %s
+	SV	SqueezeCenter körs men går inte att ansluta till port %s
+
+CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
+	DA	Hvis du har problemer med forbindelsen til og fra SqueezeCenter, skal du kontrollere at "Stateful Firewall (Always On)" er slået fra
+	DE	Vergewissern Sie sich bei Verbindungsproblemen mit SqueezeCenter, dass "Stateful Firewall (Always On)" deaktiviert ist.
+	EN	If you encounter connectivity issues with SqueezeCenter, please make sure "Stateful Firewall (Always On)" is turned off
+	ES	Si surgen problemas de conectividad con SqueezeCenter, asegúrese de que la opción "Stateful Firewall (Always On)" está desactivada
+	FI	Jos sinulla on yhteysongelmia SqueezeCenterin kanssa, tarkista, että "Tilallinen palomuuri (aina käytössä)" on kytketty pois käytöstä.
+	FR	Si vous rencontrez des problèmes de connectivité avec le SqueezeCenter, vérifiez que l'option "Pare-feu stateful (toujours activé)" est désactivée.
+	IT	In caso di problemi di connessione con SqueezeCenter, verificare che il firewall con stato non sia sempre attivato.
+	NL	Als je verbindingsproblemen met SqueezeCenter ondervindt, zorg je ervoor dat 'Stateful Firewall (Altijd aan)' is uitgeschakeld
+	NO	Hvis du har tilkoplingsproblemer med SqueezeCenter,  må du sørge for at "Tilstandsbevisst brannmur (Alltid på)" er slått av
+	SV	Om det uppstår anslutningsproblem med SqueezeCenter bör du kontrollera att Tillståndskänslig brandvägg (alltid på) är avstängd
+	
+CONTROLPANEL_CONFLICT_SCPERL
+	DA	Hvis du kører SC i Perl-versionen, er det OK og forventet.
+	DE	Das Ausführen von SC mithilfe der Perl-Version wird akzeptiert und erwartet.
+	EN	If you're running SC using the perl version, then this is ok and expected.
+	ES	Si ejecuta SC con la versión perl, es correcto y está previsto.
+	FI	Jos SC on käynnissä ja käytät Perl-versiota, tämä on odotettavissa eikä aiheuta ongelmia.
+	FR	Si vous exécutez SC à l'aide de la version perl, cet événement est attendu.
+	IT	Se è in esecuzione la versione Perl di SC, il problema non sussiste.
+	NL	Als je SC met de perl-versie uitvoert, is dit normaal gedrag.
+	NO	Hvis du kjører SC med perl-versjonen, er dette greit og forventet.
+	SV	Om du kör du perlversionen av SC är detta inget fel, utan OK och förväntat.
+
 CONTROLPANEL_REFRESH
 	CS	Obnovit
 	DA	Opdater
