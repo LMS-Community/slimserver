@@ -24,14 +24,15 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-
-	my $musicLibraryBox = Wx::StaticBox->new($self, -1, string('SETUP_LIBRARY_NAME'));
-	my $musicLibrarySizer = Wx::StaticBoxSizer->new( $musicLibraryBox, wxVERTICAL );
+	my $musicLibrarySizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('SETUP_LIBRARY_NAME')),
+		wxVERTICAL
+	);
 	
-	$musicLibrarySizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME_DESC')), 0, wxLEFT, 10);
-	$musicLibrarySizer->AddSpacer(10);
+	$musicLibrarySizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME_DESC')), 0, wxLEFT | wxTOP, 10);
+	$musicLibrarySizer->AddSpacer(5);
 	my $libraryname = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('libraryname') || '', [-1, -1], [300, -1]);
-	$musicLibrarySizer->Add($libraryname, 0, wxLEFT | wxBOTTOM | wxGROW, 10);
+	$musicLibrarySizer->Add($libraryname, 0, wxLEFT | wxBOTTOM | wxRIGHT | wxGROW, 10);
 	
 	$parent->addStatusListener($libraryname);
 	$parent->addApplyHandler($libraryname, sub {
@@ -43,14 +44,25 @@ sub new {
 	$mainSizer->Add($musicLibrarySizer, 0, wxALL | wxGROW, 10);		
 
 	
-	my $settingsBox = Wx::StaticBox->new($self, -1, string('MUSICSOURCE'));
-	my $settingsSizer = Wx::StaticBoxSizer->new( $settingsBox, wxVERTICAL );
+	my $settingsSizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('MUSICSOURCE')),
+		wxVERTICAL
+	);
 	
 	# folder selectors
-	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT, 10);
-	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'), 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
+	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_AUDIODIR')), 0, wxLEFT | wxTOP, 10);
+	$settingsSizer->AddSpacer(5);
+	$settingsSizer->Add(
+		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'audiodir'),
+		0, wxEXPAND | wxLEFT | wxRIGHT, 10
+	);
+
 	$settingsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PLAYLISTDIR')), 0, wxLEFT | wxTOP, 10);
-	$settingsSizer->Add(Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'), 0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 5);
+	$settingsSizer->AddSpacer(5);
+	$settingsSizer->Add(
+		Slim::GUI::ControlPanel::DirPicker->new($self, $parent, 'playlistdir'),
+		0, wxEXPAND | wxLEFT | wxBOTTOM | wxRIGHT, 10
+	);
 
 	my $iTunes = getPref('iTunes', 'state.prefs');
 	my $useItunesStr = Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES');

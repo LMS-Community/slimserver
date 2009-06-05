@@ -40,8 +40,10 @@ sub new {
 	if ($os->name eq 'win') {
 
 		# check for SC updates
-		my $updateBox = Wx::StaticBox->new($self, -1, string('SETUP_CHECKVERSION')); 
-		my $updateSizer = Wx::StaticBoxSizer->new($updateBox, wxVERTICAL);
+		my $updateSizer = Wx::StaticBoxSizer->new(
+			Wx::StaticBox->new($self, -1, string('SETUP_CHECKVERSION')),
+			wxVERTICAL
+		);
 	
 		my $ready = $self->_checkForUpdate();
 
@@ -49,10 +51,7 @@ sub new {
 		$updateSizer->Add($updateLabel, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
 		# update button
-		my $btnsizer = Wx::StdDialogButtonSizer->new();
 		my $btnUpdate = Wx::Button->new($self, -1, string($ready ? 'CONTROLPANEL_INSTALL_UPDATE' : 'CONTROLPANEL_CHECK_UPDATE'));
-		$btnsizer->SetAffirmativeButton($btnUpdate);
-		$btnsizer->Realize();
 
 		EVT_BUTTON( $self, $btnUpdate, sub {
 			
@@ -103,7 +102,7 @@ sub new {
 			}
 		});
 			
-		$updateSizer->Add($btnsizer, 0, wxALL | wxGROW, 10);
+		$updateSizer->Add($btnUpdate, 0, wxALL, 10);
 		
 		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);	
 	}
@@ -114,7 +113,7 @@ sub new {
 		wxVERTICAL
 	);
 	
-	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/', 'CONTROLPANEL_WEB_CONTROL_DESC', 250) , 0, wxALL, 10 );
+	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/', 'CONTROLPANEL_WEB_CONTROL_DESC', 250) , 0, wxLEFT | wxTOP, 10 );
 	$webSizer->Add( Slim::GUI::WebButton->new($self, $parent, '/settings/index.html', 'CONTROLPANEL_ADVANCED_SETTINGS_DESC', 250) , 0, wxALL, 10 );
 
 	$mainSizer->Add($webSizer, 0, wxALL | wxGROW, 10);
@@ -130,30 +129,32 @@ sub new {
 	$logBtnSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'server.log', 'CONTROLPANEL_SHOW_SERVER_LOG'));
 	$logBtnSizer->Add(Slim::GUI::Settings::LogLink->new($self, $parent, 'scanner.log', 'CONTROLPANEL_SHOW_SCANNER_LOG'), 0, wxLEFT, 10);
 
-	$logSizer->Add($logBtnSizer);
+	$logSizer->Add($logBtnSizer, 0, wxALL, 10);
 	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
 	
 
-	my $cleanupBox = Wx::StaticBox->new($self, -1, string('CLEANUP'));
-	my $cleanupSizer = Wx::StaticBoxSizer->new($cleanupBox, wxVERTICAL);
+	my $cleanupSizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('CLEANUP')),
+		wxVERTICAL
+	);
 
-	my $cbSizer = Wx::BoxSizer->new(wxVERTICAL);
-
+	$cleanupSizer->AddSpacer(5);
+	
 	foreach (@{ $args->{options} }) {
 		
 		# support only wants these three options
 		next unless $_->{name} =~ /^(?:prefs|cache)$/;
 		
 		$checkboxes{$_->{name}} = Wx::CheckBox->new( $self, -1, $_->{title}, $_->{position});
-		$cbSizer->Add( $checkboxes{$_->{name}}, 0, wxTOP, 5 );
+		$cleanupSizer->AddSpacer(5);
+		$cleanupSizer->Add($checkboxes{$_->{name}}, 0, wxLEFT, 10);
 	}
-
-	$cleanupSizer->Add($cbSizer, 1, wxALL, 5);
 
 	my $btnCleanup = Wx::Button->new( $self, -1, string('CLEANUP_DO') );
 	EVT_BUTTON( $self, $btnCleanup, \&doCleanup );
 	
 	$cleanupSizer->Add($btnCleanup, 0, wxALL , 10);
+
 	$mainSizer->Add($cleanupSizer, 0, wxALL | wxGROW, 10);	
 	
 	$self->SetSizer($mainSizer);

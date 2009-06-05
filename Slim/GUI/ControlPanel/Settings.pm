@@ -75,7 +75,8 @@ sub new {
 	$parent->addStatusListener($cbStartSafeMode, sub {
 		$cbStartSafeMode->Enable(  $_[0] == SC_STATE_STOPPED );
 	});
-	$startBtnSizer->Add($cbStartSafeMode, 0, wxLEFT, 10);
+	$startBtnSizer->AddSpacer(10);
+	$startBtnSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP, 5);
 
 	EVT_BUTTON( $self, $btnStartStop, sub {
 		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
@@ -89,7 +90,7 @@ sub new {
 		}
 	});
 
-	$statusSizer->Add($startBtnSizer, 0, wxALL | wxGROW, 10);
+	$statusSizer->Add($startBtnSizer, 0, wxLEFT | wxBOTTOM | wxGROW, 10);
 	$mainSizer->Add($statusSizer, 0, wxALL | wxGROW, 10);
 
 
@@ -170,8 +171,10 @@ sub new {
 	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
 
 
-	my $rescanBox = Wx::StaticBox->new($self, -1, string('INFORMATION_MENU_SCAN'));
-	my $rescanSizer = Wx::StaticBoxSizer->new($rescanBox, wxVERTICAL);
+	my $rescanSizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('INFORMATION_MENU_SCAN')),
+		wxVERTICAL
+	);
 
 	my $rescanBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 	

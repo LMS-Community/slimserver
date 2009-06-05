@@ -29,14 +29,16 @@ sub new {
 		wxVERTICAL
 	);
 
-	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')), 0, wxTOP, 3);
+	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')), 0, wxTOP | wxLEFT, 10);
+	$snSizer->AddSpacer(5);
 	my $username = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_email') || '', [-1, -1], [350, -1]);
-	$snSizer->Add($username);
+	$snSizer->Add($username, 0, wxLEFT, 10);
 	$parent->addStatusListener($username);
 
-	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP, 3);
+	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_PASSWORD') . string('COLON')), 0, wxTOP | wxLEFT, 10);
+	$snSizer->AddSpacer(5);
 	my $password = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_password_sha') ? 'SN_PASSWORD_PLACEHOLDER' : '', [-1, -1], [350, -1], wxTE_PASSWORD);
-	$snSizer->Add($password);
+	$snSizer->Add($password, 0, wxLEFT, 10);
 	$parent->addStatusListener($password);
 
 	$snSizer->Add(Wx::HyperlinkCtrl->new(
@@ -47,8 +49,9 @@ sub new {
 		[-1, -1], 
 		[-1, -1], 
 		wxHL_DEFAULT_STYLE,
-	), 0, wxTOP, 3);
+	), 0, wxTOP | wxLEFT, 10);
 
+	$snSizer->AddSpacer(5);
 	$snSizer->Add(Wx::HyperlinkCtrl->new(
 		$self, 
 		-1, 
@@ -57,7 +60,7 @@ sub new {
 		[-1, -1], 
 		[-1, -1], 
 		wxHL_DEFAULT_STYLE,
-	), 0, wxTOP, 3);
+	), 0, wxLEFT | wxBOTTOM, 10);
 
 	$parent->addApplyHandler($username, sub {
 		

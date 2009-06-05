@@ -60,7 +60,7 @@ sub new {
 		checkPort(getHostIP(), $cliPort, $_[0]);
 	});
 	
-	$scBoxSizer->Add($scSizer, 0, wxLEFT | wxRIGHT | wxGROW, 10);
+	$scBoxSizer->Add($scSizer, 0, wxALL | wxGROW, 10);
 	$mainSizer->Add($scBoxSizer, 0, wxALL | wxGROW, 10);
 
 
@@ -87,24 +87,17 @@ sub new {
 		checkPort(getSNAddress(), '9000', 1);
 	});
 	
-	$snBoxSizer->Add($snSizer, 0, wxLEFT | wxRIGHT | wxGROW, 10);
+	$snBoxSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
 	$mainSizer->Add($snBoxSizer, 0, wxALL | wxGROW, 10);
 
-	$mainSizer->AddStretchSpacer();	
-	
-	my $btnsizer = Wx::StdDialogButtonSizer->new();
 
 	my $btnRefresh = Wx::Button->new( $self, -1, string('CONTROLPANEL_REFRESH') );
 	EVT_BUTTON( $self, $btnRefresh, sub {
 		$self->_update();
 	} );
-	$btnsizer->SetAffirmativeButton($btnRefresh);
-	
-	$btnsizer->Realize();
 
-	$mainSizer->Add($btnsizer, 0, wxALIGN_BOTTOM | wxALL | wxALIGN_RIGHT, 10);
-	
-	
+	$mainSizer->Add($btnRefresh, 0, wxALL, 10);
+		
 	$self->SetSizer($mainSizer);
 
 	return $self;
