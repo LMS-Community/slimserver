@@ -9,7 +9,7 @@ use strict;
 use base 'Wx::Panel';
 
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON);
+use Wx::Event qw(EVT_BUTTON EVT_TIMER);
 use File::Spec::Functions qw(catfile);
 use LWP::Simple qw($ua get);
 
@@ -44,13 +44,11 @@ sub new {
 			wxVERTICAL
 		);
 	
-		my $ready = $self->_checkForUpdate();
-
-		my $updateLabel = Wx::StaticText->new($self, -1, string($ready ? 'CONTROLPANEL_UPDATE_AVAILABLE' : 'CONTROLPANEL_NO_UPDATE_AVAILABLE'));	
-		$updateSizer->Add($updateLabel, 0, wxLEFT | wxRIGHT | wxTOP, 10);
+		my $updateLabel = Wx::StaticText->new($self, -1, '');	
+		$updateSizer->Add($updateLabel, 0, wxLEFT | wxRIGHT | wxTOP | wxGROW, 10);
 	
 		# update button
-		my $btnUpdate = Wx::Button->new($self, -1, string($ready ? 'CONTROLPANEL_INSTALL_UPDATE' : 'CONTROLPANEL_CHECK_UPDATE'));
+		my $btnUpdate = Wx::Button->new($self, -1, string('CONTROLPANEL_INSTALL_UPDATE'));
 
 		EVT_BUTTON( $self, $btnUpdate, sub {
 			
@@ -73,6 +71,17 @@ sub new {
 		$updateSizer->Add($btnUpdate, 0, wxALL, 10);
 		
 		$mainSizer->Add($updateSizer, 0, wxALL | wxGROW, 10);
+
+		my $updateChecker = Wx::Timer->new($self, 1);
+		EVT_TIMER( $self, 1, sub {
+			my $ready = $self->_checkForUpdate();
+			$updateLabel->SetLabel( string($ready ? 'CONTROLPANEL_UPDATE_AVAILABLE' : 'CONTROLPANEL_NO_UPDATE_AVAILABLE') );
+			$btnUpdate->Enable($ready);
+
+			# check every five minutes
+			$updateChecker->Start(0.5 * 60 * 1000);
+		});
+		$updateChecker->Start(500);
 	}
 	
 	
