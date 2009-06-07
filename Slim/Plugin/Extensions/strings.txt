@@ -19,7 +19,7 @@ PLUGIN_EXTENSIONS_DESC
 	DE	Der Extension Downloader kann diverse Erweiterungen für ihr Squeezebox System herunterladen und installieren. Unterstützung für Erweiterungen von Drittanbietern erhalten Sie bei den Autoren (siehe Liste) oder in den <a href="http://forums.slimdevices.com/forumdisplay.php">Squeezebox Foren</a>.
 	EN	The Extension Downloader can download and install a variety of add-ons to your Squeezebox system.  For support for third-party extensions, contact the author listed below or join in at the <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>.
 	ES	El Descargador de extensiones puede descargar e instalar diversos complementos para el sistema Squeezebox. Para obtener asistencia para extensiones de otros fabricantes, póngase en contacto con el autor citado a continuación o inscríbase en los foros <a href="http://forums.slimdevices.com/forumdisplay.php?f=4"></a>.
-	FI	SqueezeCenter saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.  Kolmansien osapuolien laajennusten tukea varten ota yhteyttä alla mainittuun tekijään tai liity <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">foorumeihin</a>.
+	FI	Squeezebox Server saattaa ladata ja asentaa erilaisia lisäosia Squeezebox-järjestelmälle.  Kolmansien osapuolien laajennusten tukea varten ota yhteyttä alla mainittuun tekijään tai liity <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">foorumeihin</a>.
 	FR	L'outil de téléchargement vous permet de télécharger et installer une multitude d'extensions à votre système Squeezebox. Pour obtenir du support veuillez contacter l'auteur de l'extension tiers affiché ci-dessous ou rejoignez les <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
 	IT	L'utilità di download delle estensioni può scaricare e installare nel sistema Squeezebox una serie di moduli aggiuntivi. Per assistenza in merito alle estensioni di terzi, rivolgersi all'autore elencato di seguito o partecipare ai <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forum</a>.
 	NL	De Extension Downloader kan een scala aan invoegtoepassingen downloaden en op je Squeezebox-systeem installeren. Voor ondersteuning bij uitbreidingen van derden kun je contact opnemen met de auteur of je aansluiten bij de <a href="http://forums.slimdevices.com/forumdisplay.php?f=4">forums</a>
@@ -74,19 +74,19 @@ PLUGIN_EXTENSIONS_REPOS_WARNING
 	SV	<b>Obs!</b> Eftersom servern laddar ned program automatiskt från den servern du anger är det viktigt att du litar på databasens ägare.
 
 PLUGIN_EXTENSIONS_PLUGINS
-	CS	Pluginy SqueezeCenter
-	DA	Udvidelsesmoduler til SqueezeCenter
-	DE	SqueezeCenter-Plugins
-	EN	SqueezeCenter Plugins
-	ES	Complementos de SqueezeCenter
-	FI	SqueezeCenterin laajennukset
-	FR	Plugins SqueezeCenter
-	IT	Plugin di SqueezeCenter
-	NL	SqueezeCenter-plugins
-	NO	Plugin-moduler for SqueezeCenter
-	PL	Dodatki programu SqueezeCenter
-	RU	Плагины SqueezeCenter
-	SV	Plugin-program till SqueezeCenter
+	CS	Pluginy Squeezebox Server
+	DA	Udvidelsesmoduler til Squeezebox Server
+	DE	Squeezebox Server-Plugins
+	EN	Squeezebox Server Plugins
+	ES	Complementos de Squeezebox Server
+	FI	Squeezebox Serverin laajennukset
+	FR	Plugins Squeezebox Server
+	IT	Plugin di Squeezebox Server
+	NL	Squeezebox Server-plugins
+	NO	Plugin-moduler for Squeezebox Server
+	PL	Dodatki programu Squeezebox Server
+	RU	Плагины Squeezebox Server
+	SV	Plugin-program till Squeezebox Server
 
 PLUGIN_EXTENSIONS_PLUGINS_UPGRADE
 	CS	Upgradovat Plugin na novou verzi
@@ -164,19 +164,19 @@ PLUGIN_EXTENSIONS_PLUGIN_MANUAL_UNINSTALL
 	SV	(%s) har redan installerats manuellt – ta bort först
 
 PLUGIN_EXTENSIONS_RESTART_MSG
-	CS	Restartujte prosím SqueezeCenter k uskutečnění  změn.
-	DA	Du skal genstarte SqueezeCenter for at ændringerne kan træde i kraft.
-	DE	SqueezeCenter muss neu gestartet werden, damit die Änderungen in Kraft treten.
-	EN	Please restart SqueezeCenter for the changes to take effect.
-	ES	Reinicie SqueezeCenter para que los cambios entren en vigor.
-	FI	Käynnistä SqueezeCenter uudelleen, jotta muutokset tulevat voimaan.
-	FR	Redémarrez le SqueezeCenter pour appliquer les modifications.
-	IT	Per applicare le modifiche, è necessario riavviare SqueezeCenter.
-	NL	Start SqueezeCenter opnieuw om de wijzigingen door te voeren.
-	NO	Du må starte SqueezeCenter på nytt for at endringene skal tre i kraft.
-	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program SqueezeCenter.
-	RU	Перезапустите SqueezeCenter, чтобы изменения вступили в силу.
-	SV	Starta om SqueezeCenter om du vill att ändringarna ska träda i kraft.
+	CS	Restartujte prosím Squeezebox Server k uskutečnění  změn.
+	DA	Du skal genstarte Squeezebox Server for at ændringerne kan træde i kraft.
+	DE	Squeezebox Server muss neu gestartet werden, damit die Änderungen in Kraft treten.
+	EN	Please restart Squeezebox Server for the changes to take effect.
+	ES	Reinicie Squeezebox Server para que los cambios entren en vigor.
+	FI	Käynnistä Squeezebox Server uudelleen, jotta muutokset tulevat voimaan.
+	FR	Redémarrez le Squeezebox Server pour appliquer les modifications.
+	IT	Per applicare le modifiche, è necessario riavviare Squeezebox Server.
+	NL	Start Squeezebox Server opnieuw om de wijzigingen door te voeren.
+	NO	Du må starte Squeezebox Server på nytt for at endringene skal tre i kraft.
+	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program Squeezebox Server.
+	RU	Перезапустите Squeezebox Server, чтобы изменения вступили в силу.
+	SV	Starta om Squeezebox Server om du vill att ändringarna ska träda i kraft.
 
 PLUGIN_EXTENSIONS_REPO_ERROR
 	CS	Špatný archív

@@ -2,7 +2,7 @@ package Slim::Utils::Accessor;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -15,7 +15,7 @@ Slim::Utils::Accessor
 
 L<Slim::Utils::Accessor>
 
- Simple accessors for SqueezeCenter objects based on Class::Accessor::Faster by Marty Pauley
+ Simple accessors for Squeezebox Server objects based on Class::Accessor::Faster by Marty Pauley
  In addition to simple scalar accessors provides methods to arrays and hashes by index/key as used by Client and Display objects
 
 =cut

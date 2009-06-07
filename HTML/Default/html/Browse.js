@@ -9,9 +9,9 @@ Browse = {
 
 		// Album view selector
 		if (Ext.get('viewSelect')) {
-			var viewMode = (SqueezeJS.getCookie('SqueezeCenter-albumView') 
-								&& SqueezeJS.getCookie('SqueezeCenter-albumView').match(/[012]/) 
-								? SqueezeJS.getCookie('SqueezeCenter-albumView') : '0');
+			var viewMode = (SqueezeJS.getCookie('Squeezebox-albumView') 
+								&& SqueezeJS.getCookie('Squeezebox-albumView').match(/[012]/) 
+								? SqueezeJS.getCookie('Squeezebox-albumView') : '0');
 
 			// we don't have gallery view in playlist mode
 			if (!SqueezeJS.string('switch_to_gallery'))
@@ -51,7 +51,7 @@ Browse = {
 						'<span class="menu-title">' + SqueezeJS.string('sort_by') + '...</span>'
 				);
 
-				var sortOrder = SqueezeJS.getCookie('SqueezeCenter-orderBy');
+				var sortOrder = SqueezeJS.getCookie('Squeezebox-orderBy');
 				for (order in orderByList) {
 					menu.add(new Ext.menu.CheckItem({
 						text: order,
@@ -98,17 +98,17 @@ Browse = {
 		params = params.replace(/&artwork=\w*/gi, '');
 
 		if (artwork == 1) {
-			SqueezeJS.setCookie( 'SqueezeCenter-albumView', "1" );
+			SqueezeJS.setCookie( 'Squeezebox-albumView', "1" );
 			params += '&artwork=1';
 		}
 
 		else if (artwork == 2) {
-			SqueezeJS.setCookie( 'SqueezeCenter-albumView', "2" );
+			SqueezeJS.setCookie( 'Squeezebox-albumView', "2" );
 			params += '&artwork=2';
 		}
 
 		else {
-			SqueezeJS.setCookie( 'SqueezeCenter-albumView', "" );
+			SqueezeJS.setCookie( 'Squeezebox-albumView', "" );
 			params += '&artwork=0';
 		}
 
@@ -122,7 +122,7 @@ Browse = {
 		if (option)
 			params += '&orderBy=' + option;
 
-		SqueezeJS.setCookie('SqueezeCenter-orderBy', option);
+		SqueezeJS.setCookie('Squeezebox-orderBy', option);
 		location.search = params;
 	},
 

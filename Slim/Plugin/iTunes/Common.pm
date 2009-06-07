@@ -1,6 +1,6 @@
 package Slim::Plugin::iTunes::Common;
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -19,7 +19,7 @@ package Slim::Plugin::iTunes::Common;
 #
 #	ignoredisableditunestracks
 #		-- if this is set (1), songs that are 'disabled' (unchecked)
-#		in iTunes will still be available to SqueezeCenter.  If this is
+#		in iTunes will still be available to Squeezebox Server.  If this is
 #		unset (0) or undefined, disabled songs will be skipped.
 #
 #	itunesscaninterval

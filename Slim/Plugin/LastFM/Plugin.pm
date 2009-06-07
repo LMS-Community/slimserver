@@ -2,7 +2,7 @@ package Slim::Plugin::LastFM::Plugin;
 
 # $Id$
 
-# Play Last.fm Radio via SqueezeNetwork
+# Play Last.fm Radio via mysqueezebox.com
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);

@@ -1,6 +1,6 @@
 package Slim::Web::Settings::Server::Wizard;
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -33,7 +33,7 @@ sub handler {
 
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
-	# The hostname for SqueezeNetwork
+	# The hostname for mysqueezebox.com
 	$paramRef->{sn_server} = Slim::Networking::SqueezeNetwork->get_server("sn");
 
 	# make sure we only enforce the wizard at the very first startup

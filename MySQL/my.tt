@@ -1,6 +1,6 @@
 # $Id$
 # 
-# SqueezeCenter specific MySQL Server config.
+# Squeezebox Server specific MySQL Server config.
 
 [mysqld]
 innodb

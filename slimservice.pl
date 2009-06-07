@@ -1,6 +1,6 @@
 #!/opt/sdi/bin/perl -w
 
-# SlimServer Copyright (C) 2001-2007 Logitech.
+# SlimServer Copyright (C) 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -45,7 +45,7 @@ BEGIN {
 		# Local development
 		my $conf = "$FindBin::Bin/slimservice.conf";
 		if ( !-e $conf ) {
-			die "Please create $conf with the path to the SqueezeNetwork directory\n";
+			die "Please create $conf with the path to the mysqueezebox.com directory\n";
 		}
 		$SN_PATH = File::Slurp::read_file( $conf );
 		chomp $SN_PATH;
@@ -359,13 +359,13 @@ sub init {
 	Slim::Menu::TrackInfo->init();
 	Slim::Menu::SystemInfo->init();
 	
-	$log->info('SqueezeCenter Alarms init...');
+	$log->info('Squeezebox Server Alarms init...');
 	Slim::Utils::Alarm->init();
 
 	$log->info("SlimServer Plugins init...");
 	Slim::Utils::PluginManager->init();
 	
-	$log->info("SqueezeCenter Jive init...");
+	$log->info("Squeezebox Server Jive init...");
 	Slim::Control::Jive->init();
 	
 	$log->info("Remote Metadata init...");

@@ -120,7 +120,7 @@ sub _init_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
-	$log->warn( "Unable to get list of prefs to sync with SqueezeNetwork, sync is disabled: $error" );
+	$log->warn( "Unable to get list of prefs to sync with mysqueezebox.com, sync is disabled: $error" );
 	
 	$prefs->remove('sn_session');
 	
@@ -145,7 +145,7 @@ sub shutdown {
 	Slim::Utils::Timers::killTimers( undef, \&syncUpGlobal );
 	Slim::Utils::Timers::killTimers( undef, \&syncDownGlobal );
 	
-	$log->info( "SqueezeNetwork pref sync shutdown" );
+	$log->info( "mysqueezebox.com pref sync shutdown" );
 }
 
 sub syncDown {

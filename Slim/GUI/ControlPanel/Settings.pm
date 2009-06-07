@@ -1,6 +1,6 @@
 package Slim::GUI::ControlPanel::Settings;
 
-# SqueezeCenter Copyright 2001-2009 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -63,10 +63,10 @@ sub new {
 	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
 	# Start/Stop button
-	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZECENTER'));
+	my $btnStartStop = Wx::Button->new($self, -1, string('STOP_SQUEEZEBOX_SERVER'));
 
 	$parent->addStatusListener($btnStartStop, sub {
-		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZECENTER') :  string('START_SQUEEZECENTER'));
+		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZEBOX_SERVER') :  string('START_SQUEEZEBOX_SERVER'));
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
 	});
 	$startBtnSizer->Add($btnStartStop, 0);

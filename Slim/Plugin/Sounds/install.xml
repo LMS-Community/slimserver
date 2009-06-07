@@ -13,7 +13,7 @@
 	<type>2</type>
 	<enforce>1</enforce>
 	<targetApplication>
-		<id>SqueezeCenter</id>
+		<id>Squeezebox Server</id>
 		<minVersion>7.0</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>

@@ -1,6 +1,6 @@
-                                Welcome to SqueezeCenter 
+                                Welcome to Squeezebox Server 
    
-This document describes the steps for installing the SqueezeCenter on Unix-like platforms.
+This document describes the steps for installing the Squeezebox Server on Unix-like platforms.
 
 Version 5.8.3 or higher of Perl is required.
 
@@ -25,7 +25,7 @@ build-perl-modules script to run successfully, you must have You must have:
 - Perl 5.8.3 or greater, and the required development libs (if any; some
   platforms put this in a separate package, such as 'libperl-dev')
 
-- MySQL 4.1.xx or 5.0.xx. Included as a binary with SqueezeCenter for Windows 
+- MySQL 4.1.xx or 5.0.xx. Included as a binary with Squeezebox Server for Windows 
   NT/2000/XP, Linux (i386) and Mac OS X.
 
   This might also be a package on your system, such as mysql-server &
@@ -60,7 +60,7 @@ Linux Notes (RPM Install):
 FreeBSD Notes:
 
 	In a normal installation of FreeBSD the version of Perl is 5.00 and not 
-	sufficient for use with the SqueezeCenter software, which requires 5.8.3 or greater.
+	sufficient for use with the Squeezebox Server software, which requires 5.8.3 or greater.
 
 	To upgrade Perl to 5.8:
 
@@ -73,7 +73,7 @@ FreeBSD Notes:
 
 	The Linux standard installation creates a user, slimserver, that owns
 	all the appropriate files and is the login account for the 
-	SqueezeCenter daemon. There is no requirement that the SqueezeCenter daemon
+	Squeezebox Server daemon. There is no requirement that the server daemon
 	execute with extensive priviledges. As always, executing the perl programs
 	as "root" is not good security practice.
 
@@ -92,10 +92,10 @@ Tarball Notes:
 	This will start up the server and run itself in the background.
 
 	Visit the URL that's printed out with your web browser to configure your 
-	SqueezeCenter and see the complete documentation.
+	Squeezebox Server and see the complete documentation.
 
 	As part of the debugging support, if there is no /etc/slimserver.conf file, or
-	if it is not readable when the SqueezeCenter starts, it will look for ~.slimserver.conf
+	if it is not readable when the Squeezebox Server starts, it will look for ~.slimserver.conf
 	that is, the normally hidden file .slimserver.conf in the home directory of 
 	the current user.
 
@@ -103,5 +103,5 @@ Tarball Notes:
 	For more verbose messages, start the program with the options of --d_server
 
 	To refresh the configuration parameters, you can simply delete the /etc/slimserver.conf
-	file (or rename it to something else). This will cause the SqueezeCenter to
+	file (or rename it to something else). This will cause the Squeezebox Server to
 	search for the ~.slimserver.conf, and failing that, to recreate it with default values.

@@ -21,7 +21,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $os = Slim::Utils::OSDetect->getOS();
 
-my $versionFile = catdir( scalar($os->dirsFor('updates')), 'squeezecenter.version' );
+my $versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 
 sub checkVersion {
 
@@ -97,7 +97,7 @@ sub checkVersionCB {
 		my $version = Slim::Utils::Unicode::utf8decode( $http->content() );
 		chomp($version);
 		
-		$log->debug($version || 'No new SqueezeCenter version available');
+		$log->debug($version || 'No new Squeezebox Server version available');
 
 		# reset the update flag
 		setUpdateInstaller();
@@ -105,7 +105,7 @@ sub checkVersionCB {
 		# trigger download of the installer if available
 		if ($version && $prefs->get('autoDownloadUpdate')) {
 			
-			$log->info('Triggering automatic SqueezeCenter update download...');
+			$log->info('Triggering automatic Squeezebox Server update download...');
 			getUpdate($version);
 		}
 		
@@ -199,7 +199,7 @@ sub downloadAsyncDone {
 	return if !-e $tmpFile;
 
 	if (-s _ != $http->headers->content_length()) {
-		$log->warn( sprintf("SqueezeCenter installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
+		$log->warn( sprintf("Squeezebox Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
 		unlink $tmpFile;
 		return;
 	}

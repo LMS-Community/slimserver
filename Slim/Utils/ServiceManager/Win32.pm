@@ -1,6 +1,6 @@
 package Slim::Utils::ServiceManager::Win32;
 
-# SqueezeCenter Copyright 2001-2009 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -31,7 +31,7 @@ sub init {
 	return $class;
 }
 
-# Determine how the user wants to start SqueezeCenter
+# Determine how the user wants to start Squeezebox Server
 sub getStartupType {
 	my %services;
 

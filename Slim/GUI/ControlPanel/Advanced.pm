@@ -1,6 +1,6 @@
 package Slim::GUI::ControlPanel::Advanced;
 
-# SqueezeCenter Copyright 2001-2009 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -20,7 +20,7 @@ use Slim::Utils::ServiceManager;
 use Slim::Utils::OSDetect;
 
 my $os = Slim::Utils::OSDetect::getOS();
-my $versionFile = catfile( scalar($os->dirsFor('updates')), 'squeezecenter.version' );
+my $versionFile = catfile( scalar($os->dirsFor('updates')), 'server.version' );
 
 if ($os->name eq 'win') {
 	require Win32::Process;

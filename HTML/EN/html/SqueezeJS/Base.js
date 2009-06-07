@@ -202,7 +202,7 @@ function _init() {
 
 						// remember the selected player
 						if (playerobj.playerid)
-							SqueezeJS.setCookie('SqueezeCenter-player', playerobj.playerid);
+							SqueezeJS.setCookie('Squeezebox-player', playerobj.playerid);
 
 						this.player = playerobj.playerid;
 
@@ -472,7 +472,7 @@ function _init() {
 			if (response && response.result)
 				response = response.result;
 
-			activeplayer = activeplayer || SqueezeJS.getCookie('SqueezeCenter-player');
+			activeplayer = activeplayer || SqueezeJS.getCookie('Squeezebox-player');
 			if (response && response.players_loop) {
 				for (var x=0; x < response.players_loop.length; x++) {
 					if (response.players_loop[x].playerid == activeplayer || encodeURIComponent(response.players_loop[x].playerid) == activeplayer)

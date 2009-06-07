@@ -2,7 +2,7 @@ package Slim::Control::XMLBrowser;
 
 # $Id: XMLBrowser.pm 23262 2008-09-23 19:21:03Z andy $
 
-# Copyright 2005-2007 Logitech.
+# Copyright 2005-2009 Logitech.
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 

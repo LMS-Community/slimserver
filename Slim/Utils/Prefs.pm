@@ -240,7 +240,7 @@ sub init {
 		'thumbSize'             => 100,
 		# Server Settings - jive UI
 		'jivealbumsort'		=> 'album',
-		# Server Settings - SqueezeNetwork
+		# Server Settings - mysqueezebox.com
 		'sn_sync'               => 1,
 		'sn_disable_stats'		=> 0,
 		# Bug 5557, disable UPnP support by default
@@ -767,9 +767,9 @@ use File::Spec::Functions qw(:ALL);
 use Digest::MD5;
 
 sub makeSecuritySecret {
-	# each SqueezeCenter installation should have a unique,
+	# each Squeezebox Server installation should have a unique,
 	# strongly random value for securitySecret. This routine
-	# will be called by the first time SqueezeCenter is started
+	# will be called by the first time Squeezebox Server is started
 	# to "seed" the prefs file with a value for this installation
 
 	my $hash = new Digest::MD5;
@@ -809,7 +809,7 @@ sub defaultPlaylistDir {
 		# We've seen people have the defaultPlayListDir be a file. So
 		# change the path slightly to allow for that.
 		if (-f $path) {
-			$path .= 'SqueezeCenter';
+			$path .= 'Squeezebox';
 		}
 
 		if (!-d $path) {

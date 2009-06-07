@@ -1,6 +1,6 @@
 package Slim::Control::Jive;
 
-# SqueezeCenter Copyright 2001-2007 Logitech
+# Squeezebox Server Copyright 2001-2009 Logitech
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -239,7 +239,7 @@ sub menuQuery {
 	else {
 		# a single dummy item to keep jive happy with _merge
 		my $upgradeText = 
-		"Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and SqueezeCenter, and this requires a newer version of firmware.";
+		"Please upgrade your firmware at:\n\nSettings->\nController Settings->\nAdvanced->\nSoftware Update\n\nThere have been updates to better support the communication between your remote and Squeezebox Server, and this requires a newer version of firmware.";
 	        my $upgradeMessage = {
 			text      => 'READ ME',
 			weight    => 1,

@@ -94,7 +94,7 @@ sub title {
 	);
 }
 
-# return the raw title untainted by SqueezeCenter logic
+# return the raw title untainted by Squeezebox Server logic
 sub rawtitle {
 	my $self = shift;
 	

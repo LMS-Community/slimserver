@@ -51,34 +51,34 @@ SETUP_GROUP_DATETIME_DESC
 	SV	De här inställningar styr hur skärmsläckaren med datum och tid fungerar
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
-	CS	Výchozí nastavení SqueezeCenter
-	DA	SqueezeCenter standard
-	DE	SqueezeCenter-Standard
-	EN	SqueezeCenter Default
-	ES	Predeterminado de SqueezeCenter
-	FI	SqueezeCenter-oletus
+	CS	Výchozí nastavení Squeezebox Server
+	DA	Squeezebox Server standard
+	DE	Squeezebox Server-Standard
+	EN	Squeezebox Server Default
+	ES	Predeterminado de Squeezebox Server
+	FI	Squeezebox Server-oletus
 	FR	Défaut serveur
-	HE	ברירת המחדל של SqueezeCenter
-	IT	Impostazioni predefinite di SqueezeCenter
-	NL	SqueezeCenter-standaardinstellingen
-	NO	SqueezeCenter-standard
-	PL	Domyślny program SqueezeCenter
-	RU	SqueezeCenter по умолчанию
-	SV	SqueezeCenter-standard
+	HE	ברירת המחדל של Squeezebox Server
+	IT	Impostazioni predefinite di Squeezebox Server
+	NL	Squeezebox Server-standaardinstellingen
+	NO	Squeezebox Server-standard
+	PL	Domyślny program Squeezebox Server
+	RU	Squeezebox Server по умолчанию
+	SV	Squeezebox Server-standard
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
-	CS	Výchozí nastavení SqueezeCenter
-	DA	SqueezeCenter standard
-	DE	SqueezeCenter-Standard
-	EN	SqueezeCenter Default
-	ES	Predeterminado de SqueezeCenter
-	FI	SqueezeCenter-oletus
+	CS	Výchozí nastavení Squeezebox Server
+	DA	Squeezebox Server standard
+	DE	Squeezebox Server-Standard
+	EN	Squeezebox Server Default
+	ES	Predeterminado de Squeezebox Server
+	FI	Squeezebox Server-oletus
 	FR	Défaut serveur
-	HE	ברירת המחדל של SqueezeCenter
-	IT	Impostazioni predefinite di SqueezeCenter
-	NL	SqueezeCenter-standaardinstellingen
-	NO	SqueezeCenter-standard
-	PL	Domyślny program SqueezeCenter
-	RU	SqueezeCenter по умолчанию
-	SV	SqueezeCenter-standard
+	HE	ברירת המחדל של Squeezebox Server
+	IT	Impostazioni predefinite di Squeezebox Server
+	NL	Squeezebox Server-standaardinstellingen
+	NO	Squeezebox Server-standard
+	PL	Domyślny program Squeezebox Server
+	RU	Squeezebox Server по умолчанию
+	SV	Squeezebox Server-standard
 

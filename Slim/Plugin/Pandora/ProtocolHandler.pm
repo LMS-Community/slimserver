@@ -113,7 +113,7 @@ sub getNextTrack {
 			},
 		);
 
-		$log->debug('Reporting station change to SqueezeNetwork');
+		$log->debug('Reporting station change to mysqueezebox.com');
 		$http->get( $snURL );
 	}
 
@@ -162,7 +162,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting next track from SqueezeNetwork for stationid=$stationId");
+	$log->debug("Getting next track from mysqueezebox.com for stationid=$stationId");
 	
 	$http->get( $trackURL );
 }

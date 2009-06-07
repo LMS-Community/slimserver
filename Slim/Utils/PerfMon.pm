@@ -1,6 +1,6 @@
 package Slim::Utils::PerfMon;
 
-# Package to add simple 'bucket' based logging to SqueezeCenter
+# Package to add simple 'bucket' based logging to Squeezebox Server
 # Used to store the distibution of values logged plus min/avg/max
 # May also set high and low warning levels which trigger a msg() 
 

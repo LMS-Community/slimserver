@@ -2,7 +2,7 @@ package Slim::Networking::SqueezeNetwork;
 
 # $Id: SqueezeNetwork.pm 11768 2007-04-16 18:14:55Z andy $
 
-# Async interface to SqueezeNetwork API
+# Async interface to mysqueezebox.com API
 
 use strict;
 use base qw(Slim::Networking::SimpleAsyncHTTP);
@@ -28,7 +28,7 @@ my $log   = logger('network.squeezenetwork');
 
 my $prefs = preferences('server');
 
-# This is a hashref of SqueezeNetwork server types
+# This is a hashref of mysqueezebox.com server types
 #   and names.
 
 my $_Servers = {
@@ -77,7 +77,7 @@ sub get_server {
 sub init {
 	my $class = shift;
 	
-	$log->info('SqueezeNetwork Init');
+	$log->info('mysqueezebox.com Init');
 	
 	# Convert old non-hashed password
 	if ( my $password = $prefs->get('sn_password') ) {
@@ -118,13 +118,13 @@ sub _init_done {
 	my $snTime = $json->{time};
 	
 	if ( $snTime !~ /^\d+$/ ) {
-		$http->error( "Invalid SqueezeNetwork server timestamp" );
+		$http->error( "Invalid mysqueezebox.com server timestamp" );
 		return _init_error( $http );
 	}
 	
 	my $diff = $snTime - time();
 	
-	$log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
+	$log->info("Got mysqueezebox.com server time: $snTime, diff: $diff");
 	
 	$prefs->set( sn_timediff => $diff );
 	
@@ -179,7 +179,7 @@ sub _init_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
-	$log->error( "Unable to login to SqueezeNetwork, sync is disabled: $error" );
+	$log->error( "Unable to login to mysqueezebox.com, sync is disabled: $error" );
 	
 	$prefs->remove('sn_timediff');
 	
@@ -189,7 +189,7 @@ sub _init_error {
 	
 	my $retry = 300 * ( $count + 1 );
 	
-	$log->error( "SqueezeNetwork sync init failed: $error, will retry in $retry" );
+	$log->error( "mysqueezebox.com sync init failed: $error, will retry in $retry" );
 	
 	Slim::Utils::Timers::setTimer(
 		undef,
@@ -241,7 +241,7 @@ sub shutdown {
 	Slim::Networking::SqueezeNetwork::Stats->shutdown();
 }
 
-# Return a correct URL for SqueezeNetwork
+# Return a correct URL for mysqueezebox.com
 sub url {
 	my ( $class, $path, $external ) = @_;
 	
@@ -398,7 +398,7 @@ sub _createHTTPRequest {
 	}
 	
 	if ( !$cookie && $url !~ m{api/v1/(login|radio)|public|update} ) {
-		$log->info("Logging in to SqueezeNetwork to obtain session ID");
+		$log->info("Logging in to mysqueezebox.com to obtain session ID");
 	
 		# Login and get a session ID
 		$self->login(
@@ -407,7 +407,7 @@ sub _createHTTPRequest {
 				if ( my $cookie = $self->getCookie( $self->params('client') ) ) {
 					unshift @args, 'Cookie', $cookie;
 		
-					$log->info('Got SqueezeNetwork session ID');
+					$log->info('Got mysqueezebox.com session ID');
 				}
 		
 				$self->SUPER::_createHTTPRequest( $type, $url, @args );

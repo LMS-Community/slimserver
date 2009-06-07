@@ -2,7 +2,7 @@ package Slim::Buttons::BrowseDB;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::BrowseDB
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::BrowseTree> is a SqueezeCenter module which adds several
+L<Slim::Buttons::BrowseTree> is a Squeezebox Server module which adds several
 modes for browsing a music collection using a variety of 'hierarchies' and 
 music metadata stored in a database.
 

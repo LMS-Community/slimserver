@@ -3,7 +3,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=7" />
-		<title>[% "SQUEEZECENTER" | string %]</title>
+		<title>[% "SQUEEZEBOX_SERVER" | string %]</title>
 
 		[% USE Prefs %][% IF Prefs.preferences('server').get('language') == 'HE' %]
 		<meta http-equiv="refresh" content="0; URL=/Classic/">
@@ -68,7 +68,7 @@
 		<div id="loading-mask">&#160;</div>
 		<div id="loading">
 			<div class="loading-indicator">
-				[% "LOADING_SQUEEZECENTER" | string %]
+				[% "LOADING_SQUEEZEBOX_SERVER" | string %]
 			</div>
 		</div>
 		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
@@ -83,7 +83,7 @@
 		<script type="text/javascript">[% PROCESS html/SqueezeJS/Strings.js %]</script>
 
 		<script type="text/javascript">
-			[% IF moreThanThis != "" %]SqueezeJS.setCookie( 'SqueezeCenter-allLinks', "[% moreThanThis %]" )[% END %]
+			[% IF moreThanThis != "" %]SqueezeJS.setCookie( 'Squeezebox-allLinks', "[% moreThanThis %]" )[% END %]
 
 			Ext.onReady(Main.init, Main, true);
 		</script>
@@ -91,7 +91,7 @@
 		<div id="header">
 			<div id="header_left"></div>
 			<div id="header_content">
-				<span><a href="[% webroot %]"><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></a></span>
+				<span><a href="[% webroot %]"><img src="[% webroot %]html/images/spacer.gif" id="squeezeboxLogo"></a></span>
 				<span id="playerChooser"></span>
 				<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
 			</div>

@@ -1,10 +1,10 @@
 <!-- ....................................................................... 	-->
 <!-- slimserver_xml.dtd .................................................... 	-->
-<!-- SqueezeCenter Copyright 2003-2007 Logitech ........................	-->
+<!-- Squeezebox Server Copyright 2003-2009 Logitech ........................	-->
 <!-- ....................................................................... 	-->
 
 <!--
-This DTD describes the data returned by the SqueezeCenter XML skin.
+This DTD describes the data returned by the Squeezebox Server XML skin.
 
 NOTES: 
 - URLs returned are already URL escaped. You must escape any element you add,

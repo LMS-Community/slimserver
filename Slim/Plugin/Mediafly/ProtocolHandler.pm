@@ -119,7 +119,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->is_debug && $log->debug("Getting next track from SqueezeNetwork for $slug");
+	$log->is_debug && $log->debug("Getting next track from mysqueezebox.com for $slug");
 	
 	$http->get( $trackURL );
 }

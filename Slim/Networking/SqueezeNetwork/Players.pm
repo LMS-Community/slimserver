@@ -67,7 +67,7 @@ sub shutdown {
 	
 	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
 	
-	$log->info( "SqueezeNetwork player list shutdown" );
+	$log->info( "mysqueezebox.com player list shutdown" );
 }
 
 sub fetch_players {
@@ -153,7 +153,7 @@ sub _players_done {
 #		
 #		# need to do something if list has changed - user should be notified
 #		if ($changed) {
-#			$log->debug("List of enabled plugins has changed - you'll need to restart SqueezeCenter for the changes to take effect")
+#			$log->debug("List of enabled plugins has changed - you'll need to restart Squeezebox Server for the changes to take effect")
 #		}
 #	}
 	

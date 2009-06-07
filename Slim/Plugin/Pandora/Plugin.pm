@@ -2,7 +2,7 @@ package Slim::Plugin::Pandora::Plugin;
 
 # $Id$
 
-# Play Pandora via SqueezeNetwork
+# Play Pandora via mysqueezebox.com
 
 use strict;
 use base qw(Slim::Plugin::OPMLBased);

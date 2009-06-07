@@ -174,7 +174,7 @@ sub getPlaylist {
 		},
 	);
 	
-	$log->debug("Getting playlist from SqueezeNetwork");
+	$log->debug("Getting playlist from mysqueezebox.com");
 	
 	$http->get( $playlistURL );
 }

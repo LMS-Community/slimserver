@@ -30,7 +30,7 @@ my $REPORT_GRANULARITY = 300;
 sub init {
 	my ( $class, $json ) = @_;
 	
-	$log->info( "SqueezeNetwork stats init" );
+	$log->info( "mysqueezebox.com stats init" );
 	
 	# Override defaults if SN has provided them
 	if ( $json->{stats_interval} ) {
@@ -60,7 +60,7 @@ sub init {
 }
 
 sub shutdown {
-	$log->info( "SqueezeNetwork stats shutdown" );
+	$log->info( "mysqueezebox.com stats shutdown" );
 	
 	# Unsubscribe
 	Slim::Control::Request::unsubscribe( \&newsongCallback );

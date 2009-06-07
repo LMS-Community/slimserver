@@ -1,6 +1,6 @@
 package Slim::GUI::ControlPanel::InitialSettings;
 
-# SqueezeCenter Copyright 2001-2009 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -53,7 +53,7 @@ sub new {
 		$self, 
 		-1, 
 		string('SETUP_SN_NEED_ACCOUNT'), 
-		'http://www.squeezenetwork.com/',
+		'http://www.mysqueezebox.com/',
 		[-1, -1], 
 		[-1, -1], 
 		wxHL_DEFAULT_STYLE,
@@ -63,7 +63,7 @@ sub new {
 		$self, 
 		-1, 
 		string('SETUP_SN_FORGOT_PASSWORD'), 
-		'http://www.squeezenetwork.com/user/forgotPassword',
+		'http://www.mysqueezebox.com/user/forgotPassword',
 		[-1, -1], 
 		[-1, -1], 
 		wxHL_DEFAULT_STYLE,

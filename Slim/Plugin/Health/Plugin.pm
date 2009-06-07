@@ -1,10 +1,10 @@
-# Plugin for SqueezeCenter to monitor Server and Network Health
+# Plugin for Squeezebox Server to monitor Server and Network Health
 
 # $Id: Plugin.pm 11029 2006-12-22 19:38:49Z adrian $
 
 # This code is derived from code with the following copyright message:
 #
-# SqueezeCenter Copyright 2005-2007 Logitech.
+# Squeezebox Server Copyright 2005-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

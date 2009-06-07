@@ -2,7 +2,7 @@ package Slim::Formats::WMA;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -51,7 +51,7 @@ sub getTag {
 		}
 	}
 	
-	# Map tags onto SqueezeCenter's preferred.
+	# Map tags onto Squeezebox Server's preferred.
 	while (my ($old,$new) = each %tagMapping) {
 
 		if (exists $tags->{$old}) {

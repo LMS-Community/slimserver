@@ -1,5 +1,5 @@
 /* 
- * Globally used SqueezeCenter strings.
+ * Globally used Squeezebox Server strings.
  * This file should be PROCESSed if SqueezeJS.UI is used.
  */
 [% PROCESS jsString id='POWER' jsId='' %]
@@ -41,8 +41,8 @@ SqueezeJS.Strings['volume'] += '[% "COLON" | string %]';
 [% PROCESS jsString id='NO_PLAYER_FOUND' jsId='no_player' %]
 [% PROCESS jsString id='NO_PLAYER_DETAILS' jsId='' %]
 [% PROCESS jsString id='SQUEEZENETWORK' %]
-[% PROCESS jsString id='SQUEEZECENTER' %]
-[% PROCESS jsString id='SQUEEZECENTER_WANT_SWITCH' jsId='sc_want_switch' %]
+[% PROCESS jsString id='SQUEEZEBOX_SERVER' %]
+[% PROCESS jsString id='SQUEEZEBOX_SERVER_WANT_SWITCH' jsId='sc_want_switch' %]
 [% PROCESS jsString id='BROWSE' jsId='' %]
 [% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
 [% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]

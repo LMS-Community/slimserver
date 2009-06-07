@@ -67,7 +67,7 @@ Main = {
 			split: true,
 			minSize: 400,
 			width: '50%',
-			stateId: 'SqueezeCenter-panelWidth',
+			stateId: 'Squeezebox-panelWidth',
 			stateful: !Ext.isIE
 		};
 
@@ -318,7 +318,7 @@ Main = {
 
 		// restore player expansion from cookie
 		this.collapseExpand({
-			doExpand: (SqueezeJS.getCookie('SqueezeCenter-expandPlayerControl') != 'false')
+			doExpand: (SqueezeJS.getCookie('Squeezebox-expandPlayerControl') != 'false')
 		});
 
 		new SqueezeJS.UI.Button({
@@ -346,14 +346,14 @@ Main = {
 			var items = Ext.DomQuery.select('#' + this.playlistEl + ' div.draggableSong');
 			if (items.length > 0) {
 				if (Ext.get('btnPlaylistToggleArtwork')) {
-					var noCover = SqueezeJS.getCookie('SqueezeCenter-noPlaylistCover') == '1';
+					var noCover = SqueezeJS.getCookie('Squeezebox-noPlaylistCover') == '1';
 					var menu = new Ext.menu.Menu({
 						items: [
 							new Ext.menu.CheckItem({
 								text: SqueezeJS.string('hide_artwork'),
 								cls: 'albumList',
 								handler: function(){
-									SqueezeJS.setCookie('SqueezeCenter-noPlaylistCover', 1);
+									SqueezeJS.setCookie('Squeezebox-noPlaylistCover', 1);
 									this.load();
 								}.createDelegate(this),
 								group: 'noCover',
@@ -363,7 +363,7 @@ Main = {
 								text: SqueezeJS.string('show_artwork'),
 								cls: 'albumXList',
 								handler: function(){
-									SqueezeJS.setCookie('SqueezeCenter-noPlaylistCover', 0);
+									SqueezeJS.setCookie('Squeezebox-noPlaylistCover', 0);
 									this.load();
 								}.createDelegate(this),
 								group: 'noCover',
@@ -421,7 +421,7 @@ Main = {
 	},
 
 	collapseExpand : function(ev){
-		var doExpand = ev.doExpand == null ? !SqueezeJS.getCookie('SqueezeCenter-expandPlayerControl') : ev.doExpand;
+		var doExpand = ev.doExpand == null ? !SqueezeJS.getCookie('Squeezebox-expandPlayerControl') : ev.doExpand;
 
 		var art = Ext.get('ctrlCurrentArt');
 
@@ -449,7 +449,7 @@ Main = {
 			art.show();
 		}
 
-		SqueezeJS.setCookie('SqueezeCenter-expandPlayerControl', doExpand);
+		SqueezeJS.setCookie('Squeezebox-expandPlayerControl', doExpand);
 
 		// resize the window if in undocked mode
 		if (!Ext.get('ctrlUndock').isVisible()) {

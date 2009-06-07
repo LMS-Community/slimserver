@@ -2,7 +2,7 @@ package Slim::Web::Cometd;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -417,7 +417,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
-			# A request to execute & subscribe to some SqueezeCenter event
+			# A request to execute & subscribe to some Squeezebox Server event
 			
 			# A valid /slim/subscribe message looks like this:
 			# {
@@ -491,7 +491,7 @@ sub handler {
 			}
 		}
 		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
-			# A request to unsubscribe from a SqueezeCenter event, this is not the same as /meta/unsubscribe
+			# A request to unsubscribe from a Squeezebox Server event, this is not the same as /meta/unsubscribe
 			
 			# A valid /slim/unsubscribe message looks like this:
 			# {
@@ -524,7 +524,7 @@ sub handler {
 			};
 		}
 		elsif ( $obj->{channel} eq '/slim/request' ) {
-			# A request to execute a one-time SqueezeCenter event
+			# A request to execute a one-time Squeezebox Server event
 			
 			# A valid /slim/request message looks like this:
 			# {

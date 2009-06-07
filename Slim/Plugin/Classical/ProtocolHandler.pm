@@ -85,7 +85,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->is_debug && $log->debug("Getting track from SqueezeNetwork for $id");
+	$log->is_debug && $log->debug("Getting track from mysqueezebox.com for $id");
 	
 	$http->get( $trackURL );
 }

@@ -2,7 +2,7 @@ package Slim::Formats::XML;
 
 # $Id$
 
-# Copyright 2006-2007 Logitech
+# Copyright 2006-2009 Logitech
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -141,7 +141,7 @@ sub getFeedAsync {
 		
 		# Don't require SN session for public URLs
 		if ( $url !~ /public/ ) {
-			$log->info("URL requires SqueezeNetwork session");
+			$log->info("URL requires mysqueezebox.com session");
 		
 			# Sometimes from the web we won't have a client, so pick a random one
 			# (Never use random client on SN)
@@ -164,7 +164,7 @@ sub getFeedAsync {
 				$headers{Cookie} = $snCookie;
 			}
 			else {
-				$log->info("Logging in to SqueezeNetwork to obtain session ID");
+				$log->info("Logging in to mysqueezebox.com to obtain session ID");
 		
 				# Login and get a session ID
 				Slim::Networking::SqueezeNetwork->login(
@@ -173,7 +173,7 @@ sub getFeedAsync {
 						if ( my $snCookie = Slim::Networking::SqueezeNetwork->getCookie( $params->{client} ) ) {
 							$headers{Cookie} = $snCookie;
 
-							$log->info('Got SqueezeNetwork session ID');
+							$log->info('Got mysqueezebox.com session ID');
 						}
 				
 						$http->get( $url, %headers );

@@ -2,7 +2,7 @@ package Slim::Networking::Discovery::Players;
 
 # $Id: Players.pm 18532 2008-04-07 23:10:43Z andy $
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -75,7 +75,7 @@ sub getPlayerList {
 
 =head2 fetch_players()
 
-Poll the SqueezeCenter/SlimServers in our network for lists of connected players
+Poll the Squeezebox Server/SlimServers in our network for lists of connected players
 
 =cut
 

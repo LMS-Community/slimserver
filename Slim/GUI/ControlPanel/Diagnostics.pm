@@ -1,6 +1,6 @@
 package Slim::GUI::ControlPanel::Diagnostics;
 
-# SqueezeCenter Copyright 2001-2009 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -22,7 +22,7 @@ use Slim::Utils::ServiceManager;
 my $svcMgr = Slim::Utils::ServiceManager->new();
 my $isWin = Slim::Utils::OSDetect->isWindows();
 
-use constant SN => 'www.squeezenetwork.com';
+use constant SN => 'www.mysqueezebox.com';
 
 my @checks;
 my $cache;
@@ -38,7 +38,7 @@ sub new {
 	$alertBox = Wx::TextCtrl->new($self, -1, '', [-1, -1], [-1, 90], wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH | wxTE_RICH2 | wxTE_AUTO_URL);
 
 	my $scBoxSizer = Wx::StaticBoxSizer->new( 
-		Wx::StaticBox->new($self, -1, string('SQUEEZECENTER')),
+		Wx::StaticBox->new($self, -1, string('SQUEEZEBOX_SERVER')),
 		wxVERTICAL
 	);
 	my $scSizer = Wx::FlexGridSizer->new(0, 2, 5, 10);
@@ -46,7 +46,7 @@ sub new {
 	$scSizer->AddGrowableCol(1, 1);
 	$scSizer->SetFlexibleDirection(wxHORIZONTAL);
 
-	$self->_addItem($scSizer, string('SQUEEZECENTER') . string('COLON'), sub {
+	$self->_addItem($scSizer, string('SQUEEZEBOX_SERVER') . string('COLON'), sub {
 		$_[0] ? string('RUNNING') : string('STOPPED');
 	});
 	$self->_addItem($scSizer, string('INFORMATION_SERVER_IP') . string('COLON'), \&getHostIP);

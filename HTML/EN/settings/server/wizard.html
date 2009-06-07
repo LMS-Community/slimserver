@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
-		<title>[% "SQUEEZECENTER" | string %]</title>
+		<title>[% "SQUEEZEBOX_SERVER" | string %]</title>
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="/Default/slimserver.css" />
@@ -233,7 +233,7 @@
 		<div id="loading-mask">&#160;</div>
 		<div id="loading">
 			<div class="loading-indicator">
-				[% "LOADING_SQUEEZECENTER" | string %]
+				[% "LOADING_SQUEEZEBOX_SERVER" | string %]
 			</div>
 		</div>
 		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
@@ -283,7 +283,7 @@
 		<div id="header">
 			<div id="header_left"></div>
 			<div id="header_content">
-				<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></span>
+				<span><img src="[% webroot %]html/images/spacer.gif" id="squeezeboxLogo"></span>
 				<span>
 					<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
 						<select name="language" id="language">
@@ -344,7 +344,7 @@
 
 		<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
 			<div id="sqn_p" class="wz_page wz_canskip">
-				<div id="sqn_p" class="pagetitle">[% "WELCOME_TO_SQUEEZECENTER" | string %]</div>
+				<div id="sqn_p" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
 
 				<div class="wz_desc">
 				
@@ -435,7 +435,7 @@
 			</div>
 
 			<div id="summary_p" class="wz_page wz_finish">
-				<div id="summary_h" class="pagetitle">[% "WELCOME_TO_SQUEEZECENTER" | string %]</div>
+				<div id="summary_h" class="pagetitle">[% "WELCOME_TO_SQUEEZEBOX_SERVER" | string %]</div>
 
 				<div class="wz_desc">
 				
@@ -509,7 +509,7 @@
 						</div>
 				
 						<div class="box-inner">
-							<p>[% "CONTINUE_TO_SQUEEZECENTER" | string %]<br/>&nbsp;</p>
+							<p>[% "CONTINUE_TO_SQUEEZEBOX_SERVER" | string %]<br/>&nbsp;</p>
 						</div>
 				
 						<div class="box-bl">

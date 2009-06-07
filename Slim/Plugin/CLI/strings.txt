@@ -19,20 +19,20 @@ PLUGIN_CLI
 	SV	Kommandoradsgränssnitt
 
 PLUGIN_CLI_DESC
-	CS	Plug-in Command Line Interface (Povelové Rozhraní) umožňuje dálkové ovládání SqueezeCenter a Squeezeboxů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
-	DA	Udvidelsesmodulet Kommandolinjegrænseflade giver mulighed for at kontrollere SqueezeCenter og Squeezebox-afspilleren eksternt over en TCP/IP-forbindelse, for eksempel med et automatiseringssystem fra tredjepart som AMX eller Creston.
-	DE	Mithilfe des Befehlszeilen-Plugin können SqueezeCenter und Squeezebox über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
-	EN	The Command Line Interface plugin allows SqueezeCenter and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
-	ES	El complemento de interfaz de línea de comandos permite el control remoto de SqueezeCenter y de Squeezeboxen a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.
-	FI	Komentorivikäyttöliittymälaajennuksen avulla SqueezeCenteriä ja Squeezeboxia voidaan kauko-ohjata TCP/IP-yhteyden välityksellä, esimerkiksi AMX:n, Crestronin tai jonkin muun kolmannen osapuolen automaatiojärjestelmän avulla.
-	FR	Le plugin d'interface de ligne de commande permet de contrôler le SqueezeCenter et les Squeezebox à distance par le biais d'une connexion TCP/IP, par un système d'automatisation tiers tel qu'AMX ou Crestron, par exemple.
-	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-SqueezeCenter וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
-	IT	Il plugin dell'interfaccia della riga di comando consente di controllare SqueezeCenter e Squeezeboxen in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
-	NL	De opdrachtregelinterface-plugin maakt het mogelijk om de SqueezeCenter en de Squeezeboxen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
-	NO	Med kommandolinjegrensesnittet kan SqueezeCenter og Squeezeboxene kontrolleres eksternt via en TCP/IP-tilkopling, for eksempel av et tredjeparts automatiseringssystem som AMX eller Crestron.
-	PL	Dodatek interfejsu wiersza polecenia umożliwia obsługę programu SqueezeCenter i urządzenia Squeezebox zdalnie przez połączenie TCP/IP, na przykład automatyczny system innej firmy taki jak AMX lub Crestron.
-	RU	Плагин "Интерфейс командной строки" позволяет управлять SqueezeCenter и Squeezebox удаленно по подключению TCP/IP, например с помощью сторонней автоматической системы, такой как AMX или Crestron.
-	SV	Med plugin-programmet för kommandoradsgränssnitt kan SqueezeCenter och Squeezebox-spelarna fjärrstyras via en TCP/IP-anslutning, exempelvis av ett automatiseringssystem från tredje part som AMX eller Crestron.
+	CS	Plug-in Command Line Interface (Povelové Rozhraní) umožňuje dálkové ovládání Squeezebox Server a Squeezeboxů přes spojení TCP/IP, například automatickým systémem třetí strany jako AMX nebo Crestron.
+	DA	Udvidelsesmodulet Kommandolinjegrænseflade giver mulighed for at kontrollere Squeezebox Server og Squeezebox-afspilleren eksternt over en TCP/IP-forbindelse, for eksempel med et automatiseringssystem fra tredjepart som AMX eller Creston.
+	DE	Mithilfe des Befehlszeilen-Plugin können Squeezebox Server und Squeezebox über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
+	EN	The Command Line Interface plugin allows Squeezebox software and the players to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
+	ES	El complemento de interfaz de línea de comandos permite el control remoto de Squeezebox Server y de Squeezeboxen a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.
+	FI	Komentorivikäyttöliittymälaajennuksen avulla Squeezebox Serveriä ja Squeezeboxia voidaan kauko-ohjata TCP/IP-yhteyden välityksellä, esimerkiksi AMX:n, Crestronin tai jonkin muun kolmannen osapuolen automaatiojärjestelmän avulla.
+	FR	Le plugin d'interface de ligne de commande permet de contrôler le Squeezebox Server et les Squeezebox à distance par le biais d'une connexion TCP/IP, par un système d'automatisation tiers tel qu'AMX ou Crestron, par exemple.
+	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-Squeezebox Server וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
+	IT	Il plugin dell'interfaccia della riga di comando consente di controllare Squeezebox Server e Squeezeboxen in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
+	NL	De opdrachtregelinterface-plugin maakt het mogelijk om de Squeezebox Server en de Squeezeboxen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
+	NO	Med kommandolinjegrensesnittet kan Squeezebox Server og Squeezeboxene kontrolleres eksternt via en TCP/IP-tilkopling, for eksempel av et tredjeparts automatiseringssystem som AMX eller Crestron.
+	PL	Dodatek interfejsu wiersza polecenia umożliwia obsługę programu Squeezebox Server i urządzenia Squeezebox zdalnie przez połączenie TCP/IP, na przykład automatyczny system innej firmy taki jak AMX lub Crestron.
+	RU	Плагин "Интерфейс командной строки" позволяет управлять Squeezebox Server и Squeezebox удаленно по подключению TCP/IP, например с помощью сторонней автоматической системы, такой как AMX или Crestron.
+	SV	Med plugin-programmet för kommandoradsgränssnitt kan Squeezebox Server och Squeezebox-spelarna fjärrstyras via en TCP/IP-anslutning, exempelvis av ett automatiseringssystem från tredje part som AMX eller Crestron.
 
 SETUP_CLIPORT
 	CS	Číslo portu Command Line Interface (Povelové rozhraní)

@@ -28,7 +28,7 @@ function doAjaxRefresh(light) {
 		return;
 	}
 	
-	var args = 'player=' + getPlayer('SqueezeCenter-player') +'&ajaxRequest=1&s='+Math.random();
+	var args = 'player=' + getPlayer('Squeezebox-player') +'&ajaxRequest=1&s='+Math.random();
 	var prev_url = url;
 	if (light && light != 'onload' && !isNaN(currentID)) {
 		args = args + "&light=1";
@@ -46,7 +46,7 @@ function doAjaxRefresh(light) {
 }
 
 function processState(param) {
-	getStatusData(param + "&player="+ getPlayer('SqueezeCenter-player') +"&ajaxRequest=1&s="+Math.random(), refreshState);
+	getStatusData(param + "&player="+ getPlayer('Squeezebox-player') +"&ajaxRequest=1&s="+Math.random(), refreshState);
 }
 
 function refreshState(theData) {
@@ -125,12 +125,12 @@ function refreshState(theData) {
 
 function processBarClick (num) {
 	var pos = parseInt((_progressEnd/20) * (num - 0.5));
-	var param = 'p0=time&p1='+pos+'&player='+ getPlayer('SqueezeCenter-player');
+	var param = 'p0=time&p1='+pos+'&player='+ getPlayer('Squeezebox-player');
 	ajaxRequest(url, param + "&ajaxRequest=1&s="+Math.random(), refreshInfo);
 }
 
 function processVolume(param) {
-	ajaxRequest(url, param + "&player="+ getPlayer('SqueezeCenter-player') +"&ajaxRequest=1&s="+Math.random(), refreshVolume);
+	ajaxRequest(url, param + "&player="+ getPlayer('Squeezebox-player') +"&ajaxRequest=1&s="+Math.random(), refreshVolume);
 }
 
 function refreshVolume(theData) {
@@ -153,7 +153,7 @@ function refreshVolume(theData) {
 }
 
 function processSleepLink(param) {
-	ajaxRequest(url, param + "&player="+ getPlayer('SqueezeCenter-player') +"&ajaxRequest=1&s="+Math.random(), refreshSleepTime);
+	ajaxRequest(url, param + "&player="+ getPlayer('Squeezebox-player') +"&ajaxRequest=1&s="+Math.random(), refreshSleepTime);
 }
 
 function refreshSleepTime(theData) {
@@ -167,7 +167,7 @@ function refreshSleepTime(theData) {
 }
 
 function processPlayControls(param) {
-	ajaxRequest(url, param + "&player="+ getPlayer('SqueezeCenter-player') +"&ajaxRequest=1&s="+Math.random(), refreshPlayControls);
+	ajaxRequest(url, param + "&player="+ getPlayer('Squeezebox-player') +"&ajaxRequest=1&s="+Math.random(), refreshPlayControls);
 }
 
 function processCommand(param, id) {
@@ -432,7 +432,7 @@ function refreshInfo(theData, force, curstyle) {
 
 // reload undock window
 function refreshUndock() {
-	var player = getPlayer('SqueezeCenter-player')
+	var player = getPlayer('Squeezebox-player')
 
 	var args = 'player=' + player + '&ajaxRequest=1&s='+Math.random();
 	getStatusData(args, refreshAll);
@@ -632,7 +632,7 @@ function getPlaylistData(start, params, argplayer) {
 		thisplayer = argplayer;
 
 	} else {
-		thisplayer = getPlayer('SqueezeCenter-player');
+		thisplayer = getPlayer('Squeezebox-player');
 
 	}
 	

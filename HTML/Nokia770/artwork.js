@@ -206,7 +206,7 @@ function shrinkThumbs() {
 function resizeThumbs() {
 	thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_p.png';
 	refreshThumbs(parsedData);
-	setCookie( 'SqueezeCenter-thumbSize', thumbSize );
+	setCookie( 'Squeezebox-thumbSize', thumbSize );
 }
 
 window.onload= function() {

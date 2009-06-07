@@ -9,7 +9,7 @@ package Slim::Plugin::Favorites::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# SqueezeCenter Copyright 2005-2007 Logitech.
+# Squeezebox Server Copyright 2005-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -23,7 +23,7 @@ my $fav_off  = main::SLIM_SERVICE ? 'static/sc/images/Slacker/btn_slacker_fav.gi
 # XXX: Port to new streaming
 
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
-# XXX: needs testing in SqueezeCenter
+# XXX: needs testing in Squeezebox Server
 sub new {
 	my $class  = shift;
 	my $args   = shift;
@@ -146,7 +146,7 @@ sub _getNextTrack {
 		},
 	);
 	
-	$log->is_debug && $log->debug( $client->id . " Getting next track from SqueezeNetwork");
+	$log->is_debug && $log->debug( $client->id . " Getting next track from mysqueezebox.com");
 	
 	$http->get( $trackURL );
 }
@@ -518,7 +518,7 @@ sub stopCallback {
 			return;
 		}
 		
-		$log->debug("Player stopped, reporting stop to SqueezeNetwork");
+		$log->debug("Player stopped, reporting stop to mysqueezebox.com");
 		
 		if ( my $track = $client->master->pluginData('currentTrack') ) {
 			my ($sid)   = $url =~ m{^slacker://([^.]+)\.mp3};

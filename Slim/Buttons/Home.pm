@@ -1,6 +1,6 @@
 package Slim::Buttons::Home;
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -22,7 +22,7 @@ Slim::Buttons::Home
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Home> is a SqueezeCenter module for creating and
+L<Slim::Buttons::Home> is a Squeezebox Server module for creating and
 navigating a configurable multilevel menu structure.
 
 =cut

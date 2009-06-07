@@ -2,7 +2,7 @@ package Slim::Formats::Playlists::PLS;
 
 # $Id
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -95,7 +95,7 @@ sub read {
 sub write {
 	my $class        = shift;
 	my $listRef      = shift;
-	my $playlistname = shift || "SqueezeCenter " . Slim::Utils::Strings::string("PLAYLIST");
+	my $playlistname = shift || "Squeezebox " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename     = shift;
 
 	$log->info("Writing out: $filename");

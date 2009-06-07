@@ -224,19 +224,19 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	SV	Det gick inte att hämta nästa spår. Tryck på Spela om du vill försöka igen.
 
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
-	CS	Není možné získat detaily o účtu ze SqueezeNetwork.
-	DA	Det var ikke muligt at hente kontodetaljer fra SqueezeNetwork.
-	DE	Konnte über das SqueezeNetwork keine Account-Informationen finden.
-	EN	Unable to retrieve account details from SqueezeNetwork.
-	ES	Imposible obtener detalles de cuenta SqueezeNetwork.
-	FI	Tilitietojen hakeminen SqueezeNetwork-verkosta ei onnistu.
-	FR	Impossible de récupérer les détails du compte de SqueezeNetwork.
-	IT	Impossibile recuperare i dettagli dell'account di SqueezeNetwork.
-	NL	Kan accountgegevens niet van SqueezeNetwork ophalen.
-	NO	Får ikke til å hente kontodetaljer fra SqueezeNetwork.
-	PL	Nie można pobrać szczegółów konta z usługi SqueezeNetwork.
-	RU	Невозможно извлечь сведения учетной записи из SqueezeNetwork.
-	SV	Det gick inte att hämta kontodetaljer från SqueezeNetwork.
+	CS	Není možné získat detaily o účtu ze mysqueezebox.com.
+	DA	Det var ikke muligt at hente kontodetaljer fra mysqueezebox.com.
+	DE	Konnte über das mysqueezebox.com keine Account-Informationen finden.
+	EN	Unable to retrieve account details from mysqueezebox.com.
+	ES	Imposible obtener detalles de cuenta mysqueezebox.com.
+	FI	Tilitietojen hakeminen mysqueezebox.com-verkosta ei onnistu.
+	FR	Impossible de récupérer les détails du compte de mysqueezebox.com.
+	IT	Impossibile recuperare i dettagli dell'account di mysqueezebox.com.
+	NL	Kan accountgegevens niet van mysqueezebox.com ophalen.
+	NO	Får ikke til å hente kontodetaljer fra mysqueezebox.com.
+	PL	Nie można pobrać szczegółów konta z usługi mysqueezebox.com.
+	RU	Невозможно извлечь сведения учетной записи из mysqueezebox.com.
+	SV	Det gick inte att hämta kontodetaljer från mysqueezebox.com.
 
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	CS	Neplatná relace přehrávání. Současně jsou povoleny pouze tři proudy.

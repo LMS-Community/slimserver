@@ -244,7 +244,7 @@ sub _getNextRadioTrack {
 		},
 	);
 	
-	$log->debug("Getting next radio track from SqueezeNetwork");
+	$log->debug("Getting next radio track from mysqueezebox.com");
 	
 	$http->get( $radioURL );
 }

@@ -2,7 +2,7 @@ package Slim::Plugin::RadioTime::Plugin;
 
 # $Id: Plugin.pm 11021 2006-12-21 22:28:39Z dsully $
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -1,6 +1,6 @@
 package Slim::Buttons::Settings;
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -1157,7 +1157,7 @@ sub serverListInit {
 	
 	if ( main::SLIM_SERVICE ) {
 		@servers = ({
-			name => $client->string('SQUEEZECENTER'),
+			name => $client->string('SQUEEZEBOX_SERVER'),
 			value => 0
 		});
 	}
@@ -1195,7 +1195,7 @@ sub switchServer {
 		$client->showBriefly({
 			'line' => [
 				$client->string('MUSICSOURCE'),
-				$client->string('SQUEEZECENTER_CONNECTING', $server->{name}) 
+				$client->string('SQUEEZEBOX_SERVER_CONNECTING', $server->{name}) 
 			]
 		});
 

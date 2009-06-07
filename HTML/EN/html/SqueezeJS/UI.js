@@ -2,7 +2,7 @@
 Ext.onReady(function(){
 	SqueezeJS.loadStrings([
 		'POWER', 'PLAY', 'PAUSE', 'NEXT', 'PREVIOUS', 'CONNECTING_FOR', 'BROWSE', 'REPEAT', 'SHUFFLE',
-		'BY', 'FROM', 'ON', 'OFF', 'YES', 'NO', 'COLON', 'SQUEEZECENTER', 'SQUEEZENETWORK', 'VOLUME',
+		'BY', 'FROM', 'ON', 'OFF', 'YES', 'NO', 'COLON', 'SQUEEZEBOX_SERVER', 'SQUEEZENETWORK', 'VOLUME',
 		'CLOSE', 'CANCEL', 'CHOOSE_PLAYER', 'SYNCHRONIZE'
 	]);
 });
@@ -1206,7 +1206,7 @@ SqueezeJS.UI.Buttons.PlayerDropdown = Ext.extend(Ext.SplitButton, {
 								server: playerInfo.server,
 								cls: playerInfo.model,
 								scope: this,
-								dlgTitle: SqueezeJS.string('squeezecenter'),
+								dlgTitle: SqueezeJS.string('squeezebox_server'),
 								dlgServer: playerInfo.server,
 								handler: this._confirmSwitchPlayer
 							})

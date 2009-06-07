@@ -2,7 +2,7 @@ package Slim::Menu::TrackInfo;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2008 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

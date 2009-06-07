@@ -2,7 +2,7 @@ package Slim::Plugin::Favorites::Playlist;
 
 # $Id$
 
-# Class to allow importing of playlist formats understood by SqueezeCenter into opml files
+# Class to allow importing of playlist formats understood by Squeezebox Server into opml files
 
 use File::Basename;
 use File::Spec::Functions qw(:ALL);

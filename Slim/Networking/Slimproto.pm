@@ -2,7 +2,7 @@ package Slim::Networking::Slimproto;
 
 # $Id$
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -1099,7 +1099,7 @@ sub _hello_handler {
 	}
 	
 	if ( main::SLIM_SERVICE ) {		
-		# SqueezeNetwork clients use a different client class
+		# mysqueezebox.com clients use a different client class
 		# Note: Other player classes use SNClient directly
 		if ( $client_class eq 'Slim::Player::Squeezebox2' ) {
 			$client_class = 'SDI::Service::Player::SqueezeNetworkClient';

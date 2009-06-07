@@ -1,6 +1,6 @@
 package Slim::GUI::ControlPanel::MainFrame;
 
-# SqueezeCenter Copyright 2001-2009 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -44,11 +44,11 @@ sub new {
 	my $self = $ref->SUPER::new(
 		undef,
 		-1,
-		$initialSetup ? string('WELCOME_TO_SQUEEZECENTER') : string('CONTROLPANEL_TITLE'),
+		$initialSetup ? string('WELCOME_TO_SQUEEZEBOX_SERVER') : string('CONTROLPANEL_TITLE'),
 		[-1, -1],
 		Slim::Utils::OSDetect::isWindows() ? [550, 610] : [700, 700],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
-		'WELCOME_TO_SQUEEZECENTER'
+		'WELCOME_TO_SQUEEZEBOX_SERVER'
 	);
 
 	my $file = $self->_fixIcon('SqueezeCenter.ico');
@@ -337,7 +337,7 @@ sub serverRequest {
 	$ua->timeout(5);
 	
 	if ($credentials && $credentials->{username} && $credentials->{password}) {
-		$ua->credentials($baseUrl, "SqueezeCenter", $credentials->{username}, $credentials->{password});
+		$ua->credentials($baseUrl, "Squeezebox Server", $credentials->{username}, $credentials->{password});
 	}
 
 	my $response = $ua->request($req);
@@ -353,7 +353,7 @@ sub serverRequest {
 				password => $loginDialog->password,
 			};
 		
-			$ua->credentials($baseUrl, "SqueezeCenter", $credentials->{username}, $credentials->{password});
+			$ua->credentials($baseUrl, "Squeezebox Server", $credentials->{username}, $credentials->{password});
 		
 			$response = $ua->request($req);
 		}

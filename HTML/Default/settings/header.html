@@ -8,7 +8,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=7" />
-		<title>[% "SQUEEZECENTER" | string %]</title>
+		<title>[% "SQUEEZEBOX_SERVER" | string %]</title>
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
@@ -51,7 +51,7 @@
 	
 					// remember the last loaded page - to be used when the player tab is selected next time
 					try {
-						parent.SqueezeJS.setCookie('SqueezeCenter-playersettings', '[% playersetup.$page || 'settings/player/basic.html?' %]');
+						parent.SqueezeJS.setCookie('Squeezebox-playersettings', '[% playersetup.$page || 'settings/player/basic.html?' %]');
 						parent.player = '[% playerURI %]';
 						parent.playerid = '[% playerURI %]';  
 					}
@@ -72,7 +72,7 @@
 					]);
 
 					[% IF !needsClient %]
-						try { parent.SqueezeJS.setCookie('SqueezeCenter-advancedsettings', '[% additionalLinks.setup.$page %]'); }
+						try { parent.SqueezeJS.setCookie('Squeezebox-advancedsettings', '[% additionalLinks.setup.$page %]'); }
 						catch(e) {}
 					[% END %]
 				[%- END -%]

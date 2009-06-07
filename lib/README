@@ -2,10 +2,10 @@ $Id$
 
 ------
 
-This directory contains library modules from CPAN which have been modified for SqueezeCenter.
+This directory contains library modules from CPAN which have been modified for Squeezebox Server.
 
 We've made every effort to send patches to the upstream authors, but either
-the changes are SqueezeCenter specific, or we simply haven't heard back from
+the changes are Squeezebox Server specific, or we simply haven't heard back from
 the author, reside in a separate directory than the pristine top level CPAN/ dir.
 
 If a patch has been accepted by the author, then the module should be moved

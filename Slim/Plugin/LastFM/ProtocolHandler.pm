@@ -131,7 +131,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting next track from SqueezeNetwork ($trackURL)");
+	$log->debug("Getting next track from mysqueezebox.com ($trackURL)");
 	
 	$http->get( $trackURL );
 }

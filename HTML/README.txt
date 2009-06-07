@@ -1,4 +1,4 @@
-These are HTML 'skins' for SqueezeCenter. 
+These are HTML 'skins' for Squeezebox Server. 
 
 They are written using Template Toolkit - http://www.template-toolkit.org/
 
@@ -6,11 +6,11 @@ They are written using Template Toolkit - http://www.template-toolkit.org/
 
 Classic:
 	Owner: SlimDevices
-	Description: This is the previous Official skin for SqueezeCenter
+	Description: This is the previous Official skin for Squeezebox Server
 
 Default:
 	Owner: SlimDevices
-	Description: This is the Official skin for SqueezeCenter
+	Description: This is the Official skin for Squeezebox Server
 
 EN:
 	Owner: SlimDevices

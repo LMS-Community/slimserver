@@ -1,6 +1,6 @@
 package Slim::Utils::PluginManager;
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -18,7 +18,7 @@ package Slim::Utils::PluginManager;
 #   - Unzip zip files to a cache dir, and read install.xml to verify
 #   - Perform install of plugins marked OP_NEEDS_INSTALL
 #
-# * Check plugin versions from cache on new version of SqueezeCenter 
+# * Check plugin versions from cache on new version of Squeezebox Server 
 #   - Mark as OP_NEEDS_UPGRADE
 # 
 # * Install by id (UUID)?

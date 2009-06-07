@@ -3,11 +3,11 @@
 [% PROCESS helpheader.html %]
 
 <p>
-The SqueezeCenter can display artwork associated with each album.
+The Squeezebox Server can display artwork associated with each album.
 This "cover art" is typically a copy of the CD/album's cover.
 </p>
 <p>
-Artwork is displayed in several places within the SqueezeCenter Web interface.
+Artwork is displayed in several places within the Squeezebox software.
 The details of the display vary depending on the skin currently being
 used. The "Default", "Fishbone," and "Moser" skins have browse by cover art 
 functions, clicking on a picture of the CD/album will select the album for
@@ -15,10 +15,10 @@ playing or processing. The "Default" and "Fishbone" skins also display the cover
 in the status display as the songs are played.
 </P>
 
-<h4>What is Artwork, how does the SqueezeCenter use it?</h4>
+<h4>What is Artwork, how does the Squeezebox software use it?</h4>
 <p>
 Artwork is cover art from CD albums. It is displayed both to beautify 
-the SqueezeCenter interface, and in the "Browse by album" section to
+the Squeezebox interface, and in the "Browse by album" section to
 specify which albums are selected for playing or processing.
 </p>
 
@@ -36,7 +36,7 @@ of your MP3, Ogg, Flac, or other files. See
 for more information.
 </p>
 <h4>Graphic file requirements</h4>
-<p>The SqueezeCenter will display any graphic file that your browser can support. 
+<p>The Squeezebox will display any graphic file that your browser can support. 
 Nearly all browsers support .GIF and .JPG files, so most SlimDevices
 customers use one of these file formats.</p>
 <h4>Image sizes</h4>
@@ -49,16 +49,16 @@ and it simply takes up space and bandwidth.
 
 <h4>Technical details</h4>
 <p>For each place in the skin that references a large cover art image,
-the SqueezeCenter software performs the following search:</p>
+the Squeezebox software performs the following search:</p>
 <ul>
 <li>Search in the current music directory for (in order): <br>
 <ol><li>cover.jpg, cover.gif, <li>folder.jpg, folder.gif, <li>album.jpg, album.gif, <li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif</ul>
 </ol>
 <p>
-The SqueezeCenter will use the first image file located in this search.</p>
+The Squeezebox Server will use the first image file located in this search.</p>
 
 <p>
-SqueezeCenter looks in the same path as the song, thus you would be looking for the
+Squeezebox Server looks in the same path as the song, thus you would be looking for the
 same artfile in this case.  However there is an option in Server Settings,
 Advanced, Formatting for setting filenames for Artwork, Artwork Thumbnail, and
 for setting a central location for artwork files. You can enter a specific filename 
@@ -71,7 +71,7 @@ filenames based on song variables.  If your first character is %, the server the
 As an example, you could create a single directory of songs and name all your
 artwork as artist-album.jpg.  For this, enter a setting of</p> 
 <pre>&nbsp;&nbsp;%ARTIST-ALBUM.jpg</pre> 
-<p>for Artwork or Artwork Thumbnail in the server settings section.  The extension can be specified for any SqueezeCenter supported format, .jpg is
+<p>for Artwork or Artwork Thumbnail in the server settings section.  The extension can be specified for any Squeezebox Server supported format, .jpg is
 assumed if no extension is given.
 </P>
 
@@ -131,7 +131,7 @@ if the data elements are present.
 <p>
 The above list is included for completeness, it is unlikely that anyone would actually
 want to have differing artwork files for songs of different bitrates, but the
-ability is in the SqueezeCenter.
+ability is in the Squeezebox Server.
 </P>
 
 <p>

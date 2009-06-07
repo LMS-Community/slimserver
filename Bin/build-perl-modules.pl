@@ -2,7 +2,7 @@
 
 # $Id$
 #
-# This is an installer program for perl modules which are required by SqueezeCenter,
+# This is an installer program for perl modules which are required by Squeezebox Server,
 # but for which we can't include for every architecture and perl variant.
 #
 # The only prerequisite here is LWP, curl or wget
@@ -72,13 +72,13 @@ my %packageOptions = (
 );
 
 sub main {
-	my ($squeezeCenterPath, $downloadPath, $perlBinary, @libList, $downloadUsing);
+	my ($squeezeboxPath, $downloadPath, $perlBinary, @libList, $downloadUsing);
 
 	my $archname = $Config{'archname'};
 	my $version  = $Config{'version'};
 
 	print "Welcome to the Slim Devices perl module installer.\n\n";
-	print "These packages are needed for SqueezeCenter to function.\n";
+	print "These packages are needed for Squeezebox Server to function.\n";
 	print "You will need a C compiler (gcc), make, and perl installed.\n\n";
 	print "You will need development libraries for MySQL. eg: libmysqlclient\n\n";
 	print "You will need development libraries for expat. eg: libexpat1-dev\n\n";
@@ -95,31 +95,31 @@ sub main {
 		die "Couldn't find a perl binary. Exiting.\n";
 	}
 
-	# Where does their SqueezeCenter live? Try to guess.
+	# Where does their Squeezebox Server live? Try to guess.
 	if (-f 'slimserver.pl' && -d 'CPAN/arch') {
 
-		$squeezeCenterPath = cwd();
+		$squeezeboxPath = cwd();
 
 	} else {
 
-		print "Please enter the path to your SqueezeCenter directory (ex: /usr/local/slimserver) --> ";
-		chomp($squeezeCenterPath = <STDIN>);
+		print "Please enter the path to your Squeezebox Server directory (ex: /usr/local/slimserver) --> ";
+		chomp($squeezeboxPath = <STDIN>);
 	}
 
-	$squeezeCenterPath ||= '/usr/local/slimserver';
+	$squeezeboxPath ||= '/usr/local/slimserver';
 
-	unless (-d $squeezeCenterPath) {
-		die "Couldn't find a valid SqueezeCenter path. Exiting.\n";
+	unless (-d $squeezeboxPath) {
+		die "Couldn't find a valid Squeezebox Server path. Exiting.\n";
 	}
 
 	# Let the build process use modules installed already:
-	$ENV{'PERL5LIB'} = "$squeezeCenterPath/CPAN";
+	$ENV{'PERL5LIB'} = "$squeezeboxPath/CPAN";
 
 	# Tell MakeMaker to always use the default when prompted.
 	$ENV{'PERL_MM_USE_DEFAULT'} = 1;
 
 	# This is where the binaries will end up.
-	my $cpanDest = "$squeezeCenterPath/CPAN/arch/$version/$archname/auto";
+	my $cpanDest = "$squeezeboxPath/CPAN/arch/$version/$archname/auto";
 
 	# Where do they want the downloads to go?
 	print "Please enter a directory to download files to --> ";

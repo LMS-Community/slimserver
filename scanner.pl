@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SqueezeCenter Copyright 2001-2007 Logitech.
+# Squeezebox Server Copyright 2001-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -135,7 +135,7 @@ sub main {
 	
 	($REVISION, $BUILDDATE) = Slim::Utils::Misc::parseRevision();
 
-	$log->error("Starting SqueezeCenter scanner (v$VERSION, r$REVISION, $BUILDDATE)");
+	$log->error("Starting Squeezebox scanner (v$VERSION, r$REVISION, $BUILDDATE)");
 
 	# Bring up strings, database, etc.
 	initializeFrameworks($log);
@@ -177,7 +177,7 @@ sub main {
 
 	#checkDataSource();
 
-	$log->info("SqueezeCenter Scanner done init...\n");
+	$log->info("Squeezebox Scanner done init...\n");
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
@@ -281,26 +281,26 @@ sub main {
 sub initializeFrameworks {
 	my $log = shift;
 
-	$log->info("SqueezeCenter OSDetect init...");
+	$log->info("Squeezebox Server OSDetect init...");
 
 	Slim::Utils::OSDetect::init();
 	Slim::Utils::OSDetect::getOS->initSearchPath();
 
-	# initialize SqueezeCenter subsystems
-	$log->info("SqueezeCenter settings init...");
+	# initialize Squeezebox Server subsystems
+	$log->info("Squeezebox Server settings init...");
 
 	Slim::Utils::Prefs::init();
 
 	Slim::Utils::Prefs::makeCacheDir();	
 
-	$log->info("SqueezeCenter strings init...");
+	$log->info("Squeezebox Server strings init...");
 
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
-	# $log->info("SqueezeCenter MySQL init...");
+	# $log->info("Squeezebox Server MySQL init...");
 	# Slim::Utils::MySQLHelper->init();
 
-	$log->info("SqueezeCenter Info init...");
+	$log->info("Squeezebox Server Info init...");
 
 	Slim::Music::Info::init();
 	

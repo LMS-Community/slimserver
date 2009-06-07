@@ -101,7 +101,7 @@ sub getNextTrack {
 		},
 	);
 	
-	$log->debug("Getting channel info from SqueezeNetwork for " . $channelId );
+	$log->debug("Getting channel info from mysqueezebox.com for " . $channelId );
 	
 	$http->get( $infoURL );
 }

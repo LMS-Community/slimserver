@@ -12,90 +12,90 @@ CHOOSE_A_TIMEZONE
 	SV	Välj tidszon
 
 SERVER_VERSION
-	CS	Verze SqueezeNetwork
-	DA	SqueezeNetwork-version
-	DE	SqueezeNetwork Version
-	EN	SqueezeNetwork Version
-	ES	SqueezeNetwork versión
+	CS	Verze mysqueezebox.com
+	DA	mysqueezebox.com-version
+	DE	mysqueezebox.com Version
+	EN	mysqueezebox.com Version
+	ES	mysqueezebox.com versión
 	FI	SqueezeNetworkin versio
-	FR	Version de SqueezeNetwork
-	HE	גרסת SqueezeNetwork
-	IT	Versione di SqueezeNetwork
+	FR	Version de mysqueezebox.com
+	HE	גרסת mysqueezebox.com
+	IT	Versione di mysqueezebox.com
 	JP	スリムサーバー・バージョン
-	NL	SqueezeNetwork-versie
-	NO	SqueezeNetwork-versjon
-	PL	Wersja programu SqueezeNetwork
-	PT	Versão do SqueezeNetwork
-	RU	Версия SqueezeNetwork
-	SV	SqueezeNetwork-version
+	NL	mysqueezebox.com-versie
+	NO	mysqueezebox.com-versjon
+	PL	Wersja programu mysqueezebox.com
+	PT	Versão do mysqueezebox.com
+	RU	Версия mysqueezebox.com
+	SV	mysqueezebox.com-version
 
 SQUEEZENETWORK_HOME
-	DA	SqueezeNetwork
-	DE	SqueezeNetwork
-	EN	SqueezeNetwork
-	ES	SqueezeNetwork
-	FI	SqueezeNetwork
-	FR	SqueezeNetwork
-	IT	SqueezeNetwork
-	NL	SqueezeNetwork
-	NO	SqueezeNetwork
-	SV	SqueezeNetwork
+	DA	mysqueezebox.com
+	DE	mysqueezebox.com
+	EN	mysqueezebox.com
+	ES	mysqueezebox.com
+	FI	mysqueezebox.com
+	FR	mysqueezebox.com
+	IT	mysqueezebox.com
+	NL	mysqueezebox.com
+	NO	mysqueezebox.com
+	SV	mysqueezebox.com
 
 SQUEEZENETWORK_HOME_TEST
-	DA	SqueezeNetwork - Test
-	DE	SqueezeNetwork - Test
-	EN	SqueezeNetwork - Test
-	ES	SqueezeNetwork - Prueba
-	FI	SqueezeNetwork - testi
-	FR	SqueezeNetwork - Test
-	IT	SqueezeNetwork - Test
-	NL	SqueezeNetwork - Test
-	NO	SqueezeNetwork - Test
-	SV	SqueezeNetwork – Test
+	DA	mysqueezebox.com - Test
+	DE	mysqueezebox.com - Test
+	EN	mysqueezebox.com - Test
+	ES	mysqueezebox.com - Prueba
+	FI	mysqueezebox.com - testi
+	FR	mysqueezebox.com - Test
+	IT	mysqueezebox.com - Test
+	NL	mysqueezebox.com - Test
+	NO	mysqueezebox.com - Test
+	SV	mysqueezebox.com – Test
 
 SQUEEZENETWORK_HOME_VAR
-	DA	SqueezeNetwork - %s
-	DE	SqueezeNetwork - %s
-	EN	SqueezeNetwork - %s
-	ES	SqueezeNetwork - %s
-	FI	SqueezeNetwork - %s
-	FR	SqueezeNetwork - %s
-	IT	SqueezeNetwork - %s
-	NL	SqueezeNetwork - %s
-	NO	SqueezeNetwork - %s
-	SV	SqueezeNetwork – %s
+	DA	mysqueezebox.com - %s
+	DE	mysqueezebox.com - %s
+	EN	mysqueezebox.com - %s
+	ES	mysqueezebox.com - %s
+	FI	mysqueezebox.com - %s
+	FR	mysqueezebox.com - %s
+	IT	mysqueezebox.com - %s
+	NL	mysqueezebox.com - %s
+	NO	mysqueezebox.com - %s
+	SV	mysqueezebox.com – %s
 
 APPLICATION
-	DA	SqueezeNetwork
-	DE	SqueezeNetwork
-	EN	SqueezeNetwork
-	ES	SqueezeNetwork
-	FI	SqueezeNetwork
-	FR	SqueezeNetwork
-	HE	SqueezeNetwork
-	IT	SqueezeNetwork
-	NL	SqueezeNetwork
-	NO	SqueezeNetwork
-	SV	SqueezeNetwork
+	DA	mysqueezebox.com
+	DE	mysqueezebox.com
+	EN	mysqueezebox.com
+	ES	mysqueezebox.com
+	FI	mysqueezebox.com
+	FR	mysqueezebox.com
+	HE	mysqueezebox.com
+	IT	mysqueezebox.com
+	NL	mysqueezebox.com
+	NO	mysqueezebox.com
+	SV	mysqueezebox.com
 
 ABOUT
-	CS	SqueezeNetwork V.%s, napsal:
-	DA	SqueezeNetwork version %s, skrevet af:
-	DE	SqueezeNetwork V.%s, entwickelt von:
-	DK	SqueezeNetwork V.%s, skrevet af:
-	EN	SqueezeNetwork V.%s, written by:
-	ES	SqueezeNetwork v. %s, escrito por:
-	FI	SqueezeNetwork V.%s, teksti:
-	FR	SqueezeNetwork V.%s, écrit par :
-	HE	‏SqueezeNetwork V.%s, נכתב על-ידי:
-	IT	SqueezeNetwork V.%s, scritto da:
-	JP	SqueezeNetwork V.%s, 製作:
-	NL	SqueezeNetwork V.%s, geschreven door:
-	NO	SqueezeNetwork versjon %s, skrevet av:
-	PL	SqueezeNetwork wer. %s, autor:
-	PT	SqueezeNetwork v.%s, escrito por
-	RU	SqueezeNetwork V.%s, авторы:
-	SV	SqueezeNetwork v.%s, skriven av:
+	CS	mysqueezebox.com V.%s, napsal:
+	DA	mysqueezebox.com version %s, skrevet af:
+	DE	mysqueezebox.com V.%s, entwickelt von:
+	DK	mysqueezebox.com V.%s, skrevet af:
+	EN	mysqueezebox.com V.%s, written by:
+	ES	mysqueezebox.com v. %s, escrito por:
+	FI	mysqueezebox.com V.%s, teksti:
+	FR	mysqueezebox.com V.%s, écrit par :
+	HE	‏mysqueezebox.com V.%s, נכתב על-ידי:
+	IT	mysqueezebox.com V.%s, scritto da:
+	JP	mysqueezebox.com V.%s, 製作:
+	NL	mysqueezebox.com V.%s, geschreven door:
+	NO	mysqueezebox.com versjon %s, skrevet av:
+	PL	mysqueezebox.com wer. %s, autor:
+	PT	mysqueezebox.com v.%s, escrito por
+	RU	mysqueezebox.com V.%s, авторы:
+	SV	mysqueezebox.com v.%s, skriven av:
 
 OTHER_SERVICES
 	DA	Ekstra
@@ -137,20 +137,20 @@ CURRENT_TIME
 	SV	Aktuell
 
 WELCOME_TO_APPLICATION
-	DA	Velkommen til SqueezeNetwork
-	DE	Willkommen beim SqueezeNetwork
-	DK	Velkommen til SqueezeNetwork
-	EN	Welcome to SqueezeNetwork
-	ES	¡Bienvenido a SqueezeNetwork!
-	FI	Tervetuloa SqueezeNetwork-verkkoon
-	FR	Bienvenue sur SqueezeNetwork
-	HE	ברוך הבא ל-SqueezeNetwork
-	IT	Benvenuti in SqueezeNetwork
+	DA	Velkommen til mysqueezebox.com
+	DE	Willkommen beim mysqueezebox.com
+	DK	Velkommen til mysqueezebox.com
+	EN	Welcome to mysqueezebox.com
+	ES	¡Bienvenido a mysqueezebox.com!
+	FI	Tervetuloa mysqueezebox.com-verkkoon
+	FR	Bienvenue sur mysqueezebox.com
+	HE	ברוך הבא ל-mysqueezebox.com
+	IT	Benvenuti in mysqueezebox.com
 	JP	SqueezeNetworkへようこそ
-	NL	Welkom bij SqueezeNetwork
-	NO	Velkommen til SqueezeNetwork
-	PT	Bem-vindo ao SqueezeNetwork
-	SV	Välkommen till SqueezeNetwork
+	NL	Welkom bij mysqueezebox.com
+	NO	Velkommen til mysqueezebox.com
+	PT	Bem-vindo ao mysqueezebox.com
+	SV	Välkommen till mysqueezebox.com
 
 WELCOME_MESSAGE
 	DE	Rocken Sie los!
@@ -1240,28 +1240,28 @@ FAVORITES
 	SV	Favoriter
 
 SQUEEZENETWORK_SIGNUP
-	DA	Gå til www.squeezenetwork.com for at registrere
-	DE	Besuchen Sie zum Registriern www.squeezenetwork.com
-	EN	Visit www.squeezenetwork.com to register
-	ES	Visite www.squeezenetwork.com para registrarse
-	FI	Rekisteröidy osoitteessa www.squeezenetwork.com
-	FR	Rendez-vous sur www.squeezenetwork.com pour l'inscription
-	IT	Visitare il sito Web www.squeezenetwork.com per registrarsi
-	NL	Ga naar www.squeezenetwork.com om je te registreren
-	NO	Gå til www.squeezenetwork.com for å registrere deg
-	SV	Registrera dig på www.squeezenetwork.com
+	DA	Gå til www.mysqueezebox.com for at registrere
+	DE	Besuchen Sie zum Registriern www.mysqueezebox.com
+	EN	Visit www.mysqueezebox.com to register
+	ES	Visite www.mysqueezebox.com para registrarse
+	FI	Rekisteröidy osoitteessa www.mysqueezebox.com
+	FR	Rendez-vous sur www.mysqueezebox.com pour l'inscription
+	IT	Visitare il sito Web www.mysqueezebox.com per registrarsi
+	NL	Ga naar www.mysqueezebox.com om je te registreren
+	NO	Gå til www.mysqueezebox.com for å registrere deg
+	SV	Registrera dig på www.mysqueezebox.com
 
 SQUEEZENETWORK_SIGNUP_BOOMCAT
-	DA	Gå til www.squeezenetwork.com for at registrere
-	DE	Besuchen Sie zum Registrieren boom.squeezenetwork.com
-	EN	Visit boom.squeezenetwork.com to register
-	ES	Visite boom.squeezenetwork.com para registrarse
-	FI	Rekisteröidy osoitteessa boom.squeezenetwork.com
-	FR	Rendez-vous sur boom.squeezenetwork.com pour l'inscription
-	IT	Visitare il sito boom.squeezenetwork.com per registrarsi
-	NL	Ga naar boom.squeezenetwork.com  om je te registreren
-	NO	Gå til boom.squeezenetwork.com for å registrere deg
-	SV	Registrera dig på boom.squeezenetwork.com
+	DA	Gå til www.mysqueezebox.com for at registrere
+	DE	Besuchen Sie zum Registrieren boom.mysqueezebox.com
+	EN	Visit boom.mysqueezebox.com to register
+	ES	Visite boom.mysqueezebox.com para registrarse
+	FI	Rekisteröidy osoitteessa boom.mysqueezebox.com
+	FR	Rendez-vous sur boom.mysqueezebox.com pour l'inscription
+	IT	Visitare il sito boom.mysqueezebox.com per registrarsi
+	NL	Ga naar boom.mysqueezebox.com  om je te registreren
+	NO	Gå til boom.mysqueezebox.com for å registrere deg
+	SV	Registrera dig på boom.mysqueezebox.com
 
 SQUEEZENETWORK_PIN
 	DA	Afspillerens pinkode: %s
@@ -1290,17 +1290,17 @@ HTM
 	SV	HTML
 
 SQUEEZENETWORK_ERROR
-	DA	SqueezeNetwork-fejl
-	DE	SqueezeNetwork-Fehler
-	EN	SqueezeNetwork Error
-	ES	Error de SqueezeNetwork
+	DA	mysqueezebox.com-fejl
+	DE	mysqueezebox.com-Fehler
+	EN	mysqueezebox.com Error
+	ES	Error de mysqueezebox.com
 	FI	SqueezeNetworkin virhe
-	FR	Erreur de SqueezeNetwork
-	HE	שגיאה ב-SqueezeNetwork
-	IT	Errore di SqueezeNetwork
-	NL	SqueezeNetwork-fout
-	NO	SqueezeNetwork-feil
-	SV	SqueezeNetwork-fel
+	FR	Erreur de mysqueezebox.com
+	HE	שגיאה ב-mysqueezebox.com
+	IT	Errore di mysqueezebox.com
+	NL	mysqueezebox.com-fout
+	NO	mysqueezebox.com-feil
+	SV	mysqueezebox.com-fel
 
 INVALID_MAC
 	DA	Problem: Afspillerens MAC-adresse skal nulstilles. Du bedes kontakte support@slimdevices.com for at få hjælp.
@@ -1386,14 +1386,14 @@ SYNC_FIRMWARE_UPGRADE
 	SV	Om du vill aktivera stödet för synkronisering håller du ljusstyrkeknappen nedtryckt för att uppdatera alla spelare du vill synkronisera.
 
 INFORMATION_MENU_SERVER
-	CS	SqueezeNetwork
-	DA	Oplysninger om SqueezeNetwork
-	EN	SqueezeNetwork Information
+	CS	mysqueezebox.com
+	DA	Oplysninger om mysqueezebox.com
+	EN	mysqueezebox.com Information
 	FI	SqueezeNetworkin tiedot
-	NO	SqueezeNetwork-informasjon
-	PL	SqueezeNetwork
-	RU	SqueezeNetwork
-	SV	SqueezeNetwork-information
+	NO	mysqueezebox.com-informasjon
+	PL	mysqueezebox.com
+	RU	mysqueezebox.com
+	SV	mysqueezebox.com-information
 
 INFORMATION_DATACENTER
 	DA	Datacenter

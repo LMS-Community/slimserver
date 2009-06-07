@@ -2,14 +2,14 @@ package Slim::Networking::SimpleAsyncHTTP;
 
 # $Id$
 
-# SqueezeCenter Copyright 2003-2007 Logitech.
+# Squeezebox Server Copyright 2003-2009 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# this class provides non-blocking http requests from SqueezeCenter.
+# this class provides non-blocking http requests from Squeezebox Server.
 # That is, use this class for your http requests to ensure that
-# SqueezeCenter does not become unresponsive, or allow music to pause,
+# Squeezebox Server does not become unresponsive, or allow music to pause,
 # while your code waits for a response
 
 # This class is intended for plugins and other code needing simply to
@@ -601,7 +601,7 @@ $http->get("http://www.slimdevices.com");
 
 =head1 DESCRIPTION
 
-This class provides a way within the SqueezeCenter to make an http
+This class provides a way within the Squeezebox Server to make an http
 request in an asynchronous, non-blocking way.  This is important
 because the server will remain responsive and continue streaming audio
 while your code waits for the response.

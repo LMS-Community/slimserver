@@ -15,7 +15,7 @@ var Home = {
 			if (el = Ext.get(items[i].id)) {
 				var panel = items[i].id.replace(/_expanded/, '');
 
-				if (SqueezeJS.getCookie('SqueezeCenter-expanded-' + panel) != '1')
+				if (SqueezeJS.getCookie('Squeezebox-expanded-' + panel) != '1')
 					this.collapseItem(panel);
 
 				else
@@ -47,7 +47,7 @@ var Home = {
 	},
 
 	expandItem : function(panel){
-		SqueezeJS.setCookie('SqueezeCenter-expanded-' + panel, '1');
+		SqueezeJS.setCookie('Squeezebox-expanded-' + panel, '1');
 
 		var el = Ext.get(panel);
 		if (el) {
@@ -67,7 +67,7 @@ var Home = {
 	},
 
 	collapseItem : function(panel){
-		SqueezeJS.setCookie('SqueezeCenter-expanded-' + panel, '0');
+		SqueezeJS.setCookie('Squeezebox-expanded-' + panel, '0');
 
 		var el = Ext.get(panel);
 		if (el) {

@@ -77,8 +77,8 @@ Settings = {
 		this.body = Ext.get(document.body);
 		this.maincontent = Ext.get('maincontent');
 
-		SqueezeJS.clearCookie('SqueezeCenter-playersettings');
-		SqueezeJS.clearCookie('SqueezeCenter-advancedsettings');
+		SqueezeJS.clearCookie('Squeezebox-playersettings');
+		SqueezeJS.clearCookie('Squeezebox-advancedsettings');
 
 		// cache the offsets we're going to use to resize the background image
 		this.offsets = [
@@ -142,11 +142,11 @@ Settings = {
 	},
 
 	showSettingsPage : function(page) {
-		if (page.id == 'PLAYER' && SqueezeJS.getCookie('SqueezeCenter-playersettings'))
-			page = SqueezeJS.getCookie('SqueezeCenter-playersettings');
+		if (page.id == 'PLAYER' && SqueezeJS.getCookie('Squeezebox-playersettings'))
+			page = SqueezeJS.getCookie('Squeezebox-playersettings');
 
-		else if (page.id == 'ADVANCED_SETTINGS' && SqueezeJS.getCookie('SqueezeCenter-advancedsettings'))
-			page = SqueezeJS.getCookie('SqueezeCenter-advancedsettings');
+		else if (page.id == 'ADVANCED_SETTINGS' && SqueezeJS.getCookie('Squeezebox-advancedsettings'))
+			page = SqueezeJS.getCookie('Squeezebox-advancedsettings');
 
 		if (typeof page == 'object' && page.url)
 			page = page.url;

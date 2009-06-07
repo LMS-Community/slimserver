@@ -13,7 +13,7 @@
 	<icon>plugins/Sirius/html/images/icon.png</icon>
 	<type>2</type>
 	<targetApplication>
-		<id>SqueezeCenter</id>
+		<id>Squeezebox Server</id>
 		<minVersion>7.0a</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>
