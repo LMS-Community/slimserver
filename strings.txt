@@ -6978,6 +6978,12 @@ SETUP_IDLESAVER_ABBR
 	RU	При остановке
 	SV	I stoppat läge
 
+SETUP_ALARMSAVER
+	EN	Screensaver when alarm is playing
+
+SETUP_ALARMSAVER_ABBR
+	EN	During Alarm
+
 SETUP_SCREENSAVER_DESC
 	CS	Po období nečinnosti dálkového ovládání může přehrávač zobrazovat různé informace jako "spořiče obrazovky". Můžete zvolit odlišné spořiče k zobrazení v závislosti na tom, jestli přehrávač hraje nebo ne nebo je vypnut. Můžete také zvolit dobu čekání před povolením těchto spořičů obrazovky.
 	DA	Hvis du ikke har brugt fjernbetjeningen i et stykke tid, kan der vises forskellige oplysninger på displayet som en form for pauseskærm. Du kan vælge at bruge forskellige pauseskærme når afspilleren er hhv. tændt og slukket, når der spilles et nummer og når der ikke gør. Du kan også angive hvor lang tid der skal gå før pauseskærmene aktiveres.

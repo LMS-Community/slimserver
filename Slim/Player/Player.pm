@@ -58,6 +58,7 @@ our $defaultPrefs = {
 	'screensaver'          => 'screensaver',
 	'idlesaver'            => 'nosaver',
 	'offsaver'             => 'SCREENSAVER.datetime',
+	'alarmsaver'           => 'SCREENSAVER.datetime',
 	'screensavertimeout'   => 30,
 	'syncPower'            => 0,
 	'syncVolume'           => 0,

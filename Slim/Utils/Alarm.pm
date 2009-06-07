@@ -61,8 +61,7 @@ my $FADE_SECONDS = 20;
 my $SHOW_BRIEFLY_DUR = 3;
 
 # Screensaver used during alarms
-my $DEF_ALARM_SCREENSAVER = 'SCREENSAVER.datetime';
-my $alarmScreensaver = $DEF_ALARM_SCREENSAVER; 
+use constant DEF_ALARM_SCREENSAVER => 'SCREENSAVER.datetime';
 
 # Hash storing the playlists that alarms can use.  Keys are playlist URLs.  Values are the string descriptions for each URL.
 # Values that should be passed through client->string are surrounded with curly braces.
@@ -646,7 +645,7 @@ sub sound {
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, sub {
 			# Show a long-lasting notification unless we've already pushed into an alarm screensaver
 			my $showBrieflyDur = 30;
-			if (Slim::Buttons::Common::mode($client) eq $class->alarmScreensaver) {
+			if (Slim::Buttons::Common::mode($client) eq $class->alarmScreensaver($client)) {
 				$showBrieflyDur = $SHOW_BRIEFLY_DUR;
 			}
 
@@ -1721,7 +1720,7 @@ sub getPlaylists {
 	return \@playlists;
 }
 
-=head2 alarmScreensaver( $modeName )
+=head2 alarmScreensaver( $client, $modeName )
 
 Gets/sets the screensaver mode name that is used during an active alarm.  This mode will be pushed into at the start of an alarm
 and will for the duration of the alarm override any other defined screensaver.
@@ -1731,13 +1730,15 @@ Setting $modeName to undef will disable the alarm screensaver.
 =cut
 
 sub alarmScreensaver {
-	my $class = shift;
+	my ($class, $client, $value) = @_;
 	
-	if (@_) {
-		$alarmScreensaver = shift;
+	return $class->getDefaultAlarmScreensaver unless $client;
+	
+	if (defined $value) {
+		$prefs->client($client)->set('alarmsaver', $value);
 	}
 
-	return $alarmScreensaver;
+	return $prefs->client($client)->get('alarmsaver');
 }
 
 =head2 getDefaultAlarmScreensaver( )
@@ -1749,7 +1750,7 @@ Returns the mode name of the default alarm screensaver.
 sub getDefaultAlarmScreensaver {
 	my $class = shift;
 
-	return $DEF_ALARM_SCREENSAVER;
+	return DEF_ALARM_SCREENSAVER;
 }
 
 =head2 pushAlarmScreensaver( $client )

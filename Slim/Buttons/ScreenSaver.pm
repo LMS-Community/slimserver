@@ -125,7 +125,7 @@ sub screenSaver {
 		}
 	}
 
-	my $alarmSaverActive = Slim::Utils::Alarm->getCurrentAlarm($client) && $mode eq Slim::Utils::Alarm->alarmScreensaver;
+	my $alarmSaverActive = Slim::Utils::Alarm->getCurrentAlarm($client) && $mode eq Slim::Utils::Alarm->alarmScreensaver($client);
 
 	if (!$alarmSaverActive && $mode =~ /^screensaver|^SCREENSAVER|^IDLESAVER/ && $mode ne $savermode &&
 			Slim::Buttons::Common::validMode($savermode)) {

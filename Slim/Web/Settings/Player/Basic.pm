@@ -39,7 +39,7 @@ sub prefs {
 
 		push @prefs, qw(titleFormatCurr playingDisplayMode);
 
-		push @prefs, qw(screensaver idlesaver offsaver screensavertimeout);
+		push @prefs, qw(screensaver alarmsaver idlesaver offsaver screensavertimeout);
 
 		if ($client->display->isa('Slim::Display::Transporter')) {
 

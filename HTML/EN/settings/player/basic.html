@@ -98,7 +98,7 @@ ELSIF !useExtJS; pageHeaderScripts = BLOCK %]
 		[% WRAPPER settingSection %]
 			[% desc="SETUP_SCREENSAVER_DESC" %]
 
-			[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
+			[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver', 'alarmsaver' ] %]
 				[% WRAPPER settingGroup title="SETUP_" _ saver %]
 					<select class="stdedit" name="pref_[% saver %]" id="[% saver %]">
 						[% FOREACH option = saveropts.$saver %]

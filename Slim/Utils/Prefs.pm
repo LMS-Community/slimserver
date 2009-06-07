@@ -296,7 +296,7 @@ sub init {
 							 mp3SilencePrelude preampVolumeControl digitalOutputEncoding clockSource polarityInversion wordClockOutput
 							 replayGainMode mp3StreamingMethod
 							 playername titleFormat titleFormatCurr playingDisplayMode playingDisplayModes
-							 screensaver idlesaver offsaver screensavertimeout visualMode visualModes
+							 screensaver alarmsaver idlesaver offsaver screensavertimeout visualMode visualModes
 							 powerOnBrightness powerOffBrightness idleBrightness autobrightness
 							 scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble scrollPixels scrollPixelsDouble
 							 activeFont idleFont activeFont_curr idleFont_curr doublesize offDisplaySize largeTextFont

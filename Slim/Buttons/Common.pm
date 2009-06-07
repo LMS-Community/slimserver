@@ -187,7 +187,7 @@ sub addSaver {
 	my $setModeFunction = shift;
 	my $leaveModeFunction = shift;
 	my $displayName = shift;
-	my $type = shift || 'PLAY-IDLE-OFF';
+	my $type = shift || 'PLAY-IDLE-OFF-ALARM';
 	my $valid = shift;
 
 	logger('player.ui')->info("Registering screensaver $displayName $type");
@@ -229,7 +229,7 @@ Called from settings routines in Slim::Web::Setup and Slim::Buttons::Settings
 sub validSavers {
 	my $client = shift;
 
-	my $ret = { 'screensaver' => {}, 'idlesaver' => {}, 'offsaver' => {} };
+	my $ret = { 'screensaver' => {}, 'idlesaver' => {}, 'offsaver' => {}, 'alarmsaver' => {} };
 
 	for my $name (keys %$savers) {
 
@@ -238,6 +238,7 @@ sub validSavers {
 		if ( (!defined($client)) || !$saver->{'valid'} || $saver->{'valid'}->($client) ) {
 
 			$ret->{'screensaver'}->{$name} = $saver->{'name'} if $saver->{'type'} =~ /PLAY/;
+			$ret->{'alarmsaver'}->{$name}  = $saver->{'name'} if $saver->{'type'} =~ /ALARM/;
 			$ret->{'idlesaver'}->{$name}   = $saver->{'name'} if $saver->{'type'} =~ /IDLE/;
 			$ret->{'offsaver'}->{$name}    = $saver->{'name'} if $saver->{'type'} =~ /OFF/;
 		}
