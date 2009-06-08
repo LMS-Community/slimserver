@@ -106,7 +106,12 @@ sub init {
 				
 				require Slim::Utils::OS::Suse;
 				$os = Slim::Utils::OS::Suse->new();
-				
+
+            } elsif ($os =~ /Synology/i) {
+
+                require Slim::Utils::OS::Synology;
+                $os = Slim::Utils::OS::Synology->new();
+
 			} else {
 	
 				$os = Slim::Utils::OS::Linux->new();

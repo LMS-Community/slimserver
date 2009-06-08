@@ -38,7 +38,11 @@ sub getFlavor {
 	} elsif (-f '/etc/SuSE-release') {
 			
 		return 'SuSE';
-	}
+
+	} elsif (-f '/etc/synoinfo.conf' || -f '/etc.defaults/synoinfo.conf') {
+
+        return 'Synology DiskStation';
+    }
 
 	return 'Linux';
 }

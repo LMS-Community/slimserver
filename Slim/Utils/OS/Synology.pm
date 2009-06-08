@@ -1,0 +1,111 @@
+package Slim::Utils::OS::Synology;
+
+# SqueezeCenter Copyright 2001-2009 Logitech.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, 
+# version 2.
+#
+# This module written by Philippe Kehl <phkehl at gmx dot net>
+#
+# Synology DiskStation (DS) include a wide range of NAS devices based on
+# several architectures (PPC, ARM, PPCe500v2, ARMv5, and maybe others). They
+# all use a custom and minimal Linux system (Linux 2.6 based). There are (to my
+# knowledge) three options to run SqueezeCenter on these devices:
+#
+# 1) flipflip's SlimServer on DiskStation (SSODS) provides a system
+#    (libc, Perl, tools etc.) spcifically to run SqueezeCenter.
+# 2) Synology recently added Perl to its standard system and provides an
+#    add-on SqueezeCenter package (via the DSM Package Management).
+# 3) "Optware", a package for feed for numerous add-on packages from the
+#    NSLU2-Linux project, provides a SqueezeCenter package and its dependencies.
+#
+# This module is trying to provide customisations for all these options.
+
+use strict;
+use File::Spec::Functions qw(:ALL);
+use FindBin qw($Bin);
+
+use base qw(Slim::Utils::OS::Linux);
+
+use constant MAX_LOGSIZE => 1024*1024*1; # maximum log size: 1 MB
+
+
+sub initDetails
+{
+	my $class = shift;
+
+	$class->{osDetails} = $class->SUPER::initDetails();
+
+	$class->{osDetails}->{isDiskStation} = 1;
+
+    # check how this SqueezeCenter is run on the DiskStation we
+    if (-f '/volume1/SSODS/etc/ssods/ssods.conf'
+        && $0 =~ m{^/volume1/SqueezeCenter/})
+    {
+        $class->{osDetails}->{isSSODS} = 1;
+        $class->{osDetails}->{osName} .= ' (SSODS)';
+    }
+    elsif (-d '/opt/share/squeezecenter'
+           && $0 =~ m{^/opt/share/squeezecenter/})
+    {
+        $class->{osDetails}->{isOptware} = 1;
+        $class->{osDetails}->{osName} .= ' (NSLU2-Linux Optware)';
+    }
+    elsif (-d '/volume1/@appstore/SqueezeCenter'
+           && $0 =~ m{^/volume1/\@appstore/SqueezeCenter/})
+    {
+        $class->{osDetails}->{isSynology} = 1;
+        $class->{osDetails}->{osName} .= ' (DSM Package Management)';
+    }
+
+	return $class->{osDetails};
+}
+
+
+sub logRotate
+{
+	my $class   = shift;
+	my $dir     = shift || Slim::Utils::OSDetect::dirsFor('log');
+
+    # only keep small log files (1MB) because they are displayed
+    # (if at all) in a web interface
+    Slim::Utils::OS->logRotate($dir, MAX_LOGSIZE);
+}
+
+
+sub ignoredItems
+{
+	return (
+            '@eaDir'       => 1,   # media indexer meta data
+            '@spool'       => 1,   # mail/print/.. spool
+            '@tmp'         => 1,   # system temporary files
+            '@appstore'    => 1,   # Synology package manager
+            '@database'    => 1,   # databases store
+            '@optware'     => 1,   # NSLU2-Linux Optware system
+            'upd@te'       => 1,   # firmware update temporary directory
+            # system paths in the fs root which will not contain any music
+            'bin'          => '/',
+            'dev'          => '/',
+            'etc'          => '/',
+            'etc.defaults' => '/',
+            'home'         => '/',
+            'initrd'       => '/',
+            'lib'          => '/',
+            'linuxrc'      => '/',
+            'lost+found'   => 1,
+            'mnt'          => '/',
+            'opt'          => '/',
+            'proc'         => '/',
+            'root'         => '/',
+            'sbin'         => '/',
+            'sys'          => '/',
+            'tmp'          => '/',
+            'usr'          => '/',
+            'var'          => '/',
+            'var.defaults' => '/',
+            # now only the data partition mount points /volume(|USB)[0-9]
+            # should remain
+           );
+}
+
+1;

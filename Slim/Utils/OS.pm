@@ -143,6 +143,7 @@ Simple log rotation for systems which don't do this automatically (OSX/Windows).
 sub logRotate {
 	my $class   = shift;
 	my $dir     = shift || Slim::Utils::OSDetect::dirsFor('log');
+    my $maxSize = shift || MAX_LOGSIZE;
 
 	require File::Copy;
 
@@ -154,8 +155,8 @@ sub logRotate {
 		
 		$file = catdir($dir, $file);
 
-		# max. log size 10MB
-		if (-s $file > MAX_LOGSIZE) {
+		# max. log size (default: 10MB)
+		if (-s $file > $maxSize) {
 
 			# keep one old copy		
 			my $oldfile = "$file.0";
@@ -217,7 +218,6 @@ sub ignoredItems {
 	return (
 		# Items we should ignore on a linux volume
 		'lost+found' => 1,
-		'@eaDir'     => 1,
 	);
 }
 
