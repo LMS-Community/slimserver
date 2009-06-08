@@ -256,6 +256,7 @@ sub gotPlaylist {
 		
 	if ( $action eq 'play' ) {
 		$client->execute([ 'playlist', 'play', \@urls ]);
+		Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 	}
 	else {
 		my $cmd = $action eq 'insert' ? 'inserttracks' : 'addtracks';
