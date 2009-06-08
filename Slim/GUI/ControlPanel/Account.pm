@@ -29,6 +29,27 @@ sub new {
 		wxVERTICAL
 	);
 
+	$self->snCredentials($parent, $snSizer);
+
+	my $statsSizer = Wx::StaticBoxSizer->new( 
+		Wx::StaticBox->new($self, -1, string('SETUP_SN_REPORT_STATS')),
+		wxVERTICAL
+	);
+
+	$self->snStats($parent, $statsSizer);
+		
+	$mainSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
+	$mainSizer->Add($statsSizer, 0, wxALL | wxGROW, 10);
+
+	$self->SetSizer($mainSizer);	
+	
+	
+	return $self;
+}
+
+sub snCredentials {
+	my ($self, $parent, $snSizer) = @_;
+	
 	$snSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_SN_EMAIL') . string('COLON')), 0, wxTOP | wxLEFT, 10);
 	$snSizer->AddSpacer(5);
 	my $username = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('sn_email') || '', [-1, -1], [350, -1]);
@@ -80,12 +101,10 @@ sub new {
 			$msgbox->ShowModal();
 		}
 	});
+}
 
-
-	my $statsSizer = Wx::StaticBoxSizer->new( 
-		Wx::StaticBox->new($self, -1, string('SETUP_SN_REPORT_STATS')),
-		wxVERTICAL
-	);
+sub snStats {
+	my ($self, $parent, $statsSizer) = @_;
 
 	my $statsDesc = string('SETUP_SN_REPORT_STATS_DESC');
 	$statsDesc =~ s/<.*?>//g;
@@ -109,14 +128,7 @@ sub new {
 	});
 	
 	$statsSizer->Add($lbStatsSN, 0, wxALL, 10);
-		
-	$mainSizer->Add($snSizer, 0, wxALL | wxGROW, 10);
-	$mainSizer->Add($statsSizer, 0, wxALL | wxGROW, 10);
 
-	$self->SetSizer($mainSizer);	
-	
-	
-	return $self;
 }
 
 1;

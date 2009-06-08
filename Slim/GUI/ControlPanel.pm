@@ -110,12 +110,14 @@ sub new {
 	my $btnsizer = Wx::StdDialogButtonSizer->new();
 	$btnsizer->AddButton($btnOk);
 
-	my $btnApply = Wx::Button->new( $panel, wxID_APPLY, string('APPLY') );
-	EVT_BUTTON( $self, $btnApply, sub {
-		$btnOk->do($svcMgr->checkServiceState());
-	} );
-
-	$btnsizer->AddButton($btnApply);
+	if (!$initialSetup) {
+		my $btnApply = Wx::Button->new( $panel, wxID_APPLY, string('APPLY') );
+		EVT_BUTTON( $self, $btnApply, sub {
+			$btnOk->do($svcMgr->checkServiceState());
+		} );
+	
+		$btnsizer->AddButton($btnApply);
+	}
 	
 	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
 

@@ -24,25 +24,7 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
-	my $musicLibrarySizer = Wx::StaticBoxSizer->new(
-		Wx::StaticBox->new($self, -1, string('SETUP_LIBRARY_NAME')),
-		wxVERTICAL
-	);
-	
-	$musicLibrarySizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME_DESC')), 0, wxLEFT | wxTOP, 10);
-	$musicLibrarySizer->AddSpacer(5);
-	my $libraryname = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('libraryname') || '', [-1, -1], [300, -1]);
-	$musicLibrarySizer->Add($libraryname, 0, wxLEFT | wxBOTTOM | wxRIGHT | wxGROW, 10);
-	
-	$parent->addStatusListener($libraryname);
-	$parent->addApplyHandler($libraryname, sub {
-		if (shift == SC_STATE_RUNNING) {
-			Slim::GUI::ControlPanel->setPref('libraryname', $libraryname->GetValue());
-		}
-	});
-
-	$mainSizer->Add($musicLibrarySizer, 0, wxALL | wxGROW, 10);		
-
+	$mainSizer->Add($self->getLibraryName($parent), 0, wxALL | wxGROW, 10);		
 	
 	my $settingsSizer = Wx::StaticBoxSizer->new(
 		Wx::StaticBox->new($self, -1, string('MUSICSOURCE')),
@@ -87,6 +69,30 @@ sub new {
 	$self->SetSizer($mainSizer);
 	
 	return $self;
+}
+
+
+sub getLibraryName {
+	my ($self, $parent) = @_;
+	
+	my $musicLibrarySizer = Wx::StaticBoxSizer->new(
+		Wx::StaticBox->new($self, -1, string('SETUP_LIBRARY_NAME')),
+		wxVERTICAL
+	);
+	
+	$musicLibrarySizer->Add(Wx::StaticText->new($self, -1, string('SETUP_LIBRARY_NAME_DESC')), 0, wxLEFT | wxTOP, 10);
+	$musicLibrarySizer->AddSpacer(5);
+	my $libraryname = Wx::TextCtrl->new($self, -1, Slim::GUI::ControlPanel->getPref('libraryname') || '', [-1, -1], [300, -1]);
+	$musicLibrarySizer->Add($libraryname, 0, wxLEFT | wxBOTTOM | wxRIGHT | wxGROW, 10);
+	
+	$parent->addStatusListener($libraryname);
+	$parent->addApplyHandler($libraryname, sub {
+		if (shift == SC_STATE_RUNNING) {
+			Slim::GUI::ControlPanel->setPref('libraryname', $libraryname->GetValue());
+		}
+	});
+	
+	return $musicLibrarySizer;
 }
 
 1;
