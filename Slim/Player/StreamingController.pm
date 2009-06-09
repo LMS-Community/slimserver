@@ -1253,6 +1253,9 @@ sub _Pause {				# pause -> Paused
 				sub {
 					# Actually pause the players when the fade-out is complete.
 					
+					# Bug 9752: check that we are still paused
+					return if !$self->isPaused();
+					
 					# Reevaluate player-set here in case sync-group membership
 					# changed during fade-out, although this will fail if we
 					# have a new master.

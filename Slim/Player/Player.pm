@@ -392,6 +392,12 @@ sub _fadeVolumeUpdate {
 	
 	# If the user manually changed the volume, stop fading
 	if ( $f->{'vol'} && $f->{'vol'} != $client->volume ) {
+		
+		# Bug 9752: always call callback
+		if ($f->{'cb'}) {
+			&{$f->{'cb'}}(@{$f->{'cbargs'}});
+		}
+		
 		return;
 	}
 	
