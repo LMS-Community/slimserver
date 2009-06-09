@@ -247,7 +247,7 @@ package Slim::GUI::ControlPanel;
 use base 'Wx::App';
 use Wx qw(:everything);
 use LWP::UserAgent;
-use JSON::XS qw(to_json from_json);
+use JSON::XS::VersionOneAndTwo;
 
 use Slim::Utils::ServiceManager;
 

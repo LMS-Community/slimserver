@@ -19,7 +19,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
 use HTTP::Request;
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape);
 
 my $log = Slim::Utils::Log->addLogCategory( {

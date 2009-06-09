@@ -13,7 +13,7 @@ package Slim::Formats::XML;
 use strict;
 use File::Slurp;
 use HTML::Entities;
-use JSON::XS qw(from_json);
+use JSON::XS::VersionOneAndTwo;
 use Scalar::Util qw(weaken);
 use URI::Escape qw(uri_escape);
 use XML::Simple;
