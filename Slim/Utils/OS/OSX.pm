@@ -355,8 +355,8 @@ sub signalUpdateReady {
 sub _signalUpdateReady {
 	my $osa    = Slim::Utils::Misc::findbin('osascript');
 	my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
-			
-	system("$osa $script &") if ($osa && $script);
+	
+	system(sprintf("%s '%s' %s &", $osa, $script, Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE'))) if ($osa && $script);
 }
 
 sub canAutoUpdate { 1 }

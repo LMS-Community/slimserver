@@ -20886,6 +20886,9 @@ CONTROLPANEL_SHOW_SCANNER_LOG
 CONTROLPANEL_UPDATE_AVAILABLE
 	EN	An updated Squeezebox Server version is available and ready to be installed.
 
+PREFPANE_UPDATE_AVAILABLE
+	EN	An updated Squeezebox Server version is available and ready to be installed. Please open the Squeezebox Preference Pane to start the update.
+
 CONTROLPANEL_NO_UPDATE_AVAILABLE
 	EN	There's no updated Squeezebox Server version available.
 
