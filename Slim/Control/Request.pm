@@ -1011,7 +1011,7 @@ sub new {
 		# choose the parameter array based on whether last param is '?'
 		# 1 = array for queries ending in ?, 0 otherwise
 
-		if ($requestLineRef->[-1] ne '?') {
+		if (defined $requestLineRef->[-1] && $requestLineRef->[-1] ne '?') {
 
 			$found = $search->{'::'}->[0];
 
