@@ -49,7 +49,7 @@ sub new {
 	my $iTunes = getPref('iTunes', 'state.prefs');
 	my $useItunesStr = Slim::GUI::ControlPanel->serverRequest('getstring', 'USE_ITUNES');
 	
-	if ($useItunesStr && (!$iTunes || $iTunes !~ /disabled/i)) {
+	if ($useItunesStr && $useItunesStr->{USE_ITUNES} && (!$iTunes || $iTunes !~ /disabled/i)) {
 
 		my $useItunes = Wx::CheckBox->new($self, -1, $useItunesStr->{USE_ITUNES});
 
