@@ -679,14 +679,15 @@ our %functions = (
 		my $buttonarg = shift;
 		my $playdisp = undef;
 
-		# Repeat presses of 'search' will step through search menu
-		if ($client->curSelection($client->curDepth) eq 'SEARCH' && mode($client) eq 'INPUT.List') {
+		# Repeat presses of 'search' will step through search menu while in the top level search menu
+		if (($client->modeParam('header') eq 'SEARCH' || 
+				$client->curSelection($client->curDepth) eq 'SEARCH') && mode($client) eq 'INPUT.List') {
 
 			(Slim::Buttons::Input::List::getFunctions())->{'down'}($client);
 
 		} elsif (mode($client) ne 'search') {
 
-			Slim::Buttons::Home::jumpToMenu($client, "SEARCH");
+			Slim::Buttons::Common::pushModeLeft($client, 'search');
 
 			$client->update();
 		}

@@ -31,8 +31,26 @@ my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
 
 our %context    = ();
 our %menuParams = ();
+	
+sub setMode {
+	my $client = shift;
+	my $method = shift;
+	
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
+	#grab the top level search parameters
+	my %params = %{$menuParams{'SEARCH'}};
+	
+	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+	$client->update();
+} 
 
 sub init {
+	Slim::Buttons::Common::addMode('search',{}, \&Slim::Buttons::Search::setMode);
+
 	my %subs = (
 
 		'SEARCH_FOR_ARTISTS' => sub {
@@ -122,14 +140,9 @@ sub searchExitHandler {
 	$exitType = uc($exitType);
 
 	if ($exitType eq 'LEFT') {
-		my $oldlines = $client->curLines();
-		
-		Slim::Buttons::Home::jump($client, 'SEARCH');
-		while (Slim::Buttons::Common::popMode($client, 1)) {};
-		Slim::Buttons::Common::pushMode($client, 'home');
-		
-		$client->pushRight($oldlines, $client->curLines());
-		
+	
+		Slim::Buttons::Common::popModeRight($client);
+	
 	} elsif ($exitType eq 'RIGHT') {
 
 		my $current = $client->modeParam('valueRef');
