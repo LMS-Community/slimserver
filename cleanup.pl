@@ -12,10 +12,25 @@
 #
 
 require 5.008_001;
+
+use constant SPLASH_LOGO => 'logitech-squeezebox.png';
+
+# don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
+my $splash;
+my $useWx = ($^O !~ /darwin/ || $^X =~ /wxPerl/i) && eval {
+	require Wx;
+	
+	showSplashScreen();
+	
+	require Wx::Event;
+	require Slim::GUI::ControlPanel;
+
+	return 1;
+};
+
+print "$@\n" if $@;
+
 use strict;
-use File::Path;
-use File::Spec::Functions;
-use Getopt::Long;
 use Socket;
 use utf8;
 
@@ -23,8 +38,13 @@ use constant SLIM_SERVICE => 0;
 use constant SCANNER => 0;
 use constant DEBUG => 1;
 
-use Slim::Utils::OSDetect;
-use Slim::Utils::Light;
+# load these later, don't need them right now
+require File::Path;
+require File::Spec::Functions;
+require Getopt::Long;
+
+require Slim::Utils::OSDetect;
+require Slim::Utils::Light;
 
 our $VERSION = '7.4';
 
@@ -34,14 +54,6 @@ BEGIN {
 	}
 }
 
-# don't use Wx, if script is run using perl on OSX, it needs to be run using wxperl
-my $useWx = ($^O !~ /darwin/ || $^X =~ /wxPerl/i) && eval {
-	require Wx;
-	require Wx::Event;
-	require Slim::GUI::ControlPanel;
-
-	return 1;
-};
 
 if (DEBUG && $@) {
 	print "GUI can't be loaded: $@\n";
@@ -54,13 +66,13 @@ sub main {
 	$os = Slim::Utils::OSDetect->getOS();
 	
 	if (checkForSC() && !$useWx) {
-		print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_STOP_SC'));
+		print sprintf("\n%s\n\n", Slim::Utils::Light::string('CLEANUP_PLEASE_STOP_SC'));
 		exit;
 	}
 
 	my ($all, $cache, $filecache, $mysql, $prefs, $logs);
 	
-	GetOptions(
+	Getopt::Long::GetOptions(
 		'all'       => \$all,
 		'cache'     => \$cache,
 		'filecache' => \$filecache,
@@ -77,7 +89,7 @@ sub main {
 		'logs'      => $logs,
 		'mysql'     => $mysql,
 	});
-	
+		
 	unless (scalar @$folders) {
 
 		# show simple GUI if possible
@@ -88,7 +100,9 @@ sub main {
 				cleanCB  => \&cleanup,
 				options  => options(),
 			});
-			
+	
+			$splash->Destroy();
+	
 			$app->MainLoop;
 			exit;
 		}
@@ -101,7 +115,7 @@ sub main {
 
 	cleanup($folders);
 	
-	print sprintf("\n%s\n\n", string('CLEANUP_PLEASE_RESTART_SC'));
+	print sprintf("\n%s\n\n", Slim::Utils::Light::string('CLEANUP_PLEASE_RESTART_SC'));
 }
 
 sub usage {
@@ -121,14 +135,14 @@ sub usage {
 	
 EOF
 	print sprintf($usage, 
-		string('CLEANUP_USAGE'), 
-		string('CLEANUP_COMMAND_LINE'),
-		string('CLEANUP_MYSQL'),
-		string('CLEANUP_FILECACHE'),
-		string('CLEANUP_PREFS'),
-		string('CLEANUP_LOGS'),
-		string('CLEANUP_CACHE'),
-		string('CLEANUP_ALL'),
+		Slim::Utils::Light::string('CLEANUP_USAGE'), 
+		Slim::Utils::Light::string('CLEANUP_COMMAND_LINE'),
+		Slim::Utils::Light::string('CLEANUP_MYSQL'),
+		Slim::Utils::Light::string('CLEANUP_FILECACHE'),
+		Slim::Utils::Light::string('CLEANUP_PREFS'),
+		Slim::Utils::Light::string('CLEANUP_LOGS'),
+		Slim::Utils::Light::string('CLEANUP_CACHE'),
+		Slim::Utils::Light::string('CLEANUP_ALL'),
 	);
 }
 
@@ -136,7 +150,7 @@ sub getFolderList {
 	my $args = shift;
 	
 	my @folders;
-	my $cacheFolder = getPref('cachedir') || $os->dirsFor('cache');
+	my $cacheFolder = Slim::Utils::Light::getPref('cachedir') || $os->dirsFor('cache');
 
 	push @folders, _target('cache', 'cache') if ($args->{all} || $args->{cache});
 	
@@ -144,14 +158,14 @@ sub getFolderList {
 		push @folders, {
 			label   => 'file cache (artwork, templates etc.)',
 			folders => [
-				catdir($cacheFolder, 'Artwork'),
-				catdir($cacheFolder, 'iTunesArtwork'),
-				catdir($cacheFolder, 'FileCache'),
-				catdir($cacheFolder, 'fonts.bin'),
-				catdir($cacheFolder, 'strings.bin'),
-				catdir($cacheFolder, 'templates'),
-				catdir($cacheFolder, 'cookies.dat'),
-				catdir($cacheFolder, 'plugin-data.yaml'),
+				File::Spec::Functions::catdir($cacheFolder, 'Artwork'),
+				File::Spec::Functions::catdir($cacheFolder, 'iTunesArtwork'),
+				File::Spec::Functions::catdir($cacheFolder, 'FileCache'),
+				File::Spec::Functions::catdir($cacheFolder, 'fonts.bin'),
+				File::Spec::Functions::catdir($cacheFolder, 'strings.bin'),
+				File::Spec::Functions::catdir($cacheFolder, 'templates'),
+				File::Spec::Functions::catdir($cacheFolder, 'cookies.dat'),
+				File::Spec::Functions::catdir($cacheFolder, 'plugin-data.yaml'),
 			],
 		};
 	}
@@ -160,11 +174,11 @@ sub getFolderList {
 		push @folders, {
 			label   => 'MySQL data',
 			folders => [
-				catdir($cacheFolder, 'MySQL'),
-				catdir($cacheFolder, 'my.cnf'),
-				catdir($cacheFolder, 'squeezecenter-mysql.pid'),
-				catdir($cacheFolder, 'squeezecenter-mysql.sock'),
-				catdir($cacheFolder, 'mysql-error-log.txt'),
+				File::Spec::Functions::catdir($cacheFolder, 'MySQL'),
+				File::Spec::Functions::catdir($cacheFolder, 'my.cnf'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.pid'),
+				File::Spec::Functions::catdir($cacheFolder, 'squeezecenter-mysql.sock'),
+				File::Spec::Functions::catdir($cacheFolder, 'mysql-error-log.txt'),
 			],
 		};
 	}
@@ -195,41 +209,41 @@ sub options {
 	my $options = [
 		{
 			name     => 'prefs',
-			title    => string('CLEANUP_PREFS'),
+			title    => Slim::Utils::Light::string('CLEANUP_PREFS'),
 			position => [30, 20],
 		},
 	
 		{
 			name     => 'filecache',
-			title    => string('CLEANUP_FILECACHE'),
+			title    => Slim::Utils::Light::string('CLEANUP_FILECACHE'),
 			position => [30, 40],
 		},
 	
 		{
 	
 			name     => 'mysql',
-			title    => string('CLEANUP_MYSQL'),
+			title    => Slim::Utils::Light::string('CLEANUP_MYSQL'),
 			position => [30, 60],
 		},
 	
 		{
 	
 			name     => 'logs',
-			title    => string('CLEANUP_LOGS'),
+			title    => Slim::Utils::Light::string('CLEANUP_LOGS'),
 			position => [30, 80],
 		},
 	
 		{
 	
 			name     => 'cache',
-			title    => string('CLEANUP_CACHE'),
+			title    => Slim::Utils::Light::string('CLEANUP_CACHE'),
 			position => [30, 120],
 		},
 	
 		{
 	
 			name     => 'all',
-			title    => '(!) ' . string('CLEANUP_ALL'),
+			title    => '(!) ' . Slim::Utils::Light::string('CLEANUP_ALL'),
 			position => [30, 160],
 		},
 	];
@@ -258,7 +272,7 @@ sub cleanup {
 	my $fallbackFolder = $os->dirsFor('');
 		
 	for my $item (@$folders) {
-		print sprintf("\n%s %s...\n", string('CLEANUP_DELETING'), $item->{label}) unless $useWx;
+		print sprintf("\n%s %s...\n", Slim::Utils::Light::string('CLEANUP_DELETING'), $item->{label}) unless $useWx;
 		
 		foreach ( @{$item->{folders}} ) {
 			next unless $_;
@@ -266,13 +280,42 @@ sub cleanup {
 			print "-> $_\n" if (-e $_ && !$useWx);
 
 			if (-d $_) {
-				rmtree $_;
+				File::Path::rmtree $_;
 			}
 			
 			elsif (-f $_) {
 				unlink $_;
 			}
 		}
+	}
+}
+
+sub showSplashScreen {
+	return unless $^O =~ /win/i;
+	
+	my $file;
+	
+	if (defined $PerlApp::VERSION) {
+		$file = PerlApp::extract_bound_file(SPLASH_LOGO);
+	}
+	
+	if (!$file || !-f $file) {
+		$file = '../platforms/win32/res/' . SPLASH_LOGO;
+	}
+
+	Wx::Image::AddHandler(Wx::PNGHandler->new());
+	
+	if (my $bitmap = Wx::Bitmap->new($file, Wx::wxBITMAP_TYPE_PNG())) {
+
+		$splash = Wx::SplashScreen->new(
+			$bitmap, 
+			Wx::wxSPLASH_CENTRE_ON_SCREEN() | Wx::wxSPLASH_TIMEOUT(),
+			10000,
+			undef,
+			-1, [-1, -1], [-1, -1],
+			Wx::wxSIMPLE_BORDER() | Wx::wxSTAY_ON_TOP()
+		);
+
 	}
 }
 
