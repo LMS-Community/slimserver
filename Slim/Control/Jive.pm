@@ -1721,20 +1721,6 @@ sub playerSettingsMenu {
 			window         => { titleStyle => 'settings' },
 		},
 	}
-	
-	# Display Controller PIN on SN
-	if ( main::SLIM_SERVICE ) {
-		if ( my $pin = $client->getControllerPIN() ) {
-			push @menu, {
-				id     => 'settingsPIN',
-				action => 'none',
-				style  => 'itemNoAction',
-				node   => 'settings',
-				weight => 80,
-				text   => $client->string( 'SQUEEZENETWORK_PIN', $pin ),
-			};
-		}
-	}
 
 	if ($batch) {
 		return \@menu;
