@@ -274,7 +274,7 @@ sub infoServer {
 							cstring($client, 'INFORMATION_VERSION'),
 							cstring($client, 'COLON'),
 							$::VERSION,
-							$::REVISION,
+							'r' . $::REVISION,
 							$::BUILDDATE),
 			},
 			
