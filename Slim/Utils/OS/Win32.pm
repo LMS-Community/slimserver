@@ -349,7 +349,7 @@ sub installPath {
 	# search in legacy SlimServer folder, too
 	my $installDir;
 	PF: foreach my $programFolder ($ENV{ProgramFiles}, 'C:/Program Files') {
-		foreach my $ourFolder ('SqueezeCenter', 'SlimServer') {
+		foreach my $ourFolder ('Squeezebox', 'SqueezeCenter', 'SlimServer') {
 
 			$installDir = File::Spec->catdir($programFolder, $ourFolder);
 			last PF if (-d $installDir);

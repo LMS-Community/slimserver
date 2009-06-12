@@ -26,7 +26,7 @@ my $versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 sub checkVersion {
 
 	# clean up old download location
-	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^SqueezeCenter.*\.(dmg|exe)(\.tmp)?$/i);			
+	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter).*\.(dmg|exe)(\.tmp)?$/i);			
 
 	# reset update download status in case our system is up to date
 	my $installer = getUpdateInstaller() || '';
@@ -252,7 +252,7 @@ sub getUpdateInstaller {
 
 		chomp;
 		
-		if (/SqueezeCenter.*/) {
+		if (/(?:Squeezebox|SqueezeCenter).*/) {
 			$updateInstaller = $_;
 			last;
 		}
@@ -279,7 +279,7 @@ sub cleanup {
 
 	my $ext = $os->installerExtension() . ($additionalExt ? "\.$additionalExt" : '');
 
-	Slim::Utils::Misc::deleteFiles($path, qr/^SqueezeCenter.*\.$ext$/i);
+	Slim::Utils::Misc::deleteFiles($path, qr/^(?:Squeezebox|SqueezeCenter).*\.$ext$/i);
 }
 
 1;

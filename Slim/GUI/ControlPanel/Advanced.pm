@@ -198,7 +198,7 @@ sub _checkForUpdate {
 
 		chomp;
 		
-		if (/SqueezeCenter.*/) {
+		if (/(?:Squeezebox|SqueezeCenter).*/) {
 			$installer = $_;
 			last;
 		}
