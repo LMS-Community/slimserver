@@ -15,6 +15,7 @@ use Win32::Service;
 use Win32::TieRegistry ('Delimiter' => '/');
 
 use constant SC_USER_REGISTRY_KEY => 'CUser/Software/Logitech/SqueezeCenter';
+use constant SB_USER_REGISTRY_KEY => 'CUser/Software/Logitech/Squeezebox';
 use constant SC_SERVICE_NAME => 'squeezesvc';
 
 use Slim::Utils::OSDetect;
@@ -41,7 +42,7 @@ sub getStartupType {
 		return SC_STARTUP_TYPE_SERVICE;
 	}
 
-	if ($Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'}) {
+	if ($Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'}) {
 		return SC_STARTUP_TYPE_LOGIN;
 	}
 
@@ -79,7 +80,7 @@ sub setStartupType {
 	$username = '' unless defined $username;
 	
 	my $oldType = getStartupType();
-	$Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
+	$Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'} = ($type == SC_STARTUP_TYPE_LOGIN || 0);
 
 	my $serviceUser = $Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/squeezesvc/ObjectName'} || '';
 	$serviceUser = '' if $serviceUser =~ /^(?:LocalSystem)$/i;
@@ -99,15 +100,21 @@ sub initStartupType {
 	my $class = shift;
 
 	# preset atLogin if it isn't defined yet
-	my $atLogin = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
+	my $atLogin = $Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'};
 	
 	if ($atLogin !~ /[01]/) {
 		
 		# make sure our Key does exist before we can write to it
-		if (! (my $regKey = $Registry->{SC_USER_REGISTRY_KEY . ''})) {
+		if (! (my $regKey = $Registry->{SB_USER_REGISTRY_KEY . ''})) {
 			$Registry->{'CUser/Software/Logitech/'} = {
-				'SqueezeCenter/' => {}
+				'Squeezebox/' => {}
 			};
+		}
+	
+		# migrate startup setting
+		if (defined $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'}) {
+			$Registry->{SB_USER_REGISTRY_KEY . '/StartAtLogin'} = $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
+			delete $Registry->{SC_USER_REGISTRY_KEY . '/StartAtLogin'};
 		}
 
 		$class->setStartupType(SC_STARTUP_TYPE_LOGIN);
@@ -128,7 +135,7 @@ sub start {
 
 	else {
 
-		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'squeezecenter.exe' ) );
+		my $appExe = Win32::GetShortPathName( catdir( $os->dirsFor('base'), 'server', 'SqueezeSvr.exe' ) );
 		
 		if ($params) {
 			$params = "$appExe $params";

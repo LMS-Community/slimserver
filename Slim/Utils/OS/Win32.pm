@@ -334,7 +334,7 @@ sub installPath {
 	# Try and find it in the registry.
 	# This is a system-wide registry key.
 	my $swKey = $Win32::TieRegistry::Registry->Open(
-		'LMachine/Software/Logitech/SqueezeCenter/', 
+		'LMachine/Software/Logitech/Squeezebox/', 
 		{ 
 			Access => Win32::TieRegistry::KEY_READ(), 
 			Delimiter =>'/' 
@@ -376,7 +376,7 @@ sub writablePath {
 
 		# the installer is writing the data folder to the registry - give this the first try
 		my $swKey = $Win32::TieRegistry::Registry->Open(
-			'LMachine/Software/Logitech/SqueezeCenter/', 
+			'LMachine/Software/Logitech/Squeezebox/', 
 			{ 
 				Access => Win32::TieRegistry::KEY_READ(), 
 				Delimiter =>'/' 
@@ -420,11 +420,11 @@ sub writablePath {
 				}
 			}
 			
-			$writablePath = catdir($writablePath, 'SqueezeCenter') unless $writablePath eq $Bin;
+			$writablePath = catdir($writablePath, 'Squeezebox') unless $writablePath eq $Bin;
 			
 			# store the key in the registry for future reference
 			$swKey = $Win32::TieRegistry::Registry->Open(
-				'LMachine/Software/Logitech/SqueezeCenter/', 
+				'LMachine/Software/Logitech/Squeezebox/', 
 				{ 
 					Delimiter =>'/' 
 				}
@@ -481,12 +481,12 @@ sub pathFromShortcut {
 
 		} else {
 
-			Slim::Utils::Log::logger('os.files')->error("Error: Bad path in $fullpath - path was: [$path]");
+			Slim::Utils::Log::logger('os.files')->error("Bad path in $fullpath - path was: [$path]");
 		}
 
 	} else {
 
-		Slim::Utils::Log::logger('os.files')->error("Error: Shortcut $fullpath is invalid");
+		Slim::Utils::Log::logger('os.files')->error("Shortcut $fullpath is invalid");
 	}
 
 	return $path;
