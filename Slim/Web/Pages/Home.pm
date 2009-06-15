@@ -19,6 +19,8 @@ use Slim::Utils::Strings;
 use Slim::Networking::Discovery::Server;
 use Slim::Networking::SqueezeNetwork;
 
+require Slim::Plugin::Base;
+
 my $prefs = preferences('server');
 
 sub init {
