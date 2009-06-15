@@ -97,11 +97,6 @@ sub initPlugin {
     Slim::Control::Request::addDispatch(['subscribe', '_functions'], 
         [0, 0, 0, \&subscribeCommand]);
 	
-	if ( main::SLIM_SERVICE ) {
-		# Increase max connections on SN
-		$prefsServer->set( tcpConnectMaximum => 100 );
-	}
-	
 	# open our socket
 	cli_socket_change();
 
@@ -229,7 +224,7 @@ sub cli_socket_accept {
 	if ($client_socket && $client_socket->connected && $client_socket->peeraddr) {
 
 		# Check max connections
-		if (scalar keys %connections >= $prefsServer->get('tcpConnectMaximum')) {
+		if ( !main::SLIM_SERVICE && scalar keys %connections >= $prefsServer->get('tcpConnectMaximum') ) {
 
 			$log->error("Warning: Closing connection: too many connections open! (" . scalar( keys %connections ) . ")" );
 		
