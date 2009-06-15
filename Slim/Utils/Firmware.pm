@@ -191,7 +191,7 @@ sub init_firmware_download {
 
 	if (-r $version_file && time() - (stat($version_file))[9] < VERSION_FILE_STALE) {
 
-		$log->is_info && $log->info("Using exising $model.version file...");
+		$log->is_info && $log->info("Using existing $model.version file...");
 
 		init_version_done($version_file, $model);
 
