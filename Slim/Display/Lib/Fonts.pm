@@ -266,7 +266,8 @@ sub fontnames {
 
 sub fontheight {
 	my $fontname = shift;
-	return $fontheight->{$fontname};
+	
+	return $fontheight->{$fontname} if $fontname;
 }
 
 sub fontchars {
