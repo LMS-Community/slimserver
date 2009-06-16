@@ -316,6 +316,18 @@ sub init {
 		
 			1;
 		});
+
+		$prefs->migrate( 3, sub {
+			
+			if ($prefs->get('cachedir') =~ /SqueezeCenter/i) {
+				
+				$prefs->set('cachedir', defaultCacheDir());
+				makeCacheDir();
+				
+			}
+			
+			1;
+		} );
 	}
 
 	# migrate client prefs to version 2 - sync prefs changed
