@@ -21,6 +21,14 @@ on run argv
 	
 	if isRunning and msg is not equal to "" 
 	
+		tell application "GrowlHelperApp"
+			set the allNotificationsList to {"Squeezebox Notification"}
+			set the enabledNotificationsList to {"Squeezebox Notification"}
+			
+			register as application "Squeezebox Server" all notifications allNotificationsList default notifications enabledNotificationsList icon of application "SqueezeCenter"
+		
+			notify with name "Squeezebox Notification" title "Squeezebox Server" description msg application name "Squeezebox Server" sticky true
+		end tell
 		
 	else
 	
