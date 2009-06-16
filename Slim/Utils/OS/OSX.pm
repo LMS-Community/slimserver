@@ -65,19 +65,19 @@ sub initDetails {
 	$class->{osDetails}->{'uid'} = getpwuid($>);
 
 	for my $dir (
-		'Library/Application Support/SqueezeCenter',
-		'Library/Application Support/SqueezeCenter/Plugins', 
-		'Library/Application Support/SqueezeCenter/Graphics',
-		'Library/Application Support/SqueezeCenter/html',
-		'Library/Application Support/SqueezeCenter/IR',
-		'Library/Logs/SqueezeCenter'
+		'Library/Application Support/Squeezebox Server',
+		'Library/Application Support/Squeezebox Server/Plugins', 
+		'Library/Application Support/Squeezebox Server/Graphics',
+		'Library/Application Support/Squeezebox Server/html',
+		'Library/Application Support/Squeezebox Server/IR',
+		'Library/Logs/Squeezebox Server'
 	) {
 
 		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
 	}
 
-	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/SqueezeCenter";
-	unshift @INC, "/Library/Application Support/SqueezeCenter";
+	unshift @INC, $ENV{'HOME'} . "/Library/Application Support/Squeezebox Server";
+	unshift @INC, "/Library/Application Support/Squeezebox Server";
 	
 	return $class->{osDetails};
 }
@@ -133,17 +133,17 @@ sub dirsFor {
 		#	$dir = lc($dir);
 		#}
 
-		push @dirs, "$ENV{'HOME'}/Library/Application Support/SqueezeCenter/$dir";
-		push @dirs, "/Library/Application Support/SqueezeCenter/$dir";
+		push @dirs, "$ENV{'HOME'}/Library/Application Support/Squeezebox Server/$dir";
+		push @dirs, "/Library/Application Support/Squeezebox Server/$dir";
 		push @dirs, catdir($Bin, $dir);
 
 	} elsif ($dir eq 'log') {
 
-		push @dirs, $::logdir || catdir($ENV{'HOME'}, '/Library/Logs/SqueezeCenter');
+		push @dirs, $::logdir || catdir($ENV{'HOME'}, '/Library/Logs/Squeezebox Server');
 
 	} elsif ($dir eq 'cache') {
 
-		push @dirs, $::cachedir || catdir($ENV{'HOME'}, '/Library/Caches/SqueezeCenter');
+		push @dirs, $::cachedir || catdir($ENV{'HOME'}, '/Library/Caches/Squeezebox Server');
 
 	} elsif ($dir eq 'oldprefs') {
 
@@ -159,7 +159,7 @@ sub dirsFor {
 
 	} elsif ($dir eq 'prefs') {
 
-		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/SqueezeCenter');
+		push @dirs, $::prefsdir || catdir($ENV{'HOME'}, '/Library/Application Support/Squeezebox Server');
 			
 	} elsif ($dir eq 'music') {
 
