@@ -356,6 +356,13 @@ sub _signalUpdateReady {
 	my $osa    = Slim::Utils::Misc::findbin('osascript');
 	my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
 	
+	my $osDetails = Slim::Utils::OSDetect::details();
+	
+	# try to use Growl on 10.5+
+	if ($osDetails->{'osName'} =~ /X 10\.(\d)\./ && $1 > 4) {
+		$script = Slim::Utils::Misc::findbin('signalupdate.scpt');
+	}
+	
 	system(sprintf("%s '%s' %s &", $osa, $script, Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE'))) if ($osa && $script);
 }
 
