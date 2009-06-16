@@ -354,7 +354,7 @@ sub signalUpdateReady {
 
 sub _signalUpdateReady {
 	my $osa    = Slim::Utils::Misc::findbin('osascript');
-	my $script = Slim::Utils::Misc::findbin('openprefs.scpt');
+	my $script;
 	
 	my $osDetails = Slim::Utils::OSDetect::details();
 	
@@ -362,6 +362,8 @@ sub _signalUpdateReady {
 	if ($osDetails->{'osName'} =~ /X 10\.(\d)\./ && $1 > 4) {
 		$script = Slim::Utils::Misc::findbin('signalupdate.scpt');
 	}
+	
+	$script ||= Slim::Utils::Misc::findbin('openprefs.scpt');
 	
 	system(sprintf("%s '%s' %s &", $osa, $script, Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE'))) if ($osa && $script);
 }
