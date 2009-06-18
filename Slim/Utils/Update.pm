@@ -21,9 +21,10 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $os = Slim::Utils::OSDetect->getOS();
 
-my $versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
+my $versionFile;
 
 sub checkVersion {
+	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter).*\.(dmg|exe)(\.tmp)?$/i);			
