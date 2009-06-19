@@ -52,7 +52,7 @@ sub initDetails {
 	# Windows 2003 && suitemask 0x00008000 -> WHS
 	# http://msdn.microsoft.com/en-us/library/ms724833(VS.85).aspx
 	elsif ($major == 5 && $minor == 2
-			&& $suitemask && $suitemask >= 0x00008000 && $suitemask < 0x00009000) {
+			&& $suitemask && $suitemask & 0x00008000) {
 		$class->{osDetails}->{'osName'} = 'Windows Home Server';
 		$class->{osDetails}->{'isWHS'} = 1;
 	}
