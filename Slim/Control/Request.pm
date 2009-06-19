@@ -507,6 +507,7 @@ sub init {
 	addDispatch(['irenable',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::irenableQuery]);
 	addDispatch(['irenable',       '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::irenableCommand]);
 	addDispatch(['linesperscreen', '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::linesperscreenQuery]);
+	addDispatch(['logging'],                                                                           [0, 0, 1, \&Slim::Control::Commands::loggingCommand]);
 	addDispatch(['mixer',          'bass',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'bass',           '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
 	addDispatch(['mixer',          'muting',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);

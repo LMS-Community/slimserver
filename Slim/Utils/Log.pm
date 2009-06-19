@@ -765,26 +765,54 @@ sub _readConfig {
 
 sub logGroups {
 	return {
-		DEBUG_SERVER_CHOOSE => {
-			'server'                 => 'DEBUG',
-			'server.plugins'         => 'DEBUG',
+		SERVER => {
+			categories => {
+				'server'                 => 'DEBUG',
+				'server.plugins'         => 'DEBUG',
+			},
+			label => 'DEBUG_SERVER_CHOOSE',
 		},
-		DEBUG_RADIO => {
-			'formats.audio'          => 'DEBUG',
-			'network.asyncdns'       => 'DEBUG',
-			'network.squeezenetwork' => 'DEBUG',
+		RADIO => {
+			categories => {
+				'formats.audio'          => 'DEBUG',
+				'network.asyncdns'       => 'DEBUG',
+				'network.squeezenetwork' => 'DEBUG',
+			},
+			label => 'DEBUG_RADIO',
 		},
-		DEBUG_TRANSCODING => {
-			'player.source'          => 'DEBUG',
-			'player.streaming'       => 'DEBUG',
+		TRANSCODING => {
+			categories => {
+				'player.source'          => 'DEBUG',
+				'player.streaming'       => 'DEBUG',
+			},
+			label => 'DEBUG_TRANSCODING',
 		},
-		DEBUG_SCANNER_CHOOSE => {
-			'scan'                   => 'DEBUG',
-			'scan.scanner'           => 'DEBUG',
-			'scan.import'            => 'DEBUG',
-			'artwork'                => 'DEBUG',
+		SCANNER => {
+			categories => {
+				'scan'                   => 'DEBUG',
+				'scan.scanner'           => 'DEBUG',
+				'scan.import'            => 'DEBUG',
+				'artwork'                => 'DEBUG',
+			},
+			label => 'DEBUG_SCANNER_CHOOSE',
 		},
 	};
+}
+
+sub setLogGroup {
+	my ($class, $group, $persist) = @_;
+	
+	my $levels     = $class->logLevels($group);
+	my $categories = $class->allCategories();
+		
+	for my $category (keys %{$categories}) {
+		$class->setLogLevelForCategory(
+			$category, $levels->{$category} || 'ERROR'
+		);
+	}
+
+	$class->persist($persist ? 1 : 0);
+	$class->reInit();
 }
 
 sub logLevels {
@@ -860,8 +888,8 @@ sub logLevels {
 	
 	my $logGroups = logGroups();
 
-	foreach (keys %{ $logGroups->{$group} }) {
-		$categories->{$_} = $logGroups->{$group}->{$_};
+	foreach (keys %{ $logGroups->{$group}->{categories} }) {
+		$categories->{$_} = $logGroups->{$group}->{categories}->{$_};
 	}
 
 	return $categories;

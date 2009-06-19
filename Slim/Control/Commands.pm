@@ -518,6 +518,28 @@ sub irenableCommand {
 	$request->setStatusDone();
 }
 
+sub loggingCommand {
+	my $request = shift;
+	
+	# check this is the correct command.
+	if ($request->isNotCommand([['logging']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $group = uc( $request->getParam('group') );
+	
+	if ($group && Slim::Utils::Log->logLevels($group)) {
+		Slim::Utils::Log->setLogGroup($group, $request->getParam('persist'));
+	}
+	else {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	$request->setStatusDone();
+}
+
 sub mixerCommand {
 	my $request = shift;
 

@@ -31,15 +31,8 @@ sub handler {
 
 		if ($paramRef->{'logging_group'}) {
 
-			my $levels = Slim::Utils::Log->logLevels($paramRef->{'logging_group'});
-			
-			for my $category (keys %{$categories}) {
-				
-				Slim::Utils::Log->setLogLevelForCategory(
-					$category, $levels->{$category} || 'ERROR'
-				);
-			}
-			
+			Slim::Utils::Log->setLogGroup($paramRef->{'logging_group'});
+
 		}
 
 		else {

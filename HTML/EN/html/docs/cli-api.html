@@ -47,6 +47,7 @@
 <ul>
 	<li>Added &quot;pause&quot; & &quot;stop&quot; subtypes to &quot;playlist&quot; notifications.</li>
 	<li>Added &quot;setsncredentials&quot; command.</li>
+	<li>Added &quot;logging&quot; command.</li>
 </ul>
 
 <hr>
@@ -639,6 +640,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#pref">pref</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#logging">logging</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#getstring">getstring</a></code></strong>
 	</li>
 	<li>
@@ -889,6 +893,32 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<br>
 		Response: &quot;pref playlistdir 
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="logging">
+	<strong>
+		<code>
+			logging
+			&lt;group:logging group&gt;
+			[&lt;persist:1&gt;]
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;logging&quot; command allows setting some logging levels. Today you can 
+	only set one of the following logging groups: server, radio, transcoding, scanner.
+	The optional persist parameter defines whether the change should be persistent or not.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;logging group:scanner&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;logging group:scanner&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

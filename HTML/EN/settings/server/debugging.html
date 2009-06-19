@@ -7,7 +7,7 @@
 			<option value="DEFAULT">[% "DEBUG_DEFAULT" | string %]</option>
 
 			[% FOREACH option = logging_groups %]
-			<option value="[% option.key %]">[% option.key | string %]</option>
+			<option value="[% option.key %]">[% option.value.label | string %]</option>
 			[%- END -%]
 		
 		</select>
