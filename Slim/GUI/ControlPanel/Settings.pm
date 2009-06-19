@@ -78,6 +78,9 @@ sub new {
 	$startBtnSizer->AddSpacer(10);
 	$startBtnSizer->Add($cbStartSafeMode, 0, wxLEFT | wxTOP, 5);
 
+	@startupOptions = map { string($_) } @startupOptions;	
+	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
+
 	EVT_BUTTON( $self, $btnStartStop, sub {
 		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
 			Slim::GUI::ControlPanel->serverRequest('stopserver');
@@ -85,6 +88,7 @@ sub new {
 		
 		# starting SC is heavily platform dependant
 		else {
+			$svcMgr->setStartupType($lbStartupMode->GetSelection());
 			$svcMgr->start($cbStartSafeMode->IsChecked() ? '--failsafe' : undef);
 			$parent->checkServiceStatus();
 		}
@@ -98,10 +102,7 @@ sub new {
 		Wx::StaticBox->new($self, -1, string('CONTROLPANEL_STARTUP_OPTIONS')),
 		wxVERTICAL
 	);
-
-	@startupOptions = map { string($_) } @startupOptions;	
 	
-	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
 	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
 	$lbStartupMode->Enable($svcMgr->canSetStartupType());
 	
