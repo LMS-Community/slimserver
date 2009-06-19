@@ -71,7 +71,6 @@ sub new {
 		
 		$mainSizer->Add(Slim::GUI::ControlPanel::InitialSettings->new($panel, $self), 1, wxALL | wxGROW, 10);
 		
-		Slim::GUI::ControlPanel->setPref('wizardDone', 1);
 	}
 	
 	else {
@@ -229,6 +228,8 @@ sub addActionHandler {
 
 sub do {
 	my ($self, $status) = @_;
+	
+	Slim::GUI::ControlPanel->setPref('wizardDone', 1);
 	
 	foreach my $actionHandler (keys %{ $self->{actionHandlers} }) {
 		
