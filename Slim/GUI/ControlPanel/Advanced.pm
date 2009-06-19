@@ -107,6 +107,9 @@ sub new {
 	$logBtnSizer->Add(Slim::GUI::ControlPanel::LogLink->new($self, $parent, 'scanner.log', 'CONTROLPANEL_SHOW_SCANNER_LOG'), 0, wxLEFT, 10);
 
 	$logSizer->Add($logBtnSizer, 0, wxALL, 10);
+	
+	$logSizer->Add(Slim::GUI::ControlPanel::LogOptions->new($self, $parent), 0, wxLEFT | wxBOTTOM, 10);
+	
 	$mainSizer->Add($logSizer, 0, wxALL | wxGROW, 10);
 	
 
@@ -233,6 +236,71 @@ sub new {
 	});
 
 	return $self;
+}
+
+1;
+
+
+package Slim::GUI::ControlPanel::LogOptions;
+
+use base 'Wx::Choice';
+
+use Wx qw(:everything);
+use File::Spec::Functions qw(catfile);
+
+use Slim::GUI::ControlPanel;
+use Slim::Utils::Light;
+use Slim::Utils::Log;
+use Slim::Utils::ServiceManager;
+
+my $logGroups;
+
+sub new {
+	my ($self, $page, $parent) = @_;
+	
+	$logGroups = Slim::Utils::Log->logGroups();
+	
+	my @logOptions = (string('DEBUG_DEFAULT'));
+	
+	my $x = 1;
+	foreach my $group (keys %$logGroups) {
+
+		$logGroups->{$group}->{index} = $x;
+		push @logOptions, string($logGroups->{$group}->{label});
+	
+		$x++;
+	}
+	
+	$parent->addApplyHandler($self, sub {
+		$self->save(@_);
+	});
+	
+	$self = $self->SUPER::new($page, -1, [-1, -1], [-1, -1], \@logOptions);
+	
+	return $self;
+}
+
+
+sub save {
+	my $self = shift;
+	my $state = shift;
+	
+	if ($state == SC_STATE_RUNNING) {
+		
+		my $selected = $self->GetSelection();
+		
+		my ($group) = grep { $logGroups->{$_}->{index} == $selected } keys %$logGroups;
+		
+		$group ||= 'default';
+		
+		Slim::GUI::ControlPanel->serverRequest('logging', "group:$group");
+	}
+	else {
+#		Slim::Utils::Log->init({
+#			'logconf' => catfile(Slim::Utils::OSDetect::dirsFor('prefs'), 'log.conf'),
+#			'logtype' => 'server',
+#		});
+	}
 }
 
 1;
