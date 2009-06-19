@@ -89,7 +89,7 @@ sub new {
 		# starting SC is heavily platform dependant
 		else {
 			$svcMgr->setStartupType($lbStartupMode->GetSelection());
-			$svcMgr->start($cbStartSafeMode->IsChecked() ? '--failsafe' : undef);
+			$svcMgr->start($cbStartSafeMode->IsChecked() ? '--failsafe --debug server=debug,server.plugins=debug --d_startup' : undef);
 			$parent->checkServiceStatus();
 		}
 	});
