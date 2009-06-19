@@ -45,17 +45,8 @@ sub initDetails {
 	$class->{osDetails}->{'osName'} =~ s/2003/Server 2003/;
 	
 	# TODO: remove this code as soon as Win32::GetOSName supports Windows 2008 Server
-	# TODO: remove this code as soon as Win32::GetOSName supports Windows 2008 Server
-	if ($major == 6 && $minor == 1 && $producttype == 1) {
-		$class->{osDetails}->{'osName'} = 'Windows 7';
-	}
-
-	elsif ($major == 6 && $minor == 1 && $producttype != 1) {
+	if ($major == 6 && $minor == 1 && $producttype != 1) {
 		$class->{osDetails}->{'osName'} = 'Windows 2008 Server R2';
-	}
-
-	elsif ($major == 6 && $minor == 0 && $producttype > 1) {
-		$class->{osDetails}->{'osName'} = 'Windows 2008 Server';
 	}
 
 	# Windows 2003 && suitemask 0x00008000 -> WHS
