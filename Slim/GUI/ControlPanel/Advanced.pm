@@ -285,21 +285,23 @@ sub save {
 	my $self = shift;
 	my $state = shift;
 	
+	my $selected = $self->GetSelection();
+	my ($group) = grep { $logGroups->{$_}->{index} == $selected } keys %$logGroups;
+	
+	$group ||= 'default';
+		
 	if ($state == SC_STATE_RUNNING) {
-		
-		my $selected = $self->GetSelection();
-		
-		my ($group) = grep { $logGroups->{$_}->{index} == $selected } keys %$logGroups;
-		
-		$group ||= 'default';
-		
 		Slim::GUI::ControlPanel->serverRequest('logging', "group:$group");
 	}
 	else {
-#		Slim::Utils::Log->init({
-#			'logconf' => catfile(Slim::Utils::OSDetect::dirsFor('prefs'), 'log.conf'),
-#			'logtype' => 'server',
-#		});
+		Slim::Utils::Log->init({
+			'logconf' => catfile(Slim::Utils::OSDetect::dirsFor('prefs'), 'log.conf'),
+			'logtype' => 'server',
+		}) unless Slim::Utils::Log->isInitialized();
+		
+		Slim::Utils::Log->setLogGroup($group, 1);
+		
+		Slim::Utils::Log->writeConfig();
 	}
 }
 
