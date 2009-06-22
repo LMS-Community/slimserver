@@ -343,7 +343,12 @@ sub signalUpdateReady {
 			
 	my $updater = Slim::Utils::Update::getUpdateInstaller();
 			
-	return unless $updater && -e $updater;
+	unless ($updater && -e $updater) {	
+		Slim::Utils::Log::logger('server.update')->info("Updater file '$updater' not found!");
+		return;
+	}
+
+	Slim::Utils::Log::logger('server.update')->debug("Notify '$updater' is ready to be installed");
 		
 	Slim::Utils::Timers::killTimers(undef, \&signalUpdateReady);
 	Slim::Utils::Timers::killTimers(undef, \&_signalUpdateReady);
@@ -364,6 +369,9 @@ sub _signalUpdateReady {
 	}
 	
 	$script ||= Slim::Utils::Misc::findbin('openprefs.scpt');
+	
+	Slim::Utils::Log::logger('server.update')->debug('Running notification:\n' . 
+		sprintf("%s '%s' %s &", ($osa || 'unknown'), ($script || 'unknown'), Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE')));
 	
 	system(sprintf("%s '%s' %s &", $osa, $script, Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE'))) if ($osa && $script);
 }
