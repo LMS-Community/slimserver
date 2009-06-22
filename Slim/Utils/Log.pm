@@ -693,7 +693,9 @@ Returns the location of the default config file for the platform.
 sub defaultConfigFile {
 	my $class = shift;
 
-	my $dir = Slim::Utils::Prefs::dir() || Slim::Utils::OSDetect::dirsFor('prefs');
+	my $dir;
+	eval { $dir = Slim::Utils::Prefs::dir() };
+	$dir ||= Slim::Utils::OSDetect::dirsFor('prefs');
 	
 	if ( main::SLIM_SERVICE ) {
 		$dir = Slim::Utils::OSDetect::dirsFor('log');
