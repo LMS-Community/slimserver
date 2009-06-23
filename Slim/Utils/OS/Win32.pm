@@ -637,6 +637,51 @@ sub _priorityFromPriorityClass {
 }
 
 
+=head2 cleanupTempDirs( )
+
+PDK compiled executables can leave temporary pdk-{username}-{pid} folders behind
+if process is crashing. Use this method to clean them up.
+
+=cut
+
+sub cleanupTempDirs {
+
+	my $dir = $ENV{TEMP};
+	
+	return unless $dir && -d $dir;
+	
+	opendir(DIR, $dir) || return;
+
+	my @folders = readdir(DIR);
+	close(DIR);
+
+	my %pdkFolders;
+	for my $entry (@folders) {
+		if ($entry =~ /^pdk-.*?-(\d+)/i) {
+			$pdkFolders{$1} = $entry
+		}
+	}
+	
+	return unless scalar(keys %pdkFolders);
+
+	require File::Path;
+	require Win32::Process::List;
+	my $p = Win32::Process::List->new();
+	my %processes = $p->GetProcesses(); 
+
+	foreach my $pid (keys %pdkFolders) {
+		
+		# don't remove files if process is still running...
+		next if $processes{$pid};
+
+		my $path = catdir($dir, $pdkFolders{$pid});
+		next unless -d $path;
+
+		eval { File::Path::rmtree($path) };
+	}
+}
+
+
 sub getUpdateParams {
 	my ($class, $url) = @_;
 
