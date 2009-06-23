@@ -46,6 +46,8 @@ sub init {
 	
 	my @ns = $res->nameservers();
 	
+	my @orig_ns = @ns;
+	
 	my $valid_servers = [];
 	
 	while ( my $ns = shift @ns ) {
@@ -88,7 +90,10 @@ sub init {
 	}
 
 	if ( !scalar @{$LocalDNS} ) {
-		logWarning("No DNS servers responded, you may have problems with network requests.");
+		$log->error("No DNS servers responded, you may have problems with network requests.");
+		
+		# Use the default set of nameservers anyway
+		$LocalDNS = \@orig_ns;
 	}
 }
 
