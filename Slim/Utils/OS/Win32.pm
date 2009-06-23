@@ -657,7 +657,7 @@ sub cleanupTempDirs {
 
 	my %pdkFolders;
 	for my $entry (@folders) {
-		if ($entry =~ /^pdk-.*?-(\d+)/i) {
+		if ($entry =~ /^pdk-.*?-(\d+)$/i) {
 			$pdkFolders{$1} = $entry
 		}
 	}

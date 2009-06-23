@@ -16,11 +16,9 @@ use Socket;
 use Symbol;
 
 use Slim::Utils::Light;
-use Slim::Utils::OS;
 use Slim::Utils::ServiceManager;
 
 my $svcMgr = Slim::Utils::ServiceManager->new();
-my $isWin = Slim::Utils::OSDetect->isWindows();
 
 use constant SN => 'www.mysqueezebox.com';
 
@@ -64,7 +62,7 @@ sub new {
 			$alertBox->AppendText(string('CONTROLPANEL_PORTBLOCKED', '', $httpPort));
 			
 			# server running, but not accessible -> firewall?
-			if ($isWin && (my $conflicts = $self->getConflictingApp('Firewall'))) {
+			if (main::ISWINDOWS && (my $conflicts = $self->getConflictingApp('Firewall'))) {
 				$alertBox->AppendText(string('CONTROLPANEL_PORTBLOCKED_APPS'));
 				
 				foreach (keys %$conflicts) {
@@ -82,7 +80,7 @@ sub new {
 			$alertBox->AppendText(string('CONTROLPANEL_PORTCONFLICT', '', $httpPort));
 
 			# server not running, but port open -> other application using it?
-			if ($isWin && (my $conflicts = $self->getConflictingApp('PortConflict'))) {
+			if (main::ISWINDOWS && (my $conflicts = $self->getConflictingApp('PortConflict'))) {
 				
 				foreach (keys %$conflicts) {
 					my $conflict = $conflicts->{$_};
@@ -226,7 +224,7 @@ sub _update {
 sub getConflictingApp {
 	my ($self, $type) = @_;
 	
-	return unless $isWin;
+	return unless main::ISWINDOWS;
 	
 	require XML::Simple;
 	require Win32::Service;

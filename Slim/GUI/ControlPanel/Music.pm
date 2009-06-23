@@ -20,7 +20,6 @@ sub new {
 	$self = $self->SUPER::new($nb);
 
 	my $svcMgr = Slim::Utils::ServiceManager->new();
-	my $os     = Slim::Utils::OSDetect->getOS();
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
@@ -124,7 +123,7 @@ sub new {
 
 		my $path = $self->GetPath;
 		if ($running && $path ne Slim::GUI::ControlPanel->getPref($pref)) {
-			$path =~ s/\\/\\\\/g if Slim::Utils::OSDetect->isWindows();
+			$path =~ s/\\/\\\\/g if main::ISWINDOWS;
 			Slim::GUI::ControlPanel->setPref($pref, $path);
 		}
 	});

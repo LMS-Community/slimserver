@@ -24,7 +24,6 @@ sub new {
 	$self = $self->SUPER::new($nb);
 
 	my $svcMgr = Slim::Utils::ServiceManager->new();
-	my $os     = Slim::Utils::OSDetect->getOS();
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 
@@ -116,7 +115,7 @@ sub new {
 		
 	$startupSizer->Add($lbStartupMode, 0, wxLEFT | wxRIGHT | wxTOP, 10);
 	
-	if ($os->name eq 'win') {
+	if (main::ISWINDOWS) {
 		require Win32::TieRegistry;
 		$Win32::TieRegistry::Registry->Delimiter('/');
 		my $serviceUser = $Win32::TieRegistry::Registry->{'LMachine/SYSTEM/CurrentControlSet/Services/squeezesvc/ObjectName'} || '';
@@ -259,7 +258,7 @@ sub new {
 	
 	my $progressSizer = Wx::BoxSizer->new(wxHORIZONTAL);
 
-	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, Slim::Utils::OSDetect->isWindows() ? 20 : -1]);
+	$progressBar = Wx::Gauge->new($parent, -1, 100, [-1, -1], [-1, main::ISWINDOWS ? 20 : -1]);
 	$progressSizer->Add($progressBar, 1, wxGROW);
 
 	$progressTime = Wx::StaticText->new($parent, -1, '00:00:00');

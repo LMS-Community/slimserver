@@ -46,7 +46,7 @@ sub new {
 		-1,
 		$initialSetup ? string('WELCOME_TO_SQUEEZEBOX_SERVER') : string('CONTROLPANEL_TITLE'),
 		[-1, -1],
-		Slim::Utils::OSDetect::isWindows() ? [550, 610] : [700, 700],
+		main::ISWINDOWS ? [550, 610] : [700, 700],
 		wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCAPTION | wxCLOSE_BOX | wxSYSTEM_MENU | wxRESIZE_BORDER,
 		'WELCOME_TO_SQUEEZEBOX_SERVER'
 	);
@@ -162,7 +162,7 @@ sub _fixIcon {
 	my $self = shift;
 	my $iconFile = shift;
 
-	return unless Slim::Utils::OSDetect::isWindows();
+	return unless main::ISWINDOWS;
 
 	# set the application icon
 	my $file = "../platforms/win32/res/$iconFile";

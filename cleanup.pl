@@ -35,8 +35,9 @@ use Socket;
 use utf8;
 
 use constant SLIM_SERVICE => 0;
-use constant SCANNER => 0;
-use constant DEBUG => 1;
+use constant SCANNER      => 0;
+use constant DEBUG        => 1;
+use constant ISWINDOWS    => ( ($^O =~ /Win32/) ? 1 : 0 );
 
 # load these later, don't need them right now
 require File::Path;

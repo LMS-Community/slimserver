@@ -22,7 +22,7 @@ use Slim::Utils::OSDetect;
 my $os = Slim::Utils::OSDetect::getOS();
 my $versionFile = catfile( scalar($os->dirsFor('updates')), 'server.version' );
 
-if ($os->name eq 'win') {
+if (main::ISWINDOWS) {
 	require Win32::Process;
 }
 
@@ -36,7 +36,7 @@ sub new {
 
 	my $mainSizer = Wx::BoxSizer->new(wxVERTICAL);
 	
-	if ($os->name eq 'win') {
+	if (main::ISWINDOWS) {
 
 		# check for SC updates
 		my $updateSizer = Wx::StaticBoxSizer->new(
