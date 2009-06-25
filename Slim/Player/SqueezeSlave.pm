@@ -67,7 +67,7 @@ sub hasIR { 1 }
 sub formats {
 	my $client = shift;
 	
-	return qw(ogg flc wav mp3);
+	return qw(ogg flc pcm mp3);
 }
 
 # The original Squeezebox2 firmware supported a fairly narrow volume range
