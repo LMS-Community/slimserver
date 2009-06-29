@@ -24,15 +24,17 @@ my $os = Slim::Utils::OSDetect->getOS();
 my $versionFile;
 
 sub checkVersion {
-	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
-
 	# clean up old download location
 	Slim::Utils::Misc::deleteFiles($prefs->get('cachedir'), qr/^(?:Squeezebox|SqueezeCenter).*\.(dmg|exe)(\.tmp)?$/i);			
+
+	return unless $prefs->get('checkVersion');
+
+	$versionFile = catdir( scalar($os->dirsFor('updates')), 'server.version' );
 
 	# reset update download status in case our system is up to date
 	my $installer = getUpdateInstaller() || '';
 	
-	if ( isUpToDate($installer) || !$prefs->get('checkVersion') ) {
+	if ( isUpToDate($installer) ) {
 		
 		$log->info("We're up to date (v$::VERSION, r$::REVISION). Reset update notifiers.") if $prefs->get('checkVersion');
 		
@@ -243,6 +245,7 @@ sub setUpdateInstaller {
 
 sub getUpdateInstaller {
 	
+	logBacktrace('');
 	$log->debug("Reading update installer path from $versionFile");
 	
 	open(UPDATEFLAG, $versionFile) || return '';
