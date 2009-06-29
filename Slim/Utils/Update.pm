@@ -245,7 +245,6 @@ sub setUpdateInstaller {
 
 sub getUpdateInstaller {
 	
-	logBacktrace('');
 	$log->debug("Reading update installer path from $versionFile");
 	
 	open(UPDATEFLAG, $versionFile) || return '';
