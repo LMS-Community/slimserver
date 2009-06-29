@@ -37,7 +37,7 @@ BEGIN {
 		$hasXS = 0;
 		eval {
 			require Class::XSAccessor::Array;
-			die if $Class::XSAccessor::Array::VERSION lt '0.05';
+			die if $Class::XSAccessor::Array::VERSION ne '0.05';
 			$hasXS = 1;
 		};
 	
