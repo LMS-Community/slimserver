@@ -323,7 +323,6 @@ sub clearProgressInfo {
 
 	for my $prog (Slim::Schema->rs('Progress')->search({ 'type' => 'importer' })->all) {
 		$prog->delete;
-		$prog->update;
 	}
 }
 
