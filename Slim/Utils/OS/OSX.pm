@@ -344,7 +344,7 @@ sub signalUpdateReady {
 	my $updater = Slim::Utils::Update::getUpdateInstaller();
 			
 	unless ($updater && -e $updater) {	
-		Slim::Utils::Log::logger('server.update')->info("Updater file '$updater' not found!");
+		Slim::Utils::Log::logger('server.update')->info("Updater file '$updater' not found!") if $updater;
 		return;
 	}
 
