@@ -606,6 +606,13 @@ sub mixerCommand {
 		my $newval;
 		my $oldval = $prefs->client($client)->get($entity);
 
+		# if the player is muted and the volume changed, unmute first
+		# we're resetting the volume to 0 to mimick the IR behaviour in case of relative changes
+		if ($entity eq 'volume' && $prefs->client($client)->get('mute')) {
+			$prefs->client($client)->set('mute', 0);
+			$oldval = 0;
+		}
+
 		if ($newvalue =~ /^[\+\-]/) {
 			$newval = $oldval + $newvalue;
 		} else {
