@@ -842,7 +842,7 @@ sub volume {
 			$volume = $client->maxVolume;
 		}
 
-		if ($volume < $client->minVolume) {
+		if ($volume < $client->minVolume && !$prefs->client($client)->get('mute')) {
 			$volume = $client->minVolume;
 		}
 
