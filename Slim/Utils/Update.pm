@@ -170,6 +170,8 @@ sub getUpdate {
 		my $tmpFile = "$file.tmp";
 
 		setUpdateInstaller();
+		
+		$log->debug("Downloading...\n   URL:      $url\n   Save as:  $tmpFile\n   Filename: $file");
 
 		# Save to a tmp file so we can check SHA
 		my $download = Slim::Networking::SimpleAsyncHTTP->new(
@@ -199,7 +201,10 @@ sub downloadAsyncDone {
 	my $path    = $params->{'path'};
 	
 	# make sure we got the file
-	return if !-e $tmpFile;
+	if (!-e $tmpFile) {
+		$log->warn("Squeezebox Server installer download failed: file '$tmpFile' not stored on disk?!?");
+		return;
+	}
 
 	if (-s _ != $http->headers->content_length()) {
 		$log->warn( sprintf("Squeezebox Server installer file size mismatch: expected size %s bytes, actual size %s bytes", $http->headers->content_length(), -s _) );
@@ -209,9 +214,19 @@ sub downloadAsyncDone {
 
 	cleanup($path);
 
-	$log->info("Successfully downloaded update installer file. Saving as $file");
-	rename $tmpFile, $file;
-	setUpdateInstaller($file) if -e $file;
+	$log->info("Successfully downloaded update installer file '$tmpFile'. Saving as $file");
+	unlink $file;
+	my $success = rename $tmpFile, $file;
+	
+	if (-e $file) {
+		setUpdateInstaller($file) ;
+	}
+	elsif (!$success) {
+		$log->warn("Renaming '$tmpFile' to '$file' failed.");
+	}
+	else {
+		$log->warn("There was an unknown error downloading/storing the update installer.");
+	}
 	
 	if ($params && ref($params->{cb}) eq 'CODE') {
 		$params->{cb}->($file);

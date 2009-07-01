@@ -342,13 +342,19 @@ sub getUpdateParams {
 sub signalUpdateReady {
 			
 	my $updater = Slim::Utils::Update::getUpdateInstaller();
+	my $log     = Slim::Utils::Log::logger('server.update');
 			
 	unless ($updater && -e $updater) {	
-		Slim::Utils::Log::logger('server.update')->info("Updater file '$updater' not found!") if $updater;
+		if ($updater) {
+			$log->info("Updater file '$updater' not found!");
+		}
+		else {
+			$log->info("No updater file found!");
+		}
 		return;
 	}
 
-	Slim::Utils::Log::logger('server.update')->debug("Notify '$updater' is ready to be installed");
+	$log->debug("Notify '$updater' is ready to be installed");
 		
 	Slim::Utils::Timers::killTimers(undef, \&signalUpdateReady);
 	Slim::Utils::Timers::killTimers(undef, \&_signalUpdateReady);
