@@ -262,7 +262,10 @@ sub getUpdateInstaller {
 	
 	$log->debug("Reading update installer path from $versionFile");
 	
-	open(UPDATEFLAG, $versionFile) || return '';
+	open(UPDATEFLAG, $versionFile) || do {
+		$log->warn("Failure reading '$versionFile'");
+		return '';	
+	};
 	
 	my $updateInstaller = '';
 	
