@@ -21,7 +21,7 @@ use File::Which;
 
 # NOTE: If you change this in a future version of SC, create a new
 # versioned directory under vendor/src for all files for that version
-my $SOURCE = 'http://svn.slimdevices.com/repos/slim/vendor/src/7.3';
+my $SOURCE = 'http://svn.slimdevices.com/repos/slim/7.4/trunk/vendor/CPAN/';
 my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
@@ -40,6 +40,7 @@ my %packages = (
 	'XML::Parser::Expat'       => 'XML-Parser-2.34.tar.gz',
 	'YAML::Syck'               => 'YAML-Syck-0.64.tar.gz',
 	'GD'                       => 'GD-2.35.tar.gz',
+	'Sub::Name'                => 'Sub-Name-0.04.tar.gz',
 );
 
 # Don't need Class::C3::XS if you're running 5.10
