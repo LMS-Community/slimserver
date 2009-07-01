@@ -10,13 +10,13 @@ use base 'Wx::Panel';
 
 use Encode;
 use Wx qw(:everything);
-use Wx::Event qw(EVT_BUTTON EVT_CHOICE);
+use Wx::Event qw(EVT_BUTTON EVT_CHOICE EVT_TEXT);
 
 use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
-my ($progressPoll, $btnRescan);
+my ($progressPoll, $btnRescan, $setStartupMode);
 
 sub new {
 	my ($self, $nb, $parent) = @_;
@@ -128,10 +128,16 @@ sub new {
 		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_USERNAME') . string('COLON')));
 		my $username = Wx::TextCtrl->new($self, -1, $serviceUser, [-1, -1], [150, -1]);
 		$credentialsSizer->Add($username);
+		EVT_TEXT($self, $username, sub {
+			$setStartupMode = 1;
+		});
 	
 		$credentialsSizer->Add(Wx::StaticText->new($self, -1, string('SETUP_PASSWORD') . string('COLON')));
 		my $password = Wx::TextCtrl->new($self, -1, '', [-1, -1], [150, -1], wxTE_PASSWORD);
 		$credentialsSizer->Add($password);
+		EVT_TEXT($self, $password, sub {
+			$setStartupMode = 1;
+		});
 	
 		$startupSizer->Add($credentialsSizer, 0, wxALL, 10);
 		
@@ -153,17 +159,24 @@ sub new {
 		});
 		
 		&$handler();
-		EVT_CHOICE($self, $lbStartupMode, $handler);
+		EVT_CHOICE($self, $lbStartupMode, sub {
+			$setStartupMode = 1;
+			&$handler();
+		});
 
 		# overwrite action handler for startup mode
 		$parent->addApplyHandler($lbStartupMode, sub {
 		
-			$svcMgr->setStartupType(
-				$lbStartupMode->GetSelection(),
-				$username->GetValue(),
-				$password->GetValue(),
-			);
-			
+			if ($setStartupMode) {
+
+				$svcMgr->setStartupType(
+					$lbStartupMode->GetSelection(),
+					$username->GetValue(),
+					$password->GetValue(),
+				);
+			}
+
+			$setStartupMode = 0;
 		});
 			
 	}
