@@ -119,7 +119,10 @@ sub saveSettings {
 	
 	my @delete = @{ ref $params->{delete} eq 'ARRAY' ? $params->{delete} : [ $params->{delete} ] };
 
-	for my $deleteItem  (@delete ) {
+	for my $deleteItem (@delete) {
+		
+		next unless defined $deleteItem;
+		
 		my $i = 0;
 		while ( $i < scalar @{$feeds} ) {
 			if ( $deleteItem eq $feeds->[$i]->{value} ) {
