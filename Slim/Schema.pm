@@ -2040,7 +2040,8 @@ sub _preCheckAttributes {
 	}
 
 	if ( !main::SLIM_SERVICE ) {
-		# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
+		# The ARTISTSORT and ALBUMARTISTSORT tags are normalized in Contributor->add()
+		# since the tag may need to be split.  See bugs #295 and #4584.
 		#
 		# Push these back until we have a Track object.
 		for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
@@ -2048,6 +2049,7 @@ sub _preCheckAttributes {
 			COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
 			MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID MUSICBRAINZ_ALBUM_ID 
 			MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+			ALBUMARTISTSORT
 		)) {
 
 			next unless defined $attributes->{$tag};
