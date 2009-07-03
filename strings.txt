@@ -21038,6 +21038,21 @@ CONTROLPANEL_CONFLICT_SCPERL
 	NO	Hvis du kjører SC med perl-versjonen, er dette greit og forventet.
 	SV	Om du kör du perlversionen av SC är detta inget fel, utan OK och förväntat.
 
+CONTROLPANEL_OTHER_ISSUE
+	EN	Possible software conflict found
+	DA	Der er fundet en mulig softwarekonflikt
+	DE	Möglicher Software-Konflikt gefunden
+	ES	Encontrado posible conflicto de software
+	FI	Löytyi mahdollinen ohjelmiston ristiriita
+	FR	Conflit logiciel possible détecté
+	IT	Possibile conflitto software rilevato
+	NL	Mogelijk softwareconflict gevonden
+	NO	Mulig programvarekonflikt oppdaget
+	SV	Eventuellt programvarukonflikt upptäcktes
+
+CONTROLPANEL_OTHER_ISSUE_ESETPORTFILTERING
+	EN	ESET Antivirus or Smart Security can cause problems starting Squeezebox Server. If you experience failure starting Squeezebox Server, then make sure you have unchecked port filtering for SqueezeboxSvr.exe in ESET Advanced Settings/Antivirus and antispyware/Web access protection/HTTP, HTTPS/Web browsers.
+
 CONTROLPANEL_REFRESH
 	CS	Obnovit
 	DA	Opdater

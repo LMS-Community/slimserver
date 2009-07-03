@@ -93,8 +93,24 @@ sub new {
 				
 				$alertBox->AppendText("\n\n");
 			}
+
 		}
 		
+		# on Windows we want to look out for other potential offenders...
+		elsif (main::ISWINDOWS && !$isRunning && (my $conflicts = $self->getConflictingApp('Other'))) {
+			$alertBox->AppendText(string('CONTROLPANEL_OTHER_ISSUE'));
+				
+			foreach (keys %$conflicts) {
+				my $conflict = $conflicts->{$_};
+
+				$alertBox->AppendText("\n* " . ($conflict->{ProgramName} || $conflict->{ProgramName}));
+				$alertBox->AppendText(string('COLON') . ' ' . string('CONTROLPANEL_OTHER_ISSUE_' . uc($conflict->{Help}))) if $conflict->{Help};
+			}
+				
+			$alertBox->AppendText("\n\n");
+			
+		}
+				
 		return $stateString;
 	});
 
