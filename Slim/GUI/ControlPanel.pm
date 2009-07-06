@@ -122,7 +122,7 @@ sub new {
 	my $btnCancel = Wx::Button->new( $panel, wxID_CANCEL, string('CANCEL') );
 
 	EVT_BUTTON( $self, $btnCancel, sub {
-		Slim::Utils::OS::Win32->cleanupTempDirs();
+		Slim::Utils::OS::Win32->cleanupTempDirs() if main::ISWINDOWS;
 		$_[0]->Destroy;
 	} );
 
