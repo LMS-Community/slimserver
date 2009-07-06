@@ -64,7 +64,7 @@ sub new {
 	$btnOk = Slim::GUI::ControlPanel::OkButton->new( $panel, wxID_OK, string('OK') );
 	EVT_BUTTON( $self, $btnOk, sub {
 		$btnOk->do($svcMgr->checkServiceState());
-		Slim::Utils::OS::Win32->cleanupTempDirs();
+		Slim::Utils::OS::Win32->cleanupTempDirs() if main::ISWINDOWS;
 		$_[0]->Destroy;
 	} );
 
