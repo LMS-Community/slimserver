@@ -1,25 +1,38 @@
 # String file for PreventStandby plugin
 
 PLUGIN_PREVENTSTANDBY
-	CS	Windows: Zabránit přechodu systému do pohotovostního režimu během přehrávání
+	CS	Windows: Zabránit přechodu systému do pohotovostního režimu
 	EN	Windows: Prevent System Standby
-	PL	Windows: zapobiegaj przejściu do trybu gotowości podczas odtwarzania
-	RU	Windows: не переходить в ждущий режим во время воспроизведения
+	PL	Windows: zapobiegaj przejściu systemu do trybu wstrzymania
+	RU	Windows: не переходить в режим ожидания
 
 PLUGIN_PREVENTSTANDBY_DESC
-	CS	Zabránit zařízením s Windows v přechodu do pohotovostního režimu.
+	CS	Tento plugin monitoruje vaše přehrávače Squeezebox a zabrání systému v přechodu do úsporného pohotovostního režimu při přehrávání hudby, v průběhu prohledávání Squeezebox Server, při aktualizaci přehrávačů atd. Zabrání také systému v přechodu do pohotovostního režimu po dvou minutách od dálkového spuštění počítače přes LAN.
 	EN	This plugin monitors your SqueezeBox players and prevents the system from going into power saving standby mode while music is playing, Squeezebox Server is scanning, players are updating, etc. It will also prevent the system from prematurely going into standby two minutes after wake-on-lan.
-	PL	Zapobiegaj przejściu komputerów z systemem Windows do trybu gotowości.
-	RU	Не допускать перехода компьютеров Windows в режим ожидания.
+	PL	Ten dodatek monitoruje odtwarzacze SqueezeBox i zapobiega przejściu systemu do trybu wstrzymania w celu oszczędzania energii, kiedy odtwarzana jest muzyka, program Squeezebox Server wykonuje przeszukiwanie, trwa aktualizacja odtwarzaczy itp. Dodatek uniemożliwi także przedwczesne przejście do trybu wstrzymania po upływie dwóch minut od zadziałania funkcji wake-on-lan.
+	RU	Этот плагин выполняет мониторинг плееров SqueezeBox и предотвращает переход в энергосберегающий режим ожидания во время воспроизведения музыки, сканирования Squeezebox Server, обновления плееров и др. Он также не позволяет преждевременно переходить в режим ожидания через две минуты после пробуждения по сети.
 
 PLUGIN_PREVENTSTANDBY_IDLETIME
+	CS	Po kolika minutách nečinnosti povolit pohotovostní režim?
 	EN	Allow standby after how many idle minutes?
+	PL	Zezwalaj na tryb wstrzymania po upływie ilu minut bezczynności?
+	RU	Через сколько минут простоя переходить в режим ожидания?
 
 PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
+	CS	Zadejte počet minut (po zastavení přehrávání nebo po obnovení systému), po kterém tento plugin znovu povolí přechod systému do pohotovostního systému. K úplnému zákazu automatického přechodu tohoto systému do pohotovostního systému zadejte 0 (nulu).
 	EN	Enter the number of minutes (after playing stops or after the system resumes) at the end of which the plugin will again allow the system to go into standby. Enter 0 (zero) to completely prohibit automatic standby on this system.
+	PL	Wprowadź liczbę minut (od zakończenia odtwarzania lub wznowienia pracy systemu), po upływie których dodatek umożliwi systemowi ponowne przejście do trybu wstrzymania. Wprowadź wartość 0 (zero), aby całkowicie wyłączyć automatyczne przechodzenie w tryb wstrzymania w tym systemie.
+	RU	Введите число минут (после остановки воспроизведения или после возобновления работы системы), по истечении которых плагин вновь разрешит переход в режим ожидания. Введите 0 (ноль), чтобы полностью запретить автоматический переход в режим ожидания.
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON
+	CS	Zakázat pohotovostní režim při zapnutých přehrávačích?
 	EN	Prohibit standby if players are on?
+	PL	Uniemożliwić tryb wstrzymania, kiedy odtwarzacze są włączone?
+	RU	Запретить переход в режим ожидания во время работы плееров?
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
+	CS	Povolit toto nastavení k zákazu pohotovostního režimu systému při zapnutých přehrávačích, tzn. nezobrazení hodin.
 	EN	Enable this setting to prohibit system standby while players are turned on, i.e. not displaying the clock.
+	PL	Włącz to ustawienie, aby uniemożliwić tryb wstrzymania systemu, kiedy odtwarzacze są włączone (tzn. nie wyświetlają zegara).
+	RU	Включите этот параметр, чтобы запретить переход в режим ожидания во время работы плееров (когда не отображаются часы).
+

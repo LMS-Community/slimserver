@@ -34,7 +34,7 @@ PLUGIN_DIGITAL_INPUT_DESC
 	SV	Digital ingång för Transporter
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
-	CS	Balanced AES/EBU
+	CS	Vyvážený AES/EBU
 	DA	Afbalanceret AES/EBU
 	DE	AES/EBU symmetrisch
 	EN	Balanced AES/EBU

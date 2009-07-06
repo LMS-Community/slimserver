@@ -29,14 +29,18 @@ PLUGIN_CLASSICAL_MODULE_NAME_DESC
 	SV	Classical.com är en tjänst som ger tillgång till världens största utbud av nischad musik: klassiskt, jazz & blues och världsmusik.
 
 PLUGIN_CLASSICAL_ERROR
+	CS	Chyba služby Classical.com
 	EN	Classical.com Error
 	ES	Error de Classical.com
 	FI	Classical.comin virhe
 	FR	Erreur Classical.com
 	IT	Errore di Classical.com
 	NO	Feil med Classical.com
+	PL	Błąd usługi Classical.com
+	RU	Ошибка Classical.com
 
 PLUGIN_CLASSICAL_NO_INFO
+	CS	Není možné načíst informace o proudu.
 	DA	Der kunne ikke hentes oplysninger om streamen.
 	DE	Stream-Info kann nicht abgerufen werden.
 	EN	Unable to retrieve stream info.
@@ -46,9 +50,12 @@ PLUGIN_CLASSICAL_NO_INFO
 	IT	Impossibile recuperare le informazioni sullo stream.
 	NL	Kan stroominfo niet ophalen.
 	NO	Kan ikke hente avspillingsinformasjon.
+	PL	Nie można pobrać informacji o strumieniu.
+	RU	Невозможно извлечь информацию о потоке.
 	SV	Det gick inte att hämta ströminformationen.
 
 PLUGIN_CLASSICAL_STREAM_FAILED
+	CS	Selhání zvukového proudu, přechod na další stopu.
 	DA	Fejl i lydstream, springer til næste spor.
 	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
 	EN	Audio stream failed, skipping to next track.
@@ -58,4 +65,7 @@ PLUGIN_CLASSICAL_STREAM_FAILED
 	IT	Errore di stream audio. Passaggio al brano seguente.
 	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
 	NO	Lyddatastrøm mislyktes, hopper til neste spor.
+	PL	Przesłanie strumienia audio nie powiodło się, przechodzenie do następnego utworu.
+	RU	Сбой аудиопотока. Переход на следующую дорожку.
 	SV	Ljudströmmen fungerar inte, hoppar till nästa spår.
+

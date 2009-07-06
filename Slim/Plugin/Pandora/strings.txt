@@ -973,7 +973,7 @@ PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
 	SV	Ogiltigt användarnamn eller lösenord Gå till %s och uppdatera din kontoinformation.
 
 PLUGIN_PANDORA_AUTH_INVALID_TOKEN
-	CS	Neplatná autorizační známka, zkuste znovu později.
+	CS	Neplatný autentizační token, zkuste to prosím znovu.
 	DA	Ugyldigt godkendelsestoken. Prøv igen.
 	DE	Auth-Token ungültig, versuchen Sie es noch einmal.
 	EN	Invalid auth token, please try again.

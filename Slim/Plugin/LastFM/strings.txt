@@ -92,7 +92,7 @@ PLUGIN_LFM_SKIPS_EXCEEDED
 	SV	Du har använt alla dina överhoppningar för den här timmen. Du kan hoppa över låtar senare.
 
 PLUGIN_LFM_LOVE
-	CS	Tuhle stopu si oblíbíš
+	CS	Miluji tuto skladbu
 	DA	Jeg er vild med dette nummer
 	DE	Diesen Titel lieben
 	EN	Love this track

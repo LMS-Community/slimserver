@@ -134,7 +134,7 @@ PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
 	SV	Välj en Squeezebox 2 / 3 eller Transporter där Rhapsody ska användas.
 
 PLUGIN_RHAPSODY_DIRECT_US_ONLY
-	CS	Promiňte, Rhapsody je v současnosti dostupné pouze v USA.
+	CS	Omlouváme se, Rhapsody je nyní dostupná pouze v USA.
 	DA	Beklager, men Rhapsody kan foreløbig kun benyttes i USA.
 	DE	Rhapsody ist leider derzeit nur in den USA verfügbar.
 	EN	Sorry, Rhapsody is currently available in the U.S. only.

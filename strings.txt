@@ -86,7 +86,10 @@ CREDITS
 	ZH_CN	Kok-Bin Lee
 
 COPYRIGHT
+	CS	© 2001-2009 Logitech Verze 7.4.0
 	EN	© 2001-2009 Logitech Version 7.4.0
+	PL	© 2001-2009 Logitech wersja 7.4.0
+	RU	© Logitech, 2001-2009. Версия 7.4.0
 
 CHOOSE_A_LANGUAGE
 	CS	Zvolte prosím jazyk
@@ -108,7 +111,7 @@ CHOOSE_A_LANGUAGE
 	ZH_CN	请选择语言
 
 LOADING_SQUEEZEBOX_SERVER
-	CS	Zavádění Squeezebox Server...
+	CS	Nahrávání Squeezebox Server...
 	DA	Indlæser Squeezebox Server...
 	DE	Squeezebox Server wird geladen...
 	EN	Loading Squeezebox Server...
@@ -118,12 +121,12 @@ LOADING_SQUEEZEBOX_SERVER
 	IT	Caricamento di Squeezebox Server in corso...
 	NL	Squeezebox Server wordt geladen...
 	NO	Laster Squeezebox Server...
-	PL	Ładowanie programu Squeezebox Server...
-	RU	Загрузка Squeezebox Server...
+	PL	Trwa ładowanie programu Squeezebox Server...
+	RU	Squeezebox Server загружается...
 	SV	Läser in Squeezebox Server ...
 
 EN_SKIN
-	CS	Lehká
+	CS	Tenké
 	DA	Let
 	DE	Light
 	EN	Light
@@ -289,7 +292,7 @@ ABOUT_SLIMDEVICES
 #
 
 SLIMP3_HOME
-	CS	Domů SLIMP3
+	CS	SLIMP3 Doma
 	DA	SLIMP3 Hovedmenu
 	DE	SLIMP3 Hauptmenü
 	EN	SLIMP3 Home
@@ -308,7 +311,7 @@ SLIMP3_HOME
 	ZH_CN	SLIMP3主页
 
 SQUEEZEBOX_HOME
-	CS	Squeezebox Domů
+	CS	Squeezebox Doma
 	DA	Squeezebox Hovedmenu
 	DE	Squeezebox-Hauptmenü
 	EN	Squeezebox Home
@@ -327,7 +330,7 @@ SQUEEZEBOX_HOME
 	ZH_CN	Squeezebox主页
 
 SQUEEZEBOX2_HOME
-	CS	Squeezebox Domů
+	CS	Squeezebox Doma
 	DA	Squeezebox Hovedmenu
 	DE	Squeezebox-Hauptmenü
 	EN	Squeezebox Home
@@ -364,7 +367,7 @@ TRANSPORTER_HOME
 	SV	Transporter Hem
 
 SOFTSQUEEZE_HOME
-	CS	Domů SoftSqueeze
+	CS	SoftSqueeze Doma
 	DA	SoftSqueeze Hovedmenu
 	DE	SoftSqueeze-Hauptmenü
 	EN	SoftSqueeze Home
@@ -456,7 +459,7 @@ SETTINGS
 	ZH_CN	设置
 
 EMPTY
-	CS	Empty (Prázdné)
+	CS	Prázdné
 	DA	Tom
 	DE	Leer
 	EN	Empty
@@ -906,7 +909,7 @@ REMOVING_FROM_PLAYLIST
 	ZH_CN	正在从播放表中删除：
 
 ZAPPING_FROM_PLAYLIST
-	CS	Přesun do seznamu vymazaných (zapped) skladeb:
+	CS	Přesun do seznamu přepínaných skladeb:
 	DA	Flytter til afspilningslisten med numre der er sprunget over:
 	DE	In die Liste 'Gezappte Titel' verschieben:
 	EN	Moving to Zapped Songs playlist:
@@ -925,7 +928,7 @@ ZAPPING_FROM_PLAYLIST
 	ZH_CN	迁往废弃播放表中：
 
 ZAPPED_SONGS
-	CS	Vymazané Skladby (Zapped)
+	CS	Přepnuté Skladby
 	DA	Numre der er sprunget over
 	DE	Gezappte Titel
 	EN	Zapped Songs
@@ -1531,7 +1534,7 @@ COLLAPSE
 	SV	Komprimera
 
 UNDOCK_PLAYER_PANEL
-	CS	Uvolnit panel přehrávače
+	CS	Vyjmout panel přehrávače
 	DA	Frigør afspillerpanelet
 	DE	Player Panel in eigenem Fenster öffnen
 	EN	Undock player panel
@@ -2429,7 +2432,7 @@ WELCOME_TO_SLIMP3
 	ZH_CN	欢迎使用SLIMP3
 
 WELCOME_TO_SQUEEZEBOX_SERVER
-	CS	Vítejte ve Squeezebox Server
+	CS	Vítejte do Squeezebox Server
 	DA	Velkommen til Squeezebox Server
 	DE	Willkommen bei Squeezebox Server
 	EN	Welcome to Squeezebox Server
@@ -2441,9 +2444,9 @@ WELCOME_TO_SQUEEZEBOX_SERVER
 	JA	Squeezebox Serverへようこそ
 	NL	Welkom bij Squeezebox Server
 	NO	Velkommen til Squeezebox Server
-	PL	Squeezebox Server - Zapraszamy
+	PL	Squeezebox Server — Zapraszamy
 	PT	Bem-vindo ao Squeezebox Server
-	RU	Добро пожаловать в Squeezebox Server!
+	RU	Добро пожаловать в Squeezebox Server
 	SV	Välkommen till Squeezebox Server!
 	ZH_CN	欢迎使用Squeezebox Server
 
@@ -2599,7 +2602,7 @@ WELCOME_TO_CONTROLLER
 	SV	Välkommen till Controller
 
 LOGIN
-	CS	Přihlásit se
+	CS	Zaregistrovat
 	DA	Log på
 	DE	Anmelden
 	EN	Sign In
@@ -2787,7 +2790,7 @@ GETTING_STREAM_INFO
 	SV	Hämtar signalinformation ...
 
 GETTING_TRACK_DETAILS
-	CS	Vyvolávání podrobností stopy...
+	CS	Získávám podrobnosti o stopě...
 	DA	Henter detaljer om nummer...
 	DE	Titelinfos werden geladen...
 	EN	Fetching track details...
@@ -3481,7 +3484,7 @@ SETUP_GROUP_TCP_PARAMS
 	ZH_CN	TCP参数
 
 SETUP_GROUP_TCP_PARAMS_DESC
-	CS	tato nastavení upravují parametry sítě TCP/IP ve Squeezebox Server.
+	CS	Tato nastavení upravují parametry sítě TCP/IP ve Squeezebox Server.
 	DA	Disse indstillinger påvirker hvordan Squeezebox Server håndterer TCP/IP-parametrene.
 	DE	Diese Einstellung passt die TCP/IP-Netzwerk-Einstellungen des Squeezebox Servers an.
 	EN	These settings adjust the parameters of the TCP/IP networking in Squeezebox Server.
@@ -3871,7 +3874,10 @@ SETUP_GROUP_PLUGINS_NEEDS_RESTART
 	SV	Du måste starta om för att ändringen ska börja gälla.
 
 SETUP_PLUGINS_SAFEMODE
+	CS	Vezměte na vědomí: protože Squeezebox Server běží v bezpečném režimu, nejsou k dispozici pluginy. Můžete je stále povolit / zakázat za účelem nápravy problémů, které máte s instalací.
 	EN	Please note: as you're running Squeezebox Server in safe mode, the plugins are not available. You can still enable/disable them in order to fix problems you have with your installation.
+	PL	Uwaga: po uruchomieniu programu Squeezebox Server w trybie bezpiecznym dodatki będą niedostępne. Możliwe jest włączenie lub wyłączenie tych dodatków, aby rozwiązać problemy z instalacją.
+	RU	Примечание: поскольку Squeezebox Server выполняется в безопасном режиме, плагины недоступны. Но их по-прежнему можно включать и отключать, чтобы решить проблемы с установкой.
 
 INSTALLERROR_INVALID_VERSION
 	CS	Tento zásuvný modul není kompatibilní s touto verzí Squeezebox Server. Prosím aktualizujte.
@@ -4821,7 +4827,7 @@ SETUP_MAXWMARATE_DESC
 	IT	Per eseguire lo streaming di alcuni stream WMA sono disponibili diversi bitrate. Per impostazione predefinita in Squeezebox Server viene utilizzato lo stream con il bitrate più elevato, ma se si dispone di una connessione a Internet lenta, è possibile impostare qui un valore più basso per limitare la velocità massima selezionabile per questi stream con velocità molteplici.
 	NL	Sommige WMA-streams hebben meerdere bitsnelheden voor streaming. Squeezebox Server selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 	NO	Enkelte WMA-strømmer kan strømmes med ulike bithastigheter. Squeezebox Server velger som standard den høyeste bithastigheten som er tilgjengelig, men hvis du har en treg Internett-forbindelse, kan du angi en lavere verdi her, som forteller Squeezebox Server makshastigheten den kan velge.
-	PL	W niektóre strumieniach WMA dostępnych jest kilka szybkości transmisji bitów do przesyłania strumieniowego. Domyślnie program Squeezebox Server wybierz strumień z najwyższą dostępną szybkością transmisji bitów, ale jeżeli używane jest wolniejsze połączenie internetowe, można w tym miejscu ustawić niższą wartość w celu ograniczenia maksymalnej szybkości, jaką można wybrać w przypadku strumieni o kilku szybkościach.
+	PL	W niektóre strumieniach WMA dostępnych jest kilka szybkości transmisji bitów do przesyłania strumieniowego. Domyślnie program Squeezebox Server wybierze strumień z najwyższą dostępną szybkością transmisji bitów, ale jeżeli używane jest wolniejsze połączenie internetowe, można w tym miejscu ustawić niższą wartość w celu ograniczenia maksymalnej szybkości, jaką można wybrać w przypadku strumieni o kilku szybkościach.
 	RU	В некоторых потоках WMA доступно несколько битрейтов для потокового воспроизведения. По умолчанию Squeezebox Server выбирает поток с самым высоким битрейтом. Но при медленном соединении с Интернетом можно выбрать более низкое значение, ограничив максимальное из доступных значений битрейта.
 	SV	Vissa WMA-strömmar har flera olika bithastigheter.  Som standard väljer Squeezebox Server den högsta tillgängliga bithastigheten. Om du har en långsammare internetuppkoppling kan du ange ett lägre värde här, så sänks gränsen för hur snabba hastigheter som kan väljas.
 
@@ -5118,7 +5124,7 @@ SETUP_MAXBITRATE
 	ZH_CN	限制比特率
 
 SETUP_MAXBITRATE_DESC
-	CS	Squeezebox Server může automaticky konvertovat vaše hudební soubory do WAV/AIFF nebo MP3 průběžně a snížit tak přenosovou rychlost (bitrate) dat přenášených datovým proudem do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač ke Squeezebox Server přes Internet nebo máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost (bitrate), jakou bude Squeezebox Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na přenosovou rychlost (bitrate) nižší hodnota níže nebudou konvertovány. Pokud zvolíte Bez omezení, Squeezebox Server bude posílat datový proud vašich MP3 souborů bez konverze a vaše souboru jiných typů jako nekomprimované audio PCM.
+	CS	Squeezebox Server může automaticky průběžně konvertovat vaše hudební soubory do formátu WAV/AIFF nebo MP3 a snížit tak přenosovou rychlost dat přenášených datovým proudem do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač k serveru přes Internet nebo máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost, jakou bude Squeezebox Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na přenosovou rychlost nižší než níže uvedená hodnota nebudou konvertovány. Pokud zvolíte Bez omezení, Squeezebox Server bude posílat datový proud vašich MP3 souborů bez konverze a vaše souboru jiných typů jako nekomprimované audio PCM.
 	DA	Squeezebox Server kan automatisk konvertere musikfilerne til wav/aiff eller mp3 med en lavere bithastighed sådan at der ikke sendes så mange data til afspilleren. Det kan være praktisk hvis du etablerer forbindelse til afspilleren over internettet eller midlertidigt har problemer med et trådløst netværk. Du kan vælge den maksimale bithastighed som Squeezebox Server kan sende til afspilleren. Numre der er kodet som mp3 med en lavere bithastighed end den angivne, bliver ikke konverteret. Hvis du vælger Ingen begrænsning, vil Squeezebox Server streame dine mp3-filer uden konvertering og andre filtyper i ukomprimeret PCM-format.
 	DE	Squeezebox Server kann WAV/AIFF- oder MP3-Dateien automatisch während der Wiedergabe in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie den Player übers Internet mit Squeezebox Server verbinden oder Probleme mit dem drahtlosen Netzwerk haben. Sie können die maximale Bitrate definieren, mit der Squeezebox Server an den Player übertragen soll. MP3-Titel, die mit einer geringeren Bitrate kodiert wurden, werden nicht umgewandelt. Wenn Sie 'Keine Beschränkung' wählen, überträgt Squeezebox Server die MP3-Dateien ohne Umwandlung und andere Dateiarten als unkomprimiertes PCM-Audio.
 	EN	Squeezebox Server can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to the server across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that Squeezebox Server will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  If you choose No Limit, the server will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.
@@ -5131,12 +5137,12 @@ SETUP_MAXBITRATE_DESC
 	NL	Squeezebox Server kan je muziekbestanden direct automatisch naar WAV/AIFF of MP3 converteren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als je systeem via het internet met Squeezebox Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Squeezebox Server maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan hieronder aangegeven, worden niet geconverteerd. Als je 'Geen limiet' kiest, stroomt Squeezebox Server MP3-bestanden zonder conversie en andere bestandstypen als niet-gecomprimeerde PCM-audio.
 	NO	Squeezebox Server kan automatisk konvertere musikkfilene til wav/aiff eller mp3 under avspilling for å begrense bithastigheten på datastrømmen til spilleren. Dette kan være nyttig hvis du kopler spilleren til Squeezebox Server over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for Squeezebox Servers strømming til spilleren. Mp3-filer som er kodet med lavere bithastighet enn dette, blir ikke konvertert. Hvis du velger Ubegrenset, strømmer Squeezebox Server mp3-filer uten konvertering, og andre filtyper som ukomprimert pcm-lyd.
 	PL	Program Squeezebox Server może automatycznie przekonwertować w locie pliki WAV/AIFF lub MP3 na niższą szybkość transmisji bitów danych przesyłanych strumieniowo do odtwarzacza. Jest to przydatne w przypadku łączenia odtwarzacza z programem Squeezebox Server przez Internet lub tymczasowych problemów z siecią bezprzewodową. Możliwe jest także wybranie maksymalnej szybkości transmisji bitów danych przesyłanych strumieniowo przez program Squeezebox Server do odtwarzacza. Utwory w formacie MP3 zakodowane z szybkością transmisji bitów niższą niż podana poniżej nie zostaną przekonwertowane. Wybranie opcji Bez ograniczeń spowoduje, że program Squeezebox Server będzie strumieniowo przesyłał pliki MP3 bez konwersji, a pliki innych typów jako nieskompresowany dźwięk PCM.
-	RU	Squeezebox Server может автоматически преобразовывать музыкальные файлы в формат WAV/AIFF или MP3 в режиме реального времени, чтобы уменьшить битрейт данных, передаваемых плееру. Это удобно при подключении плеера к Squeezebox Server через Интернет или неустойчивой работе беспроводной сети. Можно задать максимальный битрейт, передаваемый Squeezebox Server на ваш плеер. MP3-песни с битрейтом ниже указанного значения преобразованы не будут. Если выбрать параметр "Без ограничений", Squeezebox Server будет передавать MP3-файлы без преобразования, а другие типы файлов — в виде PCM аудио без сжатия.
+	RU	Squeezebox Server может автоматически преобразовывать музыкальные файлы в формат WAV/AIFF или MP3 в режиме реального времени, чтобы уменьшить битрейт данных, передаваемых плееру. Это удобно при подключении плеера к серверу через Интернет или неустойчивой работе беспроводной сети. Можно задать максимальный битрейт, передаваемый Squeezebox Server на ваш плеер. MP3-песни с битрейтом ниже указанного значения преобразованы не будут. Если выбрать параметр "Без ограничений", Squeezebox Server будет передавать MP3-файлы без преобразования, а другие типы файлов — в виде PCM аудио без сжатия.
 	SV	Squeezebox Server kan automatiskt konvertera dina musikfiler till WAV/AIFF eller mp3 under uppspelning, så att bithastigheten för de data som strömmas till spelaren kan sänkas.  Det kan vara användbart om du ansluter spelaren till Squeezebox Server via internet eller om du har problem med anslutningen till ett trådlöst nätverk.  Du kan ange en maximal bithastighet för de data som Squeezebox Server strömmar till spelaren.  Mp3-låtar som kodats med lägre bithastigheter än detta värde konverteras inte.  Om du väljer Ingen gräns strömmas mp3-filer utan konvertering och andra filtyper som okomprimerad PCM-audio.
 	ZH_CN	Squeezebox Server可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与Squeezebox Server的联系经过互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择Squeezebox Server流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，Squeezebox Server将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
 
 SETUP_MP3BITRATE_DESC
-	CS	Squeezebox Server může automaticky konvertovat vaše hudební soubory do MP3 průběžně a tak přehrávat i jiné formáty než MP3.  Squeezebox Server může rovněž provést rekompresi vači souborů MP3 na nižší přenosovou rychlost (bitrate) dat přenášených v proudu do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač ke Squeezebox Server přes Internet nebo máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost (bitrate), jakou bude Squeezebox Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na přenosovou rychlost (bitrate) nižší hodnota níže nebudou konvertovány.
+	CS	Squeezebox Server může automaticky průběžně konvertovat vaše hudební soubory do MP3 a tak přehrávat i jiné formáty než MP3.  Squeezebox Server může rovněž provést rekompresi vašich souborů MP3 na nižší přenosovou rychlost dat přenášených v proudu do vašeho přehrávače. To je užitečné, pokud připojujete přehrávač ke Squeezebox Server přes Internet nebo máte problémy s přerušováním bezdrátové sítě. Můžete si zvolit maximální přenosovou rychlost, jakou bude Squeezebox Server posílat datový proud do vašeho přehrávače. Skladby MP3 kódované na přenosovou rychlost nižší než níže uvedená hodnota nebudou konvertovány.
 	DA	Squeezebox Server kan løbende konvertere lydfilerne til mp3 sådan at du kan spille lydfiler i andre formater. Squeezebox Server kan også genkomprimere mp3-filerne til en lavere bithastighed sådan at der ikke sendes så mange data til afspilleren. Det kan være praktisk hvis du etablerer forbindelse til afspilleren over internettet eller midlertidigt har problemer med et trådløst netværk. Du kan vælge den maksimale bithastighed som Squeezebox Server kan sende til afspilleren. Numre der er kodet som mp3 med en lavere bithastighed end den angivne, bliver ikke konverteret.
 	DE	Squeezebox Server kann zur Wiedergabe anderer Dateiformate Musikdateien in MP3 umwandeln sowie MP3-Dateien während der Wiedergabe in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie den Player übers Internet mit Squeezebox Server verbinden oder Probleme mit dem drahtlosen Netzwerk haben. Sie können die maximale Bitrate definieren, mit der Squeezebox Server an den Player übertragen soll. MP3-Titel, die mit einer geringeren Bitrate kodiert wurden, werden nicht umgewandelt.
 	EN	Squeezebox Server can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  It can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to the server across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that Squeezebox Server will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.
@@ -5149,7 +5155,7 @@ SETUP_MP3BITRATE_DESC
 	NL	Squeezebox Server kan je muziekbestanden direct automatisch naar MP3 converteren om andere formaten dan MP3 af te spelen. Squeezebox Server kan je MP3-bestanden ook opnieuw comprimeren om gegevens met een lagere bitsnelheid naar je muzieksysteem te streamen. Dit is handig als het systeem via het internet met Squeezebox Server verbonden is, of als je af en toe problemen hebt met een draadloos netwerk. Je kunt kiezen met welke bitsnelheid Squeezebox Server maximaal naar je systeem zal streamen. MP3-liedjes die gecodeerd zijn met een lagere bitsnelheid dan hieronder aangegeven, worden niet geconverteerd.
 	NO	Squeezebox Server kan automatisk konvertere musikkfiler til mp3 under avspilling, slik at du kan spille av andre formater enn mp3. Squeezebox Server kan også komprimere mp3-filene dine for å senke bithastigheten for data som strømmes til spilleren. Dette kan være nyttig hvis du kopler spilleren til Squeezebox Server over Internett, eller hvis du har periodevise problemer med et trådløst nettverk. Du kan angi maksimal bithastighet for Squeezebox Servers strømming til spilleren. Mp3-filer som er kodet med lavere bithastighet enn dette, blir ikke konvertert.
 	PL	Program Squeezebox Server może automatycznie przekonwertować w locie pliki muzyczne na format MP3 w celu odtworzenia formatów innych niż MP3. Program Squeezebox Server może także ponownie skompresować pliki MP3 na niższą szybkość transmisji bitów danych przesyłanych strumieniowo do odtwarzacza. Jest to przydatne w przypadku łączenia odtwarzacza z programem Squeezebox Server przez Internet lub tymczasowych problemów z siecią bezprzewodową. Możliwe jest także wybranie maksymalnej szybkości transmisji bitów danych przesyłanych strumieniowo przez program Squeezebox Server do odtwarzacza. Utwory w formacie MP3 zakodowane z szybkością transmisji bitów niższą niż podana poniżej nie zostaną przekonwertowane.
-	RU	Squeezebox Server может автоматически преобразовывать музыкальные файлы в формат MP3 в режиме реального времени, чтобы воспроизводить другие форматы, отличные от MP3. Squeezebox Server может также повторно сжимать MP3-файлы, чтобы снизить битрейт данных, передаваемых плееру. Это удобно при подключении плеера к Squeezebox Server через Интернет или неустойчивой работе беспроводной сети. Можно задать максимальный битрейт, передаваемый Squeezebox Server на ваш плеер. MP3-песни с битрейтом ниже указанного значения преобразованы не будут.
+	RU	Squeezebox Server может автоматически преобразовывать музыкальные файлы в формат MP3 в режиме реального времени, чтобы воспроизводить другие форматы, отличные от MP3. Он может также повторно сжимать MP3-файлы, чтобы снизить битрейт данных, передаваемых плееру. Это удобно при подключении плеера к серверу через Интернет или неустойчивой работе беспроводной сети. Можно задать максимальный битрейт, передаваемый Squeezebox Server на ваш плеер. MP3-песни с битрейтом ниже указанного значения преобразованы не будут.
 	SV	Squeezebox Server kan automatiskt konvertera dina musikfiler till mp3 under uppspelning, så att även filer i andra format än mp3 kan spelas upp.  Squeezebox Server kan också komprimera om mp3-filerna till en lägre bithastighet så att icke skickas så mycket data till spelaren.  Det kan vara användbart om du ansluter spelaren till Squeezebox Server via internet eller om du har problem med anslutningen till ett trådlöst nätverk.  Du kan ange en maximal bithastighet för de data som Squeezebox Server strömmar till spelaren.  Mp3-låtar som kodats med lägre bithastigheter än detta värde konverteras inte.
 	ZH_CN	Squeezebox Server可以将您的非MP3音乐文件自动并即时转换成MP3格式。Squeezebox Server也可以把MP3文件重新压缩以降低流出到播放机的比特率。如果您的播放机与Squeezebox Server的联系横跨互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择Squeezebox Server流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。
 
@@ -6068,10 +6074,16 @@ SETUP_LANGUAGE_DESC
 	SV	Välj språk för Squeezebox Server.  Språkversioner markerade med en asterisk(*) har översatts av Squeezebox Server-användare.  Om du stöter på problem eller om du vill hjälpa till med översättningen skickar du ett e-postmeddelande till <a ref="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 
 SETUP_LIBRARY_NAME
+	CS	Název hudební knihovny
 	EN	Music library name
+	PL	Nazwa biblioteki muzyki
+	RU	Имя медиатеки
 
 SETUP_LIBRARY_NAME_DESC
+	CS	Tak se bude jmenovat vaše hudební knihovna v menu "Moje hudba" vašeho Squeezebox.
 	EN	This is how your music library will be named in your Squeezebox's "My Music" menu.
+	PL	Taką nazwę będzie miała biblioteka muzyki w menu „Moja muzyka” urządzenia Squeezebox.
+	RU	Это имя медиатеки будет отображаться в меню Squeezebox "Моя музыка".
 
 SETUP_AUDIODIR
 	CS	Složka Hudba
@@ -6221,7 +6233,7 @@ SETUP_PLAYLISTDIR_DESC
 	ZH_CN	您可以指定一个作为保存播放表的文件夹。（如果您不打算保存任何播放表，请腾空。）
 
 SETUP_RESCAN
-	CS	Opakované prohledávání hudební knihovny
+	CS	Znovu prohledat hudební knihovnu
 	DA	Gennemsøg musikbibliotek igen
 	DE	Musiksammlung erneut durchsuchen
 	EN	Rescan Music Library
@@ -6802,7 +6814,7 @@ SETUP_CHECKVERSION_1
 	ZH_CN	自动检查是否有新的软件版本可供使用
 
 SETUP_CHECKVERSION_0
-	CS	Nekontrolovat aktualizace softwaru
+	CS	Nehledat aktualizace softwaru
 	DA	Søg ikke automatisk for softwareopdateringer
 	DE	Nicht automatisch nach aktualisierter Software suchen
 	EN	Don't check for software updates
@@ -6821,7 +6833,7 @@ SETUP_CHECKVERSION_0
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
 SETUP_AUTO_DOWNLOAD
-	CS	Automatické  stahování
+	CS	Automatické stahování
 	DA	Hent automatisk
 	DE	Automatischer Download
 	EN	Automatic download
@@ -6979,10 +6991,16 @@ SETUP_IDLESAVER_ABBR
 	SV	I stoppat läge
 
 SETUP_ALARMSAVER
+	CS	Spořič obrazovky při spuštění alarmu
 	EN	Screensaver when alarm is playing
+	PL	Wygaszacz ekranu podczas odtwarzania alarmu
+	RU	Экранная заставка во время работы будильника
 
 SETUP_ALARMSAVER_ABBR
+	CS	Během alarmu
 	EN	During Alarm
+	PL	Podczas alarmu
+	RU	Во время работы будильника
 
 SETUP_SCREENSAVER_DESC
 	CS	Po období nečinnosti dálkového ovládání může přehrávač zobrazovat různé informace jako "spořiče obrazovky". Můžete zvolit odlišné spořiče k zobrazení v závislosti na tom, jestli přehrávač hraje nebo ne nebo je vypnut. Můžete také zvolit dobu čekání před povolením těchto spořičů obrazovky.
@@ -7592,7 +7610,7 @@ SETUP_SPLITLIST
 	SV	Avgränsare för flera objekt i taggar
 
 SETUP_SPLITLIST_DESC
-	CS	Squeezebox Server může z tagů ve vašich hudebních souborech získat více interpretů, názvů alb a žánrů. Pokud Squeezebox Server  ve vašich tagách najde některé ze slov nebo znaků uvedených níže, vytvoří pro každou položku jednotlivé výpisy. Pokud například do seznamu níže vložíte středník, skladba s tagem interpreta "J. S. Bach;Michael Tilson Thomas" se objeví v oblasti interpretů pro "J. S. Bach" i "Michael Tilson Thomas". Po změně tohoto nastavení se spustí prohledávání vaší knihovny hudby.
+	CS	Squeezebox Server může z tagů ve vašich hudebních souborech získat více interpretů, názvů alb a žánrů. Pokud ve vašich tagách najde některé ze slov nebo znaků uvedených níže, vytvoří pro každou položku jednotlivé výpisy. Pokud například do seznamu níže vložíte středník, skladba s tagem interpreta "J. S. Bach;Michael Tilson Thomas" se objeví v oblasti interpretů pro "J. S. Bach" i "Michael Tilson Thomas". Po změně tohoto nastavení se spustí prohledávání vaší hudební knihovny.
 	DA	Squeezebox Server kan hente oplysninger om flere kunstnere, albumtitler og genrer fra mærkerne inde i musikfilerne. Hvis Squeezebox Server finder et eller flere af ordene eller tegnene i mærkerne, oprettes der selvstændige poster for hver af de fundne instanser. Hvis du fx brugte et semikolon i listen nedenfor, vil et nummer der er mærket "J. S. Bach;Michael Tilson Thomas" for kunstner, blive vist to gange i afsnittet med kunstnere under hhv. "J. S. Bach" og "Michael Tilson Thomas". Hvis du ændrer denne indstilling, bliver dit musikbibliotek gennemsøgt igen.
 	DE	Squeezebox Server kann mehrere Interpreten, Albumtitel und Stilrichtungen in den Tags von Musikdateien erkennen. Findet Squeezebox Server folgende Wörter oder Zeichen in den Tags, wird für jeden Eintrag eine andere Liste erstellt. Beispiel: Wenn Sie einen Strichpunkt als Trennzeichen definieren, wird ein Titel mit dem Interpreten-Tag 'J. S. Bach;Michael Tilson Thomas' sowohl unter 'J. S. Bach' als auch 'Michael Tilson Thomas' aufgelistet. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	Squeezebox Server can extract multiple artist, album titles and genres from the tags inside your music files.  If it finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
@@ -7995,7 +8013,7 @@ SETUP_WEBPROXY
 	ZH_CN	网代理
 
 SETUP_WEBPROXY_DESC
-	CS	Můžete zadat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení Squeezebox Server k serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
+	CS	Můžete specifikovat IP adresu a port pro HTTP/Web proxy server, které se použijí při připojení Squeezebox Server k serverům mimo vaši místní síť. Používejte formát xx.xx.xx.xx:yyyy, kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy číslo portu. Pokud nepoužíváte HTTP web proxy server, ponechte toto pole prázdné..
 	DA	Du kan angive IP-adressen og portnummeret på den HTTP/webproxy som Squeezebox Server skal bruge når den etablerer forbindelse til servere uden for det lokale netværk. Du skal angive adressen i formatet xxx.xxx.xxx.xxx:yyyy hvor xxx.xxx.xxx.xxx er proxyserverens IP-adresse og yyyy er portnummeret. Hvis du ikke bruger en webproxy, skal du lade feltet være tomt.
 	DE	Sie können die IP-Adresse und den Anschluss eines HTTP/Web-Proxys definieren, den Squeezebox Server verwenden soll, um auf Server ausserhalb des lokalen Netzwerks zugreifen zu können. Verwenden Sie das Format xx.xx.xx.xx:yyyy wobei xx.xx.xx.xx die IP-Adresse des Proxy und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when Squeezebox Server connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
@@ -8306,7 +8324,7 @@ SETUP_AUTHORIZE
 	ZH_CN	密码保护
 
 SETUP_AUTHORIZE_DESC
-	CS	Můžete si zvolit ochranu heslem webového rozhraní Squeezebox Server. Zvolte "Ochrana heslem" a zadejte uživatelské jméno a heslo, potom klepněte na Změnit. Od tohoto okamžiku při používání webového rozhraní Squeezebox Server budete muset ve svém webovém prohlížeči zadávat toto uživatelské jméno a heslo.
+	CS	Můžete si zvolit ochranu heslem pro dálkové ovládání Squeezebox Server. Zvolte "Ochrana heslem" níže a zadejte uživatelské jméno a heslo, potom klikněte na Změnit. Od tohoto okamžiku budete muset při používání dálkového ovládání Squeezebox Server zadávat toto uživatelské jméno a heslo ve svém webovém prohlížeči.
 	DA	Du kan vælge at beskytte adgangen til Squeezebox Servers webbaserede brugerflade med en adgangskode. Vælg Beskyt med adgangskode, angiv et brugernavn og en adgangskode, og klik på Skift. Når du herefter ønsker at bruge Squeezebox Servers webbaserede brugerflade, skal du angive brugernavnet og adgangskoden i browseren.
 	DE	Sie können die Web-Benutzeroberfläche von Squeezebox Server mit einem Kennwort schützen. Klicken Sie unten auf 'Kennwortschutz', geben Sie einen Benutzernamen und ein Kennwort ein, und klicken Sie auf 'Ändern'. Wenn Sie dann die Web-Benutzeroberfläche von Squeezebox Server aufrufen, müssen Sie diesen Benutzernamen und das Kennwort eingeben.
 	EN	You can choose to password protect Squeezebox Server Remote Control. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use Squeezebox Server Remote Control, you'll need to enter this username and password in your web browser.
@@ -8318,9 +8336,9 @@ SETUP_AUTHORIZE_DESC
 	JA	Squeezebox Serverのウェブインターフェースをパスワードで保護することができます。下から”パスワード保護”を選んで、ユーザー名とパスワードを指定して、「変更」をクリックして下さい。以降、Squeezebox Serverのウェブインターフェースにアクセスするにはユーザー名とパスワードが必要になります。
 	NL	Je kunt een wachtwoord instellen voor de Squeezebox Server-webinterface. Kies hieronder 'Wachtwoordbeveiliging' en voer een gebruikersnaam en wachtwoord in. Klik dan op 'Veranderen'. Vanaf dat moment moet je deze gebruikersnaam en dit wachtwoord invoeren om toegang te krijgen tot de Squeezebox Server-webinterface.
 	NO	Du kan passordbeskytte nettgrensesnittet til Squeezebox Server. Velg «Passordbeskyttelse» nedenfor, skriv inn brukernavn og passord, og trykk så på Endre. Etter det vil nettgrensesnittet til Squeezebox Server be deg om brukernavn og passord.
-	PL	Interfejs internetowy programu Squeezebox Server można zabezpieczyć hasłem. Wybierz opcję „Ochrona hasłem” poniżej i wprowadź nazwę użytkownika oraz hasło, a następnie kliknij przycisk Zmień. Od tego momentu korzystanie z interfejsu internetowego programu Squeezebox Server będzie wymagało wprowadzenia tej nazwy użytkownika i hasła w przeglądarce internetowej.
+	PL	Program Squeezebox Server Remote Control można zabezpieczyć hasłem. Wybierz opcję „Ochrona hasłem” poniżej i wprowadź nazwę użytkownika oraz hasło, a następnie kliknij przycisk Zmień. Od tego momentu korzystanie z programu Squeezebox Server Remote Control będzie wymagało wprowadzenia tej nazwy użytkownika i hasła w przeglądarce internetowej.
 	PT	Pode activar uma palavra chave para proteger a interface web. Escolha "Proteção por Palavra Chave" abaixo, escolha um nome de utilizador e uma palavra chave, e seleccione "Mudar". A partir desse momento necessitará de introduzir o utilizador e chave para entrar na interface web com o seu browser.
-	RU	Можно задать пароль для веб-интерфейса Squeezebox Server. Выберите "Защита паролем", введите имя пользователя и пароль, а затем нажмите кнопку "Изменить". С этого момента для входа в веб-интерфейс Squeezebox Server в браузере потребуется вводить это имя пользователя и пароль.
+	RU	Можно задать пароль для пульта ДУ Squeezebox Server. Выберите "Защита паролем", введите имя пользователя и пароль, а затем нажмите кнопку "Изменить". С этого момента для входа в пульт ДУ Squeezebox Server в браузере потребуется вводить это имя пользователя и пароль.
 	SV	Du kan välja att skydda Squeezebox Servers webbgränssnitt med ett lösenord. Välj Lösenordsskydd nedan och ange ett användarnamn och ett lösenord. Klicka sedan på Ändra. Därefter måste du ange användarnamnet och lösenordet varje gång du använder öppnar webbgränssnittet i webbläsaren.
 	ZH_CN	您可以选择将Squeezebox Server的网界面以密码保护。请选择《密码保护》并输入用户名和密码，然后单击《更动》。以后您使用Squeezebox Server的网界面时都需要输入这个用户名和密码。
 
@@ -8363,7 +8381,7 @@ SETUP_PASSWORD
 	ZH_CN	密码
 
 SETUP_PASSWORD_REPEAT
-	CS	Potvrdit heslo
+	CS	Potvrdit heslo:
 	DA	Bekræft adgangskode
 	DE	Kennwort bestätigen
 	EN	Confirm Password
@@ -8378,7 +8396,7 @@ SETUP_PASSWORD_REPEAT
 	SV	Bekräfta lösenord
 
 SETUP_PASSWORD_MISMATCH
-	CS	Zadané heslo nesouhlasí.
+	CS	Vámi zadaná hesla si neodpovídají.
 	DA	Adgangskoderne er ikke ens.
 	DE	Die eingegebenen Kennwörter stimmen nicht überein.
 	EN	The passwords you entered do not match.
@@ -8598,7 +8616,7 @@ SETUP_SN_PASSWORD_DESC
 	SV	Ange lösenordet för ditt mysqueezebox.com-konto.
 
 SETUP_SN_INVALID_LOGIN
-	CS	Neplatné uživatelské jméno nebo heslo do mysqueezebox.com.
+	CS	Neplatné uživatelské jméno nebo heslo mysqueezebox.com.
 	DA	Ugyldigt brugernavn eller adgangskode til mysqueezebox.com.
 	DE	mysqueezebox.com-Benutzername oder -Kennwort ungültig.
 	EN	Invalid mysqueezebox.com username or password.
@@ -8624,7 +8642,7 @@ SETUP_SN_VALID_LOGIN
 	NL	Verbinding met mysqueezebox.com geslaagd.
 	NO	Koplet til mysqueezebox.com.
 	PL	Połączenie z usługą mysqueezebox.com powiodło się.
-	RU	Подключение к mysqueezebox.com успешно установлено.
+	RU	Подключение к mysqueesebox.com успешно установлено.
 	SV	Ansluten till mysqueezebox.com
 
 SETUP_SN_FORGOT_PASSWORD
@@ -8718,7 +8736,7 @@ SETUP_SN_SYNC_DISABLE
 	SV	Avaktiverad, spelarinställningarna synkroniseras inte.
 
 SETUP_SN_REPORT_STATS
-	CS	Statistika
+	CS	Statistika zpráv
 	DA	Statistik
 	DE	Statistik
 	EN	Report Statistics
@@ -8728,8 +8746,8 @@ SETUP_SN_REPORT_STATS
 	IT	Statistiche
 	NL	Statistieken
 	NO	Statistikk
-	PL	Statystyka
-	RU	Статистика
+	PL	Raportuj statystykę
+	RU	Сообщить статистику
 	SV	Statistik
 
 SETUP_SN_REPORT_STATS_DESC
@@ -8759,7 +8777,7 @@ SETUP_SN_REPORT_STATS_ENABLE
 	NL	Ja, statistieken rapporteren om mysqueezebox.com te verbeteren.
 	NO	Jeg vil hjelpe til med å forbedre mysqueezebox.com ved å sende inn statistisk informasjon.
 	PL	Tak, pomóż w ulepszeniu usługi mysqueezebox.com przez wysyłanie statystyk.
-	RU	Да, улучшить mysqueezebox.com с помощью статистики отчетов.
+	RU	Да, улучшить Squeezebox Server с помощью статистики отчетов.
 	SV	Ja, rapportera statistisk så att mysqueezebox.com kan bli ännu bättre.
 
 SETUP_SN_REPORT_STATS_DISABLE
@@ -8898,7 +8916,7 @@ SETUP_WIZARD_PLAYLISTDIR_DESC
 	SV	Ange sökväg till mappen med dina spellistor.
 
 SETUP_WIZARD_SUMMARY_DESC
-	CS	Squeezebox nyní používá následující nastavení:
+	CS	Squeezebox Server nyní používá následující nastavení:
 	DA	Squeezebox benytter nu følgende indstillinger:
 	DE	Squeezebox nutzt jetzt folgende Einstellungen:
 	EN	Squeezebox is now using the following settings:
@@ -8958,7 +8976,7 @@ SETUP_WIZARD_DONE
 	SV	Konfigurationen av Squeezebox Server är klar!
 
 SETUP_WIZARD_DONE_DESC
-	CS	Vaše nastavení byla uložena. Nyní můžete začít používat Squeezebox Server.<br/><br/>Pokud jste zvolili místní zdroj hudby, Squeezebox Server nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete zavřít toto okno nebo <a href="/">klepnutím sem</a> pokračovat na Squeezebox Server.
+	CS	Vaše nastavení byla uložena. Nyní můžete začít používat váš Squeezebox.<br/><br/>Pokud jste zvolili místní zdroj hudby, Squeezebox Server nyní začne indexovat vaši sbírku. Prosím vyčkejte &mdash; brzy budete mít přístup ke všem svým hudebním souborům. <br/><br/>Nyní můžete zavřít toto okno nebo <a href="/">kliknutím sem</a> pokračovat na dálkové ovládání Squeezebox Server.
 	DA	Indstillingerne er gemt. Nu kan du begynde at bruge Squeezebox Server.<br/><br/>Hvis du valgte en lokal musikkilde, begynder Squeezebox Server at indeksere din musiksamling. Du skal bare have lidt tålmodighed, det varer ikke længe før du kan lytte til alle dine musikfiler.<br/><br/>Du kan lukke vinduet eller <a href="/">klikke her</a> for at gå til Squeezebox Server.
 	DE	Die Einstellungen wurden gespeichert. Sie können Squeezebox Server jetzt nutzen.<br/><br/>Wenn Sie eine lokale Musikquelle gewählt haben, beginnt Squeezebox Server mit dem Indizieren der Sammlung. Wir bitten um etwas Geduld. Sie erhalten bald Zugriff auf alle Musikdateien.<br/><br/>Sie können dieses Fenster schließen oder <a href="/">hier klicken</a>, um Squeezebox Server aufzurufen.
 	EN	Your settings have been saved. You're now ready to use your Squeezebox.<br/><br/>If you selected a local music source, Squeezebox Server will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to Squeezebox Server Remote Control.
@@ -8968,8 +8986,8 @@ SETUP_WIZARD_DONE_DESC
 	IT	Le impostazioni sono state salvate. È ora possibile utilizzare Squeezebox Server.<br/><br/>Se è stata selezionata una sorgente musicale locale, Squeezebox Server avvierà ora l'indicizzazione della raccolta. Attendere. I file musicali saranno accessibili tra qualche istante.<br/><br/>Chiudere questa finestra o <a href="/">fare clic qui</a> per accedere a Squeezebox Server.
 	NL	Je instellingen zijn opgeslagen. Je kunt Squeezebox Server nu gebruiken.<br/><br/>Als je een lokale muziekbron hebt geselecteerd, indexeert Squeezebox Server nu je collectie. Een moment geduld &mdash; je zult binnenkort al je muziekbestanden kunnen oproepen.<br/><br/>Je kunt dit venster nu sluiten of <a href="/">hier klikken</a> om naar Squeezebox Server te gaan.
 	NO	Innstillingene er lagret. Nå er du klar til å ta i bruk Squeezebox Server.<br/><br/>Hvis du velger en lokal musikkilde, vil Squeezebox Server nå begynne å indeksere samlingen din. Dette kan ta litt tid, men du vil snart ha tilgang til alle musikkfilene dine.<br/><br/>Du kan nå lukke dette vinduet, eller <a href="/">klikke her</a> for å gå videre til Squeezebox Server.
-	PL	Ustawienia zostały zapisane. Możesz teraz korzystać z programu Squeezebox Server.<br/><br/>Jeżeli wybrano lokalne źródło muzyki, program Squeezebox Server rozpocznie indeksowanie kolekcji. Prosimy o cierpliwość &mdash; wkrótce uzyskasz dostęp do wszystkich plików muzycznych.<br/><br/>Możesz teraz zamknąć to okno lub <a href="/">kliknąć tutaj</a>, aby przejść do programu Squeezebox Server.
-	RU	Ваши настройки сохранены. Теперь можно начать работу с программой Squeezebox Server.<br/><br/>Если выбран локальный источник музыкальных файлов, Squeezebox Server начнет индексировать коллекцию. Пожалуйста, подождите: скоро все музыкальные файлы будут доступны.<br/><br/>Теперь можно закрыть это окно или <a href="/">щелкнуть здесь</a>, чтобы перейти в Squeezebox Server.
+	PL	Ustawienia zostały zapisane. Możesz teraz korzystać z programu Squeezebox.<br/><br/>Jeżeli wybrano lokalne źródło muzyki, program Squeezebox Server rozpocznie indeksowanie kolekcji. Prosimy o cierpliwość &mdash; wkrótce uzyskasz dostęp do wszystkich plików muzycznych.<br/><br/>Możesz teraz zamknąć to okno lub <a href="/">kliknąć tutaj</a>, aby przejść do programu Squeezebox Server Remote Control.
+	RU	Ваши настройки сохранены. Теперь можно начать работу с программой Squeezebox.<br/><br/>Если выбран локальный источник музыкальных файлов, Squeezebox Server начнет индексировать коллекцию. Пожалуйста, подождите: скоро все музыкальные файлы будут доступны.<br/><br/>Теперь можно закрыть это окно или <a href="/">щелкнуть здесь</a>, чтобы перейти к пульту ДУ Squeezebox Server.
 	SV	Inställningarna har sparats. Nu kan du börja använda Squeezebox Server. <br/><br/>Om du har valt en lokal musikkälla kommer din samling nu att indexeras. Det kan ta en liten stund, men snart kommer du att ha tillgång till alla dina musikfiler.<br/><br/>Nu kan du stänga det här fönstret eller <a href="/">klicka här</a> för att fortsätta till Squeezebox Server.
 
 SETUP_WIZARD_NEXT
@@ -9815,7 +9833,7 @@ HIDE_ARTWORK
 	SV	Dölj albumomslag
 
 VOLUME
-	CS	Svazek
+	CS	Hlasitost
 	DA	Lydstyrke
 	DE	Lautstärke
 	EN	Volume
@@ -10384,7 +10402,7 @@ PLAYLISTDIR_IS_NOW
 	JA	プレイリストが保存してあるフォルダーへのパスを指定してください。（プレイリストを保存しないのであればブランクで結構です）
 	NL	Je kunt het pad invoeren naar een map waarin je playlistbestanden op je vaste schijf moeten worden opgeslagen. (Je kunt dit leeg laten als je geen playlists wilt opslaan.)
 	NO	Her kan du angi banen til katalogen der du har lagret spillelistefilene dine på harddisken. (Du kan la dette feltet stå tomt hvis du ikke vil lagre spillelister.)
-	PL	Możliwe jest wprowadzenie ścieżki do katalogu przechowywania zapisanych list odtwarzania na dysku twardym. (Pole można zostawić puste, jeżeli listy odtwarzania nie mają być zapisywane.)
+	PL	Możliwe jest wprowadzenie ścieżki do katalogu przechowywania zapisanych list odtwarzania na dysku twardym (pole można zostawić puste, jeżeli listy odtwarzania nie mają być zapisywane).
 	PT	Escolha a directoria onde as playlist serão gravadas no disco. (Deixe vazio para desactivar esta opção)
 	RU	Можно ввести путь к каталогу жесткого диска, в котором хранятся сохраненные файлы плей-листов. (Если сохранять плей-листы не требуется, это поле можно не заполнять.)
 	SV	Ange sökvägen till den mapp på hårddisken där dina spellistor sparas. Lämna fältet tomt om du inte spara spellistor.
@@ -10889,7 +10907,10 @@ AAC
 	SV	AAC
 
 MP4
+	CS	MP4
 	EN	MP4
+	PL	MP4
+	RU	MP4
 
 M3U
 	CS	Seznam skladeb M3U
@@ -12548,16 +12569,28 @@ MOSTPLAYED
 	ZH_CN	最常播的歌曲
 
 ALBUM_INFO
+	CS	Info o Albu
 	EN	Album Info
+	PL	Informacje o albumie
+	RU	Сведения об альбоме
 
 ARTIST_INFO
+	CS	Info o interpretovi
 	EN	Artist Info
+	PL	Informacje o wykonawcy
+	RU	Сведения об исполнителе
 
 GENRE_INFO
+	CS	Info o žánrech
 	EN	Genre Info
+	PL	Informacje o gatunku
+	RU	Сведения о жанре
 
 YEAR_INFO
+	CS	Info o roku
 	EN	Year Info
+	PL	Informacje o roku
+	RU	Сведения о годе
 
 SONG_INFO
 	CS	Informace o skladbě
@@ -12946,7 +12979,7 @@ ADVANCED_SETTINGS
 	SV	Avancerat
 
 SERVER_SETTINGS
-	CS	Nastavení Squeezebox Server
+	CS	Nastavení serveru
 	DA	Indstillinger for Squeezebox Server
 	DE	Squeezebox Server Einstellungen
 	EN	Server Settings
@@ -12958,9 +12991,9 @@ SERVER_SETTINGS
 	JA	サーバーセッティング
 	NL	Serverinstellingen
 	NO	Squeezebox Server-innstillinger
-	PL	Ustawienia programu Squeezebox Server
+	PL	Ustawienia serwera
 	PT	Configurações do Servidor
-	RU	Настройки Squeezebox Server
+	RU	Настройки сервера
 	SV	Squeezebox Server-inställningar
 	ZH_CN	服务器设置
 
@@ -13143,7 +13176,7 @@ DEBUG_NETWORK_SQUEEZENETWORK
 	NL	mysqueezebox.com-registratie
 	NO	mysqueezebox.com-loggføring
 	PL	Logowanie do usługi mysqueezebox.com
-	RU	Ведение журнала mysqueezebox.com
+	RU	Ведение журнала mysqueesebox.com
 	SV	mysqueezebox.com-loggning
 
 DEBUG_MENU_TRACKINFO
@@ -13267,7 +13300,7 @@ DEBUG_DEFAULT
 	SV	Återställ loggningsinställningar
 
 SETUP_GROUP_DEBUG_DESC
-	CS	Squeezebox Server má řadu nastavení protokolování, která lze použít pro zapsání podrobných informací o činnostech Squeezebox Server prohledávače. Každá kategorie protokolů má závažnost pro protokolování. Volba "Debug" je nejvíce informativní, volba "Vypnuto" nejméně.
+	CS	Squeezebox Server má řadu nastavení protokolování, která lze použít pro zapsání podrobných informací o provozu serveru a scanneru. Každá kategorie protokolů má určitou závažnost pro protokolování. Volba "Ladění" je nejvíce informativní, volba "Vypnuto" nejméně.
 	DA	Squeezebox Server har en række indstillinger til logføring som kan bruges til at registrere detaljerede oplysninger om Squeezebox Server og musiksøgninger. Hver logføringskategori kan indstilles til at registrere flere eller færre oplysninger. Fejlsøgning giver flest detaljer og Fra ingen.
 	DE	Squeezebox Server enthält eine Reihe von Logging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des Squeezebox Servers aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren.
 	EN	Squeezebox Server has a number of logging settings that can be used to record detailed information about server and scanner operation. Each logging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
@@ -13278,8 +13311,8 @@ SETUP_GROUP_DEBUG_DESC
 	IT	In Squeezebox Server sono disponibili numerose impostazioni di debug utilizzabili per registrare informazioni dettagliate sul funzionamento del server. Selezionare le informazioni che si desidera registrare e visualizzare, quindi fare clic su Cambia per avviarne la registrazione.
 	NL	Squeezebox Server heeft een aantal instellingen voor foutopsporing waarmee gedetailleerde informatie over de serverwerking verzameld kan worden. Selecteer de items die je in het logboek wilt zien, en klik op 'Veranderen' om het loggen te starten.
 	NO	Squeezebox Server har flere innstillinger for loggføring som kan brukes til å ta opp detaljert informasjon om Squeezebox Server og søk. Hver loggføringskategori har en alvorlighetsgrad for loggføring. «Feilsøking» er mest detaljert, og «Av» er minst.
-	PL	Program Squeezebox Server udostępnia różne opcje rejestrowania szczegółowych informacji o działaniu programu i mechanizmu przeszukiwania. Każda kategoria rejestrowania ma kategorię ważności. Opcja „Debuguj” zapewnia najbardziej, a „Wył.” najmniej dokładne przeszukiwanie.
-	RU	В Squeezebox Server предусмотрены различные настройки ведения журнала, с помощью которых можно записывать подробные сведения о работе Squeezebox Server и сканера. У каждой категории ведения журнала есть уровень серьезности. Самый подробный уровень — "Отладка", наименее подробный — "Отключено".
+	PL	Program Squeezebox Server udostępnia różne opcje rejestrowania szczegółowych informacji o działaniu programu i mechanizmu przeszukiwania. Każda kategoria rejestrowania ma kategorię ważności. Opcja „Debuguj” zapewnia najbardziej, a „Wył.” najmniej dokładne informacje.
+	RU	В Squeezebox Server предусмотрены различные настройки ведения журнала, с помощью которых можно записывать подробные сведения о работе сервера и сканера. У каждой категории ведения журнала есть уровень серьезности. Самый подробный уровень — "Отладка", наименее подробный — "Отключено".
 	SV	Det finns ett antal loggninginställningar i Squeezebox Server som du kan använda om du vill registrera information om programaktivitet och sökningar. Du kan ange noggrannhetsnivån för varje loggningskategori. Inställningen Felsökning ger den noggrannaste loggningen och Av den minst noggranna.
 
 DEBUGGING_SETTINGS
@@ -14054,7 +14087,7 @@ NO_PLAYER_DETAILS
 	ZH_CN	<b>如果您拥有Squeezebox播放机：</b><ul><li>请确保播放机已插电及其网络设置无误。当您的播放机连接好后请单击《刷新》。</ul><p><b>如果您未能拥有Squeezebox播放机：</b><ul><li>您可以利用软体式播放机<a target="_top" href="/html/softsqueeze/index.html">SoftSqueeze</a>从您的音乐库播放音乐。<li>您可以利用MP3播放软件如Winamp或iTunes来欣赏Squeezebox Server所流出的音乐。请连接到此URL：<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>。
 
 PLAYER_NEEDS_UPGRADE
-	CS	Je nutná aktualizace softwaru
+	CS	Vyžadována aktualizace softwaru
 	DA	Det er nødvendigt at opdatere softwaren
 	DE	Software muss aktualisiert werden
 	EN	Software Update Required
@@ -16519,12 +16552,12 @@ SQUEEZENETWORK_SWITCHING
 	NL	Bezig met wisselen naar mysqueezebox.com. Een ogenblik geduld...
 	NO	Bytter til mysqueezebox.com, vent litt...
 	PL	Czekaj, trwa przełączanie do usługi mysqueezebox.com...
-	RU	Переключение в mysqueezebox.com, подождите...
+	RU	Переключение на mysqueezebox.com, подождите...
 	SV	Växlar till mysqueezebox.com, vänta ...
 	ZH_CN	正在切换到mysqueezebox.com，请稍等。
 
 SQUEEZENETWORK_WANT_SWITCH
-	CS	Tento přehrávač je právě připojen k síti mysqueezebox.com. Chcete jej přepnout zpět na Squeezebox Server?
+	CS	Tento přehrávač je právě připojen k mysqueezebox.com. Chcete jej přepnout zpět na Squeezebox Server?
 	DA	Afspilleren er tilsluttet mysqueezebox.com. Vil du skifte tilbage til Squeezebox Server igen?
 	DE	Dieser Player ist derzeit mit dem mysqueezebox.com verbunden. Wollen Sie ihn zurück zum Squeezebox Server verbinden?
 	EN	This player is currently connected to mysqueezebox.com. Do you want it to switch back to Squeezebox Server?
@@ -16534,8 +16567,8 @@ SQUEEZENETWORK_WANT_SWITCH
 	IT	Il lettore è attualmente connesso a mysqueezebox.com. Ripristinare la connessione a Squeezebox Server?
 	NL	Dit muzieksysteem is momenteel met mysqueezebox.com verbonden. Wil je het systeem terugschakelen naar Squeezebox Server?
 	NO	Spilleren er koplet til mysqueezebox.com. Vil du bytte tilbake til Squeezebox Server?
-	PL	Ten odtwarzacz jest aktualnie połączony z siecią mysqueezebox.com. Czy chcesz powrócić do programu Squeezebox Server?
-	RU	Данный плеер подключен к mysqueezebox.com. Переключиться в Squeezebox Server?
+	PL	Ten odtwarzacz jest aktualnie połączony z usługą mysqueezebox.com. Czy chcesz powrócić do programu Squeezebox Server?
+	RU	Данный плеер подключен к mysqueezebox.com. Переключиться на Squeezebox Server?
 	SV	Spelaren är för närvarande ansluten till mysqueezebox.com. Vill du ansluta den till Squeezebox Server istället?
 
 SQUEEZENETWORK_SB2_REQUIRED
@@ -16616,7 +16649,7 @@ MUSICSOURCE_SWITCH
 	SV	Välj musikkälla att ansluta spelaren till.
 
 SQUEEZEBOX_SERVER_WANT_SWITCH
-	CS	Tento přehrávač je právě připojen k %s. Chcete jej přepnout na tento Squeezebox Server?
+	CS	Tento přehrávač je v aktuálně připojen k %s. Chcete ho přepnout na tento Squeezebox Server?
 	DA	Denne afspiller er sluttet til %s. Vil du skifte til Squeezebox Server?
 	DE	Dieser Player ist derzeit verbunden mit %s. Möchten Sie auf diese Version von Squeezebox Server umschalten?
 	EN	This player is currently connected to %s. Do you want it to switch to this Squeezebox Server?
@@ -16642,7 +16675,7 @@ SQUEEZEBOX_SERVER_CONNECTING
 	IT	Connessione a %s...
 	NL	Bezig verbinding te maken met %s...
 	NO	Kopler til %s...
-	PL	Połączenie z %s...
+	PL	Trwa łączenie z %s...
 	RU	Подключение к %s...
 	SV	Ansluts till %s ...
 	ZH_CN	%s连接中...
@@ -16750,7 +16783,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	ZH_CN	不要卷动
 
 COMPILATION
-	CS	Sbírka
+	CS	Kompilace
 	DA	Kompilation
 	DE	Kompilation
 	EN	Compilation
@@ -16970,7 +17003,7 @@ SETUP_USEBANDASALBUMARTIST_0
 	ZH_CN	专辑按艺人列出
 
 SETUP_USETPE2ASALBUMARTIST_DESC
-	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam "Skupina/orchestr". Zvolte význam, který chcete, aby Squeezebox Server používal. Po změně tohoto nastavení se začne opakované prohledávání vaší knihovny hudby.
+	CS	Formát MP3 tagů neposkytuje standardní způsob, jak definovat Interpreta alba. Některé nástroje pro MP3 tagy používají pro Interpreta alba pole TPE2 (iTunes, Winamp, Windows Media Player), jiné je mohou používat pro zamýšlený význam "Skupina/orchestr". Zvolte význam, který má Squeezebox Server používat. Po změně tohoto nastavení začne opakované prohledávání vaší hudební knihovny.
 	DA	MP3-mærkeformatet er en standardiseret metode til at definere en kunstner og dennes album. Nogle programmer til at håndtere mp3-mærker benytter feltet TPE2 til Albumkunstner (iTunes, Winamp, Windows Media Player) mens andre benytter det til den intenderede betydning af  Band/orkester. Du skal vælge hvilken model der skal bruges i Squeezebox Server. Hvis du ændrer indstillingen, bliver hele musikbiblioteket gennemsøgt igen.
 	DE	Das MP3-Tag-Format bietet keine Standardmöglichkeit zum Definieren des Interpreten des Albums. Manche MP3-Anwendungen (iTunes, Winamp, Windows Media Player) nutzen das Feld TPE2 für den Interpreten des Albums, andere nutzen es für den eigentlichen Zweck (Band/Orchester). Wählen Sie die gewünschte Bedeutung. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	The MP3 tag format does not provide a standard way of defining an Album Artist.  Some MP3 tagging tools use the TPE2 field for Album Artist (iTunes, Winamp, Windows Media Player) while others may use it for the intended meaning of "Band/orchestra".  Select the meaning you would like Squeezebox Server to use.  Changing this setting will start a rescan of your music library.
@@ -17512,7 +17545,7 @@ SETUP_FXLOOPSOURCE_DESC
 	IT	È possibile collegare un processore digitale esterno, quale un equalizzatore, tramite S/PDIF per elaborare il segnale prima che raggiunga il convertitore digitale-analogico interno del Transporter. Se questa opzione è attiva, il processore esterno deve essere collegato e operativo affinché gli output analogici del Transporter funzionino.
 	NL	Via s/pdif kan een externe digitale processor, zoals een equalizer, worden aangesloten om het signaal te verwerken voordat het de interne DAC van Transporter bereikt. Als deze optie ingeschakeld is, moet de externe processor aangesloten en ingeschakeld zijn, zodat de analoge uitvoeren van Transporter functioneren.
 	NO	En ekstern digital prosessor, for eksempel en EQ, kan koples til via S/PDIF for å prosessere signalet før det når Transporters interne D/A-omformer. Hvis dette alternativet er aktivert, må den eksterne prosessoren være koplet til og i gang for at Transporters analoge utganger skal fungere.
-	PL	Do złącza s/pdif można podłączyć zewnętrzny procesor dźwięku, na przykład korektor w celu przetwarzania sygnału przed przesłaniem do wewnętrznego konwertera DAC urządzenia Transporter. Po włączeniu tej opcji, zewnętrzny procesor musi być podłączony i włączony, aby działały wyjścia analogowe urządzenia Transporter.
+	PL	Do złącza s/pdif można podłączyć zewnętrzny procesor dźwięku, na przykład korektor w celu przetwarzania sygnału przed przesłaniem do wewnętrznego konwertera DAC urządzenia Trasporter. Po włączeniu tej opcji, zewnętrzny procesor musi być podłączony i włączony, aby działały wyjścia analogowe urządzenia Transporter.
 	RU	Через выход s/pdif можно подключить внешний цифровой процессор (например, EQ), который будет обрабатывать сигнал до передачи на внутренний ЦАП устройства Transporter. Если этот параметр включен, для работы аналоговых выходов Transporter необходим подключенный и рабочий внешний процессор.
 	SV	En extern digital processor, t.ex. en equalizer, kan anslutas via s/pdif och bearbeta signalen innan den når Transporters interna D/A-omvandlare. Om det här alternativet används måste den externa processorn vara ansluten och fungera korrekt om Transporters analoga utgångar ska fungera.
 
@@ -19554,10 +19587,16 @@ SCANNER_PROGRESS
 	SV	Information om musiksökning
 
 FAILURE_PROGRESS
+	CS	Prohledávání hudby neočekávaně ukončeno (%s)
 	EN	Music scan terminated unexpectedly (%s)
+	PL	Przeszukiwanie muzyki zostało przerwane nieoczekiwanie (%s)
+	RU	Сканирование музыки было неожиданно прервано (%s)
 
 SCAN_ABORTED_PROGRESS
+	CS	Prohledávání bylo manuálně přerušeno uživatelem
 	EN	Scan was manually aborted by the user
+	PL	Przeszukiwanie zostało ręcznie przerwane przez użytkownika
+	RU	Сканирование было прервано пользователем
 
 DIRECTORY_PROGRESS
 	CS	Prohledávání adresáře
@@ -19725,7 +19764,7 @@ COMPLETE
 	SV	Fullständig
 
 PROGRESS_IMPORTER_COMPLETE_DESC
-	CS	Squeezebox Server ukončil prohledávání vaší sbírky hudby.
+	CS	Server ukončil prohledávání vaší sbírky hudby.
 	DA	Squeezebox Server er færdig med at gennemsøge din musiksamling.
 	DE	Squeezebox Server hat das Durchsuchen ihrer Musiksammlung abgeschlossen.
 	EN	The server has finished scanning your music collection.
@@ -19735,8 +19774,8 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	IT	Squeezebox Server ha completato l'analisi della raccolta musicale.
 	NL	Squeezebox Server heeft je muziekcollectie gescand.
 	NO	Squeezebox Server har nå søkt gjennom musikksamlingen din.
-	PL	Program Squeezebox Server zakończył przeszukiwanie kolekcji muzyki.
-	RU	Squeezebox Server завершил сканирование музыкальной коллекции.
+	PL	Serwer zakończył przeszukiwanie kolekcji muzyki.
+	RU	Сервер завершил сканирование музыкальной коллекции.
 	SV	Sökningen av ditt musikbibliotek har slutförts.
 
 PROGRESS_IMPORTER_NO_INFO
@@ -19830,16 +19869,28 @@ PLUGINS_CHANGED
 	SV	Nästa gång programmet startas görs ändringar i följande plugin-program:
 
 PLUGINS_CHANGED_NEED_RESTART
+	CS	Změny se projeví při příštím spuštění aplikace. <a href="%s">K restartování serveru klikněte sem.</a>
 	EN	Changes will take place at the next application restart. <a href="%s">Please click here to restart the server now.</a>
-	
+	PL	Zmiany zostaną wprowadzone po następnym uruchomieniu aplikacji. <a href="%s">Kliknij tutaj, aby uruchomić ponownie serwer teraz.</a>
+	RU	Изменения будут применены при следующем перезапуске приложения. <a href="%s">Щелкните здесь, чтобы перезагрузить сервер сейчас.</a>
+
 RESTART_NOW
+	CS	Restartovat nyní
 	EN	Restart now
-	
+	PL	Uruchom ponownie teraz
+	RU	Перезапустить сейчас
+
 RESTART_LATER
+	CS	Restartovat později
 	EN	Restart later
-	
+	PL	Uruchom ponownie później
+	RU	Перезапустить позже
+
 RESTARTING_PLEASE_WAIT
+	CS	 Probíhá restartování Squeezebox Server. Před pokračováním chvíli vyčkejte...
 	EN	 Squeezebox Server is being restarted. Please wait a minute before you continue...
+	PL	 Trwa ponowne uruchamianie programu Squeezebox Server. Poczekaj chwilę, aby kontynuować...
+	RU	 Squeezebox Server перезапускается. Подождите...
 
 SETUP_VIEW_SCANNING
 	CS	Prohledávání - zobrazit průběh
@@ -20008,7 +20059,7 @@ JIVE_DELETE_FROM_FAVORITES
 	SV	Ta bort favorit
 
 JIVE_ADD_TO_FAVORITES
-	CS	Přidat do oblíbených
+	CS	Přidat k Oblíbeným položkám
 	DA	Føj til favoritter
 	DE	Zu Favoriten hinzufügen
 	EN	Add to Favorites
@@ -20083,7 +20134,7 @@ SEARCHFOR_PLAYLISTS
 	SV	Sök efter spellistor
 
 JIVE_SEARCHFOR_HELP
-	CS	Pomocí otočného ovladače měníte písmena a stisknutím středového tlačítka písmeno potvrdíte. Další stisknutím středového tlačítka spustíte hledání.
+	CS	Pomocí kolečka měňte písmena a stisknutím prostředního tlačítka proveďte výběr. Chcete-li spustit hledání, stiskněte znovu prostřední tlačítko.
 	DA	Brug drejeknappen til at skifte bogstav, og tryk på midterknappen for at vælge det. Tryk på midterknappen igen for at begynde søgningen.
 	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie zum Starten der Suche die mittlere Taste erneut.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to start your search.
@@ -20758,7 +20809,7 @@ SETUP_SHOWCOUNT_TEMP
 	SV	Vid rullning
 
 SQUEEZEBOX_SERVER_CONNECT
-	CS	Připojit se ke Squeezebox Server
+	CS	Připojit ke Squeezebox Server
 	DA	Etabler forbindelse til Squeezebox Server
 	DE	Mit Squeezebox Server verbinden
 	EN	Connect to Squeezebox Server
@@ -20819,27 +20870,49 @@ BACKUP_ALARM
 	SV	Reservalarm
 
 CONTROLPANEL_TITLE
+	CS	Ovládací panel Squeezebox Server
 	EN	Squeezebox Server Control Panel
+	PL	Panel sterowania programu Squeezebox Server
+	RU	Панель управления Squeezebox Server
 
 CONTROLPANEL_SERVERSTATUS
+	CS	Status serveru
 	EN	Server Status
-	
+	PL	Stan serwera
+	RU	Состояние сервера
+
 CONTROLPANEL_STATUS_RUNNING
+	CS	Status: Server je spuštěn
 	EN	Status: The server is running
-	
+	PL	Stan: Serwer działa
+	RU	Состояние: сервер выполняется
+
 CONTROLPANEL_STATUS_STARTING
+	CS	Status: Server se spouští
 	EN	Status: The server is starting
-	
+	PL	Stan: Trwa uruchamianie serwera
+	RU	Состояние: сервер запускается
+
 CONTROLPANEL_STATUS_STOPPED
+	CS	Status: Server je zastaven
 	EN	Status: The server is stopped
+	PL	Stan: Serwer jest zatrzymany
+	RU	Состояние: сервер остановился
 
 CONTROLPANEL_ACCOUNT
+	CS	Nastavení účtu
 	EN	Account Settings
-	
+	PL	Ustawienia konta
+	RU	Настройки учетной записи
+
 CONTROLPANEL_SN_CREDENTIALS
+	CS	Zadejte informace o vašem účtu mysqueezebox.com
 	EN	Enter your mysqueezebox.com account information
+	PL	Wprowadź informacje o koncie mysqueezebox.com
+	RU	Введите данные учетной записи mysqueezebox.com
 
 CONTROLPANEL_STARTUP_OPTIONS
+	CS	Volby při spuštění
 	DA	Startindstillinger
 	DE	Startoptionen
 	EN	Startup Options
@@ -20848,9 +20921,12 @@ CONTROLPANEL_STARTUP_OPTIONS
 	IT	Opzioni di avvio
 	NL	Opstartopties
 	NO	Oppstartsalternativer
+	PL	Opcje Autostartu
+	RU	Параметры запуска
 	SV	Startalternativ
 
 CONTROLPANEL_MUSIC_LIBRARY
+	CS	Knihovna hudby
 	DA	Musikbibliotek
 	DE	Musikbibliothek
 	EN	Music Library
@@ -20860,53 +20936,94 @@ CONTROLPANEL_MUSIC_LIBRARY
 	IT	Libreria musicale
 	NL	Muziekcollectie
 	NO	Musikkbibliotek
+	PL	Biblioteka muzyki
+	RU	Медиатека
 	SV	Musikbibliotek
-	
+
 CONTROLPANEL_AUTHENTICATION_REQUIRED
+	CS	Pro přístup do Squeezebox Server je vyžadována autentizace
 	EN	Authentication is required to access Squeezebox Server
-	
+	PL	W celu uzyskania dostępu do programu Squeezebox Server wymagane jest uwierzytelnienie
+	RU	Для доступа к Squeezebox Server требуется проверка подлинности
+
 CONTROLPANEL_WEB_UI
+	CS	Rozhraní na webu
 	EN	Web based Interface
+	PL	Interfejs internetowy
+	RU	Веб-интерфейс
 
 CONTROLPANEL_WEB_CONTROL_DESC
+	CS	Dálkové ovládání Squeezebox
 	EN	Squeezebox Remote Control
+	PL	Squeezebox Remote Control
+	RU	Пульт ДУ Squeezebox
 
 CONTROLPANEL_ADVANCED_SETTINGS_DESC
+	CS	Upřesnit nastavení
 	EN	Advanced Settings
-	
+	PL	Ustawienia zaawansowaneUstawienia zaawansowane
+	RU	Дополнительные настройки
+
 CONTROLPANEL_LOGFILES
+	CS	Protokolovací soubory
 	EN	Log Files
+	PL	Pliki dziennika
+	RU	Файлы журнала
 
 CONTROLPANEL_SHOW_SERVER_LOG
+	CS	Zobrazit protokol serveru
 	EN	Show server log
+	PL	Pokaż dziennik serwera
+	RU	Показать журнал сервера
 
 CONTROLPANEL_SHOW_SCANNER_LOG
+	CS	Zobrazit protokol scanneru
 	EN	Show scanner log
+	PL	Pokaż dziennik skanera
+	RU	Показать журнал сканера
 
 CONTROLPANEL_UPDATE_AVAILABLE
+	CS	Aktualizovaná verze Squeezebox Server je k dispozici a připravena k instalaci.
 	EN	An updated Squeezebox Server version is available and ready to be installed.
+	PL	Zaktualizowana wersja programu Squeezebox Server jest dostępna i gotowa do zainstalowania.
+	RU	Доступна и готова к установке обновленная версия Squeezebox Server.
 
 PREFPANE_UPDATE_AVAILABLE
 	EN	An updated Squeezebox Server version is available and ready to be installed. Please open the Squeezebox Preference Pane to start the update.
 
 CONTROLPANEL_NO_UPDATE_AVAILABLE
+	CS	K dispozici není žádná aktualizovaná verze Squeezebox Server.
 	EN	There's no updated Squeezebox Server version available.
+	PL	Brak dostępnej zaktualizowanej wersji programu Squeezebox Server.
+	RU	Нет доступных обновленных версий Squeezebox Server.
 
 CONTROLPANEL_CHECK_UPDATE
+	CS	Hledat aktualizaci
 	EN	Check for update
+	PL	Sprawdź dostępność aktualizacji
+	RU	Проверить наличие обновления
 
 CONTROLPANEL_DOWNLOAD_UPDATE
+	CS	Stáhnout aktualizaci
 	EN	Download update
+	PL	Pobierz aktualizację
+	RU	Загрузить обновление
 
 CONTROLPANEL_INSTALL_UPDATE
+	CS	Instalovat aktualizaci
 	EN	Install update
+	PL	Zainstaluj aktualizację
+	RU	Установить обновление
 
 CONTROLPANEL_MAINTENANCE
+	CS	Údržba
 	DE	Unterhalt
 	EN	Maintenance
+	PL	Konserwacja
+	RU	Обслуживание
 
 CONTROLPANEL_DIAGNOSTICS
-	CS	Diagnostika systému
+	CS	Diagnostika
 	DA	Systemdiagnosticering
 	DE	Systemdiagnose
 	EN	Diagnostics
@@ -20916,10 +21033,10 @@ CONTROLPANEL_DIAGNOSTICS
 	IT	Diagnostica del sistema
 	NL	Diagnostische gegevens van het systeem
 	NO	Systemdiagnose
-	PL	Diagnostyka systemu
-	RU	Диагностика системы
+	PL	Diagnostyka
+	RU	Диагностика
 	SV	Systemdiagnostik
-	
+
 CONTROLPANEL_PORTNO
 	CS	Port %s (%s):
 	DA	Port %s (%s):
@@ -20951,8 +21068,11 @@ CONTROLPANEL_PING
 	SV	Ping:
 
 CONTROLPANEL_FAILED
+	CS	Chyba
 	DE	Fehler
 	EN	Failed
+	PL	Niepowodzenie
+	RU	Сбой
 
 CONTROLPANEL_OK
 	CS	OK
@@ -20970,9 +21090,13 @@ CONTROLPANEL_OK
 	SV	OK
 
 CONTROLPANEL_ALERTS
+	CS	Výstrahy
 	EN	Alerts
+	PL	Alerty
+	RU	Сигналы
 
 CONTROLPANEL_SN_FAILURE
+	CS	Nebyli jsme schopni úspěšně komunikovat s mysqueezebox.com
 	DA	Det var ikke muligt at kommunikere med mysqueezebox.com
 	DE	Die Verbindung zu mysqueezebox.com konnte nicht hergestellt werden.
 	EN	We were not able to successfully communicate with mysqueezebox.com
@@ -20982,9 +21106,12 @@ CONTROLPANEL_SN_FAILURE
 	IT	Impossibile comunicare con mysqueezebox.com
 	NL	We kunnen niet met mysqueezebox.com communiceren
 	NO	Vi kunne ikke kommunisere med mysqueezebox.com
+	PL	Próba nawiązania komunikacji z witryną mysqueezebox.com nie powiodła się
+	RU	Не удалось подключиться к mysqueezebox.com
 	SV	Det gick inte att kommunicera med mysqueezebox.com
 
 CONTROLPANEL_SN_FAILURE_DESC
+	CS	Může jít o přechodný problém internetu nebo o omezení zavedené vaším ISP. Pokud problém přetrvává, ujistěte se, že váš firewall neblokuje odchozí komunikaci.
 	DA	Det kan skyldes et midlertidigt problem på internettet eller en begrænsning fra din internetudbyders side. Hvis problemet fortsætter, skal du kontrollere at din firewall ikke blokerer udgående trafik.
 	DE	Es handelt sich eventuell um ein zeitweiliges Internetproblem oder eine Einschränkung Ihres Internetanbieters. Wenn das Problem bestehen bleibt, vergewissern Sie sich, dass die Firewall den abgehenden Datenverkehr nicht blockiert.
 	EN	This might be a temporary internet issue, or a limitation imposed by your ISP. If the problem persists, please make sure your firewall is not blocking outgoing traffic.
@@ -20994,12 +21121,18 @@ CONTROLPANEL_SN_FAILURE_DESC
 	IT	Potrebbe trattarsi di un problema Internet temporaneo o di una limitazione imposta dal provider di servizi Internet. Se il problema persiste, verificare che il traffico in uscita non sia bloccato dal firewall.
 	NL	Dit is misschien een tijdelijk internetprobleem, of een beperking die door je ISP is opgelegd. Als het probleem zich blijft voordoen, zorg je ervoor dat je firewall geen uitgaand verkeer blokkeert.
 	NO	Dette kan skyldes et midlertidig problem med Internett, eller en begrensning fra Internett-leverandøren. Sjekk at brannmuren ikke blokkerer utgående trafikk hvis problemet vedvarer.
+	PL	Może to być tymczasowy problem z Internetem lub ograniczenie narzucone przez usługodawcę internetowego. Jeżeli problem nie zniknie, upewnij się, że zapora nie blokuje ruchu wychodzącego.
+	RU	Возможно, это временная проблема с Интернетом или ограничение поставщика услуг Интернета. Если проблема не исчезнет, убедитесь, что брандмауэр не блокирует исходящий трафик.
 	SV	Det kan röra sig om ett tillfälligt internetproblem eller om begränsningar som internetleverantören har infört. Om problemet kvarstår bör du kontrollera om brandväggen blockerar utgående trafik.
 
 CONTROLPANEL_PORTCONFLICT
+	CS	Squeezebox Server není v provozu, ale nějaká aplikace používá stejný port (%s).
 	EN	Squeezebox Server is not running, but some application is using the same port (%s).
+	PL	Program Squeezebox Server nie jest uruchomiony, ale jakaś aplikacja używa tego samego portu (%s).
+	RU	Squeezebox Server не выполняется, но какое-то приложение использует этот же порт (%s).
 
 CONTROLPANEL_PORTBLOCKED
+	CS	Squeezebox Server je v provozu, ale nemůže se spojit s portem %s.
 	DA	Squeezebox Server kører men kan ikke kontaktes på port %s
 	DE	Squeezebox Server wird ausgeführt, kann aber an Port %s nicht erreicht werden.
 	EN	Squeezebox Server is running but can't be contacted on port %s.
@@ -21009,12 +21142,18 @@ CONTROLPANEL_PORTBLOCKED
 	IT	Squeezebox Server è in esecuzione ma non può essere contattato sulla porta %s
 	NL	Squeezebox Server wordt uitgevoerd maar is niet toegankelijk via poort %s
 	NO	Squeezebox Server kjører, men kan ikke kontaktes på port %s
+	PL	Program Squeezebox Server działa, ale nie można skontaktować się z nim na porcie %s.
+	RU	Squeezebox Server выполняется, но подключение через порт %s невозможно.
 	SV	Squeezebox Server körs men går inte att ansluta till port %s
 
 CONTROLPANEL_PORTBLOCKED_APPS
+	CS	Vaše spojení mohou blokovat následující aplikace:
 	EN	The following applications might be blocking your connection:
+	PL	Następujące aplikacje mogą blokować połączenie:
+	RU	Возможно, подключение блокируется следующими приложениями:
 
 CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
+	CS	Pokud se Squeezebox Server narazíte na problémy s konektivitou, ujistěte se laskavě, že máte vypnutý "Plný firewall (Vždy zapnuto)"
 	DA	Hvis du har problemer med forbindelsen til og fra Squeezebox Server, skal du kontrollere at "Stateful Firewall (Always On)" er slået fra
 	DE	Vergewissern Sie sich bei Verbindungsproblemen mit Squeezebox Server, dass "Stateful Firewall (Always On)" deaktiviert ist.
 	EN	If you encounter connectivity issues with Squeezebox Server, please make sure "Stateful Firewall (Always On)" is turned off
@@ -21024,9 +21163,12 @@ CONTROLPANEL_CONFLICT_CISCOVPNSTATEFULINSPECTION
 	IT	In caso di problemi di connessione con Squeezebox Server, verificare che il firewall con stato non sia sempre attivato.
 	NL	Als je verbindingsproblemen met Squeezebox Server ondervindt, zorg je ervoor dat 'Stateful Firewall (Altijd aan)' is uitgeschakeld
 	NO	Hvis du har tilkoplingsproblemer med Squeezebox Server,  må du sørge for at "Tilstandsbevisst brannmur (Alltid på)" er slått av
+	PL	W przypadku wystąpienia problemów z łącznością w programie Squeezebox, upewnij się, że opcja „Zapora stanowa (zawsze włączona)” jest wyłączona
+	RU	При возникновении проблем с подключением к Squeezebox Server убедитесь, что параметр "Брандмауэр с отслеживанием состояния (Всегда включено)" отключен
 	SV	Om det uppstår anslutningsproblem med Squeezebox Server bör du kontrollera att Tillståndskänslig brandvägg (alltid på) är avstängd
-	
+
 CONTROLPANEL_CONFLICT_SCPERL
+	CS	Pokud provozujete SC s použitím verze perl, pak je to v pořádku a očekáváno.
 	DA	Hvis du kører SC i Perl-versionen, er det OK og forventet.
 	DE	Das Ausführen von SC mithilfe der Perl-Version wird akzeptiert und erwartet.
 	EN	If you're running SC using the perl version, then this is ok and expected.
@@ -21036,6 +21178,8 @@ CONTROLPANEL_CONFLICT_SCPERL
 	IT	Se è in esecuzione la versione Perl di SC, il problema non sussiste.
 	NL	Als je SC met de perl-versie uitvoert, is dit normaal gedrag.
 	NO	Hvis du kjører SC med perl-versjonen, er dette greit og forventet.
+	PL	Jeśli używasz programu SC w wersji perl, jest to poprawne i oczekiwane zachowanie.
+	RU	При выполнении SC с версией perl данное поведение ожидаемо и нормально.
 	SV	Om du kör du perlversionen av SC är detta inget fel, utan OK och förväntat.
 
 CONTROLPANEL_OTHER_ISSUE
@@ -21070,8 +21214,11 @@ CONTROLPANEL_REFRESH
 	SV	Uppdatera
 
 CLEANUP
+	CS	Čištění
 	EN	Cleanup
-	
+	PL	Oczyść
+	RU	Очистить
+
 CLEANUP_DO
 	CS	Spustit čištění
 	DA	Foretag oprydning
@@ -21133,7 +21280,10 @@ CLEANUP_PLEASE_STOP_SC
 	SV	Stoppa Squeezebox Server innan du börjar med rensningen.
 
 CLEANUP_WANT_TO_STOP_SC
+	CS	Před zahájením čištění musí být Squeezebox Server zastaven. Chcete ho zastavit nyní?
 	EN	Squeezebox Server has to be stopped before running the cleanup. Do you want to stop it now?
+	PL	Przed uruchomieniem czyszczenia należy zatrzymać program Squeezebox Server. Czy chcesz go zatrzymać teraz?
+	RU	Перед выполнением очистки Squeezebox Server нужно остановить. Остановить сейчас?
 
 CLEANUP_USAGE
 	CS	Použití
@@ -21271,12 +21421,19 @@ CLEANUP_DELETING
 	SV	Raderar
 
 CONTROLPANEL_NO_STATUS
+	CS	Nejsou dostupné žádné informace o statusu. Vezměte na vědomí, že pro zobrazení informací o statusu musí být Squeezebox Server aktivní a v provozu.
 	EN	No status information available. Please note that Squeezebox Server has to be up and running in order to display its status information.
+	PL	Brak dostępnych informacji o stanie. Aby możliwe było wyświetlenie informacji o stanie programu Squeezebox Server, musi on być uruchomiony.
+	RU	Сведения о состоянии недоступны. Сведения о состоянии выводятся только в случае, если Squeezebox Server выполняется.
 
 CONTROLPANEL_NEED_ADMINISTRATOR
+	CS	Některé volby jsou zakázány, protože nejste administrátor. Abyste mohli tyto volby používat, spusťte \ntento nástroj jako administrátor.
 	EN	Some of the options are disabled, because you're not administrator. Please run \nthis tool as an administrator to be able to use them.
+	PL	Niektóre opcje są wyłączone, ponieważ nie jesteś administratorem. Uruchom \nto narzędzie jako administrator, aby możliwe było użycie tych opcji.
+	RU	Некоторые параметры отключены, поскольку вы не являетесь администратором. Запустите \nэту утилиту от имени администратора, и они станут доступны.
 
 RUN_AT_BOOT
+	CS	Spustit automaticky při startu systému
 	DA	Kør automatisk ved systemstart
 	DE	Automatisch bei Systemstart ausführen
 	EN	Automatically run at system start
@@ -21286,9 +21443,12 @@ RUN_AT_BOOT
 	IT	Esegui automaticamente all'avvio del sistema
 	NL	Automatisch uitvoeren bij systeemstart
 	NO	Kjør automatisk når systemet starter
+	PL	Uruchom automatycznie po uruchomieniu systemu
+	RU	Запускать автоматически при запуске системы
 	SV	Kör automatiskt vid systemstart
 
 RUN_AT_LOGIN
+	CS	Spustit automaticky při přihlášení
 	DA	Kør automatisk ved logon
 	DE	Automatisch bei Anmeldung ausführen
 	EN	Automatically run at login
@@ -21298,15 +21458,24 @@ RUN_AT_LOGIN
 	IT	Esegui automaticamente all'accesso al sistema
 	NL	Automatisch uitvoeren bij aanmelden
 	NO	Kjør automatisk ved pålogging
+	PL	Uruchom automatycznie po zalogowaniu
+	RU	Запускать автоматически при входе в систему
 	SV	Kör automatiskt vid inloggning
 
 RUN_FAILSAFE
+	CS	Spustit bez veškerých uživatelských přípojek ("Bezpečný režim")
 	EN	Run with no user extensions ("Safe Mode")
+	PL	Uruchom bez rozszerzeń użytkownika („tryb bezpieczny”)
+	RU	Запустить без пользовательских расширений ("Безопасный режим")
 
 RUN_NEVER
+	CS	Nespouštět automaticky
 	EN	Don't start automatically
+	PL	Nie uruchamiaj automatycznie
+	RU	Не запускать автоматически
 
 START_SQUEEZEBOX_SERVER
+	CS	Spustit Squeezebox Server
 	DA	Start Squeezebox Server
 	DE	Squeezebox Server starten
 	EN	Start Squeezebox Server
@@ -21316,9 +21485,12 @@ START_SQUEEZEBOX_SERVER
 	IT	Avvia Squeezebox Server
 	NL	Squeezebox Server starten
 	NO	Start Squeezebox Server
+	PL	Uruchom program Squeezebox Server
+	RU	Запустить Squeezebox Server
 	SV	Starta Squeezebox Server
 
 STOP_SQUEEZEBOX_SERVER
+	CS	Zastavit Squeezebox Server
 	DA	Stop Squeezebox Server
 	DE	Squeezebox Server anhalten
 	EN	Stop Squeezebox Server
@@ -21328,6 +21500,8 @@ STOP_SQUEEZEBOX_SERVER
 	IT	Arresta Squeezebox Server
 	NL	Squeezebox Server stoppen
 	NO	Stopp Squeezebox Server
+	PL	Zatrzymaj program Squeezebox Server
+	RU	Остановить Squeezebox Server
 	SV	Avsluta Squeezebox Server
 
 PLAYLIST_MODE
@@ -21706,7 +21880,7 @@ WHATS_NEXT
 	SV	Jag är klar. Vad gör jag nu?
 
 CONTINUE_TO_SQUEEZEBOX_SERVER
-	CS	Pokračujte ve Squeezebox Server ve správě nastavení pro přehrávání své kolekce hudby.
+	CS	Pokračovat na Squeezebox Server pro správu nastavení k přehrávání vaší osobní sbírky hudby.
 	DA	Fortsæt til Squeezebox Server hvor du kan konfigurere indstillinger og afspille dine musikfiler.
 	DE	Weiter zu Squeezebox Server, um Einstellungen zur Wiedergabe Ihrer Musiksammlung zu verwalten.
 	EN	Continue to Squeezebox Server to manage settings for playing your personal music collection.

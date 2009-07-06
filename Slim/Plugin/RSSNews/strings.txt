@@ -354,7 +354,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	SV	Maximalt antal objekt ur varje flöde som visas medan skärmsläckaren är aktiv. Ett större antal innebär att skärmsläckaren visar fler objekt innan den växlar över till nästa flöde.
 
 SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
-	CS	Stávající zdroje:
+	CS	Stávající kanály:
 	DA	Eksisterende feeds:
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:

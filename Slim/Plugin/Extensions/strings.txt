@@ -44,7 +44,7 @@ PLUGIN_EXTENSIONS_REPOS
 	SV	Ytterligare databaser
 
 PLUGIN_EXTENSIONS_REPOS_DESC
-	CS	Můžete přidat dodatečné doplňkové archívy třetích stran zadáním URL pro archív níže. Seznam URL archívů je uveden na <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
+	CS	Můžete přidat dodatečné doplňkové archívy třetích stran zadáním URL pro archív níže. Seznam URL archívů je uveden na <a href="http://wiki.slimdevices.com/index.php/Squeezebox Server_Repositories" target="wiki">here</a>.
 	DA	Nedenfor kan du tilføje adresser på tredjeparters lagersteder med udvidelsesmoduler. Der er en liste med adresser på sådanne lagersteder <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">her</a>.
 	DE	Sie können weitere Repositories von Drittanbietern verwenden, indem Sie deren URL unten angeben. Eine Liste von weiteren Verzeichnissen kann <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">im Wiki</a> gefunden werden.
 	EN	You may add additional third-party extension repositories by entering the URL for the repository below.  A list of repository URLs can be found <a href="http://wiki.slimdevices.com/index.php/SqueezeCenter_Repositories" target="wiki">here</a>.
