@@ -761,7 +761,7 @@ sub restartServer {
 	
 	elsif ($PerlSvc::VERSION) {
 	
-		my $restartFlag = Slim::Utils::Prefs::preferences('cachedir') || catdir($class->dirsFor('cache'), 'restart.txt');
+		my $restartFlag = catdir( Slim::Utils::Prefs::preferences('server')->get('cachedir') || $class->dirsFor('cache'), 'restart.txt' );
 		if (open(RESTART, ">$restartFlag")) {
 			close RESTART;
 			main::stopServer();
