@@ -95,7 +95,6 @@ sub _players_done {
 	if ( $log->is_debug ) {
 		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players}, $res->{inactive_players} ) );
 		$log->debug( "Got list of active services: " . Data::Dump::dump( $res->{active_services} ));
-		$log->debug( "Got list of apps: " . Data::Dump::dump( $res->{apps} ));
 		$log->debug( "Next player check in " . $res->{next_poll} . " seconds" );
 	}
 		
@@ -123,39 +122,16 @@ sub _players_done {
 		}
 	}
 	
-	# enabled/disable plugins (apps) according to the list returned by SN
-#	if ( $res->{apps} ) {
-#		my $changed = 0;
-#		
-#		foreach my $service ( keys %{$res->{apps}} ) {
-#			
-#			next unless $service;
-#			
-#			my $module = $res->{apps}->{$service}->{internal}
-#				? "Slim::Plugin::${service}::Plugin"
-#				: "Plugins::${service}::Plugin";
-#			
-#			my $enabled = $res->{apps}->{$service}->{enabled};
-#			if ($enabled != Slim::Utils::PluginManager->isEnabled($module)) {
-#				
-#				if ($enabled) {
-#					Slim::Utils::PluginManager->enablePlugin($module);
-#				}
-#				else {
-#					Slim::Utils::PluginManager->disablePlugin($module);
-#				}
-#				
-#				$log->debug("Status of $module has changed, now " . ($enabled ? 'enabled' : 'disabled'));
-#				
-#				$changed = 1;
-#			}
-#		}
-#		
-#		# need to do something if list has changed - user should be notified
-#		if ($changed) {
-#			$log->debug("List of enabled plugins has changed - you'll need to restart Squeezebox Server for the changes to take effect")
-#		}
-#	}
+	# Update enabled apps for each player
+	# This will create new pref entries for players this server has never seen
+	for my $player ( @{ $res->{players} }, @{ $res->{inactive_players} } ) {
+		if ( exists $player->{apps} ) {
+			my $cprefs = Slim::Utils::Prefs::Client->new( $prefs, $player->{mac}, 'no-migrate' );
+			$cprefs->set( apps => $player->{apps} );
+			
+			# XXX: refresh home menus for connected players?
+		}
+	}
 	
 	# Clear error count if any
 	if ( $prefs->get('snPlayersErrors') ) {
