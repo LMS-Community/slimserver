@@ -481,6 +481,7 @@ sub playlistModeSettings {
 		party    => 4,
 	);
 
+	#todo: move node to "betaFeatures",  left as advancedSettings for backwards compat 
 	my $choice = {
 		text          => $client->string('PLAYLIST_MODE'),
 		choiceStrings => [ @translatedModeStrings ] ,
@@ -565,7 +566,7 @@ sub albumSortSettingsItem {
 		text           => $client->string('ALBUMS_SORT_METHOD'),
 		id             => 'settingsAlbumSettings',
 		node           => 'advancedSettings',
-		weight         => 100,
+		weight         => 105,
 			actions        => {
 			go => {
 				cmd => ['jivealbumsortsettings'],
@@ -1558,10 +1559,10 @@ sub playerSettingsMenu {
 
 	# sleep setting (always)
 	push @menu, {
-		text           => $client->string("PLAYER_SLEEP"),
+		text           => $client->string("SLEEP"),
 		id             => 'settingsSleep',
 		node           => 'settings',
-		weight         => 40,
+		weight         => 65,
 		actions        => {
 			go => {
 				cmd    => ['sleepsettings'],
@@ -1591,10 +1592,10 @@ sub playerSettingsMenu {
 
 	# information, always display
 	push @menu, {
-		text           => $client->string( 'INFORMATION' ),
+		text           => $client->string( 'JIVE_SQUEEZEBOX_INFORMATION' ),
 		id             => 'settingsInformation',
 		node           => 'advancedSettings',
-		weight         => 4,
+		weight         => 100,
 		window         => { titleStyle => 'settings' },
 		actions        => {
 				go =>	{
@@ -1610,8 +1611,9 @@ sub playerSettingsMenu {
 	push @menu, {
 		text           => $client->string('INFORMATION_PLAYER_NAME'),
 		id             => 'settingsPlayerNameChange',
-		node           => 'advancedSettings',
-		input          => {	
+		node           => 'settings',
+		weight         => 67,
+		input          => {
 			initialText  => $client->name(),
 			len          => 1, # For those that want to name their player "X"
 			allowedChars => $client->string('JIVE_ALLOWEDCHARS_WITHCAPS'),

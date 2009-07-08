@@ -1434,21 +1434,6 @@ SLEEP
 	SV	Viloläge
 	ZH_CN	睡眠状态
 
-PLAYER_SLEEP
-	CS	Ztlumení přehrávače do ztracena
-	DA	Afspilleren i dvale
-	DE	Player-Schlafmodus
-	EN	Player Sleep
-	ES	Suspensión de reproductor
-	FI	Soittimen lepotila
-	FR	Mise en veille de la platine
-	IT	Sospendi
-	NL	Sluimermodus muzieksysteem
-	NO	Spiller i hvilemodus
-	PL	Usypianie odtwarzacza
-	RU	Спящий режим плеера
-	SV	Viloläge för spelare
-
 SLEEPING_AT
 	CS	Ztlumení v
 	DA	Slumrefunktion aktiveres om
@@ -15473,6 +15458,9 @@ INFORMATION
 	SV	Information
 	ZH_CN	信息
 
+JIVE_SQUEEZEBOX_INFORMATION
+	EN	Squeezebox Information
+
 INFORMATION_MENU_PLAYER
 	CS	Informace o přehrávači
 	DA	Oplysninger om afspiller
@@ -15571,22 +15559,7 @@ INFORMATION_MENU_MODULE
 	SV	Plugin-moduler
 
 INFORMATION_PLAYER_NAME
-	CS	Název přehrávače
-	DA	Afspillerens navn
-	DE	Player-Name
-	EN	Player Name
-	ES	Nombre de reproductor
-	FI	Soittimen nimi
-	FR	Nom de la platine
-	HE	שם הנגן
-	IT	Nome lettore
-	JA	プレーヤーの名前
-	NL	Systeemnaam
-	NO	Spillernavn
-	PL	Nazwa odtwarzacza
-	RU	Название плеера
-	SV	Spelarnamn
-	ZH_CN	播放机名字
+	EN	Squeezebox Name
 
 INFORMATION_PLAYER_NAME_ABBR
 	CS	Název
