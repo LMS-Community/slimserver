@@ -489,7 +489,7 @@ sub runImporter {
 		$importsRunning{$importer} = Time::HiRes::time();
 
 		# rescan each enabled Import, or scan the newly enabled Import
-		$log->info("Starting $importer scan");
+		$log->error("Starting $importer scan");
 
 		$importer->startScan;
 
@@ -619,11 +619,9 @@ sub endImporter {
 
 	if (exists $importsRunning{$importer}) { 
 
-		if ( $log->is_info ) {
-			$log->info(sprintf("Completed %s Scan in %s seconds.",
-				$importer, int(Time::HiRes::time() - $importsRunning{$importer})
-			));
-		}
+		$log->error(sprintf("Completed %s Scan in %s seconds.",
+			$importer, int(Time::HiRes::time() - $importsRunning{$importer})
+		));
 
 		delete $importsRunning{$importer};
 		
