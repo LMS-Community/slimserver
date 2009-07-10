@@ -2340,7 +2340,7 @@ sub _postCheckAttributes {
 			$t->get('album') &&
 			blessed($a = $t->album) eq 'Slim::Schema::Album' &&
 			$a->get_column('title') eq $album &&
-			(!$checkDisc || ($disc eq ($a->disc || 0)))
+			(!$checkDisc || (($disc || '') eq ($a->disc || 0)))
 
 			) {
 
