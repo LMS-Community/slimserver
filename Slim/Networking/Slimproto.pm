@@ -717,9 +717,13 @@ sub _stat_handler {
 		$status{$client}->{'server_timestamp'},
 		$status{$client}->{'error_code'},
 	) = unpack ('a4CCCNNNNnNNNNnNNn', $$data_ref);
+
+	my $len = length($$data_ref);
 	
-	if ( length($$data_ref) != 57 ) {
+	if ( $len != 53 && $len != 57 ) {
 		# Older firmware that doesn't report error_code
+		# 57 = current firmware (4 junk bytes)
+		# 53 = future firmware (correct length)
 		$status{$client}->{'error_code'} = 0;
 	}
 		
