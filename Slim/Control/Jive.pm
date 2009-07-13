@@ -226,7 +226,7 @@ sub menuQuery {
 	# send main menu notification
 	my $menu = mainMenu($client);
 	
-	# Return results directly and destroy the cilent if it was a dummy
+	# Return results directly and destroy the client if it was a dummy
 	if ( $dummy ) {
 		$request->setRawResults( {
 			count     => scalar @{$menu},
@@ -338,6 +338,7 @@ sub mainMenu {
 		@{albumSortSettingsItem($client, 1)},
 		@{myMusicMenu(1, $client)},
 		@{recentSearchMenu($client, 1)},
+		@{appsMenu($client, 1)},
 	);
 	
 	# SN Jive Menu
@@ -3149,6 +3150,36 @@ sub _extensionsQueryCB {
 		$request->addResult("count", $cnt);
 
 		$request->setStatusDone();
+	}
+}
+
+sub appsMenu {
+	my $client = shift;
+	my $batch  = shift;
+	
+	my $menu = [];
+	
+	my @apps = keys %{ $prefs->client($client)->get('apps') || {} };
+	
+	if ( !scalar @apps ) {
+		return $menu;
+	}
+	
+	# Filter enabled apps out of global plugin list, and set them to home menu
+	for my $plugin ( @pluginMenus ) {
+		if ( grep { $plugin->{id} =~ /$_/ } @apps ) {
+			my $clone = Storable::dclone($plugin);
+			$clone->{node} = 'home';
+			
+			push @{$menu}, $clone;
+		}
+	}
+	
+	if ( $batch ) {
+		return $menu;
+	}
+	else {
+		_notifyJive($menu, $client);
 	}
 }
 
