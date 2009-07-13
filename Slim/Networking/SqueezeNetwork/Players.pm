@@ -130,6 +130,9 @@ sub _players_done {
 			$cprefs->set( apps => $player->{apps} );
 			
 			# XXX: refresh home menus for connected players?
+			
+			# Refresh Jive menu
+			Slim::Control::Jive::appsMenu($client);
 		}
 	}
 	
