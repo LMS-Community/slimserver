@@ -947,6 +947,10 @@ sub _cliQuery_done {
 							};
 						}
 
+						if ( $item->{isContextMenu} ) {
+							$itemParams->{'isContextMenu'} = 1;
+						}
+
 						my %merged = %$params;
 						if ( scalar keys %{$itemParams} ) {
 							%merged = (%{$params}, %{$itemParams});

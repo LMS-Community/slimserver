@@ -931,6 +931,7 @@ sub infoMoreInfo {
 	
 	return {
 		name => cstring($client, 'MOREINFO'),
+		isContextMenu => 1,
 
 		web  => {
 			group  => 'moreinfo',

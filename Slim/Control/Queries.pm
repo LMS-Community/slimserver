@@ -5579,6 +5579,9 @@ sub _contextMenuBase {
 				'menu' => $menu,
 			},
 		itemsParams => 'params',
+		window => { 
+			isContextMenu => 1, 
+		},
 	};
 
 }
