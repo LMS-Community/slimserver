@@ -132,7 +132,9 @@ sub _players_done {
 			# XXX: refresh home menus for connected players?
 			
 			# Refresh Jive menu
-			Slim::Control::Jive::appsMenu($client);
+			if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
+				Slim::Control::Jive::appsMenu($client);
+			}
 		}
 	}
 	
