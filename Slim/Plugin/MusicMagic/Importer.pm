@@ -10,7 +10,7 @@ package Slim::Plugin::MusicMagic::Importer;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use LWP::Simple;
+use LWP::UserAgent;
 use Scalar::Util qw(blessed);
 use Socket qw($LF);
 
@@ -92,7 +92,16 @@ sub initPlugin {
 
 	$log->info("Testing for API on localhost:$MMSport");
 
-	my $initialized = get("http://localhost:$MMSport/api/version");
+	my $ua = LWP::UserAgent->new(
+		timeout => 5,
+	);
+	
+	my $res = $ua->get("http://localhost:$MMSport/api/version");
+	
+	my $initialized;
+	if ( $res->is_success ) {
+		$initialized = $res->content;
+	}
 
 	if (defined $initialized) {
 
