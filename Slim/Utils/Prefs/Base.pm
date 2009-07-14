@@ -346,6 +346,8 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 	my $set = sub {
 		my ( $pref, $new ) = @_;
 		
+		my @ret;
+		
 		my $valid = $class->validate($pref, $new);
 		
 		if ( $valid ) {
@@ -363,7 +365,7 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 				if ( my $obj = $class->_obj ) {
 					my $change = $root->{onchange}->{ $pref };
 					for my $func ( @{$change} ) {
-						return sub {
+						push @ret, sub {
 							$log->is_debug && $log->debug(
 								'executing on change function ' . Slim::Utils::PerlRunTime::realNameForCodeRef($func)
 							);
@@ -375,20 +377,22 @@ sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 			}
 		}
 		
-		return;
+		return @ret;
 	};
 
 	for my $key ( keys %{$prefs} ) {
-		my $cb;
+		my @cb;
 		if ( scalar @{ $prefs->{$key} } == 1 ) {
 			# scalar pref
-			$cb = $set->( $key, $prefs->{$key}->[0] );
+			@cb = $set->( $key, $prefs->{$key}->[0] );
 		}
 		else {
 			# array pref
-			$cb = $set->( $key, $prefs->{$key} );
+			@cb = $set->( $key, $prefs->{$key} );
 		}
-		push @handlers, $cb if $cb;
+		for my $cb ( @cb ) {
+			push @handlers, $cb if defined $cb;
+		}
 	}
 	
 	for my $func ( @handlers ) {
