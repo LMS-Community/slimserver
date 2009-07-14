@@ -107,7 +107,7 @@ SLIM_SERVICE only. Pulls a pref from the database.
 
 =cut
 
-sub getFromDB {
+sub getFromDB { if ( main::SLIM_SERVICE ) { # optimize out for SC
 	my ( $class, $key, $model ) = @_;
 	
 	my $client = Slim::Player::Client::getClient( $class->{clientid} ) || return;
@@ -166,7 +166,7 @@ sub getFromDB {
 	}
 	
 	return $value;
-}
+} }
 
 =head2 exists( $prefname )
 
@@ -336,7 +336,7 @@ sub set {
 # sets all prefs passed in first, then runs all onchange handlers
 # This avoids extra db queries when a change handler uses a pref not yet loaded
 
-sub bulkSet {
+sub bulkSet { if ( main::SLIM_SERVICE ) { # optimize out for SC
 	my ( $class, $prefs ) = @_;
 	
 	my $root = $class->_root;
@@ -399,7 +399,7 @@ sub bulkSet {
 			Slim::Utils::Misc::bt();
 		}
 	}
-}
+} }
 
 sub _obj {}
 
@@ -520,13 +520,13 @@ Clears all preferences. SLIM_SERVICE only.
 
 =cut
 
-sub clear {
+sub clear { if ( main::SLIM_SERVICE ) { # optimize out for SC
 	my $class = shift;
 	
 	for my $pref ( keys %{ $class->{prefs} } ) {
 		delete $class->{prefs}->{$pref};
 	}
-}
+} }
 
 =head2 hasValidator( $pref )
 
