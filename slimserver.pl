@@ -350,6 +350,12 @@ sub init {
 	} else {
 		Slim::Utils::Misc::setPriority( $prefs->get('serverPriority') );
 	}
+	
+	# Generate a UUID for this SC instance on first-run
+	if ( !$prefs->get('server_uuid') ) {
+		require UUID::Tiny;
+		$prefs->set( server_uuid => UUID::Tiny::create_UUID_as_string( UUID::Tiny::UUID_V4() ) );
+	}
 
 	$log->info("Squeezebox Server binary search path init...");
 	Slim::Utils::OSDetect::getOS->initSearchPath();

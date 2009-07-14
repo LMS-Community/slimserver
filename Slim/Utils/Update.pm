@@ -71,12 +71,13 @@ sub checkVersion {
 	my $url  = "http://"
 		. Slim::Networking::SqueezeNetwork->get_server("update")
 		. sprintf(
-			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s", 
+			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s", 
 			$::VERSION, 
 			$::REVISION, 
 			Slim::Utils::Strings::getLanguage(),
 			$os->canAutoUpdate() && $prefs->get('autoDownloadUpdate') ? '1' : '',
 			$os->installerOS(),
+			$prefs->get('server_uuid'),
 		);
 		
 	$log->debug("Using URL: $url");
