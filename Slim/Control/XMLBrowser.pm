@@ -1075,13 +1075,7 @@ sub _cliQuery_done {
 		if ($menuMode) {
 
 
-			# Change window menuStyle to album if any images are in the list
-			if ( $hasImage ) {
-				$window->{'windowStyle'} = 'icon_list';
-				$window->{'menuStyle'} = 'album';
-			} else {
-				$window->{'windowStyle'} = 'text_list';
-			}
+			$window->{'windowStyle'} = 'text_list';
 
 			# send any window parameters we've gathered, if we've gathered any
 			if ($window) {
