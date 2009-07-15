@@ -91,17 +91,8 @@ sub initPlugin {
 	$MMSport = $prefs->get('port');
 
 	$log->info("Testing for API on localhost:$MMSport");
-
-	my $ua = LWP::UserAgent->new(
-		timeout => 5,
-	);
 	
-	my $res = $ua->get("http://localhost:$MMSport/api/version");
-	
-	my $initialized;
-	if ( $res->is_success ) {
-		$initialized = $res->content;
-	}
+	my $initialized = get( "http://localhost:$MMSport/api/version", 5 );
 
 	if (defined $initialized) {
 
@@ -580,6 +571,24 @@ sub _updatePlaylist {
 	$attributes{'MUSICMAGIC_MIXABLE'} = 1;
 
 	Slim::Music::Info::updateCacheEntry($url, \%attributes);
+}
+
+# Emulate LWP::Simple with an optional timeout
+sub get {
+	my $url     = shift;
+	my $timeout = shift || 60;
+	
+	my $ua = LWP::UserAgent->new(
+		timeout => $timeout,
+	);
+	
+	my $res = $ua->get($url);
+	
+	if ( $res->is_success ) {
+		return $res->content;
+	}
+	
+	return;
 }
 
 1;
