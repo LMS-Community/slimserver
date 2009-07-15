@@ -69,7 +69,7 @@ sub checkVersion {
 	$log->info("Checking version now.");
 
 	my $url  = "http://"
-		. Slim::Networking::SqueezeNetwork->get_server("update")
+		. Slim::Networking::SqueezeNetwork->get_server("sn")
 		. sprintf(
 			"/update/?version=%s&revision=%s&lang=%s&geturl=%s&os=%s&uuid=%s", 
 			$::VERSION, 
