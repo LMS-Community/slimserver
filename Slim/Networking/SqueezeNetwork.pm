@@ -99,15 +99,6 @@ sub init {
 					ecb => \&_init_error,
 				);
 			}
-			else {
-				# Initialize radio menu for non-SN user
-				my $http = $class->new(
-					\&_gotRadio,
-					\&_gotRadioError,
-				);
-				
-				$http->get( $class->url('/api/v1/radio') );
-			}
 		},
 	);
 }
@@ -198,28 +189,6 @@ sub _init_error {
 			__PACKAGE__->init();
 		}
 	);
-}
-
-sub _gotRadio {
-	my $http = shift;
-	
-	my $json = eval { from_json( $http->content ) };
-	
-	if ( $@ ) {
-		$http->error( $@ );
-		return _gotRadioError($http);
-	}
-	
-	if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::InternetRadio::Plugin') ) {
-		Slim::Plugin::InternetRadio::Plugin->buildMenus( $json->{radio_menu} );
-	}
-}
-
-sub _gotRadioError {
-	my $http  = shift;
-	my $error = $http->error;
-	
-	$log->error( "Unable to retrieve radio directory from SN: $error" );
 }
 
 # Stop all communication with SN, if the user removed their login info for example

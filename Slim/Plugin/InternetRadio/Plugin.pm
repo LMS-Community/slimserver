@@ -9,6 +9,7 @@ use File::Basename qw(basename);
 use File::Path qw(mkpath);
 use File::Spec::Functions qw(:ALL);
 use HTTP::Date;
+use JSON::XS::VersionOneAndTwo;
 use URI::Escape qw(uri_escape_utf8);
 
 use Slim::Networking::SimpleAsyncHTTP;
@@ -24,59 +25,65 @@ my $ICONS = {};
 sub initPlugin {
 	my $class = shift;
 	
-	# Do nothing on init for this plugin
 	if ( $class eq __PACKAGE__ ) {
-		
-		if ( main::SLIM_SERVICE ) {
-			# On SN, create the Internet Radio menu as an OPML link
-			Slim::Buttons::Home::addMenuOption(
-				RADIO => {
-					useMode => sub {
-						my $client = shift;
-						
-						my $name = $client->string('RADIO');
-						
-						my %params = (
-							header   => $name,
-							modeName => $name,
-							url      => Slim::Networking::SqueezeNetwork->url('/api/v1/radio/opml'),
-							title    => $name,
-							timeout  => 35,
-						);
+		# When called initially, fetch the list of radio plugins
+		Slim::Utils::Timers::setTimer(
+			undef,
+			time(),
+			sub {
+				if ( $prefs->get('sn_email') && $prefs->get('sn_password_sha') ) {
+					# Do nothing, menu is returned via SN login
+				}
+				else {
+					# Initialize radio menu for non-SN user and on SN
+					my $http = Slim::Networking::SqueezeNetwork->new(
+						\&_gotRadio,
+						\&_gotRadioError,
+					);
+					
+					my $url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio');
+					
+					if ( main::SLIM_SERVICE ) {
+						# Get all possible menu items on SN, they are filtered by user later
+						$url = Slim::Networking::SqueezeNetwork->url('/api/v1/radio/all');
+					}
+					
+					$http->get($url);
+				}
+			},
+		);
+	}
 
-						Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
-
-						# we'll handle the push in a callback
-						$client->modeParam( handledTransition => 1 );
-					},
-				},
-			);
-			
-			# Add a CLI command for this for Jive on SN
-			my $cliQuery = sub {
-			 	my $request = shift;
-				Slim::Control::XMLBrowser::cliQuery(
-					'internetradio',
-					Slim::Networking::SqueezeNetwork->url('/api/v1/radio/opml'),
-					$request,
-				);
-			};
-			
-			Slim::Control::Request::addDispatch(
-				[ 'internetradio', 'items', '_index', '_quantity' ],
-			    [ 1, 1, 1, $cliQuery ]
-			);
-			
-			Slim::Control::Request::addDispatch(
-				[ 'internetradio', 'playlist', '_method' ],
-				[ 1, 1, 1, $cliQuery ]
-			);
-		}
-		
-		return;
+	if ( $class ne __PACKAGE__ ) {
+		# Create a real plugin only for our sub-classes
+		return $class->SUPER::initPlugin(@_);
 	}
 	
-	return $class->SUPER::initPlugin(@_);
+	return;
+}
+
+sub _gotRadio {
+	my $http = shift;
+	
+	my $json = eval { from_json( $http->content ) };
+	
+	if ( $log->is_debug ) {
+		$log->debug( 'Got radio menu from SN: ' . Data::Dump::dump($json) );
+	}
+	
+	if ( $@ ) {
+		$http->error( $@ );
+		return _gotRadioError($http);
+	}
+	
+	__PACKAGE__->buildMenus( $json->{radio_menu} );
+}
+
+sub _gotRadioError {
+	my $http  = shift;
+	my $error = $http->error;
+	
+	$log->error( "Unable to retrieve radio directory from SN: $error" );
 }
 
 sub buildMenus {
@@ -96,9 +103,11 @@ sub buildMenus {
 	}
 	
 	for my $item ( @{$items} ) {
-		if ( $item->{icon} && $icondir ) {
-			# Download and cache icons so we can support resizing on them
-			$class->cacheIcon( $icondir, $item->{icon} );
+		if ( !main::SLIM_SERVICE ) {
+			if ( $item->{icon} && $icondir ) {
+				# Download and cache icons so we can support resizing on them
+				$class->cacheIcon( $icondir, $item->{icon} );
+			}
 		}
 		
 		$class->generate( $item );
@@ -117,13 +126,27 @@ sub generate {
 	my $package  = __PACKAGE__;
 	my $subclass = $item->{class} || return;
 	
-	my $tag    = lc $subclass;
-	my $name   = $item->{name};
-	my $feed   = $item->{URL};
-	my $weight = $item->{weight};
-	my $type   = $item->{type};
-	my $icon   = $ICONS->{ $item->{icon} }; # local path to cached icon
-	my $iconRE = $item->{iconre} || 0;
+	my $tag     = lc $subclass;
+	my $name    = $item->{name};    # a string token
+	my $strings = $item->{strings}; # all strings for this item
+	my $feed    = $item->{URL};
+	my $weight  = $item->{weight};
+	my $type    = $item->{type};
+	my $icon    = main::SLIM_SERVICE ? $item->{icon} : $ICONS->{ $item->{icon} }; # local path to cached icon
+	my $iconRE  = $item->{iconre} || 0;
+	
+	# SN needs to dynamically filter radio plugins per-user and append values such as RT username
+	my $filter;
+	my $append;
+	if ( main::SLIM_SERVICE ) {
+		$filter = $item->{filter}; # XXX needed?
+		$append = $item->{append};
+	}
+	
+	if ( $strings && uc($name) eq $name ) {
+		# Use SN-supplied translations
+		Slim::Utils::Strings::storeString( $name, $strings );
+	}
 	
 	my $code = qq{
 package ${package}::${subclass};
@@ -131,6 +154,17 @@ package ${package}::${subclass};
 use strict;
 use base qw($package);
 
+};
+
+	if ( main::SLIM_SERVICE ) {
+		$code .= qq{
+use Slim::Utils::Prefs;
+
+my \$prefs = preferences('server');
+};
+	}
+	
+	$code .= qq{
 sub initPlugin {
 	my \$class = shift;
 	
@@ -157,20 +191,39 @@ sub playerMenu { 'RADIO' }
 
 };
 
-	# RadioTime URLs require special handling
-	if ( $feed =~ /radiotime\.com/ ) {
+	if ( main::SLIM_SERVICE && $append ) {
+		# Feed method must append a pref to the URL
 		$code .= qq{
+sub feed {
+	my ( \$class, \$client ) = \@_;
+	
+	my \$val = \$prefs->client(\$client)->get('$append');
+	
+	my \$feed = '$feed';
+	
+	\$feed .= ( \$feed =~ /\\\?/ ) ? '&' : '?';
+	\$feed .= \$val;
+	
+	return \$feed;
+}
+};
+	}
+	else {
+		# RadioTime URLs require special handling
+		if ( $feed =~ /radiotime\.com/ ) {
+			$code .= qq{
 sub feed {
 	my \$class = shift;
 	
 	return \$class->radiotimeFeed( '$feed', \@_ );
 }
 };
-	}
-	else {
-		$code .= qq{
+		}
+		else {
+			$code .= qq{
 sub feed { '$feed' }
 };
+		}
 	}
 
 	$code .= qq{
@@ -252,7 +305,7 @@ sub radiotimeFeed {
 sub _pluginDataFor {
 	my ( $class, $key ) = @_;
 	
-	if ( $key ne 'icon' ) {
+	if ( $key ne 'icon' || main::SLIM_SERVICE ) {
 		return $class->SUPER::_pluginDataFor($key);
 	}
 	
