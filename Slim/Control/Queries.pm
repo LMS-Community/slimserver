@@ -439,6 +439,8 @@ sub albumsQuery {
 		};
 		
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		$base->{'actions'} = _jivePresetBase($base->{'actions'});
+
 		if ( $party || $partyMode ) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
@@ -830,6 +832,7 @@ sub artistsQuery {
 			},
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 		if ($partyMode || $party) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
@@ -1442,6 +1445,7 @@ sub genresQuery {
 			window => { titleStyle => 'genres', },
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 		if ($party || $partyMode) {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
@@ -2554,6 +2558,7 @@ sub playlistsQuery {
 			},
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 
 		if ($useContextMenu) {
 			# context menu for 'more' action
@@ -4016,6 +4021,7 @@ sub titlesQuery {
 			}
 		};
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 		# this is a temporary flag to ensure backwards compatibility between SC and Squeezeplay
 		$base->{'addAction'} = 'more';
 		
@@ -4299,6 +4305,7 @@ sub yearsQuery {
 			$base->{'actions'}->{'play'} = $base->{'actions'}->{'go'};
 		}
 		$base->{'actions'}{'play-hold'} = _mixerBase();
+		$base->{'actions'} = _jivePresetBase($base->{'actions'});
 		if ($useContextMenu) {
 			# + is more
 			$base->{'actions'}{'more'} = _contextMenuBase('year');
@@ -4738,6 +4745,21 @@ sub _jiveNoResults {
 
 	$request->addResultLoop('item_loop', 0, 'style', 'itemNoAction');
 	$request->addResultLoop('item_loop', 0, 'action', 'none');
+}
+
+
+# sets base callbacks for presets 0-9
+sub _jivePresetBase {
+	my $actions = shift;
+	for my $preset (0..9) {
+		my $key = 'set-preset-' . $preset;
+		$actions->{$key} = {
+			player => 0,
+			cmd    => [ 'jivefavorites', 'set_preset', "key:$preset" ],
+			itemsParams => 'params',
+		};
+	}
+	return $actions;
 }
 
 sub _jiveAddToFavorites {

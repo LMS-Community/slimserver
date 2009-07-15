@@ -883,17 +883,14 @@ sub cliAdd {
 			
 			$request->addResult( 'count', 1 );
 			
-			# show feedback if this action came from jive cometd session
-			if ( $request->source && $request->source =~ /\/slim\/request/ ) {
-				$client->showBriefly( {
-					'jive' => { 
-						'text' => [
-							$client->string('FAVORITES_ADDING'),
-							$title,
-						],
-					},
-				} );
-			}
+			$client->showBriefly( {
+				'jive' => { 
+					'text' => [
+						$client->string('FAVORITES_ADDING'),
+						$title,
+					],
+				},
+			} );
 
 			$request->setStatusDone();
 		}
@@ -959,16 +956,14 @@ sub cliAdd {
 			$favs->setHotkey($index, $hotkey);
 		}
 
-		# show feedback if this action came from jive cometd session
-		if ($request->source && $request->source =~ /\/slim\/request/) {
-			$client->showBriefly({
-				'jive' => { 
-				'text' => [ $client->string('FAVORITES_ADDING'),
-						$title,
-					   ],
-				}
-			});
-		}
+		# show feedback to jive
+		$client->showBriefly({
+			'jive' => { 
+			'text' => [ $client->string('FAVORITES_ADDING'),
+					$title,
+				   ],
+			}
+		});
 
 		$request->setStatusDone();
 

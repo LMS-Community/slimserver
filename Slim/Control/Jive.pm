@@ -2920,45 +2920,57 @@ sub jiveFavoritesCommand {
 	my $token   = uc($command); # either ADD or DELETE
 	my $action = $command eq 'add' ? 'parent' : 'grandparent';
 	my $favIndex = defined($request->getParam('item_id'))? $request->getParam('item_id') : undef;
-	my @favorites_menu = (
-		{
-			text    => $client->string('CANCEL'),
+
+	if ( $command eq 'set_preset' ) {
+		my $preset = $request->getParam('key');
+		my $title  = $request->getParam('favorites_title');
+		my $url    = $request->getParam('favorites_url');
+		if ( ! defined $title || ! defined $url ) {
+			$request->setStatusBadDispatch();
+		}
+		Slim::Control::Request::executeRequest( $client, [ 'favorites', 'add', "hotkey:$preset", "title:$title", "url:$url" ] );
+	} else {
+
+		my @favorites_menu = (
+			{
+				text    => $client->string('CANCEL'),
+				actions => {
+					go => {
+							player => 0,
+						cmd    => [ 'jiveblankcommand' ],
+					},
+				},
+				nextWindow => 'parent',
+			}
+		);
+		my $actionItem = {
+			text    => $client->string($token) . ' ' . $title,
 			actions => {
 				go => {
 					player => 0,
-					cmd    => [ 'jiveblankcommand' ],
+					cmd    => ['favorites', $command ],
+					params => {
+							title => $title,
+							url   => $url,
+					},
 				},
 			},
-			nextWindow => 'parent',
-		}
-	);
-	my $actionItem = {
-		text    => $client->string($token) . ' ' . $title,
-		actions => {
-			go => {
-				player => 0,
-				cmd    => ['favorites', $command ],
-				params => {
-						title => $title,
-						url   => $url,
-				},
-			},
-		},
-		nextWindow => $action,
-	};
-	$actionItem->{'actions'}{'go'}{'params'}{'icon'} = $icon if $icon;
-	$actionItem->{'actions'}{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
-	push @favorites_menu, $actionItem;
-
-	$request->addResult('offset', 0);
-	$request->addResult('count', 2);
-	$request->addResult('item_loop', \@favorites_menu);
-	$request->addResult('window', { titleStyle => 'favorites' } );
-
-
+			nextWindow => $action,
+		};
+		$actionItem->{'actions'}{'go'}{'params'}{'icon'} = $icon if $icon;
+		$actionItem->{'actions'}{'go'}{'params'}{'item_id'} = $favIndex if defined($favIndex);
+		push @favorites_menu, $actionItem;
+	
+		$request->addResult('offset', 0);
+		$request->addResult('count', 2);
+		$request->addResult('item_loop', \@favorites_menu);
+		$request->addResult('window', { titleStyle => 'favorites' } );
+	}
+	
+	
 	$request->setStatusDone();
-
-}
+		
+} 
 
 sub _jiveNoResults {
 	my $request = shift;
