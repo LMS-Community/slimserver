@@ -305,8 +305,12 @@ sub radiotimeFeed {
 sub _pluginDataFor {
 	my ( $class, $key ) = @_;
 	
-	if ( $key ne 'icon' || main::SLIM_SERVICE ) {
+	if ( $key ne 'icon' ) {
 		return $class->SUPER::_pluginDataFor($key);
+	}
+	
+	if ( main::SLIM_SERVICE ) {
+		return $class->icon;
 	}
 	
 	# Special handling for cached remote icons from SN
