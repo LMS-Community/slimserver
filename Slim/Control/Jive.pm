@@ -341,6 +341,7 @@ sub mainMenu {
 		@{appsMenu($client, 1)},
 	);
 	
+=pod
 	# SN Jive Menu
 	if ( main::SLIM_SERVICE ) {
 		@menu = map {
@@ -448,6 +449,7 @@ sub mainMenu {
 			} );
 		}
 	}
+=cut
 
 	_notifyJive(\@menu, $client);
 	
