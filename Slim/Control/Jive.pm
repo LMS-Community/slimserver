@@ -213,21 +213,31 @@ sub menuQuery {
 	}
 
 	my $client = $request->client() || 0;
-	my $dummy;
+	my $disconnected;
 	
 	if ( !$client ) {
-		# if this isn't a player, create a dummy client object
-		# so we can still return as much of the menu as possible
-		require Slim::Player::Dummy;
-		$client = Slim::Player::Dummy->new;
-		$dummy  = 1;
+		# Check if this is a disconnected player request
+		if ( my $id = $request->disconnectedClientID ) {
+			require Slim::Player::Disconnected;
+			$client = Slim::Player::Disconnected->new($id);
+			$disconnected = 1;
+		}
+		else {
+			# XXX remove when SP is updated to always send player ID
+			
+			# if this isn't a player, create a dummy client object
+			# so we can still return as much of the menu as possible
+			require Slim::Player::Dummy;
+			$client = Slim::Player::Dummy->new;
+			$disconnected = 1;
+		}
 	}
 
 	# send main menu notification
 	my $menu = mainMenu($client);
 	
-	# Return results directly and destroy the client if it was a dummy
-	if ( $dummy ) {
+	# Return results directly and destroy the client if it is disconnected
+	if ( $disconnected ) {
 		$request->setRawResults( {
 			count     => scalar @{$menu},
 			offset    => 0,

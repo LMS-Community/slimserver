@@ -755,6 +755,12 @@ sub handleRequest {
 		$client   = Slim::Player::Client::getClient($mac);
 		$clientid = blessed($client) ? $client->id : undef;
 		
+		# Special case, allow menu requests with a disconnected client
+		if ( !$clientid && $args->[0] eq 'menu' ) {
+			# MAC as first arg on a menu request will trigger special handling in S::C::Request
+			unshift @{$args}, $mac;
+		}
+		
 		if ( $clientid ) {
 			# Update the client's last activity time, since they did something through Comet
 			$client->lastActivityTime( Time::HiRes::time() );

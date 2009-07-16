@@ -994,6 +994,12 @@ sub new {
 		$self->{'_status'} = 104;
 		return $self;
 	}
+	
+	# Special case to handle menu requests that contain a disconnected client
+	# Used by SP to obtain a player-specific menu even if player is not connected
+	if ( $requestLineRef->[1] eq 'menu' && $requestLineRef->[0] =~ /:/ ) {
+		$self->{_disconnected_clientid} = shift @{$requestLineRef};
+	}
 
 	# parse the line
 	my $i = 0;
@@ -1141,6 +1147,12 @@ sub client {
 	}
 	
 	return Slim::Player::Client::getClient($self->{'_clientid'});
+}
+
+sub disconnectedClientID {
+	my $self = shift;
+	
+	return $self->{_disconnected_clientid};
 }
 
 # sets/returns the client ID
