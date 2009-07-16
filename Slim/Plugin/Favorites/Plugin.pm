@@ -878,6 +878,8 @@ sub cliAdd {
 			my $index = $favs->add( $url, $title );
 
 			if (defined $hotkey) {
+				my $oldindex = $favs->hasHotkey($hotkey);
+				$favs->setHotkey($oldindex, undef) if defined $oldindex;
 				$favs->setHotkey($index, $hotkey);
 			}
 			
@@ -953,6 +955,8 @@ sub cliAdd {
 		$favs->save;
 
 		if (defined $hotkey && (my $index = $favs->findUrl($url))) {
+			my $oldindex = $favs->hasHotkey($hotkey);
+			$favs->setHotkey($oldindex, undef) if defined $oldindex;
 			$favs->setHotkey($index, $hotkey);
 		}
 
