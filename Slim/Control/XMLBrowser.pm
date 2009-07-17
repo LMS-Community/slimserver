@@ -825,6 +825,7 @@ sub _cliQuery_done {
 							},
 						},
 					};
+                			$base->{'actions'} = _jivePresetBase($base->{'actions'});
 					$request->addResult('base', $base);
 				}
 
@@ -947,6 +948,24 @@ sub _cliQuery_done {
 							};
 						}
 
+						my $presetFavSet     = undef;
+						my $favorites_url    = $item->{play} || $item->{url};
+						my $favorites_title  = $item->{title} || $item->{name};
+						if ( $favorites_url && $favorites_title ) {
+							$itemParams->{favorites_url} = $favorites_url;
+							$itemParams->{favorites_title} = $favorites_title;
+							if ( $item->{image} ) {
+								$itemParams->{icon} = $item->{image};
+							}
+							if ( $item->{type} && $item->{type} eq 'playlist' ) {
+								$itemParams->{favorites_url} = $item->{playlist};
+							}
+							$itemParams->{type} = $item->{type};
+							$presetFavSet = 1;
+
+						}
+
+
 						if ( $item->{isContextMenu} ) {
 							$itemParams->{'isContextMenu'} = 1;
 						}
@@ -1056,7 +1075,7 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'addAction', 'more');
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemplay');
 						}
-						
+
 						if ( scalar keys %{$itemParams} && $isPlayable ) {
 							$request->addResultLoop( $loopname, $cnt, 'params', $itemParams );
 						}
@@ -1265,6 +1284,19 @@ sub hasDescription {
 
 		return undef;
 	}
+}
+
+sub _jivePresetBase {
+	my $actions = shift;
+	for my $preset (0..9) {
+		my $key = 'set-preset-' . $preset;
+		$actions->{$key} = {
+			player => 0,
+			cmd    => [ 'jivefavorites', 'set_preset', "key:$preset" ],
+			itemsParams => 'params',
+		};
+	}
+	return $actions;
 }
 
 1;

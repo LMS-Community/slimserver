@@ -2937,10 +2937,16 @@ sub jiveFavoritesCommand {
 		my $preset = $request->getParam('key');
 		my $title  = $request->getParam('favorites_title');
 		my $url    = $request->getParam('favorites_url');
+		my $type   = $request->getParam('type');
+		# favorite needs to be saved as either a playlist or default to audio
+		if ( defined($type) && $type ne 'playlist' ) {
+			$type = 'audio';
+		}
 		if ( ! defined $title || ! defined $url ) {
 			$request->setStatusBadDispatch();
+			return;
 		}
-		Slim::Control::Request::executeRequest( $client, [ 'favorites', 'add', "hotkey:$preset", "title:$title", "url:$url" ] );
+		Slim::Control::Request::executeRequest( $client, [ 'favorites', 'add', "hotkey:$preset", "title:$title", "url:$url", "icon:$icon", "type:$type" ] );
 	} else {
 
 		my @favorites_menu = (

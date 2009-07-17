@@ -864,6 +864,7 @@ sub cliAdd {
 	my $title  = $request->getParam('title');
 	my $icon   = $request->getParam('icon');
 	my $index  = $request->getParam('item_id');
+	my $type   = $request->getParam('type');
 	my $hotkey = $request->getParam('hotkey');
 	
 	if ( main::SLIM_SERVICE ) {
@@ -918,7 +919,7 @@ sub cliAdd {
 			$entry = {
 				'text' => $title,
 				'URL'  => $url,
-				'type' => 'audio',
+				'type' => $type || 'audio',
 				'icon' => $icon || $favs->icon($url),
 			};
 			
