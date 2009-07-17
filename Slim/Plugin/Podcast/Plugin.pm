@@ -77,7 +77,10 @@ sub initPlugin {
 			node           => 'extras',
 			'icon-id'      => $class->_pluginDataFor('icon'),
 			displayWhenOff => 0,
-			window         => { titleStyle => 'album' },
+			window         => { 
+				titleStyle	=> 'album',
+				'icon-id'	=> $class->_pluginDataFor('icon'),
+			},
 			actions => {
 				go =>      {
 					'cmd' => ['podcast', 'items'],
