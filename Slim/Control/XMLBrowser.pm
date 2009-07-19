@@ -957,10 +957,10 @@ sub _cliQuery_done {
 							if ( $item->{image} ) {
 								$itemParams->{icon} = $item->{image};
 							}
-							if ( $item->{type} && $item->{type} eq 'playlist' ) {
+							if ( $item->{type} && $item->{type} eq 'playlist' && $item->{playlist} ) {
 								$itemParams->{favorites_url} = $item->{playlist};
 							}
-							$itemParams->{type} = $item->{type};
+							$itemParams->{type} = $item->{type} if $item->{type};
 							$presetFavSet = 1;
 
 						}
