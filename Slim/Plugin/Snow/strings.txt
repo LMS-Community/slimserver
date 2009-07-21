@@ -4,6 +4,7 @@
 
 PLUGIN_SCREENSAVER_SNOW
 	CS	Spořič obrazovky s motivem sněhu
+	DA	Pauseskærm:
 	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
 	ES	Protector de pantalla de nieve
@@ -52,7 +53,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	CS	Spořič obrazovky s motivem sněhu: Množství sněhu
 	DA	Pauseskærm: sneens kvalitet
-	DE	Schneemenge
+	DE	Bildschirmschoner 'Schnee': Schneemenge
 	EN	Snow Screensaver: Quantity of snow
 	ES	Protector de pantalla de nieve: Cantidad de nieve
 	FI	Luminäytönsäästäjä: lumen määrä
@@ -164,7 +165,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	CS	Spořič obrazovky s motivem sněhu: Styl sněhu
 	DA	Pauseskærm: Sneens stil
-	DE	Schneeart
+	DE	Bildschirmschoner 'Schnee': Schneeart
 	EN	Snow Screensaver: Style of snow
 	ES	Protector de pantalla de nieve: Estilo de nieve
 	FI	Luminäytönsäästäjä: lumen tyyppi

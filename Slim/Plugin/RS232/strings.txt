@@ -50,9 +50,9 @@ SETUP_CLI_OVER_RS232
 SETUP_CLI_OVER_RS232_ENABLE
 	CS	Povolit
 	DA	Aktiver
-	DE	Einschalten
+	DE	Aktivieren
 	EN	Enable
-	ES	Habilitar
+	ES	Activar
 	FI	Ota käyttöön
 	FR	Activer
 	IT	Attiva

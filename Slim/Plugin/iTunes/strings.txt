@@ -162,19 +162,19 @@ SETUP_ITUNESSCANINTERVAL
 
 SETUP_ITUNESSCANINTERVAL_DESC
 	CS	Když se změní knihovna iTunes Music, Squeezebox Server automaticky importuje informace o knihovně. Můžete specifikovat minimální dobu (v sekundách), po kterou bude Squeezebox Server čekat před znovunačtením knihovny iTunes Music. Nulová hodnota zakáže opětovné načtení.
-	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Squeezebox Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i Squeezebox Server. Hvis værdien er 0, genindlæses det ikke.
+	DA	Når noget i iTunes-musikbiblioteket ændres, importeres disse oplysninger automatisk i Squeezebox Server. Du kan angive hvor lang tid (i sekunder) der mindst skal gå før iTunes-musikbiblioteket genindlæses i serveren. Hvis værdien er 0, genindlæses det ikke.
 	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert Squeezebox Server die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die Squeezebox Server mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your iTunes Music Library changes Squeezebox Server will automatically import the library information.  You can specify the minimum amount of time (in seconds) that the server will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
-	ES	Cuando cambie la biblioteca de música de iTunes, Squeezebox Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que Squeezebox Server esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero deshabilita la recarga.
-	FI	Jos iTunes-musiikkikirjastossa tapahtuu muutoksia, Squeezebox Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka Squeezebox Server odottaa, ennen kuin se lataa iTunes-musiikkikirjaston uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
-	FR	Le Squeezebox Server importe automatiquement les informations de la collection musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le Squeezebox Server actualise la collection musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
+	ES	Cuando cambie la biblioteca de música de iTunes, Squeezebox Server importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que el servidor esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero desactiva la recarga.
+	FI	Jos iTunes-musiikkikirjastossa tapahtuu muutoksia, Squeezebox Server tuo kirjaston tiedot automaattisesti.  Voit määrittää minimiajan (sekunteina), jonka palvelin odottaa, ennen kuin se lataa iTunes-musiikkikirjaston uudelleen. Jos arvo on nolla, lataaminen on poistettu käytöstä.
+	FR	Le Squeezebox Server importe automatiquement les informations de la collection musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le serveur actualise la collection musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
 	HE	כאשר ספריית המוסיקה של iTunes משתנה, Squeezebox Server מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על Squeezebox Server להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
-	IT	Se si modifica la libreria musicale di iTunes, Squeezebox Server importa automaticamente i nuovi dati. È possibile specificare per Squeezebox Server il periodo minimo di attesa (in secondi) precedente al ricaricamento della libreria musicale di iTunes. Se si imposta il valore zero, la funzionalità viene disattivata.
-	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door Squeezebox Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang Squeezebox Server minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
-	NO	Når musikkbiblioteket til iTunes endres, importerer Squeezebox Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge Squeezebox Server skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
+	IT	Se si modifica la libreria musicale di iTunes, Squeezebox Server importa automaticamente i nuovi dati. È possibile specificare il periodo minimo (in secondi) che il server deve attendere prima di ricaricare la libreria musicale di iTunes. Se si imposta il valore zero, la libreria non viene ricaricata.
+	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door Squeezebox Server geïmporteerd. Je kunt opgeven (in seconden) hoe lang de server minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	NO	Når musikkbiblioteket til iTunes endres, importerer Squeezebox Server automatisk bibliotekinformasjonen. Du kan angi en minimumstid (i sekunder) for hvor lenge serveren skal vente med å laste inn musikkbiblioteket til iTunes igjen. Hvis verdien er null, deaktiveres innlasting.
 	PL	Jeżeli biblioteka muzyki programu iTunes zmieni się, program Squeezebox Server automatycznie zaimportuje informacje z biblioteki. Możliwe jest określenie minimalnego czasu (w sekundach) po jakim program Squeezebox Server ponownie załaduje bibliotekę muzyki programu iTunes. Ustawienie wartości zero powoduje wyłączenie ponownego ładowania.
 	RU	При изменении медиатеки iTunes ее данные автоматически импортируются в Squeezebox Server. Для сервера можно задать минимальный интервал времени (в секундах) перед повторной загрузкой медиатеки iTunes. Значение 0 означает отмену повторной загрузки данных.
-	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till Squeezebox Server.  Du kan ange en minimitid (i sekunder) som Squeezebox Server ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
+	SV	När ditt iTunes-musikbibliotek ändras importeras biblioteksinformationen automatiskt till Squeezebox Server.  Du kan ange en minimitid (i sekunder) som servern ska vänta mellan varje gång informationen från iTunes-biblioteket uppdateras. Om värdet 0 anges avaktiveras uppdateringsfunktionen.
 	ZH_CN	当您的iTunes音乐库改变时，Squeezebox Server将自动地导入最新音乐库信息。您可以指定Squeezebox Server再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNES_LIBRARY_XML_PATH
@@ -405,29 +405,46 @@ ITUNES_ARTWORK_PHASE_2_PROGRESS
 
 ITUNES_IGNORED_PLAYLISTS_DEFAULTS
 	CS	Knihovna, videa, filmy, televizní show, hudba, koupené, půjčené filmy
-	DA	Bibliotek, Videor, Film, Tv-udsendelser, Musik, Indkøb, Lejede film
-	DE	Mediathek, Videos, Filme, Fernsehsendungen, Musik, Einkäufe, Ausgeliehene Filme
+	DA	Bibliotek, Videoklip, Film, Tv-udsendelser, Musik, Købt, Lejede film
+	DE	Musiksammlung, Videos, Filme, TV-Sendungen, Musik, Gekauft, Ausgeliehene Filme
 	EN	Library, Videos, Movies, TV Shows, Music, Purchased, Rented Movies
-	ES	Biblioteca, Vídeos, Películas, Programas de televisión, Música, Comprado, Películas alquiladas
-	FI	Kirjasto, Videot, Elokuvat, TV-ohjelmat, Musiikki, Ostetut, Vuokraelokuvat
-	FR	Bibliothèque, Clips vidéo, Films, Émissions de télévision, Musique, Achats, Films en location
-	IT	Libreria, Video, Filmati, Spettacoli TV, Musica, Acquisti, Filmati noleggiati
-	NL	Bibliotheek, Video's, Films, Tv-programma's, Muziek, Aangeschaft, Huurfilms
-	NO	Bibliotek, Videoer, Filmer, TV-programmer, Musikk, Kjøpt, Leide filmer
+	ES	Biblioteca, Vídeos, Películas, Programas de TV, Música, Comprados, Películas alquiladas
+	FI	Kirjasto, videot, elokuvat, tv-ohjelmat, musiikki, ostetut, vuokratut elokuvat
+	FR	Collection, vidéos, films, programmes TV, musique, films achetés, films loués
+	IT	Libraria, Video, Film, Programmi TV, Musica, Brani acquistati, Film noleggiati
+	NL	Collectie, Video's, Films, Tv-shows, Muziek, Gekocht, Gehuurde films
+	NO	Bibliotek, videoer, filmer, tv-programmer, musikk, kjøp, leiefilmer
 	PL	Biblioteka, Pliki wideo, Filmy, Programy telewizyjne, Muzyka, Zakupione, Wypożyczone filmy
 	RU	Библиотека, Видео, Фильмы, ТВ-передачи, Музыка, Покупки, Фильмы напрокат
-	SV	Bibliotek, Videor, Filmer, TV-program, Musik, Köpt, Hyrfilmer
+	SV	Bibliotek, videoklipp, filmer, tv-program, musik, köpta eller hyrda filmer
 
 SETUP_ITUNES_IGNORED_PLAYLISTS
 	CS	Ignorované seznamy skladeb
+	DA	Ignorerede afspilningslister
 	DE	Ignorierte Wiedergabelisten
 	EN	Ignored playlists
+	ES	Listas de reproducción omitidas
+	FI	Ohitetut soittoluettelot
+	FR	Listes de lecture ignorées
+	IT	Elenchi di riproduzione ignorati
+	NL	Genegeerde playlists
+	NO	Ignorerte spillelister
 	PL	Ignorowane listy odtwarzania
 	RU	Исключаемые плей-листы
+	SV	Ignorererade spellistor
 
 SETUP_ITUNES_IGNORED_PLAYLISTS_DESC
 	CS	Definujte čárkou oddělené seznamy skladeb iTunes, které nechcete importovat (např. "Videa, koupená").
+	DA	Opret en kommaadskilt liste med de afspilningslister fra iTunes som ikke skal importeres (fx Videoklip, Købt).
+	DE	Definiert eine durch Komma getrennte Liste von iTunes-Wiedergabelisten, die nicht importiert werden sollen (z.B. "Videos, gekauft").
 	EN	Define a comma separated list of iTunes playlists you don't want to be imported (eg. "Videos, Purchased").
+	ES	Defina una lista separada por comas de listas de reproducción de iTunes que no desea que se importen (por ejemplo "Vídeos, Comprados").
+	FI	Määritä pilkuilla erotettu luettelo iTunesin soittoluetteloista, joita et halua tuoda (esim. videot, ostetut).
+	FR	Définissez une liste de lecture iTunes, séparée par des virgules, à ne pas importer (par ex.: "Vidéos, achetées").
+	IT	Definire una lista di elenchi di riproduzione iTunes separati da virgole che non si desidera importare (esempio: Video, Brani acquistati).
+	NL	Maak een kommagescheiden lijst van iTunes-playlists die niet geïmporteerd moeten worden (bijv. 'Video's, Gekocht').
+	NO	Lag en liste, adskilt med kommaer, over iTunes-spillelister du ikke vil importere (f.eks. "videoer, kjøp").
 	PL	Zdefiniuj listę zawierającą oddzielone przecinkami listy odtwarzania programu iTunes, których nie chcesz importować (np. „Filmy wideo, Zakupione”).
-	RU	Введите через запятую плей-листы iTunes, которые не будут импортированы (например, "Видео, Покупки").
+	RU	Введите через запятую плей-листы iTunes, которые не нужно импортировать (например, "Видео, Покупки").
+	SV	Skapa en kommaavgränsad lista med iTunes-spellistor som du inte vill importera (t.ex. Videofilmer, köpta).
 

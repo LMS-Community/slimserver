@@ -2,37 +2,91 @@
 
 PLUGIN_PREVENTSTANDBY
 	CS	Windows: Zabránit přechodu systému do pohotovostního režimu
+	DA	Windows: Forhindrer at systemet går på standby
+	DE	Windows: Standbymodus verhindern
 	EN	Windows: Prevent System Standby
+	ES	Windows: Impedir modo de espera del sistema
+	FI	Windows: estä järjestelmän siirtyminen valmiustilaan
+	FR	Windows: empêcher la mise en veille du système
+	IT	Windows: impedisci standby del sistema
+	NL	Windows: Voorkomen dat systeem naar stand-by gaat
+	NO	Windows: Hindre hvilemodus
 	PL	Windows: zapobiegaj przejściu systemu do trybu wstrzymania
 	RU	Windows: не переходить в режим ожидания
+	SV	Windows: Förhindra viloläge
 
 PLUGIN_PREVENTSTANDBY_DESC
 	CS	Tento plugin monitoruje vaše přehrávače Squeezebox a zabrání systému v přechodu do úsporného pohotovostního režimu při přehrávání hudby, v průběhu prohledávání Squeezebox Server, při aktualizaci přehrávačů atd. Zabrání také systému v přechodu do pohotovostního režimu po dvou minutách od dálkového spuštění počítače přes LAN.
+	DA	Dette udvidelsesmodul bruges til at overvåge Squeezebox-afspillere og forhindre at systemet går på standby mens der spilles musik, søges after musikfiler i Squeezebox Server, afspillerne opdateres osv. Det forhindrer også at systemet går på standby blot to minutter efter at det er vækket via lokalnetværket.
+	DE	Dieses Plugin überwacht die Squeezebox-Player und verhindert, dass das System in den Standbymodus geschaltet wird während Squeezebox Server die Musiksammlung durchsucht, Player aktualisiert werden usw. Außerdem wird verhindert, dass das System zwei Minuten nach 'Wake on LAN' vorzeitig in den Standbymodus schaltet.
 	EN	This plugin monitors your SqueezeBox players and prevents the system from going into power saving standby mode while music is playing, Squeezebox Server is scanning, players are updating, etc. It will also prevent the system from prematurely going into standby two minutes after wake-on-lan.
+	ES	Este complemento supervisa los reproductores SqueezeBox e impide que el sistema pase al modo de espera para ahorro de energía mientras se está reproduciendo música, Squeezebox Server está explorando, los reproductores se están actualizando, etc. También impedirá que el sistema pase prematuramente al modo de espera dos minutos después de Wake On LAN.
+	FI	Tämä laajennus valvoo SqueezeBox-soittimia ja estää järjestelmää siirtymästä virtaa säästävään valmiustilaan, kun musiikkia soitetaan, kun Squeezebox Server suorittaa tarkistusta, kun soittimia päivitetään jne. Laajennus estää myös järjestelmää siirtymästä ennenaikaisesti valmiustilaan kaksi minuuttia lähiverkon herätyksen jälkeen.
+	FR	Ce plugin surveille les platines SqueezeBox et empêche le système de passer en mode veille (d'économie d'énergie) lorsqu'un morceau est en cours de lecture, le Squeezebox Server est en cours d'analyse, les platines sont mises à jour, ainsi que deux minutes après l'activation de la fonction de réveil par LAN.
+	IT	Questo plugin tiene sotto controllo i lettori SqueezeBox e impedisce che nel sistema venga attivata la modalità standby durante la riproduzione della musica, l'analisi di Squeezebox, l'aggiornamento dei lettori e così via. Impedisce inoltre che il sistema entri prematuramente in modalità standby due minuti dopo l'attivazione LAN.
+	NL	Deze plug-in houd je Squeezebox-systemen in de gaten en voorkomt dat het systeem naar energiebesparende stand-bymodus gaat terwijl er bijvoorbeeld muziek speelt, Squeezebox Server een scan uitvoert of systemen worden bijgewerkt. De plug-in voorkomt ook dat het systeem vroegtijdig naar stand-bymodus gaat twee minuten na wake-on-lan.
+	NO	Denne plugin-modulen overvåker SqueezeBox-spillerne og forhindrer systemet fra å gå i hvilemodus mens det spilles musikk, mens Squeezebox Server søker, mens spillere oppdateres osv. Den forhindrer også at systemet går i for tidlig hvilemodus to minutter etter at det har blitt startet opp via et LAN.
 	PL	Ten dodatek monitoruje odtwarzacze SqueezeBox i zapobiega przejściu systemu do trybu wstrzymania w celu oszczędzania energii, kiedy odtwarzana jest muzyka, program Squeezebox Server wykonuje przeszukiwanie, trwa aktualizacja odtwarzaczy itp. Dodatek uniemożliwi także przedwczesne przejście do trybu wstrzymania po upływie dwóch minut od zadziałania funkcji wake-on-lan.
 	RU	Этот плагин выполняет мониторинг плееров SqueezeBox и предотвращает переход в энергосберегающий режим ожидания во время воспроизведения музыки, сканирования Squeezebox Server, обновления плееров и др. Он также не позволяет преждевременно переходить в режим ожидания через две минуты после пробуждения по сети.
+	SV	Detta plugin-program övervakar SqueezeBox-spelarna och förhindrar att systemet försätts i viloläge när du spelar musik, när sökning sker, spelare uppdateras o.s.v. Det förhindrar även att systemet automatiskt försätts i viloläge två minuter efter wake-on-lan.
 
 PLUGIN_PREVENTSTANDBY_IDLETIME
 	CS	Po kolika minutách nečinnosti povolit pohotovostní režim?
+	DA	Gå på standby efter hvor mange minutters inaktivitet?
+	DE	Standby nach wie vielen Minuten Inaktivität zulassen?
 	EN	Allow standby after how many idle minutes?
+	ES	¿Permitir modo de espera después de cuántos minutos?
+	FI	Kuinka monen minuutin joutoajan jälkeen siirrytään valmiustilaan?
+	FR	Période d'inactivité avant la mise en veille (en minutes)?
+	IT	Attivare la modalità standby dopo quanti minuti di inattività?
+	NL	Stand-by toestaan na hoeveel minuten inactiviteit?
+	NO	Hvor mange inaktive minutter før hvilemodus?
 	PL	Zezwalaj na tryb wstrzymania po upływie ilu minut bezczynności?
-	RU	Через сколько минут простоя переходить в режим ожидания?
+	RU	Через сколько минут неактивности переходить в режим ожидания?
+	SV	Efter hur många minuter ska viloläge tillåtas?
 
 PLUGIN_PREVENTSTANDBY_IDLETIME_DESC
 	CS	Zadejte počet minut (po zastavení přehrávání nebo po obnovení systému), po kterém tento plugin znovu povolí přechod systému do pohotovostního systému. K úplnému zákazu automatického přechodu tohoto systému do pohotovostního systému zadejte 0 (nulu).
+	DA	Angiv det antal minutter (fra afspilningen stopper eller systemet vækkes) der skal forløbe før systemet igen kan gå på standby. Hvis du vælger 0, kan systemet ikke automatisk gå på standby.
+	DE	Geben Sie an, nach wie vielen Minuten (nachdem die Wiedergabe beendet oder das System reaktiviert wurde) das Plugin zulässt, dass das System in den Standbymodus wechselt. Wenn Sie 0 (Null) eingeben, wird der automatische Wechsel in den Standbymodus vollständig unterbunden.
 	EN	Enter the number of minutes (after playing stops or after the system resumes) at the end of which the plugin will again allow the system to go into standby. Enter 0 (zero) to completely prohibit automatic standby on this system.
+	ES	Introduzca el número de minutos (después de que la reproducción se detenga o de que el sistema se reanude) transcurridos los cuales el complemento permitirá de nuevo que el sistema pase al modo de espera. Introduzca 0 (cero) para prohibir completamente el modo de espera automático en este sistema.
+	FI	Määritä, kuinka monen minuutin jälkeen (toiston keskeydyttyä tai järjestelmän palattua) laajennus sallii jälleen järjestelmän siirtymisen valmiustilaan. Arvo 0 (nolla) estää järjestelmän automaattisen valmiustilaan siirtymisen kokonaan.
+	FR	Entrez le nombre de minutes (après l'arrêt de la lecture ou après la reprise du système) après lesquelles le plugin autorise à nouveau la mise en veille du système. Entrez 0 (zéro) pour interdire complètement la mise en veille automatique de ce système.
+	IT	Immettere il numero di minuti che devono trascorrere (dopo il termine della riproduzione o la riattivazione del sistema) prima che il plugin consenta di nuovo al sistema di entrare in modalità standby. Immettere 0 (zero) per impedire l'attivazione automatica della modalità standby.
+	NL	Voer het aantal minuten in (nadat afspelen is gestopt of het systeem is hervat) waarna de plug-in weer toestaat dat het systeem stand-by gaat. Voer 0 (nul) in om automatische stand-by op dit systeem volledig te verhinderen.
+	NO	Angi hvor mange minutter (etter avspillingen stopper eller systemet starter opp) det skal gå før plugin-modulen tillater systemet å gå i hvilemodus. Hvis du angir 0 (null), går systemet aldri i automatisk hvilemodus.
 	PL	Wprowadź liczbę minut (od zakończenia odtwarzania lub wznowienia pracy systemu), po upływie których dodatek umożliwi systemowi ponowne przejście do trybu wstrzymania. Wprowadź wartość 0 (zero), aby całkowicie wyłączyć automatyczne przechodzenie w tryb wstrzymania w tym systemie.
-	RU	Введите число минут (после остановки воспроизведения или после возобновления работы системы), по истечении которых плагин вновь разрешит переход в режим ожидания. Введите 0 (ноль), чтобы полностью запретить автоматический переход в режим ожидания.
+	RU	Введите число минут (после остановки воспроизведения или после возобновления работы системы), по истечении которых плагин вновь разрешит переход в режим ожидания. Чтобы полностью запретить автоматический переход в режим ожидания, введите 0 (ноль).
+	SV	Ange antal minuter (efter att spelaren stoppas eller systemet återupptas) som ska förflyta innan systemet åter kan försättas i viloläge. Ange 0 (noll) om du inte vill att det ska försättas i viloläge.
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON
 	CS	Zakázat pohotovostní režim při zapnutých přehrávačích?
+	DA	Forbyd standby hvis en afspiller er tændt?
+	DE	Standbymodus verhindern, wenn Player aktiv sind?
 	EN	Prohibit standby if players are on?
+	ES	¿Prohibir modo de espera si los reproductores están encendidos?
+	FI	Estetäänkö valmiustilaan siirtyminen, jos soittimet ovat päällä?
+	FR	Interdire la mise en veille si des platines sont allumées?
+	IT	Non attivare la modalità standby se i lettori sono accesi?
+	NL	Stand-by beletten als systemen aanstaan?
+	NO	Forhindre hvilemodus hvis spillerne er slått på?
 	PL	Uniemożliwić tryb wstrzymania, kiedy odtwarzacze są włączone?
 	RU	Запретить переход в режим ожидания во время работы плееров?
+	SV	Ska viloläge förhindras när spelarna är påslagna?
 
 PLUGIN_PREVENTSTANDBY_PLAYERSON_DESC
 	CS	Povolit toto nastavení k zákazu pohotovostního režimu systému při zapnutých přehrávačích, tzn. nezobrazení hodin.
+	DA	Vælg denne indstilling hvis systemet kan gå på standby mens en afspiller er tændt, dvs. uret bliver ikke vist.
+	DE	Aktiviert die Einstellung, mit der verhindert wird, dass das System in den Standbymodus wechselt, während Player aktiv sind, d.h. die Uhr nicht anzeigen.
 	EN	Enable this setting to prohibit system standby while players are turned on, i.e. not displaying the clock.
+	ES	Active esta opción para prohibir el modo de espera del sistema mientras los reproductores están encendidos, es decir cuando no muestren el reloj.
+	FI	Ottamalla tämän asetuksen käyttöön estät järjestelmää siirtymästä valmiustilaan soitinten ollessa päällä, eli silloin, kun kelloa ei näy.
+	FR	Activez ce réglage pour interdire la mise en veille du système lorsque des platines sont allumées (l'horloge n'est pas affichée).
+	IT	Attivare questa impostazione per impedire l'attivazione della modalità standby quando i lettori sono accesi, vale a dire quando non visualizzano l'orologio.
+	NL	Schakel deze instelling in om te voorkomen dat het systeem naar stand-by gaat terwijl er muzieksystemen actief zijn, d.w.z. niet de klok weergeven.
+	NO	Når denne innstillingen er aktivert, forhindrer den systemet fra å gå hvilemodus mens spillerne er slått på (altså når de ikke viser klokken).
 	PL	Włącz to ustawienie, aby uniemożliwić tryb wstrzymania systemu, kiedy odtwarzacze są włączone (tzn. nie wyświetlają zegara).
-	RU	Включите этот параметр, чтобы запретить переход в режим ожидания во время работы плееров (когда не отображаются часы).
+	RU	Включите этот параметр, чтобы запретить переход в режим ожидания во время работы плееров (не отображать часы).
+	SV	Aktivera den här inställningen för att förhindra viloläge när spelare är påslagna (klockan visas inte).
 

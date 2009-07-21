@@ -93,7 +93,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC
 	DA	Aktiver denne indstilling hvis du vil opdatere din musikprofil på Last.fm med alle de numre du lytter til.
 	DE	Aktivieren Sie diese Option, um Ihr Last.fm-Musikprofil mit allen wiedergegebenen Titel zu aktualisieren.
 	EN	Enable this option to update your Last.fm music profile with all music you have listened to.
-	ES	Habilite esta opción para actualizar su perfil musical de Last.fm con toda la música que ha escuchado.
+	ES	Active esta opción para actualizar su perfil musical de Last.fm con toda la música que ha escuchado.
 	FI	Ottamalla tämän asetuksen käyttöön voit päivittää Last.fm-musiikkiprofiiliisi musiikkia, jota olet aina halunnut kuunnella.
 	FR	Activez cette option pour mettre à jour votre profil musical Last.fm avec les morceaux que vous avez écoutés.
 	IT	Selezionare questa opzione per aggiornare il profilo musicale di Last.fm con tutta la musica ascoltata.
@@ -111,7 +111,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
 	ES	Sí, notificar pistas reproducidas a Last.fm.
 	FI	Kyllä, ilmoita soitetut kappaleet Last.fm:ään.
 	FR	Indiquer à Last.fm les morceaux lus.
-	IT	Sì, segnala i brani riprodotti in Last.fm.
+	IT	Sì, segnala i brani riprodotti a Last.fm.
 	NL	Ja, gespeelde nummers bij Last.fm melden.
 	NO	Ja, send informasjon om avspilte spor til Last.fm.
 	PL	Tak, wysyłaj informacje o odtwarzanych utworach do usługi Last.fm.
@@ -126,7 +126,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
 	ES	No notificar pistas reproducidas a Last.fm.
 	FI	Ei, älä ilmoita soitettuja kappaleita Last.fm:ään.
 	FR	Ne pas indiquer à Last.fm les morceaux lus.
-	IT	No, non segnalare i brani riprodotti in Last.fm.
+	IT	No, non segnalare i brani riprodotti a Last.fm.
 	NL	Nee, gespeelde nummers niet bij Last.fm melden.
 	NO	Nei, ikke send informasjon om avspilte spor til Last.fm.
 	PL	Nie, nie przesyłaj informacji o odtwarzanych utworach do usługi Last.fm.
@@ -213,7 +213,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
 	DA	Du skal vælge den konto som skal bruges til at aktivere Audioscrobbler for denne afspiller.
 	DE	Wählen Sie zum Aktivieren von Audioscrobbler ein Konto für diesen Player aus.
 	EN	To enable Audioscrobbler for this player, select an account to use.
-	ES	Para habilitar Audioscrobbler para este reproductor, seleccione la cuenta que usar.
+	ES	Para activar Audioscrobbler para este reproductor, seleccione la cuenta que usar.
 	FI	Jos haluat ottaa Audioscrobblerin käyttöön tässä soittimessa, valitse käytettävä tili.
 	FR	Pour activer Audioscrobbler pour cette platine, sélectionnez un compte à utiliser.
 	IT	Per abilitare Audioscrobbler per questo lettore, selezionare l'account da utilizzare.
@@ -228,7 +228,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	DA	Deaktiveret. Indsend ikke numre som afspilles på denne afspiller.
 	DE	Deaktiviert, auf diesem Player wiedergegebene Titel nicht senden.
 	EN	Disabled, do not submit tracks played on this player.
-	ES	Deshabilitado, no enviar pistas reproducidas a Last.fm.
+	ES	Desactivado, no enviar pistas reproducidas a Last.fm.
 	FI	Ei käytössä. Älä lähetä tietoja tällä soittimella soitetuista kappaleista.
 	FR	Désactivé, ne pas envoyer les morceaux lus sur cette platine.
 	IT	Disattiva. Non inviare i brani riprodotti con questo lettore.
@@ -243,7 +243,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	DA	Advarsel: Indstillingen Indsend oplysninger om alle numre, er slået fra overalt. Hvis du vil indsende oplysninger fra denne afspiller, skal du aktivere indstillingen der findes under til Avanceret -> Last.fm Audioscrobbler.
 	DE	Warnung: Das Senden aller Titel ist global deaktiviert. Wenn Sie Titelinformationen für diesen Player senden möchten, aktivieren Sie unter 'Erweitert -> Last.fm Audioscrobbler' die Option 'Alle Titel senden'.
 	EN	Warning: Submit all tracks is globally disabled.  To submit track information for this player, enable the Submit all tracks setting by going to Advanced -> Last.fm Audioscrobbler.
-	ES	Advertencia: Enviar todas las pistas se ha deshabilitado globalmente. Para enviar información de pistas para este reproductor, habilite la opción Enviar todas las pistas, en Avanzada -> Audioscrobbler de Last.fm.
+	ES	Advertencia: Enviar todas las pistas se ha desactivado globalmente. Para enviar información de pistas para este reproductor, active la opción Enviar todas las pistas, en Avanzada -> Audioscrobbler de Last.fm.
 	FI	Varoitus: Kaikkien kappaleiden lähettäminen on yleisesti poistettu käytöstä.  Jos haluat lähettää tiedot tällä soittimella soitetuista kappaleista, ota Lähetä kaikki kappaleet -asetus käyttöön kohdassa Lisäasetukset -> Last.fm Audioscrobbler.
 	FR	Avertissement: l'envoi de tous les morceaux est désactivé de manière globale. Pour envoyer les informations des morceaux pour cette platine, activez l'option pour envoyer tous les morceaux dans Avancé -> Last.fm Audioscrobbler.
 	IT	Avviso: l'invio di tutti i brani è stato disattivato a livello globale. Per inviare i dati relativi ai brani del lettore corrente, attivare l'impostazione Invia tutti i brani, accessibile dalla scheda Avanzate -> Audioscrobbler Last.fm.
@@ -258,7 +258,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 	DA	Bemærk: Du skal også aktivere Audioscrobbler for hver afspiller. Kik på fanen Afspiller, og vælg Last.fm Audioscrobbler for hver af de afspillere der skal indsendes oplysninger fra.
 	DE	Hinweis: Sie müssen auch Audioscrobbler für jeden Player aktivieren. Klicken Sie auf die Registerkarte 'Player' und wählen Sie die Option 'Last.fm Audioscrobbler' für die gewünschten Player.
 	EN	Note: You must also enable Audioscrobbler for each player.  Click on the Player tab and then select the Last.fm Audioscrobbler item for each player you want to scrobble.
-	ES	Nota: además debe habilitar Audioscrobbler para cada reproductor. Haga clic en la ficha Reproductor y seleccione el elemento Audioscrobbler de Last.fm para cada reproductor en el que desee esta función.
+	ES	Nota: además debe activar Audioscrobbler para cada reproductor. Haga clic en la ficha Reproductor y seleccione el elemento Audioscrobbler de Last.fm para cada reproductor en el que desee esta función.
 	FI	Huomaa: Audioscrobbler täytyy myös ottaa käyttöön kussakin soittimessa.  Napsauta Soitin-välilehdellä ja valitse Last.fm Audioscrobbler jokaiselle soittimelle, josta haluat lähettää tiedot kuunnelluista kappaleista Last.fm:ään.
 	FR	Remarque: vous devez également activer Audioscrobbler pour chaque platine. Cliquez sur l'onglet Platine et sélectionner Last.fm Audioscrobbler pour chaque platine.
 	IT	Nota: è inoltre necessario attivare Audioscrobbler per ogni lettore. Fare clic sulla scheda Lettore e selezionare la voce Audioscrobbler Last.fm per ogni lettore che si desidera monitorare.
@@ -287,7 +287,7 @@ SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 	CS	Last.fm je hudební služba, která vytváří váš hudební profil sledováním hudby, kterou posloucháte. Na základě vašeho vkusu Last.fm nabízí rozhlasové stanice.	to.  Based on your taste, Last.fm provides customized radio stations,
 	DA	Musiktjenesten Last.fm kan opbygge en personlig musikprofil ved at registrere hvilke numre du lytter til.	to.  Based on your taste, Last.fm provides customized radio stations,
 	DE	Last.fm ist ein Musikdienst, der ein persönliches Musikprofil für Sie erstellt, indem er sich merkt, welche Titel Sie hören.	to.  Based on your taste, Last.fm provides customized radio stations,
-	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen	to.  Based on your taste, Last.fm provides customized radio stations,	music and event recommendations, free downloads and more.  Join for	free at <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
+	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen	to.  Based on your taste, Last.fm provides customized radio stations,
 	ES	Last.fm es un servicio de música que va creando su perfil musical personal basándose en la música que escucha.	to.  Based on your taste, Last.fm provides customized radio stations,
 	FI	Last.fm on musiikkipalvelu, joka rakentaa sinulle henkilökohtaisen musiikkiprofiilin seuraamalla, mitä musiikkia kuuntelet.	to.  Based on your taste, Last.fm provides customized radio stations,
 	FR	Last.fm est un service qui permet de créer un profil musical personnel en effectuant le suivi des morceaux que vous écoutez.	to.  Based on your taste, Last.fm provides customized radio stations,

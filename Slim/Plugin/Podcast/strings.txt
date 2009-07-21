@@ -161,7 +161,7 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
 	CS	Neplatný zdroj - %s
-	DA	Ugyldigt feed: %s
+	DA	Ugyldigt feed - %s
 	DE	Ungültiger Feed - %s
 	EN	Invalid Feed - %s
 	ES	Fuente no válida - %s
@@ -172,5 +172,5 @@ SETUP_PLUGIN_PODCAST_INVALID_FEED
 	NO	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s
 	RU	Недействительный веб-канал — %s
-	SV	Ogiltigt RSS-flöde –%s
+	SV	Ogiltigt flöde – %s
 

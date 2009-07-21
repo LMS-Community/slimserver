@@ -54,7 +54,7 @@ PLUGIN_LFM_NO_TRACKS
 	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
 	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
-	NO	Klarer ikke å hente neste spor, trykk på PLAY for å prøve på nytt.
+	NO	Får ikke til å hente neste spor, trykk på PLAY for å prøve på nytt.
 	PL	Nie można pobrać następnego utworu, naciśnij przycisk PLAY, aby spróbować ponownie.
 	RU	Невозможно извлечь следующую дорожку. Нажмите PLAY, чтобы повторить попытку.
 	SV	Det gick inte att hämta nästa spår. Tryck på Play om du vill försöka igen.
@@ -66,7 +66,7 @@ PLUGIN_LFM_STREAM_FAILED
 	EN	Audio stream disconnected, skipping to next track.
 	ES	Secuencia de audio desconectada; salto a pista siguiente.
 	FI	Äänivirran yhteys katkesi, siirrytään seuraavaan raitaan.
-	FR	Flux audio déconnecté; lecture du morceau suivant.
+	FR	Flux audio déconnecté, lecture du morceau suivant.
 	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
 	IT	Stream audio disconnesso. Passaggio al brano seguente.
 	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
@@ -114,7 +114,7 @@ PLUGIN_LFM_BAN
 	ES	Prohibir esta pista
 	FI	Kiellä tämä kappale
 	FR	Exclure ce morceau
-	IT	Bandisci questo brano
+	IT	Escludi questo brano
 	NL	Dit nummer verbieden
 	NO	Sperr dette sporet
 	PL	Zablokuj ten utwór

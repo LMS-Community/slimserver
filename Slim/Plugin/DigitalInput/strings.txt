@@ -36,7 +36,7 @@ PLUGIN_DIGITAL_INPUT_DESC
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	CS	Vyvážený AES/EBU
 	DA	Afbalanceret AES/EBU
-	DE	AES/EBU symmetrisch
+	DE	AES/BEU symmetrisch
 	EN	Balanced AES/EBU
 	ES	AES/EBU equilibrado
 	FI	Tasapainotettu AES/EBU
@@ -63,7 +63,7 @@ PLUGIN_DIGITAL_INPUT_BNC_SPDIF
 	NO	BNC koaks S/PDIF
 	PL	BNC koncentryczne S/PDIF
 	RU	Коаксиальный BNC S/PDIF
-	SV	BNC Koaxial S/PDIF
+	SV	BNC-koaxial S/PDIF
 
 PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	CS	RCA Coax S/PDIF
@@ -79,7 +79,7 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	NO	RCA koaks S/PDIF
 	PL	RCA koncentryczne S/PDIF
 	RU	Коаксиальный RCA S/PDIF
-	SV	RCA Koaxial S/PDIF
+	SV	RCA-koaxial S/PDIF
 
 PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	CS	Optický S/PDIF (TOSLINK)

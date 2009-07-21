@@ -10,7 +10,7 @@ PLUGIN_SONGSCANNER
 	ES	Examen de canciones
 	FI	Kappaleen haku
 	FR	Analyseur de morceau
-	IT	Analisi brano
+	IT	Analisi brani
 	NL	Nummerscanner
 	NO	Sangsøk
 	PL	Moduł przeszukiwania utworów
@@ -42,7 +42,7 @@ PLUGIN_SONGSCANNER_SET
 	FR	Heure:
 	IT	Ora:
 	NL	Tijd:
-	NO	Tid:
+	NO	Klokkeslett:
 	PL	Czas:
 	RU	Время:
 	SV	Tid:

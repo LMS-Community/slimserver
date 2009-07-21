@@ -30,14 +30,18 @@ PLUGIN_CLASSICAL_MODULE_NAME_DESC
 
 PLUGIN_CLASSICAL_ERROR
 	CS	Chyba služby Classical.com
+	DA	Classical.com-fejl
+	DE	Classical.com-Fehler
 	EN	Classical.com Error
 	ES	Error de Classical.com
-	FI	Classical.comin virhe
+	FI	Classical.com-virhe
 	FR	Erreur Classical.com
-	IT	Errore di Classical.com
+	IT	Errore Classical.com
+	NL	Classical.com-fout
 	NO	Feil med Classical.com
 	PL	Błąd usługi Classical.com
 	RU	Ошибка Classical.com
+	SV	Classical.com-fel
 
 PLUGIN_CLASSICAL_NO_INFO
 	CS	Není možné načíst informace o proudu.

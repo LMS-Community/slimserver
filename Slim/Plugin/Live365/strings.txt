@@ -35,7 +35,7 @@ PLUGIN_LIVE365_MODULE_NAME_DESC
 PLUGIN_LIVE365_ERROR
 	CS	Chyba Live365
 	DA	Live365-fejl
-	DE	Live365 - Fehler
+	DE	Live365-Fehler
 	EN	Live365 Error
 	ES	ERROR de Live365
 	FI	Live365-virhe

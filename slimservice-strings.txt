@@ -17,7 +17,7 @@ SERVER_VERSION
 	DE	mysqueezebox.com Version
 	EN	mysqueezebox.com Version
 	ES	mysqueezebox.com versión
-	FI	SqueezeNetworkin versio
+	FI	mysqueezebox.com in versio
 	FR	Version de mysqueezebox.com
 	HE	גרסת mysqueezebox.com
 	IT	Versione di mysqueezebox.com
@@ -146,7 +146,6 @@ WELCOME_TO_APPLICATION
 	FR	Bienvenue sur mysqueezebox.com
 	HE	ברוך הבא ל-mysqueezebox.com
 	IT	Benvenuti in mysqueezebox.com
-	JP	SqueezeNetworkへようこそ
 	NL	Welkom bij mysqueezebox.com
 	NO	Velkommen til mysqueezebox.com
 	PT	Bem-vindo ao mysqueezebox.com
@@ -1294,7 +1293,7 @@ SQUEEZENETWORK_ERROR
 	DE	mysqueezebox.com-Fehler
 	EN	mysqueezebox.com Error
 	ES	Error de mysqueezebox.com
-	FI	SqueezeNetworkin virhe
+	FI	mysqueezebox.comin virhe
 	FR	Erreur de mysqueezebox.com
 	HE	שגיאה ב-mysqueezebox.com
 	IT	Errore di mysqueezebox.com
@@ -1389,7 +1388,7 @@ INFORMATION_MENU_SERVER
 	CS	mysqueezebox.com
 	DA	Oplysninger om mysqueezebox.com
 	EN	mysqueezebox.com Information
-	FI	SqueezeNetworkin tiedot
+	FI	mysqueezebox.comin tiedot
 	NO	mysqueezebox.com-informasjon
 	PL	mysqueezebox.com
 	RU	mysqueezebox.com

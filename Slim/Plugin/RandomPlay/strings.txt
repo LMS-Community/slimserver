@@ -449,7 +449,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	DE	Aktuelle Wiedergabe zeigt
 	EN	Now Playing will show
 	ES	Reproduciendo mostrará
-	FI	Nyt soi näkyy
+	FI	Nyt soi -tiedot näkyvät
 	FR	Lecture en cours affichera
 	HE	יוצג הכיתוב 'מושמע כעת'
 	IT	Vengono visualizzati i brani in corso di riproduzione

@@ -68,7 +68,7 @@ PLUGIN_DEEZER_ERROR
 	FR	Erreur Deezer
 	HE	שגיאה ב-Deezer
 	IT	Errore Deezer
-	NL	Deezer-foutmelding
+	NL	Deezer-fout
 	NO	Deezer-feil
 	PL	Błąd usługi Deezer
 	RU	Ошибка Deezer

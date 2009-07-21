@@ -525,7 +525,7 @@ PLUGIN_FAVORITES_IMPORTERROR
 PLUGIN_FAVORITES_NOTITLE
 	CS	Bez názvu
 	DA	Igen titel
-	DE	Ohne Titel
+	DE	Kein Titel
 	EN	No Title
 	ES	Sin título
 	FI	Ei nimeä

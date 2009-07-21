@@ -82,7 +82,7 @@ PLUGIN_EXTENSIONS_PLUGINS
 	FI	Squeezebox Serverin laajennukset
 	FR	Plugins Squeezebox Server
 	IT	Plugin di Squeezebox Server
-	NL	Squeezebox Server-plugins
+	NL	Invoegtoepassingen voor Squeezebox Server
 	NO	Plugin-moduler for Squeezebox Server
 	PL	Dodatki programu Squeezebox Server
 	RU	Плагины Squeezebox Server
@@ -123,7 +123,7 @@ PLUGIN_EXTENSIONS_INSTALL
 	DA	Installer
 	DE	Installieren
 	EN	Install
-	ES	Instalación
+	ES	Instalar
 	FI	Asenna
 	FR	Installer
 	IT	Installa
@@ -176,7 +176,7 @@ PLUGIN_EXTENSIONS_RESTART_MSG
 	NO	Du må starte Squeezebox Server på nytt for at endringene skal tre i kraft.
 	PL	Aby wprowadzić zmiany, należy ponownie uruchomić program Squeezebox Server.
 	RU	Перезапустите Squeezebox Server, чтобы изменения вступили в силу.
-	SV	Starta om Squeezebox Server om du vill att ändringarna ska träda i kraft.
+	SV	Ändringarna träder i kraft när du startar om Squeezebox Server.
 
 PLUGIN_EXTENSIONS_REPO_ERROR
 	CS	Špatný archív

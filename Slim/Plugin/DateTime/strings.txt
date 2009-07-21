@@ -56,11 +56,11 @@ SETUP_GROUP_DATETIME_DEFAULTTIME
 	DE	Squeezebox Server-Standard
 	EN	Squeezebox Server Default
 	ES	Predeterminado de Squeezebox Server
-	FI	Squeezebox Server-oletus
+	FI	Squeezebox Server -oletus
 	FR	Défaut serveur
 	HE	ברירת המחדל של Squeezebox Server
 	IT	Impostazioni predefinite di Squeezebox Server
-	NL	Squeezebox Server-standaardinstellingen
+	NL	Standaardinstellingen van Squeezebox Server
 	NO	Squeezebox Server-standard
 	PL	Domyślny program Squeezebox Server
 	RU	Squeezebox Server по умолчанию
@@ -72,11 +72,11 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	DE	Squeezebox Server-Standard
 	EN	Squeezebox Server Default
 	ES	Predeterminado de Squeezebox Server
-	FI	Squeezebox Server-oletus
+	FI	Squeezebox Server -oletus
 	FR	Défaut serveur
 	HE	ברירת המחדל של Squeezebox Server
 	IT	Impostazioni predefinite di Squeezebox Server
-	NL	Squeezebox Server-standaardinstellingen
+	NL	Standaardinstellingen van Squeezebox Server
 	NO	Squeezebox Server-standard
 	PL	Domyślny program Squeezebox Server
 	RU	Squeezebox Server по умолчанию

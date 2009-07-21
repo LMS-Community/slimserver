@@ -381,5 +381,5 @@ SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	NO	Ugyldig feed: %s
 	PL	Nieprawidłowe źródło — %s
 	RU	Недействительный веб-канал — %s
-	SV	Ogiltigt flöde –%s
+	SV	Ogiltigt flöde – %s
 
