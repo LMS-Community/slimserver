@@ -807,25 +807,6 @@ PLAYING
 	SV	Nu spelas
 	ZH_CN	播放中
 
-PLAYING_RANDOMLY
-	CS	Právě hraje
-	DA	Nu spiller
-	DE	Aktueller Titel
-	EN	Now Playing
-	ES	Reproduciendo
-	FI	Nyt soi
-	FR	Lecture
-	HE	מושמע כעת
-	IT	Riproduzione in corso
-	JA	再生中
-	NL	Speelt nu
-	NO	Spilles nå
-	PL	Teraz odtwarzane
-	PT	A tocar...
-	RU	Воспроизводится
-	SV	Nu spelas
-	ZH_CN	播放中
-
 OUT_OF
 	CS	z
 	DA	af

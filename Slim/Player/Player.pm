@@ -548,16 +548,7 @@ sub currentSongLines {
 
 		} else {
 
-			$status = $client->string('PLAYING');
-
-			if (Slim::Player::Playlist::shuffle($client)) {
-
-				$lines[0] = $client->string('PLAYING_RANDOMLY');
-
-			} else {
-
-				$lines[0] = $client->string('PLAYING');
-			}
+			$status = $lines[0] = $client->string('PLAYING');
 			
 			if ($client->volume() < 0) {
 				$lines[0] .= " ". $client->string('LCMUTED');
