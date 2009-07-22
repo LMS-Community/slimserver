@@ -439,12 +439,7 @@ sub playTrack {
 	my $items = [];
 	my $jive;
 	
-	my $play_string;
-	if ( $track->remote ) {
-		$play_string   = cstring($client, 'PLAY');
-	} else {
-		$play_string   = cstring($client, 'JIVE_PLAY_THIS_SONG');
-	}	
+	my $play_string = cstring($client, 'PLAY');
 
 	my $actions;
 	# "Play Song" in current playlist context is 'jump'
@@ -498,7 +493,6 @@ sub playTrack {
 	}
 
 	$jive->{actions} = $actions;
-	$jive->{style} = 'itemplay';
 
 	push @{$items}, {
 		type => 'text',
@@ -515,13 +509,8 @@ sub addTrack {
 	my $items = [];
 	my $jive;
 	
-	my $string;
-	if ( $track->remote ) {
-		$string   = cstring($client, 'ADD');
-	} else {
-		$string   = cstring($client, 'JIVE_ADD_THIS_SONG');
-	}	
-
+	my $string = cstring($client, 'ADD_TO_END');
+	
 	my $actions;
 	# "Add Song" in current playlist context is 'delete'
 	if ( $tags->{menuContext} eq 'playlist' ) {
@@ -567,7 +556,6 @@ sub addTrack {
 	}
 
 	$jive->{actions} = $actions;
-	$jive->{style} = 'itemadd';
 
 	push @{$items}, {
 		type => 'text',

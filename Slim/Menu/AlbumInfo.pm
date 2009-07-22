@@ -239,7 +239,6 @@ sub playAlbum {
 	$actions->{play} = $actions->{go};
 
 	$jive->{actions} = $actions;
-	$jive->{style}   = 'itemplay';
 
 	push @{$items}, {
 		type => 'text',
@@ -256,7 +255,7 @@ sub addAlbum {
 	my $items = [];
 	my $jive;
 	
-	my $add_string   = cstring($client, 'ADD');
+	my $add_string   = cstring($client, 'ADD_TO_END');
 
 	my $actions = {
 		go => {
@@ -282,7 +281,6 @@ sub addAlbum {
 	$actions->{add}  = $actions->{go};
 
 	$jive->{actions} = $actions;
-	$jive->{style}   = 'itemadd';
 
 	push @{$items}, {
 		type => 'text',

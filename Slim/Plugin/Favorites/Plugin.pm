@@ -1128,7 +1128,7 @@ sub _objectInfoHandler {
 			$jive->{actions} = $actions;
 			return {
 				type        => 'text',
-				name        => cstring($client, 'JIVE_ADD_TO_FAVORITES'),
+				name        => cstring($client, 'JIVE_SAVE_TO_FAVORITES'),
 				jive        => $jive,
 			};
 		} else {

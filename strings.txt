@@ -20196,6 +20196,9 @@ JIVE_DELETE_FROM_FAVORITES
 	RU	Удалить элемент выбранного
 	SV	Ta bort favorit
 
+JIVE_SAVE_TO_FAVORITES
+	EN	Save to Favorites
+
 JIVE_ADD_TO_FAVORITES
 	CS	Přidat k Oblíbeným položkám
 	DA	Føj til favoritter
@@ -20255,6 +20258,12 @@ JIVE_PLAY_THIS_SONG
 	PL	Odtwórz ten utwór
 	RU	Воспроизвести эту песню
 	SV	Spela upp den här låten
+
+ADD_TO_END
+	EN	Add to End
+
+SAVE_TO_FAVORITES
+	EN	Save to Favorites
 
 SEARCHFOR_PLAYLISTS
 	CS	Hledat seznamy skladeb

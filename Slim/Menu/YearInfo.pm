@@ -192,7 +192,6 @@ sub playYear {
 	$actions->{play} = $actions->{go};
 
 	$jive->{actions} = $actions;
-	$jive->{style}   = 'itemplay';
 
 	push @{$items}, {
 		type => 'text',
@@ -209,7 +208,7 @@ sub addYear {
 	my $items = [];
 	my $jive;
 	
-	my $add_string   = cstring($client, 'ADD');
+	my $add_string   = cstring($client, 'ADD_TO_END');
 
 	my $actions = {
 		go => {
@@ -235,7 +234,6 @@ sub addYear {
 	$actions->{add}  = $actions->{go};
 
 	$jive->{actions} = $actions;
-	$jive->{style}   = 'itemadd';
 
 	push @{$items}, {
 		type => 'text',
