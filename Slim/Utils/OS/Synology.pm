@@ -38,25 +38,25 @@ sub initDetails
 
 	$class->{osDetails}->{isDiskStation} = 1;
 
-    # check how this Squeezebox Server is run on the DiskStation
-    if (-f '/volume1/SSODS/etc/ssods/ssods.conf'
-        && $0 =~ m{^/volume1/SqueezeCenter/})
-    {
-        $class->{osDetails}->{isSSODS} = 1;
-        $class->{osDetails}->{osName} .= ' (SSODS)';
-    }
-    elsif (-d '/opt/share/squeezecenter'
-           && $0 =~ m{^/opt/share/squeezecenter/})
-    {
-        $class->{osDetails}->{isOptware} = 1;
-        $class->{osDetails}->{osName} .= ' (NSLU2-Linux Optware)';
-    }
-    elsif (-d '/volume1/@appstore/SqueezeCenter'
-           && $0 =~ m{^/volume1/\@appstore/SqueezeCenter/})
-    {
-        $class->{osDetails}->{isSynology} = 1;
-        $class->{osDetails}->{osName} .= ' (DSM Package Management)';
-    }
+	# check how this Squeezebox Server is run on the DiskStation
+	if (-f '/volume1/SSODS/etc/ssods/ssods.conf'
+		&& "@INC" =~ m{/volume1/SSODS/lib/perl})
+	{
+		$class->{osDetails}->{isSSODS} = 1;
+		$class->{osDetails}->{osName} .= ' (SSODS)';
+	}
+	elsif (-d '/opt/share/squeezecenter'
+		&& "@INC" =~ m{/opt/lib/perl})
+	{
+		$class->{osDetails}->{isOptware} = 1;
+		$class->{osDetails}->{osName} .= ' (NSLU2-Linux Optware)';
+	}
+	elsif (-d '/volume1/@appstore/SqueezeCenter'
+		&& "@INC" =~ m{/usr/lib/perl})
+	{
+		$class->{osDetails}->{isSynology} = 1;
+		$class->{osDetails}->{osName} .= ' (DSM Package Management)';
+	}
 
 	return $class->{osDetails};
 }
