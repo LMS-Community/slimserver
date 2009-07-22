@@ -589,7 +589,7 @@ sub _cliQuery_done {
 							# first see if $url is already a favorite
 							my $action = 'add';
  							my $favIndex = undef;
-							my $token = 'JIVE_ADD_TO_FAVORITES';
+							my $token = 'JIVE_SAVE_TO_FAVORITES';
 							if ( Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Favorites::Plugin') ) {
 								my $favs = Slim::Utils::Favorites->new($request->client);
 								$favIndex = $favs->findUrl($url);

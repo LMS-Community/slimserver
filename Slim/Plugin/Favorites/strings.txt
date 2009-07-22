@@ -237,7 +237,7 @@ PLUGIN_FAVORITES_LOAD
 	RU	Загрузить
 	SV	Läs in
 
-PLUGIN_FAVORITES_SAVE
+PLUGIN_FAVORITES_ADD
 	CS	Uložit
 	DA	Gem
 	DE	Speichern
@@ -567,20 +567,8 @@ PLUGIN_FAVORITES_URL
 	RU	URL
 	SV	Webbadress
 
-PLUGIN_FAVORITES_ADD
-	CS	Přidat k Oblíbeným položkám
-	DA	Føj til favoritter
-	DE	Zu Favoriten hinzufügen
-	EN	Add to Favorites
-	ES	Agregar a favoritos
-	FI	Lisää suosikkeihin
-	FR	Ajouter aux favoris
-	IT	Aggiungi ai preferiti
-	NL	Toevoegen aan Favorieten
-	NO	Legg til i favoritter
-	PL	Dodaj do ulubionych
-	RU	Добавить в выбранное
-	SV	Lägg till i favoriter
+PLUGIN_FAVORITES_SAVE
+	EN	Save to Favorites
 
 PLUGIN_FAVORITES_REMOVE
 	CS	Odstranit z Oblíbených položek

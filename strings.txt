@@ -20144,36 +20144,6 @@ JIVE_DELETE_FROM_FAVORITES
 JIVE_SAVE_TO_FAVORITES
 	EN	Save to Favorites
 
-JIVE_ADD_TO_FAVORITES
-	CS	Přidat k Oblíbeným položkám
-	DA	Føj til favoritter
-	DE	Zu Favoriten hinzufügen
-	EN	Add to Favorites
-	ES	Agregar a favoritos
-	FI	Lisää suosikkeihin
-	FR	Ajouter aux favoris
-	IT	Aggiungi ai preferiti
-	NL	Toevoegen aan Favorieten
-	NO	Legg til i favoritter
-	PL	Dodaj do ulubionych
-	RU	Добавить в выбранное
-	SV	Lägg till i favoriter
-
-JIVE_ADD_X_TO_FAVORITES
-	CS	Přidat %s do Oblíbených
-	DA	Føj %s til favoritter
-	DE	%s zu Favoriten hinzufügen
-	EN	Add %s to Favorites
-	ES	Agregar %s a favoritos
-	FI	Lisää %s suosikkeihin
-	FR	Ajouter %s aux favoris
-	IT	Aggiungi %s ai preferiti
-	NL	%s aan favorieten toevoegen
-	NO	Legg til %s i favoritter
-	PL	Dodaj %s do ulubionych
-	RU	Добавить %s в выбранное
-	SV	Lägg till %s i favoriter
-
 JIVE_ADD_THIS_SONG
 	CS	Přidat tuto skladbu
 	DA	Tilføj dette nummer

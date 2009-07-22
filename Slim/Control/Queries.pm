@@ -4794,7 +4794,7 @@ sub _jiveAddToFavorites {
 	# Add the actual favorites item if we're in the last chunk
 	if ( $lastChunk ) {
 		my $action = 'add';
-		my $token = 'JIVE_ADD_TO_FAVORITES';
+		my $token = 'JIVE_SAVE_TO_FAVORITES';
 		# first we check to see if the URL exists in favorites already
 		my $client = $request->client();
 		my $favIndex = undef;
