@@ -4983,7 +4983,7 @@ sub _songData {
 			$remoteMeta->{A} = $remoteMeta->{artist};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{K} = $remoteMeta->{cover};
-			$remoteMeta->{d} = $remoteMeta->{duration} + 0;
+			$remoteMeta->{d} = ( $remoteMeta->{duration} || 0 ) + 0;
 			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
 			$remoteMeta->{o} = $remoteMeta->{type};
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
