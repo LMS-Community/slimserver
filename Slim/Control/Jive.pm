@@ -222,15 +222,6 @@ sub menuQuery {
 			$client = Slim::Player::Disconnected->new($id);
 			$disconnected = 1;
 		}
-		else {
-			# XXX remove when SP is updated to always send player ID
-			
-			# if this isn't a player, create a dummy client object
-			# so we can still return as much of the menu as possible
-			require Slim::Player::Dummy;
-			$client = Slim::Player::Dummy->new;
-			$disconnected = 1;
-		}
 	}
 
 	# send main menu notification
@@ -2053,13 +2044,14 @@ sub _notifyJive {
 
 sub howManyPlayersToSyncWith {
 	my $client = shift;
+	return 0 if $client->isa('Slim::Player::Disconnected');
+	
 	my @playerSyncList = Slim::Player::Client::clients();
 	my $synchablePlayers = 0;
 	
 	# Restrict based on players with same userid on SN
 	my $userid;
 	if ( main::SLIM_SERVICE ) {
-		return 0 if $client->isa('Slim::Player::Dummy');
 		$userid = $client->playerData->userid;
 	}
 	

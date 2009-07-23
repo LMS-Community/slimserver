@@ -61,12 +61,6 @@ sub get_SN {
 		if ( !defined $value || $force ) {
 	
 			if ( $class->{clientid} ) {
-				
-				# Dummy clients don't have prefs in the database
-				if ( $class->{clientid} =~ /_dummy_/ ) {
-					return $class->get_SC($key);
-				}
-			
 				# Prepend namespace to key if it's not 'server'
 				my $nskey = $key;
 				if ( $class->namespace ne 'server' ) {
@@ -269,11 +263,6 @@ sub set {
 			if ( main::SLIM_SERVICE && blessed($client) ) {
 				# Skip param lets routines like initPersistedPrefs avoid writing right back to the db
 				my $skip = shift || 0;
-				
-				# Don't set dummy client prefs
-				if ( $clientid =~ /_dummy_/ ) {
-					$skip = 1;
-				}
 
 				if ( !$skip ) {
 					# Save the pref to the db
@@ -486,14 +475,12 @@ sub remove {
 		}
 		
 		if ( main::SLIM_SERVICE && $class->{clientid} ) {
-			if ( $class->{clientid} !~ /_dummy_/ ) {
-				# Remove the pref from the database
-				my $client = Slim::Player::Client::getClient( $class->{clientid} );
-				SDI::Service::Model::PlayerPref->sql_clear_array->execute(
-					$client->playerData->id,
-					$pref,
-				);
-			}
+			# Remove the pref from the database
+			my $client = Slim::Player::Client::getClient( $class->{clientid} );
+			SDI::Service::Model::PlayerPref->sql_clear_array->execute(
+				$client->playerData->id,
+				$pref,
+			);
 		}
 	}
 
