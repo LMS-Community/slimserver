@@ -95,7 +95,10 @@ sub digitalInputItem {
 		node           => 'home',
 		'icon-id'      => Slim::Plugin::DigitalInput::Plugin->_pluginDataFor('icon'),
 		displayWhenOff => 0,
-		window         => { titleStyle => 'album' },
+		window         => { 
+				titleStyle => 'album',
+				'icon-id'      => Slim::Plugin::DigitalInput::Plugin->_pluginDataFor('icon'),
+		},
 		actions => {
 			go =>          {
 				player => 0,
