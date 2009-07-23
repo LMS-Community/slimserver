@@ -642,6 +642,9 @@ PLAYLIST
 	SV	Spellista
 	ZH_CN	播放表
 
+CURRENT_PLAYLIST
+	EN	Current Playlist
+
 PLAYLISTS
 	CS	Seznamy skladeb
 	DA	Afspilningslister
