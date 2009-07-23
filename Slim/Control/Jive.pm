@@ -222,6 +222,12 @@ sub menuQuery {
 			$client = Slim::Player::Disconnected->new($id);
 			$disconnected = 1;
 		}
+		else {
+			# XXX temporary workaround for requests without a playerid
+			require Slim::Player::Disconnected;
+			$client = Slim::Player::Disconnected->new( '_dummy_' . Time::HiRes::time() );
+			$disconnected = 1;
+		}
 	}
 
 	# send main menu notification
