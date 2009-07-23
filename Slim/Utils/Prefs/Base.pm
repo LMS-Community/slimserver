@@ -260,7 +260,7 @@ sub set {
 		
 		if ( !defined $old || !defined $new || $old ne $new || ref $new ) {
 			
-			if ( main::SLIM_SERVICE && blessed($client) ) {
+			if ( main::SLIM_SERVICE && blessed($client) && $client->playerData ) {
 				# Skip param lets routines like initPersistedPrefs avoid writing right back to the db
 				my $skip = shift || 0;
 
@@ -477,10 +477,12 @@ sub remove {
 		if ( main::SLIM_SERVICE && $class->{clientid} ) {
 			# Remove the pref from the database
 			my $client = Slim::Player::Client::getClient( $class->{clientid} );
-			SDI::Service::Model::PlayerPref->sql_clear_array->execute(
-				$client->playerData->id,
-				$pref,
-			);
+			if ( $client->playerData ) {
+				SDI::Service::Model::PlayerPref->sql_clear_array->execute(
+					$client->playerData->id,
+					$pref,
+				);
+			}
 		}
 	}
 

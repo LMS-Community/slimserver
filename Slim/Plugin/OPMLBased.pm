@@ -253,7 +253,7 @@ sub cliRadiosQuery {
 		
 		if ( main::SLIM_SERVICE ) {
 			my $client = $request->client();
-			if ( $client ) {
+			if ( $client && $client->playerData ) {
 				$disabled  = [ keys %{ $client->playerData->userid->allowedServices->{disabled} } ];
 			
 				# Hide plugins if necessary (private, beta, etc)
