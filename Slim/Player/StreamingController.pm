@@ -1594,7 +1594,7 @@ sub playerActive {
 	}
 
 	# make sure that the streaming is disconnected, so that any unpause will be by _JumpToTime
-	_pauseStreaming($self, $self->playingSong()) if ($self->isPaused());
+	_pauseStreaming($self, $self->playingSong()) if $self->isPaused() && $self->playingSong();
 	
 	# It is possible for us to be paused with all the "active" players actually (logically) powered off.
 	# bug 10406: In fact, the last active player in a group to be powered off may anyway be left active and off.
