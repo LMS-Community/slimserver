@@ -406,7 +406,8 @@ sub client_readable {
 								$handler_ref->( $client, \$data );
 							}
 							else {
-								$log->error( "client_readable: Client not found for slimproto msg op: $op" );
+								$log->error( "Client not found for slimproto msg op: $op", ' from ', inet_ntoa($s->peeraddr) );
+								slimproto_close($s);
 							}
 						}
 					}
