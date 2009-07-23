@@ -458,7 +458,7 @@ sub name {
 
 		$name = $prefs->client($client)->get('playername');
 		
-		if ( main::SLIM_SERVICE ) {
+		if ( main::SLIM_SERVICE && $client->playerData ) {
 			$name = $client->playerData->name;
 		}
 	}
