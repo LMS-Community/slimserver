@@ -16,7 +16,7 @@ my $prefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'server.update',
-	'defaultLevel' => 'DEBUG',
+	'defaultLevel' => 'WARN',
 });
 
 my $os = Slim::Utils::OSDetect->getOS();
@@ -264,7 +264,7 @@ sub getUpdateInstaller {
 	$log->debug("Reading update installer path from $versionFile");
 	
 	open(UPDATEFLAG, $versionFile) || do {
-		$log->warn("Failure reading '$versionFile'");
+		$log->debug("No '$versionFile' available.");
 		return '';	
 	};
 	
