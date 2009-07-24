@@ -591,6 +591,21 @@ sub get {
 	return;
 }
 
+# Emulate LWP::Simple
+sub getstore {
+	my ( $url, $file, $timeout ) = @_;
+	
+	$timeout ||= 60;
+	
+	my $ua = LWP::UserAgent->new(
+		timeout => $timeout,
+	);
+	
+	my $res = $ua->get( $url, ':content_file' => $file );
+	
+	return $res->code;
+}
+
 1;
 
 __END__
