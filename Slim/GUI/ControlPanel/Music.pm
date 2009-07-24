@@ -123,7 +123,6 @@ sub new {
 
 		my $path = $self->GetPath;
 		if ($running && $path ne Slim::GUI::ControlPanel->getPref($pref)) {
-			$path =~ s/\\/\\\\/g if main::ISWINDOWS;
 			Slim::GUI::ControlPanel->setPref($pref, $path);
 		}
 	});
