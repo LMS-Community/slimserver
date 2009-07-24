@@ -1685,16 +1685,15 @@ sub playerSettingsMenu {
 		push @menu, 
 		{
 			stringToken    => 'JIVE_PLAYER_DISPLAY_SETTINGS',
-			weight         => 52,
-			id             => 'playerDisplaySettings',
+			id             => 'squeezeboxDisplaySettings',
 			isANode        => 1,
-			node           => 'settings',
+			node           => 'advancedSettings',
 			window         => { titleStyle => 'settings', },
 		},
 		{
 			text           => $client->string("PLAYER_BRIGHTNESS"),
 			id             => 'settingsPlayerBrightness',
-			node           => 'playerDisplaySettings',
+			node           => 'squeezeboxDisplaySettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayerbrightnesssettings' ],
@@ -1711,7 +1710,7 @@ sub playerSettingsMenu {
 		{
 			text           => $client->string("TEXTSIZE"),
 			id             => 'settingsPlayerTextsize',
-			node           => 'playerDisplaySettings',
+			node           => 'squeezeboxDisplaySettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayertextsettings', 'activeFont' ],
@@ -1723,7 +1722,7 @@ sub playerSettingsMenu {
 		{
 			text           => $client->string("OFFDISPLAYSIZE"),
 			id             => 'settingsPlayerOffTextsize',
-			node           => 'playerDisplaySettings',
+			node           => 'squeezeboxDisplaySettings',
 			actions        => {
 				  go => {
 					cmd    => [ 'jiveplayertextsettings', 'idleFont' ],
