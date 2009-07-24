@@ -21193,7 +21193,7 @@ CONTROLPANEL_UPDATE_AVAILABLE
 	SV	En uppdaterad version av Squeezebox Server är tillgänglig och klar att installeras.
 
 PREFPANE_UPDATE_AVAILABLE
-	EN	An updated Squeezebox Server version is available and ready to be installed. Please open the Squeezebox Preference Pane to start the update.
+	EN	An updated version of Squeezebox Server is available and ready to install. Visit the Squeezebox Server in System Preferences to start the upgrade.
 
 CONTROLPANEL_NO_UPDATE_AVAILABLE
 	CS	K dispozici není žádná aktualizovaná verze Squeezebox Server.
