@@ -279,7 +279,7 @@ sub OnInit {
 # the following subs are static methods to deliver some commonly used services
 sub getBaseUrl {
 	my $self = shift;
-	return 'http://127.0.0.1:' . $self->getPref('httpport');
+	return 'http://127.0.0.1:' . ($self->getPref('httpport') || '9000');
 }
 
 sub setPref {
