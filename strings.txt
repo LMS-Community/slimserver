@@ -14498,6 +14498,9 @@ SEARCHMUSIC
 	SV	Sök musik
 	ZH_CN	搜查音乐
 
+SEARCHRESULTS
+	EN	Search Results
+
 SEARCHFOR
 	CS	Vyhledat
 	DA	Søg efter
