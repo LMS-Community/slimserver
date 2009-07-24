@@ -166,6 +166,9 @@ sub _fixIcon {
 
 	return unless main::ISWINDOWS;
 
+	# bug 12904 - Windows 2000 can't read hires icon file...
+    return if $iconFile =~ /.ico$/i && Slim::Utils::OSDetect::details->{osName} =~ /Windows 2000/i;
+
 	# set the application icon
 	my $file = "../platforms/win32/res/$iconFile";
 
