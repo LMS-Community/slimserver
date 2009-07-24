@@ -21105,8 +21105,8 @@ CONTROLPANEL_WEB_UI
 CONTROLPANEL_WEB_CONTROL_DESC
 	CS	Dálkové ovládání Squeezebox
 	DA	Squeezebox Fjernbetjening
-	DE	Squeezebox Remote Control
-	EN	Squeezebox Remote Control
+	DE	Web Remote Control
+	EN	Web Remote Control
 	ES	Control remoto de Squeezebox
 	FI	Squeezeboxin kaukosäädin
 	FR	Télécommande de la Squeezebox
