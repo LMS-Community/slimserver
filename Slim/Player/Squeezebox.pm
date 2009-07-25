@@ -72,6 +72,12 @@ sub reconnect {
 		# stale data, this is caught by a timer that checks the buffer
 		# level after a STAT call to make sure the player is really
 		# playing/paused.
+		
+		# Somehow we can get here without a controller
+		if ( !$client->controller ) {
+			$client->controller(Slim::Player::StreamingController->new($client));
+		}
+	    
 		my $state = $client->playerData->playmode;
 		if ( $state =~ /^(?:PLAYING|PAUSED)/ ) {
 			$sourcelog->is_info && $sourcelog->info( $client->id . " current state is $state, resuming" );
