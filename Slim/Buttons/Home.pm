@@ -322,9 +322,21 @@ sub setMode {
 	}
 	
 	if ( main::SLIM_SERVICE ) {
-		# if player not yet linked to an account, or unauthorized, force client to register PIN
+		# if player not yet linked to an account, or unauthorized, force client to signup/login
 		if ( $client->playerData->userid == 1 || !$client->playerData->authorized ) {
-			Slim::Buttons::Common::pushMode( $client, 'setup.finish', undef );
+			# Push into registration menu
+			my $name  = 'SB_ACCOUNT';
+						
+			my %params = (
+				header   => $name,
+				modeName => $name,
+				url      => Slim::Networking::SqueezeNetwork->url('/api/register/v1/opml'),
+				title    => '',
+				timeout  => 35,
+			);
+			
+			Slim::Buttons::Common::setMode( $client, 'xmlbrowser', \%params );
+			
 			return;
 		}
 	}
