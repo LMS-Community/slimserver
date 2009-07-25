@@ -95,8 +95,7 @@ our @numberLettersUpper = (
 	['W','X','Y','Z','9'],			# 9
 );
 
-# XXX: more chars than this are allowed in email addresses
-# but are probably not common
+# Chars allowed in email addresses:
 # Uppercase and lowercase English letters (a-z, A-Z)
 # Digits 0 through 9
 # Characters ! # $ % & ' * + - / = ? ^ _ ` { | } ~
@@ -145,7 +144,8 @@ our @EmailChars = (
 	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
  	'@',
 	'.', '-', '_', '+',
-	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'!', '&', "'", '/', '`', '|', '~', '#', '$', '%', '*', '=', '?', '^', '{', '}',
 );
 
 Slim::Buttons::Common::addMode('INPUT.Text',getFunctions(),\&setMode);
