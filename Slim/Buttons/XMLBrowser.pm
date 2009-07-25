@@ -635,7 +635,8 @@ sub gotOPML {
 			}
 			elsif ( $item->{'type'} eq 'search' ) {
 				
-				my $title = $item->{'name'};
+				# Search elements may include alternate title
+				my $title = $item->{title} || $item->{name};
 				
 				my %params = (
 					'header'          => $title,
