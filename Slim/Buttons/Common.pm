@@ -131,10 +131,6 @@ sub init {
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
 	Slim::Buttons::Volume::init();
-	
-	if ( main::SLIM_SERVICE ) {
-		SDI::Service::Buttons::SetupWizard::init();
-	}
 
 	addSaver('playlist', undef, undef, undef, 'SCREENSAVER_JUMP_TO_NOW_PLAYING', 'PLAY');
 }
