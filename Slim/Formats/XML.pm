@@ -524,6 +524,9 @@ sub parseOPML {
 	# Optional command to run (used by Pandora)
 	if ( $xml->{'command'} ) {
 		$opml->{'command'} = $xml->{'command'};
+		
+		# Optional flag to abort OPML processing after command is run
+		$opml->{abort} = $xml->{abort} if $xml->{abort};
 	}
 	
 	# Optional item to indicate if the list is sorted

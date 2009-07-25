@@ -392,6 +392,12 @@ sub gotOPML {
 		my @p = map { uri_unescape($_) } split / /, $opml->{'command'};
 		$log->is_debug && $log->debug( "Executing command: " . Data::Dump::dump(\@p) );
 		$client->execute( \@p );
+		
+		# Abort after the command if requested (allows OPML to execute i.e. button home)
+		if ( $opml->{abort} ) {
+			$log->is_debug && $log->debug('Aborting OPML');
+			return;
+		}
 	}
 
 	# Push staight into remotetrackinfo if asked to replace item or a playlist of one was returned with a parser
