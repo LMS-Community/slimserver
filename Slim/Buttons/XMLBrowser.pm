@@ -450,6 +450,11 @@ sub gotOPML {
 			elsif ( $item->{type} eq 'radio' ) {
 				$item->{default} = $radioDefault;
 			}
+			elsif ( $item->{type} eq 'textarea' ) {
+				# Skip textarea type, this is for non-ip3k devices
+				splice @{ $opml->{items} }, $index, 1;
+				next;
+			}
 		}
 		
 		# Wrap text if needed
