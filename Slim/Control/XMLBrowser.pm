@@ -172,7 +172,6 @@ sub _cliQuery_done {
 	my $timeout    = $params->{'timeout'};
 #	my $forceTitle = $params->{'forceTitle'};
 	my $window;
-	my $textArea;
 	
 	my $cache = Slim::Utils::Cache->new;
 
@@ -870,9 +869,7 @@ sub _cliQuery_done {
 				}
 				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
-					
-					next if $textArea;
-					
+									
 					# create an ordered hash to store this stuff...
 					tie my %hash, "Tie::IxHash";
 					
@@ -916,13 +913,18 @@ sub _cliQuery_done {
 						if ($item->{nowPlaying}) {
 							$request->addResult('goNow', 'nowPlaying');
 						}
-
-					
-						if ( $item->{wrap} && $item->{name}) {
-							$window->{'textArea'} = $item->{name};
-							# no menu when we're sending a textArea, but we need a count of 0 sent
-							$request->addResult('count', 0);
-							$textArea++;
+						
+						# wrap = 1 and type = textarea render in the single textarea area above items
+						if ( $item->{wrap} && $item->{name} ) {
+							$window->{textarea} = $item->{name};
+							$count--;
+							next;
+						}
+						
+						if ( $item->{type} && $item->{type} eq 'textarea' ) {
+							$window->{textarea} = $item->{name};
+							$count--;
+							next;
 						}
 						
 						# Bug 7077, if the item will autoplay, it has an 'autoplays=1' attribute
@@ -1089,7 +1091,7 @@ sub _cliQuery_done {
 
 		}
 
-		$request->addResult('count', $count) unless $window->{textArea};
+		$request->addResult('count', $count);
 		
 		if ($menuMode) {
 
