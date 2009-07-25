@@ -51,11 +51,6 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Block;
 use Slim::Utils::Prefs;
 
-if ( main::SLIM_SERVICE ) {
-	# intro mode for SN
-	require SDI::Service::Buttons::SetupWizard;
-}
-
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
 
