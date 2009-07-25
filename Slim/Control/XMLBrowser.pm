@@ -1041,6 +1041,7 @@ sub _cliQuery_done {
 								},
 								softbutton1 => $request->string('INSERT'),
 								softbutton2 => $request->string('DELETE'),
+								title => $item->{title} || $item->{name},
 							};
 							
 							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
