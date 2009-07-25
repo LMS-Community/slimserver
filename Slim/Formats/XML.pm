@@ -557,7 +557,7 @@ sub _parseOPMLOutline {
 		# Pull in all attributes we find
 		my %attrs;
 		for my $attr ( keys %{$itemXML} ) {
-		    next if $attr =~ /text|type|URL|xmlUrl|outline/i;
+		    next if $attr =~ /^(?:text|type|URL|xmlUrl|outline)$/i;
 		    $attrs{$attr} = $itemXML->{$attr};
 	    }
 

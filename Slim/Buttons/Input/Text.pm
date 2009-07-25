@@ -95,6 +95,24 @@ our @numberLettersUpper = (
 	['W','X','Y','Z','9'],			# 9
 );
 
+# XXX: more chars than this are allowed in email addresses
+# but are probably not common
+# Uppercase and lowercase English letters (a-z, A-Z)
+# Digits 0 through 9
+# Characters ! # $ % & ' * + - / = ? ^ _ ` { | } ~
+our @numberLettersEmail = (
+	['0','@','.'], # 0
+	['1','-','_','+'], # 1
+	['a','b','c','2'], 	   # 2
+	['d','e','f','3'], 	   # 3
+	['g','h','i','4'], 	   # 4
+	['j','k','l','5'], 	   # 5
+	['m','n','o','6'], 	   # 6
+	['p','q','r','s','7'], 	# 7
+	['t','u','v','8'], 		# 8
+	['w','x','y','z','9']   # 9
+);
+
 # default arrays for charRef
 
 our @UpperChars = (
@@ -118,6 +136,15 @@ our @BothChars = (
 	'.', ',', "'", '?', '!', '@', '-', '_', '#', '$', '%', '^', '&',
 	'(', ')', '{', '}', '[', ']', '\\','|', ';', ':', '"', '<', '>',
 	'*', '=', '+', '`', '/',
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+);
+
+our @EmailChars = (
+	undef, # represents rightarrow
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+ 	'@',
+	'.', '-', '_', '+',
 	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 );
 
@@ -388,7 +415,10 @@ sub init {
 
 		} elsif (uc($charsRef) eq 'BOTH') {
 			$client->modeParam('charsRef',\@BothChars);
-
+		
+		} elsif (uc($charsRef) eq 'EMAIL') {
+			$client->modeParam('charsRef',\@EmailChars);
+			
 		} else {
 			$client->modeParam('charsRef',\@UpperChars);
 		}
@@ -407,7 +437,10 @@ sub init {
 
 		if (uc($numberLetterRef) eq 'UPPER') {
 			$client->modeParam('numberLetterRef',\@numberLettersUpper);
-
+		
+		} elsif (uc($numberLetterRef) eq 'EMAIL') {
+			$client->modeParam('numberLetterRef',\@numberLettersEmail);
+			
 		} else {
 			$client->modeParam('numberLetterRef',\@numberLettersMixed);
 		}
@@ -428,10 +461,11 @@ sub init {
 	}
 
 	# create a hash for char to index mapping from the charsRef array
-	my $charsInd;
+	my $charsInd = {};
 	my $index = 0;
 
 	for my $char (@{$client->modeParam('charsRef')}) {
+		no warnings;
 		$charsInd->{ $char } = $index++;
 	}
 

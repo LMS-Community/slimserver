@@ -641,8 +641,8 @@ sub gotOPML {
 				my %params = (
 					'header'          => $title,
 					'cursorPos'       => 0,
-					'charsRef'        => 'UPPER',
-					'numberLetterRef' => 'UPPER',
+					'charsRef'        => $item->{kbtype} || 'UPPER',
+					'numberLetterRef' => $item->{kbtype} || 'UPPER',
 					'callback'        => \&handleSearch,
 					'item'            => $item,
 				);
