@@ -160,11 +160,11 @@
 							<a href="[% item.web.url %]&amp;player=[% player | uri %]" class="browseItemLink">
 							[% ELSE; NEXT %]
 							[% END %]
-						[% ELSIF item.type != 'text' %]
+						[% ELSIF !item.type.match('^text') %]
 							<a href="[% path %]?[% searchquery %]index=[% item.index || index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;sess=[% sess %]">
 						[% END %]
 						[% item.name || item.title || item.web.value %]
-						[% IF item.weblink || item.type != 'text' %]
+						[% IF item.weblink || !item.type.match('^text') %]
 						</a>
 						[% END %]
 					[% END %]
