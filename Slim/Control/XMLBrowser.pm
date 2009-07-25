@@ -915,15 +915,30 @@ sub _cliQuery_done {
 						}
 						
 						# wrap = 1 and type = textarea render in the single textarea area above items
+						my $textarea;
 						if ( $item->{wrap} && $item->{name} ) {
 							$window->{textarea} = $item->{name};
-							$count--;
-							next;
+							$textarea = 1;
 						}
 						
 						if ( $item->{type} && $item->{type} eq 'textarea' ) {
 							$window->{textarea} = $item->{name};
+							$textarea = 1;
+						}
+						
+						if ( $textarea ) {
+							# Skip this item
 							$count--;
+							
+							# adjust item_id offsets because we have removed an item
+							my $cnt2 = 0;
+							for my $subitem ( @{$subFeed->{items}}[$start..$end] ) {
+								$subitem->{_slim_id} = $cnt2++;
+							}
+							
+							# If this is the only item, add an empty item list
+							$request->setResultLoopHash($loopname, 0, {});
+							
 							next;
 						}
 						
