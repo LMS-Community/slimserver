@@ -87,7 +87,25 @@ sub init {
 	my $client = shift;
 	my ($model, $capabilities) = @_;
 	
-	if ($capabilities) {
+	$client->updateCapabilities($capabilities);
+	
+	# Do this at end so that any resync that happens has the capabilities already set
+	$client->SUPER::init(@_);
+}
+
+
+sub reconnect {
+	my ($client, $paddr, $revision, $tcpsock, $reconnect, $bytes_received, $capabilities) = @_;
+	
+	$client->updateCapabilities($capabilities);
+	
+	$client->SUPER::reconnect($paddr, $revision, $tcpsock, $reconnect, $bytes_received);
+}
+
+sub updateCapabilities {
+	my ($client, $capabilities) = @_; 
+	
+	if ($client && $capabilities) {
 		
 		# if we have capabilities then all CODECs must be declared that way
 		my @formats;
@@ -120,9 +138,6 @@ sub init {
 		$log->is_info && $log->info('formats: ', join(',', @formats));
 		$client->myFormats([@formats]);
 	}
-	
-	# Do this at end so that any resync that happens has the capabilities already set
-	$client->SUPER::init(@_);
 }
 
 sub hasIR() { return 0; }

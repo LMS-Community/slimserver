@@ -1195,7 +1195,7 @@ sub _hello_handler {
 		# Reset isUpgrading flag now that the player has come back
 		$client->isUpgrading(0);
 
-		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
+		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received, $capabilities);
 
 		# notify of reconnect
 		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
