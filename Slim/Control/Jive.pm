@@ -298,7 +298,7 @@ sub mainMenu {
 			stringToken    => 'FAVORITES',
 			id             => 'favorites',
 			node           => 'home',
-			weight         => 40,
+			weight         => 100,
 			actions => {
 				go => {
 					cmd => ['favorites', 'items'],

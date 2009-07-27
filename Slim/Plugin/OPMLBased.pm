@@ -65,6 +65,7 @@ sub initJive {
 		text           => $name,
 		id             => 'opml' . $args{tag},
 		node           => $args{node} || $args{menu},
+		weight         => $class->weight,
 		displayWhenOff => 0,
 		window         => { 
 				'icon-id' => $icon,
@@ -162,7 +163,7 @@ sub cliRadiosQuery {
 	my $tag  = $args->{tag};
 
 	my $icon   = $class->_pluginDataFor('icon') ? $class->_pluginDataFor('icon') : 'html/images/radio.png';
-	my $weight = $args->{weight} || 1000;
+	my $weight = $class->weight;
 
 	return sub {
 		my $request = shift;
