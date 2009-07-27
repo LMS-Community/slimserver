@@ -9250,23 +9250,7 @@ PLAY
 	ZH_CN	播放
 
 PLAY_THIS_SONG
-	CS	Přehrát tuto skladbu
-	DA	Afspil dette nummer
-	DE	Diesen Titel wiedergeben
-	EN	Play this song
-	ES	Reproducir esta canción
-	FI	Soita tämä kappale
-	FR	Lire ce morceau
-	HE	השמעת שיר זה
-	IT	Riproduci questo brano
-	JA	この曲を再生する
-	NL	Dit liedje afspelen
-	NO	Spill denne sangen
-	PL	Odtwórz ten utwór
-	PT	Tocar esta Música
-	RU	Воспроизвести эту песню
-	SV	Spela upp den här låten
-	ZH_CN	播放此曲
+	EN	Play this Song
 
 REMOVE_THIS_SONG_FROM_PLAYLIST
 	CS	Odstranit tuto skladbu ze seznamu skladeb
@@ -10506,23 +10490,7 @@ REMOVE_FROM_PLAYLIST
 	ZH_CN	从播放表中删除
 
 ADD_TO_PLAYLIST
-	CS	Přidat do seznamu skladeb
-	DA	Føj til afspilningslisten
-	DE	Zur Wiedergabeliste hinzufügen
-	EN	Add to playlist
-	ES	Agregar a la lista de reproducción
-	FI	Lisää soittoluetteloon
-	FR	Ajouter à la liste de lecture
-	HE	הוספה לרשימת השמעה
-	IT	Aggiungi a elenco di riproduzione
-	JA	プレイリストに加える
-	NL	Aan playlist toevoegen
-	NO	Legg til i spilleliste
-	PL	Dodaj do listy odtwarzania
-	PT	Adicionar à lista
-	RU	Добавить в плей-лист
-	SV	Lägg till i spellista
-	ZH_CN	列入播放表
+	EN	Add to Current Playlist
 
 CONFIRM_OVERWRITE
 	CS	Potvrdit přepsání
@@ -20151,34 +20119,10 @@ JIVE_SAVE_TO_FAVORITES
 	EN	Save to Favorites
 
 JIVE_ADD_THIS_SONG
-	CS	Přidat tuto skladbu
-	DA	Tilføj dette nummer
-	DE	Dieses Lied hinzufügen
-	EN	Add this song
-	ES	Agregar esta canción
-	FI	Lisää tämä kappale
-	FR	Ajouter ce morceau à la liste de lecture
-	IT	Aggiungi questo brano
-	NL	Dit liedje toevoegen
-	NO	Legg til denne sangen
-	PL	Dodaj ten utwór
-	RU	Добавить эту песню
-	SV	Lägg till den här låten
+	EN	Add to Current Playlist
 
 JIVE_PLAY_THIS_SONG
-	CS	Přehrát tuto skladbu
-	DA	Afspil dette nummer
-	DE	Diesen Titel wiedergeben
-	EN	Play this song
-	ES	Reproducir esta canción
-	FI	Soita tämä kappale
-	FR	Lire ce morceau
-	IT	Riproduci questo brano
-	NL	Dit liedje afspelen
-	NO	Spill denne sangen
-	PL	Odtwórz ten utwór
-	RU	Воспроизвести эту песню
-	SV	Spela upp den här låten
+	EN	Play this Song
 
 ADD_TO_END
 	EN	Add to End
