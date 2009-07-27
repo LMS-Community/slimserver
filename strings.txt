@@ -579,7 +579,7 @@ MY_MUSIC
 	CS	Knihovna hudby
 	DA	Musikbibliotek
 	DE	Musikbibliothek
-	EN	Music Library
+	EN	My Music
 	ES	Biblioteca de música
 	FI	Musiikkikirjasto
 	FR	Collection musicale
