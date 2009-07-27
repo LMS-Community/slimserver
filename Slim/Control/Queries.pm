@@ -5428,7 +5428,6 @@ sub _mixerItemParams {
 # contextMenuQuery is a wrapper for producing context menus for various objects
 sub contextMenuQuery {
 
-	$log->error('Begin Function');
 	my $request = shift;
 
 	# check this is the correct query.
