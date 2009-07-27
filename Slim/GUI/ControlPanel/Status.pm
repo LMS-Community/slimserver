@@ -20,11 +20,12 @@ use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
 sub new {
-	my ($self, $nb) = @_;
+	my ($self, $nb, $parent) = @_;
 	
 	$self = $self->SUPER::new($nb);
 	
 	$self->{loaded} = 0;
+	$self->{serviceState} = 0;
 
 	$self->SetAutoLayout(1);
 	
@@ -45,6 +46,16 @@ sub new {
 		my ($self, $event) = @_;
 		$self->_update($event);
 	});
+	
+	
+	$parent->addStatusListener('statusUpdater', sub {
+		my $state = shift;
+		
+		if ($state != $self->{serviceState}) {
+			$self->_update();
+		}
+	});
+	
 
 	return $self;
 }
@@ -73,12 +84,14 @@ sub _update {
 			$self->{loaded} = 1;
 
 		}
+		
+		$self->{serviceState} = $svcMgr->getServiceState();
 	}
 	else {
 		$self->{loaded} = 0;
 	}
 
-	$event->Skip();
+	$event->Skip() if $event;
 }
 
 1;

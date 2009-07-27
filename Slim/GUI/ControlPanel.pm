@@ -94,7 +94,7 @@ sub new {
 		$notebook->AddPage(Slim::GUI::ControlPanel::Account->new($notebook, $self), string('CONTROLPANEL_ACCOUNT'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Advanced->new($notebook, $self, $args), string('ADVANCED_SETTINGS'));
 		$notebook->AddPage(Slim::GUI::ControlPanel::Diagnostics->new($notebook, $self, $args), string('CONTROLPANEL_DIAGNOSTICS'));
-		$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook), string('INFORMATION'));
+		$notebook->AddPage(Slim::GUI::ControlPanel::Status->new($notebook, $self), string('INFORMATION'));
 	
 		$mainSizer->Add($notebook, 1, wxALL | wxGROW, 10);
 	}
