@@ -2999,6 +2999,9 @@ sub _jiveNoResults {
 sub cacheSearch {
 	my $request = shift;
 	my $search  = shift;
+	
+	# Don't cache searches on SN
+	return if main::SLIM_SERVICE;
 
 	if (defined($search) && $search->{text} && $search->{actions}{go}{cmd}) {
 		unshift (@recentSearches, $search);
