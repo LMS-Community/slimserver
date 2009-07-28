@@ -27,8 +27,10 @@ on run argv
 			
 			register as application "Squeezebox Server" all notifications allNotificationsList default notifications enabledNotificationsList icon of application "SqueezeCenter"
 		
-			notify with name "Squeezebox Notification" title "Squeezebox Server" description msg application name "Squeezebox Server" sticky true
+			notify with name "Squeezebox Notification" title "Squeezebox Server" description msg application name "Squeezebox Server"
 		end tell
+		
+		return "1"
 		
 	else
 	

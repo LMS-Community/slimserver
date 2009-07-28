@@ -14,6 +14,8 @@ use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use POSIX qw(LC_CTYPE LC_TIME);
 
+use constant GROWLINTERVAL => 60*60;
+
 my $canFollowAlias;
 
 sub name {
@@ -379,7 +381,15 @@ sub _signalUpdateReady {
 	Slim::Utils::Log::logger('server.update')->debug('Running notification:\n' . 
 		sprintf("%s '%s' %s &", ($osa || 'unknown'), ($script || 'unknown'), Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE')));
 	
-	system(sprintf("%s '%s' %s &", $osa, $script, Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE'))) if ($osa && $script);
+	if ($osa && $script) {
+		$script = sprintf("%s '%s' %s &", $osa, $script, Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE'));
+		
+		# script will return true if Growl is installed
+		if (`$script`) {
+			# as Growl notifications are temporary only, retrigger them every hour
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + GROWLINTERVAL, \&_signalUpdateReady);
+		}
+	}
 }
 
 sub canAutoUpdate { 1 }
