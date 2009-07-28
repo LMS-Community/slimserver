@@ -1123,6 +1123,9 @@ PLAYLIST_EMPTY
 	SV	Spellistan är tom
 	ZH_CN	播放表为空
 
+PLAYLIST_CANT_WRITE
+	EN	Playlist could not be saved.
+
 BROWSING_MUSIC
 	CS	Procházení hudby...
 	DA	Gennemser musik...

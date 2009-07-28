@@ -106,6 +106,12 @@ sub saveCurrentPlaylist {
 			if (defined $request) {
 			
 				$params->{'playlist.id'} = $request->getResult('__playlist_id');
+				
+				if ($request->getResult('writeError')) {
+					
+					$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
+				
+				}
 			}
 	
 		}
@@ -163,6 +169,13 @@ sub renamePlaylist {
 							'rename', 
 							'playlist_id:' . $playlist_id,
 							'newname:' . $newName]);
+							
+			if ($request && $request->getResult('writeError')) {
+				
+				$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
+			
+			}
+
 		}
 	}
 
@@ -186,8 +199,14 @@ sub deletePlaylist {
 
 	} elsif (blessed($playlistObj)) {
 	
-		Slim::Control::Request::executeRequest(undef, 
+		my $request = Slim::Control::Request::executeRequest(undef, 
 			['playlists', 'delete', 'playlist_id:' . $playlist_id]);
+
+		if ($request && $request->getResult('writeError')) {
+			
+			$params->{'warning'} = $client->string('PLAYLIST_CANT_WRITE');
+			
+		}
 
 		$playlistObj = undef;
 	}

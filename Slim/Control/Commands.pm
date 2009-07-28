@@ -1124,19 +1124,22 @@ sub playlistSaveCommand {
 
 	Slim::Schema->forceCommit;
 
-	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
+	if (!defined Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj)) {
+		$request->addResult('writeError', 1);
+	}
+	
 	# exit playlist mode if currently in playlist mode
 	my $mode = Slim::Player::Playlist::playlistMode($client);
 	if ( $mode eq 'on' ) {
 		Slim::Player::Playlist::playlistMode($client, 'off');
 	}
 
-  	$client->showBriefly({
+	$client->showBriefly({
 		'jive' => {
 			'type'    => 'popupplay',
 			'text'    => [ $client->string('SAVED_THIS_PLAYLIST_AS', $title) ],
-                                }
-                        });
+		}
+	});
 
 	$request->addResult('__playlist_id', $playlistObj->id);
 	$request->addResult('__playlist_obj', $playlistObj);
@@ -2305,13 +2308,15 @@ sub playlistsRenameCommand {
 		$playlistObj->set_column('titlesearch', Slim::Utils::Text::ignoreCaseArticles($newName));
 		$playlistObj->update;
 
-		Slim::Formats::Playlists::M3U->write( 
+		if (!defined Slim::Formats::Playlists::M3U->write( 
 			[ $playlistObj->tracks ],
 			undef,
 			$playlistObj->path,
 			1,
 			$index,
-		);
+		)) {
+			$request->addResult('writeError', 1);
+		}
 	}
 
 	$request->setStatusDone();
