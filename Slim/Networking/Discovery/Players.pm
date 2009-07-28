@@ -119,11 +119,14 @@ sub _players_done {
 	_purge_player_list($server);
 
 	foreach my $player (@{$res->{result}->{players_loop}}) {
+		
 		$players->{$player->{playerid}} = {
 			name   => $player->{name} || $player->{model} . ' ' . substr($player->{playerid}, 9),
 			server => $server,
 			model  => $player->{model},
+			ttl    => time() + 2 * 60,		# remember the players no longer than two minutes
 		}
+		
 	}
 }
 
@@ -151,8 +154,14 @@ sub _purge_player_list {
 	my $server = shift;
 
 	foreach my $player (keys %{$players}) {
-		if ($players->{$player}->{server} eq $server) {
+		
+		# remove players connected to ourselves
+		# or whose server has not been seen in a while
+		if ( $players->{$player}->{server} eq $server
+			|| $players->{$player}->{ttl} < time() ) {
+				
 			delete $players->{$player};
+			
 		}
 	}
 }

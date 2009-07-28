@@ -91,7 +91,7 @@ purge servers from the list when they haven't been discovered in two poll cycles
 sub _purge_server_list {
 	foreach my $server (keys %{$server_list}) {
 		
-		if (!$server_list->{$server}->{timestamp} || $server_list->{$server}->{timestamp} < time() - (2 * POLL_INTERVAL)) {
+		if (!$server_list->{$server}->{ttl} || $server_list->{$server}->{ttl} < time()) {
 
 			delete $server_list->{$server};
 		}
@@ -203,8 +203,8 @@ sub gotTLVResponse {
 		
 		$server->{NAME} = Slim::Utils::Unicode::utf8decode($server->{NAME});
 		
-		$server_list->{$server->{NAME}}              = $server;
-		$server_list->{$server->{NAME}}->{timestamp} = time();
+		$server_list->{$server->{NAME}}        = $server;
+		$server_list->{$server->{NAME}}->{ttl} = time() + 2 * POLL_INTERVAL;
 
 		unless (is_self($server->{IP})) {
 
