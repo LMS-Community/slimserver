@@ -239,10 +239,9 @@ sub getProcessID {
 	}
 
 	# Windows sometimes only displays squeez~1.exe or similar
-	my $pid = ($p->GetProcessPid(qr/^squeez(ecenter|~\d).exe$/i))[1];
+	my $pid = ($p->GetProcessPid(qr/^squeez(esvr|~\d).exe$/i))[1];
 
-	return $pid if defined $pid;
-	return -1;
+	return $pid || -1;
 }
 
 1;
