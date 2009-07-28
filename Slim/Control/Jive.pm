@@ -345,7 +345,7 @@ sub mainMenu {
 		main::SLIM_SERVICE ? () : @{albumSortSettingsItem($client, 1)},
 		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
 		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
-		@{appsMenu($client, 1)},
+		@{homeMenuApps($client, 1)},
 	);
 	
 =pod
@@ -3183,13 +3183,22 @@ sub _extensionsQueryCB {
 	}
 }
 
-sub appsMenu {
+sub homeMenuApps {
 	my $client = shift;
 	my $batch  = shift;
 	
+	my $apps;
 	my $menu = [];
 	
-	my @apps = keys %{ $prefs->client($client)->get('apps') || {} };
+	if ( main::SLIM_SERVICE ) {
+		$apps = $client->playerData->apps;
+	}
+	else {
+		$apps = $prefs->client($client)->get('apps') || {};
+	}
+	
+	# Filter out only home menu apps (value=2)
+	my @apps = map { $_ } grep { $apps->{$_} == 2 } keys %{$apps};
 	
 	if ( !scalar @apps ) {
 		return $menu;
@@ -3205,11 +3214,21 @@ sub appsMenu {
 		}
 	}
 	
+	# XXX: this list is not localized on SN, assume all plugin titles don't need localized?
+	
+	# Alpha sort and add weighting
+	my $weight = 21; # After Internet Radio
+	
+	my @sorted =
+	 	map { $_->{weight} = $weight++; $_ } 
+		sort { $a->{text} cmp $b->{text} }
+		@{$menu};
+	
 	if ( $batch ) {
-		return $menu;
+		return \@sorted;
 	}
 	else {
-		_notifyJive($menu, $client);
+		_notifyJive(\@sorted, $client);
 	}
 }
 
