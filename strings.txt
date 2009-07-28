@@ -21153,7 +21153,7 @@ CONTROLPANEL_UPDATE_AVAILABLE
 	CS	Aktualizovaná verze Squeezebox Server je k dispozici a připravena k instalaci.
 	DA	Der findes en opdateret version af Squeezebox Server som er klar til at blive installeret.
 	DE	Eine aktualisierte Version von Squeezebox Server ist verfügbar und kann installiert werden.
-	EN	An updated Squeezebox Server version is available and ready to be installed.
+	EN	An updated version of Squeezebox Server is available and ready to install.
 	ES	Hay disponible una versión actualizada de Squeezebox Server y está lista para instalar.
 	FI	Squeezebox Serverin päivitetty versio on käytettävissä ja valmiina ladattavaksi.
 	FR	Une nouvelle version du Squeezebox Server est disponible et prête à l'installation.
