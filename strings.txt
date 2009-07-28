@@ -9250,7 +9250,23 @@ PLAY
 	ZH_CN	播放
 
 PLAY_THIS_SONG
+	CS	Přehrát tuto skladbu
+	DA	Afspil dette nummer
+	DE	Diesen Titel wiedergeben
 	EN	Play this Song
+	ES	Reproducir esta canción
+	FI	Soita tämä kappale
+	FR	Lire ce morceau
+	HE	השמעת שיר זה
+	IT	Riproduci questo brano
+	JA	この曲を再生する
+	NL	Dit liedje afspelen
+	NO	Spill denne sangen
+	PL	Odtwórz ten utwór
+	PT	Tocar esta Música
+	RU	Воспроизвести эту песню
+	SV	Spela upp den här låten
+	ZH_CN	播放此曲
 
 REMOVE_THIS_SONG_FROM_PLAYLIST
 	CS	Odstranit tuto skladbu ze seznamu skladeb
@@ -20122,7 +20138,19 @@ JIVE_ADD_THIS_SONG
 	EN	Add to Current Playlist
 
 JIVE_PLAY_THIS_SONG
+	CS	Přehrát tuto skladbu
+	DA	Afspil dette nummer
+	DE	Diesen Titel wiedergeben
 	EN	Play this Song
+	ES	Reproducir esta canción
+	FI	Soita tämä kappale
+	FR	Lire ce morceau
+	IT	Riproduci questo brano
+	NL	Dit liedje afspelen
+	NO	Spill denne sangen
+	PL	Odtwórz ten utwór
+	RU	Воспроизвести эту песню
+	SV	Spela upp den här låten
 
 ADD_TO_END
 	EN	Add to End
