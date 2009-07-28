@@ -286,7 +286,7 @@ sub mainMenu {
 		$_->{text} = $client->string($_->{stringToken}) if ($_->{stringToken});
 		$_;
 	}(
-		{
+		main::SLIM_SERVICE ? () : {
 			stringToken    => 'MY_MUSIC',
 			weight         => 11,
 			id             => 'myMusic',
@@ -342,9 +342,9 @@ sub mainMenu {
 		@{internetRadioMenu($client)},
 		@{musicServicesMenu($client)},
 		@{musicStoresMenu($client)},
-		@{albumSortSettingsItem($client, 1)},
-		@{myMusicMenu(1, $client)},
-		@{recentSearchMenu($client, 1)},
+		main::SLIM_SERVICE ? () : @{albumSortSettingsItem($client, 1)},
+		main::SLIM_SERVICE ? () : @{myMusicMenu(1, $client)},
+		main::SLIM_SERVICE ? () : @{recentSearchMenu($client, 1)},
 		@{appsMenu($client, 1)},
 	);
 	
