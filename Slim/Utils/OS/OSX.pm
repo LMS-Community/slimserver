@@ -378,7 +378,7 @@ sub _signalUpdateReady {
 	
 	$script ||= Slim::Utils::Misc::findbin('openprefs.scpt');
 	
-	Slim::Utils::Log::logger('server.update')->debug('Running notification:\n' . 
+	Slim::Utils::Log::logger('server.update')->debug("Running notification:\n" . 
 		sprintf("%s '%s' %s &", ($osa || 'unknown'), ($script || 'unknown'), Slim::Utils::Strings::string('PREFPANE_UPDATE_AVAILABLE')));
 	
 	if ($osa && $script) {
