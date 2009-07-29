@@ -1,4 +1,4 @@
-package Slim::Plugin::MyApps::Plugin;
+package Slim::Plugin::OPMLGeneric::Plugin;
 
 # $Id$
 
