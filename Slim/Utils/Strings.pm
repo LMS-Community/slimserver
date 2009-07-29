@@ -228,6 +228,7 @@ sub stringsFiles {
 	
 	if ( main::SLIM_SERVICE ) {
 		push @files, catdir($serverPath, 'slimservice-strings.txt');
+		push @files, catdir($main::SN_PATH, 'docroot', 'strings.txt');
 	}
 
 	# prune out files which don't exist and find newest
