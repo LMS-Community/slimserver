@@ -427,7 +427,7 @@ sub lines {
 			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
 		}
 
-		my $line1 = $client->string('PLAYLIST');
+		my $line1 = $client->string('CURRENT_PLAYLIST');
 		my $overlay1;
 
 		if ($args->{'trans'} || $prefs->client($client)->get('alwaysShowCount')) {
