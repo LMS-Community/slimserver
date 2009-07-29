@@ -16,6 +16,4 @@ sub initPlugin {
 	);
 }
 
-sub getDisplayName { 'App Gallery (the real one)' }
-
 1;
