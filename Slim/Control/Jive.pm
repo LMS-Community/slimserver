@@ -234,14 +234,17 @@ sub menuQuery {
 	my $menu = mainMenu($client);
 	
 	# Return results directly and destroy the client if it is disconnected
-	if ( $disconnected ) {
+	# Also return the results directly if param 'direct' is set
+	if ( $disconnected || $request->getParam('direct') ) {
 		$request->setRawResults( {
 			count     => scalar @{$menu},
 			offset    => 0,
 			item_loop => $menu,
 		} );
 		
-		$client->forgetClient;
+		if ( $disconnected ) {
+			$client->forgetClient;
+		}
 	}
 	else {
 		# a single dummy item to keep jive happy with _merge
