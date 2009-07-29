@@ -3195,31 +3195,74 @@ sub homeMenuApps {
 	
 	if ( main::SLIM_SERVICE ) {
 		if ( $client->playerData ) {
-			$apps = $client->playerData->apps;
+			$apps = $client->playerData->apps( sub { $client->string(@_) } );
 		}
 	}
 	else {
 		$apps = $prefs->client($client)->get('apps') || {};
 	}
 	
-	# Filter out only home menu apps (value=2)
-	my @apps = map { $_ } grep { $apps->{$_} == 2 } keys %{$apps};
+	# We want to add nodes for the following items:
+	# Home menu apps (home_menu => 1)
+	# If a home menu app is not already defined in @pluginMenus,
+	# i.e. pure OPML apps such as SomaFM
+	# create one for it using the generic OPML handler
 	
-	if ( !scalar @apps ) {
-		return $menu;
-	}
-	
-	# Filter enabled apps out of global plugin list, and set them to home menu
-	for my $plugin ( @pluginMenus ) {
-		if ( grep { $plugin->{id} =~ /$_/ } @apps ) {
+	for my $app ( keys %{$apps} ) {
+		next unless ref $apps->{$app} eq 'HASH'; # XXX don't crash on old style
+		next if $apps->{$app}->{home_menu} != 1; # non-home-menu item
+		
+		# Does this app exist in our global plugin list?
+		if ( my ($plugin) = grep { $_->{id} =~ /$app/ } @pluginMenus ) {
+			# Clone the existing plugin and change the node to home
 			my $clone = Storable::dclone($plugin);
 			$clone->{node} = 'home';
 			
+			# Use title from app list
+			delete $clone->{stringToken};
+			$clone->{text} = $apps->{$app}->{title};
+			
 			push @{$menu}, $clone;
+		}
+		else {
+			# For type=opml, use generic handler
+			if ( $apps->{$app}->{type} eq 'opml' ) {
+				my $url = $apps->{$app}->{url} =~ /^http/
+					? $apps->{$app}->{url} 
+					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{url} );
+				
+				my $icon = $apps->{$app}->{icon} =~ /^http/
+					? $apps->{$app}->{icon} 
+					: Slim::Networking::SqueezeNetwork->url( $apps->{$app}->{icon}, 'external' );
+				
+				push @{$menu}, {
+					actions => {
+						go => {
+							cmd    => [ 'opml_generic', 'items' ],
+							params => {
+								menu     => 'opml_generic',
+								opml_url => $url,
+							},
+							player => 0,
+						},
+					},
+					displayWhenOff => 0,
+					id             => 'opml' . $app,
+					node           => 'home',
+					text           => $apps->{$app}->{title},
+					window         => {
+						'icon-id'  => $icon,
+						titleStyle => 'album',
+					},
+				};
+			}
+			elsif ( $apps->{$app}->{type} eq 'squeezeplay' ) {
+				# XXX: SqueezePlay-only apps such as Flickr
+			}
 		}
 	}
 	
-	# XXX: this list is not localized on SN, assume all plugin titles don't need localized?
+	return [] if !scalar @{$menu};
 	
 	# Alpha sort and add weighting
 	my $weight = 21; # After Internet Radio
