@@ -450,14 +450,7 @@ sub hasAccount {
 	my ( $class, $client, $type ) = @_;
 		
 	if ( main::SLIM_SERVICE ) {
-		my $type_pref = {
-			pandora  => 'pandora_username',
-			rhapsody => 'plugin_rhapsody_direct_accounts',
-			lfm      => 'plugin_audioscrobbler_accounts',
-			slacker  => 'plugin_slacker_username',
-		};
-		
-		return $prefs->client($client)->get( $type_pref->{$type} );
+		return $client->playerData->userid->hasServiceAccount( $type );
 	}
 	else {
 		my $services = $prefs->get('sn_active_services') || {};
