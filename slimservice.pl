@@ -145,7 +145,12 @@ use Slim::Display::Lib::Fonts;
 #use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Menu::TrackInfo;
+use Slim::Menu::AlbumInfo;
+use Slim::Menu::ArtistInfo;
+use Slim::Menu::GenreInfo;
+use Slim::Menu::YearInfo;
 use Slim::Menu::SystemInfo;
+use Slim::Menu::PlaylistInfo;
 use Slim::Music::Info;
 #use Slim::Music::Import;
 #use Slim::Music::MusicFolderScan;
@@ -357,7 +362,12 @@ sub init {
 	
 	$log->info('Menu init...');
 	Slim::Menu::TrackInfo->init();
+	Slim::Menu::AlbumInfo->init();
+	Slim::Menu::ArtistInfo->init();
+	Slim::Menu::GenreInfo->init();
+	Slim::Menu::YearInfo->init();
 	Slim::Menu::SystemInfo->init();
+	Slim::Menu::PlaylistInfo->init();
 	
 	$log->info('Squeezebox Server Alarms init...');
 	Slim::Utils::Alarm->init();
