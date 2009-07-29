@@ -133,7 +133,7 @@ sub _players_done {
 			
 			# Refresh Jive menu
 			if ( my $client = Slim::Player::Client::getClient( $player->{mac} ) ) {
-				Slim::Control::Jive::appsMenu($client);
+				Slim::Control::Jive::homeMenuApps($client);
 			}
 		}
 	}
