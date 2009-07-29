@@ -1,0 +1,14 @@
+PLUGIN_MY_APPS_MODULE_NAME
+	CS	Moje aplikace
+	DA	Mine programmer
+	DE	Eigene Anwendungen
+	EN	My Apps
+	ES	Mis aplicaciones
+	FI	Omat sovellukset
+	FR	Mes applications
+	IT	Applicazioni
+	NL	Mijn toepassingen
+	NO	Mine tjenester
+	PL	Moje aplikacje
+	RU	Мои приложения
+	SV	Mina program

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<extension>
+	<id>2E3ACD53-B9A8-4440-9C5B-517B1EB28E34</id>
+	<name>PLUGIN_MY_APPS_MODULE_NAME</name>
+	<module>Slim::Plugin::MyApps::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_MY_APPS_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<icon>plugins/MyApps/html/images/icon.png</icon>
+	<type>2</type>
+	<targetApplication>
+		<id>Squeezebox Server</id>
+		<minVersion>7.4</minVersion>
+		<maxVersion>*</maxVersion>
+	</targetApplication>
+</extension>
