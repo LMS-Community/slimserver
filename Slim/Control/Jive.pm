@@ -3190,11 +3190,13 @@ sub homeMenuApps {
 	my $client = shift;
 	my $batch  = shift;
 	
-	my $apps;
+	my $apps = {};
 	my $menu = [];
 	
 	if ( main::SLIM_SERVICE ) {
-		$apps = $client->playerData->apps;
+		if ( $client->playerData ) {
+			$apps = $client->playerData->apps;
+		}
 	}
 	else {
 		$apps = $prefs->client($client)->get('apps') || {};
