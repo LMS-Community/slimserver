@@ -1005,7 +1005,10 @@ sub flush {}
 
 sub power {}
 
-sub string {}
+sub string {
+	$_[0]->display && return shift->display->string(@_);
+}
+
 sub doubleString {}
 
 sub maxTransitionDuration {

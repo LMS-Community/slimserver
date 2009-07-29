@@ -38,6 +38,9 @@ sub new {
 	my $client = $class->SUPER::new($id);
 	
 	$client->display( Slim::Display::NoDisplay->new($client) );
+	
+	# Load strings for display
+	$client->display->displayStrings(Slim::Utils::Strings::clientStrings($client));
 
 	return $client;
 }

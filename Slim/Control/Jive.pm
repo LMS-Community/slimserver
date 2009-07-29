@@ -283,7 +283,7 @@ sub mainMenu {
 	# as a result, no item_loops, all submenus (setting, myMusic) are just elements of the big array that get sent
 
 	my @menu = map {
-		$_->{text} = $client->string($_->{stringToken}) if ($_->{stringToken});
+		$_->{text} = $client->string(delete $_->{stringToken}) if $_->{stringToken};
 		$_;
 	}(
 		main::SLIM_SERVICE ? () : {
