@@ -39,7 +39,9 @@ sub initPlugin {
 	
 	$class->initCLI( %args );
 	
-	$class->initJive( %args );
+	if ( my $menu = $class->initJive( %args ) ) {
+		Slim::Control::Jive::registerPluginMenu($menu);
+	}
 
 	$class->SUPER::initPlugin();
 }
@@ -82,7 +84,7 @@ sub initJive {
 		},
 	} );
 
-	Slim::Control::Jive::registerPluginMenu(\@jiveMenu);
+	return \@jiveMenu;
 }
 
 sub initCLI {
