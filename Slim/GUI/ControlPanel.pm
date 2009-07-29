@@ -280,9 +280,18 @@ sub OnInit {
 }
 
 # the following subs are static methods to deliver some commonly used services
+my $baseUrl;
 sub getBaseUrl {
 	my $self = shift;
-	return 'http://127.0.0.1:' . ($self->getPref('httpport') || '9000');
+
+	if (!$baseUrl || time() > $baseUrl->{ttl}) {
+		$baseUrl = {
+			url => 'http://127.0.0.1:' . (Slim::Utils::Light::getPref('httpport') || 9000),
+			ttl => time() + 15,
+		};
+	}
+
+	return $baseUrl->{url};
 }
 
 sub setPref {
@@ -307,7 +316,10 @@ sub getPref {
 	
 		$value = $self->serverRequest('pref', $file . $pref, '?');
 
-		if (ref $value) {
+		if (ref $value eq 'HASH' && $value->{msg} && $value->{msg} =~ /^500/i) {
+			$value = Slim::Utils::Light::getPref($pref, $file);
+		}
+		elsif (ref $value eq 'HASH') {
 			$value = $value->{'_p2'};
 		}
 	}
@@ -323,15 +335,14 @@ sub getPref {
 sub serverRequest {
 	my $self = shift;
 	my $postdata;
-	
+
 	return unless $svcMgr->isRunning();
 
 	eval { $postdata = '{"id":1,"method":"slim.request","params":["",' . to_json(\@_) . ']}' };
 
 	return if $@ || !$postdata;
 
-	my $httpPort = Slim::Utils::Light::getPref('httpport') || 9000;
-	my $baseUrl  = "127.0.0.1:$httpPort";
+	my $baseUrl = $self->getBaseUrl();
 
 	my $req = HTTP::Request->new( 
 		'POST',
@@ -342,7 +353,7 @@ sub serverRequest {
 	$req->content($postdata);
 	
 	my $ua = LWP::UserAgent->new();
-	$ua->timeout(5);
+	$ua->timeout(2);
 	
 	if ($credentials && $credentials->{username} && $credentials->{password}) {
 		$ua->credentials($baseUrl, "Squeezebox Server", $credentials->{username}, $credentials->{password});
@@ -383,7 +394,7 @@ sub serverRequest {
 		}
 	}
 
-	return ref $content ? $content : { msg => $content };
+	return ref $content eq 'HASH' ? $content : { msg => $content };
 }
 
 1;
