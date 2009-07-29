@@ -1004,7 +1004,7 @@ sub _cliQuery_done {
 							$hasImage = 1;
 						}
 
-						if ( $item->{type} eq 'text' && !$hasImage && !$item->{wrap} && !$item->{jive} ) {
+						if ( $item->{type} eq 'text' && !$item->{wrap} && !$item->{jive} ) {
 							$request->addResultLoop( $loopname, $cnt, 'style', 'itemNoAction' );
 							$request->addResultLoop($loopname, $cnt, 'action', 'none');
 						}
