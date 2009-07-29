@@ -652,7 +652,7 @@ SqueezeJS.SonginfoParser = {
 
 	coverart : function(result, noLink, width){
 		var coverart = this.defaultCoverart(0, width);
-		var id = 0;
+		var id = -1;
 		var link;
 
 		if (result.playlist_tracks > 0) {
@@ -664,7 +664,7 @@ SqueezeJS.SonginfoParser = {
 			}
 		}
 
-		return this.tpl[((noLink || id == null) ? 'raw' : 'linked')].coverart.apply({
+		return this.tpl[((noLink || id == null || id < 0) ? 'raw' : 'linked')].coverart.apply({
 			id: id,
 			src: coverart,
 			width: width ? 'width="' + width + '"' : '',
