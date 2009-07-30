@@ -3207,6 +3207,10 @@ sub serverstatusQuery {
 			$request->addResultLoop(
 				'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
 			);
+			
+			$request->addResultLoop(
+				'sn_players_loop', $sn_cnt, 'model', $player->{model}
+			);
 				
 			$sn_cnt++;
 		}
