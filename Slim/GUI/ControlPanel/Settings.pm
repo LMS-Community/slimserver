@@ -57,6 +57,7 @@ sub new {
 		elsif ($state == SC_STATE_STARTING) {
 			$statusLabel->SetLabel(string('CONTROLPANEL_STATUS_STARTING'));
 		}
+		
 	});
 
 	my $startBtnSizer = Wx::BoxSizer->new(wxHORIZONTAL);
@@ -67,6 +68,7 @@ sub new {
 	$parent->addStatusListener($btnStartStop, sub {
 		$btnStartStop->SetLabel($_[0] == SC_STATE_RUNNING ? string('STOP_SQUEEZEBOX_SERVER') :  string('START_SQUEEZEBOX_SERVER'));
 		$btnStartStop->Enable( ($_[0] == SC_STATE_RUNNING || $_[0] == SC_STATE_STOPPED || $_[0] == SC_STATE_UNKNOWN) && ($_[0] == SC_STATE_STOPPED ? $svcMgr->canStart : 1) );
+		$btnStartStop->SetSize( $btnStartStop->GetBestSize() );
 	});
 	$startBtnSizer->Add($btnStartStop, 0);
 
@@ -338,6 +340,7 @@ sub Notify {
 	}
 
 	$btnRescan->SetLabel(string($isScanning ? 'ABORT_SCAN' : 'SETUP_RESCAN_BUTTON'));
+	$btnRescan->SetSize( $btnRescan->GetBestSize() );
 }
 
 sub showProgress {
@@ -365,6 +368,7 @@ sub showProgress {
 	}
 
 	$btnRescan->SetLabel(string('ABORT_SCAN'));
+	$btnRescan->SetSize( $btnRescan->GetBestSize() );
 	$self->Start(2100, wxTIMER_CONTINUOUS);
 	$self->Layout();
 }
