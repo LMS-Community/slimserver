@@ -358,6 +358,8 @@ sub installPath {
 	}
 
 	return $installDir if -d $installDir;
+	
+	return '';
 }
 
 
