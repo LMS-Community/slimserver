@@ -891,6 +891,7 @@ form#advSearchForm.resultsPage {
 #ctrlVolume, #ctrlVolume img {
 	width: 91px;
 	height: 22px;
+	cursor: pointer;
 }
 
 #ctrlVolume {
@@ -935,6 +936,7 @@ form#advSearchForm.resultsPage {
 	height: 12px;
 	margin: 2px 100px 0 40px;
 	overflow: hidden;
+	cursor: pointer;
 }
 
 #ctrlProgress img {
