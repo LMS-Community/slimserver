@@ -16,7 +16,7 @@ use Slim::GUI::ControlPanel;
 use Slim::Utils::Light;
 use Slim::Utils::ServiceManager;
 
-my ($progressPoll, $btnRescan, $setStartupMode);
+my ($progressPoll, $btnRescan, $setStartupMode, $setStartupModeHandler);
 
 sub new {
 	my ($self, $nb, $parent) = @_;
@@ -82,6 +82,10 @@ sub new {
 	@startupOptions = map { string($_) } @startupOptions;	
 	my $lbStartupMode = Wx::Choice->new($self, -1, [-1, -1], [-1, -1], \@startupOptions);
 
+	EVT_CHOICE($self, $lbStartupMode, sub {
+		$setStartupMode = 1;
+	});
+
 	EVT_BUTTON( $self, $btnStartStop, sub {
 		if ($svcMgr->checkServiceState() == SC_STATE_RUNNING) {
 			Slim::GUI::ControlPanel->serverRequest('stopserver');
@@ -89,7 +93,7 @@ sub new {
 		
 		# starting SC is heavily platform dependant
 		else {
-			$svcMgr->setStartupType($lbStartupMode->GetSelection());
+			&$setStartupModeHandler() if $setStartupModeHandler;
 			$svcMgr->start($cbStartSafeMode->IsChecked() ? '--failsafe --debug server=debug,server.plugins=debug --d_startup' : undef);
 			$parent->checkServiceStatus();
 		}
@@ -107,9 +111,10 @@ sub new {
 	$lbStartupMode->SetSelection($svcMgr->getStartupType() || 0);
 	$lbStartupMode->Enable($svcMgr->canSetStartupType());
 	
-	$parent->addApplyHandler($lbStartupMode, sub {
-		$svcMgr->setStartupType($lbStartupMode->GetSelection());
-	});
+	$setStartupModeHandler = sub {
+		$svcMgr->setStartupType($lbStartupMode->GetSelection()) if $setStartupMode;
+		$setStartupMode = 0;
+	};
 
 	$parent->addStatusListener($lbStartupMode, sub {
 		$lbStartupMode->Enable($_[0] == SC_STATE_STOPPED);
@@ -167,7 +172,7 @@ sub new {
 		});
 
 		# overwrite action handler for startup mode
-		$parent->addApplyHandler($lbStartupMode, sub {
+		$setStartupModeHandler = sub {
 		
 			if ($setStartupMode) {
 
@@ -179,9 +184,10 @@ sub new {
 			}
 
 			$setStartupMode = 0;
-		});
-			
+		};
 	}
+		
+	$parent->addApplyHandler($lbStartupMode, $setStartupModeHandler);
 
 	$mainSizer->Add($startupSizer, 0, wxALL | wxGROW, 10);
 
