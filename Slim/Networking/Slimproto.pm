@@ -1194,6 +1194,12 @@ sub _hello_handler {
 		
 		# Reset isUpgrading flag now that the player has come back
 		$client->isUpgrading(0);
+		
+		# Check display is valid
+		if ( !$client->display ) {
+			$client->display( $display_class->new($client) );
+			$client->display->init;
+		}
 
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received, $capabilities);
 
